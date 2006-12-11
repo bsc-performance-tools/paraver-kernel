@@ -1,0 +1,14 @@
+##### Paraver Changes #####
+
+3.4.1
+  * 050914 [CHANGE] El asterisco para asuntos generales que puedan interesar al 
+                    usuario.
+  - 050914 [IMPROV] El guion para cambios internos solo para developers.
+  * 050914 [BUGFIX] El formato de la fecha es YYMMDD.
+  - 050914 [FEATUR] La etiqueta referente al comentario solo tendra 6 caracteres
+                    e identifica el tipo de cambio en el codigo. Las etiquetas
+                    itentanran ser autoexplicativas.
+
+3.4
+  Initial version
+  
