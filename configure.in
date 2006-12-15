@@ -1,0 +1,48 @@
+
+# Process this file with autoconf to produce a configure script.
+
+#########################
+#    Initializations    #
+#########################
+
+# Initialize autoconf & define package name, version and bug-report address
+AC_INIT(paraver-kernel, 1.0, cepbatools@cepba.upc.edu)
+
+# Safety check to ensure that the directory told with `--srcdir` contains the source code
+AC_CONFIG_SRCDIR(src/)
+
+# Initialize automake
+AM_INIT_AUTOMAKE
+
+# Specify the output configuration header file
+AC_CONFIG_HEADERS(config.h)
+
+
+#############################
+#    Checks for programs    #
+#############################
+
+# Search for available compilers and preprocessor
+AC_PROG_CC(gcc xlc cc)
+AC_PROG_CXX(g++ xlC CC)
+AC_PROG_CPP
+AC_PROG_CXXCPP
+
+# Search for libtool support
+AC_PROG_LIBTOOL
+
+
+######################################################################
+#    Checks for typedefs, structures and compiler characteristics    #
+######################################################################
+
+
+
+#########################################
+#    Checks for user defined options    #
+#########################################
+
+
+CFLAGS="$CFLAGS -Iinclude/"
+
+AC_OUTPUT([Makefile src/Makefile])
