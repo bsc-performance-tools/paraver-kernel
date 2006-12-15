@@ -44,5 +44,6 @@ AC_PROG_LIBTOOL
 
 
 CFLAGS="$CFLAGS -Iinclude/"
+CXXFLAGS="$CXXFLAGS -Iinclude/"
 
 AC_OUTPUT([Makefile src/Makefile])
