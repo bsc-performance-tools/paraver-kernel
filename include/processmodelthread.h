@@ -7,12 +7,16 @@ class ProcessModelThread
 {
 
   public:
-    ProcessModelThread( TThreadOrder order = 0 ): traceGlobalOrder( order ) {};
+    ProcessModelThread( TThreadOrder order = 0,
+                        TNodeOrder node = 0 ):
+        traceGlobalOrder( order ),
+        nodeExecution( node ) {};
 
     ~ProcessModelThread() {};
 
   protected:
-    TThreadOrder traceGlobalOrder;
+    TThreadOrder  traceGlobalOrder;
+    TNodeOrder    nodeExecution;
 
   private:
 

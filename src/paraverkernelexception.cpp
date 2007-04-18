@@ -1,13 +1,28 @@
 #include <sstream>
 #include "paraverkernelexception.h"
 
+ostream& ParaverKernelException::defaultPrintStream( cerr );
+
+string ParaverKernelException::kernelMessage( "Paraver kernel exception: " );
+
+string ParaverKernelException::moduleMessage( "" );
+
+const char *ParaverKernelException::errorMessage[] =
+  {
+    "Undefined error: ",
+    NULL
+  };
+
 const char *ParaverKernelException::what() const throw()
 {
   ostringstream tempStream( "" );
 
-  tempStream << kernelMessage << moduleMessage << errorMessage[ code ] << endl;
-  tempStream << auxMessage << endl;
-  tempStream << file << " " << line << endl;
+  tempStream << kernelMessage << specificModuleMessage() << endl;
+  tempStream << specificErrorMessage() << auxMessage << endl;
+
+  if ( file != NULL )
+    tempStream << file << " " << line << endl;
 
   return tempStream.str().c_str();
 }
+

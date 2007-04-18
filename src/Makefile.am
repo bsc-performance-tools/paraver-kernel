@@ -1,7 +1,9 @@
 
 noinst_LTLIBRARIES = libparaver-kernel.la
 libparaver_kernel_la_SOURCES = \
-          processmodel.cpp
+          processmodel.cpp \
+          paraverkernelexception.cpp \
+          traceheaderexception.cpp
 
 
 # Erases everything which should not be uploaded to CVS

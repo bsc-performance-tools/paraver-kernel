@@ -5,33 +5,33 @@
 #include <iostream>
 #include <string>
 
-typedef unsigned int TExceptionLine;
+typedef int TExceptionLine;
 
 using namespace std;
 
-class ParaverKernelException : exception
+class ParaverKernelException : public exception
 {
 
   public:
 
-    enum TErrorCode
+    typedef enum
     {
       undefined = 0,
       LAST
-  };
+  } TErrorCode;
 
     static ostream& defaultPrintStream;
 
-    ParaverKernelException( const char *whichFile,
-                            TExceptionLine whichLine,
-                            TErrorCode whichCode = undefined,
-                            const char *whichAuxMessage = NULL ):
-        file( whichFile ),
-        line( whichLine ),
+    ParaverKernelException( TErrorCode whichCode = undefined,
+                            const char *whichAuxMessage = "",
+                            const char *whichFile = NULL,
+                            TExceptionLine whichLine = 0 ):
         code( whichCode ),
-        auxMessage( whichAuxMessage ) {}
+        auxMessage( whichAuxMessage ),
+        file( whichFile ),
+        line( whichLine ) {};
 
-    ~ParaverKernelException() throw();
+    ~ParaverKernelException() throw() {};
 
     const char *what() const throw();
 
@@ -44,31 +44,24 @@ class ParaverKernelException : exception
 
     static string moduleMessage;
 
-    const char *file;
-
-    TExceptionLine line;
-
     TErrorCode code;
 
     string auxMessage;
 
+    const char *file;
+
+    TExceptionLine line;
+
   private:
     static const char *errorMessage[];
 
+    virtual const char *specificErrorMessage() const
+      { return errorMessage[ code ]; }
+
+    virtual string& specificModuleMessage() const
+
+      { return moduleMessage; }
+
 };
-
-ostream& ParaverKernelException::defaultPrintStream( cerr );
-
-string ParaverKernelException::kernelMessage( "Paraver kernel exception: " );
-
-string ParaverKernelException::moduleMessage( "" );
-
-const char *ParaverKernelException::errorMessage[] =
-  {
-    "Undefined error.",
-    NULL
-  };
-
-
 
 #endif // PARAVERKERNELEXCEPTION_H_INCLUDED

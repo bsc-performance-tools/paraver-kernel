@@ -18,10 +18,16 @@ class ProcessModel
 
     bool isReady() { return ready; }
 
-    TApplOrder totalApplications() { return applications.size(); }
+    TApplOrder totalApplications() const;
+
+    TTaskOrder totalTasks() const;
+
+    TThreadOrder totalThreads() const;
 
   protected:
+
     vector<ProcessModelAppl> applications;
+
     bool ready;
 
   private:
