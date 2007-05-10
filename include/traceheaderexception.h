@@ -18,7 +18,6 @@ class TraceHeaderException: public ParaverKernelException
   } TErrorCode;
 
     TraceHeaderException( TErrorCode whichCode = undefined,
-
                           const char *whichAuxMessage = "",
                           const char *whichFile = NULL,
                           TExceptionLine whichLine = 0 )
@@ -39,11 +38,15 @@ class TraceHeaderException: public ParaverKernelException
     static const char *errorMessage[];
 
     virtual const char *specificErrorMessage() const
-      { return errorMessage[ code ]; }
+    {
+      return errorMessage[ code ];
+    }
 
     virtual string& specificModuleMessage() const
 
-      { return moduleMessage; }
+    {
+      return moduleMessage;
+    }
 
 };
 

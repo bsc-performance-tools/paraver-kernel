@@ -3,7 +3,6 @@
 #include <sstream>
 #include <iostream>
 
-
 TApplOrder ProcessModel::totalApplications() const
 {
   return applications.size();
@@ -11,7 +10,6 @@ TApplOrder ProcessModel::totalApplications() const
 
 
 TTaskOrder ProcessModel::totalTasks() const
-
 {
   TTaskOrder countTasks = 0;
 
@@ -23,7 +21,6 @@ TTaskOrder ProcessModel::totalTasks() const
 
 
 TThreadOrder ProcessModel::totalThreads() const
-
 {
   TThreadOrder countThreads = 0;
 
@@ -38,7 +35,6 @@ TThreadOrder ProcessModel::totalThreads() const
 
 
 ProcessModel::ProcessModel( string headerInfo )
-
 {
   istringstream headerBuffer( headerInfo );
   TApplOrder numberApplications;
@@ -116,7 +112,16 @@ ProcessModel::ProcessModel( string headerInfo )
         applications[ countAppl ].tasks[ countTask ].threads.push_back( ProcessModelThread( globalThreads, numberNode ) );
         globalThreads++;
       }
+
+      // End inserting threads
+
     }
+
+    // End inserting tasks
+
+    // Gets a useless character: ':' or ','
+    headerBuffer.get();
+
   }
 
   ready = true;

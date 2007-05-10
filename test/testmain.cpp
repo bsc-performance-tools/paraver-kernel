@@ -10,11 +10,8 @@ using namespace std;
 
 int main( int argc, char *argv[] )
 {
-  // String representing an application with two task, and one thread per task
-  //---------------------------------------------------------------------------
-
   // GOOD STRING
-  string testStringProcessModel( "1:2(1:0,1:0)" );
+  string testStringProcessModel( "2:2(1:0,1:0):2(1:0,1:0)" );
 
   cout << "For process model " << testStringProcessModel << endl;
 
