@@ -50,6 +50,4 @@ class TraceHeaderException: public ParaverKernelException
 
 };
 
-
-
 #endif // TRACEHEADEREXCEPTION_H_INCLUDED

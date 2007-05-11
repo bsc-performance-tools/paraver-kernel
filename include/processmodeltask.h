@@ -23,6 +23,4 @@ class ProcessModelTask
     friend class ProcessModel;
 };
 
-
-
 #endif // PROCESSMODELTASK_H_INCLUDED

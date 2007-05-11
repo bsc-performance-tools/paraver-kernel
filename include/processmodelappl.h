@@ -21,6 +21,4 @@ class ProcessModelAppl
     friend class ProcessModel;
 };
 
-
-
 #endif // PROCESSMODELAPPL_H_INCLUDED

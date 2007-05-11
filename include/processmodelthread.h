@@ -23,6 +23,4 @@ class ProcessModelThread
     friend class ProcessModel;
 };
 
-
-
 #endif // PROCESSMODELTHREAD_H_INCLUDED

@@ -16,5 +16,4 @@ class ResourceModel
     bool ready;
 };
 
-
 #endif // RESOURCEMODEL_H_INCLUDED
