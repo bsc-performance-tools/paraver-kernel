@@ -10,17 +10,19 @@ class ProcessModelTask
 {
 
   public:
-    ProcessModelTask( TTaskOrder order = 0 ): traceGlobalOrder( order ) {};
+    ProcessModelTask( TTaskOrder order = 0 ): traceGlobalOrder( order )
+    {};
 
-    ~ProcessModelTask() {};
+    ~ProcessModelTask()
+    {};
 
   protected:
     TTaskOrder traceGlobalOrder;
     vector<ProcessModelThread> threads;
 
   private:
-
     friend class ProcessModel;
+
 };
 
 #endif // PROCESSMODELTASK_H_INCLUDED

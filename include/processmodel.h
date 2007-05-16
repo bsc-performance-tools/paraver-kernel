@@ -11,12 +11,20 @@ class ProcessModel
 {
 
   public:
-    ProcessModel() { ready = false; }
+    ProcessModel()
+    {
+      ready = false;
+    }
 
     ProcessModel( string headerInfo );
-    ~ProcessModel() {};
 
-    bool isReady() { return ready; }
+    ~ProcessModel()
+    {};
+
+    bool isReady()
+    {
+      return ready;
+    }
 
     TApplOrder totalApplications() const;
 

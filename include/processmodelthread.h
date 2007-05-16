@@ -10,17 +10,19 @@ class ProcessModelThread
     ProcessModelThread( TThreadOrder order = 0,
                         TNodeOrder node = 0 ):
         traceGlobalOrder( order ),
-        nodeExecution( node ) {};
+        nodeExecution( node )
+    {};
 
-    ~ProcessModelThread() {};
+    ~ProcessModelThread()
+    {};
 
   protected:
     TThreadOrder  traceGlobalOrder;
     TNodeOrder    nodeExecution;
 
   private:
-
     friend class ProcessModel;
+
 };
 
 #endif // PROCESSMODELTHREAD_H_INCLUDED

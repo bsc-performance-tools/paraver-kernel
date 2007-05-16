@@ -1,7 +1,7 @@
-#include "processmodel.h"
-#include "traceheaderexception.h"
 #include <sstream>
 #include <iostream>
+#include "processmodel.h"
+#include "traceheaderexception.h"
 
 TApplOrder ProcessModel::totalApplications() const
 {
@@ -42,15 +42,15 @@ ProcessModel::ProcessModel( string headerInfo )
   TThreadOrder globalThreads = 0;
   ready = false;
 
-  string strNumberApplications;
-  std::getline( headerBuffer, strNumberApplications, ':' );
-  istringstream sstrNumberAppl( strNumberApplications );
+  string stringNumberApplications;
+  std::getline( headerBuffer, stringNumberApplications, ':' );
+  istringstream sstreamNumberAppl( stringNumberApplications );
 
-  if ( !( sstrNumberAppl >> numberApplications ) ||
+  if ( !( sstreamNumberAppl >> numberApplications ) ||
        numberApplications == 0 )
   {
     throw TraceHeaderException( TraceHeaderException::invalidApplNumber,
-                                strNumberApplications.c_str() );
+                                stringNumberApplications.c_str() );
   }
 
   // Insert applications
@@ -60,15 +60,15 @@ ProcessModel::ProcessModel( string headerInfo )
 
     applications.push_back( ProcessModelAppl( countAppl ) );
 
-    string strNumberTasks;
-    std::getline( headerBuffer, strNumberTasks, '(' );
-    istringstream sstrNumberTasks( strNumberTasks );
+    string stringNumberTasks;
+    std::getline( headerBuffer, stringNumberTasks, '(' );
+    istringstream sstreamNumberTasks( stringNumberTasks );
 
-    if ( !( sstrNumberTasks >> numberTasks ) ||
+    if ( !( sstreamNumberTasks >> numberTasks ) ||
          numberTasks == 0 )
     {
       throw TraceHeaderException( TraceHeaderException::invalidTaskNumber,
-                                  strNumberTasks.c_str() );
+                                  stringNumberTasks.c_str() );
     }
 
     // Insert tasks
@@ -80,30 +80,30 @@ ProcessModel::ProcessModel( string headerInfo )
       applications[ countAppl ].tasks.push_back( ProcessModelTask( globalTasks ) );
       globalTasks++;
 
-      string strNumberThreads;
-      std::getline( headerBuffer, strNumberThreads, ':' );
-      istringstream sstrNumberThreads( strNumberThreads );
+      string stringNumberThreads;
+      std::getline( headerBuffer, stringNumberThreads, ':' );
+      istringstream sstreamNumberThreads( stringNumberThreads );
 
-      if ( !( sstrNumberThreads >> numberThreads ) ||
+      if ( !( sstreamNumberThreads >> numberThreads ) ||
            numberThreads == 0 )
       {
         throw TraceHeaderException( TraceHeaderException::invalidThreadNumber,
-                                    strNumberThreads.c_str() );
+                                    stringNumberThreads.c_str() );
       }
 
-      string strNumberNode;
+      string stringNumberNode;
 
       if ( countTask < numberTasks - 1 )
-        std::getline( headerBuffer, strNumberNode, ',' );
+        std::getline( headerBuffer, stringNumberNode, ',' );
       else
-        std::getline( headerBuffer, strNumberNode, ')' );
+        std::getline( headerBuffer, stringNumberNode, ')' );
 
-      istringstream sstrNumberNode( strNumberNode );
+      istringstream sstreamNumberNode( stringNumberNode );
 
-      if ( !( sstrNumberNode >> numberNode ) )
+      if ( !( sstreamNumberNode >> numberNode ) )
       {
         throw TraceHeaderException( TraceHeaderException::invalidNodeNumber,
-                                    strNumberNode.c_str() );
+                                    stringNumberNode.c_str() );
       }
 
       // Insert threads

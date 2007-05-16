@@ -8,17 +8,19 @@ class ProcessModelAppl
 {
 
   public:
-    ProcessModelAppl( TApplOrder order = 0 ): traceGlobalOrder( order ) {};
+    ProcessModelAppl( TApplOrder order = 0 ): traceGlobalOrder( order )
+    {};
 
-    ~ProcessModelAppl() {};
+    ~ProcessModelAppl()
+    {};
 
   protected:
     TApplOrder traceGlobalOrder;
     vector<ProcessModelTask> tasks;
 
   private:
-
     friend class ProcessModel;
+
 };
 
 #endif // PROCESSMODELAPPL_H_INCLUDED
