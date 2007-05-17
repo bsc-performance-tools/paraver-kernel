@@ -59,6 +59,8 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add directory="include" />
+			<Add directory="../common-files" />
+			<Add directory="/home/eloy/tools/paraver-kernel/" />
 		</Compiler>
 		<Unit filename="../common-files/paraverstatisticfuncions.h" />
 		<Unit filename="include/memorytrace.h" />

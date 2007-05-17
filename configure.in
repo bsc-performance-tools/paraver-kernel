@@ -36,6 +36,13 @@ AC_PROG_LIBTOOL
 #    Checks for typedefs, structures and compiler characteristics    #
 ######################################################################
 
+AC_CHECK_TYPES([long, long long, char, int, short int])
+AC_CHECK_SIZEOF(long)
+AC_CHECK_SIZEOF(long long)
+AC_CHECK_SIZEOF(char)
+AC_CHECK_SIZEOF(int)
+AC_CHECK_SIZEOF(short int)
+AC_CHECK_TYPES([int64_t, uint64_t, int8_t, uint8_t, int32_t, uint32_t, int16_t, uint16_t])
 
 
 #########################################
@@ -43,7 +50,7 @@ AC_PROG_LIBTOOL
 #########################################
 
 
-CFLAGS="$CFLAGS -I../include/"
-CXXFLAGS="$CXXFLAGS -I../include/"
+CFLAGS="$CFLAGS -I../include/ -I../../common-files/"
+CXXFLAGS="$CXXFLAGS -I../include/ -I../../common-files/"
 
 AC_OUTPUT([Makefile src/Makefile])

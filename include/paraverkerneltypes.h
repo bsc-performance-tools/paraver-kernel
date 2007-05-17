@@ -1,7 +1,7 @@
 #ifndef PARAVERKERNELTYPES_H_INCLUDED
 #define PARAVERKERNELTYPES_H_INCLUDED
 
-#include "../common-files/types.h"
+#include "types.h"
 
 typedef UINT16        TObjectOrder;
 
