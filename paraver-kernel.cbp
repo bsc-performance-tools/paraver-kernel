@@ -92,6 +92,15 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="recordmemory.cpp">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="recordmemory.h">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/bplustree.cpp" />
+		<Unit filename="src/bplustreerecordleaf.cpp" />
+		<Unit filename="src/bplustreewrapper.cpp" />
 		<Unit filename="src/paraverkernelexception.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
