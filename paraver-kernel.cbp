@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="paraver-kernel" />
+		<Option pch_mode="2" />
+		<Option default_target="Application test" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="libparaver-kernel.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/Debug/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="libparaver-kernel.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/Release/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="Application test">
+				<Option output="paraver-kernel" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../paraver-kernel" />
+				<Option object_output="obj/test/" />
+				<Option external_deps="libparaver-kernel.a;" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option host_application="paraver-kernel" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add directory="../include" />
+					<Add directory="../common-files" />
+				</Compiler>
+				<Linker>
+					<Add library="libparaver-kernel.a" />
+					<Add directory="/home/eloy/tools/paraver-kernel/" />
+				</Linker>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="test" targets="Debug;Application test;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="include" />
+		</Compiler>
+		<Unit filename="../common-files/paraverstatisticfuncions.h" />
+		<Unit filename="include/paraverkernelexception.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/paraverkerneltypes.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/processmodel.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/processmodelappl.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/processmodeltask.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/processmodelthread.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/resourcemodel.h" />
+		<Unit filename="include/resourcemodelcpu.h" />
+		<Unit filename="include/resourcemodelnode.h" />
+		<Unit filename="include/traceheaderexception.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/paraverkernelexception.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/processmodel.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/resourcemodel.cpp" />
+		<Unit filename="src/traceheaderexception.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="test/testmain.cpp">
+			<Option target="Application test" />
+		</Unit>
+		<Extensions>
+			<code_completion>
+				<search_path add="/usr/include/c++/4.1.1" />
+				<search_path add="/usr/include" />
+			</code_completion>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
