@@ -61,6 +61,7 @@
 			<Add directory="include" />
 		</Compiler>
 		<Unit filename="../common-files/paraverstatisticfuncions.h" />
+		<Unit filename="include/memorytrace.h" />
 		<Unit filename="include/paraverkernelexception.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -90,12 +91,6 @@
 		<Unit filename="include/resourcemodelnode.h" />
 		<Unit filename="include/traceheaderexception.h">
 			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="recordmemory.cpp">
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="recordmemory.h">
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/bplustree.cpp" />
