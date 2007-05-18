@@ -23,12 +23,19 @@ TCPUOrder ResourceModel::totalCPUs() const
 ResourceModel::ResourceModel( string headerInfo )
 {
   istringstream headerBuffer( headerInfo );
+  string stringNumberNodes;
   TNodeOrder numberNodes;
   TCPUOrder glogalCPUs = 0;
   ready = false;
 
-  string stringNumberNodes;
-  std::getline( headerBuffer, stringNumberNodes, ':' );
+  // Number of nodes is 0 -> No definition of nodes nor cpus
+  if ( headerBuffer.peek() == '0' )
+  {
+    std::getline( headerBuffer, stringNumberNodes, ':' );
+    return;
+  }
+
+  std::getline( headerBuffer, stringNumberNodes, '(' );
   istringstream sstreamNumberNodes( stringNumberNodes );
 
   if ( !( sstreamNumberNodes >> numberNodes ) )
@@ -36,9 +43,6 @@ ResourceModel::ResourceModel( string headerInfo )
     throw TraceHeaderException( TraceHeaderException::invalidNodeNumber,
                                 stringNumberNodes.c_str() );
   }
-
-  if ( numberNodes == 0 )
-    return;
 
   // Insert nodes
   for ( TNodeOrder countNode = 0; countNode < numberNodes; countNode++ )
@@ -55,6 +59,26 @@ ResourceModel::ResourceModel( string headerInfo )
 
     istringstream sstreamNumberCPUs( stringNumberCPUs );
 
+    if ( !( sstreamNumberCPUs >> numberCPUs ) )
+    {
+      throw TraceHeaderException( TraceHeaderException::invalidCPUNumber,
+                                  stringNumberCPUs.c_str() );
+    }
+
+    // Insert CPUs
+    for ( TCPUOrder countCPU = 0; countCPU < numberCPUs; countCPU++ )
+    {
+      nodes[ countNode ].CPUs.push_back( ResourceModelCPU( glogalCPUs ) );
+      glogalCPUs++;
+    }
+    // End inserting CPUs
+
   }
+  // End inserting nodes
+
+  // Gets a useless character: ':'
+  headerBuffer.get();
+
+  ready = true;
 }
 

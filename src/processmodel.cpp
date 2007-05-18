@@ -112,17 +112,16 @@ ProcessModel::ProcessModel( string headerInfo )
         applications[ countAppl ].tasks[ countTask ].threads.push_back( ProcessModelThread( globalThreads, numberNode ) );
         globalThreads++;
       }
-
       // End inserting threads
 
     }
-
     // End inserting tasks
 
     // Gets a useless character: ':' or ','
     headerBuffer.get();
 
   }
+  // End inserting applications
 
   ready = true;
 }

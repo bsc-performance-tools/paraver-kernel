@@ -14,6 +14,7 @@ class TraceHeaderException: public ParaverKernelException
       invalidTaskNumber,
       invalidThreadNumber,
       invalidNodeNumber,
+      invalidCPUNumber,
       LAST
   } TErrorCode;
 
@@ -43,7 +44,6 @@ class TraceHeaderException: public ParaverKernelException
     }
 
     virtual string& specificModuleMessage() const
-
     {
       return moduleMessage;
     }

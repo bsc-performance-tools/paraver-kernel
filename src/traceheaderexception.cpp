@@ -1,4 +1,4 @@
-#include <sstream>
+#include <string>
 #include "traceheaderexception.h"
 
 string TraceHeaderException::moduleMessage( "Trace header: " );
@@ -10,6 +10,7 @@ const char *TraceHeaderException::errorMessage[] =
     "Invalid number of tasks: ",
     "Invalid number of threads: ",
     "Invalid number of node: ",
+    "Invalid number of CPU: ",
     NULL
   };
 
