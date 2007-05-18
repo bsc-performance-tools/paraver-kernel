@@ -63,6 +63,7 @@
 			<Add directory="/home/eloy/tools/paraver-kernel/" />
 		</Compiler>
 		<Unit filename="../common-files/paraverstatisticfuncions.h" />
+		<Unit filename="../common-files/types.h" />
 		<Unit filename="include/memorytrace.h" />
 		<Unit filename="include/paraverkernelexception.h">
 			<Option target="Debug" />
