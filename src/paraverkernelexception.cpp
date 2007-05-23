@@ -10,6 +10,7 @@ string ParaverKernelException::moduleMessage( "" );
 const char *ParaverKernelException::errorMessage[] =
   {
     "Undefined error: ",
+    "Empty trace not allowed :",
     "Null pointer in operand: ",
     NULL
   };

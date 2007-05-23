@@ -14,6 +14,18 @@ typedef TObjectOrder  TCPUOrder;
 
 typedef UINT64        TTime;
 typedef TTime         TRecordTime;
+typedef UINT8         TTimeUnit;
+/*
+ *  TTimeUnit defines
+ */
+#define NS            (0x00)
+#define US            (0x01)
+#define MS            (0x02)
+#define SEC           (0x04)
+#define MIN           (0x08)
+#define HOUR          (0x10)
+#define DAY           (0x20)
+
 
 typedef UINT16        TRecordType;
 /*

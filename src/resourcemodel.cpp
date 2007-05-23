@@ -20,22 +20,21 @@ TCPUOrder ResourceModel::totalCPUs() const
 }
 
 
-ResourceModel::ResourceModel( string headerInfo )
+ResourceModel::ResourceModel( istringstream& headerInfo )
 {
-  istringstream headerBuffer( headerInfo );
   string stringNumberNodes;
   TNodeOrder numberNodes;
   TCPUOrder glogalCPUs = 0;
   ready = false;
 
   // Number of nodes is 0 -> No definition of nodes nor cpus
-  if ( headerBuffer.peek() == '0' )
+  if ( headerInfo.peek() == '0' )
   {
-    std::getline( headerBuffer, stringNumberNodes, ':' );
+    std::getline( headerInfo, stringNumberNodes, ':' );
     return;
   }
 
-  std::getline( headerBuffer, stringNumberNodes, '(' );
+  std::getline( headerInfo, stringNumberNodes, '(' );
   istringstream sstreamNumberNodes( stringNumberNodes );
 
   if ( !( sstreamNumberNodes >> numberNodes ) )
@@ -53,9 +52,9 @@ ResourceModel::ResourceModel( string headerInfo )
 
     string stringNumberCPUs;
     if ( countNode < numberNodes - 1 )
-      std::getline( headerBuffer, stringNumberCPUs, ',' );
+      std::getline( headerInfo, stringNumberCPUs, ',' );
     else
-      std::getline( headerBuffer, stringNumberCPUs, ')' );
+      std::getline( headerInfo, stringNumberCPUs, ')' );
 
     istringstream sstreamNumberCPUs( stringNumberCPUs );
 
@@ -77,7 +76,7 @@ ResourceModel::ResourceModel( string headerInfo )
   // End inserting nodes
 
   // Gets a useless character: ':'
-  headerBuffer.get();
+  headerInfo.get();
 
   ready = true;
 }

@@ -15,7 +15,7 @@ class ResourceModel
       ready = false;
     }
 
-    ResourceModel( string headerInfo );
+    ResourceModel( istringstream& headerInfo );
 
     ~ResourceModel()
     {};

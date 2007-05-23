@@ -34,16 +34,15 @@ TThreadOrder ProcessModel::totalThreads() const
 }
 
 
-ProcessModel::ProcessModel( string headerInfo )
+ProcessModel::ProcessModel( istringstream& headerInfo )
 {
-  istringstream headerBuffer( headerInfo );
   TApplOrder numberApplications;
   TTaskOrder globalTasks = 0;
   TThreadOrder globalThreads = 0;
   ready = false;
 
   string stringNumberApplications;
-  std::getline( headerBuffer, stringNumberApplications, ':' );
+  std::getline( headerInfo, stringNumberApplications, ':' );
   istringstream sstreamNumberAppl( stringNumberApplications );
 
   if ( !( sstreamNumberAppl >> numberApplications ) ||
@@ -61,7 +60,7 @@ ProcessModel::ProcessModel( string headerInfo )
     applications.push_back( ProcessModelAppl( countAppl ) );
 
     string stringNumberTasks;
-    std::getline( headerBuffer, stringNumberTasks, '(' );
+    std::getline( headerInfo, stringNumberTasks, '(' );
     istringstream sstreamNumberTasks( stringNumberTasks );
 
     if ( !( sstreamNumberTasks >> numberTasks ) ||
@@ -81,7 +80,7 @@ ProcessModel::ProcessModel( string headerInfo )
       globalTasks++;
 
       string stringNumberThreads;
-      std::getline( headerBuffer, stringNumberThreads, ':' );
+      std::getline( headerInfo, stringNumberThreads, ':' );
       istringstream sstreamNumberThreads( stringNumberThreads );
 
       if ( !( sstreamNumberThreads >> numberThreads ) ||
@@ -94,9 +93,9 @@ ProcessModel::ProcessModel( string headerInfo )
       string stringNumberNode;
 
       if ( countTask < numberTasks - 1 )
-        std::getline( headerBuffer, stringNumberNode, ',' );
+        std::getline( headerInfo, stringNumberNode, ',' );
       else
-        std::getline( headerBuffer, stringNumberNode, ')' );
+        std::getline( headerInfo, stringNumberNode, ')' );
 
       istringstream sstreamNumberNode( stringNumberNode );
 
@@ -118,7 +117,7 @@ ProcessModel::ProcessModel( string headerInfo )
     // End inserting tasks
 
     // Gets a useless character: ':' or ','
-    headerBuffer.get();
+    headerInfo.get();
 
   }
   // End inserting applications

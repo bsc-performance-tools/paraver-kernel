@@ -64,7 +64,6 @@
 		</Compiler>
 		<Unit filename="../common-files/paraverstatisticfuncions.h" />
 		<Unit filename="../common-files/types.h" />
-		<Unit filename="include/memorytrace.h" />
 		<Unit filename="include/paraverkernelexception.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -89,16 +88,26 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="include/resourcemodel.h" />
-		<Unit filename="include/resourcemodelcpu.h" />
-		<Unit filename="include/resourcemodelnode.h" />
+		<Unit filename="include/resourcemodel.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/resourcemodelcpu.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/resourcemodelnode.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/trace.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="include/traceheaderexception.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="src/bplustree.cpp" />
-		<Unit filename="src/bplustreerecordleaf.cpp" />
-		<Unit filename="src/bplustreewrapper.cpp" />
 		<Unit filename="src/paraverkernelexception.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -107,7 +116,14 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="src/resourcemodel.cpp" />
+		<Unit filename="src/resourcemodel.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/trace.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="src/traceheaderexception.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />

@@ -16,7 +16,7 @@ class ProcessModel
       ready = false;
     }
 
-    ProcessModel( string headerInfo );
+    ProcessModel( istringstream& headerInfo );
 
     ~ProcessModel()
     {};

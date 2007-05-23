@@ -11,6 +11,9 @@ const char *TraceHeaderException::errorMessage[] =
     "Invalid number of threads: ",
     "Invalid number of node: ",
     "Invalid number of CPU: ",
+    "Invalid time: ",
+    "Invalid number of communicators: ",
+    "Unknown communicator line format: ",
     NULL
   };
 

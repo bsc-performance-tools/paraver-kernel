@@ -1,19 +1,26 @@
 // Application for testing paraver-kernel library code
 #include <string>
 #include <iostream>
-#include "processmodel.h"
+#include <sstream>
 #include "paraverkerneltypes.h"
 #include "traceheaderexception.h"
 #include "paraverstatisticfuncions.h"
+#include "processmodel.h"
+#include "resourcemodel.h"
+#include "trace.h"
 
 using namespace std;
 
 int main( int argc, char *argv[] )
 {
-  // GOOD STRING
-  string testStringProcessModel( "2:2(1:0,1:0):2(1:0,1:0)" );
 
-  cout << "For process model " << testStringProcessModel << endl;
+  //--------------------------------------------------------------------------
+  // TESTING ProcessModel
+  //--------------------------------------------------------------------------
+  // GOOD STRING
+  istringstream testStringProcessModel( "2:2(1:0,1:0):2(1:0,1:0)" );
+
+  cout << "For process model " << testStringProcessModel.str() << endl;
 
   ProcessModel testProcessModel;
 
@@ -33,16 +40,18 @@ int main( int argc, char *argv[] )
     ex.printMessage();
   }
 
-  // BAD STRING
-  testStringProcessModel = "-1:2(1:0,1:0)";
+  cout << endl;
 
-  cout << endl << "For process model " << testStringProcessModel << endl;
+  // BAD STRING
+  istringstream testStringProcessModel2( "-1:2(1:0,1:0)" );
+
+  cout << "For process model " << testStringProcessModel2.str() << endl;
 
   ProcessModel testBadProcessModel;
 
   try
   {
-    testBadProcessModel = ProcessModel( testStringProcessModel );
+    testBadProcessModel = ProcessModel( testStringProcessModel2 );
 
     if ( testBadProcessModel.isReady() )
       cout << testBadProcessModel.totalApplications() << endl;
@@ -51,6 +60,39 @@ int main( int argc, char *argv[] )
   {
     ex.printMessage();
   }
+  //--------------------------------------------------------------------------
+  // END TESTING ProcessModel
+  //--------------------------------------------------------------------------
+
+  cout << endl;
+  //--------------------------------------------------------------------------
+  // TESTING ResourceModel
+  //--------------------------------------------------------------------------
+  // GOOD STRING
+  istringstream testStringResourceModel( "2(4,4)" );
+
+  cout << "For resource model " << testStringResourceModel.str() << endl;
+
+  ResourceModel testResourceModel;
+
+  try
+  {
+    testResourceModel = ResourceModel( testStringResourceModel );
+
+    if ( testResourceModel.isReady() )
+    {
+      cout << "Nodes: " << testResourceModel.totalNodes() << endl;
+      cout << "CPUs: " << testResourceModel.totalCPUs() << endl;
+    }
+  }
+  catch ( TraceHeaderException& ex )
+  {
+    ex.printMessage();
+  }
+
+  //--------------------------------------------------------------------------
+  // END TESTING ResourceModel
+  //--------------------------------------------------------------------------
 
 }
 

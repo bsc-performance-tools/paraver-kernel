@@ -15,6 +15,9 @@ class TraceHeaderException: public ParaverKernelException
       invalidThreadNumber,
       invalidNodeNumber,
       invalidCPUNumber,
+      invalidTime,
+      invalidCommNumber,
+      unknownCommLine,
       LAST
   } TErrorCode;
 
