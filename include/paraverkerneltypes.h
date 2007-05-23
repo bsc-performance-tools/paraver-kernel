@@ -42,4 +42,23 @@ typedef UINT32        TEventType;
 typedef INT64         TEventValue;
 typedef UINT32        TState;
 
+typedef struct TEventRecord
+{
+  TEventType      type;
+  TEventValue     value;
+  struct TRecord *nextEv;
+}TEventRecord;
+
+typedef struct TStateRecord
+{
+  TState      state;
+  TRecordTime end_time;
+}TStateRecord;
+
+typedef struct TCommRecord
+{
+  TCommID info;
+}TCommRecord;
+
+
 #endif // PARAVERKERNELTYPES_H_INCLUDED

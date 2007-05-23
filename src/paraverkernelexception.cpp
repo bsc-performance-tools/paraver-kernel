@@ -10,6 +10,7 @@ string ParaverKernelException::moduleMessage( "" );
 const char *ParaverKernelException::errorMessage[] =
   {
     "Undefined error: ",
+    "Null pointer in operand: ",
     NULL
   };
 

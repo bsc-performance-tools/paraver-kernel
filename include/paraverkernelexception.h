@@ -17,6 +17,7 @@ class ParaverKernelException : public exception
     typedef enum
     {
       undefined = 0,
+      nullOperand,
       LAST
   } TErrorCode;
 
