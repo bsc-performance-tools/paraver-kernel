@@ -9,6 +9,7 @@ TNodeOrder ResourceModel::totalNodes() const
   return nodes.size();
 }
 
+
 TCPUOrder ResourceModel::totalCPUs() const
 {
   TCPUOrder countCPUs = 0;
@@ -17,6 +18,13 @@ TCPUOrder ResourceModel::totalCPUs() const
     countCPUs += nodes[ countNode ].CPUs.size();
 
   return countCPUs;
+}
+
+
+TCPUOrder ResourceModel::getGlobalCPU( const TNodeOrder& inNode,
+                                       const TCPUOrder& inCPU ) const
+{
+  return nodes[ inNode ].CPUs[ inCPU ].traceGlobalOrder;
 }
 
 

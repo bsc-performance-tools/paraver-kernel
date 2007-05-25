@@ -29,8 +29,13 @@ class ProcessModel
     TApplOrder totalApplications() const;
 
     TTaskOrder totalTasks() const;
+    TTaskOrder getGlobalTask( const TApplOrder& inAppl,
+                              const TTaskOrder& inTask ) const;
 
     TThreadOrder totalThreads() const;
+    TThreadOrder getGlobalThread( const TApplOrder& inAppl,
+                                  const TTaskOrder& inTask,
+                                  const TThreadOrder& inThread ) const;
 
   protected:
 

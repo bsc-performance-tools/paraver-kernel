@@ -13,13 +13,33 @@ class Trace
   public:
     Trace()
     {
-      throw ParaverKernelException( ParaverKernelException::emptytrace );
+      ready = false;
     }
 
     Trace( const string& whichFile );
 
-    ~Trace();
+    ~Trace()
+    {};
+
+    TApplOrder totalApplications() const;
+
+    TTaskOrder totalTasks() const;
+    TTaskOrder getGlobalTask( const TApplOrder& inAppl,
+                              const TTaskOrder& inTask ) const;
+
+    TThreadOrder totalThreads() const;
+    TThreadOrder getGlobalThread( const TApplOrder& inAppl,
+                                  const TTaskOrder& inTask,
+                                  const TThreadOrder& inThread ) const;
+
+    TNodeOrder totalNodes() const;
+
+    TCPUOrder totalCPUs() const;
+    TCPUOrder getGlobalCPU( const TNodeOrder& inNode,
+                            const TCPUOrder& inCPU ) const;
+
   protected:
+    bool ready;
     ProcessModel traceProcessModel;
     ResourceModel traceResourceModel;
     TTime traceEndTime;

@@ -5,17 +5,71 @@
 
 using namespace std;
 
+TApplOrder Trace::totalApplications() const
+{
+  return traceProcessModel.totalApplications();
+}
+
+
+TTaskOrder Trace::totalTasks() const
+{
+  return traceProcessModel.totalTasks();
+}
+
+
+TTaskOrder Trace::getGlobalTask( const TApplOrder& inAppl,
+                                 const TTaskOrder& inTask ) const
+{
+  return traceProcessModel.getGlobalTask( inAppl, inTask );
+}
+
+TThreadOrder Trace::totalThreads() const
+{
+  return traceProcessModel.totalThreads();
+}
+
+
+TThreadOrder Trace::getGlobalThread( const TApplOrder& inAppl,
+                                     const TTaskOrder& inTask,
+                                     const TThreadOrder& inThread ) const
+{
+  return traceProcessModel.getGlobalThread( inAppl, inTask, inThread );
+}
+
+
+TNodeOrder Trace::totalNodes() const
+{
+  return traceResourceModel.totalNodes();
+}
+
+
+TCPUOrder Trace::totalCPUs() const
+{
+  return traceResourceModel.totalCPUs();
+}
+
+
+TCPUOrder Trace::getGlobalCPU( const TNodeOrder& inNode,
+                               const TCPUOrder& inCPU ) const
+{
+  return traceResourceModel.getGlobalCPU( inNode, inCPU );
+}
+
+
 Trace::Trace( const string& whichFile ) : fileName( whichFile )
 {
   string tmpstr;
 
-  std::fstream file( fileName.c_str(), ios::out );
+  ready = false;
+  std::fstream file( fileName.c_str(), fstream::in );
 
 // Reading the header
   std::getline( file, tmpstr );
   istringstream header( tmpstr );
 
-  std::getline( header, date, ':' );
+  std::getline( header, date, ')' );
+  date += ')';
+  header.get();
 
   std::getline( header, tmpstr, ':' );
   size_t pos = tmpstr.find( '_' );
@@ -72,4 +126,5 @@ Trace::Trace( const string& whichFile ) : fileName( whichFile )
 
 
   file.close();
+  ready = true;
 }

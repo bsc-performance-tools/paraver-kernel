@@ -94,5 +94,29 @@ int main( int argc, char *argv[] )
   // END TESTING ResourceModel
   //--------------------------------------------------------------------------
 
+  cout << endl;
+
+  //--------------------------------------------------------------------------
+  // TESTING Trace
+  //--------------------------------------------------------------------------
+  Trace testTrace;
+  try
+  {
+    testTrace = Trace( "/home/eloy/traces/mpi_ping.prv" );
+  }
+  catch ( TraceHeaderException& ex )
+  {
+    ex.printMessage();
+  }
+  catch ( ParaverKernelException& ex )
+  {
+    ex.printMessage();
+  }
+
+
+  //--------------------------------------------------------------------------
+  // END TESTING Trace
+  //--------------------------------------------------------------------------
+
 }
 

@@ -20,6 +20,13 @@ TTaskOrder ProcessModel::totalTasks() const
 }
 
 
+TTaskOrder ProcessModel::getGlobalTask( const TApplOrder& inAppl,
+                                        const TTaskOrder& inTask ) const
+{
+  return applications[ inAppl ].tasks[ inTask ].traceGlobalOrder;
+}
+
+
 TThreadOrder ProcessModel::totalThreads() const
 {
   TThreadOrder countThreads = 0;
@@ -31,6 +38,14 @@ TThreadOrder ProcessModel::totalThreads() const
   }
 
   return countThreads;
+}
+
+
+TThreadOrder ProcessModel::getGlobalThread( const TApplOrder& inAppl,
+    const TTaskOrder& inTask,
+    const TThreadOrder& inThread ) const
+{
+  return applications[ inAppl ].tasks[ inTask ].threads[ inThread ].traceGlobalOrder;
 }
 
 

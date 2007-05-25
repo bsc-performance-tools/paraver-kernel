@@ -28,6 +28,8 @@ class ResourceModel
     TNodeOrder totalNodes() const;
 
     TCPUOrder totalCPUs() const;
+    TCPUOrder getGlobalCPU( const TNodeOrder& inNode,
+                            const TCPUOrder& inCPU ) const;
 
   protected:
     vector<ResourceModelNode> nodes;
