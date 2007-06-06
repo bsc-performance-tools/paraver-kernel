@@ -45,7 +45,7 @@ typedef UINT16        TRecordType;
 #define RRECV        (0x0200)          /* Partner receive. */
 #define RSEND        (0x0400)          /* Partner send. */
 
-#define EMPTYREC     (0x0800)          /* Empty Record. */
+#define EMPTYREC     STATE + EVENT + COMM /* Empty Record. */
 
 typedef UINT64        TCommID;
 typedef INT64         TCommSize;

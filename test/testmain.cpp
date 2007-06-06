@@ -8,6 +8,10 @@
 #include "processmodel.h"
 #include "resourcemodel.h"
 #include "trace.h"
+#include "memorytrace.h"
+#include "bplustreetypes.h"
+#include "memoryblocks.h"
+#include "tracebodyio.h"
 
 using namespace std;
 

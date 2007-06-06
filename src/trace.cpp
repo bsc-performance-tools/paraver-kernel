@@ -56,6 +56,18 @@ TCPUOrder Trace::getGlobalCPU( const TNodeOrder& inNode,
 }
 
 
+TTime Trace::getEndTime() const
+{
+  return traceEndTime;
+}
+
+
+TTimeUnit Trace::getTimeUnit() const
+{
+  return traceTimeUnit;
+}
+
+
 Trace::Trace( const string& whichFile ) : fileName( whichFile )
 {
   string tmpstr;

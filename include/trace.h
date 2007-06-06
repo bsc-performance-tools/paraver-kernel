@@ -4,9 +4,9 @@
 #include <string>
 #include <vector>
 #include "paraverkerneltypes.h"
-#include "paraverkernelexception.h"
 #include "processmodel.h"
 #include "resourcemodel.h"
+#include "memorytrace.h"
 
 class Trace
 {
@@ -37,6 +37,9 @@ class Trace
     TCPUOrder totalCPUs() const;
     TCPUOrder getGlobalCPU( const TNodeOrder& inNode,
                             const TCPUOrder& inCPU ) const;
+
+    TTime getEndTime() const;
+    TTimeUnit getTimeUnit() const;
 
   protected:
     bool ready;

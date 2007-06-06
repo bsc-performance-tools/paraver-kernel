@@ -64,55 +64,21 @@
 		</Compiler>
 		<Unit filename="../common-files/paraverstatisticfuncions.h" />
 		<Unit filename="../common-files/types.h" />
-		<Unit filename="include/bplustreetypes.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="include/bplustreetypes.h" />
+		<Unit filename="include/memoryblocks.h" />
 		<Unit filename="include/memorytrace.h" />
-		<Unit filename="include/paraverkernelexception.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="include/paraverkerneltypes.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="include/processmodel.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="include/processmodelappl.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="include/processmodeltask.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="include/processmodelthread.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="include/resourcemodel.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="include/resourcemodelcpu.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="include/resourcemodelnode.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="include/trace.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="include/traceheaderexception.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="include/paraverkernelexception.h" />
+		<Unit filename="include/paraverkerneltypes.h" />
+		<Unit filename="include/processmodel.h" />
+		<Unit filename="include/processmodelappl.h" />
+		<Unit filename="include/processmodeltask.h" />
+		<Unit filename="include/processmodelthread.h" />
+		<Unit filename="include/resourcemodel.h" />
+		<Unit filename="include/resourcemodelcpu.h" />
+		<Unit filename="include/resourcemodelnode.h" />
+		<Unit filename="include/trace.h" />
+		<Unit filename="include/tracebodyio.h" />
+		<Unit filename="include/traceheaderexception.h" />
 		<Unit filename="src/paraverkernelexception.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
