@@ -3,11 +3,13 @@
 
 #include "tracebodyio.h"
 
+using namespace std;
+
 // Paraver trace old format file
 class TraceBodyIO_v1 : public TraceBodyIO
 {
   public:
-    static void read( iostream& whichStream, MemoryBlocks& whichMemory );
+    static void read( fstream& whichStream, MemoryBlocks& whichMemory );
 
   protected:
 

@@ -96,6 +96,10 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="src/tracebodyio_v1.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="src/traceheaderexception.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />

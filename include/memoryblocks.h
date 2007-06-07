@@ -7,7 +7,10 @@
 class MemoryBlocks
 {
   public:
-    MemoryBlocks();
+    MemoryBlocks()
+    {
+      countInserted = 0;
+    }
     virtual ~MemoryBlocks() = 0;
 
     virtual void newRecord() = 0;
@@ -35,6 +38,11 @@ class MemoryBlocks
     UINT32 getCountInserted() const
     {
       return countInserted;
+    }
+
+    void resetCountInserted()
+    {
+      countInserted = 0;
     }
 
   protected:

@@ -1,7 +1,10 @@
 #ifndef MEMORYTRACE_H_INCLUDED
 #define MEMORYTRACE_H_INCLUDED
 
+#include <vector>
 #include "paraverkerneltypes.h"
+
+using namespace std;
 
 class MemoryTrace
 {
