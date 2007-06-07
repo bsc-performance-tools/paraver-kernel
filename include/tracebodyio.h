@@ -2,6 +2,8 @@
 #define TRACEBODYIO_H_INCLUDED
 
 #include <iostream>
+#include "memoryblocks.h"
+
 
 class TraceBodyIO
 {

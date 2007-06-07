@@ -37,6 +37,13 @@ class MemoryTrace
     MemoryTrace();
     virtual ~MemoryTrace() = 0;
 
+    virtual iterator& getFirstRecord() const = 0;
+    virtual iterator& getLastRecord() const = 0;
+    virtual iterator& getFirstRecord( TThreadOrder whichThread ) const = 0;
+    virtual iterator& getLastRecord( TThreadOrder whichThread ) const = 0;
+    virtual void getRecordByTime( vector<iterator>& listIter,
+                                  TRecordTime whichTime ) const = 0;
+
     friend class MemoryBlocks;
   protected:
     // typedef struct TRecord;

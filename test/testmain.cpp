@@ -12,6 +12,7 @@
 #include "bplustreetypes.h"
 #include "memoryblocks.h"
 #include "tracebodyio.h"
+#include "tracebodyio_v1.h"
 
 using namespace std;
 

@@ -78,6 +78,7 @@
 		<Unit filename="include/resourcemodelnode.h" />
 		<Unit filename="include/trace.h" />
 		<Unit filename="include/tracebodyio.h" />
+		<Unit filename="include/tracebodyio_v1.h" />
 		<Unit filename="include/traceheaderexception.h" />
 		<Unit filename="src/paraverkernelexception.cpp">
 			<Option target="Debug" />
