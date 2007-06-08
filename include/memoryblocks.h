@@ -28,6 +28,11 @@ class MemoryBlocks
     virtual void setCommIndex( TCommID whichID ) = 0;
 
     virtual TCommID newComm() = 0;
+    virtual void setRemoteThread( TThreadOrder whichThread ) = 0;
+    virtual void setRemoteThread( TApplOrder whichAppl,
+                                  TTaskOrder whichTask,
+                                  TThreadOrder whichThread ) = 0;
+    virtual void setRemoteCPU( TCPUOrder whichCPU ) = 0;
     virtual void setCommTag( TCommTag whichTag ) = 0;
     virtual void setCommSize( TCommSize whichSize ) = 0;
     virtual void setLogicalSend( TRecordTime whichTime ) = 0;

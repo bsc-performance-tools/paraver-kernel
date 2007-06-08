@@ -136,7 +136,9 @@ Trace::Trace( const string& whichFile ) : fileName( whichFile )
 
 // End reading the header
 
+// Reading the body
 
+// End reading the body
   file.close();
   ready = true;
 }

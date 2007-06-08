@@ -12,25 +12,41 @@ typedef TObjectOrder  TApplOrder;
 typedef TObjectOrder  TNodeOrder;
 typedef TObjectOrder  TCPUOrder;
 
-typedef UINT64        TTime;
+typedef INT64         TTime;
 typedef TTime         TRecordTime;
 typedef UINT8         TTimeUnit;
 /*
  *  TTimeUnit defines
  */
-#define NS            (0x00)
-#define US            (0x01)
-#define MS            (0x02)
-#define SEC           (0x04)
-#define MIN           (0x08)
-#define HOUR          (0x10)
-#define DAY           (0x20)
+static const TTimeUnit NS   = 0x00;
+static const TTimeUnit US   = 0x01;
+static const TTimeUnit MS   = 0x02;
+static const TTimeUnit SEC  = 0x04;
+static const TTimeUnit MIN  = 0x08;
+static const TTimeUnit HOUR = 0x10;
+static const TTimeUnit DAY  = 0x20;
 
 
 typedef UINT16        TRecordType;
 /*
  * TRecordType defines.
+ *  Comes from old paraver code.
  */
+static const TRecordType BEGIN    = 0x0000;
+static const TRecordType END      = 0x0001;
+static const TRecordType STATE    = 0x0002;
+static const TRecordType EVENT    = 0x0004;
+static const TRecordType LOG      = 0x0008;
+static const TRecordType PHY      = 0x0010;
+static const TRecordType SEND     = 0x0020;
+static const TRecordType RECV     = 0x0040;
+static const TRecordType COMM     = 0x0080;
+static const TRecordType GLOBCOMM = 0x0100;
+static const TRecordType RRECV    = 0x0200;
+static const TRecordType RSEND    = 0x0400;
+
+static const TRecordType EMPTYREC = STATE + EVENT + COMM;
+#if 0
 #define BEGIN        (0x0000)          /* Begin record. */
 #define END          (0x0001)          /* End record. Used in states record
                                           and communication records. */
@@ -46,6 +62,7 @@ typedef UINT16        TRecordType;
 #define RSEND        (0x0400)          /* Partner send. */
 
 #define EMPTYREC     STATE + EVENT + COMM /* Empty Record. */
+#endif
 
 typedef UINT64        TCommID;
 typedef INT64         TCommSize;
