@@ -80,7 +80,7 @@ void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records )
     return;
   }
 
-  if( time == endtime ) return;
+  if ( time == endtime ) return;
 
   records.newRecord();
   records.setType( STATE + BEGIN );
@@ -90,7 +90,7 @@ void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records )
   records.setState( state );
   records.setStateEndTime( endtime );
 
-  if( endtime != -1 )
+  if ( endtime != -1 )
   {
     records.newRecord();
     records.setType( STATE + END );
@@ -128,14 +128,14 @@ void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records )
     return;
   }
 
-  while( !strLine.eof() )
+  while ( !strLine.eof() )
   {
     std::getline( strLine, tmpstring, ':' );
     tmpstream.str( tmpstring );
     if ( !( tmpstream >> eventtype ) )
     {
-      cerr << "Falta sistema de logging TraceBodyIO_v1::readState()" << endl;
-      cerr << "Error leyendo record de estado" << endl;
+      cerr << "Falta sistema de logging TraceBodyIO_v1::readEvent()" << endl;
+      cerr << "Error leyendo record de evento" << endl;
       return;
     }
 
@@ -143,8 +143,8 @@ void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records )
     tmpstream.str( tmpstring );
     if ( !( tmpstream >> eventvalue ) )
     {
-      cerr << "Falta sistema de logging TraceBodyIO_v1::readState()" << endl;
-      cerr << "Error leyendo record de estado" << endl;
+      cerr << "Falta sistema de logging TraceBodyIO_v1::readEvent()" << endl;
+      cerr << "Error leyendo record de evento" << endl;
       return;
     }
 
@@ -161,12 +161,12 @@ void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records )
 
 void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records )
 {
-  string tmpstr;
+  string tmpstring;
+  istringstream tmpstream;
   TCPUOrder CPU;
   TApplOrder appl;
   TTaskOrder task;
   TThreadOrder thread;
-  TRecordTime time;
   TRecordTime logSend;
   TRecordTime phySend;
   TRecordTime logReceive;
@@ -175,19 +175,77 @@ void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records )
   TApplOrder remoteAppl;
   TTaskOrder remoteTask;
   TThreadOrder remoteThread;
+  TCommSize size;
+  TCommTag tag;
 
   istringstream strLine( line );
 
   // Discarding record type
-  std::getline( strLine, tmpstr, ':' );
+  std::getline( strLine, tmpstring, ':' );
 
   // Read the common info
-  if ( !readCommon( strLine, CPU, appl, task, thread, time ) )
+  if ( !readCommon( strLine, CPU, appl, task, thread, logSend ) )
   {
     cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
     cerr << "Error leyendo record de communicacion" << endl;
     return;
   }
+
+  std::getline( strLine, tmpstring, ':' );
+  tmpstream.str( tmpstring );
+  if ( !( tmpstream >> phySend ) )
+  {
+    cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
+    cerr << "Error leyendo record de comunicacion" << endl;
+    return;
+  }
+
+  if ( !readCommon( strLine, remoteCPU, remoteAppl, remoteTask, remoteThread,
+                    logReceive ) )
+  {
+    cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
+    cerr << "Error leyendo record de comunicacion" << endl;
+    return;
+  }
+
+  std::getline( strLine, tmpstring, ':' );
+  tmpstream.str( tmpstring );
+  if ( !( tmpstream >> phyReceive ) )
+  {
+    cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
+    cerr << "Error leyendo record de comunicacion" << endl;
+    return;
+  }
+
+  std::getline( strLine, tmpstring, ':' );
+  tmpstream.str( tmpstring );
+  if ( !( tmpstream >> size ) )
+  {
+    cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
+    cerr << "Error leyendo record de comunicacion" << endl;
+    return;
+  }
+
+  std::getline( strLine, tmpstring, ':' );
+  tmpstream.str( tmpstring );
+  if ( !( tmpstream >> tag ) )
+  {
+    cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
+    cerr << "Error leyendo record de comunicacion" << endl;
+    return;
+  }
+
+  records.newComm();
+  records.setSenderCPU( CPU );
+  records.setSenderThread( appl, task, thread );
+  records.setReceiverCPU( remoteCPU );
+  records.setReceiverThread( remoteAppl, remoteTask, remoteThread );
+  records.setLogicalSend( logSend );
+  records.setPhysicalSend( phySend );
+  records.setLogicalReceive( logReceive );
+  records.setPhysicalReceive( phyReceive );
+  records.setCommSize( size );
+  records.setCommTag( tag );
 }
 
 

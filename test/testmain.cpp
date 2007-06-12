@@ -13,12 +13,16 @@
 #include "memoryblocks.h"
 #include "tracebodyio.h"
 #include "tracebodyio_v1.h"
+#include "bplustreeblocks.h"
 
 using namespace std;
+using namespace BPlusTree;
 
 int main( int argc, char *argv[] )
 {
-
+  MemoryBlocks *b = new BPlusTreeBlocks();
+  b->resetCountInserted();
+  delete b;
   //--------------------------------------------------------------------------
   // TESTING ProcessModel
   //--------------------------------------------------------------------------

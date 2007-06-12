@@ -48,8 +48,8 @@ static const TRecordType RSEND    = 0x0400;
 static const TRecordType EMPTYREC = STATE + EVENT + COMM;
 #if 0
 #define BEGIN        (0x0000)          /* Begin record. */
-#define END          (0x0001)          /* End record. Used in states record
-                                          and communication records. */
+#define END          (0x0001)          /* End record. Used in states
+record and communication records. */
 #define STATE        (0x0002)          /* State record. */
 #define EVENT        (0x0004)          /* Event record. */
 #define LOG          (0x0008)          /* Logical communication. */

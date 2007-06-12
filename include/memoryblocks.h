@@ -3,7 +3,8 @@
 
 #include "paraverkerneltypes.h"
 
-
+// It manages the memory blocks where records are inserted.
+// It depends on MemoryTrace derived classes structures.
 class MemoryBlocks
 {
   public:
@@ -11,7 +12,9 @@ class MemoryBlocks
     {
       countInserted = 0;
     }
-    virtual ~MemoryBlocks() = 0;
+
+    virtual ~MemoryBlocks()
+    {}
 
     virtual void newRecord() = 0;
     virtual void setType( TRecordType whichType ) = 0;
@@ -27,12 +30,21 @@ class MemoryBlocks
     virtual void setStateEndTime( TRecordTime whichTime ) = 0;
     virtual void setCommIndex( TCommID whichID ) = 0;
 
-    virtual TCommID newComm() = 0;
-    virtual void setRemoteThread( TThreadOrder whichThread ) = 0;
-    virtual void setRemoteThread( TApplOrder whichAppl,
+    // If you have a block defining communications, probably you want
+    // to create records separately by your own.
+    // Then you must call newComm( false )
+    // If not, the function creates all necessary records by default.
+    virtual void newComm( bool createRecords = true ) = 0;
+    virtual void setSenderThread( TThreadOrder whichThread ) = 0;
+    virtual void setSenderThread( TApplOrder whichAppl,
                                   TTaskOrder whichTask,
                                   TThreadOrder whichThread ) = 0;
-    virtual void setRemoteCPU( TCPUOrder whichCPU ) = 0;
+    virtual void setSenderCPU( TCPUOrder whichCPU ) = 0;
+    virtual void setReceiverThread( TThreadOrder whichThread ) = 0;
+    virtual void setReceiverThread( TApplOrder whichAppl,
+                                  TTaskOrder whichTask,
+                                  TThreadOrder whichThread ) = 0;
+    virtual void setReceiverCPU( TCPUOrder whichCPU ) = 0;
     virtual void setCommTag( TCommTag whichTag ) = 0;
     virtual void setCommSize( TCommSize whichSize ) = 0;
     virtual void setLogicalSend( TRecordTime whichTime ) = 0;
@@ -40,12 +52,12 @@ class MemoryBlocks
     virtual void setPhysicalSend( TRecordTime whichTime ) = 0;
     virtual void setPhysicalReceive( TRecordTime whichTime ) = 0;
 
-    UINT32 getCountInserted() const
+    virtual UINT32 getCountInserted() const
     {
       return countInserted;
     }
 
-    void resetCountInserted()
+    virtual void resetCountInserted()
     {
       countInserted = 0;
     }
