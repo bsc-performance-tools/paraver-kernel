@@ -7,6 +7,9 @@
 #include "processmodel.h"
 #include "resourcemodel.h"
 #include "memorytrace.h"
+#include "bplustreeblocks.h"
+
+using namespace BPlusTree;
 
 class Trace
 {
@@ -47,6 +50,7 @@ class Trace
     ResourceModel traceResourceModel;
     TTime traceEndTime;
     TTimeUnit traceTimeUnit;
+    BPlusTreeBlocks *blocks;
 
   private:
     string fileName;

@@ -11,6 +11,9 @@ void TraceBodyIO_v1::read( fstream& file, MemoryBlocks& records )
 
   std::getline( file, line );
 
+  if ( line[0] == '#' || line.size() == 0 )
+    return;
+
   switch ( line[0] )
   {
     case StateRecord:
@@ -40,7 +43,6 @@ void TraceBodyIO_v1::read( fstream& file, MemoryBlocks& records )
 void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records )
 {
   string tmpstring;
-  istringstream tmpstream;
   TCPUOrder CPU;
   TApplOrder appl;
   TTaskOrder task;
@@ -59,24 +61,27 @@ void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records )
   {
     cerr << "Falta sistema de logging TraceBodyIO_v1::readState()" << endl;
     cerr << "Error leyendo record de estado" << endl;
+    cerr << line << endl;
     return;
   }
 
   std::getline( strLine, tmpstring, ':' );
-  tmpstream.str( tmpstring );
-  if ( !( tmpstream >> endtime ) )
+  istringstream endtimeStream( tmpstring );
+  if ( !( endtimeStream >> endtime ) )
   {
     cerr << "Falta sistema de logging TraceBodyIO_v1::readState()" << endl;
     cerr << "Error leyendo record de estado" << endl;
+    cerr << line << endl;
     return;
   }
 
   std::getline( strLine, tmpstring );
-  tmpstream.str( tmpstring );
-  if ( !( tmpstream >> state ) )
+  istringstream stateStream( tmpstring );
+  if ( !( stateStream >> state ) )
   {
     cerr << "Falta sistema de logging TraceBodyIO_v1::readState()" << endl;
     cerr << "Error leyendo record de estado" << endl;
+    cerr << line << endl;
     return;
   }
 
@@ -85,8 +90,11 @@ void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records )
   records.newRecord();
   records.setType( STATE + BEGIN );
   records.setTime( time );
-  records.setCPU( CPU );
-  records.setThread( appl, task, thread );
+  if ( CPU == 0 )
+    records.setCPU( CPU );
+  else
+    records.setCPU( CPU - 1 );
+  records.setThread( appl - 1, task - 1, thread - 1 );
   records.setState( state );
   records.setStateEndTime( endtime );
 
@@ -95,8 +103,11 @@ void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records )
     records.newRecord();
     records.setType( STATE + END );
     records.setTime( endtime );
-    records.setCPU( CPU );
-    records.setThread( appl, task, thread );
+    if ( CPU == 0 )
+      records.setCPU( CPU );
+    else
+      records.setCPU( CPU - 1 );
+    records.setThread( appl - 1, task - 1, thread - 1 );
     records.setState( state );
     records.setStateEndTime( time );
   }
@@ -106,7 +117,6 @@ void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records )
 void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records )
 {
   string tmpstring;
-  istringstream tmpstream;
   TCPUOrder CPU;
   TApplOrder appl;
   TTaskOrder task;
@@ -125,34 +135,40 @@ void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records )
   {
     cerr << "Falta sistema de logging TraceBodyIO_v1::readEvent()" << endl;
     cerr << "Error leyendo record de evento" << endl;
+    cerr << line << endl;
     return;
   }
 
   while ( !strLine.eof() )
   {
     std::getline( strLine, tmpstring, ':' );
-    tmpstream.str( tmpstring );
-    if ( !( tmpstream >> eventtype ) )
+    istringstream eventtypeStream( tmpstring );
+    if ( !( eventtypeStream >> eventtype ) )
     {
       cerr << "Falta sistema de logging TraceBodyIO_v1::readEvent()" << endl;
       cerr << "Error leyendo record de evento" << endl;
+      cerr << line << endl;
       return;
     }
 
     std::getline( strLine, tmpstring, ':' );
-    tmpstream.str( tmpstring );
-    if ( !( tmpstream >> eventvalue ) )
+    istringstream eventvalueStream( tmpstring );
+    if ( !( eventvalueStream >> eventvalue ) )
     {
       cerr << "Falta sistema de logging TraceBodyIO_v1::readEvent()" << endl;
       cerr << "Error leyendo record de evento" << endl;
+      cerr << line << endl;
       return;
     }
 
     records.newRecord();
     records.setType( EVENT );
     records.setTime( time );
-    records.setCPU( CPU );
-    records.setThread( appl, task, thread );
+    if ( CPU == 0 )
+      records.setCPU( CPU );
+    else
+      records.setCPU( CPU - 1 );
+    records.setThread( appl - 1, task - 1, thread - 1 );
     records.setEventType( eventtype );
     records.setEventValue( eventvalue );
   }
@@ -162,7 +178,6 @@ void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records )
 void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records )
 {
   string tmpstring;
-  istringstream tmpstream;
   TCPUOrder CPU;
   TApplOrder appl;
   TTaskOrder task;
@@ -188,15 +203,17 @@ void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records )
   {
     cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
     cerr << "Error leyendo record de communicacion" << endl;
+    cerr << line << endl;
     return;
   }
 
   std::getline( strLine, tmpstring, ':' );
-  tmpstream.str( tmpstring );
-  if ( !( tmpstream >> phySend ) )
+  istringstream phySendStream( tmpstring );
+  if ( !( phySendStream >> phySend ) )
   {
     cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
     cerr << "Error leyendo record de comunicacion" << endl;
+    cerr << line << endl;
     return;
   }
 
@@ -205,41 +222,51 @@ void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records )
   {
     cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
     cerr << "Error leyendo record de comunicacion" << endl;
+    cerr << line << endl;
     return;
   }
 
   std::getline( strLine, tmpstring, ':' );
-  tmpstream.str( tmpstring );
-  if ( !( tmpstream >> phyReceive ) )
+  istringstream phyReceiveStream( tmpstring );
+  if ( !( phyReceiveStream >> phyReceive ) )
   {
     cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
     cerr << "Error leyendo record de comunicacion" << endl;
+    cerr << line << endl;
     return;
   }
 
   std::getline( strLine, tmpstring, ':' );
-  tmpstream.str( tmpstring );
-  if ( !( tmpstream >> size ) )
+  istringstream sizeStream( tmpstring );
+  if ( !( sizeStream >> size ) )
   {
     cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
     cerr << "Error leyendo record de comunicacion" << endl;
+    cerr << line << endl;
     return;
   }
 
   std::getline( strLine, tmpstring, ':' );
-  tmpstream.str( tmpstring );
-  if ( !( tmpstream >> tag ) )
+  istringstream tagStream( tmpstring );
+  if ( !( tagStream >> tag ) )
   {
     cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
     cerr << "Error leyendo record de comunicacion" << endl;
+    cerr << line << endl;
     return;
   }
 
   records.newComm();
-  records.setSenderCPU( CPU );
-  records.setSenderThread( appl, task, thread );
-  records.setReceiverCPU( remoteCPU );
-  records.setReceiverThread( remoteAppl, remoteTask, remoteThread );
+  if ( CPU == 0 )
+    records.setSenderCPU( CPU );
+  else
+    records.setSenderCPU( CPU - 1 );
+  records.setSenderThread( appl - 1, task - 1, thread - 1 );
+  if ( remoteCPU == 0 )
+    records.setReceiverCPU( remoteCPU );
+  else
+    records.setReceiverCPU( remoteCPU - 1 );
+  records.setReceiverThread( remoteAppl - 1, remoteTask - 1, remoteThread - 1 );
   records.setLogicalSend( logSend );
   records.setPhysicalSend( phySend );
   records.setLogicalReceive( logReceive );
@@ -261,39 +288,38 @@ bool TraceBodyIO_v1::readCommon( istringstream& line,
                                  TRecordTime& time )
 {
   string tmpstring;
-  istringstream tmpstream;
 
   std::getline( line, tmpstring, ':' );
-  tmpstream.str( tmpstring );
-  if ( !( tmpstream >> CPU ) )
+  istringstream CPUStream( tmpstring );
+  if ( !( CPUStream >> CPU ) )
   {
     return false;
   }
 
   std::getline( line, tmpstring, ':' );
-  tmpstream.str( tmpstring );
-  if ( !( tmpstream >> appl ) )
+  istringstream applStream( tmpstring );
+  if ( !( applStream >> appl ) )
   {
     return false;
   }
 
   std::getline( line, tmpstring, ':' );
-  tmpstream.str( tmpstring );
-  if ( !( tmpstream >> task ) )
+  istringstream taskStream( tmpstring );
+  if ( !( taskStream >> task ) )
   {
     return false;
   }
 
   std::getline( line, tmpstring, ':' );
-  tmpstream.str( tmpstring );
-  if ( !( tmpstream >> thread ) )
+  istringstream threadStream( tmpstring );
+  if ( !( threadStream >> thread ) )
   {
     return false;
   }
 
   std::getline( line, tmpstring, ':' );
-  tmpstream.str( tmpstring );
-  if ( !( tmpstream >> time ) )
+  istringstream timeStream( tmpstring );
+  if ( !( timeStream >> time ) )
   {
     return false;
   }

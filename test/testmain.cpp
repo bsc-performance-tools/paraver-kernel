@@ -20,9 +20,7 @@ using namespace BPlusTree;
 
 int main( int argc, char *argv[] )
 {
-  MemoryBlocks *b = new BPlusTreeBlocks();
-  b->resetCountInserted();
-  delete b;
+
   //--------------------------------------------------------------------------
   // TESTING ProcessModel
   //--------------------------------------------------------------------------
@@ -48,6 +46,9 @@ int main( int argc, char *argv[] )
   {
     ex.printMessage();
   }
+  MemoryBlocks *b = new BPlusTreeBlocks( testProcessModel );
+  b->resetCountInserted();
+  delete b;
 
   cout << endl;
 
@@ -111,7 +112,9 @@ int main( int argc, char *argv[] )
   Trace testTrace;
   try
   {
-    testTrace = Trace( "/home/eloy/traces/mpi_ping.prv" );
+//    testTrace = Trace( "/home/eloy/traces/sweep3d.150.100.chop1.prv" );
+//    testTrace = Trace( "/home/eloy/traces/mpi_ping.prv" );
+    testTrace = Trace( "/home/eloy/traces/traza_10k/linpack_10000_cache.prv" );
   }
   catch ( TraceHeaderException& ex )
   {

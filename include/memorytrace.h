@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "paraverkerneltypes.h"
+#include "memoryblocks.h"
 
 using namespace std;
 
@@ -50,7 +51,7 @@ class MemoryTrace
     friend class MemoryBlocks;
   protected:
     // typedef struct TRecord;
-
+    MemoryBlocks& blocks;
   private:
 
 };

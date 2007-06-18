@@ -5,7 +5,10 @@ libparaver_kernel_la_SOURCES = \
           processmodel.cpp \
           resourcemodel.cpp \
           paraverkernelexception.cpp \
-          traceheaderexception.cpp 
+          traceheaderexception.cpp \
+          bplustreeblocks.cpp \
+          tracebodyio_v1.cpp
+          
 
 
 # Erases everything which should not be uploaded to CVS

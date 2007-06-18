@@ -2,6 +2,7 @@
 #include <sstream>
 #include "trace.h"
 #include "traceheaderexception.h"
+#include "tracebodyio_v1.h"
 
 using namespace std;
 
@@ -137,7 +138,11 @@ Trace::Trace( const string& whichFile ) : fileName( whichFile )
 // End reading the header
 
 // Reading the body
-
+  blocks = new BPlusTreeBlocks( traceProcessModel );
+  while( !file.eof() )
+  {
+    TraceBodyIO_v1::read( file, *blocks );
+  }
 // End reading the body
   file.close();
   ready = true;

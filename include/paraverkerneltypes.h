@@ -68,7 +68,7 @@ typedef UINT64        TCommID;
 typedef INT64         TCommSize;
 typedef INT64         TCommTag;
 typedef UINT32        TEventType;
-typedef INT64         TEventValue;
+typedef UINT64        TEventValue;
 typedef UINT32        TState;
 
 #endif // PARAVERKERNELTYPES_H_INCLUDED

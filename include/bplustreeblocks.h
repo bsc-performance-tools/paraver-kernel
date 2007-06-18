@@ -4,6 +4,7 @@
 #include <vector>
 #include "memoryblocks.h"
 #include "bplustreetypes.h"
+#include "processmodel.h"
 
 using namespace std;
 
@@ -12,10 +13,10 @@ namespace BPlusTree
   class BPlusTreeBlocks : public MemoryBlocks
   {
     public:
-      BPlusTreeBlocks()
+      BPlusTreeBlocks( ProcessModel& whichModel ) : traceModel( whichModel )
       {
-        blocks.push_back( new TRecord[blockSize] );
-        currentBlock = blocks[blocks.size() - 1];
+        blocks.push_back( NULL );
+        currentBlock = NULL;
         currentRecord = 0;
       }
 
@@ -26,7 +27,12 @@ namespace BPlusTree
           for ( UINT32 i = 0; i < blocks.size(); i++ )
             delete[] blocks[i];
         }
+
+        for ( UINT32 i = 0; i < communications.size(); i++ )
+          delete communications[i];
+
         blocks.clear();
+        communications.clear();
       }
 
       virtual TRecord *getLastRecord( UINT16 position ) const
@@ -79,12 +85,28 @@ namespace BPlusTree
     protected:
 
     private:
+      typedef enum
+      {
+        logicalSend = 0,
+        logicalReceive,
+        physicalSend,
+        physicalReceive,
+        remoteLogicalSend,
+        remoteLogicalReceive,
+        remotePhysicalSend,
+        remotePhysicalReceive,
+        commTypeSize
+    } TCommType;
+      static const TRecordType commTypes[commTypeSize];
       static const UINT32 blockSize = 100000;
       UINT32 currentRecord;
       TRecord *currentBlock;
       vector<TRecord *> lastRecords;
       vector<TRecord *> blocks;
-
+      vector<TCommInfo *> communications;
+      TCommID currentComm;
+      TRecord *commRecords[ commTypeSize ];
+      ProcessModel& traceModel;
   };
 }
 

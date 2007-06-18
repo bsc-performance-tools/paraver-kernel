@@ -33,6 +33,7 @@ ResourceModel::ResourceModel( istringstream& headerInfo )
   string stringNumberNodes;
   TNodeOrder numberNodes;
   TCPUOrder glogalCPUs = 0;
+  bool readCPUs;
   ready = false;
 
   // Number of nodes is 0 -> No definition of nodes nor cpus
@@ -42,7 +43,17 @@ ResourceModel::ResourceModel( istringstream& headerInfo )
     return;
   }
 
-  std::getline( headerInfo, stringNumberNodes, '(' );
+  if ( headerInfo.str().find_first_of( '(', headerInfo.tellg() ) <
+       headerInfo.str().find_first_of( ':', headerInfo.tellg() ) )
+  {
+    std::getline( headerInfo, stringNumberNodes, '(' );
+    readCPUs = true;
+  }
+  else
+  {
+    std::getline( headerInfo, stringNumberNodes, ':' );
+    readCPUs = false;
+  }
   istringstream sstreamNumberNodes( stringNumberNodes );
 
   if ( !( sstreamNumberNodes >> numberNodes ) )
@@ -58,19 +69,24 @@ ResourceModel::ResourceModel( istringstream& headerInfo )
 
     nodes.push_back( ResourceModelNode( countNode ) );
 
-    string stringNumberCPUs;
-    if ( countNode < numberNodes - 1 )
-      std::getline( headerInfo, stringNumberCPUs, ',' );
-    else
-      std::getline( headerInfo, stringNumberCPUs, ')' );
-
-    istringstream sstreamNumberCPUs( stringNumberCPUs );
-
-    if ( !( sstreamNumberCPUs >> numberCPUs ) )
+    if ( readCPUs )
     {
-      throw TraceHeaderException( TraceHeaderException::invalidCPUNumber,
-                                  stringNumberCPUs.c_str() );
+      string stringNumberCPUs;
+      if ( countNode < numberNodes - 1 )
+        std::getline( headerInfo, stringNumberCPUs, ',' );
+      else
+        std::getline( headerInfo, stringNumberCPUs, ')' );
+
+      istringstream sstreamNumberCPUs( stringNumberCPUs );
+
+      if ( !( sstreamNumberCPUs >> numberCPUs ) )
+      {
+        throw TraceHeaderException( TraceHeaderException::invalidCPUNumber,
+                                    stringNumberCPUs.c_str() );
+      }
     }
+    else
+      numberCPUs = 1;
 
     // Insert CPUs
     for ( TCPUOrder countCPU = 0; countCPU < numberCPUs; countCPU++ )
@@ -84,7 +100,8 @@ ResourceModel::ResourceModel( istringstream& headerInfo )
   // End inserting nodes
 
   // Gets a useless character: ':'
-  headerInfo.get();
+  if ( readCPUs )
+    headerInfo.get();
 
   ready = true;
 }
