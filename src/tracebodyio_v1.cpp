@@ -1,7 +1,6 @@
 #include <string>
 #include <sstream>
 #include "tracebodyio_v1.h"
-#include "tracebodyexception.h"
 
 using namespace std;
 
