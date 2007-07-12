@@ -21,7 +21,7 @@ class ProcessModel
     ~ProcessModel()
     {};
 
-    bool isReady()
+    bool isReady() const
     {
       return ready;
     }
@@ -37,8 +37,21 @@ class ProcessModel
                                   const TTaskOrder& inTask,
                                   const TThreadOrder& inThread ) const;
 
+    void getThreadLocation( TThreadOrder globalThread,
+                            TApplOrder& inAppl,
+                            TTaskOrder& inTask,
+                            TThreadOrder& inThread ) const;
+
   protected:
 
+    struct ThreadLocation
+    {
+      TApplOrder appl;
+      TTaskOrder task;
+      TThreadOrder thread;
+    };
+
+    vector<ThreadLocation> threads;
     vector<ProcessModelAppl> applications;
 
     bool ready;

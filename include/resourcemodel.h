@@ -20,7 +20,7 @@ class ResourceModel
     ~ResourceModel()
     {};
 
-    bool isReady()
+    bool isReady() const
     {
       return ready;
     }

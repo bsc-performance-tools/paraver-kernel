@@ -82,6 +82,17 @@ namespace BPlusTree
       virtual void setPhysicalSend( TRecordTime whichTime );
       virtual void setPhysicalReceive( TRecordTime whichTime );
 
+      // Communication info getters
+      virtual TThreadOrder getSenderThread( TCommID whichComm ) const;
+      virtual TCPUOrder getSenderCPU( TCommID whichComm ) const;
+      virtual TThreadOrder getReceiverThread( TCommID whichComm ) const;
+      virtual TCPUOrder getReceiverCPU( TCommID whichComm ) const;
+      virtual TCommTag getCommTag( TCommID whichComm ) const;
+      virtual TCommSize getCommSize( TCommID whichComm ) const;
+      virtual TRecordTime getLogicalSend( TCommID whichComm ) const;
+      virtual TRecordTime getLogicalReceive( TCommID whichComm ) const;
+      virtual TRecordTime getPhysicalSend( TCommID whichComm ) const;
+      virtual TRecordTime getPhysicalReceive( TCommID whichComm ) const;
     protected:
 
     private:

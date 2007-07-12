@@ -15,7 +15,12 @@ class TraceBodyIO_v1 : public TraceBodyIO
     static const UINT8 GlobalCommRecord = '4';
 
     static void read( fstream& file, MemoryBlocks& records );
-
+    static void write( fstream& whichStream,
+                       const Trace& whichTrace,
+                       const MemoryTrace::iterator& record );
+    static void writeEvents( fstream& whichStream,
+                             const Trace& whichTrace,
+                             const vector<MemoryTrace::iterator>& recordList );
   protected:
 
   private:
@@ -29,6 +34,24 @@ class TraceBodyIO_v1 : public TraceBodyIO
                             TTaskOrder& task,
                             TThreadOrder& thread,
                             TRecordTime& time );
+
+    static bool writeState( string& line,
+                            const Trace& whichTrace,
+                            const MemoryTrace::iterator& record );
+    static bool writeEvent( string& line,
+                            const Trace& whichTrace,
+                            const MemoryTrace::iterator& record,
+                            bool needCommons = true );
+    static bool writeComm( string& line,
+                           const Trace& whichTrace,
+                           const MemoryTrace::iterator& record );
+    static bool writeGlobalComm( string& line,
+                                 const Trace& whichTrace,
+                                 const MemoryTrace::iterator& record );
+    static void writeCommon( ostringstream& line,
+                             const Trace& whichTrace,
+                             const MemoryTrace::iterator& record );
+
 };
 
 

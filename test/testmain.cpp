@@ -109,12 +109,12 @@ int main( int argc, char *argv[] )
   //--------------------------------------------------------------------------
   // TESTING Trace
   //--------------------------------------------------------------------------
-  Trace testTrace;
+  Trace *testTrace;
   try
   {
 //    testTrace = Trace( "/home/eloy/traces/sweep3d.150.100.chop1.prv" );
 //    testTrace = Trace( "/home/eloy/traces/mpi_ping.prv" );
-    testTrace = Trace( "/home/eloy/traces/traza_10k/linpack_10000_cache.prv" );
+    testTrace = new Trace( "/home/eloy/traces/traza_10k/linpack_10000_cache.prv" );
   }
   catch ( TraceHeaderException& ex )
   {
@@ -125,10 +125,15 @@ int main( int argc, char *argv[] )
     ex.printMessage();
   }
 
+  TApplOrder ap;
+  TTaskOrder tk;
+  TThreadOrder th;
 
+  testTrace->getThreadLocation( 9000, ap, tk, th );
+  cout << ap << " " << tk << " " << th << endl;
   //--------------------------------------------------------------------------
   // END TESTING Trace
   //--------------------------------------------------------------------------
-
+  cin.get();
 }
 

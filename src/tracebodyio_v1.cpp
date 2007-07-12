@@ -1,5 +1,6 @@
 #include <string>
 #include <sstream>
+#include <iostream>
 #include "tracebodyio_v1.h"
 
 using namespace std;
@@ -39,6 +40,65 @@ void TraceBodyIO_v1::read( fstream& file, MemoryBlocks& records )
 }
 
 
+void TraceBodyIO_v1::write( fstream& whichStream,
+                            const Trace& whichTrace,
+                            const MemoryTrace::iterator& record )
+{
+  string line;
+  bool writeReady;
+
+  switch ( record.getType() )
+  {
+    case STATE:
+      writeReady = writeState( line, whichTrace, record );
+      break;
+    case EVENT:
+      writeReady = writeEvent( line, whichTrace, record );
+      break;
+    case COMM:
+      writeReady = writeComm( line, whichTrace, record );
+      break;
+    case GLOBCOMM:
+      writeReady = writeGlobalComm( line, whichTrace, record );
+      break;
+    default:
+      writeReady = false;
+      cerr << "Falta sistema de logging TraceBodyIO_v1::write()" << endl;
+      cerr << "Tipo de record desconocido en memoria" << endl;
+      break;
+  };
+
+  if ( !writeReady )
+    return;
+
+  whichStream << line << endl;
+}
+
+
+void TraceBodyIO_v1::writeEvents( fstream& whichStream,
+                                  const Trace& whichTrace,
+                                  const vector<MemoryTrace::iterator>& recordList )
+{
+  string line;
+
+  for ( UINT16 i = 0; i < recordList.size(); i++ )
+  {
+    if ( i > 0 )
+    {
+      line += ':';
+      writeEvent( line, whichTrace, recordList[i], false );
+    }
+    else // i == 0
+      writeEvent( line, whichTrace, recordList[i], true );
+  }
+
+  whichStream << line << endl;
+}
+
+
+/**********************
+  Read line functions
+***********************/
 void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records )
 {
   string tmpstring;
@@ -325,3 +385,105 @@ bool TraceBodyIO_v1::readCommon( istringstream& line,
 
   return true;
 }
+
+
+/**************************
+  Write records functions
+***************************/
+bool TraceBodyIO_v1::writeState( string& line,
+                                 const Trace& whichTrace,
+                                 const MemoryTrace::iterator& record )
+{
+  if ( record.getType() & END )
+    return false;
+
+  ostringstream ostr;
+
+  ostr << StateRecord << ':';
+  writeCommon( ostr, whichTrace, record );
+  ostr << record.getStateEndTime() << ':' << record.getState();
+
+  line += ostr.str();
+  return true;
+}
+
+
+bool TraceBodyIO_v1::writeEvent( string& line,
+                                 const Trace& whichTrace,
+                                 const MemoryTrace::iterator& record,
+                                 bool needCommons )
+{
+  ostringstream ostr;
+
+  if ( needCommons )
+  {
+    ostr << EventRecord << ':';
+    writeCommon( ostr, whichTrace, record );
+  }
+  ostr << record.getEventType() << ':' << record.getEventValue();
+
+  line += ostr.str();
+  return true;
+}
+
+
+bool TraceBodyIO_v1::writeComm( string& line,
+                                const Trace& whichTrace,
+                                const MemoryTrace::iterator& record )
+{
+  ostringstream ostr;
+  TCommID commID;
+  TApplOrder recvAppl;
+  TTaskOrder recvTask;
+  TThreadOrder recvThread;
+
+  if ( !( record.getType() & LOG & SEND ) )
+    return false;
+
+  commID = record.getCommIndex();
+
+  ostr << CommRecord << ':';
+  writeCommon( ostr, whichTrace, record );
+  ostr << whichTrace.getPhysicalSend( commID ) << ':';
+  if ( whichTrace.existResourceInfo() )
+    ostr << whichTrace.getReceiverCPU( commID ) + 1 << ':';
+  else
+    ostr << '0' << ':';
+  whichTrace.getThreadLocation( whichTrace.getReceiverThread( commID ),
+                                recvAppl, recvTask, recvThread );
+  ostr << recvAppl << ':' << recvTask << ':' << recvThread << ':';
+  ostr << whichTrace.getLogicalReceive( commID ) << ':';
+  ostr << whichTrace.getPhysicalReceive( commID );
+
+  line += ostr.str();
+  return true;
+}
+
+
+bool TraceBodyIO_v1::writeGlobalComm( string& line,
+                                      const Trace& whichTrace,
+                                      const MemoryTrace::iterator& record )
+{
+  return true;
+}
+
+
+void TraceBodyIO_v1::writeCommon( ostringstream& line,
+                                  const Trace& whichTrace,
+                                  const MemoryTrace::iterator& record )
+{
+  TApplOrder appl;
+  TTaskOrder task;
+  TThreadOrder thread;
+
+  if ( whichTrace.existResourceInfo() )
+    line << record.getCPU() + 1 << ':';
+  else
+    line << '0' << ':';
+
+  whichTrace.getThreadLocation( record.getThread(), appl, task, thread );
+  line << appl + 1 << ':' << task + 1 << ':' << thread + 1 << ':';
+  line << record.getTime() << ':';
+}
+
+

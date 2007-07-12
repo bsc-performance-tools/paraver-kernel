@@ -24,7 +24,7 @@ namespace BPlusTree
 
   typedef struct TCommRecord
   {
-    TCommID info;
+    TCommID index;
   }
   TCommRecord;
 

@@ -32,6 +32,7 @@ class MemoryTrace
         virtual TState       getState() const = 0;
         virtual TRecordTime  getStateEndTime() const = 0;
         virtual TCommID      getCommIndex() const = 0;
+
       protected:
 
       private:
@@ -48,10 +49,9 @@ class MemoryTrace
     virtual void getRecordByTime( vector<iterator>& listIter,
                                   TRecordTime whichTime ) const = 0;
 
-    friend class MemoryBlocks;
   protected:
-    // typedef struct TRecord;
     MemoryBlocks& blocks;
+
   private:
 
 };

@@ -71,4 +71,6 @@ typedef UINT32        TEventType;
 typedef UINT64        TEventValue;
 typedef UINT32        TState;
 
+typedef double        TSemanticValue;
+
 #endif // PARAVERKERNELTYPES_H_INCLUDED

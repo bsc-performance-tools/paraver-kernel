@@ -52,6 +52,18 @@ class MemoryBlocks
     virtual void setPhysicalSend( TRecordTime whichTime ) = 0;
     virtual void setPhysicalReceive( TRecordTime whichTime ) = 0;
 
+    // Communication info getters
+    virtual TThreadOrder getSenderThread( TCommID whichComm ) const = 0;
+    virtual TCPUOrder getSenderCPU( TCommID whichComm ) const = 0;
+    virtual TThreadOrder getReceiverThread( TCommID whichComm ) const = 0;
+    virtual TCPUOrder getReceiverCPU( TCommID whichComm ) const = 0;
+    virtual TCommTag getCommTag( TCommID whichComm ) const = 0;
+    virtual TCommSize getCommSize( TCommID whichComm ) const = 0;
+    virtual TRecordTime getLogicalSend( TCommID whichComm ) const = 0;
+    virtual TRecordTime getLogicalReceive( TCommID whichComm ) const = 0;
+    virtual TRecordTime getPhysicalSend( TCommID whichComm ) const = 0;
+    virtual TRecordTime getPhysicalReceive( TCommID whichComm ) const = 0;
+
     virtual UINT32 getCountInserted() const
     {
       return countInserted;

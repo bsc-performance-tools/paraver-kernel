@@ -89,7 +89,7 @@ void BPlusTreeBlocks::setStateEndTime( TRecordTime whichTime )
 
 void BPlusTreeBlocks::setCommIndex( TCommID whichID )
 {
-  currentBlock[currentRecord].URecordInfo.commRecord.info = whichID;
+  currentBlock[currentRecord].URecordInfo.commRecord.index = whichID;
 }
 
 
@@ -248,3 +248,54 @@ void BPlusTreeBlocks::setPhysicalReceive( TRecordTime whichTime )
     commRecords[remotePhysicalReceive]->time = whichTime;
   }
 }
+
+TThreadOrder BPlusTreeBlocks::getSenderThread( TCommID whichComm ) const
+{
+  return communications[whichComm]->senderThread;
+}
+
+TCPUOrder BPlusTreeBlocks::getSenderCPU( TCommID whichComm ) const
+{
+  return communications[whichComm]->senderCPU;
+}
+
+TThreadOrder BPlusTreeBlocks::getReceiverThread( TCommID whichComm ) const
+{
+  return communications[whichComm]->receiverThread;
+}
+
+TCPUOrder BPlusTreeBlocks::getReceiverCPU( TCommID whichComm ) const
+{
+  return communications[whichComm]->receiverCPU;
+}
+
+TCommTag BPlusTreeBlocks::getCommTag( TCommID whichComm ) const
+{
+  return communications[whichComm]->tag;
+}
+
+TCommSize BPlusTreeBlocks::getCommSize( TCommID whichComm ) const
+{
+  return communications[whichComm]->size;
+}
+
+TRecordTime BPlusTreeBlocks::getLogicalSend( TCommID whichComm ) const
+{
+  return communications[whichComm]->logicalSendTime;
+}
+
+TRecordTime BPlusTreeBlocks::getLogicalReceive( TCommID whichComm ) const
+{
+  return communications[whichComm]->logicalReceiveTime;
+}
+
+TRecordTime BPlusTreeBlocks::getPhysicalSend( TCommID whichComm ) const
+{
+  return communications[whichComm]->physicalSendTime;
+}
+
+TRecordTime BPlusTreeBlocks::getPhysicalReceive( TCommID whichComm ) const
+{
+  return communications[whichComm]->physicalReceiveTime;
+}
+

@@ -49,6 +49,17 @@ TThreadOrder ProcessModel::getGlobalThread( const TApplOrder& inAppl,
 }
 
 
+void ProcessModel::getThreadLocation( TThreadOrder globalThread,
+                                      TApplOrder& inAppl,
+                                      TTaskOrder& inTask,
+                                      TThreadOrder& inThread ) const
+{
+  inAppl = threads[ globalThread ].appl;
+  inTask = threads[ globalThread ].task;
+  inThread = threads[ globalThread ].thread;
+}
+
+
 ProcessModel::ProcessModel( istringstream& headerInfo )
 {
   TApplOrder numberApplications;
@@ -124,6 +135,10 @@ ProcessModel::ProcessModel( istringstream& headerInfo )
       for ( TThreadOrder countThread = 0; countThread < numberThreads; countThread++ )
       {
         applications[ countAppl ].tasks[ countTask ].threads.push_back( ProcessModelThread( globalThreads, numberNode ) );
+        threads.push_back( ThreadLocation() );
+        threads[ globalThreads ].appl = countAppl;
+        threads[ globalThreads ].task = countTask;
+        threads[ globalThreads ].thread = countThread;
         globalThreads++;
       }
       // End inserting threads

@@ -38,6 +38,12 @@ TThreadOrder Trace::getGlobalThread( const TApplOrder& inAppl,
 }
 
 
+bool Trace::existResourceInfo() const
+{
+  return traceResourceModel.isReady();
+}
+
+
 TNodeOrder Trace::totalNodes() const
 {
   return traceResourceModel.totalNodes();
@@ -54,6 +60,66 @@ TCPUOrder Trace::getGlobalCPU( const TNodeOrder& inNode,
                                const TCPUOrder& inCPU ) const
 {
   return traceResourceModel.getGlobalCPU( inNode, inCPU );
+}
+
+
+void Trace::getThreadLocation( TThreadOrder globalThread,
+                               TApplOrder& inAppl,
+                               TTaskOrder& inTask,
+                               TThreadOrder& inThread ) const
+{
+  traceProcessModel.getThreadLocation( globalThread, inAppl, inTask, inThread );
+}
+
+
+TThreadOrder Trace::getSenderThread( TCommID whichComm ) const
+{
+  return blocks->getSenderThread( whichComm );
+}
+
+TCPUOrder Trace::getSenderCPU( TCommID whichComm ) const
+{
+  return blocks->getSenderCPU( whichComm );
+}
+
+TThreadOrder Trace::getReceiverThread( TCommID whichComm ) const
+{
+  return blocks->getReceiverThread( whichComm );
+}
+
+TCPUOrder Trace::getReceiverCPU( TCommID whichComm ) const
+{
+  return blocks->getReceiverCPU( whichComm );
+}
+
+TCommTag Trace::getCommTag( TCommID whichComm ) const
+{
+  return blocks->getCommTag( whichComm );
+}
+
+TCommSize Trace::getCommSize( TCommID whichComm ) const
+{
+  return blocks->getCommSize( whichComm );
+}
+
+TRecordTime Trace::getLogicalSend( TCommID whichComm ) const
+{
+  return blocks->getLogicalSend( whichComm );
+}
+
+TRecordTime Trace::getLogicalReceive( TCommID whichComm ) const
+{
+  return blocks->getLogicalReceive( whichComm );
+}
+
+TRecordTime Trace::getPhysicalSend( TCommID whichComm ) const
+{
+  return blocks->getPhysicalSend( whichComm );
+}
+
+TRecordTime Trace::getPhysicalReceive( TCommID whichComm ) const
+{
+  return blocks->getPhysicalReceive( whichComm );
 }
 
 
@@ -139,7 +205,7 @@ Trace::Trace( const string& whichFile ) : fileName( whichFile )
 
 // Reading the body
   blocks = new BPlusTreeBlocks( traceProcessModel );
-  while( !file.eof() )
+  while ( !file.eof() )
   {
     TraceBodyIO_v1::read( file, *blocks );
   }
