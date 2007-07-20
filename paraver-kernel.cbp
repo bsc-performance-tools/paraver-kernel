@@ -92,11 +92,10 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="src/bplustreeexception">
+		<Unit filename="src/bplustreeexception.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="src/bplustreeexception.cpp" />
 		<Unit filename="src/bplustreerecordleaf.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
