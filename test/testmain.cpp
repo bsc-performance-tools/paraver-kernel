@@ -14,6 +14,7 @@
 #include "tracebodyio.h"
 #include "tracebodyio_v1.h"
 #include "bplustreeblocks.h"
+#include "interval.h"
 
 using namespace std;
 using namespace BPlusTree;

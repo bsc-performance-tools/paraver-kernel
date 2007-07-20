@@ -69,6 +69,8 @@
 		<Unit filename="include/bplustreeexception.h" />
 		<Unit filename="include/bplustreerecordleaf.h" />
 		<Unit filename="include/bplustreetypes.h" />
+		<Unit filename="include/interval.h" />
+		<Unit filename="include/kwindow.h" />
 		<Unit filename="include/memoryblocks.h" />
 		<Unit filename="include/memorytrace.h" />
 		<Unit filename="include/paraverkernelexception.h" />
@@ -80,6 +82,9 @@
 		<Unit filename="include/resourcemodel.h" />
 		<Unit filename="include/resourcemodelcpu.h" />
 		<Unit filename="include/resourcemodelnode.h" />
+		<Unit filename="include/semanticexception.h" />
+		<Unit filename="include/semanticfunction.h" />
+		<Unit filename="include/semanticthread.h" />
 		<Unit filename="include/trace.h" />
 		<Unit filename="include/tracebodyio.h" />
 		<Unit filename="include/tracebodyio_v1.h" />
@@ -109,6 +114,10 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/resourcemodel.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/semanticexception.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
