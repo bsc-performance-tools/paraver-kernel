@@ -17,7 +17,7 @@
 #include "interval.h"
 
 using namespace std;
-using namespace BPlusTree;
+using namespace bplustree;
 
 int main( int argc, char *argv[] )
 {
