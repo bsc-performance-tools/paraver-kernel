@@ -3,47 +3,52 @@
 
 #include "paraverkernelexception.h"
 
-class BPlusTreeException: public ParaverKernelException
+namespace bplustree
 {
 
-  public:
-    typedef enum
-    {
-      undefined = 0,
-      invalidAppend,
-      LAST
-  } TErrorCode;
+  class BPlusTreeException: public ParaverKernelException
+  {
 
-    BPlusTreeException( TErrorCode whichCode = undefined,
+    public:
+      typedef enum
+      {
+        undefined = 0,
+        invalidAppend,
+        LAST
+    } TErrorCode;
+
+      BPlusTreeException( TErrorCode whichCode = undefined,
                           const char *whichAuxMessage = "",
                           const char *whichFile = NULL,
                           TExceptionLine whichLine = 0 )
-    {
-      code = whichCode;
-      auxMessage = whichAuxMessage;
-      file = whichFile;
-      line = whichLine;
-    }
+      {
+        code = whichCode;
+        auxMessage = whichAuxMessage;
+        file = whichFile;
+        line = whichLine;
+      }
 
-  protected:
+    protected:
 
-    static string moduleMessage;
+      static string moduleMessage;
 
-    TErrorCode code;
+      TErrorCode code;
 
-  private:
-    static const char *errorMessage[];
+    private:
+      static const char *errorMessage[];
 
-    virtual const char *specificErrorMessage() const
-    {
-      return errorMessage[ code ];
-    }
+      virtual const char *specificErrorMessage() const
+      {
+        return errorMessage[ code ];
+      }
 
-    virtual string& specificModuleMessage() const
-    {
-      return moduleMessage;
-    }
+      virtual string& specificModuleMessage() const
+      {
+        return moduleMessage;
+      }
 
-};
+  };
+
+}
 
 #endif // BPLUSTREEEXCEPTION_H_INCLUDED
