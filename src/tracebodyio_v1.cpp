@@ -42,12 +42,12 @@ void TraceBodyIO_v1::read( fstream& file, MemoryBlocks& records )
 
 void TraceBodyIO_v1::write( fstream& whichStream,
                             const Trace& whichTrace,
-                            const MemoryTrace::iterator& record )
+                            const MemoryTrace::iterator *record )
 {
   string line;
   bool writeReady;
 
-  switch ( record.getType() )
+  switch ( record->getType() )
   {
     case STATE:
       writeReady = writeState( line, whichTrace, record );
@@ -77,7 +77,7 @@ void TraceBodyIO_v1::write( fstream& whichStream,
 
 void TraceBodyIO_v1::writeEvents( fstream& whichStream,
                                   const Trace& whichTrace,
-                                  const vector<MemoryTrace::iterator>& recordList )
+                                  const vector<MemoryTrace::iterator *>& recordList )
 {
   string line;
 
@@ -392,16 +392,16 @@ bool TraceBodyIO_v1::readCommon( istringstream& line,
 ***************************/
 bool TraceBodyIO_v1::writeState( string& line,
                                  const Trace& whichTrace,
-                                 const MemoryTrace::iterator& record )
+                                 const MemoryTrace::iterator *record )
 {
-  if ( record.getType() & END )
+  if ( record->getType() & END )
     return false;
 
   ostringstream ostr;
 
   ostr << StateRecord << ':';
   writeCommon( ostr, whichTrace, record );
-  ostr << record.getStateEndTime() << ':' << record.getState();
+  ostr << record->getStateEndTime() << ':' << record->getState();
 
   line += ostr.str();
   return true;
@@ -410,7 +410,7 @@ bool TraceBodyIO_v1::writeState( string& line,
 
 bool TraceBodyIO_v1::writeEvent( string& line,
                                  const Trace& whichTrace,
-                                 const MemoryTrace::iterator& record,
+                                 const MemoryTrace::iterator *record,
                                  bool needCommons )
 {
   ostringstream ostr;
@@ -420,7 +420,7 @@ bool TraceBodyIO_v1::writeEvent( string& line,
     ostr << EventRecord << ':';
     writeCommon( ostr, whichTrace, record );
   }
-  ostr << record.getEventType() << ':' << record.getEventValue();
+  ostr << record->getEventType() << ':' << record->getEventValue();
 
   line += ostr.str();
   return true;
@@ -429,7 +429,7 @@ bool TraceBodyIO_v1::writeEvent( string& line,
 
 bool TraceBodyIO_v1::writeComm( string& line,
                                 const Trace& whichTrace,
-                                const MemoryTrace::iterator& record )
+                                const MemoryTrace::iterator *record )
 {
   ostringstream ostr;
   TCommID commID;
@@ -437,10 +437,10 @@ bool TraceBodyIO_v1::writeComm( string& line,
   TTaskOrder recvTask;
   TThreadOrder recvThread;
 
-  if ( !( record.getType() & LOG & SEND ) )
+  if ( !( record->getType() & LOG & SEND ) )
     return false;
 
-  commID = record.getCommIndex();
+  commID = record->getCommIndex();
 
   ostr << CommRecord << ':';
   writeCommon( ostr, whichTrace, record );
@@ -462,7 +462,7 @@ bool TraceBodyIO_v1::writeComm( string& line,
 
 bool TraceBodyIO_v1::writeGlobalComm( string& line,
                                       const Trace& whichTrace,
-                                      const MemoryTrace::iterator& record )
+                                      const MemoryTrace::iterator *record )
 {
   return true;
 }
@@ -470,20 +470,20 @@ bool TraceBodyIO_v1::writeGlobalComm( string& line,
 
 void TraceBodyIO_v1::writeCommon( ostringstream& line,
                                   const Trace& whichTrace,
-                                  const MemoryTrace::iterator& record )
+                                  const MemoryTrace::iterator *record )
 {
   TApplOrder appl;
   TTaskOrder task;
   TThreadOrder thread;
 
   if ( whichTrace.existResourceInfo() )
-    line << record.getCPU() + 1 << ':';
+    line << record->getCPU() + 1 << ':';
   else
     line << '0' << ':';
 
-  whichTrace.getThreadLocation( record.getThread(), appl, task, thread );
+  whichTrace.getThreadLocation( record->getThread(), appl, task, thread );
   line << appl + 1 << ':' << task + 1 << ':' << thread + 1 << ':';
-  line << record.getTime() << ':';
+  line << record->getTime() << ':';
 }
 
 

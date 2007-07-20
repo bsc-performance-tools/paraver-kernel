@@ -2,161 +2,256 @@
 #define _BPLUSTREE_H
 
 #include <string>
-#include  "bplustreerecordleaf.h"
 
-// Tuning this parameter changes tree performance.
-#define NODE_SIZE 3
-#define LEAF_SIZE 4 // max 256
+#include "paraverkerneltypes.h"
+#include "memorytrace.h"
+#include "bplustreetypes.h"
+#include "bplustreerecordleaf.h"
 
-class BPlusNode
+namespace bplustree
 {
-  public:
-    virtual ~BPlusNode() {};
-
-    // Inserts rl in the tree.
-    // If a leaf split is done, newChild returns its address instead of NULL.
-    // Returns a pointer to the RecordLeaf with the smallest key.
-    virtual RecordLeaf *Insert( RecordLeaf *rl, BPlusNode *&newChild ) = 0;
-
-    // Returns a pointer to the RecordLeaf with the smallest key of this node.
-    virtual RecordLeaf *MinKey() = 0;
-
-    // Same as MinKey, but all the subtree is searched.
-    virtual RecordLeaf *MinKeyTotal() = 0;
-
-    // Returns a pointer to the record_t stored in the i cell of the tree.
-    virtual bool GetLeafData( unsigned char ii, record_t *&data ) = 0;
-
-    // Returns a pointer to the i cell of the leaf.
-    virtual bool GetLeafKey( unsigned char ii, RecordLeaf *&key ) = 0;
-    virtual unsigned int LinkRecords( record_t *&ini,
-                                      record_t *&fin,
-                                      int &recs2link,
-                                      RecordLeaf *&last_leaf) = 0;
-
-    virtual void Print( string indent ) = 0;
-    virtual BPlusNode *Split( BPlusNode *dest, RecordLeaf *&retdat ) = 0;
-    virtual bool PartialDelete( RecordLeaf *limit_key,
-                                BPlusNode **valid_predecessor )=0;
-    virtual unsigned char CountElems() = 0;
-};
+// Tuning this parameters changes tree performance.
+  static const UINT8 NODE_SIZE = 3;
+  static const UINT8 LEAF_SIZE = 4; // max 256
 
 
-class BPlusLeaf : public BPlusNode
-{
-  private:
-    // Performs a RecordLeaf ordered insertion in a node.
-    void InsertRecordInOrder(RecordLeaf *r);
-    void SetUsed(unsigned char used);
-    unsigned char GetUsed();
-    bool IsEmpty();
-    unsigned char CountElems(); // same as GetUsed
+  class BPlusNode
+  {
+    public:
 
-  public:
-    RecordLeaf records[LEAF_SIZE];
+      virtual ~BPlusNode()
+      {};
 
-    BPlusLeaf();
-    ~BPlusLeaf();
-    virtual RecordLeaf *Insert( RecordLeaf *rl, BPlusNode *&newChild );
-    virtual RecordLeaf *MinKey();
-    virtual RecordLeaf *MinKeyTotal();
+      /************************************************************************
+       * Inserts rl in the tree.
+       * If a leaf split is done, newChild returns its address instead of NULL.
+       * Returns a pointer to the RecordLeaf with the smallest key.
+       ************************************************************************/
+      virtual RecordLeaf *insert( RecordLeaf *rl, BPlusNode *&newChild ) = 0;
 
-    // Inserts a RecordLeaf in the first free position.
-    void AppendRecord(RecordLeaf newRecord);
+      /************************************************************************
+       * Returns a pointer to the RecordLeaf with the smallest key of this node.
+       ************************************************************************/
+      virtual RecordLeaf *minKey() = 0;
 
-    // Inserts a RecordLeaf in the node. If it's full, splits returning
-    // the new leaf and the smallest key (retKey).
-    BPlusLeaf *SplitAndInsert(RecordLeaf *rec, RecordLeaf *&retKey);
+      /************************************************************************
+       * Same as MinKey, but all the subtree is searched.
+       ************************************************************************/
+      virtual RecordLeaf *minKeyTotal() = 0;
 
-    virtual BPlusLeaf *Split(BPlusNode *dest, RecordLeaf *&retdat );
+      /************************************************************************
+       * Returns a pointer to the TRecord stored in the i cell of the tree.
+       ************************************************************************/
+      virtual bool getLeafData( UINT8 ii, TRecord *&data ) = 0;
 
-    virtual bool GetLeafData(unsigned char ii, record_t *&data);
-    virtual bool GetLeafKey(unsigned char ii,  RecordLeaf *&key);
+      /************************************************************************
+       * Returns a pointer to the i cell of the leaf.
+       ************************************************************************/
+      virtual bool getLeafKey( UINT8 ii, RecordLeaf *&key ) = 0;
+      virtual UINT32 linkRecords( TRecord *&ini,
+                                  TRecord *&fin,
+                                  int &recs2link,
+                                  RecordLeaf *&last_leaf ) = 0;
 
-    virtual unsigned int LinkRecords( record_t *&ini, record_t *&fin,
-                                       int &recs2link,
-                                       RecordLeaf *&last_leaf);
-
-    virtual void Print(string indent);
-    virtual bool PartialDelete( RecordLeaf *limit_key,
-                                BPlusNode **valid_predecessor );
-};
-
-
-class BPlusInternal : public BPlusNode
-{
-  public:
-    unsigned char used; // to be removed.
-    RecordLeaf *key[NODE_SIZE];
-    BPlusNode  *child[NODE_SIZE+1];
-
-    BPlusInternal();
-    ~BPlusInternal();
-    virtual RecordLeaf *Insert( RecordLeaf *rl, BPlusNode *&newChild );
-    virtual RecordLeaf *MinKey();
-    virtual RecordLeaf *MinKeyTotal();
-    void InsertInOrder( BPlusNode *c );
-    void Append( BPlusNode *newNode );
-    BPlusInternal *SplitAndInsert( BPlusNode *c, RecordLeaf *&retdat );
-    virtual BPlusInternal *Split(BPlusNode *dest, RecordLeaf *&retdat );
-
-    virtual bool GetLeafData(unsigned char ii, record_t *&data);
-    virtual bool GetLeafKey(unsigned char ii,  RecordLeaf *&key);
-
-    virtual void Print(string indent);
-    virtual unsigned int LinkRecords( record_t *&ini,
-                                      record_t *&fin,
-                                      int &recs2link,
-                                      RecordLeaf *&last_leaf );
-    virtual bool PartialDelete( RecordLeaf *limit_key,
-                                BPlusNode **valid_predecessor );
-    unsigned char CountElems();
-};
+      virtual BPlusNode *split( BPlusNode *dest, RecordLeaf *&retdat ) = 0;
+      virtual bool partialDelete( RecordLeaf *limit_key,
+                                  BPlusNode **valid_predecessor ) = 0;
+      //virtual UINT8 countElems() = 0;
+      virtual void print( string indent ) = 0;
+  };
 
 
-class BPlusTree
-{
-  public:
+  class BPlusLeaf : public BPlusNode
+  {
+    public:
+      RecordLeaf records[LEAF_SIZE];
 
-    struct TRecord
-    {
-      TRecordType type;
-      TRecordTime time;
-      union
+    public:
+      BPlusLeaf();
+      ~BPlusLeaf();
+      virtual RecordLeaf *insert( RecordLeaf *rl, BPlusNode *&newChild );
+      virtual RecordLeaf *minKey();
+      virtual RecordLeaf *minKeyTotal();
+
+      /************************************************************************
+       * Inserts a RecordLeaf in the first free position.
+       ************************************************************************/
+      void appendRecord( RecordLeaf newRecord );
+
+      /************************************************************************
+       * Inserts a RecordLeaf in the node. If it's full, splits returning
+       * the new leaf and the smallest key (retKey).
+       ************************************************************************/
+      BPlusLeaf *splitAndInsert( RecordLeaf *rec, RecordLeaf *&retKey );
+
+      virtual BPlusLeaf *split( BPlusNode *dest, RecordLeaf *&retdat );
+
+      virtual bool getLeafData( UINT8 ii, TRecord *&data );
+      virtual bool getLeafKey( UINT8 ii,  RecordLeaf *&key );
+
+      virtual UINT32 linkRecords( TRecord *&ini, TRecord *&fin,
+                                  int &recs2link,
+                                  RecordLeaf *&last_leaf );
+
+      virtual void print( string indent );
+      virtual bool partialDelete( RecordLeaf *limit_key,
+                                  BPlusNode **valid_predecessor );
+
+    private:
+      /************************************************************************
+       * Performs a RecordLeaf ordered insertion in a node.
+       ************************************************************************/
+      void insertRecordInOrder( RecordLeaf *r );
+
+      void setUsed( UINT8 used );
+      UINT8 getUsed();
+      inline bool isEmpty() { return ( getUsed() == (UINT8)0 ); }
+      // UINT8 countElems();
+  };
+
+
+  class BPlusInternal : public BPlusNode
+  {
+    public:
+      UINT8 used; // to be removed.
+      RecordLeaf *key[NODE_SIZE];
+      BPlusNode  *child[NODE_SIZE+1];
+
+      BPlusInternal();
+      ~BPlusInternal();
+      virtual RecordLeaf *insert( RecordLeaf *rl, BPlusNode *&newChild );
+      virtual RecordLeaf *minKey();
+      virtual RecordLeaf *minKeyTotal();
+      void insertInOrder( BPlusNode *c );
+      void append( BPlusNode *newNode );
+      BPlusInternal *splitAndInsert( BPlusNode *c, RecordLeaf *&retdat );
+      virtual BPlusInternal *split( BPlusNode *dest, RecordLeaf *&retdat );
+
+      virtual bool getLeafData( UINT8 ii, TRecord *&data );
+      virtual bool getLeafKey( UINT8 ii,  RecordLeaf *&key );
+
+      virtual void print( string indent );
+      virtual UINT32 linkRecords( TRecord *&ini,
+                                  TRecord *&fin,
+                                  int &recs2link,
+                                  RecordLeaf *&last_leaf );
+      virtual bool partialDelete( RecordLeaf *limit_key,
+                                  BPlusNode **valid_predecessor );
+      //UINT8 countElems();
+  };
+
+
+  class BPlusTree : public MemoryTrace
+  {
+    public:
+
+      BPlusNode *root;
+      BPlusNode *ini;
+      BPlusNode *fin;
+      TRecord *rini; // returns the initial record.
+      TRecord *rfin; // returns the final record.
+      RecordLeaf *tmpAux; // Temporal copy of RecordLeaf to be inserted. Needed?
+      UINT32 recordsInserted;
+      RecordLeaf *lastLeaf;
+      UINT32 recordsLinkedLastTime;
+
+      // Methods
+      BPlusTree();
+      ~BPlusTree();
+      void insert( TRecord *r );
+
+      inline  BPlusNode *getIni()
       {
-        struct TStateRecord stateRec;
-        struct TEventRecord eventRec;
-        struct TCommRecord  commRec;
-      } URecordInfo;
-      struct TRecord *next, *prev;
-      struct TRecord *threadNext, *threadPrev;
-    }
+        return ini;
+      };
 
-    BPlusNode *root;
-    BPlusNode *ini;
-    BPlusNode *fin;
-    record_t *rini; // returns the initial record.
-    record_t *rfin; // returns the final record.
-    RecordLeaf *tmp_aux; // Temporal copy of RecordLeaf to be inserted. Needed?
-    unsigned int records_inserted;
-    RecordLeaf *last_leaf;
-    unsigned int records_linked_last_time;
+      bool getLeafData( UINT8 ii, TRecord *&data );
+      bool getLeafKey( UINT8 ii, RecordLeaf *&key );
+      inline UINT32 getNumRecords()
+      {
+        return recordsInserted;
+      }
+      inline TRecord *getIniRecord()
+      {
+        return rini;
+      }
+      inline TRecord *getFinRecord()
+      {
+        return rfin;
+      }
+      void getRecordFirstTime( TRecord **rft );
 
-    // Methods
-    BPlusTree();
-    ~BPlusTree();
-    void Insert( record_t *r );
-    BPlusNode *GetIni(){ return ini; };
+      UINT32 linkRecords( int recs2link );
+      void print();
+      void partialDelete();
 
-    bool GetLeafData( unsigned char ii, record_t *&data );
-    bool GetLeafKey( unsigned char ii, RecordLeaf *&key );
-    unsigned int GetNumRecords() { return records_inserted; }
-    record_t *GetIniRecord() { return rini; }
-    record_t *GetFinRecord() { return rfin; }
-    void GetRecordFirstTime( record_t **rft );
+    /**************************************************************************
+     * MemoryTrace Inherited Iterator.
+     **************************************************************************/
+    class iterator : public MemoryTrace::iterator
+    {
+        public:
+          iterator();
 
-    unsigned int LinkRecords( int recs2link );
-    void Print();
-    void PartialDelete();
-};
+          iterator( TRecord *whichRecord );
+
+          virtual ~iterator();
+
+          virtual void operator++();
+          virtual void operator--();
+
+          virtual TRecordType  getType() const;
+          virtual TRecordTime  getTime() const;
+          virtual TThreadOrder getThread() const;
+          virtual TCPUOrder    getCPU() const;
+          virtual TEventType   getEventType() const;
+          virtual TEventValue  getEventValue() const;
+          virtual TState       getState() const;
+          virtual TRecordTime  getStateEndTime() const;
+          virtual TCommID      getCommIndex() const;
+
+        protected:
+
+        private:
+          TRecord *record;
+      };
+
+    class ThreadIterator : public BPlusTree::iterator, MemoryTrace::ThreadIterator
+    {
+      public:
+        //ThreadIterator();
+        //ThreadIterator( TRecord *whichRecord );
+
+        virtual ~ThreadIterator();
+
+        virtual void operator++();
+        virtual void operator--();
+    };
+
+    class CPUIterator : public BPlusTree::iterator, MemoryTrace::CPUIterator
+    {
+      public:
+        //CPUIterator();
+        //CPUIterator( TRecord *whichRecord );
+
+        virtual ~CPUIterator();
+
+        virtual void operator++();
+        virtual void operator--();
+    };
+
+      // MemoryTrace Inherited Methods
+    virtual MemoryTrace::iterator& begin() const;
+    virtual MemoryTrace::iterator& end() const;
+    virtual MemoryTrace::iterator& threadBegin( TThreadOrder whichThread ) const;
+    virtual MemoryTrace::iterator& threadEnd( TThreadOrder whichThread ) const;
+    virtual MemoryTrace::iterator& CPUBegin( TCPUOrder whichCPU ) const;
+    virtual MemoryTrace::iterator& CPUEnd( TCPUOrder whichCPU ) const;
+
+    virtual void getRecordByTime( vector<MemoryTrace::iterator *>& listIter,
+                                  TRecordTime whichTime ) const;
+
+  };
+}
+
 #endif

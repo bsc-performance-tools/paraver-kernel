@@ -1,8 +1,10 @@
-using namespace std;
-
-//#include "paraver.h"
 #include <math.h>
+
 #include "bplustree.h"
+#include "bplustreeexception.h"
+
+using namespace std;
+using namespace bplustree;
 
 
 /****************************************************************************
@@ -13,41 +15,46 @@ using namespace std;
    #     # #       #       #     #       # #       #       ####### #
    #     # #       #       #     # #     # #       #       #     # #
    ######  #       #######  #####   #####  ####### ####### #     # #
-****************************************************************************/
+ ****************************************************************************/
 
 BPlusLeaf::BPlusLeaf()
 {
-  SetUsed( 0 );
+  setUsed( 0 );
 }
+
+
 BPlusLeaf::~BPlusLeaf()
 {}
 
-RecordLeaf *BPlusLeaf::MinKey()
+
+RecordLeaf *BPlusLeaf::minKey()
 {
-  return &records[0];
-}
-RecordLeaf *BPlusLeaf::MinKeyTotal()
-{
-  return &records[0];
+  return &records[ 0 ];
 }
 
 
-void BPlusLeaf::SetUsed( unsigned char used )
+RecordLeaf *BPlusLeaf::minKeyTotal()
+{
+  return &records[ 0 ];
+}
+
+
+void BPlusLeaf::setUsed( UINT8 used )
 {
   if ( used < LEAF_SIZE )
   {
-    records[LEAF_SIZE-1].SetOrder( ( RecOrder_t )used );
-    records[LEAF_SIZE-1].SetRecordDirect( NULL );
+    records[ LEAF_SIZE - 1 ].setOrder( ( RecordLeaf::TRecordOrder )used );
+    records[ LEAF_SIZE - 1 ].setRecordDirect( NULL );
   }
 }
 
 
-unsigned char BPlusLeaf::GetUsed()
+UINT8 BPlusLeaf::getUsed()
 {
-  unsigned char used;
+  UINT8 used;
 
-  if ( records[LEAF_SIZE-1].GetRecord() == NULL )
-    used = ( unsigned char )records[LEAF_SIZE-1].GetOrder();
+  if ( records[ LEAF_SIZE - 1 ].getRecord() == NULL )
+    used = ( UINT8 )records[ LEAF_SIZE - 1 ].getOrder();
   else
     used = LEAF_SIZE;
 
@@ -55,259 +62,240 @@ unsigned char BPlusLeaf::GetUsed()
 }
 
 
-void BPlusLeaf::InsertRecordInOrder( RecordLeaf *rl )
+void BPlusLeaf::insertRecordInOrder( RecordLeaf *rl )
 {
-  bool done( false );
-  unsigned char used = GetUsed();
+  bool inserted( false );
+  UINT8 used = getUsed();
 
-  for ( unsigned char ii = 0; ii < used; ii++ )
-    if ( *rl < records[ii] )
+  for ( UINT8 ii = 0; ii < used; ii++ )
+  {
+    if ( *rl < records[ ii ] )
     {
-      for ( unsigned char jj = used; jj > ii; jj-- )
-        records[jj] = records[jj-1];
+      for ( UINT8 jj = used; jj > ii; jj-- )
+        records[ jj ] = records[ jj - 1 ];
 
-      records[ii] = *rl;
-      done = true;
+      records[ ii ] = *rl;
+      inserted = true;
       break;
     }
+  }
 
-  if ( !done )
-    records[used] = *rl;
+  if ( !inserted )
+    records[ used ] = *rl;
 
-  used++;
-  SetUsed( used );
+  setUsed( ++used );
 }
 
 
-RecordLeaf *BPlusLeaf::Insert( RecordLeaf *rl, BPlusNode *&newChild )
+RecordLeaf *BPlusLeaf::insert( RecordLeaf *rl, BPlusNode *&newChild )
 {
   RecordLeaf *retKey;
-  unsigned char used = GetUsed();
+  UINT8 used = getUsed();
 
   if ( used < LEAF_SIZE )
   {
-    InsertRecordInOrder( rl );
+    insertRecordInOrder( rl );
     newChild = NULL;
   }
   else
-    newChild = SplitAndInsert( rl , retKey );
+    newChild = splitAndInsert( rl , retKey );
 
   return retKey;
 }
 
 
-BPlusLeaf *BPlusLeaf::Split( BPlusNode *dest, RecordLeaf *&retdat )
+BPlusLeaf *BPlusLeaf::split( BPlusNode *dest, RecordLeaf *&retdat )
 {
   BPlusLeaf *newLeaf = new BPlusLeaf;
-  unsigned char used = GetUsed();
-  unsigned char d = ( used - 2 ) / 2;
+  UINT8 used = getUsed();
+  UINT8 endPos = ( used - 2 ) / 2;
 
-  for ( unsigned char ii = d + 1; ii < used; ii++ )
-    newLeaf->AppendRecord( records[ii] );
+  for ( UINT8 ii = endPos + 1; ii < used; ii++ )
+    newLeaf->appendRecord( records[ii] );
 
-  used = d + 1;
-  SetUsed( used );
+  setUsed( endPos + 1 );
 
   dest = newLeaf;
-  retdat = newLeaf->MinKey();
+  retdat = newLeaf->minKey();
+
   return newLeaf;
 }
 
 
-BPlusLeaf *BPlusLeaf::SplitAndInsert( RecordLeaf *rec, RecordLeaf *&retKey )
+BPlusLeaf *BPlusLeaf::splitAndInsert( RecordLeaf *rec, RecordLeaf *&retKey )
 {
   BPlusLeaf *newLeaf = new BPlusLeaf;
-  unsigned char used = GetUsed();
-  unsigned char d = ( used - 2 ) / 2;
+  UINT8 used = getUsed();
+  UINT8 endPos = ( used - 2 ) / 2;
+  BPlusNode *newNode( NULL );
 
-  if ( ( d*2 < used ) && ( *rec >= records[d+1] ) )
-    d++;
+  if ( ( endPos * 2 < used ) && ( *rec >= records[ endPos + 1 ] ) )
+    endPos++;
 
-  for ( unsigned char ii = d + 1; ii < used; ii++ )
-    newLeaf->AppendRecord( records[ii] );
+  for ( UINT8 ii = endPos + 1; ii < used; ii++ )
+    newLeaf->appendRecord( records[ii] );
 
-  used = d + 1;
-  SetUsed( used );
-  BPlusNode *c( NULL );
+  setUsed( endPos + 1 );
 
-  if ( *rec < *newLeaf->MinKey() )
-    Insert( rec, c );
+  if ( *rec < *newLeaf->minKey() )
+    insert( rec, newNode );
   else
-    newLeaf->Insert( rec, c );
+    newLeaf->insert( rec, newNode );
 
-  retKey = newLeaf->MinKey();
+  retKey = newLeaf->minKey();
 
   return newLeaf;
 }
 
 
-void BPlusLeaf::AppendRecord( RecordLeaf newRecord )
+void BPlusLeaf::appendRecord( RecordLeaf newRecord )
 {
-  unsigned char used = GetUsed();
+  UINT8 used = getUsed();
+
   if ( used < LEAF_SIZE - 1 )
   {
-    records[used++] = newRecord;
-    SetUsed( used );
+    records[ used ] = newRecord;
+    setUsed( ++used );
   }
   else
-    cout << "\nERROR - Leaf\n"; // usar errores!!
+    throw BPlusTreeException( BPlusTreeException::invalidAppend,
+                              "Leaf is full.",
+                              __FILE__,
+                              __LINE__ );
 }
 
 
-bool BPlusLeaf::GetLeafData( unsigned char ii, record_t *&data )
+bool BPlusLeaf::getLeafData( UINT8 ii, TRecord *&data )
 {
-  unsigned char used = GetUsed();
+  UINT8 used = getUsed();
+
   if ( ii < used )
-  {
-    data = records[ii].GetRecord();
-    return true;
-  }
+    data = records[ ii ].getRecord();
   else
-  {
     data = NULL;
-    return false;
-  }
+
+  return ( ii < used );
 }
 
 
-bool BPlusLeaf::GetLeafKey( unsigned char ii,  RecordLeaf *&key )
+bool BPlusLeaf::getLeafKey( UINT8 ii, RecordLeaf *&key )
 {
-  unsigned char used = GetUsed();
+  UINT8 used = getUsed();
+
   if ( ii < used )
-  {
-    key = &records[ii];
-    return true;
-  }
+    key = &records[ ii ];
   else
-  {
     key = NULL;
-    return false;
-  }
+
+  return ( ii < used );
 }
 
 
-// primera version: los enlaza todos en la hoja.
-unsigned int BPlusLeaf::LinkRecords( record_t *&ini,
-                                     record_t *&fin,
-                                     int &recs2link,
-                                     RecordLeaf *&last_leaf )
+UINT32 BPlusLeaf::linkRecords( TRecord *&ini,
+                               TRecord *&fin,
+                               int &recs2link,
+                               RecordLeaf *&lastLeaf )
 {
-  record_t *ant, *act, *inicial;
-  unsigned char used = GetUsed();
-  unsigned char num = 0;
-  unsigned int local_recs2link;
+  TRecord *prev, *cur, *initial;
+  UINT8 used = getUsed();
+  UINT8 num = 0;
+  UINT32 localRecs2link;
 
-  inicial = NULL;
-  ant = NULL;
-  act = NULL;
+  initial = NULL;
+  prev    = NULL;
+  cur     = NULL;
 
-#ifdef DEBUG_BTREE
-  // cout << endl << "<HOJA:Records pendientes: " << recs2link;
-#endif
-  // enlazar todos los records de la hoja
   if ( ( recs2link > LEAF_SIZE ) || ( recs2link < 0 ) )
-    local_recs2link = LEAF_SIZE;
+    localRecs2link = LEAF_SIZE;  // Link all records in the leaf.
   else
-    local_recs2link = recs2link;
+    localRecs2link = recs2link;  // Link only indicated records
 
-  if ( ( used > 0 )  && ( local_recs2link > 0 ) )
+  if ( ( used > 0 )  && ( localRecs2link > 0 ) )
   {
-    ant = records[0].GetRecord();
-    inicial = ant;
+    prev = records[ 0 ].getRecord();
+    initial = prev;
 
     num = 1;
-    while ( ( num < used ) && ( --local_recs2link > 0 ) )
+    while ( ( num < used ) && ( --localRecs2link > 0 ) )
     {
-      act = records[num].GetRecord();
-      act->prev = ant;
-      ant->next = act;
-      ant = act;
+      cur = records[ num ].getRecord();
+      cur->prev = prev;
+      prev->next = cur;
+      prev = cur;
       num++;
     }
-    ini = inicial;
-    fin = ant;
-    last_leaf = &records[num-1];
+    ini = initial;
+    fin = prev;
+    lastLeaf = &records[ num - 1 ];
   }
-#ifdef DEBUG_BTREE
-  //cout << "--> enlazados " << (int)num << endl;
-#endif
+
   if ( recs2link > 0 )
     recs2link -= num;
 
-  return ( unsigned int )num;
+  return ( UINT32 )num;
 }
 
 
-void BPlusLeaf::Print( string indent )
+void BPlusLeaf::print( string indent )
 {
-  unsigned char used = GetUsed();
-  cout << indent << "<" << ( int )used <<  endl;
-  for ( unsigned char ii = 0; ii < used - 1; ii++ )
-    cout << indent << records[ii];
+  UINT8 used = getUsed();
 
-  cout << indent << records[used-1];
-  cout << indent << ">\n\n";
+  cout << indent << "<" << ( int )used << endl;
+  for ( UINT8 ii = 0; ii < used - 1; ii++ )
+    cout << indent << records[ ii ];
+
+  cout << indent << records[ used - 1 ];
+  cout << indent << ">" << endl << endl;
 }
-
 
 // ojo, no se pueden hacer dos partial deletes seguidos, porque es la
-// operacion de LinkRecords la que asigna last_leaf;
+// operacion de linkRecords la que asigna last_leaf;
 // si tras un partial delete insertamos nuevos records, y alguno va
 // delante, se podria perder
-bool BPlusLeaf::IsEmpty()
+bool BPlusLeaf::partialDelete( RecordLeaf *limitKey,
+                               BPlusNode **validPredecessor )
 {
-  return ( GetUsed() == 0 );
-}
-
-
-bool BPlusLeaf::PartialDelete( RecordLeaf *limit_key,
-                               BPlusNode **valid_predecessor )
-{
-  unsigned char used = GetUsed();
-  unsigned char num = 0;
+  UINT8 used = getUsed();
+  UINT8 num = 0;
   bool end = false;
-  bool deleted_all = false;
+  bool deletedAll = false;
 
   if ( used > 0 )
   {
-    // contar las que son mas pequenyas
+    // Find greater key.
     num = 0;
     while ( !end )
     {
-      if ( num < used )
-      {
-        if ( records[num] <= *limit_key )
-          num++;
-        else
-          end = true;
-      }
+      if ( ( num < used ) && ( records[ num ] <= *limitKey ) )
+        num++;
       else
         end = true;
     }
 
-    // copiar las mayores al principio
-    for ( unsigned char ii = num; ii < used; ii++ )
-      records[ii-num] = records[ii];
+    // Copy the greater ones to the beginning.
+    for ( UINT8 ii = num; ii < used; ii++ )
+      records[ ii - num ] = records[ ii ];
 
-    // actualizar used
+    // Update used
     used -= num;
-    deleted_all = ( used == 0 );
-    SetUsed( used );
-    if ( deleted_all )
+    deletedAll = ( used == 0 );
+    setUsed( used );
+
+    if ( deletedAll )
       delete this;
   }
 
-  return ( deleted_all );
+  return ( deletedAll );
 }
 
-
-unsigned char BPlusLeaf::CountElems()
+/*
+UINT8 BPlusLeaf::countElems()
 {
-  return GetUsed();
+  return getUsed();
 }
+*/
 
-
-/****************************************************************************
+/******************************************************************************
                 ######  ######  #       #     #  #####
                 #     # #     # #       #     # #     #
                 #     # #     # #       #     # #
@@ -323,311 +311,321 @@ unsigned char BPlusLeaf::CountElems()
           #    #   # #    #    #       #   #   #   # # ####### #
           #    #    ##    #    #       #    #  #    ## #     # #
          ###   #     #    #    ####### #     # #     # #     # #######
-****************************************************************************/
+ ******************************************************************************/
 BPlusInternal::BPlusInternal()
 {
-
   used = 0;
-  for ( unsigned char ii = 0; ii < NODE_SIZE; ii++ )
+  for ( UINT8 ii = 0; ii < NODE_SIZE; ii++ )
   {
-    key[ii] = NULL;
-    child[ii] = NULL;
+    key[ ii ] = NULL;
+    child[ ii ] = NULL;
   }
-  child[NODE_SIZE] = NULL;
+  child[ NODE_SIZE ] = NULL;
 }
+
 
 BPlusInternal::~BPlusInternal()
 {
-  for ( unsigned char ii = 0; ii < used; ii++ )
-    delete child[ii];
+  for ( UINT8 ii = 0; ii < used; ii++ )
+    delete child[ ii ];
 }
 
-RecordLeaf *BPlusInternal::MinKey()
+
+RecordLeaf *BPlusInternal::minKey()
 {
-  return key[0];
-}
-RecordLeaf *BPlusInternal::MinKeyTotal()
-{
-  return child[0]->MinKeyTotal();
+  return key[ 0 ];
 }
 
-void BPlusInternal::InsertInOrder( BPlusNode *c )
+
+RecordLeaf *BPlusInternal::minKeyTotal()
 {
-  bool done( false );
+  return child[ 0 ]->minKeyTotal();
+}
+
+
+void BPlusInternal::insertInOrder( BPlusNode *newNode )
+{
+  bool inserted( false );
 
   for ( int ii = ( int )used - 2; ii >= 0; ii-- )
-    if ( *c->MinKeyTotal() > *key[ii] )
+  {
+    if ( *newNode->minKeyTotal() > *key[ ii ] )
     {
-      for ( unsigned char jj = used - 2; jj >= ii + 1; jj-- )
+      for ( UINT8 jj = used - 2; jj >= ii + 1; jj-- )
       {
-        key[jj+1] = key[jj];
-        child[jj+2] = child[jj+1];
+        key[ jj + 1 ] = key[ jj ];
+        child[ jj + 2 ] = child[ jj + 1 ];
       }
-      child[ii+2] = c;
-      key[ii+1] = c->MinKeyTotal();
-      done = true;
+      child[ ii + 2 ] = newNode;
+      key[ ii + 1 ] = newNode->minKeyTotal();
+      inserted = true;
       break;
     }
+  }
 
-  if ( !done )
+  if ( !inserted )
   {
     for ( int jj = ( int )used - 2; jj >= 0; jj-- )
     {
-      key[jj+1] = key[jj];
-      child[jj+2] = child[jj+1];
+      key[ jj + 1 ] = key[ jj ];
+      child[ jj + 2 ] = child[ jj + 1 ];
     }
-    child[1] = child[0];
-    child[0] = c;
+    child[ 1 ] = child[ 0 ];
+    child[ 0 ] = newNode;
 
-    if ( *child[0]->MinKey() > *child[1]->MinKey() )
+    if ( *child[ 0 ]->minKey() > *child[ 1 ]->minKey() )
     {
-      BPlusNode *tmp = child[0];
-      child[0] = child[1];
-      child[1] = tmp;
+      BPlusNode *tmp = child[ 0 ];
+      child[ 0 ] = child[ 1 ];
+      child[ 1 ] = tmp;
     }
-    key[0] = child[1]->MinKeyTotal();
+    key[ 0 ] = child[ 1 ]->minKeyTotal();
   }
 
   used++;
 
-  for ( unsigned char ii = 0; ii < used; ii++ )
-    if ( child[ii] == NULL )
+  for ( UINT8 ii = 0; ii < used; ii++ )
+  {
+    if ( child[ ii ] == NULL )
       used = ii;
+  }
 }
 
-void BPlusInternal::Append( BPlusNode *newNode )
+
+void BPlusInternal::append( BPlusNode *newNode )
 {
-  child[used] = newNode;
+  child[ used ] = newNode;
 
   if ( used >= 1 )
-    key[used-1] = newNode->MinKeyTotal();
+    key[ used - 1 ] = newNode->minKeyTotal();
 
   used++;
 }
 
-BPlusInternal *BPlusInternal::SplitAndInsert( BPlusNode *c,
+
+BPlusInternal *BPlusInternal::splitAndInsert( BPlusNode *newNode,
     RecordLeaf *&retdat )
 {
   BPlusInternal *newInternal = new BPlusInternal;
-  unsigned char d = ( ( unsigned char ) ceil( used / 2.0 ) ) - 1; //?
-  bool intothis = false;
+  UINT8 middle = ( ( UINT8 ) ceil( used / 2.0 ) ) - 1;
+  bool intoThis = false;
 
-  if ( *c->MinKey() < *child[d]->MinKey() )
+  if ( *newNode->minKey() < *child[ middle ]->minKey() )
   {
-    d--;
-    intothis = true;
+    middle--;
+    intoThis = true;
   }
 
-  for ( unsigned char ii = d + 1; ii < used; ii++ )
-    newInternal->Append( child[ii] );
+  for ( UINT8 ii = middle + 1; ii < used; ii++ )
+    newInternal->append( child[ ii ] );
 
-  used = d + 1;
+  used = middle + 1;
 
-  if ( intothis )
-    InsertInOrder( c );
+  if ( intoThis )
+    insertInOrder( newNode );
   else
-    newInternal->InsertInOrder( c );
+    newInternal->insertInOrder( newNode );
 
-  retdat = newInternal->MinKeyTotal();
+  retdat = newInternal->minKeyTotal();
 
   return newInternal;
 }
 
-RecordLeaf *BPlusInternal::Insert( RecordLeaf *rl, BPlusNode *&newChild )
+
+RecordLeaf *BPlusInternal::insert( RecordLeaf *rl, BPlusNode *&newChild )
 {
-  BPlusNode *c;
+  BPlusNode *newNode;
   RecordLeaf *retKey, *other;
-  unsigned char pos;
-  bool done( false );
+  UINT8 pos;
+  bool inserted( false );
 
   for ( pos = 0; pos < used - 1; pos++ )
-    if ( *rl < *key[pos] )
+    if ( *rl < *key[ pos ] )
     {
-      retKey = child[pos]->Insert( rl, c );
-      if ( c != NULL )
+      retKey = child[ pos ]->insert( rl, newNode );
+      if ( newNode != NULL )
       {
         if ( pos > 0 )
-          if ( *retKey < *key[pos-1] )
-            key[pos-1] = retKey;
+          if ( *retKey < *key[ pos - 1 ] )
+            key[ pos - 1 ] = retKey;
       }
-      done = true;
+      inserted = true;
       break;
     }
 
-  if ( !done )
+  if ( !inserted )
   {
-    retKey = child[used-1]->Insert( rl, c );
+    retKey = child[ used - 1 ]->insert( rl, newNode );
     pos = used - 1;
   }
 
-  if ( c == NULL )
+  if ( newNode == NULL )
     newChild = NULL;
   else
   {
     if ( used < NODE_SIZE + 1 )
     {
-      InsertInOrder( c );
+      insertInOrder( newNode );
       newChild = NULL;
     }
     else
     {
-      newChild = SplitAndInsert( c, retKey );
-      other = newChild->MinKeyTotal();
+      newChild = splitAndInsert( newNode, retKey );
+      other = newChild->minKeyTotal();
     }
   }
 
   return retKey;
 }
 
-bool BPlusInternal::GetLeafData( unsigned char ii, record_t *&data )
+
+bool BPlusInternal::getLeafData( UINT8 ii, TRecord *&data )
 {
-  return child[0]->GetLeafData( ii, data );
+  return child[ 0 ]->getLeafData( ii, data );
 }
 
-bool BPlusInternal::GetLeafKey( unsigned char ii, RecordLeaf *&key )
+
+bool BPlusInternal::getLeafKey( UINT8 ii, RecordLeaf *&key )
 {
-  return child[0]->GetLeafKey( ii, key );
+  return child[ 0 ]->getLeafKey( ii, key );
 }
 
-unsigned int BPlusInternal::LinkRecords( record_t *&ini, record_t *&fin,
-    int &recs2link,
-    RecordLeaf *&last_leaf )
-{
-  record_t *ant_ini, *ant_fin, *act_ini, *act_fin;
-  unsigned int records_linked = 0;
-  unsigned char ii = 0;
 
-#ifdef DEBUG_BTREE
-  //cout << '\t' << "[pend-->" << recs2link;
-#endif
-  // enlazar todos los records de la hoja
+UINT32 BPlusInternal::linkRecords( TRecord *&ini, TRecord *&fin,
+                                   int &recs2link,
+                                   RecordLeaf *&lastLeaf )
+{
+  TRecord *prevIni, *prevFin, *currIni, *currFin;
+  UINT32 recsLinked = 0;
+  UINT8 ii = 0;
+
+  // Link all the records in the leaf.
   if ( recs2link != 0 )
   {
-    ant_ini = ant_fin = act_ini = act_fin = NULL;
+    prevIni = prevFin = currIni = currFin = NULL;
 
-    records_linked += child[0]->LinkRecords( ant_ini, ant_fin, recs2link, last_leaf );
+    recsLinked += child[ 0]->linkRecords( prevIni, prevFin, recs2link, lastLeaf );
 
     ii = 1;
     while ( ( ii < used ) && ( recs2link != 0 ) )
     {
-      records_linked += child[ii]->LinkRecords( act_ini, act_fin, recs2link, last_leaf );
-      if ( act_fin != NULL )
+      recsLinked += child[ ii ]->linkRecords( prevIni, currFin, recs2link, lastLeaf );
+      if ( currFin != NULL )
       {
-        ant_fin->next = act_ini;
-        act_ini->prev = ant_fin;
-        // ant_ini se queda igual
-        ant_fin = act_fin;
+        prevFin->next = currIni;
+        currIni->prev = prevFin;
+        // ant_ini not modified
+        prevFin = currFin;
       }
       ii++;
     }
 
-    ini = ant_ini;
-    fin = ant_fin;
+    ini = prevIni;
+    fin = prevFin;
   }
 
-#ifdef DEBUG_BTREE
-  //cout << endl << "<-- quedan " << recs2link << "]" << '\t';
-#endif
-
-  return records_linked;
+  return recsLinked;
 }
 
 
-void BPlusInternal::Print( string indent )
+void BPlusInternal::print( string indent )
 {
   cout << indent << "^(" << ( int )used << ")" << endl;
   cout << indent << "[";
-  for ( unsigned char ii = 0; ii < used - 1; ii++ )
+
+  for ( UINT8 ii = 0; ii < used - 1; ii++ )
   {
-    if ( key[ii] != NULL )
-      cout << Get_time( key[ii]->GetRecord() ) << " ";
+    if ( key[ ii ] != NULL )
+      cout << ( key[ ii ]->getRecord() )->time << " ";
     else
       cout << "key " << ii << " NULL!!!";
   }
   cout << "]" << endl;
 
-  if ( child[0] != NULL )
-    child[0]->Print( indent + "  " );
+  if ( child[ 0 ] != NULL )
+    child[ 0 ]->print( indent + "  " );
   else
     cout << "child[0] NULL!!!";
-  for ( unsigned char ii = 1; ii < used; ii++ )
+  for ( UINT8 ii = 1; ii < used; ii++ )
   {
-    if ( child[0] != NULL )
-      child[ii]->Print( indent + "  " );
+    if ( child[ 0 ] != NULL )
+      child[ ii ]->print( indent + "  " );
     else
       cout << "child[0] NULL!!!";
   }
-  cout << indent << "v\n";
+  cout << indent << "v" << endl;
 }
 
-BPlusInternal *BPlusInternal::Split( BPlusNode *dest,
+
+BPlusInternal *BPlusInternal::split( BPlusNode *dest,
                                      RecordLeaf *&retdat )
 {
   BPlusInternal *newInternal = new BPlusInternal;
-  unsigned char d = ( ( unsigned char ) ceil( used / 2.0 ) ) - 1; //?
+  UINT8 middle = ( ( UINT8 ) ceil( used / 2.0 ) ) - 1;
 
 
-  for ( unsigned char ii = d + 1; ii < used; ii++ )
-    newInternal->Append( child[ii] );
+  for ( UINT8 ii = middle + 1; ii < used; ii++ )
+    newInternal->append( child[ ii ] );
 
-  used = d + 1;
+  used = middle + 1;
 
   dest = newInternal;
-  retdat = newInternal->MinKeyTotal();
+  retdat = newInternal->minKeyTotal();
+
   return newInternal;
 }
 
-unsigned char BPlusInternal::CountElems()
+/*
+UINT8 BPlusInternal::countElems()
 {
   return used;
 }
-
+*/
 
 /*****************************************************************************
- ** PartialDelete
+ ** partialDelete
  *****************************************************************************/
-bool BPlusInternal::PartialDelete( RecordLeaf *limit_key,
-                                   BPlusNode **valid_predecessor )
+bool BPlusInternal::partialDelete( RecordLeaf *limitKey,
+                                   BPlusNode **validPredecessor )
 {
-  unsigned char removed;
-  bool deleted_all = false;
+  UINT8 removed;
+  bool deletedAll = false;
   int ii;
-  BPlusNode *aux_valid_pred =  *valid_predecessor;
+  BPlusNode *auxValidPred =  *validPredecessor;
 
-  if ( limit_key != NULL )
+  if ( limitKey != NULL )
   {
     // Left recursive total delete.
     removed = 0;                       // testing <=
-    while ( ( removed < used - 1 ) && ( *key[removed] <= *limit_key ) )
+    while ( ( removed < used - 1 ) && ( *key[ removed ] <= *limitKey ) )
     {
-      delete child[removed];
+      delete child[ removed ];
       removed++;
     }
 
     // Recursive partial delete.
     if ( removed == used - 1 )
-      deleted_all = child[removed]->PartialDelete( limit_key,
-                    valid_predecessor );
+      deletedAll = child[ removed ]->partialDelete( limitKey,
+                   validPredecessor );
     else
-      deleted_all = child[removed]->PartialDelete( limit_key,
-                    &child[removed] );
+      deletedAll = child[removed]->partialDelete( limitKey, &child[ removed ] );
 
-    if ( deleted_all )
+    if ( deletedAll )
       removed++; // Count the last child.
 
     // Rearrange keys and childs, copying at the beginning of the node.
     // It could be improved implementing circular vector.
     for ( ii = removed; ii < used - 1; ii++ )
     {
-      key[ii-removed] = key[ii];
+      key[ ii - removed ] = key[ ii ];
       if ( removed != 0 )
-        key[ii] = NULL;
+        key[ ii ] = NULL;
     }
     for ( ii = removed; ii < used; ii++ )
     {
-      child[ii-removed] = child[ii];
+      child[ ii - removed ] = child[ ii ];
       if ( removed != 0 )
-        child[ii] = NULL;
+        child[ ii ] = NULL;
     }
     // Rearrange node size.
     used -= removed;
@@ -636,31 +634,31 @@ bool BPlusInternal::PartialDelete( RecordLeaf *limit_key,
     {
       case 0: // Treat ZOMBIE:  valid_predecessor-->zombie ==>
         //                valid_predecessor
-        deleted_all = true;
+        deletedAll = true;
         break;
       case 1: // Treat ZOMBIE:  valid_predecessor-->zombie--> only child  ==>
         //                valid_predecessor --> only_child
-        if ( *valid_predecessor != aux_valid_pred )
+        if ( *validPredecessor != auxValidPred )
         {
-          child[0] = NULL;
+          child[ 0 ] = NULL;
           delete this;
         }
         else
         {
-          *valid_predecessor = child[0];
-          child[0] = NULL;
+          *validPredecessor = child[ 0 ];
+          child[ 0 ] = NULL;
           delete this;
         }
-        deleted_all = false; // because we still have to check the childs
+        deletedAll = false; // because we still have to check the childs
         break;
       default:  // In fact, we should maintain the conditions about node filling
         // percent. Still not implemented.
-        deleted_all = false;  // returns deleted_all if child returns it.
+        deletedAll = false;  // returns deleted_all if child returns it.
         break;
     }
   }
 
-  return deleted_all;
+  return deletedAll;
 }
 
 
@@ -677,10 +675,10 @@ BPlusTree::BPlusTree()
 {
   root = NULL;
   ini = NULL;
-  tmp_aux = new RecordLeaf;
-  records_inserted = 0;
-  records_linked_last_time = 0;
-  last_leaf = NULL;
+  tmpAux = new RecordLeaf;
+  recordsInserted = 0;
+  recordsLinkedLastTime = 0;
+  lastLeaf = NULL;
 }
 
 
@@ -690,23 +688,25 @@ BPlusTree::~BPlusTree()
   {
     delete root;
   }
-  delete tmp_aux;
+  delete tmpAux;
 }
 
-void BPlusTree::GetRecordFirstTime( record_t **rft )
+
+void BPlusTree::getRecordFirstTime( TRecord **rft )
 {
-  if ( last_leaf == NULL )
+  if ( lastLeaf == NULL )
     // ojo last_leaf se actualiza al sacar.
-    *rft = NULL;  // error, nada se ha enlazado todavÃ­a.
+    *rft = NULL;  // error, nada se ha enlazado todavi­a.
   else
-    *rft = last_leaf->GetRecord();
+    *rft = lastLeaf->getRecord();
 }
 
-void BPlusTree::Insert( record_t *r )
-{
-  tmp_aux->SetRecord( r );
 
-  BPlusNode *c( NULL );
+void BPlusTree::insert( TRecord *r )
+{
+  tmpAux->setRecord( r );
+
+  BPlusNode *newNode( NULL );
 
   if ( root == NULL )
   {
@@ -714,67 +714,157 @@ void BPlusTree::Insert( record_t *r )
     root = ini;
   }
 
-  root->Insert( tmp_aux, c );
+  root->insert( tmpAux, newNode );
 
-  if ( c != NULL )
+  if ( newNode != NULL )
   {
     BPlusInternal *newRoot = new BPlusInternal;
-    newRoot->Append( root );
-    newRoot->Append( c );
+    newRoot->append( root );
+    newRoot->append( newNode );
     root = newRoot;
   }
 
-  records_inserted++;
-// cout << "Tras insertar, hay " << records_inserted <<  endl;
+  recordsInserted++;
 }
 
-bool BPlusTree::GetLeafData( unsigned char ii, record_t *&data )
+
+bool BPlusTree::getLeafData( UINT8 ii, TRecord *&data )
 {
-  return ini->GetLeafData( ii, data );
+  return ini->getLeafData( ii, data );
 }
 
-bool BPlusTree::GetLeafKey( unsigned char ii, RecordLeaf *&key )
+
+bool BPlusTree::getLeafKey( UINT8 ii, RecordLeaf *&key )
 {
-  return ini->GetLeafKey( ii, key );
+  return ini->getLeafKey( ii, key );
 }
 
-unsigned int BPlusTree::LinkRecords( int recs2link )
+
+UINT32 BPlusTree::linkRecords( int recs2link )
 {
-  unsigned int records_linked;
+  UINT32 recordsLinked;
 
-#ifdef DEBUG_BTREE
-  //cout<< "Records para borrar " << recs2link << endl;
-#endif
+  recordsLinked = root->linkRecords( rini, rfin, recs2link, lastLeaf );
+  recordsLinkedLastTime = recordsLinked;
 
-  records_linked = root->LinkRecords( rini, rfin, recs2link, last_leaf );
-
-#ifdef DEBUG_BTREE
-  // cout<< "Records pendientes de borrar " << recs2link << endl;
-  //cout<< "BPlusTree::LinkRecords: Ultima hoja :" << *last_leaf << endl;
-#endif
-//  cout << "Tras enlazar " << records_linked
-//       << ", quedan "     << records_inserted << endl;
-  records_linked_last_time = records_linked;
-  return records_linked;
+  return recordsLinked;
 }
 
-void BPlusTree::Print()
+
+void BPlusTree::print()
 {
   if ( root != NULL )
   {
-    root->Print( "" );
-    cout << '\n';
+    root->print( "" );
+    cout << endl;
   }
 }
 
 
-void BPlusTree::PartialDelete()
+void BPlusTree::partialDelete()
 {
   if ( root != NULL )
   {
-    root->PartialDelete( last_leaf, &root );
-    records_inserted -= records_linked_last_time;
-    if ( records_inserted <= 0 )
+    root->partialDelete( lastLeaf, &root );
+    recordsInserted -= recordsLinkedLastTime;
+    if ( recordsInserted <= 0 )
       root = NULL;
   }
 }
+
+/******************************************************************************
+ * MemoryTrace Inherited Iterator.
+ ******************************************************************************/
+BPlusTree::iterator::iterator( )
+{}
+
+BPlusTree::iterator::iterator( TRecord *whichRecord )
+{
+  record = whichRecord;
+}
+
+BPlusTree::iterator::~iterator()
+{}
+
+
+void BPlusTree::iterator::operator++()
+{
+}
+
+void BPlusTree::iterator::operator--()
+{}
+
+TRecordType  BPlusTree::iterator::getType() const
+{
+  return record->type;
+}
+
+TRecordTime  BPlusTree::iterator::getTime() const
+{
+  return record->time;
+}
+
+TThreadOrder BPlusTree::iterator::getThread() const
+{
+  return record->thread;
+}
+
+TCPUOrder    BPlusTree::iterator::getCPU() const
+{
+  return record->CPU;
+}
+
+TEventType   BPlusTree::iterator::getEventType() const
+{
+  return record->URecordInfo.eventRecord.type;
+}
+
+TEventValue  BPlusTree::iterator::getEventValue() const
+{
+  return record->URecordInfo.eventRecord.value;
+}
+
+TState       BPlusTree::iterator::getState() const
+{
+  return record->URecordInfo.stateRecord.state;
+}
+
+TRecordTime  BPlusTree::iterator::getStateEndTime() const
+{
+  return record->URecordInfo.stateRecord.endTime;
+}
+
+TCommID      BPlusTree::iterator::getCommIndex() const
+{
+  return record->URecordInfo.commRecord.index;
+}
+
+
+/**************************************************************************
+ * MemoryTrace Inherited ThreadIterator.
+ **************************************************************************/
+BPlusTree::ThreadIterator::~ThreadIterator()
+{}
+
+void BPlusTree::ThreadIterator::operator++()
+{}
+
+void BPlusTree::ThreadIterator::operator--()
+{}
+
+/**************************************************************************
+ * MemoryTrace Inherited CPUIterator.
+ **************************************************************************/
+BPlusTree::CPUIterator::~CPUIterator()
+{}
+
+void BPlusTree::CPUIterator::operator++()
+{}
+
+void BPlusTree::CPUIterator::operator--()
+{}
+
+
+void BPlusTree::getRecordByTime( vector<MemoryTrace::iterator *>& listIter,
+                                 TRecordTime whichTime ) const
+{}

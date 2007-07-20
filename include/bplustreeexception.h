@@ -10,7 +10,7 @@ class BPlusTreeException: public ParaverKernelException
     typedef enum
     {
       undefined = 0,
-      recordLeafNullRecordOperator,
+      invalidAppend,
       LAST
   } TErrorCode;
 

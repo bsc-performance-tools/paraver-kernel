@@ -9,7 +9,7 @@
 #include "memorytrace.h"
 #include "bplustreeblocks.h"
 
-using namespace BPlusTree;
+using namespace bplustree;
 
 class Trace
 {

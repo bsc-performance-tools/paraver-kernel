@@ -8,7 +8,7 @@
 
 using namespace std;
 
-namespace BPlusTree
+namespace bplustree
 {
   class BPlusTreeBlocks : public MemoryBlocks
   {

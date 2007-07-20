@@ -17,7 +17,7 @@ class TraceBodyIO
     static void read( fstream& whichStream, MemoryBlocks& whichMemory );
     static void write( fstream& whichStream,
                        const Trace& whichTrace,
-                       const MemoryTrace::iterator& record );
+                       const MemoryTrace::iterator *record );
   protected:
 
   private:

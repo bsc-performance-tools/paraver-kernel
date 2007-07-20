@@ -1,6 +1,6 @@
 #include "bplustreeblocks.h"
 
-using namespace BPlusTree;
+using namespace bplustree;
 
 const TRecordType BPlusTreeBlocks::commTypes[] =
   {

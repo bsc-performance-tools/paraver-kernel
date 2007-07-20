@@ -1,47 +1,49 @@
 #include <iomanip>
+
 #include "bplustreerecordleaf.h"
+#include "paraverkernelexception.h"
 
+using namespace bplustree;
 
-RecordLeaf::recordLeaf( TRecord *r )
+// Inits class attribute global_order.
+RecordLeaf::TRecordOrder RecordLeaf::global_order = 0;
+
+/******************************************************************************
+ * Constructors & Destructor Methods
+ ******************************************************************************/
+RecordLeaf::RecordLeaf( TRecord *r ) // Preferred form.
 {
   rec = r;
-  ord = global_order++;
+  ord = RecordLeaf::global_order++;
 }
 
-
-RecordLeaf::recordLeaf( TRecord *r, TRecordOrder order )
+RecordLeaf::RecordLeaf( TRecord *r, TRecordOrder order )
 {
   rec = r;
   ord = order;
 }
 
-
-RecordLeaf::recordLeaf()
+RecordLeaf::RecordLeaf()
 {
   rec = NULL;
   ord = 0;
 }
 
-
-RecordLeaf::~recordLeaf()
+RecordLeaf::~RecordLeaf()
 {}
 
 
-void RecordLeaf::setRecord( TRecord *rec )
-{
-  this->rec  = rec;
-  ord = global_order++;
-}
-
-
+/******************************************************************************
+ * Assign & Compare Methods
+ ******************************************************************************/
 RecordLeaf& RecordLeaf::operator=( const RecordLeaf &rl )
 {
   if ( rl.rec == NULL )
   {
-    throw ( ParaverKernelException::nullOperand,
-            "BPlusTree: RecordLeaf: Op: '='",
-            __FILE__,
-            __LINE__ );
+    throw ParaverKernelException( ParaverKernelException::nullOperand,
+                                  "BPlusTree: RecordLeaf: Op: '='" ,
+                                  __FILE__,
+                                  __LINE__ );
   }
 
   // Does not make a copy!
@@ -59,16 +61,16 @@ bool RecordLeaf::operator<( const RecordLeaf &rl )
 
   if ( rl.rec == NULL )
   {
-    throw ( ParaverKernelException::nullOperand,
-            "BPlusTree: RecordLeaf: Op: '<'",
-            __FILE__,
-            __LINE__ );
+    throw ParaverKernelException( ParaverKernelException::nullOperand,
+                                  "BPlusTree: RecordLeaf: Op: '<'",
+                                  __FILE__,
+                                  __LINE__ );
   }
 
-  time1 = rec.getTime();
-  type1 = rec.getTypeOrdered();
-  time2 = rl.rec.getTime();
-  type2 = rl.rec.getTypeOrdered();
+  time1 = getTime( rec );
+  type1 = getTypeOrdered( rec );
+  time2 = getTime( rl.rec );
+  type2 = getTypeOrdered( rl.rec );
 
   return ( ( time1 < time2 ) ||
            ( ( time1 == time2 ) && ( type1 < type2 ) ) ||
@@ -84,16 +86,16 @@ bool RecordLeaf::operator>( const RecordLeaf &rl )
 
   if ( rl.rec == NULL )
   {
-    throw ( ParaverKernelException::nullOperand,
-            "BPlusTree: RecordLeaf: Op: '>'",
-            __FILE__,
-            __LINE__ );
+    throw ParaverKernelException( ParaverKernelException::nullOperand,
+                                  "BPlusTree: RecordLeaf: Op: '>'",
+                                  __FILE__,
+                                  __LINE__ );
   }
 
-  time1 = rec.getTime();
-  type1 = rec.getTypeOrdered();
-  time2 = rl.rec.getTime();
-  type2 = rl.rec.getTypeOrdered();
+  time1 = getTime( rec );
+  type1 = getTypeOrdered( rec );
+  time2 = getTime( rl.rec );
+  type2 = getTypeOrdered( rl.rec );
 
   return ( ( time1 >  time2 ) ||
            ( ( time1 == time2 ) && ( type1 > type2 ) ) ||
@@ -109,16 +111,16 @@ bool RecordLeaf::operator==( const RecordLeaf &rl )
 
   if ( rl.rec == NULL )
   {
-    throw ( ParaverKernelException::nullOperand,
-            "BPlusTree: RecordLeaf: Op: '=='",
-            __FILE__,
-            __LINE__ );
+    throw ParaverKernelException( ParaverKernelException::nullOperand,
+                                  "BPlusTree: RecordLeaf: Op: '=='",
+                                  __FILE__,
+                                  __LINE__ );
   }
 
-  time1 = rec.getTime();
-  type1 = rec.getTypeOrdered();
-  time2 = rl.rec.getTime();
-  type2 = rl.rec.getTypeOrdered();
+  time1 = getTime( rec );
+  type1 = getTypeOrdered( rec );
+  time2 = getTime( rl.rec );
+  type2 = getTypeOrdered( rl.rec );
 
   return ( ( time1 == time2 ) && ( type1 == type2 ) && ( ord == rl.ord ) );
 }
@@ -131,16 +133,16 @@ bool RecordLeaf::operator!=( const RecordLeaf &rl )
 
   if ( rl.rec == NULL )
   {
-    throw ( ParaverKernelException::nullOperand,
-            "BPlusTree: RecordLeaf: Op: '!='",
-            __FILE__,
-            __LINE__ );
+    throw ParaverKernelException( ParaverKernelException::nullOperand,
+                                  "BPlusTree: RecordLeaf: Op: '!='",
+                                  __FILE__,
+                                  __LINE__ );
   }
 
-  time1 = rec.getTime();
-  type1 = rec.getTypeOrdered();
-  time2 = rl.rec.getTime();
-  type2 = rl.rec.getTypeOrdered();
+  time1 = getTime( rec );
+  type1 = getTypeOrdered( rec );
+  time2 = getTime( rl.rec );
+  type2 = getTypeOrdered( rl.rec );
 
   return ( ( time1 != time2 ) || ( type1 != type2 ) || ( ord != rl.ord ) );
 }
@@ -153,16 +155,16 @@ bool RecordLeaf::operator>=( const RecordLeaf &rl )
 
   if ( rl.rec == NULL )
   {
-    throw ( ParaverKernelException::nullOperand,
-            "BPlusTree: RecordLeaf: Op: '>='",
-            __FILE__,
-            __LINE__ );
+    throw ParaverKernelException( ParaverKernelException::nullOperand,
+                                  "BPlusTree: RecordLeaf: Op: '>='",
+                                  __FILE__,
+                                  __LINE__ );
   }
 
-  time1 = rec.getTime();
-  type1 = rec.getTypeOrdered();
-  time2 = rl.rec.getTime();
-  type2 = rl.rec.getTypeOrdered();
+  time1 = getTime( rec );
+  type1 = getTypeOrdered( rec );
+  time2 = getTime( rl.rec );
+  type2 = getTypeOrdered( rl.rec );
 
   return ( ( time1 > time2 ) ||
            ( ( time1 == time2 ) && ( type1 > type2 ) ) ||
@@ -179,16 +181,16 @@ bool RecordLeaf::operator<=( const RecordLeaf &rl )
 
   if ( rl.rec == NULL )
   {
-    throw ( ParaverKernelException::nullOperand,
-            "BPlusTree: RecordLeaf: Op: '<='",
-            __FILE__,
-            __LINE__ );
+    throw ParaverKernelException( ParaverKernelException::nullOperand,
+                                  "BPlusTree: RecordLeaf: Op: '<='",
+                                  __FILE__,
+                                  __LINE__ );
   }
 
-  time1 = rec.getTime();
-  type1 = rec.getTypeOrdered();
-  time2 = rl.rec.getTime();
-  type2 = rl.rec.getTypeOrdered();
+  time1 = getTime( rec );
+  type1 = getTypeOrdered( rec );
+  time2 = getTime( rl.rec );
+  type2 = getTypeOrdered( rl.rec );
 
   return ( ( time1 < time2 ) ||
            ( ( time1 == time2 ) && ( type1 < type2 ) ) ||
@@ -197,82 +199,54 @@ bool RecordLeaf::operator<=( const RecordLeaf &rl )
          );
 }
 
-// ---[ I/O METHODS ]---------------------------------------------------------
 
-/*
-void RecordLeaf::Print( string indent )
-{
-  string msg;
-  unsigned int aux_order;
-
-  switch(get_type_ordered(rec))
-  {
-    case (unsigned int)0: msg = "STEND"; break;
-    case (unsigned int)1: msg = "P RCV"; break;
-    case (unsigned int)2: msg = "R RCV"; break;
-    case (unsigned int)3: msg = "R SND"; break;
-    case (unsigned int)4: msg = "L SND"; break;
-    case (unsigned int)5: msg = "P SND"; break;
-    case (unsigned int)6: msg = "L RCV-EVNT"; break;
-    case (unsigned int)7: msg = "GLOBC"; break;
-    case (unsigned int)8: msg = "STBEG"; break;
-    case (unsigned int)9: msg = "?????"; break;
-  }
-  cout.setf( ios::right, ios::adjustfield);
-  cout << indent   << '[';
-  cout << setw(8)  << Get_time(rec);
-  cout << setw(3)  << " - ";
-  cout << setw(10) << msg;
-  cout << setw(3)  << " - ";
-  cout << setw(8)  << ord;
-  cout << setw(3)  << " ]";
-}
-
-*/
-ostream& operator<<( ostream& os, const RecordLeaf& rl )
+/******************************************************************************
+ * I/O Methods
+ ******************************************************************************/
+std::ostream& operator<<( std::ostream& os, const RecordLeaf& rl )
 {
   string msg;
 
-  switch ( rl.rec.getTypeOrdered() )
+  switch ( getTypeOrdered( rl.getRecord() ) )
   {
-    case ( unsigned int )0:
+    case ( UINT8 )0:
       msg = "STEND";
       break;
-    case ( unsigned int )1:
+    case ( UINT8 )1:
       msg = "P RCV";
       break;
-    case ( unsigned int )2:
+    case ( UINT8 )2:
       msg = "R RCV";
       break;
-    case ( unsigned int )3:
+    case ( UINT8 )3:
       msg = "R SND";
       break;
-    case ( unsigned int )4:
+    case ( UINT8 )4:
       msg = "L SND";
       break;
-    case ( unsigned int )5:
+    case ( UINT8 )5:
       msg = "P SND";
       break;
-    case ( unsigned int )6:
+    case ( UINT8 )6:
       msg = "L RCV-EVNT";
       break;
-    case ( unsigned int )7:
+    case ( UINT8 )7:
       msg = "GLOBC";
       break;
-    case ( unsigned int )8:
+    case ( UINT8 )8:
       msg = "STBEG";
       break;
-    case ( unsigned int )9:
-      msg = "?????";
+    case ( UINT8 )9:
+      msg = "UNKNOWN";
       break;
   }
   os.setf( ios::right, ios::adjustfield );
   os << '[';
-  os << setw( 8 )  << rl.rec.getTime();
+  os << setw( 8 )  << getTime( rl.getRecord() );
   os << setw( 3 )  << " - ";
   os << setw( 10 ) << msg;
   os << setw( 3 )  << " - ";
-  os << setw( 8 )  << rl.ord;
+  os << setw( 8 )  << rl.getOrder();
   os << setw( 3 );
   os  << " ]";
 

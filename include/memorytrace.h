@@ -3,7 +3,6 @@
 
 #include <vector>
 #include "paraverkerneltypes.h"
-#include "memoryblocks.h"
 
 using namespace std;
 
@@ -14,14 +13,12 @@ class MemoryTrace
     {
       public:
         iterator();
+        //iterator( TRecord *whichRecord );
+
         virtual ~iterator() = 0;
 
         virtual void operator++() = 0;
         virtual void operator--() = 0;
-        virtual void nextByThread() = 0;
-        virtual void prevByThread() = 0;
-        virtual void nextByCPU() = 0;
-        virtual void prevByCPU() = 0;
 
         virtual TRecordType  getType() const = 0;
         virtual TRecordTime  getTime() const = 0;
@@ -32,25 +29,49 @@ class MemoryTrace
         virtual TState       getState() const = 0;
         virtual TRecordTime  getStateEndTime() const = 0;
         virtual TCommID      getCommIndex() const = 0;
-
-      protected:
-
-      private:
-
     };
 
-    MemoryTrace();
-    virtual ~MemoryTrace() = 0;
+    class ThreadIterator : public iterator
+    {
+      public:
+        ThreadIterator();
+        //ThreadIterator( TRecord *whichRecord );
 
-    virtual iterator& getFirstRecord() const = 0;
-    virtual iterator& getLastRecord() const = 0;
-    virtual iterator& getFirstRecord( TThreadOrder whichThread ) const = 0;
-    virtual iterator& getLastRecord( TThreadOrder whichThread ) const = 0;
-    virtual void getRecordByTime( vector<iterator>& listIter,
+        virtual ~ThreadIterator();
+
+        virtual void operator++();
+        virtual void operator--();
+    };
+
+    class CPUIterator : public iterator
+    {
+      public:
+        CPUIterator();
+        //CPUIterator( TRecord *whichRecord );
+
+        virtual ~CPUIterator();
+
+        virtual void operator++();
+        virtual void operator--();
+    };
+
+
+    MemoryTrace()
+    {}
+    virtual ~MemoryTrace()
+    {}
+
+    virtual MemoryTrace::iterator& begin() const = 0;
+    virtual MemoryTrace::iterator& end() const = 0;
+    virtual MemoryTrace::iterator& threadBegin( TThreadOrder whichThread ) const = 0;
+    virtual MemoryTrace::iterator& threadEnd( TThreadOrder whichThread ) const = 0;
+    virtual MemoryTrace::iterator& CPUBegin( TCPUOrder whichCPU ) const = 0;
+    virtual MemoryTrace::iterator& CPUEnd( TCPUOrder whichCPU ) const = 0;
+
+    virtual void getRecordByTime( vector<iterator *>& listIter,
                                   TRecordTime whichTime ) const = 0;
 
   protected:
-    MemoryBlocks& blocks;
 
   private:
 
