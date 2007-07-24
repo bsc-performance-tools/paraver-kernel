@@ -1,9 +1,12 @@
+//#include <stdlib.h>
 #include <math.h>
+//#include <vector>
 
 #include "bplustree.h"
 #include "bplustreeexception.h"
 
-using namespace std;
+//using namespace std;
+using std::vector;
 using namespace bplustree;
 
 
@@ -671,7 +674,9 @@ bool BPlusInternal::partialDelete( RecordLeaf *limitKey,
     #     # #       #       #     # #     #    #    #    #  #       #
     ######  #       #######  #####   #####     #    #     # ####### #######
  ****************************************************************************/
-BPlusTree::BPlusTree()
+BPlusTree::BPlusTree( const Trace* trace,
+                      const UINT32 uthreshold,
+                      const UINT32 upercent )
 {
   root = NULL;
   ini = NULL;
@@ -679,8 +684,35 @@ BPlusTree::BPlusTree()
   recordsInserted = 0;
   recordsLinkedLastTime = 0;
   lastLeaf = NULL;
-}
 
+  unloadThreshold = uthreshold;
+  unloadPercent   = upercent;
+
+  numThreads = trace->totalThreads();
+  numCPUs    = trace->totalCPUs();
+
+  // Time list.
+  rini = NULL;
+  rfin = NULL;
+
+  // Threads list.
+  threadFirst.reserve( sizeof( TRecord * ) * numThreads );
+  threadLast.reserve( sizeof( TRecord * ) * numThreads );
+  for ( TObjectOrder ii = 0; ii < numThreads; ii++ )
+  {
+    threadFirst.push_back( NULL );
+    threadLast.push_back( NULL );
+  }
+
+  // CPUs list.
+  CPUFirst.reserve( sizeof( TRecord * ) * numCPUs );
+  CPULast.reserve( sizeof( TRecord * ) * numCPUs );
+  for ( TCPUOrder ii = 0; ii < numCPUs; ii++ )
+  {
+    CPUFirst.push_back( NULL );
+    CPULast.push_back( NULL );
+  }
+}
 
 BPlusTree::~BPlusTree()
 {
@@ -772,6 +804,17 @@ void BPlusTree::partialDelete()
   }
 }
 
+
+UINT32 BPlusTree::unload( const UINT32 numrecords )
+{
+  UINT32 unloaded  = 0;
+
+
+
+  return unloaded;
+}
+
+
 /******************************************************************************
  * MemoryTrace Inherited Iterator.
  ******************************************************************************/
@@ -788,11 +831,25 @@ BPlusTree::iterator::~iterator()
 
 
 void BPlusTree::iterator::operator++()
-{
-}
+{}
 
 void BPlusTree::iterator::operator--()
 {}
+
+bool BPlusTree::iterator::operator==( const BPlusTree::iterator &it )
+{
+  return ( this->record == it.record );
+}
+
+bool BPlusTree::iterator::operator!=( const BPlusTree::iterator &it )
+{
+  return ( this->record != it.record );
+}
+
+bool BPlusTree::iterator::isNull() const
+{
+  return ( record == NULL );
+}
 
 TRecordType  BPlusTree::iterator::getType() const
 {
@@ -847,10 +904,34 @@ BPlusTree::ThreadIterator::~ThreadIterator()
 {}
 
 void BPlusTree::ThreadIterator::operator++()
-{}
+{
+#ifdef DEBUG
+  if ( record !=  NULL )
+    record = record->threadNext;
+  else
+    throw BPlusTreeException( BPlusTreeException::wrongIterator,
+                              "threadNext unreachable, record NULL.",
+                              __FILE__,
+                              __LINE__ );
+#else
+  record = record->threadNext;
+#endif
+}
 
 void BPlusTree::ThreadIterator::operator--()
-{}
+{
+#ifdef DEBUG
+  if ( record !=  NULL )
+    record = record->threadPrev;
+  else
+    throw BPlusTreeException( BPlusTreeException::wrongIterator,
+                              "threadPrev unreachable, record NULL.",
+                              __FILE__,
+                              __LINE__ );
+#else
+  record = record->threadPrev;
+#endif
+}
 
 /**************************************************************************
  * MemoryTrace Inherited CPUIterator.
@@ -859,12 +940,91 @@ BPlusTree::CPUIterator::~CPUIterator()
 {}
 
 void BPlusTree::CPUIterator::operator++()
-{}
+{
+  if ( record !=  NULL )
+  {
+    TRecord *myRecord = this->record; // Keep current, maybe it's the last one.
+
+    // Forward search looking for next record with same CPU.
+    record = record->next;
+    while ( record != NULL )
+    {
+      if ( record->CPU == myRecord->CPU )
+        break;
+      record = record->next;
+    }
+
+    if ( record == NULL )       // It was the last record for this CPU, so
+      this->record = myRecord;  //  recover current.
+  }
+  else
+    throw BPlusTreeException( BPlusTreeException::wrongIterator,
+                              "CPUNext unreachable, record NULL.",
+                              __FILE__,
+                              __LINE__ );
+}
 
 void BPlusTree::CPUIterator::operator--()
-{}
+{
+  // Shared code with ++, but the prev/next and exception message.
+  if ( record !=  NULL )
+  {
+    TRecord *myRecord = this->record; // Keep current, maybe it's the last one.
+
+    // Backward search looking for previous record with same CPU.
+    record = record->prev;
+    while ( record != NULL )
+    {
+      if ( record->CPU == myRecord->CPU )
+        break;
+      record = record->prev;
+    }
+
+    if ( record == NULL )       // It was the first record for this CPU, so
+      this->record = myRecord;  //  recover current.
+  }
+  else
+    throw BPlusTreeException( BPlusTreeException::wrongIterator,
+                              "CPUPrev unreachable, record NULL.",
+                              __FILE__,
+                              __LINE__ );
+}
 
 
 void BPlusTree::getRecordByTime( vector<MemoryTrace::iterator *>& listIter,
                                  TRecordTime whichTime ) const
 {}
+
+/**************************************************************************
+ * MemoryTrace Inherited CPUIterator.
+ **************************************************************************/
+MemoryTrace::iterator* BPlusTree::begin() const
+{
+  return new BPlusTree::iterator( rini );
+}
+
+MemoryTrace::iterator* BPlusTree::end() const
+{
+  return new BPlusTree::iterator( rfin );
+}
+
+MemoryTrace::iterator* BPlusTree::threadBegin( TThreadOrder whichThread ) const
+{
+  return new BPlusTree::iterator( threadFirst[ whichThread ] );
+}
+
+MemoryTrace::iterator* BPlusTree::threadEnd( TThreadOrder whichThread ) const
+{
+  return new BPlusTree::iterator( threadLast[ whichThread ] );
+}
+
+MemoryTrace::iterator* BPlusTree::CPUBegin( TCPUOrder whichCPU ) const
+{
+  return new BPlusTree::iterator( CPUFirst[ whichCPU ] );
+}
+
+MemoryTrace::iterator* BPlusTree::CPUEnd( TCPUOrder whichCPU ) const
+{
+  return new BPlusTree::iterator( CPULast[ whichCPU ] );
+}
+

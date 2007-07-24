@@ -205,9 +205,12 @@ Trace::Trace( const string& whichFile ) : fileName( whichFile )
 
 // Reading the body
   blocks = new BPlusTreeBlocks( traceProcessModel );
+  //btree  = new BPlusTree( this, *blocks );//?
+
   while ( !file.eof() )
   {
     TraceBodyIO_v1::read( file, *blocks );
+    //btree.insert();
   }
 // End reading the body
   file.close();

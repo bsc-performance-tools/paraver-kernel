@@ -20,6 +20,10 @@ class MemoryTrace
         virtual void operator++() = 0;
         virtual void operator--() = 0;
 
+        virtual bool operator==( const iterator &it );
+        virtual bool operator!=( const iterator &it );
+        virtual bool isNull() const = 0;
+
         virtual TRecordType  getType() const = 0;
         virtual TRecordTime  getTime() const = 0;
         virtual TThreadOrder getThread() const = 0;
@@ -61,12 +65,13 @@ class MemoryTrace
     virtual ~MemoryTrace()
     {}
 
-    virtual MemoryTrace::iterator& begin() const = 0;
-    virtual MemoryTrace::iterator& end() const = 0;
-    virtual MemoryTrace::iterator& threadBegin( TThreadOrder whichThread ) const = 0;
-    virtual MemoryTrace::iterator& threadEnd( TThreadOrder whichThread ) const = 0;
-    virtual MemoryTrace::iterator& CPUBegin( TCPUOrder whichCPU ) const = 0;
-    virtual MemoryTrace::iterator& CPUEnd( TCPUOrder whichCPU ) const = 0;
+
+    virtual MemoryTrace::iterator* begin() const = 0;
+    virtual MemoryTrace::iterator* end() const = 0;
+    virtual MemoryTrace::iterator* threadBegin( TThreadOrder whichThread ) const = 0;
+    virtual MemoryTrace::iterator* threadEnd( TThreadOrder whichThread ) const = 0;
+    virtual MemoryTrace::iterator* CPUBegin( TCPUOrder whichCPU ) const = 0;
+    virtual MemoryTrace::iterator* CPUEnd( TCPUOrder whichCPU ) const = 0;
 
     virtual void getRecordByTime( vector<iterator *>& listIter,
                                   TRecordTime whichTime ) const = 0;

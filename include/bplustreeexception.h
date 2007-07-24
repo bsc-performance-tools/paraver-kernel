@@ -14,8 +14,10 @@ namespace bplustree
       {
         undefined = 0,
         invalidAppend,
+        wrongIterator,
+        invalidCast,
         LAST
-    } TErrorCode;
+      } TErrorCode;
 
       BPlusTreeException( TErrorCode whichCode = undefined,
                           const char *whichAuxMessage = "",
