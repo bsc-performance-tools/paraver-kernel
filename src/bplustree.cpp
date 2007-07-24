@@ -832,10 +832,34 @@ BPlusTree::iterator::~iterator()
 
 
 void BPlusTree::iterator::operator++()
-{}
+{
+  #ifdef DEBUG
+  if ( record !=  NULL )
+    record = record->next;
+  else
+    throw BPlusTreeException( BPlusTreeException::wrongIterator,
+                              "next unreachable, record NULL.",
+                              __FILE__,
+                              __LINE__ );
+#else
+  record = record->next;
+#endif
+}
 
 void BPlusTree::iterator::operator--()
-{}
+{
+  #ifdef DEBUG
+  if ( record !=  NULL )
+    record = record->prev;
+  else
+    throw BPlusTreeException( BPlusTreeException::wrongIterator,
+                              "prev unreachable, record NULL.",
+                              __FILE__,
+                              __LINE__ );
+#else
+  record = record->prev;
+#endif
+}
 
 bool BPlusTree::iterator::operator==( const BPlusTree::iterator &it )
 {
@@ -954,9 +978,6 @@ void BPlusTree::CPUIterator::operator++()
         break;
       record = record->next;
     }
-
-    if ( record == NULL )       // It was the last record for this CPU, so
-      this->record = myRecord;  //  recover current.
   }
   else
     throw BPlusTreeException( BPlusTreeException::wrongIterator,
@@ -980,9 +1001,6 @@ void BPlusTree::CPUIterator::operator--()
         break;
       record = record->prev;
     }
-
-    if ( record == NULL )       // It was the first record for this CPU, so
-      this->record = myRecord;  //  recover current.
   }
   else
     throw BPlusTreeException( BPlusTreeException::wrongIterator,
