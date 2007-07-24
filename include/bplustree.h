@@ -7,7 +7,6 @@
 #include "memorytrace.h"
 #include "bplustreetypes.h"
 #include "bplustreerecordleaf.h"
-#include "trace.h"
 
 namespace bplustree
 {
@@ -149,7 +148,7 @@ namespace bplustree
       UINT32 unloadThreshold;
       UINT32 unloadPercent;
 
-      TObjectOrder numThreads;
+      TThreadOrder numThreads;
       TCPUOrder    numCPUs;
 
       // List by time.
@@ -183,7 +182,8 @@ namespace bplustree
 
       // Methods
       BPlusTree();
-      BPlusTree( const Trace* trace,
+      BPlusTree( const TThreadOrder totalThreads,
+                 const TCPUOrder totalCPUs,
                  const UINT32 uthresh  = UNLOAD_RECORDS_THRESHOLD,
                  const UINT32 upercent = UNLOAD_PERCENT );
       ~BPlusTree();

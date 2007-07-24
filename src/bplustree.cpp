@@ -674,7 +674,8 @@ bool BPlusInternal::partialDelete( RecordLeaf *limitKey,
     #     # #       #       #     # #     #    #    #    #  #       #
     ######  #       #######  #####   #####     #    #     # ####### #######
  ****************************************************************************/
-BPlusTree::BPlusTree( const Trace* trace,
+BPlusTree::BPlusTree( const TThreadOrder totalThreads,
+                      const TCPUOrder totalCPUs,
                       const UINT32 uthreshold,
                       const UINT32 upercent )
 {
@@ -688,8 +689,8 @@ BPlusTree::BPlusTree( const Trace* trace,
   unloadThreshold = uthreshold;
   unloadPercent   = upercent;
 
-  numThreads = trace->totalThreads();
-  numCPUs    = trace->totalCPUs();
+  numThreads = totalThreads;
+  numCPUs    = totalCPUs;
 
   // Time list.
   rini = NULL;
@@ -945,7 +946,7 @@ void BPlusTree::CPUIterator::operator++()
   {
     TRecord *myRecord = this->record; // Keep current, maybe it's the last one.
 
-    // Forward search looking for next record with same CPU.
+    // Forward search, looking for next record with same CPU.
     record = record->next;
     while ( record != NULL )
     {
@@ -971,7 +972,7 @@ void BPlusTree::CPUIterator::operator--()
   {
     TRecord *myRecord = this->record; // Keep current, maybe it's the last one.
 
-    // Backward search looking for previous record with same CPU.
+    // Backward search, looking for previous record with same CPU.
     record = record->prev;
     while ( record != NULL )
     {
