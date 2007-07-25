@@ -9,6 +9,92 @@
 using std::vector;
 using namespace bplustree;
 
+/******************************************************************************
+ * UnloadedTrace
+ ******************************************************************************/
+UnloadedTrace::UnloadedTrace()
+{}
+
+
+UnloadedTrace::UnloadedTrace( const TThreadOrder totalThreads,
+                              const TCPUOrder    totalCPUs )
+{
+  numThreads = totalThreads;
+  numCPUs    = totalCPUs;
+
+  // Time list.
+  first = NULL;
+  last = NULL;
+
+  // Threads list.
+  threadFirst.reserve( sizeof( TRecord * ) * numThreads );
+  threadLast.reserve( sizeof( TRecord * ) * numThreads );
+  for ( TObjectOrder ii = 0; ii < numThreads; ii++ )
+  {
+    threadFirst.push_back( NULL );
+    threadLast.push_back( NULL );
+  }
+
+  // CPUs list.
+  CPUFirst.reserve( sizeof( TRecord * ) * numCPUs );
+  CPULast.reserve( sizeof( TRecord * ) * numCPUs );
+  for ( TCPUOrder ii = 0; ii < numCPUs; ii++ )
+  {
+    CPUFirst.push_back( NULL );
+    CPULast.push_back( NULL );
+  }
+}
+
+UnloadedTrace::~UnloadedTrace()
+{}
+
+
+// enlaza fragmento recién descargado
+// append del fragmento de traza recién descargada
+void UnloadedTrace::append( TRecord *rini, TRecord *rfin )
+{
+  TRecord      *current;
+  TThreadOrder thread;
+  TCPUOrder    cpu;
+
+  current = rini;
+  while ( current != NULL )
+  {
+    if ( first == NULL )
+    {
+      first = current;
+      current->prev = NULL;
+    }
+    last = current;
+
+    thread = current->thread;
+    if ( threadFirst[ thread ] == NULL )
+    {
+      threadFirst[ thread ] = current;
+      threadLast[ thread ] = current;
+      current->threadNext = NULL;
+      current->threadPrev = NULL;
+    }
+    else
+    {
+      current->threadPrev = threadLast[ thread ];
+      current->threadNext = NULL;
+      threadLast[ thread ]->threadNext = current;
+      threadLast[ thread ] = current;
+    }
+
+    cpu = current->CPU;
+    if ( CPUFirst[ cpu ] == NULL )
+    {
+      CPUFirst[ cpu ] = current;
+    }
+    CPULast[ cpu ] = current;
+
+    current = current->next;
+
+  }
+}
+
 
 /****************************************************************************
    ######  ######  #       #     #  #####  #       #######    #    #######
@@ -196,7 +282,7 @@ bool BPlusLeaf::getLeafKey( UINT8 ii, RecordLeaf *&key )
 
 UINT32 BPlusLeaf::linkRecords( TRecord *&ini,
                                TRecord *&fin,
-                               int &recs2link,
+                               INT32 &recs2link,
                                RecordLeaf *&lastLeaf )
 {
   TRecord *prev, *cur, *initial;
@@ -495,7 +581,7 @@ bool BPlusInternal::getLeafKey( UINT8 ii, RecordLeaf *&key )
 
 
 UINT32 BPlusInternal::linkRecords( TRecord *&ini, TRecord *&fin,
-                                   int &recs2link,
+                                   INT32 &recs2link,
                                    RecordLeaf *&lastLeaf )
 {
   TRecord *prevIni, *prevFin, *currIni, *currFin;
@@ -689,30 +775,7 @@ BPlusTree::BPlusTree( const TThreadOrder totalThreads,
   unloadThreshold = uthreshold;
   unloadPercent   = upercent;
 
-  numThreads = totalThreads;
-  numCPUs    = totalCPUs;
-
-  // Time list.
-  rini = NULL;
-  rfin = NULL;
-
-  // Threads list.
-  threadFirst.reserve( sizeof( TRecord * ) * numThreads );
-  threadLast.reserve( sizeof( TRecord * ) * numThreads );
-  for ( TObjectOrder ii = 0; ii < numThreads; ii++ )
-  {
-    threadFirst.push_back( NULL );
-    threadLast.push_back( NULL );
-  }
-
-  // CPUs list.
-  CPUFirst.reserve( sizeof( TRecord * ) * numCPUs );
-  CPULast.reserve( sizeof( TRecord * ) * numCPUs );
-  for ( TCPUOrder ii = 0; ii < numCPUs; ii++ )
-  {
-    CPUFirst.push_back( NULL );
-    CPULast.push_back( NULL );
-  }
+  unloadedTrace = new UnloadedTrace( totalThreads, totalCPUs );
 }
 
 BPlusTree::~BPlusTree()
@@ -758,6 +821,9 @@ void BPlusTree::insert( TRecord *r )
   }
 
   recordsInserted++;
+
+  if ( unloadCriteria() )
+    unload( ( UINT32 )( unloadThreshold * unloadPercent / 100 ) );
 }
 
 
@@ -773,11 +839,11 @@ bool BPlusTree::getLeafKey( UINT8 ii, RecordLeaf *&key )
 }
 
 
-UINT32 BPlusTree::linkRecords( int recs2link )
+UINT32 BPlusTree::linkRecords( TRecord *&ini, TRecord *&fin, INT32 recs2link )
 {
   UINT32 recordsLinked;
 
-  recordsLinked = root->linkRecords( rini, rfin, recs2link, lastLeaf );
+  recordsLinked = root->linkRecords( ini, fin, recs2link, lastLeaf );
   recordsLinkedLastTime = recordsLinked;
 
   return recordsLinked;
@@ -806,13 +872,20 @@ void BPlusTree::partialDelete()
 }
 
 
-UINT32 BPlusTree::unload( const UINT32 numrecords )
+void BPlusTree::unload( INT32 numrecords )
 {
-  UINT32 unloaded  = 0;
+  UINT32 records_linked;
+  TRecord *ini, *fin;
 
-
-
-  return unloaded;
+  if ( root != NULL )
+  {
+    records_linked = linkRecords( ini, fin, numrecords );
+    unloadedTrace->append( ini, fin );
+    if ( numrecords != -1 )
+      this->partialDelete();
+    else
+      delete root;
+  }
 }
 
 
@@ -833,7 +906,7 @@ BPlusTree::iterator::~iterator()
 
 void BPlusTree::iterator::operator++()
 {
-  #ifdef DEBUG
+#ifdef STRICT_CHECK_DEBUG
   if ( record !=  NULL )
     record = record->next;
   else
@@ -848,7 +921,7 @@ void BPlusTree::iterator::operator++()
 
 void BPlusTree::iterator::operator--()
 {
-  #ifdef DEBUG
+#ifdef STRICT_CHECK_DEBUG
   if ( record !=  NULL )
     record = record->prev;
   else
@@ -925,12 +998,18 @@ TCommID      BPlusTree::iterator::getCommIndex() const
 /**************************************************************************
  * MemoryTrace Inherited ThreadIterator.
  **************************************************************************/
+/*
+BPlusTree::ThreadIterator( TRecord *whichRecord )
+{
+  record = whichRecord;
+}
+*/
 BPlusTree::ThreadIterator::~ThreadIterator()
 {}
 
 void BPlusTree::ThreadIterator::operator++()
 {
-#ifdef DEBUG
+#ifdef STRICT_CHECK_DEBUG
   if ( record !=  NULL )
     record = record->threadNext;
   else
@@ -945,7 +1024,7 @@ void BPlusTree::ThreadIterator::operator++()
 
 void BPlusTree::ThreadIterator::operator--()
 {
-#ifdef DEBUG
+#ifdef STRICT_CHECK_DEBUG
   if ( record !=  NULL )
     record = record->threadPrev;
   else
@@ -961,6 +1040,7 @@ void BPlusTree::ThreadIterator::operator--()
 /**************************************************************************
  * MemoryTrace Inherited CPUIterator.
  **************************************************************************/
+
 BPlusTree::CPUIterator::~CPUIterator()
 {}
 
@@ -1010,8 +1090,12 @@ void BPlusTree::CPUIterator::operator--()
 }
 
 
-void BPlusTree::getRecordByTime( vector<MemoryTrace::iterator *>& listIter,
-                                 TRecordTime whichTime ) const
+void BPlusTree::getRecordByTimeThread( vector<BPlusTree::ThreadIterator *>& listIter,
+                                       TRecordTime whichTime ) const
+{}
+
+void BPlusTree::getRecordByTimeCPU( vector<BPlusTree::CPUIterator *>& listIter,
+                                    TRecordTime whichTime ) const
 {}
 
 /**************************************************************************
@@ -1019,31 +1103,31 @@ void BPlusTree::getRecordByTime( vector<MemoryTrace::iterator *>& listIter,
  **************************************************************************/
 MemoryTrace::iterator* BPlusTree::begin() const
 {
-  return new BPlusTree::iterator( rini );
+  return new BPlusTree::iterator( unloadedTrace->getBegin() );
 }
 
 MemoryTrace::iterator* BPlusTree::end() const
 {
-  return new BPlusTree::iterator( rfin );
+  return new BPlusTree::iterator( unloadedTrace->getEnd() );
 }
 
-MemoryTrace::iterator* BPlusTree::threadBegin( TThreadOrder whichThread ) const
+MemoryTrace::ThreadIterator* BPlusTree::threadBegin( TThreadOrder whichThread ) const
 {
-  return new BPlusTree::iterator( threadFirst[ whichThread ] );
+  return new BPlusTree::ThreadIterator( unloadedTrace->getThreadBegin( whichThread ) );
 }
 
-MemoryTrace::iterator* BPlusTree::threadEnd( TThreadOrder whichThread ) const
+MemoryTrace::ThreadIterator* BPlusTree::threadEnd( TThreadOrder whichThread ) const
 {
-  return new BPlusTree::iterator( threadLast[ whichThread ] );
+  return  new BPlusTree::ThreadIterator( unloadedTrace->getThreadEnd( whichThread ) );
 }
 
-MemoryTrace::iterator* BPlusTree::CPUBegin( TCPUOrder whichCPU ) const
+MemoryTrace::CPUIterator* BPlusTree::CPUBegin( TCPUOrder whichCPU ) const
 {
-  return new BPlusTree::iterator( CPUFirst[ whichCPU ] );
+  return new BPlusTree::CPUIterator( unloadedTrace->getCPUBegin( whichCPU ) );
 }
 
-MemoryTrace::iterator* BPlusTree::CPUEnd( TCPUOrder whichCPU ) const
+MemoryTrace::CPUIterator* BPlusTree::CPUEnd( TCPUOrder whichCPU ) const
 {
-  return new BPlusTree::iterator( CPULast[ whichCPU ] );
+  return new BPlusTree::CPUIterator( unloadedTrace->getCPUEnd( whichCPU ) );
 }
 

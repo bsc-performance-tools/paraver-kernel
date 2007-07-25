@@ -68,13 +68,15 @@ class MemoryTrace
 
     virtual MemoryTrace::iterator* begin() const = 0;
     virtual MemoryTrace::iterator* end() const = 0;
-    virtual MemoryTrace::iterator* threadBegin( TThreadOrder whichThread ) const = 0;
-    virtual MemoryTrace::iterator* threadEnd( TThreadOrder whichThread ) const = 0;
-    virtual MemoryTrace::iterator* CPUBegin( TCPUOrder whichCPU ) const = 0;
-    virtual MemoryTrace::iterator* CPUEnd( TCPUOrder whichCPU ) const = 0;
+    virtual MemoryTrace::ThreadIterator* threadBegin( TThreadOrder whichThread ) const = 0;
+    virtual MemoryTrace::ThreadIterator* threadEnd( TThreadOrder whichThread ) const = 0;
+    virtual MemoryTrace::CPUIterator* CPUBegin( TCPUOrder whichCPU ) const = 0;
+    virtual MemoryTrace::CPUIterator* CPUEnd( TCPUOrder whichCPU ) const = 0;
 
-    virtual void getRecordByTime( vector<iterator *>& listIter,
-                                  TRecordTime whichTime ) const = 0;
+    virtual void getRecordByTimeThread( vector<MemoryTrace::ThreadIterator *>& listIter,
+                                        TRecordTime whichTime ) const = 0;
+    virtual void getRecordByTimeCPU( vector<MemoryTrace::CPUIterator *>& listIter,
+                                     TRecordTime whichTime ) const = 0;
 
   protected:
 

@@ -10,6 +10,63 @@
 
 namespace bplustree
 {
+  class UnloadedTrace
+  {
+    public:
+      UnloadedTrace();
+      UnloadedTrace( const TThreadOrder totalThreads,
+                     const TCPUOrder    totalCPUs );
+
+      ~UnloadedTrace();
+
+      inline TRecord *getBegin()
+      {
+        return first;
+      }
+      inline TRecord *getEnd()
+      {
+        return last;
+      }
+      inline TRecord *getThreadBegin( TThreadOrder whichThread )
+      {
+        return threadFirst[ whichThread ];
+      }
+      inline TRecord *getThreadEnd( TThreadOrder whichThread )
+      {
+        return threadLast[ whichThread ];
+      }
+      inline TRecord *getCPUBegin( TCPUOrder whichThread )
+      {
+        return CPUFirst[ whichThread ];
+      }
+      inline TRecord *getCPUEnd( TCPUOrder whichThread )
+      {
+        return CPULast[ whichThread ];
+      }
+
+      void append( TRecord *rini, TRecord *rfin );
+
+    protected:
+
+    private:
+      TThreadOrder numThreads;
+      TCPUOrder    numCPUs;
+
+      // List by time.
+      TRecord *first;
+      TRecord *last;
+
+      // List by thread.
+      vector<TRecord *> threadFirst;
+      vector<TRecord *> threadLast;
+
+      // List by CPU.
+      vector<TRecord *> CPUFirst;
+      vector<TRecord *> CPULast;
+  };
+
+
+
 // Tuning this parameters changes tree performance.
   static const UINT8 NODE_SIZE = 3;
   static const UINT8 LEAF_SIZE = 4; // max 256
@@ -91,7 +148,7 @@ namespace bplustree
       virtual bool getLeafKey( UINT8 ii,  RecordLeaf *&key );
 
       virtual UINT32 linkRecords( TRecord *&ini, TRecord *&fin,
-                                  int &recs2link,
+                                  INT32 &recs2link,
                                   RecordLeaf *&last_leaf );
 
       virtual void print( string indent );
@@ -106,7 +163,10 @@ namespace bplustree
 
       void setUsed( UINT8 used );
       UINT8 getUsed();
-      inline bool isEmpty() { return ( getUsed() == (UINT8)0 ); }
+      inline bool isEmpty()
+      {
+        return ( getUsed() == ( UINT8 )0 );
+      }
       // UINT8 countElems();
   };
 
@@ -134,7 +194,7 @@ namespace bplustree
       virtual void print( string indent );
       virtual UINT32 linkRecords( TRecord *&ini,
                                   TRecord *&fin,
-                                  int &recs2link,
+                                  INT32 &recs2link,
                                   RecordLeaf *&last_leaf );
       virtual bool partialDelete( RecordLeaf *limit_key,
                                   BPlusNode **valid_predecessor );
@@ -147,29 +207,17 @@ namespace bplustree
     private:
       UINT32 unloadThreshold;
       UINT32 unloadPercent;
+      /*
+            inline TRecord *getIniRecord()
+            {
+              return rini;
+            }
 
-      TThreadOrder numThreads;
-      TCPUOrder    numCPUs;
-
-      // List by time.
-      TRecord *rini;
-      TRecord *rfin;
-      // List by thread.
-      vector<TRecord *> threadFirst;
-      vector<TRecord *> threadLast;
-      // List by CPU.
-      vector<TRecord *> CPUFirst;
-      vector<TRecord *> CPULast;
-
-      inline TRecord *getIniRecord()
-      {
-        return rini;
-      }
-      inline TRecord *getFinRecord()
-      {
-        return rfin;
-      }
-
+            inline TRecord *getFinRecord()
+            {
+              return rfin;
+            }
+      */
     public:
 
       BPlusNode *root;
@@ -179,6 +227,7 @@ namespace bplustree
       UINT32 recordsInserted;
       RecordLeaf *lastLeaf;
       UINT32 recordsLinkedLastTime;
+      UnloadedTrace *unloadedTrace;
 
       // Methods
       BPlusTree();
@@ -209,20 +258,20 @@ namespace bplustree
 
       void getRecordFirstTime( TRecord **rft );
 
-      UINT32 linkRecords( int recs2link );
+      UINT32 linkRecords( TRecord *&ini, TRecord *&fin, INT32 recs2link );
       void print();
       void partialDelete();
-      UINT32 unload( const UINT32 numrecords );
+      void unload( INT32 numrecords );
 
-      protected:
+    protected:
 
-      public:
+    public:
 
-    /**************************************************************************
-     * MemoryTrace Inherited Iterator.
-     **************************************************************************/
+      /**************************************************************************
+       * MemoryTrace Inherited Iterator.
+       **************************************************************************/
     class iterator : public MemoryTrace::iterator
-    {
+      {
         public:
           iterator();
 
@@ -234,7 +283,7 @@ namespace bplustree
           virtual void operator--();
           virtual bool operator==( const iterator &it );
           virtual bool operator!=( const iterator &it );
-          virtual bool isNull() const;
+          bool isNull() const;
 
           virtual TRecordType  getType() const;
           virtual TRecordTime  getTime() const;
@@ -248,45 +297,70 @@ namespace bplustree
 
         protected:
           TRecord *record;
-
-        private:
       };
 
-    class ThreadIterator : public BPlusTree::iterator, MemoryTrace::ThreadIterator
-    {
-      public:
-        //ThreadIterator();
-        //ThreadIterator( TRecord *whichRecord );
+    class ThreadIterator : public MemoryTrace::ThreadIterator, BPlusTree::iterator
+      {
+        public:
+          //ThreadIterator();
+          // Constructor declaration needed for iterators.
+          ThreadIterator( TRecord *whichRecord );
 
-        virtual ~ThreadIterator();
+          virtual ~ThreadIterator();
 
-        virtual void operator++();
-        virtual void operator--();
-    };
+          virtual void operator++();
+          virtual void operator--();
 
-    class CPUIterator : public BPlusTree::iterator, MemoryTrace::CPUIterator
-    {
-      public:
-        //CPUIterator();
-        //CPUIterator( TRecord *whichRecord );
+          // Following virtual methods declaration needed for iterators.
+          virtual bool isNull() const;
+          virtual TRecordType  getType() const;
+          virtual TRecordTime  getTime() const;
+          virtual TThreadOrder getThread() const;
+          virtual TCPUOrder    getCPU() const;
+          virtual TEventType   getEventType() const;
+          virtual TEventValue  getEventValue() const;
+          virtual TState       getState() const;
+          virtual TRecordTime  getStateEndTime() const;
+          virtual TCommID      getCommIndex() const;
+      };
 
-        virtual ~CPUIterator();
+    class CPUIterator : public MemoryTrace::CPUIterator, BPlusTree::iterator
+      {
+        public:
+          //CPUIterator();
+          // Constructor declaration needed for iterators.
+          CPUIterator( TRecord *whichRecord );
 
-        virtual void operator++();
-        virtual void operator--();
-    };
+          virtual ~CPUIterator();
+
+          virtual void operator++();
+          virtual void operator--();
+
+          // Following virtual methods declaration needed for iterators.
+          virtual bool isNull() const;
+          virtual TRecordType  getType() const;
+          virtual TRecordTime  getTime() const;
+          virtual TThreadOrder getThread() const;
+          virtual TCPUOrder    getCPU() const;
+          virtual TEventType   getEventType() const;
+          virtual TEventValue  getEventValue() const;
+          virtual TState       getState() const;
+          virtual TRecordTime  getStateEndTime() const;
+          virtual TCommID      getCommIndex() const;
+      };
 
       // MemoryTrace Inherited Methods
-    virtual MemoryTrace::iterator* begin() const;
-    virtual MemoryTrace::iterator* end() const;
-    virtual MemoryTrace::iterator* threadBegin( TThreadOrder whichThread ) const;
-    virtual MemoryTrace::iterator* threadEnd( TThreadOrder whichThread ) const;
-    virtual MemoryTrace::iterator* CPUBegin( TCPUOrder whichCPU ) const;
-    virtual MemoryTrace::iterator* CPUEnd( TCPUOrder whichCPU ) const;
+      virtual MemoryTrace::iterator* begin() const;
+      virtual MemoryTrace::iterator* end() const;
+      virtual MemoryTrace::ThreadIterator* threadBegin( TThreadOrder whichThread ) const;
+      virtual MemoryTrace::ThreadIterator* threadEnd( TThreadOrder whichThread ) const;
+      virtual MemoryTrace::CPUIterator* CPUBegin( TCPUOrder whichCPU ) const;
+      virtual MemoryTrace::CPUIterator* CPUEnd( TCPUOrder whichCPU ) const;
 
-    virtual void getRecordByTime( vector<MemoryTrace::iterator *>& listIter,
+      void getRecordByTimeThread( vector<BPlusTree::ThreadIterator *>& listIter,
                                   TRecordTime whichTime ) const;
-
+      void getRecordByTimeCPU( vector<BPlusTree::CPUIterator *>& listIter,
+                               TRecordTime whichTime ) const;
   };
 }
 
