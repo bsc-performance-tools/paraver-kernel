@@ -19,6 +19,7 @@ class ParaverKernelException : public exception
       undefined = 0,
       emptytrace,
       nullOperand,
+      memoryError,
       LAST
   } TErrorCode;
 

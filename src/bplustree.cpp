@@ -772,10 +772,13 @@ BPlusTree::BPlusTree( const TThreadOrder totalThreads,
   recordsLinkedLastTime = 0;
   lastLeaf = NULL;
 
+  numThreads = totalThreads;
+  numCPUs    = totalCPUs;
   unloadThreshold = uthreshold;
   unloadPercent   = upercent;
 
   unloadedTrace = new UnloadedTrace( totalThreads, totalCPUs );
+  traceIndex    = new Index();
 }
 
 BPlusTree::~BPlusTree()
@@ -888,6 +891,88 @@ void BPlusTree::unload( INT32 numrecords )
   }
 }
 
+
+void BPlusTree::getRecordByTimeThread( vector<BPlusTree::ThreadIterator *>& listIter,
+                                       TRecordTime whichTime ) const
+{
+  TRecord *aux_record;
+  UINT32 filled = 0;
+
+  for ( UINT32 ii = 0; ii < numThreads; ii++ )
+  {
+    if ( listIter[ ii ] != NULL )
+      delete listIter[ ii ];
+  }
+
+  // Search for especific time.
+  aux_record = traceIndex->findRecord( whichTime );
+
+  // Backward search filling vector of iterators.
+  BPlusTree::iterator *current = new BPlusTree::iterator::iterator( aux_record );
+  if ( current != NULL )
+  {
+    BPlusTree::iterator *initial = current;
+
+    while (( !current->isNull() ) && ( filled != numThreads ))
+    {
+      if ( listIter[ current->getThread() ] != NULL )
+      {
+        listIter[ current->getThread() ] =
+          dynamic_cast< BPlusTree::ThreadIterator * >( current );
+        filled++;
+      }
+      current--;
+    }
+
+    delete initial;
+  }
+  else
+    throw ParaverKernelException( ParaverKernelException::memoryError,
+                                  "new returned NULL.",
+                                  __FILE__,
+                                  __LINE__ );
+}
+
+void BPlusTree::getRecordByTimeCPU( vector<BPlusTree::CPUIterator *>& listIter,
+                                    TRecordTime whichTime ) const
+{
+  TRecord *aux_record;
+  UINT32 filled = 0;
+
+  for ( UINT32 ii = 0; ii < numCPUs; ii++ )
+  {
+    if ( listIter[ ii ] != NULL )
+      delete listIter[ ii ];
+  }
+
+  // Search for especific time.
+  aux_record = traceIndex->findRecord( whichTime );
+
+  // Backward search filling vector of iterators.
+  BPlusTree::iterator *current = new BPlusTree::iterator::iterator( aux_record );
+  if ( current != NULL )
+  {
+    BPlusTree::iterator *initial = current;
+
+    while (( !current->isNull() ) && ( filled != numThreads ))
+    {
+      if ( listIter[ current->getCPU() ] != NULL )
+      {
+        listIter[ current->getCPU() ] =
+          dynamic_cast< BPlusTree::CPUIterator * >( current );
+        filled++;
+      }
+      current--;
+    }
+
+    delete initial;
+  }
+  else
+    throw ParaverKernelException( ParaverKernelException::memoryError,
+                                  "new returned NULL.",
+                                  __FILE__,
+                                  __LINE__ );
+}
 
 /******************************************************************************
  * MemoryTrace Inherited Iterator.
@@ -1090,13 +1175,6 @@ void BPlusTree::CPUIterator::operator--()
 }
 
 
-void BPlusTree::getRecordByTimeThread( vector<BPlusTree::ThreadIterator *>& listIter,
-                                       TRecordTime whichTime ) const
-{}
-
-void BPlusTree::getRecordByTimeCPU( vector<BPlusTree::CPUIterator *>& listIter,
-                                    TRecordTime whichTime ) const
-{}
 
 /**************************************************************************
  * MemoryTrace Inherited CPUIterator.

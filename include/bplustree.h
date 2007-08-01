@@ -7,6 +7,7 @@
 #include "memorytrace.h"
 #include "bplustreetypes.h"
 #include "bplustreerecordleaf.h"
+#include "index.h"
 
 namespace bplustree
 {
@@ -205,8 +206,11 @@ namespace bplustree
   class BPlusTree : public MemoryTrace
   {
     private:
+      UINT32 numThreads;
+      UINT32 numCPUs;
       UINT32 unloadThreshold;
       UINT32 unloadPercent;
+      Index *traceIndex;
       /*
             inline TRecord *getIniRecord()
             {
