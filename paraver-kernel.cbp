@@ -70,6 +70,14 @@
 		<Unit filename="include/bplustreeexception.h" />
 		<Unit filename="include/bplustreerecordleaf.h" />
 		<Unit filename="include/bplustreetypes.h" />
+		<Unit filename="include/index.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/index.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="include/interval.h" />
 		<Unit filename="include/kwindow.h" />
 		<Unit filename="include/memoryblocks.h" />
@@ -103,6 +111,10 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/bplustreerecordleaf.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/index.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
@@ -142,7 +154,6 @@
 				<search_path add="/usr/include/c++/4.1.1" />
 				<search_path add="/usr/include" />
 			</code_completion>
-			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
