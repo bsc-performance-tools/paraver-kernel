@@ -7,6 +7,7 @@
 #include "processmodel.h"
 #include "resourcemodel.h"
 #include "memorytrace.h"
+#include "bplustree.h"
 #include "bplustreeblocks.h"
 
 using namespace bplustree;
@@ -23,6 +24,8 @@ class Trace
 
     ~Trace()
     {};
+
+    void dumpFile( const string& whichFile ) const;
 
     TApplOrder totalApplications() const;
     TTaskOrder totalTasks() const;
@@ -66,6 +69,7 @@ class Trace
     TTime traceEndTime;
     TTimeUnit traceTimeUnit;
     BPlusTreeBlocks *blocks;
+    BPlusTree *btree;
 
   private:
     string fileName;

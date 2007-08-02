@@ -134,10 +134,29 @@ TTimeUnit Trace::getTimeUnit() const
   return traceTimeUnit;
 }
 
+void Trace::dumpFile( const string& whichFile ) const
+{
+
+  std::fstream file( whichFile.c_str(), fstream::out | fstream::trunc );
+  // pendiente volcar cabecera
+
+  // volcado cuerpo
+  MemoryTrace::iterator *it = btree->begin();
+  while ( !it->isNull() )
+  {
+    TraceBodyIO_v1::write( file, *this, it );
+    it++;
+  }
+
+  file.close();
+  delete it;
+}
+
 
 Trace::Trace( const string& whichFile ) : fileName( whichFile )
 {
   string tmpstr;
+  TRecord *tmp;
 
   ready = false;
   std::fstream file( fileName.c_str(), fstream::in );
@@ -205,14 +224,26 @@ Trace::Trace( const string& whichFile ) : fileName( whichFile )
 
 // Reading the body
   blocks = new BPlusTreeBlocks( traceProcessModel );
-  //btree  = new BPlusTree( this, *blocks );//?
+
+  btree  = new BPlusTree( traceProcessModel.totalThreads(),
+                          traceResourceModel.totalCPUs() );
 
   while ( !file.eof() )
   {
     TraceBodyIO_v1::read( file, *blocks );
-    //btree.insert();
+
+    for( UINT16 i = 0; i < blocks->getCountInserted(); i++ )
+    {
+      tmp = blocks->getLastRecord( i );
+      btree->insert( tmp );
+    }
+
+    blocks->resetCountInserted();
   }
+
 // End reading the body
+  btree->unload();
   file.close();
   ready = true;
+
 }

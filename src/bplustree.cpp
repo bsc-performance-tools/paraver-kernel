@@ -4,7 +4,7 @@
 
 #include "bplustree.h"
 #include "bplustreeexception.h"
-
+#include <iostream>
 //using namespace std;
 using std::vector;
 using namespace bplustree;
@@ -892,86 +892,86 @@ void BPlusTree::unload( INT32 numrecords )
 }
 
 
-void BPlusTree::getRecordByTimeThread( vector<BPlusTree::ThreadIterator *>& listIter,
+void BPlusTree::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
                                        TRecordTime whichTime ) const
 {
-  TRecord *aux_record;
-  UINT32 filled = 0;
+  TRecord *current;
+  TThreadOrder filled = 0;
 
-  for ( UINT32 ii = 0; ii < numThreads; ii++ )
+  for ( TThreadOrder ii = 0; ii < numThreads; ii++ )
   {
     if ( listIter[ ii ] != NULL )
       delete listIter[ ii ];
   }
 
   // Search for especific time.
-  aux_record = traceIndex->findRecord( whichTime );
+  current = traceIndex->findRecord( whichTime );
+  while ( current != NULL )
+  {
+    if ( current->time < whichTime )
+      break;
+    current = current->prev;
+  }
 
   // Backward search filling vector of iterators.
-  BPlusTree::iterator *current = new BPlusTree::iterator::iterator( aux_record );
-  if ( current != NULL )
+  while (( current != NULL ) && ( filled < numThreads ))
   {
-    BPlusTree::iterator *initial = current;
-
-    while (( !current->isNull() ) && ( filled != numThreads ))
+    if ( listIter[ current->thread ] == NULL )
     {
-      if ( listIter[ current->getThread() ] != NULL )
-      {
-        listIter[ current->getThread() ] =
-          dynamic_cast< BPlusTree::ThreadIterator * >( current );
-        filled++;
-      }
-      current--;
+      listIter[ current->thread ] = new BPlusTree::iterator( current );
+      filled++;
     }
-
-    delete initial;
+    current = current->prev;
   }
-  else
-    throw ParaverKernelException( ParaverKernelException::memoryError,
-                                  "new returned NULL.",
-                                  __FILE__,
-                                  __LINE__ );
+
+  // Fill the rest.
+  if ( filled < numThreads )
+  {
+    for ( TThreadOrder i = 0; i < numThreads; i++ )
+      if ( listIter[ i ] == NULL )
+        listIter[ i ] = threadBegin( i );
+  }
 }
 
-void BPlusTree::getRecordByTimeCPU( vector<BPlusTree::CPUIterator *>& listIter,
+void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
                                     TRecordTime whichTime ) const
 {
-  TRecord *aux_record;
-  UINT32 filled = 0;
+  TRecord *current;
+  TCPUOrder filled = 0;
 
-  for ( UINT32 ii = 0; ii < numCPUs; ii++ )
+  for ( TCPUOrder ii = 0; ii < numCPUs; ii++ )
   {
     if ( listIter[ ii ] != NULL )
       delete listIter[ ii ];
   }
 
   // Search for especific time.
-  aux_record = traceIndex->findRecord( whichTime );
+  current = traceIndex->findRecord( whichTime );
+  while ( current != NULL )
+  {
+    if ( current->time < whichTime )
+      break;
+    current = current->prev;
+  }
 
   // Backward search filling vector of iterators.
-  BPlusTree::iterator *current = new BPlusTree::iterator::iterator( aux_record );
-  if ( current != NULL )
+  while (( current != NULL ) && ( filled < numCPUs ))
   {
-    BPlusTree::iterator *initial = current;
-
-    while (( !current->isNull() ) && ( filled != numThreads ))
+    if ( listIter[ current->CPU ] == NULL )
     {
-      if ( listIter[ current->getCPU() ] != NULL )
-      {
-        listIter[ current->getCPU() ] =
-          dynamic_cast< BPlusTree::CPUIterator * >( current );
-        filled++;
-      }
-      current--;
+      listIter[ current->CPU ] = new BPlusTree::iterator( current );
+      filled++;
     }
-
-    delete initial;
+    current = current->prev;
   }
-  else
-    throw ParaverKernelException( ParaverKernelException::memoryError,
-                                  "new returned NULL.",
-                                  __FILE__,
-                                  __LINE__ );
+
+  // Fill the rest.
+  if ( filled < numCPUs )
+  {
+    for ( TCPUOrder i = 0; i < numCPUs; i++ )
+      if ( listIter[ i ] == NULL )
+        listIter[ i ] = CPUBegin( i );
+  }
 }
 
 /******************************************************************************
@@ -1019,20 +1019,6 @@ void BPlusTree::iterator::operator--()
 #endif
 }
 
-bool BPlusTree::iterator::operator==( const BPlusTree::iterator &it )
-{
-  return ( this->record == it.record );
-}
-
-bool BPlusTree::iterator::operator!=( const BPlusTree::iterator &it )
-{
-  return ( this->record != it.record );
-}
-
-bool BPlusTree::iterator::isNull() const
-{
-  return ( record == NULL );
-}
 
 TRecordType  BPlusTree::iterator::getType() const
 {
@@ -1173,8 +1159,21 @@ void BPlusTree::CPUIterator::operator--()
                               __FILE__,
                               __LINE__ );
 }
+/*
+bool BPlusTree::CPUIterator::operator==( const MemoryTrace::iterator &it ) const
+{
+  const BPlusTree::CPUIterator *ti = dynamic_cast<const BPlusTree::CPUIterator *>( &it );
 
+  return ( this->record != ti->record );
+}
 
+bool BPlusTree::CPUIterator::operator!=( const MemoryTrace::iterator &it ) const
+{
+  const BPlusTree::CPUIterator *ti = dynamic_cast<const BPlusTree::CPUIterator *>( &it );
+
+  return ( this->record != ti->record );
+}
+*/
 
 /**************************************************************************
  * MemoryTrace Inherited CPUIterator.
@@ -1189,23 +1188,23 @@ MemoryTrace::iterator* BPlusTree::end() const
   return new BPlusTree::iterator( unloadedTrace->getEnd() );
 }
 
-MemoryTrace::ThreadIterator* BPlusTree::threadBegin( TThreadOrder whichThread ) const
+MemoryTrace::iterator* BPlusTree::threadBegin( TThreadOrder whichThread ) const
 {
-  return new BPlusTree::ThreadIterator( unloadedTrace->getThreadBegin( whichThread ) );
+  return new BPlusTree::iterator( unloadedTrace->getThreadBegin( whichThread ) );
 }
 
-MemoryTrace::ThreadIterator* BPlusTree::threadEnd( TThreadOrder whichThread ) const
+MemoryTrace::iterator* BPlusTree::threadEnd( TThreadOrder whichThread ) const
 {
-  return  new BPlusTree::ThreadIterator( unloadedTrace->getThreadEnd( whichThread ) );
+  return  new BPlusTree::iterator( unloadedTrace->getThreadEnd( whichThread ) );
 }
 
-MemoryTrace::CPUIterator* BPlusTree::CPUBegin( TCPUOrder whichCPU ) const
+MemoryTrace::iterator* BPlusTree::CPUBegin( TCPUOrder whichCPU ) const
 {
-  return new BPlusTree::CPUIterator( unloadedTrace->getCPUBegin( whichCPU ) );
+  return new BPlusTree::iterator( unloadedTrace->getCPUBegin( whichCPU ) );
 }
 
-MemoryTrace::CPUIterator* BPlusTree::CPUEnd( TCPUOrder whichCPU ) const
+MemoryTrace::iterator* BPlusTree::CPUEnd( TCPUOrder whichCPU ) const
 {
-  return new BPlusTree::CPUIterator( unloadedTrace->getCPUEnd( whichCPU ) );
+  return new BPlusTree::iterator( unloadedTrace->getCPUEnd( whichCPU ) );
 }
 

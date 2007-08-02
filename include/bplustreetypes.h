@@ -2,6 +2,7 @@
 #define BPLUSTREETYPES_H_INCLUDED
 
 #include "paraverkerneltypes.h"
+#include "memorytrace.h"
 
 namespace bplustree
 {
@@ -45,7 +46,7 @@ namespace bplustree
   TCommInfo;
 
 
-  typedef struct TRecord
+  typedef struct TRecord : public TData
   {
     TRecordType  type;
     TRecordTime  time;

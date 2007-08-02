@@ -6,6 +6,8 @@
 
 using namespace std;
 
+typedef struct {} TData;
+
 class MemoryTrace
 {
   public:
@@ -13,16 +15,15 @@ class MemoryTrace
     {
       public:
         iterator();
-        //iterator( TRecord *whichRecord );
 
-        virtual ~iterator() = 0;
+        virtual ~iterator();
 
         virtual void operator++() = 0;
         virtual void operator--() = 0;
 
-        virtual bool operator==( const iterator &it );
-        virtual bool operator!=( const iterator &it );
-        virtual bool isNull() const = 0;
+        virtual bool operator==( const iterator &it ) const;
+        virtual bool operator!=( const iterator &it ) const;
+        virtual bool isNull() const;
 
         virtual TRecordType  getType() const = 0;
         virtual TRecordTime  getTime() const = 0;
@@ -33,13 +34,15 @@ class MemoryTrace
         virtual TState       getState() const = 0;
         virtual TRecordTime  getStateEndTime() const = 0;
         virtual TCommID      getCommIndex() const = 0;
-    };
 
-    class ThreadIterator : public iterator
+      protected :
+        TData *record;
+    };
+/*
+    class ThreadIterator : virtual public iterator
     {
       public:
         ThreadIterator();
-        //ThreadIterator( TRecord *whichRecord );
 
         virtual ~ThreadIterator();
 
@@ -47,18 +50,17 @@ class MemoryTrace
         virtual void operator--();
     };
 
-    class CPUIterator : public iterator
+    class CPUIterator : virtual public iterator
     {
       public:
         CPUIterator();
-        //CPUIterator( TRecord *whichRecord );
 
         virtual ~CPUIterator();
 
         virtual void operator++();
         virtual void operator--();
     };
-
+*/
 
     MemoryTrace()
     {}
@@ -68,14 +70,16 @@ class MemoryTrace
 
     virtual MemoryTrace::iterator* begin() const = 0;
     virtual MemoryTrace::iterator* end() const = 0;
-    virtual MemoryTrace::ThreadIterator* threadBegin( TThreadOrder whichThread ) const = 0;
-    virtual MemoryTrace::ThreadIterator* threadEnd( TThreadOrder whichThread ) const = 0;
-    virtual MemoryTrace::CPUIterator* CPUBegin( TCPUOrder whichCPU ) const = 0;
-    virtual MemoryTrace::CPUIterator* CPUEnd( TCPUOrder whichCPU ) const = 0;
 
-    virtual void getRecordByTimeThread( vector<MemoryTrace::ThreadIterator *>& listIter,
+    virtual MemoryTrace::iterator* threadBegin( TThreadOrder whichThread ) const = 0;
+    virtual MemoryTrace::iterator* threadEnd( TThreadOrder whichThread ) const = 0;
+    virtual MemoryTrace::iterator* CPUBegin( TCPUOrder whichCPU ) const = 0;
+    virtual MemoryTrace::iterator* CPUEnd( TCPUOrder whichCPU ) const = 0;
+
+
+    virtual void getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
                                         TRecordTime whichTime ) const = 0;
-    virtual void getRecordByTimeCPU( vector<MemoryTrace::CPUIterator *>& listIter,
+    virtual void getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
                                      TRecordTime whichTime ) const = 0;
 
   protected:

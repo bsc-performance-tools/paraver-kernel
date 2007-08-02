@@ -10,6 +10,7 @@
  * Order is needed because events should be ordered in the same time.
  * The last key is the key of the record that came last.
  ******************************************************************************/
+#include <string>
 #include <iostream>
 
 #include "bplustreetypes.h"
@@ -71,7 +72,7 @@ namespace bplustree
       friend std::ostream& operator<<( std::ostream& os, const RecordLeaf& rl );
   };
 
-  std::ostream& operator<<( std::ostream& os, const RecordLeaf& rl );
+  //std::ostream& operator<<( std::ostream& os, const RecordLeaf& rl );
 }
 
 #endif

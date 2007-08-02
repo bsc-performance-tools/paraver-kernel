@@ -115,7 +115,7 @@ int main( int argc, char *argv[] )
   {
 //    testTrace = Trace( "/home/eloy/traces/sweep3d.150.100.chop1.prv" );
 //    testTrace = Trace( "/home/eloy/traces/mpi_ping.prv" );
-    testTrace = new Trace( "/home/eloy/traces/traza_10k/linpack_10000_cache.prv" );
+    testTrace = new Trace( "/home/pedro/tools/trazas/ping-pong/ping_pong.prv" );
   }
   catch ( TraceHeaderException& ex )
   {
@@ -132,6 +132,9 @@ int main( int argc, char *argv[] )
 
   testTrace->getThreadLocation( 9000, ap, tk, th );
   cout << ap << " " << tk << " " << th << endl;
+
+  testTrace->dumpFile("/home/pedro/tools/trazas/ping-pong/ping_pong_dump.prv");
+
   //--------------------------------------------------------------------------
   // END TESTING Trace
   //--------------------------------------------------------------------------

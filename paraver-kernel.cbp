@@ -114,6 +114,10 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="src/memorytrace.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="src/paraverkernelexception.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
