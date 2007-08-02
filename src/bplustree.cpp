@@ -1000,7 +1000,7 @@ void BPlusTree::iterator::operator++()
                               __FILE__,
                               __LINE__ );
 #else
-  record = record->next;
+  record = ((TRecord *)record)->next;
 #endif
 }
 
@@ -1015,54 +1015,54 @@ void BPlusTree::iterator::operator--()
                               __FILE__,
                               __LINE__ );
 #else
-  record = record->prev;
+  record = ((TRecord *)record)->prev;
 #endif
 }
 
 
 TRecordType  BPlusTree::iterator::getType() const
 {
-  return record->type;
+  return ((TRecord *)record)->type;
 }
 
 TRecordTime  BPlusTree::iterator::getTime() const
 {
-  return record->time;
+  return ((TRecord *)record)->time;
 }
 
 TThreadOrder BPlusTree::iterator::getThread() const
 {
-  return record->thread;
+  return ((TRecord *)record)->thread;
 }
 
 TCPUOrder    BPlusTree::iterator::getCPU() const
 {
-  return record->CPU;
+  return ((TRecord *)record)->CPU;
 }
 
 TEventType   BPlusTree::iterator::getEventType() const
 {
-  return record->URecordInfo.eventRecord.type;
+  return ((TRecord *)record)->URecordInfo.eventRecord.type;
 }
 
 TEventValue  BPlusTree::iterator::getEventValue() const
 {
-  return record->URecordInfo.eventRecord.value;
+  return ((TRecord *)record)->URecordInfo.eventRecord.value;
 }
 
 TState       BPlusTree::iterator::getState() const
 {
-  return record->URecordInfo.stateRecord.state;
+  return ((TRecord *)record)->URecordInfo.stateRecord.state;
 }
 
 TRecordTime  BPlusTree::iterator::getStateEndTime() const
 {
-  return record->URecordInfo.stateRecord.endTime;
+  return ((TRecord *)record)->URecordInfo.stateRecord.endTime;
 }
 
 TCommID      BPlusTree::iterator::getCommIndex() const
 {
-  return record->URecordInfo.commRecord.index;
+  return ((TRecord *)record)->URecordInfo.commRecord.index;
 }
 
 
@@ -1082,14 +1082,14 @@ void BPlusTree::ThreadIterator::operator++()
 {
 #ifdef STRICT_CHECK_DEBUG
   if ( record !=  NULL )
-    record = record->threadNext;
+    record = ((TRecord *)record)->threadNext;
   else
     throw BPlusTreeException( BPlusTreeException::wrongIterator,
                               "threadNext unreachable, record NULL.",
                               __FILE__,
                               __LINE__ );
 #else
-  record = record->threadNext;
+  record = ((TRecord *)record)->threadNext;
 #endif
 }
 
@@ -1097,14 +1097,14 @@ void BPlusTree::ThreadIterator::operator--()
 {
 #ifdef STRICT_CHECK_DEBUG
   if ( record !=  NULL )
-    record = record->threadPrev;
+    record = ((TRecord *)record)->threadPrev;
   else
     throw BPlusTreeException( BPlusTreeException::wrongIterator,
                               "threadPrev unreachable, record NULL.",
                               __FILE__,
                               __LINE__ );
 #else
-  record = record->threadPrev;
+  record = ((TRecord *)record)->threadPrev;
 #endif
 }
 
@@ -1119,15 +1119,15 @@ void BPlusTree::CPUIterator::operator++()
 {
   if ( record !=  NULL )
   {
-    TRecord *myRecord = this->record; // Keep current, maybe it's the last one.
+    TRecord *myRecord = (TRecord *)this->record; // Keep current, maybe it's the last one.
 
     // Forward search, looking for next record with same CPU.
-    record = record->next;
+    record = ((TRecord *)record)->next;
     while ( record != NULL )
     {
-      if ( record->CPU == myRecord->CPU )
+      if ( ((TRecord *)record)->CPU == myRecord->CPU )
         break;
-      record = record->next;
+      record = ((TRecord *)record)->next;
     }
   }
   else
@@ -1142,15 +1142,15 @@ void BPlusTree::CPUIterator::operator--()
   // Shared code with ++, but the prev/next and exception message.
   if ( record !=  NULL )
   {
-    TRecord *myRecord = this->record; // Keep current, maybe it's the last one.
+    TRecord *myRecord = (TRecord *)this->record; // Keep current, maybe it's the last one.
 
     // Backward search, looking for previous record with same CPU.
-    record = record->prev;
+    record = ((TRecord *)record)->prev;
     while ( record != NULL )
     {
-      if ( record->CPU == myRecord->CPU )
+      if ( ((TRecord *)record)->CPU == myRecord->CPU )
         break;
-      record = record->prev;
+      record = ((TRecord *)record)->prev;
     }
   }
   else
@@ -1159,21 +1159,6 @@ void BPlusTree::CPUIterator::operator--()
                               __FILE__,
                               __LINE__ );
 }
-/*
-bool BPlusTree::CPUIterator::operator==( const MemoryTrace::iterator &it ) const
-{
-  const BPlusTree::CPUIterator *ti = dynamic_cast<const BPlusTree::CPUIterator *>( &it );
-
-  return ( this->record != ti->record );
-}
-
-bool BPlusTree::CPUIterator::operator!=( const MemoryTrace::iterator &it ) const
-{
-  const BPlusTree::CPUIterator *ti = dynamic_cast<const BPlusTree::CPUIterator *>( &it );
-
-  return ( this->record != ti->record );
-}
-*/
 
 /**************************************************************************
  * MemoryTrace Inherited CPUIterator.

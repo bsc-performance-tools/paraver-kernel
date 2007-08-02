@@ -297,8 +297,6 @@ namespace bplustree
           virtual TRecordTime  getStateEndTime() const;
           virtual TCommID      getCommIndex() const;
 
-        protected:
-          TRecord *record;
       };
 
     class ThreadIterator : public BPlusTree::iterator

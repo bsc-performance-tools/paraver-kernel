@@ -36,6 +36,7 @@ void BPlusTreeBlocks::newRecord()
     }
   }
   lastRecords.push_back( &currentBlock[currentRecord] );
+  countInserted++;
 }
 
 void BPlusTreeBlocks::setType( TRecordType whichType )
