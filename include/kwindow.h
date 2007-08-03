@@ -9,7 +9,14 @@ class KWindow
   public:
     KWindow();
     ~KWindow();
+
+    Trace& getTrace() const
+    {
+      return myTrace;
+    }
+
   protected:
+    Trace& myTrace;
 
   private:
 
@@ -22,14 +29,23 @@ class KSingleWindow: public KWindow
     KSingleWindow();
     ~KSingleWindow();
 
-    Trace& getTrace() const
+    MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it )
     {
-      return myTrace;
+      return myTrace.copyIterator( it );
+    }
+
+    MemoryTrace::iterator *getThreadRecordByTime( TThreadOrder whichOrder )
+    {
+      return dynamic_cast<MemoryTrace::iterator *> ( recordsByTime[whichOrder] );
+    }
+
+    bool passFilter( MemoryTrace::iterator *it )
+    {
+      return true;
     }
 
   protected:
-    Trace& myTrace;
-
+    vector<MemoryTrace::iterator *> recordsByTime;
   private:
 
 };

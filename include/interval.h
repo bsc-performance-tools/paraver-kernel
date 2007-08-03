@@ -6,6 +6,8 @@
 #include "memorytrace.h"
 #include "kwindow.h"
 
+class SemanticFunction;
+
 using namespace std;
 
 // r1 is less than r2?
@@ -47,8 +49,24 @@ class Interval
       currentValue = 0;
     }
 
+    Interval( KWindow *whichWindow, TObjectOrder whichOrder ):
+        window( whichWindow ), order( whichOrder )
+    {
+      function = NULL;
+      begin = NULL;
+      end = NULL;
+      currentValue = 0;
+    }
+
     virtual ~Interval()
-    {}
+    {
+      delete begin;
+      delete end;
+      RecordList::iterator it = myDisplayList.begin();
+      while ( it != myDisplayList.end() )
+        delete *it;
+      myDisplayList.clear();
+    }
 
     SemanticFunction *getSemanticFunction() const
     {
@@ -75,18 +93,18 @@ class Interval
       return currentValue;
     }
 
-    virtual void init( TRecordTime initialTime, RecordList *displayList,  TCreateList create ) = 0;
+    virtual RecordList *init( TRecordTime initialTime, RecordList *displayList, TCreateList create ) = 0;
     virtual RecordList *calcNext( RecordList *displayList ) = 0;
     virtual RecordList *calcPrev( RecordList *displayList ) = 0;
 
   protected:
     KWindow *window;
+    TObjectOrder order;
     SemanticFunction *function;
     MemoryTrace::iterator *begin;
     MemoryTrace::iterator *end;
     TSemanticValue currentValue;
-    RecordList displayRecords;
-
+    RecordList myDisplayList;
   private:
 
 };

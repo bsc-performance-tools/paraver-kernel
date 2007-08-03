@@ -46,27 +46,24 @@ void TraceBodyIO_v1::write( fstream& whichStream,
 {
   string line;
   bool writeReady;
+  TRecordType type = record->getType();
 
-  switch ( record->getType() )
+  if ( type & STATE )
+    writeReady = writeState( line, whichTrace, record );
+  else if ( type & EVENT )
+    writeReady = writeEvent( line, whichTrace, record );
+  else if ( type & COMM )
+    writeReady = writeComm( line, whichTrace, record );
+  else if ( type & GLOBCOMM )
+    writeReady = writeGlobalComm( line, whichTrace, record );
+  else if ( type & RSEND || type & RRECV )
+    writeReady = false;
+  else
   {
-    case STATE:
-      writeReady = writeState( line, whichTrace, record );
-      break;
-    case EVENT:
-      writeReady = writeEvent( line, whichTrace, record );
-      break;
-    case COMM:
-      writeReady = writeComm( line, whichTrace, record );
-      break;
-    case GLOBCOMM:
-      writeReady = writeGlobalComm( line, whichTrace, record );
-      break;
-    default:
-      writeReady = false;
-      cerr << "Falta sistema de logging TraceBodyIO_v1::write()" << endl;
-      cerr << "Tipo de record desconocido en memoria" << endl;
-      break;
-  };
+    writeReady = false;
+    cerr << "Falta sistema de logging TraceBodyIO_v1::write()" << endl;
+    cerr << "Tipo de record desconocido en memoria" << endl;
+  }
 
   if ( !writeReady )
     return;
@@ -437,7 +434,7 @@ bool TraceBodyIO_v1::writeComm( string& line,
   TTaskOrder recvTask;
   TThreadOrder recvThread;
 
-  if ( !( record->getType() & LOG & SEND ) )
+  if ( !( record->getType() == ( COMM + LOG + SEND ) ) )
     return false;
 
   commID = record->getCommIndex();
@@ -451,9 +448,12 @@ bool TraceBodyIO_v1::writeComm( string& line,
     ostr << '0' << ':';
   whichTrace.getThreadLocation( whichTrace.getReceiverThread( commID ),
                                 recvAppl, recvTask, recvThread );
-  ostr << recvAppl << ':' << recvTask << ':' << recvThread << ':';
+  ostr << recvAppl + 1 << ':' << recvTask + 1 << ':' << recvThread + 1 << ':';
   ostr << whichTrace.getLogicalReceive( commID ) << ':';
-  ostr << whichTrace.getPhysicalReceive( commID );
+  ostr << whichTrace.getPhysicalReceive( commID ) << ':';
+
+  ostr << whichTrace.getCommSize( commID ) << ':';
+  ostr << whichTrace.getCommTag( commID );
 
   line += ostr.str();
   return true;

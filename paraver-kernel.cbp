@@ -75,6 +75,7 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="include/interval.h" />
+		<Unit filename="include/intervalthread.h" />
 		<Unit filename="include/kwindow.h" />
 		<Unit filename="include/memoryblocks.h" />
 		<Unit filename="include/memorytrace.h" />
@@ -89,7 +90,9 @@
 		<Unit filename="include/resourcemodelnode.h" />
 		<Unit filename="include/semanticexception.h" />
 		<Unit filename="include/semanticfunction.h" />
+		<Unit filename="include/semanticinfo.h" />
 		<Unit filename="include/semanticthread.h" />
+		<Unit filename="include/semanticthreadfunctions.h" />
 		<Unit filename="include/trace.h" />
 		<Unit filename="include/tracebodyio.h" />
 		<Unit filename="include/tracebodyio_v1.h" />
@@ -114,6 +117,10 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="src/intervalthread.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="src/memorytrace.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -131,6 +138,10 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/semanticexception.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/semanticthreadfunctions.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
@@ -154,6 +165,7 @@
 				<search_path add="/usr/include/c++/4.1.1" />
 				<search_path add="/usr/include" />
 			</code_completion>
+			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

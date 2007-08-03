@@ -136,7 +136,6 @@ TTimeUnit Trace::getTimeUnit() const
 
 void Trace::dumpFile( const string& whichFile ) const
 {
-
   std::fstream file( whichFile.c_str(), fstream::out | fstream::trunc );
   // pendiente volcar cabecera
 
@@ -145,11 +144,11 @@ void Trace::dumpFile( const string& whichFile ) const
   while ( !it->isNull() )
   {
     TraceBodyIO_v1::write( file, *this, it );
-    it++;
+    ++(*it);
   }
 
   file.close();
-  delete it;
+  //delete it;
 }
 
 

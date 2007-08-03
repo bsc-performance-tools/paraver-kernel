@@ -23,7 +23,14 @@ class Trace
     Trace( const string& whichFile );
 
     ~Trace()
-    {};
+    {
+      delete blocks;
+    }
+
+    MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it )
+    {
+      return new BPlusTree::iterator( *( dynamic_cast<BPlusTree::iterator *> ( it ) ) );
+    }
 
     void dumpFile( const string& whichFile ) const;
 

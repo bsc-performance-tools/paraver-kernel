@@ -4,6 +4,7 @@
 #include <vector>
 #include "memorytrace.h"
 #include "semanticexception.h"
+#include "semanticinfo.h"
 
 using namespace std;
 
@@ -14,31 +15,41 @@ class SemanticFunction
 {
   public:
     SemanticFunction()
-    {}
+    {
+      setDefaultParam();
+    }
     virtual ~SemanticFunction()
     {}
+
+    void setDefaultParam()
+    {
+      for ( UINT16 i = 0; i < getMaxParam(); i++ )
+        parameters[i] = defaultParam[i];
+    }
 
     virtual TParamIndex getMaxParam() const = 0;
     virtual const TParamValue& getParam( TParamIndex whichParam ) const
     {
-      if( whichParam > getMaxParam() - 1 )
+      if ( whichParam > getMaxParam() - 1 )
         throw SemanticException( SemanticException::maxParamExceeded );
       return parameters[whichParam];
     }
 
     virtual void setParam( TParamIndex whichParam, const TParamValue& newValue )
     {
-      if( whichParam > getMaxParam() - 1 )
+      if ( whichParam > getMaxParam() - 1 )
         throw SemanticException( SemanticException::maxParamExceeded );
       parameters[whichParam] = newValue;
     }
+
+    virtual TSemanticValue execute( const SemanticInfo& info ) = 0;
     //void setWindow( & whichWindow ) { window = whichWindow; }
     //& getWindow() { return window; }
     //
   protected:
+    static TParamValue defaultParam[];
     TParamValue parameters[];
     //& window -> associated window
-    //parameters
   private:
 
 };
