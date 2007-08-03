@@ -49,8 +49,8 @@ UnloadedTrace::~UnloadedTrace()
 {}
 
 
-// enlaza fragmento recién descargado
-// append del fragmento de traza recién descargada
+// enlaza fragmento recien descargado
+// append del fragmento de traza recien descargada
 void UnloadedTrace::append( TRecord *rini, TRecord *rfin )
 {
   TRecord      *current;
@@ -797,7 +797,7 @@ void BPlusTree::getRecordFirstTime( TRecord **rft )
 {
   if ( lastLeaf == NULL )
     // ojo last_leaf se actualiza al sacar.
-    *rft = NULL;  // error, nada se ha enlazado todavi­a.
+    *rft = NULL;  // error, nada se ha enlazado todavia.
   else
     *rft = lastLeaf->getRecord();
 }
@@ -995,7 +995,7 @@ void BPlusTree::iterator::operator++()
 {
 #ifdef STRICT_CHECK_DEBUG
   if ( record !=  NULL )
-    record = record->next;
+    record = ( ( TRecord * )record )->next;
   else
     throw BPlusTreeException( BPlusTreeException::wrongIterator,
                               "next unreachable, record NULL.",
@@ -1010,7 +1010,7 @@ void BPlusTree::iterator::operator--()
 {
 #ifdef STRICT_CHECK_DEBUG
   if ( record !=  NULL )
-    record = record->prev;
+    record = ( ( TRecord * )record )->prev;
   else
     throw BPlusTreeException( BPlusTreeException::wrongIterator,
                               "prev unreachable, record NULL.",
@@ -1119,6 +1119,7 @@ BPlusTree::CPUIterator::~CPUIterator()
 
 void BPlusTree::CPUIterator::operator++()
 {
+  cout << "cpu it" << endl;
   if ( record !=  NULL )
   {
     TRecord *myRecord = ( TRecord * )this->record; // Keep current, maybe it's the last one.
