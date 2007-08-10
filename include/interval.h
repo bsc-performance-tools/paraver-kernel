@@ -42,17 +42,14 @@ class Interval
   public:
     Interval()
     {
-      window = NULL;
-      function = NULL;
       begin = NULL;
       end = NULL;
       currentValue = 0;
     }
 
-    Interval( KWindow *whichWindow, TObjectOrder whichOrder ):
-        window( whichWindow ), order( whichOrder )
+    Interval( TObjectOrder whichOrder ):
+        order( whichOrder )
     {
-      function = NULL;
       begin = NULL;
       end = NULL;
       currentValue = 0;
@@ -66,16 +63,6 @@ class Interval
       while ( it != myDisplayList.end() )
         delete *it;
       myDisplayList.clear();
-    }
-
-    SemanticFunction *getSemanticFunction() const
-    {
-      return function;
-    }
-
-    void setSemanticFunction( SemanticFunction *whichFunction )
-    {
-      function = whichFunction;
     }
 
     TRecordTime getBeginTime() const
@@ -93,14 +80,13 @@ class Interval
       return currentValue;
     }
 
-    virtual RecordList *init( TRecordTime initialTime, RecordList *displayList, TCreateList create ) = 0;
-    virtual RecordList *calcNext( RecordList *displayList ) = 0;
-    virtual RecordList *calcPrev( RecordList *displayList ) = 0;
+    virtual RecordList *init( TRecordTime initialTime, TCreateList create,
+                              RecordList *displayList = NULL ) = 0;
+    virtual RecordList *calcNext( RecordList *displayList = NULL, bool initCalc = false ) = 0;
+    virtual RecordList *calcPrev( RecordList *displayList = NULL, bool initCalc = false ) = 0;
 
   protected:
-    KWindow *window;
     TObjectOrder order;
-    SemanticFunction *function;
     MemoryTrace::iterator *begin;
     MemoryTrace::iterator *end;
     TSemanticValue currentValue;

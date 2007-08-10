@@ -7,17 +7,37 @@
 class IntervalThread: public Interval
 {
   public:
-    virtual RecordList *init( TRecordTime initialTime, RecordList *displayList,
-                              TCreateList create );
-    virtual RecordList *calcNext( RecordList *displayList, bool initCalc = false );
-    virtual RecordList *calcPrev( RecordList *displayList, bool initCalc = false );
+    IntervalThread()
+    {
+      function = NULL;
+    }
+
+    IntervalThread( KSingleWindow *whichWindow, TObjectOrder whichOrder ):
+        Interval( whichOrder ), window( whichWindow )
+    {
+      function = NULL;
+    }
+
+    SemanticThread *getSemanticFunction() const
+    {
+      return function;
+    }
+
+    void setSemanticFunction( SemanticThread *whichFunction )
+    {
+      function = whichFunction;
+    }
+
+    virtual RecordList *init( TRecordTime initialTime, TCreateList create,
+                              RecordList *displayList = NULL );
+    virtual RecordList *calcNext( RecordList *displayList = NULL, bool initCalc = false );
+    virtual RecordList *calcPrev( RecordList *displayList = NULL, bool initCalc = false );
 
   protected:
     KSingleWindow *window;
     SemanticThread *function;
-    MemoryTrace::iterator *begin;
-    MemoryTrace::iterator *end;
     TCreateList createList;
+
   private:
     TSemanticValue nextValue;
 

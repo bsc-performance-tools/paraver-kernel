@@ -148,7 +148,7 @@ void Trace::dumpFile( const string& whichFile ) const
   }
 
   file.close();
-  //delete it;
+  delete it;
 }
 
 

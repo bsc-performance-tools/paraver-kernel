@@ -48,7 +48,9 @@ void TraceBodyIO_v1::write( fstream& whichStream,
   bool writeReady;
   TRecordType type = record->getType();
 
-  if ( type & STATE )
+  if( type == EMPTYREC )
+    return;
+  else if ( type & STATE )
     writeReady = writeState( line, whichTrace, record );
   else if ( type & EVENT )
     writeReady = writeEvent( line, whichTrace, record );

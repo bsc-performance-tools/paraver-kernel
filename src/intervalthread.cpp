@@ -1,7 +1,7 @@
 #include "intervalthread.h"
 
-RecordList *IntervalThread::init( TRecordTime initialTime, RecordList *displayList,
-                                  TCreateList create )
+RecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
+                                  RecordList *displayList )
 {
   createList = create;
   currentValue = 0;
@@ -15,12 +15,12 @@ RecordList *IntervalThread::init( TRecordTime initialTime, RecordList *displayLi
     delete end;
 
   begin = window->getThreadRecordByTime( order );
-  end = dynamic_cast<MemoryTrace::iterator *> ( window->copyIterator( begin ) );
+  end = window->copyIterator( begin );
 
   if ( ( !function->getInitFromBegin() ) && ( initialTime > 0 ) )
     calcPrev( displayList, true );
 
-  while ( ( !end->isNull() ) && ( end->getTime() < initialTime ) )
+  while ( ( !end->isNull() ) && ( end->getTime() <= initialTime ) )
     calcNext( displayList, true );
 
   return displayList;

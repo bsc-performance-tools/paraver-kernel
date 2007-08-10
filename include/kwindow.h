@@ -29,6 +29,16 @@ class KSingleWindow: public KWindow
     KSingleWindow();
     ~KSingleWindow();
 
+    TWindowLevel getLevel() const
+    {
+      return level;
+    }
+
+    void setLevel( TWindowLevel whichLevel )
+    {
+      level = whichLevel;
+    }
+
     MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it )
     {
       return myTrace.copyIterator( it );
@@ -36,7 +46,7 @@ class KSingleWindow: public KWindow
 
     MemoryTrace::iterator *getThreadRecordByTime( TThreadOrder whichOrder )
     {
-      return dynamic_cast<MemoryTrace::iterator *> ( recordsByTime[whichOrder] );
+      return recordsByTime[whichOrder];
     }
 
     bool passFilter( MemoryTrace::iterator *it )
@@ -46,6 +56,7 @@ class KSingleWindow: public KWindow
 
   protected:
     vector<MemoryTrace::iterator *> recordsByTime;
+    TWindowLevel level;
   private:
 
 };

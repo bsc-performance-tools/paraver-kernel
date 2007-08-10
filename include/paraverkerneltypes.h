@@ -73,4 +73,11 @@ typedef UINT32        TState;
 
 typedef double        TSemanticValue;
 
+typedef enum TWindowLevel
+{
+  WORKLOAD = 0, APPLICATION, TASK, THREAD,
+  SYSTEM, NODE, CPU
+};
+
+
 #endif // PARAVERKERNELTYPES_H_INCLUDED
