@@ -27,8 +27,8 @@ UnloadedTrace::UnloadedTrace( const TThreadOrder totalThreads,
   last = NULL;
 
   // Threads list.
-  threadFirst.reserve( sizeof( TRecord * ) * numThreads );
-  threadLast.reserve( sizeof( TRecord * ) * numThreads );
+  threadFirst.reserve( numThreads );
+  threadLast.reserve( numThreads );
   for ( TObjectOrder ii = 0; ii < numThreads; ii++ )
   {
     threadFirst.push_back( NULL );
@@ -36,8 +36,8 @@ UnloadedTrace::UnloadedTrace( const TThreadOrder totalThreads,
   }
 
   // CPUs list.
-  CPUFirst.reserve( sizeof( TRecord * ) * numCPUs );
-  CPULast.reserve( sizeof( TRecord * ) * numCPUs );
+  CPUFirst.reserve( numCPUs );
+  CPULast.reserve( numCPUs );
   for ( TCPUOrder ii = 0; ii < numCPUs; ii++ )
   {
     CPUFirst.push_back( NULL );
@@ -793,13 +793,60 @@ BPlusTree::~BPlusTree()
 }
 
 
-void BPlusTree::getRecordFirstTime( TRecord **rft )
+TTime BPlusTree::finish( TTime headerTime )
 {
-  if ( lastLeaf == NULL )
-    // ojo last_leaf se actualiza al sacar.
-    *rft = NULL;  // error, nada se ha enlazado todavia.
-  else
-    *rft = lastLeaf->getRecord();
+  TRecord tmpBegin, tmpEnd;
+
+  unload();
+  if ( unloadedTrace->getEnd()->time > headerTime )
+    headerTime = unloadedTrace->getEnd()->time;
+
+  emptyThreadBegin.reserve( numThreads );
+  emptyThreadEnd.reserve( numThreads );
+
+  tmpBegin.time = 0;
+  tmpEnd.time = headerTime;
+  tmpBegin.type = EMPTYREC;
+  tmpEnd.type = EMPTYREC;
+  for ( TThreadOrder i = 0; i < numThreads; i++ )
+  {
+    tmpBegin.thread = i;
+    tmpEnd.thread = i;
+    tmpBegin.threadNext = unloadedTrace->getThreadBegin( i );
+    tmpEnd.threadPrev = unloadedTrace->getThreadEnd( i );
+    emptyThreadBegin.push_back( tmpBegin );
+    emptyThreadEnd.push_back( tmpEnd );
+  }
+
+  emptyCPUBegin.reserve( numCPUs );
+  emptyCPUEnd.reserve( numCPUs );
+
+  tmpBegin.time = 0;
+  tmpEnd.time = headerTime;
+  for ( TCPUOrder i = 0; i < numCPUs; i++ )
+  {
+    tmpBegin.CPU = i;
+    tmpEnd.CPU = i;
+    tmpBegin.next = unloadedTrace->getCPUBegin( i );
+    tmpEnd.prev = unloadedTrace->getCPUEnd( i );
+    emptyCPUBegin.push_back( tmpBegin );
+    emptyCPUEnd.push_back( tmpEnd );
+  }
+
+  return headerTime;
+}
+
+
+void BPlusTree::insert( BPlusTreeBlocks *blocks )
+{
+  TRecord *tmp;
+  for ( UINT16 i = 0; i < blocks->getCountInserted(); i++ )
+  {
+    tmp = blocks->getLastRecord( i );
+    insert( tmp );
+  }
+
+  blocks->resetCountInserted();
 }
 
 
@@ -829,6 +876,15 @@ void BPlusTree::insert( TRecord *r )
 
   if ( unloadCriteria() )
     unload( ( UINT32 )( unloadThreshold * unloadPercent / 100 ) );
+}
+
+void BPlusTree::getRecordFirstTime( TRecord **rft )
+{
+  if ( lastLeaf == NULL )
+    // ojo last_leaf se actualiza al sacar.
+    *rft = NULL;  // error, nada se ha enlazado todavia.
+  else
+    *rft = lastLeaf->getRecord();
 }
 
 
@@ -1178,21 +1234,21 @@ MemoryTrace::iterator* BPlusTree::end() const
 
 MemoryTrace::iterator* BPlusTree::threadBegin( TThreadOrder whichThread ) const
 {
-  return new BPlusTree::iterator( unloadedTrace->getThreadBegin( whichThread ) );
+  return new BPlusTree::iterator( (TRecord *)&emptyThreadBegin[ whichThread ] );
 }
 
 MemoryTrace::iterator* BPlusTree::threadEnd( TThreadOrder whichThread ) const
 {
-  return  new BPlusTree::iterator( unloadedTrace->getThreadEnd( whichThread ) );
+  return  new BPlusTree::iterator( (TRecord *)&emptyThreadEnd[ whichThread ] );
 }
 
 MemoryTrace::iterator* BPlusTree::CPUBegin( TCPUOrder whichCPU ) const
 {
-  return new BPlusTree::iterator( unloadedTrace->getCPUBegin( whichCPU ) );
+  return new BPlusTree::iterator( (TRecord *)&emptyCPUBegin[ whichCPU ] );
 }
 
 MemoryTrace::iterator* BPlusTree::CPUEnd( TCPUOrder whichCPU ) const
 {
-  return new BPlusTree::iterator( unloadedTrace->getCPUEnd( whichCPU ) );
+  return new BPlusTree::iterator( (TRecord *)&emptyCPUEnd[ whichCPU ] );
 }
 

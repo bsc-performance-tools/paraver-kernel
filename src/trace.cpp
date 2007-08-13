@@ -155,7 +155,6 @@ void Trace::dumpFile( const string& whichFile ) const
 Trace::Trace( const string& whichFile ) : fileName( whichFile )
 {
   string tmpstr;
-  TRecord *tmp;
 
   ready = false;
   std::fstream file( fileName.c_str(), fstream::in );
@@ -230,18 +229,11 @@ Trace::Trace( const string& whichFile ) : fileName( whichFile )
   while ( !file.eof() )
   {
     TraceBodyIO_v1::read( file, *blocks );
-
-    for( UINT16 i = 0; i < blocks->getCountInserted(); i++ )
-    {
-      tmp = blocks->getLastRecord( i );
-      btree->insert( tmp );
-    }
-
-    blocks->resetCountInserted();
+    btree->insert( blocks );
   }
 
 // End reading the body
-  btree->unload();
+  traceEndTime = btree->finish( traceEndTime );
   file.close();
   ready = true;
 

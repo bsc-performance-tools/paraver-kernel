@@ -67,7 +67,7 @@ class MemoryTrace
     virtual ~MemoryTrace()
     {}
 
-
+    virtual TTime finish( TTime headerTime ) = 0;
     virtual MemoryTrace::iterator* begin() const = 0;
     virtual MemoryTrace::iterator* end() const = 0;
 
