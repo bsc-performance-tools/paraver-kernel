@@ -111,7 +111,8 @@ namespace bplustree
       virtual UINT32 linkRecords( TRecord *&ini,
                                   TRecord *&fin,
                                   int &recs2link,
-                                  RecordLeaf *&last_leaf ) = 0;
+                                  RecordLeaf *&last_leaf,
+                                  Index *traceIndex ) = 0;
 
       virtual BPlusNode *split( BPlusNode *dest, RecordLeaf *&retdat ) = 0;
       virtual bool partialDelete( RecordLeaf *limit_key,
@@ -151,7 +152,8 @@ namespace bplustree
 
       virtual UINT32 linkRecords( TRecord *&ini, TRecord *&fin,
                                   INT32 &recs2link,
-                                  RecordLeaf *&last_leaf );
+                                  RecordLeaf *&last_leaf,
+                                  Index *traceIndex );
 
       virtual void print( string indent );
       virtual bool partialDelete( RecordLeaf *limit_key,
@@ -197,7 +199,8 @@ namespace bplustree
       virtual UINT32 linkRecords( TRecord *&ini,
                                   TRecord *&fin,
                                   INT32 &recs2link,
-                                  RecordLeaf *&last_leaf );
+                                  RecordLeaf *&last_leaf,
+                                  Index *traceIndex );
       virtual bool partialDelete( RecordLeaf *limit_key,
                                   BPlusNode **valid_predecessor );
       //UINT8 countElems();

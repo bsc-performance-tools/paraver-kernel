@@ -25,6 +25,7 @@ class Index
   private:
     UINT32 indexStep;
     TTraceIndex baseIndex;
+    UINT32 counter;
 };
 
 #endif // INDEX_H_INCLUDED
