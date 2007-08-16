@@ -14,7 +14,8 @@
 #include "tracebodyio.h"
 #include "tracebodyio_v1.h"
 #include "bplustreeblocks.h"
-#include "interval.h"
+#include "kwindow.h"
+#include "semanticthreadfunctions.h"
 
 using namespace std;
 using namespace bplustree;
@@ -116,9 +117,9 @@ int main( int argc, char *argv[] )
 //    testTrace = Trace( "/home/eloy/traces/sweep3d.150.100.chop1.prv" );
 //    testTrace = Trace( "/home/eloy/traces/mpi_ping.prv" );
 //    testTrace = new Trace( "/home/pedro/tools/trazas/ping-pong/pingpong.prv" );
-//    testTrace = new Trace( "/home/eloy/traces/mpi_ping.prv" );
+    testTrace = new Trace( "/home/eloy/traces/mpi_ping.prv" );
 
-  testTrace = new Trace( "/home/pedro/tools/trazas/ping-pong/ping_pong.prv" );
+//  testTrace = new Trace( "/home/pedro/tools/trazas/ping-pong/ping_pong.prv" );
   }
   catch ( TraceHeaderException& ex )
   {
@@ -129,19 +130,43 @@ int main( int argc, char *argv[] )
     ex.printMessage();
   }
 
-  TApplOrder ap;
-  TTaskOrder tk;
-  TThreadOrder th;
+//  TApplOrder ap;
+//  TTaskOrder tk;
+//  TThreadOrder th;
 
-  testTrace->getThreadLocation( 9000, ap, tk, th );
-  cout << ap << " " << tk << " " << th << endl;
+//  testTrace->getThreadLocation( 9000, ap, tk, th );
+//  cout << ap << " " << tk << " " << th << endl;
 
-  testTrace->dumpFile("/home/pedro/tools/trazas/ping-pong/ping_pong_dump.prv");
+//  testTrace->dumpFile("/home/pedro/tools/trazas/ping-pong/ping_pong_dump.prv");
 //  testTrace->dumpFile("/home/eloy/ping_pong_dump.prv");
 
   //--------------------------------------------------------------------------
   // END TESTING Trace
   //--------------------------------------------------------------------------
-  cin.get();
+
+  //--------------------------------------------------------------------------
+  // TESTING KSingleWindow
+  //--------------------------------------------------------------------------
+  KSingleWindow *testWindow = new KSingleWindow( testTrace );
+  testWindow->setLevel( THREAD );
+  SemanticThread *testFunction = new StateAsIs();
+  testWindow->setLevelFunction( THREAD, testFunction );
+
+  testWindow->init( 0, NOCREATE );
+  TObjectOrder i = 0;
+  while( testWindow->getEndTime( i ) < testTrace->getEndTime() )
+  {
+    cout << i << " " << testWindow->getBeginTime( i ) << " ";
+    cout << testWindow->getEndTime( i ) - testWindow->getBeginTime( i ) << " ";
+    cout << testWindow->getValue( i ) << endl;
+    testWindow->calcNext( i );
+  }
+  cout << i << " " << testWindow->getBeginTime( i ) << " ";
+  cout << testWindow->getEndTime( i ) - testWindow->getBeginTime( i ) << " ";
+  cout << testWindow->getValue( i ) << endl;
+  //--------------------------------------------------------------------------
+  // END TESTING KSingleWindow
+  //--------------------------------------------------------------------------
+
 }
 

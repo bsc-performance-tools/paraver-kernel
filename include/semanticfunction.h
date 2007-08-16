@@ -15,16 +15,14 @@ class SemanticFunction
 {
   public:
     SemanticFunction()
-    {
-      setDefaultParam();
-    }
+    {}
     virtual ~SemanticFunction()
     {}
 
     void setDefaultParam()
     {
-      for ( UINT16 i = 0; i < getMaxParam(); i++ )
-        parameters[i] = defaultParam[i];
+      for ( TParamIndex i = 0; i < getMaxParam(); i++ )
+        parameters[i] = getDefaultParam( i );
     }
 
     virtual TParamIndex getMaxParam() const = 0;
@@ -42,12 +40,12 @@ class SemanticFunction
       parameters[whichParam] = newValue;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo& info ) = 0;
+    virtual TSemanticValue execute( const SemanticInfo *info ) = 0;
     //void setWindow( & whichWindow ) { window = whichWindow; }
     //& getWindow() { return window; }
     //
   protected:
-    static TParamValue defaultParam[];
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) = 0;
     TParamValue parameters[];
     //& window -> associated window
   private:

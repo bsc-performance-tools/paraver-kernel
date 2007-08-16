@@ -1,10 +1,11 @@
 #include "semanticthreadfunctions.h"
 
-TSemanticValue StateAsIs::execute( const SemanticThreadInfo& info )
+TSemanticValue StateAsIs::execute( const SemanticInfo *info )
 {
-  if( info.it->getType() & EMPTYREC )
+  const SemanticThreadInfo *myInfo = (const SemanticThreadInfo *) info;
+  if( myInfo->it->getType() == EMPTYREC )
     return 0;
-  return info.it->getState();
+  return myInfo->it->getState();
 }
 
 

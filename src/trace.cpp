@@ -144,11 +144,55 @@ void Trace::dumpFile( const string& whichFile ) const
   while ( !it->isNull() )
   {
     TraceBodyIO_v1::write( file, *this, it );
-    ++(*it);
+    ++( *it );
   }
 
   file.close();
   delete it;
+}
+
+
+// Forward MemoryTrace iterator functions
+MemoryTrace::iterator* Trace::begin() const
+{
+  return btree->begin();
+}
+
+MemoryTrace::iterator* Trace::end() const
+{
+  return btree->end();
+}
+
+MemoryTrace::iterator* Trace::threadBegin( TThreadOrder whichThread ) const
+{
+  return btree->threadBegin( whichThread );
+}
+
+MemoryTrace::iterator* Trace::threadEnd( TThreadOrder whichThread ) const
+{
+  return btree->threadEnd( whichThread );
+}
+
+MemoryTrace::iterator* Trace::CPUBegin( TCPUOrder whichCPU ) const
+{
+  return btree->CPUBegin( whichCPU );
+}
+
+MemoryTrace::iterator* Trace::CPUEnd( TCPUOrder whichCPU ) const
+{
+  return btree->CPUEnd( whichCPU );
+}
+
+void Trace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
+                            TRecordTime whichTime ) const
+{
+  btree->getRecordByTimeThread( listIter, whichTime );
+}
+
+void Trace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
+                         TRecordTime whichTime ) const
+{
+  btree->getRecordByTimeCPU( listIter, whichTime );
 }
 
 

@@ -32,20 +32,21 @@ typedef UINT16        TRecordType;
  * TRecordType defines.
  *  Comes from old paraver code.
  */
-static const TRecordType BEGIN    = 0x0000;
-static const TRecordType END      = 0x0001;
-static const TRecordType STATE    = 0x0002;
-static const TRecordType EVENT    = 0x0004;
-static const TRecordType LOG      = 0x0008;
-static const TRecordType PHY      = 0x0010;
-static const TRecordType SEND     = 0x0020;
-static const TRecordType RECV     = 0x0040;
-static const TRecordType COMM     = 0x0080;
-static const TRecordType GLOBCOMM = 0x0100;
-static const TRecordType RRECV    = 0x0200;
-static const TRecordType RSEND    = 0x0400;
+static const TRecordType BEGIN    = 0x0001;
+static const TRecordType END      = 0x0002;
+static const TRecordType STATE    = 0x0004;
+static const TRecordType EVENT    = 0x0008;
+static const TRecordType LOG      = 0x0010;
+static const TRecordType PHY      = 0x0020;
+static const TRecordType SEND     = 0x0040;
+static const TRecordType RECV     = 0x0080;
+static const TRecordType COMM     = 0x0100;
+static const TRecordType GLOBCOMM = 0x0200;
+static const TRecordType RRECV    = 0x0400;
+static const TRecordType RSEND    = 0x0800;
 
 static const TRecordType EMPTYREC = STATE + EVENT + COMM;
+// Paraver old code
 #if 0
 #define BEGIN        (0x0000)          /* Begin record. */
 #define END          (0x0001)          /* End record. Used in states

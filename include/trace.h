@@ -31,6 +31,14 @@ class Trace
     {
       return new BPlusTree::iterator( *( dynamic_cast<BPlusTree::iterator *> ( it ) ) );
     }
+    MemoryTrace::iterator *copyThreadIterator( MemoryTrace::iterator *it )
+    {
+      return new BPlusTree::ThreadIterator( *( dynamic_cast<BPlusTree::ThreadIterator *> ( it ) ) );
+    }
+    MemoryTrace::iterator *copyCPUIterator( MemoryTrace::iterator *it )
+    {
+      return new BPlusTree::CPUIterator( *( dynamic_cast<BPlusTree::CPUIterator *> ( it ) ) );
+    }
 
     void dumpFile( const string& whichFile ) const;
 
@@ -68,6 +76,19 @@ class Trace
 
     TTime getEndTime() const;
     TTimeUnit getTimeUnit() const;
+
+    // Forward MemoryTrace iterator functions
+    MemoryTrace::iterator* begin() const;
+    MemoryTrace::iterator* end() const;
+    MemoryTrace::iterator* threadBegin( TThreadOrder whichThread ) const;
+    MemoryTrace::iterator* threadEnd( TThreadOrder whichThread ) const;
+    MemoryTrace::iterator* CPUBegin( TCPUOrder whichCPU ) const;
+    MemoryTrace::iterator* CPUEnd( TCPUOrder whichCPU ) const;
+
+    void getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
+                                TRecordTime whichTime ) const;
+    void getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
+                             TRecordTime whichTime ) const;
 
   protected:
     bool ready;

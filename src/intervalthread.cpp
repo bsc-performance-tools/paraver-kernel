@@ -14,8 +14,8 @@ RecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
   if( end != NULL )
     delete end;
 
-  begin = window->getThreadRecordByTime( order );
-  end = window->copyIterator( begin );
+  begin = window->copyThreadIterator( window->getThreadRecordByTime( order ) );
+  end = window->copyThreadIterator( begin );
 
   if ( ( !function->getInitFromBegin() ) && ( initialTime > 0 ) )
     calcPrev( displayList, true );
@@ -43,7 +43,7 @@ RecordList *IntervalThread::calcNext( RecordList *displayList, bool initCalc )
   getNextRecord( end, displayList );
   info.callingInterval = this;
   info.it = end;
-  nextValue = function->execute( info );
+  nextValue = function->execute( &info );
 
   return displayList;
 }
@@ -60,7 +60,7 @@ RecordList *IntervalThread::calcPrev( RecordList *displayList, bool initCalc )
 void IntervalThread::getNextRecord( MemoryTrace::iterator *it,
                                     RecordList *displayList )
 {
-  it++;
+  ++(*it);
   while ( !it->isNull() )
   {
     if ( window->passFilter( it ) )
@@ -76,11 +76,14 @@ void IntervalThread::getNextRecord( MemoryTrace::iterator *it,
         break;
       }
     }
-    it++;
+    ++(*it);
   }
 
   if ( it->isNull() )
-    ;//it = window->getThreadEndRecord();
+  {
+    delete it;
+    it = window->getThreadEndRecord( order );
+  }
 }
 
 

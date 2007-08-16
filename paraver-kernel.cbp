@@ -8,7 +8,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="libparaver-kernel.a" prefix_auto="1" extension_auto="1" />
+				<Option output="libparaver-kernel" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/Debug/" />
 				<Option type="2" />
@@ -20,7 +20,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="libparaver-kernel.a" prefix_auto="1" extension_auto="1" />
+				<Option output="libparaver-kernel" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/Release/" />
 				<Option type="2" />
@@ -70,12 +70,10 @@
 		<Unit filename="include/bplustreeexception.h" />
 		<Unit filename="include/bplustreerecordleaf.h" />
 		<Unit filename="include/bplustreetypes.h" />
-		<Unit filename="include/index.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="include/index.h" />
 		<Unit filename="include/interval.h" />
 		<Unit filename="include/intervalthread.h" />
+		<Unit filename="include/intervaltypes.h" />
 		<Unit filename="include/kwindow.h" />
 		<Unit filename="include/memoryblocks.h" />
 		<Unit filename="include/memorytrace.h" />
@@ -118,6 +116,10 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/intervalthread.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/kwindow.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
@@ -166,6 +168,7 @@
 				<search_path add="/usr/include" />
 			</code_completion>
 			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

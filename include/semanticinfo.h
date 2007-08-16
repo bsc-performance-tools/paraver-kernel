@@ -8,8 +8,6 @@
 
 using namespace std;
 
-class Interval;
-
 struct SemanticInfo
 {
   Interval *callingInterval;

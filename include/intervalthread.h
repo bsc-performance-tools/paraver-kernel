@@ -2,7 +2,11 @@
 #define INTERVALTHREAD_H_INCLUDED
 
 #include "interval.h"
+#include "kwindow.h"
 #include "semanticthread.h"
+
+class KSingleWindow;
+class SemanticThread;
 
 class IntervalThread: public Interval
 {
@@ -17,6 +21,9 @@ class IntervalThread: public Interval
     {
       function = NULL;
     }
+
+    virtual ~IntervalThread()
+    {}
 
     SemanticThread *getSemanticFunction() const
     {

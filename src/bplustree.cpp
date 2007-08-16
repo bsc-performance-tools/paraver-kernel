@@ -1175,7 +1175,6 @@ BPlusTree::CPUIterator::~CPUIterator()
 
 void BPlusTree::CPUIterator::operator++()
 {
-  cout << "cpu it" << endl;
   if ( record !=  NULL )
   {
     TRecord *myRecord = ( TRecord * )this->record; // Keep current, maybe it's the last one.
@@ -1234,21 +1233,21 @@ MemoryTrace::iterator* BPlusTree::end() const
 
 MemoryTrace::iterator* BPlusTree::threadBegin( TThreadOrder whichThread ) const
 {
-  return new BPlusTree::iterator( (TRecord *)&emptyThreadBegin[ whichThread ] );
+  return new BPlusTree::ThreadIterator( ( TRecord * )&emptyThreadBegin[ whichThread ] );
 }
 
 MemoryTrace::iterator* BPlusTree::threadEnd( TThreadOrder whichThread ) const
 {
-  return  new BPlusTree::iterator( (TRecord *)&emptyThreadEnd[ whichThread ] );
+  return  new BPlusTree::ThreadIterator( ( TRecord * )&emptyThreadEnd[ whichThread ] );
 }
 
 MemoryTrace::iterator* BPlusTree::CPUBegin( TCPUOrder whichCPU ) const
 {
-  return new BPlusTree::iterator( (TRecord *)&emptyCPUBegin[ whichCPU ] );
+  return new BPlusTree::CPUIterator( ( TRecord * )&emptyCPUBegin[ whichCPU ] );
 }
 
 MemoryTrace::iterator* BPlusTree::CPUEnd( TCPUOrder whichCPU ) const
 {
-  return new BPlusTree::iterator( (TRecord *)&emptyCPUEnd[ whichCPU ] );
+  return new BPlusTree::CPUIterator( ( TRecord * )&emptyCPUEnd[ whichCPU ] );
 }
 

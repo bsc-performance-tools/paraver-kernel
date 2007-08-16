@@ -11,19 +11,18 @@ class SemanticThread : public SemanticFunction
     ~SemanticThread()
     {}
 
-    static bool getInitFromBegin()
+    const bool getInitFromBegin()
     {
-      return initFromBegin;
+      return getMyInitFromBegin();
     }
-    static bool validRecord( const MemoryTrace::iterator *record )
+
+    bool validRecord( const MemoryTrace::iterator *record )
     {
       TRecordType type = record->getType();
-      TRecordType mask = validateMask;
+      TRecordType mask = getValidateMask();
 
-      if ( type & EMPTYREC )
+      if ( type == EMPTYREC )
         return true;
-      if ( type & END )
-        type -= END;
       if ( mask & RSEND )
       {
         if ( type & RSEND )
@@ -38,14 +37,14 @@ class SemanticThread : public SemanticFunction
         else
           mask -= RRECV;
       }
-      return ( mask & type == mask );
+      return ( ( mask & type ) == mask );
     }
 
   protected:
     // Valid records for this function
-    static const TRecordType  validateMask;
+    virtual const TRecordType getValidateMask() = 0;
     // Must initialize from the beginning of the trace
-    static const bool         initFromBegin;
+    virtual const bool getMyInitFromBegin() = 0;
 
   private:
 };
