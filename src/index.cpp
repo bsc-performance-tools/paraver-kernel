@@ -3,6 +3,7 @@
 Index::Index( UINT32 step )
 {
   indexStep = step;
+  counter = 0;
 }
 
 Index::~Index()
@@ -10,7 +11,12 @@ Index::~Index()
 
 void Index::indexRecord( TRecord *rec )
 {
-  baseIndex[ rec->time ] = rec;
+  counter++;
+  if ( counter == indexStep )
+  {
+    baseIndex[ rec->time ] = rec;
+    counter = 0;
+  }
 }
 
 TRecord *Index::findRecord( TRecordTime time )

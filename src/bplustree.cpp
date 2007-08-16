@@ -285,7 +285,8 @@ bool BPlusLeaf::getLeafKey( UINT8 ii, RecordLeaf *&key )
 UINT32 BPlusLeaf::linkRecords( TRecord *&ini,
                                TRecord *&fin,
                                INT32 &recs2link,
-                               RecordLeaf *&lastLeaf )
+                               RecordLeaf *&lastLeaf,
+                               Index *traceIndex )
 {
   TRecord *prev, *cur, *initial;
   UINT8 used = getUsed();
@@ -314,6 +315,7 @@ UINT32 BPlusLeaf::linkRecords( TRecord *&ini,
       prev->next = cur;
       prev = cur;
       num++;
+      traceIndex->indexRecord( cur );
     }
     ini = initial;
     fin = prev;
@@ -584,7 +586,8 @@ bool BPlusInternal::getLeafKey( UINT8 ii, RecordLeaf *&key )
 
 UINT32 BPlusInternal::linkRecords( TRecord *&ini, TRecord *&fin,
                                    INT32 &recs2link,
-                                   RecordLeaf *&lastLeaf )
+                                   RecordLeaf *&lastLeaf,
+                                   Index *traceIndex )
 {
   TRecord *prevIni, *prevFin, *currIni, *currFin;
   UINT32 recsLinked = 0;
@@ -595,12 +598,12 @@ UINT32 BPlusInternal::linkRecords( TRecord *&ini, TRecord *&fin,
   {
     prevIni = prevFin = currIni = currFin = NULL;
 
-    recsLinked += child[ 0]->linkRecords( prevIni, prevFin, recs2link, lastLeaf );
+    recsLinked += child[ 0]->linkRecords( prevIni, prevFin, recs2link, lastLeaf, traceIndex );
 
     ii = 1;
     while ( ( ii < used ) && ( recs2link != 0 ) )
     {
-      recsLinked += child[ ii ]->linkRecords( currIni, currFin, recs2link, lastLeaf );
+      recsLinked += child[ ii ]->linkRecords( currIni, currFin, recs2link, lastLeaf, traceIndex );
       if ( currFin != NULL )
       {
         prevFin->next = currIni;
@@ -904,7 +907,7 @@ UINT32 BPlusTree::linkRecords( TRecord *&ini, TRecord *&fin, INT32 recs2link )
 {
   UINT32 recordsLinked;
 
-  recordsLinked = root->linkRecords( ini, fin, recs2link, lastLeaf );
+  recordsLinked = root->linkRecords( ini, fin, recs2link, lastLeaf, traceIndex );
   recordsLinkedLastTime = recordsLinked;
 
   return recordsLinked;
