@@ -1,5 +1,5 @@
 #include "index.h"
-
+#include <iostream>
 Index::Index( UINT32 step )
 {
   indexStep = step;
@@ -21,8 +21,7 @@ void Index::indexRecord( TRecord *rec )
 
 TRecord *Index::findRecord( TRecordTime time )
 {
-  TTraceIndex::iterator it = baseIndex.find( time );
-
+  TTraceIndex::iterator it = baseIndex.lower_bound( time );
   return it->second;
 }
 

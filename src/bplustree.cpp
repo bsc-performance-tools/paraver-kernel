@@ -962,7 +962,10 @@ void BPlusTree::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter
   for ( TThreadOrder ii = 0; ii < numThreads; ii++ )
   {
     if ( listIter[ ii ] != NULL )
+    {
       delete listIter[ ii ];
+      listIter[ ii ] = NULL;
+    }
   }
 
   // Search for especific time.
@@ -979,7 +982,7 @@ void BPlusTree::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter
   {
     if ( listIter[ current->thread ] == NULL )
     {
-      listIter[ current->thread ] = new BPlusTree::iterator( current );
+      listIter[ current->thread ] = new BPlusTree::ThreadIterator( current );
       filled++;
     }
     current = current->prev;
@@ -1020,7 +1023,7 @@ void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
   {
     if ( listIter[ current->CPU ] == NULL )
     {
-      listIter[ current->CPU ] = new BPlusTree::iterator( current );
+      listIter[ current->CPU ] = new BPlusTree::CPUIterator( current );
       filled++;
     }
     current = current->prev;

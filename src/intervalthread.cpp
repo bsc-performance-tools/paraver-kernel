@@ -20,8 +20,9 @@ RecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
   if ( ( !function->getInitFromBegin() ) && ( initialTime > 0 ) )
     calcPrev( displayList, true );
 
+  calcNext( displayList, true );
   while ( ( !end->isNull() ) && ( end->getTime() <= initialTime ) )
-    calcNext( displayList, true );
+    calcNext( displayList );
 
   return displayList;
 }
@@ -36,14 +37,13 @@ RecordList *IntervalThread::calcNext( RecordList *displayList, bool initCalc )
 
   if ( !initCalc )
   {
-    currentValue = nextValue;
     *begin = *end;
   }
 
-  getNextRecord( end, displayList );
   info.callingInterval = this;
-  info.it = end;
-  nextValue = function->execute( &info );
+  info.it = begin;
+  currentValue = function->execute( &info );
+  getNextRecord( end, displayList );
 
   return displayList;
 }
@@ -51,8 +51,26 @@ RecordList *IntervalThread::calcNext( RecordList *displayList, bool initCalc )
 
 RecordList *IntervalThread::calcPrev( RecordList *displayList, bool initCalc )
 {
+  SemanticThreadInfo info;
+
   if ( displayList == NULL )
     displayList = &myDisplayList;
+
+  if ( !initCalc )
+  {
+    *end = *begin;
+  }
+
+  getPrevRecord( begin, displayList );
+  info.callingInterval = this;
+  info.it = begin;
+  currentValue = function->execute( &info );
+
+  if( initCalc )
+  {
+    *end = *begin;
+  }
+
   return displayList;
 }
 
@@ -89,4 +107,29 @@ void IntervalThread::getNextRecord( MemoryTrace::iterator *it,
 
 void IntervalThread::getPrevRecord( MemoryTrace::iterator *it,
                                     RecordList *displayList )
-{}
+{
+  --(*it);
+  while ( !it->isNull() )
+  {
+    if ( window->passFilter( it ) )
+    {
+      if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
+           ||
+           ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
+      {
+        displayList->insert( it );
+      }
+      if ( function->validRecord( it ) )
+      {
+        break;
+      }
+    }
+    --(*it);
+  }
+
+  if ( it->isNull() )
+  {
+    delete it;
+    it = window->getThreadBeginRecord( order );
+  }
+}

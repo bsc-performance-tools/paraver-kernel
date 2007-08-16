@@ -152,9 +152,9 @@ int main( int argc, char *argv[] )
   SemanticThread *testFunction = new StateAsIs();
   testWindow->setLevelFunction( THREAD, testFunction );
 
-  testWindow->init( 0, NOCREATE );
+  testWindow->init( 1000000, NOCREATE );
   TObjectOrder i = 0;
-  while( testWindow->getEndTime( i ) < testTrace->getEndTime() )
+  while( testWindow->getEndTime( i ) < /*testTrace->getEndTime()*/2000000 )
   {
     cout << i << " " << testWindow->getBeginTime( i ) << " ";
     cout << testWindow->getEndTime( i ) - testWindow->getBeginTime( i ) << " ";

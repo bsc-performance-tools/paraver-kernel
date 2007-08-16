@@ -93,6 +93,11 @@ class KSingleWindow: public KWindow
       return myTrace->threadEnd( whichOrder );
     }
 
+    MemoryTrace::iterator *getThreadBeginRecord( TThreadOrder whichOrder )
+    {
+      return myTrace->threadBegin( whichOrder );
+    }
+
     bool passFilter( MemoryTrace::iterator *it )
     {
       return true;

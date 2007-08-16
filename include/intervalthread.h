@@ -46,8 +46,6 @@ class IntervalThread: public Interval
     TCreateList createList;
 
   private:
-    TSemanticValue nextValue;
-
     virtual void getNextRecord( MemoryTrace::iterator *it,
                                 RecordList *displayList );
     virtual void getPrevRecord( MemoryTrace::iterator *it,
