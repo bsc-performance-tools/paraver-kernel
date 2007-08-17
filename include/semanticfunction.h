@@ -25,17 +25,22 @@ class SemanticFunction
         parameters[i] = getDefaultParam( i );
     }
 
+    const bool getInitFromBegin()
+    {
+      return getMyInitFromBegin();
+    }
+
     virtual TParamIndex getMaxParam() const = 0;
     virtual const TParamValue& getParam( TParamIndex whichParam ) const
     {
-      if ( whichParam > getMaxParam() - 1 )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return parameters[whichParam];
     }
 
     virtual void setParam( TParamIndex whichParam, const TParamValue& newValue )
     {
-      if ( whichParam > getMaxParam() - 1 )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       parameters[whichParam] = newValue;
     }
@@ -45,9 +50,14 @@ class SemanticFunction
     //& getWindow() { return window; }
     //
   protected:
-    virtual TParamValue getDefaultParam( TParamIndex whichParam ) = 0;
     TParamValue parameters[];
+
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) = 0;
     //& window -> associated window
+
+    // Must initialize from the beginning of the trace
+    virtual const bool getMyInitFromBegin() = 0;
+
   private:
 
 };

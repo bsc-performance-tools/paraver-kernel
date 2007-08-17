@@ -19,7 +19,7 @@ class TraceHeaderException: public ParaverKernelException
       invalidCommNumber,
       unknownCommLine,
       LAST
-  } TErrorCode;
+    } TErrorCode;
 
     TraceHeaderException( TErrorCode whichCode = undefined,
                           const char *whichAuxMessage = "",

@@ -1,7 +1,13 @@
 #include "kwindow.h"
+#include "semanticcomposefunctions.h"
 
 KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 {
+  topCompose1 = new ComposeAsIs();
+  topCompose2 = new ComposeAsIs();
+  composeThread = new ComposeAsIs();
+  functionThread = NULL;
+
   if ( myTrace->totalThreads() > myTrace->totalCPUs() )
   {
     recordsByTime.reserve( myTrace->totalThreads() );
@@ -63,10 +69,24 @@ RecordList *KSingleWindow::init( TRecordTime initialTime, TCreateList create )
 void KSingleWindow::setLevelFunction( TWindowLevel whichLevel,
                                       SemanticFunction *whichFunction )
 {
-  if( whichLevel == THREAD )
+  if ( whichLevel == THREAD )
   {
-    for( TThreadOrder i = 0; i < intervalThread.size(); i++ )
-      intervalThread[ i ].setSemanticFunction( (SemanticThread *)whichFunction );
+    if ( functionThread != NULL )
+      delete functionThread;
+    functionThread = ( SemanticThread * ) whichFunction;
+    for ( TThreadOrder i = 0; i < intervalThread.size(); i++ )
+      intervalThread[ i ].setSemanticFunction( ( SemanticThread * )whichFunction );
+  }
+}
+
+
+void KSingleWindow::setFunctionParam( TWindowLevel whichLevel,
+                                      TParamIndex whichParam,
+                                      const TParamValue& newValue )
+{
+  if ( whichLevel == THREAD )
+  {
+    functionThread->setParam( whichParam, newValue );;
   }
 }
 

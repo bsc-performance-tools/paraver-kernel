@@ -2,9 +2,11 @@
 #define KWINDOW_H_INCLUDED
 
 #include <vector>
+#include "kwindowexception.h"
 #include "trace.h"
 #include "intervalthread.h"
-#include "semanticfunction.h"
+#include "semanticthread.h"
+#include "semanticcompose.h"
 
 class IntervalThread;
 
@@ -26,6 +28,9 @@ class KWindow
     virtual void setLevelFunction( TWindowLevel whichLevel,
                                    SemanticFunction *whichFunction ) = 0;
     //virtual void setComposeFunction( composelevel?, SemanticFunction *function ) = 0;
+    virtual void setFunctionParam( TWindowLevel whichLevel,
+                                   TParamIndex whichParam,
+                                   const TParamValue& newValue ) = 0;
 
     virtual RecordList *init( TRecordTime initialTime, TCreateList create ) = 0;
     virtual RecordList *calcNext( TObjectOrder whichObject ) = 0;
@@ -67,6 +72,8 @@ class KSingleWindow: public KWindow
 
     void setLevel( TWindowLevel whichLevel )
     {
+      if( whichLevel >= TOPCOMPOSE1 )
+        throw KWindowException( KWindowException::invalidLevel );
       level = whichLevel;
     }
 
@@ -105,6 +112,9 @@ class KSingleWindow: public KWindow
 
     virtual void setLevelFunction( TWindowLevel whichLevel,
                                    SemanticFunction *whichFunction );
+    virtual void setFunctionParam( TWindowLevel whichLevel,
+                                   TParamIndex whichParam,
+                                   const TParamValue& newValue );
 
     virtual RecordList *init( TRecordTime initialTime, TCreateList create );
     virtual RecordList *calcNext( TObjectOrder whichObject );
@@ -120,7 +130,10 @@ class KSingleWindow: public KWindow
     // Semantic interval structure
     vector<IntervalThread> intervalThread;
   private:
-
+    SemanticCompose *topCompose1;
+    SemanticCompose *topCompose2;
+    SemanticCompose *composeThread;
+    SemanticThread *functionThread;
 };
 
 

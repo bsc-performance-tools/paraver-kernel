@@ -22,7 +22,7 @@ struct SemanticThreadInfo: public SemanticInfo
 
 struct SemanticHighInfo: public SemanticInfo
 {
-  vector<TSemanticValue> *values;
+  vector<TSemanticValue> values;
 };
 
 #endif // SEMANTICINFO_H_INCLUDED

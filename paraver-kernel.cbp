@@ -72,9 +72,11 @@
 		<Unit filename="include/bplustreetypes.h" />
 		<Unit filename="include/index.h" />
 		<Unit filename="include/interval.h" />
+		<Unit filename="include/intervalhigh.h" />
 		<Unit filename="include/intervalthread.h" />
 		<Unit filename="include/intervaltypes.h" />
 		<Unit filename="include/kwindow.h" />
+		<Unit filename="include/kwindowexception.h" />
 		<Unit filename="include/memoryblocks.h" />
 		<Unit filename="include/memorytrace.h" />
 		<Unit filename="include/paraverkernelexception.h" />
@@ -86,8 +88,11 @@
 		<Unit filename="include/resourcemodel.h" />
 		<Unit filename="include/resourcemodelcpu.h" />
 		<Unit filename="include/resourcemodelnode.h" />
+		<Unit filename="include/semanticcompose.h" />
+		<Unit filename="include/semanticcomposefunctions.h" />
 		<Unit filename="include/semanticexception.h" />
 		<Unit filename="include/semanticfunction.h" />
+		<Unit filename="include/semantichigh.h" />
 		<Unit filename="include/semanticinfo.h" />
 		<Unit filename="include/semanticthread.h" />
 		<Unit filename="include/semanticthreadfunctions.h" />
@@ -123,6 +128,10 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="src/kwindowexception.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="src/memorytrace.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -136,6 +145,10 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/resourcemodel.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/semanticcomposefunctions.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>

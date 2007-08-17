@@ -1,9 +1,9 @@
-#ifndef SEMANTICTHREADFUNCTIONS_H_INCLUDED
-#define SEMANTICTHREADFUNCTIONS_H_INCLUDED
+#ifndef SEMANTICCOMPOSEFUNCTIONS_H_INCLUDED
+#define SEMANTICCOMPOSEFUNCTIONS_H_INCLUDED
 
-#include "semanticthread.h"
+#include "semanticcompose.h"
 
-class StateAsIs: public SemanticThread
+class ComposeAsIs: public SemanticCompose
 {
   public:
     typedef enum
@@ -11,22 +11,21 @@ class StateAsIs: public SemanticThread
       MAXPARAM = 0
     } TParam;
 
-    StateAsIs()
+    ComposeAsIs()
     {
       setDefaultParam();
     }
+
+    ~ComposeAsIs()
+    {}
 
     virtual TParamIndex getMaxParam() const
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
 
+    virtual TSemanticValue execute( const SemanticInfo *info );
   protected:
-    virtual const TRecordType getValidateMask()
-    {
-      return validateMask;
-    }
     virtual const bool getMyInitFromBegin()
     {
       return initFromBegin;
@@ -37,10 +36,11 @@ class StateAsIs: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+
   private:
-    static const TRecordType  validateMask = STATE + BEGIN;
-    static const bool         initFromBegin = false;
+    static const bool initFromBegin = false;
+
 };
 
 
-#endif // SEMANTICTHREADFUNCTIONS_H_INCLUDED
+#endif // SEMANTICCOMPOSEFUNCTIONS_H_INCLUDED

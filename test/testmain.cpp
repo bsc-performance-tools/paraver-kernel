@@ -111,11 +111,12 @@ int main( int argc, char *argv[] )
   //--------------------------------------------------------------------------
   // TESTING Trace
   //--------------------------------------------------------------------------
+  cout << "Loading trace..." << endl;
   Trace *testTrace;
   try
   {
-//    testTrace = Trace( "/home/eloy/traces/sweep3d.150.100.chop1.prv" );
-//    testTrace = Trace( "/home/eloy/traces/mpi_ping.prv" );
+//    testTrace = new Trace( "/home/eloy/traces/sweep3d.150.100.chop1.prv" );
+//    testTrace = new Trace( "/home/eloy/traces/traza_10k/linpack_10000_cache.prv" );
 //    testTrace = new Trace( "/home/pedro/tools/trazas/ping-pong/pingpong.prv" );
     testTrace = new Trace( "/home/eloy/traces/mpi_ping.prv" );
 
@@ -139,7 +140,7 @@ int main( int argc, char *argv[] )
 
 //  testTrace->dumpFile("/home/pedro/tools/trazas/ping-pong/ping_pong_dump.prv");
 //  testTrace->dumpFile("/home/eloy/ping_pong_dump.prv");
-
+  cout << "Trace loaded." << endl;
   //--------------------------------------------------------------------------
   // END TESTING Trace
   //--------------------------------------------------------------------------
@@ -147,23 +148,27 @@ int main( int argc, char *argv[] )
   //--------------------------------------------------------------------------
   // TESTING KSingleWindow
   //--------------------------------------------------------------------------
+  cout << "Dumping semantic function for thread 0 into /home/eloy/pk_sem_out..." << endl;
+  ofstream sem_out( "/home/eloy/pk_sem_out" );
   KSingleWindow *testWindow = new KSingleWindow( testTrace );
   testWindow->setLevel( THREAD );
   SemanticThread *testFunction = new StateAsIs();
   testWindow->setLevelFunction( THREAD, testFunction );
 
-  testWindow->init( 1000000, NOCREATE );
+  testWindow->init( 0, NOCREATE );
   TObjectOrder i = 0;
-  while( testWindow->getEndTime( i ) < /*testTrace->getEndTime()*/2000000 )
+  while ( testWindow->getEndTime( i ) < testTrace->getEndTime() )
   {
-    cout << i << " " << testWindow->getBeginTime( i ) << " ";
-    cout << testWindow->getEndTime( i ) - testWindow->getBeginTime( i ) << " ";
-    cout << testWindow->getValue( i ) << endl;
+    sem_out << /*i << " " << */testWindow->getBeginTime( i ) << "\t";
+    sem_out << testWindow->getEndTime( i ) - testWindow->getBeginTime( i ) << "\t";
+    sem_out << testWindow->getValue( i ) << ".000000" << endl;
     testWindow->calcNext( i );
   }
-  cout << i << " " << testWindow->getBeginTime( i ) << " ";
-  cout << testWindow->getEndTime( i ) - testWindow->getBeginTime( i ) << " ";
-  cout << testWindow->getValue( i ) << endl;
+  sem_out << /*i << " " <<*/ testWindow->getBeginTime( i ) << "\t";
+  sem_out << testWindow->getEndTime( i ) - testWindow->getBeginTime( i ) << "\t";
+  sem_out << testWindow->getValue( i ) << ".000000" << endl;
+
+  cout << "Dump complete." << endl;
   //--------------------------------------------------------------------------
   // END TESTING KSingleWindow
   //--------------------------------------------------------------------------

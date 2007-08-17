@@ -11,12 +11,7 @@ class SemanticThread : public SemanticFunction
     ~SemanticThread()
     {}
 
-    const bool getInitFromBegin()
-    {
-      return getMyInitFromBegin();
-    }
-
-    bool validRecord( const MemoryTrace::iterator *record )
+    inline bool validRecord( const MemoryTrace::iterator *record )
     {
       TRecordType type = record->getType();
       TRecordType mask = getValidateMask();
@@ -43,8 +38,6 @@ class SemanticThread : public SemanticFunction
   protected:
     // Valid records for this function
     virtual const TRecordType getValidateMask() = 0;
-    // Must initialize from the beginning of the trace
-    virtual const bool getMyInitFromBegin() = 0;
 
   private:
 };
