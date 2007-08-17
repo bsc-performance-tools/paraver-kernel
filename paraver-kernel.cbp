@@ -8,7 +8,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="libparaver-kernel" prefix_auto="1" extension_auto="1" />
+				<Option output="libparaver-kernel.a" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/Debug/" />
 				<Option type="2" />
@@ -20,7 +20,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="libparaver-kernel" prefix_auto="1" extension_auto="1" />
+				<Option output="libparaver-kernel.a" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/Release/" />
 				<Option type="2" />
@@ -70,6 +70,7 @@
 		<Unit filename="include/bplustreeexception.h" />
 		<Unit filename="include/bplustreerecordleaf.h" />
 		<Unit filename="include/bplustreetypes.h" />
+		<Unit filename="include/filter.h" />
 		<Unit filename="include/index.h" />
 		<Unit filename="include/interval.h" />
 		<Unit filename="include/intervalhigh.h" />
@@ -113,6 +114,10 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/bplustreerecordleaf.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/filter.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
@@ -180,8 +185,6 @@
 				<search_path add="/usr/include/c++/4.1.1" />
 				<search_path add="/usr/include" />
 			</code_completion>
-			<envvars />
-			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
