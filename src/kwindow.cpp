@@ -13,12 +13,14 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
     recordsByTime.reserve( myTrace->totalThreads() );
     for ( TThreadOrder i = 0; i < myTrace->totalThreads(); i++ )
       recordsByTime.push_back( NULL );
+    // Interval compose se crean AQUI...
   }
   else
   {
     recordsByTime.reserve( myTrace->totalCPUs() );
     for ( TCPUOrder i = 0; i < myTrace->totalCPUs(); i++ )
       recordsByTime.push_back( NULL );
+    // y AQUI...
   }
 
   intervalThread.reserve( myTrace->totalThreads() );

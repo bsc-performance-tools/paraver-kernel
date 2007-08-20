@@ -73,6 +73,7 @@
 		<Unit filename="include/filter.h" />
 		<Unit filename="include/index.h" />
 		<Unit filename="include/interval.h" />
+		<Unit filename="include/intervalcompose.h" />
 		<Unit filename="include/intervalhigh.h" />
 		<Unit filename="include/intervalthread.h" />
 		<Unit filename="include/intervaltypes.h" />

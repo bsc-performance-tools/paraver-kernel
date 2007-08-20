@@ -119,6 +119,8 @@ int main( int argc, char *argv[] )
 //    testTrace = new Trace( "/home/eloy/traces/traza_10k/linpack_10000_cache.prv" );
 //    testTrace = new Trace( "/home/pedro/tools/trazas/ping-pong/pingpong.prv" );
     testTrace = new Trace( "/home/eloy/traces/mpi_ping.prv" );
+// MEGATRAZA
+//    testTrace = new Trace( "/home/eloy/traces/TORB/TORB-4096.chop1.prv" );
 
 //  testTrace = new Trace( "/home/pedro/tools/trazas/ping-pong/ping_pong.prv" );
   }
