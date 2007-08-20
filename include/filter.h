@@ -10,9 +10,9 @@ class Filter
     bool passFilter( MemoryTrace::iterator *it );
 
   private:
-    vector<FilterEvents> eventsFilter;
-    vector<FilterComms>  commsFilter;
-}
+//    vector<FilterEvents> eventsFilter;
+//    vector<FilterComms>  commsFilter;
+};
 
 
 #endif // _FILTER_H_INCLUDED

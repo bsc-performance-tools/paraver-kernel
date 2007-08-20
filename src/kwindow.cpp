@@ -126,3 +126,17 @@ TSemanticValue KSingleWindow::getValue( TObjectOrder whichObject ) const
   // Se debe sustituir intervalThread por el top compose
   return intervalThread[ whichObject ].getValue();
 }
+
+
+vector<IntervalCompose> *KSingleWindow::getLevelInterval( TWindowLevel whichLevel )
+{
+  if( whichLevel == TOPCOMPOSE1 )
+    return &intervalTopCompose1;
+  else if( whichLevel == TOPCOMPOSE2 )
+    return &intervalTopCompose2;
+  else if( whichLevel == THREAD )
+    return &intervalComposeThread;
+
+  return NULL;
+}
+

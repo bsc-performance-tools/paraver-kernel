@@ -13,6 +13,8 @@ class IntervalThread: public Interval
   public:
     IntervalThread()
     {
+      begin = NULL;
+      end = NULL;
       function = NULL;
     }
 
@@ -23,7 +25,12 @@ class IntervalThread: public Interval
     }
 
     virtual ~IntervalThread()
-    {}
+    {
+      if( begin != NULL )
+        delete begin;
+      if( end != NULL )
+        delete end;
+    }
 
     SemanticThread *getSemanticFunction() const
     {

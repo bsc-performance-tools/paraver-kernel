@@ -5,10 +5,12 @@
 #include "kwindowexception.h"
 #include "trace.h"
 #include "intervalthread.h"
+#include "intervalcompose.h"
 #include "semanticthread.h"
 #include "semanticcompose.h"
 
 class IntervalThread;
+class IntervalCompose;
 
 class KWindow
 {
@@ -35,12 +37,20 @@ class KWindow
     virtual RecordList *init( TRecordTime initialTime, TCreateList create ) = 0;
     virtual RecordList *calcNext( TObjectOrder whichObject ) = 0;
     virtual RecordList *calcPrev( TObjectOrder whichObject ) = 0;
+
     virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const = 0;
     virtual TRecordTime getEndTime( TObjectOrder whichObject ) const = 0;
     virtual TSemanticValue getValue( TObjectOrder whichObject ) const = 0;
 
+    virtual vector<IntervalCompose> *getLevelInterval( TWindowLevel whichLevel ) = 0;
   protected:
     Trace *myTrace;
+
+    vector<IntervalCompose> intervalTopCompose1;
+    vector<IntervalCompose> intervalTopCompose2;
+
+    SemanticCompose *topCompose1;
+    SemanticCompose *topCompose2;
 
   private:
 
@@ -119,19 +129,22 @@ class KSingleWindow: public KWindow
     virtual RecordList *init( TRecordTime initialTime, TCreateList create );
     virtual RecordList *calcNext( TObjectOrder whichObject );
     virtual RecordList *calcPrev( TObjectOrder whichObject );
+
     virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const;
     virtual TRecordTime getEndTime( TObjectOrder whichObject ) const;
     virtual TSemanticValue getValue( TObjectOrder whichObject ) const;
+
+    virtual vector<IntervalCompose> *getLevelInterval( TWindowLevel whichLevel );
 
   protected:
     vector<MemoryTrace::iterator *> recordsByTime;
     TWindowLevel level;
 
     // Semantic interval structure
+    vector<IntervalCompose> intervalComposeThread;
     vector<IntervalThread> intervalThread;
+
   private:
-    SemanticCompose *topCompose1;
-    SemanticCompose *topCompose2;
     SemanticCompose *composeThread;
     SemanticThread *functionThread;
 };
@@ -151,6 +164,8 @@ class KDerivedWindow: public KWindow
     }
 
     virtual RecordList *init( TRecordTime initialTime, TCreateList create );
+
+    virtual vector<IntervalCompose> *getLevelInterval( TWindowLevel whichLevel );
 
   protected:
     vector<KWindow *> parents;

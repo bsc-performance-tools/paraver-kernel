@@ -7,9 +7,20 @@ class IntervalHigh: public Interval
 {
   public:
     IntervalHigh();
-    ~IntervalHigh();
-  protected:
 
+    IntervalHigh( TObjectOrder whichOrder ):
+        Interval( whichOrder )
+    {}
+
+    ~IntervalHigh();
+
+  protected:
+    vector<Interval *> childIntervals;
+
+    void setChilds( TWindowLevel whichLevel, TObjectOrder whichOrder )
+    {
+
+    }
   private:
 
 };

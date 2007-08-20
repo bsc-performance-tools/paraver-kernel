@@ -27,8 +27,6 @@ class Interval
 
     virtual ~Interval()
     {
-      delete begin;
-      delete end;
       RecordList::iterator it = myDisplayList.begin();
       while ( it != myDisplayList.end() )
         delete *it;
