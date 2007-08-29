@@ -12,6 +12,7 @@
 #include "intervalcontrolderived.h"
 #include "semanticthread.h"
 #include "semanticcompose.h"
+#include "filter.h"
 
 class IntervalNotThread;
 class IntervalThread;
@@ -162,7 +163,7 @@ class KSingleWindow: public KWindow
 
     bool passFilter( MemoryTrace::iterator *it )
     {
-      return true;
+      return myFilter->passFilter( it );
     }
 
     virtual void setLevelFunction( TWindowLevel whichLevel,
@@ -189,6 +190,11 @@ class KSingleWindow: public KWindow
       return false;
     }
 
+    Filter *getFilter()
+    {
+      return myFilter;
+    }
+
   protected:
     vector<MemoryTrace::iterator *> recordsByTime;
 
@@ -210,7 +216,8 @@ class KSingleWindow: public KWindow
     vector<IntervalCPU> intervalCPU;
 
   private:
-    SemanticFunction *functions[ COMPOSECPU ];
+    SemanticFunction *functions[ COMPOSECPU + 1 ];
+    Filter *myFilter;
 };
 
 

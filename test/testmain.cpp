@@ -168,7 +168,11 @@ int main( int argc, char *argv[] )
 
   KSingleWindow *testWindow2 = new KSingleWindow( testTrace );
   testWindow2->setLevel( THREAD );
-  testWindow2->setLevelFunction( THREAD, testFunction );
+  SemanticThread *testFunction2 = new SendBytesInTransit();
+  testWindow2->setLevelFunction( THREAD, testFunction2 );
+  FilterFunction *testFilter = new FilterEqual();
+  testWindow2->getFilter()->setEventTypeFunction( testFilter );
+  testWindow2->getFilter()->insertEventType( 50000001 );
 
   KDerivedWindow *testDerived = new KDerivedWindow( testWindow, testWindow2 );
   SemanticDerived *testDerivedFunction = new DerivedAdd();

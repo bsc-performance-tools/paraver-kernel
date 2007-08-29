@@ -41,7 +41,12 @@ class IntervalCPU: public IntervalHigh
     virtual RecordList *calcNext( RecordList *displayList = NULL, bool initCalc = false );
     virtual RecordList *calcPrev( RecordList *displayList = NULL, bool initCalc = false );
 
-  protected:
+    virtual KWindow *getWindow()
+    {
+      return ( KWindow * ) window;
+    }
+
+ protected:
     KSingleWindow *window;
     SemanticCPU *function;
     SemanticThread *functionThread;

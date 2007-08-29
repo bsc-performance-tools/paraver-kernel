@@ -38,6 +38,11 @@ class IntervalThread: public Interval
     virtual RecordList *calcNext( RecordList *displayList = NULL, bool initCalc = false );
     virtual RecordList *calcPrev( RecordList *displayList = NULL, bool initCalc = false );
 
+    virtual KWindow *getWindow()
+    {
+      return ( KWindow * ) window;
+    }
+
   protected:
     KSingleWindow *window;
     SemanticThread *function;

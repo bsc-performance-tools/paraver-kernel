@@ -37,6 +37,11 @@ class IntervalDerived: public IntervalHigh
     virtual RecordList *calcNext( RecordList *displayList = NULL, bool initCalc = false );
     virtual RecordList *calcPrev( RecordList *displayList = NULL, bool initCalc = false );
 
+    virtual KWindow *getWindow()
+    {
+      return ( KWindow * ) window;
+    }
+
   protected:
     KDerivedWindow *window;
     SemanticDerived *function;

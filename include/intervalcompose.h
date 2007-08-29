@@ -30,6 +30,11 @@ class IntervalCompose: public IntervalHigh
     virtual RecordList *calcNext( RecordList *displayList = NULL, bool initCalc = false );
     virtual RecordList *calcPrev( RecordList *displayList = NULL, bool initCalc = false );
 
+    virtual KWindow *getWindow()
+    {
+      return window;
+    }
+
   protected:
     KWindow *window;
     SemanticCompose *function;

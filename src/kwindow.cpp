@@ -97,6 +97,8 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
     intervalCPU.push_back( IntervalCPU( this, CPU, i ) );
     intervalComposeCPU.push_back( IntervalCompose( this, COMPOSECPU, i ) );
   }
+
+  myFilter = new Filter( this );
 }
 
 

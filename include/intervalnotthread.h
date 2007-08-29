@@ -25,9 +25,9 @@ class IntervalNotThread: public IntervalHigh
 
     virtual ~IntervalNotThread()
     {
-      if( begin != NULL )
+      if ( begin != NULL )
         delete begin;
-      if( end != NULL )
+      if ( end != NULL )
         delete end;
     }
 
@@ -35,6 +35,11 @@ class IntervalNotThread: public IntervalHigh
                               RecordList *displayList = NULL );
     virtual RecordList *calcNext( RecordList *displayList = NULL, bool initCalc = false );
     virtual RecordList *calcPrev( RecordList *displayList = NULL, bool initCalc = false );
+
+    virtual KWindow *getWindow()
+    {
+      return ( KWindow * ) window;
+    }
 
   protected:
     KSingleWindow *window;

@@ -5,6 +5,8 @@
 #include "intervaltypes.h"
 #include "memorytrace.h"
 
+class KWindow;
+
 using namespace std;
 
 class Interval
@@ -72,6 +74,8 @@ class Interval
                               RecordList *displayList = NULL ) = 0;
     virtual RecordList *calcNext( RecordList *displayList = NULL, bool initCalc = false ) = 0;
     virtual RecordList *calcPrev( RecordList *displayList = NULL, bool initCalc = false ) = 0;
+
+    virtual KWindow *getWindow() = 0;
 
   protected:
     TWindowLevel level;
