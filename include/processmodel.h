@@ -31,16 +31,22 @@ class ProcessModel
     TTaskOrder totalTasks() const;
     TTaskOrder getGlobalTask( const TApplOrder& inAppl,
                               const TTaskOrder& inTask ) const;
+    void getTaskLocation( TTaskOrder globalTask,
+                          TApplOrder& inAppl,
+                          TTaskOrder& inTask ) const;
+    TTaskOrder getFirstTask( TApplOrder inAppl ) const;
+    TTaskOrder getLastTask( TApplOrder inAppl ) const;
 
     TThreadOrder totalThreads() const;
     TThreadOrder getGlobalThread( const TApplOrder& inAppl,
                                   const TTaskOrder& inTask,
                                   const TThreadOrder& inThread ) const;
-
     void getThreadLocation( TThreadOrder globalThread,
                             TApplOrder& inAppl,
                             TTaskOrder& inTask,
                             TThreadOrder& inThread ) const;
+    TThreadOrder getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const;
+    TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask )const;
 
   protected:
 
@@ -51,7 +57,14 @@ class ProcessModel
       TThreadOrder thread;
     };
 
+    struct TaskLocation
+    {
+      TApplOrder appl;
+      TTaskOrder task;
+    };
+
     vector<ThreadLocation> threads;
+    vector<TaskLocation> tasks;
     vector<ProcessModelAppl> applications;
 
     bool ready;

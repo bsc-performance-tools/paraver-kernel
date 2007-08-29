@@ -16,6 +16,9 @@
 #include "bplustreeblocks.h"
 #include "kwindow.h"
 #include "semanticthreadfunctions.h"
+#include "semanticcpufunctions.h"
+#include "semanticnotthreadfunctions.h"
+#include "semanticderivedfunctions.h"
 
 using namespace std;
 using namespace bplustree;
@@ -156,19 +159,34 @@ int main( int argc, char *argv[] )
   testWindow->setLevel( THREAD );
   SemanticThread *testFunction = new StateAsIs();
   testWindow->setLevelFunction( THREAD, testFunction );
+/*  SemanticCPU *testCPUFunction = new ActiveThread();
+  testWindow->setLevelFunction( CPU, testCPUFunction );*/
+  SemanticNotThread *testNotThread = new Adding();
+  testWindow->setLevelFunction( WORKLOAD, testNotThread );
+  testWindow->setLevelFunction( APPLICATION, testNotThread );
+  testWindow->setLevelFunction( TASK, testNotThread );
 
-  testWindow->init( 0, NOCREATE );
+  KSingleWindow *testWindow2 = new KSingleWindow( testTrace );
+  testWindow2->setLevel( THREAD );
+  testWindow2->setLevelFunction( THREAD, testFunction );
+
+  KDerivedWindow *testDerived = new KDerivedWindow( testWindow, testWindow2 );
+  SemanticDerived *testDerivedFunction = new DerivedAdd();
+  testDerived->setLevelFunction( DERIVED, testDerivedFunction );
+
+
+  testDerived->init( 0, NOCREATE );
   TObjectOrder i = 0;
-  while ( testWindow->getEndTime( i ) < testTrace->getEndTime() )
+  while ( testDerived->getEndTime( i ) < testTrace->getEndTime() )
   {
-    sem_out << /*i << " " << */testWindow->getBeginTime( i ) << "\t";
-    sem_out << testWindow->getEndTime( i ) - testWindow->getBeginTime( i ) << "\t";
-    sem_out << testWindow->getValue( i ) << ".000000" << endl;
-    testWindow->calcNext( i );
+    sem_out << /*i << " " << */testDerived->getBeginTime( i ) << "\t";
+    sem_out << testDerived->getEndTime( i ) - testDerived->getBeginTime( i ) << "\t";
+    sem_out << testDerived->getValue( i ) << ".000000" << endl;
+    testDerived->calcNext( i );
   }
-  sem_out << /*i << " " <<*/ testWindow->getBeginTime( i ) << "\t";
-  sem_out << testWindow->getEndTime( i ) - testWindow->getBeginTime( i ) << "\t";
-  sem_out << testWindow->getValue( i ) << ".000000" << endl;
+  sem_out << /*i << " " <<*/ testDerived->getBeginTime( i ) << "\t";
+  sem_out << testDerived->getEndTime( i ) - testDerived->getBeginTime( i ) << "\t";
+  sem_out << testDerived->getValue( i ) << ".000000" << endl;
 
   cout << "Dump complete." << endl;
   //--------------------------------------------------------------------------

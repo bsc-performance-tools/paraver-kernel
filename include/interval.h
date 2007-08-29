@@ -17,8 +17,8 @@ class Interval
       currentValue = 0;
     }
 
-    Interval( TObjectOrder whichOrder ):
-        order( whichOrder )
+    Interval( TWindowLevel whichLevel, TObjectOrder whichOrder ):
+        level( whichLevel ), order( whichOrder )
     {
       begin = NULL;
       end = NULL;
@@ -48,12 +48,33 @@ class Interval
       return currentValue;
     }
 
+    MemoryTrace::iterator *getBegin() const
+    {
+      return begin;
+    }
+
+    MemoryTrace::iterator *getEnd() const
+    {
+      return end;
+    }
+
+    TWindowLevel getLevel()
+    {
+      return level;
+    }
+
+    TObjectOrder getOrder()
+    {
+      return order;
+    }
+
     virtual RecordList *init( TRecordTime initialTime, TCreateList create,
                               RecordList *displayList = NULL ) = 0;
     virtual RecordList *calcNext( RecordList *displayList = NULL, bool initCalc = false ) = 0;
     virtual RecordList *calcPrev( RecordList *displayList = NULL, bool initCalc = false ) = 0;
 
   protected:
+    TWindowLevel level;
     TObjectOrder order;
     MemoryTrace::iterator *begin;
     MemoryTrace::iterator *end;

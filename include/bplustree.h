@@ -278,11 +278,13 @@ namespace bplustree
     class iterator : public MemoryTrace::iterator
       {
         public:
-          iterator();
+          iterator()
+          {}
 
           iterator( TRecord *whichRecord );
 
-          virtual ~iterator();
+          virtual ~iterator()
+          {}
 
           virtual void operator++();
           virtual void operator--();
@@ -303,61 +305,35 @@ namespace bplustree
     class ThreadIterator : public BPlusTree::iterator
       {
         public:
-          ThreadIterator();
+          ThreadIterator()
+          {}
+
           // Constructor declaration needed for iterators.
           ThreadIterator( TRecord *whichRecord ) : BPlusTree::iterator( whichRecord )
           {}
 
-          virtual ~ThreadIterator();
+          virtual ~ThreadIterator()
+          {}
 
           virtual void operator++();
           virtual void operator--();
-          /*
-                    virtual bool operator==( const MemoryTrace::iterator &it ) const;
-                    virtual bool operator!=( const MemoryTrace::iterator &it ) const;
-          */
-          // Following virtual methods declaration needed for iterators.
-          /*          virtual bool isNull() const;
-                    virtual TRecordType  getType() const;
-                    virtual TRecordTime  getTime() const;
-                    virtual TThreadOrder getThread() const;
-                    virtual TCPUOrder    getCPU() const;
-                    virtual TEventType   getEventType() const;
-                    virtual TEventValue  getEventValue() const;
-                    virtual TState       getState() const;
-                    virtual TRecordTime  getStateEndTime() const;
-                    virtual TCommID      getCommIndex() const;
-          */
       };
 
     class CPUIterator : public BPlusTree::iterator
       {
         public:
-          CPUIterator();
+          CPUIterator()
+          {}
+
           // Constructor declaration needed for iterators.
           CPUIterator( TRecord *whichRecord ): BPlusTree::iterator( whichRecord )
           {}
 
-          virtual ~CPUIterator();
+          virtual ~CPUIterator()
+          {}
 
           virtual void operator++();
           virtual void operator--();
-
-          /*         virtual bool operator==( const MemoryTrace::iterator &it ) const;
-                   virtual bool operator!=( const MemoryTrace::iterator &it ) const;
-          */
-          // Following virtual methods declaration needed for iterators.
-          /*          virtual bool isNull() const;
-                    virtual TRecordType  getType() const;
-                    virtual TRecordTime  getTime() const;
-                    virtual TThreadOrder getThread() const;
-                    virtual TCPUOrder    getCPU() const;
-                    virtual TEventType   getEventType() const;
-                    virtual TEventValue  getEventValue() const;
-                    virtual TState       getState() const;
-                    virtual TRecordTime  getStateEndTime() const;
-                    virtual TCommID      getCommIndex() const;
-            */
       };
 
       // MemoryTrace Inherited Methods

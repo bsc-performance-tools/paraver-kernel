@@ -24,6 +24,27 @@ TTaskOrder Trace::getGlobalTask( const TApplOrder& inAppl,
   return traceProcessModel.getGlobalTask( inAppl, inTask );
 }
 
+
+void Trace::getTaskLocation( TTaskOrder globalTask,
+                             TApplOrder& inAppl,
+                             TTaskOrder& inTask ) const
+{
+  traceProcessModel.getTaskLocation( globalTask, inAppl, inTask );
+}
+
+
+TTaskOrder Trace::getFirstTask( TApplOrder inAppl ) const
+{
+  return traceProcessModel.getFirstTask( inAppl );
+}
+
+
+TTaskOrder Trace::getLastTask( TApplOrder inAppl ) const
+{
+  return traceProcessModel.getLastTask( inAppl );
+}
+
+
 TThreadOrder Trace::totalThreads() const
 {
   return traceProcessModel.totalThreads();
@@ -35,6 +56,27 @@ TThreadOrder Trace::getGlobalThread( const TApplOrder& inAppl,
                                      const TThreadOrder& inThread ) const
 {
   return traceProcessModel.getGlobalThread( inAppl, inTask, inThread );
+}
+
+
+void Trace::getThreadLocation( TThreadOrder globalThread,
+                               TApplOrder& inAppl,
+                               TTaskOrder& inTask,
+                               TThreadOrder& inThread ) const
+{
+  traceProcessModel.getThreadLocation( globalThread, inAppl, inTask, inThread );
+}
+
+
+TThreadOrder Trace::getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const
+{
+  return traceProcessModel.getFirstThread( inAppl, inTask );
+}
+
+
+TThreadOrder Trace::getLastThread( TApplOrder inAppl, TTaskOrder inTask )const
+{
+  return traceProcessModel.getLastThread( inAppl, inTask );
 }
 
 
@@ -63,12 +105,23 @@ TCPUOrder Trace::getGlobalCPU( const TNodeOrder& inNode,
 }
 
 
-void Trace::getThreadLocation( TThreadOrder globalThread,
-                               TApplOrder& inAppl,
-                               TTaskOrder& inTask,
-                               TThreadOrder& inThread ) const
+void Trace::getCPULocation( TCPUOrder globalCPU,
+                         TNodeOrder& inNode,
+                         TCPUOrder& inCPU ) const
 {
-  traceProcessModel.getThreadLocation( globalThread, inAppl, inTask, inThread );
+  traceResourceModel.getCPULocation( globalCPU, inNode, inCPU );
+}
+
+
+TCPUOrder Trace::getFirstCPU( TNodeOrder inNode ) const
+{
+  return traceResourceModel.getFirstCPU( inNode );
+}
+
+
+TCPUOrder Trace::getLastCPU( TNodeOrder inNode ) const
+{
+  return getLastCPU( inNode );
 }
 
 
@@ -184,13 +237,13 @@ MemoryTrace::iterator* Trace::CPUEnd( TCPUOrder whichCPU ) const
 }
 
 void Trace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
-                            TRecordTime whichTime ) const
+                                   TRecordTime whichTime ) const
 {
   btree->getRecordByTimeThread( listIter, whichTime );
 }
 
 void Trace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
-                         TRecordTime whichTime ) const
+                                TRecordTime whichTime ) const
 {
   btree->getRecordByTimeCPU( listIter, whichTime );
 }

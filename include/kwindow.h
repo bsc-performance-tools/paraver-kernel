@@ -4,13 +4,21 @@
 #include <vector>
 #include "kwindowexception.h"
 #include "trace.h"
+#include "intervalnotthread.h"
 #include "intervalthread.h"
+#include "intervalcpu.h"
 #include "intervalcompose.h"
+#include "intervalderived.h"
+#include "intervalcontrolderived.h"
 #include "semanticthread.h"
 #include "semanticcompose.h"
 
+class IntervalNotThread;
 class IntervalThread;
+class IntervalCPU;
 class IntervalCompose;
+class IntervalDerived;
+class IntervalControlDerived;
 
 class KWindow
 {
@@ -27,12 +35,58 @@ class KWindow
       return myTrace;
     }
 
+    virtual TWindowLevel getLevel() const
+    {
+      return level;
+    }
+
+    void setLevel( TWindowLevel whichLevel )
+    {
+      if ( whichLevel >= TOPCOMPOSE1 )
+        throw KWindowException( KWindowException::invalidLevel );
+      level = whichLevel;
+    }
+
+    TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const
+    {
+      if ( whichLevel == WORKLOAD )
+        return COMPOSEWORKLOAD;
+      else if ( whichLevel == APPLICATION )
+        return COMPOSEAPPLICATION;
+      else if ( whichLevel == TASK )
+        return COMPOSETASK;
+      else if ( whichLevel == THREAD )
+        return COMPOSETHREAD;
+      else if ( whichLevel == SYSTEM )
+        return COMPOSESYSTEM;
+      else if ( whichLevel == NODE )
+        return COMPOSENODE;
+      else if ( whichLevel == CPU )
+        return COMPOSECPU;
+
+      return NONE;
+    }
+
+    MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it )
+    {
+      return myTrace->copyIterator( it );
+    }
+    MemoryTrace::iterator *copyThreadIterator( MemoryTrace::iterator *it )
+    {
+      return myTrace->copyThreadIterator( it );
+    }
+    MemoryTrace::iterator *copyCPUIterator( MemoryTrace::iterator *it )
+    {
+      return myTrace->copyCPUIterator( it );
+    }
+
     virtual void setLevelFunction( TWindowLevel whichLevel,
                                    SemanticFunction *whichFunction ) = 0;
-    //virtual void setComposeFunction( composelevel?, SemanticFunction *function ) = 0;
+    virtual SemanticFunction *getLevelFunction( TWindowLevel whichLevel ) = 0;
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
                                    const TParamValue& newValue ) = 0;
+    virtual bool initFromBegin() const = 0;
 
     virtual RecordList *init( TRecordTime initialTime, TCreateList create ) = 0;
     virtual RecordList *calcNext( TObjectOrder whichObject ) = 0;
@@ -42,15 +96,16 @@ class KWindow
     virtual TRecordTime getEndTime( TObjectOrder whichObject ) const = 0;
     virtual TSemanticValue getValue( TObjectOrder whichObject ) const = 0;
 
-    virtual vector<IntervalCompose> *getLevelInterval( TWindowLevel whichLevel ) = 0;
+    virtual Interval *getLevelInterval( TWindowLevel whichLevel,
+                                        TObjectOrder whichOrder ) = 0;
+
+    virtual bool isDerivedWindow() const = 0;
   protected:
     Trace *myTrace;
+    TWindowLevel level;
 
     vector<IntervalCompose> intervalTopCompose1;
     vector<IntervalCompose> intervalTopCompose2;
-
-    SemanticCompose *topCompose1;
-    SemanticCompose *topCompose2;
 
   private:
 
@@ -75,31 +130,6 @@ class KSingleWindow: public KWindow
       recordsByTime.clear();
     }
 
-    TWindowLevel getLevel() const
-    {
-      return level;
-    }
-
-    void setLevel( TWindowLevel whichLevel )
-    {
-      if( whichLevel >= TOPCOMPOSE1 )
-        throw KWindowException( KWindowException::invalidLevel );
-      level = whichLevel;
-    }
-
-    MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it )
-    {
-      return myTrace->copyIterator( it );
-    }
-    MemoryTrace::iterator *copyThreadIterator( MemoryTrace::iterator *it )
-    {
-      return myTrace->copyThreadIterator( it );
-    }
-    MemoryTrace::iterator *copyCPUIterator( MemoryTrace::iterator *it )
-    {
-      return myTrace->copyCPUIterator( it );
-    }
-
     MemoryTrace::iterator *getThreadRecordByTime( TThreadOrder whichOrder )
     {
       return recordsByTime[whichOrder];
@@ -115,6 +145,21 @@ class KSingleWindow: public KWindow
       return myTrace->threadBegin( whichOrder );
     }
 
+    MemoryTrace::iterator *getCPUEndRecord( TCPUOrder whichOrder )
+    {
+      return myTrace->CPUEnd( whichOrder );
+    }
+
+    MemoryTrace::iterator *getCPUBeginRecord( TCPUOrder whichOrder )
+    {
+      return myTrace->CPUBegin( whichOrder );
+    }
+
+    MemoryTrace::iterator *getCPURecordByTime( TCPUOrder whichOrder )
+    {
+      return recordsByTime[whichOrder];
+    }
+
     bool passFilter( MemoryTrace::iterator *it )
     {
       return true;
@@ -122,9 +167,11 @@ class KSingleWindow: public KWindow
 
     virtual void setLevelFunction( TWindowLevel whichLevel,
                                    SemanticFunction *whichFunction );
+    virtual SemanticFunction *getLevelFunction( TWindowLevel whichLevel );
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
                                    const TParamValue& newValue );
+    virtual bool initFromBegin() const;
 
     virtual RecordList *init( TRecordTime initialTime, TCreateList create );
     virtual RecordList *calcNext( TObjectOrder whichObject );
@@ -134,19 +181,36 @@ class KSingleWindow: public KWindow
     virtual TRecordTime getEndTime( TObjectOrder whichObject ) const;
     virtual TSemanticValue getValue( TObjectOrder whichObject ) const;
 
-    virtual vector<IntervalCompose> *getLevelInterval( TWindowLevel whichLevel );
+    virtual Interval *getLevelInterval( TWindowLevel whichLevel,
+                                        TObjectOrder whichOrder );
+
+    virtual bool isDerivedWindow() const
+    {
+      return false;
+    }
 
   protected:
     vector<MemoryTrace::iterator *> recordsByTime;
-    TWindowLevel level;
 
     // Semantic interval structure
+    vector<IntervalCompose> intervalComposeWorkload;
+    vector<IntervalNotThread> intervalWorkload;
+    vector<IntervalCompose> intervalComposeApplication;
+    vector<IntervalNotThread> intervalApplication;
+    vector<IntervalCompose> intervalComposeTask;
+    vector<IntervalNotThread> intervalTask;
     vector<IntervalCompose> intervalComposeThread;
     vector<IntervalThread> intervalThread;
 
+    vector<IntervalCompose> intervalComposeSystem;
+    vector<IntervalNotThread> intervalSystem;
+    vector<IntervalCompose> intervalComposeNode;
+    vector<IntervalNotThread> intervalNode;
+    vector<IntervalCompose> intervalComposeCPU;
+    vector<IntervalCPU> intervalCPU;
+
   private:
-    SemanticCompose *composeThread;
-    SemanticThread *functionThread;
+    SemanticFunction *functions[ COMPOSECPU ];
 };
 
 
@@ -155,20 +219,77 @@ class KDerivedWindow: public KWindow
   public:
     KDerivedWindow()
     {}
+
+    KDerivedWindow( KWindow *window1, KWindow *window2 );
+
     virtual ~KDerivedWindow()
     {}
+
+    void setParent( UINT8 whichParent, KWindow *whichWindow )
+    {
+      parents[ whichParent ] = whichWindow;
+    }
 
     KWindow *getParent( UINT8 whichParent ) const
     {
       return parents[whichParent];
     }
 
-    virtual RecordList *init( TRecordTime initialTime, TCreateList create );
+    virtual TWindowLevel getLevel() const
+    {
+      TWindowLevel tmp = NONE;
 
-    virtual vector<IntervalCompose> *getLevelInterval( TWindowLevel whichLevel );
+      for( UINT8 i = 0; i < parents.size(); i++ )
+      {
+        if( parents[ i ]->getLevel() > tmp )
+          tmp = parents[ i ]->getLevel();
+      }
+
+      return tmp;
+    }
+
+    virtual void setLevelFunction( TWindowLevel whichLevel,
+                                   SemanticFunction *whichFunction );
+    virtual SemanticFunction *getLevelFunction( TWindowLevel whichLevel );
+    virtual void setFunctionParam( TWindowLevel whichLevel,
+                                   TParamIndex whichParam,
+                                   const TParamValue& newValue );
+    virtual bool initFromBegin() const;
+
+    virtual RecordList *init( TRecordTime initialTime, TCreateList create );
+    virtual RecordList *calcNext( TObjectOrder whichObject );
+    virtual RecordList *calcPrev( TObjectOrder whichObject );
+
+    virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const;
+    virtual TRecordTime getEndTime( TObjectOrder whichObject ) const;
+    virtual TSemanticValue getValue( TObjectOrder whichObject ) const;
+
+    virtual Interval *getLevelInterval( TWindowLevel whichLevel,
+                                        TObjectOrder whichOrder );
+
+    virtual bool isDerivedWindow() const
+    {
+      return true;
+    }
+
+    void setFactor( UINT8 whichFactor, TSemanticValue newValue )
+    {
+      factor[ whichFactor ] = newValue;
+    }
+
+    TSemanticValue getFactor( UINT8 whichFactor )
+    {
+      return factor[ whichFactor ];
+    }
 
   protected:
     vector<KWindow *> parents;
+    vector<TSemanticValue> factor;
+
+    vector<IntervalDerived> intervalDerived;
+    vector<IntervalControlDerived> intervalControlDerived;
+
+    SemanticFunction *functions[ 3 ];
 
   private:
 

@@ -1,31 +1,34 @@
-#ifndef INTERVALTHREAD_H_INCLUDED
-#define INTERVALTHREAD_H_INCLUDED
+#ifndef INTERVALCPU_H_INCLUDED
+#define INTERVALCPU_H_INCLUDED
 
-#include "interval.h"
+#include "intervalhigh.h"
 #include "kwindow.h"
+#include "semanticcpu.h"
 #include "semanticthread.h"
 
 class KSingleWindow;
-class SemanticThread;
+class SemanticCPU;
 
-class IntervalThread: public Interval
+class IntervalCPU: public IntervalHigh
 {
   public:
-    IntervalThread()
+    IntervalCPU()
     {
       begin = NULL;
       end = NULL;
       function = NULL;
     }
 
-    IntervalThread( KSingleWindow *whichWindow, TWindowLevel whichLevel,
-                    TObjectOrder whichOrder ):
-        Interval( whichLevel, whichOrder ), window( whichWindow )
+    IntervalCPU( KSingleWindow *whichWindow, TWindowLevel whichLevel,
+                 TObjectOrder whichOrder ):
+        IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
     {
+      begin = NULL;
+      end = NULL;
       function = NULL;
     }
 
-    virtual ~IntervalThread()
+    virtual ~IntervalCPU()
     {
       if ( begin != NULL )
         delete begin;
@@ -40,7 +43,8 @@ class IntervalThread: public Interval
 
   protected:
     KSingleWindow *window;
-    SemanticThread *function;
+    SemanticCPU *function;
+    SemanticThread *functionThread;
     TCreateList createList;
 
   private:
@@ -49,7 +53,15 @@ class IntervalThread: public Interval
     virtual void getPrevRecord( MemoryTrace::iterator *it,
                                 RecordList *displayList );
 
+    virtual void setChilds() {}
+    virtual Trace *getWindowTrace() const;
+    virtual TWindowLevel getWindowLevel() const;
+    virtual Interval *getWindowInterval( TWindowLevel whichLevel,
+                                         TObjectOrder whichOrder );
+    virtual bool IsDerivedWindow() const;
+    virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const;
+
 };
 
 
-#endif // INTERVALTHREAD_H_INCLUDED
+#endif // INTERVALCPU_H_INCLUDED

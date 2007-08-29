@@ -9,9 +9,11 @@ RecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
   if ( displayList == NULL )
     displayList = &myDisplayList;
 
-  if( begin != NULL )
+  function = ( SemanticThread * ) window->getLevelFunction( level );
+
+  if ( begin != NULL )
     delete begin;
-  if( end != NULL )
+  if ( end != NULL )
     delete end;
 
   begin = window->copyThreadIterator( window->getThreadRecordByTime( order ) );
@@ -66,7 +68,7 @@ RecordList *IntervalThread::calcPrev( RecordList *displayList, bool initCalc )
   info.it = begin;
   currentValue = function->execute( &info );
 
-  if( initCalc )
+  if ( initCalc )
   {
     *end = *begin;
   }
@@ -78,7 +80,7 @@ RecordList *IntervalThread::calcPrev( RecordList *displayList, bool initCalc )
 void IntervalThread::getNextRecord( MemoryTrace::iterator *it,
                                     RecordList *displayList )
 {
-  ++(*it);
+  ++( *it );
   while ( !it->isNull() )
   {
     if ( window->passFilter( it ) )
@@ -94,7 +96,7 @@ void IntervalThread::getNextRecord( MemoryTrace::iterator *it,
         break;
       }
     }
-    ++(*it);
+    ++( *it );
   }
 
   if ( it->isNull() )
@@ -108,7 +110,7 @@ void IntervalThread::getNextRecord( MemoryTrace::iterator *it,
 void IntervalThread::getPrevRecord( MemoryTrace::iterator *it,
                                     RecordList *displayList )
 {
-  --(*it);
+  --( *it );
   while ( !it->isNull() )
   {
     if ( window->passFilter( it ) )
@@ -124,7 +126,7 @@ void IntervalThread::getPrevRecord( MemoryTrace::iterator *it,
         break;
       }
     }
-    --(*it);
+    --( *it );
   }
 
   if ( it->isNull() )

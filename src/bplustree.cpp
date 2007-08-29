@@ -1041,19 +1041,13 @@ void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
 /******************************************************************************
  * MemoryTrace Inherited Iterator.
  ******************************************************************************/
-BPlusTree::iterator::iterator( )
-{}
 
-BPlusTree::iterator::iterator( TRecord *whichRecord )
+inline BPlusTree::iterator::iterator( TRecord *whichRecord )
 {
   record = whichRecord;
 }
 
-BPlusTree::iterator::~iterator()
-{}
-
-
-void BPlusTree::iterator::operator++()
+inline void BPlusTree::iterator::operator++()
 {
 #ifdef STRICT_CHECK_DEBUG
   if ( record !=  NULL )
@@ -1068,7 +1062,7 @@ void BPlusTree::iterator::operator++()
 #endif
 }
 
-void BPlusTree::iterator::operator--()
+inline void BPlusTree::iterator::operator--()
 {
 #ifdef STRICT_CHECK_DEBUG
   if ( record !=  NULL )
@@ -1084,47 +1078,47 @@ void BPlusTree::iterator::operator--()
 }
 
 
-TRecordType  BPlusTree::iterator::getType() const
+inline TRecordType  BPlusTree::iterator::getType() const
 {
   return ( ( TRecord * )record )->type;
 }
 
-TRecordTime  BPlusTree::iterator::getTime() const
+inline TRecordTime  BPlusTree::iterator::getTime() const
 {
   return ( ( TRecord * )record )->time;
 }
 
-TThreadOrder BPlusTree::iterator::getThread() const
+inline TThreadOrder BPlusTree::iterator::getThread() const
 {
   return ( ( TRecord * )record )->thread;
 }
 
-TCPUOrder    BPlusTree::iterator::getCPU() const
+inline TCPUOrder    BPlusTree::iterator::getCPU() const
 {
   return ( ( TRecord * )record )->CPU;
 }
 
-TEventType   BPlusTree::iterator::getEventType() const
+inline TEventType   BPlusTree::iterator::getEventType() const
 {
   return ( ( TRecord * )record )->URecordInfo.eventRecord.type;
 }
 
-TEventValue  BPlusTree::iterator::getEventValue() const
+inline TEventValue  BPlusTree::iterator::getEventValue() const
 {
   return ( ( TRecord * )record )->URecordInfo.eventRecord.value;
 }
 
-TState       BPlusTree::iterator::getState() const
+inline TState       BPlusTree::iterator::getState() const
 {
   return ( ( TRecord * )record )->URecordInfo.stateRecord.state;
 }
 
-TRecordTime  BPlusTree::iterator::getStateEndTime() const
+inline TRecordTime  BPlusTree::iterator::getStateEndTime() const
 {
   return ( ( TRecord * )record )->URecordInfo.stateRecord.endTime;
 }
 
-TCommID      BPlusTree::iterator::getCommIndex() const
+inline TCommID      BPlusTree::iterator::getCommIndex() const
 {
   return ( ( TRecord * )record )->URecordInfo.commRecord.index;
 }
@@ -1133,16 +1127,8 @@ TCommID      BPlusTree::iterator::getCommIndex() const
 /**************************************************************************
  * MemoryTrace Inherited ThreadIterator.
  **************************************************************************/
-/*
-BPlusTree::ThreadIterator( TRecord *whichRecord )
-{
-  record = whichRecord;
-}
-*/
-BPlusTree::ThreadIterator::~ThreadIterator()
-{}
 
-void BPlusTree::ThreadIterator::operator++()
+inline void BPlusTree::ThreadIterator::operator++()
 {
 #ifdef STRICT_CHECK_DEBUG
   if ( record !=  NULL )
@@ -1157,7 +1143,7 @@ void BPlusTree::ThreadIterator::operator++()
 #endif
 }
 
-void BPlusTree::ThreadIterator::operator--()
+inline void BPlusTree::ThreadIterator::operator--()
 {
 #ifdef STRICT_CHECK_DEBUG
   if ( record !=  NULL )
@@ -1176,10 +1162,7 @@ void BPlusTree::ThreadIterator::operator--()
  * MemoryTrace Inherited CPUIterator.
  **************************************************************************/
 
-BPlusTree::CPUIterator::~CPUIterator()
-{}
-
-void BPlusTree::CPUIterator::operator++()
+inline void BPlusTree::CPUIterator::operator++()
 {
   if ( record !=  NULL )
   {
@@ -1201,7 +1184,7 @@ void BPlusTree::CPUIterator::operator++()
                               __LINE__ );
 }
 
-void BPlusTree::CPUIterator::operator--()
+inline void BPlusTree::CPUIterator::operator--()
 {
   // Shared code with ++, but the prev/next and exception message.
   if ( record !=  NULL )

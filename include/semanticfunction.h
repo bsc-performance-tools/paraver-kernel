@@ -5,6 +5,9 @@
 #include "memorytrace.h"
 #include "semanticexception.h"
 #include "semanticinfo.h"
+//#include "kwindow.h"
+
+class KWindow;
 
 using namespace std;
 
@@ -22,7 +25,7 @@ class SemanticFunction
     void setDefaultParam()
     {
       for ( TParamIndex i = 0; i < getMaxParam(); i++ )
-        parameters[i] = getDefaultParam( i );
+        parameters.push_back( getDefaultParam( i ) );
     }
 
     const bool getInitFromBegin()
@@ -46,14 +49,13 @@ class SemanticFunction
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) = 0;
-    //void setWindow( & whichWindow ) { window = whichWindow; }
-    //& getWindow() { return window; }
-    //
+
+    virtual void init( KWindow *whichWindow ) = 0;
+
   protected:
-    TParamValue parameters[];
+    vector<TParamValue> parameters;
 
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) = 0;
-    //& window -> associated window
 
     // Must initialize from the beginning of the trace
     virtual const bool getMyInitFromBegin() = 0;

@@ -76,10 +76,14 @@ typedef double        TSemanticValue;
 
 typedef enum TWindowLevel
 {
-  WORKLOAD = 0, APPLICATION, TASK, THREAD,
+  NONE = 0,
+  WORKLOAD, APPLICATION, TASK, THREAD,
   SYSTEM, NODE, CPU,
   // Compose levels (for setting the window functions only)
-  TOPCOMPOSE1, TOPCOMPOSE2, COMPOSETHREAD
+  TOPCOMPOSE1, TOPCOMPOSE2, COMPOSEWORKLOAD, COMPOSEAPPLICATION, COMPOSETASK,
+  COMPOSETHREAD, COMPOSESYSTEM, COMPOSENODE, COMPOSECPU,
+  // Derived window levels
+  DERIVED
 };
 
 

@@ -21,6 +21,8 @@ class StateAsIs: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual void init( KWindow *whichWindow )
+    {}
 
   protected:
     virtual const TRecordType getValidateMask()

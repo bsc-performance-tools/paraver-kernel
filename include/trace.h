@@ -29,15 +29,15 @@ class Trace
 
     MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it )
     {
-      return new BPlusTree::iterator( *( dynamic_cast<BPlusTree::iterator *> ( it ) ) );
+      return new BPlusTree::iterator( *( ( BPlusTree::iterator * ) it ) );
     }
     MemoryTrace::iterator *copyThreadIterator( MemoryTrace::iterator *it )
     {
-      return new BPlusTree::ThreadIterator( *( dynamic_cast<BPlusTree::ThreadIterator *> ( it ) ) );
+      return new BPlusTree::ThreadIterator( *( ( BPlusTree::ThreadIterator * ) it ) );
     }
     MemoryTrace::iterator *copyCPUIterator( MemoryTrace::iterator *it )
     {
-      return new BPlusTree::CPUIterator( *( dynamic_cast<BPlusTree::CPUIterator *> ( it ) ) );
+      return new BPlusTree::CPUIterator( *( ( BPlusTree::CPUIterator * ) it ) );
     }
 
     void dumpFile( const string& whichFile ) const;
@@ -46,6 +46,12 @@ class Trace
     TTaskOrder totalTasks() const;
     TTaskOrder getGlobalTask( const TApplOrder& inAppl,
                               const TTaskOrder& inTask ) const;
+    void getTaskLocation( TTaskOrder globalTask,
+                          TApplOrder& inAppl,
+                          TTaskOrder& inTask ) const;
+    TTaskOrder getFirstTask( TApplOrder inAppl ) const;
+    TTaskOrder getLastTask( TApplOrder inAppl ) const;
+
     TThreadOrder totalThreads() const;
     TThreadOrder getGlobalThread( const TApplOrder& inAppl,
                                   const TTaskOrder& inTask,
@@ -54,12 +60,19 @@ class Trace
                             TApplOrder& inAppl,
                             TTaskOrder& inTask,
                             TThreadOrder& inThread ) const;
+    TThreadOrder getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const;
+    TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask )const;
 
     bool existResourceInfo() const;
     TNodeOrder totalNodes() const;
     TCPUOrder totalCPUs() const;
     TCPUOrder getGlobalCPU( const TNodeOrder& inNode,
                             const TCPUOrder& inCPU ) const;
+    void getCPULocation( TCPUOrder globalCPU,
+                         TNodeOrder& inNode,
+                         TCPUOrder& inCPU ) const;
+    TCPUOrder getFirstCPU( TNodeOrder inNode ) const;
+    TCPUOrder getLastCPU( TNodeOrder inNode ) const;
 
 
     // Communication info getters

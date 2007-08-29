@@ -30,8 +30,20 @@ class ResourceModel
     TCPUOrder totalCPUs() const;
     TCPUOrder getGlobalCPU( const TNodeOrder& inNode,
                             const TCPUOrder& inCPU ) const;
+    void getCPULocation( TCPUOrder globalCPU,
+                         TNodeOrder& inNode,
+                         TCPUOrder& inCPU ) const;
+    TCPUOrder getFirstCPU( TNodeOrder inNode ) const;
+    TCPUOrder getLastCPU( TNodeOrder inNode ) const;
 
   protected:
+    struct CPULocation
+    {
+      TNodeOrder node;
+      TCPUOrder CPU;
+    };
+
+    vector<CPULocation> CPUs;
     vector<ResourceModelNode> nodes;
     bool ready;
 

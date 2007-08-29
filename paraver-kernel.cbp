@@ -74,7 +74,11 @@
 		<Unit filename="include/index.h" />
 		<Unit filename="include/interval.h" />
 		<Unit filename="include/intervalcompose.h" />
+		<Unit filename="include/intervalcontrolderived.h" />
+		<Unit filename="include/intervalcpu.h" />
+		<Unit filename="include/intervalderived.h" />
 		<Unit filename="include/intervalhigh.h" />
+		<Unit filename="include/intervalnotthread.h" />
 		<Unit filename="include/intervalthread.h" />
 		<Unit filename="include/intervaltypes.h" />
 		<Unit filename="include/kwindow.h" />
@@ -92,10 +96,16 @@
 		<Unit filename="include/resourcemodelnode.h" />
 		<Unit filename="include/semanticcompose.h" />
 		<Unit filename="include/semanticcomposefunctions.h" />
+		<Unit filename="include/semanticcpu.h" />
+		<Unit filename="include/semanticcpufunctions.h" />
+		<Unit filename="include/semanticderived.h" />
+		<Unit filename="include/semanticderivedfunctions.h" />
 		<Unit filename="include/semanticexception.h" />
 		<Unit filename="include/semanticfunction.h" />
 		<Unit filename="include/semantichigh.h" />
 		<Unit filename="include/semanticinfo.h" />
+		<Unit filename="include/semanticnotthread.h" />
+		<Unit filename="include/semanticnotthreadfunctions.h" />
 		<Unit filename="include/semanticthread.h" />
 		<Unit filename="include/semanticthreadfunctions.h" />
 		<Unit filename="include/trace.h" />
@@ -127,6 +137,22 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/intervalcompose.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/intervalcontrolderived.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/intervalcpu.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/intervalderived.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/intervalnotthread.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
@@ -162,7 +188,19 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="src/semanticcpufunctions.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/semanticderivedfunctions.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="src/semanticexception.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/semanticnotthreadfunctions.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>

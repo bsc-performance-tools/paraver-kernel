@@ -28,11 +28,33 @@ TCPUOrder ResourceModel::getGlobalCPU( const TNodeOrder& inNode,
 }
 
 
+void ResourceModel::getCPULocation( TCPUOrder globalCPU,
+                                    TNodeOrder& inNode,
+                                    TCPUOrder& inCPU ) const
+{
+  inNode = CPUs[ globalCPU ].node;
+  inCPU = CPUs[ globalCPU ].CPU;
+}
+
+
+TCPUOrder ResourceModel::getFirstCPU( TNodeOrder inNode ) const
+{
+  return nodes[ inNode ].CPUs[ 0 ].traceGlobalOrder;
+}
+
+
+TCPUOrder ResourceModel::getLastCPU( TNodeOrder inNode ) const
+{
+  return nodes[ inNode ].CPUs[
+           nodes[ inNode ].CPUs.size() - 1 ].traceGlobalOrder;
+}
+
+
 ResourceModel::ResourceModel( istringstream& headerInfo )
 {
   string stringNumberNodes;
   TNodeOrder numberNodes;
-  TCPUOrder glogalCPUs = 0;
+  TCPUOrder globalCPUs = 0;
   bool readCPUs;
   ready = false;
 
@@ -91,8 +113,11 @@ ResourceModel::ResourceModel( istringstream& headerInfo )
     // Insert CPUs
     for ( TCPUOrder countCPU = 0; countCPU < numberCPUs; countCPU++ )
     {
-      nodes[ countNode ].CPUs.push_back( ResourceModelCPU( glogalCPUs ) );
-      glogalCPUs++;
+      nodes[ countNode ].CPUs.push_back( ResourceModelCPU( globalCPUs ) );
+      CPUs.push_back( CPULocation() );
+      CPUs[ globalCPUs ].node = countNode;
+      CPUs[ globalCPUs ].CPU = countCPU;
+      globalCPUs++;
     }
     // End inserting CPUs
 
@@ -105,4 +130,5 @@ ResourceModel::ResourceModel( istringstream& headerInfo )
 
   ready = true;
 }
+
 

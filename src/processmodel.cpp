@@ -20,6 +20,15 @@ TTaskOrder ProcessModel::totalTasks() const
 }
 
 
+void ProcessModel::getTaskLocation( TTaskOrder globalTask,
+                                    TApplOrder& inAppl,
+                                    TTaskOrder& inTask ) const
+{
+  inAppl = tasks[ globalTask ].appl;
+  inTask = tasks[ globalTask ].task;
+}
+
+
 TTaskOrder ProcessModel::getGlobalTask( const TApplOrder& inAppl,
                                         const TTaskOrder& inTask ) const
 {
@@ -103,6 +112,9 @@ ProcessModel::ProcessModel( istringstream& headerInfo )
       TNodeOrder numberNode;
 
       applications[ countAppl ].tasks.push_back( ProcessModelTask( globalTasks ) );
+      tasks.push_back( TaskLocation() );
+      tasks[ globalTasks ].appl = countAppl;
+      tasks[ globalTasks ].task = countTask;
       globalTasks++;
 
       string stringNumberThreads;
@@ -155,3 +167,28 @@ ProcessModel::ProcessModel( istringstream& headerInfo )
   ready = true;
 }
 
+
+TTaskOrder ProcessModel::getFirstTask( TApplOrder inAppl ) const
+{
+  return applications[ inAppl ].tasks[ 0 ].traceGlobalOrder;
+}
+
+
+TTaskOrder ProcessModel::getLastTask( TApplOrder inAppl ) const
+{
+  return applications[ inAppl ].tasks[
+           applications[ inAppl ].tasks.size() - 1 ].traceGlobalOrder;
+}
+
+
+TThreadOrder ProcessModel::getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const
+{
+  return applications[ inAppl ].tasks[ inTask ].threads[ 0 ].traceGlobalOrder;
+}
+
+
+TThreadOrder ProcessModel::getLastThread( TApplOrder inAppl, TTaskOrder inTask )const
+{
+  return applications[ inAppl ].tasks[ inTask ].threads[
+           applications[ inAppl ].tasks[ inTask ].threads.size() - 1 ].traceGlobalOrder;
+}
