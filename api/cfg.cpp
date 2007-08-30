@@ -1,3 +1,7 @@
+#include "cfg.h"
 
-void loadCFG()
-{}
+bool loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
+              TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return true;
+}

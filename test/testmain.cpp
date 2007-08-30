@@ -168,7 +168,7 @@ int main( int argc, char *argv[] )
 
   KSingleWindow *testWindow2 = new KSingleWindow( testTrace );
   testWindow2->setLevel( THREAD );
-  SemanticThread *testFunction2 = new SendBytesInTransit();
+  SemanticThread *testFunction2 = new SendBandWidth();
   testWindow2->setLevelFunction( THREAD, testFunction2 );
   FilterFunction *testFilter = new FilterEqual();
   testWindow2->getFilter()->setEventTypeFunction( testFilter );
