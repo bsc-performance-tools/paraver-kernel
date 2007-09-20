@@ -8,6 +8,9 @@ using namespace std;
 bool loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
               TRecordTime& beginTime, TRecordTime& endTime )
 {
+  if ( !mapLoaded )
+    loadMap();
+
   ifstream cfgFile( filename.c_str() );
   string strLine;
 
@@ -35,4 +38,10 @@ bool loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
     return false;
 
   return true;
+}
+
+
+void loadMap()
+{
+  mapLoaded = true;
 }
