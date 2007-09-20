@@ -14,6 +14,10 @@ TSemanticValue getTotalCommSize( MemoryTrace::iterator *itBegin,
                                  KSingleWindow *window );
 
 
+/**************************
+** State functions (Thread)
+***************************/
+
 class StateAsIs: public SemanticThread
 {
   public:
@@ -331,6 +335,10 @@ class StateRecordDuration: public SemanticThread
     static const bool         initFromBegin = false;
 };
 
+
+/**************************
+** Event functions (Thread)
+***************************/
 
 class LastEventType: public SemanticThread
 {
@@ -916,6 +924,10 @@ class EventBytes: public SemanticThread
     static const bool         initFromBegin = false;
 };
 
+
+/**************************
+** Comm functions (Thread)
+***************************/
 
 class LastTag: public SemanticThread
 {
@@ -1602,6 +1614,10 @@ class NumberReceiveBytes: public SemanticThread
     static const bool         initFromBegin = true;
 };
 
+
+/**************************
+** Object functions (Thread)
+***************************/
 
 class ApplicationID: public SemanticThread
 {

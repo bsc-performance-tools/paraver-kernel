@@ -148,6 +148,7 @@
 		<Unit filename="include/semanticfunction.h" />
 		<Unit filename="include/semantichigh.h" />
 		<Unit filename="include/semanticinfo.h" />
+		<Unit filename="include/semanticmanagement.h" />
 		<Unit filename="include/semanticnotthread.h" />
 		<Unit filename="include/semanticnotthreadfunctions.h" />
 		<Unit filename="include/semanticthread.h" />
@@ -241,6 +242,10 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/semanticexception.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/semanticmanagement.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>

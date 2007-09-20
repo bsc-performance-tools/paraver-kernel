@@ -25,6 +25,8 @@ class ActiveThread: public SemanticCPU
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual void init( KWindow *whichWindow )
+    {}
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -65,6 +67,8 @@ class ActiveThreadSign: public SemanticCPU
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual void init( KWindow *whichWindow )
+    {}
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -106,6 +110,8 @@ class ActiveThreadValues: public SemanticCPU
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual void init( KWindow *whichWindow )
+    {}
   protected:
     virtual const bool getMyInitFromBegin()
     {

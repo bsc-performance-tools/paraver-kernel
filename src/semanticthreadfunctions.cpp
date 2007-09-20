@@ -124,6 +124,10 @@ TSemanticValue getTotalCommSize( MemoryTrace::iterator *itBegin,
 }
 
 
+/**************************
+** State functions (Thread)
+***************************/
+
 TSemanticValue StateAsIs::execute( const SemanticInfo *info )
 {
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
@@ -234,6 +238,10 @@ TSemanticValue StateRecordDuration::execute( const SemanticInfo *info )
   return tmp;
 }
 
+
+/**************************
+** Event functions (Thread)
+***************************/
 
 TSemanticValue LastEventType::execute( const SemanticInfo *info )
 {
@@ -542,6 +550,10 @@ TSemanticValue EventBytes::execute( const SemanticInfo *info )
   return tmp;
 }
 
+
+/**************************
+** Comm functions (Thread)
+***************************/
 
 TSemanticValue LastTag::execute( const SemanticInfo *info )
 {
@@ -1261,6 +1273,10 @@ TSemanticValue NumberReceiveBytes::execute( const SemanticInfo *info )
   return bytes;
 }
 
+
+/**************************
+** Object functions (Thread)
+***************************/
 
 TSemanticValue ApplicationID::execute( const SemanticInfo *info )
 {
