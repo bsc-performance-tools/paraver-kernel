@@ -48,6 +48,8 @@ int main( int argc, char *argv[] )
 
         // Make the output file
       }
+
+      currentArg++;
     }
   }
 
