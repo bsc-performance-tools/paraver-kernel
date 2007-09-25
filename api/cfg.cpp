@@ -29,12 +29,21 @@ bool loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
     istringstream auxStream( strLine );
     getline( auxStream, cfgTag, ' ' );
 
+
     cout << cfgTag << endl;
+
+    map<string, TagFunction *>::iterator it = cfgTagFunctions.find( cfgTag );
+
+    if ( it != cfgTagFunctions.end() )
+    {
+      it->second->parseLine( auxStream, whichTrace, windows,
+                             beginTime, endTime );
+    }
   }
 
   cfgFile.close();
 
-  if ( windows[ windows.size() -1 ] == NULL )
+  if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
   return true;
@@ -43,5 +52,50 @@ bool loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
 
 void loadMap()
 {
+  cfgTagFunctions["window_type"]          = new WindowType();
+  cfgTagFunctions["window_identifiers"]   = new WindowId();
+  cfgTagFunctions["window_factors"]   = new Window();
+  cfgTagFunctions["window_operation"]   = new Window();
+  cfgTagFunctions["window_"]   = new Window();
+  cfgTagFunctions["window_"]   = new Window();
+  cfgTagFunctions["window_"]   = new Window();
+  cfgTagFunctions["window_"]   = new Window();
+  cfgTagFunctions["window_"]   = new Window();
+  cfgTagFunctions["window_"]   = new Window();
+  cfgTagFunctions["window_"]   = new Window();
+  cfgTagFunctions["window_"]   = new Window();
+  cfgTagFunctions["window_"]   = new Window();
+  cfgTagFunctions["window_"]   = new Window();
+  cfgTagFunctions["window_"]   = new Window();
+  cfgTagFunctions["window_"]   = new Window();
+
   mapLoaded = true;
+}
+
+
+bool WindowType::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  string type;
+  KWindow *tmpWin;
+
+  getline( line, type, ' ' );
+  if ( type.compare( "single" ) )
+  {
+    tmpWin = new KSingleWindow( whichTrace );
+  }
+  else if ( type.compare( "composed" ) )
+  {
+    tmpWin = new KDerivedWindow( );
+  }
+  else
+    return false;
+
+  if ( windows.size() == 1 && windows[ 0 ] == NULL )
+    windows[ 0 ] = tmpWin;
+  else
+    windows.push_back( tmpWin );
+
+  return true;
 }
