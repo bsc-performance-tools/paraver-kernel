@@ -48,6 +48,15 @@ int main( int argc, char *argv[] )
 
         // Make the output file
       }
+      else
+        cout << "Cannot load '" << strCfg << "' file." << endl;
+
+      for( UINT32 i = 0; i < windows.size(); i++ )
+      {
+        if( windows[ i ] != NULL )
+          delete windows[ i ];
+      }
+      windows.clear();
 
       currentArg++;
     }

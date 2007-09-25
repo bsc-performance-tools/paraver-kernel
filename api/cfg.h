@@ -8,6 +8,8 @@
 class TagFunction
 {
   public:
+    virtual ~TagFunction()
+    {}
     virtual bool read( istringstream& line, Trace *whichTrace, KWindow **window,
                        TRecordTime& beginTime, TRecordTime& endTime ) = 0;
 };
