@@ -225,9 +225,17 @@ class KDerivedWindow: public KWindow
 {
   public:
     KDerivedWindow()
-    {}
+    {
+      parents.push_back( NULL );
+      parents.push_back( NULL );
+    }
 
-    KDerivedWindow( KWindow *window1, KWindow *window2 );
+    KDerivedWindow( KWindow *window1, KWindow *window2 )
+    {
+      parents.push_back( window1 );
+      parents.push_back( window2 );
+      setup();
+    }
 
     virtual ~KDerivedWindow()
     {}
@@ -235,6 +243,8 @@ class KDerivedWindow: public KWindow
     void setParent( UINT8 whichParent, KWindow *whichWindow )
     {
       parents[ whichParent ] = whichWindow;
+      if( parents[ 0 ] != NULL && parents[ 1 ] != NULL )
+        setup();
     }
 
     KWindow *getParent( UINT8 whichParent ) const
@@ -299,7 +309,7 @@ class KDerivedWindow: public KWindow
     SemanticFunction *functions[ 3 ];
 
   private:
-
+    void setup();
 };
 
 #endif // KWINDOW_H_INCLUDED

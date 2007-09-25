@@ -316,19 +316,29 @@ Interval *KSingleWindow::getLevelInterval( TWindowLevel whichLevel,
  *  KDerivedWindow implementation
  **********************************************************************/
 
-KDerivedWindow::KDerivedWindow( KWindow *window1, KWindow *window2 )
+void KDerivedWindow::setup()
 {
-  parents.push_back( window1 );
-  parents.push_back( window2 );
+  factor.clear();
   factor.push_back( 1.0 );
   factor.push_back( 1.0 );
 
-  myTrace = window1->getTrace();
+  myTrace = parents[ 0 ]->getTrace();
+
+  if( functions[ 0 ] != NULL )
+    delete functions[ 0 ];
+  if( functions[ 1 ] != NULL )
+    delete functions[ 1 ];
+  if( functions[ 2 ] != NULL )
+    delete functions[ 2 ];
 
   functions[ 0 ] = new ComposeAsIs();
   functions[ 1 ] = new ComposeAsIs();
   functions[ 2 ] = NULL;
 
+  intervalTopCompose1.clear();
+  intervalTopCompose2.clear();
+  intervalDerived.clear();
+  intervalControlDerived.clear();
   if ( myTrace->totalThreads() > myTrace->totalCPUs() )
   {
     intervalTopCompose1.reserve( myTrace->totalThreads() );
