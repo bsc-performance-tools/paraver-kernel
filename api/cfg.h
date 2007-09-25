@@ -2,8 +2,14 @@
 #define CFG_H_INCLUDED
 
 #include <map>
-#include "kwindow.h"
-#include "trace.h"
+#include <vector>
+#include <sstream>
+#include "paraverkerneltypes.h"
+
+class KWindow;
+class Trace;
+
+using namespace std;
 
 class TagFunction
 {
@@ -15,13 +21,17 @@ class TagFunction
                             TRecordTime& beginTime, TRecordTime& endTime ) = 0;
 };
 
-bool mapLoaded = false;
-map<string, TagFunction *> cfgTagFunctions;
+class CFGLoader
+{
+  private:
+    static bool mapLoaded;
+    static map<string, TagFunction *> cfgTagFunctions;
+    static void loadMap();
+  public:
+    static bool loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
+                         TRecordTime& beginTime, TRecordTime& endTime );
+};
 
-bool loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
-              TRecordTime& beginTime, TRecordTime& endTime );
-
-void loadMap();
 
 class WindowType: public TagFunction
 {
@@ -31,12 +41,5 @@ class WindowType: public TagFunction
                             TRecordTime& beginTime, TRecordTime& endTime );
 };
 
-class WindowType: public TagFunction
-{
-  public:
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime );
-};
 
 #endif // CFG_H_INCLUDED

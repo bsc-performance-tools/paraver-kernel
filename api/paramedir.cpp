@@ -42,7 +42,7 @@ int main( int argc, char *argv[] )
       TRecordTime endTime;
 
 
-      if( loadCFG( strCfg, trace, windows, beginTime, endTime ) )
+      if( CFGLoader::loadCFG( strCfg, trace, windows, beginTime, endTime ) )
       {
         windows[ windows.size() - 1 ]->init( beginTime, NOCREATE );
 

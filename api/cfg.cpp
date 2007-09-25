@@ -2,10 +2,14 @@
 #include <sstream>
 
 #include "cfg.h"
+#include "trace.h"
+#include "kwindow.h"
 
 using namespace std;
 
-bool loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
+bool CFGLoader::mapLoaded = false;
+
+bool CFGLoader::loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
               TRecordTime& beginTime, TRecordTime& endTime )
 {
   if ( !mapLoaded )
@@ -50,10 +54,10 @@ bool loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
 }
 
 
-void loadMap()
+void CFGLoader::loadMap()
 {
   cfgTagFunctions["window_type"]          = new WindowType();
-  cfgTagFunctions["window_identifiers"]   = new WindowId();
+/*  cfgTagFunctions["window_identifiers"]   = new WindowId();
   cfgTagFunctions["window_factors"]   = new Window();
   cfgTagFunctions["window_operation"]   = new Window();
   cfgTagFunctions["window_"]   = new Window();
@@ -67,7 +71,7 @@ void loadMap()
   cfgTagFunctions["window_"]   = new Window();
   cfgTagFunctions["window_"]   = new Window();
   cfgTagFunctions["window_"]   = new Window();
-  cfgTagFunctions["window_"]   = new Window();
+  cfgTagFunctions["window_"]   = new Window();*/
 
   mapLoaded = true;
 }
