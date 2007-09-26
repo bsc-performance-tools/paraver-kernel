@@ -2,15 +2,14 @@
 #include <sstream>
 
 #include "cfg.h"
-#include "trace.h"
-#include "kwindow.h"
 
 using namespace std;
 
 bool CFGLoader::mapLoaded = false;
+map<string, TagFunction *> CFGLoader::cfgTagFunctions;
 
 bool CFGLoader::loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
-              TRecordTime& beginTime, TRecordTime& endTime )
+                         TRecordTime& beginTime, TRecordTime& endTime )
 {
   if ( !mapLoaded )
     loadMap();
@@ -56,22 +55,22 @@ bool CFGLoader::loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>&
 
 void CFGLoader::loadMap()
 {
-  cfgTagFunctions["window_type"]          = new WindowType();
-/*  cfgTagFunctions["window_identifiers"]   = new WindowId();
-  cfgTagFunctions["window_factors"]   = new Window();
-  cfgTagFunctions["window_operation"]   = new Window();
-  cfgTagFunctions["window_"]   = new Window();
-  cfgTagFunctions["window_"]   = new Window();
-  cfgTagFunctions["window_"]   = new Window();
-  cfgTagFunctions["window_"]   = new Window();
-  cfgTagFunctions["window_"]   = new Window();
-  cfgTagFunctions["window_"]   = new Window();
-  cfgTagFunctions["window_"]   = new Window();
-  cfgTagFunctions["window_"]   = new Window();
-  cfgTagFunctions["window_"]   = new Window();
-  cfgTagFunctions["window_"]   = new Window();
-  cfgTagFunctions["window_"]   = new Window();
-  cfgTagFunctions["window_"]   = new Window();*/
+  cfgTagFunctions["window_type"] = new WindowType();
+  /*  cfgTagFunctions["window_identifiers"]   = new WindowId();
+    cfgTagFunctions["window_factors"]   = new Window();
+    cfgTagFunctions["window_operation"]   = new Window();
+    cfgTagFunctions["window_"]   = new Window();
+    cfgTagFunctions["window_"]   = new Window();
+    cfgTagFunctions["window_"]   = new Window();
+    cfgTagFunctions["window_"]   = new Window();
+    cfgTagFunctions["window_"]   = new Window();
+    cfgTagFunctions["window_"]   = new Window();
+    cfgTagFunctions["window_"]   = new Window();
+    cfgTagFunctions["window_"]   = new Window();
+    cfgTagFunctions["window_"]   = new Window();
+    cfgTagFunctions["window_"]   = new Window();
+    cfgTagFunctions["window_"]   = new Window();
+    cfgTagFunctions["window_"]   = new Window();*/
 
   mapLoaded = true;
 }
@@ -85,11 +84,11 @@ bool WindowType::parseLine( istringstream& line, Trace *whichTrace,
   KWindow *tmpWin;
 
   getline( line, type, ' ' );
-  if ( type.compare( "single" ) )
+  if ( type.compare( "single" ) == 0 )
   {
     tmpWin = new KSingleWindow( whichTrace );
   }
-  else if ( type.compare( "composed" ) )
+  else if ( type.compare( "composed" ) == 0 )
   {
     tmpWin = new KDerivedWindow( );
   }

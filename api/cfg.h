@@ -5,6 +5,8 @@
 #include <vector>
 #include <sstream>
 #include "paraverkerneltypes.h"
+#include "trace.h"
+#include "kwindow.h"
 
 class KWindow;
 class Trace;
@@ -14,6 +16,8 @@ using namespace std;
 class TagFunction
 {
   public:
+    TagFunction()
+    {}
     virtual ~TagFunction()
     {}
     virtual bool parseLine( istringstream& line, Trace *whichTrace,
@@ -36,6 +40,10 @@ class CFGLoader
 class WindowType: public TagFunction
 {
   public:
+    WindowType()
+    {}
+    virtual ~WindowType()
+    {}
     virtual bool parseLine( istringstream& line, Trace *whichTrace,
                             vector<KWindow *>& windows,
                             TRecordTime& beginTime, TRecordTime& endTime );

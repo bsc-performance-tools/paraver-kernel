@@ -65,6 +65,9 @@
 					<Add directory="include" />
 					<Add directory="../common-files" />
 				</Compiler>
+				<Linker>
+					<Add directory="./" />
+				</Linker>
 			</Target>
 			<Target title="paramedir">
 				<Option output="paramedir" prefix_auto="1" extension_auto="1" />
@@ -78,8 +81,8 @@
 					<Add directory="../common-files" />
 				</Compiler>
 				<Linker>
-					<Add library="libparaver-kernel.a" />
 					<Add library="libcfg.a" />
+					<Add library="libparaver-kernel.a" />
 					<Add directory="./" />
 				</Linker>
 			</Target>
