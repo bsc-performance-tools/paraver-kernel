@@ -293,13 +293,13 @@ TSemanticValue NextEventType::execute( const SemanticInfo *info )
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
   MemoryTrace::iterator *nextEvent;
 
+  if ( myInfo->it->getType() == EMPTYREC )
+    return 0;
+
   if ( myInfo->callingInterval->getLevel() == THREAD )
     nextEvent = myInfo->callingInterval->getWindow()->copyThreadIterator( myInfo->it );
   if ( myInfo->callingInterval->getLevel() == CPU )
     nextEvent = myInfo->callingInterval->getWindow()->copyCPUIterator( myInfo->it );
-
-  if ( myInfo->it->getType() == EMPTYREC )
-    return 0;
 
   getNextEvent( nextEvent, ( KSingleWindow * )
                 myInfo->callingInterval->getWindow() );
@@ -321,13 +321,13 @@ TSemanticValue NextEventValue::execute( const SemanticInfo *info )
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
   MemoryTrace::iterator *nextEvent;
 
+  if ( myInfo->it->getType() == EMPTYREC )
+    return 0;
+
   if ( myInfo->callingInterval->getLevel() == THREAD )
     nextEvent = myInfo->callingInterval->getWindow()->copyThreadIterator( myInfo->it );
   if ( myInfo->callingInterval->getLevel() == CPU )
     nextEvent = myInfo->callingInterval->getWindow()->copyCPUIterator( myInfo->it );
-
-  if ( myInfo->it->getType() == EMPTYREC )
-    return 0;
 
   getNextEvent( nextEvent, ( KSingleWindow * )
                 myInfo->callingInterval->getWindow() );
@@ -350,13 +350,13 @@ TSemanticValue AverageNextEventValue::execute( const SemanticInfo *info )
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
   MemoryTrace::iterator *nextEvent;
 
+  if ( myInfo->it->getType() == EMPTYREC )
+    return 0;
+
   if ( myInfo->callingInterval->getLevel() == THREAD )
     nextEvent = myInfo->callingInterval->getWindow()->copyThreadIterator( myInfo->it );
   if ( myInfo->callingInterval->getLevel() == CPU )
     nextEvent = myInfo->callingInterval->getWindow()->copyCPUIterator( myInfo->it );
-
-  if ( myInfo->it->getType() == EMPTYREC )
-    return 0;
 
   getNextEvent( nextEvent, ( KSingleWindow * )
                 myInfo->callingInterval->getWindow() );
@@ -384,13 +384,13 @@ TSemanticValue AverageLastEventValue::execute( const SemanticInfo *info )
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
   MemoryTrace::iterator *nextEvent;
 
+  if ( myInfo->it->getType() == EMPTYREC )
+    return 0;
+
   if ( myInfo->callingInterval->getLevel() == THREAD )
     nextEvent = myInfo->callingInterval->getWindow()->copyThreadIterator( myInfo->it );
   if ( myInfo->callingInterval->getLevel() == CPU )
     nextEvent = myInfo->callingInterval->getWindow()->copyCPUIterator( myInfo->it );
-
-  if ( myInfo->it->getType() == EMPTYREC )
-    return 0;
 
   getNextEvent( nextEvent, ( KSingleWindow * )
                 myInfo->callingInterval->getWindow() );
@@ -461,13 +461,13 @@ TSemanticValue IntervalBetweenEvents::execute( const SemanticInfo *info )
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
   MemoryTrace::iterator *nextEvent;
 
+  if ( myInfo->it->getType() == EMPTYREC )
+    return 0;
+
   if ( myInfo->callingInterval->getLevel() == THREAD )
     nextEvent = myInfo->callingInterval->getWindow()->copyThreadIterator( myInfo->it );
   if ( myInfo->callingInterval->getLevel() == CPU )
     nextEvent = myInfo->callingInterval->getWindow()->copyCPUIterator( myInfo->it );
-
-  if ( myInfo->it->getType() == EMPTYREC )
-    return 0;
 
   getNextEvent( nextEvent, ( KSingleWindow * )
                 myInfo->callingInterval->getWindow() );
