@@ -200,6 +200,21 @@ bool WindowBeginTimeRelative::parseLine( istringstream& line, Trace *whichTrace,
     vector<KWindow *>& windows,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
+  string strPercentage;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strPercentage, ' ' );
+  istringstream tmpStream( strPercentage );
+  TSemanticValue percentage;
+
+  if ( !( tmpStream >> percentage ) )
+    return false;
+
+  beginTime = ( windows[ windows.size() - 1 ]->getTrace() )->getEndTime() *
+              percentage;
+
   return true;
 }
 

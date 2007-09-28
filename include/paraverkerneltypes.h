@@ -12,7 +12,7 @@ typedef TObjectOrder  TApplOrder;
 typedef TObjectOrder  TNodeOrder;
 typedef TObjectOrder  TCPUOrder;
 
-typedef INT64         TTime;
+typedef double        TTime;
 typedef TTime         TRecordTime;
 typedef UINT8         TTimeUnit;
 /*
