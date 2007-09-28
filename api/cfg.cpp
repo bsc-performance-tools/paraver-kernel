@@ -1,7 +1,12 @@
+#include <string>
 #include <fstream>
 #include <sstream>
 
 #include "cfg.h"
+#include "kwindow.h"
+#include "trace.h"
+#include "semanticmanagement.h"
+
 
 using namespace std;
 
@@ -39,8 +44,13 @@ bool CFGLoader::loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>&
 
     if ( it != cfgTagFunctions.end() )
     {
-      it->second->parseLine( auxStream, whichTrace, windows,
-                             beginTime, endTime );
+      if ( !it->second->parseLine( auxStream, whichTrace, windows,
+                                   beginTime, endTime ) )
+      {
+        if ( windows[ windows.size() - 1 ] == NULL )
+          delete windows[ windows.size() - 1 ];
+        windows[ windows.size() - 1 ] = NULL;
+      }
     }
   }
 
@@ -110,8 +120,24 @@ bool WindowFactors::parseLine( istringstream& line, Trace *whichTrace,
                                vector<KWindow *>& windows,
                                TRecordTime& beginTime, TRecordTime& endTime )
 {
+  string strFactor;
+  UINT8 numFactor = 0;
 
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
 
+  while ( !line.eof() )
+  {
+    getline( line, strFactor, ' ' );
+    istringstream tmpStream( strFactor );
+    TSemanticValue factorValue;
+
+    if ( !( tmpStream >> factorValue ) )
+      return false;
+
+    ( ( KDerivedWindow * ) windows[ windows.size() - 1 ] )->setFactor( numFactor,
+        factorValue );
+  }
   return true;
 }
 
@@ -126,6 +152,19 @@ bool WindowOperation::parseLine( istringstream& line, Trace *whichTrace,
                                  vector<KWindow *>& windows,
                                  TRecordTime& beginTime, TRecordTime& endTime )
 {
+  string strFunction;
+  SemanticFunction *function;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strFunction, ' ' );
+  function = SemanticManagement::createFunction( strFunction );
+  if ( function == NULL )
+    return false;
+
+  windows[ windows.size() - 1 ]->setLevelFunction( DERIVED, function );
+
   return true;
 }
 

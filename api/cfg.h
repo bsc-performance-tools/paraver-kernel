@@ -5,8 +5,6 @@
 #include <vector>
 #include <sstream>
 #include "paraverkerneltypes.h"
-#include "trace.h"
-#include "kwindow.h"
 
 class KWindow;
 class Trace;

@@ -5,7 +5,7 @@
 #include "semanticnotthreadfunctions.h"
 #include "semanticthreadfunctions.h"
 
-SemanticFunction *createFunction( const string& functionName )
+SemanticFunction *SemanticManagement::createFunction( const string& functionName )
 {
   SemanticFunction *tmpFunc = NULL;
 
