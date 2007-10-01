@@ -77,6 +77,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions["window_number_of_row"]       = new WindowNumberOfRow();
   cfgTagFunctions["window_selected_functions"]  = new WindowSelectedFunctions();
   cfgTagFunctions["window_semantic_module"]     = new WindowSemanticModule();
+  cfgTagFunctions["window_filter_module"]       = new WindowSemanticModule();
   /*
     cfgTagFunctions["window_"]   = new Window();
     cfgTagFunctions["window_"]   = new Window();
@@ -141,10 +142,33 @@ bool WindowFactors::parseLine( istringstream& line, Trace *whichTrace,
   return true;
 }
 
+
 bool WindowUnits::parseLine( istringstream& line, Trace *whichTrace,
                              vector<KWindow *>& windows,
                              TRecordTime& beginTime, TRecordTime& endTime )
 {
+  string strUnits;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strUnits, ' ' );
+
+  if ( strUnits.compare( "Nanoseconds" ) == 0 )
+    windows[ windows.size() - 1 ]->setTimeUnit( NS );
+  else if ( strUnits.compare( "Microseconds" ) == 0 )
+    windows[ windows.size() - 1 ]->setTimeUnit( US );
+  else if ( strUnits.compare( "Milliseconds" ) == 0 )
+    windows[ windows.size() - 1 ]->setTimeUnit( MS );
+  else if ( strUnits.compare( "Seconds" ) == 0 )
+    windows[ windows.size() - 1 ]->setTimeUnit( SEC );
+  else if ( strUnits.compare( "Minutes" ) == 0 )
+    windows[ windows.size() - 1 ]->setTimeUnit( MIN );
+  else if ( strUnits.compare( "Hours" ) == 0 )
+    windows[ windows.size() - 1 ]->setTimeUnit( HOUR );
+  else if ( strUnits.compare( "Days" ) == 0 )
+    windows[ windows.size() - 1 ]->setTimeUnit( DAY );
+
   return true;
 }
 
@@ -168,6 +192,7 @@ bool WindowOperation::parseLine( istringstream& line, Trace *whichTrace,
   return true;
 }
 
+// For representation purposes.
 bool WindowMaximumY::parseLine( istringstream& line, Trace *whichTrace,
                                 vector<KWindow *>& windows,
                                 TRecordTime& beginTime, TRecordTime& endTime )
@@ -175,6 +200,7 @@ bool WindowMaximumY::parseLine( istringstream& line, Trace *whichTrace,
   return true;
 }
 
+//
 bool WindowLevel::parseLine( istringstream& line, Trace *whichTrace,
                              vector<KWindow *>& windows,
                              TRecordTime& beginTime, TRecordTime& endTime )
@@ -233,6 +259,13 @@ bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
 }
 
 bool WindowSemanticModule::parseLine( istringstream& line, Trace *whichTrace,
+                                      vector<KWindow *>& windows,
+                                      TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return true;
+}
+
+bool WindowFilterModule::parseLine( istringstream& line, Trace *whichTrace,
                                       vector<KWindow *>& windows,
                                       TRecordTime& beginTime, TRecordTime& endTime )
 {

@@ -190,4 +190,16 @@ class WindowSemanticModule: public TagFunction
 };
 
 
+class WindowFilterModule: public TagFunction
+{
+  public:
+    WindowFilterModule()
+    {}
+    virtual ~WindowFilterModule()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
 #endif // CFG_H_INCLUDED
