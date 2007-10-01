@@ -48,6 +48,16 @@ class KWindow
       level = whichLevel;
     }
 
+    void setTimeUnit( TTimeUnit whichUnit )
+    {
+      timeUnit = whichUnit;
+    }
+
+    TTimeUnit getTimeUnit()
+    {
+      return timeUnit;
+    }
+
     TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const
     {
       if ( whichLevel == WORKLOAD )
@@ -104,6 +114,7 @@ class KWindow
   protected:
     Trace *myTrace;
     TWindowLevel level;
+    TTimeUnit timeUnit;
 
     vector<IntervalCompose> intervalTopCompose1;
     vector<IntervalCompose> intervalTopCompose2;
