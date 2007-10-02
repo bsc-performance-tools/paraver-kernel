@@ -370,27 +370,84 @@ bool WindowFilterModule::parseLine( istringstream& line, Trace *whichTrace,
                                     vector<KWindow *>& windows,
                                     TRecordTime& beginTime, TRecordTime& endTime )
 {
-  string strTag;
+  string strTag, strNumberParams, strValue;
+  UINT8 numParams;
+  Filter *filter;
+  TCommTag commTag;
+  TCommSize commSize;
+  TSemanticValue bandWidth;
+  TEventType eventType;
+  TEventValue eventValue;
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
-  getline( line, strTag, ' ' );
+  getline( line, strTag, ' ' );          // Parameter type.
+  getline( line, strNumberParams, ' ' ); // Number of following parameters.
+  istringstream tmpNumberParams( strNumberParams );
 
-  if ( strTag.compare( "from_obj" ) == 0 )
+  if ( !( tmpNumberParams >> numParams ) )
+    return false;
+
+  filter = ( ( KSingleWindow * )windows[ windows.size() - 1 ] )->getFilter();
+
+  for ( UINT8 ii = 0; ii < numParams; ii++ )
+  {
+    if ( strTag.compare( "from_obj" ) == 0 )
     {}
-  else if ( strTag.compare( "to_obj" ) == 0 )
+    else if ( strTag.compare( "to_obj" ) == 0 )
     {}
-  else if ( strTag.compare( "tag_msg" ) == 0 )
-    {}
-  else if ( strTag.compare( "size_msg" ) == 0 )
-    {}
-  else if ( strTag.compare( "bw_msg" ) == 0 )
-    {}
-  else if ( strTag.compare( "evt_type" ) == 0 )
-    {}
-  else if ( strTag.compare( "evt_value" ) == 0 )
-    {}
+    else if ( strTag.compare( "tag_msg" ) == 0 )
+    {
+      getline( line, strValue, ' ' );
+      istringstream tmpValue( strValue );
+
+      if ( !( tmpValue >> commTag ) )
+        return false;
+
+      filter->insertCommTag( commTag );
+    }
+    else if ( strTag.compare( "size_msg" ) == 0 )
+    {
+      getline( line, strValue, ' ' );
+      istringstream tmpValue( strValue );
+
+      if ( !( tmpValue >> commSize ) )
+        return false;
+
+      filter->insertCommSize( commSize );
+    }
+    else if ( strTag.compare( "bw_msg" ) == 0 )
+    {
+      getline( line, strValue, ' ' );
+      istringstream tmpValue( strValue );
+
+      if ( !( tmpValue >> bandWidth ) )
+        return false;
+
+      filter->insertBandWitdh( bandWidth );
+    }
+    else if ( strTag.compare( "evt_type" ) == 0 )
+    {
+      getline( line, strValue, ' ' );
+      istringstream tmpValue( strValue );
+
+      if ( !( tmpValue >> eventType ) )
+        return false;
+
+      filter->insertEventType( eventType );
+    }
+    else if ( strTag.compare( "evt_value" ) == 0 )
+    {
+      getline( line, strValue, ' ' );
+      istringstream tmpValue( strValue );
+
+      if ( !( tmpValue >> eventValue ) )
+        return false;
+
+      filter->insertEventValue( eventValue );
+    }
+  }
 
   return true;
 }
