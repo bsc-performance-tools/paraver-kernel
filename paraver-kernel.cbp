@@ -119,6 +119,7 @@
 		<Unit filename="include/bplustreerecordleaf.h" />
 		<Unit filename="include/bplustreetypes.h" />
 		<Unit filename="include/filter.h" />
+		<Unit filename="include/filtermanagement.h" />
 		<Unit filename="include/index.h" />
 		<Unit filename="include/interval.h" />
 		<Unit filename="include/intervalcompose.h" />
@@ -178,6 +179,10 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/filter.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/filtermanagement.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>

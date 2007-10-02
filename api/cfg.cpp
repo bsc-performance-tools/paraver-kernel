@@ -6,6 +6,7 @@
 #include "kwindow.h"
 #include "trace.h"
 #include "semanticmanagement.h"
+#include "filtermanagement.h"
 
 
 using namespace std;
@@ -299,7 +300,6 @@ bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
   string strLevel;
   TWindowLevel level;
   string strFunction;
-  SemanticFunction *function;
 
   getline( line, tmpString, ' ' );
   getline( line, strNumFunctions, ',' );
@@ -319,6 +319,8 @@ bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
     // It's a semantic function
     if ( level != NONE )
     {
+      SemanticFunction *function;
+
       function = SemanticManagement::createFunction( strFunction );
       if ( function == NULL )
         return false;
@@ -327,6 +329,27 @@ bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
     // It's a filter function
     else
     {
+      FilterFunction *function;
+      Filter *filter = ( ( KSingleWindow * ) windows[ windows.size() - 1 ] )->getFilter();
+
+      function = FilterManagement::createFunction( strFunction );
+      if ( function == NULL )
+        return false;
+
+      if ( strLevel.compare( "from_obj" ) == 0 )
+        {}
+      else if ( strLevel.compare( "to_obj" ) == 0 )
+        {}
+      else if ( strLevel.compare( "tag_msg" ) == 0 )
+        filter->setCommTagFunction( function );
+      else if ( strLevel.compare( "size_msg" ) == 0 )
+        filter->setCommSizeFunction( function );
+      else if ( strLevel.compare( "bw_msg" ) == 0 )
+        filter->setBandWidthFunction( function );
+      else if ( strLevel.compare( "evt_type" ) == 0 )
+        filter->setEventTypeFunction( function );
+      else if ( strLevel.compare( "evt_value" ) == 0 )
+        filter->setEventValueFunction( function );
     }
   }
 
@@ -338,6 +361,7 @@ bool WindowSemanticModule::parseLine( istringstream& line, Trace *whichTrace,
                                       vector<KWindow *>& windows,
                                       TRecordTime& beginTime, TRecordTime& endTime )
 {
+
   return true;
 }
 
@@ -354,19 +378,19 @@ bool WindowFilterModule::parseLine( istringstream& line, Trace *whichTrace,
   getline( line, strTag, ' ' );
 
   if ( strTag.compare( "from_obj" ) == 0 )
-  {}
+    {}
   else if ( strTag.compare( "to_obj" ) == 0 )
-  {}
+    {}
   else if ( strTag.compare( "tag_msg" ) == 0 )
-  {}
+    {}
   else if ( strTag.compare( "size_msg" ) == 0 )
-  {}
+    {}
   else if ( strTag.compare( "bw_msg" ) == 0 )
-  {}
+    {}
   else if ( strTag.compare( "evt_type" ) == 0 )
-  {}
+    {}
   else if ( strTag.compare( "evt_value" ) == 0 )
-  {}
+    {}
 
   return true;
 }
