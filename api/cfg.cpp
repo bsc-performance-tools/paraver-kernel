@@ -253,7 +253,6 @@ bool WindowScaleRelative::parseLine( istringstream& line, Trace *whichTrace,
   return true;
 }
 
-//
 bool WindowObject::parseLine( istringstream& line, Trace *whichTrace,
                               vector<KWindow *>& windows,
                               TRecordTime& beginTime, TRecordTime& endTime )
@@ -306,11 +305,11 @@ bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
   getline( line, strNumFunctions, ',' );
   istringstream tmpNumFunctions( strNumFunctions );
 
-  if( !( tmpNumFunctions >> numFunctions ) )
+  if ( !( tmpNumFunctions >> numFunctions ) )
     return false;
 
   getline( line, tmpString, '{' );
-  for( UINT8 i = 0; i < numFunctions; i++ )
+  for ( UINT8 i = 0; i < numFunctions; i++ )
   {
     getline( line, tmpString, '{' );
     getline( line, strLevel, ',' );
@@ -318,24 +317,23 @@ bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
     level = stringToLevel( strLevel );
 
     // It's a semantic function
-    if( level != NONE )
+    if ( level != NONE )
     {
       function = SemanticManagement::createFunction( strFunction );
-      if( function == NULL )
+      if ( function == NULL )
         return false;
       windows[ windows.size() - 1 ]->setLevelFunction( level, function );
     }
     // It's a filter function
     else
     {
-
     }
   }
 
   return true;
 }
 
-// si
+
 bool WindowSemanticModule::parseLine( istringstream& line, Trace *whichTrace,
                                       vector<KWindow *>& windows,
                                       TRecordTime& beginTime, TRecordTime& endTime )
@@ -370,14 +368,63 @@ bool WindowFilterModule::parseLine( istringstream& line, Trace *whichTrace,
   else if ( strTag.compare( "evt_value" ) == 0 )
   {}
 
-
   return true;
 }
 
 
 bool WindowFilterLogical::parseLine( istringstream& line, Trace *whichTrace,
+                                     vector<KWindow *>& windows,
+                                     TRecordTime& beginTime, TRecordTime& endTime )
+{
+  string strBool;
+  Filter *filter;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  filter = ( ( KSingleWindow * )windows[ windows.size() - 1 ] )->getFilter();
+
+  if ( strBool.compare( "false" ) == 0 )
+    filter->setLogical( false );
+  else if ( strBool.compare( "true" ) == 0 )
+    filter->setLogical( true );
+  else
+    return false;
+
+  return true;
+}
+
+
+bool WindowFilterPhysical::parseLine( istringstream& line, Trace *whichTrace,
                                       vector<KWindow *>& windows,
                                       TRecordTime& beginTime, TRecordTime& endTime )
+{
+  string strBool;
+  Filter *filter;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  filter = ( ( KSingleWindow * )windows[ windows.size() - 1 ] )->getFilter();
+
+  if ( strBool.compare( "false" ) == 0 )
+    filter->setPhysical( false );
+  else if ( strBool.compare( "true" ) == 0 )
+    filter->setPhysical( true );
+  else
+    return false;
+
+  return true;
+}
+
+
+bool WindowFilterBoolOpFromTo::parseLine( istringstream& line, Trace *whichTrace,
+    vector<KWindow *>& windows,
+    TRecordTime& beginTime, TRecordTime& endTime )
 {
   string strBool;
 
@@ -388,30 +435,60 @@ bool WindowFilterLogical::parseLine( istringstream& line, Trace *whichTrace,
 
   if ( strBool.compare( "false" ) == 0 )
   {}
+  else if ( strBool.compare( "true" ) == 0 )
+  {}
+  else
+    return false;
 
   return true;
 }
-bool WindowFilterPhysical::parseLine( istringstream& line, Trace *whichTrace,
-                                      vector<KWindow *>& windows,
-                                      TRecordTime& beginTime, TRecordTime& endTime )
-{
-  return true;
-}
-bool WindowFilterBoolOpFromTo::parseLine( istringstream& line, Trace *whichTrace,
-                                      vector<KWindow *>& windows,
-                                      TRecordTime& beginTime, TRecordTime& endTime )
-{
-  return true;
-}
+
+
 bool WindowFilterBoolOpTagSize::parseLine( istringstream& line, Trace *whichTrace,
-                                      vector<KWindow *>& windows,
-                                      TRecordTime& beginTime, TRecordTime& endTime )
+    vector<KWindow *>& windows,
+    TRecordTime& beginTime, TRecordTime& endTime )
 {
+  string strBool;
+  Filter *filter;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  filter = ( ( KSingleWindow * )windows[ windows.size() - 1 ] )->getFilter();
+
+  if ( strBool.compare( "false" ) == 0 )
+    filter->setOpTagSizeOr();
+  else if ( strBool.compare( "true" ) == 0 )
+    filter->setOpTagSizeAnd();
+  else
+    return false;
+
   return true;
 }
+
+
 bool WindowFilterBoolOpTypeVal::parseLine( istringstream& line, Trace *whichTrace,
-                                      vector<KWindow *>& windows,
-                                      TRecordTime& beginTime, TRecordTime& endTime )
+    vector<KWindow *>& windows,
+    TRecordTime& beginTime, TRecordTime& endTime )
 {
+  string strBool;
+  Filter *filter;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  filter = ( ( KSingleWindow * )windows[ windows.size() - 1 ] )->getFilter();
+
+  if ( strBool.compare( "false" ) == 0 )
+    filter->setOpTypeValueOr();
+  else if ( strBool.compare( "true" ) == 0 )
+    filter->setOpTypeValueAnd();
+  else
+    return false;
+
   return true;
 }
