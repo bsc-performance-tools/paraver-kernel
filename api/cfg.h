@@ -202,4 +202,70 @@ class WindowFilterModule: public TagFunction
                             TRecordTime& beginTime, TRecordTime& endTime );
 };
 
+
+class WindowFilterLogical: public TagFunction
+{
+  public:
+    WindowFilterLogical()
+    {}
+    virtual ~WindowFilterLogical()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
+class WindowFilterPhysical: public TagFunction
+{
+  public:
+    WindowFilterPhysical()
+    {}
+    virtual ~WindowFilterPhysical()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
+class WindowFilterBoolOpFromTo: public TagFunction
+{
+  public:
+    WindowFilterBoolOpFromTo()
+    {}
+    virtual ~WindowFilterBoolOpFromTo()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
+class WindowFilterBoolOpTagSize: public TagFunction
+{
+  public:
+    WindowFilterBoolOpTagSize()
+    {}
+    virtual ~WindowFilterBoolOpTagSize()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
+class WindowFilterBoolOpTypeVal: public TagFunction
+{
+  public:
+    WindowFilterBoolOpTypeVal()
+    {}
+    virtual ~WindowFilterBoolOpTypeVal()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
 #endif // CFG_H_INCLUDED

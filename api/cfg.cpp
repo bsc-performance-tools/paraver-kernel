@@ -77,14 +77,14 @@ void CFGLoader::loadMap()
   cfgTagFunctions["window_number_of_row"]       = new WindowNumberOfRow();
   cfgTagFunctions["window_selected_functions"]  = new WindowSelectedFunctions();
   cfgTagFunctions["window_semantic_module"]     = new WindowSemanticModule();
-  cfgTagFunctions["window_filter_module"]       = new WindowSemanticModule();
-  /*
-    cfgTagFunctions["window_"]   = new Window();
-    cfgTagFunctions["window_"]   = new Window();
-    cfgTagFunctions["window_"]   = new Window();
-    cfgTagFunctions["window_"]   = new Window();
-    cfgTagFunctions["window_"]   = new Window();
-  */
+
+  // Filter options
+  cfgTagFunctions["window_filter_module"]       = new WindowFilterModule();
+  cfgTagFunctions["window_logical_filtered"]    = new WindowFilterLogical();
+  cfgTagFunctions["window_physical_filtered"]   = new WindowFilterPhysical();
+  cfgTagFunctions["window_fromto"]              = new WindowFilterBoolOpFromTo();
+  cfgTagFunctions["window_comm_tagsize"]        = new WindowFilterBoolOpTagSize();
+  cfgTagFunctions["window_typeval"]             = new WindowFilterBoolOpTypeVal();
 
   mapLoaded = true;
 }
@@ -200,7 +200,7 @@ bool WindowMaximumY::parseLine( istringstream& line, Trace *whichTrace,
   return true;
 }
 
-//
+//si
 bool WindowLevel::parseLine( istringstream& line, Trace *whichTrace,
                              vector<KWindow *>& windows,
                              TRecordTime& beginTime, TRecordTime& endTime )
@@ -208,6 +208,7 @@ bool WindowLevel::parseLine( istringstream& line, Trace *whichTrace,
   return true;
 }
 
+//si (pone el end time)
 bool WindowScaleRelative::parseLine( istringstream& line, Trace *whichTrace,
                                      vector<KWindow *>& windows,
                                      TRecordTime& beginTime, TRecordTime& endTime )
@@ -215,6 +216,7 @@ bool WindowScaleRelative::parseLine( istringstream& line, Trace *whichTrace,
   return true;
 }
 
+//
 bool WindowObject::parseLine( istringstream& line, Trace *whichTrace,
                               vector<KWindow *>& windows,
                               TRecordTime& beginTime, TRecordTime& endTime )
@@ -244,6 +246,7 @@ bool WindowBeginTimeRelative::parseLine( istringstream& line, Trace *whichTrace,
   return true;
 }
 
+// en principio no
 bool WindowNumberOfRow::parseLine( istringstream& line, Trace *whichTrace,
                                    vector<KWindow *>& windows,
                                    TRecordTime& beginTime, TRecordTime& endTime )
@@ -251,6 +254,8 @@ bool WindowNumberOfRow::parseLine( istringstream& line, Trace *whichTrace,
   return true;
 }
 
+
+//si
 bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
     vector<KWindow *>& windows,
     TRecordTime& beginTime, TRecordTime& endTime )
@@ -258,6 +263,7 @@ bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
   return true;
 }
 
+// si
 bool WindowSemanticModule::parseLine( istringstream& line, Trace *whichTrace,
                                       vector<KWindow *>& windows,
                                       TRecordTime& beginTime, TRecordTime& endTime )
@@ -265,7 +271,73 @@ bool WindowSemanticModule::parseLine( istringstream& line, Trace *whichTrace,
   return true;
 }
 
+
 bool WindowFilterModule::parseLine( istringstream& line, Trace *whichTrace,
+                                      vector<KWindow *>& windows,
+                                      TRecordTime& beginTime, TRecordTime& endTime )
+{
+  string strTag;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strTag, ' ' );
+
+  if ( strTag.compare( "from_obj" ) == 0 )
+  {}
+  else if ( strTag.compare( "to_obj" ) == 0 )
+  {}
+  else if ( strTag.compare( "tag_msg" ) == 0 )
+  {}
+  else if ( strTag.compare( "size_msg" ) == 0 )
+  {}
+  else if ( strTag.compare( "bw_msg" ) == 0 )
+  {}
+  else if ( strTag.compare( "evt_type" ) == 0 )
+  {}
+  else if ( strTag.compare( "evt_value" ) == 0 )
+  {}
+
+
+  return true;
+}
+
+
+bool WindowFilterLogical::parseLine( istringstream& line, Trace *whichTrace,
+                                      vector<KWindow *>& windows,
+                                      TRecordTime& beginTime, TRecordTime& endTime )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( "false" ) == 0 )
+  {}
+
+  return true;
+}
+bool WindowFilterPhysical::parseLine( istringstream& line, Trace *whichTrace,
+                                      vector<KWindow *>& windows,
+                                      TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return true;
+}
+bool WindowFilterBoolOpFromTo::parseLine( istringstream& line, Trace *whichTrace,
+                                      vector<KWindow *>& windows,
+                                      TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return true;
+}
+bool WindowFilterBoolOpTagSize::parseLine( istringstream& line, Trace *whichTrace,
+                                      vector<KWindow *>& windows,
+                                      TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return true;
+}
+bool WindowFilterBoolOpTypeVal::parseLine( istringstream& line, Trace *whichTrace,
                                       vector<KWindow *>& windows,
                                       TRecordTime& beginTime, TRecordTime& endTime )
 {
