@@ -301,6 +301,9 @@ bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
   TWindowLevel level;
   string strFunction;
 
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
   getline( line, tmpString, ' ' );
   getline( line, strNumFunctions, ',' );
   istringstream tmpNumFunctions( strNumFunctions );
@@ -361,7 +364,31 @@ bool WindowSemanticModule::parseLine( istringstream& line, Trace *whichTrace,
                                       vector<KWindow *>& windows,
                                       TRecordTime& beginTime, TRecordTime& endTime )
 {
+  string strLevel;
+  TWindowLevel level;
+  string strFunction;
+  SemanticFunction *function;
 
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strLevel, ' ' );
+  level = stringToLevel( strLevel );
+  if ( level == NONE )
+    return false;
+
+  getline( line, strFunction, ' ' );
+  function = SemanticManagement::createFunction( strFunction );
+  if ( function == NULL )
+    return false;
+
+  if ( typeid( windows[ windows.size() - 1 ]->getLevelFunction( level ) ) ==
+       typeid( function ) )
+  {
+
+  }
+
+  delete function;
   return true;
 }
 
@@ -515,9 +542,9 @@ bool WindowFilterBoolOpFromTo::parseLine( istringstream& line, Trace *whichTrace
   getline( line, strBool, ' ' );
 
   if ( strBool.compare( "false" ) == 0 )
-  {}
+    {}
   else if ( strBool.compare( "true" ) == 0 )
-  {}
+    {}
   else
     return false;
 
