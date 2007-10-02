@@ -11,6 +11,8 @@ class Trace;
 
 using namespace std;
 
+TWindowLevel stringToLevel( const string& strLevel );
+
 class TagFunction
 {
   public:

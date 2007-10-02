@@ -27,7 +27,9 @@ class KWindow
     KWindow()
     {}
     KWindow( Trace *whichTrace ): myTrace( whichTrace )
-    {}
+    {
+      level = THREAD;
+    }
     virtual ~KWindow()
     {}
 

@@ -200,19 +200,56 @@ bool WindowMaximumY::parseLine( istringstream& line, Trace *whichTrace,
   return true;
 }
 
-//si
+
+TWindowLevel stringToLevel( const string& strLevel )
+{
+  TWindowLevel level = NONE;
+
+  if ( strLevel.compare( "appl" ) == 0 )
+    level = APPLICATION;
+  else if ( strLevel.compare( "ptask" ) == 0 )
+    level = APPLICATION;
+  else if ( strLevel.compare( "workload" ) == 0 )
+    level = WORKLOAD;
+  else if ( strLevel.compare( "task" ) == 0 )
+    level = TASK;
+  else if ( strLevel.compare( "thread" ) == 0 )
+    level = THREAD;
+  else if ( strLevel.compare( "cpu" ) == 0 )
+    level = CPU;
+  else if ( strLevel.compare( "node" ) == 0 )
+    level = NODE;
+  else if ( strLevel.compare( "system" ) == 0 )
+    level = SYSTEM;
+
+  return level;
+}
+
 bool WindowLevel::parseLine( istringstream& line, Trace *whichTrace,
                              vector<KWindow *>& windows,
                              TRecordTime& beginTime, TRecordTime& endTime )
 {
+  string strLevel;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strLevel, ' ' );
+
+  windows[ windows.size() - 1 ]->setLevel( stringToLevel( strLevel ) );
+
   return true;
 }
 
-//si (pone el end time)
 bool WindowScaleRelative::parseLine( istringstream& line, Trace *whichTrace,
                                      vector<KWindow *>& windows,
                                      TRecordTime& beginTime, TRecordTime& endTime )
 {
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  endTime = ( windows[ windows.size() - 1 ]->getTrace() )->getEndTime();
+
   return true;
 }
 
@@ -246,7 +283,6 @@ bool WindowBeginTimeRelative::parseLine( istringstream& line, Trace *whichTrace,
   return true;
 }
 
-// en principio no
 bool WindowNumberOfRow::parseLine( istringstream& line, Trace *whichTrace,
                                    vector<KWindow *>& windows,
                                    TRecordTime& beginTime, TRecordTime& endTime )
@@ -254,12 +290,48 @@ bool WindowNumberOfRow::parseLine( istringstream& line, Trace *whichTrace,
   return true;
 }
 
-
-//si
 bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
     vector<KWindow *>& windows,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
+  string tmpString;
+  string strNumFunctions;
+  UINT8 numFunctions;
+  string strLevel;
+  TWindowLevel level;
+  string strFunction;
+  SemanticFunction *function;
+
+  getline( line, tmpString, ' ' );
+  getline( line, strNumFunctions, ',' );
+  istringstream tmpNumFunctions( strNumFunctions );
+
+  if( !( tmpNumFunctions >> numFunctions ) )
+    return false;
+
+  getline( line, tmpString, '{' );
+  for( UINT8 i = 0; i < numFunctions; i++ )
+  {
+    getline( line, tmpString, '{' );
+    getline( line, strLevel, ',' );
+    getline( line, strFunction, '}' );
+    level = stringToLevel( strLevel );
+
+    // It's a semantic function
+    if( level != NONE )
+    {
+      function = SemanticManagement::createFunction( strFunction );
+      if( function == NULL )
+        return false;
+      windows[ windows.size() - 1 ]->setLevelFunction( level, function );
+    }
+    // It's a filter function
+    else
+    {
+
+    }
+  }
+
   return true;
 }
 
@@ -273,8 +345,8 @@ bool WindowSemanticModule::parseLine( istringstream& line, Trace *whichTrace,
 
 
 bool WindowFilterModule::parseLine( istringstream& line, Trace *whichTrace,
-                                      vector<KWindow *>& windows,
-                                      TRecordTime& beginTime, TRecordTime& endTime )
+                                    vector<KWindow *>& windows,
+                                    TRecordTime& beginTime, TRecordTime& endTime )
 {
   string strTag;
 
