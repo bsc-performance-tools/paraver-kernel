@@ -74,7 +74,12 @@ void CFGLoader::loadMap()
   cfgTagFunctions["window_level"]               = new WindowLevel();
   cfgTagFunctions["window_scale_relative"]      = new WindowScaleRelative();
   cfgTagFunctions["window_object"]              = new WindowObject();
+
+  cfgTagFunctions["window_begin_time"]          = new WindowBeginTime();
+  cfgTagFunctions["window_stop_time"]           = new WindowStopTime();
+  cfgTagFunctions["window_end_time"]            = new WindowEndTime();
   cfgTagFunctions["window_begin_time_relative"] = new WindowBeginTimeRelative();
+
   cfgTagFunctions["window_number_of_row"]       = new WindowNumberOfRow();
   cfgTagFunctions["window_selected_functions"]  = new WindowSelectedFunctions();
   cfgTagFunctions["window_semantic_module"]     = new WindowSemanticModule();
@@ -258,6 +263,55 @@ bool WindowObject::parseLine( istringstream& line, Trace *whichTrace,
                               vector<KWindow *>& windows,
                               TRecordTime& beginTime, TRecordTime& endTime )
 {
+  return true;
+}
+
+bool WindowBeginTime::parseLine( istringstream& line, Trace *whichTrace,
+    vector<KWindow *>& windows,
+    TRecordTime& beginTime, TRecordTime& endTime )
+{
+  string strTime;
+  TRecordTime auxTime;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strTime, ' ' );
+  istringstream tmpTime( strTime );
+
+  if ( !( tmpTime >> auxTime ) )
+    return false;
+
+  beginTime = auxTime;
+
+  return true;
+}
+
+bool WindowEndTime::parseLine( istringstream& line, Trace *whichTrace,
+    vector<KWindow *>& windows,
+    TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return true;
+}
+
+bool WindowStopTime::parseLine( istringstream& line, Trace *whichTrace,
+    vector<KWindow *>& windows,
+    TRecordTime& beginTime, TRecordTime& endTime )
+{
+  string strTime;
+  TRecordTime auxTime;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strTime, ' ' );
+  istringstream tmpTime( strTime );
+
+  if ( !( tmpTime >> auxTime ) )
+    return false;
+
+  endTime = auxTime;
+
   return true;
 }
 

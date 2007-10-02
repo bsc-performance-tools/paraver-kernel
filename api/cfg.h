@@ -141,6 +141,45 @@ class WindowObject: public TagFunction
 };
 
 
+class WindowBeginTime: public TagFunction
+{
+  public:
+    WindowBeginTime()
+    {}
+    virtual ~WindowBeginTime()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
+class WindowEndTime: public TagFunction
+{
+  public:
+    WindowEndTime()
+    {}
+    virtual ~WindowEndTime()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
+class WindowStopTime: public TagFunction
+{
+  public:
+    WindowStopTime()
+    {}
+    virtual ~WindowStopTime()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
 class WindowBeginTimeRelative: public TagFunction
 {
   public:
