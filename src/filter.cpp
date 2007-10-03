@@ -150,6 +150,45 @@ bool FilterRange::execute( TSemanticValue param, TSemanticValue data )
   return tmp;
 }
 
+
+void Filter::clearCommFrom()
+{
+  commFrom.clear();
+  existCommFrom = false;
+}
+
+void Filter::insertCommFrom( TObjectOrder value )
+{
+  commFrom.push_back( value );
+  existCommFrom = true;
+}
+
+void Filter::setCommFromFunction( FilterFunction *newFunction )
+{
+  delete functionCommFrom;
+  functionCommFrom = newFunction;
+}
+
+
+void Filter::clearCommTo()
+{
+  commTo.clear();
+  existCommTo = false;
+}
+
+void Filter::insertCommTo( TObjectOrder value )
+{
+  commTo.push_back( value );
+  existCommTo = true;
+}
+
+void Filter::setCommToFunction( FilterFunction *newFunction )
+{
+  delete functionCommTo;
+  functionCommTo = newFunction;
+}
+
+
 void Filter::clearCommTags()
 {
   commTags.clear();

@@ -142,13 +142,18 @@ class Filter
     {
       logical = true;
       physical = false;
+      existCommFrom = false;
+      existCommTo = false;
       existCommTags = false;
       existCommSize = false;
       existBandWidth = false;
       existEventTypes = false;
       existEventValues = false;
+      opFromTo = AND;
       opTagSize = AND;
       opTypeValue = AND;
+      functionCommFrom = new FilterAll();
+      functionCommTo = new FilterAll();
       functionCommTags = new FilterAll();
       functionCommSizes = new FilterAll();
       functionBandWidth = new FilterAll();
@@ -160,13 +165,18 @@ class Filter
     {
       logical = true;
       physical = false;
+      existCommFrom = false;
+      existCommTo = false;
       existCommTags = false;
       existCommSize = false;
       existBandWidth = false;
       existEventTypes = false;
       existEventValues = false;
+      opFromTo = AND;
       opTagSize = AND;
       opTypeValue = AND;
+      functionCommFrom = new FilterAll();
+      functionCommTo = new FilterAll();
       functionCommTags = new FilterAll();
       functionCommSizes = new FilterAll();
       functionBandWidth = new FilterAll();
@@ -196,6 +206,14 @@ class Filter
       return physical;
     }
 
+    void clearCommFrom();
+    void insertCommFrom( TObjectOrder value );
+    void setCommFromFunction( FilterFunction *newFunction );
+
+    void clearCommTo();
+    void insertCommTo( TObjectOrder value );
+    void setCommToFunction( FilterFunction *newFunction );
+
     void clearCommTags();
     void insertCommTag( TCommTag value );
     void setCommTagFunction( FilterFunction *newFunction );
@@ -217,6 +235,14 @@ class Filter
     void setEventValueFunction( FilterFunction *newFunction );
 
 
+    void setOpFromToAnd()
+    {
+      opFromTo = AND;
+    }
+    void setOpFromToOr()
+    {
+      opFromTo = OR;
+    }
     void setOpTagSizeAnd()
     {
       opTagSize = AND;
@@ -239,6 +265,16 @@ class Filter
 
     bool logical;
     bool physical;
+
+    bool existCommFrom;
+    vector<TObjectOrder> commFrom;
+    FilterFunction *functionCommFrom;
+
+    bool opFromTo;
+
+    bool existCommTo;
+    vector<TObjectOrder> commTo;
+    FilterFunction *functionCommTo;
 
     bool existCommTags;
     vector<TCommTag> commTags;
