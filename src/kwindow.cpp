@@ -5,33 +5,57 @@
 
 TObjectOrder KWindow::cpuObjectToWindowObject( TCPUOrder whichCPU )
 {
-  TObjectOrder tmpCPU;
+  TObjectOrder tmpObject = 0;
 
   if ( level == CPU )
-    tmpCPU = whichCPU;
+    tmpObject = whichCPU;
   else if ( level == NODE )
-    {}
-  else if ( level == SYSTEM )
-    {}
+  {
+    TCPUOrder myCPU;
+    TNodeOrder myNode;
 
-  return tmpCPU;
+    myTrace->getCPULocation( whichCPU, myNode, myCPU );
+    tmpObject = myNode;
+  }
+  else if ( level == SYSTEM )
+  {
+    tmpObject = 1;
+  }
+
+  return tmpObject;
 }
 
 
 TObjectOrder KWindow::threadObjectToWindowObject( TThreadOrder whichThread )
 {
-  TObjectOrder tmpThread;
+  TObjectOrder tmpObject;
 
   if ( level == THREAD )
-    tmpThread = whichThread;
+    tmpObject = whichThread;
   else if ( level == TASK )
-    {}
-  else if ( level == APPLICATION )
-    {}
-  else if ( level == WORKLOAD )
-    {}
+  {
+    TThreadOrder myThread;
+    TTaskOrder myTask;
+    TApplOrder myAppl;
 
-  return tmpThread;
+    myTrace->getThreadLocation( whichThread, myAppl, myTask, myThread );
+    tmpObject = myTrace->getGlobalTask( myAppl, myTask );
+  }
+  else if ( level == APPLICATION )
+  {
+    TThreadOrder myThread;
+    TTaskOrder myTask;
+    TApplOrder myAppl;
+
+    myTrace->getThreadLocation( whichThread, myAppl, myTask, myThread );
+    tmpObject = myAppl;
+  }
+  else if ( level == WORKLOAD )
+  {
+    tmpObject = 1;
+  }
+
+  return tmpObject;
 }
 
 
