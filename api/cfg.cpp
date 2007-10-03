@@ -420,9 +420,9 @@ bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
         return false;
 
       if ( strLevel.compare( "from_obj" ) == 0 )
-        {}
+        filter->setCommFromFunction( function );
       else if ( strLevel.compare( "to_obj" ) == 0 )
-        {}
+        filter->setCommToFunction( function );
       else if ( strLevel.compare( "tag_msg" ) == 0 )
         filter->setCommTagFunction( function );
       else if ( strLevel.compare( "size_msg" ) == 0 )
@@ -576,6 +576,8 @@ bool WindowFilterModule::parseLine( istringstream& line, Trace *whichTrace,
   string strTag, strNumberParams, strValue;
   UINT8 numParams;
   Filter *filter;
+  TObjectOrder fromObject;
+  TObjectOrder toObject;
   TCommTag commTag;
   TCommSize commSize;
   TSemanticValue bandWidth;
@@ -597,9 +599,25 @@ bool WindowFilterModule::parseLine( istringstream& line, Trace *whichTrace,
   for ( UINT8 ii = 0; ii < numParams; ii++ )
   {
     if ( strTag.compare( "from_obj" ) == 0 )
-      {}
+    {
+      getline( line, strValue, ' ' );
+      istringstream tmpValue( strValue );
+
+      if ( !( tmpValue >> fromObject ) )
+        return false;
+
+      filter->insertCommFrom( fromObject );
+    }
     else if ( strTag.compare( "to_obj" ) == 0 )
-      {}
+    {
+      getline( line, strValue, ' ' );
+      istringstream tmpValue( strValue );
+
+      if ( !( tmpValue >> toObject ) )
+        return false;
+
+      filter->insertCommTo( toObject );
+    }
     else if ( strTag.compare( "tag_msg" ) == 0 )
     {
       getline( line, strValue, ' ' );
