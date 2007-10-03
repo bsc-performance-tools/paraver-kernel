@@ -14,6 +14,55 @@ using namespace std;
 bool CFGLoader::mapLoaded = false;
 map<string, TagFunction *> CFGLoader::cfgTagFunctions;
 
+
+TWindowLevel stringToLevel( const string& strLevel )
+{
+  TWindowLevel level = NONE;
+
+  if ( strLevel.compare( "appl" ) == 0 )
+    level = APPLICATION;
+  else if ( strLevel.compare( "ptask" ) == 0 )
+    level = APPLICATION;
+  else if ( strLevel.compare( "workload" ) == 0 )
+    level = WORKLOAD;
+  else if ( strLevel.compare( "task" ) == 0 )
+    level = TASK;
+  else if ( strLevel.compare( "thread" ) == 0 )
+    level = THREAD;
+  else if ( strLevel.compare( "cpu" ) == 0 )
+    level = CPU;
+  else if ( strLevel.compare( "node" ) == 0 )
+    level = NODE;
+  else if ( strLevel.compare( "system" ) == 0 )
+    level = SYSTEM;
+  else if ( strLevel.compare( "topcompose1" ) == 0 )
+    level = TOPCOMPOSE1;
+  else if ( strLevel.compare( "topcompose2" ) == 0 )
+    level = TOPCOMPOSE2;
+  else if ( strLevel.compare( "compose_workload" ) == 0 )
+    level = COMPOSEWORKLOAD;
+  else if ( strLevel.compare( "compose_appl" ) == 0 )
+    level = COMPOSEAPPLICATION;
+  else if ( strLevel.compare( "compose_task" ) == 0 )
+    level = COMPOSETASK;
+  else if ( strLevel.compare( "compose_thread" ) == 0 )
+    level = COMPOSETHREAD;
+  else if ( strLevel.compare( "compose_cpu" ) == 0 )
+    level = COMPOSECPU;
+  else if ( strLevel.compare( "compose_node" ) == 0 )
+    level = COMPOSENODE;
+  else if ( strLevel.compare( "compose_system" ) == 0 )
+    level = COMPOSESYSTEM;
+  // Old semantic composes
+  else if ( strLevel.compare( "compose1" ) == 0 )
+    level = TOPCOMPOSE1;
+  else if ( strLevel.compare( "compose2" ) == 0 )
+    level = TOPCOMPOSE2;
+
+  return level;
+}
+
+
 bool CFGLoader::loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
                          TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -83,6 +132,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions["window_number_of_row"]       = new WindowNumberOfRow();
   cfgTagFunctions["window_selected_functions"]  = new WindowSelectedFunctions();
   cfgTagFunctions["window_semantic_module"]     = new WindowSemanticModule();
+  cfgTagFunctions["window_compose_functions"]   = new WindowComposeFunctions();
 
   // Filter options
   cfgTagFunctions["window_filter_module"]       = new WindowFilterModule();
@@ -207,30 +257,6 @@ bool WindowMaximumY::parseLine( istringstream& line, Trace *whichTrace,
 }
 
 
-TWindowLevel stringToLevel( const string& strLevel )
-{
-  TWindowLevel level = NONE;
-
-  if ( strLevel.compare( "appl" ) == 0 )
-    level = APPLICATION;
-  else if ( strLevel.compare( "ptask" ) == 0 )
-    level = APPLICATION;
-  else if ( strLevel.compare( "workload" ) == 0 )
-    level = WORKLOAD;
-  else if ( strLevel.compare( "task" ) == 0 )
-    level = TASK;
-  else if ( strLevel.compare( "thread" ) == 0 )
-    level = THREAD;
-  else if ( strLevel.compare( "cpu" ) == 0 )
-    level = CPU;
-  else if ( strLevel.compare( "node" ) == 0 )
-    level = NODE;
-  else if ( strLevel.compare( "system" ) == 0 )
-    level = SYSTEM;
-
-  return level;
-}
-
 bool WindowLevel::parseLine( istringstream& line, Trace *whichTrace,
                              vector<KWindow *>& windows,
                              TRecordTime& beginTime, TRecordTime& endTime )
@@ -267,8 +293,8 @@ bool WindowObject::parseLine( istringstream& line, Trace *whichTrace,
 }
 
 bool WindowBeginTime::parseLine( istringstream& line, Trace *whichTrace,
-    vector<KWindow *>& windows,
-    TRecordTime& beginTime, TRecordTime& endTime )
+                                 vector<KWindow *>& windows,
+                                 TRecordTime& beginTime, TRecordTime& endTime )
 {
   string strTime;
   TRecordTime auxTime;
@@ -288,15 +314,15 @@ bool WindowBeginTime::parseLine( istringstream& line, Trace *whichTrace,
 }
 
 bool WindowEndTime::parseLine( istringstream& line, Trace *whichTrace,
-    vector<KWindow *>& windows,
-    TRecordTime& beginTime, TRecordTime& endTime )
+                               vector<KWindow *>& windows,
+                               TRecordTime& beginTime, TRecordTime& endTime )
 {
   return true;
 }
 
 bool WindowStopTime::parseLine( istringstream& line, Trace *whichTrace,
-    vector<KWindow *>& windows,
-    TRecordTime& beginTime, TRecordTime& endTime )
+                                vector<KWindow *>& windows,
+                                TRecordTime& beginTime, TRecordTime& endTime )
 {
   string strTime;
   TRecordTime auxTime;
@@ -414,6 +440,54 @@ bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
 }
 
 
+bool WindowComposeFunctions::parseLine( istringstream& line, Trace *whichTrace,
+                                        vector<KWindow *>& windows,
+                                        TRecordTime& beginTime, TRecordTime& endTime )
+{
+  string tmpString;
+  string strNumFunctions;
+  UINT8 numFunctions;
+  string strLevel;
+  TWindowLevel level;
+  string strFunction;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, tmpString, ' ' );
+  getline( line, strNumFunctions, ',' );
+  istringstream tmpNumFunctions( strNumFunctions );
+
+  if ( !( tmpNumFunctions >> numFunctions ) )
+    return false;
+
+  getline( line, tmpString, '{' );
+  for ( UINT8 i = 0; i < numFunctions; i++ )
+  {
+    getline( line, tmpString, '{' );
+    getline( line, strLevel, ',' );
+    getline( line, tmpString, ' ' );
+    getline( line, strFunction, '}' );
+    level = stringToLevel( strLevel );
+
+    // It's a semantic function
+    if ( level != NONE )
+    {
+      SemanticFunction *function;
+
+      function = SemanticManagement::createFunction( strFunction );
+      if ( function == NULL )
+        return false;
+      windows[ windows.size() - 1 ]->setLevelFunction( level, function );
+    }
+    else
+      return false;
+  }
+
+  return true;
+}
+
+
 bool WindowSemanticModule::parseLine( istringstream& line, Trace *whichTrace,
                                       vector<KWindow *>& windows,
                                       TRecordTime& beginTime, TRecordTime& endTime )
@@ -439,10 +513,58 @@ bool WindowSemanticModule::parseLine( istringstream& line, Trace *whichTrace,
   if ( typeid( windows[ windows.size() - 1 ]->getLevelFunction( level ) ) ==
        typeid( function ) )
   {
+    string tmpString;
+    string strNumParam;
+    TParamIndex numParam;
+
+    delete function;
+
+    getline( line, tmpString, ' ' );
+    getline( line, strNumParam, ',' );
+    istringstream tmpNumParam( strNumParam );
+    if ( !( tmpNumParam >> numParam ) )
+      return false;
+
+    getline( line, tmpString, '{' );
+
+    for ( TParamIndex i = 0; i < numParam; i++ )
+    {
+      string strNumValues;
+      UINT32 numValues;
+      TParamValue values;
+
+      getline( line, tmpString, ' ' );
+
+      getline( line, strNumValues, ' ' );
+      istringstream tmpNumValues( strNumValues );
+      if ( !( tmpNumValues >> numValues ) )
+        return false;
+
+      for ( UINT32 j = 0; j < numValues; j++ )
+      {
+        string strParamValue;
+        double paramValue;
+
+        if ( j < numValues - 1 )
+          getline( line, strParamValue, ' ' );
+        else if ( j == numValues - 1 )
+        {
+          if ( i < numParam - 1 )
+            getline( line, strParamValue, ',' );
+          else if ( i == numParam - 1 )
+            getline( line, strParamValue, ' ' );
+        }
+        istringstream tmpParamValue( strParamValue );
+        if ( !( tmpParamValue >> paramValue ) )
+          return false;
+        values.push_back( paramValue );
+      }
+
+      windows[ windows.size() - 1 ]->setFunctionParam( level, i, values );
+    }
 
   }
 
-  delete function;
   return true;
 }
 
@@ -475,9 +597,9 @@ bool WindowFilterModule::parseLine( istringstream& line, Trace *whichTrace,
   for ( UINT8 ii = 0; ii < numParams; ii++ )
   {
     if ( strTag.compare( "from_obj" ) == 0 )
-    {}
+      {}
     else if ( strTag.compare( "to_obj" ) == 0 )
-    {}
+      {}
     else if ( strTag.compare( "tag_msg" ) == 0 )
     {
       getline( line, strValue, ' ' );

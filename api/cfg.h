@@ -231,6 +231,19 @@ class WindowSemanticModule: public TagFunction
 };
 
 
+class WindowComposeFunctions: public TagFunction
+{
+  public:
+    WindowComposeFunctions()
+    {}
+    virtual ~WindowComposeFunctions()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
 class WindowFilterModule: public TagFunction
 {
   public:
