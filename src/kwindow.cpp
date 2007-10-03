@@ -2,6 +2,39 @@
 #include "semanticcomposefunctions.h"
 #include "semanticderived.h"
 
+
+TObjectOrder KWindow::cpuObjectToWindowObject( TCPUOrder whichCPU )
+{
+  TObjectOrder tmpCPU;
+
+  if ( level == CPU )
+    tmpCPU = whichCPU;
+  else if ( level == NODE )
+    {}
+  else if ( level == SYSTEM )
+    {}
+
+  return tmpCPU;
+}
+
+
+TObjectOrder KWindow::threadObjectToWindowObject( TThreadOrder whichThread )
+{
+  TObjectOrder tmpThread;
+
+  if ( level == THREAD )
+    tmpThread = whichThread;
+  else if ( level == TASK )
+    {}
+  else if ( level == APPLICATION )
+    {}
+  else if ( level == WORKLOAD )
+    {}
+
+  return tmpThread;
+}
+
+
 /**********************************************************************
  *  KSingleWindow implementation
  **********************************************************************/
@@ -106,9 +139,9 @@ RecordList *KSingleWindow::init( TRecordTime initialTime, TCreateList create )
 {
   TObjectOrder objectSize = 0;
 
-  for( UINT8 i = WORKLOAD; i <= COMPOSECPU; i++ )
+  for ( UINT8 i = WORKLOAD; i <= COMPOSECPU; i++ )
   {
-    if( functions[ i ] != NULL )
+    if ( functions[ i ] != NULL )
       functions[ i ]->init( this );
   }
 
@@ -324,11 +357,11 @@ void KDerivedWindow::setup()
 
   myTrace = parents[ 0 ]->getTrace();
 
-  if( functions[ 0 ] != NULL )
+  if ( functions[ 0 ] != NULL )
     delete functions[ 0 ];
-  if( functions[ 1 ] != NULL )
+  if ( functions[ 1 ] != NULL )
     delete functions[ 1 ];
-  if( functions[ 2 ] != NULL )
+  if ( functions[ 2 ] != NULL )
     delete functions[ 2 ];
 
   functions[ 0 ] = new ComposeAsIs();
@@ -373,12 +406,12 @@ void KDerivedWindow::setup()
 void KDerivedWindow::setLevelFunction( TWindowLevel whichLevel,
                                        SemanticFunction *whichFunction )
 {
-  if( whichLevel == TOPCOMPOSE1 )
-    whichLevel = (TWindowLevel) 0;
-  else if( whichLevel == TOPCOMPOSE2 )
-    whichLevel = (TWindowLevel) 1;
-  else if( whichLevel == DERIVED )
-    whichLevel = (TWindowLevel) 2;
+  if ( whichLevel == TOPCOMPOSE1 )
+    whichLevel = ( TWindowLevel ) 0;
+  else if ( whichLevel == TOPCOMPOSE2 )
+    whichLevel = ( TWindowLevel ) 1;
+  else if ( whichLevel == DERIVED )
+    whichLevel = ( TWindowLevel ) 2;
 
   if ( functions[ whichLevel ] != NULL )
     delete functions[ whichLevel ];
@@ -388,12 +421,12 @@ void KDerivedWindow::setLevelFunction( TWindowLevel whichLevel,
 
 SemanticFunction *KDerivedWindow::getLevelFunction( TWindowLevel whichLevel )
 {
-  if( whichLevel == TOPCOMPOSE1 )
-    whichLevel = (TWindowLevel) 0;
-  else if( whichLevel == TOPCOMPOSE2 )
-    whichLevel = (TWindowLevel) 1;
-  else if( whichLevel == DERIVED )
-    whichLevel = (TWindowLevel) 2;
+  if ( whichLevel == TOPCOMPOSE1 )
+    whichLevel = ( TWindowLevel ) 0;
+  else if ( whichLevel == TOPCOMPOSE2 )
+    whichLevel = ( TWindowLevel ) 1;
+  else if ( whichLevel == DERIVED )
+    whichLevel = ( TWindowLevel ) 2;
 
   return functions[ whichLevel ];
 }
@@ -403,12 +436,12 @@ void KDerivedWindow::setFunctionParam( TWindowLevel whichLevel,
                                        TParamIndex whichParam,
                                        const TParamValue& newValue )
 {
-  if( whichLevel == TOPCOMPOSE1 )
-    whichLevel = (TWindowLevel) 0;
-  else if( whichLevel == TOPCOMPOSE2 )
-    whichLevel = (TWindowLevel) 1;
-  else if( whichLevel == DERIVED )
-    whichLevel = (TWindowLevel) 2;
+  if ( whichLevel == TOPCOMPOSE1 )
+    whichLevel = ( TWindowLevel ) 0;
+  else if ( whichLevel == TOPCOMPOSE2 )
+    whichLevel = ( TWindowLevel ) 1;
+  else if ( whichLevel == DERIVED )
+    whichLevel = ( TWindowLevel ) 2;
 
   functions[ whichLevel ]->setParam( whichParam, newValue );
 }
@@ -450,7 +483,7 @@ RecordList *KDerivedWindow::init( TRecordTime initialTime, TCreateList create )
   else if ( tmpLevel == CPU )
     objectSize = myTrace->totalCPUs();
 
-  for( UINT8 i = 0; i < parents.size(); i++ )
+  for ( UINT8 i = 0; i < parents.size(); i++ )
     parents[ i ]->init( initialTime, create );
 
   for ( TObjectOrder i = 0; i < objectSize; i++ )
@@ -497,9 +530,9 @@ Interval *KDerivedWindow::getLevelInterval( TWindowLevel whichLevel,
     return &intervalTopCompose1[ whichOrder ];
   else if ( whichLevel == TOPCOMPOSE2 )
     return &intervalTopCompose2[ whichOrder ];
-  else if( whichLevel == DERIVED )
+  else if ( whichLevel == DERIVED )
   {
-    if( ( (SemanticDerived *)functions[ 2 ] )->isControlDerived() )
+    if ( ( ( SemanticDerived * )functions[ 2 ] )->isControlDerived() )
       return &intervalControlDerived[ whichOrder ];
     else
       return &intervalDerived[ whichOrder ];

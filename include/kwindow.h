@@ -113,6 +113,9 @@ class KWindow
                                         TObjectOrder whichOrder ) = 0;
 
     virtual bool isDerivedWindow() const = 0;
+
+    TObjectOrder cpuObjectToWindowObject( TCPUOrder whichCPU );
+    TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread );
   protected:
     Trace *myTrace;
     TWindowLevel level;
