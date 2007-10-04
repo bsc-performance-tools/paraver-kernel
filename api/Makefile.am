@@ -1,6 +1,7 @@
 
 noinst_LTLIBRARIES = libcfg.la
-libcfg_la_SOURCES = cfg.cpp
+libcfg_la_SOURCES = \
+                    cfg.cpp
 
 
 # Erases everything which should not be uploaded to CVS

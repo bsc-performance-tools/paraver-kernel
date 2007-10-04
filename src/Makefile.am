@@ -6,6 +6,7 @@ libparaver_kernel_la_SOURCES = \
     bplustreeexception.cpp \
     bplustreerecordleaf.cpp \
     filter.cpp \
+    filtermanagement.cpp \
     index.cpp \
     intervalcompose.cpp \
     intervalcontrolderived.cpp \
@@ -23,6 +24,7 @@ libparaver_kernel_la_SOURCES = \
     semanticcpufunctions.cpp \
     semanticderivedfunctions.cpp \
     semanticexception.cpp \
+    semanticmanagement.cpp \
     semanticnotthreadfunctions.cpp \
     semanticthreadfunctions.cpp \
     tracebodyio_v1.cpp \
