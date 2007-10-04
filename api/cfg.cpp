@@ -87,7 +87,6 @@ bool CFGLoader::loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>&
     istringstream auxStream( strLine );
     getline( auxStream, cfgTag, ' ' );
 
-
     cout << cfgTag << endl;
 
     map<string, TagFunction *>::iterator it = cfgTagFunctions.find( cfgTag );
@@ -100,6 +99,7 @@ bool CFGLoader::loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>&
         if ( windows[ windows.size() - 1 ] == NULL )
           delete windows[ windows.size() - 1 ];
         windows[ windows.size() - 1 ] = NULL;
+        abort();
       }
     }
   }
@@ -376,7 +376,7 @@ bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
 {
   string tmpString;
   string strNumFunctions;
-  UINT8 numFunctions;
+  UINT16 numFunctions;
   string strLevel;
   TWindowLevel level;
   string strFunction;
@@ -392,10 +392,11 @@ bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
     return false;
 
   getline( line, tmpString, '{' );
-  for ( UINT8 i = 0; i < numFunctions; i++ )
+  for ( UINT16 i = 0; i < numFunctions; i++ )
   {
     getline( line, tmpString, '{' );
     getline( line, strLevel, ',' );
+    getline( line, tmpString, ' ' );
     getline( line, strFunction, '}' );
     level = stringToLevel( strLevel );
 
@@ -505,13 +506,14 @@ bool WindowSemanticModule::parseLine( istringstream& line, Trace *whichTrace,
   if ( level == NONE )
     return false;
 
-  getline( line, strFunction, ' ' );
+  getline( line, strFunction, '{' );
+  strFunction.erase( strFunction.length() - 1 ); // Final space.
   function = SemanticManagement::createFunction( strFunction );
   if ( function == NULL )
     return false;
 
-  if ( typeid( windows[ windows.size() - 1 ]->getLevelFunction( level ) ) ==
-       typeid( function ) )
+  if ( typeid( *(windows[ windows.size() - 1 ]->getLevelFunction( level ) ) ) ==
+       typeid( *function ) )
   {
     string tmpString;
     string strNumParam;
