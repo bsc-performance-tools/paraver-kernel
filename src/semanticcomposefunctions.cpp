@@ -208,7 +208,13 @@ TSemanticValue ComposeStackedValue::execute( const SemanticInfo *info )
   if ( myInfo->values[ 0 ] != 0 )
     myStack[ tmpOrder ].push( myInfo->values[ 0 ] );
   else
-    myStack[ tmpOrder ].pop();
+  {
+    if ( !myStack[ tmpOrder ].empty() )
+      myStack[ tmpOrder ].pop();
+  }
+
+  if ( myStack[ tmpOrder ].empty() )
+    return 0;
 
   return myStack[ tmpOrder ].top();
 }
@@ -243,7 +249,13 @@ TSemanticValue ComposeInStackedValue::execute( const SemanticInfo *info )
   if ( myInfo->values[ 0 ] != 0 )
     myStack[ tmpOrder ].push( myInfo->values[ 0 ] );
   else
-    myStack[ tmpOrder ].pop();
+  {
+    if ( !myStack[ tmpOrder ].empty() )
+      myStack[ tmpOrder ].pop();
+  }
+
+  if ( myStack[ tmpOrder ].empty() )
+    return 0;
 
   return myStack[ tmpOrder ].top() == parameters[ VALUE ][ 0 ] ?
          myStack[ tmpOrder ].top() : 0;

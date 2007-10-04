@@ -11,7 +11,7 @@ class KWindow;
 
 using namespace std;
 
-typedef UINT8 TParamIndex;
+typedef UINT16 TParamIndex;
 typedef vector<double> TParamValue;
 
 class SemanticFunction

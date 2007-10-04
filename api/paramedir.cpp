@@ -50,7 +50,6 @@ int main( int argc, char *argv[] )
       TRecordTime beginTime;
       TRecordTime endTime;
 
-
       if ( CFGLoader::loadCFG( strCfg, trace, windows, beginTime, endTime ) )
       {
         ofstream outputFile;
@@ -65,16 +64,17 @@ int main( int argc, char *argv[] )
         if ( endTime > trace->getEndTime() )
           endTime = trace->getEndTime();
 
+        if ( !multipleFiles )
+          outputFile.open( strOutputFile.c_str() );
+
         for ( TObjectOrder i = 0; i < tmpWindow->getWindowLevelObjects(); i++ )
         {
           if ( multipleFiles )
           {
-            ostringstream tmpName( strOutputFile );
-            tmpName << setw( 5 ) << setfill( '0' ) << "_" << i + 1;
+            ostringstream tmpName;
+            tmpName << strOutputFile  << "_" << setw( 5 ) << setfill( '0' ) << i + 1;
             outputFile.open( tmpName.str().c_str() );
           }
-          else
-            outputFile.open( strOutputFile.c_str() );
 
           outputFile << fixed;
           outputFile << showpoint;
@@ -98,6 +98,11 @@ int main( int argc, char *argv[] )
           if ( multipleFiles )
             outputFile.close();
         }
+
+        if( multipleFiles )
+          cout << strOutputFile << "_* files wrote." << endl;
+        else
+          cout << strOutputFile << " file wrote." << endl;
       }
       else
         cout << "Cannot load '" << strCfg << "' file." << endl;

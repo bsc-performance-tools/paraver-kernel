@@ -87,8 +87,6 @@ bool CFGLoader::loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>&
     istringstream auxStream( strLine );
     getline( auxStream, cfgTag, ' ' );
 
-    cout << cfgTag << endl;
-
     map<string, TagFunction *>::iterator it = cfgTagFunctions.find( cfgTag );
 
     if ( it != cfgTagFunctions.end() )
@@ -99,7 +97,6 @@ bool CFGLoader::loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>&
         if ( windows[ windows.size() - 1 ] == NULL )
           delete windows[ windows.size() - 1 ];
         windows[ windows.size() - 1 ] = NULL;
-        abort();
       }
     }
   }
@@ -508,6 +505,7 @@ bool WindowSemanticModule::parseLine( istringstream& line, Trace *whichTrace,
 
   getline( line, strFunction, '{' );
   strFunction.erase( strFunction.length() - 1 ); // Final space.
+
   function = SemanticManagement::createFunction( strFunction );
   if ( function == NULL )
     return false;
