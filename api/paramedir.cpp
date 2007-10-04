@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <fstream>
+#include <iomanip>
 #include "paramedir.h"
 #include "cfg.h"
 #include "trace.h"
@@ -9,19 +11,19 @@ using namespace std;
 
 bool multipleFiles = false;
 Trace *trace;
+UINT32 outputPrecision = 2;
 
 int main( int argc, char *argv[] )
 {
-  // argv[0] nombre del ejecutable
   if ( argc == 1 )
     printHelp();
   else
   {
     INT32 currentArg = 1;
     // Read options ( Deberia ser un while si hay mas opciones. De momento solo hay esta)
-    if( argv[ currentArg ][ 0 ] == '-' )
+    if ( argv[ currentArg ][ 0 ] == '-' )
     {
-      if( argv[ currentArg ][ 1 ] == 'm' )
+      if ( argv[ currentArg ][ 1 ] == 'm' )
       {
         multipleFiles = true;
       }
@@ -30,11 +32,18 @@ int main( int argc, char *argv[] )
 
     // Read the trace
     string strTrace( argv[ currentArg ] );
-    trace = new Trace( strTrace );
+    try
+    {
+      trace = new Trace( strTrace );
+    }
+    catch ( ParaverKernelException& ex )
+    {
+      ex.printMessage();
+    }
     currentArg++;
 
     //Read the cfgs list and create the output files for each one
-    while( currentArg < argc )
+    while ( currentArg < argc )
     {
       string strCfg( argv[ currentArg ] );
       vector<KWindow *> windows;
@@ -42,18 +51,60 @@ int main( int argc, char *argv[] )
       TRecordTime endTime;
 
 
-      if( CFGLoader::loadCFG( strCfg, trace, windows, beginTime, endTime ) )
+      if ( CFGLoader::loadCFG( strCfg, trace, windows, beginTime, endTime ) )
       {
-        windows[ windows.size() - 1 ]->init( beginTime, NOCREATE );
+        ofstream outputFile;
+        string strOutputFile;
+        KWindow *tmpWindow = windows[ windows.size() - 1 ];
 
-        // Make the output file
+        istringstream tmpOutputFile( strCfg );
+        getline( tmpOutputFile, strOutputFile, '.' );
+
+        tmpWindow->init( beginTime, NOCREATE );
+
+        if ( endTime > trace->getEndTime() )
+          endTime = trace->getEndTime();
+
+        for ( TObjectOrder i = 0; i < tmpWindow->getWindowLevelObjects(); i++ )
+        {
+          if ( multipleFiles )
+          {
+            ostringstream tmpName( strOutputFile );
+            tmpName << setw( 5 ) << setfill( '0' ) << "_" << i + 1;
+            outputFile.open( tmpName.str().c_str() );
+          }
+          else
+            outputFile.open( strOutputFile.c_str() );
+
+          outputFile << fixed;
+          outputFile << showpoint;
+          while ( tmpWindow->getEndTime( i ) < endTime )
+          {
+            outputFile << setprecision( outputPrecision );
+            if ( !multipleFiles )
+              outputFile << i + 1 << "\t";
+            outputFile << tmpWindow->getBeginTime( i ) << "\t";
+            outputFile << tmpWindow->getEndTime( i ) - tmpWindow->getBeginTime( i ) << "\t";
+            outputFile << tmpWindow->getValue( i ) << endl;
+            tmpWindow->calcNext( i );
+          }
+          outputFile << setprecision( outputPrecision );
+          if ( !multipleFiles )
+            outputFile << i + 1 << "\t";
+          outputFile << tmpWindow->getBeginTime( i ) << "\t";
+          outputFile << tmpWindow->getEndTime( i ) - tmpWindow->getBeginTime( i ) << "\t";
+          outputFile << tmpWindow->getValue( i ) << endl;
+
+          if ( multipleFiles )
+            outputFile.close();
+        }
       }
       else
         cout << "Cannot load '" << strCfg << "' file." << endl;
 
-      for( UINT32 i = 0; i < windows.size(); i++ )
+      for ( UINT32 i = 0; i < windows.size(); i++ )
       {
-        if( windows[ i ] != NULL )
+        if ( windows[ i ] != NULL )
           delete windows[ i ];
       }
       windows.clear();

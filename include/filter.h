@@ -184,6 +184,17 @@ class Filter
       functionEventValues = new FilterAll();
     }
 
+    ~Filter()
+    {
+      delete functionCommFrom;
+      delete functionCommTo;
+      delete functionCommTags;
+      delete functionCommSizes;
+      delete functionBandWidth;
+      delete functionEventTypes;
+      delete functionEventValues;
+    }
+
     bool passFilter( MemoryTrace::iterator *it );
 
     void setLogical( bool newValue )

@@ -116,6 +116,8 @@ class KWindow
 
     TObjectOrder cpuObjectToWindowObject( TCPUOrder whichCPU );
     TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread );
+
+    TObjectOrder getWindowLevelObjects();
   protected:
     Trace *myTrace;
     TWindowLevel level;

@@ -59,6 +59,30 @@ TObjectOrder KWindow::threadObjectToWindowObject( TThreadOrder whichThread )
 }
 
 
+TObjectOrder KWindow::getWindowLevelObjects()
+{
+  TObjectOrder objectSize;
+  TWindowLevel whichLevel = level;
+
+  if ( whichLevel == WORKLOAD )
+    objectSize = 1;
+  else if ( whichLevel == APPLICATION )
+    objectSize = myTrace->totalApplications();
+  else if ( whichLevel == TASK )
+    objectSize = myTrace->totalTasks();
+  else if ( whichLevel == THREAD )
+    objectSize = myTrace->totalThreads();
+  else if ( whichLevel == SYSTEM )
+    objectSize = 1;
+  else if ( whichLevel == NODE )
+    objectSize = myTrace->totalNodes();
+  else if ( whichLevel == CPU )
+    objectSize = myTrace->totalCPUs();
+
+  return objectSize;
+}
+
+
 /**********************************************************************
  *  KSingleWindow implementation
  **********************************************************************/
@@ -198,20 +222,7 @@ RecordList *KSingleWindow::init( TRecordTime initialTime, TCreateList create )
     }
   }
 
-  if ( level == WORKLOAD )
-    objectSize = 1;
-  else if ( level == APPLICATION )
-    objectSize = intervalApplication.size();
-  else if ( level == TASK )
-    objectSize = intervalTask.size();
-  else if ( level == THREAD )
-    objectSize = intervalThread.size();
-  else if ( level == SYSTEM )
-    objectSize = 1;
-  else if ( level == NODE )
-    objectSize = intervalNode.size();
-  else if ( level == CPU )
-    objectSize = intervalCPU.size();
+  objectSize = getWindowLevelObjects();
 
   for ( TObjectOrder i = 0; i < objectSize; i++ )
     intervalTopCompose1[ i ].init( initialTime, create );
