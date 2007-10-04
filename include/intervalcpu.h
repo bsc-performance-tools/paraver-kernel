@@ -2,7 +2,6 @@
 #define INTERVALCPU_H_INCLUDED
 
 #include "intervalhigh.h"
-#include "kwindow.h"
 #include "semanticcpu.h"
 #include "semanticthread.h"
 

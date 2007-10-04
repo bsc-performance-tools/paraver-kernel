@@ -1,4 +1,4 @@
-#include <typeinfo>
+#include "kwindow.h"
 #include "intervalcompose.h"
 
 RecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,

@@ -1,7 +1,6 @@
 #ifndef INTERVALCOMPOSE_H_INCLUDED
 #define INTERVALCOMPOSE_H_INCLUDED
 
-#include "kwindow.h"
 #include "intervalhigh.h"
 #include "semanticcompose.h"
 

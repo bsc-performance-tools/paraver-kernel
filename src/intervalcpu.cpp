@@ -1,3 +1,4 @@
+#include "kwindow.h"
 #include "intervalcpu.h"
 
 

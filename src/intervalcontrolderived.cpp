@@ -1,3 +1,4 @@
+#include "kwindow.h"
 #include "intervalcontrolderived.h"
 
 RecordList *IntervalControlDerived::init( TRecordTime initialTime, TCreateList create,

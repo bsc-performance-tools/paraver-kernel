@@ -1,3 +1,4 @@
+#include "kwindow.h"
 #include "intervalderived.h"
 
 RecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,

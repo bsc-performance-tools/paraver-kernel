@@ -2,7 +2,6 @@
 #define INTERVALCONTROLDERIVED_H_INCLUDED
 
 #include "intervalhigh.h"
-#include "kwindow.h"
 #include "semanticderived.h"
 
 class KWindow;

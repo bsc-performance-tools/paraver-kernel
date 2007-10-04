@@ -14,12 +14,6 @@
 #include "semanticcompose.h"
 #include "filter.h"
 
-class IntervalNotThread;
-class IntervalThread;
-class IntervalCPU;
-class IntervalCompose;
-class IntervalDerived;
-class IntervalControlDerived;
 
 class KWindow
 {

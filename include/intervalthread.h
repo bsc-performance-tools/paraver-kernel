@@ -2,7 +2,6 @@
 #define INTERVALTHREAD_H_INCLUDED
 
 #include "interval.h"
-#include "kwindow.h"
 #include "semanticthread.h"
 
 class KSingleWindow;

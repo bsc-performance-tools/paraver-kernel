@@ -1,3 +1,4 @@
+#include "kwindow.h"
 #include "intervalnotthread.h"
 
 RecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList create,

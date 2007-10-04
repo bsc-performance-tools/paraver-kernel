@@ -2,7 +2,6 @@
 #define INTERVALNOTTHREAD_H_INCLUDED
 
 #include "intervalhigh.h"
-#include "kwindow.h"
 #include "semanticnotthread.h"
 
 class KSingleWindow;
