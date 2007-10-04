@@ -112,6 +112,8 @@ class KWindow
     TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread );
 
     TObjectOrder getWindowLevelObjects();
+
+    TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime );
   protected:
     Trace *myTrace;
     TWindowLevel level;

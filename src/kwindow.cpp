@@ -83,6 +83,14 @@ TObjectOrder KWindow::getWindowLevelObjects()
 }
 
 
+TRecordTime KWindow::traceUnitsToWindowUnits( TRecordTime whichTime )
+{
+  TRecordTime tmpTime = whichTime;
+
+  return tmpTime;
+}
+
+
 /**********************************************************************
  *  KSingleWindow implementation
  **********************************************************************/
