@@ -175,7 +175,7 @@ bool WindowFactors::parseLine( istringstream& line, Trace *whichTrace,
                                TRecordTime& beginTime, TRecordTime& endTime )
 {
   string strFactor;
-  UINT8 numFactor = 0;
+  UINT16 numFactor = 0;
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
@@ -314,6 +314,20 @@ bool WindowEndTime::parseLine( istringstream& line, Trace *whichTrace,
                                vector<KWindow *>& windows,
                                TRecordTime& beginTime, TRecordTime& endTime )
 {
+  string strTime;
+  TRecordTime auxTime;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strTime, ' ' );
+  istringstream tmpTime( strTime );
+
+  if ( !( tmpTime >> auxTime ) )
+    return false;
+
+  // endTime = auxTime;
+
   return true;
 }
 
@@ -574,7 +588,7 @@ bool WindowFilterModule::parseLine( istringstream& line, Trace *whichTrace,
                                     TRecordTime& beginTime, TRecordTime& endTime )
 {
   string strTag, strNumberParams, strValue;
-  UINT8 numParams;
+  UINT16 numParams;
   Filter *filter;
   TObjectOrder fromObject;
   TObjectOrder toObject;
@@ -596,7 +610,7 @@ bool WindowFilterModule::parseLine( istringstream& line, Trace *whichTrace,
 
   filter = ( ( KSingleWindow * )windows[ windows.size() - 1 ] )->getFilter();
 
-  for ( UINT8 ii = 0; ii < numParams; ii++ )
+  for ( UINT16 ii = 0; ii < numParams; ii++ )
   {
     if ( strTag.compare( "from_obj" ) == 0 )
     {
