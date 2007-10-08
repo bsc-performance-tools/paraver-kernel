@@ -83,23 +83,27 @@ int main( int argc, char *argv[] )
             outputFile << setprecision( outputPrecision );
             if ( !multipleFiles )
               outputFile << i + 1 << "\t";
-            outputFile << tmpWindow->getBeginTime( i ) << "\t";
-            outputFile << tmpWindow->getEndTime( i ) - tmpWindow->getBeginTime( i ) << "\t";
+            outputFile << tmpWindow->traceUnitsToWindowUnits(
+              tmpWindow->getBeginTime( i ) ) << "\t";
+            outputFile << tmpWindow->traceUnitsToWindowUnits(
+              tmpWindow->getEndTime( i ) - tmpWindow->getBeginTime( i ) ) << "\t";
             outputFile << tmpWindow->getValue( i ) << endl;
             tmpWindow->calcNext( i );
           }
           outputFile << setprecision( outputPrecision );
           if ( !multipleFiles )
             outputFile << i + 1 << "\t";
-          outputFile << tmpWindow->getBeginTime( i ) << "\t";
-          outputFile << tmpWindow->getEndTime( i ) - tmpWindow->getBeginTime( i ) << "\t";
+          outputFile << tmpWindow->traceUnitsToWindowUnits(
+            tmpWindow->getBeginTime( i ) ) << "\t";
+          outputFile << tmpWindow->traceUnitsToWindowUnits(
+            tmpWindow->getEndTime( i ) - tmpWindow->getBeginTime( i ) ) << "\t";
           outputFile << tmpWindow->getValue( i ) << endl;
 
           if ( multipleFiles )
             outputFile.close();
         }
 
-        if( multipleFiles )
+        if ( multipleFiles )
           cout << strOutputFile << "_* files wrote." << endl;
         else
           cout << strOutputFile << " file wrote." << endl;
