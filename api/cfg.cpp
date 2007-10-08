@@ -70,6 +70,8 @@ bool CFGLoader::loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>&
     loadMap();
 
   ifstream cfgFile( filename.c_str() );
+  if ( !cfgFile )
+    return false;
   string strLine;
 
   windows.push_back( NULL );
@@ -120,6 +122,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions["window_level"]               = new WindowLevel();
   cfgTagFunctions["window_scale_relative"]      = new WindowScaleRelative();
   cfgTagFunctions["window_object"]              = new WindowObject();
+  cfgTagFunctions["window_identifiers"]         = new WindowIdentifiers();
 
   cfgTagFunctions["window_begin_time"]          = new WindowBeginTime();
   cfgTagFunctions["window_stop_time"]           = new WindowStopTime();
@@ -191,6 +194,8 @@ bool WindowFactors::parseLine( istringstream& line, Trace *whichTrace,
 
     ( ( KDerivedWindow * ) windows[ windows.size() - 1 ] )->setFactor( numFactor,
         factorValue );
+
+    numFactor++;
   }
   return true;
 }
@@ -240,7 +245,7 @@ bool WindowOperation::parseLine( istringstream& line, Trace *whichTrace,
   if ( function == NULL )
     return false;
 
-  windows[ windows.size() - 1 ]->setLevelFunction( DERIVED, function );
+  ( ( KDerivedWindow * ) windows[ windows.size() - 1 ] )->setLevelFunction( DERIVED, function );
 
   return true;
 }
@@ -266,6 +271,35 @@ bool WindowLevel::parseLine( istringstream& line, Trace *whichTrace,
   getline( line, strLevel, ' ' );
 
   windows[ windows.size() - 1 ]->setLevel( stringToLevel( strLevel ) );
+
+  return true;
+}
+
+
+bool WindowIdentifiers::parseLine( istringstream& line, Trace *whichTrace,
+                                   vector<KWindow *>& windows,
+                                   TRecordTime& beginTime, TRecordTime& endTime )
+{
+  string strID;
+  UINT16 id;
+  UINT16 numID = 0;
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  while ( !line.eof() )
+  {
+    getline( line, strID, ' ' );
+    istringstream tmpStream( strID );
+    if ( !( tmpStream >> id ) )
+      return false;
+
+    if ( windows[ id - 1 ] == NULL )
+      return false;
+
+    ( ( KDerivedWindow * ) windows[ windows.size() - 1 ] )->setParent( numID,
+        windows[ id - 1 ] );
+    numID++;
+  }
 
   return true;
 }
@@ -524,7 +558,7 @@ bool WindowSemanticModule::parseLine( istringstream& line, Trace *whichTrace,
   if ( function == NULL )
     return false;
 
-  if ( typeid( *(windows[ windows.size() - 1 ]->getLevelFunction( level ) ) ) ==
+  if ( typeid( *( windows[ windows.size() - 1 ]->getLevelFunction( level ) ) ) ==
        typeid( *function ) )
   {
     string tmpString;

@@ -88,17 +88,17 @@ TRecordTime KWindow::traceUnitsToWindowUnits( TRecordTime whichTime )
   TRecordTime tmpTime;
   TRecordTime factor = 1;
 
-  if( myTrace->getTimeUnit() == timeUnit )
+  if ( myTrace->getTimeUnit() == timeUnit )
     tmpTime = whichTime;
   else
   {
-    UINT16 from = myTrace->getTimeUnit() > timeUnit?timeUnit:myTrace->getTimeUnit();
-    UINT16 to = myTrace->getTimeUnit() > timeUnit?myTrace->getTimeUnit():timeUnit;
+    UINT16 from = myTrace->getTimeUnit() > timeUnit ? timeUnit : myTrace->getTimeUnit();
+    UINT16 to = myTrace->getTimeUnit() > timeUnit ? myTrace->getTimeUnit() : timeUnit;
 
-    for( UINT16 i = from + 1; i <= to; i++ )
+    for ( UINT16 i = from + 1; i <= to; i++ )
       factor *= factorTable[ i ];
 
-    if( myTrace->getTimeUnit() > timeUnit )
+    if ( myTrace->getTimeUnit() > timeUnit )
       tmpTime = whichTime * factor;
     else
       tmpTime = whichTime / factor;
@@ -411,22 +411,12 @@ Interval *KSingleWindow::getLevelInterval( TWindowLevel whichLevel,
 
 void KDerivedWindow::setup()
 {
-  factor.clear();
-  factor.push_back( 1.0 );
-  factor.push_back( 1.0 );
-
   myTrace = parents[ 0 ]->getTrace();
 
-  if ( functions[ 0 ] != NULL )
-    delete functions[ 0 ];
-  if ( functions[ 1 ] != NULL )
-    delete functions[ 1 ];
-  if ( functions[ 2 ] != NULL )
-    delete functions[ 2 ];
-
-  functions[ 0 ] = new ComposeAsIs();
-  functions[ 1 ] = new ComposeAsIs();
-  functions[ 2 ] = NULL;
+  if ( functions[ 0 ] == NULL )
+    functions[ 0 ] = new ComposeAsIs();
+  else if ( functions[ 1 ] == NULL )
+    functions[ 1 ] = new ComposeAsIs();
 
   intervalTopCompose1.clear();
   intervalTopCompose2.clear();
@@ -472,6 +462,8 @@ void KDerivedWindow::setLevelFunction( TWindowLevel whichLevel,
     whichLevel = ( TWindowLevel ) 1;
   else if ( whichLevel == DERIVED )
     whichLevel = ( TWindowLevel ) 2;
+  else
+    return;
 
   if ( functions[ whichLevel ] != NULL )
     delete functions[ whichLevel ];
@@ -543,7 +535,7 @@ RecordList *KDerivedWindow::init( TRecordTime initialTime, TCreateList create )
   else if ( tmpLevel == CPU )
     objectSize = myTrace->totalCPUs();
 
-  for ( UINT8 i = 0; i < parents.size(); i++ )
+  for ( UINT16 i = 0; i < parents.size(); i++ )
     parents[ i ]->init( initialTime, create );
 
   for ( TObjectOrder i = 0; i < objectSize; i++ )

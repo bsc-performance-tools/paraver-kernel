@@ -14,7 +14,6 @@
 #include "semanticcompose.h"
 #include "filter.h"
 
-
 class KWindow
 {
   public:
@@ -22,6 +21,7 @@ class KWindow
     {}
     KWindow( Trace *whichTrace ): myTrace( whichTrace )
     {
+      timeUnit = NS;
       level = THREAD;
     }
     virtual ~KWindow()
@@ -131,7 +131,9 @@ class KSingleWindow: public KWindow
 {
   public:
     KSingleWindow()
-    {}
+    {
+      timeUnit = NS;
+    }
 
     KSingleWindow( Trace *whichTrace );
 
@@ -240,12 +242,32 @@ class KDerivedWindow: public KWindow
   public:
     KDerivedWindow()
     {
+      timeUnit = NS;
+
+      factor.clear();
+      factor.push_back( 1.0 );
+      factor.push_back( 1.0 );
+
+      functions[ 0 ] = NULL;
+      functions[ 1 ] = NULL;
+      functions[ 2 ] = NULL;
+
       parents.push_back( NULL );
       parents.push_back( NULL );
     }
 
     KDerivedWindow( KWindow *window1, KWindow *window2 )
     {
+      timeUnit = NS;
+
+      factor.clear();
+      factor.push_back( 1.0 );
+      factor.push_back( 1.0 );
+
+      functions[ 0 ] = NULL;
+      functions[ 1 ] = NULL;
+      functions[ 2 ] = NULL;
+
       parents.push_back( window1 );
       parents.push_back( window2 );
       setup();
@@ -254,14 +276,14 @@ class KDerivedWindow: public KWindow
     virtual ~KDerivedWindow()
     {}
 
-    void setParent( UINT8 whichParent, KWindow *whichWindow )
+    void setParent( UINT16 whichParent, KWindow *whichWindow )
     {
       parents[ whichParent ] = whichWindow;
-      if( parents[ 0 ] != NULL && parents[ 1 ] != NULL )
+      if ( parents[ 0 ] != NULL && parents[ 1 ] != NULL )
         setup();
     }
 
-    KWindow *getParent( UINT8 whichParent ) const
+    KWindow *getParent( UINT16 whichParent ) const
     {
       return parents[whichParent];
     }
@@ -270,9 +292,9 @@ class KDerivedWindow: public KWindow
     {
       TWindowLevel tmp = NONE;
 
-      for( UINT8 i = 0; i < parents.size(); i++ )
+      for ( UINT16 i = 0; i < parents.size(); i++ )
       {
-        if( parents[ i ]->getLevel() > tmp )
+        if ( parents[ i ]->getLevel() > tmp )
           tmp = parents[ i ]->getLevel();
       }
 
@@ -303,12 +325,12 @@ class KDerivedWindow: public KWindow
       return true;
     }
 
-    void setFactor( UINT8 whichFactor, TSemanticValue newValue )
+    void setFactor( UINT16 whichFactor, TSemanticValue newValue )
     {
       factor[ whichFactor ] = newValue;
     }
 
-    TSemanticValue getFactor( UINT8 whichFactor )
+    TSemanticValue getFactor( UINT16 whichFactor )
     {
       return factor[ whichFactor ];
     }

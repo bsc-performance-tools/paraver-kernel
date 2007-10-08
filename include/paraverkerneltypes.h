@@ -14,7 +14,7 @@ typedef TObjectOrder  TCPUOrder;
 
 typedef double        TTime;
 typedef TTime         TRecordTime;
-typedef UINT8         TTimeUnit;
+typedef UINT16         TTimeUnit;
 /*
  *  TTimeUnit defines
  */

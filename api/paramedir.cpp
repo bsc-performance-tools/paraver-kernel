@@ -15,6 +15,8 @@ UINT32 outputPrecision = 2;
 
 int main( int argc, char *argv[] )
 {
+  readParaverConfigFile();
+
   if ( argc == 1 )
     printHelp();
   else
@@ -125,6 +127,7 @@ int main( int argc, char *argv[] )
   return 1;
 }
 
+
 void printHelp()
 {
   cout << "USAGE" << endl;
@@ -136,4 +139,44 @@ void printHelp()
   cout << "  Parameters:" << endl;
   cout << "  trc: Paraver trace filename (ASCII: *.prv)." << endl;
   cout << "  cfgs: Paraver configuration filename list (*.cfg)." << endl;
+}
+
+
+void readParaverConfigFile()
+{
+  ifstream file;
+  string strLine;
+  string strTag;
+  string strFile;
+
+  strFile.append( getenv( "HOME" ) );
+  strFile.append( "/.paraver/paraver" );
+
+  file.open( strFile.c_str() );
+
+  if ( !file )
+    return;
+
+  while ( !file.eof() )
+  {
+    getline( file, strLine );
+    if ( strLine.length() == 0 )
+      continue;
+    else if ( strLine[ 0 ] == '#' || strLine[ 0 ] == '<' )
+      continue;
+
+    istringstream auxStream( strLine );
+    getline( auxStream, strTag, ' ' );
+
+    if ( strTag.compare( "WhatWhere.num_decimals:" ) == 0 )
+    {
+      string strNumDecimals;
+
+      getline( auxStream, strNumDecimals );
+      istringstream streamNumDecimals( strNumDecimals );
+
+      streamNumDecimals >> outputPrecision;
+    }
+  }
+  file.close();
 }
