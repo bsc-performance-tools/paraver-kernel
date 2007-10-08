@@ -87,8 +87,15 @@ class Trace
     TRecordTime getPhysicalSend( TCommID whichComm ) const;
     TRecordTime getPhysicalReceive( TCommID whichComm ) const;
 
-    TTime getEndTime() const;
-    TTimeUnit getTimeUnit() const;
+    inline TTime getEndTime() const
+    {
+      return traceEndTime;
+    }
+
+    inline TTimeUnit getTimeUnit() const
+    {
+      return traceTimeUnit;
+    }
 
     // Forward MemoryTrace iterator functions
     MemoryTrace::iterator* begin() const;

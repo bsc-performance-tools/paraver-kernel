@@ -176,17 +176,6 @@ TRecordTime Trace::getPhysicalReceive( TCommID whichComm ) const
 }
 
 
-TTime Trace::getEndTime() const
-{
-  return traceEndTime;
-}
-
-
-TTimeUnit Trace::getTimeUnit() const
-{
-  return traceTimeUnit;
-}
-
 void Trace::dumpFile( const string& whichFile ) const
 {
   std::fstream file( whichFile.c_str(), fstream::out | fstream::trunc );

@@ -743,16 +743,19 @@ bool WindowFilterBoolOpFromTo::parseLine( istringstream& line, Trace *whichTrace
     TRecordTime& beginTime, TRecordTime& endTime )
 {
   string strBool;
+  Filter *filter;
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
+  filter = ( ( KSingleWindow * )windows[ windows.size() - 1 ] )->getFilter();
+
   getline( line, strBool, ' ' );
 
   if ( strBool.compare( "false" ) == 0 )
-    {}
+    filter->setOpFromToOr();
   else if ( strBool.compare( "true" ) == 0 )
-    {}
+    filter->setOpFromToAnd();
   else
     return false;
 

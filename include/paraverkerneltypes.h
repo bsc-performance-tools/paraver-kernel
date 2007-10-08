@@ -18,13 +18,24 @@ typedef UINT8         TTimeUnit;
 /*
  *  TTimeUnit defines
  */
-static const TTimeUnit NS   = 0x00;
-static const TTimeUnit US   = 0x01;
-static const TTimeUnit MS   = 0x02;
-static const TTimeUnit SEC  = 0x04;
-static const TTimeUnit MIN  = 0x08;
-static const TTimeUnit HOUR = 0x10;
-static const TTimeUnit DAY  = 0x20;
+static const TTimeUnit NS   = 0;
+static const TTimeUnit US   = 1;
+static const TTimeUnit MS   = 2;
+static const TTimeUnit SEC  = 3;
+static const TTimeUnit MIN  = 4;
+static const TTimeUnit HOUR = 5;
+static const TTimeUnit DAY  = 6;
+
+static const TRecordTime factorTable[ DAY + 1 ] =
+{
+  1, // ns
+  1E3, // us
+  1E3, // ms
+  1E3, // seconds
+  60, // minutes
+  60, // hours
+  24 // days
+};
 
 
 typedef UINT16        TRecordType;
