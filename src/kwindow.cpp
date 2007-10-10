@@ -78,6 +78,8 @@ TObjectOrder KWindow::getWindowLevelObjects()
     objectSize = myTrace->totalNodes();
   else if ( whichLevel == CPU )
     objectSize = myTrace->totalCPUs();
+  else
+    ;
 
   return objectSize;
 }
