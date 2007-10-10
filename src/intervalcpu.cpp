@@ -89,7 +89,7 @@ RecordList *IntervalCPU::calcPrev( RecordList *displayList, bool initCalc )
 
 
 void IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
-                                    RecordList *displayList )
+                                 RecordList *displayList )
 {
   ++( *it );
   while ( !it->isNull() )
@@ -99,13 +99,10 @@ void IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
       if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
            ||
            ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
-      {
-        displayList->insert( it );
-      }
+        displayList->insert( window->copyCPUIterator( it ) );
+
       if ( functionThread->validRecord( it ) )
-      {
         break;
-      }
     }
     ++( *it );
   }
@@ -119,7 +116,7 @@ void IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
 
 
 void IntervalCPU::getPrevRecord( MemoryTrace::iterator *it,
-                                    RecordList *displayList )
+                                 RecordList *displayList )
 {
   --( *it );
   while ( !it->isNull() )
@@ -129,13 +126,10 @@ void IntervalCPU::getPrevRecord( MemoryTrace::iterator *it,
       if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
            ||
            ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
-      {
-        displayList->insert( it );
-      }
+        displayList->insert( window->copyCPUIterator( it ) );
+
       if ( functionThread->validRecord( it ) )
-      {
         break;
-      }
     }
     --( *it );
   }

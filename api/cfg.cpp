@@ -72,12 +72,12 @@ bool CFGLoader::loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>&
   ifstream cfgFile( filename.c_str() );
   if ( !cfgFile )
     return false;
-  string strLine;
 
   windows.push_back( NULL );
 
   while ( !cfgFile.eof() )
   {
+    string strLine;
     string cfgTag;
 
     getline( cfgFile, strLine );

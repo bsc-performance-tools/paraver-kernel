@@ -84,17 +84,15 @@ void IntervalThread::getNextRecord( MemoryTrace::iterator *it,
   ++( *it );
   while ( !it->isNull() )
   {
-    if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
-         ||
-         ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
+    if ( window->passFilter( it ) )
     {
-      if ( window->passFilter( it ) )
-      {
-        displayList->insert( it );
+      if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
+           ||
+           ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
+        displayList->insert( window->copyThreadIterator( it ) );
 
-        if ( function->validRecord( it ) )
-          break;
-      }
+      if ( function->validRecord( it ) )
+        break;
     }
     ++( *it );
   }
@@ -113,17 +111,15 @@ void IntervalThread::getPrevRecord( MemoryTrace::iterator *it,
   --( *it );
   while ( !it->isNull() )
   {
-    if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
-         ||
-         ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
+    if ( window->passFilter( it ) )
     {
-      if ( window->passFilter( it ) )
-      {
-        displayList->insert( it );
+      if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
+           ||
+           ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
+        displayList->insert( window->copyThreadIterator( it ) );
 
-        if ( function->validRecord( it ) )
-          break;
-      }
+      if ( function->validRecord( it ) )
+        break;
     }
     --( *it );
   }
