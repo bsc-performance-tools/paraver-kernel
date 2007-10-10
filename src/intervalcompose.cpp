@@ -8,7 +8,7 @@ RecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
   SemanticHighInfo info;
 
   createList = create;
-  currentValue = 0;
+  currentValue = 0.0;
 
   if ( displayList == NULL )
     displayList = &myDisplayList;
@@ -18,7 +18,7 @@ RecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
   setChilds();
 
   if ( function->getInitFromBegin() )
-    myInitTime = 0;
+    myInitTime = 0.0;
   else
     myInitTime = initialTime;
 

@@ -16,7 +16,7 @@ class Interval
     {
       begin = NULL;
       end = NULL;
-      currentValue = 0;
+      currentValue = 0.0;
     }
 
     Interval( TWindowLevel whichLevel, TObjectOrder whichOrder ):
@@ -24,7 +24,7 @@ class Interval
     {
       begin = NULL;
       end = NULL;
-      currentValue = 0;
+      currentValue = 0.0;
     }
 
     virtual ~Interval()

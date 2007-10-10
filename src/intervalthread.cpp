@@ -5,7 +5,7 @@ RecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
                                   RecordList *displayList )
 {
   createList = create;
-  currentValue = 0;
+  currentValue = 0.0;
 
   if ( displayList == NULL )
     displayList = &myDisplayList;
@@ -20,7 +20,7 @@ RecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
   begin = window->copyThreadIterator( window->getThreadRecordByTime( order ) );
   end = window->copyThreadIterator( begin );
 
-  if ( ( !function->getInitFromBegin() ) && ( initialTime > 0 ) )
+  if ( ( !function->getInitFromBegin() ) && ( initialTime > 0.0 ) )
     calcPrev( displayList, true );
 
   calcNext( displayList, true );
@@ -84,17 +84,16 @@ void IntervalThread::getNextRecord( MemoryTrace::iterator *it,
   ++( *it );
   while ( !it->isNull() )
   {
-    if ( window->passFilter( it ) )
+    if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
+         ||
+         ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
     {
-      if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
-           ||
-           ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
+      if ( window->passFilter( it ) )
       {
         displayList->insert( it );
-      }
-      if ( function->validRecord( it ) )
-      {
-        break;
+
+        if ( function->validRecord( it ) )
+          break;
       }
     }
     ++( *it );
@@ -114,17 +113,16 @@ void IntervalThread::getPrevRecord( MemoryTrace::iterator *it,
   --( *it );
   while ( !it->isNull() )
   {
-    if ( window->passFilter( it ) )
+    if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
+         ||
+         ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
     {
-      if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
-           ||
-           ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
+      if ( window->passFilter( it ) )
       {
         displayList->insert( it );
-      }
-      if ( function->validRecord( it ) )
-      {
-        break;
+
+        if ( function->validRecord( it ) )
+          break;
       }
     }
     --( *it );

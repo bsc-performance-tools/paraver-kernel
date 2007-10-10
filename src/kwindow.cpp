@@ -62,7 +62,7 @@ TObjectOrder KWindow::threadObjectToWindowObject( TThreadOrder whichThread )
 TObjectOrder KWindow::getWindowLevelObjects()
 {
   TObjectOrder objectSize;
-  TWindowLevel whichLevel = level;
+  TWindowLevel whichLevel = getLevel();
 
   if ( whichLevel == WORKLOAD )
     objectSize = 1;

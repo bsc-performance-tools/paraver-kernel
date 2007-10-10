@@ -1227,7 +1227,7 @@ MemoryTrace::iterator* BPlusTree::threadBegin( TThreadOrder whichThread ) const
 
 MemoryTrace::iterator* BPlusTree::threadEnd( TThreadOrder whichThread ) const
 {
-  return  new BPlusTree::ThreadIterator( ( TRecord * )&emptyThreadEnd[ whichThread ] );
+  return new BPlusTree::ThreadIterator( ( TRecord * )&emptyThreadEnd[ whichThread ] );
 }
 
 MemoryTrace::iterator* BPlusTree::CPUBegin( TCPUOrder whichCPU ) const

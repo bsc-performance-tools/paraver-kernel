@@ -96,7 +96,7 @@ bool CFGLoader::loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>&
       if ( !it->second->parseLine( auxStream, whichTrace, windows,
                                    beginTime, endTime ) )
       {
-        if ( windows[ windows.size() - 1 ] == NULL )
+        if ( windows[ windows.size() - 1 ] != NULL )
           delete windows[ windows.size() - 1 ];
         windows[ windows.size() - 1 ] = NULL;
       }

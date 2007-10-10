@@ -33,8 +33,11 @@ TSemanticValue DerivedSubstract::execute( const SemanticInfo *info )
 
 TSemanticValue DerivedDivide::execute( const SemanticInfo *info )
 {
-  TSemanticValue tmp = 0;
+  TSemanticValue tmp = 0.0;
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+
+  if( myInfo->values[ 1 ] == 0 )
+    return 0.0;
 
   tmp = myInfo->values[ 0 ] / myInfo->values[ 1 ];
 

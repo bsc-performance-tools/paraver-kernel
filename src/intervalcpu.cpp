@@ -6,7 +6,7 @@ RecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
                                RecordList *displayList )
 {
   createList = create;
-  currentValue = 0;
+  currentValue = 0.0;
 
   if ( displayList == NULL )
     displayList = &myDisplayList;
@@ -23,7 +23,7 @@ RecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
   end = window->copyCPUIterator( begin );
 
   if ( ( !function->getInitFromBegin() ) && ( !functionThread->getInitFromBegin() ) &&
-       ( initialTime > 0 ) )
+       ( initialTime > 0.0 ) )
     calcPrev( displayList, true );
 
   calcNext( displayList, true );

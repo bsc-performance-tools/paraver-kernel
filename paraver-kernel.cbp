@@ -17,6 +17,7 @@
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
+					<Add option="-fno-inline" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
