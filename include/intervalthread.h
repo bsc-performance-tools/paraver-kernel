@@ -48,10 +48,10 @@ class IntervalThread: public Interval
     TCreateList createList;
 
   private:
-    virtual void getNextRecord( MemoryTrace::iterator *it,
-                                RecordList *displayList );
-    virtual void getPrevRecord( MemoryTrace::iterator *it,
-                                RecordList *displayList );
+    virtual MemoryTrace::iterator *getNextRecord( MemoryTrace::iterator *it,
+        RecordList *displayList );
+    virtual MemoryTrace::iterator *getPrevRecord( MemoryTrace::iterator *it,
+        RecordList *displayList );
 
 };
 

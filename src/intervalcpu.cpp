@@ -52,7 +52,7 @@ RecordList *IntervalCPU::calcNext( RecordList *displayList, bool initCalc )
   threadInfo.it = begin;
   highInfo.values.push_back( functionThread->execute( &threadInfo ) );
   currentValue = function->execute( &highInfo );
-  getNextRecord( end, displayList );
+  end = getNextRecord( end, displayList );
 
   return displayList;
 }
@@ -71,7 +71,7 @@ RecordList *IntervalCPU::calcPrev( RecordList *displayList, bool initCalc )
     *end = *begin;
   }
 
-  getPrevRecord( begin, displayList );
+  begin = getPrevRecord( begin, displayList );
   highInfo.callingInterval = this;
   threadInfo.callingInterval = this;
   threadInfo.it = begin;
@@ -88,8 +88,8 @@ RecordList *IntervalCPU::calcPrev( RecordList *displayList, bool initCalc )
 }
 
 
-void IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
-                                 RecordList *displayList )
+MemoryTrace::iterator *IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
+    RecordList *displayList )
 {
   ++( *it );
   while ( !it->isNull() )
@@ -112,11 +112,13 @@ void IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
     delete it;
     it = window->getCPUEndRecord( order );
   }
+
+  return it;
 }
 
 
-void IntervalCPU::getPrevRecord( MemoryTrace::iterator *it,
-                                 RecordList *displayList )
+MemoryTrace::iterator *IntervalCPU::getPrevRecord( MemoryTrace::iterator *it,
+    RecordList *displayList )
 {
   --( *it );
   while ( !it->isNull() )
@@ -139,6 +141,8 @@ void IntervalCPU::getPrevRecord( MemoryTrace::iterator *it,
     delete it;
     it = window->getCPUBeginRecord( order );
   }
+
+  return it;
 }
 
 TWindowLevel IntervalCPU::getWindowLevel() const

@@ -45,17 +45,17 @@ class IntervalCPU: public IntervalHigh
       return ( KWindow * ) window;
     }
 
- protected:
+  protected:
     KSingleWindow *window;
     SemanticCPU *function;
     SemanticThread *functionThread;
     TCreateList createList;
 
   private:
-    virtual void getNextRecord( MemoryTrace::iterator *it,
-                                RecordList *displayList );
-    virtual void getPrevRecord( MemoryTrace::iterator *it,
-                                RecordList *displayList );
+    virtual MemoryTrace::iterator *getNextRecord( MemoryTrace::iterator *it,
+        RecordList *displayList );
+    virtual MemoryTrace::iterator *getPrevRecord( MemoryTrace::iterator *it,
+        RecordList *displayList );
 
     virtual void setChilds() {}
     virtual Trace *getWindowTrace() const;

@@ -46,7 +46,7 @@ RecordList *IntervalThread::calcNext( RecordList *displayList, bool initCalc )
   info.callingInterval = this;
   info.it = begin;
   currentValue = function->execute( &info );
-  getNextRecord( end, displayList );
+  end = getNextRecord( end, displayList );
 
   return displayList;
 }
@@ -64,7 +64,7 @@ RecordList *IntervalThread::calcPrev( RecordList *displayList, bool initCalc )
     *end = *begin;
   }
 
-  getPrevRecord( begin, displayList );
+  begin = getPrevRecord( begin, displayList );
   info.callingInterval = this;
   info.it = begin;
   currentValue = function->execute( &info );
@@ -78,8 +78,8 @@ RecordList *IntervalThread::calcPrev( RecordList *displayList, bool initCalc )
 }
 
 
-void IntervalThread::getNextRecord( MemoryTrace::iterator *it,
-                                    RecordList *displayList )
+MemoryTrace::iterator *IntervalThread::getNextRecord( MemoryTrace::iterator *it,
+    RecordList *displayList )
 {
   ++( *it );
   while ( !it->isNull() )
@@ -102,11 +102,13 @@ void IntervalThread::getNextRecord( MemoryTrace::iterator *it,
     delete it;
     it = window->getThreadEndRecord( order );
   }
+
+  return it;
 }
 
 
-void IntervalThread::getPrevRecord( MemoryTrace::iterator *it,
-                                    RecordList *displayList )
+MemoryTrace::iterator *IntervalThread::getPrevRecord( MemoryTrace::iterator *it,
+    RecordList *displayList )
 {
   --( *it );
   while ( !it->isNull() )
@@ -129,4 +131,6 @@ void IntervalThread::getPrevRecord( MemoryTrace::iterator *it,
     delete it;
     it = window->getThreadBeginRecord( order );
   }
+
+  return it;
 }
