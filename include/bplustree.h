@@ -108,8 +108,8 @@ namespace bplustree
        * Returns a pointer to the i cell of the leaf.
        ************************************************************************/
       virtual bool getLeafKey( UINT8 ii, RecordLeaf *&key ) = 0;
-      virtual UINT32 linkRecords( TRecord *&ini,
-                                  TRecord *&fin,
+      virtual UINT32 linkRecords( TRecord **ini,
+                                  TRecord **fin,
                                   int &recs2link,
                                   RecordLeaf *&last_leaf,
                                   Index *traceIndex ) = 0;
@@ -150,7 +150,7 @@ namespace bplustree
       virtual bool getLeafData( UINT8 ii, TRecord *&data );
       virtual bool getLeafKey( UINT8 ii,  RecordLeaf *&key );
 
-      virtual UINT32 linkRecords( TRecord *&ini, TRecord *&fin,
+      virtual UINT32 linkRecords( TRecord **ini, TRecord **fin,
                                   INT32 &recs2link,
                                   RecordLeaf *&last_leaf,
                                   Index *traceIndex );
@@ -196,8 +196,8 @@ namespace bplustree
       virtual bool getLeafKey( UINT8 ii,  RecordLeaf *&key );
 
       virtual void print( string indent );
-      virtual UINT32 linkRecords( TRecord *&ini,
-                                  TRecord *&fin,
+      virtual UINT32 linkRecords( TRecord **ini,
+                                  TRecord **fin,
                                   INT32 &recs2link,
                                   RecordLeaf *&last_leaf,
                                   Index *traceIndex );
@@ -263,7 +263,7 @@ namespace bplustree
 
       void getRecordFirstTime( TRecord **rft );
 
-      UINT32 linkRecords( TRecord *&ini, TRecord *&fin, INT32 recs2link );
+      UINT32 linkRecords( TRecord **ini, TRecord **fin, INT32 recs2link );
       void print();
       void partialDelete();
       void unload( INT32 numrecords = -1 );

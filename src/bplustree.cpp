@@ -282,8 +282,8 @@ bool BPlusLeaf::getLeafKey( UINT8 ii, RecordLeaf *&key )
 }
 
 
-UINT32 BPlusLeaf::linkRecords( TRecord *&ini,
-                               TRecord *&fin,
+UINT32 BPlusLeaf::linkRecords( TRecord **ini,
+                               TRecord **fin,
                                INT32 &recs2link,
                                RecordLeaf *&lastLeaf,
                                Index *traceIndex )
@@ -317,8 +317,8 @@ UINT32 BPlusLeaf::linkRecords( TRecord *&ini,
       num++;
       traceIndex->indexRecord( cur );
     }
-    ini = initial;
-    fin = prev;
+    *ini = initial;
+    *fin = prev;
     lastLeaf = &records[ num - 1 ];
   }
 
@@ -584,7 +584,7 @@ bool BPlusInternal::getLeafKey( UINT8 ii, RecordLeaf *&key )
 }
 
 
-UINT32 BPlusInternal::linkRecords( TRecord *&ini, TRecord *&fin,
+UINT32 BPlusInternal::linkRecords( TRecord **ini, TRecord **fin,
                                    INT32 &recs2link,
                                    RecordLeaf *&lastLeaf,
                                    Index *traceIndex )
@@ -598,12 +598,12 @@ UINT32 BPlusInternal::linkRecords( TRecord *&ini, TRecord *&fin,
   {
     prevIni = prevFin = currIni = currFin = NULL;
 
-    recsLinked += child[ 0]->linkRecords( prevIni, prevFin, recs2link, lastLeaf, traceIndex );
+    recsLinked += child[ 0]->linkRecords( &prevIni, &prevFin, recs2link, lastLeaf, traceIndex );
 
     ii = 1;
     while ( ( ii < used ) && ( recs2link != 0 ) )
     {
-      recsLinked += child[ ii ]->linkRecords( currIni, currFin, recs2link, lastLeaf, traceIndex );
+      recsLinked += child[ ii ]->linkRecords( &currIni, &currFin, recs2link, lastLeaf, traceIndex );
       if ( currFin != NULL )
       {
         prevFin->next = currIni;
@@ -614,8 +614,8 @@ UINT32 BPlusInternal::linkRecords( TRecord *&ini, TRecord *&fin,
       ii++;
     }
 
-    ini = prevIni;
-    fin = prevFin;
+    *ini = prevIni;
+    *fin = prevFin;
   }
 
   return recsLinked;
@@ -903,7 +903,7 @@ bool BPlusTree::getLeafKey( UINT8 ii, RecordLeaf *&key )
 }
 
 
-UINT32 BPlusTree::linkRecords( TRecord *&ini, TRecord *&fin, INT32 recs2link )
+UINT32 BPlusTree::linkRecords( TRecord **ini, TRecord **fin, INT32 recs2link )
 {
   UINT32 recordsLinked;
 
@@ -943,7 +943,7 @@ void BPlusTree::unload( INT32 numrecords )
 
   if ( root != NULL )
   {
-    records_linked = linkRecords( ini, fin, numrecords );
+    records_linked = linkRecords( &ini, &fin, numrecords );
     unloadedTrace->append( ini, fin );
     if ( numrecords != -1 )
       this->partialDelete();
