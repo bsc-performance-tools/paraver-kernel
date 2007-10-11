@@ -70,8 +70,8 @@ namespace bplustree
 
 
 // Tuning this parameters changes tree performance.
-  static const UINT8 NODE_SIZE = 3;
-  static const UINT8 LEAF_SIZE = 4; // max 256
+  static const UINT16 NODE_SIZE = 3;
+  static const UINT16 LEAF_SIZE = 4;
   static const UINT32 UNLOAD_RECORDS_THRESHOLD = 1000000;
   static const UINT32 UNLOAD_PERCENT = 30;
 
@@ -80,7 +80,7 @@ namespace bplustree
     public:
 
       virtual ~BPlusNode()
-      {};
+      {}
 
       /************************************************************************
        * Inserts rl in the tree.
@@ -102,12 +102,12 @@ namespace bplustree
       /************************************************************************
        * Returns a pointer to the TRecord stored in the i cell of the tree.
        ************************************************************************/
-      virtual bool getLeafData( UINT8 ii, TRecord *&data ) = 0;
+      virtual bool getLeafData( UINT16 ii, TRecord *&data ) = 0;
 
       /************************************************************************
        * Returns a pointer to the i cell of the leaf.
        ************************************************************************/
-      virtual bool getLeafKey( UINT8 ii, RecordLeaf *&key ) = 0;
+      virtual bool getLeafKey( UINT16 ii, RecordLeaf *&key ) = 0;
       virtual UINT32 linkRecords( TRecord **ini,
                                   TRecord **fin,
                                   int &recs2link,
@@ -117,7 +117,7 @@ namespace bplustree
       virtual BPlusNode *split( BPlusNode *dest, RecordLeaf *&retdat ) = 0;
       virtual bool partialDelete( RecordLeaf *limit_key,
                                   BPlusNode **valid_predecessor ) = 0;
-      //virtual UINT8 countElems() = 0;
+      //virtual UINT16 countElems() = 0;
       virtual void print( string indent ) = 0;
   };
 
@@ -147,8 +147,8 @@ namespace bplustree
 
       virtual BPlusLeaf *split( BPlusNode *dest, RecordLeaf *&retdat );
 
-      virtual bool getLeafData( UINT8 ii, TRecord *&data );
-      virtual bool getLeafKey( UINT8 ii,  RecordLeaf *&key );
+      virtual bool getLeafData( UINT16 ii, TRecord *&data );
+      virtual bool getLeafKey( UINT16 ii,  RecordLeaf *&key );
 
       virtual UINT32 linkRecords( TRecord **ini, TRecord **fin,
                                   INT32 &recs2link,
@@ -165,20 +165,20 @@ namespace bplustree
        ************************************************************************/
       void insertRecordInOrder( RecordLeaf *r );
 
-      void setUsed( UINT8 used );
-      UINT8 getUsed();
+      void setUsed( UINT16 used );
+      UINT16 getUsed();
       inline bool isEmpty()
       {
-        return ( getUsed() == ( UINT8 )0 );
+        return ( getUsed() == ( UINT16 )0 );
       }
-      // UINT8 countElems();
+      // UINT16 countElems();
   };
 
 
   class BPlusInternal : public BPlusNode
   {
     public:
-      UINT8 used; // to be removed.
+      UINT16 used; // to be removed.
       RecordLeaf *key[NODE_SIZE];
       BPlusNode  *child[NODE_SIZE+1];
 
@@ -192,8 +192,8 @@ namespace bplustree
       BPlusInternal *splitAndInsert( BPlusNode *c, RecordLeaf *&retdat );
       virtual BPlusInternal *split( BPlusNode *dest, RecordLeaf *&retdat );
 
-      virtual bool getLeafData( UINT8 ii, TRecord *&data );
-      virtual bool getLeafKey( UINT8 ii,  RecordLeaf *&key );
+      virtual bool getLeafData( UINT16 ii, TRecord *&data );
+      virtual bool getLeafKey( UINT16 ii,  RecordLeaf *&key );
 
       virtual void print( string indent );
       virtual UINT32 linkRecords( TRecord **ini,
@@ -203,7 +203,7 @@ namespace bplustree
                                   Index *traceIndex );
       virtual bool partialDelete( RecordLeaf *limit_key,
                                   BPlusNode **valid_predecessor );
-      //UINT8 countElems();
+      //UINT16 countElems();
   };
 
 
@@ -248,8 +248,8 @@ namespace bplustree
         return ini;
       };
 
-      bool getLeafData( UINT8 ii, TRecord *&data );
-      bool getLeafKey( UINT8 ii, RecordLeaf *&key );
+      bool getLeafData( UINT16 ii, TRecord *&data );
+      bool getLeafKey( UINT16 ii, RecordLeaf *&key );
 
       inline UINT32 getNumRecords()
       {

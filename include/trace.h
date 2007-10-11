@@ -25,6 +25,7 @@ class Trace
     ~Trace()
     {
       delete blocks;
+      delete btree;
     }
 
     MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it )

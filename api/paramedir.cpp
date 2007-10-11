@@ -122,6 +122,8 @@ int main( int argc, char *argv[] )
 
       currentArg++;
     }
+
+    delete trace;
   }
 
   return 1;
