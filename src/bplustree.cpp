@@ -859,7 +859,7 @@ void BPlusTree::insert( TRecord *r )
 {
   tmpAux->setRecord( r );
 
-  BPlusNode *newNode( NULL );
+  BPlusNode *newNode = NULL;
 
   if ( root == NULL )
   {
@@ -933,7 +933,10 @@ void BPlusTree::partialDelete()
     root->partialDelete( lastLeaf, &root );
     recordsInserted -= recordsLinkedLastTime;
     if ( recordsInserted <= 0 )
+    {
+      delete root;
       root = NULL;
+    }
   }
 }
 
@@ -950,7 +953,10 @@ void BPlusTree::unload( INT32 numrecords )
     if ( numrecords != -1 )
       this->partialDelete();
     else
+    {
       delete root;
+      root = NULL;
+    }
   }
 }
 

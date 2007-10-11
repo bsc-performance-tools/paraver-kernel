@@ -12,6 +12,12 @@
 
 namespace bplustree
 {
+// Tuning this parameters changes tree performance.
+  static const UINT16 NODE_SIZE = 3;
+  static const UINT16 LEAF_SIZE = 4;
+  static const UINT32 UNLOAD_RECORDS_THRESHOLD = 100;
+  static const UINT32 UNLOAD_PERCENT = 30;
+
   class UnloadedTrace
   {
     public:
@@ -68,12 +74,6 @@ namespace bplustree
   };
 
 
-
-// Tuning this parameters changes tree performance.
-  static const UINT16 NODE_SIZE = 3;
-  static const UINT16 LEAF_SIZE = 4;
-  static const UINT32 UNLOAD_RECORDS_THRESHOLD = 1000000;
-  static const UINT32 UNLOAD_PERCENT = 30;
 
   class BPlusNode
   {
