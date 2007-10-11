@@ -11,7 +11,6 @@
 
 using namespace std;
 
-bool CFGLoader::mapLoaded = false;
 map<string, TagFunction *> CFGLoader::cfgTagFunctions;
 
 
@@ -66,12 +65,11 @@ TWindowLevel stringToLevel( const string& strLevel )
 bool CFGLoader::loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
                          TRecordTime& beginTime, TRecordTime& endTime )
 {
-  if ( !mapLoaded )
-    loadMap();
-
   ifstream cfgFile( filename.c_str() );
   if ( !cfgFile )
     return false;
+
+  loadMap();
 
   windows.push_back( NULL );
 
@@ -104,6 +102,8 @@ bool CFGLoader::loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>&
   }
 
   cfgFile.close();
+
+  unLoadMap();
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
@@ -141,8 +141,37 @@ void CFGLoader::loadMap()
   cfgTagFunctions["window_fromto"]              = new WindowFilterBoolOpFromTo();
   cfgTagFunctions["window_comm_tagsize"]        = new WindowFilterBoolOpTagSize();
   cfgTagFunctions["window_typeval"]             = new WindowFilterBoolOpTypeVal();
+}
 
-  mapLoaded = true;
+void CFGLoader::unLoadMap()
+{
+  delete cfgTagFunctions["window_type"];
+  delete cfgTagFunctions["window_factors"];
+  delete cfgTagFunctions["window_units"];
+  delete cfgTagFunctions["window_operation"];
+  delete cfgTagFunctions["window_maximum_y"];
+  delete cfgTagFunctions["window_level"];
+  delete cfgTagFunctions["window_scale_relative"];
+  delete cfgTagFunctions["window_object"];
+  delete cfgTagFunctions["window_identifiers"];
+
+  delete cfgTagFunctions["window_begin_time"];
+  delete cfgTagFunctions["window_stop_time"];
+  delete cfgTagFunctions["window_end_time"];
+  delete cfgTagFunctions["window_begin_time_relative"];
+
+  delete cfgTagFunctions["window_number_of_row"];
+  delete cfgTagFunctions["window_selected_functions"];
+  delete cfgTagFunctions["window_semantic_module"];
+  delete cfgTagFunctions["window_compose_functions"];
+
+  // Filter options
+  delete cfgTagFunctions["window_filter_module"];
+  delete cfgTagFunctions["window_logical_filtered"];
+  delete cfgTagFunctions["window_physical_filtered"];
+  delete cfgTagFunctions["window_fromto"];
+  delete cfgTagFunctions["window_comm_tagsize"];
+  delete cfgTagFunctions["window_typeval"];
 }
 
 
@@ -492,7 +521,7 @@ bool WindowComposeFunctions::parseLine( istringstream& line, Trace *whichTrace,
 {
   string tmpString;
   string strNumFunctions;
-  UINT8 numFunctions;
+  UINT16 numFunctions;
   string strLevel;
   TWindowLevel level;
   string strFunction;
@@ -508,7 +537,7 @@ bool WindowComposeFunctions::parseLine( istringstream& line, Trace *whichTrace,
     return false;
 
   getline( line, tmpString, '{' );
-  for ( UINT8 i = 0; i < numFunctions; i++ )
+  for ( UINT16 i = 0; i < numFunctions; i++ )
   {
     getline( line, tmpString, '{' );
     getline( line, strLevel, ',' );
@@ -524,7 +553,8 @@ bool WindowComposeFunctions::parseLine( istringstream& line, Trace *whichTrace,
       function = SemanticManagement::createFunction( strFunction );
       if ( function == NULL )
         return false;
-      windows[ windows.size() - 1 ]->setLevelFunction( level, function );
+      if ( !windows[ windows.size() - 1 ]->setLevelFunction( level, function ) )
+        delete function;
     }
     else
       return false;
@@ -612,6 +642,8 @@ bool WindowSemanticModule::parseLine( istringstream& line, Trace *whichTrace,
     }
 
   }
+  else
+    delete function;
 
   return true;
 }

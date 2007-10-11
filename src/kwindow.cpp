@@ -210,6 +210,53 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 }
 
 
+KSingleWindow::~KSingleWindow()
+{
+  if ( functions[ TOPCOMPOSE1 ] != NULL )
+    delete functions[ TOPCOMPOSE1 ];
+  if ( functions[ TOPCOMPOSE2 ] != NULL )
+    delete functions[ TOPCOMPOSE2 ];
+
+  if ( functions[ COMPOSEWORKLOAD ] != NULL )
+    delete functions[ COMPOSEWORKLOAD ];
+  if ( functions[ WORKLOAD ] != NULL )
+    delete functions[ WORKLOAD ];
+  if ( functions[ COMPOSEAPPLICATION ] != NULL )
+    delete functions[ COMPOSEAPPLICATION ];
+  if ( functions[ APPLICATION ] != NULL )
+    delete functions[ APPLICATION ];
+  if ( functions[ COMPOSETASK ] != NULL )
+    delete functions[ COMPOSETASK ];
+  if ( functions[ TASK ] != NULL )
+    delete functions[ TASK ];
+  if ( functions[ COMPOSETHREAD ] != NULL )
+    delete functions[ COMPOSETHREAD ];
+  if ( functions[ THREAD ] != NULL )
+    delete functions[ THREAD ];
+
+  if ( functions[ COMPOSESYSTEM ] != NULL )
+    delete functions[ COMPOSESYSTEM ];
+  if ( functions[ SYSTEM ] != NULL )
+    delete functions[ SYSTEM ];
+  if ( functions[ COMPOSENODE ] != NULL )
+    delete functions[ COMPOSENODE ];
+  if ( functions[ NODE ] != NULL )
+    delete functions[ NODE ];
+  if ( functions[ COMPOSECPU ] != NULL )
+    delete functions[ COMPOSECPU ];
+  if ( functions[ CPU ] != NULL )
+    delete functions[ CPU ];
+
+  for ( TObjectOrder i = 0; i < recordsByTime.size(); i++ )
+  {
+    if ( recordsByTime[ i ] != NULL )
+      delete recordsByTime[ i ];
+  }
+  recordsByTime.clear();
+
+  delete myFilter;
+}
+
 RecordList *KSingleWindow::init( TRecordTime initialTime, TCreateList create )
 {
   TObjectOrder objectSize = 0;
@@ -258,12 +305,17 @@ RecordList *KSingleWindow::init( TRecordTime initialTime, TCreateList create )
 }
 
 
-void KSingleWindow::setLevelFunction( TWindowLevel whichLevel,
+bool KSingleWindow::setLevelFunction( TWindowLevel whichLevel,
                                       SemanticFunction *whichFunction )
 {
+  if ( whichLevel == DERIVED )
+    return false;
+
   if ( functions[ whichLevel ] != NULL )
     delete functions[ whichLevel ];
   functions[ whichLevel ] = whichFunction;
+
+  return true;
 }
 
 
@@ -455,7 +507,7 @@ void KDerivedWindow::setup()
 }
 
 
-void KDerivedWindow::setLevelFunction( TWindowLevel whichLevel,
+bool KDerivedWindow::setLevelFunction( TWindowLevel whichLevel,
                                        SemanticFunction *whichFunction )
 {
   if ( whichLevel == TOPCOMPOSE1 )
@@ -465,11 +517,13 @@ void KDerivedWindow::setLevelFunction( TWindowLevel whichLevel,
   else if ( whichLevel == DERIVED )
     whichLevel = ( TWindowLevel ) 2;
   else
-    return;
+    return false;
 
   if ( functions[ whichLevel ] != NULL )
     delete functions[ whichLevel ];
   functions[ whichLevel ] = whichFunction;
+
+  return true;
 }
 
 

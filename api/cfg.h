@@ -28,9 +28,10 @@ class TagFunction
 class CFGLoader
 {
   private:
-    static bool mapLoaded;
     static map<string, TagFunction *> cfgTagFunctions;
     static void loadMap();
+    static void unLoadMap();
+
   public:
     static bool loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
                          TRecordTime& beginTime, TRecordTime& endTime );

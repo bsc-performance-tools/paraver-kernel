@@ -87,7 +87,7 @@ class KWindow
       return myTrace->copyCPUIterator( it );
     }
 
-    virtual void setLevelFunction( TWindowLevel whichLevel,
+    virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    SemanticFunction *whichFunction ) = 0;
     virtual SemanticFunction *getLevelFunction( TWindowLevel whichLevel ) = 0;
     virtual void setFunctionParam( TWindowLevel whichLevel,
@@ -137,15 +137,7 @@ class KSingleWindow: public KWindow
 
     KSingleWindow( Trace *whichTrace );
 
-    virtual ~KSingleWindow()
-    {
-      for ( TObjectOrder i = 0; i < recordsByTime.size(); i++ )
-      {
-        if ( recordsByTime[ i ] != NULL )
-          delete recordsByTime[ i ];
-      }
-      recordsByTime.clear();
-    }
+    virtual ~KSingleWindow();
 
     MemoryTrace::iterator *getThreadRecordByTime( TThreadOrder whichOrder )
     {
@@ -182,7 +174,7 @@ class KSingleWindow: public KWindow
       return myFilter->passFilter( it );
     }
 
-    virtual void setLevelFunction( TWindowLevel whichLevel,
+    virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    SemanticFunction *whichFunction );
     virtual SemanticFunction *getLevelFunction( TWindowLevel whichLevel );
     virtual void setFunctionParam( TWindowLevel whichLevel,
@@ -274,7 +266,14 @@ class KDerivedWindow: public KWindow
     }
 
     virtual ~KDerivedWindow()
-    {}
+    {
+      if ( functions[ 0 ] != NULL )
+        delete functions[ 0 ];
+      if ( functions[ 1 ] != NULL )
+        delete functions[ 1 ];
+      if ( functions[ 2 ] != NULL )
+        delete functions[ 2 ];
+    }
 
     void setParent( UINT16 whichParent, KWindow *whichWindow )
     {
@@ -301,7 +300,7 @@ class KDerivedWindow: public KWindow
       return tmp;
     }
 
-    virtual void setLevelFunction( TWindowLevel whichLevel,
+    virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    SemanticFunction *whichFunction );
     virtual SemanticFunction *getLevelFunction( TWindowLevel whichLevel );
     virtual void setFunctionParam( TWindowLevel whichLevel,
