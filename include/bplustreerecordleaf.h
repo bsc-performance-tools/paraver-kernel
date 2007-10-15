@@ -38,27 +38,27 @@ namespace bplustree
       {
         this->rec  = rec;
         ord = global_order++;
-      };
+      }
 
       inline TRecord  *getRecord( void ) const
       {
         return rec;
-      };
+      }
 
       inline void setOrder( TRecordOrder o )
       {
         ord = o;
-      };
+      }
 
       inline TRecordOrder getOrder( void ) const
       {
         return ord;
-      };
+      }
 
       inline void setRecordDirect( TRecord *r )
       {
         rec = r;
-      };
+      }
 
       // Assign and Compare Methods
       RecordLeaf& operator=( const RecordLeaf &rl ); // Doesn't make copy!

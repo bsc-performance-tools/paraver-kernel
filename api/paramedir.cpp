@@ -41,6 +41,8 @@ int main( int argc, char *argv[] )
     catch ( ParaverKernelException& ex )
     {
       ex.printMessage();
+      cout << "Cannot load " << strTrace << endl;
+      exit( 0 );
     }
     currentArg++;
 
