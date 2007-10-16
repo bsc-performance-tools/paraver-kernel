@@ -53,15 +53,36 @@ int main( int argc, char *argv[] )
       vector<KWindow *> windows;
       TRecordTime beginTime;
       TRecordTime endTime;
+      string strOutputFile;
+
+      if ( CFGLoader::isCFGFile( strCfg ) )
+      {
+        string strOut;
+        if ( argc > currentArg + 1 )
+        {
+          strOut = argv[ currentArg + 1 ];
+          if ( !CFGLoader::isCFGFile( strOut ) )
+          {
+            strOutputFile = strOut;
+            currentArg++;
+          }
+          else
+          {
+            strOutputFile = strCfg.substr( 0, strCfg.length() - 4 );
+          }
+
+        }
+        else
+        {
+          strOutputFile = strCfg.substr( 0, strCfg.length() - 4 );
+        }
+        currentArg++;
+      }
 
       if ( CFGLoader::loadCFG( strCfg, trace, windows, beginTime, endTime ) )
       {
         ofstream outputFile;
-        string strOutputFile;
         KWindow *tmpWindow = windows[ windows.size() - 1 ];
-
-        istringstream tmpOutputFile( strCfg );
-        getline( tmpOutputFile, strOutputFile, '.' );
 
         tmpWindow->init( beginTime, NOCREATE );
 
@@ -81,8 +102,9 @@ int main( int argc, char *argv[] )
           }
 
           outputFile << fixed;
-          outputFile << showpoint;
-          while ( tmpWindow->getEndTime( i ) < endTime )
+        outputFile << showpoint;
+
+        while ( tmpWindow->getEndTime( i ) < endTime )
           {
             outputFile << setprecision( outputPrecision );
             if ( !multipleFiles )
@@ -121,8 +143,6 @@ int main( int argc, char *argv[] )
           delete windows[ i ];
       }
       windows.clear();
-
-      currentArg++;
     }
 
     delete trace;
@@ -135,14 +155,15 @@ int main( int argc, char *argv[] )
 void printHelp()
 {
   cout << "USAGE" << endl;
-  cout << "  paramedir [OPTION] trc cfgs" << endl;
+  cout << "  paramedir [OPTION] trc cfg {out | cfg}*" << endl;
   cout << endl;
   cout << "  Options:" << endl;
   cout << "  -m: Prints on multiple files." << endl;
   cout << endl;
   cout << "  Parameters:" << endl;
   cout << "  trc: Paraver trace filename (ASCII: *.prv)." << endl;
-  cout << "  cfgs: Paraver configuration filename list (*.cfg)." << endl;
+  cout << "  cfg: Paraver configuration filename (*.cfg)." << endl;
+  cout << "  out: Filename for output (default name is cfg filename without .cfg)." << endl;
 }
 
 

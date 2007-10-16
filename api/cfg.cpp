@@ -61,6 +61,14 @@ TWindowLevel stringToLevel( const string& strLevel )
   return level;
 }
 
+bool CFGLoader::isCFGFile( const string& filename )
+{
+  string cfgExt;
+
+  cfgExt = filename.substr( filename.length() - 4 );
+
+  return ( cfgExt.compare(".cfg") == 0 );
+}
 
 bool CFGLoader::loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
                          TRecordTime& beginTime, TRecordTime& endTime )

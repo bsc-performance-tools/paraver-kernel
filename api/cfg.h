@@ -33,6 +33,7 @@ class CFGLoader
     static void unLoadMap();
 
   public:
+    static bool isCFGFile( const string& filename );
     static bool loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
                          TRecordTime& beginTime, TRecordTime& endTime );
 };
