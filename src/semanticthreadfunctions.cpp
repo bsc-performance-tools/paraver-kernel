@@ -234,6 +234,7 @@ TSemanticValue StateRecordDuration::execute( const SemanticInfo *info )
       break;
     }
   }
+  tmp = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( tmp );
 
   return tmp;
 }
@@ -367,6 +368,7 @@ TSemanticValue AverageNextEventValue::execute( const SemanticInfo *info )
   tmpTime = nextEvent->getTime() - myInfo->it->getTime();
   if ( tmpTime == 0 )
     return 0;
+  tmpTime = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( tmpTime );
 
   tmp = nextEvent->getEventValue() * parameters[ FACTOR ][ 0 ];
   tmp = tmp / tmpTime;
@@ -401,6 +403,7 @@ TSemanticValue AverageLastEventValue::execute( const SemanticInfo *info )
   tmpTime = nextEvent->getTime() - myInfo->it->getTime();
   if ( tmpTime == 0 )
     return 0;
+  tmpTime = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( tmpTime );
 
   tmp = myInfo->it->getEventValue() * parameters[ FACTOR ][ 0 ];
   tmp = tmp / tmpTime;
@@ -476,6 +479,7 @@ TSemanticValue IntervalBetweenEvents::execute( const SemanticInfo *info )
     return 0;
 
   tmp = nextEvent->getTime() - myInfo->it->getTime();
+  tmp = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( tmp );
   delete nextEvent;
 
   return tmp;
@@ -647,6 +651,7 @@ TSemanticValue LastSendDuration::execute( const SemanticInfo *info )
           myInfo->it->getCommIndex() );
 
   tmp = tmp - myInfo->it->getTime();
+  tmp = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( tmp );
 
   return tmp;
 }
@@ -689,6 +694,7 @@ TSemanticValue NextRecvDuration::execute( const SemanticInfo *info )
   tmp = myInfo->callingInterval->getWindow()->getTrace()->getLogicalSend(
           nextComm->getCommIndex() )
         - myInfo->it->getTime();
+  tmp = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( tmp );
 
   delete nextComm;
   return tmp;
@@ -842,10 +848,10 @@ TSemanticValue SendBandWidth::execute( const SemanticInfo *info )
     else
       time = trace->getPhysicalReceive( id ) - trace->getLogicalSend( id );
   }
-  //time = time / win->unit_val;
   if ( time == 0 )
     return tmp * 1E-12;
   if ( time < 0 ) time = ( -time );
+  time = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( time );
 
   bytes = trace->getCommSize( id ) / parameters[ FACTOR ][ 0 ];
 
@@ -1046,10 +1052,10 @@ TSemanticValue RecvBandWidth::execute( const SemanticInfo *info )
     else
       time = trace->getPhysicalReceive( id ) - trace->getLogicalSend( id );
   }
-  //time = time / win->unit_val;
   if ( time == 0 )
     return tmp * 1E-12;
   if ( time < 0 ) time = ( -time );
+  time = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( time );
 
   bytes = trace->getCommSize( id ) / parameters[ FACTOR ][ 0 ];
 

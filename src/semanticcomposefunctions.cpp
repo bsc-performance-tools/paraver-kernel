@@ -346,9 +346,10 @@ TSemanticValue ComposeDelta::execute( const SemanticInfo *info )
 TSemanticValue ComposeBurstTime::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
-
-  return myInfo->callingInterval->getEnd()->getTime() -
-         myInfo->callingInterval->getBegin()->getTime();
+  TSemanticValue result = myInfo->callingInterval->getEnd()->getTime() -
+                          myInfo->callingInterval->getBegin()->getTime();
+  result = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( result );
+  return result;
 }
 
 
