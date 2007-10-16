@@ -22,6 +22,10 @@ void Index::indexRecord( TRecord *rec )
 TRecord *Index::findRecord( TRecordTime time )
 {
   TTraceIndex::iterator it = baseIndex.lower_bound( time );
+
+  if ( it == baseIndex.end() )
+    return NULL;
+
   return it->second;
 }
 
