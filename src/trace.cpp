@@ -283,14 +283,17 @@ Trace::Trace( const string& whichFile ) : fileName( whichFile )
   traceProcessModel = ProcessModel( header );
 
   // Communicators
-  UINT32 numberComm;
-  std::getline( header, tmpstr );
-  istringstream streamComm( tmpstr );
-
-  if ( !( streamComm >> numberComm ) )
+  UINT32 numberComm = 0;
+  if( !header.eof() )
   {
-    throw TraceHeaderException( TraceHeaderException::invalidCommNumber,
-                                tmpstr.c_str() );
+    std::getline( header, tmpstr );
+    istringstream streamComm( tmpstr );
+
+    if ( !( streamComm >> numberComm ) )
+    {
+      throw TraceHeaderException( TraceHeaderException::invalidCommNumber,
+                                  tmpstr.c_str() );
+    }
   }
 
   for ( UINT32 count = 0; count < numberComm; count++ )

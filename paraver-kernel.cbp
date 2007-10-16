@@ -82,6 +82,7 @@
 					<Add directory="../common-files" />
 				</Compiler>
 				<Linker>
+					<Add library="libz.a" />
 					<Add library="libcfg.a" />
 					<Add library="libparaver-kernel.a" />
 					<Add directory="./" />
