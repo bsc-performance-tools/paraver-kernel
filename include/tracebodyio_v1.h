@@ -2,6 +2,7 @@
 #define TRACEBODYIO_V1_H_INCLUDED
 
 #include "tracebodyio.h"
+#include "tracestream.h"
 
 using namespace std;
 
@@ -14,7 +15,7 @@ class TraceBodyIO_v1 : public TraceBodyIO
     static const UINT8 CommRecord = '3';
     static const UINT8 GlobalCommRecord = '4';
 
-    static void read( fstream& file, MemoryBlocks& records );
+    static void read( TraceStream *file, MemoryBlocks& records );
     static void write( fstream& whichStream,
                        const Trace& whichTrace,
                        const MemoryTrace::iterator *record );

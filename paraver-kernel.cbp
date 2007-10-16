@@ -163,6 +163,7 @@
 		<Unit filename="include/tracebodyio.h" />
 		<Unit filename="include/tracebodyio_v1.h" />
 		<Unit filename="include/traceheaderexception.h" />
+		<Unit filename="include/tracestream.h" />
 		<Unit filename="src/bplustree.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -276,6 +277,10 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/traceheaderexception.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/tracestream.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>

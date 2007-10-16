@@ -3,6 +3,7 @@
 #include "trace.h"
 #include "traceheaderexception.h"
 #include "tracebodyio_v1.h"
+#include "tracestream.h"
 
 using namespace std;
 
@@ -243,10 +244,10 @@ Trace::Trace( const string& whichFile ) : fileName( whichFile )
   string tmpstr;
 
   ready = false;
-  std::fstream file( fileName.c_str(), fstream::in );
+  TraceStream *file = TraceStream::openFile( fileName );
 
 // Reading the header
-  std::getline( file, tmpstr );
+  file->getline( tmpstr );
   istringstream header( tmpstr );
 
   std::getline( header, date, ')' );
@@ -294,7 +295,7 @@ Trace::Trace( const string& whichFile ) : fileName( whichFile )
 
   for ( UINT32 count = 0; count < numberComm; count++ )
   {
-    std::getline( file, tmpstr );
+    file->getline( tmpstr );
     if ( tmpstr[0] != 'C' && tmpstr[0] != 'c' )
     {
       throw TraceHeaderException( TraceHeaderException::unknownCommLine,
@@ -312,7 +313,7 @@ Trace::Trace( const string& whichFile ) : fileName( whichFile )
   btree  = new BPlusTree( traceProcessModel.totalThreads(),
                           traceResourceModel.totalCPUs() );
 
-  while ( !file.eof() )
+  while ( !file->eof() )
   {
     TraceBodyIO_v1::read( file, *blocks );
     btree->insert( blocks );
@@ -320,7 +321,7 @@ Trace::Trace( const string& whichFile ) : fileName( whichFile )
 
 // End reading the body
   traceEndTime = btree->finish( traceEndTime );
-  file.close();
+  file->close();
   ready = true;
 
 }

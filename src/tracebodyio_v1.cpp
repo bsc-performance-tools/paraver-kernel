@@ -5,11 +5,11 @@
 
 using namespace std;
 
-void TraceBodyIO_v1::read( fstream& file, MemoryBlocks& records )
+void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records )
 {
   string line;
 
-  std::getline( file, line );
+  file->getline( line );
 
   if ( line[0] == '#' || line.size() == 0 )
     return;
