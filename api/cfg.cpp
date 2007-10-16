@@ -67,7 +67,7 @@ bool CFGLoader::isCFGFile( const string& filename )
 
   cfgExt = filename.substr( filename.length() - 4 );
 
-  return ( cfgExt.compare(".cfg") == 0 );
+  return ( cfgExt.compare( ".cfg" ) == 0 );
 }
 
 bool CFGLoader::loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
@@ -220,6 +220,9 @@ bool WindowFactors::parseLine( istringstream& line, Trace *whichTrace,
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
+  if ( !windows[ windows.size() - 1 ]->isDerivedWindow() )
+    return true;
+
   while ( !line.eof() )
   {
     getline( line, strFactor, ' ' );
@@ -277,6 +280,9 @@ bool WindowOperation::parseLine( istringstream& line, Trace *whichTrace,
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
+  if ( !windows[ windows.size() - 1 ]->isDerivedWindow() )
+    return true;
+
   getline( line, strFunction, ' ' );
   function = SemanticManagement::createFunction( strFunction );
   if ( function == NULL )
@@ -305,6 +311,9 @@ bool WindowLevel::parseLine( istringstream& line, Trace *whichTrace,
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
+  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+    return true;
+
   getline( line, strLevel, ' ' );
 
   windows[ windows.size() - 1 ]->setLevel( stringToLevel( strLevel ) );
@@ -322,6 +331,9 @@ bool WindowIdentifiers::parseLine( istringstream& line, Trace *whichTrace,
   UINT16 numID = 0;
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+
+  if ( !windows[ windows.size() - 1 ]->isDerivedWindow() )
+    return true;
 
   while ( !line.eof() )
   {
@@ -465,6 +477,9 @@ bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+
+  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+    return true;
 
   getline( line, tmpString, ' ' );
   getline( line, strNumFunctions, ',' );
@@ -675,6 +690,9 @@ bool WindowFilterModule::parseLine( istringstream& line, Trace *whichTrace,
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
+  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+    return true;
+
   getline( line, strTag, ' ' );          // Parameter type.
   getline( line, strNumberParams, ' ' ); // Number of following parameters.
   istringstream tmpNumberParams( strNumberParams );
@@ -772,6 +790,9 @@ bool WindowFilterLogical::parseLine( istringstream& line, Trace *whichTrace,
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
+  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+    return true;
+
   getline( line, strBool, ' ' );
 
   filter = ( ( KSingleWindow * )windows[ windows.size() - 1 ] )->getFilter();
@@ -796,6 +817,9 @@ bool WindowFilterPhysical::parseLine( istringstream& line, Trace *whichTrace,
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+
+  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+    return true;
 
   getline( line, strBool, ' ' );
 
@@ -822,6 +846,9 @@ bool WindowFilterBoolOpFromTo::parseLine( istringstream& line, Trace *whichTrace
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
+  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+    return true;
+
   filter = ( ( KSingleWindow * )windows[ windows.size() - 1 ] )->getFilter();
 
   getline( line, strBool, ' ' );
@@ -847,6 +874,9 @@ bool WindowFilterBoolOpTagSize::parseLine( istringstream& line, Trace *whichTrac
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
+  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+    return true;
+
   getline( line, strBool, ' ' );
 
   filter = ( ( KSingleWindow * )windows[ windows.size() - 1 ] )->getFilter();
@@ -871,6 +901,9 @@ bool WindowFilterBoolOpTypeVal::parseLine( istringstream& line, Trace *whichTrac
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+
+  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
+    return true;
 
   getline( line, strBool, ' ' );
 
