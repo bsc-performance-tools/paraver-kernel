@@ -7,6 +7,7 @@ bin_PROGRAMS = paramedir
 paramedir_SOURCES = \
                     api/paramedir.cpp
 paramedir_LDADD = \
+                  -lz \
                   api/libcfg.la \
                   src/libparaver-kernel.la 
                     

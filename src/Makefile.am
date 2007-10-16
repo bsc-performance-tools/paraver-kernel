@@ -29,7 +29,8 @@ libparaver_kernel_la_SOURCES = \
     semanticthreadfunctions.cpp \
     tracebodyio_v1.cpp \
     trace.cpp \
-    traceheaderexception.cpp
+    traceheaderexception.cpp\
+    tracestream.cpp
           
 
 
