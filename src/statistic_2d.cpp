@@ -5,43 +5,43 @@ using namespace std;
 
 #include "statistic_2d.h"
 
-template <typename TipusBasic>
-void Statistic_2D<TipusBasic>::Init()
+template <typename ValueType>
+void Statistic_2D<ValueType>::Init()
 {
-  bzero( (void*) &value, sizeof(TipusBasic) );
+  bzero( (void*) &value, sizeof(ValueType) );
 }
 
 
-template <typename TipusBasic>
-void Statistic_2D<TipusBasic>::SetValue( TipusBasic semval )
+template <typename ValueType>
+void Statistic_2D<ValueType>::SetValue( ValueType semval )
 {
   value = semval;
 }
 
 
-template <typename TipusBasic>
-void Statistic_2D<TipusBasic>::AddValue( TipusBasic semval )
+template <typename ValueType>
+void Statistic_2D<ValueType>::AddValue( ValueType semval )
 {
   value += semval;
 }
 
 
-template <typename TipusBasic>
-void Statistic_2D<TipusBasic>::Finish()
+template <typename ValueType>
+void Statistic_2D<ValueType>::Finish()
 {
-  
+
 }
 
 
-template <typename TipusBasic>
-TipusBasic Statistic_2D<TipusBasic>::GetValue()
+template <typename ValueType>
+ValueType Statistic_2D<ValueType>::GetValue()
 {
   return value;
 }
 
 
-template <typename TipusBasic>
-void Statistic_2D<TipusBasic>::Print()
+template <typename ValueType>
+void Statistic_2D<ValueType>::Print()
 {
   cout << value;
 }

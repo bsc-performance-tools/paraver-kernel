@@ -6,11 +6,11 @@ using namespace std;
 #include "column.h"
 
 
-template <typename TipusBasic>
-Column<TipusBasic>::Column( short numStats, bool *mat_finished )
+template <typename ValueType>
+Column<ValueType>::Column( short numStats, bool *mat_finished )
 {
   nstat = numStats;
-  current_cell = new Cell<TipusBasic>( 0, nstat );
+  current_cell = new Cell<ValueType>( 0, nstat );
   current_cell->Init();
   n_cells = 0;
   modified = false;
@@ -18,11 +18,11 @@ Column<TipusBasic>::Column( short numStats, bool *mat_finished )
 }
 
 
-template <typename TipusBasic>
-Column<TipusBasic>::Column( int currentRow, short numStats, bool *mat_finished )
+template <typename ValueType>
+Column<ValueType>::Column( int currentRow, short numStats, bool *mat_finished )
 {
   nstat = numStats;
-  current_cell = new Cell<TipusBasic>( currentRow, nstat );
+  current_cell = new Cell<ValueType>( currentRow, nstat );
   current_cell->Init();
   n_cells = 0;
   modified = false;
@@ -30,34 +30,34 @@ Column<TipusBasic>::Column( int currentRow, short numStats, bool *mat_finished )
 }
 
 
-template <typename TipusBasic>
-Column<TipusBasic>::~Column()
+template <typename ValueType>
+Column<ValueType>::~Column()
 {
   for( unsigned int ii = 0; ii < n_cells; ii++ )
     delete cells[ ii ];
   cells.clear();
-  
+
   if( !modified )
     delete current_cell;
 }
 
 
-template <typename TipusBasic>
-void Column<TipusBasic>::Init( short idStat )
+template <typename ValueType>
+void Column<ValueType>::Init( short idStat )
 {
   current_cell->Init( idStat );
 }
 
 
-template <typename TipusBasic>
-void Column<TipusBasic>::Init( )
+template <typename ValueType>
+void Column<ValueType>::Init( )
 {
   current_cell->Init( );
 }
 
 
-template <typename TipusBasic>
-void Column<TipusBasic>::SetValue( short idStat, TipusBasic semVal )
+template <typename ValueType>
+void Column<ValueType>::SetValue( short idStat, ValueType semVal )
 {
   if( *finished )
   {
@@ -77,8 +77,8 @@ void Column<TipusBasic>::SetValue( short idStat, TipusBasic semVal )
 }
 
 
-template <typename TipusBasic>
-void Column<TipusBasic>::SetValue( TipusBasic semVal )
+template <typename ValueType>
+void Column<ValueType>::SetValue( ValueType semVal )
 {
   if( *finished )
   {
@@ -98,8 +98,8 @@ void Column<TipusBasic>::SetValue( TipusBasic semVal )
 }
 
 
-template <typename TipusBasic>
-void Column<TipusBasic>::AddValue( short idStat, TipusBasic semVal )
+template <typename ValueType>
+void Column<ValueType>::AddValue( short idStat, ValueType semVal )
 {
   current_cell->AddValue( idStat, semVal );
   if( modified == false )
@@ -112,8 +112,8 @@ void Column<TipusBasic>::AddValue( short idStat, TipusBasic semVal )
 }
 
 
-template <typename TipusBasic>
-void Column<TipusBasic>::AddValue( TipusBasic semVal )
+template <typename ValueType>
+void Column<ValueType>::AddValue( ValueType semVal )
 {
   current_cell->AddValue( semVal );
   if( modified == false )
@@ -126,20 +126,20 @@ void Column<TipusBasic>::AddValue( TipusBasic semVal )
 }
 
 
-template <typename TipusBasic>
-TipusBasic Column<TipusBasic>::GetCurrentValue( short idStat ) const
+template <typename ValueType>
+ValueType Column<ValueType>::GetCurrentValue( short idStat ) const
 {
   if( *finished )
   {
     return (*it_cell)->GetValue( idStat );
   }
-  
+
   return current_cell->GetValue( idStat );
 }
 
 
-template <typename TipusBasic>
-int Column<TipusBasic>::GetCurrentRow( ) const
+template <typename ValueType>
+int Column<ValueType>::GetCurrentRow( ) const
 {
   if( *finished )
   {
@@ -148,19 +148,19 @@ int Column<TipusBasic>::GetCurrentRow( ) const
     else
       return (*it_cell)->GetRow();
   }
-  
+
   return current_cell->GetRow();
 }
 
 
-template <typename TipusBasic>
-void Column<TipusBasic>::NewRow( )
+template <typename ValueType>
+void Column<ValueType>::NewRow( )
 {
   int tmp_row = GetCurrentRow();
-  
+
   if( modified )
   {
-    current_cell = new Cell<TipusBasic>( tmp_row + 1, nstat );
+    current_cell = new Cell<ValueType>( tmp_row + 1, nstat );
     current_cell->Init();
     modified = false;
   }
@@ -169,14 +169,14 @@ void Column<TipusBasic>::NewRow( )
     current_cell->SetRow( tmp_row + 1 );
   }
 }
-  
 
-template <typename TipusBasic>
-void Column<TipusBasic>::NewRow( int row )
+
+template <typename ValueType>
+void Column<ValueType>::NewRow( int row )
 {
   if( modified )
   {
-    current_cell = new Cell<TipusBasic>( row, nstat );
+    current_cell = new Cell<ValueType>( row, nstat );
     current_cell->Init();
     modified = false;
   }
@@ -187,34 +187,34 @@ void Column<TipusBasic>::NewRow( int row )
 }
 
 
-template <typename TipusBasic>
-void Column<TipusBasic>::SetNextCell( )
+template <typename ValueType>
+void Column<ValueType>::SetNextCell( )
 {
   it_cell++;
 }
 
 
-template <typename TipusBasic>
-void Column<TipusBasic>::SetFirstCell( )
+template <typename ValueType>
+void Column<ValueType>::SetFirstCell( )
 {
   it_cell = cells.begin();
 }
 
 
-template <typename TipusBasic>
-bool Column<TipusBasic>::EndCell( )
+template <typename ValueType>
+bool Column<ValueType>::EndCell( )
 {
   if( n_cells == 0 )
     return true;
-  
+
   return ( it_cell == cells.end() );
 //    return true;
 //  return false;
 }
 
 
-template <typename TipusBasic>
-void Column<TipusBasic>::Print() const
+template <typename ValueType>
+void Column<ValueType>::Print() const
 {
   for( unsigned int ii = 0; ii < n_cells; ii++ )
   {

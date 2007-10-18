@@ -1,27 +1,27 @@
 #ifndef _STATISTIC_2D_H
 #define _STATISTIC_2D_H
 
-template <typename TipusBasic>
+template <typename ValueType>
 class Statistic_2D
 {
   public:
     Statistic_2D(){};
     ~Statistic_2D(){};
-  
+
     void Init();
-    void SetValue( TipusBasic semval );
-    void AddValue( TipusBasic semval );
+    void SetValue( ValueType semval );
+    void AddValue( ValueType semval );
     void Finish();
 
-    TipusBasic GetValue();
+    ValueType GetValue();
 
     void Print();
 
   protected:
-    TipusBasic value;
+    ValueType value;
 
 };
 
-#include "statistic_2d.C"
+#include "statistic_2d.cpp"
 
 #endif //_STATISTIC_2D_H

@@ -8,7 +8,7 @@ using std::vector;
 
 #include "statistic_2d.h"
 
-template <typename TipusBasic>
+template <typename ValueType>
 class Cell
 {
   public:
@@ -17,11 +17,11 @@ class Cell
 
     void Init( short idStat );
     void Init( );
-    void SetValue( short idStat, TipusBasic semVal );
-    void SetValue( TipusBasic semVal );
-    void AddValue( short idStat, TipusBasic semVal );
-    void AddValue( TipusBasic semVal );
-    TipusBasic GetValue( short idStat ) const;
+    void SetValue( short idStat, ValueType semVal );
+    void SetValue( ValueType semVal );
+    void AddValue( short idStat, ValueType semVal );
+    void AddValue( ValueType semVal );
+    ValueType GetValue( short idStat ) const;
     int GetRow( ) const;
     void SetRow( int row );
 
@@ -29,9 +29,9 @@ class Cell
 
   private:
     int row;
-    vector<Statistic_2D<TipusBasic> *>  values;
+    vector<Statistic_2D<ValueType> *>  values;
 };
 
-#include "cell.C"
+#include "cell.cpp"
 
 #endif //_CELL_H

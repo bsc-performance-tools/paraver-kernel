@@ -11,7 +11,7 @@ using std::vector;
 #include "cell.h"
 
 
-template <typename TipusBasic>
+template <typename ValueType>
 class Column
 {
   public:
@@ -21,11 +21,11 @@ class Column
 
     void Init( short idStat );
     void Init( );
-    void SetValue( short idStat, TipusBasic semVal );
-    void SetValue( TipusBasic semVal );
-    void AddValue( short idStat, TipusBasic semVal );
-    void AddValue( TipusBasic semVal );
-    TipusBasic GetCurrentValue( short idStat ) const;
+    void SetValue( short idStat, ValueType semVal );
+    void SetValue( ValueType semVal );
+    void AddValue( short idStat, ValueType semVal );
+    void AddValue( ValueType semVal );
+    ValueType GetCurrentValue( short idStat ) const;
     int GetCurrentRow( ) const;
     void NewRow( );
     void NewRow( int row );
@@ -33,15 +33,15 @@ class Column
     void SetFirstCell( );
     bool EndCell( );
     void Print() const;
-    
+
   private:
-/*    deque<Cell<TipusBasic> *> cells;
-    typename deque<Cell<TipusBasic> *>::iterator it_cell;*/
-    vector<Cell<TipusBasic> *> cells;
-    typename vector<Cell<TipusBasic> *>::iterator it_cell;
+/*    deque<Cell<ValueType> *> cells;
+    typename deque<Cell<ValueType> *>::iterator it_cell;*/
+    vector<Cell<ValueType> *> cells;
+    typename vector<Cell<ValueType> *>::iterator it_cell;
 
     short nstat;
-    Cell<TipusBasic> *current_cell;
+    Cell<ValueType> *current_cell;
     bool modified;
     unsigned int n_cells;
     bool *finished;
