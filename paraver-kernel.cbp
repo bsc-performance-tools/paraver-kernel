@@ -8,7 +8,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="libparaver-kernel" prefix_auto="1" extension_auto="1" />
+				<Option output="libparaver-kernel.a" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/Debug/" />
 				<Option type="2" />
@@ -21,7 +21,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="libparaver-kernel" prefix_auto="1" extension_auto="1" />
+				<Option output="libparaver-kernel.a" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/Release/" />
 				<Option type="2" />
@@ -54,7 +54,7 @@
 				</Linker>
 			</Target>
 			<Target title="cfg">
-				<Option output="libcfg" prefix_auto="1" extension_auto="1" />
+				<Option output="libcfg.a" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option external_deps="libparaver-kernel.a;" />
 				<Option type="2" />
@@ -120,6 +120,18 @@
 		<Unit filename="include/bplustreeexception.h" />
 		<Unit filename="include/bplustreerecordleaf.h" />
 		<Unit filename="include/bplustreetypes.h" />
+		<Unit filename="include/cell.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/column.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/cube.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="include/filter.h" />
 		<Unit filename="include/filtermanagement.h" />
 		<Unit filename="include/index.h" />
@@ -134,6 +146,10 @@
 		<Unit filename="include/intervaltypes.h" />
 		<Unit filename="include/kwindow.h" />
 		<Unit filename="include/kwindowexception.h" />
+		<Unit filename="include/matrix.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="include/memoryblocks.h" />
 		<Unit filename="include/memorytrace.h" />
 		<Unit filename="include/paraverkernelexception.h" />
@@ -160,6 +176,10 @@
 		<Unit filename="include/semanticnotthreadfunctions.h" />
 		<Unit filename="include/semanticthread.h" />
 		<Unit filename="include/semanticthreadfunctions.h" />
+		<Unit filename="include/statistic_2d.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="include/trace.h" />
 		<Unit filename="include/tracebodyio.h" />
 		<Unit filename="include/tracebodyio_v1.h" />
@@ -178,6 +198,18 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/bplustreerecordleaf.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/cell.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/column.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/cube.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
@@ -225,6 +257,10 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="src/matrix.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="src/memorytrace.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -269,6 +305,10 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="src/statistic_2d.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="src/trace.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -293,8 +333,6 @@
 				<search_path add="/usr/include/c++/4.1.1" />
 				<search_path add="/usr/include" />
 			</code_completion>
-			<envvars />
-			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
