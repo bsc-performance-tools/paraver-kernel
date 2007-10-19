@@ -146,35 +146,32 @@ namespace bplustree
     return record->type & END;
   }
 
-  static inline UINT8 getTypeOrdered( TRecord *r )
+  static inline UINT16 getTypeOrdered( TRecord *r )
   {
-    UINT8 ret;
+    UINT16 ret;
 
-    if ( isState( r ) )
+    if ( isEvent( r ) )
+      ret = 6;
+    else if ( isState( r ) )
     {
       if ( isEnd( r ) )
         ret = 0;
       else
         ret = 8;
     }
-    else if ( isEvent( r ) )
-      ret = 6;
-    else if ( isComm( r ) )
+    else if ( isPhysical( r ) )
     {
-      if ( isLogical( r ) )
-      {
-        if ( isSend( r ) )
-          ret = 4;
-        else
-          ret = 6;
-      }
-      else
-      {
-        if ( isSend( r ) )
-          ret = 5;
-        else
-          ret = 1;
-      }
+      if ( isReceive( r ) )
+        ret = 1;
+      else // isSend( r )
+        ret = 5;
+    }
+    else if ( isLogical( r ) )
+    {
+      if ( isSend( r ) )
+        ret = 4;
+      else // isReceive( r ) )
+        ret = 6;
     }
     else if ( isRReceive( r ) )
       ret  = 2;

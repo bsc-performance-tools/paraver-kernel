@@ -11,12 +11,7 @@ TApplOrder ProcessModel::totalApplications() const
 
 TTaskOrder ProcessModel::totalTasks() const
 {
-  TTaskOrder countTasks = 0;
-
-  for ( TApplOrder countAppl = 0; countAppl < applications.size(); countAppl++ )
-    countTasks += applications[ countAppl ].tasks.size();
-
-  return countTasks;
+  return tasks.size();
 }
 
 
@@ -38,15 +33,7 @@ TTaskOrder ProcessModel::getGlobalTask( const TApplOrder& inAppl,
 
 TThreadOrder ProcessModel::totalThreads() const
 {
-  TThreadOrder countThreads = 0;
-
-  for ( TApplOrder countAppl = 0; countAppl < applications.size(); countAppl++ )
-  {
-    for ( TTaskOrder countTask = 0; countTask < applications[ countAppl ].tasks.size(); countTask++ )
-      countThreads += applications[ countAppl ].tasks[ countTask ].threads.size();
-  }
-
-  return countThreads;
+  return threads.size();
 }
 
 

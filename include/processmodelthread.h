@@ -11,10 +11,10 @@ class ProcessModelThread
                         TNodeOrder node = 0 ):
         traceGlobalOrder( order ),
         nodeExecution( node )
-    {};
+    {}
 
     ~ProcessModelThread()
-    {};
+    {}
 
   protected:
     TThreadOrder  traceGlobalOrder;

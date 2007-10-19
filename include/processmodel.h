@@ -19,7 +19,7 @@ class ProcessModel
     ProcessModel( istringstream& headerInfo );
 
     ~ProcessModel()
-    {};
+    {}
 
     bool isReady() const
     {

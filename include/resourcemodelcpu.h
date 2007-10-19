@@ -7,10 +7,10 @@ class ResourceModelCPU
 {
   public:
     ResourceModelCPU( TCPUOrder order = 0 ): traceGlobalOrder( order )
-    {};
+    {}
 
     ~ResourceModelCPU()
-    {};
+    {}
 
   protected:
     TCPUOrder traceGlobalOrder;

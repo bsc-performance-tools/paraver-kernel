@@ -11,10 +11,10 @@ class ProcessModelTask
 
   public:
     ProcessModelTask( TTaskOrder order = 0 ): traceGlobalOrder( order )
-    {};
+    {}
 
     ~ProcessModelTask()
-    {};
+    {}
 
   protected:
     TTaskOrder traceGlobalOrder;

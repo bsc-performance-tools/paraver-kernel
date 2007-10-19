@@ -68,13 +68,18 @@ bool RecordLeaf::operator<( const RecordLeaf &rl )
   }
 
   time1 = getTime( rec );
-  type1 = getTypeOrdered( rec );
   time2 = getTime( rl.rec );
+
+  if( time1 < time2 )
+    return true;
+  else if( time1 > time2 )
+    return false;
+
+  type1 = getTypeOrdered( rec );
   type2 = getTypeOrdered( rl.rec );
 
-  return ( ( time1 < time2 ) ||
-           ( ( time1 == time2 ) && ( type1 < type2 ) ) ||
-           ( ( time1 == time2 ) && ( type1 == type2 ) && ( ord < rl.ord ) )
+  return ( type1 < type2 ||
+           ( ( type1 == type2 ) && ( ord < rl.ord ) )
          );
 }
 
@@ -93,13 +98,18 @@ bool RecordLeaf::operator>( const RecordLeaf &rl )
   }
 
   time1 = getTime( rec );
-  type1 = getTypeOrdered( rec );
   time2 = getTime( rl.rec );
+
+  if( time1 > time2 )
+    return true;
+  else if( time1 < time2 )
+    return false;
+
+  type1 = getTypeOrdered( rec );
   type2 = getTypeOrdered( rl.rec );
 
-  return ( ( time1 >  time2 ) ||
-           ( ( time1 == time2 ) && ( type1 > type2 ) ) ||
-           ( ( time1 == time2 ) && ( type1 == type2 ) && ( ord > rl.ord ) )
+  return ( type1 > type2 ||
+           ( ( type1 == type2 ) && ( ord > rl.ord ) )
          );
 }
 

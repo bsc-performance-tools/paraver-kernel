@@ -18,7 +18,7 @@ class ResourceModel
     ResourceModel( istringstream& headerInfo );
 
     ~ResourceModel()
-    {};
+    {}
 
     bool isReady() const
     {

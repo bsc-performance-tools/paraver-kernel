@@ -9,10 +9,10 @@ class ProcessModelAppl
 
   public:
     ProcessModelAppl( TApplOrder order = 0 ): traceGlobalOrder( order )
-    {};
+    {}
 
     ~ProcessModelAppl()
-    {};
+    {}
 
   protected:
     TApplOrder traceGlobalOrder;

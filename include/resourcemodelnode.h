@@ -10,10 +10,10 @@ class ResourceModelNode
 {
   public:
     ResourceModelNode( TNodeOrder order = 0 ) : traceGlobalOrder( order )
-    {};
+    {}
 
     ~ResourceModelNode()
-    {};
+    {}
 
   protected:
     TNodeOrder traceGlobalOrder;

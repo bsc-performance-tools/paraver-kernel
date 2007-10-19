@@ -12,12 +12,7 @@ TNodeOrder ResourceModel::totalNodes() const
 
 TCPUOrder ResourceModel::totalCPUs() const
 {
-  TCPUOrder countCPUs = 0;
-
-  for ( TNodeOrder countNode = 0; countNode < nodes.size(); countNode++ )
-    countCPUs += nodes[ countNode ].CPUs.size();
-
-  return countCPUs;
+  return CPUs.size();
 }
 
 
