@@ -22,6 +22,6 @@ class Statistic_2D
 
 };
 
-#include "statistic_2d.cpp"
+//#include "src/statistic_2d.cpp"
 
 #endif //_STATISTIC_2D_H

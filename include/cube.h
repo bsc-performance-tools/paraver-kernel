@@ -41,6 +41,6 @@ class Cube
     int crow;
 };
 
-#include "cube.cpp"
+//#include "src/cube.cpp"
 
 #endif // _CUBE_H

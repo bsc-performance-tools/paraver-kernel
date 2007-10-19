@@ -35,6 +35,6 @@ class Matrix2D
     bool finished;
 };
 
-#include "matrix.cpp"
+//#include "src/matrix.cpp"
 
 #endif // _MATRIX_H

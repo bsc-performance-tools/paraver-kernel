@@ -32,6 +32,6 @@ class Cell
     vector<Statistic_2D<ValueType> *>  values;
 };
 
-#include "cell.cpp"
+//#include "src/cell.cpp"
 
 #endif //_CELL_H
