@@ -3,8 +3,7 @@
 
 using namespace std;
 
-#include "cube.h"
-
+//#include "cube.h"
 
 template <typename ValueType>
 Cube<ValueType>::Cube( int numPlanes, int numCols, short numStats )

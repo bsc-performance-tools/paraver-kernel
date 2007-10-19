@@ -47,6 +47,6 @@ class Column
     bool *finished;
 };
 
-//#include "src/column.cpp"
+#include "src/column.cpp"
 
 #endif //_COLUMN_H

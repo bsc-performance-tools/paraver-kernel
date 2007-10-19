@@ -5,8 +5,10 @@ template <typename ValueType>
 class Statistic_2D
 {
   public:
-    Statistic_2D(){};
-    ~Statistic_2D(){};
+    Statistic_2D()
+    {}
+    ~Statistic_2D()
+    {}
 
     void Init();
     void SetValue( ValueType semval );
@@ -22,6 +24,6 @@ class Statistic_2D
 
 };
 
-//#include "src/statistic_2d.cpp"
+#include "src/statistic_2d.cpp"
 
 #endif //_STATISTIC_2D_H

@@ -3,11 +3,10 @@
 
 using namespace std;
 
-#include "matrix.h"
-
+//#include "matrix.h"
 
 template <typename ValueType>
-Matrix2D<ValueType>::Matrix2D( int numCols, short numStats )
+Matrix<ValueType>::Matrix( int numCols, short numStats )
 {
   Column<ValueType> *tmp_col;
 
@@ -23,7 +22,7 @@ Matrix2D<ValueType>::Matrix2D( int numCols, short numStats )
 
 
 template <typename ValueType>
-Matrix2D<ValueType>::Matrix2D( int currentRow, int numCols, short numStats )
+Matrix<ValueType>::Matrix( int currentRow, int numCols, short numStats )
 {
   Column<ValueType> *tmp_col;
 
@@ -38,7 +37,7 @@ Matrix2D<ValueType>::Matrix2D( int currentRow, int numCols, short numStats )
 
 
 template <typename ValueType>
-Matrix2D<ValueType>::~Matrix2D()
+Matrix<ValueType>::~Matrix()
 {
   for( unsigned int ii = 0; ii < cols.size(); ii++ )
   {
@@ -49,7 +48,7 @@ Matrix2D<ValueType>::~Matrix2D()
 
 
 template <typename ValueType>
-void Matrix2D<ValueType>::Init( short idStat )
+void Matrix<ValueType>::Init( short idStat )
 {
   for( unsigned int ii = 0; ii < cols.size(); ii++ )
   {
@@ -59,7 +58,7 @@ void Matrix2D<ValueType>::Init( short idStat )
 
 
 template <typename ValueType>
-void Matrix2D<ValueType>::Init( )
+void Matrix<ValueType>::Init( )
 {
   for( unsigned int ii = 0; ii < cols.size(); ii++ )
   {
@@ -69,49 +68,49 @@ void Matrix2D<ValueType>::Init( )
 
 
 template <typename ValueType>
-void Matrix2D<ValueType>::SetValue( int col, short idStat, ValueType semVal )
+void Matrix<ValueType>::SetValue( int col, short idStat, ValueType semVal )
 {
   cols[ col ]->SetValue( idStat, semVal );
 }
 
 
 template <typename ValueType>
-void Matrix2D<ValueType>::SetValue( int col, ValueType semVal )
+void Matrix<ValueType>::SetValue( int col, ValueType semVal )
 {
   cols[ col ]->SetValue( semVal );
 }
 
 
 template <typename ValueType>
-void Matrix2D<ValueType>::AddValue( int col, short idStat, ValueType semVal )
+void Matrix<ValueType>::AddValue( int col, short idStat, ValueType semVal )
 {
   cols[ col ]->AddValue( idStat, semVal );
 }
 
 
 template <typename ValueType>
-void Matrix2D<ValueType>::AddValue( int col, ValueType semVal )
+void Matrix<ValueType>::AddValue( int col, ValueType semVal )
 {
   cols[ col ]->AddValue( semVal );
 }
 
 
 template <typename ValueType>
-ValueType Matrix2D<ValueType>::GetCurrentValue( int col, short idStat ) const
+ValueType Matrix<ValueType>::GetCurrentValue( int col, short idStat ) const
 {
   return cols[ col ]->GetCurrentValue( idStat );
 }
 
 
 template <typename ValueType>
-int Matrix2D<ValueType>::GetCurrentRow( int col ) const
+int Matrix<ValueType>::GetCurrentRow( int col ) const
 {
   return cols[ col ]->GetCurrentRow();
 }
 
 
 template <typename ValueType>
-void Matrix2D<ValueType>::NewRow( )
+void Matrix<ValueType>::NewRow( )
 {
   for( unsigned int ii = 0; ii < cols.size(); ii++ )
   {
@@ -121,42 +120,42 @@ void Matrix2D<ValueType>::NewRow( )
 
 
 template <typename ValueType>
-void Matrix2D<ValueType>::NewRow( int col, int row )
+void Matrix<ValueType>::NewRow( int col, int row )
 {
   cols[ col ]->NewRow( row );
 }
 
 
 template <typename ValueType>
-void Matrix2D<ValueType>::Finish( )
+void Matrix<ValueType>::Finish( )
 {
   finished = true;
 }
 
 
 template <typename ValueType>
-void Matrix2D<ValueType>::SetNextCell( int col )
+void Matrix<ValueType>::SetNextCell( int col )
 {
   cols[ col ]->SetNextCell();
 }
 
 
 template <typename ValueType>
-void Matrix2D<ValueType>::SetFirstCell( int col )
+void Matrix<ValueType>::SetFirstCell( int col )
 {
   cols[ col ]->SetFirstCell();
 }
 
 
 template <typename ValueType>
-bool Matrix2D<ValueType>::EndCell( int col )
+bool Matrix<ValueType>::EndCell( int col )
 {
   return cols[ col ]->EndCell();
 }
 
 
 template <typename ValueType>
-void Matrix2D<ValueType>::EraseColumns( int ini_col, int fin_col )
+void Matrix<ValueType>::EraseColumns( int ini_col, int fin_col )
 {
   if( fin_col < ini_col )
     return;
@@ -181,7 +180,7 @@ void Matrix2D<ValueType>::EraseColumns( int ini_col, int fin_col )
 
 
 template <typename ValueType>
-void Matrix2D<ValueType>::Print() const
+void Matrix<ValueType>::Print() const
 {
   for( unsigned int ii = 0; ii < cols.size(); ii++ )
   {

@@ -3,8 +3,7 @@
 
 using namespace std;
 
-#include "column.h"
-
+//#include "column.h"
 
 template <typename ValueType>
 Column<ValueType>::Column( short numStats, bool *mat_finished )

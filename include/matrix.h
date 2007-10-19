@@ -5,12 +5,12 @@
 #include "column.h"
 
 template <typename ValueType>
-class Matrix2D
+class Matrix
 {
   public:
-    Matrix2D( int numCols, short numStats );
-    Matrix2D( int currentRow, int numCols, short numStats );
-    ~Matrix2D();
+    Matrix( int numCols, short numStats );
+    Matrix( int currentRow, int numCols, short numStats );
+    ~Matrix();
 
     void Init( short idStat );
     void Init( );
@@ -35,6 +35,6 @@ class Matrix2D
     bool finished;
 };
 
-//#include "src/matrix.cpp"
+#include "src/matrix.cpp"
 
 #endif // _MATRIX_H

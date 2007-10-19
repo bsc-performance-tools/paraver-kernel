@@ -3,7 +3,7 @@
 
 using namespace std;
 
-#include "statistic_2d.h"
+//#include "statistic_2d.h"
 
 template <typename ValueType>
 void Statistic_2D<ValueType>::Init()
