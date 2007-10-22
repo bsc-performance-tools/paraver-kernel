@@ -3,16 +3,15 @@
 
 using namespace std;
 
-//#include "matrix.h"
 
 template <typename ValueType>
-Matrix<ValueType>::Matrix( int numCols, short numStats )
+Matrix<ValueType>::Matrix( UINT32 numCols, UINT16 numStats )
 {
   Column<ValueType> *tmp_col;
 
   finished = false;
 
-  for( int ii = 0; ii < numCols; ii++ )
+  for( UINT32 ii = 0; ii < numCols; ii++ )
   {
     tmp_col = new Column<ValueType>( numStats, &finished );
     tmp_col->Init();
@@ -22,13 +21,13 @@ Matrix<ValueType>::Matrix( int numCols, short numStats )
 
 
 template <typename ValueType>
-Matrix<ValueType>::Matrix( int currentRow, int numCols, short numStats )
+Matrix<ValueType>::Matrix( TObjectOrder currentRow, UINT32 numCols, UINT16 numStats )
 {
   Column<ValueType> *tmp_col;
 
   finished = false;
 
-  for( int ii = 0; ii < numCols; ii++ )
+  for( UINT32 ii = 0; ii < numCols; ii++ )
   {
     tmp_col = new Column<ValueType>( currentRow, numStats, &finished );
     cols.push_back( tmp_col );
@@ -39,7 +38,7 @@ Matrix<ValueType>::Matrix( int currentRow, int numCols, short numStats )
 template <typename ValueType>
 Matrix<ValueType>::~Matrix()
 {
-  for( unsigned int ii = 0; ii < cols.size(); ii++ )
+  for( UINT32 ii = 0; ii < (UINT32)cols.size(); ii++ )
   {
     delete cols[ ii ];
   }
@@ -48,9 +47,9 @@ Matrix<ValueType>::~Matrix()
 
 
 template <typename ValueType>
-void Matrix<ValueType>::Init( short idStat )
+void Matrix<ValueType>::Init( UINT16 idStat )
 {
-  for( unsigned int ii = 0; ii < cols.size(); ii++ )
+  for( UINT32 ii = 0; ii < (UINT32)cols.size(); ii++ )
   {
     cols[ ii ]->Init( idStat );
   }
@@ -60,7 +59,7 @@ void Matrix<ValueType>::Init( short idStat )
 template <typename ValueType>
 void Matrix<ValueType>::Init( )
 {
-  for( unsigned int ii = 0; ii < cols.size(); ii++ )
+  for( UINT32 ii = 0; ii < (UINT32)cols.size(); ii++ )
   {
     cols[ ii ]->Init( );
   }
@@ -68,42 +67,42 @@ void Matrix<ValueType>::Init( )
 
 
 template <typename ValueType>
-void Matrix<ValueType>::SetValue( int col, short idStat, ValueType semVal )
+void Matrix<ValueType>::SetValue( UINT32 col, UINT16 idStat, ValueType semVal )
 {
   cols[ col ]->SetValue( idStat, semVal );
 }
 
 
 template <typename ValueType>
-void Matrix<ValueType>::SetValue( int col, ValueType semVal )
+void Matrix<ValueType>::SetValue( UINT32 col, ValueType semVal )
 {
   cols[ col ]->SetValue( semVal );
 }
 
 
 template <typename ValueType>
-void Matrix<ValueType>::AddValue( int col, short idStat, ValueType semVal )
+void Matrix<ValueType>::AddValue( UINT32 col, UINT16 idStat, ValueType semVal )
 {
   cols[ col ]->AddValue( idStat, semVal );
 }
 
 
 template <typename ValueType>
-void Matrix<ValueType>::AddValue( int col, ValueType semVal )
+void Matrix<ValueType>::AddValue( UINT32 col, ValueType semVal )
 {
   cols[ col ]->AddValue( semVal );
 }
 
 
 template <typename ValueType>
-ValueType Matrix<ValueType>::GetCurrentValue( int col, short idStat ) const
+ValueType Matrix<ValueType>::GetCurrentValue( UINT32 col, UINT16 idStat ) const
 {
   return cols[ col ]->GetCurrentValue( idStat );
 }
 
 
 template <typename ValueType>
-int Matrix<ValueType>::GetCurrentRow( int col ) const
+TObjectOrder Matrix<ValueType>::GetCurrentRow( UINT32 col ) const
 {
   return cols[ col ]->GetCurrentRow();
 }
@@ -112,7 +111,7 @@ int Matrix<ValueType>::GetCurrentRow( int col ) const
 template <typename ValueType>
 void Matrix<ValueType>::NewRow( )
 {
-  for( unsigned int ii = 0; ii < cols.size(); ii++ )
+  for( UINT32 ii = 0; ii < (UINT32)cols.size(); ii++ )
   {
     cols[ ii ]->NewRow();
   }
@@ -120,7 +119,7 @@ void Matrix<ValueType>::NewRow( )
 
 
 template <typename ValueType>
-void Matrix<ValueType>::NewRow( int col, int row )
+void Matrix<ValueType>::NewRow( UINT32 col, TObjectOrder row )
 {
   cols[ col ]->NewRow( row );
 }
@@ -134,28 +133,28 @@ void Matrix<ValueType>::Finish( )
 
 
 template <typename ValueType>
-void Matrix<ValueType>::SetNextCell( int col )
+void Matrix<ValueType>::SetNextCell( UINT32 col )
 {
   cols[ col ]->SetNextCell();
 }
 
 
 template <typename ValueType>
-void Matrix<ValueType>::SetFirstCell( int col )
+void Matrix<ValueType>::SetFirstCell( UINT32 col )
 {
   cols[ col ]->SetFirstCell();
 }
 
 
 template <typename ValueType>
-bool Matrix<ValueType>::EndCell( int col )
+bool Matrix<ValueType>::EndCell( UINT32 col )
 {
   return cols[ col ]->EndCell();
 }
 
 
 template <typename ValueType>
-void Matrix<ValueType>::EraseColumns( int ini_col, int fin_col )
+void Matrix<ValueType>::EraseColumns( UINT32 ini_col, UINT32 fin_col )
 {
   if( fin_col < ini_col )
     return;
@@ -167,7 +166,7 @@ void Matrix<ValueType>::EraseColumns( int ini_col, int fin_col )
     return;
 
   typename vector<Column<ValueType> *>::iterator it_ini, it_fin;
-  int i;
+  UINT32 i;
 
   it_ini = cols.begin();
   for( i = 0; i < ini_col; i++, it_ini++ );
@@ -182,7 +181,7 @@ void Matrix<ValueType>::EraseColumns( int ini_col, int fin_col )
 template <typename ValueType>
 void Matrix<ValueType>::Print() const
 {
-  for( unsigned int ii = 0; ii < cols.size(); ii++ )
+  for( UINT32 ii = 0; ii < (UINT32)cols.size(); ii++ )
   {
     cout << "----------Column " << ii << "----------" << endl;
     cols[ ii ]->Print();

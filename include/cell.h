@@ -6,29 +6,30 @@
 
 using std::vector;
 
+#include "paraverkerneltypes.h"
 #include "statistic_2d.h"
 
 template <typename ValueType>
 class Cell
 {
   public:
-    Cell( int idRow, short numStats );
+    Cell( TObjectOrder idRow, UINT16 numStats );
     ~Cell();
 
-    void Init( short idStat );
+    void Init( UINT16 idStat );
     void Init( );
-    void SetValue( short idStat, ValueType semVal );
+    void SetValue( UINT16 idStat, ValueType semVal );
     void SetValue( ValueType semVal );
-    void AddValue( short idStat, ValueType semVal );
+    void AddValue( UINT16 idStat, ValueType semVal );
     void AddValue( ValueType semVal );
-    ValueType GetValue( short idStat ) const;
-    int GetRow( ) const;
-    void SetRow( int row );
+    ValueType GetValue( UINT16 idStat ) const;
+    TObjectOrder GetRow( ) const;
+    void SetRow( TObjectOrder row );
 
     void Print() const;
 
   private:
-    int row;
+    TObjectOrder row;
     vector<Statistic_2D<ValueType> *>  values;
 };
 

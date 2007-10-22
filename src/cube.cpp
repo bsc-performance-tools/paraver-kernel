@@ -3,19 +3,18 @@
 
 using namespace std;
 
-//#include "cube.h"
 
 template <typename ValueType>
-Cube<ValueType>::Cube( int numPlanes, int numCols, short numStats )
+Cube<ValueType>::Cube( UINT32 numPlanes, UINT32 numCols, UINT16 numStats )
 {
-  Matrix2D<ValueType> *tmp_mat = NULL;
+  Matrix<ValueType> *tmp_mat = NULL;
 
   nplanes = 0;
   ncols = numCols;
   nstat = numStats;
   crow = 0;
 
-  for( int ii = 0; ii < numPlanes; ii++ )
+  for( UINT32 ii = 0; ii < numPlanes; ii++ )
   {
     planes.push_back( tmp_mat );
   }
@@ -27,7 +26,7 @@ Cube<ValueType>::~Cube()
 {
   if( nplanes > 0 )
   {
-    for( unsigned int ii = 0; ii < planes.size(); ii++ )
+    for( UINT32 ii = 0; ii < planes.size(); ii++ )
     {
       if( planes[ ii ] != NULL )
         delete planes[ ii ];
@@ -38,11 +37,11 @@ Cube<ValueType>::~Cube()
 
 
 template <typename ValueType>
-void Cube<ValueType>::Init( short idStat )
+void Cube<ValueType>::Init( UINT16 idStat )
 {
   if( nplanes > 0 )
   {
-    for( unsigned int ii = 0; ii < planes.size(); ii++ )
+    for( UINT32 ii = 0; ii < planes.size(); ii++ )
     {
       if( planes[ ii ] != NULL )
         planes[ ii ]->Init( idStat );
@@ -56,7 +55,7 @@ void Cube<ValueType>::Init( )
 {
   if( nplanes > 0 )
   {
-    for( unsigned int ii = 0; ii < planes.size(); ii++ )
+    for( UINT32 ii = 0; ii < planes.size(); ii++ )
     {
       if( planes[ ii ] != NULL )
         planes[ ii ]->Init( );
@@ -66,11 +65,11 @@ void Cube<ValueType>::Init( )
 
 
 template <typename ValueType>
-void Cube<ValueType>::SetValue( int plane, int col, short idStat, ValueType semVal )
+void Cube<ValueType>::SetValue( UINT32 plane, UINT32 col, UINT16 idStat, ValueType semVal )
 {
   if( planes[ plane ] == NULL )
   {
-    planes[ plane ] = new Matrix2D<ValueType>( crow, ncols, nstat );
+    planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
     nplanes++;
   }
 
@@ -79,11 +78,11 @@ void Cube<ValueType>::SetValue( int plane, int col, short idStat, ValueType semV
 
 
 template <typename ValueType>
-void Cube<ValueType>::SetValue( int plane, int col, ValueType semVal )
+void Cube<ValueType>::SetValue( UINT32 plane, UINT32 col, ValueType semVal )
 {
   if( planes[ plane ] == NULL )
   {
-    planes[ plane ] = new Matrix2D<ValueType>( crow, ncols, nstat );
+    planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
     nplanes++;
   }
 
@@ -92,11 +91,11 @@ void Cube<ValueType>::SetValue( int plane, int col, ValueType semVal )
 
 
 template <typename ValueType>
-void Cube<ValueType>::AddValue( int plane, int col, short idStat, ValueType semVal )
+void Cube<ValueType>::AddValue( UINT32 plane, UINT32 col, UINT16 idStat, ValueType semVal )
 {
   if( planes[ plane ] == NULL )
   {
-    planes[ plane ] = new Matrix2D<ValueType>( crow, ncols, nstat );
+    planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
     nplanes++;
   }
 
@@ -105,11 +104,11 @@ void Cube<ValueType>::AddValue( int plane, int col, short idStat, ValueType semV
 
 
 template <typename ValueType>
-void Cube<ValueType>::AddValue( int plane, int col, ValueType semVal )
+void Cube<ValueType>::AddValue( UINT32 plane, UINT32 col, ValueType semVal )
 {
   if( planes[ plane ] == NULL )
   {
-    planes[ plane ] = new Matrix2D<ValueType>( crow, ncols, nstat );
+    planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
     nplanes++;
   }
 
@@ -118,7 +117,7 @@ void Cube<ValueType>::AddValue( int plane, int col, ValueType semVal )
 
 
 template <typename ValueType>
-ValueType Cube<ValueType>::GetCurrentValue( int plane, int col, short idStat ) const
+ValueType Cube<ValueType>::GetCurrentValue( UINT32 plane, UINT32 col, UINT16 idStat ) const
 {
   if( planes[ plane ] != NULL )
     return planes[ plane ]->GetCurrentValue( col, idStat );
@@ -131,7 +130,7 @@ ValueType Cube<ValueType>::GetCurrentValue( int plane, int col, short idStat ) c
 
 
 template <typename ValueType>
-int Cube<ValueType>::GetCurrentRow( int plane, int col ) const
+UINT32 Cube<ValueType>::GetCurrentRow( UINT32 plane, UINT32 col ) const
 {
   if( planes[ plane ] != NULL )
     return planes[ plane ]->GetCurrentRow( col );
@@ -140,7 +139,7 @@ int Cube<ValueType>::GetCurrentRow( int plane, int col ) const
 
 
 template <typename ValueType>
-int Cube<ValueType>::GetCurrentRow( ) const
+UINT32 Cube<ValueType>::GetCurrentRow( ) const
 {
   return crow;
 }
@@ -151,7 +150,7 @@ void Cube<ValueType>::NewRow( )
 {
   if( nplanes > 0 )
   {
-    for( unsigned int ii = 0; ii < planes.size(); ii++ )
+    for( UINT32 ii = 0; ii < planes.size(); ii++ )
     {
       if( planes[ ii ] != NULL )
         planes[ ii ]->NewRow( );
@@ -162,7 +161,7 @@ void Cube<ValueType>::NewRow( )
 
 
 template <typename ValueType>
-void Cube<ValueType>::NewRow( int plane, int col, int row )
+void Cube<ValueType>::NewRow( UINT32 plane, UINT32 col, UINT32 row )
 {
   if( nplanes > 0 )
   {
@@ -179,7 +178,7 @@ void Cube<ValueType>::Finish( )
 {
   if( nplanes > 0 )
   {
-    for( unsigned int ii = 0; ii < planes.size(); ii++ )
+    for( UINT32 ii = 0; ii < planes.size(); ii++ )
     {
       if( planes[ ii ] != NULL )
         planes[ ii ]->Finish();
@@ -189,7 +188,7 @@ void Cube<ValueType>::Finish( )
 
 
 template <typename ValueType>
-void Cube<ValueType>::SetNextCell( int plane, int col )
+void Cube<ValueType>::SetNextCell( UINT32 plane, UINT32 col )
 {
   if( nplanes == 0 )
     return;
@@ -200,7 +199,7 @@ void Cube<ValueType>::SetNextCell( int plane, int col )
 
 
 template <typename ValueType>
-void Cube<ValueType>::SetFirstCell( int plane, int col )
+void Cube<ValueType>::SetFirstCell( UINT32 plane, UINT32 col )
 {
   if( nplanes == 0 )
     return;
@@ -211,7 +210,7 @@ void Cube<ValueType>::SetFirstCell( int plane, int col )
 
 
 template <typename ValueType>
-bool Cube<ValueType>::EndCell( int plane, int col )
+bool Cube<ValueType>::EndCell( UINT32 plane, UINT32 col )
 {
   if( nplanes == 0 )
     return true;
@@ -223,7 +222,7 @@ bool Cube<ValueType>::EndCell( int plane, int col )
 
 
 template <typename ValueType>
-bool Cube<ValueType>::PlaneWithValues( int plane ) const
+bool Cube<ValueType>::PlaneWithValues( UINT32 plane ) const
 {
   if( nplanes == 0 )
     return false;
@@ -233,7 +232,7 @@ bool Cube<ValueType>::PlaneWithValues( int plane ) const
 
 
 template <typename ValueType>
-int Cube<ValueType>::GetPlanes( ) const
+UINT32 Cube<ValueType>::GetPlanes( ) const
 {
   if( nplanes > 0 )
     return planes.size();
@@ -243,7 +242,7 @@ int Cube<ValueType>::GetPlanes( ) const
 
 
 template <typename ValueType>
-void Cube<ValueType>::EraseColumns( int ini_col, int fin_col )
+void Cube<ValueType>::EraseColumns( UINT32 ini_col, UINT32 fin_col )
 {
   if( fin_col < ini_col )
     return;
@@ -254,7 +253,7 @@ void Cube<ValueType>::EraseColumns( int ini_col, int fin_col )
   if( fin_col >= ncols )
     return;
 
-  for( unsigned int ii = 0; ii < planes.size(); ii++ )
+  for( UINT32 ii = 0; ii < planes.size(); ii++ )
   {
     if( planes[ ii ] != NULL )
       planes[ ii ]->EraseColumns( ini_col, fin_col );
@@ -265,7 +264,7 @@ void Cube<ValueType>::EraseColumns( int ini_col, int fin_col )
 
 
 template <typename ValueType>
-void Cube<ValueType>::ErasePlanes( int ini_plane, int fin_plane )
+void Cube<ValueType>::ErasePlanes( UINT32 ini_plane, UINT32 fin_plane )
 {
   if( fin_plane < ini_plane )
     return;
@@ -273,11 +272,11 @@ void Cube<ValueType>::ErasePlanes( int ini_plane, int fin_plane )
   if( ini_plane < 0 )
     return;
 
-  if( fin_plane >= (int) planes.size() )
+  if( fin_plane >= (UINT32) planes.size() )
     return;
 
-  typename vector<Matrix2D<ValueType> *>::iterator it_ini, it_fin;
-  int i;
+  typename vector<Matrix<ValueType> *>::iterator it_ini, it_fin;
+  UINT32 i;
 
   it_ini = planes.begin();
   for( i = 0; i < ini_plane; i++, it_ini++ );
@@ -300,7 +299,7 @@ void Cube<ValueType>::Print() const
 {
   if( nplanes > 0 )
   {
-    for( unsigned int ii = 0; ii < planes.size(); ii++ )
+    for( UINT32 ii = 0; ii < planes.size(); ii++ )
     {
       cout << endl;
       cout << "******************************************************" << endl;
