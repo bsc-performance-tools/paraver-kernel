@@ -6,6 +6,7 @@
 #include "cfg.h"
 #include "trace.h"
 #include "kwindow.h"
+#include "cube.h"
 
 using namespace std;
 
@@ -15,6 +16,8 @@ UINT32 outputPrecision = 2;
 
 int main( int argc, char *argv[] )
 {
+  // Cube< TSemanticValue > cube( 10, 10, 10 );
+
   readParaverConfigFile();
 
   if ( argc == 1 )
