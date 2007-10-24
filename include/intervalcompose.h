@@ -12,6 +12,8 @@ class IntervalCompose: public IntervalHigh
     IntervalCompose()
     {
       function = NULL;
+      endRecord = NULL;
+      beginRecord = NULL;
     }
 
     IntervalCompose( KWindow *whichWindow, TWindowLevel whichLevel,
@@ -19,10 +21,17 @@ class IntervalCompose: public IntervalHigh
         IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
     {
       function = NULL;
+      endRecord = NULL;
+      beginRecord = NULL;
     }
 
     virtual ~IntervalCompose()
-    {}
+    {
+      if( endRecord != NULL )
+        delete endRecord;
+      if( beginRecord != NULL )
+        delete beginRecord;
+    }
 
     virtual RecordList *init( TRecordTime initialTime, TCreateList create,
                               RecordList *displayList = NULL );
@@ -132,6 +141,9 @@ class IntervalCompose: public IntervalHigh
     virtual Trace *getWindowTrace() const;
 
   private:
+    bool joinBursts;
+    MemoryTrace::iterator *endRecord;
+    MemoryTrace::iterator *beginRecord;
 };
 
 

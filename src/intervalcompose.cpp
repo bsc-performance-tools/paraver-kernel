@@ -1,5 +1,6 @@
 #include "kwindow.h"
 #include "intervalcompose.h"
+#include "semanticcomposefunctions.h"
 
 RecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
                                    RecordList *displayList )
@@ -15,6 +16,26 @@ RecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
 
   function = ( SemanticCompose * ) window->getLevelFunction( level );
 
+  if ( endRecord != NULL )
+  {
+    delete endRecord;
+    endRecord = NULL;
+  }
+  if ( beginRecord != NULL )
+  {
+    delete beginRecord;
+    beginRecord = NULL;
+  }
+
+  if ( typeid( *function ) == typeid( ComposeJoinBursts ) )
+  {
+    joinBursts = true;
+    endRecord = ( ( KSingleWindow * ) window )->getThreadEndRecord( order );
+    beginRecord = ( ( KSingleWindow * ) window )->getThreadBeginRecord( order );
+  }
+  else
+    joinBursts = false;
+
   setChilds();
 
   if ( function->getInitFromBegin() )
@@ -23,11 +44,34 @@ RecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
     myInitTime = initialTime;
 
   childIntervals[ 0 ]->init( myInitTime, create, displayList );
-  begin = childIntervals[ 0 ]->getBegin();
-  end = childIntervals[ 0 ]->getEnd();
-  info.values.push_back( childIntervals[ 0 ]->getValue() );
-  info.callingInterval = this;
-  currentValue = function->execute( &info );
+
+  if ( joinBursts )
+  {
+    TSemanticValue tmpValue;
+
+    begin = childIntervals[ 0 ]->getBegin();
+    end = childIntervals[ 0 ]->getEnd();
+    tmpValue = childIntervals[ 0 ]->getValue();
+    childIntervals[ 0 ]->calcNext( displayList );
+    while ( tmpValue == childIntervals[ 0 ]->getValue() )
+    {
+      end = childIntervals[ 0 ]->getEnd();
+
+      if ( *end == *endRecord )
+        break;
+
+      childIntervals[ 0 ]->calcNext( displayList );
+    }
+    currentValue = tmpValue;
+  }
+  else
+  {
+    begin = childIntervals[ 0 ]->getBegin();
+    end = childIntervals[ 0 ]->getEnd();
+    info.values.push_back( childIntervals[ 0 ]->getValue() );
+    info.callingInterval = this;
+    currentValue = function->execute( &info );
+  }
 
   if ( function->getInitFromBegin() )
   {
@@ -46,12 +90,34 @@ RecordList *IntervalCompose::calcNext( RecordList *displayList, bool initCalc )
   if ( displayList == NULL )
     displayList = &myDisplayList;
 
-  childIntervals[ 0 ]->calcNext( displayList );
-  begin = childIntervals[ 0 ]->getBegin();
-  end = childIntervals[ 0 ]->getEnd();
-  info.values.push_back( childIntervals[ 0 ]->getValue() );
-  info.callingInterval = this;
-  currentValue = function->execute( &info );
+  if ( joinBursts )
+  {
+    TSemanticValue tmpValue;
+
+    begin = childIntervals[ 0 ]->getBegin();
+    end = childIntervals[ 0 ]->getEnd();
+    tmpValue = childIntervals[ 0 ]->getValue();
+    childIntervals[ 0 ]->calcNext( displayList );
+    while ( tmpValue == childIntervals[ 0 ]->getValue() )
+    {
+      end = childIntervals[ 0 ]->getEnd();
+
+      if ( *end == *endRecord )
+        break;
+
+      childIntervals[ 0 ]->calcNext( displayList );
+    }
+    currentValue = tmpValue;
+  }
+  else
+  {
+    childIntervals[ 0 ]->calcNext( displayList );
+    begin = childIntervals[ 0 ]->getBegin();
+    end = childIntervals[ 0 ]->getEnd();
+    info.values.push_back( childIntervals[ 0 ]->getValue() );
+    info.callingInterval = this;
+    currentValue = function->execute( &info );
+  }
 
   return displayList;
 }
@@ -64,12 +130,33 @@ RecordList *IntervalCompose::calcPrev( RecordList *displayList, bool initCalc )
   if ( displayList == NULL )
     displayList = &myDisplayList;
 
-  childIntervals[ 0 ]->calcPrev( displayList );
-  begin = childIntervals[ 0 ]->getBegin();
-  end = childIntervals[ 0 ]->getEnd();
-  info.values.push_back( childIntervals[ 0 ]->getValue() );
-  info.callingInterval = this;
-  currentValue = function->execute( &info );
+  if ( joinBursts )
+  {
+    TSemanticValue tmpValue;
+
+    begin = childIntervals[ 0 ]->getBegin();
+    end = childIntervals[ 0 ]->getEnd();
+    tmpValue = childIntervals[ 0 ]->getValue();
+    childIntervals[ 0 ]->calcPrev( displayList );
+    while ( tmpValue == childIntervals[ 0 ]->getValue() )
+    {
+      begin = childIntervals[ 0 ]->getBegin();
+
+      if ( *begin == *beginRecord )
+        break;
+
+      childIntervals[ 0 ]->calcPrev( displayList );
+    }
+  }
+  else
+  {
+    childIntervals[ 0 ]->calcPrev( displayList );
+    begin = childIntervals[ 0 ]->getBegin();
+    end = childIntervals[ 0 ]->getEnd();
+    info.values.push_back( childIntervals[ 0 ]->getValue() );
+    info.callingInterval = this;
+    currentValue = function->execute( &info );
+  }
 
   return displayList;
 }
