@@ -105,9 +105,9 @@ int main( int argc, char *argv[] )
           }
 
           outputFile << fixed;
-        outputFile << showpoint;
+          outputFile << showpoint;
 
-        while ( tmpWindow->getEndTime( i ) < endTime )
+          while ( tmpWindow->getEndTime( i ) < endTime )
           {
             outputFile << setprecision( outputPrecision );
             if ( !multipleFiles )
@@ -135,7 +135,10 @@ int main( int argc, char *argv[] )
         if ( multipleFiles )
           cout << strOutputFile << "_* files wrote." << endl;
         else
+        {
+          outputFile.close();
           cout << strOutputFile << " file wrote." << endl;
+        }
       }
       else
         cout << "Cannot load '" << strCfg << "' file." << endl;
