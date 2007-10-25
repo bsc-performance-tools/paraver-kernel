@@ -272,7 +272,8 @@ TSemanticValue LastEventValue::execute( const SemanticInfo *info )
 }
 
 //OJO!!!
-//Esta funcion no esta bien. Se tiene que rehacer mirando el codigo antiguo.
+//No estoy seguro que funcione igual que en codigo antiguo, pero es que mirandolo
+// (el antiguo) es muy liado pa la tonteria que hace.
 TSemanticValue LastEventValueWOBursts::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -282,6 +283,9 @@ TSemanticValue LastEventValueWOBursts::execute( const SemanticInfo *info )
     return 0;
 
   tmp = myInfo->it->getEventValue();
+
+  if( tmp == 0 )
+    tmp = myInfo->callingInterval->getValue();
 
   return tmp;
 }
