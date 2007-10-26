@@ -284,7 +284,7 @@ TSemanticValue LastEventValueWOBursts::execute( const SemanticInfo *info )
 
   tmp = myInfo->it->getEventValue();
 
-  if( tmp == 0 )
+  if ( tmp == 0 )
     tmp = myInfo->callingInterval->getValue();
 
   return tmp;
