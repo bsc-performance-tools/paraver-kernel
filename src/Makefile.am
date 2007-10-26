@@ -7,6 +7,7 @@ libparaver_kernel_la_SOURCES = \
     bplustreerecordleaf.cpp \
     filter.cpp \
     filtermanagement.cpp \
+    histogram.cpp \
     index.cpp \
     intervalcompose.cpp \
     intervalcontrolderived.cpp \
