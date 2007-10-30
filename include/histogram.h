@@ -3,6 +3,9 @@
 
 #include "kwindow.h"
 
+class HistogramStatistic;
+
+
 class Histogram
 {
   public:
@@ -13,6 +16,9 @@ class Histogram
     void setDataWindow( KWindow *whichWindow );
     void setExtraControlWindow( KWindow *whichWindow );
 
+    void clearStatistics();
+    void pushbackStatistic( HistogramStatistic *whichStatistic );
+
   protected:
 
   private:
@@ -20,6 +26,8 @@ class Histogram
     KWindow *dataWindow;
     KWindow *xtraControlWindow;
 
+    vector<HistogramStatistic *> statisticFunctions;
+    UINT16 numStatistics;
 };
 
 
