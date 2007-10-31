@@ -12,6 +12,12 @@ Histogram::Histogram()
 }
 
 
+Histogram::~Histogram()
+{
+  clearStatistics();
+}
+
+
 void Histogram::setControlWindow( KWindow *whichWindow )
 {
   controlWindow = whichWindow;
