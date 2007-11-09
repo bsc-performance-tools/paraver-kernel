@@ -5,6 +5,21 @@
 
 class HistogramStatistic;
 
+class RowsTranslator
+{
+  public:
+    RowsTranslator( vector<KWindow *>& windows );
+    ~RowsTranslator();
+
+    TObjectOrder globalTranslate( UINT16 winIndex, TObjectOrder rowIndex );
+    void getRowChilds( UINT16 winIndex, TObjectOrder rowIndex,
+                       TObjectOrder& iniRow, TObjectOrder& endRow );
+  protected:
+
+  private:
+
+};
+
 
 class Histogram
 {
