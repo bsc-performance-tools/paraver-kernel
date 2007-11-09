@@ -36,6 +36,24 @@ void Histogram::setExtraControlWindow( KWindow *whichWindow )
 }
 
 
+void Histogram::clearControlWindow()
+{
+  controlWindow = NULL;
+}
+
+
+void Histogram::clearDataWindow()
+{
+  dataWindow = NULL;
+}
+
+
+void Histogram::clearExtraControlWindow()
+{
+  xtraControlWindow = NULL;
+}
+
+
 void Histogram::clearStatistics()
 {
   vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
@@ -54,3 +72,22 @@ void Histogram::pushbackStatistic( HistogramStatistic *whichStatistic )
   numStatistics++;
 }
 
+
+void Histogram::execute( TRecordTime beginTime, TRecordTime endTime )
+{
+  if( controlWindow == NULL )
+    throw HistogramException( HistogramException::noControlWindow );
+
+  if( dataWindow == NULL )
+    dataWindow = controlWindow;
+
+  orderWindows();
+}
+
+
+void Histogram::orderWindows()
+{
+  orderWindows.clear();
+
+
+}

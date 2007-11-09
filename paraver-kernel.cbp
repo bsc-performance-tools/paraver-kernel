@@ -135,6 +135,7 @@
 		<Unit filename="include/filter.h" />
 		<Unit filename="include/filtermanagement.h" />
 		<Unit filename="include/histogram.h" />
+		<Unit filename="include/histogramexception.h" />
 		<Unit filename="include/histogramstatistic.h" />
 		<Unit filename="include/index.h" />
 		<Unit filename="include/interval.h" />
@@ -221,6 +222,10 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/histogram.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/histogramexception.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
