@@ -19,6 +19,8 @@ Histogram::Histogram()
   dataMax = 1;
 
   numStatistics = 0;
+
+  rowsTranslator = NULL;
 }
 
 
@@ -188,6 +190,9 @@ void Histogram::execute( TRecordTime beginTime, TRecordTime endTime )
     dataWindow = controlWindow;
 
   orderWindows();
+  if( rowsTranslator != NULL )
+    delete rowsTranslator;
+  rowsTranslator = new RowsTranslator( orderedWindows );
 }
 
 

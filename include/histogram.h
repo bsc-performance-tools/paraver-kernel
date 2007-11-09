@@ -77,6 +77,7 @@ class Histogram
     UINT16 numStatistics;
 
     vector<KWindow *> orderedWindows;
+    RowsTranslator *rowsTranslator;
 
     void orderWindows();
 
