@@ -97,6 +97,8 @@ typedef enum TWindowLevel
   DERIVED
 };
 
+
+typedef double THistogramLimit;
 /*
  * PARAVER OLD CODE
  * Record class field defines for a state record.
