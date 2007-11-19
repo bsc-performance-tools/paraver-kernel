@@ -99,6 +99,7 @@ typedef enum TWindowLevel
 
 
 typedef double THistogramLimit;
+typedef UINT32 THistogramColumn;
 /*
  * PARAVER OLD CODE
  * Record class field defines for a state record.

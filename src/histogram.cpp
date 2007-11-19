@@ -21,6 +21,11 @@ Histogram::Histogram()
   numStatistics = 0;
 
   rowsTranslator = NULL;
+  columnTranslator = NULL;
+  planeTranslator = NULL;
+
+  cube = NULL;
+  matrix = NULL;
 }
 
 
@@ -183,16 +188,53 @@ void Histogram::pushbackStatistic( HistogramStatistic *whichStatistic )
 
 void Histogram::execute( TRecordTime beginTime, TRecordTime endTime )
 {
+  TObjectOrder numRows;
+  THistogramColumn numCols;
+  THistogramColumn numPlanes;
+  bool threeDimensions;
+
   if ( controlWindow == NULL )
     throw HistogramException( HistogramException::noControlWindow );
 
   if ( dataWindow == NULL )
     dataWindow = controlWindow;
 
+  threeDimensions = ( xtraControlWindow != NULL );
+
   orderWindows();
-  if( rowsTranslator != NULL )
+
+  if ( rowsTranslator != NULL )
     delete rowsTranslator;
   rowsTranslator = new RowsTranslator( orderedWindows );
+
+  if ( columnTranslator != NULL )
+    delete columnTranslator;
+  columnTranslator = new ColumnTranslator( controlMin, controlMax, controlDelta );
+
+  if ( planeTranslator != NULL )
+    delete planeTranslator;
+  if( threeDimensions )
+    planeTranslator = new ColumnTranslator( xtraControlMin, xtraControlMax, xtraControlDelta );
+
+  numRows = rowsTranslator->totalRows();
+  numCols = columnTranslator->totalColumns();
+  if( threeDimensions )
+    numPlanes = planeTranslator->totalColumns();
+
+  if( cube != NULL )
+    delete cube;
+  if( matrix != NULL )
+    delete matrix;
+
+  if( threeDimensions )
+    cube = new Cube<TSemanticValue>( numPlanes, numCols, numStatistics );
+  else
+    matrix = new Matrix<TSemanticValue>( numCols, numStatistics );
+  // - Prepara la matriz o el cubo.
+  // - Inicializa el semantico de las ventanas.
+  // - Lanza la ejecucion recursiva (calculo parcial de totales?).
+  // - Calculo de totales.
+  // - Se ordenan las columnas si es necesario.
 }
 
 

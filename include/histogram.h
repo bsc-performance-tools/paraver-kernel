@@ -2,6 +2,7 @@
 #define HISTOGRAM_H_INCLUDED
 
 #include "kwindow.h"
+#include "cube.h"
 
 class HistogramStatistic;
 
@@ -11,14 +12,33 @@ class RowsTranslator
     RowsTranslator( vector<KWindow *>& windows );
     ~RowsTranslator();
 
-    TObjectOrder globalTranslate( UINT16 winIndex, TObjectOrder rowIndex );
+    TObjectOrder globalTranslate( UINT16 winIndex, TObjectOrder rowIndex ) const;
     void getRowChilds( UINT16 winIndex, TObjectOrder rowIndex,
-                       TObjectOrder& iniRow, TObjectOrder& endRow );
+                       TObjectOrder& iniRow, TObjectOrder& endRow ) const;
+    TObjectOrder totalRows() const;
   protected:
 
   private:
 
 };
+
+
+class ColumnTranslator
+{
+  public:
+    ColumnTranslator( THistogramLimit whichMin, THistogramLimit whichMax,
+                      THistogramLimit whichDelta );
+    ~ColumnTranslator();
+
+    THistogramColumn getColumn( THistogramLimit whichValue ) const;
+    THistogramColumn totalColumns() const;
+
+  protected:
+
+  private:
+    bool discrete;
+};
+
 
 
 class Histogram
@@ -78,6 +98,11 @@ class Histogram
 
     vector<KWindow *> orderedWindows;
     RowsTranslator *rowsTranslator;
+    ColumnTranslator *columnTranslator;
+    ColumnTranslator *planeTranslator;
+
+    Cube<TSemanticValue> *cube;
+    Matrix<TSemanticValue> *matrix;
 
     void orderWindows();
 
