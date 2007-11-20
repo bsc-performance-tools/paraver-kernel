@@ -2,6 +2,60 @@
 #include "histogramstatistic.h"
 #include "histogramexception.h"
 
+RowsTranslator::RowsTranslator( vector<KWindow *>& windows )
+{
+}
+
+
+RowsTranslator::~RowsTranslator()
+{
+}
+
+
+TObjectOrder RowsTranslator::globalTranslate( UINT16 winIndex,
+                                              TObjectOrder rowIndex ) const
+{
+  TObjectOrder rt;
+
+  return rt;
+}
+
+
+void RowsTranslator::getRowChilds( UINT16 winIndex,
+                                   TObjectOrder rowIndex,
+                                   TObjectOrder& iniRow,
+                                   TObjectOrder& endRow ) const
+{
+}
+
+
+ColumnTranslator::ColumnTranslator( THistogramLimit whichMin,
+                                    THistogramLimit whichMax,
+                                    THistogramLimit whichDelta )
+{
+}
+
+
+ColumnTranslator::~ColumnTranslator()
+{
+}
+
+
+THistogramColumn ColumnTranslator::getColumn( THistogramLimit whichValue ) const
+{
+  THistogramColumn hc;
+
+  return hc;
+}
+
+
+THistogramColumn ColumnTranslator::totalColumns() const
+{
+  THistogramColumn hc;
+
+  return hc;
+}
+
 
 Histogram::Histogram()
 {

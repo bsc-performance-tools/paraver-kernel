@@ -107,7 +107,7 @@ namespace bplustree
         remotePhysicalSend,
         remotePhysicalReceive,
         commTypeSize
-    } TCommType;
+      } TCommType;
       static const TRecordType commTypes[commTypeSize];
       static const UINT32 blockSize = 100000;
       UINT32 currentRecord;

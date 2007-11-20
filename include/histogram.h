@@ -9,17 +9,29 @@ class HistogramStatistic;
 class RowsTranslator
 {
   public:
+/*
+    PRECOND1: windows vector comes downwards level ordered.
+    PRECOND2: KWindows in window vector have same hierarchy.
+    PRECOND3: windows vector size is 2 or 3 KWindows.
+*/
+
     RowsTranslator( vector<KWindow *>& windows );
     ~RowsTranslator();
 
-    TObjectOrder globalTranslate( UINT16 winIndex, TObjectOrder rowIndex ) const;
-    void getRowChilds( UINT16 winIndex, TObjectOrder rowIndex,
-                       TObjectOrder& iniRow, TObjectOrder& endRow ) const;
+    TObjectOrder globalTranslate( UINT16 winIndex,
+                                  TObjectOrder rowIndex ) const;
+    void getRowChilds( UINT16 winIndex,
+                       TObjectOrder rowIndex,
+                       TObjectOrder& iniRow,
+                       TObjectOrder& endRow ) const;
     TObjectOrder totalRows() const;
   protected:
 
   private:
-
+    vector<KWindow *> *window;
+    
+    vector<TObjectOrder> rowTranslator1;
+    vector<TObjectOrder> rowTranslator2;
 };
 
 
