@@ -75,14 +75,14 @@ class Histogram
     void setDataMin( THistogramLimit whichMin );
     void setDataMax( THistogramLimit whichMax );
 
-    THistogramLimit getControlMin();
-    THistogramLimit getControlMax();
-    THistogramLimit getControlDelta();
-    THistogramLimit getExtraControlMin();
-    THistogramLimit getExtraControlMax();
-    THistogramLimit getExtraControlDelta();
-    THistogramLimit getDataMin();
-    THistogramLimit getDataMax();
+    THistogramLimit getControlMin() const;
+    THistogramLimit getControlMax() const;
+    THistogramLimit getControlDelta() const;
+    THistogramLimit getExtraControlMin() const;
+    THistogramLimit getExtraControlMax() const;
+    THistogramLimit getExtraControlDelta() const;
+    THistogramLimit getDataMin() const;
+    THistogramLimit getDataMax() const;
 
     void clearStatistics();
     void pushbackStatistic( HistogramStatistic *whichStatistic );
@@ -96,6 +96,8 @@ class Histogram
     KWindow *dataWindow;
     KWindow *xtraControlWindow;
 
+    bool threeDimensions;
+
     THistogramLimit controlMin;
     THistogramLimit controlMax;
     THistogramLimit controlDelta;
@@ -107,6 +109,7 @@ class Histogram
 
     vector<HistogramStatistic *> statisticFunctions;
     UINT16 numStatistics;
+    UINT16 numCommStatistics;
 
     vector<KWindow *> orderedWindows;
     RowsTranslator *rowsTranslator;
@@ -115,9 +118,15 @@ class Histogram
 
     Cube<TSemanticValue> *cube;
     Matrix<TSemanticValue> *matrix;
+    Cube<TSemanticValue> *commCube;
+    Matrix<TSemanticValue> *commMatrix;
 
     void orderWindows();
-
+    bool createComms() const;
+    void initTranslators();
+    void initMatrix( THistogramColumn numPlanes, THistogramColumn numCols,
+                     TObjectOrder numRows );
+    void initSemantic( TRecordTime beginTime );
 };
 
 

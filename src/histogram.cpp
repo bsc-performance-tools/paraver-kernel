@@ -63,6 +63,8 @@ Histogram::Histogram()
   dataWindow = NULL;
   xtraControlWindow = NULL;
 
+  threeDimensions = false;
+
   controlMin = 0;
   controlMax = 1;
   controlDelta = 1;
@@ -73,6 +75,7 @@ Histogram::Histogram()
   dataMax = 1;
 
   numStatistics = 0;
+  numCommStatistics = 0;
 
   rowsTranslator = NULL;
   columnTranslator = NULL;
@@ -80,6 +83,8 @@ Histogram::Histogram()
 
   cube = NULL;
   matrix = NULL;
+  commCube = NULL;
+  commMatrix = NULL;
 }
 
 
@@ -173,49 +178,49 @@ void Histogram::setDataMax( THistogramLimit whichMax )
 }
 
 
-THistogramLimit Histogram::getControlMin()
+THistogramLimit Histogram::getControlMin() const
 {
   return controlMin;
 }
 
 
-THistogramLimit Histogram::getControlMax()
+THistogramLimit Histogram::getControlMax() const
 {
   return controlMax;
 }
 
 
-THistogramLimit Histogram::getControlDelta()
+THistogramLimit Histogram::getControlDelta() const
 {
   return controlDelta;
 }
 
 
-THistogramLimit Histogram::getExtraControlMin()
+THistogramLimit Histogram::getExtraControlMin() const
 {
   return xtraControlMin;
 }
 
 
-THistogramLimit Histogram::getExtraControlMax()
+THistogramLimit Histogram::getExtraControlMax() const
 {
   return xtraControlMax;
 }
 
 
-THistogramLimit Histogram::getExtraControlDelta()
+THistogramLimit Histogram::getExtraControlDelta() const
 {
   return xtraControlDelta;
 }
 
 
-THistogramLimit Histogram::getDataMin()
+THistogramLimit Histogram::getDataMin() const
 {
   return dataMin;
 }
 
 
-THistogramLimit Histogram::getDataMax()
+THistogramLimit Histogram::getDataMax() const
 {
   return dataMax;
 }
@@ -226,17 +231,24 @@ void Histogram::clearStatistics()
   vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
 
   while ( it != statisticFunctions.end() )
+  {
     delete *it;
+    it++;
+  }
 
   statisticFunctions.clear();
   numStatistics = 0;
+  numCommStatistics = 0;
 }
 
 
 void Histogram::pushbackStatistic( HistogramStatistic *whichStatistic )
 {
   statisticFunctions.push_back( whichStatistic );
-  numStatistics++;
+  if ( whichStatistic->createComms() )
+    numCommStatistics++;
+  else
+    numStatistics++;
 }
 
 
@@ -245,7 +257,6 @@ void Histogram::execute( TRecordTime beginTime, TRecordTime endTime )
   TObjectOrder numRows;
   THistogramColumn numCols;
   THistogramColumn numPlanes;
-  bool threeDimensions;
 
   if ( controlWindow == NULL )
     throw HistogramException( HistogramException::noControlWindow );
@@ -257,35 +268,17 @@ void Histogram::execute( TRecordTime beginTime, TRecordTime endTime )
 
   orderWindows();
 
-  if ( rowsTranslator != NULL )
-    delete rowsTranslator;
-  rowsTranslator = new RowsTranslator( orderedWindows );
-
-  if ( columnTranslator != NULL )
-    delete columnTranslator;
-  columnTranslator = new ColumnTranslator( controlMin, controlMax, controlDelta );
-
-  if ( planeTranslator != NULL )
-    delete planeTranslator;
-  if( threeDimensions )
-    planeTranslator = new ColumnTranslator( xtraControlMin, xtraControlMax, xtraControlDelta );
+  initTranslators();
 
   numRows = rowsTranslator->totalRows();
   numCols = columnTranslator->totalColumns();
-  if( threeDimensions )
+  if ( threeDimensions )
     numPlanes = planeTranslator->totalColumns();
 
-  if( cube != NULL )
-    delete cube;
-  if( matrix != NULL )
-    delete matrix;
+  initMatrix( numPlanes, numCols, numRows );
 
-  if( threeDimensions )
-    cube = new Cube<TSemanticValue>( numPlanes, numCols, numStatistics );
-  else
-    matrix = new Matrix<TSemanticValue>( numCols, numStatistics );
-  // - Prepara la matriz o el cubo.
-  // - Inicializa el semantico de las ventanas.
+  initSemantic( beginTime );
+
   // - Lanza la ejecucion recursiva (calculo parcial de totales?).
   // - Calculo de totales.
   // - Se ordenan las columnas si es necesario.
@@ -297,4 +290,85 @@ void Histogram::orderWindows()
   orderedWindows.clear();
 
 
+}
+
+bool Histogram::createComms() const
+{
+  return numCommStatistics > 0;
+}
+
+
+void Histogram::initTranslators()
+{
+  if ( rowsTranslator != NULL )
+    delete rowsTranslator;
+  rowsTranslator = new RowsTranslator( orderedWindows );
+
+  if ( columnTranslator != NULL )
+    delete columnTranslator;
+  columnTranslator = new ColumnTranslator( controlMin, controlMax, controlDelta );
+
+  if ( planeTranslator != NULL )
+  {
+    delete planeTranslator;
+    planeTranslator = NULL;
+  }
+  if ( threeDimensions )
+    planeTranslator = new ColumnTranslator( xtraControlMin, xtraControlMax, xtraControlDelta );
+}
+
+
+void Histogram::initMatrix( THistogramColumn numPlanes, THistogramColumn numCols,
+                            TObjectOrder numRows )
+{
+  if ( cube != NULL )
+  {
+    delete cube;
+    cube = NULL;
+  }
+  if ( matrix != NULL )
+  {
+    delete matrix;
+    matrix = NULL;
+  }
+  if ( commCube != NULL )
+  {
+    delete commCube;
+    commCube = NULL;
+  }
+  if ( commMatrix != NULL )
+  {
+    delete commMatrix;
+    commMatrix = NULL;
+  }
+
+  if ( threeDimensions )
+  {
+    cube = new Cube<TSemanticValue>( numPlanes, numCols, numStatistics );
+    if ( createComms() )
+      commCube = new Cube<TSemanticValue>( numPlanes, numRows, numCommStatistics );
+  }
+  else
+  {
+    matrix = new Matrix<TSemanticValue>( numCols, numStatistics );
+    if ( createComms() )
+      commMatrix = new Matrix<TSemanticValue>( numRows, numCommStatistics );
+  }
+}
+
+
+void Histogram::initSemantic( TRecordTime beginTime )
+{
+  TCreateList create = NOCREATE;
+
+  if ( createComms() )
+    create = CREATECOMMS;
+
+  controlWindow->init( beginTime, create );
+
+  if ( xtraControlWindow != controlWindow )
+    xtraControlWindow->init( beginTime, NOCREATE );
+
+  if ( dataWindow != controlWindow && dataWindow != xtraControlWindow )
+    dataWindow->init( beginTime, NOCREATE );
 }
