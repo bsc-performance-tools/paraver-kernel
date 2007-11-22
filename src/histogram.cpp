@@ -13,7 +13,7 @@ RowsTranslator::~RowsTranslator()
 
 
 TObjectOrder RowsTranslator::globalTranslate( UINT16 winIndex,
-                                              TObjectOrder rowIndex ) const
+    TObjectOrder rowIndex ) const
 {
   TObjectOrder rt;
 
@@ -90,7 +90,41 @@ Histogram::Histogram()
 
 Histogram::~Histogram()
 {
+  if ( rowsTranslator != NULL )
+    delete rowsTranslator;
+  if ( columnTranslator != NULL )
+    delete columnTranslator;
+  if ( planeTranslator != NULL )
+    delete planeTranslator;
+
+  if ( cube != NULL )
+    delete cube;
+  if ( matrix != NULL )
+    delete matrix;
+  if ( commCube != NULL )
+    delete commCube;
+  if ( commMatrix != NULL )
+    delete commMatrix;
+
   clearStatistics();
+}
+
+
+bool Histogram::getThreeDimensions() const
+{
+  return threeDimensions;
+}
+
+
+TRecordTime Histogram::getBeginTime() const
+{
+  return beginTime;
+}
+
+
+TRecordTime Histogram::getEndTime() const
+{
+  return endTime;
 }
 
 
@@ -279,6 +313,9 @@ void Histogram::execute( TRecordTime beginTime, TRecordTime endTime )
 
   initSemantic( beginTime );
 
+  initStatistics();
+
+  // - Los totales podrian ser una clase aparte.
   // - Lanza la ejecucion recursiva (calculo parcial de totales?).
   // - Calculo de totales.
   // - Se ordenan las columnas si es necesario.
@@ -289,8 +326,20 @@ void Histogram::orderWindows()
 {
   orderedWindows.clear();
 
+  if ( controlWindow->getLevel() >= xtraControlWindow->getLevel() )
+  {
+    orderedWindows.push_back( controlWindow );
+    orderedWindows.push_back( xtraControlWindow );
+  }
+  else
+  {
+    orderedWindows.push_back( xtraControlWindow );
+    orderedWindows.push_back( controlWindow );
+  }
 
+  orderedWindows.push_back( dataWindow );
 }
+
 
 bool Histogram::createComms() const
 {
@@ -314,7 +363,8 @@ void Histogram::initTranslators()
     planeTranslator = NULL;
   }
   if ( threeDimensions )
-    planeTranslator = new ColumnTranslator( xtraControlMin, xtraControlMax, xtraControlDelta );
+    planeTranslator = new ColumnTranslator( xtraControlMin, xtraControlMax,
+                                            xtraControlDelta );
 }
 
 
@@ -371,4 +421,15 @@ void Histogram::initSemantic( TRecordTime beginTime )
 
   if ( dataWindow != controlWindow && dataWindow != xtraControlWindow )
     dataWindow->init( beginTime, NOCREATE );
+}
+
+
+void Histogram::initStatistics()
+{
+  vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
+
+  while ( it != statisticFunctions.end() )
+  {
+    ( *it )->init( this );
+  }
 }

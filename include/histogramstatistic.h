@@ -11,6 +11,13 @@ class HistogramStatistic
     virtual ~HistogramStatistic();
 
     virtual bool createComms() const = 0;
+    virtual void init( Histogram *whichHistogram ) = 0;
+    virtual void execute() = 0;
+    virtual void finish() = 0;
+
+//    virtual string getName() = 0;
+//    virtual SemanticFunction *create() = 0;
+
   protected:
 
   private:

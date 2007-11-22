@@ -29,7 +29,7 @@ class RowsTranslator
 
   private:
     vector<KWindow *> *window;
-    
+
     vector<TObjectOrder> rowTranslator1;
     vector<TObjectOrder> rowTranslator2;
 };
@@ -58,6 +58,11 @@ class Histogram
   public:
     Histogram();
     ~Histogram();
+
+    bool getThreeDimensions() const;
+
+    TRecordTime getBeginTime() const;
+    TRecordTime getEndTime() const;
 
     void setControlWindow( KWindow *whichWindow );
     void setDataWindow( KWindow *whichWindow );
@@ -98,6 +103,9 @@ class Histogram
 
     bool threeDimensions;
 
+    TRecordTime beginTime;
+    TRecordTime endTime;
+
     THistogramLimit controlMin;
     THistogramLimit controlMax;
     THistogramLimit controlDelta;
@@ -127,6 +135,7 @@ class Histogram
     void initMatrix( THistogramColumn numPlanes, THistogramColumn numCols,
                      TObjectOrder numRows );
     void initSemantic( TRecordTime beginTime );
+    void initStatistics();
 };
 
 
