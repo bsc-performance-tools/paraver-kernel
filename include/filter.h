@@ -18,7 +18,7 @@ class FilterFunction
     virtual bool execute( TSemanticValue param, TSemanticValue data ) = 0;
 
 //    virtual string getName() = 0;
-//    virtual SemanticFunction *create() = 0;
+//    virtual SemanticFunction *clone() = 0;
 
   protected:
 

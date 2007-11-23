@@ -16,7 +16,7 @@ class HistogramStatistic
     virtual void finish() = 0;
 
 //    virtual string getName() = 0;
-//    virtual SemanticFunction *create() = 0;
+//    virtual SemanticFunction *clone() = 0;
 
   protected:
 
