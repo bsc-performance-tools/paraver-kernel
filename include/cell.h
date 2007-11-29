@@ -16,17 +16,17 @@ class Cell
     Cell( TObjectOrder idRow, UINT16 numStats );
     ~Cell();
 
-    void Init( UINT16 idStat );
-    void Init( );
-    void SetValue( UINT16 idStat, ValueType semVal );
-    void SetValue( ValueType semVal );
-    void AddValue( UINT16 idStat, ValueType semVal );
-    void AddValue( ValueType semVal );
-    ValueType GetValue( UINT16 idStat ) const;
-    TObjectOrder GetRow( ) const;
-    void SetRow( TObjectOrder row );
+    void init( UINT16 idStat );
+    void init( );
+    void setValue( UINT16 idStat, ValueType semVal );
+    void setValue( ValueType semVal );
+    void addValue( UINT16 idStat, ValueType semVal );
+    void addValue( ValueType semVal );
+    ValueType getValue( UINT16 idStat ) const;
+    TObjectOrder getRow( ) const;
+    void setRow( TObjectOrder row );
 
-    void Print() const;
+    void print() const;
 
   private:
     TObjectOrder row;

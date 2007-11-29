@@ -9,11 +9,11 @@ class HistogramStatistic;
 class RowsTranslator
 {
   public:
-/*
-    PRECOND1: windows vector comes downwards level ordered.
-    PRECOND2: KWindows in window vector have same hierarchy.
-    PRECOND3: windows vector size is 2 or 3 KWindows.
-*/
+    /*
+        PRECOND1: windows vector comes downwards level ordered.
+        PRECOND2: KWindows in window vector have same hierarchy.
+        PRECOND3: windows vector size is 2 or 3 KWindows.
+    */
 
     RowsTranslator( vector<KWindow *>& windows );
     ~RowsTranslator();
@@ -51,6 +51,16 @@ class ColumnTranslator
     bool discrete;
 };
 
+
+struct CalculateData
+{
+  TObjectOrder row;
+  THistogramColumn column;
+  THistogramColumn plane;
+
+  TObjectOrder controlRow;
+  TObjectOrder dataRow;
+};
 
 
 class Histogram
@@ -92,7 +102,7 @@ class Histogram
     void clearStatistics();
     void pushbackStatistic( HistogramStatistic *whichStatistic );
 
-    void execute( TRecordTime beginTime, TRecordTime endTime );
+    void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime );
 
   protected:
 
@@ -105,6 +115,10 @@ class Histogram
 
     TRecordTime beginTime;
     TRecordTime endTime;
+
+    TObjectOrder numRows;
+    THistogramColumn numCols;
+    THistogramColumn numPlanes;
 
     THistogramLimit controlMin;
     THistogramLimit controlMax;
@@ -136,6 +150,9 @@ class Histogram
                      TObjectOrder numRows );
     void initSemantic( TRecordTime beginTime );
     void initStatistics();
+    void recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
+                             TObjectOrder fromRow, TObjectOrder toRow,
+                             UINT16 winIndex = 0, CalculateData *data = NULL );
 };
 
 

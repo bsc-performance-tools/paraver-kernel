@@ -19,24 +19,24 @@ class Column
     Column( int currentRow, short numStats, bool *mat_finished );
     ~Column();
 
-    void Init( short idStat );
-    void Init( );
-    void SetValue( short idStat, ValueType semVal );
-    void SetValue( ValueType semVal );
-    void AddValue( short idStat, ValueType semVal );
-    void AddValue( ValueType semVal );
-    ValueType GetCurrentValue( short idStat ) const;
-    int GetCurrentRow( ) const;
-    void NewRow( );
-    void NewRow( int row );
-    void SetNextCell( );
-    void SetFirstCell( );
-    bool EndCell( );
-    void Print() const;
+    void init( short idStat );
+    void init( );
+    void setValue( short idStat, ValueType semVal );
+    void setValue( ValueType semVal );
+    void addValue( short idStat, ValueType semVal );
+    void addValue( ValueType semVal );
+    ValueType getCurrentValue( short idStat ) const;
+    int getCurrentRow( ) const;
+    void newRow( );
+    void newRow( int row );
+    void setNextCell( );
+    void setFirstCell( );
+    bool endCell( );
+    void print() const;
 
   private:
-/*    deque<Cell<ValueType> *> cells;
-    typename deque<Cell<ValueType> *>::iterator it_cell;*/
+    /*    deque<Cell<ValueType> *> cells;
+        typename deque<Cell<ValueType> *>::iterator it_cell;*/
     vector<Cell<ValueType> *> cells;
     typename vector<Cell<ValueType> *>::iterator it_cell;
 

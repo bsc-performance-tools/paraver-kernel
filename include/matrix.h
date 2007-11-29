@@ -13,23 +13,23 @@ class Matrix
     Matrix( TObjectOrder currentRow, UINT32 numCols, UINT16 numStats );
     ~Matrix();
 
-    void Init( UINT16 idStat );
-    void Init( );
-    void SetValue( UINT32 col, UINT16 idStat, ValueType semVal );
-    void SetValue( UINT32 col, ValueType semVal );
-    void AddValue( UINT32 col, UINT16 idStat, ValueType semVal );
-    void AddValue( UINT32 col, ValueType semVal );
-    ValueType GetCurrentValue( UINT32 col, UINT16 idStat ) const;
-    TObjectOrder GetCurrentRow( UINT32 col ) const;
-    void NewRow( );
-    void NewRow( UINT32 col, TObjectOrder row );
-    void Finish( );
-    void SetNextCell( UINT32 col );
-    void SetFirstCell( UINT32 col );
-    bool EndCell( UINT32 col );
-    void EraseColumns( UINT32 ini_col, UINT32 fin_col );
+    void init( UINT16 idStat );
+    void init( );
+    void setValue( UINT32 col, UINT16 idStat, ValueType semVal );
+    void setValue( UINT32 col, ValueType semVal );
+    void addValue( UINT32 col, UINT16 idStat, ValueType semVal );
+    void addValue( UINT32 col, ValueType semVal );
+    ValueType getCurrentValue( UINT32 col, UINT16 idStat ) const;
+    TObjectOrder getCurrentRow( UINT32 col ) const;
+    void newRow( );
+    void newRow( UINT32 col, TObjectOrder row );
+    void finish( );
+    void setNextCell( UINT32 col );
+    void setFirstCell( UINT32 col );
+    bool endCell( UINT32 col );
+    void eraseColumns( UINT32 ini_col, UINT32 fin_col );
 
-    void Print() const;
+    void print() const;
 
   private:
     vector<Column<ValueType> *> cols;

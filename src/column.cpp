@@ -10,7 +10,7 @@ Column<ValueType>::Column( short numStats, bool *mat_finished )
 {
   nstat = numStats;
   current_cell = new Cell<ValueType>( 0, nstat );
-  current_cell->Init();
+  current_cell->init();
   n_cells = 0;
   modified = false;
   finished = mat_finished;
@@ -22,7 +22,7 @@ Column<ValueType>::Column( int currentRow, short numStats, bool *mat_finished )
 {
   nstat = numStats;
   current_cell = new Cell<ValueType>( currentRow, nstat );
-  current_cell->Init();
+  current_cell->init();
   n_cells = 0;
   modified = false;
   finished = mat_finished;
@@ -32,40 +32,40 @@ Column<ValueType>::Column( int currentRow, short numStats, bool *mat_finished )
 template <typename ValueType>
 Column<ValueType>::~Column()
 {
-  for( unsigned int ii = 0; ii < n_cells; ii++ )
+  for ( unsigned int ii = 0; ii < n_cells; ii++ )
     delete cells[ ii ];
   cells.clear();
 
-  if( !modified )
+  if ( !modified )
     delete current_cell;
 }
 
 
 template <typename ValueType>
-void Column<ValueType>::Init( short idStat )
+void Column<ValueType>::init( short idStat )
 {
-  current_cell->Init( idStat );
+  current_cell->init( idStat );
 }
 
 
 template <typename ValueType>
-void Column<ValueType>::Init( )
+void Column<ValueType>::init( )
 {
-  current_cell->Init( );
+  current_cell->init( );
 }
 
 
 template <typename ValueType>
-void Column<ValueType>::SetValue( short idStat, ValueType semVal )
+void Column<ValueType>::setValue( short idStat, ValueType semVal )
 {
-  if( *finished )
+  if ( *finished )
   {
-    (*it_cell)->SetValue( idStat, semVal );
+    ( *it_cell )->setValue( idStat, semVal );
   }
   else
   {
-    current_cell->SetValue( idStat, semVal );
-    if( modified == false )
+    current_cell->setValue( idStat, semVal );
+    if ( modified == false )
     {
       cells.push_back( current_cell );
       n_cells++;
@@ -77,16 +77,16 @@ void Column<ValueType>::SetValue( short idStat, ValueType semVal )
 
 
 template <typename ValueType>
-void Column<ValueType>::SetValue( ValueType semVal )
+void Column<ValueType>::setValue( ValueType semVal )
 {
-  if( *finished )
+  if ( *finished )
   {
-    (*it_cell)->SetValue( semVal );
+    ( *it_cell )->setValue( semVal );
   }
   else
   {
-    current_cell->SetValue( semVal );
-    if( modified == false )
+    current_cell->setValue( semVal );
+    if ( modified == false )
     {
       cells.push_back( current_cell );
       n_cells++;
@@ -98,10 +98,10 @@ void Column<ValueType>::SetValue( ValueType semVal )
 
 
 template <typename ValueType>
-void Column<ValueType>::AddValue( short idStat, ValueType semVal )
+void Column<ValueType>::addValue( short idStat, ValueType semVal )
 {
-  current_cell->AddValue( idStat, semVal );
-  if( modified == false )
+  current_cell->addValue( idStat, semVal );
+  if ( modified == false )
   {
     cells.push_back( current_cell );
     n_cells++;
@@ -112,10 +112,10 @@ void Column<ValueType>::AddValue( short idStat, ValueType semVal )
 
 
 template <typename ValueType>
-void Column<ValueType>::AddValue( ValueType semVal )
+void Column<ValueType>::addValue( ValueType semVal )
 {
-  current_cell->AddValue( semVal );
-  if( modified == false )
+  current_cell->addValue( semVal );
+  if ( modified == false )
   {
     cells.push_back( current_cell );
     n_cells++;
@@ -126,84 +126,84 @@ void Column<ValueType>::AddValue( ValueType semVal )
 
 
 template <typename ValueType>
-ValueType Column<ValueType>::GetCurrentValue( short idStat ) const
+ValueType Column<ValueType>::getCurrentValue( short idStat ) const
 {
-  if( *finished )
+  if ( *finished )
   {
-    return (*it_cell)->GetValue( idStat );
+    return ( *it_cell )->getValue( idStat );
   }
 
-  return current_cell->GetValue( idStat );
+  return current_cell->getValue( idStat );
 }
 
 
 template <typename ValueType>
-int Column<ValueType>::GetCurrentRow( ) const
+int Column<ValueType>::getCurrentRow( ) const
 {
-  if( *finished )
+  if ( *finished )
   {
-    if( n_cells == 0 )
+    if ( n_cells == 0 )
       return -1;
     else
-      return (*it_cell)->GetRow();
+      return ( *it_cell )->getRow();
   }
 
-  return current_cell->GetRow();
+  return current_cell->getRow();
 }
 
 
 template <typename ValueType>
-void Column<ValueType>::NewRow( )
+void Column<ValueType>::newRow( )
 {
-  int tmp_row = GetCurrentRow();
+  int tmp_row = getCurrentRow();
 
-  if( modified )
+  if ( modified )
   {
     current_cell = new Cell<ValueType>( tmp_row + 1, nstat );
-    current_cell->Init();
+    current_cell->init();
     modified = false;
   }
   else
   {
-    current_cell->SetRow( tmp_row + 1 );
+    current_cell->setRow( tmp_row + 1 );
   }
 }
 
 
 template <typename ValueType>
-void Column<ValueType>::NewRow( int row )
+void Column<ValueType>::newRow( int row )
 {
-  if( modified )
+  if ( modified )
   {
     current_cell = new Cell<ValueType>( row, nstat );
-    current_cell->Init();
+    current_cell->init();
     modified = false;
   }
   else
   {
-    current_cell->SetRow( row );
+    current_cell->setRow( row );
   }
 }
 
 
 template <typename ValueType>
-void Column<ValueType>::SetNextCell( )
+void Column<ValueType>::setNextCell( )
 {
   it_cell++;
 }
 
 
 template <typename ValueType>
-void Column<ValueType>::SetFirstCell( )
+void Column<ValueType>::setFirstCell( )
 {
   it_cell = cells.begin();
 }
 
 
 template <typename ValueType>
-bool Column<ValueType>::EndCell( )
+bool Column<ValueType>::endCell( )
 {
-  if( n_cells == 0 )
+  if ( n_cells == 0 )
     return true;
 
   return ( it_cell == cells.end() );
@@ -213,11 +213,11 @@ bool Column<ValueType>::EndCell( )
 
 
 template <typename ValueType>
-void Column<ValueType>::Print() const
+void Column<ValueType>::print() const
 {
-  for( unsigned int ii = 0; ii < n_cells; ii++ )
+  for ( unsigned int ii = 0; ii < n_cells; ii++ )
   {
-    cells[ ii ]->Print();
+    cells[ ii ]->print();
     cout << endl;
   }
 }

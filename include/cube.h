@@ -11,27 +11,27 @@ class Cube
     Cube( UINT32 numPlanes, UINT32 numCols, UINT16 numStats );
     ~Cube();
 
-    void Init( UINT16 idStat );
-    void Init( );
-    void SetValue( UINT32 plane, UINT32 col, UINT16 idStat, ValueType semVal );
-    void SetValue( UINT32 plane, UINT32 col, ValueType semVal );
-    void AddValue( UINT32 plane, UINT32 col, UINT16 idStat, ValueType semVal );
-    void AddValue( UINT32 plane, UINT32 col, ValueType semVal );
-    ValueType GetCurrentValue( UINT32 plane, UINT32 col, UINT16 idStat ) const;
-    UINT32 GetCurrentRow( UINT32 plane, UINT32 col ) const;
-    UINT32 GetCurrentRow( ) const;
-    void NewRow( );
-    void NewRow( UINT32 plane, UINT32 col, UINT32 row );
-    void Finish( );
-    void SetNextCell( UINT32 plane, UINT32 col );
-    void SetFirstCell( UINT32 plane, UINT32 col );
-    bool EndCell( UINT32 plane, UINT32 col );
-    bool PlaneWithValues( UINT32 plane ) const;
-    UINT32 GetPlanes( ) const;
-    void EraseColumns( UINT32 ini_col, UINT32 fin_col );
-    void ErasePlanes( UINT32 ini_plane, UINT32 fin_plane );
+    void init( UINT16 idStat );
+    void init( );
+    void setValue( UINT32 plane, UINT32 col, UINT16 idStat, ValueType semVal );
+    void setValue( UINT32 plane, UINT32 col, ValueType semVal );
+    void addValue( UINT32 plane, UINT32 col, UINT16 idStat, ValueType semVal );
+    void addValue( UINT32 plane, UINT32 col, ValueType semVal );
+    ValueType getCurrentValue( UINT32 plane, UINT32 col, UINT16 idStat ) const;
+    UINT32 getCurrentRow( UINT32 plane, UINT32 col ) const;
+    UINT32 getCurrentRow( ) const;
+    void newRow( );
+    void newRow( UINT32 plane, UINT32 col, UINT32 row );
+    void finish( );
+    void setNextCell( UINT32 plane, UINT32 col );
+    void setFirstCell( UINT32 plane, UINT32 col );
+    bool endCell( UINT32 plane, UINT32 col );
+    bool planeWithValues( UINT32 plane ) const;
+    UINT32 getPlanes( ) const;
+    void eraseColumns( UINT32 ini_col, UINT32 fin_col );
+    void erasePlanes( UINT32 ini_plane, UINT32 fin_plane );
 
-    void Print() const;
+    void print() const;
 
   private:
     vector<Matrix<ValueType> *> planes;

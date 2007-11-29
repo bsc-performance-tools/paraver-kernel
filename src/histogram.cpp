@@ -286,17 +286,16 @@ void Histogram::pushbackStatistic( HistogramStatistic *whichStatistic )
 }
 
 
-void Histogram::execute( TRecordTime beginTime, TRecordTime endTime )
+void Histogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
 {
-  TObjectOrder numRows;
-  THistogramColumn numCols;
-  THistogramColumn numPlanes;
-
   if ( controlWindow == NULL )
     throw HistogramException( HistogramException::noControlWindow );
 
   if ( dataWindow == NULL )
     dataWindow = controlWindow;
+
+  beginTime = whichBeginTime;
+  endTime = whichEndTime;
 
   threeDimensions = ( xtraControlWindow != NULL );
 
@@ -317,7 +316,8 @@ void Histogram::execute( TRecordTime beginTime, TRecordTime endTime )
 
   // - Los totales podrian ser una clase aparte.
   // - Lanza la ejecucion recursiva (calculo parcial de totales?).
-  // - Calculo de totales.
+  recursiveExecution( beginTime, endTime, 0, rowsTranslator->totalRows() );
+  // - Finalizacion del calculo y de los totales.
   // - Se ordenan las columnas si es necesario.
 }
 
@@ -432,4 +432,76 @@ void Histogram::initStatistics()
   {
     ( *it )->init( this );
   }
+}
+
+
+void Histogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
+                                    TObjectOrder fromRow, TObjectOrder toRow,
+                                    UINT16 winIndex, CalculateData *data )
+{
+  TObjectOrder childFromRow;
+  TObjectOrder childToRow;
+  TRecordTime childFromTime;
+  TRecordTime childToTime;
+  KWindow *currentWindow = orderedWindows[ winIndex ];
+
+  if ( data == NULL )
+    data = new CalculateData;
+
+  for ( TObjectOrder iRow = fromRow; iRow <= toRow; iRow++ )
+  {
+    if ( winIndex == 0 )
+      data->row = rowsTranslator->globalTranslate( winIndex, iRow );
+    if ( currentWindow == controlWindow )
+      data->controlRow = iRow;
+    if ( currentWindow == dataWindow )
+      data->dataRow = iRow;
+
+    while ( currentWindow->getEndTime( iRow ) <= toTime )
+    {
+      if ( currentWindow == controlWindow )
+        data->column = columnTranslator->getColumn( controlWindow->getValue( iRow ) );
+      if ( threeDimensions && currentWindow == xtraControlWindow )
+        data->plane = planeTranslator->getColumn( xtraControlWindow->getValue( iRow ) );
+
+      if ( winIndex == orderedWindows.size() - 1 )
+      {
+        TSemanticValue value;
+
+        for ( UINT16 iStat = 0; iStat < statisticFunctions.size(); iStat++ )
+        {
+          value = statisticFunctions[ iStat ]->execute( data );
+
+          if ( threeDimensions )
+          {
+
+          }
+          else
+          {
+
+          }
+        }
+      }
+      else
+      {
+        childFromTime = ( fromTime < currentWindow->getBeginTime( iRow ) ) ?
+                        currentWindow->getBeginTime( iRow ) :
+                        fromTime;
+        childToTime = ( toTime > currentWindow->getEndTime( iRow ) ) ?
+                      currentWindow->getEndTime( iRow ) :
+                      toTime;
+        rowsTranslator->getRowChilds( winIndex, iRow, childFromRow, childToRow );
+
+        recursiveExecution( childFromTime, childToTime, childFromRow, childToRow,
+                            winIndex + 1, data );
+      }
+
+      currentWindow->calcNext( iRow );
+    }
+
+    // Puede que quede un valor si el begintime de la ventana es menor (o igual?)
+    // que el totime
+  }
+
+  delete data;
 }

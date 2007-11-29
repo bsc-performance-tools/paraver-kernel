@@ -10,20 +10,20 @@ class Statistic_2D
     ~Statistic_2D()
     {}
 
-    void Init();
-    void SetValue( ValueType semval );
-    void AddValue( ValueType semval );
-    void Finish();
+    void init();
+    void setValue( ValueType semval );
+    void addValue( ValueType semval );
+    void finish();
 
-    ValueType GetValue();
+    ValueType getValue();
 
-    void Print();
+    void print();
 
   protected:
     ValueType value;
 
 };
 
-// #include "statistic_2d.cpp"
+#include "src/statistic_2d.cpp"
 
 #endif //_STATISTIC_2D_H
