@@ -317,6 +317,18 @@ void Histogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
   // - Los totales podrian ser una clase aparte.
   // - Lanza la ejecucion recursiva (calculo parcial de totales?).
   recursiveExecution( beginTime, endTime, 0, rowsTranslator->totalRows() );
+  if ( threeDimensions )
+  {
+    cube->finish();
+    if ( createComms() )
+      commCube->finish();
+  }
+  else
+  {
+    matrix->finish();
+    if ( createComms() )
+      commMatrix->finish();
+  }
   // - Finalizacion del calculo y de los totales.
   // - Se ordenan las columnas si es necesario.
 }
@@ -471,14 +483,30 @@ void Histogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
         for ( UINT16 iStat = 0; iStat < statisticFunctions.size(); iStat++ )
         {
           value = statisticFunctions[ iStat ]->execute( data );
-
-          if ( threeDimensions )
+          Cube<TSemanticValue> *myCube;
+          Matrix<TSemanticValue> *myMatrix;
+          if ( statisticFunctions[ iStat ]->createComms() )
           {
-
+            myCube = commCube;
+            myMatrix = commMatrix;
           }
           else
           {
+            myCube = cube;
+            myMatrix = matrix;
+          }
 
+          if ( threeDimensions )
+          {
+            if ( myCube->getCurrentRow( data->plane, data->column ) != data->row )
+              myCube->newRow( data->plane, data->column, data->row );
+            myCube->addValue( data->plane, data->column, iStat, value );
+          }
+          else
+          {
+            if ( myMatrix->getCurrentRow( data->column ) != data->row )
+              myMatrix->newRow( data->column, data->row );
+            myMatrix->addValue( data->column, iStat, value );
           }
         }
       }
