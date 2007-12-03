@@ -7,7 +7,19 @@ FunctionManagement<T> *FunctionManagement<T>::inst = NULL;
 
 
 template <class T>
-FunctionManagement<T>::FunctionManagement( vector<string>& names, vector<T>& objects )
+FunctionManagement<T>::~FunctionManagement()
+{
+  typename map<string, T>::iterator it = hash.find( name );
+  while ( it != hash.end() )
+  {
+    delete ( *it ).second;
+    it++;
+  }
+}
+
+
+template <class T>
+FunctionManagement<T>::FunctionManagement( vector<string>& names, vector<T *>& objects )
 {
   int i;
 
@@ -29,7 +41,7 @@ FunctionManagement<T> *FunctionManagement<T>::getInstance()
 
 
 template <class T>
-FunctionManagement<T> *FunctionManagement<T>::getInstance( vector<string>& names, vector<T>& objects )
+FunctionManagement<T> *FunctionManagement<T>::getInstance( vector<string>& names, vector<T *>& objects )
 {
 
   inst = new FunctionManagement( names, objects );
@@ -45,7 +57,7 @@ T *FunctionManagement<T>::getFunction( const string& name )
 
   typename map<string, T>::iterator it = hash.find( name );
   if ( it != hash.end() )
-    retval = ( ( *it ).second ).clone();
+    retval = ( ( *it ).second )->clone();
 
   return retval;
 }

@@ -10,15 +10,17 @@ class FunctionManagement
 
   private:
     static FunctionManagement *inst;
-    map<string, T> hash;
+    map<string, T *> hash;
 
-    FunctionManagement( vector<string> &, vector<T> & );
+    FunctionManagement( vector<string> &, vector<T *> & );
 
 
   public:
+    ~FunctionManagement();
+
     T *getFunction( const string& );
     static FunctionManagement *getInstance();
-    static FunctionManagement *getInstance( vector<string> &, vector<T> & );
+    static FunctionManagement *getInstance( vector<string> &, vector<T *> & );
 
 };
 
