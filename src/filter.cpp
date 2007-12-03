@@ -148,36 +148,43 @@ bool Filter::filterEvents( MemoryTrace::iterator *it )
 }
 
 
+string FilterAll::name = "All";
 bool FilterAll::execute( TSemanticValue param, TSemanticValue data )
 {
   return true;
 }
 
+string FilterNone::name = "None";
 bool FilterNone::execute( TSemanticValue param, TSemanticValue data )
 {
   return false;
 }
 
+string FilterEqual::name = "=";
 bool FilterEqual::execute( TSemanticValue param, TSemanticValue data )
 {
   return data == param;
 }
 
+string FilterNotEqual::name = "!=";
 bool FilterNotEqual::execute( TSemanticValue param, TSemanticValue data )
 {
   return data != param;
 }
 
+string FilterGreater::name = ">";
 bool FilterGreater::execute( TSemanticValue param, TSemanticValue data )
 {
   return data > param;
 }
 
+string FilterFewer::name = "<";
 bool FilterFewer::execute( TSemanticValue param, TSemanticValue data )
 {
   return data < param;
 }
 
+string FilterRange::name = "[x,y]";
 bool FilterRange::execute( TSemanticValue param, TSemanticValue data )
 {
   bool tmp = true;

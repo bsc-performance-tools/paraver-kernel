@@ -30,6 +30,19 @@ class ComposeAsIs: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
+
+    virtual string getName()
+    {
+      return ComposeAsIs::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeAsIs(*this);
+    }
+
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -44,7 +57,7 @@ class ComposeAsIs: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-
+    static string name;
 };
 
 
@@ -74,6 +87,16 @@ class ComposeSign: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return ComposeSign::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeSign(*this);
+    }
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -88,6 +111,7 @@ class ComposeSign: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -118,6 +142,16 @@ class ComposeUnsign: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return ComposeUnsign::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeUnsign(*this);
+    }
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -132,6 +166,7 @@ class ComposeUnsign: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -163,6 +198,16 @@ class ComposeMod: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return ComposeMod::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeMod(*this);
+    }
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -181,6 +226,7 @@ class ComposeMod: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -212,6 +258,17 @@ class ComposeModPlus1: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return ComposeModPlus1::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeModPlus1(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -230,6 +287,7 @@ class ComposeModPlus1: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -261,6 +319,16 @@ class ComposeDivide: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return ComposeDivide::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeDivide(*this);
+    }
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -279,6 +347,7 @@ class ComposeDivide: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -310,6 +379,17 @@ class ComposeProduct: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return ComposeProduct::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeProduct(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -328,6 +408,7 @@ class ComposeProduct: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -359,6 +440,16 @@ class ComposeAdding: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return ComposeAdding::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeAdding(*this);
+    }
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -377,6 +468,7 @@ class ComposeAdding: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -408,6 +500,17 @@ class ComposeSubstract: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return ComposeSubstract::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeSubstract(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -426,6 +529,7 @@ class ComposeSubstract: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -458,6 +562,17 @@ class ComposeSelectRange: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return ComposeSelectRange::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeSelectRange(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -479,6 +594,7 @@ class ComposeSelectRange: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -511,6 +627,17 @@ class ComposeIsInRange: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return ComposeIsInRange::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeIsInRange(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -532,6 +659,7 @@ class ComposeIsInRange: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -563,6 +691,17 @@ class ComposeIsEqual: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return ComposeIsEqual::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeIsEqual(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -582,6 +721,7 @@ class ComposeIsEqual: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -613,6 +753,17 @@ class ComposeIsEqualSign: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return ComposeIsEqualSign::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeIsEqualSign(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -632,6 +783,7 @@ class ComposeIsEqualSign: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -661,6 +813,17 @@ class ComposeStackedValue: public SemanticCompose
 
     virtual void init( KWindow *whichWindow );
 
+    virtual string getName()
+    {
+      return ComposeStackedValue::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeStackedValue(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -678,6 +841,7 @@ class ComposeStackedValue: public SemanticCompose
 
   private:
     static const bool initFromBegin = true;
+    static string name;
 
     vector<stack<TSemanticValue> > myStack;
 };
@@ -709,6 +873,17 @@ class ComposeInStackedValue: public SemanticCompose
 
     virtual void init( KWindow *whichWindow );
 
+    virtual string getName()
+    {
+      return ComposeInStackedValue::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeInStackedValue(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -728,6 +903,7 @@ class ComposeInStackedValue: public SemanticCompose
 
   private:
     static const bool initFromBegin = true;
+    static string name;
 
     vector<stack<TSemanticValue> > myStack;
 };
@@ -758,6 +934,17 @@ class ComposeNestingLevel: public SemanticCompose
 
     virtual void init( KWindow *whichWindow );
 
+    virtual string getName()
+    {
+      return ComposeNestingLevel::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeNestingLevel(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -775,6 +962,7 @@ class ComposeNestingLevel: public SemanticCompose
 
   private:
     static const bool initFromBegin = true;
+    static string name;
 
     vector<TSemanticValue> myStack;
 };
@@ -805,6 +993,17 @@ class ComposeDelta: public SemanticCompose
 
     virtual void init( KWindow *whichWindow );
 
+    virtual string getName()
+    {
+      return ComposeDelta::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeDelta(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -822,6 +1021,7 @@ class ComposeDelta: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
     vector<TSemanticValue> prevValue;
     vector<TSemanticValue> semPrevValue;
@@ -854,6 +1054,17 @@ class ComposeBurstTime: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return ComposeBurstTime::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeBurstTime(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -871,6 +1082,8 @@ class ComposeBurstTime: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -900,6 +1113,17 @@ class ComposeJoinBursts: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return ComposeJoinBursts::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeJoinBursts(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -917,6 +1141,8 @@ class ComposeJoinBursts: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
+    static string name;
+
 };
 
 #endif // SEMANTICCOMPOSEFUNCTIONS_H_INCLUDED

@@ -17,8 +17,8 @@ class FilterFunction
 
     virtual bool execute( TSemanticValue param, TSemanticValue data ) = 0;
 
-//    virtual string getName() = 0;
-//    virtual SemanticFunction *clone() = 0;
+    virtual string getName() = 0;
+    virtual FilterFunction *clone() = 0;
 
   protected:
 
@@ -35,9 +35,22 @@ class FilterAll:public FilterFunction
     {}
 
     virtual bool execute( TSemanticValue param, TSemanticValue data );
+
+    virtual string getName()
+    {
+      return FilterAll::name;
+    }
+
+    virtual FilterFunction *clone()
+    {
+      return new FilterAll(*this);
+    }
+
+
   protected:
 
   private:
+    static string name;
 
 };
 
@@ -50,9 +63,22 @@ class FilterNotEqual:public FilterFunction
     {}
 
     virtual bool execute( TSemanticValue param, TSemanticValue data );
+
+    virtual string getName()
+    {
+      return FilterNotEqual::name;
+    }
+                                                                                
+    virtual FilterFunction *clone()
+    {
+      return new FilterNotEqual(*this);
+    }
+
   protected:
 
   private:
+    static string name;
+
 
 };
 
@@ -65,9 +91,22 @@ class FilterEqual:public FilterFunction
     {}
 
     virtual bool execute( TSemanticValue param, TSemanticValue data );
+
+    virtual string getName()
+    {
+      return FilterEqual::name;
+    }
+                                                                                
+    virtual FilterFunction *clone()
+    {
+      return new FilterEqual(*this);
+    }
+
   protected:
 
   private:
+    static string name;
+
 
 };
 
@@ -80,9 +119,21 @@ class FilterGreater:public FilterFunction
     {}
 
     virtual bool execute( TSemanticValue param, TSemanticValue data );
+
+    virtual string getName()
+    {
+      return FilterGreater::name;
+    }
+                                                                                
+    virtual FilterFunction *clone()
+    {
+      return new FilterGreater(*this);
+    }
+
   protected:
 
   private:
+    static string name;
 
 };
 
@@ -95,9 +146,21 @@ class FilterFewer:public FilterFunction
     {}
 
     virtual bool execute( TSemanticValue param, TSemanticValue data );
+
+    virtual string getName()
+    {
+      return FilterFewer::name;
+    }
+                                                                                
+    virtual FilterFunction *clone()
+    {
+      return new FilterFewer(*this);
+    }
+
   protected:
 
   private:
+    static string name;
 
 };
 
@@ -111,9 +174,21 @@ class FilterNone:public FilterFunction
     {}
 
     virtual bool execute( TSemanticValue param, TSemanticValue data );
+
+    virtual string getName()
+    {
+      return FilterNone::name;
+    }
+                                                                                
+    virtual FilterFunction *clone()
+    {
+      return new FilterNone(*this);
+    }
+
   protected:
 
   private:
+    static string name;
 
 };
 
@@ -128,12 +203,25 @@ class FilterRange:public FilterFunction
     {}
 
     virtual bool execute( TSemanticValue param, TSemanticValue data );
+
+    virtual string getName()
+    {
+      return FilterRange::name;
+    }
+                                                                                
+    virtual FilterFunction *clone()
+    {
+      return new FilterRange(*this);
+    }
+
   protected:
 
   private:
     static const bool MINOR = true;
     static const bool MAJOR = false;
     bool position;
+    static string name;
+
 };
 
 class Filter

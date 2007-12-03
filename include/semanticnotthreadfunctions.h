@@ -27,6 +27,18 @@ class Adding: public SemanticNotThread
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return Adding::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new Adding(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -41,7 +53,7 @@ class Adding: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
-
+    static string name;
 };
 
 
@@ -69,6 +81,18 @@ class AddingSign: public SemanticNotThread
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return AddingSign::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new AddingSign(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -83,6 +107,7 @@ class AddingSign: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -111,6 +136,18 @@ class Average: public SemanticNotThread
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return Average::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new Average(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -125,6 +162,7 @@ class Average: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -153,6 +191,18 @@ class Maximum: public SemanticNotThread
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return Maximum::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new Maximum(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -167,6 +217,7 @@ class Maximum: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -195,6 +246,18 @@ class Minimum: public SemanticNotThread
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return Minimum::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new Minimum(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -209,6 +272,7 @@ class Minimum: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -238,6 +302,17 @@ class Activity: public SemanticNotThread
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return Activity::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new Activity(*this);
+    }
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -257,6 +332,7 @@ class Activity: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -286,6 +362,18 @@ class InActivity: public SemanticNotThread
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return InActivity::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new InActivity(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -305,6 +393,7 @@ class InActivity: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -333,6 +422,18 @@ class NotThreadMode: public SemanticNotThread
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return NotThreadMode::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new NotThreadMode(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -348,6 +449,7 @@ class NotThreadMode: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -377,6 +479,18 @@ class ObjectI: public SemanticNotThread
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return ObjectI::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ObjectI(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -396,6 +510,7 @@ class ObjectI: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -425,6 +540,18 @@ class AddObjectsI: public SemanticNotThread
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return AddObjectsI::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new AddObjectsI(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -444,6 +571,7 @@ class AddObjectsI: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 

@@ -39,6 +39,17 @@ class StateAsIs: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return StateAsIs::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new StateAsIs(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -57,6 +68,7 @@ class StateAsIs: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
+    static string name;
 };
 
 
@@ -81,6 +93,17 @@ class Useful: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return Useful::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new Useful(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -99,6 +122,8 @@ class Useful: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -123,6 +148,17 @@ class StateSign: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return StateSign::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new StateSign(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -141,6 +177,8 @@ class StateSign: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -166,6 +204,17 @@ class GivenState: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return GivenState::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new GivenState(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -189,6 +238,8 @@ class GivenState: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -214,6 +265,17 @@ class InState: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return InState::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new InState(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -237,6 +299,8 @@ class InState: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -262,6 +326,17 @@ class NotInState: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return NotInState::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new NotInState(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -285,6 +360,8 @@ class NotInState: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -310,6 +387,17 @@ class StateRecordDuration: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return StateRecordDuration::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new StateRecordDuration(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -333,6 +421,8 @@ class StateRecordDuration: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -361,6 +451,17 @@ class LastEventType: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return LastEventType::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new LastEventType(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -379,6 +480,8 @@ class LastEventType: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -403,6 +506,17 @@ class LastEventValue: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return LastEventValue::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new LastEventValue(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -421,6 +535,8 @@ class LastEventValue: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -445,6 +561,17 @@ class LastEventValueWOBursts: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return LastEventValueWOBursts::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new LastEventValueWOBursts(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -463,6 +590,8 @@ class LastEventValueWOBursts: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -487,6 +616,17 @@ class NextEventType: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return NextEventType::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new NextEventType(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -505,6 +645,8 @@ class NextEventType: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -529,6 +671,17 @@ class NextEventValue: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return NextEventValue::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new NextEventValue(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -547,6 +700,8 @@ class NextEventValue: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -572,6 +727,17 @@ class AverageNextEventValue: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return AverageNextEventValue::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new AverageNextEventValue(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -595,6 +761,8 @@ class AverageNextEventValue: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -620,6 +788,17 @@ class AverageLastEventValue: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return AverageLastEventValue::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new AverageLastEventValue(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -643,6 +822,8 @@ class AverageLastEventValue: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -668,6 +849,18 @@ class GivenEventValue: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return GivenEventValue::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new GivenEventValue(*this);
+    }
+
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -691,6 +884,8 @@ class GivenEventValue: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -716,6 +911,17 @@ class InEventValue: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return InEventValue::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new InEventValue(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -739,6 +945,8 @@ class InEventValue: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -763,6 +971,17 @@ class IntervalBetweenEvents: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return IntervalBetweenEvents::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new IntervalBetweenEvents(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -781,6 +1000,8 @@ class IntervalBetweenEvents: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -806,6 +1027,17 @@ class NotInEventValue: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return NotInEventValue::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new NotInEventValue(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -829,6 +1061,8 @@ class NotInEventValue: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -855,6 +1089,17 @@ class InEventRange: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return InEventRange::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new InEventRange(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -880,6 +1125,8 @@ class InEventRange: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -904,6 +1151,17 @@ class EventBytes: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return EventBytes::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new EventBytes(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -922,6 +1180,8 @@ class EventBytes: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -950,6 +1210,17 @@ class LastTag: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return LastTag::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new LastTag(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -968,6 +1239,8 @@ class LastTag: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + PHY + RECV;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -992,6 +1265,17 @@ class CommSize: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return CommSize::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new CommSize(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1010,6 +1294,8 @@ class CommSize: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -1034,6 +1320,17 @@ class CommRecvPartner: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return CommRecvPartner::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new CommRecvPartner(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1052,6 +1349,8 @@ class CommRecvPartner: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + LOG + RECV;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -1076,6 +1375,16 @@ class CommPartner: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return CommPartner::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new CommPartner(*this);
+    }
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1094,6 +1403,8 @@ class CommPartner: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + LOG + SEND;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -1118,6 +1429,17 @@ class LastSendDuration: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return LastSendDuration::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new LastSendDuration(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1136,6 +1458,8 @@ class LastSendDuration: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + LOG + SEND;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -1160,6 +1484,17 @@ class NextRecvDuration: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return NextRecvDuration::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new NextRecvDuration(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1178,6 +1513,8 @@ class NextRecvDuration: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + LOG + RECV;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -1202,6 +1539,17 @@ class SendBytesInTransit: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return SendBytesInTransit::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new SendBytesInTransit(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1220,6 +1568,8 @@ class SendBytesInTransit: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + SEND + RRECV;
     static const bool         initFromBegin = true;
+    static string name;
+
 };
 
 
@@ -1244,6 +1594,17 @@ class SendMessagesInTransit: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return SendMessagesInTransit::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new SendMessagesInTransit(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1262,6 +1623,8 @@ class SendMessagesInTransit: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + SEND + RRECV;
     static const bool         initFromBegin = true;
+    static string name;
+
 };
 
 
@@ -1286,6 +1649,17 @@ class SendBandWidth: public SemanticThread
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow );
 
+    virtual string getName()
+    {
+      return SendBandWidth::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new SendBandWidth(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1309,6 +1683,8 @@ class SendBandWidth: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + SEND + RRECV;
     static const bool         initFromBegin = true;
+    static string name;
+
 
     vector<INT64> bandwidth;
 };
@@ -1335,6 +1711,17 @@ class RecvBytesInTransit: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return RecvBytesInTransit::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new RecvBytesInTransit(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1353,6 +1740,8 @@ class RecvBytesInTransit: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + RECV + RSEND;
     static const bool         initFromBegin = true;
+    static string name;
+
 };
 
 
@@ -1377,6 +1766,17 @@ class RecvMessagesInTransit: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return RecvMessagesInTransit::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new RecvMessagesInTransit(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1395,6 +1795,8 @@ class RecvMessagesInTransit: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + RECV + RSEND;
     static const bool         initFromBegin = true;
+    static string name;
+
 };
 
 
@@ -1419,6 +1821,17 @@ class RecvBandWidth: public SemanticThread
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow );
 
+    virtual string getName()
+    {
+      return RecvBandWidth::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new RecvBandWidth(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1442,6 +1855,8 @@ class RecvBandWidth: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + RECV + RSEND;
     static const bool         initFromBegin = true;
+    static string name;
+
 
     vector<INT64> bandwidth;
 };
@@ -1468,6 +1883,17 @@ class RecvNegativeMessages: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return RecvNegativeMessages::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new RecvNegativeMessages(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1486,6 +1912,8 @@ class RecvNegativeMessages: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + RECV + RSEND;
     static const bool         initFromBegin = true;
+    static string name;
+
 };
 
 
@@ -1510,6 +1938,17 @@ class RecvNegativeBytes: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return RecvNegativeBytes::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new RecvNegativeBytes(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1528,6 +1967,8 @@ class RecvNegativeBytes: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + RECV + RSEND;
     static const bool         initFromBegin = true;
+    static string name;
+
 };
 
 
@@ -1552,6 +1993,17 @@ class NumberReceives: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return NumberReceives::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new NumberReceives(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1570,6 +2022,8 @@ class NumberReceives: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + RECV;
     static const bool         initFromBegin = true;
+    static string name;
+
 };
 
 
@@ -1594,6 +2048,17 @@ class NumberReceiveBytes: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return NumberReceiveBytes::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new NumberReceiveBytes(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1612,6 +2077,8 @@ class NumberReceiveBytes: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + RECV;
     static const bool         initFromBegin = true;
+    static string name;
+
 };
 
 
@@ -1640,6 +2107,17 @@ class ApplicationID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return ApplicationID::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ApplicationID(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1658,6 +2136,8 @@ class ApplicationID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -1682,6 +2162,17 @@ class TaskID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return TaskID::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new TaskID(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1700,6 +2191,8 @@ class TaskID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -1724,6 +2217,17 @@ class ThreadID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return ThreadID::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ThreadID(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1742,6 +2246,8 @@ class ThreadID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -1766,6 +2272,17 @@ class NodeID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return NodeID::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new NodeID(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1784,6 +2301,8 @@ class NodeID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -1808,6 +2327,17 @@ class CPUID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return CPUID::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new CPUID(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1826,6 +2356,8 @@ class CPUID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -1851,6 +2383,17 @@ class InApplicationID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return InApplicationID::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new InApplicationID(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1874,6 +2417,8 @@ class InApplicationID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -1899,6 +2444,17 @@ class InTaskID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return InTaskID::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new InTaskID(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1922,6 +2478,8 @@ class InTaskID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -1947,6 +2505,17 @@ class InThreadID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return InThreadID::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new InThreadID(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -1970,6 +2539,8 @@ class InThreadID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -1995,6 +2566,17 @@ class InNodeID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return InNodeID::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new InNodeID(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -2018,6 +2600,8 @@ class InNodeID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 
@@ -2043,6 +2627,17 @@ class InCPUID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return InCPUID::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new InCPUID(*this);
+    }
+
+
   protected:
     virtual const TRecordType getValidateMask()
     {
@@ -2066,6 +2661,8 @@ class InCPUID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
+    static string name;
+
 };
 
 #endif // SEMANTICTHREADFUNCTIONS_H_INCLUDED

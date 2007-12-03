@@ -2,6 +2,8 @@
 #include "semanticcomposefunctions.h"
 #include "kwindow.h"
 
+
+string ComposeAsIs::name = "As Is";
 TSemanticValue ComposeAsIs::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -9,6 +11,7 @@ TSemanticValue ComposeAsIs::execute( const SemanticInfo *info )
 }
 
 
+string ComposeSign::name = "Sign";
 TSemanticValue ComposeSign::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -19,6 +22,7 @@ TSemanticValue ComposeSign::execute( const SemanticInfo *info )
 }
 
 
+string ComposeUnsign::name = "1-Sign";
 TSemanticValue ComposeUnsign::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -34,6 +38,7 @@ TSemanticValue ComposeUnsign::execute( const SemanticInfo *info )
 }
 
 
+string ComposeMod::name = "Mod";
 TSemanticValue ComposeMod::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -51,6 +56,7 @@ TSemanticValue ComposeMod::execute( const SemanticInfo *info )
 }
 
 
+string ComposeModPlus1::name = "Mod+1";
 TSemanticValue ComposeModPlus1::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -68,6 +74,7 @@ TSemanticValue ComposeModPlus1::execute( const SemanticInfo *info )
 }
 
 
+string ComposeDivide::name = "Div";
 TSemanticValue ComposeDivide::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -85,6 +92,7 @@ TSemanticValue ComposeDivide::execute( const SemanticInfo *info )
 }
 
 
+string ComposeProduct::name = "Prod";
 TSemanticValue ComposeProduct::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -93,6 +101,7 @@ TSemanticValue ComposeProduct::execute( const SemanticInfo *info )
 }
 
 
+string ComposeAdding::name = "Add";
 TSemanticValue ComposeAdding::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -101,6 +110,7 @@ TSemanticValue ComposeAdding::execute( const SemanticInfo *info )
 }
 
 
+string ComposeSubstract::name = "Subs";
 TSemanticValue ComposeSubstract::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -109,6 +119,7 @@ TSemanticValue ComposeSubstract::execute( const SemanticInfo *info )
 }
 
 
+string ComposeSelectRange::name = "Select Range";
 TSemanticValue ComposeSelectRange::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -125,6 +136,7 @@ TSemanticValue ComposeSelectRange::execute( const SemanticInfo *info )
 }
 
 
+string ComposeIsInRange::name = "Is In Range";
 TSemanticValue ComposeIsInRange::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -141,6 +153,7 @@ TSemanticValue ComposeIsInRange::execute( const SemanticInfo *info )
 }
 
 
+string ComposeIsEqual::name = "Is Equal";
 TSemanticValue ComposeIsEqual::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -160,6 +173,7 @@ TSemanticValue ComposeIsEqual::execute( const SemanticInfo *info )
 }
 
 
+string ComposeIsEqualSign::name = "Is Equal (Sign)";
 TSemanticValue ComposeIsEqualSign::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -199,6 +213,7 @@ void ComposeStackedValue::init( KWindow *whichWindow )
 }
 
 
+string ComposeStackedValue::name = "Stacked Val";
 TSemanticValue ComposeStackedValue::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -240,6 +255,7 @@ void ComposeInStackedValue::init( KWindow *whichWindow )
 }
 
 
+string ComposeInStackedValue::name = "In Stacked Val";
 TSemanticValue ComposeInStackedValue::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -281,6 +297,8 @@ void ComposeNestingLevel::init( KWindow *whichWindow )
   }
 }
 
+
+string ComposeNestingLevel::name = "Nesting Level";
 TSemanticValue ComposeNestingLevel::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -324,6 +342,8 @@ void ComposeDelta::init( KWindow *whichWindow )
   }
 }
 
+
+string ComposeDelta::name = "Delta";
 TSemanticValue ComposeDelta::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -343,6 +363,7 @@ TSemanticValue ComposeDelta::execute( const SemanticInfo *info )
 }
 
 
+string ComposeBurstTime::name = "Burst Time";
 TSemanticValue ComposeBurstTime::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -353,6 +374,7 @@ TSemanticValue ComposeBurstTime::execute( const SemanticInfo *info )
 }
 
 
+string ComposeJoinBursts::name = "Join Bursts";
 TSemanticValue ComposeJoinBursts::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;

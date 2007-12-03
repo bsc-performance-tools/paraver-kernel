@@ -34,6 +34,17 @@ class DerivedAdd:public SemanticDerived
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return DerivedAdd::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new DerivedAdd(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -49,6 +60,7 @@ class DerivedAdd:public SemanticDerived
   private:
     static const bool initFromBegin = false;
     static const bool controlDerived = false;
+    static string name;
 };
 
 
@@ -83,6 +95,17 @@ class DerivedProduct:public SemanticDerived
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return DerivedProduct::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new DerivedProduct(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -98,6 +121,8 @@ class DerivedProduct:public SemanticDerived
   private:
     static const bool initFromBegin = false;
     static const bool controlDerived = false;
+    static string name;
+
 };
 
 
@@ -132,6 +157,17 @@ class DerivedSubstract:public SemanticDerived
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return DerivedSubstract::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new DerivedSubstract(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -147,6 +183,8 @@ class DerivedSubstract:public SemanticDerived
   private:
     static const bool initFromBegin = false;
     static const bool controlDerived = false;
+    static string name;
+
 };
 
 
@@ -179,6 +217,18 @@ class DerivedDivide:public SemanticDerived
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return DerivedDivide::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new DerivedDivide(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -194,6 +244,8 @@ class DerivedDivide:public SemanticDerived
   private:
     static const bool initFromBegin = false;
     static const bool controlDerived = false;
+    static string name;
+
 };
 
 
@@ -226,6 +278,18 @@ class DerivedMaximum:public SemanticDerived
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return DerivedMaximum::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new DerivedMaximum(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -241,6 +305,8 @@ class DerivedMaximum:public SemanticDerived
   private:
     static const bool initFromBegin = false;
     static const bool controlDerived = false;
+    static string name;
+
 };
 
 
@@ -273,6 +339,18 @@ class DerivedMinimum:public SemanticDerived
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return DerivedMinimum::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new DerivedMinimum(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -288,6 +366,8 @@ class DerivedMinimum:public SemanticDerived
   private:
     static const bool initFromBegin = false;
     static const bool controlDerived = false;
+    static string name;
+
 };
 
 
@@ -320,6 +400,17 @@ class ControlDerivedClearBy:public SemanticDerived
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow );
 
+    virtual string getName()
+    {
+      return ControlDerivedClearBy::name;
+    }
+                                                                                
+    virtual SemanticFunction *clone()
+    {
+      return new ControlDerivedClearBy(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -335,6 +426,7 @@ class ControlDerivedClearBy:public SemanticDerived
   private:
     static const bool initFromBegin = true;
     static const bool controlDerived = false;
+    static string name;
 
     vector<TSemanticValue> prevValue;
     vector<TSemanticValue> state;
@@ -372,6 +464,18 @@ class ControlDerivedMaximum:public SemanticDerived
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return ControlDerivedMaximum::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ControlDerivedMaximum(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -387,6 +491,8 @@ class ControlDerivedMaximum:public SemanticDerived
   private:
     static const bool initFromBegin = false;
     static const bool controlDerived = true;
+    static string name;
+
 };
 
 
@@ -419,6 +525,18 @@ class ControlDerivedAdd:public SemanticDerived
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return ControlDerivedAdd::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ControlDerivedAdd(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -434,6 +552,8 @@ class ControlDerivedAdd:public SemanticDerived
   private:
     static const bool initFromBegin = false;
     static const bool controlDerived = true;
+    static string name;
+
 };
 
 #endif // SEMANTICDERIVEDFUNCTIONS_H_INCLUDED

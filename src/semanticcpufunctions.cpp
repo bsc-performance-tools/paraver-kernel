@@ -1,5 +1,6 @@
 #include "semanticcpufunctions.h"
 
+string ActiveThread::name = "Active Thd";
 TSemanticValue ActiveThread::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -7,6 +8,7 @@ TSemanticValue ActiveThread::execute( const SemanticInfo *info )
 }
 
 
+string ActiveThreadSign::name = "Active Thd Sign";
 TSemanticValue ActiveThreadSign::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -16,6 +18,7 @@ TSemanticValue ActiveThreadSign::execute( const SemanticInfo *info )
 }
 
 
+string ActiveThreadValues::name = "Active Thd Val";
 TSemanticValue ActiveThreadValues::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
@@ -29,6 +32,7 @@ TSemanticValue ActiveThreadValues::execute( const SemanticInfo *info )
 }
 
 
+string ActiveThreadValuesSign::name = "Active Thd Val Sign";
 TSemanticValue ActiveThreadValuesSign::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;

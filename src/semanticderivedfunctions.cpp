@@ -1,6 +1,7 @@
 #include "semanticderivedfunctions.h"
 #include "kwindow.h"
 
+string DerivedAdd::name = "add";
 TSemanticValue DerivedAdd::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -11,6 +12,8 @@ TSemanticValue DerivedAdd::execute( const SemanticInfo *info )
   return tmp;
 }
 
+
+string DerivedProduct::name = "product";
 TSemanticValue DerivedProduct::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -21,6 +24,8 @@ TSemanticValue DerivedProduct::execute( const SemanticInfo *info )
   return tmp;
 }
 
+
+string DerivedSubstract::name = "substract";
 TSemanticValue DerivedSubstract::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -31,6 +36,8 @@ TSemanticValue DerivedSubstract::execute( const SemanticInfo *info )
   return tmp;
 }
 
+
+string DerivedDivide::name = "divide";
 TSemanticValue DerivedDivide::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0.0;
@@ -44,6 +51,8 @@ TSemanticValue DerivedDivide::execute( const SemanticInfo *info )
   return tmp;
 }
 
+
+string DerivedMaximum::name = "maximum";
 TSemanticValue DerivedMaximum::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -56,6 +65,8 @@ TSemanticValue DerivedMaximum::execute( const SemanticInfo *info )
   return tmp;
 }
 
+
+string DerivedMinimum::name = "minimum";
 TSemanticValue DerivedMinimum::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -68,6 +79,8 @@ TSemanticValue DerivedMinimum::execute( const SemanticInfo *info )
   return tmp;
 }
 
+
+string ControlDerivedClearBy::name = "controlled: clear by";
 TSemanticValue ControlDerivedClearBy::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -121,6 +134,8 @@ void ControlDerivedClearBy::init( KWindow *whichWindow )
   }
 }
 
+
+string ControlDerivedMaximum::name = "controlled: maximum";
 TSemanticValue ControlDerivedMaximum::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -134,6 +149,7 @@ TSemanticValue ControlDerivedMaximum::execute( const SemanticInfo *info )
 }
 
 
+string ControlDerivedAdd::name = "controlled: add";
 TSemanticValue ControlDerivedAdd::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;

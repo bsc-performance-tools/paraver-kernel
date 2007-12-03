@@ -27,6 +27,18 @@ class ActiveThread: public SemanticCPU
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return ActiveThread::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ActiveThread(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -41,7 +53,7 @@ class ActiveThread: public SemanticCPU
 
   private:
     static const bool initFromBegin = false;
-
+    static string name;
 };
 
 
@@ -69,6 +81,18 @@ class ActiveThreadSign: public SemanticCPU
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return ActiveThreadSign::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ActiveThreadSign(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -83,6 +107,7 @@ class ActiveThreadSign: public SemanticCPU
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -112,6 +137,18 @@ class ActiveThreadValues: public SemanticCPU
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow )
     {}
+
+    virtual string getName()
+    {
+      return ActiveThreadValues::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ActiveThreadValues(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -132,6 +169,7 @@ class ActiveThreadValues: public SemanticCPU
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 
@@ -163,6 +201,17 @@ class ActiveThreadValuesSign: public SemanticCPU
     virtual void init( KWindow *whichWindow )
     {}
 
+    virtual string getName()
+    {
+      return ActiveThreadValuesSign::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ActiveThreadValuesSign(*this);
+    }
+
+
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -183,6 +232,7 @@ class ActiveThreadValuesSign: public SemanticCPU
 
   private:
     static const bool initFromBegin = false;
+    static string name;
 
 };
 

@@ -1,6 +1,7 @@
 #include "semanticnotthreadfunctions.h"
 #include "paraverstatisticfuncions.h"
 
+string Adding::name = "Adding";
 TSemanticValue Adding::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -12,6 +13,8 @@ TSemanticValue Adding::execute( const SemanticInfo *info )
   return tmp;
 }
 
+
+string AddingSign::name = "AddingSign";
 TSemanticValue AddingSign::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -23,6 +26,7 @@ TSemanticValue AddingSign::execute( const SemanticInfo *info )
   return tmp > 0 ? 1 : 0;
 }
 
+string Average::name = "Average";
 TSemanticValue Average::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -34,6 +38,8 @@ TSemanticValue Average::execute( const SemanticInfo *info )
   return tmp / myInfo->values.size();
 }
 
+
+string Maximum::name = "Maximum";
 TSemanticValue Maximum::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -48,6 +54,8 @@ TSemanticValue Maximum::execute( const SemanticInfo *info )
   return tmp;
 }
 
+
+string Minimum::name = "Minimum";
 TSemanticValue Minimum::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -63,6 +71,7 @@ TSemanticValue Minimum::execute( const SemanticInfo *info )
 }
 
 
+string Activity::name = "Activity";
 TSemanticValue Activity::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -89,6 +98,7 @@ TSemanticValue Activity::execute( const SemanticInfo *info )
 }
 
 
+string InActivity::name = "In Activity";
 TSemanticValue InActivity::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -115,6 +125,7 @@ TSemanticValue InActivity::execute( const SemanticInfo *info )
 }
 
 
+string NotThreadMode::name = "Mode";
 TSemanticValue NotThreadMode::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -132,6 +143,7 @@ TSemanticValue NotThreadMode::execute( const SemanticInfo *info )
 }
 
 
+string ObjectI::name = "Thread i";
 TSemanticValue ObjectI::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -144,6 +156,7 @@ TSemanticValue ObjectI::execute( const SemanticInfo *info )
 }
 
 
+string AddObjectsI::name = "Add Tasks";
 TSemanticValue AddObjectsI::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;

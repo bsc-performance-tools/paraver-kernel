@@ -128,6 +128,7 @@ TSemanticValue getTotalCommSize( MemoryTrace::iterator *itBegin,
 ** State functions (Thread)
 ***************************/
 
+string StateAsIs::name = "State As Is";
 TSemanticValue StateAsIs::execute( const SemanticInfo *info )
 {
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
@@ -137,6 +138,7 @@ TSemanticValue StateAsIs::execute( const SemanticInfo *info )
 }
 
 
+string Useful::name = "Useful";
 TSemanticValue Useful::execute( const SemanticInfo *info )
 {
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
@@ -146,6 +148,7 @@ TSemanticValue Useful::execute( const SemanticInfo *info )
 }
 
 
+string StateSign::name = "State Sign";
 TSemanticValue StateSign::execute( const SemanticInfo *info )
 {
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
@@ -155,6 +158,8 @@ TSemanticValue StateSign::execute( const SemanticInfo *info )
 }
 
 
+
+string GivenState::name = "Given State";
 TSemanticValue GivenState::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -176,6 +181,7 @@ TSemanticValue GivenState::execute( const SemanticInfo *info )
 }
 
 
+string InState::name = "In State";
 TSemanticValue InState::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -197,6 +203,8 @@ TSemanticValue InState::execute( const SemanticInfo *info )
 }
 
 
+
+string NotInState::name = "Not In State";
 TSemanticValue NotInState::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 1;
@@ -218,6 +226,7 @@ TSemanticValue NotInState::execute( const SemanticInfo *info )
 }
 
 
+string StateRecordDuration::name = "State Record Dur.";
 TSemanticValue StateRecordDuration::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -244,6 +253,7 @@ TSemanticValue StateRecordDuration::execute( const SemanticInfo *info )
 ** Event functions (Thread)
 ***************************/
 
+string LastEventType::name = "Last Evt Type";
 TSemanticValue LastEventType::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -258,6 +268,7 @@ TSemanticValue LastEventType::execute( const SemanticInfo *info )
 }
 
 
+string LastEventValue::name = "Last Evt Val";
 TSemanticValue LastEventValue::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -274,6 +285,7 @@ TSemanticValue LastEventValue::execute( const SemanticInfo *info )
 //OJO!!!
 //No estoy seguro que funcione igual que en codigo antiguo, pero es que mirandolo
 // (el antiguo) es muy liado pa la tonteria que hace.
+string LastEventValueWOBursts::name = "Last Evt Val w/o Bursts";
 TSemanticValue LastEventValueWOBursts::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -291,6 +303,7 @@ TSemanticValue LastEventValueWOBursts::execute( const SemanticInfo *info )
 }
 
 
+string NextEventType::name = "Next Evt Type";
 TSemanticValue NextEventType::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -319,6 +332,7 @@ TSemanticValue NextEventType::execute( const SemanticInfo *info )
 }
 
 
+string NextEventValue::name = "Next Evt Val";
 TSemanticValue NextEventValue::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -347,6 +361,7 @@ TSemanticValue NextEventValue::execute( const SemanticInfo *info )
 }
 
 
+string AverageNextEventValue::name = "Avg Next Evt Val";
 TSemanticValue AverageNextEventValue::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -382,6 +397,7 @@ TSemanticValue AverageNextEventValue::execute( const SemanticInfo *info )
 }
 
 
+string AverageLastEventValue::name = "Avg Last Evt Val";
 TSemanticValue AverageLastEventValue::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -417,6 +433,7 @@ TSemanticValue AverageLastEventValue::execute( const SemanticInfo *info )
 }
 
 
+string GivenEventValue::name = "Given Evt Val";
 TSemanticValue GivenEventValue::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -439,6 +456,7 @@ TSemanticValue GivenEventValue::execute( const SemanticInfo *info )
 }
 
 
+string InEventValue::name = "In Evt Val";
 TSemanticValue InEventValue::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -461,6 +479,7 @@ TSemanticValue InEventValue::execute( const SemanticInfo *info )
 }
 
 
+string IntervalBetweenEvents::name = "Int. Between Evt";
 TSemanticValue IntervalBetweenEvents::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -490,6 +509,7 @@ TSemanticValue IntervalBetweenEvents::execute( const SemanticInfo *info )
 }
 
 
+string NotInEventValue::name = "Not In Evt Val";
 TSemanticValue NotInEventValue::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 1;
@@ -512,6 +532,7 @@ TSemanticValue NotInEventValue::execute( const SemanticInfo *info )
 }
 
 
+string InEventRange::name = "In Evt Range";
 TSemanticValue InEventRange::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -531,6 +552,7 @@ TSemanticValue InEventRange::execute( const SemanticInfo *info )
 }
 
 
+string EventBytes::name = "Event Bytes";
 TSemanticValue EventBytes::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -563,6 +585,7 @@ TSemanticValue EventBytes::execute( const SemanticInfo *info )
 ** Comm functions (Thread)
 ***************************/
 
+string LastTag::name = "Last Tag";
 TSemanticValue LastTag::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -578,6 +601,7 @@ TSemanticValue LastTag::execute( const SemanticInfo *info )
 }
 
 
+string CommSize::name = "Comm Size";
 TSemanticValue CommSize::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -593,6 +617,7 @@ TSemanticValue CommSize::execute( const SemanticInfo *info )
 }
 
 
+string CommRecvPartner::name = "Comm Recv. Partner";
 TSemanticValue CommRecvPartner::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -613,6 +638,7 @@ TSemanticValue CommRecvPartner::execute( const SemanticInfo *info )
 }
 
 
+string CommPartner::name = "Comm Partner";
 TSemanticValue CommPartner::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -633,6 +659,7 @@ TSemanticValue CommPartner::execute( const SemanticInfo *info )
 }
 
 
+string LastSendDuration::name = "Last Send Dur.";
 TSemanticValue LastSendDuration::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -661,6 +688,7 @@ TSemanticValue LastSendDuration::execute( const SemanticInfo *info )
 }
 
 
+string NextRecvDuration::name = "Next Recv Dur.";
 TSemanticValue NextRecvDuration::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -705,6 +733,7 @@ TSemanticValue NextRecvDuration::execute( const SemanticInfo *info )
 }
 
 
+string SendBytesInTransit::name = "Send Bytes in Transit";
 TSemanticValue SendBytesInTransit::execute( const SemanticInfo *info )
 {
   TSemanticValue size = 0;
@@ -757,6 +786,7 @@ TSemanticValue SendBytesInTransit::execute( const SemanticInfo *info )
 }
 
 
+string SendMessagesInTransit::name = "Send Messages in Transit";
 TSemanticValue SendMessagesInTransit::execute( const SemanticInfo *info )
 {
   TSemanticValue msgs = 0;
@@ -824,6 +854,8 @@ void SendBandWidth::init( KWindow *whichWindow )
     bandwidth.push_back( 0 );
 }
 
+
+string SendBandWidth::name = "Send BandWidth";
 TSemanticValue SendBandWidth::execute( const SemanticInfo *info )
 {
   TRecordTime time;
@@ -907,6 +939,7 @@ TSemanticValue SendBandWidth::execute( const SemanticInfo *info )
 }
 
 
+string RecvBytesInTransit::name = "Recv Bytes in Transit";
 TSemanticValue RecvBytesInTransit::execute( const SemanticInfo *info )
 {
   TSemanticValue size = 0;
@@ -959,6 +992,7 @@ TSemanticValue RecvBytesInTransit::execute( const SemanticInfo *info )
 }
 
 
+string RecvMessagesInTransit::name = "Recv Messages in Transit";
 TSemanticValue RecvMessagesInTransit::execute( const SemanticInfo *info )
 {
   TSemanticValue msgs = 0;
@@ -1028,6 +1062,8 @@ void RecvBandWidth::init( KWindow *whichWindow )
 }
 
 
+
+string RecvBandWidth::name = "Recv BandWidth";
 TSemanticValue RecvBandWidth::execute( const SemanticInfo *info )
 {
   TRecordTime time;
@@ -1110,6 +1146,7 @@ TSemanticValue RecvBandWidth::execute( const SemanticInfo *info )
 }
 
 
+string RecvNegativeMessages::name = "Recv Negative Messages";
 TSemanticValue RecvNegativeMessages::execute( const SemanticInfo *info )
 {
   TSemanticValue msgs = 0;
@@ -1162,6 +1199,7 @@ TSemanticValue RecvNegativeMessages::execute( const SemanticInfo *info )
 }
 
 
+string RecvNegativeBytes::name = "Recv Negative Bytes";
 TSemanticValue RecvNegativeBytes::execute( const SemanticInfo *info )
 {
   TSemanticValue size = 0;
@@ -1214,6 +1252,7 @@ TSemanticValue RecvNegativeBytes::execute( const SemanticInfo *info )
 }
 
 
+string NumberReceives::name = "Number Of Receives";
 TSemanticValue NumberReceives::execute( const SemanticInfo *info )
 {
   TSemanticValue msgs = 0;
@@ -1249,6 +1288,7 @@ TSemanticValue NumberReceives::execute( const SemanticInfo *info )
 }
 
 
+string NumberReceiveBytes::name = "Number Of Receive Bytes";
 TSemanticValue NumberReceiveBytes::execute( const SemanticInfo *info )
 {
   TSemanticValue bytes = 0;
@@ -1288,6 +1328,7 @@ TSemanticValue NumberReceiveBytes::execute( const SemanticInfo *info )
 ** Object functions (Thread)
 ***************************/
 
+string ApplicationID::name = "Application ID";
 TSemanticValue ApplicationID::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -1308,6 +1349,7 @@ TSemanticValue ApplicationID::execute( const SemanticInfo *info )
 }
 
 
+string TaskID::name = "TaskID";
 TSemanticValue TaskID::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -1328,6 +1370,7 @@ TSemanticValue TaskID::execute( const SemanticInfo *info )
 }
 
 
+string ThreadID::name = "Thread ID";
 TSemanticValue ThreadID::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -1343,6 +1386,7 @@ TSemanticValue ThreadID::execute( const SemanticInfo *info )
 }
 
 
+string NodeID::name = "Node ID";
 TSemanticValue NodeID::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -1362,6 +1406,7 @@ TSemanticValue NodeID::execute( const SemanticInfo *info )
 }
 
 
+string CPUID::name = "Cpu ID";
 TSemanticValue CPUID::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -1377,6 +1422,7 @@ TSemanticValue CPUID::execute( const SemanticInfo *info )
 }
 
 
+string InApplicationID::name = "In Appl ID";
 TSemanticValue InApplicationID::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -1403,6 +1449,7 @@ TSemanticValue InApplicationID::execute( const SemanticInfo *info )
 }
 
 
+string InTaskID::name = "In Task ID";
 TSemanticValue InTaskID::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -1429,6 +1476,7 @@ TSemanticValue InTaskID::execute( const SemanticInfo *info )
 }
 
 
+string InThreadID::name = "In Thread ID";
 TSemanticValue InThreadID::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -1450,6 +1498,7 @@ TSemanticValue InThreadID::execute( const SemanticInfo *info )
 }
 
 
+string InNodeID::name = "In Node ID";
 TSemanticValue InNodeID::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
@@ -1475,6 +1524,7 @@ TSemanticValue InNodeID::execute( const SemanticInfo *info )
 }
 
 
+string InCPUID::name = "In Cpu ID";
 TSemanticValue InCPUID::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;

@@ -52,8 +52,8 @@ class SemanticFunction
 
     virtual void init( KWindow *whichWindow ) = 0;
 
-//    virtual string getName() = 0;
-//    virtual SemanticFunction *clone() = 0;
+    virtual string getName() = 0;
+    virtual SemanticFunction *clone() = 0;
 
   protected:
     vector<TParamValue> parameters;
