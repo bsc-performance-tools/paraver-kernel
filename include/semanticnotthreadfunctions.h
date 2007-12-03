@@ -35,7 +35,7 @@ class Adding: public SemanticNotThread
 
     virtual SemanticFunction *clone()
     {
-      return new Adding(*this);
+      return new Adding( *this );
     }
 
 
@@ -89,7 +89,7 @@ class AddingSign: public SemanticNotThread
 
     virtual SemanticFunction *clone()
     {
-      return new AddingSign(*this);
+      return new AddingSign( *this );
     }
 
 
@@ -144,7 +144,7 @@ class Average: public SemanticNotThread
 
     virtual SemanticFunction *clone()
     {
-      return new Average(*this);
+      return new Average( *this );
     }
 
 
@@ -199,7 +199,7 @@ class Maximum: public SemanticNotThread
 
     virtual SemanticFunction *clone()
     {
-      return new Maximum(*this);
+      return new Maximum( *this );
     }
 
 
@@ -254,7 +254,7 @@ class Minimum: public SemanticNotThread
 
     virtual SemanticFunction *clone()
     {
-      return new Minimum(*this);
+      return new Minimum( *this );
     }
 
 
@@ -310,7 +310,7 @@ class Activity: public SemanticNotThread
 
     virtual SemanticFunction *clone()
     {
-      return new Activity(*this);
+      return new Activity( *this );
     }
 
   protected:
@@ -324,7 +324,7 @@ class Activity: public SemanticNotThread
 
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == VALUES )
+      else if ( whichParam == VALUES )
         tmp.push_back( 1 );
 
       return tmp;
@@ -370,7 +370,7 @@ class InActivity: public SemanticNotThread
 
     virtual SemanticFunction *clone()
     {
-      return new InActivity(*this);
+      return new InActivity( *this );
     }
 
 
@@ -385,7 +385,7 @@ class InActivity: public SemanticNotThread
 
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == VALUES )
+      else if ( whichParam == VALUES )
         tmp.push_back( 1 );
 
       return tmp;
@@ -430,7 +430,7 @@ class NotThreadMode: public SemanticNotThread
 
     virtual SemanticFunction *clone()
     {
-      return new NotThreadMode(*this);
+      return new NotThreadMode( *this );
     }
 
 
@@ -444,7 +444,7 @@ class NotThreadMode: public SemanticNotThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
 
-      return (TParamValue) 0;
+      return ( TParamValue ) 0;
     }
 
   private:
@@ -487,7 +487,7 @@ class ObjectI: public SemanticNotThread
 
     virtual SemanticFunction *clone()
     {
-      return new ObjectI(*this);
+      return new ObjectI( *this );
     }
 
 
@@ -548,7 +548,7 @@ class AddObjectsI: public SemanticNotThread
 
     virtual SemanticFunction *clone()
     {
-      return new AddObjectsI(*this);
+      return new AddObjectsI( *this );
     }
 
 

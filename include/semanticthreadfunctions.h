@@ -46,7 +46,7 @@ class StateAsIs: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new StateAsIs(*this);
+      return new StateAsIs( *this );
     }
 
 
@@ -100,7 +100,7 @@ class Useful: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new Useful(*this);
+      return new Useful( *this );
     }
 
 
@@ -155,7 +155,7 @@ class StateSign: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new StateSign(*this);
+      return new StateSign( *this );
     }
 
 
@@ -211,7 +211,7 @@ class GivenState: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new GivenState(*this);
+      return new GivenState( *this );
     }
 
 
@@ -272,7 +272,7 @@ class InState: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new InState(*this);
+      return new InState( *this );
     }
 
 
@@ -333,7 +333,7 @@ class NotInState: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new NotInState(*this);
+      return new NotInState( *this );
     }
 
 
@@ -394,7 +394,7 @@ class StateRecordDuration: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new StateRecordDuration(*this);
+      return new StateRecordDuration( *this );
     }
 
 
@@ -458,7 +458,7 @@ class LastEventType: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new LastEventType(*this);
+      return new LastEventType( *this );
     }
 
 
@@ -513,7 +513,7 @@ class LastEventValue: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new LastEventValue(*this);
+      return new LastEventValue( *this );
     }
 
 
@@ -568,7 +568,7 @@ class LastEventValueWOBursts: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new LastEventValueWOBursts(*this);
+      return new LastEventValueWOBursts( *this );
     }
 
 
@@ -623,7 +623,7 @@ class NextEventType: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new NextEventType(*this);
+      return new NextEventType( *this );
     }
 
 
@@ -678,7 +678,7 @@ class NextEventValue: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new NextEventValue(*this);
+      return new NextEventValue( *this );
     }
 
 
@@ -734,7 +734,7 @@ class AverageNextEventValue: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new AverageNextEventValue(*this);
+      return new AverageNextEventValue( *this );
     }
 
 
@@ -795,7 +795,7 @@ class AverageLastEventValue: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new AverageLastEventValue(*this);
+      return new AverageLastEventValue( *this );
     }
 
 
@@ -856,7 +856,7 @@ class GivenEventValue: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new GivenEventValue(*this);
+      return new GivenEventValue( *this );
     }
 
 
@@ -918,7 +918,7 @@ class InEventValue: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new InEventValue(*this);
+      return new InEventValue( *this );
     }
 
 
@@ -978,7 +978,7 @@ class IntervalBetweenEvents: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new IntervalBetweenEvents(*this);
+      return new IntervalBetweenEvents( *this );
     }
 
 
@@ -1034,7 +1034,7 @@ class NotInEventValue: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new NotInEventValue(*this);
+      return new NotInEventValue( *this );
     }
 
 
@@ -1096,7 +1096,7 @@ class InEventRange: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new InEventRange(*this);
+      return new InEventRange( *this );
     }
 
 
@@ -1158,7 +1158,7 @@ class EventBytes: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new EventBytes(*this);
+      return new EventBytes( *this );
     }
 
 
@@ -1217,7 +1217,7 @@ class LastTag: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new LastTag(*this);
+      return new LastTag( *this );
     }
 
 
@@ -1272,7 +1272,7 @@ class CommSize: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new CommSize(*this);
+      return new CommSize( *this );
     }
 
 
@@ -1327,7 +1327,7 @@ class CommRecvPartner: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new CommRecvPartner(*this);
+      return new CommRecvPartner( *this );
     }
 
 
@@ -1382,7 +1382,7 @@ class CommPartner: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new CommPartner(*this);
+      return new CommPartner( *this );
     }
 
   protected:
@@ -1436,7 +1436,7 @@ class LastSendDuration: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new LastSendDuration(*this);
+      return new LastSendDuration( *this );
     }
 
 
@@ -1491,7 +1491,7 @@ class NextRecvDuration: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new NextRecvDuration(*this);
+      return new NextRecvDuration( *this );
     }
 
 
@@ -1546,7 +1546,7 @@ class SendBytesInTransit: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new SendBytesInTransit(*this);
+      return new SendBytesInTransit( *this );
     }
 
 
@@ -1601,7 +1601,7 @@ class SendMessagesInTransit: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new SendMessagesInTransit(*this);
+      return new SendMessagesInTransit( *this );
     }
 
 
@@ -1656,7 +1656,7 @@ class SendBandWidth: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new SendBandWidth(*this);
+      return new SendBandWidth( *this );
     }
 
 
@@ -1675,7 +1675,7 @@ class SendBandWidth: public SemanticThread
 
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == FACTOR )
+      else if ( whichParam == FACTOR )
         tmp.push_back( 1 );
 
       return tmp;
@@ -1718,7 +1718,7 @@ class RecvBytesInTransit: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new RecvBytesInTransit(*this);
+      return new RecvBytesInTransit( *this );
     }
 
 
@@ -1773,7 +1773,7 @@ class RecvMessagesInTransit: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new RecvMessagesInTransit(*this);
+      return new RecvMessagesInTransit( *this );
     }
 
 
@@ -1828,7 +1828,7 @@ class RecvBandWidth: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new RecvBandWidth(*this);
+      return new RecvBandWidth( *this );
     }
 
 
@@ -1847,7 +1847,7 @@ class RecvBandWidth: public SemanticThread
 
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == FACTOR )
+      else if ( whichParam == FACTOR )
         tmp.push_back( 1 );
 
       return tmp;
@@ -1890,7 +1890,7 @@ class RecvNegativeMessages: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new RecvNegativeMessages(*this);
+      return new RecvNegativeMessages( *this );
     }
 
 
@@ -1945,7 +1945,7 @@ class RecvNegativeBytes: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new RecvNegativeBytes(*this);
+      return new RecvNegativeBytes( *this );
     }
 
 
@@ -2000,7 +2000,7 @@ class NumberReceives: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new NumberReceives(*this);
+      return new NumberReceives( *this );
     }
 
 
@@ -2055,7 +2055,7 @@ class NumberReceiveBytes: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new NumberReceiveBytes(*this);
+      return new NumberReceiveBytes( *this );
     }
 
 
@@ -2114,7 +2114,7 @@ class ApplicationID: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new ApplicationID(*this);
+      return new ApplicationID( *this );
     }
 
 
@@ -2169,7 +2169,7 @@ class TaskID: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new TaskID(*this);
+      return new TaskID( *this );
     }
 
 
@@ -2224,7 +2224,7 @@ class ThreadID: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new ThreadID(*this);
+      return new ThreadID( *this );
     }
 
 
@@ -2279,7 +2279,7 @@ class NodeID: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new NodeID(*this);
+      return new NodeID( *this );
     }
 
 
@@ -2334,7 +2334,7 @@ class CPUID: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new CPUID(*this);
+      return new CPUID( *this );
     }
 
 
@@ -2390,7 +2390,7 @@ class InApplicationID: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new InApplicationID(*this);
+      return new InApplicationID( *this );
     }
 
 
@@ -2409,7 +2409,7 @@ class InApplicationID: public SemanticThread
 
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == OBJECTS )
+      else if ( whichParam == OBJECTS )
         tmp.push_back( 1 );
 
       return tmp;
@@ -2451,7 +2451,7 @@ class InTaskID: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new InTaskID(*this);
+      return new InTaskID( *this );
     }
 
 
@@ -2470,7 +2470,7 @@ class InTaskID: public SemanticThread
 
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == OBJECTS )
+      else if ( whichParam == OBJECTS )
         tmp.push_back( 1 );
 
       return tmp;
@@ -2512,7 +2512,7 @@ class InThreadID: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new InThreadID(*this);
+      return new InThreadID( *this );
     }
 
 
@@ -2531,7 +2531,7 @@ class InThreadID: public SemanticThread
 
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == OBJECTS )
+      else if ( whichParam == OBJECTS )
         tmp.push_back( 1 );
 
       return tmp;
@@ -2573,7 +2573,7 @@ class InNodeID: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new InNodeID(*this);
+      return new InNodeID( *this );
     }
 
 
@@ -2592,7 +2592,7 @@ class InNodeID: public SemanticThread
 
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == OBJECTS )
+      else if ( whichParam == OBJECTS )
         tmp.push_back( 1 );
 
       return tmp;
@@ -2634,7 +2634,7 @@ class InCPUID: public SemanticThread
 
     virtual SemanticFunction *clone()
     {
-      return new InCPUID(*this);
+      return new InCPUID( *this );
     }
 
 
@@ -2653,7 +2653,7 @@ class InCPUID: public SemanticThread
 
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == OBJECTS )
+      else if ( whichParam == OBJECTS )
         tmp.push_back( 1 );
 
       return tmp;

@@ -153,6 +153,7 @@ class Histogram
     void recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                              TObjectOrder fromRow, TObjectOrder toRow,
                              UINT16 winIndex = 0, CalculateData *data = NULL );
+    void finishRow( CalculateData *data );
 };
 
 

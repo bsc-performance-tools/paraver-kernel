@@ -35,7 +35,7 @@ class ActiveThread: public SemanticCPU
 
     virtual SemanticFunction *clone()
     {
-      return new ActiveThread(*this);
+      return new ActiveThread( *this );
     }
 
 
@@ -46,7 +46,7 @@ class ActiveThread: public SemanticCPU
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
@@ -89,7 +89,7 @@ class ActiveThreadSign: public SemanticCPU
 
     virtual SemanticFunction *clone()
     {
-      return new ActiveThreadSign(*this);
+      return new ActiveThreadSign( *this );
     }
 
 
@@ -100,7 +100,7 @@ class ActiveThreadSign: public SemanticCPU
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
@@ -145,7 +145,7 @@ class ActiveThreadValues: public SemanticCPU
 
     virtual SemanticFunction *clone()
     {
-      return new ActiveThreadValues(*this);
+      return new ActiveThreadValues( *this );
     }
 
 
@@ -158,9 +158,9 @@ class ActiveThreadValues: public SemanticCPU
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      if( whichParam == VALUES )
+      if ( whichParam == VALUES )
       {
         tmp.push_back( 1 );
       }
@@ -208,7 +208,7 @@ class ActiveThreadValuesSign: public SemanticCPU
 
     virtual SemanticFunction *clone()
     {
-      return new ActiveThreadValuesSign(*this);
+      return new ActiveThreadValuesSign( *this );
     }
 
 
@@ -221,9 +221,9 @@ class ActiveThreadValuesSign: public SemanticCPU
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      if( whichParam == VALUES )
+      if ( whichParam == VALUES )
       {
         tmp.push_back( 1 );
       }

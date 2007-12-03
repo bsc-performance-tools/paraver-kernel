@@ -3,7 +3,7 @@
 
 #include "semanticderived.h"
 
-class DerivedAdd:public SemanticDerived
+class DerivedAdd: public SemanticDerived
 {
   public:
     typedef enum
@@ -41,7 +41,7 @@ class DerivedAdd:public SemanticDerived
 
     virtual SemanticFunction *clone()
     {
-      return new DerivedAdd(*this);
+      return new DerivedAdd( *this );
     }
 
 
@@ -64,7 +64,7 @@ class DerivedAdd:public SemanticDerived
 };
 
 
-class DerivedProduct:public SemanticDerived
+class DerivedProduct: public SemanticDerived
 {
   public:
     typedef enum
@@ -102,7 +102,7 @@ class DerivedProduct:public SemanticDerived
 
     virtual SemanticFunction *clone()
     {
-      return new DerivedProduct(*this);
+      return new DerivedProduct( *this );
     }
 
 
@@ -126,7 +126,7 @@ class DerivedProduct:public SemanticDerived
 };
 
 
-class DerivedSubstract:public SemanticDerived
+class DerivedSubstract: public SemanticDerived
 {
   public:
     typedef enum
@@ -164,7 +164,7 @@ class DerivedSubstract:public SemanticDerived
 
     virtual SemanticFunction *clone()
     {
-      return new DerivedSubstract(*this);
+      return new DerivedSubstract( *this );
     }
 
 
@@ -188,7 +188,7 @@ class DerivedSubstract:public SemanticDerived
 };
 
 
-class DerivedDivide:public SemanticDerived
+class DerivedDivide: public SemanticDerived
 {
   public:
     typedef enum
@@ -225,7 +225,7 @@ class DerivedDivide:public SemanticDerived
 
     virtual SemanticFunction *clone()
     {
-      return new DerivedDivide(*this);
+      return new DerivedDivide( *this );
     }
 
 
@@ -249,7 +249,7 @@ class DerivedDivide:public SemanticDerived
 };
 
 
-class DerivedMaximum:public SemanticDerived
+class DerivedMaximum: public SemanticDerived
 {
   public:
     typedef enum
@@ -286,7 +286,7 @@ class DerivedMaximum:public SemanticDerived
 
     virtual SemanticFunction *clone()
     {
-      return new DerivedMaximum(*this);
+      return new DerivedMaximum( *this );
     }
 
 
@@ -310,7 +310,7 @@ class DerivedMaximum:public SemanticDerived
 };
 
 
-class DerivedMinimum:public SemanticDerived
+class DerivedMinimum: public SemanticDerived
 {
   public:
     typedef enum
@@ -347,7 +347,7 @@ class DerivedMinimum:public SemanticDerived
 
     virtual SemanticFunction *clone()
     {
-      return new DerivedMinimum(*this);
+      return new DerivedMinimum( *this );
     }
 
 
@@ -371,7 +371,7 @@ class DerivedMinimum:public SemanticDerived
 };
 
 
-class ControlDerivedClearBy:public SemanticDerived
+class ControlDerivedClearBy: public SemanticDerived
 {
   public:
     typedef enum
@@ -404,10 +404,10 @@ class ControlDerivedClearBy:public SemanticDerived
     {
       return ControlDerivedClearBy::name;
     }
-                                                                                
+
     virtual SemanticFunction *clone()
     {
-      return new ControlDerivedClearBy(*this);
+      return new ControlDerivedClearBy( *this );
     }
 
 
@@ -435,7 +435,7 @@ class ControlDerivedClearBy:public SemanticDerived
 };
 
 
-class ControlDerivedMaximum:public SemanticDerived
+class ControlDerivedMaximum: public SemanticDerived
 {
   public:
     typedef enum
@@ -472,7 +472,7 @@ class ControlDerivedMaximum:public SemanticDerived
 
     virtual SemanticFunction *clone()
     {
-      return new ControlDerivedMaximum(*this);
+      return new ControlDerivedMaximum( *this );
     }
 
 
@@ -496,7 +496,7 @@ class ControlDerivedMaximum:public SemanticDerived
 };
 
 
-class ControlDerivedAdd:public SemanticDerived
+class ControlDerivedAdd: public SemanticDerived
 {
   public:
     typedef enum
@@ -533,7 +533,7 @@ class ControlDerivedAdd:public SemanticDerived
 
     virtual SemanticFunction *clone()
     {
-      return new ControlDerivedAdd(*this);
+      return new ControlDerivedAdd( *this );
     }
 
 

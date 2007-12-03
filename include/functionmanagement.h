@@ -5,19 +5,20 @@
 using namespace std;
 
 template <class T>
-class FunctionManagement {
+class FunctionManagement
+{
 
   private:
     static FunctionManagement *inst;
     map<string, T> hash;
 
-    FunctionManagement(vector<string> &, vector<T> &);
-    
+    FunctionManagement( vector<string> &, vector<T> & );
+
 
   public:
-    T *getFunction(const string&);
+    T *getFunction( const string& );
     static FunctionManagement *getInstance();
-    static FunctionManagement *getInstance(vector<string> &, vector<T> &);
+    static FunctionManagement *getInstance( vector<string> &, vector<T> & );
 
 };
 

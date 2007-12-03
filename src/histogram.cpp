@@ -317,6 +317,7 @@ void Histogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
   // - Los totales podrian ser una clase aparte.
   // - Lanza la ejecucion recursiva (calculo parcial de totales?).
   recursiveExecution( beginTime, endTime, 0, rowsTranslator->totalRows() );
+
   if ( threeDimensions )
   {
     cube->finish();
@@ -529,7 +530,16 @@ void Histogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 
     // Puede que quede un valor si el begintime de la ventana es menor (o igual?)
     // que el totime
+
+    if ( winIndex == 0 )
+      finishRow( data );
   }
 
   delete data;
+}
+
+
+void Histogram::finishRow( CalculateData *data )
+{
+
 }

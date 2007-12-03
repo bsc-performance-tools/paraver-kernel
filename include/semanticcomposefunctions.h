@@ -38,7 +38,7 @@ class ComposeAsIs: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeAsIs(*this);
+      return new ComposeAsIs( *this );
     }
 
 
@@ -50,7 +50,7 @@ class ComposeAsIs: public SemanticCompose
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
@@ -94,7 +94,7 @@ class ComposeSign: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeSign(*this);
+      return new ComposeSign( *this );
     }
 
   protected:
@@ -104,7 +104,7 @@ class ComposeSign: public SemanticCompose
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
@@ -149,7 +149,7 @@ class ComposeUnsign: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeUnsign(*this);
+      return new ComposeUnsign( *this );
     }
 
   protected:
@@ -159,7 +159,7 @@ class ComposeUnsign: public SemanticCompose
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
@@ -205,7 +205,7 @@ class ComposeMod: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeMod(*this);
+      return new ComposeMod( *this );
     }
 
   protected:
@@ -217,9 +217,9 @@ class ComposeMod: public SemanticCompose
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == DIVIDER )
+      else if ( whichParam == DIVIDER )
         tmp.push_back( 1 );
       return tmp;
     }
@@ -265,7 +265,7 @@ class ComposeModPlus1: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeModPlus1(*this);
+      return new ComposeModPlus1( *this );
     }
 
 
@@ -278,9 +278,9 @@ class ComposeModPlus1: public SemanticCompose
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == DIVIDER )
+      else if ( whichParam == DIVIDER )
         tmp.push_back( 1 );
       return tmp;
     }
@@ -326,7 +326,7 @@ class ComposeDivide: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeDivide(*this);
+      return new ComposeDivide( *this );
     }
 
   protected:
@@ -338,9 +338,9 @@ class ComposeDivide: public SemanticCompose
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == DIVIDER )
+      else if ( whichParam == DIVIDER )
         tmp.push_back( 1 );
       return tmp;
     }
@@ -386,7 +386,7 @@ class ComposeProduct: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeProduct(*this);
+      return new ComposeProduct( *this );
     }
 
 
@@ -399,9 +399,9 @@ class ComposeProduct: public SemanticCompose
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == FACTOR )
+      else if ( whichParam == FACTOR )
         tmp.push_back( 0 );
       return tmp;
     }
@@ -447,7 +447,7 @@ class ComposeAdding: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeAdding(*this);
+      return new ComposeAdding( *this );
     }
 
   protected:
@@ -459,9 +459,9 @@ class ComposeAdding: public SemanticCompose
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == FACTOR )
+      else if ( whichParam == FACTOR )
         tmp.push_back( 0 );
       return tmp;
     }
@@ -507,7 +507,7 @@ class ComposeSubstract: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeSubstract(*this);
+      return new ComposeSubstract( *this );
     }
 
 
@@ -520,9 +520,9 @@ class ComposeSubstract: public SemanticCompose
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == FACTOR )
+      else if ( whichParam == FACTOR )
         tmp.push_back( 0 );
       return tmp;
     }
@@ -569,7 +569,7 @@ class ComposeSelectRange: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeSelectRange(*this);
+      return new ComposeSelectRange( *this );
     }
 
 
@@ -582,11 +582,11 @@ class ComposeSelectRange: public SemanticCompose
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == MAXVALUE )
+      else if ( whichParam == MAXVALUE )
         tmp.push_back( 1 );
-      else if( whichParam == MINVALUE )
+      else if ( whichParam == MINVALUE )
         tmp.push_back( 0 );
 
       return tmp;
@@ -634,7 +634,7 @@ class ComposeIsInRange: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeIsInRange(*this);
+      return new ComposeIsInRange( *this );
     }
 
 
@@ -647,11 +647,11 @@ class ComposeIsInRange: public SemanticCompose
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == MAXVALUE )
+      else if ( whichParam == MAXVALUE )
         tmp.push_back( 1 );
-      else if( whichParam == MINVALUE )
+      else if ( whichParam == MINVALUE )
         tmp.push_back( 0 );
 
       return tmp;
@@ -698,7 +698,7 @@ class ComposeIsEqual: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeIsEqual(*this);
+      return new ComposeIsEqual( *this );
     }
 
 
@@ -711,9 +711,9 @@ class ComposeIsEqual: public SemanticCompose
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == VALUES )
+      else if ( whichParam == VALUES )
         tmp.push_back( 1 );
 
       return tmp;
@@ -760,7 +760,7 @@ class ComposeIsEqualSign: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeIsEqualSign(*this);
+      return new ComposeIsEqualSign( *this );
     }
 
 
@@ -773,9 +773,9 @@ class ComposeIsEqualSign: public SemanticCompose
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      else if( whichParam == VALUES )
+      else if ( whichParam == VALUES )
         tmp.push_back( 1 );
 
       return tmp;
@@ -820,7 +820,7 @@ class ComposeStackedValue: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeStackedValue(*this);
+      return new ComposeStackedValue( *this );
     }
 
 
@@ -833,7 +833,7 @@ class ComposeStackedValue: public SemanticCompose
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
 
       return tmp;
@@ -880,7 +880,7 @@ class ComposeInStackedValue: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeInStackedValue(*this);
+      return new ComposeInStackedValue( *this );
     }
 
 
@@ -893,7 +893,7 @@ class ComposeInStackedValue: public SemanticCompose
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       else if ( whichParam == VALUE )
         tmp.push_back( 1 );
@@ -941,7 +941,7 @@ class ComposeNestingLevel: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeNestingLevel(*this);
+      return new ComposeNestingLevel( *this );
     }
 
 
@@ -954,7 +954,7 @@ class ComposeNestingLevel: public SemanticCompose
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
 
       return tmp;
@@ -1000,7 +1000,7 @@ class ComposeDelta: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeDelta(*this);
+      return new ComposeDelta( *this );
     }
 
 
@@ -1013,7 +1013,7 @@ class ComposeDelta: public SemanticCompose
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
 
       return tmp;
@@ -1061,7 +1061,7 @@ class ComposeBurstTime: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeBurstTime(*this);
+      return new ComposeBurstTime( *this );
     }
 
 
@@ -1074,7 +1074,7 @@ class ComposeBurstTime: public SemanticCompose
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
 
       return tmp;
@@ -1120,7 +1120,7 @@ class ComposeJoinBursts: public SemanticCompose
 
     virtual SemanticFunction *clone()
     {
-      return new ComposeJoinBursts(*this);
+      return new ComposeJoinBursts( *this );
     }
 
 
@@ -1133,7 +1133,7 @@ class ComposeJoinBursts: public SemanticCompose
     {
       TParamValue tmp;
 
-      if( whichParam >= getMaxParam() )
+      if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
 
       return tmp;
