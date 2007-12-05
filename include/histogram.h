@@ -60,6 +60,9 @@ struct CalculateData
 
   TObjectOrder controlRow;
   TObjectOrder dataRow;
+
+  RecordList *rList;
+  MemoryTrace::iterator *comm;
 };
 
 
@@ -130,8 +133,7 @@ class Histogram
     THistogramLimit dataMax;
 
     vector<HistogramStatistic *> statisticFunctions;
-    UINT16 numStatistics;
-    UINT16 numCommStatistics;
+    vector<HistogramStatistic *> commStatisticFunctions;
 
     vector<KWindow *> orderedWindows;
     RowsTranslator *rowsTranslator;
@@ -153,6 +155,10 @@ class Histogram
     void recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                              TObjectOrder fromRow, TObjectOrder toRow,
                              UINT16 winIndex = 0, CalculateData *data = NULL );
+    void calculate( TObjectOrder iRow,
+                    TRecordTime fromTime, TRecordTime toTime,
+                    TObjectOrder fromRow, TObjectOrder toRow,
+                    UINT16 winIndex, CalculateData *data );
     void finishRow( CalculateData *data );
 };
 

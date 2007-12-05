@@ -95,6 +95,7 @@ class KWindow
                                    const TParamValue& newValue ) = 0;
     virtual bool initFromBegin() const = 0;
 
+    RecordList *getRecordList( TObjectOrder whichObject );
     virtual RecordList *init( TRecordTime initialTime, TCreateList create ) = 0;
     virtual RecordList *calcNext( TObjectOrder whichObject ) = 0;
     virtual RecordList *calcPrev( TObjectOrder whichObject ) = 0;

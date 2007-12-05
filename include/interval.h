@@ -70,6 +70,11 @@ class Interval
       return order;
     }
 
+    RecordList *getRecordList()
+    {
+      return &myDisplayList;
+    }
+
     virtual RecordList *init( TRecordTime initialTime, TCreateList create,
                               RecordList *displayList = NULL ) = 0;
     virtual RecordList *calcNext( RecordList *displayList = NULL, bool initCalc = false ) = 0;

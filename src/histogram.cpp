@@ -74,9 +74,6 @@ Histogram::Histogram()
   dataMin = 0;
   dataMax = 1;
 
-  numStatistics = 0;
-  numCommStatistics = 0;
-
   rowsTranslator = NULL;
   columnTranslator = NULL;
   planeTranslator = NULL;
@@ -269,20 +266,24 @@ void Histogram::clearStatistics()
     delete *it;
     it++;
   }
-
   statisticFunctions.clear();
-  numStatistics = 0;
-  numCommStatistics = 0;
+
+  it = commStatisticFunctions.begin();
+
+  while ( it != commStatisticFunctions.end() )
+  {
+    delete *it;
+    it++;
+  }
 }
 
 
 void Histogram::pushbackStatistic( HistogramStatistic *whichStatistic )
 {
-  statisticFunctions.push_back( whichStatistic );
   if ( whichStatistic->createComms() )
-    numCommStatistics++;
+    commStatisticFunctions.push_back( whichStatistic );
   else
-    numStatistics++;
+    statisticFunctions.push_back( whichStatistic );
 }
 
 
@@ -356,7 +357,7 @@ void Histogram::orderWindows()
 
 bool Histogram::createComms() const
 {
-  return numCommStatistics > 0;
+  return commStatisticFunctions.size() > 0;
 }
 
 
@@ -407,15 +408,15 @@ void Histogram::initMatrix( THistogramColumn numPlanes, THistogramColumn numCols
 
   if ( threeDimensions )
   {
-    cube = new Cube<TSemanticValue>( numPlanes, numCols, numStatistics );
+    cube = new Cube<TSemanticValue>( numPlanes, numCols, statisticFunctions.size() );
     if ( createComms() )
-      commCube = new Cube<TSemanticValue>( numPlanes, numRows, numCommStatistics );
+      commCube = new Cube<TSemanticValue>( numPlanes, numRows, commStatisticFunctions.size() );
   }
   else
   {
-    matrix = new Matrix<TSemanticValue>( numCols, numStatistics );
+    matrix = new Matrix<TSemanticValue>( numCols, statisticFunctions.size() );
     if ( createComms() )
-      commMatrix = new Matrix<TSemanticValue>( numRows, numCommStatistics );
+      commMatrix = new Matrix<TSemanticValue>( numRows, commStatisticFunctions.size() );
   }
 }
 
@@ -445,6 +446,13 @@ void Histogram::initStatistics()
   {
     ( *it )->init( this );
   }
+
+  it = commStatisticFunctions.begin();
+
+  while ( it != commStatisticFunctions.end() )
+  {
+    ( *it )->init( this );
+  }
 }
 
 
@@ -452,10 +460,6 @@ void Histogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                                     TObjectOrder fromRow, TObjectOrder toRow,
                                     UINT16 winIndex, CalculateData *data )
 {
-  TObjectOrder childFromRow;
-  TObjectOrder childToRow;
-  TRecordTime childFromTime;
-  TRecordTime childToTime;
   KWindow *currentWindow = orderedWindows[ winIndex ];
 
   if ( data == NULL )
@@ -472,64 +476,12 @@ void Histogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 
     while ( currentWindow->getEndTime( iRow ) <= toTime )
     {
-      if ( currentWindow == controlWindow )
-        data->column = columnTranslator->getColumn( controlWindow->getValue( iRow ) );
-      if ( threeDimensions && currentWindow == xtraControlWindow )
-        data->plane = planeTranslator->getColumn( xtraControlWindow->getValue( iRow ) );
-
-      if ( winIndex == orderedWindows.size() - 1 )
-      {
-        TSemanticValue value;
-
-        for ( UINT16 iStat = 0; iStat < statisticFunctions.size(); iStat++ )
-        {
-          value = statisticFunctions[ iStat ]->execute( data );
-          Cube<TSemanticValue> *myCube;
-          Matrix<TSemanticValue> *myMatrix;
-          if ( statisticFunctions[ iStat ]->createComms() )
-          {
-            myCube = commCube;
-            myMatrix = commMatrix;
-          }
-          else
-          {
-            myCube = cube;
-            myMatrix = matrix;
-          }
-
-          if ( threeDimensions )
-          {
-            if ( myCube->getCurrentRow( data->plane, data->column ) != data->row )
-              myCube->newRow( data->plane, data->column, data->row );
-            myCube->addValue( data->plane, data->column, iStat, value );
-          }
-          else
-          {
-            if ( myMatrix->getCurrentRow( data->column ) != data->row )
-              myMatrix->newRow( data->column, data->row );
-            myMatrix->addValue( data->column, iStat, value );
-          }
-        }
-      }
-      else
-      {
-        childFromTime = ( fromTime < currentWindow->getBeginTime( iRow ) ) ?
-                        currentWindow->getBeginTime( iRow ) :
-                        fromTime;
-        childToTime = ( toTime > currentWindow->getEndTime( iRow ) ) ?
-                      currentWindow->getEndTime( iRow ) :
-                      toTime;
-        rowsTranslator->getRowChilds( winIndex, iRow, childFromRow, childToRow );
-
-        recursiveExecution( childFromTime, childToTime, childFromRow, childToRow,
-                            winIndex + 1, data );
-      }
-
+      calculate( iRow, fromTime, toTime, fromRow, toRow, winIndex, data );
       currentWindow->calcNext( iRow );
     }
 
-    // Puede que quede un valor si el begintime de la ventana es menor (o igual?)
-    // que el totime
+    if ( currentWindow->getBeginTime( iRow ) < toTime )
+      calculate( iRow, fromTime, toTime, fromRow, toRow, winIndex, data );
 
     if ( winIndex == 0 )
       finishRow( data );
@@ -539,7 +491,91 @@ void Histogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 }
 
 
+void Histogram::calculate( TObjectOrder iRow,
+                           TRecordTime fromTime, TRecordTime toTime,
+                           TObjectOrder fromRow, TObjectOrder toRow,
+                           UINT16 winIndex, CalculateData *data )
+{
+  TObjectOrder childFromRow;
+  TObjectOrder childToRow;
+  TRecordTime childFromTime;
+  TRecordTime childToTime;
+  KWindow *currentWindow = orderedWindows[ winIndex ];
+
+  if ( currentWindow == controlWindow )
+  {
+    data->column = columnTranslator->getColumn( controlWindow->getValue( iRow ) );
+    data->rList = controlWindow->getRecordList( iRow );
+  }
+  if ( threeDimensions && currentWindow == xtraControlWindow )
+    data->plane = planeTranslator->getColumn( xtraControlWindow->getValue( iRow ) );
+
+  if ( winIndex == orderedWindows.size() - 1 )
+  {
+    TSemanticValue value;
+
+    // Communication statistics
+    RecordList::iterator itComm = data->rList->begin();
+    while ( itComm != data->rList->end() &&
+            ( *itComm )->getTime() >= fromTime &&
+            ( *itComm )->getTime() <= toTime )
+    {
+      data->comm = *itComm;
+      for ( UINT16 iStat = 0; iStat < commStatisticFunctions.size(); iStat++ )
+      {
+        value = commStatisticFunctions[ iStat ]->execute( data );
+        if ( value != 0.0 )
+        {
+          TObjectOrder column = commStatisticFunctions[ iStat ]->getPartner( data );
+          if ( threeDimensions )
+            commCube->addValue( data->plane, column, iStat, value );
+          else
+            commMatrix->addValue( column, iStat, value );
+        }
+      }
+
+      delete *itComm;
+      itComm++;
+    }
+
+    // Semantic statistics
+    for ( UINT16 iStat = 0; iStat < statisticFunctions.size(); iStat++ )
+    {
+      value = statisticFunctions[ iStat ]->execute( data );
+
+      if ( threeDimensions )
+        cube->addValue( data->plane, data->column, iStat, value );
+      else
+        matrix->addValue( data->column, iStat, value );
+    }
+  }
+  else
+  {
+    childFromTime = ( fromTime < currentWindow->getBeginTime( iRow ) ) ?
+                    currentWindow->getBeginTime( iRow ) :
+                    fromTime;
+    childToTime = ( toTime > currentWindow->getEndTime( iRow ) ) ?
+                  currentWindow->getEndTime( iRow ) :
+                  toTime;
+    rowsTranslator->getRowChilds( winIndex, iRow, childFromRow, childToRow );
+
+    recursiveExecution( childFromTime, childToTime, childFromRow, childToRow,
+                        winIndex + 1, data );
+  }
+}
+
+
 void Histogram::finishRow( CalculateData *data )
 {
 
+  if( createComms() )
+    if( threeDimensions )
+      commCube->newRow();
+    else
+      commMatrix->newRow();
+
+  if( threeDimensions )
+    cube->newRow();
+  else
+    matrix->newRow();
 }

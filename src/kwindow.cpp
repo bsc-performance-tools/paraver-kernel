@@ -110,6 +110,12 @@ TRecordTime KWindow::traceUnitsToWindowUnits( TRecordTime whichTime )
 }
 
 
+RecordList *KWindow::getRecordList( TObjectOrder whichObject )
+{
+  return intervalTopCompose1[ whichObject ].getRecordList();
+}
+
+
 /**********************************************************************
  *  KSingleWindow implementation
  **********************************************************************/
