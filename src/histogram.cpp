@@ -2,22 +2,44 @@
 #include "histogramstatistic.h"
 #include "histogramexception.h"
 
-RowsTranslator::RowsTranslator( vector<KWindow *>& windows )
+
+RowsTranslator::RowsTranslator( vector<KWindow *>& kwindows )
 {
+  for ( size_t ii = 0; ii < kwindows.size() - 1; ii++ )
+  {
+    childInfo.push_back( RowChildInfo() );
+    childInfo[ii].oneToOne = ( kwindows[ii]->getWindowLevelObjects() ==
+                               kwindows[ii + 1]->getWindowLevelObjects() );
+    if ( !childInfo[ii].oneToOne )
+    {
+      Trace *auxTrace = kwindows[ii]->getTrace();
+      for ( TObjectOrder iRow = 0; iRow < kwindows[ii]->getWindowLevelObjects(); iRow++ )
+      {
+        pair< TObjectOrder, TObjectOrder > range;
+
+        range.first = auxTrace->getFirst( iRow,
+                                          kwindows[ii]->getLevel(),
+                                          kwindows[ii+1]->getLevel() );
+        range.second =  auxTrace->getLast( iRow,
+                                           kwindows[ii]->getLevel(),
+                                           kwindows[ii+1]->getLevel() );
+        ;
+        childInfo[ii].rowChilds.push_back( range );
+      }
+    }
+  }
 }
 
 
 RowsTranslator::~RowsTranslator()
-{
-}
+{}
 
 
 TObjectOrder RowsTranslator::globalTranslate( UINT16 winIndex,
     TObjectOrder rowIndex ) const
 {
-  TObjectOrder rt;
-
-  return rt;
+  // This method will translate Kwindow rows to 2D rows.
+  return rowIndex;
 }
 
 
@@ -26,19 +48,33 @@ void RowsTranslator::getRowChilds( UINT16 winIndex,
                                    TObjectOrder& iniRow,
                                    TObjectOrder& endRow ) const
 {
+  if ( childInfo[winIndex].oneToOne )
+  {
+    iniRow = rowIndex;
+    endRow = rowIndex;
+  }
+  else
+  {
+    iniRow = childInfo[ winIndex ].rowChilds[ rowIndex ].first;
+    endRow = childInfo[ winIndex ].rowChilds[ rowIndex ].second;
+  }
+}
+
+//
+TObjectOrder RowsTranslator::totalRows() const
+{
+  return childInfo[ 0 ].rowChilds.size() - 1;
 }
 
 
 ColumnTranslator::ColumnTranslator( THistogramLimit whichMin,
                                     THistogramLimit whichMax,
                                     THistogramLimit whichDelta )
-{
-}
+{}
 
 
 ColumnTranslator::~ColumnTranslator()
-{
-}
+{}
 
 
 THistogramColumn ColumnTranslator::getColumn( THistogramLimit whichValue ) const

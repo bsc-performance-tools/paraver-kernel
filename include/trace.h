@@ -75,6 +75,13 @@ class Trace
     TCPUOrder getFirstCPU( TNodeOrder inNode ) const;
     TCPUOrder getLastCPU( TNodeOrder inNode ) const;
 
+    TObjectOrder getFirst( TObjectOrder globalOrder,
+                           TWindowLevel fromLevel,
+                            TWindowLevel toLevel ) const;
+    TObjectOrder getLast( TObjectOrder globalOrder,
+                          TWindowLevel fromLevel,
+                          TWindowLevel toLevel ) const;
+
 
     // Communication info getters
     TThreadOrder getSenderThread( TCommID whichComm ) const;

@@ -28,10 +28,13 @@ class RowsTranslator
   protected:
 
   private:
-    vector<KWindow *> *window;
+    struct RowChildInfo
+    {
+      bool oneToOne;
+      vector< pair< TObjectOrder, TObjectOrder > > rowChilds;
+    };
 
-    vector<TObjectOrder> rowTranslator1;
-    vector<TObjectOrder> rowTranslator2;
+    vector< RowChildInfo > childInfo;
 };
 
 

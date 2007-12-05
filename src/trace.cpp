@@ -107,8 +107,8 @@ TCPUOrder Trace::getGlobalCPU( const TNodeOrder& inNode,
 
 
 void Trace::getCPULocation( TCPUOrder globalCPU,
-                         TNodeOrder& inNode,
-                         TCPUOrder& inCPU ) const
+                            TNodeOrder& inNode,
+                            TCPUOrder& inCPU ) const
 {
   traceResourceModel.getCPULocation( globalCPU, inNode, inCPU );
 }
@@ -124,6 +124,82 @@ TCPUOrder Trace::getLastCPU( TNodeOrder inNode ) const
 {
   return getLastCPU( inNode );
 }
+
+
+// PRECOND: fromLevel > toLevel
+TObjectOrder Trace::getFirst( TObjectOrder globalOrder,
+                              TWindowLevel fromLevel,
+                              TWindowLevel toLevel  ) const
+{
+  if ( fromLevel == WORKLOAD || fromLevel == SYSTEM )
+  {
+    return 0;
+  }
+  else if ( fromLevel == APPLICATION )
+  {
+    if ( toLevel == TASK )
+      return getFirstTask( globalOrder );
+    else
+      return getFirstThread( globalOrder, 0 );
+  }
+  else if ( fromLevel == TASK )
+  {
+    TApplOrder application;
+    TTaskOrder task;
+    getTaskLocation( globalOrder, application, task );
+    return getFirstThread( application, task );
+  }
+  else if ( fromLevel == NODE )
+  {
+    return getFirstCPU( globalOrder );
+  }
+
+  return 0;
+}
+
+
+TObjectOrder Trace::getLast( TObjectOrder globalOrder,
+                             TWindowLevel fromLevel,
+                             TWindowLevel toLevel ) const
+{
+  if ( fromLevel == WORKLOAD )
+  {
+    if ( toLevel == APPLICATION )
+      return totalApplications() - 1;
+    else if ( toLevel == TASK )
+      return totalTasks() - 1;
+    else
+      return totalThreads() - 1;
+  }
+  else if ( fromLevel == APPLICATION )
+  {
+    if ( toLevel == TASK )
+      return getLastTask( globalOrder );
+    else
+      return getLastThread( globalOrder, getLastTask( globalOrder ) );
+  }
+  else if ( fromLevel == TASK )
+  {
+    TApplOrder application;
+    TTaskOrder task;
+    getTaskLocation( globalOrder, application, task );
+    return getLastThread( application, task );
+  }
+  else if ( fromLevel == SYSTEM )
+  {
+    if ( toLevel == NODE )
+      return totalNodes() - 1;
+    else
+      return totalCPUs() - 1;
+  }
+  else if ( fromLevel == NODE )
+  {
+    return getLastCPU( globalOrder );
+  }
+
+  return 0;
+}
+
 
 
 TThreadOrder Trace::getSenderThread( TCommID whichComm ) const
@@ -284,7 +360,7 @@ Trace::Trace( const string& whichFile ) : fileName( whichFile )
 
   // Communicators
   UINT32 numberComm = 0;
-  if( !header.eof() )
+  if ( !header.eof() )
   {
     std::getline( header, tmpstr );
     istringstream streamComm( tmpstr );
