@@ -153,6 +153,13 @@ int Column<ValueType>::getCurrentRow( ) const
 
 
 template <typename ValueType>
+bool Column<ValueType>::currentCellModified( ) const
+{
+  return modified;
+}
+
+
+template <typename ValueType>
 void Column<ValueType>::newRow( )
 {
   int tmp_row = getCurrentRow();

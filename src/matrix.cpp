@@ -109,6 +109,13 @@ TObjectOrder Matrix<ValueType>::getCurrentRow( UINT32 col ) const
 
 
 template <typename ValueType>
+bool Matrix<ValueType>::currentCellModified( UINT32 col ) const
+{
+  return cols[ col ]->currentCellModified();
+}
+
+
+template <typename ValueType>
 void Matrix<ValueType>::newRow( )
 {
   for ( UINT32 ii = 0; ii < ( UINT32 )cols.size(); ii++ )

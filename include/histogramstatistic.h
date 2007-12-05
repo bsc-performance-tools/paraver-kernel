@@ -20,6 +20,8 @@ class HistogramStatistic
     virtual void reset() = 0;
     virtual TSemanticValue execute( CalculateData *data ) = 0;
     virtual TSemanticValue finishRow( TSemanticValue cellValue ) = 0;
+    virtual TSemanticValue finishRow( THistogramColumn plane,
+                                      TSemanticValue cellValue ) = 0;
 
 //    virtual string getName() = 0;
 //    virtual SemanticFunction *clone() = 0;

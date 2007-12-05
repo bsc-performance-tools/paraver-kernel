@@ -27,6 +27,7 @@ class Column
     void addValue( ValueType semVal );
     ValueType getCurrentValue( short idStat ) const;
     int getCurrentRow( ) const;
+    bool currentCellModified( ) const;
     void newRow( );
     void newRow( int row );
     void setNextCell( );

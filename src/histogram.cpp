@@ -567,14 +567,106 @@ void Histogram::calculate( TObjectOrder iRow,
 
 void Histogram::finishRow( CalculateData *data )
 {
+  // Communication statistics
+  if ( threeDimensions )
+  {
+    for ( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns();
+          iPlane++ )
+    {
+      if ( commCube->planeWithValues( iPlane ) )
+      {
+        for ( TObjectOrder iColumn = 0;
+              iColumn < rowsTranslator->totalRows(); iColumn++ )
+        {
+          if ( commCube->currentCellModified( iPlane, iColumn ) )
+          {
+            TSemanticValue value;
+            for ( UINT16 iStat = 0; iStat < commStatisticFunctions.size(); iStat++ )
+            {
+              value = commCube->getCurrentValue( iPlane, iColumn, iStat );
+              value = commStatisticFunctions[ iStat ]->finishRow( iPlane, value );
+              commCube->setValue( iPlane, iColumn, iStat, value );
+            }
+          }
+        }
+      }
+    }
+  }
+  else
+  {
+    for ( TObjectOrder iColumn = 0;
+          iColumn < rowsTranslator->totalRows(); iColumn++ )
+    {
+      if ( commMatrix->currentCellModified( iColumn ) )
+      {
+        TSemanticValue value;
+        for ( UINT16 iStat = 0; iStat < commStatisticFunctions.size(); iStat++ )
+        {
+          value = commMatrix->getCurrentValue( iColumn, iStat );
+          value = commStatisticFunctions[ iStat ]->finishRow( value );
+          commMatrix->setValue( iColumn, iStat, value );
+        }
+      }
+    }
+  }
 
-  if( createComms() )
-    if( threeDimensions )
+  for ( UINT16 iStat = 0; iStat < commStatisticFunctions.size(); iStat++ )
+    commStatisticFunctions[ iStat ]->reset();
+
+  // Semantic statistics
+  if ( threeDimensions )
+  {
+    for ( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns();
+          iPlane++ )
+    {
+      if ( cube->planeWithValues( iPlane ) )
+      {
+        for ( THistogramColumn iColumn = 0;
+              iColumn < columnTranslator->totalColumns(); iColumn++ )
+        {
+          if ( cube->currentCellModified( iPlane, iColumn ) )
+          {
+            TSemanticValue value;
+            for ( UINT16 iStat = 0; iStat < statisticFunctions.size(); iStat++ )
+            {
+              value = cube->getCurrentValue( iPlane, iColumn, iStat );
+              value = statisticFunctions[ iStat ]->finishRow( iPlane, value );
+              cube->setValue( iPlane, iColumn, iStat, value );
+            }
+          }
+        }
+      }
+    }
+  }
+  else
+  {
+    for ( THistogramColumn iColumn = 0;
+          iColumn < columnTranslator->totalColumns(); iColumn++ )
+    {
+      if ( matrix->currentCellModified( iColumn ) )
+      {
+        TSemanticValue value;
+        for ( UINT16 iStat = 0; iStat < statisticFunctions.size(); iStat++ )
+        {
+          value = matrix->getCurrentValue( iColumn, iStat );
+          value = statisticFunctions[ iStat ]->finishRow( value );
+          matrix->setValue( iColumn, iStat, value );
+        }
+      }
+    }
+  }
+
+  for ( UINT16 iStat = 0; iStat < statisticFunctions.size(); iStat++ )
+    statisticFunctions[ iStat ]->reset();
+
+  // Next row
+  if ( createComms() )
+    if ( threeDimensions )
       commCube->newRow();
     else
       commMatrix->newRow();
 
-  if( threeDimensions )
+  if ( threeDimensions )
     cube->newRow();
   else
     matrix->newRow();

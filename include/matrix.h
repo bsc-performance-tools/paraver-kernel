@@ -21,6 +21,7 @@ class Matrix
     void addValue( UINT32 col, ValueType semVal );
     ValueType getCurrentValue( UINT32 col, UINT16 idStat ) const;
     TObjectOrder getCurrentRow( UINT32 col ) const;
+    bool currentCellModified( UINT32 col ) const;
     void newRow( );
     void newRow( UINT32 col, TObjectOrder row );
     void finish( );

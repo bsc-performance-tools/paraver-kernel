@@ -144,6 +144,14 @@ UINT32 Cube<ValueType>::getCurrentRow( ) const
   return crow;
 }
 
+template <typename ValueType>
+bool Cube<ValueType>::currentCellModified( UINT32 plane, UINT32 col ) const
+{
+  if ( planes[ plane ] != NULL )
+    return planes[ plane ]->currentCellModified( col );
+  return false;
+}
+
 
 template <typename ValueType>
 void Cube<ValueType>::newRow( )

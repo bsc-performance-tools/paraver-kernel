@@ -20,6 +20,7 @@ class Cube
     ValueType getCurrentValue( UINT32 plane, UINT32 col, UINT16 idStat ) const;
     UINT32 getCurrentRow( UINT32 plane, UINT32 col ) const;
     UINT32 getCurrentRow( ) const;
+    bool currentCellModified( UINT32 plane, UINT32 col ) const;
     void newRow( );
     void newRow( UINT32 plane, UINT32 col, UINT32 row );
     void finish( );
