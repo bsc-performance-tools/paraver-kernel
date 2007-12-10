@@ -69,6 +69,89 @@ class StatNumSends: public HistogramStatistic
 };
 
 
+class StatNumReceives: public HistogramStatistic
+{
+  public:
+    StatNumReceives();
+    ~StatNumReceives();
+
+    virtual bool createComms() const
+    {
+      return true;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data );
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static string name;
+    KWindow *controlWin;
+};
+
+
+class StatBytesSent: public HistogramStatistic
+{
+  public:
+    StatBytesSent();
+    ~StatBytesSent();
+
+    virtual bool createComms() const
+    {
+      return true;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data );
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static string name;
+    KWindow *controlWin;
+};
+
+
+class StatBytesReceived: public HistogramStatistic
+{
+  public:
+    StatBytesReceived();
+    ~StatBytesReceived();
+
+    virtual bool createComms() const
+    {
+      return true;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data );
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static string name;
+    KWindow *controlWin;
+};
+
 
 //-------------------------------------------------------------------------
 // Semantic statistics

@@ -49,6 +49,147 @@ HistogramStatistic *StatNumSends::clone()
 
 
 //-------------------------------------------------------------------------
+// Histogram Statistic: #Receives
+//-------------------------------------------------------------------------
+string StatNumSends::name = "#Receives";
+
+TObjectOrder StatNumReceives::getPartner( CalculateData *data )
+{
+  if ( controlWin->getLevel() >= SYSTEM )
+    return controlWin->getTrace()->getSenderCPU( data->comm->getCommIndex() );
+  else
+    return controlWin->getTrace()->getSenderThread( data->comm->getCommIndex() );
+  return 0;
+}
+
+void StatNumReceives::init( Histogram *whichHistogram )
+{
+  myHistogram = whichHistogram;
+  controlWin = myHistogram->getControlWindow();
+}
+
+void StatNumReceives::reset()
+{}
+
+TSemanticValue StatNumReceives::execute( CalculateData *data )
+{
+  if ( data->comm->getType() & RECV )
+    return 1;
+  return 0;
+}
+
+TSemanticValue StatNumReceives::finishRow( TSemanticValue cellValue,
+    THistogramColumn plane )
+{
+  return cellValue;
+}
+
+string StatNumReceives::getName()
+{
+  return StatNumReceives::name;
+}
+
+HistogramStatistic *StatNumReceives::clone()
+{
+  return new StatNumReceives( *this );
+}
+
+
+//-------------------------------------------------------------------------
+// Histogram Statistic: Bytes Sent
+//-------------------------------------------------------------------------
+string StatBytesSent::name = "Bytes Sent";
+
+TObjectOrder StatBytesSent::getPartner( CalculateData *data )
+{
+  if ( controlWin->getLevel() >= SYSTEM )
+    return controlWin->getTrace()->getReceiverCPU( data->comm->getCommIndex() );
+  else
+    return controlWin->getTrace()->getReceiverThread( data->comm->getCommIndex() );
+  return 0;
+}
+
+void StatBytesSent::init( Histogram *whichHistogram )
+{
+  myHistogram = whichHistogram;
+  controlWin = myHistogram->getControlWindow();
+}
+
+void StatBytesSent::reset()
+{}
+
+TSemanticValue StatBytesSent::execute( CalculateData *data )
+{
+  if ( data->comm->getType() & SEND )
+    return controlWin->getTrace()->getCommSize( data->comm->getCommIndex() );
+  return 0;
+}
+
+TSemanticValue StatBytesSent::finishRow( TSemanticValue cellValue,
+    THistogramColumn plane )
+{
+  return cellValue;
+}
+
+string StatBytesSent::getName()
+{
+  return StatBytesSent::name;
+}
+
+HistogramStatistic *StatBytesSent::clone()
+{
+  return new StatBytesSent( *this );
+}
+
+
+//-------------------------------------------------------------------------
+// Histogram Statistic: Bytes Received
+//-------------------------------------------------------------------------
+string StatBytesReceived::name = "Bytes Received";
+
+TObjectOrder StatBytesReceived::getPartner( CalculateData *data )
+{
+  if ( controlWin->getLevel() >= SYSTEM )
+    return controlWin->getTrace()->getSenderCPU( data->comm->getCommIndex() );
+  else
+    return controlWin->getTrace()->getSenderThread( data->comm->getCommIndex() );
+  return 0;
+}
+
+void StatBytesReceived::init( Histogram *whichHistogram )
+{
+  myHistogram = whichHistogram;
+  controlWin = myHistogram->getControlWindow();
+}
+
+void StatBytesReceived::reset()
+{}
+
+TSemanticValue StatBytesReceived::execute( CalculateData *data )
+{
+  if ( data->comm->getType() & RECV )
+    return controlWin->getTrace()->getCommSize( data->comm->getCommIndex() );
+  return 0;
+}
+
+TSemanticValue StatBytesReceived::finishRow( TSemanticValue cellValue,
+    THistogramColumn plane )
+{
+  return cellValue;
+}
+
+string StatBytesReceived::getName()
+{
+  return StatBytesReceived::name;
+}
+
+HistogramStatistic *StatBytesReceived::clone()
+{
+  return new StatBytesReceived( *this );
+}
+
+
+//-------------------------------------------------------------------------
 // Histogram Statistic: Time
 //-------------------------------------------------------------------------
 string StatTime::name = "Time";
