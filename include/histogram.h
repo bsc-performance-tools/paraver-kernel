@@ -64,6 +64,9 @@ struct CalculateData
   TObjectOrder controlRow;
   TObjectOrder dataRow;
 
+  TRecordTime beginTime;
+  TRecordTime endTime;
+
   RecordList *rList;
   MemoryTrace::iterator *comm;
 };
@@ -80,6 +83,9 @@ class Histogram
     TRecordTime getBeginTime() const;
     TRecordTime getEndTime() const;
 
+    KWindow *getControlWindow() const;
+    KWindow *getDataWindow() const;
+    KWindow *getExtraControlWindow() const;
     void setControlWindow( KWindow *whichWindow );
     void setDataWindow( KWindow *whichWindow );
     void setExtraControlWindow( KWindow *whichWindow );
@@ -104,6 +110,8 @@ class Histogram
     THistogramLimit getExtraControlDelta() const;
     THistogramLimit getDataMin() const;
     THistogramLimit getDataMax() const;
+
+    THistogramColumn getNumPlanes() const;
 
     void clearStatistics();
     void pushbackStatistic( HistogramStatistic *whichStatistic );

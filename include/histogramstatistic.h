@@ -1,11 +1,16 @@
 #ifndef HISTOGRAMSTATISTIC_H_INCLUDED
 #define HISTOGRAMSTATISTIC_H_INCLUDED
 
+#include <string>
+#include <vector>
 #include "paraverkerneltypes.h"
 
 class Histogram;
+class KWindow;
 
 struct CalculateData;
+
+using namespace std;
 
 class HistogramStatistic
 {
@@ -19,29 +24,83 @@ class HistogramStatistic
     virtual void init( Histogram *whichHistogram ) = 0;
     virtual void reset() = 0;
     virtual TSemanticValue execute( CalculateData *data ) = 0;
-    virtual TSemanticValue finishRow( TSemanticValue cellValue ) = 0;
-    virtual TSemanticValue finishRow( THistogramColumn plane,
-                                      TSemanticValue cellValue ) = 0;
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn plane = 0 ) = 0;
 
-//    virtual string getName() = 0;
-//    virtual SemanticFunction *clone() = 0;
+    virtual string getName() = 0;
+    virtual HistogramStatistic *clone() = 0;
 
   protected:
+    Histogram *myHistogram;
 
   private:
 
 };
 
 
+//-------------------------------------------------------------------------
+// Communication statistics
+//-------------------------------------------------------------------------
+class StatNumSends: public HistogramStatistic
+{
+  public:
+    StatNumSends();
+    ~StatNumSends();
+
+    virtual bool createComms() const
+    {
+      return true;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data );
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static string name;
+    KWindow *controlWin;
+};
+
+
+
+//-------------------------------------------------------------------------
+// Semantic statistics
+//-------------------------------------------------------------------------
 class StatTime: public HistogramStatistic
 {
   public:
     StatTime();
     ~StatTime();
+
+    virtual bool createComms() const
+    {
+      return false;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data )
+    {
+      return 0;
+    }
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
   protected:
 
   private:
-
+    static string name;
+    KWindow *controlWin;
 };
 
 
@@ -50,10 +109,30 @@ class StatPercTime: public HistogramStatistic
   public:
     StatPercTime();
     ~StatPercTime();
+
+    virtual bool createComms() const
+    {
+      return false;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data )
+    {
+      return 0;
+    }
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
   protected:
 
   private:
-
+    static string name;
+    KWindow *controlWin;
+    vector<TSemanticValue> rowTotal;
 };
 
 #endif // HISTOGRAMSTATISTIC_H_INCLUDED

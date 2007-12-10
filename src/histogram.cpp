@@ -161,6 +161,24 @@ TRecordTime Histogram::getEndTime() const
 }
 
 
+KWindow *Histogram::getControlWindow() const
+{
+  return controlWindow;
+}
+
+
+KWindow *Histogram::getDataWindow() const
+{
+  return dataWindow;
+}
+
+
+KWindow *Histogram::getExtraControlWindow() const
+{
+  return xtraControlWindow;
+}
+
+
 void Histogram::setControlWindow( KWindow *whichWindow )
 {
   controlWindow = whichWindow;
@@ -290,6 +308,12 @@ THistogramLimit Histogram::getDataMin() const
 THistogramLimit Histogram::getDataMax() const
 {
   return dataMax;
+}
+
+
+THistogramColumn Histogram::getNumPlanes() const
+{
+  return planeTranslator->totalColumns();
 }
 
 
@@ -550,6 +574,9 @@ void Histogram::calculate( TObjectOrder iRow,
   {
     TSemanticValue value;
 
+    data->beginTime = fromTime;
+    data->endTime = toTime;
+
     // Communication statistics
     RecordList::iterator itComm = data->rList->begin();
     while ( itComm != data->rList->end() &&
@@ -620,7 +647,7 @@ void Histogram::finishRow( CalculateData *data )
             for ( UINT16 iStat = 0; iStat < commStatisticFunctions.size(); iStat++ )
             {
               value = commCube->getCurrentValue( iPlane, iColumn, iStat );
-              value = commStatisticFunctions[ iStat ]->finishRow( iPlane, value );
+              value = commStatisticFunctions[ iStat ]->finishRow( value, iPlane );
               commCube->setValue( iPlane, iColumn, iStat, value );
             }
           }
@@ -666,7 +693,7 @@ void Histogram::finishRow( CalculateData *data )
             for ( UINT16 iStat = 0; iStat < statisticFunctions.size(); iStat++ )
             {
               value = cube->getCurrentValue( iPlane, iColumn, iStat );
-              value = statisticFunctions[ iStat ]->finishRow( iPlane, value );
+              value = statisticFunctions[ iStat ]->finishRow( value, iPlane );
               cube->setValue( iPlane, iColumn, iStat, value );
             }
           }
