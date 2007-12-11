@@ -32,6 +32,7 @@ TSemanticValue StatNumSends::execute( CalculateData *data )
 }
 
 TSemanticValue StatNumSends::finishRow( TSemanticValue cellValue,
+                                        THistogramColumn column,
                                         THistogramColumn plane )
 {
   return cellValue;
@@ -51,7 +52,7 @@ HistogramStatistic *StatNumSends::clone()
 //-------------------------------------------------------------------------
 // Histogram Statistic: #Receives
 //-------------------------------------------------------------------------
-string StatNumSends::name = "#Receives";
+string StatNumReceives::name = "#Receives";
 
 TObjectOrder StatNumReceives::getPartner( CalculateData *data )
 {
@@ -79,6 +80,7 @@ TSemanticValue StatNumReceives::execute( CalculateData *data )
 }
 
 TSemanticValue StatNumReceives::finishRow( TSemanticValue cellValue,
+    THistogramColumn column,
     THistogramColumn plane )
 {
   return cellValue;
@@ -98,7 +100,7 @@ HistogramStatistic *StatNumReceives::clone()
 //-------------------------------------------------------------------------
 // Histogram Statistic: Bytes Sent
 //-------------------------------------------------------------------------
-string StatBytesSent::name = "Bytes Sent";
+string StatBytesSent::name = "Bytes sent";
 
 TObjectOrder StatBytesSent::getPartner( CalculateData *data )
 {
@@ -126,6 +128,7 @@ TSemanticValue StatBytesSent::execute( CalculateData *data )
 }
 
 TSemanticValue StatBytesSent::finishRow( TSemanticValue cellValue,
+    THistogramColumn column,
     THistogramColumn plane )
 {
   return cellValue;
@@ -145,7 +148,7 @@ HistogramStatistic *StatBytesSent::clone()
 //-------------------------------------------------------------------------
 // Histogram Statistic: Bytes Received
 //-------------------------------------------------------------------------
-string StatBytesReceived::name = "Bytes Received";
+string StatBytesReceived::name = "Bytes received";
 
 TObjectOrder StatBytesReceived::getPartner( CalculateData *data )
 {
@@ -173,6 +176,7 @@ TSemanticValue StatBytesReceived::execute( CalculateData *data )
 }
 
 TSemanticValue StatBytesReceived::finishRow( TSemanticValue cellValue,
+    THistogramColumn column,
     THistogramColumn plane )
 {
   return cellValue;
@@ -186,6 +190,79 @@ string StatBytesReceived::getName()
 HistogramStatistic *StatBytesReceived::clone()
 {
   return new StatBytesReceived( *this );
+}
+
+
+//-------------------------------------------------------------------------
+// Histogram Statistic: Average bytes sent
+//-------------------------------------------------------------------------
+string StatAvgBytesSent::name = "Average bytes sent";
+
+TObjectOrder StatAvgBytesSent::getPartner( CalculateData *data )
+{
+  if ( controlWin->getLevel() >= SYSTEM )
+    return controlWin->getTrace()->getReceiverCPU( data->comm->getCommIndex() );
+  else
+    return controlWin->getTrace()->getReceiverThread( data->comm->getCommIndex() );
+  return 0;
+}
+
+void StatAvgBytesSent::init( Histogram *whichHistogram )
+{
+  THistogramColumn numPlanes;
+  TObjectOrder numColumns;
+
+  myHistogram = whichHistogram;
+  controlWin = myHistogram->getControlWindow();
+
+  numPlanes = myHistogram->getNumPlanes();
+  numColumns = myHistogram->getNumRows();
+
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  {
+    numComms.push_back( vector<TSemanticValue>() );
+    for ( TObjectOrder iColumn = 0; iColumn < numColumns; iColumn++ )
+      numComms[ iPlane ].push_back( 0.0 );
+  }
+}
+
+void StatAvgBytesSent::reset()
+{
+  vector<vector<TSemanticValue> >::iterator itPlane = numComms.begin();
+
+  while ( itPlane != numComms.end() )
+  {
+    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
+    while ( itColumn != ( *itPlane ).end() )
+      ( *itColumn ) = 0.0;
+  }
+}
+
+TSemanticValue StatAvgBytesSent::execute( CalculateData *data )
+{
+  if ( data->comm->getType() & SEND )
+  {
+    ( ( numComms[ data->plane ] )[ getPartner( data ) ] )++;
+    return controlWin->getTrace()->getCommSize( data->comm->getCommIndex() );
+  }
+  return 0;
+}
+
+TSemanticValue StatAvgBytesSent::finishRow( TSemanticValue cellValue,
+    THistogramColumn column,
+    THistogramColumn plane )
+{
+  return cellValue / ( numComms[ plane ] )[ column ];
+}
+
+string StatAvgBytesSent::getName()
+{
+  return StatAvgBytesSent::name;
+}
+
+HistogramStatistic *StatAvgBytesSent::clone()
+{
+  return new StatAvgBytesSent( *this );
 }
 
 
@@ -218,6 +295,7 @@ TSemanticValue StatTime::execute( CalculateData *data )
 }
 
 TSemanticValue StatTime::finishRow( TSemanticValue cellValue,
+                                    THistogramColumn column,
                                     THistogramColumn plane )
 {
   return controlWin->traceUnitsToWindowUnits( cellValue );
@@ -284,6 +362,7 @@ TSemanticValue StatPercTime::execute( CalculateData *data )
 }
 
 TSemanticValue StatPercTime::finishRow( TSemanticValue cellValue,
+                                        THistogramColumn column,
                                         THistogramColumn plane )
 {
   return ( cellValue * 100.0 ) / rowTotal[ plane ];

@@ -313,7 +313,21 @@ THistogramLimit Histogram::getDataMax() const
 
 THistogramColumn Histogram::getNumPlanes() const
 {
-  return planeTranslator->totalColumns();
+  if( threeDimensions )
+    return planeTranslator->totalColumns();
+  return 1;
+}
+
+
+THistogramColumn Histogram::getNumColumns() const
+{
+  return numCols;
+}
+
+
+TObjectOrder Histogram::getNumRows() const
+{
+  return numRows;
 }
 
 
@@ -647,7 +661,7 @@ void Histogram::finishRow( CalculateData *data )
             for ( UINT16 iStat = 0; iStat < commStatisticFunctions.size(); iStat++ )
             {
               value = commCube->getCurrentValue( iPlane, iColumn, iStat );
-              value = commStatisticFunctions[ iStat ]->finishRow( value, iPlane );
+              value = commStatisticFunctions[ iStat ]->finishRow( value, iColumn, iPlane );
               commCube->setValue( iPlane, iColumn, iStat, value );
             }
           }
@@ -666,7 +680,7 @@ void Histogram::finishRow( CalculateData *data )
         for ( UINT16 iStat = 0; iStat < commStatisticFunctions.size(); iStat++ )
         {
           value = commMatrix->getCurrentValue( iColumn, iStat );
-          value = commStatisticFunctions[ iStat ]->finishRow( value );
+          value = commStatisticFunctions[ iStat ]->finishRow( value, iColumn );
           commMatrix->setValue( iColumn, iStat, value );
         }
       }
@@ -693,7 +707,7 @@ void Histogram::finishRow( CalculateData *data )
             for ( UINT16 iStat = 0; iStat < statisticFunctions.size(); iStat++ )
             {
               value = cube->getCurrentValue( iPlane, iColumn, iStat );
-              value = statisticFunctions[ iStat ]->finishRow( value, iPlane );
+              value = statisticFunctions[ iStat ]->finishRow( value, iColumn, iPlane );
               cube->setValue( iPlane, iColumn, iStat, value );
             }
           }
@@ -712,7 +726,7 @@ void Histogram::finishRow( CalculateData *data )
         for ( UINT16 iStat = 0; iStat < statisticFunctions.size(); iStat++ )
         {
           value = matrix->getCurrentValue( iColumn, iStat );
-          value = statisticFunctions[ iStat ]->finishRow( value );
+          value = statisticFunctions[ iStat ]->finishRow( value, iColumn );
           matrix->setValue( iColumn, iStat, value );
         }
       }

@@ -112,6 +112,8 @@ class Histogram
     THistogramLimit getDataMax() const;
 
     THistogramColumn getNumPlanes() const;
+    THistogramColumn getNumColumns() const;
+    TObjectOrder getNumRows() const;
 
     void clearStatistics();
     void pushbackStatistic( HistogramStatistic *whichStatistic );

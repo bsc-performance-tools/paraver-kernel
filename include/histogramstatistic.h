@@ -25,6 +25,7 @@ class HistogramStatistic
     virtual void reset() = 0;
     virtual TSemanticValue execute( CalculateData *data ) = 0;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
                                       THistogramColumn plane = 0 ) = 0;
 
     virtual string getName() = 0;
@@ -57,6 +58,7 @@ class StatNumSends: public HistogramStatistic
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
     virtual string getName();
@@ -85,6 +87,7 @@ class StatNumReceives: public HistogramStatistic
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
     virtual string getName();
@@ -113,6 +116,7 @@ class StatBytesSent: public HistogramStatistic
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
     virtual string getName();
@@ -141,6 +145,7 @@ class StatBytesReceived: public HistogramStatistic
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
     virtual string getName();
@@ -150,6 +155,36 @@ class StatBytesReceived: public HistogramStatistic
   private:
     static string name;
     KWindow *controlWin;
+};
+
+
+class StatAvgBytesSent: public HistogramStatistic
+{
+  public:
+    StatAvgBytesSent();
+    ~StatAvgBytesSent();
+
+    virtual bool createComms() const
+    {
+      return true;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data );
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static string name;
+    KWindow *controlWin;
+    vector<vector<TSemanticValue> > numComms;
 };
 
 
@@ -175,6 +210,7 @@ class StatTime: public HistogramStatistic
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
     virtual string getName();
@@ -206,6 +242,7 @@ class StatPercTime: public HistogramStatistic
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
     virtual string getName();

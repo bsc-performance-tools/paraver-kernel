@@ -9,7 +9,7 @@ FunctionManagement<T> *FunctionManagement<T>::inst = NULL;
 template <class T>
 FunctionManagement<T>::~FunctionManagement()
 {
-  typename map<string, T>::iterator it = hash.find( name );
+  typename map<string, T>::iterator it = hash.begin();
   while ( it != hash.end() )
   {
     delete ( *it ).second;
@@ -21,7 +21,7 @@ FunctionManagement<T>::~FunctionManagement()
 template <class T>
 FunctionManagement<T>::FunctionManagement( vector<string>& names, vector<T *>& objects )
 {
-  int i;
+  UINT16 i;
 
   for ( i = 0; i < names.size(); i++ )
   {
