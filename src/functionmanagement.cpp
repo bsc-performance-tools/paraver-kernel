@@ -9,7 +9,7 @@ FunctionManagement<T> *FunctionManagement<T>::inst = NULL;
 template <class T>
 FunctionManagement<T>::~FunctionManagement()
 {
-  typename map<string, T>::iterator it = hash.begin();
+  typename map<string, T*>::iterator it = hash.begin();
   while ( it != hash.end() )
   {
     delete ( *it ).second;
