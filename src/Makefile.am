@@ -19,6 +19,7 @@ libparaver_kernel_la_SOURCES = \
     kwindowexception.cpp \
     memorytrace.cpp \
     paraverkernelexception.cpp \
+    paraverkernelinit.cpp \
     processmodel.cpp \
     resourcemodel.cpp \
     semanticcomposefunctions.cpp \

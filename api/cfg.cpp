@@ -5,8 +5,10 @@
 #include "cfg.h"
 #include "kwindow.h"
 #include "trace.h"
-#include "semanticmanagement.h"
-#include "filtermanagement.h"
+
+#include "functionmanagement.h"
+#include "semanticfunction.h"
+#include "filter.h"
 
 
 using namespace std;
@@ -284,7 +286,8 @@ bool WindowOperation::parseLine( istringstream& line, Trace *whichTrace,
     return true;
 
   getline( line, strFunction, ' ' );
-  function = SemanticManagement::createFunction( strFunction );
+  function = (FunctionManagement<SemanticFunction>::getInstance())->getFunction(strFunction);
+//  function = SemanticManagement::createFunction( strFunction );
   if ( function == NULL )
     return false;
 
@@ -502,7 +505,8 @@ bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
     {
       SemanticFunction *function;
 
-      function = SemanticManagement::createFunction( strFunction );
+  function = (FunctionManagement<SemanticFunction>::getInstance())->getFunction(strFunction);
+//      function = SemanticManagement::createFunction( strFunction );
       if ( function == NULL )
         return false;
       windows[ windows.size() - 1 ]->setLevelFunction( level, function );
@@ -513,7 +517,9 @@ bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
       FilterFunction *function;
       Filter *filter = ( ( KSingleWindow * ) windows[ windows.size() - 1 ] )->getFilter();
 
-      function = FilterManagement::createFunction( strFunction );
+
+  function = (FunctionManagement<FilterFunction>::getInstance())->getFunction(strFunction);
+//      function = FilterManagement::createFunction( strFunction );
       if ( function == NULL )
         return false;
 
@@ -573,7 +579,8 @@ bool WindowComposeFunctions::parseLine( istringstream& line, Trace *whichTrace,
     {
       SemanticFunction *function;
 
-      function = SemanticManagement::createFunction( strFunction );
+  function = (FunctionManagement<SemanticFunction>::getInstance())->getFunction(strFunction);
+//      function = SemanticManagement::createFunction( strFunction );
       if ( function == NULL )
         return false;
       if ( !windows[ windows.size() - 1 ]->setLevelFunction( level, function ) )
@@ -607,7 +614,8 @@ bool WindowSemanticModule::parseLine( istringstream& line, Trace *whichTrace,
   getline( line, strFunction, '{' );
   strFunction.erase( strFunction.length() - 1 ); // Final space.
 
-  function = SemanticManagement::createFunction( strFunction );
+  function = (FunctionManagement<SemanticFunction>::getInstance())->getFunction(strFunction);
+//  function = SemanticManagement::createFunction( strFunction );
   if ( function == NULL )
     return false;
 

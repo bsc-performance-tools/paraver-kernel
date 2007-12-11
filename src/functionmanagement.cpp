@@ -25,7 +25,7 @@ FunctionManagement<T>::FunctionManagement( vector<string>& names, vector<T *>& o
 
   for ( i = 0; i < names.size(); i++ )
   {
-    hash.insert( pair<string, T>( names[i], objects[i] ) );
+    hash.insert( pair<string, T*>( names[i], objects[i] ) );
   }
 
 }
@@ -55,7 +55,7 @@ T *FunctionManagement<T>::getFunction( const string& name )
 {
   T *retval = NULL;
 
-  typename map<string, T>::iterator it = hash.find( name );
+  typename map<string, T*>::iterator it = hash.find( name );
   if ( it != hash.end() )
     retval = ( ( *it ).second )->clone();
 

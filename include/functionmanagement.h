@@ -1,3 +1,7 @@
+#ifndef FUNCTIONMANAGEMENT_H_INCLUDED
+#define FUNCTIONMANAGEMENT_H_INCLUDED
+
+
 #include <map>
 #include <vector>
 
@@ -24,6 +28,6 @@ class FunctionManagement
 
 };
 
-#include "functionmanagement.cpp"
+#include "src/functionmanagement.cpp"
 
-
+#endif // FUNCTIONMANAGEMENT_H_INCLUDED

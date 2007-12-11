@@ -1,0 +1,9 @@
+#ifndef PARAVERKERNELINIT_H_INCLUDED
+#define PARAVERKERNELINIT_H_INCLUDED
+
+
+void paraverKernelInit();
+
+
+#endif // PARAVERKERNELINIT_H_INCLUDED
+
