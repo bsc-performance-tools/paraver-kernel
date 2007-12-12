@@ -267,6 +267,401 @@ HistogramStatistic *StatAvgBytesSent::clone()
 
 
 //-------------------------------------------------------------------------
+// Histogram Statistic: Average bytes received
+//-------------------------------------------------------------------------
+string StatAvgBytesReceived::name = "Average bytes received";
+
+TObjectOrder StatAvgBytesReceived::getPartner( CalculateData *data )
+{
+  if ( controlWin->getLevel() >= SYSTEM )
+    return controlWin->getTrace()->getSenderCPU( data->comm->getCommIndex() );
+  else
+    return controlWin->getTrace()->getSenderThread( data->comm->getCommIndex() );
+  return 0;
+}
+
+void StatAvgBytesReceived::init( Histogram *whichHistogram )
+{
+  THistogramColumn numPlanes;
+  TObjectOrder numColumns;
+
+  myHistogram = whichHistogram;
+  controlWin = myHistogram->getControlWindow();
+
+  numPlanes = myHistogram->getNumPlanes();
+  numColumns = myHistogram->getNumRows();
+
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  {
+    numComms.push_back( vector<TSemanticValue>() );
+    for ( TObjectOrder iColumn = 0; iColumn < numColumns; iColumn++ )
+      numComms[ iPlane ].push_back( 0.0 );
+  }
+}
+
+void StatAvgBytesReceived::reset()
+{
+  vector<vector<TSemanticValue> >::iterator itPlane = numComms.begin();
+
+  while ( itPlane != numComms.end() )
+  {
+    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
+    while ( itColumn != ( *itPlane ).end() )
+      ( *itColumn ) = 0.0;
+  }
+}
+
+TSemanticValue StatAvgBytesReceived::execute( CalculateData *data )
+{
+  if ( data->comm->getType() & RECV )
+  {
+    ( ( numComms[ data->plane ] )[ getPartner( data ) ] )++;
+    return controlWin->getTrace()->getCommSize( data->comm->getCommIndex() );
+  }
+  return 0;
+}
+
+TSemanticValue StatAvgBytesReceived::finishRow( TSemanticValue cellValue,
+    THistogramColumn column,
+    THistogramColumn plane )
+{
+  return cellValue / ( numComms[ plane ] )[ column ];
+}
+
+string StatAvgBytesReceived::getName()
+{
+  return StatAvgBytesReceived::name;
+}
+
+HistogramStatistic *StatAvgBytesReceived::clone()
+{
+  return new StatAvgBytesReceived( *this );
+}
+
+
+//-------------------------------------------------------------------------
+// Histogram Statistic: Minimum bytes sent
+//-------------------------------------------------------------------------
+string StatMinBytesSent::name = "Minimum bytes sent";
+
+TObjectOrder StatMinBytesSent::getPartner( CalculateData *data )
+{
+  if ( controlWin->getLevel() >= SYSTEM )
+    return controlWin->getTrace()->getReceiverCPU( data->comm->getCommIndex() );
+  else
+    return controlWin->getTrace()->getReceiverThread( data->comm->getCommIndex() );
+  return 0;
+}
+
+void StatMinBytesSent::init( Histogram *whichHistogram )
+{
+  THistogramColumn numPlanes;
+  TObjectOrder numColumns;
+
+  myHistogram = whichHistogram;
+  controlWin = myHistogram->getControlWindow();
+
+  numPlanes = myHistogram->getNumPlanes();
+  numColumns = myHistogram->getNumRows();
+
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  {
+    min.push_back( vector<TSemanticValue>() );
+    for ( TObjectOrder iColumn = 0; iColumn < numColumns; iColumn++ )
+      min[ iPlane ].push_back( 0.0 );
+  }
+}
+
+void StatMinBytesSent::reset()
+{
+  vector<vector<TSemanticValue> >::iterator itPlane = min.begin();
+
+  while ( itPlane != min.end() )
+  {
+    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
+    while ( itColumn != ( *itPlane ).end() )
+      ( *itColumn ) = 0.0;
+  }
+}
+
+TSemanticValue StatMinBytesSent::execute( CalculateData *data )
+{
+  if ( data->comm->getType() & SEND )
+  {
+    if ( ( ( min[ data->plane ] )[ getPartner( data ) ] ) == 0.0 )
+    {
+      ( ( min[ data->plane ] )[ getPartner( data ) ] ) =
+        controlWin->getTrace()->getCommSize( data->comm->getCommIndex() );
+    }
+    else if ( controlWin->getTrace()->getCommSize( data->comm->getCommIndex() ) <
+              ( ( min[ data->plane ] )[ getPartner( data ) ] ) )
+    {
+      ( ( min[ data->plane ] )[ getPartner( data ) ] ) =
+        controlWin->getTrace()->getCommSize( data->comm->getCommIndex() );
+    }
+    return 1;
+  }
+  return 0;
+}
+
+TSemanticValue StatMinBytesSent::finishRow( TSemanticValue cellValue,
+    THistogramColumn column,
+    THistogramColumn plane )
+{
+  return ( ( min[ plane ] )[ column ] );
+}
+
+string StatMinBytesSent::getName()
+{
+  return StatMinBytesSent::name;
+}
+
+HistogramStatistic *StatMinBytesSent::clone()
+{
+  return new StatMinBytesSent( *this );
+}
+
+
+//-------------------------------------------------------------------------
+// Histogram Statistic: Minimum bytes received
+//-------------------------------------------------------------------------
+string StatMinBytesReceived::name = "Minimum bytes received";
+
+TObjectOrder StatMinBytesReceived::getPartner( CalculateData *data )
+{
+  if ( controlWin->getLevel() >= SYSTEM )
+    return controlWin->getTrace()->getSenderCPU( data->comm->getCommIndex() );
+  else
+    return controlWin->getTrace()->getSenderThread( data->comm->getCommIndex() );
+  return 0;
+}
+
+void StatMinBytesReceived::init( Histogram *whichHistogram )
+{
+  THistogramColumn numPlanes;
+  TObjectOrder numColumns;
+
+  myHistogram = whichHistogram;
+  controlWin = myHistogram->getControlWindow();
+
+  numPlanes = myHistogram->getNumPlanes();
+  numColumns = myHistogram->getNumRows();
+
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  {
+    min.push_back( vector<TSemanticValue>() );
+    for ( TObjectOrder iColumn = 0; iColumn < numColumns; iColumn++ )
+      min[ iPlane ].push_back( 0.0 );
+  }
+}
+
+void StatMinBytesReceived::reset()
+{
+  vector<vector<TSemanticValue> >::iterator itPlane = min.begin();
+
+  while ( itPlane != min.end() )
+  {
+    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
+    while ( itColumn != ( *itPlane ).end() )
+      ( *itColumn ) = 0.0;
+  }
+}
+
+TSemanticValue StatMinBytesReceived::execute( CalculateData *data )
+{
+  if ( data->comm->getType() & RECV )
+  {
+    if ( ( ( min[ data->plane ] )[ getPartner( data ) ] ) == 0.0 )
+    {
+      ( ( min[ data->plane ] )[ getPartner( data ) ] ) =
+        controlWin->getTrace()->getCommSize( data->comm->getCommIndex() );
+    }
+    else if ( controlWin->getTrace()->getCommSize( data->comm->getCommIndex() ) <
+              ( ( min[ data->plane ] )[ getPartner( data ) ] ) )
+    {
+      ( ( min[ data->plane ] )[ getPartner( data ) ] ) =
+        controlWin->getTrace()->getCommSize( data->comm->getCommIndex() );
+    }
+    return 1;
+  }
+  return 0;
+}
+
+TSemanticValue StatMinBytesReceived::finishRow( TSemanticValue cellValue,
+    THistogramColumn column,
+    THistogramColumn plane )
+{
+  return ( ( min[ plane ] )[ column ] );
+}
+
+string StatMinBytesReceived::getName()
+{
+  return StatMinBytesReceived::name;
+}
+
+HistogramStatistic *StatMinBytesReceived::clone()
+{
+  return new StatMinBytesReceived( *this );
+}
+
+
+//-------------------------------------------------------------------------
+// Histogram Statistic: Maximum bytes sent
+//-------------------------------------------------------------------------
+string StatMaxBytesSent::name = "Maximum bytes sent";
+
+TObjectOrder StatMaxBytesSent::getPartner( CalculateData *data )
+{
+  if ( controlWin->getLevel() >= SYSTEM )
+    return controlWin->getTrace()->getReceiverCPU( data->comm->getCommIndex() );
+  else
+    return controlWin->getTrace()->getReceiverThread( data->comm->getCommIndex() );
+  return 0;
+}
+
+void StatMaxBytesSent::init( Histogram *whichHistogram )
+{
+  THistogramColumn numPlanes;
+  TObjectOrder numColumns;
+
+  myHistogram = whichHistogram;
+  controlWin = myHistogram->getControlWindow();
+
+  numPlanes = myHistogram->getNumPlanes();
+  numColumns = myHistogram->getNumRows();
+
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  {
+    max.push_back( vector<TSemanticValue>() );
+    for ( TObjectOrder iColumn = 0; iColumn < numColumns; iColumn++ )
+      max[ iPlane ].push_back( 0.0 );
+  }
+}
+
+void StatMaxBytesSent::reset()
+{
+  vector<vector<TSemanticValue> >::iterator itPlane = max.begin();
+
+  while ( itPlane != max.end() )
+  {
+    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
+    while ( itColumn != ( *itPlane ).end() )
+      ( *itColumn ) = 0.0;
+  }
+}
+
+TSemanticValue StatMaxBytesSent::execute( CalculateData *data )
+{
+  if ( data->comm->getType() & SEND )
+  {
+    if ( controlWin->getTrace()->getCommSize( data->comm->getCommIndex() ) >
+         ( ( max[ data->plane ] )[ getPartner( data ) ] ) )
+    {
+      ( ( max[ data->plane ] )[ getPartner( data ) ] ) =
+        controlWin->getTrace()->getCommSize( data->comm->getCommIndex() );
+    }
+    return 1;
+  }
+  return 0;
+}
+
+TSemanticValue StatMaxBytesSent::finishRow( TSemanticValue cellValue,
+    THistogramColumn column,
+    THistogramColumn plane )
+{
+  return ( ( max[ plane ] )[ column ] );
+}
+
+string StatMaxBytesSent::getName()
+{
+  return StatMaxBytesSent::name;
+}
+
+HistogramStatistic *StatMaxBytesSent::clone()
+{
+  return new StatMaxBytesSent( *this );
+}
+
+
+//-------------------------------------------------------------------------
+// Histogram Statistic: Maximum bytes received
+//-------------------------------------------------------------------------
+string StatMaxBytesReceived::name = "Maximum bytes received";
+
+TObjectOrder StatMaxBytesReceived::getPartner( CalculateData *data )
+{
+  if ( controlWin->getLevel() >= SYSTEM )
+    return controlWin->getTrace()->getSenderCPU( data->comm->getCommIndex() );
+  else
+    return controlWin->getTrace()->getSenderThread( data->comm->getCommIndex() );
+  return 0;
+}
+
+void StatMaxBytesReceived::init( Histogram *whichHistogram )
+{
+  THistogramColumn numPlanes;
+  TObjectOrder numColumns;
+
+  myHistogram = whichHistogram;
+  controlWin = myHistogram->getControlWindow();
+
+  numPlanes = myHistogram->getNumPlanes();
+  numColumns = myHistogram->getNumRows();
+
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  {
+    max.push_back( vector<TSemanticValue>() );
+    for ( TObjectOrder iColumn = 0; iColumn < numColumns; iColumn++ )
+      max[ iPlane ].push_back( 0.0 );
+  }
+}
+
+void StatMaxBytesReceived::reset()
+{
+  vector<vector<TSemanticValue> >::iterator itPlane = max.begin();
+
+  while ( itPlane != max.end() )
+  {
+    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
+    while ( itColumn != ( *itPlane ).end() )
+      ( *itColumn ) = 0.0;
+  }
+}
+
+TSemanticValue StatMaxBytesReceived::execute( CalculateData *data )
+{
+  if ( data->comm->getType() & RECV )
+  {
+    if ( controlWin->getTrace()->getCommSize( data->comm->getCommIndex() ) >
+         ( ( max[ data->plane ] )[ getPartner( data ) ] ) )
+    {
+      ( ( max[ data->plane ] )[ getPartner( data ) ] ) =
+        controlWin->getTrace()->getCommSize( data->comm->getCommIndex() );
+    }
+    return 1;
+  }
+  return 0;
+}
+
+TSemanticValue StatMaxBytesReceived::finishRow( TSemanticValue cellValue,
+    THistogramColumn column,
+    THistogramColumn plane )
+{
+  return ( ( max[ plane ] )[ column ] );
+}
+
+string StatMaxBytesReceived::getName()
+{
+  return StatMaxBytesReceived::name;
+}
+
+HistogramStatistic *StatMaxBytesReceived::clone()
+{
+  return new StatMaxBytesReceived( *this );
+}
+
+
+//-------------------------------------------------------------------------
 // Histogram Statistic: Time
 //-------------------------------------------------------------------------
 string StatTime::name = "Time";

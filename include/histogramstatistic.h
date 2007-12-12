@@ -188,6 +188,156 @@ class StatAvgBytesSent: public HistogramStatistic
 };
 
 
+class StatAvgBytesReceived: public HistogramStatistic
+{
+  public:
+    StatAvgBytesReceived();
+    ~StatAvgBytesReceived();
+
+    virtual bool createComms() const
+    {
+      return true;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data );
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static string name;
+    KWindow *controlWin;
+    vector<vector<TSemanticValue> > numComms;
+};
+
+
+class StatMinBytesSent: public HistogramStatistic
+{
+  public:
+    StatMinBytesSent();
+    ~StatMinBytesSent();
+
+    virtual bool createComms() const
+    {
+      return true;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data );
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static string name;
+    KWindow *controlWin;
+    vector<vector<TSemanticValue> > min;
+};
+
+
+class StatMinBytesReceived: public HistogramStatistic
+{
+  public:
+    StatMinBytesReceived();
+    ~StatMinBytesReceived();
+
+    virtual bool createComms() const
+    {
+      return true;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data );
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static string name;
+    KWindow *controlWin;
+    vector<vector<TSemanticValue> > min;
+};
+
+
+class StatMaxBytesSent: public HistogramStatistic
+{
+  public:
+    StatMaxBytesSent();
+    ~StatMaxBytesSent();
+
+    virtual bool createComms() const
+    {
+      return true;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data );
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static string name;
+    KWindow *controlWin;
+    vector<vector<TSemanticValue> > max;
+};
+
+
+class StatMaxBytesReceived: public HistogramStatistic
+{
+  public:
+    StatMaxBytesReceived();
+    ~StatMaxBytesReceived();
+
+    virtual bool createComms() const
+    {
+      return true;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data );
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static string name;
+    KWindow *controlWin;
+    vector<vector<TSemanticValue> > max;
+};
+
+
 //-------------------------------------------------------------------------
 // Semantic statistics
 //-------------------------------------------------------------------------
