@@ -45,7 +45,8 @@ class ColumnTranslator
                       THistogramLimit whichDelta );
     ~ColumnTranslator();
 
-    THistogramColumn getColumn( THistogramLimit whichValue ) const;
+    bool getColumn( THistogramLimit whichValue,
+                    THistogramColumn& column ) const;
     THistogramColumn totalColumns() const;
 
   protected:

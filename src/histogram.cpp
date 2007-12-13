@@ -77,7 +77,8 @@ ColumnTranslator::~ColumnTranslator()
 {}
 
 
-THistogramColumn ColumnTranslator::getColumn( THistogramLimit whichValue ) const
+bool ColumnTranslator::getColumn( THistogramLimit whichValue,
+                                  THistogramColumn& column ) const
 {
   THistogramColumn hc;
 
@@ -313,7 +314,7 @@ THistogramLimit Histogram::getDataMax() const
 
 THistogramColumn Histogram::getNumPlanes() const
 {
-  if( threeDimensions )
+  if ( threeDimensions )
     return planeTranslator->totalColumns();
   return 1;
 }
@@ -548,6 +549,9 @@ void Histogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     if ( currentWindow == dataWindow )
       data->dataRow = iRow;
 
+    while ( currentWindow->getEndTime( iRow ) <= fromTime )
+      currentWindow->calcNext( iRow );
+
     while ( currentWindow->getEndTime( iRow ) <= toTime )
     {
       calculate( iRow, fromTime, toTime, fromRow, toRow, winIndex, data );
@@ -578,11 +582,15 @@ void Histogram::calculate( TObjectOrder iRow,
 
   if ( currentWindow == controlWindow )
   {
-    data->column = columnTranslator->getColumn( controlWindow->getValue( iRow ) );
+    if ( !columnTranslator->getColumn( controlWindow->getValue( iRow ),
+                                       data->column ) )
+      return;
     data->rList = controlWindow->getRecordList( iRow );
   }
   if ( threeDimensions && currentWindow == xtraControlWindow )
-    data->plane = planeTranslator->getColumn( xtraControlWindow->getValue( iRow ) );
+    if ( !planeTranslator->getColumn( xtraControlWindow->getValue( iRow ),
+                                      data->plane ) )
+      return;
 
   if ( winIndex == orderedWindows.size() - 1 )
   {

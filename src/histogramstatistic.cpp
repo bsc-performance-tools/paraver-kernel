@@ -773,3 +773,74 @@ HistogramStatistic *StatPercTime::clone()
   return new StatPercTime( *this );
 }
 
+
+//-------------------------------------------------------------------------
+// Histogram Statistic: % Time Not Zero
+//-------------------------------------------------------------------------
+string StatPercTimeNotZero::name = "% Time Not Zero";
+
+void StatPercTimeNotZero::init( Histogram *whichHistogram )
+{
+  THistogramColumn numPlanes;
+
+  myHistogram = whichHistogram;
+  controlWin = myHistogram->getControlWindow();
+
+  rowTotal.clear();
+  if ( myHistogram->getThreeDimensions() )
+    numPlanes = myHistogram->getNumPlanes();
+  else
+    numPlanes = 1;
+
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+    rowTotal.push_back( 0.0 );
+}
+
+void StatPercTimeNotZero::reset()
+{
+  vector<TSemanticValue>::iterator it = rowTotal.begin();
+
+  while ( it != rowTotal.end() )
+    ( *it ) = 0.0;
+}
+
+TSemanticValue StatPercTimeNotZero::execute( CalculateData *data )
+{
+  if ( controlWin->getValue( data->controlRow ) != 0.0 )
+  {
+    TRecordTime begin;
+    TRecordTime end;
+
+    begin = data->beginTime > controlWin->getBeginTime( data->controlRow ) ?
+            data->beginTime : controlWin->getBeginTime( data->controlRow );
+
+    end = data->endTime < controlWin->getEndTime( data->controlRow ) ?
+          data->endTime : controlWin->getEndTime( data->controlRow );
+
+    if ( myHistogram->getThreeDimensions() )
+      rowTotal[ data->plane ] += end - begin;
+    else
+      rowTotal[ 0 ] += end - begin;
+
+    return end - begin;
+  }
+
+  return 0.0;
+}
+
+TSemanticValue StatPercTimeNotZero::finishRow( TSemanticValue cellValue,
+    THistogramColumn column,
+    THistogramColumn plane )
+{
+  return ( cellValue * 100.0 ) / rowTotal[ plane ];
+}
+
+string StatPercTimeNotZero::getName()
+{
+  return StatPercTimeNotZero::name;
+}
+
+HistogramStatistic *StatPercTimeNotZero::clone()
+{
+  return new StatPercTimeNotZero( *this );
+}

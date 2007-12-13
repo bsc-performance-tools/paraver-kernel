@@ -405,4 +405,37 @@ class StatPercTime: public HistogramStatistic
     vector<TSemanticValue> rowTotal;
 };
 
+
+class StatPercTimeNotZero: public HistogramStatistic
+{
+  public:
+    StatPercTimeNotZero();
+    ~StatPercTimeNotZero();
+
+    virtual bool createComms() const
+    {
+      return false;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data )
+    {
+      return 0;
+    }
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static string name;
+    KWindow *controlWin;
+    vector<TSemanticValue> rowTotal;
+};
+
 #endif // HISTOGRAMSTATISTIC_H_INCLUDED
