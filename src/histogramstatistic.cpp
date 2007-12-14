@@ -844,3 +844,386 @@ HistogramStatistic *StatPercTimeNotZero::clone()
 {
   return new StatPercTimeNotZero( *this );
 }
+
+
+//-------------------------------------------------------------------------
+// Histogram Statistic: % Window Time
+//-------------------------------------------------------------------------
+string StatPercTimeWindow::name = "% Window Time";
+
+void StatPercTimeWindow::init( Histogram *whichHistogram )
+{
+  myHistogram = whichHistogram;
+  controlWin = myHistogram->getControlWindow();
+}
+
+void StatPercTimeWindow::reset()
+{
+}
+
+TSemanticValue StatPercTimeWindow::execute( CalculateData *data )
+{
+  TRecordTime begin;
+  TRecordTime end;
+
+  begin = data->beginTime > controlWin->getBeginTime( data->controlRow ) ?
+          data->beginTime : controlWin->getBeginTime( data->controlRow );
+
+  end = data->endTime < controlWin->getEndTime( data->controlRow ) ?
+        data->endTime : controlWin->getEndTime( data->controlRow );
+
+  return end - begin;
+}
+
+TSemanticValue StatPercTimeWindow::finishRow( TSemanticValue cellValue,
+    THistogramColumn column,
+    THistogramColumn plane )
+{
+  return ( cellValue * 100.0 ) /
+         ( myHistogram->getEndTime() - myHistogram->getBeginTime() );
+}
+
+string StatPercTimeWindow::getName()
+{
+  return StatPercTimeWindow::name;
+}
+
+HistogramStatistic *StatPercTimeWindow::clone()
+{
+  return new StatPercTimeWindow( *this );
+}
+
+
+//-------------------------------------------------------------------------
+// Histogram Statistic: # Bursts
+//-------------------------------------------------------------------------
+string StatNumBursts::name = "# Bursts";
+
+void StatNumBursts::init( Histogram *whichHistogram )
+{
+  myHistogram = whichHistogram;
+}
+
+void StatNumBursts::reset()
+{
+}
+
+TSemanticValue StatNumBursts::execute( CalculateData *data )
+{
+  return 1.0;
+}
+
+TSemanticValue StatNumBursts::finishRow( TSemanticValue cellValue,
+    THistogramColumn column,
+    THistogramColumn plane )
+{
+  return cellValue;
+}
+
+string StatNumBursts::getName()
+{
+  return StatNumBursts::name;
+}
+
+HistogramStatistic *StatNumBursts::clone()
+{
+  return new StatNumBursts( *this );
+}
+
+
+//-------------------------------------------------------------------------
+// Histogram Statistic: % # Bursts
+//-------------------------------------------------------------------------
+string StatPercNumBursts::name = "% # Bursts";
+
+void StatPercNumBursts::init( Histogram *whichHistogram )
+{
+  THistogramColumn numPlanes;
+
+  myHistogram = whichHistogram;
+
+  rowTotal.clear();
+  if ( myHistogram->getThreeDimensions() )
+    numPlanes = myHistogram->getNumPlanes();
+  else
+    numPlanes = 1;
+
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+    rowTotal.push_back( 0.0 );
+}
+
+void StatPercNumBursts::reset()
+{
+  vector<TSemanticValue>::iterator it = rowTotal.begin();
+
+  while ( it != rowTotal.end() )
+    ( *it ) = 0.0;
+}
+
+TSemanticValue StatPercNumBursts::execute( CalculateData *data )
+{
+  if ( myHistogram->getThreeDimensions() )
+    rowTotal[ data->plane ] += 1.0;
+  else
+    rowTotal[ 0 ] += 1.0;
+
+  return 1.0;
+}
+
+TSemanticValue StatPercNumBursts::finishRow( TSemanticValue cellValue,
+    THistogramColumn column,
+    THistogramColumn plane )
+{
+  return ( cellValue * 100.0 ) / rowTotal[ plane ];
+}
+
+string StatPercNumBursts::getName()
+{
+  return StatPercNumBursts::name;
+}
+
+HistogramStatistic *StatPercNumBursts::clone()
+{
+  return new StatPercNumBursts( *this );
+}
+
+
+//-------------------------------------------------------------------------
+// Histogram Statistic: Integral
+//-------------------------------------------------------------------------
+string StatIntegral::name = "Integral";
+
+void StatIntegral::init( Histogram *whichHistogram )
+{
+  myHistogram = whichHistogram;
+  dataWin = myHistogram->getDataWindow();
+}
+
+void StatIntegral::reset()
+{
+}
+
+TSemanticValue StatIntegral::execute( CalculateData *data )
+{
+  TRecordTime begin;
+  TRecordTime end;
+
+  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
+          data->beginTime : dataWin->getBeginTime( data->dataRow );
+
+  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
+        data->endTime : dataWin->getEndTime( data->dataRow );
+
+  return ( end - begin ) * dataWin->getValue( data->dataRow );
+}
+
+TSemanticValue StatIntegral::finishRow( TSemanticValue cellValue,
+                                        THistogramColumn column,
+                                        THistogramColumn plane )
+{
+  return cellValue;
+}
+
+string StatIntegral::getName()
+{
+  return StatIntegral::name;
+}
+
+HistogramStatistic *StatIntegral::clone()
+{
+  return new StatIntegral( *this );
+}
+
+
+//-------------------------------------------------------------------------
+// Histogram Statistic: Average value
+//-------------------------------------------------------------------------
+string StatAvgValue::name = "Average value";
+
+void StatAvgValue::init( Histogram *whichHistogram )
+{
+  THistogramColumn numPlanes;
+  TObjectOrder numColumns;
+
+  myHistogram = whichHistogram;
+  dataWin = myHistogram->getDataWindow();
+
+  numPlanes = myHistogram->getNumPlanes();
+  numColumns = myHistogram->getNumColumns();
+
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  {
+    numValues.push_back( vector<TSemanticValue>() );
+    for ( TObjectOrder iColumn = 0; iColumn < numColumns; iColumn++ )
+      numValues[ iPlane ].push_back( 0.0 );
+  }
+}
+
+void StatAvgValue::reset()
+{
+  vector<vector<TSemanticValue> >::iterator itPlane = numValues.begin();
+
+  while ( itPlane != numValues.end() )
+  {
+    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
+    while ( itColumn != ( *itPlane ).end() )
+      ( *itColumn ) = 0.0;
+  }
+}
+
+TSemanticValue StatAvgValue::execute( CalculateData *data )
+{
+  ( ( numValues[ data->plane ] )[ data->column ] )++;
+  return dataWin->getValue( data->dataRow );
+}
+
+TSemanticValue StatAvgValue::finishRow( TSemanticValue cellValue,
+                                        THistogramColumn column,
+                                        THistogramColumn plane )
+{
+  return cellValue / ( numValues[ plane ] )[ column ];
+}
+
+string StatAvgValue::getName()
+{
+  return StatAvgValue::name;
+}
+
+HistogramStatistic *StatAvgValue::clone()
+{
+  return new StatAvgValue( *this );
+}
+
+
+//-------------------------------------------------------------------------
+// Histogram Statistic: Maximum
+//-------------------------------------------------------------------------
+string StatMaximum::name = "Maximum";
+
+void StatMaximum::init( Histogram *whichHistogram )
+{
+  THistogramColumn numPlanes;
+  TObjectOrder numColumns;
+
+  myHistogram = whichHistogram;
+  dataWin = myHistogram->getDataWindow();
+
+  numPlanes = myHistogram->getNumPlanes();
+  numColumns = myHistogram->getNumColumns();
+
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  {
+    max.push_back( vector<TSemanticValue>() );
+    for ( TObjectOrder iColumn = 0; iColumn < numColumns; iColumn++ )
+      max[ iPlane ].push_back( 0.0 );
+  }
+}
+
+void StatMaximum::reset()
+{
+  vector<vector<TSemanticValue> >::iterator itPlane = max.begin();
+
+  while ( itPlane != max.end() )
+  {
+    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
+    while ( itColumn != ( *itPlane ).end() )
+      ( *itColumn ) = 0.0;
+  }
+}
+
+TSemanticValue StatMaximum::execute( CalculateData *data )
+{
+  if ( dataWin->getValue( data->dataRow ) >
+       ( ( max[ data->plane ] )[ data->column ] ) )
+    ( ( max[ data->plane ] )[ data->column ] ) = dataWin->getValue( data->dataRow );
+  return 1;
+}
+
+TSemanticValue StatMaximum::finishRow( TSemanticValue cellValue,
+                                       THistogramColumn column,
+                                       THistogramColumn plane )
+{
+  return ( max[ plane ] )[ column ];
+}
+
+string StatMaximum::getName()
+{
+  return StatMaximum::name;
+}
+
+HistogramStatistic *StatMaximum::clone()
+{
+  return new StatMaximum( *this );
+}
+
+
+//-------------------------------------------------------------------------
+// Histogram Statistic: Average Burst Time
+//-------------------------------------------------------------------------
+string StatAvgBurstTime::name = "Average Burst Time";
+
+void StatAvgBurstTime::init( Histogram *whichHistogram )
+{
+  THistogramColumn numPlanes;
+  TObjectOrder numColumns;
+
+  myHistogram = whichHistogram;
+  dataWin = myHistogram->getDataWindow();
+
+  numPlanes = myHistogram->getNumPlanes();
+  numColumns = myHistogram->getNumColumns();
+
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  {
+    numValues.push_back( vector<TSemanticValue>() );
+    for ( TObjectOrder iColumn = 0; iColumn < numColumns; iColumn++ )
+      numValues[ iPlane ].push_back( 0.0 );
+  }
+}
+
+void StatAvgBurstTime::reset()
+{
+  vector<vector<TSemanticValue> >::iterator itPlane = numValues.begin();
+
+  while ( itPlane != numValues.end() )
+  {
+    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
+    while ( itColumn != ( *itPlane ).end() )
+      ( *itColumn ) = 0.0;
+  }
+}
+
+TSemanticValue StatAvgBurstTime::execute( CalculateData *data )
+{
+  TRecordTime begin;
+  TRecordTime end;
+
+  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
+          data->beginTime : dataWin->getBeginTime( data->dataRow );
+
+  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
+        data->endTime : dataWin->getEndTime( data->dataRow );
+
+  ( ( numValues[ data->plane ] )[ data->column ] )++;
+
+  return end - begin;
+}
+
+TSemanticValue StatAvgBurstTime::finishRow( TSemanticValue cellValue,
+                                        THistogramColumn column,
+                                        THistogramColumn plane )
+{
+  return cellValue / ( numValues[ plane ] )[ column ];
+}
+
+string StatAvgBurstTime::getName()
+{
+  return StatAvgBurstTime::name;
+}
+
+HistogramStatistic *StatAvgBurstTime::clone()
+{
+  return new StatAvgBurstTime( *this );
+}
+
+

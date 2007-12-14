@@ -552,7 +552,7 @@ void Histogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     while ( currentWindow->getEndTime( iRow ) <= fromTime )
       currentWindow->calcNext( iRow );
 
-    while ( currentWindow->getEndTime( iRow ) <= toTime )
+    while ( currentWindow->getEndTime( iRow ) < toTime )
     {
       calculate( iRow, fromTime, toTime, fromRow, toRow, winIndex, data );
       currentWindow->calcNext( iRow );
