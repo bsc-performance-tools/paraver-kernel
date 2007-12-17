@@ -698,4 +698,134 @@ class StatStdevBurstTime: public HistogramStatistic
     vector<vector<TSemanticValue> > qValues;
 };
 
+
+class StatAvgPerBurst: public HistogramStatistic
+{
+  public:
+    StatAvgPerBurst();
+    ~StatAvgPerBurst();
+
+    virtual bool createComms() const
+    {
+      return false;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data )
+    {
+      return 0;
+    }
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static string name;
+    KWindow *dataWin;
+    vector<vector<TSemanticValue> > numValues;
+};
+
+
+class StatAvgValueNotZero: public HistogramStatistic
+{
+  public:
+    StatAvgValueNotZero();
+    ~StatAvgValueNotZero();
+
+    virtual bool createComms() const
+    {
+      return false;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data )
+    {
+      return 0;
+    }
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static string name;
+    KWindow *dataWin;
+    vector<vector<TSemanticValue> > numValues;
+};
+
+
+class StatNumBurstsNotZero: public HistogramStatistic
+{
+  public:
+    StatNumBurstsNotZero();
+    ~StatNumBurstsNotZero();
+
+    virtual bool createComms() const
+    {
+      return false;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data )
+    {
+      return 0;
+    }
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static string name;
+    KWindow *dataWin;
+};
+
+
+class StatSumBursts: public HistogramStatistic
+{
+  public:
+    StatSumBursts();
+    ~StatSumBursts();
+
+    virtual bool createComms() const
+    {
+      return false;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data )
+    {
+      return 0;
+    }
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static string name;
+    KWindow *dataWin;
+};
+
 #endif // HISTOGRAMSTATISTIC_H_INCLUDED
