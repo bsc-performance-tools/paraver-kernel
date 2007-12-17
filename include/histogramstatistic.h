@@ -664,4 +664,38 @@ class StatAvgBurstTime: public HistogramStatistic
     vector<vector<TSemanticValue> > numValues;
 };
 
+
+class StatStdevBurstTime: public HistogramStatistic
+{
+  public:
+    StatStdevBurstTime();
+    ~StatStdevBurstTime();
+
+    virtual bool createComms() const
+    {
+      return false;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data )
+    {
+      return 0;
+    }
+
+    virtual void init( Histogram *whichHistogram );
+    virtual void reset();
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
+                                      THistogramColumn plane = 0 );
+
+    virtual string getName();
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static string name;
+    KWindow *dataWin;
+    vector<vector<TSemanticValue> > numValues;
+    vector<vector<TSemanticValue> > qValues;
+};
+
 #endif // HISTOGRAMSTATISTIC_H_INCLUDED

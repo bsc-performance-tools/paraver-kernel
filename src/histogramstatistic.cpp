@@ -1,3 +1,4 @@
+#include <math.h>
 #include "histogramstatistic.h"
 #include "histogram.h"
 
@@ -234,7 +235,11 @@ void StatAvgBytesSent::reset()
   {
     vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
     while ( itColumn != ( *itPlane ).end() )
+    {
       ( *itColumn ) = 0.0;
+      itColumn++;
+    }
+    itPlane++;
   }
 }
 
@@ -307,7 +312,11 @@ void StatAvgBytesReceived::reset()
   {
     vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
     while ( itColumn != ( *itPlane ).end() )
+    {
       ( *itColumn ) = 0.0;
+      itColumn++;
+    }
+    itPlane++;
   }
 }
 
@@ -380,7 +389,11 @@ void StatMinBytesSent::reset()
   {
     vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
     while ( itColumn != ( *itPlane ).end() )
+    {
       ( *itColumn ) = 0.0;
+      itColumn++;
+    }
+    itPlane++;
   }
 }
 
@@ -463,7 +476,11 @@ void StatMinBytesReceived::reset()
   {
     vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
     while ( itColumn != ( *itPlane ).end() )
+    {
       ( *itColumn ) = 0.0;
+      itColumn++;
+    }
+    itPlane++;
   }
 }
 
@@ -546,7 +563,11 @@ void StatMaxBytesSent::reset()
   {
     vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
     while ( itColumn != ( *itPlane ).end() )
+    {
       ( *itColumn ) = 0.0;
+      itColumn++;
+    }
+    itPlane++;
   }
 }
 
@@ -624,7 +645,11 @@ void StatMaxBytesReceived::reset()
   {
     vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
     while ( itColumn != ( *itPlane ).end() )
+    {
       ( *itColumn ) = 0.0;
+      itColumn++;
+    }
+    itPlane++;
   }
 }
 
@@ -734,7 +759,10 @@ void StatPercTime::reset()
   vector<TSemanticValue>::iterator it = rowTotal.begin();
 
   while ( it != rowTotal.end() )
+  {
     ( *it ) = 0.0;
+    it++;
+  }
 }
 
 TSemanticValue StatPercTime::execute( CalculateData *data )
@@ -801,7 +829,10 @@ void StatPercTimeNotZero::reset()
   vector<TSemanticValue>::iterator it = rowTotal.begin();
 
   while ( it != rowTotal.end() )
+  {
     ( *it ) = 0.0;
+    it++;
+  }
 }
 
 TSemanticValue StatPercTimeNotZero::execute( CalculateData *data )
@@ -957,7 +988,10 @@ void StatPercNumBursts::reset()
   vector<TSemanticValue>::iterator it = rowTotal.begin();
 
   while ( it != rowTotal.end() )
+  {
     ( *it ) = 0.0;
+    it++;
+  }
 }
 
 TSemanticValue StatPercNumBursts::execute( CalculateData *data )
@@ -1067,7 +1101,11 @@ void StatAvgValue::reset()
   {
     vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
     while ( itColumn != ( *itPlane ).end() )
+    {
       ( *itColumn ) = 0.0;
+      itColumn++;
+    }
+    itPlane++;
   }
 }
 
@@ -1127,7 +1165,11 @@ void StatMaximum::reset()
   {
     vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
     while ( itColumn != ( *itPlane ).end() )
+    {
       ( *itColumn ) = 0.0;
+      itColumn++;
+    }
+    itPlane++;
   }
 }
 
@@ -1189,7 +1231,11 @@ void StatAvgBurstTime::reset()
   {
     vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
     while ( itColumn != ( *itPlane ).end() )
+    {
       ( *itColumn ) = 0.0;
+      itColumn++;
+    }
+    itPlane++;
   }
 }
 
@@ -1210,8 +1256,8 @@ TSemanticValue StatAvgBurstTime::execute( CalculateData *data )
 }
 
 TSemanticValue StatAvgBurstTime::finishRow( TSemanticValue cellValue,
-                                        THistogramColumn column,
-                                        THistogramColumn plane )
+    THistogramColumn column,
+    THistogramColumn plane )
 {
   return cellValue / ( numValues[ plane ] )[ column ];
 }
@@ -1226,4 +1272,97 @@ HistogramStatistic *StatAvgBurstTime::clone()
   return new StatAvgBurstTime( *this );
 }
 
+
+//-------------------------------------------------------------------------
+// Histogram Statistic: Stdev Burst Time
+//-------------------------------------------------------------------------
+string StatStdevBurstTime::name = "Stdev Burst Time";
+
+void StatStdevBurstTime::init( Histogram *whichHistogram )
+{
+  THistogramColumn numPlanes;
+  TObjectOrder numColumns;
+
+  myHistogram = whichHistogram;
+  dataWin = myHistogram->getDataWindow();
+
+  numPlanes = myHistogram->getNumPlanes();
+  numColumns = myHistogram->getNumColumns();
+
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  {
+    numValues.push_back( vector<TSemanticValue>() );
+    qValues.push_back( vector<TSemanticValue>() );
+    for ( TObjectOrder iColumn = 0; iColumn < numColumns; iColumn++ )
+    {
+      numValues[ iPlane ].push_back( 0.0 );
+      qValues[ iPlane ].push_back( 0.0 );
+    }
+  }
+}
+
+void StatStdevBurstTime::reset()
+{
+  vector<vector<TSemanticValue> >::iterator itPlaneN = numValues.begin();
+  vector<vector<TSemanticValue> >::iterator itPlaneQ = qValues.begin();
+
+  while ( itPlaneN != numValues.end() )
+  {
+    vector<TSemanticValue>::iterator itColumnN = ( *itPlaneN ).begin();
+    vector<TSemanticValue>::iterator itColumnQ = ( *itPlaneQ ).begin();
+    while ( itColumnN != ( *itPlaneN ).end() )
+    {
+      ( *itColumnN ) = 0.0;
+      itColumnN++;
+      ( *itColumnQ ) = 0.0;
+      itColumnQ++;
+    }
+    itPlaneN++;
+    itPlaneQ++;
+  }
+}
+
+TSemanticValue StatStdevBurstTime::execute( CalculateData *data )
+{
+  TRecordTime begin;
+  TRecordTime end;
+
+  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
+          data->beginTime : dataWin->getBeginTime( data->dataRow );
+
+  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
+        data->endTime : dataWin->getEndTime( data->dataRow );
+
+  ( ( numValues[ data->plane ] )[ data->column ] )++;
+  ( ( qValues[ data->plane ] )[ data->column ] ) +=
+    ( end - begin ) * ( end - begin );
+
+  return end - begin;
+}
+
+TSemanticValue StatStdevBurstTime::finishRow( TSemanticValue cellValue,
+    THistogramColumn column,
+    THistogramColumn plane )
+{
+  TSemanticValue tmp;
+  TSemanticValue avgQValues = ( qValues[ plane ] )[ column ] /
+                              ( numValues[ plane ] )[ column ];
+  TSemanticValue avgQ = cellValue / ( numValues[ plane ] )[ column ];
+  avgQ *= avgQ;
+
+  tmp = avgQValues - avgQ;
+  if ( tmp < 0.0 )
+    tmp *= -1.0;
+  return sqrt( tmp );
+}
+
+string StatStdevBurstTime::getName()
+{
+  return StatStdevBurstTime::name;
+}
+
+HistogramStatistic *StatStdevBurstTime::clone()
+{
+  return new StatStdevBurstTime( *this );
+}
 
