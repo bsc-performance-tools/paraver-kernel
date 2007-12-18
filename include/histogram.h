@@ -52,15 +52,18 @@ class ColumnTranslator
   protected:
 
   private:
-    bool discrete;
+    THistogramColumn numColumns;
+    THistogramLimit minLimit;
+    THistogramLimit maxLimit;
+    THistogramLimit delta;
 };
 
 
 struct CalculateData
 {
   TObjectOrder row;
-  THistogramColumn column;
   THistogramColumn plane;
+  THistogramColumn column;
 
   TObjectOrder controlRow;
   TObjectOrder dataRow;

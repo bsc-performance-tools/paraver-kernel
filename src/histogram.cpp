@@ -1,3 +1,4 @@
+#include "math.h"
 #include "histogram.h"
 #include "histogramstatistic.h"
 #include "histogramexception.h"
@@ -23,7 +24,6 @@ RowsTranslator::RowsTranslator( vector<KWindow *>& kwindows )
         range.second =  auxTrace->getLast( iRow,
                                            kwindows[ii]->getLevel(),
                                            kwindows[ii+1]->getLevel() );
-        ;
         childInfo[ii].rowChilds.push_back( range );
       }
     }
@@ -69,28 +69,36 @@ TObjectOrder RowsTranslator::totalRows() const
 
 ColumnTranslator::ColumnTranslator( THistogramLimit whichMin,
                                     THistogramLimit whichMax,
-                                    THistogramLimit whichDelta )
-{}
+                                    THistogramLimit whichDelta ):
+    minLimit( whichMin ), maxLimit( whichMax ), delta( whichDelta )
+{
+  // PRECOND: Min < Max
+  numColumns = THistogramColumn( ceil( ( maxLimit - minLimit ) / delta ) );
+}
 
 
 ColumnTranslator::~ColumnTranslator()
 {}
 
-
+// returns whichValue in [min,max)
 bool ColumnTranslator::getColumn( THistogramLimit whichValue,
                                   THistogramColumn& column ) const
 {
-  THistogramColumn hc;
+  if ( whichValue < minLimit || whichValue > maxLimit )
+    return false;
 
-  return hc;
+  column = THistogramColumn(floor( ( whichValue * numColumns ) / ( maxLimit - minLimit ) ));
+
+  if ( column >= numColumns )
+    column = numColumns - 1;
+
+  return true;
 }
 
 
 THistogramColumn ColumnTranslator::totalColumns() const
 {
-  THistogramColumn hc;
-
-  return hc;
+  return numColumns;
 }
 
 
