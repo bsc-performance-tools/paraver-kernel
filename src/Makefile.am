@@ -8,6 +8,8 @@ libparaver_kernel_la_SOURCES = \
     filter.cpp \
     filtermanagement.cpp \
     histogram.cpp \
+    histogramexception.cpp \
+    histogramstatistic.cpp \
     index.cpp \
     intervalcompose.cpp \
     intervalcontrolderived.cpp \
