@@ -5,6 +5,7 @@
 #include "cube.h"
 
 class HistogramStatistic;
+class HistogramTotals;
 
 class RowsTranslator
 {
@@ -170,6 +171,8 @@ class Histogram
     Matrix<TSemanticValue> *matrix;
     Cube<TSemanticValue> *commCube;
     Matrix<TSemanticValue> *commMatrix;
+
+    HistogramTotals *totals;
 
     void orderWindows();
     bool createComms() const;

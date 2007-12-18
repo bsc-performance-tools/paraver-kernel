@@ -137,6 +137,7 @@
 		<Unit filename="include/histogram.h" />
 		<Unit filename="include/histogramexception.h" />
 		<Unit filename="include/histogramstatistic.h" />
+		<Unit filename="include/histogramtotals.h" />
 		<Unit filename="include/index.h" />
 		<Unit filename="include/interval.h" />
 		<Unit filename="include/intervalcompose.h" />
@@ -250,6 +251,10 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/histogramstatistic.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/histogramtotals.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>

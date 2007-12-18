@@ -2,6 +2,7 @@
 #include "histogram.h"
 #include "histogramstatistic.h"
 #include "histogramexception.h"
+#include "histogramtotals.h"
 
 
 RowsTranslator::RowsTranslator( vector<KWindow *>& kwindows )
