@@ -87,7 +87,7 @@ bool ColumnTranslator::getColumn( THistogramLimit whichValue,
   if ( whichValue < minLimit || whichValue > maxLimit )
     return false;
 
-  column = THistogramColumn(floor( ( whichValue * numColumns ) / ( maxLimit - minLimit ) ));
+  column = THistogramColumn( floor( ( whichValue * numColumns ) / ( maxLimit - minLimit ) ) );
 
   if ( column >= numColumns )
     column = numColumns - 1;
@@ -339,6 +339,62 @@ TObjectOrder Histogram::getNumRows() const
   return numRows;
 }
 
+
+TSemanticValue Histogram::getCurrentValue( UINT32 col,
+                                           UINT16 idStat,
+                                           UINT32 plane ) const
+{
+  if ( threeDimensions )
+    return cube->getCurrentValue( plane, col, idStat );
+  else
+    return matrix->getCurrentValue( col, idStat );
+
+  return TSemanticValue(0);
+}
+
+UINT32 Histogram::getCurrentRow( UINT32 col, UINT32 plane ) const
+{
+  if ( threeDimensions )
+    return cube->getCurrentRow( plane, col );
+  else
+    return matrix->getCurrentRow( col );
+
+  return 0;
+}
+
+void Histogram::setNextCell( UINT32 col, UINT32 plane )
+{
+  if ( threeDimensions )
+    cube->setNextCell( plane, col );
+  else
+    matrix->setNextCell( col );
+}
+
+void Histogram::setFirstCell( UINT32 col, UINT32 plane )
+{
+  if ( threeDimensions )
+    cube->setFirstCell( plane, col );
+  else
+    matrix->setFirstCell( col );
+}
+
+bool Histogram::endCell( UINT32 col, UINT32 plane )
+{
+  if ( threeDimensions )
+    return cube->endCell( plane, col );
+  else
+    return matrix->endCell( col );
+
+  return true;
+}
+
+bool Histogram::planeWithValues( UINT32 plane ) const
+{
+  if ( threeDimensions )
+    return cube->planeWithValues( plane );
+
+  return true;
+}
 
 void Histogram::clearStatistics()
 {
