@@ -926,3 +926,187 @@ bool WindowFilterBoolOpTypeVal::parseLine( istringstream& line, Trace *whichTrac
 
   return true;
 }
+
+
+
+bool Analyzer2DCalculateAll::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DNumDecimals::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DNumColumns::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DScientificNotation::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DThousandSeparator::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DUnits::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+bool Analyzer2DAccumulator:: parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DStatistic::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DControlWindow::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DDataWindow::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DAccumulateByControlWindow::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DSortCols::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DMinimum::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DMaximum::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DDelta::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DComputeGradient::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DMinimumGradient::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DMaximumGradient::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer3DControlWindow::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer3DMaximum::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer3DMinimum::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer3DDelta::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer3DFixedValue::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
