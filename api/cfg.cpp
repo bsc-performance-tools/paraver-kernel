@@ -151,10 +151,61 @@ void CFGLoader::loadMap()
   cfgTagFunctions["window_fromto"]              = new WindowFilterBoolOpFromTo();
   cfgTagFunctions["window_comm_tagsize"]        = new WindowFilterBoolOpTagSize();
   cfgTagFunctions["window_typeval"]             = new WindowFilterBoolOpTypeVal();
+
+  // Histogram options
+
+  // --> Analyzer2D.Name:
+  // --> Analyzer2D.X:
+  // --> Analyzer2D.Y:
+  // --> Analyzer2D.Width:
+  // --> Analyzer2D.Height:
+  cfgTagFunctions["Analyzer2D.ControlWindow:"] = new Analyzer2DControlWindow();
+  cfgTagFunctions["Analyzer2D.DataWindow:"] = new Analyzer2DDataWindow();
+  cfgTagFunctions["Analyzer2D.Statistic:"] = new Analyzer2DStatistic();
+  cfgTagFunctions["Analyzer2D.calculate_all:"] = new Analyzer2DCalculateAll();
+  cfgTagFunctions["Analyzer2D.num_columns:"] = new Analyzer2DNumColumns();
+  // --> Analyzer2D.hide_empty_cols:
+  // --> Analyzer2D.HideCols:
+  cfgTagFunctions["Analyzer2D.scientific_notation:"] = new Analyzer2DScientificNotation();
+  cfgTagFunctions["Analyzer2D.num_decimals:"] = new Analyzer2DNumDecimals();
+  cfgTagFunctions["Analyzer2D.thousandsep:"] = new Analyzer2DThousandSeparator();
+  cfgTagFunctions["Analyzer2D.units:"] = new Analyzer2DUnits();
+  // --> Analyzer2D.HorizVert:
+  // --> Analyzer2D.Color:
+  // --> Analyzer2D.SemanticColor:
+  // --> Analyzer2D.TextMode:
+  // --> Analyzer2D.Zoom:
+  // --> Analyzer2D.Expanded:
+  // --> Analyzer2D.expanded:
+  cfgTagFunctions["Analyzer2D.Accumulator:"] = new Analyzer2DAccumulator();
+  cfgTagFunctions["Analyzer2D.AccumulateByControlWindow:"] = new Analyzer2DAccumulateByControlWindow();
+  cfgTagFunctions["Analyzer2D.SortCols:"] = new Analyzer2DSortCols();
+  cfgTagFunctions["Analyzer2D.SortCriteria:"] = new Analyzer2DSortCriteria();
+
+  cfgTagFunctions["Analyzer2D.Parameters:"] = new Analyzer2DParameters();
+  cfgTagFunctions["Analyzer2D.AnalysisLimits:"] = new Analyzer2DAnalysisLimits();
+  cfgTagFunctions["Analyzer2D.RelativeTime:"] = new Analyzer2DRelativeTime();
+  // --> cfgTagFunctions["Analyzer2D.RelativeXScale:"] = new Analyzer2DRelativeXScale();
+  // --> Analyzer2D.ShowWindows:
+  cfgTagFunctions["Analyzer2D.ComputeYScale:"] = new Analyzer2DComputeYScale();
+  cfgTagFunctions["Analyzer2D.Minimum:"] = new Analyzer2DMinimum();
+  cfgTagFunctions["Analyzer2D.Maximum:"] = new Analyzer2DMaximum();
+  cfgTagFunctions["Analyzer2D.Delta:"] = new Analyzer2DDelta();
+  cfgTagFunctions["Analyzer2D.ComputeGradient:"] = new Analyzer2DComputeGradient();
+  cfgTagFunctions["Analyzer2D.MinimumGradient:"] = new Analyzer2DMinimumGradient();
+  cfgTagFunctions["Analyzer2D.MaximumGradient:"] = new Analyzer2DMaximumGradient();
+
+  // 3D Histogram
+  cfgTagFunctions["Analyzer2D.3D_ControlWindow:"] = new Analyzer3DControlWindow();
+  cfgTagFunctions["Analyzer2D.3D_Minimum:"] = new Analyzer3DMinimum();
+  cfgTagFunctions["Analyzer2D.3D_Maximum:"] = new Analyzer3DMaximum();
+  cfgTagFunctions["Analyzer2D.3D_Delta:"] = new Analyzer3DDelta();
+  cfgTagFunctions["Analyzer2D.3D_FixedValue:"] = new Analyzer3DFixedValue();
 }
 
 void CFGLoader::unLoadMap()
 {
+  // esto se puede hacer con un for
   delete cfgTagFunctions["window_type"];
   delete cfgTagFunctions["window_factors"];
   delete cfgTagFunctions["window_units"];
@@ -182,6 +233,38 @@ void CFGLoader::unLoadMap()
   delete cfgTagFunctions["window_fromto"];
   delete cfgTagFunctions["window_comm_tagsize"];
   delete cfgTagFunctions["window_typeval"];
+
+  // Histogram
+  delete cfgTagFunctions["Analyzer2D.ControlWindow:"];
+  delete cfgTagFunctions["Analyzer2D.DataWindow:"];
+  delete cfgTagFunctions["Analyzer2D.Statistic:"];
+  delete cfgTagFunctions["Analyzer2D.calculate_all:"];
+  delete cfgTagFunctions["Analyzer2D.num_columns:"];
+  delete cfgTagFunctions["Analyzer2D.scientific_notation:"];
+  delete cfgTagFunctions["Analyzer2D.num_decimals:"];
+  delete cfgTagFunctions["Analyzer2D.thousandsep:"];
+  delete cfgTagFunctions["Analyzer2D.units:"];
+  delete cfgTagFunctions["Analyzer2D.Accumulator:"];
+  delete cfgTagFunctions["Analyzer2D.AccumulateByControlWindow:"];
+  delete cfgTagFunctions["Analyzer2D.SortCols:"];
+  delete cfgTagFunctions["Analyzer2D.SortCriteria:"];
+  delete cfgTagFunctions["Analyzer2D.Parameters:"];
+  delete cfgTagFunctions["Analyzer2D.AnalysisLimits:"];
+  delete cfgTagFunctions["Analyzer2D.RelativeTime:"];
+  delete cfgTagFunctions["Analyzer2D.ComputeYScale:"];
+  delete cfgTagFunctions["Analyzer2D.Minimum:"];
+  delete cfgTagFunctions["Analyzer2D.Maximum:"];
+  delete cfgTagFunctions["Analyzer2D.Delta:"];
+  delete cfgTagFunctions["Analyzer2D.ComputeGradient:"];
+  delete cfgTagFunctions["Analyzer2D.MinimumGradient:"];
+  delete cfgTagFunctions["Analyzer2D.MaximumGradient:"];
+
+  // 3D Histogram
+  delete cfgTagFunctions["Analyzer2D.3D_ControlWindow:"];
+  delete cfgTagFunctions["Analyzer2D.3D_Minimum:"];
+  delete cfgTagFunctions["Analyzer2D.3D_Maximum:"];
+  delete cfgTagFunctions["Analyzer2D.3D_Delta:"];
+  delete cfgTagFunctions["Analyzer2D.3D_FixedValue:"];
 }
 
 
@@ -928,8 +1011,7 @@ bool WindowFilterBoolOpTypeVal::parseLine( istringstream& line, Trace *whichTrac
 }
 
 
-
-bool Analyzer2DCalculateAll::parseLine( istringstream& line, Trace *whichTrace,
+bool Analyzer2DControlWindow::parseLine( istringstream& line, Trace *whichTrace,
                             vector<KWindow *>& windows,
                             TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -937,7 +1019,23 @@ bool Analyzer2DCalculateAll::parseLine( istringstream& line, Trace *whichTrace,
 }
 
 
-bool Analyzer2DNumDecimals::parseLine( istringstream& line, Trace *whichTrace,
+bool Analyzer2DDataWindow::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DStatistic::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DCalculateAll::parseLine( istringstream& line, Trace *whichTrace,
                             vector<KWindow *>& windows,
                             TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -954,6 +1052,14 @@ bool Analyzer2DNumColumns::parseLine( istringstream& line, Trace *whichTrace,
 
 
 bool Analyzer2DScientificNotation::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DNumDecimals::parseLine( istringstream& line, Trace *whichTrace,
                             vector<KWindow *>& windows,
                             TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -984,30 +1090,6 @@ bool Analyzer2DAccumulator:: parseLine( istringstream& line, Trace *whichTrace,
 }
 
 
-bool Analyzer2DStatistic::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
-{
-  return false;
-}
-
-
-bool Analyzer2DControlWindow::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
-{
-  return false;
-}
-
-
-bool Analyzer2DDataWindow::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
-{
-  return false;
-}
-
-
 bool Analyzer2DAccumulateByControlWindow::parseLine( istringstream& line, Trace *whichTrace,
                             vector<KWindow *>& windows,
                             TRecordTime& beginTime, TRecordTime& endTime )
@@ -1023,6 +1105,45 @@ bool Analyzer2DSortCols::parseLine( istringstream& line, Trace *whichTrace,
   return false;
 }
 
+
+bool Analyzer2DSortCriteria::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DParameters::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DAnalysisLimits::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DRelativeTime::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
+
+
+bool Analyzer2DComputeYScale::parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime )
+{
+  return false;
+}
 
 bool Analyzer2DMinimum::parseLine( istringstream& line, Trace *whichTrace,
                             vector<KWindow *>& windows,
@@ -1080,7 +1201,7 @@ bool Analyzer3DControlWindow::parseLine( istringstream& line, Trace *whichTrace,
 }
 
 
-bool Analyzer3DMaximum::parseLine( istringstream& line, Trace *whichTrace,
+bool Analyzer3DMinimum::parseLine( istringstream& line, Trace *whichTrace,
                             vector<KWindow *>& windows,
                             TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1088,7 +1209,7 @@ bool Analyzer3DMaximum::parseLine( istringstream& line, Trace *whichTrace,
 }
 
 
-bool Analyzer3DMinimum::parseLine( istringstream& line, Trace *whichTrace,
+bool Analyzer3DMaximum::parseLine( istringstream& line, Trace *whichTrace,
                             vector<KWindow *>& windows,
                             TRecordTime& beginTime, TRecordTime& endTime )
 {

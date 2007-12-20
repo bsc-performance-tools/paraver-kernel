@@ -337,12 +337,12 @@ class WindowIdentifiers: public TagFunction
 };
 
 
-class Analyzer2DCalculateAll: public TagFunction
+class Analyzer2DControlWindow: public TagFunction
 {
   public:
-    Analyzer2DCalculateAll()
+    Analyzer2DControlWindow()
     {}
-    virtual ~Analyzer2DCalculateAll()
+    virtual ~Analyzer2DControlWindow()
     {}
     virtual bool parseLine( istringstream& line, Trace *whichTrace,
                             vector<KWindow *>& windows,
@@ -350,12 +350,38 @@ class Analyzer2DCalculateAll: public TagFunction
 };
 
 
-class Analyzer2DNumDecimals: public TagFunction
+class Analyzer2DDataWindow: public TagFunction
 {
   public:
-    Analyzer2DNumDecimals()
+    Analyzer2DDataWindow()
     {}
-    virtual ~Analyzer2DNumDecimals()
+    virtual ~Analyzer2DDataWindow()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
+class Analyzer2DStatistic: public TagFunction
+{
+  public:
+    Analyzer2DStatistic()
+    {}
+    virtual ~Analyzer2DStatistic()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
+class Analyzer2DCalculateAll: public TagFunction
+{
+  public:
+    Analyzer2DCalculateAll()
+    {}
+    virtual ~Analyzer2DCalculateAll()
     {}
     virtual bool parseLine( istringstream& line, Trace *whichTrace,
                             vector<KWindow *>& windows,
@@ -382,6 +408,19 @@ class Analyzer2DScientificNotation: public TagFunction
     Analyzer2DScientificNotation()
     {}
     virtual ~Analyzer2DScientificNotation()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
+class Analyzer2DNumDecimals: public TagFunction
+{
+  public:
+    Analyzer2DNumDecimals()
+    {}
+    virtual ~Analyzer2DNumDecimals()
     {}
     virtual bool parseLine( istringstream& line, Trace *whichTrace,
                             vector<KWindow *>& windows,
@@ -428,45 +467,6 @@ class Analyzer2DAccumulator: public TagFunction
 };
 
 
-class Analyzer2DStatistic: public TagFunction
-{
-  public:
-    Analyzer2DStatistic()
-    {}
-    virtual ~Analyzer2DStatistic()
-    {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime );
-};
-
-
-class Analyzer2DControlWindow: public TagFunction
-{
-  public:
-    Analyzer2DControlWindow()
-    {}
-    virtual ~Analyzer2DControlWindow()
-    {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime );
-};
-
-
-class Analyzer2DDataWindow: public TagFunction
-{
-  public:
-    Analyzer2DDataWindow()
-    {}
-    virtual ~Analyzer2DDataWindow()
-    {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime );
-};
-
-
 class Analyzer2DAccumulateByControlWindow: public TagFunction
 {
   public:
@@ -486,6 +486,71 @@ class Analyzer2DSortCols: public TagFunction
     Analyzer2DSortCols()
     {}
     virtual ~Analyzer2DSortCols()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
+class Analyzer2DSortCriteria: public TagFunction
+{
+  public:
+    Analyzer2DSortCriteria()
+    {}
+    virtual ~Analyzer2DSortCriteria()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
+class Analyzer2DParameters: public TagFunction
+{
+  public:
+    Analyzer2DParameters()
+    {}
+    virtual ~Analyzer2DParameters()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
+class Analyzer2DAnalysisLimits: public TagFunction
+{
+  public:
+    Analyzer2DAnalysisLimits()
+    {}
+    virtual ~Analyzer2DAnalysisLimits()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
+class Analyzer2DRelativeTime: public TagFunction
+{
+  public:
+    Analyzer2DRelativeTime()
+    {}
+    virtual ~Analyzer2DRelativeTime()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
+class Analyzer2DComputeYScale: public TagFunction
+{
+  public:
+    Analyzer2DComputeYScale()
+    {}
+    virtual ~Analyzer2DComputeYScale()
     {}
     virtual bool parseLine( istringstream& line, Trace *whichTrace,
                             vector<KWindow *>& windows,
@@ -583,12 +648,12 @@ class Analyzer3DControlWindow: public TagFunction
 };
 
 
-class Analyzer3DMaximum: public TagFunction
+class Analyzer3DMinimum: public TagFunction
 {
   public:
-    Analyzer3DMaximum()
+    Analyzer3DMinimum()
     {}
-    virtual ~Analyzer3DMaximum()
+    virtual ~Analyzer3DMinimum()
     {}
     virtual bool parseLine( istringstream& line, Trace *whichTrace,
                             vector<KWindow *>& windows,
@@ -596,12 +661,12 @@ class Analyzer3DMaximum: public TagFunction
 };
 
 
-class Analyzer3DMinimum: public TagFunction
+class Analyzer3DMaximum: public TagFunction
 {
   public:
-    Analyzer3DMinimum()
+    Analyzer3DMaximum()
     {}
-    virtual ~Analyzer3DMinimum()
+    virtual ~Analyzer3DMaximum()
     {}
     virtual bool parseLine( istringstream& line, Trace *whichTrace,
                             vector<KWindow *>& windows,
