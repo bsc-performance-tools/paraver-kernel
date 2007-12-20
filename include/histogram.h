@@ -173,7 +173,9 @@ class Histogram
     Matrix<TSemanticValue> *commMatrix;
 
     HistogramTotals *totals;
+    HistogramTotals *rowTotals;
     HistogramTotals *commTotals;
+    HistogramTotals *rowCommTotals;
 
     void orderWindows();
     bool createComms() const;

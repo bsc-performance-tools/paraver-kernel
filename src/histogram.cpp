@@ -130,7 +130,9 @@ Histogram::Histogram()
   commMatrix = NULL;
 
   totals = NULL;
-  commTotals = NULL;
+  rowTotals = NULL,
+              commTotals = NULL;
+  rowCommTotals = NULL;
 }
 
 
@@ -154,8 +156,12 @@ Histogram::~Histogram()
 
   if ( totals != NULL )
     delete totals;
+  if ( rowTotals != NULL )
+    delete rowTotals;
   if ( commTotals != NULL )
     delete commTotals;
+  if ( rowCommTotals != NULL )
+    delete rowCommTotals;
 
   clearStatistics();
 }
@@ -459,11 +465,11 @@ void Histogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
 
   initMatrix( numPlanes, numCols, numRows );
 
-  initTotals();
-
   initSemantic( beginTime );
 
   initStatistics();
+
+  initTotals();
 
   recursiveExecution( beginTime, endTime, 0, rowsTranslator->totalRows() );
 
@@ -482,8 +488,12 @@ void Histogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
 
   if ( totals != NULL )
     totals->finish();
+  if ( rowTotals != NULL )
+    rowTotals->finish();
   if ( commTotals != NULL )
     commTotals->finish();
+  if ( rowCommTotals != NULL )
+    rowCommTotals->finish();
   // - Finalizacion del calculo y de los totales.
   // - Se ordenan las columnas si es necesario.
 }
@@ -578,22 +588,36 @@ void Histogram::initTotals()
 {
   if ( totals != NULL )
     delete totals;
+  if ( rowTotals != NULL )
+    delete rowTotals;
   if ( commTotals != NULL )
     delete commTotals;
+  if ( rowCommTotals != NULL )
+    delete rowCommTotals;
 
   if ( threeDimensions )
   {
     totals = new HistogramTotals( statisticFunctions.size(), numCols, numPlanes );
+    rowTotals = new HistogramTotals( statisticFunctions.size(), numRows, numPlanes );
     if ( createComms() )
+    {
       commTotals = new HistogramTotals( commStatisticFunctions.size(),
                                         numRows, numPlanes );
+      rowCommTotals = new HistogramTotals( commStatisticFunctions.size(),
+                                           numRows, numPlanes );
+    }
   }
   else
   {
     totals = new HistogramTotals( statisticFunctions.size(), numCols, 1 );
+    rowTotals = new HistogramTotals( statisticFunctions.size(), numRows, 1 );
     if ( createComms() )
+    {
       commTotals = new HistogramTotals( commStatisticFunctions.size(),
                                         numRows, 1 );
+      rowCommTotals = new HistogramTotals( commStatisticFunctions.size(),
+                                           numRows, 1 );
+    }
   }
 }
 
@@ -774,6 +798,7 @@ void Histogram::finishRow( CalculateData *data )
               value = commStatisticFunctions[ iStat ]->finishRow( value, iColumn, iPlane );
               commCube->setValue( iPlane, iColumn, iStat, value );
               commTotals->newValue( value, iStat, iColumn, iPlane );
+              rowCommTotals->newValue( value, iStat, data->row, iPlane );
             }
           }
         }
@@ -794,6 +819,7 @@ void Histogram::finishRow( CalculateData *data )
           value = commStatisticFunctions[ iStat ]->finishRow( value, iColumn );
           commMatrix->setValue( iColumn, iStat, value );
           commTotals->newValue( value, iStat, iColumn );
+          rowCommTotals->newValue( value, iStat, data->row );
         }
       }
     }
@@ -822,6 +848,7 @@ void Histogram::finishRow( CalculateData *data )
               value = statisticFunctions[ iStat ]->finishRow( value, iColumn, iPlane );
               cube->setValue( iPlane, iColumn, iStat, value );
               totals->newValue( value, iStat, iColumn, iPlane );
+              rowTotals->newValue( value, iStat, data->row, iPlane );
             }
           }
         }
@@ -842,6 +869,7 @@ void Histogram::finishRow( CalculateData *data )
           value = statisticFunctions[ iStat ]->finishRow( value, iColumn );
           matrix->setValue( iColumn, iStat, value );
           totals->newValue( value, iStat, iColumn );
+          rowTotals->newValue( value, iStat, data->row );
         }
       }
     }
