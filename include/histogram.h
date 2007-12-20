@@ -173,12 +173,14 @@ class Histogram
     Matrix<TSemanticValue> *commMatrix;
 
     HistogramTotals *totals;
+    HistogramTotals *commTotals;
 
     void orderWindows();
     bool createComms() const;
     void initTranslators();
-    void initMatrix( THistogramColumn numPlanes, THistogramColumn numCols,
-                     TObjectOrder numRows );
+    void initMatrix( THistogramColumn planes, THistogramColumn cols,
+                     TObjectOrder rows );
+    void initTotals();
     void initSemantic( TRecordTime beginTime );
     void initStatistics();
     void recursiveExecution( TRecordTime fromTime, TRecordTime toTime,

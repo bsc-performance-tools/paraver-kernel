@@ -9,38 +9,50 @@ using namespace std;
 class HistogramTotals
 {
   public:
-    HistogramTotals( THistogramColumn numColumns, THistogramColumn numPlanes );
+    HistogramTotals( UINT16 numStat, THistogramColumn numColumns,
+                     THistogramColumn numPlanes );
     ~HistogramTotals();
 
     void newValue( TSemanticValue whichValue,
+                   UINT16 idStat,
                    THistogramColumn whichColumn,
                    THistogramColumn whichPlane = 0 );
     void finish();
 
-    TSemanticValue getTotal( THistogramColumn whichColumn,
+    TSemanticValue getTotal( UINT16 idStat,
+                             THistogramColumn whichColumn,
                              THistogramColumn whichPlane = 0 ) const;
-    TSemanticValue getAverage( THistogramColumn whichColumn,
+    TSemanticValue getAverage( UINT16 idStat,
+                               THistogramColumn whichColumn,
                                THistogramColumn whichPlane = 0 ) const;
-    TSemanticValue getMaximum( THistogramColumn whichColumn,
+    TSemanticValue getMaximum( UINT16 idStat,
+                               THistogramColumn whichColumn,
                                THistogramColumn whichPlane = 0 ) const;
-    TSemanticValue getMinimum( THistogramColumn whichColumn,
+    TSemanticValue getMinimum( UINT16 idStat,
+                               THistogramColumn whichColumn,
                                THistogramColumn whichPlane = 0 ) const;
-    TSemanticValue getStdev( THistogramColumn whichColumn,
+    TSemanticValue getStdev( UINT16 idStat,
+                             THistogramColumn whichColumn,
                              THistogramColumn whichPlane = 0 ) const;
-    TSemanticValue getAvgDivMax( THistogramColumn whichColumn,
+    TSemanticValue getAvgDivMax( UINT16 idStat,
+                                 THistogramColumn whichColumn,
                                  THistogramColumn whichPlane = 0 ) const;
     void getAll( vector<TSemanticValue>& where,
+                 UINT16 idStat,
                  THistogramColumn whichColumn,
                  THistogramColumn whichPlane = 0 ) const;
 
   protected:
 
   private:
-    vector<vector<TSemanticValue> > total;
-    vector<vector<TSemanticValue> > average;
-    vector<vector<TSemanticValue> > maximum;
-    vector<vector<TSemanticValue> > minimum;
-    vector<vector<TSemanticValue> > stdev;
+    THistogramColumn columns;
+    UINT16 stats;
+    // planes<columns<stats<value> > >
+    vector<vector<vector<TSemanticValue> *> *> total;
+    vector<vector<vector<TSemanticValue> *> *> average;
+    vector<vector<vector<TSemanticValue> *> *> maximum;
+    vector<vector<vector<TSemanticValue> *> *> minimum;
+    vector<vector<vector<TSemanticValue> *> *> stdev;
 
 };
 
