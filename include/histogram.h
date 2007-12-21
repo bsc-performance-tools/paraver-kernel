@@ -126,8 +126,17 @@ class Histogram
     UINT32 getCurrentRow( UINT32 col, UINT32 plane = 0 ) const;
     void setNextCell( UINT32 col, UINT32 plane = 0 );
     void setFirstCell( UINT32 col, UINT32 plane = 0 );
-    bool endCell( UINT32 col, UINT32 plane = 0);
+    bool endCell( UINT32 col, UINT32 plane = 0 );
     bool planeWithValues( UINT32 plane = 0 ) const;
+
+    TSemanticValue getCommCurrentValue( UINT32 col,
+                                    UINT16 idStat,
+                                    UINT32 plane = 0 ) const;
+    UINT32 getCommCurrentRow( UINT32 col, UINT32 plane = 0 ) const;
+    void setCommNextCell( UINT32 col, UINT32 plane = 0 );
+    void setCommFirstCell( UINT32 col, UINT32 plane = 0 );
+    bool endCommCell( UINT32 col, UINT32 plane = 0 );
+    bool planeCommWithValues( UINT32 plane = 0 ) const;
 
     void clearStatistics();
     void pushbackStatistic( HistogramStatistic *whichStatistic );

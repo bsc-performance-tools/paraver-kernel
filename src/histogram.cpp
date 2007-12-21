@@ -411,6 +411,64 @@ bool Histogram::planeWithValues( UINT32 plane ) const
   return true;
 }
 
+
+TSemanticValue Histogram::getCommCurrentValue( UINT32 col,
+    UINT16 idStat,
+    UINT32 plane ) const
+{
+  if ( threeDimensions )
+    return commCube->getCurrentValue( plane, col, idStat );
+  else
+    return commMatrix->getCurrentValue( col, idStat );
+
+  return TSemanticValue( 0 );
+}
+
+UINT32 Histogram::getCommCurrentRow( UINT32 col, UINT32 plane ) const
+{
+  if ( threeDimensions )
+    return commCube->getCurrentRow( plane, col );
+  else
+    return commMatrix->getCurrentRow( col );
+
+  return 0;
+}
+
+void Histogram::setCommNextCell( UINT32 col, UINT32 plane )
+{
+  if ( threeDimensions )
+    commCube->setNextCell( plane, col );
+  else
+    commMatrix->setNextCell( col );
+}
+
+void Histogram::setCommFirstCell( UINT32 col, UINT32 plane )
+{
+  if ( threeDimensions )
+    commCube->setFirstCell( plane, col );
+  else
+    commMatrix->setFirstCell( col );
+}
+
+bool Histogram::endCommCell( UINT32 col, UINT32 plane )
+{
+  if ( threeDimensions )
+    return commCube->endCell( plane, col );
+  else
+    return commMatrix->endCell( col );
+
+  return true;
+}
+
+bool Histogram::planeCommWithValues( UINT32 plane ) const
+{
+  if ( threeDimensions )
+    return commCube->planeWithValues( plane );
+
+  return true;
+}
+
+
 void Histogram::clearStatistics()
 {
   vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
