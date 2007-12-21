@@ -116,6 +116,8 @@ class Histogram
     THistogramLimit getDataMin() const;
     THistogramLimit getDataMax() const;
 
+    void setInclusive( bool newValue );
+
     THistogramColumn getNumPlanes() const;
     THistogramColumn getNumColumns() const;
     TObjectOrder getNumRows() const;
@@ -130,13 +132,18 @@ class Histogram
     bool planeWithValues( UINT32 plane = 0 ) const;
 
     TSemanticValue getCommCurrentValue( UINT32 col,
-                                    UINT16 idStat,
-                                    UINT32 plane = 0 ) const;
+                                        UINT16 idStat,
+                                        UINT32 plane = 0 ) const;
     UINT32 getCommCurrentRow( UINT32 col, UINT32 plane = 0 ) const;
     void setCommNextCell( UINT32 col, UINT32 plane = 0 );
     void setCommFirstCell( UINT32 col, UINT32 plane = 0 );
     bool endCommCell( UINT32 col, UINT32 plane = 0 );
     bool planeCommWithValues( UINT32 plane = 0 ) const;
+
+    HistogramTotals *getColumnTotals() const;
+    HistogramTotals *getCommColumnTotals() const;
+    HistogramTotals *getRowTotals() const;
+    HistogramTotals *getCommRowTotals() const;
 
     void clearStatistics();
     void pushbackStatistic( HistogramStatistic *whichStatistic );
@@ -167,6 +174,8 @@ class Histogram
     THistogramLimit xtraControlDelta;
     THistogramLimit dataMin;
     THistogramLimit dataMax;
+
+    bool inclusive;
 
     vector<HistogramStatistic *> statisticFunctions;
     vector<HistogramStatistic *> commStatisticFunctions;

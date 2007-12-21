@@ -156,7 +156,9 @@
 		</Unit>
 		<Unit filename="include/memoryblocks.h" />
 		<Unit filename="include/memorytrace.h" />
-		<Unit filename="include/paraverkernelexception.h" />
+		<Unit filename="include/paraverkernelexception.h">
+			<Option virtualFolder="paraver-kernel/src/" />
+		</Unit>
 		<Unit filename="include/paraverkernelinit.h" />
 		<Unit filename="include/paraverkerneltypes.h" />
 		<Unit filename="include/processmodel.h" />
@@ -382,6 +384,9 @@
 			</code_completion>
 			<envvars />
 			<debugger />
+			<wxsmith version="1">
+				<gui name="wxWidgets" src="" main="" init_handlers="necessary" language="CPP" />
+			</wxsmith>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

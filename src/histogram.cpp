@@ -120,6 +120,8 @@ Histogram::Histogram()
   dataMin = 0;
   dataMax = 1;
 
+  inclusive = false;
+
   rowsTranslator = NULL;
   columnTranslator = NULL;
   planeTranslator = NULL;
@@ -335,6 +337,12 @@ THistogramLimit Histogram::getDataMax() const
 }
 
 
+void Histogram::setInclusive( bool newValue )
+{
+  inclusive = newValue;
+}
+
+
 THistogramColumn Histogram::getNumPlanes() const
 {
   if ( threeDimensions )
@@ -469,6 +477,30 @@ bool Histogram::planeCommWithValues( UINT32 plane ) const
 }
 
 
+HistogramTotals *Histogram::getColumnTotals() const
+{
+  return totals;
+}
+
+
+HistogramTotals *Histogram::getCommColumnTotals() const
+{
+  return commTotals;
+}
+
+
+HistogramTotals *Histogram::getRowTotals() const
+{
+  return rowTotals;
+}
+
+
+HistogramTotals *Histogram::getCommRowTotals() const
+{
+  return rowCommTotals;
+}
+
+
 void Histogram::clearStatistics()
 {
   vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
@@ -552,7 +584,6 @@ void Histogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
     commTotals->finish();
   if ( rowCommTotals != NULL )
     rowCommTotals->finish();
-  // - Finalizacion del calculo y de los totales.
   // - Se ordenan las columnas si es necesario.
 }
 
