@@ -202,13 +202,13 @@ void ComposeStackedValue::init( KWindow *whichWindow )
   {
     myStack.reserve( whichWindow->getTrace()->totalThreads() );
     for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalThreads(); i++ )
-      myStack.push_back( stack<TSemanticValue>() );
+      myStack.push_back( vector<TSemanticValue>() );
   }
   else
   {
     myStack.reserve( whichWindow->getTrace()->totalCPUs() );
     for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalCPUs(); i++ )
-      myStack.push_back( stack<TSemanticValue>() );
+      myStack.push_back( vector<TSemanticValue>() );
   }
 }
 
@@ -221,17 +221,17 @@ TSemanticValue ComposeStackedValue::execute( const SemanticInfo *info )
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
 
   if ( myInfo->values[ 0 ] != 0 )
-    myStack[ tmpOrder ].push( myInfo->values[ 0 ] );
+    myStack[ tmpOrder ].push_back( myInfo->values[ 0 ] );
   else
   {
     if ( !myStack[ tmpOrder ].empty() )
-      myStack[ tmpOrder ].pop();
+      myStack[ tmpOrder ].pop_back();
   }
 
   if ( myStack[ tmpOrder ].empty() )
     return 0;
 
-  return myStack[ tmpOrder ].top();
+  return myStack[ tmpOrder ].back();
 }
 
 
@@ -244,13 +244,13 @@ void ComposeInStackedValue::init( KWindow *whichWindow )
   {
     myStack.reserve( whichWindow->getTrace()->totalThreads() );
     for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalThreads(); i++ )
-      myStack.push_back( stack<TSemanticValue>() );
+      myStack.push_back( vector<TSemanticValue>() );
   }
   else
   {
     myStack.reserve( whichWindow->getTrace()->totalCPUs() );
     for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalCPUs(); i++ )
-      myStack.push_back( stack<TSemanticValue>() );
+      myStack.push_back( vector<TSemanticValue>() );
   }
 }
 
@@ -263,18 +263,18 @@ TSemanticValue ComposeInStackedValue::execute( const SemanticInfo *info )
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
 
   if ( myInfo->values[ 0 ] != 0 )
-    myStack[ tmpOrder ].push( myInfo->values[ 0 ] );
+    myStack[ tmpOrder ].push_back( myInfo->values[ 0 ] );
   else
   {
     if ( !myStack[ tmpOrder ].empty() )
-      myStack[ tmpOrder ].pop();
+      myStack[ tmpOrder ].pop_back();
   }
 
   if ( myStack[ tmpOrder ].empty() )
     return 0;
 
-  return myStack[ tmpOrder ].top() == parameters[ VALUE ][ 0 ] ?
-         myStack[ tmpOrder ].top() : 0;
+  return myStack[ tmpOrder ].back() == parameters[ VALUE ][ 0 ] ?
+         myStack[ tmpOrder ].back() : 0;
 }
 
 

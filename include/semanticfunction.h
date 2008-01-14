@@ -2,6 +2,7 @@
 #define SEMANTICFUNCTION_H_INCLUDED
 
 #include <vector>
+#include <stack>
 #include "memorytrace.h"
 #include "semanticexception.h"
 #include "semanticinfo.h"
@@ -54,6 +55,11 @@ class SemanticFunction
 
     virtual string getName() = 0;
     virtual SemanticFunction *clone() = 0;
+
+    virtual vector<vector<TSemanticValue> > *getStack()
+    {
+      return NULL;
+    }
 
   protected:
     vector<TParamValue> parameters;

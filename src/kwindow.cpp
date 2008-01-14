@@ -1,3 +1,4 @@
+#include <typeinfo>
 #include "kwindow.h"
 #include "semanticcomposefunctions.h"
 #include "semanticderived.h"
@@ -331,6 +332,19 @@ SemanticFunction *KSingleWindow::getLevelFunction( TWindowLevel whichLevel )
 }
 
 
+SemanticFunction *KSingleWindow::getFirstUsefulFunction()
+{
+  if ( typeid( *functions[ TOPCOMPOSE1 ] ) != typeid( ComposeAsIs ) )
+    return functions[ TOPCOMPOSE1 ];
+  if ( typeid( *functions[ TOPCOMPOSE2 ] ) != typeid( ComposeAsIs ) )
+    return functions[ TOPCOMPOSE2 ];
+  if ( typeid( *functions[ getComposeLevel( getLevel() ) ] ) != typeid( ComposeAsIs ) )
+    return functions[ getComposeLevel( getLevel() ) ];
+
+  return functions[ getLevel() ];
+}
+
+
 void KSingleWindow::setFunctionParam( TWindowLevel whichLevel,
                                       TParamIndex whichParam,
                                       const TParamValue& newValue )
@@ -545,6 +559,15 @@ SemanticFunction *KDerivedWindow::getLevelFunction( TWindowLevel whichLevel )
   return functions[ whichLevel ];
 }
 
+SemanticFunction *KDerivedWindow::getFirstUsefulFunction()
+{
+  if ( typeid( *functions[ ( TWindowLevel ) 0 ] ) != typeid( ComposeAsIs ) )
+    return functions[ ( TWindowLevel ) 0 ];
+  if ( typeid( *functions[ ( TWindowLevel ) 1 ] ) != typeid( ComposeAsIs ) )
+    return functions[ ( TWindowLevel ) 1 ];
+
+  return functions[ ( TWindowLevel ) 2 ];
+}
 
 void KDerivedWindow::setFunctionParam( TWindowLevel whichLevel,
                                        TParamIndex whichParam,

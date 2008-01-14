@@ -839,11 +839,16 @@ class ComposeStackedValue: public SemanticCompose
       return tmp;
     }
 
+    virtual vector<vector<TSemanticValue> > *getStack()
+    {
+      return &myStack;
+    }
+
   private:
     static const bool initFromBegin = true;
     static string name;
 
-    vector<stack<TSemanticValue> > myStack;
+    vector<vector<TSemanticValue> > myStack;
 };
 
 
@@ -901,11 +906,16 @@ class ComposeInStackedValue: public SemanticCompose
       return tmp;
     }
 
+    virtual vector<vector<TSemanticValue> > *getStack()
+    {
+      return &myStack;
+    }
+
   private:
     static const bool initFromBegin = true;
     static string name;
 
-    vector<stack<TSemanticValue> > myStack;
+    vector<vector<TSemanticValue> > myStack;
 };
 
 

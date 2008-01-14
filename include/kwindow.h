@@ -90,9 +90,11 @@ class KWindow
     virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    SemanticFunction *whichFunction ) = 0;
     virtual SemanticFunction *getLevelFunction( TWindowLevel whichLevel ) = 0;
+    virtual SemanticFunction *getFirstUsefulFunction( ) = 0;
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
                                    const TParamValue& newValue ) = 0;
+
     virtual bool initFromBegin() const = 0;
 
     RecordList *getRecordList( TObjectOrder whichObject );
@@ -178,9 +180,11 @@ class KSingleWindow: public KWindow
     virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    SemanticFunction *whichFunction );
     virtual SemanticFunction *getLevelFunction( TWindowLevel whichLevel );
+    virtual SemanticFunction *getFirstUsefulFunction( );
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
                                    const TParamValue& newValue );
+
     virtual bool initFromBegin() const;
 
     virtual RecordList *init( TRecordTime initialTime, TCreateList create );
@@ -304,9 +308,11 @@ class KDerivedWindow: public KWindow
     virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    SemanticFunction *whichFunction );
     virtual SemanticFunction *getLevelFunction( TWindowLevel whichLevel );
+    virtual SemanticFunction *getFirstUsefulFunction( );
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
                                    const TParamValue& newValue );
+
     virtual bool initFromBegin() const;
 
     virtual RecordList *init( TRecordTime initialTime, TCreateList create );

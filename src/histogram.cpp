@@ -339,6 +339,11 @@ THistogramLimit Histogram::getDataMax() const
 
 void Histogram::setInclusive( bool newValue )
 {
+  if ( newValue )
+  {
+    if ( controlWindow->getFirstUsefulFunction()->getStack() == NULL )
+      return;
+  }
   inclusive = newValue;
 }
 
@@ -839,14 +844,40 @@ void Histogram::calculate( TObjectOrder iRow,
     }
 
     // Semantic statistics
-    for ( UINT16 iStat = 0; iStat < statisticFunctions.size(); iStat++ )
+    if ( inclusive )
     {
-      value = statisticFunctions[ iStat ]->execute( data );
+      THistogramColumn column;
+      vector<vector<TSemanticValue> > *tmp =
+        controlWindow->getFirstUsefulFunction()->getStack();
+      vector<TSemanticValue>::iterator it = ( *tmp )[ data->controlRow ].begin();
+      while ( it != ( *tmp )[ data->controlRow ].end() )
+      {
+        if ( columnTranslator->getColumn( *it, column ) )
+        {
+          for ( UINT16 iStat = 0; iStat < statisticFunctions.size(); iStat++ )
+          {
+            value = statisticFunctions[ iStat ]->execute( data );
 
-      if ( threeDimensions )
-        cube->addValue( data->plane, data->column, iStat, value );
-      else
-        matrix->addValue( data->column, iStat, value );
+            if ( threeDimensions )
+              cube->addValue( data->plane, column, iStat, value );
+            else
+              matrix->addValue( column, iStat, value );
+          }
+        }
+        it++;
+      }
+    }
+    else
+    {
+      for ( UINT16 iStat = 0; iStat < statisticFunctions.size(); iStat++ )
+      {
+        value = statisticFunctions[ iStat ]->execute( data );
+
+        if ( threeDimensions )
+          cube->addValue( data->plane, data->column, iStat, value );
+        else
+          matrix->addValue( data->column, iStat, value );
+      }
     }
   }
   else
