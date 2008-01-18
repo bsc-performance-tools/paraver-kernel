@@ -14,6 +14,15 @@ HistogramTotals::HistogramTotals( UINT16 numStat,
     minimum.push_back( NULL );
     stdev.push_back( NULL );
   }
+
+  sort = NULL;
+}
+
+
+HistogramTotals::~HistogramTotals()
+{
+  if ( sort != NULL )
+    delete sort;
 }
 
 
@@ -29,7 +38,7 @@ void HistogramTotals::newValue( TSemanticValue whichValue,
     maximum[ whichPlane ] = new vector<vector<TSemanticValue> *>();
     minimum[ whichPlane ] = new vector<vector<TSemanticValue> *>();
     stdev[ whichPlane ] = new vector<vector<TSemanticValue> *>();
-    for ( THistogramColumn iColumn = 0; iColumn < columns; iColumn++ )
+    for ( UINT16 iStat = 0; iStat < stats; iStat++ )
     {
       total[ whichPlane ]->push_back( NULL );
       average[ whichPlane ]->push_back( NULL );
@@ -39,35 +48,35 @@ void HistogramTotals::newValue( TSemanticValue whichValue,
     }
   }
 
-  if ( ( *total[ whichPlane ] )[ whichColumn ] == NULL )
+  if ( ( *total[ whichPlane ] )[ idStat ] == NULL )
   {
-    ( *total[ whichPlane ] )[ whichColumn ] = new vector<TSemanticValue>();
-    ( *average[ whichPlane ] )[ whichColumn ] = new vector<TSemanticValue>();
-    ( *maximum[ whichPlane ] )[ whichColumn ] = new vector<TSemanticValue>();
-    ( *minimum[ whichPlane ] )[ whichColumn ] = new vector<TSemanticValue>();
-    ( *stdev[ whichPlane ] )[ whichColumn ] = new vector<TSemanticValue>();
-    for ( UINT16 iStat = 0; iStat < stats; iStat++ )
+    ( *total[ whichPlane ] )[ idStat ] = new vector<TSemanticValue>();
+    ( *average[ whichPlane ] )[ idStat ] = new vector<TSemanticValue>();
+    ( *maximum[ whichPlane ] )[ idStat ] = new vector<TSemanticValue>();
+    ( *minimum[ whichPlane ] )[ idStat ] = new vector<TSemanticValue>();
+    ( *stdev[ whichPlane ] )[ idStat ] = new vector<TSemanticValue>();
+    for ( THistogramColumn iColumn = 0; iColumn < columns; iColumn++ )
     {
-      ( *total[ whichPlane ] )[ whichColumn ]->push_back( 0.0 );
-      ( *average[ whichPlane ] )[ whichColumn ]->push_back( 0.0 );
-      ( *maximum[ whichPlane ] )[ whichColumn ]->push_back( 0.0 );
-      ( *minimum[ whichPlane ] )[ whichColumn ]->push_back( 0.0 );
-      ( *stdev[ whichPlane ] )[ whichColumn ]->push_back( 0.0 );
+      ( *total[ whichPlane ] )[ idStat ]->push_back( 0.0 );
+      ( *average[ whichPlane ] )[ idStat ]->push_back( 0.0 );
+      ( *maximum[ whichPlane ] )[ idStat ]->push_back( 0.0 );
+      ( *minimum[ whichPlane ] )[ idStat ]->push_back( 0.0 );
+      ( *stdev[ whichPlane ] )[ idStat ]->push_back( 0.0 );
     }
   }
 
-  ( *( *total[ whichPlane ] )[ whichColumn ] )[ idStat ] += whichValue;
+  ( *( *total[ whichPlane ] )[ idStat ] )[ whichColumn ] += whichValue;
 
-  ( *( *average[ whichPlane ] )[ whichColumn ] )[ idStat ] += 1;
+  ( *( *average[ whichPlane ] )[ idStat ] )[ whichColumn ] += 1;
 
-  if ( whichValue > ( *( *maximum[ whichPlane ] )[ whichColumn ] ) [ idStat ] )
-    ( *( *maximum[ whichPlane ] )[ whichColumn ] ) [ idStat ] = whichValue;
+  if ( whichValue > ( *( *maximum[ whichPlane ] )[ idStat ] )[ whichColumn ] )
+    ( *( *maximum[ whichPlane ] )[ idStat ] )[ whichColumn ] = whichValue;
 
   if ( whichValue != 0.0 &&
-       whichValue < ( *( *minimum[ whichPlane ] )[ whichColumn ] ) [ idStat ] )
-    ( *( *minimum[ whichPlane ] )[ whichColumn ] )[ idStat ] = whichValue;
+       whichValue < ( *( *minimum[ whichPlane ] )[ idStat ] )[ whichColumn ] )
+    ( *( *minimum[ whichPlane ] )[ idStat ] )[ whichColumn ] = whichValue;
 
-  ( *( *stdev[ whichPlane ] )[ whichColumn ] )[ idStat ] =
+  ( *( *stdev[ whichPlane ] )[ idStat ] )[ whichColumn ] =
     ( whichValue * whichValue );
 }
 
@@ -76,29 +85,29 @@ void HistogramTotals::finish()
 {
   for ( THistogramColumn iPlane = 0; iPlane < total.size(); iPlane++ )
   {
-    for ( THistogramColumn iColumn = 0; iColumn < columns; iColumn++ )
+    for ( UINT16 iStat = 0; iStat < stats; iStat++ )
     {
-      for ( UINT16 iStat = 0; iStat < stats; iStat++ )
+      for ( THistogramColumn iColumn = 0; iColumn < columns; iColumn++ )
       {
-        if ( ( ( *average[ iPlane ] )[ iColumn ] != NULL ) )
+        if ( ( ( *average[ iPlane ] )[ iStat ] != NULL ) )
         {
-          ( *( *stdev[ iPlane ] )[ iColumn ] )[ iStat ] /=
-            ( *( *average[ iPlane ] )[ iColumn ] )[ iStat ];
+          ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] /=
+            ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ];
 
-          ( *( *average[ iPlane ] )[ iColumn ] )[ iStat ] =
-            ( *( *total[ iPlane ] )[ iColumn ] )[ iStat ] /
-            ( *( *average[ iPlane ] )[ iColumn ] )[ iStat ];
+          ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ] =
+            ( *( *total[ iPlane ] )[ iStat ] )[ iColumn ] /
+            ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ];
 
-          TSemanticValue avgQ = ( *( *average[ iPlane ] )[ iColumn ] )[ iStat ] *
-                                ( *( *average[ iPlane ] )[ iColumn ] )[ iStat ];
+          TSemanticValue avgQ = ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ] *
+                                ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ];
 
-          ( *( *stdev[ iPlane ] )[ iColumn ] )[ iStat ] -= avgQ;
+          ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] -= avgQ;
 
-          if ( ( *( *stdev[ iPlane ] )[ iColumn ] )[ iStat ] < 0.0 )
-            ( *( *stdev[ iPlane ] )[ iColumn ] )[ iStat ] *= -1.0;
+          if ( ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] < 0.0 )
+            ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] *= -1.0;
 
-          ( *( *stdev[ iPlane ] )[ iColumn ] )[ iStat ] =
-            sqrt( ( *( *stdev[ iPlane ] )[ iColumn ] )[ iStat ] );
+          ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] =
+            sqrt( ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] );
         }
       }
     }
@@ -112,8 +121,8 @@ TSemanticValue HistogramTotals::getTotal( UINT16 idStat,
 {
   if ( total[ whichPlane ] != NULL )
   {
-    if ( ( *total[ whichPlane ] )[ whichColumn ] != NULL )
-      return ( *( *total[ whichPlane ] )[ whichColumn ] )[ idStat ];
+    if ( ( *total[ whichPlane ] )[ idStat ] != NULL )
+      return ( *( *total[ whichPlane ] )[ idStat ] )[ whichColumn ];
   }
 
   return 0.0;
@@ -126,8 +135,8 @@ TSemanticValue HistogramTotals::getAverage( UINT16 idStat,
 {
   if ( average[ whichPlane ] != NULL )
   {
-    if ( ( *average[ whichPlane ] )[ whichColumn ] != NULL )
-      return ( *( *average[ whichPlane ] )[ whichColumn ] )[ idStat ];
+    if ( ( *average[ whichPlane ] )[ idStat ] != NULL )
+      return ( *( *average[ whichPlane ] )[ idStat ] )[ whichColumn ];
   }
 
   return 0.0;
@@ -140,8 +149,8 @@ TSemanticValue HistogramTotals::getMaximum( UINT16 idStat,
 {
   if ( maximum[ whichPlane ] != NULL )
   {
-    if ( ( *maximum[ whichPlane ] )[ whichColumn ] != NULL )
-      return ( *( *maximum[ whichPlane ] )[ whichColumn ] )[ idStat ];
+    if ( ( *maximum[ whichPlane ] )[ idStat ] != NULL )
+      return ( *( *maximum[ whichPlane ] )[ idStat ] )[ whichColumn ];
   }
 
   return 0.0;
@@ -154,8 +163,8 @@ TSemanticValue HistogramTotals::getMinimum( UINT16 idStat,
 {
   if ( minimum[ whichPlane ] != NULL )
   {
-    if ( ( *minimum[ whichPlane ] )[ whichColumn ] != NULL )
-      return ( *( *minimum[ whichPlane ] )[ whichColumn ] )[ idStat ];
+    if ( ( *minimum[ whichPlane ] )[ idStat ] != NULL )
+      return ( *( *minimum[ whichPlane ] )[ idStat ] )[ whichColumn ];
   }
 
   return 0.0;
@@ -168,8 +177,8 @@ TSemanticValue HistogramTotals::getStdev( UINT16 idStat,
 {
   if ( stdev[ whichPlane ] != NULL )
   {
-    if ( ( *stdev[ whichPlane ] )[ whichColumn ] != NULL )
-      return ( *( *stdev[ whichPlane ] )[ whichColumn ] )[ idStat ];
+    if ( ( *stdev[ whichPlane ] )[ idStat ] != NULL )
+      return ( *( *stdev[ whichPlane ] )[ idStat ] )[ whichColumn ];
   }
 
   return 0.0;
@@ -182,9 +191,9 @@ TSemanticValue HistogramTotals::getAvgDivMax( UINT16 idStat,
 {
   if ( average[ whichPlane ] != NULL )
   {
-    if ( ( *average[ whichPlane ] )[ whichColumn ] != NULL )
-      return ( *( *average[ whichPlane ] )[ whichColumn ] )[ idStat ] /
-             ( *( *maximum[ whichPlane ] )[ whichColumn ] )[ idStat ];
+    if ( ( *average[ whichPlane ] )[ idStat ] != NULL )
+      return ( *( *average[ whichPlane ] )[ idStat ] )[ whichColumn ] /
+             ( *( *maximum[ whichPlane ] )[ idStat ] )[ whichColumn ];
   }
 
   return 0.0;
@@ -197,15 +206,15 @@ void HistogramTotals::getAll( vector<TSemanticValue>& where,
                               THistogramColumn whichPlane ) const
 {
   if ( total[ whichPlane ] != NULL &&
-       ( *total[ whichPlane ] )[ whichColumn ] != NULL )
+       ( *total[ whichPlane ] )[ idStat ] != NULL )
   {
-    where.push_back( ( *( *total[ whichPlane ] )[ whichColumn ] ) [ idStat ] );
-    where.push_back( ( *( *average[ whichPlane ] )[ whichColumn ] ) [ idStat ] );
-    where.push_back( ( *( *maximum[ whichPlane ] )[ whichColumn ] ) [ idStat ] );
-    where.push_back( ( *( *minimum[ whichPlane ] )[ whichColumn ] ) [ idStat ] );
-    where.push_back( ( *( *stdev[ whichPlane ] )[ whichColumn ] ) [ idStat ] );
-    where.push_back( ( *( *average[ whichPlane ] )[ whichColumn ] ) [ idStat ] /
-                     ( *( *maximum[ whichPlane ] )[ whichColumn ] ) [ idStat ] );
+    where.push_back( ( *( *total[ whichPlane ] )[ idStat ] ) [ whichColumn ] );
+    where.push_back( ( *( *average[ whichPlane ] )[ idStat ] ) [ whichColumn ] );
+    where.push_back( ( *( *maximum[ whichPlane ] )[ idStat ] ) [ whichColumn ] );
+    where.push_back( ( *( *minimum[ whichPlane ] )[ idStat ] ) [ whichColumn ] );
+    where.push_back( ( *( *stdev[ whichPlane ] )[ idStat ] ) [ whichColumn ] );
+    where.push_back( ( *( *average[ whichPlane ] )[ idStat ] ) [ whichColumn ] /
+                     ( *( *maximum[ whichPlane ] )[ idStat ] ) [ whichColumn ] );
   }
   else
   {
@@ -217,3 +226,63 @@ void HistogramTotals::getAll( vector<TSemanticValue>& where,
     where.push_back( 0.0 );
   }
 }
+
+
+vector<int>& HistogramTotals::sortByTotal( UINT16 idStat,
+    THistogramColumn whichPlane )
+{
+  if ( sort != NULL )
+    delete sort;
+
+  sort = new SortIndex<TSemanticValue>( *( *total[ whichPlane ] )[ idStat ] );
+  return sort->sort();
+}
+
+
+vector<int>& HistogramTotals::sortByAverage( UINT16 idStat,
+    THistogramColumn whichPlane )
+{
+  if ( sort != NULL )
+    delete sort;
+
+  sort = new SortIndex<TSemanticValue>( *( *average[ whichPlane ] )[ idStat ] );
+  return sort->sort();
+}
+
+
+vector<int>& HistogramTotals::sortByMaximum( UINT16 idStat,
+    THistogramColumn whichPlane )
+{
+  if ( sort != NULL )
+    delete sort;
+
+  sort = new SortIndex<TSemanticValue>( *( *maximum[ whichPlane ] )[ idStat ] );
+  return sort->sort();
+}
+
+
+vector<int>& HistogramTotals::sortByMinimum( UINT16 idStat,
+    THistogramColumn whichPlane )
+{
+  if ( sort != NULL )
+    delete sort;
+
+  sort = new SortIndex<TSemanticValue>( *( *minimum[ whichPlane ] )[ idStat ] );
+  return sort->sort();
+}
+
+
+vector<int>& HistogramTotals::sortByStdev( UINT16 idStat,
+    THistogramColumn whichPlane )
+{
+  if ( sort != NULL )
+    delete sort;
+
+  sort = new SortIndex<TSemanticValue>( *( *stdev[ whichPlane ] )[ idStat ] );
+  return sort->sort();
+}
+
+
+vector<int>& HistogramTotals::sortByAvgDivMax( UINT16 idStat,
+    THistogramColumn whichPlane )
+{}

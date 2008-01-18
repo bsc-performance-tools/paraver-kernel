@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "paraverkerneltypes.h"
+#include "vectorutils.h"
 
 using namespace std;
 
@@ -42,6 +43,13 @@ class HistogramTotals
                  THistogramColumn whichColumn,
                  THistogramColumn whichPlane = 0 ) const;
 
+    vector<int>& sortByTotal( UINT16 idStat, THistogramColumn whichPlane = 0 );
+    vector<int>& sortByAverage( UINT16 idStat, THistogramColumn whichPlane = 0 );
+    vector<int>& sortByMaximum( UINT16 idStat, THistogramColumn whichPlane = 0 );
+    vector<int>& sortByMinimum( UINT16 idStat, THistogramColumn whichPlane = 0 );
+    vector<int>& sortByStdev( UINT16 idStat, THistogramColumn whichPlane = 0 );
+    vector<int>& sortByAvgDivMax( UINT16 idStat, THistogramColumn whichPlane = 0 );
+
   protected:
 
   private:
@@ -54,6 +62,7 @@ class HistogramTotals
     vector<vector<vector<TSemanticValue> *> *> minimum;
     vector<vector<vector<TSemanticValue> *> *> stdev;
 
+    SortIndex<TSemanticValue> *sort;
 };
 
 
