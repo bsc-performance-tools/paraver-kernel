@@ -12,7 +12,8 @@ bool Filter::passFilter( MemoryTrace::iterator *it )
 
 bool Filter::filterComms( MemoryTrace::iterator *it )
 {
-  bool tmp = true;
+  bool stop = true;
+  bool tmpResult = true;
   TSemanticValue info;
 
   if ( logical && !( it->getType() & LOG ) )
@@ -34,15 +35,16 @@ bool Filter::filterComms( MemoryTrace::iterator *it )
     }
     for ( UINT32 i = 0; i < commFrom.size(); i++ )
     {
-      tmp = functionCommFrom->execute( ( TSemanticValue ) commFrom[ i ], info );
-      if ( tmp == false )
+      stop = functionCommFrom->execute( ( TSemanticValue ) commFrom[ i ], info );
+      if ( stop )
         break;
     }
+    tmpResult = functionCommFrom->getResult();
   }
 
-  if ( opFromTo == AND && tmp == false )
+  if ( opFromTo == AND && !tmpResult )
     return false;
-  tmp = true;
+  tmpResult = true;
 
   if ( existCommTo )
   {
@@ -58,13 +60,14 @@ bool Filter::filterComms( MemoryTrace::iterator *it )
     }
     for ( UINT32 i = 0; i < commTo.size(); i++ )
     {
-      tmp = functionCommTo->execute( ( TSemanticValue ) commTo[ i ], info );
-      if ( tmp == false )
+      stop = functionCommTo->execute( ( TSemanticValue ) commTo[ i ], info );
+      if ( stop )
         break;
     }
+    tmpResult = functionCommTo->getResult();
   }
 
-  if ( tmp == false )
+  if ( !tmpResult )
     return false;
 
   if ( existCommTags )
@@ -72,28 +75,30 @@ bool Filter::filterComms( MemoryTrace::iterator *it )
     info = ( TSemanticValue ) window->getTrace()->getCommTag( it->getCommIndex() );
     for ( UINT32 i = 0; i < commTags.size(); i++ )
     {
-      tmp = functionCommTags->execute( ( TSemanticValue ) commTags[ i ], info );
-      if ( tmp == false )
+      stop = functionCommTags->execute( ( TSemanticValue ) commTags[ i ], info );
+      if ( stop )
         break;
     }
+    tmpResult = functionCommTags->getResult();
   }
 
-  if ( opTagSize == AND && tmp == false )
+  if ( opTagSize == AND && !tmpResult )
     return false;
-  tmp = true;
+  tmpResult = true;
 
   if ( existCommSize )
   {
     info = ( TSemanticValue ) window->getTrace()->getCommSize( it->getCommIndex() );
     for ( UINT32 i = 0; i < commSizes.size(); i++ )
     {
-      tmp = functionCommSizes->execute( ( TSemanticValue ) commSizes[ i ], info );
-      if ( tmp == false )
+      stop = functionCommSizes->execute( ( TSemanticValue ) commSizes[ i ], info );
+      if ( stop == false )
         break;
     }
+    tmpResult = functionCommSizes->getResult();
   }
 
-  if ( tmp == false )
+  if ( !tmpResult )
     return false;
 
   if ( existBandWidth )
@@ -104,18 +109,20 @@ bool Filter::filterComms( MemoryTrace::iterator *it )
              window->getTrace()->getPhysicalSend( it->getCommIndex() ) );
     for ( UINT32 i = 0; i < bandWidth.size(); i++ )
     {
-      tmp = functionBandWidth->execute( ( TSemanticValue ) bandWidth[ i ], info );
-      if ( tmp == false )
+      stop = functionBandWidth->execute( ( TSemanticValue ) bandWidth[ i ], info );
+      if ( stop )
         break;
     }
+    tmpResult = functionBandWidth->getResult();
   }
 
-  return tmp;
+  return tmpResult;
 }
 
 bool Filter::filterEvents( MemoryTrace::iterator *it )
 {
-  bool tmp = true;
+  bool stop = true;
+  bool tmpResult = true;
   TSemanticValue info;
 
   if ( existEventTypes )
@@ -123,65 +130,81 @@ bool Filter::filterEvents( MemoryTrace::iterator *it )
     info = ( TSemanticValue ) it->getEventType();
     for ( UINT32 i = 0; i < eventTypes.size(); i++ )
     {
-      tmp = functionEventTypes->execute( ( TSemanticValue ) eventTypes[ i ], info );
-      if ( tmp == false )
+      stop = functionEventTypes->execute( ( TSemanticValue ) eventTypes[ i ], info );
+      if ( stop )
         break;
     }
+    tmpResult = functionEventTypes->getResult();
   }
 
-  if ( opTypeValue == AND && tmp == false )
+  if ( opTypeValue == AND && !tmpResult )
     return false;
-  tmp = true;
+  tmpResult = true;
 
   if ( existEventValues )
   {
     info = ( TSemanticValue ) it->getEventValue();
     for ( UINT32 i = 0; i < eventValues.size(); i++ )
     {
-      tmp = functionEventValues->execute( ( TSemanticValue ) eventValues[ i ], info );
-      if ( tmp == false )
+      stop = functionEventValues->execute( ( TSemanticValue ) eventValues[ i ], info );
+      if ( stop )
         break;
     }
+    tmpResult = functionEventValues->getResult();
   }
 
-  return tmp;
+  return tmpResult;
 }
 
 
 string FilterAll::name = "All";
 bool FilterAll::execute( TSemanticValue param, TSemanticValue data )
 {
+  result = true;
   return true;
 }
 
 string FilterNone::name = "None";
 bool FilterNone::execute( TSemanticValue param, TSemanticValue data )
 {
-  return false;
+  result = false;
+  return true;
 }
 
 string FilterEqual::name = "=";
 bool FilterEqual::execute( TSemanticValue param, TSemanticValue data )
 {
-  return data == param;
+  result = data == param;
+  if ( result )
+    return true;
+  return false;
 }
 
 string FilterNotEqual::name = "!=";
 bool FilterNotEqual::execute( TSemanticValue param, TSemanticValue data )
 {
-  return data != param;
+  result = data != param;
+  if ( result )
+    return false;
+  return true;
 }
 
 string FilterGreater::name = ">";
 bool FilterGreater::execute( TSemanticValue param, TSemanticValue data )
 {
-  return data > param;
+  result = data > param;
+  if ( result )
+    return false;
+  return true;
 }
 
 string FilterFewer::name = "<";
 bool FilterFewer::execute( TSemanticValue param, TSemanticValue data )
 {
-  return data < param;
+  result = data < param;
+  if ( result )
+    return false;
+  return true;
 }
 
 string FilterRange::name = "[x,y]";
@@ -191,14 +214,20 @@ bool FilterRange::execute( TSemanticValue param, TSemanticValue data )
 
   if ( position == MINOR )
   {
-    tmp = data >= param;
-    if( tmp )
+    result = data >= param;
+    if ( result )
+    {
+      tmp = false;
       position = MAJOR;
+    }
+    else
+      tmp = true;
   }
   else if ( position == MAJOR )
   {
-    tmp = data <= param;
+    result = data <= param;
     position = MINOR;
+    tmp = true;
   }
   return tmp;
 }

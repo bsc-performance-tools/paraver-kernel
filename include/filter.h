@@ -20,8 +20,13 @@ class FilterFunction
     virtual string getName() = 0;
     virtual FilterFunction *clone() = 0;
 
-  protected:
+    bool getResult()
+    {
+      return result;
+    }
 
+  protected:
+    bool result;
   private:
 
 };
@@ -45,7 +50,6 @@ class FilterAll: public FilterFunction
     {
       return new FilterAll( *this );
     }
-
 
   protected:
 
