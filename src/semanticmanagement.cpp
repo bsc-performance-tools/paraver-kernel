@@ -17,50 +17,50 @@ void createSemantic()
   ** Compose functions
   ***************************/
 
-  functions.push_back(new ComposeAsIs());
-  functions.push_back(new ComposeSign());
-  functions.push_back(new ComposeUnsign());
-  functions.push_back(new ComposeMod());
-  functions.push_back(new ComposeModPlus1());
-  functions.push_back(new ComposeDivide());
-  functions.push_back(new ComposeProduct());
-  functions.push_back(new ComposeAdding());
-  functions.push_back(new ComposeSubstract());
-  functions.push_back(new ComposeSelectRange());
-  functions.push_back(new ComposeIsInRange());
-  functions.push_back(new ComposeIsEqual());
-  functions.push_back(new ComposeIsEqualSign());
-  functions.push_back(new ComposeStackedValue());
-  functions.push_back(new ComposeInStackedValue());
-  functions.push_back(new ComposeNestingLevel());
-  functions.push_back(new ComposeDelta());
-  functions.push_back(new ComposeBurstTime());
-  functions.push_back(new ComposeJoinBursts());
+  functions.push_back( new ComposeAsIs() );
+  functions.push_back( new ComposeSign() );
+  functions.push_back( new ComposeUnsign() );
+  functions.push_back( new ComposeMod() );
+  functions.push_back( new ComposeModPlus1() );
+  functions.push_back( new ComposeDivide() );
+  functions.push_back( new ComposeProduct() );
+  functions.push_back( new ComposeAdding() );
+  functions.push_back( new ComposeSubstract() );
+  functions.push_back( new ComposeSelectRange() );
+  functions.push_back( new ComposeIsInRange() );
+  functions.push_back( new ComposeIsEqual() );
+  functions.push_back( new ComposeIsEqualSign() );
+  functions.push_back( new ComposeStackedValue() );
+  functions.push_back( new ComposeInStackedValue() );
+  functions.push_back( new ComposeNestingLevel() );
+  functions.push_back( new ComposeDelta() );
+  functions.push_back( new ComposeBurstTime() );
+  functions.push_back( new ComposeJoinBursts() );
 
 
   /**************************
   ** Derived functions
   ***************************/
 
-  functions.push_back(new DerivedAdd());
-  functions.push_back(new DerivedProduct());
-  functions.push_back(new DerivedSubstract());
-  functions.push_back(new DerivedDivide());
-  functions.push_back(new DerivedMaximum());
-  functions.push_back(new DerivedMinimum());
-  functions.push_back(new ControlDerivedClearBy());
-  functions.push_back(new ControlDerivedMaximum());
-  functions.push_back(new ControlDerivedAdd());
+  functions.push_back( new DerivedAdd() );
+  functions.push_back( new DerivedProduct() );
+  functions.push_back( new DerivedSubstract() );
+  functions.push_back( new DerivedDivide() );
+  functions.push_back( new DerivedMaximum() );
+  functions.push_back( new DerivedMinimum() );
+  functions.push_back( new ControlDerivedClearBy() );
+  functions.push_back( new ControlDerivedMaximum() );
+  functions.push_back( new ControlDerivedAdd() );
 
 
   /**************************
   ** CPU functions
   ***************************/
 
-  functions.push_back(new ActiveThread());
-  functions.push_back(new ActiveThreadSign());
-  functions.push_back(new ActiveThreadValues());
-  functions.push_back(new ActiveThreadValuesSign());
+  functions.push_back( new ActiveThread() );
+  functions.push_back( new ActiveThreadSign() );
+  functions.push_back( new ActiveThreadValues() );
+  functions.push_back( new ActiveThreadValuesSign() );
 
 
 
@@ -68,320 +68,94 @@ void createSemantic()
   ** Not Thread functions
   ***************************/
 
-  functions.push_back(new Adding());
-  functions.push_back(new AddingSign());
-  functions.push_back(new Average());
-  functions.push_back(new Maximum());
-  functions.push_back(new Minimum());
-  functions.push_back(new Activity());
-  functions.push_back(new InActivity());
-  functions.push_back(new NotThreadMode());
-  functions.push_back(new ObjectI());
-  functions.push_back(new AddObjectsI());
+  functions.push_back( new Adding() );
+  functions.push_back( new AddingSign() );
+  functions.push_back( new Average() );
+  functions.push_back( new Maximum() );
+  functions.push_back( new Minimum() );
+  functions.push_back( new Activity() );
+  functions.push_back( new InActivity() );
+  functions.push_back( new NotThreadMode() );
+  functions.push_back( new ObjectI() );
+  functions.push_back( new AddObjectsI() );
 
 
   /**************************
   ** State functions (Thread)
   ***************************/
 
-  functions.push_back(new StateAsIs());
-  functions.push_back(new Useful());
-  functions.push_back(new StateSign());
-  functions.push_back(new GivenState());
-  functions.push_back(new InState());
-  functions.push_back(new NotInState());
-  functions.push_back(new StateRecordDuration());
+  functions.push_back( new StateAsIs() );
+  functions.push_back( new Useful() );
+  functions.push_back( new StateSign() );
+  functions.push_back( new GivenState() );
+  functions.push_back( new InState() );
+  functions.push_back( new NotInState() );
+  functions.push_back( new StateRecordDuration() );
 
 
   /**************************
   ** Event functions (Thread)
   ***************************/
 
-  functions.push_back(new LastEventType());
-  functions.push_back(new LastEventValue());
-  functions.push_back(new LastEventValueWOBursts());
-  functions.push_back(new NextEventType());
-  functions.push_back(new NextEventValue());
-  functions.push_back(new AverageNextEventValue());
-  functions.push_back(new AverageLastEventValue());
-  functions.push_back(new GivenEventValue());
-  functions.push_back(new InEventValue());
-  functions.push_back(new IntervalBetweenEvents());
-  functions.push_back(new NotInEventValue());
-  functions.push_back(new InEventRange());
-  functions.push_back(new EventBytes());
+  functions.push_back( new LastEventType() );
+  functions.push_back( new LastEventValue() );
+  functions.push_back( new LastEventValueWOBursts() );
+  functions.push_back( new NextEventType() );
+  functions.push_back( new NextEventValue() );
+  functions.push_back( new AverageNextEventValue() );
+  functions.push_back( new AverageLastEventValue() );
+  functions.push_back( new GivenEventValue() );
+  functions.push_back( new InEventValue() );
+  functions.push_back( new IntervalBetweenEvents() );
+  functions.push_back( new NotInEventValue() );
+  functions.push_back( new InEventRange() );
+  functions.push_back( new EventBytes() );
 
 
   /**************************
   ** Comm functions (Thread)
   ***************************/
 
-  functions.push_back(new LastTag());
-  functions.push_back(new CommSize());
-  functions.push_back(new CommRecvPartner());
-  functions.push_back(new CommPartner());
-  functions.push_back(new LastSendDuration());
-  functions.push_back(new NextRecvDuration());
-  functions.push_back(new SendBytesInTransit());
-  functions.push_back(new SendMessagesInTransit());
-  functions.push_back(new SendBandWidth());
-  functions.push_back(new RecvBytesInTransit());
-  functions.push_back(new RecvMessagesInTransit());
-  functions.push_back(new RecvBandWidth());
-  functions.push_back(new RecvNegativeMessages());
-  functions.push_back(new RecvNegativeBytes());
-  functions.push_back(new NumberReceives());
-  functions.push_back(new NumberReceiveBytes());
+  functions.push_back( new LastTag() );
+  functions.push_back( new CommSize() );
+  functions.push_back( new CommRecvPartner() );
+  functions.push_back( new CommPartner() );
+  functions.push_back( new LastSendDuration() );
+  functions.push_back( new NextRecvDuration() );
+  functions.push_back( new SendBytesInTransit() );
+  functions.push_back( new SendMessagesInTransit() );
+  functions.push_back( new SendBandWidth() );
+  functions.push_back( new RecvBytesInTransit() );
+  functions.push_back( new RecvMessagesInTransit() );
+  functions.push_back( new RecvBandWidth() );
+  functions.push_back( new RecvNegativeMessages() );
+  functions.push_back( new RecvNegativeBytes() );
+  functions.push_back( new NumberReceives() );
+  functions.push_back( new NumberReceiveBytes() );
 
 
   /**************************
   ** Object functions (Thread)
   ***************************/
 
-  functions.push_back(new ApplicationID());
-  functions.push_back(new TaskID());
-  functions.push_back(new ThreadID());
-  functions.push_back(new NodeID());
-  functions.push_back(new CPUID());
-  functions.push_back(new InApplicationID());
-  functions.push_back(new InTaskID());
-  functions.push_back(new InThreadID());
-  functions.push_back(new InNodeID());
-  functions.push_back(new InCPUID());
+  functions.push_back( new ApplicationID() );
+  functions.push_back( new TaskID() );
+  functions.push_back( new ThreadID() );
+  functions.push_back( new NodeID() );
+  functions.push_back( new CPUID() );
+  functions.push_back( new InApplicationID() );
+  functions.push_back( new InTaskID() );
+  functions.push_back( new InThreadID() );
+  functions.push_back( new InNodeID() );
+  functions.push_back( new InCPUID() );
 
 
 
-  for(UINT16 i = 0; i < functions.size(); i++)
-	names.push_back(functions[i]->getName());
+  for ( UINT16 i = 0; i < functions.size(); i++ )
+    names.push_back( functions[i]->getName() );
 
 
-  FunctionManagement<SemanticFunction>::getInstance(names, functions);
+  FunctionManagement<SemanticFunction>::getInstance( names, functions );
 
 }
-
-
-#if 0
-SemanticFunction *SemanticManagement::createFunction( const string& functionName )
-{
-  SemanticFunction *tmpFunc = NULL;
-
-  /**************************
-  ** Compose functions
-  ***************************/
-  if ( !functionName.compare( "As Is" ) )
-    tmpFunc = new ComposeAsIs();
-  else if ( !functionName.compare( "Sign" ) )
-    tmpFunc = new ComposeSign();
-  else if ( !functionName.compare( "1-Sign" ) )
-    tmpFunc = new ComposeUnsign();
-  else if ( !functionName.compare( "Mod" ) )
-    tmpFunc = new ComposeMod();
-  else if ( !functionName.compare( "Mod+1" ) )
-    tmpFunc = new ComposeModPlus1();
-  else if ( !functionName.compare( "Div" ) )
-    tmpFunc = new ComposeDivide();
-  else if ( !functionName.compare( "Prod" ) )
-    tmpFunc = new ComposeProduct();
-  else if ( !functionName.compare( "Add" ) )
-    tmpFunc = new ComposeAdding();
-  else if ( !functionName.compare( "Subs" ) )
-    tmpFunc = new ComposeSubstract();
-  else if ( !functionName.compare( "Select Range" ) )
-    tmpFunc = new ComposeSelectRange();
-  else if ( !functionName.compare( "Is In Range" ) )
-    tmpFunc = new ComposeIsInRange();
-  else if ( !functionName.compare( "Is Equal" ) )
-    tmpFunc = new ComposeIsEqual();
-  else if ( !functionName.compare( "Is Equal (Sign)" ) )
-    tmpFunc = new ComposeIsEqualSign();
-  else if ( !functionName.compare( "Stacked Val" ) )
-    tmpFunc = new ComposeStackedValue();
-  else if ( !functionName.compare( "In Stacked Val" ) )
-    tmpFunc = new ComposeInStackedValue();
-  else if ( !functionName.compare( "Nesting level" ) )
-    tmpFunc = new ComposeNestingLevel();
-  else if ( !functionName.compare( "Delta" ) )
-    tmpFunc = new ComposeDelta();
-  else if ( !functionName.compare( "Burst Time" ) )
-    tmpFunc = new ComposeBurstTime();
-  else if ( !functionName.compare( "Join Bursts" ) )
-    tmpFunc = new ComposeJoinBursts();
-
-
-  /**************************
-  ** Derived functions
-  ***************************/
-  else if ( !functionName.compare( "add" ) )
-    tmpFunc = new DerivedAdd();
-  else if ( !functionName.compare( "product" ) )
-    tmpFunc = new DerivedProduct();
-  else if ( !functionName.compare( "substract" ) )
-    tmpFunc = new DerivedSubstract();
-  else if ( !functionName.compare( "divide" ) )
-    tmpFunc = new DerivedDivide();
-  else if ( !functionName.compare( "maximum" ) )
-    tmpFunc = new DerivedMaximum();
-  else if ( !functionName.compare( "minimum" ) )
-    tmpFunc = new DerivedMinimum();
-  else if ( !functionName.compare( "controlled: clear by" ) )
-    tmpFunc = new ControlDerivedClearBy();
-  else if ( !functionName.compare( "controlled: maximum" ) )
-    tmpFunc = new ControlDerivedMaximum();
-  else if ( !functionName.compare( "controlled: add" ) )
-    tmpFunc = new ControlDerivedAdd();
-
-
-  /**************************
-  ** CPU functions
-  ***************************/
-  else if ( !functionName.compare( "Active Thd" ) )
-    tmpFunc = new ActiveThread();
-  else if ( !functionName.compare( "Active Thd Sign" ) )
-    tmpFunc = new ActiveThreadSign();
-  else if ( !functionName.compare( "Active Thd Val" ) )
-    tmpFunc = new ActiveThreadValues();
-  else if ( !functionName.compare( "Active Thd Val Sign" ) )
-    tmpFunc = new ActiveThreadValuesSign();
-
-
-  /**************************
-  ** Not Thread functions
-  ***************************/
-  else if ( !functionName.compare( "Adding" ) )
-    tmpFunc = new Adding();
-  else if ( !functionName.compare( "Adding Sign" ) )
-    tmpFunc = new AddingSign();
-  else if ( !functionName.compare( "Average" ) )
-    tmpFunc = new Average();
-  else if ( !functionName.compare( "Maximum" ) )
-    tmpFunc = new Maximum();
-  else if ( !functionName.compare( "Minimum" ) )
-    tmpFunc = new Minimum();
-  else if ( !functionName.compare( "Activity" ) )
-    tmpFunc = new Activity();
-  else if ( !functionName.compare( "In Activity" ) )
-    tmpFunc = new InActivity();
-  else if ( !functionName.compare( "Mode" ) )
-    tmpFunc = new NotThreadMode();
-  else if ( !functionName.compare( "Thread i" ) )
-    tmpFunc = new ObjectI();
-  else if ( !functionName.compare( "Add Tasks" ) )
-    tmpFunc = new AddObjectsI();
-
-
-  /**************************
-  ** State functions (Thread)
-  ***************************/
-  else if ( !functionName.compare( "State As Is" ) )
-    tmpFunc = new StateAsIs();
-  else if ( !functionName.compare( "Useful" ) )
-    tmpFunc = new Useful();
-  else if ( !functionName.compare( "State Sign" ) )
-    tmpFunc = new StateSign();
-  else if ( !functionName.compare( "Given State" ) )
-    tmpFunc = new GivenState();
-  else if ( !functionName.compare( "In State" ) )
-    tmpFunc = new InState();
-  else if ( !functionName.compare( "Not In State" ) )
-    tmpFunc = new NotInState();
-  else if ( !functionName.compare( "State Record Dur." ) )
-    tmpFunc = new StateRecordDuration();
-
-
-  /**************************
-  ** Event functions (Thread)
-  ***************************/
-  else if ( !functionName.compare( "Last Evt Type" ) )
-    tmpFunc = new LastEventType();
-  else if ( !functionName.compare( "Last Evt Val" ) )
-    tmpFunc = new LastEventValue();
-  else if ( !functionName.compare( "Last Evt Val w/o Bursts" ) )
-    tmpFunc = new LastEventValueWOBursts();
-  else if ( !functionName.compare( "Next Evt Type" ) )
-    tmpFunc = new NextEventType();
-  else if ( !functionName.compare( "Next Evt Val" ) )
-    tmpFunc = new NextEventValue();
-  else if ( !functionName.compare( "Avg Next Evt Val" ) )
-    tmpFunc = new AverageNextEventValue();
-  else if ( !functionName.compare( "Avg Last Evt Val" ) )
-    tmpFunc = new AverageLastEventValue();
-  else if ( !functionName.compare( "Given Evt Val" ) )
-    tmpFunc = new GivenEventValue();
-  else if ( !functionName.compare( "In Evt Val" ) )
-    tmpFunc = new InEventValue();
-  else if ( !functionName.compare( "Int. Between Evt" ) )
-    tmpFunc = new IntervalBetweenEvents();
-  else if ( !functionName.compare( "Not In Evt Val" ) )
-    tmpFunc = new NotInEventValue();
-  else if ( !functionName.compare( "In Evt Range" ) )
-    tmpFunc = new InEventRange();
-  else if ( !functionName.compare( "Event Bytes" ) )
-    tmpFunc = new EventBytes();
-
-
-  /**************************
-  ** Comm functions (Thread)
-  ***************************/
-  else if ( !functionName.compare( "Last Tag" ) )
-    tmpFunc = new LastTag();
-  else if ( !functionName.compare( "Comm Size" ) )
-    tmpFunc = new CommSize();
-  else if ( !functionName.compare( "Comm Recv. Partner" ) )
-    tmpFunc = new CommRecvPartner();
-  else if ( !functionName.compare( "Comm Partner" ) )
-    tmpFunc = new CommPartner();
-  else if ( !functionName.compare( "Last Send Dur." ) )
-    tmpFunc = new LastSendDuration();
-  else if ( !functionName.compare( "Next Recv Dur." ) )
-    tmpFunc = new NextRecvDuration();
-  else if ( !functionName.compare( "Send Bytes in Transit" ) )
-    tmpFunc = new SendBytesInTransit();
-  else if ( !functionName.compare( "Send Messages in Transit" ) )
-    tmpFunc = new SendMessagesInTransit();
-  else if ( !functionName.compare( "Send BandWidth" ) )
-    tmpFunc = new SendBandWidth();
-  else if ( !functionName.compare( "Recv Bytes in Transit" ) )
-    tmpFunc = new RecvBytesInTransit();
-  else if ( !functionName.compare( "Recv Messages in Transit" ) )
-    tmpFunc = new RecvMessagesInTransit();
-  else if ( !functionName.compare( "Recv BandWidth" ) )
-    tmpFunc = new RecvBandWidth();
-  else if ( !functionName.compare( "Recv Negative Messages" ) )
-    tmpFunc = new RecvNegativeMessages();
-  else if ( !functionName.compare( "Recv Negative Bytes" ) )
-    tmpFunc = new RecvNegativeBytes();
-  else if ( !functionName.compare( "Number Of Receives" ) )
-    tmpFunc = new NumberReceives();
-  else if ( !functionName.compare( "Number Of Receive Bytes" ) )
-    tmpFunc = new NumberReceiveBytes();
-
-
-  /**************************
-  ** Object functions (Thread)
-  ***************************/
-  else if ( !functionName.compare( "Application ID" ) )
-    tmpFunc = new ApplicationID();
-  else if ( !functionName.compare( "Task ID" ) )
-    tmpFunc = new TaskID();
-  else if ( !functionName.compare( "Thread ID" ) )
-    tmpFunc = new ThreadID();
-  else if ( !functionName.compare( "Node ID" ) )
-    tmpFunc = new NodeID();
-  else if ( !functionName.compare( "Cpu ID" ) )
-    tmpFunc = new CPUID();
-  else if ( !functionName.compare( "In Appl ID" ) )
-    tmpFunc = new InApplicationID();
-  else if ( !functionName.compare( "In Task ID" ) )
-    tmpFunc = new InTaskID();
-  else if ( !functionName.compare( "In Thread ID" ) )
-    tmpFunc = new InThreadID();
-  else if ( !functionName.compare( "In Node ID" ) )
-    tmpFunc = new InNodeID();
-  else if ( !functionName.compare( "In Cpu ID" ) )
-    tmpFunc = new InCPUID();
-
-
-  return tmpFunc;
-}
-#endif
 
