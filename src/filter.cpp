@@ -192,7 +192,8 @@ bool FilterRange::execute( TSemanticValue param, TSemanticValue data )
   if ( position == MINOR )
   {
     tmp = data >= param;
-    position = MAJOR;
+    if( tmp )
+      position = MAJOR;
   }
   else if ( position == MAJOR )
   {

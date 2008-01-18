@@ -26,7 +26,7 @@ class FilterFunction
 
 };
 
-class FilterAll:public FilterFunction
+class FilterAll: public FilterFunction
 {
   public:
     FilterAll()
@@ -43,7 +43,7 @@ class FilterAll:public FilterFunction
 
     virtual FilterFunction *clone()
     {
-      return new FilterAll(*this);
+      return new FilterAll( *this );
     }
 
 
@@ -54,7 +54,7 @@ class FilterAll:public FilterFunction
 
 };
 
-class FilterNotEqual:public FilterFunction
+class FilterNotEqual: public FilterFunction
 {
   public:
     FilterNotEqual()
@@ -68,10 +68,10 @@ class FilterNotEqual:public FilterFunction
     {
       return FilterNotEqual::name;
     }
-                                                                                
+
     virtual FilterFunction *clone()
     {
-      return new FilterNotEqual(*this);
+      return new FilterNotEqual( *this );
     }
 
   protected:
@@ -82,7 +82,7 @@ class FilterNotEqual:public FilterFunction
 
 };
 
-class FilterEqual:public FilterFunction
+class FilterEqual: public FilterFunction
 {
   public:
     FilterEqual()
@@ -96,10 +96,10 @@ class FilterEqual:public FilterFunction
     {
       return FilterEqual::name;
     }
-                                                                                
+
     virtual FilterFunction *clone()
     {
-      return new FilterEqual(*this);
+      return new FilterEqual( *this );
     }
 
   protected:
@@ -110,7 +110,7 @@ class FilterEqual:public FilterFunction
 
 };
 
-class FilterGreater:public FilterFunction
+class FilterGreater: public FilterFunction
 {
   public:
     FilterGreater()
@@ -124,10 +124,10 @@ class FilterGreater:public FilterFunction
     {
       return FilterGreater::name;
     }
-                                                                                
+
     virtual FilterFunction *clone()
     {
-      return new FilterGreater(*this);
+      return new FilterGreater( *this );
     }
 
   protected:
@@ -137,7 +137,7 @@ class FilterGreater:public FilterFunction
 
 };
 
-class FilterFewer:public FilterFunction
+class FilterFewer: public FilterFunction
 {
   public:
     FilterFewer()
@@ -151,10 +151,10 @@ class FilterFewer:public FilterFunction
     {
       return FilterFewer::name;
     }
-                                                                                
+
     virtual FilterFunction *clone()
     {
-      return new FilterFewer(*this);
+      return new FilterFewer( *this );
     }
 
   protected:
@@ -165,7 +165,7 @@ class FilterFewer:public FilterFunction
 };
 
 
-class FilterNone:public FilterFunction
+class FilterNone: public FilterFunction
 {
   public:
     FilterNone()
@@ -179,10 +179,10 @@ class FilterNone:public FilterFunction
     {
       return FilterNone::name;
     }
-                                                                                
+
     virtual FilterFunction *clone()
     {
-      return new FilterNone(*this);
+      return new FilterNone( *this );
     }
 
   protected:
@@ -192,7 +192,7 @@ class FilterNone:public FilterFunction
 
 };
 
-class FilterRange:public FilterFunction
+class FilterRange: public FilterFunction
 {
   public:
     FilterRange()
@@ -208,10 +208,10 @@ class FilterRange:public FilterFunction
     {
       return FilterRange::name;
     }
-                                                                                
+
     virtual FilterFunction *clone()
     {
-      return new FilterRange(*this);
+      return new FilterRange( *this );
     }
 
   protected:
