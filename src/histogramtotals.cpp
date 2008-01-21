@@ -15,6 +15,9 @@ HistogramTotals::HistogramTotals( UINT16 numStat,
     stdev.push_back( NULL );
   }
 
+  for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
+    nullSort.push_back( iColumn );
+
   sort = NULL;
 }
 
@@ -231,6 +234,10 @@ void HistogramTotals::getAll( vector<TSemanticValue>& where,
 vector<int>& HistogramTotals::sortByTotal( UINT16 idStat,
     THistogramColumn whichPlane )
 {
+  if ( total[ whichPlane ] == NULL ||
+       ( *total[ whichPlane ] )[ idStat ] == NULL )
+    return nullSort;
+
   if ( sort != NULL )
     delete sort;
 
@@ -242,6 +249,10 @@ vector<int>& HistogramTotals::sortByTotal( UINT16 idStat,
 vector<int>& HistogramTotals::sortByAverage( UINT16 idStat,
     THistogramColumn whichPlane )
 {
+  if ( average[ whichPlane ] == NULL ||
+       ( *average[ whichPlane ] )[ idStat ] == NULL )
+    return nullSort;
+
   if ( sort != NULL )
     delete sort;
 
@@ -253,6 +264,10 @@ vector<int>& HistogramTotals::sortByAverage( UINT16 idStat,
 vector<int>& HistogramTotals::sortByMaximum( UINT16 idStat,
     THistogramColumn whichPlane )
 {
+  if ( maximum[ whichPlane ] == NULL ||
+       ( *maximum[ whichPlane ] )[ idStat ] == NULL )
+    return nullSort;
+
   if ( sort != NULL )
     delete sort;
 
@@ -264,6 +279,10 @@ vector<int>& HistogramTotals::sortByMaximum( UINT16 idStat,
 vector<int>& HistogramTotals::sortByMinimum( UINT16 idStat,
     THistogramColumn whichPlane )
 {
+  if ( minimum[ whichPlane ] == NULL ||
+       ( *minimum[ whichPlane ] )[ idStat ] == NULL )
+    return nullSort;
+
   if ( sort != NULL )
     delete sort;
 
@@ -275,6 +294,10 @@ vector<int>& HistogramTotals::sortByMinimum( UINT16 idStat,
 vector<int>& HistogramTotals::sortByStdev( UINT16 idStat,
     THistogramColumn whichPlane )
 {
+  if ( stdev[ whichPlane ] == NULL ||
+       ( *stdev[ whichPlane ] )[ idStat ] == NULL )
+    return nullSort;
+
   if ( sort != NULL )
     delete sort;
 
@@ -285,4 +308,24 @@ vector<int>& HistogramTotals::sortByStdev( UINT16 idStat,
 
 vector<int>& HistogramTotals::sortByAvgDivMax( UINT16 idStat,
     THistogramColumn whichPlane )
-{}
+{
+  if ( average[ whichPlane ] == NULL ||
+       ( *average[ whichPlane ] )[ idStat ] == NULL )
+    return nullSort;
+
+  if ( sort != NULL )
+    delete sort;
+
+  vector<TSemanticValue> tmpV;
+
+  for ( THistogramColumn iColumn = 0;
+        iColumn < columns;
+        iColumn++ )
+  {
+    tmpV.push_back( ( *( *average[ whichPlane ] )[ idStat ] ) [ iColumn ] /
+                    ( *( *maximum[ whichPlane ] )[ idStat ] ) [ iColumn ] );
+  }
+
+  sort = new SortIndex<TSemanticValue>( tmpV );
+  return sort->sort();
+}

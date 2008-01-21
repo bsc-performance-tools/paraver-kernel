@@ -63,6 +63,7 @@ class HistogramTotals
     vector<vector<vector<TSemanticValue> *> *> stdev;
 
     SortIndex<TSemanticValue> *sort;
+    vector<int> nullSort;
 };
 
 
