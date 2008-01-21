@@ -9,7 +9,7 @@
 		<Option virtualFolders="paraver-kernel/src/;" />
 		<Build>
 			<Target title="Debug">
-				<Option output="libparaver-kernel" prefix_auto="1" extension_auto="1" />
+				<Option output="libparaver-kernel.a" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/Debug/" />
 				<Option type="2" />
@@ -21,7 +21,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="libparaver-kernel" prefix_auto="1" extension_auto="1" />
+				<Option output="libparaver-kernel.a" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/Release/" />
 				<Option type="2" />
@@ -54,7 +54,7 @@
 				</Linker>
 			</Target>
 			<Target title="cfg">
-				<Option output="libcfg" prefix_auto="1" extension_auto="1" />
+				<Option output="libcfg.a" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option external_deps="libparaver-kernel.a;" />
 				<Option type="2" />
@@ -192,6 +192,7 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="include/statisticmanagement.h" />
 		<Unit filename="include/trace.h" />
 		<Unit filename="include/tracebodyio.h" />
 		<Unit filename="include/tracebodyio_v1.h" />
@@ -254,6 +255,10 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/histogramexception.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/histogrammanagement.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
@@ -363,6 +368,10 @@
 			<Option target="Release" />
 			<Option target="Application test" />
 		</Unit>
+		<Unit filename="src/statisticmanagement.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="src/trace.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -387,11 +396,6 @@
 				<search_path add="/usr/include/c++/4.1.1" />
 				<search_path add="/usr/include" />
 			</code_completion>
-			<envvars />
-			<debugger />
-			<wxsmith version="1">
-				<gui name="wxWidgets" src="" main="" init_handlers="necessary" language="CPP" />
-			</wxsmith>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
