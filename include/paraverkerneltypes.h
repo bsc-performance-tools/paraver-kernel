@@ -61,7 +61,7 @@ static const TRecordType EMPTYREC = STATE + EVENT + COMM;
 #if 0
 #define BEGIN        (0x0000)          /* Begin record. */
 #define END          (0x0001)          /* End record. Used in states
-record and communication records. */
+record and communication records. * /
 #define STATE        (0x0002)          /* State record. */
 #define EVENT        (0x0004)          /* Event record. */
 #define LOG          (0x0008)          /* Logical communication. */
@@ -100,6 +100,12 @@ typedef enum TWindowLevel
 
 typedef double THistogramLimit;
 typedef UINT32 THistogramColumn;
+
+typedef enum THistoTotals
+{
+  TOTAL = 0, AVERAGE, MAXIMUM, MINIMUM, STDEV, AVGDIVMAX
+};
+
 /*
  * PARAVER OLD CODE
  * Record class field defines for a state record.
