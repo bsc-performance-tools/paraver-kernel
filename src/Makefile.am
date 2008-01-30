@@ -7,7 +7,6 @@ libparaver_kernel_la_SOURCES = \
     bplustreerecordleaf.cpp \
     filter.cpp \
     filtermanagement.cpp \
-    histogram.cpp \
     histogramexception.cpp \
     histogramstatistic.cpp \
     index.cpp \
@@ -17,6 +16,8 @@ libparaver_kernel_la_SOURCES = \
     intervalderived.cpp \
     intervalnotthread.cpp \
     intervalthread.cpp \
+    khistogram.cpp \
+    khistogramtotals.cpp \
     kwindow.cpp \
     kwindowexception.cpp \
     memorytrace.cpp \
