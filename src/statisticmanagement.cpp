@@ -1,4 +1,4 @@
-#include "histogram.h"
+#include "histogramstatistic.h"
 #include "statisticmanagement.h"
 #include "functionmanagement.h"
 
@@ -6,7 +6,7 @@
 void createStatistic()
 {
   vector<string> names;
-  vector<FilterFunction *> functions;
+  vector<HistogramStatistic *> functions;
 
   functions.push_back( new StatNumSends() );
   functions.push_back( new StatNumReceives() );
@@ -38,5 +38,5 @@ void createStatistic()
   for ( UINT16 i = 0; i < functions.size(); i++ )
     names.push_back( functions[i]->getName() );
 
-  FunctionManagement<FilterFunction>::getInstance( names, functions );
+  FunctionManagement<HistogramStatistic>::getInstance( names, functions );
 }

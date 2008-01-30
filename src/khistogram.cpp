@@ -1,8 +1,8 @@
 #include "math.h"
-#include "histogram.h"
+#include "khistogram.h"
 #include "histogramstatistic.h"
 #include "histogramexception.h"
-#include "histogramtotals.h"
+#include "khistogramtotals.h"
 
 
 RowsTranslator::RowsTranslator( vector<KWindow *>& kwindows )

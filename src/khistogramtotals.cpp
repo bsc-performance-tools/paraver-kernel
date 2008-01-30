@@ -1,5 +1,5 @@
 #include <math.h>
-#include "histogramtotals.h"
+#include "khistogramtotals.h"
 
 HistogramTotals::HistogramTotals( UINT16 numStat,
                                   THistogramColumn numColumns,

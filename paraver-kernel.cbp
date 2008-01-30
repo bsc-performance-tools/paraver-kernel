@@ -151,6 +151,8 @@
 		<Unit filename="include/intervalnotthread.h" />
 		<Unit filename="include/intervalthread.h" />
 		<Unit filename="include/intervaltypes.h" />
+		<Unit filename="include/khistogram.h" />
+		<Unit filename="include/khistogramtotals.h" />
 		<Unit filename="include/kwindow.h" />
 		<Unit filename="include/kwindowexception.h" />
 		<Unit filename="include/matrix.h">
@@ -281,6 +283,14 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/intervalthread.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/khistogram.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/khistogramtotals.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
