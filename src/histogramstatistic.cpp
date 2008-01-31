@@ -16,7 +16,7 @@ TObjectOrder StatNumSends::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatNumSends::init( Histogram *whichHistogram )
+void StatNumSends::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
@@ -64,7 +64,7 @@ TObjectOrder StatNumReceives::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatNumReceives::init( Histogram *whichHistogram )
+void StatNumReceives::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
@@ -112,7 +112,7 @@ TObjectOrder StatBytesSent::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatBytesSent::init( Histogram *whichHistogram )
+void StatBytesSent::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
@@ -160,7 +160,7 @@ TObjectOrder StatBytesReceived::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatBytesReceived::init( Histogram *whichHistogram )
+void StatBytesReceived::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
@@ -208,7 +208,7 @@ TObjectOrder StatAvgBytesSent::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatAvgBytesSent::init( Histogram *whichHistogram )
+void StatAvgBytesSent::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -285,7 +285,7 @@ TObjectOrder StatAvgBytesReceived::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatAvgBytesReceived::init( Histogram *whichHistogram )
+void StatAvgBytesReceived::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -362,7 +362,7 @@ TObjectOrder StatMinBytesSent::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatMinBytesSent::init( Histogram *whichHistogram )
+void StatMinBytesSent::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -449,7 +449,7 @@ TObjectOrder StatMinBytesReceived::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatMinBytesReceived::init( Histogram *whichHistogram )
+void StatMinBytesReceived::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -536,7 +536,7 @@ TObjectOrder StatMaxBytesSent::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatMaxBytesSent::init( Histogram *whichHistogram )
+void StatMaxBytesSent::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -618,7 +618,7 @@ TObjectOrder StatMaxBytesReceived::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatMaxBytesReceived::init( Histogram *whichHistogram )
+void StatMaxBytesReceived::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -691,7 +691,7 @@ HistogramStatistic *StatMaxBytesReceived::clone()
 //-------------------------------------------------------------------------
 string StatTime::name = "Time";
 
-void StatTime::init( Histogram *whichHistogram )
+void StatTime::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
@@ -737,7 +737,7 @@ HistogramStatistic *StatTime::clone()
 //-------------------------------------------------------------------------
 string StatPercTime::name = "% Time";
 
-void StatPercTime::init( Histogram *whichHistogram )
+void StatPercTime::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
 
@@ -807,7 +807,7 @@ HistogramStatistic *StatPercTime::clone()
 //-------------------------------------------------------------------------
 string StatPercTimeNotZero::name = "% Time Not Zero";
 
-void StatPercTimeNotZero::init( Histogram *whichHistogram )
+void StatPercTimeNotZero::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
 
@@ -882,7 +882,7 @@ HistogramStatistic *StatPercTimeNotZero::clone()
 //-------------------------------------------------------------------------
 string StatPercTimeWindow::name = "% Window Time";
 
-void StatPercTimeWindow::init( Histogram *whichHistogram )
+void StatPercTimeWindow::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
@@ -930,7 +930,7 @@ HistogramStatistic *StatPercTimeWindow::clone()
 //-------------------------------------------------------------------------
 string StatNumBursts::name = "# Bursts";
 
-void StatNumBursts::init( Histogram *whichHistogram )
+void StatNumBursts::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
 }
@@ -967,7 +967,7 @@ HistogramStatistic *StatNumBursts::clone()
 //-------------------------------------------------------------------------
 string StatPercNumBursts::name = "% # Bursts";
 
-void StatPercNumBursts::init( Histogram *whichHistogram )
+void StatPercNumBursts::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
 
@@ -1027,7 +1027,7 @@ HistogramStatistic *StatPercNumBursts::clone()
 //-------------------------------------------------------------------------
 string StatIntegral::name = "Integral";
 
-void StatIntegral::init( Histogram *whichHistogram )
+void StatIntegral::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   dataWin = myHistogram->getDataWindow();
@@ -1074,7 +1074,7 @@ HistogramStatistic *StatIntegral::clone()
 //-------------------------------------------------------------------------
 string StatAvgValue::name = "Average value";
 
-void StatAvgValue::init( Histogram *whichHistogram )
+void StatAvgValue::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -1138,7 +1138,7 @@ HistogramStatistic *StatAvgValue::clone()
 //-------------------------------------------------------------------------
 string StatMaximum::name = "Maximum";
 
-void StatMaximum::init( Histogram *whichHistogram )
+void StatMaximum::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -1204,7 +1204,7 @@ HistogramStatistic *StatMaximum::clone()
 //-------------------------------------------------------------------------
 string StatAvgBurstTime::name = "Average Burst Time";
 
-void StatAvgBurstTime::init( Histogram *whichHistogram )
+void StatAvgBurstTime::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -1278,7 +1278,7 @@ HistogramStatistic *StatAvgBurstTime::clone()
 //-------------------------------------------------------------------------
 string StatStdevBurstTime::name = "Stdev Burst Time";
 
-void StatStdevBurstTime::init( Histogram *whichHistogram )
+void StatStdevBurstTime::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -1372,7 +1372,7 @@ HistogramStatistic *StatStdevBurstTime::clone()
 //-------------------------------------------------------------------------
 string StatAvgPerBurst::name = "Average per Burst";
 
-void StatAvgPerBurst::init( Histogram *whichHistogram )
+void StatAvgPerBurst::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -1437,7 +1437,7 @@ HistogramStatistic *StatAvgPerBurst::clone()
 //-------------------------------------------------------------------------
 string StatAvgValueNotZero::name = "Average value != 0";
 
-void StatAvgValueNotZero::init( Histogram *whichHistogram )
+void StatAvgValueNotZero::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -1503,7 +1503,7 @@ HistogramStatistic *StatAvgValueNotZero::clone()
 //-------------------------------------------------------------------------
 string StatNumBurstsNotZero::name = "# Bursts != 0";
 
-void StatNumBurstsNotZero::init( Histogram *whichHistogram )
+void StatNumBurstsNotZero::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   dataWin = myHistogram->getDataWindow();
@@ -1543,7 +1543,7 @@ HistogramStatistic *StatNumBurstsNotZero::clone()
 //-------------------------------------------------------------------------
 string StatSumBursts::name = "Sum bursts";
 
-void StatSumBursts::init( Histogram *whichHistogram )
+void StatSumBursts::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   dataWin = myHistogram->getDataWindow();

@@ -5,7 +5,7 @@
 #include "cube.h"
 
 class HistogramStatistic;
-class HistogramTotals;
+class KHistogramTotals;
 
 class RowsTranslator
 {
@@ -77,11 +77,11 @@ struct CalculateData
 };
 
 
-class Histogram
+class KHistogram
 {
   public:
-    Histogram();
-    ~Histogram();
+    KHistogram();
+    ~KHistogram();
 
     bool getThreeDimensions() const;
 
@@ -140,10 +140,10 @@ class Histogram
     bool endCommCell( UINT32 col, UINT32 plane = 0 );
     bool planeCommWithValues( UINT32 plane = 0 ) const;
 
-    HistogramTotals *getColumnTotals() const;
-    HistogramTotals *getCommColumnTotals() const;
-    HistogramTotals *getRowTotals() const;
-    HistogramTotals *getCommRowTotals() const;
+    KHistogramTotals *getColumnTotals() const;
+    KHistogramTotals *getCommColumnTotals() const;
+    KHistogramTotals *getRowTotals() const;
+    KHistogramTotals *getCommRowTotals() const;
 
     void clearStatistics();
     void pushbackStatistic( HistogramStatistic *whichStatistic );
@@ -190,10 +190,10 @@ class Histogram
     Cube<TSemanticValue> *commCube;
     Matrix<TSemanticValue> *commMatrix;
 
-    HistogramTotals *totals;
-    HistogramTotals *rowTotals;
-    HistogramTotals *commTotals;
-    HistogramTotals *rowCommTotals;
+    KHistogramTotals *totals;
+    KHistogramTotals *rowTotals;
+    KHistogramTotals *commTotals;
+    KHistogramTotals *rowCommTotals;
 
     void orderWindows();
     bool createComms() const;

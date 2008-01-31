@@ -103,7 +103,7 @@ THistogramColumn ColumnTranslator::totalColumns() const
 }
 
 
-Histogram::Histogram()
+KHistogram::KHistogram()
 {
   controlWindow = NULL;
   dataWindow = NULL;
@@ -138,7 +138,7 @@ Histogram::Histogram()
 }
 
 
-Histogram::~Histogram()
+KHistogram::~KHistogram()
 {
   if ( rowsTranslator != NULL )
     delete rowsTranslator;
@@ -169,175 +169,175 @@ Histogram::~Histogram()
 }
 
 
-bool Histogram::getThreeDimensions() const
+bool KHistogram::getThreeDimensions() const
 {
   return threeDimensions;
 }
 
 
-TRecordTime Histogram::getBeginTime() const
+TRecordTime KHistogram::getBeginTime() const
 {
   return beginTime;
 }
 
 
-TRecordTime Histogram::getEndTime() const
+TRecordTime KHistogram::getEndTime() const
 {
   return endTime;
 }
 
 
-KWindow *Histogram::getControlWindow() const
+KWindow *KHistogram::getControlWindow() const
 {
   return controlWindow;
 }
 
 
-KWindow *Histogram::getDataWindow() const
+KWindow *KHistogram::getDataWindow() const
 {
   return dataWindow;
 }
 
 
-KWindow *Histogram::getExtraControlWindow() const
+KWindow *KHistogram::getExtraControlWindow() const
 {
   return xtraControlWindow;
 }
 
 
-void Histogram::setControlWindow( KWindow *whichWindow )
+void KHistogram::setControlWindow( KWindow *whichWindow )
 {
   controlWindow = whichWindow;
 }
 
 
-void Histogram::setDataWindow( KWindow *whichWindow )
+void KHistogram::setDataWindow( KWindow *whichWindow )
 {
   dataWindow = whichWindow;
 }
 
 
-void Histogram::setExtraControlWindow( KWindow *whichWindow )
+void KHistogram::setExtraControlWindow( KWindow *whichWindow )
 {
   xtraControlWindow = whichWindow;
 }
 
 
-void Histogram::clearControlWindow()
+void KHistogram::clearControlWindow()
 {
   controlWindow = NULL;
 }
 
 
-void Histogram::clearDataWindow()
+void KHistogram::clearDataWindow()
 {
   dataWindow = NULL;
 }
 
 
-void Histogram::clearExtraControlWindow()
+void KHistogram::clearExtraControlWindow()
 {
   xtraControlWindow = NULL;
 }
 
 
-void Histogram::setControlMin( THistogramLimit whichMin )
+void KHistogram::setControlMin( THistogramLimit whichMin )
 {
   controlMin = whichMin;
 }
 
 
-void Histogram::setControlMax( THistogramLimit whichMax )
+void KHistogram::setControlMax( THistogramLimit whichMax )
 {
   controlMax = whichMax;
 }
 
 
-void Histogram::setControlDelta( THistogramLimit whichDelta )
+void KHistogram::setControlDelta( THistogramLimit whichDelta )
 {
   controlDelta = whichDelta;
 }
 
 
-void Histogram::setExtraControlMin( THistogramLimit whichMin )
+void KHistogram::setExtraControlMin( THistogramLimit whichMin )
 {
   xtraControlMin = whichMin;
 }
 
 
-void Histogram::setExtraControlMax( THistogramLimit whichMax )
+void KHistogram::setExtraControlMax( THistogramLimit whichMax )
 {
   xtraControlMax = whichMax;
 }
 
 
-void Histogram::setExtraControlDelta( THistogramLimit whichDelta )
+void KHistogram::setExtraControlDelta( THistogramLimit whichDelta )
 {
   xtraControlDelta = whichDelta;
 }
 
 
-void Histogram::setDataMin( THistogramLimit whichMin )
+void KHistogram::setDataMin( THistogramLimit whichMin )
 {
   dataMin = whichMin;
 }
 
 
-void Histogram::setDataMax( THistogramLimit whichMax )
+void KHistogram::setDataMax( THistogramLimit whichMax )
 {
   dataMax = whichMax;
 }
 
 
-THistogramLimit Histogram::getControlMin() const
+THistogramLimit KHistogram::getControlMin() const
 {
   return controlMin;
 }
 
 
-THistogramLimit Histogram::getControlMax() const
+THistogramLimit KHistogram::getControlMax() const
 {
   return controlMax;
 }
 
 
-THistogramLimit Histogram::getControlDelta() const
+THistogramLimit KHistogram::getControlDelta() const
 {
   return controlDelta;
 }
 
 
-THistogramLimit Histogram::getExtraControlMin() const
+THistogramLimit KHistogram::getExtraControlMin() const
 {
   return xtraControlMin;
 }
 
 
-THistogramLimit Histogram::getExtraControlMax() const
+THistogramLimit KHistogram::getExtraControlMax() const
 {
   return xtraControlMax;
 }
 
 
-THistogramLimit Histogram::getExtraControlDelta() const
+THistogramLimit KHistogram::getExtraControlDelta() const
 {
   return xtraControlDelta;
 }
 
 
-THistogramLimit Histogram::getDataMin() const
+THistogramLimit KHistogram::getDataMin() const
 {
   return dataMin;
 }
 
 
-THistogramLimit Histogram::getDataMax() const
+THistogramLimit KHistogram::getDataMax() const
 {
   return dataMax;
 }
 
 
-void Histogram::setInclusive( bool newValue )
+void KHistogram::setInclusive( bool newValue )
 {
   if ( newValue )
   {
@@ -348,7 +348,7 @@ void Histogram::setInclusive( bool newValue )
 }
 
 
-THistogramColumn Histogram::getNumPlanes() const
+THistogramColumn KHistogram::getNumPlanes() const
 {
   if ( threeDimensions )
     return planeTranslator->totalColumns();
@@ -356,19 +356,19 @@ THistogramColumn Histogram::getNumPlanes() const
 }
 
 
-THistogramColumn Histogram::getNumColumns() const
+THistogramColumn KHistogram::getNumColumns() const
 {
   return numCols;
 }
 
 
-TObjectOrder Histogram::getNumRows() const
+TObjectOrder KHistogram::getNumRows() const
 {
   return numRows;
 }
 
 
-TSemanticValue Histogram::getCurrentValue( UINT32 col,
+TSemanticValue KHistogram::getCurrentValue( UINT32 col,
     UINT16 idStat,
     UINT32 plane ) const
 {
@@ -380,7 +380,7 @@ TSemanticValue Histogram::getCurrentValue( UINT32 col,
   return TSemanticValue( 0 );
 }
 
-UINT32 Histogram::getCurrentRow( UINT32 col, UINT32 plane ) const
+UINT32 KHistogram::getCurrentRow( UINT32 col, UINT32 plane ) const
 {
   if ( threeDimensions )
     return cube->getCurrentRow( plane, col );
@@ -390,7 +390,7 @@ UINT32 Histogram::getCurrentRow( UINT32 col, UINT32 plane ) const
   return 0;
 }
 
-void Histogram::setNextCell( UINT32 col, UINT32 plane )
+void KHistogram::setNextCell( UINT32 col, UINT32 plane )
 {
   if ( threeDimensions )
     cube->setNextCell( plane, col );
@@ -398,7 +398,7 @@ void Histogram::setNextCell( UINT32 col, UINT32 plane )
     matrix->setNextCell( col );
 }
 
-void Histogram::setFirstCell( UINT32 col, UINT32 plane )
+void KHistogram::setFirstCell( UINT32 col, UINT32 plane )
 {
   if ( threeDimensions )
     cube->setFirstCell( plane, col );
@@ -406,7 +406,7 @@ void Histogram::setFirstCell( UINT32 col, UINT32 plane )
     matrix->setFirstCell( col );
 }
 
-bool Histogram::endCell( UINT32 col, UINT32 plane )
+bool KHistogram::endCell( UINT32 col, UINT32 plane )
 {
   if ( threeDimensions )
     return cube->endCell( plane, col );
@@ -416,7 +416,7 @@ bool Histogram::endCell( UINT32 col, UINT32 plane )
   return true;
 }
 
-bool Histogram::planeWithValues( UINT32 plane ) const
+bool KHistogram::planeWithValues( UINT32 plane ) const
 {
   if ( threeDimensions )
     return cube->planeWithValues( plane );
@@ -425,7 +425,7 @@ bool Histogram::planeWithValues( UINT32 plane ) const
 }
 
 
-TSemanticValue Histogram::getCommCurrentValue( UINT32 col,
+TSemanticValue KHistogram::getCommCurrentValue( UINT32 col,
     UINT16 idStat,
     UINT32 plane ) const
 {
@@ -437,7 +437,7 @@ TSemanticValue Histogram::getCommCurrentValue( UINT32 col,
   return TSemanticValue( 0 );
 }
 
-UINT32 Histogram::getCommCurrentRow( UINT32 col, UINT32 plane ) const
+UINT32 KHistogram::getCommCurrentRow( UINT32 col, UINT32 plane ) const
 {
   if ( threeDimensions )
     return commCube->getCurrentRow( plane, col );
@@ -447,7 +447,7 @@ UINT32 Histogram::getCommCurrentRow( UINT32 col, UINT32 plane ) const
   return 0;
 }
 
-void Histogram::setCommNextCell( UINT32 col, UINT32 plane )
+void KHistogram::setCommNextCell( UINT32 col, UINT32 plane )
 {
   if ( threeDimensions )
     commCube->setNextCell( plane, col );
@@ -455,7 +455,7 @@ void Histogram::setCommNextCell( UINT32 col, UINT32 plane )
     commMatrix->setNextCell( col );
 }
 
-void Histogram::setCommFirstCell( UINT32 col, UINT32 plane )
+void KHistogram::setCommFirstCell( UINT32 col, UINT32 plane )
 {
   if ( threeDimensions )
     commCube->setFirstCell( plane, col );
@@ -463,7 +463,7 @@ void Histogram::setCommFirstCell( UINT32 col, UINT32 plane )
     commMatrix->setFirstCell( col );
 }
 
-bool Histogram::endCommCell( UINT32 col, UINT32 plane )
+bool KHistogram::endCommCell( UINT32 col, UINT32 plane )
 {
   if ( threeDimensions )
     return commCube->endCell( plane, col );
@@ -473,7 +473,7 @@ bool Histogram::endCommCell( UINT32 col, UINT32 plane )
   return true;
 }
 
-bool Histogram::planeCommWithValues( UINT32 plane ) const
+bool KHistogram::planeCommWithValues( UINT32 plane ) const
 {
   if ( threeDimensions )
     return commCube->planeWithValues( plane );
@@ -482,31 +482,31 @@ bool Histogram::planeCommWithValues( UINT32 plane ) const
 }
 
 
-HistogramTotals *Histogram::getColumnTotals() const
+KHistogramTotals *KHistogram::getColumnTotals() const
 {
   return totals;
 }
 
 
-HistogramTotals *Histogram::getCommColumnTotals() const
+KHistogramTotals *KHistogram::getCommColumnTotals() const
 {
   return commTotals;
 }
 
 
-HistogramTotals *Histogram::getRowTotals() const
+KHistogramTotals *KHistogram::getRowTotals() const
 {
   return rowTotals;
 }
 
 
-HistogramTotals *Histogram::getCommRowTotals() const
+KHistogramTotals *KHistogram::getCommRowTotals() const
 {
   return rowCommTotals;
 }
 
 
-void Histogram::clearStatistics()
+void KHistogram::clearStatistics()
 {
   vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
 
@@ -527,7 +527,7 @@ void Histogram::clearStatistics()
 }
 
 
-void Histogram::pushbackStatistic( HistogramStatistic *whichStatistic )
+void KHistogram::pushbackStatistic( HistogramStatistic *whichStatistic )
 {
   if ( whichStatistic->createComms() )
     commStatisticFunctions.push_back( whichStatistic );
@@ -536,7 +536,7 @@ void Histogram::pushbackStatistic( HistogramStatistic *whichStatistic )
 }
 
 
-void Histogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
+void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
 {
   if ( controlWindow == NULL )
     throw HistogramException( HistogramException::noControlWindow );
@@ -593,7 +593,7 @@ void Histogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
 }
 
 
-void Histogram::orderWindows()
+void KHistogram::orderWindows()
 {
   orderedWindows.clear();
 
@@ -612,13 +612,13 @@ void Histogram::orderWindows()
 }
 
 
-bool Histogram::createComms() const
+bool KHistogram::createComms() const
 {
   return commStatisticFunctions.size() > 0;
 }
 
 
-void Histogram::initTranslators()
+void KHistogram::initTranslators()
 {
   if ( rowsTranslator != NULL )
     delete rowsTranslator;
@@ -639,7 +639,7 @@ void Histogram::initTranslators()
 }
 
 
-void Histogram::initMatrix( THistogramColumn planes, THistogramColumn cols,
+void KHistogram::initMatrix( THistogramColumn planes, THistogramColumn cols,
                             TObjectOrder rows )
 {
   if ( cube != NULL )
@@ -678,7 +678,7 @@ void Histogram::initMatrix( THistogramColumn planes, THistogramColumn cols,
 }
 
 
-void Histogram::initTotals()
+void KHistogram::initTotals()
 {
   if ( totals != NULL )
     delete totals;
@@ -691,32 +691,32 @@ void Histogram::initTotals()
 
   if ( threeDimensions )
   {
-    totals = new HistogramTotals( statisticFunctions.size(), numCols, numPlanes );
-    rowTotals = new HistogramTotals( statisticFunctions.size(), numRows, numPlanes );
+    totals = new KHistogramTotals( statisticFunctions.size(), numCols, numPlanes );
+    rowTotals = new KHistogramTotals( statisticFunctions.size(), numRows, numPlanes );
     if ( createComms() )
     {
-      commTotals = new HistogramTotals( commStatisticFunctions.size(),
+      commTotals = new KHistogramTotals( commStatisticFunctions.size(),
                                         numRows, numPlanes );
-      rowCommTotals = new HistogramTotals( commStatisticFunctions.size(),
+      rowCommTotals = new KHistogramTotals( commStatisticFunctions.size(),
                                            numRows, numPlanes );
     }
   }
   else
   {
-    totals = new HistogramTotals( statisticFunctions.size(), numCols, 1 );
-    rowTotals = new HistogramTotals( statisticFunctions.size(), numRows, 1 );
+    totals = new KHistogramTotals( statisticFunctions.size(), numCols, 1 );
+    rowTotals = new KHistogramTotals( statisticFunctions.size(), numRows, 1 );
     if ( createComms() )
     {
-      commTotals = new HistogramTotals( commStatisticFunctions.size(),
+      commTotals = new KHistogramTotals( commStatisticFunctions.size(),
                                         numRows, 1 );
-      rowCommTotals = new HistogramTotals( commStatisticFunctions.size(),
+      rowCommTotals = new KHistogramTotals( commStatisticFunctions.size(),
                                            numRows, 1 );
     }
   }
 }
 
 
-void Histogram::initSemantic( TRecordTime beginTime )
+void KHistogram::initSemantic( TRecordTime beginTime )
 {
   TCreateList create = NOCREATE;
 
@@ -733,7 +733,7 @@ void Histogram::initSemantic( TRecordTime beginTime )
 }
 
 
-void Histogram::initStatistics()
+void KHistogram::initStatistics()
 {
   vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
 
@@ -751,7 +751,7 @@ void Histogram::initStatistics()
 }
 
 
-void Histogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
+void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                                     TObjectOrder fromRow, TObjectOrder toRow,
                                     UINT16 winIndex, CalculateData *data )
 {
@@ -789,7 +789,7 @@ void Histogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 }
 
 
-void Histogram::calculate( TObjectOrder iRow,
+void KHistogram::calculate( TObjectOrder iRow,
                            TRecordTime fromTime, TRecordTime toTime,
                            TObjectOrder fromRow, TObjectOrder toRow,
                            UINT16 winIndex, CalculateData *data )
@@ -896,7 +896,7 @@ void Histogram::calculate( TObjectOrder iRow,
 }
 
 
-void Histogram::finishRow( CalculateData *data )
+void KHistogram::finishRow( CalculateData *data )
 {
   // Communication statistics
   if ( threeDimensions )

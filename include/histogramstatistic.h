@@ -5,7 +5,7 @@
 #include <vector>
 #include "paraverkerneltypes.h"
 
-class Histogram;
+class KHistogram;
 class KWindow;
 
 struct CalculateData;
@@ -21,7 +21,7 @@ class HistogramStatistic
     virtual bool createComms() const = 0;
     virtual TObjectOrder getPartner( CalculateData *data ) = 0;
 
-    virtual void init( Histogram *whichHistogram ) = 0;
+    virtual void init( KHistogram *whichHistogram ) = 0;
     virtual void reset() = 0;
     virtual TSemanticValue execute( CalculateData *data ) = 0;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -32,7 +32,7 @@ class HistogramStatistic
     virtual HistogramStatistic *clone() = 0;
 
   protected:
-    Histogram *myHistogram;
+    KHistogram *myHistogram;
 
   private:
 
@@ -54,7 +54,7 @@ class StatNumSends: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data );
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -83,7 +83,7 @@ class StatNumReceives: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data );
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -112,7 +112,7 @@ class StatBytesSent: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data );
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -141,7 +141,7 @@ class StatBytesReceived: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data );
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -170,7 +170,7 @@ class StatAvgBytesSent: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data );
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -200,7 +200,7 @@ class StatAvgBytesReceived: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data );
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -230,7 +230,7 @@ class StatMinBytesSent: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data );
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -260,7 +260,7 @@ class StatMinBytesReceived: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data );
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -290,7 +290,7 @@ class StatMaxBytesSent: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data );
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -320,7 +320,7 @@ class StatMaxBytesReceived: public HistogramStatistic
     }
     virtual TObjectOrder getPartner( CalculateData *data );
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -356,7 +356,7 @@ class StatTime: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -388,7 +388,7 @@ class StatPercTime: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -421,7 +421,7 @@ class StatPercTimeNotZero: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -454,7 +454,7 @@ class StatPercTimeWindow: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -486,7 +486,7 @@ class StatNumBursts: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -517,7 +517,7 @@ class StatPercNumBursts: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -549,7 +549,7 @@ class StatIntegral: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -581,7 +581,7 @@ class StatAvgValue: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -614,7 +614,7 @@ class StatMaximum: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -647,7 +647,7 @@ class StatAvgBurstTime: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -680,7 +680,7 @@ class StatStdevBurstTime: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -714,7 +714,7 @@ class StatAvgPerBurst: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -747,7 +747,7 @@ class StatAvgValueNotZero: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -780,7 +780,7 @@ class StatNumBurstsNotZero: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
@@ -812,7 +812,7 @@ class StatSumBursts: public HistogramStatistic
       return 0;
     }
 
-    virtual void init( Histogram *whichHistogram );
+    virtual void init( KHistogram *whichHistogram );
     virtual void reset();
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,

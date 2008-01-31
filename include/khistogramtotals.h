@@ -7,12 +7,12 @@
 
 using namespace std;
 
-class HistogramTotals
+class KHistogramTotals
 {
   public:
-    HistogramTotals( UINT16 numStat, THistogramColumn numColumns,
+    KHistogramTotals( UINT16 numStat, THistogramColumn numColumns,
                      THistogramColumn numPlanes );
-    ~HistogramTotals();
+    ~KHistogramTotals();
 
     void newValue( TSemanticValue whichValue,
                    UINT16 idStat,
