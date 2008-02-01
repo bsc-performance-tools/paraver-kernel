@@ -6,6 +6,8 @@
 #include "kwindow.h"
 #include "trace.h"
 
+#include "histogram.h"
+#include "histogramstatistic.h"
 #include "functionmanagement.h"
 #include "semanticfunction.h"
 #include "filter.h"
@@ -72,7 +74,9 @@ bool CFGLoader::isCFGFile( const string& filename )
   return ( cfgExt.compare( ".cfg" ) == 0 );
 }
 
-bool CFGLoader::loadCFG( string& filename, Trace *whichTrace, vector<KWindow *>& windows,
+bool CFGLoader::loadCFG( string& filename,
+                         Trace *whichTrace,
+                         vector<KWindow *>& windows,
                          TRecordTime& beginTime, TRecordTime& endTime )
 {
   ifstream cfgFile( filename.c_str() );
@@ -369,7 +373,7 @@ bool WindowOperation::parseLine( istringstream& line, Trace *whichTrace,
     return true;
 
   getline( line, strFunction, ' ' );
-  function = (FunctionManagement<SemanticFunction>::getInstance())->getFunction(strFunction);
+  function = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( strFunction );
 //  function = SemanticManagement::createFunction( strFunction );
   if ( function == NULL )
     return false;
@@ -588,7 +592,7 @@ bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
     {
       SemanticFunction *function;
 
-  function = (FunctionManagement<SemanticFunction>::getInstance())->getFunction(strFunction);
+      function = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( strFunction );
 //      function = SemanticManagement::createFunction( strFunction );
       if ( function == NULL )
         return false;
@@ -601,7 +605,7 @@ bool WindowSelectedFunctions::parseLine( istringstream& line, Trace *whichTrace,
       Filter *filter = ( ( KSingleWindow * ) windows[ windows.size() - 1 ] )->getFilter();
 
 
-  function = (FunctionManagement<FilterFunction>::getInstance())->getFunction(strFunction);
+      function = ( FunctionManagement<FilterFunction>::getInstance() )->getFunction( strFunction );
 //      function = FilterManagement::createFunction( strFunction );
       if ( function == NULL )
         return false;
@@ -662,7 +666,7 @@ bool WindowComposeFunctions::parseLine( istringstream& line, Trace *whichTrace,
     {
       SemanticFunction *function;
 
-  function = (FunctionManagement<SemanticFunction>::getInstance())->getFunction(strFunction);
+      function = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( strFunction );
 //      function = SemanticManagement::createFunction( strFunction );
       if ( function == NULL )
         return false;
@@ -697,7 +701,7 @@ bool WindowSemanticModule::parseLine( istringstream& line, Trace *whichTrace,
   getline( line, strFunction, '{' );
   strFunction.erase( strFunction.length() - 1 ); // Final space.
 
-  function = (FunctionManagement<SemanticFunction>::getInstance())->getFunction(strFunction);
+  function = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( strFunction );
 //  function = SemanticManagement::createFunction( strFunction );
   if ( function == NULL )
     return false;
@@ -1011,223 +1015,571 @@ bool WindowFilterBoolOpTypeVal::parseLine( istringstream& line, Trace *whichTrac
 }
 
 
-bool Analyzer2DControlWindow::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+bool Analyzer2DControlWindow::parseLine( istringstream& line,
+    Trace *whichTrace,
+    vector<KWindow *>& windows,
+    TRecordTime& beginTime,
+    TRecordTime& endTime )
 {
-  return false;
+  string strIndexControlWindow;
+  UINT32 indexControlWindow;
+  Histogram *histogram;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strIndexControlWindow );
+  istringstream tmpWindow( strIndexControlWindow );
+  if ( !( tmpWindow >> indexControlWindow ) )
+    return false;
+
+  if ( indexControlWindow >= windows.size() )
+    return false;
+
+  // histogram = new Histogram();
+
+  histogram->setControlWindow( windows[ indexControlWindow ] );
+
+  return true;
 }
 
 
 bool Analyzer2DDataWindow::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                      vector<KWindow *>& windows,
+                                      TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string strIndexDataWindow;
+  UINT32 indexDataWindow;
+  Histogram *histogram;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strIndexDataWindow );
+  istringstream tmpWindow( strIndexDataWindow );
+  if ( !( tmpWindow >> indexDataWindow ) )
+    return false;
+
+  if ( indexDataWindow >= windows.size() )
+    return false;
+
+  // get histogram
+
+  histogram->setDataWindow( windows[ indexDataWindow ] );
+
+  return true;
 }
 
 
 bool Analyzer2DStatistic::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                     vector<KWindow *>& windows,
+                                     TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string strStatistic;
+  HistogramStatistic *statistic;
+  Histogram *histogram;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strStatistic );
+  statistic = ( FunctionManagement<HistogramStatistic>::getInstance() )->getFunction( strStatistic );
+  if ( statistic == NULL )
+    return false;
+
+  // get histogram
+
+  histogram->pushbackStatistic( statistic );
+
+  return true;
 }
 
 
 bool Analyzer2DCalculateAll::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                        vector<KWindow *>& windows,
+                                        TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string strBoolAll;
+  Histogram *histogram;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBoolAll, ' ' );
+
+  if ( strBoolAll.compare( "true" ) == 0 )
+  {
+    // get histogram
+    histogram->clearStatistics();
+
+  }
+  else if ( strBoolAll.compare( "false" ) == 0 )
+    return true;
+  else
+    return false;
+
+
+  return true;
 }
 
 
 bool Analyzer2DNumColumns::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                      vector<KWindow *>& windows,
+                                      TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer2DScientificNotation::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+    vector<KWindow *>& windows,
+    TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer2DNumDecimals::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                       vector<KWindow *>& windows,
+                                       TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer2DThousandSeparator::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+    vector<KWindow *>& windows,
+    TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer2DUnits::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                 vector<KWindow *>& windows,
+                                 TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  return true;
 }
 
 bool Analyzer2DAccumulator:: parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                        vector<KWindow *>& windows,
+                                        TRecordTime& beginTime, TRecordTime& endTime )
 {
+  string strAccumulator;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strAccumulator );
+
   return false;
 }
 
 
 bool Analyzer2DAccumulateByControlWindow::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+    vector<KWindow *>& windows,
+    TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( "false" ) == 0 ||
+       strBool.compare( "False" ) == 0 )
+  {}
+  else if ( strBool.compare( "true" ) == 0 ||
+            strBool.compare( "True" ) == 0 )
+  {}
+  else
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer2DSortCols::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                    vector<KWindow *>& windows,
+                                    TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( "false" ) == 0 ||
+       strBool.compare( "False" ) == 0 )
+  {}
+  else if ( strBool.compare( "true" ) == 0 ||
+            strBool.compare( "True" ) == 0 )
+  {}
+  else
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer2DSortCriteria::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                        vector<KWindow *>& windows,
+                                        TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string strSortCriteria;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strSortCriteria );
+
+  if ( strSortCriteria.compare( "Average" ) == 0 )
+  {}
+  else if ( strSortCriteria.compare( "Total" ) == 0 )
+  {}
+  else if ( strSortCriteria.compare( "Maximum" ) == 0 )
+  {}
+  else if ( strSortCriteria.compare( "Minimum" ) == 0 )
+  {}
+  else if ( strSortCriteria.compare( "Stdev" ) == 0 )
+  {}
+  else
+    return false;
+
+  return true;
 }
 
-
+/*
+ Number_of_parameters Parameter1 ... ParameterN
+*/
 bool Analyzer2DParameters::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                      vector<KWindow *>& windows,
+                                      TRecordTime& beginTime, TRecordTime& endTime )
 {
+  string strNumParams, strValue;
+  UINT16 numParams;
+  float dataValue;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strNumParams, ' ' ); // Number of following parameters.
+  istringstream tmpNumParams( strNumParams );
+
+  if ( !( tmpNumParams >> numParams ) )
+    return false;
+
+  for ( UINT16 ii = 0; ii < numParams; ii++ )
+  {
+    getline( line, strValue, ' ' );
+    istringstream tmpValue( strValue );
+    if ( !( tmpValue >> dataValue ) )
+      return false;
+
+  }
+
   return false;
 }
 
 
 bool Analyzer2DAnalysisLimits::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+    vector<KWindow *>& windows,
+    TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string strLimit;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strLimit, ' ' );
+
+  if ( strLimit.compare( "Alltrace" ) == 0 )
+  {}
+  else if ( strLimit.compare( "Allwindow" ) == 0 )
+  {}
+  else if ( strLimit.compare( "Region" ) == 0 )
+  {}
+  else
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer2DRelativeTime::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                        vector<KWindow *>& windows,
+                                        TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( "false" ) == 0 ||
+       strBool.compare( "False" ) == 0 )
+  {}
+  else if ( strBool.compare( "true" ) == 0 ||
+            strBool.compare( "True" ) == 0 )
+  {}
+  else
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer2DComputeYScale::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+    vector<KWindow *>& windows,
+    TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( "false" ) == 0 ||
+       strBool.compare( "False" ) == 0 )
+  {}
+  else if ( strBool.compare( "true" ) == 0 ||
+            strBool.compare( "True" ) == 0 )
+  {}
+  else
+    return false;
+
+  return true;
 }
 
 bool Analyzer2DMinimum::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                   vector<KWindow *>& windows,
+                                   TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string strMinimum;
+  THistogramLimit dataMinimum;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strMinimum );
+  istringstream tmpValue( strMinimum );
+  if ( !( tmpValue >> dataMinimum ) )
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer2DMaximum::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                   vector<KWindow *>& windows,
+                                   TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string strMaximum;
+  THistogramLimit dataMaximum;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strMaximum );
+  istringstream tmpValue( strMaximum );
+  if ( !( tmpValue >> dataMaximum ) )
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer2DDelta::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                 vector<KWindow *>& windows,
+                                 TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string strDelta;
+  THistogramLimit dataDelta;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strDelta );
+  istringstream tmpValue( strDelta );
+  if ( !( tmpValue >> dataDelta ) )
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer2DComputeGradient::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+    vector<KWindow *>& windows,
+    TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( "false" ) == 0 ||
+       strBool.compare( "False" ) == 0 )
+  {}
+  else if ( strBool.compare( "true" ) == 0 ||
+            strBool.compare( "True" ) == 0 )
+  {}
+  else
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer2DMinimumGradient::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+    vector<KWindow *>& windows,
+    TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string strMinimumGradient;
+  THistogramLimit dataMinimumGradient;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strMinimumGradient );
+  istringstream tmpValue( strMinimumGradient );
+  if ( !( tmpValue >> dataMinimumGradient ) )
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer2DMaximumGradient::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+    vector<KWindow *>& windows,
+    TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string strMaximumGradient;
+  THistogramLimit dataMaximumGradient;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strMaximumGradient );
+  istringstream tmpValue( strMaximumGradient );
+  if ( !( tmpValue >> dataMaximumGradient ) )
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer3DControlWindow::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+    vector<KWindow *>& windows,
+    TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string str3DControlWindow;
+  UINT32 controlWindow;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, str3DControlWindow );
+  istringstream tmpValue( str3DControlWindow );
+  if ( !( tmpValue >> controlWindow ) )
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer3DMinimum::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                   vector<KWindow *>& windows,
+                                   TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string str3DMinimum;
+  THistogramLimit data3DMinimum;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, str3DMinimum );
+  istringstream tmpValue( str3DMinimum );
+  if ( !( tmpValue >> data3DMinimum ) )
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer3DMaximum::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                   vector<KWindow *>& windows,
+                                   TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string str3DMaximum;
+  THistogramLimit data3DMaximum;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, str3DMaximum );
+  istringstream tmpValue( str3DMaximum );
+  if ( !( tmpValue >> data3DMaximum ) )
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer3DDelta::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                 vector<KWindow *>& windows,
+                                 TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string str3DDelta;
+  THistogramLimit data3DDelta;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, str3DDelta );
+  istringstream tmpValue( str3DDelta );
+  if ( !( tmpValue >> data3DDelta ) )
+    return false;
+
+  return true;
 }
 
 
 bool Analyzer3DFixedValue::parseLine( istringstream& line, Trace *whichTrace,
-                            vector<KWindow *>& windows,
-                            TRecordTime& beginTime, TRecordTime& endTime )
+                                      vector<KWindow *>& windows,
+                                      TRecordTime& beginTime, TRecordTime& endTime )
 {
-  return false;
+  string str3DFixedValue;
+  UINT32 data3DFixedValue;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, str3DFixedValue );
+  istringstream tmpValue( str3DFixedValue );
+  if ( !( tmpValue >> data3DFixedValue ) )
+    return false;
+
+  return true;
 }

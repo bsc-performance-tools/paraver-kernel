@@ -62,3 +62,9 @@ T *FunctionManagement<T>::getFunction( const string& name )
   return retval;
 }
 
+template <class T>
+vector<T> *FunctionManagement<T>::getAll( )
+{
+  vector<T> v;
+  return v;
+}

@@ -3,6 +3,7 @@
 
 #include "kwindow.h"
 #include "cube.h"
+#include "histogram.h"
 
 class HistogramStatistic;
 class KHistogramTotals;
@@ -77,7 +78,7 @@ struct CalculateData
 };
 
 
-class KHistogram
+class KHistogram : public Histogram
 {
   public:
     KHistogram();

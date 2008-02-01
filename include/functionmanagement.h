@@ -25,7 +25,7 @@ class FunctionManagement
     T *getFunction( const string& );
     static FunctionManagement *getInstance();
     static FunctionManagement *getInstance( vector<string> &, vector<T *> & );
-
+    static vector<T> *getAll( );
 };
 
 #include "src/functionmanagement.cpp"
