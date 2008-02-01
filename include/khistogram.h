@@ -1,12 +1,13 @@
-#ifndef HISTOGRAM_H_INCLUDED
-#define HISTOGRAM_H_INCLUDED
+#ifndef KHISTOGRAM_H_INCLUDED
+#define KHISTOGRAM_H_INCLUDED
 
-#include "kwindow.h"
+#include "intervaltypes.h"
 #include "cube.h"
 #include "histogram.h"
 
 class HistogramStatistic;
 class KHistogramTotals;
+class KWindow;
 
 class RowsTranslator
 {
@@ -215,4 +216,4 @@ class KHistogram : public Histogram
 };
 
 
-#endif // HISTOGRAM_H_INCLUDED
+#endif // KHISTOGRAM_H_INCLUDED

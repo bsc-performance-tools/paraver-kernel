@@ -81,7 +81,6 @@ class Histogram
     virtual void pushbackStatistic( HistogramStatistic *whichStatistic ) = 0;
 
     virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime ) = 0;
-
 };
 
 

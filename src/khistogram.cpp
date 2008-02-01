@@ -1,4 +1,5 @@
 #include <math.h>
+#include "kwindow.h"
 #include "khistogram.h"
 #include "histogramstatistic.h"
 #include "histogramexception.h"

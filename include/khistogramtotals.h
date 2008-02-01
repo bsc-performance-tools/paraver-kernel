@@ -1,5 +1,5 @@
-#ifndef HISTOGRAMTOTALS_H_INCLUDED
-#define HISTOGRAMTOTALS_H_INCLUDED
+#ifndef KHISTOGRAMTOTALS_H_INCLUDED
+#define KHISTOGRAMTOTALS_H_INCLUDED
 
 #include <vector>
 #include "paraverkerneltypes.h"
@@ -67,4 +67,4 @@ class KHistogramTotals
 };
 
 
-#endif // HISTOGRAMTOTALS_H_INCLUDED
+#endif // KHISTOGRAMTOTALS_H_INCLUDED

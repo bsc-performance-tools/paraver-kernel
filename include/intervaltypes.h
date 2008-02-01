@@ -1,7 +1,10 @@
 #ifndef INTERVALTYPES_H_INCLUDED
 #define INTERVALTYPES_H_INCLUDED
 
+#include <set>
 #include "memorytrace.h"
+
+using std::set;
 
 // r1 is less than r2?
 struct ltrecord
