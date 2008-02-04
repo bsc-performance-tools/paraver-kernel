@@ -10,7 +10,6 @@ class KWindow;
 class Histogram
 {
   public:
-    //Histogram() {}
     virtual ~Histogram() {}
 
     static Histogram *create();
@@ -55,8 +54,8 @@ class Histogram
     virtual TObjectOrder getNumRows() const = 0;
 
     virtual TSemanticValue getCurrentValue( UINT32 col,
-                                    UINT16 idStat,
-                                    UINT32 plane = 0 ) const = 0;
+                                            UINT16 idStat,
+                                            UINT32 plane = 0 ) const = 0;
     virtual UINT32 getCurrentRow( UINT32 col, UINT32 plane = 0 ) const = 0;
     virtual void setNextCell( UINT32 col, UINT32 plane = 0 ) = 0;
     virtual void setFirstCell( UINT32 col, UINT32 plane = 0 ) = 0;
@@ -64,8 +63,8 @@ class Histogram
     virtual bool planeWithValues( UINT32 plane = 0 ) const = 0;
 
     virtual TSemanticValue getCommCurrentValue( UINT32 col,
-                                        UINT16 idStat,
-                                        UINT32 plane = 0 ) const = 0;
+        UINT16 idStat,
+        UINT32 plane = 0 ) const = 0;
     virtual UINT32 getCommCurrentRow( UINT32 col, UINT32 plane = 0 ) const = 0;
     virtual void setCommNextCell( UINT32 col, UINT32 plane = 0 ) = 0;
     virtual void setCommFirstCell( UINT32 col, UINT32 plane = 0 ) = 0;
@@ -84,11 +83,68 @@ class Histogram
 };
 
 
-class HistogramProxy :public Histogram
+class HistogramProxy : public Histogram
 {
   public:
     HistogramProxy();
     virtual ~HistogramProxy();
+
+    virtual bool getThreeDimensions() const;
+    virtual TRecordTime getBeginTime() const;
+    virtual TRecordTime getEndTime() const;
+    virtual KWindow *getControlWindow() const;
+    virtual KWindow *getDataWindow() const;
+    virtual KWindow *getExtraControlWindow() const;
+    virtual void setControlWindow( KWindow *whichWindow );
+    virtual void setDataWindow( KWindow *whichWindow );
+    virtual void setExtraControlWindow( KWindow *whichWindow );
+    virtual void clearControlWindow();
+    virtual void clearDataWindow();
+    virtual void clearExtraControlWindow();
+    virtual void setControlMin( THistogramLimit whichMin );
+    virtual void setControlMax( THistogramLimit whichMax );
+    virtual void setControlDelta( THistogramLimit whichDelta );
+    virtual void setExtraControlMin( THistogramLimit whichMin );
+    virtual void setExtraControlMax( THistogramLimit whichMax );
+    virtual void setExtraControlDelta( THistogramLimit whichDelta );
+    virtual void setDataMin( THistogramLimit whichMin );
+    virtual void setDataMax( THistogramLimit whichMax );
+    virtual THistogramLimit getControlMin() const;
+    virtual THistogramLimit getControlMax() const;
+    virtual THistogramLimit getControlDelta() const;
+    virtual THistogramLimit getExtraControlMin() const;
+    virtual THistogramLimit getExtraControlMax() const;
+    virtual THistogramLimit getExtraControlDelta() const;
+    virtual THistogramLimit getDataMin() const;
+    virtual THistogramLimit getDataMax() const;
+    virtual void setInclusive( bool newValue );
+    virtual THistogramColumn getNumPlanes() const;
+    virtual THistogramColumn getNumColumns() const;
+    virtual TObjectOrder getNumRows() const;
+    virtual TSemanticValue getCurrentValue( UINT32 col,
+                                            UINT16 idStat,
+                                            UINT32 plane = 0 ) const;
+    virtual UINT32 getCurrentRow( UINT32 col, UINT32 plane = 0 ) const;
+    virtual void setNextCell( UINT32 col, UINT32 plane = 0 );
+    virtual void setFirstCell( UINT32 col, UINT32 plane = 0 );
+    virtual bool endCell( UINT32 col, UINT32 plane = 0 );
+    virtual bool planeWithValues( UINT32 plane = 0 ) const;
+    virtual TSemanticValue getCommCurrentValue( UINT32 col,
+        UINT16 idStat,
+        UINT32 plane = 0 ) const;
+    virtual UINT32 getCommCurrentRow( UINT32 col, UINT32 plane = 0 ) const;
+    virtual void setCommNextCell( UINT32 col, UINT32 plane = 0 );
+    virtual void setCommFirstCell( UINT32 col, UINT32 plane = 0 );
+    virtual bool endCommCell( UINT32 col, UINT32 plane = 0 );
+    virtual bool planeCommWithValues( UINT32 plane = 0 ) const;
+    virtual KHistogramTotals *getColumnTotals() const;
+    virtual KHistogramTotals *getCommColumnTotals() const;
+    virtual KHistogramTotals *getRowTotals() const;
+    virtual KHistogramTotals *getCommRowTotals() const;
+    virtual void clearStatistics();
+    virtual void pushbackStatistic( HistogramStatistic *whichStatistic );
+    virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime );
+
 };
 
 
