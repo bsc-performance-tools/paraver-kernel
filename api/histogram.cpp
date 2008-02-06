@@ -143,6 +143,7 @@ TObjectOrder HistogramProxy::getNumRows() const
   return 0;
 }
 
+
 TSemanticValue HistogramProxy::getCurrentValue( UINT32 col,
     UINT16 idStat,
     UINT32 plane ) const
@@ -227,4 +228,16 @@ void HistogramProxy::pushbackStatistic( HistogramStatistic *whichStatistic )
 
 void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
 {}
+
+void HistogramProxy::setHorizontal( bool horiz )
+{
+  horizontal = horiz;
+}
+
+bool HistogramProxy::getHorizontal() const
+{
+  return horizontal;
+}
+
+
 

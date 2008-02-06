@@ -10,7 +10,8 @@ class Window;
 class Histogram
 {
   public:
-    virtual ~Histogram() {}
+    virtual ~Histogram()
+    {}
 
     static Histogram *create();
 
@@ -80,6 +81,10 @@ class Histogram
     virtual void pushbackStatistic( HistogramStatistic *whichStatistic ) = 0;
 
     virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime ) = 0;
+
+    // Specific methods of HistogramProxy
+    virtual void setHorizontal( bool horiz ) {};
+    virtual bool getHorizontal() const { return true; };
 };
 
 
@@ -145,6 +150,11 @@ class HistogramProxy : public Histogram
     virtual void pushbackStatistic( HistogramStatistic *whichStatistic );
     virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime );
 
+    virtual void setHorizontal( bool horiz );
+    virtual bool getHorizontal() const;
+
+  private:
+    bool horizontal;
 };
 
 

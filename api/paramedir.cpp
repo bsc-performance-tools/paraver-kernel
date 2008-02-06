@@ -57,6 +57,7 @@ int main( int argc, char *argv[] )
     {
       string strCfg( argv[ currentArg ] );
       vector<KWindow *> windows;
+      Histogram *histogram;
       TRecordTime beginTime;
       TRecordTime endTime;
       string strOutputFile;
@@ -85,7 +86,7 @@ int main( int argc, char *argv[] )
         currentArg++;
       }
 
-      if ( CFGLoader::loadCFG( strCfg, trace, windows, beginTime, endTime ) )
+      if ( CFGLoader::loadCFG( strCfg, trace, windows, histogram, beginTime, endTime ) )
       {
         ofstream outputFile;
         KWindow *tmpWindow = windows[ windows.size() - 1 ];
