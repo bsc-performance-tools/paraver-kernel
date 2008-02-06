@@ -1,8 +1,8 @@
 #include "kwindow.h"
 #include "intervalnotthread.h"
 
-RecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList create,
-                                     RecordList *displayList )
+KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList create,
+                                     KRecordList *displayList )
 {
   TRecordTime myInitTime;
   SemanticHighInfo info;
@@ -71,7 +71,7 @@ RecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList create
 }
 
 
-RecordList *IntervalNotThread::calcNext( RecordList *displayList, bool initCalc )
+KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCalc )
 {
   SemanticHighInfo info;
 
@@ -117,7 +117,7 @@ RecordList *IntervalNotThread::calcNext( RecordList *displayList, bool initCalc 
 }
 
 
-RecordList *IntervalNotThread::calcPrev( RecordList *displayList, bool initCalc )
+KRecordList *IntervalNotThread::calcPrev( KRecordList *displayList, bool initCalc )
 {
   SemanticHighInfo info;
 

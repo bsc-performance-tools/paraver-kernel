@@ -2,8 +2,8 @@
 #include "intervalcpu.h"
 
 
-RecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
-                               RecordList *displayList )
+KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
+                               KRecordList *displayList )
 {
   createList = create;
   currentValue = 0.0;
@@ -34,7 +34,7 @@ RecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
 }
 
 
-RecordList *IntervalCPU::calcNext( RecordList *displayList, bool initCalc )
+KRecordList *IntervalCPU::calcNext( KRecordList *displayList, bool initCalc )
 {
   SemanticHighInfo highInfo;
   SemanticThreadInfo threadInfo;
@@ -58,7 +58,7 @@ RecordList *IntervalCPU::calcNext( RecordList *displayList, bool initCalc )
 }
 
 
-RecordList *IntervalCPU::calcPrev( RecordList *displayList, bool initCalc )
+KRecordList *IntervalCPU::calcPrev( KRecordList *displayList, bool initCalc )
 {
   SemanticHighInfo highInfo;
   SemanticThreadInfo threadInfo;
@@ -89,7 +89,7 @@ RecordList *IntervalCPU::calcPrev( RecordList *displayList, bool initCalc )
 
 
 MemoryTrace::iterator *IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
-    RecordList *displayList )
+    KRecordList *displayList )
 {
   ++( *it );
   while ( !it->isNull() )
@@ -118,7 +118,7 @@ MemoryTrace::iterator *IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
 
 
 MemoryTrace::iterator *IntervalCPU::getPrevRecord( MemoryTrace::iterator *it,
-    RecordList *displayList )
+    KRecordList *displayList )
 {
   --( *it );
   while ( !it->isNull() )

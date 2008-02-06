@@ -1,8 +1,8 @@
 #include "kwindow.h"
 #include "intervalderived.h"
 
-RecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
-                                   RecordList *displayList )
+KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
+                                   KRecordList *displayList )
 {
   TRecordTime myInitTime;
   SemanticHighInfo info;
@@ -73,7 +73,7 @@ RecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
 }
 
 
-RecordList *IntervalDerived::calcNext( RecordList *displayList, bool initCalc )
+KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc )
 {
   SemanticHighInfo info;
 
@@ -120,7 +120,7 @@ RecordList *IntervalDerived::calcNext( RecordList *displayList, bool initCalc )
 }
 
 
-RecordList *IntervalDerived::calcPrev( RecordList *displayList, bool initCalc )
+KRecordList *IntervalDerived::calcPrev( KRecordList *displayList, bool initCalc )
 {
   SemanticHighInfo info;
 
@@ -211,13 +211,13 @@ void IntervalDerived::setChilds()
 
   if ( window->getParent( 0 )->getLevel() > window->getParent( 1 )->getLevel() )
   {
-    window1 = window->getParent( 0 );
-    window2 = window->getParent( 1 );
+    window1 = (KWindow *) window->getParent( 0 );
+    window2 = (KWindow *) window->getParent( 1 );
   }
   else
   {
-    window1 = window->getParent( 1 );
-    window2 = window->getParent( 0 );
+    window1 = (KWindow *) window->getParent( 1 );
+    window2 = (KWindow *) window->getParent( 0 );
   }
 
   if ( window1->getLevel() == APPLICATION )

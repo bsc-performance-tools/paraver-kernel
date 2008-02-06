@@ -2,8 +2,8 @@
 #define INTERVAL_H_INCLUDED
 
 #include <set>
-#include "intervaltypes.h"
 #include "memorytrace.h"
+#include "krecordlist.h"
 
 class KWindow;
 
@@ -29,9 +29,6 @@ class Interval
 
     virtual ~Interval()
     {
-      RecordList::iterator it = myDisplayList.begin();
-      while ( it != myDisplayList.end() )
-        delete *it;
       myDisplayList.clear();
     }
 
@@ -70,15 +67,15 @@ class Interval
       return order;
     }
 
-    RecordList *getRecordList()
+    KRecordList *getRecordList()
     {
       return &myDisplayList;
     }
 
-    virtual RecordList *init( TRecordTime initialTime, TCreateList create,
-                              RecordList *displayList = NULL ) = 0;
-    virtual RecordList *calcNext( RecordList *displayList = NULL, bool initCalc = false ) = 0;
-    virtual RecordList *calcPrev( RecordList *displayList = NULL, bool initCalc = false ) = 0;
+    virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
+                              KRecordList *displayList = NULL ) = 0;
+    virtual KRecordList *calcNext( KRecordList *displayList = NULL, bool initCalc = false ) = 0;
+    virtual KRecordList *calcPrev( KRecordList *displayList = NULL, bool initCalc = false ) = 0;
 
     virtual KWindow *getWindow() = 0;
 
@@ -88,7 +85,7 @@ class Interval
     MemoryTrace::iterator *begin;
     MemoryTrace::iterator *end;
     TSemanticValue currentValue;
-    RecordList myDisplayList;
+    KRecordList myDisplayList;
   private:
 
 };

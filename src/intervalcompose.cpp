@@ -2,8 +2,8 @@
 #include "intervalcompose.h"
 #include "semanticcomposefunctions.h"
 
-RecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
-                                   RecordList *displayList )
+KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
+                                    KRecordList *displayList )
 {
   TRecordTime myInitTime;
   SemanticHighInfo info;
@@ -83,7 +83,7 @@ RecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
 }
 
 
-RecordList *IntervalCompose::calcNext( RecordList *displayList, bool initCalc )
+KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc )
 {
   SemanticHighInfo info;
 
@@ -123,7 +123,7 @@ RecordList *IntervalCompose::calcNext( RecordList *displayList, bool initCalc )
 }
 
 
-RecordList *IntervalCompose::calcPrev( RecordList *displayList, bool initCalc )
+KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc )
 {
   SemanticHighInfo info;
 

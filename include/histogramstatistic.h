@@ -6,7 +6,7 @@
 #include "paraverkerneltypes.h"
 
 class KHistogram;
-class KWindow;
+class Window;
 
 struct CalculateData;
 
@@ -67,7 +67,7 @@ class StatNumSends: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *controlWin;
+    Window *controlWin;
 };
 
 
@@ -96,7 +96,7 @@ class StatNumReceives: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *controlWin;
+    Window *controlWin;
 };
 
 
@@ -125,7 +125,7 @@ class StatBytesSent: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *controlWin;
+    Window *controlWin;
 };
 
 
@@ -154,7 +154,7 @@ class StatBytesReceived: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *controlWin;
+    Window *controlWin;
 };
 
 
@@ -183,7 +183,7 @@ class StatAvgBytesSent: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *controlWin;
+    Window *controlWin;
     vector<vector<TSemanticValue> > numComms;
 };
 
@@ -213,7 +213,7 @@ class StatAvgBytesReceived: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *controlWin;
+    Window *controlWin;
     vector<vector<TSemanticValue> > numComms;
 };
 
@@ -243,7 +243,7 @@ class StatMinBytesSent: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *controlWin;
+    Window *controlWin;
     vector<vector<TSemanticValue> > min;
 };
 
@@ -273,7 +273,7 @@ class StatMinBytesReceived: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *controlWin;
+    Window *controlWin;
     vector<vector<TSemanticValue> > min;
 };
 
@@ -303,7 +303,7 @@ class StatMaxBytesSent: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *controlWin;
+    Window *controlWin;
     vector<vector<TSemanticValue> > max;
 };
 
@@ -333,7 +333,7 @@ class StatMaxBytesReceived: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *controlWin;
+    Window *controlWin;
     vector<vector<TSemanticValue> > max;
 };
 
@@ -369,7 +369,7 @@ class StatTime: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *controlWin;
+    Window *controlWin;
 };
 
 
@@ -401,7 +401,7 @@ class StatPercTime: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *controlWin;
+    Window *controlWin;
     vector<TSemanticValue> rowTotal;
 };
 
@@ -434,7 +434,7 @@ class StatPercTimeNotZero: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *controlWin;
+    Window *controlWin;
     vector<TSemanticValue> rowTotal;
 };
 
@@ -467,7 +467,7 @@ class StatPercTimeWindow: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *controlWin;
+    Window *controlWin;
 };
 
 
@@ -562,7 +562,7 @@ class StatIntegral: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *dataWin;
+    Window *dataWin;
 };
 
 
@@ -594,7 +594,7 @@ class StatAvgValue: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *dataWin;
+    Window *dataWin;
     vector<vector<TSemanticValue> > numValues;
 };
 
@@ -627,7 +627,7 @@ class StatMaximum: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *dataWin;
+    Window *dataWin;
     vector<vector<TSemanticValue> > max;
 };
 
@@ -660,7 +660,7 @@ class StatAvgBurstTime: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *dataWin;
+    Window *dataWin;
     vector<vector<TSemanticValue> > numValues;
 };
 
@@ -693,7 +693,7 @@ class StatStdevBurstTime: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *dataWin;
+    Window *dataWin;
     vector<vector<TSemanticValue> > numValues;
     vector<vector<TSemanticValue> > qValues;
 };
@@ -727,7 +727,7 @@ class StatAvgPerBurst: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *dataWin;
+    Window *dataWin;
     vector<vector<TSemanticValue> > numValues;
 };
 
@@ -760,7 +760,7 @@ class StatAvgValueNotZero: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *dataWin;
+    Window *dataWin;
     vector<vector<TSemanticValue> > numValues;
 };
 
@@ -793,7 +793,7 @@ class StatNumBurstsNotZero: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *dataWin;
+    Window *dataWin;
 };
 
 
@@ -825,7 +825,7 @@ class StatSumBursts: public HistogramStatistic
 
   private:
     static string name;
-    KWindow *dataWin;
+    Window *dataWin;
 };
 
 #endif // HISTOGRAMSTATISTIC_H_INCLUDED

@@ -32,10 +32,10 @@ class IntervalThread: public Interval
         delete end;
     }
 
-    virtual RecordList *init( TRecordTime initialTime, TCreateList create,
-                              RecordList *displayList = NULL );
-    virtual RecordList *calcNext( RecordList *displayList = NULL, bool initCalc = false );
-    virtual RecordList *calcPrev( RecordList *displayList = NULL, bool initCalc = false );
+    virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
+                              KRecordList *displayList = NULL );
+    virtual KRecordList *calcNext( KRecordList *displayList = NULL, bool initCalc = false );
+    virtual KRecordList *calcPrev( KRecordList *displayList = NULL, bool initCalc = false );
 
     virtual KWindow *getWindow()
     {
@@ -49,9 +49,9 @@ class IntervalThread: public Interval
 
   private:
     virtual MemoryTrace::iterator *getNextRecord( MemoryTrace::iterator *it,
-        RecordList *displayList );
+        KRecordList *displayList );
     virtual MemoryTrace::iterator *getPrevRecord( MemoryTrace::iterator *it,
-        RecordList *displayList );
+        KRecordList *displayList );
 
 };
 

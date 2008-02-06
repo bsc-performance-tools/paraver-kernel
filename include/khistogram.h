@@ -1,9 +1,10 @@
 #ifndef KHISTOGRAM_H_INCLUDED
 #define KHISTOGRAM_H_INCLUDED
 
-#include "intervaltypes.h"
 #include "cube.h"
 #include "histogram.h"
+#include "memorytrace.h"
+#include "recordlist.h"
 
 class HistogramStatistic;
 class KHistogramTotals;
@@ -18,7 +19,7 @@ class RowsTranslator
         PRECOND3: windows vector size is 2 or 3 KWindows.
     */
 
-    RowsTranslator( vector<KWindow *>& windows );
+    RowsTranslator( vector<Window *>& windows );
     ~RowsTranslator();
 
     TObjectOrder globalTranslate( UINT16 winIndex,
@@ -75,7 +76,7 @@ struct CalculateData
   TRecordTime endTime;
 
   RecordList *rList;
-  MemoryTrace::iterator *comm;
+  RecordList::iterator comm;
 };
 
 
@@ -90,12 +91,12 @@ class KHistogram : public Histogram
     TRecordTime getBeginTime() const;
     TRecordTime getEndTime() const;
 
-    KWindow *getControlWindow() const;
-    KWindow *getDataWindow() const;
-    KWindow *getExtraControlWindow() const;
-    void setControlWindow( KWindow *whichWindow );
-    void setDataWindow( KWindow *whichWindow );
-    void setExtraControlWindow( KWindow *whichWindow );
+    Window *getControlWindow() const;
+    Window *getDataWindow() const;
+    Window *getExtraControlWindow() const;
+    void setControlWindow( Window *whichWindow );
+    void setDataWindow( Window *whichWindow );
+    void setExtraControlWindow( Window *whichWindow );
     void clearControlWindow();
     void clearDataWindow();
     void clearExtraControlWindow();
@@ -155,9 +156,9 @@ class KHistogram : public Histogram
   protected:
 
   private:
-    KWindow *controlWindow;
-    KWindow *dataWindow;
-    KWindow *xtraControlWindow;
+    Window *controlWindow;
+    Window *dataWindow;
+    Window *xtraControlWindow;
 
     bool threeDimensions;
 
@@ -182,7 +183,7 @@ class KHistogram : public Histogram
     vector<HistogramStatistic *> statisticFunctions;
     vector<HistogramStatistic *> commStatisticFunctions;
 
-    vector<KWindow *> orderedWindows;
+    vector<Window *> orderedWindows;
     RowsTranslator *rowsTranslator;
     ColumnTranslator *columnTranslator;
     ColumnTranslator *planeTranslator;

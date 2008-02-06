@@ -5,7 +5,7 @@
 #include "histogramexception.h"
 #include "khistogramtotals.h"
 
-RowsTranslator::RowsTranslator( vector<KWindow *>& kwindows )
+RowsTranslator::RowsTranslator( vector<Window *>& kwindows )
 {
   for ( size_t ii = 0; ii < kwindows.size() - 1; ii++ )
   {
@@ -187,37 +187,37 @@ TRecordTime KHistogram::getEndTime() const
 }
 
 
-KWindow *KHistogram::getControlWindow() const
+Window *KHistogram::getControlWindow() const
 {
   return controlWindow;
 }
 
 
-KWindow *KHistogram::getDataWindow() const
+Window *KHistogram::getDataWindow() const
 {
   return dataWindow;
 }
 
 
-KWindow *KHistogram::getExtraControlWindow() const
+Window *KHistogram::getExtraControlWindow() const
 {
   return xtraControlWindow;
 }
 
 
-void KHistogram::setControlWindow( KWindow *whichWindow )
+void KHistogram::setControlWindow( Window *whichWindow )
 {
   controlWindow = whichWindow;
 }
 
 
-void KHistogram::setDataWindow( KWindow *whichWindow )
+void KHistogram::setDataWindow( Window *whichWindow )
 {
   dataWindow = whichWindow;
 }
 
 
-void KHistogram::setExtraControlWindow( KWindow *whichWindow )
+void KHistogram::setExtraControlWindow( Window *whichWindow )
 {
   xtraControlWindow = whichWindow;
 }
@@ -755,7 +755,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                                     TObjectOrder fromRow, TObjectOrder toRow,
                                     UINT16 winIndex, CalculateData *data )
 {
-  KWindow *currentWindow = orderedWindows[ winIndex ];
+  Window *currentWindow = orderedWindows[ winIndex ];
 
   if ( data == NULL )
     data = new CalculateData;
@@ -798,7 +798,7 @@ void KHistogram::calculate( TObjectOrder iRow,
   TObjectOrder childToRow;
   TRecordTime childFromTime;
   TRecordTime childToTime;
-  KWindow *currentWindow = orderedWindows[ winIndex ];
+  Window *currentWindow = orderedWindows[ winIndex ];
 
   if ( currentWindow == controlWindow )
   {
@@ -822,10 +822,10 @@ void KHistogram::calculate( TObjectOrder iRow,
     // Communication statistics
     RecordList::iterator itComm = data->rList->begin();
     while ( itComm != data->rList->end() &&
-            ( *itComm )->getTime() >= fromTime &&
-            ( *itComm )->getTime() <= toTime )
+            itComm->getTime() >= fromTime &&
+            itComm->getTime() <= toTime )
     {
-      data->comm = *itComm;
+      data->comm = itComm;
       for ( UINT16 iStat = 0; iStat < commStatisticFunctions.size(); iStat++ )
       {
         value = commStatisticFunctions[ iStat ]->execute( data );
@@ -839,9 +839,10 @@ void KHistogram::calculate( TObjectOrder iRow,
         }
       }
 
-      delete *itComm;
       itComm++;
     }
+
+    data->rList->erase( data->rList->begin(), itComm );
 
     // Semantic statistics
     if ( inclusive )

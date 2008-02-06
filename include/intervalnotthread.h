@@ -30,10 +30,10 @@ class IntervalNotThread: public IntervalHigh
         delete end;
     }
 
-    virtual RecordList *init( TRecordTime initialTime, TCreateList create,
-                              RecordList *displayList = NULL );
-    virtual RecordList *calcNext( RecordList *displayList = NULL, bool initCalc = false );
-    virtual RecordList *calcPrev( RecordList *displayList = NULL, bool initCalc = false );
+    virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
+                              KRecordList *displayList = NULL );
+    virtual KRecordList *calcNext( KRecordList *displayList = NULL, bool initCalc = false );
+    virtual KRecordList *calcPrev( KRecordList *displayList = NULL, bool initCalc = false );
 
     virtual KWindow *getWindow()
     {

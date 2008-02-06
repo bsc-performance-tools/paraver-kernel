@@ -1,13 +1,25 @@
 #ifndef KRECORDLIST_H_INCLUDED
 #define KRECORDLIST_H_INCLUDED
 
+#include <set>
 #include "recordlist.h"
+#include "memorytrace.h"
+
+using std::set;
 
 class KRecordList: public RecordList
 {
   public:
     KRecordList();
     virtual ~KRecordList();
+
+    virtual void clear();
+
+    virtual iterator begin() const;
+    virtual iterator end() const;
+
+    // Specific for KRecordList
+    virtual void insert( MemoryTrace::iterator *it );
   protected:
 
   private:
@@ -16,15 +28,15 @@ class KRecordList: public RecordList
     {
       bool operator()( RLRecord *r1, RLRecord *r2 ) const
       {
-        if ( r1->time < r2->time )
+        if ( r1->getTime() < r2->getTime() )
           return true;
-        else if ( r1->time == r2->time )
+        else if ( r1->getTime() == r2->getTime() )
         {
-          if ( r1->order < r2->order )
+          if ( r1->getOrder() < r2->getOrder() )
             return true;
-          else if ( r1->order == r2->order )
+          else if ( r1->getOrder() == r2->getOrder() )
           {
-            if ( ( r1->type & COMM ) && ( r2->type & EVENT ) )
+            if ( ( r1->getType() & COMM ) && ( r2->getType() & EVENT ) )
               return true;
           }
         }

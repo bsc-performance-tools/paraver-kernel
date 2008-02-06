@@ -1,7 +1,8 @@
 #include <math.h>
 #include "histogramstatistic.h"
 #include "khistogram.h"
-#include "kwindow.h"
+#include "window.h"
+#include "trace.h"
 
 //-------------------------------------------------------------------------
 // Histogram Statistic: #Sends

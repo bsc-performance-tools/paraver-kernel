@@ -1,8 +1,8 @@
 #include "kwindow.h"
 #include "intervalcontrolderived.h"
 
-RecordList *IntervalControlDerived::init( TRecordTime initialTime, TCreateList create,
-    RecordList *displayList )
+KRecordList *IntervalControlDerived::init( TRecordTime initialTime, TCreateList create,
+    KRecordList *displayList )
 {
   TRecordTime myInitTime;
   SemanticHighInfo info;
@@ -49,10 +49,10 @@ RecordList *IntervalControlDerived::init( TRecordTime initialTime, TCreateList c
     end = window->copyThreadIterator( childIntervals[ 0 ]->getEnd() );
   }
 
-  while( childIntervals[ 1 ]->getEnd()->getTime() <= begin->getTime() )
+  while ( childIntervals[ 1 ]->getEnd()->getTime() <= begin->getTime() )
     childIntervals[ 1 ]->calcNext( displayList );
 
-  if( childIntervals[ 1 ]->getEnd()->getTime() > begin->getTime() )
+  if ( childIntervals[ 1 ]->getEnd()->getTime() > begin->getTime() )
   {
     info.values.clear();
     info.values.push_back( currentValue );
@@ -61,7 +61,7 @@ RecordList *IntervalControlDerived::init( TRecordTime initialTime, TCreateList c
     currentValue = function->execute( &info );
   }
 
-  while( childIntervals[ 1 ]->getEnd()->getTime() < end->getTime() )
+  while ( childIntervals[ 1 ]->getEnd()->getTime() < end->getTime() )
   {
     childIntervals[ 1 ]->calcNext( displayList );
     info.values.clear();
@@ -78,7 +78,7 @@ RecordList *IntervalControlDerived::init( TRecordTime initialTime, TCreateList c
 }
 
 
-RecordList *IntervalControlDerived::calcNext( RecordList *displayList, bool initCalc )
+KRecordList *IntervalControlDerived::calcNext( KRecordList *displayList, bool initCalc )
 {
   SemanticHighInfo info;
 
@@ -113,10 +113,10 @@ RecordList *IntervalControlDerived::calcNext( RecordList *displayList, bool init
     end = window->copyThreadIterator( childIntervals[ 0 ]->getEnd() );
   }
 
-  while( childIntervals[ 1 ]->getEnd()->getTime() <= begin->getTime() )
+  while ( childIntervals[ 1 ]->getEnd()->getTime() <= begin->getTime() )
     childIntervals[ 1 ]->calcNext( displayList );
 
-  if( childIntervals[ 1 ]->getEnd()->getTime() > begin->getTime() )
+  if ( childIntervals[ 1 ]->getEnd()->getTime() > begin->getTime() )
   {
     info.values.clear();
     info.values.push_back( currentValue );
@@ -125,7 +125,7 @@ RecordList *IntervalControlDerived::calcNext( RecordList *displayList, bool init
     currentValue = function->execute( &info );
   }
 
-  while( childIntervals[ 1 ]->getEnd()->getTime() < end->getTime() )
+  while ( childIntervals[ 1 ]->getEnd()->getTime() < end->getTime() )
   {
     childIntervals[ 1 ]->calcNext( displayList );
     info.values.clear();
@@ -139,7 +139,7 @@ RecordList *IntervalControlDerived::calcNext( RecordList *displayList, bool init
 }
 
 
-RecordList *IntervalControlDerived::calcPrev( RecordList *displayList, bool initCalc )
+KRecordList *IntervalControlDerived::calcPrev( KRecordList *displayList, bool initCalc )
 {
   SemanticHighInfo info;
 
@@ -174,10 +174,10 @@ RecordList *IntervalControlDerived::calcPrev( RecordList *displayList, bool init
     end = window->copyThreadIterator( childIntervals[ 0 ]->getEnd() );
   }
 
-  while( childIntervals[ 1 ]->getEnd()->getTime() <= begin->getTime() )
+  while ( childIntervals[ 1 ]->getEnd()->getTime() <= begin->getTime() )
     childIntervals[ 1 ]->calcPrev( displayList );
 
-  if( childIntervals[ 1 ]->getEnd()->getTime() > begin->getTime() )
+  if ( childIntervals[ 1 ]->getEnd()->getTime() > begin->getTime() )
   {
     info.values.clear();
     info.values.push_back( currentValue );
@@ -186,7 +186,7 @@ RecordList *IntervalControlDerived::calcPrev( RecordList *displayList, bool init
     currentValue = function->execute( &info );
   }
 
-  while( childIntervals[ 1 ]->getEnd()->getTime() < end->getTime() )
+  while ( childIntervals[ 1 ]->getEnd()->getTime() < end->getTime() )
   {
     childIntervals[ 1 ]->calcPrev( displayList );
     info.values.clear();
@@ -244,13 +244,13 @@ void IntervalControlDerived::setChilds()
 
   if ( window->getParent( 0 )->getLevel() > window->getParent( 1 )->getLevel() )
   {
-    window1 = (KWindow *) window->getParent( 0 );
-    window2 = (KWindow *) window->getParent( 1 );
+    window1 = ( KWindow * ) window->getParent( 0 );
+    window2 = ( KWindow * ) window->getParent( 1 );
   }
   else
   {
-    window1 = (KWindow *) window->getParent( 1 );
-    window2 = (KWindow *) window->getParent( 0 );
+    window1 = ( KWindow * ) window->getParent( 1 );
+    window2 = ( KWindow * ) window->getParent( 0 );
   }
 
   if ( window1->getLevel() == APPLICATION )

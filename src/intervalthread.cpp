@@ -1,8 +1,8 @@
 #include "kwindow.h"
 #include "intervalthread.h"
 
-RecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
-                                  RecordList *displayList )
+KRecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
+                                  KRecordList *displayList )
 {
   createList = create;
   currentValue = 0.0;
@@ -31,7 +31,7 @@ RecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
 }
 
 
-RecordList *IntervalThread::calcNext( RecordList *displayList, bool initCalc )
+KRecordList *IntervalThread::calcNext( KRecordList *displayList, bool initCalc )
 {
   SemanticThreadInfo info;
 
@@ -52,7 +52,7 @@ RecordList *IntervalThread::calcNext( RecordList *displayList, bool initCalc )
 }
 
 
-RecordList *IntervalThread::calcPrev( RecordList *displayList, bool initCalc )
+KRecordList *IntervalThread::calcPrev( KRecordList *displayList, bool initCalc )
 {
   SemanticThreadInfo info;
 
@@ -79,7 +79,7 @@ RecordList *IntervalThread::calcPrev( RecordList *displayList, bool initCalc )
 
 
 MemoryTrace::iterator *IntervalThread::getNextRecord( MemoryTrace::iterator *it,
-    RecordList *displayList )
+    KRecordList *displayList )
 {
   ++( *it );
   while ( !it->isNull() )
@@ -108,7 +108,7 @@ MemoryTrace::iterator *IntervalThread::getNextRecord( MemoryTrace::iterator *it,
 
 
 MemoryTrace::iterator *IntervalThread::getPrevRecord( MemoryTrace::iterator *it,
-    RecordList *displayList )
+    KRecordList *displayList )
 {
   --( *it );
   while ( !it->isNull() )
