@@ -5,7 +5,7 @@
 
 class KHistogramTotals;
 class HistogramStatistic;
-class KWindow;
+class Window;
 
 class Histogram
 {
@@ -19,12 +19,12 @@ class Histogram
     virtual TRecordTime getBeginTime() const = 0;
     virtual TRecordTime getEndTime() const = 0;
 
-    virtual KWindow *getControlWindow() const = 0;
-    virtual KWindow *getDataWindow() const = 0;
-    virtual KWindow *getExtraControlWindow() const = 0;
-    virtual void setControlWindow( KWindow *whichWindow ) = 0;
-    virtual void setDataWindow( KWindow *whichWindow ) = 0;
-    virtual void setExtraControlWindow( KWindow *whichWindow ) = 0;
+    virtual Window *getControlWindow() const = 0;
+    virtual Window *getDataWindow() const = 0;
+    virtual Window *getExtraControlWindow() const = 0;
+    virtual void setControlWindow( Window *whichWindow ) = 0;
+    virtual void setDataWindow( Window *whichWindow ) = 0;
+    virtual void setExtraControlWindow( Window *whichWindow ) = 0;
     virtual void clearControlWindow() = 0;
     virtual void clearDataWindow() = 0;
     virtual void clearExtraControlWindow() = 0;
@@ -92,12 +92,12 @@ class HistogramProxy : public Histogram
     virtual bool getThreeDimensions() const;
     virtual TRecordTime getBeginTime() const;
     virtual TRecordTime getEndTime() const;
-    virtual KWindow *getControlWindow() const;
-    virtual KWindow *getDataWindow() const;
-    virtual KWindow *getExtraControlWindow() const;
-    virtual void setControlWindow( KWindow *whichWindow );
-    virtual void setDataWindow( KWindow *whichWindow );
-    virtual void setExtraControlWindow( KWindow *whichWindow );
+    virtual Window *getControlWindow() const;
+    virtual Window *getDataWindow() const;
+    virtual Window *getExtraControlWindow() const;
+    virtual void setControlWindow( Window *whichWindow );
+    virtual void setDataWindow( Window *whichWindow );
+    virtual void setExtraControlWindow( Window *whichWindow );
     virtual void clearControlWindow();
     virtual void clearDataWindow();
     virtual void clearExtraControlWindow();

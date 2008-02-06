@@ -6,14 +6,10 @@
 #include "memorytrace.h"
 #include "semanticexception.h"
 #include "semanticinfo.h"
-//#include "kwindow.h"
 
 class KWindow;
 
 using namespace std;
-
-typedef UINT16 TParamIndex;
-typedef vector<double> TParamValue;
 
 class SemanticFunction
 {

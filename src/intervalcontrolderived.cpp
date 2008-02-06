@@ -244,13 +244,13 @@ void IntervalControlDerived::setChilds()
 
   if ( window->getParent( 0 )->getLevel() > window->getParent( 1 )->getLevel() )
   {
-    window1 = window->getParent( 0 );
-    window2 = window->getParent( 1 );
+    window1 = (KWindow *) window->getParent( 0 );
+    window2 = (KWindow *) window->getParent( 1 );
   }
   else
   {
-    window1 = window->getParent( 1 );
-    window2 = window->getParent( 0 );
+    window1 = (KWindow *) window->getParent( 1 );
+    window2 = (KWindow *) window->getParent( 0 );
   }
 
   if ( window1->getLevel() == APPLICATION )

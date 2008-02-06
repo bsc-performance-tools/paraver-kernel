@@ -1,4 +1,5 @@
 #include "histogram.h"
+#include "window.h"
 
 Histogram *Histogram::create()
 {
@@ -27,28 +28,28 @@ TRecordTime HistogramProxy::getEndTime() const
   return 0;
 }
 
-KWindow *HistogramProxy::getControlWindow() const
+Window *HistogramProxy::getControlWindow() const
 {
   return 0;
 }
 
-KWindow *HistogramProxy::getDataWindow() const
+Window *HistogramProxy::getDataWindow() const
 {
   return 0;
 }
 
-KWindow *HistogramProxy::getExtraControlWindow() const
+Window *HistogramProxy::getExtraControlWindow() const
 {
   return 0;
 }
 
-void HistogramProxy::setControlWindow( KWindow *whichWindow )
+void HistogramProxy::setControlWindow( Window *whichWindow )
 {}
 
-void HistogramProxy::setDataWindow( KWindow *whichWindow )
+void HistogramProxy::setDataWindow( Window *whichWindow )
 {}
 
-void HistogramProxy::setExtraControlWindow( KWindow *whichWindow )
+void HistogramProxy::setExtraControlWindow( Window *whichWindow )
 {}
 
 void HistogramProxy::clearControlWindow()

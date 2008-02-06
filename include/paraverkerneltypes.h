@@ -1,7 +1,10 @@
 #ifndef PARAVERKERNELTYPES_H_INCLUDED
 #define PARAVERKERNELTYPES_H_INCLUDED
 
+#include <vector>
 #include "types.h"
+
+using namespace std;
 
 typedef UINT16        TObjectOrder;
 
@@ -79,7 +82,17 @@ typedef enum TWindowLevel
   DERIVED
 };
 
+// Semantic function definitions
+typedef UINT16 TParamIndex;
+typedef vector<double> TParamValue;
 
+// Semantic record list definitions
+typedef UINT16 TCreateList;
+static const TCreateList NOCREATE = 0x00;
+static const TCreateList CREATEEVENTS = 0x01;
+static const TCreateList CREATECOMMS = 0x02;
+
+// Histogram definitions
 typedef double THistogramLimit;
 typedef UINT32 THistogramColumn;
 

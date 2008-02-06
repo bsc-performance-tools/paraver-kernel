@@ -10,7 +10,6 @@ namespace bplustree
   {
     TEventType      type;
     TEventValue     value;
-//  struct TRecord *nextEvent;
   }
   TEventRecord;
 

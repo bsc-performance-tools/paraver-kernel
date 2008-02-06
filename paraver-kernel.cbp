@@ -9,7 +9,7 @@
 		<Option virtualFolders="paraver-kernel/src/;" />
 		<Build>
 			<Target title="Debug">
-				<Option output="libparaver-kernel.a" prefix_auto="1" extension_auto="1" />
+				<Option output="libparaver-kernel" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/Debug/" />
 				<Option type="2" />
@@ -21,7 +21,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="libparaver-kernel.a" prefix_auto="1" extension_auto="1" />
+				<Option output="libparaver-kernel" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/Release/" />
 				<Option type="2" />
@@ -54,7 +54,7 @@
 				</Linker>
 			</Target>
 			<Target title="cfg">
-				<Option output="libcfg.a" prefix_auto="1" extension_auto="1" />
+				<Option output="libcfg" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option external_deps="libparaver-kernel.a;" />
 				<Option type="2" />
@@ -124,6 +124,11 @@
 		<Unit filename="api/paramedir.h">
 			<Option target="paramedir" />
 		</Unit>
+		<Unit filename="api/recordlist.h" />
+		<Unit filename="api/window.cpp">
+			<Option target="paramedir" />
+		</Unit>
+		<Unit filename="api/window.h" />
 		<Unit filename="include/bplustree.h" />
 		<Unit filename="include/bplustreeblocks.h" />
 		<Unit filename="include/bplustreeexception.h" />
@@ -158,6 +163,7 @@
 		<Unit filename="include/intervaltypes.h" />
 		<Unit filename="include/khistogram.h" />
 		<Unit filename="include/khistogramtotals.h" />
+		<Unit filename="include/krecordlist.h" />
 		<Unit filename="include/kwindow.h" />
 		<Unit filename="include/kwindowexception.h" />
 		<Unit filename="include/matrix.h">
@@ -397,6 +403,8 @@
 				<search_path add="/usr/include/c++/4.1.1" />
 				<search_path add="/usr/include" />
 			</code_completion>
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

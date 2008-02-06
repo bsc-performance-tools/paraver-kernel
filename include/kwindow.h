@@ -13,8 +13,11 @@
 #include "semanticthread.h"
 #include "semanticcompose.h"
 #include "filter.h"
+#include "window.h"
 
-class KWindow
+using namespace std;
+
+class KWindow:public Window
 {
   public:
     KWindow()
@@ -253,7 +256,7 @@ class KDerivedWindow: public KWindow
       parents.push_back( NULL );
     }
 
-    KDerivedWindow( KWindow *window1, KWindow *window2 )
+    KDerivedWindow( Window *window1, Window *window2 )
     {
       timeUnit = NS;
 
@@ -280,14 +283,14 @@ class KDerivedWindow: public KWindow
         delete functions[ 2 ];
     }
 
-    void setParent( UINT16 whichParent, KWindow *whichWindow )
+    void setParent( UINT16 whichParent, Window *whichWindow )
     {
       parents[ whichParent ] = whichWindow;
       if ( parents[ 0 ] != NULL && parents[ 1 ] != NULL )
         setup();
     }
 
-    KWindow *getParent( UINT16 whichParent ) const
+    Window *getParent( UINT16 whichParent ) const
     {
       return parents[whichParent];
     }
@@ -342,7 +345,7 @@ class KDerivedWindow: public KWindow
     }
 
   protected:
-    vector<KWindow *> parents;
+    vector<Window *> parents;
     vector<TSemanticValue> factor;
 
     vector<IntervalDerived> intervalDerived;
