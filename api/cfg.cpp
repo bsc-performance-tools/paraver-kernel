@@ -173,7 +173,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions["Analyzer2D.calculate_all:"] = new Analyzer2DCalculateAll();
   cfgTagFunctions["Analyzer2D.num_columns:"] = new Analyzer2DNumColumns();
   // --> Analyzer2D.hide_empty_cols:
-  // --> Analyzer2D.HideCols:
+  cfgTagFunctions["Analyzer2D.HideCols:"] = new Analyzer2DHideColumns();
   cfgTagFunctions["Analyzer2D.scientific_notation:"] = new Analyzer2DScientificNotation();
   cfgTagFunctions["Analyzer2D.num_decimals:"] = new Analyzer2DNumDecimals();
   cfgTagFunctions["Analyzer2D.thousandsep:"] = new Analyzer2DThousandSeparator();
@@ -248,6 +248,7 @@ void CFGLoader::unLoadMap()
   delete cfgTagFunctions["Analyzer2D.Statistic:"];
   delete cfgTagFunctions["Analyzer2D.calculate_all:"];
   delete cfgTagFunctions["Analyzer2D.num_columns:"];
+  delete cfgTagFunctions["Analyzer2D.HideCols:"];
   delete cfgTagFunctions["Analyzer2D.scientific_notation:"];
   delete cfgTagFunctions["Analyzer2D.num_decimals:"];
   delete cfgTagFunctions["Analyzer2D.thousandsep:"];
@@ -1167,6 +1168,30 @@ bool Analyzer2DNumColumns::parseLine( istringstream& line, Trace *whichTrace,
 
   return true;
 }
+
+
+bool Analyzer2DHideColumns::parseLine( istringstream& line, Trace *whichTrace,
+                                       vector<KWindow *>& windows,
+                                       Histogram *histogram,
+                                       TRecordTime& beginTime, TRecordTime& endTime )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( "true" ) == 0 )
+    histogram->setHideColumns( true );
+  else if ( strBool.compare( "false" ) == 0 )
+    histogram->setHideColumns( false );
+  else
+    return false;
+
+  return true;
+}
+
 
 
 bool Analyzer2DScientificNotation::parseLine( istringstream& line, Trace *whichTrace,

@@ -448,6 +448,20 @@ class Analyzer2DNumColumns: public TagFunction
 };
 
 
+class Analyzer2DHideColumns: public TagFunction
+{
+  public:
+    Analyzer2DHideColumns()
+    {}
+    virtual ~Analyzer2DHideColumns()
+    {}
+    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+                            vector<KWindow *>& windows,
+                            Histogram *histogram,
+                            TRecordTime& beginTime, TRecordTime& endTime );
+};
+
+
 class Analyzer2DScientificNotation: public TagFunction
 {
   public:

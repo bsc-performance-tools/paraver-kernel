@@ -239,5 +239,14 @@ bool HistogramProxy::getHorizontal() const
   return horizontal;
 }
 
+void HistogramProxy::setHideColumns( bool hide )
+{
+  hideColumns = hide;
+}
+
+bool HistogramProxy::getHideColumns() const
+{
+  return hideColumns;
+}
 
 

@@ -85,6 +85,9 @@ class Histogram
     // Specific methods of HistogramProxy
     virtual void setHorizontal( bool horiz ) {};
     virtual bool getHorizontal() const { return true; };
+    virtual void setHideColumns( bool hide ) {};
+    virtual bool getHideColumns() const { return true; };
+
 };
 
 
@@ -152,9 +155,12 @@ class HistogramProxy : public Histogram
 
     virtual void setHorizontal( bool horiz );
     virtual bool getHorizontal() const;
+    virtual void setHideColumns( bool hide );
+    virtual bool getHideColumns() const;
 
   private:
     bool horizontal;
+    bool hideColumns;
 };
 
 
