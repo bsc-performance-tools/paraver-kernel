@@ -64,6 +64,7 @@ class RecordList
     virtual ~RecordList() {}
 
     virtual void clear() = 0;
+    virtual void erase( iterator first, iterator last ) = 0;
     virtual iterator begin() const = 0;
     virtual iterator end() const = 0;
 };
@@ -75,6 +76,7 @@ class RecordListProxy: public RecordList
     virtual ~RecordListProxy();
 
     virtual void clear();
+    virtual void erase( iterator first, iterator last );
     virtual iterator begin() const;
     virtual iterator end() const;
 };

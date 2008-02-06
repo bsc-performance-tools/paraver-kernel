@@ -41,4 +41,37 @@ class Window
     virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime ) = 0;
 };
 
+
+class WindowProxy: public Window
+{
+  public:
+    virtual ~WindowProxy();
+
+    virtual Trace *getTrace() const;
+    virtual TWindowLevel getLevel() const;
+    virtual void setLevel( TWindowLevel whichLevel );
+    virtual void setTimeUnit( TTimeUnit whichUnit );
+    virtual TTimeUnit getTimeUnit();
+    virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const;
+    virtual bool setLevelFunction( TWindowLevel whichLevel,
+                                   SemanticFunction *whichFunction );
+    virtual SemanticFunction *getLevelFunction( TWindowLevel whichLevel );
+    virtual SemanticFunction *getFirstUsefulFunction( );
+    virtual void setFunctionParam( TWindowLevel whichLevel,
+                                   TParamIndex whichParam,
+                                   const TParamValue& newValue );
+    virtual RecordList *getRecordList( TObjectOrder whichObject );
+    virtual RecordList *init( TRecordTime initialTime, TCreateList create );
+    virtual RecordList *calcNext( TObjectOrder whichObject );
+    virtual RecordList *calcPrev( TObjectOrder whichObject );
+    virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const;
+    virtual TRecordTime getEndTime( TObjectOrder whichObject ) const;
+    virtual TSemanticValue getValue( TObjectOrder whichObject ) const;
+    virtual bool isDerivedWindow() const;
+    virtual TObjectOrder cpuObjectToWindowObject( TCPUOrder whichCPU );
+    virtual TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread );
+    virtual TObjectOrder getWindowLevelObjects();
+    virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime );
+};
+
 #endif // WINDOW_H_INCLUDED

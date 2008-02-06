@@ -32,6 +32,7 @@ libparaver_kernel_la_SOURCES = \
     semanticmanagement.cpp \
     semanticnotthreadfunctions.cpp \
     semanticthreadfunctions.cpp \
+    statisticmanagement.cpp \
     tracebodyio_v1.cpp \
     trace.cpp \
     traceheaderexception.cpp\

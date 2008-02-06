@@ -14,7 +14,7 @@ class KRecordList: public RecordList
     virtual ~KRecordList();
 
     virtual void clear();
-
+    virtual void erase( iterator first, iterator last );
     virtual iterator begin() const;
     virtual iterator end() const;
 

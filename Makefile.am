@@ -9,6 +9,7 @@ paramedir_SOURCES = \
 paramedir_LDADD = \
                   -lz \
                   api/libcfg.la \
+                  api/libapi.la \
                   src/libparaver-kernel.la 
                     
 # Erases everything which should not be uploaded to CVS
