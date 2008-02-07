@@ -145,6 +145,13 @@
 			<Option target="api" />
 		</Unit>
 		<Unit filename="api/histogram.h" />
+		<Unit filename="api/kernelconnection.h" />
+		<Unit filename="api/localkernel.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/localkernel.h">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="api/paramedir.cpp">
 			<Option target="paramedir" />
 		</Unit>

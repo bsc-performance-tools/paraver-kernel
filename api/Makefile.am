@@ -4,6 +4,7 @@ libcfg_la_SOURCES = \
                     cfg.cpp
 
 libapi_la_SOURCES = \
+                    localkernel.cpp
                     histogram.cpp
                     window.cpp
 
