@@ -1,13 +1,17 @@
 #include "histogram.h"
 #include "window.h"
 
-Histogram *Histogram::create()
+Histogram *Histogram::create( KernelConnection *whichKernel )
 {
   return new HistogramProxy();
 }
 
 
-HistogramProxy::HistogramProxy()
+Histogram::Histogram( KernelConnection *whichKernel ) : myKernel( whichKernel )
+{}
+
+HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
+    Histogram( whichKernel )
 {}
 
 HistogramProxy::~HistogramProxy()

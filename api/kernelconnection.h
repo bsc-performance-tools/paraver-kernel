@@ -10,9 +10,9 @@ class KernelConnection
   public:
     virtual ~KernelConnection() {}
 
-    virtual Window *newSingleWindow( Trace *whichTrace ) const = 0;
-    virtual Window *newDerivedWindow( Window *window1, Window * window2 ) const = 0;
-    virtual Histogram *newHistogram() const = 0;
+    virtual Window *newKSingleWindow( Trace *whichTrace ) const = 0;
+    virtual Window *newKDerivedWindow( Window *window1, Window * window2 ) const = 0;
+    virtual Histogram *newKHistogram() const = 0;
 
   protected:
 

@@ -3,6 +3,7 @@
 
 #include "paraverkerneltypes.h"
 
+class KernelConnection;
 class RecordList;
 class SemanticFunction;
 class Trace;
@@ -10,8 +11,10 @@ class Trace;
 class Window
 {
   public:
-    static Window *create();
+    static Window *create( KernelConnection *whichKernel );
 
+    Window() {}
+    Window( KernelConnection *whichKernel );
     virtual ~Window() {}
 
     virtual Trace *getTrace() const = 0;
@@ -39,12 +42,16 @@ class Window
     virtual TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread ) = 0;
     virtual TObjectOrder getWindowLevelObjects() = 0;
     virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime ) = 0;
+
+  protected:
+    KernelConnection *myKernel;
 };
 
 
 class WindowProxy: public Window
 {
   public:
+    WindowProxy( KernelConnection *whichKernel );
     virtual ~WindowProxy();
 
     virtual Trace *getTrace() const;

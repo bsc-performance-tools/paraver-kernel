@@ -9,9 +9,9 @@ class LocalKernel: public KernelConnection
     LocalKernel();
     virtual ~LocalKernel();
 
-    virtual Window *newSingleWindow( Trace *whichTrace ) const;
-    virtual Window *newDerivedWindow( Window *window1, Window * window2 ) const;
-    virtual Histogram *newHistogram() const;
+    virtual Window *newKSingleWindow( Trace *whichTrace ) const;
+    virtual Window *newKDerivedWindow( Window *window1, Window * window2 ) const;
+    virtual Histogram *newKHistogram() const;
 
   protected:
 

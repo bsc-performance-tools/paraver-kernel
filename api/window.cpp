@@ -1,9 +1,16 @@
 #include "kwindow.h"
 
-Window *Window::create()
+Window *Window::create( KernelConnection *whichKernel )
 {
-  return new WindowProxy;
+  return new WindowProxy( whichKernel );
 }
+
+Window::Window( KernelConnection *whichKernel ) : myKernel( whichKernel )
+{}
+
+WindowProxy::WindowProxy( KernelConnection *whichKernel ):
+    Window( whichKernel )
+{}
 
 WindowProxy::~WindowProxy()
 {}
@@ -15,7 +22,7 @@ Trace *WindowProxy::getTrace() const
 
 TWindowLevel WindowProxy::getLevel() const
 {
-  return (TWindowLevel) 0;
+  return ( TWindowLevel ) 0;
 }
 
 void WindowProxy::setLevel( TWindowLevel whichLevel )
@@ -31,11 +38,11 @@ TTimeUnit WindowProxy::getTimeUnit()
 
 TWindowLevel WindowProxy::getComposeLevel( TWindowLevel whichLevel ) const
 {
-  return (TWindowLevel) 0;
+  return ( TWindowLevel ) 0;
 }
 
 bool WindowProxy::setLevelFunction( TWindowLevel whichLevel,
-                               SemanticFunction *whichFunction )
+                                    SemanticFunction *whichFunction )
 {
   return 0;
 }
@@ -51,9 +58,9 @@ SemanticFunction *WindowProxy::getFirstUsefulFunction( )
 }
 
 void WindowProxy::setFunctionParam( TWindowLevel whichLevel,
-                               TParamIndex whichParam,
-                               const TParamValue& newValue )
-                               {}
+                                    TParamIndex whichParam,
+                                    const TParamValue& newValue )
+{}
 
 RecordList *WindowProxy::getRecordList( TObjectOrder whichObject )
 {

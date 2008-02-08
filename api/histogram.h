@@ -3,6 +3,7 @@
 
 #include "paraverkerneltypes.h"
 
+class KernelConnection;
 class KHistogramTotals;
 class HistogramStatistic;
 class Window;
@@ -10,10 +11,11 @@ class Window;
 class Histogram
 {
   public:
-    virtual ~Histogram()
-    {}
+    static Histogram *create( KernelConnection *whichKernel );
 
-    static Histogram *create();
+    Histogram() {}
+    Histogram( KernelConnection *whichKernel );
+    virtual ~Histogram() {}
 
     virtual bool getThreeDimensions() const = 0;
 
@@ -88,13 +90,16 @@ class Histogram
     virtual void setHideColumns( bool hide ) {};
     virtual bool getHideColumns() const { return true; };
 
+  protected:
+    KernelConnection *myKernel;
 };
 
 
 class HistogramProxy : public Histogram
 {
   public:
-    HistogramProxy();
+    HistogramProxy() {}
+    HistogramProxy( KernelConnection *whichKernel );
     virtual ~HistogramProxy();
 
     virtual bool getThreeDimensions() const;
