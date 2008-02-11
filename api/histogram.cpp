@@ -1,3 +1,4 @@
+#include "kernelconnection.h"
 #include "histogram.h"
 #include "window.h"
 
@@ -12,139 +13,173 @@ Histogram::Histogram( KernelConnection *whichKernel ) : myKernel( whichKernel )
 
 HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
     Histogram( whichKernel )
-{}
+{
+  myHisto = myKernel->newKHistogram();
+}
 
 HistogramProxy::~HistogramProxy()
-{}
+{
+  delete myHisto;
+}
 
 bool HistogramProxy::getThreeDimensions() const
 {
-  return false;
+  return myHisto->getThreeDimensions();
 }
 
 TRecordTime HistogramProxy::getBeginTime() const
 {
-  return 0;
+  return myHisto->getBeginTime();
 }
 
 TRecordTime HistogramProxy::getEndTime() const
 {
-  return 0;
+  return myHisto->getEndTime();
 }
 
 Window *HistogramProxy::getControlWindow() const
 {
-  return 0;
+  return myHisto->getControlWindow();
 }
 
 Window *HistogramProxy::getDataWindow() const
 {
-  return 0;
+  return myHisto->getDataWindow();
 }
 
 Window *HistogramProxy::getExtraControlWindow() const
 {
-  return 0;
+  return myHisto->getExtraControlWindow();
 }
 
 void HistogramProxy::setControlWindow( Window *whichWindow )
-{}
+{
+  myHisto->setControlWindow( whichWindow );
+}
 
 void HistogramProxy::setDataWindow( Window *whichWindow )
-{}
+{
+  myHisto->setDataWindow( whichWindow );
+}
 
 void HistogramProxy::setExtraControlWindow( Window *whichWindow )
-{}
+{
+  myHisto->setExtraControlWindow( whichWindow );
+}
 
 void HistogramProxy::clearControlWindow()
-{}
+{
+  myHisto->clearControlWindow();
+}
 
 void HistogramProxy::clearDataWindow()
-{}
+{
+  myHisto->clearDataWindow();
+}
 
 void HistogramProxy::clearExtraControlWindow()
-{}
+{
+  myHisto->clearExtraControlWindow();
+}
 
 void HistogramProxy::setControlMin( THistogramLimit whichMin )
-{}
+{
+  myHisto->setControlMin( whichMin );
+}
 
 void HistogramProxy::setControlMax( THistogramLimit whichMax )
-{}
+{
+  myHisto->setControlMax( whichMax );
+}
 
 void HistogramProxy::setControlDelta( THistogramLimit whichDelta )
-{}
+{
+  myHisto->setControlDelta( whichDelta );
+}
 
 void HistogramProxy::setExtraControlMin( THistogramLimit whichMin )
-{}
+{
+  myHisto->setExtraControlMin( whichMin );
+}
 
 void HistogramProxy::setExtraControlMax( THistogramLimit whichMax )
-{}
+{
+  myHisto->setExtraControlMax( whichMax );
+}
 
 void HistogramProxy::setExtraControlDelta( THistogramLimit whichDelta )
-{}
+{
+  myHisto->setExtraControlDelta( whichDelta );
+}
 
 void HistogramProxy::setDataMin( THistogramLimit whichMin )
-{}
+{
+  myHisto->setDataMin( whichMin );
+}
 
 void HistogramProxy::setDataMax( THistogramLimit whichMax )
-{}
+{
+  myHisto->setDataMax( whichMax );
+}
 
 THistogramLimit HistogramProxy::getControlMin() const
 {
-  return 0;
+  return myHisto->getControlMin();
 }
 
 THistogramLimit HistogramProxy::getControlMax() const
 {
-  return 0;
+  return myHisto->getControlMax();
 }
 
 THistogramLimit HistogramProxy::getControlDelta() const
 {
-  return 0;
+  return myHisto->getControlDelta();
 }
 
 THistogramLimit HistogramProxy::getExtraControlMin() const
 {
-  return 0;
+  return myHisto->getExtraControlMin();
 }
 
 THistogramLimit HistogramProxy::getExtraControlMax() const
 {
-  return 0;
+  return myHisto->getExtraControlMax();
 }
 
 THistogramLimit HistogramProxy::getExtraControlDelta() const
 {
-  return 0;
+  return myHisto->getExtraControlDelta();
 }
 
 THistogramLimit HistogramProxy::getDataMin() const
 {
-  return 0;
+  return myHisto->getDataMin();
 }
 
 THistogramLimit HistogramProxy::getDataMax() const
 {
-  return 0;
+  return myHisto->getDataMax();
 }
 
 void HistogramProxy::setInclusive( bool newValue )
-{}
+{
+  myHisto->setInclusive( newValue );
+}
 
 THistogramColumn HistogramProxy::getNumPlanes() const
 {
-  return 0;
+  return myHisto->getNumPlanes();
 }
 
 THistogramColumn HistogramProxy::getNumColumns() const
 {
-  return 0;
+  return myHisto->getNumColumns();
 }
 
 TObjectOrder HistogramProxy::getNumRows() const
 {
-  return 0;
+  return myHisto->getNumRows();
 }
 
 
@@ -152,86 +187,100 @@ TSemanticValue HistogramProxy::getCurrentValue( UINT32 col,
     UINT16 idStat,
     UINT32 plane ) const
 {
-  return 0.0;
+  return myHisto->getCurrentValue( col, idStat, plane );
 }
 
 UINT32 HistogramProxy::getCurrentRow( UINT32 col, UINT32 plane ) const
 {
-  return 0;
+  return myHisto->getCurrentRow( col, plane );
 }
 
 void HistogramProxy::setNextCell( UINT32 col, UINT32 plane )
-{}
+{
+  myHisto->setNextCell( col, plane );
+}
 
 void HistogramProxy::setFirstCell( UINT32 col, UINT32 plane )
-{}
+{
+  myHisto->setFirstCell( col, plane );
+}
 
 bool HistogramProxy::endCell( UINT32 col, UINT32 plane )
 {
-  return false;
+  return myHisto->endCell( col, plane );
 }
 
 bool HistogramProxy::planeWithValues( UINT32 plane ) const
 {
-  return false;
+  return myHisto->planeWithValues( plane );
 }
 
 TSemanticValue HistogramProxy::getCommCurrentValue( UINT32 col,
     UINT16 idStat,
     UINT32 plane ) const
 {
-  return 0.0;
+  return myHisto->getCommCurrentValue( col, idStat, plane );
 }
 
 UINT32 HistogramProxy::getCommCurrentRow( UINT32 col, UINT32 plane ) const
 {
-  return 0;
+  return myHisto->getCommCurrentRow( col, plane );
 }
 
 void HistogramProxy::setCommNextCell( UINT32 col, UINT32 plane )
-{}
+{
+  myHisto->setCommNextCell( col, plane );
+}
 
 void HistogramProxy::setCommFirstCell( UINT32 col, UINT32 plane )
-{}
+{
+  myHisto->setCommFirstCell( col, plane );
+}
 
 bool HistogramProxy::endCommCell( UINT32 col, UINT32 plane )
 {
-  return false;
+  return myHisto->endCommCell( col, plane );
 }
 
 bool HistogramProxy::planeCommWithValues( UINT32 plane ) const
 {
-  return false;
+  return myHisto->planeCommWithValues( plane );
 }
 
 KHistogramTotals *HistogramProxy::getColumnTotals() const
 {
-  return 0;
+  return myHisto->getColumnTotals();
 }
 
 KHistogramTotals *HistogramProxy::getCommColumnTotals() const
 {
-  return 0;
+  return myHisto->getCommColumnTotals();
 }
 
 KHistogramTotals *HistogramProxy::getRowTotals() const
 {
-  return 0;
+  return myHisto->getRowTotals();
 }
 
 KHistogramTotals *HistogramProxy::getCommRowTotals() const
 {
-  return 0;
+  return myHisto->getCommRowTotals();
 }
 
 void HistogramProxy::clearStatistics()
-{}
+{
+  myHisto->clearStatistics();
+}
 
 void HistogramProxy::pushbackStatistic( HistogramStatistic *whichStatistic )
-{}
+{
+  myHisto->pushbackStatistic( whichStatistic );
+}
 
 void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
-{}
+{
+  myHisto->execute( whichBeginTime, whichEndTime );
+}
 
 void HistogramProxy::setHorizontal( bool horiz )
 {

@@ -166,6 +166,8 @@ class HistogramProxy : public Histogram
   private:
     bool horizontal;
     bool hideColumns;
+
+    Histogram *myHisto;
 };
 
 
