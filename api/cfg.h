@@ -6,6 +6,7 @@
 #include <sstream>
 #include "paraverkerneltypes.h"
 
+class KernelConnection;
 class KWindow;
 class Trace;
 class Histogram;
@@ -21,7 +22,8 @@ class TagFunction
     {}
     virtual ~TagFunction()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime ) = 0;
@@ -36,7 +38,8 @@ class CFGLoader
 
   public:
     static bool isCFGFile( const string& filename );
-    static bool loadCFG( string& filename, Trace *whichTrace,
+    static bool loadCFG( KernelConnection *whichKernel, string& filename,
+                         Trace *whichTrace,
                          vector<KWindow *>& windows,
                          Histogram *histogram,
                          TRecordTime& beginTime, TRecordTime& endTime );
@@ -50,7 +53,8 @@ class WindowType: public TagFunction
     {}
     virtual ~WindowType()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -64,7 +68,8 @@ class WindowFactors: public TagFunction
     {}
     virtual ~WindowFactors()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -78,7 +83,8 @@ class WindowUnits: public TagFunction
     {}
     virtual ~WindowUnits()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -92,7 +98,8 @@ class WindowOperation: public TagFunction
     {}
     virtual ~WindowOperation()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -106,7 +113,8 @@ class WindowMaximumY: public TagFunction
     {}
     virtual ~WindowMaximumY()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -120,7 +128,8 @@ class WindowLevel: public TagFunction
     {}
     virtual ~WindowLevel()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -134,7 +143,8 @@ class WindowScaleRelative: public TagFunction
     {}
     virtual ~WindowScaleRelative()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -148,7 +158,8 @@ class WindowObject: public TagFunction
     {}
     virtual ~WindowObject()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -162,7 +173,8 @@ class WindowBeginTime: public TagFunction
     {}
     virtual ~WindowBeginTime()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -176,7 +188,8 @@ class WindowEndTime: public TagFunction
     {}
     virtual ~WindowEndTime()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -190,7 +203,8 @@ class WindowStopTime: public TagFunction
     {}
     virtual ~WindowStopTime()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -204,7 +218,8 @@ class WindowBeginTimeRelative: public TagFunction
     {}
     virtual ~WindowBeginTimeRelative()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -218,7 +233,8 @@ class WindowNumberOfRow: public TagFunction
     {}
     virtual ~WindowNumberOfRow()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -231,7 +247,8 @@ class WindowSelectedFunctions: public TagFunction
     {}
     virtual ~WindowSelectedFunctions()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -245,7 +262,8 @@ class WindowSemanticModule: public TagFunction
     {}
     virtual ~WindowSemanticModule()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -259,7 +277,8 @@ class WindowComposeFunctions: public TagFunction
     {}
     virtual ~WindowComposeFunctions()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -273,7 +292,8 @@ class WindowFilterModule: public TagFunction
     {}
     virtual ~WindowFilterModule()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -287,7 +307,8 @@ class WindowFilterLogical: public TagFunction
     {}
     virtual ~WindowFilterLogical()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -301,7 +322,8 @@ class WindowFilterPhysical: public TagFunction
     {}
     virtual ~WindowFilterPhysical()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -315,7 +337,8 @@ class WindowFilterBoolOpFromTo: public TagFunction
     {}
     virtual ~WindowFilterBoolOpFromTo()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -329,7 +352,8 @@ class WindowFilterBoolOpTagSize: public TagFunction
     {}
     virtual ~WindowFilterBoolOpTagSize()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -343,7 +367,8 @@ class WindowFilterBoolOpTypeVal: public TagFunction
     {}
     virtual ~WindowFilterBoolOpTypeVal()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -357,7 +382,8 @@ class WindowIdentifiers: public TagFunction
     {}
     virtual ~WindowIdentifiers()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -371,7 +397,8 @@ class Analyzer2DCreate: public TagFunction
     {}
     virtual ~Analyzer2DCreate()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -385,7 +412,8 @@ class Analyzer2DControlWindow: public TagFunction
     {}
     virtual ~Analyzer2DControlWindow()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -399,7 +427,8 @@ class Analyzer2DDataWindow: public TagFunction
     {}
     virtual ~Analyzer2DDataWindow()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -413,7 +442,8 @@ class Analyzer2DStatistic: public TagFunction
     {}
     virtual ~Analyzer2DStatistic()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -427,7 +457,8 @@ class Analyzer2DCalculateAll: public TagFunction
     {}
     virtual ~Analyzer2DCalculateAll()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -441,7 +472,8 @@ class Analyzer2DNumColumns: public TagFunction
     {}
     virtual ~Analyzer2DNumColumns()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -455,7 +487,8 @@ class Analyzer2DHideColumns: public TagFunction
     {}
     virtual ~Analyzer2DHideColumns()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -469,7 +502,8 @@ class Analyzer2DScientificNotation: public TagFunction
     {}
     virtual ~Analyzer2DScientificNotation()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -483,7 +517,8 @@ class Analyzer2DNumDecimals: public TagFunction
     {}
     virtual ~Analyzer2DNumDecimals()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -497,7 +532,8 @@ class Analyzer2DThousandSeparator: public TagFunction
     {}
     virtual ~Analyzer2DThousandSeparator()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -511,7 +547,8 @@ class Analyzer2DUnits: public TagFunction
     {}
     virtual ~Analyzer2DUnits()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -525,7 +562,8 @@ class Analyzer2DAccumulator: public TagFunction
     {}
     virtual ~Analyzer2DAccumulator()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -539,7 +577,8 @@ class Analyzer2DHorizontal: public TagFunction
     {}
     virtual ~Analyzer2DHorizontal()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -553,7 +592,8 @@ class Analyzer2DAccumulateByControlWindow: public TagFunction
     {}
     virtual ~Analyzer2DAccumulateByControlWindow()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -567,7 +607,8 @@ class Analyzer2DSortCols: public TagFunction
     {}
     virtual ~Analyzer2DSortCols()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -581,7 +622,8 @@ class Analyzer2DSortCriteria: public TagFunction
     {}
     virtual ~Analyzer2DSortCriteria()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -595,7 +637,8 @@ class Analyzer2DParameters: public TagFunction
     {}
     virtual ~Analyzer2DParameters()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -609,7 +652,8 @@ class Analyzer2DAnalysisLimits: public TagFunction
     {}
     virtual ~Analyzer2DAnalysisLimits()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -623,7 +667,8 @@ class Analyzer2DRelativeTime: public TagFunction
     {}
     virtual ~Analyzer2DRelativeTime()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -637,7 +682,8 @@ class Analyzer2DComputeYScale: public TagFunction
     {}
     virtual ~Analyzer2DComputeYScale()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -651,7 +697,8 @@ class Analyzer2DMinimum: public TagFunction
     {}
     virtual ~Analyzer2DMinimum()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -665,7 +712,8 @@ class Analyzer2DMaximum: public TagFunction
     {}
     virtual ~Analyzer2DMaximum()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -679,7 +727,8 @@ class Analyzer2DDelta: public TagFunction
     {}
     virtual ~Analyzer2DDelta()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -693,7 +742,8 @@ class Analyzer2DComputeGradient: public TagFunction
     {}
     virtual ~Analyzer2DComputeGradient()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -706,7 +756,8 @@ class Analyzer2DMinimumGradient: public TagFunction
     {}
     virtual ~Analyzer2DMinimumGradient()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -720,7 +771,8 @@ class Analyzer2DMaximumGradient: public TagFunction
     {}
     virtual ~Analyzer2DMaximumGradient()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -734,7 +786,8 @@ class Analyzer3DControlWindow: public TagFunction
     {}
     virtual ~Analyzer3DControlWindow()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -748,7 +801,8 @@ class Analyzer3DMinimum: public TagFunction
     {}
     virtual ~Analyzer3DMinimum()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -762,7 +816,8 @@ class Analyzer3DMaximum: public TagFunction
     {}
     virtual ~Analyzer3DMaximum()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -776,7 +831,8 @@ class Analyzer3DDelta: public TagFunction
     {}
     virtual ~Analyzer3DDelta()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );
@@ -790,7 +846,8 @@ class Analyzer3DFixedValue: public TagFunction
     {}
     virtual ~Analyzer3DFixedValue()
     {}
-    virtual bool parseLine( istringstream& line, Trace *whichTrace,
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
                             vector<KWindow *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime );

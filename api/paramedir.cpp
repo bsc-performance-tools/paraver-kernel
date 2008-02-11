@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
+#include "localkernel.h"
 #include "paramedir.h"
 #include "cfg.h"
 #include "trace.h"
@@ -17,7 +18,7 @@ UINT32 outputPrecision = 2;
 
 int main( int argc, char *argv[] )
 {
-  // Cube< TSemanticValue > cube( 10, 10, 10 );
+  KernelConnection *myKernel = new LocalKernel();
 
   paraverKernelInit();
 
@@ -86,7 +87,8 @@ int main( int argc, char *argv[] )
         currentArg++;
       }
 
-      if ( CFGLoader::loadCFG( strCfg, trace, windows, histogram, beginTime, endTime ) )
+      if ( CFGLoader::loadCFG( myKernel, strCfg, trace, windows, histogram,
+                               beginTime, endTime ) )
       {
         ofstream outputFile;
         KWindow *tmpWindow = windows[ windows.size() - 1 ];
