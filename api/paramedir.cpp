@@ -8,7 +8,6 @@
 #include "trace.h"
 #include "kwindow.h"
 #include "cube.h"
-#include "paraverkernelinit.h"
 
 using namespace std;
 
@@ -19,8 +18,6 @@ UINT32 outputPrecision = 2;
 int main( int argc, char *argv[] )
 {
   KernelConnection *myKernel = new LocalKernel();
-
-  paraverKernelInit();
 
   readParaverConfigFile();
 

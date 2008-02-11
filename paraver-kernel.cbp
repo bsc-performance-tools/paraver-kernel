@@ -369,13 +369,6 @@
 			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
-		<Unit filename="include/paraverkernelinit.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-			<Option target="Application test" />
-			<Option target="cfg" />
-			<Option target="paramedir" />
-		</Unit>
 		<Unit filename="include/paraverkerneltypes.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -703,10 +696,6 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/paraverkernelexception.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="src/paraverkernelinit.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>

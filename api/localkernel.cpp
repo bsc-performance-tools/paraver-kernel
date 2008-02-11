@@ -1,9 +1,14 @@
 #include "localkernel.h"
 #include "kwindow.h"
 #include "khistogram.h"
+#include "semanticmanagement.h"
+#include "filtermanagement.h"
 
 LocalKernel::LocalKernel()
-{}
+{
+  createFilter();
+  createSemantic();
+}
 
 LocalKernel::~LocalKernel()
 {}
