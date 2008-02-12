@@ -3,11 +3,13 @@
 #include "khistogram.h"
 #include "semanticmanagement.h"
 #include "filtermanagement.h"
+#include "statisticmanagement.h"
 
 LocalKernel::LocalKernel()
 {
   createFilter();
   createSemantic();
+  createStatistic();
 }
 
 LocalKernel::~LocalKernel()

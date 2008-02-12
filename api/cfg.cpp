@@ -1073,7 +1073,7 @@ bool Analyzer2DCreate::parseLine( KernelConnection *whichKernel, istringstream& 
                                   Histogram *histogram,
                                   TRecordTime& beginTime, TRecordTime& endTime )
 {
-  if ( histogram != NULL )
+  if ( histogram == NULL )
     histogram = Histogram::create( whichKernel );
 
   return true;
@@ -1097,10 +1097,10 @@ bool Analyzer2DControlWindow::parseLine( KernelConnection *whichKernel, istrings
   if ( !( tmpWindow >> indexControlWindow ) )
     return false;
 
-  if ( indexControlWindow >= windows.size() )
+  if ( indexControlWindow > windows.size() )
     return false;
 
-  histogram->setControlWindow( windows[ indexControlWindow ] );
+  histogram->setControlWindow( windows[ indexControlWindow - 1 ] );
 
   return true;
 }
@@ -1125,12 +1125,10 @@ bool Analyzer2DDataWindow::parseLine( KernelConnection *whichKernel, istringstre
   if ( !( tmpWindow >> indexDataWindow ) )
     return false;
 
-  if ( indexDataWindow >= windows.size() )
+  if ( indexDataWindow > windows.size() )
     return false;
 
-  // get histogram
-
-  histogram->setDataWindow( windows[ indexDataWindow ] );
+  histogram->setDataWindow( windows[ indexDataWindow - 1 ] );
 
   return true;
 }
@@ -1155,8 +1153,6 @@ bool Analyzer2DStatistic::parseLine( KernelConnection *whichKernel, istringstrea
   if ( statistic == NULL )
     return false;
 
-  // get histogram
-
   histogram->pushbackStatistic( statistic );
 
   return true;
@@ -1180,8 +1176,7 @@ bool Analyzer2DCalculateAll::parseLine( KernelConnection *whichKernel, istringst
 
   if ( strBoolAll.compare( "True" ) == 0 )
   {
-    // get histogram
-    histogram->clearStatistics();
+
 
   }
   else if ( strBoolAll.compare( "False" ) == 0 )
@@ -1335,9 +1330,7 @@ bool Analyzer2DAccumulator:: parseLine( KernelConnection *whichKernel, istringst
   if( histogram == NULL )
     return false;
 
-  getline( line, strAccumulator );
-
-  return false;
+  return true;
 }
 
 

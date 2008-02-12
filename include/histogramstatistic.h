@@ -15,8 +15,8 @@ using namespace std;
 class HistogramStatistic
 {
   public:
-    HistogramStatistic();
-    virtual ~HistogramStatistic();
+    HistogramStatistic() {};
+    virtual ~HistogramStatistic() {};
 
     virtual bool createComms() const = 0;
     virtual TObjectOrder getPartner( CalculateData *data ) = 0;
@@ -45,8 +45,8 @@ class HistogramStatistic
 class StatNumSends: public HistogramStatistic
 {
   public:
-    StatNumSends();
-    ~StatNumSends();
+    StatNumSends() {};
+    ~StatNumSends() {};
 
     virtual bool createComms() const
     {
@@ -74,8 +74,8 @@ class StatNumSends: public HistogramStatistic
 class StatNumReceives: public HistogramStatistic
 {
   public:
-    StatNumReceives();
-    ~StatNumReceives();
+    StatNumReceives() {};
+    ~StatNumReceives() {};
 
     virtual bool createComms() const
     {
@@ -103,8 +103,8 @@ class StatNumReceives: public HistogramStatistic
 class StatBytesSent: public HistogramStatistic
 {
   public:
-    StatBytesSent();
-    ~StatBytesSent();
+    StatBytesSent() {};
+    ~StatBytesSent() {};
 
     virtual bool createComms() const
     {
@@ -132,8 +132,8 @@ class StatBytesSent: public HistogramStatistic
 class StatBytesReceived: public HistogramStatistic
 {
   public:
-    StatBytesReceived();
-    ~StatBytesReceived();
+    StatBytesReceived() {};
+    ~StatBytesReceived() {};
 
     virtual bool createComms() const
     {
@@ -161,8 +161,8 @@ class StatBytesReceived: public HistogramStatistic
 class StatAvgBytesSent: public HistogramStatistic
 {
   public:
-    StatAvgBytesSent();
-    ~StatAvgBytesSent();
+    StatAvgBytesSent() {};
+    ~StatAvgBytesSent() {};
 
     virtual bool createComms() const
     {
@@ -191,8 +191,8 @@ class StatAvgBytesSent: public HistogramStatistic
 class StatAvgBytesReceived: public HistogramStatistic
 {
   public:
-    StatAvgBytesReceived();
-    ~StatAvgBytesReceived();
+    StatAvgBytesReceived() {};
+    ~StatAvgBytesReceived() {};
 
     virtual bool createComms() const
     {
@@ -221,8 +221,8 @@ class StatAvgBytesReceived: public HistogramStatistic
 class StatMinBytesSent: public HistogramStatistic
 {
   public:
-    StatMinBytesSent();
-    ~StatMinBytesSent();
+    StatMinBytesSent() {};
+    ~StatMinBytesSent() {};
 
     virtual bool createComms() const
     {
@@ -251,8 +251,8 @@ class StatMinBytesSent: public HistogramStatistic
 class StatMinBytesReceived: public HistogramStatistic
 {
   public:
-    StatMinBytesReceived();
-    ~StatMinBytesReceived();
+    StatMinBytesReceived() {};
+    ~StatMinBytesReceived() {};
 
     virtual bool createComms() const
     {
@@ -281,8 +281,8 @@ class StatMinBytesReceived: public HistogramStatistic
 class StatMaxBytesSent: public HistogramStatistic
 {
   public:
-    StatMaxBytesSent();
-    ~StatMaxBytesSent();
+    StatMaxBytesSent() {};
+    ~StatMaxBytesSent() {};
 
     virtual bool createComms() const
     {
@@ -311,8 +311,8 @@ class StatMaxBytesSent: public HistogramStatistic
 class StatMaxBytesReceived: public HistogramStatistic
 {
   public:
-    StatMaxBytesReceived();
-    ~StatMaxBytesReceived();
+    StatMaxBytesReceived() {};
+    ~StatMaxBytesReceived() {};
 
     virtual bool createComms() const
     {
@@ -344,8 +344,8 @@ class StatMaxBytesReceived: public HistogramStatistic
 class StatTime: public HistogramStatistic
 {
   public:
-    StatTime();
-    ~StatTime();
+    StatTime() {};
+    ~StatTime() {};
 
     virtual bool createComms() const
     {
@@ -376,8 +376,8 @@ class StatTime: public HistogramStatistic
 class StatPercTime: public HistogramStatistic
 {
   public:
-    StatPercTime();
-    ~StatPercTime();
+    StatPercTime() {};
+    ~StatPercTime() {};
 
     virtual bool createComms() const
     {
@@ -409,8 +409,8 @@ class StatPercTime: public HistogramStatistic
 class StatPercTimeNotZero: public HistogramStatistic
 {
   public:
-    StatPercTimeNotZero();
-    ~StatPercTimeNotZero();
+    StatPercTimeNotZero() {};
+    ~StatPercTimeNotZero() {};
 
     virtual bool createComms() const
     {
@@ -442,8 +442,8 @@ class StatPercTimeNotZero: public HistogramStatistic
 class StatPercTimeWindow: public HistogramStatistic
 {
   public:
-    StatPercTimeWindow();
-    ~StatPercTimeWindow();
+    StatPercTimeWindow() {};
+    ~StatPercTimeWindow() {};
 
     virtual bool createComms() const
     {
@@ -474,8 +474,8 @@ class StatPercTimeWindow: public HistogramStatistic
 class StatNumBursts: public HistogramStatistic
 {
   public:
-    StatNumBursts();
-    ~StatNumBursts();
+    StatNumBursts() {};
+    ~StatNumBursts() {};
 
     virtual bool createComms() const
     {
@@ -505,8 +505,8 @@ class StatNumBursts: public HistogramStatistic
 class StatPercNumBursts: public HistogramStatistic
 {
   public:
-    StatPercNumBursts();
-    ~StatPercNumBursts();
+    StatPercNumBursts() {};
+    ~StatPercNumBursts() {};
 
     virtual bool createComms() const
     {
@@ -537,8 +537,8 @@ class StatPercNumBursts: public HistogramStatistic
 class StatIntegral: public HistogramStatistic
 {
   public:
-    StatIntegral();
-    ~StatIntegral();
+    StatIntegral() {};
+    ~StatIntegral() {};
 
     virtual bool createComms() const
     {
@@ -569,8 +569,8 @@ class StatIntegral: public HistogramStatistic
 class StatAvgValue: public HistogramStatistic
 {
   public:
-    StatAvgValue();
-    ~StatAvgValue();
+    StatAvgValue() {};
+    ~StatAvgValue() {};
 
     virtual bool createComms() const
     {
@@ -602,8 +602,8 @@ class StatAvgValue: public HistogramStatistic
 class StatMaximum: public HistogramStatistic
 {
   public:
-    StatMaximum();
-    ~StatMaximum();
+    StatMaximum() {};
+    ~StatMaximum() {};
 
     virtual bool createComms() const
     {
@@ -635,8 +635,8 @@ class StatMaximum: public HistogramStatistic
 class StatAvgBurstTime: public HistogramStatistic
 {
   public:
-    StatAvgBurstTime();
-    ~StatAvgBurstTime();
+    StatAvgBurstTime() {};
+    ~StatAvgBurstTime() {};
 
     virtual bool createComms() const
     {
@@ -668,8 +668,8 @@ class StatAvgBurstTime: public HistogramStatistic
 class StatStdevBurstTime: public HistogramStatistic
 {
   public:
-    StatStdevBurstTime();
-    ~StatStdevBurstTime();
+    StatStdevBurstTime() {};
+    ~StatStdevBurstTime() {};
 
     virtual bool createComms() const
     {
@@ -702,8 +702,8 @@ class StatStdevBurstTime: public HistogramStatistic
 class StatAvgPerBurst: public HistogramStatistic
 {
   public:
-    StatAvgPerBurst();
-    ~StatAvgPerBurst();
+    StatAvgPerBurst() {};
+    ~StatAvgPerBurst() {};
 
     virtual bool createComms() const
     {
@@ -735,8 +735,8 @@ class StatAvgPerBurst: public HistogramStatistic
 class StatAvgValueNotZero: public HistogramStatistic
 {
   public:
-    StatAvgValueNotZero();
-    ~StatAvgValueNotZero();
+    StatAvgValueNotZero() {};
+    ~StatAvgValueNotZero() {};
 
     virtual bool createComms() const
     {
@@ -768,8 +768,8 @@ class StatAvgValueNotZero: public HistogramStatistic
 class StatNumBurstsNotZero: public HistogramStatistic
 {
   public:
-    StatNumBurstsNotZero();
-    ~StatNumBurstsNotZero();
+    StatNumBurstsNotZero() {};
+    ~StatNumBurstsNotZero() {};
 
     virtual bool createComms() const
     {
@@ -800,8 +800,8 @@ class StatNumBurstsNotZero: public HistogramStatistic
 class StatSumBursts: public HistogramStatistic
 {
   public:
-    StatSumBursts();
-    ~StatSumBursts();
+    StatSumBursts() {};
+    ~StatSumBursts() {};
 
     virtual bool createComms() const
     {

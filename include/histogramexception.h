@@ -16,7 +16,7 @@ class HistogramException: public ParaverKernelException
     HistogramException( TErrorCode whichCode = undefined,
                       const char *whichAuxMessage = "",
                       const char *whichFile = NULL,
-                      TExceptionLine whichLine = 0 )
+                      TExceptionLine whichLine = 0 ) throw()
     {
       code = whichCode;
       auxMessage = whichAuxMessage;

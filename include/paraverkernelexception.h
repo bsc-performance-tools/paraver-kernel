@@ -21,14 +21,14 @@ class ParaverKernelException : public exception
       nullOperand,
       memoryError,
       LAST
-  } TErrorCode;
+    } TErrorCode;
 
     static ostream& defaultPrintStream;
 
     ParaverKernelException( TErrorCode whichCode = undefined,
                             const char *whichAuxMessage = "",
                             const char *whichFile = NULL,
-                            TExceptionLine whichLine = 0 ):
+                            TExceptionLine whichLine = 0 ) throw():
         code( whichCode ),
         auxMessage( whichAuxMessage ),
         file( whichFile ),
@@ -39,7 +39,9 @@ class ParaverKernelException : public exception
     const char *what() const throw();
 
     void printMessage( ostream& printStream = defaultPrintStream ) const
-      { printStream << what(); }
+    {
+      printStream << what();
+    }
 
   protected:
 
@@ -59,11 +61,15 @@ class ParaverKernelException : public exception
     static const char *errorMessage[];
 
     virtual const char *specificErrorMessage() const
-      { return errorMessage[ code ]; }
+    {
+      return errorMessage[ code ];
+    }
 
     virtual string& specificModuleMessage() const
 
-      { return moduleMessage; }
+    {
+      return moduleMessage;
+    }
 
 };
 
