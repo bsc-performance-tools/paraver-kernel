@@ -1237,9 +1237,20 @@ bool Analyzer2DScientificNotation::parseLine( KernelConnection *whichKernel, ist
     Histogram *histogram,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
+  string strBool;
+
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
   if( histogram == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( "True" ) == 0 )
+    histogram->setScientificNotation( true );
+  else if ( strBool.compare( "False" ) == 0 )
+    histogram->setScientificNotation( false );
+  else
     return false;
 
   return true;
@@ -1252,10 +1263,20 @@ bool Analyzer2DNumDecimals::parseLine( KernelConnection *whichKernel, istringstr
                                        Histogram *histogram,
                                        TRecordTime& beginTime, TRecordTime& endTime )
 {
+  string strDec;
+  UINT16 numDecimals;
+
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
   if( histogram == NULL )
     return false;
+
+  getline( line, strDec, ' ' );
+  istringstream tmpValue( strDec );
+  if ( !( tmpValue >> numDecimals ) )
+    return false;
+
+  histogram->setNumDecimals( numDecimals );
 
   return true;
 }
@@ -1267,9 +1288,20 @@ bool Analyzer2DThousandSeparator::parseLine( KernelConnection *whichKernel, istr
     Histogram *histogram,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
+  string strBool;
+
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
   if( histogram == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( "True" ) == 0 )
+    histogram->setThousandSeparator( true );
+  else if ( strBool.compare( "False" ) == 0 )
+    histogram->setThousandSeparator( false );
+  else
     return false;
 
   return true;
