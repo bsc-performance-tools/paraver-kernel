@@ -91,6 +91,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   loadMap();
 
   windows.push_back( NULL );
+  histogram = NULL;
 
   while ( !cfgFile.eof() )
   {
@@ -1088,6 +1089,8 @@ bool Analyzer2DControlWindow::parseLine( KernelConnection *whichKernel, istrings
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, strIndexControlWindow );
   istringstream tmpWindow( strIndexControlWindow );
@@ -1113,6 +1116,8 @@ bool Analyzer2DDataWindow::parseLine( KernelConnection *whichKernel, istringstre
   UINT32 indexDataWindow;
 
   if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if( histogram == NULL )
     return false;
 
   getline( line, strIndexDataWindow );
@@ -1142,6 +1147,8 @@ bool Analyzer2DStatistic::parseLine( KernelConnection *whichKernel, istringstrea
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, strStatistic );
   statistic = ( FunctionManagement<HistogramStatistic>::getInstance() )->getFunction( strStatistic );
@@ -1166,16 +1173,18 @@ bool Analyzer2DCalculateAll::parseLine( KernelConnection *whichKernel, istringst
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, strBoolAll, ' ' );
 
-  if ( strBoolAll.compare( "true" ) == 0 )
+  if ( strBoolAll.compare( "True" ) == 0 )
   {
     // get histogram
     histogram->clearStatistics();
 
   }
-  else if ( strBoolAll.compare( "false" ) == 0 )
+  else if ( strBoolAll.compare( "False" ) == 0 )
     return true;
   else
     return false;
@@ -1193,6 +1202,8 @@ bool Analyzer2DNumColumns::parseLine( KernelConnection *whichKernel, istringstre
 {
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   return true;
 }
@@ -1208,12 +1219,14 @@ bool Analyzer2DHideColumns::parseLine( KernelConnection *whichKernel, istringstr
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( "true" ) == 0 )
+  if ( strBool.compare( "True" ) == 0 )
     histogram->setHideColumns( true );
-  else if ( strBool.compare( "false" ) == 0 )
+  else if ( strBool.compare( "False" ) == 0 )
     histogram->setHideColumns( false );
   else
     return false;
@@ -1231,6 +1244,8 @@ bool Analyzer2DScientificNotation::parseLine( KernelConnection *whichKernel, ist
 {
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   return true;
 }
@@ -1243,6 +1258,8 @@ bool Analyzer2DNumDecimals::parseLine( KernelConnection *whichKernel, istringstr
                                        TRecordTime& beginTime, TRecordTime& endTime )
 {
   if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if( histogram == NULL )
     return false;
 
   return true;
@@ -1257,6 +1274,8 @@ bool Analyzer2DThousandSeparator::parseLine( KernelConnection *whichKernel, istr
 {
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   return true;
 }
@@ -1269,6 +1288,8 @@ bool Analyzer2DUnits::parseLine( KernelConnection *whichKernel, istringstream& l
                                  TRecordTime& beginTime, TRecordTime& endTime )
 {
   if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if( histogram == NULL )
     return false;
 
   return true;
@@ -1285,12 +1306,14 @@ bool Analyzer2DHorizontal::parseLine( KernelConnection *whichKernel, istringstre
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( "true" ) == 0 )
+  if ( strBool.compare( "True" ) == 0 )
     histogram->setHorizontal( true );
-  else if ( strBool.compare( "false" ) == 0 )
+  else if ( strBool.compare( "False" ) == 0 )
     histogram->setHorizontal( false );
   else
     return false;
@@ -1309,6 +1332,8 @@ bool Analyzer2DAccumulator:: parseLine( KernelConnection *whichKernel, istringst
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, strAccumulator );
 
@@ -1326,14 +1351,14 @@ bool Analyzer2DAccumulateByControlWindow::parseLine( KernelConnection *whichKern
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( "false" ) == 0 ||
-       strBool.compare( "False" ) == 0 )
+  if ( strBool.compare( "False" ) == 0 )
     {}
-  else if ( strBool.compare( "true" ) == 0 ||
-            strBool.compare( "True" ) == 0 )
+  else if ( strBool.compare( "True" ) == 0 )
     {}
   else
     return false;
@@ -1352,14 +1377,14 @@ bool Analyzer2DSortCols::parseLine( KernelConnection *whichKernel, istringstream
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( "false" ) == 0 ||
-       strBool.compare( "False" ) == 0 )
+  if ( strBool.compare( "False" ) == 0 )
     {}
-  else if ( strBool.compare( "true" ) == 0 ||
-            strBool.compare( "True" ) == 0 )
+  else if ( strBool.compare( "True" ) == 0 )
     {}
   else
     return false;
@@ -1377,6 +1402,8 @@ bool Analyzer2DSortCriteria::parseLine( KernelConnection *whichKernel, istringst
   string strSortCriteria;
 
   if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if( histogram == NULL )
     return false;
 
   getline( line, strSortCriteria );
@@ -1412,6 +1439,8 @@ bool Analyzer2DParameters::parseLine( KernelConnection *whichKernel, istringstre
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, strNumParams, ' ' ); // Number of following parameters.
   istringstream tmpNumParams( strNumParams );
@@ -1442,6 +1471,8 @@ bool Analyzer2DAnalysisLimits::parseLine( KernelConnection *whichKernel, istring
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, strLimit, ' ' );
 
@@ -1468,14 +1499,14 @@ bool Analyzer2DRelativeTime::parseLine( KernelConnection *whichKernel, istringst
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( "false" ) == 0 ||
-       strBool.compare( "False" ) == 0 )
+  if ( strBool.compare( "False" ) == 0 )
     {}
-  else if ( strBool.compare( "true" ) == 0 ||
-            strBool.compare( "True" ) == 0 )
+  else if ( strBool.compare( "True" ) == 0 )
     {}
   else
     return false;
@@ -1494,14 +1525,14 @@ bool Analyzer2DComputeYScale::parseLine( KernelConnection *whichKernel, istrings
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( "false" ) == 0 ||
-       strBool.compare( "False" ) == 0 )
+  if ( strBool.compare( "False" ) == 0 )
     {}
-  else if ( strBool.compare( "true" ) == 0 ||
-            strBool.compare( "True" ) == 0 )
+  else if ( strBool.compare( "True" ) == 0 )
     {}
   else
     return false;
@@ -1519,6 +1550,8 @@ bool Analyzer2DMinimum::parseLine( KernelConnection *whichKernel, istringstream&
   THistogramLimit dataMinimum;
 
   if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if( histogram == NULL )
     return false;
 
   getline( line, strMinimum );
@@ -1541,6 +1574,8 @@ bool Analyzer2DMaximum::parseLine( KernelConnection *whichKernel, istringstream&
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, strMaximum );
   istringstream tmpValue( strMaximum );
@@ -1562,6 +1597,8 @@ bool Analyzer2DDelta::parseLine( KernelConnection *whichKernel, istringstream& l
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, strDelta );
   istringstream tmpValue( strDelta );
@@ -1582,14 +1619,14 @@ bool Analyzer2DComputeGradient::parseLine( KernelConnection *whichKernel, istrin
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( "false" ) == 0 ||
-       strBool.compare( "False" ) == 0 )
+  if ( strBool.compare( "False" ) == 0 )
     {}
-  else if ( strBool.compare( "true" ) == 0 ||
-            strBool.compare( "True" ) == 0 )
+  else if ( strBool.compare( "True" ) == 0 )
     {}
   else
     return false;
@@ -1608,6 +1645,8 @@ bool Analyzer2DMinimumGradient::parseLine( KernelConnection *whichKernel, istrin
   THistogramLimit dataMinimumGradient;
 
   if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if( histogram == NULL )
     return false;
 
   getline( line, strMinimumGradient );
@@ -1630,6 +1669,8 @@ bool Analyzer2DMaximumGradient::parseLine( KernelConnection *whichKernel, istrin
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, strMaximumGradient );
   istringstream tmpValue( strMaximumGradient );
@@ -1650,6 +1691,8 @@ bool Analyzer3DControlWindow::parseLine( KernelConnection *whichKernel, istrings
   UINT32 controlWindow;
 
   if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if( histogram == NULL )
     return false;
 
   getline( line, str3DControlWindow );
@@ -1672,6 +1715,8 @@ bool Analyzer3DMinimum::parseLine( KernelConnection *whichKernel, istringstream&
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, str3DMinimum );
   istringstream tmpValue( str3DMinimum );
@@ -1692,6 +1737,8 @@ bool Analyzer3DMaximum::parseLine( KernelConnection *whichKernel, istringstream&
   THistogramLimit data3DMaximum;
 
   if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if( histogram == NULL )
     return false;
 
   getline( line, str3DMaximum );
@@ -1714,6 +1761,8 @@ bool Analyzer3DDelta::parseLine( KernelConnection *whichKernel, istringstream& l
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+  if( histogram == NULL )
+    return false;
 
   getline( line, str3DDelta );
   istringstream tmpValue( str3DDelta );
@@ -1734,6 +1783,8 @@ bool Analyzer3DFixedValue::parseLine( KernelConnection *whichKernel, istringstre
   UINT32 data3DFixedValue;
 
   if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if( histogram == NULL )
     return false;
 
   getline( line, str3DFixedValue );

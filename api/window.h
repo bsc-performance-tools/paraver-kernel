@@ -79,6 +79,9 @@ class WindowProxy: public Window
     virtual TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread );
     virtual TObjectOrder getWindowLevelObjects();
     virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime );
+
+  private:
+    Window *myWindow;
 };
 
 #endif // WINDOW_H_INCLUDED
