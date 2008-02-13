@@ -85,16 +85,31 @@ class Histogram
     virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime ) = 0;
 
     // Specific methods of HistogramProxy
-    virtual void setHorizontal( bool newValue ) {};
-    virtual bool getHorizontal() const { return true; };
-    virtual void setHideColumns( bool newValue ) {};
-    virtual bool getHideColumns() const { return false; };
-    virtual void setScientificNotation( bool newValue ) {};
-    virtual bool getScientificNotation() const { return false; };
-    virtual void setNumDecimals( UINT16 newValue ) {};
-    virtual UINT16 getNumDecimals() const { return 2; };
-    virtual void setThousandSeparator( bool newValue ) {};
-    virtual bool getThousandSeparator() const { return false; }
+    virtual void setHorizontal( bool newValue ) {}
+    virtual bool getHorizontal() const
+    {
+      return true;
+    }
+    virtual void setHideColumns( bool newValue ) {}
+    virtual bool getHideColumns() const
+    {
+      return false;
+    }
+    virtual void setScientificNotation( bool newValue ) {}
+    virtual bool getScientificNotation() const
+    {
+      return false;
+    }
+    virtual void setNumDecimals( UINT16 newValue ) {}
+    virtual UINT16 getNumDecimals() const
+    {
+      return 2;
+    }
+    virtual void setThousandSeparator( bool newValue ) {}
+    virtual bool getThousandSeparator() const
+    {
+      return false;
+    }
 
   protected:
     KernelConnection *myKernel;
