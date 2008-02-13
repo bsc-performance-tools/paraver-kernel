@@ -92,7 +92,7 @@ class Histogram
     virtual void setScientificNotation( bool newValue ) {};
     virtual bool getScientificNotation() const { return false; };
     virtual void setNumDecimals( UINT16 newValue ) {};
-    virtual UINT16 getNumDecimals() const { return 2 };
+    virtual UINT16 getNumDecimals() const { return 2; };
     virtual void setThousandSeparator( bool newValue ) {};
     virtual bool getThousandSeparator() const { return false; }
 
