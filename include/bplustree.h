@@ -294,6 +294,7 @@ namespace bplustree
           virtual TRecordTime  getTime() const;
           virtual TThreadOrder getThread() const;
           virtual TCPUOrder    getCPU() const;
+          virtual TObjectOrder getOrder() const;
           virtual TEventType   getEventType() const;
           virtual TEventValue  getEventValue() const;
           virtual TState       getState() const;
@@ -315,6 +316,8 @@ namespace bplustree
           virtual ~ThreadIterator()
           {}
 
+          virtual TObjectOrder getOrder() const;
+
           virtual void operator++();
           virtual void operator--();
       };
@@ -331,6 +334,8 @@ namespace bplustree
 
           virtual ~CPUIterator()
           {}
+
+          virtual TObjectOrder getOrder() const;
 
           virtual void operator++();
           virtual void operator--();

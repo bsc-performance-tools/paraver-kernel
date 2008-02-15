@@ -158,6 +158,9 @@
 		<Unit filename="api/paramedir.h">
 			<Option target="paramedir" />
 		</Unit>
+		<Unit filename="api/recordlist.cpp">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="api/recordlist.h" />
 		<Unit filename="api/window.cpp">
 			<Option target="api" />

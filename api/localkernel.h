@@ -12,7 +12,7 @@ class LocalKernel: public KernelConnection
     virtual Window *newKSingleWindow( Trace *whichTrace ) const;
     virtual Window *newKDerivedWindow( Window *window1, Window * window2 ) const;
     virtual Histogram *newKHistogram() const;
-
+    virtual RecordList *newRecordList() const;
   protected:
 
   private:

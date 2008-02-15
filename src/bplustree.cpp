@@ -1106,6 +1106,11 @@ inline TCPUOrder    BPlusTree::iterator::getCPU() const
   return ( ( TRecord * )record )->CPU;
 }
 
+inline TObjectOrder BPlusTree::iterator::getOrder() const
+{
+  return ( ( TRecord * )record )->thread;
+}
+
 inline TEventType   BPlusTree::iterator::getEventType() const
 {
   return ( ( TRecord * )record )->URecordInfo.eventRecord.type;
@@ -1135,6 +1140,11 @@ inline TCommID      BPlusTree::iterator::getCommIndex() const
 /**************************************************************************
  * MemoryTrace Inherited ThreadIterator.
  **************************************************************************/
+
+inline TObjectOrder BPlusTree::ThreadIterator::getOrder() const
+{
+  return ( ( TRecord * )record )->thread;
+}
 
 inline void BPlusTree::ThreadIterator::operator++()
 {
@@ -1169,6 +1179,11 @@ inline void BPlusTree::ThreadIterator::operator--()
 /**************************************************************************
  * MemoryTrace Inherited CPUIterator.
  **************************************************************************/
+
+inline TObjectOrder BPlusTree::CPUIterator::getOrder() const
+{
+  return ( ( TRecord * )record )->CPU;
+}
 
 inline void BPlusTree::CPUIterator::operator++()
 {

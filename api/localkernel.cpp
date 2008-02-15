@@ -4,6 +4,7 @@
 #include "semanticmanagement.h"
 #include "filtermanagement.h"
 #include "statisticmanagement.h"
+#include "krecordlist.h"
 
 LocalKernel::LocalKernel()
 {
@@ -30,3 +31,7 @@ Histogram *LocalKernel::newKHistogram() const
   return new KHistogram();
 }
 
+RecordList *LocalKernel::newRecordList() const
+{
+  return new KRecordList();
+}

@@ -17,6 +17,7 @@ class KRecordList: public RecordList
     virtual void erase( iterator first, iterator last );
     virtual iterator begin() const;
     virtual iterator end() const;
+    virtual bool newRecords() const;
 
     // Specific for KRecordList
     virtual void insert( MemoryTrace::iterator *it );
@@ -26,17 +27,17 @@ class KRecordList: public RecordList
     // r1 is less than r2?
     struct ltrecord
     {
-      bool operator()( RLRecord *r1, RLRecord *r2 ) const
+      bool operator()( const RLRecord& r1, const RLRecord& r2 )
       {
-        if ( r1->getTime() < r2->getTime() )
+        if ( r1.getTime() < r2.getTime() )
           return true;
-        else if ( r1->getTime() == r2->getTime() )
+        else if ( r1.getTime() == r2.getTime() )
         {
-          if ( r1->getOrder() < r2->getOrder() )
+          if ( r1.getOrder() < r2.getOrder() )
             return true;
-          else if ( r1->getOrder() == r2->getOrder() )
+          else if ( r1.getOrder() == r2.getOrder() )
           {
-            if ( ( r1->getType() & COMM ) && ( r2->getType() & EVENT ) )
+            if ( ( r1.getType() & COMM ) && ( r2.getType() & EVENT ) )
               return true;
           }
         }
@@ -45,7 +46,7 @@ class KRecordList: public RecordList
     };
 
     set<RLRecord, ltrecord> list;
-
+    bool newRec;
 };
 
 

@@ -4,7 +4,7 @@
 
 Histogram *Histogram::create( KernelConnection *whichKernel )
 {
-  return new HistogramProxy();
+  return new HistogramProxy( whichKernel );
 }
 
 
