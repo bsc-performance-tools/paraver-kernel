@@ -50,7 +50,7 @@ AC_CHECK_TYPES([int64_t, uint64_t, int8_t, uint8_t, int32_t, uint32_t, int16_t, 
 #########################################
 
 
-CFLAGS="$CFLAGS -Iinclude/ -I../include/ -I../common-files/ -I../../common-files/"
-CXXFLAGS="$CXXFLAGS -Iinclude/ -I../include/ -I../common-files/ -I../../common-files/"
+CFLAGS="$CFLAGS -Iinclude/ -Iapi/ -I../include/ -I../api/ -I../common-files/ -I../../common-files/"
+CXXFLAGS="$CXXFLAGS -Iinclude/ -Iapi/ -I../include/ -I../api/ -I../common-files/ -I../../common-files/"
 
 AC_OUTPUT([Makefile src/Makefile api/Makefile])
