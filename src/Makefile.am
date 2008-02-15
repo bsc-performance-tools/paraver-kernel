@@ -18,6 +18,7 @@ libparaver_kernel_la_SOURCES = \
     intervalthread.cpp \
     khistogram.cpp \
     khistogramtotals.cpp \
+    krecordlist.cpp \
     kwindow.cpp \
     kwindowexception.cpp \
     memorytrace.cpp \
