@@ -12,7 +12,10 @@ class Filter;
 class Window
 {
   public:
+    // Create Single Window
     static Window *create( KernelConnection *whichKernel, Trace *whichTrace );
+    //Create Derived Window
+    static Window *create( KernelConnection *whichKernel );
     static Window *create( KernelConnection *whichKernel, Window *parent1, Window *parent2 );
 
     Window() {}
@@ -21,11 +24,11 @@ class Window
 
     // Specefic for WindowProxy because Single and Derived window
     // SingleWindow
-    virtual Filter *getFilter() const;
+    virtual Filter *getFilter() const = 0;
 
     //DerivedWindow
-    virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue );
-    virtual void setParent( UINT16 whichParent, Window *whichWindow );
+    virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue ) = 0;
+    virtual void setParent( UINT16 whichParent, Window *whichWindow ) = 0;
 
     //------------------------------------------------------------
     virtual Trace *getTrace() const = 0;
@@ -102,10 +105,14 @@ class WindowProxy: public Window
   private:
     Window *myWindow;
 
+    // For Single Window
     WindowProxy( KernelConnection *whichKernel, Trace *whichTrace );
+    // For Derived Window
+    WindowProxy( KernelConnection *whichKernel );
     WindowProxy( KernelConnection *whichKernel, Window *parent1, Window *parent2 );
 
     friend Window *Window::create( KernelConnection *, Trace * );
+    friend Window *Window::create( KernelConnection * );
     friend Window *Window::create( KernelConnection *, Window *, Window * );
 };
 

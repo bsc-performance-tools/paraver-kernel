@@ -30,6 +30,17 @@ class KWindow:public Window
     virtual ~KWindow()
     {}
 
+    virtual Filter *getFilter() const
+    {
+      return NULL;
+    }
+
+    virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue )
+    {}
+
+    virtual void setParent( UINT16 whichParent, Window *whichWindow )
+    {}
+
     Trace *getTrace() const
     {
       return myTrace;
@@ -206,7 +217,7 @@ class KSingleWindow: public KWindow
       return false;
     }
 
-    Filter *getFilter()
+    virtual Filter *getFilter() const
     {
       return myFilter;
     }

@@ -22,7 +22,6 @@ Window::Window( KernelConnection *whichKernel ) : myKernel( whichKernel )
 
 Filter *Window::getFilter() const
 {
-  cout << "Window" << endl;
   return NULL;
 }
 
@@ -57,7 +56,6 @@ WindowProxy::~WindowProxy()
 
 Filter *WindowProxy::getFilter() const
 {
-  cout << "WindowProxy" << endl;
   if ( !myWindow->isDerivedWindow() )
     return myWindow->getFilter();
   return NULL;
