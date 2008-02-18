@@ -7,16 +7,27 @@ class KernelConnection;
 class RecordList;
 class SemanticFunction;
 class Trace;
+class Filter;
 
 class Window
 {
   public:
-    static Window *create( KernelConnection *whichKernel );
+    static Window *create( KernelConnection *whichKernel, Trace *whichTrace );
+    static Window *create( KernelConnection *whichKernel, Window *parent1, Window *parent2 );
 
     Window() {}
     Window( KernelConnection *whichKernel );
     virtual ~Window() {}
 
+    // Specefic for WindowProxy because Single and Derived window
+    // SingleWindow
+    virtual Filter *getFilter() const;
+
+    //DerivedWindow
+    virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue );
+    virtual void setParent( UINT16 whichParent, Window *whichWindow );
+
+    //------------------------------------------------------------
     virtual Trace *getTrace() const = 0;
     virtual TWindowLevel getLevel() const = 0;
     virtual void setLevel( TWindowLevel whichLevel ) = 0;
@@ -51,9 +62,17 @@ class Window
 class WindowProxy: public Window
 {
   public:
-    WindowProxy( KernelConnection *whichKernel );
     virtual ~WindowProxy();
 
+    // Specefic for WindowProxy because Single and Derived window
+    // SingleWindow
+    virtual Filter *getFilter() const;
+
+    //DerivedWindow
+    virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue );
+    virtual void setParent( UINT16 whichParent, Window *whichWindow );
+
+    //------------------------------------------------------------
     virtual Trace *getTrace() const;
     virtual TWindowLevel getLevel() const;
     virtual void setLevel( TWindowLevel whichLevel );
@@ -82,6 +101,12 @@ class WindowProxy: public Window
 
   private:
     Window *myWindow;
+
+    WindowProxy( KernelConnection *whichKernel, Trace *whichTrace );
+    WindowProxy( KernelConnection *whichKernel, Window *parent1, Window *parent2 );
+
+    friend Window *Window::create( KernelConnection *, Trace * );
+    friend Window *Window::create( KernelConnection *, Window *, Window * );
 };
 
 #endif // WINDOW_H_INCLUDED

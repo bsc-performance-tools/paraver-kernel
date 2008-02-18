@@ -1,123 +1,176 @@
 #include "kwindow.h"
+#include "kernelconnection.h"
+#include "filter.h"
 
-Window *Window::create( KernelConnection *whichKernel )
+Window *Window::create( KernelConnection *whichKernel, Trace *whichTrace )
 {
-  return new WindowProxy( whichKernel );
+  return new WindowProxy( whichKernel, whichTrace );
+}
+
+Window *Window::create( KernelConnection *whichKernel, Window *parent1, Window *parent2 )
+{
+  return new WindowProxy( whichKernel, parent1, parent2 );
 }
 
 Window::Window( KernelConnection *whichKernel ) : myKernel( whichKernel )
 {}
 
-WindowProxy::WindowProxy( KernelConnection *whichKernel ):
-    Window( whichKernel )
+Filter *Window::getFilter() const
+{
+  return NULL;
+}
+
+void Window::setFactor( UINT16 whichFactor, TSemanticValue newValue )
 {}
 
-WindowProxy::~WindowProxy()
+void Window::setParent( UINT16 whichParent, Window *whichWindow )
 {}
+
+WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
+    Window( whichKernel )
+{
+  myWindow = myKernel->newSingleWindow( whichTrace );
+}
+
+WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *parent1, Window *parent2 ):
+    Window( whichKernel )
+{
+  myWindow = myKernel->newDerivedWindow( parent1, parent2 );
+}
+
+WindowProxy::~WindowProxy()
+{
+  delete myWindow;
+}
+
+Filter *WindowProxy::getFilter() const
+{
+  if( !myWindow->isDerivedWindow() )
+    return myWindow->getFilter();
+  return NULL;
+}
+
+void WindowProxy::setFactor( UINT16 whichFactor, TSemanticValue newValue )
+{
+  if( myWindow->isDerivedWindow() )
+    myWindow->setFactor( whichFactor, newValue );
+}
+
+void WindowProxy::setParent( UINT16 whichParent, Window *whichWindow )
+{
+  if( myWindow->isDerivedWindow() )
+    myWindow->setParent( whichParent, whichWindow );
+}
 
 Trace *WindowProxy::getTrace() const
 {
-  return 0;
+  return myWindow->getTrace();;
 }
 
 TWindowLevel WindowProxy::getLevel() const
 {
-  return ( TWindowLevel ) 0;
+  return myWindow->getLevel();
 }
 
 void WindowProxy::setLevel( TWindowLevel whichLevel )
-{}
+{
+  myWindow->setLevel( whichLevel );
+}
 
 void WindowProxy::setTimeUnit( TTimeUnit whichUnit )
-{}
+{
+  myWindow->setTimeUnit( whichUnit );
+}
 
 TTimeUnit WindowProxy::getTimeUnit()
 {
-  return 0;
+  return myWindow->getTimeUnit();
 }
 
 TWindowLevel WindowProxy::getComposeLevel( TWindowLevel whichLevel ) const
 {
-  return ( TWindowLevel ) 0;
+  return myWindow->getComposeLevel( whichLevel );
 }
 
 bool WindowProxy::setLevelFunction( TWindowLevel whichLevel,
                                     SemanticFunction *whichFunction )
 {
-  return 0;
+  return myWindow->setLevelFunction( whichLevel, whichFunction );
 }
 
 SemanticFunction *WindowProxy::getLevelFunction( TWindowLevel whichLevel )
 {
-  return 0;
+  return myWindow->getLevelFunction( whichLevel );
 }
 
 SemanticFunction *WindowProxy::getFirstUsefulFunction( )
 {
-  return 0;
+  return myWindow->getFirstUsefulFunction();
 }
 
 void WindowProxy::setFunctionParam( TWindowLevel whichLevel,
                                     TParamIndex whichParam,
                                     const TParamValue& newValue )
-{}
+{
+  myWindow->setFunctionParam( whichLevel, whichParam, newValue );
+}
 
 RecordList *WindowProxy::getRecordList( TObjectOrder whichObject )
 {
-  return 0;
+  return RecordList::create( myWindow->getRecordList( whichObject ) );
 }
 
 RecordList *WindowProxy::init( TRecordTime initialTime, TCreateList create )
 {
-  return 0;
+  return myWindow->init( initialTime, create );
 }
 
 RecordList *WindowProxy::calcNext( TObjectOrder whichObject )
 {
-  return 0;
+  return RecordList::create( myWindow->calcNext( whichObject ) );
 }
 
 RecordList *WindowProxy::calcPrev( TObjectOrder whichObject )
 {
-  return 0;
+  return RecordList::create( myWindow->calcPrev( whichObject ) );
 }
 
 TRecordTime WindowProxy::getBeginTime( TObjectOrder whichObject ) const
 {
-  return 0;
+  return myWindow->getBeginTime( whichObject );
 }
 
 TRecordTime WindowProxy::getEndTime( TObjectOrder whichObject ) const
 {
-  return 0;
+  return myWindow->getEndTime( whichObject );
 }
 
 TSemanticValue WindowProxy::getValue( TObjectOrder whichObject ) const
 {
-  return 0;
+  return myWindow->getValue( whichObject );
 }
 
 bool WindowProxy::isDerivedWindow() const
 {
-  return 0;
+  return myWindow->isDerivedWindow();
 }
 
 TObjectOrder WindowProxy::cpuObjectToWindowObject( TCPUOrder whichCPU )
 {
-  return 0;
+  return myWindow->cpuObjectToWindowObject( whichCPU );
 }
 
 TObjectOrder WindowProxy::threadObjectToWindowObject( TThreadOrder whichThread )
 {
-  return 0;
+  return myWindow->threadObjectToWindowObject( whichThread );
 }
 
 TObjectOrder WindowProxy::getWindowLevelObjects()
 {
-  return 0;
+  return myWindow->getWindowLevelObjects();
 }
 
 TRecordTime WindowProxy::traceUnitsToWindowUnits( TRecordTime whichTime )
 {
-  return 0;
+  return myWindow->traceUnitsToWindowUnits( whichTime );
 }

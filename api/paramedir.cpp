@@ -6,8 +6,9 @@
 #include "paramedir.h"
 #include "cfg.h"
 #include "trace.h"
-#include "kwindow.h"
-#include "cube.h"
+#include "window.h"
+#include "histogram.h"
+#include "paraverkernelexception.h"
 
 using namespace std;
 
@@ -17,6 +18,8 @@ UINT32 outputPrecision = 2;
 
 int main( int argc, char *argv[] )
 {
+  LocalKernel::init();
+
   KernelConnection *myKernel = new LocalKernel();
 
   readParaverConfigFile();
@@ -54,7 +57,7 @@ int main( int argc, char *argv[] )
     while ( currentArg < argc )
     {
       string strCfg( argv[ currentArg ] );
-      vector<KWindow *> windows;
+      vector<Window *> windows;
       Histogram *histogram;
       TRecordTime beginTime;
       TRecordTime endTime;
@@ -88,7 +91,7 @@ int main( int argc, char *argv[] )
                                beginTime, endTime ) )
       {
         ofstream outputFile;
-        KWindow *tmpWindow = windows[ windows.size() - 1 ];
+        Window *tmpWindow = windows[ windows.size() - 1 ];
 
         tmpWindow->init( beginTime, NOCREATE );
 

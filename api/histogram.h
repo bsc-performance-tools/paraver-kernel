@@ -13,7 +13,7 @@ class Histogram
   public:
     static Histogram *create( KernelConnection *whichKernel );
 
-    Histogram() {}
+    Histogram() {};
     Histogram( KernelConnection *whichKernel );
     virtual ~Histogram() {}
 
@@ -119,8 +119,6 @@ class Histogram
 class HistogramProxy : public Histogram
 {
   public:
-    HistogramProxy() {}
-    HistogramProxy( KernelConnection *whichKernel );
     virtual ~HistogramProxy();
 
     virtual bool getThreeDimensions() const;
@@ -189,6 +187,10 @@ class HistogramProxy : public Histogram
     bool hideColumns;
 
     Histogram *myHisto;
+
+    HistogramProxy( KernelConnection *whichKernel );
+
+    friend Histogram *Histogram::create( KernelConnection * );
 };
 
 

@@ -14,7 +14,7 @@ Histogram::Histogram( KernelConnection *whichKernel ) : myKernel( whichKernel )
 HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
     Histogram( whichKernel )
 {
-  myHisto = myKernel->newKHistogram();
+  myHisto = myKernel->newHistogram();
 }
 
 HistogramProxy::~HistogramProxy()

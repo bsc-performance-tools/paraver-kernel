@@ -4,7 +4,7 @@
 
 #include "kernelconnection.h"
 #include "cfg.h"
-#include "kwindow.h"
+#include "window.h"
 #include "trace.h"
 
 #include "histogram.h"
@@ -78,7 +78,7 @@ bool CFGLoader::isCFGFile( const string& filename )
 bool CFGLoader::loadCFG( KernelConnection *whichKernel,
                          string& filename,
                          Trace *whichTrace,
-                         vector<KWindow *>& windows,
+                         vector<Window *>& windows,
                          Histogram *histogram,
                          TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -283,21 +283,21 @@ void CFGLoader::unLoadMap()
 
 bool WindowType::parseLine( KernelConnection *whichKernel, istringstream& line,
                             Trace *whichTrace,
-                            vector<KWindow *>& windows,
+                            vector<Window *>& windows,
                             Histogram *histogram,
                             TRecordTime& beginTime, TRecordTime& endTime )
 {
   string type;
-  KWindow *tmpWin;
+  Window *tmpWin;
 
   getline( line, type, ' ' );
   if ( type.compare( "single" ) == 0 )
   {
-    tmpWin = new KSingleWindow( whichTrace );
+    tmpWin = whichKernel->newSingleWindow( whichTrace );
   }
   else if ( type.compare( "composed" ) == 0 )
   {
-    tmpWin = new KDerivedWindow( );
+    tmpWin = whichKernel->newDerivedWindow();
   }
   else
     return false;
@@ -312,7 +312,7 @@ bool WindowType::parseLine( KernelConnection *whichKernel, istringstream& line,
 
 bool WindowFactors::parseLine( KernelConnection *whichKernel, istringstream& line,
                                Trace *whichTrace,
-                               vector<KWindow *>& windows,
+                               vector<Window *>& windows,
                                Histogram *histogram,
                                TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -334,8 +334,7 @@ bool WindowFactors::parseLine( KernelConnection *whichKernel, istringstream& lin
     if ( !( tmpStream >> factorValue ) )
       return false;
 
-    ( ( KDerivedWindow * ) windows[ windows.size() - 1 ] )->setFactor( numFactor,
-        factorValue );
+    windows[ windows.size() - 1 ]->setFactor( numFactor, factorValue );
 
     numFactor++;
   }
@@ -345,7 +344,7 @@ bool WindowFactors::parseLine( KernelConnection *whichKernel, istringstream& lin
 
 bool WindowUnits::parseLine( KernelConnection *whichKernel, istringstream& line,
                              Trace *whichTrace,
-                             vector<KWindow *>& windows,
+                             vector<Window *>& windows,
                              Histogram *histogram,
                              TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -376,7 +375,7 @@ bool WindowUnits::parseLine( KernelConnection *whichKernel, istringstream& line,
 
 bool WindowOperation::parseLine( KernelConnection *whichKernel, istringstream& line,
                                  Trace *whichTrace,
-                                 vector<KWindow *>& windows,
+                                 vector<Window *>& windows,
                                  Histogram *histogram,
                                  TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -391,11 +390,11 @@ bool WindowOperation::parseLine( KernelConnection *whichKernel, istringstream& l
 
   getline( line, strFunction, ' ' );
   function = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( strFunction );
-//  function = SemanticManagement::createFunction( strFunction );
+
   if ( function == NULL )
     return false;
 
-  ( ( KDerivedWindow * ) windows[ windows.size() - 1 ] )->setLevelFunction( DERIVED, function );
+  windows[ windows.size() - 1 ]->setLevelFunction( DERIVED, function );
 
   return true;
 }
@@ -403,7 +402,7 @@ bool WindowOperation::parseLine( KernelConnection *whichKernel, istringstream& l
 // For representation purposes.
 bool WindowMaximumY::parseLine( KernelConnection *whichKernel, istringstream& line,
                                 Trace *whichTrace,
-                                vector<KWindow *>& windows,
+                                vector<Window *>& windows,
                                 Histogram *histogram,
                                 TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -413,7 +412,7 @@ bool WindowMaximumY::parseLine( KernelConnection *whichKernel, istringstream& li
 
 bool WindowLevel::parseLine( KernelConnection *whichKernel, istringstream& line,
                              Trace *whichTrace,
-                             vector<KWindow *>& windows,
+                             vector<Window *>& windows,
                              Histogram *histogram,
                              TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -435,7 +434,7 @@ bool WindowLevel::parseLine( KernelConnection *whichKernel, istringstream& line,
 
 bool WindowIdentifiers::parseLine( KernelConnection *whichKernel, istringstream& line,
                                    Trace *whichTrace,
-                                   vector<KWindow *>& windows,
+                                   vector<Window *>& windows,
                                    Histogram *histogram,
                                    TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -458,8 +457,7 @@ bool WindowIdentifiers::parseLine( KernelConnection *whichKernel, istringstream&
     if ( windows[ id - 1 ] == NULL )
       return false;
 
-    ( ( KDerivedWindow * ) windows[ windows.size() - 1 ] )->setParent( numID,
-        windows[ id - 1 ] );
+    windows[ windows.size() - 1 ]->setParent( numID, windows[ id - 1 ] );
     numID++;
   }
 
@@ -468,7 +466,7 @@ bool WindowIdentifiers::parseLine( KernelConnection *whichKernel, istringstream&
 
 bool WindowScaleRelative::parseLine( KernelConnection *whichKernel, istringstream& line,
                                      Trace *whichTrace,
-                                     vector<KWindow *>& windows,
+                                     vector<Window *>& windows,
                                      Histogram *histogram,
                                      TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -481,7 +479,7 @@ bool WindowScaleRelative::parseLine( KernelConnection *whichKernel, istringstrea
 }
 
 bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line, Trace *whichTrace,
-                              vector<KWindow *>& windows,
+                              vector<Window *>& windows,
                               Histogram *histogram,
                               TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -490,7 +488,7 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
 
 bool WindowBeginTime::parseLine( KernelConnection *whichKernel, istringstream& line,
                                  Trace *whichTrace,
-                                 vector<KWindow *>& windows,
+                                 vector<Window *>& windows,
                                  Histogram *histogram,
                                  TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -513,7 +511,7 @@ bool WindowBeginTime::parseLine( KernelConnection *whichKernel, istringstream& l
 
 bool WindowEndTime::parseLine( KernelConnection *whichKernel, istringstream& line,
                                Trace *whichTrace,
-                               vector<KWindow *>& windows,
+                               vector<Window *>& windows,
                                Histogram *histogram,
                                TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -536,7 +534,7 @@ bool WindowEndTime::parseLine( KernelConnection *whichKernel, istringstream& lin
 
 bool WindowStopTime::parseLine( KernelConnection *whichKernel, istringstream& line,
                                 Trace *whichTrace,
-                                vector<KWindow *>& windows,
+                                vector<Window *>& windows,
                                 Histogram *histogram,
                                 TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -559,7 +557,7 @@ bool WindowStopTime::parseLine( KernelConnection *whichKernel, istringstream& li
 
 bool WindowBeginTimeRelative::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
-    vector<KWindow *>& windows,
+    vector<Window *>& windows,
     Histogram *histogram,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -583,7 +581,7 @@ bool WindowBeginTimeRelative::parseLine( KernelConnection *whichKernel, istrings
 
 bool WindowNumberOfRow::parseLine( KernelConnection *whichKernel, istringstream& line,
                                    Trace *whichTrace,
-                                   vector<KWindow *>& windows,
+                                   vector<Window *>& windows,
                                    Histogram *histogram,
                                    TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -591,7 +589,7 @@ bool WindowNumberOfRow::parseLine( KernelConnection *whichKernel, istringstream&
 }
 
 bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istringstream& line, Trace *whichTrace,
-    vector<KWindow *>& windows,
+    vector<Window *>& windows,
     Histogram *histogram,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -630,7 +628,6 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
       SemanticFunction *function;
 
       function = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( strFunction );
-//      function = SemanticManagement::createFunction( strFunction );
       if ( function == NULL )
         return false;
       windows[ windows.size() - 1 ]->setLevelFunction( level, function );
@@ -639,11 +636,10 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
     else
     {
       FilterFunction *function;
-      Filter *filter = ( ( KSingleWindow * ) windows[ windows.size() - 1 ] )->getFilter();
+      Filter *filter = windows[ windows.size() - 1 ]->getFilter();
 
 
       function = ( FunctionManagement<FilterFunction>::getInstance() )->getFunction( strFunction );
-//      function = FilterManagement::createFunction( strFunction );
       if ( function == NULL )
         return false;
 
@@ -670,7 +666,7 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
 
 bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel, istringstream& line,
                                         Trace *whichTrace,
-                                        vector<KWindow *>& windows,
+                                        vector<Window *>& windows,
                                         Histogram *histogram,
                                         TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -706,7 +702,6 @@ bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel, istringst
       SemanticFunction *function;
 
       function = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( strFunction );
-//      function = SemanticManagement::createFunction( strFunction );
       if ( function == NULL )
         return false;
       if ( !windows[ windows.size() - 1 ]->setLevelFunction( level, function ) )
@@ -722,7 +717,7 @@ bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel, istringst
 
 bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstream& line,
                                       Trace *whichTrace,
-                                      vector<KWindow *>& windows,
+                                      vector<Window *>& windows,
                                       Histogram *histogram,
                                       TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -743,7 +738,6 @@ bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstre
   strFunction.erase( strFunction.length() - 1 ); // Final space.
 
   function = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( strFunction );
-//  function = SemanticManagement::createFunction( strFunction );
   if ( function == NULL )
     return false;
 
@@ -810,7 +804,7 @@ bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstre
 
 bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream& line,
                                     Trace *whichTrace,
-                                    vector<KWindow *>& windows,
+                                    vector<Window *>& windows,
                                     Histogram *histogram,
                                     TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -838,7 +832,7 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
   if ( !( tmpNumberParams >> numParams ) )
     return false;
 
-  filter = ( ( KSingleWindow * )windows[ windows.size() - 1 ] )->getFilter();
+  filter = windows[ windows.size() - 1 ]->getFilter();
 
   for ( UINT16 ii = 0; ii < numParams; ii++ )
   {
@@ -920,7 +914,7 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
 
 bool WindowFilterLogical::parseLine( KernelConnection *whichKernel, istringstream& line,
                                      Trace *whichTrace,
-                                     vector<KWindow *>& windows,
+                                     vector<Window *>& windows,
                                      Histogram *histogram,
                                      TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -935,7 +929,7 @@ bool WindowFilterLogical::parseLine( KernelConnection *whichKernel, istringstrea
 
   getline( line, strBool, ' ' );
 
-  filter = ( ( KSingleWindow * )windows[ windows.size() - 1 ] )->getFilter();
+  filter = windows[ windows.size() - 1 ]->getFilter();
 
   if ( strBool.compare( "false" ) == 0 )
     filter->setLogical( false );
@@ -950,7 +944,7 @@ bool WindowFilterLogical::parseLine( KernelConnection *whichKernel, istringstrea
 
 bool WindowFilterPhysical::parseLine( KernelConnection *whichKernel, istringstream& line,
                                       Trace *whichTrace,
-                                      vector<KWindow *>& windows,
+                                      vector<Window *>& windows,
                                       Histogram *histogram,
                                       TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -965,7 +959,7 @@ bool WindowFilterPhysical::parseLine( KernelConnection *whichKernel, istringstre
 
   getline( line, strBool, ' ' );
 
-  filter = ( ( KSingleWindow * )windows[ windows.size() - 1 ] )->getFilter();
+  filter = windows[ windows.size() - 1 ]->getFilter();
 
   if ( strBool.compare( "false" ) == 0 )
     filter->setPhysical( false );
@@ -980,7 +974,7 @@ bool WindowFilterPhysical::parseLine( KernelConnection *whichKernel, istringstre
 
 bool WindowFilterBoolOpFromTo::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
-    vector<KWindow *>& windows,
+    vector<Window *>& windows,
     Histogram *histogram,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -993,7 +987,7 @@ bool WindowFilterBoolOpFromTo::parseLine( KernelConnection *whichKernel, istring
   if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
     return true;
 
-  filter = ( ( KSingleWindow * )windows[ windows.size() - 1 ] )->getFilter();
+  filter = windows[ windows.size() - 1 ]->getFilter();
 
   getline( line, strBool, ' ' );
 
@@ -1010,7 +1004,7 @@ bool WindowFilterBoolOpFromTo::parseLine( KernelConnection *whichKernel, istring
 
 bool WindowFilterBoolOpTagSize::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
-    vector<KWindow *>& windows,
+    vector<Window *>& windows,
     Histogram *histogram,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1025,7 +1019,7 @@ bool WindowFilterBoolOpTagSize::parseLine( KernelConnection *whichKernel, istrin
 
   getline( line, strBool, ' ' );
 
-  filter = ( ( KSingleWindow * )windows[ windows.size() - 1 ] )->getFilter();
+  filter = windows[ windows.size() - 1 ]->getFilter();
 
   if ( strBool.compare( "false" ) == 0 )
     filter->setOpTagSizeOr();
@@ -1040,7 +1034,7 @@ bool WindowFilterBoolOpTagSize::parseLine( KernelConnection *whichKernel, istrin
 
 bool WindowFilterBoolOpTypeVal::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
-    vector<KWindow *>& windows,
+    vector<Window *>& windows,
     Histogram *histogram,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1055,7 +1049,7 @@ bool WindowFilterBoolOpTypeVal::parseLine( KernelConnection *whichKernel, istrin
 
   getline( line, strBool, ' ' );
 
-  filter = ( ( KSingleWindow * )windows[ windows.size() - 1 ] )->getFilter();
+  filter = windows[ windows.size() - 1 ]->getFilter();
 
   if ( strBool.compare( "false" ) == 0 )
     filter->setOpTypeValueOr();
@@ -1069,7 +1063,7 @@ bool WindowFilterBoolOpTypeVal::parseLine( KernelConnection *whichKernel, istrin
 
 bool Analyzer2DCreate::parseLine( KernelConnection *whichKernel, istringstream& line,
                                   Trace *whichTrace,
-                                  vector<KWindow *>& windows,
+                                  vector<Window *>& windows,
                                   Histogram *histogram,
                                   TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1080,7 +1074,7 @@ bool Analyzer2DCreate::parseLine( KernelConnection *whichKernel, istringstream& 
 }
 
 bool Analyzer2DControlWindow::parseLine( KernelConnection *whichKernel, istringstream& line, Trace *whichTrace,
-    vector<KWindow *>& windows,
+    vector<Window *>& windows,
     Histogram *histogram,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1108,7 +1102,7 @@ bool Analyzer2DControlWindow::parseLine( KernelConnection *whichKernel, istrings
 
 bool Analyzer2DDataWindow::parseLine( KernelConnection *whichKernel, istringstream& line,
                                       Trace *whichTrace,
-                                      vector<KWindow *>& windows,
+                                      vector<Window *>& windows,
                                       Histogram *histogram,
                                       TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1136,7 +1130,7 @@ bool Analyzer2DDataWindow::parseLine( KernelConnection *whichKernel, istringstre
 
 bool Analyzer2DStatistic::parseLine( KernelConnection *whichKernel, istringstream& line,
                                      Trace *whichTrace,
-                                     vector<KWindow *>& windows,
+                                     vector<Window *>& windows,
                                      Histogram *histogram,
                                      TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1161,7 +1155,7 @@ bool Analyzer2DStatistic::parseLine( KernelConnection *whichKernel, istringstrea
 
 bool Analyzer2DCalculateAll::parseLine( KernelConnection *whichKernel, istringstream& line,
                                         Trace *whichTrace,
-                                        vector<KWindow *>& windows,
+                                        vector<Window *>& windows,
                                         Histogram *histogram,
                                         TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1191,7 +1185,7 @@ bool Analyzer2DCalculateAll::parseLine( KernelConnection *whichKernel, istringst
 
 bool Analyzer2DNumColumns::parseLine( KernelConnection *whichKernel, istringstream& line,
                                       Trace *whichTrace,
-                                      vector<KWindow *>& windows,
+                                      vector<Window *>& windows,
                                       Histogram *histogram,
                                       TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1206,7 +1200,7 @@ bool Analyzer2DNumColumns::parseLine( KernelConnection *whichKernel, istringstre
 
 bool Analyzer2DHideColumns::parseLine( KernelConnection *whichKernel, istringstream& line,
                                        Trace *whichTrace,
-                                       vector<KWindow *>& windows,
+                                       vector<Window *>& windows,
                                        Histogram *histogram,
                                        TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1233,7 +1227,7 @@ bool Analyzer2DHideColumns::parseLine( KernelConnection *whichKernel, istringstr
 
 bool Analyzer2DScientificNotation::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
-    vector<KWindow *>& windows,
+    vector<Window *>& windows,
     Histogram *histogram,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1259,7 +1253,7 @@ bool Analyzer2DScientificNotation::parseLine( KernelConnection *whichKernel, ist
 
 bool Analyzer2DNumDecimals::parseLine( KernelConnection *whichKernel, istringstream& line,
                                        Trace *whichTrace,
-                                       vector<KWindow *>& windows,
+                                       vector<Window *>& windows,
                                        Histogram *histogram,
                                        TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1284,7 +1278,7 @@ bool Analyzer2DNumDecimals::parseLine( KernelConnection *whichKernel, istringstr
 
 bool Analyzer2DThousandSeparator::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
-    vector<KWindow *>& windows,
+    vector<Window *>& windows,
     Histogram *histogram,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1310,7 +1304,7 @@ bool Analyzer2DThousandSeparator::parseLine( KernelConnection *whichKernel, istr
 
 bool Analyzer2DUnits::parseLine( KernelConnection *whichKernel, istringstream& line,
                                  Trace *whichTrace,
-                                 vector<KWindow *>& windows,
+                                 vector<Window *>& windows,
                                  Histogram *histogram,
                                  TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1325,7 +1319,7 @@ bool Analyzer2DUnits::parseLine( KernelConnection *whichKernel, istringstream& l
 
 bool Analyzer2DHorizontal::parseLine( KernelConnection *whichKernel, istringstream& line,
                                       Trace *whichTrace,
-                                      vector<KWindow *>& windows,
+                                      vector<Window *>& windows,
                                       Histogram *histogram,
                                       TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1351,7 +1345,7 @@ bool Analyzer2DHorizontal::parseLine( KernelConnection *whichKernel, istringstre
 
 bool Analyzer2DAccumulator:: parseLine( KernelConnection *whichKernel, istringstream& line,
                                         Trace *whichTrace,
-                                        vector<KWindow *>& windows,
+                                        vector<Window *>& windows,
                                         Histogram *histogram,
                                         TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1368,7 +1362,7 @@ bool Analyzer2DAccumulator:: parseLine( KernelConnection *whichKernel, istringst
 
 bool Analyzer2DAccumulateByControlWindow::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
-    vector<KWindow *>& windows,
+    vector<Window *>& windows,
     Histogram *histogram,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1394,7 +1388,7 @@ bool Analyzer2DAccumulateByControlWindow::parseLine( KernelConnection *whichKern
 
 bool Analyzer2DSortCols::parseLine( KernelConnection *whichKernel, istringstream& line,
                                     Trace *whichTrace,
-                                    vector<KWindow *>& windows,
+                                    vector<Window *>& windows,
                                     Histogram *histogram,
                                     TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1420,7 +1414,7 @@ bool Analyzer2DSortCols::parseLine( KernelConnection *whichKernel, istringstream
 
 bool Analyzer2DSortCriteria::parseLine( KernelConnection *whichKernel, istringstream& line,
                                         Trace *whichTrace,
-                                        vector<KWindow *>& windows,
+                                        vector<Window *>& windows,
                                         Histogram *histogram,
                                         TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1454,7 +1448,7 @@ bool Analyzer2DSortCriteria::parseLine( KernelConnection *whichKernel, istringst
 */
 bool Analyzer2DParameters::parseLine( KernelConnection *whichKernel, istringstream& line,
                                       Trace *whichTrace,
-                                      vector<KWindow *>& windows,
+                                      vector<Window *>& windows,
                                       Histogram *histogram,
                                       TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1488,7 +1482,7 @@ bool Analyzer2DParameters::parseLine( KernelConnection *whichKernel, istringstre
 
 bool Analyzer2DAnalysisLimits::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
-    vector<KWindow *>& windows,
+    vector<Window *>& windows,
     Histogram *histogram,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1516,7 +1510,7 @@ bool Analyzer2DAnalysisLimits::parseLine( KernelConnection *whichKernel, istring
 
 bool Analyzer2DRelativeTime::parseLine( KernelConnection *whichKernel, istringstream& line,
                                         Trace *whichTrace,
-                                        vector<KWindow *>& windows,
+                                        vector<Window *>& windows,
                                         Histogram *histogram,
                                         TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1542,7 +1536,7 @@ bool Analyzer2DRelativeTime::parseLine( KernelConnection *whichKernel, istringst
 
 bool Analyzer2DComputeYScale::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
-    vector<KWindow *>& windows,
+    vector<Window *>& windows,
     Histogram *histogram,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1567,7 +1561,7 @@ bool Analyzer2DComputeYScale::parseLine( KernelConnection *whichKernel, istrings
 
 bool Analyzer2DMinimum::parseLine( KernelConnection *whichKernel, istringstream& line,
                                    Trace *whichTrace,
-                                   vector<KWindow *>& windows,
+                                   vector<Window *>& windows,
                                    Histogram *histogram,
                                    TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1590,7 +1584,7 @@ bool Analyzer2DMinimum::parseLine( KernelConnection *whichKernel, istringstream&
 
 bool Analyzer2DMaximum::parseLine( KernelConnection *whichKernel, istringstream& line,
                                    Trace *whichTrace,
-                                   vector<KWindow *>& windows,
+                                   vector<Window *>& windows,
                                    Histogram *histogram,
                                    TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1613,7 +1607,7 @@ bool Analyzer2DMaximum::parseLine( KernelConnection *whichKernel, istringstream&
 
 bool Analyzer2DDelta::parseLine( KernelConnection *whichKernel, istringstream& line,
                                  Trace *whichTrace,
-                                 vector<KWindow *>& windows,
+                                 vector<Window *>& windows,
                                  Histogram *histogram,
                                  TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1636,7 +1630,7 @@ bool Analyzer2DDelta::parseLine( KernelConnection *whichKernel, istringstream& l
 
 bool Analyzer2DComputeGradient::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
-    vector<KWindow *>& windows,
+    vector<Window *>& windows,
     Histogram *histogram,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1662,7 +1656,7 @@ bool Analyzer2DComputeGradient::parseLine( KernelConnection *whichKernel, istrin
 
 bool Analyzer2DMinimumGradient::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
-    vector<KWindow *>& windows,
+    vector<Window *>& windows,
     Histogram *histogram,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1685,7 +1679,7 @@ bool Analyzer2DMinimumGradient::parseLine( KernelConnection *whichKernel, istrin
 
 bool Analyzer2DMaximumGradient::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
-    vector<KWindow *>& windows,
+    vector<Window *>& windows,
     Histogram *histogram,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1708,7 +1702,7 @@ bool Analyzer2DMaximumGradient::parseLine( KernelConnection *whichKernel, istrin
 
 bool Analyzer3DControlWindow::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
-    vector<KWindow *>& windows,
+    vector<Window *>& windows,
     Histogram *histogram,
     TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1731,7 +1725,7 @@ bool Analyzer3DControlWindow::parseLine( KernelConnection *whichKernel, istrings
 
 bool Analyzer3DMinimum::parseLine( KernelConnection *whichKernel, istringstream& line,
                                    Trace *whichTrace,
-                                   vector<KWindow *>& windows,
+                                   vector<Window *>& windows,
                                    Histogram *histogram,
                                    TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1754,7 +1748,7 @@ bool Analyzer3DMinimum::parseLine( KernelConnection *whichKernel, istringstream&
 
 bool Analyzer3DMaximum::parseLine( KernelConnection *whichKernel, istringstream& line,
                                    Trace *whichTrace,
-                                   vector<KWindow *>& windows,
+                                   vector<Window *>& windows,
                                    Histogram *histogram,
                                    TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1777,7 +1771,7 @@ bool Analyzer3DMaximum::parseLine( KernelConnection *whichKernel, istringstream&
 
 bool Analyzer3DDelta::parseLine( KernelConnection *whichKernel, istringstream& line,
                                  Trace *whichTrace,
-                                 vector<KWindow *>& windows,
+                                 vector<Window *>& windows,
                                  Histogram *histogram,
                                  TRecordTime& beginTime, TRecordTime& endTime )
 {
@@ -1800,7 +1794,7 @@ bool Analyzer3DDelta::parseLine( KernelConnection *whichKernel, istringstream& l
 
 bool Analyzer3DFixedValue::parseLine( KernelConnection *whichKernel, istringstream& line,
                                       Trace *whichTrace,
-                                      vector<KWindow *>& windows,
+                                      vector<Window *>& windows,
                                       Histogram *histogram,
                                       TRecordTime& beginTime, TRecordTime& endTime )
 {

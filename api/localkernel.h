@@ -6,13 +6,17 @@
 class LocalKernel: public KernelConnection
 {
   public:
+    static void init();
+
     LocalKernel();
     virtual ~LocalKernel();
 
-    virtual Window *newKSingleWindow( Trace *whichTrace ) const;
-    virtual Window *newKDerivedWindow( Window *window1, Window * window2 ) const;
-    virtual Histogram *newKHistogram() const;
-    virtual RecordList *newRecordList() const;
+    virtual Window *newSingleWindow() const;
+    virtual Window *newSingleWindow( Trace *whichTrace ) const;
+    virtual Window *newDerivedWindow() const;
+    virtual Window *newDerivedWindow( Window *window1, Window * window2 ) const;
+    virtual Histogram *newHistogram() const;
+//    virtual RecordList *newRecordList() const;
   protected:
 
   private:

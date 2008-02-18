@@ -1,4 +1,5 @@
 #include "krecordlist.h"
+#include "paraverkernelexception.h"
 
 KRecordList::KRecordList()
 {
@@ -49,9 +50,9 @@ void KRecordList::insert( MemoryTrace::iterator *it )
   else if ( tmp.getType() & COMM )
     tmp.setCommIndex( it->getCommIndex() );
   else
-    throw // hay que crear nueva excepcion o usar ParaverKernelException
+    throw ParaverKernelException();
 
-    list.insert( tmp );
+  list.insert( tmp );
 
   newRec = true;
 }
