@@ -293,11 +293,11 @@ bool WindowType::parseLine( KernelConnection *whichKernel, istringstream& line,
   getline( line, type, ' ' );
   if ( type.compare( "single" ) == 0 )
   {
-    tmpWin = whichKernel->newSingleWindow( whichTrace );
+    tmpWin = Window::create( whichKernel, whichTrace );
   }
   else if ( type.compare( "composed" ) == 0 )
   {
-    tmpWin = whichKernel->newDerivedWindow();
+    tmpWin = Window::create( whichKernel );
   }
   else
     return false;

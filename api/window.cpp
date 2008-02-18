@@ -7,6 +7,11 @@ Window *Window::create( KernelConnection *whichKernel, Trace *whichTrace )
   return new WindowProxy( whichKernel, whichTrace );
 }
 
+Window *Window::create( KernelConnection *whichKernel )
+{
+  return new WindowProxy( whichKernel );
+}
+
 Window *Window::create( KernelConnection *whichKernel, Window *parent1, Window *parent2 )
 {
   return new WindowProxy( whichKernel, parent1, parent2 );
@@ -17,6 +22,7 @@ Window::Window( KernelConnection *whichKernel ) : myKernel( whichKernel )
 
 Filter *Window::getFilter() const
 {
+  cout << "Window" << endl;
   return NULL;
 }
 
@@ -38,6 +44,12 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *parent1, Window
   myWindow = myKernel->newDerivedWindow( parent1, parent2 );
 }
 
+WindowProxy::WindowProxy( KernelConnection *whichKernel ):
+    Window( whichKernel )
+{
+  myWindow = myKernel->newDerivedWindow();
+}
+
 WindowProxy::~WindowProxy()
 {
   delete myWindow;
@@ -45,20 +57,21 @@ WindowProxy::~WindowProxy()
 
 Filter *WindowProxy::getFilter() const
 {
-  if( !myWindow->isDerivedWindow() )
+  cout << "WindowProxy" << endl;
+  if ( !myWindow->isDerivedWindow() )
     return myWindow->getFilter();
   return NULL;
 }
 
 void WindowProxy::setFactor( UINT16 whichFactor, TSemanticValue newValue )
 {
-  if( myWindow->isDerivedWindow() )
+  if ( myWindow->isDerivedWindow() )
     myWindow->setFactor( whichFactor, newValue );
 }
 
 void WindowProxy::setParent( UINT16 whichParent, Window *whichWindow )
 {
-  if( myWindow->isDerivedWindow() )
+  if ( myWindow->isDerivedWindow() )
     myWindow->setParent( whichParent, whichWindow );
 }
 
