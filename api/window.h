@@ -16,7 +16,8 @@ class Window
     static Window *create( KernelConnection *whichKernel, Trace *whichTrace );
     //Create Derived Window
     static Window *create( KernelConnection *whichKernel );
-    static Window *create( KernelConnection *whichKernel, Window *parent1, Window *parent2 );
+    static Window *create( KernelConnection *whichKernel, Window *whichParent1,
+                           Window *whichParent2 );
 
     Window() {}
     Window( KernelConnection *whichKernel );
@@ -113,11 +114,16 @@ class WindowProxy: public Window
   private:
     Window *myWindow;
 
+    // Must store the associated proxies
+    Window *parent1;
+    Window *parent2;
+
     // For Single Window
     WindowProxy( KernelConnection *whichKernel, Trace *whichTrace );
     // For Derived Window
     WindowProxy( KernelConnection *whichKernel );
-    WindowProxy( KernelConnection *whichKernel, Window *parent1, Window *parent2 );
+    WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
+                 Window *whichParent2 );
 
     friend Window *Window::create( KernelConnection *, Trace * );
     friend Window *Window::create( KernelConnection * );

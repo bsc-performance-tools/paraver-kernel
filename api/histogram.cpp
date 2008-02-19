@@ -14,6 +14,9 @@ Histogram::Histogram( KernelConnection *whichKernel ) : myKernel( whichKernel )
 HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
     Histogram( whichKernel )
 {
+  controlWindow = NULL;
+  dataWindow = NULL;
+  extraControlWindow = NULL;
   myHisto = myKernel->newHistogram();
 }
 
@@ -39,46 +42,52 @@ TRecordTime HistogramProxy::getEndTime() const
 
 Window *HistogramProxy::getControlWindow() const
 {
-  return myHisto->getControlWindow();
+  return controlWindow;
 }
 
 Window *HistogramProxy::getDataWindow() const
 {
-  return myHisto->getDataWindow();
+  return dataWindow;
 }
 
 Window *HistogramProxy::getExtraControlWindow() const
 {
-  return myHisto->getExtraControlWindow();
+  return extraControlWindow;
 }
 
 void HistogramProxy::setControlWindow( Window *whichWindow )
 {
-  myHisto->setControlWindow( whichWindow );
+  controlWindow = whichWindow;
+  myHisto->setControlWindow( whichWindow->getConcrete() );
 }
 
 void HistogramProxy::setDataWindow( Window *whichWindow )
 {
-  myHisto->setDataWindow( whichWindow );
+  dataWindow = whichWindow;
+  myHisto->setDataWindow( whichWindow->getConcrete() );
 }
 
 void HistogramProxy::setExtraControlWindow( Window *whichWindow )
 {
-  myHisto->setExtraControlWindow( whichWindow );
+  extraControlWindow = whichWindow;
+  myHisto->setExtraControlWindow( whichWindow->getConcrete() );
 }
 
 void HistogramProxy::clearControlWindow()
 {
+  controlWindow = NULL;
   myHisto->clearControlWindow();
 }
 
 void HistogramProxy::clearDataWindow()
 {
+  dataWindow = NULL;
   myHisto->clearDataWindow();
 }
 
 void HistogramProxy::clearExtraControlWindow()
 {
+  extraControlWindow = NULL;
   myHisto->clearExtraControlWindow();
 }
 

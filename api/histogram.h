@@ -186,6 +186,11 @@ class HistogramProxy : public Histogram
     bool horizontal;
     bool hideColumns;
 
+    // Must store the associated proxies
+    Window *controlWindow;
+    Window *dataWindow;
+    Window *extraControlWindow;
+
     Histogram *myHisto;
 
     HistogramProxy( KernelConnection *whichKernel );

@@ -34,18 +34,25 @@ void Window::setParent( UINT16 whichParent, Window *whichWindow )
 WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
     Window( whichKernel )
 {
+  parent1 = NULL;
+  parent2 = NULL;
   myWindow = myKernel->newSingleWindow( whichTrace );
 }
 
-WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *parent1, Window *parent2 ):
+WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
+                          Window *whichParent2 ):
     Window( whichKernel )
 {
+  parent1 = whichParent1;
+  parent2 = whichParent2;
   myWindow = myKernel->newDerivedWindow( parent1, parent2 );
 }
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel ):
     Window( whichKernel )
 {
+  parent1 = NULL;
+  parent2 = NULL;
   myWindow = myKernel->newDerivedWindow();
 }
 
@@ -70,12 +77,18 @@ void WindowProxy::setFactor( UINT16 whichFactor, TSemanticValue newValue )
 void WindowProxy::setParent( UINT16 whichParent, Window *whichWindow )
 {
   if ( myWindow->isDerivedWindow() )
+  {
+    if( whichParent == 0 )
+      parent1 = whichWindow;
+    else if( whichParent == 1 )
+      parent2 = whichWindow;
     myWindow->setParent( whichParent, whichWindow->getConcrete() );
+  }
 }
 
 Trace *WindowProxy::getTrace() const
 {
-  return myWindow->getTrace();;
+  return myWindow->getTrace();
 }
 
 TWindowLevel WindowProxy::getLevel() const
