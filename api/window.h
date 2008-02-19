@@ -57,8 +57,14 @@ class Window
     virtual TObjectOrder getWindowLevelObjects() = 0;
     virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime ) = 0;
 
+    virtual Window *getConcrete() const
+    {
+      return NULL;
+    }
+
   protected:
     KernelConnection *myKernel;
+
 };
 
 
@@ -101,6 +107,8 @@ class WindowProxy: public Window
     virtual TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread );
     virtual TObjectOrder getWindowLevelObjects();
     virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime );
+
+    virtual Window *getConcrete() const;
 
   private:
     Window *myWindow;

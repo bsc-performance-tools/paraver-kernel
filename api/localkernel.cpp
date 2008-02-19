@@ -31,7 +31,7 @@ Window *LocalKernel::newSingleWindow( Trace *whichTrace ) const
 
 Window *LocalKernel::newDerivedWindow( Window *window1, Window * window2 ) const
 {
-  return new KDerivedWindow( window1, window2 );
+  return new KDerivedWindow( window1->getConcrete(), window2->getConcrete() );
 }
 
 Window *LocalKernel::newDerivedWindow() const

@@ -70,7 +70,7 @@ void WindowProxy::setFactor( UINT16 whichFactor, TSemanticValue newValue )
 void WindowProxy::setParent( UINT16 whichParent, Window *whichWindow )
 {
   if ( myWindow->isDerivedWindow() )
-    myWindow->setParent( whichParent, whichWindow );
+    myWindow->setParent( whichParent, whichWindow->getConcrete() );
 }
 
 Trace *WindowProxy::getTrace() const
@@ -184,4 +184,9 @@ TObjectOrder WindowProxy::getWindowLevelObjects()
 TRecordTime WindowProxy::traceUnitsToWindowUnits( TRecordTime whichTime )
 {
   return myWindow->traceUnitsToWindowUnits( whichTime );
+}
+
+Window *WindowProxy::getConcrete() const
+{
+  return myWindow;
 }
