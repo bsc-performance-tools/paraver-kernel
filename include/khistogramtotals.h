@@ -4,14 +4,15 @@
 #include <vector>
 #include "paraverkerneltypes.h"
 #include "vectorutils.h"
+#include "histogramtotals.h"
 
 using namespace std;
 
-class KHistogramTotals
+class KHistogramTotals: public HistogramTotals
 {
   public:
     KHistogramTotals( UINT16 numStat, THistogramColumn numColumns,
-                     THistogramColumn numPlanes );
+                      THistogramColumn numPlanes );
     ~KHistogramTotals();
 
     void newValue( TSemanticValue whichValue,

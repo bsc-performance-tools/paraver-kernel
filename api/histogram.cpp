@@ -1,6 +1,7 @@
 #include "kernelconnection.h"
 #include "histogram.h"
 #include "window.h"
+#include "histogramtotals.h"
 
 Histogram *Histogram::create( KernelConnection *whichKernel )
 {
@@ -256,24 +257,24 @@ bool HistogramProxy::planeCommWithValues( UINT32 plane ) const
   return myHisto->planeCommWithValues( plane );
 }
 
-KHistogramTotals *HistogramProxy::getColumnTotals() const
+HistogramTotals *HistogramProxy::getColumnTotals() const
 {
-  return myHisto->getColumnTotals();
+  return HistogramTotals::create( myHisto->getColumnTotals() );
 }
 
-KHistogramTotals *HistogramProxy::getCommColumnTotals() const
+HistogramTotals *HistogramProxy::getCommColumnTotals() const
 {
-  return myHisto->getCommColumnTotals();
+  return HistogramTotals::create( myHisto->getCommColumnTotals() );
 }
 
-KHistogramTotals *HistogramProxy::getRowTotals() const
+HistogramTotals *HistogramProxy::getRowTotals() const
 {
-  return myHisto->getRowTotals();
+  return HistogramTotals::create( myHisto->getRowTotals() );
 }
 
-KHistogramTotals *HistogramProxy::getCommRowTotals() const
+HistogramTotals *HistogramProxy::getCommRowTotals() const
 {
-  return myHisto->getCommRowTotals();
+  return HistogramTotals::create( myHisto->getCommRowTotals() );
 }
 
 void HistogramProxy::clearStatistics()

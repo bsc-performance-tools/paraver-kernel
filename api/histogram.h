@@ -4,7 +4,7 @@
 #include "paraverkerneltypes.h"
 
 class KernelConnection;
-class KHistogramTotals;
+class HistogramTotals;
 class HistogramStatistic;
 class Window;
 
@@ -74,10 +74,10 @@ class Histogram
     virtual bool endCommCell( UINT32 col, UINT32 plane = 0 ) = 0;
     virtual bool planeCommWithValues( UINT32 plane = 0 ) const = 0;
 
-    virtual KHistogramTotals *getColumnTotals() const = 0;
-    virtual KHistogramTotals *getCommColumnTotals() const = 0;
-    virtual KHistogramTotals *getRowTotals() const = 0;
-    virtual KHistogramTotals *getCommRowTotals() const = 0;
+    virtual HistogramTotals *getColumnTotals() const = 0;
+    virtual HistogramTotals *getCommColumnTotals() const = 0;
+    virtual HistogramTotals *getRowTotals() const = 0;
+    virtual HistogramTotals *getCommRowTotals() const = 0;
 
     virtual void clearStatistics() = 0;
     virtual void pushbackStatistic( HistogramStatistic *whichStatistic ) = 0;
@@ -169,10 +169,10 @@ class HistogramProxy : public Histogram
     virtual void setCommFirstCell( UINT32 col, UINT32 plane = 0 );
     virtual bool endCommCell( UINT32 col, UINT32 plane = 0 );
     virtual bool planeCommWithValues( UINT32 plane = 0 ) const;
-    virtual KHistogramTotals *getColumnTotals() const;
-    virtual KHistogramTotals *getCommColumnTotals() const;
-    virtual KHistogramTotals *getRowTotals() const;
-    virtual KHistogramTotals *getCommRowTotals() const;
+    virtual HistogramTotals *getColumnTotals() const;
+    virtual HistogramTotals *getCommColumnTotals() const;
+    virtual HistogramTotals *getRowTotals() const;
+    virtual HistogramTotals *getCommRowTotals() const;
     virtual void clearStatistics();
     virtual void pushbackStatistic( HistogramStatistic *whichStatistic );
     virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime );

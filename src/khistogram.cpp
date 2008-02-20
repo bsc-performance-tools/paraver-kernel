@@ -482,25 +482,25 @@ bool KHistogram::planeCommWithValues( UINT32 plane ) const
 }
 
 
-KHistogramTotals *KHistogram::getColumnTotals() const
+HistogramTotals *KHistogram::getColumnTotals() const
 {
   return totals;
 }
 
 
-KHistogramTotals *KHistogram::getCommColumnTotals() const
+HistogramTotals *KHistogram::getCommColumnTotals() const
 {
   return commTotals;
 }
 
 
-KHistogramTotals *KHistogram::getRowTotals() const
+HistogramTotals *KHistogram::getRowTotals() const
 {
   return rowTotals;
 }
 
 
-KHistogramTotals *KHistogram::getCommRowTotals() const
+HistogramTotals *KHistogram::getCommRowTotals() const
 {
   return rowCommTotals;
 }

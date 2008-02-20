@@ -143,10 +143,10 @@ class KHistogram : public Histogram
     bool endCommCell( UINT32 col, UINT32 plane = 0 );
     bool planeCommWithValues( UINT32 plane = 0 ) const;
 
-    KHistogramTotals *getColumnTotals() const;
-    KHistogramTotals *getCommColumnTotals() const;
-    KHistogramTotals *getRowTotals() const;
-    KHistogramTotals *getCommRowTotals() const;
+    HistogramTotals *getColumnTotals() const;
+    HistogramTotals *getCommColumnTotals() const;
+    HistogramTotals *getRowTotals() const;
+    HistogramTotals *getCommRowTotals() const;
 
     void clearStatistics();
     void pushbackStatistic( HistogramStatistic *whichStatistic );
