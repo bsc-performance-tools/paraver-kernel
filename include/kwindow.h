@@ -112,7 +112,7 @@ class KWindow:public Window
     virtual bool initFromBegin() const = 0;
 
     RecordList *getRecordList( TObjectOrder whichObject );
-    virtual RecordList *init( TRecordTime initialTime, TCreateList create ) = 0;
+    virtual void init( TRecordTime initialTime, TCreateList create ) = 0;
     virtual RecordList *calcNext( TObjectOrder whichObject ) = 0;
     virtual RecordList *calcPrev( TObjectOrder whichObject ) = 0;
 
@@ -201,7 +201,7 @@ class KSingleWindow: public KWindow
 
     virtual bool initFromBegin() const;
 
-    virtual RecordList *init( TRecordTime initialTime, TCreateList create );
+    virtual void init( TRecordTime initialTime, TCreateList create );
     virtual RecordList *calcNext( TObjectOrder whichObject );
     virtual RecordList *calcPrev( TObjectOrder whichObject );
 
@@ -329,7 +329,7 @@ class KDerivedWindow: public KWindow
 
     virtual bool initFromBegin() const;
 
-    virtual RecordList *init( TRecordTime initialTime, TCreateList create );
+    virtual void init( TRecordTime initialTime, TCreateList create );
     virtual RecordList *calcNext( TObjectOrder whichObject );
     virtual RecordList *calcPrev( TObjectOrder whichObject );
 

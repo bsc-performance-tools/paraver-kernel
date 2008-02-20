@@ -46,7 +46,7 @@ class Window
                                    TParamIndex whichParam,
                                    const TParamValue& newValue ) = 0;
     virtual RecordList *getRecordList( TObjectOrder whichObject ) = 0;
-    virtual RecordList *init( TRecordTime initialTime, TCreateList create ) = 0;
+    virtual void init( TRecordTime initialTime, TCreateList create ) = 0;
     virtual RecordList *calcNext( TObjectOrder whichObject ) = 0;
     virtual RecordList *calcPrev( TObjectOrder whichObject ) = 0;
     virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const = 0;
@@ -97,7 +97,7 @@ class WindowProxy: public Window
                                    TParamIndex whichParam,
                                    const TParamValue& newValue );
     virtual RecordList *getRecordList( TObjectOrder whichObject );
-    virtual RecordList *init( TRecordTime initialTime, TCreateList create );
+    virtual void init( TRecordTime initialTime, TCreateList create );
     virtual RecordList *calcNext( TObjectOrder whichObject );
     virtual RecordList *calcPrev( TObjectOrder whichObject );
     virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const;
@@ -113,6 +113,8 @@ class WindowProxy: public Window
 
   private:
     Window *myWindow;
+
+    vector<RecordList *> myLists;
 
     // Must store the associated proxies
     Window *parent1;

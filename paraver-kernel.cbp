@@ -145,6 +145,9 @@
 			<Option target="api" />
 		</Unit>
 		<Unit filename="api/histogram.h" />
+		<Unit filename="api/histogramtotals.cpp">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="api/histogramtotals.h" />
 		<Unit filename="api/kernelconnection.h" />
 		<Unit filename="api/localkernel.cpp">

@@ -264,7 +264,7 @@ KSingleWindow::~KSingleWindow()
   delete myFilter;
 }
 
-RecordList *KSingleWindow::init( TRecordTime initialTime, TCreateList create )
+void KSingleWindow::init( TRecordTime initialTime, TCreateList create )
 {
   TObjectOrder objectSize = 0;
 
@@ -307,8 +307,6 @@ RecordList *KSingleWindow::init( TRecordTime initialTime, TCreateList create )
 
   for ( TObjectOrder i = 0; i < objectSize; i++ )
     intervalTopCompose1[ i ].init( initialTime, create );
-
-  return NULL;
 }
 
 
@@ -596,7 +594,7 @@ bool KDerivedWindow::initFromBegin() const
 }
 
 
-RecordList *KDerivedWindow::init( TRecordTime initialTime, TCreateList create )
+void KDerivedWindow::init( TRecordTime initialTime, TCreateList create )
 {
   TObjectOrder objectSize = 0;
   TWindowLevel tmpLevel = getLevel();
@@ -625,8 +623,6 @@ RecordList *KDerivedWindow::init( TRecordTime initialTime, TCreateList create )
 
   for ( TObjectOrder i = 0; i < objectSize; i++ )
     intervalTopCompose1[ i ].init( initialTime, create );
-
-  return NULL;
 }
 
 
