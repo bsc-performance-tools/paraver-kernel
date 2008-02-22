@@ -25,11 +25,17 @@ class Window
 
     // Specefic for WindowProxy because Single and Derived window
     // SingleWindow
-    virtual Filter *getFilter() const = 0;
+    virtual Filter *getFilter() const;
 
     //DerivedWindow
-    virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue ) = 0;
-    virtual void setParent( UINT16 whichParent, Window *whichWindow ) = 0;
+    virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue );
+    virtual void setParent( UINT16 whichParent, Window *whichWindow );
+
+    // Other
+    virtual void setWindowBeginTime( TRecordTime whichTime );
+    virtual void setWindowEndTime( TRecordTime whichTime );
+    virtual TRecordTime getWindowBeginTime() const;
+    virtual TRecordTime getWindowEndTime() const;
 
     //------------------------------------------------------------
     virtual Trace *getTrace() const = 0;
@@ -82,6 +88,12 @@ class WindowProxy: public Window
     virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue );
     virtual void setParent( UINT16 whichParent, Window *whichWindow );
 
+    // Other
+    virtual void setWindowBeginTime( TRecordTime whichTime );
+    virtual void setWindowEndTime( TRecordTime whichTime );
+    virtual TRecordTime getWindowBeginTime() const;
+    virtual TRecordTime getWindowEndTime() const;
+
     //------------------------------------------------------------
     virtual Trace *getTrace() const;
     virtual TWindowLevel getLevel() const;
@@ -113,6 +125,9 @@ class WindowProxy: public Window
 
   private:
     Window *myWindow;
+
+    TRecordTime winBeginTime;
+    TRecordTime winEndTime;
 
     vector<RecordList *> myLists;
 

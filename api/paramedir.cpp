@@ -87,11 +87,13 @@ int main( int argc, char *argv[] )
         currentArg++;
       }
 
-      if ( CFGLoader::loadCFG( myKernel, strCfg, trace, windows, histogram,
-                               beginTime, endTime ) )
+      if ( CFGLoader::loadCFG( myKernel, strCfg, trace, windows, histogram ) )
       {
         ofstream outputFile;
         Window *tmpWindow = windows[ windows.size() - 1 ];
+
+        beginTime = tmpWindow->getWindowBeginTime();
+        endTime = tmpWindow->getWindowEndTime();
 
         tmpWindow->init( beginTime, NOCREATE );
 

@@ -31,6 +31,22 @@ void Window::setFactor( UINT16 whichFactor, TSemanticValue newValue )
 void Window::setParent( UINT16 whichParent, Window *whichWindow )
 {}
 
+void Window::setWindowBeginTime( TRecordTime whichTime )
+{}
+
+void Window::setWindowEndTime( TRecordTime whichTime )
+{}
+
+TRecordTime Window::getWindowBeginTime() const
+{
+  return 0;
+}
+
+TRecordTime Window::getWindowEndTime() const
+{
+  return 0;
+}
+
 WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
     Window( whichKernel )
 {
@@ -78,12 +94,32 @@ void WindowProxy::setParent( UINT16 whichParent, Window *whichWindow )
 {
   if ( myWindow->isDerivedWindow() )
   {
-    if( whichParent == 0 )
+    if ( whichParent == 0 )
       parent1 = whichWindow;
-    else if( whichParent == 1 )
+    else if ( whichParent == 1 )
       parent2 = whichWindow;
     myWindow->setParent( whichParent, whichWindow->getConcrete() );
   }
+}
+
+void WindowProxy::setWindowBeginTime( TRecordTime whichTime )
+{
+  winBeginTime = whichTime;
+}
+
+void WindowProxy::setWindowEndTime( TRecordTime whichTime )
+{
+  winEndTime = whichTime;
+}
+
+TRecordTime WindowProxy::getWindowBeginTime() const
+{
+  return winBeginTime;
+}
+
+TRecordTime WindowProxy::getWindowEndTime() const
+{
+  return winEndTime;
 }
 
 Trace *WindowProxy::getTrace() const
@@ -141,20 +177,20 @@ void WindowProxy::setFunctionParam( TWindowLevel whichLevel,
 
 RecordList *WindowProxy::getRecordList( TObjectOrder whichObject )
 {
-  if( myLists.begin() == myLists.end() )
+  if ( myLists.begin() == myLists.end() )
     return NULL;
   return myLists[ whichObject ];
 }
 
 void WindowProxy::init( TRecordTime initialTime, TCreateList create )
 {
-  if( myLists.begin() != myLists.end() )
+  if ( myLists.begin() != myLists.end() )
   {
-    for( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); it++ )
+    for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); it++ )
       delete *it;
     myLists.clear();
   }
-  for( int i = 0; i < myWindow->getWindowLevelObjects(); i++ )
+  for ( int i = 0; i < myWindow->getWindowLevelObjects(); i++ )
     myLists.push_back( NULL );
 
   myWindow->init( initialTime, create );
@@ -162,7 +198,7 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create )
 
 RecordList *WindowProxy::calcNext( TObjectOrder whichObject )
 {
-  if( myLists[ whichObject ] == NULL )
+  if ( myLists[ whichObject ] == NULL )
     myLists[ whichObject ] = RecordList::create( myWindow->calcNext( whichObject ) );
   else
     myWindow->calcNext( whichObject );
@@ -172,7 +208,7 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject )
 
 RecordList *WindowProxy::calcPrev( TObjectOrder whichObject )
 {
-  if( myLists[ whichObject ] == NULL )
+  if ( myLists[ whichObject ] == NULL )
     myLists[ whichObject ] = RecordList::create( myWindow->calcPrev( whichObject ) );
   else
     myWindow->calcPrev( whichObject );

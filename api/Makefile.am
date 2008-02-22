@@ -4,10 +4,11 @@ libcfg_la_SOURCES = \
                     cfg.cpp
 
 libapi_la_SOURCES = \
-                    localkernel.cpp \
                     histogram.cpp \
-                    window.cpp \
-                    recordlist.cpp
+                    histogramtotals.cpp \
+                    localkernel.cpp \
+                    recordlist.cpp \
+                    window.cpp
 
 # Erases everything which should not be uploaded to CVS
 mrproper: distclean

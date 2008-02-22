@@ -17,6 +17,9 @@ class Histogram
     Histogram( KernelConnection *whichKernel );
     virtual ~Histogram() {}
 
+    virtual void setWindowBeginTime( TRecordTime whichTime );
+    virtual void setWindowEndTime( TRecordTime whichTime );
+
     virtual bool getThreeDimensions() const = 0;
 
     virtual TRecordTime getBeginTime() const = 0;
@@ -121,6 +124,9 @@ class HistogramProxy : public Histogram
   public:
     virtual ~HistogramProxy();
 
+    virtual void setWindowBeginTime( TRecordTime whichTime );
+    virtual void setWindowEndTime( TRecordTime whichTime );
+
     virtual bool getThreeDimensions() const;
     virtual TRecordTime getBeginTime() const;
     virtual TRecordTime getEndTime() const;
@@ -185,6 +191,9 @@ class HistogramProxy : public Histogram
   private:
     bool horizontal;
     bool hideColumns;
+
+    TRecordTime winBeginTime;
+    TRecordTime winEndTime;
 
     // Must store the associated proxies
     Window *controlWindow;

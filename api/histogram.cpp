@@ -12,6 +12,12 @@ Histogram *Histogram::create( KernelConnection *whichKernel )
 Histogram::Histogram( KernelConnection *whichKernel ) : myKernel( whichKernel )
 {}
 
+void Histogram::setWindowBeginTime( TRecordTime whichTime )
+{}
+
+void Histogram::setWindowEndTime( TRecordTime whichTime )
+{}
+
 HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
     Histogram( whichKernel )
 {
@@ -26,6 +32,16 @@ HistogramProxy::~HistogramProxy()
   delete myHisto;
 }
 
+void HistogramProxy::setWindowBeginTime( TRecordTime whichTime )
+{
+  winBeginTime = whichTime;
+}
+
+void HistogramProxy::setWindowEndTime( TRecordTime whichTime )
+{
+  winEndTime = whichTime;
+}
+
 bool HistogramProxy::getThreeDimensions() const
 {
   return myHisto->getThreeDimensions();
@@ -33,12 +49,12 @@ bool HistogramProxy::getThreeDimensions() const
 
 TRecordTime HistogramProxy::getBeginTime() const
 {
-  return myHisto->getBeginTime();
+  return winBeginTime;
 }
 
 TRecordTime HistogramProxy::getEndTime() const
 {
-  return myHisto->getEndTime();
+  return winEndTime;
 }
 
 Window *HistogramProxy::getControlWindow() const
@@ -289,6 +305,8 @@ void HistogramProxy::pushbackStatistic( HistogramStatistic *whichStatistic )
 
 void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
 {
+  winBeginTime = whichBeginTime;
+  winEndTime = whichEndTime;
   myHisto->execute( whichBeginTime, whichEndTime );
 }
 
