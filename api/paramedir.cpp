@@ -58,9 +58,7 @@ int main( int argc, char *argv[] )
     {
       string strCfg( argv[ currentArg ] );
       vector<Window *> windows;
-      Histogram *histogram;
-      TRecordTime beginTime;
-      TRecordTime endTime;
+      Histogram *histogram = NULL;
       string strOutputFile;
 
       if ( CFGLoader::isCFGFile( strCfg ) )
@@ -89,64 +87,10 @@ int main( int argc, char *argv[] )
 
       if ( CFGLoader::loadCFG( myKernel, strCfg, trace, windows, histogram ) )
       {
-        ofstream outputFile;
-        Window *tmpWindow = windows[ windows.size() - 1 ];
-
-        beginTime = tmpWindow->getWindowBeginTime();
-        endTime = tmpWindow->getWindowEndTime();
-
-        tmpWindow->init( beginTime, NOCREATE );
-
-        if ( endTime > trace->getEndTime() )
-          endTime = trace->getEndTime();
-
-        if ( !multipleFiles )
-          outputFile.open( strOutputFile.c_str() );
-
-        for ( TObjectOrder i = 0; i < tmpWindow->getWindowLevelObjects(); i++ )
-        {
-          if ( multipleFiles )
-          {
-            ostringstream tmpName;
-            tmpName << strOutputFile  << "_" << setw( 5 ) << setfill( '0' ) << i + 1;
-            outputFile.open( tmpName.str().c_str() );
-          }
-
-          outputFile << fixed;
-          outputFile << showpoint;
-
-          while ( tmpWindow->getEndTime( i ) < endTime )
-          {
-            outputFile << setprecision( outputPrecision );
-            if ( !multipleFiles )
-              outputFile << i + 1 << "\t";
-            outputFile << tmpWindow->traceUnitsToWindowUnits(
-              tmpWindow->getBeginTime( i ) ) << "\t";
-            outputFile << tmpWindow->traceUnitsToWindowUnits(
-              tmpWindow->getEndTime( i ) - tmpWindow->getBeginTime( i ) ) << "\t";
-            outputFile << tmpWindow->getValue( i ) << endl;
-            tmpWindow->calcNext( i );
-          }
-          outputFile << setprecision( outputPrecision );
-          if ( !multipleFiles )
-            outputFile << i + 1 << "\t";
-          outputFile << tmpWindow->traceUnitsToWindowUnits(
-            tmpWindow->getBeginTime( i ) ) << "\t";
-          outputFile << tmpWindow->traceUnitsToWindowUnits(
-            tmpWindow->getEndTime( i ) - tmpWindow->getBeginTime( i ) ) << "\t";
-          outputFile << tmpWindow->getValue( i ) << endl;
-
-          if ( multipleFiles )
-            outputFile.close();
-        }
-
-        if ( multipleFiles )
-          cout << strOutputFile << "_* files wrote." << endl;
+        if( histogram != NULL )
+          dumpHistogram( histogram, strOutputFile );
         else
-        {
-          outputFile.close();
-          cout << strOutputFile << " file wrote." << endl;
-        }
+          dumpWindow( windows, strOutputFile );
       }
       else
         cout << "Cannot load '" << strCfg << "' file." << endl;
@@ -157,6 +101,9 @@ int main( int argc, char *argv[] )
           delete windows[ i ];
       }
       windows.clear();
+
+      if( histogram != NULL )
+        delete histogram;
     }
 
     delete trace;
@@ -165,6 +112,73 @@ int main( int argc, char *argv[] )
   return 1;
 }
 
+
+void dumpWindow( vector<Window *>& windows, string& strOutputFile )
+{
+  TRecordTime beginTime;
+  TRecordTime endTime;
+  ofstream outputFile;
+  Window *tmpWindow = windows[ windows.size() - 1 ];
+
+  beginTime = tmpWindow->getWindowBeginTime();
+  endTime = tmpWindow->getWindowEndTime();
+
+  tmpWindow->init( beginTime, NOCREATE );
+
+  if ( endTime > trace->getEndTime() )
+    endTime = trace->getEndTime();
+
+  if ( !multipleFiles )
+    outputFile.open( strOutputFile.c_str() );
+
+  for ( TObjectOrder i = 0; i < tmpWindow->getWindowLevelObjects(); i++ )
+  {
+    if ( multipleFiles )
+    {
+      ostringstream tmpName;
+      tmpName << strOutputFile  << "_" << setw( 5 ) << setfill( '0' ) << i + 1;
+      outputFile.open( tmpName.str().c_str() );
+    }
+
+    outputFile << fixed;
+    outputFile << showpoint;
+
+    while ( tmpWindow->getEndTime( i ) < endTime )
+    {
+      outputFile << setprecision( outputPrecision );
+      if ( !multipleFiles )
+        outputFile << i + 1 << "\t";
+      outputFile << tmpWindow->traceUnitsToWindowUnits(
+        tmpWindow->getBeginTime( i ) ) << "\t";
+      outputFile << tmpWindow->traceUnitsToWindowUnits(
+        tmpWindow->getEndTime( i ) - tmpWindow->getBeginTime( i ) ) << "\t";
+      outputFile << tmpWindow->getValue( i ) << endl;
+      tmpWindow->calcNext( i );
+    }
+    outputFile << setprecision( outputPrecision );
+    if ( !multipleFiles )
+      outputFile << i + 1 << "\t";
+    outputFile << tmpWindow->traceUnitsToWindowUnits(
+      tmpWindow->getBeginTime( i ) ) << "\t";
+    outputFile << tmpWindow->traceUnitsToWindowUnits(
+      tmpWindow->getEndTime( i ) - tmpWindow->getBeginTime( i ) ) << "\t";
+    outputFile << tmpWindow->getValue( i ) << endl;
+
+    if ( multipleFiles )
+      outputFile.close();
+  }
+
+  if ( multipleFiles )
+    cout << strOutputFile << "_* files wrote." << endl;
+  else
+  {
+    outputFile.close();
+    cout << strOutputFile << " file wrote." << endl;
+  }
+}
+
+void dumpHistogram( Histogram *histo, string& strOutputFile )
+{}
 
 void printHelp()
 {
