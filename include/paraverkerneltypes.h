@@ -98,7 +98,7 @@ typedef UINT32 THistogramColumn;
 
 typedef enum THistoTotals
 {
-  TOTAL = 0, AVERAGE, MAXIMUM, MINIMUM, STDEV, AVGDIVMAX
+  TOTAL = 0, AVERAGE, MAXIMUM, MINIMUM, STDEV, AVGDIVMAX, NUMTOTALS
 };
 
 /*

@@ -8,6 +8,7 @@
 #include "trace.h"
 #include "window.h"
 #include "histogram.h"
+#include "histogramtotals.h"
 #include "paraverkernelexception.h"
 
 using namespace std;
@@ -87,7 +88,7 @@ int main( int argc, char *argv[] )
 
       if ( CFGLoader::loadCFG( myKernel, strCfg, trace, windows, histogram ) )
       {
-        if( histogram != NULL )
+        if ( histogram != NULL )
           dumpHistogram( histogram, strOutputFile );
         else
           dumpWindow( windows, strOutputFile );
@@ -102,7 +103,7 @@ int main( int argc, char *argv[] )
       }
       windows.clear();
 
-      if( histogram != NULL )
+      if ( histogram != NULL )
         delete histogram;
     }
 
@@ -178,7 +179,99 @@ void dumpWindow( vector<Window *>& windows, string& strOutputFile )
 }
 
 void dumpHistogram( Histogram *histo, string& strOutputFile )
-{}
+{
+  THistogramColumn numPlanes;
+  THistogramColumn numColumns;
+  TObjectOrder numRows;
+  ofstream outputFile;
+
+  histo->execute( histo->getBeginTime(), histo->getEndTime() );
+  numPlanes = histo->getNumPlanes();
+  numColumns = histo->getNumColumns();
+  numRows = histo->getNumRows();
+
+  outputFile.open( strOutputFile.c_str() );
+
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  {
+    if ( numPlanes > 1 )
+      outputFile << "Plane no. " << iPlane << endl;
+
+    outputFile << "\t";
+    // Initialize all columns in this plane
+    for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
+    {
+      histo->setFirstCell( iColumn, iPlane );
+      outputFile << "Column no. " << iColumn << "\t";
+    }
+    outputFile << endl;
+
+    for ( TObjectOrder iRow = 0; iRow < numRows; iRow++ )
+    {
+      outputFile << "Row no. " << iRow << "\t";
+      for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
+      {
+        if ( histo->getCurrentRow( iColumn, iPlane ) == iRow )
+        {
+          outputFile << histo->getCurrentValue( iColumn, 0, iPlane ) << "\t";
+          histo->setNextCell( iColumn, iPlane );
+        }
+        else
+          outputFile << 0.0 << "\t";
+      }
+      outputFile << endl;
+    }
+    outputFile << endl;
+    // Print totals
+    HistogramTotals *totals = histo->getColumnTotals();
+    outputFile << "Total" << "\t";
+    for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
+    {
+      outputFile << totals->getTotal( 0, iColumn, iPlane ) << "\t";
+    }
+    outputFile << endl;
+
+    outputFile << "Average" << "\t";
+    for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
+    {
+      outputFile << totals->getAverage( 0, iColumn, iPlane ) << "\t";
+    }
+    outputFile << endl;
+
+    outputFile << "Maximum" << "\t";
+    for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
+    {
+      outputFile << totals->getMaximum( 0, iColumn, iPlane ) << "\t";
+    }
+    outputFile << endl;
+
+    outputFile << "Minimum" << "\t";
+    for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
+    {
+      outputFile << totals->getMinimum( 0, iColumn, iPlane ) << "\t";
+    }
+    outputFile << endl;
+
+    outputFile << "Stdev" << "\t";
+    for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
+    {
+      outputFile << totals->getStdev( 0, iColumn, iPlane ) << "\t";
+    }
+    outputFile << endl;
+
+    outputFile << "Avg/Max" << "\t";
+    for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
+    {
+      outputFile << totals->getAvgDivMax( 0, iColumn, iPlane ) << "\t";
+    }
+    outputFile << endl;
+
+    delete totals;
+    outputFile << endl;
+  }
+
+  outputFile.close();
+}
 
 void printHelp()
 {

@@ -162,6 +162,7 @@
 		<Unit filename="api/paramedir.h">
 			<Option target="paramedir" />
 		</Unit>
+		<Unit filename="api/paraverlabels.h" />
 		<Unit filename="api/recordlist.cpp">
 			<Option target="api" />
 		</Unit>
