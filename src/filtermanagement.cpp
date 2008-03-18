@@ -6,19 +6,21 @@
 void createFilter()
 {
   vector<string> names;
-  vector<FilterFunction *> functions;
+  vector<vector<FilterFunction *> > functions;
 
-  functions.push_back( new FilterAll() );
-  functions.push_back( new FilterNotEqual() );
-  functions.push_back( new FilterGreater() );
-  functions.push_back( new FilterFewer() );
-  functions.push_back( new FilterEqual() );
-  functions.push_back( new FilterNone() );
-  functions.push_back( new FilterRange() );
+  functions.push_back( vector<FilterFunction *>() );
+
+  functions[0].push_back( new FilterAll() );
+  functions[0].push_back( new FilterNotEqual() );
+  functions[0].push_back( new FilterGreater() );
+  functions[0].push_back( new FilterFewer() );
+  functions[0].push_back( new FilterEqual() );
+  functions[0].push_back( new FilterNone() );
+  functions[0].push_back( new FilterRange() );
 
 
   for ( UINT16 i = 0; i < functions.size(); i++ )
-    names.push_back( functions[i]->getName() );
+    names.push_back( functions[0][i]->getName() );
 
 
   FunctionManagement<FilterFunction>::getInstance( names, functions );
