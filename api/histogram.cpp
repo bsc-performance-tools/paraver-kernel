@@ -310,9 +310,9 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
   myHisto->execute( whichBeginTime, whichEndTime );
 }
 
-void HistogramProxy::setHorizontal( bool horiz )
+void HistogramProxy::setHorizontal( bool newValue )
 {
-  horizontal = horiz;
+  horizontal = newValue;
 }
 
 bool HistogramProxy::getHorizontal() const
@@ -320,9 +320,9 @@ bool HistogramProxy::getHorizontal() const
   return horizontal;
 }
 
-void HistogramProxy::setHideColumns( bool hide )
+void HistogramProxy::setHideColumns( bool newValue )
 {
-  hideColumns = hide;
+  hideColumns = newValue;
 }
 
 bool HistogramProxy::getHideColumns() const
@@ -330,4 +330,22 @@ bool HistogramProxy::getHideColumns() const
   return hideColumns;
 }
 
+void HistogramProxy::setShowUnits( bool newValue )
+{
+  showUnits = newValue;
+}
 
+bool HistogramProxy::getShowUnits() const
+{
+  return showUnits;
+}
+
+void HistogramProxy::setSortColumns( bool newValue )
+{
+  sortColumns = newValue;
+}
+
+bool HistogramProxy::getSortColumns() const
+{
+  return sortColumns;
+}

@@ -113,6 +113,16 @@ class Histogram
     {
       return false;
     }
+    virtual void setShowUnits( bool newValue ) {}
+    virtual bool getShowUnits() const
+    {
+      return false;
+    }
+    virtual void setSortColumns( bool newValue ) {}
+    virtual bool getSortColumns() const
+    {
+      return false;
+    }
 
   protected:
     KernelConnection *myKernel;
@@ -183,14 +193,20 @@ class HistogramProxy : public Histogram
     virtual void pushbackStatistic( HistogramStatistic *whichStatistic );
     virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime );
 
-    virtual void setHorizontal( bool horiz );
+    virtual void setHorizontal( bool newValue );
     virtual bool getHorizontal() const;
-    virtual void setHideColumns( bool hide );
+    virtual void setHideColumns( bool newValue );
     virtual bool getHideColumns() const;
+    virtual void setShowUnits( bool newValue );
+    virtual bool getShowUnits() const;
+    virtual void setSortColumns( bool newValue );
+    virtual bool getSortColumns() const;
 
   private:
     bool horizontal;
     bool hideColumns;
+    bool showUnits;
+    bool sortColumns;
 
     TRecordTime winBeginTime;
     TRecordTime winEndTime;

@@ -1142,14 +1142,15 @@ bool Analyzer2DCalculateAll::parseLine( KernelConnection *whichKernel, istringst
 
   if ( strBoolAll.compare( OLDCFG_VAL_TRUE2 ) == 0 )
   {
-
-
+    vector<HistogramStatistic *> v;
+    ( FunctionManagement<HistogramStatistic>::getInstance() )->getAll( v );
+    for( UINT32 i = 0; i < v.size(); i++ )
+      histogram->pushbackStatistic( v[ i ] );
   }
   else if ( strBoolAll.compare( OLDCFG_VAL_FALSE2 ) == 0 )
     return true;
   else
     return false;
-
 
   return true;
 }
@@ -1274,9 +1275,20 @@ bool Analyzer2DUnits::parseLine( KernelConnection *whichKernel, istringstream& l
                                  vector<Window *>& windows,
                                  Histogram *histogram )
 {
+  string strBool;
+
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
   if ( histogram == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+    histogram->setShowUnits( true );
+  else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+    histogram->setShowUnits( false );
+  else
     return false;
 
   return true;
@@ -1363,10 +1375,14 @@ bool Analyzer2DSortCols::parseLine( KernelConnection *whichKernel, istringstream
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
-    {}
-  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
-    {}
+  if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  {
+    histogram->setSortColumns( true );
+  }
+  else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  {
+    histogram->setSortColumns( false );
+  }
   else
     return false;
 
