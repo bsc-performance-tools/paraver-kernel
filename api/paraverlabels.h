@@ -103,6 +103,7 @@
 #define OLDCFG_VAL_SORT_MAXIMUM "Maximum"
 #define OLDCFG_VAL_SORT_MINIMUM "Minimum"
 #define OLDCFG_VAL_SORT_STDEV   "Stdev"
+#define OLDCFG_VAL_SORT_AVGDIVMAX "Avg/Max"
 
 #define OLDCFG_VAL_WNDW_TYPE_SINGLE   "single"
 #define OLDCFG_VAL_WNDW_TYPE_COMPOSED "composed"

@@ -1144,7 +1144,7 @@ bool Analyzer2DCalculateAll::parseLine( KernelConnection *whichKernel, istringst
   {
     vector<HistogramStatistic *> v;
     ( FunctionManagement<HistogramStatistic>::getInstance() )->getAll( v );
-    for( UINT32 i = 0; i < v.size(); i++ )
+    for ( UINT32 i = 0; i < v.size(); i++ )
       histogram->pushbackStatistic( v[ i ] );
   }
   else if ( strBoolAll.compare( OLDCFG_VAL_FALSE2 ) == 0 )
@@ -1405,15 +1405,17 @@ bool Analyzer2DSortCriteria::parseLine( KernelConnection *whichKernel, istringst
   getline( line, strSortCriteria );
 
   if ( strSortCriteria.compare( OLDCFG_VAL_SORT_AVERAGE ) == 0 )
-    {}
+    histogram->setSortCriteria( AVERAGE );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_TOTAL ) == 0 )
-    {}
+    histogram->setSortCriteria( TOTAL );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_MAXIMUM ) == 0 )
-    {}
+    histogram->setSortCriteria( MAXIMUM );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_MINIMUM ) == 0 )
-    {}
+    histogram->setSortCriteria( MINIMUM );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_STDEV ) == 0 )
-    {}
+    histogram->setSortCriteria( STDEV );
+  else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_AVGDIVMAX ) == 0 )
+    histogram->setSortCriteria( AVGDIVMAX );
   else
     return false;
 
@@ -1430,7 +1432,7 @@ bool Analyzer2DParameters::parseLine( KernelConnection *whichKernel, istringstre
 {
   string strNumParams, strValue;
   UINT16 numParams;
-  float dataValue;
+  double dataValue;
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
@@ -1449,7 +1451,10 @@ bool Analyzer2DParameters::parseLine( KernelConnection *whichKernel, istringstre
     istringstream tmpValue( strValue );
     if ( !( tmpValue >> dataValue ) )
       return false;
-
+    if ( ii == 0 )
+      histogram->setDataMin( dataValue );
+    else if ( ii == 1 )
+      histogram->setDataMax( dataValue );
   }
 
   return false;
@@ -1471,11 +1476,21 @@ bool Analyzer2DAnalysisLimits::parseLine( KernelConnection *whichKernel, istring
   getline( line, strLimit, ' ' );
 
   if ( strLimit.compare( OLDCFG_VAL_LIMIT_ALLTRACE ) == 0 )
-    {}
+  {
+    histogram->setWindowBeginTime( 0.0 );
+    histogram->setWindowEndTime( whichTrace->getEndTime() );
+  }
   else if ( strLimit.compare( OLDCFG_VAL_LIMIT_ALLWINDOW ) == 0 )
-    {}
+  {
+    histogram->setWindowBeginTime( histogram->getControlWindow()->getWindowBeginTime() );
+    histogram->setWindowEndTime( histogram->getControlWindow()->getWindowEndTime() );
+  }
   else if ( strLimit.compare( OLDCFG_VAL_LIMIT_REGION ) == 0 )
-    {}
+  {
+    // Not implemented yet
+    histogram->setWindowBeginTime( 0.0 );
+    histogram->setWindowEndTime( whichTrace->getEndTime() );
+  }
   else
     return false;
 
@@ -1522,10 +1537,10 @@ bool Analyzer2DComputeYScale::parseLine( KernelConnection *whichKernel, istrings
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE2) == 0 )
-    {}
+  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+    histogram->setComputeScale( false );
   else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
-    {}
+    histogram->setComputeScale( true );
   else
     return false;
 
@@ -1549,6 +1564,7 @@ bool Analyzer2DMinimum::parseLine( KernelConnection *whichKernel, istringstream&
   istringstream tmpValue( strMinimum );
   if ( !( tmpValue >> dataMinimum ) )
     return false;
+  histogram->setControlMin( dataMinimum );
 
   return true;
 }
@@ -1571,6 +1587,7 @@ bool Analyzer2DMaximum::parseLine( KernelConnection *whichKernel, istringstream&
   istringstream tmpValue( strMaximum );
   if ( !( tmpValue >> dataMaximum ) )
     return false;
+  histogram->setControlMax( dataMaximum );
 
   return true;
 }
@@ -1593,6 +1610,7 @@ bool Analyzer2DDelta::parseLine( KernelConnection *whichKernel, istringstream& l
   istringstream tmpValue( strDelta );
   if ( !( tmpValue >> dataDelta ) )
     return false;
+  histogram->setControlDelta( dataDelta );
 
   return true;
 }
@@ -1613,9 +1631,9 @@ bool Analyzer2DComputeGradient::parseLine( KernelConnection *whichKernel, istrin
   getline( line, strBool, ' ' );
 
   if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
-    {}
+    histogram->setComputeGradient( false );
   else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
-    {}
+    histogram->setComputeGradient( true );
   else
     return false;
 
@@ -1640,6 +1658,7 @@ bool Analyzer2DMinimumGradient::parseLine( KernelConnection *whichKernel, istrin
   istringstream tmpValue( strMinimumGradient );
   if ( !( tmpValue >> dataMinimumGradient ) )
     return false;
+  histogram->setMinGradient( dataMinimumGradient );
 
   return true;
 }
@@ -1662,6 +1681,7 @@ bool Analyzer2DMaximumGradient::parseLine( KernelConnection *whichKernel, istrin
   istringstream tmpValue( strMaximumGradient );
   if ( !( tmpValue >> dataMaximumGradient ) )
     return false;
+  histogram->setMaxGradient( dataMaximumGradient );
 
   return true;
 }
@@ -1684,6 +1704,7 @@ bool Analyzer3DControlWindow::parseLine( KernelConnection *whichKernel, istrings
   istringstream tmpValue( str3DControlWindow );
   if ( !( tmpValue >> controlWindow ) )
     return false;
+  histogram->setExtraControlWindow( windows[ controlWindow ] );
 
   return true;
 }
@@ -1706,6 +1727,7 @@ bool Analyzer3DMinimum::parseLine( KernelConnection *whichKernel, istringstream&
   istringstream tmpValue( str3DMinimum );
   if ( !( tmpValue >> data3DMinimum ) )
     return false;
+  histogram->setExtraControlMin( data3DMinimum );
 
   return true;
 }
@@ -1728,6 +1750,7 @@ bool Analyzer3DMaximum::parseLine( KernelConnection *whichKernel, istringstream&
   istringstream tmpValue( str3DMaximum );
   if ( !( tmpValue >> data3DMaximum ) )
     return false;
+  histogram->setExtraControlMax( data3DMaximum );
 
   return true;
 }
@@ -1750,6 +1773,7 @@ bool Analyzer3DDelta::parseLine( KernelConnection *whichKernel, istringstream& l
   istringstream tmpValue( str3DDelta );
   if ( !( tmpValue >> data3DDelta ) )
     return false;
+  histogram->setExtraControlDelta( data3DDelta );
 
   return true;
 }
@@ -1761,7 +1785,7 @@ bool Analyzer3DFixedValue::parseLine( KernelConnection *whichKernel, istringstre
                                       Histogram *histogram )
 {
   string str3DFixedValue;
-  UINT32 data3DFixedValue;
+  double data3DFixedValue;
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
@@ -1772,6 +1796,7 @@ bool Analyzer3DFixedValue::parseLine( KernelConnection *whichKernel, istringstre
   istringstream tmpValue( str3DFixedValue );
   if ( !( tmpValue >> data3DFixedValue ) )
     return false;
+  histogram->setPlaneMinValue( data3DFixedValue );
 
   return true;
 }

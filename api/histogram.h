@@ -1,6 +1,7 @@
 #ifndef HISTOGRAM_H_INCLUDED
 #define HISTOGRAM_H_INCLUDED
 
+#include <limits>
 #include "paraverkerneltypes.h"
 
 class KernelConnection;
@@ -123,7 +124,32 @@ class Histogram
     {
       return false;
     }
-
+    virtual void setSortCriteria( THistoTotals whichCriteria ) {}
+    virtual THistoTotals getSortCriteria() const
+    {
+      return AVERAGE;
+    }
+    virtual void setMinGradient( double whichMin ) {}
+    virtual double getMinGradient() const
+    {
+      return std::numeric_limits<double>::min();
+    }
+    virtual void setMaxGradient( double whichMax ) {}
+    virtual double getMaxGradient() const
+    {
+      return std::numeric_limits<double>::max();
+    }
+    virtual void setComputeScale( bool newValue ) {}
+    virtual bool getComputeScale() const
+    {
+      return false;
+    }
+    virtual void setComputeGradient( bool newValue ) {}
+    virtual bool getComputeGradient() const
+    {
+      return false;
+    }
+    virtual void setPlaneMinValue( double whichMin ) {}
   protected:
     KernelConnection *myKernel;
 };
@@ -201,12 +227,30 @@ class HistogramProxy : public Histogram
     virtual bool getShowUnits() const;
     virtual void setSortColumns( bool newValue );
     virtual bool getSortColumns() const;
+    virtual void setSortCriteria( THistoTotals whichCriteria );
+    virtual THistoTotals getSortCriteria() const;
+    virtual void setMinGradient( double whichMin );
+    virtual double getMinGradient() const;
+    virtual void setMaxGradient( double whichMax );
+    virtual double getMaxGradient() const;
+    virtual void setComputeScale( bool newValue );
+    virtual bool getComputeScale() const;
+    virtual void setComputeGradient( bool newValue );
+    virtual bool getComputeGradient() const;
+    virtual void setPlaneMinValue( double whichMin );
 
   private:
     bool horizontal;
     bool hideColumns;
     bool showUnits;
     bool sortColumns;
+    THistoTotals sortCriteria;
+    double minGradient;
+    double maxGradient;
+    bool computeScale;
+    bool computeGradient;
+    bool futurePlane;
+    double planeMinValue;
 
     TRecordTime winBeginTime;
     TRecordTime winEndTime;

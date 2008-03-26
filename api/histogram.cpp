@@ -25,6 +25,18 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   dataWindow = NULL;
   extraControlWindow = NULL;
   myHisto = myKernel->newHistogram();
+
+  horizontal = ( (Histogram) this )->getHorizontal();
+  hideColumns = ( (Histogram) this )->getHideColumns();
+  showUnits = ( (Histogram) this )->getShowUnits();
+  sortColumns = ( (Histogram) this )->getSortColumns();
+  sortCriteria = ( (Histogram) this )->getSortCriteria();
+  minGradient = ( (Histogram) this )->getMinGradient();
+  maxGradient = ( (Histogram) this )->getMaxGradient();
+  computeScale = ( (Histogram) this )->getComputeScale();
+  computeGradient = ( (Histogram) this )->getComputeGradient();
+  futurePlane = false;
+  planeMinValue = 0.0;
 }
 
 HistogramProxy::~HistogramProxy()
@@ -348,4 +360,60 @@ void HistogramProxy::setSortColumns( bool newValue )
 bool HistogramProxy::getSortColumns() const
 {
   return sortColumns;
+}
+
+void HistogramProxy::setSortCriteria( THistoTotals whichCriteria )
+{
+  sortCriteria = whichCriteria;
+}
+
+THistoTotals HistogramProxy::getSortCriteria() const
+{
+  return sortCriteria;
+}
+
+void HistogramProxy::setMinGradient( double whichMin )
+{
+  minGradient = whichMin;
+}
+
+double HistogramProxy::getMinGradient() const
+{
+  return minGradient;
+}
+
+void HistogramProxy::setMaxGradient( double whichMax )
+{
+  maxGradient = whichMax;
+}
+
+double HistogramProxy::getMaxGradient() const
+{
+  return maxGradient;
+}
+
+void HistogramProxy::setComputeScale( bool newValue )
+{
+  computeScale = newValue;
+}
+
+bool HistogramProxy::getComputeScale() const
+{
+  return computeScale;
+}
+
+void HistogramProxy::setComputeGradient( bool newValue )
+{
+  computeGradient = newValue;
+}
+
+bool HistogramProxy::getComputeGradient() const
+{
+  return computeGradient;
+}
+
+void HistogramProxy::setPlaneMinValue( double whichMin )
+{
+  planeMinValue = whichMin;
+  futurePlane = true;
 }
