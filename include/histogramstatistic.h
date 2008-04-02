@@ -23,6 +23,7 @@ class HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram ) = 0;
     virtual void reset() = 0;
+    virtual bool filter( CalculateData *data ) const = 0;
     virtual TSemanticValue execute( CalculateData *data ) = 0;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -56,6 +57,7 @@ class StatNumSends: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -85,6 +87,7 @@ class StatNumReceives: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -114,6 +117,7 @@ class StatBytesSent: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -143,6 +147,7 @@ class StatBytesReceived: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -172,6 +177,7 @@ class StatAvgBytesSent: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -202,6 +208,7 @@ class StatAvgBytesReceived: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -232,6 +239,7 @@ class StatMinBytesSent: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -262,6 +270,7 @@ class StatMinBytesReceived: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -292,6 +301,7 @@ class StatMaxBytesSent: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -322,6 +332,7 @@ class StatMaxBytesReceived: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -358,6 +369,7 @@ class StatTime: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -390,6 +402,7 @@ class StatPercTime: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -423,6 +436,7 @@ class StatPercTimeNotZero: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -456,6 +470,7 @@ class StatPercTimeWindow: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -488,6 +503,7 @@ class StatNumBursts: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -519,6 +535,7 @@ class StatPercNumBursts: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -551,6 +568,7 @@ class StatIntegral: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -583,6 +601,7 @@ class StatAvgValue: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -616,6 +635,7 @@ class StatMaximum: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -649,6 +669,7 @@ class StatAvgBurstTime: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -682,6 +703,7 @@ class StatStdevBurstTime: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -716,6 +738,7 @@ class StatAvgPerBurst: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -749,6 +772,7 @@ class StatAvgValueNotZero: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -782,6 +806,7 @@ class StatNumBurstsNotZero: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
@@ -814,6 +839,7 @@ class StatSumBursts: public HistogramStatistic
 
     virtual void init( KHistogram *whichHistogram );
     virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,

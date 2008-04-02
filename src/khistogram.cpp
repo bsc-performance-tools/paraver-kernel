@@ -1,4 +1,5 @@
 #include <math.h>
+#include <limits>
 #include "kwindow.h"
 #include "khistogram.h"
 #include "histogramstatistic.h"
@@ -117,8 +118,14 @@ KHistogram::KHistogram()
   xtraControlMin = 0;
   xtraControlMax = 1;
   xtraControlDelta = 1;
-  dataMin = 0;
-  dataMax = 1;
+  dataMin = std::numeric_limits<TSemanticValue>::min();
+  dataMax = std::numeric_limits<TSemanticValue>::max();
+  burstMin = std::numeric_limits<TRecordTime>::min();
+  burstMax = std::numeric_limits<TRecordTime>::max();
+  commSizeMin = std::numeric_limits<TCommSize>::min();
+  commSizeMax = std::numeric_limits<TCommSize>::max();
+  commTagMin = std::numeric_limits<TCommTag>::min();
+  commTagMax = std::numeric_limits<TCommTag>::max();
 
   inclusive = false;
 
@@ -132,8 +139,8 @@ KHistogram::KHistogram()
   commMatrix = NULL;
 
   totals = NULL;
-  rowTotals = NULL,
-              commTotals = NULL;
+  rowTotals = NULL;
+  commTotals = NULL;
   rowCommTotals = NULL;
 }
 
@@ -277,15 +284,51 @@ void KHistogram::setExtraControlDelta( THistogramLimit whichDelta )
 }
 
 
-void KHistogram::setDataMin( THistogramLimit whichMin )
+void KHistogram::setDataMin( TSemanticValue whichMin )
 {
   dataMin = whichMin;
 }
 
 
-void KHistogram::setDataMax( THistogramLimit whichMax )
+void KHistogram::setDataMax( TSemanticValue whichMax )
 {
   dataMax = whichMax;
+}
+
+
+void KHistogram::setBurstMin( TRecordTime whichTime )
+{
+  burstMin = whichTime;
+}
+
+
+void KHistogram::setBurstMax( TRecordTime whichTime )
+{
+  burstMax = whichTime;
+}
+
+
+void KHistogram::setCommSizeMin( TCommSize whichSize )
+{
+  commSizeMin = whichSize;
+}
+
+
+void KHistogram::setCommSizeMax( TCommSize whichSize )
+{
+  commSizeMax = whichSize;
+}
+
+
+void KHistogram::setCommTagMin( TCommTag whichTag )
+{
+  commTagMin = whichTag;
+}
+
+
+void KHistogram::setCommTagMax( TCommTag whichTag )
+{
+  commTagMax = whichTag;
 }
 
 
@@ -325,15 +368,51 @@ THistogramLimit KHistogram::getExtraControlDelta() const
 }
 
 
-THistogramLimit KHistogram::getDataMin() const
+TSemanticValue KHistogram::getDataMin() const
 {
   return dataMin;
 }
 
 
-THistogramLimit KHistogram::getDataMax() const
+TSemanticValue KHistogram::getDataMax() const
 {
   return dataMax;
+}
+
+
+TRecordTime KHistogram::getBurstMin() const
+{
+  return burstMin;
+}
+
+
+TRecordTime KHistogram::getBurstMax() const
+{
+  return burstMax;
+}
+
+
+TCommSize KHistogram::getCommSizeMin() const
+{
+  return commSizeMin;
+}
+
+
+TCommSize KHistogram::getCommSizeMax() const
+{
+  return commSizeMax;
+}
+
+
+TCommTag KHistogram::getCommTagMin() const
+{
+  return commTagMin;
+}
+
+
+TCommTag KHistogram::getCommTagMax() const
+{
+  return commTagMax;
 }
 
 
@@ -640,7 +719,7 @@ void KHistogram::initTranslators()
 
 
 void KHistogram::initMatrix( THistogramColumn planes, THistogramColumn cols,
-                            TObjectOrder rows )
+                             TObjectOrder rows )
 {
   if ( cube != NULL )
   {
@@ -696,9 +775,9 @@ void KHistogram::initTotals()
     if ( createComms() )
     {
       commTotals = new KHistogramTotals( commStatisticFunctions.size(),
-                                        numRows, numPlanes );
+                                         numRows, numPlanes );
       rowCommTotals = new KHistogramTotals( commStatisticFunctions.size(),
-                                           numRows, numPlanes );
+                                            numRows, numPlanes );
     }
   }
   else
@@ -708,9 +787,9 @@ void KHistogram::initTotals()
     if ( createComms() )
     {
       commTotals = new KHistogramTotals( commStatisticFunctions.size(),
-                                        numRows, 1 );
+                                         numRows, 1 );
       rowCommTotals = new KHistogramTotals( commStatisticFunctions.size(),
-                                           numRows, 1 );
+                                            numRows, 1 );
     }
   }
 }
@@ -752,8 +831,8 @@ void KHistogram::initStatistics()
 
 
 void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
-                                    TObjectOrder fromRow, TObjectOrder toRow,
-                                    UINT16 winIndex, CalculateData *data )
+                                     TObjectOrder fromRow, TObjectOrder toRow,
+                                     UINT16 winIndex, CalculateData *data )
 {
   Window *currentWindow = orderedWindows[ winIndex ];
 
@@ -790,9 +869,9 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 
 
 void KHistogram::calculate( TObjectOrder iRow,
-                           TRecordTime fromTime, TRecordTime toTime,
-                           TObjectOrder fromRow, TObjectOrder toRow,
-                           UINT16 winIndex, CalculateData *data )
+                            TRecordTime fromTime, TRecordTime toTime,
+                            TObjectOrder fromRow, TObjectOrder toRow,
+                            UINT16 winIndex, CalculateData *data )
 {
   TObjectOrder childFromRow;
   TObjectOrder childToRow;
@@ -828,14 +907,17 @@ void KHistogram::calculate( TObjectOrder iRow,
       data->comm = itComm;
       for ( UINT16 iStat = 0; iStat < commStatisticFunctions.size(); iStat++ )
       {
-        value = commStatisticFunctions[ iStat ]->execute( data );
-        if ( value != 0.0 )
+        if ( commStatisticFunctions[ iStat ]->filter( data ) )
         {
-          TObjectOrder column = commStatisticFunctions[ iStat ]->getPartner( data );
-          if ( threeDimensions )
-            commCube->addValue( data->plane, column, iStat, value );
-          else
-            commMatrix->addValue( column, iStat, value );
+          value = commStatisticFunctions[ iStat ]->execute( data );
+          if ( value != 0.0 )
+          {
+            TObjectOrder column = commStatisticFunctions[ iStat ]->getPartner( data );
+            if ( threeDimensions )
+              commCube->addValue( data->plane, column, iStat, value );
+            else
+              commMatrix->addValue( column, iStat, value );
+          }
         }
       }
 
@@ -857,12 +939,15 @@ void KHistogram::calculate( TObjectOrder iRow,
         {
           for ( UINT16 iStat = 0; iStat < statisticFunctions.size(); iStat++ )
           {
-            value = statisticFunctions[ iStat ]->execute( data );
+            if ( statisticFunctions[ iStat ]->filter( data ) )
+            {
+              value = statisticFunctions[ iStat ]->execute( data );
 
-            if ( threeDimensions )
-              cube->addValue( data->plane, column, iStat, value );
-            else
-              matrix->addValue( column, iStat, value );
+              if ( threeDimensions )
+                cube->addValue( data->plane, column, iStat, value );
+              else
+                matrix->addValue( column, iStat, value );
+            }
           }
         }
         it++;
@@ -872,12 +957,15 @@ void KHistogram::calculate( TObjectOrder iRow,
     {
       for ( UINT16 iStat = 0; iStat < statisticFunctions.size(); iStat++ )
       {
-        value = statisticFunctions[ iStat ]->execute( data );
+        if ( statisticFunctions[ iStat ]->filter( data ) )
+        {
+          value = statisticFunctions[ iStat ]->execute( data );
 
-        if ( threeDimensions )
-          cube->addValue( data->plane, data->column, iStat, value );
-        else
-          matrix->addValue( data->column, iStat, value );
+          if ( threeDimensions )
+            cube->addValue( data->plane, data->column, iStat, value );
+          else
+            matrix->addValue( data->column, iStat, value );
+        }
       }
     }
   }

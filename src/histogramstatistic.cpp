@@ -5,6 +5,32 @@
 #include "trace.h"
 
 //-------------------------------------------------------------------------
+// Statistics filtering functions
+//-------------------------------------------------------------------------
+bool filterCommunication( RecordList::iterator& comm, KHistogram *histogram )
+{
+  Window *controlWin = histogram->getControlWindow();
+  TCommSize size = controlWin->getTrace()->getCommSize( comm->getCommIndex() );
+  TCommTag tag = controlWin->getTrace()->getCommTag( comm->getCommIndex() );
+  return size >= histogram->getCommSizeMin() &&
+         size <= histogram->getCommSizeMax() &&
+         tag >= histogram->getCommTagMin() &&
+         tag <= histogram->getCommTagMax();
+}
+
+bool filterSemanticValue( TSemanticValue value, KHistogram *histogram )
+{
+  return value >= histogram->getDataMin() &&
+         value <= histogram->getDataMax();
+}
+
+bool filterBurstTime( TRecordTime burstTime, KHistogram *histogram )
+{
+  return burstTime >= histogram->getBurstMin() &&
+         burstTime <= histogram->getBurstMax();
+}
+
+//-------------------------------------------------------------------------
 // Histogram Statistic: #Sends
 //-------------------------------------------------------------------------
 string StatNumSends::name = "#Sends";
@@ -26,6 +52,11 @@ void StatNumSends::init( KHistogram *whichHistogram )
 
 void StatNumSends::reset()
 {}
+
+bool StatNumSends::filter( CalculateData *data ) const
+{
+  return filterCommunication( data->comm, myHistogram );
+}
 
 TSemanticValue StatNumSends::execute( CalculateData *data )
 {
@@ -75,6 +106,11 @@ void StatNumReceives::init( KHistogram *whichHistogram )
 void StatNumReceives::reset()
 {}
 
+bool StatNumReceives::filter( CalculateData *data ) const
+{
+  return filterCommunication( data->comm, myHistogram );
+}
+
 TSemanticValue StatNumReceives::execute( CalculateData *data )
 {
   if ( data->comm->getType() & RECV )
@@ -123,6 +159,11 @@ void StatBytesSent::init( KHistogram *whichHistogram )
 void StatBytesSent::reset()
 {}
 
+bool StatBytesSent::filter( CalculateData *data ) const
+{
+  return filterCommunication( data->comm, myHistogram );
+}
+
 TSemanticValue StatBytesSent::execute( CalculateData *data )
 {
   if ( data->comm->getType() & SEND )
@@ -170,6 +211,11 @@ void StatBytesReceived::init( KHistogram *whichHistogram )
 
 void StatBytesReceived::reset()
 {}
+
+bool StatBytesReceived::filter( CalculateData *data ) const
+{
+  return filterCommunication( data->comm, myHistogram );
+}
 
 TSemanticValue StatBytesReceived::execute( CalculateData *data )
 {
@@ -243,6 +289,11 @@ void StatAvgBytesSent::reset()
     }
     itPlane++;
   }
+}
+
+bool StatAvgBytesSent::filter( CalculateData *data ) const
+{
+  return filterCommunication( data->comm, myHistogram );
 }
 
 TSemanticValue StatAvgBytesSent::execute( CalculateData *data )
@@ -322,6 +373,11 @@ void StatAvgBytesReceived::reset()
   }
 }
 
+bool StatAvgBytesReceived::filter( CalculateData *data ) const
+{
+  return filterCommunication( data->comm, myHistogram );
+}
+
 TSemanticValue StatAvgBytesReceived::execute( CalculateData *data )
 {
   if ( data->comm->getType() & RECV )
@@ -397,6 +453,11 @@ void StatMinBytesSent::reset()
     }
     itPlane++;
   }
+}
+
+bool StatMinBytesSent::filter( CalculateData *data ) const
+{
+  return filterCommunication( data->comm, myHistogram );
 }
 
 TSemanticValue StatMinBytesSent::execute( CalculateData *data )
@@ -486,6 +547,11 @@ void StatMinBytesReceived::reset()
   }
 }
 
+bool StatMinBytesReceived::filter( CalculateData *data ) const
+{
+  return filterCommunication( data->comm, myHistogram );
+}
+
 TSemanticValue StatMinBytesReceived::execute( CalculateData *data )
 {
   if ( data->comm->getType() & RECV )
@@ -573,6 +639,11 @@ void StatMaxBytesSent::reset()
   }
 }
 
+bool StatMaxBytesSent::filter( CalculateData *data ) const
+{
+  return filterCommunication( data->comm, myHistogram );
+}
+
 TSemanticValue StatMaxBytesSent::execute( CalculateData *data )
 {
   if ( data->comm->getType() & SEND )
@@ -655,6 +726,11 @@ void StatMaxBytesReceived::reset()
   }
 }
 
+bool StatMaxBytesReceived::filter( CalculateData *data ) const
+{
+  return filterCommunication( data->comm, myHistogram );
+}
+
 TSemanticValue StatMaxBytesReceived::execute( CalculateData *data )
 {
   if ( data->comm->getType() & RECV )
@@ -701,6 +777,12 @@ void StatTime::init( KHistogram *whichHistogram )
 
 void StatTime::reset()
 {}
+
+bool StatTime::filter( CalculateData *data ) const
+{
+  return filterSemanticValue( controlWin->getValue( data->controlRow ),
+                              myHistogram );
+}
 
 TSemanticValue StatTime::execute( CalculateData *data )
 {
@@ -765,6 +847,12 @@ void StatPercTime::reset()
     ( *it ) = 0.0;
     it++;
   }
+}
+
+bool StatPercTime::filter( CalculateData *data ) const
+{
+  return filterSemanticValue( controlWin->getValue( data->controlRow ),
+                              myHistogram );
 }
 
 TSemanticValue StatPercTime::execute( CalculateData *data )
@@ -837,6 +925,12 @@ void StatPercTimeNotZero::reset()
   }
 }
 
+bool StatPercTimeNotZero::filter( CalculateData *data ) const
+{
+  return filterSemanticValue( controlWin->getValue( data->controlRow ),
+                              myHistogram );
+}
+
 TSemanticValue StatPercTimeNotZero::execute( CalculateData *data )
 {
   if ( controlWin->getValue( data->controlRow ) != 0.0 )
@@ -894,6 +988,12 @@ void StatPercTimeWindow::reset()
 {
 }
 
+bool StatPercTimeWindow::filter( CalculateData *data ) const
+{
+  return filterSemanticValue( controlWin->getValue( data->controlRow ),
+                              myHistogram );
+}
+
 TSemanticValue StatPercTimeWindow::execute( CalculateData *data )
 {
   TRecordTime begin;
@@ -939,6 +1039,23 @@ void StatNumBursts::init( KHistogram *whichHistogram )
 
 void StatNumBursts::reset()
 {
+}
+
+bool StatNumBursts::filter( CalculateData *data ) const
+{
+  TRecordTime begin;
+  TRecordTime end;
+
+  begin = data->beginTime > myHistogram->getDataWindow()->getBeginTime( data->dataRow ) ?
+          data->beginTime : myHistogram->getDataWindow()->getBeginTime( data->dataRow );
+
+  end = data->endTime < myHistogram->getDataWindow()->getEndTime( data->dataRow ) ?
+        data->endTime : myHistogram->getDataWindow()->getEndTime( data->dataRow );
+
+  return filterSemanticValue( myHistogram->getDataWindow()->getValue( data->dataRow ),
+                              myHistogram )
+         &&
+         filterBurstTime( end - begin, myHistogram );
 }
 
 TSemanticValue StatNumBursts::execute( CalculateData *data )
@@ -996,6 +1113,23 @@ void StatPercNumBursts::reset()
   }
 }
 
+bool StatPercNumBursts::filter( CalculateData *data ) const
+{
+  TRecordTime begin;
+  TRecordTime end;
+
+  begin = data->beginTime > myHistogram->getDataWindow()->getBeginTime( data->dataRow ) ?
+          data->beginTime : myHistogram->getDataWindow()->getBeginTime( data->dataRow );
+
+  end = data->endTime < myHistogram->getDataWindow()->getEndTime( data->dataRow ) ?
+        data->endTime : myHistogram->getDataWindow()->getEndTime( data->dataRow );
+
+  return filterSemanticValue( myHistogram->getDataWindow()->getValue( data->dataRow ),
+                              myHistogram )
+         &&
+         filterBurstTime( end - begin, myHistogram );
+}
+
 TSemanticValue StatPercNumBursts::execute( CalculateData *data )
 {
   if ( myHistogram->getThreeDimensions() )
@@ -1037,6 +1171,12 @@ void StatIntegral::init( KHistogram *whichHistogram )
 
 void StatIntegral::reset()
 {
+}
+
+bool StatIntegral::filter( CalculateData *data ) const
+{
+  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+                              myHistogram );
 }
 
 TSemanticValue StatIntegral::execute( CalculateData *data )
@@ -1111,6 +1251,12 @@ void StatAvgValue::reset()
   }
 }
 
+bool StatAvgValue::filter( CalculateData *data ) const
+{
+  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+                              myHistogram );
+}
+
 TSemanticValue StatAvgValue::execute( CalculateData *data )
 {
   ( ( numValues[ data->plane ] )[ data->column ] )++;
@@ -1173,6 +1319,12 @@ void StatMaximum::reset()
     }
     itPlane++;
   }
+}
+
+bool StatMaximum::filter( CalculateData *data ) const
+{
+  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+                              myHistogram );
 }
 
 TSemanticValue StatMaximum::execute( CalculateData *data )
@@ -1239,6 +1391,23 @@ void StatAvgBurstTime::reset()
     }
     itPlane++;
   }
+}
+
+bool StatAvgBurstTime::filter( CalculateData *data ) const
+{
+  TRecordTime begin;
+  TRecordTime end;
+
+  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
+          data->beginTime : dataWin->getBeginTime( data->dataRow );
+
+  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
+        data->endTime : dataWin->getEndTime( data->dataRow );
+
+  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+                              myHistogram )
+         &&
+         filterBurstTime( end - begin, myHistogram );
 }
 
 TSemanticValue StatAvgBurstTime::execute( CalculateData *data )
@@ -1322,6 +1491,23 @@ void StatStdevBurstTime::reset()
     itPlaneN++;
     itPlaneQ++;
   }
+}
+
+bool StatStdevBurstTime::filter( CalculateData *data ) const
+{
+  TRecordTime begin;
+  TRecordTime end;
+
+  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
+          data->beginTime : dataWin->getBeginTime( data->dataRow );
+
+  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
+        data->endTime : dataWin->getEndTime( data->dataRow );
+
+  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+                              myHistogram )
+         &&
+         filterBurstTime( end - begin, myHistogram );
 }
 
 TSemanticValue StatStdevBurstTime::execute( CalculateData *data )
@@ -1409,6 +1595,23 @@ void StatAvgPerBurst::reset()
   }
 }
 
+bool StatAvgPerBurst::filter( CalculateData *data ) const
+{
+  TRecordTime begin;
+  TRecordTime end;
+
+  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
+          data->beginTime : dataWin->getBeginTime( data->dataRow );
+
+  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
+        data->endTime : dataWin->getEndTime( data->dataRow );
+
+  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+                              myHistogram )
+         &&
+         filterBurstTime( end - begin, myHistogram );
+}
+
 TSemanticValue StatAvgPerBurst::execute( CalculateData *data )
 {
   ( ( numValues[ data->plane ] )[ data->column ] )++;
@@ -1474,6 +1677,12 @@ void StatAvgValueNotZero::reset()
   }
 }
 
+bool StatAvgValueNotZero::filter( CalculateData *data ) const
+{
+  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+                              myHistogram );
+}
+
 TSemanticValue StatAvgValueNotZero::execute( CalculateData *data )
 {
   if ( dataWin->getValue( data->dataRow ) != 0.0 )
@@ -1515,6 +1724,23 @@ void StatNumBurstsNotZero::reset()
 {
 }
 
+bool StatNumBurstsNotZero::filter( CalculateData *data ) const
+{
+  TRecordTime begin;
+  TRecordTime end;
+
+  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
+          data->beginTime : dataWin->getBeginTime( data->dataRow );
+
+  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
+        data->endTime : dataWin->getEndTime( data->dataRow );
+
+  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+                              myHistogram )
+         &&
+         filterBurstTime( end - begin, myHistogram );
+}
+
 TSemanticValue StatNumBurstsNotZero::execute( CalculateData *data )
 {
   if ( dataWin->getValue( data->dataRow ) != 0.0 )
@@ -1553,6 +1779,12 @@ void StatSumBursts::init( KHistogram *whichHistogram )
 
 void StatSumBursts::reset()
 {
+}
+
+bool StatSumBursts::filter( CalculateData *data ) const
+{
+  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+                              myHistogram );
 }
 
 TSemanticValue StatSumBursts::execute( CalculateData *data )

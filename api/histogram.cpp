@@ -26,17 +26,18 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   extraControlWindow = NULL;
   myHisto = myKernel->newHistogram();
 
-  horizontal = ( (Histogram) this )->getHorizontal();
-  hideColumns = ( (Histogram) this )->getHideColumns();
-  showUnits = ( (Histogram) this )->getShowUnits();
-  sortColumns = ( (Histogram) this )->getSortColumns();
-  sortCriteria = ( (Histogram) this )->getSortCriteria();
-  minGradient = ( (Histogram) this )->getMinGradient();
-  maxGradient = ( (Histogram) this )->getMaxGradient();
-  computeScale = ( (Histogram) this )->getComputeScale();
-  computeGradient = ( (Histogram) this )->getComputeGradient();
+  horizontal = Histogram::getHorizontal();
+  hideColumns = Histogram::getHideColumns();
+  showUnits = Histogram::getShowUnits();
+  sortColumns = Histogram::getSortColumns();
+  sortCriteria = Histogram::getSortCriteria();
+  minGradient = Histogram::getMinGradient();
+  maxGradient = Histogram::getMaxGradient();
+  computeScale = Histogram::getComputeScale();
+  computeGradient = Histogram::getComputeGradient();
   futurePlane = false;
   planeMinValue = 0.0;
+  selectedPlane = 0;
 }
 
 HistogramProxy::~HistogramProxy()
@@ -150,12 +151,12 @@ void HistogramProxy::setExtraControlDelta( THistogramLimit whichDelta )
   myHisto->setExtraControlDelta( whichDelta );
 }
 
-void HistogramProxy::setDataMin( THistogramLimit whichMin )
+void HistogramProxy::setDataMin( TSemanticValue whichMin )
 {
   myHisto->setDataMin( whichMin );
 }
 
-void HistogramProxy::setDataMax( THistogramLimit whichMax )
+void HistogramProxy::setDataMax( TSemanticValue whichMax )
 {
   myHisto->setDataMax( whichMax );
 }
@@ -190,12 +191,12 @@ THistogramLimit HistogramProxy::getExtraControlDelta() const
   return myHisto->getExtraControlDelta();
 }
 
-THistogramLimit HistogramProxy::getDataMin() const
+TSemanticValue HistogramProxy::getDataMin() const
 {
   return myHisto->getDataMin();
 }
 
-THistogramLimit HistogramProxy::getDataMax() const
+TSemanticValue HistogramProxy::getDataMax() const
 {
   return myHisto->getDataMax();
 }
@@ -416,4 +417,9 @@ void HistogramProxy::setPlaneMinValue( double whichMin )
 {
   planeMinValue = whichMin;
   futurePlane = true;
+}
+
+INT32 HistogramProxy::getSelectedPlane() const
+{
+  return selectedPlane;
 }

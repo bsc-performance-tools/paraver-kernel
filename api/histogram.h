@@ -42,8 +42,8 @@ class Histogram
     virtual void setExtraControlMin( THistogramLimit whichMin ) = 0;
     virtual void setExtraControlMax( THistogramLimit whichMax ) = 0;
     virtual void setExtraControlDelta( THistogramLimit whichDelta ) = 0;
-    virtual void setDataMin( THistogramLimit whichMin ) = 0;
-    virtual void setDataMax( THistogramLimit whichMax ) = 0;
+    virtual void setDataMin( TSemanticValue whichMin ) = 0;
+    virtual void setDataMax( TSemanticValue whichMax ) = 0;
 
     virtual THistogramLimit getControlMin() const = 0;
     virtual THistogramLimit getControlMax() const = 0;
@@ -51,8 +51,8 @@ class Histogram
     virtual THistogramLimit getExtraControlMin() const = 0;
     virtual THistogramLimit getExtraControlMax() const = 0;
     virtual THistogramLimit getExtraControlDelta() const = 0;
-    virtual THistogramLimit getDataMin() const = 0;
-    virtual THistogramLimit getDataMax() const = 0;
+    virtual TSemanticValue getDataMin() const = 0;
+    virtual TSemanticValue getDataMax() const = 0;
 
     virtual void setInclusive( bool newValue ) = 0;
 
@@ -150,6 +150,10 @@ class Histogram
       return false;
     }
     virtual void setPlaneMinValue( double whichMin ) {}
+    virtual INT32 getSelectedPlane() const
+    {
+      return 0;
+    }
   protected:
     KernelConnection *myKernel;
 };
@@ -238,6 +242,7 @@ class HistogramProxy : public Histogram
     virtual void setComputeGradient( bool newValue );
     virtual bool getComputeGradient() const;
     virtual void setPlaneMinValue( double whichMin );
+    virtual INT32 getSelectedPlane() const;
 
   private:
     bool horizontal;
@@ -251,6 +256,7 @@ class HistogramProxy : public Histogram
     bool computeGradient;
     bool futurePlane;
     double planeMinValue;
+    INT32 selectedPlane;
 
     TRecordTime winBeginTime;
     TRecordTime winEndTime;

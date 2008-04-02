@@ -107,8 +107,15 @@ class KHistogram : public Histogram
     void setExtraControlMin( THistogramLimit whichMin );
     void setExtraControlMax( THistogramLimit whichMax );
     void setExtraControlDelta( THistogramLimit whichDelta );
-    void setDataMin( THistogramLimit whichMin );
-    void setDataMax( THistogramLimit whichMax );
+    void setDataMin( TSemanticValue whichMin );
+    void setDataMax( TSemanticValue whichMax );
+    void setBurstMin( TRecordTime whichTime );
+    void setBurstMax( TRecordTime whichTime );
+    void setCommSizeMin( TCommSize whichSize );
+    void setCommSizeMax( TCommSize whichSize );
+    void setCommTagMin( TCommTag whichTag );
+    void setCommTagMax( TCommTag whichTag );
+
 
     THistogramLimit getControlMin() const;
     THistogramLimit getControlMax() const;
@@ -116,8 +123,14 @@ class KHistogram : public Histogram
     THistogramLimit getExtraControlMin() const;
     THistogramLimit getExtraControlMax() const;
     THistogramLimit getExtraControlDelta() const;
-    THistogramLimit getDataMin() const;
-    THistogramLimit getDataMax() const;
+    TSemanticValue getDataMin() const;
+    TSemanticValue getDataMax() const;
+    TRecordTime getBurstMin() const;
+    TRecordTime getBurstMax() const;
+    TCommSize getCommSizeMin() const;
+    TCommSize getCommSizeMax() const;
+    TCommTag getCommTagMin() const;
+    TCommTag getCommTagMax() const;
 
     void setInclusive( bool newValue );
 
@@ -175,8 +188,14 @@ class KHistogram : public Histogram
     THistogramLimit xtraControlMin;
     THistogramLimit xtraControlMax;
     THistogramLimit xtraControlDelta;
-    THistogramLimit dataMin;
-    THistogramLimit dataMax;
+    TSemanticValue dataMin;
+    TSemanticValue dataMax;
+    TRecordTime burstMin;
+    TRecordTime burstMax;
+    TCommSize commSizeMin;
+    TCommSize commSizeMax;
+    TCommTag commTagMin;
+    TCommTag commTagMax;
 
     bool inclusive;
 
