@@ -8,6 +8,7 @@ void createStatistic()
   vector<string> names;
   vector<vector<HistogramStatistic *> > functions;
 
+  // Communication statistics
   functions.push_back( vector<HistogramStatistic *>() );
 
   functions[0].push_back( new StatNumSends() );
@@ -20,6 +21,9 @@ void createStatistic()
   functions[0].push_back( new StatMinBytesReceived() );
   functions[0].push_back( new StatMaxBytesSent() );
   functions[0].push_back( new StatMaxBytesReceived() );
+
+  // Semantic statistics
+  functions.push_back( vector<HistogramStatistic *>() );
 
   functions[1].push_back( new StatTime() );
   functions[1].push_back( new StatPercTime() );

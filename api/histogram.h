@@ -44,6 +44,12 @@ class Histogram
     virtual void setExtraControlDelta( THistogramLimit whichDelta ) = 0;
     virtual void setDataMin( TSemanticValue whichMin ) = 0;
     virtual void setDataMax( TSemanticValue whichMax ) = 0;
+    virtual void setBurstMin( TRecordTime whichTime ) = 0;
+    virtual void setBurstMax( TRecordTime whichTime ) = 0;
+    virtual void setCommSizeMin( TCommSize whichSize ) = 0;
+    virtual void setCommSizeMax( TCommSize whichSize ) = 0;
+    virtual void setCommTagMin( TCommTag whichTag ) = 0;
+    virtual void setCommTagMax( TCommTag whichTag ) = 0;
 
     virtual THistogramLimit getControlMin() const = 0;
     virtual THistogramLimit getControlMax() const = 0;
@@ -53,6 +59,12 @@ class Histogram
     virtual THistogramLimit getExtraControlDelta() const = 0;
     virtual TSemanticValue getDataMin() const = 0;
     virtual TSemanticValue getDataMax() const = 0;
+    virtual TRecordTime getBurstMin() const = 0;
+    virtual TRecordTime getBurstMax() const = 0;
+    virtual TCommSize getCommSizeMin() const = 0;
+    virtual TCommSize getCommSizeMax() const = 0;
+    virtual TCommTag getCommTagMin() const = 0;
+    virtual TCommTag getCommTagMax() const = 0;
 
     virtual void setInclusive( bool newValue ) = 0;
 
@@ -187,6 +199,13 @@ class HistogramProxy : public Histogram
     virtual void setExtraControlDelta( THistogramLimit whichDelta );
     virtual void setDataMin( THistogramLimit whichMin );
     virtual void setDataMax( THistogramLimit whichMax );
+    virtual void setBurstMin( TRecordTime whichTime );
+    virtual void setBurstMax( TRecordTime whichTime );
+    virtual void setCommSizeMin( TCommSize whichSize );
+    virtual void setCommSizeMax( TCommSize whichSize );
+    virtual void setCommTagMin( TCommTag whichTag );
+    virtual void setCommTagMax( TCommTag whichTag );
+
     virtual THistogramLimit getControlMin() const;
     virtual THistogramLimit getControlMax() const;
     virtual THistogramLimit getControlDelta() const;
@@ -195,6 +214,13 @@ class HistogramProxy : public Histogram
     virtual THistogramLimit getExtraControlDelta() const;
     virtual THistogramLimit getDataMin() const;
     virtual THistogramLimit getDataMax() const;
+    virtual TRecordTime getBurstMin() const;
+    virtual TRecordTime getBurstMax() const;
+    virtual TCommSize getCommSizeMin() const;
+    virtual TCommSize getCommSizeMax() const;
+    virtual TCommTag getCommTagMin() const;
+    virtual TCommTag getCommTagMax() const;
+
     virtual void setInclusive( bool newValue );
     virtual THistogramColumn getNumPlanes() const;
     virtual THistogramColumn getNumColumns() const;
