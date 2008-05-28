@@ -5,10 +5,12 @@
 
 void createStatistic()
 {
+  vector<string> groups;
   vector<string> names;
   vector<vector<HistogramStatistic *> > functions;
 
   // Communication statistics
+  groups.push_back( "Communication" );
   functions.push_back( vector<HistogramStatistic *>() );
 
   functions[0].push_back( new StatNumSends() );
@@ -23,6 +25,7 @@ void createStatistic()
   functions[0].push_back( new StatMaxBytesReceived() );
 
   // Semantic statistics
+  groups.push_back( "Semantic" );
   functions.push_back( vector<HistogramStatistic *>() );
 
   functions[1].push_back( new StatTime() );
@@ -47,5 +50,5 @@ void createStatistic()
       names.push_back( functions[ iGroup ][ iFunction ]->getName() );
   }
 
-  FunctionManagement<HistogramStatistic>::getInstance( names, functions );
+  FunctionManagement<HistogramStatistic>::getInstance( groups, names, functions );
 }

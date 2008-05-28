@@ -162,7 +162,9 @@ class KHistogram : public Histogram
     HistogramTotals *getCommRowTotals() const;
 
     void clearStatistics();
-    void pushbackStatistic( HistogramStatistic *whichStatistic );
+    void pushbackStatistic( string& whichStatistic );
+
+    bool itsCommunicationStat( const string& whichStat ) const;
 
     void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime );
 

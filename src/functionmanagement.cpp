@@ -15,20 +15,26 @@ FunctionManagement<T>::~FunctionManagement()
     delete ( *it ).second;
     it++;
   }
+
+  inst = NULL;
 }
 
 
 template <class T>
-FunctionManagement<T>::FunctionManagement( vector<string>& names, vector<vector<T *> >& objects )
+FunctionManagement<T>::FunctionManagement( vector<string>& whichGroups,
+    vector<string>& whichFunctions,
+    vector<vector<T *> >& objects )
 {
   UINT32 iName = 0;
+
+  nameGroups = whichGroups;
 
   for ( UINT32 iGroup = 0; iGroup < objects.size(); iGroup++ )
   {
     groups.push_back( vector<T *>() );
     for ( UINT32 iObject = 0; iObject < objects[ iGroup ].size(); iObject++ )
     {
-      hash.insert( pair<string, T*>( names[ iName ], objects[ iGroup ][ iObject ] ) );
+      hash.insert( pair<string, T*>( whichFunctions[ iName ], objects[ iGroup ][ iObject ] ) );
       groups[ iGroup ].push_back( objects[ iGroup ][ iObject ] );
       iName++;
     }
@@ -44,9 +50,12 @@ FunctionManagement<T> *FunctionManagement<T>::getInstance()
 
 
 template <class T>
-FunctionManagement<T> *FunctionManagement<T>::getInstance( vector<string>& names, vector<vector<T *> >& objects )
+FunctionManagement<T> *FunctionManagement<T>::getInstance( vector<string>& whichGroups,
+    vector<string>& whichFunctions,
+    vector<vector<T *> >& objects )
 {
-  inst = new FunctionManagement( names, objects );
+  if ( inst == NULL )
+    inst = new FunctionManagement( whichGroups, whichFunctions, objects );
   return inst;
 }
 
@@ -86,4 +95,30 @@ void FunctionManagement<T>::getAll( vector<T *>& onVector, UINT32 whichGroup ) c
 {
   for ( UINT32 iObject = 0; iObject < groups[ whichGroup ].size(); iObject++ )
     onVector.push_back( groups[ whichGroup ][ iObject ] );
+}
+
+
+template <class T>
+void FunctionManagement<T>::getNameGroups( vector<string>& onVector )
+{
+  onVector = nameGroups;
+}
+
+
+template <class T>
+void FunctionManagement<T>::getAll( vector<string>& onVector ) const
+{
+  for ( UINT32 iGroup = 0; iGroup < groups.size(); iGroup++ )
+  {
+    for ( UINT32 iObject = 0; iObject < groups[ iGroup ].size(); iObject++ )
+      onVector.push_back( groups[ iGroup ][ iObject ]->getName() );
+  }
+}
+
+
+template <class T>
+void FunctionManagement<T>::getAll( vector<string>& onVector, UINT32 whichGroup ) const
+{
+  for ( UINT32 iObject = 0; iObject < groups[ whichGroup ].size(); iObject++ )
+    onVector.push_back( groups[ whichGroup ][ iObject ]->getName() );
 }

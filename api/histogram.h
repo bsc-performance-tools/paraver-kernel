@@ -96,11 +96,17 @@ class Histogram
     virtual HistogramTotals *getCommRowTotals() const = 0;
 
     virtual void clearStatistics() = 0;
-    virtual void pushbackStatistic( HistogramStatistic *whichStatistic ) = 0;
+    virtual void pushbackStatistic( string& whichStatistic ) = 0;
 
     virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime ) = 0;
 
+    virtual bool itsCommunicationStat( const string& whichStat ) const = 0;
+
     // Specific methods of HistogramProxy
+    virtual HistogramTotals *getTotals( UINT16 idStat ) const
+    {
+      return NULL;
+    }
     virtual void setHorizontal( bool newValue ) {}
     virtual bool getHorizontal() const
     {
@@ -168,6 +174,7 @@ class Histogram
     }
   protected:
     KernelConnection *myKernel;
+
 };
 
 
@@ -241,12 +248,16 @@ class HistogramProxy : public Histogram
     virtual void setCommFirstCell( UINT32 col, UINT32 plane = 0 );
     virtual bool endCommCell( UINT32 col, UINT32 plane = 0 );
     virtual bool planeCommWithValues( UINT32 plane = 0 ) const;
+
+    virtual HistogramTotals *getTotals( UINT16 idStat ) const;
     virtual HistogramTotals *getColumnTotals() const;
     virtual HistogramTotals *getCommColumnTotals() const;
     virtual HistogramTotals *getRowTotals() const;
     virtual HistogramTotals *getCommRowTotals() const;
+
     virtual void clearStatistics();
-    virtual void pushbackStatistic( HistogramStatistic *whichStatistic );
+    virtual void pushbackStatistic( string& whichStatistic );
+
     virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime );
 
     virtual void setHorizontal( bool newValue );
@@ -292,9 +303,13 @@ class HistogramProxy : public Histogram
     Window *dataWindow;
     Window *extraControlWindow;
 
+    vector<string> calcStat;
+
     Histogram *myHisto;
 
     HistogramProxy( KernelConnection *whichKernel );
+
+    bool itsCommunicationStat( const string& whichStat ) const;
 
     friend Histogram *Histogram::create( KernelConnection * );
 };

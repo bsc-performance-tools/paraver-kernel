@@ -1120,7 +1120,7 @@ bool Analyzer2DStatistic::parseLine( KernelConnection *whichKernel, istringstrea
   if ( statistic == NULL )
     return false;
 
-  histogram->pushbackStatistic( statistic );
+  histogram->pushbackStatistic( strStatistic );
 
   return true;
 }
@@ -1142,7 +1142,7 @@ bool Analyzer2DCalculateAll::parseLine( KernelConnection *whichKernel, istringst
 
   if ( strBoolAll.compare( OLDCFG_VAL_TRUE2 ) == 0 )
   {
-    vector<HistogramStatistic *> v;
+    vector<string> v;
     ( FunctionManagement<HistogramStatistic>::getInstance() )->getAll( v );
     for ( UINT32 i = 0; i < v.size(); i++ )
       histogram->pushbackStatistic( v[ i ] );
@@ -1452,9 +1452,25 @@ bool Analyzer2DParameters::parseLine( KernelConnection *whichKernel, istringstre
     if ( !( tmpValue >> dataValue ) )
       return false;
     if ( ii == 0 )
+    {
       histogram->setDataMin( dataValue );
+      histogram->setCommSizeMin( (TCommSize) dataValue );
+    }
     else if ( ii == 1 )
+    {
       histogram->setDataMax( dataValue );
+      histogram->setCommSizeMax( (TCommSize) dataValue );
+    }
+    else if( ii == 2 )
+    {
+      histogram->setBurstMin( dataValue );
+      histogram->setCommTagMin( (TCommTag) dataValue );
+    }
+    else if( ii == 3 )
+    {
+      histogram->setBurstMax( dataValue );
+      histogram->setCommTagMax( (TCommTag) dataValue );
+    }
   }
 
   return false;

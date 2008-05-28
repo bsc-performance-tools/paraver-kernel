@@ -5,6 +5,7 @@
 #include "histogramstatistic.h"
 #include "histogramexception.h"
 #include "khistogramtotals.h"
+#include "functionmanagement.h"
 
 RowsTranslator::RowsTranslator( vector<Window *>& kwindows )
 {
@@ -606,12 +607,16 @@ void KHistogram::clearStatistics()
 }
 
 
-void KHistogram::pushbackStatistic( HistogramStatistic *whichStatistic )
+void KHistogram::pushbackStatistic( string& whichStatistic )
 {
-  if ( whichStatistic->createComms() )
-    commStatisticFunctions.push_back( whichStatistic );
+  HistogramStatistic *stat;
+
+  stat = ( FunctionManagement<HistogramStatistic>::getInstance() )->getFunction( whichStatistic );
+
+  if ( stat->createComms() )
+    commStatisticFunctions.push_back( stat );
   else
-    statisticFunctions.push_back( whichStatistic );
+    statisticFunctions.push_back( stat );
 }
 
 
@@ -1098,4 +1103,10 @@ void KHistogram::finishRow( CalculateData *data )
     cube->newRow();
   else
     matrix->newRow();
+}
+
+bool KHistogram::itsCommunicationStat( const string& whichStat ) const
+{
+  return FunctionManagement<HistogramStatistic>::getInstance()
+         ->getFunction( whichStat )->createComms();
 }

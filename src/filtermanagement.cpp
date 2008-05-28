@@ -5,9 +5,11 @@
 
 void createFilter()
 {
+  vector<string> groups;
   vector<string> names;
   vector<vector<FilterFunction *> > functions;
 
+  groups.push_back( "Filter functions" );
   functions.push_back( vector<FilterFunction *>() );
 
   functions[0].push_back( new FilterAll() );
@@ -23,6 +25,6 @@ void createFilter()
     names.push_back( functions[0][i]->getName() );
 
 
-  FunctionManagement<FilterFunction>::getInstance( names, functions );
+  FunctionManagement<FilterFunction>::getInstance( groups, names, functions );
 }
 

@@ -1,3 +1,4 @@
+#include <string>
 #include "kernelconnection.h"
 #include "histogram.h"
 #include "window.h"
@@ -346,6 +347,24 @@ bool HistogramProxy::planeCommWithValues( UINT32 plane ) const
   return myHisto->planeCommWithValues( plane );
 }
 
+HistogramTotals *HistogramProxy::getTotals( UINT16 idStat ) const
+{
+  if( itsCommunicationStat( calcStat[ idStat ] ) )
+  {
+    if( horizontal )
+      return getCommColumnTotals();
+    else
+      return getCommRowTotals();
+  }
+  else
+  {
+    if( horizontal )
+      return getColumnTotals();
+    else
+      return getRowTotals();
+  }
+}
+
 HistogramTotals *HistogramProxy::getColumnTotals() const
 {
   return HistogramTotals::create( myHisto->getColumnTotals() );
@@ -369,11 +388,13 @@ HistogramTotals *HistogramProxy::getCommRowTotals() const
 void HistogramProxy::clearStatistics()
 {
   myHisto->clearStatistics();
+  calcStat.clear();
 }
 
-void HistogramProxy::pushbackStatistic( HistogramStatistic *whichStatistic )
+void HistogramProxy::pushbackStatistic( string& whichStatistic )
 {
   myHisto->pushbackStatistic( whichStatistic );
+  calcStat.push_back( whichStatistic );
 }
 
 void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
@@ -482,4 +503,9 @@ void HistogramProxy::setPlaneMinValue( double whichMin )
 INT32 HistogramProxy::getSelectedPlane() const
 {
   return selectedPlane;
+}
+
+bool HistogramProxy::itsCommunicationStat( const string& whichStat ) const
+{
+  return myHisto->itsCommunicationStat( whichStat );
 }

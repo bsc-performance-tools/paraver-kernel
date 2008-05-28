@@ -9,12 +9,14 @@
 
 void createSemantic()
 {
+  vector<string> groups;
   vector<string> names;
   vector<vector<SemanticFunction *> > functions;
 
   /**************************
   ** Compose functions
   ***************************/
+  groups.push_back( "Compose" );
   functions.push_back( vector<SemanticFunction *>() );
 
   functions[0].push_back( new ComposeAsIs() );
@@ -41,6 +43,7 @@ void createSemantic()
   /**************************
   ** Derived functions
   ***************************/
+  groups.push_back( "Derived" );
   functions.push_back( vector<SemanticFunction *>() );
 
   functions[1].push_back( new DerivedAdd() );
@@ -57,6 +60,7 @@ void createSemantic()
   /**************************
   ** CPU functions
   ***************************/
+  groups.push_back( "CPU" );
   functions.push_back( vector<SemanticFunction *>() );
 
   functions[2].push_back( new ActiveThread() );
@@ -69,6 +73,7 @@ void createSemantic()
   /**************************
   ** Not Thread functions
   ***************************/
+  groups.push_back( "Not thread" );
   functions.push_back( vector<SemanticFunction *>() );
 
   functions[3].push_back( new Adding() );
@@ -86,6 +91,7 @@ void createSemantic()
   /**************************
   ** State functions (Thread)
   ***************************/
+  groups.push_back( "State" );
   functions.push_back( vector<SemanticFunction *>() );
 
   functions[4].push_back( new StateAsIs() );
@@ -100,6 +106,7 @@ void createSemantic()
   /**************************
   ** Event functions (Thread)
   ***************************/
+  groups.push_back( "Event" );
   functions.push_back( vector<SemanticFunction *>() );
 
   functions[5].push_back( new LastEventType() );
@@ -120,6 +127,7 @@ void createSemantic()
   /**************************
   ** Comm functions (Thread)
   ***************************/
+  groups.push_back( "Communication" );
   functions.push_back( vector<SemanticFunction *>() );
 
   functions[6].push_back( new LastTag() );
@@ -143,6 +151,7 @@ void createSemantic()
   /**************************
   ** Object functions (Thread)
   ***************************/
+  groups.push_back( "Object" );
   functions.push_back( vector<SemanticFunction *>() );
 
   functions[7].push_back( new ApplicationID() );
@@ -157,12 +166,13 @@ void createSemantic()
   functions[7].push_back( new InCPUID() );
 
 
-  for( UINT16 iGroup = 0; iGroup < functions.size(); iGroup++ )
+  for ( UINT16 iGroup = 0; iGroup < functions.size(); iGroup++ )
   {
     for ( UINT16 iFunction = 0; iFunction < functions[ iGroup ].size(); iFunction++ )
       names.push_back( functions[ iGroup ][ iFunction ]->getName() );
   }
-  FunctionManagement<SemanticFunction>::getInstance( names, functions );
+
+  FunctionManagement<SemanticFunction>::getInstance( groups, names, functions );
 
 }
 
