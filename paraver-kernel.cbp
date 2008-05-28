@@ -123,6 +123,54 @@
 			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
+		<Unit filename="../common-files/pcfparser/ParaverEventType.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="../common-files/pcfparser/ParaverEventType.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="../common-files/pcfparser/ParaverEventValue.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="../common-files/pcfparser/ParaverEventValue.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="../common-files/pcfparser/ParaverGradientColor.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="../common-files/pcfparser/ParaverGradientColor.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="../common-files/pcfparser/ParaverGradientNames.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="../common-files/pcfparser/ParaverGradientNames.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="../common-files/pcfparser/ParaverState.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="../common-files/pcfparser/ParaverState.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="../common-files/pcfparser/ParaverStatesColor.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="../common-files/pcfparser/ParaverStatesColor.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="../common-files/pcfparser/ParaverTraceConfig.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="../common-files/pcfparser/ParaverTraceConfig.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="../common-files/pcfparser/ParaverTraceConfigGrammar.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="../common-files/pcfparser/ParaverTraceConfigGrammar.h">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="../common-files/types.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -371,11 +419,6 @@
 		</Unit>
 		<Unit filename="include/paraverkernelexception.h">
 			<Option virtualFolder="paraver-kernel/src/" />
-			<Option target="Debug" />
-			<Option target="Release" />
-			<Option target="Application test" />
-			<Option target="cfg" />
-			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/paraverkerneltypes.h">
 			<Option target="Debug" />
