@@ -12,7 +12,7 @@ class Histogram;
 
 void dumpWindow( vector<Window *>& windows, string& strOutputFile );
 
-void dumpHistogram( Histogram *histo, string& strOutputFile );
+void dumpHistogram( vector<Histogram *>& histograms, string& strOutputFile );
 
 void printHelp();
 

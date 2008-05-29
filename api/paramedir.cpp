@@ -59,7 +59,7 @@ int main( int argc, char *argv[] )
     {
       string strCfg( argv[ currentArg ] );
       vector<Window *> windows;
-      Histogram *histogram = NULL;
+      vector<Histogram *> histograms;
       string strOutputFile;
 
       if ( CFGLoader::isCFGFile( strCfg ) )
@@ -86,10 +86,10 @@ int main( int argc, char *argv[] )
         currentArg++;
       }
 
-      if ( CFGLoader::loadCFG( myKernel, strCfg, trace, windows, histogram ) )
+      if ( CFGLoader::loadCFG( myKernel, strCfg, trace, windows, histograms ) )
       {
-        if ( histogram != NULL )
-          dumpHistogram( histogram, strOutputFile );
+        if ( histograms[ histograms.size() - 1 ] != NULL )
+          dumpHistogram( histograms, strOutputFile );
         else
           dumpWindow( windows, strOutputFile );
       }
@@ -103,8 +103,12 @@ int main( int argc, char *argv[] )
       }
       windows.clear();
 
-      if ( histogram != NULL )
-        delete histogram;
+      for ( UINT32 i = 0; i < histograms.size(); i++ )
+      {
+        if ( histograms[ i ] != NULL )
+          delete histograms[ i ];
+      }
+      histograms.clear();
     }
 
     delete trace;
@@ -178,12 +182,13 @@ void dumpWindow( vector<Window *>& windows, string& strOutputFile )
   }
 }
 
-void dumpHistogram( Histogram *histo, string& strOutputFile )
+void dumpHistogram( vector<Histogram *>& histograms, string& strOutputFile )
 {
   THistogramColumn numPlanes;
   THistogramColumn numColumns;
   TObjectOrder numRows;
   ofstream outputFile;
+  Histogram *histo = histograms[ histograms.size() - 1 ];
 
   histo->execute( histo->getBeginTime(), histo->getEndTime() );
   numPlanes = histo->getNumPlanes();
