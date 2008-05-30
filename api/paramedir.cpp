@@ -10,12 +10,13 @@
 #include "histogram.h"
 #include "histogramtotals.h"
 #include "paraverkernelexception.h"
+#include "paraverconfig.h"
 
 using namespace std;
 
 bool multipleFiles = false;
 Trace *trace;
-UINT32 outputPrecision = 2;
+ParaverConfig config;
 
 int main( int argc, char *argv[] )
 {
@@ -23,7 +24,7 @@ int main( int argc, char *argv[] )
 
   KernelConnection *myKernel = new LocalKernel();
 
-  readParaverConfigFile();
+  ParaverConfig::readParaverConfigFile( config );
 
   if ( argc == 1 )
     printHelp();
@@ -150,7 +151,7 @@ void dumpWindow( vector<Window *>& windows, string& strOutputFile )
 
     while ( tmpWindow->getEndTime( i ) < endTime )
     {
-      outputFile << setprecision( outputPrecision );
+      outputFile << setprecision( config.getPrecision() );
       if ( !multipleFiles )
         outputFile << i + 1 << "\t";
       outputFile << tmpWindow->traceUnitsToWindowUnits(
@@ -160,7 +161,7 @@ void dumpWindow( vector<Window *>& windows, string& strOutputFile )
       outputFile << tmpWindow->getValue( i ) << endl;
       tmpWindow->calcNext( i );
     }
-    outputFile << setprecision( outputPrecision );
+    outputFile << setprecision( config.getPrecision() );
     if ( !multipleFiles )
       outputFile << i + 1 << "\t";
     outputFile << tmpWindow->traceUnitsToWindowUnits(
@@ -292,42 +293,3 @@ void printHelp()
   cout << "  out: Filename for output (default name is cfg filename without .cfg)." << endl;
 }
 
-
-void readParaverConfigFile()
-{
-  ifstream file;
-  string strLine;
-  string strTag;
-  string strFile;
-
-  strFile.append( getenv( "HOME" ) );
-  strFile.append( "/.paraver/paraver" );
-
-  file.open( strFile.c_str() );
-
-  if ( !file )
-    return;
-
-  while ( !file.eof() )
-  {
-    getline( file, strLine );
-    if ( strLine.length() == 0 )
-      continue;
-    else if ( strLine[ 0 ] == '#' || strLine[ 0 ] == '<' )
-      continue;
-
-    istringstream auxStream( strLine );
-    getline( auxStream, strTag, ' ' );
-
-    if ( strTag.compare( "WhatWhere.num_decimals:" ) == 0 )
-    {
-      string strNumDecimals;
-
-      getline( auxStream, strNumDecimals );
-      istringstream streamNumDecimals( strNumDecimals );
-
-      streamNumDecimals >> outputPrecision;
-    }
-  }
-  file.close();
-}

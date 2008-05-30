@@ -16,6 +16,4 @@ void dumpHistogram( vector<Histogram *>& histograms, string& strOutputFile );
 
 void printHelp();
 
-void readParaverConfigFile();
-
 #endif // PARAMEDIR_H_INCLUDED

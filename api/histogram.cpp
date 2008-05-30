@@ -401,7 +401,31 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
 {
   winBeginTime = whichBeginTime;
   winEndTime = whichEndTime;
+
+  if( computeScale )
+  {
+    // Se usan los valores de las diferentes ventanas de control para el min
+    // y max. Para el delta se tiene que saber cuantas columnas se quieren
+    // por defecto (leerlo del fichero de defaults).
+  }
+
+  if( computeGradient )
+  {
+    // Idem que para computeScale pero con la ventana de datos, aunque hace
+    // falta una clase para hacer gradientes.
+  }
+
   myHisto->execute( whichBeginTime, whichEndTime );
+
+  if( futurePlane )
+  {
+    // se mira si planeMinValue tiene valores y si no se usa el primer plano
+    // que si los tenga.
+  }
+  else
+  {
+    // se coge el primer plano con valores.
+  }
 }
 
 void HistogramProxy::setHorizontal( bool newValue )
