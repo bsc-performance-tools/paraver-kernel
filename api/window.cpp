@@ -47,12 +47,45 @@ TRecordTime Window::getWindowEndTime() const
   return 0;
 }
 
+bool Window::getYScaleComputed() const
+{
+  return false;
+}
+
+void Window::computeYScale()
+{}
+
+void Window::setComputeYMaxOnInit( bool newValue )
+{}
+
+bool Window::getComputeYMaxOnInit() const
+{
+  return false;
+}
+
+void Window::setMaximumY( TSemanticValue whichMax )
+{}
+
+void Window::setMinimumY( TSemanticValue whichMin )
+{}
+
+TSemanticValue Window::getMaximumY() const
+{
+  return 15.0;
+}
+
+TSemanticValue Window::getMinimumY() const
+{
+  return 0.0;
+}
+
 WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
     Window( whichKernel )
 {
   parent1 = NULL;
   parent2 = NULL;
   myWindow = myKernel->newSingleWindow( whichTrace );
+  init();
 }
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
@@ -62,6 +95,7 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
   parent1 = whichParent1;
   parent2 = whichParent2;
   myWindow = myKernel->newDerivedWindow( parent1, parent2 );
+  init();
 }
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel ):
@@ -70,6 +104,18 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel ):
   parent1 = NULL;
   parent2 = NULL;
   myWindow = myKernel->newDerivedWindow();
+  init();
+}
+
+void WindowProxy::init()
+{
+  winBeginTime = 0.0;
+  winEndTime = myWindow->getTrace()->getEndTime();
+
+  computeYMaxOnInit = false;
+  yScaleComputed = false;
+  maximumY = Window::getMaximumY();
+  minimumY = Window::getMinimumY();
 }
 
 WindowProxy::~WindowProxy()
@@ -87,13 +133,19 @@ Filter *WindowProxy::getFilter() const
 void WindowProxy::setFactor( UINT16 whichFactor, TSemanticValue newValue )
 {
   if ( myWindow->isDerivedWindow() )
+  {
+    yScaleComputed = false;
+
     myWindow->setFactor( whichFactor, newValue );
+  }
 }
 
 void WindowProxy::setParent( UINT16 whichParent, Window *whichWindow )
 {
   if ( myWindow->isDerivedWindow() )
   {
+    yScaleComputed = false;
+
     if ( whichParent == 0 )
       parent1 = whichWindow;
     else if ( whichParent == 1 )
@@ -104,11 +156,15 @@ void WindowProxy::setParent( UINT16 whichParent, Window *whichWindow )
 
 void WindowProxy::setWindowBeginTime( TRecordTime whichTime )
 {
+  yScaleComputed = false;
+
   winBeginTime = whichTime;
 }
 
 void WindowProxy::setWindowEndTime( TRecordTime whichTime )
 {
+  yScaleComputed = false;
+
   winEndTime = whichTime;
 }
 
@@ -120,6 +176,57 @@ TRecordTime WindowProxy::getWindowBeginTime() const
 TRecordTime WindowProxy::getWindowEndTime() const
 {
   return winEndTime;
+}
+
+bool WindowProxy::getYScaleComputed() const
+{
+  return yScaleComputed;
+}
+
+void WindowProxy::computeYScale()
+{
+  if ( !yScaleComputed )
+  {
+    init( winBeginTime, NONE );
+    for ( TObjectOrder obj = 0; obj < getWindowLevelObjects(); obj++ )
+    {
+      while ( getBeginTime( obj ) < winEndTime )
+        calcNext( obj );
+    }
+  }
+
+  maximumY = computedMaxY;
+  minimumY = computedMinY;
+}
+
+void WindowProxy::setComputeYMaxOnInit( bool newValue )
+{
+  computeYMaxOnInit = newValue;
+}
+
+bool WindowProxy::getComputeYMaxOnInit() const
+{
+  return computeYMaxOnInit;
+}
+
+void WindowProxy::setMaximumY( TSemanticValue whichMax )
+{
+  maximumY = whichMax;
+}
+
+void WindowProxy::setMinimumY( TSemanticValue whichMin )
+{
+  minimumY = whichMin;
+}
+
+TSemanticValue WindowProxy::getMaximumY() const
+{
+  return maximumY;
+}
+
+TSemanticValue WindowProxy::getMinimumY() const
+{
+  return minimumY;
 }
 
 Trace *WindowProxy::getTrace() const
@@ -134,11 +241,15 @@ TWindowLevel WindowProxy::getLevel() const
 
 void WindowProxy::setLevel( TWindowLevel whichLevel )
 {
+  yScaleComputed = false;
+
   myWindow->setLevel( whichLevel );
 }
 
 void WindowProxy::setTimeUnit( TTimeUnit whichUnit )
 {
+  yScaleComputed = false;
+
   myWindow->setTimeUnit( whichUnit );
 }
 
@@ -155,7 +266,10 @@ TWindowLevel WindowProxy::getComposeLevel( TWindowLevel whichLevel ) const
 bool WindowProxy::setLevelFunction( TWindowLevel whichLevel,
                                     SemanticFunction *whichFunction )
 {
-  return myWindow->setLevelFunction( whichLevel, whichFunction );
+  bool result = myWindow->setLevelFunction( whichLevel, whichFunction );
+  if( result )
+    yScaleComputed = false;
+  return result;
 }
 
 SemanticFunction *WindowProxy::getLevelFunction( TWindowLevel whichLevel )
@@ -172,6 +286,8 @@ void WindowProxy::setFunctionParam( TWindowLevel whichLevel,
                                     TParamIndex whichParam,
                                     const TParamValue& newValue )
 {
+  yScaleComputed = false;
+
   myWindow->setFunctionParam( whichLevel, whichParam, newValue );
 }
 
@@ -194,6 +310,8 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create )
     myLists.push_back( NULL );
 
   myWindow->init( initialTime, create );
+  yScaleComputed = true;
+  computedMaxY = computedMinY = getValue( 0 );
 }
 
 RecordList *WindowProxy::calcNext( TObjectOrder whichObject )
@@ -202,6 +320,12 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject )
     myLists[ whichObject ] = RecordList::create( myWindow->calcNext( whichObject ) );
   else
     myWindow->calcNext( whichObject );
+
+  TSemanticValue objValue = getValue( whichObject );
+  if( computedMaxY < objValue )
+    computedMaxY = objValue;
+  if( computedMinY > objValue )
+    computedMinY = objValue;
 
   return myLists[ whichObject ];
 }
@@ -212,6 +336,12 @@ RecordList *WindowProxy::calcPrev( TObjectOrder whichObject )
     myLists[ whichObject ] = RecordList::create( myWindow->calcPrev( whichObject ) );
   else
     myWindow->calcPrev( whichObject );
+
+  TSemanticValue objValue = getValue( whichObject );
+  if( computedMaxY < objValue )
+    computedMaxY = objValue;
+  if( computedMinY > objValue )
+    computedMinY = objValue;
 
   return myLists[ whichObject ];
 }

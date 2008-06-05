@@ -136,6 +136,8 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_UNITS]               = new WindowUnits();
   cfgTagFunctions[OLDCFG_TAG_WNDW_OPERATION]           = new WindowOperation();
   cfgTagFunctions[OLDCFG_TAG_WNDW_MAXIMUM_Y]           = new WindowMaximumY();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_MINIMUM_Y]           = new WindowMinimumY();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_COMPUTE_Y_MAX]       = new WindowComputeYMax();
   cfgTagFunctions[OLDCFG_TAG_WNDW_LEVEL]               = new WindowLevel();
   cfgTagFunctions[OLDCFG_TAG_WNDW_SCALE_RELATIVE]      = new WindowScaleRelative();
   cfgTagFunctions[OLDCFG_TAG_WNDW_OBJECT]              = new WindowObject();
@@ -398,6 +400,57 @@ bool WindowMaximumY::parseLine( KernelConnection *whichKernel, istringstream& li
                                 vector<Window *>& windows,
                                 vector<Histogram *>& histograms )
 {
+  string strMaximum;
+  TSemanticValue maximum;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strMaximum, ' ' );
+  istringstream tmpStream( strMaximum );
+  if ( !( tmpStream >> maximum ) )
+    return false;
+
+  windows[ windows.size() - 1 ]->setMaximumY( maximum );
+
+  return true;
+}
+
+
+bool WindowMinimumY::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                Trace *whichTrace,
+                                vector<Window *>& windows,
+                                vector<Histogram *>& histograms )
+{
+  string strMinimum;
+  TSemanticValue minimum;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strMinimum, ' ' );
+  istringstream tmpStream( strMinimum );
+  if ( !( tmpStream >> minimum ) )
+    return false;
+
+  windows[ windows.size() - 1 ]->setMinimumY( minimum );
+
+  return true;
+}
+
+
+bool WindowComputeYMax::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                Trace *whichTrace,
+                                vector<Window *>& windows,
+                                vector<Histogram *>& histograms )
+{
+  string strMinimum;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  windows[ windows.size() - 1 ]->setComputeYMaxOnInit( true );
+
   return true;
 }
 

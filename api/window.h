@@ -37,6 +37,15 @@ class Window
     virtual TRecordTime getWindowBeginTime() const;
     virtual TRecordTime getWindowEndTime() const;
 
+    virtual bool getYScaleComputed() const;
+    virtual void computeYScale();
+    virtual void setComputeYMaxOnInit( bool newValue );
+    virtual bool getComputeYMaxOnInit() const;
+    virtual void setMaximumY( TSemanticValue whichMax );
+    virtual void setMinimumY( TSemanticValue whichMin );
+    virtual TSemanticValue getMaximumY() const;
+    virtual TSemanticValue getMinimumY() const;
+
     //------------------------------------------------------------
     virtual Trace *getTrace() const = 0;
     virtual TWindowLevel getLevel() const = 0;
@@ -94,6 +103,15 @@ class WindowProxy: public Window
     virtual TRecordTime getWindowBeginTime() const;
     virtual TRecordTime getWindowEndTime() const;
 
+    virtual bool getYScaleComputed() const;
+    virtual void computeYScale();
+    virtual void setComputeYMaxOnInit( bool newValue );
+    virtual bool getComputeYMaxOnInit() const;
+    virtual void setMaximumY( TSemanticValue whichMax );
+    virtual void setMinimumY( TSemanticValue whichMin );
+    virtual TSemanticValue getMaximumY() const;
+    virtual TSemanticValue getMinimumY() const;
+
     //------------------------------------------------------------
     virtual Trace *getTrace() const;
     virtual TWindowLevel getLevel() const;
@@ -129,6 +147,13 @@ class WindowProxy: public Window
     TRecordTime winBeginTime;
     TRecordTime winEndTime;
 
+    bool computeYMaxOnInit;
+    bool yScaleComputed;
+    TSemanticValue maximumY;
+    TSemanticValue minimumY;
+    TSemanticValue computedMaxY;
+    TSemanticValue computedMinY;
+
     vector<RecordList *> myLists;
 
     // Must store the associated proxies
@@ -141,6 +166,8 @@ class WindowProxy: public Window
     WindowProxy( KernelConnection *whichKernel );
     WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
                  Window *whichParent2 );
+
+    void init();
 
     friend Window *Window::create( KernelConnection *, Trace * );
     friend Window *Window::create( KernelConnection * );

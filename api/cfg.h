@@ -114,6 +114,34 @@ class WindowMaximumY: public TagFunction
 };
 
 
+class WindowMinimumY: public TagFunction
+{
+  public:
+    WindowMinimumY()
+    {}
+    virtual ~WindowMinimumY()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+};
+
+
+class WindowComputeYMax: public TagFunction
+{
+  public:
+    WindowComputeYMax()
+    {}
+    virtual ~WindowComputeYMax()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+};
+
+
 class WindowLevel: public TagFunction
 {
   public:

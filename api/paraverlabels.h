@@ -27,6 +27,8 @@
 #define OLDCFG_TAG_WNDW_UNITS     "window_units"
 #define OLDCFG_TAG_WNDW_OPERATION "window_operation"
 #define OLDCFG_TAG_WNDW_MAXIMUM_Y "window_maximum_y"
+#define OLDCFG_TAG_WNDW_MINIMUM_Y "window_minimum_y"
+#define OLDCFG_TAG_WNDW_COMPUTE_Y_MAX "window_compute_y_max"
 #define OLDCFG_TAG_WNDW_LEVEL     "window_level"
 #define OLDCFG_TAG_WNDW_SCALE_RELATIVE "window_scale_relative"
 #define OLDCFG_TAG_WNDW_OBJECT "window_object"
