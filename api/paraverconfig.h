@@ -6,14 +6,21 @@
 class ParaverConfig
 {
   public:
-    ParaverConfig();
+    static ParaverConfig *getInstance();
+
+    static void readParaverConfigFile();
+    static bool writeDefaultConfig();
 
     UINT32 getPrecision() const;
-
-    static void readParaverConfigFile( ParaverConfig& config );
+    TObjectOrder getHistoNumColumns() const;
 
   private:
+    static ParaverConfig *instance;
+
+    ParaverConfig();
+
     UINT32 precision;
+    TObjectOrder histoNumColumns;
 
 };
 

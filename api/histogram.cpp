@@ -3,6 +3,7 @@
 #include "histogram.h"
 #include "window.h"
 #include "histogramtotals.h"
+#include "paraverconfig.h"
 
 Histogram *Histogram::create( KernelConnection *whichKernel )
 {
@@ -39,6 +40,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   futurePlane = false;
   planeMinValue = 0.0;
   selectedPlane = 0;
+  commSelectedPlane = 0;
 }
 
 HistogramProxy::~HistogramProxy()
@@ -349,16 +351,16 @@ bool HistogramProxy::planeCommWithValues( UINT32 plane ) const
 
 HistogramTotals *HistogramProxy::getTotals( UINT16 idStat ) const
 {
-  if( itsCommunicationStat( calcStat[ idStat ] ) )
+  if ( itsCommunicationStat( calcStat[ idStat ] ) )
   {
-    if( horizontal )
+    if ( horizontal )
       return getCommColumnTotals();
     else
       return getCommRowTotals();
   }
   else
   {
-    if( horizontal )
+    if ( horizontal )
       return getColumnTotals();
     else
       return getRowTotals();
@@ -402,14 +404,14 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
   winBeginTime = whichBeginTime;
   winEndTime = whichEndTime;
 
-  if( computeScale )
+  if ( computeScale )
   {
-    // Se usan los valores de las diferentes ventanas de control para el min
-    // y max. Para el delta se tiene que saber cuantas columnas se quieren
-    // por defecto (leerlo del fichero de defaults).
+    compute2DScale();
+    if ( getThreeDimensions() )
+      compute3DScale();
   }
 
-  if( computeGradient )
+  if ( computeGradient )
   {
     // Idem que para computeScale pero con la ventana de datos, aunque hace
     // falta una clase para hacer gradientes.
@@ -417,14 +419,74 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
 
   myHisto->execute( whichBeginTime, whichEndTime );
 
-  if( futurePlane )
+  if ( getThreeDimensions() && futurePlane )
   {
-    // se mira si planeMinValue tiene valores y si no se usa el primer plano
-    // que si los tenga.
+    THistogramLimit nPlanes = getNumPlanes();
+    THistogramLimit min, max;
+    UINT32 i;
+    bool commFuturePlane = true;
+    i = selectedPlane = commSelectedPlane = 0;
+
+    while ( i < nPlanes )
+    {
+      min = getExtraControlMin() + getExtraControlDelta() * i;
+      max = getExtraControlMin() + getExtraControlDelta() * i + 1;
+
+      // get the first plane with values
+      if ( futurePlane && planeWithValues( i ) )
+      {
+        selectedPlane = i;
+        futurePlane = false;
+      }
+
+      if ( commFuturePlane && planeCommWithValues( i ) )
+      {
+        commSelectedPlane = i;
+        commFuturePlane = false;
+      }
+
+      if ( planeMinValue >= min && planeMinValue < max )
+      {
+        if ( planeWithValues( i ) )
+          selectedPlane = i;
+
+        if ( planeCommWithValues( i ) )
+          commSelectedPlane = i;
+      }
+
+      i++;
+    }
+    futurePlane = false;
   }
-  else
+  else if ( getThreeDimensions() )
   {
-    // se coge el primer plano con valores.
+    THistogramLimit nPlanes = getNumPlanes();
+    UINT32 i;
+    bool commFuturePlane = true;
+    bool stop = false;
+    i = selectedPlane = commSelectedPlane = 0;
+
+    while ( i < nPlanes )
+    {
+      // get the first plane with values
+      if ( futurePlane && planeWithValues( i ) )
+      {
+        selectedPlane = i;
+        futurePlane = false;
+        if ( stop ) break;
+        else stop = true;
+      }
+
+      if ( commFuturePlane && planeCommWithValues( i ) )
+      {
+        commSelectedPlane = i;
+        commFuturePlane = false;
+        if ( stop ) break;
+        else stop = true;
+      }
+
+      i++;
+    }
   }
 }
 
@@ -529,7 +591,70 @@ INT32 HistogramProxy::getSelectedPlane() const
   return selectedPlane;
 }
 
+INT32 HistogramProxy::getCommSelectedPlane() const
+{
+  return commSelectedPlane;
+}
+
 bool HistogramProxy::itsCommunicationStat( const string& whichStat ) const
 {
   return myHisto->itsCommunicationStat( whichStat );
+}
+
+void HistogramProxy::compute2DScale()
+{
+  TSemanticValue minY = controlWindow->getMinimumY();
+  TSemanticValue maxY = controlWindow->getMaximumY();
+
+  setControlMin( minY );
+  setControlMax( maxY );
+
+  if ( ( maxY - minY ) == 0 )
+  {
+    setControlDelta( 1.0 );
+  }
+  else if ( ( maxY - minY ) < 1.0 )
+  {
+    setControlDelta( ( maxY - minY ) /
+                     ParaverConfig::getInstance()->getHistoNumColumns() );
+  }
+  else if ( ( maxY - minY ) <
+            ParaverConfig::getInstance()->getHistoNumColumns() )
+  {
+    setControlDelta( 1.0 );
+  }
+  else
+  {
+    setControlDelta( ( maxY - minY ) /
+                     ParaverConfig::getInstance()->getHistoNumColumns() );
+  }
+}
+
+void HistogramProxy::compute3DScale()
+{
+  TSemanticValue minY = extraControlWindow->getMinimumY();
+  TSemanticValue maxY = extraControlWindow->getMaximumY();
+
+  setExtraControlMin( minY );
+  setExtraControlMax( maxY );
+
+  if ( ( maxY - minY ) == 0 )
+  {
+    setExtraControlDelta( 1.0 );
+  }
+  else if ( ( maxY - minY ) < 1.0 )
+  {
+    setExtraControlDelta( ( maxY - minY ) /
+                          ParaverConfig::getInstance()->getHistoNumColumns() );
+  }
+  else if ( ( maxY - minY ) <
+            ParaverConfig::getInstance()->getHistoNumColumns() )
+  {
+    setExtraControlDelta( 1.0 );
+  }
+  else
+  {
+    setExtraControlDelta( ( maxY - minY ) /
+                          ParaverConfig::getInstance()->getHistoNumColumns() );
+  }
 }

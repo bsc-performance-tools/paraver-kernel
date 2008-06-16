@@ -3,8 +3,18 @@
 #include <sstream>
 #include "paraverconfig.h"
 
+ParaverConfig *ParaverConfig::instance = NULL;
+
+ParaverConfig *ParaverConfig::getInstance()
+{
+  if( ParaverConfig::instance == NULL )
+    ParaverConfig::instance = new ParaverConfig();
+  return ParaverConfig::instance;
+}
+
 ParaverConfig::ParaverConfig() :
-    precision( 2 )
+    precision( 2 ),
+    histoNumColumns( 20 )
 {}
 
 UINT32 ParaverConfig::getPrecision() const
@@ -12,8 +22,15 @@ UINT32 ParaverConfig::getPrecision() const
   return precision;
 }
 
-void ParaverConfig::readParaverConfigFile( ParaverConfig& config )
+TObjectOrder ParaverConfig::getHistoNumColumns() const
 {
+  return histoNumColumns;
+}
+
+void ParaverConfig::readParaverConfigFile()
+{
+  ParaverConfig& config = *ParaverConfig::instance;
+
   ifstream file;
   string strLine;
   string strTag;
@@ -25,7 +42,11 @@ void ParaverConfig::readParaverConfigFile( ParaverConfig& config )
   file.open( strFile.c_str() );
 
   if ( !file )
-    return;
+  {
+    if( !ParaverConfig::writeDefaultConfig())
+      return;
+    file.open( strFile.c_str() );
+  }
 
   while ( !file.eof() )
   {
@@ -38,6 +59,8 @@ void ParaverConfig::readParaverConfigFile( ParaverConfig& config )
     istringstream auxStream( strLine );
     getline( auxStream, strTag, ' ' );
 
+// Hay que hacer algo parecido a lo del cfg para cuando se
+// quiera leer el fichero entero
     if ( strTag.compare( "WhatWhere.num_decimals:" ) == 0 )
     {
       string strNumDecimals;
@@ -47,6 +70,32 @@ void ParaverConfig::readParaverConfigFile( ParaverConfig& config )
 
       streamNumDecimals >> config.precision;
     }
+    else if ( strTag.compare( "Analyzer2D.num_columns:" ) == 0 )
+    {
+      string strNumColumns;
+
+      getline( auxStream, strNumColumns );
+      istringstream streamNumColumns( strNumColumns );
+
+      streamNumColumns >> config.histoNumColumns;
+    }
+
   }
   file.close();
+}
+
+bool ParaverConfig::writeDefaultConfig()
+{
+  ofstream file;
+  string strFile;
+
+  strFile.append( getenv( "HOME" ) );
+  strFile.append( "/.paraver/paraver" );
+
+  file.open( strFile.c_str() );
+
+  if( !file )
+    return false;
+
+  return true;
 }

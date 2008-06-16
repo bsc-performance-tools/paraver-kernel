@@ -172,6 +172,12 @@ class Histogram
     {
       return 0;
     }
+    virtual INT32 getCommSelectedPlane() const
+    {
+      return 0;
+    }
+    virtual void compute2DScale() {}
+    virtual void compute3DScale() {}
   protected:
     KernelConnection *myKernel;
 
@@ -280,6 +286,10 @@ class HistogramProxy : public Histogram
     virtual bool getComputeGradient() const;
     virtual void setPlaneMinValue( double whichMin );
     virtual INT32 getSelectedPlane() const;
+    virtual INT32 getCommSelectedPlane() const;
+
+    virtual void compute2DScale();
+    virtual void compute3DScale();
 
   private:
     bool horizontal;
@@ -294,6 +304,7 @@ class HistogramProxy : public Histogram
     bool futurePlane;
     double planeMinValue;
     INT32 selectedPlane;
+    INT32 commSelectedPlane;
 
     TRecordTime winBeginTime;
     TRecordTime winEndTime;

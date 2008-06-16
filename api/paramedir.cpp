@@ -16,7 +16,6 @@ using namespace std;
 
 bool multipleFiles = false;
 Trace *trace;
-ParaverConfig config;
 
 int main( int argc, char *argv[] )
 {
@@ -24,7 +23,9 @@ int main( int argc, char *argv[] )
 
   KernelConnection *myKernel = new LocalKernel();
 
-  ParaverConfig::readParaverConfigFile( config );
+  ParaverConfig *config = ParaverConfig::getInstance();
+
+  config->readParaverConfigFile();
 
   if ( argc == 1 )
     printHelp();
@@ -125,6 +126,7 @@ void dumpWindow( vector<Window *>& windows, string& strOutputFile )
   TRecordTime endTime;
   ofstream outputFile;
   Window *tmpWindow = windows[ windows.size() - 1 ];
+  ParaverConfig *config = ParaverConfig::getInstance();
 
   beginTime = tmpWindow->getWindowBeginTime();
   endTime = tmpWindow->getWindowEndTime();
@@ -151,7 +153,7 @@ void dumpWindow( vector<Window *>& windows, string& strOutputFile )
 
     while ( tmpWindow->getEndTime( i ) < endTime )
     {
-      outputFile << setprecision( config.getPrecision() );
+      outputFile << setprecision( config->getPrecision() );
       if ( !multipleFiles )
         outputFile << i + 1 << "\t";
       outputFile << tmpWindow->traceUnitsToWindowUnits(
@@ -161,7 +163,7 @@ void dumpWindow( vector<Window *>& windows, string& strOutputFile )
       outputFile << tmpWindow->getValue( i ) << endl;
       tmpWindow->calcNext( i );
     }
-    outputFile << setprecision( config.getPrecision() );
+    outputFile << setprecision( config->getPrecision() );
     if ( !multipleFiles )
       outputFile << i + 1 << "\t";
     outputFile << tmpWindow->traceUnitsToWindowUnits(

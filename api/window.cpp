@@ -69,12 +69,12 @@ void Window::setMaximumY( TSemanticValue whichMax )
 void Window::setMinimumY( TSemanticValue whichMin )
 {}
 
-TSemanticValue Window::getMaximumY() const
+TSemanticValue Window::getMaximumY()
 {
   return 15.0;
 }
 
-TSemanticValue Window::getMinimumY() const
+TSemanticValue Window::getMinimumY()
 {
   return 0.0;
 }
@@ -219,13 +219,23 @@ void WindowProxy::setMinimumY( TSemanticValue whichMin )
   minimumY = whichMin;
 }
 
-TSemanticValue WindowProxy::getMaximumY() const
+TSemanticValue WindowProxy::getMaximumY()
 {
+  if( computeYMaxOnInit )
+  {
+    computeYScale();
+    computeYMaxOnInit = false;
+  }
   return maximumY;
 }
 
-TSemanticValue WindowProxy::getMinimumY() const
+TSemanticValue WindowProxy::getMinimumY()
 {
+  if( computeYMaxOnInit )
+  {
+    computeYScale();
+    computeYMaxOnInit = false;
+  }
   return minimumY;
 }
 
@@ -311,6 +321,7 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create )
 
   myWindow->init( initialTime, create );
   yScaleComputed = true;
+  computeYMaxOnInit = false;
   computedMaxY = computedMinY = getValue( 0 );
 }
 

@@ -43,8 +43,8 @@ class Window
     virtual bool getComputeYMaxOnInit() const;
     virtual void setMaximumY( TSemanticValue whichMax );
     virtual void setMinimumY( TSemanticValue whichMin );
-    virtual TSemanticValue getMaximumY() const;
-    virtual TSemanticValue getMinimumY() const;
+    virtual TSemanticValue getMaximumY();
+    virtual TSemanticValue getMinimumY();
 
     //------------------------------------------------------------
     virtual Trace *getTrace() const = 0;
@@ -109,8 +109,8 @@ class WindowProxy: public Window
     virtual bool getComputeYMaxOnInit() const;
     virtual void setMaximumY( TSemanticValue whichMax );
     virtual void setMinimumY( TSemanticValue whichMin );
-    virtual TSemanticValue getMaximumY() const;
-    virtual TSemanticValue getMinimumY() const;
+    virtual TSemanticValue getMaximumY();
+    virtual TSemanticValue getMinimumY();
 
     //------------------------------------------------------------
     virtual Trace *getTrace() const;
