@@ -100,6 +100,9 @@
 #define OLDCFG_VAL_FALSE  "false"
 #define OLDCFG_VAL_FALSE2 "False"
 
+#define OLDCFG_VAL_HORIZONTAL "Horizontal"
+#define OLDCFG_VAL_VERTICAL   "Vertical"
+
 #define OLDCFG_VAL_SORT_AVERAGE "Average"
 #define OLDCFG_VAL_SORT_TOTAL   "Total"
 #define OLDCFG_VAL_SORT_MAXIMUM "Maximum"

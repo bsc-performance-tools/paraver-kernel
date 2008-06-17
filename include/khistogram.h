@@ -36,6 +36,7 @@ class RowsTranslator
     {
       bool oneToOne;
       vector< pair< TObjectOrder, TObjectOrder > > rowChilds;
+      TObjectOrder numRows;
     };
 
     vector< RowChildInfo > childInfo;

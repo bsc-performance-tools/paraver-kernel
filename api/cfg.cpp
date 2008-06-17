@@ -98,19 +98,26 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
     getline( cfgFile, strLine );
     if ( strLine.length() == 0 )
       continue;
-    else if ( strLine[ 0 ] == '#' || strLine[ 0 ] == '<' )
+    else if ( strLine[ 0 ] == '#' )
       continue;
 
     istringstream auxStream( strLine );
-    getline( auxStream, cfgTag, ' ' );
+    if( strLine[ 0 ] == '<' )
+    {
+      cfgTag = strLine;
+    }
+    else
+    {
+      getline( auxStream, cfgTag, ' ' );
+    }
 
     map<string, TagFunction *>::iterator it = cfgTagFunctions.find( cfgTag );
-
     if ( it != cfgTagFunctions.end() )
     {
       if ( !it->second->parseLine( whichKernel, auxStream, whichTrace, windows,
                                    histograms ) )
       {
+        cout << auxStream.str() << endl;
         if ( windows[ windows.size() - 1 ] != NULL )
           delete windows[ windows.size() - 1 ];
         windows[ windows.size() - 1 ] = NULL;
@@ -440,9 +447,9 @@ bool WindowMinimumY::parseLine( KernelConnection *whichKernel, istringstream& li
 
 
 bool WindowComputeYMax::parseLine( KernelConnection *whichKernel, istringstream& line,
-                                Trace *whichTrace,
-                                vector<Window *>& windows,
-                                vector<Histogram *>& histograms )
+                                   Trace *whichTrace,
+                                   vector<Window *>& windows,
+                                   vector<Histogram *>& histograms )
 {
   string strMinimum;
 
@@ -1096,9 +1103,13 @@ bool Analyzer2DCreate::parseLine( KernelConnection *whichKernel, istringstream& 
                                   vector<Histogram *>& histograms )
 {
   if ( histograms[ histograms.size() - 1 ] == NULL )
+  {
     histograms[ histograms.size() - 1 ] = Histogram::create( whichKernel );
+  }
   else
+  {
     histograms.push_back( Histogram::create( whichKernel ) );
+  }
 
   return true;
 }
@@ -1363,9 +1374,9 @@ bool Analyzer2DHorizontal::parseLine( KernelConnection *whichKernel, istringstre
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  if ( strBool.compare( OLDCFG_VAL_HORIZONTAL ) == 0 )
     histograms[ histograms.size() - 1 ]->setHorizontal( true );
-  else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  else if ( strBool.compare( OLDCFG_VAL_VERTICAL ) == 0 )
     histograms[ histograms.size() - 1 ]->setHorizontal( false );
   else
     return false;
@@ -1527,7 +1538,7 @@ bool Analyzer2DParameters::parseLine( KernelConnection *whichKernel, istringstre
     }
   }
 
-  return false;
+  return true;
 }
 
 

@@ -14,6 +14,7 @@ RowsTranslator::RowsTranslator( vector<Window *>& kwindows )
     childInfo.push_back( RowChildInfo() );
     childInfo[ii].oneToOne = ( kwindows[ii]->getWindowLevelObjects() ==
                                kwindows[ii + 1]->getWindowLevelObjects() );
+    childInfo[ii].numRows = kwindows[ii]->getWindowLevelObjects();
     if ( !childInfo[ii].oneToOne )
     {
       Trace *auxTrace = kwindows[ii]->getTrace();
@@ -66,7 +67,7 @@ void RowsTranslator::getRowChilds( UINT16 winIndex,
 //
 TObjectOrder RowsTranslator::totalRows() const
 {
-  return childInfo[ 0 ].rowChilds.size() - 1;
+  return childInfo[ 0 ].numRows;
 }
 
 
@@ -650,7 +651,7 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
 
   initTotals();
 
-  recursiveExecution( beginTime, endTime, 0, rowsTranslator->totalRows() );
+  recursiveExecution( beginTime, endTime, 0, rowsTranslator->totalRows() - 1 );
 
   if ( threeDimensions )
   {
@@ -681,16 +682,21 @@ void KHistogram::orderWindows()
 {
   orderedWindows.clear();
 
-  if ( controlWindow->getLevel() >= xtraControlWindow->getLevel() )
+  if ( getThreeDimensions() )
   {
-    orderedWindows.push_back( controlWindow );
-    orderedWindows.push_back( xtraControlWindow );
+    if ( controlWindow->getLevel() >= xtraControlWindow->getLevel() )
+    {
+      orderedWindows.push_back( controlWindow );
+      orderedWindows.push_back( xtraControlWindow );
+    }
+    else
+    {
+      orderedWindows.push_back( xtraControlWindow );
+      orderedWindows.push_back( controlWindow );
+    }
   }
   else
-  {
-    orderedWindows.push_back( xtraControlWindow );
     orderedWindows.push_back( controlWindow );
-  }
 
   orderedWindows.push_back( dataWindow );
 }
@@ -809,7 +815,7 @@ void KHistogram::initSemantic( TRecordTime beginTime )
 
   controlWindow->init( beginTime, create );
 
-  if ( xtraControlWindow != controlWindow )
+  if ( xtraControlWindow != NULL && xtraControlWindow != controlWindow )
     xtraControlWindow->init( beginTime, NOCREATE );
 
   if ( dataWindow != controlWindow && dataWindow != xtraControlWindow )
@@ -824,6 +830,7 @@ void KHistogram::initStatistics()
   while ( it != statisticFunctions.end() )
   {
     ( *it )->init( this );
+    it++;
   }
 
   it = commStatisticFunctions.begin();
@@ -831,6 +838,7 @@ void KHistogram::initStatistics()
   while ( it != commStatisticFunctions.end() )
   {
     ( *it )->init( this );
+    it++;
   }
 }
 
@@ -869,7 +877,11 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
       finishRow( data );
   }
 
-  delete data;
+  if ( winIndex == 0 )
+  {
+    delete data;
+    data = NULL;
+  }
 }
 
 
@@ -993,55 +1005,57 @@ void KHistogram::calculate( TObjectOrder iRow,
 void KHistogram::finishRow( CalculateData *data )
 {
   // Communication statistics
-  if ( threeDimensions )
+  if ( createComms() )
   {
-    for ( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns();
-          iPlane++ )
+    if ( threeDimensions )
     {
-      if ( commCube->planeWithValues( iPlane ) )
+      for ( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns();
+            iPlane++ )
       {
-        for ( TObjectOrder iColumn = 0;
-              iColumn < rowsTranslator->totalRows(); iColumn++ )
+        if ( commCube->planeWithValues( iPlane ) )
         {
-          if ( commCube->currentCellModified( iPlane, iColumn ) )
+          for ( TObjectOrder iColumn = 0;
+                iColumn < rowsTranslator->totalRows(); iColumn++ )
           {
-            TSemanticValue value;
-            for ( UINT16 iStat = 0; iStat < commStatisticFunctions.size(); iStat++ )
+            if ( commCube->currentCellModified( iPlane, iColumn ) )
             {
-              value = commCube->getCurrentValue( iPlane, iColumn, iStat );
-              value = commStatisticFunctions[ iStat ]->finishRow( value, iColumn, iPlane );
-              commCube->setValue( iPlane, iColumn, iStat, value );
-              commTotals->newValue( value, iStat, iColumn, iPlane );
-              rowCommTotals->newValue( value, iStat, data->row, iPlane );
+              TSemanticValue value;
+              for ( UINT16 iStat = 0; iStat < commStatisticFunctions.size(); iStat++ )
+              {
+                value = commCube->getCurrentValue( iPlane, iColumn, iStat );
+                value = commStatisticFunctions[ iStat ]->finishRow( value, iColumn, iPlane );
+                commCube->setValue( iPlane, iColumn, iStat, value );
+                commTotals->newValue( value, iStat, iColumn, iPlane );
+                rowCommTotals->newValue( value, iStat, data->row, iPlane );
+              }
             }
           }
         }
       }
     }
-  }
-  else
-  {
-    for ( TObjectOrder iColumn = 0;
-          iColumn < rowsTranslator->totalRows(); iColumn++ )
+    else
     {
-      if ( commMatrix->currentCellModified( iColumn ) )
+      for ( TObjectOrder iColumn = 0;
+            iColumn < rowsTranslator->totalRows(); iColumn++ )
       {
-        TSemanticValue value;
-        for ( UINT16 iStat = 0; iStat < commStatisticFunctions.size(); iStat++ )
+        if ( commMatrix->currentCellModified( iColumn ) )
         {
-          value = commMatrix->getCurrentValue( iColumn, iStat );
-          value = commStatisticFunctions[ iStat ]->finishRow( value, iColumn );
-          commMatrix->setValue( iColumn, iStat, value );
-          commTotals->newValue( value, iStat, iColumn );
-          rowCommTotals->newValue( value, iStat, data->row );
+          TSemanticValue value;
+          for ( UINT16 iStat = 0; iStat < commStatisticFunctions.size(); iStat++ )
+          {
+            value = commMatrix->getCurrentValue( iColumn, iStat );
+            value = commStatisticFunctions[ iStat ]->finishRow( value, iColumn );
+            commMatrix->setValue( iColumn, iStat, value );
+            commTotals->newValue( value, iStat, iColumn );
+            rowCommTotals->newValue( value, iStat, data->row );
+          }
         }
       }
     }
+
+    for ( UINT16 iStat = 0; iStat < commStatisticFunctions.size(); iStat++ )
+      commStatisticFunctions[ iStat ]->reset();
   }
-
-  for ( UINT16 iStat = 0; iStat < commStatisticFunctions.size(); iStat++ )
-    commStatisticFunctions[ iStat ]->reset();
-
   // Semantic statistics
   if ( threeDimensions )
   {
