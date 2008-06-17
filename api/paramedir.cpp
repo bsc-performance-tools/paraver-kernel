@@ -200,6 +200,9 @@ void dumpHistogram( vector<Histogram *>& histograms, string& strOutputFile )
 
   outputFile.open( strOutputFile.c_str() );
 
+  outputFile << fixed;
+  outputFile << showpoint;
+
   for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
   {
     if ( numPlanes > 1 )

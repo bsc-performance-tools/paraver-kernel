@@ -79,7 +79,7 @@ void KHistogramTotals::newValue( TSemanticValue whichValue,
        whichValue < ( *( *minimum[ whichPlane ] )[ idStat ] )[ whichColumn ] )
     ( *( *minimum[ whichPlane ] )[ idStat ] )[ whichColumn ] = whichValue;
 
-  ( *( *stdev[ whichPlane ] )[ idStat ] )[ whichColumn ] =
+  ( *( *stdev[ whichPlane ] )[ idStat ] )[ whichColumn ] +=
     ( whichValue * whichValue );
 }
 
@@ -94,24 +94,29 @@ void KHistogramTotals::finish()
       {
         if ( ( ( *average[ iPlane ] )[ iStat ] != NULL ) )
         {
-          ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] /=
-            ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ];
+          TSemanticValue n = ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ];
 
           ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ] =
-            ( *( *total[ iPlane ] )[ iStat ] )[ iColumn ] /
-            ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ];
+            ( *( *total[ iPlane ] )[ iStat ] )[ iColumn ] / n;
 
           TSemanticValue avgQ = ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ] *
                                 ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ];
 
-          ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] -= avgQ;
+        /*  ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] -= ( 2 *
+              ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ] *
+              ( *( *total[ iPlane ] )[ iStat ] )[ iColumn ] );
+
+          ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] += avgQ;*/
+          ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] -= ( n * avgQ );
+
+          ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] /= ( n );
 
           if ( ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] < 0.0 )
             ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] *= -1.0;
 
-          ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] =
-            sqrt( ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] );
-        }
+            ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] =
+              sqrt( ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] );
+          }
       }
     }
   }
