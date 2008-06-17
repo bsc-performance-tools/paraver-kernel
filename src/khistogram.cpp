@@ -77,7 +77,7 @@ ColumnTranslator::ColumnTranslator( THistogramLimit whichMin,
     minLimit( whichMin ), maxLimit( whichMax ), delta( whichDelta )
 {
   // PRECOND: Min < Max
-  numColumns = THistogramColumn( ceil( ( maxLimit - minLimit ) / delta ) );
+  numColumns = THistogramColumn( ceil( ( maxLimit - minLimit ) / delta ) ) + 1;
 }
 
 

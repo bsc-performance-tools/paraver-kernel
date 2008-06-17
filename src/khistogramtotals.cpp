@@ -2,8 +2,8 @@
 #include "khistogramtotals.h"
 
 KHistogramTotals::KHistogramTotals( UINT16 numStat,
-                                  THistogramColumn numColumns,
-                                  THistogramColumn numPlanes ):
+                                    THistogramColumn numColumns,
+                                    THistogramColumn numPlanes ):
     columns( numColumns ), stats( numStat )
 {
   for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
@@ -30,9 +30,9 @@ KHistogramTotals::~KHistogramTotals()
 
 
 void KHistogramTotals::newValue( TSemanticValue whichValue,
-                                UINT16 idStat,
-                                THistogramColumn whichColumn,
-                                THistogramColumn whichPlane )
+                                 UINT16 idStat,
+                                 THistogramColumn whichColumn,
+                                 THistogramColumn whichPlane )
 {
   if ( total[ whichPlane ] == NULL )
   {
@@ -62,8 +62,8 @@ void KHistogramTotals::newValue( TSemanticValue whichValue,
     {
       ( *total[ whichPlane ] )[ idStat ]->push_back( 0.0 );
       ( *average[ whichPlane ] )[ idStat ]->push_back( 0.0 );
-      ( *maximum[ whichPlane ] )[ idStat ]->push_back( 0.0 );
-      ( *minimum[ whichPlane ] )[ idStat ]->push_back( 0.0 );
+      ( *maximum[ whichPlane ] )[ idStat ]->push_back( std::numeric_limits<double>::min() );
+      ( *minimum[ whichPlane ] )[ idStat ]->push_back( std::numeric_limits<double>::max() );
       ( *stdev[ whichPlane ] )[ idStat ]->push_back( 0.0 );
     }
   }
@@ -204,9 +204,9 @@ TSemanticValue KHistogramTotals::getAvgDivMax( UINT16 idStat,
 
 
 void KHistogramTotals::getAll( vector<TSemanticValue>& where,
-                              UINT16 idStat,
-                              THistogramColumn whichColumn,
-                              THistogramColumn whichPlane ) const
+                               UINT16 idStat,
+                               THistogramColumn whichColumn,
+                               THistogramColumn whichPlane ) const
 {
   if ( total[ whichPlane ] != NULL &&
        ( *total[ whichPlane ] )[ idStat ] != NULL )
