@@ -85,7 +85,6 @@ int main( int argc, char *argv[] )
         {
           strOutputFile = strCfg.substr( 0, strCfg.length() - 4 );
         }
-        currentArg++;
       }
 
       if ( CFGLoader::loadCFG( myKernel, strCfg, trace, windows, histograms ) )
@@ -111,6 +110,8 @@ int main( int argc, char *argv[] )
           delete histograms[ i ];
       }
       histograms.clear();
+
+      currentArg++;
     }
 
     delete trace;

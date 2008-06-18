@@ -7,6 +7,7 @@ libapi_la_SOURCES = \
                     histogram.cpp \
                     histogramtotals.cpp \
                     localkernel.cpp \
+                    paraverconfig.cpp \
                     recordlist.cpp \
                     window.cpp \
                     ../../common-files/pcfparser/ParaverEventType.cpp \
