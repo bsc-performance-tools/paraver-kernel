@@ -29,7 +29,8 @@ AC_PROG_CPP
 AC_PROG_CXXCPP
 
 # Search for libtool support
-AC_PROG_LIBTOOL
+AC_LIBTOOL_WIN32_DLL
+AM_PROG_LIBTOOL
 
 
 ######################################################################

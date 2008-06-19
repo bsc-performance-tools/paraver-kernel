@@ -1,5 +1,5 @@
 
-noinst_LTLIBRARIES = libparaver-kernel.la
+pkglib_LTLIBRARIES = libparaver-kernel.la
 libparaver_kernel_la_SOURCES = \
     bplustreeblocks.cpp \
     bplustree.cpp \

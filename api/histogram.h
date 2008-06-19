@@ -178,6 +178,19 @@ class Histogram
     }
     virtual void compute2DScale() {}
     virtual void compute3DScale() {}
+    virtual string getRowLabel( TObjectOrder whichRow ) const
+    {
+      return "";
+    }
+    virtual string getColumnLabel( THistogramColumn whichColumn ) const
+    {
+      return "";
+    }
+    virtual string getPlaneLabel( THistogramColumn whichPlane ) const
+    {
+      return "";
+    }
+
   protected:
     KernelConnection *myKernel;
 
@@ -290,6 +303,10 @@ class HistogramProxy : public Histogram
 
     virtual void compute2DScale();
     virtual void compute3DScale();
+
+    virtual string getRowLabel( TObjectOrder whichRow ) const;
+    virtual string getColumnLabel( THistogramColumn whichColumn ) const;
+    virtual string getPlaneLabel( THistogramColumn whichPlane ) const;
 
   private:
     bool horizontal;

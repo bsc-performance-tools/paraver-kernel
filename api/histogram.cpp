@@ -4,6 +4,7 @@
 #include "window.h"
 #include "histogramtotals.h"
 #include "paraverconfig.h"
+#include "labelconstructor.h"
 
 Histogram *Histogram::create( KernelConnection *whichKernel )
 {
@@ -657,4 +658,26 @@ void HistogramProxy::compute3DScale()
     setExtraControlDelta( ( maxY - minY ) /
                           ParaverConfig::getInstance()->getHistoNumColumns() );
   }
+}
+
+string HistogramProxy::getRowLabel( TObjectOrder whichRow ) const
+{
+  return LabelConstructor::objectLabel( whichRow, controlWindow->getLevel(),
+                                        controlWindow->getTrace() );
+}
+
+string HistogramProxy::getColumnLabel( THistogramColumn whichColumn ) const
+{
+  return LabelConstructor::histoColumnLabel( whichColumn, this,
+         getControlMin(),
+         getControlMax(),
+         getControlDelta() );
+}
+
+string HistogramProxy::getPlaneLabel( THistogramColumn whichPlane ) const
+{
+  return LabelConstructor::histoColumnLabel( whichPlane, this,
+         getExtraControlMin(),
+         getExtraControlMax(),
+         getExtraControlDelta() );
 }

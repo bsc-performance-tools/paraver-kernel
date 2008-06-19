@@ -88,6 +88,10 @@ void KHistogramTotals::finish()
 {
   for ( THistogramColumn iPlane = 0; iPlane < total.size(); iPlane++ )
   {
+    // No values
+    if ( total[ iPlane ] == NULL )
+      return;
+
     for ( UINT16 iStat = 0; iStat < stats; iStat++ )
     {
       for ( THistogramColumn iColumn = 0; iColumn < columns; iColumn++ )
@@ -96,27 +100,33 @@ void KHistogramTotals::finish()
         {
           TSemanticValue n = ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ];
 
-          ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ] =
-            ( *( *total[ iPlane ] )[ iStat ] )[ iColumn ] / n;
+          if ( n == 0 )
+          {
+            ( *( *total[ iPlane ] )[ iStat ] )[ iColumn ] = 0.0;
+            ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ] = 0.0;
+            ( *( *maximum[ iPlane ] )[ iStat ] )[ iColumn ] = 0.0;
+            ( *( *minimum[ iPlane ] )[ iStat ] )[ iColumn ] = 0.0;
+            ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] = 0.0;
+          }
+          else
+          {
+            ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ] =
+              ( *( *total[ iPlane ] )[ iStat ] )[ iColumn ] / n;
 
-          TSemanticValue avgQ = ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ] *
-                                ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ];
+            TSemanticValue avgQ = ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ] *
+                                  ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ];
 
-        /*  ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] -= ( 2 *
-              ( *( *average[ iPlane ] )[ iStat ] )[ iColumn ] *
-              ( *( *total[ iPlane ] )[ iStat ] )[ iColumn ] );
+            ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] -= ( n * avgQ );
 
-          ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] += avgQ;*/
-          ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] -= ( n * avgQ );
+            ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] /= ( n );
 
-          ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] /= ( n );
-
-          if ( ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] < 0.0 )
-            ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] *= -1.0;
+            if ( ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] < 0.0 )
+              ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] *= -1.0;
 
             ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] =
               sqrt( ( *( *stdev[ iPlane ] )[ iStat ] )[ iColumn ] );
           }
+        }
       }
     }
   }

@@ -207,20 +207,20 @@ void dumpHistogram( vector<Histogram *>& histograms, string& strOutputFile )
   for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
   {
     if ( numPlanes > 1 )
-      outputFile << "Plane no. " << iPlane << endl;
+      outputFile << histo->getPlaneLabel( iPlane ) << endl;
 
     outputFile << "\t";
     // Initialize all columns in this plane
     for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
     {
       histo->setFirstCell( iColumn, iPlane );
-      outputFile << "Column no. " << iColumn << "\t";
+      outputFile << histo->getColumnLabel( iColumn ) << "\t";
     }
     outputFile << endl;
 
     for ( TObjectOrder iRow = 0; iRow < numRows; iRow++ )
     {
-      outputFile << "Row no. " << iRow << "\t";
+      outputFile << histo->getRowLabel( iRow ) << "\t";
       for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
       {
         if ( histo->getCurrentRow( iColumn, iPlane ) == iRow )

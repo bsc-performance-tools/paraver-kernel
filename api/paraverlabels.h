@@ -118,4 +118,14 @@
 #define OLDCFG_VAL_LIMIT_REGION    "Region"
 
 
+// STRING CONSTRUCTION LABELS FOR THE GUI
+#define LEVEL_WORKLOAD     "WORKLOAD"
+#define LEVEL_APPLICATION  "APPL"
+#define LEVEL_TASK         "TASK"
+#define LEVEL_THREAD       "THREAD"
+#define LEVEL_SYSTEM       "SYSTEM"
+#define LEVEL_NODE         "NODE"
+#define LEVEL_CPU          "CPU"
+
+
 #endif // PARAVERLABELS_H_INCLUDED

@@ -1,5 +1,5 @@
 
-noinst_LTLIBRARIES = libcfg.la libapi.la
+pkglib_LTLIBRARIES = libcfg.la libapi.la
 libcfg_la_SOURCES = \
                     cfg.cpp
 
