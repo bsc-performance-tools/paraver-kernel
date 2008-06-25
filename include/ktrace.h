@@ -12,17 +12,17 @@
 
 using namespace bplustree;
 
-class Trace
+class KTrace
 {
   public:
-    Trace()
+    KTrace()
     {
       ready = false;
     }
 
-    Trace( const string& whichFile );
+    KTrace( const string& whichFile );
 
-    ~Trace()
+    ~KTrace()
     {
       delete blocks;
       delete btree;

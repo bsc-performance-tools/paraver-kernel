@@ -394,6 +394,13 @@
 			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
+		<Unit filename="include/ktrace.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Application test" />
+			<Option target="cfg" />
+			<Option target="paramedir" />
+		</Unit>
 		<Unit filename="include/kwindow.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -594,13 +601,6 @@
 			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
-		<Unit filename="include/trace.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-			<Option target="Application test" />
-			<Option target="cfg" />
-			<Option target="paramedir" />
-		</Unit>
 		<Unit filename="include/tracebodyio.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -729,6 +729,10 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="src/ktrace.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="src/kwindow.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -796,10 +800,6 @@
 			<Option target="Application test" />
 		</Unit>
 		<Unit filename="src/statisticmanagement.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="src/trace.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>

@@ -17,10 +17,10 @@ class TraceBodyIO_v1 : public TraceBodyIO
 
     static void read( TraceStream *file, MemoryBlocks& records );
     static void write( fstream& whichStream,
-                       const Trace& whichTrace,
+                       const KTrace& whichTrace,
                        const MemoryTrace::iterator *record );
     static void writeEvents( fstream& whichStream,
-                             const Trace& whichTrace,
+                             const KTrace& whichTrace,
                              const vector<MemoryTrace::iterator *>& recordList );
   protected:
 
@@ -37,20 +37,20 @@ class TraceBodyIO_v1 : public TraceBodyIO
                             TRecordTime& time );
 
     static bool writeState( string& line,
-                            const Trace& whichTrace,
+                            const KTrace& whichTrace,
                             const MemoryTrace::iterator *record );
     static bool writeEvent( string& line,
-                            const Trace& whichTrace,
+                            const KTrace& whichTrace,
                             const MemoryTrace::iterator *record,
                             bool needCommons = true );
     static bool writeComm( string& line,
-                           const Trace& whichTrace,
+                           const KTrace& whichTrace,
                            const MemoryTrace::iterator *record );
     static bool writeGlobalComm( string& line,
-                                 const Trace& whichTrace,
+                                 const KTrace& whichTrace,
                                  const MemoryTrace::iterator *record );
     static void writeCommon( ostringstream& line,
-                             const Trace& whichTrace,
+                             const KTrace& whichTrace,
                              const MemoryTrace::iterator *record );
 
 };

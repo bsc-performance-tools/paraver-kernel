@@ -3,7 +3,7 @@
 
 #include <fstream>
 #include "memoryblocks.h"
-#include "trace.h"
+#include "ktrace.h"
 #include "tracestream.h"
 
 using namespace std;
@@ -16,7 +16,7 @@ class TraceBodyIO
 
     static void read( TraceStream *whichStream, MemoryBlocks& whichMemory );
     static void write( fstream& whichStream,
-                       const Trace& whichTrace,
+                       const KTrace& whichTrace,
                        const MemoryTrace::iterator *record );
   protected:
 

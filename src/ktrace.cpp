@@ -1,32 +1,32 @@
 #include <fstream>
 #include <sstream>
-#include "trace.h"
+#include "ktrace.h"
 #include "traceheaderexception.h"
 #include "tracebodyio_v1.h"
 #include "tracestream.h"
 
 using namespace std;
 
-TApplOrder Trace::totalApplications() const
+TApplOrder KTrace::totalApplications() const
 {
   return traceProcessModel.totalApplications();
 }
 
 
-TTaskOrder Trace::totalTasks() const
+TTaskOrder KTrace::totalTasks() const
 {
   return traceProcessModel.totalTasks();
 }
 
 
-TTaskOrder Trace::getGlobalTask( const TApplOrder& inAppl,
+TTaskOrder KTrace::getGlobalTask( const TApplOrder& inAppl,
                                  const TTaskOrder& inTask ) const
 {
   return traceProcessModel.getGlobalTask( inAppl, inTask );
 }
 
 
-void Trace::getTaskLocation( TTaskOrder globalTask,
+void KTrace::getTaskLocation( TTaskOrder globalTask,
                              TApplOrder& inAppl,
                              TTaskOrder& inTask ) const
 {
@@ -34,25 +34,25 @@ void Trace::getTaskLocation( TTaskOrder globalTask,
 }
 
 
-TTaskOrder Trace::getFirstTask( TApplOrder inAppl ) const
+TTaskOrder KTrace::getFirstTask( TApplOrder inAppl ) const
 {
   return traceProcessModel.getFirstTask( inAppl );
 }
 
 
-TTaskOrder Trace::getLastTask( TApplOrder inAppl ) const
+TTaskOrder KTrace::getLastTask( TApplOrder inAppl ) const
 {
   return traceProcessModel.getLastTask( inAppl );
 }
 
 
-TThreadOrder Trace::totalThreads() const
+TThreadOrder KTrace::totalThreads() const
 {
   return traceProcessModel.totalThreads();
 }
 
 
-TThreadOrder Trace::getGlobalThread( const TApplOrder& inAppl,
+TThreadOrder KTrace::getGlobalThread( const TApplOrder& inAppl,
                                      const TTaskOrder& inTask,
                                      const TThreadOrder& inThread ) const
 {
@@ -60,7 +60,7 @@ TThreadOrder Trace::getGlobalThread( const TApplOrder& inAppl,
 }
 
 
-void Trace::getThreadLocation( TThreadOrder globalThread,
+void KTrace::getThreadLocation( TThreadOrder globalThread,
                                TApplOrder& inAppl,
                                TTaskOrder& inTask,
                                TThreadOrder& inThread ) const
@@ -69,44 +69,44 @@ void Trace::getThreadLocation( TThreadOrder globalThread,
 }
 
 
-TThreadOrder Trace::getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const
+TThreadOrder KTrace::getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const
 {
   return traceProcessModel.getFirstThread( inAppl, inTask );
 }
 
 
-TThreadOrder Trace::getLastThread( TApplOrder inAppl, TTaskOrder inTask )const
+TThreadOrder KTrace::getLastThread( TApplOrder inAppl, TTaskOrder inTask )const
 {
   return traceProcessModel.getLastThread( inAppl, inTask );
 }
 
 
-bool Trace::existResourceInfo() const
+bool KTrace::existResourceInfo() const
 {
   return traceResourceModel.isReady();
 }
 
 
-TNodeOrder Trace::totalNodes() const
+TNodeOrder KTrace::totalNodes() const
 {
   return traceResourceModel.totalNodes();
 }
 
 
-TCPUOrder Trace::totalCPUs() const
+TCPUOrder KTrace::totalCPUs() const
 {
   return traceResourceModel.totalCPUs();
 }
 
 
-TCPUOrder Trace::getGlobalCPU( const TNodeOrder& inNode,
+TCPUOrder KTrace::getGlobalCPU( const TNodeOrder& inNode,
                                const TCPUOrder& inCPU ) const
 {
   return traceResourceModel.getGlobalCPU( inNode, inCPU );
 }
 
 
-void Trace::getCPULocation( TCPUOrder globalCPU,
+void KTrace::getCPULocation( TCPUOrder globalCPU,
                             TNodeOrder& inNode,
                             TCPUOrder& inCPU ) const
 {
@@ -114,20 +114,20 @@ void Trace::getCPULocation( TCPUOrder globalCPU,
 }
 
 
-TCPUOrder Trace::getFirstCPU( TNodeOrder inNode ) const
+TCPUOrder KTrace::getFirstCPU( TNodeOrder inNode ) const
 {
   return traceResourceModel.getFirstCPU( inNode );
 }
 
 
-TCPUOrder Trace::getLastCPU( TNodeOrder inNode ) const
+TCPUOrder KTrace::getLastCPU( TNodeOrder inNode ) const
 {
   return getLastCPU( inNode );
 }
 
 
 // PRECOND: fromLevel > toLevel
-TObjectOrder Trace::getFirst( TObjectOrder globalOrder,
+TObjectOrder KTrace::getFirst( TObjectOrder globalOrder,
                               TWindowLevel fromLevel,
                               TWindowLevel toLevel  ) const
 {
@@ -158,7 +158,7 @@ TObjectOrder Trace::getFirst( TObjectOrder globalOrder,
 }
 
 
-TObjectOrder Trace::getLast( TObjectOrder globalOrder,
+TObjectOrder KTrace::getLast( TObjectOrder globalOrder,
                              TWindowLevel fromLevel,
                              TWindowLevel toLevel ) const
 {
@@ -202,58 +202,58 @@ TObjectOrder Trace::getLast( TObjectOrder globalOrder,
 
 
 
-TThreadOrder Trace::getSenderThread( TCommID whichComm ) const
+TThreadOrder KTrace::getSenderThread( TCommID whichComm ) const
 {
   return blocks->getSenderThread( whichComm );
 }
 
-TCPUOrder Trace::getSenderCPU( TCommID whichComm ) const
+TCPUOrder KTrace::getSenderCPU( TCommID whichComm ) const
 {
   return blocks->getSenderCPU( whichComm );
 }
 
-TThreadOrder Trace::getReceiverThread( TCommID whichComm ) const
+TThreadOrder KTrace::getReceiverThread( TCommID whichComm ) const
 {
   return blocks->getReceiverThread( whichComm );
 }
 
-TCPUOrder Trace::getReceiverCPU( TCommID whichComm ) const
+TCPUOrder KTrace::getReceiverCPU( TCommID whichComm ) const
 {
   return blocks->getReceiverCPU( whichComm );
 }
 
-TCommTag Trace::getCommTag( TCommID whichComm ) const
+TCommTag KTrace::getCommTag( TCommID whichComm ) const
 {
   return blocks->getCommTag( whichComm );
 }
 
-TCommSize Trace::getCommSize( TCommID whichComm ) const
+TCommSize KTrace::getCommSize( TCommID whichComm ) const
 {
   return blocks->getCommSize( whichComm );
 }
 
-TRecordTime Trace::getLogicalSend( TCommID whichComm ) const
+TRecordTime KTrace::getLogicalSend( TCommID whichComm ) const
 {
   return blocks->getLogicalSend( whichComm );
 }
 
-TRecordTime Trace::getLogicalReceive( TCommID whichComm ) const
+TRecordTime KTrace::getLogicalReceive( TCommID whichComm ) const
 {
   return blocks->getLogicalReceive( whichComm );
 }
 
-TRecordTime Trace::getPhysicalSend( TCommID whichComm ) const
+TRecordTime KTrace::getPhysicalSend( TCommID whichComm ) const
 {
   return blocks->getPhysicalSend( whichComm );
 }
 
-TRecordTime Trace::getPhysicalReceive( TCommID whichComm ) const
+TRecordTime KTrace::getPhysicalReceive( TCommID whichComm ) const
 {
   return blocks->getPhysicalReceive( whichComm );
 }
 
 
-void Trace::dumpFile( const string& whichFile ) const
+void KTrace::dumpFile( const string& whichFile ) const
 {
   std::fstream file( whichFile.c_str(), fstream::out | fstream::trunc );
   // pendiente volcar cabecera
@@ -272,50 +272,50 @@ void Trace::dumpFile( const string& whichFile ) const
 
 
 // Forward MemoryTrace iterator functions
-MemoryTrace::iterator* Trace::begin() const
+MemoryTrace::iterator* KTrace::begin() const
 {
   return btree->begin();
 }
 
-MemoryTrace::iterator* Trace::end() const
+MemoryTrace::iterator* KTrace::end() const
 {
   return btree->end();
 }
 
-MemoryTrace::iterator* Trace::threadBegin( TThreadOrder whichThread ) const
+MemoryTrace::iterator* KTrace::threadBegin( TThreadOrder whichThread ) const
 {
   return btree->threadBegin( whichThread );
 }
 
-MemoryTrace::iterator* Trace::threadEnd( TThreadOrder whichThread ) const
+MemoryTrace::iterator* KTrace::threadEnd( TThreadOrder whichThread ) const
 {
   return btree->threadEnd( whichThread );
 }
 
-MemoryTrace::iterator* Trace::CPUBegin( TCPUOrder whichCPU ) const
+MemoryTrace::iterator* KTrace::CPUBegin( TCPUOrder whichCPU ) const
 {
   return btree->CPUBegin( whichCPU );
 }
 
-MemoryTrace::iterator* Trace::CPUEnd( TCPUOrder whichCPU ) const
+MemoryTrace::iterator* KTrace::CPUEnd( TCPUOrder whichCPU ) const
 {
   return btree->CPUEnd( whichCPU );
 }
 
-void Trace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
+void KTrace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
                                    TRecordTime whichTime ) const
 {
   btree->getRecordByTimeThread( listIter, whichTime );
 }
 
-void Trace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
+void KTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
                                 TRecordTime whichTime ) const
 {
   btree->getRecordByTimeCPU( listIter, whichTime );
 }
 
 
-Trace::Trace( const string& whichFile ) : fileName( whichFile )
+KTrace::KTrace( const string& whichFile ) : fileName( whichFile )
 {
   string tmpstr;
 
