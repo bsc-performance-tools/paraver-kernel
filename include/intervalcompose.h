@@ -138,7 +138,7 @@ class IntervalCompose: public IntervalHigh
                                          TObjectOrder whichOrder );
     virtual bool IsDerivedWindow() const;
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const;
-    virtual Trace *getWindowTrace() const;
+    virtual KTrace *getWindowTrace() const;
 
   private:
     bool joinBursts;

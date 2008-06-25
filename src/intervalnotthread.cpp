@@ -188,7 +188,7 @@ TWindowLevel IntervalNotThread::getComposeLevel( TWindowLevel whichLevel ) const
 }
 
 
-Trace *IntervalNotThread::getWindowTrace() const
+KTrace *IntervalNotThread::getWindowTrace() const
 {
   return window->getTrace();
 }

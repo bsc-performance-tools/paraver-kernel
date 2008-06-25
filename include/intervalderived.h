@@ -48,7 +48,7 @@ class IntervalDerived: public IntervalHigh
 
     virtual void setChilds();
 
-    virtual Trace *getWindowTrace() const;
+    virtual KTrace *getWindowTrace() const;
     virtual TWindowLevel getWindowLevel() const;
     virtual Interval *getWindowInterval( TWindowLevel whichLevel,
                                          TObjectOrder whichOrder );

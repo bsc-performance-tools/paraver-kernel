@@ -7,7 +7,7 @@
 #include "khistogramtotals.h"
 #include "functionmanagement.h"
 
-RowsTranslator::RowsTranslator( vector<Window *>& kwindows )
+RowsTranslator::RowsTranslator( vector<KWindow *>& kwindows )
 {
   for ( size_t ii = 0; ii < kwindows.size() - 1; ii++ )
   {
@@ -17,7 +17,7 @@ RowsTranslator::RowsTranslator( vector<Window *>& kwindows )
     childInfo[ii].numRows = kwindows[ii]->getWindowLevelObjects();
     if ( !childInfo[ii].oneToOne )
     {
-      Trace *auxTrace = kwindows[ii]->getTrace();
+      KTrace *auxTrace = kwindows[ii]->getTrace();
       for ( TObjectOrder iRow = 0; iRow < kwindows[ii]->getWindowLevelObjects(); iRow++ )
       {
         pair< TObjectOrder, TObjectOrder > range;
@@ -220,19 +220,19 @@ Window *KHistogram::getExtraControlWindow() const
 
 void KHistogram::setControlWindow( Window *whichWindow )
 {
-  controlWindow = whichWindow;
+  controlWindow = (KWindow *) whichWindow->getConcrete();
 }
 
 
 void KHistogram::setDataWindow( Window *whichWindow )
 {
-  dataWindow = whichWindow;
+  dataWindow = (KWindow *) whichWindow->getConcrete();
 }
 
 
 void KHistogram::setExtraControlWindow( Window *whichWindow )
 {
-  xtraControlWindow = whichWindow;
+  xtraControlWindow = (KWindow *) whichWindow->getConcrete();
 }
 
 

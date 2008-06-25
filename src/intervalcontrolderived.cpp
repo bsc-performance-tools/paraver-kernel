@@ -225,7 +225,7 @@ TWindowLevel IntervalControlDerived::getComposeLevel( TWindowLevel whichLevel ) 
 }
 
 
-Trace *IntervalControlDerived::getWindowTrace() const
+KTrace *IntervalControlDerived::getWindowTrace() const
 {
   return window->getTrace();
 }

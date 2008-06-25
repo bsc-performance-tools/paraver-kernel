@@ -224,6 +224,10 @@
 			<Option target="api" />
 		</Unit>
 		<Unit filename="api/recordlist.h" />
+		<Unit filename="api/trace.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/trace.h" />
 		<Unit filename="api/window.cpp">
 			<Option target="api" />
 		</Unit>

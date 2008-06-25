@@ -1,9 +1,10 @@
-#ifndef TRACE_H_INCLUDED
-#define TRACE_H_INCLUDED
+#ifndef KTRACE_H_INCLUDED
+#define KTRACE_H_INCLUDED
 
 #include <string>
 #include <vector>
 #include "paraverkerneltypes.h"
+#include "trace.h"
 #include "processmodel.h"
 #include "resourcemodel.h"
 #include "memorytrace.h"
@@ -12,7 +13,7 @@
 
 using namespace bplustree;
 
-class KTrace
+class KTrace: public Trace
 {
   public:
     KTrace()
@@ -77,7 +78,7 @@ class KTrace
 
     TObjectOrder getFirst( TObjectOrder globalOrder,
                            TWindowLevel fromLevel,
-                            TWindowLevel toLevel ) const;
+                           TWindowLevel toLevel ) const;
     TObjectOrder getLast( TObjectOrder globalOrder,
                           TWindowLevel fromLevel,
                           TWindowLevel toLevel ) const;
@@ -134,4 +135,4 @@ class KTrace
 };
 
 
-#endif // TRACE_H_INCLUDED
+#endif // KTRACE_H_INCLUDED

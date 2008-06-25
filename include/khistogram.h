@@ -19,7 +19,7 @@ class RowsTranslator
         PRECOND3: windows vector size is 2 or 3 KWindows.
     */
 
-    RowsTranslator( vector<Window *>& windows );
+    RowsTranslator( vector<KWindow *>& windows );
     ~RowsTranslator();
 
     TObjectOrder globalTranslate( UINT16 winIndex,
@@ -172,9 +172,9 @@ class KHistogram : public Histogram
   protected:
 
   private:
-    Window *controlWindow;
-    Window *dataWindow;
-    Window *xtraControlWindow;
+    KWindow *controlWindow;
+    KWindow *dataWindow;
+    KWindow *xtraControlWindow;
 
     bool threeDimensions;
 
@@ -205,7 +205,7 @@ class KHistogram : public Histogram
     vector<HistogramStatistic *> statisticFunctions;
     vector<HistogramStatistic *> commStatisticFunctions;
 
-    vector<Window *> orderedWindows;
+    vector<KWindow *> orderedWindows;
     RowsTranslator *rowsTranslator;
     ColumnTranslator *columnTranslator;
     ColumnTranslator *planeTranslator;

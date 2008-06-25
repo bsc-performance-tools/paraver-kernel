@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "kwindowexception.h"
-#include "trace.h"
+#include "ktrace.h"
 #include "intervalnotthread.h"
 #include "intervalthread.h"
 #include "intervalcpu.h"
@@ -22,7 +22,7 @@ class KWindow:public Window
   public:
     KWindow()
     {}
-    KWindow( Trace *whichTrace ): myTrace( whichTrace )
+    KWindow( KTrace *whichTrace ): myTrace( whichTrace )
     {
       timeUnit = NS;
       level = THREAD;
@@ -41,7 +41,7 @@ class KWindow:public Window
     virtual void setParent( UINT16 whichParent, Window *whichWindow )
     {}
 
-    Trace *getTrace() const
+    KTrace *getTrace() const
     {
       return myTrace;
     }
@@ -132,7 +132,7 @@ class KWindow:public Window
 
     TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime );
   protected:
-    Trace *myTrace;
+    KTrace *myTrace;
     TWindowLevel level;
     TTimeUnit timeUnit;
 
@@ -152,7 +152,7 @@ class KSingleWindow: public KWindow
       timeUnit = NS;
     }
 
-    KSingleWindow( Trace *whichTrace );
+    KSingleWindow( KTrace *whichTrace );
 
     virtual ~KSingleWindow();
 
@@ -267,7 +267,7 @@ class KDerivedWindow: public KWindow
       parents.push_back( NULL );
     }
 
-    KDerivedWindow( Window *window1, Window *window2 )
+    KDerivedWindow( KWindow *window1, KWindow *window2 )
     {
       timeUnit = NS;
 
@@ -294,14 +294,14 @@ class KDerivedWindow: public KWindow
         delete functions[ 2 ];
     }
 
-    void setParent( UINT16 whichParent, Window *whichWindow )
+    void setParent( UINT16 whichParent, KWindow *whichWindow )
     {
       parents[ whichParent ] = whichWindow;
       if ( parents[ 0 ] != NULL && parents[ 1 ] != NULL )
         setup();
     }
 
-    Window *getParent( UINT16 whichParent ) const
+    KWindow *getParent( UINT16 whichParent ) const
     {
       return parents[whichParent];
     }
@@ -356,7 +356,7 @@ class KDerivedWindow: public KWindow
     }
 
   protected:
-    vector<Window *> parents;
+    vector<KWindow *> parents;
     vector<TSemanticValue> factor;
 
     vector<IntervalDerived> intervalDerived;

@@ -121,7 +121,7 @@ RecordList *KWindow::getRecordList( TObjectOrder whichObject )
  *  KSingleWindow implementation
  **********************************************************************/
 
-KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
+KSingleWindow::KSingleWindow( KTrace *whichTrace ): KWindow( whichTrace )
 {
   functions[ TOPCOMPOSE1 ] = new ComposeAsIs();
   functions[ TOPCOMPOSE2 ] = new ComposeAsIs();

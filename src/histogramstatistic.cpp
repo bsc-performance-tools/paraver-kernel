@@ -2,7 +2,7 @@
 #include "histogramstatistic.h"
 #include "khistogram.h"
 #include "window.h"
-#include "trace.h"
+#include "ktrace.h"
 
 //-------------------------------------------------------------------------
 // Statistics filtering functions

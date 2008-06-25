@@ -4,9 +4,9 @@
 #include "paraverkerneltypes.h"
 
 class KernelConnection;
+class Trace;
 class RecordList;
 class SemanticFunction;
-class Trace;
 class Filter;
 
 class Window

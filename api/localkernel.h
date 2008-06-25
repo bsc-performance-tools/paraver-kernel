@@ -11,6 +11,7 @@ class LocalKernel: public KernelConnection
     LocalKernel();
     virtual ~LocalKernel();
 
+    virtual Trace *newTrace( const string& whichFile ) const;
     virtual Window *newSingleWindow() const;
     virtual Window *newSingleWindow( Trace *whichTrace ) const;
     virtual Window *newDerivedWindow() const;

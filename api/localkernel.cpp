@@ -19,6 +19,11 @@ LocalKernel::LocalKernel()
 LocalKernel::~LocalKernel()
 {}
 
+Trace *LocalKernel::newTrace( const string& whichFile ) const
+{
+  return new KTrace( whichFile );
+}
+
 Window *LocalKernel::newSingleWindow() const
 {
   return new KSingleWindow();
@@ -26,12 +31,13 @@ Window *LocalKernel::newSingleWindow() const
 
 Window *LocalKernel::newSingleWindow( Trace *whichTrace ) const
 {
-  return new KSingleWindow( whichTrace );
+  return new KSingleWindow( ( KTrace * ) whichTrace->getConcrete() );
 }
 
 Window *LocalKernel::newDerivedWindow( Window *window1, Window * window2 ) const
 {
-  return new KDerivedWindow( window1->getConcrete(), window2->getConcrete() );
+  return new KDerivedWindow( ( KWindow * ) window1->getConcrete(),
+                             ( KWindow * ) window2->getConcrete() );
 }
 
 Window *LocalKernel::newDerivedWindow() const

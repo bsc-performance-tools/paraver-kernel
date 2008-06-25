@@ -1,6 +1,8 @@
-#include "kwindow.h"
 #include "kernelconnection.h"
 #include "filter.h"
+#include "trace.h"
+#include "window.h"
+#include "recordlist.h"
 
 Window *Window::create( KernelConnection *whichKernel, Trace *whichTrace )
 {

@@ -2,7 +2,7 @@
 #define INTERVALHIGH_H_INCLUDED
 
 #include "interval.h"
-#include "trace.h"
+#include "ktrace.h"
 
 class IntervalHigh: public Interval
 {
@@ -28,7 +28,7 @@ class IntervalHigh: public Interval
                                          TObjectOrder whichOrder ) = 0;
     virtual bool IsDerivedWindow() const = 0;
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const = 0;
-    virtual Trace *getWindowTrace() const = 0;
+    virtual KTrace *getWindowTrace() const = 0;
 
   private:
 

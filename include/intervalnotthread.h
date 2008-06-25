@@ -113,7 +113,7 @@ class IntervalNotThread: public IntervalHigh
       }
     }
 
-    virtual Trace *getWindowTrace() const;
+    virtual KTrace *getWindowTrace() const;
     virtual TWindowLevel getWindowLevel() const;
     virtual Interval *getWindowInterval( TWindowLevel whichLevel,
                                          TObjectOrder whichOrder );
