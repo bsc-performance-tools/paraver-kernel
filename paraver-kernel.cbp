@@ -218,6 +218,7 @@
 		<Unit filename="api/paraverconfig.h">
 			<Option target="api" />
 		</Unit>
+		<Unit filename="api/paraverkernelexception.h" />
 		<Unit filename="api/paraverkerneltypes.h" />
 		<Unit filename="api/paraverlabels.h" />
 		<Unit filename="api/recordlist.cpp">
@@ -436,9 +437,6 @@
 			<Option target="Application test" />
 			<Option target="cfg" />
 			<Option target="paramedir" />
-		</Unit>
-		<Unit filename="include/paraverkernelexception.h">
-			<Option virtualFolder="paraver-kernel/src/" />
 		</Unit>
 		<Unit filename="include/processmodel.h">
 			<Option target="Debug" />
