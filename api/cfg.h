@@ -37,7 +37,7 @@ class CFGLoader
 
   public:
     static bool isCFGFile( const string& filename );
-    static bool loadCFG( KernelConnection *whichKernel, string& filename,
+    static bool loadCFG( KernelConnection *whichKernel, const string& filename,
                          Trace *whichTrace,
                          vector<Window *>& windows,
                          vector<Histogram *>& histograms );

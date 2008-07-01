@@ -76,7 +76,7 @@ bool CFGLoader::isCFGFile( const string& filename )
 }
 
 bool CFGLoader::loadCFG( KernelConnection *whichKernel,
-                         string& filename,
+                         const string& filename,
                          Trace *whichTrace,
                          vector<Window *>& windows,
                          vector<Histogram *>& histograms )
