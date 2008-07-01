@@ -7,6 +7,11 @@
 
 using namespace std;
 
+string KTrace::getFileName() const
+{
+  return fileName;
+}
+
 TApplOrder KTrace::totalApplications() const
 {
   return traceProcessModel.totalApplications();

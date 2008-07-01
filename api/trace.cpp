@@ -21,6 +21,11 @@ TraceProxy::~TraceProxy()
   delete myTrace;
 }
 
+string TraceProxy::getFileName()const
+{
+  return myTrace->getFileName();
+}
+
 void TraceProxy::dumpFile( const string& whichFile ) const
 {
   myTrace->dumpFile( whichFile );

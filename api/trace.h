@@ -14,6 +14,7 @@ class Trace
     Trace( KernelConnection *whichKernel );
     virtual ~Trace() {}
 
+    virtual string getFileName() const = 0;
     virtual void dumpFile( const string& whichFile ) const = 0;
 
     virtual TApplOrder totalApplications() const = 0;
@@ -84,6 +85,8 @@ class TraceProxy: public Trace
 {
   public:
     virtual ~TraceProxy();
+
+    virtual string getFileName() const;
 
     virtual void dumpFile( const string& whichFile ) const;
 

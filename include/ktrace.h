@@ -29,6 +29,8 @@ class KTrace: public Trace
       delete btree;
     }
 
+    string getFileName() const;
+
     MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it )
     {
       return new BPlusTree::iterator( *( ( BPlusTree::iterator * ) it ) );
