@@ -180,15 +180,21 @@ class Histogram
     virtual void compute3DScale() {}
     virtual string getRowLabel( TObjectOrder whichRow ) const
     {
-      return "";
+      return "Unamed row";
     }
     virtual string getColumnLabel( THistogramColumn whichColumn ) const
     {
-      return "";
+      return "Unamed column";
     }
     virtual string getPlaneLabel( THistogramColumn whichPlane ) const
     {
-      return "";
+      return "Unamed plane";
+    }
+
+    virtual void setName( const string& whichName ) {}
+    virtual string getName() const
+    {
+      return "Unamed histogram";
     }
 
   protected:
@@ -308,7 +314,12 @@ class HistogramProxy : public Histogram
     virtual string getColumnLabel( THistogramColumn whichColumn ) const;
     virtual string getPlaneLabel( THistogramColumn whichPlane ) const;
 
+    virtual void setName( const string& whichName );
+    virtual string getName() const;
+
   private:
+    string name;
+
     bool horizontal;
     bool hideColumns;
     bool showUnits;

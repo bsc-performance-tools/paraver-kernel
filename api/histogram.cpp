@@ -24,6 +24,8 @@ void Histogram::setWindowEndTime( TRecordTime whichTime )
 HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
     Histogram( whichKernel )
 {
+  name = Histogram::getName();
+
   controlWindow = NULL;
   dataWindow = NULL;
   extraControlWindow = NULL;
@@ -680,4 +682,14 @@ string HistogramProxy::getPlaneLabel( THistogramColumn whichPlane ) const
          getExtraControlMin(),
          getExtraControlMax(),
          getExtraControlDelta() );
+}
+
+void HistogramProxy::setName( const string& whichName )
+{
+  name = whichName;
+}
+
+string HistogramProxy::getName() const
+{
+  return name;
 }

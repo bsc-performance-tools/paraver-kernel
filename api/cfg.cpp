@@ -102,7 +102,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
       continue;
 
     istringstream auxStream( strLine );
-    if( strLine[ 0 ] == '<' )
+    if ( strLine[ 0 ] == '<' )
     {
       cfgTag = strLine;
     }
@@ -128,6 +128,9 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   cfgFile.close();
 
   unLoadMap();
+
+  if ( histograms[ histograms.size() -1 ] == NULL )
+    histograms.pop_back();
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
@@ -171,7 +174,7 @@ void CFGLoader::loadMap()
   // Histogram options
 
   cfgTagFunctions[OLDCFG_TAG_AN2D_NEW]                 = new Analyzer2DCreate();
-  // --> Analyzer2D.Name:
+  cfgTagFunctions[OLDCFG_TAG_AN2D_NAME]                = new Analyzer2DName();
   // --> Analyzer2D.X:
   // --> Analyzer2D.Y:
   // --> Analyzer2D.Width:
@@ -222,68 +225,10 @@ void CFGLoader::loadMap()
 
 void CFGLoader::unLoadMap()
 {
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_TYPE];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_FACTORS];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_UNITS];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_OPERATION];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_MAXIMUM_Y];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_LEVEL];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_SCALE_RELATIVE];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_OBJECT];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_IDENTIFIERS];
-
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_BEGIN_TIME];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_STOP_TIME];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_END_TIME];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_BEGIN_TIME_RELATIVE];
-
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_NUMBER_OF_ROWS];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_SELECTED_FUNCTIONS];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_SEMANTIC_MODULE];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_COMPOSE_FUNCTIONS];
-
-  // Filter options
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_FILTER_MODULE];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_LOGICAL_FILTERED];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_PHYSICAL_FILTERED];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_FROMTO];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_COMM_TAGSIZE];
-  delete cfgTagFunctions[OLDCFG_TAG_WNDW_TYPEVAL];
-
-  // Histogram
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_NEW];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_CONTROL_WINDOW];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_DATA_WINDOW];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_STATISTIC];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_CALCULATE_ALL];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_NUM_COLUMNS];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_HIDE_COLS];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_SCIENTIFIC_NOTATION];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_NUM_DECIMALS];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_THOUSANDSEP];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_UNITS];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_HORIZONTAL];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_ACCUMULATOR];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_ACCUM_BY_CTRL_WINDOW];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_SORTCOLS];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_SORTCRITERIA];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_PARAMETERS];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_ANALYSISLIMITS];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_RELATIVETIME];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_COMPUTEYSCALE];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_MINIMUM];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_MAXIMUM];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_DELTA];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_COMPUTEGRADIENT];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_MINIMUMGRADIENT];
-  delete cfgTagFunctions[OLDCFG_TAG_AN2D_MAXIMUMGRADIENT];
-
-  // 3D Histogram
-  delete cfgTagFunctions[OLDCFG_TAG_AN3D_CONTROLWINDOW];
-  delete cfgTagFunctions[OLDCFG_TAG_AN3D_MINIMUM];
-  delete cfgTagFunctions[OLDCFG_TAG_AN3D_MAXIMUM];
-  delete cfgTagFunctions[OLDCFG_TAG_AN3D_DELTA];
-  delete cfgTagFunctions[OLDCFG_TAG_AN3D_FIXEDVALUE];
+  for ( map<string, TagFunction *>::iterator it = cfgTagFunctions.begin();
+        it != cfgTagFunctions.end();
+        it++ )
+    delete ( *it ).second;
 }
 
 
@@ -1110,6 +1055,24 @@ bool Analyzer2DCreate::parseLine( KernelConnection *whichKernel, istringstream& 
   {
     histograms.push_back( Histogram::create( whichKernel ) );
   }
+
+  return true;
+}
+
+bool Analyzer2DName::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                Trace *whichTrace,
+                                vector<Window *>& windows,
+                                vector<Histogram *>& histograms )
+{
+  string strName;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strName );
+  histograms[ histograms.size() - 1 ]->setName( strName );
 
   return true;
 }

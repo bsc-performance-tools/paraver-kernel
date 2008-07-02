@@ -407,6 +407,20 @@ class Analyzer2DCreate: public TagFunction
 };
 
 
+class Analyzer2DName: public TagFunction
+{
+  public:
+    Analyzer2DName()
+    {}
+    virtual ~Analyzer2DName()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+};
+
+
 class Analyzer2DControlWindow: public TagFunction
 {
   public:

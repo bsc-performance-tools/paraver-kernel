@@ -48,6 +48,7 @@
 #define OLDCFG_TAG_WNDW_COMM_TAGSIZE "window_comm_tagsize"
 #define OLDCFG_TAG_WNDW_TYPEVAL "window_typeval"
 #define OLDCFG_TAG_AN2D_NEW "< NEW ANALYZER2D >"
+#define OLDCFG_TAG_AN2D_NAME "Analyzer2D.Name:"
 #define OLDCFG_TAG_AN2D_CONTROL_WINDOW "Analyzer2D.ControlWindow:"
 #define OLDCFG_TAG_AN2D_DATA_WINDOW "Analyzer2D.DataWindow:"
 #define OLDCFG_TAG_AN2D_STATISTIC "Analyzer2D.Statistic:"
