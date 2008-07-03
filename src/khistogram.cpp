@@ -220,19 +220,19 @@ Window *KHistogram::getExtraControlWindow() const
 
 void KHistogram::setControlWindow( Window *whichWindow )
 {
-  controlWindow = (KWindow *) whichWindow->getConcrete();
+  controlWindow = (KWindow *) whichWindow;
 }
 
 
 void KHistogram::setDataWindow( Window *whichWindow )
 {
-  dataWindow = (KWindow *) whichWindow->getConcrete();
+  dataWindow = (KWindow *) whichWindow;
 }
 
 
 void KHistogram::setExtraControlWindow( Window *whichWindow )
 {
-  xtraControlWindow = (KWindow *) whichWindow->getConcrete();
+  xtraControlWindow = (KWindow *) whichWindow;
 }
 
 
