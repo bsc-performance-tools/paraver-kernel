@@ -280,6 +280,14 @@ THistogramColumn HistogramProxy::getNumPlanes() const
   return myHisto->getNumPlanes();
 }
 
+THistogramColumn HistogramProxy::getNumColumns( const string& whichStat ) const
+{
+  if( itsCommunicationStat( whichStat ) )
+    return (THistogramColumn) getNumRows();
+
+  return getNumColumns();
+}
+
 THistogramColumn HistogramProxy::getNumColumns() const
 {
   return myHisto->getNumColumns();
@@ -355,9 +363,9 @@ bool HistogramProxy::planeCommWithValues( UINT32 plane ) const
   return myHisto->planeCommWithValues( plane );
 }
 
-HistogramTotals *HistogramProxy::getTotals( UINT16 idStat ) const
+HistogramTotals *HistogramProxy::getTotals( const string& whichStat ) const
 {
-  if ( itsCommunicationStat( calcStat[ idStat ] ) )
+  if ( itsCommunicationStat( whichStat ) )
   {
     if ( horizontal )
       return getCommColumnTotals();

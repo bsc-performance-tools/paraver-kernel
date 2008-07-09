@@ -102,7 +102,7 @@ class Histogram
     virtual bool itsCommunicationStat( const string& whichStat ) const = 0;
 
     // Specific methods of HistogramProxy
-    virtual HistogramTotals *getTotals( UINT16 idStat ) const
+    virtual HistogramTotals *getTotals( const string& whichStat ) const
     {
       return NULL;
     }
@@ -213,6 +213,11 @@ class Histogram
       return "";
     }
 
+    virtual THistogramColumn getNumColumns( const string& whichStat ) const
+    {
+      return getNumColumns();
+    }
+
   protected:
     KernelConnection *myKernel;
 
@@ -271,7 +276,7 @@ class HistogramProxy : public Histogram
 
     virtual void setInclusive( bool newValue );
     virtual THistogramColumn getNumPlanes() const;
-    virtual THistogramColumn getNumColumns() const;
+    virtual THistogramColumn getNumColumns( const string& whichStat ) const;
     virtual TObjectOrder getNumRows() const;
     virtual TSemanticValue getCurrentValue( UINT32 col,
                                             UINT16 idStat,
@@ -290,7 +295,7 @@ class HistogramProxy : public Histogram
     virtual bool endCommCell( UINT32 col, UINT32 plane = 0 );
     virtual bool planeCommWithValues( UINT32 plane = 0 ) const;
 
-    virtual HistogramTotals *getTotals( UINT16 idStat ) const;
+    virtual HistogramTotals *getTotals( const string& whichStat ) const;
     virtual HistogramTotals *getColumnTotals() const;
     virtual HistogramTotals *getCommColumnTotals() const;
     virtual HistogramTotals *getRowTotals() const;
@@ -376,6 +381,7 @@ class HistogramProxy : public Histogram
     HistogramProxy( KernelConnection *whichKernel );
 
     bool itsCommunicationStat( const string& whichStat ) const;
+    THistogramColumn getNumColumns() const;
 
     friend Histogram *Histogram::create( KernelConnection * );
 };
