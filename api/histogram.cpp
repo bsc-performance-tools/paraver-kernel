@@ -44,6 +44,9 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   planeMinValue = 0.0;
   selectedPlane = 0;
   commSelectedPlane = 0;
+
+  setCalculateAll( Histogram::getCalculateAll() );
+  currentStat = Histogram::getCurrentStat();
 }
 
 HistogramProxy::~HistogramProxy()
@@ -399,7 +402,10 @@ void HistogramProxy::clearStatistics()
 void HistogramProxy::pushbackStatistic( string& whichStatistic )
 {
   myHisto->pushbackStatistic( whichStatistic );
-  calcStat.push_back( whichStatistic );
+  if ( itsCommunicationStat( whichStatistic ) )
+    commCalcStat.push_back( whichStatistic );
+  else
+    calcStat.push_back( whichStatistic );
 }
 
 void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
@@ -692,4 +698,56 @@ void HistogramProxy::setName( const string& whichName )
 string HistogramProxy::getName() const
 {
   return name;
+}
+
+void HistogramProxy::setCalculateAll( bool status )
+{
+  calculateAll = status;
+  clearStatistics();
+  if ( status )
+  {
+    vector<string> vStat;
+    myKernel->getAllStatistics( vStat );
+    for ( vector<string>::iterator it = vStat.begin(); it != vStat.end(); it++ )
+      pushbackStatistic( *it );
+  }
+}
+
+bool HistogramProxy::getCalculateAll() const
+{
+  return calculateAll;
+}
+
+bool HistogramProxy::getIdStat( const string& whichStat, UINT16& idStat ) const
+{
+  idStat = 0;
+  const vector<string> *vStat;
+
+  if ( itsCommunicationStat( whichStat ) )
+    vStat = &commCalcStat;
+  else
+    vStat = &calcStat;
+
+  if ( vStat->begin() == vStat->end() )
+    return false;
+
+  for ( vector<string>::const_iterator it = vStat->begin(); it != vStat->end(); it++ )
+  {
+    if ( whichStat.compare( *it ) == 0 )
+      return true;
+
+    idStat++;
+  }
+
+  return false;
+}
+
+void HistogramProxy::setCurrentStat( const string& whichStat )
+{
+  currentStat = whichStat;
+}
+
+string HistogramProxy::getCurrentStat() const
+{
+  return currentStat;
 }

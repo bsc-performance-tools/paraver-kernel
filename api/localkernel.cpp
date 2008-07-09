@@ -1,9 +1,11 @@
 #include "localkernel.h"
 #include "kwindow.h"
 #include "khistogram.h"
+#include "histogramstatistic.h"
 #include "semanticmanagement.h"
 #include "filtermanagement.h"
 #include "statisticmanagement.h"
+#include "functionmanagement.h"
 #include "krecordlist.h"
 
 void LocalKernel::init()
@@ -54,3 +56,8 @@ Histogram *LocalKernel::newHistogram() const
 {
   return new KRecordList();
 }*/
+
+void LocalKernel::getAllStatistics( vector<string>& onVector ) const
+{
+  FunctionManagement<HistogramStatistic>::getInstance()->getAll( onVector );
+}

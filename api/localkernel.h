@@ -18,6 +18,9 @@ class LocalKernel: public KernelConnection
     virtual Window *newDerivedWindow( Window *window1, Window * window2 ) const;
     virtual Histogram *newHistogram() const;
 //    virtual RecordList *newRecordList() const;
+
+    virtual void getAllStatistics( vector<string>& onVector ) const;
+
   protected:
 
   private:

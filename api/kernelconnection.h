@@ -2,6 +2,7 @@
 #define KERNELCONNECTION_H_INCLUDED
 
 #include <string>
+#include <vector>
 
 class Window;
 class Histogram;
@@ -22,6 +23,9 @@ class KernelConnection
     virtual Window *newDerivedWindow( Window *window1, Window * window2 ) const = 0;
     virtual Histogram *newHistogram() const = 0;
 //    virtual RecordList *newRecordList() const = 0;
+
+    virtual void getAllStatistics( vector<string>& onVector ) const = 0;
+
   protected:
 
   private:

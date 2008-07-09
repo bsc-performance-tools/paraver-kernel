@@ -6,7 +6,6 @@
 
 class KernelConnection;
 class HistogramTotals;
-class HistogramStatistic;
 class Window;
 
 class Histogram
@@ -197,6 +196,23 @@ class Histogram
       return "Unamed histogram";
     }
 
+    virtual void setCalculateAll( bool status ) {}
+    virtual bool getCalculateAll() const
+    {
+      return true;
+    }
+
+    virtual bool getIdStat( const string& whichStat, UINT16& idStat ) const
+    {
+      return false;
+    }
+
+    virtual void setCurrentStat( const string& whichStat ) {}
+    virtual string getCurrentStat() const
+    {
+      return "";
+    }
+
   protected:
     KernelConnection *myKernel;
 
@@ -317,6 +333,14 @@ class HistogramProxy : public Histogram
     virtual void setName( const string& whichName );
     virtual string getName() const;
 
+    virtual void setCalculateAll( bool status );
+    virtual bool getCalculateAll() const;
+
+    virtual bool getIdStat( const string& whichStat, UINT16& idStat ) const;
+
+    virtual void setCurrentStat( const string& whichStat );
+    virtual string getCurrentStat() const;
+
   private:
     string name;
 
@@ -342,7 +366,10 @@ class HistogramProxy : public Histogram
     Window *dataWindow;
     Window *extraControlWindow;
 
+    bool calculateAll;
+    string currentStat;
     vector<string> calcStat;
+    vector<string> commCalcStat;
 
     Histogram *myHisto;
 

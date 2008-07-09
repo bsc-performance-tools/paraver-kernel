@@ -1136,7 +1136,6 @@ bool Analyzer2DStatistic::parseLine( KernelConnection *whichKernel, istringstrea
                                      vector<Histogram *>& histograms )
 {
   string strStatistic;
-  HistogramStatistic *statistic;
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
@@ -1144,11 +1143,11 @@ bool Analyzer2DStatistic::parseLine( KernelConnection *whichKernel, istringstrea
     return false;
 
   getline( line, strStatistic );
-  statistic = ( FunctionManagement<HistogramStatistic>::getInstance() )->getFunction( strStatistic );
-  if ( statistic == NULL )
-    return false;
 
-  histograms[ histograms.size() - 1 ]->pushbackStatistic( strStatistic );
+  if ( !histograms[ histograms.size() - 1 ]->getCalculateAll() )
+    histograms[ histograms.size() - 1 ]->pushbackStatistic( strStatistic );
+
+  histograms[ histograms.size() - 1 ]->setCurrentStat( strStatistic );
 
   return true;
 }
@@ -1169,14 +1168,9 @@ bool Analyzer2DCalculateAll::parseLine( KernelConnection *whichKernel, istringst
   getline( line, strBoolAll, ' ' );
 
   if ( strBoolAll.compare( OLDCFG_VAL_TRUE2 ) == 0 )
-  {
-    vector<string> v;
-    ( FunctionManagement<HistogramStatistic>::getInstance() )->getAll( v );
-    for ( UINT32 i = 0; i < v.size(); i++ )
-      histograms[ histograms.size() - 1 ]->pushbackStatistic( v[ i ] );
-  }
+    histograms[ histograms.size() - 1 ]->setCalculateAll( true );
   else if ( strBoolAll.compare( OLDCFG_VAL_FALSE2 ) == 0 )
-    return true;
+    histograms[ histograms.size() - 1 ]->setCalculateAll( false );
   else
     return false;
 
