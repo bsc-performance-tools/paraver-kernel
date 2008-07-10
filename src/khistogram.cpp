@@ -908,9 +908,13 @@ void KHistogram::calculate( TObjectOrder iRow,
     data->rList = controlWindow->getRecordList( iRow );
   }
   if ( threeDimensions && currentWindow == xtraControlWindow )
+  {
     if ( !planeTranslator->getColumn( xtraControlWindow->getValue( iRow ),
                                       data->plane ) )
       return;
+  }
+  else
+    data->plane = 0;
 
   if ( winIndex == orderedWindows.size() - 1 )
   {

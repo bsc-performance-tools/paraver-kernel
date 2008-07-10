@@ -346,6 +346,8 @@ class HistogramProxy : public Histogram
     virtual void setCurrentStat( const string& whichStat );
     virtual string getCurrentStat() const;
 
+    bool itsCommunicationStat( const string& whichStat ) const;
+
   private:
     string name;
 
@@ -380,7 +382,6 @@ class HistogramProxy : public Histogram
 
     HistogramProxy( KernelConnection *whichKernel );
 
-    bool itsCommunicationStat( const string& whichStat ) const;
     THistogramColumn getNumColumns() const;
 
     friend Histogram *Histogram::create( KernelConnection * );

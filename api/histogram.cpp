@@ -282,8 +282,8 @@ THistogramColumn HistogramProxy::getNumPlanes() const
 
 THistogramColumn HistogramProxy::getNumColumns( const string& whichStat ) const
 {
-  if( itsCommunicationStat( whichStat ) )
-    return (THistogramColumn) getNumRows();
+  if ( itsCommunicationStat( whichStat ) )
+    return ( THistogramColumn ) getNumRows();
 
   return getNumColumns();
 }
