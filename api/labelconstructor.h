@@ -18,6 +18,9 @@ class LabelConstructor
                                     THistogramLimit min,
                                     THistogramLimit max,
                                     THistogramLimit delta );
+
+    static string histoCellLabel( const Histogram *whichHisto,
+                                  TSemanticValue value );
 };
 
 #endif // LABELCONSTRUCTOR_H_INCLUDED

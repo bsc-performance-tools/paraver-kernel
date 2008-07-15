@@ -167,6 +167,8 @@ class KHistogram : public Histogram
 
     bool itsCommunicationStat( const string& whichStat ) const;
 
+    string getUnitsLabel( const string& whichStat ) const;
+
     void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime );
 
   protected:

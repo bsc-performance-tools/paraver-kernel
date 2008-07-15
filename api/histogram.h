@@ -3,6 +3,7 @@
 
 #include <limits>
 #include "paraverkerneltypes.h"
+#include "paraverconfig.h"
 
 class KernelConnection;
 class HistogramTotals;
@@ -101,6 +102,8 @@ class Histogram
 
     virtual bool itsCommunicationStat( const string& whichStat ) const = 0;
 
+    virtual string getUnitsLabel( const string& whichStat ) const = 0;
+
     // Specific methods of HistogramProxy
     virtual HistogramTotals *getTotals( const string& whichStat ) const
     {
@@ -134,7 +137,7 @@ class Histogram
     virtual void setShowUnits( bool newValue ) {}
     virtual bool getShowUnits() const
     {
-      return false;
+      return ParaverConfig::getInstance()->getShowUnits();
     }
     virtual void setSortColumns( bool newValue ) {}
     virtual bool getSortColumns() const
@@ -347,6 +350,8 @@ class HistogramProxy : public Histogram
     virtual string getCurrentStat() const;
 
     bool itsCommunicationStat( const string& whichStat ) const;
+
+    string getUnitsLabel( const string& whichStat ) const;
 
   private:
     string name;

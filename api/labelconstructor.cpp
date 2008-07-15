@@ -3,6 +3,7 @@
 #include "labelconstructor.h"
 #include "paraverlabels.h"
 #include "histogram.h"
+#include "paraverconfig.h"
 
 string LabelConstructor::objectLabel( TObjectOrder globalOrder,
                                       TWindowLevel level,
@@ -58,7 +59,7 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
   {
     // Column range values
     label << '[' << ( whichColumn * delta ) + min << "..";
-    if( ( ( whichColumn * delta ) + min + delta ) > max )
+    if ( ( ( whichColumn * delta ) + min + delta ) > max )
     {
       label << max;
       label << ']';
@@ -74,6 +75,27 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
     // Discrete integer value
     label << ( whichColumn * delta ) + min;
   }
+
+  return label.str();
+}
+
+string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
+    TSemanticValue value )
+{
+  stringstream label;
+
+  if ( whichHisto->getScientificNotation() )
+    label << scientific;
+  else
+    label << fixed;
+
+  label.precision( ParaverConfig::getInstance()->getPrecision() );
+
+  label << value;
+
+  if ( whichHisto->getShowUnits() &&
+       !whichHisto->itsCommunicationStat( whichHisto->getCurrentStat() ) )
+    label << " " << whichHisto->getUnitsLabel( whichHisto->getCurrentStat() );
 
   return label.str();
 }

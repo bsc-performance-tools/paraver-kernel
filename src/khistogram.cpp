@@ -79,7 +79,7 @@ ColumnTranslator::ColumnTranslator( THistogramLimit whichMin,
   // PRECOND: Min < Max
   numColumns = THistogramColumn( ceil( ( maxLimit - minLimit ) / delta ) );
 
-  if( ( numColumns * delta ) + minLimit <= maxLimit )
+  if ( ( numColumns * delta ) + minLimit <= maxLimit )
     numColumns++;
 }
 
@@ -220,19 +220,19 @@ Window *KHistogram::getExtraControlWindow() const
 
 void KHistogram::setControlWindow( Window *whichWindow )
 {
-  controlWindow = (KWindow *) whichWindow;
+  controlWindow = ( KWindow * ) whichWindow;
 }
 
 
 void KHistogram::setDataWindow( Window *whichWindow )
 {
-  dataWindow = (KWindow *) whichWindow;
+  dataWindow = ( KWindow * ) whichWindow;
 }
 
 
 void KHistogram::setExtraControlWindow( Window *whichWindow )
 {
-  xtraControlWindow = (KWindow *) whichWindow;
+  xtraControlWindow = ( KWindow * ) whichWindow;
 }
 
 
@@ -1132,3 +1132,10 @@ bool KHistogram::itsCommunicationStat( const string& whichStat ) const
   return FunctionManagement<HistogramStatistic>::getInstance()
          ->getFunction( whichStat )->createComms();
 }
+
+string KHistogram::getUnitsLabel( const string& whichStat ) const
+{
+  return FunctionManagement<HistogramStatistic>::getInstance()
+         ->getFunction( whichStat )->getUnits( this );
+}
+

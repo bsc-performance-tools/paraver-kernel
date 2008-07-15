@@ -7,14 +7,15 @@ ParaverConfig *ParaverConfig::instance = NULL;
 
 ParaverConfig *ParaverConfig::getInstance()
 {
-  if( ParaverConfig::instance == NULL )
+  if ( ParaverConfig::instance == NULL )
     ParaverConfig::instance = new ParaverConfig();
   return ParaverConfig::instance;
 }
 
 ParaverConfig::ParaverConfig() :
     precision( 2 ),
-    histoNumColumns( 20 )
+    histoNumColumns( 20 ),
+    showUnits( true )
 {}
 
 UINT32 ParaverConfig::getPrecision() const
@@ -25,6 +26,11 @@ UINT32 ParaverConfig::getPrecision() const
 TObjectOrder ParaverConfig::getHistoNumColumns() const
 {
   return histoNumColumns;
+}
+
+bool ParaverConfig::getShowUnits() const
+{
+  return showUnits;
 }
 
 void ParaverConfig::readParaverConfigFile()
@@ -43,7 +49,7 @@ void ParaverConfig::readParaverConfigFile()
 
   if ( !file )
   {
-    if( !ParaverConfig::writeDefaultConfig())
+    if ( !ParaverConfig::writeDefaultConfig() )
       return;
     file.open( strFile.c_str() );
   }
@@ -79,6 +85,17 @@ void ParaverConfig::readParaverConfigFile()
 
       streamNumColumns >> config.histoNumColumns;
     }
+    else if ( strTag.compare( "Analyzer2D.units:" ) == 0 )
+    {
+      string strUnits;
+
+      getline( auxStream, strUnits );
+
+      if ( strUnits.compare( "True" ) == 0 )
+        config.showUnits = true;
+      else
+        config.showUnits = false;
+    }
 
   }
   file.close();
@@ -94,7 +111,7 @@ bool ParaverConfig::writeDefaultConfig()
 
   file.open( strFile.c_str() );
 
-  if( !file )
+  if ( !file )
     return false;
 
   return true;

@@ -13,6 +13,7 @@ class ParaverConfig
 
     UINT32 getPrecision() const;
     TObjectOrder getHistoNumColumns() const;
+    bool getShowUnits() const;
 
   private:
     static ParaverConfig *instance;
@@ -21,6 +22,7 @@ class ParaverConfig
 
     UINT32 precision;
     TObjectOrder histoNumColumns;
+    bool showUnits;
 
 };
 

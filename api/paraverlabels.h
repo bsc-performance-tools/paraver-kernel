@@ -128,5 +128,15 @@
 #define LEVEL_NODE         "NODE"
 #define LEVEL_CPU          "CPU"
 
+static const string LABEL_TIMEUNIT[ DAY + 1 ] =
+{
+  "ns",
+  "us",
+  "ms",
+  "s",
+  "m",
+  "h",
+  "d"
+};
 
 #endif // PARAVERLABELS_H_INCLUDED

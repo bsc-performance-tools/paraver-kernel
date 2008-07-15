@@ -759,3 +759,9 @@ string HistogramProxy::getCurrentStat() const
 {
   return currentStat;
 }
+
+string HistogramProxy::getUnitsLabel( const string& whichStat ) const
+{
+  return myHisto->getUnitsLabel( whichStat );
+}
+

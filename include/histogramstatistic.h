@@ -29,7 +29,8 @@ class HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 ) = 0;
 
-    virtual string getName() = 0;
+    virtual string getName() const = 0;
+    virtual string getUnits( const KHistogram *whichHisto ) const = 0;
     virtual HistogramStatistic *clone() = 0;
 
   protected:
@@ -63,7 +64,8 @@ class StatNumSends: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -93,7 +95,8 @@ class StatNumReceives: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -123,7 +126,8 @@ class StatBytesSent: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -153,7 +157,8 @@ class StatBytesReceived: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -183,7 +188,8 @@ class StatAvgBytesSent: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -214,7 +220,8 @@ class StatAvgBytesReceived: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -245,7 +252,8 @@ class StatMinBytesSent: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -276,7 +284,8 @@ class StatMinBytesReceived: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -307,7 +316,8 @@ class StatMaxBytesSent: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -338,7 +348,8 @@ class StatMaxBytesReceived: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -375,7 +386,8 @@ class StatTime: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -408,7 +420,8 @@ class StatPercTime: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -442,7 +455,8 @@ class StatPercTimeNotZero: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -476,7 +490,8 @@ class StatPercTimeWindow: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -509,7 +524,8 @@ class StatNumBursts: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -541,7 +557,8 @@ class StatPercNumBursts: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -574,7 +591,8 @@ class StatIntegral: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -607,7 +625,8 @@ class StatAvgValue: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -641,7 +660,8 @@ class StatMaximum: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -675,7 +695,8 @@ class StatAvgBurstTime: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -709,7 +730,8 @@ class StatStdevBurstTime: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -744,7 +766,8 @@ class StatAvgPerBurst: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -778,7 +801,8 @@ class StatAvgValueNotZero: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -812,7 +836,8 @@ class StatNumBurstsNotZero: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
@@ -845,7 +870,8 @@ class StatSumBursts: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName();
+    virtual string getName() const;
+    virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
