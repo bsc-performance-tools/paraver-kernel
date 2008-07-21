@@ -15,8 +15,16 @@ ParaverConfig *ParaverConfig::getInstance()
 ParaverConfig::ParaverConfig() :
     precision( 2 ),
     histoNumColumns( 20 ),
-    showUnits( true )
-{}
+    showUnits( true ),
+    thousandSep( true )
+{
+  loadMap();
+}
+
+ParaverConfig::~ParaverConfig()
+{
+  unLoadMap();
+}
 
 UINT32 ParaverConfig::getPrecision() const
 {
@@ -31,6 +39,31 @@ TObjectOrder ParaverConfig::getHistoNumColumns() const
 bool ParaverConfig::getShowUnits() const
 {
   return showUnits;
+}
+
+bool ParaverConfig::getThousandSep() const
+{
+  return thousandSep;
+}
+
+void ParaverConfig::setPrecision( UINT32 prec )
+{
+  precision = prec;
+}
+
+void ParaverConfig::setHistoNumColumns( TObjectOrder columns )
+{
+  histoNumColumns = columns;
+}
+
+void ParaverConfig::setShowUnits( bool units )
+{
+  showUnits = units;
+}
+
+void ParaverConfig::setThousandSep( bool sep )
+{
+  thousandSep = sep;
 }
 
 void ParaverConfig::readParaverConfigFile()
@@ -65,38 +98,12 @@ void ParaverConfig::readParaverConfigFile()
     istringstream auxStream( strLine );
     getline( auxStream, strTag, ' ' );
 
-// Hay que hacer algo parecido a lo del cfg para cuando se
-// quiera leer el fichero entero
-    if ( strTag.compare( "WhatWhere.num_decimals:" ) == 0 )
+    map<string, PropertyFunction*>::iterator it =
+      config.propertyFunctions.find( strTag );
+    if ( it != config.propertyFunctions.end() )
     {
-      string strNumDecimals;
-
-      getline( auxStream, strNumDecimals );
-      istringstream streamNumDecimals( strNumDecimals );
-
-      streamNumDecimals >> config.precision;
+      it->second->parseLine( auxStream, config );
     }
-    else if ( strTag.compare( "Analyzer2D.num_columns:" ) == 0 )
-    {
-      string strNumColumns;
-
-      getline( auxStream, strNumColumns );
-      istringstream streamNumColumns( strNumColumns );
-
-      streamNumColumns >> config.histoNumColumns;
-    }
-    else if ( strTag.compare( "Analyzer2D.units:" ) == 0 )
-    {
-      string strUnits;
-
-      getline( auxStream, strUnits );
-
-      if ( strUnits.compare( "True" ) == 0 )
-        config.showUnits = true;
-      else
-        config.showUnits = false;
-    }
-
   }
   file.close();
 }
@@ -115,4 +122,68 @@ bool ParaverConfig::writeDefaultConfig()
     return false;
 
   return true;
+}
+
+void ParaverConfig::loadMap()
+{
+  propertyFunctions[ "WhatWhere.num_decimals:" ] = new WWNumDecimals();
+  propertyFunctions[ "Analyzer2D.num_columns:" ] = new HistoNumColumns();
+  propertyFunctions[ "Analyzer2D.units:" ] = new HistoUnits();
+  propertyFunctions[ "Analyzer2D.thousandsep:" ] = new HistoThousanSep();
+}
+
+void ParaverConfig::unLoadMap()
+{
+  for ( map<string, PropertyFunction*>::iterator it = propertyFunctions.begin();
+        it != propertyFunctions.end();
+        it++ )
+    delete ( *it ).second;
+}
+
+void WWNumDecimals::parseLine( istringstream& line, ParaverConfig& config )
+{
+  string strNumDecimals;
+  UINT32 precision;
+
+  getline( line, strNumDecimals );
+  istringstream streamNumDecimals( strNumDecimals );
+
+  if ( streamNumDecimals >> precision )
+    config.setPrecision( precision );
+}
+
+void HistoNumColumns::parseLine( istringstream& line, ParaverConfig& config )
+{
+  string strNumColumns;
+  TObjectOrder numColumns;
+
+  getline( line, strNumColumns );
+  istringstream streamNumColumns( strNumColumns );
+
+  if ( streamNumColumns >> numColumns )
+    config.setHistoNumColumns( numColumns );
+}
+
+void HistoUnits::parseLine( istringstream& line, ParaverConfig& config )
+{
+  string strUnits;
+
+  getline( line, strUnits );
+
+  if ( strUnits.compare( "True" ) == 0 )
+    config.setShowUnits( true );
+  else
+    config.setShowUnits( false );
+}
+
+void HistoThousanSep::parseLine( istringstream& line, ParaverConfig& config )
+{
+  string strSep;
+
+  getline( line, strSep );
+
+  if ( strSep.compare( "True" ) == 0 )
+    config.setThousandSep( true );
+  else
+    config.setThousandSep( false );
 }

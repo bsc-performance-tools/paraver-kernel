@@ -132,7 +132,7 @@ class Histogram
     virtual void setThousandSeparator( bool newValue ) {}
     virtual bool getThousandSeparator() const
     {
-      return false;
+      return ParaverConfig::getInstance()->getThousandSep();
     }
     virtual void setShowUnits( bool newValue ) {}
     virtual bool getShowUnits() const
