@@ -1,11 +1,12 @@
 #include <sstream>
 #include <math.h>
 #include <boost/lexical_cast.hpp>
+#include <iostream>
+#include <iomanip>
 #include "labelconstructor.h"
 #include "paraverlabels.h"
 #include "histogram.h"
 #include "paraverconfig.h"
-#include <iostream>
 string LabelConstructor::objectLabel( TObjectOrder globalOrder,
                                       TWindowLevel level,
                                       Trace *whichTrace )
@@ -80,11 +81,19 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
   return label.str();
 }
 
-inline string chomp( double& number )
+inline string chomp( int& number )
 {
-  double remainder = ( int ) number % 1000;
+  int remainder = number % 1000;
   number /= 1000;
 
+  if( number == 0 )
+    return boost::lexical_cast<std::string>( remainder );
+  else if( remainder == 0 )
+    return "000";
+  else if( remainder < 10 )
+    return "00" + boost::lexical_cast<std::string>( remainder );
+  else if( remainder < 100 )
+    return "0" + boost::lexical_cast<std::string>( remainder );
   return boost::lexical_cast<std::string>( remainder );
 }
 
@@ -105,17 +114,19 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
   {
     string strNum;
     TSemanticValue origValue = value;
+    int intValue = int( value );
 
     if( origValue >= 1.0 )
     {
-      while ( value >= 1.0 )
-        strNum = chomp( value ) + "," + strNum;
+      while ( intValue > 0.0 )
+        strNum = chomp( intValue ) + "," + strNum;
       strNum.erase( strNum.size() - 1, 1 );
       label << strNum;
     }
 
     stringstream tmp;
-    tmp.precision( ParaverConfig::getInstance()->getPrecision() );
+    tmp << setprecision( ParaverConfig::getInstance()->getPrecision() );
+    value -= int( origValue );
     tmp << value;
     strNum = tmp.str();
     if( origValue >= 1.0 )
