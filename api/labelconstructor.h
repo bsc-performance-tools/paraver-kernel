@@ -21,6 +21,8 @@ class LabelConstructor
 
     static string histoCellLabel( const Histogram *whichHisto,
                                   TSemanticValue value );
+
+    static string histoTotalLabel( THistoTotals whichTotal );
 };
 
 #endif // LABELCONSTRUCTOR_H_INCLUDED

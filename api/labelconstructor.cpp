@@ -132,3 +132,26 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
 
   return label.str();
 }
+
+string LabelConstructor::histoTotalLabel( THistoTotals whichTotal )
+{
+  switch( whichTotal )
+  {
+    case TOTAL:
+      return "Total";
+    case AVERAGE:
+      return "Average";
+    case MAXIMUM:
+      return "Maximum";
+    case MINIMUM:
+      return "Minimum";
+    case STDEV:
+      return "StDev";
+    case AVGDIVMAX:
+      return "Avg/Max";
+    case NUMTOTALS:
+      return "";
+  }
+
+  return "";
+}
