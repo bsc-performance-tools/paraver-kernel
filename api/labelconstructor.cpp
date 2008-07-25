@@ -1,8 +1,6 @@
 #include <sstream>
 #include <math.h>
 #include <boost/lexical_cast.hpp>
-#include <iostream>
-#include <iomanip>
 #include "labelconstructor.h"
 #include "paraverlabels.h"
 #include "histogram.h"
@@ -125,7 +123,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
     }
 
     stringstream tmp;
-    tmp << setprecision( ParaverConfig::getInstance()->getPrecision() );
+    tmp.precision( ParaverConfig::getInstance()->getPrecision() );
     value -= int( origValue );
     tmp << value;
     strNum = tmp.str();
