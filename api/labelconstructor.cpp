@@ -79,9 +79,9 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
   return label.str();
 }
 
-inline string chomp( int& number )
+inline string chomp( INT64& number )
 {
-  int remainder = number % 1000;
+  INT64 remainder = number % 1000;
   number /= 1000;
 
   if( number == 0 )
@@ -112,7 +112,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
   {
     string strNum;
     TSemanticValue origValue = value;
-    int intValue = int( value );
+    INT64 intValue = INT64( value );
 
     if( origValue >= 1.0 )
     {
