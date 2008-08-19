@@ -86,13 +86,13 @@ inline string chomp( INT64& number )
 
   if( number == 0 )
     return boost::lexical_cast<std::string>( remainder );
-  else if( remainder == 0 )
-    return "000";
-  else if( remainder < 10 )
-    return "00" + boost::lexical_cast<std::string>( remainder );
-  else if( remainder < 100 )
+  else if( remainder > 99 )
+    return boost::lexical_cast<std::string>( remainder );
+  else if( remainder > 9 )
     return "0" + boost::lexical_cast<std::string>( remainder );
-  return boost::lexical_cast<std::string>( remainder );
+  else if( remainder > 0 )
+    return "00" + boost::lexical_cast<std::string>( remainder );
+  return "000";
 }
 
 string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
@@ -124,7 +124,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
 
     stringstream tmp;
     tmp.precision( ParaverConfig::getInstance()->getPrecision() );
-    value -= int( origValue );
+    value -= INT64( origValue );
     tmp << value;
     strNum = tmp.str();
     if( origValue >= 1.0 )
