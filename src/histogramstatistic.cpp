@@ -8,7 +8,7 @@
 //-------------------------------------------------------------------------
 // Statistics filtering functions
 //-------------------------------------------------------------------------
-bool filterCommunication( RecordList::iterator& comm, KHistogram *histogram )
+inline bool filterCommunication( RecordList::iterator& comm, KHistogram *histogram )
 {
   KWindow *controlWin = ( KWindow* ) histogram->getControlWindow();
   TCommSize size = controlWin->getTrace()->getCommSize( comm->getCommIndex() );
@@ -19,13 +19,13 @@ bool filterCommunication( RecordList::iterator& comm, KHistogram *histogram )
          tag <= histogram->getCommTagMax();
 }
 
-bool filterSemanticValue( TSemanticValue value, KHistogram *histogram )
+inline bool filterSemanticValue( TSemanticValue value, KHistogram *histogram )
 {
   return value >= histogram->getDataMin() &&
          value <= histogram->getDataMax();
 }
 
-bool filterBurstTime( TRecordTime burstTime, KHistogram *histogram )
+inline bool filterBurstTime( TRecordTime burstTime, KHistogram *histogram )
 {
   return burstTime >= histogram->getBurstMin() &&
          burstTime <= histogram->getBurstMax();
@@ -36,7 +36,7 @@ bool filterBurstTime( TRecordTime burstTime, KHistogram *histogram )
 //-------------------------------------------------------------------------
 string StatNumSends::name = "#Sends";
 
-TObjectOrder StatNumSends::getPartner( CalculateData *data )
+inline TObjectOrder StatNumSends::getPartner( CalculateData *data )
 {
   if ( controlWin->getLevel() >= SYSTEM )
     return controlWin->getTrace()->getReceiverCPU( data->comm->getCommIndex() );
@@ -45,45 +45,45 @@ TObjectOrder StatNumSends::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatNumSends::init( KHistogram *whichHistogram )
+inline void StatNumSends::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
 }
 
-void StatNumSends::reset()
+inline void StatNumSends::reset()
 {}
 
-bool StatNumSends::filter( CalculateData *data ) const
+inline bool StatNumSends::filter( CalculateData *data ) const
 {
   return filterCommunication( data->comm, myHistogram );
 }
 
-TSemanticValue StatNumSends::execute( CalculateData *data )
+inline TSemanticValue StatNumSends::execute( CalculateData *data )
 {
   if ( data->comm->getType() & SEND )
     return 1;
   return 0;
 }
 
-TSemanticValue StatNumSends::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatNumSends::finishRow( TSemanticValue cellValue,
                                         THistogramColumn column,
                                         THistogramColumn plane )
 {
   return cellValue;
 }
 
-string StatNumSends::getName() const
+inline string StatNumSends::getName() const
 {
   return StatNumSends::name;
 }
 
-string StatNumSends::getUnits( const KHistogram *whichHisto ) const
+inline string StatNumSends::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatNumSends::clone()
+inline HistogramStatistic *StatNumSends::clone()
 {
   return new StatNumSends( *this );
 }
@@ -94,7 +94,7 @@ HistogramStatistic *StatNumSends::clone()
 //-------------------------------------------------------------------------
 string StatNumReceives::name = "#Receives";
 
-TObjectOrder StatNumReceives::getPartner( CalculateData *data )
+inline TObjectOrder StatNumReceives::getPartner( CalculateData *data )
 {
   if ( controlWin->getLevel() >= SYSTEM )
     return controlWin->getTrace()->getSenderCPU( data->comm->getCommIndex() );
@@ -103,45 +103,45 @@ TObjectOrder StatNumReceives::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatNumReceives::init( KHistogram *whichHistogram )
+inline void StatNumReceives::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
 }
 
-void StatNumReceives::reset()
+inline void StatNumReceives::reset()
 {}
 
-bool StatNumReceives::filter( CalculateData *data ) const
+inline bool StatNumReceives::filter( CalculateData *data ) const
 {
   return filterCommunication( data->comm, myHistogram );
 }
 
-TSemanticValue StatNumReceives::execute( CalculateData *data )
+inline TSemanticValue StatNumReceives::execute( CalculateData *data )
 {
   if ( data->comm->getType() & RECV )
     return 1;
   return 0;
 }
 
-TSemanticValue StatNumReceives::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatNumReceives::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
   return cellValue;
 }
 
-string StatNumReceives::getName() const
+inline string StatNumReceives::getName() const
 {
   return StatNumReceives::name;
 }
 
-string StatNumReceives::getUnits( const KHistogram *whichHisto ) const
+inline string StatNumReceives::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatNumReceives::clone()
+inline HistogramStatistic *StatNumReceives::clone()
 {
   return new StatNumReceives( *this );
 }
@@ -152,7 +152,7 @@ HistogramStatistic *StatNumReceives::clone()
 //-------------------------------------------------------------------------
 string StatBytesSent::name = "Bytes sent";
 
-TObjectOrder StatBytesSent::getPartner( CalculateData *data )
+inline TObjectOrder StatBytesSent::getPartner( CalculateData *data )
 {
   if ( controlWin->getLevel() >= SYSTEM )
     return controlWin->getTrace()->getReceiverCPU( data->comm->getCommIndex() );
@@ -161,45 +161,45 @@ TObjectOrder StatBytesSent::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatBytesSent::init( KHistogram *whichHistogram )
+inline void StatBytesSent::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
 }
 
-void StatBytesSent::reset()
+inline void StatBytesSent::reset()
 {}
 
-bool StatBytesSent::filter( CalculateData *data ) const
+inline bool StatBytesSent::filter( CalculateData *data ) const
 {
   return filterCommunication( data->comm, myHistogram );
 }
 
-TSemanticValue StatBytesSent::execute( CalculateData *data )
+inline TSemanticValue StatBytesSent::execute( CalculateData *data )
 {
   if ( data->comm->getType() & SEND )
     return controlWin->getTrace()->getCommSize( data->comm->getCommIndex() );
   return 0;
 }
 
-TSemanticValue StatBytesSent::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatBytesSent::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
   return cellValue;
 }
 
-string StatBytesSent::getName() const
+inline string StatBytesSent::getName() const
 {
   return StatBytesSent::name;
 }
 
-string StatBytesSent::getUnits( const KHistogram *whichHisto ) const
+inline string StatBytesSent::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatBytesSent::clone()
+inline HistogramStatistic *StatBytesSent::clone()
 {
   return new StatBytesSent( *this );
 }
@@ -210,7 +210,7 @@ HistogramStatistic *StatBytesSent::clone()
 //-------------------------------------------------------------------------
 string StatBytesReceived::name = "Bytes received";
 
-TObjectOrder StatBytesReceived::getPartner( CalculateData *data )
+inline TObjectOrder StatBytesReceived::getPartner( CalculateData *data )
 {
   if ( controlWin->getLevel() >= SYSTEM )
     return controlWin->getTrace()->getSenderCPU( data->comm->getCommIndex() );
@@ -219,45 +219,45 @@ TObjectOrder StatBytesReceived::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatBytesReceived::init( KHistogram *whichHistogram )
+inline void StatBytesReceived::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
 }
 
-void StatBytesReceived::reset()
+inline void StatBytesReceived::reset()
 {}
 
-bool StatBytesReceived::filter( CalculateData *data ) const
+inline bool StatBytesReceived::filter( CalculateData *data ) const
 {
   return filterCommunication( data->comm, myHistogram );
 }
 
-TSemanticValue StatBytesReceived::execute( CalculateData *data )
+inline TSemanticValue StatBytesReceived::execute( CalculateData *data )
 {
   if ( data->comm->getType() & RECV )
     return controlWin->getTrace()->getCommSize( data->comm->getCommIndex() );
   return 0;
 }
 
-TSemanticValue StatBytesReceived::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatBytesReceived::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
   return cellValue;
 }
 
-string StatBytesReceived::getName() const
+inline string StatBytesReceived::getName() const
 {
   return StatBytesReceived::name;
 }
 
-string StatBytesReceived::getUnits( const KHistogram *whichHisto ) const
+inline string StatBytesReceived::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatBytesReceived::clone()
+inline HistogramStatistic *StatBytesReceived::clone()
 {
   return new StatBytesReceived( *this );
 }
@@ -268,7 +268,7 @@ HistogramStatistic *StatBytesReceived::clone()
 //-------------------------------------------------------------------------
 string StatAvgBytesSent::name = "Average bytes sent";
 
-TObjectOrder StatAvgBytesSent::getPartner( CalculateData *data )
+inline TObjectOrder StatAvgBytesSent::getPartner( CalculateData *data )
 {
   if ( controlWin->getLevel() >= SYSTEM )
     return controlWin->getTrace()->getReceiverCPU( data->comm->getCommIndex() );
@@ -277,7 +277,7 @@ TObjectOrder StatAvgBytesSent::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatAvgBytesSent::init( KHistogram *whichHistogram )
+inline void StatAvgBytesSent::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -296,7 +296,7 @@ void StatAvgBytesSent::init( KHistogram *whichHistogram )
   }
 }
 
-void StatAvgBytesSent::reset()
+inline void StatAvgBytesSent::reset()
 {
   vector<vector<TSemanticValue> >::iterator itPlane = numComms.begin();
 
@@ -312,12 +312,12 @@ void StatAvgBytesSent::reset()
   }
 }
 
-bool StatAvgBytesSent::filter( CalculateData *data ) const
+inline bool StatAvgBytesSent::filter( CalculateData *data ) const
 {
   return filterCommunication( data->comm, myHistogram );
 }
 
-TSemanticValue StatAvgBytesSent::execute( CalculateData *data )
+inline TSemanticValue StatAvgBytesSent::execute( CalculateData *data )
 {
   if ( data->comm->getType() & SEND )
   {
@@ -327,24 +327,24 @@ TSemanticValue StatAvgBytesSent::execute( CalculateData *data )
   return 0;
 }
 
-TSemanticValue StatAvgBytesSent::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatAvgBytesSent::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
   return cellValue / ( numComms[ plane ] )[ column ];
 }
 
-string StatAvgBytesSent::getName() const
+inline string StatAvgBytesSent::getName() const
 {
   return StatAvgBytesSent::name;
 }
 
-string StatAvgBytesSent::getUnits( const KHistogram *whichHisto ) const
+inline string StatAvgBytesSent::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatAvgBytesSent::clone()
+inline HistogramStatistic *StatAvgBytesSent::clone()
 {
   return new StatAvgBytesSent( *this );
 }
@@ -355,7 +355,7 @@ HistogramStatistic *StatAvgBytesSent::clone()
 //-------------------------------------------------------------------------
 string StatAvgBytesReceived::name = "Average bytes received";
 
-TObjectOrder StatAvgBytesReceived::getPartner( CalculateData *data )
+inline TObjectOrder StatAvgBytesReceived::getPartner( CalculateData *data )
 {
   if ( controlWin->getLevel() >= SYSTEM )
     return controlWin->getTrace()->getSenderCPU( data->comm->getCommIndex() );
@@ -364,7 +364,7 @@ TObjectOrder StatAvgBytesReceived::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatAvgBytesReceived::init( KHistogram *whichHistogram )
+inline void StatAvgBytesReceived::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -383,7 +383,7 @@ void StatAvgBytesReceived::init( KHistogram *whichHistogram )
   }
 }
 
-void StatAvgBytesReceived::reset()
+inline void StatAvgBytesReceived::reset()
 {
   vector<vector<TSemanticValue> >::iterator itPlane = numComms.begin();
 
@@ -399,12 +399,12 @@ void StatAvgBytesReceived::reset()
   }
 }
 
-bool StatAvgBytesReceived::filter( CalculateData *data ) const
+inline bool StatAvgBytesReceived::filter( CalculateData *data ) const
 {
   return filterCommunication( data->comm, myHistogram );
 }
 
-TSemanticValue StatAvgBytesReceived::execute( CalculateData *data )
+inline TSemanticValue StatAvgBytesReceived::execute( CalculateData *data )
 {
   if ( data->comm->getType() & RECV )
   {
@@ -414,24 +414,24 @@ TSemanticValue StatAvgBytesReceived::execute( CalculateData *data )
   return 0;
 }
 
-TSemanticValue StatAvgBytesReceived::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatAvgBytesReceived::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
   return cellValue / ( numComms[ plane ] )[ column ];
 }
 
-string StatAvgBytesReceived::getName() const
+inline string StatAvgBytesReceived::getName() const
 {
   return StatAvgBytesReceived::name;
 }
 
-string StatAvgBytesReceived::getUnits( const KHistogram *whichHisto ) const
+inline string StatAvgBytesReceived::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatAvgBytesReceived::clone()
+inline HistogramStatistic *StatAvgBytesReceived::clone()
 {
   return new StatAvgBytesReceived( *this );
 }
@@ -442,7 +442,7 @@ HistogramStatistic *StatAvgBytesReceived::clone()
 //-------------------------------------------------------------------------
 string StatMinBytesSent::name = "Minimum bytes sent";
 
-TObjectOrder StatMinBytesSent::getPartner( CalculateData *data )
+inline TObjectOrder StatMinBytesSent::getPartner( CalculateData *data )
 {
   if ( controlWin->getLevel() >= SYSTEM )
     return controlWin->getTrace()->getReceiverCPU( data->comm->getCommIndex() );
@@ -451,7 +451,7 @@ TObjectOrder StatMinBytesSent::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatMinBytesSent::init( KHistogram *whichHistogram )
+inline void StatMinBytesSent::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -470,7 +470,7 @@ void StatMinBytesSent::init( KHistogram *whichHistogram )
   }
 }
 
-void StatMinBytesSent::reset()
+inline void StatMinBytesSent::reset()
 {
   vector<vector<TSemanticValue> >::iterator itPlane = min.begin();
 
@@ -486,12 +486,12 @@ void StatMinBytesSent::reset()
   }
 }
 
-bool StatMinBytesSent::filter( CalculateData *data ) const
+inline bool StatMinBytesSent::filter( CalculateData *data ) const
 {
   return filterCommunication( data->comm, myHistogram );
 }
 
-TSemanticValue StatMinBytesSent::execute( CalculateData *data )
+inline TSemanticValue StatMinBytesSent::execute( CalculateData *data )
 {
   if ( data->comm->getType() & SEND )
   {
@@ -511,24 +511,24 @@ TSemanticValue StatMinBytesSent::execute( CalculateData *data )
   return 0;
 }
 
-TSemanticValue StatMinBytesSent::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatMinBytesSent::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
   return ( ( min[ plane ] )[ column ] );
 }
 
-string StatMinBytesSent::getName() const
+inline string StatMinBytesSent::getName() const
 {
   return StatMinBytesSent::name;
 }
 
-string StatMinBytesSent::getUnits( const KHistogram *whichHisto ) const
+inline string StatMinBytesSent::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatMinBytesSent::clone()
+inline HistogramStatistic *StatMinBytesSent::clone()
 {
   return new StatMinBytesSent( *this );
 }
@@ -539,7 +539,7 @@ HistogramStatistic *StatMinBytesSent::clone()
 //-------------------------------------------------------------------------
 string StatMinBytesReceived::name = "Minimum bytes received";
 
-TObjectOrder StatMinBytesReceived::getPartner( CalculateData *data )
+inline TObjectOrder StatMinBytesReceived::getPartner( CalculateData *data )
 {
   if ( controlWin->getLevel() >= SYSTEM )
     return controlWin->getTrace()->getSenderCPU( data->comm->getCommIndex() );
@@ -548,7 +548,7 @@ TObjectOrder StatMinBytesReceived::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatMinBytesReceived::init( KHistogram *whichHistogram )
+inline void StatMinBytesReceived::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -567,7 +567,7 @@ void StatMinBytesReceived::init( KHistogram *whichHistogram )
   }
 }
 
-void StatMinBytesReceived::reset()
+inline void StatMinBytesReceived::reset()
 {
   vector<vector<TSemanticValue> >::iterator itPlane = min.begin();
 
@@ -583,12 +583,12 @@ void StatMinBytesReceived::reset()
   }
 }
 
-bool StatMinBytesReceived::filter( CalculateData *data ) const
+inline bool StatMinBytesReceived::filter( CalculateData *data ) const
 {
   return filterCommunication( data->comm, myHistogram );
 }
 
-TSemanticValue StatMinBytesReceived::execute( CalculateData *data )
+inline TSemanticValue StatMinBytesReceived::execute( CalculateData *data )
 {
   if ( data->comm->getType() & RECV )
   {
@@ -608,24 +608,24 @@ TSemanticValue StatMinBytesReceived::execute( CalculateData *data )
   return 0;
 }
 
-TSemanticValue StatMinBytesReceived::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatMinBytesReceived::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
   return ( ( min[ plane ] )[ column ] );
 }
 
-string StatMinBytesReceived::getName() const
+inline string StatMinBytesReceived::getName() const
 {
   return StatMinBytesReceived::name;
 }
 
-string StatMinBytesReceived::getUnits( const KHistogram *whichHisto ) const
+inline string StatMinBytesReceived::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatMinBytesReceived::clone()
+inline HistogramStatistic *StatMinBytesReceived::clone()
 {
   return new StatMinBytesReceived( *this );
 }
@@ -636,7 +636,7 @@ HistogramStatistic *StatMinBytesReceived::clone()
 //-------------------------------------------------------------------------
 string StatMaxBytesSent::name = "Maximum bytes sent";
 
-TObjectOrder StatMaxBytesSent::getPartner( CalculateData *data )
+inline TObjectOrder StatMaxBytesSent::getPartner( CalculateData *data )
 {
   if ( controlWin->getLevel() >= SYSTEM )
     return controlWin->getTrace()->getReceiverCPU( data->comm->getCommIndex() );
@@ -645,7 +645,7 @@ TObjectOrder StatMaxBytesSent::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatMaxBytesSent::init( KHistogram *whichHistogram )
+inline void StatMaxBytesSent::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -664,7 +664,7 @@ void StatMaxBytesSent::init( KHistogram *whichHistogram )
   }
 }
 
-void StatMaxBytesSent::reset()
+inline void StatMaxBytesSent::reset()
 {
   vector<vector<TSemanticValue> >::iterator itPlane = max.begin();
 
@@ -680,12 +680,12 @@ void StatMaxBytesSent::reset()
   }
 }
 
-bool StatMaxBytesSent::filter( CalculateData *data ) const
+inline bool StatMaxBytesSent::filter( CalculateData *data ) const
 {
   return filterCommunication( data->comm, myHistogram );
 }
 
-TSemanticValue StatMaxBytesSent::execute( CalculateData *data )
+inline TSemanticValue StatMaxBytesSent::execute( CalculateData *data )
 {
   if ( data->comm->getType() & SEND )
   {
@@ -700,24 +700,24 @@ TSemanticValue StatMaxBytesSent::execute( CalculateData *data )
   return 0;
 }
 
-TSemanticValue StatMaxBytesSent::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatMaxBytesSent::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
   return ( ( max[ plane ] )[ column ] );
 }
 
-string StatMaxBytesSent::getName() const
+inline string StatMaxBytesSent::getName() const
 {
   return StatMaxBytesSent::name;
 }
 
-string StatMaxBytesSent::getUnits( const KHistogram *whichHisto ) const
+inline string StatMaxBytesSent::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatMaxBytesSent::clone()
+inline HistogramStatistic *StatMaxBytesSent::clone()
 {
   return new StatMaxBytesSent( *this );
 }
@@ -728,7 +728,7 @@ HistogramStatistic *StatMaxBytesSent::clone()
 //-------------------------------------------------------------------------
 string StatMaxBytesReceived::name = "Maximum bytes received";
 
-TObjectOrder StatMaxBytesReceived::getPartner( CalculateData *data )
+inline TObjectOrder StatMaxBytesReceived::getPartner( CalculateData *data )
 {
   if ( controlWin->getLevel() >= SYSTEM )
     return controlWin->getTrace()->getSenderCPU( data->comm->getCommIndex() );
@@ -737,7 +737,7 @@ TObjectOrder StatMaxBytesReceived::getPartner( CalculateData *data )
   return 0;
 }
 
-void StatMaxBytesReceived::init( KHistogram *whichHistogram )
+inline void StatMaxBytesReceived::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -756,7 +756,7 @@ void StatMaxBytesReceived::init( KHistogram *whichHistogram )
   }
 }
 
-void StatMaxBytesReceived::reset()
+inline void StatMaxBytesReceived::reset()
 {
   vector<vector<TSemanticValue> >::iterator itPlane = max.begin();
 
@@ -772,12 +772,12 @@ void StatMaxBytesReceived::reset()
   }
 }
 
-bool StatMaxBytesReceived::filter( CalculateData *data ) const
+inline bool StatMaxBytesReceived::filter( CalculateData *data ) const
 {
   return filterCommunication( data->comm, myHistogram );
 }
 
-TSemanticValue StatMaxBytesReceived::execute( CalculateData *data )
+inline TSemanticValue StatMaxBytesReceived::execute( CalculateData *data )
 {
   if ( data->comm->getType() & RECV )
   {
@@ -792,24 +792,24 @@ TSemanticValue StatMaxBytesReceived::execute( CalculateData *data )
   return 0;
 }
 
-TSemanticValue StatMaxBytesReceived::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatMaxBytesReceived::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
   return ( ( max[ plane ] )[ column ] );
 }
 
-string StatMaxBytesReceived::getName() const
+inline string StatMaxBytesReceived::getName() const
 {
   return StatMaxBytesReceived::name;
 }
 
-string StatMaxBytesReceived::getUnits( const KHistogram *whichHisto ) const
+inline string StatMaxBytesReceived::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatMaxBytesReceived::clone()
+inline HistogramStatistic *StatMaxBytesReceived::clone()
 {
   return new StatMaxBytesReceived( *this );
 }
@@ -820,22 +820,22 @@ HistogramStatistic *StatMaxBytesReceived::clone()
 //-------------------------------------------------------------------------
 string StatTime::name = "Time";
 
-void StatTime::init( KHistogram *whichHistogram )
+inline void StatTime::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
 }
 
-void StatTime::reset()
+inline void StatTime::reset()
 {}
 
-bool StatTime::filter( CalculateData *data ) const
+inline bool StatTime::filter( CalculateData *data ) const
 {
   return filterSemanticValue( controlWin->getValue( data->controlRow ),
                               myHistogram );
 }
 
-TSemanticValue StatTime::execute( CalculateData *data )
+inline TSemanticValue StatTime::execute( CalculateData *data )
 {
   TRecordTime begin;
   TRecordTime end;
@@ -849,26 +849,26 @@ TSemanticValue StatTime::execute( CalculateData *data )
   return end - begin;
 }
 
-TSemanticValue StatTime::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatTime::finishRow( TSemanticValue cellValue,
                                     THistogramColumn column,
                                     THistogramColumn plane )
 {
   return controlWin->traceUnitsToWindowUnits( cellValue );
 }
 
-string StatTime::getName() const
+inline string StatTime::getName() const
 {
   return StatTime::name;
 }
 
-string StatTime::getUnits( const KHistogram *whichHisto ) const
+inline string StatTime::getUnits( const KHistogram *whichHisto ) const
 {
   TTimeUnit tu =  whichHisto->getControlWindow()->getTimeUnit();
 
   return LABEL_TIMEUNIT[ tu ];
 }
 
-HistogramStatistic *StatTime::clone()
+inline HistogramStatistic *StatTime::clone()
 {
   return new StatTime( *this );
 }
@@ -879,7 +879,7 @@ HistogramStatistic *StatTime::clone()
 //-------------------------------------------------------------------------
 string StatPercTime::name = "% Time";
 
-void StatPercTime::init( KHistogram *whichHistogram )
+inline void StatPercTime::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
 
@@ -896,7 +896,7 @@ void StatPercTime::init( KHistogram *whichHistogram )
     rowTotal.push_back( 0.0 );
 }
 
-void StatPercTime::reset()
+inline void StatPercTime::reset()
 {
   vector<TSemanticValue>::iterator it = rowTotal.begin();
 
@@ -907,13 +907,13 @@ void StatPercTime::reset()
   }
 }
 
-bool StatPercTime::filter( CalculateData *data ) const
+inline bool StatPercTime::filter( CalculateData *data ) const
 {
   return filterSemanticValue( controlWin->getValue( data->controlRow ),
                               myHistogram );
 }
 
-TSemanticValue StatPercTime::execute( CalculateData *data )
+inline TSemanticValue StatPercTime::execute( CalculateData *data )
 {
   TRecordTime begin;
   TRecordTime end;
@@ -932,24 +932,24 @@ TSemanticValue StatPercTime::execute( CalculateData *data )
   return end - begin;
 }
 
-TSemanticValue StatPercTime::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatPercTime::finishRow( TSemanticValue cellValue,
                                         THistogramColumn column,
                                         THistogramColumn plane )
 {
   return ( cellValue * 100.0 ) / rowTotal[ plane ];
 }
 
-string StatPercTime::getName() const
+inline string StatPercTime::getName() const
 {
   return StatPercTime::name;
 }
 
-string StatPercTime::getUnits( const KHistogram *whichHisto ) const
+inline string StatPercTime::getUnits( const KHistogram *whichHisto ) const
 {
   return "%";
 }
 
-HistogramStatistic *StatPercTime::clone()
+inline HistogramStatistic *StatPercTime::clone()
 {
   return new StatPercTime( *this );
 }
@@ -960,7 +960,7 @@ HistogramStatistic *StatPercTime::clone()
 //-------------------------------------------------------------------------
 string StatPercTimeNotZero::name = "% Time Not Zero";
 
-void StatPercTimeNotZero::init( KHistogram *whichHistogram )
+inline void StatPercTimeNotZero::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
 
@@ -977,7 +977,7 @@ void StatPercTimeNotZero::init( KHistogram *whichHistogram )
     rowTotal.push_back( 0.0 );
 }
 
-void StatPercTimeNotZero::reset()
+inline void StatPercTimeNotZero::reset()
 {
   vector<TSemanticValue>::iterator it = rowTotal.begin();
 
@@ -988,13 +988,13 @@ void StatPercTimeNotZero::reset()
   }
 }
 
-bool StatPercTimeNotZero::filter( CalculateData *data ) const
+inline bool StatPercTimeNotZero::filter( CalculateData *data ) const
 {
   return filterSemanticValue( controlWin->getValue( data->controlRow ),
                               myHistogram );
 }
 
-TSemanticValue StatPercTimeNotZero::execute( CalculateData *data )
+inline TSemanticValue StatPercTimeNotZero::execute( CalculateData *data )
 {
   if ( controlWin->getValue( data->controlRow ) != 0.0 )
   {
@@ -1018,24 +1018,24 @@ TSemanticValue StatPercTimeNotZero::execute( CalculateData *data )
   return 0.0;
 }
 
-TSemanticValue StatPercTimeNotZero::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatPercTimeNotZero::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
   return ( cellValue * 100.0 ) / rowTotal[ plane ];
 }
 
-string StatPercTimeNotZero::getName() const
+inline string StatPercTimeNotZero::getName() const
 {
   return StatPercTimeNotZero::name;
 }
 
-string StatPercTimeNotZero::getUnits( const KHistogram *whichHisto ) const
+inline string StatPercTimeNotZero::getUnits( const KHistogram *whichHisto ) const
 {
   return "%";
 }
 
-HistogramStatistic *StatPercTimeNotZero::clone()
+inline HistogramStatistic *StatPercTimeNotZero::clone()
 {
   return new StatPercTimeNotZero( *this );
 }
@@ -1046,23 +1046,23 @@ HistogramStatistic *StatPercTimeNotZero::clone()
 //-------------------------------------------------------------------------
 string StatPercTimeWindow::name = "% Window Time";
 
-void StatPercTimeWindow::init( KHistogram *whichHistogram )
+inline void StatPercTimeWindow::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
 }
 
-void StatPercTimeWindow::reset()
+inline void StatPercTimeWindow::reset()
 {
 }
 
-bool StatPercTimeWindow::filter( CalculateData *data ) const
+inline bool StatPercTimeWindow::filter( CalculateData *data ) const
 {
   return filterSemanticValue( controlWin->getValue( data->controlRow ),
                               myHistogram );
 }
 
-TSemanticValue StatPercTimeWindow::execute( CalculateData *data )
+inline TSemanticValue StatPercTimeWindow::execute( CalculateData *data )
 {
   TRecordTime begin;
   TRecordTime end;
@@ -1076,7 +1076,7 @@ TSemanticValue StatPercTimeWindow::execute( CalculateData *data )
   return end - begin;
 }
 
-TSemanticValue StatPercTimeWindow::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatPercTimeWindow::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
@@ -1084,17 +1084,17 @@ TSemanticValue StatPercTimeWindow::finishRow( TSemanticValue cellValue,
          ( myHistogram->getEndTime() - myHistogram->getBeginTime() );
 }
 
-string StatPercTimeWindow::getName() const
+inline string StatPercTimeWindow::getName() const
 {
   return StatPercTimeWindow::name;
 }
 
-string StatPercTimeWindow::getUnits( const KHistogram *whichHisto ) const
+inline string StatPercTimeWindow::getUnits( const KHistogram *whichHisto ) const
 {
   return "%";
 }
 
-HistogramStatistic *StatPercTimeWindow::clone()
+inline HistogramStatistic *StatPercTimeWindow::clone()
 {
   return new StatPercTimeWindow( *this );
 }
@@ -1105,16 +1105,16 @@ HistogramStatistic *StatPercTimeWindow::clone()
 //-------------------------------------------------------------------------
 string StatNumBursts::name = "# Bursts";
 
-void StatNumBursts::init( KHistogram *whichHistogram )
+inline void StatNumBursts::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
 }
 
-void StatNumBursts::reset()
+inline void StatNumBursts::reset()
 {
 }
 
-bool StatNumBursts::filter( CalculateData *data ) const
+inline bool StatNumBursts::filter( CalculateData *data ) const
 {
   TRecordTime begin;
   TRecordTime end;
@@ -1131,29 +1131,29 @@ bool StatNumBursts::filter( CalculateData *data ) const
          filterBurstTime( end - begin, myHistogram );
 }
 
-TSemanticValue StatNumBursts::execute( CalculateData *data )
+inline TSemanticValue StatNumBursts::execute( CalculateData *data )
 {
   return 1.0;
 }
 
-TSemanticValue StatNumBursts::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatNumBursts::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
   return cellValue;
 }
 
-string StatNumBursts::getName() const
+inline string StatNumBursts::getName() const
 {
   return StatNumBursts::name;
 }
 
-string StatNumBursts::getUnits( const KHistogram *whichHisto ) const
+inline string StatNumBursts::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatNumBursts::clone()
+inline HistogramStatistic *StatNumBursts::clone()
 {
   return new StatNumBursts( *this );
 }
@@ -1164,7 +1164,7 @@ HistogramStatistic *StatNumBursts::clone()
 //-------------------------------------------------------------------------
 string StatPercNumBursts::name = "% # Bursts";
 
-void StatPercNumBursts::init( KHistogram *whichHistogram )
+inline void StatPercNumBursts::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
 
@@ -1180,7 +1180,7 @@ void StatPercNumBursts::init( KHistogram *whichHistogram )
     rowTotal.push_back( 0.0 );
 }
 
-void StatPercNumBursts::reset()
+inline void StatPercNumBursts::reset()
 {
   vector<TSemanticValue>::iterator it = rowTotal.begin();
 
@@ -1191,7 +1191,7 @@ void StatPercNumBursts::reset()
   }
 }
 
-bool StatPercNumBursts::filter( CalculateData *data ) const
+inline bool StatPercNumBursts::filter( CalculateData *data ) const
 {
   TRecordTime begin;
   TRecordTime end;
@@ -1208,7 +1208,7 @@ bool StatPercNumBursts::filter( CalculateData *data ) const
          filterBurstTime( end - begin, myHistogram );
 }
 
-TSemanticValue StatPercNumBursts::execute( CalculateData *data )
+inline TSemanticValue StatPercNumBursts::execute( CalculateData *data )
 {
   if ( myHistogram->getThreeDimensions() )
     rowTotal[ data->plane ] += 1.0;
@@ -1218,24 +1218,24 @@ TSemanticValue StatPercNumBursts::execute( CalculateData *data )
   return 1.0;
 }
 
-TSemanticValue StatPercNumBursts::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatPercNumBursts::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
   return ( cellValue * 100.0 ) / rowTotal[ plane ];
 }
 
-string StatPercNumBursts::getName() const
+inline string StatPercNumBursts::getName() const
 {
   return StatPercNumBursts::name;
 }
 
-string StatPercNumBursts::getUnits( const KHistogram *whichHisto ) const
+inline string StatPercNumBursts::getUnits( const KHistogram *whichHisto ) const
 {
   return "%";
 }
 
-HistogramStatistic *StatPercNumBursts::clone()
+inline HistogramStatistic *StatPercNumBursts::clone()
 {
   return new StatPercNumBursts( *this );
 }
@@ -1246,23 +1246,23 @@ HistogramStatistic *StatPercNumBursts::clone()
 //-------------------------------------------------------------------------
 string StatIntegral::name = "Integral";
 
-void StatIntegral::init( KHistogram *whichHistogram )
+inline void StatIntegral::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   dataWin = myHistogram->getDataWindow();
 }
 
-void StatIntegral::reset()
+inline void StatIntegral::reset()
 {
 }
 
-bool StatIntegral::filter( CalculateData *data ) const
+inline bool StatIntegral::filter( CalculateData *data ) const
 {
   return filterSemanticValue( dataWin->getValue( data->dataRow ),
                               myHistogram );
 }
 
-TSemanticValue StatIntegral::execute( CalculateData *data )
+inline TSemanticValue StatIntegral::execute( CalculateData *data )
 {
   TRecordTime begin;
   TRecordTime end;
@@ -1276,24 +1276,24 @@ TSemanticValue StatIntegral::execute( CalculateData *data )
   return ( end - begin ) * dataWin->getValue( data->dataRow );
 }
 
-TSemanticValue StatIntegral::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatIntegral::finishRow( TSemanticValue cellValue,
                                         THistogramColumn column,
                                         THistogramColumn plane )
 {
   return cellValue;
 }
 
-string StatIntegral::getName() const
+inline string StatIntegral::getName() const
 {
   return StatIntegral::name;
 }
 
-string StatIntegral::getUnits( const KHistogram *whichHisto ) const
+inline string StatIntegral::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatIntegral::clone()
+inline HistogramStatistic *StatIntegral::clone()
 {
   return new StatIntegral( *this );
 }
@@ -1304,7 +1304,7 @@ HistogramStatistic *StatIntegral::clone()
 //-------------------------------------------------------------------------
 string StatAvgValue::name = "Average value";
 
-void StatAvgValue::init( KHistogram *whichHistogram )
+inline void StatAvgValue::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -1323,7 +1323,7 @@ void StatAvgValue::init( KHistogram *whichHistogram )
   }
 }
 
-void StatAvgValue::reset()
+inline void StatAvgValue::reset()
 {
   vector<vector<TSemanticValue> >::iterator itPlane = numValues.begin();
 
@@ -1339,36 +1339,36 @@ void StatAvgValue::reset()
   }
 }
 
-bool StatAvgValue::filter( CalculateData *data ) const
+inline bool StatAvgValue::filter( CalculateData *data ) const
 {
   return filterSemanticValue( dataWin->getValue( data->dataRow ),
                               myHistogram );
 }
 
-TSemanticValue StatAvgValue::execute( CalculateData *data )
+inline TSemanticValue StatAvgValue::execute( CalculateData *data )
 {
   ( ( numValues[ data->plane ] )[ data->column ] )++;
   return dataWin->getValue( data->dataRow );
 }
 
-TSemanticValue StatAvgValue::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatAvgValue::finishRow( TSemanticValue cellValue,
                                         THistogramColumn column,
                                         THistogramColumn plane )
 {
   return cellValue / ( numValues[ plane ] )[ column ];
 }
 
-string StatAvgValue::getName() const
+inline string StatAvgValue::getName() const
 {
   return StatAvgValue::name;
 }
 
-string StatAvgValue::getUnits( const KHistogram *whichHisto ) const
+inline string StatAvgValue::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatAvgValue::clone()
+inline HistogramStatistic *StatAvgValue::clone()
 {
   return new StatAvgValue( *this );
 }
@@ -1379,7 +1379,7 @@ HistogramStatistic *StatAvgValue::clone()
 //-------------------------------------------------------------------------
 string StatMaximum::name = "Maximum";
 
-void StatMaximum::init( KHistogram *whichHistogram )
+inline void StatMaximum::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -1398,7 +1398,7 @@ void StatMaximum::init( KHistogram *whichHistogram )
   }
 }
 
-void StatMaximum::reset()
+inline void StatMaximum::reset()
 {
   vector<vector<TSemanticValue> >::iterator itPlane = max.begin();
 
@@ -1414,13 +1414,13 @@ void StatMaximum::reset()
   }
 }
 
-bool StatMaximum::filter( CalculateData *data ) const
+inline bool StatMaximum::filter( CalculateData *data ) const
 {
   return filterSemanticValue( dataWin->getValue( data->dataRow ),
                               myHistogram );
 }
 
-TSemanticValue StatMaximum::execute( CalculateData *data )
+inline TSemanticValue StatMaximum::execute( CalculateData *data )
 {
   if ( dataWin->getValue( data->dataRow ) >
        ( ( max[ data->plane ] )[ data->column ] ) )
@@ -1428,24 +1428,24 @@ TSemanticValue StatMaximum::execute( CalculateData *data )
   return 1;
 }
 
-TSemanticValue StatMaximum::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatMaximum::finishRow( TSemanticValue cellValue,
                                        THistogramColumn column,
                                        THistogramColumn plane )
 {
   return ( max[ plane ] )[ column ];
 }
 
-string StatMaximum::getName() const
+inline string StatMaximum::getName() const
 {
   return StatMaximum::name;
 }
 
-string StatMaximum::getUnits( const KHistogram *whichHisto ) const
+inline string StatMaximum::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatMaximum::clone()
+inline HistogramStatistic *StatMaximum::clone()
 {
   return new StatMaximum( *this );
 }
@@ -1456,7 +1456,7 @@ HistogramStatistic *StatMaximum::clone()
 //-------------------------------------------------------------------------
 string StatAvgBurstTime::name = "Average Burst Time";
 
-void StatAvgBurstTime::init( KHistogram *whichHistogram )
+inline void StatAvgBurstTime::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -1475,7 +1475,7 @@ void StatAvgBurstTime::init( KHistogram *whichHistogram )
   }
 }
 
-void StatAvgBurstTime::reset()
+inline void StatAvgBurstTime::reset()
 {
   vector<vector<TSemanticValue> >::iterator itPlane = numValues.begin();
 
@@ -1491,7 +1491,7 @@ void StatAvgBurstTime::reset()
   }
 }
 
-bool StatAvgBurstTime::filter( CalculateData *data ) const
+inline bool StatAvgBurstTime::filter( CalculateData *data ) const
 {
   TRecordTime begin;
   TRecordTime end;
@@ -1508,7 +1508,7 @@ bool StatAvgBurstTime::filter( CalculateData *data ) const
          filterBurstTime( end - begin, myHistogram );
 }
 
-TSemanticValue StatAvgBurstTime::execute( CalculateData *data )
+inline TSemanticValue StatAvgBurstTime::execute( CalculateData *data )
 {
   TRecordTime begin;
   TRecordTime end;
@@ -1524,26 +1524,26 @@ TSemanticValue StatAvgBurstTime::execute( CalculateData *data )
   return end - begin;
 }
 
-TSemanticValue StatAvgBurstTime::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatAvgBurstTime::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
   return cellValue / ( numValues[ plane ] )[ column ];
 }
 
-string StatAvgBurstTime::getName() const
+inline string StatAvgBurstTime::getName() const
 {
   return StatAvgBurstTime::name;
 }
 
-string StatAvgBurstTime::getUnits( const KHistogram *whichHisto ) const
+inline string StatAvgBurstTime::getUnits( const KHistogram *whichHisto ) const
 {
   TTimeUnit tu =  whichHisto->getControlWindow()->getTimeUnit();
 
   return LABEL_TIMEUNIT[ tu ];
 }
 
-HistogramStatistic *StatAvgBurstTime::clone()
+inline HistogramStatistic *StatAvgBurstTime::clone()
 {
   return new StatAvgBurstTime( *this );
 }
@@ -1554,7 +1554,7 @@ HistogramStatistic *StatAvgBurstTime::clone()
 //-------------------------------------------------------------------------
 string StatStdevBurstTime::name = "Stdev Burst Time";
 
-void StatStdevBurstTime::init( KHistogram *whichHistogram )
+inline void StatStdevBurstTime::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -1577,7 +1577,7 @@ void StatStdevBurstTime::init( KHistogram *whichHistogram )
   }
 }
 
-void StatStdevBurstTime::reset()
+inline void StatStdevBurstTime::reset()
 {
   vector<vector<TSemanticValue> >::iterator itPlaneN = numValues.begin();
   vector<vector<TSemanticValue> >::iterator itPlaneQ = qValues.begin();
@@ -1598,7 +1598,7 @@ void StatStdevBurstTime::reset()
   }
 }
 
-bool StatStdevBurstTime::filter( CalculateData *data ) const
+inline bool StatStdevBurstTime::filter( CalculateData *data ) const
 {
   TRecordTime begin;
   TRecordTime end;
@@ -1615,7 +1615,7 @@ bool StatStdevBurstTime::filter( CalculateData *data ) const
          filterBurstTime( end - begin, myHistogram );
 }
 
-TSemanticValue StatStdevBurstTime::execute( CalculateData *data )
+inline TSemanticValue StatStdevBurstTime::execute( CalculateData *data )
 {
   TRecordTime begin;
   TRecordTime end;
@@ -1633,7 +1633,7 @@ TSemanticValue StatStdevBurstTime::execute( CalculateData *data )
   return end - begin;
 }
 
-TSemanticValue StatStdevBurstTime::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatStdevBurstTime::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
@@ -1649,19 +1649,19 @@ TSemanticValue StatStdevBurstTime::finishRow( TSemanticValue cellValue,
   return sqrt( tmp );
 }
 
-string StatStdevBurstTime::getName() const
+inline string StatStdevBurstTime::getName() const
 {
   return StatStdevBurstTime::name;
 }
 
-string StatStdevBurstTime::getUnits( const KHistogram *whichHisto ) const
+inline string StatStdevBurstTime::getUnits( const KHistogram *whichHisto ) const
 {
   TTimeUnit tu =  whichHisto->getControlWindow()->getTimeUnit();
 
   return LABEL_TIMEUNIT[ tu ];
 }
 
-HistogramStatistic *StatStdevBurstTime::clone()
+inline HistogramStatistic *StatStdevBurstTime::clone()
 {
   return new StatStdevBurstTime( *this );
 }
@@ -1672,7 +1672,7 @@ HistogramStatistic *StatStdevBurstTime::clone()
 //-------------------------------------------------------------------------
 string StatAvgPerBurst::name = "Average per Burst";
 
-void StatAvgPerBurst::init( KHistogram *whichHistogram )
+inline void StatAvgPerBurst::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -1691,7 +1691,7 @@ void StatAvgPerBurst::init( KHistogram *whichHistogram )
   }
 }
 
-void StatAvgPerBurst::reset()
+inline void StatAvgPerBurst::reset()
 {
   vector<vector<TSemanticValue> >::iterator itPlane = numValues.begin();
 
@@ -1707,7 +1707,7 @@ void StatAvgPerBurst::reset()
   }
 }
 
-bool StatAvgPerBurst::filter( CalculateData *data ) const
+inline bool StatAvgPerBurst::filter( CalculateData *data ) const
 {
   TRecordTime begin;
   TRecordTime end;
@@ -1724,31 +1724,31 @@ bool StatAvgPerBurst::filter( CalculateData *data ) const
          filterBurstTime( end - begin, myHistogram );
 }
 
-TSemanticValue StatAvgPerBurst::execute( CalculateData *data )
+inline TSemanticValue StatAvgPerBurst::execute( CalculateData *data )
 {
   ( ( numValues[ data->plane ] )[ data->column ] )++;
 
   return dataWin->getValue( data->dataRow );
 }
 
-TSemanticValue StatAvgPerBurst::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatAvgPerBurst::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
   return cellValue / ( numValues[ plane ] )[ column ];
 }
 
-string StatAvgPerBurst::getName() const
+inline string StatAvgPerBurst::getName() const
 {
   return StatAvgPerBurst::name;
 }
 
-string StatAvgPerBurst::getUnits( const KHistogram *whichHisto ) const
+inline string StatAvgPerBurst::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatAvgPerBurst::clone()
+inline HistogramStatistic *StatAvgPerBurst::clone()
 {
   return new StatAvgPerBurst( *this );
 }
@@ -1759,7 +1759,7 @@ HistogramStatistic *StatAvgPerBurst::clone()
 //-------------------------------------------------------------------------
 string StatAvgValueNotZero::name = "Average value != 0";
 
-void StatAvgValueNotZero::init( KHistogram *whichHistogram )
+inline void StatAvgValueNotZero::init( KHistogram *whichHistogram )
 {
   THistogramColumn numPlanes;
   TObjectOrder numColumns;
@@ -1778,7 +1778,7 @@ void StatAvgValueNotZero::init( KHistogram *whichHistogram )
   }
 }
 
-void StatAvgValueNotZero::reset()
+inline void StatAvgValueNotZero::reset()
 {
   vector<vector<TSemanticValue> >::iterator itPlane = numValues.begin();
 
@@ -1794,13 +1794,13 @@ void StatAvgValueNotZero::reset()
   }
 }
 
-bool StatAvgValueNotZero::filter( CalculateData *data ) const
+inline bool StatAvgValueNotZero::filter( CalculateData *data ) const
 {
   return filterSemanticValue( dataWin->getValue( data->dataRow ),
                               myHistogram );
 }
 
-TSemanticValue StatAvgValueNotZero::execute( CalculateData *data )
+inline TSemanticValue StatAvgValueNotZero::execute( CalculateData *data )
 {
   if ( dataWin->getValue( data->dataRow ) != 0.0 )
     ( ( numValues[ data->plane ] )[ data->column ] )++;
@@ -1808,24 +1808,24 @@ TSemanticValue StatAvgValueNotZero::execute( CalculateData *data )
   return dataWin->getValue( data->dataRow );
 }
 
-TSemanticValue StatAvgValueNotZero::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatAvgValueNotZero::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
   return cellValue / ( numValues[ plane ] )[ column ];
 }
 
-string StatAvgValueNotZero::getName() const
+inline string StatAvgValueNotZero::getName() const
 {
   return StatAvgValueNotZero::name;
 }
 
-string StatAvgValueNotZero::getUnits( const KHistogram *whichHisto ) const
+inline string StatAvgValueNotZero::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatAvgValueNotZero::clone()
+inline HistogramStatistic *StatAvgValueNotZero::clone()
 {
   return new StatAvgValueNotZero( *this );
 }
@@ -1836,17 +1836,17 @@ HistogramStatistic *StatAvgValueNotZero::clone()
 //-------------------------------------------------------------------------
 string StatNumBurstsNotZero::name = "# Bursts != 0";
 
-void StatNumBurstsNotZero::init( KHistogram *whichHistogram )
+inline void StatNumBurstsNotZero::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   dataWin = myHistogram->getDataWindow();
 }
 
-void StatNumBurstsNotZero::reset()
+inline void StatNumBurstsNotZero::reset()
 {
 }
 
-bool StatNumBurstsNotZero::filter( CalculateData *data ) const
+inline bool StatNumBurstsNotZero::filter( CalculateData *data ) const
 {
   TRecordTime begin;
   TRecordTime end;
@@ -1863,31 +1863,31 @@ bool StatNumBurstsNotZero::filter( CalculateData *data ) const
          filterBurstTime( end - begin, myHistogram );
 }
 
-TSemanticValue StatNumBurstsNotZero::execute( CalculateData *data )
+inline TSemanticValue StatNumBurstsNotZero::execute( CalculateData *data )
 {
   if ( dataWin->getValue( data->dataRow ) != 0.0 )
     return 1.0;
   return 0.0;
 }
 
-TSemanticValue StatNumBurstsNotZero::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatNumBurstsNotZero::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
   return cellValue;
 }
 
-string StatNumBurstsNotZero::getName() const
+inline string StatNumBurstsNotZero::getName() const
 {
   return StatNumBurstsNotZero::name;
 }
 
-string StatNumBurstsNotZero::getUnits( const KHistogram *whichHisto ) const
+inline string StatNumBurstsNotZero::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatNumBurstsNotZero::clone()
+inline HistogramStatistic *StatNumBurstsNotZero::clone()
 {
   return new StatNumBurstsNotZero( *this );
 }
@@ -1898,45 +1898,45 @@ HistogramStatistic *StatNumBurstsNotZero::clone()
 //-------------------------------------------------------------------------
 string StatSumBursts::name = "Sum bursts";
 
-void StatSumBursts::init( KHistogram *whichHistogram )
+inline void StatSumBursts::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
   dataWin = myHistogram->getDataWindow();
 }
 
-void StatSumBursts::reset()
+inline void StatSumBursts::reset()
 {
 }
 
-bool StatSumBursts::filter( CalculateData *data ) const
+inline bool StatSumBursts::filter( CalculateData *data ) const
 {
   return filterSemanticValue( dataWin->getValue( data->dataRow ),
                               myHistogram );
 }
 
-TSemanticValue StatSumBursts::execute( CalculateData *data )
+inline TSemanticValue StatSumBursts::execute( CalculateData *data )
 {
   return dataWin->getValue( data->dataRow );
 }
 
-TSemanticValue StatSumBursts::finishRow( TSemanticValue cellValue,
+inline TSemanticValue StatSumBursts::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
   return cellValue;
 }
 
-string StatSumBursts::getName() const
+inline string StatSumBursts::getName() const
 {
   return StatSumBursts::name;
 }
 
-string StatSumBursts::getUnits( const KHistogram *whichHisto ) const
+inline string StatSumBursts::getUnits( const KHistogram *whichHisto ) const
 {
   return "";
 }
 
-HistogramStatistic *StatSumBursts::clone()
+inline HistogramStatistic *StatSumBursts::clone()
 {
   return new StatSumBursts( *this );
 }

@@ -6,26 +6,20 @@ using namespace std;
 //#include "column.h"
 
 template <typename ValueType>
-Column<ValueType>::Column( short numStats, bool *mat_finished )
+Column<ValueType>::Column( short numStats, bool *mat_finished ):
+    nstat( numStats ), modified( false ), n_cells( 0 ), finished( mat_finished )
 {
-  nstat = numStats;
   current_cell = new Cell<ValueType>( 0, nstat );
   current_cell->init();
-  n_cells = 0;
-  modified = false;
-  finished = mat_finished;
 }
 
 
 template <typename ValueType>
-Column<ValueType>::Column( int currentRow, short numStats, bool *mat_finished )
+Column<ValueType>::Column( int currentRow, short numStats, bool *mat_finished ):
+    nstat( numStats ), modified( false ), n_cells( 0 ), finished( mat_finished )
 {
-  nstat = numStats;
   current_cell = new Cell<ValueType>( currentRow, nstat );
   current_cell->init();
-  n_cells = 0;
-  modified = false;
-  finished = mat_finished;
 }
 
 
@@ -42,21 +36,21 @@ Column<ValueType>::~Column()
 
 
 template <typename ValueType>
-void Column<ValueType>::init( short idStat )
+inline void Column<ValueType>::init( short idStat )
 {
   current_cell->init( idStat );
 }
 
 
 template <typename ValueType>
-void Column<ValueType>::init( )
+inline void Column<ValueType>::init( )
 {
   current_cell->init( );
 }
 
 
 template <typename ValueType>
-void Column<ValueType>::setValue( short idStat, ValueType semVal )
+inline void Column<ValueType>::setValue( short idStat, ValueType semVal )
 {
   if ( *finished )
   {
@@ -77,7 +71,7 @@ void Column<ValueType>::setValue( short idStat, ValueType semVal )
 
 
 template <typename ValueType>
-void Column<ValueType>::setValue( ValueType semVal )
+inline void Column<ValueType>::setValue( ValueType semVal )
 {
   if ( *finished )
   {
@@ -98,7 +92,7 @@ void Column<ValueType>::setValue( ValueType semVal )
 
 
 template <typename ValueType>
-void Column<ValueType>::addValue( short idStat, ValueType semVal )
+inline void Column<ValueType>::addValue( short idStat, ValueType semVal )
 {
   current_cell->addValue( idStat, semVal );
   if ( modified == false )
@@ -112,7 +106,7 @@ void Column<ValueType>::addValue( short idStat, ValueType semVal )
 
 
 template <typename ValueType>
-void Column<ValueType>::addValue( ValueType semVal )
+inline void Column<ValueType>::addValue( ValueType semVal )
 {
   current_cell->addValue( semVal );
   if ( modified == false )
@@ -126,7 +120,7 @@ void Column<ValueType>::addValue( ValueType semVal )
 
 
 template <typename ValueType>
-ValueType Column<ValueType>::getCurrentValue( short idStat ) const
+inline ValueType Column<ValueType>::getCurrentValue( short idStat ) const
 {
   if ( *finished )
   {
@@ -138,7 +132,7 @@ ValueType Column<ValueType>::getCurrentValue( short idStat ) const
 
 
 template <typename ValueType>
-int Column<ValueType>::getCurrentRow( ) const
+inline int Column<ValueType>::getCurrentRow( ) const
 {
   if ( *finished )
   {
@@ -153,14 +147,14 @@ int Column<ValueType>::getCurrentRow( ) const
 
 
 template <typename ValueType>
-bool Column<ValueType>::currentCellModified( ) const
+inline bool Column<ValueType>::currentCellModified( ) const
 {
   return modified;
 }
 
 
 template <typename ValueType>
-void Column<ValueType>::newRow( )
+inline void Column<ValueType>::newRow( )
 {
   int tmp_row = getCurrentRow();
 
@@ -178,7 +172,7 @@ void Column<ValueType>::newRow( )
 
 
 template <typename ValueType>
-void Column<ValueType>::newRow( int row )
+inline void Column<ValueType>::newRow( int row )
 {
   if ( modified )
   {
@@ -194,21 +188,21 @@ void Column<ValueType>::newRow( int row )
 
 
 template <typename ValueType>
-void Column<ValueType>::setNextCell( )
+inline void Column<ValueType>::setNextCell( )
 {
   it_cell++;
 }
 
 
 template <typename ValueType>
-void Column<ValueType>::setFirstCell( )
+inline void Column<ValueType>::setFirstCell( )
 {
   it_cell = cells.begin();
 }
 
 
 template <typename ValueType>
-bool Column<ValueType>::endCell( )
+inline bool Column<ValueType>::endCell( )
 {
   if ( n_cells == 0 )
     return true;
@@ -220,7 +214,7 @@ bool Column<ValueType>::endCell( )
 
 
 template <typename ValueType>
-void Column<ValueType>::print() const
+inline void Column<ValueType>::print() const
 {
   for ( unsigned int ii = 0; ii < n_cells; ii++ )
   {

@@ -5,14 +5,10 @@ using namespace std;
 
 
 template <typename ValueType>
-Cube<ValueType>::Cube( UINT32 numPlanes, UINT32 numCols, UINT16 numStats )
+Cube<ValueType>::Cube( UINT32 numPlanes, UINT32 numCols, UINT16 numStats ):
+    nplanes( 0 ), ncols( numCols ), nstat( numStats ), crow( 0 )
 {
   Matrix<ValueType> *tmp_mat = NULL;
-
-  nplanes = 0;
-  ncols = numCols;
-  nstat = numStats;
-  crow = 0;
 
   for ( UINT32 ii = 0; ii < numPlanes; ii++ )
   {
@@ -37,7 +33,7 @@ Cube<ValueType>::~Cube()
 
 
 template <typename ValueType>
-void Cube<ValueType>::init( UINT16 idStat )
+inline void Cube<ValueType>::init( UINT16 idStat )
 {
   if ( nplanes > 0 )
   {
@@ -51,7 +47,7 @@ void Cube<ValueType>::init( UINT16 idStat )
 
 
 template <typename ValueType>
-void Cube<ValueType>::init( )
+inline void Cube<ValueType>::init( )
 {
   if ( nplanes > 0 )
   {
@@ -65,7 +61,7 @@ void Cube<ValueType>::init( )
 
 
 template <typename ValueType>
-void Cube<ValueType>::setValue( UINT32 plane, UINT32 col, UINT16 idStat, ValueType semVal )
+inline void Cube<ValueType>::setValue( UINT32 plane, UINT32 col, UINT16 idStat, ValueType semVal )
 {
   if ( planes[ plane ] == NULL )
   {
@@ -78,7 +74,7 @@ void Cube<ValueType>::setValue( UINT32 plane, UINT32 col, UINT16 idStat, ValueTy
 
 
 template <typename ValueType>
-void Cube<ValueType>::setValue( UINT32 plane, UINT32 col, ValueType semVal )
+inline void Cube<ValueType>::setValue( UINT32 plane, UINT32 col, ValueType semVal )
 {
   if ( planes[ plane ] == NULL )
   {
@@ -91,7 +87,7 @@ void Cube<ValueType>::setValue( UINT32 plane, UINT32 col, ValueType semVal )
 
 
 template <typename ValueType>
-void Cube<ValueType>::addValue( UINT32 plane, UINT32 col, UINT16 idStat, ValueType semVal )
+inline void Cube<ValueType>::addValue( UINT32 plane, UINT32 col, UINT16 idStat, ValueType semVal )
 {
   if ( planes[ plane ] == NULL )
   {
@@ -104,7 +100,7 @@ void Cube<ValueType>::addValue( UINT32 plane, UINT32 col, UINT16 idStat, ValueTy
 
 
 template <typename ValueType>
-void Cube<ValueType>::addValue( UINT32 plane, UINT32 col, ValueType semVal )
+inline void Cube<ValueType>::addValue( UINT32 plane, UINT32 col, ValueType semVal )
 {
   if ( planes[ plane ] == NULL )
   {
@@ -117,7 +113,7 @@ void Cube<ValueType>::addValue( UINT32 plane, UINT32 col, ValueType semVal )
 
 
 template <typename ValueType>
-ValueType Cube<ValueType>::getCurrentValue( UINT32 plane, UINT32 col, UINT16 idStat ) const
+inline ValueType Cube<ValueType>::getCurrentValue( UINT32 plane, UINT32 col, UINT16 idStat ) const
 {
   if ( planes[ plane ] != NULL )
     return planes[ plane ]->getCurrentValue( col, idStat );
@@ -130,7 +126,7 @@ ValueType Cube<ValueType>::getCurrentValue( UINT32 plane, UINT32 col, UINT16 idS
 
 
 template <typename ValueType>
-UINT32 Cube<ValueType>::getCurrentRow( UINT32 plane, UINT32 col ) const
+inline UINT32 Cube<ValueType>::getCurrentRow( UINT32 plane, UINT32 col ) const
 {
   if ( planes[ plane ] != NULL )
     return planes[ plane ]->getCurrentRow( col );
@@ -139,13 +135,13 @@ UINT32 Cube<ValueType>::getCurrentRow( UINT32 plane, UINT32 col ) const
 
 
 template <typename ValueType>
-UINT32 Cube<ValueType>::getCurrentRow( ) const
+inline UINT32 Cube<ValueType>::getCurrentRow( ) const
 {
   return crow;
 }
 
 template <typename ValueType>
-bool Cube<ValueType>::currentCellModified( UINT32 plane, UINT32 col ) const
+inline bool Cube<ValueType>::currentCellModified( UINT32 plane, UINT32 col ) const
 {
   if ( planes[ plane ] != NULL )
     return planes[ plane ]->currentCellModified( col );
@@ -154,7 +150,7 @@ bool Cube<ValueType>::currentCellModified( UINT32 plane, UINT32 col ) const
 
 
 template <typename ValueType>
-void Cube<ValueType>::newRow( )
+inline void Cube<ValueType>::newRow( )
 {
   if ( nplanes > 0 )
   {
@@ -169,7 +165,7 @@ void Cube<ValueType>::newRow( )
 
 
 template <typename ValueType>
-void Cube<ValueType>::newRow( UINT32 plane, UINT32 col, UINT32 row )
+inline void Cube<ValueType>::newRow( UINT32 plane, UINT32 col, UINT32 row )
 {
   if ( nplanes > 0 )
   {
@@ -182,7 +178,7 @@ void Cube<ValueType>::newRow( UINT32 plane, UINT32 col, UINT32 row )
 
 
 template <typename ValueType>
-void Cube<ValueType>::finish( )
+inline void Cube<ValueType>::finish( )
 {
   if ( nplanes > 0 )
   {
@@ -196,7 +192,7 @@ void Cube<ValueType>::finish( )
 
 
 template <typename ValueType>
-void Cube<ValueType>::setNextCell( UINT32 plane, UINT32 col )
+inline void Cube<ValueType>::setNextCell( UINT32 plane, UINT32 col )
 {
   if ( nplanes == 0 )
     return;
@@ -207,7 +203,7 @@ void Cube<ValueType>::setNextCell( UINT32 plane, UINT32 col )
 
 
 template <typename ValueType>
-void Cube<ValueType>::setFirstCell( UINT32 plane, UINT32 col )
+inline void Cube<ValueType>::setFirstCell( UINT32 plane, UINT32 col )
 {
   if ( nplanes == 0 )
     return;
@@ -218,7 +214,7 @@ void Cube<ValueType>::setFirstCell( UINT32 plane, UINT32 col )
 
 
 template <typename ValueType>
-bool Cube<ValueType>::endCell( UINT32 plane, UINT32 col )
+inline bool Cube<ValueType>::endCell( UINT32 plane, UINT32 col )
 {
   if ( nplanes == 0 )
     return true;
@@ -230,7 +226,7 @@ bool Cube<ValueType>::endCell( UINT32 plane, UINT32 col )
 
 
 template <typename ValueType>
-bool Cube<ValueType>::planeWithValues( UINT32 plane ) const
+inline bool Cube<ValueType>::planeWithValues( UINT32 plane ) const
 {
   if ( nplanes == 0 )
     return false;
@@ -240,7 +236,7 @@ bool Cube<ValueType>::planeWithValues( UINT32 plane ) const
 
 
 template <typename ValueType>
-UINT32 Cube<ValueType>::getPlanes( ) const
+inline UINT32 Cube<ValueType>::getPlanes( ) const
 {
   if ( nplanes > 0 )
     return planes.size();
@@ -250,7 +246,7 @@ UINT32 Cube<ValueType>::getPlanes( ) const
 
 
 template <typename ValueType>
-void Cube<ValueType>::eraseColumns( UINT32 ini_col, UINT32 fin_col )
+inline void Cube<ValueType>::eraseColumns( UINT32 ini_col, UINT32 fin_col )
 {
   if ( fin_col < ini_col )
     return;
@@ -272,7 +268,7 @@ void Cube<ValueType>::eraseColumns( UINT32 ini_col, UINT32 fin_col )
 
 
 template <typename ValueType>
-void Cube<ValueType>::erasePlanes( UINT32 ini_plane, UINT32 fin_plane )
+inline void Cube<ValueType>::erasePlanes( UINT32 ini_plane, UINT32 fin_plane )
 {
   if ( fin_plane < ini_plane )
     return;
@@ -303,7 +299,7 @@ void Cube<ValueType>::erasePlanes( UINT32 ini_plane, UINT32 fin_plane )
 
 
 template <typename ValueType>
-void Cube<ValueType>::print() const
+inline void Cube<ValueType>::print() const
 {
   if ( nplanes > 0 )
   {

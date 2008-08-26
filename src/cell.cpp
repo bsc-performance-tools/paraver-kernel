@@ -6,11 +6,11 @@
 using namespace std;
 
 template <typename ValueType>
-Cell<ValueType>::Cell( TObjectOrder idRow, UINT16 numStats )
+Cell<ValueType>::Cell( TObjectOrder idRow, UINT16 numStats ):
+    row( idRow )
 {
   Statistic_2D<ValueType> *tmp_stat;
 
-  row = idRow;
   for ( UINT16 ii = 0; ii < numStats; ii++ )
   {
     tmp_stat = new Statistic_2D<ValueType>;
@@ -29,7 +29,7 @@ Cell<ValueType>::~Cell()
 
 
 template <typename ValueType>
-void Cell<ValueType>::init( UINT16 idStat )
+inline void Cell<ValueType>::init( UINT16 idStat )
 {
   if ( ( UINT16 )values.size() > idStat )
     values[ idStat ]->init();
@@ -37,7 +37,7 @@ void Cell<ValueType>::init( UINT16 idStat )
 
 
 template <typename ValueType>
-void Cell<ValueType>::init( )
+inline void Cell<ValueType>::init( )
 {
   for ( UINT16 ii = 0; ii < ( UINT16 )values.size(); ii++ )
     values[ ii ]->init();
@@ -45,7 +45,7 @@ void Cell<ValueType>::init( )
 
 
 template <typename ValueType>
-void Cell<ValueType>::setValue( UINT16 idStat, ValueType semVal )
+inline void Cell<ValueType>::setValue( UINT16 idStat, ValueType semVal )
 {
   if ( ( UINT16 )values.size() > idStat )
     values[ idStat ]->setValue( semVal );
@@ -53,7 +53,7 @@ void Cell<ValueType>::setValue( UINT16 idStat, ValueType semVal )
 
 
 template <typename ValueType>
-void Cell<ValueType>::setValue( ValueType semVal )
+inline void Cell<ValueType>::setValue( ValueType semVal )
 {
   for ( UINT16 ii = 0; ii < ( UINT16 )values.size(); ii++ )
     values[ ii ]->setValue( semVal );
@@ -61,7 +61,7 @@ void Cell<ValueType>::setValue( ValueType semVal )
 
 
 template <typename ValueType>
-void Cell<ValueType>::addValue( UINT16 idStat, ValueType semVal )
+inline void Cell<ValueType>::addValue( UINT16 idStat, ValueType semVal )
 {
   if ( ( UINT16 )values.size() > idStat )
     values[ idStat ]->addValue( semVal );
@@ -69,7 +69,7 @@ void Cell<ValueType>::addValue( UINT16 idStat, ValueType semVal )
 
 
 template <typename ValueType>
-void Cell<ValueType>::addValue( ValueType semVal )
+inline void Cell<ValueType>::addValue( ValueType semVal )
 {
   for ( UINT16 ii = 0; ii < ( UINT16 )values.size(); ii++ )
     values[ ii ]->AddValue( semVal );
@@ -77,7 +77,7 @@ void Cell<ValueType>::addValue( ValueType semVal )
 
 
 template <typename ValueType>
-ValueType Cell<ValueType>::getValue( UINT16 idStat ) const
+inline ValueType Cell<ValueType>::getValue( UINT16 idStat ) const
 {
   if ( ( UINT16 )values.size() > idStat )
     return values[idStat]->getValue();
@@ -90,21 +90,21 @@ ValueType Cell<ValueType>::getValue( UINT16 idStat ) const
 
 
 template <typename ValueType>
-TObjectOrder Cell<ValueType>::getRow( ) const
+inline TObjectOrder Cell<ValueType>::getRow( ) const
 {
   return row;
 }
 
 
 template <typename ValueType>
-void Cell<ValueType>::setRow( TObjectOrder row )
+inline void Cell<ValueType>::setRow( TObjectOrder row )
 {
   this->row = row;
 }
 
 
 template <typename ValueType>
-void Cell<ValueType>::print( ) const
+inline void Cell<ValueType>::print( ) const
 {
   cout << "[" << row << "] " ;
   for ( UINT16 ii = 0; ii < ( UINT16 )values.size(); ii++ )

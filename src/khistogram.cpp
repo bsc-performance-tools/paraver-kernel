@@ -39,7 +39,7 @@ RowsTranslator::~RowsTranslator()
 {}
 
 
-TObjectOrder RowsTranslator::globalTranslate( UINT16 winIndex,
+inline TObjectOrder RowsTranslator::globalTranslate( UINT16 winIndex,
     TObjectOrder rowIndex ) const
 {
   // This method will translate Kwindow rows to 2D rows.
@@ -47,7 +47,7 @@ TObjectOrder RowsTranslator::globalTranslate( UINT16 winIndex,
 }
 
 
-void RowsTranslator::getRowChilds( UINT16 winIndex,
+inline void RowsTranslator::getRowChilds( UINT16 winIndex,
                                    TObjectOrder rowIndex,
                                    TObjectOrder& iniRow,
                                    TObjectOrder& endRow ) const
@@ -65,7 +65,7 @@ void RowsTranslator::getRowChilds( UINT16 winIndex,
 }
 
 //
-TObjectOrder RowsTranslator::totalRows() const
+inline TObjectOrder RowsTranslator::totalRows() const
 {
   return childInfo[ 0 ].numRows;
 }
@@ -88,7 +88,7 @@ ColumnTranslator::~ColumnTranslator()
 {}
 
 // returns whichValue in [min,max)
-bool ColumnTranslator::getColumn( THistogramLimit whichValue,
+inline bool ColumnTranslator::getColumn( THistogramLimit whichValue,
                                   THistogramColumn& column ) const
 {
   if ( whichValue < minLimit || whichValue > maxLimit )
@@ -104,7 +104,7 @@ bool ColumnTranslator::getColumn( THistogramLimit whichValue,
 }
 
 
-THistogramColumn ColumnTranslator::totalColumns() const
+inline THistogramColumn ColumnTranslator::totalColumns() const
 {
   return numColumns;
 }
@@ -182,247 +182,247 @@ KHistogram::~KHistogram()
 }
 
 
-bool KHistogram::getThreeDimensions() const
+inline bool KHistogram::getThreeDimensions() const
 {
   return threeDimensions;
 }
 
 
-TRecordTime KHistogram::getBeginTime() const
+inline TRecordTime KHistogram::getBeginTime() const
 {
   return beginTime;
 }
 
 
-TRecordTime KHistogram::getEndTime() const
+inline TRecordTime KHistogram::getEndTime() const
 {
   return endTime;
 }
 
 
-Window *KHistogram::getControlWindow() const
+inline Window *KHistogram::getControlWindow() const
 {
   return controlWindow;
 }
 
 
-Window *KHistogram::getDataWindow() const
+inline Window *KHistogram::getDataWindow() const
 {
   return dataWindow;
 }
 
 
-Window *KHistogram::getExtraControlWindow() const
+inline Window *KHistogram::getExtraControlWindow() const
 {
   return xtraControlWindow;
 }
 
 
-void KHistogram::setControlWindow( Window *whichWindow )
+inline void KHistogram::setControlWindow( Window *whichWindow )
 {
   controlWindow = ( KWindow * ) whichWindow;
 }
 
 
-void KHistogram::setDataWindow( Window *whichWindow )
+inline void KHistogram::setDataWindow( Window *whichWindow )
 {
   dataWindow = ( KWindow * ) whichWindow;
 }
 
 
-void KHistogram::setExtraControlWindow( Window *whichWindow )
+inline void KHistogram::setExtraControlWindow( Window *whichWindow )
 {
   xtraControlWindow = ( KWindow * ) whichWindow;
 }
 
 
-void KHistogram::clearControlWindow()
+inline void KHistogram::clearControlWindow()
 {
   controlWindow = NULL;
 }
 
 
-void KHistogram::clearDataWindow()
+inline void KHistogram::clearDataWindow()
 {
   dataWindow = NULL;
 }
 
 
-void KHistogram::clearExtraControlWindow()
+inline void KHistogram::clearExtraControlWindow()
 {
   xtraControlWindow = NULL;
 }
 
 
-void KHistogram::setControlMin( THistogramLimit whichMin )
+inline void KHistogram::setControlMin( THistogramLimit whichMin )
 {
   controlMin = whichMin;
 }
 
 
-void KHistogram::setControlMax( THistogramLimit whichMax )
+inline void KHistogram::setControlMax( THistogramLimit whichMax )
 {
   controlMax = whichMax;
 }
 
 
-void KHistogram::setControlDelta( THistogramLimit whichDelta )
+inline void KHistogram::setControlDelta( THistogramLimit whichDelta )
 {
   controlDelta = whichDelta;
 }
 
 
-void KHistogram::setExtraControlMin( THistogramLimit whichMin )
+inline void KHistogram::setExtraControlMin( THistogramLimit whichMin )
 {
   xtraControlMin = whichMin;
 }
 
 
-void KHistogram::setExtraControlMax( THistogramLimit whichMax )
+inline void KHistogram::setExtraControlMax( THistogramLimit whichMax )
 {
   xtraControlMax = whichMax;
 }
 
 
-void KHistogram::setExtraControlDelta( THistogramLimit whichDelta )
+inline void KHistogram::setExtraControlDelta( THistogramLimit whichDelta )
 {
   xtraControlDelta = whichDelta;
 }
 
 
-void KHistogram::setDataMin( TSemanticValue whichMin )
+inline void KHistogram::setDataMin( TSemanticValue whichMin )
 {
   dataMin = whichMin;
 }
 
 
-void KHistogram::setDataMax( TSemanticValue whichMax )
+inline void KHistogram::setDataMax( TSemanticValue whichMax )
 {
   dataMax = whichMax;
 }
 
 
-void KHistogram::setBurstMin( TRecordTime whichTime )
+inline void KHistogram::setBurstMin( TRecordTime whichTime )
 {
   burstMin = whichTime;
 }
 
 
-void KHistogram::setBurstMax( TRecordTime whichTime )
+inline void KHistogram::setBurstMax( TRecordTime whichTime )
 {
   burstMax = whichTime;
 }
 
 
-void KHistogram::setCommSizeMin( TCommSize whichSize )
+inline void KHistogram::setCommSizeMin( TCommSize whichSize )
 {
   commSizeMin = whichSize;
 }
 
 
-void KHistogram::setCommSizeMax( TCommSize whichSize )
+inline void KHistogram::setCommSizeMax( TCommSize whichSize )
 {
   commSizeMax = whichSize;
 }
 
 
-void KHistogram::setCommTagMin( TCommTag whichTag )
+inline void KHistogram::setCommTagMin( TCommTag whichTag )
 {
   commTagMin = whichTag;
 }
 
 
-void KHistogram::setCommTagMax( TCommTag whichTag )
+inline void KHistogram::setCommTagMax( TCommTag whichTag )
 {
   commTagMax = whichTag;
 }
 
 
-THistogramLimit KHistogram::getControlMin() const
+inline THistogramLimit KHistogram::getControlMin() const
 {
   return controlMin;
 }
 
 
-THistogramLimit KHistogram::getControlMax() const
+inline THistogramLimit KHistogram::getControlMax() const
 {
   return controlMax;
 }
 
 
-THistogramLimit KHistogram::getControlDelta() const
+inline THistogramLimit KHistogram::getControlDelta() const
 {
   return controlDelta;
 }
 
 
-THistogramLimit KHistogram::getExtraControlMin() const
+inline THistogramLimit KHistogram::getExtraControlMin() const
 {
   return xtraControlMin;
 }
 
 
-THistogramLimit KHistogram::getExtraControlMax() const
+inline THistogramLimit KHistogram::getExtraControlMax() const
 {
   return xtraControlMax;
 }
 
 
-THistogramLimit KHistogram::getExtraControlDelta() const
+inline THistogramLimit KHistogram::getExtraControlDelta() const
 {
   return xtraControlDelta;
 }
 
 
-TSemanticValue KHistogram::getDataMin() const
+inline TSemanticValue KHistogram::getDataMin() const
 {
   return dataMin;
 }
 
 
-TSemanticValue KHistogram::getDataMax() const
+inline TSemanticValue KHistogram::getDataMax() const
 {
   return dataMax;
 }
 
 
-TRecordTime KHistogram::getBurstMin() const
+inline TRecordTime KHistogram::getBurstMin() const
 {
   return burstMin;
 }
 
 
-TRecordTime KHistogram::getBurstMax() const
+inline TRecordTime KHistogram::getBurstMax() const
 {
   return burstMax;
 }
 
 
-TCommSize KHistogram::getCommSizeMin() const
+inline TCommSize KHistogram::getCommSizeMin() const
 {
   return commSizeMin;
 }
 
 
-TCommSize KHistogram::getCommSizeMax() const
+inline TCommSize KHistogram::getCommSizeMax() const
 {
   return commSizeMax;
 }
 
 
-TCommTag KHistogram::getCommTagMin() const
+inline TCommTag KHistogram::getCommTagMin() const
 {
   return commTagMin;
 }
 
 
-TCommTag KHistogram::getCommTagMax() const
+inline TCommTag KHistogram::getCommTagMax() const
 {
   return commTagMax;
 }
 
 
-void KHistogram::setInclusive( bool newValue )
+inline void KHistogram::setInclusive( bool newValue )
 {
   if ( newValue )
   {
@@ -433,7 +433,7 @@ void KHistogram::setInclusive( bool newValue )
 }
 
 
-THistogramColumn KHistogram::getNumPlanes() const
+inline THistogramColumn KHistogram::getNumPlanes() const
 {
   if ( threeDimensions )
     return planeTranslator->totalColumns();
@@ -441,19 +441,19 @@ THistogramColumn KHistogram::getNumPlanes() const
 }
 
 
-THistogramColumn KHistogram::getNumColumns() const
+inline THistogramColumn KHistogram::getNumColumns() const
 {
   return numCols;
 }
 
 
-TObjectOrder KHistogram::getNumRows() const
+inline TObjectOrder KHistogram::getNumRows() const
 {
   return numRows;
 }
 
 
-TSemanticValue KHistogram::getCurrentValue( UINT32 col,
+inline TSemanticValue KHistogram::getCurrentValue( UINT32 col,
     UINT16 idStat,
     UINT32 plane ) const
 {
@@ -465,7 +465,7 @@ TSemanticValue KHistogram::getCurrentValue( UINT32 col,
   return TSemanticValue( 0 );
 }
 
-UINT32 KHistogram::getCurrentRow( UINT32 col, UINT32 plane ) const
+inline UINT32 KHistogram::getCurrentRow( UINT32 col, UINT32 plane ) const
 {
   if ( threeDimensions )
     return cube->getCurrentRow( plane, col );
@@ -475,7 +475,7 @@ UINT32 KHistogram::getCurrentRow( UINT32 col, UINT32 plane ) const
   return 0;
 }
 
-void KHistogram::setNextCell( UINT32 col, UINT32 plane )
+inline void KHistogram::setNextCell( UINT32 col, UINT32 plane )
 {
   if ( threeDimensions )
     cube->setNextCell( plane, col );
@@ -483,7 +483,7 @@ void KHistogram::setNextCell( UINT32 col, UINT32 plane )
     matrix->setNextCell( col );
 }
 
-void KHistogram::setFirstCell( UINT32 col, UINT32 plane )
+inline void KHistogram::setFirstCell( UINT32 col, UINT32 plane )
 {
   if ( threeDimensions )
     cube->setFirstCell( plane, col );
@@ -491,7 +491,7 @@ void KHistogram::setFirstCell( UINT32 col, UINT32 plane )
     matrix->setFirstCell( col );
 }
 
-bool KHistogram::endCell( UINT32 col, UINT32 plane )
+inline bool KHistogram::endCell( UINT32 col, UINT32 plane )
 {
   if ( threeDimensions )
     return cube->endCell( plane, col );
@@ -501,7 +501,7 @@ bool KHistogram::endCell( UINT32 col, UINT32 plane )
   return true;
 }
 
-bool KHistogram::planeWithValues( UINT32 plane ) const
+inline bool KHistogram::planeWithValues( UINT32 plane ) const
 {
   if ( threeDimensions )
     return cube->planeWithValues( plane );
@@ -510,7 +510,7 @@ bool KHistogram::planeWithValues( UINT32 plane ) const
 }
 
 
-TSemanticValue KHistogram::getCommCurrentValue( UINT32 col,
+inline TSemanticValue KHistogram::getCommCurrentValue( UINT32 col,
     UINT16 idStat,
     UINT32 plane ) const
 {
@@ -522,7 +522,7 @@ TSemanticValue KHistogram::getCommCurrentValue( UINT32 col,
   return TSemanticValue( 0 );
 }
 
-UINT32 KHistogram::getCommCurrentRow( UINT32 col, UINT32 plane ) const
+inline UINT32 KHistogram::getCommCurrentRow( UINT32 col, UINT32 plane ) const
 {
   if ( threeDimensions )
     return commCube->getCurrentRow( plane, col );
@@ -532,7 +532,7 @@ UINT32 KHistogram::getCommCurrentRow( UINT32 col, UINT32 plane ) const
   return 0;
 }
 
-void KHistogram::setCommNextCell( UINT32 col, UINT32 plane )
+inline void KHistogram::setCommNextCell( UINT32 col, UINT32 plane )
 {
   if ( threeDimensions )
     commCube->setNextCell( plane, col );
@@ -540,7 +540,7 @@ void KHistogram::setCommNextCell( UINT32 col, UINT32 plane )
     commMatrix->setNextCell( col );
 }
 
-void KHistogram::setCommFirstCell( UINT32 col, UINT32 plane )
+inline void KHistogram::setCommFirstCell( UINT32 col, UINT32 plane )
 {
   if ( threeDimensions )
     commCube->setFirstCell( plane, col );
@@ -548,7 +548,7 @@ void KHistogram::setCommFirstCell( UINT32 col, UINT32 plane )
     commMatrix->setFirstCell( col );
 }
 
-bool KHistogram::endCommCell( UINT32 col, UINT32 plane )
+inline bool KHistogram::endCommCell( UINT32 col, UINT32 plane )
 {
   if ( threeDimensions )
     return commCube->endCell( plane, col );
@@ -558,7 +558,7 @@ bool KHistogram::endCommCell( UINT32 col, UINT32 plane )
   return true;
 }
 
-bool KHistogram::planeCommWithValues( UINT32 plane ) const
+inline bool KHistogram::planeCommWithValues( UINT32 plane ) const
 {
   if ( threeDimensions )
     return commCube->planeWithValues( plane );
@@ -567,31 +567,31 @@ bool KHistogram::planeCommWithValues( UINT32 plane ) const
 }
 
 
-HistogramTotals *KHistogram::getColumnTotals() const
+inline HistogramTotals *KHistogram::getColumnTotals() const
 {
   return totals;
 }
 
 
-HistogramTotals *KHistogram::getCommColumnTotals() const
+inline HistogramTotals *KHistogram::getCommColumnTotals() const
 {
   return commTotals;
 }
 
 
-HistogramTotals *KHistogram::getRowTotals() const
+inline HistogramTotals *KHistogram::getRowTotals() const
 {
   return rowTotals;
 }
 
 
-HistogramTotals *KHistogram::getCommRowTotals() const
+inline HistogramTotals *KHistogram::getCommRowTotals() const
 {
   return rowCommTotals;
 }
 
 
-void KHistogram::clearStatistics()
+inline void KHistogram::clearStatistics()
 {
   vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
 
@@ -612,7 +612,7 @@ void KHistogram::clearStatistics()
 }
 
 
-void KHistogram::pushbackStatistic( string& whichStatistic )
+inline void KHistogram::pushbackStatistic( string& whichStatistic )
 {
   HistogramStatistic *stat;
 
