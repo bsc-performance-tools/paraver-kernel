@@ -29,7 +29,7 @@ TObjectOrder KWindow::cpuObjectToWindowObject( TCPUOrder whichCPU )
 
 TObjectOrder KWindow::threadObjectToWindowObject( TThreadOrder whichThread )
 {
-  TObjectOrder tmpObject;
+  TObjectOrder tmpObject = 0;
 
   if ( level == THREAD )
     tmpObject = whichThread;
@@ -62,7 +62,7 @@ TObjectOrder KWindow::threadObjectToWindowObject( TThreadOrder whichThread )
 
 TObjectOrder KWindow::getWindowLevelObjects()
 {
-  TObjectOrder objectSize;
+  TObjectOrder objectSize = 0;
   TWindowLevel whichLevel = getLevel();
 
   if ( whichLevel == WORKLOAD )
@@ -79,8 +79,6 @@ TObjectOrder KWindow::getWindowLevelObjects()
     objectSize = myTrace->totalNodes();
   else if ( whichLevel == CPU )
     objectSize = myTrace->totalCPUs();
-  else
-    ;
 
   return objectSize;
 }

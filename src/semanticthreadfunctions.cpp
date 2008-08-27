@@ -309,7 +309,7 @@ TSemanticValue NextEventType::execute( const SemanticInfo *info )
   TSemanticValue tmp = 0;
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  MemoryTrace::iterator *nextEvent;
+  MemoryTrace::iterator *nextEvent = NULL;
 
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
@@ -338,7 +338,7 @@ TSemanticValue NextEventValue::execute( const SemanticInfo *info )
   TSemanticValue tmp = 0;
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  MemoryTrace::iterator *nextEvent;
+  MemoryTrace::iterator *nextEvent = NULL;
 
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
@@ -368,7 +368,7 @@ TSemanticValue AverageNextEventValue::execute( const SemanticInfo *info )
   TSemanticValue tmpTime = 0;
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  MemoryTrace::iterator *nextEvent;
+  MemoryTrace::iterator *nextEvent = NULL;
 
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
@@ -404,7 +404,7 @@ TSemanticValue AverageLastEventValue::execute( const SemanticInfo *info )
   TSemanticValue tmpTime = 0;
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  MemoryTrace::iterator *nextEvent;
+  MemoryTrace::iterator *nextEvent = NULL;
 
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
@@ -485,7 +485,7 @@ TSemanticValue IntervalBetweenEvents::execute( const SemanticInfo *info )
   TSemanticValue tmp = 0;
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  MemoryTrace::iterator *nextEvent;
+  MemoryTrace::iterator *nextEvent = NULL;
 
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
@@ -558,7 +558,7 @@ TSemanticValue EventBytes::execute( const SemanticInfo *info )
   TSemanticValue tmp = 0;
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  MemoryTrace::iterator *nextEvent;
+  MemoryTrace::iterator *nextEvent = NULL;
 
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
@@ -692,7 +692,7 @@ string NextRecvDuration::name = "Next Recv Dur.";
 TSemanticValue NextRecvDuration::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
-  MemoryTrace::iterator *nextComm;
+  MemoryTrace::iterator *nextComm = NULL;
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
 
