@@ -22,6 +22,7 @@
 #define OLDCFG_LVL_COMPOSE1         "compose1"
 #define OLDCFG_LVL_COMPOSE2         "compose2"
 
+#define OLDCFG_TAG_WNDW_NAME      "window_name"
 #define OLDCFG_TAG_WNDW_TYPE      "window_type"
 #define OLDCFG_TAG_WNDW_FACTORS   "window_factors"
 #define OLDCFG_TAG_WNDW_UNITS     "window_units"

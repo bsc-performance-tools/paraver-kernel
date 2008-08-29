@@ -44,6 +44,20 @@ class CFGLoader
 };
 
 
+class WindowName: public TagFunction
+{
+  public:
+    WindowName()
+    {}
+    virtual ~WindowName()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+};
+
+
 class WindowType: public TagFunction
 {
   public:

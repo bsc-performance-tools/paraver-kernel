@@ -73,9 +73,18 @@ class Window
     virtual TObjectOrder getWindowLevelObjects() = 0;
     virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime ) = 0;
 
+    // Specific functions for WindowProxy
     virtual Window *getConcrete() const
     {
       return NULL;
+    }
+
+    virtual void setName( string& whichName )
+    {}
+
+    virtual string getName() const
+    {
+      return "";
     }
 
   protected:
@@ -140,6 +149,8 @@ class WindowProxy: public Window
     virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime );
 
     virtual Window *getConcrete() const;
+    virtual void setName( string& whichName );
+    virtual string getName() const;
 
   private:
     Window *myWindow;
@@ -159,6 +170,9 @@ class WindowProxy: public Window
     // Must store the associated proxies
     Window *parent1;
     Window *parent2;
+
+    // GUI related attributes
+    string name;
 
     // For Single Window
     WindowProxy( KernelConnection *whichKernel, Trace *whichTrace );

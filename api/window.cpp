@@ -403,3 +403,13 @@ Window *WindowProxy::getConcrete() const
 {
   return myWindow;
 }
+
+void WindowProxy::setName( string& whichName )
+{
+  name = whichName;
+}
+
+string WindowProxy::getName() const
+{
+  return name;
+}

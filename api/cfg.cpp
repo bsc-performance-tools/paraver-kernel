@@ -18,6 +18,7 @@ using namespace std;
 
 map<string, TagFunction *> CFGLoader::cfgTagFunctions;
 
+string currentWindowName;
 
 TWindowLevel stringToLevel( const string& strLevel )
 {
@@ -141,6 +142,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
 void CFGLoader::loadMap()
 {
+  cfgTagFunctions[OLDCFG_TAG_WNDW_NAME]                = new WindowName();
   cfgTagFunctions[OLDCFG_TAG_WNDW_TYPE]                = new WindowType();
   cfgTagFunctions[OLDCFG_TAG_WNDW_FACTORS]             = new WindowFactors();
   cfgTagFunctions[OLDCFG_TAG_WNDW_UNITS]               = new WindowUnits();
@@ -232,6 +234,21 @@ void CFGLoader::unLoadMap()
 }
 
 
+bool WindowName::parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms )
+{
+  string name;
+
+  getline( line, name, ' ' );
+
+  currentWindowName = name;
+
+  return true;
+}
+
+
 bool WindowType::parseLine( KernelConnection *whichKernel, istringstream& line,
                             Trace *whichTrace,
                             vector<Window *>& windows,
@@ -256,6 +273,8 @@ bool WindowType::parseLine( KernelConnection *whichKernel, istringstream& line,
     windows[ 0 ] = tmpWin;
   else
     windows.push_back( tmpWin );
+
+  windows[ windows.size() - 1 ]->setName( currentWindowName );
 
   return true;
 }
