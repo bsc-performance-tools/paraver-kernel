@@ -19,6 +19,7 @@ libparaver_kernel_la_SOURCES = \
     khistogram.cpp \
     khistogramtotals.cpp \
     krecordlist.cpp \
+    ktrace.cpp \
     kwindow.cpp \
     kwindowexception.cpp \
     memorytrace.cpp \
@@ -34,7 +35,6 @@ libparaver_kernel_la_SOURCES = \
     semanticthreadfunctions.cpp \
     statisticmanagement.cpp \
     tracebodyio_v1.cpp \
-    ktrace.cpp \
     traceheaderexception.cpp\
     tracestream.cpp
           
