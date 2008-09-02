@@ -105,6 +105,33 @@ class Histogram
     virtual string getUnitsLabel( const string& whichStat ) const = 0;
 
     // Specific methods of HistogramProxy
+    virtual UINT16 getPosX() const
+    {
+      return 0;
+    }
+    virtual void setPosX( UINT16 whichPos )
+    {}
+
+    virtual UINT16 getPosY() const
+    {
+      return 0;
+    }
+    virtual void setPosY( UINT16 whichPos )
+    {}
+
+    virtual UINT16 getWidth() const
+    {
+      return 0;
+    }
+    virtual void setWidth( UINT16 whichPos )
+    {}
+
+    virtual UINT16 getHeight() const
+    {
+      return 0;
+    }
+    virtual void setHeight( UINT16 whichPos )
+    {}
     virtual HistogramTotals *getTotals( const string& whichStat ) const
     {
       return NULL;
@@ -353,8 +380,22 @@ class HistogramProxy : public Histogram
 
     string getUnitsLabel( const string& whichStat ) const;
 
+    virtual UINT16 getPosX() const;
+    virtual void setPosX( UINT16 whichPos );
+    virtual UINT16 getPosY() const;
+    virtual void setPosY( UINT16 whichPos );
+    virtual UINT16 getWidth() const;
+    virtual void setWidth( UINT16 whichPos );
+    virtual UINT16 getHeight() const;
+    virtual void setHeight( UINT16 whichPos );
+
   private:
     string name;
+
+    UINT16 posX;
+    UINT16 posY;
+    UINT16 width;
+    UINT16 height;
 
     bool horizontal;
     bool hideColumns;

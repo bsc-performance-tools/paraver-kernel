@@ -491,6 +491,62 @@ class Analyzer2DName: public TagFunction
 };
 
 
+class Analyzer2DX: public TagFunction
+{
+  public:
+    Analyzer2DX()
+    {}
+    virtual ~Analyzer2DX()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+};
+
+
+class Analyzer2DY: public TagFunction
+{
+  public:
+    Analyzer2DY()
+    {}
+    virtual ~Analyzer2DY()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+};
+
+
+class Analyzer2DWidth: public TagFunction
+{
+  public:
+    Analyzer2DWidth()
+    {}
+    virtual ~Analyzer2DWidth()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+};
+
+
+class Analyzer2DHeight: public TagFunction
+{
+  public:
+    Analyzer2DHeight()
+    {}
+    virtual ~Analyzer2DHeight()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+};
+
+
 class Analyzer2DControlWindow: public TagFunction
 {
   public:

@@ -765,3 +765,42 @@ string HistogramProxy::getUnitsLabel( const string& whichStat ) const
   return myHisto->getUnitsLabel( whichStat );
 }
 
+UINT16 HistogramProxy::getPosX() const
+{
+  return posX;
+}
+
+void HistogramProxy::setPosX( UINT16 whichPos )
+{
+  posX = whichPos;
+}
+
+UINT16 HistogramProxy::getPosY() const
+{
+  return posY;
+}
+
+void HistogramProxy::setPosY( UINT16 whichPos )
+{
+  posY = whichPos;
+}
+
+UINT16 HistogramProxy::getWidth() const
+{
+  return width;
+}
+
+void HistogramProxy::setWidth( UINT16 whichPos )
+{
+  width = whichPos;
+}
+
+UINT16 HistogramProxy::getHeight() const
+{
+  return height;
+}
+
+void HistogramProxy::setHeight( UINT16 whichPos )
+{
+  height = whichPos;
+}

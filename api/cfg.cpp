@@ -181,10 +181,10 @@ void CFGLoader::loadMap()
 
   cfgTagFunctions[OLDCFG_TAG_AN2D_NEW]                 = new Analyzer2DCreate();
   cfgTagFunctions[OLDCFG_TAG_AN2D_NAME]                = new Analyzer2DName();
-  // --> Analyzer2D.X:
-  // --> Analyzer2D.Y:
-  // --> Analyzer2D.Width:
-  // --> Analyzer2D.Height:
+  cfgTagFunctions[OLDCFG_TAG_AN2D_X]                   = new Analyzer2DX();
+  cfgTagFunctions[OLDCFG_TAG_AN2D_Y]                   = new Analyzer2DY();
+  cfgTagFunctions[OLDCFG_TAG_AN2D_WIDTH]               = new Analyzer2DWidth();
+  cfgTagFunctions[OLDCFG_TAG_AN2D_HEIGHT]              = new Analyzer2DHeight();
   cfgTagFunctions[OLDCFG_TAG_AN2D_CONTROL_WINDOW]      = new Analyzer2DControlWindow();
   cfgTagFunctions[OLDCFG_TAG_AN2D_DATA_WINDOW]         = new Analyzer2DDataWindow();
   cfgTagFunctions[OLDCFG_TAG_AN2D_STATISTIC]           = new Analyzer2DStatistic();
@@ -1188,6 +1188,102 @@ bool Analyzer2DName::parseLine( KernelConnection *whichKernel, istringstream& li
 
   getline( line, strName );
   histograms[ histograms.size() - 1 ]->setName( strName );
+
+  return true;
+}
+
+bool Analyzer2DX::parseLine( KernelConnection *whichKernel, istringstream& line,
+                             Trace *whichTrace,
+                             vector<Window *>& windows,
+                             vector<Histogram *>& histograms )
+{
+  string strX;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strX, ' ' );
+  istringstream tmpStream( strX );
+  UINT16 x;
+
+  if ( !( tmpStream >> x ) )
+    return false;
+
+  histograms[ histograms.size() - 1 ]->setPosX( x );
+
+  return true;
+}
+
+bool Analyzer2DY::parseLine( KernelConnection *whichKernel, istringstream& line,
+                             Trace *whichTrace,
+                             vector<Window *>& windows,
+                             vector<Histogram *>& histograms )
+{
+  string strY;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strY, ' ' );
+  istringstream tmpStream( strY );
+  UINT16 y;
+
+  if ( !( tmpStream >> y ) )
+    return false;
+
+  histograms[ histograms.size() - 1 ]->setPosY( y );
+
+  return true;
+}
+
+bool Analyzer2DWidth::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                 Trace *whichTrace,
+                                 vector<Window *>& windows,
+                                 vector<Histogram *>& histograms )
+{
+  string strWidth;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strWidth, ' ' );
+  istringstream tmpStream( strWidth );
+  UINT16 width;
+
+  if ( !( tmpStream >> width ) )
+    return false;
+
+  histograms[ histograms.size() - 1 ]->setWidth( width );
+
+  return true;
+}
+
+bool Analyzer2DHeight::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                  Trace *whichTrace,
+                                  vector<Window *>& windows,
+                                  vector<Histogram *>& histograms )
+{
+  string strHeight;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strHeight, ' ' );
+  istringstream tmpStream( strHeight );
+  UINT16 height;
+
+  if ( !( tmpStream >> height ) )
+    return false;
+
+  histograms[ histograms.size() - 1 ]->setHeight( height );
 
   return true;
 }

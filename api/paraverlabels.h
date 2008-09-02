@@ -54,6 +54,11 @@
 #define OLDCFG_TAG_WNDW_TYPEVAL "window_typeval"
 #define OLDCFG_TAG_AN2D_NEW "< NEW ANALYZER2D >"
 #define OLDCFG_TAG_AN2D_NAME "Analyzer2D.Name:"
+#define OLDCFG_TAG_AN2D_X "Analyzer2D.X:"
+#define OLDCFG_TAG_AN2D_Y "Analyzer2D.Y:"
+#define OLDCFG_TAG_AN2D_WIDTH "Analyzer2D.Width:"
+#define OLDCFG_TAG_AN2D_HEIGHT "Analyzer2D.Height:"
+
 #define OLDCFG_TAG_AN2D_CONTROL_WINDOW "Analyzer2D.ControlWindow:"
 #define OLDCFG_TAG_AN2D_DATA_WINDOW "Analyzer2D.DataWindow:"
 #define OLDCFG_TAG_AN2D_STATISTIC "Analyzer2D.Statistic:"
