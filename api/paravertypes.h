@@ -3,7 +3,7 @@
 
 typedef ParaverColor unsigned char;
 
-struct rbg
+struct rgb
 {
   ParaverColor red;
   ParaverColor green;

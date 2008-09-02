@@ -210,3 +210,8 @@ Trace *TraceProxy::getConcrete() const
 {
   return myTrace;
 }
+
+void TraceProxy::parsePCF( const string& whichFile )
+{
+
+}

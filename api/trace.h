@@ -151,6 +151,8 @@ class TraceProxy: public Trace
 
     TraceProxy( KernelConnection *whichKernel, const string& whichFile );
 
+    void parsePCF( const string& whichFile );
+
     friend Trace *Trace::create( KernelConnection *, const string& );
 };
 
