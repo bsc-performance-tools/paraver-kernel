@@ -223,7 +223,7 @@ void WindowProxy::setMinimumY( TSemanticValue whichMin )
 
 TSemanticValue WindowProxy::getMaximumY()
 {
-  if( computeYMaxOnInit )
+  if ( computeYMaxOnInit )
   {
     computeYScale();
     computeYMaxOnInit = false;
@@ -233,7 +233,7 @@ TSemanticValue WindowProxy::getMaximumY()
 
 TSemanticValue WindowProxy::getMinimumY()
 {
-  if( computeYMaxOnInit )
+  if ( computeYMaxOnInit )
   {
     computeYScale();
     computeYMaxOnInit = false;
@@ -279,7 +279,7 @@ bool WindowProxy::setLevelFunction( TWindowLevel whichLevel,
                                     SemanticFunction *whichFunction )
 {
   bool result = myWindow->setLevelFunction( whichLevel, whichFunction );
-  if( result )
+  if ( result )
     yScaleComputed = false;
   return result;
 }
@@ -335,9 +335,9 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject )
     myWindow->calcNext( whichObject );
 
   TSemanticValue objValue = getValue( whichObject );
-  if( computedMaxY < objValue )
+  if ( computedMaxY < objValue )
     computedMaxY = objValue;
-  if( computedMinY > objValue )
+  if ( computedMinY > objValue )
     computedMinY = objValue;
 
   return myLists[ whichObject ];
@@ -351,9 +351,9 @@ RecordList *WindowProxy::calcPrev( TObjectOrder whichObject )
     myWindow->calcPrev( whichObject );
 
   TSemanticValue objValue = getValue( whichObject );
-  if( computedMaxY < objValue )
+  if ( computedMaxY < objValue )
     computedMaxY = objValue;
-  if( computedMinY > objValue )
+  if ( computedMinY > objValue )
     computedMinY = objValue;
 
   return myLists[ whichObject ];
@@ -412,4 +412,44 @@ void WindowProxy::setName( string& whichName )
 string WindowProxy::getName() const
 {
   return name;
+}
+
+UINT16 WindowProxy::getPosX() const
+{
+  return posX;
+}
+
+void WindowProxy::setPosX( UINT16 whichPos )
+{
+  posX = whichPos;
+}
+
+UINT16 WindowProxy::getPosY() const
+{
+  return posY;
+}
+
+void WindowProxy::setPosY( UINT16 whichPos )
+{
+  posY = whichPos;
+}
+
+UINT16 WindowProxy::getWidth() const
+{
+  return width;
+}
+
+void WindowProxy::setWidth( UINT16 whichPos )
+{
+  width = whichPos;
+}
+
+UINT16 WindowProxy::getHeight() const
+{
+  return height;
+}
+
+void WindowProxy::setHeight( UINT16 whichPos )
+{
+  height = whichPos;
 }

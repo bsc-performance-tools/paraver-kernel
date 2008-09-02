@@ -87,6 +87,34 @@ class Window
       return "";
     }
 
+    virtual UINT16 getPosX() const
+    {
+      return 0;
+    }
+    virtual void setPosX( UINT16 whichPos )
+    {}
+
+    virtual UINT16 getPosY() const
+    {
+      return 0;
+    }
+    virtual void setPosY( UINT16 whichPos )
+    {}
+
+    virtual UINT16 getWidth() const
+    {
+      return 0;
+    }
+    virtual void setWidth( UINT16 whichPos )
+    {}
+
+    virtual UINT16 getHeight() const
+    {
+      return 0;
+    }
+    virtual void setHeight( UINT16 whichPos )
+    {}
+
   protected:
     KernelConnection *myKernel;
 
@@ -151,9 +179,22 @@ class WindowProxy: public Window
     virtual Window *getConcrete() const;
     virtual void setName( string& whichName );
     virtual string getName() const;
+    virtual UINT16 getPosX() const;
+    virtual void setPosX( UINT16 whichPos );
+    virtual UINT16 getPosY() const;
+    virtual void setPosY( UINT16 whichPos );
+    virtual UINT16 getWidth() const;
+    virtual void setWidth( UINT16 whichPos );
+    virtual UINT16 getHeight() const;
+    virtual void setHeight( UINT16 whichPos );
 
   private:
     Window *myWindow;
+
+    UINT16 posX;
+    UINT16 posY;
+    UINT16 width;
+    UINT16 height;
 
     TRecordTime winBeginTime;
     TRecordTime winEndTime;

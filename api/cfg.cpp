@@ -145,6 +145,10 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_NAME]                = new WindowName();
   cfgTagFunctions[OLDCFG_TAG_WNDW_TYPE]                = new WindowType();
   cfgTagFunctions[OLDCFG_TAG_WNDW_FACTORS]             = new WindowFactors();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_POSX]                = new WindowPositionX();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_POSY]                = new WindowPositionY();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_WIDTH]               = new WindowWidth();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_HEIGHT]              = new WindowHeight();
   cfgTagFunctions[OLDCFG_TAG_WNDW_UNITS]               = new WindowUnits();
   cfgTagFunctions[OLDCFG_TAG_WNDW_OPERATION]           = new WindowOperation();
   cfgTagFunctions[OLDCFG_TAG_WNDW_MAXIMUM_Y]           = new WindowMaximumY();
@@ -306,6 +310,98 @@ bool WindowFactors::parseLine( KernelConnection *whichKernel, istringstream& lin
 
     numFactor++;
   }
+  return true;
+}
+
+
+bool WindowPositionX::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                 Trace *whichTrace,
+                                 vector<Window *>& windows,
+                                 vector<Histogram *>& histograms )
+{
+  string strPos;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strPos, ' ' );
+  istringstream tmpStream( strPos );
+  UINT16 pos;
+
+  if ( !( tmpStream >> pos ) )
+    return false;
+
+  windows[ windows.size() - 1 ]->setPosX( pos );
+
+  return true;
+}
+
+
+bool WindowPositionY::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                 Trace *whichTrace,
+                                 vector<Window *>& windows,
+                                 vector<Histogram *>& histograms )
+{
+  string strPos;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strPos, ' ' );
+  istringstream tmpStream( strPos );
+  UINT16 pos;
+
+  if ( !( tmpStream >> pos ) )
+    return false;
+
+  windows[ windows.size() - 1 ]->setPosY( pos );
+
+  return true;
+}
+
+
+bool WindowWidth::parseLine( KernelConnection *whichKernel, istringstream& line,
+                             Trace *whichTrace,
+                             vector<Window *>& windows,
+                             vector<Histogram *>& histograms )
+{
+  string strWidth;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strWidth, ' ' );
+  istringstream tmpStream( strWidth );
+  UINT16 width;
+
+  if ( !( tmpStream >> width ) )
+    return false;
+
+  windows[ windows.size() - 1 ]->setWidth( width );
+
+  return true;
+}
+
+
+bool WindowHeight::parseLine( KernelConnection *whichKernel, istringstream& line,
+                              Trace *whichTrace,
+                              vector<Window *>& windows,
+                              vector<Histogram *>& histograms )
+{
+  string strHeight;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strHeight, ' ' );
+  istringstream tmpStream( strHeight );
+  UINT16 height;
+
+  if ( !( tmpStream >> height ) )
+    return false;
+
+  windows[ windows.size() - 1 ]->setHeight( height );
+
   return true;
 }
 

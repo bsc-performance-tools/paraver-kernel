@@ -86,6 +86,62 @@ class WindowFactors: public TagFunction
 };
 
 
+class WindowPositionX: public TagFunction
+{
+  public:
+    WindowPositionX()
+    {}
+    virtual ~WindowPositionX()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+};
+
+
+class WindowPositionY: public TagFunction
+{
+  public:
+    WindowPositionY()
+    {}
+    virtual ~WindowPositionY()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+};
+
+
+class WindowWidth: public TagFunction
+{
+  public:
+    WindowWidth()
+    {}
+    virtual ~WindowWidth()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+};
+
+
+class WindowHeight: public TagFunction
+{
+  public:
+    WindowHeight()
+    {}
+    virtual ~WindowHeight()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+};
+
+
 class WindowUnits: public TagFunction
 {
   public:
