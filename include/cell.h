@@ -2,10 +2,6 @@
 #define _CELL_H
 
 
-#include <vector>
-
-using std::vector;
-
 #include "paraverkerneltypes.h"
 #include "statistic_2d.h"
 
@@ -30,7 +26,8 @@ class Cell
 
   private:
     TObjectOrder row;
-    vector<Statistic_2D<ValueType> *>  values;
+    UINT16 nStats;
+    Statistic_2D<ValueType> *values;
 };
 
 #include "src/cell.cpp"

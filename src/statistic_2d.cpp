@@ -6,7 +6,7 @@ using namespace std;
 template <typename ValueType>
 inline void Statistic_2D<ValueType>::init()
 {
-  bzero( ( void* ) &value, sizeof( ValueType ) );
+  memset( ( void* ) &value, 0, sizeof( ValueType ) );
 }
 
 
