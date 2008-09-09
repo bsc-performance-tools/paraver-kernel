@@ -1,7 +1,7 @@
 #ifndef PARAVERTYPES_H_INCLUDED
 #define PARAVERTYPES_H_INCLUDED
 
-typedef ParaverColor unsigned char;
+typedef unsigned char ParaverColor;
 
 struct rgb
 {
