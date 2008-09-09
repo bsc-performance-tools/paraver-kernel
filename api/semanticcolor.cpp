@@ -1,6 +1,8 @@
 #include "semanticcolor.h"
 #include "window.h"
 
+rgb SemanticColor::BACKGROUND = { 0, 0, 0 };
+
 UINT32 SemanticColor::numColors = 49;
 rgb SemanticColor::codeColor[ ] =
   {
@@ -126,3 +128,86 @@ inline rgb CodeColor::calcColor( TSemanticValue whichValue,
 
   return getColor( static_cast< UINT32 >( whichValue ) );
 }
+
+// GRADIENTCOLOR METHODS
+
+GradientColor::GradientColor( Trace& whichTrace )
+{}
+
+GradientColor::~GradientColor()
+{}
+
+inline void GradientColor::setBeginGradientColor( rgb color )
+{
+  beginGradientColor = color;
+}
+
+inline rgb GradientColor::getBeginGradientColor() const
+{
+  return beginGradientColor;
+}
+
+inline void GradientColor::setEndGradientColor( rgb color )
+{
+  endGradientColor = color;
+}
+
+inline rgb GradientColor::getEndGradientColor() const
+{
+  return endGradientColor;
+}
+
+inline void GradientColor::setAboveOutlierColor( rgb color )
+{
+  aboveOutlierColor = color;
+}
+
+inline rgb GradientColor::getAboveOutlierColor() const
+{
+  return aboveOutlierColor;
+}
+
+inline void GradientColor::setBelowOutlierColor( rgb color )
+{
+  belowOutlierColor = color;
+}
+
+inline rgb GradientColor::getBelowOutlierColor() const
+{
+  return belowOutlierColor;
+}
+
+inline void GradientColor::allowOutliers( bool activate )
+{
+  drawOutlier = activate;
+}
+
+inline void GradientColor::allowOutOfScale( bool activate )
+{
+  drawOutOfScale = activate;
+}
+
+rgb GradientColor::calcColor( TSemanticValue whichValue, Window& whichWindow ) const
+{
+
+  if ( whichValue < whichWindow.getMinimumY() )
+  {
+    if ( drawOutlier )
+      return belowOutlierColor;
+    if ( drawOutOfScale )
+      return beginGradientColor;
+    return SemanticColor::BACKGROUND;
+  }
+
+  if ( whichValue > whichWindow.getMaximumY() )
+  {
+    if ( drawOutlier )
+      return aboveOutlierColor;
+    if ( drawOutOfScale )
+      return endGradientColor;
+    return SemanticColor::BACKGROUND;
+  }
+
+  return SemanticColor::BACKGROUND; // SOLO TEMPORAL, CAMBIAR!!
+}
+
