@@ -1,6 +1,7 @@
 #include "semanticcolor.h"
+#include "window.h"
 
-int SemanticColor::numColors = 49;
+UINT32 SemanticColor::numColors = 49;
 rgb SemanticColor::codeColor[ ] =
   {
     { 117, 195, 255 }, //  0 - Idle
@@ -59,7 +60,7 @@ rgb SemanticColor::endGradientColor   = {   0,   0, 255 };
 rgb SemanticColor::aboveOutlierColor  = { 255, 146,  24 };
 rgb SemanticColor::belowOutlierColor  = { 207, 207,  68 };
 
-int SemanticColor::getNumColors()
+UINT32 SemanticColor::getNumColors()
 {
   return numColors;
 }
@@ -89,5 +90,39 @@ rgb SemanticColor::getBelowOutlierColor()
   return belowOutlierColor;
 }
 
+// CODECOLOR METHODS
+CodeColor::CodeColor( Trace& whichTrace )
+{}
 
+CodeColor::~CodeColor()
+{};
 
+inline UINT32 CodeColor::getNumColors() const
+{
+  return colors.size();
+}
+
+inline rgb CodeColor::getColor( UINT32 pos ) const
+{
+  return colors[ pos ];
+}
+
+inline void CodeColor::setColor( UINT32 pos, rgb color )
+{
+  colors[ pos ] = color;
+}
+
+inline void CodeColor::addColor( rgb color )
+{
+  colors.push_back( color );
+}
+
+inline rgb CodeColor::calcColor( TSemanticValue whichValue,
+                                 Window& whichWindow  ) const
+{
+  if ( whichValue < whichWindow.getMinimumY() ||
+       whichValue > whichWindow.getMaximumY() )
+    return getColor( 0 ); // IDLE!
+
+  return getColor( static_cast< UINT32 >( whichValue ) );
+}

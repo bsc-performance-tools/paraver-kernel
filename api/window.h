@@ -1,6 +1,7 @@
 #ifndef WINDOW_H_INCLUDED
 #define WINDOW_H_INCLUDED
 
+#include <string>
 #include "paraverkerneltypes.h"
 
 class KernelConnection;
