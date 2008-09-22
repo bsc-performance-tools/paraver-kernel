@@ -3,6 +3,8 @@
 
 typedef unsigned char ParaverColor;
 
+enum colorIndex { RED, GREEN, BLUE };
+
 struct rgb
 {
   ParaverColor red;

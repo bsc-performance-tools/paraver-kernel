@@ -33,12 +33,15 @@ class SemanticColor
     static rgb endGradientColor;
     static rgb aboveOutlierColor;
     static rgb belowOutlierColor;
+
+    static const double GradientSteps;
 };
 
 class CodeColor: public SemanticColor
 {
   public:
-    CodeColor( Trace& whichTrace );
+    CodeColor();
+    CodeColor( CodeColor& color );
     ~CodeColor();
 
     UINT32 getNumColors() const;
@@ -55,7 +58,8 @@ class CodeColor: public SemanticColor
 class GradientColor: public SemanticColor
 {
   public:
-    GradientColor( Trace& whichTrace );
+    GradientColor();
+    GradientColor( GradientColor& color );
     ~GradientColor();
 
     void setBeginGradientColor( rgb color );
@@ -63,6 +67,8 @@ class GradientColor: public SemanticColor
 
     void setEndGradientColor( rgb color );
     rgb getEndGradientColor() const;
+
+    void setLimitsGradientColor( rgb begin, rgb end );
 
     void setAboveOutlierColor( rgb color );
     rgb getAboveOutlierColor() const;
@@ -83,6 +89,9 @@ class GradientColor: public SemanticColor
     rgb endGradientColor;
     rgb aboveOutlierColor;
     rgb belowOutlierColor;
+
+    void selectMinorComponents( rgb color, vector<colorIndex>* components );
+
 };
 
 

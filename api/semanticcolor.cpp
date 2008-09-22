@@ -62,6 +62,8 @@ rgb SemanticColor::endGradientColor   = {   0,   0, 255 };
 rgb SemanticColor::aboveOutlierColor  = { 255, 146,  24 };
 rgb SemanticColor::belowOutlierColor  = { 207, 207,  68 };
 
+const double SemanticColor::GradientSteps = 513.0;
+
 UINT32 SemanticColor::getNumColors()
 {
   return numColors;
@@ -93,11 +95,14 @@ rgb SemanticColor::getBelowOutlierColor()
 }
 
 // CODECOLOR METHODS
-CodeColor::CodeColor( Trace& whichTrace )
+CodeColor::CodeColor( )
+{}
+
+CodeColor::CodeColor( CodeColor& color )
 {}
 
 CodeColor::~CodeColor()
-{};
+{}
 
 inline UINT32 CodeColor::getNumColors() const
 {
@@ -130,8 +135,10 @@ inline rgb CodeColor::calcColor( TSemanticValue whichValue,
 }
 
 // GRADIENTCOLOR METHODS
+GradientColor::GradientColor( )
+{}
 
-GradientColor::GradientColor( Trace& whichTrace )
+GradientColor::GradientColor( GradientColor& color )
 {}
 
 GradientColor::~GradientColor()
@@ -150,6 +157,67 @@ inline rgb GradientColor::getBeginGradientColor() const
 inline void GradientColor::setEndGradientColor( rgb color )
 {
   endGradientColor = color;
+}
+
+void GradientColor::selectMinorComponents( rgb color, vector<colorIndex>* components )
+{
+  ParaverColor cr = color.red;
+  ParaverColor cg = color.green;
+  ParaverColor cb = color.blue;
+
+  // (1,2,3) and (1,2,2)
+  if (( cr < cg ) && ( cr <= cb ))
+    components->push_back( RED );
+  else if (( cg < cr ) && ( cg <= cb ))
+    components->push_back( GREEN );
+  else if (( cb < cr ) && ( cb <= cg ))
+    components->push_back( BLUE );
+
+  // (2,2,3)
+  if (( cr == cg ) && ( cr < cb ))
+  {
+    components->push_back( RED );
+    components->push_back( GREEN );
+  }
+  else if (( cr == cb ) && ( cr < cg ))
+  {
+    components->push_back( RED );
+    components->push_back( BLUE );
+  }
+  else if (( cg == cb ) && ( cg < cr ))
+  {
+    components->push_back( GREEN );
+    components->push_back( BLUE );
+  }
+
+  // (1,1,1)
+  if (( cr == cg ) && ( cr == cb ))
+    components->push_back( RED );
+}
+
+
+void GradientColor::setLimitsGradientColor( rgb begin, rgb end )
+{
+  vector<colorIndex> minorComponentBegin, minorComponentEnd;
+
+  beginGradientColor = begin;
+  endGradientColor = end;
+
+  selectMinorComponents( begin, &minorComponentBegin);
+  selectMinorComponents( end,   &minorComponentEnd );
+
+  // Select common
+
+
+  // Decidir menor componente de cada limite
+  // Ver si coincide -> si si, ok
+  // si no coincide buscar la pareja más alejada del 0 -(negro)
+
+  // Guardar componente(s) descartada(s)
+
+  // Calcular número de paso(s) para cada componente.
+  // Guardarlo, además del reparto entre las mismas.
+
 }
 
 inline rgb GradientColor::getEndGradientColor() const
@@ -208,6 +276,12 @@ rgb GradientColor::calcColor( TSemanticValue whichValue, Window& whichWindow ) c
     return SemanticColor::BACKGROUND;
   }
 
-  return SemanticColor::BACKGROUND; // SOLO TEMPORAL, CAMBIAR!!
+  // mapear [whichWindow.getMinimumY(),...,whichValue,...,whichWindow.getMinimumY()] -->
+  //        [0, SemanticColor::GradientSteps ]
+
+  //return SemanticColor::GradientSteps * whichValue / (whichWindow.getMaximumY() - whichWindow.getMinimumY())
+
+
+  return SemanticColor::BACKGROUND;
 }
 
