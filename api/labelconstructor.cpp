@@ -164,3 +164,16 @@ string LabelConstructor::histoTotalLabel( THistoTotals whichTotal )
 
   return "";
 }
+
+string LabelConstructor::timeLabel( TTime value, TTimeUnit unit )
+{
+  stringstream label;
+
+  label << fixed;
+  label.precision( ParaverConfig::getInstance()->getPrecision() );
+
+  label << value;
+  label << " " << LABEL_TIMEUNIT[ unit ];
+
+  return label.str();
+}

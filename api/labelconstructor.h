@@ -23,6 +23,8 @@ class LabelConstructor
                                   TSemanticValue value );
 
     static string histoTotalLabel( THistoTotals whichTotal );
+
+    static string timeLabel( TTime value, TTimeUnit unit );
 };
 
 #endif // LABELCONSTRUCTOR_H_INCLUDED
