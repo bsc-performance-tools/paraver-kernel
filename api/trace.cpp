@@ -1,5 +1,10 @@
 #include "kernelconnection.h"
 #include "trace.h"
+#include "pcfparser/ParaverTraceConfig.h"
+#include "pcfparser/ParaverStatesColor.h"
+#include "pcfparser/ParaverGradientColor.h"
+
+using namespace domain;
 
 Trace *Trace::create( KernelConnection *whichKernel, const string& whichFile )
 {
@@ -14,6 +19,9 @@ TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile )
     Trace( whichKernel )
 {
   myTrace = myKernel->newTrace( whichFile );
+  string pcfFile( whichFile.substr( 0, whichFile.length() - 3 ) );
+  pcfFile.append( "pcf" );
+  parsePCF( pcfFile );
 }
 
 TraceProxy::~TraceProxy()
@@ -213,5 +221,30 @@ Trace *TraceProxy::getConcrete() const
 
 void TraceProxy::parsePCF( const string& whichFile )
 {
+  ParaverTraceConfig config( whichFile );
 
+  rgb tmpColor;
+  for ( vector<ParaverStatesColor *>::const_iterator it = config.get_statesColor().begin();
+        it != config.get_statesColor().end(); it++ )
+  {
+    tmpColor.red = (*it)->get_color1();
+    tmpColor.green = (*it)->get_color2();
+    tmpColor.blue = (*it)->get_color3();
+    if( (UINT32)(*it)->get_key() < myCodeColor.getNumColors() )
+      myCodeColor.setColor( (UINT32)(*it)->get_key(), tmpColor );
+    else
+      myCodeColor.addColor( tmpColor );
+  }
+
+  ParaverGradientColor *grad = ( config.get_gradientColors() )[ 0 ];
+  tmpColor.red = grad->get_color1();
+  tmpColor.green = grad->get_color2();
+  tmpColor.blue = grad->get_color3();
+  myGradientColor.setBeginGradientColor( tmpColor );
+
+  grad = ( config.get_gradientColors() )[ config.get_gradientColors().size() ];
+  tmpColor.red = grad->get_color1();
+  tmpColor.green = grad->get_color2();
+  tmpColor.blue = grad->get_color3();
+  myGradientColor.setEndGradientColor( tmpColor );
 }

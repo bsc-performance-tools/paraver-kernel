@@ -2,6 +2,7 @@
 #define TRACE_H_INCLUDED
 
 #include "paraverkerneltypes.h"
+#include "semanticcolor.h"
 
 class KernelConnection;
 
@@ -148,6 +149,9 @@ class TraceProxy: public Trace
 
   private:
     Trace *myTrace;
+
+    CodeColor myCodeColor;
+    GradientColor myGradientColor;
 
     TraceProxy( KernelConnection *whichKernel, const string& whichFile );
 

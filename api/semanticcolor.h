@@ -5,7 +5,6 @@
 #include "paraverkerneltypes.h"
 
 
-class Trace;
 class Window;
 
 class SemanticColor

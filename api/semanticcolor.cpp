@@ -104,27 +104,27 @@ CodeColor::CodeColor( CodeColor& color )
 CodeColor::~CodeColor()
 {}
 
-inline UINT32 CodeColor::getNumColors() const
+UINT32 CodeColor::getNumColors() const
 {
   return colors.size();
 }
 
-inline rgb CodeColor::getColor( UINT32 pos ) const
+rgb CodeColor::getColor( UINT32 pos ) const
 {
   return colors[ pos ];
 }
 
-inline void CodeColor::setColor( UINT32 pos, rgb color )
+void CodeColor::setColor( UINT32 pos, rgb color )
 {
   colors[ pos ] = color;
 }
 
-inline void CodeColor::addColor( rgb color )
+void CodeColor::addColor( rgb color )
 {
   colors.push_back( color );
 }
 
-inline rgb CodeColor::calcColor( TSemanticValue whichValue,
+rgb CodeColor::calcColor( TSemanticValue whichValue,
                                  Window& whichWindow  ) const
 {
   if ( whichValue < whichWindow.getMinimumY() ||
@@ -144,12 +144,12 @@ GradientColor::GradientColor( GradientColor& color )
 GradientColor::~GradientColor()
 {}
 
-inline void GradientColor::setBeginGradientColor( rgb color )
+void GradientColor::setBeginGradientColor( rgb color )
 {
   beginGradientColor = color;
 }
 
-inline rgb GradientColor::getBeginGradientColor() const
+rgb GradientColor::getBeginGradientColor() const
 {
   return beginGradientColor;
 }
