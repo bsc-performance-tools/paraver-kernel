@@ -154,7 +154,7 @@ rgb GradientColor::getBeginGradientColor() const
   return beginGradientColor;
 }
 
-inline void GradientColor::setEndGradientColor( rgb color )
+void GradientColor::setEndGradientColor( rgb color )
 {
   endGradientColor = color;
 }
