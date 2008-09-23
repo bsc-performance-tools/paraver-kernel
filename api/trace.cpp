@@ -221,11 +221,20 @@ Trace *TraceProxy::getConcrete() const
 
 void TraceProxy::parsePCF( const string& whichFile )
 {
-  ParaverTraceConfig config( whichFile );
+  ParaverTraceConfig *config;
+
+  try
+  {
+    config = new ParaverTraceConfig( whichFile );
+  }
+  catch( ... )
+  {
+    return;
+  }
 
   rgb tmpColor;
-  for ( vector<ParaverStatesColor *>::const_iterator it = config.get_statesColor().begin();
-        it != config.get_statesColor().end(); it++ )
+  for ( vector<ParaverStatesColor *>::const_iterator it = config->get_statesColor().begin();
+        it != config->get_statesColor().end(); it++ )
   {
     tmpColor.red = (*it)->get_color1();
     tmpColor.green = (*it)->get_color2();
@@ -236,15 +245,17 @@ void TraceProxy::parsePCF( const string& whichFile )
       myCodeColor.addColor( tmpColor );
   }
 
-  ParaverGradientColor *grad = ( config.get_gradientColors() )[ 0 ];
+  ParaverGradientColor *grad = ( config->get_gradientColors() )[ 0 ];
   tmpColor.red = grad->get_color1();
   tmpColor.green = grad->get_color2();
   tmpColor.blue = grad->get_color3();
   myGradientColor.setBeginGradientColor( tmpColor );
 
-  grad = ( config.get_gradientColors() )[ config.get_gradientColors().size() ];
+  grad = ( config->get_gradientColors() )[ config->get_gradientColors().size() ];
   tmpColor.red = grad->get_color1();
   tmpColor.green = grad->get_color2();
   tmpColor.blue = grad->get_color3();
   myGradientColor.setEndGradientColor( tmpColor );
+
+  delete config;
 }
