@@ -10,6 +10,7 @@ libapi_la_SOURCES = \
                     localkernel.cpp \
                     paraverconfig.cpp \
                     recordlist.cpp \
+                    semanticcolor.cpp \
                     trace.cpp \
                     window.cpp \
                     ../../common-files/pcfparser/ParaverEventType.cpp \
