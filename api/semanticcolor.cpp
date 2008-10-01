@@ -96,10 +96,16 @@ rgb SemanticColor::getBelowOutlierColor()
 
 // CODECOLOR METHODS
 CodeColor::CodeColor( )
-{}
+{
+  rgb* codeColor = SemanticColor::getCodeColors();
+  for( UINT32 i = 0; i < SemanticColor::getNumColors(); i++ )
+    colors.push_back( codeColor[ i ] );
+}
 
 CodeColor::CodeColor( CodeColor& color )
-{}
+{
+  colors = color.colors;
+}
 
 CodeColor::~CodeColor()
 {}
@@ -136,10 +142,26 @@ rgb CodeColor::calcColor( TSemanticValue whichValue,
 
 // GRADIENTCOLOR METHODS
 GradientColor::GradientColor( )
-{}
+{
+  drawOutlier = true;
+  drawOutOfScale = true;
+
+  beginGradientColor = SemanticColor::getBeginGradientColor();
+  endGradientColor = SemanticColor::getEndGradientColor();
+  aboveOutlierColor = SemanticColor::getAboveOutlierColor();
+  belowOutlierColor = SemanticColor::getBelowOutlierColor();
+}
 
 GradientColor::GradientColor( GradientColor& color )
-{}
+{
+  drawOutlier = color.drawOutlier;
+  drawOutOfScale = color.drawOutOfScale;
+
+  beginGradientColor = color.beginGradientColor;
+  endGradientColor = color.endGradientColor;
+  aboveOutlierColor = color.aboveOutlierColor;
+  belowOutlierColor = color.belowOutlierColor;
+}
 
 GradientColor::~GradientColor()
 {}
