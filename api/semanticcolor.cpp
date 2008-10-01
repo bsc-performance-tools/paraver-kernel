@@ -102,11 +102,6 @@ CodeColor::CodeColor( )
     colors.push_back( codeColor[ i ] );
 }
 
-CodeColor::CodeColor( CodeColor& color )
-{
-  colors = color.colors;
-}
-
 CodeColor::~CodeColor()
 {}
 
@@ -150,17 +145,6 @@ GradientColor::GradientColor( )
   endGradientColor = SemanticColor::getEndGradientColor();
   aboveOutlierColor = SemanticColor::getAboveOutlierColor();
   belowOutlierColor = SemanticColor::getBelowOutlierColor();
-}
-
-GradientColor::GradientColor( GradientColor& color )
-{
-  drawOutlier = color.drawOutlier;
-  drawOutOfScale = color.drawOutOfScale;
-
-  beginGradientColor = color.beginGradientColor;
-  endGradientColor = color.endGradientColor;
-  aboveOutlierColor = color.aboveOutlierColor;
-  belowOutlierColor = color.belowOutlierColor;
 }
 
 GradientColor::~GradientColor()

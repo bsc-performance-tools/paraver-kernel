@@ -259,3 +259,13 @@ void TraceProxy::parsePCF( const string& whichFile )
 
   delete config;
 }
+
+const CodeColor& TraceProxy::getCodeColor() const
+{
+  return myCodeColor;
+}
+
+const GradientColor& TraceProxy::getGradientColor() const
+{
+  return myGradientColor;
+}

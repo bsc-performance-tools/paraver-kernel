@@ -82,7 +82,7 @@ TSemanticValue Window::getMinimumY()
 }
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
-    Window( whichKernel )
+    Window( whichKernel ), myTrace( whichTrace )
 {
   parent1 = NULL;
   parent2 = NULL;
@@ -92,7 +92,7 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
                           Window *whichParent2 ):
-    Window( whichKernel )
+    Window( whichKernel ), myTrace( whichParent1->getTrace() )
 {
   parent1 = whichParent1;
   parent2 = whichParent2;
@@ -112,12 +112,15 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel ):
 void WindowProxy::init()
 {
   winBeginTime = 0.0;
-  winEndTime = myWindow->getTrace()->getEndTime();
+  winEndTime = myTrace->getEndTime();
 
   computeYMaxOnInit = false;
   yScaleComputed = false;
   maximumY = Window::getMaximumY();
   minimumY = Window::getMinimumY();
+
+  myCodeColor = myTrace->getCodeColor();
+  myGradientColor = myTrace->getGradientColor();
 }
 
 WindowProxy::~WindowProxy()
@@ -243,7 +246,7 @@ TSemanticValue WindowProxy::getMinimumY()
 
 Trace *WindowProxy::getTrace() const
 {
-  return myWindow->getTrace();
+  return myTrace;
 }
 
 TWindowLevel WindowProxy::getLevel() const

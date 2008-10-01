@@ -40,7 +40,6 @@ class CodeColor: public SemanticColor
 {
   public:
     CodeColor();
-    CodeColor( CodeColor& color );
     ~CodeColor();
 
     UINT32 getNumColors() const;
@@ -58,7 +57,6 @@ class GradientColor: public SemanticColor
 {
   public:
     GradientColor();
-    GradientColor( GradientColor& color );
     ~GradientColor();
 
     void setBeginGradientColor( rgb color );

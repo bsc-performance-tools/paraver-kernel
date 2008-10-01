@@ -3,6 +3,7 @@
 
 #include <string>
 #include "paraverkerneltypes.h"
+#include "semanticcolor.h"
 
 class KernelConnection;
 class Trace;
@@ -191,6 +192,7 @@ class WindowProxy: public Window
 
   private:
     Window *myWindow;
+    Trace *myTrace;
 
     UINT16 posX;
     UINT16 posY;
@@ -215,6 +217,8 @@ class WindowProxy: public Window
 
     // GUI related attributes
     string name;
+    CodeColor myCodeColor;
+    GradientColor myGradientColor;
 
     // For Single Window
     WindowProxy( KernelConnection *whichKernel, Trace *whichTrace );

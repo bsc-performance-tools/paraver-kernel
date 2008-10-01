@@ -72,9 +72,20 @@ class Trace
     virtual TTime getEndTime() const = 0;
     virtual TTimeUnit getTimeUnit() const = 0;
 
+    // Specific methods for TraceProxy only
     virtual Trace *getConcrete() const
     {
       return NULL;
+    }
+    virtual const CodeColor& getCodeColor() const
+    {
+      CodeColor *a = NULL;
+      return *a;
+    }
+    virtual const GradientColor& getGradientColor() const
+    {
+      GradientColor *a = NULL;
+      return *a;
     }
 
   protected:
@@ -146,6 +157,8 @@ class TraceProxy: public Trace
     virtual TTimeUnit getTimeUnit() const;
 
     virtual Trace *getConcrete() const;
+    virtual const CodeColor& getCodeColor() const;
+    virtual const GradientColor& getGradientColor() const;
 
   private:
     Trace *myTrace;
