@@ -97,6 +97,12 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
     begin = childIntervals[ 0 ]->getBegin();
     end = childIntervals[ 0 ]->getEnd();
     tmpValue = childIntervals[ 0 ]->getValue();
+    if ( *end == *endRecord )
+    {
+      currentValue = tmpValue;
+      return displayList;
+    }
+
     childIntervals[ 0 ]->calcNext( displayList );
     while ( tmpValue == childIntervals[ 0 ]->getValue() )
     {
