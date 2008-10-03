@@ -22,7 +22,7 @@ class SemanticColor
     virtual ~SemanticColor()
     {};
 
-    virtual rgb calcColor( TSemanticValue whichValue, Window& whichWindow ) const = 0;
+    virtual rgb calcColor( TSemanticValue whichValue, Window& whichWindow ) = 0;
 
   private:
     static UINT32 numColors;
@@ -46,7 +46,7 @@ class CodeColor: public SemanticColor
     rgb getColor( UINT32 pos ) const;
     void setColor( UINT32 pos, rgb color );
     void addColor( rgb color );
-    rgb calcColor( TSemanticValue whichValue, Window& whichWindow  ) const;
+    rgb calcColor( TSemanticValue whichValue, Window& whichWindow  );
 
   private:
     vector<rgb> colors;
@@ -65,8 +65,6 @@ class GradientColor: public SemanticColor
     void setEndGradientColor( rgb color );
     rgb getEndGradientColor() const;
 
-    void setLimitsGradientColor( rgb begin, rgb end );
-
     void setAboveOutlierColor( rgb color );
     rgb getAboveOutlierColor() const;
 
@@ -76,7 +74,7 @@ class GradientColor: public SemanticColor
     void allowOutliers( bool activate );
     void allowOutOfScale( bool activate );
 
-    rgb calcColor( TSemanticValue whichValue, Window& whichWindow ) const;
+    rgb calcColor( TSemanticValue whichValue, Window& whichWindow );
 
   private:
     bool drawOutlier;
@@ -87,9 +85,14 @@ class GradientColor: public SemanticColor
     rgb aboveOutlierColor;
     rgb belowOutlierColor;
 
-    void selectMinorComponents( rgb color, vector<colorIndex>* components );
+    TSemanticValue minYScale;
+    TSemanticValue maxYScale;
 
+    double redStep;
+    double greenStep;
+    double blueStep;
+
+    void recalcSteps();
 };
-
 
 #endif // SEMANTICCOLOR_H_INCLUDED

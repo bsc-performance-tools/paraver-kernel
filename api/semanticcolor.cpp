@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "semanticcolor.h"
 #include "window.h"
 
@@ -126,7 +128,7 @@ void CodeColor::addColor( rgb color )
 }
 
 rgb CodeColor::calcColor( TSemanticValue whichValue,
-                                 Window& whichWindow  ) const
+                                 Window& whichWindow  )
 {
   if ( whichValue < whichWindow.getMinimumY() ||
        whichValue > whichWindow.getMaximumY() )
@@ -145,6 +147,10 @@ GradientColor::GradientColor( )
   endGradientColor = SemanticColor::getEndGradientColor();
   aboveOutlierColor = SemanticColor::getAboveOutlierColor();
   belowOutlierColor = SemanticColor::getBelowOutlierColor();
+
+  minYScale = 0.0;
+  maxYScale = 1.0;
+  recalcSteps();
 }
 
 GradientColor::~GradientColor()
@@ -153,6 +159,7 @@ GradientColor::~GradientColor()
 void GradientColor::setBeginGradientColor( rgb color )
 {
   beginGradientColor = color;
+  recalcSteps();
 }
 
 rgb GradientColor::getBeginGradientColor() const
@@ -163,67 +170,7 @@ rgb GradientColor::getBeginGradientColor() const
 void GradientColor::setEndGradientColor( rgb color )
 {
   endGradientColor = color;
-}
-
-void GradientColor::selectMinorComponents( rgb color, vector<colorIndex>* components )
-{
-  ParaverColor cr = color.red;
-  ParaverColor cg = color.green;
-  ParaverColor cb = color.blue;
-
-  // (1,2,3) and (1,2,2)
-  if (( cr < cg ) && ( cr <= cb ))
-    components->push_back( RED );
-  else if (( cg < cr ) && ( cg <= cb ))
-    components->push_back( GREEN );
-  else if (( cb < cr ) && ( cb <= cg ))
-    components->push_back( BLUE );
-
-  // (2,2,3)
-  if (( cr == cg ) && ( cr < cb ))
-  {
-    components->push_back( RED );
-    components->push_back( GREEN );
-  }
-  else if (( cr == cb ) && ( cr < cg ))
-  {
-    components->push_back( RED );
-    components->push_back( BLUE );
-  }
-  else if (( cg == cb ) && ( cg < cr ))
-  {
-    components->push_back( GREEN );
-    components->push_back( BLUE );
-  }
-
-  // (1,1,1)
-  if (( cr == cg ) && ( cr == cb ))
-    components->push_back( RED );
-}
-
-
-void GradientColor::setLimitsGradientColor( rgb begin, rgb end )
-{
-  vector<colorIndex> minorComponentBegin, minorComponentEnd;
-
-  beginGradientColor = begin;
-  endGradientColor = end;
-
-  selectMinorComponents( begin, &minorComponentBegin);
-  selectMinorComponents( end,   &minorComponentEnd );
-
-  // Select common
-
-
-  // Decidir menor componente de cada limite
-  // Ver si coincide -> si si, ok
-  // si no coincide buscar la pareja más alejada del 0 -(negro)
-
-  // Guardar componente(s) descartada(s)
-
-  // Calcular número de paso(s) para cada componente.
-  // Guardarlo, además del reparto entre las mismas.
-
+  recalcSteps();
 }
 
 inline rgb GradientColor::getEndGradientColor() const
@@ -261,8 +208,16 @@ inline void GradientColor::allowOutOfScale( bool activate )
   drawOutOfScale = activate;
 }
 
-rgb GradientColor::calcColor( TSemanticValue whichValue, Window& whichWindow ) const
+rgb GradientColor::calcColor( TSemanticValue whichValue, Window& whichWindow )
 {
+
+  if ( minYScale != whichWindow.getMinimumY() ||
+       maxYScale != whichWindow.getMaximumY() )
+  {
+    minYScale = whichWindow.getMinimumY();
+    maxYScale = whichWindow.getMaximumY();
+    recalcSteps();
+  }
 
   if ( whichValue < whichWindow.getMinimumY() )
   {
@@ -282,12 +237,22 @@ rgb GradientColor::calcColor( TSemanticValue whichValue, Window& whichWindow ) c
     return SemanticColor::BACKGROUND;
   }
 
-  // mapear [whichWindow.getMinimumY(),...,whichValue,...,whichWindow.getMinimumY()] -->
-  //        [0, SemanticColor::GradientSteps ]
+  TSemanticValue norm = whichValue / ( maxYScale - minYScale );
 
-  //return SemanticColor::GradientSteps * whichValue / (whichWindow.getMaximumY() - whichWindow.getMinimumY())
+  rgb tmpColor = beginGradientColor;
 
+  tmpColor.red += (ParaverColor) floor( redStep * norm );
+  tmpColor.green += (ParaverColor) floor( greenStep * norm );
+  tmpColor.blue += (ParaverColor) floor( blueStep * norm );
 
   return SemanticColor::BACKGROUND;
 }
 
+void GradientColor::recalcSteps()
+{
+  TSemanticValue range = maxYScale - minYScale;
+
+  redStep = ( endGradientColor.red - beginGradientColor.red ) / range;
+  greenStep = ( endGradientColor.green - beginGradientColor.green ) / range;
+  blueStep = ( endGradientColor.blue - beginGradientColor.blue ) / range;
+}
