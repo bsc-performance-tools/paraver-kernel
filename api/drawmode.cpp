@@ -13,6 +13,11 @@ inline TSemanticValue selectMethod<DRAW_MAXIMUM>( vector<TSemanticValue> v )
 {
   TSemanticValue max = 0;
 
+  for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); it++ )
+  {
+    if( *it > max ) max = *it;
+  }
+
   return max;
 }
 
@@ -21,23 +26,43 @@ inline TSemanticValue selectMethod<DRAW_MINNOTZERO>( vector<TSemanticValue> v )
 {
   TSemanticValue min = std::numeric_limits<TSemanticValue>::max();
 
+  for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); it++ )
+  {
+    if( *it < min ) min = *it;
+  }
+
   return min;
 }
 
 template <>
 inline TSemanticValue selectMethod<DRAW_RANDOM>( vector<TSemanticValue> v )
 {
-  TSemanticValue tmp = 0;
+  int pos;
 
-  return tmp;
+  srand( time( NULL ) );
+  pos = rand() * v.size();
+
+  return v[ pos ];
 }
 
 template <>
 inline TSemanticValue selectMethod<DRAW_RANDNOTZERO>( vector<TSemanticValue> v )
 {
-  TSemanticValue tmp = 0;
+  int pos;
 
-  return tmp;
+  srand( time( NULL ) );
+  pos = rand() * v.size();
+
+  UINT32 i = 0;
+  while( v[ pos ] == 0 )
+  {
+    pos++;
+    pos = pos % v.size();
+    i++;
+    if( i == v.size() ) return 0;
+  }
+
+  return v[ pos ];
 }
 
 template <>
@@ -45,7 +70,12 @@ inline TSemanticValue selectMethod<DRAW_AVERAGE>( vector<TSemanticValue> v )
 {
   TSemanticValue avg = 0;
 
-  return avg;
+  for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); it++ )
+  {
+    avg += *it;
+  }
+
+  return avg / v.size();
 }
 
 TSemanticValue DrawMode::selectValue( vector<TSemanticValue> v,
