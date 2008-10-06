@@ -4,6 +4,7 @@ libcfg_la_SOURCES = \
                     cfg.cpp
 
 libapi_la_SOURCES = \
+                    drawmode.cpp \
                     histogram.cpp \
                     histogramtotals.cpp \
                     labelconstructor.cpp \

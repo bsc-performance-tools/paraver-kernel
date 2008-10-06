@@ -196,6 +196,12 @@
 			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
+		<Unit filename="api/drawmode.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/drawmode.h">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="api/histogram.cpp">
 			<Option target="api" />
 		</Unit>
