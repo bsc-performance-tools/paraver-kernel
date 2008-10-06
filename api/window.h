@@ -4,6 +4,7 @@
 #include <string>
 #include "paraverkerneltypes.h"
 #include "semanticcolor.h"
+#include "drawmode.h"
 
 class KernelConnection;
 class Trace;
@@ -116,7 +117,18 @@ class Window
     }
     virtual void setHeight( UINT16 whichPos )
     {}
-
+    virtual void setDrawModeObject( DrawModeMethod method )
+    {}
+    virtual DrawModeMethod getDrawModeObject()
+    {
+      return DRAW_MAXIMUM;
+    }
+    virtual void setDrawModeTime( DrawModeMethod method )
+    {}
+    virtual DrawModeMethod getDrawModeTime()
+    {
+      return DRAW_MAXIMUM;
+    }
   protected:
     KernelConnection *myKernel;
 
@@ -219,6 +231,8 @@ class WindowProxy: public Window
     string name;
     CodeColor myCodeColor;
     GradientColor myGradientColor;
+    DrawModeMethod drawModeObject;
+    DrawModeMethod drawModeTime;
 
     // For Single Window
     WindowProxy( KernelConnection *whichKernel, Trace *whichTrace );

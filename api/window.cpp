@@ -121,6 +121,9 @@ void WindowProxy::init()
 
   myCodeColor = myTrace->getCodeColor();
   myGradientColor = myTrace->getGradientColor();
+
+  drawModeObject = DRAW_MAXIMUM;
+  drawModeTime = DRAW_MAXIMUM;
 }
 
 WindowProxy::~WindowProxy()
@@ -455,4 +458,24 @@ UINT16 WindowProxy::getHeight() const
 void WindowProxy::setHeight( UINT16 whichPos )
 {
   height = whichPos;
+}
+
+void WindowProxy::setDrawModeObject( DrawModeMethod method )
+{
+  drawModeObject = method;
+}
+
+DrawModeMethod WindowProxy::getDrawModeObject()
+{
+  return drawModeObject;
+}
+
+void WindowProxy::setDrawModeTime( DrawModeMethod method )
+{
+  drawModeTime = method;
+}
+
+DrawModeMethod WindowProxy::getDrawModeTime()
+{
+  return drawModeTime;
 }
