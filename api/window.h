@@ -201,6 +201,10 @@ class WindowProxy: public Window
     virtual void setWidth( UINT16 whichPos );
     virtual UINT16 getHeight() const;
     virtual void setHeight( UINT16 whichPos );
+    virtual void setDrawModeObject( DrawModeMethod method );
+    virtual DrawModeMethod getDrawModeObject();
+    virtual void setDrawModeTime( DrawModeMethod method );
+    virtual DrawModeMethod getDrawModeTime();
 
   private:
     Window *myWindow;
