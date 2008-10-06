@@ -15,7 +15,7 @@ typedef enum DrawModeMethod
 
 class DrawMode
 {
-    static TSemanticValue selectValue( vector<TSemanticValue> v,
+    static TSemanticValue selectValue( vector<TSemanticValue>& v,
                                        DrawModeMethod method );
 };
 

@@ -3,13 +3,13 @@
 
 // LAST is the default method
 template <int method>
-inline TSemanticValue selectMethod( vector<TSemanticValue> v )
+inline TSemanticValue selectMethod( vector<TSemanticValue>& v )
 {
   return v[ v.size() -1 ];
 }
 
 template <>
-inline TSemanticValue selectMethod<DRAW_MAXIMUM>( vector<TSemanticValue> v )
+inline TSemanticValue selectMethod<DRAW_MAXIMUM>( vector<TSemanticValue>& v )
 {
   TSemanticValue max = 0;
 
@@ -22,7 +22,7 @@ inline TSemanticValue selectMethod<DRAW_MAXIMUM>( vector<TSemanticValue> v )
 }
 
 template <>
-inline TSemanticValue selectMethod<DRAW_MINNOTZERO>( vector<TSemanticValue> v )
+inline TSemanticValue selectMethod<DRAW_MINNOTZERO>( vector<TSemanticValue>& v )
 {
   TSemanticValue min = std::numeric_limits<TSemanticValue>::max();
 
@@ -35,7 +35,7 @@ inline TSemanticValue selectMethod<DRAW_MINNOTZERO>( vector<TSemanticValue> v )
 }
 
 template <>
-inline TSemanticValue selectMethod<DRAW_RANDOM>( vector<TSemanticValue> v )
+inline TSemanticValue selectMethod<DRAW_RANDOM>( vector<TSemanticValue>& v )
 {
   int pos;
 
@@ -46,7 +46,7 @@ inline TSemanticValue selectMethod<DRAW_RANDOM>( vector<TSemanticValue> v )
 }
 
 template <>
-inline TSemanticValue selectMethod<DRAW_RANDNOTZERO>( vector<TSemanticValue> v )
+inline TSemanticValue selectMethod<DRAW_RANDNOTZERO>( vector<TSemanticValue>& v )
 {
   int pos;
 
@@ -66,7 +66,7 @@ inline TSemanticValue selectMethod<DRAW_RANDNOTZERO>( vector<TSemanticValue> v )
 }
 
 template <>
-inline TSemanticValue selectMethod<DRAW_AVERAGE>( vector<TSemanticValue> v )
+inline TSemanticValue selectMethod<DRAW_AVERAGE>( vector<TSemanticValue>& v )
 {
   TSemanticValue avg = 0;
 
@@ -78,7 +78,7 @@ inline TSemanticValue selectMethod<DRAW_AVERAGE>( vector<TSemanticValue> v )
   return avg / v.size();
 }
 
-TSemanticValue DrawMode::selectValue( vector<TSemanticValue> v,
+TSemanticValue DrawMode::selectValue( vector<TSemanticValue>& v,
                                       DrawModeMethod method )
 {
   switch ( method )
