@@ -251,7 +251,7 @@ void TraceProxy::parsePCF( const string& whichFile )
   tmpColor.blue = grad->get_color3();
   myGradientColor.setBeginGradientColor( tmpColor );
 
-  grad = ( config->get_gradientColors() )[ config->get_gradientColors().size() ];
+  grad = ( config->get_gradientColors() )[ config->get_gradientColors().size() - 1];
   tmpColor.red = grad->get_color1();
   tmpColor.green = grad->get_color2();
   tmpColor.blue = grad->get_color3();
