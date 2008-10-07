@@ -89,7 +89,8 @@ int main( int argc, char *argv[] )
 
       if ( CFGLoader::loadCFG( myKernel, strCfg, trace, windows, histograms ) )
       {
-        if ( histograms[ histograms.size() - 1 ] != NULL )
+        if ( histograms.begin() != histograms.end() &&
+             histograms[ histograms.size() - 1 ] != NULL )
           dumpHistogram( histograms, strOutputFile );
         else
           dumpWindow( windows, strOutputFile );
