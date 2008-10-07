@@ -227,36 +227,42 @@ void TraceProxy::parsePCF( const string& whichFile )
   {
     config = new ParaverTraceConfig( whichFile );
   }
-  catch( ... )
+  catch ( ... )
   {
     return;
   }
 
   rgb tmpColor;
-  for ( vector<ParaverStatesColor *>::const_iterator it = config->get_statesColor().begin();
-        it != config->get_statesColor().end(); it++ )
+
+  if ( config->get_statesColor().begin() != config->get_statesColor().end() )
   {
-    tmpColor.red = (*it)->get_color1();
-    tmpColor.green = (*it)->get_color2();
-    tmpColor.blue = (*it)->get_color3();
-    if( (UINT32)(*it)->get_key() < myCodeColor.getNumColors() )
-      myCodeColor.setColor( (UINT32)(*it)->get_key(), tmpColor );
-    else
-      myCodeColor.addColor( tmpColor );
+    for ( vector<ParaverStatesColor *>::const_iterator it = config->get_statesColor().begin();
+          it != config->get_statesColor().end(); it++ )
+    {
+      tmpColor.red = ( *it )->get_color1();
+      tmpColor.green = ( *it )->get_color2();
+      tmpColor.blue = ( *it )->get_color3();
+      if ( ( UINT32 )( *it )->get_key() < myCodeColor.getNumColors() )
+        myCodeColor.setColor( ( UINT32 )( *it )->get_key(), tmpColor );
+      else
+        myCodeColor.addColor( tmpColor );
+    }
   }
 
-  ParaverGradientColor *grad = ( config->get_gradientColors() )[ 0 ];
-  tmpColor.red = grad->get_color1();
-  tmpColor.green = grad->get_color2();
-  tmpColor.blue = grad->get_color3();
-  myGradientColor.setBeginGradientColor( tmpColor );
+  if ( config->get_gradientColors().begin() != config->get_gradientColors().end() )
+  {
+    ParaverGradientColor *grad = ( config->get_gradientColors() )[ 0 ];
+    tmpColor.red = grad->get_color1();
+    tmpColor.green = grad->get_color2();
+    tmpColor.blue = grad->get_color3();
+    myGradientColor.setBeginGradientColor( tmpColor );
 
-  grad = ( config->get_gradientColors() )[ config->get_gradientColors().size() - 1];
-  tmpColor.red = grad->get_color1();
-  tmpColor.green = grad->get_color2();
-  tmpColor.blue = grad->get_color3();
-  myGradientColor.setEndGradientColor( tmpColor );
-
+    grad = ( config->get_gradientColors() )[ config->get_gradientColors().size() - 1 ];
+    tmpColor.red = grad->get_color1();
+    tmpColor.green = grad->get_color2();
+    tmpColor.blue = grad->get_color3();
+    myGradientColor.setEndGradientColor( tmpColor );
+  }
   delete config;
 }
 
