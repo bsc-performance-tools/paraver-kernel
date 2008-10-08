@@ -818,6 +818,8 @@ TTime BPlusTree::finish( TTime headerTime )
     tmpBegin.thread = i;
     tmpEnd.thread = i;
     tmpBegin.threadNext = unloadedTrace->getThreadBegin( i );
+    tmpBegin.threadPrev = NULL;
+    tmpEnd.threadNext = NULL;
     tmpEnd.threadPrev = unloadedTrace->getThreadEnd( i );
     emptyThreadBegin.push_back( tmpBegin );
     emptyThreadEnd.push_back( tmpEnd );
@@ -833,6 +835,8 @@ TTime BPlusTree::finish( TTime headerTime )
     tmpBegin.CPU = i;
     tmpEnd.CPU = i;
     tmpBegin.next = unloadedTrace->getCPUBegin( i );
+    tmpBegin.prev = NULL;
+    tmpEnd.next = NULL;
     tmpEnd.prev = unloadedTrace->getCPUEnd( i );
     emptyCPUBegin.push_back( tmpBegin );
     emptyCPUEnd.push_back( tmpEnd );

@@ -2,7 +2,7 @@
 #include "intervalthread.h"
 
 KRecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
-                                  KRecordList *displayList )
+                                   KRecordList *displayList )
 {
   createList = create;
   currentValue = 0.0;
