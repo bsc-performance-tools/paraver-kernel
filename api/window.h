@@ -119,15 +119,25 @@ class Window
     {}
     virtual void setDrawModeObject( DrawModeMethod method )
     {}
-    virtual DrawModeMethod getDrawModeObject()
+    virtual DrawModeMethod getDrawModeObject() const
     {
       return DRAW_MAXIMUM;
     }
     virtual void setDrawModeTime( DrawModeMethod method )
     {}
-    virtual DrawModeMethod getDrawModeTime()
+    virtual DrawModeMethod getDrawModeTime() const
     {
       return DRAW_MAXIMUM;
+    }
+    virtual CodeColor& getCodeColor()
+    {
+      CodeColor *tmp = NULL;
+      return *tmp;
+    }
+    virtual GradientColor& getGradientColor()
+    {
+      GradientColor *tmp = NULL;
+      return *tmp;
     }
   protected:
     KernelConnection *myKernel;
@@ -202,9 +212,11 @@ class WindowProxy: public Window
     virtual UINT16 getHeight() const;
     virtual void setHeight( UINT16 whichPos );
     virtual void setDrawModeObject( DrawModeMethod method );
-    virtual DrawModeMethod getDrawModeObject();
+    virtual DrawModeMethod getDrawModeObject() const;
     virtual void setDrawModeTime( DrawModeMethod method );
-    virtual DrawModeMethod getDrawModeTime();
+    virtual DrawModeMethod getDrawModeTime() const;
+    virtual CodeColor& getCodeColor();
+    virtual GradientColor& getGradientColor();
 
   private:
     Window *myWindow;

@@ -465,7 +465,7 @@ void WindowProxy::setDrawModeObject( DrawModeMethod method )
   drawModeObject = method;
 }
 
-DrawModeMethod WindowProxy::getDrawModeObject()
+DrawModeMethod WindowProxy::getDrawModeObject() const
 {
   return drawModeObject;
 }
@@ -475,7 +475,17 @@ void WindowProxy::setDrawModeTime( DrawModeMethod method )
   drawModeTime = method;
 }
 
-DrawModeMethod WindowProxy::getDrawModeTime()
+DrawModeMethod WindowProxy::getDrawModeTime() const
 {
   return drawModeTime;
+}
+
+CodeColor& WindowProxy::getCodeColor()
+{
+  return myCodeColor;
+}
+
+GradientColor& WindowProxy::getGradientColor()
+{
+  return myGradientColor;
 }
