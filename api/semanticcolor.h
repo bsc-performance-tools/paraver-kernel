@@ -85,9 +85,6 @@ class GradientColor: public SemanticColor
     rgb aboveOutlierColor;
     rgb belowOutlierColor;
 
-    TSemanticValue minYScale;
-    TSemanticValue maxYScale;
-
     double redStep;
     double greenStep;
     double blueStep;
