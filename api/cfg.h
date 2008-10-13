@@ -463,6 +463,20 @@ class WindowIdentifiers: public TagFunction
 };
 
 
+class WindowOpen: public TagFunction
+{
+  public:
+    WindowOpen()
+    {}
+    virtual ~WindowOpen()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+};
+
+
 class Analyzer2DCreate: public TagFunction
 {
   public:

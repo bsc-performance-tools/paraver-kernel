@@ -17,12 +17,12 @@
 
 using namespace std;
 
-class KWindow:public Window
+class KWindow: public Window
 {
   public:
     KWindow()
     {}
-    KWindow( KTrace *whichTrace ): myTrace( whichTrace )
+    KWindow( Trace *whichTrace ): myTrace( (KTrace*)whichTrace )
     {
       timeUnit = NS;
       level = THREAD;
@@ -35,13 +35,7 @@ class KWindow:public Window
       return NULL;
     }
 
-    virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue )
-    {}
-
-    virtual void setParent( UINT16 whichParent, Window *whichWindow )
-    {}
-
-    KTrace *getTrace() const
+    Trace *getTrace() const
     {
       return myTrace;
     }
@@ -152,7 +146,7 @@ class KSingleWindow: public KWindow
       timeUnit = NS;
     }
 
-    KSingleWindow( KTrace *whichTrace );
+    KSingleWindow( Trace *whichTrace );
 
     virtual ~KSingleWindow();
 
@@ -267,7 +261,7 @@ class KDerivedWindow: public KWindow
       parents.push_back( NULL );
     }
 
-    KDerivedWindow( KWindow *window1, KWindow *window2 )
+    KDerivedWindow( Window *window1, Window *window2 )
     {
       timeUnit = NS;
 
@@ -279,8 +273,8 @@ class KDerivedWindow: public KWindow
       functions[ 1 ] = NULL;
       functions[ 2 ] = NULL;
 
-      parents.push_back( window1 );
-      parents.push_back( window2 );
+      parents.push_back( (KWindow*)window1 );
+      parents.push_back( (KWindow*)window2 );
       setup();
     }
 
@@ -294,30 +288,10 @@ class KDerivedWindow: public KWindow
         delete functions[ 2 ];
     }
 
-    void setParent( UINT16 whichParent, KWindow *whichWindow )
-    {
-      parents[ whichParent ] = whichWindow;
-      if ( parents[ 0 ] != NULL && parents[ 1 ] != NULL )
-        setup();
-    }
+    virtual void setParent( UINT16 whichParent, Window *whichWindow );
+    virtual Window *getParent( UINT16 whichParent ) const;
 
-    KWindow *getParent( UINT16 whichParent ) const
-    {
-      return parents[whichParent];
-    }
-
-    virtual TWindowLevel getLevel() const
-    {
-      TWindowLevel tmp = NONE;
-
-      for ( UINT16 i = 0; i < parents.size(); i++ )
-      {
-        if ( parents[ i ]->getLevel() > tmp )
-          tmp = parents[ i ]->getLevel();
-      }
-
-      return tmp;
-    }
+    virtual TWindowLevel getLevel() const;
 
     virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    SemanticFunction *whichFunction );

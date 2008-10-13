@@ -177,6 +177,8 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_COMM_TAGSIZE]        = new WindowFilterBoolOpTagSize();
   cfgTagFunctions[OLDCFG_TAG_WNDW_TYPEVAL]             = new WindowFilterBoolOpTypeVal();
 
+  cfgTagFunctions[OLDCFG_TAG_WNDW_OPEN]                = new WindowOpen();
+
   // Histogram options
 
   cfgTagFunctions[OLDCFG_TAG_AN2D_NEW]                 = new Analyzer2DCreate();
@@ -1151,6 +1153,28 @@ bool WindowFilterBoolOpTypeVal::parseLine( KernelConnection *whichKernel, istrin
     filter->setOpTypeValueOr();
   else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     filter->setOpTypeValueAnd();
+  else
+    return false;
+
+  return true;
+}
+
+bool WindowOpen::parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+    windows[ windows.size() - 1 ]->setShowWindow( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+    windows[ windows.size() - 1 ]->setShowWindow( true );
   else
     return false;
 

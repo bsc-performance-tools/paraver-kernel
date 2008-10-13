@@ -172,6 +172,6 @@ TWindowLevel IntervalCPU::getComposeLevel( TWindowLevel whichLevel ) const
 
 KTrace *IntervalCPU::getWindowTrace() const
 {
-  return window->getTrace();
+  return (KTrace*)window->getTrace();
 }
 

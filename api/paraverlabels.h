@@ -52,6 +52,7 @@
 #define OLDCFG_TAG_WNDW_FROMTO "window_fromto"
 #define OLDCFG_TAG_WNDW_COMM_TAGSIZE "window_comm_tagsize"
 #define OLDCFG_TAG_WNDW_TYPEVAL "window_typeval"
+#define OLDCFG_TAG_WNDW_OPEN "window_open"
 #define OLDCFG_TAG_AN2D_NEW "< NEW ANALYZER2D >"
 #define OLDCFG_TAG_AN2D_NAME "Analyzer2D.Name:"
 #define OLDCFG_TAG_AN2D_X "Analyzer2D.X:"

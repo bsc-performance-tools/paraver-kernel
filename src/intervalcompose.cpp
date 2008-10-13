@@ -195,5 +195,5 @@ TWindowLevel IntervalCompose::getComposeLevel( TWindowLevel whichLevel ) const
 
 KTrace *IntervalCompose::getWindowTrace() const
 {
-  return window->getTrace();
+  return (KTrace*)window->getTrace();
 }

@@ -139,6 +139,12 @@ class Window
       GradientColor *tmp = NULL;
       return *tmp;
     }
+    virtual bool getShowWindow() const
+    {
+      return true;
+    }
+    virtual void setShowWindow( bool newValue )
+    {}
   protected:
     KernelConnection *myKernel;
 
@@ -217,6 +223,8 @@ class WindowProxy: public Window
     virtual DrawModeMethod getDrawModeTime() const;
     virtual CodeColor& getCodeColor();
     virtual GradientColor& getGradientColor();
+    virtual bool getShowWindow() const;
+    virtual void setShowWindow( bool newValue );
 
   private:
     Window *myWindow;
@@ -249,6 +257,7 @@ class WindowProxy: public Window
     GradientColor myGradientColor;
     DrawModeMethod drawModeObject;
     DrawModeMethod drawModeTime;
+    bool showWindow;
 
     // For Single Window
     WindowProxy( KernelConnection *whichKernel, Trace *whichTrace );

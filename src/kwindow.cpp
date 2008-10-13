@@ -119,7 +119,7 @@ RecordList *KWindow::getRecordList( TObjectOrder whichObject )
  *  KSingleWindow implementation
  **********************************************************************/
 
-KSingleWindow::KSingleWindow( KTrace *whichTrace ): KWindow( whichTrace )
+KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 {
   functions[ TOPCOMPOSE1 ] = new ComposeAsIs();
   functions[ TOPCOMPOSE2 ] = new ComposeAsIs();
@@ -481,7 +481,7 @@ Interval *KSingleWindow::getLevelInterval( TWindowLevel whichLevel,
 
 void KDerivedWindow::setup()
 {
-  myTrace = parents[ 0 ]->getTrace();
+  myTrace = (KTrace*)parents[ 0 ]->getTrace();
 
   if ( functions[ 0 ] == NULL )
     functions[ 0 ] = new ComposeAsIs();
@@ -669,4 +669,29 @@ Interval *KDerivedWindow::getLevelInterval( TWindowLevel whichLevel,
       return &intervalDerived[ whichOrder ];
   }
   return NULL;
+}
+
+void KDerivedWindow::setParent( UINT16 whichParent, Window *whichWindow )
+{
+  parents[ whichParent ] = (KWindow*)whichWindow;
+  if ( parents[ 0 ] != NULL && parents[ 1 ] != NULL )
+    setup();
+}
+
+Window *KDerivedWindow::getParent( UINT16 whichParent ) const
+{
+  return parents[whichParent];
+}
+
+TWindowLevel KDerivedWindow::getLevel() const
+{
+  TWindowLevel tmp = NONE;
+
+  for ( UINT16 i = 0; i < parents.size(); i++ )
+  {
+    if ( parents[ i ]->getLevel() > tmp )
+      tmp = parents[ i ]->getLevel();
+  }
+
+  return tmp;
 }

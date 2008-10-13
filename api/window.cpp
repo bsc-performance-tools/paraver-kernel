@@ -101,12 +101,12 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
 }
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel ):
-    Window( whichKernel )
+    Window( whichKernel ), myTrace( NULL )
 {
   parent1 = NULL;
   parent2 = NULL;
   myWindow = myKernel->newDerivedWindow();
-  init();
+//  init();
 }
 
 void WindowProxy::init()
@@ -124,6 +124,8 @@ void WindowProxy::init()
 
   drawModeObject = DRAW_MAXIMUM;
   drawModeTime = DRAW_MAXIMUM;
+
+  showWindow = true;
 }
 
 WindowProxy::~WindowProxy()
@@ -159,6 +161,11 @@ void WindowProxy::setParent( UINT16 whichParent, Window *whichWindow )
     else if ( whichParent == 1 )
       parent2 = whichWindow;
     myWindow->setParent( whichParent, whichWindow->getConcrete() );
+    if ( myTrace == NULL )
+    {
+      myTrace = whichWindow->getTrace();
+      init();
+    }
   }
 }
 
@@ -488,4 +495,14 @@ CodeColor& WindowProxy::getCodeColor()
 GradientColor& WindowProxy::getGradientColor()
 {
   return myGradientColor;
+}
+
+bool WindowProxy::getShowWindow() const
+{
+  return showWindow;
+}
+
+void WindowProxy::setShowWindow( bool newValue )
+{
+  showWindow = newValue;
 }

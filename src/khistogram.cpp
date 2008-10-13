@@ -17,7 +17,7 @@ RowsTranslator::RowsTranslator( vector<KWindow *>& kwindows )
     childInfo[ii].numRows = kwindows[ii]->getWindowLevelObjects();
     if ( !childInfo[ii].oneToOne )
     {
-      KTrace *auxTrace = kwindows[ii]->getTrace();
+      KTrace *auxTrace = (KTrace*)kwindows[ii]->getTrace();
       for ( TObjectOrder iRow = 0; iRow < kwindows[ii]->getWindowLevelObjects(); iRow++ )
       {
         pair< TObjectOrder, TObjectOrder > range;

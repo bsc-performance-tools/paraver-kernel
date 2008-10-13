@@ -15,7 +15,6 @@
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="-O2" />
 					<Add option="-Wall" />
 					<Add option="-g" />
 				</Compiler>
@@ -58,7 +57,6 @@
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="-O2" />
 					<Add option="-g" />
 					<Add directory="include" />
 					<Add directory="../common-files" />
@@ -74,7 +72,6 @@
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="-O2" />
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add directory="include" />
