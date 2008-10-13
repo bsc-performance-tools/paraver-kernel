@@ -145,6 +145,19 @@ class Window
     }
     virtual void setShowWindow( bool newValue )
     {}
+    virtual void setCodeColorMode()
+    {}
+    virtual void setGradientColorMode()
+    {}
+    virtual void allowOutOfScale( bool activate )
+    {}
+    virtual void allowOutliers( bool activate )
+    {}
+    virtual rgb calcColor( TSemanticValue whichValue, Window& whichWindow )
+    {
+      return SemanticColor::BACKGROUND;
+    }
+
   protected:
     KernelConnection *myKernel;
 
@@ -225,6 +238,11 @@ class WindowProxy: public Window
     virtual GradientColor& getGradientColor();
     virtual bool getShowWindow() const;
     virtual void setShowWindow( bool newValue );
+    virtual void setCodeColorMode();
+    virtual void setGradientColorMode();
+    virtual void allowOutOfScale( bool activate );
+    virtual void allowOutliers( bool activate );
+    virtual rgb calcColor( TSemanticValue whichValue, Window& whichWindow );
 
   private:
     Window *myWindow;
@@ -255,6 +273,7 @@ class WindowProxy: public Window
     string name;
     CodeColor myCodeColor;
     GradientColor myGradientColor;
+    bool codeColor;
     DrawModeMethod drawModeObject;
     DrawModeMethod drawModeTime;
     bool showWindow;

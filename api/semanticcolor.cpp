@@ -196,12 +196,12 @@ inline rgb GradientColor::getBelowOutlierColor() const
   return belowOutlierColor;
 }
 
-inline void GradientColor::allowOutliers( bool activate )
+void GradientColor::allowOutliers( bool activate )
 {
   drawOutlier = activate;
 }
 
-inline void GradientColor::allowOutOfScale( bool activate )
+void GradientColor::allowOutOfScale( bool activate )
 {
   drawOutOfScale = activate;
 }

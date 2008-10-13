@@ -142,6 +142,20 @@ class WindowHeight: public TagFunction
 };
 
 
+class WindowColorMode: public TagFunction
+{
+  public:
+    WindowColorMode()
+    {}
+    virtual ~WindowColorMode()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+};
+
+
 class WindowUnits: public TagFunction
 {
   public:
@@ -469,6 +483,34 @@ class WindowOpen: public TagFunction
     WindowOpen()
     {}
     virtual ~WindowOpen()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+};
+
+
+class WindowDrawMode: public TagFunction
+{
+  public:
+    WindowDrawMode()
+    {}
+    virtual ~WindowDrawMode()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+};
+
+
+class WindowDrawModeRows: public TagFunction
+{
+  public:
+    WindowDrawModeRows()
+    {}
+    virtual ~WindowDrawModeRows()
     {}
     virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
                             Trace *whichTrace,

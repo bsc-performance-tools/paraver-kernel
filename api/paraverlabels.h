@@ -29,6 +29,7 @@
 #define OLDCFG_TAG_WNDW_POSY      "window_position_y"
 #define OLDCFG_TAG_WNDW_WIDTH      "window_width"
 #define OLDCFG_TAG_WNDW_HEIGHT      "window_height"
+#define OLDCFG_TAG_WNDW_COLOR_MODE  "window_color_mode"
 #define OLDCFG_TAG_WNDW_UNITS     "window_units"
 #define OLDCFG_TAG_WNDW_OPERATION "window_operation"
 #define OLDCFG_TAG_WNDW_MAXIMUM_Y "window_maximum_y"
@@ -53,6 +54,8 @@
 #define OLDCFG_TAG_WNDW_COMM_TAGSIZE "window_comm_tagsize"
 #define OLDCFG_TAG_WNDW_TYPEVAL "window_typeval"
 #define OLDCFG_TAG_WNDW_OPEN "window_open"
+#define OLDCFG_TAG_WNDW_DRAW_MODE "window_drawmode"
+#define OLDCFG_TAG_WNDW_DRAW_MODE_ROWS "window_drawmode_rows"
 #define OLDCFG_TAG_AN2D_NEW "< NEW ANALYZER2D >"
 #define OLDCFG_TAG_AN2D_NAME "Analyzer2D.Name:"
 #define OLDCFG_TAG_AN2D_X "Analyzer2D.X:"
@@ -90,6 +93,16 @@
 #define OLDCFG_TAG_AN3D_MAXIMUM "Analyzer2D.3D_Maximum:"
 #define OLDCFG_TAG_AN3D_DELTA "Analyzer2D.3D_Delta:"
 #define OLDCFG_TAG_AN3D_FIXEDVALUE "Analyzer2D.3D_FixedValue:"
+
+#define OLDCFG_VAL_DRAW_MODE_LAST       "0"
+#define OLDCFG_VAL_DRAW_MODE_MAXIMUM    "1"
+#define OLDCFG_VAL_DRAW_MODE_MINNOT0    "2"
+#define OLDCFG_VAL_DRAW_MODE_RANDOM     "3"
+#define OLDCFG_VAL_DRAW_MODE_RANDOMNOT0 "4"
+#define OLDCFG_VAL_DRAW_MODE_AVERAGE    "5"
+
+#define OLDCFG_VAL_COLOR_MODE_GRADIENT  "window_in_gradient_mode"
+#define OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT  "window_in_null_gradient_mode"
 
 #define OLDCFG_VAL_TIMEUNIT_NS "Nanoseconds"
 #define OLDCFG_VAL_TIMEUNIT_US "Microseconds"

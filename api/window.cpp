@@ -121,6 +121,7 @@ void WindowProxy::init()
 
   myCodeColor = myTrace->getCodeColor();
   myGradientColor = myTrace->getGradientColor();
+  codeColor = true;
 
   drawModeObject = DRAW_MAXIMUM;
   drawModeTime = DRAW_MAXIMUM;
@@ -505,4 +506,32 @@ bool WindowProxy::getShowWindow() const
 void WindowProxy::setShowWindow( bool newValue )
 {
   showWindow = newValue;
+}
+
+void WindowProxy::setCodeColorMode()
+{
+  codeColor = true;
+}
+
+void WindowProxy::setGradientColorMode()
+{
+  codeColor = false;
+}
+
+void WindowProxy::allowOutOfScale( bool activate )
+{
+  myGradientColor.allowOutOfScale( activate );
+}
+
+void WindowProxy::allowOutliers( bool activate )
+{
+  myGradientColor.allowOutliers( activate );
+}
+
+rgb WindowProxy::calcColor( TSemanticValue whichValue, Window& whichWindow )
+{
+  if ( codeColor )
+    return myCodeColor.calcColor( whichValue, whichWindow );
+
+  return myGradientColor.calcColor( whichValue, whichWindow );
 }

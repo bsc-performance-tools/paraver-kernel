@@ -13,6 +13,7 @@
 #include "semanticfunction.h"
 #include "filter.h"
 #include "paraverlabels.h"
+#include "drawmode.h"
 
 using namespace std;
 
@@ -150,6 +151,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_WIDTH]               = new WindowWidth();
   cfgTagFunctions[OLDCFG_TAG_WNDW_HEIGHT]              = new WindowHeight();
   cfgTagFunctions[OLDCFG_TAG_WNDW_UNITS]               = new WindowUnits();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_COLOR_MODE]          = new WindowColorMode();
   cfgTagFunctions[OLDCFG_TAG_WNDW_OPERATION]           = new WindowOperation();
   cfgTagFunctions[OLDCFG_TAG_WNDW_MAXIMUM_Y]           = new WindowMaximumY();
   cfgTagFunctions[OLDCFG_TAG_WNDW_MINIMUM_Y]           = new WindowMinimumY();
@@ -178,6 +180,8 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_TYPEVAL]             = new WindowFilterBoolOpTypeVal();
 
   cfgTagFunctions[OLDCFG_TAG_WNDW_OPEN]                = new WindowOpen();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_DRAW_MODE]           = new WindowDrawMode();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_DRAW_MODE_ROWS]      = new WindowDrawModeRows();
 
   // Histogram options
 
@@ -403,6 +407,33 @@ bool WindowHeight::parseLine( KernelConnection *whichKernel, istringstream& line
     return false;
 
   windows[ windows.size() - 1 ]->setHeight( height );
+
+  return true;
+}
+
+
+bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& line,
+                             Trace *whichTrace,
+                             vector<Window *>& windows,
+                             vector<Histogram *>& histograms )
+{
+  string strMode;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strMode, ' ' );
+
+  if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_GRADIENT ) == 0 )
+  {
+    windows[ windows.size() - 1 ]->setGradientColorMode();
+    windows[ windows.size() - 1 ]->getGradientColor().allowOutOfScale( true );
+  }
+  else if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) == 0 )
+  {
+    windows[ windows.size() - 1 ]->setGradientColorMode();
+    windows[ windows.size() - 1 ]->getGradientColor().allowOutOfScale( false );
+  }
 
   return true;
 }
@@ -1177,6 +1208,62 @@ bool WindowOpen::parseLine( KernelConnection *whichKernel, istringstream& line,
     windows[ windows.size() - 1 ]->setShowWindow( true );
   else
     return false;
+
+  return true;
+}
+
+bool WindowDrawMode::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                Trace *whichTrace,
+                                vector<Window *>& windows,
+                                vector<Histogram *>& histograms )
+{
+  string strMode;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strMode, ' ' );
+
+  if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_LAST ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawModeTime( DRAW_LAST );
+  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_MAXIMUM ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawModeTime( DRAW_MAXIMUM );
+  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_MINNOT0 ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawModeTime( DRAW_MINNOTZERO );
+  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_RANDOM ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawModeTime( DRAW_RANDOM );
+  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_RANDOMNOT0 ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawModeTime( DRAW_RANDNOTZERO );
+  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_AVERAGE ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawModeTime( DRAW_AVERAGE );
+
+  return true;
+}
+
+bool WindowDrawModeRows::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                    Trace *whichTrace,
+                                    vector<Window *>& windows,
+                                    vector<Histogram *>& histograms )
+{
+  string strMode;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strMode, ' ' );
+
+  if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_LAST ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawModeObject( DRAW_LAST );
+  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_MAXIMUM ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawModeObject( DRAW_MAXIMUM );
+  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_MINNOT0 ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawModeObject( DRAW_MINNOTZERO );
+  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_RANDOM ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawModeObject( DRAW_RANDOM );
+  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_RANDOMNOT0 ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawModeObject( DRAW_RANDNOTZERO );
+  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_AVERAGE ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawModeObject( DRAW_AVERAGE );
 
   return true;
 }
