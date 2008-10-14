@@ -371,6 +371,67 @@ class DerivedMinimum: public SemanticDerived
 };
 
 
+class DerivedDifferent: public SemanticDerived
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    DerivedDifferent()
+    {
+      setDefaultParam();
+    }
+
+    ~DerivedDifferent()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+
+    virtual bool isControlDerived()
+    {
+      return controlDerived;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual void init( KWindow *whichWindow )
+    {}
+
+    virtual string getName()
+    {
+      return DerivedDifferent::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new DerivedDifferent( *this );
+    }
+
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return ( TParamValue ) 0;
+    }
+
+  private:
+    static const bool initFromBegin = false;
+    static const bool controlDerived = false;
+    static string name;
+
+};
+
+
 class ControlDerivedClearBy: public SemanticDerived
 {
   public:

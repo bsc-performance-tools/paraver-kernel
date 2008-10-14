@@ -80,6 +80,20 @@ TSemanticValue DerivedMinimum::execute( const SemanticInfo *info )
 }
 
 
+string DerivedDifferent::name = "different";
+TSemanticValue DerivedDifferent::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp = 0;
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+
+  tmp = myInfo->values[ 0 ] != myInfo->values[ 1 ] ?
+        1 :
+        0;
+
+  return tmp;
+}
+
+
 string ControlDerivedClearBy::name = "controlled: clear by";
 TSemanticValue ControlDerivedClearBy::execute( const SemanticInfo *info )
 {
