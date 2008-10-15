@@ -100,6 +100,9 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
 {
   stringstream label;
 
+  if( value == numeric_limits<double>::infinity() )
+    return "inf";
+
   if ( whichHisto->getScientificNotation() )
     label << scientific;
   else
