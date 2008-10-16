@@ -251,7 +251,7 @@ bool WindowName::parseLine( KernelConnection *whichKernel, istringstream& line,
 {
   string name;
 
-  getline( line, name, ' ' );
+  getline( line, name );
 
   currentWindowName = name;
 
@@ -267,7 +267,7 @@ bool WindowType::parseLine( KernelConnection *whichKernel, istringstream& line,
   string type;
   Window *tmpWin;
 
-  getline( line, type, ' ' );
+  getline( line, type );
   if ( type.compare( OLDCFG_VAL_WNDW_TYPE_SINGLE ) == 0 )
   {
     tmpWin = Window::create( whichKernel, whichTrace );
