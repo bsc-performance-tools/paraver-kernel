@@ -564,7 +564,7 @@ class AddObjectsI: public SemanticNotThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       else if ( whichParam == OBJECTS )
-        tmp.push_back( 1 );
+        tmp.push_back( 0 );
 
       return tmp;
     }
