@@ -248,6 +248,13 @@ class Histogram
       return getNumColumns();
     }
 
+    virtual bool getShowWindow() const
+    {
+      return true;
+    }
+    virtual void setShowWindow( bool newValue )
+    {}
+
   protected:
     KernelConnection *myKernel;
 
@@ -389,6 +396,9 @@ class HistogramProxy : public Histogram
     virtual UINT16 getHeight() const;
     virtual void setHeight( UINT16 whichPos );
 
+    virtual bool getShowWindow() const;
+    virtual void setShowWindow( bool newValue );
+
   private:
     string name;
 
@@ -410,6 +420,7 @@ class HistogramProxy : public Histogram
     double planeMinValue;
     INT32 selectedPlane;
     INT32 commSelectedPlane;
+    bool showWindow;
 
     TRecordTime winBeginTime;
     TRecordTime winEndTime;

@@ -47,6 +47,8 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
 
   setCalculateAll( Histogram::getCalculateAll() );
   currentStat = Histogram::getCurrentStat();
+
+  showWindow = true;
 }
 
 HistogramProxy::~HistogramProxy()
@@ -803,4 +805,14 @@ UINT16 HistogramProxy::getHeight() const
 void HistogramProxy::setHeight( UINT16 whichPos )
 {
   height = whichPos;
+}
+
+bool HistogramProxy::getShowWindow() const
+{
+  return showWindow;
+}
+
+void HistogramProxy::setShowWindow( bool newValue )
+{
+  showWindow = newValue;
 }
