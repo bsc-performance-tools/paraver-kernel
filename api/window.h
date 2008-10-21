@@ -82,7 +82,7 @@ class Window
       return NULL;
     }
 
-    virtual void setName( string& whichName )
+    virtual void setName( const string& whichName )
     {}
 
     virtual string getName() const
@@ -220,7 +220,7 @@ class WindowProxy: public Window
     virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime );
 
     virtual Window *getConcrete() const;
-    virtual void setName( string& whichName );
+    virtual void setName( const string& whichName );
     virtual string getName() const;
     virtual UINT16 getPosX() const;
     virtual void setPosX( UINT16 whichPos );

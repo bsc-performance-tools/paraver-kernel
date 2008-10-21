@@ -418,7 +418,7 @@ Window *WindowProxy::getConcrete() const
   return myWindow;
 }
 
-void WindowProxy::setName( string& whichName )
+void WindowProxy::setName( const string& whichName )
 {
   name = whichName;
 }
