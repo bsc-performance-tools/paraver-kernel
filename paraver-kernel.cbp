@@ -9,7 +9,7 @@
 		<Option virtualFolders="paraver-kernel/src/;" />
 		<Build>
 			<Target title="Debug">
-				<Option output="libparaver-kernel" prefix_auto="1" extension_auto="1" />
+				<Option output="libparaver-kernel.so" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -20,7 +20,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="libparaver-kernel" prefix_auto="1" extension_auto="1" />
+				<Option output="libparaver-kernel.so" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -52,12 +52,13 @@
 				</Linker>
 			</Target>
 			<Target title="api">
-				<Option output="libapi" prefix_auto="1" extension_auto="1" />
+				<Option output="libapi.so" prefix_auto="1" extension_auto="1" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-g" />
+					<Add option="-DBOOST_SPIRIT_DEBUG" />
 					<Add directory="include" />
 					<Add directory="../common-files" />
 				</Compiler>
@@ -66,7 +67,7 @@
 				</Linker>
 			</Target>
 			<Target title="cfg">
-				<Option output="libcfg" prefix_auto="1" extension_auto="1" />
+				<Option output="libcfg.so" prefix_auto="1" extension_auto="1" />
 				<Option external_deps="libparaver-kernel.a;libapi.a;" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -237,6 +238,12 @@
 		<Unit filename="api/paraverlabels.h" />
 		<Unit filename="api/paravertypes.h">
 			<Option target="api" />
+		</Unit>
+		<Unit filename="api/previousfiles.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/previousfiles.h">
+			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="api/recordlist.cpp">
 			<Option target="api" />
@@ -848,8 +855,6 @@
 				<search_path add="/usr/include/c++/4.1.1" />
 				<search_path add="/usr/include" />
 			</code_completion>
-			<envvars />
-			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
