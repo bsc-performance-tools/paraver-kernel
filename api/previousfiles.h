@@ -15,6 +15,7 @@ class PreviousFiles
     ~PreviousFiles();
 
     bool add( string newFile );
+    const set<string>& getFiles() const;
 
   private:
     static const UINT16 SIZE = 20;

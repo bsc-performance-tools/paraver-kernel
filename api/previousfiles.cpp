@@ -70,3 +70,7 @@ bool PreviousFiles::add( string newFile )
   return update();
 }
 
+const set<string>& PreviousFiles::getFiles() const
+{
+  return listFiles;
+}
