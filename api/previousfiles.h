@@ -4,25 +4,38 @@
 #include <string>
 #include <fstream>
 using namespace std;
-#include <set>
+#include <vector>
 
 #include "paraverkerneltypes.h"
 
 class PreviousFiles
 {
   public:
-    PreviousFiles( const string &filename );
+    static PreviousFiles *createPreviousTraces()
+    {
+      return new PreviousFiles( previousTracesFile );
+    }
+    static PreviousFiles *createPreviousCFGs()
+    {
+      return new PreviousFiles( previousCFGsFile );
+    }
+
     ~PreviousFiles();
 
     bool add( string newFile );
-    const set<string>& getFiles() const;
+    const vector<string>& getFiles() const;
+
+    static const string previousTracesFile;
+    static const string previousCFGsFile;
 
   private:
+    PreviousFiles( const string &filename );
+
     static const UINT16 SIZE = 20;
 
     fstream myFile;
     string  myFileName;
-    set < string > listFiles;
+    vector< string > listFiles;
 
     void create();
     bool update();

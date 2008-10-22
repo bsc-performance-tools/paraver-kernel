@@ -1,11 +1,17 @@
 #include "previousfiles.h"
 
-PreviousFiles::PreviousFiles( const string &filename ): myFileName( filename )
+const string PreviousFiles::previousTracesFile = "/.paraver/paraverdb";
+const string PreviousFiles::previousCFGsFile = "/.paraver/paravercfgdb";
+
+PreviousFiles::PreviousFiles( const string &filename )
 {
   fstream myFile;
 
+  myFileName.append( getenv( "HOME" ) );
+  myFileName.append( filename );
   myFile.open( myFileName.c_str(), ios::in );
-  if ( !myFile.fail() )
+
+  if ( !myFile )
     throw exception();
   else
   {
@@ -31,9 +37,11 @@ void PreviousFiles::read( fstream &myFile )
     string strLine;
 
     getline( myFile, strLine );
-    listFiles.insert( strLine );
-
-    lines ++;
+    if( strLine[ 0 ] != '#' &&  strLine != "" )
+    {
+      listFiles.push_back( strLine );
+      lines++;
+    }
   }
 }
 
@@ -42,11 +50,11 @@ bool PreviousFiles::update( )
 {
   fstream myFile;
 
-  myFile.open(  myFileName.c_str(), ios::out );
-  if ( !myFile.fail() )
+  myFile.open( myFileName.c_str(), ios::out );
+  if ( !myFile )
     return false;
 
-  for ( set<string>::iterator it = listFiles.begin(); it != listFiles.end(); it++ )
+  for ( vector<string>::iterator it = listFiles.begin(); it != listFiles.end(); it++ )
     myFile << *it << endl;
 
   myFile.close();
@@ -57,20 +65,26 @@ bool PreviousFiles::update( )
 
 bool PreviousFiles::add( string newFile )
 {
-  set<string>::iterator it = listFiles.find( newFile );
+  vector<string> v;
 
-  if ( it != listFiles.end() )
-      listFiles.erase( it );
+  v.push_back( newFile );
+  for ( vector<string>::iterator it = v.begin(); it != v.end(); it++ )
+  {
+    if ( *it != newFile && v.size() <= SIZE )
+       v.push_back( *it );
+  }
 
-  listFiles.insert( listFiles.begin(), newFile );
-
-  if ( listFiles.size() > SIZE )
-    listFiles.erase( --listFiles.end() );
-
+  v.swap( listFiles );
+/*
+  for ( vector<string>::iterator it = listFiles.begin(); it != listFiles.end(); it++ )
+  {
+    printf("en el swqp %s\n", (*it).c_str());
+  }
+*/
   return update();
 }
 
-const set<string>& PreviousFiles::getFiles() const
+const vector<string>& PreviousFiles::getFiles() const
 {
   return listFiles;
 }
