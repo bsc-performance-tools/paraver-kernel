@@ -127,6 +127,7 @@ void WindowProxy::init()
   drawModeTime = DRAW_MAXIMUM;
 
   showWindow = true;
+  changed = false;
 }
 
 WindowProxy::~WindowProxy()
@@ -534,4 +535,14 @@ rgb WindowProxy::calcColor( TSemanticValue whichValue, Window& whichWindow )
     return myCodeColor.calcColor( whichValue, whichWindow );
 
   return myGradientColor.calcColor( whichValue, whichWindow );
+}
+
+bool WindowProxy::getChanged() const
+{
+  return changed;
+}
+
+void WindowProxy::setChanged( bool newValue )
+{
+  changed = newValue;
 }

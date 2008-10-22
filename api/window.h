@@ -157,7 +157,12 @@ class Window
     {
       return SemanticColor::BACKGROUND;
     }
-
+    virtual bool getChanged() const
+    {
+      return false;
+    }
+    virtual void setChanged( bool newValue )
+    {}
   protected:
     KernelConnection *myKernel;
 
@@ -243,6 +248,8 @@ class WindowProxy: public Window
     virtual void allowOutOfScale( bool activate );
     virtual void allowOutliers( bool activate );
     virtual rgb calcColor( TSemanticValue whichValue, Window& whichWindow );
+    virtual bool getChanged() const;
+    virtual void setChanged( bool newValue );
 
   private:
     Window *myWindow;
@@ -277,6 +284,7 @@ class WindowProxy: public Window
     DrawModeMethod drawModeObject;
     DrawModeMethod drawModeTime;
     bool showWindow;
+    bool changed;
 
     // For Single Window
     WindowProxy( KernelConnection *whichKernel, Trace *whichTrace );

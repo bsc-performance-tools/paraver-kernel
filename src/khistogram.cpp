@@ -1139,3 +1139,12 @@ string KHistogram::getUnitsLabel( const string& whichStat ) const
          ->getFunction( whichStat )->getUnits( this );
 }
 
+void KHistogram::getGroupsLabels( vector<string>& onVector ) const
+{
+  FunctionManagement<HistogramStatistic *>::getInstance()->getNameGroups( onVector );
+}
+
+void KHistogram::getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const
+{
+
+}

@@ -49,6 +49,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   currentStat = Histogram::getCurrentStat();
 
   showWindow = true;
+  changed = false;
 }
 
 HistogramProxy::~HistogramProxy()
@@ -815,4 +816,24 @@ bool HistogramProxy::getShowWindow() const
 void HistogramProxy::setShowWindow( bool newValue )
 {
   showWindow = newValue;
+}
+
+bool HistogramProxy::getChanged() const
+{
+  return changed;
+}
+
+void HistogramProxy::setChanged( bool newValue )
+{
+  changed = newValue;
+}
+
+void HistogramProxy::getGroupsLabels( vector<string>& onVector ) const
+{
+  myHisto->getGroupsLabels( onVector );
+}
+
+void HistogramProxy::getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const
+{
+  myHisto->getStatisticsLabels( onVector, whichGroup );
 }

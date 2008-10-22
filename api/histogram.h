@@ -104,6 +104,9 @@ class Histogram
 
     virtual string getUnitsLabel( const string& whichStat ) const = 0;
 
+    virtual void getGroupsLabels( vector<string>& onVector ) const = 0;
+    virtual void getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const = 0;
+
     // Specific methods of HistogramProxy
     virtual UINT16 getPosX() const
     {
@@ -219,40 +222,40 @@ class Histogram
     {
       return "Unamed plane";
     }
-
     virtual void setName( const string& whichName ) {}
     virtual string getName() const
     {
       return "Unamed histogram";
     }
-
     virtual void setCalculateAll( bool status ) {}
     virtual bool getCalculateAll() const
     {
       return true;
     }
-
     virtual bool getIdStat( const string& whichStat, UINT16& idStat ) const
     {
       return false;
     }
-
     virtual void setCurrentStat( const string& whichStat ) {}
     virtual string getCurrentStat() const
     {
       return "";
     }
-
     virtual THistogramColumn getNumColumns( const string& whichStat ) const
     {
       return getNumColumns();
     }
-
     virtual bool getShowWindow() const
     {
       return true;
     }
     virtual void setShowWindow( bool newValue )
+    {}
+    virtual bool getChanged() const
+    {
+      return false;
+    }
+    virtual void setChanged( bool newValue )
     {}
 
   protected:
@@ -386,6 +389,8 @@ class HistogramProxy : public Histogram
     bool itsCommunicationStat( const string& whichStat ) const;
 
     string getUnitsLabel( const string& whichStat ) const;
+    virtual void getGroupsLabels( vector<string>& onVector ) const;
+    virtual void getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const;
 
     virtual UINT16 getPosX() const;
     virtual void setPosX( UINT16 whichPos );
@@ -395,9 +400,10 @@ class HistogramProxy : public Histogram
     virtual void setWidth( UINT16 whichPos );
     virtual UINT16 getHeight() const;
     virtual void setHeight( UINT16 whichPos );
-
     virtual bool getShowWindow() const;
     virtual void setShowWindow( bool newValue );
+    virtual bool getChanged() const;
+    virtual void setChanged( bool newValue );
 
   private:
     string name;
@@ -421,6 +427,7 @@ class HistogramProxy : public Histogram
     INT32 selectedPlane;
     INT32 commSelectedPlane;
     bool showWindow;
+    bool changed;
 
     TRecordTime winBeginTime;
     TRecordTime winEndTime;

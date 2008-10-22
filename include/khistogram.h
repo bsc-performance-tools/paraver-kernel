@@ -171,6 +171,9 @@ class KHistogram : public Histogram
 
     void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime );
 
+    void getGroupsLabels( vector<string>& onVector ) const;
+    void getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const;
+
   protected:
 
   private:
