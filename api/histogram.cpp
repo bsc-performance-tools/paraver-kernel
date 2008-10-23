@@ -759,7 +759,7 @@ bool HistogramProxy::getIdStat( const string& whichStat, UINT16& idStat ) const
 void HistogramProxy::setCurrentStat( const string& whichStat )
 {
   currentStat = whichStat;
-  if( !calculateAll )
+  if ( !calculateAll )
   {
     clearStatistics();
     pushbackStatistic( whichStat );
@@ -854,4 +854,14 @@ string HistogramProxy::getFirstStatistic() const
 string HistogramProxy::getFirstCommStatistic() const
 {
   return myHisto->getFirstCommStatistic();
+}
+
+bool HistogramProxy::getRedraw() const
+{
+  return redraw;
+}
+
+void HistogramProxy::setRedraw( bool newValue )
+{
+  redraw = newValue;
 }
