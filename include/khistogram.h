@@ -163,7 +163,7 @@ class KHistogram : public Histogram
     HistogramTotals *getCommRowTotals() const;
 
     void clearStatistics();
-    void pushbackStatistic( string& whichStatistic );
+    void pushbackStatistic( const string& whichStatistic );
 
     bool itsCommunicationStat( const string& whichStat ) const;
 
@@ -173,6 +173,8 @@ class KHistogram : public Histogram
 
     void getGroupsLabels( vector<string>& onVector ) const;
     void getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const;
+    string getFirstStatistic() const;
+    string getFirstCommStatistic() const;
 
   protected:
 

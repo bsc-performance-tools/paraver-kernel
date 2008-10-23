@@ -120,5 +120,5 @@ template <class T>
 void FunctionManagement<T>::getAll( vector<string>& onVector, UINT32 whichGroup ) const
 {
   for ( UINT32 iObject = 0; iObject < groups[ whichGroup ].size(); iObject++ )
-    onVector.push_back( groups[ whichGroup ][ iObject ]->getName() );
+    onVector.push_back( ( groups[ whichGroup ][ iObject ] )->getName() );
 }

@@ -609,10 +609,11 @@ inline void KHistogram::clearStatistics()
     delete *it;
     it++;
   }
+  commStatisticFunctions.clear();
 }
 
 
-inline void KHistogram::pushbackStatistic( string& whichStatistic )
+inline void KHistogram::pushbackStatistic( const string& whichStatistic )
 {
   HistogramStatistic *stat;
 
@@ -1141,10 +1142,24 @@ string KHistogram::getUnitsLabel( const string& whichStat ) const
 
 void KHistogram::getGroupsLabels( vector<string>& onVector ) const
 {
-  FunctionManagement<HistogramStatistic *>::getInstance()->getNameGroups( onVector );
+  FunctionManagement<HistogramStatistic>::getInstance()->getNameGroups( onVector );
 }
 
 void KHistogram::getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const
 {
+  FunctionManagement<HistogramStatistic>::getInstance()->getAll( onVector, whichGroup );
+}
 
+string KHistogram::getFirstStatistic() const
+{
+  vector<string> v;
+  FunctionManagement<HistogramStatistic>::getInstance()->getAll( v, 1 );
+  return v[ 0 ];
+}
+
+string KHistogram::getFirstCommStatistic() const
+{
+  vector<string> v;
+  FunctionManagement<HistogramStatistic>::getInstance()->getAll( v, 0 );
+  return v[ 0 ];
 }

@@ -96,7 +96,7 @@ class Histogram
     virtual HistogramTotals *getCommRowTotals() const = 0;
 
     virtual void clearStatistics() = 0;
-    virtual void pushbackStatistic( string& whichStatistic ) = 0;
+    virtual void pushbackStatistic( const string& whichStatistic ) = 0;
 
     virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime ) = 0;
 
@@ -106,6 +106,8 @@ class Histogram
 
     virtual void getGroupsLabels( vector<string>& onVector ) const = 0;
     virtual void getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const = 0;
+    virtual string getFirstStatistic() const = 0;
+    virtual string getFirstCommStatistic() const = 0;
 
     // Specific methods of HistogramProxy
     virtual UINT16 getPosX() const
@@ -342,7 +344,7 @@ class HistogramProxy : public Histogram
     virtual HistogramTotals *getCommRowTotals() const;
 
     virtual void clearStatistics();
-    virtual void pushbackStatistic( string& whichStatistic );
+    virtual void pushbackStatistic( const string& whichStatistic );
 
     virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime );
 
@@ -391,6 +393,8 @@ class HistogramProxy : public Histogram
     string getUnitsLabel( const string& whichStat ) const;
     virtual void getGroupsLabels( vector<string>& onVector ) const;
     virtual void getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const;
+    virtual string getFirstStatistic() const;
+    virtual string getFirstCommStatistic() const;
 
     virtual UINT16 getPosX() const;
     virtual void setPosX( UINT16 whichPos );

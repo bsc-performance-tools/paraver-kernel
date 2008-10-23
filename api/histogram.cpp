@@ -5,7 +5,7 @@
 #include "histogramtotals.h"
 #include "paraverconfig.h"
 #include "labelconstructor.h"
-
+#include <iostream>
 Histogram *Histogram::create( KernelConnection *whichKernel )
 {
   return new HistogramProxy( whichKernel );
@@ -408,9 +408,10 @@ void HistogramProxy::clearStatistics()
 {
   myHisto->clearStatistics();
   calcStat.clear();
+  commCalcStat.clear();
 }
 
-void HistogramProxy::pushbackStatistic( string& whichStatistic )
+void HistogramProxy::pushbackStatistic( const string& whichStatistic )
 {
   myHisto->pushbackStatistic( whichStatistic );
   if ( itsCommunicationStat( whichStatistic ) )
@@ -722,6 +723,8 @@ void HistogramProxy::setCalculateAll( bool status )
     for ( vector<string>::iterator it = vStat.begin(); it != vStat.end(); it++ )
       pushbackStatistic( *it );
   }
+  else
+    pushbackStatistic( currentStat );
 }
 
 bool HistogramProxy::getCalculateAll() const
@@ -756,6 +759,11 @@ bool HistogramProxy::getIdStat( const string& whichStat, UINT16& idStat ) const
 void HistogramProxy::setCurrentStat( const string& whichStat )
 {
   currentStat = whichStat;
+  if( !calculateAll )
+  {
+    clearStatistics();
+    pushbackStatistic( whichStat );
+  }
 }
 
 string HistogramProxy::getCurrentStat() const
@@ -836,4 +844,14 @@ void HistogramProxy::getGroupsLabels( vector<string>& onVector ) const
 void HistogramProxy::getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const
 {
   myHisto->getStatisticsLabels( onVector, whichGroup );
+}
+
+string HistogramProxy::getFirstStatistic() const
+{
+  return myHisto->getFirstStatistic();
+}
+
+string HistogramProxy::getFirstCommStatistic() const
+{
+  return myHisto->getFirstCommStatistic();
 }
