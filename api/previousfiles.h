@@ -22,7 +22,7 @@ class PreviousFiles
 
     ~PreviousFiles();
 
-    bool add( string newFile );
+    bool add( const string &newFile );
     const vector<string>& getFiles() const;
 
     static const string previousTracesFile;

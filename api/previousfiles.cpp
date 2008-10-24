@@ -9,6 +9,8 @@ PreviousFiles::PreviousFiles( const string &filename )
 
   myFileName.append( getenv( "HOME" ) );
   myFileName.append( filename );
+  myFile.open( myFileName.c_str(), ios::out | ios::app );
+  myFile.close();
   myFile.open( myFileName.c_str(), ios::in );
 
   if ( !myFile )
@@ -63,12 +65,12 @@ bool PreviousFiles::update( )
 }
 
 
-bool PreviousFiles::add( string newFile )
+bool PreviousFiles::add( const string &newFile )
 {
   vector<string> v;
 
   v.push_back( newFile );
-  for ( vector<string>::iterator it = v.begin(); it != v.end(); it++ )
+  for ( vector<string>::iterator it = listFiles.begin(); it != listFiles.end(); it++ )
   {
     if ( *it != newFile && v.size() <= SIZE )
        v.push_back( *it );
