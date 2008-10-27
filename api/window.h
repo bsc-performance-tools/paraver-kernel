@@ -163,6 +163,12 @@ class Window
     }
     virtual void setChanged( bool newValue )
     {}
+    virtual bool getRedraw() const
+    {
+      return false;
+    }
+    virtual void setRedraw( bool newValue )
+    {}
   protected:
     KernelConnection *myKernel;
 
@@ -250,6 +256,8 @@ class WindowProxy: public Window
     virtual rgb calcColor( TSemanticValue whichValue, Window& whichWindow );
     virtual bool getChanged() const;
     virtual void setChanged( bool newValue );
+    virtual bool getRedraw() const;
+    virtual void setRedraw( bool newValue );
 
   private:
     Window *myWindow;
@@ -285,6 +293,7 @@ class WindowProxy: public Window
     DrawModeMethod drawModeTime;
     bool showWindow;
     bool changed;
+    bool redraw;
 
     // For Single Window
     WindowProxy( KernelConnection *whichKernel, Trace *whichTrace );

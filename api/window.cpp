@@ -128,6 +128,7 @@ void WindowProxy::init()
 
   showWindow = true;
   changed = false;
+  redraw = false;
 }
 
 WindowProxy::~WindowProxy()
@@ -545,4 +546,14 @@ bool WindowProxy::getChanged() const
 void WindowProxy::setChanged( bool newValue )
 {
   changed = newValue;
+}
+
+bool WindowProxy::getRedraw() const
+{
+  return redraw;
+}
+
+void WindowProxy::setRedraw( bool newValue )
+{
+  redraw = newValue;
 }

@@ -50,6 +50,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
 
   showWindow = true;
   changed = false;
+  redraw = false;
 }
 
 HistogramProxy::~HistogramProxy()
