@@ -265,7 +265,12 @@ class Histogram
     }
     virtual void setRedraw( bool newValue )
     {}
-
+    virtual bool getRecalc() const
+    {
+      return false;
+    }
+    virtual void setRecalc( bool newValue )
+    {}
   protected:
     KernelConnection *myKernel;
 
@@ -416,6 +421,8 @@ class HistogramProxy : public Histogram
     virtual void setChanged( bool newValue );
     virtual bool getRedraw() const;
     virtual void setRedraw( bool newValue );
+    virtual bool getRecalc() const;
+    virtual void setRecalc( bool newValue );
 
   private:
     string name;
@@ -441,6 +448,7 @@ class HistogramProxy : public Histogram
     bool showWindow;
     bool changed;
     bool redraw;
+    bool recalc;
 
     TRecordTime winBeginTime;
     TRecordTime winEndTime;

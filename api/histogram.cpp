@@ -51,6 +51,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   showWindow = true;
   changed = false;
   redraw = false;
+  recalc = false;
 }
 
 HistogramProxy::~HistogramProxy()
@@ -865,4 +866,14 @@ bool HistogramProxy::getRedraw() const
 void HistogramProxy::setRedraw( bool newValue )
 {
   redraw = newValue;
+}
+
+bool HistogramProxy::getRecalc() const
+{
+  return recalc;
+}
+
+void HistogramProxy::setRecalc( bool newValue )
+{
+  recalc = newValue;
 }
