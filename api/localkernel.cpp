@@ -7,6 +7,7 @@
 #include "statisticmanagement.h"
 #include "functionmanagement.h"
 #include "krecordlist.h"
+#include "kprogresscontroller.h"
 
 void LocalKernel::init()
 {
@@ -56,6 +57,11 @@ Histogram *LocalKernel::newHistogram() const
 {
   return new KRecordList();
 }*/
+
+ProgressController *LocalKernel::newProgressController() const
+{
+  return new KProgressController();
+}
 
 void LocalKernel::getAllStatistics( vector<string>& onVector ) const
 {

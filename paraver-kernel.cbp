@@ -9,7 +9,7 @@
 		<Option virtualFolders="paraver-kernel/src/;" />
 		<Build>
 			<Target title="Debug">
-				<Option output="libparaver-kernel.so" prefix_auto="1" extension_auto="1" />
+				<Option output="libparaver-kernel" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -20,7 +20,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="libparaver-kernel.so" prefix_auto="1" extension_auto="1" />
+				<Option output="libparaver-kernel" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -52,7 +52,7 @@
 				</Linker>
 			</Target>
 			<Target title="api">
-				<Option output="libapi.so" prefix_auto="1" extension_auto="1" />
+				<Option output="libapi" prefix_auto="1" extension_auto="1" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -66,7 +66,7 @@
 				</Linker>
 			</Target>
 			<Target title="cfg">
-				<Option output="libcfg.so" prefix_auto="1" extension_auto="1" />
+				<Option output="libcfg" prefix_auto="1" extension_auto="1" />
 				<Option external_deps="libparaver-kernel.a;libapi.a;" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -244,6 +244,15 @@
 		<Unit filename="api/previousfiles.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="api/progresscontroller.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/progresscontroller.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="api" />
+			<Option target="paramedir" />
+		</Unit>
 		<Unit filename="api/recordlist.cpp">
 			<Option target="api" />
 		</Unit>
@@ -420,6 +429,10 @@
 			<Option target="Application test" />
 			<Option target="cfg" />
 			<Option target="paramedir" />
+		</Unit>
+		<Unit filename="include/kprogresscontroller.h">
+			<Option target="Debug" />
+			<Option target="Release" />
 		</Unit>
 		<Unit filename="include/krecordlist.h">
 			<Option target="Debug" />
@@ -756,6 +769,10 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="src/kprogresscontroller.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="src/krecordlist.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -854,6 +871,8 @@
 				<search_path add="/usr/include/c++/4.1.1" />
 				<search_path add="/usr/include" />
 			</code_completion>
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
