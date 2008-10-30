@@ -3,22 +3,25 @@
 #include "pcfparser/ParaverTraceConfig.h"
 #include "pcfparser/ParaverStatesColor.h"
 #include "pcfparser/ParaverGradientColor.h"
+#include "progresscontroller.h"
 
 using namespace domain;
 
-Trace *Trace::create( KernelConnection *whichKernel, const string& whichFile )
+Trace *Trace::create( KernelConnection *whichKernel, const string& whichFile,
+                      ProgressController *progress )
 {
-  return new TraceProxy( whichKernel, whichFile );
+  return new TraceProxy( whichKernel, whichFile, progress );
 }
 
 Trace::Trace( KernelConnection *whichKernel ):
     myKernel( whichKernel )
 {}
 
-TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile ):
+TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile,
+                        ProgressController *progress ):
     Trace( whichKernel )
 {
-  myTrace = myKernel->newTrace( whichFile );
+  myTrace = myKernel->newTrace( whichFile, progress );
   string pcfFile( whichFile.substr( 0, whichFile.length() - 3 ) );
   pcfFile.append( "pcf" );
   parsePCF( pcfFile );

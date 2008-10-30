@@ -37,6 +37,20 @@ bool NotCompressed::eof()
   return file.eof();
 }
 
+void NotCompressed::seekbegin()
+{
+  file.seekg( 0, ios_base::beg );
+}
+
+void NotCompressed::seekend()
+{
+  file.seekg( 0, ios_base::end );
+}
+
+double NotCompressed::tellg()
+{
+  return file.tellg();
+}
 
 Compressed::Compressed( const string& filename )
 {
@@ -64,3 +78,17 @@ bool Compressed::eof()
   return gzeof( file );
 }
 
+void Compressed::seekbegin()
+{
+  gzseek( file, 0, SEEK_SET );
+}
+
+void Compressed::seekend()
+{
+  gzseek( file, 0, SEEK_END );
+}
+
+double Compressed::tellg()
+{
+  return gztell( file );
+}

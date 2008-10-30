@@ -4,6 +4,7 @@
 #include "traceheaderexception.h"
 #include "tracebodyio_v1.h"
 #include "tracestream.h"
+#include "kprogresscontroller.h"
 
 using namespace std;
 
@@ -25,15 +26,15 @@ TTaskOrder KTrace::totalTasks() const
 
 
 TTaskOrder KTrace::getGlobalTask( const TApplOrder& inAppl,
-                                 const TTaskOrder& inTask ) const
+                                  const TTaskOrder& inTask ) const
 {
   return traceProcessModel.getGlobalTask( inAppl, inTask );
 }
 
 
 void KTrace::getTaskLocation( TTaskOrder globalTask,
-                             TApplOrder& inAppl,
-                             TTaskOrder& inTask ) const
+                              TApplOrder& inAppl,
+                              TTaskOrder& inTask ) const
 {
   traceProcessModel.getTaskLocation( globalTask, inAppl, inTask );
 }
@@ -58,17 +59,17 @@ TThreadOrder KTrace::totalThreads() const
 
 
 TThreadOrder KTrace::getGlobalThread( const TApplOrder& inAppl,
-                                     const TTaskOrder& inTask,
-                                     const TThreadOrder& inThread ) const
+                                      const TTaskOrder& inTask,
+                                      const TThreadOrder& inThread ) const
 {
   return traceProcessModel.getGlobalThread( inAppl, inTask, inThread );
 }
 
 
 void KTrace::getThreadLocation( TThreadOrder globalThread,
-                               TApplOrder& inAppl,
-                               TTaskOrder& inTask,
-                               TThreadOrder& inThread ) const
+                                TApplOrder& inAppl,
+                                TTaskOrder& inTask,
+                                TThreadOrder& inThread ) const
 {
   traceProcessModel.getThreadLocation( globalThread, inAppl, inTask, inThread );
 }
@@ -105,15 +106,15 @@ TCPUOrder KTrace::totalCPUs() const
 
 
 TCPUOrder KTrace::getGlobalCPU( const TNodeOrder& inNode,
-                               const TCPUOrder& inCPU ) const
+                                const TCPUOrder& inCPU ) const
 {
   return traceResourceModel.getGlobalCPU( inNode, inCPU );
 }
 
 
 void KTrace::getCPULocation( TCPUOrder globalCPU,
-                            TNodeOrder& inNode,
-                            TCPUOrder& inCPU ) const
+                             TNodeOrder& inNode,
+                             TCPUOrder& inCPU ) const
 {
   traceResourceModel.getCPULocation( globalCPU, inNode, inCPU );
 }
@@ -133,8 +134,8 @@ TCPUOrder KTrace::getLastCPU( TNodeOrder inNode ) const
 
 // PRECOND: fromLevel > toLevel
 TObjectOrder KTrace::getFirst( TObjectOrder globalOrder,
-                              TWindowLevel fromLevel,
-                              TWindowLevel toLevel  ) const
+                               TWindowLevel fromLevel,
+                               TWindowLevel toLevel  ) const
 {
   if ( fromLevel == WORKLOAD || fromLevel == SYSTEM )
   {
@@ -164,8 +165,8 @@ TObjectOrder KTrace::getFirst( TObjectOrder globalOrder,
 
 
 TObjectOrder KTrace::getLast( TObjectOrder globalOrder,
-                             TWindowLevel fromLevel,
-                             TWindowLevel toLevel ) const
+                              TWindowLevel fromLevel,
+                              TWindowLevel toLevel ) const
 {
   if ( fromLevel == WORKLOAD )
   {
@@ -308,24 +309,28 @@ MemoryTrace::iterator* KTrace::CPUEnd( TCPUOrder whichCPU ) const
 }
 
 void KTrace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
-                                   TRecordTime whichTime ) const
+                                    TRecordTime whichTime ) const
 {
   btree->getRecordByTimeThread( listIter, whichTime );
 }
 
 void KTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
-                                TRecordTime whichTime ) const
+                                 TRecordTime whichTime ) const
 {
   btree->getRecordByTimeCPU( listIter, whichTime );
 }
 
 
-KTrace::KTrace( const string& whichFile ) : fileName( whichFile )
+KTrace::KTrace( const string& whichFile, ProgressController *progress )
+    : fileName( whichFile )
 {
   string tmpstr;
 
   ready = false;
   TraceStream *file = TraceStream::openFile( fileName );
+  file->seekend();
+  progress->setEndLimit( file->tellg() );
+  file->seekbegin();
 
 // Reading the header
   file->getline( tmpstr );
@@ -397,10 +402,18 @@ KTrace::KTrace( const string& whichFile ) : fileName( whichFile )
   btree  = new BPlusTree( traceProcessModel.totalThreads(),
                           traceResourceModel.totalCPUs() );
 
+  int count = 0;
   while ( !file->eof() )
   {
     TraceBodyIO_v1::read( file, *blocks );
     btree->insert( blocks );
+    if( count == 100 )
+    {
+      progress->setCurrentProgress( file->tellg() );
+      count = 0;
+    }
+    else
+      count++;
   }
 
 // End reading the body

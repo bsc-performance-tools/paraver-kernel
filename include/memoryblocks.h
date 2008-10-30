@@ -64,6 +64,8 @@ class MemoryBlocks
     virtual TRecordTime getPhysicalSend( TCommID whichComm ) const = 0;
     virtual TRecordTime getPhysicalReceive( TCommID whichComm ) const = 0;
 
+    virtual TRecordTime getLastRecordTime() const = 0;
+
     virtual UINT32 getCountInserted() const
     {
       return countInserted;

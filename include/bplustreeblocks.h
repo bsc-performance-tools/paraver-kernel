@@ -93,6 +93,9 @@ namespace bplustree
       virtual TRecordTime getLogicalReceive( TCommID whichComm ) const;
       virtual TRecordTime getPhysicalSend( TCommID whichComm ) const;
       virtual TRecordTime getPhysicalReceive( TCommID whichComm ) const;
+
+      virtual TRecordTime getLastRecordTime() const;
+
     protected:
 
     private:

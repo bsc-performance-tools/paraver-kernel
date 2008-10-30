@@ -24,6 +24,9 @@ class TraceStream
     virtual void close() = 0;
     virtual void getline( string& strLine ) = 0;
     virtual bool eof() = 0;
+    virtual void seekbegin() = 0;
+    virtual void seekend() = 0;
+    virtual double tellg() = 0;
 
     static TraceStream *openFile( const string& filename );
 };
@@ -44,6 +47,9 @@ class NotCompressed: public TraceStream
     virtual void close();
     virtual void getline( string& strLine );
     virtual bool eof();
+    virtual void seekbegin();
+    virtual void seekend();
+    virtual double tellg();
 
   private:
     fstream file;
@@ -66,6 +72,9 @@ class Compressed: public TraceStream
     virtual void close();
     virtual void getline( string& strLine );
     virtual bool eof();
+    virtual void seekbegin();
+    virtual void seekend();
+    virtual double tellg();
 
   private:
     static const UINT32 LINESIZE = 100 * 1024;

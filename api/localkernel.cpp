@@ -22,9 +22,9 @@ LocalKernel::LocalKernel()
 LocalKernel::~LocalKernel()
 {}
 
-Trace *LocalKernel::newTrace( const string& whichFile ) const
+Trace *LocalKernel::newTrace( const string& whichFile, ProgressController *progress ) const
 {
-  return new KTrace( whichFile );
+  return new KTrace( whichFile, ( KProgressController * ) progress->getConcrete() );
 }
 
 Window *LocalKernel::newSingleWindow() const

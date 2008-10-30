@@ -21,7 +21,7 @@ class KTrace: public Trace
       ready = false;
     }
 
-    KTrace( const string& whichFile );
+    KTrace( const string& whichFile, ProgressController *progress );
 
     ~KTrace()
     {

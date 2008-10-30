@@ -17,7 +17,7 @@ class KernelConnection
   public:
     virtual ~KernelConnection() {}
 
-    virtual Trace *newTrace( const string& whichFile ) const = 0;
+    virtual Trace *newTrace( const string& whichFile, ProgressController *progress ) const = 0;
     virtual Window *newSingleWindow() const = 0;
     virtual Window *newSingleWindow( Trace *whichTrace ) const = 0;
     virtual Window *newDerivedWindow() const = 0;

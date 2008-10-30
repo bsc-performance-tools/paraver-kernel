@@ -11,18 +11,18 @@ class KProgressController: public ProgressController
 
     void setHandler( ProgressHandler whichHandler );
     void callHandler( ProgressController *not_used );
-    INT64 getEndLimit() const;
-    void setEndLimit( INT64 limit );
-    INT64 getCurrentProgress() const;
-    void setCurrentProgress( INT64 progress );
+    double getEndLimit() const;
+    void setEndLimit( double limit );
+    double getCurrentProgress() const;
+    void setCurrentProgress( double progress );
     void setPartner( ProgressController* partner );
 
   private:
     ProgressController *myPartner;
 
     ProgressHandler handler;
-    INT64 endLimit;
-    INT64 currentProgress;
+    double endLimit;
+    double currentProgress;
 
 };
 

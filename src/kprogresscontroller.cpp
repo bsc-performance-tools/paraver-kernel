@@ -1,7 +1,10 @@
 #include "kprogresscontroller.h"
 
 KProgressController::KProgressController()
-{}
+{
+  endLimit = 0;
+  currentProgress = 0;
+}
 
 KProgressController::~KProgressController()
 {}
@@ -16,25 +19,27 @@ void KProgressController::callHandler( ProgressController *not_used )
   handler( NULL );
 }
 
-INT64 KProgressController::getEndLimit() const
+double KProgressController::getEndLimit() const
 {
   return endLimit;
 }
 
-void KProgressController::setEndLimit( INT64 limit )
+void KProgressController::setEndLimit( double limit )
 {
   endLimit = limit;
+  myPartner->setEndLimit( limit );
 }
 
-INT64 KProgressController::getCurrentProgress() const
+double KProgressController::getCurrentProgress() const
 {
   return currentProgress;
 }
 
-void KProgressController::setCurrentProgress( INT64 progress )
+void KProgressController::setCurrentProgress( double progress )
 {
+  if( progress < currentProgress )
+    return;
   currentProgress = progress;
-  myPartner->setCurrentProgress( progress );
   myPartner->callHandler( NULL );
 }
 

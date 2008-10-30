@@ -300,3 +300,7 @@ TRecordTime BPlusTreeBlocks::getPhysicalReceive( TCommID whichComm ) const
   return communications[whichComm]->physicalReceiveTime;
 }
 
+TRecordTime BPlusTreeBlocks::getLastRecordTime() const
+{
+  return currentBlock[currentRecord].time;
+}

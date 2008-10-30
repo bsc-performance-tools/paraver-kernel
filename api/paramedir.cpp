@@ -46,7 +46,7 @@ int main( int argc, char *argv[] )
     string strTrace( argv[ currentArg ] );
     try
     {
-      trace = Trace::create( myKernel, strTrace );
+      trace = Trace::create( myKernel, strTrace, NULL );
     }
     catch ( ParaverKernelException& ex )
     {

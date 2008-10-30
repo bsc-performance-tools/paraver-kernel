@@ -5,11 +5,13 @@
 #include "semanticcolor.h"
 
 class KernelConnection;
+class ProgressController;
 
 class Trace
 {
   public:
-    static Trace *create( KernelConnection *whichKernel, const string& whichFile );
+    static Trace *create( KernelConnection *whichKernel, const string& whichFile,
+                          ProgressController *progress );
 
     Trace() {}
     Trace( KernelConnection *whichKernel );
@@ -166,11 +168,12 @@ class TraceProxy: public Trace
     CodeColor myCodeColor;
     GradientColor myGradientColor;
 
-    TraceProxy( KernelConnection *whichKernel, const string& whichFile );
+    TraceProxy( KernelConnection *whichKernel, const string& whichFile,
+                ProgressController *progress );
 
     void parsePCF( const string& whichFile );
 
-    friend Trace *Trace::create( KernelConnection *, const string& );
+    friend Trace *Trace::create( KernelConnection *, const string&, ProgressController * );
 };
 
 #endif // TRACE_H_INCLUDED
