@@ -37,8 +37,6 @@ double KProgressController::getCurrentProgress() const
 
 void KProgressController::setCurrentProgress( double progress )
 {
-  if( progress < currentProgress )
-    return;
   currentProgress = progress;
   myPartner->callHandler( NULL );
 }

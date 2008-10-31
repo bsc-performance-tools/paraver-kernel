@@ -52,6 +52,11 @@ double NotCompressed::tellg()
   return file.tellg();
 }
 
+bool NotCompressed::canseekend()
+{
+  return true;
+}
+
 Compressed::Compressed( const string& filename )
 {
   file = gzopen( filename.c_str(), "r" );
@@ -91,4 +96,9 @@ void Compressed::seekend()
 double Compressed::tellg()
 {
   return gztell( file );
+}
+
+bool Compressed::canseekend()
+{
+  return false;
 }

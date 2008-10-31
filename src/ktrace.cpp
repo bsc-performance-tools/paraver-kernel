@@ -328,9 +328,12 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress )
 
   ready = false;
   TraceStream *file = TraceStream::openFile( fileName );
-  file->seekend();
-  progress->setEndLimit( file->tellg() );
-  file->seekbegin();
+  if( file->canseekend() )
+  {
+    file->seekend();
+    progress->setEndLimit( file->tellg() );
+    file->seekbegin();
+  }
 
 // Reading the header
   file->getline( tmpstr );
@@ -364,6 +367,9 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress )
                                   tmpstr.c_str() );
     }
   }
+
+  if( !file->canseekend() )
+    progress->setEndLimit( traceEndTime );
 
   traceResourceModel = ResourceModel( header );
   traceProcessModel = ProcessModel( header );
@@ -407,9 +413,12 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress )
   {
     TraceBodyIO_v1::read( file, *blocks );
     btree->insert( blocks );
-    if( count == 100 )
+    if( count == 500 )
     {
-      progress->setCurrentProgress( file->tellg() );
+      if( file->canseekend() )
+        progress->setCurrentProgress( file->tellg() );
+      else
+        progress->setCurrentProgress( blocks->getLastRecordTime() );
       count = 0;
     }
     else
