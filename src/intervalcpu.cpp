@@ -94,7 +94,14 @@ MemoryTrace::iterator *IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
   ++( *it );
   while ( !it->isNull() )
   {
-    if ( window->passFilter( it ) )
+    if ( window->passFilter( it )
+         ||
+         ( window->getFilter()->getLogical() && !window->getFilter()->getPhysical()
+           && it->getType() & ( RECV + PHY ) &&
+           ( window->getTrace()->getLogicalReceive( it->getCommIndex() ) <
+             window->getTrace()->getPhysicalReceive( it->getCommIndex() ) )
+         )
+       )
     {
       if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
            ||
@@ -123,7 +130,14 @@ MemoryTrace::iterator *IntervalCPU::getPrevRecord( MemoryTrace::iterator *it,
   --( *it );
   while ( !it->isNull() )
   {
-    if ( window->passFilter( it ) )
+    if ( window->passFilter( it )
+         ||
+         ( window->getFilter()->getLogical() && !window->getFilter()->getPhysical()
+           && it->getType() & ( RECV + PHY ) &&
+           ( window->getTrace()->getLogicalReceive( it->getCommIndex() ) <
+             window->getTrace()->getPhysicalReceive( it->getCommIndex() ) )
+         )
+       )
     {
       if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
            ||

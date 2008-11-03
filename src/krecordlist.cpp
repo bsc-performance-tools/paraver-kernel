@@ -53,11 +53,13 @@ void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
   {
     KTrace *trace = ( KTrace * ) window->getTrace();
     TWindowLevel level = window->getLevel();
+    tmp.setCommSize( trace->getCommSize( id ) );
+    tmp.setCommTag( trace->getCommTag( id ) );
     if ( it->getType() & SEND )
     {
       if ( level >= WORKLOAD && level <= THREAD )
         tmp.setCommPartnerObject( trace->getReceiverThread( id ) );
-      else if( level >=SYSTEM && level <= CPU )
+      else if ( level >= SYSTEM && level <= CPU )
         tmp.setCommPartnerObject( trace->getReceiverCPU( id ) );
 
       if ( it->getType() & LOG )
@@ -66,29 +68,41 @@ void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
                               ? trace->getLogicalReceive( id ) : trace->getPhysicalReceive( id );
         tmp.setCommPartnerTime( tmpTime );
       }
-      else if( it->getType() & PHY )
+      else if ( it->getType() & PHY )
         tmp.setCommPartnerTime( trace->getPhysicalReceive( id ) );
     }
-    else if( it->getType() & RECV )
+    else if ( it->getType() & RECV )
     {
       if ( level >= WORKLOAD && level <= THREAD )
         tmp.setCommPartnerObject( trace->getSenderThread( id ) );
-      else if( level >=SYSTEM && level <= CPU )
+      else if ( level >= SYSTEM && level <= CPU )
         tmp.setCommPartnerObject( trace->getSenderCPU( id ) );
 
       if ( it->getType() & LOG )
+      {
+        if ( trace->getLogicalReceive( id ) < trace->getPhysicalReceive( id ) )
+          return;
         tmp.setCommPartnerTime( trace->getLogicalSend( id ) );
-      else if( it->getType() & PHY )
-        tmp.setCommPartnerTime( trace->getLogicalReceive( id ) );
+      }
+      else if ( it->getType() & PHY )
+      {
+        tmp.setCommPartnerTime( trace->getPhysicalSend( id ) );
+        if ( trace->getLogicalReceive( id ) < trace->getPhysicalReceive( id ) )
+        {
+          if( window->getFilter()->getPhysical() )
+          {
+            // Inserts the physical comm
+            list.insert( tmp );
+          }
+          // Prepares the logical comm for insert later
+          tmp.setType( tmp.getType() - PHY + LOG );
+        }
+      }
     }
-    tmp.setCommSize( trace->getCommSize( id ) );
-    tmp.setCommTag( trace->getCommTag( id ) );
+    else
+      throw ParaverKernelException();
   }
-  else
-    throw ParaverKernelException();
 
   list.insert( tmp );
-
   newRec = true;
 }
-
