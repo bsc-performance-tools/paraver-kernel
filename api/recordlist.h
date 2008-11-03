@@ -16,7 +16,10 @@ struct RLEvent
 
 struct RLComm
 {
-  TCommID id;
+  TObjectOrder partnerObject;
+  TRecordTime partnerTime;
+  TCommSize size;
+  TCommTag tag;
 };
 
 struct RLRecord
@@ -42,9 +45,21 @@ public:
   {
     return UInfo.event.value;
   }
-  TCommID getCommIndex() const
+  TObjectOrder getCommPartnerObject() const
   {
-    return UInfo.comm.id;
+    return UInfo.comm.partnerObject;
+  }
+  TRecordTime getCommPartnerTime() const
+  {
+    return UInfo.comm.partnerTime;
+  }
+  TCommSize getCommSize() const
+  {
+    return UInfo.comm.size;
+  }
+  TCommTag getCommTag() const
+  {
+    return UInfo.comm.tag;
   }
   void setType( TRecordType whichType )
   {
@@ -66,9 +81,21 @@ public:
   {
     UInfo.event.value = whichValue;
   }
-  void setCommIndex( TCommID whichID )
+  void setCommPartnerObject( TObjectOrder whichOrder )
   {
-    UInfo.comm.id = whichID;
+    UInfo.comm.partnerObject = whichOrder;
+  }
+  void setCommPartnerTime( TRecordTime whichTime )
+  {
+    UInfo.comm.partnerTime = whichTime;
+  }
+  void setCommSize( TCommSize whichSize )
+  {
+    UInfo.comm.size = whichSize;
+  }
+  void setCommTag( TCommTag whichTag )
+  {
+    UInfo.comm.tag = whichTag;
   }
 private:
   TRecordType type;

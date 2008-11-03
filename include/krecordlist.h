@@ -7,6 +7,8 @@
 
 using std::set;
 
+class KWindow;
+
 class KRecordList: public RecordList
 {
   public:
@@ -20,7 +22,7 @@ class KRecordList: public RecordList
     virtual bool newRecords() const;
 
     // Specific for KRecordList
-    virtual void insert( MemoryTrace::iterator *it );
+    virtual void insert( KWindow *window, MemoryTrace::iterator *it );
   protected:
 
   private:

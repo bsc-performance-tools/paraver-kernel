@@ -169,6 +169,12 @@ class Window
     }
     virtual void setRedraw( bool newValue )
     {}
+    virtual bool getDrawCommLines() const
+    {
+      return true;
+    }
+    virtual void setDrawCommLines( bool newValue )
+    {}
   protected:
     KernelConnection *myKernel;
 
@@ -258,6 +264,8 @@ class WindowProxy: public Window
     virtual void setChanged( bool newValue );
     virtual bool getRedraw() const;
     virtual void setRedraw( bool newValue );
+    virtual bool getDrawCommLines() const;
+    virtual void setDrawCommLines( bool newValue );
 
   private:
     Window *myWindow;
@@ -294,6 +302,7 @@ class WindowProxy: public Window
     bool showWindow;
     bool changed;
     bool redraw;
+    bool commLines;
 
     // For Single Window
     WindowProxy( KernelConnection *whichKernel, Trace *whichTrace );

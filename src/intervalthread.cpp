@@ -89,7 +89,7 @@ MemoryTrace::iterator *IntervalThread::getNextRecord( MemoryTrace::iterator *it,
       if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
            ||
            ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
-        displayList->insert( window->copyThreadIterator( it ) );
+        displayList->insert( window, window->copyThreadIterator( it ) );
 
       if ( function->validRecord( it ) )
         break;
@@ -118,7 +118,7 @@ MemoryTrace::iterator *IntervalThread::getPrevRecord( MemoryTrace::iterator *it,
       if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
            ||
            ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
-        displayList->insert( window->copyThreadIterator( it ) );
+        displayList->insert( window, window->copyThreadIterator( it ) );
 
       if ( function->validRecord( it ) )
         break;

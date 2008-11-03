@@ -151,6 +151,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_POSY]                = new WindowPositionY();
   cfgTagFunctions[OLDCFG_TAG_WNDW_WIDTH]               = new WindowWidth();
   cfgTagFunctions[OLDCFG_TAG_WNDW_HEIGHT]              = new WindowHeight();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_COMM_LINES]          = new WindowCommLines();
   cfgTagFunctions[OLDCFG_TAG_WNDW_UNITS]               = new WindowUnits();
   cfgTagFunctions[OLDCFG_TAG_WNDW_COLOR_MODE]          = new WindowColorMode();
   cfgTagFunctions[OLDCFG_TAG_WNDW_OPERATION]           = new WindowOperation();
@@ -408,6 +409,29 @@ bool WindowHeight::parseLine( KernelConnection *whichKernel, istringstream& line
     return false;
 
   windows[ windows.size() - 1 ]->setHeight( height );
+
+  return true;
+}
+
+
+bool WindowCommLines::parseLine( KernelConnection *whichKernel, istringstream& line,
+                              Trace *whichTrace,
+                              vector<Window *>& windows,
+                              vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawCommLines( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawCommLines( true );
+  else
+    return false;
 
   return true;
 }

@@ -557,3 +557,13 @@ void WindowProxy::setRedraw( bool newValue )
 {
   redraw = newValue;
 }
+
+bool WindowProxy::getDrawCommLines() const
+{
+  return commLines;
+}
+
+void WindowProxy::setDrawCommLines( bool newValue )
+{
+  commLines = newValue;
+}

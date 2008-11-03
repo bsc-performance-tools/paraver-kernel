@@ -142,6 +142,20 @@ class WindowHeight: public TagFunction
 };
 
 
+class WindowCommLines: public TagFunction
+{
+  public:
+    WindowCommLines()
+    {}
+    virtual ~WindowCommLines()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+};
+
+
 class WindowColorMode: public TagFunction
 {
   public:
