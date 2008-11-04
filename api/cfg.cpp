@@ -670,7 +670,10 @@ bool WindowBeginTime::parseLine( KernelConnection *whichKernel, istringstream& l
   if ( !( tmpTime >> auxTime ) )
     return false;
 
-  windows[ windows.size() - 1 ]->setWindowBeginTime( auxTime );
+  if( auxTime < whichTrace->getEndTime() )
+    windows[ windows.size() - 1 ]->setWindowBeginTime( auxTime );
+  else
+    windows[ windows.size() - 1 ]->setWindowBeginTime( 0.0 );
 
   return true;
 }
@@ -714,8 +717,10 @@ bool WindowStopTime::parseLine( KernelConnection *whichKernel, istringstream& li
   if ( !( tmpTime >> auxTime ) )
     return false;
 
-  windows[ windows.size() - 1 ]->setWindowEndTime( auxTime );
-
+  if( auxTime <= whichTrace->getEndTime() )
+    windows[ windows.size() - 1 ]->setWindowEndTime( auxTime );
+  else
+    windows[ windows.size() - 1 ]->setWindowEndTime( whichTrace->getEndTime() );
   return true;
 }
 

@@ -3,7 +3,7 @@
 
 
 KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
-                               KRecordList *displayList )
+                                KRecordList *displayList )
 {
   createList = create;
   currentValue = 0.0;
@@ -97,7 +97,7 @@ MemoryTrace::iterator *IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
     if ( window->passFilter( it )
          ||
          ( window->getFilter()->getLogical() && !window->getFilter()->getPhysical()
-           && it->getType() & ( RECV + PHY ) &&
+           && ( ( it->getType() & RECV ) && ( it->getType() & PHY ) ) &&
            ( window->getTrace()->getLogicalReceive( it->getCommIndex() ) <
              window->getTrace()->getPhysicalReceive( it->getCommIndex() ) )
          )
@@ -133,7 +133,7 @@ MemoryTrace::iterator *IntervalCPU::getPrevRecord( MemoryTrace::iterator *it,
     if ( window->passFilter( it )
          ||
          ( window->getFilter()->getLogical() && !window->getFilter()->getPhysical()
-           && it->getType() & ( RECV + PHY ) &&
+           && ( ( it->getType() & RECV ) && ( it->getType() & PHY ) ) &&
            ( window->getTrace()->getLogicalReceive( it->getCommIndex() ) <
              window->getTrace()->getPhysicalReceive( it->getCommIndex() ) )
          )
@@ -186,6 +186,6 @@ TWindowLevel IntervalCPU::getComposeLevel( TWindowLevel whichLevel ) const
 
 KTrace *IntervalCPU::getWindowTrace() const
 {
-  return (KTrace*)window->getTrace();
+  return ( KTrace* )window->getTrace();
 }
 

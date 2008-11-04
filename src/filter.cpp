@@ -16,10 +16,21 @@ bool Filter::filterComms( MemoryTrace::iterator *it )
   bool tmpResult = true;
   TSemanticValue info;
 
-  if ( logical && !( it->getType() & LOG ) )
-    return false;
-  if ( physical && !( it->getType() & PHY ) )
-    return false;
+  if ( !( logical && physical ) )
+  {
+    if( !logical && !physical )
+      return false;
+    if ( it->getType() & LOG )
+    {
+      if( !logical )
+        return false;
+    }
+    else if ( it->getType() & PHY )
+    {
+      if( !physical )
+        return false;
+    }
+  }
 
   if ( existCommFrom )
   {

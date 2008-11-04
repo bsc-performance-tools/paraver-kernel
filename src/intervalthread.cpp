@@ -87,7 +87,7 @@ MemoryTrace::iterator *IntervalThread::getNextRecord( MemoryTrace::iterator *it,
     if ( window->passFilter( it )
          ||
          ( window->getFilter()->getLogical() && !window->getFilter()->getPhysical()
-           && it->getType() & ( RECV + PHY ) &&
+           && ( ( it->getType() & RECV ) && ( it->getType() & PHY ) ) &&
            ( window->getTrace()->getLogicalReceive( it->getCommIndex() ) <
              window->getTrace()->getPhysicalReceive( it->getCommIndex() ) )
          )
@@ -123,7 +123,7 @@ MemoryTrace::iterator *IntervalThread::getPrevRecord( MemoryTrace::iterator *it,
     if ( window->passFilter( it )
          ||
          ( window->getFilter()->getLogical() && !window->getFilter()->getPhysical()
-           && it->getType() & ( RECV + PHY ) &&
+           && ( ( it->getType() & RECV ) && ( it->getType() & PHY ) ) &&
            ( window->getTrace()->getLogicalReceive( it->getCommIndex() ) <
              window->getTrace()->getPhysicalReceive( it->getCommIndex() ) )
          )
