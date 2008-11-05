@@ -129,6 +129,7 @@ void WindowProxy::init()
   showWindow = true;
   changed = false;
   redraw = false;
+  commLines = true;
 }
 
 WindowProxy::~WindowProxy()

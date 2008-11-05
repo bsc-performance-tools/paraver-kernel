@@ -22,7 +22,11 @@ TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile,
     Trace( whichKernel )
 {
   myTrace = myKernel->newTrace( whichFile, progress );
-  string pcfFile( whichFile.substr( 0, whichFile.length() - 3 ) );
+  string pcfFile;
+  if( whichFile.substr( 0, whichFile.length() - 6 ) == "prv.gz" )
+    pcfFile = whichFile.substr( 0, whichFile.length() - 6 );
+  else
+    pcfFile = whichFile.substr( 0, whichFile.length() - 3 );
   pcfFile.append( "pcf" );
   parsePCF( pcfFile );
 }
