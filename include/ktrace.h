@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include "paraverkerneltypes.h"
 #include "trace.h"
 #include "processmodel.h"
@@ -11,6 +12,7 @@
 #include "bplustree.h"
 #include "bplustreeblocks.h"
 
+using namespace std;
 using namespace bplustree;
 
 class KTrace: public Trace
@@ -121,6 +123,8 @@ class KTrace: public Trace
     void getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
                              TRecordTime whichTime ) const;
 
+    const set<TEventType>& getLoadedEvents() const;
+
   protected:
     bool ready;
     ProcessModel traceProcessModel;
@@ -134,6 +138,7 @@ class KTrace: public Trace
     string fileName;
     string date;
     vector<string> communicators;
+    set<TEventType> events;
 };
 
 

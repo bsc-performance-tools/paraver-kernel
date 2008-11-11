@@ -5,7 +5,8 @@
 
 using namespace std;
 
-void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records )
+void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
+                           hash_set<TEventType>& events )
 {
   string line;
 
@@ -21,7 +22,7 @@ void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records )
       break;
 
     case EventRecord:
-      readEvent( line, records );
+      readEvent( line, records, events );
       break;
 
     case CommRecord:
@@ -48,7 +49,7 @@ void TraceBodyIO_v1::write( fstream& whichStream,
   bool writeReady;
   TRecordType type = record->getType();
 
-  if( type == EMPTYREC )
+  if ( type == EMPTYREC )
     return;
   else if ( type & STATE )
     writeReady = writeState( line, whichTrace, record );
@@ -172,7 +173,8 @@ void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records )
 }
 
 
-void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records )
+void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records,
+                                hash_set<TEventType>& events )
 {
   string tmpstring;
   TCPUOrder CPU;
@@ -229,6 +231,8 @@ void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records )
     records.setThread( appl - 1, task - 1, thread - 1 );
     records.setEventType( eventtype );
     records.setEventValue( eventvalue );
+
+    events.insert( eventtype );
   }
 }
 

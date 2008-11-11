@@ -199,6 +199,13 @@
 		<Unit filename="api/drawmode.h">
 			<Option target="api" />
 		</Unit>
+		<Unit filename="api/eventlabels.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/eventlabels.h">
+			<Option target="api" />
+			<Option target="paramedir" />
+		</Unit>
 		<Unit filename="api/histogram.cpp">
 			<Option target="api" />
 		</Unit>

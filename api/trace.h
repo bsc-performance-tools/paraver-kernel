@@ -1,8 +1,10 @@
 #ifndef TRACE_H_INCLUDED
 #define TRACE_H_INCLUDED
 
+#include <set>
 #include "paraverkerneltypes.h"
 #include "semanticcolor.h"
+#include "eventlabels.h"
 
 class KernelConnection;
 class ProgressController;
@@ -81,13 +83,25 @@ class Trace
     }
     virtual const CodeColor& getCodeColor() const
     {
-      CodeColor *a = NULL;
-      return *a;
+      CodeColor *tmp = NULL;
+      return *tmp;
     }
     virtual const GradientColor& getGradientColor() const
     {
-      GradientColor *a = NULL;
-      return *a;
+      GradientColor *tmp = NULL;
+      return *tmp;
+    }
+    virtual const EventLabels& getEventLabels() const
+    {
+      EventLabels *tmp = NULL;
+      return *tmp;
+    }
+
+    // Specific methods for KTrace only
+    virtual const set<TEventType>& getLoadedEvents() const
+    {
+      set<TEventType> *tmp = NULL;
+      return *tmp;
     }
 
   protected:
@@ -161,12 +175,15 @@ class TraceProxy: public Trace
     virtual Trace *getConcrete() const;
     virtual const CodeColor& getCodeColor() const;
     virtual const GradientColor& getGradientColor() const;
+    virtual const EventLabels& getEventLabels() const;
 
   private:
     Trace *myTrace;
 
     CodeColor myCodeColor;
     GradientColor myGradientColor;
+
+    EventLabels myEventLabels;
 
     TraceProxy( KernelConnection *whichKernel, const string& whichFile,
                 ProgressController *progress );

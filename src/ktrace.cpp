@@ -1,5 +1,6 @@
 #include <fstream>
 #include <sstream>
+#include <ext/hash_set>
 #include "ktrace.h"
 #include "traceheaderexception.h"
 #include "tracebodyio_v1.h"
@@ -7,6 +8,7 @@
 #include "kprogresscontroller.h"
 
 using namespace std;
+using namespace __gnu_cxx;
 
 string KTrace::getFileName() const
 {
@@ -408,10 +410,11 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress )
   btree  = new BPlusTree( traceProcessModel.totalThreads(),
                           traceResourceModel.totalCPUs() );
 
+  hash_set<TEventType> hashevents;
   int count = 0;
   while ( !file->eof() )
   {
-    TraceBodyIO_v1::read( file, *blocks );
+    TraceBodyIO_v1::read( file, *blocks, hashevents );
     btree->insert( blocks );
     if( count == 500 )
     {
@@ -425,9 +428,17 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress )
       count++;
   }
 
+  for( hash_set<TEventType>::iterator it = hashevents.begin(); it != hashevents.end(); it++ )
+    events.insert( *it );
+
 // End reading the body
   traceEndTime = btree->finish( traceEndTime );
   file->close();
   ready = true;
 
+}
+
+const set<TEventType>& KTrace::getLoadedEvents() const
+{
+  return events;
 }

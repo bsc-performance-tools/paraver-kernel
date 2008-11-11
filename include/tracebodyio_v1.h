@@ -1,10 +1,12 @@
 #ifndef TRACEBODYIO_V1_H_INCLUDED
 #define TRACEBODYIO_V1_H_INCLUDED
 
+#include <ext/hash_set>
 #include "tracebodyio.h"
 #include "tracestream.h"
 
 using namespace std;
+using namespace __gnu_cxx;
 
 // Paraver trace old format file
 class TraceBodyIO_v1 : public TraceBodyIO
@@ -15,7 +17,8 @@ class TraceBodyIO_v1 : public TraceBodyIO
     static const UINT8 CommRecord = '3';
     static const UINT8 GlobalCommRecord = '4';
 
-    static void read( TraceStream *file, MemoryBlocks& records );
+    static void read( TraceStream *file, MemoryBlocks& records,
+                      hash_set<TEventType>& events );
     static void write( fstream& whichStream,
                        const KTrace& whichTrace,
                        const MemoryTrace::iterator *record );
@@ -26,7 +29,8 @@ class TraceBodyIO_v1 : public TraceBodyIO
 
   private:
     static void readState( const string& line, MemoryBlocks& records );
-    static void readEvent( const string& line, MemoryBlocks& records );
+    static void readEvent( const string& line, MemoryBlocks& records,
+                           hash_set<TEventType>& events );
     static void readComm( const string& line, MemoryBlocks& records );
     static void readGlobalComm( const string& line, MemoryBlocks& records );
     static bool readCommon( istringstream& line,
