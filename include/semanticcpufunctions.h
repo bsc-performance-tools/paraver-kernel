@@ -38,6 +38,10 @@ class ActiveThread: public SemanticCPU
       return new ActiveThread( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return SAME_TYPE;
+    }
 
   protected:
     virtual const bool getMyInitFromBegin()
@@ -148,6 +152,10 @@ class ActiveThreadValues: public SemanticCPU
       return new ActiveThreadValues( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return SAME_TYPE;
+    }
 
   protected:
     virtual const bool getMyInitFromBegin()

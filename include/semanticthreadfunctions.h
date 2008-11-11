@@ -49,6 +49,10 @@ class StateAsIs: public SemanticThread
       return new StateAsIs( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return STATE_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -103,6 +107,10 @@ class Useful: public SemanticThread
       return new Useful( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return STATE_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -214,6 +222,10 @@ class GivenState: public SemanticThread
       return new GivenState( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return STATE_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -397,6 +409,10 @@ class StateRecordDuration: public SemanticThread
       return new StateRecordDuration( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return TIME_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -461,6 +477,10 @@ class LastEventType: public SemanticThread
       return new LastEventType( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return EVENTTYPE_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -516,6 +536,10 @@ class LastEventValue: public SemanticThread
       return new LastEventValue( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return EVENTVALUE_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -571,6 +595,10 @@ class LastEventValueWOBursts: public SemanticThread
       return new LastEventValueWOBursts( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return EVENTVALUE_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -626,6 +654,10 @@ class NextEventType: public SemanticThread
       return new NextEventType( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return EVENTTYPE_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -681,6 +713,10 @@ class NextEventValue: public SemanticThread
       return new NextEventValue( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return EVENTVALUE_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -859,7 +895,10 @@ class GivenEventValue: public SemanticThread
       return new GivenEventValue( *this );
     }
 
-
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return EVENTVALUE_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -981,6 +1020,10 @@ class IntervalBetweenEvents: public SemanticThread
       return new IntervalBetweenEvents( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return TIME_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -1161,6 +1204,10 @@ class EventBytes: public SemanticThread
       return new EventBytes( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return COMMSIZE_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -1220,6 +1267,10 @@ class LastTag: public SemanticThread
       return new LastTag( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return COMMTAG_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -1275,6 +1326,10 @@ class CommSize: public SemanticThread
       return new CommSize( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return COMMSIZE_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -1330,6 +1385,10 @@ class CommRecvPartner: public SemanticThread
       return new CommRecvPartner( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return OBJECT_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -1383,6 +1442,11 @@ class CommPartner: public SemanticThread
     virtual SemanticFunction *clone()
     {
       return new CommPartner( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return OBJECT_TYPE;
     }
 
   protected:
@@ -1439,6 +1503,10 @@ class LastSendDuration: public SemanticThread
       return new LastSendDuration( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return TIME_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -1494,6 +1562,10 @@ class NextRecvDuration: public SemanticThread
       return new NextRecvDuration( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return TIME_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -1549,6 +1621,10 @@ class SendBytesInTransit: public SemanticThread
       return new SendBytesInTransit( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return COMMSIZE_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -1659,6 +1735,10 @@ class SendBandWidth: public SemanticThread
       return new SendBandWidth( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return BANDWIDTH_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -1721,6 +1801,10 @@ class RecvBytesInTransit: public SemanticThread
       return new RecvBytesInTransit( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return COMMSIZE_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -1831,6 +1915,10 @@ class RecvBandWidth: public SemanticThread
       return new RecvBandWidth( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return BANDWIDTH_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -1948,6 +2036,10 @@ class RecvNegativeBytes: public SemanticThread
       return new RecvNegativeBytes( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return COMMSIZE_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -2058,6 +2150,10 @@ class NumberReceiveBytes: public SemanticThread
       return new NumberReceiveBytes( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return COMMSIZE_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -2117,6 +2213,10 @@ class ApplicationID: public SemanticThread
       return new ApplicationID( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return APPL_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -2172,6 +2272,10 @@ class TaskID: public SemanticThread
       return new TaskID( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return TASK_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -2227,6 +2331,10 @@ class ThreadID: public SemanticThread
       return new ThreadID( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return THREAD_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -2282,6 +2390,10 @@ class NodeID: public SemanticThread
       return new NodeID( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return NODE_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -2337,6 +2449,10 @@ class CPUID: public SemanticThread
       return new CPUID( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return CPU_TYPE;
+    }
 
   protected:
     virtual const TRecordType getValidateMask()

@@ -125,6 +125,7 @@ class KWindow: public Window
     TObjectOrder getWindowLevelObjects();
 
     TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime );
+
   protected:
     KTrace *myTrace;
     TWindowLevel level;
@@ -215,6 +216,8 @@ class KSingleWindow: public KWindow
     {
       return myFilter;
     }
+
+    SemanticInfoType getSemanticInfoType() const;
 
   protected:
     vector<MemoryTrace::iterator *> recordsByTime;
@@ -328,6 +331,8 @@ class KDerivedWindow: public KWindow
     {
       return factor[ whichFactor ];
     }
+
+    SemanticInfoType getSemanticInfoType() const;
 
   protected:
     vector<KWindow *> parents;

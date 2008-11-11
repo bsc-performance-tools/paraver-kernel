@@ -41,7 +41,10 @@ class ComposeAsIs: public SemanticCompose
       return new ComposeAsIs( *this );
     }
 
-
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return SAME_TYPE;
+    }
 
   protected:
     virtual const bool getMyInitFromBegin()
@@ -572,6 +575,10 @@ class ComposeSelectRange: public SemanticCompose
       return new ComposeSelectRange( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return SAME_TYPE;
+    }
 
   protected:
     virtual const bool getMyInitFromBegin()
@@ -823,6 +830,10 @@ class ComposeStackedValue: public SemanticCompose
       return new ComposeStackedValue( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return SAME_TYPE;
+    }
 
   protected:
     virtual const bool getMyInitFromBegin()
@@ -1074,6 +1085,10 @@ class ComposeBurstTime: public SemanticCompose
       return new ComposeBurstTime( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return TIME_TYPE;
+    }
 
   protected:
     virtual const bool getMyInitFromBegin()
@@ -1133,6 +1148,10 @@ class ComposeJoinBursts: public SemanticCompose
       return new ComposeJoinBursts( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return SAME_TYPE;
+    }
 
   protected:
     virtual const bool getMyInitFromBegin()

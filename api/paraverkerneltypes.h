@@ -101,6 +101,25 @@ typedef enum THistoTotals
   TOTAL = 0, AVERAGE, MAXIMUM, MINIMUM, STDEV, AVGDIVMAX, NUMTOTALS
 };
 
+typedef enum SemanticInfoType
+{
+  NO_TYPE = 0, // without units
+  SAME_TYPE, // same type as previous function
+  OBJECT_TYPE, // window same level object
+  APPL_TYPE,
+  TASK_TYPE,
+  THREAD_TYPE,
+  NODE_TYPE,
+  CPU_TYPE,
+  TIME_TYPE,
+  STATE_TYPE,
+  EVENTTYPE_TYPE,
+  EVENTVALUE_TYPE,
+  COMMSIZE_TYPE,
+  COMMTAG_TYPE,
+  BANDWIDTH_TYPE,
+};
+
 /*
  * PARAVER OLD CODE
  * Record class field defines for a state record.

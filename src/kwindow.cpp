@@ -474,6 +474,10 @@ Interval *KSingleWindow::getLevelInterval( TWindowLevel whichLevel,
   return NULL;
 }
 
+SemanticInfoType KSingleWindow::getSemanticInfoType() const
+{
+  return NO_TYPE;
+}
 
 /**********************************************************************
  *  KDerivedWindow implementation
@@ -694,4 +698,9 @@ TWindowLevel KDerivedWindow::getLevel() const
   }
 
   return tmp;
+}
+
+SemanticInfoType KDerivedWindow::getSemanticInfoType() const
+{
+  return NO_TYPE;
 }

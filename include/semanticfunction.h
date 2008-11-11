@@ -50,11 +50,17 @@ class SemanticFunction
     virtual void init( KWindow *whichWindow ) = 0;
 
     virtual string getName() = 0;
+
     virtual SemanticFunction *clone() = 0;
 
     virtual vector<vector<TSemanticValue> > *getStack()
     {
       return NULL;
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return NO_TYPE;
     }
 
   protected:

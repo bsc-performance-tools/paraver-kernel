@@ -75,6 +75,7 @@ class Window
     virtual TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread ) = 0;
     virtual TObjectOrder getWindowLevelObjects() = 0;
     virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime ) = 0;
+    virtual SemanticInfoType getSemanticInfoType() const = 0;
 
     // Specific functions for WindowProxy
     virtual Window *getConcrete() const
@@ -235,6 +236,7 @@ class WindowProxy: public Window
     virtual TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread );
     virtual TObjectOrder getWindowLevelObjects();
     virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime );
+    virtual SemanticInfoType getSemanticInfoType() const;
 
     virtual Window *getConcrete() const;
     virtual void setName( const string& whichName );

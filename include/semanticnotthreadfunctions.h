@@ -202,6 +202,10 @@ class Maximum: public SemanticNotThread
       return new Maximum( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return SAME_TYPE;
+    }
 
   protected:
     virtual const bool getMyInitFromBegin()
@@ -257,6 +261,10 @@ class Minimum: public SemanticNotThread
       return new Minimum( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return SAME_TYPE;
+    }
 
   protected:
     virtual const bool getMyInitFromBegin()
@@ -433,6 +441,10 @@ class NotThreadMode: public SemanticNotThread
       return new NotThreadMode( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return SAME_TYPE;
+    }
 
   protected:
     virtual const bool getMyInitFromBegin()
@@ -490,6 +502,10 @@ class ObjectI: public SemanticNotThread
       return new ObjectI( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return SAME_TYPE;
+    }
 
   protected:
     virtual const bool getMyInitFromBegin()

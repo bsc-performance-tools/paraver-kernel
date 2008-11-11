@@ -568,3 +568,8 @@ void WindowProxy::setDrawCommLines( bool newValue )
 {
   commLines = newValue;
 }
+
+SemanticInfoType WindowProxy::getSemanticInfoType() const
+{
+  return myWindow->getSemanticInfoType();
+}
