@@ -70,7 +70,7 @@ typedef UINT32        TState;
 
 typedef double        TSemanticValue;
 
-typedef enum TWindowLevel
+enum TWindowLevel
 {
   NONE = 0,
   WORKLOAD, APPLICATION, TASK, THREAD,
@@ -96,12 +96,12 @@ static const TCreateList CREATECOMMS = 0x02;
 typedef double THistogramLimit;
 typedef UINT32 THistogramColumn;
 
-typedef enum THistoTotals
+enum THistoTotals
 {
   TOTAL = 0, AVERAGE, MAXIMUM, MINIMUM, STDEV, AVGDIVMAX, NUMTOTALS
 };
 
-typedef enum SemanticInfoType
+enum SemanticInfoType
 {
   NO_TYPE = 0, // without units
   SAME_TYPE, // same type as previous function

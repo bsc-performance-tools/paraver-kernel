@@ -1,6 +1,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <stdlib.h>
 #include "paraverconfig.h"
 
 ParaverConfig *ParaverConfig::instance = NULL;

@@ -331,14 +331,14 @@ UINT32 BPlusLeaf::linkRecords( TRecord **ini,
 
 void BPlusLeaf::print( string indent )
 {
-  UINT16 used = getUsed();
+/*  UINT16 used = getUsed();
 
   cout << indent << "<" << ( int )used << endl;
   for ( UINT16 ii = 0; ii < used - 1; ii++ )
     cout << indent << records[ ii ];
 
   cout << indent << records[ used - 1 ];
-  cout << indent << ">" << endl << endl;
+  cout << indent << ">" << endl << endl;*/
 }
 
 // ojo, no se pueden hacer dos partial deletes seguidos, porque es la

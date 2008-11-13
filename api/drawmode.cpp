@@ -1,4 +1,6 @@
 #include <limits>
+#include <time.h>
+#include <stdlib.h>
 #include "drawmode.h"
 
 // LAST is the default method

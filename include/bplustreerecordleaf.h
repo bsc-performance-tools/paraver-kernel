@@ -69,7 +69,7 @@ namespace bplustree
       bool operator>=( const RecordLeaf &rl );
       bool operator<=( const RecordLeaf &rl );
 
-      friend std::ostream& operator<<( std::ostream& os, const RecordLeaf& rl );
+      //friend std::ostream& operator<<( std::ostream& os, const RecordLeaf& rl );
   };
 
   //std::ostream& operator<<( std::ostream& os, const RecordLeaf& rl );

@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "previousfiles.h"
 
 const string PreviousFiles::previousTracesFile = "/.paraver/paraverdb";

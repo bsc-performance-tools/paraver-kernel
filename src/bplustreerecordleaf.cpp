@@ -213,7 +213,7 @@ bool RecordLeaf::operator<=( const RecordLeaf &rl )
 /******************************************************************************
  * I/O Methods
  ******************************************************************************/
-std::ostream& bplustree::operator<<( std::ostream& os, const RecordLeaf& rl )
+/*std::ostream& bplustree::operator<<( std::ostream& os, const RecordLeaf& rl )
 {
   string msg;
 
@@ -262,3 +262,4 @@ std::ostream& bplustree::operator<<( std::ostream& os, const RecordLeaf& rl )
 
   return os << "\n";
 }
+*/

@@ -1,3 +1,4 @@
+#include <limits>
 #include <math.h>
 #include "khistogramtotals.h"
 
@@ -62,8 +63,8 @@ void KHistogramTotals::newValue( TSemanticValue whichValue,
     {
       ( *total[ whichPlane ] )[ idStat ]->push_back( 0.0 );
       ( *average[ whichPlane ] )[ idStat ]->push_back( 0.0 );
-      ( *maximum[ whichPlane ] )[ idStat ]->push_back( std::numeric_limits<double>::min() );
-      ( *minimum[ whichPlane ] )[ idStat ]->push_back( std::numeric_limits<double>::max() );
+      ( *maximum[ whichPlane ] )[ idStat ]->push_back( numeric_limits<double>::min() );
+      ( *minimum[ whichPlane ] )[ idStat ]->push_back( numeric_limits<double>::max() );
       ( *stdev[ whichPlane ] )[ idStat ]->push_back( 0.0 );
     }
   }

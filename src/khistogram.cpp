@@ -1117,10 +1117,12 @@ void KHistogram::finishRow( CalculateData *data )
 
   // Next row
   if ( createComms() )
+  {
     if ( threeDimensions )
       commCube->newRow();
     else
       commMatrix->newRow();
+  }
 
   if ( threeDimensions )
     cube->newRow();
