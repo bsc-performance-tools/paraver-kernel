@@ -134,6 +134,7 @@ class KWindow: public Window
     vector<IntervalCompose> intervalTopCompose1;
     vector<IntervalCompose> intervalTopCompose2;
 
+    SemanticInfoType getTopComposeSemanticInfoType() const;
   private:
 
 };

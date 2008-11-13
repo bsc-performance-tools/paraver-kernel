@@ -114,7 +114,6 @@ RecordList *KWindow::getRecordList( TObjectOrder whichObject )
   return intervalTopCompose1[ whichObject ].getRecordList();
 }
 
-
 /**********************************************************************
  *  KSingleWindow implementation
  **********************************************************************/
@@ -476,7 +475,13 @@ Interval *KSingleWindow::getLevelInterval( TWindowLevel whichLevel,
 
 SemanticInfoType KSingleWindow::getSemanticInfoType() const
 {
-  return NO_TYPE;
+  if( functions[ TOPCOMPOSE1 ]->getSemanticInfoType() != SAME_TYPE )
+    return functions[ TOPCOMPOSE1 ]->getSemanticInfoType();
+  if( functions[ TOPCOMPOSE2 ]->getSemanticInfoType() != SAME_TYPE )
+    return functions[ TOPCOMPOSE2 ]->getSemanticInfoType();
+
+
+  return functions[ THREAD ]->getSemanticInfoType();
 }
 
 /**********************************************************************
@@ -702,5 +707,10 @@ TWindowLevel KDerivedWindow::getLevel() const
 
 SemanticInfoType KDerivedWindow::getSemanticInfoType() const
 {
-  return NO_TYPE;
+  if( functions[ TOPCOMPOSE1 ]->getSemanticInfoType() != SAME_TYPE )
+    return functions[ TOPCOMPOSE1 ]->getSemanticInfoType();
+  if( functions[ TOPCOMPOSE2 ]->getSemanticInfoType() != SAME_TYPE )
+    return functions[ TOPCOMPOSE2 ]->getSemanticInfoType();
+
+  return functions[ DERIVED ]->getSemanticInfoType();
 }
