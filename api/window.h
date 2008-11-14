@@ -33,6 +33,8 @@ class Window
     //DerivedWindow
     virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue );
     virtual void setParent( UINT16 whichParent, Window *whichWindow );
+    virtual void setChild( Window *whichWindow );
+    virtual Window *getChild();
 
     // Other
     virtual void setWindowBeginTime( TRecordTime whichTime );
@@ -194,6 +196,8 @@ class WindowProxy: public Window
     //DerivedWindow
     virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue );
     virtual void setParent( UINT16 whichParent, Window *whichWindow );
+    virtual void setChild( Window *whichWindow );
+    virtual Window *getChild();
 
     // Other
     virtual void setWindowBeginTime( TRecordTime whichTime );
@@ -293,6 +297,7 @@ class WindowProxy: public Window
     // Must store the associated proxies
     Window *parent1;
     Window *parent2;
+    Window *child;
 
     // GUI related attributes
     string name;

@@ -33,6 +33,14 @@ void Window::setFactor( UINT16 whichFactor, TSemanticValue newValue )
 void Window::setParent( UINT16 whichParent, Window *whichWindow )
 {}
 
+void Window::setChild( Window *whichWindow )
+{}
+
+Window *Window::getChild()
+{
+  return NULL;
+}
+
 void Window::setWindowBeginTime( TRecordTime whichTime )
 {}
 
@@ -171,6 +179,16 @@ void WindowProxy::setParent( UINT16 whichParent, Window *whichWindow )
       init();
     }
   }
+}
+
+void WindowProxy::setChild( Window *whichWindow )
+{
+  child = whichWindow;
+}
+
+Window *WindowProxy::getChild()
+{
+  return child;
 }
 
 void WindowProxy::setWindowBeginTime( TRecordTime whichTime )
