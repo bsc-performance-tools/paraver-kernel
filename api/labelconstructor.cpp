@@ -84,13 +84,13 @@ inline string chomp( INT64& number )
   INT64 remainder = number % 1000;
   number /= 1000;
 
-  if( number == 0 )
+  if ( number == 0 )
     return boost::lexical_cast<std::string>( remainder );
-  else if( remainder > 99 )
+  else if ( remainder > 99 )
     return boost::lexical_cast<std::string>( remainder );
-  else if( remainder > 9 )
+  else if ( remainder > 9 )
     return "0" + boost::lexical_cast<std::string>( remainder );
-  else if( remainder > 0 )
+  else if ( remainder > 0 )
     return "00" + boost::lexical_cast<std::string>( remainder );
   return "000";
 }
@@ -100,7 +100,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
 {
   stringstream label;
 
-  if( value == numeric_limits<double>::infinity() )
+  if ( value == numeric_limits<double>::infinity() )
     return "inf";
 
   if ( whichHisto->getScientificNotation() )
@@ -117,7 +117,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
     TSemanticValue origValue = value;
     INT64 intValue = INT64( value );
 
-    if( origValue >= 1.0 )
+    if ( origValue >= 1.0 )
     {
       while ( intValue > 0.0 )
         strNum = chomp( intValue ) + "," + strNum;
@@ -126,14 +126,21 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
     }
 
     stringstream tmp;
+    if ( whichHisto->getScientificNotation() )
+      tmp << scientific;
+    else
+      tmp << fixed;
     tmp.precision( ParaverConfig::getInstance()->getPrecision() );
     value -= INT64( origValue );
-    tmp << value;
-    strNum = tmp.str();
-    if( origValue >= 1.0 )
-      strNum.erase( strNum.begin() );
+    if ( value > 0 )
+    {
+      tmp << value;
+      strNum = tmp.str();
+      if ( origValue >= 1.0 )
+        strNum.erase( strNum.begin() );
 
-    label << strNum;
+      label << strNum;
+    }
   }
   else
     label << value;
@@ -147,7 +154,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
 
 string LabelConstructor::histoTotalLabel( THistoTotals whichTotal )
 {
-  switch( whichTotal )
+  switch ( whichTotal )
   {
     case TOTAL:
       return "Total";
