@@ -5,11 +5,13 @@ libcfg_la_SOURCES = \
 
 libapi_la_SOURCES = \
                     drawmode.cpp \
+                    eventlabels.cpp \
                     histogram.cpp \
                     histogramtotals.cpp \
                     labelconstructor.cpp \
                     localkernel.cpp \
                     paraverconfig.cpp \
+                    progresscontroller.cpp \
                     recordlist.cpp \
                     semanticcolor.cpp \
                     trace.cpp \
