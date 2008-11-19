@@ -25,6 +25,9 @@ class LabelConstructor
     static string histoTotalLabel( THistoTotals whichTotal );
 
     static string timeLabel( TTime value, TTimeUnit unit );
+
+    static string semanticLabel( Window * whichWindow, TSemanticValue value,
+                                 bool text );
 };
 
 #endif // LABELCONSTRUCTOR_H_INCLUDED

@@ -5,6 +5,8 @@
 #include "paraverlabels.h"
 #include "histogram.h"
 #include "paraverconfig.h"
+#include "window.h"
+
 string LabelConstructor::objectLabel( TObjectOrder globalOrder,
                                       TWindowLevel level,
                                       Trace *whichTrace )
@@ -73,7 +75,8 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
   else
   {
     // Discrete integer value
-    label << ( whichColumn * delta ) + min;
+    label << LabelConstructor::semanticLabel( whichHisto->getControlWindow(),
+        ( whichColumn * delta ) + min, true );
   }
 
   return label.str();
@@ -184,6 +187,64 @@ string LabelConstructor::timeLabel( TTime value, TTimeUnit unit )
 
   label << value;
   label << " " << LABEL_TIMEUNIT[ unit ];
+
+  return label.str();
+}
+
+string LabelConstructor::semanticLabel( Window * whichWindow,
+                                        TSemanticValue value,
+                                        bool text )
+{
+  stringstream label;
+  SemanticInfoType infoType = whichWindow->getSemanticInfoType();
+
+  label << fixed;
+  if ( ( value - INT64( value ) ) > 0.0 )
+    label.precision( ParaverConfig::getInstance()->getPrecision() );
+  else
+    label.precision( 0 );
+
+  if ( infoType == NO_TYPE || !text )
+  {
+    label << value;
+  }
+  else
+  {
+    if ( infoType == OBJECT_TYPE )
+      label << LabelConstructor::objectLabel( value, whichWindow->getLevel(),
+                                              whichWindow->getTrace() );
+    else if ( infoType == APPL_TYPE )
+      label << LabelConstructor::objectLabel( value, APPLICATION,
+                                              whichWindow->getTrace() );
+    else if ( infoType == TASK_TYPE )
+      label << LabelConstructor::objectLabel( value, TASK,
+                                              whichWindow->getTrace() );
+    else if ( infoType == THREAD_TYPE )
+      label << LabelConstructor::objectLabel( value, THREAD,
+                                              whichWindow->getTrace() );
+    else if ( infoType == NODE_TYPE )
+      label << LabelConstructor::objectLabel( value, NODE,
+                                              whichWindow->getTrace() );
+    else if ( infoType == CPU_TYPE )
+      label << LabelConstructor::objectLabel( value, CPU,
+                                              whichWindow->getTrace() );
+    else if ( infoType == TIME_TYPE )
+      label << LabelConstructor::timeLabel( value, whichWindow->getTimeUnit() );
+    else if ( infoType == STATE_TYPE )
+      label << "unknown state " << value;
+    else if ( infoType == EVENTTYPE_TYPE )
+      label << whichWindow->getTrace()->getEventLabels().getEventTypeLabel( value );
+    else if ( infoType == EVENTVALUE_TYPE )
+      label << "unknown value " << value;
+    else if ( infoType == COMMSIZE_TYPE )
+      label << value << " bytes";
+    else if ( infoType == COMMTAG_TYPE )
+      label << value;
+    else if ( infoType == BANDWIDTH_TYPE )
+      label << value << " bytes/sec";
+    else
+      label << "unknown " << value;
+  }
 
   return label.str();
 }

@@ -475,12 +475,59 @@ Interval *KSingleWindow::getLevelInterval( TWindowLevel whichLevel,
 
 SemanticInfoType KSingleWindow::getSemanticInfoType() const
 {
-  if( functions[ TOPCOMPOSE1 ]->getSemanticInfoType() != SAME_TYPE )
+  if ( functions[ TOPCOMPOSE1 ]->getSemanticInfoType() != SAME_TYPE )
     return functions[ TOPCOMPOSE1 ]->getSemanticInfoType();
-  if( functions[ TOPCOMPOSE2 ]->getSemanticInfoType() != SAME_TYPE )
+  if ( functions[ TOPCOMPOSE2 ]->getSemanticInfoType() != SAME_TYPE )
     return functions[ TOPCOMPOSE2 ]->getSemanticInfoType();
 
-
+  if ( level >= SYSTEM && level <= CPU )
+  {
+    switch ( level )
+    {
+      case SYSTEM:
+        if ( functions[ COMPOSESYSTEM ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ COMPOSESYSTEM ]->getSemanticInfoType();
+        if ( functions[ SYSTEM ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ SYSTEM ]->getSemanticInfoType();
+      case NODE:
+        if ( functions[ COMPOSENODE ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ COMPOSENODE ]->getSemanticInfoType();
+        if ( functions[ NODE ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ NODE ]->getSemanticInfoType();
+      case CPU:
+        if ( functions[ COMPOSECPU ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ COMPOSECPU ]->getSemanticInfoType();
+        if ( functions[ CPU ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ CPU ]->getSemanticInfoType();
+      default:
+        break;
+    }
+  }
+  else if ( level >= WORKLOAD && level <= THREAD )
+  {
+    switch ( level )
+    {
+      case WORKLOAD:
+        if ( functions[ COMPOSEWORKLOAD ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ COMPOSEWORKLOAD ]->getSemanticInfoType();
+        if ( functions[ WORKLOAD ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ WORKLOAD ]->getSemanticInfoType();
+      case APPLICATION:
+        if ( functions[ COMPOSEAPPLICATION ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ COMPOSEAPPLICATION ]->getSemanticInfoType();
+        if ( functions[ APPLICATION ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ APPLICATION ]->getSemanticInfoType();
+      case TASK:
+        if ( functions[ COMPOSETASK ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ COMPOSETASK ]->getSemanticInfoType();
+        if ( functions[ TASK ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ TASK ]->getSemanticInfoType();
+      default:
+        break;
+    }
+  }
+  if ( functions[ COMPOSETHREAD ]->getSemanticInfoType() != SAME_TYPE )
+    return functions[ COMPOSETHREAD ]->getSemanticInfoType();
   return functions[ THREAD ]->getSemanticInfoType();
 }
 
@@ -490,7 +537,7 @@ SemanticInfoType KSingleWindow::getSemanticInfoType() const
 
 void KDerivedWindow::setup()
 {
-  myTrace = (KTrace*)parents[ 0 ]->getTrace();
+  myTrace = ( KTrace* )parents[ 0 ]->getTrace();
 
   if ( functions[ 0 ] == NULL )
     functions[ 0 ] = new ComposeAsIs();
@@ -682,7 +729,7 @@ Interval *KDerivedWindow::getLevelInterval( TWindowLevel whichLevel,
 
 void KDerivedWindow::setParent( UINT16 whichParent, Window *whichWindow )
 {
-  parents[ whichParent ] = (KWindow*)whichWindow;
+  parents[ whichParent ] = ( KWindow* )whichWindow;
   if ( parents[ 0 ] != NULL && parents[ 1 ] != NULL )
     setup();
 }
@@ -707,9 +754,9 @@ TWindowLevel KDerivedWindow::getLevel() const
 
 SemanticInfoType KDerivedWindow::getSemanticInfoType() const
 {
-  if( functions[ TOPCOMPOSE1 ]->getSemanticInfoType() != SAME_TYPE )
+  if ( functions[ TOPCOMPOSE1 ]->getSemanticInfoType() != SAME_TYPE )
     return functions[ TOPCOMPOSE1 ]->getSemanticInfoType();
-  if( functions[ TOPCOMPOSE2 ]->getSemanticInfoType() != SAME_TYPE )
+  if ( functions[ TOPCOMPOSE2 ]->getSemanticInfoType() != SAME_TYPE )
     return functions[ TOPCOMPOSE2 ]->getSemanticInfoType();
 
   return functions[ DERIVED ]->getSemanticInfoType();
