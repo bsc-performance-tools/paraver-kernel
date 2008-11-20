@@ -5,6 +5,7 @@
 #include "paraverkerneltypes.h"
 #include "semanticcolor.h"
 #include "eventlabels.h"
+#include "statelabels.h"
 
 class KernelConnection;
 class ProgressController;
@@ -96,6 +97,11 @@ class Trace
       EventLabels *tmp = NULL;
       return *tmp;
     }
+    virtual const StateLabels& getStateLabels() const
+    {
+      StateLabels *tmp = NULL;
+      return *tmp;
+    }
 
     // Specific methods for KTrace only
     virtual const set<TEventType>& getLoadedEvents() const
@@ -176,6 +182,7 @@ class TraceProxy: public Trace
     virtual const CodeColor& getCodeColor() const;
     virtual const GradientColor& getGradientColor() const;
     virtual const EventLabels& getEventLabels() const;
+    virtual const StateLabels& getStateLabels() const;
 
   private:
     Trace *myTrace;
@@ -184,6 +191,7 @@ class TraceProxy: public Trace
     GradientColor myGradientColor;
 
     EventLabels myEventLabels;
+    StateLabels myStateLabels;
 
     TraceProxy( KernelConnection *whichKernel, const string& whichFile,
                 ProgressController *progress );

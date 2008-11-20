@@ -231,7 +231,13 @@ string LabelConstructor::semanticLabel( Window * whichWindow,
     else if ( infoType == TIME_TYPE )
       label << LabelConstructor::timeLabel( value, whichWindow->getTimeUnit() );
     else if ( infoType == STATE_TYPE )
-      label << "unknown state " << value;
+    {
+      string tmpstr;
+      if ( !whichWindow->getTrace()->getStateLabels().getStateLabel( value, tmpstr ) )
+        label << tmpstr << " state " << value;
+      else
+        label << tmpstr;
+    }
     else if ( infoType == EVENTTYPE_TYPE )
     {
       string tmpstr;

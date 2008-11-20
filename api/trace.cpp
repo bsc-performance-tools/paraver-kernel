@@ -272,6 +272,8 @@ void TraceProxy::parsePCF( const string& whichFile )
     myGradientColor.setEndGradientColor( tmpColor );
   }
   myEventLabels = EventLabels( *config, myTrace->getLoadedEvents() );
+  myStateLabels = StateLabels( *config );
+
   delete config;
 }
 
@@ -288,4 +290,9 @@ const GradientColor& TraceProxy::getGradientColor() const
 const EventLabels& TraceProxy::getEventLabels() const
 {
   return myEventLabels;
+}
+
+const StateLabels& TraceProxy::getStateLabels() const
+{
+  return myStateLabels;
 }
