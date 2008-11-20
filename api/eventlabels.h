@@ -18,8 +18,9 @@ class EventLabels
     ~EventLabels();
 
     void getTypes( vector<TEventType>& onVector ) const;
-    string getEventTypeLabel( TEventType type ) const;
-    string getEventValueLabel( TEventType type, TEventValue value ) const;
+    bool getEventTypeLabel( TEventType type, string& onStr ) const;
+    bool getEventValueLabel( TEventType type, TEventValue value, string& onStr ) const;
+    bool getEventValueLabel( TEventValue value, string& onStr ) const;
 
   protected:
 

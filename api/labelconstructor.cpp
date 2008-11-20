@@ -233,9 +233,21 @@ string LabelConstructor::semanticLabel( Window * whichWindow,
     else if ( infoType == STATE_TYPE )
       label << "unknown state " << value;
     else if ( infoType == EVENTTYPE_TYPE )
-      label << whichWindow->getTrace()->getEventLabels().getEventTypeLabel( value );
+    {
+      string tmpstr;
+      if ( !whichWindow->getTrace()->getEventLabels().getEventTypeLabel( value, tmpstr ) )
+        label << tmpstr << " type " << value;
+      else
+        label << tmpstr;
+    }
     else if ( infoType == EVENTVALUE_TYPE )
-      label << "unknown value " << value;
+    {
+      string tmpstr;
+      if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( value, tmpstr ) )
+        label << tmpstr << " type " << value;
+      else
+        label << tmpstr;
+    }
     else if ( infoType == COMMSIZE_TYPE )
       label << value << " bytes";
     else if ( infoType == COMMTAG_TYPE )
