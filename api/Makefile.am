@@ -14,6 +14,7 @@ libapi_la_SOURCES = \
                     progresscontroller.cpp \
                     recordlist.cpp \
                     semanticcolor.cpp \
+                    statelabels.cpp \
                     trace.cpp \
                     window.cpp \
                     ../../common-files/pcfparser/ParaverEventType.cpp \
