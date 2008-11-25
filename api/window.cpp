@@ -138,6 +138,8 @@ void WindowProxy::init()
   changed = false;
   redraw = false;
   commLines = true;
+
+  child = NULL;
 }
 
 WindowProxy::~WindowProxy()
@@ -169,10 +171,21 @@ void WindowProxy::setParent( UINT16 whichParent, Window *whichWindow )
     yScaleComputed = false;
 
     if ( whichParent == 0 )
+    {
+      if ( parent1 != NULL )
+        parent1->setChild( NULL );
       parent1 = whichWindow;
+    }
     else if ( whichParent == 1 )
+    {
+      if ( parent2 != NULL )
+        parent2->setChild( NULL );
       parent2 = whichWindow;
+    }
     myWindow->setParent( whichParent, whichWindow->getConcrete() );
+
+    whichWindow->setChild( this );
+
     if ( myTrace == NULL )
     {
       myTrace = whichWindow->getTrace();
