@@ -222,6 +222,12 @@
 		<Unit filename="api/labelconstructor.h">
 			<Option target="api" />
 		</Unit>
+		<Unit filename="api/loadedwindows.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/loadedwindows.h">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="api/localkernel.cpp">
 			<Option target="api" />
 		</Unit>
