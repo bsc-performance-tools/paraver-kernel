@@ -49,7 +49,7 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
 
 
 string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
-    const Histogram *whichHisto,
+    const Window *whichWindow,
     THistogramLimit min,
     THistogramLimit max,
     THistogramLimit delta )
@@ -75,26 +75,29 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
   else
   {
     // Discrete integer value
-    label << LabelConstructor::semanticLabel( whichHisto->getControlWindow(),
+    label << LabelConstructor::semanticLabel( whichWindow,
         ( whichColumn * delta ) + min, true );
   }
 
   return label.str();
 }
 
-inline string chomp( INT64& number )
+inline string chomp( TSemanticValue& number )
 {
-  INT64 remainder = number % 1000;
-  number /= 1000;
+  TSemanticValue origValue = number;
+  number /= 1000.0;
+  number = floor( number );
+  TSemanticValue remainder = origValue - number * 1000.0;
+  INT32 intRemainder = INT32( remainder );
 
   if ( number == 0 )
-    return boost::lexical_cast<std::string>( remainder );
+    return boost::lexical_cast<std::string>( intRemainder );
   else if ( remainder > 99 )
-    return boost::lexical_cast<std::string>( remainder );
+    return boost::lexical_cast<std::string>( intRemainder );
   else if ( remainder > 9 )
-    return "0" + boost::lexical_cast<std::string>( remainder );
+    return "0" + boost::lexical_cast<std::string>( intRemainder );
   else if ( remainder > 0 )
-    return "00" + boost::lexical_cast<std::string>( remainder );
+    return "00" + boost::lexical_cast<std::string>( intRemainder );
   return "000";
 }
 
@@ -118,7 +121,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
   {
     string strNum;
     TSemanticValue origValue = value;
-    INT64 intValue = INT64( value );
+    TSemanticValue intValue = floor( value );
 
     if ( origValue >= 1.0 )
     {
@@ -191,7 +194,7 @@ string LabelConstructor::timeLabel( TTime value, TTimeUnit unit )
   return label.str();
 }
 
-string LabelConstructor::semanticLabel( Window * whichWindow,
+string LabelConstructor::semanticLabel( const Window * whichWindow,
                                         TSemanticValue value,
                                         bool text )
 {

@@ -1543,8 +1543,10 @@ inline void StatStdevBurstTime::init( KHistogram *whichHistogram )
   numValues.reserve( numPlanes );
   qValues.reserve( numPlanes );
   for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  {
     numValues.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
-  qValues.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
+    qValues.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
+  }
 }
 
 inline void StatStdevBurstTime::reset()

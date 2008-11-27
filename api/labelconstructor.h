@@ -14,7 +14,7 @@ class LabelConstructor
                                Trace *whichTrace );
 
     static string histoColumnLabel( THistogramColumn whichColumn,
-                                    const Histogram *whichHisto,
+                                    const Window *whichWindow,
                                     THistogramLimit min,
                                     THistogramLimit max,
                                     THistogramLimit delta );
@@ -26,7 +26,7 @@ class LabelConstructor
 
     static string timeLabel( TTime value, TTimeUnit unit );
 
-    static string semanticLabel( Window * whichWindow, TSemanticValue value,
+    static string semanticLabel( const Window * whichWindow, TSemanticValue value,
                                  bool text );
 };
 

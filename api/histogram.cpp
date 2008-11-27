@@ -485,29 +485,26 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
   {
     THistogramLimit nPlanes = getNumPlanes();
     UINT32 i;
-    bool commFuturePlane = true;
-    bool stop = false;
-    i = selectedPlane = commSelectedPlane = 0;
-
+    i = selectedPlane = 0;
     while ( i < nPlanes )
     {
       // get the first plane with values
-      if ( futurePlane && planeWithValues( i ) )
+      if ( /*futurePlane &&*/ planeWithValues( i ) )
       {
         selectedPlane = i;
-        futurePlane = false;
-        if ( stop ) break;
-        else stop = true;
+        break;
       }
+      i++;
+    }
 
-      if ( commFuturePlane && planeCommWithValues( i ) )
+    i = commSelectedPlane = 0;
+    while ( i < nPlanes )
+    {
+      if ( /*commFuturePlane &&*/ planeCommWithValues( i ) )
       {
         commSelectedPlane = i;
-        commFuturePlane = false;
-        if ( stop ) break;
-        else stop = true;
+        break;
       }
-
       i++;
     }
   }
@@ -609,6 +606,11 @@ void HistogramProxy::setPlaneMinValue( double whichMin )
   futurePlane = true;
 }
 
+double HistogramProxy::getPlaneMinValue() const
+{
+  return planeMinValue;
+}
+
 INT32 HistogramProxy::getSelectedPlane() const
 {
   return selectedPlane;
@@ -690,7 +692,7 @@ string HistogramProxy::getRowLabel( TObjectOrder whichRow ) const
 
 string HistogramProxy::getColumnLabel( THistogramColumn whichColumn ) const
 {
-  return LabelConstructor::histoColumnLabel( whichColumn, this,
+  return LabelConstructor::histoColumnLabel( whichColumn, controlWindow,
          getControlMin(),
          getControlMax(),
          getControlDelta() );
@@ -698,7 +700,8 @@ string HistogramProxy::getColumnLabel( THistogramColumn whichColumn ) const
 
 string HistogramProxy::getPlaneLabel( THistogramColumn whichPlane ) const
 {
-  return LabelConstructor::histoColumnLabel( whichPlane, this,
+  Window *win = ( extraControlWindow != NULL ) ? extraControlWindow : controlWindow;
+  return LabelConstructor::histoColumnLabel( whichPlane, win,
          getExtraControlMin(),
          getExtraControlMax(),
          getExtraControlDelta() );

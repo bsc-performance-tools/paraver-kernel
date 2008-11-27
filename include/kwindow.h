@@ -57,7 +57,7 @@ class KWindow: public Window
       timeUnit = whichUnit;
     }
 
-    TTimeUnit getTimeUnit()
+    TTimeUnit getTimeUnit() const
     {
       return timeUnit;
     }

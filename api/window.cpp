@@ -313,7 +313,7 @@ void WindowProxy::setTimeUnit( TTimeUnit whichUnit )
   myWindow->setTimeUnit( whichUnit );
 }
 
-TTimeUnit WindowProxy::getTimeUnit()
+TTimeUnit WindowProxy::getTimeUnit() const
 {
   return myWindow->getTimeUnit();
 }

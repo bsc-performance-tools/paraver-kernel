@@ -30,22 +30,27 @@ TWindowID LoadedWindows::add( Window *whichWindow )
   return currentID;
 }
 
+Window *LoadedWindows::getWindow( TWindowID id ) const
+{
+  return windows.find( id )->second;
+}
+
 // Histogram windows selection related methods
 void LoadedWindows::getValidControlWindow( Window *dataWindow,
-    vector<Window *>& onVector ) const
+    vector<TWindowID>& onVector ) const
 {
   for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
         it != windows.end(); it++ )
   {
     if ( ( *it ).second->getChild() == NULL &&
          validDataWindow( dataWindow, ( *it ).second ) )
-      onVector.push_back( ( *it ).second );
+      onVector.push_back( ( *it ).first );
   }
 }
 
 void LoadedWindows::getValidDatalWindow( Window *controlWindow,
     Window *extraWindow,
-    vector<Window *>& onVector ) const
+    vector<TWindowID>& onVector ) const
 {
   Window *cWin = ( controlWindow > extraWindow ) ? controlWindow : extraWindow;
   for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
@@ -53,7 +58,7 @@ void LoadedWindows::getValidDatalWindow( Window *controlWindow,
   {
     if ( ( *it ).second->getChild() == NULL &&
          validDataWindow( ( *it ).second, cWin ) )
-      onVector.push_back( ( *it ).second );
+      onVector.push_back( ( *it ).first );
   }
 }
 
@@ -66,6 +71,7 @@ bool LoadedWindows::validDataWindow( Window *dataWindow, Window *controlWindow )
   else
   {
     // The traces have the same resource and application structure???
+    // not yet done
   }
 
   return false;

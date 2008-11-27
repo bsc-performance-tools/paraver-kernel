@@ -120,10 +120,18 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
       if ( !it->second->parseLine( whichKernel, auxStream, whichTrace, windows,
                                    histograms ) )
       {
-        cout << auxStream.str() << endl;
-        if ( windows[ windows.size() - 1 ] != NULL )
-          delete windows[ windows.size() - 1 ];
-        windows[ windows.size() - 1 ] = NULL;
+        if ( histograms.begin() != histograms.end() &&
+             histograms[ histograms.size() - 1 ] != NULL )
+        {
+          delete histograms[ histograms.size() - 1 ];
+          histograms[ histograms.size() - 1 ] = NULL;
+        }
+        else
+        {
+          if ( windows[ windows.size() - 1 ] != NULL )
+            delete windows[ windows.size() - 1 ];
+          windows[ windows.size() - 1 ] = NULL;
+        }
       }
     }
   }
@@ -415,9 +423,9 @@ bool WindowHeight::parseLine( KernelConnection *whichKernel, istringstream& line
 
 
 bool WindowCommLines::parseLine( KernelConnection *whichKernel, istringstream& line,
-                              Trace *whichTrace,
-                              vector<Window *>& windows,
-                              vector<Histogram *>& histograms )
+                                 Trace *whichTrace,
+                                 vector<Window *>& windows,
+                                 vector<Histogram *>& histograms )
 {
   string strBool;
 
@@ -438,9 +446,9 @@ bool WindowCommLines::parseLine( KernelConnection *whichKernel, istringstream& l
 
 
 bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& line,
-                             Trace *whichTrace,
-                             vector<Window *>& windows,
-                             vector<Histogram *>& histograms )
+                                 Trace *whichTrace,
+                                 vector<Window *>& windows,
+                                 vector<Histogram *>& histograms )
 {
   string strMode;
 
@@ -670,7 +678,7 @@ bool WindowBeginTime::parseLine( KernelConnection *whichKernel, istringstream& l
   if ( !( tmpTime >> auxTime ) )
     return false;
 
-  if( auxTime < whichTrace->getEndTime() )
+  if ( auxTime < whichTrace->getEndTime() )
     windows[ windows.size() - 1 ]->setWindowBeginTime( auxTime );
   else
     windows[ windows.size() - 1 ]->setWindowBeginTime( 0.0 );
@@ -717,7 +725,7 @@ bool WindowStopTime::parseLine( KernelConnection *whichKernel, istringstream& li
   if ( !( tmpTime >> auxTime ) )
     return false;
 
-  if( auxTime <= whichTrace->getEndTime() )
+  if ( auxTime <= whichTrace->getEndTime() )
     windows[ windows.size() - 1 ]->setWindowEndTime( auxTime );
   else
     windows[ windows.size() - 1 ]->setWindowEndTime( whichTrace->getEndTime() );
@@ -1446,7 +1454,8 @@ bool Analyzer2DControlWindow::parseLine( KernelConnection *whichKernel, istrings
   if ( !( tmpWindow >> indexControlWindow ) )
     return false;
 
-  if ( indexControlWindow > windows.size() )
+  if ( indexControlWindow > windows.size() ||
+       windows[ indexControlWindow - 1 ] == NULL )
     return false;
 
   histograms[ histograms.size() - 1 ]->setControlWindow( windows[ indexControlWindow - 1 ] );
@@ -1473,7 +1482,8 @@ bool Analyzer2DDataWindow::parseLine( KernelConnection *whichKernel, istringstre
   if ( !( tmpWindow >> indexDataWindow ) )
     return false;
 
-  if ( indexDataWindow > windows.size() )
+  if ( indexDataWindow > windows.size() ||
+       windows[ indexDataWindow - 1 ] == NULL )
     return false;
 
   histograms[ histograms.size() - 1 ]->setDataWindow( windows[ indexDataWindow - 1 ] );
@@ -2094,7 +2104,12 @@ bool Analyzer3DControlWindow::parseLine( KernelConnection *whichKernel, istrings
   istringstream tmpValue( str3DControlWindow );
   if ( !( tmpValue >> controlWindow ) )
     return false;
-  histograms[ histograms.size() - 1 ]->setExtraControlWindow( windows[ controlWindow ] );
+
+  if ( controlWindow > windows.size() ||
+       windows[ controlWindow - 1 ] == NULL )
+    return false;
+
+  histograms[ histograms.size() - 1 ]->setExtraControlWindow( windows[ controlWindow - 1 ] );
 
   return true;
 }

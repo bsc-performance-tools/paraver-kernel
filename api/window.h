@@ -56,7 +56,7 @@ class Window
     virtual TWindowLevel getLevel() const = 0;
     virtual void setLevel( TWindowLevel whichLevel ) = 0;
     virtual void setTimeUnit( TTimeUnit whichUnit ) = 0;
-    virtual TTimeUnit getTimeUnit() = 0;
+    virtual TTimeUnit getTimeUnit() const = 0;
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const = 0;
     virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    SemanticFunction *whichFunction ) = 0;
@@ -219,7 +219,7 @@ class WindowProxy: public Window
     virtual TWindowLevel getLevel() const;
     virtual void setLevel( TWindowLevel whichLevel );
     virtual void setTimeUnit( TTimeUnit whichUnit );
-    virtual TTimeUnit getTimeUnit();
+    virtual TTimeUnit getTimeUnit() const;
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const;
     virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    SemanticFunction *whichFunction );
