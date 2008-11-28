@@ -754,10 +754,10 @@ TWindowLevel KDerivedWindow::getLevel() const
 
 SemanticInfoType KDerivedWindow::getSemanticInfoType() const
 {
-  if ( functions[ TOPCOMPOSE1 ]->getSemanticInfoType() != SAME_TYPE )
-    return functions[ TOPCOMPOSE1 ]->getSemanticInfoType();
-  if ( functions[ TOPCOMPOSE2 ]->getSemanticInfoType() != SAME_TYPE )
-    return functions[ TOPCOMPOSE2 ]->getSemanticInfoType();
+  if ( functions[ 0 ]->getSemanticInfoType() != SAME_TYPE )
+    return functions[ 0 ]->getSemanticInfoType();
+  if ( functions[ 1 ]->getSemanticInfoType() != SAME_TYPE )
+    return functions[ 1 ]->getSemanticInfoType();
 
-  return functions[ DERIVED ]->getSemanticInfoType();
+  return functions[ 2 ]->getSemanticInfoType();
 }
