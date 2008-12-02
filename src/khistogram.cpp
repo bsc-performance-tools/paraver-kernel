@@ -679,7 +679,7 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
     commTotals->finish();
   if ( rowCommTotals != NULL )
     rowCommTotals->finish();
-  // - Se ordenan las columnas si es necesario.
+  // - Columns will be ordered if necesary
 }
 
 
@@ -914,8 +914,6 @@ void KHistogram::calculate( TObjectOrder iRow,
                                       data->plane ) )
       return;
   }
-  else
-    data->plane = 0;
 
   if ( winIndex == orderedWindows.size() - 1 )
   {
