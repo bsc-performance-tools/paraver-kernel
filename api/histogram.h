@@ -206,6 +206,7 @@ class Histogram
     {
       return 0;
     }
+    virtual void setSelectedPlane( INT32 plane ) {}
     virtual INT32 getSelectedPlane() const
     {
       return 0;
@@ -383,6 +384,7 @@ class HistogramProxy : public Histogram
     virtual bool getComputeGradient() const;
     virtual void setPlaneMinValue( double whichMin );
     virtual double getPlaneMinValue() const;
+    virtual void setSelectedPlane( INT32 plane );
     virtual INT32 getSelectedPlane() const;
     virtual INT32 getCommSelectedPlane() const;
 

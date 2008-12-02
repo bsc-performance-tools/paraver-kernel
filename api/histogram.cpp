@@ -132,6 +132,8 @@ void HistogramProxy::clearDataWindow()
 void HistogramProxy::clearExtraControlWindow()
 {
   extraControlWindow = NULL;
+  selectedPlane = 0;
+  commSelectedPlane = 0;
   myHisto->clearExtraControlWindow();
 }
 
@@ -609,6 +611,11 @@ void HistogramProxy::setPlaneMinValue( double whichMin )
 double HistogramProxy::getPlaneMinValue() const
 {
   return planeMinValue;
+}
+
+void HistogramProxy::setSelectedPlane( INT32 plane )
+{
+  selectedPlane = plane;
 }
 
 INT32 HistogramProxy::getSelectedPlane() const
