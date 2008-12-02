@@ -91,7 +91,7 @@ void KHistogramTotals::finish()
   {
     // No values
     if ( total[ iPlane ] == NULL )
-      return;
+      continue;
 
     for ( UINT16 iStat = 0; iStat < stats; iStat++ )
     {
