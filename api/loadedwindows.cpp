@@ -52,7 +52,17 @@ void LoadedWindows::getValidDatalWindow( Window *controlWindow,
     Window *extraWindow,
     vector<TWindowID>& onVector ) const
 {
-  Window *cWin = ( controlWindow > extraWindow ) ? controlWindow : extraWindow;
+  Window *cWin;
+
+  if ( extraWindow == NULL )
+  {
+    cWin = controlWindow;
+  }
+  else
+  {
+    cWin = ( controlWindow->getLevel() > extraWindow->getLevel() ) ?
+           controlWindow : extraWindow;
+  }
   for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
         it != windows.end(); it++ )
   {
