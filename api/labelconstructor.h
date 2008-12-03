@@ -20,7 +20,8 @@ class LabelConstructor
                                     THistogramLimit delta );
 
     static string histoCellLabel( const Histogram *whichHisto,
-                                  TSemanticValue value );
+                                  TSemanticValue value,
+                                  bool showUnits );
 
     static string histoTotalLabel( THistoTotals whichTotal );
 

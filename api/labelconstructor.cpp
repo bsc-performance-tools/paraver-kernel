@@ -102,7 +102,7 @@ inline string chomp( TSemanticValue& number )
 }
 
 string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
-    TSemanticValue value )
+    TSemanticValue value, bool showUnits )
 {
   stringstream label;
 
@@ -151,7 +151,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
   else
     label << value;
 
-  if ( whichHisto->getShowUnits() &&
+  if ( showUnits && whichHisto->getShowUnits() &&
        !whichHisto->itsCommunicationStat( whichHisto->getCurrentStat() ) )
     label << " " << whichHisto->getUnitsLabel( whichHisto->getCurrentStat() );
 
