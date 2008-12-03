@@ -35,6 +35,8 @@ class Window
     virtual void setParent( UINT16 whichParent, Window *whichWindow );
     virtual void setChild( Window *whichWindow );
     virtual Window *getChild();
+    virtual Window *getParent( UINT16 whichParent );
+
 
     // Other
     virtual void setWindowBeginTime( TRecordTime whichTime );
@@ -198,6 +200,7 @@ class WindowProxy: public Window
     virtual void setParent( UINT16 whichParent, Window *whichWindow );
     virtual void setChild( Window *whichWindow );
     virtual Window *getChild();
+    virtual Window *getParent( UINT16 whichParent );
 
     // Other
     virtual void setWindowBeginTime( TRecordTime whichTime );

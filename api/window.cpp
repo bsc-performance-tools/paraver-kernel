@@ -41,6 +41,11 @@ Window *Window::getChild()
   return NULL;
 }
 
+Window *Window::getParent( UINT16 whichParent )
+{
+  return NULL;
+}
+
 void Window::setWindowBeginTime( TRecordTime whichTime )
 {}
 
@@ -203,6 +208,18 @@ Window *WindowProxy::getChild()
 {
   return child;
 }
+
+
+Window *WindowProxy::getParent( UINT16 whichParent )
+{
+  switch ( whichParent )
+  {
+    case 0: return parent1; break;
+    case 1: return parent2; break;
+    default: return NULL; break;
+  }
+}
+
 
 void WindowProxy::setWindowBeginTime( TRecordTime whichTime )
 {
