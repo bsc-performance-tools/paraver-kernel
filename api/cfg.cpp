@@ -296,6 +296,9 @@ bool WindowType::parseLine( KernelConnection *whichKernel, istringstream& line,
 
   windows[ windows.size() - 1 ]->setName( currentWindowName );
 
+  // Default value from old paraver code
+  windows[ windows.size() - 1 ]->setTimeUnit( US );
+
   return true;
 }
 

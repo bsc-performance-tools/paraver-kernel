@@ -210,7 +210,7 @@ rgb GradientColor::calcColor( TSemanticValue whichValue, Window& whichWindow )
 {
   if ( whichValue < whichWindow.getMinimumY() )
   {
-    if ( drawOutlier )
+    if ( drawOutlier && whichValue != 0 )
       return belowOutlierColor;
     if ( drawOutOfScale )
       return beginGradientColor;

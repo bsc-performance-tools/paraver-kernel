@@ -243,6 +243,7 @@ TSemanticValue StateRecordDuration::execute( const SemanticInfo *info )
       break;
     }
   }
+
   tmp = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( tmp );
 
   return tmp;
@@ -282,9 +283,7 @@ TSemanticValue LastEventValue::execute( const SemanticInfo *info )
   return tmp;
 }
 
-//OJO!!!
-//No estoy seguro que funcione igual que en codigo antiguo, pero es que mirandolo
-// (el antiguo) es muy liado pa la tonteria que hace.
+
 string LastEventValueWOBursts::name = "Last Evt Val w/o Bursts";
 TSemanticValue LastEventValueWOBursts::execute( const SemanticInfo *info )
 {
@@ -576,6 +575,8 @@ TSemanticValue EventBytes::execute( const SemanticInfo *info )
 
   tmp = getTotalCommSize( myInfo->it, nextEvent,
                           ( KSingleWindow * ) myInfo->callingInterval->getWindow() );
+
+  delete nextEvent;
 
   return tmp;
 }
