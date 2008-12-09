@@ -569,6 +569,16 @@ void WindowProxy::setGradientColorMode()
   codeColor = false;
 }
 
+bool WindowProxy::IsCodeColorSet() const
+{
+  return codeColor;
+}
+
+bool WindowProxy::IsGradientColorSet() const
+{
+  return !codeColor;
+}
+
 void WindowProxy::allowOutOfScale( bool activate )
 {
   myGradientColor.allowOutOfScale( activate );

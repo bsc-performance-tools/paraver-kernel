@@ -152,6 +152,14 @@ class Window
     {}
     virtual void setCodeColorMode()
     {}
+    virtual bool IsCodeColorSet() const
+    {
+      return true;
+    }
+    virtual bool IsGradientColorSet() const
+    {
+      return false;
+    }
     virtual void setGradientColorMode()
     {}
     virtual void allowOutOfScale( bool activate )
@@ -266,6 +274,8 @@ class WindowProxy: public Window
     virtual void setShowWindow( bool newValue );
     virtual void setCodeColorMode();
     virtual void setGradientColorMode();
+    virtual bool IsCodeColorSet() const;
+    virtual bool IsGradientColorSet() const;
     virtual void allowOutOfScale( bool activate );
     virtual void allowOutliers( bool activate );
     virtual rgb calcColor( TSemanticValue whichValue, Window& whichWindow );
