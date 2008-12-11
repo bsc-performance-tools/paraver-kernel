@@ -50,8 +50,8 @@ class Window
     virtual bool getComputeYMaxOnInit() const { return false; }
     virtual void setMaximumY( TSemanticValue whichMax ) {}
     virtual void setMinimumY( TSemanticValue whichMin ) {}
-    virtual TSemanticValue getMaximumY() { return 0; }
-    virtual TSemanticValue getMinimumY() { return 0; }
+    virtual TSemanticValue getMaximumY() { return 15.0; }
+    virtual TSemanticValue getMinimumY() { return 0.0; }
 
     //------------------------------------------------------------
     virtual Trace *getTrace() const = 0;

@@ -141,8 +141,8 @@ class RecordList
 
     virtual void clear() = 0;
     virtual void erase( iterator first, iterator last ) = 0;
-    virtual iterator begin() = 0;
-    virtual iterator end() = 0;
+    virtual RecordList::iterator begin() = 0;
+    virtual RecordList::iterator end() = 0;
     virtual bool newRecords() const = 0;
 };
 
@@ -153,8 +153,8 @@ class RecordListProxy: public RecordList
 
     virtual void clear();
     virtual void erase( iterator first, iterator last );
-    virtual iterator begin();
-    virtual iterator end();
+    virtual RecordList::iterator begin();
+    virtual RecordList::iterator end();
     virtual bool newRecords() const;
 
   private:

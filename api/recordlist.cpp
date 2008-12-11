@@ -19,12 +19,12 @@ void RecordListProxy::erase( iterator first, iterator last )
   myRecordList->erase( first, last );
 }
 
-RecordListProxy::iterator RecordListProxy::begin() const
+RecordList::iterator RecordListProxy::begin()
 {
   return myRecordList->begin();
 }
 
-RecordListProxy::iterator RecordListProxy::end() const
+RecordList::iterator RecordListProxy::end()
 {
   return myRecordList->end();
 }

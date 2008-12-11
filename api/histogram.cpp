@@ -15,12 +15,6 @@ Histogram *Histogram::create( KernelConnection *whichKernel )
 Histogram::Histogram( KernelConnection *whichKernel ) : myKernel( whichKernel )
 {}
 
-void Histogram::setWindowBeginTime( TRecordTime whichTime )
-{}
-
-void Histogram::setWindowEndTime( TRecordTime whichTime )
-{}
-
 HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
     Histogram( whichKernel )
 {

@@ -20,7 +20,8 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
+			ConfigurationType="4"
+			UseOfMFC="2"
 			CharacterSet="1"
 			>
 			<Tool
@@ -47,7 +48,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
-				WarningLevel="2"
+				WarningLevel="1"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -60,17 +61,10 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -80,9 +74,6 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -212,6 +203,70 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common-files\pcfparser\ParaverEventType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\ParaverEventType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\ParaverEventValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\ParaverEventValue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\ParaverGradientColor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\ParaverGradientColor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\ParaverGradientNames.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\ParaverGradientNames.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\ParaverState.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\ParaverState.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\ParaverStatesColor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\ParaverStatesColor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\ParaverTraceConfig.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\ParaverTraceConfig.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\ParaverTraceConfigGrammar.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\ParaverTraceConfigGrammar.h"
+				>
+			</File>
+			<File
 				RelativePath=".\previousfiles.cpp"
 				>
 			</File>
@@ -233,6 +288,14 @@
 			</File>
 			<File
 				RelativePath=".\trace.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\UIParaverTraceConfig.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\UIParaverTraceConfig.h"
 				>
 			</File>
 			<File
