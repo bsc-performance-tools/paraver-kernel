@@ -17,8 +17,8 @@ class KRecordList: public RecordList
 
     virtual void clear();
     virtual void erase( iterator first, iterator last );
-    virtual iterator begin() const;
-    virtual iterator end() const;
+    virtual iterator begin();
+    virtual iterator end();
     virtual bool newRecords() const;
 
     // Specific for KRecordList
@@ -26,27 +26,6 @@ class KRecordList: public RecordList
   protected:
 
   private:
-    // r1 is less than r2?
-    struct ltrecord
-    {
-      bool operator()( const RLRecord& r1, const RLRecord& r2 )
-      {
-        if ( r1.getTime() < r2.getTime() )
-          return true;
-        else if ( r1.getTime() == r2.getTime() )
-        {
-          if ( r1.getOrder() < r2.getOrder() )
-            return true;
-          else if ( r1.getOrder() == r2.getOrder() )
-          {
-            if ( ( r1.getType() & COMM ) && ( r2.getType() & EVENT ) )
-              return true;
-          }
-        }
-        return false;
-      }
-    };
-
     set<RLRecord, ltrecord> list;
     bool newRec;
 };

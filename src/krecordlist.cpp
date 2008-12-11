@@ -22,12 +22,12 @@ void KRecordList::erase( iterator first, iterator last )
   newRec = false;
 }
 
-KRecordList::iterator KRecordList::begin() const
+RecordList::iterator KRecordList::begin()
 {
   return list.begin();
 }
 
-KRecordList::iterator KRecordList::end() const
+RecordList::iterator KRecordList::end()
 {
   return list.end();
 }

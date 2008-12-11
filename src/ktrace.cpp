@@ -1,6 +1,10 @@
 #include <fstream>
 #include <sstream>
-#include <ext/hash_set>
+#ifdef WIN32
+  #include <hash_set>
+#else
+  #include <ext/hash_set>
+#endif
 #include "ktrace.h"
 #include "traceheaderexception.h"
 #include "tracebodyio_v1.h"
@@ -8,7 +12,11 @@
 #include "kprogresscontroller.h"
 
 using namespace std;
-using namespace __gnu_cxx;
+#ifdef WIN32
+  using namespace stdext;
+#else
+  using namespace __gnu_cxx;
+#endif
 
 string KTrace::getFileName() const
 {

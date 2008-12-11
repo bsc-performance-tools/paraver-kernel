@@ -5,6 +5,11 @@
 #include "paraverkerneltypes.h"
 #include "paraverconfig.h"
 
+#ifdef WIN32
+#undef max
+#undef min
+#endif
+
 class KernelConnection;
 class HistogramTotals;
 class Window;
@@ -18,8 +23,8 @@ class Histogram
     Histogram( KernelConnection *whichKernel );
     virtual ~Histogram() {}
 
-    virtual void setWindowBeginTime( TRecordTime whichTime );
-    virtual void setWindowEndTime( TRecordTime whichTime );
+    virtual void setWindowBeginTime( TRecordTime whichTime ) {};
+    virtual void setWindowEndTime( TRecordTime whichTime ) {};
 
     virtual bool getThreeDimensions() const = 0;
 
@@ -164,12 +169,12 @@ class Histogram
     virtual void setThousandSeparator( bool newValue ) {}
     virtual bool getThousandSeparator() const
     {
-      return ParaverConfig::getInstance()->getThousandSep();
+      return false;
     }
     virtual void setShowUnits( bool newValue ) {}
     virtual bool getShowUnits() const
     {
-      return ParaverConfig::getInstance()->getShowUnits();
+      return false;
     }
     virtual void setSortColumns( bool newValue ) {}
     virtual bool getSortColumns() const

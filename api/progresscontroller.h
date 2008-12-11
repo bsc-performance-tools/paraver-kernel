@@ -12,8 +12,8 @@ class ProgressController
 
     static ProgressController *create( KernelConnection *whichKernel );
 
-    ProgressController();
-    virtual ~ProgressController();
+    ProgressController() {};
+    virtual ~ProgressController() {};
 
     virtual void setHandler( ProgressHandler whichHandler ) = 0;
     virtual void callHandler( ProgressController *not_used ) = 0;

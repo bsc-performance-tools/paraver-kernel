@@ -131,7 +131,8 @@ TSemanticValue NotThreadMode::execute( const SemanticInfo *info )
   TSemanticValue tmp = 0;
 
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
-  TSemanticValue tmpValues[ myInfo->values.size() ];
+  TSemanticValue *tmpValues;
+  tmpValues = new TSemanticValue[ myInfo->values.size() ];
 
   for ( TObjectOrder i = 0; i < myInfo->values.size(); i++ )
     tmpValues[ i ] = myInfo->values[ i ];

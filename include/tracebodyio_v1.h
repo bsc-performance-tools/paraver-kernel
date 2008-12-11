@@ -1,12 +1,20 @@
 #ifndef TRACEBODYIO_V1_H_INCLUDED
 #define TRACEBODYIO_V1_H_INCLUDED
 
-#include <ext/hash_set>
+#ifdef WIN32
+  #include <hash_set>
+#else
+  #include <ext/hash_set>
+#endif
 #include "tracebodyio.h"
 #include "tracestream.h"
 
 using namespace std;
-using namespace __gnu_cxx;
+#ifdef WIN32
+  using namespace stdext;
+#else
+  using namespace __gnu_cxx;
+#endif
 
 // Paraver trace old format file
 class TraceBodyIO_v1 : public TraceBodyIO

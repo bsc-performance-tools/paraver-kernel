@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C++ Express 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "paraver-kernel", "paraver-kernel.vcproj", "{D75642E1-24D5-418D-983C-BF7AF752C372}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "api", "..\api\api.vcproj", "{ECBC5CAC-98BB-42DD-8D6D-B72F94E8BBC9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D75642E1-24D5-418D-983C-BF7AF752C372} = {D75642E1-24D5-418D-983C-BF7AF752C372}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		api debug|Win32 = api debug|Win32
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D75642E1-24D5-418D-983C-BF7AF752C372}.api debug|Win32.ActiveCfg = api debug|Win32
+		{D75642E1-24D5-418D-983C-BF7AF752C372}.api debug|Win32.Build.0 = api debug|Win32
+		{D75642E1-24D5-418D-983C-BF7AF752C372}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D75642E1-24D5-418D-983C-BF7AF752C372}.Debug|Win32.Build.0 = Debug|Win32
+		{D75642E1-24D5-418D-983C-BF7AF752C372}.Release|Win32.ActiveCfg = Release|Win32
+		{D75642E1-24D5-418D-983C-BF7AF752C372}.Release|Win32.Build.0 = Release|Win32
+		{ECBC5CAC-98BB-42DD-8D6D-B72F94E8BBC9}.api debug|Win32.ActiveCfg = Release|Win32
+		{ECBC5CAC-98BB-42DD-8D6D-B72F94E8BBC9}.api debug|Win32.Build.0 = Release|Win32
+		{ECBC5CAC-98BB-42DD-8D6D-B72F94E8BBC9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{ECBC5CAC-98BB-42DD-8D6D-B72F94E8BBC9}.Debug|Win32.Build.0 = Debug|Win32
+		{ECBC5CAC-98BB-42DD-8D6D-B72F94E8BBC9}.Release|Win32.ActiveCfg = Release|Win32
+		{ECBC5CAC-98BB-42DD-8D6D-B72F94E8BBC9}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

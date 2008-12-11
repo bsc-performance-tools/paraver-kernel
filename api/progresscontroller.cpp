@@ -6,12 +6,6 @@ ProgressController *ProgressController::create( KernelConnection *whichKernel )
   return new ProgressControllerProxy( whichKernel );
 }
 
-ProgressController::ProgressController()
-{}
-
-ProgressController::~ProgressController()
-{}
-
 ProgressControllerProxy::ProgressControllerProxy( KernelConnection * whichKernel )
 : myKernel( whichKernel )
 {

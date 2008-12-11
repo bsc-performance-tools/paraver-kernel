@@ -28,30 +28,30 @@ class Window
 
     // Specefic for WindowProxy because Single and Derived window
     // SingleWindow
-    virtual Filter *getFilter() const;
+    virtual Filter *getFilter() const { return NULL; }
 
     //DerivedWindow
-    virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue );
-    virtual void setParent( UINT16 whichParent, Window *whichWindow );
-    virtual void setChild( Window *whichWindow );
-    virtual Window *getChild();
-    virtual Window *getParent( UINT16 whichParent );
+    virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue ) {}
+    virtual void setParent( UINT16 whichParent, Window *whichWindow ) {}
+    virtual void setChild( Window *whichWindow ) {}
+    virtual Window *getChild() { return NULL; }
+    virtual Window *getParent( UINT16 whichParent ) { return NULL; }
 
 
     // Other
-    virtual void setWindowBeginTime( TRecordTime whichTime );
-    virtual void setWindowEndTime( TRecordTime whichTime );
-    virtual TRecordTime getWindowBeginTime() const;
-    virtual TRecordTime getWindowEndTime() const;
+    virtual void setWindowBeginTime( TRecordTime whichTime ) {}
+    virtual void setWindowEndTime( TRecordTime whichTime ) {}
+    virtual TRecordTime getWindowBeginTime() const { return 0; }
+    virtual TRecordTime getWindowEndTime() const { return 0; }
 
-    virtual bool getYScaleComputed() const;
-    virtual void computeYScale();
-    virtual void setComputeYMaxOnInit( bool newValue );
-    virtual bool getComputeYMaxOnInit() const;
-    virtual void setMaximumY( TSemanticValue whichMax );
-    virtual void setMinimumY( TSemanticValue whichMin );
-    virtual TSemanticValue getMaximumY();
-    virtual TSemanticValue getMinimumY();
+    virtual bool getYScaleComputed() const { return false; }
+    virtual void computeYScale() {}
+    virtual void setComputeYMaxOnInit( bool newValue ){}
+    virtual bool getComputeYMaxOnInit() const { return false; }
+    virtual void setMaximumY( TSemanticValue whichMax ) {}
+    virtual void setMinimumY( TSemanticValue whichMin ) {}
+    virtual TSemanticValue getMaximumY() { return 0; }
+    virtual TSemanticValue getMinimumY() { return 0; }
 
     //------------------------------------------------------------
     virtual Trace *getTrace() const = 0;
@@ -168,7 +168,8 @@ class Window
     {}
     virtual rgb calcColor( TSemanticValue whichValue, Window& whichWindow )
     {
-      return SemanticColor::BACKGROUND;
+      rgb tmp = { 0, 0, 0 };
+      return tmp;
     }
     virtual bool getChanged() const
     {

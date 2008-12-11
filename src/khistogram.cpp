@@ -7,6 +7,11 @@
 #include "khistogramtotals.h"
 #include "functionmanagement.h"
 
+#ifdef WIN32
+#undef max
+#undef min
+#endif
+
 RowsTranslator::RowsTranslator( vector<KWindow *>& kwindows )
 {
   for ( size_t ii = 0; ii < kwindows.size() - 1; ii++ )

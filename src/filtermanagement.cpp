@@ -1,3 +1,4 @@
+#include <string>
 #include "filter.h"
 #include "filtermanagement.h"
 #include "functionmanagement.h"

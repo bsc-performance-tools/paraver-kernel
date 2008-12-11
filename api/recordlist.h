@@ -108,11 +108,32 @@ private:
   } UInfo;
 };
 
+// r1 is less than r2?
+struct ltrecord
+{
+  bool operator()( const RLRecord& r1, const RLRecord& r2 )
+  {
+    if ( r1.getTime() < r2.getTime() )
+      return true;
+    else if ( r1.getTime() == r2.getTime() )
+    {
+      if ( r1.getOrder() < r2.getOrder() )
+        return true;
+      else if ( r1.getOrder() == r2.getOrder() )
+      {
+        if ( ( r1.getType() & COMM ) && ( r2.getType() & EVENT ) )
+          return true;
+      }
+    }
+    return false;
+  }
+};
+
 
 class RecordList
 {
   public:
-    typedef set<RLRecord>::iterator iterator;
+    typedef set<RLRecord,ltrecord>::iterator iterator;
 
     static RecordList *create( RecordList *whichList );
 
@@ -120,8 +141,8 @@ class RecordList
 
     virtual void clear() = 0;
     virtual void erase( iterator first, iterator last ) = 0;
-    virtual iterator begin() const = 0;
-    virtual iterator end() const = 0;
+    virtual iterator begin() = 0;
+    virtual iterator end() = 0;
     virtual bool newRecords() const = 0;
 };
 
@@ -132,8 +153,8 @@ class RecordListProxy: public RecordList
 
     virtual void clear();
     virtual void erase( iterator first, iterator last );
-    virtual iterator begin() const;
-    virtual iterator end() const;
+    virtual iterator begin();
+    virtual iterator end();
     virtual bool newRecords() const;
 
   private:

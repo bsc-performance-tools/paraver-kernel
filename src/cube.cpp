@@ -120,7 +120,7 @@ inline ValueType Cube<ValueType>::getCurrentValue( UINT32 plane, UINT32 col, UIN
 
   ValueType tmp;
 
-  bzero( ( void * ) &tmp, sizeof( ValueType ) );
+  memset( ( void * ) &tmp, 0, sizeof( ValueType ) );
   return tmp;
 }
 

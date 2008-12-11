@@ -873,6 +873,7 @@ class StatSumBursts: public HistogramStatistic
     virtual string getName() const;
     virtual string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
+
   protected:
 
   private:

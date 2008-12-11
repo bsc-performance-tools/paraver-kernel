@@ -13,7 +13,7 @@ class FunctionManagement
 {
 
   private:
-    static FunctionManagement *inst;
+    static FunctionManagement<T> *inst;
 
     vector<string> nameGroups;
     map<string, T *> hash;
@@ -25,8 +25,8 @@ class FunctionManagement
 
 
   public:
-    static FunctionManagement *getInstance();
-    static FunctionManagement *getInstance( vector<string>&,
+    static FunctionManagement<T> *getInstance();
+    static FunctionManagement<T> *getInstance( vector<string>&,
                                             vector<string>&,
                                             vector<vector<T *> >& );
 

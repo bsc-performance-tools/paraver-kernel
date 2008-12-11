@@ -33,7 +33,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
 
   horizontal = Histogram::getHorizontal();
   hideColumns = Histogram::getHideColumns();
-  showUnits = Histogram::getShowUnits();
+  showUnits = ParaverConfig::getInstance()->getShowUnits();
   sortColumns = Histogram::getSortColumns();
   sortCriteria = Histogram::getSortCriteria();
   minGradient = Histogram::getMinGradient();
