@@ -75,9 +75,21 @@ void ParaverConfig::readParaverConfigFile()
   string strLine;
   string strTag;
   string strFile;
+  string homedir;
 
-  strFile.append( getenv( "HOME" ) );
+#ifdef WIN32
+  homedir = getenv( "HOMEDRIVE" );
+  homedir.append( getenv( "HOMEPATH" ) );
+#else
+  homedir = getenv( "HOME" );
+#endif
+  strFile.append( homedir );
+#ifdef WIN32
+  strFile.append( "\\paraver\\paraver" );
+#else
   strFile.append( "/.paraver/paraver" );
+#endif
+
 
   file.open( strFile.c_str() );
 
@@ -113,14 +125,27 @@ bool ParaverConfig::writeDefaultConfig()
 {
   ofstream file;
   string strFile;
+  string homedir;
 
-  strFile.append( getenv( "HOME" ) );
+#ifdef WIN32
+  homedir = getenv( "HOMEDRIVE" );
+  homedir.append( getenv( "HOMEPATH" ) );
+#else
+  homedir = getenv( "HOME" );
+#endif
+  strFile.append( homedir );
+#ifdef WIN32
+  strFile.append( "\\paraver\\paraver" );
+#else
   strFile.append( "/.paraver/paraver" );
+#endif
 
   file.open( strFile.c_str() );
 
   if ( !file )
     return false;
+
+  file.close();
 
   return true;
 }

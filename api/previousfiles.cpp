@@ -1,14 +1,26 @@
 #include <stdlib.h>
 #include "previousfiles.h"
 
+#ifdef WIN32
+const string PreviousFiles::previousTracesFile = "\\paraver\\paraverdb";
+const string PreviousFiles::previousCFGsFile = "\\paraver\\paravercfgdb";
+#else
 const string PreviousFiles::previousTracesFile = "/.paraver/paraverdb";
 const string PreviousFiles::previousCFGsFile = "/.paraver/paravercfgdb";
+#endif
 
 PreviousFiles::PreviousFiles( const string &filename )
 {
   fstream myFile;
+  string homedir;
 
-  myFileName.append( getenv( "HOME" ) );
+#ifdef WIN32
+  homedir = getenv( "HOMEDRIVE" );
+  homedir.append( getenv( "HOMEPATH" ) );
+#else
+  homedir = getenv( "HOME" );
+#endif
+  myFileName.append( homedir );
   myFileName.append( filename );
   myFile.open( myFileName.c_str(), ios::out | ios::app );
   myFile.close();

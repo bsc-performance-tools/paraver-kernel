@@ -22,6 +22,7 @@ void BPlusTreeBlocks::newRecord()
   if ( currentBlock == NULL )
   {
     blocks[0] = new TRecord[blockSize];
+    memset( blocks[0], 0, blockSize * sizeof( TRecord ) );
     currentBlock = blocks[0];
     currentRecord = 0;
   }
@@ -31,6 +32,7 @@ void BPlusTreeBlocks::newRecord()
     if ( currentRecord == blockSize )
     {
       blocks.push_back( new TRecord[blockSize] );
+      memset( blocks[blocks.size() - 1], 0, blockSize * sizeof( TRecord ) );
       currentBlock = blocks[blocks.size() - 1];
       currentRecord = 0;
     }

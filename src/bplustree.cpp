@@ -180,7 +180,7 @@ void BPlusLeaf::insertRecordInOrder( RecordLeaf *rl )
 
 RecordLeaf *BPlusLeaf::insert( RecordLeaf *rl, BPlusNode *&newChild )
 {
-  RecordLeaf *retKey;
+  RecordLeaf *retKey = NULL;
   UINT16 used = getUsed();
 
   if ( used < LEAF_SIZE )
