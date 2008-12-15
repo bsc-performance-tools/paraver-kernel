@@ -1,3 +1,4 @@
+#include <string.h>
 #include "bplustreeblocks.h"
 
 using namespace bplustree;
