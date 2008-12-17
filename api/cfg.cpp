@@ -1059,7 +1059,7 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
       if ( !( tmpValue >> bandWidth ) )
         return false;
 
-      filter->insertBandWitdh( bandWidth );
+      filter->insertBandWidth( bandWidth );
     }
     else if ( strTag.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
     {

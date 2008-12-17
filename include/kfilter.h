@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "memorytrace.h"
+#include "filter.h"
 
 class KSingleWindow;
 
@@ -228,13 +229,13 @@ class FilterRange: public FilterFunction
 
 };
 
-class Filter
+class KFilter
 {
   public:
     static const bool AND = true;
     static const bool OR = false;
 
-    Filter()
+    KFilter()
     {
       logical = true;
       physical = false;
@@ -257,7 +258,7 @@ class Filter
       functionEventValues = new FilterAll();
     }
 
-    Filter( KSingleWindow *whichWindow ) : window( whichWindow )
+    KFilter( Window *whichWindow ) : window( (KSingleWindow *)whichWindow )
     {
       logical = true;
       physical = false;
@@ -280,7 +281,7 @@ class Filter
       functionEventValues = new FilterAll();
     }
 
-    ~Filter()
+    ~KFilter()
     {
       delete functionCommFrom;
       delete functionCommTo;
@@ -315,30 +316,37 @@ class Filter
 
     void clearCommFrom();
     void insertCommFrom( TObjectOrder value );
+    void getCommFrom( vector<TObjectOrder>& onVector ) const;
     void setCommFromFunction( FilterFunction *newFunction );
 
     void clearCommTo();
     void insertCommTo( TObjectOrder value );
+    void getCommTo( vector<TObjectOrder>& onVector ) const;
     void setCommToFunction( FilterFunction *newFunction );
 
     void clearCommTags();
     void insertCommTag( TCommTag value );
+    void getCommTag( vector<TCommTag>& onVector ) const;
     void setCommTagFunction( FilterFunction *newFunction );
 
     void clearCommSizes();
     void insertCommSize( TCommSize value );
+    void getCommSize( vector<TCommSize>& onVector ) const;
     void setCommSizeFunction( FilterFunction *newFunction );
 
     void clearBandWidth();
-    void insertBandWitdh( TSemanticValue value );
+    void insertBandWidth( TSemanticValue value );
+    void getBandWidth( vector<TSemanticValue>& onVector ) const;
     void setBandWidthFunction( FilterFunction *newFunction );
 
     void clearEventTypes();
     void insertEventType( TEventType value );
+    void getEventType( vector<TEventType>& onVector ) const;
     void setEventTypeFunction( FilterFunction *newFunction );
 
     void clearEventValues();
     void insertEventValue( TEventValue value );
+    void getEventValue( vector<TEventValue>& onVector ) const;
     void setEventValueFunction( FilterFunction *newFunction );
 
 

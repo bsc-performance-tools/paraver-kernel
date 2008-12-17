@@ -1,7 +1,7 @@
-#include "filter.h"
+#include "kfilter.h"
 #include "kwindow.h"
 
-bool Filter::passFilter( MemoryTrace::iterator *it )
+bool KFilter::passFilter( MemoryTrace::iterator *it )
 {
   if ( it->getType() & EVENT )
     return filterEvents( it );
@@ -10,7 +10,7 @@ bool Filter::passFilter( MemoryTrace::iterator *it )
   return true;
 }
 
-bool Filter::filterComms( MemoryTrace::iterator *it )
+bool KFilter::filterComms( MemoryTrace::iterator *it )
 {
   bool stop = true;
   bool tmpResult = true;
@@ -130,7 +130,7 @@ bool Filter::filterComms( MemoryTrace::iterator *it )
   return tmpResult;
 }
 
-bool Filter::filterEvents( MemoryTrace::iterator *it )
+bool KFilter::filterEvents( MemoryTrace::iterator *it )
 {
   bool stop = true;
   bool tmpResult = true;
@@ -244,133 +244,168 @@ bool FilterRange::execute( TSemanticValue param, TSemanticValue data )
 }
 
 
-void Filter::clearCommFrom()
+void KFilter::clearCommFrom()
 {
   commFrom.clear();
   existCommFrom = false;
 }
 
-void Filter::insertCommFrom( TObjectOrder value )
+void KFilter::insertCommFrom( TObjectOrder value )
 {
   commFrom.push_back( value );
   existCommFrom = true;
 }
 
-void Filter::setCommFromFunction( FilterFunction *newFunction )
+void KFilter::getCommFrom( vector<TObjectOrder>& onVector ) const
+{
+  onVector = commFrom;
+}
+
+void KFilter::setCommFromFunction( FilterFunction *newFunction )
 {
   delete functionCommFrom;
   functionCommFrom = newFunction;
 }
 
 
-void Filter::clearCommTo()
+void KFilter::clearCommTo()
 {
   commTo.clear();
   existCommTo = false;
 }
 
-void Filter::insertCommTo( TObjectOrder value )
+void KFilter::insertCommTo( TObjectOrder value )
 {
   commTo.push_back( value );
   existCommTo = true;
 }
 
-void Filter::setCommToFunction( FilterFunction *newFunction )
+void KFilter::getCommTo( vector<TObjectOrder>& onVector ) const
+{
+  onVector = commTo;
+}
+
+void KFilter::setCommToFunction( FilterFunction *newFunction )
 {
   delete functionCommTo;
   functionCommTo = newFunction;
 }
 
 
-void Filter::clearCommTags()
+void KFilter::clearCommTags()
 {
   commTags.clear();
   existCommTags = false;
 }
 
-void Filter::insertCommTag( TCommTag value )
+void KFilter::insertCommTag( TCommTag value )
 {
   commTags.push_back( value );
   existCommTags = true;
 }
 
-void Filter::setCommTagFunction( FilterFunction *newFunction )
+void KFilter::getCommTag( vector<TCommTag>& onVector ) const
+{
+  onVector = commTags;
+}
+
+void KFilter::setCommTagFunction( FilterFunction *newFunction )
 {
   delete functionCommTags;
   functionCommTags = newFunction;
 }
 
 
-void Filter::clearCommSizes()
+void KFilter::clearCommSizes()
 {
   commSizes.clear();
   existCommSize = false;
 }
 
-void Filter::insertCommSize( TCommSize value )
+void KFilter::insertCommSize( TCommSize value )
 {
   commSizes.push_back( value );
   existCommSize = true;
 }
 
-void Filter::setCommSizeFunction( FilterFunction *newFunction )
+void KFilter::getCommSize( vector<TCommSize>& onVector ) const
+{
+  onVector = commSizes;
+}
+
+void KFilter::setCommSizeFunction( FilterFunction *newFunction )
 {
   delete functionCommSizes;
   functionCommSizes = newFunction;
 }
 
 
-void Filter::clearBandWidth()
+void KFilter::clearBandWidth()
 {
   bandWidth.clear();
   existBandWidth = false;
 }
 
-void Filter::insertBandWitdh( TSemanticValue value )
+void KFilter::insertBandWidth( TSemanticValue value )
 {
   bandWidth.push_back( value );
   existBandWidth = true;
 }
 
-void Filter::setBandWidthFunction( FilterFunction *newFunction )
+void KFilter::getBandWidth( vector<TSemanticValue>& onVector ) const
+{
+  onVector = bandWidth;
+}
+
+void KFilter::setBandWidthFunction( FilterFunction *newFunction )
 {
   delete functionBandWidth;
   functionBandWidth = newFunction;
 }
 
 
-void Filter::clearEventTypes()
+void KFilter::clearEventTypes()
 {
   eventTypes.clear();
   existEventTypes = false;
 }
 
-void Filter::insertEventType( TEventType value )
+void KFilter::insertEventType( TEventType value )
 {
   eventTypes.push_back( value );
   existEventTypes = true;
 }
 
-void Filter::setEventTypeFunction( FilterFunction *newFunction )
+void KFilter::getEventType( vector<TEventType>& onVector ) const
+{
+  onVector = eventTypes;
+}
+
+void KFilter::setEventTypeFunction( FilterFunction *newFunction )
 {
   delete functionEventTypes;
   functionEventTypes = newFunction;
 }
 
 
-void Filter::clearEventValues()
+void KFilter::clearEventValues()
 {
   eventValues.clear();
   existEventValues = false;
 }
 
-void Filter::insertEventValue( TEventValue value )
+void KFilter::insertEventValue( TEventValue value )
 {
   eventValues.push_back( value );
   existEventValues = true;
 }
 
-void Filter::setEventValueFunction( FilterFunction *newFunction )
+void KFilter::getEventValue( vector<TEventValue>& onVector ) const
+{
+  onVector = eventValues;
+}
+
+void KFilter::setEventValueFunction( FilterFunction *newFunction )
 {
   delete functionEventValues;
   functionEventValues = newFunction;
