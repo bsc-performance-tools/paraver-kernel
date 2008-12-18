@@ -48,7 +48,7 @@ void LoadedWindows::getValidControlWindow( Window *dataWindow,
   }
 }
 
-void LoadedWindows::getValidDatalWindow( Window *controlWindow,
+void LoadedWindows::getValidDataWindow( Window *controlWindow,
     Window *extraWindow,
     vector<TWindowID>& onVector ) const
 {

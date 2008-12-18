@@ -22,7 +22,7 @@ class LoadedWindows
 
     // Histogram windows selection related methods
     void getValidControlWindow( Window *dataWindow, vector<TWindowID>& onVector ) const;
-    void getValidDatalWindow( Window *controlWindow, Window *extraWindow,
+    void getValidDataWindow( Window *controlWindow, Window *extraWindow,
                               vector<TWindowID>& onVector ) const;
   protected:
 

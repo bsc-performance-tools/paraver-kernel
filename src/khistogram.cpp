@@ -661,7 +661,8 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
 
   initTotals();
 
-  recursiveExecution( beginTime, endTime, 0, rowsTranslator->totalRows() - 1 );
+  TObjectOrder aux = rowsTranslator->totalRows() - 1;
+  recursiveExecution( beginTime, endTime, 0, aux );
 
   if ( threeDimensions )
   {
@@ -860,7 +861,12 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
   Window *currentWindow = orderedWindows[ winIndex ];
 
   if ( data == NULL )
+  {
     data = new CalculateData;
+    data->plane = 0;
+    data->beginTime = 0;
+    data->endTime = 0;
+  }
 
   for ( TObjectOrder iRow = fromRow; iRow <= toRow; iRow++ )
   {
