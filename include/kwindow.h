@@ -12,7 +12,7 @@
 #include "intervalcontrolderived.h"
 #include "semanticthread.h"
 #include "semanticcompose.h"
-#include "filter.h"
+#include "kfilter.h"
 #include "window.h"
 
 using namespace std;
@@ -215,7 +215,7 @@ class KSingleWindow: public KWindow
 
     virtual Filter *getFilter() const
     {
-      return myFilter;
+      return (Filter *)myFilter;
     }
 
     SemanticInfoType getSemanticInfoType() const;
@@ -242,7 +242,7 @@ class KSingleWindow: public KWindow
 
   private:
     SemanticFunction *functions[ COMPOSECPU + 1 ];
-    Filter *myFilter;
+    KFilter *myFilter;
 };
 
 

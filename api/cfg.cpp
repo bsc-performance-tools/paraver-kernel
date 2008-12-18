@@ -813,28 +813,22 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
     // It's a filter function
     else
     {
-      FilterFunction *function;
       Filter *filter = windows[ windows.size() - 1 ]->getFilter();
 
-
-      function = ( FunctionManagement<FilterFunction>::getInstance() )->getFunction( strFunction );
-      if ( function == NULL )
-        return false;
-
       if ( strLevel.compare( OLDCFG_VAL_FILTER_OBJ_FROM ) == 0 )
-        filter->setCommFromFunction( function );
+        filter->setCommFromFunction( strFunction );
       else if ( strLevel.compare( OLDCFG_VAL_FILTER_OBJ_TO ) == 0 )
-        filter->setCommToFunction( function );
+        filter->setCommToFunction( strFunction );
       else if ( strLevel.compare( OLDCFG_VAL_FILTER_COM_TAG ) == 0 )
-        filter->setCommTagFunction( function );
+        filter->setCommTagFunction( strFunction );
       else if ( strLevel.compare( OLDCFG_VAL_FILTER_COM_SIZE ) == 0 )
-        filter->setCommSizeFunction( function );
+        filter->setCommSizeFunction( strFunction );
       else if ( strLevel.compare( OLDCFG_VAL_FILTER_COM_BW ) == 0 )
-        filter->setBandWidthFunction( function );
+        filter->setBandWidthFunction( strFunction );
       else if ( strLevel.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
-        filter->setEventTypeFunction( function );
+        filter->setEventTypeFunction( strFunction );
       else if ( strLevel.compare( OLDCFG_VAL_FILTER_EVT_VALUE ) == 0 )
-        filter->setEventValueFunction( function );
+        filter->setEventValueFunction( strFunction );
     }
   }
 

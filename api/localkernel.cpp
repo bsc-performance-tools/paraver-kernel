@@ -63,6 +63,13 @@ ProgressController *LocalKernel::newProgressController() const
   return new KProgressController();
 }
 
+Filter *LocalKernel::newFilter( Filter *concreteFilter ) const
+{
+  FilterProxy *tmpFilter = new FilterProxy();
+  tmpFilter->myFilter = concreteFilter;
+  return (Filter *) tmpFilter;
+}
+
 void LocalKernel::getAllStatistics( vector<string>& onVector ) const
 {
   FunctionManagement<HistogramStatistic>::getInstance()->getAll( onVector );

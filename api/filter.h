@@ -1,6 +1,12 @@
 #ifndef FILTER_H_INCLUDED
 #define FILTER_H_INCLUDED
 
+#include <string>
+#include "paraverkerneltypes.h"
+#include "localkernel.h"
+
+class Window;
+
 class Filter
 {
   public:
@@ -8,9 +14,6 @@ class Filter
     static const bool OR = false;
 
     Filter()
-    {}
-
-    Filter( Window *whichWindow )
     {}
 
     virtual ~Filter()
@@ -72,13 +75,11 @@ class Filter
 
 class FilterProxy : public Filter
 {
-    Filter()
+  public:
+    FilterProxy()
     {}
 
-    Filter( Window *whichWindow )
-    {}
-
-    virtual ~Filter()
+    virtual ~FilterProxy()
     {}
 
     virtual void setLogical( bool newValue );
@@ -133,8 +134,9 @@ class FilterProxy : public Filter
     virtual void setOpTypeValueOr();
 
   private:
-    Filter *myFilter
+    Filter *myFilter;
 
+    friend Filter *LocalKernel::newFilter( Filter * ) const;
 };
 
 #endif // FILTER_H_INCLUDED

@@ -1,5 +1,5 @@
 #include <string>
-#include "filter.h"
+#include "kfilter.h"
 #include "filtermanagement.h"
 #include "functionmanagement.h"
 

@@ -9,6 +9,7 @@ class Histogram;
 class Trace;
 class RecordList;
 class ProgressController;
+class Filter;
 
 using namespace std;
 
@@ -25,6 +26,7 @@ class KernelConnection
     virtual Histogram *newHistogram() const = 0;
 //    virtual RecordList *newRecordList() const = 0;
     virtual ProgressController *newProgressController() const = 0;
+    virtual Filter *newFilter( Filter *concreteFilter ) const = 0;
 
     virtual void getAllStatistics( vector<string>& onVector ) const = 0;
 

@@ -28,6 +28,7 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
   parent1 = NULL;
   parent2 = NULL;
   myWindow = myKernel->newSingleWindow( whichTrace );
+  myFilter = myKernel->newFilter( myWindow->getFilter() );
   init();
 }
 
@@ -38,6 +39,7 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
   parent1 = whichParent1;
   parent2 = whichParent2;
   myWindow = myKernel->newDerivedWindow( parent1, parent2 );
+  myFilter = NULL;
   init();
 }
 
@@ -47,6 +49,7 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel ):
   parent1 = NULL;
   parent2 = NULL;
   myWindow = myKernel->newDerivedWindow();
+  myFilter = NULL;
 //  init();
 }
 
@@ -77,13 +80,15 @@ void WindowProxy::init()
 
 WindowProxy::~WindowProxy()
 {
+  if( myFilter != NULL )
+    delete myFilter;
   delete myWindow;
 }
 
 Filter *WindowProxy::getFilter() const
 {
   if ( !myWindow->isDerivedWindow() )
-    return myWindow->getFilter();
+    return myFilter;
   return NULL;
 }
 

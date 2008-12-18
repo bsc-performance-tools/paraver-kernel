@@ -19,6 +19,7 @@ class LocalKernel: public KernelConnection
     virtual Histogram *newHistogram() const;
 //    virtual RecordList *newRecordList() const;
     virtual ProgressController *newProgressController() const;
+    virtual Filter *newFilter( Filter *concreteFilter ) const;
 
     virtual void getAllStatistics( vector<string>& onVector ) const;
 

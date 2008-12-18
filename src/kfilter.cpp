@@ -1,5 +1,6 @@
 #include "kfilter.h"
 #include "kwindow.h"
+#include "functionmanagement.h"
 
 bool KFilter::passFilter( MemoryTrace::iterator *it )
 {
@@ -18,16 +19,16 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
 
   if ( !( logical && physical ) )
   {
-    if( !logical && !physical )
+    if ( !logical && !physical )
       return false;
     if ( it->getType() & LOG )
     {
-      if( !logical )
+      if ( !logical )
         return false;
     }
     else if ( it->getType() & PHY )
     {
-      if( !physical )
+      if ( !physical )
         return false;
     }
   }
@@ -261,10 +262,11 @@ void KFilter::getCommFrom( vector<TObjectOrder>& onVector ) const
   onVector = commFrom;
 }
 
-void KFilter::setCommFromFunction( FilterFunction *newFunction )
+void KFilter::setCommFromFunction( string newFunction )
 {
   delete functionCommFrom;
-  functionCommFrom = newFunction;
+  functionCommFrom = FunctionManagement<FilterFunction>::getInstance()
+                     ->getFunction( newFunction );
 }
 
 
@@ -285,10 +287,11 @@ void KFilter::getCommTo( vector<TObjectOrder>& onVector ) const
   onVector = commTo;
 }
 
-void KFilter::setCommToFunction( FilterFunction *newFunction )
+void KFilter::setCommToFunction( string newFunction )
 {
   delete functionCommTo;
-  functionCommTo = newFunction;
+  functionCommTo = FunctionManagement<FilterFunction>::getInstance()
+                   ->getFunction( newFunction );
 }
 
 
@@ -309,10 +312,11 @@ void KFilter::getCommTag( vector<TCommTag>& onVector ) const
   onVector = commTags;
 }
 
-void KFilter::setCommTagFunction( FilterFunction *newFunction )
+void KFilter::setCommTagFunction( string newFunction )
 {
   delete functionCommTags;
-  functionCommTags = newFunction;
+  functionCommTags = FunctionManagement<FilterFunction>::getInstance()
+                     ->getFunction( newFunction );
 }
 
 
@@ -333,10 +337,11 @@ void KFilter::getCommSize( vector<TCommSize>& onVector ) const
   onVector = commSizes;
 }
 
-void KFilter::setCommSizeFunction( FilterFunction *newFunction )
+void KFilter::setCommSizeFunction( string newFunction )
 {
   delete functionCommSizes;
-  functionCommSizes = newFunction;
+  functionCommSizes = FunctionManagement<FilterFunction>::getInstance()
+                      ->getFunction( newFunction );
 }
 
 
@@ -357,10 +362,11 @@ void KFilter::getBandWidth( vector<TSemanticValue>& onVector ) const
   onVector = bandWidth;
 }
 
-void KFilter::setBandWidthFunction( FilterFunction *newFunction )
+void KFilter::setBandWidthFunction( string newFunction )
 {
   delete functionBandWidth;
-  functionBandWidth = newFunction;
+  functionBandWidth = FunctionManagement<FilterFunction>::getInstance()
+                      ->getFunction( newFunction );
 }
 
 
@@ -381,10 +387,11 @@ void KFilter::getEventType( vector<TEventType>& onVector ) const
   onVector = eventTypes;
 }
 
-void KFilter::setEventTypeFunction( FilterFunction *newFunction )
+void KFilter::setEventTypeFunction( string newFunction )
 {
   delete functionEventTypes;
-  functionEventTypes = newFunction;
+  functionEventTypes = FunctionManagement<FilterFunction>::getInstance()
+                       ->getFunction( newFunction );
 }
 
 
@@ -405,8 +412,9 @@ void KFilter::getEventValue( vector<TEventValue>& onVector ) const
   onVector = eventValues;
 }
 
-void KFilter::setEventValueFunction( FilterFunction *newFunction )
+void KFilter::setEventValueFunction( string newFunction )
 {
   delete functionEventValues;
-  functionEventValues = newFunction;
+  functionEventValues = FunctionManagement<FilterFunction>::getInstance()
+                        ->getFunction( newFunction );
 }

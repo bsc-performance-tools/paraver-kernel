@@ -206,6 +206,15 @@
 			<Option target="api" />
 			<Option target="paramedir" />
 		</Unit>
+		<Unit filename="api/filter.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/filter.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="api" />
+			<Option target="cfg" />
+		</Unit>
 		<Unit filename="api/histogram.cpp">
 			<Option target="api" />
 		</Unit>
@@ -337,13 +346,6 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="include/filter.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-			<Option target="Application test" />
-			<Option target="cfg" />
-			<Option target="paramedir" />
-		</Unit>
 		<Unit filename="include/filtermanagement.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -434,6 +436,10 @@
 			<Option target="Application test" />
 			<Option target="cfg" />
 			<Option target="paramedir" />
+		</Unit>
+		<Unit filename="include/kfilter.h">
+			<Option target="Debug" />
+			<Option target="Release" />
 		</Unit>
 		<Unit filename="include/khistogram.h">
 			<Option target="Debug" />
@@ -729,10 +735,6 @@
 			<Option target="Release" />
 			<Option target="Application test" />
 		</Unit>
-		<Unit filename="src/filter.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
 		<Unit filename="src/filtermanagement.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -777,6 +779,10 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/intervalthread.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/kfilter.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>

@@ -290,6 +290,7 @@ class WindowProxy: public Window
   private:
     Window *myWindow;
     Trace *myTrace;
+    Filter *myFilter;
 
     UINT16 posX;
     UINT16 posY;

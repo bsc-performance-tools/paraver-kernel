@@ -210,7 +210,7 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
     intervalComposeCPU.push_back( IntervalCompose( this, COMPOSECPU, i ) );
   }
 
-  myFilter = new Filter( this );
+  myFilter = new KFilter( this );
 }
 
 
