@@ -27,6 +27,9 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
 
   horizontal = Histogram::getHorizontal();
   hideColumns = Histogram::getHideColumns();
+  scientificNotation = Histogram::getScientificNotation();
+  numDecimals = Histogram::getNumDecimals();
+  thousandSep = Histogram::getThousandSeparator();
   showUnits = ParaverConfig::getInstance()->getShowUnits();
   sortColumns = Histogram::getSortColumns();
   sortCriteria = Histogram::getSortCriteria();
@@ -524,6 +527,36 @@ void HistogramProxy::setHideColumns( bool newValue )
 bool HistogramProxy::getHideColumns() const
 {
   return hideColumns;
+}
+
+void HistogramProxy::setScientificNotation( bool newValue )
+{
+  scientificNotation = newValue;
+}
+
+bool HistogramProxy::getScientificNotation() const
+{
+  return scientificNotation;
+}
+
+void HistogramProxy::setNumDecimals( UINT16 newValue )
+{
+  numDecimals = newValue;
+}
+
+UINT16 HistogramProxy::getNumDecimals() const
+{
+  return numDecimals;
+}
+
+void HistogramProxy::setThousandSeparator( bool newValue )
+{
+  thousandSep = newValue;
+}
+
+bool HistogramProxy::getThousandSeparator() const
+{
+  return thousandSep;
 }
 
 void HistogramProxy::setShowUnits( bool newValue )

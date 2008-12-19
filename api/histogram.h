@@ -164,12 +164,12 @@ class Histogram
     virtual void setNumDecimals( UINT16 newValue ) {}
     virtual UINT16 getNumDecimals() const
     {
-      return 2;
+      return ParaverConfig::getInstance()->getPrecision();
     }
     virtual void setThousandSeparator( bool newValue ) {}
     virtual bool getThousandSeparator() const
     {
-      return false;
+      return ParaverConfig::getInstance()->getThousandSep();
     }
     virtual void setShowUnits( bool newValue ) {}
     virtual bool getShowUnits() const
@@ -373,6 +373,12 @@ class HistogramProxy : public Histogram
     virtual bool getHorizontal() const;
     virtual void setHideColumns( bool newValue );
     virtual bool getHideColumns() const;
+    virtual void setScientificNotation( bool newValue );
+    virtual bool getScientificNotation() const;
+    virtual void setNumDecimals( UINT16 newValue );
+    virtual UINT16 getNumDecimals() const;
+    virtual void setThousandSeparator( bool newValue );
+    virtual bool getThousandSeparator() const;
     virtual void setShowUnits( bool newValue );
     virtual bool getShowUnits() const;
     virtual void setSortColumns( bool newValue );
@@ -446,6 +452,9 @@ class HistogramProxy : public Histogram
 
     bool horizontal;
     bool hideColumns;
+    bool scientificNotation;
+    UINT16 numDecimals;
+    bool thousandSep;
     bool showUnits;
     bool sortColumns;
     THistoTotals sortCriteria;
