@@ -90,7 +90,7 @@ bool EventLabels::getEventValueLabel( TEventValue value, string& onStr ) const
       onStr = ( *itVal ).second;
       found = true;
     }
-    it++;
+    ++it;
   }
 
   if ( found )

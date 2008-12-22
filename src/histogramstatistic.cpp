@@ -302,9 +302,9 @@ void StatAvgBytesSent::reset()
     while ( itColumn != ( *itPlane ).end() )
     {
       ( *itColumn ) = 0.0;
-      itColumn++;
+      ++itColumn;
     }
-    itPlane++;
+    ++itPlane;
   }
 }
 
@@ -386,9 +386,9 @@ void StatAvgBytesReceived::reset()
     while ( itColumn != ( *itPlane ).end() )
     {
       ( *itColumn ) = 0.0;
-      itColumn++;
+      ++itColumn;
     }
-    itPlane++;
+    ++itPlane;
   }
 }
 
@@ -470,9 +470,9 @@ void StatMinBytesSent::reset()
     while ( itColumn != ( *itPlane ).end() )
     {
       ( *itColumn ) = 0.0;
-      itColumn++;
+      ++itColumn;
     }
-    itPlane++;
+    ++itPlane;
   }
 }
 
@@ -564,9 +564,9 @@ void StatMinBytesReceived::reset()
     while ( itColumn != ( *itPlane ).end() )
     {
       ( *itColumn ) = 0.0;
-      itColumn++;
+      ++itColumn;
     }
-    itPlane++;
+    ++itPlane;
   }
 }
 
@@ -658,9 +658,9 @@ void StatMaxBytesSent::reset()
     while ( itColumn != ( *itPlane ).end() )
     {
       ( *itColumn ) = 0.0;
-      itColumn++;
+      ++itColumn;
     }
-    itPlane++;
+    ++itPlane;
   }
 }
 
@@ -747,9 +747,9 @@ void StatMaxBytesReceived::reset()
     while ( itColumn != ( *itPlane ).end() )
     {
       ( *itColumn ) = 0.0;
-      itColumn++;
+      ++itColumn;
     }
-    itPlane++;
+    ++itPlane;
   }
 }
 
@@ -885,7 +885,7 @@ void StatPercTime::reset()
   while ( it != rowTotal.end() )
   {
     ( *it ) = 0.0;
-    it++;
+    ++it;
   }
 }
 
@@ -967,7 +967,7 @@ void StatPercTimeNotZero::reset()
   while ( it != rowTotal.end() )
   {
     ( *it ) = 0.0;
-    it++;
+    ++it;
   }
 }
 
@@ -1171,7 +1171,7 @@ void StatPercNumBursts::reset()
   while ( it != rowTotal.end() )
   {
     ( *it ) = 0.0;
-    it++;
+    ++it;
   }
 }
 
@@ -1314,9 +1314,9 @@ void StatAvgValue::reset()
     while ( itColumn != ( *itPlane ).end() )
     {
       ( *itColumn ) = 0.0;
-      itColumn++;
+      ++itColumn;
     }
-    itPlane++;
+    ++itPlane;
   }
 }
 
@@ -1386,9 +1386,9 @@ void StatMaximum::reset()
     while ( itColumn != ( *itPlane ).end() )
     {
       ( *itColumn ) = 0.0;
-      itColumn++;
+      ++itColumn;
     }
-    itPlane++;
+    ++itPlane;
   }
 }
 
@@ -1460,9 +1460,9 @@ void StatAvgBurstTime::reset()
     while ( itColumn != ( *itPlane ).end() )
     {
       ( *itColumn ) = 0.0;
-      itColumn++;
+      ++itColumn;
     }
-    itPlane++;
+    ++itPlane;
   }
 }
 
@@ -1561,12 +1561,12 @@ void StatStdevBurstTime::reset()
     while ( itColumnN != ( *itPlaneN ).end() )
     {
       ( *itColumnN ) = 0.0;
-      itColumnN++;
+      ++itColumnN;
       ( *itColumnQ ) = 0.0;
-      itColumnQ++;
+      ++itColumnQ;
     }
-    itPlaneN++;
-    itPlaneQ++;
+    ++itPlaneN;
+    ++itPlaneQ;
   }
 }
 
@@ -1670,9 +1670,9 @@ void StatAvgPerBurst::reset()
     while ( itColumn != ( *itPlane ).end() )
     {
       ( *itColumn ) = 0.0;
-      itColumn++;
+      ++itColumn;
     }
-    itPlane++;
+    ++itPlane;
   }
 }
 
@@ -1754,9 +1754,9 @@ void StatAvgValueNotZero::reset()
     while ( itColumn != ( *itPlane ).end() )
     {
       ( *itColumn ) = 0.0;
-      itColumn++;
+      ++itColumn;
     }
-    itPlane++;
+    ++itPlane;
   }
 }
 

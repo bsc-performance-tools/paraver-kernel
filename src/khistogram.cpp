@@ -603,7 +603,7 @@ inline void KHistogram::clearStatistics()
   while ( it != statisticFunctions.end() )
   {
     delete *it;
-    it++;
+    ++it;
   }
   statisticFunctions.clear();
 
@@ -612,7 +612,7 @@ inline void KHistogram::clearStatistics()
   while ( it != commStatisticFunctions.end() )
   {
     delete *it;
-    it++;
+    ++it;
   }
   commStatisticFunctions.clear();
 }
@@ -841,7 +841,7 @@ void KHistogram::initStatistics()
   while ( it != statisticFunctions.end() )
   {
     ( *it )->init( this );
-    it++;
+    ++it;
   }
 
   it = commStatisticFunctions.begin();
@@ -849,7 +849,7 @@ void KHistogram::initStatistics()
   while ( it != commStatisticFunctions.end() )
   {
     ( *it )->init( this );
-    it++;
+    ++it;
   }
 }
 
@@ -956,7 +956,7 @@ void KHistogram::calculate( TObjectOrder iRow,
         }
       }
 
-      itComm++;
+      ++itComm;
     }
 
     data->rList->erase( data->rList->begin(), itComm );
@@ -985,7 +985,7 @@ void KHistogram::calculate( TObjectOrder iRow,
             }
           }
         }
-        it++;
+        ++it;
       }
     }
     else

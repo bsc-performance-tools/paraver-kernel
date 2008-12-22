@@ -190,7 +190,7 @@ inline void Column<ValueType>::newRow( int row )
 template <typename ValueType>
 inline void Column<ValueType>::setNextCell( )
 {
-  it_cell++;
+  ++it_cell;
 }
 
 

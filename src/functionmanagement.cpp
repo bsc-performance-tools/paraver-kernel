@@ -13,7 +13,7 @@ FunctionManagement<T>::~FunctionManagement()
   while ( it != hash.end() )
   {
     delete ( *it ).second;
-    it++;
+    ++it;
   }
 
   inst = NULL;
