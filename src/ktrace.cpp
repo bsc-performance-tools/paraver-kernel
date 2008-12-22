@@ -436,7 +436,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress )
       count++;
   }
 
-  for( hash_set<TEventType>::iterator it = hashevents.begin(); it != hashevents.end(); it++ )
+  for( hash_set<TEventType>::iterator it = hashevents.begin(); it != hashevents.end(); ++it )
     events.insert( *it );
 
 // End reading the body

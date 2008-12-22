@@ -10,7 +10,7 @@ EventLabels::EventLabels()
 EventLabels::EventLabels( const set<TEventType>& eventsLoaded )
 {
   for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
-        it != eventsLoaded.end(); it ++ )
+        it != eventsLoaded.end(); ++it )
     eventTypeLabel[ *it ] = unknownLabel + " type";
 }
 
@@ -18,18 +18,18 @@ EventLabels::EventLabels( const domain::ParaverTraceConfig& config,
                           const set<TEventType>& eventsLoaded )
 {
   for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
-        it != eventsLoaded.end(); it ++ )
+        it != eventsLoaded.end(); ++it )
     eventTypeLabel[ *it ] = unknownLabel + " type";
 
   const vector<ParaverEventType *>& types = config.get_eventTypes();
   for ( vector<ParaverEventType *>::const_iterator it = types.begin();
-        it != types.end(); it++ )
+        it != types.end(); ++it )
   {
     eventTypeLabel[ ( *it )->get_key() ] = ( *it )->get_description();
     eventValueLabel[ ( *it )->get_key() ] = map<TEventValue, string>();
     const vector<ParaverEventValue *>& values = ( *it )->get_eventValues();
     for ( vector<ParaverEventValue *>::const_iterator itVal = values.begin();
-          itVal != values.end(); itVal++ )
+          itVal != values.end(); ++itVal )
     {
       ( eventValueLabel[ ( *it )->get_key() ] )[ ( *itVal )->get_key() ] =
         ( *itVal )->get_value();
@@ -43,7 +43,7 @@ EventLabels::~EventLabels()
 void EventLabels::getTypes( vector<TEventType>& onVector ) const
 {
   for ( map<TEventType, string>::const_iterator it = eventTypeLabel.begin();
-        it != eventTypeLabel.end(); it++ )
+        it != eventTypeLabel.end(); ++it )
     onVector.push_back( ( *it ).first );
 }
 

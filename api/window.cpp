@@ -312,7 +312,7 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create )
 {
   if ( myLists.begin() != myLists.end() )
   {
-    for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); it++ )
+    for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); ++it )
       delete *it;
     myLists.clear();
   }

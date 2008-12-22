@@ -162,7 +162,7 @@ void ParaverConfig::unLoadMap()
 {
   for ( map<string, PropertyFunction*>::iterator it = propertyFunctions.begin();
         it != propertyFunctions.end();
-        it++ )
+        ++it )
     delete ( *it ).second;
 }
 

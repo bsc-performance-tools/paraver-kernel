@@ -69,7 +69,7 @@ bool PreviousFiles::update( )
   if ( !myFile )
     return false;
 
-  for ( vector<string>::iterator it = listFiles.begin(); it != listFiles.end(); it++ )
+  for ( vector<string>::iterator it = listFiles.begin(); it != listFiles.end(); ++it )
     myFile << *it << endl;
 
   myFile.close();
@@ -83,7 +83,7 @@ bool PreviousFiles::add( const string &newFile )
   vector<string> v;
 
   v.push_back( newFile );
-  for ( vector<string>::iterator it = listFiles.begin(); it != listFiles.end(); it++ )
+  for ( vector<string>::iterator it = listFiles.begin(); it != listFiles.end(); ++it )
   {
     if ( *it != newFile && v.size() <= SIZE )
        v.push_back( *it );
@@ -91,7 +91,7 @@ bool PreviousFiles::add( const string &newFile )
 
   v.swap( listFiles );
 /*
-  for ( vector<string>::iterator it = listFiles.begin(); it != listFiles.end(); it++ )
+  for ( vector<string>::iterator it = listFiles.begin(); it != listFiles.end(); ++it )
   {
     printf("en el swqp %s\n", (*it).c_str());
   }

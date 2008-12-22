@@ -174,9 +174,9 @@ inline void Matrix<ValueType>::eraseColumns( UINT32 ini_col, UINT32 fin_col )
   UINT32 i;
 
   it_ini = cols.begin();
-  for ( i = 0; i < ini_col; i++, it_ini++ );
+  for ( i = 0; i < ini_col; i++, ++it_ini );
 
-  for ( it_fin = it_ini; i < fin_col; i++, it_fin++ )
+  for ( it_fin = it_ini; i < fin_col; i++, ++it_fin )
     delete cols[ i ];
 
   cols.erase( it_ini, it_fin );

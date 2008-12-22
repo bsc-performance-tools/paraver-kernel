@@ -18,7 +18,7 @@ LoadedWindows *LoadedWindows::getInstance()
 LoadedWindows::~LoadedWindows()
 {
   for ( map<TWindowID, Window *>::iterator it = windows.begin();
-        it != windows.end(); it++ )
+        it != windows.end(); ++it )
     delete ( *it ).second;
 }
 
@@ -40,7 +40,7 @@ void LoadedWindows::getValidControlWindow( Window *dataWindow,
     vector<TWindowID>& onVector ) const
 {
   for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
-        it != windows.end(); it++ )
+        it != windows.end(); ++it )
   {
     if ( ( *it ).second->getChild() == NULL &&
          validDataWindow( dataWindow, ( *it ).second ) )
@@ -64,7 +64,7 @@ void LoadedWindows::getValidDataWindow( Window *controlWindow,
            controlWindow : extraWindow;
   }
   for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
-        it != windows.end(); it++ )
+        it != windows.end(); ++it )
   {
     if ( ( *it ).second->getChild() == NULL &&
          validDataWindow( ( *it ).second, cWin ) )

@@ -283,9 +283,9 @@ inline void Cube<ValueType>::erasePlanes( UINT32 ini_plane, UINT32 fin_plane )
   UINT32 i;
 
   it_ini = planes.begin();
-  for ( i = 0; i < ini_plane; i++, it_ini++ );
+  for ( i = 0; i < ini_plane; i++, ++it_ini );
 
-  for ( it_fin = it_ini; i < fin_plane; i++, it_fin++ )
+  for ( it_fin = it_ini; i < fin_plane; i++, ++it_fin )
   {
     if ( planes[ i ] != NULL )
     {

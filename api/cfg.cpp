@@ -249,7 +249,7 @@ void CFGLoader::unLoadMap()
 {
   for ( map<string, TagFunction *>::iterator it = cfgTagFunctions.begin();
         it != cfgTagFunctions.end();
-        it++ )
+        ++it )
     delete ( *it ).second;
 }
 

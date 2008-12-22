@@ -10,7 +10,7 @@ StateLabels::StateLabels( const ParaverTraceConfig& config )
 {
   const vector<ParaverState *>& states = config.get_states();
   for ( vector<ParaverState *>::const_iterator it = states.begin();
-        it != states.end(); it++ )
+        it != states.end(); ++it )
     stateLabel[ ( *it )->get_key() ] = ( *it )->get_value();
 }
 
@@ -20,7 +20,7 @@ StateLabels::~StateLabels()
 void StateLabels::getStates( vector<TState>& onVector ) const
 {
   for ( map<TState, string>::const_iterator it = stateLabel.begin();
-        it != stateLabel.end(); it++ )
+        it != stateLabel.end(); ++it )
     onVector.push_back( ( *it ).first );
 }
 

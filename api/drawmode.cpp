@@ -15,7 +15,7 @@ inline TSemanticValue selectMethod<DRAW_MAXIMUM>( vector<TSemanticValue>& v )
 {
   TSemanticValue max = 0;
 
-  for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); it++ )
+  for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); ++it )
   {
     if( *it > max ) max = *it;
   }
@@ -28,7 +28,7 @@ inline TSemanticValue selectMethod<DRAW_MINNOTZERO>( vector<TSemanticValue>& v )
 {
   TSemanticValue min = std::numeric_limits<TSemanticValue>::max();
 
-  for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); it++ )
+  for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); ++it )
   {
     if( *it < min ) min = *it;
   }
@@ -72,7 +72,7 @@ inline TSemanticValue selectMethod<DRAW_AVERAGE>( vector<TSemanticValue>& v )
 {
   TSemanticValue avg = 0;
 
-  for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); it++ )
+  for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); ++it )
   {
     avg += *it;
   }

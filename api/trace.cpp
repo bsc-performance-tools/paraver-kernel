@@ -245,7 +245,7 @@ void TraceProxy::parsePCF( const string& whichFile )
   if ( config->get_statesColor().begin() != config->get_statesColor().end() )
   {
     for ( vector<ParaverStatesColor *>::const_iterator it = config->get_statesColor().begin();
-          it != config->get_statesColor().end(); it++ )
+          it != config->get_statesColor().end(); ++it )
     {
       tmpColor.red = ( *it )->get_color1();
       tmpColor.green = ( *it )->get_color2();

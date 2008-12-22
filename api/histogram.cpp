@@ -759,7 +759,7 @@ void HistogramProxy::setCalculateAll( bool status )
   {
     vector<string> vStat;
     myKernel->getAllStatistics( vStat );
-    for ( vector<string>::iterator it = vStat.begin(); it != vStat.end(); it++ )
+    for ( vector<string>::iterator it = vStat.begin(); it != vStat.end(); ++it )
       pushbackStatistic( *it );
   }
   else
@@ -784,7 +784,7 @@ bool HistogramProxy::getIdStat( const string& whichStat, UINT16& idStat ) const
   if ( vStat->begin() == vStat->end() )
     return false;
 
-  for ( vector<string>::const_iterator it = vStat->begin(); it != vStat->end(); it++ )
+  for ( vector<string>::const_iterator it = vStat->begin(); it != vStat->end(); ++it )
   {
     if ( whichStat.compare( *it ) == 0 )
       return true;
