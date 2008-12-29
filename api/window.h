@@ -61,9 +61,9 @@ class Window
     virtual TTimeUnit getTimeUnit() const = 0;
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const = 0;
     virtual bool setLevelFunction( TWindowLevel whichLevel,
-                                   SemanticFunction *whichFunction ) = 0;
-    virtual SemanticFunction *getLevelFunction( TWindowLevel whichLevel ) = 0;
-    virtual SemanticFunction *getFirstUsefulFunction( ) = 0;
+                                   const string& whichFunction ) = 0;
+    virtual string getLevelFunction( TWindowLevel whichLevel ) = 0;
+    virtual string getFirstUsefulFunction( ) = 0;
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
                                    const TParamValue& newValue ) = 0;
@@ -234,9 +234,9 @@ class WindowProxy: public Window
     virtual TTimeUnit getTimeUnit() const;
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const;
     virtual bool setLevelFunction( TWindowLevel whichLevel,
-                                   SemanticFunction *whichFunction );
-    virtual SemanticFunction *getLevelFunction( TWindowLevel whichLevel );
-    virtual SemanticFunction *getFirstUsefulFunction( );
+                                   const string& whichFunction );
+    virtual string getLevelFunction( TWindowLevel whichLevel );
+    virtual string getFirstUsefulFunction( );
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
                                    const TParamValue& newValue );

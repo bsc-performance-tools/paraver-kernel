@@ -13,7 +13,7 @@ KRecordList *IntervalControlDerived::init( TRecordTime initialTime, TCreateList 
   if ( displayList == NULL )
     displayList = &myDisplayList;
 
-  function = ( SemanticDerived * ) window->getLevelFunction( level );
+  function = ( SemanticDerived * ) window->getSemanticFunction( level );
 
   setChilds();
 

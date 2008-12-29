@@ -14,7 +14,7 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
   if ( displayList == NULL )
     displayList = &myDisplayList;
 
-  function = ( SemanticCompose * ) window->getLevelFunction( level );
+  function = ( SemanticCompose * ) window->getSemanticFunction( level );
 
   if ( endRecord != NULL )
   {

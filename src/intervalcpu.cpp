@@ -11,8 +11,8 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
   if ( displayList == NULL )
     displayList = &myDisplayList;
 
-  function = ( SemanticCPU * ) window->getLevelFunction( level );
-  functionThread = ( SemanticThread * ) window->getLevelFunction( THREAD );
+  function = ( SemanticCPU * ) window->getSemanticFunction( level );
+  functionThread = ( SemanticThread * ) window->getSemanticFunction( THREAD );
 
   if ( begin != NULL )
     delete begin;

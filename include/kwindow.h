@@ -96,9 +96,11 @@ class KWindow: public Window
     }
 
     virtual bool setLevelFunction( TWindowLevel whichLevel,
-                                   SemanticFunction *whichFunction ) = 0;
-    virtual SemanticFunction *getLevelFunction( TWindowLevel whichLevel ) = 0;
-    virtual SemanticFunction *getFirstUsefulFunction( ) = 0;
+                                   const string& whichFunction ) = 0;
+    virtual string getLevelFunction( TWindowLevel whichLevel ) = 0;
+    virtual SemanticFunction *getSemanticFunction( TWindowLevel whichLevel ) = 0;
+    virtual string getFirstUsefulFunction( ) = 0;
+    virtual SemanticFunction *getFirstSemUsefulFunction() = 0;
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
                                    const TParamValue& newValue ) = 0;
@@ -188,9 +190,11 @@ class KSingleWindow: public KWindow
     }
 
     virtual bool setLevelFunction( TWindowLevel whichLevel,
-                                   SemanticFunction *whichFunction );
-    virtual SemanticFunction *getLevelFunction( TWindowLevel whichLevel );
-    virtual SemanticFunction *getFirstUsefulFunction( );
+                                   const string& whichFunction );
+    virtual string getLevelFunction( TWindowLevel whichLevel );
+    virtual SemanticFunction *getSemanticFunction( TWindowLevel whichLevel );
+    virtual string getFirstUsefulFunction( );
+    virtual SemanticFunction *getFirstSemUsefulFunction();
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
                                    const TParamValue& newValue );
@@ -298,9 +302,11 @@ class KDerivedWindow: public KWindow
     virtual TWindowLevel getLevel() const;
 
     virtual bool setLevelFunction( TWindowLevel whichLevel,
-                                   SemanticFunction *whichFunction );
-    virtual SemanticFunction *getLevelFunction( TWindowLevel whichLevel );
-    virtual SemanticFunction *getFirstUsefulFunction( );
+                                   const string& whichFunction );
+    virtual string getLevelFunction( TWindowLevel whichLevel );
+    virtual SemanticFunction *getSemanticFunction( TWindowLevel whichLevel );
+    virtual string getFirstUsefulFunction( );
+    virtual SemanticFunction *getFirstSemUsefulFunction();
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
                                    const TParamValue& newValue );

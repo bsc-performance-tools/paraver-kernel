@@ -511,7 +511,6 @@ bool WindowOperation::parseLine( KernelConnection *whichKernel, istringstream& l
                                  vector<Histogram *>& histograms )
 {
   string strFunction;
-  SemanticFunction *function;
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
@@ -520,12 +519,8 @@ bool WindowOperation::parseLine( KernelConnection *whichKernel, istringstream& l
     return true;
 
   getline( line, strFunction, ' ' );
-  function = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( strFunction );
 
-  if ( function == NULL )
-    return false;
-
-  windows[ windows.size() - 1 ]->setLevelFunction( DERIVED, function );
+  return windows[ windows.size() - 1 ]->setLevelFunction( DERIVED, strFunction );
 
   return true;
 }
@@ -803,12 +798,7 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
     // It's a semantic function
     if ( level != NONE )
     {
-      SemanticFunction *function;
-
-      function = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( strFunction );
-      if ( function == NULL )
-        return false;
-      windows[ windows.size() - 1 ]->setLevelFunction( level, function );
+      return windows[ windows.size() - 1 ]->setLevelFunction( level, strFunction );
     }
     // It's a filter function
     else
@@ -869,15 +859,7 @@ bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel, istringst
 
     // It's a semantic function
     if ( level != NONE )
-    {
-      SemanticFunction *function;
-
-      function = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( strFunction );
-      if ( function == NULL )
-        return false;
-      if ( !windows[ windows.size() - 1 ]->setLevelFunction( level, function ) )
-        delete function;
-    }
+      return windows[ windows.size() - 1 ]->setLevelFunction( level, strFunction );
     else
       return false;
   }
@@ -894,7 +876,6 @@ bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstre
   string strLevel;
   TWindowLevel level;
   string strFunction;
-  SemanticFunction *function;
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
@@ -907,18 +888,11 @@ bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstre
   getline( line, strFunction, '{' );
   strFunction.erase( strFunction.length() - 1 ); // Final space.
 
-  function = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( strFunction );
-  if ( function == NULL )
-    return false;
-
-  if ( typeid( *( windows[ windows.size() - 1 ]->getLevelFunction( level ) ) ) ==
-       typeid( *function ) )
+  if ( windows[ windows.size() - 1 ]->getLevelFunction( level ) == strFunction )
   {
     string tmpString;
     string strNumParam;
     TParamIndex numParam;
-
-    delete function;
 
     getline( line, tmpString, ' ' );
     getline( line, strNumParam, ',' );
@@ -965,8 +939,6 @@ bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstre
     }
 
   }
-  else
-    delete function;
 
   return true;
 }

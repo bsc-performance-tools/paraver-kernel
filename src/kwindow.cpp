@@ -2,6 +2,7 @@
 #include "kwindow.h"
 #include "semanticcomposefunctions.h"
 #include "semanticderived.h"
+#include "functionmanagement.h"
 
 
 TObjectOrder KWindow::cpuObjectToWindowObject( TCPUOrder whichCPU )
@@ -308,26 +309,47 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create )
 
 
 bool KSingleWindow::setLevelFunction( TWindowLevel whichLevel,
-                                      SemanticFunction *whichFunction )
+                                      const string& whichFunction )
 {
   if ( whichLevel == DERIVED )
     return false;
 
   if ( functions[ whichLevel ] != NULL )
     delete functions[ whichLevel ];
-  functions[ whichLevel ] = whichFunction;
+  functions[ whichLevel ] =
+    ( FunctionManagement<SemanticFunction>::getInstance() )->
+    getFunction( whichFunction );;
 
   return true;
 }
 
 
-SemanticFunction *KSingleWindow::getLevelFunction( TWindowLevel whichLevel )
+string KSingleWindow::getLevelFunction( TWindowLevel whichLevel )
+{
+  return functions[ whichLevel ]->getName();
+}
+
+
+SemanticFunction *KSingleWindow::getSemanticFunction( TWindowLevel whichLevel )
 {
   return functions[ whichLevel ];
 }
 
 
-SemanticFunction *KSingleWindow::getFirstUsefulFunction()
+string KSingleWindow::getFirstUsefulFunction()
+{
+  if ( typeid( *functions[ TOPCOMPOSE1 ] ) != typeid( ComposeAsIs ) )
+    return functions[ TOPCOMPOSE1 ]->getName();
+  if ( typeid( *functions[ TOPCOMPOSE2 ] ) != typeid( ComposeAsIs ) )
+    return functions[ TOPCOMPOSE2 ]->getName();
+  if ( typeid( *functions[ getComposeLevel( getLevel() ) ] ) != typeid( ComposeAsIs ) )
+    return functions[ getComposeLevel( getLevel() ) ]->getName();
+
+  return functions[ getLevel() ]->getName();
+}
+
+
+SemanticFunction *KSingleWindow::getFirstSemUsefulFunction()
 {
   if ( typeid( *functions[ TOPCOMPOSE1 ] ) != typeid( ComposeAsIs ) )
     return functions[ TOPCOMPOSE1 ];
@@ -580,7 +602,7 @@ void KDerivedWindow::setup()
 
 
 bool KDerivedWindow::setLevelFunction( TWindowLevel whichLevel,
-                                       SemanticFunction *whichFunction )
+                                       const string& whichFunction )
 {
   if ( whichLevel == TOPCOMPOSE1 )
     whichLevel = ( TWindowLevel ) 0;
@@ -593,13 +615,27 @@ bool KDerivedWindow::setLevelFunction( TWindowLevel whichLevel,
 
   if ( functions[ whichLevel ] != NULL )
     delete functions[ whichLevel ];
-  functions[ whichLevel ] = whichFunction;
+  functions[ whichLevel ] =
+    ( FunctionManagement<SemanticFunction>::getInstance() )->
+    getFunction( whichFunction );
 
   return true;
 }
 
 
-SemanticFunction *KDerivedWindow::getLevelFunction( TWindowLevel whichLevel )
+string KDerivedWindow::getLevelFunction( TWindowLevel whichLevel )
+{
+  if ( whichLevel == TOPCOMPOSE1 )
+    whichLevel = ( TWindowLevel ) 0;
+  else if ( whichLevel == TOPCOMPOSE2 )
+    whichLevel = ( TWindowLevel ) 1;
+  else if ( whichLevel == DERIVED )
+    whichLevel = ( TWindowLevel ) 2;
+
+  return functions[ whichLevel ]->getName();
+}
+
+SemanticFunction *KDerivedWindow::getSemanticFunction( TWindowLevel whichLevel )
 {
   if ( whichLevel == TOPCOMPOSE1 )
     whichLevel = ( TWindowLevel ) 0;
@@ -611,7 +647,17 @@ SemanticFunction *KDerivedWindow::getLevelFunction( TWindowLevel whichLevel )
   return functions[ whichLevel ];
 }
 
-SemanticFunction *KDerivedWindow::getFirstUsefulFunction()
+string KDerivedWindow::getFirstUsefulFunction()
+{
+  if ( typeid( *functions[ ( TWindowLevel ) 0 ] ) != typeid( ComposeAsIs ) )
+    return functions[ ( TWindowLevel ) 0 ]->getName();
+  if ( typeid( *functions[ ( TWindowLevel ) 1 ] ) != typeid( ComposeAsIs ) )
+    return functions[ ( TWindowLevel ) 1 ]->getName();
+
+  return functions[ ( TWindowLevel ) 2 ]->getName();
+}
+
+SemanticFunction *KDerivedWindow::getFirstSemUsefulFunction()
 {
   if ( typeid( *functions[ ( TWindowLevel ) 0 ] ) != typeid( ComposeAsIs ) )
     return functions[ ( TWindowLevel ) 0 ];

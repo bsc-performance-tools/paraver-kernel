@@ -274,7 +274,7 @@ TWindowLevel WindowProxy::getComposeLevel( TWindowLevel whichLevel ) const
 }
 
 bool WindowProxy::setLevelFunction( TWindowLevel whichLevel,
-                                    SemanticFunction *whichFunction )
+                                    const string& whichFunction )
 {
   bool result = myWindow->setLevelFunction( whichLevel, whichFunction );
   if ( result )
@@ -282,12 +282,12 @@ bool WindowProxy::setLevelFunction( TWindowLevel whichLevel,
   return result;
 }
 
-SemanticFunction *WindowProxy::getLevelFunction( TWindowLevel whichLevel )
+string WindowProxy::getLevelFunction( TWindowLevel whichLevel )
 {
   return myWindow->getLevelFunction( whichLevel );
 }
 
-SemanticFunction *WindowProxy::getFirstUsefulFunction( )
+string WindowProxy::getFirstUsefulFunction( )
 {
   return myWindow->getFirstUsefulFunction();
 }

@@ -431,7 +431,7 @@ inline void KHistogram::setInclusive( bool newValue )
 {
   if ( newValue )
   {
-    if ( controlWindow->getFirstUsefulFunction()->getStack() == NULL )
+    if ( controlWindow->getFirstSemUsefulFunction()->getStack() == NULL )
       return;
   }
   inclusive = newValue;
@@ -966,7 +966,7 @@ void KHistogram::calculate( TObjectOrder iRow,
     {
       THistogramColumn column;
       vector<vector<TSemanticValue> > *tmp =
-        controlWindow->getFirstUsefulFunction()->getStack();
+        controlWindow->getFirstSemUsefulFunction()->getStack();
       vector<TSemanticValue>::iterator it = ( *tmp )[ data->controlRow ].begin();
       while ( it != ( *tmp )[ data->controlRow ].end() )
       {

@@ -13,7 +13,7 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
   if ( displayList == NULL )
     displayList = &myDisplayList;
 
-  function = ( SemanticNotThread * ) window->getLevelFunction( level );
+  function = ( SemanticNotThread * ) window->getSemanticFunction( level );
 
   setChilds();
   if ( begin != NULL )

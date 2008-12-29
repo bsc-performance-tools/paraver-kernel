@@ -10,7 +10,7 @@ KRecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
   if ( displayList == NULL )
     displayList = &myDisplayList;
 
-  function = ( SemanticThread * ) window->getLevelFunction( level );
+  function = ( SemanticThread * ) window->getSemanticFunction( level );
 
   if ( begin != NULL )
     delete begin;
