@@ -22,12 +22,7 @@ TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile,
     Trace( whichKernel )
 {
   myTrace = myKernel->newTrace( whichFile, progress );
-  string pcfFile;
-  if( whichFile.substr( 0, whichFile.length() - 6 ) == "prv.gz" )
-    pcfFile = whichFile.substr( 0, whichFile.length() - 6 );
-  else
-    pcfFile = whichFile.substr( 0, whichFile.length() - 3 );
-  pcfFile.append( "pcf" );
+  string pcfFile = myKernel->getPCFFileLocation( whichFile );
   parsePCF( pcfFile );
 }
 
@@ -275,6 +270,11 @@ void TraceProxy::parsePCF( const string& whichFile )
   myStateLabels = StateLabels( *config );
 
   delete config;
+}
+
+void TraceProxy::parseROW( const string& whichFile )
+{
+
 }
 
 const CodeColor& TraceProxy::getCodeColor() const

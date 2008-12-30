@@ -19,12 +19,13 @@ class KernelConnection
     virtual ~KernelConnection() {}
 
     virtual Trace *newTrace( const string& whichFile, ProgressController *progress ) const = 0;
+    virtual string getPCFFileLocation( const string& traceFile ) const = 0;
+    virtual string getROWFileLocation( const string& traceFile ) const = 0;
     virtual Window *newSingleWindow() const = 0;
     virtual Window *newSingleWindow( Trace *whichTrace ) const = 0;
     virtual Window *newDerivedWindow() const = 0;
     virtual Window *newDerivedWindow( Window *window1, Window * window2 ) const = 0;
     virtual Histogram *newHistogram() const = 0;
-//    virtual RecordList *newRecordList() const = 0;
     virtual ProgressController *newProgressController() const = 0;
     virtual Filter *newFilter( Filter *concreteFilter ) const = 0;
 

@@ -197,6 +197,7 @@ class TraceProxy: public Trace
                 ProgressController *progress );
 
     void parsePCF( const string& whichFile );
+    void parseROW( const string& whichFile );
 
     friend Trace *Trace::create( KernelConnection *, const string&, ProgressController * );
 };

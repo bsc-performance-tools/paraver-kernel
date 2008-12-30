@@ -27,6 +27,32 @@ Trace *LocalKernel::newTrace( const string& whichFile, ProgressController *progr
   return new KTrace( whichFile, ( KProgressController * ) progress->getConcrete() );
 }
 
+string LocalKernel::getPCFFileLocation( const string& traceFile ) const
+{
+  string pcfFile;
+
+  if ( traceFile.substr( 0, traceFile.length() - 6 ) == "prv.gz" )
+    pcfFile = traceFile.substr( 0, traceFile.length() - 6 );
+  else
+    pcfFile = traceFile.substr( 0, traceFile.length() - 3 );
+  pcfFile.append( "pcf" );
+
+  return pcfFile;
+}
+
+string LocalKernel::getROWFileLocation( const string& traceFile ) const
+{
+  string rowFile;
+
+  if ( traceFile.substr( 0, traceFile.length() - 6 ) == "prv.gz" )
+    rowFile = traceFile.substr( 0, traceFile.length() - 6 );
+  else
+    rowFile = traceFile.substr( 0, traceFile.length() - 3 );
+  rowFile.append( "row" );
+
+  return rowFile;
+}
+
 Window *LocalKernel::newSingleWindow() const
 {
   return new KSingleWindow();
@@ -67,7 +93,7 @@ Filter *LocalKernel::newFilter( Filter *concreteFilter ) const
 {
   FilterProxy *tmpFilter = new FilterProxy();
   tmpFilter->myFilter = concreteFilter;
-  return (Filter *) tmpFilter;
+  return ( Filter * ) tmpFilter;
 }
 
 void LocalKernel::getAllStatistics( vector<string>& onVector ) const
