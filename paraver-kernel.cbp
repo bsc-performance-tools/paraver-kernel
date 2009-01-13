@@ -279,6 +279,12 @@
 			<Option target="api" />
 		</Unit>
 		<Unit filename="api/recordlist.h" />
+		<Unit filename="api/rowlabels.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/rowlabels.h">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="api/semanticcolor.cpp">
 			<Option target="api" />
 		</Unit>
