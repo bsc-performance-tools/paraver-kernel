@@ -615,7 +615,7 @@ bool KDerivedWindow::setLevelFunction( TWindowLevel whichLevel,
   else if ( whichLevel == DERIVED )
     whichLevel = ( TWindowLevel ) 2;
   else
-    return false;
+    return true;
 
   if ( functions[ whichLevel ] != NULL )
     delete functions[ whichLevel ];

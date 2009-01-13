@@ -521,8 +521,6 @@ bool WindowOperation::parseLine( KernelConnection *whichKernel, istringstream& l
   getline( line, strFunction );
 
   return windows[ windows.size() - 1 ]->setLevelFunction( DERIVED, strFunction );
-
-  return true;
 }
 
 // For representation purposes.
