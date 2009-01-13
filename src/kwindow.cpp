@@ -316,9 +316,13 @@ bool KSingleWindow::setLevelFunction( TWindowLevel whichLevel,
 
   if ( functions[ whichLevel ] != NULL )
     delete functions[ whichLevel ];
+
   functions[ whichLevel ] =
     ( FunctionManagement<SemanticFunction>::getInstance() )->
-    getFunction( whichFunction );;
+    getFunction( whichFunction );
+
+  if( functions[ whichLevel ] == NULL )
+    return false;
 
   return true;
 }
@@ -615,9 +619,13 @@ bool KDerivedWindow::setLevelFunction( TWindowLevel whichLevel,
 
   if ( functions[ whichLevel ] != NULL )
     delete functions[ whichLevel ];
+
   functions[ whichLevel ] =
     ( FunctionManagement<SemanticFunction>::getInstance() )->
     getFunction( whichFunction );
+
+  if( functions[ whichLevel ] == NULL )
+    return false;
 
   return true;
 }

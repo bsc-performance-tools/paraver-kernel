@@ -518,7 +518,7 @@ bool WindowOperation::parseLine( KernelConnection *whichKernel, istringstream& l
   if ( !windows[ windows.size() - 1 ]->isDerivedWindow() )
     return true;
 
-  getline( line, strFunction, ' ' );
+  getline( line, strFunction );
 
   return windows[ windows.size() - 1 ]->setLevelFunction( DERIVED, strFunction );
 
@@ -798,7 +798,9 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
     // It's a semantic function
     if ( level != NONE )
     {
-      return windows[ windows.size() - 1 ]->setLevelFunction( level, strFunction );
+      bool result = windows[ windows.size() - 1 ]->setLevelFunction( level, strFunction );
+      if( !result )
+        return false;
     }
     // It's a filter function
     else
@@ -859,7 +861,11 @@ bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel, istringst
 
     // It's a semantic function
     if ( level != NONE )
-      return windows[ windows.size() - 1 ]->setLevelFunction( level, strFunction );
+    {
+      bool result = windows[ windows.size() - 1 ]->setLevelFunction( level, strFunction );
+      if( !result )
+        return false;
+    }
     else
       return false;
   }
