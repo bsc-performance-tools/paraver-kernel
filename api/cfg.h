@@ -41,6 +41,8 @@ class CFGLoader
                          Trace *whichTrace,
                          vector<Window *>& windows,
                          vector<Histogram *>& histograms );
+
+    static string errorLine;
 };
 
 

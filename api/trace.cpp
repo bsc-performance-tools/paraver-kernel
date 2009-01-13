@@ -24,6 +24,8 @@ TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile,
   myTrace = myKernel->newTrace( whichFile, progress );
   string pcfFile = myKernel->getPCFFileLocation( whichFile );
   parsePCF( pcfFile );
+  string rowFile = myKernel->getROWFileLocation( whichFile );
+  parseROW( rowFile );
 }
 
 TraceProxy::~TraceProxy()
@@ -274,7 +276,7 @@ void TraceProxy::parsePCF( const string& whichFile )
 
 void TraceProxy::parseROW( const string& whichFile )
 {
-
+  myRowLabels = RowLabels( whichFile );
 }
 
 const CodeColor& TraceProxy::getCodeColor() const
@@ -295,4 +297,9 @@ const EventLabels& TraceProxy::getEventLabels() const
 const StateLabels& TraceProxy::getStateLabels() const
 {
   return myStateLabels;
+}
+
+string TraceProxy::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const
+{
+  return myRowLabels.getRowLabel( whichLevel, whichRow );
 }

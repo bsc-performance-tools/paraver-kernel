@@ -6,6 +6,7 @@
 #include "semanticcolor.h"
 #include "eventlabels.h"
 #include "statelabels.h"
+#include "rowlabels.h"
 
 class KernelConnection;
 class ProgressController;
@@ -102,6 +103,10 @@ class Trace
       StateLabels *tmp = NULL;
       return *tmp;
     }
+    virtual string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const
+    {
+      return "";
+    }
 
     // Specific methods for KTrace only
     virtual const set<TEventType>& getLoadedEvents() const
@@ -183,7 +188,7 @@ class TraceProxy: public Trace
     virtual const GradientColor& getGradientColor() const;
     virtual const EventLabels& getEventLabels() const;
     virtual const StateLabels& getStateLabels() const;
-
+    virtual string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const;
   private:
     Trace *myTrace;
 
@@ -192,6 +197,7 @@ class TraceProxy: public Trace
 
     EventLabels myEventLabels;
     StateLabels myStateLabels;
+    RowLabels myRowLabels;
 
     TraceProxy( KernelConnection *whichKernel, const string& whichFile,
                 ProgressController *progress );

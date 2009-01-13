@@ -21,6 +21,7 @@ using namespace std;
 map<string, TagFunction *> CFGLoader::cfgTagFunctions;
 
 string currentWindowName;
+string CFGLoader::errorLine = "";
 
 TWindowLevel stringToLevel( const string& strLevel )
 {
@@ -61,9 +62,9 @@ TWindowLevel stringToLevel( const string& strLevel )
   else if ( strLevel.compare( OLDCFG_LVL_COMPOSE_SYSTEM ) == 0 )
     level = COMPOSESYSTEM;
   // Old semantic composes
-  else if ( strLevel.compare( OLDCFG_LVL_TOPCOMPOSE1 ) == 0 )
+  else if ( strLevel.compare( OLDCFG_LVL_COMPOSE1 ) == 0 )
     level = TOPCOMPOSE1;
-  else if ( strLevel.compare( OLDCFG_LVL_TOPCOMPOSE2 ) == 0 )
+  else if ( strLevel.compare( OLDCFG_LVL_COMPOSE2 ) == 0 )
     level = TOPCOMPOSE2;
 
   return level;
@@ -125,11 +126,15 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
         {
           delete histograms[ histograms.size() - 1 ];
           histograms[ histograms.size() - 1 ] = NULL;
+          CFGLoader::errorLine = strLine;
         }
         else
         {
           if ( windows[ windows.size() - 1 ] != NULL )
+          {
             delete windows[ windows.size() - 1 ];
+            CFGLoader::errorLine = strLine;
+          }
           windows[ windows.size() - 1 ] = NULL;
         }
       }
@@ -145,6 +150,10 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+
+  // Because old paraver set window_open to false for all windows
+  if( histograms.begin() == histograms.end() )
+    windows[ windows.size() - 1 ]->setShowWindow( true );
 
   return true;
 }

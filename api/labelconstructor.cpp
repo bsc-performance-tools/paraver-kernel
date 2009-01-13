@@ -11,7 +11,12 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
                                       TWindowLevel level,
                                       Trace *whichTrace )
 {
+  string rowStr;
   stringstream label;
+
+  rowStr = whichTrace->getRowLabel( level, globalOrder );
+  if( rowStr != "" )
+    return rowStr;
 
   if ( level == WORKLOAD )
     label << LEVEL_WORKLOAD;
