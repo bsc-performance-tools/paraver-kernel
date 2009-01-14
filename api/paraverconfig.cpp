@@ -2,7 +2,14 @@
 #include <fstream>
 #include <sstream>
 #include <stdlib.h>
+#ifdef WIN32
+  #include <shlobj.h>
+#else
+  #include <sys/stat.h>
+  #include <sys/types.h>
+#endif
 #include "paraverconfig.h"
+
 
 ParaverConfig *ParaverConfig::instance = NULL;
 
@@ -90,11 +97,11 @@ void ParaverConfig::readParaverConfigFile()
   strFile.append( "/.paraver/paraver" );
 #endif
 
-
   file.open( strFile.c_str() );
 
   if ( !file )
   {
+    file.close();
     if ( !ParaverConfig::writeDefaultConfig() )
       return;
     file.open( strFile.c_str() );
@@ -134,10 +141,13 @@ bool ParaverConfig::writeDefaultConfig()
   homedir = getenv( "HOME" );
 #endif
   strFile.append( homedir );
+
 #ifdef WIN32
   strFile.append( "\\paraver\\paraver" );
+  SHCreateDirectoryEx( NULL, homedir + "\\paraver", NULL );
 #else
   strFile.append( "/.paraver/paraver" );
+  mkdir( ( homedir + "/.paraver" ).c_str(), (mode_t)0700 );
 #endif
 
   file.open( strFile.c_str() );
