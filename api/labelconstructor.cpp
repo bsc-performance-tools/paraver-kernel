@@ -6,6 +6,7 @@
 #include "histogram.h"
 #include "paraverconfig.h"
 #include "window.h"
+#include "filter.h"
 
 string LabelConstructor::objectLabel( TObjectOrder globalOrder,
                                       TWindowLevel level,
@@ -257,10 +258,25 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
     else if ( infoType == EVENTVALUE_TYPE )
     {
       string tmpstr;
-      if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( value, tmpstr ) )
-        label << tmpstr << " type " << value;
-      else
-        label << tmpstr;
+      vector<TEventType> types;
+      bool found = false;
+      whichWindow->getFilter()->getEventType( types );
+      for( vector<TEventType>::iterator it = types.begin(); it != types.end(); ++it )
+      {
+        if( whichWindow->getTrace()->getEventLabels().getEventValueLabel(
+          (*it), value, tmpstr ) )
+        {
+          found = true;
+          label << tmpstr;
+        }
+      }
+      if( !found )
+      {
+        if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( value, tmpstr ) )
+          label << tmpstr << " value " << value;
+        else
+          label << tmpstr;
+      }
     }
     else if ( infoType == COMMSIZE_TYPE )
       label << value << " bytes";
