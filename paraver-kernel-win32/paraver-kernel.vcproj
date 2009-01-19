@@ -311,10 +311,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\src\filter.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\src\filtermanagement.cpp"
 				>
 			</File>
@@ -364,6 +360,10 @@
 			</File>
 			<File
 				RelativePath="..\src\intervalthread.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\kfilter.cpp"
 				>
 			</File>
 			<File
@@ -545,10 +545,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\filter.h"
-				>
-			</File>
-			<File
 				RelativePath="..\include\filtermanagement.h"
 				>
 			</File>
@@ -610,6 +606,10 @@
 			</File>
 			<File
 				RelativePath="..\api\kernelconnection.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\kfilter.h"
 				>
 			</File>
 			<File

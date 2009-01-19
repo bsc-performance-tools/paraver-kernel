@@ -144,7 +144,15 @@ bool ParaverConfig::writeDefaultConfig()
 
 #ifdef WIN32
   strFile.append( "\\paraver\\paraver" );
-  SHCreateDirectoryEx( NULL, homedir + "\\paraver", NULL );
+  string tmpPath( homedir + "\\paraver" );
+
+  int len = tmpPath.length() + 1;
+  wchar_t *wText = new wchar_t[len];
+  memset(wText,0,len);
+  ::MultiByteToWideChar( CP_ACP, NULL, tmpPath.c_str(), -1, wText, len );
+
+  SHCreateDirectoryEx( NULL, wText, NULL );
+  delete []wText;
 #else
   strFile.append( "/.paraver/paraver" );
   mkdir( ( homedir + "/.paraver" ).c_str(), (mode_t)0700 );

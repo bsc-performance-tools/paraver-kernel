@@ -175,6 +175,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\filter.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\histogram.cpp"
 				>
 			</File>
@@ -227,10 +231,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\common-files\pcfparser\ParaverTraceConfigGrammar.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\previousfiles.cpp"
 				>
 			</File>
@@ -240,6 +240,10 @@
 			</File>
 			<File
 				RelativePath=".\recordlist.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\rowlabels.cpp"
 				>
 			</File>
 			<File
@@ -282,6 +286,10 @@
 			</File>
 			<File
 				RelativePath=".\eventlabels.h"
+				>
+			</File>
+			<File
+				RelativePath=".\filter.h"
 				>
 			</File>
 			<File
@@ -370,6 +378,10 @@
 			</File>
 			<File
 				RelativePath=".\recordlist.h"
+				>
+			</File>
+			<File
+				RelativePath=".\rowlabels.h"
 				>
 			</File>
 			<File
