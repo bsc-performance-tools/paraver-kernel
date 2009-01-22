@@ -12,63 +12,84 @@ ZoomHistory<Dimension1,Dimension2>::~ZoomHistory( )
 }
 
 template <typename Dimension1, typename Dimension2>
-pair<Dimension1, Dimension1> ZoomHistory<Dimension1,Dimension2>::GetFirstDimension()
+pair<Dimension1, Dimension1> ZoomHistory<Dimension1,Dimension2>::getFirstDimension() const
 {
   return zooms[ currentZoom ].first;
 }
 
 template <typename Dimension1, typename Dimension2>
-pair<Dimension2, Dimension2> ZoomHistory<Dimension1,Dimension2>::GetSecondDimension()
+pair<Dimension2, Dimension2> ZoomHistory<Dimension1,Dimension2>::getSecondDimension() const
 {
   return zooms[ currentZoom ].second;
 }
 
 
 template <typename Dimension1, typename Dimension2>
-void ZoomHistory<Dimension1,Dimension2>::AddZoom( Dimension1 begin1, Dimension1 end1,
+void ZoomHistory<Dimension1,Dimension2>::addZoom( Dimension1 begin1, Dimension1 end1,
                                                   Dimension2 begin2, Dimension2 end2 )
 {
-  int totalZooms = int(zooms.size());
-  for (int i = currentZoom + 1; i < totalZooms; i++ )
-      zooms.pop_back();
+  if ( currentZoom < (int)zooms.size() - 1 )
+    zooms.resize( currentZoom + 1 );
 
   zooms.push_back( make_pair( make_pair(begin1,end1), make_pair(begin2,end2)));
   currentZoom = zooms.size() - 1;
 }
 
 template <typename Dimension1, typename Dimension2>
-bool ZoomHistory<Dimension1,Dimension2>::IsEmpty()
+void ZoomHistory<Dimension1,Dimension2>::addZoom( Dimension1 begin, Dimension1 end )
 {
-  return ( zooms.size() == 0 );
+  if ( currentZoom < (int)zooms.size() - 1 )
+    zooms.resize( currentZoom + 1 );
+
+  zooms.push_back( make_pair( make_pair(begin,end),
+                   make_pair( zooms[currentZoom].second.first, zooms[currentZoom].second.second)));
+  ++currentZoom;
 }
 
 template <typename Dimension1, typename Dimension2>
-bool ZoomHistory<Dimension1,Dimension2>::EmptyNextZoom()
+void ZoomHistory<Dimension1,Dimension2>::addZoom( Dimension2 begin, Dimension2 end )
+{
+  if ( currentZoom < (int)zooms.size() - 1 )
+    zooms.resize( currentZoom + 1 );
+
+  zooms.push_back( make_pair( make_pair( zooms[currentZoom].first.first, zooms[currentZoom].first.second ),
+                              make_pair( begin, end )));
+  ++currentZoom;
+}
+
+template <typename Dimension1, typename Dimension2>
+bool ZoomHistory<Dimension1,Dimension2>::isEmpty() const
+{
+  return ( zooms.begin() == zooms.end() );
+}
+
+template <typename Dimension1, typename Dimension2>
+bool ZoomHistory<Dimension1,Dimension2>::emptyNextZoom() const
 {
   return ( currentZoom == int( zooms.size() - 1 ) );
 }
 
 template <typename Dimension1, typename Dimension2>
-bool ZoomHistory<Dimension1,Dimension2>::EmptyPrevZoom()
+bool ZoomHistory<Dimension1,Dimension2>::emptyPrevZoom() const
 {
   return ( currentZoom <= 0 );
 }
 
 template <typename Dimension1, typename Dimension2>
-void ZoomHistory<Dimension1,Dimension2>::FirstZoom( )
+void ZoomHistory<Dimension1,Dimension2>::firstZoom( )
 {
   currentZoom = 0;
 }
 
 template <typename Dimension1, typename Dimension2>
-void ZoomHistory<Dimension1,Dimension2>::PrevZoom( )
+void ZoomHistory<Dimension1,Dimension2>::prevZoom( )
 {
   if ( currentZoom > 0 )
     currentZoom--;
 }
 
 template <typename Dimension1, typename Dimension2>
-void ZoomHistory<Dimension1,Dimension2>::NextZoom( )
+void ZoomHistory<Dimension1,Dimension2>::nextZoom( )
 {
   if ( currentZoom < int(zooms.size() - 1) )
     currentZoom++;

@@ -306,7 +306,7 @@
 		</Unit>
 		<Unit filename="api/window.h" />
 		<Unit filename="api/zoomhistory.cpp">
-			<Option target="api" />
+			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="api/zoomhistory.h">
 			<Option target="api" />
