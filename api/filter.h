@@ -16,6 +16,9 @@ class Filter
     Filter()
     {}
 
+    Filter( const KernelConnection *whichKernel ) : myKernel( whichKernel )
+    {}
+
     virtual ~Filter()
     {}
 
@@ -31,36 +34,43 @@ class Filter
     virtual void insertCommFrom( TObjectOrder value ) = 0;
     virtual void getCommFrom( vector<TObjectOrder>& onVector ) const = 0;
     virtual void setCommFromFunction( string newFunction ) = 0;
+    virtual string getCommFromFunction() const = 0;
 
     virtual void clearCommTo() = 0;
     virtual void insertCommTo( TObjectOrder value ) = 0;
     virtual void getCommTo( vector<TObjectOrder>& onVector ) const = 0;
     virtual void setCommToFunction( string newFunction ) = 0;
+    virtual string getCommToFunction() const = 0;
 
     virtual void clearCommTags() = 0;
     virtual void insertCommTag( TCommTag value ) = 0;
     virtual void getCommTag( vector<TCommTag>& onVector ) const = 0;
     virtual void setCommTagFunction( string newFunction ) = 0;
+    virtual string getCommTagFunction() const = 0;
 
     virtual void clearCommSizes() = 0;
     virtual void insertCommSize( TCommSize value ) = 0;
     virtual void getCommSize( vector<TCommSize>& onVector ) const = 0;
     virtual void setCommSizeFunction( string newFunction ) = 0;
+    virtual string getCommSizeFunction() const = 0;
 
     virtual void clearBandWidth() = 0;
     virtual void insertBandWidth( TSemanticValue value ) = 0;
     virtual void getBandWidth( vector<TSemanticValue>& onVector ) const = 0;
     virtual void setBandWidthFunction( string newFunction ) = 0;
+    virtual string getBandWidthFunction() const = 0;
 
     virtual void clearEventTypes() = 0;
     virtual void insertEventType( TEventType value ) = 0;
     virtual void getEventType( vector<TEventType>& onVector ) const = 0;
     virtual void setEventTypeFunction( string newFunction ) = 0;
+    virtual string getEventTypeFunction() const = 0;
 
     virtual void clearEventValues() = 0;
     virtual void insertEventValue( TEventValue value ) = 0;
     virtual void getEventValue( vector<TEventValue>& onVector ) const = 0;
     virtual void setEventValueFunction( string newFunction ) = 0;
+    virtual string getEventValueFunction() const = 0;
 
 
     virtual void setOpFromToAnd() = 0;
@@ -70,15 +80,15 @@ class Filter
     virtual void setOpTypeValueAnd() = 0;
     virtual void setOpTypeValueOr() = 0;
 
+    virtual void getAllFilterFunctions( vector<string>& onVector ) const;
+
   private:
+    const KernelConnection *myKernel;
 };
 
 class FilterProxy : public Filter
 {
   public:
-    FilterProxy()
-    {}
-
     virtual ~FilterProxy()
     {}
 
@@ -94,36 +104,43 @@ class FilterProxy : public Filter
     virtual void insertCommFrom( TObjectOrder value );
     virtual void getCommFrom( vector<TObjectOrder>& onVector ) const;
     virtual void setCommFromFunction( string newFunction );
+    virtual string getCommFromFunction() const;
 
     virtual void clearCommTo();
     virtual void insertCommTo( TObjectOrder value );
     virtual void getCommTo( vector<TObjectOrder>& onVector ) const;
     virtual void setCommToFunction( string newFunction );
+    virtual string getCommToFunction() const;
 
     virtual void clearCommTags();
     virtual void insertCommTag( TCommTag value );
     virtual void getCommTag( vector<TCommTag>& onVector ) const;
     virtual void setCommTagFunction( string newFunction );
+    virtual string getCommTagFunction() const;
 
     virtual void clearCommSizes();
     virtual void insertCommSize( TCommSize value );
     virtual void getCommSize( vector<TCommSize>& onVector ) const;
     virtual void setCommSizeFunction( string newFunction );
+    virtual string getCommSizeFunction() const;
 
     virtual void clearBandWidth();
     virtual void insertBandWidth( TSemanticValue value );
     virtual void getBandWidth( vector<TSemanticValue>& onVector ) const;
     virtual void setBandWidthFunction( string newFunction );
+    virtual string getBandWidthFunction() const;
 
     virtual void clearEventTypes();
     virtual void insertEventType( TEventType value );
     virtual void getEventType( vector<TEventType>& onVector ) const;
     virtual void setEventTypeFunction( string newFunction );
+    virtual string getEventTypeFunction() const;
 
     virtual void clearEventValues();
     virtual void insertEventValue( TEventValue value );
     virtual void getEventValue( vector<TEventValue>& onVector ) const;
     virtual void setEventValueFunction( string newFunction );
+    virtual string getEventValueFunction() const;
 
 
     virtual void setOpFromToAnd();
@@ -135,6 +152,12 @@ class FilterProxy : public Filter
 
   private:
     Filter *myFilter;
+
+    FilterProxy()
+    {}
+
+    FilterProxy( const KernelConnection *whichKernel ) : Filter( whichKernel )
+    {}
 
     friend Filter *LocalKernel::newFilter( Filter * ) const;
 };

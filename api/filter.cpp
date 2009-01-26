@@ -1,5 +1,10 @@
 #include "filter.h"
 
+void Filter::getAllFilterFunctions( vector<string>& onVector ) const
+{
+  myKernel->getAllFilterFunctions( onVector );
+}
+
 void FilterProxy::setLogical( bool newValue )
 {
   myFilter->setLogical( newValue );
@@ -40,6 +45,11 @@ void FilterProxy::setCommFromFunction( string newFunction )
   myFilter->setCommFromFunction( newFunction );
 }
 
+string FilterProxy::getCommFromFunction() const
+{
+  return myFilter->getCommFromFunction();
+}
+
 void FilterProxy::clearCommTo()
 {
   myFilter->clearCommTo();
@@ -58,6 +68,11 @@ void FilterProxy::getCommTo( vector<TObjectOrder>& onVector ) const
 void FilterProxy::setCommToFunction( string newFunction )
 {
   myFilter->setCommToFunction( newFunction );
+}
+
+string FilterProxy::getCommToFunction() const
+{
+  return myFilter->getCommToFunction();
 }
 
 void FilterProxy::clearCommTags()
@@ -80,6 +95,11 @@ void FilterProxy::setCommTagFunction( string newFunction )
   myFilter->setCommTagFunction( newFunction );
 }
 
+string FilterProxy::getCommTagFunction() const
+{
+  return myFilter->getCommTagFunction();
+}
+
 void FilterProxy::clearCommSizes()
 {
   myFilter->clearCommSizes();
@@ -98,6 +118,11 @@ void FilterProxy::getCommSize( vector<TCommSize>& onVector ) const
 void FilterProxy::setCommSizeFunction( string newFunction )
 {
   myFilter->setCommSizeFunction( newFunction );
+}
+
+string FilterProxy::getCommSizeFunction() const
+{
+  return myFilter->getCommSizeFunction();
 }
 
 void FilterProxy::clearBandWidth()
@@ -120,6 +145,11 @@ void FilterProxy::setBandWidthFunction( string newFunction )
   myFilter->setBandWidthFunction( newFunction );
 }
 
+string FilterProxy::getBandWidthFunction() const
+{
+  return myFilter->getBandWidthFunction();
+}
+
 void FilterProxy::clearEventTypes()
 {
   myFilter->clearEventTypes();
@@ -138,6 +168,11 @@ void FilterProxy::getEventType( vector<TEventType>& onVector ) const
 void FilterProxy::setEventTypeFunction( string newFunction )
 {
   myFilter->setEventTypeFunction( newFunction );
+}
+
+string FilterProxy::getEventTypeFunction() const
+{
+  return myFilter->getEventTypeFunction();
 }
 
 void FilterProxy::clearEventValues()
@@ -160,6 +195,10 @@ void FilterProxy::setEventValueFunction( string newFunction )
   myFilter->setEventValueFunction( newFunction );
 }
 
+string FilterProxy::getEventValueFunction() const
+{
+  return myFilter->getEventValueFunction();
+}
 
 void FilterProxy::setOpFromToAnd()
 {

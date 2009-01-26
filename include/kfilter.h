@@ -318,36 +318,43 @@ class KFilter : public Filter
     void insertCommFrom( TObjectOrder value );
     void getCommFrom( vector<TObjectOrder>& onVector ) const;
     void setCommFromFunction( string newFunction );
+    string getCommFromFunction() const;
 
     void clearCommTo();
     void insertCommTo( TObjectOrder value );
     void getCommTo( vector<TObjectOrder>& onVector ) const;
     void setCommToFunction( string newFunction );
+    string getCommToFunction() const;
 
     void clearCommTags();
     void insertCommTag( TCommTag value );
     void getCommTag( vector<TCommTag>& onVector ) const;
     void setCommTagFunction( string newFunction );
+    string getCommTagFunction() const;
 
     void clearCommSizes();
     void insertCommSize( TCommSize value );
     void getCommSize( vector<TCommSize>& onVector ) const;
     void setCommSizeFunction( string newFunction );
+    string getCommSizeFunction() const;
 
     void clearBandWidth();
     void insertBandWidth( TSemanticValue value );
     void getBandWidth( vector<TSemanticValue>& onVector ) const;
     void setBandWidthFunction( string newFunction );
+    string getBandWidthFunction() const;
 
     void clearEventTypes();
     void insertEventType( TEventType value );
     void getEventType( vector<TEventType>& onVector ) const;
     void setEventTypeFunction( string newFunction );
+    string getEventTypeFunction() const;
 
     void clearEventValues();
     void insertEventValue( TEventValue value );
     void getEventValue( vector<TEventValue>& onVector ) const;
     void setEventValueFunction( string newFunction );
+    string getEventValueFunction() const;
 
 
     void setOpFromToAnd()

@@ -24,6 +24,7 @@ class LocalKernel: public KernelConnection
     virtual Filter *newFilter( Filter *concreteFilter ) const;
 
     virtual void getAllStatistics( vector<string>& onVector ) const;
+    virtual void getAllFilterFunctions( vector<string>& onVector ) const;
 
   protected:
 

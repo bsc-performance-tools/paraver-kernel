@@ -269,6 +269,10 @@ void KFilter::setCommFromFunction( string newFunction )
                      ->getFunction( newFunction );
 }
 
+string KFilter::getCommFromFunction() const
+{
+  return functionCommFrom->getName();
+}
 
 void KFilter::clearCommTo()
 {
@@ -294,6 +298,10 @@ void KFilter::setCommToFunction( string newFunction )
                    ->getFunction( newFunction );
 }
 
+string KFilter::getCommToFunction() const
+{
+  return functionCommTo->getName();
+}
 
 void KFilter::clearCommTags()
 {
@@ -319,6 +327,10 @@ void KFilter::setCommTagFunction( string newFunction )
                      ->getFunction( newFunction );
 }
 
+string KFilter::getCommTagFunction() const
+{
+  return functionCommTags->getName();
+}
 
 void KFilter::clearCommSizes()
 {
@@ -344,6 +356,10 @@ void KFilter::setCommSizeFunction( string newFunction )
                       ->getFunction( newFunction );
 }
 
+string KFilter::getCommSizeFunction() const
+{
+  return functionCommSizes->getName();
+}
 
 void KFilter::clearBandWidth()
 {
@@ -369,6 +385,10 @@ void KFilter::setBandWidthFunction( string newFunction )
                       ->getFunction( newFunction );
 }
 
+string KFilter::getBandWidthFunction() const
+{
+  return functionBandWidth->getName();
+}
 
 void KFilter::clearEventTypes()
 {
@@ -394,6 +414,10 @@ void KFilter::setEventTypeFunction( string newFunction )
                        ->getFunction( newFunction );
 }
 
+string KFilter::getEventTypeFunction() const
+{
+  return functionEventTypes->getName();
+}
 
 void KFilter::clearEventValues()
 {
@@ -417,4 +441,9 @@ void KFilter::setEventValueFunction( string newFunction )
   delete functionEventValues;
   functionEventValues = FunctionManagement<FilterFunction>::getInstance()
                         ->getFunction( newFunction );
+}
+
+string KFilter::getEventValueFunction() const
+{
+  return functionEventValues->getName();
 }

@@ -91,7 +91,7 @@ ProgressController *LocalKernel::newProgressController() const
 
 Filter *LocalKernel::newFilter( Filter *concreteFilter ) const
 {
-  FilterProxy *tmpFilter = new FilterProxy();
+  FilterProxy *tmpFilter = new FilterProxy( this );
   tmpFilter->myFilter = concreteFilter;
   return ( Filter * ) tmpFilter;
 }
@@ -99,4 +99,9 @@ Filter *LocalKernel::newFilter( Filter *concreteFilter ) const
 void LocalKernel::getAllStatistics( vector<string>& onVector ) const
 {
   FunctionManagement<HistogramStatistic>::getInstance()->getAll( onVector );
+}
+
+void LocalKernel::getAllFilterFunctions( vector<string>& onVector ) const
+{
+  FunctionManagement<FilterFunction>::getInstance()->getAll( onVector );
 }

@@ -30,6 +30,7 @@ class KernelConnection
     virtual Filter *newFilter( Filter *concreteFilter ) const = 0;
 
     virtual void getAllStatistics( vector<string>& onVector ) const = 0;
+    virtual void getAllFilterFunctions( vector<string>& onVector ) const = 0;
 
   protected:
 

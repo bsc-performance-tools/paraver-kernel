@@ -9,7 +9,7 @@
 		<Option virtualFolders="paraver-kernel/src/;" />
 		<Build>
 			<Target title="Debug">
-				<Option output="libparaver-kernel.so" prefix_auto="1" extension_auto="1" />
+				<Option output="libparaver-kernel" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -21,7 +21,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="libparaver-kernel.so" prefix_auto="1" extension_auto="1" />
+				<Option output="libparaver-kernel" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -54,7 +54,7 @@
 				</Linker>
 			</Target>
 			<Target title="api">
-				<Option output="libapi.so" prefix_auto="1" extension_auto="1" />
+				<Option output="libapi" prefix_auto="1" extension_auto="1" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -69,7 +69,7 @@
 				</Linker>
 			</Target>
 			<Target title="cfg">
-				<Option output="libcfg.so" prefix_auto="1" extension_auto="1" />
+				<Option output="libcfg" prefix_auto="1" extension_auto="1" />
 				<Option external_deps="libparaver-kernel.a;libapi.a;" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -306,7 +306,7 @@
 		</Unit>
 		<Unit filename="api/window.h" />
 		<Unit filename="api/zoomhistory.cpp">
-			<Option target="&lt;{~None~}&gt;" />
+			<Option target="api" />
 		</Unit>
 		<Unit filename="api/zoomhistory.h">
 			<Option target="api" />
@@ -908,6 +908,8 @@
 				<search_path add="/usr/include/c++/4.1.1" />
 				<search_path add="/usr/include" />
 			</code_completion>
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
