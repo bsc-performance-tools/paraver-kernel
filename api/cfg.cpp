@@ -43,6 +43,8 @@ TWindowLevel stringToLevel( const string& strLevel )
     level = NODE;
   else if ( strLevel.compare( OLDCFG_LVL_SYSTEM ) == 0 )
     level = SYSTEM;
+  else if ( strLevel.compare( OLDCFG_LVL_TOPCOMPOSE ) == 0 )
+    level = TOPCOMPOSE2;
   else if ( strLevel.compare( OLDCFG_LVL_TOPCOMPOSE1 ) == 0 )
     level = TOPCOMPOSE1;
   else if ( strLevel.compare( OLDCFG_LVL_TOPCOMPOSE2 ) == 0 )

@@ -229,3 +229,18 @@ void FilterProxy::setOpTypeValueOr()
 {
   myFilter->setOpTypeValueOr();
 }
+
+bool FilterProxy::getOpFromTo() const
+{
+  return myFilter->getOpFromTo();
+}
+
+bool FilterProxy::getOpTagSize() const
+{
+  return myFilter->getOpTagSize();
+}
+
+bool FilterProxy::getOpTypeValue() const
+{
+  return myFilter->getOpTypeValue();
+}

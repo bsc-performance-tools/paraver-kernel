@@ -10,6 +10,7 @@
 #define OLDCFG_LVL_NODE     "node"
 #define OLDCFG_LVL_SYSTEM    "system"
 
+#define OLDCFG_LVL_TOPCOMPOSE       "topcompose"
 #define OLDCFG_LVL_TOPCOMPOSE1      "topcompose1"
 #define OLDCFG_LVL_TOPCOMPOSE2      "topcompose2"
 #define OLDCFG_LVL_COMPOSE_WORKLOAD "compose_workload"

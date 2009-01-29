@@ -80,6 +80,10 @@ class Filter
     virtual void setOpTypeValueAnd() = 0;
     virtual void setOpTypeValueOr() = 0;
 
+    virtual bool getOpFromTo() const = 0;
+    virtual bool getOpTagSize() const = 0;
+    virtual bool getOpTypeValue() const = 0;
+
     virtual void getAllFilterFunctions( vector<string>& onVector ) const;
 
   private:
@@ -149,6 +153,10 @@ class FilterProxy : public Filter
     virtual void setOpTagSizeOr();
     virtual void setOpTypeValueAnd();
     virtual void setOpTypeValueOr();
+
+    virtual bool getOpFromTo() const;
+    virtual bool getOpTagSize() const;
+    virtual bool getOpTypeValue() const;
 
   private:
     Filter *myFilter;

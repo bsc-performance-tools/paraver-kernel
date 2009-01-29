@@ -382,6 +382,19 @@ class KFilter : public Filter
       opTypeValue = OR;
     }
 
+    bool getOpFromTo() const
+    {
+      return opFromTo;
+    }
+    bool getOpTagSize() const
+    {
+      return opTagSize;
+    }
+    bool getOpTypeValue() const
+    {
+      return opTypeValue;
+    }
+
   private:
     KSingleWindow *window;
 
