@@ -21,7 +21,12 @@ class FilterFunction
     virtual string getName() = 0;
     virtual FilterFunction *clone() = 0;
 
-    bool getResult()
+    virtual bool getDefaultValue() const
+    {
+      return false;
+    }
+
+    virtual bool getResult() const
     {
       return result;
     }
@@ -50,6 +55,16 @@ class FilterAll: public FilterFunction
     virtual FilterFunction *clone()
     {
       return new FilterAll( *this );
+    }
+
+    virtual bool getDefaultValue() const
+    {
+      return true;
+    }
+
+    virtual bool getResult() const
+    {
+      return true;
     }
 
   protected:
@@ -188,6 +203,11 @@ class FilterNone: public FilterFunction
     virtual FilterFunction *clone()
     {
       return new FilterNone( *this );
+    }
+
+    virtual bool getResult() const
+    {
+      return false;
     }
 
   protected:

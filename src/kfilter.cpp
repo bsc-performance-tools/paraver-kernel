@@ -134,7 +134,7 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
 bool KFilter::filterEvents( MemoryTrace::iterator *it )
 {
   bool stop = true;
-  bool tmpResult = true;
+  bool tmpResult = functionEventTypes->getDefaultValue();
   TSemanticValue info;
 
   if ( existEventTypes )
@@ -151,7 +151,7 @@ bool KFilter::filterEvents( MemoryTrace::iterator *it )
 
   if ( opTypeValue == AND && !tmpResult )
     return false;
-  tmpResult = true;
+  tmpResult = functionEventValues->getDefaultValue();
 
   if ( existEventValues )
   {
