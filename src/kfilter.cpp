@@ -14,7 +14,7 @@ bool KFilter::passFilter( MemoryTrace::iterator *it )
 bool KFilter::filterComms( MemoryTrace::iterator *it )
 {
   bool stop = true;
-  bool tmpResult = true;
+  bool tmpResult = functionCommFrom->getDefaultValue();
   TSemanticValue info;
 
   if ( !( logical && physical ) )
@@ -56,7 +56,7 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
 
   if ( opFromTo == AND && !tmpResult )
     return false;
-  tmpResult = true;
+  tmpResult = functionCommTo->getDefaultValue();
 
   if ( existCommTo )
   {
@@ -82,6 +82,7 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
   if ( !tmpResult )
     return false;
 
+  tmpResult = functionCommTags->getDefaultValue();
   if ( existCommTags )
   {
     info = ( TSemanticValue ) window->getTrace()->getCommTag( it->getCommIndex() );
@@ -96,7 +97,7 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
 
   if ( opTagSize == AND && !tmpResult )
     return false;
-  tmpResult = true;
+  tmpResult = functionCommSizes->getDefaultValue();
 
   if ( existCommSize )
   {
@@ -113,6 +114,7 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
   if ( !tmpResult )
     return false;
 
+  tmpResult = functionBandWidth->getDefaultValue();
   if ( existBandWidth )
   {
     info = ( TSemanticValue ) window->getTrace()->getCommSize( it->getCommIndex() )
