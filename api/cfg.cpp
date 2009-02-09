@@ -154,12 +154,44 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
     return false;
 
   // Because old paraver set window_open to false for all windows
-  if( histograms.begin() == histograms.end() )
+  if ( histograms.begin() == histograms.end() )
     windows[ windows.size() - 1 ]->setShowWindow( true );
 
   return true;
 }
 
+bool CFGLoader::saveCFG( const string& filename,
+                         const vector<Window *>& windows,
+                         const vector<Histogram *>& histograms )
+{
+  ofstream cfgFile( filename.c_str() );
+  if ( !cfgFile )
+    return false;
+
+  cfgFile << "ConfigFile.Version: 3.4" << endl;
+  cfgFile << "ConfigFile.NumWindows: " << windows.size() << endl;
+  cfgFile << endl;
+
+  for ( vector<Window *>::const_iterator it = windows.begin();
+        it != windows.end(); ++it )
+  {
+    cfgFile << "################################################################################" << endl;
+    cfgFile << "< NEW DISPLAYING WINDOW " << (*it)->getName() << " >" << endl;
+    cfgFile << "################################################################################" << endl;
+
+    cfgFile << endl;
+  }
+
+  for ( vector<Histogram *>::const_iterator it = histograms.begin();
+        it != histograms.end(); ++it )
+  {
+    cfgFile << "< NEW ANALYZER2D >" << endl;
+
+    cfgFile << endl;
+  }
+
+  return true;
+}
 
 void CFGLoader::loadMap()
 {
@@ -808,7 +840,7 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
     if ( level != NONE )
     {
       bool result = windows[ windows.size() - 1 ]->setLevelFunction( level, strFunction );
-      if( !result )
+      if ( !result )
         return false;
     }
     // It's a filter function
@@ -872,7 +904,7 @@ bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel, istringst
     if ( level != NONE )
     {
       bool result = windows[ windows.size() - 1 ]->setLevelFunction( level, strFunction );
-      if( !result )
+      if ( !result )
         return false;
     }
     else

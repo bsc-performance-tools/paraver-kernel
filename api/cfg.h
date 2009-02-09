@@ -41,6 +41,9 @@ class CFGLoader
                          Trace *whichTrace,
                          vector<Window *>& windows,
                          vector<Histogram *>& histograms );
+    static bool saveCFG( const string& filename,
+                         const vector<Window *>& windows,
+                         const vector<Histogram *>& histograms );
 
     static string errorLine;
 };
