@@ -1000,7 +1000,7 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
       if ( !( tmpValue >> fromObject ) )
         return false;
 
-      filter->insertCommFrom( fromObject );
+      filter->insertCommFrom( fromObject - 1 );
     }
     else if ( strTag.compare( OLDCFG_VAL_FILTER_OBJ_TO ) == 0 )
     {
@@ -1010,7 +1010,7 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
       if ( !( tmpValue >> toObject ) )
         return false;
 
-      filter->insertCommTo( toObject );
+      filter->insertCommTo( toObject - 1 );
     }
     else if ( strTag.compare( OLDCFG_VAL_FILTER_COM_TAG ) == 0 )
     {

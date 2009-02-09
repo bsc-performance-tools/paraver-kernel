@@ -29,7 +29,13 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
     else if ( it->getType() & PHY )
     {
       if ( !physical )
-        return false;
+      {
+        if ( !( logical && ( ( it->getType() & RECV ) &&
+            ( window->getTrace()->getLogicalReceive( it->getCommIndex() ) <
+              window->getTrace()->getPhysicalReceive( it->getCommIndex() ) ) ) )
+           )
+          return false;
+      }
     }
   }
 

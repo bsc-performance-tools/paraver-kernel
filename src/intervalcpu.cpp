@@ -94,19 +94,12 @@ MemoryTrace::iterator *IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
   ++( *it );
   while ( !it->isNull() )
   {
-    if ( window->passFilter( it )
-         ||
-         ( window->getFilter()->getLogical() && !window->getFilter()->getPhysical()
-           && ( ( it->getType() & RECV ) && ( it->getType() & PHY ) ) &&
-           ( window->getTrace()->getLogicalReceive( it->getCommIndex() ) <
-             window->getTrace()->getPhysicalReceive( it->getCommIndex() ) )
-         )
-       )
+    if ( window->passFilter( it ) )
     {
       if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
            ||
            ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
-        displayList->insert( window, window->copyCPUIterator( it ) );
+        displayList->insert( window, it );
 
       if ( functionThread->validRecord( it ) )
         break;
@@ -130,19 +123,12 @@ MemoryTrace::iterator *IntervalCPU::getPrevRecord( MemoryTrace::iterator *it,
   --( *it );
   while ( !it->isNull() )
   {
-    if ( window->passFilter( it )
-         ||
-         ( window->getFilter()->getLogical() && !window->getFilter()->getPhysical()
-           && ( ( it->getType() & RECV ) && ( it->getType() & PHY ) ) &&
-           ( window->getTrace()->getLogicalReceive( it->getCommIndex() ) <
-             window->getTrace()->getPhysicalReceive( it->getCommIndex() ) )
-         )
-       )
+    if ( window->passFilter( it ) )
     {
       if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
            ||
            ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
-        displayList->insert( window, window->copyCPUIterator( it ) );
+        displayList->insert( window, it );
 
       if ( functionThread->validRecord( it ) )
         break;
