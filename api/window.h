@@ -32,6 +32,7 @@ class Window
 
     //DerivedWindow
     virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue ) {}
+    virtual TSemanticValue getFactor( UINT16 whichFactor ) const { return 1.0; }
     virtual void setParent( UINT16 whichParent, Window *whichWindow ) {}
     virtual void setChild( Window *whichWindow ) {}
     virtual Window *getChild() { return NULL; }
@@ -206,6 +207,7 @@ class WindowProxy: public Window
 
     //DerivedWindow
     virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue );
+    virtual TSemanticValue getFactor( UINT16 whichFactor ) const;
     virtual void setParent( UINT16 whichParent, Window *whichWindow );
     virtual void setChild( Window *whichWindow );
     virtual Window *getChild();

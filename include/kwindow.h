@@ -334,7 +334,7 @@ class KDerivedWindow: public KWindow
       factor[ whichFactor ] = newValue;
     }
 
-    TSemanticValue getFactor( UINT16 whichFactor )
+    TSemanticValue getFactor( UINT16 whichFactor ) const
     {
       return factor[ whichFactor ];
     }

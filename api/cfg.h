@@ -60,6 +60,8 @@ class WindowName: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -74,6 +76,8 @@ class WindowType: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -88,6 +92,8 @@ class WindowFactors: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -102,6 +108,8 @@ class WindowPositionX: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -116,6 +124,8 @@ class WindowPositionY: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -130,6 +140,8 @@ class WindowWidth: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -144,6 +156,8 @@ class WindowHeight: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 

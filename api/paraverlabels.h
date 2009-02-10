@@ -25,6 +25,7 @@
 
 #define OLDCFG_TAG_WNDW_NAME      "window_name"
 #define OLDCFG_TAG_WNDW_TYPE      "window_type"
+#define OLDCFG_TAG_WNDW_ID        "window_id"
 #define OLDCFG_TAG_WNDW_FACTORS   "window_factors"
 #define OLDCFG_TAG_WNDW_POSX      "window_position_x"
 #define OLDCFG_TAG_WNDW_POSY      "window_position_y"

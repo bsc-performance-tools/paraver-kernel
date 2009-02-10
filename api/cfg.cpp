@@ -172,14 +172,27 @@ bool CFGLoader::saveCFG( const string& filename,
   cfgFile << "ConfigFile.NumWindows: " << windows.size() << endl;
   cfgFile << endl;
 
+  int id = 1;
   for ( vector<Window *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
   {
     cfgFile << "################################################################################" << endl;
-    cfgFile << "< NEW DISPLAYING WINDOW " << (*it)->getName() << " >" << endl;
+    cfgFile << "< NEW DISPLAYING WINDOW " << ( *it )->getName() << " >" << endl;
     cfgFile << "################################################################################" << endl;
+    WindowName::printLine( cfgFile, it );
+    WindowType::printLine( cfgFile, it );
+    cfgFile << OLDCFG_TAG_WNDW_ID << " " << id << endl;
+    if( (*it)->isDerivedWindow() )
+    {
+      WindowFactors::printLine( cfgFile, it );
+    }
+    WindowPositionX::printLine( cfgFile, it );
+    WindowPositionY::printLine( cfgFile, it );
+    WindowWidth::printLine( cfgFile, it );
+    WindowHeight::printLine( cfgFile, it );
 
     cfgFile << endl;
+    ++id;
   }
 
   for ( vector<Histogram *>::const_iterator it = histograms.begin();
@@ -189,6 +202,8 @@ bool CFGLoader::saveCFG( const string& filename,
 
     cfgFile << endl;
   }
+
+  cfgFile.close();
 
   return true;
 }
@@ -311,6 +326,11 @@ bool WindowName::parseLine( KernelConnection *whichKernel, istringstream& line,
   return true;
 }
 
+void WindowName::printLine( ofstream& cfgFile,
+                            const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_NAME << " " << ( *it )->getName() << endl;
+}
 
 bool WindowType::parseLine( KernelConnection *whichKernel, istringstream& line,
                             Trace *whichTrace,
@@ -345,6 +365,16 @@ bool WindowType::parseLine( KernelConnection *whichKernel, istringstream& line,
   return true;
 }
 
+void WindowType::printLine( ofstream& cfgFile,
+                            const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_TYPE << " ";
+  if( (*it)->isDerivedWindow() )
+    cfgFile << OLDCFG_VAL_WNDW_TYPE_COMPOSED << endl;
+  else
+    cfgFile << OLDCFG_VAL_WNDW_TYPE_SINGLE << endl;
+}
+
 bool WindowFactors::parseLine( KernelConnection *whichKernel, istringstream& line,
                                Trace *whichTrace,
                                vector<Window *>& windows,
@@ -375,6 +405,12 @@ bool WindowFactors::parseLine( KernelConnection *whichKernel, istringstream& lin
   return true;
 }
 
+void WindowFactors::printLine( ofstream& cfgFile,
+                               const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_FACTORS << " " << (*it)->getFactor( 0 ) <<
+                                        " " << (*it)->getFactor( 1 ) << endl;
+}
 
 bool WindowPositionX::parseLine( KernelConnection *whichKernel, istringstream& line,
                                  Trace *whichTrace,
@@ -398,6 +434,11 @@ bool WindowPositionX::parseLine( KernelConnection *whichKernel, istringstream& l
   return true;
 }
 
+void WindowPositionX::printLine( ofstream& cfgFile,
+                                 const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_POSX << " " << (*it)->getPosX() << endl;
+}
 
 bool WindowPositionY::parseLine( KernelConnection *whichKernel, istringstream& line,
                                  Trace *whichTrace,
@@ -421,6 +462,11 @@ bool WindowPositionY::parseLine( KernelConnection *whichKernel, istringstream& l
   return true;
 }
 
+void WindowPositionY::printLine( ofstream& cfgFile,
+                                 const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_POSY << " " << (*it)->getPosY() << endl;
+}
 
 bool WindowWidth::parseLine( KernelConnection *whichKernel, istringstream& line,
                              Trace *whichTrace,
@@ -444,6 +490,11 @@ bool WindowWidth::parseLine( KernelConnection *whichKernel, istringstream& line,
   return true;
 }
 
+void WindowWidth::printLine( ofstream& cfgFile,
+                             const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_WIDTH << " " << (*it)->getWidth() << endl;
+}
 
 bool WindowHeight::parseLine( KernelConnection *whichKernel, istringstream& line,
                               Trace *whichTrace,
@@ -467,6 +518,11 @@ bool WindowHeight::parseLine( KernelConnection *whichKernel, istringstream& line
   return true;
 }
 
+void WindowHeight::printLine( ofstream& cfgFile,
+                             const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_WIDTH << " " << (*it)->getHeight() << endl;
+}
 
 bool WindowCommLines::parseLine( KernelConnection *whichKernel, istringstream& line,
                                  Trace *whichTrace,

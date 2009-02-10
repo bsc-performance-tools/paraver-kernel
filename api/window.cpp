@@ -102,6 +102,11 @@ void WindowProxy::setFactor( UINT16 whichFactor, TSemanticValue newValue )
   }
 }
 
+TSemanticValue WindowProxy::getFactor( UINT16 whichFactor ) const
+{
+  return myWindow->getFactor( whichFactor );
+}
+
 void WindowProxy::setParent( UINT16 whichParent, Window *whichWindow )
 {
   if ( myWindow->isDerivedWindow() )
