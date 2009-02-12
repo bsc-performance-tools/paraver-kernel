@@ -172,6 +172,8 @@ class WindowCommLines: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -186,6 +188,8 @@ class WindowColorMode: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -200,6 +204,8 @@ class WindowUnits: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -214,6 +220,8 @@ class WindowOperation: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -228,6 +236,8 @@ class WindowMaximumY: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -242,6 +252,8 @@ class WindowMinimumY: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -256,6 +268,8 @@ class WindowComputeYMax: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -270,6 +284,24 @@ class WindowLevel: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
+};
+
+
+class WindowIdentifiers: public TagFunction
+{
+  public:
+    WindowIdentifiers()
+    {}
+    virtual ~WindowIdentifiers()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -284,6 +316,8 @@ class WindowScaleRelative: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -298,6 +332,8 @@ class WindowObject: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -312,6 +348,8 @@ class WindowBeginTime: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -326,6 +364,8 @@ class WindowEndTime: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -340,6 +380,8 @@ class WindowStopTime: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -354,6 +396,8 @@ class WindowBeginTimeRelative: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -368,6 +412,8 @@ class WindowNumberOfRow: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 class WindowSelectedFunctions: public TagFunction
@@ -381,20 +427,8 @@ class WindowSelectedFunctions: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
-};
-
-
-class WindowSemanticModule: public TagFunction
-{
-  public:
-    WindowSemanticModule()
-    {}
-    virtual ~WindowSemanticModule()
-    {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
-                            Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -404,6 +438,22 @@ class WindowComposeFunctions: public TagFunction
     WindowComposeFunctions()
     {}
     virtual ~WindowComposeFunctions()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
+};
+
+
+class WindowSemanticModule: public TagFunction
+{
+  public:
+    WindowSemanticModule()
+    {}
+    virtual ~WindowSemanticModule()
     {}
     virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
                             Trace *whichTrace,
@@ -488,20 +538,6 @@ class WindowFilterBoolOpTypeVal: public TagFunction
     WindowFilterBoolOpTypeVal()
     {}
     virtual ~WindowFilterBoolOpTypeVal()
-    {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
-                            Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-};
-
-
-class WindowIdentifiers: public TagFunction
-{
-  public:
-    WindowIdentifiers()
-    {}
-    virtual ~WindowIdentifiers()
     {}
     virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
                             Trace *whichTrace,

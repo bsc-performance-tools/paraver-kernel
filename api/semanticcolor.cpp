@@ -201,9 +201,19 @@ void GradientColor::allowOutliers( bool activate )
   drawOutlier = activate;
 }
 
+bool GradientColor::getAllowOutliers() const
+{
+  return drawOutlier;
+}
+
 void GradientColor::allowOutOfScale( bool activate )
 {
   drawOutOfScale = activate;
+}
+
+bool GradientColor::getAllowOutOfScale() const
+{
+  return drawOutOfScale;
 }
 
 rgb GradientColor::calcColor( TSemanticValue whichValue, Window& whichWindow )

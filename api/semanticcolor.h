@@ -72,7 +72,9 @@ class GradientColor: public SemanticColor
     rgb getBelowOutlierColor() const;
 
     void allowOutliers( bool activate );
+    bool getAllowOutliers() const;
     void allowOutOfScale( bool activate );
+    bool getAllowOutOfScale() const;
 
     rgb calcColor( TSemanticValue whichValue, Window& whichWindow );
 

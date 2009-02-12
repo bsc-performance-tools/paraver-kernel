@@ -72,6 +72,67 @@ TWindowLevel stringToLevel( const string& strLevel )
   return level;
 }
 
+string levelToString( TWindowLevel whichLevel )
+{
+  switch( whichLevel )
+  {
+    case NONE:
+      break;
+    case DERIVED:
+      break;
+    case WORKLOAD:
+      return OLDCFG_LVL_WORKLOAD;
+      break;
+    case APPLICATION:
+      return OLDCFG_LVL_APPL;
+      break;
+    case TASK:
+      return OLDCFG_LVL_TASK;
+      break;
+    case THREAD:
+      return OLDCFG_LVL_THREAD;
+      break;
+    case SYSTEM:
+      return OLDCFG_LVL_SYSTEM;
+      break;
+    case NODE:
+      return OLDCFG_LVL_NODE;
+      break;
+    case CPU:
+      return OLDCFG_LVL_CPU;
+      break;
+    case TOPCOMPOSE1:
+      return OLDCFG_LVL_TOPCOMPOSE1;
+      break;
+    case TOPCOMPOSE2:
+      return OLDCFG_LVL_TOPCOMPOSE2;
+      break;
+    case COMPOSEWORKLOAD:
+      return OLDCFG_LVL_COMPOSE_WORKLOAD;
+      break;
+    case COMPOSEAPPLICATION:
+      return OLDCFG_LVL_COMPOSE_APPL;
+      break;
+    case COMPOSETASK:
+      return OLDCFG_LVL_COMPOSE_TASK;
+      break;
+    case COMPOSETHREAD:
+      return OLDCFG_LVL_COMPOSE_THREAD;
+      break;
+    case COMPOSESYSTEM:
+      return OLDCFG_LVL_COMPOSE_SYSTEM;
+      break;
+    case COMPOSENODE:
+      return OLDCFG_LVL_COMPOSE_NODE;
+      break;
+    case COMPOSECPU:
+      return OLDCFG_LVL_COMPOSE_CPU;
+      break;
+  }
+
+  return "";
+}
+
 bool CFGLoader::isCFGFile( const string& filename )
 {
   string cfgExt;
@@ -182,14 +243,30 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowName::printLine( cfgFile, it );
     WindowType::printLine( cfgFile, it );
     cfgFile << OLDCFG_TAG_WNDW_ID << " " << id << endl;
-    if( (*it)->isDerivedWindow() )
+    if ( ( *it )->isDerivedWindow() )
     {
       WindowFactors::printLine( cfgFile, it );
+      WindowOperation::printLine( cfgFile, it );
+      WindowIdentifiers::printLine( cfgFile, it );
     }
     WindowPositionX::printLine( cfgFile, it );
     WindowPositionY::printLine( cfgFile, it );
     WindowWidth::printLine( cfgFile, it );
     WindowHeight::printLine( cfgFile, it );
+    WindowCommLines::printLine( cfgFile, it );
+    WindowColorMode::printLine( cfgFile, it );
+    WindowUnits::printLine( cfgFile, it );
+    WindowMaximumY::printLine( cfgFile, it );
+    WindowMinimumY::printLine( cfgFile, it );
+    WindowComputeYMax::printLine( cfgFile, it );
+    WindowLevel::printLine( cfgFile, it );
+    WindowScaleRelative::printLine( cfgFile, it );
+    WindowObject::printLine( cfgFile, it );
+    WindowBeginTime::printLine( cfgFile, it );
+    WindowEndTime::printLine( cfgFile, it );
+    WindowStopTime::printLine( cfgFile, it );
+    WindowSelectedFunctions::printLine( cfgFile, it );
+    WindowComposeFunctions::printLine( cfgFile, it );
 
     cfgFile << endl;
     ++id;
@@ -369,7 +446,7 @@ void WindowType::printLine( ofstream& cfgFile,
                             const vector<Window *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_TYPE << " ";
-  if( (*it)->isDerivedWindow() )
+  if ( ( *it )->isDerivedWindow() )
     cfgFile << OLDCFG_VAL_WNDW_TYPE_COMPOSED << endl;
   else
     cfgFile << OLDCFG_VAL_WNDW_TYPE_SINGLE << endl;
@@ -408,8 +485,8 @@ bool WindowFactors::parseLine( KernelConnection *whichKernel, istringstream& lin
 void WindowFactors::printLine( ofstream& cfgFile,
                                const vector<Window *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_FACTORS << " " << (*it)->getFactor( 0 ) <<
-                                        " " << (*it)->getFactor( 1 ) << endl;
+  cfgFile << OLDCFG_TAG_WNDW_FACTORS << " " << ( *it )->getFactor( 0 ) <<
+  " " << ( *it )->getFactor( 1 ) << endl;
 }
 
 bool WindowPositionX::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -437,7 +514,7 @@ bool WindowPositionX::parseLine( KernelConnection *whichKernel, istringstream& l
 void WindowPositionX::printLine( ofstream& cfgFile,
                                  const vector<Window *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_POSX << " " << (*it)->getPosX() << endl;
+  cfgFile << OLDCFG_TAG_WNDW_POSX << " " << ( *it )->getPosX() << endl;
 }
 
 bool WindowPositionY::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -465,7 +542,7 @@ bool WindowPositionY::parseLine( KernelConnection *whichKernel, istringstream& l
 void WindowPositionY::printLine( ofstream& cfgFile,
                                  const vector<Window *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_POSY << " " << (*it)->getPosY() << endl;
+  cfgFile << OLDCFG_TAG_WNDW_POSY << " " << ( *it )->getPosY() << endl;
 }
 
 bool WindowWidth::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -493,7 +570,7 @@ bool WindowWidth::parseLine( KernelConnection *whichKernel, istringstream& line,
 void WindowWidth::printLine( ofstream& cfgFile,
                              const vector<Window *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_WIDTH << " " << (*it)->getWidth() << endl;
+  cfgFile << OLDCFG_TAG_WNDW_WIDTH << " " << ( *it )->getWidth() << endl;
 }
 
 bool WindowHeight::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -519,9 +596,9 @@ bool WindowHeight::parseLine( KernelConnection *whichKernel, istringstream& line
 }
 
 void WindowHeight::printLine( ofstream& cfgFile,
-                             const vector<Window *>::const_iterator it )
+                              const vector<Window *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_WIDTH << " " << (*it)->getHeight() << endl;
+  cfgFile << OLDCFG_TAG_WNDW_WIDTH << " " << ( *it )->getHeight() << endl;
 }
 
 bool WindowCommLines::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -546,6 +623,12 @@ bool WindowCommLines::parseLine( KernelConnection *whichKernel, istringstream& l
   return true;
 }
 
+void WindowCommLines::printLine( ofstream& cfgFile,
+                                 const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_COMM_LINES << " " << ( ( *it )->getDrawCommLines() ?
+      OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
+}
 
 bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& line,
                                  Trace *whichTrace,
@@ -573,6 +656,16 @@ bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& l
   return true;
 }
 
+void WindowColorMode::printLine( ofstream& cfgFile,
+                                 const vector<Window *>::const_iterator it )
+{
+  if ( ( *it )->IsGradientColorSet() )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " <<
+    ( ( *it )->getGradientColor().getAllowOutOfScale() ?
+      OLDCFG_VAL_COLOR_MODE_GRADIENT : OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) << endl;
+  }
+}
 
 bool WindowUnits::parseLine( KernelConnection *whichKernel, istringstream& line,
                              Trace *whichTrace,
@@ -604,6 +697,38 @@ bool WindowUnits::parseLine( KernelConnection *whichKernel, istringstream& line,
   return true;
 }
 
+void WindowUnits::printLine( ofstream& cfgFile,
+                             const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_UNITS << " ";
+  switch( (*it)->getTimeUnit() )
+  {
+    case NS:
+      cfgFile << OLDCFG_VAL_TIMEUNIT_NS;
+      break;
+    case US:
+      cfgFile << OLDCFG_VAL_TIMEUNIT_US;
+      break;
+    case MS:
+      cfgFile << OLDCFG_VAL_TIMEUNIT_MS;
+      break;
+    case SEC:
+      cfgFile << OLDCFG_VAL_TIMEUNIT_S;
+      break;
+    case MIN:
+      cfgFile << OLDCFG_VAL_TIMEUNIT_M;
+      break;
+    case HOUR:
+      cfgFile << OLDCFG_VAL_TIMEUNIT_H;
+      break;
+    case DAY:
+      cfgFile << OLDCFG_VAL_TIMEUNIT_D;
+      break;
+  }
+
+  cfgFile << endl;
+}
+
 bool WindowOperation::parseLine( KernelConnection *whichKernel, istringstream& line,
                                  Trace *whichTrace,
                                  vector<Window *>& windows,
@@ -620,6 +745,12 @@ bool WindowOperation::parseLine( KernelConnection *whichKernel, istringstream& l
   getline( line, strFunction );
 
   return windows[ windows.size() - 1 ]->setLevelFunction( DERIVED, strFunction );
+}
+
+void WindowOperation::printLine( ofstream& cfgFile,
+                                 const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_OPERATION << " " << (*it)->getLevelFunction( DERIVED ) << endl;
 }
 
 // For representation purposes.
@@ -644,6 +775,11 @@ bool WindowMaximumY::parseLine( KernelConnection *whichKernel, istringstream& li
   return true;
 }
 
+void WindowMaximumY::printLine( ofstream& cfgFile,
+                                const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_MAXIMUM_Y << " " << (*it)->getMaximumY() << endl;
+}
 
 bool WindowMinimumY::parseLine( KernelConnection *whichKernel, istringstream& line,
                                 Trace *whichTrace,
@@ -666,14 +802,17 @@ bool WindowMinimumY::parseLine( KernelConnection *whichKernel, istringstream& li
   return true;
 }
 
+void WindowMinimumY::printLine( ofstream& cfgFile,
+                                const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_MINIMUM_Y << " " << (*it)->getMinimumY() << endl;
+}
 
 bool WindowComputeYMax::parseLine( KernelConnection *whichKernel, istringstream& line,
                                    Trace *whichTrace,
                                    vector<Window *>& windows,
                                    vector<Histogram *>& histograms )
 {
-  string strMinimum;
-
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
@@ -682,6 +821,11 @@ bool WindowComputeYMax::parseLine( KernelConnection *whichKernel, istringstream&
   return true;
 }
 
+void WindowComputeYMax::printLine( ofstream& cfgFile,
+                                   const vector<Window *>::const_iterator it )
+{
+  #warning WindowComputeYMax::printLine
+}
 
 bool WindowLevel::parseLine( KernelConnection *whichKernel, istringstream& line,
                              Trace *whichTrace,
@@ -703,6 +847,11 @@ bool WindowLevel::parseLine( KernelConnection *whichKernel, istringstream& line,
   return true;
 }
 
+void WindowLevel::printLine( ofstream& cfgFile,
+                             const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_LEVEL << " " << levelToString( (*it)->getLevel() ) << endl;
+}
 
 bool WindowIdentifiers::parseLine( KernelConnection *whichKernel, istringstream& line,
                                    Trace *whichTrace,
@@ -735,6 +884,12 @@ bool WindowIdentifiers::parseLine( KernelConnection *whichKernel, istringstream&
   return true;
 }
 
+void WindowIdentifiers::printLine( ofstream& cfgFile,
+                                   const vector<Window *>::const_iterator it )
+{
+  #warning WindowIdentifiers::printLine
+}
+
 bool WindowScaleRelative::parseLine( KernelConnection *whichKernel, istringstream& line,
                                      Trace *whichTrace,
                                      vector<Window *>& windows,
@@ -749,11 +904,25 @@ bool WindowScaleRelative::parseLine( KernelConnection *whichKernel, istringstrea
   return true;
 }
 
+void WindowScaleRelative::printLine( ofstream& cfgFile,
+                                     const vector<Window *>::const_iterator it )
+{
+  #warning WindowScaleRelative::printLine
+}
+
 bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line, Trace *whichTrace,
                               vector<Window *>& windows,
                               vector<Histogram *>& histograms )
 {
+  #warning WindowObject::parseLine
   return true;
+}
+
+void WindowObject::printLine( ofstream& cfgFile,
+                              const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_OBJECT << " appl { 1, { All } }" << endl;
+  #warning WindowObject::printLine
 }
 
 bool WindowBeginTime::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -781,6 +950,13 @@ bool WindowBeginTime::parseLine( KernelConnection *whichKernel, istringstream& l
   return true;
 }
 
+void WindowBeginTime::printLine( ofstream& cfgFile,
+                                 const vector<Window *>::const_iterator it )
+{
+  #warning WindowBeginTime::printLine
+  cfgFile << OLDCFG_TAG_WNDW_BEGIN_TIME << " " << (*it)->getWindowBeginTime() << endl;
+}
+
 bool WindowEndTime::parseLine( KernelConnection *whichKernel, istringstream& line,
                                Trace *whichTrace,
                                vector<Window *>& windows,
@@ -801,6 +977,12 @@ bool WindowEndTime::parseLine( KernelConnection *whichKernel, istringstream& lin
   // endTime = auxTime;
 
   return true;
+}
+
+void WindowEndTime::printLine( ofstream& cfgFile,
+                               const vector<Window *>::const_iterator it )
+{
+  #warning WindowEndTime::printLine
 }
 
 bool WindowStopTime::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -827,6 +1009,13 @@ bool WindowStopTime::parseLine( KernelConnection *whichKernel, istringstream& li
   return true;
 }
 
+void WindowStopTime::printLine( ofstream& cfgFile,
+                                const vector<Window *>::const_iterator it )
+{
+  #warning WindowStopTime::printLine
+  cfgFile << OLDCFG_TAG_WNDW_STOP_TIME << " " << (*it)->getWindowEndTime() << endl;
+}
+
 bool WindowBeginTimeRelative::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
     vector<Window *>& windows,
@@ -850,12 +1039,25 @@ bool WindowBeginTimeRelative::parseLine( KernelConnection *whichKernel, istrings
   return true;
 }
 
+void WindowBeginTimeRelative::printLine( ofstream& cfgFile,
+                                         const vector<Window *>::const_iterator it )
+{
+  #warning WindowBeginTimeRelative::printLine
+}
+
 bool WindowNumberOfRow::parseLine( KernelConnection *whichKernel, istringstream& line,
                                    Trace *whichTrace,
                                    vector<Window *>& windows,
                                    vector<Histogram *>& histograms )
 {
+  #warning WindowNumberOfRow::parseLine
   return true;
+}
+
+void WindowNumberOfRow::printLine( ofstream& cfgFile,
+                                   const vector<Window *>::const_iterator it )
+{
+  #warning WindowNumberOfRow::printLine
 }
 
 bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -924,6 +1126,28 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
   return true;
 }
 
+void WindowSelectedFunctions::printLine( ofstream& cfgFile,
+                                         const vector<Window *>::const_iterator it )
+{
+  Filter *filter = (*it)->getFilter();
+
+  cfgFile << OLDCFG_TAG_WNDW_SELECTED_FUNCTIONS << " { 14, { ";
+  cfgFile << "{" << OLDCFG_LVL_CPU << ", " << (*it)->getLevelFunction( CPU ) << "}, ";
+  cfgFile << "{" << OLDCFG_LVL_APPL << ", " << (*it)->getLevelFunction( APPLICATION ) << "}, ";
+  cfgFile << "{" << OLDCFG_LVL_TASK << ", " << (*it)->getLevelFunction( TASK ) << "}, ";
+  cfgFile << "{" << OLDCFG_LVL_THREAD << ", " << (*it)->getLevelFunction( THREAD ) << "}, ";
+  cfgFile << "{" << OLDCFG_LVL_NODE << ", " << (*it)->getLevelFunction( NODE ) << "}, ";
+  cfgFile << "{" << OLDCFG_LVL_SYSTEM << ", " << (*it)->getLevelFunction( SYSTEM ) << "}, ";
+  cfgFile << "{" << OLDCFG_LVL_WORKLOAD << ", " << (*it)->getLevelFunction( WORKLOAD ) << "}, ";
+  cfgFile << "{" << OLDCFG_VAL_FILTER_OBJ_FROM << ", " << filter->getCommFromFunction() << "}, ";
+  cfgFile << "{" << OLDCFG_VAL_FILTER_OBJ_TO << ", " << filter->getCommToFunction() << "}, ";
+  cfgFile << "{" << OLDCFG_VAL_FILTER_COM_TAG << ", " << filter->getCommTagFunction() << "}, ";
+  cfgFile << "{" << OLDCFG_VAL_FILTER_COM_SIZE << ", " << filter->getCommSizeFunction() << "}, ";
+  cfgFile << "{" << OLDCFG_VAL_FILTER_COM_BW << ", " << filter->getBandWidthFunction() << "}, ";
+  cfgFile << "{" << OLDCFG_VAL_FILTER_EVT_TYPE << ", " << filter->getEventTypeFunction() << "}, ";
+  cfgFile << "{" << OLDCFG_VAL_FILTER_EVT_VALUE << ", " << filter->getEventValueFunction() << "} ";
+  cfgFile << "} }" << endl;
+}
 
 bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel, istringstream& line,
                                         Trace *whichTrace,
@@ -970,6 +1194,21 @@ bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel, istringst
   return true;
 }
 
+void WindowComposeFunctions::printLine( ofstream& cfgFile,
+                                        const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_COMPOSE_FUNCTIONS << " { 9, { ";
+  cfgFile << "{" << OLDCFG_LVL_COMPOSE_CPU << ", " << (*it)->getLevelFunction( COMPOSECPU ) << "}, ";
+  cfgFile << "{" << OLDCFG_LVL_COMPOSE_APPL << ", " << (*it)->getLevelFunction( COMPOSEAPPLICATION ) << "}, ";
+  cfgFile << "{" << OLDCFG_LVL_COMPOSE_TASK << ", " << (*it)->getLevelFunction( COMPOSETASK ) << "}, ";
+  cfgFile << "{" << OLDCFG_LVL_COMPOSE_THREAD << ", " << (*it)->getLevelFunction( COMPOSETHREAD ) << "}, ";
+  cfgFile << "{" << OLDCFG_LVL_COMPOSE_NODE << ", " << (*it)->getLevelFunction( COMPOSENODE ) << "}, ";
+  cfgFile << "{" << OLDCFG_LVL_COMPOSE_SYSTEM << ", " << (*it)->getLevelFunction( COMPOSESYSTEM ) << "}, ";
+  cfgFile << "{" << OLDCFG_LVL_COMPOSE_WORKLOAD << ", " << (*it)->getLevelFunction( COMPOSEWORKLOAD ) << "}, ";
+  cfgFile << "{" << OLDCFG_LVL_TOPCOMPOSE1 << ", " << (*it)->getLevelFunction( TOPCOMPOSE1 ) << "}, ";
+  cfgFile << "{" << OLDCFG_LVL_TOPCOMPOSE2 << ", " << (*it)->getLevelFunction( TOPCOMPOSE2 ) << "} ";
+  cfgFile << "} }" << endl;
+}
 
 bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstream& line,
                                       Trace *whichTrace,
