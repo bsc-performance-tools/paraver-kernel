@@ -459,6 +459,8 @@ class WindowSemanticModule: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -473,6 +475,8 @@ class WindowFilterModule: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 

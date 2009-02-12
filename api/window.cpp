@@ -306,6 +306,17 @@ void WindowProxy::setFunctionParam( TWindowLevel whichLevel,
   myWindow->setFunctionParam( whichLevel, whichParam, newValue );
 }
 
+TParamIndex WindowProxy::getFunctionNumParam( TWindowLevel whichLevel ) const
+{
+  return myWindow->getFunctionNumParam( whichLevel );
+}
+
+TParamValue WindowProxy::getFunctionParam( TWindowLevel whichLevel,
+                                           TParamIndex whichParam ) const
+{
+  return myWindow->getFunctionParam( whichLevel, whichParam );
+}
+
 RecordList *WindowProxy::getRecordList( TObjectOrder whichObject )
 {
   if ( myLists.begin() == myLists.end() )

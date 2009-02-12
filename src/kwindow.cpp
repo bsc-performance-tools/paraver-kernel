@@ -373,6 +373,16 @@ void KSingleWindow::setFunctionParam( TWindowLevel whichLevel,
   functions[ whichLevel ]->setParam( whichParam, newValue );
 }
 
+TParamIndex KSingleWindow::getFunctionNumParam( TWindowLevel whichLevel ) const
+{
+  return functions[ whichLevel ]->getMaxParam();
+}
+
+TParamValue KSingleWindow::getFunctionParam( TWindowLevel whichLevel,
+                                             TParamIndex whichParam ) const
+{
+  return functions[ whichLevel ]->getParam( whichParam );
+}
 
 bool KSingleWindow::initFromBegin() const
 {
@@ -689,6 +699,30 @@ void KDerivedWindow::setFunctionParam( TWindowLevel whichLevel,
   functions[ whichLevel ]->setParam( whichParam, newValue );
 }
 
+TParamIndex KDerivedWindow::getFunctionNumParam( TWindowLevel whichLevel ) const
+{
+  if ( whichLevel == TOPCOMPOSE1 )
+    whichLevel = ( TWindowLevel ) 0;
+  else if ( whichLevel == TOPCOMPOSE2 )
+    whichLevel = ( TWindowLevel ) 1;
+  else if ( whichLevel == DERIVED )
+    whichLevel = ( TWindowLevel ) 2;
+
+  return functions[ whichLevel ]->getMaxParam();
+}
+
+TParamValue KDerivedWindow::getFunctionParam( TWindowLevel whichLevel,
+                                              TParamIndex whichParam ) const
+{
+  if ( whichLevel == TOPCOMPOSE1 )
+    whichLevel = ( TWindowLevel ) 0;
+  else if ( whichLevel == TOPCOMPOSE2 )
+    whichLevel = ( TWindowLevel ) 1;
+  else if ( whichLevel == DERIVED )
+    whichLevel = ( TWindowLevel ) 2;
+
+  return functions[ whichLevel ]->getParam( whichParam );
+}
 
 bool KDerivedWindow::initFromBegin() const
 {
