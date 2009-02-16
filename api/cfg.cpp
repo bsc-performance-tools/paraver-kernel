@@ -255,6 +255,8 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowHeight::printLine( cfgFile, it );
     WindowCommLines::printLine( cfgFile, it );
     WindowColorMode::printLine( cfgFile, it );
+    WindowFilterLogical::printLine( cfgFile, it );
+    WindowFilterPhysical::printLine( cfgFile, it );
     WindowUnits::printLine( cfgFile, it );
     WindowMaximumY::printLine( cfgFile, it );
     WindowMinimumY::printLine( cfgFile, it );
@@ -268,6 +270,7 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowSelectedFunctions::printLine( cfgFile, it );
     WindowComposeFunctions::printLine( cfgFile, it );
     WindowSemanticModule::printLine( cfgFile, it );
+    WindowFilterModule::printLine( cfgFile, it );
 
     cfgFile << endl;
     ++id;
@@ -1494,6 +1497,105 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
 void WindowFilterModule::printLine( ofstream& cfgFile,
                                     const vector<Window *>::const_iterator it )
 {
+  Filter *filter = (*it)->getFilter();
+  vector<TObjectOrder> objVec;
+  vector<TCommTag> tagVec;
+  vector<TCommSize> sizeVec;
+  vector<TSemanticValue> bwVec;
+  vector<TEventType> typeVec;
+  vector<TEventValue> valueVec;
+
+  filter->getCommFrom( objVec );
+  if( objVec.begin() != objVec.end() )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_OBJ_FROM << " ";
+    cfgFile << objVec.size();
+    for( vector<TObjectOrder>::iterator itObj = objVec.begin();
+         itObj != objVec.end(); ++itObj )
+    {
+      cfgFile << " " << (*itObj);
+    }
+    cfgFile << endl;
+  }
+
+  objVec.clear();
+  filter->getCommTo( objVec );
+  if( objVec.begin() != objVec.end() )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_OBJ_TO << " ";
+    cfgFile << objVec.size();
+    for( vector<TObjectOrder>::iterator itObj = objVec.begin();
+         itObj != objVec.end(); ++itObj )
+    {
+      cfgFile << " " << (*itObj);
+    }
+    cfgFile << endl;
+  }
+
+  filter->getCommTag( tagVec );
+  if( tagVec.begin() != tagVec.end() )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_COM_TAG << " ";
+    cfgFile << tagVec.size();
+    for( vector<TCommTag>::iterator itTag = tagVec.begin();
+         itTag != tagVec.end(); ++itTag )
+    {
+      cfgFile << " " << (*itTag);
+    }
+    cfgFile << endl;
+  }
+
+  filter->getCommSize( sizeVec );
+  if( sizeVec.begin() != sizeVec.end() )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_COM_SIZE << " ";
+    cfgFile << sizeVec.size();
+    for( vector<TCommSize>::iterator itSize = sizeVec.begin();
+         itSize != sizeVec.end(); ++itSize )
+    {
+      cfgFile << " " << (*itSize);
+    }
+    cfgFile << endl;
+  }
+
+  filter->getBandWidth( bwVec );
+  if( bwVec.begin() != bwVec.end() )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_COM_BW << " ";
+    cfgFile << bwVec.size();
+    for( vector<TSemanticValue>::iterator itBW = bwVec.begin();
+         itBW != bwVec.end(); ++itBW )
+    {
+      cfgFile << " " << (*itBW);
+    }
+    cfgFile << endl;
+  }
+
+  filter->getEventType( typeVec );
+  if( typeVec.begin() != typeVec.end() )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_EVT_TYPE << " ";
+    cfgFile << typeVec.size();
+    for( vector<TEventType>::iterator itType = typeVec.begin();
+         itType != typeVec.end(); ++itType )
+    {
+      cfgFile << " " << (*itType);
+    }
+    cfgFile << endl;
+  }
+
+  filter->getEventValue( valueVec );
+  if( valueVec.begin() != valueVec.end() )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_EVT_VALUE << " ";
+    cfgFile << valueVec.size();
+    for( vector<TEventValue>::iterator itValue = valueVec.begin();
+         itValue != valueVec.end(); ++itValue )
+    {
+      cfgFile << " " << (*itValue);
+    }
+    cfgFile << endl;
+  }
 
 }
 
@@ -1525,6 +1627,16 @@ bool WindowFilterLogical::parseLine( KernelConnection *whichKernel, istringstrea
   return true;
 }
 
+void WindowFilterLogical::printLine( ofstream& cfgFile,
+                                     const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_LOGICAL_FILTERED << " ";
+  if( (*it)->getFilter()->getLogical() )
+    cfgFile << OLDCFG_VAL_TRUE;
+  else
+    cfgFile << OLDCFG_VAL_FALSE;
+  cfgFile << endl;
+}
 
 bool WindowFilterPhysical::parseLine( KernelConnection *whichKernel, istringstream& line,
                                       Trace *whichTrace,
@@ -1554,6 +1666,16 @@ bool WindowFilterPhysical::parseLine( KernelConnection *whichKernel, istringstre
   return true;
 }
 
+void WindowFilterPhysical::printLine( ofstream& cfgFile,
+                                      const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_PHYSICAL_FILTERED << " ";
+  if( (*it)->getFilter()->getPhysical() )
+    cfgFile << OLDCFG_VAL_TRUE;
+  else
+    cfgFile << OLDCFG_VAL_FALSE;
+  cfgFile << endl;
+}
 
 bool WindowFilterBoolOpFromTo::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
@@ -1583,6 +1705,16 @@ bool WindowFilterBoolOpFromTo::parseLine( KernelConnection *whichKernel, istring
   return true;
 }
 
+void WindowFilterBoolOpFromTo::printLine( ofstream& cfgFile,
+                                          const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_FROMTO << " ";
+  if( (*it)->getFilter()->getOpFromTo() )
+    cfgFile << OLDCFG_VAL_TRUE;
+  else
+    cfgFile << OLDCFG_VAL_FALSE;
+  cfgFile << endl;
+}
 
 bool WindowFilterBoolOpTagSize::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
@@ -1612,6 +1744,16 @@ bool WindowFilterBoolOpTagSize::parseLine( KernelConnection *whichKernel, istrin
   return true;
 }
 
+void WindowFilterBoolOpTagSize::printLine( ofstream& cfgFile,
+                                           const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_COMM_TAGSIZE << " ";
+  if( (*it)->getFilter()->getOpTagSize() )
+    cfgFile << OLDCFG_VAL_TRUE;
+  else
+    cfgFile << OLDCFG_VAL_FALSE;
+  cfgFile << endl;
+}
 
 bool WindowFilterBoolOpTypeVal::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
@@ -1639,6 +1781,17 @@ bool WindowFilterBoolOpTypeVal::parseLine( KernelConnection *whichKernel, istrin
     return false;
 
   return true;
+}
+
+void WindowFilterBoolOpTypeVal::printLine( ofstream& cfgFile,
+                                           const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_TYPEVAL << " ";
+  if( (*it)->getFilter()->getOpTypeValue() )
+    cfgFile << OLDCFG_VAL_TRUE;
+  else
+    cfgFile << OLDCFG_VAL_FALSE;
+  cfgFile << endl;
 }
 
 bool WindowOpen::parseLine( KernelConnection *whichKernel, istringstream& line,
