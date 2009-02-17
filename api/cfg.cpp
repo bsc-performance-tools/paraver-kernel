@@ -229,6 +229,9 @@ bool CFGLoader::saveCFG( const string& filename,
   if ( !cfgFile )
     return false;
 
+  cfgFile << fixed;
+  cfgFile.precision( 6 );
+
   cfgFile << "ConfigFile.Version: 3.4" << endl;
   cfgFile << "ConfigFile.NumWindows: " << windows.size() << endl;
   cfgFile << endl;
@@ -267,6 +270,8 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowBeginTime::printLine( cfgFile, it );
     WindowEndTime::printLine( cfgFile, it );
     WindowStopTime::printLine( cfgFile, it );
+    WindowDrawMode::printLine( cfgFile, it );
+    WindowDrawModeRows::printLine( cfgFile, it );
     WindowSelectedFunctions::printLine( cfgFile, it );
     WindowComposeFunctions::printLine( cfgFile, it );
     WindowSemanticModule::printLine( cfgFile, it );
@@ -279,7 +284,45 @@ bool CFGLoader::saveCFG( const string& filename,
   for ( vector<Histogram *>::const_iterator it = histograms.begin();
         it != histograms.end(); ++it )
   {
-    cfgFile << "< NEW ANALYZER2D >" << endl;
+    Analyzer2DCreate::printLine( cfgFile, it );
+    Analyzer2DName::printLine( cfgFile, it );
+    Analyzer2DX::printLine( cfgFile, it );
+    Analyzer2DY::printLine( cfgFile, it );
+    Analyzer2DWidth::printLine( cfgFile, it );
+    Analyzer2DHeight::printLine( cfgFile, it );
+    Analyzer2DControlWindow::printLine( cfgFile, it );
+    Analyzer2DDataWindow::printLine( cfgFile, it );
+    Analyzer2DAccumulator::printLine( cfgFile, it );
+    Analyzer2DStatistic::printLine( cfgFile, it );
+    Analyzer2DCalculateAll::printLine( cfgFile, it );
+    //Analyzer2DNumColumns::printLine( cfgFile, it );
+    Analyzer2DHideColumns::printLine( cfgFile, it );
+    //Analyzer2DScientificNotation::printLine( cfgFile, it );
+    //Analyzer2DNumDecimals::printLine( cfgFile, it );
+    //Analyzer2DThousandSeparator::printLine( cfgFile, it );
+    //Analyzer2DUnits::printLine( cfgFile, it );
+    Analyzer2DHorizontal::printLine( cfgFile, it );
+    Analyzer2DAccumulateByControlWindow::printLine( cfgFile, it );
+    Analyzer2DSortCols::printLine( cfgFile, it );
+    Analyzer2DSortCriteria::printLine( cfgFile, it );
+    Analyzer2DParameters::printLine( cfgFile, it );
+    Analyzer2DAnalysisLimits::printLine( cfgFile, it );
+    Analyzer2DRelativeTime::printLine( cfgFile, it );
+    Analyzer2DComputeYScale::printLine( cfgFile, it );
+    Analyzer2DMinimum::printLine( cfgFile, it );
+    Analyzer2DMaximum::printLine( cfgFile, it );
+    Analyzer2DDelta::printLine( cfgFile, it );
+    Analyzer2DComputeGradient::printLine( cfgFile, it );
+    Analyzer2DMinimumGradient::printLine( cfgFile, it );
+    Analyzer2DMaximumGradient::printLine( cfgFile, it );
+    if( (*it)->getThreeDimensions() )
+    {
+      Analyzer3DControlWindow::printLine( cfgFile, it );
+      Analyzer3DMinimum::printLine( cfgFile, it );
+      Analyzer3DMaximum::printLine( cfgFile, it );
+      Analyzer3DDelta::printLine( cfgFile, it );
+      Analyzer3DFixedValue::printLine( cfgFile, it );
+    }
 
     cfgFile << endl;
   }
@@ -344,13 +387,8 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN2D_DATA_WINDOW]         = new Analyzer2DDataWindow();
   cfgTagFunctions[OLDCFG_TAG_AN2D_STATISTIC]           = new Analyzer2DStatistic();
   cfgTagFunctions[OLDCFG_TAG_AN2D_CALCULATE_ALL]       = new Analyzer2DCalculateAll();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_NUM_COLUMNS]         = new Analyzer2DNumColumns();
   // --> Analyzer2D.hide_empty_cols:
   cfgTagFunctions[OLDCFG_TAG_AN2D_HIDE_COLS]           = new Analyzer2DHideColumns();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_SCIENTIFIC_NOTATION] = new Analyzer2DScientificNotation();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_NUM_DECIMALS]        = new Analyzer2DNumDecimals();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_THOUSANDSEP]         = new Analyzer2DThousandSeparator();
-  cfgTagFunctions[OLDCFG_TAG_AN2D_UNITS]               = new Analyzer2DUnits();
   cfgTagFunctions[OLDCFG_TAG_AN2D_HORIZONTAL]          = new Analyzer2DHorizontal();
   // --> Analyzer2D.Color:
   // --> Analyzer2D.SemanticColor:
@@ -1497,7 +1535,7 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
 void WindowFilterModule::printLine( ofstream& cfgFile,
                                     const vector<Window *>::const_iterator it )
 {
-  Filter *filter = (*it)->getFilter();
+  Filter *filter = ( *it )->getFilter();
   vector<TObjectOrder> objVec;
   vector<TCommTag> tagVec;
   vector<TCommSize> sizeVec;
@@ -1506,93 +1544,93 @@ void WindowFilterModule::printLine( ofstream& cfgFile,
   vector<TEventValue> valueVec;
 
   filter->getCommFrom( objVec );
-  if( objVec.begin() != objVec.end() )
+  if ( objVec.begin() != objVec.end() )
   {
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_OBJ_FROM << " ";
     cfgFile << objVec.size();
-    for( vector<TObjectOrder>::iterator itObj = objVec.begin();
-         itObj != objVec.end(); ++itObj )
+    for ( vector<TObjectOrder>::iterator itObj = objVec.begin();
+          itObj != objVec.end(); ++itObj )
     {
-      cfgFile << " " << (*itObj);
+      cfgFile << " " << ( *itObj );
     }
     cfgFile << endl;
   }
 
   objVec.clear();
   filter->getCommTo( objVec );
-  if( objVec.begin() != objVec.end() )
+  if ( objVec.begin() != objVec.end() )
   {
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_OBJ_TO << " ";
     cfgFile << objVec.size();
-    for( vector<TObjectOrder>::iterator itObj = objVec.begin();
-         itObj != objVec.end(); ++itObj )
+    for ( vector<TObjectOrder>::iterator itObj = objVec.begin();
+          itObj != objVec.end(); ++itObj )
     {
-      cfgFile << " " << (*itObj);
+      cfgFile << " " << ( *itObj );
     }
     cfgFile << endl;
   }
 
   filter->getCommTag( tagVec );
-  if( tagVec.begin() != tagVec.end() )
+  if ( tagVec.begin() != tagVec.end() )
   {
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_COM_TAG << " ";
     cfgFile << tagVec.size();
-    for( vector<TCommTag>::iterator itTag = tagVec.begin();
-         itTag != tagVec.end(); ++itTag )
+    for ( vector<TCommTag>::iterator itTag = tagVec.begin();
+          itTag != tagVec.end(); ++itTag )
     {
-      cfgFile << " " << (*itTag);
+      cfgFile << " " << ( *itTag );
     }
     cfgFile << endl;
   }
 
   filter->getCommSize( sizeVec );
-  if( sizeVec.begin() != sizeVec.end() )
+  if ( sizeVec.begin() != sizeVec.end() )
   {
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_COM_SIZE << " ";
     cfgFile << sizeVec.size();
-    for( vector<TCommSize>::iterator itSize = sizeVec.begin();
-         itSize != sizeVec.end(); ++itSize )
+    for ( vector<TCommSize>::iterator itSize = sizeVec.begin();
+          itSize != sizeVec.end(); ++itSize )
     {
-      cfgFile << " " << (*itSize);
+      cfgFile << " " << ( *itSize );
     }
     cfgFile << endl;
   }
 
   filter->getBandWidth( bwVec );
-  if( bwVec.begin() != bwVec.end() )
+  if ( bwVec.begin() != bwVec.end() )
   {
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_COM_BW << " ";
     cfgFile << bwVec.size();
-    for( vector<TSemanticValue>::iterator itBW = bwVec.begin();
-         itBW != bwVec.end(); ++itBW )
+    for ( vector<TSemanticValue>::iterator itBW = bwVec.begin();
+          itBW != bwVec.end(); ++itBW )
     {
-      cfgFile << " " << (*itBW);
+      cfgFile << " " << ( *itBW );
     }
     cfgFile << endl;
   }
 
   filter->getEventType( typeVec );
-  if( typeVec.begin() != typeVec.end() )
+  if ( typeVec.begin() != typeVec.end() )
   {
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_EVT_TYPE << " ";
     cfgFile << typeVec.size();
-    for( vector<TEventType>::iterator itType = typeVec.begin();
-         itType != typeVec.end(); ++itType )
+    for ( vector<TEventType>::iterator itType = typeVec.begin();
+          itType != typeVec.end(); ++itType )
     {
-      cfgFile << " " << (*itType);
+      cfgFile << " " << ( *itType );
     }
     cfgFile << endl;
   }
 
   filter->getEventValue( valueVec );
-  if( valueVec.begin() != valueVec.end() )
+  if ( valueVec.begin() != valueVec.end() )
   {
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_EVT_VALUE << " ";
     cfgFile << valueVec.size();
-    for( vector<TEventValue>::iterator itValue = valueVec.begin();
-         itValue != valueVec.end(); ++itValue )
+    for ( vector<TEventValue>::iterator itValue = valueVec.begin();
+          itValue != valueVec.end(); ++itValue )
     {
-      cfgFile << " " << (*itValue);
+      cfgFile << " " << ( *itValue );
     }
     cfgFile << endl;
   }
@@ -1631,7 +1669,7 @@ void WindowFilterLogical::printLine( ofstream& cfgFile,
                                      const vector<Window *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_LOGICAL_FILTERED << " ";
-  if( (*it)->getFilter()->getLogical() )
+  if ( ( *it )->getFilter()->getLogical() )
     cfgFile << OLDCFG_VAL_TRUE;
   else
     cfgFile << OLDCFG_VAL_FALSE;
@@ -1670,7 +1708,7 @@ void WindowFilterPhysical::printLine( ofstream& cfgFile,
                                       const vector<Window *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_PHYSICAL_FILTERED << " ";
-  if( (*it)->getFilter()->getPhysical() )
+  if ( ( *it )->getFilter()->getPhysical() )
     cfgFile << OLDCFG_VAL_TRUE;
   else
     cfgFile << OLDCFG_VAL_FALSE;
@@ -1706,10 +1744,10 @@ bool WindowFilterBoolOpFromTo::parseLine( KernelConnection *whichKernel, istring
 }
 
 void WindowFilterBoolOpFromTo::printLine( ofstream& cfgFile,
-                                          const vector<Window *>::const_iterator it )
+    const vector<Window *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_FROMTO << " ";
-  if( (*it)->getFilter()->getOpFromTo() )
+  if ( ( *it )->getFilter()->getOpFromTo() )
     cfgFile << OLDCFG_VAL_TRUE;
   else
     cfgFile << OLDCFG_VAL_FALSE;
@@ -1745,10 +1783,10 @@ bool WindowFilterBoolOpTagSize::parseLine( KernelConnection *whichKernel, istrin
 }
 
 void WindowFilterBoolOpTagSize::printLine( ofstream& cfgFile,
-                                           const vector<Window *>::const_iterator it )
+    const vector<Window *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_COMM_TAGSIZE << " ";
-  if( (*it)->getFilter()->getOpTagSize() )
+  if ( ( *it )->getFilter()->getOpTagSize() )
     cfgFile << OLDCFG_VAL_TRUE;
   else
     cfgFile << OLDCFG_VAL_FALSE;
@@ -1784,10 +1822,10 @@ bool WindowFilterBoolOpTypeVal::parseLine( KernelConnection *whichKernel, istrin
 }
 
 void WindowFilterBoolOpTypeVal::printLine( ofstream& cfgFile,
-                                           const vector<Window *>::const_iterator it )
+    const vector<Window *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_TYPEVAL << " ";
-  if( (*it)->getFilter()->getOpTypeValue() )
+  if ( ( *it )->getFilter()->getOpTypeValue() )
     cfgFile << OLDCFG_VAL_TRUE;
   else
     cfgFile << OLDCFG_VAL_FALSE;
@@ -1814,6 +1852,17 @@ bool WindowOpen::parseLine( KernelConnection *whichKernel, istringstream& line,
     return false;
 
   return true;
+}
+
+void WindowOpen::printLine( ofstream& cfgFile,
+                            const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_OPEN << " ";
+  if ( ( *it )->getShowWindow() )
+    cfgFile << OLDCFG_VAL_TRUE;
+  else
+    cfgFile << OLDCFG_VAL_FALSE;
+  cfgFile << endl;
 }
 
 bool WindowDrawMode::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -1844,6 +1893,36 @@ bool WindowDrawMode::parseLine( KernelConnection *whichKernel, istringstream& li
   return true;
 }
 
+void WindowDrawMode::printLine( ofstream& cfgFile,
+                                const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_DRAW_MODE << " ";
+  switch ( ( *it )->getDrawModeTime() )
+  {
+    case DRAW_LAST:
+      cfgFile << OLDCFG_VAL_DRAW_MODE_LAST;
+      break;
+    case DRAW_MAXIMUM:
+      cfgFile << OLDCFG_VAL_DRAW_MODE_MAXIMUM;
+      break;
+    case DRAW_MINNOTZERO:
+      cfgFile << OLDCFG_VAL_DRAW_MODE_MINNOT0;
+      break;
+    case DRAW_RANDOM:
+      cfgFile << OLDCFG_VAL_DRAW_MODE_RANDOM;
+      break;
+    case DRAW_RANDNOTZERO:
+      cfgFile << OLDCFG_VAL_DRAW_MODE_RANDOMNOT0;
+      break;
+    case DRAW_AVERAGE:
+      cfgFile << OLDCFG_VAL_DRAW_MODE_AVERAGE;
+      break;
+    default:
+      break;
+  }
+  cfgFile << endl;
+}
+
 bool WindowDrawModeRows::parseLine( KernelConnection *whichKernel, istringstream& line,
                                     Trace *whichTrace,
                                     vector<Window *>& windows,
@@ -1872,6 +1951,36 @@ bool WindowDrawModeRows::parseLine( KernelConnection *whichKernel, istringstream
   return true;
 }
 
+void WindowDrawModeRows::printLine( ofstream& cfgFile,
+                                    const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_DRAW_MODE_ROWS << " ";
+  switch ( ( *it )->getDrawModeObject() )
+  {
+    case DRAW_LAST:
+      cfgFile << OLDCFG_VAL_DRAW_MODE_LAST;
+      break;
+    case DRAW_MAXIMUM:
+      cfgFile << OLDCFG_VAL_DRAW_MODE_MAXIMUM;
+      break;
+    case DRAW_MINNOTZERO:
+      cfgFile << OLDCFG_VAL_DRAW_MODE_MINNOT0;
+      break;
+    case DRAW_RANDOM:
+      cfgFile << OLDCFG_VAL_DRAW_MODE_RANDOM;
+      break;
+    case DRAW_RANDNOTZERO:
+      cfgFile << OLDCFG_VAL_DRAW_MODE_RANDOMNOT0;
+      break;
+    case DRAW_AVERAGE:
+      cfgFile << OLDCFG_VAL_DRAW_MODE_AVERAGE;
+      break;
+    default:
+      break;
+  }
+  cfgFile << endl;
+}
+
 bool Analyzer2DCreate::parseLine( KernelConnection *whichKernel, istringstream& line,
                                   Trace *whichTrace,
                                   vector<Window *>& windows,
@@ -1887,6 +1996,12 @@ bool Analyzer2DCreate::parseLine( KernelConnection *whichKernel, istringstream& 
   }
 
   return true;
+}
+
+void Analyzer2DCreate::printLine( ofstream& cfgFile,
+                                  const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_NEW << endl;
 }
 
 bool Analyzer2DName::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -1905,6 +2020,12 @@ bool Analyzer2DName::parseLine( KernelConnection *whichKernel, istringstream& li
   histograms[ histograms.size() - 1 ]->setName( strName );
 
   return true;
+}
+
+void Analyzer2DName::printLine( ofstream& cfgFile,
+                                const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_NAME << " " << ( *it )->getName() << endl;
 }
 
 bool Analyzer2DX::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -1931,6 +2052,12 @@ bool Analyzer2DX::parseLine( KernelConnection *whichKernel, istringstream& line,
   return true;
 }
 
+void Analyzer2DX::printLine( ofstream& cfgFile,
+                             const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_X << " " << ( *it )->getPosX() << endl;
+}
+
 bool Analyzer2DY::parseLine( KernelConnection *whichKernel, istringstream& line,
                              Trace *whichTrace,
                              vector<Window *>& windows,
@@ -1953,6 +2080,12 @@ bool Analyzer2DY::parseLine( KernelConnection *whichKernel, istringstream& line,
   histograms[ histograms.size() - 1 ]->setPosY( y );
 
   return true;
+}
+
+void Analyzer2DY::printLine( ofstream& cfgFile,
+                             const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_Y << " " << ( *it )->getPosY() << endl;
 }
 
 bool Analyzer2DWidth::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -1979,6 +2112,12 @@ bool Analyzer2DWidth::parseLine( KernelConnection *whichKernel, istringstream& l
   return true;
 }
 
+void Analyzer2DWidth::printLine( ofstream& cfgFile,
+                                 const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_WIDTH << " " << ( *it )->getWidth() << endl;
+}
+
 bool Analyzer2DHeight::parseLine( KernelConnection *whichKernel, istringstream& line,
                                   Trace *whichTrace,
                                   vector<Window *>& windows,
@@ -2001,6 +2140,12 @@ bool Analyzer2DHeight::parseLine( KernelConnection *whichKernel, istringstream& 
   histograms[ histograms.size() - 1 ]->setHeight( height );
 
   return true;
+}
+
+void Analyzer2DHeight::printLine( ofstream& cfgFile,
+                                  const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_HEIGHT << " " << ( *it )->getHeight() << endl;
 }
 
 bool Analyzer2DControlWindow::parseLine( KernelConnection *whichKernel, istringstream& line, Trace *whichTrace,
@@ -2029,6 +2174,11 @@ bool Analyzer2DControlWindow::parseLine( KernelConnection *whichKernel, istrings
   return true;
 }
 
+void Analyzer2DControlWindow::printLine( ofstream& cfgFile,
+    const vector<Histogram *>::const_iterator it )
+{
+#warning Analyzer2DControlWindow::printLine
+}
 
 bool Analyzer2DDataWindow::parseLine( KernelConnection *whichKernel, istringstream& line,
                                       Trace *whichTrace,
@@ -2057,6 +2207,11 @@ bool Analyzer2DDataWindow::parseLine( KernelConnection *whichKernel, istringstre
   return true;
 }
 
+void Analyzer2DDataWindow::printLine( ofstream& cfgFile,
+                                      const vector<Histogram *>::const_iterator it )
+{
+#warning Analyzer2DDataWindow::printLine
+}
 
 bool Analyzer2DStatistic::parseLine( KernelConnection *whichKernel, istringstream& line,
                                      Trace *whichTrace,
@@ -2080,6 +2235,12 @@ bool Analyzer2DStatistic::parseLine( KernelConnection *whichKernel, istringstrea
   return true;
 }
 
+void Analyzer2DStatistic::printLine( ofstream& cfgFile,
+                                     const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_STATISTIC << " ";
+  cfgFile << ( *it )->getCurrentStat() << endl;
+}
 
 bool Analyzer2DCalculateAll::parseLine( KernelConnection *whichKernel, istringstream& line,
                                         Trace *whichTrace,
@@ -2105,20 +2266,16 @@ bool Analyzer2DCalculateAll::parseLine( KernelConnection *whichKernel, istringst
   return true;
 }
 
-
-bool Analyzer2DNumColumns::parseLine( KernelConnection *whichKernel, istringstream& line,
-                                      Trace *whichTrace,
-                                      vector<Window *>& windows,
-                                      vector<Histogram *>& histograms )
+void Analyzer2DCalculateAll::printLine( ofstream& cfgFile,
+                                        const vector<Histogram *>::const_iterator it )
 {
-  if ( windows[ windows.size() - 1 ] == NULL )
-    return false;
-  if ( histograms[ histograms.size() - 1 ] == NULL )
-    return false;
-
-  return true;
+  cfgFile << OLDCFG_TAG_AN2D_CALCULATE_ALL << " ";
+  if ( ( *it )->getCalculateAll() )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
 }
-
 
 bool Analyzer2DHideColumns::parseLine( KernelConnection *whichKernel, istringstream& line,
                                        Trace *whichTrace,
@@ -2144,106 +2301,16 @@ bool Analyzer2DHideColumns::parseLine( KernelConnection *whichKernel, istringstr
   return true;
 }
 
-
-
-bool Analyzer2DScientificNotation::parseLine( KernelConnection *whichKernel, istringstream& line,
-    Trace *whichTrace,
-    vector<Window *>& windows,
-    vector<Histogram *>& histograms )
+void Analyzer2DHideColumns::printLine( ofstream& cfgFile,
+                                       const vector<Histogram *>::const_iterator it )
 {
-  string strBool;
-
-  if ( windows[ windows.size() - 1 ] == NULL )
-    return false;
-  if ( histograms[ histograms.size() - 1 ] == NULL )
-    return false;
-
-  getline( line, strBool, ' ' );
-
-  if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
-    histograms[ histograms.size() - 1 ]->setScientificNotation( true );
-  else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
-    histograms[ histograms.size() - 1 ]->setScientificNotation( false );
+  cfgFile << OLDCFG_TAG_AN2D_HIDE_COLS << " ";
+  if ( ( *it )->getHideColumns() )
+    cfgFile << OLDCFG_VAL_TRUE2;
   else
-    return false;
-
-  return true;
+    cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
 }
-
-
-bool Analyzer2DNumDecimals::parseLine( KernelConnection *whichKernel, istringstream& line,
-                                       Trace *whichTrace,
-                                       vector<Window *>& windows,
-                                       vector<Histogram *>& histograms )
-{
-  string strDec;
-  UINT16 numDecimals;
-
-  if ( windows[ windows.size() - 1 ] == NULL )
-    return false;
-  if ( histograms[ histograms.size() - 1 ] == NULL )
-    return false;
-
-  getline( line, strDec, ' ' );
-  istringstream tmpValue( strDec );
-  if ( !( tmpValue >> numDecimals ) )
-    return false;
-
-  histograms[ histograms.size() - 1 ]->setNumDecimals( numDecimals );
-
-  return true;
-}
-
-
-bool Analyzer2DThousandSeparator::parseLine( KernelConnection *whichKernel, istringstream& line,
-    Trace *whichTrace,
-    vector<Window *>& windows,
-    vector<Histogram *>& histograms )
-{
-  string strBool;
-
-  if ( windows[ windows.size() - 1 ] == NULL )
-    return false;
-  if ( histograms[ histograms.size() - 1 ] == NULL )
-    return false;
-
-  getline( line, strBool, ' ' );
-
-  if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
-    histograms[ histograms.size() - 1 ]->setThousandSeparator( true );
-  else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
-    histograms[ histograms.size() - 1 ]->setThousandSeparator( false );
-  else
-    return false;
-
-  return true;
-}
-
-
-bool Analyzer2DUnits::parseLine( KernelConnection *whichKernel, istringstream& line,
-                                 Trace *whichTrace,
-                                 vector<Window *>& windows,
-                                 vector<Histogram *>& histograms )
-{
-  string strBool;
-
-  if ( windows[ windows.size() - 1 ] == NULL )
-    return false;
-  if ( histograms[ histograms.size() - 1 ] == NULL )
-    return false;
-
-  getline( line, strBool, ' ' );
-
-  if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
-    histograms[ histograms.size() - 1 ]->setShowUnits( true );
-  else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
-    histograms[ histograms.size() - 1 ]->setShowUnits( false );
-  else
-    return false;
-
-  return true;
-}
-
 
 bool Analyzer2DHorizontal::parseLine( KernelConnection *whichKernel, istringstream& line,
                                       Trace *whichTrace,
@@ -2269,6 +2336,16 @@ bool Analyzer2DHorizontal::parseLine( KernelConnection *whichKernel, istringstre
   return true;
 }
 
+void Analyzer2DHorizontal::printLine( ofstream& cfgFile,
+                                      const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_HORIZONTAL << " ";
+  if ( ( *it )->getHorizontal() )
+    cfgFile << OLDCFG_VAL_HORIZONTAL;
+  else
+    cfgFile << OLDCFG_VAL_VERTICAL;
+  cfgFile << endl;
+}
 
 bool Analyzer2DAccumulator:: parseLine( KernelConnection *whichKernel, istringstream& line,
                                         Trace *whichTrace,
@@ -2285,6 +2362,11 @@ bool Analyzer2DAccumulator:: parseLine( KernelConnection *whichKernel, istringst
   return true;
 }
 
+void Analyzer2DAccumulator::printLine( ofstream& cfgFile,
+                                       const vector<Histogram *>::const_iterator it )
+{
+#warning Analyzer2DAccumulator::printLine
+}
 
 bool Analyzer2DAccumulateByControlWindow::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
@@ -2292,7 +2374,7 @@ bool Analyzer2DAccumulateByControlWindow::parseLine( KernelConnection *whichKern
     vector<Histogram *>& histograms )
 {
   string strBool;
-
+#warning Analyzer2DAccumulateByControlWindow::parseLine
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
   if ( histograms[ histograms.size() - 1 ] == NULL )
@@ -2310,6 +2392,11 @@ bool Analyzer2DAccumulateByControlWindow::parseLine( KernelConnection *whichKern
   return true;
 }
 
+void Analyzer2DAccumulateByControlWindow::printLine( ofstream& cfgFile,
+    const vector<Histogram *>::const_iterator it )
+{
+#warning Analyzer2DAccumulateByControlWindow::printLine
+}
 
 bool Analyzer2DSortCols::parseLine( KernelConnection *whichKernel, istringstream& line,
                                     Trace *whichTrace,
@@ -2339,6 +2426,16 @@ bool Analyzer2DSortCols::parseLine( KernelConnection *whichKernel, istringstream
   return true;
 }
 
+void Analyzer2DSortCols::printLine( ofstream& cfgFile,
+                                    const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_SORTCOLS << " ";
+  if ( ( *it )->getSortColumns() )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
+}
 
 bool Analyzer2DSortCriteria::parseLine( KernelConnection *whichKernel, istringstream& line,
                                         Trace *whichTrace,
@@ -2370,6 +2467,36 @@ bool Analyzer2DSortCriteria::parseLine( KernelConnection *whichKernel, istringst
     return false;
 
   return true;
+}
+
+void Analyzer2DSortCriteria::printLine( ofstream& cfgFile,
+                                        const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_SORTCRITERIA << " ";
+  switch ( ( *it )->getSortCriteria() )
+  {
+    case AVERAGE:
+      cfgFile << OLDCFG_VAL_SORT_AVERAGE;
+      break;
+    case TOTAL:
+      cfgFile << OLDCFG_VAL_SORT_TOTAL;
+      break;
+    case MAXIMUM:
+      cfgFile << OLDCFG_VAL_SORT_MAXIMUM;
+      break;
+    case MINIMUM:
+      cfgFile << OLDCFG_VAL_SORT_MINIMUM;
+      break;
+    case STDEV:
+      cfgFile << OLDCFG_VAL_SORT_STDEV;
+      break;
+    case AVGDIVMAX:
+      cfgFile << OLDCFG_VAL_SORT_AVGDIVMAX;
+      break;
+    default:
+      break;
+  }
+  cfgFile << endl;
 }
 
 /*
@@ -2426,6 +2553,16 @@ bool Analyzer2DParameters::parseLine( KernelConnection *whichKernel, istringstre
   return true;
 }
 
+void Analyzer2DParameters::printLine( ofstream& cfgFile,
+                                      const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_PARAMETERS << " 4 ";
+  cfgFile << (*it)->getDataMin() << " ";
+  cfgFile << (*it)->getDataMax() << " ";
+  cfgFile << (*it)->getBurstMin() << " ";
+  cfgFile << (*it)->getBurstMax();
+  cfgFile << endl;
+}
 
 bool Analyzer2DAnalysisLimits::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
@@ -2463,6 +2600,20 @@ bool Analyzer2DAnalysisLimits::parseLine( KernelConnection *whichKernel, istring
   return true;
 }
 
+void Analyzer2DAnalysisLimits::printLine( ofstream& cfgFile,
+                                          const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_ANALYSISLIMITS << " ";
+  if( (*it)->getBeginTime() == 0 &&
+      (*it)->getEndTime() == (*it)->getControlWindow()->getTrace()->getEndTime() )
+    cfgFile << OLDCFG_VAL_LIMIT_ALLTRACE;
+  else if( (*it)->getBeginTime() == (*it)->getControlWindow()->getWindowBeginTime() &&
+           (*it)->getEndTime() == (*it)->getControlWindow()->getWindowEndTime() )
+    cfgFile << OLDCFG_VAL_LIMIT_ALLWINDOW;
+  else
+    cfgFile << OLDCFG_VAL_LIMIT_REGION;
+  cfgFile << endl;
+}
 
 bool Analyzer2DRelativeTime::parseLine( KernelConnection *whichKernel, istringstream& line,
                                         Trace *whichTrace,
@@ -2470,7 +2621,7 @@ bool Analyzer2DRelativeTime::parseLine( KernelConnection *whichKernel, istringst
                                         vector<Histogram *>& histograms )
 {
   string strBool;
-
+#warning Analyzer2DRelativeTime::parseLine
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
   if ( histograms[ histograms.size() - 1 ] == NULL )
@@ -2488,6 +2639,11 @@ bool Analyzer2DRelativeTime::parseLine( KernelConnection *whichKernel, istringst
   return true;
 }
 
+void Analyzer2DRelativeTime::printLine( ofstream& cfgFile,
+                                        const vector<Histogram *>::const_iterator it )
+{
+#warning Analyzer2DRelativeTime::printLine
+}
 
 bool Analyzer2DComputeYScale::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
@@ -2513,6 +2669,17 @@ bool Analyzer2DComputeYScale::parseLine( KernelConnection *whichKernel, istrings
   return true;
 }
 
+void Analyzer2DComputeYScale::printLine( ofstream& cfgFile,
+                                         const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_COMPUTEYSCALE << " ";
+  if( (*it)->getComputeScale() )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
+}
+
 bool Analyzer2DMinimum::parseLine( KernelConnection *whichKernel, istringstream& line,
                                    Trace *whichTrace,
                                    vector<Window *>& windows,
@@ -2535,6 +2702,11 @@ bool Analyzer2DMinimum::parseLine( KernelConnection *whichKernel, istringstream&
   return true;
 }
 
+void Analyzer2DMinimum::printLine( ofstream& cfgFile,
+                                   const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_MINIMUM << " " << (*it)->getControlMin() << endl;
+}
 
 bool Analyzer2DMaximum::parseLine( KernelConnection *whichKernel, istringstream& line,
                                    Trace *whichTrace,
@@ -2558,6 +2730,11 @@ bool Analyzer2DMaximum::parseLine( KernelConnection *whichKernel, istringstream&
   return true;
 }
 
+void Analyzer2DMaximum::printLine( ofstream& cfgFile,
+                                   const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_MAXIMUM << " " << (*it)->getControlMax() << endl;
+}
 
 bool Analyzer2DDelta::parseLine( KernelConnection *whichKernel, istringstream& line,
                                  Trace *whichTrace,
@@ -2581,6 +2758,11 @@ bool Analyzer2DDelta::parseLine( KernelConnection *whichKernel, istringstream& l
   return true;
 }
 
+void Analyzer2DDelta::printLine( ofstream& cfgFile,
+                                 const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_DELTA << " " << (*it)->getControlDelta() << endl;
+}
 
 bool Analyzer2DComputeGradient::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
@@ -2606,6 +2788,16 @@ bool Analyzer2DComputeGradient::parseLine( KernelConnection *whichKernel, istrin
   return true;
 }
 
+void Analyzer2DComputeGradient::printLine( ofstream& cfgFile,
+                                           const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_COMPUTEGRADIENT << " ";
+  if( (*it)->getComputeGradient() )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
+}
 
 bool Analyzer2DMinimumGradient::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
@@ -2629,6 +2821,11 @@ bool Analyzer2DMinimumGradient::parseLine( KernelConnection *whichKernel, istrin
   return true;
 }
 
+void Analyzer2DMinimumGradient::printLine( ofstream& cfgFile,
+                                           const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_MINIMUMGRADIENT << " " << (*it)->getMinGradient() << endl;
+}
 
 bool Analyzer2DMaximumGradient::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
@@ -2652,6 +2849,11 @@ bool Analyzer2DMaximumGradient::parseLine( KernelConnection *whichKernel, istrin
   return true;
 }
 
+void Analyzer2DMaximumGradient::printLine( ofstream& cfgFile,
+                                           const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_MAXIMUMGRADIENT << " " << (*it)->getMaxGradient() << endl;
+}
 
 bool Analyzer3DControlWindow::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,
@@ -2680,6 +2882,11 @@ bool Analyzer3DControlWindow::parseLine( KernelConnection *whichKernel, istrings
   return true;
 }
 
+void Analyzer3DControlWindow::printLine( ofstream& cfgFile,
+                                         const vector<Histogram *>::const_iterator it )
+{
+  #warning Analyzer3DControlWindow::printLine
+}
 
 bool Analyzer3DMinimum::parseLine( KernelConnection *whichKernel, istringstream& line,
                                    Trace *whichTrace,
@@ -2703,6 +2910,11 @@ bool Analyzer3DMinimum::parseLine( KernelConnection *whichKernel, istringstream&
   return true;
 }
 
+void Analyzer3DMinimum::printLine( ofstream& cfgFile,
+                                   const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN3D_MINIMUM << " " << (*it)->getExtraControlMin() << endl;
+}
 
 bool Analyzer3DMaximum::parseLine( KernelConnection *whichKernel, istringstream& line,
                                    Trace *whichTrace,
@@ -2726,6 +2938,11 @@ bool Analyzer3DMaximum::parseLine( KernelConnection *whichKernel, istringstream&
   return true;
 }
 
+void Analyzer3DMaximum::printLine( ofstream& cfgFile,
+                                   const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN3D_MAXIMUM << " " << (*it)->getExtraControlMax() << endl;
+}
 
 bool Analyzer3DDelta::parseLine( KernelConnection *whichKernel, istringstream& line,
                                  Trace *whichTrace,
@@ -2749,6 +2966,11 @@ bool Analyzer3DDelta::parseLine( KernelConnection *whichKernel, istringstream& l
   return true;
 }
 
+void Analyzer3DDelta::printLine( ofstream& cfgFile,
+                                 const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN3D_DELTA << " " << (*it)->getExtraControlDelta() << endl;
+}
 
 bool Analyzer3DFixedValue::parseLine( KernelConnection *whichKernel, istringstream& line,
                                       Trace *whichTrace,
@@ -2770,4 +2992,10 @@ bool Analyzer3DFixedValue::parseLine( KernelConnection *whichKernel, istringstre
   histograms[ histograms.size() - 1 ]->setPlaneMinValue( data3DFixedValue );
 
   return true;
+}
+
+void Analyzer3DFixedValue::printLine( ofstream& cfgFile,
+                                      const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN3D_FIXEDVALUE << " " << (*it)->getPlaneMinValue();
 }

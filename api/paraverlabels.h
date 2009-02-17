@@ -69,7 +69,7 @@
 #define OLDCFG_TAG_AN2D_CONTROL_WINDOW "Analyzer2D.ControlWindow:"
 #define OLDCFG_TAG_AN2D_DATA_WINDOW "Analyzer2D.DataWindow:"
 #define OLDCFG_TAG_AN2D_STATISTIC "Analyzer2D.Statistic:"
-#define OLDCFG_TAG_AN2D_CALCULATE_ALL "Analyzer2D.calculate_all:"
+#define OLDCFG_TAG_AN2D_CALCULATE_ALL "Analyzer2D.CalculateAll:"
 #define OLDCFG_TAG_AN2D_NUM_COLUMNS "Analyzer2D.num_columns:"
 #define OLDCFG_TAG_AN2D_HIDE_COLS "Analyzer2D.HideCols:"
 #define OLDCFG_TAG_AN2D_SCIENTIFIC_NOTATION "Analyzer2D.scientific_notation:"

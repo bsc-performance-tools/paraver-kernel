@@ -571,6 +571,8 @@ class WindowOpen: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -585,6 +587,8 @@ class WindowDrawMode: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -599,6 +603,8 @@ class WindowDrawModeRows: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
 };
 
 
@@ -613,6 +619,8 @@ class Analyzer2DCreate: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -627,6 +635,8 @@ class Analyzer2DName: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -641,6 +651,8 @@ class Analyzer2DX: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -655,6 +667,8 @@ class Analyzer2DY: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -669,6 +683,8 @@ class Analyzer2DWidth: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -683,6 +699,8 @@ class Analyzer2DHeight: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -697,6 +715,8 @@ class Analyzer2DControlWindow: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -711,6 +731,8 @@ class Analyzer2DDataWindow: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -725,6 +747,8 @@ class Analyzer2DStatistic: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -739,20 +763,8 @@ class Analyzer2DCalculateAll: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
-};
-
-
-class Analyzer2DNumColumns: public TagFunction
-{
-  public:
-    Analyzer2DNumColumns()
-    {}
-    virtual ~Analyzer2DNumColumns()
-    {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
-                            Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -767,76 +779,8 @@ class Analyzer2DHideColumns: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
-};
-
-
-class Analyzer2DScientificNotation: public TagFunction
-{
-  public:
-    Analyzer2DScientificNotation()
-    {}
-    virtual ~Analyzer2DScientificNotation()
-    {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
-                            Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-};
-
-
-class Analyzer2DNumDecimals: public TagFunction
-{
-  public:
-    Analyzer2DNumDecimals()
-    {}
-    virtual ~Analyzer2DNumDecimals()
-    {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
-                            Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-};
-
-
-class Analyzer2DThousandSeparator: public TagFunction
-{
-  public:
-    Analyzer2DThousandSeparator()
-    {}
-    virtual ~Analyzer2DThousandSeparator()
-    {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
-                            Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-};
-
-
-class Analyzer2DUnits: public TagFunction
-{
-  public:
-    Analyzer2DUnits()
-    {}
-    virtual ~Analyzer2DUnits()
-    {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
-                            Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-};
-
-
-class Analyzer2DAccumulator: public TagFunction
-{
-  public:
-    Analyzer2DAccumulator()
-    {}
-    virtual ~Analyzer2DAccumulator()
-    {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
-                            Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -851,6 +795,24 @@ class Analyzer2DHorizontal: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
+};
+
+
+class Analyzer2DAccumulator: public TagFunction
+{
+  public:
+    Analyzer2DAccumulator()
+    {}
+    virtual ~Analyzer2DAccumulator()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -865,6 +827,8 @@ class Analyzer2DAccumulateByControlWindow: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -879,6 +843,8 @@ class Analyzer2DSortCols: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -893,6 +859,8 @@ class Analyzer2DSortCriteria: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -907,6 +875,8 @@ class Analyzer2DParameters: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -921,6 +891,8 @@ class Analyzer2DAnalysisLimits: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -935,6 +907,8 @@ class Analyzer2DRelativeTime: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -949,6 +923,8 @@ class Analyzer2DComputeYScale: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -963,6 +939,8 @@ class Analyzer2DMinimum: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -977,6 +955,8 @@ class Analyzer2DMaximum: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -991,6 +971,8 @@ class Analyzer2DDelta: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -1005,6 +987,8 @@ class Analyzer2DComputeGradient: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 class Analyzer2DMinimumGradient: public TagFunction
@@ -1018,6 +1002,8 @@ class Analyzer2DMinimumGradient: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -1032,6 +1018,8 @@ class Analyzer2DMaximumGradient: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -1046,6 +1034,8 @@ class Analyzer3DControlWindow: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -1060,6 +1050,8 @@ class Analyzer3DMinimum: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -1074,6 +1066,8 @@ class Analyzer3DMaximum: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -1088,6 +1082,8 @@ class Analyzer3DDelta: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
@@ -1102,6 +1098,8 @@ class Analyzer3DFixedValue: public TagFunction
                             Trace *whichTrace,
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
 };
 
 
