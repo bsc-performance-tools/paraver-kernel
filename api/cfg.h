@@ -34,6 +34,11 @@ class CFGLoader
     static map<string, TagFunction *> cfgTagFunctions;
     static void loadMap();
     static void unLoadMap();
+    static void pushbackWindow( Window *whichWindow,
+                                vector<Window *>& allWindows );
+    static void pushbackAllWindows( const vector<Window *>& selected,
+                                    const vector<Histogram *>& selectedHistos,
+                                    vector<Window *>& allWindows );
 
   public:
     static bool isCFGFile( const string& filename );
@@ -44,6 +49,8 @@ class CFGLoader
     static bool saveCFG( const string& filename,
                          const vector<Window *>& windows,
                          const vector<Histogram *>& histograms );
+    static int findWindow( const Window *whichWindow,
+                           const vector<Window *>& allWindows );
 
     static string errorLine;
 };
@@ -301,6 +308,7 @@ class WindowIdentifiers: public TagFunction
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
     static void printLine( ofstream& cfgFile,
+                           const vector<Window *>& allWindows,
                            const vector<Window *>::const_iterator it );
 };
 
@@ -716,6 +724,7 @@ class Analyzer2DControlWindow: public TagFunction
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
     static void printLine( ofstream& cfgFile,
+                           const vector<Window *>& allWindows,
                            const vector<Histogram *>::const_iterator it );
 };
 
@@ -732,6 +741,7 @@ class Analyzer2DDataWindow: public TagFunction
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
     static void printLine( ofstream& cfgFile,
+                           const vector<Window *>& allWindows,
                            const vector<Histogram *>::const_iterator it );
 };
 
@@ -1035,6 +1045,7 @@ class Analyzer3DControlWindow: public TagFunction
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
     static void printLine( ofstream& cfgFile,
+                           const vector<Window *>& allWindows,
                            const vector<Histogram *>::const_iterator it );
 };
 
