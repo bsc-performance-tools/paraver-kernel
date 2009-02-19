@@ -84,6 +84,9 @@ class Filter
     virtual bool getOpTagSize() const = 0;
     virtual bool getOpTypeValue() const = 0;
 
+    virtual void copyEventsSection( Filter *filter ) {};
+    virtual void copyCommunicationsSection( Filter *filter ) {};
+
     virtual void getAllFilterFunctions( vector<string>& onVector ) const;
 
   private:
@@ -157,6 +160,9 @@ class FilterProxy : public Filter
     virtual bool getOpFromTo() const;
     virtual bool getOpTagSize() const;
     virtual bool getOpTypeValue() const;
+
+    virtual void copyEventsSection( Filter *filter );
+    virtual void copyCommunicationsSection( Filter *filter );
 
   private:
     Filter *myFilter;
