@@ -10,6 +10,14 @@
 #define OLDCFG_LVL_NODE     "node"
 #define OLDCFG_LVL_SYSTEM    "system"
 
+#define OLDCFG_LVL_HISTO_WORKLOAD "Workload"
+#define OLDCFG_LVL_HISTO_APPL "Application"
+#define OLDCFG_LVL_HISTO_TASK "Task"
+#define OLDCFG_LVL_HISTO_THREAD "Thread"
+#define OLDCFG_LVL_HISTO_SYSTEM "System"
+#define OLDCFG_LVL_HISTO_NODE "Node"
+#define OLDCFG_LVL_HISTO_CPU "CPU"
+
 #define OLDCFG_LVL_TOPCOMPOSE       "topcompose"
 #define OLDCFG_LVL_TOPCOMPOSE1      "topcompose1"
 #define OLDCFG_LVL_TOPCOMPOSE2      "topcompose2"
@@ -145,6 +153,7 @@
 #define OLDCFG_VAL_LIMIT_ALLWINDOW "Allwindow"
 #define OLDCFG_VAL_LIMIT_REGION    "Region"
 
+#define OLDCFG_VAL_AN2D_ACCUM_SEMANTIC "Semantic"
 
 // STRING CONSTRUCTION LABELS FOR THE GUI
 #define LEVEL_WORKLOAD     "WORKLOAD"
@@ -165,5 +174,8 @@ static const string LABEL_TIMEUNIT[ DAY + 1 ] =
   "h",
   "d"
 };
+
+// New cfg label definitions
+#define CFG_TAG_WNDW_END_TIME_RELATIVE "window_end_time_relative"
 
 #endif // PARAVERLABELS_H_INCLUDED

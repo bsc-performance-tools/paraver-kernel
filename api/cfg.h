@@ -28,6 +28,26 @@ class TagFunction
                             vector<Histogram *>& histograms ) = 0;
 };
 
+struct SaveOptions
+{
+public:
+  SaveOptions()
+  {
+    windowComputeYMaxOnLoad = true;
+    windowScaleRelative = true;
+    windowBeginTimeRelative = true;
+    histoComputeYScale = true;
+    histoComputeGradient = true;
+  }
+
+  string description;
+  bool windowComputeYMaxOnLoad;
+  bool windowScaleRelative;
+  bool windowBeginTimeRelative;
+  bool histoComputeYScale;
+  bool histoComputeGradient;
+};
+
 class CFGLoader
 {
   private:
@@ -47,6 +67,7 @@ class CFGLoader
                          vector<Window *>& windows,
                          vector<Histogram *>& histograms );
     static bool saveCFG( const string& filename,
+                         const SaveOptions& options,
                          const vector<Window *>& windows,
                          const vector<Histogram *>& histograms );
     static int findWindow( const Window *whichWindow,
@@ -276,6 +297,7 @@ class WindowComputeYMax: public TagFunction
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
     static void printLine( ofstream& cfgFile,
+                           const SaveOptions& options,
                            const vector<Window *>::const_iterator it );
 };
 
@@ -325,6 +347,24 @@ class WindowScaleRelative: public TagFunction
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
     static void printLine( ofstream& cfgFile,
+                           const SaveOptions& options,
+                           const vector<Window *>::const_iterator it );
+};
+
+
+class WindowEndTimeRelative: public TagFunction
+{
+  public:
+    WindowEndTimeRelative()
+    {}
+    virtual ~WindowEndTimeRelative()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const SaveOptions& options,
                            const vector<Window *>::const_iterator it );
 };
 
@@ -357,6 +397,7 @@ class WindowBeginTime: public TagFunction
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
     static void printLine( ofstream& cfgFile,
+                           const SaveOptions& options,
                            const vector<Window *>::const_iterator it );
 };
 
@@ -373,6 +414,7 @@ class WindowEndTime: public TagFunction
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
     static void printLine( ofstream& cfgFile,
+                           const SaveOptions& options,
                            const vector<Window *>::const_iterator it );
 };
 
@@ -389,6 +431,7 @@ class WindowStopTime: public TagFunction
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
     static void printLine( ofstream& cfgFile,
+                           const SaveOptions& options,
                            const vector<Window *>::const_iterator it );
 };
 
@@ -405,6 +448,7 @@ class WindowBeginTimeRelative: public TagFunction
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
     static void printLine( ofstream& cfgFile,
+                           const SaveOptions& options,
                            const vector<Window *>::const_iterator it );
 };
 
@@ -934,6 +978,7 @@ class Analyzer2DComputeYScale: public TagFunction
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
     static void printLine( ofstream& cfgFile,
+                           const SaveOptions& options,
                            const vector<Histogram *>::const_iterator it );
 };
 
@@ -998,6 +1043,7 @@ class Analyzer2DComputeGradient: public TagFunction
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
     static void printLine( ofstream& cfgFile,
+                           const SaveOptions& options,
                            const vector<Histogram *>::const_iterator it );
 };
 

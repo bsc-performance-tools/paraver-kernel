@@ -133,6 +133,37 @@ string levelToString( TWindowLevel whichLevel )
   return "";
 }
 
+string levelToStringHisto( TWindowLevel whichLevel )
+{
+  switch ( whichLevel )
+  {
+    case WORKLOAD:
+      return OLDCFG_LVL_HISTO_WORKLOAD;
+      break;
+    case APPLICATION:
+      return OLDCFG_LVL_HISTO_APPL;
+      break;
+    case TASK:
+      return OLDCFG_LVL_HISTO_TASK;
+      break;
+    case THREAD:
+      return OLDCFG_LVL_HISTO_THREAD;
+      break;
+    case SYSTEM:
+      return OLDCFG_LVL_HISTO_SYSTEM;
+      break;
+    case NODE:
+      return OLDCFG_LVL_HISTO_NODE;
+      break;
+    case CPU:
+      return OLDCFG_LVL_HISTO_CPU;
+      break;
+    default:
+      break;
+  }
+  return "";
+}
+
 bool CFGLoader::isCFGFile( const string& filename )
 {
   string cfgExt;
@@ -256,6 +287,7 @@ void CFGLoader::pushbackAllWindows( const vector<Window *>& selectedWindows,
 }
 
 bool CFGLoader::saveCFG( const string& filename,
+                         const SaveOptions& options,
                          const vector<Window *>& windows,
                          const vector<Histogram *>& histograms )
 {
@@ -307,13 +339,15 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowUnits::printLine( cfgFile, it );
     WindowMaximumY::printLine( cfgFile, it );
     WindowMinimumY::printLine( cfgFile, it );
-    WindowComputeYMax::printLine( cfgFile, it );
+    WindowComputeYMax::printLine( cfgFile, options, it );
     WindowLevel::printLine( cfgFile, it );
-    WindowScaleRelative::printLine( cfgFile, it );
+    WindowScaleRelative::printLine( cfgFile, options, it );
+    WindowEndTimeRelative::printLine( cfgFile, options, it );
     WindowObject::printLine( cfgFile, it );
-    WindowBeginTime::printLine( cfgFile, it );
-    WindowEndTime::printLine( cfgFile, it );
-    WindowStopTime::printLine( cfgFile, it );
+    WindowBeginTime::printLine( cfgFile, options, it );
+    WindowEndTime::printLine( cfgFile, options, it );
+    WindowStopTime::printLine( cfgFile, options, it );
+    WindowBeginTimeRelative::printLine( cfgFile, options, it );
     WindowDrawMode::printLine( cfgFile, it );
     WindowDrawModeRows::printLine( cfgFile, it );
     if ( !( *it )->isDerivedWindow() )
@@ -354,11 +388,11 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DParameters::printLine( cfgFile, it );
     Analyzer2DAnalysisLimits::printLine( cfgFile, it );
     Analyzer2DRelativeTime::printLine( cfgFile, it );
-    Analyzer2DComputeYScale::printLine( cfgFile, it );
+    Analyzer2DComputeYScale::printLine( cfgFile, options, it );
     Analyzer2DMinimum::printLine( cfgFile, it );
     Analyzer2DMaximum::printLine( cfgFile, it );
     Analyzer2DDelta::printLine( cfgFile, it );
-    Analyzer2DComputeGradient::printLine( cfgFile, it );
+    Analyzer2DComputeGradient::printLine( cfgFile, options, it );
     Analyzer2DMinimumGradient::printLine( cfgFile, it );
     Analyzer2DMaximumGradient::printLine( cfgFile, it );
     if ( ( *it )->getThreeDimensions() )
@@ -417,6 +451,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_COMPUTE_Y_MAX]       = new WindowComputeYMax();
   cfgTagFunctions[OLDCFG_TAG_WNDW_LEVEL]               = new WindowLevel();
   cfgTagFunctions[OLDCFG_TAG_WNDW_SCALE_RELATIVE]      = new WindowScaleRelative();
+  cfgTagFunctions[CFG_TAG_WNDW_END_TIME_RELATIVE]      = new WindowEndTimeRelative();
   cfgTagFunctions[OLDCFG_TAG_WNDW_OBJECT]              = new WindowObject();
   cfgTagFunctions[OLDCFG_TAG_WNDW_IDENTIFIERS]         = new WindowIdentifiers();
 
@@ -862,7 +897,6 @@ void WindowOperation::printLine( ofstream& cfgFile,
   cfgFile << OLDCFG_TAG_WNDW_OPERATION << " " << ( *it )->getLevelFunction( DERIVED ) << endl;
 }
 
-// For representation purposes.
 bool WindowMaximumY::parseLine( KernelConnection *whichKernel, istringstream& line,
                                 Trace *whichTrace,
                                 vector<Window *>& windows,
@@ -931,9 +965,15 @@ bool WindowComputeYMax::parseLine( KernelConnection *whichKernel, istringstream&
 }
 
 void WindowComputeYMax::printLine( ofstream& cfgFile,
+                                   const SaveOptions& options,
                                    const vector<Window *>::const_iterator it )
 {
-#warning WindowComputeYMax::printLine
+  cfgFile << OLDCFG_TAG_WNDW_COMPUTE_Y_MAX << " ";
+  if ( options.windowComputeYMaxOnLoad )
+    cfgFile << OLDCFG_VAL_TRUE;
+  else
+    cfgFile << OLDCFG_VAL_FALSE;
+  cfgFile << endl;
 }
 
 bool WindowLevel::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -1008,19 +1048,70 @@ bool WindowScaleRelative::parseLine( KernelConnection *whichKernel, istringstrea
                                      vector<Window *>& windows,
                                      vector<Histogram *>& histograms )
 {
+  string strEndTime;
+  double percEndTime;
+
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
+  getline( line, strEndTime );
+  istringstream tmpStream( strEndTime );
+  if ( !( tmpStream >> percEndTime ) )
+    return false;
+
+  if ( percEndTime > 1.0 ) percEndTime = 1.0;
+
   windows[ windows.size() - 1 ]->setWindowEndTime(
-    ( windows[ windows.size() - 1 ]->getTrace() )->getEndTime() );
+    ( windows[ windows.size() - 1 ]->getTrace() )->getEndTime() * percEndTime );
 
   return true;
 }
 
 void WindowScaleRelative::printLine( ofstream& cfgFile,
+                                     const SaveOptions& options,
                                      const vector<Window *>::const_iterator it )
 {
-#warning WindowScaleRelative::printLine
+  if ( options.windowScaleRelative )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_SCALE_RELATIVE << " ";
+    double maxScale = ( *it )->getTrace()->getEndTime() / ( double )( *it )->getWidth();
+    cfgFile << ( ( *it )->getWindowEndTime() / ( *it )->getWidth() ) / maxScale;
+    cfgFile << endl;
+  }
+}
+
+bool WindowEndTimeRelative::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                       Trace *whichTrace,
+                                       vector<Window *>& windows,
+                                       vector<Histogram *>& histograms )
+{
+  string strEndTime;
+  double percEndTime;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strEndTime );
+  istringstream tmpStream( strEndTime );
+  if ( !( tmpStream >> percEndTime ) )
+    return false;
+
+  windows[ windows.size() - 1 ]->setWindowEndTime(
+    ( windows[ windows.size() - 1 ]->getTrace() )->getEndTime() * percEndTime );
+
+  return true;
+}
+
+void WindowEndTimeRelative::printLine( ofstream& cfgFile,
+                                       const SaveOptions& options,
+                                       const vector<Window *>::const_iterator it )
+{
+  if ( options.windowScaleRelative )
+  {
+    cfgFile << CFG_TAG_WNDW_END_TIME_RELATIVE << " ";
+    cfgFile << ( *it )->getWindowEndTime() / ( *it )->getTrace()->getEndTime();
+    cfgFile << endl;
+  }
 }
 
 bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line, Trace *whichTrace,
@@ -1064,10 +1155,11 @@ bool WindowBeginTime::parseLine( KernelConnection *whichKernel, istringstream& l
 }
 
 void WindowBeginTime::printLine( ofstream& cfgFile,
+                                 const SaveOptions& options,
                                  const vector<Window *>::const_iterator it )
 {
-#warning WindowBeginTime::printLine
-  cfgFile << OLDCFG_TAG_WNDW_BEGIN_TIME << " " << ( *it )->getWindowBeginTime() << endl;
+  if ( !options.windowBeginTimeRelative )
+    cfgFile << OLDCFG_TAG_WNDW_BEGIN_TIME << " " << ( *it )->getWindowBeginTime() << endl;
 }
 
 bool WindowEndTime::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -1093,6 +1185,7 @@ bool WindowEndTime::parseLine( KernelConnection *whichKernel, istringstream& lin
 }
 
 void WindowEndTime::printLine( ofstream& cfgFile,
+                               const SaveOptions& options,
                                const vector<Window *>::const_iterator it )
 {
 #warning WindowEndTime::printLine
@@ -1123,10 +1216,11 @@ bool WindowStopTime::parseLine( KernelConnection *whichKernel, istringstream& li
 }
 
 void WindowStopTime::printLine( ofstream& cfgFile,
+                                const SaveOptions& options,
                                 const vector<Window *>::const_iterator it )
 {
-#warning WindowStopTime::printLine
-  cfgFile << OLDCFG_TAG_WNDW_STOP_TIME << " " << ( *it )->getWindowEndTime() << endl;
+  if ( !options.windowScaleRelative )
+    cfgFile << OLDCFG_TAG_WNDW_STOP_TIME << " " << ( *it )->getWindowEndTime() << endl;
 }
 
 bool WindowBeginTimeRelative::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -1153,9 +1247,15 @@ bool WindowBeginTimeRelative::parseLine( KernelConnection *whichKernel, istrings
 }
 
 void WindowBeginTimeRelative::printLine( ofstream& cfgFile,
+    const SaveOptions& options,
     const vector<Window *>::const_iterator it )
 {
-#warning WindowBeginTimeRelative::printLine
+  if ( options.windowBeginTimeRelative )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_BEGIN_TIME_RELATIVE << " ";
+    cfgFile << ( *it )->getWindowBeginTime() / ( *it )->getTrace()->getEndTime();
+    cfgFile << endl;
+  }
 }
 
 bool WindowNumberOfRow::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -2477,7 +2577,12 @@ bool Analyzer2DAccumulator:: parseLine( KernelConnection *whichKernel, istringst
 void Analyzer2DAccumulator::printLine( ofstream& cfgFile,
                                        const vector<Histogram *>::const_iterator it )
 {
-#warning Analyzer2DAccumulator::printLine
+  cfgFile << OLDCFG_TAG_AN2D_ACCUMULATOR << " ";
+  if ( ( *it )->itsCommunicationStat( ( *it )->getCurrentStat() ) )
+    cfgFile << levelToStringHisto( ( *it )->getControlWindow()->getLevel() );
+  else
+    cfgFile << OLDCFG_VAL_AN2D_ACCUM_SEMANTIC;
+  cfgFile << endl;
 }
 
 bool Analyzer2DAccumulateByControlWindow::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -2782,9 +2887,15 @@ bool Analyzer2DComputeYScale::parseLine( KernelConnection *whichKernel, istrings
 }
 
 void Analyzer2DComputeYScale::printLine( ofstream& cfgFile,
+    const SaveOptions& options,
     const vector<Histogram *>::const_iterator it )
 {
-#warning Analyzer2DComputeYScale::printLine
+  cfgFile << OLDCFG_TAG_AN2D_COMPUTEYSCALE << " ";
+  if ( options.histoComputeYScale )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
 }
 
 bool Analyzer2DMinimum::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -2896,9 +3007,15 @@ bool Analyzer2DComputeGradient::parseLine( KernelConnection *whichKernel, istrin
 }
 
 void Analyzer2DComputeGradient::printLine( ofstream& cfgFile,
+    const SaveOptions& options,
     const vector<Histogram *>::const_iterator it )
 {
-#warning Analyzer2DComputeGradient::printLine
+  cfgFile << OLDCFG_TAG_AN2D_COMPUTEGRADIENT << " ";
+  if ( options.histoComputeGradient )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
 }
 
 bool Analyzer2DMinimumGradient::parseLine( KernelConnection *whichKernel, istringstream& line,
