@@ -38,6 +38,7 @@ public:
     windowBeginTimeRelative = true;
     histoComputeYScale = false;
     histoComputeGradient = true;
+    histoAllTrace = true;
   }
 
   string description;
@@ -46,6 +47,7 @@ public:
   bool windowBeginTimeRelative;
   bool histoComputeYScale;
   bool histoComputeGradient;
+  bool histoAllTrace;
 };
 
 class CFGLoader
@@ -946,6 +948,7 @@ class Analyzer2DAnalysisLimits: public TagFunction
                             vector<Window *>& windows,
                             vector<Histogram *>& histograms );
     static void printLine( ofstream& cfgFile,
+                           const SaveOptions& options,
                            const vector<Histogram *>::const_iterator it );
 };
 

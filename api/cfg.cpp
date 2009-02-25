@@ -387,7 +387,7 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DSortCols::printLine( cfgFile, it );
     Analyzer2DSortCriteria::printLine( cfgFile, it );
     Analyzer2DParameters::printLine( cfgFile, it );
-    Analyzer2DAnalysisLimits::printLine( cfgFile, it );
+    Analyzer2DAnalysisLimits::printLine( cfgFile, options, it );
     Analyzer2DRelativeTime::printLine( cfgFile, it );
     Analyzer2DComputeYScale::printLine( cfgFile, options, it );
     Analyzer2DMinimum::printLine( cfgFile, it );
@@ -2819,17 +2819,14 @@ bool Analyzer2DAnalysisLimits::parseLine( KernelConnection *whichKernel, istring
 }
 
 void Analyzer2DAnalysisLimits::printLine( ofstream& cfgFile,
+    const SaveOptions& options,
     const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_ANALYSISLIMITS << " ";
-  if ( ( *it )->getBeginTime() == 0 &&
-       ( *it )->getEndTime() == ( *it )->getControlWindow()->getTrace()->getEndTime() )
+  if ( options.histoAllTrace )
     cfgFile << OLDCFG_VAL_LIMIT_ALLTRACE;
-  else if ( ( *it )->getBeginTime() == ( *it )->getControlWindow()->getWindowBeginTime() &&
-            ( *it )->getEndTime() == ( *it )->getControlWindow()->getWindowEndTime() )
-    cfgFile << OLDCFG_VAL_LIMIT_ALLWINDOW;
   else
-    cfgFile << OLDCFG_VAL_LIMIT_REGION;
+    cfgFile << OLDCFG_VAL_LIMIT_ALLWINDOW;
   cfgFile << endl;
 }
 
