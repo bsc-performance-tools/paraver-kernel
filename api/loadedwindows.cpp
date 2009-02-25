@@ -1,11 +1,13 @@
 #include "loadedwindows.h"
 #include "window.h"
+#include "histogram.h"
 
 LoadedWindows *LoadedWindows::instance = NULL;
 
 LoadedWindows::LoadedWindows()
 {
   currentID = 0;
+  currentHistoID = 0;
 }
 
 LoadedWindows *LoadedWindows::getInstance()
@@ -20,6 +22,9 @@ LoadedWindows::~LoadedWindows()
   for ( map<TWindowID, Window *>::iterator it = windows.begin();
         it != windows.end(); ++it )
     delete ( *it ).second;
+  for ( map<TWindowID, Histogram *>::iterator it = histograms.begin();
+        it != histograms.end(); ++it )
+    delete ( *it ).second;
 }
 
 TWindowID LoadedWindows::add( Window *whichWindow )
@@ -30,15 +35,35 @@ TWindowID LoadedWindows::add( Window *whichWindow )
   return currentID;
 }
 
+TWindowID LoadedWindows::add( Histogram *whichHisto )
+{
+  currentHistoID++;
+  histograms[ currentHistoID ] = whichHisto;
+
+  return currentHistoID;
+}
+
 Window *LoadedWindows::getWindow( TWindowID id ) const
 {
   return windows.find( id )->second;
+}
+
+Histogram *LoadedWindows::getHisto( TWindowID id ) const
+{
+  return histograms.find( id )->second;
 }
 
 void LoadedWindows::getAll( vector<Window *>& onVector ) const
 {
   for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
+    onVector.push_back( ( *it ).second );
+}
+
+void LoadedWindows::getAll( vector<Histogram *>& onVector ) const
+{
+  for ( map<TWindowID, Histogram *>::const_iterator it = histograms.begin();
+        it != histograms.end(); ++it )
     onVector.push_back( ( *it ).second );
 }
 

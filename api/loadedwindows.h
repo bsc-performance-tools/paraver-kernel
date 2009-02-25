@@ -7,6 +7,7 @@
 using namespace std;
 
 class Window;
+class Histogram;
 
 typedef UINT32 TWindowID;
 
@@ -18,8 +19,11 @@ class LoadedWindows
     static LoadedWindows *getInstance();
 
     TWindowID add( Window *whichWindow );
+    TWindowID add( Histogram *whichHisto );
     Window *getWindow( TWindowID id ) const;
+    Histogram *getHisto( TWindowID id ) const;
     void getAll( vector<Window *>& onVector ) const;
+    void getAll( vector<Histogram *>& onVector ) const;
 
     // Histogram windows selection related methods
     void getValidControlWindow( Window *dataWindow, vector<TWindowID>& onVector ) const;
@@ -33,7 +37,9 @@ class LoadedWindows
     static LoadedWindows *instance;
 
     map<TWindowID, Window *> windows;
+    map<TWindowID, Histogram *> histograms;
     TWindowID currentID;
+    TWindowID currentHistoID;
 
     bool validDataWindow( Window *dataWindow, Window *controlWindow ) const;
     bool validLevelDataWindow( Window *dataWindow, Window *controlWindow ) const;
