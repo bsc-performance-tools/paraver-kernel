@@ -19,11 +19,12 @@ class LoadedWindows
 
     TWindowID add( Window *whichWindow );
     Window *getWindow( TWindowID id ) const;
+    void getAll( vector<Window *>& onVector ) const;
 
     // Histogram windows selection related methods
     void getValidControlWindow( Window *dataWindow, vector<TWindowID>& onVector ) const;
     void getValidDataWindow( Window *controlWindow, Window *extraWindow,
-                              vector<TWindowID>& onVector ) const;
+                             vector<TWindowID>& onVector ) const;
   protected:
 
   private:

@@ -33,10 +33,10 @@ struct SaveOptions
 public:
   SaveOptions()
   {
-    windowComputeYMaxOnLoad = true;
+    windowComputeYMaxOnLoad = false;
     windowScaleRelative = true;
     windowBeginTimeRelative = true;
-    histoComputeYScale = true;
+    histoComputeYScale = false;
     histoComputeGradient = true;
   }
 

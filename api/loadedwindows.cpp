@@ -35,6 +35,13 @@ Window *LoadedWindows::getWindow( TWindowID id ) const
   return windows.find( id )->second;
 }
 
+void LoadedWindows::getAll( vector<Window *>& onVector ) const
+{
+  for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
+        it != windows.end(); ++it )
+    onVector.push_back( ( *it ).second );
+}
+
 // Histogram windows selection related methods
 void LoadedWindows::getValidControlWindow( Window *dataWindow,
     vector<TWindowID>& onVector ) const

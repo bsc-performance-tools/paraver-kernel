@@ -304,6 +304,7 @@ bool CFGLoader::saveCFG( const string& filename,
 
   cfgFile << "ConfigFile.Version: 3.4" << endl;
   cfgFile << "ConfigFile.NumWindows: " << allWindows.size() << endl;
+  cfgFile << options.description << endl;
   cfgFile << endl;
 
   int id = 1;
