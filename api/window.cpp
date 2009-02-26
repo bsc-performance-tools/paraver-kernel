@@ -80,7 +80,7 @@ void WindowProxy::init()
 
 WindowProxy::~WindowProxy()
 {
-  if( myFilter != NULL )
+  if ( myFilter != NULL )
     delete myFilter;
   delete myWindow;
 }
@@ -152,9 +152,15 @@ Window *WindowProxy::getParent( UINT16 whichParent )
 {
   switch ( whichParent )
   {
-    case 0: return parent1; break;
-    case 1: return parent2; break;
-    default: return NULL; break;
+    case 0:
+      return parent1;
+      break;
+    case 1:
+      return parent2;
+      break;
+    default:
+      return NULL;
+      break;
   }
 }
 
@@ -312,7 +318,7 @@ TParamIndex WindowProxy::getFunctionNumParam( TWindowLevel whichLevel ) const
 }
 
 TParamValue WindowProxy::getFunctionParam( TWindowLevel whichLevel,
-                                           TParamIndex whichParam ) const
+    TParamIndex whichParam ) const
 {
   return myWindow->getFunctionParam( whichLevel, whichParam );
 }
@@ -541,9 +547,9 @@ void WindowProxy::allowOutliers( bool activate )
 rgb WindowProxy::calcColor( TSemanticValue whichValue, Window& whichWindow )
 {
   if ( codeColor )
-    return myCodeColor.calcColor( whichValue, whichWindow );
+    return myCodeColor.calcColor( whichValue, minimumY, maximumY );
 
-  return myGradientColor.calcColor( whichValue, whichWindow );
+  return myGradientColor.calcColor( whichValue, minimumY, maximumY );
 }
 
 bool WindowProxy::getChanged() const

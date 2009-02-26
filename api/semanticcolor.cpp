@@ -128,10 +128,11 @@ void CodeColor::addColor( rgb color )
 }
 
 rgb CodeColor::calcColor( TSemanticValue whichValue,
-                          Window& whichWindow  )
+                          TSemanticValue minimum,
+                          TSemanticValue maximum )
 {
-  if ( whichValue < whichWindow.getMinimumY() ||
-       whichValue > whichWindow.getMaximumY() )
+  if ( whichValue < minimum ||
+       whichValue > maximum )
     return getColor( 0 ); // IDLE!
 
   return getColor( static_cast< UINT32 >( whichValue ) );
@@ -216,9 +217,11 @@ bool GradientColor::getAllowOutOfScale() const
   return drawOutOfScale;
 }
 
-rgb GradientColor::calcColor( TSemanticValue whichValue, Window& whichWindow )
+rgb GradientColor::calcColor( TSemanticValue whichValue,
+                              TSemanticValue minimum,
+                              TSemanticValue maximum )
 {
-  if ( whichValue < whichWindow.getMinimumY() )
+  if ( whichValue < minimum )
   {
     if ( drawOutlier && whichValue != 0 )
       return belowOutlierColor;
@@ -227,7 +230,7 @@ rgb GradientColor::calcColor( TSemanticValue whichValue, Window& whichWindow )
     return SemanticColor::BACKGROUND;
   }
 
-  if ( whichValue > whichWindow.getMaximumY() )
+  if ( whichValue > maximum )
   {
     if ( drawOutlier )
       return aboveOutlierColor;
@@ -237,7 +240,7 @@ rgb GradientColor::calcColor( TSemanticValue whichValue, Window& whichWindow )
   }
 
   TSemanticValue norm = whichValue /
-                        ( whichWindow.getMaximumY() - whichWindow.getMinimumY() );
+                        ( minimum - maximum );
 
   rgb tmpColor = beginGradientColor;
 

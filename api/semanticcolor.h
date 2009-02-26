@@ -22,7 +22,9 @@ class SemanticColor
     virtual ~SemanticColor()
     {};
 
-    virtual rgb calcColor( TSemanticValue whichValue, Window& whichWindow ) = 0;
+    virtual rgb calcColor( TSemanticValue whichValue,
+                           TSemanticValue minimum,
+                           TSemanticValue maximum ) = 0;
 
   private:
     static UINT32 numColors;
@@ -46,7 +48,9 @@ class CodeColor: public SemanticColor
     rgb getColor( UINT32 pos ) const;
     void setColor( UINT32 pos, rgb color );
     void addColor( rgb color );
-    rgb calcColor( TSemanticValue whichValue, Window& whichWindow  );
+    rgb calcColor( TSemanticValue whichValue,
+                   TSemanticValue minimum,
+                   TSemanticValue maximum );
 
   private:
     vector<rgb> colors;
@@ -76,7 +80,9 @@ class GradientColor: public SemanticColor
     void allowOutOfScale( bool activate );
     bool getAllowOutOfScale() const;
 
-    rgb calcColor( TSemanticValue whichValue, Window& whichWindow );
+    rgb calcColor( TSemanticValue whichValue,
+                   TSemanticValue minimum,
+                   TSemanticValue maximum );
 
   private:
     bool drawOutlier;
