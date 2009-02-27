@@ -4,6 +4,7 @@
 #include <limits>
 #include "paraverkerneltypes.h"
 #include "paraverconfig.h"
+#include "semanticcolor.h"
 
 #ifdef WIN32
 #undef max
@@ -483,6 +484,8 @@ class HistogramProxy : public Histogram
     string currentStat;
     vector<string> calcStat;
     vector<string> commCalcStat;
+
+    GradientColor myGradientColor;
 
     Histogram *myHisto;
 
