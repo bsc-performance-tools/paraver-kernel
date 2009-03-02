@@ -129,7 +129,7 @@ void CodeColor::addColor( rgb color )
 
 rgb CodeColor::calcColor( TSemanticValue whichValue,
                           TSemanticValue minimum,
-                          TSemanticValue maximum )
+                          TSemanticValue maximum ) const
 {
   if ( whichValue < minimum ||
        whichValue > maximum )
@@ -219,7 +219,7 @@ bool GradientColor::getAllowOutOfScale() const
 
 rgb GradientColor::calcColor( TSemanticValue whichValue,
                               TSemanticValue minimum,
-                              TSemanticValue maximum )
+                              TSemanticValue maximum ) const
 {
   if ( whichValue < minimum )
   {
@@ -239,8 +239,8 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
     return SemanticColor::BACKGROUND;
   }
 
-  TSemanticValue norm = whichValue /
-                        ( minimum - maximum );
+  TSemanticValue norm = ( whichValue - minimum ) /
+                        ( maximum - minimum );
 
   rgb tmpColor = beginGradientColor;
 

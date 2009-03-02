@@ -376,13 +376,9 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DAccumulator::printLine( cfgFile, it );
     Analyzer2DStatistic::printLine( cfgFile, it );
     Analyzer2DCalculateAll::printLine( cfgFile, it );
-    //Analyzer2DNumColumns::printLine( cfgFile, it );
     Analyzer2DHideColumns::printLine( cfgFile, it );
-    //Analyzer2DScientificNotation::printLine( cfgFile, it );
-    //Analyzer2DNumDecimals::printLine( cfgFile, it );
-    //Analyzer2DThousandSeparator::printLine( cfgFile, it );
-    //Analyzer2DUnits::printLine( cfgFile, it );
     Analyzer2DHorizontal::printLine( cfgFile, it );
+    Analyzer2DColor::printLine( cfgFile, it );
     Analyzer2DAccumulateByControlWindow::printLine( cfgFile, it );
     Analyzer2DSortCols::printLine( cfgFile, it );
     Analyzer2DSortCriteria::printLine( cfgFile, it );
@@ -493,7 +489,7 @@ void CFGLoader::loadMap()
   // --> Analyzer2D.hide_empty_cols:
   cfgTagFunctions[OLDCFG_TAG_AN2D_HIDE_COLS]           = new Analyzer2DHideColumns();
   cfgTagFunctions[OLDCFG_TAG_AN2D_HORIZONTAL]          = new Analyzer2DHorizontal();
-  // --> Analyzer2D.Color:
+  cfgTagFunctions[OLDCFG_TAG_AN2D_COLOR]               = new Analyzer2DColor();
   // --> Analyzer2D.SemanticColor:
   // --> Analyzer2D.TextMode:
   // --> Analyzer2D.Zoom:
@@ -2557,6 +2553,39 @@ void Analyzer2DHorizontal::printLine( ofstream& cfgFile,
     cfgFile << OLDCFG_VAL_HORIZONTAL;
   else
     cfgFile << OLDCFG_VAL_VERTICAL;
+  cfgFile << endl;
+}
+
+bool Analyzer2DColor::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                 Trace *whichTrace,
+                                 vector<Window *>& windows,
+                                 vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setShowColor( true );
+  else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setShowColor( false );
+
+  return true;
+}
+
+void Analyzer2DColor::printLine( ofstream& cfgFile,
+                                 const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_COLOR << " ";
+  if ( ( *it )->getShowColor() )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
   cfgFile << endl;
 }
 

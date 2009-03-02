@@ -24,7 +24,7 @@ class SemanticColor
 
     virtual rgb calcColor( TSemanticValue whichValue,
                            TSemanticValue minimum,
-                           TSemanticValue maximum ) = 0;
+                           TSemanticValue maximum ) const = 0;
 
   private:
     static UINT32 numColors;
@@ -50,7 +50,7 @@ class CodeColor: public SemanticColor
     void addColor( rgb color );
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
-                   TSemanticValue maximum );
+                   TSemanticValue maximum ) const;
 
   private:
     vector<rgb> colors;
@@ -82,7 +82,7 @@ class GradientColor: public SemanticColor
 
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
-                   TSemanticValue maximum );
+                   TSemanticValue maximum ) const;
 
   private:
     bool drawOutlier;

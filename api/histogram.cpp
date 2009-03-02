@@ -37,6 +37,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   maxGradient = Histogram::getMaxGradient();
   computeScale = Histogram::getComputeScale();
   computeGradient = Histogram::getComputeGradient();
+  showColor = Histogram::getShowColor();
   futurePlane = false;
   planeMinValue = 0.0;
   selectedPlane = 0;
@@ -627,6 +628,67 @@ void HistogramProxy::setComputeGradient( bool newValue )
 bool HistogramProxy::getComputeGradient() const
 {
   return computeGradient;
+}
+
+void HistogramProxy::setShowColor( bool newValue )
+{
+  showColor = newValue;
+}
+
+bool HistogramProxy::getShowColor() const
+{
+  return showColor;
+}
+
+rgb HistogramProxy::calcGradientColor( TSemanticValue whichValue ) const
+{
+  return myGradientColor.calcColor( whichValue, minGradient, maxGradient );
+}
+
+void HistogramProxy::recalcGradientLimits()
+{
+  TSemanticValue tmpMin = std::numeric_limits<TSemanticValue>::max();
+  TSemanticValue tmpMax = 0.0;
+  HistogramTotals *totals = NULL;
+  UINT32 plane;
+  UINT16 idStat;
+  THistogramColumn numColumns = getNumColumns( getCurrentStat() );
+
+  getIdStat( getCurrentStat(), idStat );
+
+  if( itsCommunicationStat( getCurrentStat() ) )
+  {
+    totals = getCommColumnTotals();
+    plane = getCommSelectedPlane();
+  }
+  else
+  {
+    totals = getColumnTotals();
+    plane = getSelectedPlane();
+  }
+
+  if( !planeWithValues( plane ) )
+  {
+    minGradient = 0.0;
+    maxGradient = std::numeric_limits<TSemanticValue>::max();
+    delete totals;
+    return;
+  }
+
+  for( THistogramColumn iCol = 0; iCol < numColumns; ++iCol )
+  {
+    TSemanticValue curMin = totals->getMinimum( idStat, iCol, plane );
+    TSemanticValue curMax = totals->getMaximum( idStat, iCol, plane );
+    if( curMin < tmpMin )
+      tmpMin = curMin;
+    if( curMax > tmpMax )
+      tmpMax = curMax;
+  }
+
+  minGradient = tmpMin;
+  maxGradient = tmpMax;
+
+  delete totals;
 }
 
 void HistogramProxy::setPlaneMinValue( double whichMin )

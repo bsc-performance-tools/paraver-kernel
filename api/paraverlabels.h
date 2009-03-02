@@ -85,6 +85,7 @@
 #define OLDCFG_TAG_AN2D_THOUSANDSEP "Analyzer2D.thousandsep:"
 #define OLDCFG_TAG_AN2D_UNITS "Analyzer2D.units:"
 #define OLDCFG_TAG_AN2D_HORIZONTAL "Analyzer2D.HorizVert:"
+#define OLDCFG_TAG_AN2D_COLOR "Analyzer2D.Color:"
 #define OLDCFG_TAG_AN2D_ACCUMULATOR "Analyzer2D.Accumulator:"
 #define OLDCFG_TAG_AN2D_ACCUM_BY_CTRL_WINDOW "Analyzer2D.AccumulateByControlWindow:"
 #define OLDCFG_TAG_AN2D_SORTCOLS "Analyzer2D.SortCols:"

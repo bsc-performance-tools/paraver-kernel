@@ -207,6 +207,17 @@ class Histogram
     {
       return false;
     }
+    virtual void setShowColor( bool newValue ) {}
+    virtual bool getShowColor() const
+    {
+      return true;
+    }
+    virtual rgb calcGradientColor( TSemanticValue whichValue ) const
+    {
+      rgb tmp;
+      return tmp;
+    }
+    virtual void recalcGradientLimits() {}
     virtual void setPlaneMinValue( double whichMin ) {}
     virtual double getPlaneMinValue() const
     {
@@ -394,6 +405,10 @@ class HistogramProxy : public Histogram
     virtual bool getComputeScale() const;
     virtual void setComputeGradient( bool newValue );
     virtual bool getComputeGradient() const;
+    virtual void setShowColor( bool newValue );
+    virtual bool getShowColor() const;
+    virtual rgb calcGradientColor( TSemanticValue whichValue ) const;
+    virtual void recalcGradientLimits();
     virtual void setPlaneMinValue( double whichMin );
     virtual double getPlaneMinValue() const;
     virtual void setSelectedPlane( INT32 plane );
@@ -463,6 +478,7 @@ class HistogramProxy : public Histogram
     double maxGradient;
     bool computeScale;
     bool computeGradient;
+    bool showColor;
     bool futurePlane;
     double planeMinValue;
     INT32 selectedPlane;
