@@ -38,6 +38,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   computeScale = Histogram::getComputeScale();
   computeGradient = Histogram::getComputeGradient();
   showColor = Histogram::getShowColor();
+  zoom = Histogram::getZoom();
   futurePlane = false;
   planeMinValue = 0.0;
   selectedPlane = 0;
@@ -689,6 +690,16 @@ void HistogramProxy::recalcGradientLimits()
   maxGradient = tmpMax;
 
   delete totals;
+}
+
+void HistogramProxy::setZoom( bool newValue )
+{
+  zoom = newValue;
+}
+
+bool HistogramProxy::getZoom() const
+{
+  return zoom;
 }
 
 void HistogramProxy::setPlaneMinValue( double whichMin )

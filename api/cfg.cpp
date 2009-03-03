@@ -379,6 +379,7 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DHideColumns::printLine( cfgFile, it );
     Analyzer2DHorizontal::printLine( cfgFile, it );
     Analyzer2DColor::printLine( cfgFile, it );
+    Analyzer2DZoom::printLine( cfgFile, it );
     Analyzer2DAccumulateByControlWindow::printLine( cfgFile, it );
     Analyzer2DSortCols::printLine( cfgFile, it );
     Analyzer2DSortCriteria::printLine( cfgFile, it );
@@ -492,7 +493,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN2D_COLOR]               = new Analyzer2DColor();
   // --> Analyzer2D.SemanticColor:
   // --> Analyzer2D.TextMode:
-  // --> Analyzer2D.Zoom:
+  cfgTagFunctions[OLDCFG_TAG_AN2D_ZOOM]               = new Analyzer2DZoom();
   // --> Analyzer2D.Expanded:
   // --> Analyzer2D.expanded:
   cfgTagFunctions[OLDCFG_TAG_AN2D_ACCUMULATOR]          = new Analyzer2DAccumulator();
@@ -2586,6 +2587,39 @@ void Analyzer2DColor::printLine( ofstream& cfgFile,
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
+}
+
+bool Analyzer2DZoom::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                Trace *whichTrace,
+                                vector<Window *>& windows,
+                                vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_ENABLED ) == 0 )
+    histograms[ histograms.size() - 1 ]->setZoom( true );
+  else if ( strBool.compare( OLDCFG_VAL_DISABLED ) == 0 )
+    histograms[ histograms.size() - 1 ]->setZoom( false );
+
+  return true;
+}
+
+void Analyzer2DZoom::printLine( ofstream& cfgFile,
+                                 const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_COLOR << " ";
+  if ( ( *it )->getZoom() )
+    cfgFile << OLDCFG_VAL_ENABLED;
+  else
+    cfgFile << OLDCFG_VAL_DISABLED;
   cfgFile << endl;
 }
 

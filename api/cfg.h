@@ -872,6 +872,22 @@ class Analyzer2DColor: public TagFunction
 };
 
 
+class Analyzer2DZoom: public TagFunction
+{
+  public:
+    Analyzer2DZoom()
+    {}
+    virtual ~Analyzer2DZoom()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
+};
+
+
 class Analyzer2DAccumulator: public TagFunction
 {
   public:

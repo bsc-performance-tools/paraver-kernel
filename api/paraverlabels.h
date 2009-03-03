@@ -86,6 +86,7 @@
 #define OLDCFG_TAG_AN2D_UNITS "Analyzer2D.units:"
 #define OLDCFG_TAG_AN2D_HORIZONTAL "Analyzer2D.HorizVert:"
 #define OLDCFG_TAG_AN2D_COLOR "Analyzer2D.Color:"
+#define OLDCFG_TAG_AN2D_ZOOM "Analyzer2D.Zoom:"
 #define OLDCFG_TAG_AN2D_ACCUMULATOR "Analyzer2D.Accumulator:"
 #define OLDCFG_TAG_AN2D_ACCUM_BY_CTRL_WINDOW "Analyzer2D.AccumulateByControlWindow:"
 #define OLDCFG_TAG_AN2D_SORTCOLS "Analyzer2D.SortCols:"
@@ -136,6 +137,9 @@
 #define OLDCFG_VAL_TRUE2  "True"
 #define OLDCFG_VAL_FALSE  "false"
 #define OLDCFG_VAL_FALSE2 "False"
+
+#define OLDCFG_VAL_ENABLED "Enabled"
+#define OLDCFG_VAL_DISABLED "Disabled"
 
 #define OLDCFG_VAL_HORIZONTAL "Horizontal"
 #define OLDCFG_VAL_VERTICAL   "Vertical"
