@@ -105,3 +105,11 @@ void LocalKernel::getAllFilterFunctions( vector<string>& onVector ) const
 {
   FunctionManagement<FilterFunction>::getInstance()->getAll( onVector );
 }
+
+void LocalKernel::getAllSemanticFunctions( TSemanticGroup whichGroup,
+    vector<string>& onVector ) const
+{
+  FunctionManagement<SemanticFunction>::getInstance()->getAll( onVector,
+      whichGroup );
+}
+

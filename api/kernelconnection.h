@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "paraverkerneltypes.h"
 
 class Window;
 class Histogram;
@@ -31,6 +32,9 @@ class KernelConnection
 
     virtual void getAllStatistics( vector<string>& onVector ) const = 0;
     virtual void getAllFilterFunctions( vector<string>& onVector ) const = 0;
+    virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
+                                          vector<string>& onVector ) const = 0;
+
 
   protected:
 

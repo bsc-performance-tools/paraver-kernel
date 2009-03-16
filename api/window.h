@@ -28,33 +28,66 @@ class Window
 
     // Specefic for WindowProxy because Single and Derived window
     // SingleWindow
-    virtual Filter *getFilter() const { return NULL; }
+    virtual Filter *getFilter() const
+    {
+      return NULL;
+    }
 
     //DerivedWindow
     virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue ) {}
-    virtual TSemanticValue getFactor( UINT16 whichFactor ) const { return 1.0; }
+    virtual TSemanticValue getFactor( UINT16 whichFactor ) const
+    {
+      return 1.0;
+    }
     virtual void setParent( UINT16 whichParent, Window *whichWindow ) {}
     virtual void setChild( Window *whichWindow ) {}
-    virtual Window *getChild() { return NULL; }
-    virtual Window *getParent( UINT16 whichParent ) { return NULL; }
+    virtual Window *getChild()
+    {
+      return NULL;
+    }
+    virtual Window *getParent( UINT16 whichParent )
+    {
+      return NULL;
+    }
 
 
     // Other
     virtual void setWindowBeginTime( TRecordTime whichTime ) {}
     virtual void setWindowEndTime( TRecordTime whichTime ) {}
-    virtual TRecordTime getWindowBeginTime() const { return 0; }
-    virtual TRecordTime getWindowEndTime() const { return 0; }
+    virtual TRecordTime getWindowBeginTime() const
+    {
+      return 0;
+    }
+    virtual TRecordTime getWindowEndTime() const
+    {
+      return 0;
+    }
 
-    virtual bool getYScaleComputed() const { return false; }
+    virtual bool getYScaleComputed() const
+    {
+      return false;
+    }
     virtual void computeYScale() {}
-    virtual void setComputeYMaxOnInit( bool newValue ){}
-    virtual bool getComputeYMaxOnInit() const { return false; }
+    virtual void setComputeYMaxOnInit( bool newValue ) {}
+    virtual bool getComputeYMaxOnInit() const
+    {
+      return false;
+    }
     virtual void setMaximumY( TSemanticValue whichMax ) {}
     virtual void setMinimumY( TSemanticValue whichMin ) {}
-    virtual TSemanticValue getMaximumY() { return 15.0; }
-    virtual TSemanticValue getMinimumY() { return 0.0; }
+    virtual TSemanticValue getMaximumY()
+    {
+      return 15.0;
+    }
+    virtual TSemanticValue getMinimumY()
+    {
+      return 0.0;
+    }
 
-    virtual Window* clone( ) { return NULL; }
+    virtual Window* clone( )
+    {
+      return NULL;
+    }
 
     //------------------------------------------------------------
     virtual Trace *getTrace() const = 0;
@@ -195,6 +228,10 @@ class Window
     }
     virtual void setDrawCommLines( bool newValue )
     {}
+    virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
+                                          vector<string>& onVector ) const
+    {}
+
   protected:
     KernelConnection *myKernel;
 
@@ -265,6 +302,8 @@ class WindowProxy: public Window
     virtual TObjectOrder getWindowLevelObjects();
     virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime );
     virtual SemanticInfoType getSemanticInfoType() const;
+    virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
+                                          vector<string>& onVector ) const;
 
     virtual Window *getConcrete() const;
     virtual void setName( const string& whichName );

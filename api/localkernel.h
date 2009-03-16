@@ -25,6 +25,9 @@ class LocalKernel: public KernelConnection
 
     virtual void getAllStatistics( vector<string>& onVector ) const;
     virtual void getAllFilterFunctions( vector<string>& onVector ) const;
+    virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
+                                          vector<string>& onVector ) const;
+
 
   protected:
 

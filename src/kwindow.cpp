@@ -3,6 +3,7 @@
 #include "semanticcomposefunctions.h"
 #include "semanticderived.h"
 #include "functionmanagement.h"
+#include "semanticmanagement.h"
 
 
 TObjectOrder KWindow::cpuObjectToWindowObject( TCPUOrder whichCPU )
@@ -117,16 +118,6 @@ RecordList *KWindow::getRecordList( TObjectOrder whichObject )
 
 KWindow *KWindow::clone()
 {
-/*  KWindow *clonedKWindow = new KWindow();
-
-  clonedKWindow->level = level;
-  clonedKWindow->timeUnit = timeUnit;
-
-  clonedKWindow->intervalTopCompose1 = vector<IntervalCompose>( intervalTopCompose1 );
-  clonedKWindow->intervalTopCompose2 = vector<IntervalCompose>( intervalTopCompose2 );
-
-  return clonedKWindow;
-*/
   return NULL;
 }
 
@@ -337,7 +328,7 @@ bool KSingleWindow::setLevelFunction( TWindowLevel whichLevel,
     ( FunctionManagement<SemanticFunction>::getInstance() )->
     getFunction( whichFunction );
 
-  if( functions[ whichLevel ] == NULL )
+  if ( functions[ whichLevel ] == NULL )
     return false;
 
   return true;
@@ -395,7 +386,7 @@ TParamIndex KSingleWindow::getFunctionNumParam( TWindowLevel whichLevel ) const
 }
 
 TParamValue KSingleWindow::getFunctionParam( TWindowLevel whichLevel,
-                                             TParamIndex whichParam ) const
+    TParamIndex whichParam ) const
 {
   return functions[ whichLevel ]->getParam( whichParam );
 }
@@ -588,32 +579,11 @@ KWindow *KSingleWindow::clone()
 {
   KSingleWindow *clonedKSWindow = new KSingleWindow( myTrace );
 
-  // KWindow clone!
   clonedKSWindow->level = level;
   clonedKSWindow->timeUnit = timeUnit;
-/*
-  clonedKSWindow->intervalTopCompose1 = vector<IntervalCompose>( intervalTopCompose1 );
-  clonedKSWindow->intervalTopCompose2 = vector<IntervalCompose>( intervalTopCompose2 );
-*/
 
   clonedKSWindow->recordsByTime = vector<MemoryTrace::iterator *>( recordsByTime );
 
-  // Semantic interval structure
-/*  clonedKSWindow->intervalComposeWorkload = vector<IntervalCompose>( intervalComposeWorkload );
-  clonedKSWindow->intervalWorkload = vector<IntervalNotThread>( intervalWorkload );
-  clonedKSWindow->intervalComposeApplication = vector<IntervalCompose>( intervalComposeApplication );
-  clonedKSWindow->intervalApplication = vector<IntervalNotThread>( intervalApplication );
-  clonedKSWindow->intervalComposeTask = vector<IntervalCompose>( intervalComposeTask );
-  clonedKSWindow->intervalTask = vector<IntervalNotThread>( intervalTask );
-  clonedKSWindow->intervalComposeThread = vector<IntervalCompose>( intervalComposeThread );
-  clonedKSWindow->intervalThread = vector<IntervalThread>( intervalThread );
-  clonedKSWindow->intervalComposeSystem = vector<IntervalCompose>( intervalComposeSystem );
-  clonedKSWindow->intervalSystem = vector<IntervalNotThread>( intervalSystem );
-  clonedKSWindow->intervalComposeNode = vector<IntervalCompose>( intervalComposeNode );
-  clonedKSWindow->intervalNode = vector<IntervalNotThread>( intervalNode );
-  clonedKSWindow->intervalComposeCPU = vector<IntervalCompose>( intervalComposeCPU );
-  clonedKSWindow->intervalCPU = vector<IntervalCPU>( intervalCPU );
-*/
   for ( int i = 0; i < COMPOSECPU + 1; i++ )
     clonedKSWindow->functions[ i ] = functions[ i ];
 
@@ -691,7 +661,7 @@ bool KDerivedWindow::setLevelFunction( TWindowLevel whichLevel,
     ( FunctionManagement<SemanticFunction>::getInstance() )->
     getFunction( whichFunction );
 
-  if( functions[ whichLevel ] == NULL )
+  if ( functions[ whichLevel ] == NULL )
     return false;
 
   return true;
@@ -769,7 +739,7 @@ TParamIndex KDerivedWindow::getFunctionNumParam( TWindowLevel whichLevel ) const
 }
 
 TParamValue KDerivedWindow::getFunctionParam( TWindowLevel whichLevel,
-                                              TParamIndex whichParam ) const
+    TParamIndex whichParam ) const
 {
   if ( whichLevel == TOPCOMPOSE1 )
     whichLevel = ( TWindowLevel ) 0;

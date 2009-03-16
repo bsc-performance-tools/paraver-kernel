@@ -27,8 +27,8 @@ class FunctionManagement
   public:
     static FunctionManagement<T> *getInstance();
     static FunctionManagement<T> *getInstance( vector<string>&,
-                                            vector<string>&,
-                                            vector<vector<T *> >& );
+                                               vector<string>&,
+                                               vector<vector<T *> >& );
 
     ~FunctionManagement();
 

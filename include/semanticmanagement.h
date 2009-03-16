@@ -1,7 +1,6 @@
 #ifndef SEMANTICMANAGEMENT_H_INCLUDED
 #define SEMANTICMANAGEMENT_H_INCLUDED
 
-
 void createSemantic();
 
 

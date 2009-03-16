@@ -36,10 +36,7 @@ bool RecordListProxy::newRecords() const
 
 RecordList *RecordListProxy::clone()
 {
-  printf("RecordListProxy CLONE\n");
-
   RecordListProxy *clonedRecordListProxy = NULL;
-//  clonedRecordListProxy->myRecordList = (static_cast<KRecordList *>myRecordList)->clone();
   clonedRecordListProxy->myRecordList = myRecordList->clone();
 
   return clonedRecordListProxy;

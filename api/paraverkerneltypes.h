@@ -120,6 +120,13 @@ enum SemanticInfoType
   BANDWIDTH_TYPE,
 };
 
+enum TSemanticGroup
+{
+  COMPOSE_GROUP = 0, DERIVED_GROUP, CPU_GROUP, NOTTHREAD_GROUP, STATE_GROUP,
+  EVENT_GROUP, COMM_GROUP, OBJECT_GROUP
+};
+
+
 /*
  * PARAVER OLD CODE
  * Record class field defines for a state record.

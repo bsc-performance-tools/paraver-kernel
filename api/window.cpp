@@ -636,3 +636,9 @@ SemanticInfoType WindowProxy::getSemanticInfoType() const
 {
   return myWindow->getSemanticInfoType();
 }
+
+void WindowProxy::getAllSemanticFunctions( TSemanticGroup whichGroup,
+    vector<string>& onVector ) const
+{
+  myKernel->getAllSemanticFunctions( whichGroup, onVector );
+}
