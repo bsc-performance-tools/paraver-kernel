@@ -128,6 +128,8 @@ class KWindow: public Window
 
     TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime );
 
+    virtual KWindow *clone();
+
   protected:
     KTrace *myTrace;
     TWindowLevel level;
@@ -226,6 +228,8 @@ class KSingleWindow: public KWindow
     }
 
     SemanticInfoType getSemanticInfoType() const;
+
+    virtual KWindow *clone();
 
   protected:
     vector<MemoryTrace::iterator *> recordsByTime;

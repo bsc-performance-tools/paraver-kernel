@@ -455,3 +455,57 @@ string KFilter::getEventValueFunction() const
 {
   return functionEventValues->getName();
 }
+
+KFilter *KFilter::clone( KWindow *clonedWindow )
+{
+  KFilter *clonedKFilter = new KFilter( clonedWindow );
+
+  // Constructor allocates FilterFunctions
+  delete clonedKFilter->functionCommFrom;
+  delete clonedKFilter->functionCommTo;
+  delete clonedKFilter->functionCommTags;
+  delete clonedKFilter->functionCommSizes;
+  delete clonedKFilter->functionBandWidth;
+  delete clonedKFilter->functionEventTypes;
+  delete clonedKFilter->functionEventValues;
+
+  // Copy values and clone FilterFunctions
+  clonedKFilter->logical = logical;
+  clonedKFilter->physical = physical;
+
+  clonedKFilter->existCommFrom = existCommFrom;
+  clonedKFilter->commFrom = vector<TObjectOrder>( commFrom );
+  clonedKFilter->functionCommFrom = functionCommFrom->clone();
+
+  clonedKFilter->opFromTo = opFromTo;
+
+  clonedKFilter->existCommTo = existCommTo;
+  clonedKFilter->commTo = vector<TObjectOrder>( commTo );
+  clonedKFilter->functionCommTo = functionCommTo->clone();
+
+  clonedKFilter->existCommTags = existCommTags;
+  clonedKFilter->commTags = vector<TCommTag>( commTags );
+  clonedKFilter->functionCommTags = functionCommTags->clone();
+
+  clonedKFilter->opTagSize = opTagSize;
+
+  clonedKFilter->existCommSize = existCommSize;
+  clonedKFilter->commSizes = vector<TCommSize>( commSizes );
+  clonedKFilter->functionCommSizes = functionCommSizes->clone();
+
+  clonedKFilter->existBandWidth = existBandWidth;
+  clonedKFilter->bandWidth = vector<TSemanticValue>( bandWidth );
+  clonedKFilter->functionBandWidth = functionBandWidth->clone();
+
+  clonedKFilter->existEventTypes = existEventTypes;
+  clonedKFilter->eventTypes = vector<TEventType>( eventTypes );
+  clonedKFilter->functionEventTypes = functionEventTypes->clone();
+
+  clonedKFilter->opTypeValue = opTypeValue;
+
+  clonedKFilter->existEventValues = existEventValues;
+  clonedKFilter->eventValues = vector<TEventValue>( eventValues );
+  clonedKFilter->functionEventValues = functionEventValues->clone();
+
+  return clonedKFilter;
+}

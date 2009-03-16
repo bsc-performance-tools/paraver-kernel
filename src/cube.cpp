@@ -18,6 +18,17 @@ Cube<ValueType>::Cube( UINT32 numPlanes, UINT32 numCols, UINT16 numStats ):
 
 
 template <typename ValueType>
+Cube<ValueType>::Cube( Cube<ValueType>& source ):
+    nplanes( source.nplanes ), ncols( source.ncols ), nstat( source.nstat ), crow( source.crow )
+{
+  typename vector< Matrix<ValueType> *>::iterator it_mat;
+
+  for ( it_mat = source.planes.begin(); it_mat != source.planes.end(); ++it_mat )
+    planes.push_back( new Matrix<ValueType>( **it_mat ) );
+}
+
+
+template <typename ValueType>
 Cube<ValueType>::~Cube()
 {
   if ( nplanes > 0 )

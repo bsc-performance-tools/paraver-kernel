@@ -257,3 +257,18 @@ void GradientColor::recalcSteps()
   greenStep = ( endGradientColor.green - beginGradientColor.green );
   blueStep = ( endGradientColor.blue - beginGradientColor.blue );
 }
+
+void GradientColor::copy( GradientColor &destiny )
+{
+  destiny.drawOutlier = drawOutlier;
+  destiny.drawOutOfScale = drawOutOfScale;
+
+  destiny.beginGradientColor = beginGradientColor;
+  destiny.endGradientColor = endGradientColor;
+  destiny.aboveOutlierColor = aboveOutlierColor;
+  destiny.belowOutlierColor = belowOutlierColor;
+
+  destiny.redStep = redStep;
+  destiny.greenStep = greenStep;
+  destiny.blueStep = blueStep;
+}

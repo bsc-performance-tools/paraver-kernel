@@ -115,6 +115,8 @@ class Histogram
     virtual string getFirstStatistic() const = 0;
     virtual string getFirstCommStatistic() const = 0;
 
+    virtual Histogram* clone( ) { return NULL; }
+
     // Specific methods of HistogramProxy
     virtual UINT16 getPosX() const
     {
@@ -241,20 +243,20 @@ class Histogram
     virtual void compute3DScale() {}
     virtual string getRowLabel( TObjectOrder whichRow ) const
     {
-      return "Unamed row";
+      return "Unnamed row";
     }
     virtual string getColumnLabel( THistogramColumn whichColumn ) const
     {
-      return "Unamed column";
+      return "Unnamed column";
     }
     virtual string getPlaneLabel( THistogramColumn whichPlane ) const
     {
-      return "Unamed plane";
+      return "Unnamed plane";
     }
     virtual void setName( const string& whichName ) {}
     virtual string getName() const
     {
-      return "Unamed histogram";
+      return "Unnamed histogram";
     }
     virtual void setCalculateAll( bool status ) {}
     virtual bool getCalculateAll() const
@@ -447,6 +449,8 @@ class HistogramProxy : public Histogram
     virtual void getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const;
     virtual string getFirstStatistic() const;
     virtual string getFirstCommStatistic() const;
+
+    virtual Histogram *clone();
 
     virtual UINT16 getPosX() const;
     virtual void setPosX( UINT16 whichPos );

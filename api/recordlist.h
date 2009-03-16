@@ -144,6 +144,10 @@ class RecordList
     virtual RecordList::iterator begin() = 0;
     virtual RecordList::iterator end() = 0;
     virtual bool newRecords() const = 0;
+    virtual RecordList *clone()
+    {
+      return NULL;
+    };
 };
 
 class RecordListProxy: public RecordList
@@ -156,6 +160,7 @@ class RecordListProxy: public RecordList
     virtual RecordList::iterator begin();
     virtual RecordList::iterator end();
     virtual bool newRecords() const;
+    virtual RecordList *clone();
 
   private:
     RecordListProxy( RecordList *whichList );

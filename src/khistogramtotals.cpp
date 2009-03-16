@@ -1,6 +1,76 @@
 #include <limits>
 #include <math.h>
 #include "khistogramtotals.h"
+#include "paraverkerneltypes.h"
+
+
+KHistogramTotals::KHistogramTotals( KHistogramTotals *& source )
+{
+  for ( size_t iPlane = 0; iPlane < source->total.size(); iPlane++ )
+  {
+    if (  source->total[ iPlane ] == NULL )
+    {
+      total.push_back( NULL );
+      average.push_back( NULL );
+      maximum.push_back( NULL );
+      minimum.push_back( NULL );
+      stdev.push_back( NULL );
+    }
+    else
+    {
+      total.push_back( new vector< vector< TSemanticValue > * >() );
+      average.push_back( new vector< vector< TSemanticValue > * >() );
+      maximum.push_back( new vector< vector< TSemanticValue > * >() );
+      minimum.push_back( new vector< vector< TSemanticValue > * >() );
+      stdev.push_back( new vector< vector< TSemanticValue > * >() );
+
+      for ( UINT16 iStat = 0; iStat < source->stats; iStat++ )
+      {
+        if ( ( *source->total[ iPlane] )[ iStat ] == NULL )
+        {
+          total[ iPlane]->push_back( NULL );
+          average[ iPlane ]->push_back( NULL );
+          maximum[ iPlane ]->push_back( NULL );
+          minimum[ iPlane ]->push_back( NULL );
+          stdev[ iPlane ]->push_back( NULL );
+        }
+        else
+        {
+          total[ iPlane]->push_back( new vector<TSemanticValue>( ( *( *source->total[ iPlane ] )[ iStat ] )));
+          average[ iPlane ]->push_back( new vector<TSemanticValue>( ( *( *source->average[ iPlane ] )[ iStat ] )));
+          maximum[ iPlane ]->push_back( new vector<TSemanticValue>( ( *( *source->maximum[ iPlane ] )[ iStat ] )));
+          minimum[ iPlane ]->push_back( new vector<TSemanticValue>( ( *( *source->minimum[ iPlane ] )[ iStat ] )));
+          stdev[ iPlane ]->push_back( new vector<TSemanticValue>( ( *( *source->stdev[ iPlane ] )[ iStat ] )));
+        }
+/*
+      ( *total[ iPlane] )[ iStat ]     = new vector<TSemanticValue>();
+      ( *average[  iPlane ] )[ iStat ] = new vector<TSemanticValue>();
+      ( *maximum[  iPlane ] )[ iStat ] = new vector<TSemanticValue>();
+      ( *minimum[  iPlane ] )[ iStat ] = new vector<TSemanticValue>();
+      ( *stdev[ iPlane ] )[ iStat ]    = new vector<TSemanticValue>();
+      for ( THistogramColumn iCol = 0; iCol < source->columns; iCol++ )
+      {
+        ( *( *total[ iPlane ] )[ iStat ] )[ iCol ] = ( *( *source->total[ iPlane ] )[ iStat ] )[ iCol ];
+        ( *( *average[ iPlane ] )[ iStat ] )[ iCol ] = ( *( *source->average[ iPlane ] )[ iStat ] )[ iCol ];
+        ( *( *maximum[ iPlane ] )[ iStat ] )[ iCol ] = ( *( *source->maximum[ iPlane ] )[ iStat ] )[ iCol ];
+        ( *( *minimum[ iPlane ] )[ iStat ] )[ iCol ] = ( *( *source->minimum[ iPlane ] )[ iStat ] )[ iCol ];
+        ( *( *stdev[ iPlane ] )[ iStat ] )[ iCol ] = ( *( *source->stdev[ iPlane ] )[ iStat ] )[ iCol ];
+      }
+*/
+      }
+    }
+  }
+
+  columns = source->columns;
+  stats = source->stats;
+
+/*
+  if ( source->sort != NULL )
+    sort = new SortIndex<TSemanticValue>( *source->sort );
+*/
+  sort = NULL;
+  nullSort = source->nullSort;
+}
 
 KHistogramTotals::KHistogramTotals( UINT16 numStat,
                                     THistogramColumn numColumns,

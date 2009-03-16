@@ -22,6 +22,12 @@ Window *Window::create( KernelConnection *whichKernel, Window *parent1, Window *
 Window::Window( KernelConnection *whichKernel ) : myKernel( whichKernel )
 {}
 
+WindowProxy::WindowProxy()
+{
+  parent1 = NULL;
+  parent2 = NULL;
+}
+
 WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
     Window( whichKernel ), myTrace( whichTrace )
 {
@@ -162,6 +168,49 @@ Window *WindowProxy::getParent( UINT16 whichParent )
       return NULL;
       break;
   }
+}
+
+
+Window *WindowProxy::clone( )
+{
+  WindowProxy *clonedWindow = new WindowProxy();
+  clonedWindow->myKernel = myKernel;
+  clonedWindow->myTrace  = myTrace;
+  clonedWindow->myWindow = myWindow->clone( );
+
+  clonedWindow->myFilter = myKernel->newFilter( myWindow->getFilter() );
+  clonedWindow->myFilter->copyEventsSection( myFilter );
+  clonedWindow->myFilter->copyCommunicationsSection( myFilter );
+
+  clonedWindow->winBeginTime = winBeginTime;
+  clonedWindow->winEndTime = winEndTime;
+  clonedWindow->computeYMaxOnInit = computeYMaxOnInit;
+  clonedWindow->yScaleComputed = yScaleComputed;
+  clonedWindow->computeYMaxOnInit = computeYMaxOnInit;
+  clonedWindow->computedMaxY = computedMaxY;
+  clonedWindow->computedMinY = computedMinY;
+  clonedWindow->maximumY = maximumY;
+  clonedWindow->minimumY = minimumY;
+  clonedWindow->name = "";
+  clonedWindow->myCodeColor = myCodeColor;
+  clonedWindow->myGradientColor = myGradientColor;
+  clonedWindow->codeColor = codeColor;
+  clonedWindow->drawModeObject = drawModeObject;
+  clonedWindow->drawModeTime = drawModeTime;
+  clonedWindow->showWindow = showWindow;
+  clonedWindow->changed = changed;
+  clonedWindow->redraw = redraw;
+  clonedWindow->commLines = commLines;
+  clonedWindow->child = child;
+  clonedWindow->posX = posX;
+  clonedWindow->posY = posY;
+  clonedWindow->width = width;
+  clonedWindow->height = height;
+
+  for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); it++ )
+    clonedWindow->myLists.push_back( (*it)->create( *it ) );
+
+  return clonedWindow;
 }
 
 
@@ -336,7 +385,8 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create )
   {
     for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); ++it )
       delete *it;
-    myLists.clear();
+    if (myLists.begin() != myLists.end()) // solo sintoma de que algo no va bien
+      myLists.clear();
   }
   for ( int i = 0; i < myWindow->getWindowLevelObjects(); i++ )
     myLists.push_back( NULL );

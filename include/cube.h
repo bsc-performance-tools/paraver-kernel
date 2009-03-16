@@ -9,6 +9,7 @@ class Cube
 {
   public:
     Cube( UINT32 numPlanes, UINT32 numCols, UINT16 numStats );
+    Cube( Cube<ValueType>& source );
     ~Cube();
 
     void init( UINT16 idStat );

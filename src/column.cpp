@@ -24,6 +24,23 @@ Column<ValueType>::Column( int currentRow, short numStats, bool *mat_finished ):
 
 
 template <typename ValueType>
+Column<ValueType>::Column( Column<ValueType>& source ):
+    nstat( source.nstat ), modified( source.modified ), n_cells( source.n_cells ), finished( source.finished )
+{
+  current_cell = new Cell<ValueType>( *source.current_cell );
+
+  for ( it_cell = source.cells.begin(); it_cell != source.cells.end(); ++it_cell )
+    cells.push_back( new Cell<ValueType>( **it_cell ) );
+
+  // Set it_cell properly.
+  typename vector<Cell<ValueType> *>::iterator it_aux;
+  it_cell = cells.begin();
+  for ( it_aux = source.cells.begin(); it_aux != source.it_cell; ++it_aux );
+    it_cell++;
+}
+
+
+template <typename ValueType>
 Column<ValueType>::~Column()
 {
   for ( unsigned int ii = 0; ii < n_cells; ii++ )

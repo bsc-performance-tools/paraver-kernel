@@ -11,6 +11,8 @@ using namespace std;
 class KHistogramTotals: public HistogramTotals
 {
   public:
+    KHistogramTotals( KHistogramTotals *& source );
+
     KHistogramTotals( UINT16 numStat, THistogramColumn numColumns,
                       THistogramColumn numPlanes );
     ~KHistogramTotals();

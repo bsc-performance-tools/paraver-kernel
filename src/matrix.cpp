@@ -34,6 +34,17 @@ Matrix<ValueType>::Matrix( TObjectOrder currentRow, UINT32 numCols, UINT16 numSt
 
 
 template <typename ValueType>
+Matrix<ValueType>::Matrix( Matrix<ValueType>& source ):
+  finished( source.finished )
+{
+  typename vector< Column<ValueType> *>::iterator it_col;
+
+  for ( it_col = source.cols.begin(); it_col != source.cols.end(); ++it_col )
+    cols.push_back( new Column<ValueType>( **it_col ));
+}
+
+
+template <typename ValueType>
 Matrix<ValueType>::~Matrix()
 {
   for ( UINT32 ii = 0; ii < ( UINT32 )cols.size(); ii++ )

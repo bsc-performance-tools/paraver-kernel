@@ -10,6 +10,7 @@ class Cell
 {
   public:
     Cell( TObjectOrder idRow, UINT16 numStats );
+    Cell( Cell< ValueType >& source );
     ~Cell();
 
     void init( UINT16 idStat );

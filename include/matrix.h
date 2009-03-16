@@ -11,6 +11,7 @@ class Matrix
   public:
     Matrix( UINT32 numCols, UINT16 numStats );
     Matrix( TObjectOrder currentRow, UINT32 numCols, UINT16 numStats );
+    Matrix( Matrix<ValueType>& source );
     ~Matrix();
 
     void init( UINT16 idStat );

@@ -18,7 +18,7 @@ class RowsTranslator
         PRECOND2: KWindows in window vector have same hierarchy.
         PRECOND3: windows vector size is 2 or 3 KWindows.
     */
-
+    RowsTranslator( const RowsTranslator& source );
     RowsTranslator( vector<KWindow *>& windows );
     ~RowsTranslator();
 
@@ -29,6 +29,9 @@ class RowsTranslator
                        TObjectOrder& iniRow,
                        TObjectOrder& endRow ) const;
     TObjectOrder totalRows() const;
+
+    RowsTranslator *clone();
+
   protected:
 
   private:
@@ -46,6 +49,7 @@ class RowsTranslator
 class ColumnTranslator
 {
   public:
+    ColumnTranslator( const ColumnTranslator& source );
     ColumnTranslator( THistogramLimit whichMin, THistogramLimit whichMax,
                       THistogramLimit whichDelta );
     ~ColumnTranslator();
@@ -175,6 +179,8 @@ class KHistogram : public Histogram
     void getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const;
     string getFirstStatistic() const;
     string getFirstCommStatistic() const;
+
+    virtual KHistogram *clone();
 
   protected:
 

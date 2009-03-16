@@ -106,3 +106,23 @@ void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
   list.insert( tmp );
   newRec = true;
 }
+
+
+RecordList *KRecordList::clone()
+{
+  printf("KRecordList CLONE\n");
+  KRecordList *clonedRecordList = new KRecordList();
+
+  clonedRecordList->newRec = newRec;
+
+  /*
+  for ( set<RLRecord,ltrecord>::iterator it = list.begin(); it != list.end(); it++ )
+  {
+    RLRecord * currentRLRecord = new RLRecord( *it );
+    clonedRecordList->list.insert( currentRLRecord );
+  }
+  */
+  clonedRecordList->list = list;
+
+  return clonedRecordList;
+}

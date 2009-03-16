@@ -54,6 +54,8 @@ class Window
     virtual TSemanticValue getMaximumY() { return 15.0; }
     virtual TSemanticValue getMinimumY() { return 0.0; }
 
+    virtual Window* clone( ) { return NULL; }
+
     //------------------------------------------------------------
     virtual Trace *getTrace() const = 0;
     virtual TWindowLevel getLevel() const = 0;
@@ -216,6 +218,8 @@ class WindowProxy: public Window
     virtual Window *getChild();
     virtual Window *getParent( UINT16 whichParent );
 
+    virtual Window *clone( );
+
     // Other
     virtual void setWindowBeginTime( TRecordTime whichTime );
     virtual void setWindowEndTime( TRecordTime whichTime );
@@ -334,6 +338,8 @@ class WindowProxy: public Window
     bool redraw;
     bool commLines;
 
+    // For Clone
+    WindowProxy();
     // For Single Window
     WindowProxy( KernelConnection *whichKernel, Trace *whichTrace );
     // For Derived Window

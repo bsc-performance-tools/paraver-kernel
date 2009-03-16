@@ -19,6 +19,14 @@ Cell<ValueType>::Cell( TObjectOrder idRow, UINT16 numStats ):
   values = new Statistic_2D<ValueType>[ nStats ];
 }
 
+template <typename ValueType>
+Cell<ValueType>::Cell( Cell< ValueType >& source ):
+    row( source.row ), nStats( source.nStats )
+{
+  values = new Statistic_2D<ValueType>[ nStats ];
+  for ( UINT16 i = 0; i < nStats; i++ )
+    values[ i ] = source.values[ i ];
+}
 
 template <typename ValueType>
 Cell<ValueType>::~Cell()

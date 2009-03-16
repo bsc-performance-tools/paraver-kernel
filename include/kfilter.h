@@ -6,7 +6,7 @@
 #include "filter.h"
 
 class KSingleWindow;
-
+class KWindow;
 
 class FilterFunction
 {
@@ -414,6 +414,8 @@ class KFilter : public Filter
     {
       return opTypeValue;
     }
+
+    KFilter *clone( KWindow *clonedWindow );
 
   private:
     KSingleWindow *window;

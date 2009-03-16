@@ -12,6 +12,18 @@
 #undef min
 #endif
 
+RowsTranslator::RowsTranslator( const RowsTranslator& source )
+{
+  for ( size_t ii = 0; ii < source.childInfo.size() - 1; ii++ )
+  {
+    childInfo.push_back( RowChildInfo() );
+    childInfo[ii].oneToOne = source.childInfo[ii].oneToOne;
+    childInfo[ii].rowChilds = vector< pair< TObjectOrder, TObjectOrder > > ( source.childInfo[ii].rowChilds );
+    childInfo[ii].numRows = source.childInfo[ii].numRows;
+  }
+}
+
+
 RowsTranslator::RowsTranslator( vector<KWindow *>& kwindows )
 {
   for ( size_t ii = 0; ii < kwindows.size() - 1; ii++ )
@@ -73,6 +85,15 @@ inline void RowsTranslator::getRowChilds( UINT16 winIndex,
 inline TObjectOrder RowsTranslator::totalRows() const
 {
   return childInfo[ 0 ].numRows;
+}
+
+
+ColumnTranslator::ColumnTranslator( const ColumnTranslator& source )
+{
+  numColumns = source.numColumns;
+  minLimit = source.minLimit;
+  maxLimit = source.maxLimit;
+  delta = source.delta;
 }
 
 
@@ -1173,4 +1194,72 @@ string KHistogram::getFirstCommStatistic() const
   vector<string> v;
   FunctionManagement<HistogramStatistic>::getInstance()->getAll( v, 0 );
   return v[ 0 ];
+}
+
+KHistogram *KHistogram::clone()
+{
+  KHistogram *clonedKHistogram = new KHistogram();
+
+  clonedKHistogram->controlWindow = controlWindow->clone();
+  clonedKHistogram->dataWindow = dataWindow->clone();
+  if ( clonedKHistogram->xtraControlWindow != NULL )
+    clonedKHistogram->xtraControlWindow = xtraControlWindow->clone();
+
+  clonedKHistogram->threeDimensions = threeDimensions;
+
+  clonedKHistogram->beginTime = beginTime;
+  clonedKHistogram->endTime = endTime;
+
+  clonedKHistogram->numRows = numRows;
+  clonedKHistogram->numCols = numCols;
+  clonedKHistogram->numPlanes = numPlanes;
+
+  clonedKHistogram->controlMin = controlMin;
+  clonedKHistogram->controlMax = controlMax;
+  clonedKHistogram->controlDelta = controlDelta;
+  clonedKHistogram->xtraControlMin = xtraControlMin;
+  clonedKHistogram->xtraControlMax = xtraControlMax;
+  clonedKHistogram->xtraControlDelta = xtraControlDelta;
+  clonedKHistogram->dataMin = dataMin;
+  clonedKHistogram->dataMax = dataMax;
+  clonedKHistogram->burstMin = burstMin;
+  clonedKHistogram->burstMax = burstMax;
+  clonedKHistogram->commSizeMin = commSizeMin;
+  clonedKHistogram->commSizeMax = commSizeMax;
+  clonedKHistogram->commTagMin = commTagMin;
+  clonedKHistogram->commTagMax = commTagMax;
+
+  clonedKHistogram->inclusive = inclusive;
+
+  for ( vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
+        it != statisticFunctions.end(); it++ )
+    clonedKHistogram->statisticFunctions.push_back( (*it)->clone() );
+
+  for ( vector<HistogramStatistic *>::iterator it = commStatisticFunctions.begin();
+        it != commStatisticFunctions.end(); it++ )
+    clonedKHistogram->commStatisticFunctions.push_back( (*it)->clone() );
+
+  clonedKHistogram->rowsTranslator = new RowsTranslator( *rowsTranslator );
+  clonedKHistogram->columnTranslator = new ColumnTranslator( *columnTranslator );
+
+  if ( clonedKHistogram->planeTranslator != NULL )
+    clonedKHistogram->planeTranslator = new ColumnTranslator( *planeTranslator );
+
+  if ( cube != NULL )
+    clonedKHistogram->cube = new Cube<TSemanticValue>( *cube );
+  if ( matrix != NULL )
+    clonedKHistogram->matrix = new Matrix<TSemanticValue>( *matrix );
+  if ( commCube != NULL )
+    clonedKHistogram->commCube = new Cube<TSemanticValue>( *commCube );
+  if ( commMatrix != NULL )
+    clonedKHistogram->commMatrix = new Matrix<TSemanticValue>( *commMatrix );
+
+  clonedKHistogram->totals = new KHistogramTotals( totals );
+  clonedKHistogram->rowTotals = new KHistogramTotals( rowTotals );
+  clonedKHistogram->commTotals = new KHistogramTotals( commTotals );
+  clonedKHistogram->rowCommTotals = new KHistogramTotals( rowCommTotals );
+
+  clonedKHistogram->orderWindows();
+
+  return clonedKHistogram;
 }

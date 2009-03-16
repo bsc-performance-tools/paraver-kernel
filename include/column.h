@@ -17,6 +17,7 @@ class Column
   public:
     Column( short numStats, bool *mat_finished );
     Column( int currentRow, short numStats, bool *mat_finished );
+    Column( Column<ValueType>& source );
     ~Column();
 
     void init( short idStat );

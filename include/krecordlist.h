@@ -23,6 +23,8 @@ class KRecordList: public RecordList
 
     // Specific for KRecordList
     virtual void insert( KWindow *window, MemoryTrace::iterator *it );
+    virtual RecordList *clone();
+
   protected:
 
   private:

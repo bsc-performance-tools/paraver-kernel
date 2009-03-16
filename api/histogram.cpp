@@ -888,6 +888,62 @@ string HistogramProxy::getUnitsLabel( const string& whichStat ) const
   return myHisto->getUnitsLabel( whichStat );
 }
 
+Histogram *HistogramProxy::clone()
+{
+  HistogramProxy *clonedHistogramProxy = new HistogramProxy( myKernel );
+
+  clonedHistogramProxy->name = name;
+
+  clonedHistogramProxy->posX = posX;
+  clonedHistogramProxy->posY = posY;
+  clonedHistogramProxy->width = width;
+  clonedHistogramProxy->height = height;
+
+  clonedHistogramProxy->horizontal = horizontal;
+  clonedHistogramProxy->hideColumns = hideColumns;
+  clonedHistogramProxy->scientificNotation = scientificNotation;
+  clonedHistogramProxy->numDecimals = numDecimals;
+  clonedHistogramProxy->thousandSep = thousandSep;
+  clonedHistogramProxy->showUnits = showUnits;
+  clonedHistogramProxy->sortColumns = sortColumns;
+  clonedHistogramProxy->sortCriteria = sortCriteria;
+  clonedHistogramProxy->minGradient = minGradient;
+  clonedHistogramProxy->maxGradient = maxGradient;
+  clonedHistogramProxy->computeScale = computeScale;
+  clonedHistogramProxy->computeGradient = computeGradient;
+  clonedHistogramProxy->showColor = showColor;
+  clonedHistogramProxy->zoom = zoom;
+  clonedHistogramProxy->futurePlane = futurePlane;
+  clonedHistogramProxy->planeMinValue = planeMinValue;
+  clonedHistogramProxy->selectedPlane = selectedPlane;
+  clonedHistogramProxy->commSelectedPlane = commSelectedPlane;
+  clonedHistogramProxy->showWindow = showWindow;
+  clonedHistogramProxy->changed = changed;
+  clonedHistogramProxy->redraw = redraw;
+  clonedHistogramProxy->recalc = recalc;
+
+  clonedHistogramProxy->winBeginTime = winBeginTime;
+  clonedHistogramProxy->winEndTime = winEndTime;
+
+    // Must store the associated proxies
+  clonedHistogramProxy->controlWindow = controlWindow->clone();
+  clonedHistogramProxy->dataWindow = dataWindow->clone();
+  if ( extraControlWindow != NULL )
+    clonedHistogramProxy->extraControlWindow = extraControlWindow->clone();
+
+  clonedHistogramProxy->calculateAll = calculateAll;
+  clonedHistogramProxy->currentStat = currentStat;
+  clonedHistogramProxy->calcStat = vector<string>( calcStat );
+  clonedHistogramProxy->commCalcStat = vector<string>( commCalcStat );
+
+  myGradientColor.copy( clonedHistogramProxy->myGradientColor );
+
+  clonedHistogramProxy->myHisto = myHisto->clone();
+
+  return clonedHistogramProxy;
+}
+
+
 UINT16 HistogramProxy::getPosX() const
 {
   return posX;

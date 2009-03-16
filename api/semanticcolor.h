@@ -84,6 +84,8 @@ class GradientColor: public SemanticColor
                    TSemanticValue minimum,
                    TSemanticValue maximum ) const;
 
+    void copy( GradientColor &destiny );
+
   private:
     bool drawOutlier;
     bool drawOutOfScale;
