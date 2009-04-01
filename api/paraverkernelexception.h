@@ -9,7 +9,7 @@ typedef int TExceptionLine;
 
 using namespace std;
 
-class ParaverKernelException : public exception
+class ParaverKernelException : public std::exception
 {
 
   public:
