@@ -34,7 +34,7 @@ RowsTranslator::RowsTranslator( vector<KWindow *>& kwindows )
     childInfo[ii].numRows = kwindows[ii]->getWindowLevelObjects();
     if ( !childInfo[ii].oneToOne )
     {
-      KTrace *auxTrace = (KTrace*)kwindows[ii]->getTrace();
+      KTrace *auxTrace = ( KTrace* )kwindows[ii]->getTrace();
       for ( TObjectOrder iRow = 0; iRow < kwindows[ii]->getWindowLevelObjects(); iRow++ )
       {
         pair< TObjectOrder, TObjectOrder > range;
@@ -65,9 +65,9 @@ inline TObjectOrder RowsTranslator::globalTranslate( UINT16 winIndex,
 
 
 inline void RowsTranslator::getRowChilds( UINT16 winIndex,
-                                   TObjectOrder rowIndex,
-                                   TObjectOrder& iniRow,
-                                   TObjectOrder& endRow ) const
+    TObjectOrder rowIndex,
+    TObjectOrder& iniRow,
+    TObjectOrder& endRow ) const
 {
   if ( childInfo[winIndex].oneToOne )
   {
@@ -115,7 +115,7 @@ ColumnTranslator::~ColumnTranslator()
 
 // returns whichValue in [min,max)
 inline bool ColumnTranslator::getColumn( THistogramLimit whichValue,
-                                  THistogramColumn& column ) const
+    THistogramColumn& column ) const
 {
   if ( whichValue < minLimit || whichValue > maxLimit )
     return false;
@@ -951,8 +951,12 @@ void KHistogram::calculate( TObjectOrder iRow,
   {
     TSemanticValue value;
 
-    data->beginTime = fromTime;
-    data->endTime = toTime;
+    data->beginTime = ( fromTime < currentWindow->getBeginTime( iRow ) ) ?
+                      currentWindow->getBeginTime( iRow ) :
+                      fromTime;
+    data->endTime = ( toTime > currentWindow->getEndTime( iRow ) ) ?
+                    currentWindow->getEndTime( iRow ) :
+                    toTime;
 
     // Communication statistics
     RecordList::iterator itComm = data->rList->begin();
@@ -1203,9 +1207,16 @@ KHistogram *KHistogram::clone()
   clonedKHistogram->controlWindow = controlWindow->clone();
   clonedKHistogram->dataWindow = dataWindow->clone();
   if ( clonedKHistogram->xtraControlWindow != NULL )
+  {
     clonedKHistogram->xtraControlWindow = xtraControlWindow->clone();
+    clonedKHistogram->threeDimensions = true;
+  }
+  else
+  {
+    clonedKHistogram->threeDimensions = false;
+  }
+  // clonedKHistogram->threeDimensions = threeDimensions;
 
-  clonedKHistogram->threeDimensions = threeDimensions;
 
   clonedKHistogram->beginTime = beginTime;
   clonedKHistogram->endTime = endTime;
@@ -1233,11 +1244,11 @@ KHistogram *KHistogram::clone()
 
   for ( vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
         it != statisticFunctions.end(); it++ )
-    clonedKHistogram->statisticFunctions.push_back( (*it)->clone() );
+    clonedKHistogram->statisticFunctions.push_back( ( *it )->clone() );
 
   for ( vector<HistogramStatistic *>::iterator it = commStatisticFunctions.begin();
         it != commStatisticFunctions.end(); it++ )
-    clonedKHistogram->commStatisticFunctions.push_back( (*it)->clone() );
+    clonedKHistogram->commStatisticFunctions.push_back( ( *it )->clone() );
 
   clonedKHistogram->rowsTranslator = new RowsTranslator( *rowsTranslator );
   clonedKHistogram->columnTranslator = new ColumnTranslator( *columnTranslator );
