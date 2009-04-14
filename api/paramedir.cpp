@@ -15,6 +15,7 @@
 using namespace std;
 
 bool multipleFiles = false;
+bool dumpTrace = false;
 Trace *trace;
 
 int main( int argc, char *argv[] )
@@ -39,6 +40,10 @@ int main( int argc, char *argv[] )
       {
         multipleFiles = true;
       }
+      else if ( argv[ currentArg ][ 1 ] == 'd' )
+      {
+        dumpTrace = true;
+      }
       currentArg++;
     }
 
@@ -56,6 +61,8 @@ int main( int argc, char *argv[] )
     }
     currentArg++;
 
+    if( dumpTrace )
+      trace->dumpFile( strTrace + ".new" );
     //Read the cfgs list and create the output files for each one
     while ( currentArg < argc )
     {

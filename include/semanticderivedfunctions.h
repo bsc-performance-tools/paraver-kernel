@@ -56,6 +56,12 @@ class DerivedAdd: public SemanticDerived
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
 
   private:
     static const bool initFromBegin = false;
@@ -116,6 +122,12 @@ class DerivedProduct: public SemanticDerived
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
 
   private:
@@ -179,6 +191,12 @@ class DerivedSubstract: public SemanticDerived
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
 
   private:
     static const bool initFromBegin = false;
@@ -239,6 +257,12 @@ class DerivedDivide: public SemanticDerived
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
 
   private:
@@ -301,6 +325,12 @@ class DerivedMaximum: public SemanticDerived
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
 
   private:
     static const bool initFromBegin = false;
@@ -361,6 +391,12 @@ class DerivedMinimum: public SemanticDerived
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
 
   private:
@@ -423,6 +459,12 @@ class DerivedDifferent: public SemanticDerived
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
 
   private:
     static const bool initFromBegin = false;
@@ -482,6 +524,12 @@ class ControlDerivedClearBy: public SemanticDerived
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
 
   private:
@@ -548,6 +596,12 @@ class ControlDerivedMaximum: public SemanticDerived
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
 
   private:
     static const bool initFromBegin = false;
@@ -608,6 +662,12 @@ class ControlDerivedAdd: public SemanticDerived
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
 
   private:

@@ -253,6 +253,11 @@ void BPlusTreeBlocks::setPhysicalReceive( TRecordTime whichTime )
   }
 }
 
+TCommID BPlusTreeBlocks::getTotalComms() const
+{
+  return communications.size();
+}
+
 TThreadOrder BPlusTreeBlocks::getSenderThread( TCommID whichComm ) const
 {
   return communications[whichComm]->senderThread;

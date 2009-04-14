@@ -24,6 +24,9 @@ LocalKernel::~LocalKernel()
 
 Trace *LocalKernel::newTrace( const string& whichFile, ProgressController *progress ) const
 {
+  if( progress == NULL )
+    return new KTrace( whichFile, NULL );
+
   return new KTrace( whichFile, ( KProgressController * ) progress->getConcrete() );
 }
 

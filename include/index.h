@@ -20,7 +20,7 @@ class Index
     ~Index();
 
     void indexRecord( TRecord *rec );
-    TRecord *findRecord( TRecordTime time );
+    TRecord *findRecord( TRecordTime time ) const;
 
   private:
     UINT32 indexStep;

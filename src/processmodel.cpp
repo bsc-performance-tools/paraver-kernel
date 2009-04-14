@@ -1,5 +1,6 @@
 #include <sstream>
 #include <iostream>
+#include <fstream>
 #include "processmodel.h"
 #include "traceheaderexception.h"
 
@@ -152,6 +153,34 @@ ProcessModel::ProcessModel( istringstream& headerInfo )
   // End inserting applications
 
   ready = true;
+}
+
+
+void ProcessModel::dumpToFile( fstream& file ) const
+{
+  ostringstream ostr;
+  ostr << fixed;
+  ostr << dec;
+  ostr.precision( 0 );
+
+  ostr << applications.size() << ':';
+  for( TApplOrder iAppl = 0; iAppl < applications.size(); ++iAppl )
+  {
+    ostr << applications[ iAppl ].tasks.size() << '(';
+    for( TTaskOrder iTask = 0; iTask < applications[ iAppl ].tasks.size(); ++iTask )
+    {
+      ostr << applications[ iAppl ].tasks[ iTask ].threads.size() << ':';
+      ostr << applications[ iAppl ].tasks[ iTask ].threads[ 0 ].nodeExecution;
+
+      if( iTask < applications[ iAppl ].tasks.size() - 1 )
+        ostr << ',';
+    }
+    ostr << ')';
+
+    if( iAppl < applications.size() - 1 )
+      ostr << ':';
+  }
+  file << ostr.str();
 }
 
 

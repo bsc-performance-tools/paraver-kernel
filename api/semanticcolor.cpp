@@ -114,11 +114,14 @@ UINT32 CodeColor::getNumColors() const
 
 rgb CodeColor::getColor( UINT32 pos ) const
 {
+  pos = pos % colors.size();
   return colors[ pos ];
 }
 
 void CodeColor::setColor( UINT32 pos, rgb color )
 {
+  if( pos >= colors.size() )
+    return;
   colors[ pos ] = color;
 }
 

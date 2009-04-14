@@ -4,6 +4,8 @@
 #include <vector>
 #include "paraverkerneltypes.h"
 
+class MemoryBlocks;
+
 using namespace std;
 
 typedef struct {} TData;
@@ -39,35 +41,13 @@ class MemoryTrace
       protected :
         TData *record;
     };
-/*
-    class ThreadIterator : virtual public iterator
-    {
-      public:
-        ThreadIterator();
-
-        virtual ~ThreadIterator();
-
-        virtual void operator++();
-        virtual void operator--();
-    };
-
-    class CPUIterator : virtual public iterator
-    {
-      public:
-        CPUIterator();
-
-        virtual ~CPUIterator();
-
-        virtual void operator++();
-        virtual void operator--();
-    };
-*/
 
     MemoryTrace()
     {}
     virtual ~MemoryTrace()
     {}
 
+    virtual void insert( MemoryBlocks *blocks ) = 0;
     virtual TTime finish( TTime headerTime ) = 0;
     virtual MemoryTrace::iterator* begin() const = 0;
     virtual MemoryTrace::iterator* end() const = 0;
@@ -82,6 +62,10 @@ class MemoryTrace
                                         TRecordTime whichTime ) const = 0;
     virtual void getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
                                      TRecordTime whichTime ) const = 0;
+
+    virtual MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it ) = 0;
+    virtual MemoryTrace::iterator *copyThreadIterator( MemoryTrace::iterator *it ) = 0;
+    virtual MemoryTrace::iterator *copyCPUIterator( MemoryTrace::iterator *it ) = 0;
 
   protected:
 

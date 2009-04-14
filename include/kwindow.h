@@ -203,6 +203,8 @@ class KSingleWindow: public KWindow
     virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const;
     virtual TParamValue getFunctionParam( TWindowLevel whichLevel,
                                           TParamIndex whichParam ) const;
+    virtual string getFunctionParamName( TWindowLevel whichLevel,
+                                         TParamIndex whichParam ) const;
 
     virtual bool initFromBegin() const;
 
@@ -320,6 +322,8 @@ class KDerivedWindow: public KWindow
     virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const;
     virtual TParamValue getFunctionParam( TWindowLevel whichLevel,
                                           TParamIndex whichParam ) const;
+    virtual string getFunctionParamName( TWindowLevel whichLevel,
+                                         TParamIndex whichParam ) const;
 
     virtual bool initFromBegin() const;
 

@@ -11,7 +11,7 @@ class LocalKernel: public KernelConnection
     LocalKernel();
     virtual ~LocalKernel();
 
-    virtual Trace *newTrace( const string& whichFile, ProgressController *progress ) const;
+    virtual Trace *newTrace( const string& whichFile, ProgressController *progress = NULL ) const;
     virtual string getPCFFileLocation( const string& traceFile ) const;
     virtual string getROWFileLocation( const string& traceFile ) const;
     virtual Window *newSingleWindow() const;

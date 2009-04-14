@@ -1,5 +1,6 @@
 #include <sstream>
 #include <iostream>
+#include <fstream>
 #include "resourcemodel.h"
 #include "traceheaderexception.h"
 
@@ -126,4 +127,27 @@ ResourceModel::ResourceModel( istringstream& headerInfo )
   ready = true;
 }
 
+void ResourceModel::dumpToFile( fstream& file ) const
+{
+  ostringstream ostr;
+  ostr << fixed;
+  ostr << dec;
+  ostr.precision( 0 );
 
+  if ( !ready )
+  {
+    ostr << '0';
+  }
+  else
+  {
+    ostr << nodes.size() << '(';
+    for ( TNodeOrder iNode = 0; iNode < nodes.size(); ++iNode )
+    {
+      ostr << nodes[ iNode ].CPUs.size();
+      if ( iNode < nodes.size() - 1 )
+        ostr << ',';
+    }
+    ostr << ')';
+  }
+  file << ostr.str();
+}

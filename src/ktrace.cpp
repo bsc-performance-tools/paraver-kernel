@@ -1,21 +1,22 @@
 #include <fstream>
 #include <sstream>
 #ifdef WIN32
-  #include <hash_set>
+#include <hash_set>
 #else
-  #include <ext/hash_set>
+#include <ext/hash_set>
 #endif
 #include "ktrace.h"
 #include "traceheaderexception.h"
-#include "tracebodyio_v1.h"
+#include "tracebodyio.h"
 #include "tracestream.h"
 #include "kprogresscontroller.h"
+#include "plaintrace.h"
 
 using namespace std;
 #ifdef WIN32
-  using namespace stdext;
+using namespace stdext;
 #else
-  using namespace __gnu_cxx;
+using namespace __gnu_cxx;
 #endif
 
 string KTrace::getFileName() const
@@ -218,6 +219,11 @@ TObjectOrder KTrace::getLast( TObjectOrder globalOrder,
 
 
 
+TCommID KTrace::getTotalComms() const
+{
+  return blocks->getTotalComms();
+}
+
 TThreadOrder KTrace::getSenderThread( TCommID whichComm ) const
 {
   return blocks->getSenderThread( whichComm );
@@ -271,14 +277,43 @@ TRecordTime KTrace::getPhysicalReceive( TCommID whichComm ) const
 
 void KTrace::dumpFile( const string& whichFile ) const
 {
-  std::fstream file( whichFile.c_str(), fstream::out | fstream::trunc );
-  // pendiente volcar cabecera
+  ostringstream ostr;
 
-  // volcado cuerpo
-  MemoryTrace::iterator *it = btree->begin();
+  ostr << fixed;
+  ostr << dec;
+  ostr.precision( 0 );
+
+  std::fstream file( whichFile.c_str(), fstream::out | fstream::trunc );
+  file << fixed;
+  file << dec;
+  file.precision( 0 );
+
+  file << "new format" << endl;
+  file << date << ':';
+  ostr << traceEndTime;
+  file << ostr.str();
+  if ( traceTimeUnit != US )
+    file << "_ns" << ':';
+  traceResourceModel.dumpToFile( file );
+  file << ':';
+  traceProcessModel.dumpToFile( file );
+  if ( communicators.begin() != communicators.end() )
+  {
+    file << ',' << communicators.size() << endl;
+    for ( vector<string>::const_iterator it = communicators.begin();
+          it != communicators.end(); ++it )
+      file << ( *it ) << endl;
+  }
+  else
+    file << endl;
+
+  MemoryTrace::iterator *it = memTrace->begin();
+  TraceBodyIO *body = TraceBodyIO::createTraceBody();
+  body->writeCommInfo( file, *this );
+
   while ( !it->isNull() )
   {
-    TraceBodyIO_v1::write( file, *this, it );
+    body->write( file, *this, it );
     ++( *it );
   }
 
@@ -290,44 +325,44 @@ void KTrace::dumpFile( const string& whichFile ) const
 // Forward MemoryTrace iterator functions
 MemoryTrace::iterator* KTrace::begin() const
 {
-  return btree->begin();
+  return memTrace->begin();
 }
 
 MemoryTrace::iterator* KTrace::end() const
 {
-  return btree->end();
+  return memTrace->end();
 }
 
 MemoryTrace::iterator* KTrace::threadBegin( TThreadOrder whichThread ) const
 {
-  return btree->threadBegin( whichThread );
+  return memTrace->threadBegin( whichThread );
 }
 
 MemoryTrace::iterator* KTrace::threadEnd( TThreadOrder whichThread ) const
 {
-  return btree->threadEnd( whichThread );
+  return memTrace->threadEnd( whichThread );
 }
 
 MemoryTrace::iterator* KTrace::CPUBegin( TCPUOrder whichCPU ) const
 {
-  return btree->CPUBegin( whichCPU );
+  return memTrace->CPUBegin( whichCPU );
 }
 
 MemoryTrace::iterator* KTrace::CPUEnd( TCPUOrder whichCPU ) const
 {
-  return btree->CPUEnd( whichCPU );
+  return memTrace->CPUEnd( whichCPU );
 }
 
 void KTrace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
                                     TRecordTime whichTime ) const
 {
-  btree->getRecordByTimeThread( listIter, whichTime );
+  memTrace->getRecordByTimeThread( listIter, whichTime );
 }
 
 void KTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
                                  TRecordTime whichTime ) const
 {
-  btree->getRecordByTimeCPU( listIter, whichTime );
+  memTrace->getRecordByTimeCPU( listIter, whichTime );
 }
 
 
@@ -338,12 +373,14 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress )
 
   ready = false;
   TraceStream *file = TraceStream::openFile( fileName );
-  if( file->canseekend() )
+  if ( file->canseekend() )
   {
     file->seekend();
-    progress->setEndLimit( file->tellg() );
+    if ( progress != NULL )
+      progress->setEndLimit( file->tellg() );
     file->seekbegin();
   }
+  TraceBodyIO *body = TraceBodyIO::createTraceBody( file );
 
 // Reading the header
   file->getline( tmpstr );
@@ -378,8 +415,11 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress )
     }
   }
 
-  if( !file->canseekend() )
-    progress->setEndLimit( traceEndTime );
+  if ( !file->canseekend() )
+  {
+    if ( progress != NULL )
+      progress->setEndLimit( traceEndTime );
+  }
 
   traceResourceModel = ResourceModel( header );
   traceProcessModel = ProcessModel( header );
@@ -415,35 +455,44 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress )
 // Reading the body
   blocks = new BPlusTreeBlocks( traceProcessModel );
 
-  btree  = new BPlusTree( traceProcessModel.totalThreads(),
-                          traceResourceModel.totalCPUs() );
+  if ( body->ordered() )
+    memTrace  = new PlainTrace( traceProcessModel.totalThreads(),
+                                traceResourceModel.totalCPUs() );
+  else
+    memTrace  = new BPlusTree( traceProcessModel.totalThreads(),
+                               traceResourceModel.totalCPUs() );
 
   hash_set<TEventType> hashevents;
   int count = 0;
   while ( !file->eof() )
   {
-    TraceBodyIO_v1::read( file, *blocks, hashevents );
-    btree->insert( blocks );
-    if( count == 500 )
+    body->read( file, *blocks, hashevents );
+    if ( count == 5000 )
     {
-      if( file->canseekend() )
-        progress->setCurrentProgress( file->tellg() );
-      else
-        progress->setCurrentProgress( blocks->getLastRecordTime() );
+      memTrace->insert( blocks );
+      if ( progress != NULL )
+      {
+        if ( file->canseekend() )
+          progress->setCurrentProgress( file->tellg() );
+        else
+          progress->setCurrentProgress( blocks->getLastRecordTime() );
+      }
       count = 0;
     }
     else
       count++;
   }
+  if ( blocks->getCountInserted() > 0 )
+    memTrace->insert( blocks );
 
-  for( hash_set<TEventType>::iterator it = hashevents.begin(); it != hashevents.end(); ++it )
+  for ( hash_set<TEventType>::iterator it = hashevents.begin(); it != hashevents.end(); ++it )
     events.insert( *it );
 
 // End reading the body
-  traceEndTime = btree->finish( traceEndTime );
+  traceEndTime = memTrace->finish( traceEndTime );
   file->close();
+  delete body;
   ready = true;
-
 }
 
 const set<TEventType>& KTrace::getLoadedEvents() const

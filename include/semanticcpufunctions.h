@@ -54,6 +54,12 @@ class ActiveThread: public SemanticCPU
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
 
   private:
     static const bool initFromBegin = false;
@@ -107,6 +113,12 @@ class ActiveThreadSign: public SemanticCPU
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
 
   private:
@@ -174,6 +186,12 @@ class ActiveThreadValues: public SemanticCPU
       }
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Values";
+    }
 
   private:
     static const bool initFromBegin = false;
@@ -236,6 +254,12 @@ class ActiveThreadValuesSign: public SemanticCPU
         tmp.push_back( 1 );
       }
       return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Values";
     }
 
   private:

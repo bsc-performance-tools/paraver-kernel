@@ -2,6 +2,7 @@
 #define MEMORYBLOCKS_H_INCLUDED
 
 #include "paraverkerneltypes.h"
+#include "memorytrace.h"
 
 // It manages the memory blocks where records are inserted.
 // It depends on MemoryTrace derived classes structures.
@@ -16,6 +17,7 @@ class MemoryBlocks
     virtual ~MemoryBlocks()
     {}
 
+    virtual TData *getLastRecord( UINT16 position ) const = 0;
     virtual void newRecord() = 0;
     virtual void setType( TRecordType whichType ) = 0;
     virtual void setTime( TRecordTime whichTime ) = 0;
@@ -53,6 +55,7 @@ class MemoryBlocks
     virtual void setPhysicalReceive( TRecordTime whichTime ) = 0;
 
     // Communication info getters
+    virtual TCommID getTotalComms() const = 0;
     virtual TThreadOrder getSenderThread( TCommID whichComm ) const = 0;
     virtual TCPUOrder getSenderCPU( TCommID whichComm ) const = 0;
     virtual TThreadOrder getReceiverThread( TCommID whichComm ) const = 0;

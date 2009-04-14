@@ -25,6 +25,8 @@ class ResourceModel
       return ready;
     }
 
+    void dumpToFile( fstream& file ) const;
+
     TNodeOrder totalNodes() const;
 
     TCPUOrder totalCPUs() const;

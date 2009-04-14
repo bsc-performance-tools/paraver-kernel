@@ -28,22 +28,22 @@ class KTrace: public Trace
     ~KTrace()
     {
       delete blocks;
-      delete btree;
+      delete memTrace;
     }
 
     string getFileName() const;
 
     MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it )
     {
-      return new BPlusTree::iterator( *( ( BPlusTree::iterator * ) it ) );
+      return memTrace->copyIterator( it );
     }
     MemoryTrace::iterator *copyThreadIterator( MemoryTrace::iterator *it )
     {
-      return new BPlusTree::ThreadIterator( *( ( BPlusTree::ThreadIterator * ) it ) );
+      return memTrace->copyThreadIterator( it );
     }
     MemoryTrace::iterator *copyCPUIterator( MemoryTrace::iterator *it )
     {
-      return new BPlusTree::CPUIterator( *( ( BPlusTree::CPUIterator * ) it ) );
+      return memTrace->copyCPUIterator( it );
     }
 
     void dumpFile( const string& whichFile ) const;
@@ -89,6 +89,7 @@ class KTrace: public Trace
 
 
     // Communication info getters
+    TCommID getTotalComms() const;
     TThreadOrder getSenderThread( TCommID whichComm ) const;
     TCPUOrder getSenderCPU( TCommID whichComm ) const;
     TThreadOrder getReceiverThread( TCommID whichComm ) const;
@@ -131,8 +132,8 @@ class KTrace: public Trace
     ResourceModel traceResourceModel;
     TTime traceEndTime;
     TTimeUnit traceTimeUnit;
-    BPlusTreeBlocks *blocks;
-    BPlusTree *btree;
+    MemoryBlocks *blocks;
+    MemoryTrace *memTrace;
 
   private:
     string fileName;

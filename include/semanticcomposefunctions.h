@@ -57,7 +57,12 @@ class ComposeAsIs: public SemanticCompose
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
   private:
     static const bool initFromBegin = false;
     static string name;
@@ -110,6 +115,12 @@ class ComposeSign: public SemanticCompose
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
 
   private:
@@ -165,6 +176,12 @@ class ComposeUnsign: public SemanticCompose
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
 
   private:
@@ -225,6 +242,12 @@ class ComposeMod: public SemanticCompose
       else if ( whichParam == DIVIDER )
         tmp.push_back( 1 );
       return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Divider";
     }
 
   private:
@@ -287,6 +310,12 @@ class ComposeModPlus1: public SemanticCompose
         tmp.push_back( 1 );
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Divider";
+    }
 
   private:
     static const bool initFromBegin = false;
@@ -346,6 +375,12 @@ class ComposeDivide: public SemanticCompose
       else if ( whichParam == DIVIDER )
         tmp.push_back( 1 );
       return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Divider";
     }
 
   private:
@@ -408,6 +443,12 @@ class ComposeProduct: public SemanticCompose
         tmp.push_back( 0 );
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Factor";
+    }
 
   private:
     static const bool initFromBegin = false;
@@ -467,6 +508,12 @@ class ComposeAdding: public SemanticCompose
       else if ( whichParam == FACTOR )
         tmp.push_back( 0 );
       return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Value";
     }
 
   private:
@@ -528,6 +575,12 @@ class ComposeSubstract: public SemanticCompose
       else if ( whichParam == FACTOR )
         tmp.push_back( 0 );
       return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Value";
     }
 
   private:
@@ -598,6 +651,16 @@ class ComposeSelectRange: public SemanticCompose
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      if( whichParam == MAXVALUE )
+        return "Max value";
+      else if( whichParam == MINVALUE )
+        return "Min value";
+      return "";
+    }
 
   private:
     static const bool initFromBegin = false;
@@ -663,6 +726,16 @@ class ComposeIsInRange: public SemanticCompose
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      if( whichParam == MAXVALUE )
+        return "Max value";
+      else if( whichParam == MINVALUE )
+        return "Min value";
+      return "";
+    }
 
   private:
     static const bool initFromBegin = false;
@@ -724,6 +797,12 @@ class ComposeIsEqual: public SemanticCompose
         tmp.push_back( 1 );
 
       return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Values";
     }
 
   private:
@@ -787,6 +866,12 @@ class ComposeIsEqualSign: public SemanticCompose
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Values";
+    }
 
   private:
     static const bool initFromBegin = false;
@@ -848,6 +933,12 @@ class ComposeStackedValue: public SemanticCompose
         throw SemanticException( SemanticException::maxParamExceeded );
 
       return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
 
     virtual vector<vector<TSemanticValue> > *getStack()
@@ -916,6 +1007,12 @@ class ComposeInStackedValue: public SemanticCompose
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Value";
+    }
 
     virtual vector<vector<TSemanticValue> > *getStack()
     {
@@ -980,6 +1077,12 @@ class ComposeNestingLevel: public SemanticCompose
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
 
   private:
     static const bool initFromBegin = true;
@@ -1038,6 +1141,12 @@ class ComposeDelta: public SemanticCompose
         throw SemanticException( SemanticException::maxParamExceeded );
 
       return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
 
   private:
@@ -1104,6 +1213,12 @@ class ComposeBurstTime: public SemanticCompose
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
 
   private:
     static const bool initFromBegin = false;
@@ -1166,6 +1281,12 @@ class ComposeJoinBursts: public SemanticCompose
         throw SemanticException( SemanticException::maxParamExceeded );
 
       return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
 
   private:

@@ -106,6 +106,8 @@ class Window
     virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const = 0;
     virtual TParamValue getFunctionParam( TWindowLevel whichLevel,
                                           TParamIndex whichParam ) const = 0;
+    virtual string getFunctionParamName( TWindowLevel whichLevel,
+                                         TParamIndex whichParam ) const = 0;
     virtual RecordList *getRecordList( TObjectOrder whichObject ) = 0;
     virtual void init( TRecordTime initialTime, TCreateList create ) = 0;
     virtual RecordList *calcNext( TObjectOrder whichObject ) = 0;
@@ -289,6 +291,8 @@ class WindowProxy: public Window
     virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const;
     virtual TParamValue getFunctionParam( TWindowLevel whichLevel,
                                           TParamIndex whichParam ) const;
+    virtual string getFunctionParamName( TWindowLevel whichLevel,
+                                         TParamIndex whichParam ) const;
     virtual RecordList *getRecordList( TObjectOrder whichObject );
     virtual void init( TRecordTime initialTime, TCreateList create );
     virtual RecordList *calcNext( TObjectOrder whichObject );

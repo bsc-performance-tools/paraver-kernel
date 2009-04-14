@@ -19,9 +19,9 @@ void Index::indexRecord( TRecord *rec )
   }
 }
 
-TRecord *Index::findRecord( TRecordTime time )
+TRecord *Index::findRecord( TRecordTime time ) const
 {
-  TTraceIndex::iterator it = baseIndex.lower_bound( time );
+  TTraceIndex::const_iterator it = baseIndex.lower_bound( time );
 
   if ( it == baseIndex.end() )
     return NULL;

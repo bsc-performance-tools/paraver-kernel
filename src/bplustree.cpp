@@ -331,14 +331,14 @@ UINT32 BPlusLeaf::linkRecords( TRecord **ini,
 
 void BPlusLeaf::print( string indent )
 {
-/*  UINT16 used = getUsed();
+  /*  UINT16 used = getUsed();
 
-  cout << indent << "<" << ( int )used << endl;
-  for ( UINT16 ii = 0; ii < used - 1; ii++ )
-    cout << indent << records[ ii ];
+    cout << indent << "<" << ( int )used << endl;
+    for ( UINT16 ii = 0; ii < used - 1; ii++ )
+      cout << indent << records[ ii ];
 
-  cout << indent << records[ used - 1 ];
-  cout << indent << ">" << endl << endl;*/
+    cout << indent << records[ used - 1 ];
+    cout << indent << ">" << endl << endl;*/
 }
 
 // ojo, no se pueden hacer dos partial deletes seguidos, porque es la
@@ -846,12 +846,12 @@ TTime BPlusTree::finish( TTime headerTime )
 }
 
 
-void BPlusTree::insert( BPlusTreeBlocks *blocks )
+void BPlusTree::insert( MemoryBlocks *blocks )
 {
   TRecord *tmp;
   for ( UINT16 i = 0; i < blocks->getCountInserted(); i++ )
   {
-    tmp = blocks->getLastRecord( i );
+    tmp = ( TRecord * )blocks->getLastRecord( i );
     insert( tmp );
   }
 
@@ -1267,3 +1267,15 @@ MemoryTrace::iterator* BPlusTree::CPUEnd( TCPUOrder whichCPU ) const
   return new BPlusTree::CPUIterator( ( TRecord * )&emptyCPUEnd[ whichCPU ] );
 }
 
+MemoryTrace::iterator *BPlusTree::copyIterator( MemoryTrace::iterator *it )
+{
+  return new BPlusTree::iterator( *( ( BPlusTree::iterator * ) it ) );
+}
+MemoryTrace::iterator *BPlusTree::copyThreadIterator( MemoryTrace::iterator *it )
+{
+  return new BPlusTree::ThreadIterator( *( ( BPlusTree::ThreadIterator * ) it ) );
+}
+MemoryTrace::iterator *BPlusTree::copyCPUIterator( MemoryTrace::iterator *it )
+{
+  return new BPlusTree::CPUIterator( *( ( BPlusTree::CPUIterator * ) it ) );
+}

@@ -1,19 +1,24 @@
-#ifndef TRACEBODYIO_V1_H_INCLUDED
-#define TRACEBODYIO_V1_H_INCLUDED
+#ifndef TRACEBODYIO_V2_H_INCLUDED
+#define TRACEBODYIO_V2_H_INCLUDED
 
 #include "tracebodyio.h"
 #include "tracestream.h"
 
 using namespace std;
 
-// Paraver trace old format file
-class TraceBodyIO_v1 : public TraceBodyIO
+// Paraver trace NEW format file
+class TraceBodyIO_v2 : public TraceBodyIO
 {
   public:
-    static const UINT8 StateRecord = '1';
-    static const UINT8 EventRecord = '2';
-    static const UINT8 CommRecord = '3';
-    static const UINT8 GlobalCommRecord = '4';
+    static const UINT8 StateBeginRecord = '1';
+    static const UINT8 StateEndRecord = '2';
+    static const UINT8 EventRecord = '3';
+    static const UINT8 CommRecord = 'd';
+    static const UINT8 LogicalSendRecord = '4';
+    static const UINT8 LogicalRecvRecord = '5';
+    static const UINT8 PhysicalSendRecord = '6';
+    static const UINT8 PhysicalRecvRecord = '7';
+    static const UINT8 GlobalCommRecord = '8';
 
     bool ordered() const;
     void read( TraceStream *file, MemoryBlocks& records,
@@ -21,11 +26,11 @@ class TraceBodyIO_v1 : public TraceBodyIO
     void write( fstream& whichStream,
                 const KTrace& whichTrace,
                 MemoryTrace::iterator *record ) const;
-    void writeCommInfo( fstream& whichStream,
-                        const KTrace& whichTrace ) const;
     void writeEvents( fstream& whichStream,
                       const KTrace& whichTrace,
                       vector<MemoryTrace::iterator *>& recordList ) const;
+    void writeCommInfo( fstream& whichStream,
+                        const KTrace& whichTrace ) const;
   protected:
 
   private:
@@ -36,29 +41,27 @@ class TraceBodyIO_v1 : public TraceBodyIO
     void readGlobalComm( const string& line, MemoryBlocks& records ) const;
     bool readCommon( istringstream& line,
                      TCPUOrder& CPU,
-                     TApplOrder& appl,
-                     TTaskOrder& task,
                      TThreadOrder& thread,
                      TRecordTime& time ) const;
 
     bool writeState( string& line,
                      const KTrace& whichTrace,
-                     const MemoryTrace::iterator *record ) const;
+                     MemoryTrace::iterator *record ) const;
     bool writeEvent( string& line,
                      const KTrace& whichTrace,
-                     const MemoryTrace::iterator *record,
+                     MemoryTrace::iterator *record,
                      bool needCommons = true ) const;
-    bool writeComm( string& line,
-                    const KTrace& whichTrace,
-                    const MemoryTrace::iterator *record ) const;
+    bool writeCommRecord( string& line,
+                          const KTrace& whichTrace,
+                          MemoryTrace::iterator *record ) const;
     bool writeGlobalComm( string& line,
                           const KTrace& whichTrace,
-                          const MemoryTrace::iterator *record ) const;
+                          MemoryTrace::iterator *record ) const;
     void writeCommon( ostringstream& line,
                       const KTrace& whichTrace,
-                      const MemoryTrace::iterator *record ) const;
+                      MemoryTrace::iterator *record ) const;
 
 };
 
 
-#endif // TRACEBODYIO_V1_H_INCLUDED
+#endif // TRACEBODYIO_V2_H_INCLUDED

@@ -517,6 +517,10 @@
 			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
+		<Unit filename="include/plaintrace.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="include/processmodel.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -696,6 +700,10 @@
 			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
+		<Unit filename="include/tracebodyio_v2.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="include/traceheaderexception.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -841,6 +849,10 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="src/plaintrace.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="src/processmodel.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -888,7 +900,15 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="src/tracebodyio.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="src/tracebodyio_v1.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/tracebodyio_v2.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>

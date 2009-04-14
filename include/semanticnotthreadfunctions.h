@@ -50,6 +50,12 @@ class Adding: public SemanticNotThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
 
   private:
     static const bool initFromBegin = false;
@@ -103,6 +109,12 @@ class AddingSign: public SemanticNotThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
 
   private:
@@ -158,6 +170,12 @@ class Average: public SemanticNotThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
 
   private:
@@ -218,6 +236,12 @@ class Maximum: public SemanticNotThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
 
   private:
     static const bool initFromBegin = false;
@@ -276,6 +300,12 @@ class Minimum: public SemanticNotThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
 
   private:
@@ -336,6 +366,12 @@ class Activity: public SemanticNotThread
         tmp.push_back( 1 );
 
       return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Values";
     }
 
   private:
@@ -398,6 +434,12 @@ class InActivity: public SemanticNotThread
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Values";
+    }
 
   private:
     static const bool initFromBegin = false;
@@ -457,6 +499,12 @@ class NotThreadMode: public SemanticNotThread
         throw SemanticException( SemanticException::maxParamExceeded );
 
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
 
   private:
@@ -523,6 +571,12 @@ class ObjectI: public SemanticNotThread
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Object";
+    }
 
   private:
     static const bool initFromBegin = false;
@@ -583,6 +637,12 @@ class AddObjectsI: public SemanticNotThread
         tmp.push_back( 0 );
 
       return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Objects";
     }
 
   private:

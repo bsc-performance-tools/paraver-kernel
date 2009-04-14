@@ -22,7 +22,10 @@ class SemanticFunction
     void setDefaultParam()
     {
       for ( TParamIndex i = 0; i < getMaxParam(); i++ )
+      {
         parameters.push_back( getDefaultParam( i ) );
+        parametersName.push_back( getDefaultParamName( i ) );
+      }
     }
 
     const bool getInitFromBegin()
@@ -45,6 +48,13 @@ class SemanticFunction
       parameters[whichParam] = newValue;
     }
 
+    virtual string getParamName( TParamIndex whichParam ) const
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return parametersName[whichParam];
+    }
+
     virtual TSemanticValue execute( const SemanticInfo *info ) = 0;
 
     virtual void init( KWindow *whichWindow ) = 0;
@@ -65,8 +75,10 @@ class SemanticFunction
 
   protected:
     vector<TParamValue> parameters;
+    vector<string> parametersName;
 
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) = 0;
+    virtual string getDefaultParamName( TParamIndex whichParam ) = 0;
 
     // Must initialize from the beginning of the trace
     virtual const bool getMyInitFromBegin() = 0;

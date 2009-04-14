@@ -26,6 +26,8 @@ class ProcessModel
       return ready;
     }
 
+    void dumpToFile( fstream& file ) const;
+
     TApplOrder totalApplications() const;
 
     TTaskOrder totalTasks() const;

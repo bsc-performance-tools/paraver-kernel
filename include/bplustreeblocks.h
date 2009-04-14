@@ -35,7 +35,7 @@ namespace bplustree
         communications.clear();
       }
 
-      virtual TRecord *getLastRecord( UINT16 position ) const
+      virtual TData *getLastRecord( UINT16 position ) const
       {
         return lastRecords[ position ];
       }
@@ -83,6 +83,7 @@ namespace bplustree
       virtual void setPhysicalReceive( TRecordTime whichTime );
 
       // Communication info getters
+      virtual TCommID getTotalComms() const;
       virtual TThreadOrder getSenderThread( TCommID whichComm ) const;
       virtual TCPUOrder getSenderCPU( TCommID whichComm ) const;
       virtual TThreadOrder getReceiverThread( TCommID whichComm ) const;

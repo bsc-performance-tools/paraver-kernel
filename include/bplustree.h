@@ -15,7 +15,7 @@ namespace bplustree
 // Tuning this parameters changes tree performance.
   static const UINT16 NODE_SIZE = 3;
   static const UINT16 LEAF_SIZE = 4;
-  static const UINT32 UNLOAD_RECORDS_THRESHOLD = 1000000;
+  static const UINT32 UNLOAD_RECORDS_THRESHOLD = 10000000;
   static const UINT32 UNLOAD_PERCENT = 30;
 
   class UnloadedTrace
@@ -241,7 +241,7 @@ namespace bplustree
                  const UINT32 upercent = UNLOAD_PERCENT );
       ~BPlusTree();
       virtual TTime finish( TTime headerTime );
-      void insert( BPlusTreeBlocks *blocks );
+      void insert( MemoryBlocks *blocks );
 
       inline  BPlusNode *getIni()
       {
@@ -268,6 +268,10 @@ namespace bplustree
       void partialDelete();
       void unload( INT32 numrecords = -1 );
 
+      MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it );
+      MemoryTrace::iterator *copyThreadIterator( MemoryTrace::iterator *it );
+      MemoryTrace::iterator *copyCPUIterator( MemoryTrace::iterator *it );
+
     protected:
 
     public:
@@ -275,7 +279,7 @@ namespace bplustree
       /**************************************************************************
        * MemoryTrace Inherited Iterator.
        **************************************************************************/
-    class iterator : public MemoryTrace::iterator
+      class iterator : public MemoryTrace::iterator
       {
         public:
           iterator()
@@ -303,7 +307,7 @@ namespace bplustree
 
       };
 
-    class ThreadIterator : public BPlusTree::iterator
+      class ThreadIterator : public BPlusTree::iterator
       {
         public:
           ThreadIterator()
@@ -322,7 +326,7 @@ namespace bplustree
           virtual void operator--();
       };
 
-    class CPUIterator : public BPlusTree::iterator
+      class CPUIterator : public BPlusTree::iterator
       {
         public:
           CPUIterator()

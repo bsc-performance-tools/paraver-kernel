@@ -5,8 +5,13 @@
 
 using namespace std;
 
+bool TraceBodyIO_v1::ordered() const
+{
+  return false;
+}
+
 void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
-                           hash_set<TEventType>& events )
+                           hash_set<TEventType>& events ) const
 {
   string line;
 
@@ -43,7 +48,7 @@ void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
 
 void TraceBodyIO_v1::write( fstream& whichStream,
                             const KTrace& whichTrace,
-                            const MemoryTrace::iterator *record )
+                            MemoryTrace::iterator *record ) const
 {
   string line;
   bool writeReady;
@@ -77,7 +82,7 @@ void TraceBodyIO_v1::write( fstream& whichStream,
 
 void TraceBodyIO_v1::writeEvents( fstream& whichStream,
                                   const KTrace& whichTrace,
-                                  const vector<MemoryTrace::iterator *>& recordList )
+                                  vector<MemoryTrace::iterator *>& recordList ) const
 {
   string line;
 
@@ -95,11 +100,14 @@ void TraceBodyIO_v1::writeEvents( fstream& whichStream,
   whichStream << line << endl;
 }
 
+void TraceBodyIO_v1::writeCommInfo( fstream& whichStream,
+                                    const KTrace& whichTrace ) const
+{}
 
 /**********************
   Read line functions
 ***********************/
-void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records )
+void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records ) const
 {
   string tmpstring;
   TCPUOrder CPU;
@@ -174,7 +182,7 @@ void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records )
 
 
 void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records,
-                                hash_set<TEventType>& events )
+                                hash_set<TEventType>& events ) const
 {
   string tmpstring;
   TCPUOrder CPU;
@@ -237,7 +245,7 @@ void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records,
 }
 
 
-void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records )
+void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records ) const
 {
   string tmpstring;
   TCPUOrder CPU;
@@ -338,7 +346,7 @@ void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records )
 }
 
 
-void TraceBodyIO_v1::readGlobalComm( const string& line, MemoryBlocks& records )
+void TraceBodyIO_v1::readGlobalComm( const string& line, MemoryBlocks& records ) const
 {}
 
 
@@ -347,7 +355,7 @@ bool TraceBodyIO_v1::readCommon( istringstream& line,
                                  TApplOrder& appl,
                                  TTaskOrder& task,
                                  TThreadOrder& thread,
-                                 TRecordTime& time )
+                                 TRecordTime& time ) const
 {
   string tmpstring;
 
@@ -395,7 +403,7 @@ bool TraceBodyIO_v1::readCommon( istringstream& line,
 ***************************/
 bool TraceBodyIO_v1::writeState( string& line,
                                  const KTrace& whichTrace,
-                                 const MemoryTrace::iterator *record )
+                                 const MemoryTrace::iterator *record ) const
 {
   if ( record->getType() & END )
     return false;
@@ -414,7 +422,7 @@ bool TraceBodyIO_v1::writeState( string& line,
 bool TraceBodyIO_v1::writeEvent( string& line,
                                  const KTrace& whichTrace,
                                  const MemoryTrace::iterator *record,
-                                 bool needCommons )
+                                 bool needCommons ) const
 {
   ostringstream ostr;
 
@@ -432,7 +440,7 @@ bool TraceBodyIO_v1::writeEvent( string& line,
 
 bool TraceBodyIO_v1::writeComm( string& line,
                                 const KTrace& whichTrace,
-                                const MemoryTrace::iterator *record )
+                                const MemoryTrace::iterator *record ) const
 {
   ostringstream ostr;
   TCommID commID;
@@ -468,7 +476,7 @@ bool TraceBodyIO_v1::writeComm( string& line,
 
 bool TraceBodyIO_v1::writeGlobalComm( string& line,
                                       const KTrace& whichTrace,
-                                      const MemoryTrace::iterator *record )
+                                      const MemoryTrace::iterator *record ) const
 {
   return true;
 }
@@ -476,7 +484,7 @@ bool TraceBodyIO_v1::writeGlobalComm( string& line,
 
 void TraceBodyIO_v1::writeCommon( ostringstream& line,
                                   const KTrace& whichTrace,
-                                  const MemoryTrace::iterator *record )
+                                  const MemoryTrace::iterator *record ) const
 {
   TApplOrder appl;
   TTaskOrder task;

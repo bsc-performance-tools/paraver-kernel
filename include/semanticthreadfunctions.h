@@ -69,6 +69,12 @@ class StateAsIs: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
@@ -127,6 +133,12 @@ class Useful: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
@@ -181,6 +193,12 @@ class StateSign: public SemanticThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
@@ -247,6 +265,12 @@ class GivenState: public SemanticThread
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "State values";
+    }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
@@ -308,6 +332,12 @@ class InState: public SemanticThread
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "State values";
+    }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
@@ -368,6 +398,12 @@ class NotInState: public SemanticThread
         tmp.push_back( 1 );
 
       return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "State values";
     }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
@@ -434,6 +470,12 @@ class StateRecordDuration: public SemanticThread
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "State values";
+    }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
@@ -497,6 +539,12 @@ class LastEventType: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
@@ -555,6 +603,12 @@ class LastEventValue: public SemanticThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
   private:
     static const TRecordType  validateMask = EVENT;
@@ -615,6 +669,12 @@ class LastEventValueWOBursts: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
@@ -674,6 +734,12 @@ class NextEventType: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
@@ -732,6 +798,12 @@ class NextEventValue: public SemanticThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
   private:
     static const TRecordType  validateMask = EVENT;
@@ -794,6 +866,12 @@ class AverageNextEventValue: public SemanticThread
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Factor";
+    }
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
@@ -854,6 +932,12 @@ class AverageLastEventValue: public SemanticThread
         tmp.push_back( 1 );
 
       return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Factor";
     }
   private:
     static const TRecordType  validateMask = EVENT;
@@ -920,6 +1004,12 @@ class GivenEventValue: public SemanticThread
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Event values";
+    }
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
@@ -981,6 +1071,12 @@ class InEventValue: public SemanticThread
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Event values";
+    }
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
@@ -1039,6 +1135,12 @@ class IntervalBetweenEvents: public SemanticThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
   private:
     static const TRecordType  validateMask = EVENT;
@@ -1100,6 +1202,12 @@ class NotInEventValue: public SemanticThread
         tmp.push_back( 1 );
 
       return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Event values";
     }
   private:
     static const TRecordType  validateMask = EVENT;
@@ -1165,6 +1273,16 @@ class InEventRange: public SemanticThread
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      if( whichParam == MINVALUE )
+        return "Min value";
+      else if( whichParam == MAXVALUE )
+        return "Max value";
+      return "";
+    }
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
@@ -1223,6 +1341,12 @@ class EventBytes: public SemanticThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
   private:
     static const TRecordType  validateMask = EVENT;
@@ -1287,6 +1411,12 @@ class LastTag: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
   private:
     static const TRecordType  validateMask = COMM + PHY + RECV;
     static const bool         initFromBegin = false;
@@ -1345,6 +1475,12 @@ class CommSize: public SemanticThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
   private:
     static const TRecordType  validateMask = COMM;
@@ -1405,6 +1541,12 @@ class CommRecvPartner: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
   private:
     static const TRecordType  validateMask = COMM + LOG + RECV;
     static const bool         initFromBegin = false;
@@ -1463,6 +1605,12 @@ class CommPartner: public SemanticThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
   private:
     static const TRecordType  validateMask = COMM + LOG + SEND;
@@ -1523,6 +1671,12 @@ class LastSendDuration: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
   private:
     static const TRecordType  validateMask = COMM + LOG + SEND;
     static const bool         initFromBegin = false;
@@ -1581,6 +1735,12 @@ class NextRecvDuration: public SemanticThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
   private:
     static const TRecordType  validateMask = COMM + LOG + RECV;
@@ -1641,6 +1801,12 @@ class SendBytesInTransit: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
   private:
     static const TRecordType  validateMask = COMM + SEND + RRECV;
     static const bool         initFromBegin = true;
@@ -1695,6 +1861,12 @@ class SendMessagesInTransit: public SemanticThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
   private:
     static const TRecordType  validateMask = COMM + SEND + RRECV;
@@ -1760,6 +1932,12 @@ class SendBandWidth: public SemanticThread
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Byte Factor";
+    }
   private:
     static const TRecordType  validateMask = COMM + SEND + RRECV;
     static const bool         initFromBegin = true;
@@ -1821,6 +1999,12 @@ class RecvBytesInTransit: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
   private:
     static const TRecordType  validateMask = COMM + RECV + RSEND;
     static const bool         initFromBegin = true;
@@ -1875,6 +2059,12 @@ class RecvMessagesInTransit: public SemanticThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
   private:
     static const TRecordType  validateMask = COMM + RECV + RSEND;
@@ -1940,6 +2130,12 @@ class RecvBandWidth: public SemanticThread
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Byte factor";
+    }
   private:
     static const TRecordType  validateMask = COMM + RECV + RSEND;
     static const bool         initFromBegin = true;
@@ -1996,6 +2192,12 @@ class RecvNegativeMessages: public SemanticThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
   private:
     static const TRecordType  validateMask = COMM + RECV + RSEND;
@@ -2056,6 +2258,12 @@ class RecvNegativeBytes: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
   private:
     static const TRecordType  validateMask = COMM + RECV + RSEND;
     static const bool         initFromBegin = true;
@@ -2110,6 +2318,12 @@ class NumberReceives: public SemanticThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
   private:
     static const TRecordType  validateMask = COMM + RECV;
@@ -2169,6 +2383,12 @@ class NumberReceiveBytes: public SemanticThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
   private:
     static const TRecordType  validateMask = COMM + RECV;
@@ -2233,6 +2453,12 @@ class ApplicationID: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
@@ -2291,6 +2517,12 @@ class TaskID: public SemanticThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
@@ -2351,6 +2583,12 @@ class ThreadID: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
@@ -2410,6 +2648,12 @@ class NodeID: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
@@ -2468,6 +2712,12 @@ class CPUID: public SemanticThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
     }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
@@ -2530,6 +2780,12 @@ class InApplicationID: public SemanticThread
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Appl ID";
+    }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
@@ -2590,6 +2846,12 @@ class InTaskID: public SemanticThread
         tmp.push_back( 1 );
 
       return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Task ID";
     }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
@@ -2652,6 +2914,12 @@ class InThreadID: public SemanticThread
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Thread ID";
+    }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
@@ -2713,6 +2981,12 @@ class InNodeID: public SemanticThread
 
       return tmp;
     }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Node ID";
+    }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
     static const bool         initFromBegin = false;
@@ -2773,6 +3047,12 @@ class InCPUID: public SemanticThread
         tmp.push_back( 1 );
 
       return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "CPU ID";
     }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
