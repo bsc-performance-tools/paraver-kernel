@@ -892,6 +892,9 @@ Histogram *HistogramProxy::clone()
 {
   HistogramProxy *clonedHistogramProxy = new HistogramProxy( myKernel );
 
+  delete clonedHistogramProxy->myHisto;
+  clonedHistogramProxy->myHisto = myHisto->clone();
+
   clonedHistogramProxy->name = name;
 
   clonedHistogramProxy->posX = posX;
@@ -926,10 +929,12 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->winEndTime = winEndTime;
 
     // Must store the associated proxies
-  clonedHistogramProxy->controlWindow = controlWindow->clone();
-  clonedHistogramProxy->dataWindow = dataWindow->clone();
+  clonedHistogramProxy->setControlWindow( controlWindow->clone() );
+  clonedHistogramProxy->setDataWindow( dataWindow->clone() );
   if ( extraControlWindow != NULL )
-    clonedHistogramProxy->extraControlWindow = extraControlWindow->clone();
+  {
+    clonedHistogramProxy->setExtraControlWindow( extraControlWindow->clone() );
+  }
 
   clonedHistogramProxy->calculateAll = calculateAll;
   clonedHistogramProxy->currentStat = currentStat;
@@ -937,8 +942,6 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->commCalcStat = vector<string>( commCalcStat );
 
   myGradientColor.copy( clonedHistogramProxy->myGradientColor );
-
-  clonedHistogramProxy->myHisto = myHisto->clone();
 
   return clonedHistogramProxy;
 }

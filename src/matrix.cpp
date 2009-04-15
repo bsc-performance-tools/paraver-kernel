@@ -40,7 +40,10 @@ Matrix<ValueType>::Matrix( Matrix<ValueType>& source ):
   typename vector< Column<ValueType> *>::iterator it_col;
 
   for ( it_col = source.cols.begin(); it_col != source.cols.end(); ++it_col )
-    cols.push_back( new Column<ValueType>( **it_col ));
+    if ( *it_col != NULL )
+      cols.push_back( new Column<ValueType>( **it_col ));
+    else
+      cols.push_back( NULL );
 }
 
 

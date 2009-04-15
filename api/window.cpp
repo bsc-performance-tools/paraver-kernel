@@ -178,9 +178,21 @@ Window *WindowProxy::clone( )
   clonedWindow->myTrace  = myTrace;
   clonedWindow->myWindow = myWindow->clone( );
 
-  clonedWindow->myFilter = myKernel->newFilter( myWindow->getFilter() );
-  clonedWindow->myFilter->copyEventsSection( myFilter );
-  clonedWindow->myFilter->copyCommunicationsSection( myFilter );
+  if ( clonedWindow->isDerivedWindow())
+  {
+    clonedWindow->parent1 = parent1->clone();
+    clonedWindow->myWindow->setParent( 0, clonedWindow->parent1->getConcrete() );
+    clonedWindow->parent2 = parent2->clone();
+    clonedWindow->myWindow->setParent( 1, clonedWindow->parent2->getConcrete() );
+    clonedWindow->parent1->setChild( clonedWindow );
+    clonedWindow->parent2->setChild( clonedWindow );
+  }
+  else
+  {
+    clonedWindow->myFilter = myKernel->newFilter( myWindow->getFilter() );
+    clonedWindow->myFilter->copyEventsSection( myFilter );
+    clonedWindow->myFilter->copyCommunicationsSection( myFilter );
+  }
 
   clonedWindow->winBeginTime = winBeginTime;
   clonedWindow->winEndTime = winEndTime;
@@ -191,7 +203,7 @@ Window *WindowProxy::clone( )
   clonedWindow->computedMinY = computedMinY;
   clonedWindow->maximumY = maximumY;
   clonedWindow->minimumY = minimumY;
-  clonedWindow->name = "";
+  clonedWindow->name = name + "_clone";
   clonedWindow->myCodeColor = myCodeColor;
   clonedWindow->myGradientColor = myGradientColor;
   clonedWindow->codeColor = codeColor;
@@ -207,9 +219,10 @@ Window *WindowProxy::clone( )
   clonedWindow->width = width;
   clonedWindow->height = height;
 
+/*
   for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); it++ )
     clonedWindow->myLists.push_back( (*it)->create( *it ) );
-
+*/
   return clonedWindow;
 }
 

@@ -292,7 +292,7 @@ class KDerivedWindow: public KWindow
 
       parents.push_back( (KWindow*)window1 );
       parents.push_back( (KWindow*)window2 );
-      setup();
+      setup( NULL );
     }
 
     virtual ~KDerivedWindow()
@@ -355,6 +355,8 @@ class KDerivedWindow: public KWindow
 
     SemanticInfoType getSemanticInfoType() const;
 
+    virtual KWindow *clone();
+
   protected:
     vector<KWindow *> parents;
     vector<TSemanticValue> factor;
@@ -365,7 +367,7 @@ class KDerivedWindow: public KWindow
     SemanticFunction *functions[ 3 ];
 
   private:
-    void setup();
+    void setup( KTrace * whichTrace );
 };
 
 #endif // KWINDOW_H_INCLUDED

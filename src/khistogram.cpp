@@ -1204,11 +1204,11 @@ KHistogram *KHistogram::clone()
 {
   KHistogram *clonedKHistogram = new KHistogram();
 
-  clonedKHistogram->controlWindow = controlWindow->clone();
-  clonedKHistogram->dataWindow = dataWindow->clone();
+  clonedKHistogram->controlWindow = NULL;
+  clonedKHistogram->dataWindow = NULL;
   if ( clonedKHistogram->xtraControlWindow != NULL )
   {
-    clonedKHistogram->xtraControlWindow = xtraControlWindow->clone();
+    clonedKHistogram->xtraControlWindow = NULL;
     clonedKHistogram->threeDimensions = true;
   }
   else

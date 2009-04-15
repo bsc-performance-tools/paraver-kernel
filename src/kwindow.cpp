@@ -604,9 +604,12 @@ KWindow *KSingleWindow::clone()
  *  KDerivedWindow implementation
  **********************************************************************/
 
-void KDerivedWindow::setup()
+void KDerivedWindow::setup( KTrace* whichTrace )
 {
-  myTrace = ( KTrace* )parents[ 0 ]->getTrace();
+  if ( whichTrace == NULL )
+    myTrace = ( KTrace* )parents[ 0 ]->getTrace();
+  else
+    myTrace = whichTrace;
 
   if ( functions[ 0 ] == NULL )
     functions[ 0 ] = new ComposeAsIs();
@@ -865,7 +868,7 @@ void KDerivedWindow::setParent( UINT16 whichParent, Window *whichWindow )
 {
   parents[ whichParent ] = ( KWindow* )whichWindow;
   if ( parents[ 0 ] != NULL && parents[ 1 ] != NULL )
-    setup();
+    setup( NULL );
 }
 
 Window *KDerivedWindow::getParent( UINT16 whichParent ) const
@@ -886,6 +889,27 @@ TWindowLevel KDerivedWindow::getLevel() const
   return tmp;
 }
 
+KWindow *KDerivedWindow::clone()
+{
+  KDerivedWindow *clonedKDerivedWindow = new KDerivedWindow();
+
+  for (size_t i = 0; i < parents.size(); ++i )
+  {
+    clonedKDerivedWindow->parents[i] = NULL;
+    clonedKDerivedWindow->factor[i] = factor[ i ];
+  }
+
+  for (UINT16 i = 0; i < 3; i++ )
+    clonedKDerivedWindow->functions[ i ] = functions[ i ];
+
+  clonedKDerivedWindow->setup( myTrace );
+  clonedKDerivedWindow->level = getLevel();
+  clonedKDerivedWindow->timeUnit = timeUnit;
+
+  return clonedKDerivedWindow;
+}
+
+
 SemanticInfoType KDerivedWindow::getSemanticInfoType() const
 {
   if ( functions[ 0 ]->getSemanticInfoType() != SAME_TYPE )
@@ -895,3 +919,5 @@ SemanticInfoType KDerivedWindow::getSemanticInfoType() const
 
   return functions[ 2 ]->getSemanticInfoType();
 }
+
+

@@ -24,7 +24,10 @@ Cube<ValueType>::Cube( Cube<ValueType>& source ):
   typename vector< Matrix<ValueType> *>::iterator it_mat;
 
   for ( it_mat = source.planes.begin(); it_mat != source.planes.end(); ++it_mat )
-    planes.push_back( new Matrix<ValueType>( **it_mat ) );
+    if ( *it_mat != NULL )
+      planes.push_back( new Matrix<ValueType>( **it_mat ) );
+    else
+      planes.push_back( NULL );
 }
 
 
