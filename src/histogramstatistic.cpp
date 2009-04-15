@@ -820,7 +820,7 @@ TSemanticValue StatTime::execute( CalculateData *data )
 {
   TRecordTime begin;
   TRecordTime end;
-
+/*
   begin = data->beginTime > controlWin->getBeginTime( data->controlRow ) ?
           data->beginTime : controlWin->getBeginTime( data->controlRow );
 
@@ -828,6 +828,9 @@ TSemanticValue StatTime::execute( CalculateData *data )
         data->endTime : controlWin->getEndTime( data->controlRow );
 
   return end - begin;
+*/
+
+  return data->endTime - data->beginTime;
 }
 
 TSemanticValue StatTime::finishRow( TSemanticValue cellValue,
