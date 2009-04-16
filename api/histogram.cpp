@@ -6,6 +6,12 @@
 #include "paraverconfig.h"
 #include "labelconstructor.h"
 #include <iostream>
+
+#ifdef WIN32
+#undef min
+#undef max
+#endif
+
 Histogram *Histogram::create( KernelConnection *whichKernel )
 {
   return new HistogramProxy( whichKernel );

@@ -1116,7 +1116,9 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
                               vector<Window *>& windows,
                               vector<Histogram *>& histograms )
 {
+#ifndef WIN32
 #warning WindowObject::parseLine
+#endif
   return true;
 }
 
@@ -1124,7 +1126,9 @@ void WindowObject::printLine( ofstream& cfgFile,
                               const vector<Window *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_OBJECT << " appl { 1, { All } }" << endl;
+#ifndef WIN32
 #warning WindowObject::printLine
+#endif
 }
 
 bool WindowBeginTime::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -1186,7 +1190,9 @@ void WindowEndTime::printLine( ofstream& cfgFile,
                                const SaveOptions& options,
                                const vector<Window *>::const_iterator it )
 {
+#ifndef WIN32
 #warning WindowEndTime::printLine
+#endif
 }
 
 bool WindowStopTime::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -1261,14 +1267,18 @@ bool WindowNumberOfRow::parseLine( KernelConnection *whichKernel, istringstream&
                                    vector<Window *>& windows,
                                    vector<Histogram *>& histograms )
 {
+#ifndef WIN32
 #warning WindowNumberOfRow::parseLine
+#endif
   return true;
 }
 
 void WindowNumberOfRow::printLine( ofstream& cfgFile,
                                    const vector<Window *>::const_iterator it )
 {
+#ifndef WIN32
 #warning WindowNumberOfRow::printLine
+#endif
 }
 
 bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -2655,7 +2665,9 @@ bool Analyzer2DAccumulateByControlWindow::parseLine( KernelConnection *whichKern
     vector<Histogram *>& histograms )
 {
   string strBool;
+#ifndef WIN32
 #warning Analyzer2DAccumulateByControlWindow::parseLine
+#endif
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
   if ( histograms[ histograms.size() - 1 ] == NULL )
@@ -2676,7 +2688,9 @@ bool Analyzer2DAccumulateByControlWindow::parseLine( KernelConnection *whichKern
 void Analyzer2DAccumulateByControlWindow::printLine( ofstream& cfgFile,
     const vector<Histogram *>::const_iterator it )
 {
+#ifndef WIN32
 #warning Analyzer2DAccumulateByControlWindow::printLine
+#endif
 }
 
 bool Analyzer2DSortCols::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -2899,7 +2913,9 @@ bool Analyzer2DRelativeTime::parseLine( KernelConnection *whichKernel, istringst
                                         vector<Histogram *>& histograms )
 {
   string strBool;
+#ifndef WIN32
 #warning Analyzer2DRelativeTime::parseLine
+#endif
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
   if ( histograms[ histograms.size() - 1 ] == NULL )
@@ -2920,7 +2936,9 @@ bool Analyzer2DRelativeTime::parseLine( KernelConnection *whichKernel, istringst
 void Analyzer2DRelativeTime::printLine( ofstream& cfgFile,
                                         const vector<Histogram *>::const_iterator it )
 {
+#ifndef WIN32
 #warning Analyzer2DRelativeTime::printLine
+#endif
 }
 
 bool Analyzer2DComputeYScale::parseLine( KernelConnection *whichKernel, istringstream& line,
