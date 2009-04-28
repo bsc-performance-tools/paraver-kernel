@@ -5,7 +5,6 @@ libparaver_kernel_la_SOURCES = \
     bplustree.cpp \
     bplustreeexception.cpp \
     bplustreerecordleaf.cpp \
-    filter.cpp \
     filtermanagement.cpp \
     histogramexception.cpp \
     histogramstatistic.cpp \
@@ -16,6 +15,7 @@ libparaver_kernel_la_SOURCES = \
     intervalderived.cpp \
     intervalnotthread.cpp \
     intervalthread.cpp \
+    kfilter.cpp \
     khistogram.cpp \
     khistogramtotals.cpp \
     kprogresscontroller.cpp \
@@ -25,6 +25,7 @@ libparaver_kernel_la_SOURCES = \
     kwindowexception.cpp \
     memorytrace.cpp \
     paraverkernelexception.cpp \
+    plaintrace.cpp \
     processmodel.cpp \
     resourcemodel.cpp \
     semanticcomposefunctions.cpp \
@@ -35,7 +36,9 @@ libparaver_kernel_la_SOURCES = \
     semanticnotthreadfunctions.cpp \
     semanticthreadfunctions.cpp \
     statisticmanagement.cpp \
+    tracebodyio.cpp \
     tracebodyio_v1.cpp \
+    tracebodyio_v2.cpp \
     traceheaderexception.cpp\
     tracestream.cpp
           

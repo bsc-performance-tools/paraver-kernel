@@ -6,6 +6,7 @@ libcfg_la_SOURCES = \
 libapi_la_SOURCES = \
                     drawmode.cpp \
                     eventlabels.cpp \
+                    filter.cpp \
                     histogram.cpp \
                     histogramtotals.cpp \
                     labelconstructor.cpp \
@@ -13,6 +14,7 @@ libapi_la_SOURCES = \
                     paraverconfig.cpp \
                     progresscontroller.cpp \
                     recordlist.cpp \
+                    rowlabels.cpp \
                     semanticcolor.cpp \
                     statelabels.cpp \
                     trace.cpp \
