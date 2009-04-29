@@ -209,7 +209,7 @@ void IntervalDerived::setChilds()
 
   childIntervals.clear();
 
-  if ( window->getParent( 0 )->getLevel() > window->getParent( 1 )->getLevel() )
+  if ( window->getParent( 0 )->getLevel() >= window->getParent( 1 )->getLevel() )
   {
     window1 = (KWindow *) window->getParent( 0 );
     window2 = (KWindow *) window->getParent( 1 );
@@ -241,8 +241,7 @@ void IntervalDerived::setChilds()
     window1->getTrace()->getCPULocation( order, tmpNode, tmpCPU );
   }
 
-  if ( window1 == window->getParent( 0 ) )
-    childIntervals.push_back( window1->getLevelInterval( TOPCOMPOSE1, order ) );
+  childIntervals.push_back( window1->getLevelInterval( TOPCOMPOSE1, order ) );
 
   if ( window2->getLevel() == WORKLOAD )
   {
@@ -275,8 +274,4 @@ void IntervalDerived::setChilds()
     childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1,
                               window2->getTrace()->getGlobalCPU( tmpNode, tmpCPU ) ) );
   }
-
-  if ( window1 == window->getParent( 1 ) )
-    childIntervals.push_back( window1->getLevelInterval( TOPCOMPOSE1, order ) );
-
 }

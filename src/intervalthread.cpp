@@ -100,7 +100,7 @@ MemoryTrace::iterator *IntervalThread::getNextRecord( MemoryTrace::iterator *it,
   if ( it->isNull() )
   {
     delete it;
-    it = window->getThreadEndRecord( order );
+    it = window->getEndRecord();
   }
 
   return it;
@@ -129,7 +129,7 @@ MemoryTrace::iterator *IntervalThread::getPrevRecord( MemoryTrace::iterator *it,
   if ( it->isNull() )
   {
     delete it;
-    it = window->getThreadBeginRecord( order );
+    it = window->getBeginRecord();
   }
 
   return it;

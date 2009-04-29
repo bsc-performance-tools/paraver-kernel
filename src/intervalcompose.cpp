@@ -30,8 +30,8 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
   if ( typeid( *function ) == typeid( ComposeJoinBursts ) )
   {
     joinBursts = true;
-    endRecord = ( ( KSingleWindow * ) window )->getThreadEndRecord( order );
-    beginRecord = ( ( KSingleWindow * ) window )->getThreadBeginRecord( order );
+    endRecord = ( ( KSingleWindow * ) window )->getEndRecord();
+    beginRecord = ( ( KSingleWindow * ) window )->getBeginRecord();
   }
   else
     joinBursts = false;

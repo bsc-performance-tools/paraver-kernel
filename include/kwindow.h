@@ -156,6 +156,16 @@ class KSingleWindow: public KWindow
 
     virtual ~KSingleWindow();
 
+    MemoryTrace::iterator *getEndRecord()
+    {
+      return myTrace->end();
+    }
+
+    MemoryTrace::iterator *getBeginRecord()
+    {
+      return myTrace->begin();
+    }
+
     MemoryTrace::iterator *getThreadRecordByTime( TThreadOrder whichOrder )
     {
       return recordsByTime[whichOrder];
