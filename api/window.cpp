@@ -1,8 +1,12 @@
+#include <iostream>
+#include <sstream>
+
 #include "kernelconnection.h"
 #include "filter.h"
 #include "trace.h"
 #include "window.h"
 #include "recordlist.h"
+
 
 Window *Window::create( KernelConnection *whichKernel, Trace *whichTrace )
 {
@@ -26,6 +30,8 @@ WindowProxy::WindowProxy()
 {
   parent1 = NULL;
   parent2 = NULL;
+
+  number_of_clones = 0;
 }
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
@@ -35,6 +41,7 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
   parent2 = NULL;
   myWindow = myKernel->newSingleWindow( whichTrace );
   myFilter = myKernel->newFilter( myWindow->getFilter() );
+  number_of_clones = 0;
   init();
 }
 
@@ -46,6 +53,7 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
   parent2 = whichParent2;
   myWindow = myKernel->newDerivedWindow( parent1, parent2 );
   myFilter = NULL;
+  number_of_clones = 0;
   init();
 }
 
@@ -56,6 +64,7 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel ):
   parent2 = NULL;
   myWindow = myKernel->newDerivedWindow();
   myFilter = NULL;
+  number_of_clones = 0;
 //  init();
 }
 
@@ -203,7 +212,11 @@ Window *WindowProxy::clone( )
   clonedWindow->computedMinY = computedMinY;
   clonedWindow->maximumY = maximumY;
   clonedWindow->minimumY = minimumY;
-  clonedWindow->name = name + "_clone";
+
+  std::ostringstream tmp;
+  tmp << ++number_of_clones;
+  clonedWindow->name = name + ".c" + tmp.str();
+
   clonedWindow->myCodeColor = myCodeColor;
   clonedWindow->myGradientColor = myGradientColor;
   clonedWindow->codeColor = codeColor;

@@ -390,6 +390,8 @@ class WindowProxy: public Window
     WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
                  Window *whichParent2 );
 
+    int number_of_clones;
+
     void init();
 
     friend Window *Window::create( KernelConnection *, Trace * );
