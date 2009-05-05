@@ -251,32 +251,24 @@ void FilterProxy::copyEventsSection( Filter *whichFilter )
   {
     vector< TEventType > etype;
     whichFilter->getEventType( etype );
+    clearEventTypes();
     for ( vector< TEventType >::iterator it = etype.begin(); it < etype.end(); it++ )
-      myFilter->insertEventType( *it );
+      insertEventType( *it );
 
-    myFilter->setEventTypeFunction( whichFilter->getEventTypeFunction() );
+    setEventTypeFunction( whichFilter->getEventTypeFunction() );
 
     vector< TEventValue > evalue;
     whichFilter->getEventValue( evalue );
+    clearEventValues();
     for ( vector< TEventValue >::iterator it = evalue.begin(); it < evalue.end(); it++ )
-      myFilter->insertEventValue( *it );
+      insertEventValue( *it );
 
-    myFilter->setEventValueFunction( whichFilter->getEventValueFunction() );
-
-    if ( whichFilter->getOpFromTo() )
-      myFilter->setOpFromToAnd();
-    else
-      myFilter->setOpFromToOr();
-
-    if ( whichFilter->getOpTagSize() )
-      myFilter->setOpTagSizeAnd();
-    else
-      myFilter->setOpTagSizeOr();
+    setEventValueFunction( whichFilter->getEventValueFunction() );
 
     if ( whichFilter->getOpTypeValue() )
-      myFilter->setOpTypeValueAnd();
+      setOpTypeValueAnd();
     else
-      myFilter->setOpTypeValueOr();
+      setOpTypeValueOr();
   }
 }
 
@@ -284,42 +276,57 @@ void FilterProxy::copyCommunicationsSection( Filter *whichFilter )
 {
   if ( whichFilter != NULL )
   {
-    myFilter->setLogical( whichFilter->getLogical() );
-    myFilter->setPhysical( whichFilter->getPhysical() );
+    setLogical( whichFilter->getLogical() );
+    setPhysical( whichFilter->getPhysical() );
 
     vector< TObjectOrder > from;
     whichFilter->getCommFrom( from );
+    clearCommFrom();
     for ( vector< TObjectOrder >::iterator it = from.begin(); it < from.end(); it++ )
-      myFilter->insertCommFrom( *it );
+      insertCommFrom( *it );
 
-    myFilter->setCommFromFunction( whichFilter->getCommFromFunction() );
+    setCommFromFunction( whichFilter->getCommFromFunction() );
 
     vector< TObjectOrder > to;
     whichFilter->getCommTo( to );
+    clearCommTo();
     for ( vector< TObjectOrder >::iterator it = to.begin(); it < to.end(); it++ )
-      myFilter->insertCommTo( *it );
+      insertCommTo( *it );
 
-    myFilter->setCommToFunction( whichFilter->getCommToFunction() );
+    setCommToFunction( whichFilter->getCommToFunction() );
 
     vector< TCommTag > tag;
     whichFilter->getCommTag( tag );
+    clearCommTags();
     for ( vector< TCommTag >::iterator it = tag.begin(); it < tag.end(); it++ )
-      myFilter->insertCommTag( *it );
+      insertCommTag( *it );
 
-    myFilter->setCommTagFunction( whichFilter->getCommTagFunction() );
+    setCommTagFunction( whichFilter->getCommTagFunction() );
 
     vector< TCommSize > size;
     whichFilter->getCommSize( size );
+    clearCommSizes();
     for ( vector< TCommSize >::iterator it = size.begin(); it < size.end(); it++ )
-      myFilter->insertCommSize( *it );
+      insertCommSize( *it );
 
-    myFilter->setCommSizeFunction( whichFilter->getCommSizeFunction() );
+    setCommSizeFunction( whichFilter->getCommSizeFunction() );
 
     vector< TSemanticValue > bw;
     whichFilter->getBandWidth( bw );
+    clearBandWidth();
     for ( vector< TSemanticValue >::iterator it = bw.begin(); it < bw.end(); it++ )
-      myFilter->insertBandWidth( *it );
+      insertBandWidth( *it );
 
-    myFilter->setBandWidthFunction( whichFilter->getBandWidthFunction() );
+    setBandWidthFunction( whichFilter->getBandWidthFunction() );
+
+    if ( whichFilter->getOpFromTo() )
+      setOpFromToAnd();
+    else
+      setOpFromToOr();
+
+    if ( whichFilter->getOpTagSize() )
+      setOpTagSizeAnd();
+    else
+      setOpTagSizeOr();
   }
 }
