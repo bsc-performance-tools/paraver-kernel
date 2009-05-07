@@ -818,9 +818,9 @@ bool StatTime::filter( CalculateData *data ) const
 
 TSemanticValue StatTime::execute( CalculateData *data )
 {
-  TRecordTime begin;
+/*  TRecordTime begin;
   TRecordTime end;
-/*
+
   begin = data->beginTime > controlWin->getBeginTime( data->controlRow ) ?
           data->beginTime : controlWin->getBeginTime( data->controlRow );
 

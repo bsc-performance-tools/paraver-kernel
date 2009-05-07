@@ -1404,6 +1404,19 @@ bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel, istringst
     // It's a semantic function
     if ( level != NONE )
     {
+      // Compatibility code with old CFG versions
+      switch( level )
+      {
+        case WORKLOAD:    level = COMPOSEWORKLOAD;    break;
+        case APPLICATION: level = COMPOSEAPPLICATION; break;
+        case TASK:        level = COMPOSETASK;        break;
+        case THREAD:      level = COMPOSETHREAD;      break;
+        case SYSTEM:      level = COMPOSESYSTEM;      break;
+        case NODE:        level = COMPOSENODE;        break;
+        case CPU:         level = COMPOSECPU;         break;
+        default: break;
+      }
+
       bool result = windows[ windows.size() - 1 ]->setLevelFunction( level, strFunction );
       if ( !result )
         return false;
