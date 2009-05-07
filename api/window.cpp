@@ -613,8 +613,16 @@ bool WindowProxy::IsCodeColorSet() const
 
 bool WindowProxy::IsGradientColorSet() const
 {
-  return !codeColor;
+  return (!codeColor && (myGradientColor.getAllowOutOfScale()));
+//  return !codeColor;
 }
+
+
+bool WindowProxy::IsNotNullGradientColorSet() const
+{
+  return (!codeColor && !(myGradientColor.getAllowOutOfScale()));
+}
+
 
 void WindowProxy::allowOutOfScale( bool activate )
 {

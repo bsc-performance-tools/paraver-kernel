@@ -300,6 +300,7 @@ class Histogram
     }
     virtual void setRecalc( bool newValue )
     {}
+
   protected:
     KernelConnection *myKernel;
 
@@ -516,6 +517,8 @@ class HistogramProxy : public Histogram
     GradientColor myGradientColor;
 
     Histogram *myHisto;
+
+    int number_of_clones;
 
     HistogramProxy( KernelConnection *whichKernel );
 

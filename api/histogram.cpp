@@ -25,6 +25,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
     Histogram( whichKernel )
 {
   name = Histogram::getName();
+  number_of_clones = 0;
 
   controlWindow = NULL;
   dataWindow = NULL;
@@ -901,7 +902,9 @@ Histogram *HistogramProxy::clone()
   delete clonedHistogramProxy->myHisto;
   clonedHistogramProxy->myHisto = myHisto->clone();
 
-  clonedHistogramProxy->name = name;
+  std::ostringstream tmp;
+  tmp << ++number_of_clones;
+  clonedHistogramProxy->name = name + ".c" + tmp.str();
 
   clonedHistogramProxy->posX = posX;
   clonedHistogramProxy->posY = posY;
