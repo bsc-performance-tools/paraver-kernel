@@ -30,8 +30,11 @@ inline TSemanticValue selectMethod<DRAW_MINNOTZERO>( vector<TSemanticValue>& v )
 
   for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); ++it )
   {
-    if( *it < min ) min = *it;
+    if( *it > 0 && *it < min ) min = *it;
   }
+
+  if( min == std::numeric_limits<TSemanticValue>::max() )
+    return 0;
 
   return min;
 }
