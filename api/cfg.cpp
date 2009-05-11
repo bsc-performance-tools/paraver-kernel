@@ -338,6 +338,7 @@ bool CFGLoader::saveCFG( const string& filename,
       WindowFilterBoolOpTypeVal::printLine( cfgFile, it );
     }
     WindowUnits::printLine( cfgFile, it );
+    WindowColorMode::printLine( cfgFile, it );
     WindowMaximumY::printLine( cfgFile, it );
     WindowMinimumY::printLine( cfgFile, it );
     WindowComputeYMax::printLine( cfgFile, options, it );
