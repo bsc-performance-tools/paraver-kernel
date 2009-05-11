@@ -803,7 +803,7 @@ bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& l
 void WindowColorMode::printLine( ofstream& cfgFile,
                                  const vector<Window *>::const_iterator it )
 {
-  if ( ( *it )->IsGradientColorSet() )
+  if ( ( *it )->IsGradientColorSet() || ( *it )->IsNotNullGradientColorSet() )
   {
     cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " <<
     ( ( *it )->getGradientColor().getAllowOutOfScale() ?
