@@ -349,6 +349,7 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowEndTime::printLine( cfgFile, options, it );
     WindowStopTime::printLine( cfgFile, options, it );
     WindowBeginTimeRelative::printLine( cfgFile, options, it );
+    WindowOpen::printLine( cfgFile, it );
     WindowDrawMode::printLine( cfgFile, it );
     WindowDrawModeRows::printLine( cfgFile, it );
     if ( !( *it )->isDerivedWindow() )
@@ -2086,7 +2087,12 @@ void WindowOpen::printLine( ofstream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_WNDW_OPEN << " ";
   if ( ( *it )->getShowWindow() )
-    cfgFile << OLDCFG_VAL_TRUE;
+  {
+    if( (*it)->getChild() != NULL )
+      cfgFile << OLDCFG_VAL_FALSE;
+    else
+      cfgFile << OLDCFG_VAL_TRUE;
+  }
   else
     cfgFile << OLDCFG_VAL_FALSE;
   cfgFile << endl;
