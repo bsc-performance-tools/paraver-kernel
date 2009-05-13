@@ -478,6 +478,8 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress )
           progress->setCurrentProgress( blocks->getLastRecordTime() );
       }
       count = 0;
+      if( progress->getStop() )
+        break;
     }
     else
       count++;

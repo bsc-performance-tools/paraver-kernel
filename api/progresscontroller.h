@@ -22,6 +22,8 @@ class ProgressController
     virtual double getCurrentProgress() const = 0;
     virtual void setCurrentProgress( double progress ) = 0;
     virtual void setPartner( ProgressController* partner ) = 0;
+    virtual void setStop( bool value ) = 0;
+    virtual bool getStop() const = 0;
 
     virtual ProgressController *getConcrete() const
     {
@@ -42,6 +44,8 @@ class ProgressControllerProxy:public ProgressController
     double getCurrentProgress() const;
     void setCurrentProgress( double progress );
     void setPartner( ProgressController* partner );
+    virtual void setStop( bool value );
+    virtual bool getStop() const;
 
     ProgressController *getConcrete() const;
 

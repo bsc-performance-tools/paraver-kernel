@@ -16,6 +16,8 @@ class KProgressController: public ProgressController
     double getCurrentProgress() const;
     void setCurrentProgress( double progress );
     void setPartner( ProgressController* partner );
+    virtual void setStop( bool value );
+    virtual bool getStop() const;
 
   private:
     ProgressController *myPartner;
@@ -23,7 +25,7 @@ class KProgressController: public ProgressController
     ProgressHandler handler;
     double endLimit;
     double currentProgress;
-
+    bool stop;
 };
 
 

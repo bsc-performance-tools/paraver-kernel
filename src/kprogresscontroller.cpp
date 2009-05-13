@@ -4,6 +4,7 @@ KProgressController::KProgressController()
 {
   endLimit = 0;
   currentProgress = 0;
+  stop = false;
 }
 
 KProgressController::~KProgressController()
@@ -46,3 +47,12 @@ void KProgressController::setPartner( ProgressController* partner )
   myPartner = partner;
 }
 
+void KProgressController::setStop( bool value )
+{
+  stop = value;
+}
+
+bool KProgressController::getStop() const
+{
+  return stop;
+}

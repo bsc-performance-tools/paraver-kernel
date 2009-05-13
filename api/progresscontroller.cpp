@@ -54,6 +54,16 @@ void ProgressControllerProxy::callHandler( ProgressController *not_used )
     handler( this );
 }
 
+void ProgressControllerProxy::setStop( bool value )
+{
+  myPartner->setStop( value );
+}
+
+bool ProgressControllerProxy::getStop() const
+{
+  return myPartner->getStop();
+}
+
 ProgressController *ProgressControllerProxy::getConcrete() const
 {
   return myPartner;
