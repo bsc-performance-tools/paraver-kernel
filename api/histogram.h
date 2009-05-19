@@ -5,6 +5,7 @@
 #include "paraverkerneltypes.h"
 #include "paraverconfig.h"
 #include "semanticcolor.h"
+#include "drawmode.h"
 
 #ifdef WIN32
 #undef max
@@ -282,6 +283,18 @@ class Histogram
     }
     virtual void setShowWindow( bool newValue )
     {}
+    virtual DrawModeMethod getDrawModeObjects() const
+    {
+      return DRAW_MAXIMUM;
+    }
+    virtual void setDrawModeObjects( DrawModeMethod whichMethod )
+    {}
+    virtual DrawModeMethod getDrawModeColumns() const
+    {
+      return DRAW_MAXIMUM;
+    }
+    virtual void setDrawModeColumns( DrawModeMethod whichMethod )
+    {}
     virtual bool getChanged() const
     {
       return false;
@@ -463,6 +476,10 @@ class HistogramProxy : public Histogram
     virtual void setHeight( UINT16 whichPos );
     virtual bool getShowWindow() const;
     virtual void setShowWindow( bool newValue );
+    virtual DrawModeMethod getDrawModeObjects() const;
+    virtual void setDrawModeObjects( DrawModeMethod whichMethod );
+    virtual DrawModeMethod getDrawModeColumns() const;
+    virtual void setDrawModeColumns( DrawModeMethod whichMethod );
     virtual bool getChanged() const;
     virtual void setChanged( bool newValue );
     virtual bool getRedraw() const;
@@ -497,6 +514,8 @@ class HistogramProxy : public Histogram
     INT32 selectedPlane;
     INT32 commSelectedPlane;
     bool showWindow;
+    DrawModeMethod drawModeObjects;
+    DrawModeMethod drawModeColumns;
     bool changed;
     bool redraw;
     bool recalc;

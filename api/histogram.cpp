@@ -50,6 +50,8 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   planeMinValue = 0.0;
   selectedPlane = 0;
   commSelectedPlane = 0;
+  drawModeObjects = Histogram::getDrawModeObjects();
+  drawModeColumns = Histogram::getDrawModeColumns();
 
   setCalculateAll( Histogram::getCalculateAll() );
   currentStat = Histogram::getCurrentStat();
@@ -1004,6 +1006,26 @@ bool HistogramProxy::getShowWindow() const
 void HistogramProxy::setShowWindow( bool newValue )
 {
   showWindow = newValue;
+}
+
+DrawModeMethod HistogramProxy::getDrawModeObjects() const
+{
+  return drawModeObjects;
+}
+
+void HistogramProxy::setDrawModeObjects( DrawModeMethod whichMethod )
+{
+  drawModeObjects = whichMethod;
+}
+
+DrawModeMethod HistogramProxy::getDrawModeColumns() const
+{
+  return drawModeColumns;
+}
+
+void HistogramProxy::setDrawModeColumns( DrawModeMethod whichMethod )
+{
+  drawModeColumns = whichMethod;
 }
 
 bool HistogramProxy::getChanged() const
