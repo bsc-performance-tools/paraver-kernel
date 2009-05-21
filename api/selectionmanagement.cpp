@@ -1,9 +1,8 @@
+#include "selectionmanagement.h"
+
 template < typename SelType >
 SelectionManagement::SelectionManagement()
 {
-  firstSelected = ( SelType )0;
-  lastSelected = ( SelType )0;
-  countSelected = 0;
 }
 
 template < typename SelType >
@@ -14,41 +13,23 @@ template < typename SelType >
 template <typename SelType>
 void SelectionManagement::setSelected( vector< bool > &selection )
 {
-  firstSelected = ( SelType ) 0;
-  lastSelected = ( SelType ) 0;
-  countSelected = 0;
-
   // Search for first and last selected
+  selected = selection;
+
   if ( !selection.empty() )
   {
+    bool firstFound = false;
     for ( size_t current = 0; current < selected.size(); ++current )
     {
       if ( selected[ current ] )
       {
-        firstSelected = ( SelType )current;  // caution!
-        break;
+        if ( !firstFound )
+          firstSelected = ( SelType )current;  // caution!
+
+        lastFound = ( SelType )current;
+        selectedSet.push_back( current );
       }
     }
-
-    for ( size_t current = selected.size() - 1 ; current >= 0; --current )
-    {
-      if ( selected[ current ] )
-      {
-        lastSelected = ( SelType )current;  // caution!
-        break;
-      }
-    }
-
-    // Count values
-    for ( vector<bool>::iterator it = selected.begin(); it != selected.end(); ++it )
-    {
-      if ( *it )
-        ++countSelected;
-    }
-
-    // Copy; doesn't modify parameter selection.
-    vector<bool> aux( selection );
-    selected.swap( aux );
   }
 }
 
@@ -56,6 +37,14 @@ template <typename SelType>
 bool SelectionManagement::getSelectedPosition( SelType &selected )
 {
   return selected[ SelType ];
+}
+
+template <typename SelType>
+void SelectionManagement::getSelectedSet( vector<SelType> &whichSelected )
+{
+  whichSelected.clear();
+  for ( vector<SelType>::iterator it = selectedSet.begin(); it != selectedSet.end(); ++it )
+    whichSelected.push_back( *it );
 }
 
 template <typename SelType>
@@ -75,3 +64,4 @@ UINT32 SelectionManagement::countSelected()
 {
   return countSelected;
 }
+
