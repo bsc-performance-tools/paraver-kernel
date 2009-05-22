@@ -11,10 +11,9 @@ class SelectionManagement
     ~SelectionManagement();
 
     void setSelected( vector< bool > &selection );
-    bool isSelectedPosition( SelType );
-    void getSelectedSet( vector< SelType > &selection,
-                         SelType first = ( SelType )0,
-                         SelType last  = ( SelType )0 );
+    void getSelected( vector< bool > &selection );
+    bool isSelectedPosition( SelType whichSelected );
+    void getSelectedSet( vector< SelType > &selection );
     void getSelectedSetRange( vector< SelType > &selection,
                               SelType first,
                               SelType last );
@@ -23,8 +22,12 @@ class SelectionManagement
     SelType lastSelected();
 
   private:
+    SelType first;
+    SelType last;
     vector< bool > selected;
     vector< SelType > selectedSet;
 };
+
+#include "selectionmanagement.cpp"
 
 #endif // _SELECTION_MANAGEMENT_H

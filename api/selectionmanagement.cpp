@@ -1,12 +1,10 @@
-#include "selectionmanagement.h"
-
 template < typename SelType >
-SelectionManagement::SelectionManagement()
+SelectionManagement<SelType>::SelectionManagement()
 {
 }
 
 template < typename SelType >
-~SelectionManagement::SelectionManagement()
+SelectionManagement<SelType>::~SelectionManagement()
 {
 }
 
@@ -14,7 +12,7 @@ template < typename SelType >
 // Sets firstSelected and lastSelected
 // Fills selectedSet vector with i positions that verify selected[i] == true
 template <typename SelType>
-void SelectionManagement::setSelected( vector< bool > &selection )
+void SelectionManagement<SelType>::setSelected( vector< bool > &selection )
 {
   // Search for first and last selected
   selected = selection;
@@ -27,9 +25,9 @@ void SelectionManagement::setSelected( vector< bool > &selection )
       if ( selected[ current ] )
       {
         if ( !firstFound )
-          firstSelected = ( SelType )current;  // caution!
+          first = ( SelType )current;  // caution!
 
-        lastFound = ( SelType )current;
+        last = ( SelType )current;
         selectedSet.push_back( current );
       }
     }
@@ -37,26 +35,40 @@ void SelectionManagement::setSelected( vector< bool > &selection )
 }
 
 template <typename SelType>
-bool SelectionManagement::isSelectedPosition( SelType &selected )
+bool SelectionManagement< SelType >::isSelectedPosition( SelType whichSelected )
 {
-  return selected[ SelType ];
+  return selected[ whichSelected ];
 }
 
+
 template <typename SelType>
-void SelectionManagement::getSelectedSet( vector<SelType> &whichSelected )
+void SelectionManagement< SelType >::getSelectedSet( vector<SelType> &whichSelected )
 {
   whichSelected.clear();
-  for ( vector<SelType>::iterator it = selectedSet.begin(); it != selectedSet.end(); ++it )
+  typename vector<SelType>::iterator it;
+
+  for( it = selectedSet.begin(); it != selectedSet.end(); ++it )
     whichSelected.push_back( *it );
 }
 
 template <typename SelType>
-void SelectionManagement::getSelectedSetRange( vector<SelType> &whichSelected,
+void SelectionManagement< SelType >::getSelectedSet( vector<SelType> &whichSelected )
+{
+  whichSelected.clear();
+  typename vector<SelType>::iterator it;
+
+  for( it = selectedSet.begin(); it != selectedSet.end(); ++it )
+    whichSelected.push_back( *it );
+}
+
+template <typename SelType>
+void SelectionManagement< SelType >::getSelectedSetRange( vector<SelType> &whichSelected,
                                                SelType first,
                                                SelType last )
 {
   whichSelected.clear();
-  for ( vector<SelType>::iterator it = selectedSet.begin(); it != selectedSet.end(); ++it )
+  typename vector<SelType>::iterator it;
+  for ( it = selectedSet.begin(); it != selectedSet.end(); ++it )
   {
     if (( *it >= first ) && ( *it <= last ))
       whichSelected.push_back( *it );
@@ -64,15 +76,15 @@ void SelectionManagement::getSelectedSetRange( vector<SelType> &whichSelected,
 }
 
 template <typename SelType>
-SelType SelectionManagement::firstSelected()
+SelType SelectionManagement< SelType >::firstSelected()
 {
-  return ( SelType ) firstSelected;
+  return first;
 }
 
 template <typename SelType>
-SelType SelectionManagement::lastSelected()
+SelType SelectionManagement< SelType >::lastSelected()
 {
-  return  ( SelType ) lastSelected;
+  return last;
 }
 
 

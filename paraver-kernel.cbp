@@ -286,6 +286,8 @@
 			<Option target="api" />
 		</Unit>
 		<Unit filename="api/selectionmanagement.cpp">
+			<Option compile="0" />
+			<Option link="0" />
 			<Option target="api" />
 		</Unit>
 		<Unit filename="api/selectionmanagement.h">

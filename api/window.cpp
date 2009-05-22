@@ -7,7 +7,6 @@
 #include "window.h"
 #include "recordlist.h"
 
-
 Window *Window::create( KernelConnection *whichKernel, Trace *whichTrace )
 {
   return new WindowProxy( whichKernel, whichTrace );
@@ -681,4 +680,19 @@ void WindowProxy::getAllSemanticFunctions( TSemanticGroup whichGroup,
     vector<string>& onVector ) const
 {
   myKernel->getAllSemanticFunctions( whichGroup, onVector );
+}
+
+void WindowProxy::setSelectedRows( vector< bool > &selected )
+{
+  selectedRow.setSelected( selected );
+}
+
+void WindowProxy::getSelectedRows( vector< bool > &selected )
+{
+  selectedRow.getSelected( selected );
+}
+
+void WindowProxy::getSelectedRowsSet( vector< TObjectOrder > &selection )
+{
+  selectedRow.getSelectedSet( selection );
 }

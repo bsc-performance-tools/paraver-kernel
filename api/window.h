@@ -5,6 +5,7 @@
 #include "paraverkerneltypes.h"
 #include "semanticcolor.h"
 #include "drawmode.h"
+#include "selectionmanagement.h"
 
 class KernelConnection;
 class Trace;
@@ -238,6 +239,13 @@ class Window
                                           vector<string>& onVector ) const
     {}
 
+    virtual void setSelectedRows( vector< bool > &selected )
+    {}
+    virtual void getSelectedRows( vector< bool > &selected )
+    {}
+    virtual void getSelectedRowSet( vector< TObjectOrder > &selection )
+    {}
+
   protected:
     KernelConnection *myKernel;
 
@@ -348,6 +356,10 @@ class WindowProxy: public Window
     virtual bool getDrawCommLines() const;
     virtual void setDrawCommLines( bool newValue );
 
+    virtual void setSelectedRows( vector< bool > &selected );
+    virtual void getSelectedRows( vector< bool > &selected );
+    virtual void getSelectedRowsSet( vector< TObjectOrder > &selection );
+
   private:
     Window *myWindow;
     Trace *myTrace;
@@ -386,6 +398,9 @@ class WindowProxy: public Window
     bool changed;
     bool redraw;
     bool commLines;
+
+    // Row selection
+    SelectionManagement< TObjectOrder > selectedRow;
 
     // For Clone
     WindowProxy();
