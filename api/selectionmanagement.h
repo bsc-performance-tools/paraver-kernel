@@ -11,12 +11,16 @@ class SelectionManagement
     ~SelectionManagement();
 
     void setSelected( vector< bool > &selection );
-    bool getSelectedPosition( SelType );
-    void getSelectedSet( vector< SelType > &selection );
+    bool isSelectedPosition( SelType );
+    void getSelectedSet( vector< SelType > &selection,
+                         SelType first = ( SelType )0,
+                         SelType last  = ( SelType )0 );
+    void getSelectedSetRange( vector< SelType > &selection,
+                              SelType first,
+                              SelType last );
 
     SelType firstSelected();
     SelType lastSelected();
-    UINT32 countSelected();
 
   private:
     vector< bool > selected;
