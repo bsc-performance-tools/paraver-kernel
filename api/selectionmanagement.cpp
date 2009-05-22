@@ -45,7 +45,7 @@ template <typename SelType>
 void SelectionManagement< SelType >::getSelected( vector<bool> &whichSelected )
 {
   whichSelected.clear();
-  typename vector<SelType>::iterator it;
+  typename vector<bool>::iterator it;
 
   for( it = selected.begin(); it != selected.end(); ++it )
     whichSelected.push_back( *it );
