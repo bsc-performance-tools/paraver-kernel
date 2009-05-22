@@ -42,12 +42,12 @@ bool SelectionManagement< SelType >::isSelectedPosition( SelType whichSelected )
 
 
 template <typename SelType>
-void SelectionManagement< SelType >::getSelectedSet( vector<SelType> &whichSelected )
+void SelectionManagement< SelType >::getSelected( vector<bool> &whichSelected )
 {
   whichSelected.clear();
   typename vector<SelType>::iterator it;
 
-  for( it = selectedSet.begin(); it != selectedSet.end(); ++it )
+  for( it = selected.begin(); it != selected.end(); ++it )
     whichSelected.push_back( *it );
 }
 
