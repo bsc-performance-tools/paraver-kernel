@@ -90,6 +90,8 @@ void WindowProxy::init()
   commLines = true;
 
   child = NULL;
+
+
 }
 
 WindowProxy::~WindowProxy()
@@ -235,6 +237,10 @@ Window *WindowProxy::clone( )
   for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); it++ )
     clonedWindow->myLists.push_back( (*it)->create( *it ) );
 */
+  vector< bool > selected;
+  getSelectedRows( selected );
+  clonedWindow->setSelectedRows( selected );
+
   return clonedWindow;
 }
 
@@ -426,6 +432,12 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create )
   yScaleComputed = true;
   computeYMaxOnInit = false;
   computedMaxY = computedMinY = getValue( 0 );
+
+#warning Set rows as in CFG
+  // Simple initialization - all showed; CHANGE THIS
+  vector< bool > selected;
+  selected.assign( myWindow->getWindowLevelObjects(), true );
+  setSelectedRows( selected );
 }
 
 RecordList *WindowProxy::calcNext( TObjectOrder whichObject )
@@ -692,7 +704,7 @@ void WindowProxy::getSelectedRows( vector< bool > &selected )
   selectedRow.getSelected( selected );
 }
 
-void WindowProxy::getSelectedRowsSet( vector< TObjectOrder > &selection )
+void WindowProxy::getSelectedRowSet( vector< TObjectOrder > &selection )
 {
   selectedRow.getSelectedSet( selection );
 }

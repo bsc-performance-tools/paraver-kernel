@@ -358,7 +358,7 @@ class WindowProxy: public Window
 
     virtual void setSelectedRows( vector< bool > &selected );
     virtual void getSelectedRows( vector< bool > &selected );
-    virtual void getSelectedRowsSet( vector< TObjectOrder > &selection );
+    virtual void getSelectedRowSet( vector< TObjectOrder > &selection );
 
   private:
     Window *myWindow;
