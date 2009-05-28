@@ -34,6 +34,39 @@ void SelectionManagement<SelType>::setSelected( vector< bool > &selection )
   }
 }
 
+// Copies selection vector into selectedSet attribute
+// Sets firstSelected and lastSelected
+// Fills selected vector
+template <typename SelType>
+void SelectionManagement<SelType>::setSelected( vector< SelType > &selection,
+                                                SelType maxElems )
+{
+  // Search for first and last selected
+  selectedSet = selection;
+
+  if ( !selection.empty() )
+  {
+    bool firstFound = false;
+    typename vector< SelType >::iterator it;
+    it = selection.begin();
+    for ( size_t current = 0; current < ( size_t ) maxElems; ++current )
+    {
+      if ( current == ( size_t )*it )
+      {
+        if ( !firstFound )
+          first = ( SelType )current;  // caution!
+
+        last = ( SelType )current;
+        selected.push_back( true );
+        ++it;
+      }
+      else
+        selected.push_back( false );
+    }
+  }
+}
+
+
 template <typename SelType>
 bool SelectionManagement< SelType >::isSelectedPosition( SelType whichSelected )
 {
@@ -52,7 +85,7 @@ void SelectionManagement< SelType >::getSelected( vector<bool> &whichSelected )
 }
 
 template <typename SelType>
-void SelectionManagement< SelType >::getSelectedSet( vector<SelType> &whichSelected )
+void SelectionManagement< SelType >::getSelected( vector<SelType> &whichSelected )
 {
   whichSelected.clear();
   typename vector<SelType>::iterator it;
@@ -62,9 +95,9 @@ void SelectionManagement< SelType >::getSelectedSet( vector<SelType> &whichSelec
 }
 
 template <typename SelType>
-void SelectionManagement< SelType >::getSelectedSetRange( vector<SelType> &whichSelected,
-                                               SelType first,
-                                               SelType last )
+void SelectionManagement< SelType >::getSelected( vector<SelType> &whichSelected,
+                                                  SelType first,
+                                                  SelType last )
 {
   whichSelected.clear();
   typename vector<SelType>::iterator it;

@@ -241,9 +241,11 @@ class Window
 
     virtual void setSelectedRows( vector< bool > &selected )
     {}
+    virtual void setSelectedRows( vector< TObjectOrder > &selection )
+    {}
     virtual void getSelectedRows( vector< bool > &selected )
     {}
-    virtual void getSelectedRowSet( vector< TObjectOrder > &selection )
+    virtual void getSelectedRows( vector< TObjectOrder > &selection )
     {}
 
   protected:
@@ -357,8 +359,9 @@ class WindowProxy: public Window
     virtual void setDrawCommLines( bool newValue );
 
     virtual void setSelectedRows( vector< bool > &selected );
+    virtual void setSelectedRows( vector< TObjectOrder > &selected );
     virtual void getSelectedRows( vector< bool > &selected );
-    virtual void getSelectedRowSet( vector< TObjectOrder > &selection );
+    virtual void getSelectedRows( vector< TObjectOrder > &selected );
 
   private:
     Window *myWindow;

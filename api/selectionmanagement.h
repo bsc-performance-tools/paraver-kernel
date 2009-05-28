@@ -11,12 +11,13 @@ class SelectionManagement
     ~SelectionManagement();
 
     void setSelected( vector< bool > &selection );
+    void setSelected( vector< SelType > &selection, SelType maxElems );
+
     void getSelected( vector< bool > &selection );
+    void getSelected( vector< SelType > &selection );
+    void getSelected( vector< SelType > &selection, SelType first, SelType last );
+
     bool isSelectedPosition( SelType whichSelected );
-    void getSelectedSet( vector< SelType > &selection );
-    void getSelectedSetRange( vector< SelType > &selection,
-                              SelType first,
-                              SelType last );
 
     SelType firstSelected();
     SelType lastSelected();

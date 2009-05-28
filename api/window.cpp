@@ -699,12 +699,17 @@ void WindowProxy::setSelectedRows( vector< bool > &selected )
   selectedRow.setSelected( selected );
 }
 
+void WindowProxy::setSelectedRows( vector< TObjectOrder > &selected )
+{
+  selectedRow.setSelected( selected, getWindowLevelObjects() );
+}
+
 void WindowProxy::getSelectedRows( vector< bool > &selected )
 {
   selectedRow.getSelected( selected );
 }
 
-void WindowProxy::getSelectedRowSet( vector< TObjectOrder > &selection )
+void WindowProxy::getSelectedRows( vector< TObjectOrder > &selection )
 {
-  selectedRow.getSelectedSet( selection );
+  selectedRow.getSelected( selection );
 }
