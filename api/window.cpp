@@ -91,7 +91,9 @@ void WindowProxy::init()
 
   child = NULL;
 
-
+  vector< bool > selected;
+  selected.assign( getWindowLevelObjects(), true );
+  setSelectedRows( selected );
 }
 
 WindowProxy::~WindowProxy()
