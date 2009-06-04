@@ -29,7 +29,9 @@ void createSemantic()
   functions[0].push_back( new ComposeAdding() );
   functions[0].push_back( new ComposeSubstract() );
   functions[0].push_back( new ComposeSelectRange() );
+  functions[0].push_back( new ComposeSelectRangeOpen() );
   functions[0].push_back( new ComposeIsInRange() );
+  functions[0].push_back( new ComposeIsInRangeOpen() );
   functions[0].push_back( new ComposeIsEqual() );
   functions[0].push_back( new ComposeIsEqualSign() );
   functions[0].push_back( new ComposeStackedValue() );

@@ -387,6 +387,11 @@ string WindowProxy::getFirstUsefulFunction( )
   return myWindow->getFirstUsefulFunction();
 }
 
+TWindowLevel WindowProxy::getFirstFreeCompose() const
+{
+  return myWindow->getFirstFreeCompose();
+}
+
 void WindowProxy::setFunctionParam( TWindowLevel whichLevel,
                                     TParamIndex whichParam,
                                     const TParamValue& newValue )

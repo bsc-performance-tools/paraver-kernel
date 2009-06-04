@@ -128,6 +128,7 @@ KWindow *KWindow::clone()
 
 KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 {
+  functions[ NONE ] = NULL;
   functions[ TOPCOMPOSE1 ] = new ComposeAsIs();
   functions[ TOPCOMPOSE2 ] = new ComposeAsIs();
 
@@ -359,6 +360,14 @@ string KSingleWindow::getFirstUsefulFunction()
   return functions[ getLevel() ]->getName();
 }
 
+TWindowLevel KSingleWindow::getFirstFreeCompose() const
+{
+  if( typeid( *functions[ getComposeLevel( getLevel() ) ] ) == typeid( ComposeAsIs ) )
+    return getComposeLevel( getLevel() );
+  if ( typeid( *functions[ TOPCOMPOSE2 ] ) == typeid( ComposeAsIs ) )
+    return TOPCOMPOSE2;
+  return TOPCOMPOSE1;
+}
 
 SemanticFunction *KSingleWindow::getFirstSemUsefulFunction()
 {
@@ -591,7 +600,12 @@ KWindow *KSingleWindow::clone()
   clonedKSWindow->recordsByTime = vector<MemoryTrace::iterator *>( recordsByTime );
 
   for ( int i = 0; i < COMPOSECPU + 1; i++ )
-    clonedKSWindow->functions[ i ] = functions[ i ];
+  {
+    if( functions[ i ] != NULL )
+      clonedKSWindow->functions[ i ] = functions[ i ]->clone();
+    else
+      clonedKSWindow->functions[ i ] = NULL;
+  }
 
   clonedKSWindow->myFilter = myFilter->clone( clonedKSWindow );
 
@@ -613,7 +627,7 @@ void KDerivedWindow::setup( KTrace* whichTrace )
 
   if ( functions[ 0 ] == NULL )
     functions[ 0 ] = new ComposeAsIs();
-  else if ( functions[ 1 ] == NULL )
+  if ( functions[ 1 ] == NULL )
     functions[ 1 ] = new ComposeAsIs();
 
   intervalTopCompose1.clear();
@@ -709,6 +723,13 @@ string KDerivedWindow::getFirstUsefulFunction()
     return functions[ ( TWindowLevel ) 1 ]->getName();
 
   return functions[ ( TWindowLevel ) 2 ]->getName();
+}
+
+TWindowLevel KDerivedWindow::getFirstFreeCompose() const
+{
+  if ( typeid( *functions[ ( TWindowLevel ) 1 ] ) == typeid( ComposeAsIs ) )
+    return TOPCOMPOSE2;
+  return TOPCOMPOSE1;
 }
 
 SemanticFunction *KDerivedWindow::getFirstSemUsefulFunction()
@@ -899,8 +920,13 @@ KWindow *KDerivedWindow::clone()
     clonedKDerivedWindow->factor[i] = factor[ i ];
   }
 
-  for (UINT16 i = 0; i < 3; i++ )
-    clonedKDerivedWindow->functions[ i ] = functions[ i ];
+  for ( UINT16 i = 0; i < 3; i++ )
+  {
+    if( functions[ i ] != NULL )
+      clonedKDerivedWindow->functions[ i ] = functions[ i ]->clone();
+    else
+      clonedKDerivedWindow->functions[ i ] = NULL;
+  }
 
   clonedKDerivedWindow->setup( myTrace );
   clonedKDerivedWindow->level = getLevel();

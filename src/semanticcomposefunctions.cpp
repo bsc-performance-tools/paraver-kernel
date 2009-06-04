@@ -136,6 +136,23 @@ TSemanticValue ComposeSelectRange::execute( const SemanticInfo *info )
 }
 
 
+string ComposeSelectRangeOpen::name = "Select Range [)";
+TSemanticValue ComposeSelectRangeOpen::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+
+  TSemanticValue tmp = 0;
+
+  if ( myInfo->values[ 0 ] < parameters[ MAXVALUE ][ 0 ] &&
+       myInfo->values[ 0 ] >= parameters[ MINVALUE ][ 0 ] )
+    tmp = myInfo->values[ 0 ];
+  else
+    tmp = 0;
+
+  return tmp;
+}
+
+
 string ComposeIsInRange::name = "Is In Range";
 TSemanticValue ComposeIsInRange::execute( const SemanticInfo *info )
 {
@@ -144,6 +161,23 @@ TSemanticValue ComposeIsInRange::execute( const SemanticInfo *info )
   TSemanticValue tmp = 0;
 
   if ( myInfo->values[ 0 ] <= parameters[ MAXVALUE ][ 0 ] &&
+       myInfo->values[ 0 ] >= parameters[ MINVALUE ][ 0 ] )
+    tmp = 1;
+  else
+    tmp = 0;
+
+  return tmp;
+}
+
+
+string ComposeIsInRangeOpen::name = "Is In Range [)";
+TSemanticValue ComposeIsInRangeOpen::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+
+  TSemanticValue tmp = 0;
+
+  if ( myInfo->values[ 0 ] < parameters[ MAXVALUE ][ 0 ] &&
        myInfo->values[ 0 ] >= parameters[ MINVALUE ][ 0 ] )
     tmp = 1;
   else

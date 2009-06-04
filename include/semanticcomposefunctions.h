@@ -665,7 +665,84 @@ class ComposeSelectRange: public SemanticCompose
   private:
     static const bool initFromBegin = false;
     static string name;
+};
 
+
+class ComposeSelectRangeOpen: public SemanticCompose
+{
+  public:
+    typedef enum
+    {
+      MAXVALUE = 0,
+      MINVALUE,
+      MAXPARAM
+    } TParam;
+
+    ComposeSelectRangeOpen()
+    {
+      setDefaultParam();
+    }
+
+    ~ComposeSelectRangeOpen()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+
+    virtual void init( KWindow *whichWindow )
+    {}
+
+    virtual string getName()
+    {
+      return ComposeSelectRangeOpen::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeSelectRangeOpen( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return SAME_TYPE;
+    }
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      TParamValue tmp;
+
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      else if ( whichParam == MAXVALUE )
+        tmp.push_back( 1 );
+      else if ( whichParam == MINVALUE )
+        tmp.push_back( 0 );
+
+      return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      if( whichParam == MAXVALUE )
+        return "Max value";
+      else if( whichParam == MINVALUE )
+        return "Min value";
+      return "";
+    }
+
+  private:
+    static const bool initFromBegin = false;
+    static string name;
 };
 
 
@@ -741,6 +818,80 @@ class ComposeIsInRange: public SemanticCompose
     static const bool initFromBegin = false;
     static string name;
 
+};
+
+
+class ComposeIsInRangeOpen: public SemanticCompose
+{
+  public:
+    typedef enum
+    {
+      MAXVALUE = 0,
+      MINVALUE,
+      MAXPARAM
+    } TParam;
+
+    ComposeIsInRangeOpen()
+    {
+      setDefaultParam();
+    }
+
+    ~ComposeIsInRangeOpen()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+
+    virtual void init( KWindow *whichWindow )
+    {}
+
+    virtual string getName()
+    {
+      return ComposeIsInRangeOpen::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeIsInRangeOpen( *this );
+    }
+
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      TParamValue tmp;
+
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      else if ( whichParam == MAXVALUE )
+        tmp.push_back( 1 );
+      else if ( whichParam == MINVALUE )
+        tmp.push_back( 0 );
+
+      return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      if( whichParam == MAXVALUE )
+        return "Max value";
+      else if( whichParam == MINVALUE )
+        return "Min value";
+      return "";
+    }
+
+  private:
+    static const bool initFromBegin = false;
+    static string name;
 };
 
 

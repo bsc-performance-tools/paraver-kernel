@@ -27,6 +27,11 @@ class Window
     Window( KernelConnection *whichKernel );
     virtual ~Window() {}
 
+    KernelConnection *getKernel() const
+    {
+      return myKernel;
+    }
+
     // Specefic for WindowProxy because Single and Derived window
     // SingleWindow
     virtual Filter *getFilter() const
@@ -101,6 +106,7 @@ class Window
                                    const string& whichFunction ) = 0;
     virtual string getLevelFunction( TWindowLevel whichLevel ) = 0;
     virtual string getFirstUsefulFunction( ) = 0;
+    virtual TWindowLevel getFirstFreeCompose() const = 0;
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
                                    const TParamValue& newValue ) = 0;
@@ -302,6 +308,7 @@ class WindowProxy: public Window
                                    const string& whichFunction );
     virtual string getLevelFunction( TWindowLevel whichLevel );
     virtual string getFirstUsefulFunction( );
+    virtual TWindowLevel getFirstFreeCompose() const;
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
                                    const TParamValue& newValue );

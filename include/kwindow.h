@@ -100,6 +100,7 @@ class KWindow: public Window
     virtual string getLevelFunction( TWindowLevel whichLevel ) = 0;
     virtual SemanticFunction *getSemanticFunction( TWindowLevel whichLevel ) = 0;
     virtual string getFirstUsefulFunction( ) = 0;
+    virtual TWindowLevel getFirstFreeCompose() const = 0;
     virtual SemanticFunction *getFirstSemUsefulFunction() = 0;
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
@@ -206,6 +207,7 @@ class KSingleWindow: public KWindow
     virtual string getLevelFunction( TWindowLevel whichLevel );
     virtual SemanticFunction *getSemanticFunction( TWindowLevel whichLevel );
     virtual string getFirstUsefulFunction( );
+    virtual TWindowLevel getFirstFreeCompose() const;
     virtual SemanticFunction *getFirstSemUsefulFunction();
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
@@ -325,6 +327,7 @@ class KDerivedWindow: public KWindow
     virtual string getLevelFunction( TWindowLevel whichLevel );
     virtual SemanticFunction *getSemanticFunction( TWindowLevel whichLevel );
     virtual string getFirstUsefulFunction( );
+    virtual TWindowLevel getFirstFreeCompose() const;
     virtual SemanticFunction *getFirstSemUsefulFunction();
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
