@@ -16,7 +16,7 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
   stringstream label;
 
   rowStr = whichTrace->getRowLabel( level, globalOrder );
-  if( rowStr != "" )
+  if ( rowStr != "" )
     return rowStr;
 
   if ( level == WORKLOAD )
@@ -261,16 +261,17 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
       vector<TEventType> types;
       bool found = false;
       whichWindow->getFilter()->getEventType( types );
-      for( vector<TEventType>::iterator it = types.begin(); it != types.end(); ++it )
+      for ( vector<TEventType>::iterator it = types.begin(); it != types.end(); ++it )
       {
-        if( whichWindow->getTrace()->getEventLabels().getEventValueLabel(
-          (*it), value, tmpstr ) )
+        if ( whichWindow->getTrace()->getEventLabels().getEventValueLabel(
+               ( *it ), value, tmpstr ) )
         {
           found = true;
           label << tmpstr;
+          break;
         }
       }
-      if( !found )
+      if ( !found )
       {
         if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( value, tmpstr ) )
           label << tmpstr << " value " << value;
