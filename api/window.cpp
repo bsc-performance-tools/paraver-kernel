@@ -92,7 +92,7 @@ void WindowProxy::init()
   child = NULL;
 
   vector< bool > selected;
-  selected.assign( getWindowLevelObjects(), true );
+  selected.assign( myTrace->totalThreads(), true );
   setSelectedRows( selected );
 }
 
