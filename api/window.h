@@ -247,6 +247,9 @@ class Window
     {}
     virtual void getSelectedRows( vector< TObjectOrder > &selection )
     {}
+    virtual void getSelectedRows( vector< TObjectOrder > &selection,
+                                  TObjectOrder first, TObjectOrder last )
+    {}
 
   protected:
     KernelConnection *myKernel;
@@ -362,6 +365,10 @@ class WindowProxy: public Window
     virtual void setSelectedRows( vector< TObjectOrder > &selected );
     virtual void getSelectedRows( vector< bool > &selected );
     virtual void getSelectedRows( vector< TObjectOrder > &selected );
+    virtual void getSelectedRows( vector< TObjectOrder > &selected,
+                                  TObjectOrder first, TObjectOrder last );
+//    virtual TObjectOrder getFirstSelectedRow();
+//    virtual TObjectOrder getLastSelectedRow();
 
   private:
     Window *myWindow;

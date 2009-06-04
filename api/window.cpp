@@ -278,11 +278,15 @@ void WindowProxy::computeYScale()
 {
   if ( !yScaleComputed )
   {
+    vector< TObjectOrder > selected;
+    getSelectedRows( selected );
+
     init( winBeginTime, NONE );
-    for ( TObjectOrder obj = 0; obj < getWindowLevelObjects(); obj++ )
+
+    for ( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
     {
-      while ( getBeginTime( obj ) < winEndTime )
-        calcNext( obj );
+      while ( getBeginTime( *obj ) < winEndTime )
+        calcNext( *obj );
     }
   }
 
@@ -433,11 +437,11 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create )
   computeYMaxOnInit = false;
   computedMaxY = computedMinY = getValue( 0 );
 
-#warning Set rows as in CFG
+//#warning Set rows as in CFG
   // Simple initialization - all showed; CHANGE THIS
-  vector< bool > selected;
-  selected.assign( myWindow->getWindowLevelObjects(), true );
-  setSelectedRows( selected );
+//  vector< bool > selected;
+//  selected.assign( myWindow->getWindowLevelObjects(), true );
+//  setSelectedRows( selected );
 }
 
 RecordList *WindowProxy::calcNext( TObjectOrder whichObject )
@@ -709,7 +713,13 @@ void WindowProxy::getSelectedRows( vector< bool > &selected )
   selectedRow.getSelected( selected );
 }
 
-void WindowProxy::getSelectedRows( vector< TObjectOrder > &selection )
+void WindowProxy::getSelectedRows( vector< TObjectOrder > &selected )
 {
-  selectedRow.getSelected( selection );
+  selectedRow.getSelected( selected );
+}
+
+void WindowProxy::getSelectedRows( vector< TObjectOrder > &selected,
+                                   TObjectOrder first, TObjectOrder last )
+{
+  selectedRow.getSelected( selected, first, last );
 }

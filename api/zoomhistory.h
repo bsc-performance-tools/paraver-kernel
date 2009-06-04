@@ -14,12 +14,12 @@ class ZoomHistory
     ~ZoomHistory();
 
     void addZoom( Dimension1 begin1, Dimension1 end1,
-                  Dimension2 begin2, Dimension2 end2 );
-    void addZoom( Dimension2 begin, Dimension2 end );
+                  vector< Dimension2 >& selected );
+    void addZoom( vector< Dimension2 >& selected );
     void addZoom( Dimension1 begin, Dimension1 end );
 
     pair<Dimension1, Dimension1> getFirstDimension() const;
-    pair<Dimension2, Dimension2> getSecondDimension() const;
+    void getSecondDimension( vector< Dimension2> &selected ) const;
 
     bool isEmpty() const;
     bool emptyNextZoom() const;
@@ -33,7 +33,7 @@ class ZoomHistory
 
   private:
     int currentZoom;
-    vector< pair< pair<Dimension1,Dimension1>, pair<Dimension2, Dimension2> > > zooms;
+    vector< pair< pair<Dimension1,Dimension1>, vector<Dimension2> > > zooms;
 };
 
 #endif // _ZOOMHISTORY_H

@@ -18,20 +18,20 @@ pair<Dimension1, Dimension1> ZoomHistory<Dimension1,Dimension2>::getFirstDimensi
 }
 
 template <typename Dimension1, typename Dimension2>
-pair<Dimension2, Dimension2> ZoomHistory<Dimension1,Dimension2>::getSecondDimension() const
+void ZoomHistory<Dimension1,Dimension2>::getSecondDimension( vector< Dimension2> &selected ) const
 {
-  return zooms[ currentZoom ].second;
+  selected = zooms[ currentZoom ].second;
 }
 
 
 template <typename Dimension1, typename Dimension2>
 void ZoomHistory<Dimension1,Dimension2>::addZoom( Dimension1 begin1, Dimension1 end1,
-                                                  Dimension2 begin2, Dimension2 end2 )
+                                                  vector< Dimension2> &selected )
 {
   if ( currentZoom < (int)zooms.size() - 1 )
     zooms.resize( currentZoom + 1 );
 
-  zooms.push_back( make_pair( make_pair(begin1,end1), make_pair(begin2,end2)));
+  zooms.push_back( make_pair( make_pair(begin1,end1), selected ));
   currentZoom = zooms.size() - 1;
 }
 
@@ -41,19 +41,18 @@ void ZoomHistory<Dimension1,Dimension2>::addZoom( Dimension1 begin, Dimension1 e
   if ( currentZoom < (int)zooms.size() - 1 )
     zooms.resize( currentZoom + 1 );
 
-  zooms.push_back( make_pair( make_pair(begin,end),
-                   make_pair( zooms[currentZoom].second.first, zooms[currentZoom].second.second)));
+  zooms.push_back( make_pair( make_pair( begin, end ), zooms[ currentZoom ].second ));
   ++currentZoom;
 }
 
 template <typename Dimension1, typename Dimension2>
-void ZoomHistory<Dimension1,Dimension2>::addZoom( Dimension2 begin, Dimension2 end )
+void ZoomHistory<Dimension1,Dimension2>::addZoom( vector< Dimension2> &selected )
 {
   if ( currentZoom < (int)zooms.size() - 1 )
     zooms.resize( currentZoom + 1 );
 
   zooms.push_back( make_pair( make_pair( zooms[currentZoom].first.first, zooms[currentZoom].first.second ),
-                              make_pair( begin, end )));
+                              selected ));
   ++currentZoom;
 }
 
@@ -102,7 +101,7 @@ ZoomHistory<Dimension1,Dimension2> *ZoomHistory<Dimension1,Dimension2>::clone()
   ZoomHistory *clonedZoomHistory = new ZoomHistory<Dimension1,Dimension2>();
 
   clonedZoomHistory->currentZoom = currentZoom;
-  clonedZoomHistory->zooms = vector< pair< pair<Dimension1,Dimension1>, pair<Dimension2, Dimension2> > >( zooms );
+  clonedZoomHistory->zooms = vector< pair< pair<Dimension1,Dimension1>, vector<Dimension2> > >( zooms );
 
   return clonedZoomHistory;
 }

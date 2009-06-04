@@ -15,6 +15,7 @@ template <typename SelType>
 void SelectionManagement<SelType>::setSelected( vector< bool > &selection )
 {
   // Search for first and last selected
+  selectedSet.clear();
   selected = selection;
 
   if ( !selection.empty() )
@@ -42,6 +43,7 @@ void SelectionManagement<SelType>::setSelected( vector< SelType > &selection,
                                                 SelType maxElems )
 {
   // Search for first and last selected
+  selected.clear();
   selectedSet = selection;
 
   if ( !selection.empty() )
@@ -99,6 +101,9 @@ void SelectionManagement< SelType >::getSelected( vector<SelType> &whichSelected
                                                   SelType first,
                                                   SelType last )
 {
+  //  vector<TObjectOrder>::iterator first = find( selected.begin(), selected.end(), firstRow );
+  //  vector<TObjectOrder>::iterator last  = find( selected.begin(), selected.end(), lastRow );
+
   whichSelected.clear();
   typename vector<SelType>::iterator it;
   for ( it = selectedSet.begin(); it != selectedSet.end(); ++it )
