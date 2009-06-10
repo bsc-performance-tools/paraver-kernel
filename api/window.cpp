@@ -239,6 +239,8 @@ Window *WindowProxy::clone( )
   for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); it++ )
     clonedWindow->myLists.push_back( (*it)->create( *it ) );
 */
+  clonedWindow->zoomHistory = zoomHistory;
+
   vector< bool > selected;
   getSelectedRows( selected );
   clonedWindow->setSelectedRows( selected );
@@ -704,6 +706,49 @@ void WindowProxy::getAllSemanticFunctions( TSemanticGroup whichGroup,
 {
   myKernel->getAllSemanticFunctions( whichGroup, onVector );
 }
+
+bool WindowProxy::emptyPrevZoom() const
+{
+  return zoomHistory.emptyPrevZoom();
+}
+
+bool WindowProxy::emptyNextZoom() const
+{
+  return zoomHistory.emptyNextZoom();
+}
+
+void WindowProxy::nextZoom()
+{
+  zoomHistory.nextZoom();
+}
+
+void WindowProxy::prevZoom()
+{
+  zoomHistory.prevZoom();
+}
+
+void WindowProxy::addZoom( TTime beginTime, TTime endTime,
+                           TObjectOrder beginObject, TObjectOrder endObject )
+{
+  zoomHistory.addZoom( beginTime, endTime, beginObject, endObject );
+}
+
+void WindowProxy::addZoom( TTime beginTime, TTime endTime )
+{
+  zoomHistory.addZoom( beginTime, endTime );
+}
+
+pair<TTime, TTime> WindowProxy::getZoomFirstDimension() const
+{
+  return zoomHistory.getFirstDimension();
+}
+
+pair<TObjectOrder, TObjectOrder> WindowProxy::getZoomSecondDimension() const
+{
+  return zoomHistory.getSecondDimension();
+}
+
+
 
 void WindowProxy::setSelectedRows( vector< bool > &selected )
 {

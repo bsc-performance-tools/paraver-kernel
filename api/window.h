@@ -5,6 +5,7 @@
 #include "paraverkerneltypes.h"
 #include "semanticcolor.h"
 #include "drawmode.h"
+#include "zoomhistory.h"
 #include "selectionmanagement.h"
 
 class KernelConnection;
@@ -245,6 +246,34 @@ class Window
                                           vector<string>& onVector ) const
     {}
 
+    virtual bool emptyPrevZoom() const
+    {
+      return true;
+    }
+
+    virtual bool emptyNextZoom() const
+    {
+      return true;
+    }
+
+    virtual void addZoom( TTime beginTime, TTime endTime,
+                          TObjectOrder beginObject, TObjectOrder endObject )
+    {}
+    virtual void addZoom( TTime beginTime, TTime endTime )
+    {}
+    virtual void nextZoom()
+    {}
+    virtual void prevZoom()
+    {}
+    virtual pair<TTime, TTime> getZoomFirstDimension() const
+    {
+      return pair<TTime, TTime>();
+    }
+    virtual pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const
+    {
+      return pair<TObjectOrder,TObjectOrder>();
+    }
+
     virtual void setSelectedRows( vector< bool > &selected )
     {}
     virtual void setSelectedRows( vector< TObjectOrder > &selection )
@@ -368,6 +397,18 @@ class WindowProxy: public Window
     virtual bool getDrawCommLines() const;
     virtual void setDrawCommLines( bool newValue );
 
+
+    virtual bool emptyPrevZoom() const;
+    virtual bool emptyNextZoom() const;
+    virtual void addZoom( TTime beginTime, TTime endTime,
+                          TObjectOrder beginObject, TObjectOrder endObject );
+    virtual void addZoom( TTime beginTime, TTime endTime );
+    virtual void nextZoom();
+    virtual void prevZoom();
+    virtual pair<TTime, TTime> getZoomFirstDimension() const;
+    virtual pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const;
+
+
     virtual void setSelectedRows( vector< bool > &selected );
     virtual void setSelectedRows( vector< TObjectOrder > &selected );
     virtual void getSelectedRows( vector< bool > &selected );
@@ -415,6 +456,9 @@ class WindowProxy: public Window
     bool changed;
     bool redraw;
     bool commLines;
+
+    // Zoom history
+    ZoomHistory<TTime, TObjectOrder> zoomHistory;
 
     // Row selection
     SelectionManagement< TObjectOrder > selectedRow;

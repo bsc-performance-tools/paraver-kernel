@@ -110,6 +110,8 @@ void SelectionManagement< SelType >::getSelected( vector<SelType> &whichSelected
   {
     if (( *it >= first ) && ( *it <= last ))
       whichSelected.push_back( *it );
+    if ( *it == last )
+      break;
   }
 }
 

@@ -1,5 +1,3 @@
-#include "zoomhistory.h"
-
 template <typename Dimension1, typename Dimension2>
 ZoomHistory<Dimension1,Dimension2>::ZoomHistory( )
 {
@@ -95,14 +93,3 @@ void ZoomHistory<Dimension1,Dimension2>::nextZoom( )
     currentZoom++;
 }
 
-
-template <typename Dimension1, typename Dimension2>
-ZoomHistory<Dimension1,Dimension2> *ZoomHistory<Dimension1,Dimension2>::clone()
-{
-  ZoomHistory *clonedZoomHistory = new ZoomHistory<Dimension1,Dimension2>();
-
-  clonedZoomHistory->currentZoom = currentZoom;
-  clonedZoomHistory->zooms = vector< pair< pair<Dimension1,Dimension1>, pair<Dimension2, Dimension2> > >( zooms );
-
-  return clonedZoomHistory;
-}

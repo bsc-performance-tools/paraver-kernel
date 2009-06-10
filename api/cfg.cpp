@@ -245,6 +245,11 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
+  // Init first zoom for all windows
+  for( vector<Window *>::iterator it = windows.begin(); it != windows.end(); ++it )
+    (*it)->addZoom( (*it)->getWindowBeginTime(), (*it)->getWindowEndTime(),
+                    0, (*it)->getWindowLevelObjects() );
+
   // Because old paraver set window_open to false for all windows
   if ( histograms.begin() == histograms.end() )
     windows[ windows.size() - 1 ]->setShowWindow( true );

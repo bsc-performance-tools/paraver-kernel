@@ -314,6 +314,8 @@
 		</Unit>
 		<Unit filename="api/window.h" />
 		<Unit filename="api/zoomhistory.cpp">
+			<Option compile="0" />
+			<Option link="0" />
 			<Option target="api" />
 		</Unit>
 		<Unit filename="api/zoomhistory.h">

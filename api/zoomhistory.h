@@ -29,11 +29,11 @@ class ZoomHistory
     void nextZoom();
     void prevZoom();
 
-    ZoomHistory *clone();
-
   private:
     int currentZoom;
     vector< pair< pair<Dimension1,Dimension1>, pair<Dimension2, Dimension2> > > zooms;
 };
+
+#include "zoomhistory.cpp"
 
 #endif // _ZOOMHISTORY_H
