@@ -202,7 +202,11 @@ void dumpHistogram( vector<Histogram *>& histograms, string& strOutputFile )
   ofstream outputFile;
   Histogram *histo = histograms[ histograms.size() - 1 ];
 
-  histo->execute( histo->getBeginTime(), histo->getEndTime() );
+  vector<TObjectOrder> selectedRows;
+  TObjectOrder beginRow = histo->getControlWindow()->getZoomSecondDimension().first;
+  TObjectOrder endRow =  histo->getControlWindow()->getZoomSecondDimension().second;
+  histo->getControlWindow()->getSelectedRows( selectedRows, beginRow, endRow );
+  histo->execute( histo->getBeginTime(), histo->getEndTime(), selectedRows );
   numPlanes = histo->getNumPlanes();
   numColumns = histo->getNumColumns();
   numRows = histo->getNumRows();

@@ -105,7 +105,8 @@ class Histogram
     virtual void clearStatistics() = 0;
     virtual void pushbackStatistic( const string& whichStatistic ) = 0;
 
-    virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime ) = 0;
+    virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
+                          vector<TObjectOrder>& selectedRows ) = 0;
 
     virtual bool itsCommunicationStat( const string& whichStat ) const = 0;
 
@@ -400,7 +401,8 @@ class HistogramProxy : public Histogram
     virtual void clearStatistics();
     virtual void pushbackStatistic( const string& whichStatistic );
 
-    virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime );
+    virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
+                          vector<TObjectOrder>& selectedRows );
 
     virtual void setHorizontal( bool newValue );
     virtual bool getHorizontal() const;

@@ -432,7 +432,8 @@ void HistogramProxy::pushbackStatistic( const string& whichStatistic )
     calcStat.push_back( whichStatistic );
 }
 
-void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
+void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
+                              vector<TObjectOrder>& selectedRows )
 {
   winBeginTime = whichBeginTime;
   winEndTime = whichEndTime;
@@ -450,7 +451,7 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
     // falta una clase para hacer gradientes.
   }
 
-  myHisto->execute( whichBeginTime, whichEndTime );
+  myHisto->execute( whichBeginTime, whichEndTime, selectedRows );
 
   if ( getThreeDimensions() && futurePlane )
   {

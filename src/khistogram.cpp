@@ -652,7 +652,8 @@ inline void KHistogram::pushbackStatistic( const string& whichStatistic )
 }
 
 
-void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
+void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
+                          vector<TObjectOrder>& selectedRows )
 {
   if ( controlWindow == NULL )
     throw HistogramException( HistogramException::noControlWindow );
@@ -669,7 +670,7 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
 
   initTranslators();
 
-  numRows = rowsTranslator->totalRows();
+  numRows = selectedRows.size();
   numCols = columnTranslator->totalColumns();
   if ( threeDimensions )
     numPlanes = planeTranslator->totalColumns();
@@ -682,8 +683,7 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime )
 
   initTotals();
 
-  TObjectOrder aux = rowsTranslator->totalRows() - 1;
-  recursiveExecution( beginTime, endTime, 0, aux );
+  recursiveExecution( beginTime, endTime, 0, numRows - 1, selectedRows );
 
   if ( threeDimensions )
   {
@@ -789,13 +789,13 @@ void KHistogram::initMatrix( THistogramColumn planes, THistogramColumn cols,
   {
     cube = new Cube<TSemanticValue>( planes, cols, statisticFunctions.size() );
     if ( createComms() )
-      commCube = new Cube<TSemanticValue>( planes, rows, commStatisticFunctions.size() );
+      commCube = new Cube<TSemanticValue>( planes, rowsTranslator->totalRows(), commStatisticFunctions.size() );
   }
   else
   {
     matrix = new Matrix<TSemanticValue>( cols, statisticFunctions.size() );
     if ( createComms() )
-      commMatrix = new Matrix<TSemanticValue>( rows, commStatisticFunctions.size() );
+      commMatrix = new Matrix<TSemanticValue>( rowsTranslator->totalRows(), commStatisticFunctions.size() );
   }
 }
 
@@ -818,7 +818,7 @@ void KHistogram::initTotals()
     if ( createComms() )
     {
       commTotals = new KHistogramTotals( commStatisticFunctions.size(),
-                                         numRows, numPlanes );
+                                         rowsTranslator->totalRows(), numPlanes );
       rowCommTotals = new KHistogramTotals( commStatisticFunctions.size(),
                                             numRows, numPlanes );
     }
@@ -830,7 +830,7 @@ void KHistogram::initTotals()
     if ( createComms() )
     {
       commTotals = new KHistogramTotals( commStatisticFunctions.size(),
-                                         numRows, 1 );
+                                         rowsTranslator->totalRows(), 1 );
       rowCommTotals = new KHistogramTotals( commStatisticFunctions.size(),
                                             numRows, 1 );
     }
@@ -877,6 +877,7 @@ void KHistogram::initStatistics()
 
 void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                                      TObjectOrder fromRow, TObjectOrder toRow,
+                                     vector<TObjectOrder>& selectedRows,
                                      UINT16 winIndex, CalculateData *data )
 {
   Window *currentWindow = orderedWindows[ winIndex ];
@@ -889,10 +890,14 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     data->endTime = 0;
   }
 
-  for ( TObjectOrder iRow = fromRow; iRow <= toRow; iRow++ )
+  for ( TObjectOrder i = fromRow; i <= toRow; ++i )
   {
+    TObjectOrder iRow = i;
     if ( winIndex == 0 )
-      data->row = rowsTranslator->globalTranslate( winIndex, iRow );
+    {
+      iRow = selectedRows[ i ];
+      data->row = i;
+    }
     if ( currentWindow == controlWindow )
       data->controlRow = iRow;
     if ( currentWindow == dataWindow )
@@ -903,12 +908,12 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 
     while ( currentWindow->getEndTime( iRow ) < toTime )
     {
-      calculate( iRow, fromTime, toTime, fromRow, toRow, winIndex, data );
+      calculate( iRow, fromTime, toTime, winIndex, data );
       currentWindow->calcNext( iRow );
     }
 
     if ( currentWindow->getBeginTime( iRow ) < toTime )
-      calculate( iRow, fromTime, toTime, fromRow, toRow, winIndex, data );
+      calculate( iRow, fromTime, toTime, winIndex, data );
 
     if ( winIndex == 0 )
       finishRow( data );
@@ -924,7 +929,6 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 
 void KHistogram::calculate( TObjectOrder iRow,
                             TRecordTime fromTime, TRecordTime toTime,
-                            TObjectOrder fromRow, TObjectOrder toRow,
                             UINT16 winIndex, CalculateData *data )
 {
   TObjectOrder childFromRow;
@@ -1039,8 +1043,9 @@ void KHistogram::calculate( TObjectOrder iRow,
                   toTime;
     rowsTranslator->getRowChilds( winIndex, iRow, childFromRow, childToRow );
 
+    vector<TObjectOrder> tmp;
     recursiveExecution( childFromTime, childToTime, childFromRow, childToRow,
-                        winIndex + 1, data );
+                        tmp, winIndex + 1, data );
   }
 }
 

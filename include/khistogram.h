@@ -173,7 +173,8 @@ class KHistogram : public Histogram
 
     string getUnitsLabel( const string& whichStat ) const;
 
-    void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime );
+    void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
+                  vector<TObjectOrder>& selectedRows );
 
     void getGroupsLabels( vector<string>& onVector ) const;
     void getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const;
@@ -243,10 +244,10 @@ class KHistogram : public Histogram
     void initStatistics();
     void recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                              TObjectOrder fromRow, TObjectOrder toRow,
+                             vector<TObjectOrder>& selectedRows,
                              UINT16 winIndex = 0, CalculateData *data = NULL );
     void calculate( TObjectOrder iRow,
                     TRecordTime fromTime, TRecordTime toTime,
-                    TObjectOrder fromRow, TObjectOrder toRow,
                     UINT16 winIndex, CalculateData *data );
     void finishRow( CalculateData *data );
 };
