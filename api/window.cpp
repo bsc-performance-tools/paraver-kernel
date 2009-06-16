@@ -91,9 +91,7 @@ void WindowProxy::init()
 
   child = NULL;
 
-  vector< bool > selected;
-  selected.assign( myTrace->totalThreads(), true );
-  setSelectedRows( selected );
+  selectedRow.init( getTrace() );
 }
 
 WindowProxy::~WindowProxy()
@@ -241,9 +239,7 @@ Window *WindowProxy::clone( )
 */
   clonedWindow->zoomHistory = zoomHistory;
 
-  vector< bool > selected;
-  getSelectedRows( selected );
-  clonedWindow->setSelectedRows( selected );
+  clonedWindow->selectedRow = selectedRow;
 
   return clonedWindow;
 }
@@ -752,26 +748,26 @@ pair<TObjectOrder, TObjectOrder> WindowProxy::getZoomSecondDimension() const
 
 void WindowProxy::setSelectedRows( vector< bool > &selected )
 {
-  selectedRow.setSelected( selected );
+  selectedRow.setSelected( selected, getLevel() );
 }
 
 void WindowProxy::setSelectedRows( vector< TObjectOrder > &selected )
 {
-  selectedRow.setSelected( selected, getWindowLevelObjects() );
+  selectedRow.setSelected( selected, getWindowLevelObjects(), getLevel() );
 }
 
 void WindowProxy::getSelectedRows( vector< bool > &selected )
 {
-  selectedRow.getSelected( selected );
+  selectedRow.getSelected( selected, getLevel() );
 }
 
 void WindowProxy::getSelectedRows( vector< TObjectOrder > &selected )
 {
-  selectedRow.getSelected( selected );
+  selectedRow.getSelected( selected, getLevel() );
 }
 
 void WindowProxy::getSelectedRows( vector< TObjectOrder > &selected,
                                    TObjectOrder first, TObjectOrder last )
 {
-  selectedRow.getSelected( selected, first, last );
+  selectedRow.getSelected( selected, first, last, getLevel() );
 }

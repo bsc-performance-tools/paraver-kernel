@@ -4,7 +4,6 @@
 #include "paravertypes.h"
 #include "paraverkerneltypes.h"
 
-
 class Window;
 
 class SemanticColor

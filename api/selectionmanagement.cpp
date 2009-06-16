@@ -1,112 +1,167 @@
+#include "trace.h"
+
 template < typename SelType >
-SelectionManagement<SelType>::SelectionManagement()
+SelectionManagement< SelType >::SelectionManagement()
 {
 }
 
+
 template < typename SelType >
-SelectionManagement<SelType>::~SelectionManagement()
+SelectionManagement< SelType >::~SelectionManagement()
 {
 }
 
-// Copies selection vector into selected attribute
-// Sets firstSelected and lastSelected
-// Fills selectedSet vector with i positions that verify selected[i] == true
-template <typename SelType>
-void SelectionManagement<SelType>::setSelected( vector< bool > &selection )
+
+template < typename SelType >
+void SelectionManagement< SelType >::init( Trace *trace )
 {
-  // Search for first and last selected
+  selected.clear();
   selectedSet.clear();
-  selected = selection;
 
-  if ( !selection.empty() )
+  vector< bool > auxSelected;
+
+  for (  UINT32 level = (UINT32)NONE; level <= (UINT32)CPU; ++level )
   {
-    bool firstFound = false;
-    for ( size_t current = 0; current < selected.size(); ++current )
-    {
-      if ( selected[ current ] )
-      {
-        if ( !firstFound )
-          first = ( SelType )current;  // caution!
+    auxSelected.clear();
+    selected.push_back( vector< bool >( ) );
+    selectedSet.push_back( vector< TObjectOrder >( ) );
 
-        last = ( SelType )current;
-        selectedSet.push_back( current );
-      }
+    switch ( level )
+    {
+      case APPLICATION:
+        auxSelected.insert( auxSelected.begin(),
+                            ( size_t ) trace->totalApplications(),
+                            true );
+        setSelected( auxSelected, ( TWindowLevel )level );
+        break;
+
+      case TASK:
+        auxSelected.insert( auxSelected.begin(),
+                            ( size_t ) trace->totalTasks(),
+                            true );
+        setSelected( auxSelected, ( TWindowLevel )level );
+        break;
+
+      case THREAD:
+        auxSelected.insert( auxSelected.begin(),
+                            ( size_t ) trace->totalThreads(),
+                            true );
+        setSelected( auxSelected, ( TWindowLevel )level );
+        break;
+
+      case NODE:
+        auxSelected.insert( auxSelected.begin(),
+                            trace->totalNodes(),
+                            true );
+        setSelected( auxSelected, ( TWindowLevel )level );
+        break;
+
+      case CPU:
+        auxSelected.insert( auxSelected.begin(),
+                            trace->totalCPUs(),
+                            true );
+        setSelected( auxSelected, ( TWindowLevel )level );
+        break;
+
+//    NONE, WORKLOAD, SYSTEM
+      default:
+        break;
     }
   }
 }
 
-// Copies selection vector into selectedSet attribute
-// Sets firstSelected and lastSelected
-// Fills selected vector
-template <typename SelType>
-void SelectionManagement<SelType>::setSelected( vector< SelType > &selection,
-                                                SelType maxElems )
+
+template < typename SelType >
+void SelectionManagement<SelType>::copy( const SelectionManagement &selection )
 {
-  // Search for first and last selected
-  selected.clear();
-  selectedSet = selection;
+  selected = selection.selected;
+  selectedSet = selection.selectedSet;
+}
+
+
+template < typename SelType >
+void SelectionManagement< SelType >::setSelected( vector< bool > &selection,
+                                                  TWindowLevel level )
+{
+  selectedSet[ level ].clear();
+  selected[ level ] = selection;
 
   if ( !selection.empty() )
   {
-    bool firstFound = false;
+    for ( size_t current = 0; current < selected[ level ].size(); ++current )
+      if ( selected[ level ][ current ] )
+        selectedSet[ level ].push_back( current );
+  }
+}
+
+
+template < typename SelType >
+void SelectionManagement< SelType >::setSelected( vector< SelType > &selection,
+                                                  SelType maxElems,
+                                                  TWindowLevel level )
+{
+  selected[ level ].clear();
+  selectedSet[ level ] = selection;
+
+  if ( !selection.empty() )
+  {
     typename vector< SelType >::iterator it;
     it = selection.begin();
     for ( size_t current = 0; current < ( size_t ) maxElems; ++current )
     {
       if ( current == ( size_t )*it )
       {
-        if ( !firstFound )
-          first = ( SelType )current;  // caution!
-
-        last = ( SelType )current;
-        selected.push_back( true );
+        selected[ level ].push_back( true );
         ++it;
       }
       else
-        selected.push_back( false );
+        selected[ level ].push_back( false );
     }
   }
 }
 
 
-template <typename SelType>
-bool SelectionManagement< SelType >::isSelectedPosition( SelType whichSelected )
+template < typename SelType >
+bool SelectionManagement< SelType >::isSelectedPosition( SelType whichSelected,
+                                                         TWindowLevel level )
 {
-  return selected[ whichSelected ];
+  return selected[ level ][ whichSelected ];
 }
 
 
-template <typename SelType>
-void SelectionManagement< SelType >::getSelected( vector<bool> &whichSelected )
+template < typename SelType >
+void SelectionManagement< SelType >::getSelected( vector< bool > &whichSelected,
+                                                  TWindowLevel level )
 {
   whichSelected.clear();
-  typename vector<bool>::iterator it;
+  typename vector< bool >::iterator it;
 
-  for( it = selected.begin(); it != selected.end(); ++it )
+  for( it = selected[ level ].begin(); it != selected[ level ].end(); ++it )
     whichSelected.push_back( *it );
 }
 
-template <typename SelType>
-void SelectionManagement< SelType >::getSelected( vector<SelType> &whichSelected )
+
+template < typename SelType >
+void SelectionManagement< SelType >::getSelected( vector< SelType > &whichSelected,
+                                                  TWindowLevel level )
 {
   whichSelected.clear();
-  typename vector<SelType>::iterator it;
+  typename vector< SelType >::iterator it;
 
-  for( it = selectedSet.begin(); it != selectedSet.end(); ++it )
+  for( it = selectedSet[ level ].begin(); it != selectedSet[ level ].end(); ++it )
     whichSelected.push_back( *it );
 }
 
-template <typename SelType>
-void SelectionManagement< SelType >::getSelected( vector<SelType> &whichSelected,
+
+template < typename SelType >
+void SelectionManagement< SelType >::getSelected( vector< SelType > &whichSelected,
                                                   SelType first,
-                                                  SelType last )
+                                                  SelType last,
+                                                  TWindowLevel level )
 {
-  //  vector<TObjectOrder>::iterator first = find( selected.begin(), selected.end(), firstRow );
-  //  vector<TObjectOrder>::iterator last  = find( selected.begin(), selected.end(), lastRow );
-
   whichSelected.clear();
-  typename vector<SelType>::iterator it;
-  for ( it = selectedSet.begin(); it != selectedSet.end(); ++it )
+  typename vector< SelType >::iterator it;
+  for ( it = selectedSet[ level ].begin(); it != selectedSet[ level ].end(); ++it )
   {
     if (( *it >= first ) && ( *it <= last ))
       whichSelected.push_back( *it );
@@ -114,17 +169,3 @@ void SelectionManagement< SelType >::getSelected( vector<SelType> &whichSelected
       break;
   }
 }
-
-template <typename SelType>
-SelType SelectionManagement< SelType >::firstSelected()
-{
-  return first;
-}
-
-template <typename SelType>
-SelType SelectionManagement< SelType >::lastSelected()
-{
-  return last;
-}
-
-
