@@ -273,10 +273,15 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
       }
       if ( !found )
       {
-        if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( value, tmpstr ) )
-          label << tmpstr << " value " << value;
+        if( types.begin() == types.end() )
+        {
+          if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( value, tmpstr ) )
+            label << tmpstr << " value " << value;
+          else
+            label << tmpstr;
+        }
         else
-          label << tmpstr;
+          label << EventLabels::unknownLabel << " value " << value;
       }
     }
     else if ( infoType == COMMSIZE_TYPE )

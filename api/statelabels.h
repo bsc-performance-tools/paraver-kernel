@@ -10,6 +10,8 @@ using namespace domain;
 class StateLabels
 {
   public:
+    static const string unknownLabel;
+
     StateLabels();
     StateLabels( const ParaverTraceConfig& config );
     ~StateLabels();
@@ -20,8 +22,6 @@ class StateLabels
   protected:
 
   private:
-    static const string unknownLabel;
-
     map<TState, string> stateLabel;
 };
 

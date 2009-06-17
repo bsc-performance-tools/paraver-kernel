@@ -11,6 +11,8 @@ using namespace domain;
 class EventLabels
 {
   public:
+    static const string unknownLabel;
+
     EventLabels();
     EventLabels( const set<TEventType>& eventsLoaded );
     EventLabels( const ParaverTraceConfig& config,
@@ -25,8 +27,6 @@ class EventLabels
   protected:
 
   private:
-    static const string unknownLabel;
-
     map<TEventType, string> eventTypeLabel;
     map<TEventType, map<TEventValue, string> > eventValueLabel;
 };
