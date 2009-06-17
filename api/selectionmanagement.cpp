@@ -109,7 +109,7 @@ void SelectionManagement< SelType >::setSelected( vector< SelType > &selection,
     it = selection.begin();
     for ( size_t current = 0; current < ( size_t ) maxElems; ++current )
     {
-      if ( current == ( size_t )*it )
+      if ( it != selection.end() && current == ( size_t )*it )
       {
         selected[ level ].push_back( true );
         ++it;

@@ -240,6 +240,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\selectionmanagement.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\semanticcolor.cpp"
 				>
 			</File>
@@ -395,6 +407,10 @@
 			</File>
 			<File
 				RelativePath=".\rowlabels.h"
+				>
+			</File>
+			<File
+				RelativePath=".\selectionmanagement.h"
 				>
 			</File>
 			<File
