@@ -21,6 +21,8 @@ class Trace
     Trace( KernelConnection *whichKernel );
     virtual ~Trace() {}
 
+    TObjectOrder getLevelObjects( TWindowLevel onLevel ) const;
+
     virtual string getFileName() const = 0;
     virtual void dumpFile( const string& whichFile ) const = 0;
 

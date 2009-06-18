@@ -998,11 +998,6 @@ bool WindowLevel::parseLine( KernelConnection *whichKernel, istringstream& line,
 
   windows[ windows.size() - 1 ]->setLevel( stringToLevel( strLevel ) );
 
-  // Sets as selected all rows
-  vector< bool > selected;
-  selected.assign( windows[ windows.size() - 1 ]->getWindowLevelObjects(), true );
-  windows[ windows.size() - 1 ]->setSelectedRows( selected );
-
   return true;
 }
 
@@ -1133,8 +1128,9 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
 #endif
   // Sets as selected all rows
   vector< bool > selected;
-  selected.assign( windows[ windows.size() - 1 ]->getWindowLevelObjects(), true );
-  windows[ windows.size() - 1 ]->setSelectedRows( selected );
+  Window *win = windows[ windows.size() - 1 ];
+  selected.assign( win->getWindowLevelObjects(), true );
+  win->setSelectedRows( win->getLevel(), selected );
 
   return true;
 }

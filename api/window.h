@@ -274,15 +274,16 @@ class Window
       return pair<TObjectOrder,TObjectOrder>();
     }
 
-    virtual void setSelectedRows( vector< bool > &selected )
+    virtual void setSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
     {}
-    virtual void setSelectedRows( vector< TObjectOrder > &selection )
+    virtual void setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selection )
     {}
-    virtual void getSelectedRows( vector< bool > &selected )
+    virtual void getSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
     {}
-    virtual void getSelectedRows( vector< TObjectOrder > &selection )
+    virtual void getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selection )
     {}
-    virtual void getSelectedRows( vector< TObjectOrder > &selection,
+    virtual void getSelectedRows( TWindowLevel onLevel,
+                                  vector< TObjectOrder > &selection,
                                   TObjectOrder first, TObjectOrder last )
     {}
 
@@ -409,11 +410,11 @@ class WindowProxy: public Window
     virtual pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const;
 
 
-    virtual void setSelectedRows( vector< bool > &selected );
-    virtual void setSelectedRows( vector< TObjectOrder > &selected );
-    virtual void getSelectedRows( vector< bool > &selected );
-    virtual void getSelectedRows( vector< TObjectOrder > &selected );
-    virtual void getSelectedRows( vector< TObjectOrder > &selected,
+    virtual void setSelectedRows( TWindowLevel onLevel, vector< bool > &selected );
+    virtual void setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected );
+    virtual void getSelectedRows( TWindowLevel onLevel, vector< bool > &selected );
+    virtual void getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected );
+    virtual void getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected,
                                   TObjectOrder first, TObjectOrder last );
 //    virtual TObjectOrder getFirstSelectedRow();
 //    virtual TObjectOrder getLastSelectedRow();

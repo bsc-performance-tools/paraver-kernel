@@ -279,7 +279,7 @@ void WindowProxy::computeYScale()
   if ( !yScaleComputed )
   {
     vector< TObjectOrder > selected;
-    getSelectedRows( selected );
+    getSelectedRows( getLevel(), selected );
 
     init( winBeginTime, NONE );
 
@@ -746,28 +746,29 @@ pair<TObjectOrder, TObjectOrder> WindowProxy::getZoomSecondDimension() const
 
 
 
-void WindowProxy::setSelectedRows( vector< bool > &selected )
+void WindowProxy::setSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
 {
-  selectedRow.setSelected( selected, getLevel() );
+  selectedRow.setSelected( selected, onLevel );
 }
 
-void WindowProxy::setSelectedRows( vector< TObjectOrder > &selected )
+void WindowProxy::setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected )
 {
-  selectedRow.setSelected( selected, getWindowLevelObjects(), getLevel() );
+  selectedRow.setSelected( selected, myTrace->getLevelObjects( onLevel ), onLevel );
 }
 
-void WindowProxy::getSelectedRows( vector< bool > &selected )
+void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
 {
-  selectedRow.getSelected( selected, getLevel() );
+  selectedRow.getSelected( selected, onLevel );
 }
 
-void WindowProxy::getSelectedRows( vector< TObjectOrder > &selected )
+void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected )
 {
-  selectedRow.getSelected( selected, getLevel() );
+  selectedRow.getSelected( selected, onLevel );
 }
 
-void WindowProxy::getSelectedRows( vector< TObjectOrder > &selected,
+void WindowProxy::getSelectedRows( TWindowLevel onLevel,
+                                   vector< TObjectOrder > &selected,
                                    TObjectOrder first, TObjectOrder last )
 {
-  selectedRow.getSelected( selected, first, last, getLevel() );
+  selectedRow.getSelected( selected, first, last, onLevel );
 }

@@ -17,6 +17,35 @@ Trace::Trace( KernelConnection *whichKernel ):
     myKernel( whichKernel )
 {}
 
+TObjectOrder Trace::getLevelObjects( TWindowLevel onLevel ) const
+{
+  switch( onLevel )
+  {
+    case WORKLOAD:
+    case SYSTEM:
+      return 1;
+      break;
+    case APPLICATION:
+      return totalApplications();
+      break;
+    case TASK:
+      return totalTasks();
+      break;
+    case THREAD:
+      return totalThreads();
+      break;
+    case NODE:
+      return totalNodes();
+      break;
+    case CPU:
+      return totalCPUs();
+      break;
+    default:
+      return 0;
+  }
+  return 0;
+}
+
 TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile,
                         ProgressController *progress ):
     Trace( whichKernel )

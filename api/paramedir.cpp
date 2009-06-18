@@ -205,7 +205,8 @@ void dumpHistogram( vector<Histogram *>& histograms, string& strOutputFile )
   vector<TObjectOrder> selectedRows;
   TObjectOrder beginRow = histo->getControlWindow()->getZoomSecondDimension().first;
   TObjectOrder endRow =  histo->getControlWindow()->getZoomSecondDimension().second;
-  histo->getControlWindow()->getSelectedRows( selectedRows, beginRow, endRow );
+  histo->getControlWindow()->getSelectedRows( histo->getControlWindow()->getLevel(),
+                                              selectedRows, beginRow, endRow );
   histo->execute( histo->getBeginTime(), histo->getEndTime(), selectedRows );
   numPlanes = histo->getNumPlanes();
   numColumns = histo->getNumColumns();
