@@ -429,12 +429,15 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress )
   if ( !header.eof() )
   {
     std::getline( header, tmpstr );
-    istringstream streamComm( tmpstr );
-
-    if ( !( streamComm >> numberComm ) )
+    if ( tmpstr != "" )
     {
-      throw TraceHeaderException( TraceHeaderException::invalidCommNumber,
-                                  tmpstr.c_str() );
+      istringstream streamComm( tmpstr );
+
+      if ( !( streamComm >> numberComm ) )
+      {
+        throw TraceHeaderException( TraceHeaderException::invalidCommNumber,
+                                    tmpstr.c_str() );
+      }
     }
   }
 
@@ -478,7 +481,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress )
           progress->setCurrentProgress( blocks->getLastRecordTime() );
       }
       count = 0;
-      if( progress->getStop() )
+      if ( progress->getStop() )
         break;
     }
     else

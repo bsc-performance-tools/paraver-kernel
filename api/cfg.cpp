@@ -1119,18 +1119,102 @@ void WindowEndTimeRelative::printLine( ofstream& cfgFile,
   }
 }
 
+bool genericParseObjects( istringstream& line,
+                          TObjectOrder numObjects,
+                          TObjectOrder beginObject,
+                          vector<bool>& onVector,
+                          bool numbers = false )
+{
+  string strValue;
+  bool value;
+
+  for( TObjectOrder iObj = 0; iObj < numObjects; ++iObj )
+  {
+    if( iObj == numObjects - 1 )
+      getline( line, strValue, ' ' );
+    else
+      getline( line, strValue, ',' );
+
+    if( numbers )
+    {
+      istringstream tmpValue( strValue );
+      if( !( tmpValue >> value ) )
+        return false;
+    }
+    else
+    {
+      value = true;
+      if( strValue == "None" )
+        value = false;
+    }
+
+    onVector[ beginObject + iObj ] = value;
+  }
+
+  return true;
+}
+
 bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line, Trace *whichTrace,
                               vector<Window *>& windows,
                               vector<Histogram *>& histograms )
 {
-#ifndef WIN32
-#warning WindowObject::parseLine
-#endif
+  string strVoid;
+  string strLevel;
+  TWindowLevel level;
+  string strNumObjects;
+  TObjectOrder numObjects;
+  vector<bool> selObjects;
+  istringstream tmpNumObjects;
+  Window *win = windows[ windows.size() - 1 ];
+
+  if ( win == NULL )
+    return false;
+
+  getline( line, strLevel, ' ' );
+  level = stringToLevel( strLevel );
+
+  getline( line, strVoid, ' ' );
+
+  switch( level )
+  {
+    case APPLICATION:
+      win->getSelectedRows( APPLICATION, selObjects );
+      getline( line, strNumObjects, ',' );
+      tmpNumObjects.str( strNumObjects );
+      if ( !( tmpNumObjects >> numObjects ) )
+        return false;
+      getline( line, strVoid, ' ' );
+      getline( line, strVoid, ' ' );
+      if( !genericParseObjects( line, numObjects, 0, selObjects ) )
+        return false;
+      win->setSelectedRows( APPLICATION, selObjects );
+      break;
+
+    case TASK:
+
+      break;
+
+    case THREAD:
+
+      break;
+
+    case NODE:
+
+      break;
+
+    case CPU:
+
+      break;
+
+    default:
+      break;
+  }
+
   // Sets as selected all rows
-  vector< bool > selected;
+/*  vector< bool > selected;
   Window *win = windows[ windows.size() - 1 ];
   selected.assign( win->getWindowLevelObjects(), true );
-  win->setSelectedRows( win->getLevel(), selected );
+  win->setSelectedRows( win->getLevel(), selected );*/
 
   return true;
 }

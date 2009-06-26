@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <functional>
 #include "trace.h"
 
 template < typename SelType >
@@ -84,7 +86,17 @@ void SelectionManagement< SelType >::setSelected( vector< bool > &selection,
                                                   TWindowLevel level )
 {
   selectedSet[ level ].clear();
-  selected[ level ] = selection;
+  if( selected[ level ].size() > selection.size() )
+  {
+    std::copy( selection.begin(), selection.end(), selected[ level ].begin() );
+  }
+  else
+  {
+    size_t size = selected[ level ].size();
+    selected[ level ] = selection;
+    if( size > 0 )
+      selected[ level ].resize( size );
+  }
 
   if ( !selection.empty() )
   {
@@ -102,6 +114,12 @@ void SelectionManagement< SelType >::setSelected( vector< SelType > &selection,
 {
   selected[ level ].clear();
   selectedSet[ level ] = selection;
+  typename vector<SelType>::iterator maxIt;
+  maxIt = std::find_if( selectedSet[ level ].begin(),
+                        selectedSet[ level ].end(),
+                        std::bind2nd( std::greater_equal<SelType>(), maxElems ) );
+  if( maxIt != selectedSet[ level ].end() )
+    selectedSet[ level ].erase( maxIt, selectedSet[ level ].end() );
 
   if ( !selection.empty() )
   {
@@ -133,11 +151,7 @@ template < typename SelType >
 void SelectionManagement< SelType >::getSelected( vector< bool > &whichSelected,
                                                   TWindowLevel level )
 {
-  whichSelected.clear();
-  typename vector< bool >::iterator it;
-
-  for( it = selected[ level ].begin(); it != selected[ level ].end(); ++it )
-    whichSelected.push_back( *it );
+  whichSelected = selected[ level ];
 }
 
 
@@ -145,11 +159,7 @@ template < typename SelType >
 void SelectionManagement< SelType >::getSelected( vector< SelType > &whichSelected,
                                                   TWindowLevel level )
 {
-  whichSelected.clear();
-  typename vector< SelType >::iterator it;
-
-  for( it = selectedSet[ level ].begin(); it != selectedSet[ level ].end(); ++it )
-    whichSelected.push_back( *it );
+  whichSelected = selectedSet[ level ];
 }
 
 
