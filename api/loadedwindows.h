@@ -8,6 +8,7 @@ using namespace std;
 
 class Window;
 class Histogram;
+class Trace;
 
 typedef UINT32 TWindowID;
 
@@ -24,6 +25,8 @@ class LoadedWindows
     Histogram *getHisto( TWindowID id ) const;
     void getAll( vector<Window *>& onVector ) const;
     void getAll( vector<Histogram *>& onVector ) const;
+    void getAll( Trace *whichTrace, vector< Window *>& onVector ) const;
+    void getAll( Trace *whichTrace, vector< Histogram *>& onVector ) const;
 
     // Histogram windows selection related methods
     void getValidControlWindow( Window *dataWindow, vector<TWindowID>& onVector ) const;

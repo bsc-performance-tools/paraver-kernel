@@ -300,6 +300,9 @@ void TraceProxy::parsePCF( const string& whichFile )
   myEventLabels = EventLabels( *config, myTrace->getLoadedEvents() );
   myStateLabels = StateLabels( *config );
 
+  myDefaultTaskSemanticFunc = config->get_default_task_semantic_func();
+  myDefaultThreadSemanticFunc = config->get_default_thread_semantic_func();
+
   delete config;
 }
 
@@ -331,4 +334,22 @@ const StateLabels& TraceProxy::getStateLabels() const
 string TraceProxy::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const
 {
   return myRowLabels.getRowLabel( whichLevel, whichRow );
+}
+
+
+string TraceProxy::getDefaultSemanticFunc( TWindowLevel whichLevel ) const
+{
+  switch( whichLevel )
+  {
+    case ( TASK ):
+      return myDefaultTaskSemanticFunc;
+      break;
+    case( THREAD ):
+      return myDefaultThreadSemanticFunc;
+      break;
+    default:
+      break;
+  }
+
+  return myDefaultThreadSemanticFunc;
 }

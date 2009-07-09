@@ -287,6 +287,9 @@ class Window
                                   TObjectOrder first, TObjectOrder last )
     {}
 
+    virtual void getGroupLabels( vector<string>& onVector, UINT32 whichGroup ) const = 0;
+
+
   protected:
     KernelConnection *myKernel;
 
@@ -418,6 +421,7 @@ class WindowProxy: public Window
                                   TObjectOrder first, TObjectOrder last );
 //    virtual TObjectOrder getFirstSelectedRow();
 //    virtual TObjectOrder getLastSelectedRow();
+    virtual void getGroupLabels( vector<string>& onVector, UINT32 whichGroup ) const;
 
   private:
     Window *myWindow;

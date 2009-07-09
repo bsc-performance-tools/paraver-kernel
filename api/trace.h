@@ -110,6 +110,12 @@ class Trace
       return "";
     }
 
+    virtual string getDefaultSemanticFunc( TWindowLevel whichLevel ) const
+    {
+      return "";
+    }
+
+
     // Specific methods for KTrace only
     virtual const set<TEventType>& getLoadedEvents() const
     {
@@ -191,6 +197,9 @@ class TraceProxy: public Trace
     virtual const EventLabels& getEventLabels() const;
     virtual const StateLabels& getStateLabels() const;
     virtual string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const;
+
+    virtual string getDefaultSemanticFunc( TWindowLevel whichLevel ) const;
+
   private:
     Trace *myTrace;
 
@@ -200,6 +209,9 @@ class TraceProxy: public Trace
     EventLabels myEventLabels;
     StateLabels myStateLabels;
     RowLabels myRowLabels;
+
+    string myDefaultTaskSemanticFunc;
+    string myDefaultThreadSemanticFunc;
 
     TraceProxy( KernelConnection *whichKernel, const string& whichFile,
                 ProgressController *progress );

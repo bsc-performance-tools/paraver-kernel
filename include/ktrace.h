@@ -142,5 +142,4 @@ class KTrace: public Trace
     set<TEventType> events;
 };
 
-
 #endif // KTRACE_H_INCLUDED

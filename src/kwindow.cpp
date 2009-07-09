@@ -121,6 +121,10 @@ KWindow *KWindow::clone()
   return NULL;
 }
 
+void KWindow::getGroupLabels( vector<string>& onVector, UINT32 whichGroup ) const
+{
+  FunctionManagement<SemanticFunction>::getInstance()->getAll( onVector, whichGroup );
+}
 
 /**********************************************************************
  *  KSingleWindow implementation

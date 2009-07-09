@@ -67,6 +67,25 @@ void LoadedWindows::getAll( vector<Histogram *>& onVector ) const
     onVector.push_back( ( *it ).second );
 }
 
+
+void LoadedWindows::getAll( Trace *whichTrace, vector< Window *>& onVector ) const
+{
+  for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
+        it != windows.end(); ++it )
+    if ( (*it).second->getTrace() == whichTrace )
+      onVector.push_back( ( *it ).second );
+}
+
+
+void LoadedWindows::getAll( Trace *whichTrace, vector< Histogram *>& onVector ) const
+{
+  for ( map<TWindowID, Histogram *>::const_iterator it = histograms.begin();
+        it != histograms.end(); ++it )
+    if ( (*it).second->getControlWindow()->getTrace() == whichTrace )
+      onVector.push_back( ( *it ).second );
+}
+
+
 // Histogram windows selection related methods
 void LoadedWindows::getValidControlWindow( Window *dataWindow,
     vector<TWindowID>& onVector ) const
