@@ -44,7 +44,6 @@ inline TSemanticValue selectMethod<DRAW_RANDOM>( vector<TSemanticValue>& v )
 {
   int pos;
 
-  srand( time( NULL ) );
   pos = v.size() * rand() / RAND_MAX;
 
   return v[ pos ];
@@ -55,7 +54,6 @@ inline TSemanticValue selectMethod<DRAW_RANDNOTZERO>( vector<TSemanticValue>& v 
 {
   int pos;
 
-  srand( time( NULL ) );
   pos = v.size() * rand() / RAND_MAX;
 
   UINT32 i = 0;

@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <string.h>
 
 #include "paraverkerneltypes.h"
 
@@ -9,45 +10,34 @@ template <typename ValueType>
 Cell<ValueType>::Cell( TObjectOrder idRow, UINT16 numStats ):
     row( idRow ), nStats( numStats )
 {
-/*  Statistic_2D<ValueType> *tmp_stat;
-
-  for ( UINT16 ii = 0; ii < numStats; ii++ )
-  {
-    tmp_stat = new Statistic_2D<ValueType>;
-    values.push_back( tmp_stat );
-  }*/
-  values = new Statistic_2D<ValueType>[ nStats ];
+  values.insert( values.begin(), nStats, (ValueType) 0 );
 }
 
 template <typename ValueType>
 Cell<ValueType>::Cell( Cell< ValueType >& source ):
     row( source.row ), nStats( source.nStats )
 {
-  values = new Statistic_2D<ValueType>[ nStats ];
-  for ( UINT16 i = 0; i < nStats; i++ )
-    values[ i ] = source.values[ i ];
+  values = source.values;
 }
 
 template <typename ValueType>
 Cell<ValueType>::~Cell()
-{
-  delete[] values;
-}
+{}
 
 
 template <typename ValueType>
 inline void Cell<ValueType>::init( UINT16 idStat )
 {
   if ( nStats > idStat )
-    values[ idStat ].init();
+    values[ idStat ] = (ValueType) 0;
 }
 
 
 template <typename ValueType>
 inline void Cell<ValueType>::init( )
 {
-  for ( UINT16 ii = 0; ii < nStats; ii++ )
-    values[ ii ].init();
+  for ( UINT16 ii = 0; ii < nStats; ++ii )
+    values[ ii ] = (ValueType) 0;
 }
 
 
@@ -55,15 +45,22 @@ template <typename ValueType>
 inline void Cell<ValueType>::setValue( UINT16 idStat, ValueType semVal )
 {
   if ( nStats > idStat )
-    values[ idStat ].setValue( semVal );
+    values[ idStat ] = semVal;
 }
 
 
 template <typename ValueType>
 inline void Cell<ValueType>::setValue( ValueType semVal )
 {
-  for ( UINT16 ii = 0; ii < nStats; ii++ )
-    values[ ii ].setValue( semVal );
+  for ( UINT16 ii = 0; ii < nStats; ++ii )
+    values[ ii ] = semVal;
+}
+
+
+template <typename ValueType>
+inline void Cell<ValueType>::setValue( const vector<ValueType>& semVal )
+{
+  values = semVal;
 }
 
 
@@ -71,15 +68,23 @@ template <typename ValueType>
 inline void Cell<ValueType>::addValue( UINT16 idStat, ValueType semVal )
 {
   if ( nStats > idStat )
-    values[ idStat ].addValue( semVal );
+    values[ idStat ] += semVal;
 }
 
 
 template <typename ValueType>
 inline void Cell<ValueType>::addValue( ValueType semVal )
 {
-  for ( UINT16 ii = 0; ii < nStats; ii++ )
-    values[ ii ].addValue( semVal );
+  for ( UINT16 ii = 0; ii < nStats; ++ii )
+    values[ ii ] += semVal;
+}
+
+
+template <typename ValueType>
+inline void Cell<ValueType>::addValue( const vector<ValueType>& semVal )
+{
+  for ( UINT16 ii = 0; ii < nStats; ++ii )
+    values[ ii ] += semVal[ ii ];
 }
 
 
@@ -87,12 +92,19 @@ template <typename ValueType>
 inline ValueType Cell<ValueType>::getValue( UINT16 idStat ) const
 {
   if ( nStats > idStat )
-    return values[idStat].getValue();
+    return values[ idStat ];
 
   ValueType tmp;
 
   memset( ( void * ) &tmp, 0, sizeof( ValueType ) );
   return tmp;
+}
+
+
+template <typename ValueType>
+inline vector<ValueType> Cell<ValueType>::getValue() const
+{
+  return values;
 }
 
 
@@ -114,9 +126,9 @@ template <typename ValueType>
 inline void Cell<ValueType>::print( ) const
 {
   cout << "[" << row << "] " ;
-  for ( UINT16 ii = 0; ii < nStats; ii++ )
+  for ( UINT16 ii = 0; ii < nStats; ++ii )
   {
-    values[ii].print();
+    cout << values[ ii ];
     cout << " ";
   }
 

@@ -11,6 +11,8 @@
 
 void LocalKernel::init()
 {
+  srand( time( NULL ) );
+
   createFilter();
   createSemantic();
   createStatistic();

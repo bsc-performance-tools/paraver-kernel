@@ -109,6 +109,7 @@
 			<Add alias="test" targets="Debug;" />
 		</VirtualTargets>
 		<Compiler>
+			<Add option="-O2" />
 			<Add option="-Wall" />
 			<Add option="-g" />
 			<Add directory="include" />

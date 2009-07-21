@@ -190,8 +190,6 @@ class KHistogram : public Histogram
     KWindow *dataWindow;
     KWindow *xtraControlWindow;
 
-    bool threeDimensions;
-
     TRecordTime beginTime;
     TRecordTime endTime;
 

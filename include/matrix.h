@@ -18,9 +18,12 @@ class Matrix
     void init( );
     void setValue( UINT32 col, UINT16 idStat, ValueType semVal );
     void setValue( UINT32 col, ValueType semVal );
+    void setValue( UINT32 col, const vector<ValueType>& semVal );
     void addValue( UINT32 col, UINT16 idStat, ValueType semVal );
     void addValue( UINT32 col, ValueType semVal );
+    void addValue( UINT32 col, const vector<ValueType>& semVal );
     ValueType getCurrentValue( UINT32 col, UINT16 idStat ) const;
+    vector<ValueType> getCurrentValue( UINT32 col ) const;
     TObjectOrder getCurrentRow( UINT32 col ) const;
     bool currentCellModified( UINT32 col ) const;
     void newRow( );
@@ -34,7 +37,7 @@ class Matrix
     void print() const;
 
   private:
-    vector<Column<ValueType> *> cols;
+    vector<Column<ValueType> > cols;
     bool finished;
 };
 

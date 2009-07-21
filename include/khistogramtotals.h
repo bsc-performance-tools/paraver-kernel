@@ -58,12 +58,12 @@ class KHistogramTotals: public HistogramTotals
   private:
     THistogramColumn columns;
     UINT16 stats;
-    // planes<columns<stats<value> > >
-    vector<vector<vector<TSemanticValue> *> *> total;
-    vector<vector<vector<TSemanticValue> *> *> average;
-    vector<vector<vector<TSemanticValue> *> *> maximum;
-    vector<vector<vector<TSemanticValue> *> *> minimum;
-    vector<vector<vector<TSemanticValue> *> *> stdev;
+    // planes<stats<columns<value> > >
+    vector<vector<vector<TSemanticValue> > > total;
+    vector<vector<vector<TSemanticValue> > > average;
+    vector<vector<vector<TSemanticValue> > > maximum;
+    vector<vector<vector<TSemanticValue> > > minimum;
+    vector<vector<vector<TSemanticValue> > > stdev;
 
     SortIndex<TSemanticValue> *sort;
     vector<int> nullSort;

@@ -17,16 +17,19 @@ class Column
   public:
     Column( short numStats, bool *mat_finished );
     Column( int currentRow, short numStats, bool *mat_finished );
-    Column( Column<ValueType>& source );
+    Column( const Column<ValueType>& source );
     ~Column();
 
     void init( short idStat );
     void init( );
     void setValue( short idStat, ValueType semVal );
     void setValue( ValueType semVal );
+    void setValue( const vector<ValueType>& semVal );
     void addValue( short idStat, ValueType semVal );
     void addValue( ValueType semVal );
+    void addValue( const vector<ValueType>& semVal );
     ValueType getCurrentValue( short idStat ) const;
+    vector<ValueType> getCurrentValue() const;
     int getCurrentRow( ) const;
     bool currentCellModified( ) const;
     void newRow( );
@@ -37,8 +40,6 @@ class Column
     void print() const;
 
   private:
-    /*    deque<Cell<ValueType> *> cells;
-        typename deque<Cell<ValueType> *>::iterator it_cell;*/
     vector<Cell<ValueType> *> cells;
     typename vector<Cell<ValueType> *>::iterator it_cell;
 

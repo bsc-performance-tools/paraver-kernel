@@ -12,6 +12,32 @@ struct CalculateData;
 
 using namespace std;
 
+class StatNumSends;
+class StatNumReceives;
+class StatBytesSent;
+class StatBytesReceived;
+class StatAvgBytesSent;
+class StatAvgBytesReceived;
+class StatMinBytesSent;
+class StatMinBytesReceived;
+class StatMaxBytesSent;
+class StatMaxBytesReceived;
+class StatTime;
+class StatPercTime;
+class StatPercTimeNotZero;
+class StatPercTimeWindow;
+class StatNumBursts;
+class StatPercNumBursts;
+class StatIntegral;
+class StatAvgValue;
+class StatMaximum;
+class StatAvgBurstTime;
+class StatStdevBurstTime;
+class StatAvgPerBurst;
+class StatAvgValueNotZero;
+class StatNumBurstsNotZero;
+class StatSumBursts;
+
 class HistogramStatistic
 {
   public:
@@ -33,10 +59,52 @@ class HistogramStatistic
     virtual string getUnits( const KHistogram *whichHisto ) const = 0;
     virtual HistogramStatistic *clone() = 0;
 
+    static void initAllComm( KHistogram *whichHistogram );
+    static void resetAllComm();
+    static vector<bool> filterAllComm( CalculateData *data );
+    static vector<TSemanticValue> executeAllComm( CalculateData *data );
+    static vector<TSemanticValue> finishRowAllComm( vector<TSemanticValue>& cellValue,
+        THistogramColumn column,
+        THistogramColumn plane = 0 );
+
+    static void initAll( KHistogram *whichHistogram );
+    static void resetAll();
+    static vector<bool> filterAll( CalculateData *data );
+    static vector<TSemanticValue> executeAll( CalculateData *data );
+    static vector<TSemanticValue> finishRowAll( vector<TSemanticValue>& cellValue,
+        THistogramColumn column,
+        THistogramColumn plane = 0 );
+
   protected:
     KHistogram *myHistogram;
 
   private:
+    static StatNumSends statNumSends;
+    static StatNumReceives statNumReceives;
+    static StatBytesSent statBytesSent;
+    static StatBytesReceived statBytesReceived;
+    static StatAvgBytesSent statAvgBytesSent;
+    static StatAvgBytesReceived statAvgBytesReceived;
+    static StatMinBytesSent statMinBytesSent;
+    static StatMinBytesReceived statMinBytesReceived;
+    static StatMaxBytesSent statMaxBytesSent;
+    static StatMaxBytesReceived statMaxBytesReceived;
+
+    static StatTime statTime;
+    static StatPercTime statPercTime;
+    static StatPercTimeNotZero statPercTimeNotZero;
+    static StatPercTimeWindow statPercTimeWindow;
+    static StatNumBursts statNumBursts;
+    static StatPercNumBursts statPercNumBursts;
+    static StatIntegral statIntegral;
+    static StatAvgValue statAvgValue;
+    static StatMaximum statMaximum;
+    static StatAvgBurstTime statAvgBurstTime;
+    static StatStdevBurstTime statStdevBurstTime;
+    static StatAvgPerBurst statAvgPerBurst;
+    static StatAvgValueNotZero statAvgValueNotZero;
+    static StatNumBurstsNotZero statNumBurstsNotZero;
+    static StatSumBursts statSumBursts;
 
 };
 

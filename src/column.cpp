@@ -3,14 +3,12 @@
 
 using namespace std;
 
-//#include "column.h"
-
 template <typename ValueType>
 Column<ValueType>::Column( short numStats, bool *mat_finished ):
     nstat( numStats ), modified( false ), n_cells( 0 ), finished( mat_finished )
 {
   current_cell = new Cell<ValueType>( 0, nstat );
-  current_cell->init();
+  //current_cell->init();
 }
 
 
@@ -19,24 +17,19 @@ Column<ValueType>::Column( int currentRow, short numStats, bool *mat_finished ):
     nstat( numStats ), modified( false ), n_cells( 0 ), finished( mat_finished )
 {
   current_cell = new Cell<ValueType>( currentRow, nstat );
-  current_cell->init();
+  //current_cell->init();
 }
 
 
 template <typename ValueType>
-Column<ValueType>::Column( Column<ValueType>& source ):
+Column<ValueType>::Column( const Column<ValueType>& source ):
     nstat( source.nstat ), modified( source.modified ), n_cells( source.n_cells ), finished( source.finished )
 {
   current_cell = new Cell<ValueType>( *source.current_cell );
 
-  for ( it_cell = source.cells.begin(); it_cell != source.cells.end(); ++it_cell )
-    cells.push_back( new Cell<ValueType>( **it_cell ) );
-
-  // Set it_cell properly.
-  typename vector<Cell<ValueType> *>::iterator it_aux;
-  it_cell = cells.begin();
-  for ( it_aux = source.cells.begin(); it_aux != source.it_cell; ++it_aux );
-    it_cell++;
+  typename vector<Cell<ValueType> *>::const_iterator it_aux;
+  for ( it_aux = source.cells.begin(); it_aux != source.cells.end(); ++it_aux )
+    cells.push_back( new Cell<ValueType>( **it_aux ) );
 }
 
 
@@ -79,9 +72,9 @@ inline void Column<ValueType>::setValue( short idStat, ValueType semVal )
     if ( modified == false )
     {
       cells.push_back( current_cell );
-      n_cells++;
+      ++n_cells;
       modified = true;
-      it_cell = cells.begin();
+      //it_cell = cells.begin();
     }
   }
 }
@@ -100,9 +93,30 @@ inline void Column<ValueType>::setValue( ValueType semVal )
     if ( modified == false )
     {
       cells.push_back( current_cell );
-      n_cells++;
+      ++n_cells;
       modified = true;
-      it_cell = cells.begin();
+      //it_cell = cells.begin();
+    }
+  }
+}
+
+
+template <typename ValueType>
+inline void Column<ValueType>::setValue( const vector<ValueType>& semVal )
+{
+  if ( *finished )
+  {
+    ( *it_cell )->setValue( semVal );
+  }
+  else
+  {
+    current_cell->setValue( semVal );
+    if ( modified == false )
+    {
+      cells.push_back( current_cell );
+      ++n_cells;
+      modified = true;
+      //it_cell = cells.begin();
     }
   }
 }
@@ -115,9 +129,9 @@ inline void Column<ValueType>::addValue( short idStat, ValueType semVal )
   if ( modified == false )
   {
     cells.push_back( current_cell );
-    n_cells++;
+    ++n_cells;
     modified = true;
-    it_cell = cells.begin();
+    //it_cell = cells.begin();
   }
 }
 
@@ -129,9 +143,23 @@ inline void Column<ValueType>::addValue( ValueType semVal )
   if ( modified == false )
   {
     cells.push_back( current_cell );
-    n_cells++;
+    ++n_cells;
     modified = true;
-    it_cell = cells.begin();
+    //it_cell = cells.begin();
+  }
+}
+
+
+template <typename ValueType>
+inline void Column<ValueType>::addValue( const vector<ValueType>& semVal )
+{
+  current_cell->addValue( semVal );
+  if ( modified == false )
+  {
+    cells.push_back( current_cell );
+    ++n_cells;
+    modified = true;
+    //it_cell = cells.begin();
   }
 }
 
@@ -145,6 +173,18 @@ inline ValueType Column<ValueType>::getCurrentValue( short idStat ) const
   }
 
   return current_cell->getValue( idStat );
+}
+
+
+template <typename ValueType>
+inline vector<ValueType> Column<ValueType>::getCurrentValue() const
+{
+  if ( *finished )
+  {
+    return ( *it_cell )->getValue();
+  }
+
+  return current_cell->getValue();
 }
 
 
@@ -178,7 +218,7 @@ inline void Column<ValueType>::newRow( )
   if ( modified )
   {
     current_cell = new Cell<ValueType>( tmp_row + 1, nstat );
-    current_cell->init();
+    //current_cell->init();
     modified = false;
   }
   else
@@ -194,7 +234,7 @@ inline void Column<ValueType>::newRow( int row )
   if ( modified )
   {
     current_cell = new Cell<ValueType>( row, nstat );
-    current_cell->init();
+    //current_cell->init();
     modified = false;
   }
   else
@@ -221,12 +261,7 @@ inline void Column<ValueType>::setFirstCell( )
 template <typename ValueType>
 inline bool Column<ValueType>::endCell( )
 {
-  if ( n_cells == 0 )
-    return true;
-
   return ( it_cell == cells.end() );
-//    return true;
-//  return false;
 }
 
 

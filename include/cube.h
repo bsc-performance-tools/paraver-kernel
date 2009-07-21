@@ -16,9 +16,12 @@ class Cube
     void init( );
     void setValue( UINT32 plane, UINT32 col, UINT16 idStat, ValueType semVal );
     void setValue( UINT32 plane, UINT32 col, ValueType semVal );
+    void setValue( UINT32 plane, UINT32 col, const vector<ValueType>& semVal );
     void addValue( UINT32 plane, UINT32 col, UINT16 idStat, ValueType semVal );
     void addValue( UINT32 plane, UINT32 col, ValueType semVal );
+    void addValue( UINT32 plane, UINT32 col, const vector<ValueType>& semVal );
     ValueType getCurrentValue( UINT32 plane, UINT32 col, UINT16 idStat ) const;
+    vector<ValueType> getCurrentValue( UINT32 plane, UINT32 col ) const;
     UINT32 getCurrentRow( UINT32 plane, UINT32 col ) const;
     UINT32 getCurrentRow( ) const;
     bool currentCellModified( UINT32 plane, UINT32 col ) const;

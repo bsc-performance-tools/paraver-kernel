@@ -5,6 +5,33 @@
 #include "ktrace.h"
 #include "paraverlabels.h"
 
+StatNumSends HistogramStatistic::statNumSends;
+StatNumReceives HistogramStatistic::statNumReceives;
+StatBytesSent HistogramStatistic::statBytesSent;
+StatBytesReceived HistogramStatistic::statBytesReceived;
+StatAvgBytesSent HistogramStatistic::statAvgBytesSent;
+StatAvgBytesReceived HistogramStatistic::statAvgBytesReceived;
+StatMinBytesSent HistogramStatistic::statMinBytesSent;
+StatMinBytesReceived HistogramStatistic::statMinBytesReceived;
+StatMaxBytesSent HistogramStatistic::statMaxBytesSent;
+StatMaxBytesReceived HistogramStatistic::statMaxBytesReceived;
+
+StatTime HistogramStatistic::statTime;
+StatPercTime HistogramStatistic::statPercTime;
+StatPercTimeNotZero HistogramStatistic::statPercTimeNotZero;
+StatPercTimeWindow HistogramStatistic::statPercTimeWindow;
+StatNumBursts HistogramStatistic::statNumBursts;
+StatPercNumBursts HistogramStatistic::statPercNumBursts;
+StatIntegral HistogramStatistic::statIntegral;
+StatAvgValue HistogramStatistic::statAvgValue;
+StatMaximum HistogramStatistic::statMaximum;
+StatAvgBurstTime HistogramStatistic::statAvgBurstTime;
+StatStdevBurstTime HistogramStatistic::statStdevBurstTime;
+StatAvgPerBurst HistogramStatistic::statAvgPerBurst;
+StatAvgValueNotZero HistogramStatistic::statAvgValueNotZero;
+StatNumBurstsNotZero HistogramStatistic::statNumBurstsNotZero;
+StatSumBursts HistogramStatistic::statSumBursts;
+
 //-------------------------------------------------------------------------
 // Statistics filtering functions
 //-------------------------------------------------------------------------
@@ -28,6 +55,226 @@ inline bool filterBurstTime( TRecordTime burstTime, KHistogram *histogram )
 {
   return burstTime >= histogram->getBurstMin() &&
          burstTime <= histogram->getBurstMax();
+}
+
+void HistogramStatistic::initAllComm( KHistogram *whichHistogram )
+{
+  statNumSends.init( whichHistogram );
+  statNumReceives.init( whichHistogram );
+  statBytesSent.init( whichHistogram );
+  statBytesReceived.init( whichHistogram );
+  statAvgBytesSent.init( whichHistogram );
+  statAvgBytesReceived.init( whichHistogram );
+  statMinBytesSent.init( whichHistogram );
+  statMinBytesReceived.init( whichHistogram );
+  statMaxBytesSent.init( whichHistogram );
+  statMaxBytesReceived.init( whichHistogram );
+}
+
+void HistogramStatistic::resetAllComm()
+{
+  statNumSends.reset();
+  statNumReceives.reset();
+  statBytesSent.reset();
+  statBytesReceived.reset();
+  statAvgBytesSent.reset();
+  statAvgBytesReceived.reset();
+  statMinBytesSent.reset();
+  statMinBytesReceived.reset();
+  statMaxBytesSent.reset();
+  statMaxBytesReceived.reset();
+}
+
+vector<bool> HistogramStatistic::filterAllComm( CalculateData *data )
+{
+  vector<bool> values;
+
+  statNumSends.filter( data );
+  statNumReceives.filter( data );
+  statBytesSent.filter( data );
+  statBytesReceived.filter( data );
+  statAvgBytesSent.filter( data );
+  statAvgBytesReceived.filter( data );
+  statMinBytesSent.filter( data );
+  statMinBytesReceived.filter( data );
+  statMaxBytesSent.filter( data );
+  statMaxBytesReceived.filter( data );
+
+  return values;
+}
+
+vector<TSemanticValue> HistogramStatistic::executeAllComm( CalculateData *data )
+{
+  vector<TSemanticValue> values;
+
+  statNumSends.execute( data );
+  statNumReceives.execute( data );
+  statBytesSent.execute( data );
+  statBytesReceived.execute( data );
+  statAvgBytesSent.execute( data );
+  statAvgBytesReceived.execute( data );
+  statMinBytesSent.execute( data );
+  statMinBytesReceived.execute( data );
+  statMaxBytesSent.execute( data );
+  statMaxBytesReceived.execute( data );
+
+  return values;
+}
+
+vector<TSemanticValue> HistogramStatistic::finishRowAllComm( vector<TSemanticValue>& cellValue,
+    THistogramColumn column,
+    THistogramColumn plane )
+{
+  vector<TSemanticValue> values;
+  size_t i = 0;
+
+  values.push_back( statNumSends.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statNumReceives.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statBytesSent.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statBytesReceived.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statAvgBytesSent.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statAvgBytesReceived.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statMinBytesSent.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statMinBytesReceived.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statMaxBytesSent.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statMaxBytesReceived.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+
+  return values;
+}
+
+void HistogramStatistic::initAll( KHistogram *whichHistogram )
+{
+  statTime.init( whichHistogram );
+  statPercTime.init( whichHistogram );
+  statPercTimeNotZero.init( whichHistogram );
+  statPercTimeWindow.init( whichHistogram );
+  statNumBursts.init( whichHistogram );
+  statPercNumBursts.init( whichHistogram );
+  statIntegral.init( whichHistogram );
+  statAvgValue.init( whichHistogram );
+  statMaximum.init( whichHistogram );
+  statAvgBurstTime.init( whichHistogram );
+  statStdevBurstTime.init( whichHistogram );
+  statAvgPerBurst.init( whichHistogram );
+  statAvgValueNotZero.init( whichHistogram );
+  statNumBurstsNotZero.init( whichHistogram );
+  statSumBursts.init( whichHistogram );
+}
+
+void HistogramStatistic::resetAll()
+{
+  statTime.reset();
+  statPercTime.reset();
+  statPercTimeNotZero.reset();
+  statPercTimeWindow.reset();
+  statNumBursts.reset();
+  statPercNumBursts.reset();
+  statIntegral.reset();
+  statAvgValue.reset();
+  statMaximum.reset();
+  statAvgBurstTime.reset();
+  statStdevBurstTime.reset();
+  statAvgPerBurst.reset();
+  statAvgValueNotZero.reset();
+  statNumBurstsNotZero.reset();
+  statSumBursts.reset();
+}
+
+vector<bool> HistogramStatistic::filterAll( CalculateData *data )
+{
+  vector<bool> values;
+
+  values.push_back( statTime.filter( data ) );
+  values.push_back( statPercTime.filter( data ) );
+  values.push_back( statPercTimeNotZero.filter( data ) );
+  values.push_back( statPercTimeWindow.filter( data ) );
+  values.push_back( statNumBursts.filter( data ) );
+  values.push_back( statPercNumBursts.filter( data ) );
+  values.push_back( statIntegral.filter( data ) );
+  values.push_back( statAvgValue.filter( data ) );
+  values.push_back( statMaximum.filter( data ) );
+  values.push_back( statAvgBurstTime.filter( data ) );
+  values.push_back( statStdevBurstTime.filter( data ) );
+  values.push_back( statAvgPerBurst.filter( data ) );
+  values.push_back( statAvgValueNotZero.filter( data ) );
+  values.push_back( statNumBurstsNotZero.filter( data ) );
+  values.push_back( statSumBursts.filter( data ) );
+
+  return values;
+}
+
+vector<TSemanticValue> HistogramStatistic::executeAll( CalculateData *data )
+{
+  vector<TSemanticValue> values;
+
+  values.push_back( statTime.execute( data ) );
+  values.push_back( statPercTime.execute( data ) );
+  values.push_back( statPercTimeNotZero.execute( data ) );
+  values.push_back( statPercTimeWindow.execute( data ) );
+  values.push_back( statNumBursts.execute( data ) );
+  values.push_back( statPercNumBursts.execute( data ) );
+  values.push_back( statIntegral.execute( data ) );
+  values.push_back( statAvgValue.execute( data ) );
+  values.push_back( statMaximum.execute( data ) );
+  values.push_back( statAvgBurstTime.execute( data ) );
+  values.push_back( statStdevBurstTime.execute( data ) );
+  values.push_back( statAvgPerBurst.execute( data ) );
+  values.push_back( statAvgValueNotZero.execute( data ) );
+  values.push_back( statNumBurstsNotZero.execute( data ) );
+  values.push_back( statSumBursts.execute( data ) );
+
+  return values;
+}
+
+vector<TSemanticValue> HistogramStatistic::finishRowAll( vector<TSemanticValue>& cellValue,
+    THistogramColumn column,
+    THistogramColumn plane )
+{
+  vector<TSemanticValue> values;
+  size_t i = 0;
+
+  values.push_back( statTime.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statPercTime.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statPercTimeNotZero.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statPercTimeWindow.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statNumBursts.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statPercNumBursts.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statIntegral.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statAvgValue.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statMaximum.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statAvgBurstTime.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statStdevBurstTime.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statAvgPerBurst.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statAvgValueNotZero.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statNumBurstsNotZero.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+  values.push_back( statSumBursts.finishRow( cellValue[ i ], column, plane ) );
+  ++i;
+
+  return values;
 }
 
 //-------------------------------------------------------------------------
@@ -818,17 +1065,17 @@ bool StatTime::filter( CalculateData *data ) const
 
 TSemanticValue StatTime::execute( CalculateData *data )
 {
-/*  TRecordTime begin;
-  TRecordTime end;
+  /*  TRecordTime begin;
+    TRecordTime end;
 
-  begin = data->beginTime > controlWin->getBeginTime( data->controlRow ) ?
-          data->beginTime : controlWin->getBeginTime( data->controlRow );
+    begin = data->beginTime > controlWin->getBeginTime( data->controlRow ) ?
+            data->beginTime : controlWin->getBeginTime( data->controlRow );
 
-  end = data->endTime < controlWin->getEndTime( data->controlRow ) ?
-        data->endTime : controlWin->getEndTime( data->controlRow );
+    end = data->endTime < controlWin->getEndTime( data->controlRow ) ?
+          data->endTime : controlWin->getEndTime( data->controlRow );
 
-  return end - begin;
-*/
+    return end - begin;
+  */
 
   return data->endTime - data->beginTime;
 }

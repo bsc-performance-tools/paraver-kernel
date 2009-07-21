@@ -36,7 +36,7 @@ Cube<ValueType>::~Cube()
 {
   if ( nplanes > 0 )
   {
-    for ( UINT32 ii = 0; ii < planes.size(); ii++ )
+    for ( UINT32 ii = 0; ii < planes.size(); ++ii )
     {
       if ( planes[ ii ] != NULL )
         delete planes[ ii ];
@@ -51,7 +51,7 @@ inline void Cube<ValueType>::init( UINT16 idStat )
 {
   if ( nplanes > 0 )
   {
-    for ( UINT32 ii = 0; ii < planes.size(); ii++ )
+    for ( UINT32 ii = 0; ii < planes.size(); ++ii )
     {
       if ( planes[ ii ] != NULL )
         planes[ ii ]->init( idStat );
@@ -65,7 +65,7 @@ inline void Cube<ValueType>::init( )
 {
   if ( nplanes > 0 )
   {
-    for ( UINT32 ii = 0; ii < planes.size(); ii++ )
+    for ( UINT32 ii = 0; ii < planes.size(); ++ii )
     {
       if ( planes[ ii ] != NULL )
         planes[ ii ]->init( );
@@ -80,7 +80,7 @@ inline void Cube<ValueType>::setValue( UINT32 plane, UINT32 col, UINT16 idStat, 
   if ( planes[ plane ] == NULL )
   {
     planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
-    nplanes++;
+    ++nplanes;
   }
 
   planes[ plane ]->setValue( col, idStat, semVal );
@@ -93,7 +93,20 @@ inline void Cube<ValueType>::setValue( UINT32 plane, UINT32 col, ValueType semVa
   if ( planes[ plane ] == NULL )
   {
     planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
-    nplanes++;
+    ++nplanes;
+  }
+
+  planes[ plane ]->setValue( col, semVal );
+}
+
+
+template <typename ValueType>
+inline void Cube<ValueType>::setValue( UINT32 plane, UINT32 col, const vector<ValueType>& semVal )
+{
+  if ( planes[ plane ] == NULL )
+  {
+    planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
+    ++nplanes;
   }
 
   planes[ plane ]->setValue( col, semVal );
@@ -106,7 +119,7 @@ inline void Cube<ValueType>::addValue( UINT32 plane, UINT32 col, UINT16 idStat, 
   if ( planes[ plane ] == NULL )
   {
     planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
-    nplanes++;
+    ++nplanes;
   }
 
   planes[ plane ]->addValue( col, idStat, semVal );
@@ -119,7 +132,20 @@ inline void Cube<ValueType>::addValue( UINT32 plane, UINT32 col, ValueType semVa
   if ( planes[ plane ] == NULL )
   {
     planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
-    nplanes++;
+    ++nplanes;
+  }
+
+  planes[ plane ]->addValue( col, semVal );
+}
+
+
+template <typename ValueType>
+inline void Cube<ValueType>::addValue( UINT32 plane, UINT32 col, const vector<ValueType>& semVal )
+{
+  if ( planes[ plane ] == NULL )
+  {
+    planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
+    ++nplanes;
   }
 
   planes[ plane ]->addValue( col, semVal );
@@ -135,6 +161,18 @@ inline ValueType Cube<ValueType>::getCurrentValue( UINT32 plane, UINT32 col, UIN
   ValueType tmp;
 
   memset( ( void * ) &tmp, 0, sizeof( ValueType ) );
+  return tmp;
+}
+
+
+template <typename ValueType>
+inline vector<ValueType> Cube<ValueType>::getCurrentValue( UINT32 plane, UINT32 col ) const
+{
+  if ( planes[ plane ] != NULL )
+    return planes[ plane ]->getCurrentValue( col );
+
+  vector<ValueType> tmp;
+
   return tmp;
 }
 
@@ -168,13 +206,13 @@ inline void Cube<ValueType>::newRow( )
 {
   if ( nplanes > 0 )
   {
-    for ( UINT32 ii = 0; ii < planes.size(); ii++ )
+    for ( UINT32 ii = 0; ii < planes.size(); ++ii )
     {
       if ( planes[ ii ] != NULL )
         planes[ ii ]->newRow( );
     }
   }
-  crow++;
+  ++crow;
 }
 
 
@@ -196,7 +234,7 @@ inline void Cube<ValueType>::finish( )
 {
   if ( nplanes > 0 )
   {
-    for ( UINT32 ii = 0; ii < planes.size(); ii++ )
+    for ( UINT32 ii = 0; ii < planes.size(); ++ii )
     {
       if ( planes[ ii ] != NULL )
         planes[ ii ]->finish();
@@ -271,7 +309,7 @@ inline void Cube<ValueType>::eraseColumns( UINT32 ini_col, UINT32 fin_col )
   if ( fin_col >= ncols )
     return;
 
-  for ( UINT32 ii = 0; ii < planes.size(); ii++ )
+  for ( UINT32 ii = 0; ii < planes.size(); ++ii )
   {
     if ( planes[ ii ] != NULL )
       planes[ ii ]->eraseColumns( ini_col, fin_col );
@@ -297,9 +335,9 @@ inline void Cube<ValueType>::erasePlanes( UINT32 ini_plane, UINT32 fin_plane )
   UINT32 i;
 
   it_ini = planes.begin();
-  for ( i = 0; i < ini_plane; i++, ++it_ini );
+  for ( i = 0; i < ini_plane; ++i, ++it_ini );
 
-  for ( it_fin = it_ini; i < fin_plane; i++, ++it_fin )
+  for ( it_fin = it_ini; i < fin_plane; ++i, ++it_fin )
   {
     if ( planes[ i ] != NULL )
     {
@@ -317,7 +355,7 @@ inline void Cube<ValueType>::print() const
 {
   if ( nplanes > 0 )
   {
-    for ( UINT32 ii = 0; ii < planes.size(); ii++ )
+    for ( UINT32 ii = 0; ii < planes.size(); ++ii )
     {
       cout << endl;
       cout << "******************************************************" << endl;

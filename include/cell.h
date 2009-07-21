@@ -3,7 +3,6 @@
 
 
 #include "paraverkerneltypes.h"
-#include "statistic_2d.h"
 
 template <typename ValueType>
 class Cell
@@ -17,9 +16,12 @@ class Cell
     void init( );
     void setValue( UINT16 idStat, ValueType semVal );
     void setValue( ValueType semVal );
+    void setValue( const vector<ValueType>& semVal );
     void addValue( UINT16 idStat, ValueType semVal );
     void addValue( ValueType semVal );
+    void addValue( const vector<ValueType>& semVal );
     ValueType getValue( UINT16 idStat ) const;
+    vector<ValueType> getValue() const;
     TObjectOrder getRow( ) const;
     void setRow( TObjectOrder row );
 
@@ -28,7 +30,7 @@ class Cell
   private:
     TObjectOrder row;
     UINT16 nStats;
-    Statistic_2D<ValueType> *values;
+    vector<ValueType> values;
 };
 
 #include "src/cell.cpp"
