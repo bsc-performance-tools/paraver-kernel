@@ -773,7 +773,14 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel,
   selectedRow.getSelected( selected, first, last, onLevel );
 }
 
-void WindowProxy::getGroupLabels( vector<string>& onVector, UINT32 whichGroup ) const
+void WindowProxy::getGroupLabels( UINT32 whichGroup, vector<string>& onVector ) const
 {
-  myWindow->getGroupLabels( onVector, whichGroup );
+  myWindow->getGroupLabels( whichGroup, onVector );
+}
+
+bool WindowProxy::getParametersOfFunction( string whichFunction,
+                                           UINT32 &numParameters,
+                                           vector<string> &nameParameters ) const
+{
+  return myWindow->getParametersOfFunction( whichFunction, numParameters, nameParameters );
 }

@@ -130,7 +130,10 @@ class KWindow: public Window
     TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime );
 
     virtual KWindow *clone();
-    void getGroupLabels( vector<string>& onVector, UINT32 whichGroup ) const;
+    void getGroupLabels(  UINT32 whichGroup, vector<string>& onVector ) const;
+    bool getParametersOfFunction( string whichFunction,
+                                   UINT32 &numParameters,
+                                   vector<string> &nameParameters ) const;
 
   protected:
     KTrace *myTrace;

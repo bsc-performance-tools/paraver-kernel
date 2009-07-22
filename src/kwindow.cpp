@@ -121,9 +121,34 @@ KWindow *KWindow::clone()
   return NULL;
 }
 
-void KWindow::getGroupLabels( vector<string>& onVector, UINT32 whichGroup ) const
+void KWindow::getGroupLabels( UINT32 whichGroup, vector<string>& onVector ) const
 {
   FunctionManagement<SemanticFunction>::getInstance()->getAll( onVector, whichGroup );
+}
+
+
+bool KWindow::getParametersOfFunction( string whichFunction,
+                                        UINT32 &numParameters,
+                                        vector<string> &nameParameters ) const
+{
+  bool done = false;
+
+  SemanticFunction *tmp = FunctionManagement<SemanticFunction>::getInstance()->getFunction( whichFunction );
+
+  if ( tmp != NULL )
+  {
+    numParameters = tmp->getMaxParam();
+
+    nameParameters.clear();
+    for ( UINT32 i = 0; i < numParameters; ++i )
+      nameParameters.push_back( tmp->getParamName( TParamIndex( i ) ) );
+
+    delete tmp; // getFunctions performs a clone
+
+    done = true;
+  }
+
+  return done;
 }
 
 /**********************************************************************
