@@ -129,7 +129,8 @@ void KWindow::getGroupLabels( UINT32 whichGroup, vector<string>& onVector ) cons
 
 bool KWindow::getParametersOfFunction( string whichFunction,
                                         UINT32 &numParameters,
-                                        vector<string> &nameParameters ) const
+                                        vector< string > &nameParameters,
+                                        vector< vector < double > > &defaultValues ) const
 {
   bool done = false;
 
@@ -141,7 +142,10 @@ bool KWindow::getParametersOfFunction( string whichFunction,
 
     nameParameters.clear();
     for ( UINT32 i = 0; i < numParameters; ++i )
+    {
       nameParameters.push_back( tmp->getParamName( TParamIndex( i ) ) );
+      defaultValues.push_back( tmp->getParam( TParamIndex( i ) ) );
+    }
 
     delete tmp; // getFunctions performs a clone
 

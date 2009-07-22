@@ -290,7 +290,8 @@ class Window
     virtual void getGroupLabels( UINT32 whichGroup, vector<string>& onVector ) const = 0;
     virtual bool getParametersOfFunction( string whichFunction,
                                            UINT32 &numParameters,
-                                           vector<string> &nameParameters ) const = 0;
+                                           vector<string> &nameParameters,
+                                           vector< vector< double > >&defaultParameters ) const = 0;
 
 
   protected:
@@ -427,7 +428,8 @@ class WindowProxy: public Window
     virtual void getGroupLabels( UINT32 whichGroup, vector<string>& onVector ) const;
     virtual bool getParametersOfFunction( string whichFunction,
                                            UINT32 &numParameters,
-                                           vector<string> &nameParameters ) const;
+                                           vector<string> &nameParameters,
+                                           vector< vector< double > >&defaultParameters ) const;
 
   private:
     Window *myWindow;

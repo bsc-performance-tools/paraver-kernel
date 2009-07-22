@@ -780,7 +780,11 @@ void WindowProxy::getGroupLabels( UINT32 whichGroup, vector<string>& onVector ) 
 
 bool WindowProxy::getParametersOfFunction( string whichFunction,
                                            UINT32 &numParameters,
-                                           vector<string> &nameParameters ) const
+                                           vector<string> &nameParameters,
+                                           vector< vector< double > >&defaultParameters ) const
 {
-  return myWindow->getParametersOfFunction( whichFunction, numParameters, nameParameters );
+  return myWindow->getParametersOfFunction( whichFunction,
+                                             numParameters,
+                                             nameParameters,
+                                             defaultParameters );
 }

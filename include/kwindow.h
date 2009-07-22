@@ -133,7 +133,8 @@ class KWindow: public Window
     void getGroupLabels(  UINT32 whichGroup, vector<string>& onVector ) const;
     bool getParametersOfFunction( string whichFunction,
                                    UINT32 &numParameters,
-                                   vector<string> &nameParameters ) const;
+                                   vector<string> &nameParameters,
+                                   vector< vector < double > > &defaultValues  ) const;
 
   protected:
     KTrace *myTrace;
