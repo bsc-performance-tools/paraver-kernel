@@ -218,7 +218,7 @@ class Histogram
     }
     virtual rgb calcGradientColor( TSemanticValue whichValue ) const
     {
-      rgb tmp;
+      rgb tmp = SemanticColor::BACKGROUND;
       return tmp;
     }
     virtual void recalcGradientLimits() {}

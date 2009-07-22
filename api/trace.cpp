@@ -5,7 +5,7 @@
 #include "pcfparser/ParaverGradientColor.h"
 #include "progresscontroller.h"
 
-using namespace domain;
+using namespace libparaver;
 
 Trace *Trace::create( KernelConnection *whichKernel, const string& whichFile,
                       ProgressController *progress )

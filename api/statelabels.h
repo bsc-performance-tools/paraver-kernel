@@ -5,7 +5,7 @@
 #include "paraverkerneltypes.h"
 #include "pcfparser/ParaverTraceConfig.h"
 
-using namespace domain;
+using namespace libparaver;
 
 class StateLabels
 {

@@ -14,7 +14,7 @@ EventLabels::EventLabels( const set<TEventType>& eventsLoaded )
     eventTypeLabel[ *it ] = unknownLabel + " type";
 }
 
-EventLabels::EventLabels( const domain::ParaverTraceConfig& config,
+EventLabels::EventLabels( const libparaver::ParaverTraceConfig& config,
                           const set<TEventType>& eventsLoaded )
 {
   for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
