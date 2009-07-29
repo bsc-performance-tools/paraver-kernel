@@ -141,6 +141,7 @@ bool KWindow::getParametersOfFunction( string whichFunction,
     numParameters = tmp->getMaxParam();
 
     nameParameters.clear();
+    defaultValues.clear();
     for ( UINT32 i = 0; i < numParameters; ++i )
     {
       nameParameters.push_back( tmp->getParamName( TParamIndex( i ) ) );
