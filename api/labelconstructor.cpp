@@ -122,8 +122,10 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
 
   label.precision( ParaverConfig::getInstance()->getPrecision() );
 
-  if ( whichHisto->getThousandSeparator() &&
-       !whichHisto->getScientificNotation() )
+  if( value == 0 )
+    label << "0";
+  else if ( whichHisto->getThousandSeparator() &&
+            !whichHisto->getScientificNotation() )
   {
     string strNum;
     TSemanticValue origValue = value;
@@ -194,7 +196,36 @@ string LabelConstructor::timeLabel( TTime value, TTimeUnit unit )
   label << fixed;
   label.precision( ParaverConfig::getInstance()->getPrecision() );
 
-  label << value;
+  if ( value == 0 )
+    label << "0";
+  else
+  {
+    string strNum;
+    TSemanticValue origValue = value;
+    TSemanticValue intValue = floor( value );
+
+    if ( origValue >= 1.0 )
+    {
+      while ( intValue > 0.0 )
+        strNum = chomp( intValue ) + "," + strNum;
+      strNum.erase( strNum.size() - 1, 1 );
+      label << strNum;
+    }
+
+    stringstream tmp;
+    tmp << fixed;
+    tmp.precision( ParaverConfig::getInstance()->getPrecision() );
+    value -= INT64( origValue );
+    if ( unit != NS && value > 0 )
+    {
+      tmp << value;
+      strNum = tmp.str();
+      if ( origValue >= 1.0 )
+        strNum.erase( strNum.begin() );
+
+      label << strNum;
+    }
+  }
   label << " " << LABEL_TIMEUNIT[ unit ];
 
   return label.str();
@@ -273,7 +304,7 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
       }
       if ( !found )
       {
-        if( types.begin() == types.end() )
+        if ( types.begin() == types.end() )
         {
           if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( value, tmpstr ) )
             label << tmpstr << " value " << value;
