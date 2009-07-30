@@ -128,6 +128,7 @@ class KWindow: public Window
     TObjectOrder getWindowLevelObjects();
 
     TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime );
+    TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime );
 
     virtual KWindow *clone();
     void getGroupLabels(  UINT32 whichGroup, vector<string>& onVector ) const;

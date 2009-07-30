@@ -110,6 +110,29 @@ TRecordTime KWindow::traceUnitsToWindowUnits( TRecordTime whichTime )
   return tmpTime;
 }
 
+TRecordTime KWindow::windowUnitsToTraceUnits( TRecordTime whichTime )
+{
+  TRecordTime tmpTime;
+  TRecordTime factor = 1;
+
+  if ( myTrace->getTimeUnit() == timeUnit )
+    tmpTime = whichTime;
+  else
+  {
+    UINT16 from = myTrace->getTimeUnit() > timeUnit ? timeUnit : myTrace->getTimeUnit();
+    UINT16 to = myTrace->getTimeUnit() > timeUnit ? myTrace->getTimeUnit() : timeUnit;
+
+    for ( UINT16 i = from + 1; i <= to; i++ )
+      factor *= factorTable[ i ];
+
+    if ( myTrace->getTimeUnit() > timeUnit )
+      tmpTime = whichTime / factor;
+    else
+      tmpTime = whichTime * factor;
+  }
+
+  return tmpTime;
+}
 
 RecordList *KWindow::getRecordList( TObjectOrder whichObject )
 {

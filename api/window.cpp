@@ -521,6 +521,11 @@ TRecordTime WindowProxy::traceUnitsToWindowUnits( TRecordTime whichTime )
   return myWindow->traceUnitsToWindowUnits( whichTime );
 }
 
+TRecordTime WindowProxy::windowUnitsToTraceUnits( TRecordTime whichTime )
+{
+  return myWindow->windowUnitsToTraceUnits( whichTime );
+}
+
 Window *WindowProxy::getConcrete() const
 {
   return myWindow;
