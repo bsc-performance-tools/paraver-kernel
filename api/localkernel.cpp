@@ -1,3 +1,4 @@
+#include <time.h>
 #include "localkernel.h"
 #include "kwindow.h"
 #include "khistogram.h"

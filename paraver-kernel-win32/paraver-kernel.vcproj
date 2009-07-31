@@ -41,10 +41,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Archivos de programa\zlib\include&quot;;&quot;..\..\common-files\win32&quot;;..\api;..\include;..\;&quot;..\..\common-files&quot;;&quot;C:\Archivos de programa\boost_1_35_0&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Archivos de programa\zlib\include&quot;;&quot;..\..\common-files\win32&quot;;..\api;..\include;..\;&quot;..\..\common-files&quot;;&quot;C:\Archivos de programa\boost&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;PARAVERKERNEL_EXPORTS"
-				MinimalRebuild="true"
+				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
@@ -105,10 +106,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="&quot;C:\Archivos de programa\zlib\include&quot;;&quot;..\..\common-files\win32&quot;;..\api;..\include;..\;&quot;..\..\common-files&quot;;&quot;C:\Archivos de programa\boost_1_35_0&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Archivos de programa\zlib\include&quot;;&quot;..\..\common-files\win32&quot;;..\api;..\include;..\;&quot;..\..\common-files&quot;;&quot;C:\Archivos de programa\boost&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;PARAVERKERNEL_EXPORTS"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
