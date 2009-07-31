@@ -200,6 +200,8 @@ class Window
     }
     virtual void setShowWindow( bool newValue )
     {}
+    virtual void setShowChildrenWindow( bool newValue )
+    {}
     virtual void setCodeColorMode()
     {}
     virtual bool IsCodeColorSet() const
@@ -391,6 +393,7 @@ class WindowProxy: public Window
     virtual GradientColor& getGradientColor();
     virtual bool getShowWindow() const;
     virtual void setShowWindow( bool newValue );
+    virtual void setShowChildrenWindow( bool newValue ); // recursively sets children
     virtual void setCodeColorMode();
     virtual void setGradientColorMode();
     virtual bool IsCodeColorSet() const;

@@ -621,6 +621,18 @@ void WindowProxy::setShowWindow( bool newValue )
   showWindow = newValue;
 }
 
+void WindowProxy::setShowChildrenWindow( bool newValue )
+{
+  if ( getParent( 0 ) != NULL )
+  {
+    for ( UINT16 i = 0; i < 2; ++i )
+    {
+      getParent( i )->setShowWindow( newValue );
+      getParent( i )->setShowChildrenWindow( newValue );
+    }
+  }
+}
+
 void WindowProxy::setCodeColorMode()
 {
   codeColor = true;
