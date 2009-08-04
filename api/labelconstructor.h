@@ -29,6 +29,11 @@ class LabelConstructor
 
     static string semanticLabel( const Window * whichWindow, TSemanticValue value,
                                  bool text );
+
+    static string eventLabel( Window *whichWindow,
+                              TEventType whichType,
+                              TEventValue whichValue,
+                              bool text );
 };
 
 #endif // LABELCONSTRUCTOR_H_INCLUDED

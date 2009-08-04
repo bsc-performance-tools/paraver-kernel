@@ -9,17 +9,17 @@ EventLabels::EventLabels()
 
 EventLabels::EventLabels( const set<TEventType>& eventsLoaded )
 {
-  for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
+/*  for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
         it != eventsLoaded.end(); ++it )
-    eventTypeLabel[ *it ] = unknownLabel + " type";
+    eventTypeLabel[ *it ] = unknownLabel + " type ";*/
 }
 
 EventLabels::EventLabels( const libparaver::ParaverTraceConfig& config,
                           const set<TEventType>& eventsLoaded )
 {
-  for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
+/*  for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
         it != eventsLoaded.end(); ++it )
-    eventTypeLabel[ *it ] = unknownLabel + " type";
+    eventTypeLabel[ *it ] = unknownLabel + " type ";*/
 
   const vector<ParaverEventType *>& types = config.get_eventTypes();
   for ( vector<ParaverEventType *>::const_iterator it = types.begin();

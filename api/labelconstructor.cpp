@@ -122,7 +122,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
 
   label.precision( ParaverConfig::getInstance()->getPrecision() );
 
-  if( value == 0 )
+  if ( value == 0 )
     label << "0";
   else if ( whichHisto->getThousandSeparator() &&
             !whichHisto->getScientificNotation() )
@@ -323,6 +323,39 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
       label << value << " bytes/sec";
     else
       label << "unknown " << value;
+  }
+
+  return label.str();
+}
+
+
+string LabelConstructor::eventLabel( Window *whichWindow,
+                                     TEventType whichType,
+                                     TEventValue whichValue,
+                                     bool text )
+{
+  stringstream label;
+  string tmpstr;
+
+  if ( !text )
+    label << "Type is " << whichType;
+  else
+  {
+    if( !whichWindow->getTrace()->getEventLabels().getEventTypeLabel( whichType, tmpstr ) )
+      label << tmpstr << " type " << whichType;
+    else
+      label << tmpstr;
+  }
+
+  if ( !text )
+    label << " Value is " << whichValue;
+  else
+  {
+    label << " ";
+    if( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( whichValue, tmpstr ) )
+      label << tmpstr << " value " << whichValue;
+    else
+      label << tmpstr;
   }
 
   return label.str();
