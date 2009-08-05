@@ -654,8 +654,6 @@ KWindow *KSingleWindow::clone()
   clonedKSWindow->level = level;
   clonedKSWindow->timeUnit = timeUnit;
 
-  clonedKSWindow->recordsByTime = vector<MemoryTrace::iterator *>( recordsByTime );
-
   for ( int i = 0; i < COMPOSECPU + 1; i++ )
   {
     if( functions[ i ] != NULL )
