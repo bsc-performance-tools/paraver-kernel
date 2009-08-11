@@ -29,7 +29,7 @@ UnloadedTrace::UnloadedTrace( const TThreadOrder totalThreads,
   // Threads list.
   threadFirst.reserve( numThreads );
   threadLast.reserve( numThreads );
-  for ( TObjectOrder ii = 0; ii < numThreads; ii++ )
+  for ( TObjectOrder ii = 0; ii < numThreads; ++ii )
   {
     threadFirst.push_back( NULL );
     threadLast.push_back( NULL );
@@ -38,7 +38,7 @@ UnloadedTrace::UnloadedTrace( const TThreadOrder totalThreads,
   // CPUs list.
   CPUFirst.reserve( numCPUs );
   CPULast.reserve( numCPUs );
-  for ( TCPUOrder ii = 0; ii < numCPUs; ii++ )
+  for ( TCPUOrder ii = 0; ii < numCPUs; ++ii )
   {
     CPUFirst.push_back( NULL );
     CPULast.push_back( NULL );
@@ -158,11 +158,11 @@ void BPlusLeaf::insertRecordInOrder( RecordLeaf *rl )
   bool inserted( false );
   UINT16 used = getUsed();
 
-  for ( UINT16 ii = 0; ii < used; ii++ )
+  for ( UINT16 ii = 0; ii < used; ++ii )
   {
     if ( *rl < records[ ii ] )
     {
-      for ( UINT16 jj = used; jj > ii; jj-- )
+      for ( UINT16 jj = used; jj > ii; --jj )
         records[ jj ] = records[ jj - 1 ];
 
       records[ ii ] = *rl;
@@ -201,7 +201,7 @@ BPlusLeaf *BPlusLeaf::split( BPlusNode *dest, RecordLeaf *&retdat )
   UINT16 used = getUsed();
   UINT16 endPos = ( used - 2 ) / 2;
 
-  for ( UINT16 ii = endPos + 1; ii < used; ii++ )
+  for ( UINT16 ii = endPos + 1; ii < used; ++ii )
     newLeaf->appendRecord( records[ii] );
 
   setUsed( endPos + 1 );
@@ -223,7 +223,7 @@ BPlusLeaf *BPlusLeaf::splitAndInsert( RecordLeaf *rec, RecordLeaf *&retKey )
   if ( ( endPos * 2 < used ) && ( *rec >= records[ endPos + 1 ] ) )
     endPos++;
 
-  for ( UINT16 ii = endPos + 1; ii < used; ii++ )
+  for ( UINT16 ii = endPos + 1; ii < used; ++ii )
     newLeaf->appendRecord( records[ii] );
 
   setUsed( endPos + 1 );
@@ -314,7 +314,7 @@ UINT32 BPlusLeaf::linkRecords( TRecord **ini,
       cur->prev = prev;
       prev->next = cur;
       prev = cur;
-      num++;
+      ++num;
       traceIndex->indexRecord( cur );
     }
     *ini = initial;
@@ -360,13 +360,13 @@ bool BPlusLeaf::partialDelete( RecordLeaf *limitKey,
     while ( !end )
     {
       if ( ( num < used ) && ( records[ num ] <= *limitKey ) )
-        num++;
+        ++num;
       else
         end = true;
     }
 
     // Copy the greater ones to the beginning.
-    for ( UINT16 ii = num; ii < used; ii++ )
+    for ( UINT16 ii = num; ii < used; ++ii )
       records[ ii - num ] = records[ ii ];
 
     // Update used
@@ -408,7 +408,7 @@ UINT16 BPlusLeaf::countElems()
 BPlusInternal::BPlusInternal()
 {
   used = 0;
-  for ( UINT16 ii = 0; ii < NODE_SIZE; ii++ )
+  for ( UINT16 ii = 0; ii < NODE_SIZE; ++ii )
   {
     key[ ii ] = NULL;
     child[ ii ] = NULL;
@@ -419,7 +419,7 @@ BPlusInternal::BPlusInternal()
 
 BPlusInternal::~BPlusInternal()
 {
-  for ( UINT16 ii = 0; ii < used; ii++ )
+  for ( UINT16 ii = 0; ii < used; ++ii )
     delete child[ ii ];
 }
 
@@ -440,11 +440,11 @@ void BPlusInternal::insertInOrder( BPlusNode *newNode )
 {
   bool inserted( false );
 
-  for ( int ii = ( int )used - 2; ii >= 0; ii-- )
+  for ( int ii = ( int )used - 2; ii >= 0; --ii )
   {
     if ( *newNode->minKeyTotal() > *key[ ii ] )
     {
-      for ( UINT16 jj = used - 2; jj >= ii + 1; jj-- )
+      for ( UINT16 jj = used - 2; jj >= ii + 1; --jj )
       {
         key[ jj + 1 ] = key[ jj ];
         child[ jj + 2 ] = child[ jj + 1 ];
@@ -458,7 +458,7 @@ void BPlusInternal::insertInOrder( BPlusNode *newNode )
 
   if ( !inserted )
   {
-    for ( int jj = ( int )used - 2; jj >= 0; jj-- )
+    for ( int jj = ( int )used - 2; jj >= 0; --jj )
     {
       key[ jj + 1 ] = key[ jj ];
       child[ jj + 2 ] = child[ jj + 1 ];
@@ -475,9 +475,9 @@ void BPlusInternal::insertInOrder( BPlusNode *newNode )
     key[ 0 ] = child[ 1 ]->minKeyTotal();
   }
 
-  used++;
+  ++used;
 
-  for ( UINT16 ii = 0; ii < used; ii++ )
+  for ( UINT16 ii = 0; ii < used; ++ii )
   {
     if ( child[ ii ] == NULL )
       used = ii;
@@ -492,7 +492,7 @@ void BPlusInternal::append( BPlusNode *newNode )
   if ( used >= 1 )
     key[ used - 1 ] = newNode->minKeyTotal();
 
-  used++;
+  ++used;
 }
 
 
@@ -505,11 +505,11 @@ BPlusInternal *BPlusInternal::splitAndInsert( BPlusNode *newNode,
 
   if ( *newNode->minKey() < *child[ middle ]->minKey() )
   {
-    middle--;
+    --middle;
     intoThis = true;
   }
 
-  for ( UINT16 ii = middle + 1; ii < used; ii++ )
+  for ( UINT16 ii = middle + 1; ii < used; ++ii )
     newInternal->append( child[ ii ] );
 
   used = middle + 1;
@@ -532,7 +532,7 @@ RecordLeaf *BPlusInternal::insert( RecordLeaf *rl, BPlusNode *&newChild )
   UINT16 pos;
   bool inserted( false );
 
-  for ( pos = 0; pos < used - 1; pos++ )
+  for ( pos = 0; pos < used - 1; ++pos )
     if ( *rl < *key[ pos ] )
     {
       retKey = child[ pos ]->insert( rl, newNode );
@@ -611,7 +611,7 @@ UINT32 BPlusInternal::linkRecords( TRecord **ini, TRecord **fin,
         // ant_ini not modified
         prevFin = currFin;
       }
-      ii++;
+      ++ii;
     }
 
     *ini = prevIni;
@@ -627,7 +627,7 @@ void BPlusInternal::print( string indent )
   cout << indent << "^(" << ( int )used << ")" << endl;
   cout << indent << "[";
 
-  for ( UINT16 ii = 0; ii < used - 1; ii++ )
+  for ( UINT16 ii = 0; ii < used - 1; ++ii )
   {
     if ( key[ ii ] != NULL )
       cout << ( key[ ii ]->getRecord() )->time << " ";
@@ -640,7 +640,7 @@ void BPlusInternal::print( string indent )
     child[ 0 ]->print( indent + "  " );
   else
     cout << "child[0] NULL!!!";
-  for ( UINT16 ii = 1; ii < used; ii++ )
+  for ( UINT16 ii = 1; ii < used; ++ii )
   {
     if ( child[ 0 ] != NULL )
       child[ ii ]->print( indent + "  " );
@@ -658,7 +658,7 @@ BPlusInternal *BPlusInternal::split( BPlusNode *dest,
   UINT16 middle = ( ( UINT16 ) ceil( used / 2.0 ) ) - 1;
 
 
-  for ( UINT16 ii = middle + 1; ii < used; ii++ )
+  for ( UINT16 ii = middle + 1; ii < used; ++ii )
     newInternal->append( child[ ii ] );
 
   used = middle + 1;
@@ -694,7 +694,7 @@ bool BPlusInternal::partialDelete( RecordLeaf *limitKey,
     while ( ( removed < used - 1 ) && ( *key[ removed ] <= *limitKey ) )
     {
       delete child[ removed ];
-      removed++;
+      ++removed;
     }
 
     // Recursive partial delete.
@@ -705,17 +705,17 @@ bool BPlusInternal::partialDelete( RecordLeaf *limitKey,
       deletedAll = child[removed]->partialDelete( limitKey, &child[ removed ] );
 
     if ( deletedAll )
-      removed++; // Count the last child.
+      ++removed; // Count the last child.
 
     // Rearrange keys and childs, copying at the beginning of the node.
     // It could be improved implementing circular vector.
-    for ( ii = removed; ii < used - 1; ii++ )
+    for ( ii = removed; ii < used - 1; ++ii )
     {
       key[ ii - removed ] = key[ ii ];
       if ( removed != 0 )
         key[ ii ] = NULL;
     }
-    for ( ii = removed; ii < used; ii++ )
+    for ( ii = removed; ii < used; ++ii )
     {
       child[ ii - removed ] = child[ ii ];
       if ( removed != 0 )
@@ -813,7 +813,7 @@ TTime BPlusTree::finish( TTime headerTime )
   tmpEnd.time = headerTime;
   tmpBegin.type = EMPTYREC;
   tmpEnd.type = EMPTYREC;
-  for ( TThreadOrder i = 0; i < numThreads; i++ )
+  for ( TThreadOrder i = 0; i < numThreads; ++i )
   {
     tmpBegin.thread = i;
     tmpEnd.thread = i;
@@ -830,7 +830,7 @@ TTime BPlusTree::finish( TTime headerTime )
 
   tmpBegin.time = 0;
   tmpEnd.time = headerTime;
-  for ( TCPUOrder i = 0; i < numCPUs; i++ )
+  for ( TCPUOrder i = 0; i < numCPUs; ++i )
   {
     tmpBegin.CPU = i;
     tmpEnd.CPU = i;
@@ -849,9 +849,11 @@ TTime BPlusTree::finish( TTime headerTime )
 void BPlusTree::insert( MemoryBlocks *blocks )
 {
   TRecord *tmp;
-  for ( UINT16 i = 0; i < blocks->getCountInserted(); i++ )
+
+  for ( UINT32 i = 0; i < blocks->getCountInserted(); ++i )
   {
     tmp = ( TRecord * )blocks->getLastRecord( i );
+
     insert( tmp );
   }
 
@@ -881,7 +883,7 @@ void BPlusTree::insert( TRecord *r )
     root = newRoot;
   }
 
-  recordsInserted++;
+  ++recordsInserted;
 
   if ( unloadCriteria() )
     unload( ( UINT32 )( unloadThreshold * unloadPercent / 100 ) );
@@ -971,7 +973,7 @@ void BPlusTree::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter
   TRecord *current;
   TThreadOrder filled = 0;
 
-  for ( TThreadOrder ii = 0; ii < numThreads; ii++ )
+  for ( TThreadOrder ii = 0; ii < numThreads; ++ii )
   {
     if ( listIter[ ii ] != NULL )
     {
@@ -995,7 +997,7 @@ void BPlusTree::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter
     if ( listIter[ current->thread ] == NULL )
     {
       listIter[ current->thread ] = new BPlusTree::ThreadIterator( current );
-      filled++;
+      ++filled;
     }
     current = current->prev;
   }
@@ -1003,7 +1005,7 @@ void BPlusTree::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter
   // Fill the rest.
   if ( filled < numThreads )
   {
-    for ( TThreadOrder i = 0; i < numThreads; i++ )
+    for ( TThreadOrder i = 0; i < numThreads; ++i )
       if ( listIter[ i ] == NULL )
         listIter[ i ] = threadBegin( i );
   }
@@ -1015,7 +1017,7 @@ void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
   TRecord *current;
   TCPUOrder filled = 0;
 
-  for ( TCPUOrder ii = 0; ii < numCPUs; ii++ )
+  for ( TCPUOrder ii = 0; ii < numCPUs; ++ii )
   {
     if ( listIter[ ii ] != NULL )
       delete listIter[ ii ];
@@ -1036,7 +1038,7 @@ void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
     if ( listIter[ current->CPU ] == NULL )
     {
       listIter[ current->CPU ] = new BPlusTree::CPUIterator( current );
-      filled++;
+      ++filled;
     }
     current = current->prev;
   }
@@ -1044,7 +1046,7 @@ void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
   // Fill the rest.
   if ( filled < numCPUs )
   {
-    for ( TCPUOrder i = 0; i < numCPUs; i++ )
+    for ( TCPUOrder i = 0; i < numCPUs; ++i )
       if ( listIter[ i ] == NULL )
         listIter[ i ] = CPUBegin( i );
   }
