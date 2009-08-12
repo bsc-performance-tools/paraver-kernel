@@ -504,3 +504,9 @@ const set<TEventType>& KTrace::getLoadedEvents() const
 {
   return events;
 }
+
+bool KTrace::eventLoaded( TEventType whichType ) const
+{
+  return events.find( whichType ) != events.end();
+}
+

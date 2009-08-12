@@ -353,3 +353,8 @@ string TraceProxy::getDefaultSemanticFunc( TWindowLevel whichLevel ) const
 
   return myDefaultThreadSemanticFunc;
 }
+
+bool TraceProxy::eventLoaded( TEventType whichType ) const
+{
+  return myTrace->eventLoaded( whichType );
+}

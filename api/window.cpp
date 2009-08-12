@@ -78,7 +78,7 @@ void WindowProxy::init()
   minimumY = Window::getMinimumY();
 
   myCodeColor = myTrace->getCodeColor();
-  myGradientColor = myTrace->getGradientColor();
+//  myGradientColor = myTrace->getGradientColor();
   codeColor = true;
 
   drawModeObject = DRAW_MAXIMUM;

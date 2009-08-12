@@ -189,21 +189,18 @@ string LabelConstructor::histoTotalLabel( THistoTotals whichTotal )
   return "";
 }
 
-string LabelConstructor::timeLabel( TTime value, TTimeUnit unit )
+string numberWithSeparators( TSemanticValue value, TTimeUnit unit = MS )
 {
   stringstream label;
 
-  label << fixed;
-  label.precision( ParaverConfig::getInstance()->getPrecision() );
+  string strNum;
+  TSemanticValue origValue = value;
+  TSemanticValue intValue = floor( value );
 
   if ( value == 0 )
     label << "0";
   else
   {
-    string strNum;
-    TSemanticValue origValue = value;
-    TSemanticValue intValue = floor( value );
-
     if ( origValue >= 1.0 )
     {
       while ( intValue > 0.0 )
@@ -226,6 +223,17 @@ string LabelConstructor::timeLabel( TTime value, TTimeUnit unit )
       label << strNum;
     }
   }
+  return label.str();
+}
+string LabelConstructor::timeLabel( TTime value, TTimeUnit unit )
+{
+  stringstream label;
+
+  label << fixed;
+  label.precision( ParaverConfig::getInstance()->getPrecision() );
+
+  label << numberWithSeparators( value, unit );
+
   label << " " << LABEL_TIMEUNIT[ unit ];
 
   return label.str();
@@ -246,7 +254,7 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
 
   if ( infoType == NO_TYPE || !text )
   {
-    label << value;
+    label << numberWithSeparators( value );
   }
   else
   {
@@ -341,7 +349,7 @@ string LabelConstructor::eventLabel( Window *whichWindow,
     label << "Type is " << whichType;
   else
   {
-    if( !whichWindow->getTrace()->getEventLabels().getEventTypeLabel( whichType, tmpstr ) )
+    if ( !whichWindow->getTrace()->getEventLabels().getEventTypeLabel( whichType, tmpstr ) )
       label << tmpstr << " type " << whichType;
     else
       label << tmpstr;
@@ -352,7 +360,7 @@ string LabelConstructor::eventLabel( Window *whichWindow,
   else
   {
     label << " ";
-    if( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( whichValue, tmpstr ) )
+    if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( whichValue, tmpstr ) )
       label << tmpstr << " value " << whichValue;
     else
       label << tmpstr;

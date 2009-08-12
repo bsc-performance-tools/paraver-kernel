@@ -224,7 +224,7 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
                               TSemanticValue minimum,
                               TSemanticValue maximum ) const
 {
-  if ( whichValue <= minimum )
+  if ( whichValue < minimum )
   {
     if ( drawOutlier && whichValue != 0 )
       return belowOutlierColor;

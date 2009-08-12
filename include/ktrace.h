@@ -111,6 +111,8 @@ class KTrace: public Trace
       return traceTimeUnit;
     }
 
+    bool eventLoaded( TEventType whichType ) const;
+
     // Forward MemoryTrace iterator functions
     MemoryTrace::iterator* begin() const;
     MemoryTrace::iterator* end() const;

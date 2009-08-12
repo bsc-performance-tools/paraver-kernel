@@ -80,6 +80,8 @@ class Trace
     virtual TTime getEndTime() const = 0;
     virtual TTimeUnit getTimeUnit() const = 0;
 
+    virtual bool eventLoaded( TEventType whichType ) const = 0;
+
     // Specific methods for TraceProxy only
     virtual Trace *getConcrete() const
     {
@@ -114,7 +116,6 @@ class Trace
     {
       return "";
     }
-
 
     // Specific methods for KTrace only
     virtual const set<TEventType>& getLoadedEvents() const
@@ -199,6 +200,8 @@ class TraceProxy: public Trace
     virtual string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const;
 
     virtual string getDefaultSemanticFunc( TWindowLevel whichLevel ) const;
+
+    virtual bool eventLoaded( TEventType whichType ) const;
 
   private:
     Trace *myTrace;
