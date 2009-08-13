@@ -5,8 +5,8 @@
 #include "histogram.h"
 #include "memorytrace.h"
 #include "recordlist.h"
+#include "histogramstatistic.h"
 
-class HistogramStatistic;
 class KHistogramTotals;
 class KWindow;
 
@@ -214,8 +214,9 @@ class KHistogram : public Histogram
 
     bool inclusive;
 
-    vector<HistogramStatistic *> statisticFunctions;
-    vector<HistogramStatistic *> commStatisticFunctions;
+    /*vector<HistogramStatistic *> statisticFunctions;
+    vector<HistogramStatistic *> commStatisticFunctions;*/
+    Statistics statistics;
 
     vector<KWindow *> orderedWindows;
     RowsTranslator *rowsTranslator;

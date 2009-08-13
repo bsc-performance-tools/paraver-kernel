@@ -2589,14 +2589,15 @@ bool Analyzer2DCalculateAll::parseLine( KernelConnection *whichKernel, istringst
   if ( histograms[ histograms.size() - 1 ] == NULL )
     return false;
 
-  getline( line, strBoolAll, ' ' );
+  histograms[ histograms.size() - 1 ]->setCalculateAll( true );
+/*  getline( line, strBoolAll, ' ' );
 
   if ( strBoolAll.compare( OLDCFG_VAL_TRUE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setCalculateAll( true );
   else if ( strBoolAll.compare( OLDCFG_VAL_FALSE2 ) == 0 )
     histograms[ histograms.size() - 1 ]->setCalculateAll( false );
   else
-    return false;
+    return false;*/
 
   return true;
 }

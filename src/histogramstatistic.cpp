@@ -5,32 +5,8 @@
 #include "ktrace.h"
 #include "paraverlabels.h"
 
-StatNumSends HistogramStatistic::statNumSends;
-StatNumReceives HistogramStatistic::statNumReceives;
-StatBytesSent HistogramStatistic::statBytesSent;
-StatBytesReceived HistogramStatistic::statBytesReceived;
-StatAvgBytesSent HistogramStatistic::statAvgBytesSent;
-StatAvgBytesReceived HistogramStatistic::statAvgBytesReceived;
-StatMinBytesSent HistogramStatistic::statMinBytesSent;
-StatMinBytesReceived HistogramStatistic::statMinBytesReceived;
-StatMaxBytesSent HistogramStatistic::statMaxBytesSent;
-StatMaxBytesReceived HistogramStatistic::statMaxBytesReceived;
-
-StatTime HistogramStatistic::statTime;
-StatPercTime HistogramStatistic::statPercTime;
-StatPercTimeNotZero HistogramStatistic::statPercTimeNotZero;
-StatPercTimeWindow HistogramStatistic::statPercTimeWindow;
-StatNumBursts HistogramStatistic::statNumBursts;
-StatPercNumBursts HistogramStatistic::statPercNumBursts;
-StatIntegral HistogramStatistic::statIntegral;
-StatAvgValue HistogramStatistic::statAvgValue;
-StatMaximum HistogramStatistic::statMaximum;
-StatAvgBurstTime HistogramStatistic::statAvgBurstTime;
-StatStdevBurstTime HistogramStatistic::statStdevBurstTime;
-StatAvgPerBurst HistogramStatistic::statAvgPerBurst;
-StatAvgValueNotZero HistogramStatistic::statAvgValueNotZero;
-StatNumBurstsNotZero HistogramStatistic::statNumBurstsNotZero;
-StatSumBursts HistogramStatistic::statSumBursts;
+int Statistics::numCommStats = 10;
+int Statistics::numStats = 15;
 
 //-------------------------------------------------------------------------
 // Statistics filtering functions
@@ -57,7 +33,17 @@ inline bool filterBurstTime( TRecordTime burstTime, KHistogram *histogram )
          burstTime <= histogram->getBurstMax();
 }
 
-void HistogramStatistic::initAllComm( KHistogram *whichHistogram )
+int Statistics::getNumCommStats()
+{
+  return Statistics::numCommStats;
+}
+
+int Statistics::getNumStats()
+{
+  return Statistics::numStats;
+}
+
+void Statistics::initAllComm( KHistogram *whichHistogram )
 {
   statNumSends.init( whichHistogram );
   statNumReceives.init( whichHistogram );
@@ -71,7 +57,7 @@ void HistogramStatistic::initAllComm( KHistogram *whichHistogram )
   statMaxBytesReceived.init( whichHistogram );
 }
 
-void HistogramStatistic::resetAllComm()
+void Statistics::resetAllComm()
 {
   statNumSends.reset();
   statNumReceives.reset();
@@ -85,43 +71,43 @@ void HistogramStatistic::resetAllComm()
   statMaxBytesReceived.reset();
 }
 
-vector<bool> HistogramStatistic::filterAllComm( CalculateData *data )
+vector<bool> Statistics::filterAllComm( CalculateData *data )
 {
   vector<bool> values;
 
-  statNumSends.filter( data );
-  statNumReceives.filter( data );
-  statBytesSent.filter( data );
-  statBytesReceived.filter( data );
-  statAvgBytesSent.filter( data );
-  statAvgBytesReceived.filter( data );
-  statMinBytesSent.filter( data );
-  statMinBytesReceived.filter( data );
-  statMaxBytesSent.filter( data );
-  statMaxBytesReceived.filter( data );
+  values.push_back( statNumSends.filter( data ) );
+  values.push_back( statNumReceives.filter( data ) );
+  values.push_back( statBytesSent.filter( data ) );
+  values.push_back( statBytesReceived.filter( data ) );
+  values.push_back( statAvgBytesSent.filter( data ) );
+  values.push_back( statAvgBytesReceived.filter( data ) );
+  values.push_back( statMinBytesSent.filter( data ) );
+  values.push_back( statMinBytesReceived.filter( data ) );
+  values.push_back( statMaxBytesSent.filter( data ) );
+  values.push_back( statMaxBytesReceived.filter( data ) );
 
   return values;
 }
 
-vector<TSemanticValue> HistogramStatistic::executeAllComm( CalculateData *data )
+vector<TSemanticValue> Statistics::executeAllComm( CalculateData *data )
 {
   vector<TSemanticValue> values;
 
-  statNumSends.execute( data );
-  statNumReceives.execute( data );
-  statBytesSent.execute( data );
-  statBytesReceived.execute( data );
-  statAvgBytesSent.execute( data );
-  statAvgBytesReceived.execute( data );
-  statMinBytesSent.execute( data );
-  statMinBytesReceived.execute( data );
-  statMaxBytesSent.execute( data );
-  statMaxBytesReceived.execute( data );
+  values.push_back( statNumSends.execute( data ) );
+  values.push_back( statNumReceives.execute( data ) );
+  values.push_back( statBytesSent.execute( data ) );
+  values.push_back( statBytesReceived.execute( data ) );
+  values.push_back( statAvgBytesSent.execute( data ) );
+  values.push_back( statAvgBytesReceived.execute( data ) );
+  values.push_back( statMinBytesSent.execute( data ) );
+  values.push_back( statMinBytesReceived.execute( data ) );
+  values.push_back( statMaxBytesSent.execute( data ) );
+  values.push_back( statMaxBytesReceived.execute( data ) );
 
   return values;
 }
 
-vector<TSemanticValue> HistogramStatistic::finishRowAllComm( vector<TSemanticValue>& cellValue,
+vector<TSemanticValue> Statistics::finishRowAllComm( vector<TSemanticValue>& cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
@@ -152,7 +138,7 @@ vector<TSemanticValue> HistogramStatistic::finishRowAllComm( vector<TSemanticVal
   return values;
 }
 
-void HistogramStatistic::initAll( KHistogram *whichHistogram )
+void Statistics::initAll( KHistogram *whichHistogram )
 {
   statTime.init( whichHistogram );
   statPercTime.init( whichHistogram );
@@ -171,7 +157,7 @@ void HistogramStatistic::initAll( KHistogram *whichHistogram )
   statSumBursts.init( whichHistogram );
 }
 
-void HistogramStatistic::resetAll()
+void Statistics::resetAll()
 {
   statTime.reset();
   statPercTime.reset();
@@ -190,7 +176,7 @@ void HistogramStatistic::resetAll()
   statSumBursts.reset();
 }
 
-vector<bool> HistogramStatistic::filterAll( CalculateData *data )
+vector<bool> Statistics::filterAll( CalculateData *data )
 {
   vector<bool> values;
 
@@ -213,7 +199,7 @@ vector<bool> HistogramStatistic::filterAll( CalculateData *data )
   return values;
 }
 
-vector<TSemanticValue> HistogramStatistic::executeAll( CalculateData *data )
+vector<TSemanticValue> Statistics::executeAll( CalculateData *data )
 {
   vector<TSemanticValue> values;
 
@@ -236,7 +222,7 @@ vector<TSemanticValue> HistogramStatistic::executeAll( CalculateData *data )
   return values;
 }
 
-vector<TSemanticValue> HistogramStatistic::finishRowAll( vector<TSemanticValue>& cellValue,
+vector<TSemanticValue> Statistics::finishRowAll( vector<TSemanticValue>& cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
@@ -535,7 +521,7 @@ void StatAvgBytesSent::init( KHistogram *whichHistogram )
   numColumns = myHistogram->getNumRows();
 
   numComms.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
     numComms.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
 }
 
@@ -564,7 +550,7 @@ TSemanticValue StatAvgBytesSent::execute( CalculateData *data )
 {
   if ( data->comm->getType() & SEND )
   {
-    ( ( numComms[ data->plane ] )[ getPartner( data ) ] )++;
+    ++( ( numComms[ data->plane ] )[ getPartner( data ) ] );
     return data->comm->getCommSize();
   }
   return 0;
@@ -619,7 +605,7 @@ void StatAvgBytesReceived::init( KHistogram *whichHistogram )
   numColumns = myHistogram->getNumRows();
 
   numComms.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
     numComms.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
 }
 
@@ -648,7 +634,7 @@ TSemanticValue StatAvgBytesReceived::execute( CalculateData *data )
 {
   if ( data->comm->getType() & RECV )
   {
-    ( ( numComms[ data->plane ] )[ getPartner( data ) ] )++;
+    ++( ( numComms[ data->plane ] )[ getPartner( data ) ] );
     return data->comm->getCommSize();
   }
   return 0;
@@ -703,7 +689,7 @@ void StatMinBytesSent::init( KHistogram *whichHistogram )
   numColumns = myHistogram->getNumRows();
 
   min.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
     min.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
 }
 
@@ -797,7 +783,7 @@ void StatMinBytesReceived::init( KHistogram *whichHistogram )
   numColumns = myHistogram->getNumRows();
 
   min.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
     min.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
 }
 
@@ -891,7 +877,7 @@ void StatMaxBytesSent::init( KHistogram *whichHistogram )
   numColumns = myHistogram->getNumRows();
 
   max.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
     max.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
 }
 
@@ -980,7 +966,7 @@ void StatMaxBytesReceived::init( KHistogram *whichHistogram )
   numColumns = myHistogram->getNumRows();
 
   max.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
     max.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
 }
 
@@ -1124,7 +1110,7 @@ void StatPercTime::init( KHistogram *whichHistogram )
     numPlanes = 1;
 
   rowTotal.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
     rowTotal.push_back( 0.0 );
 }
 
@@ -1206,7 +1192,7 @@ void StatPercTimeNotZero::init( KHistogram *whichHistogram )
     numPlanes = 1;
 
   rowTotal.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
     rowTotal.push_back( 0.0 );
 }
 
@@ -1410,7 +1396,7 @@ void StatPercNumBursts::init( KHistogram *whichHistogram )
     numPlanes = 1;
 
   rowTotal.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
     rowTotal.push_back( 0.0 );
 }
 
@@ -1550,7 +1536,7 @@ void StatAvgValue::init( KHistogram *whichHistogram )
   numColumns = myHistogram->getNumColumns();
 
   numValues.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
     numValues.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
 }
 
@@ -1578,7 +1564,7 @@ bool StatAvgValue::filter( CalculateData *data ) const
 
 TSemanticValue StatAvgValue::execute( CalculateData *data )
 {
-  ( ( numValues[ data->plane ] )[ data->column ] )++;
+  ++( ( numValues[ data->plane ] )[ data->column ] );
   return dataWin->getValue( data->dataRow );
 }
 
@@ -1622,7 +1608,7 @@ void StatMaximum::init( KHistogram *whichHistogram )
   numColumns = myHistogram->getNumColumns();
 
   max.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
     max.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
 }
 
@@ -1696,7 +1682,7 @@ void StatAvgBurstTime::init( KHistogram *whichHistogram )
   numColumns = myHistogram->getNumColumns();
 
   numValues.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
     numValues.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
 }
 
@@ -1744,7 +1730,7 @@ TSemanticValue StatAvgBurstTime::execute( CalculateData *data )
   end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
         data->endTime : dataWin->getEndTime( data->dataRow );
 
-  ( ( numValues[ data->plane ] )[ data->column ] )++;
+  ++( ( numValues[ data->plane ] )[ data->column ] );
 
   return end - begin;
 }
@@ -1792,7 +1778,7 @@ void StatStdevBurstTime::init( KHistogram *whichHistogram )
 
   numValues.reserve( numPlanes );
   qValues.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
   {
     numValues.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
     qValues.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
@@ -1848,7 +1834,7 @@ TSemanticValue StatStdevBurstTime::execute( CalculateData *data )
   end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
         data->endTime : dataWin->getEndTime( data->dataRow );
 
-  ( ( numValues[ data->plane ] )[ data->column ] )++;
+  ++( ( numValues[ data->plane ] )[ data->column ] );
   ( ( qValues[ data->plane ] )[ data->column ] ) +=
     ( end - begin ) * ( end - begin );
 
@@ -1906,7 +1892,7 @@ void StatAvgPerBurst::init( KHistogram *whichHistogram )
   numColumns = myHistogram->getNumColumns();
 
   numValues.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
     numValues.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
 }
 
@@ -1945,7 +1931,7 @@ bool StatAvgPerBurst::filter( CalculateData *data ) const
 
 TSemanticValue StatAvgPerBurst::execute( CalculateData *data )
 {
-  ( ( numValues[ data->plane ] )[ data->column ] )++;
+  ++( ( numValues[ data->plane ] )[ data->column ] );
 
   return dataWin->getValue( data->dataRow );
 }
@@ -1990,7 +1976,7 @@ void StatAvgValueNotZero::init( KHistogram *whichHistogram )
   numColumns = myHistogram->getNumColumns();
 
   numValues.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
     numValues.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
 }
 
@@ -2019,7 +2005,7 @@ bool StatAvgValueNotZero::filter( CalculateData *data ) const
 TSemanticValue StatAvgValueNotZero::execute( CalculateData *data )
 {
   if ( dataWin->getValue( data->dataRow ) != 0.0 )
-    ( ( numValues[ data->plane ] )[ data->column ] )++;
+    ++( ( numValues[ data->plane ] )[ data->column ] );
 
   return dataWin->getValue( data->dataRow );
 }

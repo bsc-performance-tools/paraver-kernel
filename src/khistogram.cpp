@@ -617,7 +617,7 @@ inline HistogramTotals *KHistogram::getCommRowTotals() const
 
 inline void KHistogram::clearStatistics()
 {
-  vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
+/*  vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
 
   while ( it != statisticFunctions.end() )
   {
@@ -633,20 +633,20 @@ inline void KHistogram::clearStatistics()
     delete *it;
     ++it;
   }
-  commStatisticFunctions.clear();
+  commStatisticFunctions.clear();*/
 }
 
 
 inline void KHistogram::pushbackStatistic( const string& whichStatistic )
 {
-  HistogramStatistic *stat;
+/*  HistogramStatistic *stat;
 
   stat = ( FunctionManagement<HistogramStatistic>::getInstance() )->getFunction( whichStatistic );
 
   if ( stat->createComms() )
     commStatisticFunctions.push_back( stat );
   else
-    statisticFunctions.push_back( stat );
+    statisticFunctions.push_back( stat );*/
 }
 
 
@@ -732,7 +732,8 @@ void KHistogram::orderWindows()
 
 bool KHistogram::createComms() const
 {
-  return commStatisticFunctions.size() > 0;
+//  return commStatisticFunctions.size() > 0;
+  return true;
 }
 
 
@@ -783,15 +784,15 @@ void KHistogram::initMatrix( THistogramColumn planes, THistogramColumn cols,
 
   if ( getThreeDimensions() )
   {
-    cube = new Cube<TSemanticValue>( planes, cols, statisticFunctions.size() );
+    cube = new Cube<TSemanticValue>( planes, cols, Statistics::getNumStats() );
     if ( createComms() )
-      commCube = new Cube<TSemanticValue>( planes, rowsTranslator->totalRows(), commStatisticFunctions.size() );
+      commCube = new Cube<TSemanticValue>( planes, rowsTranslator->totalRows(), Statistics::getNumCommStats() );
   }
   else
   {
-    matrix = new Matrix<TSemanticValue>( cols, statisticFunctions.size() );
+    matrix = new Matrix<TSemanticValue>( cols, Statistics::getNumStats() );
     if ( createComms() )
-      commMatrix = new Matrix<TSemanticValue>( rowsTranslator->totalRows(), commStatisticFunctions.size() );
+      commMatrix = new Matrix<TSemanticValue>( rowsTranslator->totalRows(), Statistics::getNumCommStats() );
   }
 }
 
@@ -809,25 +810,25 @@ void KHistogram::initTotals()
 
   if ( getThreeDimensions() )
   {
-    totals = new KHistogramTotals( statisticFunctions.size(), numCols, numPlanes );
-    rowTotals = new KHistogramTotals( statisticFunctions.size(), numRows, numPlanes );
+    totals = new KHistogramTotals( Statistics::getNumStats(), numCols, numPlanes );
+    rowTotals = new KHistogramTotals( Statistics::getNumStats(), numRows, numPlanes );
     if ( createComms() )
     {
-      commTotals = new KHistogramTotals( commStatisticFunctions.size(),
+      commTotals = new KHistogramTotals( Statistics::getNumCommStats(),
                                          rowsTranslator->totalRows(), numPlanes );
-      rowCommTotals = new KHistogramTotals( commStatisticFunctions.size(),
+      rowCommTotals = new KHistogramTotals( Statistics::getNumCommStats(),
                                             numRows, numPlanes );
     }
   }
   else
   {
-    totals = new KHistogramTotals( statisticFunctions.size(), numCols, 1 );
-    rowTotals = new KHistogramTotals( statisticFunctions.size(), numRows, 1 );
+    totals = new KHistogramTotals( Statistics::getNumStats(), numCols, 1 );
+    rowTotals = new KHistogramTotals( Statistics::getNumStats(), numRows, 1 );
     if ( createComms() )
     {
-      commTotals = new KHistogramTotals( commStatisticFunctions.size(),
+      commTotals = new KHistogramTotals( Statistics::getNumCommStats(),
                                          rowsTranslator->totalRows(), 1 );
-      rowCommTotals = new KHistogramTotals( commStatisticFunctions.size(),
+      rowCommTotals = new KHistogramTotals( Statistics::getNumCommStats(),
                                             numRows, 1 );
     }
   }
@@ -853,8 +854,8 @@ void KHistogram::initSemantic( TRecordTime beginTime )
 
 void KHistogram::initStatistics()
 {
-  HistogramStatistic::initAll( this );
-  HistogramStatistic::initAllComm( this );
+  statistics.initAll( this );
+  statistics.initAllComm( this );
 }
 
 
@@ -951,8 +952,8 @@ void KHistogram::calculate( TObjectOrder iRow,
             itComm->getTime() <= toTime )
     {
       data->comm = itComm;
-      vector<bool> filter = HistogramStatistic::filterAllComm( data );
-      vector<TSemanticValue> values = HistogramStatistic::executeAllComm( data );
+      vector<bool> filter = statistics.filterAllComm( data );
+      vector<TSemanticValue> values = statistics.executeAllComm( data );
       for ( UINT16 iStat = 0; iStat < filter.size(); iStat++ )
       {
         if ( filter[ iStat ] )
@@ -982,8 +983,8 @@ void KHistogram::calculate( TObjectOrder iRow,
       {
         if ( columnTranslator->getColumn( *it, column ) )
         {
-          vector<bool> filter = HistogramStatistic::filterAll( data );
-          vector<TSemanticValue> values = HistogramStatistic::executeAll( data );
+          vector<bool> filter = statistics.filterAll( data );
+          vector<TSemanticValue> values = statistics.executeAll( data );
 
           for ( UINT16 iStat = 0; iStat < filter.size(); ++iStat )
           {
@@ -1003,8 +1004,8 @@ void KHistogram::calculate( TObjectOrder iRow,
     }
     else
     {
-      vector<bool> filter = HistogramStatistic::filterAll( data );
-      vector<TSemanticValue> values = HistogramStatistic::executeAll( data );
+      vector<bool> filter = statistics.filterAll( data );
+      vector<TSemanticValue> values = statistics.executeAll( data );
 
       for ( UINT16 iStat = 0; iStat < filter.size(); ++iStat )
       {
@@ -1052,7 +1053,7 @@ void KHistogram::finishRow( CalculateData *data )
           if ( commCube->currentCellModified( iPlane, iColumn ) )
           {
             vector<TSemanticValue> values = commCube->getCurrentValue( iPlane, iColumn );
-            values = HistogramStatistic::finishRowAllComm( values, iColumn, iPlane );
+            values = statistics.finishRowAllComm( values, iColumn, iPlane );
 
             commCube->setValue( iPlane, iColumn, values );
             for ( UINT16 iStat = 0; iStat < values.size(); ++iStat )
@@ -1073,7 +1074,7 @@ void KHistogram::finishRow( CalculateData *data )
       if ( commMatrix->currentCellModified( iColumn ) )
       {
         vector<TSemanticValue> values = commMatrix->getCurrentValue( iColumn );
-        values = HistogramStatistic::finishRowAllComm( values, iColumn );
+        values = statistics.finishRowAllComm( values, iColumn );
 
         commMatrix->setValue( iColumn, values );
         for ( UINT16 iStat = 0; iStat < values.size(); ++iStat )
@@ -1085,7 +1086,7 @@ void KHistogram::finishRow( CalculateData *data )
     }
   }
 
-  HistogramStatistic::resetAllComm();
+  statistics.resetAllComm();
 
   if ( getThreeDimensions() )
   {
@@ -1100,7 +1101,7 @@ void KHistogram::finishRow( CalculateData *data )
           if ( cube->currentCellModified( iPlane, iColumn ) )
           {
             vector<TSemanticValue> values = cube->getCurrentValue( iPlane, iColumn );
-            values = HistogramStatistic::finishRowAll( values, iColumn, iPlane );
+            values = statistics.finishRowAll( values, iColumn, iPlane );
 
             cube->setValue( iPlane, iColumn, values );
             for ( UINT16 iStat = 0; iStat < values.size(); iStat++ )
@@ -1121,7 +1122,7 @@ void KHistogram::finishRow( CalculateData *data )
       if ( matrix->currentCellModified( iColumn ) )
       {
         vector<TSemanticValue> values = matrix->getCurrentValue( iColumn );
-        values = HistogramStatistic::finishRowAll( values, iColumn );
+        values = statistics.finishRowAll( values, iColumn );
         matrix->setValue( iColumn, values );
         for ( UINT16 iStat = 0; iStat < values.size(); iStat++ )
         {
@@ -1132,7 +1133,7 @@ void KHistogram::finishRow( CalculateData *data )
     }
   }
 
-  HistogramStatistic::resetAll();
+  statistics.resetAll();
 
   // Next row
   if ( createComms() )
@@ -1219,13 +1220,13 @@ KHistogram *KHistogram::clone()
 
   clonedKHistogram->inclusive = inclusive;
 
-  for ( vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
+/*  for ( vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
         it != statisticFunctions.end(); it++ )
     clonedKHistogram->statisticFunctions.push_back( ( *it )->clone() );
 
   for ( vector<HistogramStatistic *>::iterator it = commStatisticFunctions.begin();
         it != commStatisticFunctions.end(); it++ )
-    clonedKHistogram->commStatisticFunctions.push_back( ( *it )->clone() );
+    clonedKHistogram->commStatisticFunctions.push_back( ( *it )->clone() );*/
 
   clonedKHistogram->rowsTranslator = new RowsTranslator( *rowsTranslator );
   clonedKHistogram->columnTranslator = new ColumnTranslator( *columnTranslator );
