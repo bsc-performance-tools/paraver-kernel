@@ -204,6 +204,12 @@ class Window
     {}
     virtual void setShowChildrenWindow( bool newValue )
     {}
+    virtual bool getRaiseWindow() const
+    {
+      return false;
+    }
+    virtual void setRaiseWindow( bool newValue )
+    {}
     virtual void setCodeColorMode()
     {}
     virtual bool IsCodeColorSet() const
@@ -398,6 +404,8 @@ class WindowProxy: public Window
     virtual bool getShowWindow() const;
     virtual void setShowWindow( bool newValue );
     virtual void setShowChildrenWindow( bool newValue ); // recursively sets children
+    virtual bool getRaiseWindow() const;
+    virtual void setRaiseWindow( bool newValue );
     virtual void setCodeColorMode();
     virtual void setGradientColorMode();
     virtual bool IsCodeColorSet() const;
@@ -475,6 +483,7 @@ class WindowProxy: public Window
     DrawModeMethod drawModeObject;
     DrawModeMethod drawModeTime;
     bool showWindow;
+    bool raise;
     bool changed;
     bool redraw;
     bool commLines;

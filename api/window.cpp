@@ -85,6 +85,7 @@ void WindowProxy::init()
   drawModeTime = DRAW_MAXIMUM;
 
   showWindow = true;
+  raise = false;
   changed = false;
   redraw = false;
   commLines = true;
@@ -669,6 +670,16 @@ void WindowProxy::setShowChildrenWindow( bool newValue )
       getParent( i )->setShowChildrenWindow( newValue );
     }
   }
+}
+
+bool WindowProxy::getRaiseWindow() const
+{
+  return raise;
+}
+
+void WindowProxy::setRaiseWindow( bool newValue )
+{
+  raise = newValue;
 }
 
 void WindowProxy::setCodeColorMode()
