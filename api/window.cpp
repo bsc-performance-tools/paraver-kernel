@@ -274,6 +274,44 @@ bool WindowProxy::getYScaleComputed() const
   return yScaleComputed;
 }
 
+void WindowProxy::computeYScaleMin()
+{
+  if ( !yScaleComputed )
+  {
+    vector< TObjectOrder > selected;
+    getSelectedRows( getLevel(), selected );
+
+    init( winBeginTime, NONE );
+
+    for ( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
+    {
+      while ( getBeginTime( *obj ) < winEndTime )
+        calcNext( *obj );
+    }
+  }
+
+  minimumY = computedMinY;
+}
+
+void WindowProxy::computeYScaleMax()
+{
+  if ( !yScaleComputed )
+  {
+    vector< TObjectOrder > selected;
+    getSelectedRows( getLevel(), selected );
+
+    init( winBeginTime, NONE );
+
+    for ( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
+    {
+      while ( getBeginTime( *obj ) < winEndTime )
+        calcNext( *obj );
+    }
+  }
+
+  maximumY = computedMaxY;
+}
+
 void WindowProxy::computeYScale()
 {
   if ( !yScaleComputed )

@@ -74,6 +74,8 @@ class Window
     {
       return false;
     }
+    virtual void computeYScaleMin() {}
+    virtual void computeYScaleMax() {}
     virtual void computeYScale() {}
     virtual void setComputeYMaxOnInit( bool newValue ) {}
     virtual bool getComputeYMaxOnInit() const
@@ -329,6 +331,8 @@ class WindowProxy: public Window
     virtual TRecordTime getWindowEndTime() const;
 
     virtual bool getYScaleComputed() const;
+    virtual void computeYScaleMin();
+    virtual void computeYScaleMax();
     virtual void computeYScale();
     virtual void setComputeYMaxOnInit( bool newValue );
     virtual bool getComputeYMaxOnInit() const;
