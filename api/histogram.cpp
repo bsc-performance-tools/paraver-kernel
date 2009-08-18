@@ -445,12 +445,6 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
       compute3DScale();
   }
 
-  if ( computeGradient )
-  {
-    // Idem que para computeScale pero con la ventana de datos, aunque hace
-    // falta una clase para hacer gradientes.
-  }
-
   myHisto->execute( whichBeginTime, whichEndTime, selectedRows );
 
   if ( getThreeDimensions() && futurePlane )
