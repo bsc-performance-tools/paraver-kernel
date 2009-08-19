@@ -88,7 +88,8 @@ void WindowProxy::init()
   raise = false;
   changed = false;
   redraw = false;
-  commLines = true;
+  commLines = Window::getDrawCommLines();
+  flags = Window::getDrawFlags();
 
   child = NULL;
 
@@ -756,6 +757,16 @@ bool WindowProxy::getDrawCommLines() const
 void WindowProxy::setDrawCommLines( bool newValue )
 {
   commLines = newValue;
+}
+
+bool WindowProxy::getDrawFlags() const
+{
+  return flags;
+}
+
+void WindowProxy::setDrawFlags( bool newValue )
+{
+  flags = newValue;
 }
 
 SemanticInfoType WindowProxy::getSemanticInfoType() const

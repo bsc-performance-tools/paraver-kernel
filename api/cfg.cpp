@@ -779,6 +779,35 @@ void WindowCommLines::printLine( ofstream& cfgFile,
       OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
 
+bool WindowFlagsEnabled::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                 Trace *whichTrace,
+                                 vector<Window *>& windows,
+                                 vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawFlags( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawFlags( true );
+  else
+    return false;
+
+  return true;
+}
+
+void WindowFlagsEnabled::printLine( ofstream& cfgFile,
+                                 const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_COMM_LINES << " " << ( ( *it )->getDrawFlags() ?
+      OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
+}
+
 bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& line,
                                  Trace *whichTrace,
                                  vector<Window *>& windows,

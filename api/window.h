@@ -253,6 +253,12 @@ class Window
     }
     virtual void setDrawCommLines( bool newValue )
     {}
+    virtual bool getDrawFlags() const
+    {
+      return true;
+    }
+    virtual void setDrawFlags( bool newValue )
+    {}
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
                                           vector<string>& onVector ) const
     {}
@@ -421,6 +427,8 @@ class WindowProxy: public Window
     virtual void setRedraw( bool newValue );
     virtual bool getDrawCommLines() const;
     virtual void setDrawCommLines( bool newValue );
+    virtual bool getDrawFlags() const;
+    virtual void setDrawFlags( bool newValue );
 
 
     virtual bool emptyPrevZoom() const;
@@ -487,6 +495,7 @@ class WindowProxy: public Window
     bool changed;
     bool redraw;
     bool commLines;
+    bool flags;
 
     // Zoom history
     ZoomHistory<TTime, TObjectOrder> zoomHistory;
