@@ -754,6 +754,8 @@ string KDerivedWindow::getLevelFunction( TWindowLevel whichLevel )
     whichLevel = ( TWindowLevel ) 1;
   else if ( whichLevel == DERIVED )
     whichLevel = ( TWindowLevel ) 2;
+  else
+    return "";
 
   return functions[ whichLevel ]->getName();
 }

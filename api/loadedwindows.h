@@ -46,6 +46,7 @@ class LoadedWindows
 
     bool validDataWindow( Window *dataWindow, Window *controlWindow ) const;
     bool validLevelDataWindow( Window *dataWindow, Window *controlWindow ) const;
+    bool notInParents( Window *whichWindow, Window *inParents ) const;
 };
 
 

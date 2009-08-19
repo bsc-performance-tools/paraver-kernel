@@ -93,8 +93,7 @@ void LoadedWindows::getValidControlWindow( Window *dataWindow,
   for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
   {
-    if ( ( *it ).second->getChild() == NULL &&
-         validDataWindow( dataWindow, ( *it ).second ) )
+    if ( validDataWindow( dataWindow, ( *it ).second ) )
       onVector.push_back( ( *it ).first );
   }
 }
@@ -103,31 +102,26 @@ void LoadedWindows::getValidDataWindow( Window *controlWindow,
     Window *extraWindow,
     vector<TWindowID>& onVector ) const
 {
-  Window *cWin;
-
-  if ( extraWindow == NULL )
-  {
-    cWin = controlWindow;
-  }
-  else
-  {
-    cWin = ( controlWindow->getLevel() > extraWindow->getLevel() ) ?
-           controlWindow : extraWindow;
-  }
   for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
   {
-    if ( ( *it ).second->getChild() == NULL &&
-         validDataWindow( ( *it ).second, cWin ) )
+    if ( validDataWindow( ( *it ).second, controlWindow )
+         && validDataWindow( ( *it ).second, extraWindow ) )
       onVector.push_back( ( *it ).first );
   }
 }
 
 bool LoadedWindows::validDataWindow( Window *dataWindow, Window *controlWindow ) const
 {
-  if ( dataWindow->getTrace() == controlWindow->getTrace() )
+  if( dataWindow == controlWindow )
+    return true;
+  else if ( dataWindow->getTrace() == controlWindow->getTrace() )
   {
-    return validLevelDataWindow( dataWindow, controlWindow );
+    if( validLevelDataWindow( dataWindow, controlWindow ) )
+    {
+      return notInParents( dataWindow, controlWindow )
+             && notInParents( controlWindow, dataWindow );
+    }
   }
   else
   {
@@ -160,4 +154,20 @@ bool LoadedWindows::validLevelDataWindow( Window *dataWindow, Window *controlWin
     }
   }
   return false;
+}
+
+bool LoadedWindows::notInParents( Window *whichWindow, Window *inParents ) const
+{
+  bool result = true;
+
+  if( whichWindow == inParents )
+    result = false;
+  else if( inParents->isDerivedWindow() )
+  {
+    result = notInParents( whichWindow, inParents->getParent( 0 ) );
+    if( result )
+      result = notInParents( whichWindow, inParents->getParent( 1 ) );
+  }
+
+  return result;
 }
