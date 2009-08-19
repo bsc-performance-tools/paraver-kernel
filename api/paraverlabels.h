@@ -40,6 +40,8 @@
 #define OLDCFG_TAG_WNDW_WIDTH      "window_width"
 #define OLDCFG_TAG_WNDW_HEIGHT      "window_height"
 #define OLDCFG_TAG_WNDW_COMM_LINES  "window_comm_lines_enabled"
+#define OLDCFG_TAG_WNDW_FLAGS_ENABLED  "window_flags_enabled"
+#define OLDCFG_TAG_WNDW_NON_COLOR_MODE  "window_noncolor_mode"
 #define OLDCFG_TAG_WNDW_COLOR_MODE  "window_color_mode"
 #define OLDCFG_TAG_WNDW_UNITS     "window_units"
 #define OLDCFG_TAG_WNDW_OPERATION "window_operation"

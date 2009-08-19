@@ -246,9 +246,9 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
     return false;
 
   // Init first zoom for all windows
-  for( vector<Window *>::iterator it = windows.begin(); it != windows.end(); ++it )
-    (*it)->addZoom( (*it)->getWindowBeginTime(), (*it)->getWindowEndTime(),
-                    0, (*it)->getWindowLevelObjects() - 1 );
+  for ( vector<Window *>::iterator it = windows.begin(); it != windows.end(); ++it )
+    ( *it )->addZoom( ( *it )->getWindowBeginTime(), ( *it )->getWindowEndTime(),
+                      0, ( *it )->getWindowLevelObjects() - 1 );
 
   // Because old paraver set window_open to false for all windows
   if ( histograms.begin() == histograms.end() )
@@ -333,6 +333,8 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowWidth::printLine( cfgFile, it );
     WindowHeight::printLine( cfgFile, it );
     WindowCommLines::printLine( cfgFile, it );
+    WindowFlagsEnabled::printLine( cfgFile, it );
+    WindowNonColorMode::printLine( cfgFile, it );
     WindowColorMode::printLine( cfgFile, it );
     if ( !( *it )->isDerivedWindow() )
     {
@@ -448,6 +450,8 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_WIDTH]               = new WindowWidth();
   cfgTagFunctions[OLDCFG_TAG_WNDW_HEIGHT]              = new WindowHeight();
   cfgTagFunctions[OLDCFG_TAG_WNDW_COMM_LINES]          = new WindowCommLines();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_FLAGS_ENABLED]       = new WindowFlagsEnabled();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_NON_COLOR_MODE]      = new WindowNonColorMode();
   cfgTagFunctions[OLDCFG_TAG_WNDW_UNITS]               = new WindowUnits();
   cfgTagFunctions[OLDCFG_TAG_WNDW_COLOR_MODE]          = new WindowColorMode();
   cfgTagFunctions[OLDCFG_TAG_WNDW_OPERATION]           = new WindowOperation();
@@ -780,9 +784,9 @@ void WindowCommLines::printLine( ofstream& cfgFile,
 }
 
 bool WindowFlagsEnabled::parseLine( KernelConnection *whichKernel, istringstream& line,
-                                 Trace *whichTrace,
-                                 vector<Window *>& windows,
-                                 vector<Histogram *>& histograms )
+                                    Trace *whichTrace,
+                                    vector<Window *>& windows,
+                                    vector<Histogram *>& histograms )
 {
   string strBool;
 
@@ -802,9 +806,38 @@ bool WindowFlagsEnabled::parseLine( KernelConnection *whichKernel, istringstream
 }
 
 void WindowFlagsEnabled::printLine( ofstream& cfgFile,
-                                 const vector<Window *>::const_iterator it )
+                                    const vector<Window *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_COMM_LINES << " " << ( ( *it )->getDrawFlags() ?
+      OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
+}
+
+bool WindowNonColorMode::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                    Trace *whichTrace,
+                                    vector<Window *>& windows,
+                                    vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawFunctionLineColor( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawFunctionLineColor( true );
+  else
+    return false;
+
+  return true;
+}
+
+void WindowNonColorMode::printLine( ofstream& cfgFile,
+                                    const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_COMM_LINES << " " << ( ( *it )->getDrawFunctionLineColor() ?
       OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
 
@@ -1157,23 +1190,23 @@ bool genericParseObjects( istringstream& line,
   string strValue;
   bool value;
 
-  for( TObjectOrder iObj = 0; iObj < numObjects; ++iObj )
+  for ( TObjectOrder iObj = 0; iObj < numObjects; ++iObj )
   {
-    if( iObj == numObjects - 1 )
+    if ( iObj == numObjects - 1 )
       getline( line, strValue, ' ' );
     else
       getline( line, strValue, ',' );
 
-    if( numbers )
+    if ( numbers )
     {
       istringstream tmpValue( strValue );
-      if( !( tmpValue >> value ) )
+      if ( !( tmpValue >> value ) )
         return false;
     }
     else
     {
       value = true;
-      if( strValue == "None" )
+      if ( strValue == "None" )
         value = false;
     }
 
@@ -1204,7 +1237,7 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
 
   getline( line, strVoid, ' ' );
 
-  switch( level )
+  switch ( level )
   {
     case APPLICATION:
       win->getSelectedRows( APPLICATION, selObjects );
@@ -1214,7 +1247,7 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
         return false;
       getline( line, strVoid, ' ' );
       getline( line, strVoid, ' ' );
-      if( !genericParseObjects( line, numObjects, 0, selObjects ) )
+      if ( !genericParseObjects( line, numObjects, 0, selObjects ) )
         return false;
       win->setSelectedRows( APPLICATION, selObjects );
       break;
@@ -1240,10 +1273,10 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
   }
 
   // Sets as selected all rows
-/*  vector< bool > selected;
-  Window *win = windows[ windows.size() - 1 ];
-  selected.assign( win->getWindowLevelObjects(), true );
-  win->setSelectedRows( win->getLevel(), selected );*/
+  /*  vector< bool > selected;
+    Window *win = windows[ windows.size() - 1 ];
+    selected.assign( win->getWindowLevelObjects(), true );
+    win->setSelectedRows( win->getLevel(), selected );*/
 
   return true;
 }
@@ -1531,16 +1564,31 @@ bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel, istringst
     if ( level != NONE )
     {
       // Compatibility code with old CFG versions
-      switch( level )
+      switch ( level )
       {
-        case WORKLOAD:    level = COMPOSEWORKLOAD;    break;
-        case APPLICATION: level = COMPOSEAPPLICATION; break;
-        case TASK:        level = COMPOSETASK;        break;
-        case THREAD:      level = COMPOSETHREAD;      break;
-        case SYSTEM:      level = COMPOSESYSTEM;      break;
-        case NODE:        level = COMPOSENODE;        break;
-        case CPU:         level = COMPOSECPU;         break;
-        default: break;
+        case WORKLOAD:
+          level = COMPOSEWORKLOAD;
+          break;
+        case APPLICATION:
+          level = COMPOSEAPPLICATION;
+          break;
+        case TASK:
+          level = COMPOSETASK;
+          break;
+        case THREAD:
+          level = COMPOSETHREAD;
+          break;
+        case SYSTEM:
+          level = COMPOSESYSTEM;
+          break;
+        case NODE:
+          level = COMPOSENODE;
+          break;
+        case CPU:
+          level = COMPOSECPU;
+          break;
+        default:
+          break;
       }
 
       bool result = windows[ windows.size() - 1 ]->setLevelFunction( level, strFunction );
@@ -2213,7 +2261,7 @@ void WindowOpen::printLine( ofstream& cfgFile,
   cfgFile << OLDCFG_TAG_WNDW_OPEN << " ";
   if ( ( *it )->getShowWindow() )
   {
-    if( (*it)->getChild() != NULL )
+    if ( ( *it )->getChild() != NULL )
       cfgFile << OLDCFG_VAL_FALSE;
     else
       cfgFile << OLDCFG_VAL_TRUE;
@@ -2619,14 +2667,14 @@ bool Analyzer2DCalculateAll::parseLine( KernelConnection *whichKernel, istringst
     return false;
 
   histograms[ histograms.size() - 1 ]->setCalculateAll( true );
-/*  getline( line, strBoolAll, ' ' );
+  /*  getline( line, strBoolAll, ' ' );
 
-  if ( strBoolAll.compare( OLDCFG_VAL_TRUE2 ) == 0 )
-    histograms[ histograms.size() - 1 ]->setCalculateAll( true );
-  else if ( strBoolAll.compare( OLDCFG_VAL_FALSE2 ) == 0 )
-    histograms[ histograms.size() - 1 ]->setCalculateAll( false );
-  else
-    return false;*/
+    if ( strBoolAll.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+      histograms[ histograms.size() - 1 ]->setCalculateAll( true );
+    else if ( strBoolAll.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+      histograms[ histograms.size() - 1 ]->setCalculateAll( false );
+    else
+      return false;*/
 
   return true;
 }
@@ -2768,7 +2816,7 @@ bool Analyzer2DZoom::parseLine( KernelConnection *whichKernel, istringstream& li
 }
 
 void Analyzer2DZoom::printLine( ofstream& cfgFile,
-                                 const vector<Histogram *>::const_iterator it )
+                                const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_COLOR << " ";
   if ( ( *it )->getZoom() )

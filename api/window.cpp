@@ -90,6 +90,7 @@ void WindowProxy::init()
   redraw = false;
   commLines = Window::getDrawCommLines();
   flags = Window::getDrawFlags();
+  functionLineColor = Window::getDrawFunctionLineColor();
 
   child = NULL;
 
@@ -767,6 +768,16 @@ bool WindowProxy::getDrawFlags() const
 void WindowProxy::setDrawFlags( bool newValue )
 {
   flags = newValue;
+}
+
+bool WindowProxy::getDrawFunctionLineColor() const
+{
+  return functionLineColor;
+}
+
+void WindowProxy::setDrawFunctionLineColor( bool newValue )
+{
+  functionLineColor = newValue;
 }
 
 SemanticInfoType WindowProxy::getSemanticInfoType() const

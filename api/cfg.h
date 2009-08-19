@@ -223,6 +223,22 @@ class WindowFlagsEnabled: public TagFunction
 };
 
 
+class WindowNonColorMode: public TagFunction
+{
+  public:
+    WindowNonColorMode()
+    {}
+    virtual ~WindowNonColorMode()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
+};
+
+
 class WindowColorMode: public TagFunction
 {
   public:
