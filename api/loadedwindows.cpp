@@ -72,7 +72,7 @@ void LoadedWindows::getAll( Trace *whichTrace, vector< Window *>& onVector ) con
 {
   for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
-    if ( (*it).second->getTrace() == whichTrace )
+    if ( ( *it ).second->getTrace() == whichTrace )
       onVector.push_back( ( *it ).second );
 }
 
@@ -81,26 +81,28 @@ void LoadedWindows::getAll( Trace *whichTrace, vector< Histogram *>& onVector ) 
 {
   for ( map<TWindowID, Histogram *>::const_iterator it = histograms.begin();
         it != histograms.end(); ++it )
-    if ( (*it).second->getControlWindow()->getTrace() == whichTrace )
+    if ( ( *it ).second->getControlWindow()->getTrace() == whichTrace )
       onVector.push_back( ( *it ).second );
 }
 
 
 // Histogram windows selection related methods
 void LoadedWindows::getValidControlWindow( Window *dataWindow,
+    Window *controlWindow,
     vector<TWindowID>& onVector ) const
 {
   for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
   {
-    if ( validDataWindow( dataWindow, ( *it ).second ) )
+    if ( validDataWindow( dataWindow, ( *it ).second )
+         && validDataWindow( controlWindow, ( *it ).second ) )
       onVector.push_back( ( *it ).first );
   }
 }
 
 void LoadedWindows::getValidDataWindow( Window *controlWindow,
-    Window *extraWindow,
-    vector<TWindowID>& onVector ) const
+                                        Window *extraWindow,
+                                        vector<TWindowID>& onVector ) const
 {
   for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
@@ -113,11 +115,16 @@ void LoadedWindows::getValidDataWindow( Window *controlWindow,
 
 bool LoadedWindows::validDataWindow( Window *dataWindow, Window *controlWindow ) const
 {
-  if( dataWindow == controlWindow )
+  if ( dataWindow == controlWindow )
     return true;
+  if( controlWindow == NULL )
+    return true;
+  if( dataWindow == NULL )
+    return true;
+
   else if ( dataWindow->getTrace() == controlWindow->getTrace() )
   {
-    if( validLevelDataWindow( dataWindow, controlWindow ) )
+    if ( validLevelDataWindow( dataWindow, controlWindow ) )
     {
       return notInParents( dataWindow, controlWindow )
              && notInParents( controlWindow, dataWindow );
@@ -160,12 +167,12 @@ bool LoadedWindows::notInParents( Window *whichWindow, Window *inParents ) const
 {
   bool result = true;
 
-  if( whichWindow == inParents )
+  if ( whichWindow == inParents )
     result = false;
-  else if( inParents->isDerivedWindow() )
+  else if ( inParents->isDerivedWindow() )
   {
     result = notInParents( whichWindow, inParents->getParent( 0 ) );
-    if( result )
+    if ( result )
       result = notInParents( whichWindow, inParents->getParent( 1 ) );
   }
 

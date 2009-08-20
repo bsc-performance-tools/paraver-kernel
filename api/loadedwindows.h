@@ -29,7 +29,7 @@ class LoadedWindows
     void getAll( Trace *whichTrace, vector< Histogram *>& onVector ) const;
 
     // Histogram windows selection related methods
-    void getValidControlWindow( Window *dataWindow, vector<TWindowID>& onVector ) const;
+    void getValidControlWindow( Window *dataWindow, Window *controlWindow, vector<TWindowID>& onVector ) const;
     void getValidDataWindow( Window *controlWindow, Window *extraWindow,
                              vector<TWindowID>& onVector ) const;
   protected:
