@@ -951,6 +951,11 @@ void KHistogram::calculate( TObjectOrder iRow,
             itComm->getTime() >= fromTime &&
             itComm->getTime() <= toTime )
     {
+      if( !( itComm->getType() & COMM ) )
+      {
+        ++itComm;
+        continue;
+      }
       data->comm = itComm;
       vector<bool> filter = statistics.filterAllComm( data );
       vector<TSemanticValue> values = statistics.executeAllComm( data );
