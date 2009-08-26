@@ -224,9 +224,12 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
                               TSemanticValue minimum,
                               TSemanticValue maximum ) const
 {
+  if( whichValue == 0 && !drawOutOfScale )
+    return SemanticColor::BACKGROUND;
+
   if ( whichValue < minimum )
   {
-    if ( drawOutlier && whichValue != 0 )
+    if ( drawOutlier )
       return belowOutlierColor;
     if ( drawOutOfScale )
       return beginGradientColor;

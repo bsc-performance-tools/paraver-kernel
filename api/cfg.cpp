@@ -857,11 +857,13 @@ bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& l
   {
     windows[ windows.size() - 1 ]->setGradientColorMode();
     windows[ windows.size() - 1 ]->getGradientColor().allowOutOfScale( true );
+    windows[ windows.size() - 1 ]->getGradientColor().allowOutliers( true );
   }
   else if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) == 0 )
   {
     windows[ windows.size() - 1 ]->setGradientColorMode();
     windows[ windows.size() - 1 ]->getGradientColor().allowOutOfScale( false );
+    windows[ windows.size() - 1 ]->getGradientColor().allowOutliers( true );
   }
 
   return true;
