@@ -181,6 +181,9 @@ class KHistogram : public Histogram
     string getFirstStatistic() const;
     string getFirstCommStatistic() const;
 
+    bool getControlOutOfLimits() const;
+    bool getExtraOutOfLimits() const;
+
     virtual KHistogram *clone();
 
   protected:
@@ -211,6 +214,9 @@ class KHistogram : public Histogram
     TCommSize commSizeMax;
     TCommTag commTagMin;
     TCommTag commTagMax;
+
+    bool controlOutOfLimits;
+    bool xtraOutOfLimits;
 
     bool inclusive;
 

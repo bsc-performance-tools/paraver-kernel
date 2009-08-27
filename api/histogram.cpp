@@ -1053,6 +1053,16 @@ string HistogramProxy::getFirstCommStatistic() const
   return myHisto->getFirstCommStatistic();
 }
 
+bool HistogramProxy::getControlOutOfLimits() const
+{
+  return myHisto->getControlOutOfLimits();
+}
+
+bool HistogramProxy::getExtraOutOfLimits() const
+{
+  return myHisto->getExtraOutOfLimits();
+}
+
 bool HistogramProxy::getRedraw() const
 {
   return redraw;

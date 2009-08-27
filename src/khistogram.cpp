@@ -157,6 +157,9 @@ KHistogram::KHistogram()
   commTagMin = std::numeric_limits<TCommTag>::min();
   commTagMax = std::numeric_limits<TCommTag>::max();
 
+  controlOutOfLimits = false;
+  xtraOutOfLimits = false;
+
   inclusive = false;
 
   rowsTranslator = NULL;
@@ -659,6 +662,9 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
   if ( dataWindow == NULL )
     dataWindow = controlWindow;
 
+  controlOutOfLimits = false;
+  xtraOutOfLimits = false;
+
   beginTime = whichBeginTime;
   endTime = whichEndTime;
 
@@ -926,14 +932,20 @@ void KHistogram::calculate( TObjectOrder iRow,
   {
     if ( !columnTranslator->getColumn( controlWindow->getValue( iRow ),
                                        data->column ) )
+    {
+      controlOutOfLimits = true;
       return;
+    }
     data->rList = controlWindow->getRecordList( iRow );
   }
   if ( getThreeDimensions() && currentWindow == xtraControlWindow )
   {
     if ( !planeTranslator->getColumn( xtraControlWindow->getValue( iRow ),
                                       data->plane ) )
+    {
+      xtraOutOfLimits = true;
       return;
+    }
   }
 
   if ( winIndex == orderedWindows.size() - 1 )
@@ -1189,6 +1201,16 @@ string KHistogram::getFirstCommStatistic() const
   vector<string> v;
   FunctionManagement<HistogramStatistic>::getInstance()->getAll( v, 0 );
   return v[ 0 ];
+}
+
+bool KHistogram::getControlOutOfLimits() const
+{
+  return controlOutOfLimits;
+}
+
+bool KHistogram::getExtraOutOfLimits() const
+{
+  return xtraOutOfLimits;
 }
 
 KHistogram *KHistogram::clone()

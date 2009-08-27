@@ -117,6 +117,9 @@ class Histogram
     virtual string getFirstStatistic() const = 0;
     virtual string getFirstCommStatistic() const = 0;
 
+    virtual bool getControlOutOfLimits() const = 0;
+    virtual bool getExtraOutOfLimits() const = 0;
+
     virtual Histogram* clone( ) { return NULL; }
 
     // Specific methods of HistogramProxy
@@ -465,6 +468,9 @@ class HistogramProxy : public Histogram
     virtual void getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const;
     virtual string getFirstStatistic() const;
     virtual string getFirstCommStatistic() const;
+
+    virtual bool getControlOutOfLimits() const;
+    virtual bool getExtraOutOfLimits() const;
 
     virtual Histogram *clone();
 
