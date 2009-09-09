@@ -109,10 +109,10 @@
 			<Add alias="test" targets="Debug;" />
 		</VirtualTargets>
 		<Compiler>
-			<Add option="-O2" />
+			<Add option="-O3" />
 			<Add option="-Wall" />
 			<Add option="-g" />
-			<Add option="-Wno-deprecated" />
+			<Add option="-Wno-deprecated -ffast-math" />
 			<Add directory="include" />
 			<Add directory="../common-files" />
 			<Add directory="./" />
