@@ -2,8 +2,11 @@
 #define _FILTER_H
 
 #include <iostream>
+#include <set>
 #include "memorytrace.h"
 #include "filter.h"
+
+using namespace std;
 
 class KSingleWindow;
 class KWindow;
@@ -369,6 +372,8 @@ class KFilter : public Filter
     void getEventType( vector<TEventType>& onVector ) const;
     void setEventTypeFunction( string newFunction );
     string getEventTypeFunction() const;
+    void getValidEvents( vector<TEventType>& onVector,
+                         const set<TEventType>& eventsLoaded ) const;
 
     void clearEventValues();
     void insertEventValue( TEventValue value );

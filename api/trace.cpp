@@ -19,7 +19,7 @@ Trace::Trace( KernelConnection *whichKernel ):
 
 TObjectOrder Trace::getLevelObjects( TWindowLevel onLevel ) const
 {
-  switch( onLevel )
+  switch ( onLevel )
   {
     case WORKLOAD:
     case SYSTEM:
@@ -339,13 +339,13 @@ string TraceProxy::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow )
 
 string TraceProxy::getDefaultSemanticFunc( TWindowLevel whichLevel ) const
 {
-  switch( whichLevel )
+  switch ( whichLevel )
   {
     case ( TASK ):
-      return myDefaultTaskSemanticFunc;
+            return myDefaultTaskSemanticFunc;
       break;
     case( THREAD ):
-      return myDefaultThreadSemanticFunc;
+            return myDefaultThreadSemanticFunc;
       break;
     default:
       break;
@@ -358,3 +358,9 @@ bool TraceProxy::eventLoaded( TEventType whichType ) const
 {
   return myTrace->eventLoaded( whichType );
 }
+
+const set<TEventType>& TraceProxy::getLoadedEvents() const
+{
+  return myTrace->getLoadedEvents();
+}
+

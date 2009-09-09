@@ -175,6 +175,12 @@ string FilterProxy::getEventTypeFunction() const
   return myFilter->getEventTypeFunction();
 }
 
+void FilterProxy::getValidEvents( vector<TEventType>& onVector,
+                                  const set<TEventType>& eventsLoaded ) const
+{
+  myFilter->getValidEvents( onVector, eventsLoaded );
+}
+
 void FilterProxy::clearEventValues()
 {
   myFilter->clearEventValues();

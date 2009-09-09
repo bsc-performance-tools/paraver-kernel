@@ -31,8 +31,8 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
       if ( !physical )
       {
         if ( !( logical && ( ( it->getType() & RECV ) &&
-            ( window->getTrace()->getLogicalReceive( it->getCommIndex() ) <
-              window->getTrace()->getPhysicalReceive( it->getCommIndex() ) ) ) )
+                             ( window->getTrace()->getLogicalReceive( it->getCommIndex() ) <
+                               window->getTrace()->getPhysicalReceive( it->getCommIndex() ) ) ) )
            )
           return false;
       }
@@ -425,6 +425,26 @@ void KFilter::setEventTypeFunction( string newFunction )
 string KFilter::getEventTypeFunction() const
 {
   return functionEventTypes->getName();
+}
+
+void KFilter::getValidEvents( vector<TEventType>& onVector,
+                              const set<TEventType>& eventsLoaded ) const
+{
+  bool stop = true;
+
+  for ( set<TEventType>::const_iterator itEvt = eventsLoaded.begin();
+        itEvt != eventsLoaded.end(); ++itEvt )
+  {
+    for ( UINT32 i = 0; i < eventTypes.size(); i++ )
+    {
+      stop = functionEventTypes->execute( ( TSemanticValue ) eventTypes[ i ], ( *itEvt ) );
+      if ( stop )
+        break;
+    }
+    if( functionEventTypes->getResult() )
+      onVector.push_back( ( *itEvt ) );
+  }
+
 }
 
 void KFilter::clearEventValues()

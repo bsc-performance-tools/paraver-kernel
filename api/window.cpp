@@ -230,6 +230,8 @@ Window *WindowProxy::clone( )
   clonedWindow->changed = changed;
   clonedWindow->redraw = redraw;
   clonedWindow->commLines = commLines;
+  clonedWindow->flags = flags;
+  clonedWindow->functionLineColor = functionLineColor;
   clonedWindow->child = child;
   clonedWindow->posX = posX;
   clonedWindow->posY = posY;

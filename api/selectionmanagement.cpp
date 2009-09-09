@@ -1,28 +1,29 @@
 #include <algorithm>
 #include <functional>
 #include "trace.h"
+#include "histogramtotals.h"
 
-template < typename SelType >
-SelectionManagement< SelType >::SelectionManagement()
+template < typename SelType, typename LevelType >
+SelectionManagement< SelType, LevelType >::SelectionManagement()
 {
 }
 
 
-template < typename SelType >
-SelectionManagement< SelType >::~SelectionManagement()
+template < typename SelType, typename LevelType >
+SelectionManagement< SelType, LevelType >::~SelectionManagement()
 {
 }
 
 
-template < typename SelType >
-void SelectionManagement< SelType >::init( Trace *trace )
+template < typename SelType, typename LevelType >
+void SelectionManagement< SelType, LevelType >::init( Trace *trace )
 {
   selected.clear();
   selectedSet.clear();
 
   vector< bool > auxSelected;
 
-  for (  UINT32 level = (UINT32)NONE; level <= (UINT32)CPU; ++level )
+  for ( UINT32 level = ( UINT32 )NONE; level <= ( UINT32 )CPU; ++level )
   {
     auxSelected.clear();
     selected.push_back( vector< bool >( ) );
@@ -73,20 +74,45 @@ void SelectionManagement< SelType >::init( Trace *trace )
 }
 
 
-template < typename SelType >
-void SelectionManagement<SelType>::copy( const SelectionManagement &selection )
+template < typename SelType, typename LevelType >
+void SelectionManagement< SelType, LevelType >::init( HistogramTotals *totals,
+    UINT16 idStat,
+    THistogramColumn numColumns,
+    THistogramColumn whichPlane )
+{
+  selected.clear();
+  selectedSet.clear();
+
+  selected.push_back( vector< bool >( ) );
+  selectedSet.push_back( vector< SelType >( ) );
+
+  vector< bool > auxSelected;
+  for( THistogramColumn i = 0; i < numColumns; ++i )
+  {
+    if( totals->getTotal( idStat, i, whichPlane ) == 0 )
+      auxSelected.push_back( false );
+    else
+      auxSelected.push_back( true );
+  }
+
+  setSelected( auxSelected, 0 );
+}
+
+
+template < typename SelType, typename LevelType >
+void SelectionManagement<SelType, LevelType>::copy( const SelectionManagement &selection )
 {
   selected = selection.selected;
   selectedSet = selection.selectedSet;
 }
 
 
-template < typename SelType >
-void SelectionManagement< SelType >::setSelected( vector< bool > &selection,
-                                                  TWindowLevel level )
+template < typename SelType, typename LevelType >
+void SelectionManagement< SelType, LevelType >::setSelected( vector< bool > &selection,
+    LevelType level )
 {
   selectedSet[ level ].clear();
-  if( selected[ level ].size() > selection.size() )
+  if ( selected[ level ].size() > selection.size() )
   {
     std::copy( selection.begin(), selection.end(), selected[ level ].begin() );
   }
@@ -94,7 +120,7 @@ void SelectionManagement< SelType >::setSelected( vector< bool > &selection,
   {
     size_t size = selected[ level ].size();
     selected[ level ] = selection;
-    if( size > 0 )
+    if ( size > 0 )
       selected[ level ].resize( size );
   }
 
@@ -107,10 +133,10 @@ void SelectionManagement< SelType >::setSelected( vector< bool > &selection,
 }
 
 
-template < typename SelType >
-void SelectionManagement< SelType >::setSelected( vector< SelType > &selection,
-                                                  SelType maxElems,
-                                                  TWindowLevel level )
+template < typename SelType, typename LevelType >
+void SelectionManagement< SelType, LevelType >::setSelected( vector< SelType > &selection,
+    SelType maxElems,
+    LevelType level )
 {
   selected[ level ].clear();
   selectedSet[ level ] = selection;
@@ -118,7 +144,7 @@ void SelectionManagement< SelType >::setSelected( vector< SelType > &selection,
   maxIt = std::find_if( selectedSet[ level ].begin(),
                         selectedSet[ level ].end(),
                         std::bind2nd( std::greater_equal<SelType>(), maxElems ) );
-  if( maxIt != selectedSet[ level ].end() )
+  if ( maxIt != selectedSet[ level ].end() )
     selectedSet[ level ].erase( maxIt, selectedSet[ level ].end() );
 
   if ( !selection.empty() )
@@ -139,41 +165,41 @@ void SelectionManagement< SelType >::setSelected( vector< SelType > &selection,
 }
 
 
-template < typename SelType >
-bool SelectionManagement< SelType >::isSelectedPosition( SelType whichSelected,
-                                                         TWindowLevel level )
+template < typename SelType, typename LevelType >
+bool SelectionManagement< SelType, LevelType >::isSelectedPosition( SelType whichSelected,
+    LevelType level )
 {
   return selected[ level ][ whichSelected ];
 }
 
 
-template < typename SelType >
-void SelectionManagement< SelType >::getSelected( vector< bool > &whichSelected,
-                                                  TWindowLevel level )
+template < typename SelType, typename LevelType >
+void SelectionManagement< SelType, LevelType >::getSelected( vector< bool > &whichSelected,
+    LevelType level )
 {
   whichSelected = selected[ level ];
 }
 
 
-template < typename SelType >
-void SelectionManagement< SelType >::getSelected( vector< SelType > &whichSelected,
-                                                  TWindowLevel level )
+template < typename SelType, typename LevelType >
+void SelectionManagement< SelType, LevelType >::getSelected( vector< SelType > &whichSelected,
+    LevelType level )
 {
   whichSelected = selectedSet[ level ];
 }
 
 
-template < typename SelType >
-void SelectionManagement< SelType >::getSelected( vector< SelType > &whichSelected,
-                                                  SelType first,
-                                                  SelType last,
-                                                  TWindowLevel level )
+template < typename SelType, typename LevelType >
+void SelectionManagement< SelType, LevelType >::getSelected( vector< SelType > &whichSelected,
+    SelType first,
+    SelType last,
+    LevelType level )
 {
   whichSelected.clear();
   typename vector< SelType >::iterator it;
   for ( it = selectedSet[ level ].begin(); it != selectedSet[ level ].end(); ++it )
   {
-    if (( *it >= first ) && ( *it <= last ))
+    if ( ( *it >= first ) && ( *it <= last ) )
       whichSelected.push_back( *it );
     if ( *it == last )
       break;

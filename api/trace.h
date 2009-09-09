@@ -81,6 +81,8 @@ class Trace
     virtual TTimeUnit getTimeUnit() const = 0;
 
     virtual bool eventLoaded( TEventType whichType ) const = 0;
+    virtual const set<TEventType>& getLoadedEvents() const = 0;
+
 
     // Specific methods for TraceProxy only
     virtual Trace *getConcrete() const
@@ -115,13 +117,6 @@ class Trace
     virtual string getDefaultSemanticFunc( TWindowLevel whichLevel ) const
     {
       return "";
-    }
-
-    // Specific methods for KTrace only
-    virtual const set<TEventType>& getLoadedEvents() const
-    {
-      set<TEventType> *tmp = NULL;
-      return *tmp;
     }
 
   protected:
@@ -202,6 +197,8 @@ class TraceProxy: public Trace
     virtual string getDefaultSemanticFunc( TWindowLevel whichLevel ) const;
 
     virtual bool eventLoaded( TEventType whichType ) const;
+    virtual const set<TEventType>& getLoadedEvents() const;
+
 
   private:
     Trace *myTrace;

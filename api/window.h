@@ -255,7 +255,7 @@ class Window
     {}
     virtual bool getDrawFlags() const
     {
-      return true;
+      return false;
     }
     virtual void setDrawFlags( bool newValue )
     {}
@@ -510,7 +510,7 @@ class WindowProxy: public Window
     ZoomHistory<TTime, TObjectOrder> zoomHistory;
 
     // Row selection
-    SelectionManagement< TObjectOrder > selectedRow;
+    SelectionManagement< TObjectOrder, TWindowLevel > selectedRow;
 
     // For Clone
     WindowProxy();

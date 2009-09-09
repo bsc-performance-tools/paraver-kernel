@@ -2,8 +2,11 @@
 #define FILTER_H_INCLUDED
 
 #include <string>
+#include <set>
 #include "paraverkerneltypes.h"
 #include "localkernel.h"
+
+using std::set;
 
 class Window;
 
@@ -65,6 +68,8 @@ class Filter
     virtual void getEventType( vector<TEventType>& onVector ) const = 0;
     virtual void setEventTypeFunction( string newFunction ) = 0;
     virtual string getEventTypeFunction() const = 0;
+    virtual void getValidEvents( vector<TEventType>& onVector,
+                                 const set<TEventType>& eventsLoaded ) const = 0;
 
     virtual void clearEventValues() = 0;
     virtual void insertEventValue( TEventValue value ) = 0;
@@ -142,6 +147,8 @@ class FilterProxy : public Filter
     virtual void getEventType( vector<TEventType>& onVector ) const;
     virtual void setEventTypeFunction( string newFunction );
     virtual string getEventTypeFunction() const;
+    virtual void getValidEvents( vector<TEventType>& onVector,
+                                 const set<TEventType>& eventsLoaded ) const;
 
     virtual void clearEventValues();
     virtual void insertEventValue( TEventValue value );

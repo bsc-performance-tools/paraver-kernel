@@ -7,6 +7,7 @@
 #include "paraverconfig.h"
 #include "window.h"
 #include "filter.h"
+#include "kfilter.h"
 
 string LabelConstructor::objectLabel( TObjectOrder globalOrder,
                                       TWindowLevel level,
@@ -299,7 +300,9 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
       string tmpstr;
       vector<TEventType> types;
       bool found = false;
-      whichWindow->getFilter()->getEventType( types );
+      whichWindow->getFilter()->getValidEvents( types,
+          whichWindow->getTrace()->getLoadedEvents() );
+
       for ( vector<TEventType>::iterator it = types.begin(); it != types.end(); ++it )
       {
         if ( whichWindow->getTrace()->getEventLabels().getEventValueLabel(
