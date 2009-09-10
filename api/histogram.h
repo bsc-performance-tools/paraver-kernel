@@ -139,14 +139,14 @@ class Histogram
 
     virtual UINT16 getWidth() const
     {
-      return 0;
+      return 400;
     }
     virtual void setWidth( UINT16 whichPos )
     {}
 
     virtual UINT16 getHeight() const
     {
-      return 0;
+      return 300;
     }
     virtual void setHeight( UINT16 whichPos )
     {}

@@ -32,6 +32,8 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   extraControlWindow = NULL;
   myHisto = myKernel->newHistogram();
 
+  width = Histogram::getWidth();
+  height = Histogram::getHeight();
   horizontal = Histogram::getHorizontal();
   hideColumns = Histogram::getHideColumns();
   scientificNotation = Histogram::getScientificNotation();
