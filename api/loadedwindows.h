@@ -24,6 +24,8 @@ class LoadedWindows
     Window *getWindow( TWindowID id ) const;
     Histogram *getHisto( TWindowID id ) const;
     void getAll( vector<Window *>& onVector ) const;
+    void getAll( vector<TWindowID>& onVector ) const;
+
     void getAll( vector<Histogram *>& onVector ) const;
     void getAll( Trace *whichTrace, vector< Window *>& onVector ) const;
     void getAll( Trace *whichTrace, vector< Histogram *>& onVector ) const;

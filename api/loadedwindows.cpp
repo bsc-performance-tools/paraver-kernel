@@ -60,6 +60,13 @@ void LoadedWindows::getAll( vector<Window *>& onVector ) const
     onVector.push_back( ( *it ).second );
 }
 
+void LoadedWindows::getAll( vector<TWindowID>& onVector ) const
+{
+  for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
+        it != windows.end(); ++it )
+    onVector.push_back( ( *it ).first );
+}
+
 void LoadedWindows::getAll( vector<Histogram *>& onVector ) const
 {
   for ( map<TWindowID, Histogram *>::const_iterator it = histograms.begin();
