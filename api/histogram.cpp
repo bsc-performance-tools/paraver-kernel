@@ -44,7 +44,8 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   sortCriteria = Histogram::getSortCriteria();
   minGradient = Histogram::getMinGradient();
   maxGradient = Histogram::getMaxGradient();
-  computeScale = Histogram::getComputeScale();
+  computeControlScale = Histogram::getCompute2DScale();
+  computeXtraScale = Histogram::getCompute3DScale();
   computeGradient = Histogram::getComputeGradient();
   showColor = Histogram::getShowColor();
   zoom = Histogram::getZoom();
@@ -440,12 +441,11 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
   winBeginTime = whichBeginTime;
   winEndTime = whichEndTime;
 
-  if ( computeScale )
-  {
+  if ( computeControlScale )
     compute2DScale();
-    if ( getThreeDimensions() )
-      compute3DScale();
-  }
+
+  if ( getThreeDimensions() && computeXtraScale )
+    compute3DScale();
 
   myHisto->execute( whichBeginTime, whichEndTime, selectedRows );
 
@@ -619,12 +619,33 @@ double HistogramProxy::getMaxGradient() const
 
 void HistogramProxy::setComputeScale( bool newValue )
 {
-  computeScale = newValue;
+  computeControlScale = newValue;
+  computeXtraScale = newValue;
 }
 
 bool HistogramProxy::getComputeScale() const
 {
-  return computeScale;
+  return computeControlScale && computeXtraScale;
+}
+
+void HistogramProxy::setCompute2DScale( bool newValue )
+{
+  computeControlScale = newValue;
+}
+
+bool HistogramProxy::getCompute2DScale() const
+{
+  return computeControlScale;
+}
+
+void HistogramProxy::setCompute3DScale( bool newValue )
+{
+  computeXtraScale = newValue;
+}
+
+bool HistogramProxy::getCompute3DScale() const
+{
+  return computeXtraScale;
 }
 
 void HistogramProxy::setComputeGradient( bool newValue )
@@ -920,7 +941,8 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->sortCriteria = sortCriteria;
   clonedHistogramProxy->minGradient = minGradient;
   clonedHistogramProxy->maxGradient = maxGradient;
-  clonedHistogramProxy->computeScale = computeScale;
+  clonedHistogramProxy->computeControlScale = computeControlScale;
+  clonedHistogramProxy->computeXtraScale = computeXtraScale;
   clonedHistogramProxy->computeGradient = computeGradient;
   clonedHistogramProxy->showColor = showColor;
   clonedHistogramProxy->zoom = zoom;

@@ -207,7 +207,17 @@ class Histogram
     virtual void setComputeScale( bool newValue ) {}
     virtual bool getComputeScale() const
     {
-      return false;
+      return true;
+    }
+    virtual void setCompute2DScale( bool newValue ) {}
+    virtual bool getCompute2DScale() const
+    {
+      return true;
+    }
+    virtual void setCompute3DScale( bool newValue ) {}
+    virtual bool getCompute3DScale() const
+    {
+      return true;
     }
     virtual void setComputeGradient( bool newValue ) {}
     virtual bool getComputeGradient() const
@@ -429,6 +439,10 @@ class HistogramProxy : public Histogram
     virtual double getMaxGradient() const;
     virtual void setComputeScale( bool newValue );
     virtual bool getComputeScale() const;
+    virtual void setCompute2DScale( bool newValue );
+    virtual bool getCompute2DScale() const;
+    virtual void setCompute3DScale( bool newValue );
+    virtual bool getCompute3DScale() const;
     virtual void setComputeGradient( bool newValue );
     virtual bool getComputeGradient() const;
     virtual void setShowColor( bool newValue );
@@ -513,7 +527,8 @@ class HistogramProxy : public Histogram
     THistoTotals sortCriteria;
     double minGradient;
     double maxGradient;
-    bool computeScale;
+    bool computeControlScale;
+    bool computeXtraScale;
     bool computeGradient;
     bool showColor;
     bool zoom;
