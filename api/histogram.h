@@ -139,7 +139,7 @@ class Histogram
 
     virtual UINT16 getWidth() const
     {
-      return 400;
+      return 600;
     }
     virtual void setWidth( UINT16 whichPos )
     {}
@@ -222,7 +222,7 @@ class Histogram
     virtual void setComputeGradient( bool newValue ) {}
     virtual bool getComputeGradient() const
     {
-      return false;
+      return true;
     }
     virtual void setShowColor( bool newValue ) {}
     virtual bool getShowColor() const
