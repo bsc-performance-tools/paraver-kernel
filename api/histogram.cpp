@@ -492,27 +492,34 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
   {
     THistogramLimit nPlanes = getNumPlanes();
     UINT32 i;
-    i = selectedPlane = 0;
-    while ( i < nPlanes )
+
+    if ( !planeWithValues( selectedPlane ) )
     {
-      // get the first plane with values
-      if ( /*futurePlane &&*/ planeWithValues( i ) )
+      i = selectedPlane = 0;
+      while ( i < nPlanes )
       {
-        selectedPlane = i;
-        break;
+        // get the first plane with values
+        if ( /*futurePlane &&*/ planeWithValues( i ) )
+        {
+          selectedPlane = i;
+          break;
+        }
+        i++;
       }
-      i++;
     }
 
-    i = commSelectedPlane = 0;
-    while ( i < nPlanes )
+    if ( !planeCommWithValues( commSelectedPlane ) )
     {
-      if ( /*commFuturePlane &&*/ planeCommWithValues( i ) )
+      i = commSelectedPlane = 0;
+      while ( i < nPlanes )
       {
-        commSelectedPlane = i;
-        break;
+        if ( /*commFuturePlane &&*/ planeCommWithValues( i ) )
+        {
+          commSelectedPlane = i;
+          break;
+        }
+        i++;
       }
-      i++;
     }
   }
 }
@@ -684,7 +691,7 @@ void HistogramProxy::recalcGradientLimits()
 
   getIdStat( getCurrentStat(), idStat );
 
-  if( itsCommunicationStat( getCurrentStat() ) )
+  if ( itsCommunicationStat( getCurrentStat() ) )
   {
     totals = getCommColumnTotals();
     plane = getCommSelectedPlane();
@@ -695,7 +702,7 @@ void HistogramProxy::recalcGradientLimits()
     plane = getSelectedPlane();
   }
 
-  if( !planeWithValues( plane ) )
+  if ( !planeWithValues( plane ) )
   {
     minGradient = 0.0;
     maxGradient = std::numeric_limits<TSemanticValue>::max();
@@ -703,13 +710,13 @@ void HistogramProxy::recalcGradientLimits()
     return;
   }
 
-  for( THistogramColumn iCol = 0; iCol < numColumns; ++iCol )
+  for ( THistogramColumn iCol = 0; iCol < numColumns; ++iCol )
   {
     TSemanticValue curMin = totals->getMinimum( idStat, iCol, plane );
     TSemanticValue curMax = totals->getMaximum( idStat, iCol, plane );
-    if( curMin < tmpMin )
+    if ( curMin < tmpMin )
       tmpMin = curMin;
-    if( curMax > tmpMax )
+    if ( curMax > tmpMax )
       tmpMax = curMax;
   }
 
@@ -958,7 +965,7 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->winBeginTime = winBeginTime;
   clonedHistogramProxy->winEndTime = winEndTime;
 
-    // Must store the associated proxies
+  // Must store the associated proxies
   clonedHistogramProxy->setControlWindow( controlWindow->clone() );
   clonedHistogramProxy->setDataWindow( dataWindow->clone() );
   if ( extraControlWindow != NULL )
