@@ -477,6 +477,7 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create )
     if (myLists.begin() != myLists.end()) // solo sintoma de que algo no va bien
       myLists.clear();
   }
+
   for ( int i = 0; i < myWindow->getWindowLevelObjects(); i++ )
     myLists.push_back( NULL );
 
@@ -484,6 +485,12 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create )
   yScaleComputed = true;
   computeYMaxOnInit = false;
   computedMaxY = computedMinY = getValue( 0 );
+
+  for ( int i = 0; i < myWindow->getWindowLevelObjects(); i++ )
+  {
+    if( myLists[ i ] == NULL )
+      myLists[ i ] = RecordList::create( myWindow->getRecordList( i ) );
+  }
 
 //#warning Set rows as in CFG
   // Simple initialization - all showed; CHANGE THIS

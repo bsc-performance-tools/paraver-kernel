@@ -110,7 +110,6 @@ void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
 
 RecordList *KRecordList::clone()
 {
-  printf("KRecordList CLONE\n");
   KRecordList *clonedRecordList = new KRecordList();
 
   clonedRecordList->newRec = newRec;
