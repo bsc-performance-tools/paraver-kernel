@@ -32,6 +32,7 @@ class KTrace: public Trace
     }
 
     string getFileName() const;
+    string getTraceName() const;
 
     MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it )
     {

@@ -62,9 +62,14 @@ TraceProxy::~TraceProxy()
   delete myTrace;
 }
 
-string TraceProxy::getFileName()const
+string TraceProxy::getFileName() const
 {
   return myTrace->getFileName();
+}
+
+string TraceProxy::getTraceName() const
+{
+  return myTrace->getTraceName();
 }
 
 void TraceProxy::dumpFile( const string& whichFile ) const

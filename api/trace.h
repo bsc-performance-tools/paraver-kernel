@@ -24,6 +24,8 @@ class Trace
     TObjectOrder getLevelObjects( TWindowLevel onLevel ) const;
 
     virtual string getFileName() const = 0;
+    virtual string getTraceName() const = 0;
+
     virtual void dumpFile( const string& whichFile ) const = 0;
 
     virtual TApplOrder totalApplications() const = 0;
@@ -130,6 +132,7 @@ class TraceProxy: public Trace
     virtual ~TraceProxy();
 
     virtual string getFileName() const;
+    virtual string getTraceName() const;
 
     virtual void dumpFile( const string& whichFile ) const;
 

@@ -802,7 +802,7 @@ TTime BPlusTree::finish( TTime headerTime )
 {
   TRecord tmpBegin, tmpEnd;
 
-  unload();
+  unload( );
   if ( unloadedTrace->getEnd()->time > headerTime )
     headerTime = unloadedTrace->getEnd()->time;
 
@@ -917,6 +917,8 @@ UINT32 BPlusTree::linkRecords( TRecord **ini, TRecord **fin, INT32 recs2link )
 
   recordsLinked = root->linkRecords( ini, fin, recs2link, lastLeaf, traceIndex );
   recordsLinkedLastTime = recordsLinked;
+
+//  cout << "#RECORDS LINKED: " << recordsLinked << endl;
 
   return recordsLinked;
 }

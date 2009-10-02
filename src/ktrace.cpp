@@ -24,6 +24,22 @@ string KTrace::getFileName() const
   return fileName;
 }
 
+string KTrace::getTraceName() const
+{
+  string traceName = fileName;
+
+#ifdef WIN32
+  string::size_type pos = traceName.find_last_of( '\\' );
+#else
+  string::size_type pos = traceName.find_last_of( '/' );
+#endif
+  if ( pos != string::npos )
+    traceName = traceName.substr( pos + 1, traceName.size() );
+
+  return traceName;
+}
+
+
 TApplOrder KTrace::totalApplications() const
 {
   return traceProcessModel.totalApplications();
