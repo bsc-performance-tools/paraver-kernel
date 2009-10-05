@@ -363,7 +363,7 @@ string LabelConstructor::eventLabel( Window *whichWindow,
   else
   {
     label << " ";
-    if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( whichValue, tmpstr ) )
+    if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( whichType, whichValue, tmpstr ) )
       label << tmpstr << " value " << whichValue;
     else
       label << tmpstr;
