@@ -332,7 +332,7 @@ void ComposeNestingLevel::init( KWindow *whichWindow )
 }
 
 
-string ComposeNestingLevel::name = "Nesting Level";
+string ComposeNestingLevel::name = "Nesting level";
 TSemanticValue ComposeNestingLevel::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
