@@ -35,7 +35,7 @@ class KernelConnection
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
                                           vector<string>& onVector ) const = 0;
 
-
+    virtual bool userMessage( const string& message ) const = 0;
   protected:
 
   private:

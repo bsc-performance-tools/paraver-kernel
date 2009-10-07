@@ -22,7 +22,7 @@ int main( int argc, char *argv[] )
 {
   LocalKernel::init();
 
-  KernelConnection *myKernel = new LocalKernel();
+  KernelConnection *myKernel = new LocalKernel( NULL );
 
   ParaverConfig *config = ParaverConfig::getInstance();
 

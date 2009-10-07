@@ -22,6 +22,8 @@ map<string, TagFunction *> CFGLoader::cfgTagFunctions;
 
 string currentWindowName;
 string CFGLoader::errorLine = "";
+bool someEventsExist = false;
+bool someEventsNotExist = false;
 
 TWindowLevel stringToLevel( const string& strLevel )
 {
@@ -179,6 +181,9 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
                          vector<Window *>& windows,
                          vector<Histogram *>& histograms )
 {
+  someEventsExist = false;
+  someEventsNotExist = false;
+
   ifstream cfgFile( filename.c_str() );
   if ( !cfgFile )
     return false;
@@ -244,6 +249,37 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+
+  if( !someEventsExist )
+  {
+    if( !whichKernel->userMessage( "None of the events specified in the filter appears in the trace. Continue loading CFG file?" ) )
+    {
+      for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
+        delete *itWin;
+      windows.clear();
+
+      for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
+        delete *itHisto;
+      histograms.clear();
+
+      return true;
+    }
+  }
+  else if( someEventsNotExist )
+  {
+    if( !whichKernel->userMessage( "Some of the events specified in the filter not appears in the trace. Continue loading CFG file?" ) )
+    {
+      for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
+        delete *itWin;
+      windows.clear();
+
+      for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
+        delete *itHisto;
+      histograms.clear();
+
+      return true;
+    }
+  }
 
   // Init first zoom for all windows
   for ( vector<Window *>::iterator it = windows.begin(); it != windows.end(); ++it )
@@ -1499,7 +1535,11 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
       else if ( strLevel.compare( OLDCFG_VAL_FILTER_COM_BW ) == 0 )
         filter->setBandWidthFunction( strFunction );
       else if ( strLevel.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
+      {
         filter->setEventTypeFunction( strFunction );
+        if( strFunction == "All" )
+          someEventsExist = true;
+      }
       else if ( strLevel.compare( OLDCFG_VAL_FILTER_EVT_VALUE ) == 0 )
         filter->setEventValueFunction( strFunction );
     }
@@ -1917,6 +1957,11 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
 
       if ( !( tmpValue >> eventType ) )
         return false;
+
+      if( !whichTrace->eventLoaded( eventType ) )
+        someEventsNotExist = true;
+      else
+        someEventsExist = true;
 
       filter->insertEventType( eventType );
     }

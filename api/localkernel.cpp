@@ -19,7 +19,8 @@ void LocalKernel::init()
   createStatistic();
 }
 
-LocalKernel::LocalKernel()
+LocalKernel::LocalKernel( bool ( *messageFunction )( string ) ) :
+    myMessageFunction( messageFunction )
 {}
 
 LocalKernel::~LocalKernel()
@@ -27,7 +28,7 @@ LocalKernel::~LocalKernel()
 
 Trace *LocalKernel::newTrace( const string& whichFile, ProgressController *progress ) const
 {
-  if( progress == NULL )
+  if ( progress == NULL )
     return new KTrace( whichFile, NULL );
 
   return new KTrace( whichFile, ( KProgressController * ) progress->getConcrete() );
@@ -119,3 +120,10 @@ void LocalKernel::getAllSemanticFunctions( TSemanticGroup whichGroup,
       whichGroup );
 }
 
+bool LocalKernel::userMessage( const string& message ) const
+{
+  if( myMessageFunction == NULL )
+    return false;
+
+  return myMessageFunction( message );
+}

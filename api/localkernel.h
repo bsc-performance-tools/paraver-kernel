@@ -8,7 +8,7 @@ class LocalKernel: public KernelConnection
   public:
     static void init();
 
-    LocalKernel();
+    LocalKernel( bool (*messageFunction)(string) );
     virtual ~LocalKernel();
 
     virtual Trace *newTrace( const string& whichFile, ProgressController *progress = NULL ) const;
@@ -28,11 +28,11 @@ class LocalKernel: public KernelConnection
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
                                           vector<string>& onVector ) const;
 
-
+    virtual bool userMessage( const string& message ) const;
   protected:
 
   private:
-
+    bool (*myMessageFunction)(string);
 };
 
 
