@@ -19,6 +19,8 @@ using namespace std;
 
 class KWindow: public Window
 {
+  protected:
+    virtual void initSemanticFunctions() = 0;
   public:
     KWindow()
     {}
@@ -50,6 +52,7 @@ class KWindow: public Window
       if ( whichLevel >= TOPCOMPOSE1 )
         throw KWindowException( KWindowException::invalidLevel );
       level = whichLevel;
+      initSemanticFunctions();
     }
 
     void setTimeUnit( TTimeUnit whichUnit )
@@ -272,6 +275,8 @@ class KSingleWindow: public KWindow
     vector<IntervalCPU> intervalCPU;
 
   private:
+    virtual void initSemanticFunctions();
+
     SemanticFunction *functions[ COMPOSECPU + 1 ];
     KFilter *myFilter;
 };
@@ -387,6 +392,7 @@ class KDerivedWindow: public KWindow
 
   private:
     void setup( KTrace * whichTrace );
+    virtual void initSemanticFunctions() {}
 };
 
 #endif // KWINDOW_H_INCLUDED

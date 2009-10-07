@@ -667,6 +667,8 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
 
   beginTime = whichBeginTime;
   endTime = whichEndTime;
+  if( endTime > controlWindow->getTrace()->getEndTime() )
+    endTime = controlWindow->getTrace()->getEndTime();
 
   orderWindows();
 

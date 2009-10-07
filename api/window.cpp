@@ -389,6 +389,9 @@ TWindowLevel WindowProxy::getLevel() const
 
 void WindowProxy::setLevel( TWindowLevel whichLevel )
 {
+  if( whichLevel == myWindow->getLevel() )
+    return;
+
   yScaleComputed = false;
 
   myWindow->setLevel( whichLevel );

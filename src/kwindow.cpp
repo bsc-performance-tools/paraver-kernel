@@ -2,6 +2,9 @@
 #include "kwindow.h"
 #include "semanticcomposefunctions.h"
 #include "semanticderived.h"
+#include "semanticcpufunctions.h"
+#include "semanticnotthreadfunctions.h"
+#include "semanticthreadfunctions.h"
 #include "functionmanagement.h"
 #include "semanticmanagement.h"
 
@@ -668,6 +671,48 @@ KWindow *KSingleWindow::clone()
 }
 
 
+void KSingleWindow::initSemanticFunctions()
+{
+  if( level >= WORKLOAD && level <= THREAD )
+  {
+    if( functions[ COMPOSEWORKLOAD ] == NULL )
+      functions[ COMPOSEWORKLOAD ] = new ComposeAsIs();
+    if( functions[ WORKLOAD ] == NULL )
+      functions[ WORKLOAD ] = new Adding();
+
+    if( functions[ COMPOSEAPPLICATION ] == NULL )
+      functions[ COMPOSEAPPLICATION ] = new ComposeAsIs();
+    if( functions[ APPLICATION ] == NULL )
+      functions[ APPLICATION ] = new Adding();
+
+    if( functions[ COMPOSETASK ] == NULL )
+      functions[ COMPOSETASK ] = new ComposeAsIs();
+    if( functions[ TASK ] == NULL )
+      functions[ TASK ] = new Adding();
+
+    if( functions[ COMPOSETHREAD ] == NULL )
+      functions[ COMPOSETHREAD ] = new ComposeAsIs();
+    if( functions[ THREAD ] == NULL )
+      functions[ THREAD ] = new StateAsIs();
+  }
+  else if( level >= SYSTEM && level <= CPU )
+  {
+    if( functions[ COMPOSESYSTEM ] == NULL )
+      functions[ COMPOSESYSTEM ] = new ComposeAsIs();
+    if( functions[ SYSTEM ] == NULL )
+      functions[ SYSTEM ] = new Adding();
+
+    if( functions[ COMPOSENODE ] == NULL )
+      functions[ COMPOSENODE ] = new ComposeAsIs();
+    if( functions[ NODE ] == NULL )
+      functions[ NODE ] = new Adding();
+
+    if( functions[ COMPOSECPU ] == NULL )
+      functions[ COMPOSECPU ] = new ComposeAsIs();
+    if( functions[ CPU ] == NULL )
+      functions[ CPU ] = new ActiveThread();
+  }
+}
 
 /**********************************************************************
  *  KDerivedWindow implementation
