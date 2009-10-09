@@ -13,8 +13,8 @@
 namespace bplustree
 {
 // Tuning this parameters changes tree performance.
-  static const UINT16 NODE_SIZE = 3;
-  static const UINT16 LEAF_SIZE = 8;
+  static const UINT16 NODE_SIZE = 64;
+  static const UINT16 LEAF_SIZE = 64;
   static const UINT32 UNLOAD_RECORDS_THRESHOLD = 10000000;
   static const UINT32 UNLOAD_PERCENT = 30;
 
