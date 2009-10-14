@@ -395,6 +395,7 @@ void WindowProxy::setLevel( TWindowLevel whichLevel )
   yScaleComputed = false;
 
   myWindow->setLevel( whichLevel );
+  zoomHistory.clear();
 }
 
 void WindowProxy::setTimeUnit( TTimeUnit whichUnit )

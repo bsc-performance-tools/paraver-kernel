@@ -154,9 +154,9 @@ void KWindow::getGroupLabels( UINT32 whichGroup, vector<string>& onVector ) cons
 
 
 bool KWindow::getParametersOfFunction( string whichFunction,
-                                        UINT32 &numParameters,
-                                        vector< string > &nameParameters,
-                                        vector< vector < double > > &defaultValues ) const
+                                       UINT32 &numParameters,
+                                       vector< string > &nameParameters,
+                                       vector< vector < double > > &defaultValues ) const
 {
   bool done = false;
 
@@ -188,25 +188,7 @@ bool KWindow::getParametersOfFunction( string whichFunction,
 
 KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 {
-  functions[ NONE ] = NULL;
-  functions[ TOPCOMPOSE1 ] = new ComposeAsIs();
-  functions[ TOPCOMPOSE2 ] = new ComposeAsIs();
-
-  functions[ COMPOSEWORKLOAD ] = new ComposeAsIs();
-  functions[ WORKLOAD ] = NULL;
-  functions[ COMPOSEAPPLICATION ] = new ComposeAsIs();
-  functions[ APPLICATION ] = NULL;
-  functions[ COMPOSETASK ] = new ComposeAsIs();
-  functions[ TASK ] = NULL;
-  functions[ COMPOSETHREAD ] = new ComposeAsIs();
-  functions[ THREAD ] = NULL;
-
-  functions[ COMPOSESYSTEM ] = new ComposeAsIs();
-  functions[ SYSTEM ] = NULL;
-  functions[ COMPOSENODE ] = new ComposeAsIs();
-  functions[ NODE ] = NULL;
-  functions[ COMPOSECPU ] = new ComposeAsIs();
-  functions[ CPU ] = NULL;
+  initSemanticFunctions();
 
   if ( myTrace->totalThreads() > myTrace->totalCPUs() )
   {
@@ -422,7 +404,7 @@ string KSingleWindow::getFirstUsefulFunction()
 
 TWindowLevel KSingleWindow::getFirstFreeCompose() const
 {
-  if( typeid( *functions[ getComposeLevel( getLevel() ) ] ) == typeid( ComposeAsIs ) )
+  if ( typeid( *functions[ getComposeLevel( getLevel() ) ] ) == typeid( ComposeAsIs ) )
     return getComposeLevel( getLevel() );
   if ( typeid( *functions[ TOPCOMPOSE2 ] ) == typeid( ComposeAsIs ) )
     return TOPCOMPOSE2;
@@ -659,7 +641,7 @@ KWindow *KSingleWindow::clone()
 
   for ( int i = 0; i < COMPOSECPU + 1; i++ )
   {
-    if( functions[ i ] != NULL )
+    if ( functions[ i ] != NULL )
       clonedKSWindow->functions[ i ] = functions[ i ]->clone();
     else
       clonedKSWindow->functions[ i ] = NULL;
@@ -673,45 +655,31 @@ KWindow *KSingleWindow::clone()
 
 void KSingleWindow::initSemanticFunctions()
 {
-  if( level >= WORKLOAD && level <= THREAD )
-  {
-    if( functions[ COMPOSEWORKLOAD ] == NULL )
-      functions[ COMPOSEWORKLOAD ] = new ComposeAsIs();
-    if( functions[ WORKLOAD ] == NULL )
-      functions[ WORKLOAD ] = new Adding();
+  functions[ 0 ] = NULL;
 
-    if( functions[ COMPOSEAPPLICATION ] == NULL )
-      functions[ COMPOSEAPPLICATION ] = new ComposeAsIs();
-    if( functions[ APPLICATION ] == NULL )
-      functions[ APPLICATION ] = new Adding();
+  functions[ TOPCOMPOSE1 ] = new ComposeAsIs();
+  functions[ TOPCOMPOSE2 ] = new ComposeAsIs();
 
-    if( functions[ COMPOSETASK ] == NULL )
-      functions[ COMPOSETASK ] = new ComposeAsIs();
-    if( functions[ TASK ] == NULL )
-      functions[ TASK ] = new Adding();
+  functions[ COMPOSEWORKLOAD ] = new ComposeAsIs();
+  functions[ WORKLOAD ] = new Adding();
 
-    if( functions[ COMPOSETHREAD ] == NULL )
-      functions[ COMPOSETHREAD ] = new ComposeAsIs();
-    if( functions[ THREAD ] == NULL )
-      functions[ THREAD ] = new StateAsIs();
-  }
-  else if( level >= SYSTEM && level <= CPU )
-  {
-    if( functions[ COMPOSESYSTEM ] == NULL )
-      functions[ COMPOSESYSTEM ] = new ComposeAsIs();
-    if( functions[ SYSTEM ] == NULL )
-      functions[ SYSTEM ] = new Adding();
+  functions[ COMPOSEAPPLICATION ] = new ComposeAsIs();
+  functions[ APPLICATION ] = new Adding();
 
-    if( functions[ COMPOSENODE ] == NULL )
-      functions[ COMPOSENODE ] = new ComposeAsIs();
-    if( functions[ NODE ] == NULL )
-      functions[ NODE ] = new Adding();
+  functions[ COMPOSETASK ] = new ComposeAsIs();
+  functions[ TASK ] = new Adding();
 
-    if( functions[ COMPOSECPU ] == NULL )
-      functions[ COMPOSECPU ] = new ComposeAsIs();
-    if( functions[ CPU ] == NULL )
-      functions[ CPU ] = new ActiveThread();
-  }
+  functions[ COMPOSETHREAD ] = new ComposeAsIs();
+  functions[ THREAD ] = new StateAsIs();
+
+  functions[ COMPOSESYSTEM ] = new ComposeAsIs();
+  functions[ SYSTEM ] = new Adding();
+
+  functions[ COMPOSENODE ] = new ComposeAsIs();
+  functions[ NODE ] = new Adding();
+
+  functions[ COMPOSECPU ] = new ComposeAsIs();
+  functions[ CPU ] = new ActiveThread();
 }
 
 /**********************************************************************
@@ -1016,7 +984,7 @@ KWindow *KDerivedWindow::clone()
 {
   KDerivedWindow *clonedKDerivedWindow = new KDerivedWindow();
 
-  for (size_t i = 0; i < parents.size(); ++i )
+  for ( size_t i = 0; i < parents.size(); ++i )
   {
     clonedKDerivedWindow->parents[i] = NULL;
     clonedKDerivedWindow->factor[i] = factor[ i ];
@@ -1024,7 +992,7 @@ KWindow *KDerivedWindow::clone()
 
   for ( UINT16 i = 0; i < 3; i++ )
   {
-    if( functions[ i ] != NULL )
+    if ( functions[ i ] != NULL )
       clonedKDerivedWindow->functions[ i ] = functions[ i ]->clone();
     else
       clonedKDerivedWindow->functions[ i ] = NULL;

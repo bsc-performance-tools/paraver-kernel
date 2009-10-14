@@ -19,8 +19,6 @@ using namespace std;
 
 class KWindow: public Window
 {
-  protected:
-    virtual void initSemanticFunctions() = 0;
   public:
     KWindow()
     {}
@@ -52,7 +50,6 @@ class KWindow: public Window
       if ( whichLevel >= TOPCOMPOSE1 )
         throw KWindowException( KWindowException::invalidLevel );
       level = whichLevel;
-      initSemanticFunctions();
     }
 
     void setTimeUnit( TTimeUnit whichUnit )
@@ -149,6 +146,7 @@ class KWindow: public Window
     vector<IntervalCompose> intervalTopCompose2;
 
     SemanticInfoType getTopComposeSemanticInfoType() const;
+    virtual void initSemanticFunctions() = 0;
   private:
 
 };

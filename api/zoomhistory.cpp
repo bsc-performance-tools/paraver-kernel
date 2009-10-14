@@ -93,3 +93,8 @@ void ZoomHistory<Dimension1,Dimension2>::nextZoom( )
     currentZoom++;
 }
 
+template <typename Dimension1, typename Dimension2>
+void ZoomHistory<Dimension1,Dimension2>::clear()
+{
+  zooms.clear();
+}

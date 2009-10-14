@@ -1096,7 +1096,11 @@ bool WindowLevel::parseLine( KernelConnection *whichKernel, istringstream& line,
 
   getline( line, strLevel, ' ' );
 
-  windows[ windows.size() - 1 ]->setLevel( stringToLevel( strLevel ) );
+  TWindowLevel tmpLevel = stringToLevel( strLevel );
+  if( tmpLevel >= SYSTEM && tmpLevel <= CPU && !whichTrace->existResourceInfo() )
+    return false;
+
+  windows[ windows.size() - 1 ]->setLevel( tmpLevel );
 
   return true;
 }

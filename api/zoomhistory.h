@@ -29,6 +29,7 @@ class ZoomHistory
     void nextZoom();
     void prevZoom();
 
+    void clear();
   private:
     int currentZoom;
     vector< pair< pair<Dimension1,Dimension1>, pair<Dimension2, Dimension2> > > zooms;
