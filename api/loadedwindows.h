@@ -21,6 +21,10 @@ class LoadedWindows
 
     TWindowID add( Window *whichWindow );
     TWindowID add( Histogram *whichHisto );
+    void eraseWindow( TWindowID id );
+    void eraseWindow( Window *whichWindow );
+    void eraseHisto( TWindowID id );
+    void eraseHisto( Histogram *whichHisto );
     Window *getWindow( TWindowID id ) const;
     Histogram *getHisto( TWindowID id ) const;
     void getAll( vector<Window *>& onVector ) const;

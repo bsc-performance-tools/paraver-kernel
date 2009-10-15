@@ -123,6 +123,8 @@ class Histogram
     virtual Histogram* clone( ) { return NULL; }
 
     // Specific methods of HistogramProxy
+    virtual bool getDestroy() const { return false; }
+    virtual void setDestroy( bool newValue ) {}
     virtual UINT16 getPosX() const
     {
       return 0;
@@ -488,6 +490,8 @@ class HistogramProxy : public Histogram
 
     virtual Histogram *clone();
 
+    virtual bool getDestroy() const;
+    virtual void setDestroy( bool newValue );
     virtual UINT16 getPosX() const;
     virtual void setPosX( UINT16 whichPos );
     virtual UINT16 getPosY() const;
@@ -511,6 +515,8 @@ class HistogramProxy : public Histogram
 
   private:
     string name;
+
+    bool destroy;
 
     UINT16 posX;
     UINT16 posY;

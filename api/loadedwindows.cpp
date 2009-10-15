@@ -43,6 +43,38 @@ TWindowID LoadedWindows::add( Histogram *whichHisto )
   return currentHistoID;
 }
 
+void LoadedWindows::eraseWindow( TWindowID id )
+{
+  windows.erase( id );
+}
+
+void LoadedWindows::eraseWindow( Window *whichWindow )
+{
+  map<TWindowID, Window *>::iterator it;
+  for (  it = windows.begin(); it != windows.end(); ++it )
+    if ( it->second == whichWindow )
+      break;
+
+  if ( it != windows.end() )
+    windows.erase( it );
+}
+
+void LoadedWindows::eraseHisto( TWindowID id )
+{
+  histograms.erase( id );
+}
+
+void LoadedWindows::eraseHisto( Histogram *whichHisto )
+{
+  map<TWindowID, Histogram *>::iterator it;
+  for ( it = histograms.begin(); it != histograms.end(); ++it )
+    if ( it->second == whichHisto )
+      break;
+
+  if ( it != histograms.end() )
+    histograms.erase( it );
+}
+
 Window *LoadedWindows::getWindow( TWindowID id ) const
 {
   return windows.find( id )->second;
@@ -124,9 +156,9 @@ bool LoadedWindows::validDataWindow( Window *dataWindow, Window *controlWindow )
 {
   if ( dataWindow == controlWindow )
     return true;
-  if( controlWindow == NULL )
+  if ( controlWindow == NULL )
     return true;
-  if( dataWindow == NULL )
+  if ( dataWindow == NULL )
     return true;
 
   else if ( dataWindow->getTrace() == controlWindow->getTrace() )

@@ -6,6 +6,7 @@
 #include "trace.h"
 #include "window.h"
 #include "recordlist.h"
+#include "loadedwindows.h"
 
 Window *Window::create( KernelConnection *whichKernel, Trace *whichTrace )
 {
@@ -27,6 +28,8 @@ Window::Window( KernelConnection *whichKernel ) : myKernel( whichKernel )
 
 WindowProxy::WindowProxy()
 {
+  destroy = false;
+
   parent1 = NULL;
   parent2 = NULL;
 
@@ -36,6 +39,8 @@ WindowProxy::WindowProxy()
 WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
     Window( whichKernel ), myTrace( whichTrace )
 {
+  destroy = false;
+
   parent1 = NULL;
   parent2 = NULL;
   myWindow = myKernel->newSingleWindow( whichTrace );
@@ -48,6 +53,8 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
                           Window *whichParent2 ):
     Window( whichKernel ), myTrace( whichParent1->getTrace() )
 {
+  destroy = false;
+
   parent1 = whichParent1;
   parent2 = whichParent2;
   myWindow = myKernel->newDerivedWindow( parent1, parent2 );
@@ -59,6 +66,8 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
 WindowProxy::WindowProxy( KernelConnection *whichKernel ):
     Window( whichKernel ), myTrace( NULL )
 {
+  destroy = false;
+
   parent1 = NULL;
   parent2 = NULL;
   myWindow = myKernel->newDerivedWindow();
@@ -101,6 +110,7 @@ WindowProxy::~WindowProxy()
 {
   if ( myFilter != NULL )
     delete myFilter;
+  LoadedWindows::getInstance()->eraseWindow( this );
   delete myWindow;
 }
 
@@ -247,6 +257,18 @@ Window *WindowProxy::clone( )
   clonedWindow->selectedRow = selectedRow;
 
   return clonedWindow;
+}
+
+
+void WindowProxy::setDestroy( bool newValue )
+{
+  destroy = newValue;
+}
+
+
+bool WindowProxy::getDestroy() const
+{
+  return destroy;
 }
 
 

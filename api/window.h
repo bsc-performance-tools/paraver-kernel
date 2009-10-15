@@ -59,6 +59,8 @@ class Window
 
 
     // Other
+    virtual void setDestroy( bool newValue ) {}
+    virtual bool getDestroy() const { return false; }
     virtual void setWindowBeginTime( TRecordTime whichTime ) {}
     virtual void setWindowEndTime( TRecordTime whichTime ) {}
     virtual TRecordTime getWindowBeginTime() const
@@ -343,6 +345,8 @@ class WindowProxy: public Window
     virtual Window *clone( );
 
     // Other
+    virtual void setDestroy( bool newValue );
+    virtual bool getDestroy() const;
     virtual void setWindowBeginTime( TRecordTime whichTime );
     virtual void setWindowEndTime( TRecordTime whichTime );
     virtual TRecordTime getWindowBeginTime() const;
@@ -468,6 +472,8 @@ class WindowProxy: public Window
     Window *myWindow;
     Trace *myTrace;
     Filter *myFilter;
+
+    bool destroy;
 
     UINT16 posX;
     UINT16 posY;

@@ -5,6 +5,7 @@
 #include "histogramtotals.h"
 #include "paraverconfig.h"
 #include "labelconstructor.h"
+#include "loadedwindows.h"
 #include <iostream>
 
 #ifdef WIN32
@@ -24,6 +25,8 @@ Histogram::Histogram( KernelConnection *whichKernel ) : myKernel( whichKernel )
 HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
     Histogram( whichKernel )
 {
+  destroy = false;
+
   name = Histogram::getName();
   number_of_clones = 0;
 
@@ -67,6 +70,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
 
 HistogramProxy::~HistogramProxy()
 {
+  LoadedWindows::getInstance()->eraseHisto( this );
   delete myHisto;
 }
 
@@ -981,6 +985,18 @@ Histogram *HistogramProxy::clone()
   myGradientColor.copy( clonedHistogramProxy->myGradientColor );
 
   return clonedHistogramProxy;
+}
+
+
+bool HistogramProxy::getDestroy() const
+{
+  return destroy;
+}
+
+
+void HistogramProxy::setDestroy( bool newValue )
+{
+  destroy = newValue;
 }
 
 
