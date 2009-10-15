@@ -79,9 +79,11 @@ void ParaverConfig::readParaverConfigFile()
   ParaverConfig& config = *ParaverConfig::instance;
 
   ifstream file;
+  ifstream fileXML;
   string strLine;
   string strTag;
   string strFile;
+  string strFileXML;
   string homedir;
 
 #ifdef WIN32
@@ -96,39 +98,59 @@ void ParaverConfig::readParaverConfigFile()
 #else
   strFile.append( "/.paraver/paraver" );
 #endif
+  strFileXML.append( ".xml" );
 
-  file.open( strFile.c_str() );
+  fileXML.open( strFileXML.c_str() );
 
-  if ( !file )
+  if ( !fileXML )
   {
-    file.close();
-    if ( !ParaverConfig::writeDefaultConfig() )
-      return;
+    // XML file can't be opened
+    fileXML.close();
+
+    // Does file in old format exists?
     file.open( strFile.c_str() );
-  }
-
-  while ( !file.eof() )
-  {
-    getline( file, strLine );
-    if ( strLine.length() == 0 )
-      continue;
-    else if ( strLine[ 0 ] == '#' || strLine[ 0 ] == '<' )
-      continue;
-
-    istringstream auxStream( strLine );
-    getline( auxStream, strTag, ' ' );
-
-    map<string, PropertyFunction*>::iterator it =
-      config.propertyFunctions.find( strTag );
-    if ( it != config.propertyFunctions.end() )
+    if ( file )
     {
-      it->second->parseLine( auxStream, config );
+      // Read it!
+      while ( !file.eof() )
+      {
+        getline( file, strLine );
+        if ( strLine.length() == 0 )
+          continue;
+        else if ( strLine[ 0 ] == '#' || strLine[ 0 ] == '<' )
+          continue;
+
+        istringstream auxStream( strLine );
+        getline( auxStream, strTag, ' ' );
+
+        map<string, PropertyFunction*>::iterator it =
+          config.propertyFunctions.find( strTag );
+        if ( it != config.propertyFunctions.end() )
+        {
+          it->second->parseLine( auxStream, config );
+        }
+      }
+      file.close();
+    }
+
+    // Try to create/rewrite new XML format
+    if ( !ParaverConfig::writeDefaultConfig())
+      return;
+    else
+    { // Right! And also write old info.
+      ParaverConfig::writeParaverConfigFile();
     }
   }
-  file.close();
+  else
+  {
+    // XML file found ! load it!
+    fileXML.close();
+    instance->loadXML( strFileXML );
+  }
 }
 
-bool ParaverConfig::writeDefaultConfig()
+
+void ParaverConfig::writeParaverConfigFile()
 {
   ofstream file;
   string strFile;
@@ -157,6 +179,41 @@ bool ParaverConfig::writeDefaultConfig()
   strFile.append( "/.paraver/paraver" );
   mkdir( ( homedir + "/.paraver" ).c_str(), (mode_t)0700 );
 #endif
+  strFile.append( ".xml" );
+
+  instance->saveXML( strFile.c_str() );
+}
+
+
+bool ParaverConfig::writeDefaultConfig()
+{
+  ofstream file;
+  string strFile;
+  string homedir;
+
+#ifdef WIN32
+  homedir = getenv( "HOMEDRIVE" );
+  homedir.append( getenv( "HOMEPATH" ) );
+#else
+  homedir = getenv( "HOME" );
+#endif
+  strFile.append( homedir );
+
+#ifdef WIN32
+  strFile.append( "\\paraver\\paraver.xml" );
+  string tmpPath( homedir + "\\paraver" );
+
+  int len = tmpPath.length() + 1;
+  wchar_t *wText = new wchar_t[len];
+  memset(wText,0,len);
+  ::MultiByteToWideChar( CP_ACP, NULL, tmpPath.c_str(), -1, wText, len );
+
+  SHCreateDirectoryEx( NULL, wText, NULL );
+  delete []wText;
+#else
+  strFile.append( "/.paraver/paraver.xml" );
+  mkdir( ( homedir + "/.paraver" ).c_str(), (mode_t)0700 );
+#endif
 
   file.open( strFile.c_str() );
 
@@ -166,6 +223,20 @@ bool ParaverConfig::writeDefaultConfig()
   file.close();
 
   return true;
+}
+
+void ParaverConfig::saveXML( const string &filename )
+{
+  std::ofstream ofs( filename.c_str() );
+  boost::archive::xml_oarchive oa( ofs );
+  oa << boost::serialization::make_nvp( "ParaverConfiguration", this );
+}
+
+void ParaverConfig::loadXML( const string &filename )
+{
+  std::ifstream ifs( filename.c_str() );
+  boost::archive::xml_iarchive ia( ifs );
+  ia >> boost::serialization::make_nvp( "ParaverConfiguration", *this );
 }
 
 void ParaverConfig::loadMap()

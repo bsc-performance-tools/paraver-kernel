@@ -5,6 +5,14 @@
 #include <sstream>
 #include "paraverkerneltypes.h"
 
+// SERIALIZATION INCLUDES
+#include <fstream>
+#include <iostream>
+#include <boost/serialization/string.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+
+
 class ParaverConfig;
 
 class PropertyFunction
@@ -25,6 +33,7 @@ class ParaverConfig
     static ParaverConfig *getInstance();
 
     static void readParaverConfigFile();
+    static void writeParaverConfigFile();
     static bool writeDefaultConfig();
 
     UINT32 getPrecision() const;
@@ -37,7 +46,21 @@ class ParaverConfig
     void setShowUnits( bool units );
     void setThousandSep( bool sep );
 
+    void saveXML( const string &filename );
+    void loadXML( const string &filename );
+
   private:
+    friend class boost::serialization::access;
+
+    template< class Archive >
+    void serialize( Archive & ar, const unsigned int version )
+    {
+      ar & boost::serialization::make_nvp( "2DDecimalPrecision", precision );
+      ar & boost::serialization::make_nvp( "2DNumberOfColumns", histoNumColumns );
+      ar & boost::serialization::make_nvp( "2DShowUnits", showUnits );
+      ar & boost::serialization::make_nvp( "2DThousandSeparator", thousandSep );
+    }
+
     static ParaverConfig *instance;
 
     ParaverConfig();
@@ -50,7 +73,6 @@ class ParaverConfig
     TObjectOrder histoNumColumns;
     bool showUnits;
     bool thousandSep;
-
 };
 
 // WhatWhere.num_decimals
