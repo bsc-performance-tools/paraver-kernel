@@ -65,9 +65,8 @@
 					<Add directory="../common-files" />
 				</Compiler>
 				<Linker>
-					<Add library="/usr/lib64/boost-serialization" />
+					<Add library="boost_serialization" />
 					<Add directory="./" />
-					<Add directory="/usr/lib64" />
 				</Linker>
 			</Target>
 			<Target title="cfg">
