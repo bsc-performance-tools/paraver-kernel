@@ -56,7 +56,10 @@ void LoadedWindows::eraseWindow( Window *whichWindow )
       break;
 
   if ( it != windows.end() )
+  {
     windows.erase( it );
+cout << "erase window " << it->second->getName() << endl;
+  }
 }
 
 void LoadedWindows::eraseHisto( TWindowID id )
@@ -72,7 +75,10 @@ void LoadedWindows::eraseHisto( Histogram *whichHisto )
       break;
 
   if ( it != histograms.end() )
+  {
     histograms.erase( it );
+cout << "erase histo " << it->second->getName() << endl;
+  }
 }
 
 Window *LoadedWindows::getWindow( TWindowID id ) const

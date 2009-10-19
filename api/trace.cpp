@@ -50,6 +50,7 @@ TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile,
                         ProgressController *progress ):
     Trace( whichKernel )
 {
+  unload = false;
   myTrace = myKernel->newTrace( whichFile, progress );
   string pcfFile = myKernel->getPCFFileLocation( whichFile );
   parsePCF( pcfFile );
@@ -250,6 +251,16 @@ TTime TraceProxy::getEndTime() const
 TTimeUnit TraceProxy::getTimeUnit() const
 {
   return myTrace->getTimeUnit();
+}
+
+bool TraceProxy::getUnload() const
+{
+  return unload;
+}
+
+void TraceProxy::setUnload( bool newValue )
+{
+  unload = newValue;
 }
 
 Trace *TraceProxy::getConcrete() const

@@ -87,6 +87,11 @@ class Trace
 
 
     // Specific methods for TraceProxy only
+    virtual bool getUnload() const
+    {
+      return false;
+    }
+    virtual void setUnload( bool newValue ) {}
     virtual Trace *getConcrete() const
     {
       return NULL;
@@ -190,6 +195,8 @@ class TraceProxy: public Trace
     virtual TTime getEndTime() const;
     virtual TTimeUnit getTimeUnit() const;
 
+    virtual bool getUnload() const;
+    virtual void setUnload( bool newValue );
     virtual Trace *getConcrete() const;
     virtual const CodeColor& getCodeColor() const;
     virtual const GradientColor& getGradientColor() const;
@@ -205,6 +212,8 @@ class TraceProxy: public Trace
 
   private:
     Trace *myTrace;
+
+    bool unload;
 
     CodeColor myCodeColor;
     GradientColor myGradientColor;
