@@ -30,6 +30,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   name = Histogram::getName();
   number_of_clones = 0;
 
+  myTrace = NULL;
   controlWindow = NULL;
   dataWindow = NULL;
   extraControlWindow = NULL;
@@ -99,6 +100,11 @@ TRecordTime HistogramProxy::getEndTime() const
   return winEndTime;
 }
 
+Trace *HistogramProxy::getTrace() const
+{
+  return myTrace;
+}
+
 Window *HistogramProxy::getControlWindow() const
 {
   return controlWindow;
@@ -118,6 +124,7 @@ void HistogramProxy::setControlWindow( Window *whichWindow )
 {
   controlWindow = whichWindow;
   myHisto->setControlWindow( whichWindow->getConcrete() );
+  myTrace = controlWindow->getTrace();
 }
 
 void HistogramProxy::setDataWindow( Window *whichWindow )

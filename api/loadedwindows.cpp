@@ -56,10 +56,7 @@ void LoadedWindows::eraseWindow( Window *whichWindow )
       break;
 
   if ( it != windows.end() )
-  {
     windows.erase( it );
-cout << "erase window " << it->second->getName() << endl;
-  }
 }
 
 void LoadedWindows::eraseHisto( TWindowID id )
@@ -75,10 +72,7 @@ void LoadedWindows::eraseHisto( Histogram *whichHisto )
       break;
 
   if ( it != histograms.end() )
-  {
     histograms.erase( it );
-cout << "erase histo " << it->second->getName() << endl;
-  }
 }
 
 Window *LoadedWindows::getWindow( TWindowID id ) const
@@ -126,7 +120,7 @@ void LoadedWindows::getAll( Trace *whichTrace, vector< Histogram *>& onVector ) 
 {
   for ( map<TWindowID, Histogram *>::const_iterator it = histograms.begin();
         it != histograms.end(); ++it )
-    if ( ( *it ).second->getControlWindow()->getTrace() == whichTrace )
+    if ( ( *it ).second->getTrace() == whichTrace )
       onVector.push_back( ( *it ).second );
 }
 

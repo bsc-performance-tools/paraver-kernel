@@ -15,6 +15,7 @@
 class KernelConnection;
 class HistogramTotals;
 class Window;
+class Trace;
 
 class Histogram
 {
@@ -123,6 +124,7 @@ class Histogram
     virtual Histogram* clone( ) { return NULL; }
 
     // Specific methods of HistogramProxy
+    virtual Trace *getTrace() const { return NULL; }
     virtual bool getDestroy() const { return false; }
     virtual void setDestroy( bool newValue ) {}
     virtual UINT16 getPosX() const
@@ -347,6 +349,7 @@ class HistogramProxy : public Histogram
     virtual bool getThreeDimensions() const;
     virtual TRecordTime getBeginTime() const;
     virtual TRecordTime getEndTime() const;
+    virtual Trace *getTrace() const;
     virtual Window *getControlWindow() const;
     virtual Window *getDataWindow() const;
     virtual Window *getExtraControlWindow() const;
@@ -556,6 +559,7 @@ class HistogramProxy : public Histogram
     Window *controlWindow;
     Window *dataWindow;
     Window *extraControlWindow;
+    Trace *myTrace;
 
     bool calculateAll;
     string currentStat;
