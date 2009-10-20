@@ -40,6 +40,7 @@ string KTrace::getTraceName() const
 }
 
 
+
 TApplOrder KTrace::totalApplications() const
 {
   return traceProcessModel.totalApplications();

@@ -90,12 +90,7 @@ bool PreviousFiles::add( const string &newFile )
   }
 
   v.swap( listFiles );
-/*
-  for ( vector<string>::iterator it = listFiles.begin(); it != listFiles.end(); ++it )
-  {
-    printf("en el swqp %s\n", (*it).c_str());
-  }
-*/
+
   return update();
 }
 

@@ -51,6 +51,8 @@ TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile,
     Trace( whichKernel )
 {
   unload = false;
+  instanceNumber = 0;
+
   myTrace = myKernel->newTrace( whichFile, progress );
   string pcfFile = myKernel->getPCFFileLocation( whichFile );
   parsePCF( pcfFile );
@@ -71,6 +73,39 @@ string TraceProxy::getFileName() const
 string TraceProxy::getTraceName() const
 {
   return myTrace->getTraceName();
+}
+
+string TraceProxy::getFileNameNumbered() const
+{
+  string name = myTrace->getFileName();
+
+  if ( instanceNumber > 0 )
+  {
+    stringstream suffix;
+    suffix << instanceNumber;
+    name = name + " #" + suffix.str();
+  }
+
+  return name;
+}
+
+string TraceProxy::getTraceNameNumbered() const
+{
+  string name = myTrace->getTraceName();
+
+  if ( instanceNumber > 0 )
+  {
+    stringstream suffix;
+    suffix << instanceNumber;
+    name = name + " #" + suffix.str();
+  }
+
+  return name;
+}
+
+void TraceProxy::setInstanceNumber( UINT32 whichInstanceNumber )
+{
+  instanceNumber = whichInstanceNumber;
 }
 
 void TraceProxy::dumpFile( const string& whichFile ) const

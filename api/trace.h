@@ -96,6 +96,15 @@ class Trace
     {
       return NULL;
     }
+    virtual string getFileNameNumbered() const
+    {
+      return "";
+    }
+    virtual string getTraceNameNumbered() const
+    {
+      return "";
+    }
+    virtual void setInstanceNumber( UINT32 whichInstanceNumber ) {}
     virtual const CodeColor& getCodeColor() const
     {
       CodeColor *tmp = NULL;
@@ -138,6 +147,9 @@ class TraceProxy: public Trace
 
     virtual string getFileName() const;
     virtual string getTraceName() const;
+    virtual string getFileNameNumbered() const;
+    virtual string getTraceNameNumbered() const;
+    virtual void setInstanceNumber( UINT32 whichInstanceNumber );
 
     virtual void dumpFile( const string& whichFile ) const;
 
@@ -214,6 +226,7 @@ class TraceProxy: public Trace
     Trace *myTrace;
 
     bool unload;
+    UINT32 instanceNumber;
 
     CodeColor myCodeColor;
     GradientColor myGradientColor;
