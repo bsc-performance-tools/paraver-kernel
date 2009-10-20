@@ -4,6 +4,7 @@
 #include "pcfparser/ParaverStatesColor.h"
 #include "pcfparser/ParaverGradientColor.h"
 #include "progresscontroller.h"
+#include <sstream>
 
 using namespace libparaver;
 
