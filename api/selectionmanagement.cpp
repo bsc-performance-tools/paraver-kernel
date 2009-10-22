@@ -68,6 +68,10 @@ void SelectionManagement< SelType, LevelType >::init( Trace *trace )
 
 //    NONE, WORKLOAD, SYSTEM
       default:
+        auxSelected.insert( auxSelected.begin(),
+                            1,
+                            true );
+        setSelected( auxSelected, ( TWindowLevel )level );
         break;
     }
   }
@@ -87,9 +91,9 @@ void SelectionManagement< SelType, LevelType >::init( HistogramTotals *totals,
   selectedSet.push_back( vector< SelType >( ) );
 
   vector< bool > auxSelected;
-  for( THistogramColumn i = 0; i < numColumns; ++i )
+  for ( THistogramColumn i = 0; i < numColumns; ++i )
   {
-    if( totals->getTotal( idStat, i, whichPlane ) == 0 )
+    if ( totals->getTotal( idStat, i, whichPlane ) == 0 )
       auxSelected.push_back( false );
     else
       auxSelected.push_back( true );
