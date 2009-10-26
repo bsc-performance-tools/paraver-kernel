@@ -57,6 +57,12 @@ bool NotCompressed::canseekend()
   return true;
 }
 
+bool NotCompressed::good() const
+{
+  return file.good();
+}
+
+
 Compressed::Compressed( const string& filename )
 {
   file = gzopen( filename.c_str(), "r" );
@@ -101,4 +107,9 @@ double Compressed::tellg()
 bool Compressed::canseekend()
 {
   return false;
+}
+
+bool Compressed::good() const
+{
+  return file != NULL;
 }

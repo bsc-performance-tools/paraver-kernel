@@ -28,6 +28,7 @@ class TraceStream
     virtual void seekend() = 0;
     virtual double tellg() = 0;
     virtual bool canseekend() = 0;
+    virtual bool good() const = 0;
 
     static TraceStream *openFile( const string& filename );
 };
@@ -52,6 +53,7 @@ class NotCompressed: public TraceStream
     virtual void seekend();
     virtual double tellg();
     virtual bool canseekend();
+    virtual bool good() const;
 
   private:
     fstream file;
@@ -78,6 +80,7 @@ class Compressed: public TraceStream
     virtual void seekend();
     virtual double tellg();
     virtual bool canseekend();
+    virtual bool good() const;
 
   private:
     static const UINT32 LINESIZE = 100 * 1024;

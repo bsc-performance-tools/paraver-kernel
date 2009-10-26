@@ -18,6 +18,7 @@ class ParaverKernelException : public std::exception
     {
       undefined = 0,
       emptytrace,
+      cannotOpenTrace,
       nullOperand,
       memoryError,
       LAST
