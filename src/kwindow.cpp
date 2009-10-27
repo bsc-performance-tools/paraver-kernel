@@ -25,7 +25,7 @@ TObjectOrder KWindow::cpuObjectToWindowObject( TCPUOrder whichCPU )
   }
   else if ( level == SYSTEM )
   {
-    tmpObject = 1;
+    tmpObject = 0;
   }
 
   return tmpObject;
@@ -58,7 +58,7 @@ TObjectOrder KWindow::threadObjectToWindowObject( TThreadOrder whichThread )
   }
   else if ( level == WORKLOAD )
   {
-    tmpObject = 1;
+    tmpObject = 0;
   }
 
   return tmpObject;
