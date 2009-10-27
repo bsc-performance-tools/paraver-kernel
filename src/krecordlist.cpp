@@ -43,7 +43,11 @@ void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
   TCommID id = it->getCommIndex();
   tmp.setType( it->getType() );
   tmp.setTime( it->getTime() );
-  tmp.setOrder( it->getOrder() );
+  if ( window->getLevel() >= WORKLOAD && window->getLevel() <= THREAD )
+    tmp.setOrder( window->threadObjectToWindowObject( it->getOrder() ) );
+  else if ( window->getLevel() >= SYSTEM && window->getLevel() <= CPU )
+    tmp.setOrder( window->cpuObjectToWindowObject( it->getOrder() ) );
+
   if ( tmp.getType() & EVENT )
   {
     tmp.setEventType( it->getEventType() );
@@ -89,7 +93,7 @@ void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
         tmp.setCommPartnerTime( trace->getPhysicalSend( id ) );
         if ( trace->getLogicalReceive( id ) < trace->getPhysicalReceive( id ) )
         {
-          if( window->getFilter()->getPhysical() )
+          if ( window->getFilter()->getPhysical() )
           {
             // Inserts the physical comm
             list.insert( tmp );

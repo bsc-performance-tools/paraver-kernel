@@ -19,7 +19,7 @@ KHistogramTotals::KHistogramTotals( UINT16 numStat,
     columns( numColumns ), stats( numStat )
 {
   vector<TSemanticValue> tmpColumns( columns, 0.0 );
-  vector<TSemanticValue> tmpColumnsMax( columns, numeric_limits<double>::min() );
+  vector<TSemanticValue> tmpColumnsMax( columns, -numeric_limits<double>::max() );
   vector<TSemanticValue> tmpColumnsMin( columns, numeric_limits<double>::max() );
   vector<vector<TSemanticValue> > tmpStats( stats, tmpColumns );
   vector<vector<TSemanticValue> > tmpStatsMax( stats, tmpColumnsMax );
@@ -86,6 +86,10 @@ void KHistogramTotals::finish()
         }
         else
         {
+          if( ( ( minimum[ iPlane ] )[ iStat ] )[ iColumn ] ==
+              numeric_limits<double>::max() )
+            ( ( minimum[ iPlane ] )[ iStat ] )[ iColumn ] = 0.0;
+
           ( ( average[ iPlane ] )[ iStat ] )[ iColumn ] =
             ( ( total[ iPlane ] )[ iStat ] )[ iColumn ] / n;
 

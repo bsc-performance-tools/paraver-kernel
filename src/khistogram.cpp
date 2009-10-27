@@ -148,9 +148,9 @@ KHistogram::KHistogram()
   xtraControlMin = 0;
   xtraControlMax = 1;
   xtraControlDelta = 1;
-  dataMin = std::numeric_limits<TSemanticValue>::min();
+  dataMin = -std::numeric_limits<TSemanticValue>::max();
   dataMax = std::numeric_limits<TSemanticValue>::max();
-  burstMin = std::numeric_limits<TRecordTime>::min();
+  burstMin = -std::numeric_limits<TRecordTime>::max();
   burstMax = std::numeric_limits<TRecordTime>::max();
   commSizeMin = std::numeric_limits<TCommSize>::min();
   commSizeMax = std::numeric_limits<TCommSize>::max();
@@ -620,36 +620,36 @@ inline HistogramTotals *KHistogram::getCommRowTotals() const
 
 inline void KHistogram::clearStatistics()
 {
-/*  vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
+  /*  vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
 
-  while ( it != statisticFunctions.end() )
-  {
-    delete *it;
-    ++it;
-  }
-  statisticFunctions.clear();
+    while ( it != statisticFunctions.end() )
+    {
+      delete *it;
+      ++it;
+    }
+    statisticFunctions.clear();
 
-  it = commStatisticFunctions.begin();
+    it = commStatisticFunctions.begin();
 
-  while ( it != commStatisticFunctions.end() )
-  {
-    delete *it;
-    ++it;
-  }
-  commStatisticFunctions.clear();*/
+    while ( it != commStatisticFunctions.end() )
+    {
+      delete *it;
+      ++it;
+    }
+    commStatisticFunctions.clear();*/
 }
 
 
 inline void KHistogram::pushbackStatistic( const string& whichStatistic )
 {
-/*  HistogramStatistic *stat;
+  /*  HistogramStatistic *stat;
 
-  stat = ( FunctionManagement<HistogramStatistic>::getInstance() )->getFunction( whichStatistic );
+    stat = ( FunctionManagement<HistogramStatistic>::getInstance() )->getFunction( whichStatistic );
 
-  if ( stat->createComms() )
-    commStatisticFunctions.push_back( stat );
-  else
-    statisticFunctions.push_back( stat );*/
+    if ( stat->createComms() )
+      commStatisticFunctions.push_back( stat );
+    else
+      statisticFunctions.push_back( stat );*/
 }
 
 
@@ -667,7 +667,7 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
 
   beginTime = whichBeginTime;
   endTime = whichEndTime;
-  if( endTime > controlWindow->getTrace()->getEndTime() )
+  if ( endTime > controlWindow->getTrace()->getEndTime() )
     endTime = controlWindow->getTrace()->getEndTime();
 
   orderWindows();
@@ -935,7 +935,8 @@ void KHistogram::calculate( TObjectOrder iRow,
     if ( !columnTranslator->getColumn( controlWindow->getValue( iRow ),
                                        data->column ) )
     {
-      controlOutOfLimits = true;
+      if ( controlWindow->getValue( iRow ) != 0 )
+        controlOutOfLimits = true;
       return;
     }
     data->rList = controlWindow->getRecordList( iRow );
@@ -945,7 +946,8 @@ void KHistogram::calculate( TObjectOrder iRow,
     if ( !planeTranslator->getColumn( xtraControlWindow->getValue( iRow ),
                                       data->plane ) )
     {
-      xtraOutOfLimits = true;
+      if ( xtraControlWindow->getValue( iRow ) != 0 )
+        xtraOutOfLimits = true;
       return;
     }
   }
@@ -965,7 +967,7 @@ void KHistogram::calculate( TObjectOrder iRow,
             itComm->getTime() >= fromTime &&
             itComm->getTime() <= toTime )
     {
-      if( !( itComm->getType() & COMM ) )
+      if ( !( itComm->getType() & COMM ) )
       {
         ++itComm;
         continue;
@@ -1249,13 +1251,13 @@ KHistogram *KHistogram::clone()
 
   clonedKHistogram->inclusive = inclusive;
 
-/*  for ( vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
-        it != statisticFunctions.end(); it++ )
-    clonedKHistogram->statisticFunctions.push_back( ( *it )->clone() );
+  /*  for ( vector<HistogramStatistic *>::iterator it = statisticFunctions.begin();
+          it != statisticFunctions.end(); it++ )
+      clonedKHistogram->statisticFunctions.push_back( ( *it )->clone() );
 
-  for ( vector<HistogramStatistic *>::iterator it = commStatisticFunctions.begin();
-        it != commStatisticFunctions.end(); it++ )
-    clonedKHistogram->commStatisticFunctions.push_back( ( *it )->clone() );*/
+    for ( vector<HistogramStatistic *>::iterator it = commStatisticFunctions.begin();
+          it != commStatisticFunctions.end(); it++ )
+      clonedKHistogram->commStatisticFunctions.push_back( ( *it )->clone() );*/
 
   clonedKHistogram->rowsTranslator = new RowsTranslator( *rowsTranslator );
   clonedKHistogram->columnTranslator = new ColumnTranslator( *columnTranslator );

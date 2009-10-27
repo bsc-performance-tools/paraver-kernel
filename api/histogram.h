@@ -201,7 +201,7 @@ class Histogram
     virtual void setMinGradient( double whichMin ) {}
     virtual double getMinGradient() const
     {
-      return std::numeric_limits<double>::min();
+      return -std::numeric_limits<double>::max();
     }
     virtual void setMaxGradient( double whichMax ) {}
     virtual double getMaxGradient() const

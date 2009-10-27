@@ -725,13 +725,16 @@ void HistogramProxy::recalcGradientLimits()
   {
     TSemanticValue curMin = totals->getMinimum( idStat, iCol, plane );
     TSemanticValue curMax = totals->getMaximum( idStat, iCol, plane );
-    if ( curMin < tmpMin )
+    if ( curMin != 0 && curMin < tmpMin )
       tmpMin = curMin;
     if ( curMax > tmpMax )
       tmpMax = curMax;
   }
 
-  minGradient = tmpMin;
+  if( tmpMin == std::numeric_limits<TSemanticValue>::max() )
+    minGradient = 0;
+  else
+    minGradient = tmpMin;
   maxGradient = tmpMax;
 
   delete totals;

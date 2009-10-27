@@ -201,7 +201,7 @@ Window *WindowProxy::clone( )
   clonedWindow->myTrace  = myTrace;
   clonedWindow->myWindow = myWindow->clone( );
 
-  if ( clonedWindow->isDerivedWindow())
+  if ( clonedWindow->isDerivedWindow() )
   {
     clonedWindow->parent1 = parent1->clone();
     clonedWindow->myWindow->setParent( 0, clonedWindow->parent1->getConcrete() );
@@ -248,10 +248,10 @@ Window *WindowProxy::clone( )
   clonedWindow->width = width;
   clonedWindow->height = height;
 
-/*
-  for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); it++ )
-    clonedWindow->myLists.push_back( (*it)->create( *it ) );
-*/
+  /*
+    for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); it++ )
+      clonedWindow->myLists.push_back( (*it)->create( *it ) );
+  */
   clonedWindow->zoomHistory = zoomHistory;
 
   clonedWindow->selectedRow = selectedRow;
@@ -411,7 +411,7 @@ TWindowLevel WindowProxy::getLevel() const
 
 void WindowProxy::setLevel( TWindowLevel whichLevel )
 {
-  if( whichLevel == myWindow->getLevel() )
+  if ( whichLevel == myWindow->getLevel() )
     return;
 
   yScaleComputed = false;
@@ -482,7 +482,7 @@ TParamValue WindowProxy::getFunctionParam( TWindowLevel whichLevel,
 }
 
 string WindowProxy::getFunctionParamName( TWindowLevel whichLevel,
-                                          TParamIndex whichParam ) const
+    TParamIndex whichParam ) const
 {
   return myWindow->getFunctionParamName( whichLevel, whichParam );
 }
@@ -500,7 +500,7 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create )
   {
     for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); ++it )
       delete *it;
-    if (myLists.begin() != myLists.end()) // solo sintoma de que algo no va bien
+    if ( myLists.begin() != myLists.end() ) // solo sintoma de que algo no va bien
       myLists.clear();
   }
 
@@ -514,7 +514,7 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create )
 
   for ( int i = 0; i < myWindow->getWindowLevelObjects(); i++ )
   {
-    if( myLists[ i ] == NULL )
+    if ( myLists[ i ] == NULL )
       myLists[ i ] = RecordList::create( myWindow->getRecordList( i ) );
   }
 
@@ -535,7 +535,7 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject )
   TSemanticValue objValue = getValue( whichObject );
   if ( computedMaxY < objValue )
     computedMaxY = objValue;
-  if ( computedMinY > objValue )
+  if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
     computedMinY = objValue;
 
   return myLists[ whichObject ];
@@ -551,7 +551,7 @@ RecordList *WindowProxy::calcPrev( TObjectOrder whichObject )
   TSemanticValue objValue = getValue( whichObject );
   if ( computedMaxY < objValue )
     computedMaxY = objValue;
-  if ( computedMinY > objValue )
+  if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
     computedMinY = objValue;
 
   return myLists[ whichObject ];
@@ -736,14 +736,14 @@ bool WindowProxy::IsCodeColorSet() const
 
 bool WindowProxy::IsGradientColorSet() const
 {
-  return (!codeColor && (myGradientColor.getAllowOutOfScale()));
+  return ( !codeColor && ( myGradientColor.getAllowOutOfScale() ) );
 //  return !codeColor;
 }
 
 
 bool WindowProxy::IsNotNullGradientColorSet() const
 {
-  return (!codeColor && !(myGradientColor.getAllowOutOfScale()));
+  return ( !codeColor && !( myGradientColor.getAllowOutOfScale() ) );
 }
 
 
@@ -902,12 +902,12 @@ void WindowProxy::getGroupLabels( UINT32 whichGroup, vector<string>& onVector ) 
 }
 
 bool WindowProxy::getParametersOfFunction( string whichFunction,
-                                           UINT32 &numParameters,
-                                           vector<string> &nameParameters,
-                                           vector< vector< double > >&defaultParameters ) const
+    UINT32 &numParameters,
+    vector<string> &nameParameters,
+    vector< vector< double > >&defaultParameters ) const
 {
   return myWindow->getParametersOfFunction( whichFunction,
-                                             numParameters,
-                                             nameParameters,
-                                             defaultParameters );
+         numParameters,
+         nameParameters,
+         defaultParameters );
 }
