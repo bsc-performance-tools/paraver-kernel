@@ -844,7 +844,7 @@ bool WindowFlagsEnabled::parseLine( KernelConnection *whichKernel, istringstream
 void WindowFlagsEnabled::printLine( ofstream& cfgFile,
                                     const vector<Window *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_COMM_LINES << " " << ( ( *it )->getDrawFlags() ?
+  cfgFile << OLDCFG_TAG_WNDW_FLAGS_ENABLED << " " << ( ( *it )->getDrawFlags() ?
       OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
 
@@ -873,7 +873,7 @@ bool WindowNonColorMode::parseLine( KernelConnection *whichKernel, istringstream
 void WindowNonColorMode::printLine( ofstream& cfgFile,
                                     const vector<Window *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_COMM_LINES << " " << ( ( *it )->getDrawFunctionLineColor() ?
+  cfgFile << OLDCFG_TAG_WNDW_NON_COLOR_MODE << " " << ( ( *it )->getDrawFunctionLineColor() ?
       OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
 
