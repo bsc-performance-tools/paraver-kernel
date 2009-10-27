@@ -61,6 +61,8 @@ class Window
     // Other
     virtual void setDestroy( bool newValue ) {}
     virtual bool getDestroy() const { return false; }
+    virtual void setUsedByHistogram( bool newValue ) {}
+    virtual bool getUsedByHistogram() { return false; }
     virtual void setWindowBeginTime( TRecordTime whichTime ) {}
     virtual void setWindowEndTime( TRecordTime whichTime ) {}
     virtual TRecordTime getWindowBeginTime() const
@@ -347,6 +349,8 @@ class WindowProxy: public Window
     // Other
     virtual void setDestroy( bool newValue );
     virtual bool getDestroy() const;
+    virtual void setUsedByHistogram( bool newValue );
+    virtual bool getUsedByHistogram();
     virtual void setWindowBeginTime( TRecordTime whichTime );
     virtual void setWindowEndTime( TRecordTime whichTime );
     virtual TRecordTime getWindowBeginTime() const;
@@ -496,6 +500,8 @@ class WindowProxy: public Window
     Window *parent1;
     Window *parent2;
     Window *child;
+
+    bool usedByHistogram;
 
     // GUI related attributes
     string name;

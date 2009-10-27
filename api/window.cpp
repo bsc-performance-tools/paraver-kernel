@@ -102,6 +102,7 @@ void WindowProxy::init()
   functionLineColor = Window::getDrawFunctionLineColor();
 
   child = NULL;
+  usedByHistogram = false;
 
   selectedRow.init( getTrace() );
 }
@@ -269,6 +270,18 @@ void WindowProxy::setDestroy( bool newValue )
 bool WindowProxy::getDestroy() const
 {
   return destroy;
+}
+
+
+void WindowProxy::setUsedByHistogram( bool newValue )
+{
+  usedByHistogram = newValue;
+}
+
+
+bool WindowProxy::getUsedByHistogram()
+{
+  return usedByHistogram;
 }
 
 
