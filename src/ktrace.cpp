@@ -156,7 +156,7 @@ TCPUOrder KTrace::getFirstCPU( TNodeOrder inNode ) const
 
 TCPUOrder KTrace::getLastCPU( TNodeOrder inNode ) const
 {
-  return getLastCPU( inNode );
+  return traceResourceModel.getLastCPU( inNode );
 }
 
 

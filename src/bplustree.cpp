@@ -1022,7 +1022,10 @@ void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
   for ( TCPUOrder ii = 0; ii < numCPUs; ++ii )
   {
     if ( listIter[ ii ] != NULL )
+    {
       delete listIter[ ii ];
+      listIter[ ii ] = NULL;
+    }
   }
 
   // Search for especific time.
