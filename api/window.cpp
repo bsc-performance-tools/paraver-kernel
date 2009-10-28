@@ -218,6 +218,7 @@ Window *WindowProxy::clone( )
     clonedWindow->myFilter->copyCommunicationsSection( myFilter );
   }
 
+  clonedWindow->usedByHistogram = usedByHistogram;
   clonedWindow->winBeginTime = winBeginTime;
   clonedWindow->winEndTime = winEndTime;
   clonedWindow->computeYMaxOnInit = computeYMaxOnInit;
