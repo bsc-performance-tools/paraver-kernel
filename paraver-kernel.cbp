@@ -115,7 +115,7 @@
 			<Add option="-O3" />
 			<Add option="-Wall" />
 			<Add option="-g" />
-			<Add option="-Wno-deprecated -ffast-math" />
+			<Add option="-Wno-deprecated -ffast-math -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE" />
 			<Add directory="include" />
 			<Add directory="../common-files" />
 			<Add directory="./" />
