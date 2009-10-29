@@ -28,7 +28,7 @@ class KernelConnection
     virtual Window *newDerivedWindow( Window *window1, Window * window2 ) const = 0;
     virtual Histogram *newHistogram() const = 0;
     virtual ProgressController *newProgressController() const = 0;
-    virtual Filter *newFilter( Filter *concreteFilter ) const = 0;
+    virtual Filter *newFilter( Filter *concreteFilter, Window *clonedWindow = NULL ) const = 0;
 
     virtual void getAllStatistics( vector<string>& onVector ) const = 0;
     virtual void getAllFilterFunctions( vector<string>& onVector ) const = 0;

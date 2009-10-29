@@ -96,10 +96,13 @@ ProgressController *LocalKernel::newProgressController() const
   return new KProgressController();
 }
 
-Filter *LocalKernel::newFilter( Filter *concreteFilter ) const
+Filter *LocalKernel::newFilter( Filter *concreteFilter, Window *clonedWindow ) const
 {
   FilterProxy *tmpFilter = new FilterProxy( this );
-  tmpFilter->myFilter = concreteFilter;
+  if( clonedWindow == NULL )
+    tmpFilter->myFilter = concreteFilter;
+  else
+    tmpFilter->myFilter = ((KFilter *)concreteFilter)->clone( (KWindow *)( clonedWindow->getConcrete() ) );
   return ( Filter * ) tmpFilter;
 }
 

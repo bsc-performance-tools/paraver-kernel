@@ -213,7 +213,7 @@ Window *WindowProxy::clone( )
   }
   else
   {
-    clonedWindow->myFilter = myKernel->newFilter( myWindow->getFilter() );
+    clonedWindow->myFilter = myKernel->newFilter( myWindow->getFilter(), clonedWindow );
     clonedWindow->myFilter->copyEventsSection( myFilter );
     clonedWindow->myFilter->copyCommunicationsSection( myFilter );
   }
