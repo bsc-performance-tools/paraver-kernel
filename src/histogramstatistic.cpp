@@ -587,10 +587,10 @@ string StatAvgBytesReceived::name = "Average bytes received";
 
 TObjectOrder StatAvgBytesReceived::getPartner( CalculateData *data )
 {
-  /*  if ( controlWin->getLevel() >= SYSTEM )
-      return controlWin->getTrace()->getSenderCPU( data->comm->getCommIndex() );
-    else
-      return controlWin->getTrace()->getSenderThread( data->comm->getCommIndex() );*/
+/*  if ( controlWin->getLevel() >= SYSTEM )
+    return controlWin->getTrace()->getSenderCPU( data->comm->getCommIndex() );
+  else
+    return controlWin->getTrace()->getSenderThread( data->comm->getCommIndex() );*/
   return data->comm->getCommPartnerObject();
 }
 

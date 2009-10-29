@@ -63,6 +63,8 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="zdll.lib"
+				AdditionalLibraryDirectories="&quot;C:\Archivos de programa\zlib\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"

@@ -432,6 +432,7 @@ void WindowProxy::setLevel( TWindowLevel whichLevel )
 
   myWindow->setLevel( whichLevel );
   zoomHistory.clear();
+  zoomHistory.addZoom( winBeginTime, winEndTime, 0, getWindowLevelObjects() - 1 );
 }
 
 void WindowProxy::setTimeUnit( TTimeUnit whichUnit )
