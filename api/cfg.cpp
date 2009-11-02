@@ -2310,7 +2310,7 @@ void WindowOpen::printLine( ofstream& cfgFile,
                             const vector<Window *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_OPEN << " ";
-  if ( ( *it )->getShowWindow() )
+  if ( ( *it )->getShowWindow() && !( *it )->getUsedByHistogram() )
   {
     if ( ( *it )->getChild() != NULL )
       cfgFile << OLDCFG_VAL_FALSE;
