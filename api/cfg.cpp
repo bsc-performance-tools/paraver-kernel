@@ -2869,7 +2869,7 @@ bool Analyzer2DZoom::parseLine( KernelConnection *whichKernel, istringstream& li
 void Analyzer2DZoom::printLine( ofstream& cfgFile,
                                 const vector<Histogram *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_AN2D_COLOR << " ";
+  cfgFile << OLDCFG_TAG_AN2D_ZOOM << " ";
   if ( ( *it )->getZoom() )
     cfgFile << OLDCFG_VAL_ENABLED;
   else
