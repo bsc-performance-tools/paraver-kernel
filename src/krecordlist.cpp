@@ -59,6 +59,7 @@ void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
     TWindowLevel level = window->getLevel();
     tmp.setCommSize( trace->getCommSize( id ) );
     tmp.setCommTag( trace->getCommTag( id ) );
+    tmp.setCommId( id );
     if ( it->getType() & SEND )
     {
       if ( level >= WORKLOAD && level <= THREAD )

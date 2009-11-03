@@ -4,7 +4,7 @@
 KRecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
                                    KRecordList *displayList )
 {
-  createList = create;
+  createList = NOCREATE;
   currentValue = 0.0;
 
   if ( displayList == NULL )
@@ -23,6 +23,7 @@ KRecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
   if ( ( !function->getInitFromBegin() ) && ( initialTime > 0.0 ) )
     calcPrev( displayList, true );
 
+  createList = create;
   calcNext( displayList, true );
   while ( ( !end->isNull() ) && ( end->getTime() <= initialTime ) )
     calcNext( displayList );

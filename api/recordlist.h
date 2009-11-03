@@ -20,6 +20,7 @@ struct RLComm
   TRecordTime partnerTime;
   TCommSize size;
   TCommTag tag;
+  TCommID id;
 };
 
 struct RLRecord
@@ -61,6 +62,10 @@ public:
   {
     return UInfo.comm.tag;
   }
+  TCommID getCommId() const
+  {
+    return UInfo.comm.id;
+  }
   void setType( TRecordType whichType )
   {
     type = whichType;
@@ -97,6 +102,10 @@ public:
   {
     UInfo.comm.tag = whichTag;
   }
+  void setCommId( TCommID whichID )
+  {
+    UInfo.comm.id = whichID;
+  }
 private:
   TRecordType type;
   TRecordTime time;
@@ -123,6 +132,18 @@ struct ltrecord
       {
         if ( ( r1.getType() & COMM ) && ( r2.getType() & EVENT ) )
           return true;
+        else if( r1.getType() == r2.getType() && ( r1.getType() & COMM ) )
+        {
+          if( r1.getCommId() != r2.getCommId() )
+            return true;
+        }
+        else if( r1.getType() == r2.getType() && ( r1.getType() & EVENT ) )
+        {
+          if( r1.getEventType() != r2.getEventType() )
+            return true;
+          else if( r1.getEventValue() != r2.getEventValue() )
+            return true;
+        }
       }
     }
     return false;
