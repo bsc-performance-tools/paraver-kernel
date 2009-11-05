@@ -64,8 +64,6 @@ rgb SemanticColor::endGradientColor   = {   0,   0, 255 };
 rgb SemanticColor::aboveOutlierColor  = { 255, 146,  24 };
 rgb SemanticColor::belowOutlierColor  = { 207, 207,  68 };
 
-const double SemanticColor::GradientSteps = 513.0;
-
 UINT32 SemanticColor::getNumColors()
 {
   return numColors;
@@ -120,7 +118,7 @@ rgb CodeColor::getColor( UINT32 pos ) const
 
 void CodeColor::setColor( UINT32 pos, rgb color )
 {
-  if( pos >= colors.size() )
+  if ( pos >= colors.size() )
     return;
   colors[ pos ] = color;
 }
@@ -151,6 +149,9 @@ GradientColor::GradientColor( )
   endGradientColor = SemanticColor::getEndGradientColor();
   aboveOutlierColor = SemanticColor::getAboveOutlierColor();
   belowOutlierColor = SemanticColor::getBelowOutlierColor();
+
+  function = LINEAR;
+  numSteps = 10;
 
   recalcSteps();
 }
@@ -220,11 +221,31 @@ bool GradientColor::getAllowOutOfScale() const
   return drawOutOfScale;
 }
 
+GradientColor::TGradientFunction GradientColor::getGradientFunction() const
+{
+  return function;
+}
+
+void GradientColor::setGradientFunction( TGradientFunction whichFunction )
+{
+  function = whichFunction;
+}
+
+INT16 GradientColor::getNumSteps() const
+{
+  return numSteps;
+}
+
+void GradientColor::setNumSteps( INT16 steps )
+{
+  numSteps = steps;
+}
+
 rgb GradientColor::calcColor( TSemanticValue whichValue,
                               TSemanticValue minimum,
                               TSemanticValue maximum ) const
 {
-  if( whichValue == 0 && !drawOutOfScale )
+  if ( whichValue == 0 && !drawOutOfScale )
     return SemanticColor::BACKGROUND;
 
   if ( whichValue < minimum )
@@ -248,13 +269,28 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
   TSemanticValue norm = ( whichValue - minimum ) /
                         ( maximum - minimum );
 
-  rgb tmpColor = beginGradientColor;
+  rgb returnColor;
 
-  tmpColor.red += ( ParaverColor ) floor( redStep * norm );
-  tmpColor.green += ( ParaverColor ) floor( greenStep * norm );
-  tmpColor.blue += ( ParaverColor ) floor( blueStep * norm );
+  switch ( function )
+  {
+    case LINEAR:
+      returnColor = functionLinear( norm, minimum, maximum );
+      break;
 
-  return tmpColor;
+    case STEPS:
+      returnColor = functionSteps( norm, minimum, maximum );
+      break;
+
+    case LOGARITHMIC:
+      returnColor = functionLog( norm, minimum, maximum );
+      break;
+
+    case EXPONENTIAL:
+      returnColor = functionExp( norm, minimum, maximum );
+      break;
+  }
+
+  return returnColor;
 }
 
 void GradientColor::recalcSteps()
@@ -277,4 +313,59 @@ void GradientColor::copy( GradientColor &destiny )
   destiny.redStep = redStep;
   destiny.greenStep = greenStep;
   destiny.blueStep = blueStep;
+}
+
+rgb GradientColor::functionLinear( TSemanticValue whichValue,
+                                   TSemanticValue minimum,
+                                   TSemanticValue maximum ) const
+{
+  rgb tmpColor = beginGradientColor;
+
+  tmpColor.red += ( ParaverColor ) floor( redStep * whichValue );
+  tmpColor.green += ( ParaverColor ) floor( greenStep * whichValue );
+  tmpColor.blue += ( ParaverColor ) floor( blueStep * whichValue );
+
+  return tmpColor;
+}
+
+rgb GradientColor::functionSteps( TSemanticValue whichValue,
+                                  TSemanticValue minimum,
+                                  TSemanticValue maximum ) const
+{
+  rgb tmpColor = beginGradientColor;
+
+  double stepNorm = floor( numSteps * whichValue ) / numSteps;
+  tmpColor.red += ( ParaverColor ) floor( redStep * stepNorm );
+  tmpColor.green += ( ParaverColor ) floor( greenStep * stepNorm );
+  tmpColor.blue += ( ParaverColor ) floor( blueStep * stepNorm );
+
+  return tmpColor;
+}
+
+rgb GradientColor::functionLog( TSemanticValue whichValue,
+                                TSemanticValue minimum,
+                                TSemanticValue maximum ) const
+{
+  rgb tmpColor = beginGradientColor;
+
+  double stepNorm = log( whichValue * 100 + 1 ) / log( 101 );
+  tmpColor.red += ( ParaverColor ) floor( redStep * stepNorm );
+  tmpColor.green += ( ParaverColor ) floor( greenStep * stepNorm );
+  tmpColor.blue += ( ParaverColor ) floor( blueStep * stepNorm );
+
+  return tmpColor;
+}
+
+rgb GradientColor::functionExp( TSemanticValue whichValue,
+                                TSemanticValue minimum,
+                                TSemanticValue maximum ) const
+{
+  rgb tmpColor = beginGradientColor;
+
+  double stepNorm = exp( whichValue * 10 ) / exp( 10 );
+  tmpColor.red += ( ParaverColor ) floor( redStep * stepNorm );
+  tmpColor.green += ( ParaverColor ) floor( greenStep * stepNorm );
+  tmpColor.blue += ( ParaverColor ) floor( blueStep * stepNorm );
+
+  return tmpColor;
 }

@@ -238,6 +238,11 @@ class Histogram
       rgb tmp = SemanticColor::BACKGROUND;
       return tmp;
     }
+    virtual GradientColor& getGradientColor()
+    {
+      GradientColor *tmp = NULL;
+      return *tmp;
+    }
     virtual void recalcGradientLimits() {}
     virtual void setZoom( bool newValue ) {}
     virtual bool getZoom() const
@@ -453,6 +458,7 @@ class HistogramProxy : public Histogram
     virtual void setShowColor( bool newValue );
     virtual bool getShowColor() const;
     virtual rgb calcGradientColor( TSemanticValue whichValue ) const;
+    virtual GradientColor& getGradientColor();
     virtual void recalcGradientLimits();
     virtual void setZoom( bool newValue );
     virtual bool getZoom() const;

@@ -713,6 +713,11 @@ rgb HistogramProxy::calcGradientColor( TSemanticValue whichValue ) const
   return myGradientColor.calcColor( whichValue, minGradient, maxGradient );
 }
 
+GradientColor& HistogramProxy::getGradientColor()
+{
+  return myGradientColor;
+}
+
 void HistogramProxy::recalcGradientLimits()
 {
   TSemanticValue tmpMin = std::numeric_limits<TSemanticValue>::max();

@@ -33,8 +33,6 @@ class SemanticColor
     static rgb endGradientColor;
     static rgb aboveOutlierColor;
     static rgb belowOutlierColor;
-
-    static const double GradientSteps;
 };
 
 class CodeColor: public SemanticColor
@@ -59,6 +57,14 @@ class CodeColor: public SemanticColor
 class GradientColor: public SemanticColor
 {
   public:
+    enum TGradientFunction
+    {
+      LINEAR = 0,
+      STEPS,
+      LOGARITHMIC,
+      EXPONENTIAL
+    };
+
     GradientColor();
     ~GradientColor();
 
@@ -79,6 +85,11 @@ class GradientColor: public SemanticColor
     void allowOutOfScale( bool activate );
     bool getAllowOutOfScale() const;
 
+    TGradientFunction getGradientFunction() const;
+    void setGradientFunction( TGradientFunction whichFunction );
+    INT16 getNumSteps() const;
+    void setNumSteps( INT16 steps );
+
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
                    TSemanticValue maximum ) const;
@@ -98,7 +109,24 @@ class GradientColor: public SemanticColor
     double greenStep;
     double blueStep;
 
+    TGradientFunction function;
+    INT16 numSteps;
+
     void recalcSteps();
+
+    rgb functionLinear( TSemanticValue whichValue,
+                        TSemanticValue minimum,
+                        TSemanticValue maximum ) const;
+    rgb functionSteps( TSemanticValue whichValue,
+                       TSemanticValue minimum,
+                       TSemanticValue maximum ) const;
+    rgb functionLog( TSemanticValue whichValue,
+                     TSemanticValue minimum,
+                     TSemanticValue maximum ) const;
+    rgb functionExp( TSemanticValue whichValue,
+                     TSemanticValue minimum,
+                     TSemanticValue maximum ) const;
+
 };
 
 #endif // SEMANTICCOLOR_H_INCLUDED
