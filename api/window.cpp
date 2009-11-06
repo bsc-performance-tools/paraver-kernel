@@ -320,7 +320,8 @@ void WindowProxy::computeYScaleMin()
   if ( !yScaleComputed )
   {
     vector< TObjectOrder > selected;
-    getSelectedRows( getLevel(), selected );
+    getSelectedRows( getLevel(), selected,
+                     getZoomSecondDimension().first, getZoomSecondDimension().second );
 
     init( winBeginTime, NONE );
 
@@ -339,7 +340,8 @@ void WindowProxy::computeYScaleMax()
   if ( !yScaleComputed )
   {
     vector< TObjectOrder > selected;
-    getSelectedRows( getLevel(), selected );
+    getSelectedRows( getLevel(), selected,
+                     getZoomSecondDimension().first, getZoomSecondDimension().second );
 
     init( winBeginTime, NONE );
 
@@ -358,7 +360,8 @@ void WindowProxy::computeYScale()
   if ( !yScaleComputed )
   {
     vector< TObjectOrder > selected;
-    getSelectedRows( getLevel(), selected );
+    getSelectedRows( getLevel(), selected,
+                     getZoomSecondDimension().first, getZoomSecondDimension().second );
 
     init( winBeginTime, NONE );
 

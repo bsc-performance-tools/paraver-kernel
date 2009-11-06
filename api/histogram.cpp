@@ -810,8 +810,19 @@ bool HistogramProxy::itsCommunicationStat( const string& whichStat ) const
 
 void HistogramProxy::compute2DScale()
 {
+  TSemanticValue tmpMinY = controlWindow->getMinimumY();
+  TSemanticValue tmpMaxY = controlWindow->getMaximumY();
+  TRecordTime tmpBeginTime = controlWindow->getWindowBeginTime();
+  TRecordTime tmpEndTime = controlWindow->getWindowEndTime();
+  controlWindow->setWindowBeginTime( getBeginTime() );
+  controlWindow->setWindowEndTime( getEndTime() );
+  controlWindow->computeYScale();
+  controlWindow->setWindowBeginTime( tmpBeginTime );
+  controlWindow->setWindowEndTime( tmpEndTime );
   TSemanticValue minY = controlWindow->getMinimumY();
   TSemanticValue maxY = controlWindow->getMaximumY();
+  controlWindow->setMinimumY( tmpMinY );
+  controlWindow->setMaximumY( tmpMaxY );
 
   setControlMin( minY );
   setControlMax( maxY );
@@ -839,8 +850,19 @@ void HistogramProxy::compute2DScale()
 
 void HistogramProxy::compute3DScale()
 {
+  TSemanticValue tmpMinY = extraControlWindow->getMinimumY();
+  TSemanticValue tmpMaxY = extraControlWindow->getMaximumY();
+  TRecordTime tmpBeginTime = extraControlWindow->getWindowBeginTime();
+  TRecordTime tmpEndTime = extraControlWindow->getWindowEndTime();
+  extraControlWindow->setWindowBeginTime( getBeginTime() );
+  extraControlWindow->setWindowEndTime( getEndTime() );
+  extraControlWindow->computeYScale();
+  extraControlWindow->setWindowBeginTime( tmpBeginTime );
+  extraControlWindow->setWindowEndTime( tmpEndTime );
   TSemanticValue minY = extraControlWindow->getMinimumY();
   TSemanticValue maxY = extraControlWindow->getMaximumY();
+  extraControlWindow->setMinimumY( tmpMinY );
+  extraControlWindow->setMaximumY( tmpMaxY );
 
   setExtraControlMin( minY );
   setExtraControlMax( maxY );
