@@ -85,6 +85,10 @@ class Trace
     virtual bool eventLoaded( TEventType whichType ) const = 0;
     virtual const set<TEventType>& getLoadedEvents() const = 0;
 
+    virtual bool getFillStateGaps() const = 0;
+
+    virtual void setFillStateGaps( bool fill ) = 0;
+
 
     // Specific methods for TraceProxy only
     virtual bool getUnload() const
@@ -134,6 +138,14 @@ class Trace
     {
       return "";
     }
+/*
+    virtual bool getFillStateGaps() const
+    {
+      return false;
+    }
+
+    void setFillStateGaps( bool fill ) {}
+*/
 
   protected:
     KernelConnection *myKernel;
@@ -220,7 +232,8 @@ class TraceProxy: public Trace
 
     virtual bool eventLoaded( TEventType whichType ) const;
     virtual const set<TEventType>& getLoadedEvents() const;
-
+    virtual bool getFillStateGaps() const;
+    virtual void setFillStateGaps( bool fill );
 
   private:
     Trace *myTrace;

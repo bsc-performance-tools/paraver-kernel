@@ -2,6 +2,7 @@
 #define SEMANTICTHREADFUNCTIONS_H_INCLUDED
 
 #include "semanticthread.h"
+#include "paraverconfig.h"
 
 class KSingleWindow;
 
@@ -36,8 +37,8 @@ class StateAsIs: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
-    {}
+    virtual void init( KWindow *whichWindow );
+//    {}
 
     virtual string getName()
     {
@@ -57,7 +58,11 @@ class StateAsIs: public SemanticThread
   protected:
     virtual const TRecordType getValidateMask()
     {
-      return validateMask;
+//      if ( ParaverConfig::getInstance()->getFillStateGaps() )
+      if ( fillStateGaps )
+        return validateMaskFillGaps;
+      else;
+        return validateMask;
     }
     virtual const bool getMyInitFromBegin()
     {
@@ -77,8 +82,10 @@ class StateAsIs: public SemanticThread
     }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
+    static const TRecordType  validateMaskFillGaps = STATE;
     static const bool         initFromBegin = false;
     static string name;
+    bool fillStateGaps;
 };
 
 
@@ -100,8 +107,8 @@ class Useful: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
-    {}
+    virtual void init( KWindow *whichWindow );
+//    {}
 
     virtual string getName()
     {
@@ -121,7 +128,11 @@ class Useful: public SemanticThread
   protected:
     virtual const TRecordType getValidateMask()
     {
-      return validateMask;
+//      if ( ParaverConfig::getInstance()->getFillStateGaps() )
+      if ( fillStateGaps )
+        return validateMaskFillGaps;
+      else;
+        return validateMask;
     }
     virtual const bool getMyInitFromBegin()
     {
@@ -141,9 +152,10 @@ class Useful: public SemanticThread
     }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
+    static const TRecordType  validateMaskFillGaps = STATE;
     static const bool         initFromBegin = false;
     static string name;
-
+    bool fillStateGaps;
 };
 
 
@@ -165,8 +177,8 @@ class StateSign: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
-    {}
+    virtual void init( KWindow *whichWindow );
+//    {}
 
     virtual string getName()
     {
@@ -182,7 +194,11 @@ class StateSign: public SemanticThread
   protected:
     virtual const TRecordType getValidateMask()
     {
-      return validateMask;
+//      if ( ParaverConfig::getInstance()->getFillStateGaps() )
+      if ( fillStateGaps )
+        return validateMaskFillGaps;
+      else;
+        return validateMask;
     }
     virtual const bool getMyInitFromBegin()
     {
@@ -202,9 +218,10 @@ class StateSign: public SemanticThread
     }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
+    static const TRecordType  validateMaskFillGaps = STATE;
     static const bool         initFromBegin = false;
     static string name;
-
+    bool fillStateGaps;
 };
 
 
@@ -227,8 +244,8 @@ class GivenState: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
-    {}
+    virtual void init( KWindow *whichWindow );
+//    {}
 
     virtual string getName()
     {
@@ -248,7 +265,11 @@ class GivenState: public SemanticThread
   protected:
     virtual const TRecordType getValidateMask()
     {
-      return validateMask;
+//      if ( ParaverConfig::getInstance()->getFillStateGaps() )
+      if ( fillStateGaps )
+        return validateMaskFillGaps;
+      else;
+        return validateMask;
     }
     virtual const bool getMyInitFromBegin()
     {
@@ -273,9 +294,10 @@ class GivenState: public SemanticThread
     }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
+    static const TRecordType  validateMaskFillGaps = STATE;
     static const bool         initFromBegin = false;
     static string name;
-
+    bool fillStateGaps;
 };
 
 
@@ -298,8 +320,8 @@ class InState: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
-    {}
+    virtual void init( KWindow *whichWindow );
+//    {}
 
     virtual string getName()
     {
@@ -315,7 +337,11 @@ class InState: public SemanticThread
   protected:
     virtual const TRecordType getValidateMask()
     {
-      return validateMask;
+//      if ( ParaverConfig::getInstance()->getFillStateGaps() )
+      if ( fillStateGaps )
+        return validateMaskFillGaps;
+      else;
+        return validateMask;
     }
     virtual const bool getMyInitFromBegin()
     {
@@ -340,8 +366,10 @@ class InState: public SemanticThread
     }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
+    static const TRecordType  validateMaskFillGaps = STATE;
     static const bool         initFromBegin = false;
     static string name;
+    bool fillStateGaps;
 
 };
 
@@ -365,8 +393,8 @@ class NotInState: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
-    {}
+    virtual void init( KWindow *whichWindow );
+//    {}
 
     virtual string getName()
     {
@@ -382,7 +410,11 @@ class NotInState: public SemanticThread
   protected:
     virtual const TRecordType getValidateMask()
     {
-      return validateMask;
+//      if ( ParaverConfig::getInstance()->getFillStateGaps() )
+      if ( fillStateGaps )
+        return validateMaskFillGaps;
+      else;
+        return validateMask;
     }
     virtual const bool getMyInitFromBegin()
     {
@@ -407,8 +439,10 @@ class NotInState: public SemanticThread
     }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
+    static const TRecordType  validateMaskFillGaps = STATE;
     static const bool         initFromBegin = false;
     static string name;
+    bool fillStateGaps;
 
 };
 
@@ -432,8 +466,8 @@ class StateRecordDuration: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
-    {}
+    virtual void init( KWindow *whichWindow );
+//    {}
 
     virtual string getName()
     {
@@ -453,7 +487,11 @@ class StateRecordDuration: public SemanticThread
   protected:
     virtual const TRecordType getValidateMask()
     {
-      return validateMask;
+      if ( fillStateGaps )
+//      if ( ParaverConfig::getInstance()->getFillStateGaps() )
+        return validateMaskFillGaps;
+      else;
+        return validateMask;
     }
     virtual const bool getMyInitFromBegin()
     {
@@ -478,8 +516,10 @@ class StateRecordDuration: public SemanticThread
     }
   private:
     static const TRecordType  validateMask = STATE + BEGIN;
+    static const TRecordType  validateMaskFillGaps = STATE;
     static const bool         initFromBegin = false;
     static string name;
+    bool fillStateGaps;
 
 };
 

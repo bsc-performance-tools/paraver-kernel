@@ -5,6 +5,7 @@
 #include "pcfparser/ParaverGradientColor.h"
 #include "progresscontroller.h"
 #include <sstream>
+#include "paraverconfig.h"
 
 using namespace libparaver;
 
@@ -59,6 +60,12 @@ TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile,
   parsePCF( pcfFile );
   string rowFile = myKernel->getROWFileLocation( whichFile );
   parseROW( rowFile );
+
+  myTrace->setFillStateGaps( ParaverConfig::getInstance()->getFillStateGaps() );
+//cout << "TraceProxy :: paraverConfig->getFillStateGaps():" << ParaverConfig::getInstance()->getFillStateGaps() << endl;
+
+//  cout << "TraceProxy :: myTrace->getFillStateGaps(): " << myTrace->getFillStateGaps() << endl;
+//  cout << "TraceProxy :: getFillStateGaps(): " << getFillStateGaps() << endl;
 }
 
 TraceProxy::~TraceProxy()
@@ -414,5 +421,16 @@ bool TraceProxy::eventLoaded( TEventType whichType ) const
 const set<TEventType>& TraceProxy::getLoadedEvents() const
 {
   return myTrace->getLoadedEvents();
+}
+
+bool TraceProxy::getFillStateGaps() const
+{
+  return myTrace->getFillStateGaps();
+}
+
+
+void TraceProxy::setFillStateGaps( bool fill )
+{
+  myTrace->setFillStateGaps( fill );
 }
 

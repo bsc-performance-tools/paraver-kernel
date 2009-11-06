@@ -24,7 +24,8 @@ ParaverConfig::ParaverConfig() :
     precision( 2 ),
     histoNumColumns( 20 ),
     showUnits( true ),
-    thousandSep( true )
+    thousandSep( true ),
+    fillStateGaps( true )
 {
   loadMap();
 }
@@ -54,6 +55,11 @@ bool ParaverConfig::getThousandSep() const
   return thousandSep;
 }
 
+bool ParaverConfig::getFillStateGaps() const
+{
+  return fillStateGaps;
+}
+
 void ParaverConfig::setPrecision( UINT32 prec )
 {
   precision = prec;
@@ -74,9 +80,16 @@ void ParaverConfig::setThousandSep( bool sep )
   thousandSep = sep;
 }
 
+void ParaverConfig::setFillStateGaps( bool fill )
+{
+  fillStateGaps = fill;
+}
+
 void ParaverConfig::readParaverConfigFile()
 {
-  ParaverConfig& config = *ParaverConfig::instance;
+  //ParaverConfig *config = ParaverConfig::instance;
+
+//  cout << "ini readParaverConfigFile: fillStateGaps: " << getFillStateGaps() << endl;
 
   ifstream file;
   ifstream fileXML;
@@ -98,12 +111,17 @@ void ParaverConfig::readParaverConfigFile()
 #else
   strFile.append( "/.paraver/paraver" );
 #endif
+//  strFileXML = strFile; //<<<<<<<<<<<< !!!!!!
   strFileXML.append( ".xml" );
+
+//  cout << "opening " << strFileXML << "?" << endl;
 
   fileXML.open( strFileXML.c_str() );
 
   if ( !fileXML )
   {
+//    cout << "!not found!!!!" << endl;
+
     // XML file can't be opened
     fileXML.close();
 
@@ -124,10 +142,10 @@ void ParaverConfig::readParaverConfigFile()
         getline( auxStream, strTag, ' ' );
 
         map<string, PropertyFunction*>::iterator it =
-          config.propertyFunctions.find( strTag );
-        if ( it != config.propertyFunctions.end() )
+          propertyFunctions.find( strTag );
+        if ( it != propertyFunctions.end() )
         {
-          it->second->parseLine( auxStream, config );
+          it->second->parseLine( auxStream, *this );
         }
       }
       file.close();
@@ -143,9 +161,12 @@ void ParaverConfig::readParaverConfigFile()
   }
   else
   {
+//    cout << "found!" << endl;
     // XML file found ! load it!
     fileXML.close();
-    instance->loadXML( strFileXML );
+    //ParaverConfig::instance->loadXML( strFileXML );
+    loadXML( strFileXML );
+//    cout << "fin readParaverConfigFile: fillStateGaps: " << getFillStateGaps() << endl;
   }
 }
 
@@ -229,14 +250,24 @@ void ParaverConfig::saveXML( const string &filename )
 {
   std::ofstream ofs( filename.c_str() );
   boost::archive::xml_oarchive oa( ofs );
-  oa << boost::serialization::make_nvp( "ParaverConfiguration", this );
+//  oa << boost::serialization::make_nvp( "ParaverConfiguration", this );
+  oa << BOOST_SERIALIZATION_NVP( this );
 }
 
 void ParaverConfig::loadXML( const string &filename )
 {
+//  cout << "loadXML filename: " << filename << endl;
   std::ifstream ifs( filename.c_str() );
+//  if ( !ifs.good() )
+//    cout << "FICHERO KK" << endl;
   boost::archive::xml_iarchive ia( ifs );
-  ia >> boost::serialization::make_nvp( "ParaverConfiguration", *this );
+//  cout << "before read serialization " << endl;
+
+
+  //ia >> boost::serialization::make_nvp( "ParaverConfiguration", *this );
+  ia >> BOOST_SERIALIZATION_NVP( *this );
+//  cout << "AFter read serialization " << endl;
+
 }
 
 void ParaverConfig::loadMap()

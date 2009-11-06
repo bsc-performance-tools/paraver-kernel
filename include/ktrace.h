@@ -129,6 +129,9 @@ class KTrace: public Trace
 
     const set<TEventType>& getLoadedEvents() const;
 
+    virtual bool getFillStateGaps() const;
+    virtual void setFillStateGaps( bool fill );
+
   protected:
     bool ready;
     ProcessModel traceProcessModel;
@@ -143,6 +146,7 @@ class KTrace: public Trace
     string date;
     vector<string> communicators;
     set<TEventType> events;
+    bool fillStateGaps;
 };
 
 #endif // KTRACE_H_INCLUDED

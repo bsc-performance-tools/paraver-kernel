@@ -28,11 +28,12 @@ class PropertyFunction
 class ParaverConfig
 {
   public:
+    ParaverConfig();
     ~ParaverConfig();
 
     static ParaverConfig *getInstance();
 
-    static void readParaverConfigFile();
+    void readParaverConfigFile();
     static void writeParaverConfigFile();
     static bool writeDefaultConfig();
 
@@ -40,11 +41,13 @@ class ParaverConfig
     TObjectOrder getHistoNumColumns() const;
     bool getShowUnits() const;
     bool getThousandSep() const;
+    bool getFillStateGaps() const;
 
     void setPrecision( UINT32 prec );
     void setHistoNumColumns( TObjectOrder columns );
     void setShowUnits( bool units );
     void setThousandSep( bool sep );
+    void setFillStateGaps( bool sep );
 
     void saveXML( const string &filename );
     void loadXML( const string &filename );
@@ -55,15 +58,26 @@ class ParaverConfig
     template< class Archive >
     void serialize( Archive & ar, const unsigned int version )
     {
-      ar & boost::serialization::make_nvp( "2DDecimalPrecision", precision );
-      ar & boost::serialization::make_nvp( "2DNumberOfColumns", histoNumColumns );
-      ar & boost::serialization::make_nvp( "2DShowUnits", showUnits );
-      ar & boost::serialization::make_nvp( "2DThousandSeparator", thousandSep );
+//      cout << "serialize begin" << endl;
+//      ar & boost::serialization::make_nvp( "2DDecimalPrecision", precision );
+      ar & BOOST_SERIALIZATION_NVP( precision );
+//      cout << "serialize 1" << endl;
+//      ar & boost::serialization::make_nvp( "2DNumberOfColumns", histoNumColumns );
+      ar & BOOST_SERIALIZATION_NVP( histoNumColumns );
+//      cout << "serialize 2" << endl;
+      //ar & boost::serialization::make_nvp( "2DShowUnits", showUnits );
+      ar & BOOST_SERIALIZATION_NVP( showUnits );
+//      cout << "serialize 3" << endl;
+      //ar & boost::serialization::make_nvp( "2DThousandSeparator", thousandSep );
+      ar & BOOST_SERIALIZATION_NVP( thousandSep );
+//      cout << "serialize 4" << endl;
+      //ar & boost::serialization::make_nvp( "GlobalFillStateGaps", fillStateGaps );
+      ar & BOOST_SERIALIZATION_NVP( fillStateGaps );
+//      cout << "serialize end" << endl;
     }
 
     static ParaverConfig *instance;
 
-    ParaverConfig();
 
     map<string, PropertyFunction *> propertyFunctions;
     void loadMap();
@@ -73,6 +87,7 @@ class ParaverConfig
     TObjectOrder histoNumColumns;
     bool showUnits;
     bool thousandSep;
+    bool fillStateGaps;
 };
 
 // WhatWhere.num_decimals

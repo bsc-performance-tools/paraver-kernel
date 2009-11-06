@@ -134,7 +134,17 @@ TSemanticValue StateAsIs::execute( const SemanticInfo *info )
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
-  return myInfo->it->getState();
+
+  if ( myInfo->it->getType() & END )
+    return IDLE;
+  else
+    return myInfo->it->getState();
+}
+
+void StateAsIs::init( KWindow *whichWindow )
+{
+  fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
+//  cout << fillStateGaps << endl;
 }
 
 
@@ -144,7 +154,16 @@ TSemanticValue Useful::execute( const SemanticInfo *info )
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
-  return myInfo->it->getState() == RUNNING ? 1 : 0;
+
+  if ( myInfo->it->getType() & END )
+    return IDLE;
+  else
+    return myInfo->it->getState() == RUNNING ? 1 : 0;
+}
+
+void Useful::init( KWindow *whichWindow )
+{
+  fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
 }
 
 
@@ -154,9 +173,17 @@ TSemanticValue StateSign::execute( const SemanticInfo *info )
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
-  return myInfo->it->getState() != 0 ? 1 : 0;
+
+  if ( myInfo->it->getType() & END )
+    return IDLE;
+  else
+    return myInfo->it->getState() != 0 ? 1 : 0;
 }
 
+void StateSign::init( KWindow *whichWindow )
+{
+  fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
+}
 
 
 string GivenState::name = "Given State";
@@ -168,18 +195,27 @@ TSemanticValue GivenState::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  if ( myInfo->it->getType() & END )
+    return IDLE;
+  else
   {
-    if ( myInfo->it->getState() == parameters[ VALUES ][ i ] )
+    for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
     {
-      tmp = myInfo->it->getState();
-      break;
+      if ( myInfo->it->getState() == parameters[ VALUES ][ i ] )
+      {
+        tmp = myInfo->it->getState();
+        break;
+      }
     }
   }
 
   return tmp;
 }
 
+void GivenState::init( KWindow *whichWindow )
+{
+  fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
+}
 
 string InState::name = "In State";
 TSemanticValue InState::execute( const SemanticInfo *info )
@@ -190,18 +226,27 @@ TSemanticValue InState::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  if ( myInfo->it->getType() & END )
+    return IDLE;
+  else
   {
-    if ( myInfo->it->getState() == parameters[ VALUES ][ i ] )
+    for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
     {
-      tmp = 1;
-      break;
+      if ( myInfo->it->getState() == parameters[ VALUES ][ i ] )
+      {
+        tmp = 1;
+        break;
+      }
     }
   }
 
   return tmp;
 }
 
+void InState::init( KWindow *whichWindow )
+{
+  fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
+}
 
 
 string NotInState::name = "Not In State";
@@ -213,18 +258,27 @@ TSemanticValue NotInState::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  if ( myInfo->it->getType() & END )
+    return IDLE;
+  else
   {
-    if ( myInfo->it->getState() == parameters[ VALUES ][ i ] )
+    for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
     {
-      tmp = 0;
-      break;
+      if ( myInfo->it->getState() == parameters[ VALUES ][ i ] )
+      {
+        tmp = 0;
+        break;
+      }
     }
   }
 
   return tmp;
 }
 
+void NotInState::init( KWindow *whichWindow )
+{
+  fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
+}
 
 string StateRecordDuration::name = "State Record Dur.";
 TSemanticValue StateRecordDuration::execute( const SemanticInfo *info )
@@ -235,20 +289,29 @@ TSemanticValue StateRecordDuration::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  if ( myInfo->it->getType() & END )
+    return IDLE;
+  else
   {
-    if ( myInfo->it->getState() == parameters[ VALUES ][ i ] )
+    for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
     {
-      tmp = myInfo->it->getStateEndTime() - myInfo->it->getTime();
-      break;
+      if ( myInfo->it->getState() == parameters[ VALUES ][ i ] )
+      {
+        tmp = myInfo->it->getStateEndTime() - myInfo->it->getTime();
+        break;
+      }
     }
-  }
 
-  tmp = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( tmp );
+    tmp = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( tmp );
+  }
 
   return tmp;
 }
 
+void StateRecordDuration::init( KWindow *whichWindow )
+{
+  fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
+}
 
 /**************************
 ** Event functions (Thread)

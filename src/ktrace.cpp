@@ -531,3 +531,12 @@ bool KTrace::eventLoaded( TEventType whichType ) const
   return events.find( whichType ) != events.end();
 }
 
+bool KTrace::getFillStateGaps() const
+{
+  return fillStateGaps;
+}
+
+void KTrace::setFillStateGaps( bool fill )
+{
+  fillStateGaps = fill;
+}
