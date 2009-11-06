@@ -348,7 +348,7 @@ rgb GradientColor::functionLog( TSemanticValue whichValue,
 {
   rgb tmpColor = beginGradientColor;
 
-  double stepNorm = log( whichValue * 100 + 1 ) / log( 101 );
+  double stepNorm = log( (double)(whichValue * 100 + 1) ) / log( (double)101 );
   tmpColor.red += ( ParaverColor ) floor( redStep * stepNorm );
   tmpColor.green += ( ParaverColor ) floor( greenStep * stepNorm );
   tmpColor.blue += ( ParaverColor ) floor( blueStep * stepNorm );
@@ -362,7 +362,7 @@ rgb GradientColor::functionExp( TSemanticValue whichValue,
 {
   rgb tmpColor = beginGradientColor;
 
-  double stepNorm = exp( whichValue * 10 ) / exp( 10 );
+  double stepNorm = exp( (double)(whichValue * 10) ) / exp( (double)10 );
   tmpColor.red += ( ParaverColor ) floor( redStep * stepNorm );
   tmpColor.green += ( ParaverColor ) floor( greenStep * stepNorm );
   tmpColor.blue += ( ParaverColor ) floor( blueStep * stepNorm );
