@@ -525,22 +525,20 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create )
   for ( int i = 0; i < myWindow->getWindowLevelObjects(); i++ )
     myLists.push_back( NULL );
 
+  if( getComputeYMaxOnInit() )
+  {
+    setComputeYMaxOnInit( false );
+    computeYScale();
+  }
   myWindow->init( initialTime, create );
   yScaleComputed = true;
-  computeYMaxOnInit = false;
-  computedMaxY = computedMinY = getValue( 0 );
+//  computedMaxY = computedMinY = getValue( 0 );
 
   for ( int i = 0; i < myWindow->getWindowLevelObjects(); i++ )
   {
     if ( myLists[ i ] == NULL )
       myLists[ i ] = RecordList::create( myWindow->getRecordList( i ) );
   }
-
-//#warning Set rows as in CFG
-  // Simple initialization - all showed; CHANGE THIS
-//  vector< bool > selected;
-//  selected.assign( myWindow->getWindowLevelObjects(), true );
-//  setSelectedRows( selected );
 }
 
 RecordList *WindowProxy::calcNext( TObjectOrder whichObject )

@@ -250,9 +250,9 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
-  if( !someEventsExist )
+  if ( !someEventsExist )
   {
-    if( !whichKernel->userMessage( "None of the events specified in the filter appears in the trace. Continue loading CFG file?" ) )
+    if ( !whichKernel->userMessage( "None of the events specified in the filter appears in the trace. Continue loading CFG file?" ) )
     {
       for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
         delete *itWin;
@@ -265,9 +265,9 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
       return true;
     }
   }
-  else if( someEventsNotExist )
+  else if ( someEventsNotExist )
   {
-    if( !whichKernel->userMessage( "Some of the events specified in the filter not appears in the trace. Continue loading CFG file?" ) )
+    if ( !whichKernel->userMessage( "Some of the events specified in the filter not appears in the trace. Continue loading CFG file?" ) )
     {
       for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
         delete *itWin;
@@ -1097,7 +1097,7 @@ bool WindowLevel::parseLine( KernelConnection *whichKernel, istringstream& line,
   getline( line, strLevel, ' ' );
 
   TWindowLevel tmpLevel = stringToLevel( strLevel );
-  if( tmpLevel >= SYSTEM && tmpLevel <= CPU && !whichTrace->existResourceInfo() )
+  if ( tmpLevel >= SYSTEM && tmpLevel <= CPU && !whichTrace->existResourceInfo() )
     return false;
 
   windows[ windows.size() - 1 ]->setLevel( tmpLevel );
@@ -1282,28 +1282,180 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
   switch ( level )
   {
     case APPLICATION:
-      win->getSelectedRows( APPLICATION, selObjects );
-      getline( line, strNumObjects, ',' );
-      tmpNumObjects.str( strNumObjects );
-      if ( !( tmpNumObjects >> numObjects ) )
-        return false;
-      getline( line, strVoid, ' ' );
-      getline( line, strVoid, ' ' );
-      if ( !genericParseObjects( line, numObjects, 0, selObjects ) )
-        return false;
-      win->setSelectedRows( APPLICATION, selObjects );
+      {
+        win->getSelectedRows( APPLICATION, selObjects );
+        getline( line, strNumObjects, ',' );
+        tmpNumObjects.str( strNumObjects );
+        if ( !( tmpNumObjects >> numObjects ) )
+          return false;
+        getline( line, strVoid, ' ' );
+        getline( line, strVoid, ' ' );
+        if ( !genericParseObjects( line, numObjects, 0, selObjects ) )
+          return false;
+        win->setSelectedRows( APPLICATION, selObjects );
+      }
       break;
 
     case TASK:
-
+      {
+        string strAppl;
+        TApplOrder appl;
+        win->getSelectedRows( TASK, selObjects );
+        getline( line, strAppl, ',' );
+        istringstream tmpAppl( strAppl );
+        if ( !( tmpAppl >> appl ) )
+          return false;
+        getline( line, strNumObjects, ',' );
+        tmpNumObjects.str( strNumObjects );
+        if ( !( tmpNumObjects >> numObjects ) )
+          return false;
+        getline( line, strVoid, ' ' );
+        getline( line, strVoid, ' ' );
+        TObjectOrder beginObject = win->getTrace()->getGlobalTask( appl, 0 );
+        if ( !genericParseObjects( line, numObjects, beginObject, selObjects ) )
+          return false;
+        win->setSelectedRows( TASK, selObjects );
+      }
       break;
 
     case THREAD:
-
+      {
+        string strAppl, strTask;
+        TApplOrder appl, task;
+        win->getSelectedRows( THREAD, selObjects );
+        getline( line, strAppl, ',' );
+        istringstream tmpAppl( strAppl );
+        if ( !( tmpAppl >> appl ) )
+          return false;
+        getline( line, strTask, ',' );
+        istringstream tmpTask( strTask );
+        if ( !( tmpTask >> task ) )
+          return false;
+        getline( line, strNumObjects, ',' );
+        tmpNumObjects.str( strNumObjects );
+        if ( !( tmpNumObjects >> numObjects ) )
+          return false;
+        getline( line, strVoid, ' ' );
+        getline( line, strVoid, ' ' );
+        TObjectOrder beginObject = win->getTrace()->getGlobalThread( appl, task, 0 );
+        if ( !genericParseObjects( line, numObjects, beginObject, selObjects, true ) )
+          return false;
+        win->setSelectedRows( THREAD, selObjects );
+      }
       break;
 
     case NODE:
+      {
+        win->getSelectedRows( NODE, selObjects );
+        getline( line, strNumObjects, ',' );
+        tmpNumObjects.str( strNumObjects );
+        if ( !( tmpNumObjects >> numObjects ) )
+          return false;
+        getline( line, strVoid, ' ' );
+        getline( line, strVoid, ' ' );
+        if ( !genericParseObjects( line, numObjects, 0, selObjects ) )
+          return false;
+        win->setSelectedRows( NODE, selObjects );
+      }
+      break;
 
+    case CPU:
+      {
+        string strNode;
+        TApplOrder node;
+        win->getSelectedRows( CPU, selObjects );
+        getline( line, strNode, ',' );
+        istringstream tmpNode( strNode );
+        if ( !( tmpNode >> node ) )
+          return false;
+        getline( line, strNumObjects, ',' );
+        tmpNumObjects.str( strNumObjects );
+        if ( !( tmpNumObjects >> numObjects ) )
+          return false;
+        getline( line, strVoid, ' ' );
+        getline( line, strVoid, ' ' );
+        TObjectOrder beginObject = win->getTrace()->getGlobalCPU( node, 0 );
+        if ( !genericParseObjects( line, numObjects, beginObject, selObjects ) )
+          return false;
+        win->setSelectedRows( CPU, selObjects );
+      }
+      break;
+
+    default:
+      break;
+  }
+
+  return true;
+}
+
+void genericWriteObjects( ofstream& cfgFile, vector<bool>& selected, bool numbers )
+{
+  for( vector<bool>::iterator it = selected.begin(); it != selected.end(); ++it )
+  {
+    if( *it )
+    {
+      if( numbers )
+        cfgFile << "1";
+      else
+        cfgFile << "All";
+    }
+    else
+    {
+      if( numbers )
+        cfgFile << "0";
+      else
+        cfgFile << "None";
+    }
+    if( it != --selected.end() )
+      cfgFile << ", ";
+  }
+}
+
+void writeAppl( ofstream& cfgFile,
+                const vector<Window *>::const_iterator it )
+{
+  vector<bool> selectedSet;
+
+  (*it)->getSelectedRows( APPLICATION, selectedSet );
+  cfgFile << OLDCFG_TAG_WNDW_OBJECT << " appl { " << selectedSet.size() << ", { ";
+  genericWriteObjects( cfgFile, selectedSet, false );
+  cfgFile << " } }" << endl;
+}
+
+void writeNode( ofstream& cfgFile,
+                const vector<Window *>::const_iterator it )
+{
+  vector<bool> selectedSet;
+
+  (*it)->getSelectedRows( NODE, selectedSet );
+  cfgFile << OLDCFG_TAG_WNDW_OBJECT << " node { " << selectedSet.size() << ", { ";
+  genericWriteObjects( cfgFile, selectedSet, false );
+  cfgFile << " } }" << endl;
+}
+
+void WindowObject::printLine( ofstream& cfgFile,
+                              const vector<Window *>::const_iterator it )
+{
+  vector<TObjectOrder> selected;
+
+  switch( (*it)->getLevel() )
+  {
+    case WORKLOAD:
+    case APPLICATION:
+      writeAppl( cfgFile, it );
+      break;
+
+    case TASK:
+      writeAppl( cfgFile, it );
+      break;
+
+    case THREAD:
+      writeAppl( cfgFile, it );
+      break;
+
+    case SYSTEM:
+    case NODE:
+      writeNode( cfgFile, it );
       break;
 
     case CPU:
@@ -1313,23 +1465,6 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
     default:
       break;
   }
-
-  // Sets as selected all rows
-  /*  vector< bool > selected;
-    Window *win = windows[ windows.size() - 1 ];
-    selected.assign( win->getWindowLevelObjects(), true );
-    win->setSelectedRows( win->getLevel(), selected );*/
-
-  return true;
-}
-
-void WindowObject::printLine( ofstream& cfgFile,
-                              const vector<Window *>::const_iterator it )
-{
-  cfgFile << OLDCFG_TAG_WNDW_OBJECT << " appl { 1, { All } }" << endl;
-#ifndef WIN32
-#warning WindowObject::printLine
-#endif
 }
 
 bool WindowBeginTime::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -1468,18 +1603,14 @@ bool WindowNumberOfRow::parseLine( KernelConnection *whichKernel, istringstream&
                                    vector<Window *>& windows,
                                    vector<Histogram *>& histograms )
 {
-#ifndef WIN32
-#warning WindowNumberOfRow::parseLine
-#endif
+  // DEPRECATED
   return true;
 }
 
 void WindowNumberOfRow::printLine( ofstream& cfgFile,
                                    const vector<Window *>::const_iterator it )
 {
-#ifndef WIN32
-#warning WindowNumberOfRow::printLine
-#endif
+  // DEPRECATED
 }
 
 bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -1541,7 +1672,7 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
       else if ( strLevel.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
       {
         filter->setEventTypeFunction( strFunction );
-        if( strFunction == "All" )
+        if ( strFunction == "All" )
           someEventsExist = true;
       }
       else if ( strLevel.compare( OLDCFG_VAL_FILTER_EVT_VALUE ) == 0 )
@@ -1962,7 +2093,7 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
       if ( !( tmpValue >> eventType ) )
         return false;
 
-      if( !whichTrace->eventLoaded( eventType ) )
+      if ( !whichTrace->eventLoaded( eventType ) )
         someEventsNotExist = true;
       else
         someEventsExist = true;
