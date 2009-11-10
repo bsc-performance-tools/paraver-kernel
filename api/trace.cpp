@@ -61,11 +61,7 @@ TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile,
   string rowFile = myKernel->getROWFileLocation( whichFile );
   parseROW( rowFile );
 
-  myTrace->setFillStateGaps( ParaverConfig::getInstance()->getFillStateGaps() );
-//cout << "TraceProxy :: paraverConfig->getFillStateGaps():" << ParaverConfig::getInstance()->getFillStateGaps() << endl;
-
-//  cout << "TraceProxy :: myTrace->getFillStateGaps(): " << myTrace->getFillStateGaps() << endl;
-//  cout << "TraceProxy :: getFillStateGaps(): " << getFillStateGaps() << endl;
+  myTrace->setFillStateGaps( ParaverConfig::getInstance()->getGlobalFillStateGaps() );
 }
 
 TraceProxy::~TraceProxy()

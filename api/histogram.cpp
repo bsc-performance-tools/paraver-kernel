@@ -43,7 +43,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   scientificNotation = Histogram::getScientificNotation();
   numDecimals = Histogram::getNumDecimals();
   thousandSep = Histogram::getThousandSeparator();
-  showUnits = ParaverConfig::getInstance()->getShowUnits();
+  showUnits = ParaverConfig::getInstance()->getHistogramShowUnits();
   sortColumns = Histogram::getSortColumns();
   sortCriteria = Histogram::getSortCriteria();
   minGradient = Histogram::getMinGradient();
@@ -834,17 +834,17 @@ void HistogramProxy::compute2DScale()
   else if ( ( maxY - minY ) < 1.0 )
   {
     setControlDelta( ( maxY - minY ) /
-                     ParaverConfig::getInstance()->getHistoNumColumns() );
+                     ParaverConfig::getInstance()->getHistogramNumColumns() );
   }
   else if ( ( maxY - minY ) <
-            ParaverConfig::getInstance()->getHistoNumColumns() )
+            ParaverConfig::getInstance()->getHistogramNumColumns() )
   {
     setControlDelta( 1.0 );
   }
   else
   {
     setControlDelta( ( maxY - minY ) /
-                     ParaverConfig::getInstance()->getHistoNumColumns() );
+                     ParaverConfig::getInstance()->getHistogramNumColumns() );
   }
 }
 
@@ -874,17 +874,17 @@ void HistogramProxy::compute3DScale()
   else if ( ( maxY - minY ) < 1.0 )
   {
     setExtraControlDelta( ( maxY - minY ) /
-                          ParaverConfig::getInstance()->getHistoNumColumns() );
+                          ParaverConfig::getInstance()->getHistogramNumColumns() );
   }
   else if ( ( maxY - minY ) <
-            ParaverConfig::getInstance()->getHistoNumColumns() )
+            ParaverConfig::getInstance()->getHistogramNumColumns() )
   {
     setExtraControlDelta( 1.0 );
   }
   else
   {
     setExtraControlDelta( ( maxY - minY ) /
-                          ParaverConfig::getInstance()->getHistoNumColumns() );
+                          ParaverConfig::getInstance()->getHistogramNumColumns() );
   }
 }
 

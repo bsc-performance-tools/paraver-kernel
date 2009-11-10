@@ -162,7 +162,7 @@ void dumpWindow( vector<Window *>& windows, string& strOutputFile )
 
     while ( tmpWindow->getEndTime( i ) < endTime )
     {
-      outputFile << setprecision( config->getPrecision() );
+      outputFile << setprecision( config->getTimelinePrecision() );
       if ( !multipleFiles )
         outputFile << i + 1 << "\t";
       outputFile << tmpWindow->traceUnitsToWindowUnits(
@@ -172,7 +172,7 @@ void dumpWindow( vector<Window *>& windows, string& strOutputFile )
       outputFile << tmpWindow->getValue( i ) << endl;
       tmpWindow->calcNext( i );
     }
-    outputFile << setprecision( config->getPrecision() );
+    outputFile << setprecision( config->getHistogramPrecision() );
     if ( !multipleFiles )
       outputFile << i + 1 << "\t";
     outputFile << tmpWindow->traceUnitsToWindowUnits(

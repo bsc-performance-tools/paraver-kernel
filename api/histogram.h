@@ -176,12 +176,12 @@ class Histogram
     virtual void setNumDecimals( UINT16 newValue ) {}
     virtual UINT16 getNumDecimals() const
     {
-      return ParaverConfig::getInstance()->getPrecision();
+      return ParaverConfig::getInstance()->getHistogramPrecision();
     }
     virtual void setThousandSeparator( bool newValue ) {}
     virtual bool getThousandSeparator() const
     {
-      return ParaverConfig::getInstance()->getThousandSep();
+      return ParaverConfig::getInstance()->getHistogramThousandSep();
     }
     virtual void setShowUnits( bool newValue ) {}
     virtual bool getShowUnits() const

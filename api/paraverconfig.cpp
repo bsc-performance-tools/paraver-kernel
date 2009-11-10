@@ -20,13 +20,76 @@ ParaverConfig *ParaverConfig::getInstance()
   return ParaverConfig::instance;
 }
 
-ParaverConfig::ParaverConfig() :
-    precision( 2 ),
-    histoNumColumns( 20 ),
-    showUnits( true ),
-    thousandSep( true ),
-    fillStateGaps( true )
+ParaverConfig::ParaverConfig()
 {
+  string homedir;
+
+#ifdef WIN32
+  homedir = getenv( "HOMEDRIVE" );
+  homedir.append( getenv( "HOMEPATH" ) );
+#else
+  homedir = getenv( "HOME" );
+#endif
+
+  xmlGlobal.tracesPath = homedir; // also for paraload.sig!
+  xmlGlobal.cfgsPath = homedir;
+  xmlGlobal.tmpPath = homedir; // errors, logs, working dir
+  xmlGlobal.applyFollowingCFGsToAllTraces = false;
+  xmlGlobal.fillStateGaps = true;
+
+  xmlTimeline.defaultName = "New window # %N";
+  xmlTimeline.nameFormat = "%W @ %T";
+  xmlTimeline.defaultCFG = homedir; // not used if it doesn't point to cfg
+  xmlTimeline.precision = 2;
+  xmlTimeline.viewEventsLines = false;
+  xmlTimeline.viewCommunicationsLines = true;
+  xmlTimeline.viewFunctionAsColor = true;
+  xmlTimeline.color = SemanticColor::COLOR;
+  xmlTimeline.drawmodeTime = DRAW_MAXIMUM;
+  xmlTimeline.drawmodeObjects = DRAW_MAXIMUM;
+  xmlTimeline.drawmodeBoth = DRAW_MAXIMUM;
+  xmlTimeline.gradientFunction = GradientColor::LINEAR;
+  xmlTimeline.pixelSize = 1;
+  xmlTimeline.whatWhereSemantic = true;
+  xmlTimeline.whatWhereEvents = true;
+  xmlTimeline.whatWhereCommunications = true;
+  xmlTimeline.whatWherePreviousNext = false;
+  xmlTimeline.whatWhereText = true;
+  xmlTimeline.saveTextFormat = CSV;
+  xmlTimeline.saveImageFormat = JPG;
+
+  xmlHistogram.viewZoom = false;
+  xmlHistogram.viewGradientZoom = true;
+  xmlHistogram.viewHorizontal = false;
+  xmlHistogram.viewEmptyColumns = false;
+  xmlHistogram.scientificNotation = false;
+  xmlHistogram.thousandSep = true;
+  xmlHistogram.precision = 2;
+  xmlHistogram.showUnits = true;
+  xmlHistogram.histoNumColumns = 20;
+  xmlHistogram.autofitControlScale = true;
+  xmlHistogram.autofitDataGradient = true;
+  xmlHistogram.autofitThirdDimensionScale = true;
+  xmlHistogram.gradientFunction = GradientColor::LINEAR;
+  xmlHistogram.drawmodeSemantic = DRAW_MAXIMUM;
+  xmlHistogram.drawmodeObjects = DRAW_MAXIMUM;
+  xmlHistogram.drawmodeBoth = DRAW_MAXIMUM;
+  xmlHistogram.saveTextAsMatrix = true;
+  xmlHistogram.saveTextFormat = CSV;
+  xmlHistogram.saveImageFormat = JPG;
+
+  xmlFilters.filterTraceUpToMB = 500.0;
+  xmlFilters.xmlPath = homedir;
+
+  xmlColor.timelineBackground = SemanticColor::BACKGROUND;
+  xmlColor.timelineAxis = (rgb){ 255, 255, 255 };
+  xmlColor.timelineLogicalCommunications = (rgb){ 255, 255, 0 };
+  xmlColor.timelinePhysicalCommunications = (rgb){ 255, 0, 0 };
+  xmlColor.topGradient = SemanticColor::getAboveOutlierColor();
+  xmlColor.lowGradient = SemanticColor::getBelowOutlierColor();
+  xmlColor.beginGradient = SemanticColor::getBeginGradientColor();
+  xmlColor.endGradient = SemanticColor::getEndGradientColor();
+
   loadMap();
 }
 
@@ -35,62 +98,559 @@ ParaverConfig::~ParaverConfig()
   unLoadMap();
 }
 
-UINT32 ParaverConfig::getPrecision() const
+
+// GLOBAL XML SECTION
+void ParaverConfig::setGlobalTracesPath( string whichTracesPath )
 {
-  return precision;
+   xmlGlobal.tracesPath = whichTracesPath;
 }
 
-TObjectOrder ParaverConfig::getHistoNumColumns() const
+void ParaverConfig::setGlobalCFGsPath( string whichCfgsPath )
 {
-  return histoNumColumns;
+  xmlGlobal.cfgsPath = whichCfgsPath;
 }
 
-bool ParaverConfig::getShowUnits() const
+void ParaverConfig::setGlobalTmpPath( string whichTmpPath )
 {
-  return showUnits;
+  xmlGlobal.tmpPath = whichTmpPath;
 }
 
-bool ParaverConfig::getThousandSep() const
+void ParaverConfig::setGlobalApplyFollowingCFGsToAllTraces( bool whichApplyFollowingCFGsToAllTraces )
 {
-  return thousandSep;
+  xmlGlobal.applyFollowingCFGsToAllTraces = whichApplyFollowingCFGsToAllTraces;
 }
 
-bool ParaverConfig::getFillStateGaps() const
+void ParaverConfig::setGlobalFillStateGaps( bool fill )
 {
-  return fillStateGaps;
+  xmlGlobal.fillStateGaps = fill;
 }
 
-void ParaverConfig::setPrecision( UINT32 prec )
+string ParaverConfig::getGlobalTracesPath() const
 {
-  precision = prec;
+  return xmlGlobal.tracesPath;
 }
 
-void ParaverConfig::setHistoNumColumns( TObjectOrder columns )
+string ParaverConfig::getGlobalCFGsPath() const
 {
-  histoNumColumns = columns;
+  return xmlGlobal.cfgsPath ;
 }
 
-void ParaverConfig::setShowUnits( bool units )
+string ParaverConfig::getGlobalTmpPath() const
 {
-  showUnits = units;
+  return xmlGlobal.tmpPath;
 }
 
-void ParaverConfig::setThousandSep( bool sep )
+bool ParaverConfig::getGlobalApplyFollowingCFGsToAllTraces() const
 {
-  thousandSep = sep;
+  return xmlGlobal.applyFollowingCFGsToAllTraces;
 }
 
-void ParaverConfig::setFillStateGaps( bool fill )
+bool ParaverConfig::getGlobalFillStateGaps() const
 {
-  fillStateGaps = fill;
+  return xmlGlobal.fillStateGaps;
+}
+
+
+// TIMELINES XML SECTION
+void ParaverConfig::setTimelineDefaultName( string whichDefaultName )
+{
+  xmlTimeline.defaultName = whichDefaultName;
+}
+
+void ParaverConfig::setTimelineNameFormat( string whichNameFormat )
+{
+  xmlTimeline.nameFormat = whichNameFormat;
+}
+
+void ParaverConfig::setTimelineDefaultCFG( string whichDefaultCFG )
+{
+  xmlTimeline.defaultCFG = whichDefaultCFG;
+}
+
+void ParaverConfig::setTimelinePrecision( UINT32 whichPrecision )
+{
+  xmlTimeline.precision = whichPrecision;
+}
+
+void ParaverConfig::setTimelineViewEventsLines( bool whichViewEventsLines )
+{
+  xmlTimeline.viewEventsLines = whichViewEventsLines;
+}
+
+void ParaverConfig::setTimelineViewCommunicationsLines( bool whichViewCommunicationsLines )
+{
+  xmlTimeline.viewCommunicationsLines = whichViewCommunicationsLines;
+}
+
+void ParaverConfig::setTimelineViewFunctionAsColor( bool whichViewFunctionAsColor )
+{
+  xmlTimeline.viewFunctionAsColor = whichViewFunctionAsColor;
+}
+
+void ParaverConfig::setTimelineColor( SemanticColor::TColorFunction whichColor )
+{
+  xmlTimeline.color = whichColor;
+}
+
+void ParaverConfig::setTimelineDrawmodeTime( DrawModeMethod whichDrawmodeTime )
+{
+  xmlTimeline.drawmodeTime = whichDrawmodeTime;
+}
+
+void ParaverConfig::setTimelineDrawmodeObjects( DrawModeMethod whichDrawmodeObjects )
+{
+  xmlTimeline.drawmodeObjects = whichDrawmodeObjects;
+}
+
+void ParaverConfig::setTimelineDrawmodeBoth( DrawModeMethod whichDrawmodeBoth )
+{
+  xmlTimeline.drawmodeBoth = whichDrawmodeBoth;
+}
+
+void ParaverConfig::setTimelineGradientFunction( GradientColor::TGradientFunction whichGradientFunction )
+{
+  xmlTimeline.gradientFunction = whichGradientFunction;
+}
+
+void ParaverConfig::setTimelinePixelSize( UINT32 whichPixelSize )
+{
+  xmlTimeline.pixelSize = whichPixelSize;
+}
+
+void ParaverConfig::setTimelineWhatWhereSemantic( bool whichWhatWhereSemantic )
+{
+  xmlTimeline.whatWhereSemantic = whichWhatWhereSemantic;
+}
+
+void ParaverConfig::setTimelineWhatWhereEvents( bool whichWhatWhereEvents )
+{
+  xmlTimeline.whatWhereEvents = whichWhatWhereEvents;
+}
+
+void ParaverConfig::setTimelineWhatWhereCommunications( bool whichWhatWhereCommunications )
+{
+  xmlTimeline.whatWhereCommunications = whichWhatWhereCommunications;
+}
+
+void ParaverConfig::setTimelineWhatWherePreviousNext( bool whichWhatWherePreviousNext )
+{
+  xmlTimeline.whatWherePreviousNext = whichWhatWherePreviousNext;
+}
+
+void ParaverConfig::setTimelineWhatWhereText( bool whichWhatWhereText )
+{
+  xmlTimeline.whatWhereText = whichWhatWhereText;
+}
+
+void ParaverConfig::setTimelineSaveTextFormat( TTextFormat whichSaveTextFormat )
+{
+  xmlTimeline.saveTextFormat = whichSaveTextFormat;
+}
+
+void ParaverConfig::setTimelineSaveImageFormat( TImageFormat whichSaveImageFormat )
+{
+  xmlTimeline.saveImageFormat = whichSaveImageFormat;
+}
+
+
+string ParaverConfig::getTimelineDefaultName() const
+{
+  return xmlTimeline.defaultName;
+}
+
+string ParaverConfig::getTimelineNameFormat() const
+{
+  return xmlTimeline.nameFormat;
+}
+
+string ParaverConfig::getTimelineDefaultCFG() const
+{
+  return xmlTimeline.defaultCFG;
+}
+
+UINT32 ParaverConfig::getTimelinePrecision() const
+{
+  return xmlTimeline.precision;
+}
+
+bool ParaverConfig::getTimelineViewEventsLines() const
+{
+  return xmlTimeline.viewEventsLines;
+}
+
+bool ParaverConfig::getTimelineViewCommunicationsLines() const
+{
+  return xmlTimeline.viewCommunicationsLines;
+}
+
+bool ParaverConfig::getTimelineViewFunctionAsColor() const
+{
+  return xmlTimeline.viewFunctionAsColor;
+}
+
+SemanticColor::TColorFunction ParaverConfig::getTimelineColor() const
+{
+  return xmlTimeline.color;
+}
+
+DrawModeMethod ParaverConfig::getTimelineDrawmodeTime() const
+{
+  return xmlTimeline.drawmodeTime;
+}
+
+DrawModeMethod ParaverConfig::getTimelineDrawmodeObjects() const
+{
+  return xmlTimeline.drawmodeObjects;
+}
+
+DrawModeMethod ParaverConfig::getTimelineDrawmodeBoth() const
+{
+  return xmlTimeline.drawmodeBoth;
+}
+
+GradientColor::TGradientFunction ParaverConfig::getTimelineGradientFunction() const
+{
+  return xmlTimeline.gradientFunction;
+}
+
+UINT32 ParaverConfig::getTimelinePixelSize() const
+{
+  return xmlTimeline.pixelSize;
+}
+
+bool ParaverConfig::getTimelineWhatWhereSemantic() const
+{
+  return xmlTimeline.whatWhereSemantic;
+}
+
+bool ParaverConfig::getTimelineWhatWhereEvents() const
+{
+  return xmlTimeline.whatWhereEvents;
+}
+
+bool ParaverConfig::getTimelineWhatWhereCommunications() const
+{
+  return xmlTimeline.whatWhereCommunications;
+}
+
+bool ParaverConfig::getTimelineWhatWherePreviousNext() const
+{
+  return xmlTimeline.whatWherePreviousNext;
+}
+
+bool ParaverConfig::getTimelineWhatWhereText() const
+{
+  return xmlTimeline.whatWhereText;
+}
+
+ParaverConfig::TTextFormat ParaverConfig::getTimelineSaveTextFormat() const
+{
+  return xmlTimeline.saveTextFormat;
+}
+
+ParaverConfig::TImageFormat ParaverConfig::getTimelineSaveImageFormat() const
+{
+  return xmlTimeline.saveImageFormat;
+}
+
+
+// HISTOGRAM
+void ParaverConfig::setHistogramViewZoom( bool whichViewZoom )
+{
+  xmlHistogram.viewZoom = whichViewZoom;
+}
+
+void ParaverConfig::setHistogramviewGradientZoom( bool whichViewGradientZoom )
+{
+  xmlHistogram.viewGradientZoom = whichViewGradientZoom;
+}
+
+void ParaverConfig::setHistogramviewHorizontal( bool whichViewHorizontal )
+{
+  xmlHistogram.viewHorizontal = whichViewHorizontal;
+}
+
+void ParaverConfig::setHistogramviewEmptyColumns( bool whichViewEmptyColumns )
+{
+  xmlHistogram.viewEmptyColumns = whichViewEmptyColumns;
+}
+
+void ParaverConfig::setHistogramscientificNotation( bool whichScientificNotation )
+{
+  xmlHistogram.scientificNotation = whichScientificNotation;
+}
+
+void ParaverConfig::setHistogramThousandSep( bool whichThousandSep )
+{
+  xmlHistogram.thousandSep = whichThousandSep;
+}
+
+void ParaverConfig::setHistogramPrecision( UINT32 whichPrecision )
+{
+  xmlHistogram.precision = whichPrecision;
+}
+
+void ParaverConfig::setHistogramShowUnits( bool whichShowUnits )
+{
+  xmlHistogram.showUnits = whichShowUnits;
+}
+
+void ParaverConfig::setHistogramNumColumns( TObjectOrder whichNumColumns )
+{
+  xmlHistogram.histoNumColumns = whichNumColumns;
+}
+
+void ParaverConfig::setHistogramAutofitControlScale( bool whichAutofitControlScale )
+{
+  xmlHistogram.autofitControlScale = whichAutofitControlScale;
+}
+
+void ParaverConfig::setHistogramAutofitDataGradient( bool whichAutofitDataGradient )
+{
+  xmlHistogram.autofitDataGradient = whichAutofitDataGradient;
+}
+
+void ParaverConfig::setHistogramAutofitThirdDimensionScale( bool whichAutofitThirdDimensionScale )
+{
+ xmlHistogram.autofitThirdDimensionScale  = whichAutofitThirdDimensionScale;
+}
+
+void ParaverConfig::setHistogramGradientFunction( GradientColor::TGradientFunction whichGradientFunction )
+{
+  xmlHistogram.gradientFunction = whichGradientFunction;
+}
+
+void ParaverConfig::setHistogramDrawmodeSemantic( DrawModeMethod whichDrawmodeSemantic )
+{
+  xmlHistogram.drawmodeSemantic = whichDrawmodeSemantic;
+}
+
+void ParaverConfig::setHistogramDrawmodeObjects( DrawModeMethod whichDrawmodeObjects )
+{
+  xmlHistogram.drawmodeObjects = whichDrawmodeObjects;
+}
+
+void ParaverConfig::setHistogramDrawmodeBoth( DrawModeMethod whichDrawmodeBoth )
+{
+  xmlHistogram.drawmodeBoth = whichDrawmodeBoth;
+}
+
+void ParaverConfig::setHistogramSaveTextAsMatrix( bool whichSaveTextAsMatrix )
+{
+  xmlHistogram.saveTextAsMatrix = whichSaveTextAsMatrix;
+}
+
+void ParaverConfig::setHistogramSaveTextFormat( TTextFormat whichSaveTextFormat )
+{
+  xmlHistogram.saveTextFormat = whichSaveTextFormat;
+}
+
+void ParaverConfig::setHistogramSaveImageFormat( TImageFormat whichSaveImageFormat )
+{
+  xmlHistogram.saveImageFormat = whichSaveImageFormat;
+}
+
+bool ParaverConfig::getHistogramViewZoom() const
+{
+  return xmlHistogram.viewZoom;
+}
+
+bool ParaverConfig::getHistogramViewGradientZoom() const
+{
+  return xmlHistogram.viewGradientZoom;
+}
+
+bool ParaverConfig::getHistogramViewHorizontal() const
+{
+  return xmlHistogram.viewHorizontal;
+}
+
+bool ParaverConfig::getHistogramViewEmptyColumns() const
+{
+  return xmlHistogram.viewEmptyColumns;
+}
+
+bool ParaverConfig::getHistogramScientificNotation() const
+{
+  return xmlHistogram.scientificNotation;
+}
+
+bool ParaverConfig::getHistogramThousandSep() const
+{
+  return xmlHistogram.thousandSep;
+}
+
+UINT32 ParaverConfig::getHistogramPrecision() const
+{
+  return xmlHistogram.precision;
+}
+
+bool ParaverConfig::getHistogramShowUnits() const
+{
+  return xmlHistogram.showUnits;
+}
+
+TObjectOrder ParaverConfig::getHistogramNumColumns() const
+{
+  return xmlHistogram.histoNumColumns;
+}
+
+bool ParaverConfig::getHistogramAutofitControlScale() const
+{
+  return xmlHistogram.autofitControlScale;
+}
+
+bool ParaverConfig::getHistogramAutofitDataGradient() const
+{
+  return xmlHistogram.autofitDataGradient;
+}
+
+bool ParaverConfig::getHistogramAutofitThirdDimensionScale() const
+{
+  return xmlHistogram.autofitThirdDimensionScale;
+}
+
+GradientColor::TGradientFunction ParaverConfig::getHistogramGradientFunction() const
+{
+  return xmlHistogram.gradientFunction;
+}
+
+DrawModeMethod ParaverConfig::getHistogramDrawmodeSemantic() const
+{
+  return xmlHistogram.drawmodeSemantic;
+}
+
+DrawModeMethod ParaverConfig::getHistogramDrawmodeObjects() const
+{
+  return xmlHistogram.drawmodeObjects;
+}
+
+DrawModeMethod ParaverConfig::getHistogramDrawmodeBoth() const
+{
+  return xmlHistogram.drawmodeBoth;
+}
+
+bool ParaverConfig::getHistogramSaveTextAsMatrix() const
+{
+  return xmlHistogram.saveTextAsMatrix;
+}
+
+ParaverConfig::TTextFormat ParaverConfig::getHistogramSaveTextFormat() const
+{
+  return xmlHistogram.saveTextFormat;
+}
+
+ParaverConfig::TImageFormat ParaverConfig::getHistogramSaveImageFormat() const
+{
+  return xmlHistogram.saveImageFormat;
+}
+
+
+// FILTERS XML SECTION
+void ParaverConfig::setFiltersFilterTraceUpToMB( float whichFilterTraceUpToMB )
+{
+  xmlFilters.filterTraceUpToMB = whichFilterTraceUpToMB;
+}
+
+void ParaverConfig::setFiltersXMLPath( string whichXMLPath )
+{
+  xmlFilters.xmlPath = whichXMLPath;
+}
+
+float ParaverConfig::getFiltersFilterTraceUpToMB() const
+{
+  return xmlFilters.filterTraceUpToMB;
+}
+
+string ParaverConfig::getFiltersXMLPath() const
+{
+  return xmlFilters.xmlPath;
+}
+
+
+// COLORS XML SECTION
+void ParaverConfig::setColorsTimelineBackground( rgb whichTimelineBackground )
+{
+  xmlColor.timelineBackground = whichTimelineBackground;
+}
+
+void ParaverConfig::setColorsTimelineAxis( rgb whichTimelineAxis )
+{
+  xmlColor.timelineAxis = whichTimelineAxis;
+}
+
+void ParaverConfig::setColorsTimelineLogicalCommunications( rgb whichTimelineLogicalCommunications )
+{
+  xmlColor.timelineLogicalCommunications = whichTimelineLogicalCommunications;
+}
+
+void ParaverConfig::setColorsTimelinePhysicalCommunications( rgb whichTimelinePhysicalCommunications )
+{
+  xmlColor.timelinePhysicalCommunications = whichTimelinePhysicalCommunications ;
+}
+
+void ParaverConfig::setColorsTopGradient( rgb whichTopGradient )
+{
+  xmlColor.topGradient = whichTopGradient;
+}
+
+void ParaverConfig::setColorsLowGradient( rgb whichLowGradient )
+{
+  xmlColor.lowGradient = whichLowGradient;
+}
+
+void ParaverConfig::setColorsBeginGradient( rgb whichBeginGradient )
+{
+  xmlColor.beginGradient = whichBeginGradient;
+}
+
+void ParaverConfig::setColorsEndGradient( rgb whichEndGradient )
+{
+  xmlColor.endGradient = whichEndGradient;
+}
+
+rgb ParaverConfig::getColorsTimelineBackground() const
+{
+  return xmlColor.timelineBackground;
+}
+
+rgb ParaverConfig::getColorsTimelineAxis() const
+{
+  return xmlColor.timelineAxis;
+}
+
+rgb ParaverConfig::getColorsTimelineLogicalCommunications() const
+{
+  return xmlColor.timelineLogicalCommunications;
+}
+
+rgb ParaverConfig::getColorsTimelinePhysicalCommunications() const
+{
+  return xmlColor.timelinePhysicalCommunications;
+}
+
+rgb ParaverConfig::getColorsTopGradient() const
+{
+  return xmlColor.topGradient;
+}
+
+rgb ParaverConfig::getColorsLowGradient() const
+{
+  return xmlColor.lowGradient;
+}
+
+rgb ParaverConfig::getColorsBeginGradient() const
+{
+  return xmlColor.beginGradient;
+}
+
+rgb ParaverConfig::getColorsEndGradient() const
+{
+  return xmlColor.endGradient;
 }
 
 void ParaverConfig::readParaverConfigFile()
 {
-  //ParaverConfig *config = ParaverConfig::instance;
-
-//  cout << "ini readParaverConfigFile: fillStateGaps: " << getFillStateGaps() << endl;
-
   ifstream file;
   ifstream fileXML;
   string strLine;
@@ -111,17 +671,13 @@ void ParaverConfig::readParaverConfigFile()
 #else
   strFile.append( "/.paraver/paraver" );
 #endif
-//  strFileXML = strFile; //<<<<<<<<<<<< !!!!!!
+  strFileXML = strFile;
   strFileXML.append( ".xml" );
-
-//  cout << "opening " << strFileXML << "?" << endl;
 
   fileXML.open( strFileXML.c_str() );
 
   if ( !fileXML )
   {
-//    cout << "!not found!!!!" << endl;
-
     // XML file can't be opened
     fileXML.close();
 
@@ -161,12 +717,9 @@ void ParaverConfig::readParaverConfigFile()
   }
   else
   {
-//    cout << "found!" << endl;
     // XML file found ! load it!
     fileXML.close();
-    //ParaverConfig::instance->loadXML( strFileXML );
     loadXML( strFileXML );
-//    cout << "fin readParaverConfigFile: fillStateGaps: " << getFillStateGaps() << endl;
   }
 }
 
@@ -250,24 +803,14 @@ void ParaverConfig::saveXML( const string &filename )
 {
   std::ofstream ofs( filename.c_str() );
   boost::archive::xml_oarchive oa( ofs );
-//  oa << boost::serialization::make_nvp( "ParaverConfiguration", this );
-  oa << BOOST_SERIALIZATION_NVP( this );
+  oa << boost::serialization::make_nvp( "paraver_configuration", this );
 }
 
 void ParaverConfig::loadXML( const string &filename )
 {
-//  cout << "loadXML filename: " << filename << endl;
   std::ifstream ifs( filename.c_str() );
-//  if ( !ifs.good() )
-//    cout << "FICHERO KK" << endl;
   boost::archive::xml_iarchive ia( ifs );
-//  cout << "before read serialization " << endl;
-
-
-  //ia >> boost::serialization::make_nvp( "ParaverConfiguration", *this );
-  ia >> BOOST_SERIALIZATION_NVP( *this );
-//  cout << "AFter read serialization " << endl;
-
+  ia >> boost::serialization::make_nvp( "paraver_configuration", *this );
 }
 
 void ParaverConfig::loadMap()
@@ -295,7 +838,7 @@ void WWNumDecimals::parseLine( istringstream& line, ParaverConfig& config )
   istringstream streamNumDecimals( strNumDecimals );
 
   if ( streamNumDecimals >> precision )
-    config.setPrecision( precision );
+    config.setHistogramPrecision( precision );
 }
 
 void HistoNumColumns::parseLine( istringstream& line, ParaverConfig& config )
@@ -307,7 +850,7 @@ void HistoNumColumns::parseLine( istringstream& line, ParaverConfig& config )
   istringstream streamNumColumns( strNumColumns );
 
   if ( streamNumColumns >> numColumns )
-    config.setHistoNumColumns( numColumns );
+    config.setHistogramNumColumns( numColumns );
 }
 
 void HistoUnits::parseLine( istringstream& line, ParaverConfig& config )
@@ -317,9 +860,9 @@ void HistoUnits::parseLine( istringstream& line, ParaverConfig& config )
   getline( line, strUnits );
 
   if ( strUnits.compare( "True" ) == 0 )
-    config.setShowUnits( true );
+    config.setHistogramShowUnits( true );
   else
-    config.setShowUnits( false );
+    config.setHistogramShowUnits( false );
 }
 
 void HistoThousanSep::parseLine( istringstream& line, ParaverConfig& config )
@@ -329,7 +872,7 @@ void HistoThousanSep::parseLine( istringstream& line, ParaverConfig& config )
   getline( line, strSep );
 
   if ( strSep.compare( "True" ) == 0 )
-    config.setThousandSep( true );
+    config.setHistogramThousandSep( true );
   else
-    config.setThousandSep( false );
+    config.setHistogramThousandSep( false );
 }

@@ -9,6 +9,13 @@ class Window;
 class SemanticColor
 {
   public:
+    enum TColorFunction
+    {
+      COLOR = 0,
+      GRADIENT,
+      NOT_NULL_GRADIENT
+    };
+
     static rgb BACKGROUND;
 
     static UINT32 getNumColors();

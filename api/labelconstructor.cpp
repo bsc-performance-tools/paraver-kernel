@@ -121,7 +121,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
   else
     label << fixed;
 
-  label.precision( ParaverConfig::getInstance()->getPrecision() );
+  label.precision( ParaverConfig::getInstance()->getHistogramPrecision() );
 
   if ( value == 0 )
     label << "0";
@@ -145,7 +145,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
       tmp << scientific;
     else
       tmp << fixed;
-    tmp.precision( ParaverConfig::getInstance()->getPrecision() );
+    tmp.precision( ParaverConfig::getInstance()->getHistogramPrecision() );
     value -= INT64( origValue );
     if ( value > 0 )
     {
@@ -212,7 +212,7 @@ string numberWithSeparators( TSemanticValue value, TTimeUnit unit = MS )
 
     stringstream tmp;
     tmp << fixed;
-    tmp.precision( ParaverConfig::getInstance()->getPrecision() );
+    tmp.precision( ParaverConfig::getInstance()->getHistogramPrecision() );
     value -= INT64( origValue );
     if ( unit != NS && value > 0 )
     {
@@ -231,7 +231,7 @@ string LabelConstructor::timeLabel( TTime value, TTimeUnit unit )
   stringstream label;
 
   label << fixed;
-  label.precision( ParaverConfig::getInstance()->getPrecision() );
+  label.precision( ParaverConfig::getInstance()->getHistogramPrecision() );
 
   label << numberWithSeparators( value, unit );
 
@@ -249,7 +249,7 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
 
   label << fixed;
   if ( ( value - INT64( value ) ) > 0.0 )
-    label.precision( ParaverConfig::getInstance()->getPrecision() );
+    label.precision( ParaverConfig::getInstance()->getHistogramPrecision() );
   else
     label.precision( 0 );
 
