@@ -105,6 +105,7 @@ void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
           }
           // Prepares the logical comm for insert later
           tmp.setType( tmp.getType() - PHY + LOG );
+          tmp.setCommPartnerTime( trace->getLogicalSend( id ) );
         }
       }
     }

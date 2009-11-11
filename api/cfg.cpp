@@ -381,7 +381,6 @@ bool CFGLoader::saveCFG( const string& filename,
       WindowFilterBoolOpTypeVal::printLine( cfgFile, it );
     }
     WindowUnits::printLine( cfgFile, it );
-    WindowColorMode::printLine( cfgFile, it );
     WindowMaximumY::printLine( cfgFile, it );
     WindowMinimumY::printLine( cfgFile, it );
     WindowComputeYMax::printLine( cfgFile, options, it );
@@ -1924,7 +1923,7 @@ void WindowSemanticModule::printLine( ofstream& cfgFile,
       cfgFile << v.size();
       for ( vector<double>::iterator itVec = v.begin(); itVec != v.end(); ++itVec )
         cfgFile << " " << ( *itVec );
-      if ( parIdx == ( *it )->getFunctionNumParam( topLevel ) - 1 )
+      if ( parIdx < ( *it )->getFunctionNumParam( topLevel ) - 1 )
         cfgFile << ", ";
       else
         cfgFile << " } }" << endl;
@@ -2134,7 +2133,7 @@ void WindowFilterModule::printLine( ofstream& cfgFile,
     for ( vector<TObjectOrder>::iterator itObj = objVec.begin();
           itObj != objVec.end(); ++itObj )
     {
-      cfgFile << " " << ( *itObj );
+      cfgFile << " " << ( *itObj ) + 1;
     }
     cfgFile << endl;
   }
@@ -2148,7 +2147,7 @@ void WindowFilterModule::printLine( ofstream& cfgFile,
     for ( vector<TObjectOrder>::iterator itObj = objVec.begin();
           itObj != objVec.end(); ++itObj )
     {
-      cfgFile << " " << ( *itObj );
+      cfgFile << " " << ( *itObj ) + 1;
     }
     cfgFile << endl;
   }

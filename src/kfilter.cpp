@@ -62,6 +62,9 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
 
   if ( opFromTo == AND && !tmpResult )
     return false;
+  else if( opFromTo == OR && tmpResult )
+    return true;
+
   tmpResult = functionCommTo->getDefaultValue();
 
   if ( existCommTo )
@@ -103,6 +106,9 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
 
   if ( opTagSize == AND && !tmpResult )
     return false;
+  else if( opTagSize == OR && tmpResult )
+    return true;
+
   tmpResult = functionCommSizes->getDefaultValue();
 
   if ( existCommSize )
@@ -159,6 +165,9 @@ bool KFilter::filterEvents( MemoryTrace::iterator *it )
 
   if ( opTypeValue == AND && !tmpResult )
     return false;
+  else if( opTypeValue == OR && tmpResult )
+    return true;
+
   tmpResult = functionEventValues->getDefaultValue();
 
   if ( existEventValues )

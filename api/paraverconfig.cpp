@@ -39,7 +39,7 @@ ParaverConfig::ParaverConfig()
 
   xmlTimeline.defaultName = "New window # %N";
   xmlTimeline.nameFormat = "%W @ %T";
-  xmlTimeline.defaultCFG = homedir; // not used if it doesn't point to cfg
+  xmlTimeline.defaultCFG = "";
   xmlTimeline.precision = 2;
   xmlTimeline.viewEventsLines = false;
   xmlTimeline.viewCommunicationsLines = true;
@@ -47,7 +47,6 @@ ParaverConfig::ParaverConfig()
   xmlTimeline.color = SemanticColor::COLOR;
   xmlTimeline.drawmodeTime = DRAW_MAXIMUM;
   xmlTimeline.drawmodeObjects = DRAW_MAXIMUM;
-  xmlTimeline.drawmodeBoth = DRAW_MAXIMUM;
   xmlTimeline.gradientFunction = GradientColor::LINEAR;
   xmlTimeline.pixelSize = 1;
   xmlTimeline.whatWhereSemantic = true;
@@ -56,10 +55,10 @@ ParaverConfig::ParaverConfig()
   xmlTimeline.whatWherePreviousNext = false;
   xmlTimeline.whatWhereText = true;
   xmlTimeline.saveTextFormat = CSV;
-  xmlTimeline.saveImageFormat = JPG;
+  xmlTimeline.saveImageFormat = PNG;
 
   xmlHistogram.viewZoom = false;
-  xmlHistogram.viewGradientZoom = true;
+  xmlHistogram.viewGradientColors = true;
   xmlHistogram.viewHorizontal = false;
   xmlHistogram.viewEmptyColumns = false;
   xmlHistogram.scientificNotation = false;
@@ -73,7 +72,6 @@ ParaverConfig::ParaverConfig()
   xmlHistogram.gradientFunction = GradientColor::LINEAR;
   xmlHistogram.drawmodeSemantic = DRAW_MAXIMUM;
   xmlHistogram.drawmodeObjects = DRAW_MAXIMUM;
-  xmlHistogram.drawmodeBoth = DRAW_MAXIMUM;
   xmlHistogram.saveTextAsMatrix = true;
   xmlHistogram.saveTextFormat = CSV;
   xmlHistogram.saveImageFormat = JPG;
@@ -202,11 +200,6 @@ void ParaverConfig::setTimelineDrawmodeObjects( DrawModeMethod whichDrawmodeObje
   xmlTimeline.drawmodeObjects = whichDrawmodeObjects;
 }
 
-void ParaverConfig::setTimelineDrawmodeBoth( DrawModeMethod whichDrawmodeBoth )
-{
-  xmlTimeline.drawmodeBoth = whichDrawmodeBoth;
-}
-
 void ParaverConfig::setTimelineGradientFunction( GradientColor::TGradientFunction whichGradientFunction )
 {
   xmlTimeline.gradientFunction = whichGradientFunction;
@@ -303,11 +296,6 @@ DrawModeMethod ParaverConfig::getTimelineDrawmodeObjects() const
   return xmlTimeline.drawmodeObjects;
 }
 
-DrawModeMethod ParaverConfig::getTimelineDrawmodeBoth() const
-{
-  return xmlTimeline.drawmodeBoth;
-}
-
 GradientColor::TGradientFunction ParaverConfig::getTimelineGradientFunction() const
 {
   return xmlTimeline.gradientFunction;
@@ -360,22 +348,22 @@ void ParaverConfig::setHistogramViewZoom( bool whichViewZoom )
   xmlHistogram.viewZoom = whichViewZoom;
 }
 
-void ParaverConfig::setHistogramviewGradientZoom( bool whichViewGradientZoom )
+void ParaverConfig::setHistogramViewGradientColors( bool whichViewGradientColors )
 {
-  xmlHistogram.viewGradientZoom = whichViewGradientZoom;
+  xmlHistogram.viewGradientColors = whichViewGradientColors;
 }
 
-void ParaverConfig::setHistogramviewHorizontal( bool whichViewHorizontal )
+void ParaverConfig::setHistogramViewHorizontal( bool whichViewHorizontal )
 {
   xmlHistogram.viewHorizontal = whichViewHorizontal;
 }
 
-void ParaverConfig::setHistogramviewEmptyColumns( bool whichViewEmptyColumns )
+void ParaverConfig::setHistogramViewEmptyColumns( bool whichViewEmptyColumns )
 {
   xmlHistogram.viewEmptyColumns = whichViewEmptyColumns;
 }
 
-void ParaverConfig::setHistogramscientificNotation( bool whichScientificNotation )
+void ParaverConfig::setHistogramScientificNotation( bool whichScientificNotation )
 {
   xmlHistogram.scientificNotation = whichScientificNotation;
 }
@@ -430,11 +418,6 @@ void ParaverConfig::setHistogramDrawmodeObjects( DrawModeMethod whichDrawmodeObj
   xmlHistogram.drawmodeObjects = whichDrawmodeObjects;
 }
 
-void ParaverConfig::setHistogramDrawmodeBoth( DrawModeMethod whichDrawmodeBoth )
-{
-  xmlHistogram.drawmodeBoth = whichDrawmodeBoth;
-}
-
 void ParaverConfig::setHistogramSaveTextAsMatrix( bool whichSaveTextAsMatrix )
 {
   xmlHistogram.saveTextAsMatrix = whichSaveTextAsMatrix;
@@ -455,9 +438,9 @@ bool ParaverConfig::getHistogramViewZoom() const
   return xmlHistogram.viewZoom;
 }
 
-bool ParaverConfig::getHistogramViewGradientZoom() const
+bool ParaverConfig::getHistogramViewGradientColors() const
 {
-  return xmlHistogram.viewGradientZoom;
+  return xmlHistogram.viewGradientColors;
 }
 
 bool ParaverConfig::getHistogramViewHorizontal() const
@@ -523,11 +506,6 @@ DrawModeMethod ParaverConfig::getHistogramDrawmodeSemantic() const
 DrawModeMethod ParaverConfig::getHistogramDrawmodeObjects() const
 {
   return xmlHistogram.drawmodeObjects;
-}
-
-DrawModeMethod ParaverConfig::getHistogramDrawmodeBoth() const
-{
-  return xmlHistogram.drawmodeBoth;
 }
 
 bool ParaverConfig::getHistogramSaveTextAsMatrix() const

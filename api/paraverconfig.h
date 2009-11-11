@@ -80,7 +80,6 @@ class ParaverConfig
     void setTimelineColor( SemanticColor::TColorFunction whichColor );
     void setTimelineDrawmodeTime( DrawModeMethod whichDrawmodeTime );
     void setTimelineDrawmodeObjects( DrawModeMethod whichDrawmodeObjects );
-    void setTimelineDrawmodeBoth( DrawModeMethod whichDrawmodeBoth );
     void setTimelineGradientFunction( GradientColor::TGradientFunction whichGradientFunction );
     void setTimelinePixelSize( UINT32 whichPixelSize );
     void setTimelineWhatWhereSemantic( bool whichWhatWhereSemantic );
@@ -101,7 +100,6 @@ class ParaverConfig
     SemanticColor::TColorFunction getTimelineColor() const;
     DrawModeMethod getTimelineDrawmodeTime() const;
     DrawModeMethod getTimelineDrawmodeObjects() const;
-    DrawModeMethod getTimelineDrawmodeBoth() const;
     GradientColor::TGradientFunction getTimelineGradientFunction() const;
     UINT32 getTimelinePixelSize() const;
     bool getTimelineWhatWhereSemantic() const;
@@ -114,10 +112,10 @@ class ParaverConfig
 
     // HISTOGRAM
     void setHistogramViewZoom( bool whichViewZoom );
-    void setHistogramviewGradientZoom( bool whichViewGradientZoom );
-    void setHistogramviewHorizontal( bool whichViewHorizontal );
-    void setHistogramviewEmptyColumns( bool whichViewEmptyColumns );
-    void setHistogramscientificNotation( bool whichScientificNotation );
+    void setHistogramViewGradientColors( bool whichViewGradientColors );
+    void setHistogramViewHorizontal( bool whichViewHorizontal );
+    void setHistogramViewEmptyColumns( bool whichViewEmptyColumns );
+    void setHistogramScientificNotation( bool whichScientificNotation );
     void setHistogramThousandSep( bool whichThousandSep );
     void setHistogramPrecision( UINT32 whichPrecision );
     void setHistogramShowUnits( bool whichShowUnits );
@@ -128,13 +126,12 @@ class ParaverConfig
     void setHistogramGradientFunction( GradientColor::TGradientFunction whichGradientFunction );
     void setHistogramDrawmodeSemantic( DrawModeMethod whichDrawmodeSemantic );
     void setHistogramDrawmodeObjects( DrawModeMethod whichDrawmodeObjects );
-    void setHistogramDrawmodeBoth( DrawModeMethod whichDrawmodeBoth );
     void setHistogramSaveTextAsMatrix( bool whichSaveTextAsMatrix );
     void setHistogramSaveTextFormat( TTextFormat whichSaveTextFormat );
     void setHistogramSaveImageFormat( TImageFormat whichSaveImageFormat );
 
     bool getHistogramViewZoom() const;
-    bool getHistogramViewGradientZoom() const;
+    bool getHistogramViewGradientColors() const;
     bool getHistogramViewHorizontal() const;
     bool getHistogramViewEmptyColumns() const;
     bool getHistogramScientificNotation() const;
@@ -148,7 +145,6 @@ class ParaverConfig
     GradientColor::TGradientFunction getHistogramGradientFunction() const;
     DrawModeMethod getHistogramDrawmodeSemantic() const;
     DrawModeMethod getHistogramDrawmodeObjects() const;
-    DrawModeMethod getHistogramDrawmodeBoth() const;
     bool getHistogramSaveTextAsMatrix() const;
     TTextFormat getHistogramSaveTextFormat() const;
     TImageFormat getHistogramSaveImageFormat() const;
@@ -199,7 +195,7 @@ class ParaverConfig
         ar & boost::serialization::make_nvp( "traces_path", tracesPath );
         ar & boost::serialization::make_nvp( "cfgs_path", cfgsPath );
         ar & boost::serialization::make_nvp( "tmp_path", tmpPath );
-        ar & boost::serialization::make_nvp( "apply_following_cfgs_to_all_traces", applyFollowingCFGsToAllTraces );
+        // ar & boost::serialization::make_nvp( "apply_following_cfgs_to_all_traces", applyFollowingCFGsToAllTraces );
         ar & boost::serialization::make_nvp( "fill_state_gaps", fillStateGaps );
       }
 
@@ -227,8 +223,7 @@ class ParaverConfig
         ar & boost::serialization::make_nvp( "color", color );
         ar & boost::serialization::make_nvp( "drawmode_time", drawmodeTime );
         ar & boost::serialization::make_nvp( "drawmode_objects", drawmodeObjects );
-        ar & boost::serialization::make_nvp( "drawmode_both", drawmodeBoth );
-        ar & boost::serialization::make_nvp( "gradientFunction", gradientFunction );
+        ar & boost::serialization::make_nvp( "gradient_function", gradientFunction );
         ar & boost::serialization::make_nvp( "pixel_size", pixelSize );
         ar & boost::serialization::make_nvp( "what_where_semantic", whatWhereSemantic );
         ar & boost::serialization::make_nvp( "what_where_events", whatWhereEvents );
@@ -249,7 +244,6 @@ class ParaverConfig
       SemanticColor::TColorFunction color;
       DrawModeMethod drawmodeTime;
       DrawModeMethod drawmodeObjects;
-      DrawModeMethod drawmodeBoth;
       GradientColor::TGradientFunction gradientFunction;
       UINT32 pixelSize;
       bool whatWhereSemantic;
@@ -268,7 +262,7 @@ class ParaverConfig
       void serialize( Archive & ar, const unsigned int version )
       {
         ar & boost::serialization::make_nvp( "view_zoom", viewZoom );
-        ar & boost::serialization::make_nvp( "view_gradient_zoom", viewGradientZoom );
+        ar & boost::serialization::make_nvp( "view_gradient_colors", viewGradientColors );
         ar & boost::serialization::make_nvp( "view_horizontal", viewHorizontal );
         ar & boost::serialization::make_nvp( "view_empty_columns", viewEmptyColumns );
         ar & boost::serialization::make_nvp( "cell_scientific_notation", scientificNotation );
@@ -279,17 +273,16 @@ class ParaverConfig
         ar & boost::serialization::make_nvp( "autofit_control_scale", autofitControlScale );
         ar & boost::serialization::make_nvp( "autofit_data_gradient", autofitDataGradient );
         ar & boost::serialization::make_nvp( "autofit_third_dimension_scale", autofitThirdDimensionScale );
-        ar & boost::serialization::make_nvp( "gradientFunction", gradientFunction );
+        ar & boost::serialization::make_nvp( "gradient_function", gradientFunction );
         ar & boost::serialization::make_nvp( "drawmode_semantic", drawmodeSemantic );
         ar & boost::serialization::make_nvp( "drawmode_objects", drawmodeObjects );
-        ar & boost::serialization::make_nvp( "drawmode_both", drawmodeBoth );
         ar & boost::serialization::make_nvp( "save_text_as_matrix", saveTextAsMatrix );
         ar & boost::serialization::make_nvp( "save_text_format", saveTextFormat );
         ar & boost::serialization::make_nvp( "save_image_format", saveImageFormat );
       }
 
       bool viewZoom;
-      bool viewGradientZoom;
+      bool viewGradientColors;
       bool viewHorizontal;
       bool viewEmptyColumns;
       bool scientificNotation;
@@ -303,7 +296,6 @@ class ParaverConfig
       GradientColor::TGradientFunction gradientFunction;
       DrawModeMethod drawmodeSemantic;
       DrawModeMethod drawmodeObjects;
-      DrawModeMethod drawmodeBoth;
       bool saveTextAsMatrix;
       TTextFormat saveTextFormat;
       TImageFormat saveImageFormat;
