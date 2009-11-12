@@ -212,11 +212,7 @@ Window *WindowProxy::clone( )
     clonedWindow->parent2->setChild( clonedWindow );
   }
   else
-  {
-    clonedWindow->myFilter = myKernel->newFilter( myWindow->getFilter(), clonedWindow );
-    clonedWindow->myFilter->copyEventsSection( myFilter );
-    clonedWindow->myFilter->copyCommunicationsSection( myFilter );
-  }
+    clonedWindow->myFilter = myKernel->newFilter( clonedWindow->myWindow->getFilter() );
 
   clonedWindow->usedByHistogram = usedByHistogram;
   clonedWindow->winBeginTime = winBeginTime;
@@ -525,7 +521,7 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create )
   for ( int i = 0; i < myWindow->getWindowLevelObjects(); i++ )
     myLists.push_back( NULL );
 
-  if( getComputeYMaxOnInit() )
+  if ( getComputeYMaxOnInit() )
   {
     setComputeYMaxOnInit( false );
     computeYScale();
@@ -898,6 +894,12 @@ void WindowProxy::setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > 
 void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
 {
   selectedRow.getSelected( selected, onLevel );
+}
+
+void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selected,
+                                   TObjectOrder first, TObjectOrder last )
+{
+  selectedRow.getSelected( selected, first, last, onLevel );
 }
 
 void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected )

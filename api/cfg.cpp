@@ -1234,9 +1234,16 @@ bool genericParseObjects( istringstream& line,
   for ( TObjectOrder iObj = 0; iObj < numObjects; ++iObj )
   {
     if ( iObj == numObjects - 1 )
-      getline( line, strValue, ' ' );
+    {
+      getline( line, strValue, '}' );
+      strValue.erase( strValue.length() - 1 );
+      strValue.erase( 0, 1 );
+    }
     else
+    {
       getline( line, strValue, ',' );
+      strValue.erase( 0, 1 );
+    }
 
     if ( numbers )
     {
@@ -1308,8 +1315,7 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
         tmpNumObjects.str( strNumObjects );
         if ( !( tmpNumObjects >> numObjects ) )
           return false;
-        getline( line, strVoid, ' ' );
-        getline( line, strVoid, ' ' );
+        getline( line, strVoid, '{' );
         TObjectOrder beginObject = win->getTrace()->getGlobalTask( appl, 0 );
         if ( !genericParseObjects( line, numObjects, beginObject, selObjects ) )
           return false;
@@ -1389,23 +1395,23 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
 
 void genericWriteObjects( ofstream& cfgFile, vector<bool>& selected, bool numbers )
 {
-  for( vector<bool>::iterator it = selected.begin(); it != selected.end(); ++it )
+  for ( vector<bool>::iterator it = selected.begin(); it != selected.end(); ++it )
   {
-    if( *it )
+    if ( *it )
     {
-      if( numbers )
+      if ( numbers )
         cfgFile << "1";
       else
         cfgFile << "All";
     }
     else
     {
-      if( numbers )
+      if ( numbers )
         cfgFile << "0";
       else
         cfgFile << "None";
     }
-    if( it != --selected.end() )
+    if ( it != --selected.end() )
       cfgFile << ", ";
   }
 }
@@ -1415,8 +1421,22 @@ void writeAppl( ofstream& cfgFile,
 {
   vector<bool> selectedSet;
 
-  (*it)->getSelectedRows( APPLICATION, selectedSet );
+  ( *it )->getSelectedRows( APPLICATION, selectedSet );
   cfgFile << OLDCFG_TAG_WNDW_OBJECT << " appl { " << selectedSet.size() << ", { ";
+  genericWriteObjects( cfgFile, selectedSet, false );
+  cfgFile << " } }" << endl;
+}
+
+void writeTask( ofstream& cfgFile,
+                const vector<Window *>::const_iterator it,
+                TApplOrder whichAppl )
+{
+  vector<bool> selectedSet;
+
+  ( *it )->getSelectedRows( TASK, selectedSet,
+                            ( *it )->getTrace()->getFirstTask( whichAppl ),
+                            ( *it )->getTrace()->getLastTask( whichAppl ) );
+  cfgFile << OLDCFG_TAG_WNDW_OBJECT << " task { " << whichAppl << ", " << selectedSet.size() << ", { ";
   genericWriteObjects( cfgFile, selectedSet, false );
   cfgFile << " } }" << endl;
 }
@@ -1426,7 +1446,7 @@ void writeNode( ofstream& cfgFile,
 {
   vector<bool> selectedSet;
 
-  (*it)->getSelectedRows( NODE, selectedSet );
+  ( *it )->getSelectedRows( NODE, selectedSet );
   cfgFile << OLDCFG_TAG_WNDW_OBJECT << " node { " << selectedSet.size() << ", { ";
   genericWriteObjects( cfgFile, selectedSet, false );
   cfgFile << " } }" << endl;
@@ -1437,7 +1457,7 @@ void WindowObject::printLine( ofstream& cfgFile,
 {
   vector<TObjectOrder> selected;
 
-  switch( (*it)->getLevel() )
+  switch ( ( *it )->getLevel() )
   {
     case WORKLOAD:
     case APPLICATION:
@@ -1445,7 +1465,19 @@ void WindowObject::printLine( ofstream& cfgFile,
       break;
 
     case TASK:
-      writeAppl( cfgFile, it );
+      {
+        writeAppl( cfgFile, it );
+
+        vector<TObjectOrder> tmpSel;
+        for ( TObjectOrder iAppl = 0; iAppl < ( *it )->getTrace()->totalApplications(); ++iAppl )
+        {
+          TObjectOrder begin = ( *it )->getTrace()->getFirstTask( iAppl );
+          TObjectOrder last = ( *it )->getTrace()->getLastTask( iAppl );
+          ( *it )->getSelectedRows( TASK, tmpSel, begin, last );
+          if ( tmpSel.size() != ( TObjectOrder )( last - begin ) )
+            writeTask( cfgFile, it, iAppl );
+        }
+      }
       break;
 
     case THREAD:

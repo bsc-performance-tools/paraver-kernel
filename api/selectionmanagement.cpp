@@ -116,23 +116,25 @@ void SelectionManagement< SelType, LevelType >::setSelected( vector< bool > &sel
     LevelType level )
 {
   selectedSet[ level ].clear();
-  if ( selected[ level ].size() > selection.size() )
+  if ( selected[ level ].size() >= selection.size() )
   {
     std::copy( selection.begin(), selection.end(), selected[ level ].begin() );
   }
   else
   {
     size_t size = selected[ level ].size();
-    selected[ level ] = selection;
     if ( size > 0 )
       selected[ level ].resize( size );
+    selected[ level ] = selection;
   }
 
   if ( !selection.empty() )
   {
     for ( size_t current = 0; current < selected[ level ].size(); ++current )
+    {
       if ( selected[ level ][ current ] )
         selectedSet[ level ].push_back( current );
+    }
   }
 }
 
@@ -184,6 +186,18 @@ void SelectionManagement< SelType, LevelType >::getSelected( vector< bool > &whi
   whichSelected = selected[ level ];
 }
 
+
+template < typename SelType, typename LevelType >
+void SelectionManagement< SelType, LevelType >::getSelected( vector< bool > &whichSelected,
+    SelType first,
+    SelType last,
+    LevelType level )
+{
+  whichSelected.clear();
+
+  for ( SelType i = first; i <= last; ++ i )
+    whichSelected.push_back( ( selected[ level ] )[ i ] );
+}
 
 template < typename SelType, typename LevelType >
 void SelectionManagement< SelType, LevelType >::getSelected( vector< SelType > &whichSelected,

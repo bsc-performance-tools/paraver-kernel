@@ -180,7 +180,7 @@ class FilterProxy : public Filter
     FilterProxy( const KernelConnection *whichKernel ) : Filter( whichKernel )
     {}
 
-    friend Filter *LocalKernel::newFilter( Filter *, Window * ) const;
+    friend Filter *LocalKernel::newFilter( Filter * ) const;
 };
 
 #endif // FILTER_H_INCLUDED

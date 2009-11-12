@@ -647,6 +647,7 @@ KWindow *KSingleWindow::clone()
       clonedKSWindow->functions[ i ] = NULL;
   }
 
+  delete clonedKSWindow->myFilter;
   clonedKSWindow->myFilter = myFilter->clone( clonedKSWindow );
 
   return clonedKSWindow;

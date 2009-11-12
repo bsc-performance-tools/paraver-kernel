@@ -60,9 +60,15 @@ class Window
 
     // Other
     virtual void setDestroy( bool newValue ) {}
-    virtual bool getDestroy() const { return false; }
+    virtual bool getDestroy() const
+    {
+      return false;
+    }
     virtual void setUsedByHistogram( bool newValue ) {}
-    virtual bool getUsedByHistogram() { return false; }
+    virtual bool getUsedByHistogram()
+    {
+      return false;
+    }
     virtual void setWindowBeginTime( TRecordTime whichTime ) {}
     virtual void setWindowEndTime( TRecordTime whichTime ) {}
     virtual TRecordTime getWindowBeginTime() const
@@ -298,7 +304,7 @@ class Window
     }
     virtual pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const
     {
-      return pair<TObjectOrder,TObjectOrder>();
+      return pair<TObjectOrder, TObjectOrder>();
     }
 
     virtual void setSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
@@ -306,6 +312,9 @@ class Window
     virtual void setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selection )
     {}
     virtual void getSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
+    {}
+    virtual void getSelectedRows( TWindowLevel onLevel, vector< bool > &selected,
+                                  TObjectOrder first, TObjectOrder last )
     {}
     virtual void getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selection )
     {}
@@ -316,9 +325,9 @@ class Window
 
     virtual void getGroupLabels( UINT32 whichGroup, vector<string>& onVector ) const = 0;
     virtual bool getParametersOfFunction( string whichFunction,
-                                           UINT32 &numParameters,
-                                           vector<string> &nameParameters,
-                                           vector< vector< double > >&defaultParameters ) const = 0;
+                                          UINT32 &numParameters,
+                                          vector<string> &nameParameters,
+                                          vector< vector< double > >&defaultParameters ) const = 0;
 
 
   protected:
@@ -461,6 +470,8 @@ class WindowProxy: public Window
     virtual void setSelectedRows( TWindowLevel onLevel, vector< bool > &selected );
     virtual void setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected );
     virtual void getSelectedRows( TWindowLevel onLevel, vector< bool > &selected );
+    virtual void getSelectedRows( TWindowLevel onLevel, vector< bool > &selected,
+                                  TObjectOrder first, TObjectOrder last );
     virtual void getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected );
     virtual void getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected,
                                   TObjectOrder first, TObjectOrder last );
@@ -468,9 +479,9 @@ class WindowProxy: public Window
 //    virtual TObjectOrder getLastSelectedRow();
     virtual void getGroupLabels( UINT32 whichGroup, vector<string>& onVector ) const;
     virtual bool getParametersOfFunction( string whichFunction,
-                                           UINT32 &numParameters,
-                                           vector<string> &nameParameters,
-                                           vector< vector< double > >&defaultParameters ) const;
+                                          UINT32 &numParameters,
+                                          vector<string> &nameParameters,
+                                          vector< vector< double > >&defaultParameters ) const;
 
   private:
     Window *myWindow;

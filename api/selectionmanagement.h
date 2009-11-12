@@ -25,6 +25,7 @@ class SelectionManagement
     void setSelected( vector< SelType > &selection, SelType maxElems, LevelType level = (LevelType)0 );
 
     void getSelected( vector< bool > &selection, LevelType level = (LevelType)0 );
+    void getSelected( vector< bool > &selection, SelType first, SelType last, LevelType level = (LevelType)0 );
     void getSelected( vector< SelType > &selection, LevelType level = (LevelType)0 );
     void getSelected( vector< SelType > &selection, SelType first, SelType last, LevelType level = (LevelType)0 );
 
