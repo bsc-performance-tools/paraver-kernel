@@ -80,13 +80,13 @@ ParaverConfig::ParaverConfig()
   xmlFilters.xmlPath = homedir;
 
   xmlColor.timelineBackground = SemanticColor::BACKGROUND;
-  xmlColor.timelineAxis = (rgb){ 255, 255, 255 };
-  xmlColor.timelineLogicalCommunications = (rgb){ 255, 255, 0 };
-  xmlColor.timelinePhysicalCommunications = (rgb){ 255, 0, 0 };
-  xmlColor.topGradient = SemanticColor::getAboveOutlierColor();
-  xmlColor.lowGradient = SemanticColor::getBelowOutlierColor();
-  xmlColor.beginGradient = SemanticColor::getBeginGradientColor();
-  xmlColor.endGradient = SemanticColor::getEndGradientColor();
+  xmlColor.timelineAxis = SemanticColor::FOREGROUND;
+  xmlColor.timelineLogicalCommunications = SemanticColor::DEFAULT_LOGICAL_COMMUNICATIONS;
+  xmlColor.timelinePhysicalCommunications = SemanticColor::DEFAULT_PHYSICAL_COMMUNICATIONS;
+  xmlColor.topGradient = SemanticColor::DEFAULT_ABOVE_OUTLIER_COLOR;
+  xmlColor.lowGradient = SemanticColor::DEFAULT_BELOW_OUTLIER_COLOR;
+  xmlColor.beginGradient = SemanticColor::DEFAULT_BEGIN_GRADIENT_COLOR;
+  xmlColor.endGradient = SemanticColor::DEFAULT_END_GRADIENT_COLOR;
 
   loadMap();
 }

@@ -17,9 +17,17 @@ class SemanticColor
     };
 
     static rgb BACKGROUND;
+    static rgb FOREGROUND;
+    static rgb DEFAULT_LOGICAL_COMMUNICATIONS;
+    static rgb DEFAULT_PHYSICAL_COMMUNICATIONS;
+    static rgb DEFAULT_BEGIN_GRADIENT_COLOR;
+    static rgb DEFAULT_END_GRADIENT_COLOR;
+    static rgb DEFAULT_ABOVE_OUTLIER_COLOR;
+    static rgb DEFAULT_BELOW_OUTLIER_COLOR;
 
     static UINT32 getNumColors();
     static rgb* getCodeColors();
+
     static rgb getBeginGradientColor();
     static rgb getEndGradientColor();
     static rgb getAboveOutlierColor();

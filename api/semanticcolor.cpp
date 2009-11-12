@@ -2,8 +2,12 @@
 #include <iostream>
 #include "semanticcolor.h"
 #include "window.h"
+#include "paraverconfig.h"
 
 rgb SemanticColor::BACKGROUND = { 0, 0, 0 };
+rgb SemanticColor::FOREGROUND = { 255, 255, 255 };
+rgb SemanticColor::DEFAULT_LOGICAL_COMMUNICATIONS = { 255, 255, 0 };
+rgb SemanticColor::DEFAULT_PHYSICAL_COMMUNICATIONS = { 255, 0, 0 };
 
 UINT32 SemanticColor::numColors = 49;
 rgb SemanticColor::codeColor[ ] =
@@ -59,10 +63,17 @@ rgb SemanticColor::codeColor[ ] =
   {   0, 138, 119 }  // 48 - Not used
 };
 
-rgb SemanticColor::beginGradientColor = {   0, 255,   0 };
-rgb SemanticColor::endGradientColor   = {   0,   0, 255 };
-rgb SemanticColor::aboveOutlierColor  = { 255, 146,  24 };
-rgb SemanticColor::belowOutlierColor  = { 207, 207,  68 };
+// Program defaults
+rgb SemanticColor::DEFAULT_BEGIN_GRADIENT_COLOR = {   0, 255,   0 };
+rgb SemanticColor::DEFAULT_END_GRADIENT_COLOR   = {   0,   0, 255 };
+rgb SemanticColor::DEFAULT_ABOVE_OUTLIER_COLOR  = { 255, 146,  24 };
+rgb SemanticColor::DEFAULT_BELOW_OUTLIER_COLOR  = { 207, 207,  68 };
+
+// Preferences may change these
+rgb SemanticColor::beginGradientColor = SemanticColor::DEFAULT_BEGIN_GRADIENT_COLOR;
+rgb SemanticColor::endGradientColor   = SemanticColor::DEFAULT_END_GRADIENT_COLOR;
+rgb SemanticColor::aboveOutlierColor  = SemanticColor::DEFAULT_ABOVE_OUTLIER_COLOR;
+rgb SemanticColor::belowOutlierColor  = SemanticColor::DEFAULT_BELOW_OUTLIER_COLOR;
 
 UINT32 SemanticColor::getNumColors()
 {
@@ -76,22 +87,22 @@ rgb* SemanticColor::getCodeColors()
 
 rgb SemanticColor::getBeginGradientColor()
 {
-  return beginGradientColor;
+  return ParaverConfig::getInstance()->getColorsBeginGradient();
 }
 
 rgb SemanticColor::getEndGradientColor()
 {
-  return endGradientColor;
+  return ParaverConfig::getInstance()->getColorsEndGradient();
 }
 
 rgb SemanticColor::getAboveOutlierColor()
 {
-  return aboveOutlierColor;
+  return ParaverConfig::getInstance()->getColorsTopGradient();
 }
 
 rgb SemanticColor::getBelowOutlierColor()
 {
-  return belowOutlierColor;
+  return ParaverConfig::getInstance()->getColorsLowGradient();
 }
 
 // CODECOLOR METHODS
