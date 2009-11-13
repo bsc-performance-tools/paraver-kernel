@@ -62,7 +62,7 @@ class StateAsIs: public SemanticThread
       if ( fillStateGaps )
         return validateMaskFillGaps;
       else;
-        return validateMask;
+      return validateMask;
     }
     virtual const bool getMyInitFromBegin()
     {
@@ -132,7 +132,7 @@ class Useful: public SemanticThread
       if ( fillStateGaps )
         return validateMaskFillGaps;
       else;
-        return validateMask;
+      return validateMask;
     }
     virtual const bool getMyInitFromBegin()
     {
@@ -198,7 +198,7 @@ class StateSign: public SemanticThread
       if ( fillStateGaps )
         return validateMaskFillGaps;
       else;
-        return validateMask;
+      return validateMask;
     }
     virtual const bool getMyInitFromBegin()
     {
@@ -269,7 +269,7 @@ class GivenState: public SemanticThread
       if ( fillStateGaps )
         return validateMaskFillGaps;
       else;
-        return validateMask;
+      return validateMask;
     }
     virtual const bool getMyInitFromBegin()
     {
@@ -341,7 +341,7 @@ class InState: public SemanticThread
       if ( fillStateGaps )
         return validateMaskFillGaps;
       else;
-        return validateMask;
+      return validateMask;
     }
     virtual const bool getMyInitFromBegin()
     {
@@ -414,7 +414,7 @@ class NotInState: public SemanticThread
       if ( fillStateGaps )
         return validateMaskFillGaps;
       else;
-        return validateMask;
+      return validateMask;
     }
     virtual const bool getMyInitFromBegin()
     {
@@ -491,7 +491,7 @@ class StateRecordDuration: public SemanticThread
 //      if ( ParaverConfig::getInstance()->getFillStateGaps() )
         return validateMaskFillGaps;
       else;
-        return validateMask;
+      return validateMask;
     }
     virtual const bool getMyInitFromBegin()
     {
@@ -1317,9 +1317,9 @@ class InEventRange: public SemanticThread
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
-      if( whichParam == MINVALUE )
+      if ( whichParam == MINVALUE )
         return "Min value";
-      else if( whichParam == MAXVALUE )
+      else if ( whichParam == MAXVALUE )
         return "Max value";
       return "";
     }
@@ -1395,6 +1395,69 @@ class EventBytes: public SemanticThread
 
 };
 
+
+class EventSentBytes: public SemanticThread
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    EventSentBytes()
+    {
+      setDefaultParam();
+    }
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual void init( KWindow *whichWindow )
+    {}
+
+    virtual string getName()
+    {
+      return EventSentBytes::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new EventSentBytes( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return COMMSIZE_TYPE;
+    }
+
+  protected:
+    virtual const TRecordType getValidateMask()
+    {
+      return validateMask;
+    }
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
+  private:
+    static const TRecordType  validateMask = EVENT;
+    static const bool         initFromBegin = false;
+    static string name;
+};
 
 /**************************
 ** Comm functions (Thread)

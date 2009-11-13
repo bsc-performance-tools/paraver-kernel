@@ -125,6 +125,7 @@ void createSemantic()
   functions[5].push_back( new NotInEventValue() );
   functions[5].push_back( new InEventRange() );
   functions[5].push_back( new EventBytes() );
+  functions[5].push_back( new EventSentBytes() );
 
 
   /**************************

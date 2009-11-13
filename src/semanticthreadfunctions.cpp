@@ -123,6 +123,60 @@ TSemanticValue getTotalCommSize( MemoryTrace::iterator *itBegin,
   return bytes;
 }
 
+TSemanticValue getTotalSentCommSize( MemoryTrace::iterator *itBegin,
+                                     MemoryTrace::iterator *itEnd,
+                                     KSingleWindow *window )
+{
+  TSemanticValue bytes = 0;
+  MemoryTrace::iterator *nextComm;
+
+  if ( window->getLevel() >= SYSTEM )
+    nextComm = window->copyCPUIterator( itBegin );
+  else
+    nextComm = window->copyThreadIterator( itBegin );
+
+  /* First we watched if there are previous records of communications
+     in the same time of the "record", but only sends */
+  --( *nextComm );
+  while ( ( !nextComm->isNull() ) && ( nextComm->getTime() == itBegin->getTime() ) )
+  {
+    if ( window->getFilter()->getPhysical() && !window->getFilter()->getLogical() &&
+         ( nextComm->getType() & PHY &&
+           nextComm->getType() & COMM &&
+           nextComm->getType() & SEND ) )
+    {
+      if ( window->passFilter( nextComm ) )
+        bytes += window->getTrace()->getCommSize( nextComm->getCommIndex() );
+    }
+    else if ( window->getFilter()->getLogical() &&
+              ( nextComm->getType() & LOG &&
+                nextComm->getType() & COMM &&
+                nextComm->getType() & SEND ) )
+    {
+      if ( window->passFilter( nextComm ) )
+        bytes += window->getTrace()->getCommSize( nextComm->getCommIndex() );
+    }
+    --( *nextComm );
+  }
+
+  ( *nextComm ) = ( *itBegin );
+  ++( *nextComm );
+
+  /* Then go forward, until next event */
+  while ( !nextComm->isNull() && nextComm->getTime() < itEnd->getTime() )
+  {
+    if ( ( nextComm->getType() & COMM &&
+           nextComm->getType() & SEND ) &&
+         window->passFilter( nextComm ) )
+      bytes += window->getTrace()->getCommSize( nextComm->getCommIndex() );
+
+    ++( *nextComm );
+  }
+
+  delete nextComm;
+
+  return bytes;
+}
 
 /**************************
 ** State functions (Thread)
@@ -645,6 +699,36 @@ TSemanticValue EventBytes::execute( const SemanticInfo *info )
 }
 
 
+string EventSentBytes::name = "Event Sent Bytes";
+TSemanticValue EventSentBytes::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp = 0;
+
+  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+  MemoryTrace::iterator *nextEvent = NULL;
+
+  if ( myInfo->it->getType() == EMPTYREC )
+    return 0;
+
+  if ( myInfo->callingInterval->getLevel() == THREAD )
+    nextEvent = myInfo->callingInterval->getWindow()->copyThreadIterator( myInfo->it );
+  if ( myInfo->callingInterval->getLevel() == CPU )
+    nextEvent = myInfo->callingInterval->getWindow()->copyCPUIterator( myInfo->it );
+
+  getNextEvent( nextEvent, ( KSingleWindow * )
+                myInfo->callingInterval->getWindow() );
+
+  if ( nextEvent->isNull() )
+    return 0;
+
+  tmp = getTotalSentCommSize( myInfo->it, nextEvent,
+                              ( KSingleWindow * ) myInfo->callingInterval->getWindow() );
+
+  delete nextEvent;
+
+  return tmp;
+}
+
 /**************************
 ** Comm functions (Thread)
 ***************************/
@@ -808,7 +892,7 @@ TSemanticValue SendBytesInTransit::execute( const SemanticInfo *info )
     return 0;
 
   KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = (KTrace*)window->getTrace();
+  KTrace *trace = ( KTrace* )window->getTrace();
   TCommID id = myInfo->it->getCommIndex();
 
   size = myInfo->callingInterval->getValue();
@@ -861,7 +945,7 @@ TSemanticValue SendMessagesInTransit::execute( const SemanticInfo *info )
     return 0;
 
   KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = (KTrace*)window->getTrace();
+  KTrace *trace = ( KTrace* )window->getTrace();
   TCommID id = myInfo->it->getCommIndex();
 
   msgs = myInfo->callingInterval->getValue();
@@ -932,7 +1016,7 @@ TSemanticValue SendBandWidth::execute( const SemanticInfo *info )
     return 0;
 
   KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = (KTrace*)window->getTrace();
+  KTrace *trace = ( KTrace* )window->getTrace();
   TCommID id = myInfo->it->getCommIndex();
   INT64 tmp;
 
@@ -1014,7 +1098,7 @@ TSemanticValue RecvBytesInTransit::execute( const SemanticInfo *info )
     return 0;
 
   KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = (KTrace*)window->getTrace();
+  KTrace *trace = ( KTrace* )window->getTrace();
   TCommID id = myInfo->it->getCommIndex();
 
   size = myInfo->callingInterval->getValue();
@@ -1067,7 +1151,7 @@ TSemanticValue RecvMessagesInTransit::execute( const SemanticInfo *info )
     return 0;
 
   KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = (KTrace*)window->getTrace();
+  KTrace *trace = ( KTrace* )window->getTrace();
   TCommID id = myInfo->it->getCommIndex();
 
   msgs = myInfo->callingInterval->getValue();
@@ -1140,7 +1224,7 @@ TSemanticValue RecvBandWidth::execute( const SemanticInfo *info )
     return 0;
 
   KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = (KTrace*)window->getTrace();
+  KTrace *trace = ( KTrace* )window->getTrace();
   TCommID id = myInfo->it->getCommIndex();
   INT64 tmp;
 
@@ -1221,7 +1305,7 @@ TSemanticValue RecvNegativeMessages::execute( const SemanticInfo *info )
     return 0;
 
   KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = (KTrace*)window->getTrace();
+  KTrace *trace = ( KTrace* )window->getTrace();
   TCommID id = myInfo->it->getCommIndex();
 
   msgs = myInfo->callingInterval->getValue();
@@ -1274,7 +1358,7 @@ TSemanticValue RecvNegativeBytes::execute( const SemanticInfo *info )
     return 0;
 
   KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = (KTrace*)window->getTrace();
+  KTrace *trace = ( KTrace* )window->getTrace();
   TCommID id = myInfo->it->getCommIndex();
 
   size = myInfo->callingInterval->getValue();
@@ -1327,7 +1411,7 @@ TSemanticValue NumberReceives::execute( const SemanticInfo *info )
     return 0;
 
   KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = (KTrace*)window->getTrace();
+  KTrace *trace = ( KTrace* )window->getTrace();
   TCommID id = myInfo->it->getCommIndex();
 
   msgs = myInfo->callingInterval->getValue();
@@ -1363,7 +1447,7 @@ TSemanticValue NumberReceiveBytes::execute( const SemanticInfo *info )
     return 0;
 
   KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
-  KTrace *trace = (KTrace*)window->getTrace();
+  KTrace *trace = ( KTrace* )window->getTrace();
   TCommID id = myInfo->it->getCommIndex();
 
   bytes = myInfo->callingInterval->getValue();

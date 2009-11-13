@@ -390,7 +390,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress )
 
   ready = false;
   TraceStream *file = TraceStream::openFile( fileName );
-  if( !file->good() )
+  if ( !file->good() )
     throw ParaverKernelException( ParaverKernelException::cannotOpenTrace,
                                   fileName.c_str() );
 
@@ -529,6 +529,46 @@ const set<TEventType>& KTrace::getLoadedEvents() const
 bool KTrace::eventLoaded( TEventType whichType ) const
 {
   return events.find( whichType ) != events.end();
+}
+
+bool KTrace::findLastEventValue( TThreadOrder whichThread,
+                                 TRecordTime whichTime,
+                                 TEventType whichEvent,
+                                 TEventValue& returnValue ) const
+{
+  bool result = false;
+  vector<MemoryTrace::iterator *> listIter;
+  MemoryTrace::iterator *it;
+
+  if ( !eventLoaded( whichEvent ) )
+    return false;
+
+  MemoryTrace::iterator *itBegin = threadBegin( whichThread );
+
+  listIter.insert( listIter.begin(), totalThreads(), NULL );
+  getRecordByTimeThread( listIter, whichTime );
+  it = listIter[ whichThread ];
+
+  while ( it->getTime() > whichTime )
+    --( *it );
+
+  while ( *it != *itBegin )
+  {
+    if ( ( it->getType() & EVENT ) && ( it->getEventType() == whichEvent ) )
+    {
+      returnValue = it->getEventValue();
+      result = true;
+      break;
+    }
+    --( *it );
+  }
+
+  for ( vector<MemoryTrace::iterator *>::iterator itErase = listIter.begin();
+        itErase != listIter.end(); ++itErase )
+    delete *itErase;
+  delete itBegin;
+
+  return result;
 }
 
 bool KTrace::getFillStateGaps() const
