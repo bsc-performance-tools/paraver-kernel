@@ -34,6 +34,10 @@ class LabelConstructor
                               TEventType whichType,
                               TEventValue whichValue,
                               bool text );
+
+    static string eventValueLabel( Window *whichWindow,
+                                   TEventType whichType,
+                                   TEventValue whichValue );
 };
 
 #endif // LABELCONSTRUCTOR_H_INCLUDED

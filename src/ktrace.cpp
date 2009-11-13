@@ -554,7 +554,8 @@ bool KTrace::findLastEventValue( TThreadOrder whichThread,
 
   while ( *it != *itBegin )
   {
-    if ( ( it->getType() & EVENT ) && ( it->getEventType() == whichEvent ) )
+    if ( ( it->getType() & EVENT ) && ( it->getEventType() == whichEvent )
+         && ( it->getEventValue() != 0 ) )
     {
       returnValue = it->getEventValue();
       result = true;

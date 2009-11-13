@@ -371,3 +371,15 @@ string LabelConstructor::eventLabel( Window *whichWindow,
 
   return label.str();
 }
+
+string LabelConstructor::eventValueLabel( Window *whichWindow,
+                                          TEventType whichType,
+                                          TEventValue whichValue )
+{
+  string tmpstr;
+
+  if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( whichType, whichValue, tmpstr ) )
+    return "";
+
+  return tmpstr;
+}
