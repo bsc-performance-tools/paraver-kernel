@@ -533,17 +533,20 @@ bool KTrace::eventLoaded( TEventType whichType ) const
 
 bool KTrace::findLastEventValue( TThreadOrder whichThread,
                                  TRecordTime whichTime,
-                                 TEventType whichEvent,
+                                 const vector<TEventType>& whichEvent,
+                                 TEventType& returnType,
                                  TEventValue& returnValue ) const
 {
   bool result = false;
   vector<MemoryTrace::iterator *> listIter;
   MemoryTrace::iterator *it;
 
-  if ( !eventLoaded( whichEvent ) )
-    return false;
-
-  MemoryTrace::iterator *itBegin = threadBegin( whichThread );
+  for( vector<TEventType>::const_iterator itEvt = whichEvent.begin();
+       itEvt != whichEvent.end(); ++itEvt )
+  {
+    if ( !eventLoaded( *itEvt ) )
+      return false;
+  }
 
   listIter.insert( listIter.begin(), totalThreads(), NULL );
   getRecordByTimeThread( listIter, whichTime );
@@ -552,14 +555,19 @@ bool KTrace::findLastEventValue( TThreadOrder whichThread,
   while ( it->getTime() > whichTime )
     --( *it );
 
-  while ( *it != *itBegin )
+  while ( !it->isNull() && !result )
   {
-    if ( ( it->getType() & EVENT ) && ( it->getEventType() == whichEvent )
-         && ( it->getEventValue() != 0 ) )
+    for( vector<TEventType>::const_iterator itEvt = whichEvent.begin();
+         itEvt != whichEvent.end(); ++itEvt )
     {
-      returnValue = it->getEventValue();
-      result = true;
-      break;
+      if ( ( it->getType() & EVENT ) && ( it->getEventType() == *itEvt )
+           && ( it->getEventValue() != 0 ) )
+      {
+        returnType = it->getEventType();
+        returnValue = it->getEventValue();
+        result = true;
+        break;
+      }
     }
     --( *it );
   }
@@ -567,7 +575,6 @@ bool KTrace::findLastEventValue( TThreadOrder whichThread,
   for ( vector<MemoryTrace::iterator *>::iterator itErase = listIter.begin();
         itErase != listIter.end(); ++itErase )
     delete *itErase;
-  delete itBegin;
 
   return result;
 }

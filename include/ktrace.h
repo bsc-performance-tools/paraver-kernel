@@ -131,7 +131,8 @@ class KTrace: public Trace
 
     bool findLastEventValue( TThreadOrder whichThread,
                              TRecordTime whichTime,
-                             TEventType whichEvent,
+                             const vector<TEventType>& whichEvent,
+                             TEventType& returnType,
                              TEventValue& returnValue ) const;
 
     virtual bool getFillStateGaps() const;

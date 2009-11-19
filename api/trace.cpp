@@ -421,10 +421,11 @@ const set<TEventType>& TraceProxy::getLoadedEvents() const
 
 bool TraceProxy::findLastEventValue( TThreadOrder whichThread,
                                      TRecordTime whichTime,
-                                     TEventType whichEvent,
+                                     const vector<TEventType>& whichEvent,
+                                     TEventType& returnType,
                                      TEventValue& returnValue ) const
 {
-  return myTrace->findLastEventValue( whichThread, whichTime, whichEvent, returnValue );
+  return myTrace->findLastEventValue( whichThread, whichTime, whichEvent, returnType, returnValue );
 }
 
 bool TraceProxy::getFillStateGaps() const

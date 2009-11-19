@@ -38,7 +38,7 @@ string LocalKernel::getPCFFileLocation( const string& traceFile ) const
 {
   string pcfFile;
 
-  if ( traceFile.substr( 0, traceFile.length() - 6 ) == "prv.gz" )
+  if ( traceFile.substr( traceFile.length() - 6 ) == "prv.gz" )
     pcfFile = traceFile.substr( 0, traceFile.length() - 6 );
   else
     pcfFile = traceFile.substr( 0, traceFile.length() - 3 );
