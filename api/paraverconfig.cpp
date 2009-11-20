@@ -48,7 +48,7 @@ ParaverConfig::ParaverConfig()
   xmlTimeline.drawmodeTime = DRAW_MAXIMUM;
   xmlTimeline.drawmodeObjects = DRAW_MAXIMUM;
   xmlTimeline.gradientFunction = GradientColor::LINEAR;
-  xmlTimeline.pixelSize = 1;
+  xmlTimeline.pixelSize = 0;
   xmlTimeline.whatWhereSemantic = true;
   xmlTimeline.whatWhereEvents = true;
   xmlTimeline.whatWhereCommunications = true;

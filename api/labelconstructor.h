@@ -25,10 +25,10 @@ class LabelConstructor
 
     static string histoTotalLabel( THistoTotals whichTotal );
 
-    static string timeLabel( TTime value, TTimeUnit unit );
+    static string timeLabel( TTime value, TTimeUnit unit, UINT32 precision );
 
     static string semanticLabel( const Window * whichWindow, TSemanticValue value,
-                                 bool text );
+                                 bool text, UINT32 precision );
 
     static string eventLabel( Window *whichWindow,
                               TEventType whichType,
@@ -38,6 +38,18 @@ class LabelConstructor
     static string eventValueLabel( Window *whichWindow,
                                    TEventType whichType,
                                    TEventValue whichValue );
+
+    enum TGroupID
+    {
+      COLOR = 0,
+      GRADIENT_FUNCTION,
+      DRAWMODE,
+      PIXEL_SIZE,
+      IMAGE_FORMAT,
+      TEXT_FORMAT
+    };
+
+    static void getGUIGroupLabels( const TGroupID group, vector< string > &labels );
 };
 
 #endif // LABELCONSTRUCTOR_H_INCLUDED

@@ -7,6 +7,7 @@
 #include "window.h"
 #include "recordlist.h"
 #include "loadedwindows.h"
+#include "paraverconfig.h"
 
 Window *Window::create( KernelConnection *whichKernel, Trace *whichTrace )
 {
@@ -88,18 +89,23 @@ void WindowProxy::init()
 
   myCodeColor = myTrace->getCodeColor();
 //  myGradientColor = myTrace->getGradientColor();
-  codeColor = true;
-
-  drawModeObject = DRAW_MAXIMUM;
-  drawModeTime = DRAW_MAXIMUM;
+  codeColor = ParaverConfig::getInstance()->getTimelineColor() == SemanticColor::COLOR;
+/*
+  myGradientColor.allowOutOfScale( ParaverConfig::getInstance()->getTimelineColor() == SemanticColor::NOT_NULL_GRADIENT );
+  bool outliers = ( ParaverConfig::getInstance()->getTimelineColor() == SemanticColor::GRADIENT ||
+                    ParaverConfig::getInstance()->getTimelineColor() == SemanticColor::NOT_NULL_GRADIENT );
+  myGradientColor.allowOutliers( !codeColor );
+*/
+  drawModeObject = ParaverConfig::getInstance()->getTimelineDrawmodeObjects();
+  drawModeTime = ParaverConfig::getInstance()->getTimelineDrawmodeTime();
 
   showWindow = true;
   raise = false;
   changed = false;
   redraw = false;
-  commLines = Window::getDrawCommLines();
-  flags = Window::getDrawFlags();
-  functionLineColor = Window::getDrawFunctionLineColor();
+  commLines = ParaverConfig::getInstance()->getTimelineViewCommunicationsLines();
+  flags = ParaverConfig::getInstance()->getTimelineViewEventsLines();
+  functionLineColor = ParaverConfig::getInstance()->getTimelineViewFunctionAsColor();
 
   child = NULL;
   usedByHistogram = false;

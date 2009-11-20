@@ -153,15 +153,25 @@ rgb CodeColor::calcColor( TSemanticValue whichValue,
 // GRADIENTCOLOR METHODS
 GradientColor::GradientColor( )
 {
-  drawOutlier = true;
-  drawOutOfScale = true;
+/*
+  myGradientColor.allowOutOfScale( ParaverConfig::getInstance()->getTimelineColor() == SemanticColor::NOT_NULL_GRADIENT );
+  myGradientColor.allowOutliers( !codeColor );
+*/
+  bool outOfScale = ParaverConfig::getInstance()->getTimelineColor() == SemanticColor::NOT_NULL_GRADIENT;
+  bool outliers = ( ParaverConfig::getInstance()->getTimelineColor() == SemanticColor::GRADIENT ||
+                    outOfScale );
+
+  // drawOutlier = true;
+  drawOutlier = outliers;
+  // drawOutOfScale = true;
+  drawOutOfScale = outOfScale;
 
   beginGradientColor = SemanticColor::getBeginGradientColor();
   endGradientColor = SemanticColor::getEndGradientColor();
   aboveOutlierColor = SemanticColor::getAboveOutlierColor();
   belowOutlierColor = SemanticColor::getBelowOutlierColor();
 
-  function = LINEAR;
+  function = ParaverConfig::getInstance()->getTimelineGradientFunction();
   numSteps = 10;
 
   recalcSteps();

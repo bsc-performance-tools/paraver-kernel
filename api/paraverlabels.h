@@ -185,4 +185,29 @@ static const string LABEL_TIMEUNIT[ DAY + 1 ] =
 // New cfg label definitions
 #define CFG_TAG_WNDW_END_TIME_RELATIVE "window_end_time_relative"
 
+// GUI Group of Labels
+#define GUI_COLORS_CODE_COLOR             "Code Color"
+#define GUI_COLORS_GRADIENT_COLOR         "Gradient Color"
+#define GUI_COLORS_NOT_NULL_GRADIENT      "Not Null Gradient"
+#define GUI_GRADIENT_FUNCTION_LINEAR      "Linear"
+#define GUI_GRADIENT_FUNCTION_STEPS       "Steps"
+#define GUI_GRADIENT_FUNCTION_LOGARITHMIC "Logarithmic"
+#define GUI_GRADIENT_FUNCTION_EXPONENTIAL "Exponential"
+#define GUI_DRAWMODE_LAST                 "Last"
+#define GUI_DRAWMODE_MAXIMUM              "Maximum"
+#define GUI_DRAWMODE_MINIMUM_NOT_ZERO     "Minimum not zero"
+#define GUI_DRAWMODE_RANDOM               "Random"
+#define GUI_DRAWMODE_RANDOM_NOT_ZERO      "Random not zero"
+#define GUI_DRAWMODE_AVERAGE              "Average"
+#define GUI_PIXEL_SIZE_X1                 "x1"
+#define GUI_PIXEL_SIZE_X2                 "x2"
+#define GUI_PIXEL_SIZE_X4                 "x4"
+#define GUI_PIXEL_SIZE_X8                 "x8"
+#define GUI_IMAGE_FORMAT_BMP              "BMP"
+#define GUI_IMAGE_FORMAT_JPEG             "JPEG"
+#define GUI_IMAGE_FORMAT_PNG              "PNG"
+#define GUI_IMAGE_FORMAT_XPM              "XPM"
+#define GUI_TEXT_FORMAT_CSV               "CSV"
+#define GUI_TEXT_FORMAT_PLAIN             "Plain"
+
 #endif // PARAVERLABELS_H_INCLUDED
