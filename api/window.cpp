@@ -90,12 +90,7 @@ void WindowProxy::init()
   myCodeColor = myTrace->getCodeColor();
 //  myGradientColor = myTrace->getGradientColor();
   codeColor = ParaverConfig::getInstance()->getTimelineColor() == SemanticColor::COLOR;
-/*
-  myGradientColor.allowOutOfScale( ParaverConfig::getInstance()->getTimelineColor() == SemanticColor::NOT_NULL_GRADIENT );
-  bool outliers = ( ParaverConfig::getInstance()->getTimelineColor() == SemanticColor::GRADIENT ||
-                    ParaverConfig::getInstance()->getTimelineColor() == SemanticColor::NOT_NULL_GRADIENT );
-  myGradientColor.allowOutliers( !codeColor );
-*/
+
   drawModeObject = ParaverConfig::getInstance()->getTimelineDrawmodeObjects();
   drawModeTime = ParaverConfig::getInstance()->getTimelineDrawmodeTime();
 
