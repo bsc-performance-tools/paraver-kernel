@@ -1,17 +1,18 @@
 
-pkglib_LTLIBRARIES = libcfg.la libapi.la
-libcfg_la_SOURCES = \
-                    cfg.cpp
+pkglib_LTLIBRARIES = libapi.la
 
 libapi_la_SOURCES = \
+                    cfg.cpp \
                     drawmode.cpp \
                     eventlabels.cpp \
                     filter.cpp \
                     histogram.cpp \
                     histogramtotals.cpp \
                     labelconstructor.cpp \
+                    loadedwindows.cpp \
                     localkernel.cpp \
                     paraverconfig.cpp \
+                    previousfiles.cpp \
                     progresscontroller.cpp \
                     recordlist.cpp \
                     rowlabels.cpp \
@@ -19,7 +20,7 @@ libapi_la_SOURCES = \
                     statelabels.cpp \
                     trace.cpp \
                     window.cpp \
-                    ../../common-files/LibException.cpp \
+                    ../../common-files/pcfparser/LibException.cpp \
                     ../../common-files/pcfparser/ParaverEventType.cpp \
                     ../../common-files/pcfparser/ParaverEventValue.cpp \
                     ../../common-files/pcfparser/ParaverGradientColor.cpp \

@@ -55,13 +55,14 @@ class StateAsIs: public SemanticThread
       return STATE_TYPE;
     }
 
+    virtual bool validRecord( MemoryTrace::iterator *record );
+
   protected:
     virtual const TRecordType getValidateMask()
     {
 //      if ( ParaverConfig::getInstance()->getFillStateGaps() )
       if ( fillStateGaps )
         return validateMaskFillGaps;
-      else;
       return validateMask;
     }
     virtual const bool getMyInitFromBegin()
@@ -86,6 +87,7 @@ class StateAsIs: public SemanticThread
     static const bool         initFromBegin = false;
     static string name;
     bool fillStateGaps;
+    KSingleWindow *myWindow;
 };
 
 
@@ -125,13 +127,14 @@ class Useful: public SemanticThread
       return STATE_TYPE;
     }
 
+    virtual bool validRecord( MemoryTrace::iterator *record );
+
   protected:
     virtual const TRecordType getValidateMask()
     {
 //      if ( ParaverConfig::getInstance()->getFillStateGaps() )
       if ( fillStateGaps )
         return validateMaskFillGaps;
-      else;
       return validateMask;
     }
     virtual const bool getMyInitFromBegin()
@@ -156,6 +159,7 @@ class Useful: public SemanticThread
     static const bool         initFromBegin = false;
     static string name;
     bool fillStateGaps;
+    KSingleWindow *myWindow;
 };
 
 
@@ -190,6 +194,7 @@ class StateSign: public SemanticThread
       return new StateSign( *this );
     }
 
+    virtual bool validRecord( MemoryTrace::iterator *record );
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -197,7 +202,6 @@ class StateSign: public SemanticThread
 //      if ( ParaverConfig::getInstance()->getFillStateGaps() )
       if ( fillStateGaps )
         return validateMaskFillGaps;
-      else;
       return validateMask;
     }
     virtual const bool getMyInitFromBegin()
@@ -222,6 +226,7 @@ class StateSign: public SemanticThread
     static const bool         initFromBegin = false;
     static string name;
     bool fillStateGaps;
+    KSingleWindow *myWindow;
 };
 
 
@@ -262,13 +267,14 @@ class GivenState: public SemanticThread
       return STATE_TYPE;
     }
 
+    virtual bool validRecord( MemoryTrace::iterator *record );
+
   protected:
     virtual const TRecordType getValidateMask()
     {
 //      if ( ParaverConfig::getInstance()->getFillStateGaps() )
       if ( fillStateGaps )
         return validateMaskFillGaps;
-      else;
       return validateMask;
     }
     virtual const bool getMyInitFromBegin()
@@ -298,6 +304,7 @@ class GivenState: public SemanticThread
     static const bool         initFromBegin = false;
     static string name;
     bool fillStateGaps;
+    KSingleWindow *myWindow;
 };
 
 
@@ -333,6 +340,7 @@ class InState: public SemanticThread
       return new InState( *this );
     }
 
+    virtual bool validRecord( MemoryTrace::iterator *record );
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -340,7 +348,6 @@ class InState: public SemanticThread
 //      if ( ParaverConfig::getInstance()->getFillStateGaps() )
       if ( fillStateGaps )
         return validateMaskFillGaps;
-      else;
       return validateMask;
     }
     virtual const bool getMyInitFromBegin()
@@ -370,7 +377,7 @@ class InState: public SemanticThread
     static const bool         initFromBegin = false;
     static string name;
     bool fillStateGaps;
-
+    KSingleWindow *myWindow;
 };
 
 
@@ -406,6 +413,7 @@ class NotInState: public SemanticThread
       return new NotInState( *this );
     }
 
+    virtual bool validRecord( MemoryTrace::iterator *record );
 
   protected:
     virtual const TRecordType getValidateMask()
@@ -413,7 +421,6 @@ class NotInState: public SemanticThread
 //      if ( ParaverConfig::getInstance()->getFillStateGaps() )
       if ( fillStateGaps )
         return validateMaskFillGaps;
-      else;
       return validateMask;
     }
     virtual const bool getMyInitFromBegin()
@@ -443,7 +450,7 @@ class NotInState: public SemanticThread
     static const bool         initFromBegin = false;
     static string name;
     bool fillStateGaps;
-
+    KSingleWindow *myWindow;
 };
 
 
@@ -484,13 +491,14 @@ class StateRecordDuration: public SemanticThread
       return TIME_TYPE;
     }
 
+    virtual bool validRecord( MemoryTrace::iterator *record );
+
   protected:
     virtual const TRecordType getValidateMask()
     {
       if ( fillStateGaps )
 //      if ( ParaverConfig::getInstance()->getFillStateGaps() )
         return validateMaskFillGaps;
-      else;
       return validateMask;
     }
     virtual const bool getMyInitFromBegin()
@@ -520,7 +528,7 @@ class StateRecordDuration: public SemanticThread
     static const bool         initFromBegin = false;
     static string name;
     bool fillStateGaps;
-
+    KSingleWindow *myWindow;
 };
 
 

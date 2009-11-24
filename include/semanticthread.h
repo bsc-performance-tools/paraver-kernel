@@ -11,7 +11,7 @@ class SemanticThread : public SemanticFunction
     ~SemanticThread()
     {}
 
-    inline bool validRecord( const MemoryTrace::iterator *record )
+    virtual bool validRecord( MemoryTrace::iterator *record )
     {
       TRecordType type = record->getType();
       TRecordType mask = getValidateMask();

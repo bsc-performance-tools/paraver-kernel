@@ -1,6 +1,33 @@
 #include "semanticthreadfunctions.h"
 #include "kwindow.h"
 
+bool stateOnSameTime( MemoryTrace::iterator *it, KSingleWindow *window )
+{
+  bool finish = false;
+  TRecordTime time = it->getTime();
+  MemoryTrace::iterator *nextState = NULL;
+
+  if ( window->getLevel() >= WORKLOAD && window->getLevel() <= THREAD )
+    nextState = window->copyThreadIterator( it );
+  else
+    nextState = window->copyCPUIterator( it );
+
+  ++( *nextState );
+  while ( !finish && nextState->getTime() == time )
+  {
+    if ( nextState->isNull() )
+      break;
+    else if ( nextState->getType() & STATE && nextState->getType() & BEGIN )
+      finish = true;
+
+    ++( *nextState );
+  }
+
+  delete nextState;
+
+  return finish;
+}
+
 void getNextEvent( MemoryTrace::iterator *it, KSingleWindow *window )
 {
   bool finish = false;
@@ -197,10 +224,21 @@ TSemanticValue StateAsIs::execute( const SemanticInfo *info )
 
 void StateAsIs::init( KWindow *whichWindow )
 {
-  fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
+  myWindow = ( KSingleWindow * ) whichWindow;
+  fillStateGaps = myWindow->getTrace()->getFillStateGaps();
 //  cout << fillStateGaps << endl;
 }
 
+bool StateAsIs::validRecord( MemoryTrace::iterator *record )
+{
+  if ( !SemanticThread::validRecord( record ) )
+    return false;
+
+  if ( fillStateGaps && record->getType() & STATE && record->getType() & END )
+    return !stateOnSameTime( record, myWindow );
+
+  return true;
+}
 
 string Useful::name = "Useful";
 TSemanticValue Useful::execute( const SemanticInfo *info )
@@ -220,6 +258,17 @@ void Useful::init( KWindow *whichWindow )
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
 }
 
+bool Useful::validRecord( MemoryTrace::iterator *record )
+{
+  if ( !SemanticThread::validRecord( record ) )
+    return false;
+
+  if ( fillStateGaps && record->getType() & STATE && record->getType() & END )
+    return !stateOnSameTime( record, myWindow );
+
+  return true;
+}
+
 
 string StateSign::name = "State Sign";
 TSemanticValue StateSign::execute( const SemanticInfo *info )
@@ -237,6 +286,17 @@ TSemanticValue StateSign::execute( const SemanticInfo *info )
 void StateSign::init( KWindow *whichWindow )
 {
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
+}
+
+bool StateSign::validRecord( MemoryTrace::iterator *record )
+{
+  if ( !SemanticThread::validRecord( record ) )
+    return false;
+
+  if ( fillStateGaps && record->getType() & STATE && record->getType() & END )
+    return !stateOnSameTime( record, myWindow );
+
+  return true;
 }
 
 
@@ -271,6 +331,18 @@ void GivenState::init( KWindow *whichWindow )
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
 }
 
+bool GivenState::validRecord( MemoryTrace::iterator *record )
+{
+  if ( !SemanticThread::validRecord( record ) )
+    return false;
+
+  if ( fillStateGaps && record->getType() & STATE && record->getType() & END )
+    return !stateOnSameTime( record, myWindow );
+
+  return true;
+}
+
+
 string InState::name = "In State";
 TSemanticValue InState::execute( const SemanticInfo *info )
 {
@@ -300,6 +372,17 @@ TSemanticValue InState::execute( const SemanticInfo *info )
 void InState::init( KWindow *whichWindow )
 {
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
+}
+
+bool InState::validRecord( MemoryTrace::iterator *record )
+{
+  if ( !SemanticThread::validRecord( record ) )
+    return false;
+
+  if ( fillStateGaps && record->getType() & STATE && record->getType() & END )
+    return !stateOnSameTime( record, myWindow );
+
+  return true;
 }
 
 
@@ -334,6 +417,18 @@ void NotInState::init( KWindow *whichWindow )
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
 }
 
+bool NotInState::validRecord( MemoryTrace::iterator *record )
+{
+  if ( !SemanticThread::validRecord( record ) )
+    return false;
+
+  if ( fillStateGaps && record->getType() & STATE && record->getType() & END )
+    return !stateOnSameTime( record, myWindow );
+
+  return true;
+}
+
+
 string StateRecordDuration::name = "State Record Dur.";
 TSemanticValue StateRecordDuration::execute( const SemanticInfo *info )
 {
@@ -365,6 +460,17 @@ TSemanticValue StateRecordDuration::execute( const SemanticInfo *info )
 void StateRecordDuration::init( KWindow *whichWindow )
 {
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
+}
+
+bool StateRecordDuration::validRecord( MemoryTrace::iterator *record )
+{
+  if ( !SemanticThread::validRecord( record ) )
+    return false;
+
+  if ( fillStateGaps && record->getType() & STATE && record->getType() & END )
+    return !stateOnSameTime( record, myWindow );
+
+  return true;
 }
 
 /**************************
