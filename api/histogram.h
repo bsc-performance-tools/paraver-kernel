@@ -161,17 +161,17 @@ class Histogram
     virtual void setHorizontal( bool newValue ) {}
     virtual bool getHorizontal() const
     {
-      return true;
+      return ParaverConfig::getInstance()->getHistogramViewHorizontal();
     }
     virtual void setHideColumns( bool newValue ) {}
     virtual bool getHideColumns() const
     {
-      return false;
+      return !ParaverConfig::getInstance()->getHistogramViewEmptyColumns();
     }
     virtual void setScientificNotation( bool newValue ) {}
     virtual bool getScientificNotation() const
     {
-      return false;
+      return ParaverConfig::getInstance()->getHistogramScientificNotation();
     }
     virtual void setNumDecimals( UINT16 newValue ) {}
     virtual UINT16 getNumDecimals() const
@@ -186,7 +186,7 @@ class Histogram
     virtual void setShowUnits( bool newValue ) {}
     virtual bool getShowUnits() const
     {
-      return false;
+      return ParaverConfig::getInstance()->getHistogramShowUnits();
     }
     virtual void setSortColumns( bool newValue ) {}
     virtual bool getSortColumns() const
@@ -231,7 +231,7 @@ class Histogram
     virtual void setShowColor( bool newValue ) {}
     virtual bool getShowColor() const
     {
-      return true;
+      return ParaverConfig::getInstance()->getHistogramViewGradientColors();
     }
     virtual rgb calcGradientColor( TSemanticValue whichValue ) const
     {
@@ -247,7 +247,7 @@ class Histogram
     virtual void setZoom( bool newValue ) {}
     virtual bool getZoom() const
     {
-      return false;
+      return ParaverConfig::getInstance()->getHistogramViewZoom();
     }
     virtual void setPlaneMinValue( double whichMin ) {}
     virtual double getPlaneMinValue() const
@@ -308,13 +308,13 @@ class Histogram
     {}
     virtual DrawModeMethod getDrawModeObjects() const
     {
-      return DRAW_MAXIMUM;
+      return ParaverConfig::getInstance()->getHistogramDrawmodeObjects();
     }
     virtual void setDrawModeObjects( DrawModeMethod whichMethod )
     {}
     virtual DrawModeMethod getDrawModeColumns() const
     {
-      return DRAW_MAXIMUM;
+      return ParaverConfig::getInstance()->getHistogramDrawmodeSemantic();
     }
     virtual void setDrawModeColumns( DrawModeMethod whichMethod )
     {}
