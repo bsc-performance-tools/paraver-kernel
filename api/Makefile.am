@@ -19,6 +19,7 @@ libapi_la_SOURCES = \
                     statelabels.cpp \
                     trace.cpp \
                     window.cpp \
+                    ../../common-files/LibException.cpp \
                     ../../common-files/pcfparser/ParaverEventType.cpp \
                     ../../common-files/pcfparser/ParaverEventValue.cpp \
                     ../../common-files/pcfparser/ParaverGradientColor.cpp \
