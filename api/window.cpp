@@ -529,7 +529,7 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create )
   }
   myWindow->init( initialTime, create );
   yScaleComputed = true;
-//  computedMaxY = computedMinY = getValue( 0 );
+  computedMaxY = computedMinY = 0.0;
 
   for ( int i = 0; i < myWindow->getWindowLevelObjects(); i++ )
   {
