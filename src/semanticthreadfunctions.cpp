@@ -13,11 +13,9 @@ bool stateOnSameTime( MemoryTrace::iterator *it, KSingleWindow *window )
     nextState = window->copyCPUIterator( it );
 
   ++( *nextState );
-  while ( !finish && nextState->getTime() == time )
+  while ( !finish && !nextState->isNull() && nextState->getTime() == time )
   {
-    if ( nextState->isNull() )
-      break;
-    else if ( nextState->getType() & STATE && nextState->getType() & BEGIN )
+    if ( nextState->getType() & STATE && nextState->getType() & BEGIN )
       finish = true;
 
     ++( *nextState );
