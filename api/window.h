@@ -311,16 +311,16 @@ class Window
     {}
     virtual void setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selection )
     {}
-    virtual void getSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
+    virtual void getSelectedRows( TWindowLevel onLevel, vector< bool > &selected, bool lookUpLevels = false )
     {}
     virtual void getSelectedRows( TWindowLevel onLevel, vector< bool > &selected,
-                                  TObjectOrder first, TObjectOrder last )
+                                  TObjectOrder first, TObjectOrder last, bool lookUpLevels = false )
     {}
-    virtual void getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selection )
+    virtual void getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selection, bool lookUpLevels = false )
     {}
     virtual void getSelectedRows( TWindowLevel onLevel,
                                   vector< TObjectOrder > &selection,
-                                  TObjectOrder first, TObjectOrder last )
+                                  TObjectOrder first, TObjectOrder last, bool lookUpLevels = false )
     {}
 
     virtual void getGroupLabels( UINT32 whichGroup, vector<string>& onVector ) const = 0;
