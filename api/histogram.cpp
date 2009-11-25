@@ -59,6 +59,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   commSelectedPlane = 0;
   drawModeObjects = Histogram::getDrawModeObjects();
   drawModeColumns = Histogram::getDrawModeColumns();
+  myGradientColor.setGradientFunction( ParaverConfig::getInstance()->getHistogramGradientFunction() );
 
   setCalculateAll( Histogram::getCalculateAll() );
   currentStat = Histogram::getCurrentStat();

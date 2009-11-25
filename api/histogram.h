@@ -216,17 +216,17 @@ class Histogram
     virtual void setCompute2DScale( bool newValue ) {}
     virtual bool getCompute2DScale() const
     {
-      return true;
+      return ParaverConfig::getInstance()->getHistogramAutofitControlScale();
     }
     virtual void setCompute3DScale( bool newValue ) {}
     virtual bool getCompute3DScale() const
     {
-      return true;
+      return ParaverConfig::getInstance()->getHistogramAutofitThirdDimensionScale();
     }
     virtual void setComputeGradient( bool newValue ) {}
     virtual bool getComputeGradient() const
     {
-      return true;
+      return ParaverConfig::getInstance()->getHistogramAutofitDataGradient();
     }
     virtual void setShowColor( bool newValue ) {}
     virtual bool getShowColor() const

@@ -88,8 +88,12 @@ void WindowProxy::init()
   minimumY = Window::getMinimumY();
 
   myCodeColor = myTrace->getCodeColor();
-//  myGradientColor = myTrace->getGradientColor();
+
   codeColor = ParaverConfig::getInstance()->getTimelineColor() == SemanticColor::COLOR;
+
+// The current pcf gradient colors are wrong. Next's been commented until it's fixed.
+//  myGradientColor = myTrace->getGradientColor();
+  myGradientColor.setGradientFunction( ParaverConfig::getInstance()->getTimelineGradientFunction() );
 
   drawModeObject = ParaverConfig::getInstance()->getTimelineDrawmodeObjects();
   drawModeTime = ParaverConfig::getInstance()->getTimelineDrawmodeTime();

@@ -163,7 +163,7 @@ GradientColor::GradientColor( )
   aboveOutlierColor  = SemanticColor::getAboveOutlierColor();
   belowOutlierColor  = SemanticColor::getBelowOutlierColor();
 
-  function = ParaverConfig::getInstance()->getTimelineGradientFunction();
+  function = GradientColor::STEPS;
   numSteps = 10;
 
   recalcSteps();
