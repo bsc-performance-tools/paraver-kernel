@@ -1,7 +1,7 @@
 
 pkglib_LTLIBRARIES = libparaver-api.la
 
-libapi_la_SOURCES = \
+libparaver_api_la_SOURCES = \
                     cfg.cpp \
                     drawmode.cpp \
                     eventlabels.cpp \
