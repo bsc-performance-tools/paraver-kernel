@@ -83,7 +83,7 @@
 					<Add directory="../common-files" />
 				</Compiler>
 				<Linker>
-					<Add library="libapi.a" />
+					<Add library="libparaver-api.a" />
 					<Add library="libparaver-kernel.a" />
 					<Add library="libz.a" />
 					<Add directory="./" />
