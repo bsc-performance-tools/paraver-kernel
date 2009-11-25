@@ -9,7 +9,7 @@ paramedir_SOURCES = \
 paramedir_LDADD = \
                   -lz \
                   -lboost_serialization-gcc43-mt \
-                  api/libapi.la \
+                  api/libparaver-api.la \
                   src/libparaver-kernel.la 
                     
 # Erases everything which should not be uploaded to CVS

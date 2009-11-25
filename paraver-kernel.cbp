@@ -54,7 +54,7 @@
 				</Linker>
 			</Target>
 			<Target title="api">
-				<Option output="libapi" prefix_auto="1" extension_auto="1" />
+				<Option output="libparaver-api" prefix_auto="1" extension_auto="1" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -71,22 +71,6 @@
 					<Add directory="./" />
 				</Linker>
 			</Target>
-			<Target title="cfg">
-				<Option output="libcfg" prefix_auto="1" extension_auto="1" />
-				<Option external_deps="libparaver-kernel.a;libapi.a;" />
-				<Option type="3" />
-				<Option compiler="gcc" />
-				<Option createDefFile="1" />
-				<Compiler>
-					<Add option="-g" />
-					<Add option="-fPIC" />
-					<Add directory="include" />
-					<Add directory="../common-files" />
-				</Compiler>
-				<Linker>
-					<Add directory="./" />
-				</Linker>
-			</Target>
 			<Target title="paramedir">
 				<Option output="paramedir" prefix_auto="1" extension_auto="1" />
 				<Option external_deps="libparaver-kernel.a;libcfg.a;libapi.a;" />
@@ -99,7 +83,6 @@
 					<Add directory="../common-files" />
 				</Compiler>
 				<Linker>
-					<Add library="libcfg.a" />
 					<Add library="libapi.a" />
 					<Add library="libparaver-kernel.a" />
 					<Add library="libz.a" />
@@ -108,7 +91,7 @@
 			</Target>
 		</Build>
 		<VirtualTargets>
-			<Add alias="paramedir_all_build" targets="Debug;api;cfg;paramedir;" />
+			<Add alias="paramedir_all_build" targets="Debug;api;paramedir;" />
 			<Add alias="test" targets="Debug;" />
 		</VirtualTargets>
 		<Compiler>
@@ -125,7 +108,6 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="../common-files/pcfparser/LibException.cpp">
@@ -192,7 +174,6 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="../common-files/vectorutils.h">
@@ -200,11 +181,11 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="api/cfg.cpp">
-			<Option target="cfg" />
+			<Option target="api" />
 		</Unit>
 		<Unit filename="api/cfg.h">
-			<Option target="cfg" />
 			<Option target="paramedir" />
+			<Option target="api" />
 		</Unit>
 		<Unit filename="api/drawmode.cpp">
 			<Option target="api" />
@@ -226,7 +207,6 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="api" />
-			<Option target="cfg" />
 		</Unit>
 		<Unit filename="api/histogram.cpp">
 			<Option target="api" />
@@ -338,35 +318,30 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/bplustreeblocks.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/bplustreeexception.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/bplustreerecordleaf.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/bplustreetypes.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/cell.h">
@@ -385,91 +360,78 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/functionmanagement.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/histogramexception.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/histogramstatistic.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/index.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/interval.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/intervalcompose.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/intervalcontrolderived.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/intervalcpu.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/intervalderived.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/intervalhigh.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/intervalnotthread.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/intervalthread.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/kfilter.h">
@@ -480,14 +442,12 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/khistogramtotals.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/kprogresscontroller.h">
@@ -498,28 +458,24 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/ktrace.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/kwindow.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/kwindowexception.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/matrix.h">
@@ -530,14 +486,12 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/memorytrace.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/plaintrace.h">
@@ -548,154 +502,132 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/processmodelappl.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/processmodeltask.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/processmodelthread.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/resourcemodel.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/resourcemodelcpu.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/resourcemodelnode.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/semanticcompose.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/semanticcomposefunctions.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/semanticcpu.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/semanticcpufunctions.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/semanticderived.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/semanticderivedfunctions.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/semanticexception.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/semanticfunction.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/semantichigh.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/semanticinfo.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/semanticmanagement.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/semanticnotthread.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/semanticnotthreadfunctions.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/semanticthread.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/semanticthreadfunctions.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/statistic_2d.h">
@@ -706,21 +638,18 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/tracebodyio.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/tracebodyio_v1.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/tracebodyio_v2.h">
@@ -731,14 +660,12 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/tracestream.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="cfg" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="src/bplustree.cpp">

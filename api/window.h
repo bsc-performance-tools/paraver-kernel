@@ -469,12 +469,12 @@ class WindowProxy: public Window
 
     virtual void setSelectedRows( TWindowLevel onLevel, vector< bool > &selected );
     virtual void setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected );
-    virtual void getSelectedRows( TWindowLevel onLevel, vector< bool > &selected );
+    virtual void getSelectedRows( TWindowLevel onLevel, vector< bool > &selected, bool lookUpLevels = false );
     virtual void getSelectedRows( TWindowLevel onLevel, vector< bool > &selected,
-                                  TObjectOrder first, TObjectOrder last );
-    virtual void getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected );
+                                  TObjectOrder first, TObjectOrder last, bool lookUpLevels = false );
+    virtual void getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected, bool lookUpLevels = false );
     virtual void getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected,
-                                  TObjectOrder first, TObjectOrder last );
+                                  TObjectOrder first, TObjectOrder last, bool lookUpLevels = false );
 //    virtual TObjectOrder getFirstSelectedRow();
 //    virtual TObjectOrder getLastSelectedRow();
     virtual void getGroupLabels( UINT32 whichGroup, vector<string>& onVector ) const;

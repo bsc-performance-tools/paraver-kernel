@@ -892,25 +892,25 @@ void WindowProxy::setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > 
   selectedRow.setSelected( selected, myTrace->getLevelObjects( onLevel ), onLevel );
 }
 
-void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
+void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selected, bool lookUpLevels )
 {
   selectedRow.getSelected( selected, onLevel );
 }
 
 void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selected,
-                                   TObjectOrder first, TObjectOrder last )
+                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels )
 {
   selectedRow.getSelected( selected, first, last, onLevel );
 }
 
-void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected )
+void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected, bool lookUpLevels )
 {
   selectedRow.getSelected( selected, onLevel );
 }
 
 void WindowProxy::getSelectedRows( TWindowLevel onLevel,
                                    vector< TObjectOrder > &selected,
-                                   TObjectOrder first, TObjectOrder last )
+                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels )
 {
   selectedRow.getSelected( selected, first, last, onLevel );
 }

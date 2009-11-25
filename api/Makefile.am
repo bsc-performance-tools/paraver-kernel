@@ -1,5 +1,5 @@
 
-pkglib_LTLIBRARIES = libapi.la
+pkglib_LTLIBRARIES = libparaver-api.la
 
 libapi_la_SOURCES = \
                     cfg.cpp \
