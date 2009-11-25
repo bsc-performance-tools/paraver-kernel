@@ -8,7 +8,6 @@ paramedir_SOURCES = \
                     api/paramedir.cpp
 paramedir_LDADD = \
                   -lz \
-                  -lboost_serialization-gcc43-mt \
                   api/libparaver-api.la \
                   src/libparaver-kernel.la 
                     

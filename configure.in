@@ -55,5 +55,6 @@ AC_CHECK_TYPES([int64_t, uint64_t, int8_t, uint8_t, int32_t, uint32_t, int16_t, 
 
 CFLAGS="$CFLAGS -Iinclude/ -Iapi/ -I../include/ -I../api/ -I../common-files/ -I../../common-files/ -I../../common-files/pcfparser -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
 CXXFLAGS="$CXXFLAGS -Iinclude/ -Iapi/ -I../include/ -I../api/ -I../common-files/ -I../../common-files/ -I../../common-files/pcfparser -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
+LDFLAGS="$LDFLAGS $BOOST_LDFLAGS $BOOST_SERIALIZATION_LIB"
 
 AC_OUTPUT([Makefile src/Makefile api/Makefile])
