@@ -32,6 +32,8 @@ AC_PROG_CXXCPP
 AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
+AX_BOOST_BASE(1.39)
+AX_BOOST_SERIALIZATION
 
 ######################################################################
 #    Checks for typedefs, structures and compiler characteristics    #
