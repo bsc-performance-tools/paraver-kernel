@@ -6,6 +6,7 @@ SUBDIRS = \
 bin_PROGRAMS = paramedir
 paramedir_SOURCES = \
                     api/paramedir.cpp
+
 paramedir_LDADD = \
                   -lz \
                   api/libparaver-api.la \
