@@ -1,9 +1,8 @@
 
 SUBDIRS = \
+          include \
           src \
           api
-
-DIST_SUBDIRS = include
 
 bin_PROGRAMS = paramedir
 paramedir_SOURCES = \

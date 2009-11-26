@@ -1,4 +1,4 @@
-noinst_include_HEADERS = \
+noinst_HEADERS = \
                           bplustreeblocks.h\
                           bplustreeexception.h\
                           bplustree.h\

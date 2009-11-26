@@ -42,7 +42,13 @@ libparaver_kernel_la_SOURCES = \
     traceheaderexception.cpp\
     tracestream.cpp
           
-
+noinst_HEADERS = \
+    cell.cpp \
+    column.cpp \
+    cube.cpp \
+    functionmanagement.cpp \
+    matrix.cpp \
+    statistic_2d.cpp
 
 # Erases everything which should not be uploaded to CVS
 mrproper: distclean
