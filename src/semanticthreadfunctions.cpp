@@ -224,7 +224,6 @@ void StateAsIs::init( KWindow *whichWindow )
 {
   myWindow = ( KSingleWindow * ) whichWindow;
   fillStateGaps = myWindow->getTrace()->getFillStateGaps();
-//  cout << fillStateGaps << endl;
 }
 
 bool StateAsIs::validRecord( MemoryTrace::iterator *record )
@@ -253,6 +252,7 @@ TSemanticValue Useful::execute( const SemanticInfo *info )
 
 void Useful::init( KWindow *whichWindow )
 {
+  myWindow = ( KSingleWindow * ) whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
 }
 
@@ -283,6 +283,7 @@ TSemanticValue StateSign::execute( const SemanticInfo *info )
 
 void StateSign::init( KWindow *whichWindow )
 {
+  myWindow = ( KSingleWindow * ) whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
 }
 
@@ -326,6 +327,7 @@ TSemanticValue GivenState::execute( const SemanticInfo *info )
 
 void GivenState::init( KWindow *whichWindow )
 {
+  myWindow = ( KSingleWindow * ) whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
 }
 
@@ -369,6 +371,7 @@ TSemanticValue InState::execute( const SemanticInfo *info )
 
 void InState::init( KWindow *whichWindow )
 {
+  myWindow = ( KSingleWindow * ) whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
 }
 
@@ -412,6 +415,7 @@ TSemanticValue NotInState::execute( const SemanticInfo *info )
 
 void NotInState::init( KWindow *whichWindow )
 {
+  myWindow = ( KSingleWindow * ) whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
 }
 
@@ -457,6 +461,7 @@ TSemanticValue StateRecordDuration::execute( const SemanticInfo *info )
 
 void StateRecordDuration::init( KWindow *whichWindow )
 {
+  myWindow = ( KSingleWindow * ) whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
 }
 
