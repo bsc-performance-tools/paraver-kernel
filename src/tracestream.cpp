@@ -47,7 +47,12 @@ void NotCompressed::seekend()
   file.seekg( 0, ios_base::end );
 }
 
-double NotCompressed::tellg()
+void NotCompressed::seekg( streampos pos )
+{
+  file.seekg( pos );
+}
+
+streampos NotCompressed::tellg()
 {
   return file.tellg();
 }
@@ -62,6 +67,10 @@ bool NotCompressed::good() const
   return file.good();
 }
 
+void NotCompressed::clear()
+{
+  file.clear();
+}
 
 Compressed::Compressed( const string& filename )
 {
@@ -99,7 +108,12 @@ void Compressed::seekend()
   gzseek( file, 0, SEEK_END );
 }
 
-double Compressed::tellg()
+void Compressed::seekg( streampos pos )
+{
+  gzseek( file, pos, SEEK_SET );
+}
+
+streampos Compressed::tellg()
 {
   return gztell( file );
 }
@@ -113,3 +127,6 @@ bool Compressed::good() const
 {
   return file != NULL;
 }
+
+void Compressed::clear()
+{}

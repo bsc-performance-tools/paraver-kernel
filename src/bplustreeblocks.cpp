@@ -4,16 +4,16 @@
 using namespace bplustree;
 
 const TRecordType BPlusTreeBlocks::commTypes[] =
-  {
-    COMM + LOG + SEND,
-    COMM + LOG + RECV,
-    COMM + PHY + SEND,
-    COMM + PHY + RECV,
-    RSEND + LOG,
-    RRECV + LOG,
-    RSEND + PHY,
-    RRECV + PHY
-  };
+{
+  COMM + LOG + SEND,
+  COMM + LOG + RECV,
+  COMM + PHY + SEND,
+  COMM + PHY + RECV,
+  RSEND + LOG,
+  RRECV + LOG,
+  RSEND + PHY,
+  RRECV + PHY
+};
 
 /****************************************
  * Record blocks management methods
@@ -38,6 +38,10 @@ void BPlusTreeBlocks::newRecord()
       currentRecord = 0;
     }
   }
+  currentBlock[currentRecord].next = NULL;
+  currentBlock[currentRecord].prev = NULL;
+  currentBlock[currentRecord].threadNext = NULL;
+  currentBlock[currentRecord].threadPrev = NULL;
   lastRecords.push_back( &currentBlock[currentRecord] );
   countInserted++;
 }

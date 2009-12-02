@@ -31,7 +31,9 @@ noinst_HEADERS = \
                           matrix.h\
                           memoryblocks.h\
                           memorytrace.h\
+                          plainblocks.h\
                           plaintrace.h\
+                          plaintypes.h\
                           processmodelappl.h\
                           processmodel.h\
                           processmodeltask.h\

@@ -13,7 +13,6 @@
 #include "bplustreeblocks.h"
 
 using namespace std;
-using namespace bplustree;
 
 class KTrace: public Trace
 {

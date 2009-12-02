@@ -15,7 +15,7 @@ namespace bplustree
 // Tuning this parameters changes tree performance.
   static const UINT16 NODE_SIZE = 64;
   static const UINT16 LEAF_SIZE = 64;
-  static const UINT32 UNLOAD_RECORDS_THRESHOLD = 10000000;
+  static const UINT32 UNLOAD_RECORDS_THRESHOLD = 100000000;
   static const UINT32 UNLOAD_PERCENT = 30;
 
   class UnloadedTrace
@@ -112,7 +112,7 @@ namespace bplustree
                                   TRecord **fin,
                                   int &recs2link,
                                   RecordLeaf *&last_leaf,
-                                  Index *traceIndex ) = 0;
+                                  Index<TRecord *> *traceIndex ) = 0;
 
       virtual BPlusNode *split( BPlusNode *dest, RecordLeaf *&retdat ) = 0;
       virtual bool partialDelete( RecordLeaf *limit_key,
@@ -153,7 +153,7 @@ namespace bplustree
       virtual UINT32 linkRecords( TRecord **ini, TRecord **fin,
                                   INT32 &recs2link,
                                   RecordLeaf *&last_leaf,
-                                  Index *traceIndex );
+                                  Index<TRecord *> *traceIndex );
 
       virtual void print( string indent );
       virtual bool partialDelete( RecordLeaf *limit_key,
@@ -200,7 +200,7 @@ namespace bplustree
                                   TRecord **fin,
                                   INT32 &recs2link,
                                   RecordLeaf *&last_leaf,
-                                  Index *traceIndex );
+                                  Index<TRecord *> *traceIndex );
       virtual bool partialDelete( RecordLeaf *limit_key,
                                   BPlusNode **valid_predecessor );
       //UINT16 countElems();
@@ -214,7 +214,7 @@ namespace bplustree
       TCPUOrder numCPUs;
       UINT32 unloadThreshold;
       UINT32 unloadPercent;
-      Index *traceIndex;
+      Index<TRecord *> *traceIndex;
       vector< TRecord > emptyThreadBegin;
       vector< TRecord > emptyThreadEnd;
       vector< TRecord > emptyCPUBegin;

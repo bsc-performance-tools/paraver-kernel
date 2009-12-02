@@ -11,6 +11,7 @@
 #include "tracestream.h"
 #include "kprogresscontroller.h"
 #include "plaintrace.h"
+#include "plainblocks.h"
 
 using namespace std;
 #ifdef WIN32
@@ -18,6 +19,9 @@ using namespace stdext;
 #else
 using namespace __gnu_cxx;
 #endif
+
+using namespace bplustree;
+using namespace Plain;
 
 string KTrace::getFileName() const
 {
@@ -310,7 +314,8 @@ void KTrace::dumpFile( const string& whichFile ) const
   ostr << traceEndTime;
   file << ostr.str();
   if ( traceTimeUnit != US )
-    file << "_ns" << ':';
+    file << "_ns";
+  file << ':';
   traceResourceModel.dumpToFile( file );
   file << ':';
   traceProcessModel.dumpToFile( file );
@@ -324,6 +329,27 @@ void KTrace::dumpFile( const string& whichFile ) const
   else
     file << endl;
 
+#ifdef BYTHREAD
+  TraceBodyIO *body = TraceBodyIO::createTraceBody();
+  body->writeCommInfo( file, *this );
+
+  MemoryTrace::iterator *itEnd = memTrace->end();
+  for( TThreadOrder iThread = 0; iThread < totalThreads(); ++iThread )
+  {
+    MemoryTrace::iterator *it = memTrace->begin();
+
+    while ( !it->isNull() && *it != *itEnd )
+    {
+      if( it->getOrder() == iThread )
+        body->write( file, *this, it );
+      ++( *it );
+    }
+    if( *it == *itEnd && it->getOrder() == iThread )
+      body->write( file, *this, it );
+    delete it;
+  }
+  delete itEnd;
+#else
   MemoryTrace::iterator *it = memTrace->begin();
   TraceBodyIO *body = TraceBodyIO::createTraceBody();
   body->writeCommInfo( file, *this );
@@ -334,8 +360,9 @@ void KTrace::dumpFile( const string& whichFile ) const
     ++( *it );
   }
 
-  file.close();
   delete it;
+#endif
+  file.close();
 }
 
 
@@ -477,14 +504,19 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress )
 // End reading the header
 
 // Reading the body
-  blocks = new BPlusTreeBlocks( traceProcessModel );
 
   if ( body->ordered() )
+  {
     memTrace  = new PlainTrace( traceProcessModel.totalThreads(),
                                 traceResourceModel.totalCPUs() );
+    blocks = new PlainBlocks( traceResourceModel, traceProcessModel );
+  }
   else
+  {
+    blocks = new BPlusTreeBlocks( traceProcessModel );
     memTrace  = new BPlusTree( traceProcessModel.totalThreads(),
                                traceResourceModel.totalCPUs() );
+  }
 
   hash_set<TEventType> hashevents;
   int count = 0;

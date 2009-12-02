@@ -33,7 +33,7 @@ int main( int argc, char *argv[] )
   else
   {
     INT32 currentArg = 1;
-    // Read options ( Deberia ser un while si hay mas opciones. De momento solo hay esta)
+    // Read options
     if ( argv[ currentArg ][ 0 ] == '-' )
     {
       if ( argv[ currentArg ][ 1 ] == 'm' )
@@ -62,7 +62,11 @@ int main( int argc, char *argv[] )
     currentArg++;
 
     if( dumpTrace )
-      trace->dumpFile( strTrace + ".new" );
+#ifdef BYTHREAD
+      trace->dumpFile( strTrace + ".new.bythread" );
+#else
+      trace->dumpFile( strTrace + ".new.global" );
+#endif
     //Read the cfgs list and create the output files for each one
     while ( currentArg < argc )
     {

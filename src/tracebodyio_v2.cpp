@@ -36,6 +36,12 @@ void TraceBodyIO_v2::read( TraceStream *file, MemoryBlocks& records,
     case LogicalRecvRecord:
     case PhysicalSendRecord:
     case PhysicalRecvRecord:
+#ifdef BYTHREAD
+    case RemoteLogicalSendRecord:
+    case RemoteLogicalRecvRecord:
+    case RemotePhysicalSendRecord:
+    case RemotePhysicalRecvRecord:
+#endif
       readComm( line, records );
       break;
 
@@ -70,7 +76,11 @@ void TraceBodyIO_v2::write( fstream& whichStream,
   else if ( type & GLOBCOMM )
     writeReady = writeGlobalComm( line, whichTrace, record );
   else if ( type & RSEND || type & RRECV )
+#ifdef BYTHREAD
+    writeReady = writeCommRecord( line, whichTrace, record );
+#else
     writeReady = false;
+#endif
   else
   {
     writeReady = false;
@@ -409,25 +419,41 @@ void TraceBodyIO_v2::readComm( const string& line, MemoryBlocks& records ) const
     records.newRecord();
     switch ( line[0] )
     {
+#ifdef BYTHREAD
+      case RemoteLogicalSendRecord:
+#else
       case LogicalSendRecord:
+#endif
         records.setType( RSEND + LOG );
         records.setTime( records.getLogicalSend( commid ) );
         records.setCPU( records.getReceiverCPU( commid ) );
         records.setThread( records.getReceiverThread( commid ) );
         break;
+#ifdef BYTHREAD
+      case RemoteLogicalRecvRecord:
+#else
       case LogicalRecvRecord:
+#endif
         records.setType( RRECV + LOG );
         records.setTime( records.getLogicalReceive( commid ) );
         records.setCPU( records.getSenderCPU( commid ) );
         records.setThread( records.getSenderThread( commid ) );
         break;
+#ifdef BYTHREAD
+      case RemotePhysicalSendRecord:
+#else
       case PhysicalSendRecord:
+#endif
         records.setType( RSEND + PHY );
         records.setTime( records.getPhysicalSend( commid ) );
         records.setCPU( records.getReceiverCPU( commid ) );
         records.setThread( records.getReceiverThread( commid ) );
         break;
+#ifdef BYTHREAD
+      case RemotePhysicalRecvRecord:
+#else
       case PhysicalRecvRecord:
+#endif
         records.setType( RRECV + PHY );
         records.setTime( records.getPhysicalReceive( commid ) );
         records.setCPU( records.getSenderCPU( commid ) );
@@ -558,6 +584,16 @@ bool TraceBodyIO_v2::writeCommRecord( string& line,
     ostr << PhysicalSendRecord << ':';
   else if ( type == ( COMM + PHY + RECV ) )
     ostr << PhysicalRecvRecord << ':';
+#ifdef BYTHREAD
+  else if ( type == ( LOG + RSEND ) )
+    ostr << RemoteLogicalSendRecord << ':';
+  else if ( type == ( LOG + RRECV ) )
+    ostr << RemoteLogicalRecvRecord << ':';
+  else if ( type == ( PHY + RSEND ) )
+    ostr << RemotePhysicalSendRecord << ':';
+  else if ( type == ( PHY + RRECV ) )
+    ostr << RemotePhysicalRecvRecord << ':';
+#endif
   ostr << record->getCommIndex();
 
   line += ostr.str();

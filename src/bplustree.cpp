@@ -286,7 +286,7 @@ UINT32 BPlusLeaf::linkRecords( TRecord **ini,
                                TRecord **fin,
                                INT32 &recs2link,
                                RecordLeaf *&lastLeaf,
-                               Index *traceIndex )
+                               Index<TRecord *> *traceIndex )
 {
   TRecord *prev, *cur, *initial;
   UINT16 used = getUsed();
@@ -315,7 +315,7 @@ UINT32 BPlusLeaf::linkRecords( TRecord **ini,
       prev->next = cur;
       prev = cur;
       ++num;
-      traceIndex->indexRecord( cur );
+      traceIndex->indexRecord( cur->time, cur );
     }
     *ini = initial;
     *fin = prev;
@@ -587,7 +587,7 @@ bool BPlusInternal::getLeafKey( UINT16 ii, RecordLeaf *&key )
 UINT32 BPlusInternal::linkRecords( TRecord **ini, TRecord **fin,
                                    INT32 &recs2link,
                                    RecordLeaf *&lastLeaf,
-                                   Index *traceIndex )
+                                   Index<TRecord *> *traceIndex )
 {
   TRecord *prevIni, *prevFin, *currIni, *currFin;
   UINT32 recsLinked = 0;
@@ -783,7 +783,7 @@ BPlusTree::BPlusTree( const TThreadOrder totalThreads,
   unloadPercent   = upercent;
 
   unloadedTrace = new UnloadedTrace( totalThreads, totalCPUs );
-  traceIndex    = new Index();
+  traceIndex    = new Index<TRecord *>();
 }
 
 BPlusTree::~BPlusTree()

@@ -19,6 +19,12 @@ class TraceBodyIO_v2 : public TraceBodyIO
     static const UINT8 PhysicalSendRecord = '6';
     static const UINT8 PhysicalRecvRecord = '7';
     static const UINT8 GlobalCommRecord = '8';
+#ifdef BYTHREAD
+    static const UINT8 RemoteLogicalSendRecord = 'W';
+    static const UINT8 RemoteLogicalRecvRecord = 'X';
+    static const UINT8 RemotePhysicalSendRecord = 'Y';
+    static const UINT8 RemotePhysicalRecvRecord = 'Z';
+#endif
 
     bool ordered() const;
     void read( TraceStream *file, MemoryBlocks& records,

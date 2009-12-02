@@ -8,7 +8,6 @@ libparaver_kernel_la_SOURCES = \
     filtermanagement.cpp \
     histogramexception.cpp \
     histogramstatistic.cpp \
-    index.cpp \
     intervalcompose.cpp \
     intervalcontrolderived.cpp \
     intervalcpu.cpp \
@@ -25,6 +24,7 @@ libparaver_kernel_la_SOURCES = \
     kwindowexception.cpp \
     memorytrace.cpp \
     paraverkernelexception.cpp \
+    plainblocks.cpp \
     plaintrace.cpp \
     processmodel.cpp \
     resourcemodel.cpp \

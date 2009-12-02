@@ -89,6 +89,21 @@
 					<Add directory="./" />
 				</Linker>
 			</Target>
+			<Target title="testspeed">
+				<Option output="testspeed/testspeed" prefix_auto="1" extension_auto="1" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add directory="../include" />
+				</Compiler>
+				<Linker>
+					<Add library="libparaver-kernel" />
+					<Add library="libparaver-api" />
+					<Add library="libz" />
+					<Add directory="./" />
+				</Linker>
+			</Target>
 		</Build>
 		<VirtualTargets>
 			<Add alias="paramedir_all_build" targets="Debug;api;paramedir;" />
@@ -99,6 +114,7 @@
 			<Add option="-Wall" />
 			<Add option="-g" />
 			<Add option="-Wno-deprecated -ffast-math -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE" />
+			<Add option="-DBYTHREAD" />
 			<Add directory="include" />
 			<Add directory="../common-files" />
 			<Add directory="./" />
@@ -211,12 +227,30 @@
 		<Unit filename="api/histogram.cpp">
 			<Option target="api" />
 		</Unit>
-		<Unit filename="api/histogram.h" />
+		<Unit filename="api/histogram.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Application test" />
+			<Option target="api" />
+			<Option target="paramedir" />
+		</Unit>
 		<Unit filename="api/histogramtotals.cpp">
 			<Option target="api" />
 		</Unit>
-		<Unit filename="api/histogramtotals.h" />
-		<Unit filename="api/kernelconnection.h" />
+		<Unit filename="api/histogramtotals.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Application test" />
+			<Option target="api" />
+			<Option target="paramedir" />
+		</Unit>
+		<Unit filename="api/kernelconnection.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Application test" />
+			<Option target="api" />
+			<Option target="paramedir" />
+		</Unit>
 		<Unit filename="api/labelconstructor.cpp">
 			<Option target="api" />
 		</Unit>
@@ -247,9 +281,27 @@
 		<Unit filename="api/paraverconfig.h">
 			<Option target="api" />
 		</Unit>
-		<Unit filename="api/paraverkernelexception.h" />
-		<Unit filename="api/paraverkerneltypes.h" />
-		<Unit filename="api/paraverlabels.h" />
+		<Unit filename="api/paraverkernelexception.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Application test" />
+			<Option target="api" />
+			<Option target="paramedir" />
+		</Unit>
+		<Unit filename="api/paraverkerneltypes.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Application test" />
+			<Option target="api" />
+			<Option target="paramedir" />
+		</Unit>
+		<Unit filename="api/paraverlabels.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Application test" />
+			<Option target="api" />
+			<Option target="paramedir" />
+		</Unit>
 		<Unit filename="api/paravertypes.h">
 			<Option target="api" />
 		</Unit>
@@ -271,7 +323,13 @@
 		<Unit filename="api/recordlist.cpp">
 			<Option target="api" />
 		</Unit>
-		<Unit filename="api/recordlist.h" />
+		<Unit filename="api/recordlist.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Application test" />
+			<Option target="api" />
+			<Option target="paramedir" />
+		</Unit>
 		<Unit filename="api/rowlabels.cpp">
 			<Option target="api" />
 		</Unit>
@@ -301,11 +359,23 @@
 		<Unit filename="api/trace.cpp">
 			<Option target="api" />
 		</Unit>
-		<Unit filename="api/trace.h" />
+		<Unit filename="api/trace.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Application test" />
+			<Option target="api" />
+			<Option target="paramedir" />
+		</Unit>
 		<Unit filename="api/window.cpp">
 			<Option target="api" />
 		</Unit>
-		<Unit filename="api/window.h" />
+		<Unit filename="api/window.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Application test" />
+			<Option target="api" />
+			<Option target="paramedir" />
+		</Unit>
 		<Unit filename="api/zoomhistory.cpp">
 			<Option compile="0" />
 			<Option link="0" />
@@ -494,9 +564,19 @@
 			<Option target="Application test" />
 			<Option target="paramedir" />
 		</Unit>
+		<Unit filename="include/plainblocks.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="paramedir" />
+		</Unit>
 		<Unit filename="include/plaintrace.h">
 			<Option target="Debug" />
 			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/plaintypes.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/processmodel.h">
 			<Option target="Debug" />
@@ -799,6 +879,10 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="src/plainblocks.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="src/plaintrace.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -872,6 +956,12 @@
 		</Unit>
 		<Unit filename="test/testmain.cpp">
 			<Option target="Application test" />
+		</Unit>
+		<Unit filename="testspeed/testspeed.cpp">
+			<Option target="testspeed" />
+		</Unit>
+		<Unit filename="testspeed/testspeed.h">
+			<Option target="testspeed" />
 		</Unit>
 		<Extensions>
 			<code_completion>
