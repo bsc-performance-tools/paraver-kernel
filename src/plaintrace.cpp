@@ -129,15 +129,21 @@ void PlainTrace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIte
 
   for ( TThreadOrder ii = 0; ii < numThreads; ++ii )
   {
-    pair<UINT32, UINT32> blockPos = traceIndex[ ii ].findRecord( whichTime );
-    ThreadIterator *tmpIt = new ThreadIterator( myBlocks, blockPos.first, blockPos.second, ii );
-    while ( !tmpIt->isNull() && tmpIt->getTime() > whichTime )
-      --( *tmpIt );
-    if ( tmpIt->isNull() )
+    pair<UINT32, UINT32> blockPos;
+    ThreadIterator *tmpIt;
+    if ( traceIndex[ ii ].findRecord( whichTime, blockPos ) )
     {
-      delete tmpIt;
-      tmpIt = ( PlainTrace::ThreadIterator * )threadBegin( ii );
+      tmpIt = new ThreadIterator( myBlocks, blockPos.first, blockPos.second, ii );
+      while ( !tmpIt->isNull() && tmpIt->getTime() > whichTime )
+        --( *tmpIt );
+      if ( tmpIt->isNull() )
+      {
+        delete tmpIt;
+        tmpIt = ( PlainTrace::ThreadIterator * )threadBegin( ii );
+      }
     }
+    else
+      tmpIt = ( PlainTrace::ThreadIterator * )threadBegin( ii );
     listIter[ ii ] = tmpIt;
   }
 }
@@ -173,9 +179,17 @@ void PlainTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
     pos = new UINT32[ numThreads ];
     for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )
     {
-      pair<UINT32, UINT32> blockPos = traceIndex[ iThread ].findRecord( whichTime );
-      block[ iThread ] = 0;
-      pos[ iThread ] = 0;
+      pair<UINT32, UINT32> blockPos;
+      if ( traceIndex[ iThread ].findRecord( whichTime, blockPos ) )
+      {
+        block[ iThread ] = blockPos.first;
+        pos[ iThread ] = blockPos.second;
+      }
+      else
+      {
+        block[ iThread ] = 0;
+        pos[ iThread ] = 0;
+      }
       threads[ iThread ] = tmpThreads[ iThread ];
     }
 

@@ -22,13 +22,15 @@ void Index<RecordType>::indexRecord( TRecordTime time, RecordType rec )
 }
 
 template <typename RecordType>
-RecordType Index<RecordType>::findRecord( TRecordTime time ) const
+bool Index<RecordType>::findRecord( TRecordTime time, RecordType& record ) const
 {
   typename TTraceIndex::const_iterator it = baseIndex.lower_bound( time );
 
   if ( it == baseIndex.end() )
-    return baseIndex.end()->second;
+    return false;
 
-  return it->second;
+  record = it->second;
+
+  return true;
 }
 

@@ -985,12 +985,14 @@ void BPlusTree::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter
   }
 
   // Search for especific time.
-  current = traceIndex->findRecord( whichTime );
-  while ( current != NULL )
+  if ( traceIndex->findRecord( whichTime, current ) )
   {
-    if ( current->time < whichTime )
-      break;
-    current = current->prev;
+    while ( current != NULL )
+    {
+      if ( current->time < whichTime )
+        break;
+      current = current->prev;
+    }
   }
 
   // Backward search filling vector of iterators.
@@ -1029,14 +1031,15 @@ void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
   }
 
   // Search for especific time.
-  current = traceIndex->findRecord( whichTime );
-  while ( current != NULL )
+  if ( traceIndex->findRecord( whichTime, current ) )
   {
-    if ( current->time < whichTime )
-      break;
-    current = current->prev;
+    while ( current != NULL )
+    {
+      if ( current->time < whichTime )
+        break;
+      current = current->prev;
+    }
   }
-
   // Backward search filling vector of iterators.
   while ( ( current != NULL ) && ( filled < numCPUs ) )
   {

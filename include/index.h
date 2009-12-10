@@ -17,7 +17,7 @@ class Index
     ~Index();
 
     void indexRecord( TRecordTime time, RecordType rec );
-    RecordType findRecord( TRecordTime time ) const;
+    bool findRecord( TRecordTime time, RecordType& record ) const;
 
   private:
     typedef map< TRecordTime, RecordType > TTraceIndex;
