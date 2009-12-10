@@ -47,9 +47,8 @@ namespace Plain
 
   typedef struct TRecord : public TData
   {
-    TRecordType  type;
     TRecordTime  time;
-    TThreadOrder thread;
+    TRecordType  type;
     TCPUOrder    CPU;
     union
     {
@@ -119,6 +118,46 @@ namespace Plain
   {
     return record->type & END;
   }
+
+  static inline UINT16 getTypeOrdered( TRecord *r )
+  {
+    UINT16 ret;
+
+    if ( isEvent( r ) )
+      ret = 6;
+    else if ( isState( r ) )
+    {
+      if ( isEnd( r ) )
+        ret = 0;
+      else
+        ret = 8;
+    }
+    else if ( isPhysical( r ) )
+    {
+      if ( isReceive( r ) )
+        ret = 1;
+      else // isSend( r )
+        ret = 5;
+    }
+    else if ( isLogical( r ) )
+    {
+      if ( isSend( r ) )
+        ret = 4;
+      else // isReceive( r ) )
+        ret = 6;
+    }
+    else if ( isRReceive( r ) )
+      ret  = 2;
+    else if ( isRSend( r ) )
+      ret  = 3;
+    else if ( isGlobComm( r ) )
+      ret = 7;
+    else
+      ret = 9;
+
+    return ret;
+  }
+
 }
 
 #endif // PLAINTYPES_H_INCLUDED

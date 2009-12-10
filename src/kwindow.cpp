@@ -872,6 +872,8 @@ bool KDerivedWindow::initFromBegin() const
   tmp = tmp || functions[ 0 ]->getInitFromBegin();
   tmp = tmp || functions[ 1 ]->getInitFromBegin();
   tmp = tmp || functions[ 2 ]->getInitFromBegin();
+  tmp = tmp || parents[ 0 ]->initFromBegin();
+  tmp = tmp || parents[ 1 ]->initFromBegin();
 
   return tmp;
 }
@@ -900,6 +902,9 @@ void KDerivedWindow::init( TRecordTime initialTime, TCreateList create )
     objectSize = myTrace->totalNodes();
   else if ( tmpLevel == CPU )
     objectSize = myTrace->totalCPUs();
+
+  if( initFromBegin() )
+    initialTime = 0;
 
   for ( UINT16 i = 0; i < parents.size(); i++ )
     parents[ i ]->init( initialTime, create );

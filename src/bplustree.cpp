@@ -4,7 +4,7 @@
 
 #include "bplustree.h"
 #include "bplustreeexception.h"
-#include <iostream>
+
 //using namespace std;
 using std::vector;
 using namespace bplustree;

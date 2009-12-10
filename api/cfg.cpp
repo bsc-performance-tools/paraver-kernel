@@ -3311,7 +3311,7 @@ bool Analyzer2DParameters::parseLine( KernelConnection *whichKernel, istringstre
     getline( line, strValue, ' ' );
     istringstream tmpValue( strValue );
     if ( !( tmpValue >> dataValue ) )
-      return false;
+      continue;
     if ( ii == 0 )
     {
       histograms[ histograms.size() - 1 ]->setDataMin( dataValue );
@@ -3360,7 +3360,7 @@ bool Analyzer2DAnalysisLimits::parseLine( KernelConnection *whichKernel, istring
   if ( histograms[ histograms.size() - 1 ] == NULL )
     return false;
 
-  getline( line, strLimit, ' ' );
+  getline( line, strLimit );
 
   if ( strLimit.compare( OLDCFG_VAL_LIMIT_ALLTRACE ) == 0 )
   {

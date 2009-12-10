@@ -3,10 +3,14 @@
 
 #include "memorytrace.h"
 #include "index.h"
-#include "plainblocks.h"
+
+class ProcessModel;
+class ResourceModel;
 
 namespace Plain
 {
+  class PlainBlocks;
+
   class PlainTrace: public MemoryTrace
   {
     public:
@@ -15,6 +19,8 @@ namespace Plain
         public:
           iterator()
           {}
+
+          iterator( PlainBlocks *whichBlocks );
 
           virtual ~iterator()
           {}
@@ -33,6 +39,8 @@ namespace Plain
           virtual TRecordTime  getStateEndTime() const;
           virtual TCommID      getCommIndex() const;
 
+        protected:
+          PlainBlocks *blocks;
       };
 
     class ThreadIterator : public PlainTrace::iterator
@@ -41,13 +49,25 @@ namespace Plain
           ThreadIterator()
           {}
 
+          ThreadIterator( PlainBlocks *whichBlocks, UINT32 whichBlock, UINT32 whichPos,
+                          TThreadOrder whichThread );
+
           virtual ~ThreadIterator()
           {}
 
+          virtual TThreadOrder getThread() const;
           virtual TObjectOrder getOrder() const;
 
           virtual void operator++();
           virtual void operator--();
+
+        private:
+          TThreadOrder thread;
+          UINT32 block;
+          UINT32 pos;
+          UINT32 lastBlock;
+          UINT32 lastPos;
+
       };
 
     class CPUIterator : public PlainTrace::iterator
@@ -56,19 +76,35 @@ namespace Plain
           CPUIterator()
           {}
 
-          virtual ~CPUIterator()
-          {}
+          CPUIterator( PlainBlocks *whichBlocks, UINT32 *whichBlock, UINT32 *whichPos,
+                       TThreadOrder whichNumThreads, TThreadOrder *whichThreads, TCPUOrder whichCPU );
 
+          virtual ~CPUIterator();
+
+          virtual TThreadOrder getThread() const;
           virtual TObjectOrder getOrder() const;
 
           virtual void operator++();
           virtual void operator--();
+
+        private:
+          TCPUOrder cpu;
+          TThreadOrder numThreads;
+          TThreadOrder *threads;
+          UINT32 *block;
+          UINT32 *pos;
+          UINT32 *lastBlock;
+          UINT32 *lastPos;
+          TThreadOrder lastThread;
+
+          TThreadOrder minThread();
+          TThreadOrder maxThread();
+          void setToMyCPUForward();
+          void setToMyCPUBackward();
       };
 
-      PlainTrace()
-      {}
-      PlainTrace( const TThreadOrder totalThreads,
-                  const TCPUOrder totalCPUs );
+      PlainTrace( const ProcessModel& whichProcessModel,
+                  const ResourceModel& whichResourceModel );
       virtual ~PlainTrace()
       {}
 
@@ -95,9 +131,11 @@ namespace Plain
     protected:
 
     private:
+      const ProcessModel& processModel;
+      const ResourceModel& resourceModel;
       TThreadOrder numThreads;
       TCPUOrder numCPUs;
-      vector<Index<pair<INT32, INT32> > > traceIndex;
+      vector<Index<pair<UINT32, UINT32> > > traceIndex;
       PlainBlocks *myBlocks;
   };
 }

@@ -50,6 +50,8 @@ class ProcessModel
     TThreadOrder getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const;
     TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask )const;
 
+    void getThreadsPerNode( TNodeOrder inNode, vector<TThreadOrder>& onVector ) const;
+
   protected:
 
     struct ThreadLocation

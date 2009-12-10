@@ -5,9 +5,18 @@
 #include "resourcemodel.h"
 #include "processmodel.h"
 #include "plaintypes.h"
+#include "plaintrace.h"
 
 namespace Plain
 {
+  struct TLastRecord: public TData
+  {
+    TRecordTime time;
+    TThreadOrder thread;
+    UINT32 block;
+    UINT32 pos;
+  };
+
   class PlainBlocks: public MemoryBlocks
   {
     public:
@@ -84,10 +93,10 @@ namespace Plain
         commTypeSize
       } TCommType;
       static const TRecordType commTypes[commTypeSize];
-      static const UINT32 blockSize = 100000;
+      static const UINT32 blockSize = 10000;
       vector<UINT32> currentRecord;
       vector<TRecord *> currentBlock;
-      vector<TRecord *> lastRecords;
+      vector<TLastRecord> lastRecords;
       vector<vector<TRecord *> > blocks;
       vector<TCommInfo *> communications;
       TCommID currentComm;
@@ -96,6 +105,11 @@ namespace Plain
       TRecord tmpRecord;
       bool inserted;
       TThreadOrder insertedOnThread;
+
+      friend class PlainTrace;
+      friend class PlainTrace::iterator;
+      friend class PlainTrace::ThreadIterator;
+      friend class PlainTrace::CPUIterator;
   };
 }
 

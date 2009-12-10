@@ -97,7 +97,8 @@ KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc 
 
   for ( TObjectOrder i = 0; i < childIntervals.size(); i++ )
   {
-    if ( childIntervals[ i ]->getEnd()->getTime() <= begin->getTime() )
+//    if ( childIntervals[ i ]->getEnd()->getTime() <= begin->getTime() )
+    if ( *childIntervals[ i ]->getEnd() == *begin )
       childIntervals[ i ]->calcNext( displayList );
 
     if ( end == NULL ||

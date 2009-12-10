@@ -76,7 +76,7 @@ ProcessModel::ProcessModel( istringstream& headerInfo )
   }
 
   // Insert applications
-  for ( TApplOrder countAppl = 0; countAppl < numberApplications; countAppl++ )
+  for ( TApplOrder countAppl = 0; countAppl < numberApplications; ++countAppl )
   {
     TTaskOrder numberTasks;
 
@@ -94,7 +94,7 @@ ProcessModel::ProcessModel( istringstream& headerInfo )
     }
 
     // Insert tasks
-    for ( TTaskOrder countTask = 0; countTask < numberTasks; countTask++ )
+    for ( TTaskOrder countTask = 0; countTask < numberTasks; ++countTask )
     {
       TThreadOrder numberThreads;
       TNodeOrder numberNode;
@@ -103,7 +103,7 @@ ProcessModel::ProcessModel( istringstream& headerInfo )
       tasks.push_back( TaskLocation() );
       tasks[ globalTasks ].appl = countAppl;
       tasks[ globalTasks ].task = countTask;
-      globalTasks++;
+      ++globalTasks;
 
       string stringNumberThreads;
       std::getline( headerInfo, stringNumberThreads, ':' );
@@ -132,14 +132,14 @@ ProcessModel::ProcessModel( istringstream& headerInfo )
       }
 
       // Insert threads
-      for ( TThreadOrder countThread = 0; countThread < numberThreads; countThread++ )
+      for ( TThreadOrder countThread = 0; countThread < numberThreads; ++countThread )
       {
-        applications[ countAppl ].tasks[ countTask ].threads.push_back( ProcessModelThread( globalThreads, numberNode ) );
+        applications[ countAppl ].tasks[ countTask ].threads.push_back( ProcessModelThread( globalThreads, numberNode - 1 ) );
         threads.push_back( ThreadLocation() );
         threads[ globalThreads ].appl = countAppl;
         threads[ globalThreads ].task = countTask;
         threads[ globalThreads ].thread = countThread;
-        globalThreads++;
+        ++globalThreads;
       }
       // End inserting threads
 
@@ -207,4 +207,24 @@ TThreadOrder ProcessModel::getLastThread( TApplOrder inAppl, TTaskOrder inTask )
 {
   return applications[ inAppl ].tasks[ inTask ].threads[
            applications[ inAppl ].tasks[ inTask ].threads.size() - 1 ].traceGlobalOrder;
+}
+
+void ProcessModel::getThreadsPerNode( TNodeOrder inNode, vector<TThreadOrder>& onVector ) const
+{
+  onVector.clear();
+
+  for( vector<ProcessModelAppl>::const_iterator itAppl = applications.begin();
+       itAppl != applications.end(); ++itAppl )
+  {
+    for( vector<ProcessModelTask>::const_iterator itTask = itAppl->tasks.begin();
+         itTask != itAppl->tasks.end(); ++itTask )
+    {
+      for( vector<ProcessModelThread>::const_iterator itThread = itTask->threads.begin();
+           itThread != itTask->threads.end(); ++itThread )
+      {
+        if( itThread->nodeExecution == inNode )
+          onVector.push_back( itThread->traceGlobalOrder );
+      }
+    }
+  }
 }

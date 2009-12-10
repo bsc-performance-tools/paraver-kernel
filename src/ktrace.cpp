@@ -507,9 +507,9 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress )
 
   if ( body->ordered() )
   {
-    memTrace  = new PlainTrace( traceProcessModel.totalThreads(),
-                                traceResourceModel.totalCPUs() );
     blocks = new PlainBlocks( traceResourceModel, traceProcessModel );
+    memTrace  = new PlainTrace( traceProcessModel,
+                                traceResourceModel );
   }
   else
   {

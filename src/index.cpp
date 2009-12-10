@@ -27,7 +27,7 @@ RecordType Index<RecordType>::findRecord( TRecordTime time ) const
   typename TTraceIndex::const_iterator it = baseIndex.lower_bound( time );
 
   if ( it == baseIndex.end() )
-    return NULL;
+    return baseIndex.end()->second;
 
   return it->second;
 }
