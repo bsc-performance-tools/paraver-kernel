@@ -367,6 +367,14 @@
 			<File
 				RelativePath="..\src\index.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\src\intervalcompose.cpp"
@@ -458,6 +466,10 @@
 			</File>
 			<File
 				RelativePath="..\src\paraverkernelexception.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\plainblocks.cpp"
 				>
 			</File>
 			<File
@@ -747,7 +759,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\plainblocks.h"
+				>
+			</File>
+			<File
 				RelativePath="..\include\plaintrace.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\plaintypes.h"
 				>
 			</File>
 			<File
