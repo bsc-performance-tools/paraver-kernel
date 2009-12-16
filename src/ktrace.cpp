@@ -12,6 +12,8 @@
 #include "kprogresscontroller.h"
 #include "plaintrace.h"
 #include "plainblocks.h"
+#include "noloadtrace.h"
+#include "noloadblocks.h"
 
 using namespace std;
 #ifdef WIN32
@@ -22,6 +24,7 @@ using namespace __gnu_cxx;
 
 using namespace bplustree;
 using namespace Plain;
+using namespace NoLoad;
 
 string KTrace::getFileName() const
 {
@@ -410,7 +413,7 @@ void KTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
 }
 
 
-KTrace::KTrace( const string& whichFile, ProgressController *progress )
+KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLoad )
     : fileName( whichFile )
 {
   string tmpstr;
@@ -505,7 +508,12 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress )
 
 // Reading the body
 
-  if ( body->ordered() )
+  if( noLoad && body->ordered() )
+  {
+    blocks = new NoLoadBlocks();
+    memTrace = new NoLoadTrace();
+  }
+  else if ( body->ordered() )
   {
     blocks = new PlainBlocks( traceResourceModel, traceProcessModel );
     memTrace  = new PlainTrace( traceProcessModel,

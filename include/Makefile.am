@@ -31,6 +31,8 @@ noinst_HEADERS = \
                           matrix.h\
                           memoryblocks.h\
                           memorytrace.h\
+                          noloadblocks.h\
+                          noloadtrace.h\
                           plainblocks.h\
                           plaintrace.h\
                           plaintypes.h\

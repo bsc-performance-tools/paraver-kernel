@@ -2,6 +2,7 @@
 #include "plainblocks.h"
 #include "processmodel.h"
 #include "resourcemodel.h"
+#include <iostream>
 
 using namespace Plain;
 using namespace std;
@@ -63,53 +64,40 @@ MemoryTrace::iterator* PlainTrace::threadEnd( TThreadOrder whichThread ) const
 
 MemoryTrace::iterator* PlainTrace::CPUBegin( TCPUOrder whichCPU ) const
 {
-  UINT32 *block;
-  UINT32 *pos;
-  TThreadOrder *threads;
+  vector<UINT32> block;
+  vector<UINT32> pos;
   TThreadOrder numThreads;
-  vector<TThreadOrder> tmpThreads;
+  vector<TThreadOrder> threads;
   TNodeOrder tmpNode;
   TCPUOrder tmpCPU;
 
   resourceModel.getCPULocation( whichCPU, tmpNode, tmpCPU );
-  processModel.getThreadsPerNode( tmpNode, tmpThreads );
+  processModel.getThreadsPerNode( tmpNode, threads );
 
-  numThreads = tmpThreads.size();
-  threads = new TThreadOrder[ numThreads ];
-  block = new UINT32[ numThreads ];
-  pos = new UINT32[ numThreads ];
-  for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )
-  {
-    block[ iThread ] = 0;
-    pos[ iThread ] = 0;
-    threads[ iThread ] = tmpThreads[ iThread ];
-  }
+  numThreads = threads.size();
+  block.insert( block.begin(), numThreads, 0 );
+  pos.insert( pos.begin(), numThreads, 0 );
 
   return new PlainTrace::CPUIterator( myBlocks, block, pos, numThreads, threads, whichCPU );
 }
 
 MemoryTrace::iterator* PlainTrace::CPUEnd( TCPUOrder whichCPU ) const
 {
-  UINT32 *block;
-  UINT32 *pos;
-  TThreadOrder *threads;
+  vector<UINT32> block;
+  vector<UINT32> pos;
   TThreadOrder numThreads;
-  vector<TThreadOrder> tmpThreads;
+  vector<TThreadOrder> threads;
   TNodeOrder tmpNode;
   TCPUOrder tmpCPU;
 
   resourceModel.getCPULocation( whichCPU, tmpNode, tmpCPU );
-  processModel.getThreadsPerNode( tmpNode, tmpThreads );
+  processModel.getThreadsPerNode( tmpNode, threads );
 
-  numThreads = tmpThreads.size();
-  threads = new TThreadOrder[ numThreads ];
-  block = new UINT32[ numThreads ];
-  pos = new UINT32[ numThreads ];
+  numThreads = threads.size();
   for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )
   {
-    block[ iThread ] = myBlocks->blocks[ iThread ].size() - 1;;
-    pos[ iThread ] = myBlocks->currentRecord[ iThread ];
-    threads[ iThread ] = tmpThreads[ iThread ];
+    block.push_back( myBlocks->blocks[ iThread ].size() - 1 );
+    pos.push_back( myBlocks->currentRecord[ iThread ] );
   }
 
   return new PlainTrace::CPUIterator( myBlocks, block, pos, numThreads, threads, whichCPU );
@@ -162,35 +150,30 @@ void PlainTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
 
   for ( TCPUOrder ii = 0; ii < numCPUs; ++ii )
   {
-    UINT32 *block;
-    UINT32 *pos;
-    TThreadOrder *threads;
+    vector<UINT32> block;
+    vector<UINT32> pos;
     TThreadOrder numThreads;
-    vector<TThreadOrder> tmpThreads;
+    vector<TThreadOrder> threads;
     TNodeOrder tmpNode;
     TCPUOrder tmpCPU;
 
     resourceModel.getCPULocation( ii, tmpNode, tmpCPU );
-    processModel.getThreadsPerNode( tmpNode, tmpThreads );
+    processModel.getThreadsPerNode( tmpNode, threads );
 
-    numThreads = tmpThreads.size();
-    threads = new TThreadOrder[ numThreads ];
-    block = new UINT32[ numThreads ];
-    pos = new UINT32[ numThreads ];
+    numThreads = threads.size();
     for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )
     {
       pair<UINT32, UINT32> blockPos;
       if ( traceIndex[ iThread ].findRecord( whichTime, blockPos ) )
       {
-        block[ iThread ] = blockPos.first;
-        pos[ iThread ] = blockPos.second;
+        block.push_back( blockPos.first );
+        pos.push_back( blockPos.second );
       }
       else
       {
-        block[ iThread ] = 0;
-        pos[ iThread ] = 0;
+        block.push_back( 0 );
+        pos.push_back( 0 );
       }
-      threads[ iThread ] = tmpThreads[ iThread ];
     }
 
     CPUIterator *tmpIt = new PlainTrace::CPUIterator( myBlocks, block, pos, numThreads, threads, ii );
@@ -338,32 +321,22 @@ inline void PlainTrace::ThreadIterator::operator--()
  * MemoryTrace Inherited CPUIterator.
  **************************************************************************/
 
-PlainTrace::CPUIterator::CPUIterator( PlainBlocks *whichBlocks, UINT32 *whichBlock, UINT32 *whichPos,
-                                      TThreadOrder whichNumThreads, TThreadOrder *whichThreads, TCPUOrder whichCPU )
+PlainTrace::CPUIterator::CPUIterator( PlainBlocks *whichBlocks, vector<UINT32>& whichBlock, vector<UINT32>& whichPos,
+                                      TThreadOrder whichNumThreads, vector<TThreadOrder>& whichThreads, TCPUOrder whichCPU )
     : PlainTrace::iterator( whichBlocks ), cpu( whichCPU ), numThreads( whichNumThreads ),
     threads( whichThreads ), block( whichBlock ), pos( whichPos )
 {
-  lastBlock = new UINT32[ numThreads ];
-  lastPos = new UINT32[ numThreads ];
-
   for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )
   {
-    lastBlock[ iThread ] = blocks->blocks[ threads[ iThread ] ].size() - 1;
-    lastPos[ iThread ] = blocks->currentRecord[ threads[ iThread ] ];
+    lastBlock.push_back( blocks->blocks[ threads[ iThread ] ].size() - 1 );
+    lastPos.push_back( blocks->currentRecord[ threads[ iThread ] ] + 1 );
   }
-
   lastThread = minThread();
   record = &blocks->blocks[ threads[ lastThread ] ][ block[ lastThread ] ][ pos[ lastThread ] ];
 }
 
 PlainTrace::CPUIterator::~CPUIterator()
-{
-  delete[] threads;
-  delete[] block;
-  delete[] pos;
-  delete[] lastBlock;
-  delete[] lastPos;
-}
+{}
 
 inline TThreadOrder PlainTrace::CPUIterator::getThread() const
 {
@@ -378,10 +351,13 @@ inline TObjectOrder PlainTrace::CPUIterator::getOrder() const
 inline void PlainTrace::CPUIterator::operator++()
 {
   TThreadOrder inLastPos = 0;
+  ++pos[ lastThread ];
   for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )
   {
     if ( pos[ iThread ] == lastPos[ iThread ] && block[ iThread ] == lastBlock[ iThread ] )
+    {
       ++inLastPos;
+    }
   }
   if ( inLastPos == numThreads )
   {
@@ -389,16 +365,18 @@ inline void PlainTrace::CPUIterator::operator++()
     return;
   }
 
-  if ( pos[ lastThread ] == PlainBlocks::blockSize - 1 )
+  if ( pos[ lastThread ] >= PlainBlocks::blockSize )
   {
-    ++block[ lastThread ];
-    pos[ lastThread ] = 0;
+    if ( block[ lastThread ] < lastBlock[ lastThread ] )
+    {
+      ++block[ lastThread ];
+      pos[ lastThread ] = 0;
+    }
     lastThread = minThread();
     record = &blocks->blocks[ threads[ lastThread ] ][ block[ lastThread ] ][ pos[ lastThread ] ];
     return;
   }
 
-  ++pos[ lastThread ];
   lastThread = minThread();
   record = &blocks->blocks[ threads[ lastThread ] ][ block[ lastThread ] ][ pos[ lastThread ] ];
 }
@@ -406,6 +384,7 @@ inline void PlainTrace::CPUIterator::operator++()
 inline void PlainTrace::CPUIterator::operator--()
 {
   TThreadOrder inFirstPos = 0;
+  --pos[ lastThread ];
   for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )
   {
     if ( pos[ iThread ] == 0 && block[ iThread ] == 0 )
@@ -419,14 +398,16 @@ inline void PlainTrace::CPUIterator::operator--()
 
   if ( pos[ lastThread ] == 0 )
   {
-    pos[ lastThread ] = PlainBlocks::blockSize - 1;
-    --block[ lastThread ];
+    if( block[ lastThread ] > 0 )
+    {
+      pos[ lastThread ] = PlainBlocks::blockSize - 1;
+      --block[ lastThread ];
+    }
     lastThread = maxThread();
     record = &blocks->blocks[ threads[ lastThread ] ][ block[ lastThread ] ][ pos[ lastThread ] ];
     return;
   }
 
-  --pos[ lastThread ];
   lastThread = maxThread();
   record = &blocks->blocks[ threads[ lastThread ] ][ block[ lastThread ] ][ pos[ lastThread ] ];
 }
@@ -450,7 +431,7 @@ inline TThreadOrder PlainTrace::CPUIterator::minThread()
   setToMyCPUForward();
   for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )
   {
-    if ( pos[ iThread ] <= lastPos[ iThread ] && block[ iThread ] <= lastBlock[ iThread ] )
+    if ( !( pos[ iThread ] == lastPos[ iThread ] && block[ iThread ] == lastBlock[ iThread ] ) )
       sortedRecords[ &blocks->blocks[ threads[ iThread ] ][ block[ iThread ] ][ pos[ iThread ] ] ] = iThread;
   }
 
@@ -464,7 +445,7 @@ inline TThreadOrder PlainTrace::CPUIterator::maxThread()
   setToMyCPUBackward();
   for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )
   {
-    if ( pos[ iThread ] <= lastPos[ iThread ] && block[ iThread ] <= lastBlock[ iThread ] )
+    if ( !( pos[ iThread ] == 0 && block[ iThread ] == 0 ) )
       sortedRecords[ &blocks->blocks[ threads[ iThread ] ][ block[ iThread ] ][ pos[ iThread ] ] ] = iThread;
   }
 
@@ -477,19 +458,22 @@ inline void PlainTrace::CPUIterator::setToMyCPUForward()
 {
   for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )
   {
-    if ( pos[ iThread ] <= lastPos[ iThread ] && block[ iThread ] <= lastBlock[ iThread ] )
+    if ( !( pos[ iThread ] == lastPos[ iThread ] && block[ iThread ] == lastBlock[ iThread ] ) )
     {
       TRecord *tmpRec = &blocks->blocks[ threads[ iThread ] ][ block[ iThread ] ][ pos[ iThread ] ];
-      while ( tmpRec->CPU != cpu && pos[ iThread ] <= lastPos[ iThread ] && block[ iThread ] <= lastBlock[ iThread ] )
+      while ( !( pos[ iThread ] == lastPos[ iThread ] && block[ iThread ] == lastBlock[ iThread ] )
+              && tmpRec->CPU != cpu )
       {
-        if ( pos[ iThread ] == PlainBlocks::blockSize - 1 )
+        ++pos[ iThread ];
+        if ( pos[ iThread ] >= PlainBlocks::blockSize )
         {
-          ++block[ iThread ];
-          pos[ iThread ] = 0;
+          if ( block[ iThread ] < lastBlock[ iThread ] )
+          {
+            ++block[ iThread ];
+            pos[ iThread ] = 0;
+          }
         }
-        else
-          ++pos[ iThread ];
-        record = &blocks->blocks[ threads[ iThread ] ][ block[ iThread ] ][ pos[ iThread ] ];
+        tmpRec = &blocks->blocks[ threads[ iThread ] ][ block[ iThread ] ][ pos[ iThread ] ];
       }
     }
   }
@@ -499,10 +483,10 @@ inline void PlainTrace::CPUIterator::setToMyCPUBackward()
 {
   for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )
   {
-    if ( pos[ iThread ] <= lastPos[ iThread ] && block[ iThread ] <= lastBlock[ iThread ] )
+    if ( !( pos[ iThread ] == 0 && block[ iThread ] == 0 ) )
     {
       TRecord *tmpRec = &blocks->blocks[ threads[ iThread ] ][ block[ iThread ] ][ pos[ iThread ] ];
-      while ( tmpRec->CPU != cpu )
+      while ( !( pos[ iThread ] == 0 && block[ iThread ] == 0 ) && tmpRec->CPU != cpu )
       {
         if ( pos[ iThread ] == 0 )
         {
@@ -511,7 +495,7 @@ inline void PlainTrace::CPUIterator::setToMyCPUBackward()
         }
         else
           --pos[ iThread ];
-        record = &blocks->blocks[ threads[ iThread ] ][ block[ iThread ] ][ pos[ iThread ] ];
+        tmpRec = &blocks->blocks[ threads[ iThread ] ][ block[ iThread ] ][ pos[ iThread ] ];
       }
     }
   }
