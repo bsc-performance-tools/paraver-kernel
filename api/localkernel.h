@@ -13,7 +13,7 @@ class LocalKernel: public KernelConnection
     LocalKernel( bool (*messageFunction)(string) );
     virtual ~LocalKernel();
 
-    virtual Trace *newTrace( const string& whichFile, ProgressController *progress = NULL ) const;
+    virtual Trace *newTrace( const string& whichFile, bool noLoad, ProgressController *progress = NULL ) const;
     virtual string getPCFFileLocation( const string& traceFile ) const;
     virtual string getROWFileLocation( const string& traceFile ) const;
     virtual Window *newSingleWindow() const;

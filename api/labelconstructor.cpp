@@ -331,7 +331,22 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
     else if ( infoType == COMMTAG_TYPE )
       label << value;
     else if ( infoType == BANDWIDTH_TYPE )
-      label << value << " bytes/sec";
+    {
+      if( whichWindow->getTimeUnit() == NS )
+        label << value << " GB/sec";
+      else if( whichWindow->getTimeUnit() == US )
+        label << value << " MB/sec";
+      else if( whichWindow->getTimeUnit() == MS )
+        label << value << " KB/sec";
+      else if( whichWindow->getTimeUnit() == SEC )
+        label << value << " bytes/sec";
+      else if( whichWindow->getTimeUnit() == MIN )
+        label << value << " bytes/min";
+      else if( whichWindow->getTimeUnit() == HOUR )
+        label << value << " bytes/hour";
+      else if( whichWindow->getTimeUnit() == DAY )
+        label << value << " bytes/day";
+    }
     else
       label << "unknown " << value;
   }

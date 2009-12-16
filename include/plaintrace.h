@@ -76,8 +76,8 @@ namespace Plain
           CPUIterator()
           {}
 
-          CPUIterator( PlainBlocks *whichBlocks, UINT32 *whichBlock, UINT32 *whichPos,
-                       TThreadOrder whichNumThreads, TThreadOrder *whichThreads, TCPUOrder whichCPU );
+          CPUIterator( PlainBlocks *whichBlocks, vector<UINT32>& whichBlock, vector<UINT32>& whichPos,
+                       TThreadOrder whichNumThreads, vector<TThreadOrder>& whichThreads, TCPUOrder whichCPU );
 
           virtual ~CPUIterator();
 
@@ -90,11 +90,11 @@ namespace Plain
         private:
           TCPUOrder cpu;
           TThreadOrder numThreads;
-          TThreadOrder *threads;
-          UINT32 *block;
-          UINT32 *pos;
-          UINT32 *lastBlock;
-          UINT32 *lastPos;
+          vector<TThreadOrder> threads;
+          vector<UINT32> block;
+          vector<UINT32> pos;
+          vector<UINT32> lastBlock;
+          vector<UINT32> lastPos;
           TThreadOrder lastThread;
 
           TThreadOrder minThread();

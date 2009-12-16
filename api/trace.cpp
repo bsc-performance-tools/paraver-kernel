@@ -10,9 +10,9 @@
 using namespace libparaver;
 
 Trace *Trace::create( KernelConnection *whichKernel, const string& whichFile,
-                      ProgressController *progress )
+                      bool noLoad, ProgressController *progress )
 {
-  return new TraceProxy( whichKernel, whichFile, progress );
+  return new TraceProxy( whichKernel, whichFile, noLoad, progress );
 }
 
 Trace::Trace( KernelConnection *whichKernel ):
@@ -49,13 +49,13 @@ TObjectOrder Trace::getLevelObjects( TWindowLevel onLevel ) const
 }
 
 TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile,
-                        ProgressController *progress ):
+                        bool noLoad, ProgressController *progress ):
     Trace( whichKernel )
 {
   unload = false;
   instanceNumber = 0;
 
-  myTrace = myKernel->newTrace( whichFile, progress );
+  myTrace = myKernel->newTrace( whichFile, noLoad, progress );
   string pcfFile = myKernel->getPCFFileLocation( whichFile );
   parsePCF( pcfFile );
   string rowFile = myKernel->getROWFileLocation( whichFile );

@@ -8,16 +8,16 @@ namespace Plain
 {
   typedef struct TEventRecord
   {
-    TEventType      type;
     TEventValue     value;
+    TEventType      type;
   }
   TEventRecord;
 
 
   typedef struct TStateRecord
   {
-    TState      state;
     TRecordTime endTime;
+    TState      state;
   }
   TStateRecord;
 
@@ -31,16 +31,16 @@ namespace Plain
 
   typedef struct TCommInfo
   {
+    TRecordTime   logicalSendTime;
+    TRecordTime   physicalSendTime;
+    TRecordTime   logicalReceiveTime;
+    TRecordTime   physicalReceiveTime;
     TCommTag      tag;
     TCommSize     size;
     TCPUOrder     senderCPU;
     TThreadOrder  senderThread;
     TCPUOrder     receiverCPU;
     TThreadOrder  receiverThread;
-    TRecordTime   logicalSendTime;
-    TRecordTime   physicalSendTime;
-    TRecordTime   logicalReceiveTime;
-    TRecordTime   physicalReceiveTime;
   }
   TCommInfo;
 

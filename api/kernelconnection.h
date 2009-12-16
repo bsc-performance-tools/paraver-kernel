@@ -19,7 +19,7 @@ class KernelConnection
   public:
     virtual ~KernelConnection() {}
 
-    virtual Trace *newTrace( const string& whichFile, ProgressController *progress ) const = 0;
+    virtual Trace *newTrace( const string& whichFile, bool noLoad, ProgressController *progress ) const = 0;
     virtual string getPCFFileLocation( const string& traceFile ) const = 0;
     virtual string getROWFileLocation( const string& traceFile ) const = 0;
     virtual Window *newSingleWindow() const = 0;

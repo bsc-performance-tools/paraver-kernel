@@ -16,6 +16,7 @@ using namespace std;
 
 bool multipleFiles = false;
 bool dumpTrace = false;
+bool noLoad = false;
 Trace *trace;
 
 int main( int argc, char *argv[] )
@@ -34,24 +35,22 @@ int main( int argc, char *argv[] )
   {
     INT32 currentArg = 1;
     // Read options
-    if ( argv[ currentArg ][ 0 ] == '-' )
+    while ( argv[ currentArg ][ 0 ] == '-' )
     {
       if ( argv[ currentArg ][ 1 ] == 'm' )
-      {
         multipleFiles = true;
-      }
       else if ( argv[ currentArg ][ 1 ] == 'd' )
-      {
         dumpTrace = true;
-      }
-      currentArg++;
+      else if ( argv[ currentArg ][ 1 ] == 'n' )
+        noLoad = true;
+      ++currentArg;
     }
 
     // Read the trace
     string strTrace( argv[ currentArg ] );
     try
     {
-      trace = Trace::create( myKernel, strTrace, NULL );
+      trace = Trace::create( myKernel, strTrace, noLoad, NULL );
     }
     catch ( ParaverKernelException& ex )
     {
@@ -61,7 +60,7 @@ int main( int argc, char *argv[] )
     }
     currentArg++;
 
-    if( dumpTrace )
+    if ( dumpTrace )
 #ifdef BYTHREAD
       trace->dumpFile( strTrace + ".new.bythread" );
 #else
@@ -84,7 +83,7 @@ int main( int argc, char *argv[] )
           if ( !CFGLoader::isCFGFile( strOut ) )
           {
             strOutputFile = strOut;
-            currentArg++;
+            ++currentArg;
           }
           else
           {
@@ -109,21 +108,21 @@ int main( int argc, char *argv[] )
       else
         cout << "Cannot load '" << strCfg << "' file." << endl;
 
-      for ( UINT32 i = 0; i < windows.size(); i++ )
+      for ( UINT32 i = 0; i < windows.size(); ++i )
       {
         if ( windows[ i ] != NULL )
           delete windows[ i ];
       }
       windows.clear();
 
-      for ( UINT32 i = 0; i < histograms.size(); i++ )
+      for ( UINT32 i = 0; i < histograms.size(); ++i )
       {
         if ( histograms[ i ] != NULL )
           delete histograms[ i ];
       }
       histograms.clear();
 
-      currentArg++;
+      ++currentArg;
     }
 
     delete trace;
@@ -152,7 +151,7 @@ void dumpWindow( vector<Window *>& windows, string& strOutputFile )
   if ( !multipleFiles )
     outputFile.open( strOutputFile.c_str() );
 
-  for ( TObjectOrder i = 0; i < tmpWindow->getWindowLevelObjects(); i++ )
+  for ( TObjectOrder i = 0; i < tmpWindow->getWindowLevelObjects(); ++i )
   {
     if ( multipleFiles )
     {
@@ -210,7 +209,7 @@ void dumpHistogram( vector<Histogram *>& histograms, string& strOutputFile )
   TObjectOrder beginRow = histo->getControlWindow()->getZoomSecondDimension().first;
   TObjectOrder endRow =  histo->getControlWindow()->getZoomSecondDimension().second;
   histo->getControlWindow()->getSelectedRows( histo->getControlWindow()->getLevel(),
-                                              selectedRows, beginRow, endRow );
+      selectedRows, beginRow, endRow );
   histo->execute( histo->getBeginTime(), histo->getEndTime(), selectedRows );
   numPlanes = histo->getNumPlanes();
   numColumns = histo->getNumColumns();
@@ -221,24 +220,24 @@ void dumpHistogram( vector<Histogram *>& histograms, string& strOutputFile )
   outputFile << fixed;
   outputFile << showpoint;
 
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; iPlane++ )
+  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
   {
     if ( numPlanes > 1 )
       outputFile << histo->getPlaneLabel( iPlane ) << endl;
 
     outputFile << "\t";
     // Initialize all columns in this plane
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
+    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
     {
       histo->setFirstCell( iColumn, iPlane );
       outputFile << histo->getColumnLabel( iColumn ) << "\t";
     }
     outputFile << endl;
 
-    for ( TObjectOrder iRow = 0; iRow < numRows; iRow++ )
+    for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
     {
       outputFile << histo->getRowLabel( iRow ) << "\t";
-      for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
+      for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
       {
         if ( histo->getCurrentRow( iColumn, iPlane ) == iRow )
         {
@@ -254,42 +253,42 @@ void dumpHistogram( vector<Histogram *>& histograms, string& strOutputFile )
     // Print totals
     HistogramTotals *totals = histo->getColumnTotals();
     outputFile << "Total" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
+    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
     {
       outputFile << totals->getTotal( 0, iColumn, iPlane ) << "\t";
     }
     outputFile << endl;
 
     outputFile << "Average" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
+    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
     {
       outputFile << totals->getAverage( 0, iColumn, iPlane ) << "\t";
     }
     outputFile << endl;
 
     outputFile << "Maximum" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
+    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
     {
       outputFile << totals->getMaximum( 0, iColumn, iPlane ) << "\t";
     }
     outputFile << endl;
 
     outputFile << "Minimum" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
+    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
     {
       outputFile << totals->getMinimum( 0, iColumn, iPlane ) << "\t";
     }
     outputFile << endl;
 
     outputFile << "Stdev" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
+    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
     {
       outputFile << totals->getStdev( 0, iColumn, iPlane ) << "\t";
     }
     outputFile << endl;
 
     outputFile << "Avg/Max" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
+    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
     {
       outputFile << totals->getAvgDivMax( 0, iColumn, iPlane ) << "\t";
     }

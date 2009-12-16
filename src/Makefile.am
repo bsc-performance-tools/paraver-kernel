@@ -47,6 +47,7 @@ noinst_HEADERS = \
     column.cpp \
     cube.cpp \
     functionmanagement.cpp \
+    index.cpp \
     matrix.cpp \
     statistic_2d.cpp
 

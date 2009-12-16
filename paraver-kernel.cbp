@@ -110,7 +110,6 @@
 			<Add alias="test" targets="Debug;" />
 		</VirtualTargets>
 		<Compiler>
-			<Add option="-O3" />
 			<Add option="-Wall" />
 			<Add option="-g" />
 			<Add option="-Wno-deprecated -ffast-math -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE" />
@@ -564,6 +563,14 @@
 			<Option target="Application test" />
 			<Option target="paramedir" />
 		</Unit>
+		<Unit filename="include/noloadblocks.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/noloadtrace.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="include/plainblocks.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -874,6 +881,14 @@
 			<Option target="Application test" />
 		</Unit>
 		<Unit filename="src/memorytrace.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/noloadblocks.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/noloadtrace.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>

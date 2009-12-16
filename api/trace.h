@@ -15,7 +15,7 @@ class Trace
 {
   public:
     static Trace *create( KernelConnection *whichKernel, const string& whichFile,
-                          ProgressController *progress );
+                          bool noLoad, ProgressController *progress );
 
     Trace() {}
     Trace( KernelConnection *whichKernel );
@@ -265,12 +265,12 @@ class TraceProxy: public Trace
     string myDefaultThreadSemanticFunc;
 
     TraceProxy( KernelConnection *whichKernel, const string& whichFile,
-                ProgressController *progress );
+                bool noLoad, ProgressController *progress );
 
     void parsePCF( const string& whichFile );
     void parseROW( const string& whichFile );
 
-    friend Trace *Trace::create( KernelConnection *, const string&, ProgressController * );
+    friend Trace *Trace::create( KernelConnection *, const string&, bool noLoad, ProgressController * );
 };
 
 #endif // TRACE_H_INCLUDED

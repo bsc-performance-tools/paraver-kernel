@@ -26,12 +26,12 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( string ) ) :
 LocalKernel::~LocalKernel()
 {}
 
-Trace *LocalKernel::newTrace( const string& whichFile, ProgressController *progress ) const
+Trace *LocalKernel::newTrace( const string& whichFile, bool noLoad, ProgressController *progress ) const
 {
   if ( progress == NULL )
-    return new KTrace( whichFile, NULL );
+    return new KTrace( whichFile, NULL, noLoad );
 
-  return new KTrace( whichFile, ( KProgressController * ) progress->getConcrete() );
+  return new KTrace( whichFile, ( KProgressController * ) progress->getConcrete(), noLoad );
 }
 
 string LocalKernel::getPCFFileLocation( const string& traceFile ) const
