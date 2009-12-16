@@ -108,19 +108,19 @@ int main( int argc, char *argv[] )
       else
         cout << "Cannot load '" << strCfg << "' file." << endl;
 
-      for ( UINT32 i = 0; i < windows.size(); ++i )
-      {
-        if ( windows[ i ] != NULL )
-          delete windows[ i ];
-      }
-      windows.clear();
-
       for ( UINT32 i = 0; i < histograms.size(); ++i )
       {
         if ( histograms[ i ] != NULL )
           delete histograms[ i ];
       }
       histograms.clear();
+
+      for ( UINT32 i = 0; i < windows.size(); ++i )
+      {
+        if ( windows[ i ] != NULL )
+          delete windows[ i ];
+      }
+      windows.clear();
 
       ++currentArg;
     }
