@@ -1,0 +1,6 @@
+Library dependencies:
+	- Boost >= 1.36
+	- Boost Serialization
+	- Zlib
+
+Read INSTALL file for installation instructions.
