@@ -28,7 +28,7 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "semanticnotthreadfunctions.h"
-#include "paraverstatisticfuncions.h"
+#include "paraverstatisticfunctions.h"
 
 string Adding::name = "Adding";
 TSemanticValue Adding::execute( const SemanticInfo *info )
