@@ -1001,7 +1001,7 @@ void BPlusTree::unload( INT32 numrecords )
 void BPlusTree::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
                                        TRecordTime whichTime ) const
 {
-  TRecord *current;
+  TRecord *current = NULL;
   TThreadOrder filled = 0;
 
   for ( TThreadOrder ii = 0; ii < numThreads; ++ii )
@@ -1047,7 +1047,7 @@ void BPlusTree::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter
 void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
                                     TRecordTime whichTime ) const
 {
-  TRecord *current;
+  TRecord *current = NULL;
   TCPUOrder filled = 0;
 
   for ( TCPUOrder ii = 0; ii < numCPUs; ++ii )
