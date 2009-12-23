@@ -137,18 +137,22 @@ int main( int argc, char *argv[] )
       else
         cout << "Cannot load '" << strCfg << "' file." << endl;
 
+
       for ( UINT32 i = 0; i < histograms.size(); ++i )
       {
         if ( histograms[ i ] != NULL )
           delete histograms[ i ];
       }
+
       histograms.clear();
+
 
       for ( UINT32 i = 0; i < windows.size(); ++i )
       {
         if ( windows[ i ] != NULL )
           delete windows[ i ];
       }
+
       windows.clear();
 
       ++currentArg;
@@ -166,35 +170,48 @@ void dumpWindow( vector<Window *>& windows, string& strOutputFile )
   TRecordTime beginTime;
   TRecordTime endTime;
   ofstream outputFile;
-  Window *tmpWindow = windows[ windows.size() - 1 ];
-  ParaverConfig *config = ParaverConfig::getInstance();
 
-  beginTime = tmpWindow->getWindowBeginTime();
-  endTime = tmpWindow->getWindowEndTime();
-
-  tmpWindow->init( beginTime, NOCREATE );
-
-  if ( endTime > trace->getEndTime() )
-    endTime = trace->getEndTime();
-
-  if ( !multipleFiles )
-    outputFile.open( strOutputFile.c_str() );
-
-  for ( TObjectOrder i = 0; i < tmpWindow->getWindowLevelObjects(); ++i )
+  if ( windows.size() != 0 )
   {
-    if ( multipleFiles )
-    {
-      ostringstream tmpName;
-      tmpName << strOutputFile  << "_" << setw( 5 ) << setfill( '0' ) << i + 1;
-      outputFile.open( tmpName.str().c_str() );
-    }
+    Window *tmpWindow = windows[ windows.size() - 1 ];
+    ParaverConfig *config = ParaverConfig::getInstance();
 
-    outputFile << fixed;
-    outputFile << showpoint;
+    beginTime = tmpWindow->getWindowBeginTime();
+    endTime = tmpWindow->getWindowEndTime();
 
-    while ( tmpWindow->getEndTime( i ) < endTime )
+    tmpWindow->init( beginTime, NOCREATE );
+
+    if ( endTime > trace->getEndTime() )
+      endTime = trace->getEndTime();
+
+    if ( !multipleFiles )
+      outputFile.open( strOutputFile.c_str() );
+
+    for ( TObjectOrder i = 0; i < tmpWindow->getWindowLevelObjects(); ++i )
     {
-      outputFile << setprecision( config->getTimelinePrecision() );
+      if ( multipleFiles )
+      {
+        ostringstream tmpName;
+        tmpName << strOutputFile  << "_" << setw( 5 ) << setfill( '0' ) << i + 1;
+        outputFile.open( tmpName.str().c_str() );
+      }
+
+      outputFile << fixed;
+      outputFile << showpoint;
+
+      while ( tmpWindow->getEndTime( i ) < endTime )
+      {
+        outputFile << setprecision( config->getTimelinePrecision() );
+        if ( !multipleFiles )
+          outputFile << i + 1 << "\t";
+        outputFile << tmpWindow->traceUnitsToWindowUnits(
+          tmpWindow->getBeginTime( i ) ) << "\t";
+        outputFile << tmpWindow->traceUnitsToWindowUnits(
+          tmpWindow->getEndTime( i ) - tmpWindow->getBeginTime( i ) ) << "\t";
+        outputFile << tmpWindow->getValue( i ) << endl;
+        tmpWindow->calcNext( i );
+      }
+      outputFile << setprecision( config->getHistogramPrecision() );
       if ( !multipleFiles )
         outputFile << i + 1 << "\t";
       outputFile << tmpWindow->traceUnitsToWindowUnits(
@@ -202,27 +219,18 @@ void dumpWindow( vector<Window *>& windows, string& strOutputFile )
       outputFile << tmpWindow->traceUnitsToWindowUnits(
         tmpWindow->getEndTime( i ) - tmpWindow->getBeginTime( i ) ) << "\t";
       outputFile << tmpWindow->getValue( i ) << endl;
-      tmpWindow->calcNext( i );
+
+      if ( multipleFiles )
+        outputFile.close();
     }
-    outputFile << setprecision( config->getHistogramPrecision() );
-    if ( !multipleFiles )
-      outputFile << i + 1 << "\t";
-    outputFile << tmpWindow->traceUnitsToWindowUnits(
-      tmpWindow->getBeginTime( i ) ) << "\t";
-    outputFile << tmpWindow->traceUnitsToWindowUnits(
-      tmpWindow->getEndTime( i ) - tmpWindow->getBeginTime( i ) ) << "\t";
-    outputFile << tmpWindow->getValue( i ) << endl;
 
     if ( multipleFiles )
+      cout << strOutputFile << "_* files wrote." << endl;
+    else
+    {
       outputFile.close();
-  }
-
-  if ( multipleFiles )
-    cout << strOutputFile << "_* files wrote." << endl;
-  else
-  {
-    outputFile.close();
-    cout << strOutputFile << " file wrote." << endl;
+      cout << strOutputFile << " file wrote." << endl;
+    }
   }
 }
 
@@ -232,102 +240,110 @@ void dumpHistogram( vector<Histogram *>& histograms, string& strOutputFile )
   THistogramColumn numColumns;
   TObjectOrder numRows;
   ofstream outputFile;
-  Histogram *histo = histograms[ histograms.size() - 1 ];
 
-  vector<TObjectOrder> selectedRows;
-  TObjectOrder beginRow = histo->getControlWindow()->getZoomSecondDimension().first;
-  TObjectOrder endRow =  histo->getControlWindow()->getZoomSecondDimension().second;
-  histo->getControlWindow()->getSelectedRows( histo->getControlWindow()->getLevel(),
-      selectedRows, beginRow, endRow );
-  histo->execute( histo->getBeginTime(), histo->getEndTime(), selectedRows );
-  numPlanes = histo->getNumPlanes();
-  numColumns = histo->getNumColumns();
-  numRows = histo->getNumRows();
-
-  outputFile.open( strOutputFile.c_str() );
-
-  outputFile << fixed;
-  outputFile << showpoint;
-
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
+  if ( histograms.size() != 0 )
   {
-    if ( numPlanes > 1 )
-      outputFile << histo->getPlaneLabel( iPlane ) << endl;
+    Histogram *histo = histograms[ histograms.size() - 1 ];
 
-    outputFile << "\t";
-    // Initialize all columns in this plane
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
-    {
-      histo->setFirstCell( iColumn, iPlane );
-      outputFile << histo->getColumnLabel( iColumn ) << "\t";
-    }
-    outputFile << endl;
+    vector<TObjectOrder> selectedRows;
+    TObjectOrder beginRow = histo->getControlWindow()->getZoomSecondDimension().first;
+    TObjectOrder endRow =  histo->getControlWindow()->getZoomSecondDimension().second;
+    histo->getControlWindow()->getSelectedRows( histo->getControlWindow()->getLevel(),
+        selectedRows, beginRow, endRow );
+    histo->execute( histo->getBeginTime(), histo->getEndTime(), selectedRows );
 
-    for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+    numPlanes = histo->getNumPlanes();
+    numColumns = histo->getNumColumns();
+    numRows = histo->getNumRows();
+
+    outputFile.open( strOutputFile.c_str() );
+
+    outputFile << fixed;
+    outputFile << showpoint;
+
+    for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
     {
-      outputFile << histo->getRowLabel( iRow ) << "\t";
+      if ( numPlanes > 1 )
+        outputFile << histo->getPlaneLabel( iPlane ) << endl;
+
+      outputFile << "\t";
+      // Initialize all columns in this plane
       for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
       {
-        if ( histo->getCurrentRow( iColumn, iPlane ) == iRow )
-        {
-          outputFile << histo->getCurrentValue( iColumn, 0, iPlane ) << "\t";
-          histo->setNextCell( iColumn, iPlane );
-        }
-        else
-          outputFile << 0.0 << "\t";
+        histo->setFirstCell( iColumn, iPlane );
+        outputFile << histo->getColumnLabel( iColumn ) << "\t";
       }
       outputFile << endl;
-    }
-    outputFile << endl;
-    // Print totals
-    HistogramTotals *totals = histo->getColumnTotals();
-    outputFile << "Total" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
-    {
-      outputFile << totals->getTotal( 0, iColumn, iPlane ) << "\t";
-    }
-    outputFile << endl;
 
-    outputFile << "Average" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
-    {
-      outputFile << totals->getAverage( 0, iColumn, iPlane ) << "\t";
-    }
-    outputFile << endl;
+      for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+      {
+        outputFile << histo->getRowLabel( iRow ) << "\t";
+        for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+        {
+          if ( !histo->endCell( iColumn ) )
+          {
+            if ( histo->getCurrentRow( iColumn, iPlane ) == iRow )
+            {
+              outputFile << histo->getCurrentValue( iColumn, 0, iPlane ) << "\t";
+              histo->setNextCell( iColumn, iPlane );
+            }
+            else
+              outputFile << 0.0 << "\t";
+          }
+        }
+        outputFile << endl;
+      }
+      outputFile << endl;
+      // Print totals
+      HistogramTotals *totals = histo->getColumnTotals();
+      outputFile << "Total" << "\t";
+      for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+      {
+        outputFile << totals->getTotal( 0, iColumn, iPlane ) << "\t";
+      }
+      outputFile << endl;
 
-    outputFile << "Maximum" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
-    {
-      outputFile << totals->getMaximum( 0, iColumn, iPlane ) << "\t";
-    }
-    outputFile << endl;
+      outputFile << "Average" << "\t";
+      for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+      {
+        outputFile << totals->getAverage( 0, iColumn, iPlane ) << "\t";
+      }
+      outputFile << endl;
 
-    outputFile << "Minimum" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
-    {
-      outputFile << totals->getMinimum( 0, iColumn, iPlane ) << "\t";
-    }
-    outputFile << endl;
+      outputFile << "Maximum" << "\t";
+      for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+      {
+        outputFile << totals->getMaximum( 0, iColumn, iPlane ) << "\t";
+      }
+      outputFile << endl;
 
-    outputFile << "Stdev" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
-    {
-      outputFile << totals->getStdev( 0, iColumn, iPlane ) << "\t";
-    }
-    outputFile << endl;
+      outputFile << "Minimum" << "\t";
+      for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+      {
+        outputFile << totals->getMinimum( 0, iColumn, iPlane ) << "\t";
+      }
+      outputFile << endl;
 
-    outputFile << "Avg/Max" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
-    {
-      outputFile << totals->getAvgDivMax( 0, iColumn, iPlane ) << "\t";
-    }
-    outputFile << endl;
+      outputFile << "Stdev" << "\t";
+      for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+      {
+        outputFile << totals->getStdev( 0, iColumn, iPlane ) << "\t";
+      }
+      outputFile << endl;
 
-    delete totals;
-    outputFile << endl;
+      outputFile << "Avg/Max" << "\t";
+      for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+      {
+        outputFile << totals->getAvgDivMax( 0, iColumn, iPlane ) << "\t";
+      }
+      outputFile << endl;
+
+      delete totals;
+      outputFile << endl;
+    }
+    outputFile.close();
   }
 
-  outputFile.close();
 }
 
 void printHelp()

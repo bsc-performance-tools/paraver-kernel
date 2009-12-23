@@ -283,13 +283,14 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   {
     if ( !whichKernel->userMessage( "None of the events specified in the filter appears in the trace. Continue loading CFG file?" ) )
     {
+      for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
+        delete *itHisto;
+      histograms.clear();
+
       for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
         delete *itWin;
       windows.clear();
 
-      for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
-        delete *itHisto;
-      histograms.clear();
 
       return true;
     }
@@ -298,13 +299,18 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   {
     if ( !whichKernel->userMessage( "Some of the events specified in the filter not appears in the trace. Continue loading CFG file?" ) )
     {
+      for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
+      {
+        delete *itHisto;
+      }
+      histograms.clear();
+
       for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
+      {
         delete *itWin;
+      }
       windows.clear();
 
-      for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
-        delete *itHisto;
-      histograms.clear();
 
       return true;
     }
@@ -1485,7 +1491,7 @@ void writeTasks( ofstream& cfgFile,
     TObjectOrder lastThread = ( *it )->getTrace()->getLastThread( iAppl, last );
     ( *it )->getSelectedRows( THREAD, tmpSelThreads, beginThread, lastThread );
     if ( ( tmpSel.size() > 0  && tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
-         || tmpSelThreads.size() != ( TObjectOrder )( lastThread -beginThread + 1 )
+         || tmpSelThreads.size() != ( TObjectOrder )( lastThread - beginThread + 1 )
        )
       writeTask( cfgFile, it, iAppl );
   }
