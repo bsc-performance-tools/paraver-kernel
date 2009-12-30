@@ -32,6 +32,7 @@
 
 #include "memorytrace.h"
 #include "index.h"
+#include "plaintypes.h"
 
 class ProcessModel;
 class ResourceModel;
@@ -39,6 +40,18 @@ class ResourceModel;
 namespace Plain
 {
   class PlainBlocks;
+
+  struct ltrecord
+  {
+    bool operator()( TRecord *r1, TRecord *r2 ) const
+    {
+      if ( r1->time < r2->time )
+        return true;
+      if ( getTypeOrdered( r1 ) < getTypeOrdered( r2 ) )
+        return true;
+      return false;
+    }
+  };
 
   class PlainTrace: public MemoryTrace
   {
@@ -56,6 +69,10 @@ namespace Plain
 
           virtual void operator++();
           virtual void operator--();
+          virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy )
+          {
+            return *this;
+          }
 
           virtual TRecordType  getType() const;
           virtual TRecordTime  getTime() const;
@@ -89,6 +106,7 @@ namespace Plain
 
           virtual void operator++();
           virtual void operator--();
+          virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy );
 
         private:
           TThreadOrder thread;
@@ -115,6 +133,7 @@ namespace Plain
 
           virtual void operator++();
           virtual void operator--();
+          virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy );
 
         private:
           TCPUOrder cpu;

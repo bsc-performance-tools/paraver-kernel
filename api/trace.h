@@ -55,7 +55,7 @@ class Trace
     virtual string getFileName() const = 0;
     virtual string getTraceName() const = 0;
 
-    virtual void dumpFile( const string& whichFile ) const = 0;
+    virtual void dumpFile( const string& whichFile, INT32 numIter = 1 ) const = 0;
 
     virtual TApplOrder totalApplications() const = 0;
     virtual TTaskOrder totalTasks() const = 0;
@@ -198,7 +198,7 @@ class TraceProxy: public Trace
     virtual string getTraceNameNumbered() const;
     virtual void setInstanceNumber( UINT32 whichInstanceNumber );
 
-    virtual void dumpFile( const string& whichFile ) const;
+    virtual void dumpFile( const string& whichFile, INT32 numIter = 1 ) const;
 
     virtual TApplOrder totalApplications() const;
     virtual TTaskOrder totalTasks() const;

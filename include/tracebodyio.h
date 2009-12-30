@@ -58,9 +58,11 @@ class TraceBodyIO
                        hash_set<TEventType>& events ) const = 0;
     virtual void write( fstream& whichStream,
                         const KTrace& whichTrace,
-                        MemoryTrace::iterator *record ) const = 0;
+                        MemoryTrace::iterator *record,
+                        INT32 numIter = 0 ) const = 0;
     virtual void writeCommInfo( fstream& whichStream,
-                                const KTrace& whichTrace ) const = 0;
+                                const KTrace& whichTrace,
+                                INT32 numIter = 1 ) const = 0;
 
     static TraceBodyIO *createTraceBody( TraceStream *file );
     static TraceBodyIO *createTraceBody();

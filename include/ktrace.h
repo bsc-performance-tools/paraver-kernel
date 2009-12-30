@@ -35,13 +35,13 @@
 #include <set>
 #include "paraverkerneltypes.h"
 #include "trace.h"
+#include "memorytrace.h"
 #include "processmodel.h"
 #include "resourcemodel.h"
-#include "memorytrace.h"
-#include "bplustree.h"
-#include "bplustreeblocks.h"
 
 using namespace std;
+
+class TraceBodyIO;
 
 class KTrace: public Trace
 {
@@ -53,11 +53,7 @@ class KTrace: public Trace
 
     KTrace( const string& whichFile, ProgressController *progress, bool noLoad );
 
-    ~KTrace()
-    {
-      delete blocks;
-      delete memTrace;
-    }
+    ~KTrace();
 
     string getFileName() const;
     string getTraceName() const;
@@ -75,7 +71,7 @@ class KTrace: public Trace
       return memTrace->copyCPUIterator( it );
     }
 
-    void dumpFile( const string& whichFile ) const;
+    void dumpFile( const string& whichFile, INT32 numIter = 1 ) const;
 
     TApplOrder totalApplications() const;
     TTaskOrder totalTasks() const;
@@ -174,7 +170,7 @@ class KTrace: public Trace
     TTimeUnit traceTimeUnit;
     MemoryBlocks *blocks;
     MemoryTrace *memTrace;
-
+    TraceBodyIO *body;
   private:
     string fileName;
     string date;

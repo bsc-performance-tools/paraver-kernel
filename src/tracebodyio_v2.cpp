@@ -79,8 +79,8 @@ void TraceBodyIO_v2::read( TraceStream *file, MemoryBlocks& records,
       break;
 
     default:
-      cerr << "Falta sistema de logging TraceBodyIO_v2::read()" << endl;
-      cerr << "Tipo de record desconocido" << endl;
+      cerr << "No logging system yet. TraceBodyIO_v2::read()" << endl;
+      cerr << "Unkwnown record type." << endl;
       break;
   };
 }
@@ -88,7 +88,8 @@ void TraceBodyIO_v2::read( TraceStream *file, MemoryBlocks& records,
 
 void TraceBodyIO_v2::write( fstream& whichStream,
                             const KTrace& whichTrace,
-                            MemoryTrace::iterator *record ) const
+                            MemoryTrace::iterator *record,
+                            INT32 numIter ) const
 {
   string line;
   bool writeReady;
@@ -97,24 +98,24 @@ void TraceBodyIO_v2::write( fstream& whichStream,
   if ( type == EMPTYREC )
     return;
   else if ( type & STATE )
-    writeReady = writeState( line, whichTrace, record );
+    writeReady = writeState( line, whichTrace, record, numIter );
   else if ( type & EVENT )
-    writeReady = writeEvent( line, whichTrace, record );
+    writeReady = writeEvent( line, whichTrace, record, true, numIter );
   else if ( type & COMM )
-    writeReady = writeCommRecord( line, whichTrace, record );
+    writeReady = writeCommRecord( line, whichTrace, record, numIter );
   else if ( type & GLOBCOMM )
-    writeReady = writeGlobalComm( line, whichTrace, record );
+    writeReady = writeGlobalComm( line, whichTrace, record, numIter );
   else if ( type & RSEND || type & RRECV )
 #ifdef BYTHREAD
-    writeReady = writeCommRecord( line, whichTrace, record );
+    writeReady = writeCommRecord( line, whichTrace, record, numIter );
 #else
     writeReady = false;
 #endif
   else
   {
     writeReady = false;
-    cerr << "Falta sistema de logging TraceBodyIO_v2::write()" << endl;
-    cerr << "Tipo de record desconocido en memoria" << endl;
+    cerr << "No logging system yet. TraceBodyIO_v2::write()" << endl;
+    cerr << "Unkwnown record type in memory." << endl;
   }
 
   if ( !writeReady )
@@ -126,7 +127,8 @@ void TraceBodyIO_v2::write( fstream& whichStream,
 
 void TraceBodyIO_v2::writeEvents( fstream& whichStream,
                                   const KTrace& whichTrace,
-                                  vector<MemoryTrace::iterator *>& recordList ) const
+                                  vector<MemoryTrace::iterator *>& recordList,
+                                  INT32 numIter ) const
 {
   string line;
 
@@ -135,10 +137,10 @@ void TraceBodyIO_v2::writeEvents( fstream& whichStream,
     if ( i > 0 )
     {
       line += ':';
-      writeEvent( line, whichTrace, recordList[i], false );
+      writeEvent( line, whichTrace, recordList[i], false, numIter );
     }
     else // i == 0
-      writeEvent( line, whichTrace, recordList[i], true );
+      writeEvent( line, whichTrace, recordList[i], true, numIter );
   }
 
   whichStream << line << endl;
@@ -146,35 +148,43 @@ void TraceBodyIO_v2::writeEvents( fstream& whichStream,
 
 
 void TraceBodyIO_v2::writeCommInfo( fstream& whichStream,
-                                    const KTrace& whichTrace ) const
+                                    const KTrace& whichTrace,
+                                    INT32 numIter ) const
 {
-  for ( TCommID id = 0; id < whichTrace.getTotalComms(); ++id )
+  TRecordTime endTraceTime = whichTrace.getEndTime();
+
+  for ( INT32 i = 0; i < numIter; ++i )
   {
-    ostringstream ostr;
-    ostr << fixed;
-    ostr << dec;
-    ostr.precision( 0 );
+    TRecordTime baseTime = endTraceTime * i;
 
-    ostr << CommRecord << ':';
-    if ( whichTrace.existResourceInfo() )
-      ostr << whichTrace.getSenderCPU( id ) + 1 << ':';
-    else
-      ostr << '0' << ':';
-    ostr << whichTrace.getSenderThread( id ) + 1 << ':';
-    ostr << whichTrace.getLogicalSend( id ) << ':';
-    ostr << whichTrace.getPhysicalSend( id ) << ':';
-    if ( whichTrace.existResourceInfo() )
-      ostr << whichTrace.getReceiverCPU( id ) + 1 << ':';
-    else
-      ostr << '0' << ':';
-    ostr << whichTrace.getReceiverThread( id ) + 1 << ':';
-    ostr << whichTrace.getLogicalReceive( id ) << ':';
-    ostr << whichTrace.getPhysicalReceive( id ) << ':';
-    ostr << whichTrace.getCommSize( id ) << ':';
-    ostr << whichTrace.getCommTag( id );
+    for ( TCommID id = 0; id < whichTrace.getTotalComms(); ++id )
+    {
+      ostringstream ostr;
+      ostr << fixed;
+      ostr << dec;
+      ostr.precision( 0 );
 
-    whichStream << ostr.str();
-    whichStream << endl;
+      ostr << CommRecord << ':';
+      if ( whichTrace.existResourceInfo() )
+        ostr << whichTrace.getSenderCPU( id ) + 1 << ':';
+      else
+        ostr << '0' << ':';
+      ostr << whichTrace.getSenderThread( id ) + 1 << ':';
+      ostr << whichTrace.getLogicalSend( id ) + baseTime << ':';
+      ostr << whichTrace.getPhysicalSend( id ) + baseTime << ':';
+      if ( whichTrace.existResourceInfo() )
+        ostr << whichTrace.getReceiverCPU( id ) + 1 << ':';
+      else
+        ostr << '0' << ':';
+      ostr << whichTrace.getReceiverThread( id ) + 1 << ':';
+      ostr << whichTrace.getLogicalReceive( id ) + baseTime << ':';
+      ostr << whichTrace.getPhysicalReceive( id ) + baseTime << ':';
+      ostr << whichTrace.getCommSize( id ) << ':';
+      ostr << whichTrace.getCommTag( id );
+
+      whichStream << ostr.str();
+      whichStream << endl;
+    }
   }
 }
 
@@ -199,8 +209,8 @@ void TraceBodyIO_v2::readState( const string& line, MemoryBlocks& records ) cons
   // Read the common info
   if ( !readCommon( strLine, CPU, thread, time ) )
   {
-    cerr << "Falta sistema de logging TraceBodyIO_v2::readState()" << endl;
-    cerr << "Error leyendo record de estado" << endl;
+    cerr << "No logging system yet. TraceBodyIO_v2::readState()" << endl;
+    cerr << "Error reading state record." << endl;
     cerr << line << endl;
     return;
   }
@@ -209,8 +219,8 @@ void TraceBodyIO_v2::readState( const string& line, MemoryBlocks& records ) cons
   istringstream endtimeStream( tmpstring );
   if ( !( endtimeStream >> endtime ) )
   {
-    cerr << "Falta sistema de logging TraceBodyIO_v2::readState()" << endl;
-    cerr << "Error leyendo record de estado" << endl;
+    cerr << "No logging system yet. TraceBodyIO_v2::readState()" << endl;
+    cerr << "Error reading state record." << endl;
     cerr << line << endl;
     return;
   }
@@ -219,8 +229,8 @@ void TraceBodyIO_v2::readState( const string& line, MemoryBlocks& records ) cons
   istringstream stateStream( tmpstring );
   if ( !( stateStream >> state ) )
   {
-    cerr << "Falta sistema de logging TraceBodyIO_v2::readState()" << endl;
-    cerr << "Error leyendo record de estado" << endl;
+    cerr << "No logging system yet. TraceBodyIO_v2::readState()" << endl;
+    cerr << "Error reading state record." << endl;
     cerr << line << endl;
     return;
   }
@@ -261,8 +271,8 @@ void TraceBodyIO_v2::readEvent( const string& line, MemoryBlocks& records,
   // Read the common info
   if ( !readCommon( strLine, CPU, thread, time ) )
   {
-    cerr << "Falta sistema de logging TraceBodyIO_v2::readEvent()" << endl;
-    cerr << "Error leyendo record de evento" << endl;
+    cerr << "No logging system yet. TraceBodyIO_v2::readEvent()" << endl;
+    cerr << "Error reading event record." << endl;
     cerr << line << endl;
     return;
   }
@@ -273,8 +283,8 @@ void TraceBodyIO_v2::readEvent( const string& line, MemoryBlocks& records,
     istringstream eventtypeStream( tmpstring );
     if ( !( eventtypeStream >> eventtype ) )
     {
-      cerr << "Falta sistema de logging TraceBodyIO_v2::readEvent()" << endl;
-      cerr << "Error leyendo record de evento" << endl;
+      cerr << "No logging system yet. TraceBodyIO_v2::readEvent()" << endl;
+      cerr << "Error reading event record." << endl;
       cerr << line << endl;
       return;
     }
@@ -283,8 +293,8 @@ void TraceBodyIO_v2::readEvent( const string& line, MemoryBlocks& records,
     istringstream eventvalueStream( tmpstring );
     if ( !( eventvalueStream >> eventvalue ) )
     {
-      cerr << "Falta sistema de logging TraceBodyIO_v2::readEvent()" << endl;
-      cerr << "Error leyendo record de evento" << endl;
+      cerr << "No logging system yet. TraceBodyIO_v2::readEvent()" << endl;
+      cerr << "Error reading event record." << endl;
       cerr << line << endl;
       return;
     }
@@ -330,8 +340,8 @@ void TraceBodyIO_v2::readComm( const string& line, MemoryBlocks& records ) const
     // Read the common info
     if ( !readCommon( strLine, CPU, thread, logSend ) )
     {
-      cerr << "Falta sistema de logging TraceBodyIO_v2::readComm()" << endl;
-      cerr << "Error leyendo record de communicacion" << endl;
+      cerr << "No logging system yet. TraceBodyIO_v2::readComm()" << endl;
+      cerr << "Error reading communication record." << endl;
       cerr << line << endl;
       return;
     }
@@ -340,8 +350,8 @@ void TraceBodyIO_v2::readComm( const string& line, MemoryBlocks& records ) const
     istringstream phySendStream( tmpstring );
     if ( !( phySendStream >> phySend ) )
     {
-      cerr << "Falta sistema de logging TraceBodyIO_v2::readComm()" << endl;
-      cerr << "Error leyendo record de comunicacion" << endl;
+      cerr << "No logging system yet. TraceBodyIO_v2::readComm()" << endl;
+      cerr << "Error reading communication record." << endl;
       cerr << line << endl;
       return;
     }
@@ -349,8 +359,8 @@ void TraceBodyIO_v2::readComm( const string& line, MemoryBlocks& records ) const
     if ( !readCommon( strLine, remoteCPU, remoteThread,
                       logReceive ) )
     {
-      cerr << "Falta sistema de logging TraceBodyIO_v2::readComm()" << endl;
-      cerr << "Error leyendo record de comunicacion" << endl;
+      cerr << "No logging system yet. TraceBodyIO_v2::readComm()" << endl;
+      cerr << "Error reading communication record." << endl;
       cerr << line << endl;
       return;
     }
@@ -359,8 +369,8 @@ void TraceBodyIO_v2::readComm( const string& line, MemoryBlocks& records ) const
     istringstream phyReceiveStream( tmpstring );
     if ( !( phyReceiveStream >> phyReceive ) )
     {
-      cerr << "Falta sistema de logging TraceBodyIO_v2::readComm()" << endl;
-      cerr << "Error leyendo record de comunicacion" << endl;
+      cerr << "No logging system yet. TraceBodyIO_v2::readComm()" << endl;
+      cerr << "Error reading communication record." << endl;
       cerr << line << endl;
       return;
     }
@@ -369,8 +379,8 @@ void TraceBodyIO_v2::readComm( const string& line, MemoryBlocks& records ) const
     istringstream sizeStream( tmpstring );
     if ( !( sizeStream >> size ) )
     {
-      cerr << "Falta sistema de logging TraceBodyIO_v2::readComm()" << endl;
-      cerr << "Error leyendo record de comunicacion" << endl;
+      cerr << "No logging system yet. TraceBodyIO_v2::readComm()" << endl;
+      cerr << "Error reading communication record." << endl;
       cerr << line << endl;
       return;
     }
@@ -379,8 +389,8 @@ void TraceBodyIO_v2::readComm( const string& line, MemoryBlocks& records ) const
     istringstream tagStream( tmpstring );
     if ( !( tagStream >> tag ) )
     {
-      cerr << "Falta sistema de logging TraceBodyIO_v2::readComm()" << endl;
-      cerr << "Error leyendo record de comunicacion" << endl;
+      cerr << "No logging system yet. TraceBodyIO_v2::readComm()" << endl;
+      cerr << "Error reading communication record." << endl;
       cerr << line << endl;
       return;
     }
@@ -405,12 +415,12 @@ void TraceBodyIO_v2::readComm( const string& line, MemoryBlocks& records ) const
   }
   else
   {
-    std::getline( strLine, tmpstring, ':' );
+    std::getline( strLine, tmpstring );
     istringstream commidStream( tmpstring );
     if ( !( commidStream >> commid ) )
     {
-      cerr << "Falta sistema de logging TraceBodyIO_v2::readComm()" << endl;
-      cerr << "Error leyendo record de comunicacion" << endl;
+      cerr << "No logging system yet. TraceBodyIO_v2::readComm()" << endl;
+      cerr << "Error reading communication record." << endl;
       cerr << line << endl;
       return;
     }
@@ -442,52 +452,36 @@ void TraceBodyIO_v2::readComm( const string& line, MemoryBlocks& records ) const
         records.setCPU( records.getReceiverCPU( commid ) );
         records.setThread( records.getReceiverThread( commid ) );
         break;
-    }
-    records.setCommIndex( commid );
 
-    records.newRecord();
-    switch ( line[0] )
-    {
 #ifdef BYTHREAD
       case RemoteLogicalSendRecord:
-#else
-      case LogicalSendRecord:
-#endif
         records.setType( RSEND + LOG );
         records.setTime( records.getLogicalSend( commid ) );
         records.setCPU( records.getReceiverCPU( commid ) );
         records.setThread( records.getReceiverThread( commid ) );
         break;
-#ifdef BYTHREAD
+
       case RemoteLogicalRecvRecord:
-#else
-      case LogicalRecvRecord:
-#endif
         records.setType( RRECV + LOG );
         records.setTime( records.getLogicalReceive( commid ) );
         records.setCPU( records.getSenderCPU( commid ) );
         records.setThread( records.getSenderThread( commid ) );
         break;
-#ifdef BYTHREAD
+
       case RemotePhysicalSendRecord:
-#else
-      case PhysicalSendRecord:
-#endif
         records.setType( RSEND + PHY );
         records.setTime( records.getPhysicalSend( commid ) );
         records.setCPU( records.getReceiverCPU( commid ) );
         records.setThread( records.getReceiverThread( commid ) );
         break;
-#ifdef BYTHREAD
+
       case RemotePhysicalRecvRecord:
-#else
-      case PhysicalRecvRecord:
-#endif
         records.setType( RRECV + PHY );
         records.setTime( records.getPhysicalReceive( commid ) );
         records.setCPU( records.getSenderCPU( commid ) );
         records.setThread( records.getSenderThread( commid ) );
         break;
+#endif
     }
     records.setCommIndex( commid );
   }
@@ -535,7 +529,8 @@ bool TraceBodyIO_v2::readCommon( istringstream& line,
 ***************************/
 bool TraceBodyIO_v2::writeState( string& line,
                                  const KTrace& whichTrace,
-                                 MemoryTrace::iterator *record ) const
+                                 MemoryTrace::iterator *record,
+                                 INT32 numIter ) const
 {
   ostringstream ostr;
   ostr << fixed;
@@ -546,8 +541,9 @@ bool TraceBodyIO_v2::writeState( string& line,
     ostr << StateBeginRecord << ':';
   else if ( record->getType() == ( STATE + END ) )
     ostr << StateEndRecord << ':';
-  writeCommon( ostr, whichTrace, record );
-  ostr << record->getStateEndTime() << ':' << record->getState();
+  writeCommon( ostr, whichTrace, record, numIter );
+  ostr << ( record->getStateEndTime() + ( whichTrace.getEndTime() * numIter ) );
+  ostr << ':' << record->getState();
 
   line += ostr.str();
   return true;
@@ -557,7 +553,8 @@ bool TraceBodyIO_v2::writeState( string& line,
 bool TraceBodyIO_v2::writeEvent( string& line,
                                  const KTrace& whichTrace,
                                  MemoryTrace::iterator *record,
-                                 bool needCommons ) const
+                                 bool needCommons,
+                                 INT32 numIter ) const
 {
   TRecordType firstType;
   TRecordTime firstTime;
@@ -570,21 +567,21 @@ bool TraceBodyIO_v2::writeEvent( string& line,
   if ( needCommons )
   {
     ostr << EventRecord << ':';
-    writeCommon( ostr, whichTrace, record );
+    writeCommon( ostr, whichTrace, record, numIter );
   }
   ostr << record->getEventType() << ':' << record->getEventValue();
   firstType = record->getType();
   firstTime = record->getTime();
   firstThread = record->getThread();
-  ++(*record);
-  while( !record->isNull() && record->getType() == firstType &&
-         record->getTime() == firstTime && record->getThread() == firstThread )
+  ++( *record );
+  while ( !record->isNull() && record->getType() == firstType &&
+          record->getTime() == firstTime && record->getThread() == firstThread )
   {
     ostr << ':' << record->getEventType() << ':' << record->getEventValue();
-    ++(*record);
+    ++( *record );
   }
-  if( !record->isNull() )
-    --(*record);
+  if ( !record->isNull() )
+    --( *record );
 
   line += ostr.str();
   return true;
@@ -593,7 +590,8 @@ bool TraceBodyIO_v2::writeEvent( string& line,
 
 bool TraceBodyIO_v2::writeCommRecord( string& line,
                                       const KTrace& whichTrace,
-                                      MemoryTrace::iterator *record ) const
+                                      MemoryTrace::iterator *record,
+                                      INT32 numIter ) const
 {
   ostringstream ostr;
   TCommID commID;
@@ -623,7 +621,7 @@ bool TraceBodyIO_v2::writeCommRecord( string& line,
   else if ( type == ( PHY + RRECV ) )
     ostr << RemotePhysicalRecvRecord << ':';
 #endif
-  ostr << record->getCommIndex();
+  ostr << ( record->getCommIndex() + ( whichTrace.getTotalComms() * numIter ) );
 
   line += ostr.str();
   return true;
@@ -632,7 +630,8 @@ bool TraceBodyIO_v2::writeCommRecord( string& line,
 
 bool TraceBodyIO_v2::writeGlobalComm( string& line,
                                       const KTrace& whichTrace,
-                                      MemoryTrace::iterator *record ) const
+                                      MemoryTrace::iterator *record,
+                                      INT32 numIter ) const
 {
   return true;
 }
@@ -640,7 +639,8 @@ bool TraceBodyIO_v2::writeGlobalComm( string& line,
 
 void TraceBodyIO_v2::writeCommon( ostringstream& line,
                                   const KTrace& whichTrace,
-                                  MemoryTrace::iterator *record ) const
+                                  MemoryTrace::iterator *record,
+                                  INT32 numIter ) const
 {
   if ( whichTrace.existResourceInfo() )
     line << record->getCPU() + 1 << ':';
@@ -648,7 +648,7 @@ void TraceBodyIO_v2::writeCommon( ostringstream& line,
     line << '0' << ':';
 
   line << record->getThread() + 1 << ':';
-  line << record->getTime() << ':';
+  line << ( record->getTime() + ( whichTrace.getEndTime() * numIter ) ) << ':';
 }
 
 

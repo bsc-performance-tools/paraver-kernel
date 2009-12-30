@@ -28,7 +28,8 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "memorytrace.h"
-
+#include <iostream>
+using namespace std;
 MemoryTrace::iterator::iterator()
 {}
 
@@ -43,6 +44,13 @@ bool MemoryTrace::iterator::operator==( const MemoryTrace::iterator &it ) const
 bool MemoryTrace::iterator::operator!=( const MemoryTrace::iterator &it ) const
 {
   return ( this->record != it.record );
+}
+
+MemoryTrace::iterator& MemoryTrace::iterator::operator=( const MemoryTrace::iterator& copy )
+{
+  if( this != &copy )
+    record = copy.record;
+  return *this;
 }
 
 bool MemoryTrace::iterator::isNull() const

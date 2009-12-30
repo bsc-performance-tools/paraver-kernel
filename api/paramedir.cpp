@@ -46,6 +46,7 @@ using namespace std;
 bool multipleFiles = false;
 bool dumpTrace = false;
 bool noLoad = false;
+INT32 numIter = 1;
 Trace *trace;
 
 int main( int argc, char *argv[] )
@@ -69,7 +70,14 @@ int main( int argc, char *argv[] )
       if ( argv[ currentArg ][ 1 ] == 'm' )
         multipleFiles = true;
       else if ( argv[ currentArg ][ 1 ] == 'd' )
+      {
         dumpTrace = true;
+        ++currentArg;
+        string strNumIter( argv[ currentArg ] );
+        stringstream tmpNumIter( strNumIter );
+        if( !( tmpNumIter >> numIter ) )
+          numIter = 1;
+      }
       else if ( argv[ currentArg ][ 1 ] == 'n' )
         noLoad = true;
       ++currentArg;
@@ -91,7 +99,7 @@ int main( int argc, char *argv[] )
 
     if ( dumpTrace )
 #ifdef BYTHREAD
-      trace->dumpFile( strTrace + ".new.bythread" );
+      trace->dumpFile( strTrace + ".new.bythread", numIter );
 #else
       trace->dumpFile( strTrace + ".new.global" );
 #endif
@@ -179,6 +187,7 @@ void dumpWindow( vector<Window *>& windows, string& strOutputFile )
     beginTime = tmpWindow->getWindowBeginTime();
     endTime = tmpWindow->getWindowEndTime();
 
+    tmpWindow->setComputeYMaxOnInit( false );
     tmpWindow->init( beginTime, NOCREATE );
 
     if ( endTime > trace->getEndTime() )

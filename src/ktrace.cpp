@@ -39,6 +39,8 @@
 #include "tracebodyio.h"
 #include "tracestream.h"
 #include "kprogresscontroller.h"
+#include "bplustree.h"
+#include "bplustreeblocks.h"
 #include "plaintrace.h"
 #include "plainblocks.h"
 #include "noloadtrace.h"
@@ -328,7 +330,7 @@ TRecordTime KTrace::getPhysicalReceive( TCommID whichComm ) const
 }
 
 
-void KTrace::dumpFile( const string& whichFile ) const
+void KTrace::dumpFile( const string& whichFile, INT32 numIter ) const
 {
   ostringstream ostr;
 
@@ -343,7 +345,7 @@ void KTrace::dumpFile( const string& whichFile ) const
 
   file << "new format" << endl;
   file << date << ':';
-  ostr << traceEndTime;
+  ostr << traceEndTime * numIter;
   file << ostr.str();
   if ( traceTimeUnit != US )
     file << "_ns";
@@ -363,24 +365,23 @@ void KTrace::dumpFile( const string& whichFile ) const
 
 #ifdef BYTHREAD
   TraceBodyIO *body = TraceBodyIO::createTraceBody();
-  body->writeCommInfo( file, *this );
+  body->writeCommInfo( file, *this, numIter );
 
-  MemoryTrace::iterator *itEnd = memTrace->end();
-  for( TThreadOrder iThread = 0; iThread < totalThreads(); ++iThread )
+  for ( TThreadOrder iThread = 0; iThread < totalThreads(); ++iThread )
   {
-    MemoryTrace::iterator *it = memTrace->begin();
-
-    while ( !it->isNull() && *it != *itEnd )
+    for ( INT32 iter = 0; iter < numIter; ++iter )
     {
-      if( it->getOrder() == iThread )
-        body->write( file, *this, it );
-      ++( *it );
+      MemoryTrace::iterator *it = memTrace->threadBegin( iThread );
+
+      while ( !it->isNull() )
+      {
+        body->write( file, *this, it, iter );
+        ++( *it );
+      }
+
+      delete it;
     }
-    if( *it == *itEnd && it->getOrder() == iThread )
-      body->write( file, *this, it );
-    delete it;
   }
-  delete itEnd;
 #else
   MemoryTrace::iterator *it = memTrace->begin();
   TraceBodyIO *body = TraceBodyIO::createTraceBody();
@@ -460,7 +461,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
       progress->setEndLimit( file->tellg() );
     file->seekbegin();
   }
-  TraceBodyIO *body = TraceBodyIO::createTraceBody( file );
+  body = TraceBodyIO::createTraceBody( file );
 
 // Reading the header
   file->getline( tmpstr );
@@ -537,10 +538,11 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
 
 // Reading the body
 
-  if( noLoad && body->ordered() )
+  if ( noLoad && body->ordered() )
   {
-    blocks = new NoLoadBlocks();
-    memTrace = new NoLoadTrace();
+    blocks = new NoLoadBlocks( traceResourceModel, traceProcessModel, body, file, traceEndTime );
+    memTrace = new NoLoadTrace( blocks, traceProcessModel, traceResourceModel );
+    ( ( NoLoadBlocks * )blocks )->setFirstOffset( file->tellg() );
   }
   else if ( body->ordered() )
   {
@@ -575,7 +577,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
         break;
     }
     else
-      count++;
+      ++count;
   }
   if ( blocks->getCountInserted() > 0 )
     memTrace->insert( blocks );
@@ -585,9 +587,27 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
 
 // End reading the body
   traceEndTime = memTrace->finish( traceEndTime );
-  file->close();
-  delete body;
+  if ( !( noLoad && body->ordered() ) )
+  {
+    file->close();
+    delete body;
+    body = NULL;
+  }
+  else
+  {
+    ( ( NoLoadBlocks * ) blocks )->setFileLoaded();
+    file->clear();
+  }
+
   ready = true;
+}
+
+KTrace::~KTrace()
+{
+  delete blocks;
+  delete memTrace;
+  if ( body != NULL )
+    delete body;
 }
 
 const set<TEventType>& KTrace::getLoadedEvents() const
@@ -610,8 +630,8 @@ bool KTrace::findLastEventValue( TThreadOrder whichThread,
   vector<MemoryTrace::iterator *> listIter;
   MemoryTrace::iterator *it;
 
-  for( vector<TEventType>::const_iterator itEvt = whichEvent.begin();
-       itEvt != whichEvent.end(); ++itEvt )
+  for ( vector<TEventType>::const_iterator itEvt = whichEvent.begin();
+        itEvt != whichEvent.end(); ++itEvt )
   {
     if ( !eventLoaded( *itEvt ) )
       return false;
@@ -626,8 +646,8 @@ bool KTrace::findLastEventValue( TThreadOrder whichThread,
 
   while ( !it->isNull() && !result )
   {
-    for( vector<TEventType>::const_iterator itEvt = whichEvent.begin();
-         itEvt != whichEvent.end(); ++itEvt )
+    for ( vector<TEventType>::const_iterator itEvt = whichEvent.begin();
+          itEvt != whichEvent.end(); ++itEvt )
     {
       if ( ( it->getType() & EVENT ) && ( it->getEventType() == *itEvt )
            && ( it->getEventValue() != 0 ) )

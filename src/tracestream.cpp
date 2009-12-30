@@ -101,6 +101,12 @@ void NotCompressed::clear()
   file.clear();
 }
 
+int NotCompressed::peek()
+{
+  return file.peek();
+}
+
+
 Compressed::Compressed( const string& filename )
 {
   file = gzopen( filename.c_str(), "r" );
@@ -159,3 +165,8 @@ bool Compressed::good() const
 
 void Compressed::clear()
 {}
+
+int Compressed::peek()
+{
+  return gzgetc( file );
+}

@@ -30,14 +30,35 @@
 #ifndef NOLOADBLOCKS_H_INCLUDED
 #define NOLOADBLOCKS_H_INCLUDED
 
+#include <fstream>
+#ifdef WIN32
+#include <hash_map>
+#else
+#include <ext/hash_map>
+#endif
 #include "memoryblocks.h"
+#include "resourcemodel.h"
+#include "processmodel.h"
+#include "index.h"
+#include "plaintypes.h"
+#include "tracebodyio.h"
+#include "tracestream.h"
+
+using Plain::TRecord;
+using Plain::TCommInfo;
+#ifdef WIN32
+using namespace stdext;
+#else
+using namespace __gnu_cxx;
+#endif
 
 namespace NoLoad
 {
   class NoLoadBlocks: public MemoryBlocks
   {
     public:
-      NoLoadBlocks();
+      NoLoadBlocks( const ResourceModel& resource, const ProcessModel& process,
+                    TraceBodyIO *whichBody, TraceStream *whichFile, TRecordTime endTime );
 
       virtual ~NoLoadBlocks();
 
@@ -93,10 +114,58 @@ namespace NoLoad
 
       virtual TRecordTime getLastRecordTime() const;
 
+      virtual void getBeginThreadRecord( TThreadOrder whichThread, TRecord **record, INT64& offset, UINT16& recPos );
+      virtual void getEndThreadRecord( TThreadOrder whichThread, TRecord **record, INT64& offset, UINT16& recPos );
+
+      virtual void getNextRecord( TThreadOrder whichThread, TRecord **record, INT64& offset, UINT16& recPos );
+      virtual void getPrevRecord( TThreadOrder whichThread, TRecord **record, INT64& offset, UINT16& recPos );
+
+      virtual void getThreadRecordByTime( TThreadOrder whichThread, TRecordTime whichTime,
+                                          TRecord **record, INT64& offset, UINT16& recPos );
+
+      virtual void incNumUseds( INT64 offset );
+      virtual void decNumUseds( INT64 offset );
+
+      virtual void setFileLoaded();
+      virtual void setFirstOffset( INT64 whichOffset );
+
     protected:
 
     private:
+      struct fileLineData
+      {
+        INT16 numUseds;
+        streampos endOffset;
+        TThreadOrder thread;
+        vector<TRecord> records;
+      };
 
+      const ResourceModel& resourceModel;
+      const ProcessModel& processModel;
+      TraceBodyIO *body;
+      TraceStream *file;
+      INT64 endFileOffset;
+
+      vector<Index<INT64> > traceIndex;
+      hash_map<INT64, fileLineData *> blocks;
+      vector<INT64> beginThread;
+      vector<TRecord> emptyBeginRecords;
+      vector<TRecord> emptyEndRecords;
+
+      vector<TCommInfo *> communications;
+      TCommID currentComm;
+
+      fileLineData *lastData;
+      INT16 lastRecord;
+      INT64 lastPos;
+
+      bool fileLoaded;
+      TRecord loadingRec;
+      TThreadOrder loadingThread;
+
+      hash_set<TEventType> notUsedEvents;
+
+      void goToPrevLine();
   };
 
 }

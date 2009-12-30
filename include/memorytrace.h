@@ -51,6 +51,7 @@ class MemoryTrace
 
         virtual void operator++() = 0;
         virtual void operator--() = 0;
+        virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy );
 
         virtual bool operator==( const iterator &it ) const;
         virtual bool operator!=( const iterator &it ) const;
@@ -66,6 +67,11 @@ class MemoryTrace
         virtual TState       getState() const = 0;
         virtual TRecordTime  getStateEndTime() const = 0;
         virtual TCommID      getCommIndex() const = 0;
+
+        virtual TData *getRecord() const
+        {
+          return record;
+        }
 
       protected :
         TData *record;

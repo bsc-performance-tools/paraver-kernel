@@ -42,7 +42,7 @@ Index<RecordType>::~Index()
 template <typename RecordType>
 void Index<RecordType>::indexRecord( TRecordTime time, RecordType rec )
 {
-  counter++;
+  ++counter;
   if ( counter == indexStep )
   {
     baseIndex[ time ] = rec;

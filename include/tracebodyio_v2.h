@@ -60,12 +60,15 @@ class TraceBodyIO_v2 : public TraceBodyIO
                hash_set<TEventType>& events ) const;
     void write( fstream& whichStream,
                 const KTrace& whichTrace,
-                MemoryTrace::iterator *record ) const;
+                MemoryTrace::iterator *record,
+                INT32 numIter = 0 ) const;
     void writeEvents( fstream& whichStream,
                       const KTrace& whichTrace,
-                      vector<MemoryTrace::iterator *>& recordList ) const;
+                      vector<MemoryTrace::iterator *>& recordList,
+                      INT32 numIter = 0 ) const;
     void writeCommInfo( fstream& whichStream,
-                        const KTrace& whichTrace ) const;
+                        const KTrace& whichTrace,
+                        INT32 numIter = 1 ) const;
   protected:
 
   private:
@@ -81,20 +84,25 @@ class TraceBodyIO_v2 : public TraceBodyIO
 
     bool writeState( string& line,
                      const KTrace& whichTrace,
-                     MemoryTrace::iterator *record ) const;
+                     MemoryTrace::iterator *record,
+                     INT32 numIter = 0 ) const;
     bool writeEvent( string& line,
                      const KTrace& whichTrace,
                      MemoryTrace::iterator *record,
-                     bool needCommons = true ) const;
+                     bool needCommons = true,
+                     INT32 numIter = 0 ) const;
     bool writeCommRecord( string& line,
                           const KTrace& whichTrace,
-                          MemoryTrace::iterator *record ) const;
+                          MemoryTrace::iterator *record,
+                          INT32 numIter = 0 ) const;
     bool writeGlobalComm( string& line,
                           const KTrace& whichTrace,
-                          MemoryTrace::iterator *record ) const;
+                          MemoryTrace::iterator *record,
+                          INT32 numIter = 0 ) const;
     void writeCommon( ostringstream& line,
                       const KTrace& whichTrace,
-                      MemoryTrace::iterator *record ) const;
+                      MemoryTrace::iterator *record,
+                      INT32 numIter = 0 ) const;
 
 };
 

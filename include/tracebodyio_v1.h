@@ -49,9 +49,11 @@ class TraceBodyIO_v1 : public TraceBodyIO
                hash_set<TEventType>& events ) const;
     void write( fstream& whichStream,
                 const KTrace& whichTrace,
-                MemoryTrace::iterator *record ) const;
+                MemoryTrace::iterator *record,
+                INT32 numIter = 0 ) const;
     void writeCommInfo( fstream& whichStream,
-                        const KTrace& whichTrace ) const;
+                        const KTrace& whichTrace,
+                        INT32 numIter = 1 ) const;
     void writeEvents( fstream& whichStream,
                       const KTrace& whichTrace,
                       vector<MemoryTrace::iterator *>& recordList ) const;

@@ -894,7 +894,7 @@ TSemanticValue CommSize::execute( const SemanticInfo *info )
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
 
-  if ( myInfo->it->getType() == EMPTYREC )
+  if ( myInfo->it->getType() == EMPTYREC || !( myInfo->it->getType() & COMM ) )
     return 0;
 
   tmp = myInfo->callingInterval->getWindow()->getTrace()->getCommSize(

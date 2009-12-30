@@ -141,9 +141,9 @@ void TraceProxy::setInstanceNumber( UINT32 whichInstanceNumber )
   instanceNumber = whichInstanceNumber;
 }
 
-void TraceProxy::dumpFile( const string& whichFile ) const
+void TraceProxy::dumpFile( const string& whichFile, INT32 numIter ) const
 {
-  myTrace->dumpFile( whichFile );
+  myTrace->dumpFile( whichFile, numIter );
 }
 
 TApplOrder TraceProxy::totalApplications() const

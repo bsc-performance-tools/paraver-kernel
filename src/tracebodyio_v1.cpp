@@ -68,8 +68,8 @@ void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
       break;
 
     default:
-      cerr << "Falta sistema de logging TraceBodyIO_v1::read()" << endl;
-      cerr << "Tipo de record desconocido" << endl;
+      cerr << "No logging system yet. TraceBodyIO_v1::read()" << endl;
+      cerr << "Unkwnown record type." << endl;
       break;
   };
 }
@@ -77,7 +77,8 @@ void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
 
 void TraceBodyIO_v1::write( fstream& whichStream,
                             const KTrace& whichTrace,
-                            MemoryTrace::iterator *record ) const
+                            MemoryTrace::iterator *record,
+                            INT32 numIter ) const
 {
   string line;
   bool writeReady;
@@ -98,8 +99,8 @@ void TraceBodyIO_v1::write( fstream& whichStream,
   else
   {
     writeReady = false;
-    cerr << "Falta sistema de logging TraceBodyIO_v1::write()" << endl;
-    cerr << "Tipo de record desconocido en memoria" << endl;
+    cerr << "No logging system yet. TraceBodyIO_v1::write()" << endl;
+    cerr << "Unkwnown record type in memory." << endl;
   }
 
   if ( !writeReady )
@@ -130,7 +131,8 @@ void TraceBodyIO_v1::writeEvents( fstream& whichStream,
 }
 
 void TraceBodyIO_v1::writeCommInfo( fstream& whichStream,
-                                    const KTrace& whichTrace ) const
+                                    const KTrace& whichTrace,
+                                    INT32 numIter ) const
 {}
 
 /**********************
@@ -155,8 +157,8 @@ void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records ) cons
   // Read the common info
   if ( !readCommon( strLine, CPU, appl, task, thread, time ) )
   {
-    cerr << "Falta sistema de logging TraceBodyIO_v1::readState()" << endl;
-    cerr << "Error leyendo record de estado" << endl;
+    cerr << "No logging system yet. TraceBodyIO_v1::readState()" << endl;
+    cerr << "Error reading state record." << endl;
     cerr << line << endl;
     return;
   }
@@ -165,8 +167,8 @@ void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records ) cons
   istringstream endtimeStream( tmpstring );
   if ( !( endtimeStream >> endtime ) )
   {
-    cerr << "Falta sistema de logging TraceBodyIO_v1::readState()" << endl;
-    cerr << "Error leyendo record de estado" << endl;
+    cerr << "No logging system yet. TraceBodyIO_v1::readState()" << endl;
+    cerr << "Error reading state record." << endl;
     cerr << line << endl;
     return;
   }
@@ -175,8 +177,8 @@ void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records ) cons
   istringstream stateStream( tmpstring );
   if ( !( stateStream >> state ) )
   {
-    cerr << "Falta sistema de logging TraceBodyIO_v1::readState()" << endl;
-    cerr << "Error leyendo record de estado" << endl;
+    cerr << "No logging system yet. TraceBodyIO_v1::readState()" << endl;
+    cerr << "Error reading state record." << endl;
     cerr << line << endl;
     return;
   }
@@ -230,8 +232,8 @@ void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records,
   // Read the common info
   if ( !readCommon( strLine, CPU, appl, task, thread, time ) )
   {
-    cerr << "Falta sistema de logging TraceBodyIO_v1::readEvent()" << endl;
-    cerr << "Error leyendo record de evento" << endl;
+    cerr << "No logging system yet. TraceBodyIO_v1::readEvent()" << endl;
+    cerr << "Error reading event record." << endl;
     cerr << line << endl;
     return;
   }
@@ -242,8 +244,8 @@ void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records,
     istringstream eventtypeStream( tmpstring );
     if ( !( eventtypeStream >> eventtype ) )
     {
-      cerr << "Falta sistema de logging TraceBodyIO_v1::readEvent()" << endl;
-      cerr << "Error leyendo record de evento" << endl;
+      cerr << "No logging system yet. TraceBodyIO_v1::readEvent()" << endl;
+      cerr << "Error reading event record." << endl;
       cerr << line << endl;
       return;
     }
@@ -252,8 +254,8 @@ void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records,
     istringstream eventvalueStream( tmpstring );
     if ( !( eventvalueStream >> eventvalue ) )
     {
-      cerr << "Falta sistema de logging TraceBodyIO_v1::readEvent()" << endl;
-      cerr << "Error leyendo record de evento" << endl;
+      cerr << "No logging system yet. TraceBodyIO_v1::readEvent()" << endl;
+      cerr << "Error reading event record." << endl;
       cerr << line << endl;
       return;
     }
@@ -300,8 +302,8 @@ void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records ) const
   // Read the common info
   if ( !readCommon( strLine, CPU, appl, task, thread, logSend ) )
   {
-    cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
-    cerr << "Error leyendo record de communicacion" << endl;
+    cerr << "No logging system yet. TraceBodyIO_v1::readComm()" << endl;
+    cerr << "Error reading communication record." << endl;
     cerr << line << endl;
     return;
   }
@@ -310,8 +312,8 @@ void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records ) const
   istringstream phySendStream( tmpstring );
   if ( !( phySendStream >> phySend ) )
   {
-    cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
-    cerr << "Error leyendo record de comunicacion" << endl;
+    cerr << "No logging system yet. TraceBodyIO_v1::readComm()" << endl;
+    cerr << "Error reading communication record." << endl;
     cerr << line << endl;
     return;
   }
@@ -319,8 +321,8 @@ void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records ) const
   if ( !readCommon( strLine, remoteCPU, remoteAppl, remoteTask, remoteThread,
                     logReceive ) )
   {
-    cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
-    cerr << "Error leyendo record de comunicacion" << endl;
+    cerr << "No logging system yet. TraceBodyIO_v1::readComm()" << endl;
+    cerr << "Error reading communication record." << endl;
     cerr << line << endl;
     return;
   }
@@ -329,8 +331,8 @@ void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records ) const
   istringstream phyReceiveStream( tmpstring );
   if ( !( phyReceiveStream >> phyReceive ) )
   {
-    cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
-    cerr << "Error leyendo record de comunicacion" << endl;
+    cerr << "No logging system yet. TraceBodyIO_v1::readComm()" << endl;
+    cerr << "Error reading communication record." << endl;
     cerr << line << endl;
     return;
   }
@@ -339,8 +341,8 @@ void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records ) const
   istringstream sizeStream( tmpstring );
   if ( !( sizeStream >> size ) )
   {
-    cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
-    cerr << "Error leyendo record de comunicacion" << endl;
+    cerr << "No logging system yet. TraceBodyIO_v1::readComm()" << endl;
+    cerr << "Error reading communication record." << endl;
     cerr << line << endl;
     return;
   }
@@ -349,8 +351,8 @@ void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records ) const
   istringstream tagStream( tmpstring );
   if ( !( tagStream >> tag ) )
   {
-    cerr << "Falta sistema de logging TraceBodyIO_v1::readComm()" << endl;
-    cerr << "Error leyendo record de comunicacion" << endl;
+    cerr << "No logging system yet. TraceBodyIO_v1::readComm()" << endl;
+    cerr << "Error reading communication record." << endl;
     cerr << line << endl;
     return;
   }

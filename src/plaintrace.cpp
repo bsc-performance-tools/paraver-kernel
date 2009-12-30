@@ -346,6 +346,20 @@ inline void PlainTrace::ThreadIterator::operator--()
   record -= sizeof( TRecord );
 }
 
+MemoryTrace::iterator& PlainTrace::ThreadIterator::operator=( const MemoryTrace::iterator & copy )
+{
+  if ( this != &copy )
+  {
+    PlainTrace::ThreadIterator *tmpCopy = ( PlainTrace::ThreadIterator * ) & copy;
+    thread = tmpCopy->thread;
+    block = tmpCopy->block;
+    pos = tmpCopy->pos;
+    lastBlock = tmpCopy->lastBlock;
+    lastPos = tmpCopy->lastPos;
+    record = tmpCopy->getRecord();
+  }
+  return *this;
+}
 /**************************************************************************
  * MemoryTrace Inherited CPUIterator.
  **************************************************************************/
@@ -427,7 +441,7 @@ inline void PlainTrace::CPUIterator::operator--()
 
   if ( pos[ lastThread ] == 0 )
   {
-    if( block[ lastThread ] > 0 )
+    if ( block[ lastThread ] > 0 )
     {
       pos[ lastThread ] = PlainBlocks::blockSize - 1;
       --block[ lastThread ];
@@ -441,21 +455,27 @@ inline void PlainTrace::CPUIterator::operator--()
   record = &blocks->blocks[ threads[ lastThread ] ][ block[ lastThread ] ][ pos[ lastThread ] ];
 }
 
-struct ltrecord
+MemoryTrace::iterator& PlainTrace::CPUIterator::operator=( const MemoryTrace::iterator & copy )
 {
-  bool operator()( TRecord *r1, TRecord *r2 ) const
+  if ( this != &copy )
   {
-    if ( r1->time < r2->time )
-      return true;
-    if ( getTypeOrdered( r1 ) < getTypeOrdered( r2 ) )
-      return true;
-    return false;
+    PlainTrace::CPUIterator *tmpCopy = ( PlainTrace::CPUIterator * ) & copy;
+    cpu = tmpCopy->cpu;
+    numThreads = tmpCopy->numThreads;
+    threads = tmpCopy->threads;
+    block = tmpCopy->block;
+    pos = tmpCopy->pos;
+    lastBlock = tmpCopy->lastBlock;
+    lastPos = tmpCopy->lastPos;
+    lastThread = tmpCopy->lastThread;
+    record = tmpCopy->getRecord();
   }
-};
+  return *this;
+}
 
 inline TThreadOrder PlainTrace::CPUIterator::minThread()
 {
-  map<TRecord *, TThreadOrder, ltrecord> sortedRecords;
+  map<TRecord *, TThreadOrder, Plain::ltrecord> sortedRecords;
 
   setToMyCPUForward();
   for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )
@@ -469,7 +489,7 @@ inline TThreadOrder PlainTrace::CPUIterator::minThread()
 
 inline TThreadOrder PlainTrace::CPUIterator::maxThread()
 {
-  map<TRecord *, TThreadOrder, ltrecord> sortedRecords;
+  map<TRecord *, TThreadOrder, Plain::ltrecord> sortedRecords;
 
   setToMyCPUBackward();
   for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )

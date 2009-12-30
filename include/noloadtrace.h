@@ -31,21 +31,48 @@
 #define NOLOADTRACE_H_INCLUDED
 
 #include "memorytrace.h"
+#include "plaintypes.h"
+
+using Plain::TRecord;
+
+class ProcessModel;
+class ResourceModel;
 
 namespace NoLoad
 {
+  class NoLoadBlocks;
+
+  struct ltrecord
+  {
+    bool operator()( TRecord *r1, TRecord *r2 ) const
+    {
+      if ( r1->time < r2->time )
+        return true;
+      if ( getTypeOrdered( r1 ) < getTypeOrdered( r2 ) )
+        return true;
+      return false;
+    }
+  };
+
   class NoLoadTrace: public MemoryTrace
   {
     public:
     class iterator: public MemoryTrace::iterator
       {
         public:
-          iterator();
+          iterator()
+          {}
+
+          iterator( NoLoadBlocks *whichBlocks );
 
           virtual ~iterator();
 
           virtual void operator++();
           virtual void operator--();
+          virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy )
+          {
+            return *this;
+          }
 
           virtual TRecordType  getType() const;
           virtual TRecordTime  getTime() const;
@@ -58,9 +85,75 @@ namespace NoLoad
           virtual TRecordTime  getStateEndTime() const;
           virtual TCommID      getCommIndex() const;
 
+        protected:
+          NoLoadBlocks *blocks;
+
       };
 
-      NoLoadTrace();
+    class ThreadIterator : public NoLoadTrace::iterator
+      {
+        public:
+          ThreadIterator()
+          {}
+
+          ThreadIterator( NoLoadBlocks *whichBlocks, TThreadOrder whichThread,
+                          TRecord *whichRecord, INT64 whichOffset, INT16 whichPos );
+
+          virtual ~ThreadIterator();
+
+          virtual TThreadOrder getThread() const;
+          virtual TObjectOrder getOrder() const;
+
+          virtual void operator++();
+          virtual void operator--();
+          virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy );
+
+        private:
+          TThreadOrder thread;
+          INT64 offset;
+          UINT16 recPos;
+
+          friend class NoLoadTrace;
+      };
+
+    class CPUIterator : public NoLoadTrace::iterator
+      {
+        public:
+          CPUIterator()
+          {}
+
+          CPUIterator( NoLoadBlocks *whichBlocks, TCPUOrder whichCPU,
+                       vector<TThreadOrder>& whichThreads, vector<TRecord *>& whichRecords,
+                       vector<INT64>& whichOffsets, vector<UINT16>& whichPos, bool notMove = false );
+
+          virtual ~CPUIterator();
+
+          virtual TThreadOrder getThread() const;
+          virtual TObjectOrder getOrder() const;
+
+          virtual void operator++();
+          virtual void operator--();
+          virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy );
+
+        private:
+          TCPUOrder cpu;
+          vector<TThreadOrder> threads;
+          vector<TRecord *> threadRecords;
+          vector<INT64> offset;
+          vector<UINT16> recPos;
+          TThreadOrder lastThread;
+
+          TThreadOrder minThread();
+          TThreadOrder maxThread();
+          void setToMyCPUForward();
+          void setToMyCPUBackward();
+
+          friend class NoLoadTrace;
+      };
+
+      NoLoadTrace( MemoryBlocks *whichBlocks,
+                   const ProcessModel& whichProcessModel,
+                   const ResourceModel& whichResourceModel );
 
       virtual ~NoLoadTrace();
 
@@ -87,7 +180,9 @@ namespace NoLoad
     protected:
 
     private:
-
+      const ProcessModel& processModel;
+      const ResourceModel& resourceModel;
+      NoLoadBlocks *blocks;
   };
 
 }
