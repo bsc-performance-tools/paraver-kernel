@@ -351,7 +351,7 @@ void WindowProxy::computeYScaleMin()
   {
     vector< TObjectOrder > selected;
     getSelectedRows( getLevel(), selected,
-                     getZoomSecondDimension().first, getZoomSecondDimension().second );
+                     getZoomSecondDimension().first, getZoomSecondDimension().second, true );
 
     init( winBeginTime, NONE );
 
@@ -371,7 +371,7 @@ void WindowProxy::computeYScaleMax()
   {
     vector< TObjectOrder > selected;
     getSelectedRows( getLevel(), selected,
-                     getZoomSecondDimension().first, getZoomSecondDimension().second );
+                     getZoomSecondDimension().first, getZoomSecondDimension().second, true );
 
     init( winBeginTime, NONE );
 
@@ -391,7 +391,7 @@ void WindowProxy::computeYScale()
   {
     vector< TObjectOrder > selected;
     getSelectedRows( getLevel(), selected,
-                     getZoomSecondDimension().first, getZoomSecondDimension().second );
+                     getZoomSecondDimension().first, getZoomSecondDimension().second, true );
 
     init( winBeginTime, NONE );
 
@@ -913,8 +913,6 @@ pair<TObjectOrder, TObjectOrder> WindowProxy::getZoomSecondDimension() const
   return zoomHistory.getSecondDimension();
 }
 
-
-
 void WindowProxy::setSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
 {
   selectedRow.setSelected( selected, onLevel );
@@ -928,17 +926,147 @@ void WindowProxy::setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > 
 void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selected, bool lookUpLevels )
 {
   selectedRow.getSelected( selected, onLevel );
+
+  if ( lookUpLevels )
+  {
+    TObjectOrder iAppl, jTask, iNode, aux;
+    // Only deselect those with higher levels deselected
+    switch ( onLevel )
+    {
+      case TASK:
+        for ( TTaskOrder iTask = 0; iTask < getTrace()->totalTasks(); ++iTask )
+        {
+          getTrace()->getTaskLocation( iTask, iAppl, aux );
+          selected[ iTask ] = selected[ iTask ] &&
+                              selectedRow.isSelectedPosition( iAppl, APPLICATION );
+        }
+
+        break;
+
+      case THREAD:
+        for ( TThreadOrder iThread = 0; iThread < getTrace()->totalThreads(); ++iThread )
+        {
+          getTrace()->getThreadLocation( iThread, iAppl, jTask, aux );
+          selected[ iThread ] = selected[ iThread ] &&
+                                selectedRow.isSelectedPosition( iAppl, APPLICATION ) &&
+                                selectedRow.isSelectedPosition( jTask, TASK );
+        }
+
+        break;
+
+      case CPU:
+        for ( TCPUOrder iCPU = 0; iCPU < getTrace()->totalCPUs(); ++iCPU )
+        {
+          getTrace()->getCPULocation( iCPU, iNode, aux );
+          selected[ iCPU ] = selected[ iCPU ] &&
+                             selectedRow.isSelectedPosition( iNode, NODE );
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
 }
 
 void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selected,
                                    TObjectOrder first, TObjectOrder last, bool lookUpLevels )
 {
   selectedRow.getSelected( selected, first, last, onLevel );
+
+  if ( lookUpLevels )
+  {
+    TObjectOrder iAppl, jTask, iNode, aux;
+    switch ( onLevel )
+    {
+      case TASK:
+        for ( TObjectOrder iTask = first; iTask <= last; ++iTask )
+        {
+          getTrace()->getTaskLocation( iTask, iAppl, aux );
+          selected[ iTask ] = selected[ iTask ] &&
+                              selectedRow.isSelectedPosition( iAppl, APPLICATION );
+        }
+
+        break;
+
+      case THREAD:
+        for ( TObjectOrder iThread = first; iThread <= last; ++iThread )
+        {
+          getTrace()->getThreadLocation( iThread, iAppl, jTask, aux );
+          selected[ iThread ] = selected[ iThread ] &&
+                                selectedRow.isSelectedPosition( iAppl, APPLICATION ) &&
+                                selectedRow.isSelectedPosition( jTask, TASK );
+        }
+
+        break;
+
+      case CPU:
+        for ( TObjectOrder iCPU = first; iCPU <= last; ++iCPU )
+        {
+          getTrace()->getCPULocation( iCPU, iNode, aux );
+          selected[ iCPU ] = selected[ iCPU ] &&
+                             selectedRow.isSelectedPosition( iNode, NODE );
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
+}
+
+void WindowProxy::getAllLevelsSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected )
+{
+  vector< TObjectOrder > allLevelsSelected;
+  TObjectOrder iAppl, iTask, iNode, aux;
+  switch ( onLevel )
+  {
+    case TASK:
+      for ( vector< TObjectOrder >::iterator it = selected.begin(); it != selected.end(); ++it )
+      {
+        getTrace()->getTaskLocation( *it, iAppl, aux );
+        if ( selectedRow.isSelectedPosition( iAppl, APPLICATION ) )
+          allLevelsSelected.push_back( *it );
+      }
+
+      break;
+
+    case THREAD:
+      for ( vector< TObjectOrder >::iterator it = selected.begin(); it != selected.end(); ++it )
+      {
+        getTrace()->getThreadLocation( *it, iAppl, iTask, aux );
+        if ( selectedRow.isSelectedPosition( iAppl, APPLICATION ) &&
+             selectedRow.isSelectedPosition( iTask, TASK ) )
+          allLevelsSelected.push_back( *it );
+      }
+
+      break;
+
+    case CPU:
+      for ( vector< TObjectOrder >::iterator it = selected.begin(); it != selected.end(); ++it )
+      {
+        getTrace()->getCPULocation( *it, iNode, aux );
+        if ( selectedRow.isSelectedPosition( iNode, NODE ) )
+          allLevelsSelected.push_back( *it );
+      }
+      break;
+
+    default:
+      break;
+  }
+
+  if ( allLevelsSelected.size() > 0 )
+    selected.swap( allLevelsSelected );
 }
 
 void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected, bool lookUpLevels )
 {
   selectedRow.getSelected( selected, onLevel );
+
+  if ( lookUpLevels )
+  {
+    getAllLevelsSelectedRows( onLevel, selected );
+  }
 }
 
 void WindowProxy::getSelectedRows( TWindowLevel onLevel,
@@ -946,6 +1074,10 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel,
                                    TObjectOrder first, TObjectOrder last, bool lookUpLevels )
 {
   selectedRow.getSelected( selected, first, last, onLevel );
+  if ( lookUpLevels )
+  {
+    getAllLevelsSelectedRows( onLevel, selected );
+  }
 }
 
 void WindowProxy::getGroupLabels( UINT32 whichGroup, vector<string>& onVector ) const

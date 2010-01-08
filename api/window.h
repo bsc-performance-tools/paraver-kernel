@@ -577,6 +577,8 @@ class WindowProxy: public Window
 
     void init();
 
+    void getAllLevelsSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected );
+
     friend Window *Window::create( KernelConnection *, Trace * );
     friend Window *Window::create( KernelConnection * );
     friend Window *Window::create( KernelConnection *, Window *, Window * );
