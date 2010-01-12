@@ -31,11 +31,7 @@
 #define NOLOADBLOCKS_H_INCLUDED
 
 #include <fstream>
-#ifdef WIN32
-#include <hash_map>
-#else
-#include <ext/hash_map>
-#endif
+#include <map>
 #include "memoryblocks.h"
 #include "resourcemodel.h"
 #include "processmodel.h"
@@ -46,11 +42,8 @@
 
 using Plain::TRecord;
 using Plain::TCommInfo;
-#ifdef WIN32
-using namespace stdext;
-#else
-using namespace __gnu_cxx;
-#endif
+
+using namespace std;
 
 namespace NoLoad
 {
@@ -135,7 +128,7 @@ namespace NoLoad
       struct fileLineData
       {
         INT16 numUseds;
-        streampos endOffset;
+        INT64 endOffset;
         TThreadOrder thread;
         vector<TRecord> records;
       };
@@ -147,7 +140,7 @@ namespace NoLoad
       INT64 endFileOffset;
 
       vector<Index<INT64> > traceIndex;
-      hash_map<INT64, fileLineData *> blocks;
+      map<INT64, fileLineData *> blocks;
       vector<INT64> beginThread;
       vector<TRecord> emptyBeginRecords;
       vector<TRecord> emptyEndRecords;
