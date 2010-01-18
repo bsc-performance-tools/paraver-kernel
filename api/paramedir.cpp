@@ -76,7 +76,10 @@ int main( int argc, char *argv[] )
         string strNumIter( argv[ currentArg ] );
         stringstream tmpNumIter( strNumIter );
         if( !( tmpNumIter >> numIter ) )
+        {
           numIter = 1;
+          --currentArg;
+        }
       }
       else if ( argv[ currentArg ][ 1 ] == 'n' )
         noLoad = true;

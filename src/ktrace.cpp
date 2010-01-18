@@ -376,6 +376,7 @@ void KTrace::dumpFile( const string& whichFile, INT32 numIter ) const
       while ( !it->isNull() )
       {
         body->write( file, *this, it, iter );
+        if( it->getTime() == traceEndTime ) break;
         ++( *it );
       }
 
