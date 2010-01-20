@@ -49,7 +49,8 @@ namespace Plain
   class PlainBlocks: public MemoryBlocks
   {
     public:
-      PlainBlocks( const ResourceModel& resource, const ProcessModel& process );
+      PlainBlocks( const ResourceModel& resource, const ProcessModel& process,
+                   TRecordTime endTime );
 
       ~PlainBlocks();
 
@@ -105,7 +106,7 @@ namespace Plain
       virtual TRecordTime getPhysicalReceive( TCommID whichComm ) const;
 
       virtual TRecordTime getLastRecordTime() const;
-
+      virtual void setFileLoaded();
     protected:
 
     private:
@@ -131,6 +132,7 @@ namespace Plain
       TCommID currentComm;
       const ResourceModel& resourceModel;
       const ProcessModel& processModel;
+      TRecordTime traceEndTime;
       TRecord tmpRecord;
       bool inserted;
       TThreadOrder insertedOnThread;

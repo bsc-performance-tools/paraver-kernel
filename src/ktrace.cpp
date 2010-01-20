@@ -547,7 +547,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   }
   else if ( body->ordered() )
   {
-    blocks = new PlainBlocks( traceResourceModel, traceProcessModel );
+    blocks = new PlainBlocks( traceResourceModel, traceProcessModel, traceEndTime );
     memTrace  = new PlainTrace( traceProcessModel,
                                 traceResourceModel );
   }
@@ -596,9 +596,10 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   }
   else
   {
-    ( ( NoLoadBlocks * ) blocks )->setFileLoaded();
     file->clear();
   }
+
+  blocks->setFileLoaded();
 
   ready = true;
 }

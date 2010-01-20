@@ -45,8 +45,9 @@ const TRecordType PlainBlocks::commTypes[] =
   RRECV + PHY
 };
 
-PlainBlocks::PlainBlocks( const ResourceModel& resource, const ProcessModel& process )
-    : resourceModel( resource ), processModel( process )
+PlainBlocks::PlainBlocks( const ResourceModel& resource, const ProcessModel& process,
+                          TRecordTime endTime )
+    : resourceModel( resource ), processModel( process ), traceEndTime( endTime )
 {
   blocks.reserve( processModel.totalThreads() );
   currentBlock.reserve( processModel.totalThreads() );
@@ -81,7 +82,7 @@ PlainBlocks::~PlainBlocks()
 
 TData *PlainBlocks::getLastRecord( UINT16 position ) const
 {
-  return (TData *)&lastRecords[ position ];
+  return ( TData * )&lastRecords[ position ];
 }
 
 void PlainBlocks::resetCountInserted()
@@ -375,4 +376,37 @@ TRecordTime PlainBlocks::getLastRecordTime() const
   TRecordTime time = blocks[ thread ][ block ][ pos ].time;
 
   return time;
+}
+
+void PlainBlocks::setFileLoaded()
+{
+  TRecord tmpEndRec;
+  tmpEndRec.time = traceEndTime;
+  tmpEndRec.type = EMPTYREC;
+
+  for ( TThreadOrder i = 0; i < processModel.totalThreads(); ++i )
+  {
+    if ( currentBlock[ i ] == NULL )
+    {
+      blocks[ i ][ 0 ] = new TRecord[ blockSize ];
+      currentBlock[ i ] = blocks[ i ][ 0 ];
+      TRecord empty;
+      empty.time = 0;
+      empty.type = EMPTYREC;
+      empty.CPU = 0;
+      currentBlock[ i ][ 0 ] = empty;
+      currentRecord[ i ] = 1;
+    }
+    else
+    {
+      ++currentRecord[ i ];
+      if ( currentRecord[ i ] == blockSize )
+      {
+        blocks[ i ].push_back( new TRecord[ blockSize ] );
+        currentBlock[ i ] = blocks[ i ][ blocks[ i ].size() - 1 ];
+        currentRecord[ i ] = 0;
+      }
+    }
+    currentBlock[ i ][ currentRecord[ i ] ] = tmpEndRec;
+  }
 }

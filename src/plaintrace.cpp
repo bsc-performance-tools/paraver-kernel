@@ -395,6 +395,14 @@ inline void PlainTrace::CPUIterator::operator++()
 {
   TThreadOrder inLastPos = 0;
   ++pos[ lastThread ];
+  if ( pos[ lastThread ] >= PlainBlocks::blockSize )
+  {
+    if ( block[ lastThread ] < lastBlock[ lastThread ] )
+    {
+      ++block[ lastThread ];
+      pos[ lastThread ] = 0;
+    }
+  }
   for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )
   {
     if ( pos[ iThread ] == lastPos[ iThread ] && block[ iThread ] == lastBlock[ iThread ] )
@@ -408,18 +416,6 @@ inline void PlainTrace::CPUIterator::operator++()
     return;
   }
 
-  if ( pos[ lastThread ] >= PlainBlocks::blockSize )
-  {
-    if ( block[ lastThread ] < lastBlock[ lastThread ] )
-    {
-      ++block[ lastThread ];
-      pos[ lastThread ] = 0;
-    }
-    lastThread = minThread();
-    record = &blocks->blocks[ threads[ lastThread ] ][ block[ lastThread ] ][ pos[ lastThread ] ];
-    return;
-  }
-
   lastThread = minThread();
   record = &blocks->blocks[ threads[ lastThread ] ][ block[ lastThread ] ][ pos[ lastThread ] ];
 }
@@ -427,7 +423,16 @@ inline void PlainTrace::CPUIterator::operator++()
 inline void PlainTrace::CPUIterator::operator--()
 {
   TThreadOrder inFirstPos = 0;
-  --pos[ lastThread ];
+  if ( pos[ lastThread ] == 0 )
+  {
+    if ( block[ lastThread ] > 0 )
+    {
+      pos[ lastThread ] = PlainBlocks::blockSize - 1;
+      --block[ lastThread ];
+    }
+  }
+  else
+    --pos[ lastThread ];
   for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )
   {
     if ( pos[ iThread ] == 0 && block[ iThread ] == 0 )
@@ -436,18 +441,6 @@ inline void PlainTrace::CPUIterator::operator--()
   if ( inFirstPos == numThreads )
   {
     record = NULL;
-    return;
-  }
-
-  if ( pos[ lastThread ] == 0 )
-  {
-    if ( block[ lastThread ] > 0 )
-    {
-      pos[ lastThread ] = PlainBlocks::blockSize - 1;
-      --block[ lastThread ];
-    }
-    lastThread = maxThread();
-    record = &blocks->blocks[ threads[ lastThread ] ][ block[ lastThread ] ][ pos[ lastThread ] ];
     return;
   }
 
@@ -484,6 +477,9 @@ inline TThreadOrder PlainTrace::CPUIterator::minThread()
       sortedRecords[ &blocks->blocks[ threads[ iThread ] ][ block[ iThread ] ][ pos[ iThread ] ] ] = iThread;
   }
 
+  if ( sortedRecords.begin() == sortedRecords.end() )
+    return 0;
+
   return sortedRecords.begin()->second;
 }
 
@@ -498,6 +494,9 @@ inline TThreadOrder PlainTrace::CPUIterator::maxThread()
       sortedRecords[ &blocks->blocks[ threads[ iThread ] ][ block[ iThread ] ][ pos[ iThread ] ] ] = iThread;
   }
 
+  if ( sortedRecords.begin() == sortedRecords.end() )
+    return 0;
+
   map<TRecord *, TThreadOrder, ltrecord>::iterator it = sortedRecords.end();
   --it;
   return it->second;
@@ -510,7 +509,9 @@ inline void PlainTrace::CPUIterator::setToMyCPUForward()
     if ( !( pos[ iThread ] == lastPos[ iThread ] && block[ iThread ] == lastBlock[ iThread ] ) )
     {
       TRecord *tmpRec = &blocks->blocks[ threads[ iThread ] ][ block[ iThread ] ][ pos[ iThread ] ];
-      while ( !( pos[ iThread ] == lastPos[ iThread ] && block[ iThread ] == lastBlock[ iThread ] )
+      if( tmpRec->type == EMPTYREC )
+        return;
+      while ( !( pos[ iThread ] >= lastPos[ iThread ] && block[ iThread ] >= lastBlock[ iThread ] )
               && tmpRec->CPU != cpu )
       {
         ++pos[ iThread ];
@@ -535,12 +536,17 @@ inline void PlainTrace::CPUIterator::setToMyCPUBackward()
     if ( !( pos[ iThread ] == 0 && block[ iThread ] == 0 ) )
     {
       TRecord *tmpRec = &blocks->blocks[ threads[ iThread ] ][ block[ iThread ] ][ pos[ iThread ] ];
+      if( tmpRec->type == EMPTYREC )
+        return;
       while ( !( pos[ iThread ] == 0 && block[ iThread ] == 0 ) && tmpRec->CPU != cpu )
       {
         if ( pos[ iThread ] == 0 )
         {
-          --block[ iThread ];
-          pos[ iThread ] = PlainBlocks::blockSize - 1;
+          if( block[ iThread ] > 0 )
+          {
+            --block[ iThread ];
+            pos[ iThread ] = PlainBlocks::blockSize - 1;
+          }
         }
         else
           --pos[ iThread ];

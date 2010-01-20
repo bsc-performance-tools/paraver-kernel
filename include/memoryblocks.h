@@ -108,6 +108,9 @@ class MemoryBlocks
       countInserted = 0;
     }
 
+    virtual void setFileLoaded()
+    {}
+
   protected:
     // Number of new records inserted in the last operation
     UINT32 countInserted;
