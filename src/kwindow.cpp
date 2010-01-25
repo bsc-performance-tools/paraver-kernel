@@ -932,9 +932,9 @@ void KDerivedWindow::init( TRecordTime initialTime, TCreateList create )
   else if ( tmpLevel == CPU )
     objectSize = myTrace->totalCPUs();
 
-  if( initFromBegin() )
+/*  if( initFromBegin() )
     initialTime = 0;
-
+*/
   for ( UINT16 i = 0; i < parents.size(); i++ )
     parents[ i ]->init( initialTime, create );
 
