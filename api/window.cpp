@@ -929,7 +929,7 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selecte
 
   if ( lookUpLevels )
   {
-    TObjectOrder iAppl, jTask, iNode, aux;
+    TObjectOrder iAppl, jTask, globalTask, iNode, aux;
     // Only deselect those with higher levels deselected
     switch ( onLevel )
     {
@@ -937,8 +937,8 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selecte
         for ( TTaskOrder iTask = 0; iTask < getTrace()->totalTasks(); ++iTask )
         {
           getTrace()->getTaskLocation( iTask, iAppl, aux );
-          selected[ iTask ] = selected[ iTask ] &&
-                              selectedRow.isSelectedPosition( iAppl, APPLICATION );
+          selected[ iTask ] = selectedRow.isSelectedPosition( iAppl, APPLICATION ) &&
+                              selected[ iTask ];
         }
 
         break;
@@ -947,9 +947,10 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selecte
         for ( TThreadOrder iThread = 0; iThread < getTrace()->totalThreads(); ++iThread )
         {
           getTrace()->getThreadLocation( iThread, iAppl, jTask, aux );
-          selected[ iThread ] = selected[ iThread ] &&
-                                selectedRow.isSelectedPosition( iAppl, APPLICATION ) &&
-                                selectedRow.isSelectedPosition( jTask, TASK );
+          globalTask = getTrace()->getGlobalTask( iAppl, jTask );
+          selected[ iThread ] = selectedRow.isSelectedPosition( iAppl, APPLICATION ) &&
+                                selectedRow.isSelectedPosition( globalTask, TASK ) &&
+                                selected[ iThread ];
         }
 
         break;
@@ -976,15 +977,15 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selecte
 
   if ( lookUpLevels )
   {
-    TObjectOrder iAppl, jTask, iNode, aux;
+    TObjectOrder iAppl, jTask, globalTask, iNode, aux;
     switch ( onLevel )
     {
       case TASK:
         for ( TObjectOrder iTask = first; iTask <= last; ++iTask )
         {
           getTrace()->getTaskLocation( iTask, iAppl, aux );
-          selected[ iTask ] = selected[ iTask ] &&
-                              selectedRow.isSelectedPosition( iAppl, APPLICATION );
+          selected[ iTask ] = selectedRow.isSelectedPosition( iAppl, APPLICATION ) &&
+                              selected[ iTask ];
         }
 
         break;
@@ -993,9 +994,10 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selecte
         for ( TObjectOrder iThread = first; iThread <= last; ++iThread )
         {
           getTrace()->getThreadLocation( iThread, iAppl, jTask, aux );
-          selected[ iThread ] = selected[ iThread ] &&
-                                selectedRow.isSelectedPosition( iAppl, APPLICATION ) &&
-                                selectedRow.isSelectedPosition( jTask, TASK );
+          globalTask = getTrace()->getGlobalTask( iAppl, jTask );
+          selected[ iThread ] = selectedRow.isSelectedPosition( iAppl, APPLICATION ) &&
+                                selectedRow.isSelectedPosition( globalTask, TASK ) &&
+                                selected[ iThread ];
         }
 
         break;
@@ -1018,7 +1020,7 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selecte
 void WindowProxy::getAllLevelsSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected )
 {
   vector< TObjectOrder > allLevelsSelected;
-  TObjectOrder iAppl, iTask, iNode, aux;
+  TObjectOrder iAppl, iTask, globalTask, iNode, aux;
   switch ( onLevel )
   {
     case TASK:
@@ -1035,8 +1037,10 @@ void WindowProxy::getAllLevelsSelectedRows( TWindowLevel onLevel, vector< TObjec
       for ( vector< TObjectOrder >::iterator it = selected.begin(); it != selected.end(); ++it )
       {
         getTrace()->getThreadLocation( *it, iAppl, iTask, aux );
+        globalTask = getTrace()->getGlobalTask( iAppl, iTask );
+
         if ( selectedRow.isSelectedPosition( iAppl, APPLICATION ) &&
-             selectedRow.isSelectedPosition( iTask, TASK ) )
+             selectedRow.isSelectedPosition( globalTask, TASK ) )
           allLevelsSelected.push_back( *it );
       }
 
@@ -1074,6 +1078,7 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel,
                                    TObjectOrder first, TObjectOrder last, bool lookUpLevels )
 {
   selectedRow.getSelected( selected, first, last, onLevel );
+
   if ( lookUpLevels )
   {
     getAllLevelsSelectedRows( onLevel, selected );

@@ -157,7 +157,7 @@ void SelectionManagement< SelType, LevelType >::setSelected( vector< bool > &sel
     selected[ level ] = selection;
   }
 
-  if ( !selection.empty() )
+  if ( !selected[ level ].empty() )
   {
     for ( size_t current = 0; current < selected[ level ].size(); ++current )
     {
@@ -173,28 +173,34 @@ void SelectionManagement< SelType, LevelType >::setSelected( vector< SelType > &
     SelType maxElems,
     LevelType level )
 {
+  // Prepare vectors for update
   selected[ level ].clear();
   selectedSet[ level ] = selection;
-  typename vector<SelType>::iterator maxIt;
-  maxIt = std::find_if( selectedSet[ level ].begin(),
-                        selectedSet[ level ].end(),
-                        std::bind2nd( std::greater_equal<SelType>(), maxElems ) );
-  if ( maxIt != selectedSet[ level ].end() )
-    selectedSet[ level ].erase( maxIt, selectedSet[ level ].end() );
 
-  if ( !selection.empty() )
+  typename vector<SelType>::iterator it;
+
+  // Delete any SelType greater than maxElems ( number of level objects)
+  it = std::find_if( selectedSet[ level ].begin(),
+                     selectedSet[ level ].end(),
+                     std::bind2nd( std::greater_equal<SelType>(), maxElems ) );
+  if ( it != selectedSet[ level ].end() )
+    selectedSet[ level ].erase( it, selectedSet[ level ].end() );
+
+  // Any reamining row?
+  if ( !selectedSet[ level ].empty() )
   {
-    typename vector< SelType >::iterator it;
-    it = selection.begin();
+    it = selectedSet[ level ].begin();
     for ( size_t current = 0; current < ( size_t ) maxElems; ++current )
     {
-      if ( it != selection.end() && current == ( size_t )*it )
+      if ( it != selectedSet[level].end() && current == ( size_t )*it )
       {
         selected[ level ].push_back( true );
         ++it;
       }
       else
+      {
         selected[ level ].push_back( false );
+      }
     }
   }
 }
