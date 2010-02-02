@@ -341,7 +341,7 @@ KSingleWindow::~KSingleWindow()
   delete myFilter;
 }
 
-void KSingleWindow::init( TRecordTime initialTime, TCreateList create )
+void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
   TObjectOrder objectSize = 0;
 
@@ -534,13 +534,13 @@ bool KSingleWindow::initFromBegin() const
 }
 
 
-RecordList *KSingleWindow::calcNext( TObjectOrder whichObject )
+RecordList *KSingleWindow::calcNext( TObjectOrder whichObject, bool updateLimits )
 {
   return intervalTopCompose1[ whichObject ].calcNext();
 }
 
 
-RecordList *KSingleWindow::calcPrev( TObjectOrder whichObject )
+RecordList *KSingleWindow::calcPrev( TObjectOrder whichObject, bool updateLimits )
 {
   return intervalTopCompose1[ whichObject ].calcPrev();
 }
@@ -908,7 +908,7 @@ bool KDerivedWindow::initFromBegin() const
 }
 
 
-void KDerivedWindow::init( TRecordTime initialTime, TCreateList create )
+void KDerivedWindow::init( TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
   TObjectOrder objectSize = 0;
   TWindowLevel tmpLevel = getLevel();
@@ -932,9 +932,9 @@ void KDerivedWindow::init( TRecordTime initialTime, TCreateList create )
   else if ( tmpLevel == CPU )
     objectSize = myTrace->totalCPUs();
 
-/*  if( initFromBegin() )
-    initialTime = 0;
-*/
+  /*  if( initFromBegin() )
+      initialTime = 0;
+  */
   for ( UINT16 i = 0; i < parents.size(); i++ )
     parents[ i ]->init( initialTime, create );
 
@@ -943,13 +943,13 @@ void KDerivedWindow::init( TRecordTime initialTime, TCreateList create )
 }
 
 
-RecordList *KDerivedWindow::calcNext( TObjectOrder whichObject )
+RecordList *KDerivedWindow::calcNext( TObjectOrder whichObject, bool updateLimits )
 {
   return intervalTopCompose1[ whichObject ].calcNext();
 }
 
 
-RecordList *KDerivedWindow::calcPrev( TObjectOrder whichObject )
+RecordList *KDerivedWindow::calcPrev( TObjectOrder whichObject, bool updateLimits )
 {
   return intervalTopCompose1[ whichObject ].calcPrev();
 }

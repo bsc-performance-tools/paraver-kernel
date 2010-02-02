@@ -138,9 +138,9 @@ class KWindow: public Window
     virtual bool initFromBegin() const = 0;
 
     RecordList *getRecordList( TObjectOrder whichObject );
-    virtual void init( TRecordTime initialTime, TCreateList create ) = 0;
-    virtual RecordList *calcNext( TObjectOrder whichObject ) = 0;
-    virtual RecordList *calcPrev( TObjectOrder whichObject ) = 0;
+    virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true ) = 0;
+    virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true ) = 0;
+    virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true ) = 0;
 
     virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const = 0;
     virtual TRecordTime getEndTime( TObjectOrder whichObject ) const = 0;
@@ -256,9 +256,9 @@ class KSingleWindow: public KWindow
 
     virtual bool initFromBegin() const;
 
-    virtual void init( TRecordTime initialTime, TCreateList create );
-    virtual RecordList *calcNext( TObjectOrder whichObject );
-    virtual RecordList *calcPrev( TObjectOrder whichObject );
+    virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true );
+    virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true );
+    virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true );
 
     virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const;
     virtual TRecordTime getEndTime( TObjectOrder whichObject ) const;
@@ -378,9 +378,9 @@ class KDerivedWindow: public KWindow
 
     virtual bool initFromBegin() const;
 
-    virtual void init( TRecordTime initialTime, TCreateList create );
-    virtual RecordList *calcNext( TObjectOrder whichObject );
-    virtual RecordList *calcPrev( TObjectOrder whichObject );
+    virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true );
+    virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true );
+    virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true );
 
     virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const;
     virtual TRecordTime getEndTime( TObjectOrder whichObject ) const;

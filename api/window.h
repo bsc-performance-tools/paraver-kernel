@@ -158,9 +158,9 @@ class Window
     virtual string getFunctionParamName( TWindowLevel whichLevel,
                                          TParamIndex whichParam ) const = 0;
     virtual RecordList *getRecordList( TObjectOrder whichObject ) = 0;
-    virtual void init( TRecordTime initialTime, TCreateList create ) = 0;
-    virtual RecordList *calcNext( TObjectOrder whichObject ) = 0;
-    virtual RecordList *calcPrev( TObjectOrder whichObject ) = 0;
+    virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true ) = 0;
+    virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true ) = 0;
+    virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true ) = 0;
     virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const = 0;
     virtual TRecordTime getEndTime( TObjectOrder whichObject ) const = 0;
     virtual TSemanticValue getValue( TObjectOrder whichObject ) const = 0;
@@ -426,9 +426,9 @@ class WindowProxy: public Window
     virtual string getFunctionParamName( TWindowLevel whichLevel,
                                          TParamIndex whichParam ) const;
     virtual RecordList *getRecordList( TObjectOrder whichObject );
-    virtual void init( TRecordTime initialTime, TCreateList create );
-    virtual RecordList *calcNext( TObjectOrder whichObject );
-    virtual RecordList *calcPrev( TObjectOrder whichObject );
+    virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true );
+    virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true );
+    virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true );
     virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const;
     virtual TRecordTime getEndTime( TObjectOrder whichObject ) const;
     virtual TSemanticValue getValue( TObjectOrder whichObject ) const;

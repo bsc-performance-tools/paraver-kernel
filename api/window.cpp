@@ -542,7 +542,7 @@ RecordList *WindowProxy::getRecordList( TObjectOrder whichObject )
   return myLists[ whichObject ];
 }
 
-void WindowProxy::init( TRecordTime initialTime, TCreateList create )
+void WindowProxy::init( TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
   if ( myLists.begin() != myLists.end() )
   {
@@ -561,8 +561,11 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create )
     computeYScale();
   }
   myWindow->init( initialTime, create );
-  yScaleComputed = true;
-  computedMaxY = computedMinY = 0.0;
+  if ( updateLimits )
+  {
+    yScaleComputed = true;
+    computedMaxY = computedMinY = 0.0;
+  }
 
   for ( int i = 0; i < myWindow->getWindowLevelObjects(); i++ )
   {
@@ -571,7 +574,7 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create )
   }
 }
 
-RecordList *WindowProxy::calcNext( TObjectOrder whichObject )
+RecordList *WindowProxy::calcNext( TObjectOrder whichObject, bool updateLimits )
 {
   if ( myLists[ whichObject ] == NULL )
     myLists[ whichObject ] = RecordList::create( myWindow->calcNext( whichObject ) );
@@ -579,15 +582,18 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject )
     myWindow->calcNext( whichObject );
 
   TSemanticValue objValue = getValue( whichObject );
-  if ( computedMaxY < objValue )
-    computedMaxY = objValue;
-  if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
-    computedMinY = objValue;
+  if ( updateLimits )
+  {
+    if ( computedMaxY < objValue )
+      computedMaxY = objValue;
+    if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
+      computedMinY = objValue;
+  }
 
   return myLists[ whichObject ];
 }
 
-RecordList *WindowProxy::calcPrev( TObjectOrder whichObject )
+RecordList *WindowProxy::calcPrev( TObjectOrder whichObject, bool updateLimits )
 {
   if ( myLists[ whichObject ] == NULL )
     myLists[ whichObject ] = RecordList::create( myWindow->calcPrev( whichObject ) );
@@ -595,10 +601,13 @@ RecordList *WindowProxy::calcPrev( TObjectOrder whichObject )
     myWindow->calcPrev( whichObject );
 
   TSemanticValue objValue = getValue( whichObject );
-  if ( computedMaxY < objValue )
-    computedMaxY = objValue;
-  if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
-    computedMinY = objValue;
+  if ( updateLimits )
+  {
+    if ( computedMaxY < objValue )
+      computedMaxY = objValue;
+    if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
+      computedMinY = objValue;
+  }
 
   return myLists[ whichObject ];
 }
