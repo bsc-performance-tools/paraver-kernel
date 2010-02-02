@@ -211,6 +211,17 @@ static const string LABEL_TIMEUNIT[ DAY + 1 ] =
   "d"
 };
 
+static const string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
+{
+  "Nanoseconds",
+  "Microseconds",
+  "Milliseconds",
+  "Seconds",
+  "Minutes",
+  "Hours",
+  "Days"
+};
+
 // New cfg label definitions
 #define CFG_TAG_WNDW_END_TIME_RELATIVE "window_end_time_relative"
 
