@@ -728,6 +728,7 @@ class StatAvgBurstTime: public HistogramStatistic
 
   private:
     static string name;
+    Window *controlWin;
     Window *dataWin;
     vector<vector<TSemanticValue> > numValues;
 };

@@ -1577,10 +1577,12 @@ void StatAvgValue::init( KHistogram *whichHistogram )
   numValues.reserve( numPlanes );
   for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
     numValues.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
+
 }
 
 void StatAvgValue::reset()
 {
+
   vector<vector<TSemanticValue> >::iterator itPlane = numValues.begin();
 
   while ( itPlane != numValues.end() )
@@ -1593,6 +1595,7 @@ void StatAvgValue::reset()
     }
     ++itPlane;
   }
+
 }
 
 bool StatAvgValue::filter( CalculateData *data ) const
@@ -1601,11 +1604,23 @@ bool StatAvgValue::filter( CalculateData *data ) const
                               myHistogram );
 }
 
+
 TSemanticValue StatAvgValue::execute( CalculateData *data )
 {
-  ++( ( numValues[ data->plane ] )[ data->column ] );
-  return dataWin->getValue( data->dataRow );
+  TRecordTime begin;
+  TRecordTime end;
+
+  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
+          data->beginTime : dataWin->getBeginTime( data->dataRow );
+
+  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
+        data->endTime : dataWin->getEndTime( data->dataRow );
+
+  ( numValues[ data->plane ] )[ data->column ] += ( end - begin );
+
+  return dataWin->getValue( data->dataRow ) * ( end -begin );
 }
+
 
 TSemanticValue StatAvgValue::finishRow( TSemanticValue cellValue,
                                         THistogramColumn column,
@@ -1614,10 +1629,12 @@ TSemanticValue StatAvgValue::finishRow( TSemanticValue cellValue,
   return cellValue / ( numValues[ plane ] )[ column ];
 }
 
+
 string StatAvgValue::getName() const
 {
   return StatAvgValue::name;
 }
+
 
 string StatAvgValue::getUnits( const KHistogram *whichHisto ) const
 {
@@ -1716,6 +1733,7 @@ void StatAvgBurstTime::init( KHistogram *whichHistogram )
   TObjectOrder numColumns;
 
   myHistogram = whichHistogram;
+  controlWin = myHistogram->getControlWindow();
   dataWin = myHistogram->getDataWindow();
 
   numPlanes = myHistogram->getNumPlanes();
@@ -1780,7 +1798,7 @@ TSemanticValue StatAvgBurstTime::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
-  return cellValue / ( numValues[ plane ] )[ column ];
+  return controlWin->traceUnitsToWindowUnits( cellValue ) / ( numValues[ plane ] )[ column ];
 }
 
 string StatAvgBurstTime::getName() const
@@ -2049,10 +2067,19 @@ bool StatAvgValueNotZero::filter( CalculateData *data ) const
 
 TSemanticValue StatAvgValueNotZero::execute( CalculateData *data )
 {
-  if ( dataWin->getValue( data->dataRow ) != 0.0 )
-    ++( ( numValues[ data->plane ] )[ data->column ] );
+  TRecordTime begin;
+  TRecordTime end;
 
-  return dataWin->getValue( data->dataRow );
+  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
+          data->beginTime : dataWin->getBeginTime( data->dataRow );
+
+  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
+        data->endTime : dataWin->getEndTime( data->dataRow );
+
+  if ( dataWin->getValue( data->dataRow ) != 0.0 )
+    ( numValues[ data->plane ] )[ data->column ] += ( end - begin );
+
+  return dataWin->getValue( data->dataRow ) * ( end -begin );
 }
 
 TSemanticValue StatAvgValueNotZero::finishRow( TSemanticValue cellValue,
