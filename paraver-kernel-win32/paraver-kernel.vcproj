@@ -465,6 +465,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\noloadblocks.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\noloadtrace.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\paraverkernelexception.cpp"
 				>
 			</File>
@@ -732,6 +740,14 @@
 			</File>
 			<File
 				RelativePath="..\include\memorytrace.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\noloadblocks.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\noloadtrace.h"
 				>
 			</File>
 			<File

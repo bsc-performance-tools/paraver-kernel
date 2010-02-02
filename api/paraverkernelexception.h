@@ -62,13 +62,14 @@ class ParaverKernelException : public std::exception
         code( whichCode ),
         auxMessage( whichAuxMessage ),
         file( whichFile ),
-        line( whichLine ) {};
+        line( whichLine ) 
+    {};
 
     ~ParaverKernelException() throw() {};
 
-    const char *what() const throw();
+    const char *what() throw();
 
-    void printMessage( ostream& printStream = defaultPrintStream ) const
+    void printMessage( ostream& printStream = defaultPrintStream )
     {
       printStream << what();
     }
@@ -89,6 +90,7 @@ class ParaverKernelException : public std::exception
 
   private:
     static const char *errorMessage[];
+    string message;
 
     virtual const char *specificErrorMessage() const
     {

@@ -46,7 +46,7 @@ const char *ParaverKernelException::errorMessage[] =
     NULL
   };
 
-const char *ParaverKernelException::what() const throw()
+const char *ParaverKernelException::what() throw()
 {
   ostringstream tempStream( "" );
 
@@ -56,6 +56,8 @@ const char *ParaverKernelException::what() const throw()
   if ( file != NULL )
     tempStream << file << " " << line << endl;
 
-  return tempStream.str().c_str();
+  message = string( tempStream.str() );
+
+  return message.c_str();
 }
 
