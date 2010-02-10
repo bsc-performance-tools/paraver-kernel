@@ -90,7 +90,7 @@ class NotCompressed: public TraceStream
     virtual void clear();
     virtual int peek();
   private:
-    fstream file;
+    ifstream file;
 
 };
 
