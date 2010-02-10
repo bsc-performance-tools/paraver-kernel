@@ -1202,8 +1202,6 @@ bool WindowScaleRelative::parseLine( KernelConnection *whichKernel, istringstrea
   if ( !( tmpStream >> percEndTime ) )
     return false;
 
-  if ( percEndTime > 1.0 ) percEndTime = 1.0;
-
   windows[ windows.size() - 1 ]->setWindowEndTime(
     ( windows[ windows.size() - 1 ]->getTrace() )->getEndTime() * percEndTime );
 

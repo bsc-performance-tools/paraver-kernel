@@ -357,7 +357,7 @@ void WindowProxy::computeYScaleMin()
 
     for ( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
     {
-      while ( getBeginTime( *obj ) < winEndTime )
+      while ( getBeginTime( *obj ) < getTrace()->getEndTime() )
         calcNext( *obj );
     }
   }
@@ -377,7 +377,7 @@ void WindowProxy::computeYScaleMax()
 
     for ( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
     {
-      while ( getBeginTime( *obj ) < winEndTime )
+      while ( getBeginTime( *obj ) < getTrace()->getEndTime() )
         calcNext( *obj );
     }
   }
@@ -397,7 +397,7 @@ void WindowProxy::computeYScale()
 
     for ( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
     {
-      while ( getBeginTime( *obj ) < winEndTime )
+      while ( getBeginTime( *obj ) < getTrace()->getEndTime() )
         calcNext( *obj );
     }
   }
