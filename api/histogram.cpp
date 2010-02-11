@@ -97,6 +97,8 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   changed = false;
   redraw = false;
   recalc = false;
+
+  zoomHistory.clear();
 }
 
 HistogramProxy::~HistogramProxy()
@@ -939,6 +941,52 @@ string HistogramProxy::getPlaneLabel( THistogramColumn whichPlane ) const
          getExtraControlMin(),
          getExtraControlMax(),
          getExtraControlDelta() );
+}
+
+bool HistogramProxy::isZoomEmpty() const
+{
+  return zoomHistory.isEmpty();
+}
+
+bool HistogramProxy::emptyPrevZoom() const
+{
+  return zoomHistory.emptyPrevZoom();
+}
+
+bool HistogramProxy::emptyNextZoom() const
+{
+  return zoomHistory.emptyNextZoom();
+}
+
+void HistogramProxy::nextZoom()
+{
+  zoomHistory.nextZoom();
+}
+
+void HistogramProxy::prevZoom()
+{
+  zoomHistory.prevZoom();
+}
+
+void HistogramProxy::addZoom( THistogramColumn beginColumn, THistogramColumn endColumn,
+                              TObjectOrder beginObject, TObjectOrder endObject )
+{
+  zoomHistory.addZoom( beginColumn, endColumn, beginObject, endObject );
+}
+
+void HistogramProxy::addZoom( THistogramColumn beginColumn, THistogramColumn endColumn )
+{
+  zoomHistory.addZoom( beginColumn, endColumn );
+}
+
+pair<THistogramColumn, THistogramColumn> HistogramProxy::getZoomFirstDimension() const
+{
+  return zoomHistory.getFirstDimension();
+}
+
+pair <TObjectOrder, TObjectOrder> HistogramProxy::getZoomSecondDimension() const
+{
+  return zoomHistory.getSecondDimension();
 }
 
 void HistogramProxy::setName( const string& whichName )

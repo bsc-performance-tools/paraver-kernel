@@ -35,6 +35,7 @@
 #include "paraverconfig.h"
 #include "semanticcolor.h"
 #include "drawmode.h"
+#include "zoomhistory.h"
 
 #ifdef WIN32
 #undef max
@@ -306,6 +307,38 @@ class Histogram
     {
       return "Unnamed plane";
     }
+
+    // Zoom history
+    virtual bool isZoomEmpty() const
+    {
+      return true;
+    }
+    virtual bool emptyPrevZoom() const
+    {
+      return true;
+    }
+    virtual bool emptyNextZoom() const
+    {
+      return true;
+    }
+    virtual void nextZoom()
+    {}
+    virtual void prevZoom()
+    {}
+    virtual void addZoom( THistogramColumn beginColumn, THistogramColumn endColumn,
+                          TObjectOrder beginObject, TObjectOrder endObject )
+    {}
+    virtual void addZoom( THistogramColumn beginColumn, THistogramColumn endColumn )
+    {}
+    virtual pair<THistogramColumn, THistogramColumn> getZoomFirstDimension() const
+    {
+      return pair<THistogramColumn, THistogramColumn>();
+    }
+    virtual pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const
+    {
+      return pair<TObjectOrder, TObjectOrder>();
+    }
+
     virtual void setName( const string& whichName ) {}
     virtual string getName() const
     {
@@ -504,6 +537,18 @@ class HistogramProxy : public Histogram
     virtual string getColumnLabel( THistogramColumn whichColumn ) const;
     virtual string getPlaneLabel( THistogramColumn whichPlane ) const;
 
+    // Zoom history
+    virtual bool isZoomEmpty() const;
+    virtual bool emptyPrevZoom() const;
+    virtual bool emptyNextZoom() const;
+    virtual void nextZoom();
+    virtual void prevZoom();
+    virtual void addZoom( THistogramColumn beginColumn, THistogramColumn endColumn,
+                          TObjectOrder beginObject, TObjectOrder endObject );
+    virtual void addZoom( THistogramColumn beginColumn, THistogramColumn endColumn );
+    virtual pair<THistogramColumn, THistogramColumn> getZoomFirstDimension() const;
+    virtual pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const;
+
     virtual void setName( const string& whichName );
     virtual string getName() const;
 
@@ -589,6 +634,9 @@ class HistogramProxy : public Histogram
 
     TRecordTime winBeginTime;
     TRecordTime winEndTime;
+
+    // Zoom history
+    ZoomHistory< THistogramColumn, TObjectOrder > zoomHistory;
 
     // Must store the associated proxies
     Window *controlWindow;
