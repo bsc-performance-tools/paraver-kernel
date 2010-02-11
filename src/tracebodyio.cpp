@@ -42,7 +42,7 @@ TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file )
   string firstLine;
 
   file->getline( firstLine );
-  if( firstLine.compare( "new format" ) == 0 )
+  if ( firstLine.compare( "new format" ) == 0 )
   {
     ret = new TraceBodyIO_v2();
   }
@@ -57,4 +57,9 @@ TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file )
 TraceBodyIO *TraceBodyIO::createTraceBody()
 {
   return new TraceBodyIO_v2();
+}
+
+void TraceBodyIO::setProcessModel(  const ProcessModel* whichProcessModel )
+{
+  processModel = whichProcessModel;
 }

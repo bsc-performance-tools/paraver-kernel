@@ -506,6 +506,8 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   traceResourceModel = ResourceModel( header );
   traceProcessModel = ProcessModel( header );
 
+  body->setProcessModel( &traceProcessModel );
+
   // Communicators
   UINT32 numberComm = 0;
   if ( !header.eof() )

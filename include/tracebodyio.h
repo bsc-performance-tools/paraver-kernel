@@ -53,6 +53,8 @@ class TraceBodyIO
     TraceBodyIO();
     virtual ~TraceBodyIO();
 
+    virtual void setProcessModel(  const ProcessModel* whichProcessModel );
+
     virtual bool ordered() const = 0;
     virtual void read( TraceStream *file, MemoryBlocks& records,
                        hash_set<TEventType>& events ) const = 0;
@@ -64,9 +66,10 @@ class TraceBodyIO
                                 const KTrace& whichTrace,
                                 INT32 numIter = 1 ) const = 0;
 
-    static TraceBodyIO *createTraceBody( TraceStream *file );
+    static TraceBodyIO *createTraceBody( TraceStream *file);
     static TraceBodyIO *createTraceBody();
   protected:
+    const ProcessModel* processModel;
 
   private:
 

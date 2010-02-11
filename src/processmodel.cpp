@@ -193,20 +193,20 @@ void ProcessModel::dumpToFile( fstream& file ) const
   ostr.precision( 0 );
 
   ostr << applications.size() << ':';
-  for( TApplOrder iAppl = 0; iAppl < applications.size(); ++iAppl )
+  for ( TApplOrder iAppl = 0; iAppl < applications.size(); ++iAppl )
   {
     ostr << applications[ iAppl ].tasks.size() << '(';
-    for( TTaskOrder iTask = 0; iTask < applications[ iAppl ].tasks.size(); ++iTask )
+    for ( TTaskOrder iTask = 0; iTask < applications[ iAppl ].tasks.size(); ++iTask )
     {
       ostr << applications[ iAppl ].tasks[ iTask ].threads.size() << ':';
       ostr << applications[ iAppl ].tasks[ iTask ].threads[ 0 ].nodeExecution;
 
-      if( iTask < applications[ iAppl ].tasks.size() - 1 )
+      if ( iTask < applications[ iAppl ].tasks.size() - 1 )
         ostr << ',';
     }
     ostr << ')';
 
-    if( iAppl < applications.size() - 1 )
+    if ( iAppl < applications.size() - 1 )
       ostr << ':';
   }
   file << ostr.str();
@@ -242,18 +242,55 @@ void ProcessModel::getThreadsPerNode( TNodeOrder inNode, vector<TThreadOrder>& o
 {
   onVector.clear();
 
-  for( vector<ProcessModelAppl>::const_iterator itAppl = applications.begin();
-       itAppl != applications.end(); ++itAppl )
+  for ( vector<ProcessModelAppl>::const_iterator itAppl = applications.begin();
+        itAppl != applications.end(); ++itAppl )
   {
-    for( vector<ProcessModelTask>::const_iterator itTask = itAppl->tasks.begin();
-         itTask != itAppl->tasks.end(); ++itTask )
+    for ( vector<ProcessModelTask>::const_iterator itTask = itAppl->tasks.begin();
+          itTask != itAppl->tasks.end(); ++itTask )
     {
-      for( vector<ProcessModelThread>::const_iterator itThread = itTask->threads.begin();
-           itThread != itTask->threads.end(); ++itThread )
+      for ( vector<ProcessModelThread>::const_iterator itThread = itTask->threads.begin();
+            itThread != itTask->threads.end(); ++itThread )
       {
-        if( itThread->nodeExecution == inNode )
+        if ( itThread->nodeExecution == inNode )
           onVector.push_back( itThread->traceGlobalOrder );
       }
     }
   }
+}
+
+bool ProcessModel::isValidThread( TThreadOrder whichThread ) const
+{
+  return whichThread < threads.size();
+}
+
+bool ProcessModel::isValidThread( TApplOrder whichAppl,
+                                  TTaskOrder whichTask,
+                                  TThreadOrder whichThread ) const
+{
+  if( !isValidAppl( whichAppl ) )
+    return false;
+
+  if( whichTask >= applications[ whichAppl ].tasks.size() )
+    return false;
+
+  return whichThread < applications[ whichAppl ].tasks[ whichTask ].threads.size();
+}
+
+bool ProcessModel::isValidTask( TTaskOrder whichTask ) const
+{
+  return whichTask < tasks.size();
+}
+
+bool ProcessModel::isValidTask( TApplOrder whichAppl,
+                                TTaskOrder whichTask ) const
+{
+  if( !isValidAppl( whichAppl ) )
+    return false;
+
+  return whichTask < applications[ whichAppl ].tasks.size();
+}
+
+bool ProcessModel::isValidAppl( TApplOrder whichAppl ) const
+{
+  return whichAppl < applications.size();
 }

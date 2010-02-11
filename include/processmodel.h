@@ -81,6 +81,15 @@ class ProcessModel
 
     void getThreadsPerNode( TNodeOrder inNode, vector<TThreadOrder>& onVector ) const;
 
+    bool isValidThread( TThreadOrder whichThread ) const;
+    bool isValidThread( TApplOrder whichAppl,
+                        TTaskOrder whichTask,
+                        TThreadOrder whichThread ) const;
+    bool isValidTask( TTaskOrder whichTask ) const;
+    bool isValidTask( TApplOrder whichAppl,
+                        TTaskOrder whichTask ) const;
+    bool isValidAppl( TApplOrder whichAppl ) const;
+
   protected:
 
     struct ThreadLocation

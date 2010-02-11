@@ -418,6 +418,9 @@ bool TraceBodyIO_v1::readCommon( istringstream& line,
     return false;
   }
 
+  if ( !processModel->isValidThread( appl - 1, task - 1, thread - 1 ) )
+    return false;
+
   std::getline( line, tmpstring, ':' );
   istringstream timeStream( tmpstring );
   if ( !( timeStream >> time ) )
