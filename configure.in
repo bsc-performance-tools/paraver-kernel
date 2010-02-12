@@ -17,6 +17,7 @@ AM_INIT_AUTOMAKE
 # Specify the output configuration header file
 AC_CONFIG_HEADERS(config.h)
 
+AC_CONFIG_MACRO_DIR([m4])
 
 #############################
 #    Checks for programs    #
