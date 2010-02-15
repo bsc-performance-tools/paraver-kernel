@@ -1473,20 +1473,20 @@ void writeTask( ofstream& cfgFile,
 void writeTasks( ofstream& cfgFile,
                  const vector<Window *>::const_iterator it )
 {
-  vector<TObjectOrder> tmpSel;
-  vector<TObjectOrder> tmpSelThreads;
+  vector<TTaskOrder> tmpSel;
+  vector<TThreadOrder> tmpSelThreads;
   vector<bool> selectedAppl;
 
   ( *it )->getSelectedRows( APPLICATION, selectedAppl );
-  for ( TObjectOrder iAppl = 0; iAppl < ( *it )->getTrace()->totalApplications(); ++iAppl )
+  for ( TApplOrder iAppl = 0; iAppl < ( *it )->getTrace()->totalApplications(); ++iAppl )
   {
     if ( !selectedAppl[ iAppl ] )
       continue;
-    TObjectOrder begin = ( *it )->getTrace()->getFirstTask( iAppl );
-    TObjectOrder last = ( *it )->getTrace()->getLastTask( iAppl );
+    TTaskOrder begin = ( *it )->getTrace()->getFirstTask( iAppl );
+    TTaskOrder last = ( *it )->getTrace()->getLastTask( iAppl );
     ( *it )->getSelectedRows( TASK, tmpSel, begin, last );
-    TObjectOrder beginThread = ( *it )->getTrace()->getFirstThread( iAppl, begin );
-    TObjectOrder lastThread = ( *it )->getTrace()->getLastThread( iAppl, last );
+    TThreadOrder beginThread = ( *it )->getTrace()->getFirstThread( iAppl, begin );
+    TThreadOrder lastThread = ( *it )->getTrace()->getLastThread( iAppl, last );
     ( *it )->getSelectedRows( THREAD, tmpSelThreads, beginThread, lastThread );
     if ( ( tmpSel.size() > 0  && tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
          || tmpSelThreads.size() != ( TObjectOrder )( lastThread - beginThread + 1 )
@@ -1519,19 +1519,19 @@ void writeThreads( ofstream& cfgFile,
   vector<bool> selectedTask;
 
   ( *it )->getSelectedRows( APPLICATION, selectedAppl );
-  for ( TObjectOrder iAppl = 0; iAppl < ( *it )->getTrace()->totalApplications(); ++iAppl )
+  for ( TApplOrder iAppl = 0; iAppl < ( *it )->getTrace()->totalApplications(); ++iAppl )
   {
     if ( !selectedAppl[ iAppl ] )
       continue;
-    TObjectOrder beginTask = ( *it )->getTrace()->getFirstTask( iAppl );
-    TObjectOrder lastTask = ( *it )->getTrace()->getLastTask( iAppl );
+    TTaskOrder beginTask = ( *it )->getTrace()->getFirstTask( iAppl );
+    TTaskOrder lastTask = ( *it )->getTrace()->getLastTask( iAppl );
     ( *it )->getSelectedRows( TASK, selectedTask, beginTask, lastTask );
-    for ( TObjectOrder iTask = beginTask; iTask <= lastTask; ++iTask )
+    for ( TTaskOrder iTask = beginTask; iTask <= lastTask; ++iTask )
     {
       if ( !selectedTask[ iTask - beginTask ] )
         continue;
-      TObjectOrder begin = ( *it )->getTrace()->getFirstThread( iAppl, iTask - beginTask );
-      TObjectOrder last = ( *it )->getTrace()->getLastThread( iAppl, iTask - beginTask );
+      TTaskOrder begin = ( *it )->getTrace()->getFirstThread( iAppl, iTask - beginTask );
+      TTaskOrder last = ( *it )->getTrace()->getLastThread( iAppl, iTask - beginTask );
       ( *it )->getSelectedRows( THREAD, tmpSel, begin, last );
       if ( tmpSel.size() > 0  && tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
         writeThread( cfgFile, it, iAppl, iTask - beginTask );
@@ -1572,12 +1572,12 @@ void writeCPUs( ofstream& cfgFile,
   vector<bool> selectedNode;
 
   ( *it )->getSelectedRows( NODE, selectedNode );
-  for ( TObjectOrder iNode = 0; iNode < ( *it )->getTrace()->totalNodes(); ++iNode )
+  for ( TNodeOrder iNode = 0; iNode < ( *it )->getTrace()->totalNodes(); ++iNode )
   {
     if ( !selectedNode[ iNode ] )
       continue;
-    TObjectOrder begin = ( *it )->getTrace()->getFirstCPU( iNode );
-    TObjectOrder last = ( *it )->getTrace()->getLastCPU( iNode );
+    TCPUOrder begin = ( *it )->getTrace()->getFirstCPU( iNode );
+    TCPUOrder last = ( *it )->getTrace()->getLastCPU( iNode );
     ( *it )->getSelectedRows( CPU, tmpSel, begin, last );
     if ( tmpSel.size() > 0  && tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
       writeCPU( cfgFile, it, iNode );
@@ -3815,5 +3815,8 @@ bool Analyzer3DFixedValue::parseLine( KernelConnection *whichKernel, istringstre
 void Analyzer3DFixedValue::printLine( ofstream& cfgFile,
                                       const vector<Histogram *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_AN3D_FIXEDVALUE << " " << ( *it )->getPlaneMinValue();
+  double planeMinValue =
+    ( *it )->getSelectedPlane() * ( *it )->getExtraControlDelta()
+    + ( *it )->getExtraControlMin();
+  cfgFile << OLDCFG_TAG_AN3D_FIXEDVALUE << " " << planeMinValue << endl;
 }
