@@ -327,6 +327,10 @@ class Window
     {}
     virtual void prevZoom()
     {}
+    virtual void setZoomFirstDimension( pair<TTime, TTime> &dim )
+    {}
+    virtual void setZoomSecondDimension( pair<TObjectOrder, TObjectOrder>  &dim )
+    {}
     virtual pair<TTime, TTime> getZoomFirstDimension() const
     {
       return pair<TTime, TTime>();
@@ -492,6 +496,8 @@ class WindowProxy: public Window
     virtual void addZoom( TTime beginTime, TTime endTime );
     virtual void nextZoom();
     virtual void prevZoom();
+    virtual void setZoomFirstDimension( pair<TTime, TTime> &dim );
+    virtual void setZoomSecondDimension( pair<TObjectOrder, TObjectOrder>  &dim );
     virtual pair<TTime, TTime> getZoomFirstDimension() const;
     virtual pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const;
 

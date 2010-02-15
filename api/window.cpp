@@ -912,6 +912,16 @@ void WindowProxy::addZoom( TTime beginTime, TTime endTime )
   zoomHistory.addZoom( beginTime, endTime );
 }
 
+void WindowProxy::setZoomFirstDimension( pair<TTime, TTime> &dim )
+{
+  zoomHistory.setFirstDimension( dim );
+}
+
+void WindowProxy::setZoomSecondDimension( pair<TObjectOrder, TObjectOrder>  &dim )
+{
+  zoomHistory.setSecondDimension( dim );
+}
+
 pair<TTime, TTime> WindowProxy::getZoomFirstDimension() const
 {
   return zoomHistory.getFirstDimension();
