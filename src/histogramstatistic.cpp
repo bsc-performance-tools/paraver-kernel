@@ -547,7 +547,7 @@ void StatAvgBytesSent::init( KHistogram *whichHistogram )
   controlWin = myHistogram->getControlWindow();
 
   numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getNumRows();
+  numColumns = myHistogram->getControlWindow()->getWindowLevelObjects();
 
   numComms.clear();
   numComms.reserve( numPlanes );
@@ -632,7 +632,7 @@ void StatAvgBytesReceived::init( KHistogram *whichHistogram )
   controlWin = myHistogram->getControlWindow();
 
   numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getNumRows();
+  numColumns = myHistogram->getControlWindow()->getWindowLevelObjects();
 
   numComms.clear();
   numComms.reserve( numPlanes );
@@ -717,7 +717,7 @@ void StatMinBytesSent::init( KHistogram *whichHistogram )
   controlWin = myHistogram->getControlWindow();
 
   numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getNumRows();
+  numColumns = myHistogram->getControlWindow()->getWindowLevelObjects();
 
   min.clear();
   min.reserve( numPlanes );
@@ -812,7 +812,7 @@ void StatMinBytesReceived::init( KHistogram *whichHistogram )
   controlWin = myHistogram->getControlWindow();
 
   numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getNumRows();
+  numColumns = myHistogram->getControlWindow()->getWindowLevelObjects();
 
   min.clear();
   min.reserve( numPlanes );
@@ -907,7 +907,7 @@ void StatMaxBytesSent::init( KHistogram *whichHistogram )
   controlWin = myHistogram->getControlWindow();
 
   numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getNumRows();
+  numColumns = myHistogram->getControlWindow()->getWindowLevelObjects();
 
   max.clear();
   max.reserve( numPlanes );
@@ -997,7 +997,7 @@ void StatMaxBytesReceived::init( KHistogram *whichHistogram )
   controlWin = myHistogram->getControlWindow();
 
   numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getNumRows();
+  numColumns = myHistogram->getControlWindow()->getWindowLevelObjects();
 
   max.clear();
   max.reserve( numPlanes );
