@@ -1485,10 +1485,15 @@ void writeTasks( ofstream& cfgFile,
     TTaskOrder begin = ( *it )->getTrace()->getFirstTask( iAppl );
     TTaskOrder last = ( *it )->getTrace()->getLastTask( iAppl );
     ( *it )->getSelectedRows( TASK, tmpSel, begin, last );
-    TThreadOrder beginThread = ( *it )->getTrace()->getFirstThread( iAppl, begin );
-    TThreadOrder lastThread = ( *it )->getTrace()->getLastThread( iAppl, last );
+    TApplOrder tmpAppl;
+    TTaskOrder beginTask;
+    TTaskOrder lastTask;
+    ( *it )->getTrace()->getTaskLocation( begin, tmpAppl, beginTask );
+    ( *it )->getTrace()->getTaskLocation( last, tmpAppl, lastTask );
+    TThreadOrder beginThread = ( *it )->getTrace()->getFirstThread( iAppl, beginTask );
+    TThreadOrder lastThread = ( *it )->getTrace()->getLastThread( iAppl, lastTask );
     ( *it )->getSelectedRows( THREAD, tmpSelThreads, beginThread, lastThread );
-    if ( ( tmpSel.size() > 0  && tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
+    if ( ( /*tmpSel.size() > 0  &&*/ tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
          || tmpSelThreads.size() != ( TObjectOrder )( lastThread - beginThread + 1 )
        )
       writeTask( cfgFile, it, iAppl );
@@ -1533,7 +1538,7 @@ void writeThreads( ofstream& cfgFile,
       TTaskOrder begin = ( *it )->getTrace()->getFirstThread( iAppl, iTask - beginTask );
       TTaskOrder last = ( *it )->getTrace()->getLastThread( iAppl, iTask - beginTask );
       ( *it )->getSelectedRows( THREAD, tmpSel, begin, last );
-      if ( tmpSel.size() > 0  && tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
+      if ( /*tmpSel.size() > 0  &&*/ tmpSel.size() != ( TObjectOrder )( last - begin + 1 ) )
         writeThread( cfgFile, it, iAppl, iTask - beginTask );
     }
   }

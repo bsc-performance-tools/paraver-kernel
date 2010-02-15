@@ -33,6 +33,8 @@
 #include "processmodel.h"
 #include "traceheaderexception.h"
 
+#include <stdlib.h>
+
 TApplOrder ProcessModel::totalApplications() const
 {
   return applications.size();
