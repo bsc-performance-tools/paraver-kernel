@@ -309,6 +309,12 @@ class Histogram
     }
 
     // Zoom history
+    typedef struct TZoomInfo
+    {
+      THistogramLimit begin;
+      THistogramLimit end;
+    } TZoomInfo;
+
     virtual bool isZoomEmpty() const
     {
       return true;
@@ -325,14 +331,18 @@ class Histogram
     {}
     virtual void prevZoom()
     {}
-    virtual void addZoom( THistogramColumn beginColumn, THistogramColumn endColumn,
+    virtual void addZoom( TZoomInfo columnInfo, TZoomInfo dummy,
                           TObjectOrder beginObject, TObjectOrder endObject )
     {}
-    virtual void addZoom( THistogramColumn beginColumn, THistogramColumn endColumn )
+    virtual void addZoom( TZoomInfo columnInfo, TZoomInfo dummy )
     {}
-    virtual pair<THistogramColumn, THistogramColumn> getZoomFirstDimension() const
+    virtual void setZoomFirstDimension( pair<TZoomInfo, TZoomInfo> &zinfo )
+    {}
+    virtual void setZoomSecondDimension( pair<TObjectOrder, TObjectOrder> &objects )
+    {}
+    virtual pair<TZoomInfo, TZoomInfo> getZoomFirstDimension() const
     {
-      return pair<THistogramColumn, THistogramColumn>();
+      return pair<TZoomInfo, TZoomInfo>();
     }
     virtual pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const
     {
@@ -543,10 +553,12 @@ class HistogramProxy : public Histogram
     virtual bool emptyNextZoom() const;
     virtual void nextZoom();
     virtual void prevZoom();
-    virtual void addZoom( THistogramColumn beginColumn, THistogramColumn endColumn,
+    virtual void addZoom( TZoomInfo columnInfo, TZoomInfo dummy,
                           TObjectOrder beginObject, TObjectOrder endObject );
-    virtual void addZoom( THistogramColumn beginColumn, THistogramColumn endColumn );
-    virtual pair<THistogramColumn, THistogramColumn> getZoomFirstDimension() const;
+    virtual void addZoom( TZoomInfo columnInfo, TZoomInfo dummy );
+    virtual void setZoomFirstDimension( pair<TZoomInfo, TZoomInfo> &zinfo );
+    virtual void setZoomSecondDimension( pair<TObjectOrder, TObjectOrder> &objects );
+    virtual pair<TZoomInfo, TZoomInfo> getZoomFirstDimension() const;
     virtual pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const;
 
     virtual void setName( const string& whichName );
@@ -636,7 +648,7 @@ class HistogramProxy : public Histogram
     TRecordTime winEndTime;
 
     // Zoom history
-    ZoomHistory< THistogramColumn, TObjectOrder > zoomHistory;
+    ZoomHistory< TZoomInfo, TObjectOrder > zoomHistory;
 
     // Must store the associated proxies
     Window *controlWindow;

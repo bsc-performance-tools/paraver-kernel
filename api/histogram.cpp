@@ -968,18 +968,28 @@ void HistogramProxy::prevZoom()
   zoomHistory.prevZoom();
 }
 
-void HistogramProxy::addZoom( THistogramColumn beginColumn, THistogramColumn endColumn,
+void HistogramProxy::addZoom( TZoomInfo columnsInfo, TZoomInfo dummy,
                               TObjectOrder beginObject, TObjectOrder endObject )
 {
-  zoomHistory.addZoom( beginColumn, endColumn, beginObject, endObject );
+  zoomHistory.addZoom( columnsInfo, dummy, beginObject, endObject );
 }
 
-void HistogramProxy::addZoom( THistogramColumn beginColumn, THistogramColumn endColumn )
+void HistogramProxy::addZoom( TZoomInfo columnsInfo, TZoomInfo dummy )
 {
-  zoomHistory.addZoom( beginColumn, endColumn );
+  zoomHistory.addZoom( columnsInfo, dummy );
 }
 
-pair<THistogramColumn, THistogramColumn> HistogramProxy::getZoomFirstDimension() const
+void HistogramProxy::setZoomFirstDimension( pair<TZoomInfo, TZoomInfo> &zinfo )
+{
+  zoomHistory.setFirstDimension( zinfo );
+}
+
+void HistogramProxy::setZoomSecondDimension( pair<TObjectOrder, TObjectOrder> &objects )
+{
+  zoomHistory.setSecondDimension( objects );
+}
+
+pair<HistogramProxy::TZoomInfo, HistogramProxy::TZoomInfo> HistogramProxy::getZoomFirstDimension() const
 {
   return zoomHistory.getFirstDimension();
 }

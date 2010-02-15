@@ -50,6 +50,18 @@ pair<Dimension2, Dimension2> ZoomHistory<Dimension1,Dimension2>::getSecondDimens
   return zooms[ currentZoom ].second;
 }
 
+template <typename Dimension1, typename Dimension2>
+void ZoomHistory<Dimension1,Dimension2>::setFirstDimension( pair<Dimension1, Dimension1> &dim )
+{
+  zooms[ currentZoom ].first = dim;
+}
+
+template <typename Dimension1, typename Dimension2>
+void ZoomHistory<Dimension1,Dimension2>::setSecondDimension(  pair<Dimension2, Dimension2> &dim )
+{
+  zooms[ currentZoom ].second = dim;
+}
+
 
 template <typename Dimension1, typename Dimension2>
 void ZoomHistory<Dimension1,Dimension2>::addZoom( Dimension1 begin1, Dimension1 end1,

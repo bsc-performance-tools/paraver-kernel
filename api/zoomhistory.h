@@ -47,6 +47,8 @@ class ZoomHistory
     void addZoom( Dimension2 begin, Dimension2 end );
     void addZoom( Dimension1 begin, Dimension1 end );
 
+    void setFirstDimension( pair<Dimension1, Dimension1> &dim );
+    void setSecondDimension( pair<Dimension2, Dimension2> &dim );
     pair<Dimension1, Dimension1> getFirstDimension() const;
     pair<Dimension2, Dimension2> getSecondDimension() const;
 
