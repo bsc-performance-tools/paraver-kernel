@@ -94,10 +94,10 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
   else if( opFromTo == OR && tmpResult )
     return true;
 
-  tmpResult = functionCommTo->getDefaultValue();
-
   if ( existCommTo )
   {
+    tmpResult = functionCommTo->getDefaultValue();
+
     if ( window->getLevel() >= SYSTEM )
     {
       TCPUOrder tmpCPU = window->getTrace()->getReceiverCPU( it->getCommIndex() );
@@ -138,10 +138,10 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
   else if( opTagSize == OR && tmpResult )
     return true;
 
-  tmpResult = functionCommSizes->getDefaultValue();
-
   if ( existCommSize )
   {
+    tmpResult = functionCommSizes->getDefaultValue();
+
     info = ( TSemanticValue ) window->getTrace()->getCommSize( it->getCommIndex() );
     for ( UINT32 i = 0; i < commSizes.size(); i++ )
     {
@@ -197,10 +197,10 @@ bool KFilter::filterEvents( MemoryTrace::iterator *it )
   else if( opTypeValue == OR && tmpResult )
     return true;
 
-  tmpResult = functionEventValues->getDefaultValue();
-
   if ( existEventValues )
   {
+    tmpResult = functionEventValues->getDefaultValue();
+
     info = ( TSemanticValue ) it->getEventValue();
     for ( UINT32 i = 0; i < eventValues.size(); i++ )
     {

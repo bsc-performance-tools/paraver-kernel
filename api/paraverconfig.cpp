@@ -89,7 +89,7 @@ ParaverConfig::ParaverConfig()
   xmlHistogram.viewZoom = false;
   xmlHistogram.viewGradientColors = true;
   xmlHistogram.viewHorizontal = true;
-  xmlHistogram.viewEmptyColumns = false;
+  xmlHistogram.viewEmptyColumns = true;
   xmlHistogram.scientificNotation = false;
   xmlHistogram.thousandSep = true;
   xmlHistogram.precision = 2;
