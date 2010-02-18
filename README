@@ -1,6 +1,8 @@
 Library dependencies:
-	- Boost >= 1.36
-	- Boost Serialization
-	- Zlib
+	- Boost >= 1.36 (www.boost.org)
+	- Boost Serialization (www.boost.org)
+	- Zlib (zlib.net)
+
+If you have installed these packages from a package manager, remember to install devel packages too.
 
 Read INSTALL file for installation instructions.
