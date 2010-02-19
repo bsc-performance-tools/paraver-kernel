@@ -33,6 +33,10 @@
 #include "window.h"
 #include "paraverconfig.h"
 
+#ifdef WIN32
+#define lround floor
+#endif
+
 rgb SemanticColor::BACKGROUND = { 0, 0, 0 };
 rgb SemanticColor::FOREGROUND = { 255, 255, 255 };
 rgb SemanticColor::DEFAULT_LOGICAL_COMMUNICATIONS = { 255, 255, 0 };
