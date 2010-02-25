@@ -162,9 +162,9 @@ void ControlDerivedClearBy::init( KWindow *whichWindow )
   prevResult.clear();
 
   if( whichWindow->getLevel() >= SYSTEM )
-    size = whichWindow->getTrace()->totalNodes();
+    size = whichWindow->getTrace()->totalCPUs();
   else
-    size = whichWindow->getTrace()->totalApplications();
+    size = whichWindow->getTrace()->totalThreads();
 
   prevValue.reserve( size );
   state.reserve( size );
