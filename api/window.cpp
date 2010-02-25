@@ -58,24 +58,19 @@ Window::Window( KernelConnection *whichKernel ) : myKernel( whichKernel )
 
 WindowProxy::WindowProxy()
 {
-  destroy = false;
-
   parent1 = NULL;
   parent2 = NULL;
-
-  number_of_clones = 0;
+  myTrace = NULL;
+  init();
 }
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
     Window( whichKernel ), myTrace( whichTrace )
 {
-  destroy = false;
-
   parent1 = NULL;
   parent2 = NULL;
   myWindow = myKernel->newSingleWindow( whichTrace );
   myFilter = myKernel->newFilter( myWindow->getFilter() );
-  number_of_clones = 0;
   init();
 }
 
@@ -83,50 +78,38 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
                           Window *whichParent2 ):
     Window( whichKernel ), myTrace( whichParent1->getTrace() )
 {
-  destroy = false;
-
   parent1 = whichParent1;
+  parent1->setChild( this );
   parent2 = whichParent2;
+  parent2->setChild( this );
   myWindow = myKernel->newDerivedWindow( parent1, parent2 );
   myFilter = NULL;
-  number_of_clones = 0;
   init();
 }
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel ):
     Window( whichKernel ), myTrace( NULL )
 {
-  destroy = false;
-
   parent1 = NULL;
   parent2 = NULL;
   myWindow = myKernel->newDerivedWindow();
   myFilter = NULL;
-  number_of_clones = 0;
-//  init();
+  init();
 }
 
 void WindowProxy::init()
 {
+  destroy = false;
+  number_of_clones = 0;
   winBeginTime = 0.0;
-  winEndTime = myTrace->getEndTime();
-
   computeYMaxOnInit = false;
   yScaleComputed = false;
   maximumY = Window::getMaximumY();
   minimumY = Window::getMinimumY();
-
-  myCodeColor = myTrace->getCodeColor();
-
   codeColor = ParaverConfig::getInstance()->getTimelineColor() == SemanticColor::COLOR;
-
-// The current pcf gradient colors are wrong. Next's been commented until it's fixed.
-//  myGradientColor = myTrace->getGradientColor();
   myGradientColor.setGradientFunction( ParaverConfig::getInstance()->getTimelineGradientFunction() );
-
   drawModeObject = ParaverConfig::getInstance()->getTimelineDrawmodeObjects();
   drawModeTime = ParaverConfig::getInstance()->getTimelineDrawmodeTime();
-
   showWindow = true;
   raise = false;
   changed = false;
@@ -134,11 +117,15 @@ void WindowProxy::init()
   commLines = ParaverConfig::getInstance()->getTimelineViewCommunicationsLines();
   flags = ParaverConfig::getInstance()->getTimelineViewEventsLines();
   functionLineColor = ParaverConfig::getInstance()->getTimelineViewFunctionAsColor();
-
   child = NULL;
   usedByHistogram = false;
 
-  selectedRow.init( getTrace() );
+  if( myTrace != NULL )
+  {
+    winEndTime = myTrace->getEndTime();
+    myCodeColor = myTrace->getCodeColor();
+    selectedRow.init( getTrace() );
+  }
 }
 
 WindowProxy::~WindowProxy()
