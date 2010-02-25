@@ -1048,6 +1048,9 @@ SemanticInfoType KDerivedWindow::getSemanticInfoType() const
   if ( functions[ 1 ]->getSemanticInfoType() != SAME_TYPE )
     return functions[ 1 ]->getSemanticInfoType();
 
+  if( functions[ 2 ]->getSemanticInfoType() == SAME_TYPE )
+    return parents[ 0 ]->getSemanticInfoType();
+
   return functions[ 2 ]->getSemanticInfoType();
 }
 

@@ -73,7 +73,6 @@ class DerivedAdd: public SemanticDerived
       return new DerivedAdd( *this );
     }
 
-
   protected:
     virtual const bool getMyInitFromBegin()
     {

@@ -361,19 +361,19 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
       label << value;
     else if ( infoType == BANDWIDTH_TYPE )
     {
-      if( whichWindow->getTimeUnit() == NS )
+      if ( whichWindow->getTimeUnit() == NS )
         label << value << " GB/sec";
-      else if( whichWindow->getTimeUnit() == US )
+      else if ( whichWindow->getTimeUnit() == US )
         label << value << " MB/sec";
-      else if( whichWindow->getTimeUnit() == MS )
+      else if ( whichWindow->getTimeUnit() == MS )
         label << value << " KB/sec";
-      else if( whichWindow->getTimeUnit() == SEC )
+      else if ( whichWindow->getTimeUnit() == SEC )
         label << value << " bytes/sec";
-      else if( whichWindow->getTimeUnit() == MIN )
+      else if ( whichWindow->getTimeUnit() == MIN )
         label << value << " bytes/min";
-      else if( whichWindow->getTimeUnit() == HOUR )
+      else if ( whichWindow->getTimeUnit() == HOUR )
         label << value << " bytes/hour";
-      else if( whichWindow->getTimeUnit() == DAY )
+      else if ( whichWindow->getTimeUnit() == DAY )
         label << value << " bytes/day";
     }
     else
@@ -417,8 +417,8 @@ string LabelConstructor::eventLabel( Window *whichWindow,
 }
 
 string LabelConstructor::eventValueLabel( Window *whichWindow,
-                                          TEventType whichType,
-                                          TEventValue whichValue )
+    TEventType whichType,
+    TEventValue whichValue )
 {
   string tmpstr;
 
@@ -431,7 +431,7 @@ string LabelConstructor::eventValueLabel( Window *whichWindow,
 
 void LabelConstructor::getGUIGroupLabels( const TGroupID groupID, vector< string > &labels )
 {
-  switch( groupID )
+  switch ( groupID )
   {
     case COLOR:
       labels.push_back( GUI_COLORS_CODE_COLOR );

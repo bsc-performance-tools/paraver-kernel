@@ -138,9 +138,9 @@ WindowProxy::~WindowProxy()
 
 Filter *WindowProxy::getFilter() const
 {
-  if ( !myWindow->isDerivedWindow() )
-    return myFilter;
-  return NULL;
+  if ( myWindow->isDerivedWindow() )
+    return parent1->getFilter();
+  return myFilter;
 }
 
 void WindowProxy::setFactor( UINT16 whichFactor, TSemanticValue newValue )

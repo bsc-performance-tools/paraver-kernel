@@ -43,6 +43,11 @@ class SemanticDerived: public SemanticHigh
 
     virtual bool isControlDerived() = 0;
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return SAME_TYPE;
+    }
+
   protected:
 
   private:
