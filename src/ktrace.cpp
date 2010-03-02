@@ -487,8 +487,16 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   }
   else
   {
-    // '_' char found. The trace is in ns.
-    traceTimeUnit = NS;
+    string strTimeUnit( tmpstr.substr( pos, tmpstr.length() ) );
+    if( strTimeUnit == "_ns" )
+      traceTimeUnit = NS;
+    else if( strTimeUnit == "_us" )
+      traceTimeUnit = US;
+    else if( strTimeUnit == "_ms" )
+      traceTimeUnit = MS;
+    else
+      traceTimeUnit = US;
+
     istringstream stringEndTime( tmpstr.substr( 0, pos ) );
     if ( !( stringEndTime >> traceEndTime ) )
     {
