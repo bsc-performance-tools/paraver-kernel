@@ -356,6 +356,12 @@
 		<Unit filename="api/statelabels.h">
 			<Option target="api" />
 		</Unit>
+		<Unit filename="api/textoutput.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/textoutput.h">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="api/trace.cpp">
 			<Option target="api" />
 		</Unit>

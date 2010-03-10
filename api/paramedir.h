@@ -39,10 +39,6 @@ using std::string;
 class Window;
 class Histogram;
 
-void dumpWindow( vector<Window *>& windows, string& strOutputFile );
-
-void dumpHistogram( vector<Histogram *>& histograms, string& strOutputFile );
-
 void printHelp();
 
 #endif // PARAMEDIR_H_INCLUDED

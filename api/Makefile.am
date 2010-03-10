@@ -18,6 +18,7 @@ libparaver_api_la_SOURCES = \
                     rowlabels.cpp \
                     semanticcolor.cpp \
                     statelabels.cpp \
+                    textoutput.cpp \
                     trace.cpp \
                     window.cpp \
                     ../../common-files/pcfparser/LibException.cpp \
@@ -55,6 +56,7 @@ include_HEADERS = \
                   semanticcolor.h\
                   statelabels.h\
                   trace.h\
+                  textoutput.h\
                   window.h\
                   zoomhistory.h\
                   selectionmanagement.cpp\
