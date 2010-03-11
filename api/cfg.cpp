@@ -1327,6 +1327,8 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
         tmpNumObjects.str( strNumObjects );
         if ( !( tmpNumObjects >> numObjects ) )
           return false;
+        if ( numObjects > whichTrace->totalApplications() )
+          return true;
         getline( line, strVoid, '{' );
         if ( !genericParseObjects( line, numObjects, 0, selObjects, win->getLevel() == level ) )
           return false;
@@ -1343,10 +1345,19 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
         istringstream tmpAppl( strAppl );
         if ( !( tmpAppl >> appl ) )
           return false;
+        if ( appl >= whichTrace->totalApplications() )
+          return true;
+
         getline( line, strNumObjects, ',' );
         tmpNumObjects.str( strNumObjects );
         if ( !( tmpNumObjects >> numObjects ) )
           return false;
+        TApplOrder tmpNumAppl;
+        TTaskOrder tmpNumTask;
+        whichTrace->getTaskLocation( whichTrace->getLastTask( appl ), tmpNumAppl, tmpNumTask );
+        if ( numObjects > tmpNumTask + 1 )
+          return true;
+
         getline( line, strVoid, '{' );
         TObjectOrder beginObject = win->getTrace()->getGlobalTask( appl, 0 );
         if ( !genericParseObjects( line, numObjects, beginObject, selObjects, win->getLevel() == level ) )
@@ -1364,14 +1375,28 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
         istringstream tmpAppl( strAppl );
         if ( !( tmpAppl >> appl ) )
           return false;
+        if ( appl >= whichTrace->totalApplications() )
+          return true;
+
         getline( line, strTask, ',' );
         istringstream tmpTask( strTask );
         if ( !( tmpTask >> task ) )
           return false;
+        TApplOrder tmpNumAppl;
+        TTaskOrder tmpNumTask;
+        whichTrace->getTaskLocation( whichTrace->getLastTask( appl ), tmpNumAppl, tmpNumTask );
+        if ( task > tmpNumTask )
+          return true;
+
         getline( line, strNumObjects, ',' );
         tmpNumObjects.str( strNumObjects );
         if ( !( tmpNumObjects >> numObjects ) )
           return false;
+        TThreadOrder tmpNumThread;
+        whichTrace->getThreadLocation( whichTrace->getLastThread( appl, task ), tmpNumAppl, tmpNumTask, tmpNumThread );
+        if ( numObjects > tmpNumThread + 1 )
+          return true;
+
         getline( line, strVoid, '{' );
         TObjectOrder beginObject = win->getTrace()->getGlobalThread( appl, task, 0 );
         if ( !genericParseObjects( line, numObjects, beginObject, selObjects, win->getLevel() == level ) )
@@ -1387,6 +1412,9 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
         tmpNumObjects.str( strNumObjects );
         if ( !( tmpNumObjects >> numObjects ) )
           return false;
+        if ( numObjects > whichTrace->totalNodes() )
+          return true;
+
         getline( line, strVoid, '{' );
         if ( !genericParseObjects( line, numObjects, 0, selObjects, win->getLevel() == level ) )
           return false;
@@ -1403,10 +1431,19 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
         istringstream tmpNode( strNode );
         if ( !( tmpNode >> node ) )
           return false;
+        if ( node >= whichTrace->totalNodes() )
+          return true;
+
         getline( line, strNumObjects, ',' );
         tmpNumObjects.str( strNumObjects );
         if ( !( tmpNumObjects >> numObjects ) )
           return false;
+        TApplOrder tmpNumNode;
+        TTaskOrder tmpNumCPU;
+        whichTrace->getCPULocation( whichTrace->getLastCPU( node ), tmpNumNode, tmpNumCPU );
+        if ( numObjects > tmpNumCPU + 1 )
+          return true;
+
         getline( line, strVoid, '{' );
         TObjectOrder beginObject = win->getTrace()->getGlobalCPU( node, 0 );
         if ( !genericParseObjects( line, numObjects, beginObject, selObjects, win->getLevel() == level ) )
