@@ -169,6 +169,8 @@ TSemanticValue NotThreadMode::execute( const SemanticInfo *info )
   tmp = ParaverStatisticFunctions<TSemanticValue>::mode( tmpValues,
         myInfo->values.size() );
 
+  delete[] tmpValues;
+
   return tmp;
 }
 
