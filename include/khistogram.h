@@ -278,11 +278,11 @@ class KHistogram : public Histogram
     void initStatistics();
     void recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                              TObjectOrder fromRow, TObjectOrder toRow,
-                             vector<TObjectOrder>& selectedRows,
+                             vector<TObjectOrder>& selectedRows, bool needInit,
                              UINT16 winIndex = 0, CalculateData *data = NULL );
     void calculate( TObjectOrder iRow,
                     TRecordTime fromTime, TRecordTime toTime,
-                    UINT16 winIndex, CalculateData *data );
+                    UINT16 winIndex, CalculateData *data, bool needInit );
     void finishRow( CalculateData *data );
 };
 

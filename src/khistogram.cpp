@@ -716,7 +716,7 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
 
   initTotals();
 
-  recursiveExecution( beginTime, endTime, 0, numRows - 1, selectedRows );
+  recursiveExecution( beginTime, endTime, 0, numRows - 1, selectedRows, true );
 
   if ( getThreeDimensions() )
   {
@@ -898,7 +898,7 @@ void KHistogram::initStatistics()
 
 void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                                      TObjectOrder fromRow, TObjectOrder toRow,
-                                     vector<TObjectOrder>& selectedRows,
+                                     vector<TObjectOrder>& selectedRows, bool needInit,
                                      UINT16 winIndex, CalculateData *data )
 {
   Window *currentWindow = orderedWindows[ winIndex ];
@@ -925,17 +925,27 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     if ( currentWindow == dataWindow )
       data->dataRow = iRow;
 
+    if( needInit )
+    {
+      if( winIndex == 0 )
+        currentWindow->initRow( iRow, fromTime, CREATECOMMS );
+      else
+        currentWindow->initRow( iRow, fromTime, NOCREATE );
+    }
+
     while ( currentWindow->getEndTime( iRow ) <= fromTime )
       currentWindow->calcNext( iRow );
 
+    bool childInit = true;;
     while ( currentWindow->getEndTime( iRow ) < toTime )
     {
-      calculate( iRow, fromTime, toTime, winIndex, data );
+      calculate( iRow, fromTime, toTime, winIndex, data, childInit );
       currentWindow->calcNext( iRow );
+      childInit = false;
     }
 
     if ( currentWindow->getBeginTime( iRow ) < toTime )
-      calculate( iRow, fromTime, toTime, winIndex, data );
+      calculate( iRow, fromTime, toTime, winIndex, data, false );
 
     if ( winIndex == 0 )
       finishRow( data );
@@ -951,7 +961,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 
 void KHistogram::calculate( TObjectOrder iRow,
                             TRecordTime fromTime, TRecordTime toTime,
-                            UINT16 winIndex, CalculateData *data )
+                            UINT16 winIndex, CalculateData *data, bool needInit )
 {
   TObjectOrder childFromRow;
   TObjectOrder childToRow;
@@ -1082,8 +1092,10 @@ void KHistogram::calculate( TObjectOrder iRow,
     rowsTranslator->getRowChilds( winIndex, iRow, childFromRow, childToRow );
 
     vector<TObjectOrder> tmp;
+    if( currentWindow == orderedWindows[ winIndex + 1 ] )
+      needInit = false;
     recursiveExecution( childFromTime, childToTime, childFromRow, childToRow,
-                        tmp, winIndex + 1, data );
+                        tmp, needInit, winIndex + 1, data );
   }
 }
 

@@ -344,6 +344,7 @@ void WindowProxy::computeYScaleMin()
 
     for ( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
     {
+      initRow( *obj, winBeginTime, NONE );
       while ( getBeginTime( *obj ) < getTrace()->getEndTime() )
         calcNext( *obj );
     }
@@ -364,6 +365,7 @@ void WindowProxy::computeYScaleMax()
 
     for ( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
     {
+      initRow( *obj, winBeginTime, NONE );
       while ( getBeginTime( *obj ) < getTrace()->getEndTime() )
         calcNext( *obj );
     }
@@ -384,6 +386,7 @@ void WindowProxy::computeYScale()
 
     for ( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
     {
+      initRow( *obj, winBeginTime, NONE );
       while ( getBeginTime( *obj ) < getTrace()->getEndTime() )
         calcNext( *obj );
     }
@@ -553,12 +556,13 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create, bool update
     yScaleComputed = true;
     computedMaxY = computedMinY = 0.0;
   }
+}
 
-  for ( int i = 0; i < myWindow->getWindowLevelObjects(); i++ )
-  {
-    if ( myLists[ i ] == NULL )
-      myLists[ i ] = RecordList::create( myWindow->getRecordList( i ) );
-  }
+void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create )
+{
+  myWindow->initRow( whichRow, initialTime, create );
+  if ( myLists[ whichRow ] == NULL )
+    myLists[ whichRow ] = RecordList::create( myWindow->getRecordList( whichRow ) );
 }
 
 RecordList *WindowProxy::calcNext( TObjectOrder whichObject, bool updateLimits )

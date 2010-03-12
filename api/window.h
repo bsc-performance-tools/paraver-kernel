@@ -159,6 +159,7 @@ class Window
                                          TParamIndex whichParam ) const = 0;
     virtual RecordList *getRecordList( TObjectOrder whichObject ) = 0;
     virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true ) = 0;
+    virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create ) = 0;
     virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true ) = 0;
     virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true ) = 0;
     virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const = 0;
@@ -431,6 +432,7 @@ class WindowProxy: public Window
                                          TParamIndex whichParam ) const;
     virtual RecordList *getRecordList( TObjectOrder whichObject );
     virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true );
+    virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create );
     virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true );
     virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true );
     virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const;

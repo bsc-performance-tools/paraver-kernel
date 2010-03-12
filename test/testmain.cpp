@@ -181,6 +181,7 @@ int main( int argc, char *argv[] )
 
   testDerived->init( 0, NOCREATE );
   TObjectOrder i = 0;
+  initRow( i, 0, NOCREATE );
   while ( testDerived->getEndTime( i ) < testTrace->getEndTime() )
   {
     sem_out << /*i << " " << */testDerived->getBeginTime( i ) << "\t";

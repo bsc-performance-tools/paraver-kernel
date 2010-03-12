@@ -139,6 +139,7 @@ class KWindow: public Window
 
     RecordList *getRecordList( TObjectOrder whichObject );
     virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true ) = 0;
+    virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create ) = 0;
     virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true ) = 0;
     virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true ) = 0;
 
@@ -257,6 +258,7 @@ class KSingleWindow: public KWindow
     virtual bool initFromBegin() const;
 
     virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true );
+    virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create );
     virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true );
     virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true );
 
@@ -379,6 +381,7 @@ class KDerivedWindow: public KWindow
     virtual bool initFromBegin() const;
 
     virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true );
+    virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create );
     virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true );
     virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true );
 

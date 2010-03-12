@@ -381,11 +381,12 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
   }
 
   objectSize = getWindowLevelObjects();
-
-  for ( TObjectOrder i = 0; i < objectSize; i++ )
-    intervalTopCompose1[ i ].init( initialTime, create );
 }
 
+void KSingleWindow::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create )
+{
+  intervalTopCompose1[ whichRow ].init( initialTime, create );
+}
 
 bool KSingleWindow::setLevelFunction( TWindowLevel whichLevel,
                                       const string& whichFunction )
@@ -937,11 +938,12 @@ void KDerivedWindow::init( TRecordTime initialTime, TCreateList create, bool upd
   */
   for ( UINT16 i = 0; i < parents.size(); i++ )
     parents[ i ]->init( initialTime, create );
-
-  for ( TObjectOrder i = 0; i < objectSize; i++ )
-    intervalTopCompose1[ i ].init( initialTime, create );
 }
 
+void KDerivedWindow::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create )
+{
+  intervalTopCompose1[ whichRow ].init( initialTime, create );
+}
 
 RecordList *KDerivedWindow::calcNext( TObjectOrder whichObject, bool updateLimits )
 {

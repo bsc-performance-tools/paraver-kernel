@@ -42,6 +42,7 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
     outputFile << fixed;
     outputFile << showpoint;
 
+    whichWindow->initRow( i, beginTime, NOCREATE );
     while ( whichWindow->getEndTime( i ) < endTime )
     {
       outputFile << setprecision( config->getTimelinePrecision() );
