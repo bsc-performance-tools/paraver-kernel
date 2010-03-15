@@ -75,6 +75,9 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
     outputFile.close();
     cout << strOutputFile << " file wrote." << endl;
   }
+
+  if( !multipleFiles )
+    outputFile.close();
 }
 
 void TextOutput::dumpHistogram( Histogram *whichHisto, string& strOutputFile )
