@@ -275,6 +275,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\textoutput.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\trace.cpp"
 				>
 			</File>
@@ -438,6 +442,10 @@
 			</File>
 			<File
 				RelativePath=".\statelabels.h"
+				>
+			</File>
+			<File
+				RelativePath=".\textoutput.h"
 				>
 			</File>
 			<File
