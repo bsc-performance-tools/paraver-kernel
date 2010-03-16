@@ -134,8 +134,8 @@ ColumnTranslator::ColumnTranslator( THistogramLimit whichMin,
   // PRECOND: Min < Max
   numColumns = THistogramColumn( ceil( ( maxLimit - minLimit ) / delta ) );
 
-  if ( ( numColumns * delta ) + minLimit <= maxLimit )
-    numColumns++;
+  if ( delta == 1 && ( numColumns * delta ) + minLimit <= maxLimit )
+    ++numColumns;
 }
 
 

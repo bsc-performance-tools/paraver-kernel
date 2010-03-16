@@ -97,7 +97,7 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
   {
     // Column range values
     label << '[' << ( whichColumn * delta ) + min << "..";
-    if ( ( ( whichColumn * delta ) + min + delta ) > max )
+    if ( ( ( whichColumn * delta ) + min + delta ) >= max )
     {
       label << max;
       label << ']';
