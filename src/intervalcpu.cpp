@@ -79,7 +79,10 @@ KRecordList *IntervalCPU::calcNext( KRecordList *displayList, bool initCalc )
   threadInfo.callingInterval = this;
   highInfo.callingInterval = this;
   threadInfo.it = begin;
-  highInfo.values.push_back( functionThread->execute( &threadInfo ) );
+  if( begin->getType() == STATE + END )
+    highInfo.values.push_back( 0.0 );
+  else
+    highInfo.values.push_back( functionThread->execute( &threadInfo ) );
   currentValue = function->execute( &highInfo );
   end = getNextRecord( end, displayList );
 

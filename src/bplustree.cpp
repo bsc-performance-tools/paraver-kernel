@@ -115,11 +115,14 @@ void UnloadedTrace::append( TRecord *rini, TRecord *rfin )
     if ( numCPUs > 0 )
     {
       cpu = current->CPU;
-      if ( CPUFirst[ cpu ] == NULL )
+      if( cpu < numCPUs )
       {
-        CPUFirst[ cpu ] = current;
+        if ( CPUFirst[ cpu ] == NULL )
+        {
+          CPUFirst[ cpu ] = current;
+        }
+        CPULast[ cpu ] = current;
       }
-      CPULast[ cpu ] = current;
     }
     current = current->next;
 

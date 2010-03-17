@@ -243,10 +243,7 @@ void TraceBodyIO_v2::readState( const string& line, MemoryBlocks& records ) cons
   else
     records.setType( STATE + END );
   records.setTime( time );
-  if ( CPU == 0 )
-    records.setCPU( CPU );
-  else
-    records.setCPU( CPU - 1 );
+  records.setCPU( CPU - 1 );
   records.setThread( thread - 1 );
   records.setState( state );
   records.setStateEndTime( endtime );
@@ -302,10 +299,7 @@ void TraceBodyIO_v2::readEvent( const string& line, MemoryBlocks& records,
     records.newRecord();
     records.setType( EVENT );
     records.setTime( time );
-    if ( CPU == 0 )
-      records.setCPU( CPU );
-    else
-      records.setCPU( CPU - 1 );
+    records.setCPU( CPU - 1 );
     records.setThread( thread - 1 );
     records.setEventType( eventtype );
     records.setEventValue( eventvalue );
@@ -396,15 +390,9 @@ void TraceBodyIO_v2::readComm( const string& line, MemoryBlocks& records ) const
     }
 
     records.newComm( false );
-    if ( CPU == 0 )
-      records.setSenderCPU( CPU );
-    else
-      records.setSenderCPU( CPU - 1 );
+    records.setSenderCPU( CPU - 1 );
     records.setSenderThread( thread - 1 );
-    if ( remoteCPU == 0 )
-      records.setReceiverCPU( remoteCPU );
-    else
-      records.setReceiverCPU( remoteCPU - 1 );
+    records.setReceiverCPU( remoteCPU - 1 );
     records.setReceiverThread( remoteThread - 1 );
     records.setLogicalSend( logSend );
     records.setPhysicalSend( phySend );
