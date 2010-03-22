@@ -235,7 +235,7 @@ Window *WindowProxy::clone( )
   else
     clonedWindow->myFilter = myKernel->newFilter( clonedWindow->myWindow->getFilter() );
 
-  clonedWindow->usedByHistogram = usedByHistogram;
+  clonedWindow->usedByHistogram = false;
   clonedWindow->winBeginTime = winBeginTime;
   clonedWindow->winEndTime = winEndTime;
   clonedWindow->computeYMaxOnInit = computeYMaxOnInit;

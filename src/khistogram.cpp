@@ -913,6 +913,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 
   for ( TObjectOrder i = fromRow; i <= toRow; ++i )
   {
+    bool childInit;
     TObjectOrder iRow = i;
 
     if ( winIndex == 0 )
@@ -934,18 +935,20 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     }
 
     while ( currentWindow->getEndTime( iRow ) <= fromTime )
+    {
       currentWindow->calcNext( iRow );
+    }
 
-    bool childInit = true;;
+    childInit = true;
     while ( currentWindow->getEndTime( iRow ) < toTime )
     {
       calculate( iRow, fromTime, toTime, winIndex, data, childInit );
       currentWindow->calcNext( iRow );
-      childInit = false;
+//      childInit = false;
     }
 
     if ( currentWindow->getBeginTime( iRow ) < toTime )
-      calculate( iRow, fromTime, toTime, winIndex, data, false );
+      calculate( iRow, fromTime, toTime, winIndex, data, childInit );
 
     if ( winIndex == 0 )
       finishRow( data );
@@ -961,7 +964,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 
 void KHistogram::calculate( TObjectOrder iRow,
                             TRecordTime fromTime, TRecordTime toTime,
-                            UINT16 winIndex, CalculateData *data, bool needInit )
+                            UINT16 winIndex, CalculateData *data, bool& needInit )
 {
   TObjectOrder childFromRow;
   TObjectOrder childToRow;
@@ -1096,6 +1099,7 @@ void KHistogram::calculate( TObjectOrder iRow,
       needInit = false;
     recursiveExecution( childFromTime, childToTime, childFromRow, childToRow,
                         tmp, needInit, winIndex + 1, data );
+    needInit = false;
   }
 }
 

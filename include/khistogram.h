@@ -282,7 +282,7 @@ class KHistogram : public Histogram
                              UINT16 winIndex = 0, CalculateData *data = NULL );
     void calculate( TObjectOrder iRow,
                     TRecordTime fromTime, TRecordTime toTime,
-                    UINT16 winIndex, CalculateData *data, bool needInit );
+                    UINT16 winIndex, CalculateData *data, bool& needInit );
     void finishRow( CalculateData *data );
 };
 

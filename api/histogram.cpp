@@ -1118,10 +1118,25 @@ Histogram *HistogramProxy::clone()
 
   // Must store the associated proxies
   clonedHistogramProxy->setControlWindow( controlWindow->clone() );
-  clonedHistogramProxy->setDataWindow( dataWindow->clone() );
+  clonedHistogramProxy->getControlWindow()->setUsedByHistogram( true );
+  if( controlWindow == dataWindow )
+    clonedHistogramProxy->setDataWindow( clonedHistogramProxy->getControlWindow() );
+  else
+  {
+    clonedHistogramProxy->setDataWindow( dataWindow->clone() );
+    clonedHistogramProxy->getDataWindow()->setUsedByHistogram( true );
+  }
   if ( extraControlWindow != NULL )
   {
-    clonedHistogramProxy->setExtraControlWindow( extraControlWindow->clone() );
+    if( extraControlWindow == controlWindow )
+      clonedHistogramProxy->setExtraControlWindow( clonedHistogramProxy->getControlWindow() );
+    else if( extraControlWindow == dataWindow )
+      clonedHistogramProxy->setExtraControlWindow( clonedHistogramProxy->getDataWindow() );
+    else
+    {
+      clonedHistogramProxy->setExtraControlWindow( extraControlWindow->clone() );
+      clonedHistogramProxy->getExtraControlWindow()->setUsedByHistogram( true );
+    }
   }
 
   clonedHistogramProxy->calculateAll = calculateAll;
