@@ -141,6 +141,7 @@ class ParaverConfig
 
     // HISTOGRAM
     void setHistogramViewZoom( bool whichViewZoom );
+    void setHistogramViewFirstRowColored( bool whichViewFirstRow );
     void setHistogramViewGradientColors( bool whichViewGradientColors );
     void setHistogramViewHorizontal( bool whichViewHorizontal );
     void setHistogramViewEmptyColumns( bool whichViewEmptyColumns );
@@ -160,6 +161,7 @@ class ParaverConfig
     void setHistogramSaveImageFormat( TImageFormat whichSaveImageFormat );
 
     bool getHistogramViewZoom() const;
+    bool getHistogramViewFirstRowColored() const;
     bool getHistogramViewGradientColors() const;
     bool getHistogramViewHorizontal() const;
     bool getHistogramViewEmptyColumns() const;
@@ -308,9 +310,12 @@ class ParaverConfig
         ar & boost::serialization::make_nvp( "save_text_as_matrix", saveTextAsMatrix );
         ar & boost::serialization::make_nvp( "save_text_format", saveTextFormat );
         ar & boost::serialization::make_nvp( "save_image_format", saveImageFormat );
+        if( version >= 1 )
+          ar & boost::serialization::make_nvp( "view_first_row_colored", viewFirstRowColored );
       }
 
       bool viewZoom;
+      bool viewFirstRowColored;
       bool viewGradientColors;
       bool viewHorizontal;
       bool viewEmptyColumns;
@@ -406,7 +411,7 @@ class ParaverConfig
 BOOST_CLASS_VERSION( ParaverConfig, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 0)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 0)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilters, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesColor, 0)
 

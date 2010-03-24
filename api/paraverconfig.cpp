@@ -87,6 +87,7 @@ ParaverConfig::ParaverConfig()
   xmlTimeline.saveImageFormat = PNG;
 
   xmlHistogram.viewZoom = false;
+  xmlHistogram.viewFirstRowColored = false;
   xmlHistogram.viewGradientColors = true;
   xmlHistogram.viewHorizontal = true;
   xmlHistogram.viewEmptyColumns = true;
@@ -377,6 +378,11 @@ void ParaverConfig::setHistogramViewZoom( bool whichViewZoom )
   xmlHistogram.viewZoom = whichViewZoom;
 }
 
+void ParaverConfig::setHistogramViewFirstRowColored( bool whichViewFirstRow )
+{
+  xmlHistogram.viewFirstRowColored = whichViewFirstRow;
+}
+
 void ParaverConfig::setHistogramViewGradientColors( bool whichViewGradientColors )
 {
   xmlHistogram.viewGradientColors = whichViewGradientColors;
@@ -465,6 +471,11 @@ void ParaverConfig::setHistogramSaveImageFormat( TImageFormat whichSaveImageForm
 bool ParaverConfig::getHistogramViewZoom() const
 {
   return xmlHistogram.viewZoom;
+}
+
+bool ParaverConfig::getHistogramViewFirstRowColored() const
+{
+  return xmlHistogram.viewFirstRowColored;
 }
 
 bool ParaverConfig::getHistogramViewGradientColors() const

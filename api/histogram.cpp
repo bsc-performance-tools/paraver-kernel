@@ -82,6 +82,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   computeGradient = Histogram::getComputeGradient();
   showColor = Histogram::getShowColor();
   zoom = Histogram::getZoom();
+  firstRowColored = Histogram::getFirstRowColored();
   futurePlane = false;
   planeMinValue = 0.0;
   selectedPlane = 0;
@@ -807,6 +808,16 @@ void HistogramProxy::setZoom( bool newValue )
 bool HistogramProxy::getZoom() const
 {
   return zoom;
+}
+
+void HistogramProxy::setFirstRowColored( bool newValue )
+{
+  firstRowColored = newValue;
+}
+
+bool HistogramProxy::getFirstRowColored() const
+{
+  return firstRowColored;
 }
 
 void HistogramProxy::setPlaneMinValue( double whichMin )

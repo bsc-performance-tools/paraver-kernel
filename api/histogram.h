@@ -279,6 +279,12 @@ class Histogram
     {
       return ParaverConfig::getInstance()->getHistogramViewZoom();
     }
+    virtual void setFirstRowColored( bool newValue ) {}
+    virtual bool getFirstRowColored() const
+    {
+      return ParaverConfig::getInstance()->getHistogramViewFirstRowColored();
+    }
+
     virtual void setPlaneMinValue( double whichMin ) {}
     virtual double getPlaneMinValue() const
     {
@@ -534,6 +540,8 @@ class HistogramProxy : public Histogram
     virtual void recalcGradientLimits();
     virtual void setZoom( bool newValue );
     virtual bool getZoom() const;
+    virtual void setFirstRowColored( bool newValue );
+    virtual bool getFirstRowColored() const;
     virtual void setPlaneMinValue( double whichMin );
     virtual double getPlaneMinValue() const;
     virtual void setSelectedPlane( INT32 plane );
@@ -633,6 +641,7 @@ class HistogramProxy : public Histogram
     bool computeGradient;
     bool showColor;
     bool zoom;
+    bool firstRowColored;
     bool futurePlane;
     double planeMinValue;
     INT32 selectedPlane;
