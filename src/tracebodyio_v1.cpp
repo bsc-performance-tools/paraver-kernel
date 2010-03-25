@@ -34,6 +34,9 @@
 
 using namespace std;
 
+istringstream TraceBodyIO_v1::fieldStream;
+istringstream TraceBodyIO_v1::strLine;
+
 bool TraceBodyIO_v1::ordered() const
 {
   return false;
@@ -138,7 +141,7 @@ void TraceBodyIO_v1::writeCommInfo( fstream& whichStream,
 /**********************
   Read line functions
 ***********************/
-void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records ) const
+inline void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records ) const
 {
   string tmpstring;
   TCPUOrder CPU;
@@ -149,7 +152,8 @@ void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records ) cons
   TRecordTime endtime;
   TState state;
 
-  istringstream strLine( line );
+  strLine.clear();
+  strLine.str( line );
 
   // Discarding record type
   std::getline( strLine, tmpstring, ':' );
@@ -164,8 +168,9 @@ void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records ) cons
   }
 
   std::getline( strLine, tmpstring, ':' );
-  istringstream endtimeStream( tmpstring );
-  if ( !( endtimeStream >> endtime ) )
+  fieldStream.clear();
+  fieldStream.str( tmpstring );
+  if ( !( fieldStream >> endtime ) )
   {
     cerr << "No logging system yet. TraceBodyIO_v1::readState()" << endl;
     cerr << "Error reading state record." << endl;
@@ -174,8 +179,9 @@ void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records ) cons
   }
 
   std::getline( strLine, tmpstring );
-  istringstream stateStream( tmpstring );
-  if ( !( stateStream >> state ) )
+  fieldStream.clear();
+  fieldStream.str( tmpstring );
+  if ( !( fieldStream >> state ) )
   {
     cerr << "No logging system yet. TraceBodyIO_v1::readState()" << endl;
     cerr << "Error reading state record." << endl;
@@ -206,8 +212,8 @@ void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records ) cons
 }
 
 
-void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records,
-                                hash_set<TEventType>& events ) const
+inline void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records,
+                                       hash_set<TEventType>& events ) const
 {
   string tmpstring;
   TCPUOrder CPU;
@@ -218,7 +224,8 @@ void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records,
   TEventType eventtype;
   TEventValue eventvalue;
 
-  istringstream strLine( line );
+  strLine.clear();
+  strLine.str( line );
 
   // Discarding record type
   std::getline( strLine, tmpstring, ':' );
@@ -235,8 +242,9 @@ void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records,
   while ( !strLine.eof() )
   {
     std::getline( strLine, tmpstring, ':' );
-    istringstream eventtypeStream( tmpstring );
-    if ( !( eventtypeStream >> eventtype ) )
+    fieldStream.clear();
+    fieldStream.str( tmpstring );
+    if ( !( fieldStream >> eventtype ) )
     {
       cerr << "No logging system yet. TraceBodyIO_v1::readEvent()" << endl;
       cerr << "Error reading event record." << endl;
@@ -245,8 +253,9 @@ void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records,
     }
 
     std::getline( strLine, tmpstring, ':' );
-    istringstream eventvalueStream( tmpstring );
-    if ( !( eventvalueStream >> eventvalue ) )
+    fieldStream.clear();
+    fieldStream.str( tmpstring );
+    if ( !( fieldStream >> eventvalue ) )
     {
       cerr << "No logging system yet. TraceBodyIO_v1::readEvent()" << endl;
       cerr << "Error reading event record." << endl;
@@ -267,7 +276,7 @@ void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records,
 }
 
 
-void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records ) const
+inline void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records ) const
 {
   string tmpstring;
   TCPUOrder CPU;
@@ -285,7 +294,8 @@ void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records ) const
   TCommSize size;
   TCommTag tag;
 
-  istringstream strLine( line );
+  strLine.clear();
+  strLine.str( line );
 
   // Discarding record type
   std::getline( strLine, tmpstring, ':' );
@@ -300,8 +310,9 @@ void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records ) const
   }
 
   std::getline( strLine, tmpstring, ':' );
-  istringstream phySendStream( tmpstring );
-  if ( !( phySendStream >> phySend ) )
+  fieldStream.clear();
+  fieldStream.str( tmpstring );
+  if ( !( fieldStream >> phySend ) )
   {
     cerr << "No logging system yet. TraceBodyIO_v1::readComm()" << endl;
     cerr << "Error reading communication record." << endl;
@@ -319,8 +330,9 @@ void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records ) const
   }
 
   std::getline( strLine, tmpstring, ':' );
-  istringstream phyReceiveStream( tmpstring );
-  if ( !( phyReceiveStream >> phyReceive ) )
+  fieldStream.clear();
+  fieldStream.str( tmpstring );
+  if ( !( fieldStream >> phyReceive ) )
   {
     cerr << "No logging system yet. TraceBodyIO_v1::readComm()" << endl;
     cerr << "Error reading communication record." << endl;
@@ -329,8 +341,9 @@ void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records ) const
   }
 
   std::getline( strLine, tmpstring, ':' );
-  istringstream sizeStream( tmpstring );
-  if ( !( sizeStream >> size ) )
+  fieldStream.clear();
+  fieldStream.str( tmpstring );
+  if ( !( fieldStream >> size ) )
   {
     cerr << "No logging system yet. TraceBodyIO_v1::readComm()" << endl;
     cerr << "Error reading communication record." << endl;
@@ -339,8 +352,9 @@ void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records ) const
   }
 
   std::getline( strLine, tmpstring, ':' );
-  istringstream tagStream( tmpstring );
-  if ( !( tagStream >> tag ) )
+  fieldStream.clear();
+  fieldStream.str( tmpstring );
+  if ( !( fieldStream >> tag ) )
   {
     cerr << "No logging system yet. TraceBodyIO_v1::readComm()" << endl;
     cerr << "Error reading communication record." << endl;
@@ -362,43 +376,47 @@ void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records ) const
 }
 
 
-void TraceBodyIO_v1::readGlobalComm( const string& line, MemoryBlocks& records ) const
+inline void TraceBodyIO_v1::readGlobalComm( const string& line, MemoryBlocks& records ) const
 {}
 
 
-bool TraceBodyIO_v1::readCommon( istringstream& line,
-                                 TCPUOrder& CPU,
-                                 TApplOrder& appl,
-                                 TTaskOrder& task,
-                                 TThreadOrder& thread,
-                                 TRecordTime& time ) const
+inline bool TraceBodyIO_v1::readCommon( istringstream& line,
+                                        TCPUOrder& CPU,
+                                        TApplOrder& appl,
+                                        TTaskOrder& task,
+                                        TThreadOrder& thread,
+                                        TRecordTime& time ) const
 {
   string tmpstring;
 
   std::getline( line, tmpstring, ':' );
-  istringstream CPUStream( tmpstring );
-  if ( !( CPUStream >> CPU ) )
+  fieldStream.clear();
+  fieldStream.str( tmpstring );
+  if ( !( fieldStream >> CPU ) )
   {
     return false;
   }
 
   std::getline( line, tmpstring, ':' );
-  istringstream applStream( tmpstring );
-  if ( !( applStream >> appl ) )
+  fieldStream.clear();
+  fieldStream.str( tmpstring );
+  if ( !( fieldStream >> appl ) )
   {
     return false;
   }
 
   std::getline( line, tmpstring, ':' );
-  istringstream taskStream( tmpstring );
-  if ( !( taskStream >> task ) )
+  fieldStream.clear();
+  fieldStream.str( tmpstring );
+  if ( !( fieldStream >> task ) )
   {
     return false;
   }
 
   std::getline( line, tmpstring, ':' );
-  istringstream threadStream( tmpstring );
-  if ( !( threadStream >> thread ) )
+  fieldStream.clear();
+  fieldStream.str( tmpstring );
+  if ( !( fieldStream >> thread ) )
   {
     return false;
   }
@@ -407,8 +425,9 @@ bool TraceBodyIO_v1::readCommon( istringstream& line,
     return false;
 
   std::getline( line, tmpstring, ':' );
-  istringstream timeStream( tmpstring );
-  if ( !( timeStream >> time ) )
+  fieldStream.clear();
+  fieldStream.str( tmpstring );
+  if ( !( fieldStream >> time ) )
   {
     return false;
   }

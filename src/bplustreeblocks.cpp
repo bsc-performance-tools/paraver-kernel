@@ -58,7 +58,7 @@ void BPlusTreeBlocks::newRecord()
   }
   else
   {
-    currentRecord++;
+    ++currentRecord;
     if ( currentRecord == blockSize )
     {
       blocks.push_back( new TRecord[blockSize] );
@@ -72,7 +72,7 @@ void BPlusTreeBlocks::newRecord()
   currentBlock[currentRecord].threadNext = NULL;
   currentBlock[currentRecord].threadPrev = NULL;
   lastRecords.push_back( &currentBlock[currentRecord] );
-  countInserted++;
+  ++countInserted;
 }
 
 void BPlusTreeBlocks::setType( TRecordType whichType )
@@ -139,12 +139,12 @@ void BPlusTreeBlocks::newComm( bool createRecords )
   currentComm = communications.size() - 1;
   if ( !createRecords )
   {
-    for ( UINT8 i = 0; i < commTypeSize; i++ )
+    for ( UINT8 i = 0; i < commTypeSize; ++i )
       commRecords[ i ] = NULL;
   }
   else
   {
-    for ( UINT8 i = 0; i < commTypeSize; i++ )
+    for ( UINT8 i = 0; i < commTypeSize; ++i )
     {
       newRecord();
       commRecords[i] = &currentBlock[currentRecord];

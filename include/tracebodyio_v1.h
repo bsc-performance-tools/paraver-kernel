@@ -89,6 +89,8 @@ class TraceBodyIO_v1 : public TraceBodyIO
                       const KTrace& whichTrace,
                       const MemoryTrace::iterator *record ) const;
 
+    static istringstream fieldStream;
+    static istringstream strLine;
 };
 
 

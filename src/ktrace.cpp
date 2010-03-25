@@ -574,7 +574,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   {
     body->read( file, *blocks, hashevents );
 //    if ( count == 500 )
-    if ( blocks->getCountInserted() >= 1000 )
+    if ( blocks->getCountInserted() >= 10000 )
     {
 
       memTrace->insert( blocks );
