@@ -749,7 +749,12 @@ void KHistogram::orderWindows()
 
   if ( getThreeDimensions() )
   {
-    if ( controlWindow->getLevel() >= xtraControlWindow->getLevel() )
+    if ( controlWindow == dataWindow )
+    {
+      orderedWindows.push_back( xtraControlWindow );
+      orderedWindows.push_back( controlWindow );
+    }
+    else if ( controlWindow->getLevel() >= xtraControlWindow->getLevel() )
     {
       orderedWindows.push_back( controlWindow );
       orderedWindows.push_back( xtraControlWindow );
