@@ -34,7 +34,7 @@ KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
                                    KRecordList *displayList )
 {
   TRecordTime myInitTime;
-  SemanticHighInfo info;
+  info.values.clear();
 
   createList = create;
   currentValue = 0.0;
@@ -104,7 +104,7 @@ KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
 
 KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc )
 {
-  SemanticHighInfo info;
+  info.values.clear();
 
   if ( displayList == NULL )
     displayList = &myDisplayList;
@@ -152,7 +152,7 @@ KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc 
 
 KRecordList *IntervalDerived::calcPrev( KRecordList *displayList, bool initCalc )
 {
-  SemanticHighInfo info;
+  info.values.clear();
 
   if ( displayList == NULL )
     displayList = &myDisplayList;

@@ -30,6 +30,7 @@
 #ifndef LABELCONSTRUCTOR_H_INCLUDED
 #define LABELCONSTRUCTOR_H_INCLUDED
 
+#include <sstream>
 #include "paraverkerneltypes.h"
 #include "trace.h"
 
@@ -68,6 +69,10 @@ class LabelConstructor
                                    TEventType whichType,
                                    TEventValue whichValue );
 
+    static string numberWithSeparators( TSemanticValue value,
+                                        UINT32 precision,
+                                        TTimeUnit unit = MS );
+
     enum TGroupID
     {
       COLOR = 0,
@@ -79,6 +84,12 @@ class LabelConstructor
     };
 
     static void getGUIGroupLabels( const TGroupID group, vector< string > &labels );
+
+  private:
+    static stringstream label;
+    static stringstream tmp;
+    static stringstream sstrTimeLabel;
+    static stringstream sstrSemanticLabel;
 };
 
 #endif // LABELCONSTRUCTOR_H_INCLUDED

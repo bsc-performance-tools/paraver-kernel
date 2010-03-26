@@ -82,6 +82,7 @@ class IntervalThread: public Interval
     virtual MemoryTrace::iterator *getPrevRecord( MemoryTrace::iterator *it,
         KRecordList *displayList );
 
+    SemanticThreadInfo info;
 };
 
 

@@ -85,6 +85,7 @@ class IntervalDerived: public IntervalHigh
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const;
 
   private:
+    SemanticHighInfo info;
 
 };
 

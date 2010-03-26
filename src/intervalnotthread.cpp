@@ -34,7 +34,7 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
                                      KRecordList *displayList )
 {
   TRecordTime myInitTime;
-  SemanticHighInfo info;
+  info.values.clear();
 
   createList = create;
   currentValue = 0.0;
@@ -102,7 +102,7 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
 
 KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCalc )
 {
-  SemanticHighInfo info;
+  info.values.clear();
 
   if ( displayList == NULL )
     displayList = &myDisplayList;
@@ -148,7 +148,7 @@ KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCal
 
 KRecordList *IntervalNotThread::calcPrev( KRecordList *displayList, bool initCalc )
 {
-  SemanticHighInfo info;
+  info.values.clear();
 
   if ( displayList == NULL )
     displayList = &myDisplayList;

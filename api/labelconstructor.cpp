@@ -27,7 +27,6 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-#include <sstream>
 #include <math.h>
 #include <boost/lexical_cast.hpp>
 #include "labelconstructor.h"
@@ -38,12 +37,18 @@
 #include "filter.h"
 #include "kfilter.h"
 
+stringstream LabelConstructor::label;
+stringstream LabelConstructor::tmp;
+stringstream LabelConstructor::sstrTimeLabel;
+stringstream LabelConstructor::sstrSemanticLabel;
+
 string LabelConstructor::objectLabel( TObjectOrder globalOrder,
                                       TWindowLevel level,
                                       Trace *whichTrace )
 {
   string rowStr;
-  stringstream label;
+  label.clear();
+  label.str( "" );
 
   rowStr = whichTrace->getRowLabel( level, globalOrder );
   if ( rowStr != "" )
@@ -90,7 +95,8 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
     THistogramLimit max,
     THistogramLimit delta )
 {
-  stringstream label;
+  label.clear();
+  label.str( "" );
   double tmp;
 
   if ( modf( min, &tmp ) != 0.0 || delta != 1.0 )
@@ -140,7 +146,8 @@ inline string chomp( TSemanticValue& number )
 string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
     TSemanticValue value, bool showUnits )
 {
-  stringstream label;
+  label.clear();
+  label.str( "" );
 
   if ( value == numeric_limits<double>::infinity() )
     return "inf";
@@ -169,7 +176,8 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
       label << strNum;
     }
 
-    stringstream tmp;
+    tmp.clear();
+    tmp.str( "" );
     if ( whichHisto->getScientificNotation() )
       tmp << scientific;
     else
@@ -219,9 +227,10 @@ string LabelConstructor::histoTotalLabel( THistoTotals whichTotal )
   return "";
 }
 
-string numberWithSeparators( TSemanticValue value, UINT32 precision, TTimeUnit unit = MS )
+string LabelConstructor::numberWithSeparators( TSemanticValue value, UINT32 precision, TTimeUnit unit )
 {
-  stringstream label;
+  label.clear();
+  label.str( "" );
 
   string strNum;
   TSemanticValue origValue = value;
@@ -239,7 +248,8 @@ string numberWithSeparators( TSemanticValue value, UINT32 precision, TTimeUnit u
       label << strNum;
     }
 
-    stringstream tmp;
+    tmp.clear();
+    tmp.str( "" );
     tmp << fixed;
     tmp.precision( precision );
     value -= INT64( origValue );
@@ -257,72 +267,74 @@ string numberWithSeparators( TSemanticValue value, UINT32 precision, TTimeUnit u
 }
 string LabelConstructor::timeLabel( TTime value, TTimeUnit unit, UINT32 precision )
 {
-  stringstream label;
+  sstrTimeLabel.clear();
+  sstrTimeLabel.str( "" );
 
-  label << fixed;
-  label.precision( precision );
+  sstrTimeLabel << fixed;
+  sstrTimeLabel.precision( precision );
 
-  label << numberWithSeparators( value, precision, unit );
+  sstrTimeLabel << numberWithSeparators( value, precision, unit );
 
-  label << " " << LABEL_TIMEUNIT[ unit ];
+  sstrTimeLabel << " " << LABEL_TIMEUNIT[ unit ];
 
-  return label.str();
+  return sstrTimeLabel.str();
 }
 
 string LabelConstructor::semanticLabel( const Window * whichWindow,
                                         TSemanticValue value,
                                         bool text, UINT32 precision )
 {
-  stringstream label;
+  sstrSemanticLabel.clear();
+  sstrSemanticLabel.str( "" );
   SemanticInfoType infoType = whichWindow->getSemanticInfoType();
 
-  label << fixed;
+  sstrSemanticLabel << fixed;
   if ( ( value - INT64( value ) ) > 0.0 )
-    label.precision( precision );
+    sstrSemanticLabel.precision( precision );
   else
-    label.precision( 0 );
+    sstrSemanticLabel.precision( 0 );
 
   if ( infoType == NO_TYPE || !text )
   {
-    label << numberWithSeparators( value, precision );
+    sstrSemanticLabel << numberWithSeparators( value, precision );
   }
   else
   {
     if ( infoType == OBJECT_TYPE )
-      label << LabelConstructor::objectLabel( value, whichWindow->getLevel(),
-                                              whichWindow->getTrace() );
+      sstrSemanticLabel << LabelConstructor::objectLabel( value, whichWindow->getLevel(),
+                                                          whichWindow->getTrace() );
     else if ( infoType == APPL_TYPE )
-      label << LabelConstructor::objectLabel( value, APPLICATION,
-                                              whichWindow->getTrace() );
+      sstrSemanticLabel << LabelConstructor::objectLabel( value, APPLICATION,
+                                                          whichWindow->getTrace() );
     else if ( infoType == TASK_TYPE )
-      label << LabelConstructor::objectLabel( value, TASK,
-                                              whichWindow->getTrace() );
+      sstrSemanticLabel << LabelConstructor::objectLabel( value, TASK,
+                                                          whichWindow->getTrace() );
     else if ( infoType == THREAD_TYPE )
-      label << LabelConstructor::objectLabel( value, THREAD,
-                                              whichWindow->getTrace() );
+      sstrSemanticLabel << LabelConstructor::objectLabel( value, THREAD,
+                                                          whichWindow->getTrace() );
     else if ( infoType == NODE_TYPE )
-      label << LabelConstructor::objectLabel( value, NODE,
-                                              whichWindow->getTrace() );
+      sstrSemanticLabel << LabelConstructor::objectLabel( value, NODE,
+                                                          whichWindow->getTrace() );
     else if ( infoType == CPU_TYPE )
-      label << LabelConstructor::objectLabel( value, CPU,
-                                              whichWindow->getTrace() );
+      sstrSemanticLabel << LabelConstructor::objectLabel( value, CPU,
+                                                          whichWindow->getTrace() );
     else if ( infoType == TIME_TYPE )
-      label << LabelConstructor::timeLabel( value, whichWindow->getTimeUnit(), precision );
+      sstrSemanticLabel << LabelConstructor::timeLabel( value, whichWindow->getTimeUnit(), precision );
     else if ( infoType == STATE_TYPE )
     {
       string tmpstr;
       if ( !whichWindow->getTrace()->getStateLabels().getStateLabel( value, tmpstr ) )
-        label << tmpstr << " state " << value;
+        sstrSemanticLabel << tmpstr << " state " << value;
       else
-        label << tmpstr;
+        sstrSemanticLabel << tmpstr;
     }
     else if ( infoType == EVENTTYPE_TYPE )
     {
       string tmpstr;
       if ( !whichWindow->getTrace()->getEventLabels().getEventTypeLabel( value, tmpstr ) )
-        label << tmpstr << " type " << value;
+        sstrSemanticLabel << tmpstr << " type " << value;
       else
-        label << tmpstr;
+        sstrSemanticLabel << tmpstr;
     }
     else if ( infoType == EVENTVALUE_TYPE )
     {
@@ -338,7 +350,7 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
                ( *it ), value, tmpstr ) )
         {
           found = true;
-          label << tmpstr;
+          sstrSemanticLabel << tmpstr;
           break;
         }
       }
@@ -347,40 +359,40 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
         if ( types.begin() == types.end() )
         {
           if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( value, tmpstr ) )
-            label << tmpstr << " value " << value;
+            sstrSemanticLabel << tmpstr << " value " << value;
           else
-            label << tmpstr;
+            sstrSemanticLabel << tmpstr;
         }
         else
-          label << EventLabels::unknownLabel << " value " << value;
+          sstrSemanticLabel << EventLabels::unknownLabel << " value " << value;
       }
     }
     else if ( infoType == COMMSIZE_TYPE )
-      label << value << " bytes";
+      sstrSemanticLabel << value << " bytes";
     else if ( infoType == COMMTAG_TYPE )
-      label << value;
+      sstrSemanticLabel << value;
     else if ( infoType == BANDWIDTH_TYPE )
     {
       if ( whichWindow->getTimeUnit() == NS )
-        label << value << " GB/sec";
+        sstrSemanticLabel << value << " GB/sec";
       else if ( whichWindow->getTimeUnit() == US )
-        label << value << " MB/sec";
+        sstrSemanticLabel << value << " MB/sec";
       else if ( whichWindow->getTimeUnit() == MS )
-        label << value << " KB/sec";
+        sstrSemanticLabel << value << " KB/sec";
       else if ( whichWindow->getTimeUnit() == SEC )
-        label << value << " bytes/sec";
+        sstrSemanticLabel << value << " bytes/sec";
       else if ( whichWindow->getTimeUnit() == MIN )
-        label << value << " bytes/min";
+        sstrSemanticLabel << value << " bytes/min";
       else if ( whichWindow->getTimeUnit() == HOUR )
-        label << value << " bytes/hour";
+        sstrSemanticLabel << value << " bytes/hour";
       else if ( whichWindow->getTimeUnit() == DAY )
-        label << value << " bytes/day";
+        sstrSemanticLabel << value << " bytes/day";
     }
     else
-      label << "unknown " << value;
+      sstrSemanticLabel << "unknown " << value;
   }
 
-  return label.str();
+  return sstrSemanticLabel.str();
 }
 
 
@@ -389,7 +401,8 @@ string LabelConstructor::eventLabel( Window *whichWindow,
                                      TEventValue whichValue,
                                      bool text )
 {
-  stringstream label;
+  label.clear();
+  label.str( "" );
   string tmpstr;
 
   if ( !text )

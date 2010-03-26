@@ -572,9 +572,9 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject, bool updateLimits )
   else
     myWindow->calcNext( whichObject );
 
-  TSemanticValue objValue = getValue( whichObject );
   if ( updateLimits )
   {
+    TSemanticValue objValue = getValue( whichObject );
     if ( computedMaxY < objValue )
       computedMaxY = objValue;
     if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
@@ -591,9 +591,9 @@ RecordList *WindowProxy::calcPrev( TObjectOrder whichObject, bool updateLimits )
   else
     myWindow->calcPrev( whichObject );
 
-  TSemanticValue objValue = getValue( whichObject );
   if ( updateLimits )
   {
+    TSemanticValue objValue = getValue( whichObject );
     if ( computedMaxY < objValue )
       computedMaxY = objValue;
     if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )

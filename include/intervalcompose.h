@@ -72,6 +72,8 @@ class IntervalCompose: public IntervalHigh
       return window;
     }
 
+    SemanticHighInfo info;
+
   protected:
     KWindow *window;
     SemanticCompose *function;
@@ -173,6 +175,7 @@ class IntervalCompose: public IntervalHigh
     bool joinBursts;
     MemoryTrace::iterator *endRecord;
     MemoryTrace::iterator *beginRecord;
+
 };
 
 
