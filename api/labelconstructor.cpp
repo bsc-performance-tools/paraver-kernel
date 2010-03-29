@@ -38,6 +38,7 @@
 #include "kfilter.h"
 
 stringstream LabelConstructor::label;
+stringstream LabelConstructor::columnLabel;
 stringstream LabelConstructor::tmp;
 stringstream LabelConstructor::sstrTimeLabel;
 stringstream LabelConstructor::sstrSemanticLabel;
@@ -95,33 +96,33 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
     THistogramLimit max,
     THistogramLimit delta )
 {
-  label.clear();
-  label.str( "" );
+  columnLabel.clear();
+  columnLabel.str( "" );
   double tmp;
 
   if ( modf( min, &tmp ) != 0.0 || delta != 1.0 )
   {
     // Column range values
-    label << '[' << ( whichColumn * delta ) + min << "..";
+    columnLabel << '[' << ( whichColumn * delta ) + min << "..";
     if ( ( ( whichColumn * delta ) + min + delta ) >= max )
     {
-      label << max;
-      label << ']';
+      columnLabel << max;
+      columnLabel << ']';
     }
     else
     {
-      label << ( whichColumn * delta ) + min + delta;
-      label << ')';
+      columnLabel << ( whichColumn * delta ) + min + delta;
+      columnLabel << ')';
     }
   }
   else
   {
     // Discrete integer value
-    label << LabelConstructor::semanticLabel( whichWindow,
+    columnLabel << LabelConstructor::semanticLabel( whichWindow,
         ( whichColumn * delta ) + min, true, ParaverConfig::getInstance()->getHistogramPrecision() );
   }
 
-  return label.str();
+  return columnLabel.str();
 }
 
 inline string chomp( TSemanticValue& number )
@@ -265,6 +266,7 @@ string LabelConstructor::numberWithSeparators( TSemanticValue value, UINT32 prec
   }
   return label.str();
 }
+
 string LabelConstructor::timeLabel( TTime value, TTimeUnit unit, UINT32 precision )
 {
   sstrTimeLabel.clear();

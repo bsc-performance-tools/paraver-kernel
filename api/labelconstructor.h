@@ -87,6 +87,7 @@ class LabelConstructor
 
   private:
     static stringstream label;
+    static stringstream columnLabel;
     static stringstream tmp;
     static stringstream sstrTimeLabel;
     static stringstream sstrSemanticLabel;

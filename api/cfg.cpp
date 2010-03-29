@@ -376,7 +376,7 @@ bool CFGLoader::saveCFG( const string& filename,
   pushbackAllWindows( windows, histograms, allWindows );
 
   cfgFile << fixed;
-  cfgFile.precision( 6 );
+  cfgFile.precision( 12 );
 
   cfgFile << "ConfigFile.Version: 3.4" << endl;
   cfgFile << "ConfigFile.NumWindows: " << allWindows.size() << endl;
