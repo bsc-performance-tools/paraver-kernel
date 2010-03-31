@@ -36,6 +36,9 @@ using namespace std;
 
 istringstream TraceBodyIO_v1::fieldStream;
 istringstream TraceBodyIO_v1::strLine;
+string TraceBodyIO_v1::tmpstring;
+string TraceBodyIO_v1::line;
+
 
 bool TraceBodyIO_v1::ordered() const
 {
@@ -45,8 +48,6 @@ bool TraceBodyIO_v1::ordered() const
 void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
                            hash_set<TEventType>& events ) const
 {
-  string line;
-
   file->getline( line );
 
   if ( line[0] == '#' || line.size() == 0 )
@@ -83,7 +84,6 @@ void TraceBodyIO_v1::write( fstream& whichStream,
                             MemoryTrace::iterator *record,
                             INT32 numIter ) const
 {
-  string line;
   bool writeReady;
   TRecordType type = record->getType();
 
@@ -117,8 +117,6 @@ void TraceBodyIO_v1::writeEvents( fstream& whichStream,
                                   const KTrace& whichTrace,
                                   vector<MemoryTrace::iterator *>& recordList ) const
 {
-  string line;
-
   for ( UINT16 i = 0; i < recordList.size(); i++ )
   {
     if ( i > 0 )
@@ -143,7 +141,6 @@ void TraceBodyIO_v1::writeCommInfo( fstream& whichStream,
 ***********************/
 inline void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records ) const
 {
-  string tmpstring;
   TCPUOrder CPU;
   TApplOrder appl;
   TTaskOrder task;
@@ -215,7 +212,6 @@ inline void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records
 inline void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records,
                                        hash_set<TEventType>& events ) const
 {
-  string tmpstring;
   TCPUOrder CPU;
   TApplOrder appl;
   TTaskOrder task;
@@ -278,7 +274,6 @@ inline void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records
 
 inline void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records ) const
 {
-  string tmpstring;
   TCPUOrder CPU;
   TApplOrder appl;
   TTaskOrder task;
@@ -387,8 +382,6 @@ inline bool TraceBodyIO_v1::readCommon( istringstream& line,
                                         TThreadOrder& thread,
                                         TRecordTime& time ) const
 {
-  string tmpstring;
-
   std::getline( line, tmpstring, ':' );
   fieldStream.clear();
   fieldStream.str( tmpstring );

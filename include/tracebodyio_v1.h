@@ -91,6 +91,8 @@ class TraceBodyIO_v1 : public TraceBodyIO
 
     static istringstream fieldStream;
     static istringstream strLine;
+    static string tmpstring;
+    static string line;
 };
 
 
