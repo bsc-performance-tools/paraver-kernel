@@ -63,6 +63,10 @@ void createSemantic()
   functions[0].push_back( new ComposeIsInRangeOpen() );
   functions[0].push_back( new ComposeIsEqual() );
   functions[0].push_back( new ComposeIsEqualSign() );
+  functions[0].push_back( new ComposeFloor() );
+  functions[0].push_back( new ComposeCeil() );
+  functions[0].push_back( new ComposeRound() );
+  functions[0].push_back( new ComposeAbs() );
   functions[0].push_back( new ComposeStackedValue() );
   functions[0].push_back( new ComposeInStackedValue() );
   functions[0].push_back( new ComposeNestingLevel() );

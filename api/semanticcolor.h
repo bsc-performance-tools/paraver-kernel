@@ -86,7 +86,6 @@ class CodeColor: public SemanticColor
     ~CodeColor();
 
     UINT32 getNumColors() const;
-    rgb getColor( UINT32 pos ) const;
     void setColor( UINT32 pos, rgb color );
     void addColor( rgb color );
     rgb calcColor( TSemanticValue whichValue,
@@ -95,6 +94,8 @@ class CodeColor: public SemanticColor
 
   private:
     vector<rgb> colors;
+
+    inline rgb getColor( UINT32 pos ) const;
 };
 
 
@@ -158,18 +159,18 @@ class GradientColor: public SemanticColor
 
     void recalcSteps();
 
-    rgb functionLinear( TSemanticValue whichValue,
-                        TSemanticValue minimum,
-                        TSemanticValue maximum ) const;
-    rgb functionSteps( TSemanticValue whichValue,
-                       TSemanticValue minimum,
-                       TSemanticValue maximum ) const;
-    rgb functionLog( TSemanticValue whichValue,
-                     TSemanticValue minimum,
-                     TSemanticValue maximum ) const;
-    rgb functionExp( TSemanticValue whichValue,
-                     TSemanticValue minimum,
-                     TSemanticValue maximum ) const;
+    inline rgb functionLinear( TSemanticValue whichValue,
+                               TSemanticValue minimum,
+                               TSemanticValue maximum ) const;
+    inline rgb functionSteps( TSemanticValue whichValue,
+                              TSemanticValue minimum,
+                              TSemanticValue maximum ) const;
+    inline rgb functionLog( TSemanticValue whichValue,
+                            TSemanticValue minimum,
+                            TSemanticValue maximum ) const;
+    inline rgb functionExp( TSemanticValue whichValue,
+                            TSemanticValue minimum,
+                            TSemanticValue maximum ) const;
 
 };
 

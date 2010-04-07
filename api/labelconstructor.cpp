@@ -47,26 +47,14 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
                                       TWindowLevel level,
                                       Trace *whichTrace )
 {
-  string rowStr;
+  string rowStr( whichTrace->getRowLabel( level, globalOrder ) );
   label.clear();
   label.str( "" );
 
-  rowStr = whichTrace->getRowLabel( level, globalOrder );
   if ( rowStr != "" )
     return rowStr;
 
-  if ( level == WORKLOAD )
-    label << LEVEL_WORKLOAD;
-  else if ( level == APPLICATION )
-    label << LEVEL_APPLICATION << ' ' << globalOrder + 1;
-  else if ( level == TASK )
-  {
-    TApplOrder appl;
-    TTaskOrder task;
-    whichTrace->getTaskLocation( globalOrder, appl, task );
-    label << LEVEL_TASK << ' ' << appl + 1 << '.' << task + 1;
-  }
-  else if ( level == THREAD )
+  if ( level == THREAD )
   {
     TApplOrder appl;
     TTaskOrder task;
@@ -74,10 +62,17 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
     whichTrace->getThreadLocation( globalOrder, appl, task, thread );
     label << LEVEL_THREAD << ' ' << appl + 1 << '.' << task + 1 << '.' << thread + 1;
   }
-  else if ( level == SYSTEM )
-    label << LEVEL_SYSTEM;
-  else if ( level == NODE )
-    label << LEVEL_NODE << ' ' << globalOrder + 1;
+  else if ( level == TASK )
+  {
+    TApplOrder appl;
+    TTaskOrder task;
+    whichTrace->getTaskLocation( globalOrder, appl, task );
+    label << LEVEL_TASK << ' ' << appl + 1 << '.' << task + 1;
+  }
+  else if ( level == APPLICATION )
+    label << LEVEL_APPLICATION << ' ' << globalOrder + 1;
+  else if ( level == WORKLOAD )
+    label << LEVEL_WORKLOAD;
   else if ( level == CPU )
   {
     TNodeOrder node;
@@ -85,6 +80,10 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
     whichTrace->getCPULocation( globalOrder, node, cpu );
     label << LEVEL_CPU << ' ' << node + 1 << '.' << cpu + 1;
   }
+  else if ( level == NODE )
+    label << LEVEL_NODE << ' ' << globalOrder + 1;
+  else if ( level == SYSTEM )
+    label << LEVEL_SYSTEM;
 
   return label.str();
 }

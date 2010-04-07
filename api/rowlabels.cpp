@@ -103,45 +103,44 @@ RowLabels::~RowLabels()
 
 string RowLabels::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const
 {
-  string tmpstr;
   const vector<string> *tmpvector = NULL;
   switch( whichLevel )
   {
-    case WORKLOAD:
-      tmpvector = &workload;
-      break;
-    case APPLICATION:
-      tmpvector = &appl;
+    case THREAD:
+      tmpvector = &thread;
       break;
     case TASK:
       tmpvector = &task;
       break;
-    case THREAD:
-      tmpvector = &thread;
+    case APPLICATION:
+      tmpvector = &appl;
       break;
-    case SYSTEM:
-      tmpvector = &system;
+    case WORKLOAD:
+      tmpvector = &workload;
+      break;
+    case CPU:
+      tmpvector = &cpu;
       break;
     case NODE:
       tmpvector = &node;
       break;
-    case CPU:
-      tmpvector = &cpu;
+    case SYSTEM:
+      tmpvector = &system;
       break;
     default:
       tmpvector = NULL;
   }
 
   if( tmpvector == NULL )
-    tmpstr = "";
+    return "";
   else
   {
     if( tmpvector->begin() == tmpvector->end() ||
         whichRow > tmpvector->size() )
-      tmpstr = "";
+      return "";
     else
-      tmpstr = (*tmpvector)[ whichRow ];
+      return (*tmpvector)[ whichRow ];
   }
 
-  return tmpstr;
+  return "";
 }

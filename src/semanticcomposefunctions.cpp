@@ -256,6 +256,38 @@ TSemanticValue ComposeIsEqualSign::execute( const SemanticInfo *info )
 }
 
 
+string ComposeFloor::name = "Floor";
+TSemanticValue ComposeFloor::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  return floor( myInfo->values[ 0 ] );
+}
+
+
+string ComposeCeil::name = "Ceil";
+TSemanticValue ComposeCeil::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  return ceil( myInfo->values[ 0 ] );
+}
+
+
+string ComposeRound::name = "Round";
+TSemanticValue ComposeRound::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  return rint( myInfo->values[ 0 ] );
+}
+
+
+string ComposeAbs::name = "Abs";
+TSemanticValue ComposeAbs::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  return abs( myInfo->values[ 0 ] );
+}
+
+
 void ComposeStackedValue::init( KWindow *whichWindow )
 {
   myStack.clear();
