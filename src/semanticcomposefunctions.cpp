@@ -272,6 +272,15 @@ TSemanticValue ComposeCeil::execute( const SemanticInfo *info )
 }
 
 
+#ifdef WIN32
+inline double rint(double nr)
+{
+  double f = floor(nr);
+  double c = ceil(nr);
+  return (((c-nr) >= (nr-f)) ? f :c);
+}
+#endif
+
 string ComposeRound::name = "Round";
 TSemanticValue ComposeRound::execute( const SemanticInfo *info )
 {
