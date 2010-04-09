@@ -565,9 +565,6 @@ TSemanticValue NextEventType::execute( const SemanticInfo *info )
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
   MemoryTrace::iterator *nextEvent = NULL;
 
-  if ( myInfo->it->getType() == EMPTYREC )
-    return 0;
-
   if ( myInfo->callingInterval->getLevel() == THREAD )
     nextEvent = myInfo->callingInterval->getWindow()->copyThreadIterator( myInfo->it );
   if ( myInfo->callingInterval->getLevel() == CPU )
@@ -593,9 +590,6 @@ TSemanticValue NextEventValue::execute( const SemanticInfo *info )
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
   MemoryTrace::iterator *nextEvent = NULL;
-
-  if ( myInfo->it->getType() == EMPTYREC )
-    return 0;
 
   if ( myInfo->callingInterval->getLevel() == THREAD )
     nextEvent = myInfo->callingInterval->getWindow()->copyThreadIterator( myInfo->it );
@@ -623,9 +617,6 @@ TSemanticValue AverageNextEventValue::execute( const SemanticInfo *info )
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
   MemoryTrace::iterator *nextEvent = NULL;
-
-  if ( myInfo->it->getType() == EMPTYREC )
-    return 0;
 
   if ( myInfo->callingInterval->getLevel() == THREAD )
     nextEvent = myInfo->callingInterval->getWindow()->copyThreadIterator( myInfo->it );
