@@ -574,7 +574,7 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject, bool updateLimits )
 
   if ( updateLimits )
   {
-    TSemanticValue objValue = getValue( whichObject );
+    TSemanticValue objValue = myWindow->getValue( whichObject );
     if ( computedMaxY < objValue )
       computedMaxY = objValue;
     if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
