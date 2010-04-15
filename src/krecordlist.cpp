@@ -66,9 +66,10 @@ bool KRecordList::newRecords() const
   return newRec;
 }
 
+
 void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
 {
-  RLRecord tmp;
+  static RLRecord tmp;
   TCommID id = it->getCommIndex();
   tmp.setType( it->getType() );
   tmp.setTime( it->getTime() );
@@ -138,8 +139,6 @@ void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
         }
       }
     }
-    else
-      throw ParaverKernelException();
   }
 
   list.insert( tmp );

@@ -153,7 +153,7 @@ struct ltrecord
   {
     if ( r1.getTime() < r2.getTime() )
       return true;
-    else if ( r1.getTime() == r2.getTime() )
+/*    else if ( r1.getTime() == r2.getTime() )
     {
       if ( r1.getOrder() < r2.getOrder() )
         return true;
@@ -174,7 +174,7 @@ struct ltrecord
             return true;
         }
       }
-    }
+    }*/
     return false;
   }
 };
