@@ -73,6 +73,11 @@ class LabelConstructor
                                         UINT32 precision,
                                         TTimeUnit unit = MS );
 
+    static bool getTimeValue( const string& timeLabel,
+                              TTimeUnit unit,
+                              UINT32 precision,
+                              TTime& value );
+
     enum TGroupID
     {
       COLOR = 0,

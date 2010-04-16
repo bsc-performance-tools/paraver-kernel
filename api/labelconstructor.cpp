@@ -281,6 +281,37 @@ string LabelConstructor::timeLabel( TTime value, TTimeUnit unit, UINT32 precisio
   return sstrTimeLabel.str();
 }
 
+
+bool LabelConstructor::getTimeValue( const string& timeLabel,
+                                     TTimeUnit unit, UINT32 precision,
+                                     TTime& value )
+{
+  bool done = false;
+  sstrTimeLabel.clear();
+  sstrTimeLabel.str( "" );
+
+  if ( !sstrTimeLabel.eof() )
+  {
+    string sub;
+
+    sstrTimeLabel << timeLabel;
+    tmp.clear();
+    tmp.str( "" );
+
+    while ( !sstrTimeLabel.eof() )
+    {
+      std::getline( sstrTimeLabel, sub, ',' );
+      tmp << sub;
+    }
+
+    tmp >> value;
+    done = true;
+  }
+
+  return done;
+}
+
+
 string LabelConstructor::semanticLabel( const Window * whichWindow,
                                         TSemanticValue value,
                                         bool text, UINT32 precision )
