@@ -76,7 +76,7 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
     cout << strOutputFile << " file wrote." << endl;
   }
 
-  if( !multipleFiles )
+  if ( !multipleFiles )
     outputFile.close();
 }
 
@@ -113,72 +113,132 @@ void TextOutput::dumpHistogram( Histogram *whichHisto, string& strOutputFile )
     for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
     {
       whichHisto->setFirstCell( iColumn, iPlane );
-      outputFile << whichHisto->getColumnLabel( iColumn ) << "\t";
+      if ( whichHisto->getHorizontal() )
+        outputFile << whichHisto->getColumnLabel( iColumn ) << "\t";
     }
-    outputFile << endl;
+    if ( whichHisto->getHorizontal() )
+      outputFile << endl;
 
-    for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+    if ( whichHisto->getHorizontal() )
     {
-      outputFile << whichHisto->getRowLabel( iRow ) << "\t";
-      for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+      for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
       {
-        if ( !whichHisto->endCell( iColumn ) )
+        outputFile << whichHisto->getRowLabel( iRow ) << "\t";
+        for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
         {
-          if ( whichHisto->getCurrentRow( iColumn, iPlane ) == iRow )
+          if ( !whichHisto->endCell( iColumn ) )
           {
-            outputFile << whichHisto->getCurrentValue( iColumn, 0, iPlane ) << "\t";
-            whichHisto->setNextCell( iColumn, iPlane );
+            if ( whichHisto->getCurrentRow( iColumn, iPlane ) == iRow )
+            {
+              outputFile << whichHisto->getCurrentValue( iColumn, 0, iPlane ) << "\t";
+              whichHisto->setNextCell( iColumn, iPlane );
+            }
+            else
+              outputFile << 0.0 << "\t";
           }
           else
             outputFile << 0.0 << "\t";
         }
+        outputFile << endl;
       }
+    }
+    else
+    {
+      for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+        outputFile << whichHisto->getRowLabel( iRow ) << "\t";
+
       outputFile << endl;
+      for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+      {
+        outputFile << whichHisto->getColumnLabel( iColumn ) << "\t";
+        for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+        {
+          if ( !whichHisto->endCell( iColumn ) )
+          {
+            if ( whichHisto->getCurrentRow( iColumn, iPlane ) == iRow )
+            {
+              outputFile << whichHisto->getCurrentValue( iColumn, 0, iPlane ) << "\t";
+              whichHisto->setNextCell( iColumn, iPlane );
+            }
+            else
+              outputFile << 0.0 << "\t";
+          }
+          else
+            outputFile << 0.0 << "\t";
+        }
+        outputFile << endl;
+      }
     }
     outputFile << endl;
     // Print totals
-    HistogramTotals *totals = whichHisto->getColumnTotals();
-    outputFile << "Total" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+    HistogramTotals *totals;
+    if ( whichHisto->getHorizontal() )
     {
-      outputFile << totals->getTotal( 0, iColumn, iPlane ) << "\t";
-    }
-    outputFile << endl;
+      totals = whichHisto->getColumnTotals();
+      outputFile << "Total" << "\t";
+      for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+        outputFile << totals->getTotal( 0, iColumn, iPlane ) << "\t";
+      outputFile << endl;
 
-    outputFile << "Average" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
-    {
-      outputFile << totals->getAverage( 0, iColumn, iPlane ) << "\t";
-    }
-    outputFile << endl;
+      outputFile << "Average" << "\t";
+      for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+        outputFile << totals->getAverage( 0, iColumn, iPlane ) << "\t";
+      outputFile << endl;
 
-    outputFile << "Maximum" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
-    {
-      outputFile << totals->getMaximum( 0, iColumn, iPlane ) << "\t";
-    }
-    outputFile << endl;
+      outputFile << "Maximum" << "\t";
+      for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+        outputFile << totals->getMaximum( 0, iColumn, iPlane ) << "\t";
+      outputFile << endl;
 
-    outputFile << "Minimum" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
-    {
-      outputFile << totals->getMinimum( 0, iColumn, iPlane ) << "\t";
-    }
-    outputFile << endl;
+      outputFile << "Minimum" << "\t";
+      for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+        outputFile << totals->getMinimum( 0, iColumn, iPlane ) << "\t";
+      outputFile << endl;
 
-    outputFile << "Stdev" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
-    {
-      outputFile << totals->getStdev( 0, iColumn, iPlane ) << "\t";
-    }
-    outputFile << endl;
+      outputFile << "Stdev" << "\t";
+      for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+        outputFile << totals->getStdev( 0, iColumn, iPlane ) << "\t";
+      outputFile << endl;
 
-    outputFile << "Avg/Max" << "\t";
-    for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
-    {
-      outputFile << totals->getAvgDivMax( 0, iColumn, iPlane ) << "\t";
+      outputFile << "Avg/Max" << "\t";
+      for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+        outputFile << totals->getAvgDivMax( 0, iColumn, iPlane ) << "\t";
+      outputFile << endl;
     }
-    outputFile << endl;
+    else
+    {
+      totals = whichHisto->getRowTotals();
+      outputFile << "Total" << "\t";
+      for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+        outputFile << totals->getTotal( 0, iRow, iPlane ) << "\t";
+      outputFile << endl;
+
+      outputFile << "Average" << "\t";
+      for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+        outputFile << totals->getAverage( 0, iRow, iPlane ) << "\t";
+      outputFile << endl;
+
+      outputFile << "Maximum" << "\t";
+      for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+        outputFile << totals->getMaximum( 0, iRow, iPlane ) << "\t";
+      outputFile << endl;
+
+      outputFile << "Minimum" << "\t";
+      for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+        outputFile << totals->getMinimum( 0, iRow, iPlane ) << "\t";
+      outputFile << endl;
+
+      outputFile << "Stdev" << "\t";
+      for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+        outputFile << totals->getStdev( 0, iRow, iPlane ) << "\t";
+      outputFile << endl;
+
+      outputFile << "Avg/Max" << "\t";
+      for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+        outputFile << totals->getAvgDivMax( 0, iRow, iPlane ) << "\t";
+      outputFile << endl;
+    }
+
 
     delete totals;
     outputFile << endl;
