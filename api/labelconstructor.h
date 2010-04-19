@@ -39,6 +39,8 @@ class Histogram;
 class LabelConstructor
 {
   public:
+    static void init();
+
     static string objectLabel( TObjectOrder globalOrder,
                                TWindowLevel level,
                                Trace *whichTrace );
@@ -96,6 +98,9 @@ class LabelConstructor
     static stringstream tmp;
     static stringstream sstrTimeLabel;
     static stringstream sstrSemanticLabel;
+
+    static char separator;
+    static char point;
 };
 
 #endif // LABELCONSTRUCTOR_H_INCLUDED

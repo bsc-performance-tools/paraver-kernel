@@ -28,6 +28,7 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include <math.h>
+#include <locale>
 #include <boost/lexical_cast.hpp>
 #include "labelconstructor.h"
 #include "paraverlabels.h"
@@ -42,6 +43,25 @@ stringstream LabelConstructor::columnLabel;
 stringstream LabelConstructor::tmp;
 stringstream LabelConstructor::sstrTimeLabel;
 stringstream LabelConstructor::sstrSemanticLabel;
+char LabelConstructor::separator;
+char LabelConstructor::point;
+
+void LabelConstructor::init()
+{
+  locale myLocale( "" );
+  point = use_facet<numpunct<char> >(myLocale).decimal_point();
+  label.imbue( myLocale );
+  columnLabel.imbue( myLocale );
+  tmp.imbue( myLocale );
+  sstrTimeLabel.imbue( myLocale );
+  sstrSemanticLabel.imbue( myLocale );
+
+  if ( point == ',' )
+    separator = '.';
+  else
+    separator = ',';
+}
+
 
 string LabelConstructor::objectLabel( TObjectOrder globalOrder,
                                       TWindowLevel level,
@@ -171,7 +191,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
     if ( origValue >= 1.0 )
     {
       while ( intValue > 0.0 )
-        strNum = chomp( intValue ) + "," + strNum;
+        strNum = chomp( intValue ) + separator + strNum;
       strNum.erase( strNum.size() - 1, 1 );
       label << strNum;
     }
@@ -243,7 +263,7 @@ string LabelConstructor::numberWithSeparators( TSemanticValue value, UINT32 prec
     if ( origValue >= 1.0 )
     {
       while ( intValue > 0.0 )
-        strNum = chomp( intValue ) + "," + strNum;
+        strNum = chomp( intValue ) + separator + strNum;
       strNum.erase( strNum.size() - 1, 1 );
       label << strNum;
     }
@@ -300,12 +320,14 @@ bool LabelConstructor::getTimeValue( const string& timeLabel,
 
     while ( !sstrTimeLabel.eof() )
     {
-      std::getline( sstrTimeLabel, sub, ',' );
+      std::getline( sstrTimeLabel, sub, separator );
       tmp << sub;
     }
 
-    tmp >> value;
-    done = true;
+    if( !( tmp >> value ) )
+      done = false;
+    else
+      done = true;
   }
 
   return done;

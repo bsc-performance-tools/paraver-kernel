@@ -38,6 +38,7 @@
 #include "functionmanagement.h"
 #include "krecordlist.h"
 #include "kprogresscontroller.h"
+#include "labelconstructor.h"
 
 void LocalKernel::init()
 {
@@ -46,6 +47,7 @@ void LocalKernel::init()
   createFilter();
   createSemantic();
   createStatistic();
+  LabelConstructor::init();
 }
 
 LocalKernel::LocalKernel( bool ( *messageFunction )( string ) ) :
