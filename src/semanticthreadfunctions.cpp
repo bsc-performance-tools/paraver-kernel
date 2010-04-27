@@ -55,6 +55,34 @@ bool stateOnSameTime( MemoryTrace::iterator *it, KSingleWindow *window )
   return finish;
 }
 
+TRecordTime timeToNextState( MemoryTrace::iterator *it, KSingleWindow *window )
+{
+  bool finish = false;
+  TRecordTime time = it->getTime();
+  MemoryTrace::iterator *nextState = NULL;
+
+  if ( window->getLevel() >= WORKLOAD && window->getLevel() <= THREAD )
+    nextState = window->copyThreadIterator( it );
+  else
+    nextState = window->copyCPUIterator( it );
+
+  ++( *nextState );
+  while ( !finish && !nextState->isNull() )
+  {
+    if ( nextState->getType() & STATE && nextState->getType() & BEGIN )
+    {
+      time = nextState->getTime() - time;
+      finish = true;
+    }
+
+    ++( *nextState );
+  }
+
+  delete nextState;
+
+  return time;
+}
+
 void getNextEvent( MemoryTrace::iterator *it, KSingleWindow *window )
 {
   bool finish = false;
@@ -381,17 +409,19 @@ TSemanticValue InState::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  if ( myInfo->it->getType() & END )
-    return IDLE;
-  else
+  for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
-    for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+    if ( myInfo->it->getType() & END &&
+         parameters[ VALUES ][ i ] == 0 )
     {
-      if ( myInfo->it->getState() == parameters[ VALUES ][ i ] )
-      {
-        tmp = 1;
-        break;
-      }
+      tmp = 1;
+      break;
+    }
+    else if ( !( myInfo->it->getType() & END ) &&
+              myInfo->it->getState() == parameters[ VALUES ][ i ] )
+    {
+      tmp = 1;
+      break;
     }
   }
 
@@ -425,17 +455,19 @@ TSemanticValue NotInState::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  if ( myInfo->it->getType() & END )
-    return IDLE;
-  else
+  for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
-    for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+    if ( myInfo->it->getType() & END &&
+         parameters[ VALUES ][ i ] == 0 )
     {
-      if ( myInfo->it->getState() == parameters[ VALUES ][ i ] )
-      {
-        tmp = 0;
-        break;
-      }
+      tmp = 0;
+      break;
+    }
+    if ( !( myInfo->it->getType() & END ) &&
+         myInfo->it->getState() == parameters[ VALUES ][ i ] )
+    {
+      tmp = 0;
+      break;
     }
   }
 
@@ -469,21 +501,22 @@ TSemanticValue StateRecordDuration::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  if ( myInfo->it->getType() & END )
-    return IDLE;
-  else
+  for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
-    for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+    if ( myInfo->it->getType() & END &&
+         parameters[ VALUES ][ i ] == 0 )
     {
-      if ( myInfo->it->getState() == parameters[ VALUES ][ i ] )
-      {
-        tmp = myInfo->it->getStateEndTime() - myInfo->it->getTime();
-        break;
-      }
+      tmp = timeToNextState( myInfo->it, myWindow );
+      break;
     }
-
-    tmp = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( tmp );
+    if ( myInfo->it->getState() == parameters[ VALUES ][ i ] )
+    {
+      tmp = myInfo->it->getStateEndTime() - myInfo->it->getTime();
+      break;
+    }
   }
+
+  tmp = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( tmp );
 
   return tmp;
 }
