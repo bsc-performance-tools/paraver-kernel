@@ -120,7 +120,7 @@ class Compressed: public TraceStream
     virtual int peek();
 
   private:
-    static const UINT32 LINESIZE = 100 * 1024;
+    static const UINT32 LINESIZE = 1000 * 1024;
     gzFile file;
     char tmpLine[ LINESIZE ];
 
