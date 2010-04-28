@@ -120,6 +120,9 @@
 			<Add directory="./" />
 			<Add directory="api" />
 		</Compiler>
+		<Linker>
+			<Add library="xml2" />
+		</Linker>
 		<Unit filename="../common-files/paraverstatisticfuncions.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -372,6 +375,24 @@
 			<Option target="api" />
 			<Option target="paramedir" />
 		</Unit>
+		<Unit filename="api/tracecutter.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/tracecutter.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/tracefilter.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/tracefilter.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/tracesofwarecounters.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/tracesofwarecounters.h">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="api/window.cpp">
 			<Option target="api" />
 		</Unit>
@@ -540,6 +561,26 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
+			<Option target="paramedir" />
+		</Unit>
+		<Unit filename="include/ktracecutter.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="paramedir" />
+		</Unit>
+		<Unit filename="include/ktracefilter.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="paramedir" />
+		</Unit>
+		<Unit filename="include/ktraceoptions.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="paramedir" />
+		</Unit>
+		<Unit filename="include/ktracesoftwarecounters.h">
+			<Option target="Debug" />
+			<Option target="Release" />
 			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="include/kwindow.h">
@@ -869,6 +910,22 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/ktrace.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/ktracecutter.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/ktracefilter.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/ktraceoptions.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/ktracesoftwarecounters.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
