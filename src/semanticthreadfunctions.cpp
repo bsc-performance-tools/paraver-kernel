@@ -509,7 +509,8 @@ TSemanticValue StateRecordDuration::execute( const SemanticInfo *info )
       tmp = timeToNextState( myInfo->it, myWindow );
       break;
     }
-    if ( myInfo->it->getState() == parameters[ VALUES ][ i ] )
+    if ( !( myInfo->it->getType() & END ) &&
+         myInfo->it->getState() == parameters[ VALUES ][ i ] )
     {
       tmp = myInfo->it->getStateEndTime() - myInfo->it->getTime();
       break;
