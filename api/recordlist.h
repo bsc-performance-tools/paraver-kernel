@@ -161,16 +161,16 @@ struct ltrecord
       {
         if ( ( r1.getType() & COMM ) && ( r2.getType() & EVENT ) )
           return true;
-        else if( r1.getType() == r2.getType() && ( r1.getType() & COMM ) )
+        else if ( r1.getType() == r2.getType() && ( r1.getType() & COMM ) )
         {
-          if( r1.getCommId() != r2.getCommId() )
+          if ( r1.getCommId() != r2.getCommId() )
             return true;
         }
-        else if( r1.getType() == r2.getType() && ( r1.getType() & EVENT ) )
+        else if ( r1.getType() == r2.getType() && ( r1.getType() & EVENT ) )
         {
-          if( r1.getEventType() != r2.getEventType() )
+          if ( r1.getEventType() != r2.getEventType() )
             return true;
-          else if( r1.getEventValue() != r2.getEventValue() )
+          else if ( r1.getEventValue() != r2.getEventValue() )
             return true;
         }
       }
@@ -183,7 +183,7 @@ struct ltrecord
 class RecordList
 {
   public:
-    typedef set<RLRecord,ltrecord>::iterator iterator;
+    typedef set<RLRecord, ltrecord>::iterator iterator;
 
     static RecordList *create( RecordList *whichList );
 

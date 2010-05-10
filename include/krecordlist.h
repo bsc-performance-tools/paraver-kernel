@@ -57,7 +57,7 @@ class KRecordList: public RecordList
   protected:
 
   private:
-    set<RLRecord, ltrecord> list;
+    multiset<RLRecord, ltrecord> list;
     bool newRec;
 };
 
