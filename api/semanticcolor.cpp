@@ -156,6 +156,8 @@ UINT32 CodeColor::getNumColors() const
 
 rgb CodeColor::getColor( UINT32 pos ) const
 {
+  if( pos == 0 && ParaverConfig::getInstance()->getColorsTimelineUseZero() )
+    return ParaverConfig::getInstance()->getColorsTimelineColorZero();
   pos = pos % colors.size();
   return colors[ pos ];
 }

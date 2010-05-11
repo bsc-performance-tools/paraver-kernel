@@ -111,6 +111,8 @@ ParaverConfig::ParaverConfig()
 
   xmlColor.timelineBackground = SemanticColor::BACKGROUND;
   xmlColor.timelineAxis = SemanticColor::FOREGROUND;
+  xmlColor.useColorZero = false;
+  xmlColor.timelineColorZero = SemanticColor::BACKGROUND;
   xmlColor.timelineLogicalCommunications = SemanticColor::DEFAULT_LOGICAL_COMMUNICATIONS;
   xmlColor.timelinePhysicalCommunications = SemanticColor::DEFAULT_PHYSICAL_COMMUNICATIONS;
   xmlColor.topGradient = SemanticColor::DEFAULT_ABOVE_OUTLIER_COLOR;
@@ -597,6 +599,16 @@ void ParaverConfig::setColorsTimelineAxis( rgb whichTimelineAxis )
   xmlColor.timelineAxis = whichTimelineAxis;
 }
 
+void ParaverConfig::setColorsTimelineUseZero( bool useZero )
+{
+  xmlColor.useColorZero = useZero;
+}
+
+void ParaverConfig::setColorsTimelineColorZero( rgb whichTimelineZero )
+{
+  xmlColor.timelineColorZero = whichTimelineZero;
+}
+
 void ParaverConfig::setColorsTimelineLogicalCommunications( rgb whichTimelineLogicalCommunications )
 {
   xmlColor.timelineLogicalCommunications = whichTimelineLogicalCommunications;
@@ -635,6 +647,16 @@ rgb ParaverConfig::getColorsTimelineBackground() const
 rgb ParaverConfig::getColorsTimelineAxis() const
 {
   return xmlColor.timelineAxis;
+}
+
+bool ParaverConfig::getColorsTimelineUseZero() const
+{
+  return xmlColor.useColorZero;
+}
+
+rgb ParaverConfig::getColorsTimelineColorZero() const
+{
+  return xmlColor.timelineColorZero;
 }
 
 rgb ParaverConfig::getColorsTimelineLogicalCommunications() const
