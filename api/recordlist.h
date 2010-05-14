@@ -183,7 +183,7 @@ struct ltrecord
 class RecordList
 {
   public:
-    typedef set<RLRecord, ltrecord>::iterator iterator;
+    typedef multiset<RLRecord, ltrecord>::iterator iterator;
 
     static RecordList *create( RecordList *whichList );
 
