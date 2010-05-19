@@ -383,7 +383,7 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
   objectSize = getWindowLevelObjects();
 }
 
-void KSingleWindow::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create )
+void KSingleWindow::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
   intervalTopCompose1[ whichRow ].init( initialTime, create );
 }
@@ -940,7 +940,7 @@ void KDerivedWindow::init( TRecordTime initialTime, TCreateList create, bool upd
     parents[ i ]->init( initialTime, create );
 }
 
-void KDerivedWindow::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create )
+void KDerivedWindow::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
   intervalTopCompose1[ whichRow ].init( initialTime, create );
 }

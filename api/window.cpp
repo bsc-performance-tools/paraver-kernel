@@ -558,11 +558,20 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create, bool update
   }
 }
 
-void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create )
+void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
   myWindow->initRow( whichRow, initialTime, create );
   if ( myLists[ whichRow ] == NULL )
     myLists[ whichRow ] = RecordList::create( myWindow->getRecordList( whichRow ) );
+
+  if ( updateLimits )
+  {
+    TSemanticValue objValue = myWindow->getValue( whichRow );
+    if ( computedMaxY < objValue )
+      computedMaxY = objValue;
+    if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
+      computedMinY = objValue;
+  }
 }
 
 RecordList *WindowProxy::calcNext( TObjectOrder whichObject, bool updateLimits )
