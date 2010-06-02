@@ -30,11 +30,44 @@
 #ifndef TRACEFILTER_H_INCLUDED
 #define TRACEFILTER_H_INCLUDED
 
+class TraceOptions;
+class KernelConnection;
+
 class TraceFilter
 {
   public:
-    TraceFilter( char *trace_in, char *trace_out, char *xmldocname );
-    ~TraceFilter();
+    static TraceFilter *create( KernelConnection *whichKernel,
+                                char *traceIn,
+                                char *traceOut,
+                                TraceOptions *options );
+
+    virtual ~TraceFilter()
+    {}
+
+    virtual void execute()
+    {}
 };
+
+class TraceFilterProxy : public TraceFilter
+{
+  public:
+    virtual ~TraceFilterProxy();
+
+    virtual void execute();
+
+  private:
+    TraceFilter *myTraceFilter;
+
+    TraceFilterProxy( KernelConnection *whichKernel,
+                      char *traceIn,
+                      char *traceOut,
+                      TraceOptions *options );
+
+    friend TraceFilter *TraceFilter::create( KernelConnection *kernelConnection,
+                                             char *traceIn,
+                                             char *traceOut,
+                                             TraceOptions *options );
+};
+
 
 #endif // TRACEFILTER_H_INCLUDED

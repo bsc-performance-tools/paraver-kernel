@@ -32,10 +32,13 @@
 
 #include "ktraceoptions.h"
 
+
+//class TraceSoftwareCounters;
+
 class KTraceSoftwareCounters
 {
   public:
-    KTraceSoftwareCounters( char *trace_in, char *trace_out, KTraceOptions::utilities_options options );
+    KTraceSoftwareCounters( char *trace_in, char *trace_out, KTraceOptions &options );
     ~KTraceSoftwareCounters();
 
   private:
@@ -117,7 +120,7 @@ class KTraceSoftwareCounters
       struct state_queue_elem *next;
     };
 
-    char line[4096];  /* Buffer for reading trace records */
+    char line[MAX_LINE_SIZE];  /* Buffer for reading trace records */
 
     /* Execution parameters */
     int all_types;
@@ -139,7 +142,7 @@ class KTraceSoftwareCounters
 
     /* Trace in and trace out */
     FILE *infile, *outfile;
-    struct KTraceOptions::utilities_options exec_options;
+    KTraceOptions exec_options;
 
     /* Pointers to the thread struct, for avoiding to much searches */
     int thread_pointer[MAX_APPL][MAX_TASK][MAX_THREAD];

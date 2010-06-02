@@ -35,43 +35,118 @@
 #include <unistd.h>
 #include <zlib.h>
 
+// only for cout ----
+#include <string>
+#include <iostream>
+using namespace std;
+// only for cout ----
+
 //#include "filters_wait_window.h"
+
 #include "ktracecutter.h"
 
-KTraceCutter::KTraceCutter( char *trace_in, char *trace_out, KTraceOptions::utilities_options options )
+//class ParaverConfig;
+
+KTraceCutter::KTraceCutter( char *&trace_in, char *&trace_out, KTraceOptions *options )
 {
-  min_perc = 0;
-  max_perc = 100;
+  //min_perc = 0;
+  //max_perc = 100;
   total_cutter_iters = 0;
 
-  exec_options = options;
+  exec_options = new KTraceOptions( *options );
 
+  cout << "-------------------->KTraceCutter antes" << endl;
+  cout << "trace_in: " << trace_in << endl;
+  cout << "trace_out: " << trace_out << endl;
   execute( trace_in, trace_out );
+  cout << "<--------------------KTraceCutter despues" << endl;
+  cout << "trace_in: " << trace_in << endl;
+  cout << "trace_out: " << trace_out << endl;
 }
+
 
 KTraceCutter::~KTraceCutter()
 {
 }
+
+
+void KTraceCutter::set_by_time( bool byTime )
+{
+}
+
+
+void KTraceCutter::set_min_cutting_time( unsigned long long minCutTime )
+{
+}
+
+
+void KTraceCutter::set_max_cutting_time( unsigned long long maxCutTime )
+{
+}
+
+
+void KTraceCutter::set_minimum_time_percentage( unsigned long long minimumPercentage )
+{
+}
+
+
+void KTraceCutter::set_maximum_time_percentage( unsigned long long maximumPercentage )
+{
+}
+
+
+void KTraceCutter::set_tasks_list( char *tasksList )
+{
+}
+
+
+void KTraceCutter::set_original_time( char originalTime )
+{
+}
+
+
+void KTraceCutter::set_max_trace_size( int traceSize )
+{
+}
+
+
+void KTraceCutter::set_break_states( int breakStates )
+{
+}
+
+
+void KTraceCutter::set_remFirstStates( int remStates )
+{
+}
+
+
+void KTraceCutter::set_remLastStates( int remStates )
+{
+}
+
 
 /* Function for parsing program parameters */
 void KTraceCutter::read_cutter_params()
 {
   char *word, *buffer;
 
-  by_time = 1;
-  time_min = exec_options.min_cutting_time;
-  time_max = exec_options.max_cutting_time;
+  //by_time = 1;
+  by_time = exec_options->by_time;
+  time_min = exec_options->min_cutting_time;
+  time_max = exec_options->max_cutting_time;
   total_time = time_max - time_min;
+  min_perc = exec_options->min_percentage;
+  max_perc = exec_options->max_percentage;
 
-  if ( exec_options.original_time )
+  if ( exec_options->original_time )
     old_times = 1;
 
-  if ( exec_options.tasks_list[0] != '\0' )
+  if ( exec_options->tasks_list[0] != '\0' )
   {
     cut_tasks = 1;
     int j = 0;
 
-    word = strtok( exec_options.tasks_list, "," );
+    word = strtok( exec_options->tasks_list, "," );
     do
     {
       if ( ( buffer = strchr( word, '-' ) ) != NULL )
@@ -80,11 +155,14 @@ void KTraceCutter::read_cutter_params()
         wanted_tasks[j].min_task_id = atoll( word );
         wanted_tasks[j].max_task_id = atoll( ++buffer );
         wanted_tasks[j].range = 1;
+cout << "T-> " <<wanted_tasks[j].min_task_id << "-" << wanted_tasks[j].max_task_id << endl;
+
       }
       else
       {
         wanted_tasks[j].min_task_id = atoll( word );
         wanted_tasks[j].range = 0;
+cout << "T-> " << wanted_tasks[j].min_task_id << endl;
       }
 
       j++;
@@ -92,19 +170,19 @@ void KTraceCutter::read_cutter_params()
     while ( ( word = strtok( NULL, "," ) ) != NULL );
   }
 
-  if ( exec_options.max_trace_size != 0 )
-    max_size = exec_options.max_trace_size * 1000000;
+  if ( exec_options->max_trace_size != 0 )
+    max_size = exec_options->max_trace_size * 1000000;
 
-  break_states = exec_options.break_states;
-  remFirstStates = exec_options.remFirstStates;
-  remLastStates = exec_options.remLastStates;
+  break_states = exec_options->break_states;
+  remFirstStates = exec_options->remFirstStates;
+  remLastStates = exec_options->remLastStates;
 }
 
 
 /* For processing the Paraver header */
 void KTraceCutter::proces_cutter_header( char *header,
-    char *trace_in_name,
-    char *trace_out_name )
+                                         char *trace_in_name,
+                                         char *trace_out_name )
 {
   int num_comms;
   char *word;
@@ -152,15 +230,19 @@ void KTraceCutter::proces_cutter_header( char *header,
 
   }
 
+  cout << " PROCESS CUTTER PARAMS" << endl;
+  cout << "trace_time: " << trace_time << endl;
+  cout << "min_perc: "   << min_perc   << endl;
+  cout << "max_perc: "   << max_perc   << endl;
+  cout << "time_min: "   << time_min   << endl;
+  cout << "time_max: "   << time_max   << endl;
 
   word = strtok( NULL, "\n" );
   current_size += fprintf( outfile, "%s\n", word );
 
-
   word = strrchr( word, ',' );
 
-
-  /* Obtaining th number of communicators */
+  /* Obtaining the number of communicators */
   strcpy( header, word + 1 );
   if ( strchr( header, ')' ) != NULL ) return;
   num_comms = atoi( header );
@@ -173,7 +255,7 @@ void KTraceCutter::proces_cutter_header( char *header,
     num_comms--;
   }
 
-  /* Writting in the header the offset of the cut regard original trace */
+  /* Writing in the header the offset of the cut regard original trace */
 
   /* Reading first if we have old offsets into the trace */
   if ( !is_zip ) fgets( header, MAX_TRACE_HEADER, infile );
@@ -189,8 +271,9 @@ void KTraceCutter::proces_cutter_header( char *header,
 
   fseek( infile, -( strlen( header ) ), SEEK_CUR );
 
-  /* Writting of the current cut offset */
-  if ( trace_in_name != '\0' ) current_size += fprintf( outfile, "# %s: Offset %lld from %s\n", trace_out_name, time_min, trace_in_name );
+  /* Writing of the current cut offset */
+  if ( trace_in_name != '\0' )
+    current_size += fprintf( outfile, "# %s: Offset %lld from %s\n", trace_out_name, time_min, trace_in_name );
 }
 
 
@@ -543,6 +626,13 @@ int KTraceCutter::is_selected_task( int task_id )
 
 void KTraceCutter::execute( char *trace_in, char *trace_out )
 {
+  cout << "---------------------------------> KTraceCutter::execute" << endl;
+
+  if ( trace_in != NULL && trace_out != NULL )
+    cout << string( trace_in) << " -->" << string(trace_out) << endl;
+  else
+    cout << "KTraceCutter::execute: NULL NAMES OF TRACES!" << endl;
+
   char *c, *tmp_dir, *word, *trace_header;
   char trace_name[1024], buffer[1024], end_parsing = 0, reset_counters;
   char trace_file_out[2048];
@@ -553,8 +643,6 @@ void KTraceCutter::execute( char *trace_in, char *trace_out )
 
   unsigned long num_iters = 0;
   struct thread_info *p;
-
-
 
   /* Ini Data */
   for ( i = 0;i < MAX_APPL;i++ )
@@ -636,7 +724,6 @@ void KTraceCutter::execute( char *trace_in, char *trace_out )
 
   if ( !break_states )
   {
-
     if ( ( tmp_dir = getenv( "TMPDIR" ) ) == NULL )
       tmp_dir = getenv( "PWD" );
 
@@ -659,6 +746,8 @@ void KTraceCutter::execute( char *trace_in, char *trace_out )
     exit( 1 );
   }
 #endif
+
+cout << "trace_file_out: " << trace_file_out << endl;
 
   ini_cutter_progress_bar( trace_name );
 
@@ -1020,4 +1109,6 @@ void KTraceCutter::execute( char *trace_in, char *trace_out )
   }
 
 //  ok_cutter_wait_window();
+  cout << "<------------------------- KTraceCutter::execute" << endl;
+
 }

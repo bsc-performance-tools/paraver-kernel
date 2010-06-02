@@ -41,7 +41,9 @@
 //#include "filters_wait_window.h"
 
 
-KTraceSoftwareCounters::KTraceSoftwareCounters( char *trace_in, char *trace_out, KTraceOptions::utilities_options options )
+KTraceSoftwareCounters::KTraceSoftwareCounters( char *trace_in,
+                                                char *trace_out,
+                                                KTraceOptions &options )
 {
   min_state_time = 0;
   last_type_mark = -1;

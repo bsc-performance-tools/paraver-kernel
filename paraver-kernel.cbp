@@ -387,10 +387,16 @@
 		<Unit filename="api/tracefilter.h">
 			<Option target="api" />
 		</Unit>
-		<Unit filename="api/tracesofwarecounters.cpp">
+		<Unit filename="api/traceoptions.cpp">
 			<Option target="api" />
 		</Unit>
-		<Unit filename="api/tracesofwarecounters.h">
+		<Unit filename="api/traceoptions.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/tracesoftwarecounters.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/tracesofwarecounters.cpp">
 			<Option target="api" />
 		</Unit>
 		<Unit filename="api/window.cpp">

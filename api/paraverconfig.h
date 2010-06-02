@@ -187,6 +187,30 @@ class ParaverConfig
     float getFiltersFilterTraceUpToMB() const;
     string getFiltersXMLPath() const;
 
+    // filters filter
+    void setCutterByTime( bool whichByTime );
+    void setCutterMinimumTime( TTime minTime );
+    void setCutterMaximumTime( TTime maxTime );
+    void setCutterMinimumTimePercentage( TTime minTimePercentage );
+    void setCutterMaximumTimePercentage( TTime maxTimePercentage );
+
+    void setCutterOriginalTime( bool originalTime );
+    // void setFiltersTasksList(  );
+    void setCutterBreakStates( bool breakStates );
+    void setCutterRemoveFirstStates( bool removeFirstStates );
+    void setCutterRemoveLastStates( bool removeLastStates );
+
+    bool getCutterByTime();
+    TTime getCutterMinimumTime();
+    TTime getCutterMaximumTime();
+    TTime getCutterMinimumTimePercentage();
+    TTime getCutterMaximumTimePercentage();
+    bool getCutterOriginalTime();
+    //  setFiltersTasksList(  );
+    bool getCutterBreakStates();
+    bool getCutterRemoveFirstStates();
+    bool getCutterRemoveLastStates();
+
     // COLORS XML SECTION
     void setColorsTimelineBackground( rgb whichTimelineBackground );
     void setColorsTimelineAxis( rgb whichTimelineAxis );
@@ -341,6 +365,54 @@ class ParaverConfig
     } xmlHistogram;
 
 
+    struct XMLPreferencesCutter
+    {
+      template< class Archive >
+      void serialize( Archive & ar, const unsigned int version )
+      {
+        ar & boost::serialization::make_nvp( "by_time", byTime );
+        ar & boost::serialization::make_nvp( "minimum_time", minimumTime );
+        ar & boost::serialization::make_nvp( "maximum_time", maximumTime );
+        ar & boost::serialization::make_nvp( "minimum_time_percentage", minimumTimePercentage );
+        ar & boost::serialization::make_nvp( "maximum_time_percentage", maximumTimePercentage );
+        ar & boost::serialization::make_nvp( "original_time", originalTime );
+        ar & boost::serialization::make_nvp( "break_states", breakStates );
+        ar & boost::serialization::make_nvp( "remove_first_states", removeFirstStates );
+        ar & boost::serialization::make_nvp( "remove_last_states", removeLastStates );
+      }
+
+      bool byTime;
+      TTime minimumTime;
+      TTime maximumTime;
+      TTime minimumTimePercentage;
+      TTime maximumTimePercentage;
+      bool originalTime;
+      bool breakStates;
+      bool removeFirstStates;
+      bool removeLastStates;
+
+    };
+
+/*
+    struct XMLPreferencesFilter
+    {
+      template< class Archive >
+      void serialize( Archive & ar, const unsigned int version )
+      {
+      }
+    };
+
+    struct XMLPreferencesCommunicationsFusion
+    {
+      template< class Archive >
+      void serialize( Archive & ar, const unsigned int version )
+      {
+        ar & boost::serialization::make_nvp( "sample_interval", sampleInterval );
+        ar & boost::serialization::make_nvp( "inter_comm_interval", interCommInterval );
+      }
+    };
+*/
+
     struct XMLPreferencesFilters
     {
       template< class Archive >
@@ -348,12 +420,25 @@ class ParaverConfig
       {
         ar & boost::serialization::make_nvp( "filter_trace_up_to_MB", filterTraceUpToMB );
         ar & boost::serialization::make_nvp( "xml_path", xmlPath );
+        if ( version >= 1 )
+        {
+          ar & boost::serialization::make_nvp( "cutter", xmlCutterInstance );
+//          ar & boost::serialization::make_nvp( "filter", xmlFilterInstance );
+//          ar & boost::serialization::make_nvp( "comm_fusion", xmlCommunicationsFusionInstance );
+        }
       }
 
       float filterTraceUpToMB;
       string xmlPath;
 
+      // Second level xml; needed a variable.
+      // Next filters, same way.
+      XMLPreferencesCutter xmlCutterInstance;
+      // XMLPreferencesFilter xmlFilterInstance;
+      // XMLPreferenecesCommunicationsFusion xmlCommunicationsFusionInstance;
+
     } xmlFilters;
+
 
     struct XMLPreferencesColor
     {
@@ -423,7 +508,8 @@ BOOST_CLASS_VERSION( ParaverConfig, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 1)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilters, 0)
+//BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 0)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilters, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesColor, 1)
 
 // WhatWhere.num_decimals

@@ -39,10 +39,11 @@
 //#include "filters_wait_window.h"
 #include "ktracefilter.h"
 
-KTraceFilter::KTraceFilter( char *trace_in, char *trace_out, KTraceOptions::utilities_options options )
+KTraceFilter::KTraceFilter( char *trace_in, char *trace_out, KTraceOptions *options )
 {
   is_zip_filter = 0;
-  exec_options = options;
+
+  exec_options = new KTraceOptions( *options );
 
   execute( trace_in, trace_out );
 }
@@ -56,32 +57,32 @@ KTraceFilter::~KTraceFilter()
 /* Function for parsing program parameters */
 void KTraceFilter::read_params()
 {
-  if ( exec_options.filter_states )
+  if ( exec_options->filter_states )
   {
     show_states = 1;
-    all_states = exec_options.all_states;
+    all_states = exec_options->all_states;
 
-    if ( exec_options.min_state_time != 0 )
-      min_state_time = exec_options.min_state_time;
+    if ( exec_options->min_state_time != 0 )
+      min_state_time = exec_options->min_state_time;
   }
 
-  if ( exec_options.filter_comms )
+  if ( exec_options->filter_comms )
   {
     show_comms = 1;
 
-    if ( exec_options.min_comm_size != 0 )
-      min_comm_size = exec_options.min_comm_size;
+    if ( exec_options->min_comm_size != 0 )
+      min_comm_size = exec_options->min_comm_size;
   }
 
-  if ( exec_options.filter_events )
+  if ( exec_options->filter_events )
   {
     show_events = 1;
 
-    if ( exec_options.filter_last_type == 0 )
+    if ( exec_options->filter_last_type == 0 )
       filter_all_types = 1;
   }
 
-  if ( exec_options.filter_by_call_time )
+  if ( exec_options->filter_by_call_time )
     filter_by_call_time = 1;
   else
     filter_by_call_time = 0;
@@ -136,13 +137,13 @@ int KTraceFilter::filter_allowed_type(  int appl, int task, int thread,
 
   /* First, searching if this type and value are allowed */
   type_allowed = 0;
-  for ( i = 0; i < exec_options.filter_last_type; i++ )
+  for ( i = 0; i < exec_options->filter_last_type; i++ )
   {
-    if ( exec_options.filter_types[i].max_type != 0 )
+    if ( exec_options->filter_types[i].max_type != 0 )
     {
-      if ( type >= exec_options.filter_types[i].type && type <= exec_options.filter_types[i].max_type )
+      if ( type >= exec_options->filter_types[i].type && type <= exec_options->filter_types[i].max_type )
       {
-        if ( exec_options.discard_given_types )
+        if ( exec_options->discard_given_types )
           type_allowed = 0;
         else
           type_allowed = 1;
@@ -151,11 +152,11 @@ int KTraceFilter::filter_allowed_type(  int appl, int task, int thread,
       }
     }
 
-    if ( exec_options.filter_types[i].type == type )
+    if ( exec_options->filter_types[i].type == type )
     {
-      if ( exec_options.filter_types[i].last_value == 0 )
+      if ( exec_options->filter_types[i].last_value == 0 )
       {
-        if ( exec_options.discard_given_types )
+        if ( exec_options->discard_given_types )
           type_allowed = 0;
         else
           type_allowed = 1;
@@ -163,10 +164,10 @@ int KTraceFilter::filter_allowed_type(  int appl, int task, int thread,
         break;
       }
 
-      for ( j = 0; j < exec_options.filter_types[i].last_value; j++ )
-        if ( exec_options.filter_types[i].value[j] == value )
+      for ( j = 0; j < exec_options->filter_types[i].last_value; j++ )
+        if ( exec_options->filter_types[i].value[j] == value )
         {
-          if ( exec_options.discard_given_types )
+          if ( exec_options->discard_given_types )
             type_allowed = 0;
           else
             type_allowed = 1;
@@ -178,11 +179,11 @@ int KTraceFilter::filter_allowed_type(  int appl, int task, int thread,
     }
   }
 
-  if ( i == exec_options.filter_last_type && exec_options.discard_given_types )
+  if ( i == exec_options->filter_last_type && exec_options->discard_given_types )
     type_allowed = 1;
 
   /* second, we look if event have a min_time property */
-  if ( type_allowed && exec_options.filter_types[i].min_call_time > 0 )
+  if ( type_allowed && exec_options->filter_types[i].min_call_time > 0 )
   {
     /* Event d'entrada */
     if ( value > 0 )
@@ -194,7 +195,7 @@ int KTraceFilter::filter_allowed_type(  int appl, int task, int thread,
         type_allowed = 0;
       else
       {
-        if ( time - thread_call_info[appl][task][thread]->event_time >= exec_options.filter_types[i].min_call_time )
+        if ( time - thread_call_info[appl][task][thread]->event_time >= exec_options->filter_types[i].min_call_time )
           type_allowed = 2;
         else
         {
@@ -283,9 +284,9 @@ void KTraceFilter::load_pcf( char *pcf_name )
         sscanf( line, "%d %[^\n]", &state_id, state_name );
 
         i = 0;
-        while ( i < 20 && exec_options.state_names[i] != NULL )
+        while ( i < 20 && exec_options->state_names[i] != NULL )
         {
-          if ( strstr( exec_options.state_names[i], state_name ) != NULL )
+          if ( strstr( exec_options->state_names[i], state_name ) != NULL )
           {
             states_info.ids[states_info.last_id] = state_id;
             states_info.last_id++;
@@ -649,11 +650,11 @@ void KTraceFilter::execute( char *trace_in, char *trace_out )
         if ( !show_comms )
           break;
 
-        if ( exec_options.min_comm_size > 0 )
+        if ( exec_options->min_comm_size > 0 )
         {
           sscanf( line, "%*d:%*d:%*d:%*d:%*d:%*lld:%*lld:%*d:%*d:%*d:%*d:%*lld:%*lld:%d:%*d\n", &size );
 
-          if ( size < exec_options.min_comm_size )
+          if ( size < exec_options->min_comm_size )
             break;
         }
 

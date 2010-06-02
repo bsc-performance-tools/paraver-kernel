@@ -33,15 +33,31 @@
 #include "ktraceoptions.h"
 #include "zlib.h"
 
-class KTraceCutter
+#include "tracecutter.h"
+
+class KTraceCutter : public TraceCutter
 {
   public:
-    KTraceCutter( char *trace_in, char *trace_out, KTraceOptions::utilities_options options );
+    KTraceCutter( char *&trace_in, char *&trace_out, KTraceOptions *options );
     ~KTraceCutter();
+
+    void set_by_time( bool byTime );
+    void set_min_cutting_time( unsigned long long minCutTime );
+    void set_max_cutting_time( unsigned long long maxCutTime );
+    void set_minimum_time_percentage( unsigned long long minimumPercentage );
+    void set_maximum_time_percentage( unsigned long long maximumPercentage );
+    void set_tasks_list( char *tasksList );
+    void set_original_time( char originalTime );
+    void set_max_trace_size( int traceSize );
+    void set_break_states( int breakStates );
+    void set_remFirstStates( int remStates );
+    void set_remLastStates( int remStates );
+
+    void execute( char *trace_in, char *trace_out );
 
   private:
     /* Buffer for reading trace records */
-    char line[4096];
+    char line[8192];
 
     /* Trace in and trace out */
     FILE *infile;
@@ -109,7 +125,7 @@ class KTraceCutter
     };
 
     struct selected_tasks wanted_tasks[MAX_SELECTED_TASKS];
-    struct KTraceOptions::utilities_options exec_options;
+    KTraceOptions *exec_options;
 
     void read_cutter_params();
     void proces_cutter_header( char *header,
@@ -124,8 +140,6 @@ class KTraceCutter
     void load_counters_of_pcf( char *trace_name );
     void shift_trace_to_zero( char *nameIn, char *nameOut );
     int is_selected_task( int task_id );
-
-    void execute( char *trace_in, char *trace_out );
 };
 
 #endif // _KTRACECUTTER_H_

@@ -33,13 +33,17 @@
 #include <string>
 #include <vector>
 #include "paraverkerneltypes.h"
-
+#include "traceoptions.h"
 class Window;
 class Histogram;
 class Trace;
 class RecordList;
 class ProgressController;
 class Filter;
+//class TraceOptions;
+class TraceCutter;
+class TraceFilter;
+class TraceSoftwareCounters;
 
 using namespace std;
 
@@ -58,6 +62,18 @@ class KernelConnection
     virtual Histogram *newHistogram() const = 0;
     virtual ProgressController *newProgressController() const = 0;
     virtual Filter *newFilter( Filter *concreteFilter ) const = 0;
+
+//    virtual TraceOptions *newTraceOptions( char *docname ) const = 0;
+    virtual TraceOptions *newTraceOptions() const = 0;
+    virtual TraceCutter *newTraceCutter( char *trace_in,
+                                         char *trace_out,
+                                         TraceOptions *options  ) const = 0;
+    virtual TraceFilter *newTraceFilter( char *trace_in,
+                                         char *trace_out,
+                                         TraceOptions *options ) const = 0;
+    virtual TraceSoftwareCounters *newTraceSoftwareCounters( char *&trace_in,
+                                                             char *&trace_out,
+                                                             TraceOptions &options) const = 0;
 
     virtual void getAllStatistics( vector<string>& onVector ) const = 0;
     virtual void getAllFilterFunctions( vector<string>& onVector ) const = 0;

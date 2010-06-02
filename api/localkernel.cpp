@@ -39,6 +39,8 @@
 #include "krecordlist.h"
 #include "kprogresscontroller.h"
 #include "labelconstructor.h"
+#include "ktracecutter.h"
+#include "ktracefilter.h"
 
 void LocalKernel::init()
 {
@@ -132,6 +134,37 @@ Filter *LocalKernel::newFilter( Filter *concreteFilter ) const
   FilterProxy *tmpFilter = new FilterProxy( this );
   tmpFilter->myFilter = concreteFilter;
   return ( Filter * ) tmpFilter;
+}
+
+TraceOptions *LocalKernel::newTraceOptions() const
+{
+  return new KTraceOptions( this );
+}
+
+TraceCutter *LocalKernel::newTraceCutter( char *trace_in,
+                                          char *trace_out,
+                                          TraceOptions *options ) const
+{
+  cout << "LocalKernel::newTraceCutter: tracein " << trace_in  << endl;
+  cout << "LocalKernel::newTraceCutter: traceout" << trace_out << endl;
+
+  return (TraceCutter *)new KTraceCutter( trace_in, trace_out, (KTraceOptions *)options );
+}
+
+TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
+                                          char *trace_out,
+                                          TraceOptions *options ) const
+{
+  return (TraceFilter *)new KTraceFilter( trace_in, trace_out, (KTraceOptions *)options );
+}
+
+
+TraceSoftwareCounters *LocalKernel::newTraceSoftwareCounters( char *&trace_in,
+                                                              char *&trace_out,
+                                                              TraceOptions &options ) const
+{
+//  return new KTraceSoftwareCounters();
+  return NULL;
 }
 
 void LocalKernel::getAllStatistics( vector<string>& onVector ) const

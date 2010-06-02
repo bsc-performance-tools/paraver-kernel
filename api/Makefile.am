@@ -20,6 +20,10 @@ libparaver_api_la_SOURCES = \
                     statelabels.cpp \
                     textoutput.cpp \
                     trace.cpp \
+                    tracecutter.cpp \
+                    tracefilter.cpp \
+                    traceoptions.cpp \
+                    tracesoftwarecounters.cpp \
                     window.cpp \
                     ../../common-files/pcfparser/LibException.cpp \
                     ../../common-files/pcfparser/ParaverEventType.cpp \
@@ -57,6 +61,10 @@ include_HEADERS = \
                   statelabels.h\
                   trace.h\
                   textoutput.h\
+                  tracecutter.h \
+                  tracefilter.h \
+                  traceoptions.h \
+                  tracesoftwarecounters.h \
                   window.h\
                   zoomhistory.h\
                   selectionmanagement.cpp\

@@ -26,20 +26,108 @@
  | @last_commit: $Date$
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
+#include <iostream>
 #include <string.h>
 #include <ctype.h>
 
+using namespace std;
+
 #include "ktraceoptions.h"
+#include "paraverconfig.h"
 
 // void KTraceOptions::parseDoc( char *docname ) is the real contructor
+// KTraceOptions::KTraceOptions( const KernelConnection *whichKernel, char *xmldocname ): TraceOptions( whichKernel, xmldocname )
 KTraceOptions::KTraceOptions()
 {
+  init();
+}
+
+//KTraceOptions::KTraceOptions( const TraceOptions &whichTraceOptions )
+KTraceOptions::KTraceOptions( const TraceOptions &auxwhichTraceOptions ): TraceOptions( auxwhichTraceOptions )
+//KTraceOptions::KTraceOptions( const KTraceOptions &whichTraceOptions )
+{
+  init();
+}
+
+KTraceOptions::KTraceOptions( const KTraceOptions &whichTraceOptions )
+{
+  // Global Default Options
+  set_max_trace_size( whichTraceOptions.get_max_trace_size() );
+
+  // Cutter Default Options
+  set_by_time( whichTraceOptions.get_by_time() );
+  set_min_cutting_time( whichTraceOptions.get_min_cutting_time() );
+  set_max_cutting_time( whichTraceOptions.get_max_cutting_time() );
+  set_minimum_time_percentage( whichTraceOptions.get_minimum_time_percentage() );
+  set_maximum_time_percentage( whichTraceOptions.get_maximum_time_percentage() );
+  TTasksList list;
+  whichTraceOptions.get_tasks_list( list );
+  set_tasks_list( list );
+  set_original_time( whichTraceOptions.get_original_time() );
+  set_break_states( whichTraceOptions.get_break_states() );
+  set_remFirstStates( whichTraceOptions.get_remFirstStates() );
+  set_remLastStates( whichTraceOptions.get_remLastStates() );
+
+  // Filter Default Options
 }
 
 
-KTraceOptions::~KTraceOptions()
+KTraceOptions::KTraceOptions( const KernelConnection *whichKernel ): TraceOptions( whichKernel )
 {
+  init();
+}
+
+KTraceOptions::~KTraceOptions()
+{}
+
+
+void KTraceOptions::init_filter_types()
+{
+  for ( unsigned int i = 0; i < 20; ++i )
+  {
+    filter_types[ i ].type = 0;
+    filter_types[ i ].max_type = 0;
+    filter_types[ i ].min_call_time = 0;
+    for ( unsigned int j = 0; j < 20; ++j )
+      filter_types[ i ].value[j] = 0;
+    filter_types[ i ].last_value = 0;
+  }
+}
+
+void KTraceOptions::init()
+{
+  // Global Default Options
+  set_max_trace_size( ParaverConfig::getInstance()->getFiltersFilterTraceUpToMB() );
+
+  // Cutter Default Options
+  set_by_time( ParaverConfig::getInstance()->getCutterByTime() );
+  set_min_cutting_time( ParaverConfig::getInstance()->getCutterMinimumTime() );
+  set_max_cutting_time( ParaverConfig::getInstance()->getCutterMaximumTime() );
+  set_minimum_time_percentage( ParaverConfig::getInstance()->getCutterMinimumTimePercentage() );
+  set_maximum_time_percentage( ParaverConfig::getInstance()->getCutterMaximumTimePercentage() );
+  init_tasks_list();
+  set_original_time( ParaverConfig::getInstance()->getCutterOriginalTime() );
+  set_break_states( ParaverConfig::getInstance()->getCutterBreakStates() );
+  set_remFirstStates( ParaverConfig::getInstance()->getCutterRemoveFirstStates() );
+  set_remLastStates( ParaverConfig::getInstance()->getCutterRemoveLastStates() );
+
+  // Filter Default Options
+// problem --> derived fields?; minimum default info?
+/*
+  set_filter_states( ParaverConfig::getInstance()->getFiltersDiscardStates() );
+  set_all_states( ParaverConfig::getInstance()->getFilterAllStates() );
+  set_filter_by_call_time( false );
+  init_state_names();
+  set_min_state_time( 10000000000 );
+
+  set_filter_events( ParaverConfig::getInstance()->getFiltersDiscardEvents() );
+  set_discard_given_types( false );
+  set_filter_last_type( false );
+  init_filter_types();
+
+  set_filter_comms( ParaverConfig::getInstance()->getFiltersDiscardCommunications() );
+  set_min_comm_size( ParaverConfig::getInstance()->getFilterCommunicationMinimumSize() )
+*/
 }
 
 
@@ -53,7 +141,7 @@ void KTraceOptions::parse_type( xmlDocPtr doc, xmlNodePtr cur, struct allowed_ty
   word = xmlGetProp( cur, ( const xmlChar * )"min_time" );
   if ( word != NULL )
   {
-    exec_options.filter_by_call_time = 1;
+    filter_by_call_time = 1;
     types[*last_type].min_call_time = atoll( ( char * )word );
 
     xmlFree( word );
@@ -100,6 +188,8 @@ void KTraceOptions::parse_type( xmlDocPtr doc, xmlNodePtr cur, struct allowed_ty
 
 void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
 {
+cout << "FILTER PARAMS!" << endl;
+
   xmlNodePtr child;
   xmlChar *word;
   char *word_aux;
@@ -110,15 +200,15 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"types" ) )
     {
 
-      exec_options.filter_events = 1;
-      exec_options.discard_given_types = 0;
+      filter_events = 1;
+      discard_given_types = 0;
 
       /* Get properties */
       word = xmlGetProp( cur, ( const xmlChar * )"use" );
       if ( word != NULL )
       {
         if ( !xmlStrcmp( word, ( const xmlChar * )"discard" ) )
-          exec_options.discard_given_types = 1;
+          discard_given_types = 1;
 
         xmlFree( word );
       }
@@ -130,7 +220,7 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
       while ( child != NULL )
       {
         if ( !xmlStrcmp( child->name, ( const xmlChar * )"type" ) )
-          parse_type( doc, child, exec_options.filter_types, &( exec_options.filter_last_type ) );
+          parse_type( doc, child, filter_types, &( filter_last_type ) );
 
         child = child->next;
       }
@@ -138,33 +228,33 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"comms" ) )
     {
-      exec_options.filter_comms = 1;
+      filter_comms = 1;
       child = cur->xmlChildrenNode;
       child = child->next;
 
       if ( child != NULL )
       {
         word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-        exec_options.min_comm_size = atoi( ( char * )word );
+        min_comm_size = atoi( ( char * )word );
         xmlFree( word );
       }
     }
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"states" ) )
     {
-      exec_options.filter_states = 1;
-      exec_options.all_states = 0;
+      filter_states = 1;
+      all_states = 0;
       child = cur->xmlChildrenNode;
 
       /* searching which states wants to keep */
       for ( i = 0; i < 20; i++ )
-        exec_options.state_names[i] = NULL;
+        state_names[i] = NULL;
 
       word = xmlNodeListGetString( doc, child, 1 );
       word_aux = strtok( ( char * )word, "," );
 
       if ( strstr( word_aux, "All" ) != NULL )
-        exec_options.all_states = 1;
+        all_states = 1;
       else
       {
         /* Patch in order to allow tag without name */
@@ -174,11 +264,11 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
         if ( i == strlen( word_aux ) )
         {
           /* No label */
-          exec_options.state_names[0] = strdup( "Running" );
+          state_names[0] = strdup( "Running" );
         }
         else
         {
-          exec_options.state_names[0] = strdup( word_aux );
+          state_names[0] = strdup( word_aux );
 
           for ( i = 1; i < 20; i++ )
           {
@@ -186,9 +276,9 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
               break;
 
             if ( !strcmp( word_aux, "All" ) )
-              exec_options.all_states = 1;
+              all_states = 1;
             else
-              exec_options.state_names[i] = strdup( word_aux );
+              state_names[i] = strdup( word_aux );
           }
         }
       }
@@ -201,7 +291,7 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
       if ( child != NULL )
       {
         word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-        exec_options.min_state_time = atoll( ( char * )word );
+        min_state_time = atoll( ( char * )word );
         xmlFree( word );
       }
     }
@@ -213,6 +303,8 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
 
 void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
 {
+cout << "PARSING CUTTER PARAMS!" << endl;
+
   xmlChar *word;
 
   while ( cur != NULL )
@@ -220,30 +312,78 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"tasks" ) )
     {
       word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      strcpy( exec_options.tasks_list, ( const char * )word );
+      strcpy( tasks_list, ( const char * )word );
 
       xmlFree( word );
     }
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"original_time" ) )
     {
-      /* Te mes prioritat els parametres de la GUI */
-    }
-
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"time_percentage" ) )
-    {
-      /* Te mes prioritat la GUI */
-    }
-
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"time" ) )
-    {
-      /* Te prioritat la GUI */
+      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+      original_time = atoi( ( char * )word );
+      xmlFree( word );
     }
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"max_trace_size" ) )
     {
       word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      exec_options.max_trace_size = atoi( ( char * )word );
+      max_trace_size = atoi( ( char * )word );
+      xmlFree( word );
+    }
+
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"by_time" ) )
+    {
+      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+      by_time = atoi( ( char * )word );
+      xmlFree( word );
+    }
+
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"minimum_time" ) )
+    {
+      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+      min_cutting_time = atoi( ( char * )word );
+      xmlFree( word );
+    }
+
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"maximum_time" ) )
+    {
+      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+      max_cutting_time = atoi( ( char * )word );
+      xmlFree( word );
+    }
+
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"minimum_time_percentage" ) )
+    {
+      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+      min_percentage = atoi( ( char * )word );
+      xmlFree( word );
+    }
+
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"maximum_time_percentage" ) )
+    {
+      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+      max_percentage = atoi( ( char * )word );
+      xmlFree( word );
+    }
+
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"break_states" ) )
+    {
+      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+      break_states = atoi( ( char * )word );
+      xmlFree( word );
+    }
+
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"remove_first_states" ) )
+    {
+      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+      remFirstStates = atoi( ( char * )word );
+      xmlFree( word );
+    }
+
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"remove_last_states" ) )
+    {
+      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+      remLastStates = atoi( ( char * )word );
       xmlFree( word );
     }
 
@@ -254,16 +394,19 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
 
 void KTraceOptions::parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur )
 {
+cout << "COMM_FUSION PARAMS!" << endl;
+
+
   xmlChar *word;
 
-  exec_options.reduce_comms = 1;
+  reduce_comms = 1;
 
   while ( cur != NULL )
   {
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"sample_interval" ) )
     {
       word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      exec_options.comm_fusion_big_interval = atoi( ( char * )word );
+      comm_fusion_big_interval = atoi( ( char * )word );
       xmlFree( word );
     }
 
@@ -271,7 +414,7 @@ void KTraceOptions::parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur )
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"inter_comm_interval" ) )
     {
       word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      exec_options.comm_fusion_small_interval = atoi( ( char * )word );
+      comm_fusion_small_interval = atoi( ( char * )word );
       xmlFree( word );
     }
 
@@ -282,18 +425,21 @@ void KTraceOptions::parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur )
 // The real constructor
 void KTraceOptions::parseDoc( char *docname )
 {
+cout << "PARSE DOC!" << endl;
+
+
   xmlDocPtr doc;
   xmlNodePtr cur;
 
   /* Ini Data */
-  exec_options.min_state_time = 0;
-  exec_options.min_comm_size = 0;
-  exec_options.filter_last_type = 0;
+  min_state_time = 0;
+  min_comm_size = 0;
+  filter_last_type = 0;
 
-  exec_options.original_time = 1;
-  exec_options.tasks_list[0] = '\0';
+  original_time = 1;
+  tasks_list[0] = '\0';
 
-  exec_options.filter_by_call_time = 0;
+  filter_by_call_time = 0;
 
   if ( docname == NULL ) return;
 

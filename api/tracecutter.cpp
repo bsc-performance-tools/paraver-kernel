@@ -30,64 +30,90 @@
 #include "tracecutter.h"
 #include "ktraceoptions.h"
 #include "ktracecutter.h"
+#include "kernelconnection.h"
 
-TraceCutter::TraceCutter( char *trace_in, char *trace_out, char *xmldocname = NULL )
+TraceCutter *TraceCutter::create(  KernelConnection *whichKernel,
+                                   char *traceIn,
+                                   char *traceOut,
+                                   TraceOptions *options )
 {
-  // some extra file checks?
-  traceIn = strdup( trace_in );
-  traceOut = strdup( trace_out );
-
-  if ( xmldocname != NULL )
-    options.parseDoc( xmldocname );
+  return new TraceCutterProxy( whichKernel, traceIn, traceOut, options );
 }
 
-TraceCutter::~TraceCutter()
+
+TraceCutterProxy::TraceCutterProxy( KernelConnection *whichKernel,
+                                    char *traceIn,
+                                    char *traceOut,
+                                    TraceOptions *options )
 {
-  free( traceIn );
-  free( traceOut );
+  myTraceCutter = whichKernel->newTraceCutter( traceIn, traceOut, options );
 }
 
-void TraceCutter::set_min_cutting_time( unsigned long long minCutTime )
+
+TraceCutterProxy::~TraceCutterProxy()
 {
-  options.set_min_cutting_time( minCutTime );
+  delete myTraceCutter;
 }
 
-void TraceCutter::set_max_cutting_time( unsigned long long maxCutTime )
+
+void TraceCutterProxy::set_by_time( bool whichByTime )
 {
-  options.set_min_cutting_time( maxCutTime );
+  myTraceCutter->set_by_time( whichByTime );
 }
 
-void TraceCutter::set_tasks_list( char *tasksList[256] )
+
+void TraceCutterProxy::set_min_cutting_time( unsigned long long minCutTime )
 {
-  options.set_tasks_list( tasksList );
+  myTraceCutter->set_min_cutting_time( minCutTime );
 }
 
-void TraceCutter::set_original_time( char originalTime )
+void TraceCutterProxy::set_max_cutting_time( unsigned long long maxCutTime )
 {
-  options.set_original_time ( originalTime );
+  myTraceCutter->set_min_cutting_time( maxCutTime );
 }
 
-void TraceCutter::set_max_trace_size( int traceSize )
+void TraceCutterProxy::set_minimum_time_percentage( unsigned long long minimumPercentage )
 {
-  options.set_max_trace_size( traceSize );
+  myTraceCutter->set_minimum_time_percentage( minimumPercentage );
 }
 
-void TraceCutter::set_break_states( int breakStates )
+void TraceCutterProxy::set_maximum_time_percentage( unsigned long long maximumPercentage )
 {
-  options.set_break_states( breakStates );
+  myTraceCutter->set_maximum_time_percentage( maximumPercentage );
 }
 
-void TraceCutter::set_remFirstStates( int remStates )
+void TraceCutterProxy::set_tasks_list( char *tasksList )
 {
-  options.set_remFirstStates ( remStates );
+  myTraceCutter->set_tasks_list( tasksList );
 }
 
-void TraceCutter::set_remLastStates( int remStates )
+void TraceCutterProxy::set_original_time( char originalTime )
 {
-  options.set_remLastStates( remStates );
+  myTraceCutter->set_original_time ( originalTime );
 }
 
-void TraceCutter::execute()
+void TraceCutterProxy::set_max_trace_size( int traceSize )
 {
-  KTraceCutter cutter( traceIn, traceOut, options.exec_options );
+  myTraceCutter->set_max_trace_size( traceSize );
 }
+
+void TraceCutterProxy::set_break_states( int breakStates )
+{
+  myTraceCutter->set_break_states( breakStates );
+}
+
+void TraceCutterProxy::set_remFirstStates( int remStates )
+{
+  myTraceCutter->set_remFirstStates ( remStates );
+}
+
+void TraceCutterProxy::set_remLastStates( int remStates )
+{
+  myTraceCutter->set_remLastStates( remStates );
+}
+
+void TraceCutterProxy::execute()
+{
+//  KTraceCutter cutter( traceIn, traceOut, options->exec_options );
+}
+

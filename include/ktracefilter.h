@@ -32,12 +32,14 @@
 
 #include "ktraceoptions.h"
 #include "zlib.h"
+#include "tracefilter.h"
 
-class KTraceFilter
+class KTraceFilter: public TraceFilter
 {
   public:
-    KTraceFilter( char *trace_in, char *trace_out, KTraceOptions::utilities_options options );
+    KTraceFilter( char *trace_in, char *trace_out, KTraceOptions *options );
     ~KTraceFilter();
+    void execute( char *trace_in, char *trace_out );
 
   private:
     /* Buffer for reading trace records */
@@ -81,7 +83,7 @@ class KTraceFilter
 //    unsigned long long counters[50];
 //    int last_counter;
 
-    struct KTraceOptions::utilities_options exec_options;
+    KTraceOptions *exec_options;
 
     /* Execution parameters */
     char show_states;
@@ -146,7 +148,6 @@ class KTraceFilter
     void show_progress_bar();
     void load_pcf( char *pcf_name );
     void dump_buffer();
-    void execute( char *trace_in, char *trace_out );
 };
 
 #endif // _KTRACEFILTER_H_

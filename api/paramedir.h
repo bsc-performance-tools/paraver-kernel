@@ -39,6 +39,4 @@ using std::string;
 class Window;
 class Histogram;
 
-void printHelp();
-
 #endif // PARAMEDIR_H_INCLUDED

@@ -27,13 +27,15 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-#ifndef _KPARSERXML_H_
-#define _KPARSERXML_H_
+#ifndef _KTRACEOPTIONS_H_
+#define _KTRACEOPTIONS_H_
 
 #include <string.h>
 
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
+
+#include "traceoptions.h"
 
 #define MAX_TRACE_HEADER 131072
 #define MAX_HEADER_SIZE 131072
@@ -41,13 +43,13 @@
 #define MAX_TASK 20000
 #define MAX_THREAD 10
 #define MAX_SELECTED_TASKS 30
-
+#define MAX_LINE_SIZE 8192
 /* sofware counters */
 /*#define MAX_TYPES 100 */
 #define MAX_VALUES 100
 #define MAX_THREADS 20000
 
-class KTraceOptions
+class KTraceOptions: public TraceOptions
 {
   public:
 
@@ -60,268 +62,361 @@ class KTraceOptions
       int last_value;
     };
 
-    struct utilities_options
-    {
-      /* Parameters for filtering */
-      char filter_events;
-      char filter_states;
-      char filter_comms;
-      char discard_given_types;
-      char filter_by_call_time;
+    /* Global parameters */
+    int max_trace_size;
 
-      char *state_names[20];
-      char all_states;
-      unsigned long long min_state_time;
-      int min_comm_size;
-      struct allowed_types filter_types[20];
-      int filter_last_type;
+    /* Parameters for filtering */
+    char filter_events;
+    char filter_states;
+    char filter_comms;
+    char discard_given_types;
+    char filter_by_call_time;
+    char *state_names[20];
+    char all_states;
+    unsigned long long min_state_time;
+    int min_comm_size;
+    struct allowed_types filter_types[20];
+    int filter_last_type;
 
-      /* Parameters for cutting */
-      unsigned long long min_cutting_time;
-      unsigned long long max_cutting_time;
+    /* Parameters for cutting */
+    bool by_time;
+    unsigned long long min_cutting_time;
+    unsigned long long max_cutting_time;
+    int min_percentage;
+    int max_percentage;
+    char original_time;
+    int break_states;
+    int remFirstStates;
+    int remLastStates;
+    char tasks_list[256];
 
-      // not used?
-      // int min_percentage;
-      // int max_percentage;
+    // not used?
+    // char *logfile;
 
-      char tasks_list[256];
-      char original_time;
+    /* Parameters for comm_fusion */
+    char reduce_comms;
+    unsigned long long comm_fusion_big_interval;
+    unsigned long long comm_fusion_small_interval;
 
-      // not used?
-      // char *logfile;
+    /* Parameters for software counters */
+    int sc_onInterval;
+    int sc_global_counters;
+    int sc_acumm_counters;
+    int sc_summarize_states;
+    int sc_only_in_bursts;
+    int sc_remove_states;
+    unsigned long long sc_interval;
+    int sc_frequency;
+    char *types;
+    char *types_kept;
 
-      int max_trace_size;
-      int break_states;
-      int remFirstStates;
-      int remLastStates;
+    /* Parameters for Stats */
+    int bursts_plot;
+    int comms_plot;
+    int events_plot;
 
-      /* Parameters for comm_fusion */
-      char reduce_comms;
-      unsigned long long comm_fusion_big_interval;
-      unsigned long long comm_fusion_small_interval;
-
-      /* Parameters for software counters */
-      int sc_onInterval;
-      int sc_global_counters;
-      int sc_acumm_counters;
-      int sc_summarize_states;
-      int sc_only_in_bursts;
-      int sc_remove_states;
-      unsigned long long sc_interval;
-      int sc_frequency;
-      char *types;
-      char *types_kept;
-
-      /* Parameters for Stats */
-      int bursts_plot;
-      int comms_plot;
-      int events_plot;
-    };
-
-    struct utilities_options exec_options;
-
+  //  KTraceOptions( const KernelConnection *whichKernel, char *xmldocname );
     KTraceOptions();
+    KTraceOptions( const TraceOptions &whichTraceOptions );
+    KTraceOptions( const KTraceOptions &whichTraceOptions );
+    KTraceOptions( const KernelConnection *whichKernel );
     ~KTraceOptions();
 
-    /* Sets for filtering */
-    inline void set_filter_events( char filterEvents )
+    /* Global Settings */
+    inline void set_max_trace_size( int whichTraceSize )
     {
-      exec_options.filter_events = filterEvents;
+      max_trace_size = whichTraceSize;
     }
 
-    inline void set_filter_states( char filterStates )
+    inline int get_max_trace_size() const
     {
-      exec_options.filter_states = filterStates;
-    }
-
-    inline void set_filter_comms( char filterComms )
-    {
-      exec_options.filter_comms = filterComms;
-    }
-
-    inline void set_discard_given_types( char discardGivenTypes )
-    {
-      exec_options.discard_given_types = discardGivenTypes;
-    }
-
-    inline void set_filter_by_call_time( char filterByCallTime )
-    {
-      exec_options.filter_by_call_time = filterByCallTime;
-    }
-
-    inline void set_state_names( char *stateNames[20] )
-    {
-      for ( unsigned int i = 0; i < 20; ++i )
-      {
-        exec_options.state_names[ i ] = strdup( stateNames[ i ] );
-      }
-    }
-
-    inline void set_all_states( char allStates )
-    {
-      exec_options.all_states = allStates;
-    }
-
-    inline void set_min_state_time( unsigned long long minStateTime )
-    {
-      exec_options.min_state_time = minStateTime;
-    }
-
-    inline void set_min_comm_size( int minCommSize )
-    {
-      exec_options.min_comm_size = minCommSize;
-    }
-
-    inline void set_filter_types( struct allowed_types filterTypes[20] )
-    {
-      for ( unsigned int i = 0; i < 20; ++i )
-      {
-        exec_options.filter_types[ i ] = filterTypes[ i ];
-      }
-    }
-
-    inline void set_filter_last_type(  int filterLastType )
-    {
-      exec_options.filter_last_type = filterLastType;
+      return max_trace_size;
     }
 
     /* Sets for Cutter */
-    inline void set_min_cutting_time( unsigned long long minCutTime )
+    inline void set_by_time( bool whichByTime )
     {
-      exec_options.min_cutting_time = minCutTime;
+      by_time = whichByTime;
     }
 
-    inline void set_max_cutting_time( unsigned long long maxCutTime )
+    inline void set_min_cutting_time( unsigned long long whichMinCutTime )
     {
-      exec_options.min_cutting_time = maxCutTime;
+      min_cutting_time = whichMinCutTime;
     }
 
-    inline void set_tasks_list( char *tasksList[256] )
+    inline void set_max_cutting_time( unsigned long long whichMaxCutTime )
+    {
+      max_cutting_time = whichMaxCutTime;
+    }
+
+    inline void set_minimum_time_percentage( unsigned long long whichMinimumTimePercentage )
+    {
+      min_percentage = whichMinimumTimePercentage;
+    }
+
+    inline void set_maximum_time_percentage( unsigned long long whichMaximumTimePercentage )
+    {
+      max_percentage = whichMaximumTimePercentage;
+    }
+
+    inline void init_tasks_list()
     {
       for ( unsigned int i = 0; i < 256; ++i )
       {
-        exec_options.tasks_list[ i ] = *tasksList[ i ];
+        tasks_list[ i ] = '\0';
       }
     }
 
-    inline void set_original_time( char originalTime )
+    inline void set_tasks_list( char whichTasksList[256] )
     {
-      exec_options.original_time = originalTime;
+      init_tasks_list();
+
+      for ( unsigned int i = 0; i < 256; ++i )
+      {
+        if ( whichTasksList[ i ] == '\0' )
+          break;
+        else
+          tasks_list[ i ] = whichTasksList[ i ];
+      }
     }
 
-    inline void set_max_trace_size( int traceSize )
+    inline void set_original_time( char whichOriginalTime )
     {
-      exec_options.max_trace_size = traceSize;
+      original_time = whichOriginalTime;
     }
 
-    inline void set_break_states( int breakStates )
+    inline void set_break_states( int whichBreakStates )
     {
-      exec_options.break_states = breakStates;
+      break_states = whichBreakStates;
     }
 
-    inline void set_remFirstStates( int remStates )
+    inline void set_remFirstStates( int whichRemStates )
     {
-      exec_options.remFirstStates = remStates;
+      remFirstStates = whichRemStates;
     }
 
-    inline void set_remLastStates( int remStates )
+    inline void set_remLastStates( int whichRemStates )
     {
-      exec_options.remLastStates = remStates;
+      remLastStates = whichRemStates;
     }
 
-    /* Sets for Sofware Counters */
-    inline void set_sc_onInterval( int scOnInterval )
+    inline bool get_by_time() const
     {
-      exec_options.sc_onInterval = scOnInterval;
+      return by_time;
     }
 
-    inline void set_sc_global_counters( int scGlobalCounters )
+    inline unsigned long long get_min_cutting_time() const
     {
-      exec_options.sc_global_counters = scGlobalCounters;
+      return min_cutting_time;
     }
 
-    inline void set_sc_acumm_counters( int scAcummCounters )
+    inline unsigned long long get_max_cutting_time() const
     {
-      exec_options.sc_acumm_counters = scAcummCounters;
+      return max_cutting_time;
     }
 
-    inline void set_sc_summarize_states( int scSummarizeStates )
+    inline unsigned long long get_minimum_time_percentage() const
     {
-      exec_options.sc_summarize_states = scSummarizeStates;
+      return min_percentage;
     }
 
-    inline void set_sc_only_in_bursts( int scOnlyInBursts )
+    inline unsigned long long get_maximum_time_percentage() const
     {
-      exec_options.sc_only_in_bursts = scOnlyInBursts;
+      return max_percentage;
     }
 
-    inline void set_sc_remove_states( int scRemoveStates )
+    inline void get_tasks_list( TTasksList &whichTasksList ) const
     {
-      exec_options.sc_remove_states = scRemoveStates;
+      for ( unsigned int i = 0; i < 256; ++i )
+      {
+        whichTasksList[ i ] = '\0';
+      }
+
+      for ( unsigned int i = 0; i < 256; ++i )
+      {
+        if ( tasks_list[ i ] == '\0' )
+          break;
+        else
+          whichTasksList[ i ] = tasks_list[ i ];
+      }
     }
 
-    inline void set_sc_interval( unsigned long long scInterval )
+    inline char get_original_time() const
     {
-      exec_options.sc_interval = scInterval;
+      return original_time;
     }
 
-    inline void set_sc_frequency( int scFrequency )
+    inline int get_break_states() const
     {
-      exec_options.sc_frequency = scFrequency;
+      return break_states;
+    }
+
+    inline int get_remFirstStates() const
+    {
+      return remFirstStates;
+    }
+
+    inline int get_remLastStates() const
+    {
+      return remLastStates;
+    }
+
+    /* Sets for filtering */
+    inline void set_filter_events( char whichFilterEvents )
+    {
+      filter_events = whichFilterEvents;
+    }
+
+    inline void set_filter_states( char whichFilterStates )
+    {
+      filter_states = whichFilterStates;
+    }
+
+    inline void set_filter_comms( char whichFilterComms )
+    {
+      filter_comms = whichFilterComms;
+    }
+
+    inline void set_discard_given_types( char whichDiscardGivenTypes )
+    {
+      discard_given_types = whichDiscardGivenTypes;
+    }
+
+    inline void set_filter_by_call_time( char whichFilterByCallTime )
+    {
+      filter_by_call_time = whichFilterByCallTime;
+    }
+
+    inline void set_state_names( char *whichStateNames[20] )
+    {
+      for ( unsigned int i = 0; i < 20; ++i )
+      {
+        state_names[ i ] = strdup( whichStateNames[ i ] );
+      }
+    }
+
+    inline void set_all_states( char whichAllStates )
+    {
+      all_states = whichAllStates;
+    }
+
+    inline void set_min_state_time( unsigned long long whichMinStateTime )
+    {
+      min_state_time = whichMinStateTime;
+    }
+
+    inline void set_min_comm_size( int whichMinCommSize )
+    {
+      min_comm_size = whichMinCommSize;
+    }
+
+    inline void set_filter_types( struct allowed_types whichFilterTypes[20] )
+    {
+      for ( unsigned int i = 0; i < 20; ++i )
+      {
+        filter_types[ i ] = whichFilterTypes[ i ];
+      }
+    }
+
+    inline void set_filter_last_type(  int whichFilterLastType )
+    {
+      filter_last_type = whichFilterLastType;
+    }
+
+    /* Sets for Software Counters */
+    inline void set_sc_onInterval( int whichSCOnInterval )
+    {
+      sc_onInterval = whichSCOnInterval;
+    }
+
+    inline void set_sc_global_counters( int whichSCGlobalCounters )
+    {
+      sc_global_counters = whichSCGlobalCounters;
+    }
+
+    inline void set_sc_acumm_counters( int whichSCAcummCounters )
+    {
+      sc_acumm_counters = whichSCAcummCounters;
+    }
+
+    inline void set_sc_summarize_states( int whichSCSummarizeStates )
+    {
+      sc_summarize_states = whichSCSummarizeStates;
+    }
+
+    inline void set_sc_only_in_bursts( int whichSCOnlyInBursts )
+    {
+      sc_only_in_bursts = whichSCOnlyInBursts;
+    }
+
+    inline void set_sc_remove_states( int whichSCRemoveStates )
+    {
+      sc_remove_states = whichSCRemoveStates;
+    }
+
+    inline void set_sc_interval( unsigned long long whichSCInterval )
+    {
+      sc_interval = whichSCInterval;
+    }
+
+    inline void set_sc_frequency( int whichSCFrequency )
+    {
+      sc_frequency = whichSCFrequency;
     }
 
     inline void set_types( char *whichTypes )
     {
-      exec_options.types = whichTypes;
+      types = whichTypes;
     }
 
-    inline void set_types_kept( char *typesKept )
+    inline void set_types_kept( char *whichTypesKept )
     {
-      exec_options.types_kept = typesKept;
+      types_kept = whichTypesKept;
     }
 
 
     /* Sets for comm_fusion */
-    inline void set_reduce_comms( char reduceComms )
+    inline void set_reduce_comms( char whichReduceComms )
     {
-      exec_options.reduce_comms = reduceComms;
+      reduce_comms = whichReduceComms;
     }
 
-    inline void set_comm_fusion_big_interval( unsigned long long bigInterval )
+    inline void set_comm_fusion_big_interval( unsigned long long whichBigInterval )
     {
-      exec_options.comm_fusion_big_interval = bigInterval;
+      comm_fusion_big_interval = whichBigInterval;
     }
 
-    inline void set_comm_fusion_small_interval( unsigned long long smallInterval )
+    inline void set_comm_fusion_small_interval( unsigned long long whichSmallInterval )
     {
-      exec_options.comm_fusion_small_interval = smallInterval;
+      comm_fusion_small_interval = whichSmallInterval;
     }
 
     /* Parameters for Stats */
-    inline void set_bursts_plot( int burstsPlot )
+    inline void set_bursts_plot( int whichBurstsPlot )
     {
-      exec_options.bursts_plot = burstsPlot;
+      bursts_plot = whichBurstsPlot;
     }
 
-    inline void set_comms_plot( int commsPlot )
+    inline void set_comms_plot( int whichCommsPlot )
     {
-      exec_options.comms_plot = commsPlot;
+      comms_plot = whichCommsPlot;
     }
 
-    inline void set_events_plot( int eventsPlot )
+    inline void set_events_plot( int whichEventsPlot )
     {
-      exec_options.events_plot = eventsPlot;
+      events_plot = whichEventsPlot;
     }
 
 
     void parseDoc( char *docname );
 
   private:
-
+    void init();
+    void init_filter_types();
     void parse_type( xmlDocPtr doc, xmlNodePtr cur, struct allowed_types *types, int *last_type );
     void parse_filter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur );
 };
 
-#endif // _KPARSERXML_H_
+#endif // _KTRACEOPTIONS_H_

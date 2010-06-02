@@ -33,9 +33,9 @@
 
 TraceSoftwareCounters::TraceSoftwareCounters( char *trace_in, char *trace_out, char *xmldocname )
 {
-  KTraceOptions options;
-  options.parseDoc( xmldocname );
-  KTraceSoftwareCounters sc( trace_in, trace_out, options.exec_options );
+//  KTraceOptions options;
+//  options.parseDoc( xmldocname );
+//  KTraceSoftwareCounters sc( trace_in, trace_out, options.exec_options );
 }
 
 TraceSoftwareCounters::~TraceSoftwareCounters()

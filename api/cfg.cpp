@@ -197,11 +197,16 @@ string levelToStringHisto( TWindowLevel whichLevel )
 
 bool CFGLoader::isCFGFile( const string& filename )
 {
+  bool isCFG = false;
   string cfgExt;
 
-  cfgExt = filename.substr( filename.length() - 4 );
+  if ( filename.length() > 4 )
+  {
+    cfgExt = filename.substr( filename.length() - 4 );
+    isCFG = ( cfgExt.compare( ".cfg" ) == 0 );
+  }
 
-  return ( cfgExt.compare( ".cfg" ) == 0 );
+  return isCFG;
 }
 
 bool CFGLoader::loadCFG( KernelConnection *whichKernel,

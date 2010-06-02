@@ -30,14 +30,34 @@
 #include "tracefilter.h"
 #include "ktraceoptions.h"
 #include "ktracefilter.h"
+#include "kernelconnection.h"
 
-TraceFilter::TraceFilter( char *trace_in, char *trace_out, char *xmldocname )
+
+TraceFilter *TraceFilter::create( KernelConnection *whichKernel,
+                                  char *traceIn,
+                                  char *traceOut,
+                                  TraceOptions *options )
 {
-  KTraceOptions options;
-  options.parseDoc( xmldocname );
-  KTraceFilter filter( trace_in, trace_out, options.exec_options );
+  return new TraceFilterProxy( whichKernel, traceIn, traceOut, options );
 }
 
-TraceFilter::~TraceFilter()
+
+TraceFilterProxy::TraceFilterProxy( KernelConnection *whichKernel,
+                                  char *traceIn,
+                                  char *traceOut,
+                                  TraceOptions *options )
+{
+  myTraceFilter = whichKernel->newTraceFilter( traceIn, traceOut, options );
+}
+
+void TraceFilterProxy::execute()
 {
 }
+
+TraceFilterProxy::~TraceFilterProxy()
+{
+  delete myTraceFilter;
+}
+
+
+

@@ -54,6 +54,18 @@ class LocalKernel: public KernelConnection
     virtual ProgressController *newProgressController() const;
     virtual Filter *newFilter( Filter *concreteFilter ) const;
 
+//    virtual TraceOptions *newTraceOptions( char *docname ) const;
+    virtual TraceOptions *newTraceOptions() const;
+    virtual TraceCutter *newTraceCutter( char *trace_in,
+                                         char *trace_out,
+                                         TraceOptions *options ) const;
+    virtual TraceFilter *newTraceFilter( char *trace_in,
+                                         char *trace_out,
+                                         TraceOptions *options ) const;
+    virtual TraceSoftwareCounters *newTraceSoftwareCounters( char *&trace_in,
+                                                             char *&trace_out,
+                                                             TraceOptions &options ) const;
+
     virtual void getAllStatistics( vector<string>& onVector ) const;
     virtual void getAllFilterFunctions( vector<string>& onVector ) const;
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,

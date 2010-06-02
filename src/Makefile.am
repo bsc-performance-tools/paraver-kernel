@@ -20,6 +20,10 @@ libparaver_kernel_la_SOURCES = \
     kprogresscontroller.cpp \
     krecordlist.cpp \
     ktrace.cpp \
+    ktracecutter.cpp \
+    ktracefilter.cpp \
+    ktraceoptions.cpp \
+    ktracesoftwarecounters.cpp \
     kwindow.cpp \
     kwindowexception.cpp \
     memorytrace.cpp \

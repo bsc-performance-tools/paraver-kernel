@@ -106,8 +106,19 @@ ParaverConfig::ParaverConfig()
   xmlHistogram.saveTextFormat = CSV;
   xmlHistogram.saveImageFormat = JPG;
 
+  // Filter Globals
   xmlFilters.filterTraceUpToMB = 500.0;
   xmlFilters.xmlPath = homedir;
+
+  xmlFilters.xmlCutterInstance.byTime = false;
+  xmlFilters.xmlCutterInstance.minimumTime = 0;
+  xmlFilters.xmlCutterInstance.maximumTime = 0; // proposal: 0 == maximum trace time
+  xmlFilters.xmlCutterInstance.minimumTimePercentage = 0;
+  xmlFilters.xmlCutterInstance.maximumTimePercentage = 100;
+  xmlFilters.xmlCutterInstance.originalTime = true;
+  xmlFilters.xmlCutterInstance.breakStates = true;
+  xmlFilters.xmlCutterInstance.removeFirstStates = false;
+  xmlFilters.xmlCutterInstance.removeLastStates = false;
 
   xmlColor.timelineBackground = SemanticColor::BACKGROUND;
   xmlColor.timelineAxis = SemanticColor::FOREGROUND;
@@ -585,6 +596,100 @@ float ParaverConfig::getFiltersFilterTraceUpToMB() const
 string ParaverConfig::getFiltersXMLPath() const
 {
   return xmlFilters.xmlPath;
+}
+
+
+// filters filter
+void ParaverConfig::setCutterByTime( bool whichByTime )
+{
+  xmlFilters.xmlCutterInstance.byTime = whichByTime;
+}
+
+void ParaverConfig::setCutterMinimumTime( TTime whichMinTime )
+{
+  xmlFilters.xmlCutterInstance.minimumTime = whichMinTime;
+}
+
+void ParaverConfig::setCutterMaximumTime( TTime whichMaxTime )
+{
+  xmlFilters.xmlCutterInstance.maximumTime = whichMaxTime;
+}
+
+void ParaverConfig::setCutterMinimumTimePercentage( TTime whichMinTimePercentage )
+{
+  xmlFilters.xmlCutterInstance.minimumTimePercentage = whichMinTimePercentage;
+}
+
+void ParaverConfig::setCutterMaximumTimePercentage( TTime whichMaxTimePercentage )
+{
+  xmlFilters.xmlCutterInstance.maximumTimePercentage = whichMaxTimePercentage;
+}
+
+void ParaverConfig::setCutterOriginalTime( bool whichOriginalTime )
+{
+  xmlFilters.xmlCutterInstance.originalTime = whichOriginalTime;
+}
+
+// void setFiltersTasksList(  );
+void ParaverConfig::setCutterBreakStates( bool whichBreakStates )
+{
+  xmlFilters.xmlCutterInstance.breakStates = whichBreakStates;
+}
+
+void ParaverConfig::setCutterRemoveFirstStates( bool whichRemoveFirstStates )
+{
+  xmlFilters.xmlCutterInstance.removeFirstStates = whichRemoveFirstStates;
+}
+
+void ParaverConfig::setCutterRemoveLastStates( bool whichRemoveLastStates )
+{
+  xmlFilters.xmlCutterInstance.removeLastStates = whichRemoveLastStates;
+}
+
+bool ParaverConfig::getCutterByTime()
+{
+  return xmlFilters.xmlCutterInstance.byTime;
+}
+
+TTime ParaverConfig::getCutterMinimumTime()
+{
+  return xmlFilters.xmlCutterInstance.minimumTime;
+}
+
+TTime ParaverConfig::getCutterMaximumTime()
+{
+  return xmlFilters.xmlCutterInstance.maximumTime;
+}
+
+TTime ParaverConfig::getCutterMinimumTimePercentage()
+{
+  return xmlFilters.xmlCutterInstance.minimumTimePercentage;
+}
+
+TTime ParaverConfig::getCutterMaximumTimePercentage()
+{
+  return xmlFilters.xmlCutterInstance.maximumTimePercentage;
+}
+
+bool ParaverConfig::getCutterOriginalTime()
+{
+  return xmlFilters.xmlCutterInstance.originalTime;
+}
+
+//  setFiltersTasksList(  );
+bool ParaverConfig::getCutterBreakStates()
+{
+  return xmlFilters.xmlCutterInstance.breakStates;
+}
+
+bool ParaverConfig::getCutterRemoveFirstStates()
+{
+  return xmlFilters.xmlCutterInstance.removeFirstStates;
+}
+
+bool ParaverConfig::getCutterRemoveLastStates()
+{
+  return xmlFilters.xmlCutterInstance.removeLastStates;
 }
 
 
