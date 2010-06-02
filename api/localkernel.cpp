@@ -39,6 +39,7 @@
 #include "krecordlist.h"
 #include "kprogresscontroller.h"
 #include "labelconstructor.h"
+#include "ktraceoptions.h"
 #include "ktracecutter.h"
 #include "ktracefilter.h"
 

@@ -41,6 +41,7 @@
 #include "paraverkernelexception.h"
 #include "paraverconfig.h"
 #include "textoutput.h"
+#include "traceoptions.h"
 
 using namespace std;
 
