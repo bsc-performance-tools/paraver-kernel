@@ -394,10 +394,10 @@
 		<Unit filename="api/traceoptions.h">
 			<Option target="api" />
 		</Unit>
-		<Unit filename="api/tracesoftwarecounters.h">
+		<Unit filename="api/tracesoftwarecounters.cpp">
 			<Option target="api" />
 		</Unit>
-		<Unit filename="api/tracesofwarecounters.cpp">
+		<Unit filename="api/tracesoftwarecounters.h">
 			<Option target="api" />
 		</Unit>
 		<Unit filename="api/window.cpp">
