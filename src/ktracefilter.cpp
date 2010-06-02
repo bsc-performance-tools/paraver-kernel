@@ -51,6 +51,7 @@ KTraceFilter::KTraceFilter( char *trace_in, char *trace_out, KTraceOptions *opti
 
 KTraceFilter::~KTraceFilter()
 {
+  delete exec_options;
 }
 
 

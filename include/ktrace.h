@@ -161,6 +161,8 @@ class KTrace: public Trace
 
     virtual bool getFillStateGaps() const;
     virtual void setFillStateGaps( bool fill );
+    virtual void copyPCF( char *name, char *traceToLoad );
+    virtual void copyROW( char *name, char *traceToLoad );
 
   protected:
     bool ready;
@@ -177,6 +179,8 @@ class KTrace: public Trace
     vector<string> communicators;
     set<TEventType> events;
     bool fillStateGaps;
+
+    void copyFile( char *in, char *out );
 };
 
 #endif // KTRACE_H_INCLUDED

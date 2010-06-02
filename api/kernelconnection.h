@@ -33,7 +33,7 @@
 #include <string>
 #include <vector>
 #include "paraverkerneltypes.h"
-#include "traceoptions.h"
+//#include "traceoptions.h"
 
 class Window;
 class Histogram;
@@ -41,7 +41,7 @@ class Trace;
 class RecordList;
 class ProgressController;
 class Filter;
-//class TraceOptions;
+class TraceOptions;
 class TraceCutter;
 class TraceFilter;
 class TraceSoftwareCounters;

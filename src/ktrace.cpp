@@ -376,7 +376,7 @@ void KTrace::dumpFile( const string& whichFile, INT32 numIter ) const
       while ( !it->isNull() )
       {
         body->write( file, *this, it, iter );
-        if( it->getTime() == traceEndTime ) break;
+        if ( it->getTime() == traceEndTime ) break;
         ++( *it );
       }
 
@@ -488,11 +488,11 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   else
   {
     string strTimeUnit( tmpstr.substr( pos, tmpstr.length() ) );
-    if( strTimeUnit == "_ns" )
+    if ( strTimeUnit == "_ns" )
       traceTimeUnit = NS;
-    else if( strTimeUnit == "_us" )
+    else if ( strTimeUnit == "_us" )
       traceTimeUnit = US;
-    else if( strTimeUnit == "_ms" )
+    else if ( strTimeUnit == "_ms" )
       traceTimeUnit = MS;
     else
       traceTimeUnit = US;
@@ -691,3 +691,48 @@ void KTrace::setFillStateGaps( bool fill )
 {
   fillStateGaps = fill;
 }
+
+#include <string.h>
+void KTrace::copyPCF( char *name, char *traceToLoad )
+{
+  char *pcfIn = strdup( name );
+  char *pcfOut = strdup( traceToLoad );
+  pcfIn[strlen( pcfIn )-4] = '\0';
+  pcfOut[strlen( pcfOut )-4] = '\0';
+  sprintf( pcfIn, "%s.pcf", pcfIn );
+  sprintf( pcfOut, "%s.pcf", pcfOut );
+  copyFile( pcfIn, pcfOut );
+  free( pcfIn );
+  free( pcfOut );
+}
+
+void KTrace::copyROW( char *name, char *traceToLoad )
+{
+  char *rowIn = strdup( name );
+  char *rowOut = strdup( traceToLoad );
+  rowIn[strlen( rowIn )-4] = '\0';
+  rowOut[strlen( rowOut )-4] = '\0';
+  sprintf( rowIn, "%s.row", rowIn );
+  sprintf( rowOut, "%s.row", rowOut );
+  copyFile( rowIn, rowOut );
+  free( rowIn );
+  free( rowOut );
+}
+
+void KTrace::copyFile( char *in, char *out )
+{
+  FILE *fileIn, *fileOut;
+  char line[2048];
+
+  if ( ( fileIn = fopen( in, "r" ) ) == NULL )
+    return;
+
+  fileOut = fopen( out, "w" );
+
+  while ( fgets( line, sizeof( line ), fileIn ) != NULL )
+    fputs( line, fileOut );
+
+  fclose( fileIn );
+  fclose( fileOut );
+}
+
