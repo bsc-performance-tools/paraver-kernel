@@ -124,6 +124,8 @@ class Trace
 
     virtual void setFillStateGaps( bool fill ) = 0;
 
+    virtual void copyPCF( char *name, char *traceToLoad ) = 0;
+    virtual void copyROW( char *name, char *traceToLoad ) = 0;
 
     // Specific methods for TraceProxy only
     virtual bool getUnload() const
@@ -276,6 +278,8 @@ class TraceProxy: public Trace
 
     virtual bool getFillStateGaps() const;
     virtual void setFillStateGaps( bool fill );
+    virtual void copyPCF( char *name, char *traceToLoad );
+    virtual void copyROW( char *name, char *traceToLoad );
 
   private:
     Trace *myTrace;
