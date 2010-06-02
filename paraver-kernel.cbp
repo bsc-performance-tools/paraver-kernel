@@ -119,6 +119,7 @@
 			<Add directory="../common-files" />
 			<Add directory="./" />
 			<Add directory="api" />
+			<Add directory="/usr/include/libxml2" />
 		</Compiler>
 		<Linker>
 			<Add library="xml2" />
