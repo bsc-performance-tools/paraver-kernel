@@ -316,3 +316,9 @@ void TraceOptionsProxy::parseDoc( char *docname )
 {
   myTraceOptions->parseDoc( docname );
 }
+
+TraceOptions *TraceOptionsProxy::getConcrete()
+{
+  return myTraceOptions;
+}
+

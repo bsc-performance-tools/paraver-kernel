@@ -32,6 +32,7 @@
 
 class TraceOptions;
 class KernelConnection;
+#include "localkernel.h"
 
 class TraceFilter
 {

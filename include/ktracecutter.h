@@ -38,7 +38,7 @@
 class KTraceCutter : public TraceCutter
 {
   public:
-    KTraceCutter( char *&trace_in, char *&trace_out, KTraceOptions *options );
+    KTraceCutter( char *&trace_in, char *&trace_out, TraceOptions *options );
     ~KTraceCutter();
 
     void set_by_time( bool byTime );

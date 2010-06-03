@@ -39,11 +39,13 @@
 //#include "filters_wait_window.h"
 #include "ktracefilter.h"
 
-KTraceFilter::KTraceFilter( char *trace_in, char *trace_out, KTraceOptions *options )
+KTraceFilter::KTraceFilter( char *trace_in, char *trace_out, TraceOptions *options )
 {
   is_zip_filter = 0;
 
-  exec_options = new KTraceOptions( *options );
+//  exec_options = new KTraceOptions( *options );
+  exec_options = new KTraceOptions( (KTraceOptions )(*options) );
+
 
   execute( trace_in, trace_out );
 }

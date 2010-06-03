@@ -35,38 +35,34 @@ using namespace std;
 #include "ktraceoptions.h"
 #include "paraverconfig.h"
 
-// void KTraceOptions::parseDoc( char *docname ) is the real contructor
-// KTraceOptions::KTraceOptions( const KernelConnection *whichKernel, char *xmldocname ): TraceOptions( whichKernel, xmldocname )
 KTraceOptions::KTraceOptions()
 {
   init();
 }
 
-//KTraceOptions::KTraceOptions( const TraceOptions &whichTraceOptions )
 KTraceOptions::KTraceOptions( const TraceOptions &auxwhichTraceOptions ): TraceOptions( auxwhichTraceOptions )
-//KTraceOptions::KTraceOptions( const KTraceOptions &whichTraceOptions )
 {
   init();
 }
 
-KTraceOptions::KTraceOptions( const KTraceOptions &whichTraceOptions )
+KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
 {
   // Global Default Options
-  set_max_trace_size( whichTraceOptions.get_max_trace_size() );
+  set_max_trace_size( whichTraceOptions->get_max_trace_size() );
 
   // Cutter Default Options
-  set_by_time( whichTraceOptions.get_by_time() );
-  set_min_cutting_time( whichTraceOptions.get_min_cutting_time() );
-  set_max_cutting_time( whichTraceOptions.get_max_cutting_time() );
-  set_minimum_time_percentage( whichTraceOptions.get_minimum_time_percentage() );
-  set_maximum_time_percentage( whichTraceOptions.get_maximum_time_percentage() );
+  set_by_time( whichTraceOptions->get_by_time() );
+  set_min_cutting_time( whichTraceOptions->get_min_cutting_time() );
+  set_max_cutting_time( whichTraceOptions->get_max_cutting_time() );
+  set_minimum_time_percentage( whichTraceOptions->get_minimum_time_percentage() );
+  set_maximum_time_percentage( whichTraceOptions->get_maximum_time_percentage() );
   TTasksList list;
-  whichTraceOptions.get_tasks_list( list );
+  whichTraceOptions->get_tasks_list( list );
   set_tasks_list( list );
-  set_original_time( whichTraceOptions.get_original_time() );
-  set_break_states( whichTraceOptions.get_break_states() );
-  set_remFirstStates( whichTraceOptions.get_remFirstStates() );
-  set_remLastStates( whichTraceOptions.get_remLastStates() );
+  set_original_time( whichTraceOptions->get_original_time() );
+  set_break_states( whichTraceOptions->get_break_states() );
+  set_remFirstStates( whichTraceOptions->get_remFirstStates() );
+  set_remLastStates( whichTraceOptions->get_remLastStates() );
 
   // Filter Default Options
 }
@@ -76,6 +72,7 @@ KTraceOptions::KTraceOptions( const KernelConnection *whichKernel ): TraceOption
 {
   init();
 }
+
 
 KTraceOptions::~KTraceOptions()
 {}
@@ -188,7 +185,7 @@ void KTraceOptions::parse_type( xmlDocPtr doc, xmlNodePtr cur, struct allowed_ty
 
 void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
 {
-cout << "FILTER PARAMS!" << endl;
+//cout << "FILTER PARAMS!" << endl;
 
   xmlNodePtr child;
   xmlChar *word;
@@ -303,8 +300,6 @@ cout << "FILTER PARAMS!" << endl;
 
 void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
 {
-cout << "PARSING CUTTER PARAMS!" << endl;
-
   xmlChar *word;
 
   while ( cur != NULL )
@@ -394,7 +389,7 @@ cout << "PARSING CUTTER PARAMS!" << endl;
 
 void KTraceOptions::parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur )
 {
-cout << "COMM_FUSION PARAMS!" << endl;
+//cout << "COMM_FUSION PARAMS!" << endl;
 
 
   xmlChar *word;
@@ -425,9 +420,6 @@ cout << "COMM_FUSION PARAMS!" << endl;
 // The real constructor
 void KTraceOptions::parseDoc( char *docname )
 {
-cout << "PARSE DOC!" << endl;
-
-
   xmlDocPtr doc;
   xmlNodePtr cur;
 

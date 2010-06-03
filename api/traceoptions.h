@@ -31,6 +31,8 @@
 #define TRACEOPTIONS_H_INCLUDED
 
 class KernelConnection;
+#include "localkernel.h"
+
 
 class TraceOptions
 {
@@ -38,11 +40,9 @@ class TraceOptions
 
     typedef char TTasksList[256];
 
-//    static TraceOptions *create( KernelConnection *whichKernel, char *xmldocname );
     static TraceOptions *create( KernelConnection *whichKernel );
 
     TraceOptions() {}
-//    TraceOptions( const KernelConnection *whichKernel, char *xmldocname ) {}
     TraceOptions( const KernelConnection *whichKernel ) {}
     virtual ~TraceOptions() {}
 
@@ -236,6 +236,7 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_events_plot( int eventsPlot );
 
     virtual void parseDoc( char *docname );
+    virtual TraceOptions *getConcrete();
 
   protected:
 
@@ -247,5 +248,11 @@ class TraceOptionsProxy :public TraceOptions
 
     // friend TraceOptions *TraceOptions::create( KernelConnection *, char * );
     friend TraceOptions *TraceOptions::create( KernelConnection * );
+    friend TraceCutter *LocalKernel::newTraceCutter( char *trace_in,
+                                         char *trace_out,
+                                         TraceOptions *options ) const;
+    friend TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
+                                          char *trace_out,
+                                          TraceOptions *options ) const;
 };
 #endif // TRACEOPTIONS_H_INCLUDED

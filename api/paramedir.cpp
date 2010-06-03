@@ -43,6 +43,9 @@
 #include "textoutput.h"
 #include "traceoptions.h"
 
+// for strdup
+#include <string.h>
+
 using namespace std;
 
 bool showHelp = false;
@@ -94,6 +97,9 @@ void printHelp()
   cout << "    paramedir -m linpack.prv.gz mpi_stats.cfg" << endl;
   cout << "      Computes the mpi_stats.cfg analysis of compressed trace linpack.prv." << endl;
   cout << endl;
+  cout << "    paramedir -c linpack.prv cutter.xml" << endl;
+  cout << "      Reads parameters of the cutter from the xml and applies them to linpack.prv trace." << endl;
+/*
   cout << "    paramedir -f linpack.prv just_MPI_calls.xml" << endl;
   cout << "      Filters mpi calls of linpack.prv. Doesn't load it, just writes the file." << endl;
   cout << endl;
@@ -101,6 +107,7 @@ void printHelp()
   cout << "      Reads parameters of the cutter and the filter from the xml and applies them to" << endl;
   cout << "      linpack.prv trace before load it and compute mpi_stats.cfg." << endl;
   cout << endl;
+*/
 }
 
 
@@ -259,40 +266,40 @@ bool anyFilter()
 string applyFilters( KernelConnection *myKernel )
 {
   string tmpTraceIn, tmpTraceOut;
-  char *tmpNameIn, *tmpNameOut;
+  char tmpNameIn[1024], tmpNameOut[1024];
   string strOutputFile;
 
   traceOptions = myKernel->newTraceOptions( );
   traceOptions->parseDoc( (char *)strXMLOptions.c_str() );
 
-  // Generate trace name properly; how do we number it?
-
   // Concatenate Filter Utilities
-
   if ( !cutTrace )
-    tmpNameOut = (char *)strTrace.c_str();
+    strcpy( tmpNameOut, (char *)strTrace.c_str() );
   else
   {
-    tmpNameIn = (char *)strTrace.c_str();
-    tmpNameOut = (char *)string( "tmpcutted.prv" ).c_str();
-
+    strcpy( tmpNameIn, (char *)strTrace.c_str() );
+    strcpy( tmpNameOut, (char *)strTrace.c_str() );
+    myKernel->getNewTraceName( tmpNameIn, tmpNameOut, INC_CHOP_COUNTER );
     traceCutter = myKernel->newTraceCutter( tmpNameIn,
                                             tmpNameOut,
                                             traceOptions );
   }
 
-  // tmpNameOut set
-  // <---
+  // <--- DISABLE FILTER
   filterTrace = false;
 
   if ( filterTrace )
   {
-    tmpNameIn = tmpNameOut;
-    tmpNameOut = (char *)string( "tmpcutted2.prv" ).c_str();
+    strcpy( tmpNameIn, tmpNameOut );
+    strcpy( tmpNameOut, (char *)string( "tmpcutted2.prv" ).c_str() );
     traceFilter = myKernel->newTraceFilter( tmpNameIn,
                                             tmpNameOut,
                                             traceOptions );
   }
+
+  // Finallyx, we duplicate .pcf and .row changing the name.
+  myKernel->copyPCF( tmpNameIn, tmpNameOut );
+  myKernel->copyROW( tmpNameIn, tmpNameOut );
 /*
   if ( !softwareCountersTrace )
     strOutputFile = tmpFile2;
@@ -399,8 +406,6 @@ int main( int argc, char *argv[] )
       if ( anyFilter() )
       {
         strTrace = applyFilters( myKernel );
-        cout << " ----> written trace!" << strTrace << endl;
-        // copy .pcf and .row ?
       }
 
       if ( anyCFG() || dumpTrace )

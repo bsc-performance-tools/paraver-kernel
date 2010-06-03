@@ -467,14 +467,3 @@ void TraceProxy::setFillStateGaps( bool fill )
 {
   myTrace->setFillStateGaps( fill );
 }
-
-
-void TraceProxy::copyPCF( char *name, char *traceToLoad )
-{
-  myTrace->copyPCF( name, traceToLoad );
-}
-
-void TraceProxy::copyROW( char *name, char *traceToLoad )
-{
-  myTrace->copyROW( name, traceToLoad );
-}

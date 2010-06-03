@@ -72,10 +72,29 @@ class LocalKernel: public KernelConnection
                                           vector<string>& onVector ) const;
 
     virtual bool userMessage( const string& message ) const;
+
+    virtual void copyPCF( char *name, char *traceToLoad );
+    virtual void copyROW( char *name, char *traceToLoad );
+    virtual void getNewTraceName( char *name, char *new_trace_name, int action );
+
   protected:
 
   private:
     bool (*myMessageFunction)(string);
+
+    // FILTERS
+    struct traces_table {
+      char *name;
+      int num_chop;
+      int num_filter;
+      int num_sc;
+    };
+
+    struct traces_table trace_names_table[10];
+    int trace_names_table_last; // should be static?
+
+    void copyFile( char *in, char *out );
+
 };
 
 

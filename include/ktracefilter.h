@@ -37,7 +37,7 @@
 class KTraceFilter: public TraceFilter
 {
   public:
-    KTraceFilter( char *trace_in, char *trace_out, KTraceOptions *options );
+    KTraceFilter( char *trace_in, char *trace_out, TraceOptions *options );
     ~KTraceFilter();
     void execute( char *trace_in, char *trace_out );
 

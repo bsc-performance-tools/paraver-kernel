@@ -118,7 +118,7 @@ class KTraceOptions: public TraceOptions
   //  KTraceOptions( const KernelConnection *whichKernel, char *xmldocname );
     KTraceOptions();
     KTraceOptions( const TraceOptions &whichTraceOptions );
-    KTraceOptions( const KTraceOptions &whichTraceOptions );
+    KTraceOptions( const KTraceOptions *whichTraceOptions );
     KTraceOptions( const KernelConnection *whichKernel );
     ~KTraceOptions();
 
