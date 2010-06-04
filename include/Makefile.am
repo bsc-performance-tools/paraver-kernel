@@ -26,7 +26,11 @@ noinst_HEADERS = \
                           kprogresscontroller.h\
                           krecordlist.h\
                           ktrace.h\
-                          kwindowexception.h\
+                          ktracecutter.h \
+                          ktracefilter.h \
+                          ktraceoptions.h \
+                          ktracesoftwarecounters.h \
+													kwindowexception.h\
                           kwindow.h\
                           matrix.h\
                           memoryblocks.h\

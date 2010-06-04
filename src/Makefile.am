@@ -15,6 +15,10 @@ libparaver_kernel_la_SOURCES = \
     intervalnotthread.cpp \
     intervalthread.cpp \
     kfilter.cpp \
+    ktracecutter.cpp \
+    ktracefilter.cpp \
+    ktraceoptions.cpp \
+    ktracesoftwarecounters.cpp \
     khistogram.cpp \
     khistogramtotals.cpp \
     kprogresscontroller.cpp \
