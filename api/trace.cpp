@@ -360,10 +360,7 @@ void TraceProxy::parsePCF( const string& whichFile )
       tmpColor.red = ( *it )->get_color1();
       tmpColor.green = ( *it )->get_color2();
       tmpColor.blue = ( *it )->get_color3();
-      if ( ( UINT32 )( *it )->get_key() < myCodeColor.getNumColors() )
-        myCodeColor.setColor( ( UINT32 )( *it )->get_key(), tmpColor );
-      else
-        myCodeColor.addColor( tmpColor );
+      myCodeColor.setColor( ( UINT32 )( *it )->get_key(), tmpColor );
     }
   }
 

@@ -87,7 +87,6 @@ class CodeColor: public SemanticColor
 
     UINT32 getNumColors() const;
     void setColor( UINT32 pos, rgb color );
-    void addColor( rgb color );
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
                    TSemanticValue maximum ) const;

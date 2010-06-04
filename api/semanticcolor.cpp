@@ -165,13 +165,14 @@ rgb CodeColor::getColor( UINT32 pos ) const
 void CodeColor::setColor( UINT32 pos, rgb color )
 {
   if ( pos >= colors.size() )
-    return;
+  {
+    while( pos >= colors.size() )
+    {
+      vector<rgb>::iterator pos = colors.end(); --pos;
+      colors.insert( pos, colors.begin(), colors.end() );
+    }
+  }
   colors[ pos ] = color;
-}
-
-void CodeColor::addColor( rgb color )
-{
-  colors.push_back( color );
 }
 
 rgb CodeColor::calcColor( TSemanticValue whichValue,
