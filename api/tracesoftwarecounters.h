@@ -33,8 +33,9 @@
 class TraceSoftwareCounters
 {
   public:
-    TraceSoftwareCounters( char *trace_in, char *trace_out, char *xmldocname );
-    ~TraceSoftwareCounters();
+    //TraceSoftwareCounters( char *trace_in, char *trace_out, char *xmldocname );
+    virtual ~TraceSoftwareCounters()
+    {}
 };
 
 #endif // TRACESOFTWARECOUNTERS_H_INCLUDED

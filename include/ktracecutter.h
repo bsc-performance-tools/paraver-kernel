@@ -39,21 +39,21 @@ class KTraceCutter : public TraceCutter
 {
   public:
     KTraceCutter( char *&trace_in, char *&trace_out, TraceOptions *options );
-    ~KTraceCutter();
+    virtual ~KTraceCutter();
 
-    void set_by_time( bool byTime );
-    void set_min_cutting_time( unsigned long long minCutTime );
-    void set_max_cutting_time( unsigned long long maxCutTime );
-    void set_minimum_time_percentage( unsigned long long minimumPercentage );
-    void set_maximum_time_percentage( unsigned long long maximumPercentage );
-    void set_tasks_list( char *tasksList );
-    void set_original_time( char originalTime );
-    void set_max_trace_size( int traceSize );
-    void set_break_states( int breakStates );
-    void set_remFirstStates( int remStates );
-    void set_remLastStates( int remStates );
+    virtual void set_by_time( bool byTime );
+    virtual void set_min_cutting_time( unsigned long long minCutTime );
+    virtual void set_max_cutting_time( unsigned long long maxCutTime );
+    virtual void set_minimum_time_percentage( unsigned long long minimumPercentage );
+    virtual void set_maximum_time_percentage( unsigned long long maximumPercentage );
+    virtual void set_tasks_list( char *tasksList );
+    virtual void set_original_time( char originalTime );
+    virtual void set_max_trace_size( int traceSize );
+    virtual void set_break_states( int breakStates );
+    virtual void set_remFirstStates( int remStates );
+    virtual void set_remLastStates( int remStates );
 
-    void execute( char *trace_in, char *trace_out );
+    virtual void execute( char *trace_in, char *trace_out );
 
   private:
     /* Buffer for reading trace records */

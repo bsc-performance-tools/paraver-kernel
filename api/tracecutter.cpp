@@ -28,8 +28,9 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "tracecutter.h"
-#include "ktraceoptions.h"
-#include "ktracecutter.h"
+//#include "ktraceoptions.h"
+#include "traceoptions.h"
+//#include "ktracecutter.h"
 #include "kernelconnection.h"
 
 TraceCutter *TraceCutter::create(  KernelConnection *whichKernel,

@@ -38,8 +38,8 @@ class KTraceFilter: public TraceFilter
 {
   public:
     KTraceFilter( char *trace_in, char *trace_out, TraceOptions *options );
-    ~KTraceFilter();
-    void execute( char *trace_in, char *trace_out );
+    virtual ~KTraceFilter();
+    virtual void execute( char *trace_in, char *trace_out );
 
   private:
     /* Buffer for reading trace records */

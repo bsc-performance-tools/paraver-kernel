@@ -36,10 +36,11 @@
 //class TraceSoftwareCounters;
 
 class KTraceSoftwareCounters
+//sclass KTraceSoftwareCounters : public TraceSoftwareCounters
 {
   public:
     KTraceSoftwareCounters( char *trace_in, char *trace_out, KTraceOptions &options );
-    ~KTraceSoftwareCounters();
+    virtual ~KTraceSoftwareCounters();
 
   private:
 

@@ -30,7 +30,7 @@
 #include "tracesoftwarecounters.h"
 #include "ktraceoptions.h"
 #include "ktracesoftwarecounters.h"
-
+/*
 TraceSoftwareCounters::TraceSoftwareCounters( char *trace_in, char *trace_out, char *xmldocname )
 {
 //  KTraceOptions options;
@@ -41,3 +41,4 @@ TraceSoftwareCounters::TraceSoftwareCounters( char *trace_in, char *trace_out, c
 TraceSoftwareCounters::~TraceSoftwareCounters()
 {
 }
+*/
