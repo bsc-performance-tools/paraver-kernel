@@ -54,7 +54,6 @@ class LocalKernel: public KernelConnection
     virtual ProgressController *newProgressController() const;
     virtual Filter *newFilter( Filter *concreteFilter ) const;
 
-//    virtual TraceOptions *newTraceOptions( char *docname ) const;
     virtual TraceOptions *newTraceOptions() const;
     virtual TraceCutter *newTraceCutter( char *trace_in,
                                          char *trace_out,
