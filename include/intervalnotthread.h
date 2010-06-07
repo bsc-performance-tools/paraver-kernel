@@ -130,11 +130,8 @@ class IntervalNotThread: public IntervalHigh
         if ( lastLevel != COMPOSECPU )
         {
           lastLevel = COMPOSECPU;
-          TNodeOrder myNode;
-          TCPUOrder myCPU;
-          getWindowTrace()->getCPULocation( order, myNode, myCPU );
-          for ( TCPUOrder i = getWindowTrace()->getFirstCPU( myNode );
-                i <= getWindowTrace()->getLastCPU( myNode ); i++ )
+          for ( TCPUOrder i = getWindowTrace()->getFirstCPU( order );
+                i <= getWindowTrace()->getLastCPU( order ); i++ )
           {
             childIntervals.push_back( getWindowInterval( COMPOSECPU, i ) );
           }
