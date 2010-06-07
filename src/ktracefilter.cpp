@@ -30,7 +30,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#ifndef WIN32
 #include <unistd.h>
+#endif
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <math.h>
@@ -38,6 +40,10 @@
 
 //#include "filters_wait_window.h"
 #include "ktracefilter.h"
+
+#ifdef WIN32
+#define atoll _atoi64
+#endif
 
 KTraceFilter::KTraceFilter( char *trace_in, char *trace_out, TraceOptions *options )
 {
@@ -244,6 +250,11 @@ void KTraceFilter::show_progress_bar()
     current_readed_size = ( unsigned long long )ftello( infile );
   else
     current_readed_size = ( unsigned long )gztell( gzInfile );
+#elif defined(WIN32)
+  if ( !is_zip_filter )
+    current_readed_size = ( unsigned long long )_ftelli64( infile );
+  else
+    current_readed_size = ( unsigned long )gztell( gzInfile );
 #else
   if ( !is_zip_filter )
     current_readed_size = ( unsigned long long )ftello64( infile );
@@ -376,6 +387,13 @@ void KTraceFilter::execute( char *trace_in, char *trace_out )
       printf( "Error Opening File %s\n", trace_in );
       exit( 1 );
     }
+#elif defined(WIN32)
+    if ( ( fopen_s( &infile, trace_name, "r" ) ) == NULL )
+    {
+      perror( "ERROR" );
+      printf( "Error Opening File %s\n", trace_in );
+      exit( 1 );
+    }
 #else
     if ( ( infile = fopen64( trace_name, "r" ) ) == NULL )
     {
@@ -396,6 +414,12 @@ void KTraceFilter::execute( char *trace_in, char *trace_out )
 
 #if defined(FreeBSD)
   if ( ( outfile = fopen( trace_out, "w" ) ) == NULL )
+  {
+    printf( "Error Opening File %s\n", trace_out );
+    exit( 1 );
+  }
+#elif defined(WIN32)
+  if ( ( fopen_s( &outfile, trace_out, "w" ) ) == NULL )
   {
     printf( "Error Opening File %s\n", trace_out );
     exit( 1 );

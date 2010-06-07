@@ -28,6 +28,7 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include <time.h>
+#include <sys/stat.h>
 #include "localkernel.h"
 #include "kwindow.h"
 #include "khistogram.h"
@@ -251,7 +252,11 @@ void LocalKernel::getNewTraceName( char *name, char *new_trace_name, int action 
 {
   /* Putting on table of names in order to generate new trace names */
   int i;
+#ifndef WIN32
   struct stat file_info;
+#else
+  struct _stat64 file_info;
+#endif
   char *c;
   char path_name_backup[1024];
   char traceToLoad[1024];
@@ -360,5 +365,9 @@ void LocalKernel::getNewTraceName( char *name, char *new_trace_name, int action 
         break;
     }
   }
+#ifndef WIN32
   while ( stat( new_trace_name, &file_info ) == 0 );
+#else
+  while ( _stat64( new_trace_name, &file_info ) == 0 );
+#endif
 }

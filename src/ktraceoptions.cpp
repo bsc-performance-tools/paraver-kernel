@@ -29,11 +29,16 @@
 #include <iostream>
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 using namespace std;
 
 #include "ktraceoptions.h"
 #include "paraverconfig.h"
+
+#ifdef WIN32
+#define atoll _atoi64
+#endif
 
 KTraceOptions::KTraceOptions()
 {

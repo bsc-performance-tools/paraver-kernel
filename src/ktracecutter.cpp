@@ -32,7 +32,11 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <math.h>
+#ifndef WIN32
 #include <unistd.h>
+#else
+#include <io.h>
+#endif
 #include <zlib.h>
 
 // only for cout ----
@@ -44,6 +48,10 @@ using namespace std;
 //#include "filters_wait_window.h"
 
 #include "ktracecutter.h"
+
+#ifdef WIN32
+#define atoll _atoi64
+#endif
 
 //class ParaverConfig;
 
@@ -380,6 +388,11 @@ void KTraceCutter::show_cutter_progress_bar()
     current_readed_size = ( unsigned long long )ftello( infile );
   else
     current_readed_size = ( unsigned long )gztell( gzInfile );
+#elif defined(WIN32)
+  if ( !is_zip )
+    current_readed_size = ( unsigned long long )_ftelli64( infile );
+  else
+    current_readed_size = ( unsigned long )gztell( gzInfile );
 #else
   if ( !is_zip )
     current_readed_size = ( unsigned long long )ftello64( infile );
@@ -511,6 +524,13 @@ void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut )
     printf( "KCutter: Error Opening File %s\n", nameIn );
     exit( 1 );
   }
+#elif defined(WIN32)
+  if ( ( fopen_s( &infile, nameIn, "r" ) ) == NULL )
+  {
+    perror( "ERROR" );
+    printf( "KCutter: Error Opening File %s\n", nameIn );
+    exit( 1 );
+  }
 #else
   if ( ( infile = fopen64( nameIn, "r" ) ) == NULL )
   {
@@ -524,6 +544,13 @@ void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut )
 
 #if defined(FreeBSD)
   if ( ( outfile = fopen( nameOut, "w" ) ) == NULL )
+  {
+    perror( "ERROR" );
+    printf( "KCutter: Error Opening File %s\n", nameOut );
+    exit( 1 );
+  }
+#elif defined(WIN32)
+  if ( ( fopen_s( &outfile, nameOut, "w" ) ) == NULL )
   {
     perror( "ERROR" );
     printf( "KCutter: Error Opening File %s\n", nameOut );
@@ -711,6 +738,13 @@ void KTraceCutter::execute( char *trace_in, char *trace_out )
       printf( "KCutter: Error Opening File %s\n", trace_name );
       exit( 1 );
     }
+#elif defined(WIN32)
+    if ( ( fopen_s( &infile, trace_name, "r" ) ) == NULL )
+    {
+      perror( "ERROR" );
+      printf( "KCutter: Error Opening File %s\n", trace_name );
+      exit( 1 );
+    }
 #else
     if ( ( infile = fopen64( trace_name, "r" ) ) == NULL )
     {
@@ -736,13 +770,23 @@ void KTraceCutter::execute( char *trace_in, char *trace_out )
       tmp_dir = getenv( "PWD" );
 
     sprintf( trace_file_out, "%s/tmp_fileXXXXXX", tmp_dir );
+#ifdef WIN32
+    _mktemp_s( trace_file_out );
+#else
     mkstemp( trace_file_out );
+#endif
   }
   else
     strcpy( trace_file_out, trace_out );
 
 #if defined(FreeBSD)
   if ( ( outfile = fopen( trace_file_out, "w" ) ) == NULL )
+  {
+    printf( "Error Opening KCutter Ouput File %s\n", trace_file_out );
+    exit( 1 );
+  }
+#elif defined(WIN32)
+  if ( ( fopen_s( &outfile, trace_file_out, "w" ) ) == NULL )
   {
     printf( "Error Opening KCutter Ouput File %s\n", trace_file_out );
     exit( 1 );

@@ -112,7 +112,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;..\..\common-files\win32&quot;;..\api;..\include;..\;&quot;..\..\common-files&quot;;&quot;C:\Archivos de programa\boost&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Archivos de programa\zlib\include&quot;;&quot;C:\Archivos de programa\iconv\include&quot;;&quot;C:\Archivos de programa\libxml2\include&quot;;&quot;..\..\common-files\win32&quot;;..\api;..\include;..\;&quot;..\..\common-files&quot;;&quot;C:\Archivos de programa\boost&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;API_EXPORTS"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -287,6 +287,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\tracecutter.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\tracefilter.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\traceoptions.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\tracesoftwarecounters.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common-files\pcfparser\UIParaverTraceConfig.cpp"
 				>
 			</File>
@@ -454,6 +470,22 @@
 			</File>
 			<File
 				RelativePath=".\trace.h"
+				>
+			</File>
+			<File
+				RelativePath=".\tracecutter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\tracefilter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\traceoptions.h"
+				>
+			</File>
+			<File
+				RelativePath=".\tracesoftwarecounters.h"
 				>
 			</File>
 			<File

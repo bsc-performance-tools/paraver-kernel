@@ -34,11 +34,17 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <math.h>
+#ifndef WIN32
 #include <unistd.h>
+#endif
 
 #include "ktracesoftwarecounters.h"
 #include "ktraceoptions.h"
 //#include "filters_wait_window.h"
+
+#ifdef WIN32
+#define atoll _atoi64
+#endif
 
 
 KTraceSoftwareCounters::KTraceSoftwareCounters( char *trace_in,
@@ -615,6 +621,8 @@ void KTraceSoftwareCounters::ini_progress_bar( char *file_name )
 {
 #if defined(FreeBSD)
   struct stat file_info;
+#elif defined(WIN32)
+  struct _stat64 file_info;
 #else
   struct stat64 file_info;
 #endif
@@ -623,6 +631,12 @@ void KTraceSoftwareCounters::ini_progress_bar( char *file_name )
   if ( stat( file_name, &file_info ) < 0 )
   {
     perror( "Error calling stat" );
+    exit( 1 );
+  }
+#elif defined(WIN32)
+  if ( _stat64( file_name, &file_info ) < 0 )
+  {
+    perror( "Error calling stat64" );
     exit( 1 );
   }
 #else
@@ -652,6 +666,8 @@ void KTraceSoftwareCounters::show_progress_bar()
 
 #if defined(FreeBSD)
   current_readed_size = ftello( infile );
+#elif defined(WIN32)
+  current_readed_size = _ftelli64( infile );
 #else
   current_readed_size = ftello64( infile );
 #endif
@@ -1378,6 +1394,18 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out )
     exit( 1 );
   }
   if ( ( outfile = fopen( trace_out, "w" ) ) == NULL )
+  {
+    printf( "Error Opening File %s\n", trace_out );
+    exit( 1 );
+  }
+#elif defined(WIN32)
+  if ( ( fopen_s( &infile, trace_name, "r" ) ) == NULL )
+  {
+    printf( "Error Opening File %s\n", trace_name );
+    exit( 1 );
+  }
+
+  if ( ( fopen_s( &outfile, trace_out, "w" ) ) == NULL )
   {
     printf( "Error Opening File %s\n", trace_out );
     exit( 1 );
