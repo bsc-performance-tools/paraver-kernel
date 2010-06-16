@@ -294,9 +294,13 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
                               TSemanticValue minimum,
                               TSemanticValue maximum ) const
 {
-  if ( whichValue == 0 && !drawOutOfScale &&
-      ParaverConfig::getInstance()->getColorsTimelineUseZero() )
-    return ParaverConfig::getInstance()->getColorsTimelineColorZero();
+  if ( whichValue == 0 && !drawOutOfScale )
+  {
+    if( ParaverConfig::getInstance()->getColorsTimelineUseZero() )
+      return ParaverConfig::getInstance()->getColorsTimelineColorZero();
+    else
+      return SemanticColor::BACKGROUND;
+  }
 
   if ( whichValue < minimum )
   {
