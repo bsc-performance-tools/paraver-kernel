@@ -1128,7 +1128,8 @@ void KTraceSoftwareCounters::insert_in_queue_state( int thread_id, unsigned long
 }
 
 
-void KTraceSoftwareCounters::put_counters_on_state( struct state_queue_elem *p, struct state_queue_elem *q )
+void KTraceSoftwareCounters::put_counters_on_state( struct KTraceSoftwareCounters::state_queue_elem *p,
+                                                    struct KTraceSoftwareCounters::state_queue_elem *q )
 {
   int i, j;
   unsigned long long type_mask;

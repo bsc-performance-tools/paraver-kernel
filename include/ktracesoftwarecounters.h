@@ -184,7 +184,8 @@ class KTraceSoftwareCounters
     void flush_counter_buffers( void );
     void sc_by_event();
     void insert_in_queue_state( int thread_id, unsigned long long time );
-    void put_counters_on_state( struct state_queue_elem *p, struct state_queue_elem *q );
+    void put_counters_on_state( struct KTraceSoftwareCounters::state_queue_elem *p,
+                                struct KTraceSoftwareCounters::state_queue_elem *q );
     void sc_by_states();
     void execute( char *trace_in, char *trace_out );
 };

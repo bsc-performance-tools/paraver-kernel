@@ -286,7 +286,7 @@ void KTraceCutter::proces_cutter_header( char *header,
   fseek( infile, -( strlen( header ) ), SEEK_CUR );
 
   /* Writing of the current cut offset */
-  if ( trace_in_name != '\0' )
+  if ( trace_in_name != "\0" )
     current_size += fprintf( outfile, "# %s: Offset %lld from %s\n", trace_out_name, time_min, trace_in_name );
 }
 
@@ -571,7 +571,7 @@ void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut )
   fgets( trace_header, MAX_TRACE_HEADER, infile );
 
 
-  proces_cutter_header( trace_header, '\0', '\0' );
+  proces_cutter_header( trace_header, "\0", "\0" );
 
   fgets( trace_header, MAX_TRACE_HEADER, infile );
   sscanf( trace_header, "%*d:%*d:%*d:%*d:%*d:%lld:", &timeOffset );

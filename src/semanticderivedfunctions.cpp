@@ -148,6 +148,8 @@ TSemanticValue ControlDerivedClearBy::execute( const SemanticInfo *info )
     }
     else
       tmp = prevResult[ tmpOrder ];
+
+    prevValue[ tmpOrder ] = myInfo->values[ 1 ];
   }
 
   return tmp;

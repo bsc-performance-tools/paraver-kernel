@@ -310,7 +310,7 @@ class KTraceOptions: public TraceOptions
       min_comm_size = whichMinCommSize;
     }
 
-    inline void set_filter_types( struct allowed_types whichFilterTypes[20] )
+    inline void set_filter_types( struct KTraceOptions::allowed_types whichFilterTypes[20] )
     {
       for ( unsigned int i = 0; i < 20; ++i )
       {
@@ -413,7 +413,7 @@ class KTraceOptions: public TraceOptions
   private:
     void init();
     void init_filter_types();
-    void parse_type( xmlDocPtr doc, xmlNodePtr cur, struct allowed_types *types, int *last_type );
+    void parse_type( xmlDocPtr doc, xmlNodePtr cur, struct KTraceOptions::allowed_types *types, int *last_type );
     void parse_filter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur );

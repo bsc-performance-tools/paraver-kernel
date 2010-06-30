@@ -133,7 +133,7 @@ void KTraceOptions::init()
 }
 
 
-void KTraceOptions::parse_type( xmlDocPtr doc, xmlNodePtr cur, struct allowed_types *types, int *last_type )
+void KTraceOptions::parse_type( xmlDocPtr doc, xmlNodePtr cur, struct KTraceOptions::allowed_types *types, int *last_type )
 {
   xmlChar *word;
   int index;
