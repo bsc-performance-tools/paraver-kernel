@@ -57,16 +57,17 @@ INT32 numIter = 1;
 Trace *trace;
 
 // Filter / Cutter global variables
+bool communicationsFusionTrace = false;
 bool cutTrace = false;
 bool filterTrace = false;
-bool commFusionTrace = false;
 bool softwareCountersTrace = false;
-// bool communicationsFusionTrace = false;
+
 TraceOptions *traceOptions = NULL;
+//TraceCommunicationsFusion *traceCommunicationsFusion = NULL;
 TraceCutter *traceCutter = NULL;
 TraceFilter *traceFilter = NULL;
-//TraceCommunicationsFusion *traceCommunicationsFusion = NULL;
 TraceSoftwareCounters *traceSoftwareCounters = NULL;
+
 string strXMLOptions( "" );
 map< string, string > cfgs;
 string strTrace( "" );
@@ -81,9 +82,9 @@ void printHelp()
   cout << "  Output file options:" << endl;
   cout << "    -m: Prints on multiple files." << endl;
   cout << endl;
-  cout << "  Cutter/Filter options ( xml options file needed ):" << endl;
+  cout << "  Cutter/Filter options ( needed unique xml file with cutter/filter options):" << endl;
   cout << "    -c: Apply Cutter." << endl;
-//  cout << "    -f: Apply Filter. (in progress)" << endl;
+  cout << "    -f: Apply Filter." << endl;
 //  cout << "    -j: Apply Communications Fusion. (in progress)" << endl;
 //  cout << "    -s: Apply Software Counters. (in progress)" << endl;
   cout << endl;
@@ -99,15 +100,15 @@ void printHelp()
   cout << endl;
   cout << "    paramedir -c linpack.prv cutter.xml" << endl;
   cout << "      Reads parameters of the cutter from the xml and applies them to linpack.prv trace." << endl;
-/*
+  cout << endl;
   cout << "    paramedir -f linpack.prv just_MPI_calls.xml" << endl;
   cout << "      Filters mpi calls of linpack.prv. Doesn't load it, just writes the file." << endl;
   cout << endl;
   cout << "    paramedir -c -f linpack.prv cut_filter_options.xml mpi_stats.cfg" << endl;
   cout << "      Reads parameters of the cutter and the filter from the xml and applies them to" << endl;
   cout << "      linpack.prv trace before load it and compute mpi_stats.cfg." << endl;
+  cout << "      paramedir will apply in first term the cutter, and then the resulting trace will be filtered." << endl;
   cout << endl;
-*/
 }
 
 
@@ -162,8 +163,8 @@ void activateOption( char *argument )
     filterTrace = true;
 //      else if ( argv[ currentArg ][ 1 ] ) == 'j' )
 //        communicationsFusionTrace = true;
-  else if ( argument[ 1 ] == 's' )
-    softwareCountersTrace = true;
+//  else if ( argument[ 1 ] == 's' )
+//    softwareCountersTrace = true;
   else
     cout << "Unknown option " << argument << endl;
 }
@@ -273,41 +274,52 @@ string applyFilters( KernelConnection *myKernel )
   traceOptions->parseDoc( (char *)strXMLOptions.c_str() );
 
   // Concatenate Filter Utilities
-  if ( !cutTrace )
-    strcpy( tmpNameOut, (char *)strTrace.c_str() );
-  else
+  strcpy( tmpNameOut, (char *)strTrace.c_str() );
+
+  if ( cutTrace )
   {
-    strcpy( tmpNameIn, (char *)strTrace.c_str() );
-    strcpy( tmpNameOut, (char *)strTrace.c_str() );
+    strcpy( tmpNameIn, tmpNameOut );
     myKernel->getNewTraceName( tmpNameIn, tmpNameOut, INC_CHOP_COUNTER );
     traceCutter = myKernel->newTraceCutter( tmpNameIn,
                                             tmpNameOut,
                                             traceOptions );
+    myKernel->copyPCF( tmpNameIn, tmpNameOut );
+    myKernel->copyROW( tmpNameIn, tmpNameOut );
   }
-
-  // <--- DISABLE FILTER
-  filterTrace = false;
 
   if ( filterTrace )
   {
     strcpy( tmpNameIn, tmpNameOut );
-    strcpy( tmpNameOut, (char *)string( "tmpcutted2.prv" ).c_str() );
+    myKernel->getNewTraceName( tmpNameIn, tmpNameOut, INC_FILTER_COUNTER );
     traceFilter = myKernel->newTraceFilter( tmpNameIn,
                                             tmpNameOut,
                                             traceOptions );
+    myKernel->copyPCF( tmpNameIn, tmpNameOut );
+    myKernel->copyROW( tmpNameIn, tmpNameOut );
   }
 
-  // Finallyx, we duplicate .pcf and .row changing the name.
-  myKernel->copyPCF( tmpNameIn, tmpNameOut );
-  myKernel->copyROW( tmpNameIn, tmpNameOut );
 /*
-  if ( !softwareCountersTrace )
-    strOutputFile = tmpFile2;
-  else
-    traceSoftwareCounters = myKernel->newTraceSoftwareCounters( (char *)tmpFile2.c_str(),
-                                                                (char *)strOutputFile.c_str(),
-                                                                traceOptions );
+  if ( commFusionTrace )
+  {
+    strcpy( tmpNameIn, tmpNameOut );
+    // which kind of name? "cf" ?
+    myKernel->getNewTraceName( tmpNameIn, tmpNameOut, INC_FILTER_COUNTER );
+    traceCommFusion = myKernel->newTraceCommFusion( tmpNameIn,
+                                                    tmpNameOut,
+                                                    traceOptions );
+  }
 */
+/*
+  if ( softwareCountersTrace )
+  {
+    strcpy( tmpNameIn, tmpNameOut );
+    myKernel->getNewTraceName( tmpNameIn, tmpNameOut, INC_SC_COUNTER );
+    traceSoftwareCounters = myKernel->newTraceSoftwareCounters( tmpNameIn,
+                                                                tmpNameOut,
+                                                                traceOptions );
+  }
+*/
+
 
 //      traceCommunicationsFusionTrace = myKernel->newTraceCommunicationsFusionTrace();
 
@@ -320,7 +332,7 @@ string applyFilters( KernelConnection *myKernel )
 //        delete traceFilter;
 //  delete traceCommunicationsFusionTrace;
 //  delete traceSoftwareCounters;
-    return string( tmpNameOut );
+  return string( tmpNameOut );
 }
 
 

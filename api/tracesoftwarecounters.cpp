@@ -30,15 +30,28 @@
 #include "tracesoftwarecounters.h"
 #include "ktraceoptions.h"
 #include "ktracesoftwarecounters.h"
-/*
-TraceSoftwareCounters::TraceSoftwareCounters( char *trace_in, char *trace_out, char *xmldocname )
+TraceSoftwareCounters *TraceSoftwareCounters::create( KernelConnection *whichKernel,
+                                  char *traceIn,
+                                  char *traceOut,
+                                  TraceOptions *options )
 {
-//  KTraceOptions options;
-//  options.parseDoc( xmldocname );
-//  KTraceSoftwareCounters sc( trace_in, trace_out, options.exec_options );
+  return new TraceSoftwareCountersProxy( whichKernel, traceIn, traceOut, options );
 }
 
-TraceSoftwareCounters::~TraceSoftwareCounters()
+
+TraceSoftwareCountersProxy::TraceSoftwareCountersProxy( KernelConnection *whichKernel,
+                                  char *traceIn,
+                                  char *traceOut,
+                                  TraceOptions *options )
+{
+  myTraceSoftwareCounters = whichKernel->newTraceSoftwareCounters( traceIn, traceOut, options );
+}
+
+void TraceSoftwareCountersProxy::execute()
 {
 }
-*/
+
+TraceSoftwareCountersProxy::~TraceSoftwareCountersProxy()
+{
+  delete myTraceSoftwareCounters;
+}

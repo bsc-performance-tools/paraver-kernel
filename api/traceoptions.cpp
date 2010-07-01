@@ -193,10 +193,7 @@ void TraceOptionsProxy::set_filter_by_call_time( char filterByCallTime )
 
 void TraceOptionsProxy::set_state_names( char *stateNames[20] )
 {
-  // for ( unsigned int i( 0; i < 20; ++i )
-  // {
   myTraceOptions->set_state_names( stateNames );
-  // }
 }
 
 void TraceOptionsProxy::set_all_states( char allStates )
@@ -216,16 +213,69 @@ void TraceOptionsProxy::set_min_comm_size( int minCommSize )
 
 void TraceOptionsProxy::set_filter_types( struct allowed_types filterTypes[20] )
 {
-  //for ( unsigned int i( 0; i < 20; ++i )
-  // {
   myTraceOptions->set_filter_types( filterTypes );
-  //}
 }
 
 void TraceOptionsProxy::set_filter_last_type(  int filterLastType )
 {
   myTraceOptions->set_filter_last_type( filterLastType );
 }
+
+char TraceOptionsProxy::get_filter_events()
+{
+  return myTraceOptions->get_filter_events();
+}
+
+char TraceOptionsProxy::get_filter_states()
+{
+  return myTraceOptions->get_filter_states();
+}
+
+char TraceOptionsProxy::get_filter_comms()
+{
+  return myTraceOptions->get_filter_comms();
+}
+
+char TraceOptionsProxy::get_discard_given_types()
+{
+  return myTraceOptions->get_discard_given_types();
+}
+
+char TraceOptionsProxy::get_filter_by_call_time()
+{
+  return myTraceOptions->get_filter_by_call_time();
+}
+
+void TraceOptionsProxy::get_state_names( TStateNames &stateNames )
+{
+  return myTraceOptions->get_state_names( stateNames );
+}
+
+char TraceOptionsProxy::get_all_states()
+{
+  return myTraceOptions->get_all_states();
+}
+
+unsigned long long TraceOptionsProxy::get_min_state_time()
+{
+  return myTraceOptions->get_min_state_time();
+}
+
+int TraceOptionsProxy::get_min_comm_size()
+{
+  return myTraceOptions->get_min_comm_size();
+}
+
+void TraceOptionsProxy::get_filter_types( TFilterTypes &filterTypes )
+{
+  return myTraceOptions->get_filter_types( filterTypes );
+}
+
+int TraceOptionsProxy::get_filter_last_type()
+{
+  return myTraceOptions->get_filter_last_type();
+}
+
 
 /* Sets for Sofware Counters */
 void TraceOptionsProxy::set_sc_onInterval( int scOnInterval )
@@ -310,7 +360,6 @@ void TraceOptionsProxy::set_events_plot( int eventsPlot )
 {
   myTraceOptions->set_events_plot( eventsPlot );
 }
-
 
 void TraceOptionsProxy::parseDoc( char *docname )
 {

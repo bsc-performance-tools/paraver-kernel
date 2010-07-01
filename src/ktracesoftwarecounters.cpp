@@ -47,9 +47,9 @@
 #endif
 
 
-KTraceSoftwareCounters::KTraceSoftwareCounters( char *trace_in,
-                                                char *trace_out,
-                                                KTraceOptions &options )
+KTraceSoftwareCounters::KTraceSoftwareCounters( char *&trace_in,
+                                                char *&trace_out,
+                                                TraceOptions *options )
 {
   min_state_time = 0;
   last_type_mark = -1;
@@ -59,7 +59,7 @@ KTraceSoftwareCounters::KTraceSoftwareCounters( char *trace_in,
   total_iters = 0;
   first_state_elem = NULL;
 
-  exec_options = options;
+  exec_options = new KTraceOptions( (KTraceOptions *) options );
 
   execute( trace_in, trace_out );
 }
@@ -67,6 +67,7 @@ KTraceSoftwareCounters::KTraceSoftwareCounters( char *trace_in,
 
 KTraceSoftwareCounters::~KTraceSoftwareCounters()
 {
+  delete exec_options;
 }
 
 
@@ -83,19 +84,19 @@ void KTraceSoftwareCounters::read_sc_args()
   only_in_bursts = 0;
   summarize_bursts = 0;
 
-  type_of_counters = exec_options.sc_onInterval;
+  type_of_counters = exec_options->sc_onInterval;
 
-  if ( exec_options.sc_onInterval )
-    interval = exec_options.sc_interval;
+  if ( exec_options->sc_onInterval )
+    interval = exec_options->sc_interval;
   else
-    min_state_time = exec_options.sc_interval;
+    min_state_time = exec_options->sc_interval;
 
-  last_time = exec_options.sc_interval;
+  last_time = exec_options->sc_interval;
 
-  if ( strlen( exec_options.types ) > 0 )
+  if ( strlen( exec_options->types ) > 0 )
   {
     all_types = 0;
-    words[0] = strtok( exec_options.types, ";" );
+    words[0] = strtok( exec_options->types, ";" );
 
     i = 1;
     while ( ( words[i] = strtok( NULL, ";" ) ) != NULL )
@@ -129,13 +130,13 @@ void KTraceSoftwareCounters::read_sc_args()
     }
 
     types.next_free_slot++;
-    free( exec_options.types );
+    free( exec_options->types );
   }
 
-  if ( strlen( exec_options.types_kept ) > 0 )
+  if ( strlen( exec_options->types_kept ) > 0 )
   {
     keep_events = 1;
-    words[0] = strtok( exec_options.types_kept, ";" );
+    words[0] = strtok( exec_options->types_kept, ";" );
     types_to_keep.type[types_to_keep.next_free_slot] = atoll( words[0] );
     types_to_keep.next_free_slot++;
 
@@ -145,18 +146,18 @@ void KTraceSoftwareCounters::read_sc_args()
       types_to_keep.next_free_slot++;
     }
 
-    free( exec_options.types_kept );
+    free( exec_options->types_kept );
   }
 
-  global_counters = exec_options.sc_global_counters;
+  global_counters = exec_options->sc_global_counters;
 
-  acumm_values = exec_options.sc_acumm_counters;
+  acumm_values = exec_options->sc_acumm_counters;
 
-  remove_states = exec_options.sc_remove_states;
+  remove_states = exec_options->sc_remove_states;
 
-  only_in_bursts = exec_options.sc_only_in_bursts;
+  only_in_bursts = exec_options->sc_only_in_bursts;
 
-  if ( ( summarize_bursts = exec_options.sc_summarize_states ) == 1 )
+  if ( ( summarize_bursts = exec_options->sc_summarize_states ) == 1 )
     remove_states = 1;
 }
 

@@ -42,7 +42,7 @@ TraceCutter *TraceCutter::create(  KernelConnection *whichKernel,
 }
 
 
-TraceCutterProxy::TraceCutterProxy( KernelConnection *whichKernel,
+TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
                                     char *traceIn,
                                     char *traceOut,
                                     TraceOptions *options )
@@ -55,7 +55,6 @@ TraceCutterProxy::~TraceCutterProxy()
 {
   delete myTraceCutter;
 }
-
 
 void TraceCutterProxy::set_by_time( bool whichByTime )
 {

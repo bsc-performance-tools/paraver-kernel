@@ -37,8 +37,18 @@ class KernelConnection;
 class TraceOptions
 {
   public:
+    struct allowed_types
+    {
+      unsigned long long type;
+      unsigned long long max_type;  /* For range of types */
+      unsigned long long min_call_time; /* For filtering calls by time */
+      unsigned long long value[20];
+      int last_value;
+    };
 
     typedef char TTasksList[256];
+    typedef char *TStateNames[20];
+    typedef struct allowed_types TFilterTypes[20];
 
     static TraceOptions *create( KernelConnection *whichKernel );
 
@@ -109,7 +119,7 @@ class TraceOptions
     {}
     virtual void set_filter_by_call_time( char filterByCallTime )
     {}
-    virtual void set_state_names( char *stateNames[20] )
+    virtual void set_state_names( TStateNames stateNames )
     {}
     virtual void set_all_states( char allStates )
     {}
@@ -117,10 +127,33 @@ class TraceOptions
     {}
     virtual void set_min_comm_size( int minCommSize )
     {}
-    virtual void set_filter_types( struct allowed_types filterTypes[20] )
+    virtual void set_filter_types( TFilterTypes filterTypes )
     {}
     virtual void set_filter_last_type(  int filterLastType )
     {}
+
+    virtual char get_filter_events()
+    { return 0; }
+    virtual char get_filter_states()
+    { return 0; }
+    virtual char get_filter_comms()
+    { return 0; }
+    virtual char get_discard_given_types()
+    { return 0; }
+    virtual char get_filter_by_call_time()
+    { return 0; }
+    virtual void get_state_names( TStateNames &stateNames )
+    {}
+    virtual char get_all_states()
+    { return 0; }
+    virtual unsigned long long get_min_state_time()
+    { return 0; }
+    virtual int get_min_comm_size()
+    { return 0; }
+    virtual void get_filter_types( TFilterTypes &filterTypes )
+    {}
+    virtual int get_filter_last_type()
+    { return 0; }
 
     /* Sets for Sofware Counters */
     virtual void set_sc_onInterval( int scOnInterval )
@@ -206,12 +239,24 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_filter_comms( char filterComms );
     virtual void set_discard_given_types( char discardGivenTypes );
     virtual void set_filter_by_call_time( char filterByCallTime );
-    virtual void set_state_names( char *stateNames[20] );
+    virtual void set_state_names( TStateNames stateNames );
     virtual void set_all_states( char allStates );
     virtual void set_min_state_time( unsigned long long minStateTime );
     virtual void set_min_comm_size( int minCommSize );
-    virtual void set_filter_types( struct allowed_types filterTypes[20] );
+    virtual void set_filter_types( TFilterTypes filterTypes );
     virtual void set_filter_last_type(  int filterLastType );
+
+    virtual char get_filter_events();
+    virtual char get_filter_states();
+    virtual char get_filter_comms();
+    virtual char get_discard_given_types();
+    virtual char get_filter_by_call_time();
+    virtual void get_state_names( TStateNames &stateNames );
+    virtual char get_all_states();
+    virtual unsigned long long get_min_state_time();
+    virtual int get_min_comm_size();
+    virtual void get_filter_types( TFilterTypes &filterTypes );
+    virtual int get_filter_last_type();
 
     /* Sets for Software Counters */
     virtual void set_sc_onInterval( int scOnInterval );

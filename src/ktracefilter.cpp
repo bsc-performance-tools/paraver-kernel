@@ -49,9 +49,7 @@ KTraceFilter::KTraceFilter( char *trace_in, char *trace_out, TraceOptions *optio
 {
   is_zip_filter = 0;
 
-//  exec_options = new KTraceOptions( *options );
-  exec_options = new KTraceOptions( (KTraceOptions )(*options) );
-
+  exec_options = new KTraceOptions( (KTraceOptions *)options );
 
   execute( trace_in, trace_out );
 }
@@ -161,6 +159,7 @@ int KTraceFilter::filter_allowed_type(  int appl, int task, int thread,
       }
     }
 
+
     if ( exec_options->filter_types[i].type == type )
     {
       if ( exec_options->filter_types[i].last_value == 0 )
@@ -174,6 +173,7 @@ int KTraceFilter::filter_allowed_type(  int appl, int task, int thread,
       }
 
       for ( j = 0; j < exec_options->filter_types[i].last_value; j++ )
+      {
         if ( exec_options->filter_types[i].value[j] == value )
         {
           if ( exec_options->discard_given_types )
@@ -183,7 +183,7 @@ int KTraceFilter::filter_allowed_type(  int appl, int task, int thread,
 
           break;
         }
-
+      }
       break;
     }
   }
@@ -364,6 +364,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out )
         thread_call_info[i][j][k] = NULL;
 
   /* Reading of the program arguments */
+
   read_params();
   strcpy( trace_name, trace_in );
 
@@ -538,7 +539,6 @@ void KTraceFilter::execute( char *trace_in, char *trace_out )
         break;
 
       case '2':
-
         if ( !show_events )
           break;
 

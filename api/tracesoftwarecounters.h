@@ -30,12 +30,45 @@
 #ifndef TRACESOFTWARECOUNTERS_H_INCLUDED
 #define TRACESOFTWARECOUNTERS_H_INCLUDED
 
+class TraceOptions;
+class KernelConnection;
+
 class TraceSoftwareCounters
 {
   public:
-    //TraceSoftwareCounters( char *trace_in, char *trace_out, char *xmldocname );
+    static TraceSoftwareCounters *create( KernelConnection *whichKernel,
+                                          char *traceIn,
+                                          char *traceOut,
+                                          TraceOptions *options );
+
     virtual ~TraceSoftwareCounters()
     {}
+
+    virtual void execute()
+    {}
 };
+
+class TraceSoftwareCountersProxy : public TraceSoftwareCounters
+{
+  public:
+    virtual ~TraceSoftwareCountersProxy();
+
+    virtual void execute();
+
+  private:
+    TraceSoftwareCounters *myTraceSoftwareCounters;
+
+    TraceSoftwareCountersProxy( KernelConnection *whichKernel,
+                                char *traceIn,
+                                char *traceOut,
+                                TraceOptions *options );
+
+    friend TraceSoftwareCounters *TraceSoftwareCounters::create( KernelConnection *kernelConnection,
+                                                                 char *traceIn,
+                                                                 char *traceOut,
+                                                                 TraceOptions *options );
+};
+
+
 
 #endif // TRACESOFTWARECOUNTERS_H_INCLUDED

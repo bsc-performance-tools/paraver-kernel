@@ -48,19 +48,16 @@
 /*#define MAX_TYPES 100 */
 #define MAX_VALUES 100
 #define MAX_THREADS 20000
+#define MAXSTATES 20
+
+// only for cout, delete this 2 lines
+#include <iostream>
+using namespace std;
 
 class KTraceOptions: public TraceOptions
 {
   public:
 
-    struct allowed_types
-    {
-      unsigned long long type;
-      unsigned long long max_type;  /* For range of types */
-      unsigned long long min_call_time; /* For filtering calls by time */
-      unsigned long long value[20];
-      int last_value;
-    };
 
     /* Global parameters */
     int max_trace_size;
@@ -71,11 +68,11 @@ class KTraceOptions: public TraceOptions
     char filter_comms;
     char discard_given_types;
     char filter_by_call_time;
-    char *state_names[20];
+    char *state_names[MAXSTATES];
     char all_states;
     unsigned long long min_state_time;
-    int min_comm_size;
-    struct allowed_types filter_types[20];
+    int min_comm_size; // ---->    should be TCommSize
+    TFilterTypes filter_types;
     int filter_last_type;
 
     /* Parameters for cutting */
@@ -287,11 +284,22 @@ class KTraceOptions: public TraceOptions
       filter_by_call_time = whichFilterByCallTime;
     }
 
-    inline void set_state_names( char *whichStateNames[20] )
+    inline void init_state_names()
     {
-      for ( unsigned int i = 0; i < 20; ++i )
+      for ( unsigned int i = 0; i < MAXSTATES; ++i )
       {
-        state_names[ i ] = strdup( whichStateNames[ i ] );
+        state_names[ i ] = NULL;
+      }
+    }
+
+    inline void set_state_names( TStateNames whichStateNames )
+    {
+      for ( unsigned int i = 0; i < MAXSTATES; ++i )
+      {
+        if ( whichStateNames[ i ] != NULL )
+          state_names[ i ] = strdup( whichStateNames[ i ] );
+        else
+          state_names[ i ] = NULL;
       }
     }
 
@@ -310,7 +318,7 @@ class KTraceOptions: public TraceOptions
       min_comm_size = whichMinCommSize;
     }
 
-    inline void set_filter_types( struct KTraceOptions::allowed_types whichFilterTypes[20] )
+    inline void set_filter_types( TFilterTypes whichFilterTypes )
     {
       for ( unsigned int i = 0; i < 20; ++i )
       {
@@ -322,6 +330,71 @@ class KTraceOptions: public TraceOptions
     {
       filter_last_type = whichFilterLastType;
     }
+
+    inline char get_filter_events() const
+    {
+      return filter_events;
+    }
+
+    inline char get_filter_states() const
+    {
+      return filter_states;
+    }
+
+    inline char get_filter_comms() const
+    {
+      return filter_comms;
+    }
+
+    inline char get_discard_given_types() const
+    {
+      return discard_given_types;
+    }
+
+    inline char get_filter_by_call_time() const
+    {
+      return filter_by_call_time;
+    }
+
+    inline void get_state_names( TStateNames &whichStateNames ) const
+    {
+      for( unsigned int i = 0; i < MAXSTATES; ++i )
+      {
+        if ( state_names[ i ] != NULL )
+          whichStateNames[ i ] = strdup( state_names[ i ] );
+        else
+          whichStateNames[ i ] = NULL;
+      }
+    }
+
+    inline char get_all_states() const
+    {
+      return all_states;
+    }
+
+    inline unsigned long long get_min_state_time() const
+    {
+      return min_state_time;
+    }
+
+    inline int get_min_comm_size() const
+    {
+      return min_comm_size;
+    }
+
+    inline void get_filter_types( TFilterTypes &whichFilterTypes ) const
+    {
+      for ( unsigned int i = 0; i < 20; ++i )
+      {
+        whichFilterTypes[ i ] = filter_types[ i ];
+      }
+    }
+
+    inline int get_filter_last_type() const
+    {
+      return filter_last_type;
+    }
+
 
     /* Sets for Software Counters */
     inline void set_sc_onInterval( int whichSCOnInterval )

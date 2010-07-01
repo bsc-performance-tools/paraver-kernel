@@ -58,6 +58,3 @@ TraceFilterProxy::~TraceFilterProxy()
 {
   delete myTraceFilter;
 }
-
-
-

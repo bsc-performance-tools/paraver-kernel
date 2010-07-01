@@ -44,6 +44,7 @@
 #include "ktraceoptions.h"
 #include "ktracecutter.h"
 #include "ktracefilter.h"
+#include "ktracesoftwarecounters.h"
 #include <string.h>
 
 void LocalKernel::init()
@@ -148,16 +149,24 @@ TraceOptions *LocalKernel::newTraceOptions() const
   return new KTraceOptions( this );
 }
 
-TraceCutter *LocalKernel::newTraceCutter( char *trace_in,
+TraceCutter *LocalKernel::newTraceCutter( //TraceCutter *concreteTraceCutter,
+                                          char *trace_in,
                                           char *trace_out,
                                           TraceOptions *options ) const
 {
 //  cout << "LocalKernel::newTraceCutter: tracein " << trace_in  << endl;
 //  cout << "LocalKernel::newTraceCutter: traceout" << trace_out << endl;
 
-//  TraceOptionsProxy *myOptions = new TraceOptionsProxy( this );
-//  myOptions->myTraceOptions = options;
+  //TraceOptionsProxy *myOptions = new TraceOptionsProxy( this );
+  //myOptions->myTraceOptions = options;
+  /*TraceCutterProxy *myCutter = new TraceCutterProxy( this,
+                                                     trace_in,
+                                                     trace_out,
+                                                     options );
+*/
   return new KTraceCutter( trace_in, trace_out, options );
+//  return ( TraceCutter *) myCutter;
+
 }
 
 TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
@@ -170,12 +179,11 @@ TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
 }
 
 
-TraceSoftwareCounters *LocalKernel::newTraceSoftwareCounters( char *&trace_in,
-                                                              char *&trace_out,
-                                                              TraceOptions &options ) const
+TraceSoftwareCounters *LocalKernel::newTraceSoftwareCounters( char *trace_in,
+                                                              char *trace_out,
+                                                              TraceOptions *options ) const
 {
-//  return new KTraceSoftwareCounters();
-  return NULL;
+  return new KTraceSoftwareCounters( trace_in, trace_out, options );
 }
 
 void LocalKernel::getAllStatistics( vector<string>& onVector ) const

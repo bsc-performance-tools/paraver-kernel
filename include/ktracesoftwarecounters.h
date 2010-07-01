@@ -31,16 +31,14 @@
 #define _KTRACESOFTWARECOUNTERS_H_
 
 #include "ktraceoptions.h"
+#include "tracesoftwarecounters.h"
 
-
-//class TraceSoftwareCounters;
-
-class KTraceSoftwareCounters
-//sclass KTraceSoftwareCounters : public TraceSoftwareCounters
+class KTraceSoftwareCounters : public TraceSoftwareCounters
 {
   public:
-    KTraceSoftwareCounters( char *trace_in, char *trace_out, KTraceOptions &options );
+    KTraceSoftwareCounters( char *&trace_in, char *&trace_out, TraceOptions *options );
     virtual ~KTraceSoftwareCounters();
+    void execute( char *trace_in, char *trace_out );
 
   private:
 
@@ -143,7 +141,7 @@ class KTraceSoftwareCounters
 
     /* Trace in and trace out */
     FILE *infile, *outfile;
-    KTraceOptions exec_options;
+    KTraceOptions *exec_options;
 
     /* Pointers to the thread struct, for avoiding to much searches */
     int thread_pointer[MAX_APPL][MAX_TASK][MAX_THREAD];
@@ -187,6 +185,5 @@ class KTraceSoftwareCounters
     void put_counters_on_state( struct KTraceSoftwareCounters::state_queue_elem *p,
                                 struct KTraceSoftwareCounters::state_queue_elem *q );
     void sc_by_states();
-    void execute( char *trace_in, char *trace_out );
 };
 #endif // _KTRACESOFTWARECOUNTERS_H_

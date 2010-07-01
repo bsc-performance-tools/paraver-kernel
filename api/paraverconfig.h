@@ -180,14 +180,14 @@ class ParaverConfig
     TTextFormat getHistogramSaveTextFormat() const;
     TImageFormat getHistogramSaveImageFormat() const;
 
-    // FILTERS XML SECTION
+    // FILTERS XML SECTION : GLOBAL
     void setFiltersFilterTraceUpToMB( float whichFilterTraceUpToMB );
     void setFiltersXMLPath( string whichXMLPath );
 
     float getFiltersFilterTraceUpToMB() const;
     string getFiltersXMLPath() const;
 
-    // filters filter
+    // FILTERS XML SECTION : Cutter
     void setCutterByTime( bool whichByTime );
     void setCutterMinimumTime( TTime minTime );
     void setCutterMaximumTime( TTime maxTime );
@@ -210,6 +210,16 @@ class ParaverConfig
     bool getCutterBreakStates();
     bool getCutterRemoveFirstStates();
     bool getCutterRemoveLastStates();
+
+    // FILTERS XML SECTION : FILTER
+    void setFilterDiscardStates( bool discard );
+    void setFilterDiscardEvents( bool discard );
+    void setFilterDiscardCommunications( bool discard );
+    void setFilterCommunicationsMinimumSize( TCommSize size );
+    bool getFilterDiscardStates();
+    bool getFilterDiscardEvents();
+    bool getFilterDiscardCommunications();
+    TCommSize getFilterCommunicationsMinimumSize();
 
     // COLORS XML SECTION
     void setColorsTimelineBackground( rgb whichTimelineBackground );
@@ -393,15 +403,26 @@ class ParaverConfig
 
     };
 
-/*
+
     struct XMLPreferencesFilter
     {
       template< class Archive >
       void serialize( Archive & ar, const unsigned int version )
       {
+        ar & boost::serialization::make_nvp( "discard_states", discardStates );
+        ar & boost::serialization::make_nvp( "discard_events", discardEvents );
+        ar & boost::serialization::make_nvp( "discard_communications", discardCommunications );
+        ar & boost::serialization::make_nvp( "comms", communicationsMinimumSize );
       }
+
+      bool discardStates;
+      bool discardEvents;
+      bool discardCommunications;
+      TCommSize communicationsMinimumSize;
+
     };
 
+/*
     struct XMLPreferencesCommunicationsFusion
     {
       template< class Archive >
@@ -423,7 +444,10 @@ class ParaverConfig
         if ( version >= 1 )
         {
           ar & boost::serialization::make_nvp( "cutter", xmlCutterInstance );
-//          ar & boost::serialization::make_nvp( "filter", xmlFilterInstance );
+          if ( version >= 2 )
+          {
+            ar & boost::serialization::make_nvp( "filter", xmlFilterInstance );
+          }
 //          ar & boost::serialization::make_nvp( "comm_fusion", xmlCommunicationsFusionInstance );
         }
       }
@@ -434,7 +458,7 @@ class ParaverConfig
       // Second level xml; needed a variable.
       // Next filters, same way.
       XMLPreferencesCutter xmlCutterInstance;
-      // XMLPreferencesFilter xmlFilterInstance;
+      XMLPreferencesFilter xmlFilterInstance;
       // XMLPreferenecesCommunicationsFusion xmlCommunicationsFusionInstance;
 
     } xmlFilters;
@@ -508,8 +532,9 @@ BOOST_CLASS_VERSION( ParaverConfig, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 1)
-//BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 0)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilters, 1)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 0)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilter, 0)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilters, 2)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesColor, 1)
 
 // WhatWhere.num_decimals

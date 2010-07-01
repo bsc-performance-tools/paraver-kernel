@@ -69,7 +69,30 @@ KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
   set_remFirstStates( whichTraceOptions->get_remFirstStates() );
   set_remLastStates( whichTraceOptions->get_remLastStates() );
 
-  // Filter Default Options
+  // Filter Default Options: states
+  set_filter_states( whichTraceOptions->get_filter_states() );
+  set_all_states( whichTraceOptions->get_all_states() );
+  if ( !whichTraceOptions->get_all_states() )
+  {
+    TStateNames namesList;
+    whichTraceOptions->get_state_names( namesList );
+    set_state_names( namesList );
+  }
+  else
+    init_state_names();
+  set_min_state_time( whichTraceOptions->get_min_state_time() );
+
+  // Filter Default Options: events
+  set_filter_events( whichTraceOptions->get_filter_events() );
+  TFilterTypes eventTypes;
+  whichTraceOptions->get_filter_types( eventTypes );
+  set_filter_types( eventTypes );
+  set_filter_last_type( whichTraceOptions->get_filter_last_type() );
+  set_discard_given_types( whichTraceOptions->get_discard_given_types() );
+
+  // Filter Default Options: comms
+  set_filter_comms( whichTraceOptions->get_filter_comms() );
+  set_min_comm_size( whichTraceOptions->get_min_comm_size() );
 }
 
 
@@ -115,21 +138,19 @@ void KTraceOptions::init()
 
   // Filter Default Options
 // problem --> derived fields?; minimum default info?
-/*
-  set_filter_states( ParaverConfig::getInstance()->getFiltersDiscardStates() );
-  set_all_states( ParaverConfig::getInstance()->getFilterAllStates() );
-  set_filter_by_call_time( false );
+  set_filter_states( !ParaverConfig::getInstance()->getFilterDiscardStates() );
+  set_all_states( false );
+  //set_filter_by_call_time( false );
   init_state_names();
-  set_min_state_time( 10000000000 );
+  set_min_state_time( 0 );
 
-  set_filter_events( ParaverConfig::getInstance()->getFiltersDiscardEvents() );
+  set_filter_events( !ParaverConfig::getInstance()->getFilterDiscardEvents() );
   set_discard_given_types( false );
-  set_filter_last_type( false );
   init_filter_types();
+  set_filter_last_type( 0 );
 
-  set_filter_comms( ParaverConfig::getInstance()->getFiltersDiscardCommunications() );
-  set_min_comm_size( ParaverConfig::getInstance()->getFilterCommunicationMinimumSize() )
-*/
+  set_filter_comms( !ParaverConfig::getInstance()->getFilterDiscardCommunications() );
+  set_min_comm_size( ParaverConfig::getInstance()->getFilterCommunicationsMinimumSize() );
 }
 
 
@@ -161,6 +182,7 @@ void KTraceOptions::parse_type( xmlDocPtr doc, xmlNodePtr cur, struct KTraceOpti
     types[*last_type].type = atoll( ( char * )word );
     types[*last_type].max_type = atoll( ++c );
     ( *last_type )++;
+
     return;
   }
   else
@@ -190,12 +212,19 @@ void KTraceOptions::parse_type( xmlDocPtr doc, xmlNodePtr cur, struct KTraceOpti
 
 void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
 {
-//cout << "FILTER PARAMS!" << endl;
-
   xmlNodePtr child;
   xmlChar *word;
   char *word_aux;
   unsigned int i;
+
+// this should be read from ParaverConfig.
+  bool discardStates = ParaverConfig::getInstance()->getFilterDiscardStates();
+  bool discardEvents = ParaverConfig::getInstance()->getFilterDiscardEvents();
+  bool discardCommunications = ParaverConfig::getInstance()->getFilterDiscardCommunications();
+
+  bool foundDiscardStatesTag = false;
+  bool foundDiscardEventsTag = false;
+  bool foundDiscardCommunicationsTag = false;
 
   while ( cur != NULL )
   {
@@ -232,14 +261,15 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
     {
       filter_comms = 1;
       child = cur->xmlChildrenNode;
-      child = child->next;
-
+      //child = child->next;  ??
       if ( child != NULL )
       {
-        word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+        //word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 ); ??
+        word = xmlNodeListGetString( doc, child, 1 );
         min_comm_size = atoi( ( char * )word );
         xmlFree( word );
       }
+
     }
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"states" ) )
@@ -249,10 +279,13 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
       child = cur->xmlChildrenNode;
 
       /* searching which states wants to keep */
-      for ( i = 0; i < 20; i++ )
+      for ( i = 0; i < MAXSTATES; i++ )
         state_names[i] = NULL;
 
       word = xmlNodeListGetString( doc, child, 1 );
+
+      bool onlyOneState = ( strstr( (char *)word, "," ) == NULL );
+
       word_aux = strtok( ( char * )word, "," );
 
       if ( strstr( word_aux, "All" ) != NULL )
@@ -272,15 +305,18 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
         {
           state_names[0] = strdup( word_aux );
 
-          for ( i = 1; i < 20; i++ )
+          if ( !onlyOneState )
           {
-            if ( ( word_aux = strtok( NULL, "," ) ) == NULL )
-              break;
+            for ( i = 1; i < MAXSTATES; i++ )
+            {
+              if ( ( word_aux = strtok( NULL, "," ) ) == NULL )
+                break;
 
-            if ( !strcmp( word_aux, "All" ) )
-              all_states = 1;
-            else
-              state_names[i] = strdup( word_aux );
+              if ( !strcmp( word_aux, "All" ) )
+                all_states = 1;
+              else
+                state_names[i] = strdup( word_aux );
+            }
           }
         }
       }
@@ -298,8 +334,44 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
       }
     }
 
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"discard_states" ) )
+    {
+      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+      discardStates = atoi( ( char * )word );
+      xmlFree( word );
+      foundDiscardStatesTag = true;
+    }
+
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"discard_events" ) )
+    {
+      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+      discardEvents = atoi( ( char * )word );
+      xmlFree( word );
+      foundDiscardEventsTag = true;
+    }
+
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"discard_communications" ) )
+    {
+      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+      discardCommunications = atoi( ( char * )word );
+      xmlFree( word );
+      foundDiscardCommunicationsTag = true;
+    }
+
     cur = cur->next;
   }
+
+  // POSTCOND: boolean variable discard{States, Events, Communications} is set,
+  // no matter if xml tag is present
+  // foundDiscard{States, Events, Communications}Tag is true only if we found "discard" xml tag
+  // filter_{states, events, comms} is true if section found
+
+  if ( foundDiscardCommunicationsTag )
+    filter_comms = !discardCommunications;
+  if ( foundDiscardEventsTag )
+    filter_events = !discardEvents;
+  if ( foundDiscardStatesTag )
+    filter_states = !discardStates;
 }
 
 
@@ -394,9 +466,6 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
 
 void KTraceOptions::parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur )
 {
-//cout << "COMM_FUSION PARAMS!" << endl;
-
-
   xmlChar *word;
 
   reduce_comms = 1;

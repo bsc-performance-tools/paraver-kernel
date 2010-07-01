@@ -93,12 +93,12 @@ class TraceCutterProxy : public TraceCutter
   private:
     TraceCutter *myTraceCutter;
 
-    TraceCutterProxy( KernelConnection *whichKernel,
+    TraceCutterProxy( const KernelConnection *whichKernel,
                       char *traceIn,
                       char *traceOut,
                       TraceOptions *options );
 
-    friend TraceCutter *TraceCutter::create( KernelConnection *kernelConnection,
+    friend TraceCutter *TraceCutter::create( KernelConnection *whichKernel,
                                              char *traceIn,
                                              char *traceOut,
                                              TraceOptions *options );

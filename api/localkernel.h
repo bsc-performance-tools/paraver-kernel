@@ -55,15 +55,16 @@ class LocalKernel: public KernelConnection
     virtual Filter *newFilter( Filter *concreteFilter ) const;
 
     virtual TraceOptions *newTraceOptions() const;
-    virtual TraceCutter *newTraceCutter( char *trace_in,
+    virtual TraceCutter *newTraceCutter( //TraceCutter *concreteTraceCutter,
+                                         char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options ) const;
     virtual TraceFilter *newTraceFilter( char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options ) const;
-    virtual TraceSoftwareCounters *newTraceSoftwareCounters( char *&trace_in,
-                                                             char *&trace_out,
-                                                             TraceOptions &options ) const;
+    virtual TraceSoftwareCounters *newTraceSoftwareCounters( char *trace_in,
+                                                             char *trace_out,
+                                                             TraceOptions *options ) const;
 
     virtual void getAllStatistics( vector<string>& onVector ) const;
     virtual void getAllFilterFunctions( vector<string>& onVector ) const;
@@ -93,7 +94,6 @@ class LocalKernel: public KernelConnection
     int trace_names_table_last; // should be static?
 
     void copyFile( char *in, char *out );
-
 };
 
 

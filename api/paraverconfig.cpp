@@ -120,6 +120,11 @@ ParaverConfig::ParaverConfig()
   xmlFilters.xmlCutterInstance.removeFirstStates = false;
   xmlFilters.xmlCutterInstance.removeLastStates = false;
 
+  xmlFilters.xmlFilterInstance.discardStates = false;
+  xmlFilters.xmlFilterInstance.discardEvents = false;
+  xmlFilters.xmlFilterInstance.discardCommunications = false;
+  xmlFilters.xmlFilterInstance.communicationsMinimumSize = 10000.0; // Random!
+
   xmlColor.timelineBackground = SemanticColor::BACKGROUND;
   xmlColor.timelineAxis = SemanticColor::FOREGROUND;
   xmlColor.useColorZero = false;
@@ -577,7 +582,7 @@ ParaverConfig::TImageFormat ParaverConfig::getHistogramSaveImageFormat() const
 }
 
 
-// FILTERS XML SECTION
+// FILTERS XML SECTION : GLOBAL
 void ParaverConfig::setFiltersFilterTraceUpToMB( float whichFilterTraceUpToMB )
 {
   xmlFilters.filterTraceUpToMB = whichFilterTraceUpToMB;
@@ -599,7 +604,7 @@ string ParaverConfig::getFiltersXMLPath() const
 }
 
 
-// filters filter
+// FILTERS XML SECTION : CUTTER
 void ParaverConfig::setCutterByTime( bool whichByTime )
 {
   xmlFilters.xmlCutterInstance.byTime = whichByTime;
@@ -692,6 +697,47 @@ bool ParaverConfig::getCutterRemoveLastStates()
   return xmlFilters.xmlCutterInstance.removeLastStates;
 }
 
+// FILTERS XML SECTION : FILTER
+
+void ParaverConfig::setFilterDiscardStates( bool discard )
+{
+  xmlFilters.xmlFilterInstance.discardStates = discard;
+}
+
+void ParaverConfig::setFilterDiscardEvents( bool discard )
+{
+  xmlFilters.xmlFilterInstance.discardEvents = discard;
+}
+
+void ParaverConfig::setFilterDiscardCommunications( bool discard )
+{
+  xmlFilters.xmlFilterInstance.discardCommunications = discard;
+}
+
+void ParaverConfig::setFilterCommunicationsMinimumSize( TCommSize size )
+{
+  xmlFilters.xmlFilterInstance.communicationsMinimumSize = size;
+}
+
+bool ParaverConfig::getFilterDiscardStates()
+{
+  return xmlFilters.xmlFilterInstance.discardStates;
+}
+
+bool ParaverConfig::getFilterDiscardEvents()
+{
+  return xmlFilters.xmlFilterInstance.discardEvents;
+}
+
+bool ParaverConfig::getFilterDiscardCommunications()
+{
+  return xmlFilters.xmlFilterInstance.discardCommunications;
+}
+
+TCommSize ParaverConfig::getFilterCommunicationsMinimumSize()
+{
+  return xmlFilters.xmlFilterInstance.communicationsMinimumSize;
+}
 
 // COLORS XML SECTION
 void ParaverConfig::setColorsTimelineBackground( rgb whichTimelineBackground )
