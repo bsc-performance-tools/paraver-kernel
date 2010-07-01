@@ -91,7 +91,7 @@ string LocalKernel::getROWFileLocation( const string& traceFile ) const
 {
   string rowFile;
 
-  if ( traceFile.substr( 0, traceFile.length() - 6 ) == "prv.gz" )
+  if ( traceFile.substr( traceFile.length() - 6 ) == "prv.gz" )
     rowFile = traceFile.substr( 0, traceFile.length() - 6 );
   else
     rowFile = traceFile.substr( 0, traceFile.length() - 3 );
