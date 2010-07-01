@@ -354,9 +354,19 @@ TCommTag HistogramProxy::getCommTagMax() const
   return myHisto->getCommTagMax();
 }
 
+bool HistogramProxy::getInclusiveEnabled() const
+{
+  return myHisto->getInclusiveEnabled();
+}
+
 void HistogramProxy::setInclusive( bool newValue )
 {
   myHisto->setInclusive( newValue );
+}
+
+bool HistogramProxy::getInclusive() const
+{
+  return myHisto->getInclusive();
 }
 
 THistogramColumn HistogramProxy::getNumPlanes() const

@@ -104,7 +104,9 @@ class Histogram
     virtual TCommTag getCommTagMin() const = 0;
     virtual TCommTag getCommTagMax() const = 0;
 
+    virtual bool getInclusiveEnabled() const = 0;
     virtual void setInclusive( bool newValue ) = 0;
+    virtual bool getInclusive() const = 0;
 
     virtual THistogramColumn getNumPlanes() const = 0;
     virtual THistogramColumn getNumColumns() const = 0;
@@ -472,7 +474,10 @@ class HistogramProxy : public Histogram
     virtual TCommTag getCommTagMin() const;
     virtual TCommTag getCommTagMax() const;
 
+    virtual bool getInclusiveEnabled() const;
     virtual void setInclusive( bool newValue );
+    virtual bool getInclusive() const;
+
     virtual THistogramColumn getNumPlanes() const;
     virtual THistogramColumn getNumColumns( const string& whichStat ) const;
     virtual TObjectOrder getNumRows() const;

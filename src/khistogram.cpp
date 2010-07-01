@@ -478,6 +478,14 @@ inline TCommTag KHistogram::getCommTagMax() const
 }
 
 
+inline bool KHistogram::getInclusiveEnabled() const
+{
+  if ( controlWindow->getFirstSemUsefulFunction()->getStack() == NULL )
+    return false;
+  return true;
+}
+
+
 inline void KHistogram::setInclusive( bool newValue )
 {
   if ( newValue )
@@ -486,6 +494,12 @@ inline void KHistogram::setInclusive( bool newValue )
       return;
   }
   inclusive = newValue;
+}
+
+
+inline bool KHistogram::getInclusive() const
+{
+  return inclusive;
 }
 
 

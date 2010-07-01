@@ -166,7 +166,9 @@ class KHistogram : public Histogram
     TCommTag getCommTagMin() const;
     TCommTag getCommTagMax() const;
 
+    bool getInclusiveEnabled() const;
     void setInclusive( bool newValue );
+    bool getInclusive() const;
 
     THistogramColumn getNumPlanes() const;
     THistogramColumn getNumColumns() const;
