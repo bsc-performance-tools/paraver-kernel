@@ -57,8 +57,6 @@ using namespace std;
 class KTraceOptions: public TraceOptions
 {
   public:
-
-
     /* Global parameters */
     int max_trace_size;
 
@@ -486,7 +484,7 @@ class KTraceOptions: public TraceOptions
   private:
     void init();
     void init_filter_types();
-    void parse_type( xmlDocPtr doc, xmlNodePtr cur, struct KTraceOptions::allowed_types *types, int *last_type );
+    void parse_type( xmlDocPtr doc, xmlNodePtr cur, struct TraceOptions::allowed_types *types, int *last_type );
     void parse_filter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur );
