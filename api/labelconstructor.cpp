@@ -184,10 +184,14 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
   else if ( whichHisto->getThousandSeparator() &&
             !whichHisto->getScientificNotation() )
   {
+    if( value < 0.0 )
+    {
+      value = -value;
+      label << "-";
+    }
     string strNum;
     TSemanticValue origValue = value;
     TSemanticValue intValue = floor( value );
-
     if ( origValue >= 1.0 )
     {
       while ( intValue > 0.0 )
@@ -294,7 +298,10 @@ string LabelConstructor::timeLabel( TTime value, TTimeUnit unit, UINT32 precisio
   sstrTimeLabel << fixed;
   sstrTimeLabel.precision( precision );
 
-  sstrTimeLabel << numberWithSeparators( value, precision, unit );
+  if( value < 0.0 )
+    sstrTimeLabel << "-" << numberWithSeparators( -value, precision, unit );
+  else
+    sstrTimeLabel << numberWithSeparators( value, precision, unit );
 
   sstrTimeLabel << " " << LABEL_TIMEUNIT[ unit ];
 
@@ -350,7 +357,10 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
 
   if ( infoType == NO_TYPE || !text )
   {
-    sstrSemanticLabel << numberWithSeparators( value, precision );
+    if( value < 0.0 )
+      sstrSemanticLabel << "-" << numberWithSeparators( -value, precision );
+    else
+      sstrSemanticLabel << numberWithSeparators( value, precision );
   }
   else
   {
