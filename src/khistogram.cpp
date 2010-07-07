@@ -480,7 +480,8 @@ inline TCommTag KHistogram::getCommTagMax() const
 
 inline bool KHistogram::getInclusiveEnabled() const
 {
-  if ( controlWindow->getFirstSemUsefulFunction()->getStack() == NULL )
+  if ( controlWindow != NULL
+       && controlWindow->getFirstSemUsefulFunction()->getStack() == NULL )
     return false;
   return true;
 }
