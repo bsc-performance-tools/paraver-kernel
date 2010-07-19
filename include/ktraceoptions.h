@@ -487,6 +487,7 @@ class KTraceOptions: public TraceOptions
     void parse_type( xmlDocPtr doc, xmlNodePtr cur, struct TraceOptions::allowed_types *types, int *last_type );
     void parse_filter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur );
+    void parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur );
 };
 

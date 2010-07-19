@@ -221,6 +221,29 @@ class ParaverConfig
     bool getFilterDiscardCommunications();
     TCommSize getFilterCommunicationsMinimumSize();
 
+    // FILTERS XML SECTION : SOFTWARE COUNTERS
+    void setSoftwareCountersInvervalsOrStates( bool whichIntervalsOrStates );
+    void setSoftwareCountersSamplingInterval( TTime whichSamplingInterval );
+    void setSoftwareCountersMinimumBurstTime( TTime whichMinimumBurstTime );
+    void setSoftwareCountersTypes( string whichTypes );
+    void setSoftwareCountersCountEventsOrAcummulateValues( bool whichCountEventsOrAcummulateValues );
+    void setSoftwareCountersRemoveStates( bool whichRemoveStates );
+    void setSoftwareCountersSummarizeStates( bool whichSummarizeStates );
+    void setSoftwareCountersGlobalCounters( bool whichGlobalCounters );
+    void setSoftwareCountersOnlyInBursts( bool whichOnlyInBursts );
+    void setSoftwareCountersTypesKept( string whichTypesKept );
+
+    bool getSoftwareCountersInvervalsOrStates();
+    TTime getSoftwareCountersSamplingInterval();
+    TTime getSoftwareCountersMinimumBurstTime();
+    string getSoftwareCountersTypes();
+    bool getSoftwareCountersCountEventsOrAcummulateValues();
+    bool getSoftwareCountersRemoveStates();
+    bool getSoftwareCountersSummarizeStates();
+    bool getSoftwareCountersGlobalCounters();
+    bool getSoftwareCountersOnlyInBursts();
+    string getSoftwareCountersTypesKept();
+
     // COLORS XML SECTION
     void setColorsTimelineBackground( rgb whichTimelineBackground );
     void setColorsTimelineAxis( rgb whichTimelineAxis );
@@ -422,6 +445,58 @@ class ParaverConfig
 
     };
 
+    struct XMLPreferencesSoftwareCountersRange
+    {
+      template< class Archive >
+      void serialize( Archive & ar, const unsigned int version )
+      {
+        ar & boost::serialization::make_nvp( "by_intervals_vs_by_states", intervalsOrStates );
+        ar & boost::serialization::make_nvp( "sampling_inteval", samplingInterval );
+        ar & boost::serialization::make_nvp( "minimum_burst_time", minimumBurstTime );
+        ar & boost::serialization::make_nvp( "events", types );
+      }
+
+      bool intervalsOrStates;
+      TTime samplingInterval;
+      TTime minimumBurstTime;
+      string types;
+
+    };
+
+    struct XMLPreferencesSoftwareCountersAlgorithm
+    {
+      template< class Archive >
+      void serialize( Archive & ar, const unsigned int version )
+      {
+        ar & boost::serialization::make_nvp( "count_events_vs_acummulate_values", countEventsOrAcummulateValues );
+        ar & boost::serialization::make_nvp( "remove_states", removeStates );
+        ar & boost::serialization::make_nvp( "summarize_useful_states", summarizeStates );
+        ar & boost::serialization::make_nvp( "global_counters", globalCounters );
+        ar & boost::serialization::make_nvp( "only_in_burst_counting", onlyInBursts );
+        ar & boost::serialization::make_nvp( "keep_events", typesKept );
+      }
+
+      bool countEventsOrAcummulateValues;
+      bool removeStates;
+      bool summarizeStates;
+      bool globalCounters;
+      bool onlyInBursts;
+      string typesKept;
+
+    };
+
+    struct XMLPreferencesSoftwareCounters
+    {
+      template< class Archive >
+      void serialize( Archive & ar, const unsigned int version )
+      {
+        ar & boost::serialization::make_nvp( "range", xmlSCRangeInstance );
+        ar & boost::serialization::make_nvp( "algorithm", xmlSCAlgorithmInstance );
+      }
+
+      XMLPreferencesSoftwareCountersRange xmlSCRangeInstance;
+      XMLPreferencesSoftwareCountersAlgorithm xmlSCAlgorithmInstance;
+    };
 /*
     struct XMLPreferencesCommunicationsFusion
     {
@@ -447,8 +522,11 @@ class ParaverConfig
           if ( version >= 2 )
           {
             ar & boost::serialization::make_nvp( "filter", xmlFilterInstance );
+            if ( version >= 3 )
+            {
+              ar & boost::serialization::make_nvp( "software_counters", xmlSoftwareCountersInstance );
+            }
           }
-//          ar & boost::serialization::make_nvp( "comm_fusion", xmlCommunicationsFusionInstance );
         }
       }
 
@@ -459,6 +537,7 @@ class ParaverConfig
       // Next filters, same way.
       XMLPreferencesCutter xmlCutterInstance;
       XMLPreferencesFilter xmlFilterInstance;
+      XMLPreferencesSoftwareCounters xmlSoftwareCountersInstance;
       // XMLPreferenecesCommunicationsFusion xmlCommunicationsFusionInstance;
 
     } xmlFilters;
@@ -534,7 +613,10 @@ BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilter, 0)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilters, 2)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersRange, 0)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersAlgorithm, 0)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCounters, 0)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilters, 3)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesColor, 1)
 
 // WhatWhere.num_decimals

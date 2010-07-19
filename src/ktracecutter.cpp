@@ -709,6 +709,10 @@ void KTraceCutter::execute( char *trace_in, char *trace_out )
 
   /* Reading of the program arguments */
   read_cutter_params();
+  cout << "by_time  :" << by_time << endl;
+  cout << "time_min :" << time_min << endl;
+  cout << "time_max :" << time_max << endl;
+
   strcpy( trace_name, trace_in );
 
 

@@ -151,6 +151,24 @@ void KTraceOptions::init()
 
   set_filter_comms( !ParaverConfig::getInstance()->getFilterDiscardCommunications() );
   set_min_comm_size( ParaverConfig::getInstance()->getFilterCommunicationsMinimumSize() );
+
+  // Software Counters Default Options
+  set_sc_onInterval( ParaverConfig::getInstance()->getSoftwareCountersInvervalsOrStates() );
+
+  if ( ParaverConfig::getInstance()->getSoftwareCountersInvervalsOrStates() )
+    set_sc_interval( ParaverConfig::getInstance()->getSoftwareCountersSamplingInterval() );
+  else
+    set_sc_interval( ParaverConfig::getInstance()->getSoftwareCountersMinimumBurstTime() );
+
+  set_types( (char *)ParaverConfig::getInstance()->getSoftwareCountersTypes().c_str() );
+
+  set_sc_acumm_counters( ParaverConfig::getInstance()->getSoftwareCountersCountEventsOrAcummulateValues() ); // accumulate or count?
+  set_sc_remove_states( ParaverConfig::getInstance()->getSoftwareCountersRemoveStates() );
+  set_sc_summarize_states( ParaverConfig::getInstance()->getSoftwareCountersSummarizeStates() );
+  set_sc_global_counters( ParaverConfig::getInstance()->getSoftwareCountersGlobalCounters() );
+  set_sc_only_in_bursts( ParaverConfig::getInstance()->getSoftwareCountersOnlyInBursts() );
+  //set_sc_frequency( ParaverConfig::getInstance()->getSoftwareCountersFrequency ); // not used!!!
+  set_types_kept( (char *)ParaverConfig::getInstance()->getSoftwareCountersTypesKept().c_str() );
 }
 
 
@@ -269,7 +287,6 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
         min_comm_size = atoi( ( char * )word );
         xmlFree( word );
       }
-
     }
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"states" ) )
@@ -457,6 +474,133 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
       word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
       remLastStates = atoi( ( char * )word );
       xmlFree( word );
+    }
+
+    cur = cur->next;
+  }
+}
+
+
+void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cur )
+{
+  xmlNodePtr child;
+  xmlChar *word;
+  char *word_aux;
+  unsigned int i;
+  unsigned long long samplingInterval, minimumBurstTime;
+
+/* PARAMETERS TO FILL
+    int sc_onInterval;
+    int sc_global_counters;
+    int sc_acumm_counters;
+    int sc_summarize_states;
+    int sc_only_in_bursts;
+    int sc_remove_states;
+    unsigned long long sc_interval;
+    int sc_frequency;
+    char *types;
+    char *types_kept;
+*/
+  while ( cur != NULL )
+  {
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"range" ) )
+    {
+      /* Navigate throug nodes */
+      child = cur->xmlChildrenNode;
+      child = child->next;
+
+      while ( child != NULL )
+      {
+        if ( !xmlStrcmp( child->name, ( const xmlChar * )"by_intervals_vs_by_states" ) )
+        {
+          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+          sc_onInterval = atoi( ( char * )word );
+          xmlFree( word );
+        }
+
+        if ( !xmlStrcmp( child->name, ( const xmlChar * )"sampling_interval" ) )
+        {
+          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+          samplingInterval = atoll( ( char * )word );
+          xmlFree( word );
+        }
+
+        if ( !xmlStrcmp( child->name, ( const xmlChar * )"minimum_burst_time" ) )
+        {
+          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+          minimumBurstTime = atoll( ( char * )word );
+          xmlFree( word );
+        }
+
+        if ( !xmlStrcmp( child->name, ( const xmlChar * )"events" ) )
+        {
+          /* Navigate throug nodes */
+          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+          types = strdup( (char *)word );
+          xmlFree( word );
+        }
+
+        child = child->next;
+      }
+
+      if ( sc_onInterval == 1 )
+        sc_interval = samplingInterval;
+      else
+        sc_interval = minimumBurstTime;
+    }
+
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"algorithm" ) )
+    {
+      /* Navigate throug nodes */
+      child = cur->xmlChildrenNode;
+      child = child->next;
+
+      while ( child != NULL )
+      {
+        if ( !xmlStrcmp( child->name, ( const xmlChar * )"count_events_vs_acummulate_values" ) )
+        {
+          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+          sc_acumm_counters = atoi( ( char * )word );
+          xmlFree( word );
+        }
+
+        if ( !xmlStrcmp( child->name, ( const xmlChar * )"remove_states" ) )
+        {
+          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+          sc_remove_states = atoi( ( char * )word );
+          xmlFree( word );
+        }
+
+        if ( !xmlStrcmp( child->name, ( const xmlChar * )"summarize_useful_states" ) )
+        {
+          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+          sc_summarize_states = atoi( ( char * )word );
+          xmlFree( word );
+        }
+
+        if ( !xmlStrcmp( child->name, ( const xmlChar * )"global_counters" ) )
+        {
+          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+          sc_global_counters = atoi( ( char * )word );
+          xmlFree( word );
+        }
+
+        if ( !xmlStrcmp( child->name, ( const xmlChar * )"only_in_burst_counting" ) )
+        {
+          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+          sc_only_in_bursts = atoi( ( char * )word );
+          xmlFree( word );
+        }
+
+        if ( !xmlStrcmp( child->name, ( const xmlChar * )"keep_events" ) )
+        {
+          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+          types_kept = strdup ( (char *)word );
+          xmlFree( word );
+        }
+
+        child = child->next;
+      }
     }
 
     cur = cur->next;

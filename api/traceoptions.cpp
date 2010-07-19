@@ -277,7 +277,7 @@ int TraceOptionsProxy::get_filter_last_type()
 }
 
 
-/* Sets for Sofware Counters */
+/* Sets for Software Counters */
 void TraceOptionsProxy::set_sc_onInterval( int scOnInterval )
 {
   myTraceOptions->set_sc_onInterval( scOnInterval );

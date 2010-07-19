@@ -125,6 +125,17 @@ ParaverConfig::ParaverConfig()
   xmlFilters.xmlFilterInstance.discardCommunications = false;
   xmlFilters.xmlFilterInstance.communicationsMinimumSize = 10000.0; // Random!
 
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCRangeInstance.intervalsOrStates = true;
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCRangeInstance.samplingInterval = 1000000.0; // 1ms
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCRangeInstance.minimumBurstTime = 1000.0; // 1us
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCRangeInstance.types = string("");
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.countEventsOrAcummulateValues = true;
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.removeStates = false;
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.summarizeStates = false;
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.globalCounters = false;
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.onlyInBursts = false;
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.typesKept = string("");
+
   xmlColor.timelineBackground = SemanticColor::BACKGROUND;
   xmlColor.timelineAxis = SemanticColor::FOREGROUND;
   xmlColor.useColorZero = false;
@@ -737,6 +748,111 @@ bool ParaverConfig::getFilterDiscardCommunications()
 TCommSize ParaverConfig::getFilterCommunicationsMinimumSize()
 {
   return xmlFilters.xmlFilterInstance.communicationsMinimumSize;
+}
+
+
+// FILTERS XML SECTION : SOFTWARE COUNTERS
+void ParaverConfig::setSoftwareCountersInvervalsOrStates( bool whichIntervalsOrStates )
+{
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCRangeInstance.intervalsOrStates = whichIntervalsOrStates;
+}
+
+void ParaverConfig::setSoftwareCountersSamplingInterval( TTime whichSamplingInterval )
+{
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCRangeInstance.samplingInterval = whichSamplingInterval;
+}
+
+void ParaverConfig::setSoftwareCountersMinimumBurstTime( TTime whichMinimumBurstTime )
+{
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCRangeInstance.minimumBurstTime = whichMinimumBurstTime;
+}
+
+void ParaverConfig::setSoftwareCountersTypes( string whichTypes )
+{
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCRangeInstance.types = whichTypes;
+}
+
+void ParaverConfig::setSoftwareCountersCountEventsOrAcummulateValues( bool whichCountEventsOrAcummulateValues )
+{
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.countEventsOrAcummulateValues = whichCountEventsOrAcummulateValues;
+}
+
+void ParaverConfig::setSoftwareCountersRemoveStates( bool whichRemoveStates )
+{
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.removeStates = whichRemoveStates;
+}
+
+void ParaverConfig::setSoftwareCountersSummarizeStates( bool whichSummarizeStates )
+{
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.summarizeStates = whichSummarizeStates;
+}
+
+void ParaverConfig::setSoftwareCountersGlobalCounters( bool whichGlobalCounters )
+{
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.globalCounters = whichGlobalCounters;
+}
+
+void ParaverConfig::setSoftwareCountersOnlyInBursts( bool whichOnlyInBursts )
+{
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.onlyInBursts = whichOnlyInBursts;
+}
+
+void ParaverConfig::setSoftwareCountersTypesKept( string whichTypesKept )
+{
+  xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.typesKept = whichTypesKept;
+}
+
+
+bool ParaverConfig::getSoftwareCountersInvervalsOrStates()
+{
+  return xmlFilters.xmlSoftwareCountersInstance.xmlSCRangeInstance.intervalsOrStates;
+}
+
+TTime ParaverConfig::getSoftwareCountersSamplingInterval()
+{
+  return xmlFilters.xmlSoftwareCountersInstance.xmlSCRangeInstance.samplingInterval;
+}
+
+TTime ParaverConfig::getSoftwareCountersMinimumBurstTime()
+{
+  return xmlFilters.xmlSoftwareCountersInstance.xmlSCRangeInstance.minimumBurstTime;
+}
+
+string ParaverConfig::getSoftwareCountersTypes()
+{
+  return xmlFilters.xmlSoftwareCountersInstance.xmlSCRangeInstance.types;
+}
+
+bool ParaverConfig::getSoftwareCountersCountEventsOrAcummulateValues()
+{
+  return xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.countEventsOrAcummulateValues;
+}
+
+bool ParaverConfig::getSoftwareCountersRemoveStates()
+{
+  return xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.removeStates;
+}
+
+bool  ParaverConfig::getSoftwareCountersSummarizeStates()
+{
+  return xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.summarizeStates;
+}
+
+bool  ParaverConfig::getSoftwareCountersGlobalCounters()
+{
+  return xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.globalCounters;
+}
+
+bool  ParaverConfig::getSoftwareCountersOnlyInBursts()
+{
+  return xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.onlyInBursts;
+}
+
+//bool ParaverConfig::getSoftwareCountersFrequency() // not used!!!
+
+string  ParaverConfig::getSoftwareCountersTypesKept()
+{
+  return xmlFilters.xmlSoftwareCountersInstance.xmlSCAlgorithmInstance.typesKept;
 }
 
 // COLORS XML SECTION

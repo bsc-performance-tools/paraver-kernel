@@ -240,7 +240,7 @@ void readParameters( int argc, char *arguments[] )
   if ( !cutTrace && !filterTrace && !softwareCountersTrace && ( strXMLOptions != "" ) )
   {
     cutTrace = true;
-    // filterTrace = true;
+    filterTrace = true;
     // softwareCountersTrace = true;
   }
 }
@@ -309,7 +309,7 @@ string applyFilters( KernelConnection *myKernel )
                                                     traceOptions );
   }
 */
-/*
+
   if ( softwareCountersTrace )
   {
     strcpy( tmpNameIn, tmpNameOut );
@@ -317,9 +317,10 @@ string applyFilters( KernelConnection *myKernel )
     traceSoftwareCounters = myKernel->newTraceSoftwareCounters( tmpNameIn,
                                                                 tmpNameOut,
                                                                 traceOptions );
+    // SoftwareCounters creates its own different .pcf file, adding a few event types.
+    // myKernel->copyPCF( tmpNameIn, tmpNameOut );
+    myKernel->copyROW( tmpNameIn, tmpNameOut );
   }
-*/
-
 
 //      traceCommunicationsFusionTrace = myKernel->newTraceCommunicationsFusionTrace();
 
