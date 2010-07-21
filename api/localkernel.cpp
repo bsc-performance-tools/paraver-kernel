@@ -211,31 +211,25 @@ bool LocalKernel::userMessage( const string& message ) const
   return myMessageFunction( message );
 }
 
-
-void LocalKernel::copyPCF( char *name, char *traceToLoad )
+char *LocalKernel::composeName( char *name, char *newExtension )
 {
-  char *pcfIn = strdup( name );
-  char *pcfOut = strdup( traceToLoad );
-  pcfIn[strlen( pcfIn )-4] = '\0';
-  pcfOut[strlen( pcfOut )-4] = '\0';
-  sprintf( pcfIn, "%s.pcf", pcfIn );
-  sprintf( pcfOut, "%s.pcf", pcfOut );
-  copyFile( pcfIn, pcfOut );
-  free( pcfIn );
-  free( pcfOut );
-}
+  int zip_filter;
+  char *fileName = strdup( name );
+  char *aux;
 
-void LocalKernel::copyROW( char *name, char *traceToLoad )
-{
-  char *rowIn = strdup( name );
-  char *rowOut = strdup( traceToLoad );
-  rowIn[strlen( rowIn )-4] = '\0';
-  rowOut[strlen( rowOut )-4] = '\0';
-  sprintf( rowIn, "%s.row", rowIn );
-  sprintf( rowOut, "%s.row", rowOut );
-  copyFile( rowIn, rowOut );
-  free( rowIn );
-  free( rowOut );
+  if ( ( aux = strrchr( fileName, '.' ) ) != NULL )
+  {
+    /* The names finishes with .gz */
+    if ( !strcmp( aux, ".gz" ) )
+      zip_filter = 7;
+    else
+      zip_filter = 4;
+  }
+
+  fileName[ strlen( fileName ) - zip_filter ] = '\0';
+  sprintf( fileName, "%s.%s", fileName, newExtension );
+
+  return fileName;
 }
 
 void LocalKernel::copyFile( char *in, char *out )
@@ -255,6 +249,44 @@ void LocalKernel::copyFile( char *in, char *out )
   fclose( fileOut );
 }
 
+void LocalKernel::copyPCF( char *name, char *traceToLoad )
+{
+/*
+  char *pcfIn = strdup( name );
+  char *pcfOut = strdup( traceToLoad );
+  pcfIn[strlen( pcfIn )-4] = '\0';
+  pcfOut[strlen( pcfOut )-4] = '\0';
+  sprintf( pcfIn, "%s.pcf", pcfIn );
+  sprintf( pcfOut, "%s.pcf", pcfOut );
+*/
+  char *pcfIn  = composeName( name, "pcf" );
+  char *pcfOut = composeName( traceToLoad, "pcf" );
+
+  copyFile( pcfIn, pcfOut );
+
+  free( pcfIn );
+  free( pcfOut );
+}
+
+void LocalKernel::copyROW( char *name, char *traceToLoad )
+{
+/*
+  char *rowIn = strdup( name );
+  char *rowOut = strdup( traceToLoad );
+  rowIn[strlen( rowIn )-4] = '\0';
+  rowOut[strlen( rowOut )-4] = '\0';
+  sprintf( rowIn, "%s.row", rowIn );
+  sprintf( rowOut, "%s.row", rowOut );
+  copyFile( rowIn, rowOut );
+*/
+  char *rowIn = composeName( name, "row" );
+  char *rowOut = composeName( traceToLoad, "row" );
+
+  copyFile( rowIn, rowOut );
+
+  free( rowIn );
+  free( rowOut );
+}
 
 void LocalKernel::getNewTraceName( char *name, char *new_trace_name, int action )
 {

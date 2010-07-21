@@ -93,6 +93,24 @@ KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
   // Filter Default Options: comms
   set_filter_comms( whichTraceOptions->get_filter_comms() );
   set_min_comm_size( whichTraceOptions->get_min_comm_size() );
+
+  // Software Counters Default Options
+  set_sc_onInterval( whichTraceOptions->get_sc_onInterval() );
+
+  if ( whichTraceOptions->get_sc_onInterval() )
+    set_sc_sampling_interval( whichTraceOptions->get_sc_sampling_interval() );
+  else
+    set_sc_minimum_burst_time( whichTraceOptions->get_sc_minimum_burst_time() );
+
+  set_sc_types( whichTraceOptions->get_sc_types() );
+
+  set_sc_acumm_counters( whichTraceOptions->get_sc_acumm_counters() ); // accumulate or count?
+  set_sc_remove_states( whichTraceOptions->get_sc_remove_states() );
+  set_sc_summarize_states( whichTraceOptions->get_sc_summarize_states() );
+  set_sc_global_counters( whichTraceOptions->get_sc_global_counters() );
+  set_sc_only_in_bursts( whichTraceOptions->get_sc_only_in_bursts() );
+  //set_sc_frequency( whichTraceOptions->getSoftwareCountersFrequency ); // not used!!!
+  set_sc_types_kept( whichTraceOptions->get_sc_types_kept() );
 }
 
 
@@ -155,12 +173,12 @@ void KTraceOptions::init()
   // Software Counters Default Options
   set_sc_onInterval( ParaverConfig::getInstance()->getSoftwareCountersInvervalsOrStates() );
 
-  if ( ParaverConfig::getInstance()->getSoftwareCountersInvervalsOrStates() )
-    set_sc_interval( ParaverConfig::getInstance()->getSoftwareCountersSamplingInterval() );
-  else
-    set_sc_interval( ParaverConfig::getInstance()->getSoftwareCountersMinimumBurstTime() );
+//  if ( ParaverConfig::getInstance()->getSoftwareCountersInvervalsOrStates() )
+    set_sc_sampling_interval( ParaverConfig::getInstance()->getSoftwareCountersSamplingInterval() );
+//  else
+    set_sc_minimum_burst_time( ParaverConfig::getInstance()->getSoftwareCountersMinimumBurstTime() );
 
-  set_types( (char *)ParaverConfig::getInstance()->getSoftwareCountersTypes().c_str() );
+  set_sc_types( (char *)ParaverConfig::getInstance()->getSoftwareCountersTypes().c_str() );
 
   set_sc_acumm_counters( ParaverConfig::getInstance()->getSoftwareCountersCountEventsOrAcummulateValues() ); // accumulate or count?
   set_sc_remove_states( ParaverConfig::getInstance()->getSoftwareCountersRemoveStates() );
@@ -168,7 +186,7 @@ void KTraceOptions::init()
   set_sc_global_counters( ParaverConfig::getInstance()->getSoftwareCountersGlobalCounters() );
   set_sc_only_in_bursts( ParaverConfig::getInstance()->getSoftwareCountersOnlyInBursts() );
   //set_sc_frequency( ParaverConfig::getInstance()->getSoftwareCountersFrequency ); // not used!!!
-  set_types_kept( (char *)ParaverConfig::getInstance()->getSoftwareCountersTypesKept().c_str() );
+  set_sc_types_kept( (char *)ParaverConfig::getInstance()->getSoftwareCountersTypesKept().c_str() );
 }
 
 
@@ -485,9 +503,6 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
 {
   xmlNodePtr child;
   xmlChar *word;
-  char *word_aux;
-  unsigned int i;
-  unsigned long long samplingInterval, minimumBurstTime;
 
 /* PARAMETERS TO FILL
     int sc_onInterval;
@@ -521,14 +536,14 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
         if ( !xmlStrcmp( child->name, ( const xmlChar * )"sampling_interval" ) )
         {
           word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          samplingInterval = atoll( ( char * )word );
+          sc_sampling_interval = atoll( ( char * )word );
           xmlFree( word );
         }
 
         if ( !xmlStrcmp( child->name, ( const xmlChar * )"minimum_burst_time" ) )
         {
           word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          minimumBurstTime = atoll( ( char * )word );
+          sc_minimum_burst_time = atoll( ( char * )word );
           xmlFree( word );
         }
 
@@ -542,11 +557,6 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
 
         child = child->next;
       }
-
-      if ( sc_onInterval == 1 )
-        sc_interval = samplingInterval;
-      else
-        sc_interval = minimumBurstTime;
     }
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"algorithm" ) )
@@ -676,14 +686,19 @@ void KTraceOptions::parseDoc( char *docname )
   cur = cur->xmlChildrenNode;
   while ( cur != NULL )
   {
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"filter" ) )
-      parse_filter_params( doc, cur->xmlChildrenNode );
-
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"cutter" ) )
       parse_cutter_params( doc, cur->xmlChildrenNode );
 
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"filter" ) )
+      parse_filter_params( doc, cur->xmlChildrenNode );
+
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"software_counters" ) )
+      parse_comm_fusion_params( doc, cur->xmlChildrenNode );
+
+    /*
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"comm_fusion" ) )
       parse_comm_fusion_params( doc, cur->xmlChildrenNode );
+    */
 
     cur = cur->next;
   }

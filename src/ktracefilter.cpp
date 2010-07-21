@@ -440,6 +440,13 @@ void KTraceFilter::execute( char *trace_in, char *trace_out )
   {
     strcpy( pcf_file, trace_name );
     c = strrchr( pcf_file, '.' );
+    if (is_zip_filter)
+    {
+      // twice, for ".prv" and for ".gz" in ".prv.gz"
+      *c = '\0';
+      c = strrchr( pcf_file, '.' );
+    }
+
     *c = '\0';
     strcat( pcf_file, ".pcf" );
     load_pcf( pcf_file );

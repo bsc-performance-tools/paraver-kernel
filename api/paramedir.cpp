@@ -85,8 +85,8 @@ void printHelp()
   cout << "  Cutter/Filter options ( needed unique xml file with cutter/filter options):" << endl;
   cout << "    -c: Apply Cutter." << endl;
   cout << "    -f: Apply Filter." << endl;
+  cout << "    -s: Apply Software Counters." << endl;
 //  cout << "    -j: Apply Communications Fusion. (in progress)" << endl;
-//  cout << "    -s: Apply Software Counters. (in progress)" << endl;
   cout << endl;
   cout << "  Parameters:" << endl;
   cout << "    trc: Paraver trace filename ( with extension .prv or .prv.gz )." << endl;
@@ -147,7 +147,7 @@ bool isXML( char *argument )
 }
 
 
-void activateOption( char *argument )
+void activateOption( char *argument, vector< int > &filterToolOrder )
 {
   if ( argument[ 1 ] == 'h' )
     showHelp = true;
@@ -158,13 +158,22 @@ void activateOption( char *argument )
   else if ( argument[ 1 ] == 'n' )
     noLoad = true;
   else if ( argument[ 1 ] == 'c' )
+  {
     cutTrace = true;
+    filterToolOrder.push_back( INC_CHOP_COUNTER );
+  }
   else if ( argument[ 1 ] == 'f' )
+  {
     filterTrace = true;
+    filterToolOrder.push_back( INC_FILTER_COUNTER );
+  }
+  else if ( argument[ 1 ] == 's' )
+  {
+    softwareCountersTrace = true;
+    filterToolOrder.push_back( INC_SC_COUNTER );
+  }
 //      else if ( argv[ currentArg ][ 1 ] ) == 'j' )
 //        communicationsFusionTrace = true;
-//  else if ( argument[ 1 ] == 's' )
-//    softwareCountersTrace = true;
   else
     cout << "Unknown option " << argument << endl;
 }
@@ -188,7 +197,9 @@ void getDumpIterations( int &currentArg, char *argv[] )
 #endif
 
 
-void readParameters( int argc, char *arguments[] )
+void readParameters( int argc,
+                     char *arguments[],
+                     vector< int > &filterToolOrder)
 {
   string strOut;
   string strOutputFile;
@@ -199,7 +210,7 @@ void readParameters( int argc, char *arguments[] )
   {
     if ( isOption( arguments[ currentArg ] ))
     {
-      activateOption( arguments[ currentArg ] );
+      activateOption( arguments[ currentArg ], filterToolOrder );
 #ifdef BYTHREAD
       getDumpIterations( currentArg, arguments );
 #endif
@@ -237,12 +248,16 @@ void readParameters( int argc, char *arguments[] )
   }
 
   // Default filters to apply if no option given: all?
+  // IMPROVE: Detect which kind of xml do we have.
+
+  /*
   if ( !cutTrace && !filterTrace && !softwareCountersTrace && ( strXMLOptions != "" ) )
   {
     cutTrace = true;
     filterTrace = true;
-    // softwareCountersTrace = true;
+    softwareCountersTrace = true;
   }
+  */
 }
 
 
@@ -264,7 +279,9 @@ bool anyFilter()
 }
 
 
-string applyFilters( KernelConnection *myKernel )
+string applyFilters( KernelConnection *myKernel,
+                     vector< int > &filterToolOrder,
+                     vector< string > &tmpFiles )
 {
   string tmpTraceIn, tmpTraceOut;
   char tmpNameIn[1024], tmpNameOut[1024];
@@ -276,63 +293,59 @@ string applyFilters( KernelConnection *myKernel )
   // Concatenate Filter Utilities
   strcpy( tmpNameOut, (char *)strTrace.c_str() );
 
-  if ( cutTrace )
+  for( UINT16 i = 0; i < filterToolOrder.size(); ++i )
   {
     strcpy( tmpNameIn, tmpNameOut );
-    myKernel->getNewTraceName( tmpNameIn, tmpNameOut, INC_CHOP_COUNTER );
-    traceCutter = myKernel->newTraceCutter( tmpNameIn,
-                                            tmpNameOut,
-                                            traceOptions );
-    myKernel->copyPCF( tmpNameIn, tmpNameOut );
+    myKernel->getNewTraceName( tmpNameIn, tmpNameOut, filterToolOrder[ i ] );
+
+    switch( filterToolOrder[i] )
+    {
+      case INC_CHOP_COUNTER:
+        traceCutter = myKernel->newTraceCutter( tmpNameIn,
+                                                tmpNameOut,
+                                                traceOptions );
+        myKernel->copyPCF( tmpNameIn, tmpNameOut );
+        break;
+
+      case INC_FILTER_COUNTER:
+        traceFilter = myKernel->newTraceFilter( tmpNameIn,
+                                                tmpNameOut,
+                                                traceOptions );
+        myKernel->copyPCF( tmpNameIn, tmpNameOut );
+        break;
+
+      case INC_SC_COUNTER:
+        traceSoftwareCounters = myKernel->newTraceSoftwareCounters( tmpNameIn,
+                                                                    tmpNameOut,
+                                                                    traceOptions );
+        break;
+
+      default:
+        break;
+    }
+
     myKernel->copyROW( tmpNameIn, tmpNameOut );
+    tmpFiles.push_back( tmpNameOut );
   }
 
-  if ( filterTrace )
+  // Delete intermediate files
+  char *pcfName, *rowName;
+  for( UINT16 i = 0; i < tmpFiles.size() - 1; ++i )
   {
-    strcpy( tmpNameIn, tmpNameOut );
-    myKernel->getNewTraceName( tmpNameIn, tmpNameOut, INC_FILTER_COUNTER );
-    traceFilter = myKernel->newTraceFilter( tmpNameIn,
-                                            tmpNameOut,
-                                            traceOptions );
-    myKernel->copyPCF( tmpNameIn, tmpNameOut );
-    myKernel->copyROW( tmpNameIn, tmpNameOut );
+    pcfName = myKernel->composeName( (char *)tmpFiles[ i ].c_str(), "pcf" );
+    rowName = myKernel->composeName( (char *)tmpFiles[ i ].c_str(), "row" );
+    remove( tmpFiles[ i ].c_str() );
+    remove( pcfName );
+    remove( rowName );
   }
-
-/*
-  if ( commFusionTrace )
-  {
-    strcpy( tmpNameIn, tmpNameOut );
-    // which kind of name? "cf" ?
-    myKernel->getNewTraceName( tmpNameIn, tmpNameOut, INC_FILTER_COUNTER );
-    traceCommFusion = myKernel->newTraceCommFusion( tmpNameIn,
-                                                    tmpNameOut,
-                                                    traceOptions );
-  }
-*/
-
-  if ( softwareCountersTrace )
-  {
-    strcpy( tmpNameIn, tmpNameOut );
-    myKernel->getNewTraceName( tmpNameIn, tmpNameOut, INC_SC_COUNTER );
-    traceSoftwareCounters = myKernel->newTraceSoftwareCounters( tmpNameIn,
-                                                                tmpNameOut,
-                                                                traceOptions );
-    // SoftwareCounters creates its own different .pcf file, adding a few event types.
-    // myKernel->copyPCF( tmpNameIn, tmpNameOut );
-    myKernel->copyROW( tmpNameIn, tmpNameOut );
-  }
-
-//      traceCommunicationsFusionTrace = myKernel->newTraceCommunicationsFusionTrace();
-
-  // Delete temporal files
 
   // Delete utilities
-//        delete traceOptions;
-
-//        delete traceCutter;
-//        delete traceFilter;
+//  delete traceOptions;
+//  delete traceCutter;
+//  delete traceFilter;
 //  delete traceCommunicationsFusionTrace;
 //  delete traceSoftwareCounters;
+
   return string( tmpNameOut );
 }
 
@@ -403,13 +416,16 @@ int main( int argc, char *argv[] )
     printHelp();
   else
   {
+    vector< int > filterToolOrder;
+    vector< string > tmpFiles;
+
     // Initializations
     LocalKernel::init();
     KernelConnection *myKernel = new LocalKernel( NULL );
     ParaverConfig *config = ParaverConfig::getInstance();
     config->readParaverConfigFile();
 
-    readParameters( argc, argv );
+    readParameters( argc, argv, filterToolOrder );
 
     // Execute
     if ( showHelp )
@@ -418,7 +434,7 @@ int main( int argc, char *argv[] )
     {
       if ( anyFilter() )
       {
-        strTrace = applyFilters( myKernel );
+        strTrace = applyFilters( myKernel, filterToolOrder, tmpFiles );
       }
 
       if ( anyCFG() || dumpTrace )

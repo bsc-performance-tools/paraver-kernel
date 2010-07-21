@@ -88,6 +88,8 @@ class KernelConnection
     virtual void copyPCF( char *name, char *traceToLoad ) = 0;
     virtual void copyROW( char *name, char *traceToLoad ) = 0;
     virtual void getNewTraceName( char *name, char *new_trace_name, int action ) = 0;
+    virtual char *composeName( char *name, char *newExtension ) = 0;
+
 
   protected:
 

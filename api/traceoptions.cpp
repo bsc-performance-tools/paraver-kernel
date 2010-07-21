@@ -283,6 +283,16 @@ void TraceOptionsProxy::set_sc_onInterval( int scOnInterval )
   myTraceOptions->set_sc_onInterval( scOnInterval );
 }
 
+void TraceOptionsProxy::set_sc_sampling_interval( unsigned long long scInterval )
+{
+  myTraceOptions->set_sc_sampling_interval( scInterval );
+}
+
+void TraceOptionsProxy::set_sc_minimum_burst_time( unsigned long long scInterval )
+{
+  myTraceOptions->set_sc_minimum_burst_time( scInterval );
+}
+
 void TraceOptionsProxy::set_sc_global_counters( int scGlobalCounters )
 {
   myTraceOptions->set_sc_global_counters( scGlobalCounters );
@@ -308,24 +318,76 @@ void TraceOptionsProxy::set_sc_remove_states( int scRemoveStates )
   myTraceOptions->set_sc_remove_states( scRemoveStates );
 }
 
-void TraceOptionsProxy::set_sc_interval( unsigned long long scInterval )
-{
-  myTraceOptions->set_sc_interval( scInterval );
-}
-
 void TraceOptionsProxy::set_sc_frequency( int scFrequency )
 {
   myTraceOptions->set_sc_frequency( scFrequency );
 }
 
-void TraceOptionsProxy::set_types( char *whichTypes )
+void TraceOptionsProxy::set_sc_types( char *whichTypes )
 {
-  myTraceOptions->set_types( whichTypes );
+  myTraceOptions->set_sc_types( whichTypes );
 }
 
-void TraceOptionsProxy::set_types_kept( char *typesKept )
+void TraceOptionsProxy::set_sc_types_kept( char *typesKept )
 {
-  myTraceOptions->set_types_kept( typesKept );
+  myTraceOptions->set_sc_types_kept( typesKept );
+}
+
+
+int TraceOptionsProxy::get_sc_onInterval()
+{
+  return myTraceOptions->get_sc_onInterval();
+}
+
+unsigned long long TraceOptionsProxy::get_sc_sampling_interval()
+{
+  return myTraceOptions->get_sc_sampling_interval();
+}
+
+unsigned long long TraceOptionsProxy::get_sc_minimum_burst_time()
+{
+  return myTraceOptions->get_sc_minimum_burst_time();
+}
+
+int TraceOptionsProxy::get_sc_global_counters()
+{
+  return myTraceOptions->get_sc_global_counters();
+}
+
+int TraceOptionsProxy::get_sc_acumm_counters()
+{
+  return myTraceOptions->get_sc_acumm_counters();
+}
+
+int TraceOptionsProxy::get_sc_summarize_states()
+{
+  return myTraceOptions->get_sc_summarize_states();
+}
+
+int TraceOptionsProxy::get_sc_only_in_bursts()
+{
+  return myTraceOptions->get_sc_only_in_bursts();
+}
+
+int TraceOptionsProxy::get_sc_remove_states()
+{
+  return myTraceOptions->get_sc_remove_states();
+}
+
+/*
+void TraceOptionsProxy::set_sc_frequency()
+{
+  myTraceOptions->set_sc_frequency( scFrequency );
+}
+*/
+char *TraceOptionsProxy::get_sc_types()
+{
+  return myTraceOptions->get_sc_types();
+}
+
+char *TraceOptionsProxy::get_sc_types_kept()
+{
+  return myTraceOptions->get_sc_types_kept();
 }
 
 

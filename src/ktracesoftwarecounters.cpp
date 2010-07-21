@@ -46,9 +46,8 @@
 #define atoll _atoi64
 #endif
 
-
-KTraceSoftwareCounters::KTraceSoftwareCounters( char *&trace_in,
-                                                char *&trace_out,
+KTraceSoftwareCounters::KTraceSoftwareCounters( char *trace_in,
+                                                char *trace_out,
                                                 TraceOptions *options )
 {
   min_state_time = 0;
@@ -87,11 +86,15 @@ void KTraceSoftwareCounters::read_sc_args()
   type_of_counters = exec_options->sc_onInterval;
 
   if ( exec_options->sc_onInterval )
-    interval = exec_options->sc_interval;
+  {
+    interval = exec_options->sc_sampling_interval;
+    last_time = interval;
+  }
   else
-    min_state_time = exec_options->sc_interval;
-
-  last_time = exec_options->sc_interval;
+  {
+    min_state_time = exec_options->sc_minimum_burst_time;
+    last_time = min_state_time;
+  }
 
   if ( strlen( exec_options->types ) > 0 )
   {
@@ -261,6 +264,8 @@ int KTraceSoftwareCounters::allowed_type( unsigned long long type, unsigned long
       if ( types.type_values[i].all_values == 1 )
         return 1;
 
+
+// BUG EN POTENCIA: NO RECORRE TODA LA LISTA DE VALORES!!!
       for ( j = 0; j < 16; j++ )
       {
         if ( types.type_values[i].values[j] == 0 )

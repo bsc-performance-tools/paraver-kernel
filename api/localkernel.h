@@ -76,6 +76,7 @@ class LocalKernel: public KernelConnection
     virtual void copyPCF( char *name, char *traceToLoad );
     virtual void copyROW( char *name, char *traceToLoad );
     virtual void getNewTraceName( char *name, char *new_trace_name, int action );
+    virtual char *composeName( char *name, char *newExtension );
 
   protected:
 

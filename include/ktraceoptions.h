@@ -100,8 +100,12 @@ class KTraceOptions: public TraceOptions
     int sc_summarize_states;
     int sc_only_in_bursts;
     int sc_remove_states;
-    unsigned long long sc_interval;
-    int sc_frequency;
+
+    // unsigned long long sc_interval; splits in next two
+    unsigned long long sc_sampling_interval;
+    unsigned long long sc_minimum_burst_time;
+
+    int sc_frequency; // ??
     char *types;
     char *types_kept;
 
@@ -400,6 +404,16 @@ class KTraceOptions: public TraceOptions
       sc_onInterval = whichSCOnInterval;
     }
 
+    inline void set_sc_sampling_interval( unsigned long long whichSCInterval )
+    {
+      sc_sampling_interval = whichSCInterval;
+    }
+
+    inline void set_sc_minimum_burst_time( unsigned long long whichSCMinimumBurstTime )
+    {
+      sc_minimum_burst_time = whichSCMinimumBurstTime;
+    }
+
     inline void set_sc_global_counters( int whichSCGlobalCounters )
     {
       sc_global_counters = whichSCGlobalCounters;
@@ -424,25 +438,75 @@ class KTraceOptions: public TraceOptions
     {
       sc_remove_states = whichSCRemoveStates;
     }
-
-    inline void set_sc_interval( unsigned long long whichSCInterval )
-    {
-      sc_interval = whichSCInterval;
-    }
-
+/*
     inline void set_sc_frequency( int whichSCFrequency )
     {
       sc_frequency = whichSCFrequency;
     }
-
-    inline void set_types( char *whichTypes )
+*/
+    inline void set_sc_types( char *whichTypes )
     {
       types = whichTypes;
     }
 
-    inline void set_types_kept( char *whichTypesKept )
+    inline void set_sc_types_kept( char *whichTypesKept )
     {
       types_kept = whichTypesKept;
+    }
+
+    inline int get_sc_onInterval() const
+    {
+      return sc_onInterval;
+    }
+
+    inline unsigned long long get_sc_sampling_interval() const
+    {
+      return sc_sampling_interval;
+    }
+
+    inline unsigned long long get_sc_minimum_burst_time() const
+    {
+      return sc_minimum_burst_time;
+    }
+
+    inline int get_sc_global_counters() const
+    {
+      return sc_global_counters;
+    }
+
+    inline int get_sc_acumm_counters() const
+    {
+      return sc_acumm_counters;
+    }
+
+    inline int get_sc_summarize_states() const
+    {
+      return sc_summarize_states;
+    }
+
+    inline int get_sc_only_in_bursts() const
+    {
+      return sc_only_in_bursts;
+    }
+
+    inline int get_sc_remove_states() const
+    {
+      return sc_remove_states;
+    }
+/*
+    inline int get_sc_frequency()
+    {
+      return sc_frequency;
+    }
+*/
+    inline char *get_sc_types() const
+    {
+      return strdup( types );
+    }
+
+    inline char *get_sc_types_kept() const
+    {
+      return strdup( types_kept );
     }
 
 

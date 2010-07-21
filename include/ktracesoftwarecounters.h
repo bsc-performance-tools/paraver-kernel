@@ -36,7 +36,7 @@
 class KTraceSoftwareCounters : public TraceSoftwareCounters
 {
   public:
-    KTraceSoftwareCounters( char *&trace_in, char *&trace_out, TraceOptions *options );
+    KTraceSoftwareCounters( char *trace_in, char *trace_out, TraceOptions *options );
     virtual ~KTraceSoftwareCounters();
     void execute( char *trace_in, char *trace_out );
 

@@ -158,6 +158,10 @@ class TraceOptions
     /* Sets for Sofware Counters */
     virtual void set_sc_onInterval( int scOnInterval )
     {}
+    virtual void set_sc_sampling_interval( unsigned long long scInterval )
+    {}
+    virtual void set_sc_minimum_burst_time( unsigned long long scInterval )
+    {}
     virtual void set_sc_global_counters( int scGlobalCounters )
     {}
     virtual void set_sc_acumm_counters( int scAcummCounters )
@@ -168,14 +172,35 @@ class TraceOptions
     {}
     virtual void set_sc_remove_states( int scRemoveStates )
     {}
-    virtual void set_sc_interval( unsigned long long scInterval )
-    {}
     virtual void set_sc_frequency( int scFrequency )
     {}
-    virtual void set_types( char *whichTypes )
+    virtual void set_sc_types( char *whichTypes )
     {}
-    virtual void set_types_kept( char *typesKept )
+    virtual void set_sc_types_kept( char *typesKept )
     {}
+
+    virtual int get_sc_onInterval()
+    { return 0; }
+    virtual unsigned long long get_sc_sampling_interval()
+    { return 0; }
+    virtual unsigned long long get_sc_minimum_burst_time()
+    { return 0; }
+    virtual int get_sc_global_counters()
+    { return 0; }
+    virtual int get_sc_acumm_counters()
+    { return 0; }
+    virtual int get_sc_summarize_states()
+    { return 0; }
+    virtual int get_sc_only_in_bursts()
+    { return 0; }
+    virtual int get_sc_remove_states()
+    { return 0; }
+    //virtual unsigned long long get_sc_interval()
+    //{ return 0; }
+    virtual char *get_sc_types()
+    { return (char *)NULL; }
+    virtual char *get_sc_types_kept()
+    { return (char *)NULL; }
 
     /* Sets for comm_fusion */
     virtual void set_reduce_comms( char reduceComms )
@@ -260,15 +285,27 @@ class TraceOptionsProxy :public TraceOptions
 
     /* Sets for Software Counters */
     virtual void set_sc_onInterval( int scOnInterval );
+    virtual void set_sc_sampling_interval( unsigned long long scInterval );
+    virtual void set_sc_minimum_burst_time( unsigned long long scInterval );
     virtual void set_sc_global_counters( int scGlobalCounters );
     virtual void set_sc_acumm_counters( int scAcummCounters );
     virtual void set_sc_summarize_states( int scSummarizeStates );
     virtual void set_sc_only_in_bursts( int scOnlyInBursts );
     virtual void set_sc_remove_states( int scRemoveStates );
-    virtual void set_sc_interval( unsigned long long scInterval );
     virtual void set_sc_frequency( int scFrequency );
-    virtual void set_types( char *whichTypes );
-    virtual void set_types_kept( char *typesKept );
+    virtual void set_sc_types( char *whichTypes );
+    virtual void set_sc_types_kept( char *typesKept );
+
+    virtual int get_sc_onInterval();
+    virtual unsigned long long get_sc_sampling_interval();
+    virtual unsigned long long get_sc_minimum_burst_time();
+    virtual int get_sc_global_counters();
+    virtual int get_sc_acumm_counters();
+    virtual int get_sc_summarize_states();
+    virtual int get_sc_only_in_bursts();
+    virtual int get_sc_remove_states();
+    virtual char *get_sc_types();
+    virtual char *get_sc_types_kept();
 
     /* Sets for comm_fusion */
     virtual void set_reduce_comms( char reduceComms );
