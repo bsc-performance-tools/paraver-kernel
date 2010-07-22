@@ -971,6 +971,9 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     if ( currentWindow->getBeginTime( iRow ) < toTime )
       calculate( iRow, fromTime, toTime, winIndex, data, childInit );
 
+    if ( currentWindow->getBeginTime( iRow ) == currentWindow->getEndTime( iRow ) )
+      calculate( iRow, fromTime, toTime, winIndex, data, childInit );
+
     if ( winIndex == 0 )
       finishRow( data );
   }
