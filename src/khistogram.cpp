@@ -954,7 +954,8 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
         currentWindow->initRow( iRow, fromTime, NOCREATE );
     }
 
-    while ( currentWindow->getEndTime( iRow ) <= fromTime )
+    while ( currentWindow->getEndTime( iRow ) <= fromTime &&
+            currentWindow->getBeginTime( iRow ) != currentWindow->getEndTime( iRow ) )
     {
       currentWindow->calcNext( iRow );
     }
