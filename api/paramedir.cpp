@@ -90,7 +90,7 @@ void printHelp()
   cout << endl;
   cout << "  Parameters:" << endl;
   cout << "    trc: Paraver trace filename ( with extension .prv or .prv.gz )." << endl;
-  cout << "    xml: Options for cutter/filter ( with extension .xml )." << endl;
+  cout << "    xml: Options for cutter/filter/software counters ( with extension .xml )." << endl;
   cout << "    cfg: Paraver configuration filename ( with extension .cfg ). If present, trace's loaded." << endl;
   cout << "    out: Filename for output ( default name is cfg filename without, with extension .mcr )." << endl;
   cout << endl;
@@ -104,10 +104,9 @@ void printHelp()
   cout << "    paramedir -f linpack.prv just_MPI_calls.xml" << endl;
   cout << "      Filters mpi calls of linpack.prv. Doesn't load it, just writes the file." << endl;
   cout << endl;
-  cout << "    paramedir -c -f linpack.prv cut_filter_options.xml mpi_stats.cfg" << endl;
-  cout << "      Reads parameters of the cutter and the filter from the xml and applies them to" << endl;
-  cout << "      linpack.prv trace before load it and compute mpi_stats.cfg." << endl;
-  cout << "      paramedir will apply in first term the cutter, and then the resulting trace will be filtered." << endl;
+  cout << "    paramedir -s -c -f linpack.prv cut_filter_options.xml mpi_stats.cfg" << endl;
+  cout << "      Reads parameters of the software counters, cutter and filter from the xml and applies them to" << endl;
+  cout << "      linpack.prv trace, and the filtered trace is loaded and used to compute mpi_stats.cfg." << endl;
   cout << endl;
 }
 
