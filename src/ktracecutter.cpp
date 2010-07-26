@@ -704,9 +704,6 @@ void KTraceCutter::execute( char *trace_in, char *trace_out )
   for ( i = 0; i < MAX_SELECTED_TASKS; i++ )
     wanted_tasks[i].min_task_id = 0;
 
-
-
-
   /* Reading of the program arguments */
   read_cutter_params();
 /* test bug times
