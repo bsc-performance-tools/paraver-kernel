@@ -61,9 +61,15 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
     joinBursts = true;
     endRecord = ( ( KSingleWindow * ) window )->getEndRecord();
     beginRecord = ( ( KSingleWindow * ) window )->getBeginRecord();
+
+    // lastEnd to control loop!
+    lastEnd = endRecord;
+    firstBegin = beginRecord;
   }
   else
+  {
     joinBursts = false;
+  }
 
   setChilds();
 
@@ -86,10 +92,16 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
     {
       end = childIntervals[ 0 ]->getEnd();
 
-      if ( *end == *endRecord )
+      // somehow, this break never is executed
+      // if ( *end == *endRecord )
+      if (( *end == *endRecord ) || ( *end == *lastEnd ))
         break;
 
+    // lastEnd to control loop!
+      lastEnd = end;
+
       childIntervals[ 0 ]->calcNext( displayList );
+
     }
     currentValue = tmpValue;
   }
@@ -123,6 +135,9 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
   {
     TSemanticValue tmpValue;
 
+    // lastEnd to control loop! Initialized with endRecord.
+    lastEnd = endRecord;
+
     begin = childIntervals[ 0 ]->getBegin();
     end = childIntervals[ 0 ]->getEnd();
     tmpValue = childIntervals[ 0 ]->getValue();
@@ -133,12 +148,18 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
     }
 
     childIntervals[ 0 ]->calcNext( displayList );
+
     while ( tmpValue == childIntervals[ 0 ]->getValue() )
     {
       end = childIntervals[ 0 ]->getEnd();
 
-      if ( *end == *endRecord )
+      // somehow, this break never is executed
+      // if ( *end == *endRecord )
+      if (( *end == *endRecord ) || ( *end == *lastEnd ))
         break;
+
+    // lastEnd to control loop!
+      lastEnd = end;
 
       childIntervals[ 0 ]->calcNext( displayList );
     }
@@ -169,6 +190,9 @@ KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc 
   {
     TSemanticValue tmpValue;
 
+    // firstBegin to control loop! Initialized with beginRecord.
+    firstBegin = beginRecord;
+
     begin = childIntervals[ 0 ]->getBegin();
     end = childIntervals[ 0 ]->getEnd();
     tmpValue = childIntervals[ 0 ]->getValue();
@@ -177,8 +201,13 @@ KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc 
     {
       begin = childIntervals[ 0 ]->getBegin();
 
-      if ( *begin == *beginRecord )
+      // somehow, this break never is executed
+      // if ( *begin == *beginRecord )
+      if (( *begin == *beginRecord ) || ( *begin == *firstBegin ))
         break;
+
+      // firstBegin to control loop!
+      firstBegin = begin;
 
       childIntervals[ 0 ]->calcPrev( displayList );
     }
