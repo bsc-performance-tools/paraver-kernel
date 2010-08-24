@@ -47,6 +47,7 @@ class TraceHeaderException: public ParaverKernelException
       invalidTime,
       invalidCommNumber,
       unknownCommLine,
+      emptyBody,
       LAST
     } TErrorCode;
 

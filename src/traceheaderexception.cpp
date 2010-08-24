@@ -43,6 +43,7 @@ const char *TraceHeaderException::errorMessage[] =
     "Invalid time: ",
     "Invalid number of communicators: ",
     "Unknown communicator line format: ",
+    "Empty body: ",
     NULL
   };
 
