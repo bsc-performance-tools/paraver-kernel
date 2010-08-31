@@ -53,29 +53,11 @@ using namespace std;
 #define atoll _atoi64
 #endif
 
-//class ParaverConfig;
-
 KTraceCutter::KTraceCutter( char *&trace_in, char *&trace_out, TraceOptions *options )
 {
-  //min_perc = 0;
-  //max_perc = 100;
   total_cutter_iters = 0;
-//cout << "KTraceCutter::KTraceCutter::options min_percentage: " << ((KTraceOptions *)options)->min_percentage << endl;
-//cout << "KTraceCutter::KTraceCutter::options max_percentage: " << ((KTraceOptions *)options)->max_percentage << endl;
   exec_options = new KTraceOptions( (KTraceOptions *) options );
-//cout << "KTraceCutter::KTraceCutter::exec_options min_percentage: " << exec_options->min_percentage << endl;
-//cout << "KTraceCutter::KTraceCutter::exec_options max_percentage: " << exec_options->max_percentage << endl;
-/*
-  cout << "-------------------->KTraceCutter antes" << endl;
-  cout << "trace_in: " << trace_in << endl;
-  cout << "trace_out: " << trace_out << endl;
-*/
   execute( trace_in, trace_out );
-/*
-  cout << "<--------------------KTraceCutter despues" << endl;
-  cout << "trace_in: " << trace_in << endl;
-  cout << "trace_out: " << trace_out << endl;
-*/
 }
 
 
@@ -283,7 +265,10 @@ void KTraceCutter::proces_cutter_header( char *header,
     else gzgets( gzInfile, header, MAX_TRACE_HEADER );
   }
 
-  fseek( infile, -( strlen( header ) ), SEEK_CUR );
+  if ( !is_zip )
+    fseek( infile, -( strlen( header ) ), SEEK_CUR );
+  else
+    gzseek( gzInfile, -( strlen( header ) ), SEEK_CUR );
 
   /* Writing of the current cut offset */
   if ( trace_in_name != "\0" )
@@ -659,15 +644,6 @@ int KTraceCutter::is_selected_task( int task_id )
 
 void KTraceCutter::execute( char *trace_in, char *trace_out )
 {
-/*
-  cout << "---------------------------------> KTraceCutter::execute" << endl;
-
-  if ( trace_in != NULL && trace_out != NULL )
-    cout << string( trace_in) << " -->" << string(trace_out) << endl;
-  else
-    cout << "KTraceCutter::execute: NULL NAMES OF TRACES!" << endl;
-*/
-
   char *c, *tmp_dir, *word, *trace_header;
   char trace_name[1024], buffer[1024], end_parsing = 0, reset_counters;
   char trace_file_out[2048];
@@ -706,14 +682,8 @@ void KTraceCutter::execute( char *trace_in, char *trace_out )
 
   /* Reading of the program arguments */
   read_cutter_params();
-/* test bug times
-  cout << "by_time  :" << by_time << endl;
-  cout << "time_min :" << time_min << endl;
-  cout << "time_max :" << time_max << endl;
-*/
+
   strcpy( trace_name, trace_in );
-
-
 
   /* Is the trace zipped ? */
   if ( ( c = strrchr( trace_name, '.' ) ) != NULL )
@@ -758,7 +728,6 @@ void KTraceCutter::execute( char *trace_in, char *trace_out )
   }
   else
   {
-
     if ( ( gzInfile = gzopen( trace_name, "rb" ) ) == NULL )
     {
       printf( "KCutter: Error opening compressed trace\n" );
