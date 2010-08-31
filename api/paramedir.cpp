@@ -283,8 +283,8 @@ string applyFilters( KernelConnection *myKernel,
                      vector< string > &tmpFiles )
 {
   string tmpTraceIn, tmpTraceOut;
-  char tmpNameIn[1024], tmpNameOut[1024];
-  string strOutputFile;
+  char tmpNameIn[1024], tmpNameOut[1024], tmpPathOut[1024];
+  string strOutputFile, strPathOut;
 
   traceOptions = myKernel->newTraceOptions( );
   traceOptions->parseDoc( (char *)strXMLOptions.c_str() );
@@ -292,10 +292,19 @@ string applyFilters( KernelConnection *myKernel,
   // Concatenate Filter Utilities
   strcpy( tmpNameOut, (char *)strTrace.c_str() );
 
+  size_t pos = strTrace.find_last_of( '/' );
+  if ( pos != string::npos )
+    strPathOut = strTrace.substr( 0, pos );
+  else
+    strPathOut = strTrace;
+
+  strcpy( tmpPathOut, (char *)strPathOut.c_str() );
+
   for( UINT16 i = 0; i < filterToolOrder.size(); ++i )
   {
     strcpy( tmpNameIn, tmpNameOut );
-    myKernel->getNewTraceName( tmpNameIn, tmpNameOut, filterToolOrder[ i ] );
+    myKernel->getNewTraceName( tmpNameIn, tmpPathOut, filterToolOrder[ i ] );
+    strcpy( tmpNameOut, tmpPathOut );
 
     switch( filterToolOrder[i] )
     {

@@ -221,6 +221,11 @@ class TraceOptions
     virtual void parseDoc( char *docname )
     {}
 
+    virtual TraceOptions *getConcrete()
+    {
+      return NULL;
+    }
+
   protected:
   //  KernelConnection *myKernel;
 };

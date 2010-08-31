@@ -47,6 +47,7 @@ TraceOptionsProxy::TraceOptionsProxy( const KernelConnection *whichKernel )
   //  myTraceOptions->parseDoc( xmldocname );
 }
 
+
 TraceOptionsProxy::~TraceOptionsProxy()
 {
   delete myTraceOptions;
