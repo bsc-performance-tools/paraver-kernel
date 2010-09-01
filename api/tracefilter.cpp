@@ -28,8 +28,6 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "tracefilter.h"
-#include "ktraceoptions.h"
-#include "ktracefilter.h"
 #include "kernelconnection.h"
 
 

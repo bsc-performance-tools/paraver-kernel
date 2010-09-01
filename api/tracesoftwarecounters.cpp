@@ -28,8 +28,8 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "tracesoftwarecounters.h"
-#include "ktraceoptions.h"
-#include "ktracesoftwarecounters.h"
+#include "kernelconnection.h"
+
 TraceSoftwareCounters *TraceSoftwareCounters::create( KernelConnection *whichKernel,
                                   char *traceIn,
                                   char *traceOut,
