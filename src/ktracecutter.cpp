@@ -266,7 +266,11 @@ void KTraceCutter::proces_cutter_header( char *header,
   }
 
   if ( !is_zip )
+#ifdef WIN32
+    _fseeki64( infile, 0, SEEK_SET );
+#else
     fseek( infile, -( strlen( header ) ), SEEK_CUR );
+#endif
   else
     gzseek( gzInfile, -( strlen( header ) ), SEEK_CUR );
 
@@ -711,7 +715,7 @@ void KTraceCutter::execute( char *trace_in, char *trace_out )
       exit( 1 );
     }
 #elif defined(WIN32)
-    if ( ( fopen_s( &infile, trace_name, "r" ) ) == NULL )
+    if ( fopen_s( &infile, trace_name, "r" ) != 0 )
     {
       perror( "ERROR" );
       printf( "KCutter: Error Opening File %s\n", trace_name );
@@ -757,7 +761,7 @@ void KTraceCutter::execute( char *trace_in, char *trace_out )
     exit( 1 );
   }
 #elif defined(WIN32)
-  if ( ( fopen_s( &outfile, trace_file_out, "w" ) ) == NULL )
+  if ( fopen_s( &outfile, trace_file_out, "w" ) != 0 )
   {
     printf( "Error Opening KCutter Ouput File %s\n", trace_file_out );
     exit( 1 );
@@ -828,10 +832,8 @@ void KTraceCutter::execute( char *trace_in, char *trace_out )
 
         sscanf( line, "%d:%d:%d:%d:%d:%lld:%lld:%d\n", &id, &cpu, &appl, &task, &thread, &time_1, &time_2, &state );
 
-
         /* If is a not traceable thread, get next record */
         if ( cut_tasks && !is_selected_task( task ) ) break;
-
 
         if ( time_2 <= time_min ) break;
 
