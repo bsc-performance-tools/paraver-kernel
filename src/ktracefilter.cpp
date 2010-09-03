@@ -389,7 +389,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out )
       exit( 1 );
     }
 #elif defined(WIN32)
-    if ( ( fopen_s( &infile, trace_name, "r" ) ) == NULL )
+    if ( fopen_s( &infile, trace_name, "r" ) != 0 )
     {
       perror( "ERROR" );
       printf( "Error Opening File %s\n", trace_in );
@@ -420,7 +420,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out )
     exit( 1 );
   }
 #elif defined(WIN32)
-  if ( ( fopen_s( &outfile, trace_out, "w" ) ) == NULL )
+  if ( fopen_s( &outfile, trace_out, "w" ) != 0 )
   {
     printf( "Error Opening File %s\n", trace_out );
     exit( 1 );
