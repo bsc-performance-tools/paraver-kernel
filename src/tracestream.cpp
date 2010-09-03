@@ -29,6 +29,9 @@
 
 #include "tracestream.h"
 
+#ifndef WIN32
+#include <stdlib.h>
+#endif
 
 TraceStream *TraceStream::openFile( const string& filename )
 {
