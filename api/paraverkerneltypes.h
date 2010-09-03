@@ -35,6 +35,8 @@
 
 using namespace std;
 
+typedef unsigned long long TTraceSize;
+
 typedef UINT16        TObjectOrder;
 
 typedef TObjectOrder  TThreadOrder;

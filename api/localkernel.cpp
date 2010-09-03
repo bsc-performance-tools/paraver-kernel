@@ -45,6 +45,7 @@
 #include "ktracecutter.h"
 #include "ktracefilter.h"
 #include "ktracesoftwarecounters.h"
+#include "tracestream.h"
 #include <string.h>
 
 void LocalKernel::init()
@@ -66,6 +67,16 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( string ) ) :
 
 LocalKernel::~LocalKernel()
 {}
+
+bool LocalKernel::checkTraceSize( const string& filename, TTraceSize maxSize ) const
+{
+  TTraceSize size = TraceStream::getTraceFileSize( filename );
+
+  if( size <= maxSize )
+    return true;
+
+  return false;
+}
 
 Trace *LocalKernel::newTrace( const string& whichFile, bool noLoad, ProgressController *progress ) const
 {

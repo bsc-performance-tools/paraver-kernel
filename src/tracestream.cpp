@@ -40,6 +40,15 @@ TraceStream *TraceStream::openFile( const string& filename )
     return new NotCompressed( filename );
 }
 
+TTraceSize TraceStream::getTraceFileSize( const string& filename )
+{
+  string strExt = filename.substr( filename.length() - 3 );
+
+  if ( strExt.compare( ".gz" ) == 0 )
+    return Compressed::getTraceFileSize( filename );
+  else
+    return NotCompressed::getTraceFileSize( filename );
+}
 
 NotCompressed::NotCompressed( const string& filename )
 {
@@ -106,6 +115,41 @@ int NotCompressed::peek()
   return file.peek();
 }
 
+TTraceSize NotCompressed::getTraceFileSize( const string& filename )
+{
+  FILE *traceFile;
+  TTraceSize tmpSize;
+
+#ifdef WIN32
+  if ( fopen_s( &traceFile, filename.c_str(), "r" ) != 0 )
+  {
+    printf( "Error Opening File %s\n", filename.c_str() );
+    exit( 1 );
+  }
+#else
+  if ( ( traceFile = fopen64( filename.c_str(), "r" ) ) == NULL )
+  {
+    printf( "Error Opening File %s\n", filename.c_str() );
+    exit( 1 );
+  }
+#endif
+
+#ifdef WIN32
+    _fseeki64( traceFile, 0, SEEK_END );
+#else
+    fseek( traceFile, 0, SEEK_END );
+#endif
+
+#ifdef WIN32
+    tmpSize = _ftelli64( traceFile );
+#else
+    tmpSize = ftell( traceFile );
+#endif
+
+  fclose( traceFile );
+  return tmpSize;
+}
+
 
 Compressed::Compressed( const string& filename )
 {
@@ -169,4 +213,16 @@ void Compressed::clear()
 int Compressed::peek()
 {
   return gzgetc( file );
+}
+
+TTraceSize Compressed::getTraceFileSize( const string& filename )
+{
+  TTraceSize tmpSize;
+
+  Compressed tmpComp( filename );
+  tmpComp.seekend();
+  tmpSize = tmpComp.tellg();
+  tmpComp.close();
+
+  return tmpSize;
 }

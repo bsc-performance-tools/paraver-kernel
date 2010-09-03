@@ -63,6 +63,8 @@ class TraceStream
     virtual int peek() = 0;
 
     static TraceStream *openFile( const string& filename );
+
+    static TTraceSize getTraceFileSize( const string& filename );
 };
 
 
@@ -89,7 +91,10 @@ class NotCompressed: public TraceStream
     virtual bool good() const;
     virtual void clear();
     virtual int peek();
-  private:
+
+    static TTraceSize getTraceFileSize( const string& filename );
+
+private:
     ifstream file;
 
 };
@@ -118,6 +123,8 @@ class Compressed: public TraceStream
     virtual bool good() const;
     virtual void clear();
     virtual int peek();
+
+    static TTraceSize getTraceFileSize( const string& filename );
 
   private:
     static const UINT32 LINESIZE = 1000 * 1024;
