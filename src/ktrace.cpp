@@ -569,11 +569,12 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   }
 
   hash_set<TEventType> hashevents;
-//  int count = 0;
+
+  unsigned long long count = 0;
   while ( !file->eof() )
   {
     body->read( file, *blocks, hashevents );
-//    if ( count == 500 )
+    ++count;
     if ( blocks->getCountInserted() >= 10000 )
     {
 
@@ -585,20 +586,18 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
         else
           progress->setCurrentProgress( blocks->getLastRecordTime() );
       }
-//      count = 0;
+
       if ( progress != NULL && progress->getStop() )
         break;
     }
-//    else
-//      ++count;
   }
-/*
+
   if (count == 0)
   {
     throw TraceHeaderException( TraceHeaderException::emptyBody,
-                                     whichFile.c_str() );
+                                whichFile.c_str() );
   }
-*/
+
   if ( blocks->getCountInserted() > 0 )
     memTrace->insert( blocks );
 
