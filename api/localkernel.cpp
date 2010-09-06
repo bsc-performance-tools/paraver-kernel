@@ -270,8 +270,8 @@ void LocalKernel::copyPCF( char *name, char *traceToLoad )
   sprintf( pcfIn, "%s.pcf", pcfIn );
   sprintf( pcfOut, "%s.pcf", pcfOut );
 */
-  char *pcfIn  = composeName( name, "pcf" );
-  char *pcfOut = composeName( traceToLoad, "pcf" );
+  char *pcfIn  = composeName( name, (char *)string("pcf").c_str() );
+  char *pcfOut = composeName( traceToLoad, (char *)string("pcf").c_str() );
 
   copyFile( pcfIn, pcfOut );
 
@@ -290,8 +290,8 @@ void LocalKernel::copyROW( char *name, char *traceToLoad )
   sprintf( rowOut, "%s.row", rowOut );
   copyFile( rowIn, rowOut );
 */
-  char *rowIn = composeName( name, "row" );
-  char *rowOut = composeName( traceToLoad, "row" );
+  char *rowIn = composeName( name, (char *)string("row").c_str() );
+  char *rowOut = composeName( traceToLoad, (char *)string("row").c_str() );
 
   copyFile( rowIn, rowOut );
 

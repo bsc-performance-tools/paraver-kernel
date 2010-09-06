@@ -299,8 +299,6 @@ void KTraceCutter::adjust_to_final_time()
         q = p;
       }
 
-
-
     if ( old_times )
       fprintf( outfile, "1:0:%d:%d:%d:%lld:%lld:14\n", q->appl, q->task, q->thread, next_time, trace_time );
 
@@ -560,7 +558,7 @@ void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut )
   fgets( trace_header, MAX_TRACE_HEADER, infile );
 
 
-  proces_cutter_header( trace_header, "\0", "\0" );
+  proces_cutter_header( trace_header, (char *)string("\0").c_str(), (char *)string("\0").c_str() );
 
   fgets( trace_header, MAX_TRACE_HEADER, infile );
   sscanf( trace_header, "%*d:%*d:%*d:%*d:%*d:%lld:", &timeOffset );

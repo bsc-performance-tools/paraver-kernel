@@ -340,8 +340,8 @@ string applyFilters( KernelConnection *myKernel,
   char *pcfName, *rowName;
   for( UINT16 i = 0; i < tmpFiles.size() - 1; ++i )
   {
-    pcfName = myKernel->composeName( (char *)tmpFiles[ i ].c_str(), "pcf" );
-    rowName = myKernel->composeName( (char *)tmpFiles[ i ].c_str(), "row" );
+    pcfName = myKernel->composeName( (char *)tmpFiles[ i ].c_str(), (char *)string("pcf").c_str() );
+    rowName = myKernel->composeName( (char *)tmpFiles[ i ].c_str(), (char *)string("row").c_str() );
     remove( tmpFiles[ i ].c_str() );
     remove( pcfName );
     remove( rowName );
