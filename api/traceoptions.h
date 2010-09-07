@@ -60,7 +60,7 @@ class TraceOptions
     virtual void set_max_trace_size( int traceSize )
     {}
 
-    virtual int get_max_trace_size( )
+    virtual int get_max_trace_size( ) const
     { return 0; }
 
     /* Sets for Cutter */
@@ -85,25 +85,25 @@ class TraceOptions
     virtual void set_remLastStates( int remStates )
     {}
 
-    virtual bool get_by_time()
+    virtual bool get_by_time() const
     { return false; }
-    virtual unsigned long long get_min_cutting_time()
+    virtual unsigned long long get_min_cutting_time() const
     { return 0; }
-    virtual unsigned long long get_max_cutting_time()
+    virtual unsigned long long get_max_cutting_time() const
     { return 0; }
-    virtual unsigned long long get_minimum_time_percentage()
+    virtual unsigned long long get_minimum_time_percentage() const
     { return 0; }
-    virtual unsigned long long get_maximum_time_percentage()
+    virtual unsigned long long get_maximum_time_percentage() const
     { return 0; }
-    virtual void get_tasks_list( TTasksList &whichTasksList )
+    virtual void get_tasks_list( TTasksList &whichTasksList ) const
     { }
-    virtual char get_original_time()
+    virtual char get_original_time() const
     { return 0; }
-    virtual int get_break_states()
+    virtual int get_break_states() const
     { return 0; }
-    virtual int get_remFirstStates()
+    virtual int get_remFirstStates() const
     { return 0; }
-    virtual int get_remLastStates()
+    virtual int get_remLastStates() const
     { return 0; }
 
 
@@ -241,7 +241,7 @@ class TraceOptionsProxy :public TraceOptions
 
     /* Global Settings */
     virtual void set_max_trace_size( int traceSize );
-    virtual int get_max_trace_size();
+    virtual int get_max_trace_size() const;
 
     /* Sets for Cutter */
     virtual void set_by_time( bool whichByTime );
@@ -255,16 +255,16 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_remFirstStates( int remStates );
     virtual void set_remLastStates( int remStates );
 
-    virtual bool get_by_time();
-    virtual unsigned long long get_min_cutting_time();
-    virtual unsigned long long get_max_cutting_time();
-    virtual unsigned long long get_minimum_time_percentage();
-    virtual unsigned long long get_maximum_time_percentage();
-    virtual void get_tasks_list( TTasksList &whichTasksList );
-    virtual char get_original_time();
-    virtual int get_break_states();
-    virtual int get_remFirstStates();
-    virtual int get_remLastStates();
+    virtual bool get_by_time() const;
+    virtual unsigned long long get_min_cutting_time() const;
+    virtual unsigned long long get_max_cutting_time() const;
+    virtual unsigned long long get_minimum_time_percentage() const;
+    virtual unsigned long long get_maximum_time_percentage() const;
+    virtual void get_tasks_list( TTasksList &whichTasksList ) const;
+    virtual char get_original_time() const;
+    virtual int get_break_states() const;
+    virtual int get_remFirstStates() const;
+    virtual int get_remLastStates() const;
 
     /* Sets for filtering */
     virtual void set_filter_events( char filterEvents );

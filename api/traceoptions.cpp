@@ -59,7 +59,7 @@ void TraceOptionsProxy::set_max_trace_size( int traceSize )
   myTraceOptions->set_max_trace_size( traceSize );
 }
 
-int TraceOptionsProxy::get_max_trace_size()
+int TraceOptionsProxy::get_max_trace_size() const
 {
   return myTraceOptions->get_max_trace_size();
 }
@@ -115,52 +115,52 @@ void TraceOptionsProxy::set_remLastStates( int remStates )
   myTraceOptions->set_remLastStates( remStates );
 }
 
-bool TraceOptionsProxy::get_by_time()
+bool TraceOptionsProxy::get_by_time() const
 {
   return myTraceOptions->get_by_time();
 }
 
-unsigned long long TraceOptionsProxy::get_min_cutting_time()
+unsigned long long TraceOptionsProxy::get_min_cutting_time() const
 {
   return myTraceOptions->get_min_cutting_time();
 }
 
-unsigned long long TraceOptionsProxy::get_max_cutting_time()
+unsigned long long TraceOptionsProxy::get_max_cutting_time() const
 {
   return myTraceOptions->get_max_cutting_time();
 }
 
-unsigned long long TraceOptionsProxy::get_minimum_time_percentage()
+unsigned long long TraceOptionsProxy::get_minimum_time_percentage() const
 {
   return myTraceOptions->get_minimum_time_percentage();
 }
 
-unsigned long long TraceOptionsProxy::get_maximum_time_percentage()
+unsigned long long TraceOptionsProxy::get_maximum_time_percentage() const
 {
   return myTraceOptions->get_maximum_time_percentage();
 }
 
-void TraceOptionsProxy::get_tasks_list( TTasksList &whichTaskList )
+void TraceOptionsProxy::get_tasks_list( TTasksList &whichTaskList ) const
 {
   myTraceOptions->get_tasks_list( whichTaskList );
 }
 
-char TraceOptionsProxy::get_original_time()
+char TraceOptionsProxy::get_original_time() const
 {
   return myTraceOptions->get_original_time();
 }
 
-int TraceOptionsProxy::get_break_states()
+int TraceOptionsProxy::get_break_states() const
 {
   return myTraceOptions->get_break_states();
 }
 
-int TraceOptionsProxy::get_remFirstStates()
+int TraceOptionsProxy::get_remFirstStates() const
 {
   return myTraceOptions->get_remFirstStates();
 }
 
-int TraceOptionsProxy::get_remLastStates()
+int TraceOptionsProxy::get_remLastStates() const
 {
   return myTraceOptions->get_remLastStates();
 }
