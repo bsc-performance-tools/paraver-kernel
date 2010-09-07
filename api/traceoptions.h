@@ -132,27 +132,27 @@ class TraceOptions
     virtual void set_filter_last_type(  int filterLastType )
     {}
 
-    virtual char get_filter_events()
+    virtual char get_filter_events() const
     { return 0; }
-    virtual char get_filter_states()
+    virtual char get_filter_states() const
     { return 0; }
-    virtual char get_filter_comms()
+    virtual char get_filter_comms() const
     { return 0; }
-    virtual char get_discard_given_types()
+    virtual char get_discard_given_types() const
     { return 0; }
-    virtual char get_filter_by_call_time()
+    virtual char get_filter_by_call_time() const
     { return 0; }
-    virtual void get_state_names( TStateNames &stateNames )
+    virtual void get_state_names( TStateNames &stateNames ) const
     {}
-    virtual char get_all_states()
+    virtual char get_all_states() const
     { return 0; }
-    virtual unsigned long long get_min_state_time()
+    virtual unsigned long long get_min_state_time() const
     { return 0; }
-    virtual int get_min_comm_size()
+    virtual int get_min_comm_size() const
     { return 0; }
-    virtual void get_filter_types( TFilterTypes &filterTypes )
+    virtual void get_filter_types( TFilterTypes &filterTypes ) const
     {}
-    virtual int get_filter_last_type()
+    virtual int get_filter_last_type() const
     { return 0; }
 
     /* Sets for Sofware Counters */
@@ -179,27 +179,27 @@ class TraceOptions
     virtual void set_sc_types_kept( char *typesKept )
     {}
 
-    virtual int get_sc_onInterval()
+    virtual int get_sc_onInterval() const
     { return 0; }
-    virtual unsigned long long get_sc_sampling_interval()
+    virtual unsigned long long get_sc_sampling_interval() const
     { return 0; }
-    virtual unsigned long long get_sc_minimum_burst_time()
+    virtual unsigned long long get_sc_minimum_burst_time() const
     { return 0; }
-    virtual int get_sc_global_counters()
+    virtual int get_sc_global_counters() const
     { return 0; }
-    virtual int get_sc_acumm_counters()
+    virtual int get_sc_acumm_counters() const
     { return 0; }
-    virtual int get_sc_summarize_states()
+    virtual int get_sc_summarize_states() const
     { return 0; }
-    virtual int get_sc_only_in_bursts()
+    virtual int get_sc_only_in_bursts() const
     { return 0; }
-    virtual int get_sc_remove_states()
+    virtual int get_sc_remove_states() const
     { return 0; }
     //virtual unsigned long long get_sc_interval()
     //{ return 0; }
-    virtual char *get_sc_types()
+    virtual char *get_sc_types() const
     { return (char *)NULL; }
-    virtual char *get_sc_types_kept()
+    virtual char *get_sc_types_kept() const
     { return (char *)NULL; }
 
     /* Sets for comm_fusion */
@@ -279,17 +279,17 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_filter_types( TFilterTypes filterTypes );
     virtual void set_filter_last_type(  int filterLastType );
 
-    virtual char get_filter_events();
-    virtual char get_filter_states();
-    virtual char get_filter_comms();
-    virtual char get_discard_given_types();
-    virtual char get_filter_by_call_time();
-    virtual void get_state_names( TStateNames &stateNames );
-    virtual char get_all_states();
-    virtual unsigned long long get_min_state_time();
-    virtual int get_min_comm_size();
-    virtual void get_filter_types( TFilterTypes &filterTypes );
-    virtual int get_filter_last_type();
+    virtual char get_filter_events() const;
+    virtual char get_filter_states() const;
+    virtual char get_filter_comms() const;
+    virtual char get_discard_given_types() const;
+    virtual char get_filter_by_call_time() const;
+    virtual void get_state_names( TStateNames &stateNames ) const;
+    virtual char get_all_states() const;
+    virtual unsigned long long get_min_state_time() const;
+    virtual int get_min_comm_size() const;
+    virtual void get_filter_types( TFilterTypes &filterTypes ) const;
+    virtual int get_filter_last_type() const;
 
     /* Sets for Software Counters */
     virtual void set_sc_onInterval( int scOnInterval );
@@ -304,16 +304,16 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_sc_types( char *whichTypes );
     virtual void set_sc_types_kept( char *typesKept );
 
-    virtual int get_sc_onInterval();
-    virtual unsigned long long get_sc_sampling_interval();
-    virtual unsigned long long get_sc_minimum_burst_time();
-    virtual int get_sc_global_counters();
-    virtual int get_sc_acumm_counters();
-    virtual int get_sc_summarize_states();
-    virtual int get_sc_only_in_bursts();
-    virtual int get_sc_remove_states();
-    virtual char *get_sc_types();
-    virtual char *get_sc_types_kept();
+    virtual int get_sc_onInterval() const;
+    virtual unsigned long long get_sc_sampling_interval() const;
+    virtual unsigned long long get_sc_minimum_burst_time() const;
+    virtual int get_sc_global_counters() const;
+    virtual int get_sc_acumm_counters() const;
+    virtual int get_sc_summarize_states() const;
+    virtual int get_sc_only_in_bursts() const;
+    virtual int get_sc_remove_states() const;
+    virtual char *get_sc_types() const;
+    virtual char *get_sc_types_kept() const;
 
     /* Sets for comm_fusion */
     virtual void set_reduce_comms( char reduceComms );

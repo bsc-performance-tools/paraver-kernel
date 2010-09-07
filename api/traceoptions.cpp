@@ -222,57 +222,57 @@ void TraceOptionsProxy::set_filter_last_type(  int filterLastType )
   myTraceOptions->set_filter_last_type( filterLastType );
 }
 
-char TraceOptionsProxy::get_filter_events()
+char TraceOptionsProxy::get_filter_events() const
 {
   return myTraceOptions->get_filter_events();
 }
 
-char TraceOptionsProxy::get_filter_states()
+char TraceOptionsProxy::get_filter_states() const
 {
   return myTraceOptions->get_filter_states();
 }
 
-char TraceOptionsProxy::get_filter_comms()
+char TraceOptionsProxy::get_filter_comms() const
 {
   return myTraceOptions->get_filter_comms();
 }
 
-char TraceOptionsProxy::get_discard_given_types()
+char TraceOptionsProxy::get_discard_given_types() const
 {
   return myTraceOptions->get_discard_given_types();
 }
 
-char TraceOptionsProxy::get_filter_by_call_time()
+char TraceOptionsProxy::get_filter_by_call_time() const
 {
   return myTraceOptions->get_filter_by_call_time();
 }
 
-void TraceOptionsProxy::get_state_names( TStateNames &stateNames )
+void TraceOptionsProxy::get_state_names( TStateNames &stateNames ) const
 {
   return myTraceOptions->get_state_names( stateNames );
 }
 
-char TraceOptionsProxy::get_all_states()
+char TraceOptionsProxy::get_all_states() const
 {
   return myTraceOptions->get_all_states();
 }
 
-unsigned long long TraceOptionsProxy::get_min_state_time()
+unsigned long long TraceOptionsProxy::get_min_state_time() const
 {
   return myTraceOptions->get_min_state_time();
 }
 
-int TraceOptionsProxy::get_min_comm_size()
+int TraceOptionsProxy::get_min_comm_size() const
 {
   return myTraceOptions->get_min_comm_size();
 }
 
-void TraceOptionsProxy::get_filter_types( TFilterTypes &filterTypes )
+void TraceOptionsProxy::get_filter_types( TFilterTypes &filterTypes ) const
 {
   return myTraceOptions->get_filter_types( filterTypes );
 }
 
-int TraceOptionsProxy::get_filter_last_type()
+int TraceOptionsProxy::get_filter_last_type() const
 {
   return myTraceOptions->get_filter_last_type();
 }
@@ -335,42 +335,42 @@ void TraceOptionsProxy::set_sc_types_kept( char *typesKept )
 }
 
 
-int TraceOptionsProxy::get_sc_onInterval()
+int TraceOptionsProxy::get_sc_onInterval() const
 {
   return myTraceOptions->get_sc_onInterval();
 }
 
-unsigned long long TraceOptionsProxy::get_sc_sampling_interval()
+unsigned long long TraceOptionsProxy::get_sc_sampling_interval() const
 {
   return myTraceOptions->get_sc_sampling_interval();
 }
 
-unsigned long long TraceOptionsProxy::get_sc_minimum_burst_time()
+unsigned long long TraceOptionsProxy::get_sc_minimum_burst_time() const
 {
   return myTraceOptions->get_sc_minimum_burst_time();
 }
 
-int TraceOptionsProxy::get_sc_global_counters()
+int TraceOptionsProxy::get_sc_global_counters() const
 {
   return myTraceOptions->get_sc_global_counters();
 }
 
-int TraceOptionsProxy::get_sc_acumm_counters()
+int TraceOptionsProxy::get_sc_acumm_counters() const
 {
   return myTraceOptions->get_sc_acumm_counters();
 }
 
-int TraceOptionsProxy::get_sc_summarize_states()
+int TraceOptionsProxy::get_sc_summarize_states() const
 {
   return myTraceOptions->get_sc_summarize_states();
 }
 
-int TraceOptionsProxy::get_sc_only_in_bursts()
+int TraceOptionsProxy::get_sc_only_in_bursts() const
 {
   return myTraceOptions->get_sc_only_in_bursts();
 }
 
-int TraceOptionsProxy::get_sc_remove_states()
+int TraceOptionsProxy::get_sc_remove_states() const
 {
   return myTraceOptions->get_sc_remove_states();
 }
@@ -381,12 +381,12 @@ void TraceOptionsProxy::set_sc_frequency()
   myTraceOptions->set_sc_frequency( scFrequency );
 }
 */
-char *TraceOptionsProxy::get_sc_types()
+char *TraceOptionsProxy::get_sc_types() const
 {
   return myTraceOptions->get_sc_types();
 }
 
-char *TraceOptionsProxy::get_sc_types_kept()
+char *TraceOptionsProxy::get_sc_types_kept() const
 {
   return myTraceOptions->get_sc_types_kept();
 }
