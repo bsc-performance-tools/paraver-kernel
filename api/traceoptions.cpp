@@ -424,9 +424,9 @@ void TraceOptionsProxy::set_events_plot( int eventsPlot )
   myTraceOptions->set_events_plot( eventsPlot );
 }
 
-void TraceOptionsProxy::parseDoc( char *docname )
+vector< int > TraceOptionsProxy::parseDoc( char *docname )
 {
-  myTraceOptions->parseDoc( docname );
+  return myTraceOptions->parseDoc( docname );
 }
 
 TraceOptions *TraceOptionsProxy::getConcrete()

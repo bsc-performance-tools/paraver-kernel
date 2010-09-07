@@ -218,8 +218,11 @@ class TraceOptions
     virtual void set_events_plot( int eventsPlot )
     {}
 
-    virtual void parseDoc( char *docname )
-    {}
+    virtual vector< int > parseDoc( char *docname )
+    {
+      vector< int > v;
+      return v;
+    }
 
     virtual TraceOptions *getConcrete()
     {
@@ -322,7 +325,7 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_comms_plot( int commsPlot );
     virtual void set_events_plot( int eventsPlot );
 
-    virtual void parseDoc( char *docname );
+    virtual vector< int > parseDoc( char *docname );
     virtual TraceOptions *getConcrete();
 
   protected:

@@ -543,7 +543,7 @@ class KTraceOptions: public TraceOptions
     }
 
 
-    void parseDoc( char *docname );
+    vector<int> parseDoc( char *docname );
 
   private:
     void init();

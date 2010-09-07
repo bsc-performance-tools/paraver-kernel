@@ -160,7 +160,7 @@ void KTraceOptions::init()
   set_all_states( false );
   //set_filter_by_call_time( false );
   init_state_names();
-  set_min_state_time( 0 );
+  set_min_state_time( 0 ); // Not present in ParaverConfig.
 
   set_filter_events( !ParaverConfig::getInstance()->getFilterDiscardEvents() );
   set_discard_given_types( false );
@@ -646,8 +646,10 @@ void KTraceOptions::parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur )
 }
 
 // The real constructor
-void KTraceOptions::parseDoc( char *docname )
+vector<int> KTraceOptions::parseDoc( char *docname )
 {
+  vector< int > order;
+
   xmlDocPtr doc;
   xmlNodePtr cur;
 
@@ -661,11 +663,11 @@ void KTraceOptions::parseDoc( char *docname )
 
   filter_by_call_time = 0;
 
-  if ( docname == NULL ) return;
+  if ( docname == NULL ) return order;
 
   doc = xmlParseFile( docname );
 
-  if ( doc == NULL ) return;
+  if ( doc == NULL ) return order;
 
   cur = xmlDocGetRootElement( doc );
 
@@ -673,27 +675,36 @@ void KTraceOptions::parseDoc( char *docname )
   {
     fprintf( stderr, "empty document\n" );
     xmlFreeDoc( doc );
-    return;
+    return order;
   }
 
   if ( xmlStrcmp( cur->name, ( const xmlChar * ) "config" ) )
   {
     fprintf( stderr, "document of the wrong type, root node != config" );
     xmlFreeDoc( doc );
-    return;
+    return order;
   }
 
   cur = cur->xmlChildrenNode;
   while ( cur != NULL )
   {
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"cutter" ) )
+    {
       parse_cutter_params( doc, cur->xmlChildrenNode );
+      order.push_back( INC_CHOP_COUNTER );
+    }
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"filter" ) )
+    {
       parse_filter_params( doc, cur->xmlChildrenNode );
+      order.push_back( INC_FILTER_COUNTER );
+    }
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"software_counters" ) )
+    {
       parse_comm_fusion_params( doc, cur->xmlChildrenNode );
+      order.push_back( INC_SC_COUNTER );
+    }
 
     /*
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"comm_fusion" ) )
@@ -704,5 +715,6 @@ void KTraceOptions::parseDoc( char *docname )
   }
 
   xmlFreeDoc( doc );
-  return;
+
+  return order;
 }

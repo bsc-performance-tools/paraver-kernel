@@ -287,7 +287,8 @@ string applyFilters( KernelConnection *myKernel,
   string strOutputFile, strPathOut;
 
   traceOptions = myKernel->newTraceOptions( );
-  traceOptions->parseDoc( (char *)strXMLOptions.c_str() );
+  // The order is given by the command line, not the xml file.
+  vector<int> xmlToolOrder = traceOptions->parseDoc( (char *)strXMLOptions.c_str() );
 
   // Concatenate Filter Utilities
   strcpy( tmpNameOut, (char *)strTrace.c_str() );
