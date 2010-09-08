@@ -50,7 +50,6 @@ KTraceFilter::KTraceFilter( char *trace_in, char *trace_out, TraceOptions *optio
   is_zip_filter = 0;
 
   exec_options = new KTraceOptions( (KTraceOptions *)options );
-
   execute( trace_in, trace_out );
 }
 
@@ -184,15 +183,21 @@ int KTraceFilter::filter_allowed_type(  int appl, int task, int thread,
           break;
         }
       }
-      break;
+
+      if( j < exec_options->filter_types[i].last_value )
+        break;
     }
   }
 
   if ( i == exec_options->filter_last_type && exec_options->discard_given_types )
+  {
     type_allowed = 1;
+  }
 
+#if 0
   /* second, we look if event have a min_time property */
-  if ( type_allowed && exec_options->filter_types[i].min_call_time > 0 )
+  if ( !exec_options->discard_given_types &&
+       type_allowed && exec_options->filter_types[i].min_call_time > 0 )
   {
     /* Event d'entrada */
     if ( value > 0 )
@@ -214,6 +219,7 @@ int KTraceFilter::filter_allowed_type(  int appl, int task, int thread,
       }
     }
   }
+#endif
 
   return type_allowed;
 }

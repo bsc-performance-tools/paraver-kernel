@@ -212,7 +212,8 @@ void TraceOptionsProxy::set_min_comm_size( int minCommSize )
   myTraceOptions->set_min_comm_size( minCommSize );
 }
 
-void TraceOptionsProxy::set_filter_types( struct allowed_types filterTypes[20] )
+//void TraceOptionsProxy::set_filter_types( struct allowed_types filterTypes[20] )
+void TraceOptionsProxy::set_filter_types( TFilterTypes filterTypes )
 {
   myTraceOptions->set_filter_types( filterTypes );
 }

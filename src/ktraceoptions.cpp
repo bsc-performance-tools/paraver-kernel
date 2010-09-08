@@ -87,8 +87,10 @@ KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
   set_filter_events( whichTraceOptions->get_filter_events() );
   TFilterTypes eventTypes;
   whichTraceOptions->get_filter_types( eventTypes );
-  set_filter_types( eventTypes );
+
   set_filter_last_type( whichTraceOptions->get_filter_last_type() );
+  set_filter_types( eventTypes );
+
   set_discard_given_types( whichTraceOptions->get_discard_given_types() );
 
   // Filter Default Options: comms
