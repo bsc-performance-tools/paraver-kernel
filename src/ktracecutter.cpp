@@ -512,9 +512,8 @@ void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut )
     exit( 1 );
   }
 #elif defined(WIN32)
-  if ( ( fopen_s( &infile, nameIn, "r" ) ) == NULL )
+  if ( fopen_s( &infile, nameIn, "r" ) != 0 )
   {
-    perror( "ERROR" );
     printf( "KCutter: Error Opening File %s\n", nameIn );
     exit( 1 );
   }
@@ -537,9 +536,8 @@ void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut )
     exit( 1 );
   }
 #elif defined(WIN32)
-  if ( ( fopen_s( &outfile, nameOut, "w" ) ) == NULL )
+  if ( fopen_s( &outfile, nameOut, "w" ) != 0 )
   {
-    perror( "ERROR" );
     printf( "KCutter: Error Opening File %s\n", nameOut );
     exit( 1 );
   }
@@ -742,10 +740,11 @@ void KTraceCutter::execute( char *trace_in, char *trace_out )
     if ( ( tmp_dir = getenv( "TMPDIR" ) ) == NULL )
       tmp_dir = getenv( "PWD" );
 
-    sprintf( trace_file_out, "%s/tmp_fileXXXXXX", tmp_dir );
 #ifdef WIN32
+    sprintf( trace_file_out, "C:\\tmp_fileXXXXXX" );
     _mktemp_s( trace_file_out );
 #else
+    sprintf( trace_file_out, "%s/tmp_fileXXXXXX", tmp_dir );
     mkstemp( trace_file_out );
 #endif
   }
