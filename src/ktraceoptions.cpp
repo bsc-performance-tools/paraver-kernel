@@ -414,6 +414,7 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
 void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
 {
   xmlChar *word;
+  stringstream auxStr;
 
   while ( cur != NULL )
   {
@@ -435,7 +436,10 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"max_trace_size" ) )
     {
       word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      max_trace_size = atoi( ( char * )word );
+      auxStr.str("");
+      auxStr << word;
+      auxStr >> max_trace_size;
+      //max_trace_size = atoi( ( char * )word );
       xmlFree( word );
     }
 
@@ -449,14 +453,20 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"minimum_time" ) )
     {
       word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      min_cutting_time = atoi( ( char * )word );
+      auxStr.str("");
+      auxStr << word;
+      auxStr >> min_cutting_time;
+      //min_cutting_time = atoi( ( char * )word );
       xmlFree( word );
     }
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"maximum_time" ) )
     {
       word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      max_cutting_time = atoi( ( char * )word );
+      auxStr.str("");
+      auxStr << word;
+      auxStr >> max_cutting_time;
+      //max_cutting_time = atoi( ( char * )word );
       xmlFree( word );
     }
 
