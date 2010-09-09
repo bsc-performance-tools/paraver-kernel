@@ -710,7 +710,7 @@ vector<int> KTraceOptions::parseDoc( char *docname )
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"software_counters" ) )
     {
-      parse_comm_fusion_params( doc, cur->xmlChildrenNode );
+      parse_software_counters_params( doc, cur->xmlChildrenNode );
       order.push_back( INC_SC_COUNTER );
     }
 

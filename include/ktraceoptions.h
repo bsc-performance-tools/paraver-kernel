@@ -397,7 +397,6 @@ class KTraceOptions: public TraceOptions
       return filter_last_type;
     }
 
-
     /* Sets for Software Counters */
     inline void set_sc_onInterval( int whichSCOnInterval )
     {
