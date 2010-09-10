@@ -37,9 +37,12 @@
 class KTraceFilter: public TraceFilter
 {
   public:
-    KTraceFilter( char *trace_in, char *trace_out, TraceOptions *options );
+    KTraceFilter( char *trace_in,
+                  char *trace_out,
+                  TraceOptions *options,
+                  ProgressController *progress );
     virtual ~KTraceFilter();
-    virtual void execute( char *trace_in, char *trace_out );
+    virtual void execute( char *trace_in, char *trace_out, ProgressController *progress );
 
   private:
     /* Buffer for reading trace records */
@@ -144,8 +147,8 @@ class KTraceFilter: public TraceFilter
                               unsigned long long time,
                               unsigned long long type,
                               unsigned long long value );
-    void ini_progress_bar( char *file_name );
-    void show_progress_bar();
+    void ini_progress_bar( char *file_name, ProgressController *progress );
+    void show_progress_bar( ProgressController *progress );
     void load_pcf( char *pcf_name );
     void dump_buffer();
 };

@@ -32,6 +32,7 @@
 
 class TraceOptions;
 class KernelConnection;
+class ProgressController;
 
 class TraceSoftwareCounters
 {
@@ -39,13 +40,12 @@ class TraceSoftwareCounters
     static TraceSoftwareCounters *create( KernelConnection *whichKernel,
                                           char *traceIn,
                                           char *traceOut,
-                                          TraceOptions *options );
+                                          TraceOptions *options,
+                                          ProgressController *progress );
 
     virtual ~TraceSoftwareCounters()
     {}
 
-    virtual void execute()
-    {}
 };
 
 class TraceSoftwareCountersProxy : public TraceSoftwareCounters
@@ -53,20 +53,20 @@ class TraceSoftwareCountersProxy : public TraceSoftwareCounters
   public:
     virtual ~TraceSoftwareCountersProxy();
 
-    virtual void execute();
-
   private:
     TraceSoftwareCounters *myTraceSoftwareCounters;
 
     TraceSoftwareCountersProxy( KernelConnection *whichKernel,
                                 char *traceIn,
                                 char *traceOut,
-                                TraceOptions *options );
+                                TraceOptions *options,
+                                ProgressController *progress );
 
     friend TraceSoftwareCounters *TraceSoftwareCounters::create( KernelConnection *kernelConnection,
                                                                  char *traceIn,
                                                                  char *traceOut,
-                                                                 TraceOptions *options );
+                                                                 TraceOptions *options,
+                                                                 ProgressController *progress );
 };
 
 

@@ -320,14 +320,16 @@ string applyFilters( KernelConnection *myKernel,
       case INC_FILTER_COUNTER:
         traceFilter = myKernel->newTraceFilter( tmpNameIn,
                                                 tmpNameOut,
-                                                traceOptions );
+                                                traceOptions,
+                                                NULL );
         myKernel->copyPCF( tmpNameIn, tmpNameOut );
         break;
 
       case INC_SC_COUNTER:
         traceSoftwareCounters = myKernel->newTraceSoftwareCounters( tmpNameIn,
                                                                     tmpNameOut,
-                                                                    traceOptions );
+                                                                    traceOptions,
+                                                                    NULL );
         break;
 
       default:

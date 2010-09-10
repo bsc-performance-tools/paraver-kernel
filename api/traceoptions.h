@@ -344,6 +344,7 @@ class TraceOptionsProxy :public TraceOptions
                                          ProgressController *progress ) const;
     friend TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
                                           char *trace_out,
-                                          TraceOptions *options ) const;
+                                          TraceOptions *options,
+                                          ProgressController *progress ) const;
 };
 #endif // TRACEOPTIONS_H_INCLUDED

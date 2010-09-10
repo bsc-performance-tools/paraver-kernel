@@ -40,17 +40,21 @@
 
 //#include "filters_wait_window.h"
 #include "ktracefilter.h"
+#include "kprogresscontroller.h"
 
 #ifdef WIN32
 #define atoll _atoi64
 #endif
 
-KTraceFilter::KTraceFilter( char *trace_in, char *trace_out, TraceOptions *options )
+KTraceFilter::KTraceFilter( char *trace_in,
+                            char *trace_out,
+                            TraceOptions *options,
+                            ProgressController *progress )
 {
   is_zip_filter = 0;
 
   exec_options = new KTraceOptions( (KTraceOptions *)options );
-  execute( trace_in, trace_out );
+  execute( trace_in, trace_out, progress );
 }
 
 
@@ -225,7 +229,7 @@ int KTraceFilter::filter_allowed_type(  int appl, int task, int thread,
 }
 
 
-void KTraceFilter::ini_progress_bar( char *file_name )
+void KTraceFilter::ini_progress_bar( char *file_name, ProgressController *progress )
 {
   struct stat file_info;
 
@@ -238,19 +242,20 @@ void KTraceFilter::ini_progress_bar( char *file_name )
   total_trace_size = file_info.st_size;
 
   if ( total_trace_size < 500000000 )
-    total_iters = 5000;
+    total_iters = 10000;
   else
-    total_iters = 50000;
+    total_iters = 100000;
 
   current_readed_size = 0;
 
-//  create_filter_wait_window();
+  if( progress != NULL)
+    progress->setEndLimit( total_trace_size );
 }
 
 
-void KTraceFilter::show_progress_bar()
+void KTraceFilter::show_progress_bar( ProgressController *progress )
 {
-  double current_showed, i, j;
+//  double current_showed, i, j;
 #if defined(FreeBSD)
   if ( !is_zip_filter )
     current_readed_size = ( unsigned long long )ftello( infile );
@@ -268,12 +273,13 @@ void KTraceFilter::show_progress_bar()
     current_readed_size = ( unsigned long )gztell( gzInfile );
 #endif
 
-  i = ( double )( current_readed_size );
+/*  i = ( double )( current_readed_size );
   j = ( double )( total_trace_size );
 
   current_showed = i / j;
-
-  // update_filter_loading( current_showed );
+*/
+  if( progress != NULL)
+    progress->setCurrentProgress( current_readed_size );
 }
 
 
@@ -342,7 +348,7 @@ void KTraceFilter::dump_buffer()
 }
 
 
-void KTraceFilter::execute( char *trace_in, char *trace_out )
+void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *progress )
 {
   int i, j, k, num_char, end_line, print_record, state, size, appl, task, thread;
   unsigned long long time_1, time_2, type, value;
@@ -439,7 +445,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out )
   }
 #endif
 
-  ini_progress_bar( trace_name );
+  ini_progress_bar( trace_name, progress );
 
   /* Symbol loading of the .pcf file */
   if ( show_states && !all_states )
@@ -493,7 +499,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out )
 
     if ( num_iters == total_iters )
     {
-      //show_progress_bar( infile );
+      show_progress_bar( progress );
       num_iters = 0;
     }
     else

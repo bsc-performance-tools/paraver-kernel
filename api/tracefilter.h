@@ -32,6 +32,7 @@
 
 class TraceOptions;
 class KernelConnection;
+class ProgressController;
 #include "localkernel.h"
 
 class TraceFilter
@@ -40,13 +41,12 @@ class TraceFilter
     static TraceFilter *create( KernelConnection *whichKernel,
                                 char *traceIn,
                                 char *traceOut,
-                                TraceOptions *options );
+                                TraceOptions *options,
+                                ProgressController *progress );
 
     virtual ~TraceFilter()
     {}
 
-    virtual void execute()
-    {}
 };
 
 class TraceFilterProxy : public TraceFilter
@@ -54,20 +54,20 @@ class TraceFilterProxy : public TraceFilter
   public:
     virtual ~TraceFilterProxy();
 
-    virtual void execute();
-
   private:
     TraceFilter *myTraceFilter;
 
     TraceFilterProxy( KernelConnection *whichKernel,
                       char *traceIn,
                       char *traceOut,
-                      TraceOptions *options );
+                      TraceOptions *options,
+                      ProgressController *progress );
 
     friend TraceFilter *TraceFilter::create( KernelConnection *kernelConnection,
                                              char *traceIn,
                                              char *traceOut,
-                                             TraceOptions *options );
+                                             TraceOptions *options,
+                                             ProgressController *progress );
 };
 
 

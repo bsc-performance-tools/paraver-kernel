@@ -40,6 +40,7 @@
 
 #include "ktracesoftwarecounters.h"
 #include "ktraceoptions.h"
+#include "kprogresscontroller.h"
 //#include "filters_wait_window.h"
 
 #ifdef WIN32
@@ -48,7 +49,8 @@
 
 KTraceSoftwareCounters::KTraceSoftwareCounters( char *trace_in,
                                                 char *trace_out,
-                                                TraceOptions *options )
+                                                TraceOptions *options,
+                                                ProgressController *progress )
 {
   min_state_time = 0;
   last_type_mark = -1;
@@ -60,7 +62,7 @@ KTraceSoftwareCounters::KTraceSoftwareCounters( char *trace_in,
 
   exec_options = new KTraceOptions( (KTraceOptions *) options );
 
-  execute( trace_in, trace_out );
+  execute( trace_in, trace_out, progress );
 }
 
 
@@ -623,7 +625,7 @@ void KTraceSoftwareCounters::put_counters_by_thread( int appl, int task, int thr
 }
 
 
-void KTraceSoftwareCounters::ini_progress_bar( char *file_name )
+void KTraceSoftwareCounters::ini_progress_bar( char *file_name, ProgressController *progress )
 {
 #if defined(FreeBSD)
   struct stat file_info;
@@ -656,19 +658,20 @@ void KTraceSoftwareCounters::ini_progress_bar( char *file_name )
 
   /* Depen mida traça mostrem percentatge amb un interval diferent de temps */
   if ( total_trace_size < 500000000 )
-    total_iters = 50000;
+    total_iters = 10000;
   else
-    total_iters = 500000;
+    total_iters = 100000;
 
   current_readed_size = 0;
 
-//  create_sc_wait_window();
+  if( progress != NULL)
+    progress->setEndLimit( total_trace_size );
 }
 
 
-void KTraceSoftwareCounters::show_progress_bar()
+void KTraceSoftwareCounters::show_progress_bar( ProgressController *progress )
 {
-  double current_showed, i, j;
+//  double current_showed, i, j;
 
 #if defined(FreeBSD)
   current_readed_size = ftello( infile );
@@ -678,11 +681,12 @@ void KTraceSoftwareCounters::show_progress_bar()
   current_readed_size = ftello64( infile );
 #endif
 
-  i = ( double )( current_readed_size );
+/*  i = ( double )( current_readed_size );
   j = ( double )( total_trace_size );
   current_showed = i / j;
-
-//  update_sc_loading( current_showed );
+*/
+  if( progress != NULL)
+    progress->setCurrentProgress( current_readed_size );
 }
 
 
@@ -743,7 +747,7 @@ void KTraceSoftwareCounters::put_counters_on_state_by_thread( int appl, int task
 }
 
 
-void KTraceSoftwareCounters::sc_by_time()
+void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
 {
   int id, cpu, appl, task, thread, state;
   unsigned long long time_1, time_2, type, value;
@@ -756,7 +760,7 @@ void KTraceSoftwareCounters::sc_by_time()
   {
     if ( num_iters == total_iters )
     {
-      show_progress_bar();
+      show_progress_bar( progress );
       num_iters = 0;
     }
     else
@@ -955,7 +959,7 @@ void KTraceSoftwareCounters::flush_counter_buffers( void )
 }
 
 
-void KTraceSoftwareCounters::sc_by_event()
+void KTraceSoftwareCounters::sc_by_event( ProgressController *progress )
 {
   int id, cpu, appl, task, thread, i;
   unsigned long long time_1, type, value;
@@ -969,7 +973,7 @@ void KTraceSoftwareCounters::sc_by_event()
   {
     if ( num_iters == total_iters )
     {
-      show_progress_bar();
+      show_progress_bar( progress );
       num_iters = 0;
     }
     else
@@ -1180,7 +1184,7 @@ void KTraceSoftwareCounters::put_counters_on_state( struct KTraceSoftwareCounter
 }
 
 
-void KTraceSoftwareCounters::sc_by_states()
+void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
 {
   int id, cpu, appl, task, thread, state;
   unsigned long long time_1, time_2, type, value;
@@ -1194,7 +1198,7 @@ void KTraceSoftwareCounters::sc_by_states()
   {
     if ( num_iters == total_iters )
     {
-      show_progress_bar();
+      show_progress_bar( progress );
       num_iters = 0;
     }
     else
@@ -1343,7 +1347,7 @@ void KTraceSoftwareCounters::sc_by_states()
 }
 
 
-void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out )
+void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressController *progress )
 {
   int is_zip;
   char *tmp_dir, *c, trace_name[512], *trace_header;
@@ -1433,7 +1437,7 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out )
 
   write_pcf( trace_out );
 
-  ini_progress_bar( trace_name );
+  ini_progress_bar( trace_name, progress );
 
   /* Read header */
   trace_header = ( char * )malloc( sizeof( char ) * MAX_HEADER_SIZE );
@@ -1442,9 +1446,9 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out )
   free( trace_header );
 
   if ( type_of_counters )
-    sc_by_time();
+    sc_by_time( progress );
   else
-    sc_by_states();
+    sc_by_states( progress );
 
   /* Close the files */
   fclose( infile );

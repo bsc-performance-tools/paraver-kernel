@@ -63,10 +63,12 @@ class LocalKernel: public KernelConnection
                                          ProgressController *progress ) const;
     virtual TraceFilter *newTraceFilter( char *trace_in,
                                          char *trace_out,
-                                         TraceOptions *options ) const;
+                                         TraceOptions *options,
+                                         ProgressController *progress ) const;
     virtual TraceSoftwareCounters *newTraceSoftwareCounters( char *trace_in,
                                                              char *trace_out,
-                                                             TraceOptions *options ) const;
+                                                             TraceOptions *options,
+                                                             ProgressController *progress ) const;
 
     virtual void getAllStatistics( vector<string>& onVector ) const;
     virtual void getAllFilterFunctions( vector<string>& onVector ) const;

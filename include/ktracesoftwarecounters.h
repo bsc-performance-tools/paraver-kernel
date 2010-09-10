@@ -36,9 +36,12 @@
 class KTraceSoftwareCounters : public TraceSoftwareCounters
 {
   public:
-    KTraceSoftwareCounters( char *trace_in, char *trace_out, TraceOptions *options );
+    KTraceSoftwareCounters( char *trace_in,
+                            char *trace_out,
+                            TraceOptions *options,
+                            ProgressController *progress );
     virtual ~KTraceSoftwareCounters();
-    void execute( char *trace_in, char *trace_out );
+    void execute( char *trace_in, char *trace_out, ProgressController *progress );
 
   private:
 
@@ -175,15 +178,15 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     void flush_all_events( void );
     void put_all_counters( void );
     void put_counters_by_thread( int appl, int task, int thread, int cpu );
-    void ini_progress_bar( char *file_name );
-    void show_progress_bar();
+    void ini_progress_bar( char *file_name, ProgressController *progress );
+    void show_progress_bar( ProgressController *progress );
     void put_counters_on_state_by_thread( int appl, int task, int thread );
-    void sc_by_time();
+    void sc_by_time( ProgressController *progress );
     void flush_counter_buffers( void );
-    void sc_by_event();
+    void sc_by_event( ProgressController *progress );
     void insert_in_queue_state( int thread_id, unsigned long long time );
     void put_counters_on_state( struct KTraceSoftwareCounters::state_queue_elem *p,
                                 struct KTraceSoftwareCounters::state_queue_elem *q );
-    void sc_by_states();
+    void sc_by_states( ProgressController *progress );
 };
 #endif // _KTRACESOFTWARECOUNTERS_H_

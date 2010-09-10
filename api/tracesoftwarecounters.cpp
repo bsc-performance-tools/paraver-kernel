@@ -33,22 +33,20 @@
 TraceSoftwareCounters *TraceSoftwareCounters::create( KernelConnection *whichKernel,
                                   char *traceIn,
                                   char *traceOut,
-                                  TraceOptions *options )
+                                  TraceOptions *options,
+                                  ProgressController *progress )
 {
-  return new TraceSoftwareCountersProxy( whichKernel, traceIn, traceOut, options );
+  return new TraceSoftwareCountersProxy( whichKernel, traceIn, traceOut, options, progress );
 }
 
 
 TraceSoftwareCountersProxy::TraceSoftwareCountersProxy( KernelConnection *whichKernel,
                                   char *traceIn,
                                   char *traceOut,
-                                  TraceOptions *options )
+                                  TraceOptions *options,
+                                  ProgressController *progress )
 {
-  myTraceSoftwareCounters = whichKernel->newTraceSoftwareCounters( traceIn, traceOut, options );
-}
-
-void TraceSoftwareCountersProxy::execute()
-{
+  myTraceSoftwareCounters = whichKernel->newTraceSoftwareCounters( traceIn, traceOut, options, progress );
 }
 
 TraceSoftwareCountersProxy::~TraceSoftwareCountersProxy()

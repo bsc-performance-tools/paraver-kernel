@@ -184,19 +184,23 @@ TraceCutter *LocalKernel::newTraceCutter( //TraceCutter *concreteTraceCutter,
 
 TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
                                           char *trace_out,
-                                          TraceOptions *options ) const
+                                          TraceOptions *options,
+                                          ProgressController *progress ) const
 {
 //  TraceOptionsProxy *myOptions = new TraceOptionsProxy( this );
 //  myOptions->myTraceOptions = options;
-  return new KTraceFilter( trace_in, trace_out, options );
+  return new KTraceFilter( trace_in, trace_out, options,
+                           (KProgressController *)progress->getConcrete() );
 }
 
 
 TraceSoftwareCounters *LocalKernel::newTraceSoftwareCounters( char *trace_in,
                                                               char *trace_out,
-                                                              TraceOptions *options ) const
+                                                              TraceOptions *options,
+                                                              ProgressController *progress ) const
 {
-  return new KTraceSoftwareCounters( trace_in, trace_out, options );
+  return new KTraceSoftwareCounters( trace_in, trace_out, options,
+                                     (KProgressController *)progress->getConcrete() );
 }
 
 void LocalKernel::getAllStatistics( vector<string>& onVector ) const

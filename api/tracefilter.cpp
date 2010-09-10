@@ -34,22 +34,20 @@
 TraceFilter *TraceFilter::create( KernelConnection *whichKernel,
                                   char *traceIn,
                                   char *traceOut,
-                                  TraceOptions *options )
+                                  TraceOptions *options,
+                                  ProgressController *progress )
 {
-  return new TraceFilterProxy( whichKernel, traceIn, traceOut, options );
+  return new TraceFilterProxy( whichKernel, traceIn, traceOut, options, progress );
 }
 
 
 TraceFilterProxy::TraceFilterProxy( KernelConnection *whichKernel,
                                   char *traceIn,
                                   char *traceOut,
-                                  TraceOptions *options )
+                                  TraceOptions *options,
+                                  ProgressController *progress )
 {
-  myTraceFilter = whichKernel->newTraceFilter( traceIn, traceOut, options );
-}
-
-void TraceFilterProxy::execute()
-{
+  myTraceFilter = whichKernel->newTraceFilter( traceIn, traceOut, options, progress );
 }
 
 TraceFilterProxy::~TraceFilterProxy()
