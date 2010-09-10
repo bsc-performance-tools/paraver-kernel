@@ -91,12 +91,14 @@ class ParaverConfig
     void setGlobalTmpPath( string whichTmpPath );
     void setGlobalApplyFollowingCFGsToAllTraces( bool whichApplyFollowingCFGsToAllTraces );
     void setGlobalFillStateGaps( bool whichFillStateGaps );
+    void setGlobalSingleInstance( bool whichSingleInstance );
 
     string getGlobalTracesPath() const;
     string getGlobalCFGsPath() const;
     string getGlobalTmpPath() const;
     bool getGlobalApplyFollowingCFGsToAllTraces() const;
     bool getGlobalFillStateGaps() const;
+    bool getGlobalSingleInstance() const;
 
     // TIMELINES XML SECTION
     void setTimelineDefaultName( string whichDefaultName );
@@ -289,6 +291,8 @@ class ParaverConfig
         ar & boost::serialization::make_nvp( "tmp_path", tmpPath );
         // ar & boost::serialization::make_nvp( "apply_following_cfgs_to_all_traces", applyFollowingCFGsToAllTraces );
         ar & boost::serialization::make_nvp( "fill_state_gaps", fillStateGaps );
+        if( version >= 1 )
+          ar & boost::serialization::make_nvp( "single_instance", singleInstance );
       }
 
       string tracesPath; // also for paraload.sig!
@@ -296,6 +300,7 @@ class ParaverConfig
       string tmpPath;    // errors, logs, working dir
       bool applyFollowingCFGsToAllTraces;
       bool fillStateGaps;
+      bool singleInstance;
 
     } xmlGlobal;
 
@@ -608,7 +613,7 @@ class ParaverConfig
 
 // Second version: introducing some structure
 BOOST_CLASS_VERSION( ParaverConfig, 1)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 0)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 0)

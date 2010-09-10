@@ -59,7 +59,8 @@ class LocalKernel: public KernelConnection
     virtual TraceCutter *newTraceCutter( //TraceCutter *concreteTraceCutter,
                                          char *trace_in,
                                          char *trace_out,
-                                         TraceOptions *options ) const;
+                                         TraceOptions *options,
+                                         ProgressController *progress ) const;
     virtual TraceFilter *newTraceFilter( char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options ) const;

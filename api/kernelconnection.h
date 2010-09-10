@@ -68,7 +68,8 @@ class KernelConnection
     virtual TraceOptions *newTraceOptions() const = 0;
     virtual TraceCutter *newTraceCutter( char *trace_in,
                                          char *trace_out,
-                                         TraceOptions *options  ) const = 0;
+                                         TraceOptions *options,
+                                         ProgressController *progress ) const = 0;
     virtual TraceFilter *newTraceFilter( char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options ) const = 0;

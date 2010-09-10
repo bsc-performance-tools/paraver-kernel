@@ -13,6 +13,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
+				<Option host_application="/home/eloy/tools/wxparaver/GCCDebug/wxparaver" />
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-Wall" />
@@ -124,11 +125,9 @@
 		<Linker>
 			<Add library="xml2" />
 		</Linker>
-		<Unit filename="../common-files/paraverstatisticfuncions.h">
+		<Unit filename="../common-files/paraverstatisticfunctions.h">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="Application test" />
-			<Option target="paramedir" />
 		</Unit>
 		<Unit filename="../common-files/pcfparser/LibException.cpp">
 			<Option target="api" />

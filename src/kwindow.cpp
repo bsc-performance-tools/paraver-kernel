@@ -724,11 +724,6 @@ void KDerivedWindow::setup( KTrace* whichTrace )
   else
     myTrace = whichTrace;
 
-  if ( functions[ 0 ] == NULL )
-    functions[ 0 ] = new ComposeAsIs();
-  if ( functions[ 1 ] == NULL )
-    functions[ 1 ] = new ComposeAsIs();
-
   intervalTopCompose1.clear();
   intervalTopCompose2.clear();
   intervalDerived.clear();
@@ -1027,7 +1022,7 @@ KWindow *KDerivedWindow::clone()
     clonedKDerivedWindow->factor[i] = factor[ i ];
   }
 
-  for ( UINT16 i = 0; i < 3; i++ )
+  for ( UINT16 i = 0; i < DERIVED; i++ )
   {
     if ( functions[ i ] != NULL )
       clonedKDerivedWindow->functions[ i ] = functions[ i ]->clone();
@@ -1056,4 +1051,35 @@ SemanticInfoType KDerivedWindow::getSemanticInfoType() const
   return functions[ 2 ]->getSemanticInfoType();
 }
 
+
+void KDerivedWindow::initSemanticFunctions()
+{
+  functions[ 0 ] = NULL;
+
+  functions[ TOPCOMPOSE1 ] = new ComposeAsIs();
+  functions[ TOPCOMPOSE2 ] = new ComposeAsIs();
+
+  functions[ COMPOSEWORKLOAD ] = new ComposeAsIs();
+  functions[ WORKLOAD ] = new Adding();
+
+  functions[ COMPOSEAPPLICATION ] = new ComposeAsIs();
+  functions[ APPLICATION ] = new Adding();
+
+  functions[ COMPOSETASK ] = new ComposeAsIs();
+  functions[ TASK ] = new Adding();
+
+  functions[ COMPOSETHREAD ] = new ComposeAsIs();
+  functions[ THREAD ] = NULL;
+
+  functions[ COMPOSESYSTEM ] = new ComposeAsIs();
+  functions[ SYSTEM ] = new Adding();
+
+  functions[ COMPOSENODE ] = new ComposeAsIs();
+  functions[ NODE ] = new Adding();
+
+  functions[ COMPOSECPU ] = new ComposeAsIs();
+  functions[ CPU ] = NULL;
+
+  functions[ DERIVED ] = NULL;
+}
 

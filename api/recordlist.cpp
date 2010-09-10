@@ -65,8 +65,7 @@ bool RecordListProxy::newRecords() const
 
 RecordList *RecordListProxy::clone()
 {
-  RecordListProxy *clonedRecordListProxy = NULL;
-  clonedRecordListProxy->myRecordList = myRecordList->clone();
+  RecordListProxy *clonedRecordListProxy = new RecordListProxy( myRecordList->clone() );
 
   return clonedRecordListProxy;
 }

@@ -39,25 +39,23 @@
 #endif
 #include <zlib.h>
 
-// only for cout ----
-#include <string>
-#include <iostream>
-using namespace std;
-// only for cout ----
-
 //#include "filters_wait_window.h"
 
 #include "ktracecutter.h"
+#include "kprogresscontroller.h"
 
 #ifdef WIN32
 #define atoll _atoi64
 #endif
 
-KTraceCutter::KTraceCutter( char *&trace_in, char *&trace_out, TraceOptions *options )
+KTraceCutter::KTraceCutter( char *&trace_in,
+                            char *&trace_out,
+                            TraceOptions *options,
+                            ProgressController *progress )
 {
   total_cutter_iters = 0;
   exec_options = new KTraceOptions( (KTraceOptions *) options );
-  execute( trace_in, trace_out );
+  execute( trace_in, trace_out, progress );
 }
 
 
@@ -343,7 +341,8 @@ void KTraceCutter::adjust_to_final_time()
 
 }
 
-void KTraceCutter::ini_cutter_progress_bar( char *file_name )
+void KTraceCutter::ini_cutter_progress_bar( char *file_name,
+                                            ProgressController *progress )
 {
   struct stat file_info;
 
@@ -355,19 +354,20 @@ void KTraceCutter::ini_cutter_progress_bar( char *file_name )
   total_trace_size = file_info.st_size;
 
   /* Depen mida traça mostrem percentatge amb un interval diferent de temps */
-  if ( total_trace_size < 500000000 ) total_cutter_iters = 500000;
-  else total_cutter_iters = 5000000;
+  if ( total_trace_size < 500000000 ) total_cutter_iters = 10000;
+  else total_cutter_iters = 100000;
 
   current_readed_size = 0;
 
-//  create_cutter_wait_window();
+  if( progress != NULL)
+    progress->setEndLimit( total_trace_size );
 }
 
 
 
-void KTraceCutter::show_cutter_progress_bar()
+void KTraceCutter::show_cutter_progress_bar( ProgressController *progress )
 {
-  double current_showed, i, j;
+//  double current_showed, i, j;
 
 
 #if defined(FreeBSD)
@@ -388,12 +388,12 @@ void KTraceCutter::show_cutter_progress_bar()
 #endif
 
 
-  i = ( double )( current_readed_size );
+/*  i = ( double )( current_readed_size );
   j = ( double )( total_trace_size );
 
-  current_showed = i / j;
+  current_showed = i / j;*/
 
-//  update_cutter_loading( current_showed );
+  progress->setCurrentProgress( current_readed_size );
 }
 
 
@@ -642,7 +642,9 @@ int KTraceCutter::is_selected_task( int task_id )
 }
 
 
-void KTraceCutter::execute( char *trace_in, char *trace_out )
+void KTraceCutter::execute( char *trace_in,
+                            char *trace_out,
+                            ProgressController *progress )
 {
   char *c, *tmp_dir, *word, *trace_header;
   char trace_name[1024], buffer[1024], end_parsing = 0, reset_counters;
@@ -773,7 +775,7 @@ void KTraceCutter::execute( char *trace_in, char *trace_out )
 
 //cout << "trace_file_out: " << trace_file_out << endl;
 
-  ini_cutter_progress_bar( trace_name );
+  ini_cutter_progress_bar( trace_name, progress );
 
 
   /* Process header */
@@ -814,7 +816,7 @@ void KTraceCutter::execute( char *trace_in, char *trace_out )
 
     if ( num_iters == total_cutter_iters )
     {
-      show_cutter_progress_bar();
+      show_cutter_progress_bar( progress );
       num_iters = 0;
     }
     else num_iters++;

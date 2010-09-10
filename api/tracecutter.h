@@ -33,6 +33,7 @@
 //#include "traceoptions.h"
 class TraceOptions;
 class KernelConnection;
+class ProgressController;
 
 class TraceCutter
 {
@@ -40,7 +41,8 @@ class TraceCutter
     static TraceCutter *create( KernelConnection *whichKernel,
                                 char *traceIn,
                                 char *traceOut,
-                                TraceOptions *options );
+                                TraceOptions *options,
+                                ProgressController *progress );
 
     virtual ~TraceCutter()
     {}
@@ -67,8 +69,6 @@ class TraceCutter
     {}
     virtual void set_remLastStates( int remStates )
     {}
-    virtual void execute()
-    {}
 };
 
 class TraceCutterProxy : public TraceCutter
@@ -88,20 +88,20 @@ class TraceCutterProxy : public TraceCutter
     virtual void set_remFirstStates( int remStates );
     virtual void set_remLastStates( int remStates );
 
-    virtual void execute();
-
   private:
     TraceCutter *myTraceCutter;
 
     TraceCutterProxy( const KernelConnection *whichKernel,
                       char *traceIn,
                       char *traceOut,
-                      TraceOptions *options );
+                      TraceOptions *options,
+                      ProgressController *progress );
 
     friend TraceCutter *TraceCutter::create( KernelConnection *whichKernel,
                                              char *traceIn,
                                              char *traceOut,
-                                             TraceOptions *options );
+                                             TraceOptions *options,
+                                             ProgressController *progress );
 };
 
 

@@ -38,7 +38,10 @@
 class KTraceCutter : public TraceCutter
 {
   public:
-    KTraceCutter( char *&trace_in, char *&trace_out, TraceOptions *options );
+    KTraceCutter( char *&trace_in,
+                  char *&trace_out,
+                  TraceOptions *options,
+                  ProgressController *progress );
     virtual ~KTraceCutter();
 
     virtual void set_by_time( bool byTime );
@@ -53,7 +56,9 @@ class KTraceCutter : public TraceCutter
     virtual void set_remFirstStates( int remStates );
     virtual void set_remLastStates( int remStates );
 
-    virtual void execute( char *trace_in, char *trace_out );
+    virtual void execute( char *trace_in,
+                          char *trace_out,
+                          ProgressController *progress );
 
   private:
     /* Buffer for reading trace records */
@@ -132,8 +137,8 @@ class KTraceCutter : public TraceCutter
                                char *trace_in_name,
                                char *trace_out_name );
     void adjust_to_final_time();
-    void ini_cutter_progress_bar( char *file_name );
-    void show_cutter_progress_bar();
+    void ini_cutter_progress_bar( char *file_name, ProgressController *progress );
+    void show_cutter_progress_bar( ProgressController *progress );
     void update_queue( int appl, int task, int thread,
                        unsigned long long type,
                        unsigned long long value );

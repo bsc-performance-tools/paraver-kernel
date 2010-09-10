@@ -340,7 +340,8 @@ class TraceOptionsProxy :public TraceOptions
     friend TraceOptions *TraceOptions::create( KernelConnection * );
     friend TraceCutter *LocalKernel::newTraceCutter( char *trace_in,
                                          char *trace_out,
-                                         TraceOptions *options ) const;
+                                         TraceOptions *options,
+                                         ProgressController *progress ) const;
     friend TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
                                           char *trace_out,
                                           TraceOptions *options ) const;

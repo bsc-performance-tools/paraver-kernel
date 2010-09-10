@@ -322,9 +322,7 @@ class KDerivedWindow: public KWindow
       factor.push_back( 1.0 );
       factor.push_back( 1.0 );
 
-      functions[ 0 ] = NULL;
-      functions[ 1 ] = NULL;
-      functions[ 2 ] = NULL;
+      initSemanticFunctions();
 
       parents.push_back( NULL );
       parents.push_back( NULL );
@@ -338,9 +336,7 @@ class KDerivedWindow: public KWindow
       factor.push_back( 1.0 );
       factor.push_back( 1.0 );
 
-      functions[ 0 ] = NULL;
-      functions[ 1 ] = NULL;
-      functions[ 2 ] = NULL;
+      initSemanticFunctions();
 
       parents.push_back( (KWindow*)window1 );
       parents.push_back( (KWindow*)window2 );
@@ -415,14 +411,30 @@ class KDerivedWindow: public KWindow
     vector<KWindow *> parents;
     vector<TSemanticValue> factor;
 
+    // Semantic interval structure
+    vector<IntervalCompose> intervalComposeWorkload;
+    vector<IntervalNotThread> intervalWorkload;
+    vector<IntervalCompose> intervalComposeApplication;
+    vector<IntervalNotThread> intervalApplication;
+    vector<IntervalCompose> intervalComposeTask;
+    vector<IntervalNotThread> intervalTask;
+    vector<IntervalCompose> intervalComposeThread;
+
+    vector<IntervalCompose> intervalComposeSystem;
+    vector<IntervalNotThread> intervalSystem;
+    vector<IntervalCompose> intervalComposeNode;
+    vector<IntervalNotThread> intervalNode;
+    vector<IntervalCompose> intervalComposeCPU;
+
     vector<IntervalDerived> intervalDerived;
     vector<IntervalControlDerived> intervalControlDerived;
 
-    SemanticFunction *functions[ 3 ];
+    SemanticFunction *functions[ DERIVED + 1 ];
 
   private:
     void setup( KTrace * whichTrace );
-    virtual void initSemanticFunctions() {}
+
+    virtual void initSemanticFunctions();
 };
 
 #endif // KWINDOW_H_INCLUDED

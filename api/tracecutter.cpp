@@ -36,18 +36,20 @@
 TraceCutter *TraceCutter::create(  KernelConnection *whichKernel,
                                    char *traceIn,
                                    char *traceOut,
-                                   TraceOptions *options )
+                                   TraceOptions *options,
+                                   ProgressController *progress )
 {
-  return new TraceCutterProxy( whichKernel, traceIn, traceOut, options );
+  return new TraceCutterProxy( whichKernel, traceIn, traceOut, options, progress );
 }
 
 
 TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
                                     char *traceIn,
                                     char *traceOut,
-                                    TraceOptions *options )
+                                    TraceOptions *options,
+                                    ProgressController *progress )
 {
-  myTraceCutter = whichKernel->newTraceCutter( traceIn, traceOut, options );
+  myTraceCutter = whichKernel->newTraceCutter( traceIn, traceOut, options, progress );
 }
 
 
@@ -110,10 +112,5 @@ void TraceCutterProxy::set_remFirstStates( int remStates )
 void TraceCutterProxy::set_remLastStates( int remStates )
 {
   myTraceCutter->set_remLastStates( remStates );
-}
-
-void TraceCutterProxy::execute()
-{
-//  KTraceCutter cutter( traceIn, traceOut, options->exec_options );
 }
 

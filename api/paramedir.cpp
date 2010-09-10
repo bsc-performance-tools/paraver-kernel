@@ -312,7 +312,8 @@ string applyFilters( KernelConnection *myKernel,
       case INC_CHOP_COUNTER:
         traceCutter = myKernel->newTraceCutter( tmpNameIn,
                                                 tmpNameOut,
-                                                traceOptions );
+                                                traceOptions,
+                                                NULL );
         myKernel->copyPCF( tmpNameIn, tmpNameOut );
         break;
 

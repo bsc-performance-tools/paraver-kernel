@@ -163,7 +163,8 @@ TraceOptions *LocalKernel::newTraceOptions() const
 TraceCutter *LocalKernel::newTraceCutter( //TraceCutter *concreteTraceCutter,
                                           char *trace_in,
                                           char *trace_out,
-                                          TraceOptions *options ) const
+                                          TraceOptions *options,
+                                          ProgressController *progress ) const
 {
 //  cout << "LocalKernel::newTraceCutter: tracein " << trace_in  << endl;
 //  cout << "LocalKernel::newTraceCutter: traceout" << trace_out << endl;
@@ -175,7 +176,8 @@ TraceCutter *LocalKernel::newTraceCutter( //TraceCutter *concreteTraceCutter,
                                                      trace_out,
                                                      options );
 */
-  return new KTraceCutter( trace_in, trace_out, options );
+  return new KTraceCutter( trace_in, trace_out, options,
+                           (KProgressController *)progress->getConcrete() );
 //  return ( TraceCutter *) myCutter;
 
 }
