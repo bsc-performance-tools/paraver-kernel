@@ -65,6 +65,7 @@ ParaverConfig::ParaverConfig()
   xmlGlobal.tmpPath = homedir; // errors, logs, working dir
   xmlGlobal.applyFollowingCFGsToAllTraces = false;
   xmlGlobal.fillStateGaps = true;
+  xmlGlobal.singleInstance = true;
 
   xmlTimeline.defaultName = "New window # %N";
   xmlTimeline.nameFormat = "%W @ %T";
