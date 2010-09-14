@@ -183,6 +183,11 @@ void ParaverConfig::setGlobalFillStateGaps( bool fill )
   xmlGlobal.fillStateGaps = fill;
 }
 
+void ParaverConfig::setGlobalSingleInstance( bool whichSingleInstance )
+{
+  xmlGlobal.singleInstance = whichSingleInstance;
+}
+
 string ParaverConfig::getGlobalTracesPath() const
 {
   return xmlGlobal.tracesPath;
@@ -208,6 +213,10 @@ bool ParaverConfig::getGlobalFillStateGaps() const
   return xmlGlobal.fillStateGaps;
 }
 
+bool ParaverConfig::getGlobalSingleInstance() const
+{
+  return xmlGlobal.singleInstance;
+}
 
 // TIMELINES XML SECTION
 void ParaverConfig::setTimelineDefaultName( string whichDefaultName )
