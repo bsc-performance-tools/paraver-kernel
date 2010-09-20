@@ -1022,7 +1022,8 @@ KWindow *KDerivedWindow::clone()
     clonedKDerivedWindow->factor[i] = factor[ i ];
   }
 
-  for ( UINT16 i = 0; i < DERIVED; i++ )
+//  for ( UINT16 i = 0; i < DERIVED; i++ )
+  for ( UINT16 i = 0; i < 3; i++ )
   {
     if ( functions[ i ] != NULL )
       clonedKDerivedWindow->functions[ i ] = functions[ i ]->clone();
@@ -1054,7 +1055,10 @@ SemanticInfoType KDerivedWindow::getSemanticInfoType() const
 
 void KDerivedWindow::initSemanticFunctions()
 {
-  functions[ 0 ] = NULL;
+  functions[ 0 ] = new ComposeAsIs();
+  functions[ 1 ] = new ComposeAsIs();
+  functions[ 2 ] = NULL;
+/*  functions[ 0 ] = NULL;
 
   functions[ TOPCOMPOSE1 ] = new ComposeAsIs();
   functions[ TOPCOMPOSE2 ] = new ComposeAsIs();
@@ -1081,5 +1085,6 @@ void KDerivedWindow::initSemanticFunctions()
   functions[ CPU ] = NULL;
 
   functions[ DERIVED ] = NULL;
+  */
 }
 

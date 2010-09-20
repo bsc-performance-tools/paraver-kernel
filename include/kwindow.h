@@ -429,8 +429,8 @@ class KDerivedWindow: public KWindow
     vector<IntervalDerived> intervalDerived;
     vector<IntervalControlDerived> intervalControlDerived;
 
-    SemanticFunction *functions[ DERIVED + 1 ];
-
+//    SemanticFunction *functions[ DERIVED + 1 ];
+    SemanticFunction *functions[ 3 ];
   private:
     void setup( KTrace * whichTrace );
 
