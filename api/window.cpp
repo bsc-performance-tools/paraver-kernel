@@ -273,7 +273,7 @@ Window *WindowProxy::clone( )
   */
   clonedWindow->zoomHistory = zoomHistory;
 
-  clonedWindow->selectedRow = selectedRow;
+  clonedWindow->selectedRow.copy( selectedRow );
 
   return clonedWindow;
 }
