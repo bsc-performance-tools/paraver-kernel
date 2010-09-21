@@ -463,6 +463,7 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DHideColumns::printLine( cfgFile, it );
     Analyzer2DHorizontal::printLine( cfgFile, it );
     Analyzer2DColor::printLine( cfgFile, it );
+    Analyzer2DSemanticColor::printLine( cfgFile, it );
     Analyzer2DZoom::printLine( cfgFile, it );
     Analyzer2DAccumulateByControlWindow::printLine( cfgFile, it );
     Analyzer2DSortCols::printLine( cfgFile, it );
@@ -577,9 +578,9 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN2D_HIDE_COLS]           = new Analyzer2DHideColumns();
   cfgTagFunctions[OLDCFG_TAG_AN2D_HORIZONTAL]          = new Analyzer2DHorizontal();
   cfgTagFunctions[OLDCFG_TAG_AN2D_COLOR]               = new Analyzer2DColor();
-  // --> Analyzer2D.SemanticColor:
+  cfgTagFunctions[OLDCFG_TAG_AN2D_SEMANTIC_COLOR]      = new Analyzer2DSemanticColor();
   // --> Analyzer2D.TextMode:
-  cfgTagFunctions[OLDCFG_TAG_AN2D_ZOOM]               = new Analyzer2DZoom();
+  cfgTagFunctions[OLDCFG_TAG_AN2D_ZOOM]                = new Analyzer2DZoom();
   // --> Analyzer2D.Expanded:
   // --> Analyzer2D.expanded:
   cfgTagFunctions[OLDCFG_TAG_AN2D_ACCUMULATOR]          = new Analyzer2DAccumulator();
@@ -3168,6 +3169,39 @@ void Analyzer2DColor::printLine( ofstream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_AN2D_COLOR << " ";
   if ( ( *it )->getShowColor() )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
+}
+
+bool Analyzer2DSemanticColor::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                         Trace *whichTrace,
+                                         vector<Window *>& windows,
+                                         vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setFirstRowColored( true );
+  else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setFirstRowColored( false );
+
+  return true;
+}
+
+void Analyzer2DSemanticColor::printLine( ofstream& cfgFile,
+                                         const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_SEMANTIC_COLOR << " ";
+  if ( ( *it )->getFirstRowColored() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;

@@ -933,6 +933,22 @@ class Analyzer2DColor: public TagFunction
 };
 
 
+class Analyzer2DSemanticColor: public TagFunction
+{
+  public:
+    Analyzer2DSemanticColor()
+    {}
+    virtual ~Analyzer2DSemanticColor()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
+};
+
+
 class Analyzer2DZoom: public TagFunction
 {
   public:
