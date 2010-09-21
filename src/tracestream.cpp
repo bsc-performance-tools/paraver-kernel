@@ -28,7 +28,7 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "tracestream.h"
-
+#include <iostream>
 #ifndef WIN32
 #include <stdlib.h>
 #endif
@@ -127,13 +127,13 @@ TTraceSize NotCompressed::getTraceFileSize( const string& filename )
   if ( fopen_s( &traceFile, filename.c_str(), "r" ) != 0 )
   {
     printf( "Error Opening File %s\n", filename.c_str() );
-    exit( 1 );
+    return 0;
   }
 #else
   if ( ( traceFile = fopen64( filename.c_str(), "r" ) ) == NULL )
   {
     printf( "Error Opening File %s\n", filename.c_str() );
-    exit( 1 );
+    return 0;
   }
 #endif
 
@@ -223,6 +223,11 @@ TTraceSize Compressed::getTraceFileSize( const string& filename )
   TTraceSize tmpSize;
 
   Compressed tmpComp( filename );
+  if( !tmpComp.good() )
+  {
+    tmpComp.close();
+    return 0;
+  }
   tmpComp.seekend();
   tmpSize = tmpComp.tellg();
   tmpComp.close();

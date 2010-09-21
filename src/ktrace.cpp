@@ -451,6 +451,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
 
   ready = false;
   TraceStream *file = TraceStream::openFile( fileName );
+
   if ( !file->good() )
     throw ParaverKernelException( ParaverKernelException::cannotOpenTrace,
                                   fileName.c_str() );
