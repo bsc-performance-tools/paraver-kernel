@@ -44,8 +44,8 @@ class ZoomHistory
 
     void addZoom( Dimension1 begin1, Dimension1 end1,
                   Dimension2 begin2, Dimension2 end2 );
-    void addZoom( Dimension2 begin, Dimension2 end );
     void addZoom( Dimension1 begin, Dimension1 end );
+    void addZoom( Dimension2 begin, Dimension2 end );
 
     void setFirstDimension( pair<Dimension1, Dimension1> &dim );
     void setSecondDimension( pair<Dimension2, Dimension2> &dim );

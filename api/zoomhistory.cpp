@@ -80,8 +80,8 @@ void ZoomHistory<Dimension1,Dimension2>::addZoom( Dimension1 begin, Dimension1 e
   if ( currentZoom < (int)zooms.size() - 1 )
     zooms.resize( currentZoom + 1 );
 
-  zooms.push_back( make_pair( make_pair(begin,end),
-                   make_pair( zooms[currentZoom].second.first, zooms[currentZoom].second.second)));
+  zooms.push_back( make_pair( make_pair( begin,end ),
+                              make_pair( zooms[currentZoom].second.first, zooms[currentZoom].second.second )));
   ++currentZoom;
 }
 
