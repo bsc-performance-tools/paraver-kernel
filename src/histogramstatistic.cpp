@@ -2086,6 +2086,8 @@ TSemanticValue StatAvgValueNotZero::finishRow( TSemanticValue cellValue,
     THistogramColumn column,
     THistogramColumn plane )
 {
+  if( ( numValues[ plane ] )[ column ] == 0 )
+    return 0.0;
   return cellValue / ( numValues[ plane ] )[ column ];
 }
 
