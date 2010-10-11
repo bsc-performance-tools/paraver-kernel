@@ -30,6 +30,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <limits>
 #include "resourcemodel.h"
 #include "traceheaderexception.h"
 
@@ -138,11 +139,14 @@ ResourceModel::ResourceModel( istringstream& headerInfo )
     // Insert CPUs
     for ( TCPUOrder countCPU = 0; countCPU < numberCPUs; countCPU++ )
     {
-      nodes[ countNode ].CPUs.push_back( ResourceModelCPU( globalCPUs ) );
-      CPUs.push_back( CPULocation() );
-      CPUs[ globalCPUs ].node = countNode;
-      CPUs[ globalCPUs ].CPU = countCPU;
-      globalCPUs++;
+      if( globalCPUs < std::numeric_limits<TCPUOrder>::max() )
+      {
+        nodes[ countNode ].CPUs.push_back( ResourceModelCPU( globalCPUs ) );
+        CPUs.push_back( CPULocation() );
+        CPUs[ globalCPUs ].node = countNode;
+        CPUs[ globalCPUs ].CPU = countCPU;
+        ++globalCPUs;
+      }
     }
     // End inserting CPUs
 

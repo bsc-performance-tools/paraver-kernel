@@ -30,6 +30,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <limits>
 #include "processmodel.h"
 #include "traceheaderexception.h"
 
@@ -130,12 +131,14 @@ ProcessModel::ProcessModel( istringstream& headerInfo )
       TThreadOrder numberThreads;
       TNodeOrder numberNode;
 
-      applications[ countAppl ].tasks.push_back( ProcessModelTask( globalTasks ) );
-      tasks.push_back( TaskLocation() );
-      tasks[ globalTasks ].appl = countAppl;
-      tasks[ globalTasks ].task = countTask;
-      ++globalTasks;
-
+      if( globalTasks < std::numeric_limits<TTaskOrder>::max() )
+      {
+        applications[ countAppl ].tasks.push_back( ProcessModelTask( globalTasks ) );
+        tasks.push_back( TaskLocation() );
+        tasks[ globalTasks ].appl = countAppl;
+        tasks[ globalTasks ].task = countTask;
+        ++globalTasks;
+      }
       string stringNumberThreads;
       std::getline( headerInfo, stringNumberThreads, ':' );
       istringstream sstreamNumberThreads( stringNumberThreads );
@@ -165,12 +168,15 @@ ProcessModel::ProcessModel( istringstream& headerInfo )
       // Insert threads
       for ( TThreadOrder countThread = 0; countThread < numberThreads; ++countThread )
       {
-        applications[ countAppl ].tasks[ countTask ].threads.push_back( ProcessModelThread( globalThreads, numberNode - 1 ) );
-        threads.push_back( ThreadLocation() );
-        threads[ globalThreads ].appl = countAppl;
-        threads[ globalThreads ].task = countTask;
-        threads[ globalThreads ].thread = countThread;
-        ++globalThreads;
+        if( globalThreads < std::numeric_limits<TThreadOrder>::max() )
+        {
+          applications[ countAppl ].tasks[ countTask ].threads.push_back( ProcessModelThread( globalThreads, numberNode - 1 ) );
+          threads.push_back( ThreadLocation() );
+          threads[ globalThreads ].appl = countAppl;
+          threads[ globalThreads ].task = countTask;
+          threads[ globalThreads ].thread = countThread;
+          ++globalThreads;
+        }
       }
       // End inserting threads
 
