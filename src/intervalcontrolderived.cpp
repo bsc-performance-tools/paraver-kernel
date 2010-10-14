@@ -142,6 +142,9 @@ KRecordList *IntervalControlDerived::calcNext( KRecordList *displayList, bool in
     end = window->copyThreadIterator( childIntervals[ 0 ]->getEnd() );
   }
 
+  if( begin->getTime() == window->getTrace()->getEndTime() )
+    return displayList;
+
   while ( childIntervals[ 1 ]->getEnd()->getTime() <= begin->getTime() )
     childIntervals[ 1 ]->calcNext( displayList );
 
