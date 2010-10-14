@@ -594,15 +594,17 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     }
   }
 
+  if ( blocks->getCountInserted() > 0 )
+  {
+    memTrace->insert( blocks );
+    ++count;
+  }
+
   if (count == 0)
   {
     throw TraceHeaderException( TraceHeaderException::emptyBody,
                                 whichFile.c_str() );
   }
-
-  if ( blocks->getCountInserted() > 0 )
-    memTrace->insert( blocks );
-
 
   for ( hash_set<TEventType>::iterator it = hashevents.begin(); it != hashevents.end(); ++it )
     events.insert( *it );
