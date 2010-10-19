@@ -257,6 +257,14 @@ void KTraceCutter::proces_cutter_header( char *header,
 
   while ( header[0] == '#' )
   {
+    if ( !is_zip )
+    {
+      if( feof( infile ) ) break;
+    }
+    else
+    {
+      if ( gzeof( gzInfile ) ) break;
+    }
     current_size += fprintf( outfile, "%s", header );
 
     if ( !is_zip ) fgets( header, MAX_TRACE_HEADER, infile );
