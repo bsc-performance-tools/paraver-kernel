@@ -96,15 +96,8 @@ class IntervalCompose: public IntervalHigh
         {
           childIntervals.clear();
           lastLevel = getWindowLevel();
-          if ( IsDerivedWindow() )
-          {
-            childIntervals.push_back( getWindowInterval( DERIVED, order ) );
-          }
-          else
-          {
-            childIntervals.push_back( getWindowInterval(
-                                        getComposeLevel( getWindowLevel() ), order ) );
-          }
+          childIntervals.push_back( getWindowInterval(
+                                    getComposeLevel( getWindowLevel() ), order ) );
         }
       }
       else if ( level == COMPOSEWORKLOAD )

@@ -230,7 +230,7 @@ bool LocalKernel::userMessage( const string& message ) const
 
 char *LocalKernel::composeName( char *name, char *newExtension )
 {
-  int zip_filter;
+  int zip_filter = 0;
   char *fileName = strdup( name );
   char *aux;
 

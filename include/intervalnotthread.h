@@ -44,7 +44,7 @@ class IntervalNotThread: public IntervalHigh
       function = NULL;
     }
 
-    IntervalNotThread( KSingleWindow *whichWindow, TWindowLevel whichLevel,
+    IntervalNotThread( KWindow *whichWindow, TWindowLevel whichLevel,
                        TObjectOrder whichOrder ):
         IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
     {
@@ -70,7 +70,7 @@ class IntervalNotThread: public IntervalHigh
     }
 
   protected:
-    KSingleWindow *window;
+    KWindow *window;
     SemanticNotThread *function;
     TCreateList createList;
 

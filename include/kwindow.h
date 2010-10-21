@@ -74,11 +74,16 @@ class KWindow: public Window
       return level;
     }
 
-    void setLevel( TWindowLevel whichLevel )
+    virtual void setLevel( TWindowLevel whichLevel )
     {
       if ( whichLevel >= TOPCOMPOSE1 )
         throw KWindowException( KWindowException::invalidLevel );
       level = whichLevel;
+    }
+
+    virtual TWindowLevel getMinAcceptableLevel() const
+    {
+      return THREAD;
     }
 
     void setTimeUnit( TTimeUnit whichUnit )
@@ -343,20 +348,13 @@ class KDerivedWindow: public KWindow
       setup( NULL );
     }
 
-    virtual ~KDerivedWindow()
-    {
-      if ( functions[ 0 ] != NULL )
-        delete functions[ 0 ];
-      if ( functions[ 1 ] != NULL )
-        delete functions[ 1 ];
-      if ( functions[ 2 ] != NULL )
-        delete functions[ 2 ];
-    }
+    virtual ~KDerivedWindow();
 
     virtual void setParent( UINT16 whichParent, Window *whichWindow );
     virtual Window *getParent( UINT16 whichParent ) const;
 
-    virtual TWindowLevel getLevel() const;
+    virtual void setLevel( TWindowLevel whichLevel );
+    virtual TWindowLevel getMinAcceptableLevel() const;
 
     virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    const string& whichFunction );
@@ -429,8 +427,8 @@ class KDerivedWindow: public KWindow
     vector<IntervalDerived> intervalDerived;
     vector<IntervalControlDerived> intervalControlDerived;
 
-//    SemanticFunction *functions[ DERIVED + 1 ];
-    SemanticFunction *functions[ 3 ];
+    SemanticFunction *functions[ DERIVED + 1 ];
+//    SemanticFunction *functions[ 3 ];
   private:
     void setup( KTrace * whichTrace );
 

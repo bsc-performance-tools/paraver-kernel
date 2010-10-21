@@ -141,6 +141,7 @@ class Window
     virtual Trace *getTrace() const = 0;
     virtual TWindowLevel getLevel() const = 0;
     virtual void setLevel( TWindowLevel whichLevel ) = 0;
+    virtual TWindowLevel getMinAcceptableLevel() const = 0;
     virtual void setTimeUnit( TTimeUnit whichUnit ) = 0;
     virtual TTimeUnit getTimeUnit() const = 0;
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const = 0;
@@ -414,6 +415,7 @@ class WindowProxy: public Window
     virtual Trace *getTrace() const;
     virtual TWindowLevel getLevel() const;
     virtual void setLevel( TWindowLevel whichLevel );
+    virtual TWindowLevel getMinAcceptableLevel() const;
     virtual void setTimeUnit( TTimeUnit whichUnit );
     virtual TTimeUnit getTimeUnit() const;
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const;

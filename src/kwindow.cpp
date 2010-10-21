@@ -42,9 +42,9 @@ TObjectOrder KWindow::cpuObjectToWindowObject( TCPUOrder whichCPU )
 {
   TObjectOrder tmpObject = 0;
 
-  if ( level == CPU )
+  if( level == CPU )
     tmpObject = whichCPU;
-  else if ( level == NODE )
+  else if( level == NODE )
   {
     TCPUOrder myCPU;
     TNodeOrder myNode;
@@ -52,7 +52,7 @@ TObjectOrder KWindow::cpuObjectToWindowObject( TCPUOrder whichCPU )
     myTrace->getCPULocation( whichCPU, myNode, myCPU );
     tmpObject = myNode;
   }
-  else if ( level == SYSTEM )
+  else if( level == SYSTEM )
   {
     tmpObject = 0;
   }
@@ -65,9 +65,9 @@ TObjectOrder KWindow::threadObjectToWindowObject( TThreadOrder whichThread )
 {
   TObjectOrder tmpObject = 0;
 
-  if ( level == THREAD )
+  if( level == THREAD )
     tmpObject = whichThread;
-  else if ( level == TASK )
+  else if( level == TASK )
   {
     TThreadOrder myThread;
     TTaskOrder myTask;
@@ -76,7 +76,7 @@ TObjectOrder KWindow::threadObjectToWindowObject( TThreadOrder whichThread )
     myTrace->getThreadLocation( whichThread, myAppl, myTask, myThread );
     tmpObject = myTrace->getGlobalTask( myAppl, myTask );
   }
-  else if ( level == APPLICATION )
+  else if( level == APPLICATION )
   {
     TThreadOrder myThread;
     TTaskOrder myTask;
@@ -85,7 +85,7 @@ TObjectOrder KWindow::threadObjectToWindowObject( TThreadOrder whichThread )
     myTrace->getThreadLocation( whichThread, myAppl, myTask, myThread );
     tmpObject = myAppl;
   }
-  else if ( level == WORKLOAD )
+  else if( level == WORKLOAD )
   {
     tmpObject = 0;
   }
@@ -99,19 +99,19 @@ TObjectOrder KWindow::getWindowLevelObjects()
   TObjectOrder objectSize = 0;
   TWindowLevel whichLevel = getLevel();
 
-  if ( whichLevel == WORKLOAD )
+  if( whichLevel == WORKLOAD )
     objectSize = 1;
-  else if ( whichLevel == APPLICATION )
+  else if( whichLevel == APPLICATION )
     objectSize = myTrace->totalApplications();
-  else if ( whichLevel == TASK )
+  else if( whichLevel == TASK )
     objectSize = myTrace->totalTasks();
-  else if ( whichLevel == THREAD )
+  else if( whichLevel == THREAD )
     objectSize = myTrace->totalThreads();
-  else if ( whichLevel == SYSTEM )
+  else if( whichLevel == SYSTEM )
     objectSize = 1;
-  else if ( whichLevel == NODE )
+  else if( whichLevel == NODE )
     objectSize = myTrace->totalNodes();
-  else if ( whichLevel == CPU )
+  else if( whichLevel == CPU )
     objectSize = myTrace->totalCPUs();
 
   return objectSize;
@@ -123,17 +123,17 @@ TRecordTime KWindow::traceUnitsToWindowUnits( TRecordTime whichTime )
   TRecordTime tmpTime;
   TRecordTime factor = 1;
 
-  if ( myTrace->getTimeUnit() == timeUnit )
+  if( myTrace->getTimeUnit() == timeUnit )
     tmpTime = whichTime;
   else
   {
     UINT16 from = myTrace->getTimeUnit() > timeUnit ? timeUnit : myTrace->getTimeUnit();
     UINT16 to = myTrace->getTimeUnit() > timeUnit ? myTrace->getTimeUnit() : timeUnit;
 
-    for ( UINT16 i = from + 1; i <= to; i++ )
+    for( UINT16 i = from + 1; i <= to; i++ )
       factor *= factorTable[ i ];
 
-    if ( myTrace->getTimeUnit() > timeUnit )
+    if( myTrace->getTimeUnit() > timeUnit )
       tmpTime = whichTime * factor;
     else
       tmpTime = whichTime / factor;
@@ -147,17 +147,17 @@ TRecordTime KWindow::windowUnitsToTraceUnits( TRecordTime whichTime )
   TRecordTime tmpTime;
   TRecordTime factor = 1;
 
-  if ( myTrace->getTimeUnit() == timeUnit )
+  if( myTrace->getTimeUnit() == timeUnit )
     tmpTime = whichTime;
   else
   {
     UINT16 from = myTrace->getTimeUnit() > timeUnit ? timeUnit : myTrace->getTimeUnit();
     UINT16 to = myTrace->getTimeUnit() > timeUnit ? myTrace->getTimeUnit() : timeUnit;
 
-    for ( UINT16 i = from + 1; i <= to; i++ )
+    for( UINT16 i = from + 1; i <= to; i++ )
       factor *= factorTable[ i ];
 
-    if ( myTrace->getTimeUnit() > timeUnit )
+    if( myTrace->getTimeUnit() > timeUnit )
       tmpTime = whichTime / factor;
     else
       tmpTime = whichTime * factor;
@@ -191,13 +191,13 @@ bool KWindow::getParametersOfFunction( string whichFunction,
 
   SemanticFunction *tmp = FunctionManagement<SemanticFunction>::getInstance()->getFunction( whichFunction );
 
-  if ( tmp != NULL )
+  if( tmp != NULL )
   {
     numParameters = tmp->getMaxParam();
 
     nameParameters.clear();
     defaultValues.clear();
-    for ( UINT32 i = 0; i < numParameters; ++i )
+    for( UINT32 i = 0; i < numParameters; ++i )
     {
       nameParameters.push_back( tmp->getParamName( TParamIndex( i ) ) );
       defaultValues.push_back( tmp->getParam( TParamIndex( i ) ) );
@@ -219,12 +219,12 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 {
   initSemanticFunctions();
 
-  if ( myTrace->totalThreads() > myTrace->totalCPUs() )
+  if( myTrace->totalThreads() > myTrace->totalCPUs() )
   {
     recordsByTime.reserve( myTrace->totalThreads() );
     intervalTopCompose1.reserve( myTrace->totalThreads() );
     intervalTopCompose2.reserve( myTrace->totalThreads() );
-    for ( TThreadOrder i = 0; i < myTrace->totalThreads(); i++ )
+    for( TThreadOrder i = 0; i < myTrace->totalThreads(); i++ )
     {
       recordsByTime.push_back( NULL );
       intervalTopCompose1.push_back( IntervalCompose( this, TOPCOMPOSE1, i ) );
@@ -236,7 +236,7 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
     recordsByTime.reserve( myTrace->totalCPUs() );
     intervalTopCompose1.reserve( myTrace->totalCPUs() );
     intervalTopCompose2.reserve( myTrace->totalCPUs() );
-    for ( TCPUOrder i = 0; i < myTrace->totalCPUs(); i++ )
+    for( TCPUOrder i = 0; i < myTrace->totalCPUs(); i++ )
     {
       recordsByTime.push_back( NULL );
       intervalTopCompose1.push_back( IntervalCompose( this, TOPCOMPOSE1, i ) );
@@ -249,7 +249,7 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 
   intervalApplication.reserve( myTrace->totalApplications() );
   intervalComposeApplication.reserve( myTrace->totalApplications() );
-  for ( TApplOrder i = 0; i < myTrace->totalApplications(); i++ )
+  for( TApplOrder i = 0; i < myTrace->totalApplications(); i++ )
   {
     intervalApplication.push_back( IntervalNotThread( this, APPLICATION, i ) );
     intervalComposeApplication.push_back( IntervalCompose( this, COMPOSEAPPLICATION, i ) );
@@ -257,7 +257,7 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 
   intervalTask.reserve( myTrace->totalTasks() );
   intervalComposeTask.reserve( myTrace->totalTasks() );
-  for ( TTaskOrder i = 0; i < myTrace->totalTasks(); i++ )
+  for( TTaskOrder i = 0; i < myTrace->totalTasks(); i++ )
   {
     intervalTask.push_back( IntervalNotThread( this, TASK, i ) );
     intervalComposeTask.push_back( IntervalCompose( this, COMPOSETASK, i ) );
@@ -265,7 +265,7 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 
   intervalThread.reserve( myTrace->totalThreads() );
   intervalComposeThread.reserve( myTrace->totalThreads() );
-  for ( TThreadOrder i = 0; i < myTrace->totalThreads(); i++ )
+  for( TThreadOrder i = 0; i < myTrace->totalThreads(); i++ )
   {
     intervalThread.push_back( IntervalThread( this, THREAD, i ) );
     intervalComposeThread.push_back( IntervalCompose( this, COMPOSETHREAD, i ) );
@@ -276,7 +276,7 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 
   intervalNode.reserve( myTrace->totalNodes() );
   intervalComposeNode.reserve( myTrace->totalNodes() );
-  for ( TNodeOrder i = 0; i < myTrace->totalNodes(); i++ )
+  for( TNodeOrder i = 0; i < myTrace->totalNodes(); i++ )
   {
     intervalNode.push_back( IntervalNotThread( this, NODE, i ) );
     intervalComposeNode.push_back( IntervalCompose( this, COMPOSENODE, i ) );
@@ -284,7 +284,7 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 
   intervalCPU.reserve( myTrace->totalCPUs() );
   intervalComposeCPU.reserve( myTrace->totalCPUs() );
-  for ( TCPUOrder i = 0; i < myTrace->totalCPUs(); i++ )
+  for( TCPUOrder i = 0; i < myTrace->totalCPUs(); i++ )
   {
     intervalCPU.push_back( IntervalCPU( this, CPU, i ) );
     intervalComposeCPU.push_back( IntervalCompose( this, COMPOSECPU, i ) );
@@ -296,44 +296,44 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 
 KSingleWindow::~KSingleWindow()
 {
-  if ( functions[ TOPCOMPOSE1 ] != NULL )
+  if( functions[ TOPCOMPOSE1 ] != NULL )
     delete functions[ TOPCOMPOSE1 ];
-  if ( functions[ TOPCOMPOSE2 ] != NULL )
+  if( functions[ TOPCOMPOSE2 ] != NULL )
     delete functions[ TOPCOMPOSE2 ];
 
-  if ( functions[ COMPOSEWORKLOAD ] != NULL )
+  if( functions[ COMPOSEWORKLOAD ] != NULL )
     delete functions[ COMPOSEWORKLOAD ];
-  if ( functions[ WORKLOAD ] != NULL )
+  if( functions[ WORKLOAD ] != NULL )
     delete functions[ WORKLOAD ];
-  if ( functions[ COMPOSEAPPLICATION ] != NULL )
+  if( functions[ COMPOSEAPPLICATION ] != NULL )
     delete functions[ COMPOSEAPPLICATION ];
-  if ( functions[ APPLICATION ] != NULL )
+  if( functions[ APPLICATION ] != NULL )
     delete functions[ APPLICATION ];
-  if ( functions[ COMPOSETASK ] != NULL )
+  if( functions[ COMPOSETASK ] != NULL )
     delete functions[ COMPOSETASK ];
-  if ( functions[ TASK ] != NULL )
+  if( functions[ TASK ] != NULL )
     delete functions[ TASK ];
-  if ( functions[ COMPOSETHREAD ] != NULL )
+  if( functions[ COMPOSETHREAD ] != NULL )
     delete functions[ COMPOSETHREAD ];
-  if ( functions[ THREAD ] != NULL )
+  if( functions[ THREAD ] != NULL )
     delete functions[ THREAD ];
 
-  if ( functions[ COMPOSESYSTEM ] != NULL )
+  if( functions[ COMPOSESYSTEM ] != NULL )
     delete functions[ COMPOSESYSTEM ];
-  if ( functions[ SYSTEM ] != NULL )
+  if( functions[ SYSTEM ] != NULL )
     delete functions[ SYSTEM ];
-  if ( functions[ COMPOSENODE ] != NULL )
+  if( functions[ COMPOSENODE ] != NULL )
     delete functions[ COMPOSENODE ];
-  if ( functions[ NODE ] != NULL )
+  if( functions[ NODE ] != NULL )
     delete functions[ NODE ];
-  if ( functions[ COMPOSECPU ] != NULL )
+  if( functions[ COMPOSECPU ] != NULL )
     delete functions[ COMPOSECPU ];
-  if ( functions[ CPU ] != NULL )
+  if( functions[ CPU ] != NULL )
     delete functions[ CPU ];
 
-  for ( TObjectOrder i = 0; i < recordsByTime.size(); i++ )
+  for( TObjectOrder i = 0; i < recordsByTime.size(); i++ )
   {
-    if ( recordsByTime[ i ] != NULL )
+    if( recordsByTime[ i ] != NULL )
       delete recordsByTime[ i ];
   }
   recordsByTime.clear();
@@ -345,21 +345,21 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
 {
   TObjectOrder objectSize = 0;
 
-  for ( UINT8 i = WORKLOAD; i <= COMPOSECPU; i++ )
+  for( UINT8 i = WORKLOAD; i <= COMPOSECPU; i++ )
   {
-    if ( functions[ i ] != NULL )
+    if( functions[ i ] != NULL )
       functions[ i ]->init( this );
   }
 
-  if ( level >= SYSTEM )
+  if( level >= SYSTEM )
   {
-    if ( initialTime > 0 && !initFromBegin() )
+    if( initialTime > 0 && !initFromBegin() )
       myTrace->getRecordByTimeCPU( recordsByTime, initialTime );
     else
     {
-      for ( TCPUOrder i = 0; i < myTrace->totalCPUs(); i++ )
+      for( TCPUOrder i = 0; i < myTrace->totalCPUs(); i++ )
       {
-        if ( recordsByTime[ i ] != NULL )
+        if( recordsByTime[ i ] != NULL )
           delete recordsByTime[ i ];
         recordsByTime[ i ] = myTrace->CPUBegin( i );
       }
@@ -367,13 +367,13 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
   }
   else
   {
-    if ( initialTime > 0 && !initFromBegin() )
+    if( initialTime > 0 && !initFromBegin() )
       myTrace->getRecordByTimeThread( recordsByTime, initialTime );
     else
     {
-      for ( TThreadOrder i = 0; i < myTrace->totalThreads(); i++ )
+      for( TThreadOrder i = 0; i < myTrace->totalThreads(); i++ )
       {
-        if ( recordsByTime[ i ] != NULL )
+        if( recordsByTime[ i ] != NULL )
           delete recordsByTime[ i ];
         recordsByTime[ i ] = myTrace->threadBegin( i );
       }
@@ -391,17 +391,17 @@ void KSingleWindow::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCr
 bool KSingleWindow::setLevelFunction( TWindowLevel whichLevel,
                                       const string& whichFunction )
 {
-  if ( whichLevel == DERIVED )
+  if( whichLevel == DERIVED )
     return false;
 
-  if ( functions[ whichLevel ] != NULL )
+  if( functions[ whichLevel ] != NULL )
     delete functions[ whichLevel ];
 
   functions[ whichLevel ] =
     ( FunctionManagement<SemanticFunction>::getInstance() )->
     getFunction( whichFunction );
 
-  if ( functions[ whichLevel ] == NULL )
+  if( functions[ whichLevel ] == NULL )
     return false;
 
   return true;
@@ -422,35 +422,35 @@ SemanticFunction *KSingleWindow::getSemanticFunction( TWindowLevel whichLevel )
 
 string KSingleWindow::getFirstUsefulFunction()
 {
-  if ( typeid( *functions[ TOPCOMPOSE1 ] ) != typeid( ComposeAsIs ) )
+  if( typeid( *functions[ TOPCOMPOSE1 ] ) != typeid( ComposeAsIs ) )
     return functions[ TOPCOMPOSE1 ]->getName();
-  if ( typeid( *functions[ TOPCOMPOSE2 ] ) != typeid( ComposeAsIs ) )
+  if( typeid( *functions[ TOPCOMPOSE2 ] ) != typeid( ComposeAsIs ) )
     return functions[ TOPCOMPOSE2 ]->getName();
-  if ( typeid( *functions[ getComposeLevel( getLevel() ) ] ) != typeid( ComposeAsIs ) )
-    return functions[ getComposeLevel( getLevel() ) ]->getName();
+  if( typeid( *functions[ getComposeLevel( getLevel() )] ) != typeid( ComposeAsIs ) )
+    return functions[ getComposeLevel( getLevel() )]->getName();
 
-  return functions[ getLevel() ]->getName();
+  return functions[ getLevel()]->getName();
 }
 
 TWindowLevel KSingleWindow::getFirstFreeCompose() const
 {
-  if ( typeid( *functions[ getComposeLevel( getLevel() ) ] ) == typeid( ComposeAsIs ) )
+  if( typeid( *functions[ getComposeLevel( getLevel() )] ) == typeid( ComposeAsIs ) )
     return getComposeLevel( getLevel() );
-  if ( typeid( *functions[ TOPCOMPOSE2 ] ) == typeid( ComposeAsIs ) )
+  if( typeid( *functions[ TOPCOMPOSE2 ] ) == typeid( ComposeAsIs ) )
     return TOPCOMPOSE2;
   return TOPCOMPOSE1;
 }
 
 SemanticFunction *KSingleWindow::getFirstSemUsefulFunction()
 {
-  if ( typeid( *functions[ TOPCOMPOSE1 ] ) != typeid( ComposeAsIs ) )
+  if( typeid( *functions[ TOPCOMPOSE1 ] ) != typeid( ComposeAsIs ) )
     return functions[ TOPCOMPOSE1 ];
-  if ( typeid( *functions[ TOPCOMPOSE2 ] ) != typeid( ComposeAsIs ) )
+  if( typeid( *functions[ TOPCOMPOSE2 ] ) != typeid( ComposeAsIs ) )
     return functions[ TOPCOMPOSE2 ];
-  if ( typeid( *functions[ getComposeLevel( getLevel() ) ] ) != typeid( ComposeAsIs ) )
-    return functions[ getComposeLevel( getLevel() ) ];
+  if( typeid( *functions[ getComposeLevel( getLevel() )] ) != typeid( ComposeAsIs ) )
+    return functions[ getComposeLevel( getLevel() )];
 
-  return functions[ getLevel() ];
+  return functions[ getLevel()];
 }
 
 
@@ -485,7 +485,7 @@ bool KSingleWindow::initFromBegin() const
   tmp = tmp || functions[ TOPCOMPOSE1 ]->getInitFromBegin();
   tmp = tmp || functions[ TOPCOMPOSE2 ]->getInitFromBegin();
 
-  if ( level == WORKLOAD )
+  if( level == WORKLOAD )
   {
     tmp = tmp || functions[ COMPOSEWORKLOAD ]->getInitFromBegin();
     tmp = tmp || functions[ WORKLOAD ]->getInitFromBegin();
@@ -494,19 +494,19 @@ bool KSingleWindow::initFromBegin() const
     tmp = tmp || functions[ COMPOSETASK ]->getInitFromBegin();
     tmp = tmp || functions[ TASK ]->getInitFromBegin();
   }
-  else if ( level == APPLICATION )
+  else if( level == APPLICATION )
   {
     tmp = tmp || functions[ COMPOSEAPPLICATION ]->getInitFromBegin();
     tmp = tmp || functions[ APPLICATION ]->getInitFromBegin();
     tmp = tmp || functions[ COMPOSETASK ]->getInitFromBegin();
     tmp = tmp || functions[ TASK ]->getInitFromBegin();
   }
-  else if ( level == TASK )
+  else if( level == TASK )
   {
     tmp = tmp || functions[ COMPOSETASK ]->getInitFromBegin();
     tmp = tmp || functions[ TASK ]->getInitFromBegin();
   }
-  else if ( level == SYSTEM )
+  else if( level == SYSTEM )
   {
     tmp = tmp || functions[ COMPOSESYSTEM ]->getInitFromBegin();
     tmp = tmp || functions[ SYSTEM ]->getInitFromBegin();
@@ -515,14 +515,14 @@ bool KSingleWindow::initFromBegin() const
     tmp = tmp || functions[ COMPOSECPU ]->getInitFromBegin();
     tmp = tmp || functions[ CPU ]->getInitFromBegin();
   }
-  else if ( level == NODE )
+  else if( level == NODE )
   {
     tmp = tmp || functions[ COMPOSENODE ]->getInitFromBegin();
     tmp = tmp || functions[ NODE ]->getInitFromBegin();
     tmp = tmp || functions[ COMPOSECPU ]->getInitFromBegin();
     tmp = tmp || functions[ CPU ]->getInitFromBegin();
   }
-  else if ( level == CPU )
+  else if( level == CPU )
   {
     tmp = tmp || functions[ COMPOSECPU ]->getInitFromBegin();
     tmp = tmp || functions[ CPU ]->getInitFromBegin();
@@ -568,95 +568,95 @@ TSemanticValue KSingleWindow::getValue( TObjectOrder whichObject ) const
 Interval *KSingleWindow::getLevelInterval( TWindowLevel whichLevel,
     TObjectOrder whichOrder )
 {
-  if ( whichLevel == TOPCOMPOSE1 )
+  if( whichLevel == TOPCOMPOSE1 )
     return &intervalTopCompose1[ whichOrder ];
-  else if ( whichLevel == TOPCOMPOSE2 )
+  else if( whichLevel == TOPCOMPOSE2 )
     return &intervalTopCompose2[ whichOrder ];
-  else if ( whichLevel == COMPOSEWORKLOAD )
+  else if( whichLevel == COMPOSEWORKLOAD )
     return &intervalComposeWorkload[ whichOrder ];
-  else if ( whichLevel == WORKLOAD )
+  else if( whichLevel == WORKLOAD )
     return &intervalWorkload[ whichOrder ];
-  else if ( whichLevel == COMPOSEAPPLICATION )
+  else if( whichLevel == COMPOSEAPPLICATION )
     return &intervalComposeApplication[ whichOrder ];
-  else if ( whichLevel == APPLICATION )
+  else if( whichLevel == APPLICATION )
     return &intervalApplication[ whichOrder ];
-  else if ( whichLevel == COMPOSETASK )
+  else if( whichLevel == COMPOSETASK )
     return &intervalComposeTask[ whichOrder ];
-  else if ( whichLevel == TASK )
+  else if( whichLevel == TASK )
     return &intervalTask[ whichOrder ];
-  else if ( whichLevel == COMPOSETHREAD )
+  else if( whichLevel == COMPOSETHREAD )
     return &intervalComposeThread[ whichOrder ];
-  else if ( whichLevel == THREAD )
+  else if( whichLevel == THREAD )
     return &intervalThread[ whichOrder ];
-  else if ( whichLevel == COMPOSESYSTEM )
+  else if( whichLevel == COMPOSESYSTEM )
     return &intervalComposeSystem[ whichOrder ];
-  else if ( whichLevel == SYSTEM )
+  else if( whichLevel == SYSTEM )
     return &intervalSystem[ whichOrder ];
-  else if ( whichLevel == COMPOSENODE )
+  else if( whichLevel == COMPOSENODE )
     return &intervalComposeNode[ whichOrder ];
-  else if ( whichLevel == NODE )
+  else if( whichLevel == NODE )
     return &intervalNode[ whichOrder ];
-  else if ( whichLevel == COMPOSECPU )
+  else if( whichLevel == COMPOSECPU )
     return &intervalComposeCPU[ whichOrder ];
-  else if ( whichLevel == CPU )
+  else if( whichLevel == CPU )
     return &intervalCPU[ whichOrder ];
   return NULL;
 }
 
 SemanticInfoType KSingleWindow::getSemanticInfoType() const
 {
-  if ( functions[ TOPCOMPOSE1 ]->getSemanticInfoType() != SAME_TYPE )
+  if( functions[ TOPCOMPOSE1 ]->getSemanticInfoType() != SAME_TYPE )
     return functions[ TOPCOMPOSE1 ]->getSemanticInfoType();
-  if ( functions[ TOPCOMPOSE2 ]->getSemanticInfoType() != SAME_TYPE )
+  if( functions[ TOPCOMPOSE2 ]->getSemanticInfoType() != SAME_TYPE )
     return functions[ TOPCOMPOSE2 ]->getSemanticInfoType();
 
-  if ( level >= SYSTEM && level <= CPU )
+  if( level >= SYSTEM && level <= CPU )
   {
-    switch ( level )
+    switch( level )
     {
       case SYSTEM:
-        if ( functions[ COMPOSESYSTEM ]->getSemanticInfoType() != SAME_TYPE )
+        if( functions[ COMPOSESYSTEM ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSESYSTEM ]->getSemanticInfoType();
-        if ( functions[ SYSTEM ]->getSemanticInfoType() != SAME_TYPE )
+        if( functions[ SYSTEM ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ SYSTEM ]->getSemanticInfoType();
       case NODE:
-        if ( functions[ COMPOSENODE ]->getSemanticInfoType() != SAME_TYPE )
+        if( functions[ COMPOSENODE ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSENODE ]->getSemanticInfoType();
-        if ( functions[ NODE ]->getSemanticInfoType() != SAME_TYPE )
+        if( functions[ NODE ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ NODE ]->getSemanticInfoType();
       case CPU:
-        if ( functions[ COMPOSECPU ]->getSemanticInfoType() != SAME_TYPE )
+        if( functions[ COMPOSECPU ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSECPU ]->getSemanticInfoType();
-        if ( functions[ CPU ]->getSemanticInfoType() != SAME_TYPE )
+        if( functions[ CPU ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ CPU ]->getSemanticInfoType();
       default:
         break;
     }
   }
-  else if ( level >= WORKLOAD && level <= THREAD )
+  else if( level >= WORKLOAD && level <= THREAD )
   {
-    switch ( level )
+    switch( level )
     {
       case WORKLOAD:
-        if ( functions[ COMPOSEWORKLOAD ]->getSemanticInfoType() != SAME_TYPE )
+        if( functions[ COMPOSEWORKLOAD ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSEWORKLOAD ]->getSemanticInfoType();
-        if ( functions[ WORKLOAD ]->getSemanticInfoType() != SAME_TYPE )
+        if( functions[ WORKLOAD ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ WORKLOAD ]->getSemanticInfoType();
       case APPLICATION:
-        if ( functions[ COMPOSEAPPLICATION ]->getSemanticInfoType() != SAME_TYPE )
+        if( functions[ COMPOSEAPPLICATION ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSEAPPLICATION ]->getSemanticInfoType();
-        if ( functions[ APPLICATION ]->getSemanticInfoType() != SAME_TYPE )
+        if( functions[ APPLICATION ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ APPLICATION ]->getSemanticInfoType();
       case TASK:
-        if ( functions[ COMPOSETASK ]->getSemanticInfoType() != SAME_TYPE )
+        if( functions[ COMPOSETASK ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSETASK ]->getSemanticInfoType();
-        if ( functions[ TASK ]->getSemanticInfoType() != SAME_TYPE )
+        if( functions[ TASK ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ TASK ]->getSemanticInfoType();
       default:
         break;
     }
   }
-  if ( functions[ COMPOSETHREAD ]->getSemanticInfoType() != SAME_TYPE )
+  if( functions[ COMPOSETHREAD ]->getSemanticInfoType() != SAME_TYPE )
     return functions[ COMPOSETHREAD ]->getSemanticInfoType();
   return functions[ THREAD ]->getSemanticInfoType();
 }
@@ -669,9 +669,9 @@ KWindow *KSingleWindow::clone()
   clonedKSWindow->level = level;
   clonedKSWindow->timeUnit = timeUnit;
 
-  for ( int i = 0; i < COMPOSECPU + 1; i++ )
+  for( int i = 0; i < COMPOSECPU + 1; i++ )
   {
-    if ( functions[ i ] != NULL )
+    if( functions[ i ] != NULL )
       clonedKSWindow->functions[ i ] = functions[ i ]->clone();
     else
       clonedKSWindow->functions[ i ] = NULL;
@@ -717,24 +717,67 @@ void KSingleWindow::initSemanticFunctions()
  *  KDerivedWindow implementation
  **********************************************************************/
 
+KDerivedWindow::~KDerivedWindow()
+{
+  if( functions[ TOPCOMPOSE1 ] != NULL )
+    delete functions[ TOPCOMPOSE1 ];
+  if( functions[ TOPCOMPOSE2 ] != NULL )
+    delete functions[ TOPCOMPOSE2 ];
+
+  if( functions[ COMPOSEWORKLOAD ] != NULL )
+    delete functions[ COMPOSEWORKLOAD ];
+  if( functions[ WORKLOAD ] != NULL )
+    delete functions[ WORKLOAD ];
+  if( functions[ COMPOSEAPPLICATION ] != NULL )
+    delete functions[ COMPOSEAPPLICATION ];
+  if( functions[ APPLICATION ] != NULL )
+    delete functions[ APPLICATION ];
+  if( functions[ COMPOSETASK ] != NULL )
+    delete functions[ COMPOSETASK ];
+  if( functions[ TASK ] != NULL )
+    delete functions[ TASK ];
+  if( functions[ COMPOSETHREAD ] != NULL )
+    delete functions[ COMPOSETHREAD ];
+  if( functions[ THREAD ] != NULL )
+    delete functions[ THREAD ];
+
+  if( functions[ COMPOSESYSTEM ] != NULL )
+    delete functions[ COMPOSESYSTEM ];
+  if( functions[ SYSTEM ] != NULL )
+    delete functions[ SYSTEM ];
+  if( functions[ COMPOSENODE ] != NULL )
+    delete functions[ COMPOSENODE ];
+  if( functions[ NODE ] != NULL )
+    delete functions[ NODE ];
+  if( functions[ COMPOSECPU ] != NULL )
+    delete functions[ COMPOSECPU ];
+  if( functions[ CPU ] != NULL )
+    delete functions[ CPU ];
+
+  if( functions[ DERIVED ] != NULL )
+    delete functions[ DERIVED ];
+}
+
 void KDerivedWindow::setup( KTrace* whichTrace )
 {
-  if ( whichTrace == NULL )
+  if( whichTrace == NULL )
     myTrace = ( KTrace* )parents[ 0 ]->getTrace();
   else
     myTrace = whichTrace;
+
+  level = getMinAcceptableLevel();
 
   intervalTopCompose1.clear();
   intervalTopCompose2.clear();
   intervalDerived.clear();
   intervalControlDerived.clear();
-  if ( myTrace->totalThreads() > myTrace->totalCPUs() )
+  if( myTrace->totalThreads() > myTrace->totalCPUs() )
   {
     intervalTopCompose1.reserve( myTrace->totalThreads() );
     intervalTopCompose2.reserve( myTrace->totalThreads() );
     intervalDerived.reserve( myTrace->totalThreads() );
     intervalControlDerived.reserve( myTrace->totalThreads() );
-    for ( TThreadOrder i = 0; i < myTrace->totalThreads(); i++ )
+    for( TThreadOrder i = 0; i < myTrace->totalThreads(); i++ )
     {
       intervalTopCompose1.push_back( IntervalCompose( this, TOPCOMPOSE1, i ) );
       intervalTopCompose2.push_back( IntervalCompose( this, TOPCOMPOSE2, i ) );
@@ -748,7 +791,7 @@ void KDerivedWindow::setup( KTrace* whichTrace )
     intervalTopCompose2.reserve( myTrace->totalCPUs() );
     intervalDerived.reserve( myTrace->totalCPUs() );
     intervalControlDerived.reserve( myTrace->totalCPUs() );
-    for ( TCPUOrder i = 0; i < myTrace->totalCPUs(); i++ )
+    for( TCPUOrder i = 0; i < myTrace->totalCPUs(); i++ )
     {
       intervalTopCompose1.push_back( IntervalCompose( this, TOPCOMPOSE1, i ) );
       intervalTopCompose2.push_back( IntervalCompose( this, TOPCOMPOSE2, i ) );
@@ -756,29 +799,70 @@ void KDerivedWindow::setup( KTrace* whichTrace )
       intervalControlDerived.push_back( IntervalControlDerived( this, DERIVED, i ) );
     }
   }
+
+  intervalWorkload.clear();
+  intervalComposeWorkload.clear();
+  intervalWorkload.push_back( IntervalNotThread( this, WORKLOAD, 0 ) );
+  intervalComposeWorkload.push_back( IntervalCompose( this, COMPOSEWORKLOAD, 0 ) );
+
+  intervalApplication.clear();
+  intervalComposeApplication.clear();
+  intervalApplication.reserve( myTrace->totalApplications() );
+  intervalComposeApplication.reserve( myTrace->totalApplications() );
+  for( TApplOrder i = 0; i < myTrace->totalApplications(); i++ )
+  {
+    intervalApplication.push_back( IntervalNotThread( this, APPLICATION, i ) );
+    intervalComposeApplication.push_back( IntervalCompose( this, COMPOSEAPPLICATION, i ) );
+  }
+
+  intervalTask.clear();
+  intervalComposeTask.clear();
+  intervalTask.reserve( myTrace->totalTasks() );
+  intervalComposeTask.reserve( myTrace->totalTasks() );
+  for( TTaskOrder i = 0; i < myTrace->totalTasks(); i++ )
+  {
+    intervalTask.push_back( IntervalNotThread( this, TASK, i ) );
+    intervalComposeTask.push_back( IntervalCompose( this, COMPOSETASK, i ) );
+  }
+
+  intervalComposeThread.clear();
+  intervalComposeThread.reserve( myTrace->totalThreads() );
+  for( TThreadOrder i = 0; i < myTrace->totalThreads(); i++ )
+    intervalComposeThread.push_back( IntervalCompose( this, COMPOSETHREAD, i ) );
+
+  intervalSystem.clear();
+  intervalComposeSystem.clear();
+  intervalSystem.push_back( IntervalNotThread( this, SYSTEM, 0 ) );
+  intervalComposeSystem.push_back( IntervalCompose( this, COMPOSESYSTEM, 0 ) );
+
+  intervalNode.clear();
+  intervalComposeNode.clear();
+  intervalNode.reserve( myTrace->totalNodes() );
+  intervalComposeNode.reserve( myTrace->totalNodes() );
+  for( TNodeOrder i = 0; i < myTrace->totalNodes(); i++ )
+  {
+    intervalNode.push_back( IntervalNotThread( this, NODE, i ) );
+    intervalComposeNode.push_back( IntervalCompose( this, COMPOSENODE, i ) );
+  }
+
+  intervalComposeCPU.clear();
+  intervalComposeCPU.reserve( myTrace->totalCPUs() );
+  for( TCPUOrder i = 0; i < myTrace->totalCPUs(); i++ )
+    intervalComposeCPU.push_back( IntervalCompose( this, COMPOSECPU, i ) );
 }
 
 
 bool KDerivedWindow::setLevelFunction( TWindowLevel whichLevel,
                                        const string& whichFunction )
 {
-  if ( whichLevel == TOPCOMPOSE1 )
-    whichLevel = ( TWindowLevel ) 0;
-  else if ( whichLevel == TOPCOMPOSE2 )
-    whichLevel = ( TWindowLevel ) 1;
-  else if ( whichLevel == DERIVED )
-    whichLevel = ( TWindowLevel ) 2;
-  else
-    return true;
-
-  if ( functions[ whichLevel ] != NULL )
+  if( functions[ whichLevel ] != NULL )
     delete functions[ whichLevel ];
 
   functions[ whichLevel ] =
     ( FunctionManagement<SemanticFunction>::getInstance() )->
     getFunction( whichFunction );
 
-  if ( functions[ whichLevel ] == NULL )
+  if( functions[ whichLevel ] == NULL )
     return false;
 
   return true;
@@ -787,106 +871,68 @@ bool KDerivedWindow::setLevelFunction( TWindowLevel whichLevel,
 
 string KDerivedWindow::getLevelFunction( TWindowLevel whichLevel )
 {
-  if ( whichLevel == TOPCOMPOSE1 )
-    whichLevel = ( TWindowLevel ) 0;
-  else if ( whichLevel == TOPCOMPOSE2 )
-    whichLevel = ( TWindowLevel ) 1;
-  else if ( whichLevel == DERIVED )
-    whichLevel = ( TWindowLevel ) 2;
-  else
-    return "";
-
   return functions[ whichLevel ]->getName();
 }
 
 SemanticFunction *KDerivedWindow::getSemanticFunction( TWindowLevel whichLevel )
 {
-  if ( whichLevel == TOPCOMPOSE1 )
-    whichLevel = ( TWindowLevel ) 0;
-  else if ( whichLevel == TOPCOMPOSE2 )
-    whichLevel = ( TWindowLevel ) 1;
-  else if ( whichLevel == DERIVED )
-    whichLevel = ( TWindowLevel ) 2;
-
   return functions[ whichLevel ];
 }
 
 string KDerivedWindow::getFirstUsefulFunction()
 {
-  if ( typeid( *functions[ ( TWindowLevel ) 0 ] ) != typeid( ComposeAsIs ) )
-    return functions[ ( TWindowLevel ) 0 ]->getName();
-  if ( typeid( *functions[ ( TWindowLevel ) 1 ] ) != typeid( ComposeAsIs ) )
-    return functions[ ( TWindowLevel ) 1 ]->getName();
+  if( typeid( *functions[ TOPCOMPOSE1 ] ) != typeid( ComposeAsIs ) )
+    return functions[ TOPCOMPOSE1 ]->getName();
+  if( typeid( *functions[ TOPCOMPOSE2 ] ) != typeid( ComposeAsIs ) )
+    return functions[ TOPCOMPOSE2 ]->getName();
+  if( typeid( *functions[ getComposeLevel( getLevel() )] ) != typeid( ComposeAsIs ) )
+    return functions[ getComposeLevel( getLevel() )]->getName();
 
-  return functions[ ( TWindowLevel ) 2 ]->getName();
+  return functions[ getLevel() ]->getName();
 }
 
 TWindowLevel KDerivedWindow::getFirstFreeCompose() const
 {
-  if ( typeid( *functions[ ( TWindowLevel ) 1 ] ) == typeid( ComposeAsIs ) )
+  if( typeid( *functions[ getComposeLevel( getLevel() )] ) == typeid( ComposeAsIs ) )
+    return getComposeLevel( getLevel() );
+  if( typeid( *functions[ TOPCOMPOSE2 ] ) == typeid( ComposeAsIs ) )
     return TOPCOMPOSE2;
   return TOPCOMPOSE1;
 }
 
 SemanticFunction *KDerivedWindow::getFirstSemUsefulFunction()
 {
-  if ( typeid( *functions[ ( TWindowLevel ) 0 ] ) != typeid( ComposeAsIs ) )
-    return functions[ ( TWindowLevel ) 0 ];
-  if ( typeid( *functions[ ( TWindowLevel ) 1 ] ) != typeid( ComposeAsIs ) )
-    return functions[ ( TWindowLevel ) 1 ];
+  if( typeid( *functions[ TOPCOMPOSE1 ] ) != typeid( ComposeAsIs ) )
+    return functions[ TOPCOMPOSE1 ];
+  if( typeid( *functions[ TOPCOMPOSE2 ] ) != typeid( ComposeAsIs ) )
+    return functions[ TOPCOMPOSE2 ];
+  if( typeid( *functions[ getComposeLevel( getLevel() ) ] ) != typeid( ComposeAsIs ) )
+    return functions[ getComposeLevel( getLevel() ) ];
 
-  return functions[ ( TWindowLevel ) 2 ];
+  return functions[ getLevel() ];
 }
 
 void KDerivedWindow::setFunctionParam( TWindowLevel whichLevel,
                                        TParamIndex whichParam,
                                        const TParamValue& newValue )
 {
-  if ( whichLevel == TOPCOMPOSE1 )
-    whichLevel = ( TWindowLevel ) 0;
-  else if ( whichLevel == TOPCOMPOSE2 )
-    whichLevel = ( TWindowLevel ) 1;
-  else if ( whichLevel == DERIVED )
-    whichLevel = ( TWindowLevel ) 2;
-
   functions[ whichLevel ]->setParam( whichParam, newValue );
 }
 
 TParamIndex KDerivedWindow::getFunctionNumParam( TWindowLevel whichLevel ) const
 {
-  if ( whichLevel == TOPCOMPOSE1 )
-    whichLevel = ( TWindowLevel ) 0;
-  else if ( whichLevel == TOPCOMPOSE2 )
-    whichLevel = ( TWindowLevel ) 1;
-  else if ( whichLevel == DERIVED )
-    whichLevel = ( TWindowLevel ) 2;
-
   return functions[ whichLevel ]->getMaxParam();
 }
 
 TParamValue KDerivedWindow::getFunctionParam( TWindowLevel whichLevel,
     TParamIndex whichParam ) const
 {
-  if ( whichLevel == TOPCOMPOSE1 )
-    whichLevel = ( TWindowLevel ) 0;
-  else if ( whichLevel == TOPCOMPOSE2 )
-    whichLevel = ( TWindowLevel ) 1;
-  else if ( whichLevel == DERIVED )
-    whichLevel = ( TWindowLevel ) 2;
-
   return functions[ whichLevel ]->getParam( whichParam );
 }
 
 string KDerivedWindow::getFunctionParamName( TWindowLevel whichLevel,
     TParamIndex whichParam ) const
 {
-  if ( whichLevel == TOPCOMPOSE1 )
-    whichLevel = ( TWindowLevel ) 0;
-  else if ( whichLevel == TOPCOMPOSE2 )
-    whichLevel = ( TWindowLevel ) 1;
-  else if ( whichLevel == DERIVED )
-    whichLevel = ( TWindowLevel ) 2;
-
   return functions[ whichLevel ]->getParamName( whichParam );
 }
 
@@ -894,11 +940,54 @@ bool KDerivedWindow::initFromBegin() const
 {
   bool tmp = false;
 
-  tmp = tmp || functions[ 0 ]->getInitFromBegin();
-  tmp = tmp || functions[ 1 ]->getInitFromBegin();
-  tmp = tmp || functions[ 2 ]->getInitFromBegin();
-//  tmp = tmp || parents[ 0 ]->initFromBegin();
-//  tmp = tmp || parents[ 1 ]->initFromBegin();
+  tmp = tmp || functions[ TOPCOMPOSE1 ]->getInitFromBegin();
+  tmp = tmp || functions[ TOPCOMPOSE2 ]->getInitFromBegin();
+
+  if( level == WORKLOAD )
+  {
+    tmp = tmp || functions[ COMPOSEWORKLOAD ]->getInitFromBegin();
+    tmp = tmp || functions[ WORKLOAD ]->getInitFromBegin();
+    tmp = tmp || functions[ COMPOSEAPPLICATION ]->getInitFromBegin();
+    tmp = tmp || functions[ APPLICATION ]->getInitFromBegin();
+    tmp = tmp || functions[ COMPOSETASK ]->getInitFromBegin();
+    tmp = tmp || functions[ TASK ]->getInitFromBegin();
+  }
+  else if( level == APPLICATION )
+  {
+    tmp = tmp || functions[ COMPOSEAPPLICATION ]->getInitFromBegin();
+    tmp = tmp || functions[ APPLICATION ]->getInitFromBegin();
+    tmp = tmp || functions[ COMPOSETASK ]->getInitFromBegin();
+    tmp = tmp || functions[ TASK ]->getInitFromBegin();
+  }
+  else if( level == TASK )
+  {
+    tmp = tmp || functions[ COMPOSETASK ]->getInitFromBegin();
+    tmp = tmp || functions[ TASK ]->getInitFromBegin();
+  }
+  else if( level == SYSTEM )
+  {
+    tmp = tmp || functions[ COMPOSESYSTEM ]->getInitFromBegin();
+    tmp = tmp || functions[ SYSTEM ]->getInitFromBegin();
+    tmp = tmp || functions[ COMPOSENODE ]->getInitFromBegin();
+    tmp = tmp || functions[ NODE ]->getInitFromBegin();
+    tmp = tmp || functions[ COMPOSECPU ]->getInitFromBegin();
+    tmp = tmp || functions[ CPU ]->getInitFromBegin();
+  }
+  else if( level == NODE )
+  {
+    tmp = tmp || functions[ COMPOSENODE ]->getInitFromBegin();
+    tmp = tmp || functions[ NODE ]->getInitFromBegin();
+    tmp = tmp || functions[ COMPOSECPU ]->getInitFromBegin();
+    tmp = tmp || functions[ CPU ]->getInitFromBegin();
+  }
+  else if( level == CPU )
+  {
+    tmp = tmp || functions[ COMPOSECPU ]->getInitFromBegin();
+  }
+  else if( level == THREAD )
+    tmp = tmp || functions[ COMPOSETHREAD ]->getInitFromBegin();
+
+  tmp = tmp || functions[ DERIVED ]->getInitFromBegin();
 
   return tmp;
 }
@@ -906,32 +995,34 @@ bool KDerivedWindow::initFromBegin() const
 
 void KDerivedWindow::init( TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
-  TObjectOrder objectSize = 0;
+/*  TObjectOrder objectSize = 0;
   TWindowLevel tmpLevel = getLevel();
+*/
+  for( UINT8 i = WORKLOAD; i <= DERIVED; ++i )
+  {
+    if( functions[ i ] != NULL )
+      functions[ i ]->init( this );
+  }
 
-  functions[ 0 ]->init( this );
-  functions[ 1 ]->init( this );
-  functions[ 2 ]->init( this );
-
-  if ( tmpLevel == WORKLOAD )
+/*  if( tmpLevel == WORKLOAD )
     objectSize = 1;
-  else if ( tmpLevel == APPLICATION )
+  else if( tmpLevel == APPLICATION )
     objectSize = myTrace->totalApplications();
-  else if ( tmpLevel == TASK )
+  else if( tmpLevel == TASK )
     objectSize = myTrace->totalTasks();
-  else if ( tmpLevel == THREAD )
+  else if( tmpLevel == THREAD )
     objectSize = myTrace->totalThreads();
-  else if ( tmpLevel == SYSTEM )
+  else if( tmpLevel == SYSTEM )
     objectSize = 1;
-  else if ( tmpLevel == NODE )
+  else if( tmpLevel == NODE )
     objectSize = myTrace->totalNodes();
-  else if ( tmpLevel == CPU )
+  else if( tmpLevel == CPU )
     objectSize = myTrace->totalCPUs();
-
+*/
   if( initFromBegin() )
     initialTime = 0;
 
-  for ( UINT16 i = 0; i < parents.size(); i++ )
+  for( UINT16 i = 0; i < parents.size(); i++ )
     parents[ i ]->init( initialTime, create );
 }
 
@@ -973,13 +1064,40 @@ TSemanticValue KDerivedWindow::getValue( TObjectOrder whichObject ) const
 Interval *KDerivedWindow::getLevelInterval( TWindowLevel whichLevel,
     TObjectOrder whichOrder )
 {
-  if ( whichLevel == TOPCOMPOSE1 )
+  if( whichLevel == getMinAcceptableLevel() )
+    whichLevel = DERIVED;
+
+  if( whichLevel == TOPCOMPOSE1 )
     return &intervalTopCompose1[ whichOrder ];
-  else if ( whichLevel == TOPCOMPOSE2 )
+  else if( whichLevel == TOPCOMPOSE2 )
     return &intervalTopCompose2[ whichOrder ];
-  else if ( whichLevel == DERIVED )
+  else if( whichLevel == COMPOSEWORKLOAD )
+    return &intervalComposeWorkload[ whichOrder ];
+  else if( whichLevel == WORKLOAD )
+    return &intervalWorkload[ whichOrder ];
+  else if( whichLevel == COMPOSEAPPLICATION )
+    return &intervalComposeApplication[ whichOrder ];
+  else if( whichLevel == APPLICATION )
+    return &intervalApplication[ whichOrder ];
+  else if( whichLevel == COMPOSETASK )
+    return &intervalComposeTask[ whichOrder ];
+  else if( whichLevel == TASK )
+    return &intervalTask[ whichOrder ];
+  else if( whichLevel == COMPOSETHREAD )
+    return &intervalComposeThread[ whichOrder ];
+  else if( whichLevel == COMPOSESYSTEM )
+    return &intervalComposeSystem[ whichOrder ];
+  else if( whichLevel == SYSTEM )
+    return &intervalSystem[ whichOrder ];
+  else if( whichLevel == COMPOSENODE )
+    return &intervalComposeNode[ whichOrder ];
+  else if( whichLevel == NODE )
+    return &intervalNode[ whichOrder ];
+  else if( whichLevel == COMPOSECPU )
+    return &intervalComposeCPU[ whichOrder ];
+  else if( whichLevel == DERIVED )
   {
-    if ( ( ( SemanticDerived * )functions[ 2 ] )->isControlDerived() )
+    if( ( ( SemanticDerived * )functions[ DERIVED ] )->isControlDerived() )
       return &intervalControlDerived[ whichOrder ];
     else
       return &intervalDerived[ whichOrder ];
@@ -990,7 +1108,7 @@ Interval *KDerivedWindow::getLevelInterval( TWindowLevel whichLevel,
 void KDerivedWindow::setParent( UINT16 whichParent, Window *whichWindow )
 {
   parents[ whichParent ] = ( KWindow* )whichWindow;
-  if ( parents[ 0 ] != NULL && parents[ 1 ] != NULL )
+  if( parents[ 0 ] != NULL && parents[ 1 ] != NULL )
     setup( NULL );
 }
 
@@ -999,13 +1117,19 @@ Window *KDerivedWindow::getParent( UINT16 whichParent ) const
   return parents[whichParent];
 }
 
-TWindowLevel KDerivedWindow::getLevel() const
+void KDerivedWindow::setLevel( TWindowLevel whichLevel )
+{
+  if( whichLevel <= getMinAcceptableLevel() )
+    level = whichLevel;
+}
+
+TWindowLevel KDerivedWindow::getMinAcceptableLevel() const
 {
   TWindowLevel tmp = NONE;
 
-  for ( UINT16 i = 0; i < parents.size(); i++ )
+  for( UINT16 i = 0; i < parents.size(); i++ )
   {
-    if ( parents[ i ]->getLevel() > tmp )
+    if( parents[ i ]->getLevel() > tmp )
       tmp = parents[ i ]->getLevel();
   }
 
@@ -1016,16 +1140,15 @@ KWindow *KDerivedWindow::clone()
 {
   KDerivedWindow *clonedKDerivedWindow = new KDerivedWindow();
 
-  for ( size_t i = 0; i < parents.size(); ++i )
+  for( size_t i = 0; i < parents.size(); ++i )
   {
     clonedKDerivedWindow->parents[i] = NULL;
     clonedKDerivedWindow->factor[i] = factor[ i ];
   }
 
-//  for ( UINT16 i = 0; i < DERIVED; i++ )
-  for ( UINT16 i = 0; i < 3; i++ )
+  for ( UINT16 i = 0; i < DERIVED; i++ )
   {
-    if ( functions[ i ] != NULL )
+    if( functions[ i ] != NULL )
       clonedKDerivedWindow->functions[ i ] = functions[ i ]->clone();
     else
       clonedKDerivedWindow->functions[ i ] = NULL;
@@ -1041,24 +1164,64 @@ KWindow *KDerivedWindow::clone()
 
 SemanticInfoType KDerivedWindow::getSemanticInfoType() const
 {
-  if ( functions[ 0 ]->getSemanticInfoType() != SAME_TYPE )
-    return functions[ 0 ]->getSemanticInfoType();
-  if ( functions[ 1 ]->getSemanticInfoType() != SAME_TYPE )
-    return functions[ 1 ]->getSemanticInfoType();
+  if( functions[ TOPCOMPOSE1 ]->getSemanticInfoType() != SAME_TYPE )
+    return functions[ TOPCOMPOSE1 ]->getSemanticInfoType();
+  if( functions[ TOPCOMPOSE2 ]->getSemanticInfoType() != SAME_TYPE )
+    return functions[ TOPCOMPOSE2 ]->getSemanticInfoType();
 
-  if( functions[ 2 ]->getSemanticInfoType() == SAME_TYPE )
-    return parents[ 0 ]->getSemanticInfoType();
-
-  return functions[ 2 ]->getSemanticInfoType();
+  if( level >= SYSTEM && level <= CPU )
+  {
+    switch( level )
+    {
+      case SYSTEM:
+        if( functions[ COMPOSESYSTEM ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ COMPOSESYSTEM ]->getSemanticInfoType();
+        if( functions[ SYSTEM ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ SYSTEM ]->getSemanticInfoType();
+      case NODE:
+        if( functions[ COMPOSENODE ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ COMPOSENODE ]->getSemanticInfoType();
+        if( functions[ NODE ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ NODE ]->getSemanticInfoType();
+      case CPU:
+        if( functions[ COMPOSECPU ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ COMPOSECPU ]->getSemanticInfoType();
+      default:
+        break;
+    }
+  }
+  else if( level >= WORKLOAD && level <= THREAD )
+  {
+    switch( level )
+    {
+      case WORKLOAD:
+        if( functions[ COMPOSEWORKLOAD ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ COMPOSEWORKLOAD ]->getSemanticInfoType();
+        if( functions[ WORKLOAD ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ WORKLOAD ]->getSemanticInfoType();
+      case APPLICATION:
+        if( functions[ COMPOSEAPPLICATION ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ COMPOSEAPPLICATION ]->getSemanticInfoType();
+        if( functions[ APPLICATION ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ APPLICATION ]->getSemanticInfoType();
+      case TASK:
+        if( functions[ COMPOSETASK ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ COMPOSETASK ]->getSemanticInfoType();
+        if( functions[ TASK ]->getSemanticInfoType() != SAME_TYPE )
+          return functions[ TASK ]->getSemanticInfoType();
+      default:
+        break;
+    }
+  }
+  if( functions[ COMPOSETHREAD ]->getSemanticInfoType() != SAME_TYPE )
+    return functions[ COMPOSETHREAD ]->getSemanticInfoType();
+  return functions[ DERIVED ]->getSemanticInfoType();
 }
 
 
 void KDerivedWindow::initSemanticFunctions()
 {
-  functions[ 0 ] = new ComposeAsIs();
-  functions[ 1 ] = new ComposeAsIs();
-  functions[ 2 ] = NULL;
-/*  functions[ 0 ] = NULL;
+  functions[ 0 ] = NULL;
 
   functions[ TOPCOMPOSE1 ] = new ComposeAsIs();
   functions[ TOPCOMPOSE2 ] = new ComposeAsIs();
@@ -1082,9 +1245,9 @@ void KDerivedWindow::initSemanticFunctions()
   functions[ NODE ] = new Adding();
 
   functions[ COMPOSECPU ] = new ComposeAsIs();
-  functions[ CPU ] = NULL;
+  functions[ CPU ] = new ActiveThread();
 
-  functions[ DERIVED ] = NULL;
-  */
+  functions[ DERIVED ] = NULL;//new DerivedProduct();
 }
+
 

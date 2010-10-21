@@ -31,7 +31,7 @@
 #include "intervalnotthread.h"
 
 KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList create,
-                                     KRecordList *displayList )
+                                      KRecordList *displayList )
 {
   TRecordTime myInitTime;
   info.values.clear();

@@ -458,6 +458,11 @@ void WindowProxy::setLevel( TWindowLevel whichLevel )
   zoomHistory.addZoom( winBeginTime, winEndTime, 0, getWindowLevelObjects() - 1 );
 }
 
+TWindowLevel WindowProxy::getMinAcceptableLevel() const
+{
+  return myWindow->getMinAcceptableLevel();
+}
+
 void WindowProxy::setTimeUnit( TTimeUnit whichUnit )
 {
   yScaleComputed = false;
