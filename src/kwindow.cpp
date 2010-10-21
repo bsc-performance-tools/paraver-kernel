@@ -888,6 +888,9 @@ string KDerivedWindow::getFirstUsefulFunction()
   if( typeid( *functions[ getComposeLevel( getLevel() )] ) != typeid( ComposeAsIs ) )
     return functions[ getComposeLevel( getLevel() )]->getName();
 
+  if( getLevel() == getMinAcceptableLevel() )
+    return functions[ DERIVED ]->getName();
+
   return functions[ getLevel() ]->getName();
 }
 
@@ -908,6 +911,9 @@ SemanticFunction *KDerivedWindow::getFirstSemUsefulFunction()
     return functions[ TOPCOMPOSE2 ];
   if( typeid( *functions[ getComposeLevel( getLevel() ) ] ) != typeid( ComposeAsIs ) )
     return functions[ getComposeLevel( getLevel() ) ];
+
+  if( getLevel() == getMinAcceptableLevel() )
+    return functions[ DERIVED ];
 
   return functions[ getLevel() ];
 }
@@ -1129,10 +1135,12 @@ TWindowLevel KDerivedWindow::getMinAcceptableLevel() const
 
   for( UINT16 i = 0; i < parents.size(); i++ )
   {
-    if( parents[ i ]->getLevel() > tmp )
+    if( parents[ i ] != NULL && parents[ i ]->getLevel() > tmp )
       tmp = parents[ i ]->getLevel();
   }
 
+  if( tmp == NONE )
+    return THREAD;
   return tmp;
 }
 
@@ -1146,7 +1154,7 @@ KWindow *KDerivedWindow::clone()
     clonedKDerivedWindow->factor[i] = factor[ i ];
   }
 
-  for ( UINT16 i = 0; i < DERIVED; i++ )
+  for ( UINT16 i = 0; i <= DERIVED; i++ )
   {
     if( functions[ i ] != NULL )
       clonedKDerivedWindow->functions[ i ] = functions[ i ]->clone();
