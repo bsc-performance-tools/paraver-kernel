@@ -1872,7 +1872,7 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
       else if ( strLevel.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
       {
         filter->setEventTypeFunction( strFunction );
-        if ( strFunction == "All" )
+        if ( strFunction == "All" || strFunction == "None" )
           someEventsExist = true;
       }
       else if ( strLevel.compare( OLDCFG_VAL_FILTER_EVT_VALUE ) == 0 )
