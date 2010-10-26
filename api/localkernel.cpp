@@ -223,7 +223,7 @@ void LocalKernel::getAllSemanticFunctions( TSemanticGroup whichGroup,
 bool LocalKernel::userMessage( const string& message ) const
 {
   if( myMessageFunction == NULL )
-    return false;
+    return true;
 
   return myMessageFunction( message );
 }
