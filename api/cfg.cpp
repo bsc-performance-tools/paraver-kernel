@@ -435,8 +435,7 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowOpen::printLine( cfgFile, it );
     WindowDrawMode::printLine( cfgFile, it );
     WindowDrawModeRows::printLine( cfgFile, it );
-    if ( !( *it )->isDerivedWindow() )
-      WindowSelectedFunctions::printLine( cfgFile, it );
+    WindowSelectedFunctions::printLine( cfgFile, it );
     WindowComposeFunctions::printLine( cfgFile, it );
     WindowSemanticModule::printLine( cfgFile, it );
     if ( !( *it )->isDerivedWindow() )
@@ -1130,9 +1129,6 @@ bool WindowLevel::parseLine( KernelConnection *whichKernel, istringstream& line,
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
-
-  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
-    return true;
 
   getline( line, strLevel, ' ' );
 
@@ -1828,9 +1824,6 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
-  if ( windows[ windows.size() - 1 ]->isDerivedWindow() )
-    return true;
-
   getline( line, tmpString, ' ' );
   getline( line, strNumFunctions, ',' );
   istringstream tmpNumFunctions( strNumFunctions );
@@ -1857,6 +1850,9 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
     // It's a filter function
     else
     {
+      if( windows[ windows.size() - 1 ]->isDerivedWindow() )
+        return false;
+
       Filter *filter = windows[ windows.size() - 1 ]->getFilter();
 
       if ( strLevel.compare( OLDCFG_VAL_FILTER_OBJ_FROM ) == 0 )
@@ -1886,23 +1882,34 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
 void WindowSelectedFunctions::printLine( ofstream& cfgFile,
     const vector<Window *>::const_iterator it )
 {
-  Filter *filter = ( *it )->getFilter();
+  Filter *filter = NULL;
+  if( !( *it )->isDerivedWindow() )
+    filter = ( *it )->getFilter();
 
-  cfgFile << OLDCFG_TAG_WNDW_SELECTED_FUNCTIONS << " { 14, { ";
-  cfgFile << "{" << OLDCFG_LVL_CPU << ", " << ( *it )->getLevelFunction( CPU ) << "}, ";
+  if( !( *it )->isDerivedWindow() )
+    cfgFile << OLDCFG_TAG_WNDW_SELECTED_FUNCTIONS << " { 14, { ";
+  else
+    cfgFile << OLDCFG_TAG_WNDW_SELECTED_FUNCTIONS << " { 5, { ";
+
+  if( !( *it )->isDerivedWindow() )
+    cfgFile << "{" << OLDCFG_LVL_CPU << ", " << ( *it )->getLevelFunction( CPU ) << "}, ";
   cfgFile << "{" << OLDCFG_LVL_APPL << ", " << ( *it )->getLevelFunction( APPLICATION ) << "}, ";
   cfgFile << "{" << OLDCFG_LVL_TASK << ", " << ( *it )->getLevelFunction( TASK ) << "}, ";
-  cfgFile << "{" << OLDCFG_LVL_THREAD << ", " << ( *it )->getLevelFunction( THREAD ) << "}, ";
+  if( !( *it )->isDerivedWindow() )
+    cfgFile << "{" << OLDCFG_LVL_THREAD << ", " << ( *it )->getLevelFunction( THREAD ) << "}, ";
   cfgFile << "{" << OLDCFG_LVL_NODE << ", " << ( *it )->getLevelFunction( NODE ) << "}, ";
   cfgFile << "{" << OLDCFG_LVL_SYSTEM << ", " << ( *it )->getLevelFunction( SYSTEM ) << "}, ";
   cfgFile << "{" << OLDCFG_LVL_WORKLOAD << ", " << ( *it )->getLevelFunction( WORKLOAD ) << "}, ";
-  cfgFile << "{" << OLDCFG_VAL_FILTER_OBJ_FROM << ", " << filter->getCommFromFunction() << "}, ";
-  cfgFile << "{" << OLDCFG_VAL_FILTER_OBJ_TO << ", " << filter->getCommToFunction() << "}, ";
-  cfgFile << "{" << OLDCFG_VAL_FILTER_COM_TAG << ", " << filter->getCommTagFunction() << "}, ";
-  cfgFile << "{" << OLDCFG_VAL_FILTER_COM_SIZE << ", " << filter->getCommSizeFunction() << "}, ";
-  cfgFile << "{" << OLDCFG_VAL_FILTER_COM_BW << ", " << filter->getBandWidthFunction() << "}, ";
-  cfgFile << "{" << OLDCFG_VAL_FILTER_EVT_TYPE << ", " << filter->getEventTypeFunction() << "}, ";
-  cfgFile << "{" << OLDCFG_VAL_FILTER_EVT_VALUE << ", " << filter->getEventValueFunction() << "} ";
+  if( !( *it )->isDerivedWindow() )
+  {
+    cfgFile << "{" << OLDCFG_VAL_FILTER_OBJ_FROM << ", " << filter->getCommFromFunction() << "}, ";
+    cfgFile << "{" << OLDCFG_VAL_FILTER_OBJ_TO << ", " << filter->getCommToFunction() << "}, ";
+    cfgFile << "{" << OLDCFG_VAL_FILTER_COM_TAG << ", " << filter->getCommTagFunction() << "}, ";
+    cfgFile << "{" << OLDCFG_VAL_FILTER_COM_SIZE << ", " << filter->getCommSizeFunction() << "}, ";
+    cfgFile << "{" << OLDCFG_VAL_FILTER_COM_BW << ", " << filter->getBandWidthFunction() << "}, ";
+    cfgFile << "{" << OLDCFG_VAL_FILTER_EVT_TYPE << ", " << filter->getEventTypeFunction() << "}, ";
+    cfgFile << "{" << OLDCFG_VAL_FILTER_EVT_VALUE << ", " << filter->getEventValueFunction() << "} ";
+  }
   cfgFile << "} }" << endl;
 }
 
@@ -1984,46 +1991,25 @@ void WindowComposeFunctions::printLine( ofstream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_WNDW_COMPOSE_FUNCTIONS << " { 9, { ";
   cfgFile << "{" << OLDCFG_LVL_COMPOSE_CPU << ", ";
-  if ( !( *it )->isDerivedWindow() )
-    cfgFile << ( *it )->getLevelFunction( COMPOSECPU ) << "}, ";
-  else
-    cfgFile << "As Is}, ";
+  cfgFile << ( *it )->getLevelFunction( COMPOSECPU ) << "}, ";
 
   cfgFile << "{" << OLDCFG_LVL_COMPOSE_APPL << ", ";
-  if ( !( *it )->isDerivedWindow() )
-    cfgFile << ( *it )->getLevelFunction( COMPOSEAPPLICATION ) << "}, ";
-  else
-    cfgFile << "As Is}, ";
+  cfgFile << ( *it )->getLevelFunction( COMPOSEAPPLICATION ) << "}, ";
 
   cfgFile << "{" << OLDCFG_LVL_COMPOSE_TASK << ", ";
-  if ( !( *it )->isDerivedWindow() )
-    cfgFile << ( *it )->getLevelFunction( COMPOSETASK ) << "}, ";
-  else
-    cfgFile << "As Is}, ";
+  cfgFile << ( *it )->getLevelFunction( COMPOSETASK ) << "}, ";
 
   cfgFile << "{" << OLDCFG_LVL_COMPOSE_THREAD << ", ";
-  if ( !( *it )->isDerivedWindow() )
-    cfgFile << ( *it )->getLevelFunction( COMPOSETHREAD ) << "}, ";
-  else
-    cfgFile << "As Is}, ";
+  cfgFile << ( *it )->getLevelFunction( COMPOSETHREAD ) << "}, ";
 
   cfgFile << "{" << OLDCFG_LVL_COMPOSE_NODE << ", ";
-  if ( !( *it )->isDerivedWindow() )
-    cfgFile << ( *it )->getLevelFunction( COMPOSENODE ) << "}, ";
-  else
-    cfgFile << "As Is}, ";
+  cfgFile << ( *it )->getLevelFunction( COMPOSENODE ) << "}, ";
 
   cfgFile << "{" << OLDCFG_LVL_COMPOSE_SYSTEM << ", ";
-  if ( !( *it )->isDerivedWindow() )
-    cfgFile << ( *it )->getLevelFunction( COMPOSESYSTEM ) << "}, ";
-  else
-    cfgFile << "As Is}, ";
+  cfgFile << ( *it )->getLevelFunction( COMPOSESYSTEM ) << "}, ";
 
   cfgFile << "{" << OLDCFG_LVL_COMPOSE_WORKLOAD << ", ";
-  if ( !( *it )->isDerivedWindow() )
-    cfgFile << ( *it )->getLevelFunction( COMPOSEWORKLOAD ) << "}, ";
-  else
-    cfgFile << "As Is}, ";
+  cfgFile << ( *it )->getLevelFunction( COMPOSEWORKLOAD ) << "}, ";
 
   cfgFile << "{" << OLDCFG_LVL_TOPCOMPOSE1 << ", " << ( *it )->getLevelFunction( TOPCOMPOSE1 ) << "}, ";
   cfgFile << "{" << OLDCFG_LVL_TOPCOMPOSE2 << ", " << ( *it )->getLevelFunction( TOPCOMPOSE2 ) << "} ";
@@ -2152,54 +2138,55 @@ void WindowSemanticModule::printLine( ofstream& cfgFile,
         cfgFile << " } }" << endl;
     }
   }
-  else
-  {
-    for ( int levelIdx = WORKLOAD; levelIdx <= CPU; ++levelIdx )
-    {
-      TWindowLevel level = ( TWindowLevel ) levelIdx;
-      for ( TParamIndex parIdx = 0; parIdx < ( *it )->getFunctionNumParam( level ); ++parIdx )
-      {
-        if ( parIdx == 0 )
-        {
-          cfgFile << OLDCFG_TAG_WNDW_SEMANTIC_MODULE << " " << levelToString( level );
-          cfgFile << " " << ( *it )->getLevelFunction( level ) << " { ";
-          cfgFile << ( *it )->getFunctionNumParam( level ) << ", ";
-          cfgFile << "{ ";
-        }
-        vector<double> v = ( *it )->getFunctionParam( level, parIdx );
-        cfgFile << v.size();
-        for ( vector<double>::iterator itVec = v.begin(); itVec != v.end(); ++itVec )
-          cfgFile << " " << ( *itVec );
-        if ( parIdx < ( *it )->getFunctionNumParam( level ) - 1 )
-          cfgFile << ", ";
-        else
-          cfgFile << " } }" << endl;
-      }
-    }
-    for ( int levelIdx = COMPOSEWORKLOAD; levelIdx <= COMPOSECPU; ++levelIdx )
-    {
-      TWindowLevel level = ( TWindowLevel ) levelIdx;
-      for ( TParamIndex parIdx = 0; parIdx < ( *it )->getFunctionNumParam( level ); ++parIdx )
-      {
-        if ( parIdx == 0 )
-        {
-          cfgFile << OLDCFG_TAG_WNDW_SEMANTIC_MODULE << " " << levelToString( level );
-          cfgFile << " " << ( *it )->getLevelFunction( level ) << " { ";
-          cfgFile << ( *it )->getFunctionNumParam( level ) << ", ";
-          cfgFile << "{ ";
-        }
-        vector<double> v = ( *it )->getFunctionParam( level, parIdx );
-        cfgFile << v.size();
-        for ( vector<double>::iterator itVec = v.begin(); itVec != v.end(); ++itVec )
-          cfgFile << " " << ( *itVec );
-        if ( parIdx < ( *it )->getFunctionNumParam( level ) - 1 )
-          cfgFile << ", ";
-        else
-          cfgFile << " } }" << endl;
-      }
-    }
 
+  for ( int levelIdx = WORKLOAD; levelIdx <= CPU; ++levelIdx )
+  {
+    if( ( *it )->isDerivedWindow() && ( levelIdx == THREAD || levelIdx == CPU ) )
+      continue;
+
+    TWindowLevel level = ( TWindowLevel ) levelIdx;
+    for ( TParamIndex parIdx = 0; parIdx < ( *it )->getFunctionNumParam( level ); ++parIdx )
+    {
+      if ( parIdx == 0 )
+      {
+        cfgFile << OLDCFG_TAG_WNDW_SEMANTIC_MODULE << " " << levelToString( level );
+        cfgFile << " " << ( *it )->getLevelFunction( level ) << " { ";
+        cfgFile << ( *it )->getFunctionNumParam( level ) << ", ";
+        cfgFile << "{ ";
+      }
+      vector<double> v = ( *it )->getFunctionParam( level, parIdx );
+      cfgFile << v.size();
+      for ( vector<double>::iterator itVec = v.begin(); itVec != v.end(); ++itVec )
+        cfgFile << " " << ( *itVec );
+      if ( parIdx < ( *it )->getFunctionNumParam( level ) - 1 )
+        cfgFile << ", ";
+      else
+        cfgFile << " } }" << endl;
+    }
   }
+  for ( int levelIdx = COMPOSEWORKLOAD; levelIdx <= COMPOSECPU; ++levelIdx )
+  {
+    TWindowLevel level = ( TWindowLevel ) levelIdx;
+    for ( TParamIndex parIdx = 0; parIdx < ( *it )->getFunctionNumParam( level ); ++parIdx )
+    {
+      if ( parIdx == 0 )
+      {
+        cfgFile << OLDCFG_TAG_WNDW_SEMANTIC_MODULE << " " << levelToString( level );
+        cfgFile << " " << ( *it )->getLevelFunction( level ) << " { ";
+        cfgFile << ( *it )->getFunctionNumParam( level ) << ", ";
+        cfgFile << "{ ";
+      }
+      vector<double> v = ( *it )->getFunctionParam( level, parIdx );
+      cfgFile << v.size();
+      for ( vector<double>::iterator itVec = v.begin(); itVec != v.end(); ++itVec )
+        cfgFile << " " << ( *itVec );
+      if ( parIdx < ( *it )->getFunctionNumParam( level ) - 1 )
+        cfgFile << ", ";
+      else
+        cfgFile << " } }" << endl;
+    }
+  }
+
 }
 
 bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -3176,9 +3163,9 @@ void Analyzer2DColor::printLine( ofstream& cfgFile,
 }
 
 bool Analyzer2DSemanticColor::parseLine( KernelConnection *whichKernel, istringstream& line,
-                                         Trace *whichTrace,
-                                         vector<Window *>& windows,
-                                         vector<Histogram *>& histograms )
+    Trace *whichTrace,
+    vector<Window *>& windows,
+    vector<Histogram *>& histograms )
 {
   string strBool;
 
@@ -3198,7 +3185,7 @@ bool Analyzer2DSemanticColor::parseLine( KernelConnection *whichKernel, istrings
 }
 
 void Analyzer2DSemanticColor::printLine( ofstream& cfgFile,
-                                         const vector<Histogram *>::const_iterator it )
+    const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SEMANTIC_COLOR << " ";
   if ( ( *it )->getFirstRowColored() )
