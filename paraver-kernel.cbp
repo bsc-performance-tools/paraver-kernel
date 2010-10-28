@@ -359,6 +359,12 @@
 		<Unit filename="api/statelabels.h">
 			<Option target="api" />
 		</Unit>
+		<Unit filename="api/syncwindows.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/syncwindows.h">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="api/textoutput.cpp">
 			<Option target="api" />
 		</Unit>

@@ -37,6 +37,7 @@
 #include "recordlist.h"
 #include "loadedwindows.h"
 #include "paraverconfig.h"
+#include "syncwindows.h"
 
 Window *Window::create( KernelConnection *whichKernel, Trace *whichTrace )
 {
@@ -65,7 +66,7 @@ WindowProxy::WindowProxy()
 }
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
-    Window( whichKernel ), myTrace( whichTrace )
+  Window( whichKernel ), myTrace( whichTrace )
 {
   parent1 = NULL;
   parent2 = NULL;
@@ -76,7 +77,7 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
                           Window *whichParent2 ):
-    Window( whichKernel ), myTrace( whichParent1->getTrace() )
+  Window( whichKernel ), myTrace( whichParent1->getTrace() )
 {
   parent1 = whichParent1;
   parent1->setChild( this );
@@ -88,7 +89,7 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
 }
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel ):
-    Window( whichKernel ), myTrace( NULL )
+  Window( whichKernel ), myTrace( NULL )
 {
   parent1 = NULL;
   parent2 = NULL;
@@ -126,6 +127,9 @@ void WindowProxy::init()
     myCodeColor = myTrace->getCodeColor();
     selectedRow.init( getTrace() );
   }
+
+  sync = false;
+  syncGroup = 0;
 }
 
 WindowProxy::~WindowProxy()
@@ -274,6 +278,10 @@ Window *WindowProxy::clone( )
   clonedWindow->zoomHistory = zoomHistory;
 
   clonedWindow->selectedRow.copy( selectedRow );
+
+  clonedWindow->sync = sync;
+  clonedWindow->syncGroup = syncGroup;
+  SyncWindows::getInstance()->addWindow( clonedWindow, syncGroup );
 
   return clonedWindow;
 }
@@ -907,14 +915,28 @@ void WindowProxy::prevZoom()
 }
 
 void WindowProxy::addZoom( TTime beginTime, TTime endTime,
-                           TObjectOrder beginObject, TObjectOrder endObject )
+                           TObjectOrder beginObject, TObjectOrder endObject,
+                           bool isBroadCast )
 {
+  if( sync && !isBroadCast )
+  {
+    sync = false;
+    SyncWindows::getInstance()->broadcastTime( syncGroup, beginTime, endTime );
+    sync = true;
+  }
   zoomHistory.addZoom( beginTime, endTime, beginObject, endObject );
 }
 
-void WindowProxy::addZoom( TTime beginTime, TTime endTime )
+void WindowProxy::addZoom( TTime beginTime, TTime endTime, bool isBroadCast )
 {
-  zoomHistory.addZoom( beginTime, endTime );
+  if( sync && !isBroadCast )
+  {
+    sync = false;
+    SyncWindows::getInstance()->broadcastTime( syncGroup, beginTime, endTime );
+    sync = true;
+  }
+  else
+    zoomHistory.addZoom( beginTime, endTime );
 }
 
 void WindowProxy::setZoomFirstDimension( pair<TTime, TTime> &dim )
@@ -935,6 +957,32 @@ pair<TTime, TTime> WindowProxy::getZoomFirstDimension() const
 pair<TObjectOrder, TObjectOrder> WindowProxy::getZoomSecondDimension() const
 {
   return zoomHistory.getSecondDimension();
+}
+
+void WindowProxy::addToSyncGroup( unsigned int whichGroup )
+{
+  if( sync )
+    return;
+  syncGroup = whichGroup;
+  sync = SyncWindows::getInstance()->addWindow( this, whichGroup );
+}
+
+void WindowProxy::removeFromSync()
+{
+  if( !sync )
+    return;
+  SyncWindows::getInstance()->removeWindow( this, syncGroup );
+  sync = false;
+}
+
+bool WindowProxy::isSync() const
+{
+  return sync;
+}
+
+unsigned int WindowProxy::getSyncGroup() const
+{
+  return syncGroup;
 }
 
 void WindowProxy::setSelectedRows( TWindowLevel onLevel, vector< bool > &selected )

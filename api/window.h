@@ -321,9 +321,10 @@ class Window
     }
 
     virtual void addZoom( TTime beginTime, TTime endTime,
-                          TObjectOrder beginObject, TObjectOrder endObject )
+                          TObjectOrder beginObject, TObjectOrder endObject,
+                          bool isBroadCast = false )
     {}
-    virtual void addZoom( TTime beginTime, TTime endTime )
+    virtual void addZoom( TTime beginTime, TTime endTime, bool isBroadCast = false )
     {}
     virtual void nextZoom()
     {}
@@ -341,6 +342,20 @@ class Window
     {
       return pair<TObjectOrder, TObjectOrder>();
     }
+
+    virtual void addToSyncGroup( unsigned int whichGroup )
+    {}
+    virtual void removeFromSync()
+    {}
+    virtual bool isSync() const
+    {
+      return false;
+    }
+    virtual unsigned int getSyncGroup() const
+    {
+      return 0;
+    }
+
 
     virtual void setSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
     {}
@@ -496,8 +511,9 @@ class WindowProxy: public Window
     virtual bool emptyPrevZoom() const;
     virtual bool emptyNextZoom() const;
     virtual void addZoom( TTime beginTime, TTime endTime,
-                          TObjectOrder beginObject, TObjectOrder endObject );
-    virtual void addZoom( TTime beginTime, TTime endTime );
+                          TObjectOrder beginObject, TObjectOrder endObject,
+                          bool isBroadCast = false );
+    virtual void addZoom( TTime beginTime, TTime endTime, bool isBroadCast = false );
     virtual void nextZoom();
     virtual void prevZoom();
     virtual void setZoomFirstDimension( pair<TTime, TTime> &dim );
@@ -505,6 +521,10 @@ class WindowProxy: public Window
     virtual pair<TTime, TTime> getZoomFirstDimension() const;
     virtual pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const;
 
+    virtual void addToSyncGroup( unsigned int whichGroup );
+    virtual void removeFromSync();
+    virtual bool isSync() const;
+    virtual unsigned int getSyncGroup() const;
 
     virtual void setSelectedRows( TWindowLevel onLevel, vector< bool > &selected );
     virtual void setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected );
@@ -570,6 +590,9 @@ class WindowProxy: public Window
 
     // Zoom history
     ZoomHistory<TTime, TObjectOrder> zoomHistory;
+
+    bool sync;
+    unsigned int syncGroup;
 
     // Row selection
     SelectionManagement< TObjectOrder, TWindowLevel > selectedRow;

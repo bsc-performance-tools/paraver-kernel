@@ -18,6 +18,7 @@ libparaver_api_la_SOURCES = \
                     rowlabels.cpp \
                     semanticcolor.cpp \
                     statelabels.cpp \
+                    syncwindows.cpp \
                     textoutput.cpp \
                     trace.cpp \
                     tracecutter.cpp \
@@ -59,6 +60,7 @@ include_HEADERS = \
                   selectionmanagement.h\
                   semanticcolor.h\
                   statelabels.h\
+                  syncwindows.h\
                   trace.h\
                   textoutput.h\
                   tracecutter.h \
