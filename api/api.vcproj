@@ -280,6 +280,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\syncwindows.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\textoutput.cpp"
 				>
 			</File>
@@ -463,6 +467,10 @@
 			</File>
 			<File
 				RelativePath=".\statelabels.h"
+				>
+			</File>
+			<File
+				RelativePath=".\syncwindows.h"
 				>
 			</File>
 			<File
