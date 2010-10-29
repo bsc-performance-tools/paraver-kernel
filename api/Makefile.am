@@ -25,8 +25,6 @@ libparaver_api_la_SOURCES = \
                     tracefilter.cpp \
                     traceoptions.cpp \
                     tracesoftwarecounters.cpp \
-                    syncwindows.cpp \
-                    tracesoftwarecounters.cpp \
                     window.cpp \
                     ../../common-files/pcfparser/LibException.cpp \
                     ../../common-files/pcfparser/ParaverEventType.cpp \
