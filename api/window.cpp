@@ -137,6 +137,8 @@ WindowProxy::~WindowProxy()
   if ( myFilter != NULL )
     delete myFilter;
   LoadedWindows::getInstance()->eraseWindow( this );
+  if( sync )
+    SyncWindows::getInstance()->removeWindow( this, syncGroup );
   delete myWindow;
 }
 
