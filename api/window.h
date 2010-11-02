@@ -98,8 +98,8 @@ class Window
     {
       return false;
     }
-    virtual void setWindowBeginTime( TRecordTime whichTime ) {}
-    virtual void setWindowEndTime( TRecordTime whichTime ) {}
+    virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false ) {}
+    virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false ) {}
     virtual TRecordTime getWindowBeginTime() const
     {
       return 0;
@@ -410,8 +410,8 @@ class WindowProxy: public Window
     virtual bool getDestroy() const;
     virtual void setUsedByHistogram( bool newValue );
     virtual bool getUsedByHistogram();
-    virtual void setWindowBeginTime( TRecordTime whichTime );
-    virtual void setWindowEndTime( TRecordTime whichTime );
+    virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false );
+    virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false );
     virtual TRecordTime getWindowBeginTime() const;
     virtual TRecordTime getWindowEndTime() const;
 

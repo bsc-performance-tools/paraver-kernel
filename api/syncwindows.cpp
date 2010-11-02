@@ -84,16 +84,19 @@ int SyncWindows::getNumGroups() const
   return syncGroups.size();
 }
 
-void SyncWindows::broadcastTime( unsigned int whichGroup, TTime beginTime, TTime endTime )
+void SyncWindows::broadcastTime( unsigned int whichGroup, Window *sendWindow, TTime beginTime, TTime endTime )
 {
   for( vector<Window *>::iterator it = syncGroups[ whichGroup ].begin();
        it != syncGroups[ whichGroup ].end(); ++it )
   {
-    (*it)->addZoom( beginTime, endTime, true );
-    (*it)->setWindowBeginTime( beginTime );
-    (*it)->setWindowEndTime( endTime );
-    (*it)->setChanged( true );
-    (*it)->setRedraw( true );
+    if( ( *it ) != sendWindow )
+    {
+      ( *it )->addZoom( beginTime, endTime, true );
+      ( *it )->setWindowBeginTime( beginTime, true );
+      ( *it )->setWindowEndTime( endTime, true );
+      ( *it )->setChanged( true );
+      ( *it )->setRedraw( true );
+    }
   }
 }
 

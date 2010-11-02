@@ -45,7 +45,7 @@ class SyncWindows
 
     int newGroup();
     int getNumGroups() const;
-    void broadcastTime( unsigned int whichGroup, TTime beginTime, TTime endTime );
+    void broadcastTime( unsigned int whichGroup, Window *sendWindow, TTime beginTime, TTime endTime );
 
   private:
     SyncWindows();

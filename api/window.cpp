@@ -311,18 +311,22 @@ bool WindowProxy::getUsedByHistogram()
 }
 
 
-void WindowProxy::setWindowBeginTime( TRecordTime whichTime )
+void WindowProxy::setWindowBeginTime( TRecordTime whichTime, bool isBroadcast )
 {
   yScaleComputed = false;
 
   winBeginTime = whichTime;
+  if( sync && !isBroadcast )
+    SyncWindows::getInstance()->broadcastTime( syncGroup, this, winBeginTime, winEndTime );
 }
 
-void WindowProxy::setWindowEndTime( TRecordTime whichTime )
+void WindowProxy::setWindowEndTime( TRecordTime whichTime, bool isBroadcast )
 {
   yScaleComputed = false;
 
   winEndTime = whichTime;
+  if( sync && !isBroadcast )
+    SyncWindows::getInstance()->broadcastTime( syncGroup, this, winBeginTime, winEndTime );
 }
 
 TRecordTime WindowProxy::getWindowBeginTime() const
@@ -907,11 +911,17 @@ bool WindowProxy::emptyNextZoom() const
 void WindowProxy::nextZoom()
 {
   zoomHistory.nextZoom();
+  if( sync )
+    SyncWindows::getInstance()->broadcastTime( syncGroup, this, zoomHistory.getFirstDimension().first,
+                                                                zoomHistory.getFirstDimension().second );
 }
 
 void WindowProxy::prevZoom()
 {
   zoomHistory.prevZoom();
+  if( sync )
+    SyncWindows::getInstance()->broadcastTime( syncGroup, this, zoomHistory.getFirstDimension().first,
+                                                                zoomHistory.getFirstDimension().second );
 }
 
 void WindowProxy::addZoom( TTime beginTime, TTime endTime,
@@ -919,24 +929,15 @@ void WindowProxy::addZoom( TTime beginTime, TTime endTime,
                            bool isBroadCast )
 {
   if( sync && !isBroadCast )
-  {
-    sync = false;
-    SyncWindows::getInstance()->broadcastTime( syncGroup, beginTime, endTime );
-    sync = true;
-  }
+    SyncWindows::getInstance()->broadcastTime( syncGroup, this, beginTime, endTime );
   zoomHistory.addZoom( beginTime, endTime, beginObject, endObject );
 }
 
 void WindowProxy::addZoom( TTime beginTime, TTime endTime, bool isBroadCast )
 {
   if( sync && !isBroadCast )
-  {
-    sync = false;
-    SyncWindows::getInstance()->broadcastTime( syncGroup, beginTime, endTime );
-    sync = true;
-  }
-  else
-    zoomHistory.addZoom( beginTime, endTime );
+    SyncWindows::getInstance()->broadcastTime( syncGroup, this, beginTime, endTime );
+  zoomHistory.addZoom( beginTime, endTime );
 }
 
 void WindowProxy::setZoomFirstDimension( pair<TTime, TTime> &dim )
