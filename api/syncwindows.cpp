@@ -54,6 +54,14 @@ bool SyncWindows::addWindow( Window *whichWindow, unsigned int whichGroup )
     return false;
 
   syncGroups[ whichGroup ].push_back( whichWindow );
+  if( syncGroups[ whichGroup ].size() > 1 )
+  {
+    whichWindow->setWindowBeginTime( syncGroups[ whichGroup ][ 0 ]->getWindowBeginTime(), true );
+    whichWindow->setWindowEndTime( syncGroups[ whichGroup ][ 0 ]->getWindowEndTime(), true );
+    whichWindow->setChanged( true );
+    whichWindow->setRedraw( true );
+  }
+
   return true;
 }
 
