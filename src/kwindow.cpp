@@ -1223,7 +1223,7 @@ SemanticInfoType KDerivedWindow::getSemanticInfoType() const
   }
   if( functions[ COMPOSETHREAD ]->getSemanticInfoType() != SAME_TYPE )
     return functions[ COMPOSETHREAD ]->getSemanticInfoType();
-  return functions[ DERIVED ]->getSemanticInfoType();
+  return parents[ 0 ]->getSemanticInfoType();
 }
 
 
