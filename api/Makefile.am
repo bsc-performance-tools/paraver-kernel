@@ -55,6 +55,7 @@ include_HEADERS = \
                   paravertypes.h\
                   previousfiles.h\
                   progresscontroller.h\
+                  ../../common-files/prvtypes.h\
                   recordlist.h\
                   rowlabels.h\
                   selectionmanagement.h\
