@@ -44,7 +44,7 @@ class SelectionManagement
 
     void init( Trace *trace );
     void init( HistogramTotals *totals,
-               UINT16 idStat,
+               PRV_UINT16 idStat,
                THistogramColumn numColumns,
                THistogramColumn whichPlane );
 

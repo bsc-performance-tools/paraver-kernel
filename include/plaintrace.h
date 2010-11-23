@@ -95,7 +95,7 @@ namespace Plain
           ThreadIterator()
           {}
 
-          ThreadIterator( PlainBlocks *whichBlocks, UINT32 whichBlock, UINT32 whichPos,
+          ThreadIterator( PlainBlocks *whichBlocks, PRV_UINT32 whichBlock, PRV_UINT32 whichPos,
                           TThreadOrder whichThread );
 
           virtual ~ThreadIterator()
@@ -110,10 +110,10 @@ namespace Plain
 
         private:
           TThreadOrder thread;
-          UINT32 block;
-          UINT32 pos;
-          UINT32 lastBlock;
-          UINT32 lastPos;
+          PRV_UINT32 block;
+          PRV_UINT32 pos;
+          PRV_UINT32 lastBlock;
+          PRV_UINT32 lastPos;
 
       };
 
@@ -123,7 +123,7 @@ namespace Plain
           CPUIterator()
           {}
 
-          CPUIterator( PlainBlocks *whichBlocks, vector<UINT32>& whichBlock, vector<UINT32>& whichPos,
+          CPUIterator( PlainBlocks *whichBlocks, vector<PRV_UINT32>& whichBlock, vector<PRV_UINT32>& whichPos,
                        TThreadOrder whichNumThreads, vector<TThreadOrder>& whichThreads, TCPUOrder whichCPU );
 
           virtual ~CPUIterator();
@@ -139,10 +139,10 @@ namespace Plain
           TCPUOrder cpu;
           TThreadOrder numThreads;
           vector<TThreadOrder> threads;
-          vector<UINT32> block;
-          vector<UINT32> pos;
-          vector<UINT32> lastBlock;
-          vector<UINT32> lastPos;
+          vector<PRV_UINT32> block;
+          vector<PRV_UINT32> pos;
+          vector<PRV_UINT32> lastBlock;
+          vector<PRV_UINT32> lastPos;
           TThreadOrder lastThread;
 
           TThreadOrder minThread();
@@ -183,7 +183,7 @@ namespace Plain
       const ResourceModel& resourceModel;
       TThreadOrder numThreads;
       TCPUOrder numCPUs;
-      vector<Index<pair<UINT32, UINT32> > > traceIndex;
+      vector<Index<pair<PRV_UINT32, PRV_UINT32> > > traceIndex;
       PlainBlocks *myBlocks;
   };
 }

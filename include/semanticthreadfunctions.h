@@ -2084,7 +2084,7 @@ class SendBandWidth: public SemanticThread
     static string name;
 
 
-    vector<INT64> bandwidth;
+    vector<PRV_INT64> bandwidth;
 };
 
 
@@ -2282,7 +2282,7 @@ class RecvBandWidth: public SemanticThread
     static string name;
 
 
-    vector<INT64> bandwidth;
+    vector<PRV_INT64> bandwidth;
 };
 
 

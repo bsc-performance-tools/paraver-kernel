@@ -31,13 +31,13 @@
 #define PARAVERKERNELTYPES_H_INCLUDED
 
 #include <vector>
-#include "types.h"
+#include "prvtypes.h"
 
 using namespace std;
 
 typedef unsigned long long TTraceSize;
 
-typedef UINT16        TObjectOrder;
+typedef PRV_UINT16        TObjectOrder;
 
 typedef TObjectOrder  TThreadOrder;
 typedef TObjectOrder  TTaskOrder;
@@ -48,7 +48,7 @@ typedef TObjectOrder  TCPUOrder;
 
 typedef double        TTime;
 typedef TTime         TRecordTime;
-typedef UINT16         TTimeUnit;
+typedef PRV_UINT16         TTimeUnit;
 /*
  *  TTimeUnit defines
  */
@@ -72,7 +72,7 @@ static const TRecordTime factorTable[ DAY + 1 ] =
 };
 
 
-typedef UINT16        TRecordType;
+typedef PRV_UINT16        TRecordType;
 /*
  * TRecordType defines.
  *  Comes from old paraver code.
@@ -92,12 +92,12 @@ static const TRecordType RSEND    = 0x0800;
 
 static const TRecordType EMPTYREC = STATE + EVENT + COMM;
 
-typedef UINT64        TCommID;
-typedef INT64         TCommSize;
-typedef INT64         TCommTag;
-typedef UINT32        TEventType;
-typedef UINT64        TEventValue;
-typedef UINT32        TState;
+typedef PRV_UINT64        TCommID;
+typedef PRV_INT64         TCommSize;
+typedef PRV_INT64         TCommTag;
+typedef PRV_UINT32        TEventType;
+typedef PRV_UINT64        TEventValue;
+typedef PRV_UINT32        TState;
 
 typedef double        TSemanticValue;
 
@@ -114,18 +114,18 @@ enum TWindowLevel
 };
 
 // Semantic function definitions
-typedef UINT16 TParamIndex;
+typedef PRV_UINT16 TParamIndex;
 typedef vector<double> TParamValue;
 
 // Semantic record list definitions
-typedef UINT16 TCreateList;
+typedef PRV_UINT16 TCreateList;
 static const TCreateList NOCREATE = 0x00;
 static const TCreateList CREATEEVENTS = 0x01;
 static const TCreateList CREATECOMMS = 0x02;
 
 // Histogram definitions
-typedef double THistogramLimit;
-typedef UINT32 THistogramColumn;
+typedef double     THistogramLimit;
+typedef PRV_UINT32 THistogramColumn;
 
 enum THistoTotals
 {

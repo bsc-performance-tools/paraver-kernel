@@ -162,7 +162,7 @@ RecordLeaf *BPlusLeaf::minKeyTotal()
 }
 
 
-void BPlusLeaf::setUsed( UINT16 used )
+void BPlusLeaf::setUsed( PRV_UINT16 used )
 {
   if ( used < LEAF_SIZE )
   {
@@ -172,12 +172,12 @@ void BPlusLeaf::setUsed( UINT16 used )
 }
 
 
-UINT16 BPlusLeaf::getUsed()
+PRV_UINT16 BPlusLeaf::getUsed()
 {
-  UINT16 used;
+  PRV_UINT16 used;
 
   if ( records[ LEAF_SIZE - 1 ].getRecord() == NULL )
-    used = ( UINT16 )records[ LEAF_SIZE - 1 ].getOrder();
+    used = ( PRV_UINT16 )records[ LEAF_SIZE - 1 ].getOrder();
   else
     used = LEAF_SIZE;
 
@@ -188,13 +188,13 @@ UINT16 BPlusLeaf::getUsed()
 void BPlusLeaf::insertRecordInOrder( RecordLeaf *rl )
 {
   bool inserted( false );
-  UINT16 used = getUsed();
+  PRV_UINT16 used = getUsed();
 
-  for ( UINT16 ii = 0; ii < used; ++ii )
+  for ( PRV_UINT16 ii = 0; ii < used; ++ii )
   {
     if ( *rl < records[ ii ] )
     {
-      for ( UINT16 jj = used; jj > ii; --jj )
+      for ( PRV_UINT16 jj = used; jj > ii; --jj )
         records[ jj ] = records[ jj - 1 ];
 
       records[ ii ] = *rl;
@@ -213,7 +213,7 @@ void BPlusLeaf::insertRecordInOrder( RecordLeaf *rl )
 RecordLeaf *BPlusLeaf::insert( RecordLeaf *rl, BPlusNode *&newChild )
 {
   RecordLeaf *retKey = NULL;
-  UINT16 used = getUsed();
+  PRV_UINT16 used = getUsed();
 
   if ( used < LEAF_SIZE )
   {
@@ -230,10 +230,10 @@ RecordLeaf *BPlusLeaf::insert( RecordLeaf *rl, BPlusNode *&newChild )
 BPlusLeaf *BPlusLeaf::split( BPlusNode *dest, RecordLeaf *&retdat )
 {
   BPlusLeaf *newLeaf = new BPlusLeaf;
-  UINT16 used = getUsed();
-  UINT16 endPos = ( used - 2 ) / 2;
+  PRV_UINT16 used = getUsed();
+  PRV_UINT16 endPos = ( used - 2 ) / 2;
 
-  for ( UINT16 ii = endPos + 1; ii < used; ++ii )
+  for ( PRV_UINT16 ii = endPos + 1; ii < used; ++ii )
     newLeaf->appendRecord( records[ii] );
 
   setUsed( endPos + 1 );
@@ -248,14 +248,14 @@ BPlusLeaf *BPlusLeaf::split( BPlusNode *dest, RecordLeaf *&retdat )
 BPlusLeaf *BPlusLeaf::splitAndInsert( RecordLeaf *rec, RecordLeaf *&retKey )
 {
   BPlusLeaf *newLeaf = new BPlusLeaf;
-  UINT16 used = getUsed();
-  UINT16 endPos = ( used - 2 ) / 2;
+  PRV_UINT16 used = getUsed();
+  PRV_UINT16 endPos = ( used - 2 ) / 2;
   BPlusNode *newNode( NULL );
 
   if ( ( endPos * 2 < used ) && ( *rec >= records[ endPos + 1 ] ) )
     endPos++;
 
-  for ( UINT16 ii = endPos + 1; ii < used; ++ii )
+  for ( PRV_UINT16 ii = endPos + 1; ii < used; ++ii )
     newLeaf->appendRecord( records[ii] );
 
   setUsed( endPos + 1 );
@@ -273,7 +273,7 @@ BPlusLeaf *BPlusLeaf::splitAndInsert( RecordLeaf *rec, RecordLeaf *&retKey )
 
 void BPlusLeaf::appendRecord( RecordLeaf newRecord )
 {
-  UINT16 used = getUsed();
+  PRV_UINT16 used = getUsed();
 
   if ( used < LEAF_SIZE - 1 )
   {
@@ -288,9 +288,9 @@ void BPlusLeaf::appendRecord( RecordLeaf newRecord )
 }
 
 
-bool BPlusLeaf::getLeafData( UINT16 ii, TRecord *&data )
+bool BPlusLeaf::getLeafData( PRV_UINT16 ii, TRecord *&data )
 {
-  UINT16 used = getUsed();
+  PRV_UINT16 used = getUsed();
 
   if ( ii < used )
     data = records[ ii ].getRecord();
@@ -301,9 +301,9 @@ bool BPlusLeaf::getLeafData( UINT16 ii, TRecord *&data )
 }
 
 
-bool BPlusLeaf::getLeafKey( UINT16 ii, RecordLeaf *&key )
+bool BPlusLeaf::getLeafKey( PRV_UINT16 ii, RecordLeaf *&key )
 {
-  UINT16 used = getUsed();
+  PRV_UINT16 used = getUsed();
 
   if ( ii < used )
     key = &records[ ii ];
@@ -314,16 +314,16 @@ bool BPlusLeaf::getLeafKey( UINT16 ii, RecordLeaf *&key )
 }
 
 
-UINT32 BPlusLeaf::linkRecords( TRecord **ini,
+PRV_UINT32 BPlusLeaf::linkRecords( TRecord **ini,
                                TRecord **fin,
-                               INT32 &recs2link,
+                               PRV_INT32 &recs2link,
                                RecordLeaf *&lastLeaf,
                                Index<TRecord *> *traceIndex )
 {
   TRecord *prev, *cur, *initial;
-  UINT16 used = getUsed();
-  UINT16 num = 0;
-  UINT32 localRecs2link;
+  PRV_UINT16 used = getUsed();
+  PRV_UINT16 num = 0;
+  PRV_UINT32 localRecs2link;
 
   initial = NULL;
   prev    = NULL;
@@ -357,16 +357,16 @@ UINT32 BPlusLeaf::linkRecords( TRecord **ini,
   if ( recs2link > 0 )
     recs2link -= num;
 
-  return ( UINT32 )num;
+  return ( PRV_UINT32 )num;
 }
 
 
 void BPlusLeaf::print( string indent )
 {
-  /*  UINT16 used = getUsed();
+  /*  PRV_UINT16 used = getUsed();
 
     cout << indent << "<" << ( int )used << endl;
-    for ( UINT16 ii = 0; ii < used - 1; ii++ )
+    for ( PRV_UINT16 ii = 0; ii < used - 1; ii++ )
       cout << indent << records[ ii ];
 
     cout << indent << records[ used - 1 ];
@@ -380,8 +380,8 @@ void BPlusLeaf::print( string indent )
 bool BPlusLeaf::partialDelete( RecordLeaf *limitKey,
                                BPlusNode **validPredecessor )
 {
-  UINT16 used = getUsed();
-  UINT16 num = 0;
+  PRV_UINT16 used = getUsed();
+  PRV_UINT16 num = 0;
   bool end = false;
   bool deletedAll = false;
 
@@ -398,7 +398,7 @@ bool BPlusLeaf::partialDelete( RecordLeaf *limitKey,
     }
 
     // Copy the greater ones to the beginning.
-    for ( UINT16 ii = num; ii < used; ++ii )
+    for ( PRV_UINT16 ii = num; ii < used; ++ii )
       records[ ii - num ] = records[ ii ];
 
     // Update used
@@ -414,7 +414,7 @@ bool BPlusLeaf::partialDelete( RecordLeaf *limitKey,
 }
 
 /*
-UINT16 BPlusLeaf::countElems()
+PRV_UINT16 BPlusLeaf::countElems()
 {
   return getUsed();
 }
@@ -440,7 +440,7 @@ UINT16 BPlusLeaf::countElems()
 BPlusInternal::BPlusInternal()
 {
   used = 0;
-  for ( UINT16 ii = 0; ii < NODE_SIZE; ++ii )
+  for ( PRV_UINT16 ii = 0; ii < NODE_SIZE; ++ii )
   {
     key[ ii ] = NULL;
     child[ ii ] = NULL;
@@ -451,7 +451,7 @@ BPlusInternal::BPlusInternal()
 
 BPlusInternal::~BPlusInternal()
 {
-  for ( UINT16 ii = 0; ii < used; ++ii )
+  for ( PRV_UINT16 ii = 0; ii < used; ++ii )
     delete child[ ii ];
 }
 
@@ -476,7 +476,7 @@ void BPlusInternal::insertInOrder( BPlusNode *newNode )
   {
     if ( *newNode->minKeyTotal() > *key[ ii ] )
     {
-      for ( UINT16 jj = used - 2; jj >= ii + 1; --jj )
+      for ( PRV_UINT16 jj = used - 2; jj >= ii + 1; --jj )
       {
         key[ jj + 1 ] = key[ jj ];
         child[ jj + 2 ] = child[ jj + 1 ];
@@ -509,7 +509,7 @@ void BPlusInternal::insertInOrder( BPlusNode *newNode )
 
   ++used;
 
-  for ( UINT16 ii = 0; ii < used; ++ii )
+  for ( PRV_UINT16 ii = 0; ii < used; ++ii )
   {
     if ( child[ ii ] == NULL )
       used = ii;
@@ -532,7 +532,7 @@ BPlusInternal *BPlusInternal::splitAndInsert( BPlusNode *newNode,
     RecordLeaf *&retdat )
 {
   BPlusInternal *newInternal = new BPlusInternal;
-  UINT16 middle = ( ( UINT16 ) ceil( used / 2.0 ) ) - 1;
+  PRV_UINT16 middle = ( ( PRV_UINT16 ) ceil( used / 2.0 ) ) - 1;
   bool intoThis = false;
 
   if ( *newNode->minKey() < *child[ middle ]->minKey() )
@@ -541,7 +541,7 @@ BPlusInternal *BPlusInternal::splitAndInsert( BPlusNode *newNode,
     intoThis = true;
   }
 
-  for ( UINT16 ii = middle + 1; ii < used; ++ii )
+  for ( PRV_UINT16 ii = middle + 1; ii < used; ++ii )
     newInternal->append( child[ ii ] );
 
   used = middle + 1;
@@ -561,7 +561,7 @@ RecordLeaf *BPlusInternal::insert( RecordLeaf *rl, BPlusNode *&newChild )
 {
   BPlusNode *newNode;
   RecordLeaf *retKey, *other;
-  UINT16 pos;
+  PRV_UINT16 pos;
   bool inserted( false );
 
   for ( pos = 0; pos < used - 1; ++pos )
@@ -604,26 +604,26 @@ RecordLeaf *BPlusInternal::insert( RecordLeaf *rl, BPlusNode *&newChild )
 }
 
 
-bool BPlusInternal::getLeafData( UINT16 ii, TRecord *&data )
+bool BPlusInternal::getLeafData( PRV_UINT16 ii, TRecord *&data )
 {
   return child[ 0 ]->getLeafData( ii, data );
 }
 
 
-bool BPlusInternal::getLeafKey( UINT16 ii, RecordLeaf *&key )
+bool BPlusInternal::getLeafKey( PRV_UINT16 ii, RecordLeaf *&key )
 {
   return child[ 0 ]->getLeafKey( ii, key );
 }
 
 
-UINT32 BPlusInternal::linkRecords( TRecord **ini, TRecord **fin,
-                                   INT32 &recs2link,
+PRV_UINT32 BPlusInternal::linkRecords( TRecord **ini, TRecord **fin,
+                                   PRV_INT32 &recs2link,
                                    RecordLeaf *&lastLeaf,
                                    Index<TRecord *> *traceIndex )
 {
   TRecord *prevIni, *prevFin, *currIni, *currFin;
-  UINT32 recsLinked = 0;
-  UINT16 ii = 0;
+  PRV_UINT32 recsLinked = 0;
+  PRV_UINT16 ii = 0;
 
   // Link all the records in the leaf.
   if ( recs2link != 0 )
@@ -659,7 +659,7 @@ void BPlusInternal::print( string indent )
   cout << indent << "^(" << ( int )used << ")" << endl;
   cout << indent << "[";
 
-  for ( UINT16 ii = 0; ii < used - 1; ++ii )
+  for ( PRV_UINT16 ii = 0; ii < used - 1; ++ii )
   {
     if ( key[ ii ] != NULL )
       cout << ( key[ ii ]->getRecord() )->time << " ";
@@ -672,7 +672,7 @@ void BPlusInternal::print( string indent )
     child[ 0 ]->print( indent + "  " );
   else
     cout << "child[0] NULL!!!";
-  for ( UINT16 ii = 1; ii < used; ++ii )
+  for ( PRV_UINT16 ii = 1; ii < used; ++ii )
   {
     if ( child[ 0 ] != NULL )
       child[ ii ]->print( indent + "  " );
@@ -687,10 +687,10 @@ BPlusInternal *BPlusInternal::split( BPlusNode *dest,
                                      RecordLeaf *&retdat )
 {
   BPlusInternal *newInternal = new BPlusInternal;
-  UINT16 middle = ( ( UINT16 ) ceil( used / 2.0 ) ) - 1;
+  PRV_UINT16 middle = ( ( PRV_UINT16 ) ceil( used / 2.0 ) ) - 1;
 
 
-  for ( UINT16 ii = middle + 1; ii < used; ++ii )
+  for ( PRV_UINT16 ii = middle + 1; ii < used; ++ii )
     newInternal->append( child[ ii ] );
 
   used = middle + 1;
@@ -702,7 +702,7 @@ BPlusInternal *BPlusInternal::split( BPlusNode *dest,
 }
 
 /*
-UINT16 BPlusInternal::countElems()
+PRV_UINT16 BPlusInternal::countElems()
 {
   return used;
 }
@@ -714,7 +714,7 @@ UINT16 BPlusInternal::countElems()
 bool BPlusInternal::partialDelete( RecordLeaf *limitKey,
                                    BPlusNode **validPredecessor )
 {
-  UINT16 removed;
+  PRV_UINT16 removed;
   bool deletedAll = false;
   int ii;
   BPlusNode *auxValidPred =  *validPredecessor;
@@ -799,8 +799,8 @@ bool BPlusInternal::partialDelete( RecordLeaf *limitKey,
  ****************************************************************************/
 BPlusTree::BPlusTree( const TThreadOrder totalThreads,
                       const TCPUOrder totalCPUs,
-                      const UINT32 uthreshold,
-                      const UINT32 upercent )
+                      const PRV_UINT32 uthreshold,
+                      const PRV_UINT32 upercent )
 {
   root = NULL;
   ini = NULL;
@@ -882,7 +882,7 @@ void BPlusTree::insert( MemoryBlocks *blocks )
 {
   TRecord *tmp;
 
-  for ( UINT32 i = 0; i < blocks->getCountInserted(); ++i )
+  for ( PRV_UINT32 i = 0; i < blocks->getCountInserted(); ++i )
   {
     tmp = ( TRecord * )blocks->getLastRecord( i );
 
@@ -918,7 +918,7 @@ void BPlusTree::insert( TRecord *r )
   ++recordsInserted;
 
   if ( unloadCriteria() )
-    unload( ( UINT32 )( unloadThreshold * unloadPercent / 100 ) );
+    unload( ( PRV_UINT32 )( unloadThreshold * unloadPercent / 100 ) );
 }
 
 void BPlusTree::getRecordFirstTime( TRecord **rft )
@@ -931,21 +931,21 @@ void BPlusTree::getRecordFirstTime( TRecord **rft )
 }
 
 
-bool BPlusTree::getLeafData( UINT16 ii, TRecord *&data )
+bool BPlusTree::getLeafData( PRV_UINT16 ii, TRecord *&data )
 {
   return ini->getLeafData( ii, data );
 }
 
 
-bool BPlusTree::getLeafKey( UINT16 ii, RecordLeaf *&key )
+bool BPlusTree::getLeafKey( PRV_UINT16 ii, RecordLeaf *&key )
 {
   return ini->getLeafKey( ii, key );
 }
 
 
-UINT32 BPlusTree::linkRecords( TRecord **ini, TRecord **fin, INT32 recs2link )
+PRV_UINT32 BPlusTree::linkRecords( TRecord **ini, TRecord **fin, PRV_INT32 recs2link )
 {
-  UINT32 recordsLinked;
+  PRV_UINT32 recordsLinked;
 
   recordsLinked = root->linkRecords( ini, fin, recs2link, lastLeaf, traceIndex );
   recordsLinkedLastTime = recordsLinked;
@@ -981,9 +981,9 @@ void BPlusTree::partialDelete()
 }
 
 
-void BPlusTree::unload( INT32 numrecords )
+void BPlusTree::unload( PRV_INT32 numrecords )
 {
-  UINT32 records_linked;
+  PRV_UINT32 records_linked;
   TRecord *ini, *fin;
 
   if ( root != NULL )

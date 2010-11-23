@@ -139,12 +139,12 @@ void BPlusTreeBlocks::newComm( bool createRecords )
   currentComm = communications.size() - 1;
   if ( !createRecords )
   {
-    for ( UINT8 i = 0; i < commTypeSize; ++i )
+    for ( PRV_UINT8 i = 0; i < commTypeSize; ++i )
       commRecords[ i ] = NULL;
   }
   else
   {
-    for ( UINT8 i = 0; i < commTypeSize; ++i )
+    for ( PRV_UINT8 i = 0; i < commTypeSize; ++i )
     {
       newRecord();
       commRecords[i] = &currentBlock[currentRecord];

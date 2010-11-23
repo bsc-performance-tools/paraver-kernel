@@ -686,7 +686,7 @@ bool WindowFactors::parseLine( KernelConnection *whichKernel, istringstream& lin
                                vector<Histogram *>& histograms )
 {
   string strFactor;
-  UINT16 numFactor = 0;
+  PRV_UINT16 numFactor = 0;
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
@@ -729,7 +729,7 @@ bool WindowPositionX::parseLine( KernelConnection *whichKernel, istringstream& l
 
   getline( line, strPos, ' ' );
   istringstream tmpStream( strPos );
-  UINT16 pos;
+  PRV_UINT16 pos;
 
   if ( !( tmpStream >> pos ) )
     return false;
@@ -757,7 +757,7 @@ bool WindowPositionY::parseLine( KernelConnection *whichKernel, istringstream& l
 
   getline( line, strPos, ' ' );
   istringstream tmpStream( strPos );
-  UINT16 pos;
+  PRV_UINT16 pos;
 
   if ( !( tmpStream >> pos ) )
     return false;
@@ -785,7 +785,7 @@ bool WindowWidth::parseLine( KernelConnection *whichKernel, istringstream& line,
 
   getline( line, strWidth, ' ' );
   istringstream tmpStream( strWidth );
-  UINT16 width;
+  PRV_UINT16 width;
 
   if ( !( tmpStream >> width ) )
     return false;
@@ -813,7 +813,7 @@ bool WindowHeight::parseLine( KernelConnection *whichKernel, istringstream& line
 
   getline( line, strHeight, ' ' );
   istringstream tmpStream( strHeight );
-  UINT16 height;
+  PRV_UINT16 height;
 
   if ( !( tmpStream >> height ) )
     return false;
@@ -1153,8 +1153,8 @@ bool WindowIdentifiers::parseLine( KernelConnection *whichKernel, istringstream&
                                    vector<Histogram *>& histograms )
 {
   string strID;
-  UINT16 id;
-  UINT16 numID = 0;
+  PRV_UINT16 id;
+  PRV_UINT16 numID = 0;
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
@@ -1816,7 +1816,7 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
 {
   string tmpString;
   string strNumFunctions;
-  UINT16 numFunctions;
+  PRV_UINT16 numFunctions;
   string strLevel;
   TWindowLevel level;
   string strFunction;
@@ -1832,7 +1832,7 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
     return false;
 
   getline( line, tmpString, '{' );
-  for ( UINT16 i = 0; i < numFunctions; i++ )
+  for ( PRV_UINT16 i = 0; i < numFunctions; i++ )
   {
     getline( line, tmpString, '{' );
     getline( line, strLevel, ',' );
@@ -1920,7 +1920,7 @@ bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel, istringst
 {
   string tmpString;
   string strNumFunctions;
-  UINT16 numFunctions;
+  PRV_UINT16 numFunctions;
   string strLevel;
   TWindowLevel level;
   string strFunction;
@@ -1936,7 +1936,7 @@ bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel, istringst
     return false;
 
   getline( line, tmpString, '{' );
-  for ( UINT16 i = 0; i < numFunctions; i++ )
+  for ( PRV_UINT16 i = 0; i < numFunctions; i++ )
   {
     getline( line, tmpString, '{' );
     getline( line, strLevel, ',' );
@@ -2053,7 +2053,7 @@ bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstre
     for ( TParamIndex i = 0; i < numParam; i++ )
     {
       string strNumValues;
-      UINT32 numValues;
+      PRV_UINT32 numValues;
       TParamValue values;
 
       getline( line, tmpString, ' ' );
@@ -2063,7 +2063,7 @@ bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstre
       if ( !( tmpNumValues >> numValues ) )
         return false;
 
-      for ( UINT32 j = 0; j < numValues; j++ )
+      for ( PRV_UINT32 j = 0; j < numValues; j++ )
       {
         string strParamValue;
         double paramValue;
@@ -2195,7 +2195,7 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
                                     vector<Histogram *>& histograms )
 {
   string strTag, strNumberParams, strValue;
-  UINT16 numParams;
+  PRV_UINT16 numParams;
   Filter *filter;
   TObjectOrder fromObject;
   TObjectOrder toObject;
@@ -2220,7 +2220,7 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
 
   filter = windows[ windows.size() - 1 ]->getFilter();
 
-  for ( UINT16 ii = 0; ii < numParams; ii++ )
+  for ( PRV_UINT16 ii = 0; ii < numParams; ii++ )
   {
     if ( strTag.compare( OLDCFG_VAL_FILTER_OBJ_FROM ) == 0 )
     {
@@ -2817,7 +2817,7 @@ bool Analyzer2DX::parseLine( KernelConnection *whichKernel, istringstream& line,
 
   getline( line, strX, ' ' );
   istringstream tmpStream( strX );
-  UINT16 x;
+  PRV_UINT16 x;
 
   if ( !( tmpStream >> x ) )
     return false;
@@ -2847,7 +2847,7 @@ bool Analyzer2DY::parseLine( KernelConnection *whichKernel, istringstream& line,
 
   getline( line, strY, ' ' );
   istringstream tmpStream( strY );
-  UINT16 y;
+  PRV_UINT16 y;
 
   if ( !( tmpStream >> y ) )
     return false;
@@ -2877,7 +2877,7 @@ bool Analyzer2DWidth::parseLine( KernelConnection *whichKernel, istringstream& l
 
   getline( line, strWidth, ' ' );
   istringstream tmpStream( strWidth );
-  UINT16 width;
+  PRV_UINT16 width;
 
   if ( !( tmpStream >> width ) )
     return false;
@@ -2907,7 +2907,7 @@ bool Analyzer2DHeight::parseLine( KernelConnection *whichKernel, istringstream& 
 
   getline( line, strHeight, ' ' );
   istringstream tmpStream( strHeight );
-  UINT16 height;
+  PRV_UINT16 height;
 
   if ( !( tmpStream >> height ) )
     return false;
@@ -2928,7 +2928,7 @@ bool Analyzer2DControlWindow::parseLine( KernelConnection *whichKernel, istrings
     vector<Histogram *>& histograms )
 {
   string strIndexControlWindow;
-  UINT32 indexControlWindow;
+  PRV_UINT32 indexControlWindow;
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
@@ -2964,7 +2964,7 @@ bool Analyzer2DDataWindow::parseLine( KernelConnection *whichKernel, istringstre
                                       vector<Histogram *>& histograms )
 {
   string strIndexDataWindow;
-  UINT32 indexDataWindow;
+  PRV_UINT32 indexDataWindow;
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
@@ -3393,7 +3393,7 @@ bool Analyzer2DParameters::parseLine( KernelConnection *whichKernel, istringstre
                                       vector<Histogram *>& histograms )
 {
   string strNumParams, strValue;
-  UINT16 numParams;
+  PRV_UINT16 numParams;
   double dataValue;
 
   if ( windows[ windows.size() - 1 ] == NULL )
@@ -3407,7 +3407,7 @@ bool Analyzer2DParameters::parseLine( KernelConnection *whichKernel, istringstre
   if ( !( tmpNumParams >> numParams ) )
     return false;
 
-  for ( UINT16 ii = 0; ii < numParams; ii++ )
+  for ( PRV_UINT16 ii = 0; ii < numParams; ii++ )
   {
     getline( line, strValue, ' ' );
     istringstream tmpValue( strValue );
@@ -3744,7 +3744,7 @@ bool Analyzer3DControlWindow::parseLine( KernelConnection *whichKernel, istrings
     vector<Histogram *>& histograms )
 {
   string str3DControlWindow;
-  UINT32 controlWindow;
+  PRV_UINT32 controlWindow;
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;

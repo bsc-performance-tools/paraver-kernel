@@ -71,7 +71,7 @@ class KTrace: public Trace
       return memTrace->copyCPUIterator( it );
     }
 
-    void dumpFile( const string& whichFile, INT32 numIter = 1 ) const;
+    void dumpFile( const string& whichFile, PRV_INT32 numIter = 1 ) const;
 
     TApplOrder totalApplications() const;
     TTaskOrder totalTasks() const;

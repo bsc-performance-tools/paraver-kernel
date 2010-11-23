@@ -42,7 +42,7 @@ rgb SemanticColor::FOREGROUND = { 255, 255, 255 };
 rgb SemanticColor::DEFAULT_LOGICAL_COMMUNICATIONS = { 255, 255, 0 };
 rgb SemanticColor::DEFAULT_PHYSICAL_COMMUNICATIONS = { 255, 0, 0 };
 
-UINT32 SemanticColor::numColors = 49;
+PRV_UINT32 SemanticColor::numColors = 49;
 rgb SemanticColor::codeColor[ ] =
 {
   { 117, 195, 255 }, //  0 - Idle
@@ -108,7 +108,7 @@ rgb SemanticColor::endGradientColor   = SemanticColor::DEFAULT_END_GRADIENT_COLO
 rgb SemanticColor::aboveOutlierColor  = SemanticColor::DEFAULT_ABOVE_OUTLIER_COLOR;
 rgb SemanticColor::belowOutlierColor  = SemanticColor::DEFAULT_BELOW_OUTLIER_COLOR;
 
-UINT32 SemanticColor::getNumColors()
+PRV_UINT32 SemanticColor::getNumColors()
 {
   return numColors;
 }
@@ -142,19 +142,19 @@ rgb SemanticColor::getBelowOutlierColor()
 CodeColor::CodeColor( )
 {
   rgb* codeColor = SemanticColor::getCodeColors();
-  for ( UINT32 i = 0; i < SemanticColor::getNumColors(); i++ )
+  for ( PRV_UINT32 i = 0; i < SemanticColor::getNumColors(); i++ )
     colors.push_back( codeColor[ i ] );
 }
 
 CodeColor::~CodeColor()
 {}
 
-UINT32 CodeColor::getNumColors() const
+PRV_UINT32 CodeColor::getNumColors() const
 {
   return colors.size();
 }
 
-rgb CodeColor::getColor( UINT32 pos ) const
+rgb CodeColor::getColor( PRV_UINT32 pos ) const
 {
   if( pos == 0 && ParaverConfig::getInstance()->getColorsTimelineUseZero() )
     return ParaverConfig::getInstance()->getColorsTimelineColorZero();
@@ -162,7 +162,7 @@ rgb CodeColor::getColor( UINT32 pos ) const
   return colors[ pos ];
 }
 
-void CodeColor::setColor( UINT32 pos, rgb color )
+void CodeColor::setColor( PRV_UINT32 pos, rgb color )
 {
   if ( pos >= colors.size() )
   {
@@ -183,7 +183,7 @@ rgb CodeColor::calcColor( TSemanticValue whichValue,
        whichValue > maximum )
     return getColor( 0 ); // IDLE!
 
-  return getColor( static_cast< UINT32 >( whichValue ) );
+  return getColor( static_cast< PRV_UINT32 >( whichValue ) );
 }
 
 // GRADIENTCOLOR METHODS
@@ -280,12 +280,12 @@ void GradientColor::setGradientFunction( TGradientFunction whichFunction )
   function = whichFunction;
 }
 
-INT16 GradientColor::getNumSteps() const
+PRV_INT16 GradientColor::getNumSteps() const
 {
   return numSteps;
 }
 
-void GradientColor::setNumSteps( INT16 steps )
+void GradientColor::setNumSteps( PRV_INT16 steps )
 {
   numSteps = steps;
 }

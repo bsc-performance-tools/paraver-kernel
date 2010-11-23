@@ -55,7 +55,7 @@ namespace NoLoad
 
       virtual ~NoLoadBlocks();
 
-      virtual TData *getLastRecord( UINT16 position ) const;
+      virtual TData *getLastRecord( PRV_UINT16 position ) const;
       virtual void newRecord();
       virtual void setType( TRecordType whichType );
       virtual void setTime( TRecordTime whichTime );
@@ -107,28 +107,28 @@ namespace NoLoad
 
       virtual TRecordTime getLastRecordTime() const;
 
-      virtual void getBeginThreadRecord( TThreadOrder whichThread, TRecord **record, INT64& offset, UINT16& recPos );
-      virtual void getEndThreadRecord( TThreadOrder whichThread, TRecord **record, INT64& offset, UINT16& recPos );
+      virtual void getBeginThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
+      virtual void getEndThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
 
-      virtual void getNextRecord( TThreadOrder whichThread, TRecord **record, INT64& offset, UINT16& recPos );
-      virtual void getPrevRecord( TThreadOrder whichThread, TRecord **record, INT64& offset, UINT16& recPos );
+      virtual void getNextRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
+      virtual void getPrevRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
 
       virtual void getThreadRecordByTime( TThreadOrder whichThread, TRecordTime whichTime,
-                                          TRecord **record, INT64& offset, UINT16& recPos );
+                                          TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
 
-      virtual void incNumUseds( INT64 offset );
-      virtual void decNumUseds( INT64 offset );
+      virtual void incNumUseds( PRV_INT64 offset );
+      virtual void decNumUseds( PRV_INT64 offset );
 
       virtual void setFileLoaded();
-      virtual void setFirstOffset( INT64 whichOffset );
+      virtual void setFirstOffset( PRV_INT64 whichOffset );
 
     protected:
 
     private:
       struct fileLineData
       {
-        INT16 numUseds;
-        INT64 endOffset;
+        PRV_INT16 numUseds;
+        PRV_INT64 endOffset;
         TThreadOrder thread;
         vector<TRecord> records;
       };
@@ -137,11 +137,11 @@ namespace NoLoad
       const ProcessModel& processModel;
       TraceBodyIO *body;
       TraceStream *file;
-      INT64 endFileOffset;
+      PRV_INT64 endFileOffset;
 
-      vector<Index<INT64> > traceIndex;
-      map<INT64, fileLineData *> blocks;
-      vector<INT64> beginThread;
+      vector<Index<PRV_INT64> > traceIndex;
+      map<PRV_INT64, fileLineData *> blocks;
+      vector<PRV_INT64> beginThread;
       vector<TRecord> emptyBeginRecords;
       vector<TRecord> emptyEndRecords;
 
@@ -149,8 +149,8 @@ namespace NoLoad
       TCommID currentComm;
 
       fileLineData *lastData;
-      INT16 lastRecord;
-      INT64 lastPos;
+      PRV_INT16 lastRecord;
+      PRV_INT64 lastPos;
 
       bool fileLoaded;
       TRecord loadingRec;

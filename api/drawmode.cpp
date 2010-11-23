@@ -89,7 +89,7 @@ inline TSemanticValue selectMethod<DRAW_RANDNOTZERO>( vector<TSemanticValue>& v 
   if( pos >= (int) v.size() )
     pos = v.size() - 1;
 
-  UINT32 i = 0;
+  PRV_UINT32 i = 0;
   while( v[ pos ] == 0 )
   {
     ++pos;

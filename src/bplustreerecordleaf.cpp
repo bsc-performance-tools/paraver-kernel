@@ -248,34 +248,34 @@ bool RecordLeaf::operator<=( const RecordLeaf &rl )
 
   switch ( getTypeOrdered( rl.getRecord() ) )
   {
-    case ( UINT8 )0:
+    case ( PRV_UINT8 )0:
       msg = "STEND";
       break;
-    case ( UINT8 )1:
+    case ( PRV_UINT8 )1:
       msg = "P RCV";
       break;
-    case ( UINT8 )2:
+    case ( PRV_UINT8 )2:
       msg = "R RCV";
       break;
-    case ( UINT8 )3:
+    case ( PRV_UINT8 )3:
       msg = "R SND";
       break;
-    case ( UINT8 )4:
+    case ( PRV_UINT8 )4:
       msg = "L SND";
       break;
-    case ( UINT8 )5:
+    case ( PRV_UINT8 )5:
       msg = "P SND";
       break;
-    case ( UINT8 )6:
+    case ( PRV_UINT8 )6:
       msg = "L RCV-EVNT";
       break;
-    case ( UINT8 )7:
+    case ( PRV_UINT8 )7:
       msg = "GLOBC";
       break;
-    case ( UINT8 )8:
+    case ( PRV_UINT8 )8:
       msg = "STBEG";
       break;
-    case ( UINT8 )9:
+    case ( PRV_UINT8 )9:
       msg = "UNKNOWN";
       break;
   }

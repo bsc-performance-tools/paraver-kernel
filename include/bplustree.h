@@ -42,10 +42,10 @@
 namespace bplustree
 {
 // Tuning this parameters changes tree performance.
-  static const UINT16 NODE_SIZE = 64;
-  static const UINT16 LEAF_SIZE = 64;
-  static const UINT32 UNLOAD_RECORDS_THRESHOLD = 100000000;
-  static const UINT32 UNLOAD_PERCENT = 30;
+  static const PRV_UINT16 NODE_SIZE = 64;
+  static const PRV_UINT16 LEAF_SIZE = 64;
+  static const PRV_UINT32 UNLOAD_RECORDS_THRESHOLD = 100000000;
+  static const PRV_UINT32 UNLOAD_PERCENT = 30;
 
   class UnloadedTrace
   {
@@ -131,22 +131,22 @@ namespace bplustree
       /************************************************************************
        * Returns a pointer to the TRecord stored in the i cell of the tree.
        ************************************************************************/
-      virtual bool getLeafData( UINT16 ii, TRecord *&data ) = 0;
+      virtual bool getLeafData( PRV_UINT16 ii, TRecord *&data ) = 0;
 
       /************************************************************************
        * Returns a pointer to the i cell of the leaf.
        ************************************************************************/
-      virtual bool getLeafKey( UINT16 ii, RecordLeaf *&key ) = 0;
-      virtual UINT32 linkRecords( TRecord **ini,
-                                  TRecord **fin,
-                                  int &recs2link,
-                                  RecordLeaf *&last_leaf,
-                                  Index<TRecord *> *traceIndex ) = 0;
+      virtual bool getLeafKey( PRV_UINT16 ii, RecordLeaf *&key ) = 0;
+      virtual PRV_UINT32 linkRecords( TRecord **ini,
+                                      TRecord **fin,
+                                      int &recs2link,
+                                      RecordLeaf *&last_leaf,
+                                      Index<TRecord *> *traceIndex ) = 0;
 
       virtual BPlusNode *split( BPlusNode *dest, RecordLeaf *&retdat ) = 0;
       virtual bool partialDelete( RecordLeaf *limit_key,
                                   BPlusNode **valid_predecessor ) = 0;
-      //virtual UINT16 countElems() = 0;
+      //virtual PRV_UINT16 countElems() = 0;
       virtual void print( string indent ) = 0;
   };
 
@@ -176,13 +176,13 @@ namespace bplustree
 
       virtual BPlusLeaf *split( BPlusNode *dest, RecordLeaf *&retdat );
 
-      virtual bool getLeafData( UINT16 ii, TRecord *&data );
-      virtual bool getLeafKey( UINT16 ii,  RecordLeaf *&key );
+      virtual bool getLeafData( PRV_UINT16 ii, TRecord *&data );
+      virtual bool getLeafKey( PRV_UINT16 ii,  RecordLeaf *&key );
 
-      virtual UINT32 linkRecords( TRecord **ini, TRecord **fin,
-                                  INT32 &recs2link,
-                                  RecordLeaf *&last_leaf,
-                                  Index<TRecord *> *traceIndex );
+      virtual PRV_UINT32 linkRecords( TRecord **ini, TRecord **fin,
+                                      PRV_INT32 &recs2link,
+                                      RecordLeaf *&last_leaf,
+                                      Index<TRecord *> *traceIndex );
 
       virtual void print( string indent );
       virtual bool partialDelete( RecordLeaf *limit_key,
@@ -194,20 +194,20 @@ namespace bplustree
        ************************************************************************/
       void insertRecordInOrder( RecordLeaf *r );
 
-      void setUsed( UINT16 used );
-      UINT16 getUsed();
+      void setUsed( PRV_UINT16 used );
+      PRV_UINT16 getUsed();
       inline bool isEmpty()
       {
-        return ( getUsed() == ( UINT16 )0 );
+        return ( getUsed() == ( PRV_UINT16 )0 );
       }
-      // UINT16 countElems();
+      // PRV_UINT16 countElems();
   };
 
 
   class BPlusInternal : public BPlusNode
   {
     public:
-      UINT16 used; // to be removed.
+      PRV_UINT16 used; // to be removed.
       RecordLeaf *key[NODE_SIZE];
       BPlusNode  *child[NODE_SIZE+1];
 
@@ -221,18 +221,18 @@ namespace bplustree
       BPlusInternal *splitAndInsert( BPlusNode *c, RecordLeaf *&retdat );
       virtual BPlusInternal *split( BPlusNode *dest, RecordLeaf *&retdat );
 
-      virtual bool getLeafData( UINT16 ii, TRecord *&data );
-      virtual bool getLeafKey( UINT16 ii,  RecordLeaf *&key );
+      virtual bool getLeafData( PRV_UINT16 ii, TRecord *&data );
+      virtual bool getLeafKey( PRV_UINT16 ii,  RecordLeaf *&key );
 
       virtual void print( string indent );
-      virtual UINT32 linkRecords( TRecord **ini,
-                                  TRecord **fin,
-                                  INT32 &recs2link,
-                                  RecordLeaf *&last_leaf,
-                                  Index<TRecord *> *traceIndex );
+      virtual PRV_UINT32 linkRecords( TRecord **ini,
+                                      TRecord **fin,
+                                      PRV_INT32 &recs2link,
+                                      RecordLeaf *&last_leaf,
+                                      Index<TRecord *> *traceIndex );
       virtual bool partialDelete( RecordLeaf *limit_key,
                                   BPlusNode **valid_predecessor );
-      //UINT16 countElems();
+      //PRV_UINT16 countElems();
   };
 
 
@@ -241,8 +241,8 @@ namespace bplustree
     private:
       TThreadOrder numThreads;
       TCPUOrder numCPUs;
-      UINT32 unloadThreshold;
-      UINT32 unloadPercent;
+      PRV_UINT32 unloadThreshold;
+      PRV_UINT32 unloadPercent;
       Index<TRecord *> *traceIndex;
       vector< TRecord > emptyThreadBegin;
       vector< TRecord > emptyThreadEnd;
@@ -257,17 +257,17 @@ namespace bplustree
       BPlusNode *ini;
       BPlusNode *fin;
       RecordLeaf *tmpAux; // Temporal copy of RecordLeaf to be inserted. Needed?
-      UINT32 recordsInserted;
+      PRV_UINT32 recordsInserted;
       RecordLeaf *lastLeaf;
-      UINT32 recordsLinkedLastTime;
+      PRV_UINT32 recordsLinkedLastTime;
       UnloadedTrace *unloadedTrace;
 
       // Methods
       BPlusTree();
       BPlusTree( const TThreadOrder totalThreads,
                  const TCPUOrder totalCPUs,
-                 const UINT32 uthresh  = UNLOAD_RECORDS_THRESHOLD,
-                 const UINT32 upercent = UNLOAD_PERCENT );
+                 const PRV_UINT32 uthresh  = UNLOAD_RECORDS_THRESHOLD,
+                 const PRV_UINT32 upercent = UNLOAD_PERCENT );
       ~BPlusTree();
       virtual TTime finish( TTime headerTime );
       void insert( MemoryBlocks *blocks );
@@ -277,10 +277,10 @@ namespace bplustree
         return ini;
       };
 
-      bool getLeafData( UINT16 ii, TRecord *&data );
-      bool getLeafKey( UINT16 ii, RecordLeaf *&key );
+      bool getLeafData( PRV_UINT16 ii, TRecord *&data );
+      bool getLeafKey( PRV_UINT16 ii, RecordLeaf *&key );
 
-      inline UINT32 getNumRecords()
+      inline PRV_UINT32 getNumRecords()
       {
         return recordsInserted;
       }
@@ -292,10 +292,10 @@ namespace bplustree
 
       void getRecordFirstTime( TRecord **rft );
 
-      UINT32 linkRecords( TRecord **ini, TRecord **fin, INT32 recs2link );
+      PRV_UINT32 linkRecords( TRecord **ini, TRecord **fin, PRV_INT32 recs2link );
       void print();
       void partialDelete();
-      void unload( INT32 numrecords = -1 );
+      void unload( PRV_INT32 numrecords = -1 );
 
       MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it );
       MemoryTrace::iterator *copyThreadIterator( MemoryTrace::iterator *it );

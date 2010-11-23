@@ -42,7 +42,7 @@ KHistogramTotals::KHistogramTotals( KHistogramTotals *& source )
   nullSort = source->nullSort;
 }
 
-KHistogramTotals::KHistogramTotals( UINT16 numStat,
+KHistogramTotals::KHistogramTotals( PRV_UINT16 numStat,
                                     THistogramColumn numColumns,
                                     THistogramColumn numPlanes ):
     columns( numColumns ), stats( numStat )
@@ -75,7 +75,7 @@ KHistogramTotals::~KHistogramTotals()
 
 
 void KHistogramTotals::newValue( TSemanticValue whichValue,
-                                 UINT16 idStat,
+                                 PRV_UINT16 idStat,
                                  THistogramColumn whichColumn,
                                  THistogramColumn whichPlane )
 {
@@ -99,7 +99,7 @@ void KHistogramTotals::finish()
 {
   for ( THistogramColumn iPlane = 0; iPlane < total.size(); iPlane++ )
   {
-    for ( UINT16 iStat = 0; iStat < stats; iStat++ )
+    for ( PRV_UINT16 iStat = 0; iStat < stats; iStat++ )
     {
       for ( THistogramColumn iColumn = 0; iColumn < columns; iColumn++ )
       {
@@ -141,7 +141,7 @@ void KHistogramTotals::finish()
 }
 
 
-TSemanticValue KHistogramTotals::getTotal( UINT16 idStat,
+TSemanticValue KHistogramTotals::getTotal( PRV_UINT16 idStat,
     THistogramColumn whichColumn,
     THistogramColumn whichPlane ) const
 {
@@ -149,7 +149,7 @@ TSemanticValue KHistogramTotals::getTotal( UINT16 idStat,
 }
 
 
-TSemanticValue KHistogramTotals::getAverage( UINT16 idStat,
+TSemanticValue KHistogramTotals::getAverage( PRV_UINT16 idStat,
     THistogramColumn whichColumn,
     THistogramColumn whichPlane ) const
 {
@@ -157,7 +157,7 @@ TSemanticValue KHistogramTotals::getAverage( UINT16 idStat,
 }
 
 
-TSemanticValue KHistogramTotals::getMaximum( UINT16 idStat,
+TSemanticValue KHistogramTotals::getMaximum( PRV_UINT16 idStat,
     THistogramColumn whichColumn,
     THistogramColumn whichPlane ) const
 {
@@ -165,7 +165,7 @@ TSemanticValue KHistogramTotals::getMaximum( UINT16 idStat,
 }
 
 
-TSemanticValue KHistogramTotals::getMinimum( UINT16 idStat,
+TSemanticValue KHistogramTotals::getMinimum( PRV_UINT16 idStat,
     THistogramColumn whichColumn,
     THistogramColumn whichPlane ) const
 {
@@ -173,7 +173,7 @@ TSemanticValue KHistogramTotals::getMinimum( UINT16 idStat,
 }
 
 
-TSemanticValue KHistogramTotals::getStdev( UINT16 idStat,
+TSemanticValue KHistogramTotals::getStdev( PRV_UINT16 idStat,
     THistogramColumn whichColumn,
     THistogramColumn whichPlane ) const
 {
@@ -181,7 +181,7 @@ TSemanticValue KHistogramTotals::getStdev( UINT16 idStat,
 }
 
 
-TSemanticValue KHistogramTotals::getAvgDivMax( UINT16 idStat,
+TSemanticValue KHistogramTotals::getAvgDivMax( PRV_UINT16 idStat,
     THistogramColumn whichColumn,
     THistogramColumn whichPlane ) const
 {
@@ -191,7 +191,7 @@ TSemanticValue KHistogramTotals::getAvgDivMax( UINT16 idStat,
 
 
 void KHistogramTotals::getAll( vector<TSemanticValue>& where,
-                               UINT16 idStat,
+                               PRV_UINT16 idStat,
                                THistogramColumn whichColumn,
                                THistogramColumn whichPlane ) const
 {
@@ -205,7 +205,7 @@ void KHistogramTotals::getAll( vector<TSemanticValue>& where,
 }
 
 
-vector<int>& KHistogramTotals::sortByTotal( UINT16 idStat,
+vector<int>& KHistogramTotals::sortByTotal( PRV_UINT16 idStat,
     THistogramColumn whichPlane )
 {
   if ( sort != NULL )
@@ -216,7 +216,7 @@ vector<int>& KHistogramTotals::sortByTotal( UINT16 idStat,
 }
 
 
-vector<int>& KHistogramTotals::sortByAverage( UINT16 idStat,
+vector<int>& KHistogramTotals::sortByAverage( PRV_UINT16 idStat,
     THistogramColumn whichPlane )
 {
   if ( sort != NULL )
@@ -227,7 +227,7 @@ vector<int>& KHistogramTotals::sortByAverage( UINT16 idStat,
 }
 
 
-vector<int>& KHistogramTotals::sortByMaximum( UINT16 idStat,
+vector<int>& KHistogramTotals::sortByMaximum( PRV_UINT16 idStat,
     THistogramColumn whichPlane )
 {
   if ( sort != NULL )
@@ -238,7 +238,7 @@ vector<int>& KHistogramTotals::sortByMaximum( UINT16 idStat,
 }
 
 
-vector<int>& KHistogramTotals::sortByMinimum( UINT16 idStat,
+vector<int>& KHistogramTotals::sortByMinimum( PRV_UINT16 idStat,
     THistogramColumn whichPlane )
 {
   if ( sort != NULL )
@@ -249,7 +249,7 @@ vector<int>& KHistogramTotals::sortByMinimum( UINT16 idStat,
 }
 
 
-vector<int>& KHistogramTotals::sortByStdev( UINT16 idStat,
+vector<int>& KHistogramTotals::sortByStdev( PRV_UINT16 idStat,
     THistogramColumn whichPlane )
 {
   if ( sort != NULL )
@@ -260,7 +260,7 @@ vector<int>& KHistogramTotals::sortByStdev( UINT16 idStat,
 }
 
 
-vector<int>& KHistogramTotals::sortByAvgDivMax( UINT16 idStat,
+vector<int>& KHistogramTotals::sortByAvgDivMax( PRV_UINT16 idStat,
     THistogramColumn whichPlane )
 {
   if ( sort != NULL )

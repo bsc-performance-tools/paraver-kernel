@@ -330,7 +330,7 @@ TRecordTime KTrace::getPhysicalReceive( TCommID whichComm ) const
 }
 
 
-void KTrace::dumpFile( const string& whichFile, INT32 numIter ) const
+void KTrace::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
 {
   ostringstream ostr;
 
@@ -369,7 +369,7 @@ void KTrace::dumpFile( const string& whichFile, INT32 numIter ) const
 
   for ( TThreadOrder iThread = 0; iThread < totalThreads(); ++iThread )
   {
-    for ( INT32 iter = 0; iter < numIter; ++iter )
+    for ( PRV_INT32 iter = 0; iter < numIter; ++iter )
     {
       MemoryTrace::iterator *it = memTrace->threadBegin( iThread );
 
@@ -518,7 +518,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   body->setProcessModel( &traceProcessModel );
 
   // Communicators
-  UINT32 numberComm = 0;
+  PRV_UINT32 numberComm = 0;
   if ( !header.eof() )
   {
     std::getline( header, tmpstr );
@@ -534,7 +534,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     }
   }
 
-  for ( UINT32 count = 0; count < numberComm; count++ )
+  for ( PRV_UINT32 count = 0; count < numberComm; count++ )
   {
     file->getline( tmpstr );
     if ( tmpstr[0] != 'C' && tmpstr[0] != 'c' )

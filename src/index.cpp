@@ -29,7 +29,7 @@
 
 
 template <typename RecordType>
-Index<RecordType>::Index( UINT32 step )
+Index<RecordType>::Index( PRV_UINT32 step )
 {
   indexStep = step;
   counter = 0;

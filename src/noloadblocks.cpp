@@ -49,12 +49,12 @@ NoLoadBlocks::NoLoadBlocks( const ResourceModel& resource, const ProcessModel& p
 
   for ( TThreadOrder i = 0; i < processModel.totalThreads(); ++i )
   {
-    traceIndex.push_back( Index<INT64>( 1000 ) );
+    traceIndex.push_back( Index<PRV_INT64>( 1000 ) );
     emptyBeginRecords.push_back( tmpBeginRec );
     emptyEndRecords.push_back( tmpEndRec );
   }
 
-  INT64 currentOffset = file->tellg();
+  PRV_INT64 currentOffset = file->tellg();
   file->seekend();
   endFileOffset = file->tellg();
   file->seekg( currentOffset );
@@ -62,7 +62,7 @@ NoLoadBlocks::NoLoadBlocks( const ResourceModel& resource, const ProcessModel& p
 
 NoLoadBlocks::~NoLoadBlocks()
 {
-  for ( UINT32 i = 0; i < communications.size(); ++i )
+  for ( PRV_UINT32 i = 0; i < communications.size(); ++i )
     delete communications[i];
 
   communications.clear();
@@ -70,7 +70,7 @@ NoLoadBlocks::~NoLoadBlocks()
   file->close();
 }
 
-TData *NoLoadBlocks::getLastRecord( UINT16 position ) const
+TData *NoLoadBlocks::getLastRecord( PRV_UINT16 position ) const
 {
   return NULL;
 }
@@ -325,14 +325,14 @@ TRecordTime NoLoadBlocks::getLastRecordTime() const
   return 0;
 }
 
-void NoLoadBlocks::getBeginThreadRecord( TThreadOrder whichThread, TRecord **record, INT64& offset, UINT16& recPos )
+void NoLoadBlocks::getBeginThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
   *record = &emptyBeginRecords[ whichThread ];
   offset = -1;
   recPos = 0;
 }
 
-void NoLoadBlocks::getEndThreadRecord( TThreadOrder whichThread, TRecord **record, INT64& offset, UINT16& recPos )
+void NoLoadBlocks::getEndThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
   *record = &emptyEndRecords[ whichThread ];
   if ( whichThread == processModel.totalThreads() - 1 )
@@ -342,7 +342,7 @@ void NoLoadBlocks::getEndThreadRecord( TThreadOrder whichThread, TRecord **recor
   recPos = 0;
 }
 
-void NoLoadBlocks::getNextRecord( TThreadOrder whichThread, TRecord **record, INT64& offset, UINT16& recPos )
+void NoLoadBlocks::getNextRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
   if( *record == &emptyEndRecords[ whichThread ] )
   {
@@ -390,7 +390,7 @@ void NoLoadBlocks::getNextRecord( TThreadOrder whichThread, TRecord **record, IN
   ++currentData->numUseds;
 }
 
-void NoLoadBlocks::getPrevRecord( TThreadOrder whichThread, TRecord **record, INT64& offset, UINT16& recPos )
+void NoLoadBlocks::getPrevRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
   if ( offset == -1 )
   {
@@ -436,7 +436,7 @@ void NoLoadBlocks::getPrevRecord( TThreadOrder whichThread, TRecord **record, IN
 }
 
 void NoLoadBlocks::getThreadRecordByTime( TThreadOrder whichThread, TRecordTime whichTime,
-    TRecord **record, INT64& offset, UINT16& recPos )
+    TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
   if ( !traceIndex[ whichThread ].findRecord( whichTime, offset ) )
   {
@@ -460,7 +460,7 @@ void NoLoadBlocks::getThreadRecordByTime( TThreadOrder whichThread, TRecordTime 
   ++currentData->numUseds;
 }
 
-void NoLoadBlocks::incNumUseds( INT64 offset )
+void NoLoadBlocks::incNumUseds( PRV_INT64 offset )
 {
   if( blocks.count( offset ) == 0 )
     return;
@@ -469,7 +469,7 @@ void NoLoadBlocks::incNumUseds( INT64 offset )
     ++tmpData->numUseds;
 }
 
-void NoLoadBlocks::decNumUseds( INT64 offset )
+void NoLoadBlocks::decNumUseds( PRV_INT64 offset )
 {
   if( blocks.count( offset ) == 0 )
     return;
@@ -485,7 +485,7 @@ void NoLoadBlocks::decNumUseds( INT64 offset )
 void NoLoadBlocks::goToPrevLine()
 {
   file->clear();
-  INT64 curOffset = file->tellg();
+  PRV_INT64 curOffset = file->tellg();
   curOffset -= 2;
 
   file->seekg( curOffset );
@@ -504,7 +504,7 @@ void NoLoadBlocks::setFileLoaded()
   fileLoaded = true;
 }
 
-void NoLoadBlocks::setFirstOffset( INT64 whichOffset )
+void NoLoadBlocks::setFirstOffset( PRV_INT64 whichOffset )
 {
   lastPos = whichOffset;
 }

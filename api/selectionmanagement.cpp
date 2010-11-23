@@ -52,7 +52,7 @@ void SelectionManagement< SelType, LevelType >::init( Trace *trace )
 
   vector< bool > auxSelected;
 
-  for ( UINT32 level = ( UINT32 )NONE; level <= ( UINT32 )CPU; ++level )
+  for ( PRV_UINT32 level = ( PRV_UINT32 )NONE; level <= ( PRV_UINT32 )CPU; ++level )
   {
     auxSelected.clear();
     selected.push_back( vector< bool >( ) );
@@ -109,7 +109,7 @@ void SelectionManagement< SelType, LevelType >::init( Trace *trace )
 
 template < typename SelType, typename LevelType >
 void SelectionManagement< SelType, LevelType >::init( HistogramTotals *totals,
-    UINT16 idStat,
+    PRV_UINT16 idStat,
     THistogramColumn numColumns,
     THistogramColumn whichPlane )
 {

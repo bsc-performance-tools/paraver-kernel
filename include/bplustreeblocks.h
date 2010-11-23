@@ -53,18 +53,18 @@ namespace bplustree
       {
         if ( blocks[ 0 ] != NULL )
         {
-          for ( UINT32 i = 0; i < blocks.size(); i++ )
+          for ( PRV_UINT32 i = 0; i < blocks.size(); i++ )
             delete[] blocks[i];
         }
 
-        for ( UINT32 i = 0; i < communications.size(); i++ )
+        for ( PRV_UINT32 i = 0; i < communications.size(); i++ )
           delete communications[i];
 
         blocks.clear();
         communications.clear();
       }
 
-      virtual TData *getLastRecord( UINT16 position ) const
+      virtual TData *getLastRecord( PRV_UINT16 position ) const
       {
         return lastRecords[ position ];
       }
@@ -142,8 +142,8 @@ namespace bplustree
         commTypeSize
       } TCommType;
       static const TRecordType commTypes[commTypeSize];
-      static const UINT32 blockSize = 100000;
-      UINT32 currentRecord;
+      static const PRV_UINT32 blockSize = 100000;
+      PRV_UINT32 currentRecord;
       TRecord *currentBlock;
       vector<TRecord *> lastRecords;
       vector<TRecord *> blocks;

@@ -53,7 +53,7 @@ bool multipleFiles = false;
 bool dumpTrace = false;
 bool noLoad = false;
 
-INT32 numIter = 1;
+PRV_INT32 numIter = 1;
 Trace *trace;
 
 // Filter / Cutter global variables
@@ -202,8 +202,8 @@ void readParameters( int argc,
 {
   string strOut;
   string strOutputFile;
-  INT32 previousCFGPosition = 0;
-  INT32 currentArg = 1;
+  PRV_INT32 previousCFGPosition = 0;
+  PRV_INT32 currentArg = 1;
 
   while ( currentArg < argc )
   {
@@ -301,7 +301,7 @@ string applyFilters( KernelConnection *myKernel,
 
   strcpy( tmpPathOut, (char *)strPathOut.c_str() );
 
-  for( UINT16 i = 0; i < filterToolOrder.size(); ++i )
+  for( PRV_UINT16 i = 0; i < filterToolOrder.size(); ++i )
   {
     strcpy( tmpNameIn, tmpNameOut );
     myKernel->getNewTraceName( tmpNameIn, tmpPathOut, filterToolOrder[ i ] );
@@ -342,7 +342,7 @@ string applyFilters( KernelConnection *myKernel,
 
   // Delete intermediate files
   char *pcfName, *rowName;
-  for( UINT16 i = 0; i < tmpFiles.size() - 1; ++i )
+  for( PRV_UINT16 i = 0; i < tmpFiles.size() - 1; ++i )
   {
     pcfName = myKernel->composeName( (char *)tmpFiles[ i ].c_str(), (char *)string("pcf").c_str() );
     rowName = myKernel->composeName( (char *)tmpFiles[ i ].c_str(), (char *)string("row").c_str() );
@@ -402,7 +402,7 @@ void loadCFGs( KernelConnection *myKernel )
     else
       cout << "Cannot load '" << it->first << "' file." << endl;
 
-    for ( UINT32 i = 0; i < histograms.size(); ++i )
+    for ( PRV_UINT32 i = 0; i < histograms.size(); ++i )
     {
       if ( histograms[ i ] != NULL )
         delete histograms[ i ];
@@ -411,7 +411,7 @@ void loadCFGs( KernelConnection *myKernel )
     histograms.clear();
 
 
-    for ( UINT32 i = 0; i < windows.size(); ++i )
+    for ( PRV_UINT32 i = 0; i < windows.size(); ++i )
     {
       if ( windows[ i ] != NULL )
         delete windows[ i ];

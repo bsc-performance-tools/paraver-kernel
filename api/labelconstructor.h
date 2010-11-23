@@ -57,10 +57,10 @@ class LabelConstructor
 
     static string histoTotalLabel( THistoTotals whichTotal );
 
-    static string timeLabel( TTime value, TTimeUnit unit, UINT32 precision );
+    static string timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 precision );
 
     static string semanticLabel( const Window * whichWindow, TSemanticValue value,
-                                 bool text, UINT32 precision );
+                                 bool text, PRV_UINT32 precision );
 
     static string eventLabel( Window *whichWindow,
                               TEventType whichType,
@@ -72,12 +72,12 @@ class LabelConstructor
                                    TEventValue whichValue );
 
     static string numberWithSeparators( TSemanticValue value,
-                                        UINT32 precision,
+                                        PRV_UINT32 precision,
                                         TTimeUnit unit = MS );
 
     static bool getTimeValue( const string& timeLabel,
                               TTimeUnit unit,
-                              UINT32 precision,
+                              PRV_UINT32 precision,
                               TTime& value );
 
     enum TGroupID

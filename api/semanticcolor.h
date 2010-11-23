@@ -54,7 +54,7 @@ class SemanticColor
     static rgb DEFAULT_ABOVE_OUTLIER_COLOR;
     static rgb DEFAULT_BELOW_OUTLIER_COLOR;
 
-    static UINT32 getNumColors();
+    static PRV_UINT32 getNumColors();
     static rgb* getCodeColors();
 
     static rgb getBeginGradientColor();
@@ -70,7 +70,7 @@ class SemanticColor
                            TSemanticValue maximum ) const = 0;
 
   private:
-    static UINT32 numColors;
+    static PRV_UINT32 numColors;
     static rgb codeColor[];
 
     static rgb beginGradientColor;
@@ -85,8 +85,8 @@ class CodeColor: public SemanticColor
     CodeColor();
     ~CodeColor();
 
-    UINT32 getNumColors() const;
-    void setColor( UINT32 pos, rgb color );
+    PRV_UINT32 getNumColors() const;
+    void setColor( PRV_UINT32 pos, rgb color );
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
                    TSemanticValue maximum ) const;
@@ -94,7 +94,7 @@ class CodeColor: public SemanticColor
   private:
     vector<rgb> colors;
 
-    inline rgb getColor( UINT32 pos ) const;
+    inline rgb getColor( PRV_UINT32 pos ) const;
 };
 
 
@@ -131,8 +131,8 @@ class GradientColor: public SemanticColor
 
     TGradientFunction getGradientFunction() const;
     void setGradientFunction( TGradientFunction whichFunction );
-    INT16 getNumSteps() const;
-    void setNumSteps( INT16 steps );
+    PRV_INT16 getNumSteps() const;
+    void setNumSteps( PRV_INT16 steps );
 
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
@@ -154,7 +154,7 @@ class GradientColor: public SemanticColor
     double blueStep;
 
     TGradientFunction function;
-    INT16 numSteps;
+    PRV_INT16 numSteps;
 
     void recalcSteps();
 

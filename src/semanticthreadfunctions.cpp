@@ -369,7 +369,7 @@ TSemanticValue GivenState::execute( const SemanticInfo *info )
     return IDLE;
   else
   {
-    for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+    for ( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
     {
       if ( myInfo->it->getState() == parameters[ VALUES ][ i ] )
       {
@@ -409,7 +409,7 @@ TSemanticValue InState::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  for ( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
     if ( myInfo->it->getType() & END &&
          parameters[ VALUES ][ i ] == 0 )
@@ -455,7 +455,7 @@ TSemanticValue NotInState::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  for ( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
     if ( myInfo->it->getType() & END &&
          parameters[ VALUES ][ i ] == 0 )
@@ -501,7 +501,7 @@ TSemanticValue StateRecordDuration::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  for ( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
     if ( myInfo->it->getType() & END &&
          parameters[ VALUES ][ i ] == 0 )
@@ -722,7 +722,7 @@ TSemanticValue GivenEventValue::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  for ( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
     if ( myInfo->it->getEventValue() == parameters[ VALUES ][ i ] )
     {
@@ -745,7 +745,7 @@ TSemanticValue InEventValue::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  for ( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
     if ( myInfo->it->getEventValue() == parameters[ VALUES ][ i ] )
     {
@@ -798,7 +798,7 @@ TSemanticValue NotInEventValue::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  for ( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
     if ( myInfo->it->getEventValue() == parameters[ VALUES ][ i ] )
     {
@@ -1181,7 +1181,7 @@ TSemanticValue SendBandWidth::execute( const SemanticInfo *info )
   KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
   KTrace *trace = ( KTrace* )window->getTrace();
   TCommID id = myInfo->it->getCommIndex();
-  INT64 tmp;
+  PRV_INT64 tmp;
 
   tmp = bandwidth[ myInfo->callingInterval->getOrder() ];
 
@@ -1214,14 +1214,14 @@ TSemanticValue SendBandWidth::execute( const SemanticInfo *info )
       return tmp * 1E-12;
 
     if ( myInfo->it->getType() & LOG && myInfo->it->getType() & SEND )
-      tmp += ( INT64 ) ( ( bytes / time ) * 1E12 );
+      tmp += ( PRV_INT64 ) ( ( bytes / time ) * 1E12 );
     else if ( ( myInfo->it->getType() & LOG && myInfo->it->getType() & RRECV &&
                 trace->getLogicalReceive( id ) >
                 trace->getPhysicalReceive( id ) ) ||
               ( myInfo->it->getType() & PHY && myInfo->it->getType() & RRECV &&
                 trace->getPhysicalReceive( id ) >=
                 trace->getLogicalReceive( id ) ) )
-      tmp -= ( INT64 ) ( ( bytes / time ) * 1E12 );
+      tmp -= ( PRV_INT64 ) ( ( bytes / time ) * 1E12 );
     else
       changes = false;
   }
@@ -1232,9 +1232,9 @@ TSemanticValue SendBandWidth::execute( const SemanticInfo *info )
       return tmp * 1E-12;
 
     if ( myInfo->it->getType() & PHY && myInfo->it->getType() & SEND )
-      tmp += ( INT64 ) ( ( bytes / time ) * 1E12 );
+      tmp += ( PRV_INT64 ) ( ( bytes / time ) * 1E12 );
     else if ( myInfo->it->getType() & PHY && myInfo->it->getType() & RRECV )
-      tmp -= ( INT64 ) ( ( bytes / time ) * 1E12 );
+      tmp -= ( PRV_INT64 ) ( ( bytes / time ) * 1E12 );
     else
       changes = false;
   }
@@ -1389,7 +1389,7 @@ TSemanticValue RecvBandWidth::execute( const SemanticInfo *info )
   KSingleWindow *window = ( KSingleWindow * ) myInfo->callingInterval->getWindow();
   KTrace *trace = ( KTrace* )window->getTrace();
   TCommID id = myInfo->it->getCommIndex();
-  INT64 tmp;
+  PRV_INT64 tmp;
 
   tmp = bandwidth[ myInfo->callingInterval->getOrder() ];
 
@@ -1422,14 +1422,14 @@ TSemanticValue RecvBandWidth::execute( const SemanticInfo *info )
       return tmp * 1E-12;
 
     if ( myInfo->it->getType() & LOG && myInfo->it->getType() & RSEND )
-      tmp += ( INT64 ) ( ( bytes / time ) * 1E12 );
+      tmp += ( PRV_INT64 ) ( ( bytes / time ) * 1E12 );
     else if ( ( myInfo->it->getType() & LOG && myInfo->it->getType() & RECV &&
                 trace->getLogicalReceive( id ) >
                 trace->getPhysicalReceive( id ) ) ||
               ( myInfo->it->getType() & PHY && myInfo->it->getType() & RECV &&
                 trace->getPhysicalReceive( id ) >=
                 trace->getLogicalReceive( id ) ) )
-      tmp -= ( INT64 ) ( ( bytes / time ) * 1E12 );
+      tmp -= ( PRV_INT64 ) ( ( bytes / time ) * 1E12 );
     else
       changes = false;
   }
@@ -1440,9 +1440,9 @@ TSemanticValue RecvBandWidth::execute( const SemanticInfo *info )
       return tmp * 1E-12;
 
     if ( myInfo->it->getType() & PHY && myInfo->it->getType() & RSEND )
-      tmp += ( INT64 ) ( ( bytes / time ) * 1E12 );
+      tmp += ( PRV_INT64 ) ( ( bytes / time ) * 1E12 );
     else if ( myInfo->it->getType() & PHY && myInfo->it->getType() & RECV )
-      tmp -= ( INT64 ) ( ( bytes / time ) * 1E12 );
+      tmp -= ( PRV_INT64 ) ( ( bytes / time ) * 1E12 );
     else
       changes = false;
   }

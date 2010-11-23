@@ -42,51 +42,51 @@ class KHistogramTotals: public HistogramTotals
   public:
     KHistogramTotals( KHistogramTotals *& source );
 
-    KHistogramTotals( UINT16 numStat, THistogramColumn numColumns,
+    KHistogramTotals( PRV_UINT16 numStat, THistogramColumn numColumns,
                       THistogramColumn numPlanes );
     ~KHistogramTotals();
 
     void newValue( TSemanticValue whichValue,
-                   UINT16 idStat,
+                   PRV_UINT16 idStat,
                    THistogramColumn whichColumn,
                    THistogramColumn whichPlane = 0 );
     void finish();
 
-    TSemanticValue getTotal( UINT16 idStat,
+    TSemanticValue getTotal( PRV_UINT16 idStat,
                              THistogramColumn whichColumn,
                              THistogramColumn whichPlane = 0 ) const;
-    TSemanticValue getAverage( UINT16 idStat,
+    TSemanticValue getAverage( PRV_UINT16 idStat,
                                THistogramColumn whichColumn,
                                THistogramColumn whichPlane = 0 ) const;
-    TSemanticValue getMaximum( UINT16 idStat,
+    TSemanticValue getMaximum( PRV_UINT16 idStat,
                                THistogramColumn whichColumn,
                                THistogramColumn whichPlane = 0 ) const;
-    TSemanticValue getMinimum( UINT16 idStat,
+    TSemanticValue getMinimum( PRV_UINT16 idStat,
                                THistogramColumn whichColumn,
                                THistogramColumn whichPlane = 0 ) const;
-    TSemanticValue getStdev( UINT16 idStat,
+    TSemanticValue getStdev( PRV_UINT16 idStat,
                              THistogramColumn whichColumn,
                              THistogramColumn whichPlane = 0 ) const;
-    TSemanticValue getAvgDivMax( UINT16 idStat,
+    TSemanticValue getAvgDivMax( PRV_UINT16 idStat,
                                  THistogramColumn whichColumn,
                                  THistogramColumn whichPlane = 0 ) const;
     void getAll( vector<TSemanticValue>& where,
-                 UINT16 idStat,
+                 PRV_UINT16 idStat,
                  THistogramColumn whichColumn,
                  THistogramColumn whichPlane = 0 ) const;
 
-    vector<int>& sortByTotal( UINT16 idStat, THistogramColumn whichPlane = 0 );
-    vector<int>& sortByAverage( UINT16 idStat, THistogramColumn whichPlane = 0 );
-    vector<int>& sortByMaximum( UINT16 idStat, THistogramColumn whichPlane = 0 );
-    vector<int>& sortByMinimum( UINT16 idStat, THistogramColumn whichPlane = 0 );
-    vector<int>& sortByStdev( UINT16 idStat, THistogramColumn whichPlane = 0 );
-    vector<int>& sortByAvgDivMax( UINT16 idStat, THistogramColumn whichPlane = 0 );
+    vector<int>& sortByTotal( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    vector<int>& sortByAverage( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    vector<int>& sortByMaximum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    vector<int>& sortByMinimum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    vector<int>& sortByStdev( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    vector<int>& sortByAvgDivMax( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
 
   protected:
 
   private:
     THistogramColumn columns;
-    UINT16 stats;
+    PRV_UINT16 stats;
     // planes<stats<columns<value> > >
     vector<vector<vector<TSemanticValue> > > total;
     vector<vector<vector<TSemanticValue> > > average;

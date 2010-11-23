@@ -68,8 +68,8 @@ MemoryTrace::iterator* NoLoadTrace::end() const
 MemoryTrace::iterator* NoLoadTrace::threadBegin( TThreadOrder whichThread ) const
 {
   TRecord *tmpRec;
-  INT64 tmpOffset;
-  UINT16 tmpPos;
+  PRV_INT64 tmpOffset;
+  PRV_UINT16 tmpPos;
 
   blocks->getBeginThreadRecord( whichThread, &tmpRec, tmpOffset, tmpPos );
 
@@ -79,8 +79,8 @@ MemoryTrace::iterator* NoLoadTrace::threadBegin( TThreadOrder whichThread ) cons
 MemoryTrace::iterator* NoLoadTrace::threadEnd( TThreadOrder whichThread ) const
 {
   TRecord *tmpRec;
-  INT64 tmpOffset;
-  UINT16 tmpPos;
+  PRV_INT64 tmpOffset;
+  PRV_UINT16 tmpPos;
 
   blocks->getEndThreadRecord( whichThread, &tmpRec, tmpOffset, tmpPos );
 
@@ -90,8 +90,8 @@ MemoryTrace::iterator* NoLoadTrace::threadEnd( TThreadOrder whichThread ) const
 MemoryTrace::iterator* NoLoadTrace::CPUBegin( TCPUOrder whichCPU ) const
 {
   vector<TRecord *> records;
-  vector<INT64> offsets;
-  vector<UINT16> pos;
+  vector<PRV_INT64> offsets;
+  vector<PRV_UINT16> pos;
   vector<TThreadOrder> threads;
   TNodeOrder tmpNode;
   TCPUOrder tmpCPU;
@@ -102,8 +102,8 @@ MemoryTrace::iterator* NoLoadTrace::CPUBegin( TCPUOrder whichCPU ) const
   for ( TThreadOrder i = 0; i < threads.size(); ++i )
   {
     TRecord *tmpRec;
-    INT64 tmpOffset;
-    UINT16 tmpPos;
+    PRV_INT64 tmpOffset;
+    PRV_UINT16 tmpPos;
 
     blocks->getBeginThreadRecord( threads[ i ], &tmpRec, tmpOffset, tmpPos );
     records.push_back( tmpRec );
@@ -117,8 +117,8 @@ MemoryTrace::iterator* NoLoadTrace::CPUBegin( TCPUOrder whichCPU ) const
 MemoryTrace::iterator* NoLoadTrace::CPUEnd( TCPUOrder whichCPU ) const
 {
   vector<TRecord *> records;
-  vector<INT64> offsets;
-  vector<UINT16> pos;
+  vector<PRV_INT64> offsets;
+  vector<PRV_UINT16> pos;
   vector<TThreadOrder> threads;
   TNodeOrder tmpNode;
   TCPUOrder tmpCPU;
@@ -129,8 +129,8 @@ MemoryTrace::iterator* NoLoadTrace::CPUEnd( TCPUOrder whichCPU ) const
   for ( TThreadOrder i = 0; i < threads.size(); ++i )
   {
     TRecord *tmpRec;
-    INT64 tmpOffset;
-    UINT16 tmpPos;
+    PRV_INT64 tmpOffset;
+    PRV_UINT16 tmpPos;
 
     blocks->getEndThreadRecord( threads[ i ], &tmpRec, tmpOffset, tmpPos );
     records.push_back( tmpRec );
@@ -156,8 +156,8 @@ void NoLoadTrace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIt
   {
     ThreadIterator *it;
     TRecord *tmpRec;
-    INT64 tmpOffset;
-    UINT16 tmpPos;
+    PRV_INT64 tmpOffset;
+    PRV_UINT16 tmpPos;
 
     blocks->getThreadRecordByTime( iThread, whichTime, &tmpRec, tmpOffset, tmpPos );
     if( tmpRec == NULL )
@@ -191,8 +191,8 @@ void NoLoadTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
   for ( TCPUOrder ii = 0; ii < resourceModel.totalCPUs(); ++ii )
   {
     vector<TRecord *> records;
-    vector<INT64> offsets;
-    vector<UINT16> pos;
+    vector<PRV_INT64> offsets;
+    vector<PRV_UINT16> pos;
     vector<TThreadOrder> threads;
     TNodeOrder tmpNode;
     TCPUOrder tmpCPU;
@@ -203,8 +203,8 @@ void NoLoadTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
     for ( TThreadOrder iThread = 0; iThread < threads.size(); ++iThread )
     {
       TRecord *tmpRec;
-      INT64 tmpOffset;
-      UINT16 tmpPos;
+      PRV_INT64 tmpOffset;
+      PRV_UINT16 tmpPos;
 
       blocks->getThreadRecordByTime( threads[ iThread ], whichTime, &tmpRec, tmpOffset, tmpPos );
       if ( tmpRec == NULL )
@@ -318,7 +318,7 @@ inline TCommID NoLoadTrace::iterator::getCommIndex() const
 }
 
 NoLoadTrace::ThreadIterator::ThreadIterator( NoLoadBlocks *whichBlocks, TThreadOrder whichThread,
-    TRecord *whichRecord, INT64 whichOffset, INT16 whichPos )
+    TRecord *whichRecord, PRV_INT64 whichOffset, PRV_INT16 whichPos )
     : NoLoadTrace::iterator( whichBlocks ), thread( whichThread ),
     offset( whichOffset ), recPos( whichPos )
 {
@@ -368,7 +368,7 @@ inline MemoryTrace::iterator& NoLoadTrace::ThreadIterator::operator=( const Memo
 
 NoLoadTrace::CPUIterator::CPUIterator( NoLoadBlocks *whichBlocks, TCPUOrder whichCPU,
                                        vector<TThreadOrder>& whichThreads, vector<TRecord *>& whichRecords,
-                                       vector<INT64>& whichOffsets, vector<UINT16>& whichPos,
+                                       vector<PRV_INT64>& whichOffsets, vector<PRV_UINT16>& whichPos,
                                        bool notMove )
     : NoLoadTrace::iterator( whichBlocks ), cpu( whichCPU ), threads( whichThreads ),
     threadRecords( whichRecords ), offset( whichOffsets ), recPos( whichPos )

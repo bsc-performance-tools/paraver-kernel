@@ -49,7 +49,7 @@ namespace bplustree
   class RecordLeaf
   {
     public:
-      typedef UINT32 TRecordOrder;
+      typedef PRV_UINT32 TRecordOrder;
 
     private:
       static TRecordOrder global_order; // Numbers different records.

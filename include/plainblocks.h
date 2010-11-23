@@ -42,8 +42,8 @@ namespace Plain
   {
     TRecordTime time;
     TThreadOrder thread;
-    UINT32 block;
-    UINT32 pos;
+    PRV_UINT32 block;
+    PRV_UINT32 pos;
   };
 
   class PlainBlocks: public MemoryBlocks
@@ -54,7 +54,7 @@ namespace Plain
 
       ~PlainBlocks();
 
-      virtual TData *getLastRecord( UINT16 position ) const;
+      virtual TData *getLastRecord( PRV_UINT16 position ) const;
       virtual void resetCountInserted();
       virtual void newRecord();
       virtual void setType( TRecordType whichType );
@@ -123,8 +123,8 @@ namespace Plain
         commTypeSize
       } TCommType;
       static const TRecordType commTypes[commTypeSize];
-      static const UINT32 blockSize = 10000;
-      vector<UINT32> currentRecord;
+      static const PRV_UINT32 blockSize = 10000;
+      vector<PRV_UINT32> currentRecord;
       vector<TRecord *> currentBlock;
       vector<TLastRecord> lastRecords;
       vector<vector<TRecord *> > blocks;

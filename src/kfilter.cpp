@@ -80,7 +80,7 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
       TThreadOrder tmpThread = window->getTrace()->getSenderThread( it->getCommIndex() );
       info = ( TSemanticValue ) window->threadObjectToWindowObject( tmpThread );
     }
-    for ( UINT32 i = 0; i < commFrom.size(); i++ )
+    for ( PRV_UINT32 i = 0; i < commFrom.size(); i++ )
     {
       stop = functionCommFrom->execute( ( TSemanticValue ) commFrom[ i ], info );
       if ( stop )
@@ -108,7 +108,7 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
       TThreadOrder tmpThread = window->getTrace()->getReceiverThread( it->getCommIndex() );
       info = ( TSemanticValue ) window->threadObjectToWindowObject( tmpThread );
     }
-    for ( UINT32 i = 0; i < commTo.size(); i++ )
+    for ( PRV_UINT32 i = 0; i < commTo.size(); i++ )
     {
       stop = functionCommTo->execute( ( TSemanticValue ) commTo[ i ], info );
       if ( stop )
@@ -124,7 +124,7 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
   if ( existCommTags )
   {
     info = ( TSemanticValue ) window->getTrace()->getCommTag( it->getCommIndex() );
-    for ( UINT32 i = 0; i < commTags.size(); i++ )
+    for ( PRV_UINT32 i = 0; i < commTags.size(); i++ )
     {
       stop = functionCommTags->execute( ( TSemanticValue ) commTags[ i ], info );
       if ( stop )
@@ -143,7 +143,7 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
     tmpResult = functionCommSizes->getDefaultValue();
 
     info = ( TSemanticValue ) window->getTrace()->getCommSize( it->getCommIndex() );
-    for ( UINT32 i = 0; i < commSizes.size(); i++ )
+    for ( PRV_UINT32 i = 0; i < commSizes.size(); i++ )
     {
       stop = functionCommSizes->execute( ( TSemanticValue ) commSizes[ i ], info );
       if ( stop == false )
@@ -162,7 +162,7 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
            / ( TSemanticValue )
            ( window->getTrace()->getPhysicalReceive( it->getCommIndex() ) -
              window->getTrace()->getPhysicalSend( it->getCommIndex() ) );
-    for ( UINT32 i = 0; i < bandWidth.size(); i++ )
+    for ( PRV_UINT32 i = 0; i < bandWidth.size(); i++ )
     {
       stop = functionBandWidth->execute( ( TSemanticValue ) bandWidth[ i ], info );
       if ( stop )
@@ -183,7 +183,7 @@ bool KFilter::filterEvents( MemoryTrace::iterator *it )
   if ( existEventTypes )
   {
     info = ( TSemanticValue ) it->getEventType();
-    for ( UINT32 i = 0; i < eventTypes.size(); i++ )
+    for ( PRV_UINT32 i = 0; i < eventTypes.size(); i++ )
     {
       stop = functionEventTypes->execute( ( TSemanticValue ) eventTypes[ i ], info );
       if ( stop )
@@ -202,7 +202,7 @@ bool KFilter::filterEvents( MemoryTrace::iterator *it )
     tmpResult = functionEventValues->getDefaultValue();
 
     info = ( TSemanticValue ) it->getEventValue();
-    for ( UINT32 i = 0; i < eventValues.size(); i++ )
+    for ( PRV_UINT32 i = 0; i < eventValues.size(); i++ )
     {
       stop = functionEventValues->execute( ( TSemanticValue ) eventValues[ i ], info );
       if ( stop )
@@ -473,7 +473,7 @@ void KFilter::getValidEvents( vector<TEventType>& onVector,
   for ( set<TEventType>::const_iterator itEvt = eventsLoaded.begin();
         itEvt != eventsLoaded.end(); ++itEvt )
   {
-    for ( UINT32 i = 0; i < eventTypes.size(); i++ )
+    for ( PRV_UINT32 i = 0; i < eventTypes.size(); i++ )
     {
       stop = functionEventTypes->execute( ( TSemanticValue ) eventTypes[ i ], ( *itEvt ) );
       if ( stop )

@@ -39,7 +39,7 @@ class Window;
 class Histogram;
 class Trace;
 
-typedef UINT32 TWindowID;
+typedef PRV_UINT32 TWindowID;
 
 class LoadedWindows
 {

@@ -112,23 +112,23 @@ class Histogram
     virtual THistogramColumn getNumColumns() const = 0;
     virtual TObjectOrder getNumRows() const = 0;
 
-    virtual TSemanticValue getCurrentValue( UINT32 col,
-                                            UINT16 idStat,
-                                            UINT32 plane = 0 ) const = 0;
-    virtual UINT32 getCurrentRow( UINT32 col, UINT32 plane = 0 ) const = 0;
-    virtual void setNextCell( UINT32 col, UINT32 plane = 0 ) = 0;
-    virtual void setFirstCell( UINT32 col, UINT32 plane = 0 ) = 0;
-    virtual bool endCell( UINT32 col, UINT32 plane = 0 ) = 0;
-    virtual bool planeWithValues( UINT32 plane = 0 ) const = 0;
+    virtual TSemanticValue getCurrentValue( PRV_UINT32 col,
+                                            PRV_UINT16 idStat,
+                                            PRV_UINT32 plane = 0 ) const = 0;
+    virtual PRV_UINT32 getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const = 0;
+    virtual void setNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) = 0;
+    virtual void setFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) = 0;
+    virtual bool endCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) = 0;
+    virtual bool planeWithValues( PRV_UINT32 plane = 0 ) const = 0;
 
-    virtual TSemanticValue getCommCurrentValue( UINT32 col,
-        UINT16 idStat,
-        UINT32 plane = 0 ) const = 0;
-    virtual UINT32 getCommCurrentRow( UINT32 col, UINT32 plane = 0 ) const = 0;
-    virtual void setCommNextCell( UINT32 col, UINT32 plane = 0 ) = 0;
-    virtual void setCommFirstCell( UINT32 col, UINT32 plane = 0 ) = 0;
-    virtual bool endCommCell( UINT32 col, UINT32 plane = 0 ) = 0;
-    virtual bool planeCommWithValues( UINT32 plane = 0 ) const = 0;
+    virtual TSemanticValue getCommCurrentValue( PRV_UINT32 col,
+        PRV_UINT16 idStat,
+        PRV_UINT32 plane = 0 ) const = 0;
+    virtual PRV_UINT32 getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const = 0;
+    virtual void setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) = 0;
+    virtual void setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) = 0;
+    virtual bool endCommCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) = 0;
+    virtual bool planeCommWithValues( PRV_UINT32 plane = 0 ) const = 0;
 
     virtual HistogramTotals *getColumnTotals() const = 0;
     virtual HistogramTotals *getCommColumnTotals() const = 0;
@@ -146,7 +146,7 @@ class Histogram
     virtual string getUnitsLabel( const string& whichStat ) const = 0;
 
     virtual void getGroupsLabels( vector<string>& onVector ) const = 0;
-    virtual void getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const = 0;
+    virtual void getStatisticsLabels( vector<string>& onVector, PRV_UINT32 whichGroup ) const = 0;
     virtual string getFirstStatistic() const = 0;
     virtual string getFirstCommStatistic() const = 0;
 
@@ -159,32 +159,32 @@ class Histogram
     virtual Trace *getTrace() const { return NULL; }
     virtual bool getDestroy() const { return false; }
     virtual void setDestroy( bool newValue ) {}
-    virtual UINT16 getPosX() const
+    virtual PRV_UINT16 getPosX() const
     {
       return 0;
     }
-    virtual void setPosX( UINT16 whichPos )
+    virtual void setPosX( PRV_UINT16 whichPos )
     {}
 
-    virtual UINT16 getPosY() const
+    virtual PRV_UINT16 getPosY() const
     {
       return 0;
     }
-    virtual void setPosY( UINT16 whichPos )
+    virtual void setPosY( PRV_UINT16 whichPos )
     {}
 
-    virtual UINT16 getWidth() const
+    virtual PRV_UINT16 getWidth() const
     {
       return 600;
     }
-    virtual void setWidth( UINT16 whichPos )
+    virtual void setWidth( PRV_UINT16 whichPos )
     {}
 
-    virtual UINT16 getHeight() const
+    virtual PRV_UINT16 getHeight() const
     {
       return 300;
     }
-    virtual void setHeight( UINT16 whichPos )
+    virtual void setHeight( PRV_UINT16 whichPos )
     {}
     virtual HistogramTotals *getTotals( const string& whichStat ) const
     {
@@ -205,8 +205,8 @@ class Histogram
     {
       return ParaverConfig::getInstance()->getHistogramScientificNotation();
     }
-    virtual void setNumDecimals( UINT16 newValue ) {}
-    virtual UINT16 getNumDecimals() const
+    virtual void setNumDecimals( PRV_UINT16 newValue ) {}
+    virtual PRV_UINT16 getNumDecimals() const
     {
       return ParaverConfig::getInstance()->getHistogramPrecision();
     }
@@ -292,12 +292,12 @@ class Histogram
     {
       return 0;
     }
-    virtual void setSelectedPlane( INT32 plane ) {}
-    virtual INT32 getSelectedPlane() const
+    virtual void setSelectedPlane( PRV_INT32 plane ) {}
+    virtual PRV_INT32 getSelectedPlane() const
     {
       return 0;
     }
-    virtual INT32 getCommSelectedPlane() const
+    virtual PRV_INT32 getCommSelectedPlane() const
     {
       return 0;
     }
@@ -367,7 +367,7 @@ class Histogram
     {
       return true;
     }
-    virtual bool getIdStat( const string& whichStat, UINT16& idStat ) const
+    virtual bool getIdStat( const string& whichStat, PRV_UINT16& idStat ) const
     {
       return false;
     }
@@ -481,22 +481,22 @@ class HistogramProxy : public Histogram
     virtual THistogramColumn getNumPlanes() const;
     virtual THistogramColumn getNumColumns( const string& whichStat ) const;
     virtual TObjectOrder getNumRows() const;
-    virtual TSemanticValue getCurrentValue( UINT32 col,
-                                            UINT16 idStat,
-                                            UINT32 plane = 0 ) const;
-    virtual UINT32 getCurrentRow( UINT32 col, UINT32 plane = 0 ) const;
-    virtual void setNextCell( UINT32 col, UINT32 plane = 0 );
-    virtual void setFirstCell( UINT32 col, UINT32 plane = 0 );
-    virtual bool endCell( UINT32 col, UINT32 plane = 0 );
-    virtual bool planeWithValues( UINT32 plane = 0 ) const;
-    virtual TSemanticValue getCommCurrentValue( UINT32 col,
-        UINT16 idStat,
-        UINT32 plane = 0 ) const;
-    virtual UINT32 getCommCurrentRow( UINT32 col, UINT32 plane = 0 ) const;
-    virtual void setCommNextCell( UINT32 col, UINT32 plane = 0 );
-    virtual void setCommFirstCell( UINT32 col, UINT32 plane = 0 );
-    virtual bool endCommCell( UINT32 col, UINT32 plane = 0 );
-    virtual bool planeCommWithValues( UINT32 plane = 0 ) const;
+    virtual TSemanticValue getCurrentValue( PRV_UINT32 col,
+                                            PRV_UINT16 idStat,
+                                            PRV_UINT32 plane = 0 ) const;
+    virtual PRV_UINT32 getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const;
+    virtual void setNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
+    virtual void setFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
+    virtual bool endCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
+    virtual bool planeWithValues( PRV_UINT32 plane = 0 ) const;
+    virtual TSemanticValue getCommCurrentValue( PRV_UINT32 col,
+        PRV_UINT16 idStat,
+        PRV_UINT32 plane = 0 ) const;
+    virtual PRV_UINT32 getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const;
+    virtual void setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
+    virtual void setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
+    virtual bool endCommCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
+    virtual bool planeCommWithValues( PRV_UINT32 plane = 0 ) const;
 
     virtual HistogramTotals *getTotals( const string& whichStat ) const;
     virtual HistogramTotals *getColumnTotals() const;
@@ -516,8 +516,8 @@ class HistogramProxy : public Histogram
     virtual bool getHideColumns() const;
     virtual void setScientificNotation( bool newValue );
     virtual bool getScientificNotation() const;
-    virtual void setNumDecimals( UINT16 newValue );
-    virtual UINT16 getNumDecimals() const;
+    virtual void setNumDecimals( PRV_UINT16 newValue );
+    virtual PRV_UINT16 getNumDecimals() const;
     virtual void setThousandSeparator( bool newValue );
     virtual bool getThousandSeparator() const;
     virtual void setShowUnits( bool newValue );
@@ -549,9 +549,9 @@ class HistogramProxy : public Histogram
     virtual bool getFirstRowColored() const;
     virtual void setPlaneMinValue( double whichMin );
     virtual double getPlaneMinValue() const;
-    virtual void setSelectedPlane( INT32 plane );
-    virtual INT32 getSelectedPlane() const;
-    virtual INT32 getCommSelectedPlane() const;
+    virtual void setSelectedPlane( PRV_INT32 plane );
+    virtual PRV_INT32 getSelectedPlane() const;
+    virtual PRV_INT32 getCommSelectedPlane() const;
 
     virtual void compute2DScale();
     virtual void compute3DScale();
@@ -580,7 +580,7 @@ class HistogramProxy : public Histogram
     virtual void setCalculateAll( bool status );
     virtual bool getCalculateAll() const;
 
-    virtual bool getIdStat( const string& whichStat, UINT16& idStat ) const;
+    virtual bool getIdStat( const string& whichStat, PRV_UINT16& idStat ) const;
 
     virtual void setCurrentStat( const string& whichStat );
     virtual string getCurrentStat() const;
@@ -589,7 +589,7 @@ class HistogramProxy : public Histogram
 
     string getUnitsLabel( const string& whichStat ) const;
     virtual void getGroupsLabels( vector<string>& onVector ) const;
-    virtual void getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const;
+    virtual void getStatisticsLabels( vector<string>& onVector, PRV_UINT32 whichGroup ) const;
     virtual string getFirstStatistic() const;
     virtual string getFirstCommStatistic() const;
 
@@ -600,14 +600,14 @@ class HistogramProxy : public Histogram
 
     virtual bool getDestroy() const;
     virtual void setDestroy( bool newValue );
-    virtual UINT16 getPosX() const;
-    virtual void setPosX( UINT16 whichPos );
-    virtual UINT16 getPosY() const;
-    virtual void setPosY( UINT16 whichPos );
-    virtual UINT16 getWidth() const;
-    virtual void setWidth( UINT16 whichPos );
-    virtual UINT16 getHeight() const;
-    virtual void setHeight( UINT16 whichPos );
+    virtual PRV_UINT16 getPosX() const;
+    virtual void setPosX( PRV_UINT16 whichPos );
+    virtual PRV_UINT16 getPosY() const;
+    virtual void setPosY( PRV_UINT16 whichPos );
+    virtual PRV_UINT16 getWidth() const;
+    virtual void setWidth( PRV_UINT16 whichPos );
+    virtual PRV_UINT16 getHeight() const;
+    virtual void setHeight( PRV_UINT16 whichPos );
     virtual bool getShowWindow() const;
     virtual void setShowWindow( bool newValue );
     virtual DrawModeMethod getDrawModeObjects() const;
@@ -626,15 +626,15 @@ class HistogramProxy : public Histogram
 
     bool destroy;
 
-    UINT16 posX;
-    UINT16 posY;
-    UINT16 width;
-    UINT16 height;
+    PRV_UINT16 posX;
+    PRV_UINT16 posY;
+    PRV_UINT16 width;
+    PRV_UINT16 height;
 
     bool horizontal;
     bool hideColumns;
     bool scientificNotation;
-    UINT16 numDecimals;
+    PRV_UINT16 numDecimals;
     bool thousandSep;
     bool showUnits;
     bool sortColumns;
@@ -649,8 +649,8 @@ class HistogramProxy : public Histogram
     bool firstRowColored;
     bool futurePlane;
     double planeMinValue;
-    INT32 selectedPlane;
-    INT32 commSelectedPlane;
+    PRV_INT32 selectedPlane;
+    PRV_INT32 commSelectedPlane;
     bool showWindow;
     DrawModeMethod drawModeObjects;
     DrawModeMethod drawModeColumns;

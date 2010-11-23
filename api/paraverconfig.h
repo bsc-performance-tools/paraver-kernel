@@ -104,7 +104,7 @@ class ParaverConfig
     void setTimelineDefaultName( string whichDefaultName );
     void setTimelineNameFormat( string whichNameFormat );
     void setTimelineDefaultCFG( string whichDefaultCFG );
-    void setTimelinePrecision( UINT32 whichPrecision );
+    void setTimelinePrecision( PRV_UINT32 whichPrecision );
     void setTimelineViewEventsLines( bool whichViewEventLines );
     void setTimelineViewCommunicationsLines( bool whichViewCommunicationsLines );
     void setTimelineViewFunctionAsColor( bool whichViewFunctionAsColor );
@@ -112,7 +112,7 @@ class ParaverConfig
     void setTimelineDrawmodeTime( DrawModeMethod whichDrawmodeTime );
     void setTimelineDrawmodeObjects( DrawModeMethod whichDrawmodeObjects );
     void setTimelineGradientFunction( GradientColor::TGradientFunction whichGradientFunction );
-    void setTimelinePixelSize( UINT32 whichPixelSize );
+    void setTimelinePixelSize( PRV_UINT32 whichPixelSize );
     void setTimelineWhatWhereSemantic( bool whichWhatWhereSemantic );
     void setTimelineWhatWhereEvents( bool whichWhatWhereEvents );
     void setTimelineWhatWhereCommunications( bool whichWhatWhereCommunications );
@@ -124,7 +124,7 @@ class ParaverConfig
     string getTimelineDefaultName() const;
     string getTimelineNameFormat() const;
     string getTimelineDefaultCFG() const;
-    UINT32 getTimelinePrecision() const;
+    PRV_UINT32 getTimelinePrecision() const;
     bool getTimelineViewEventsLines() const;
     bool getTimelineViewCommunicationsLines() const;
     bool getTimelineViewFunctionAsColor() const;
@@ -132,7 +132,7 @@ class ParaverConfig
     DrawModeMethod getTimelineDrawmodeTime() const;
     DrawModeMethod getTimelineDrawmodeObjects() const;
     GradientColor::TGradientFunction getTimelineGradientFunction() const;
-    UINT32 getTimelinePixelSize() const;
+    PRV_UINT32 getTimelinePixelSize() const;
     bool getTimelineWhatWhereSemantic() const;
     bool getTimelineWhatWhereEvents() const;
     bool getTimelineWhatWhereCommunications() const;
@@ -149,7 +149,7 @@ class ParaverConfig
     void setHistogramViewEmptyColumns( bool whichViewEmptyColumns );
     void setHistogramScientificNotation( bool whichScientificNotation );
     void setHistogramThousandSep( bool whichThousandSep );
-    void setHistogramPrecision( UINT32 whichPrecision );
+    void setHistogramPrecision( PRV_UINT32 whichPrecision );
     void setHistogramShowUnits( bool whichShowUnits );
     void setHistogramNumColumns( TObjectOrder whichNumColumns );
     void setHistogramAutofitControlScale( bool whichAutofitControlScale );
@@ -169,7 +169,7 @@ class ParaverConfig
     bool getHistogramViewEmptyColumns() const;
     bool getHistogramScientificNotation() const;
     bool getHistogramThousandSep() const;
-    UINT32 getHistogramPrecision() const;
+    PRV_UINT32 getHistogramPrecision() const;
     bool getHistogramShowUnits() const;
     TObjectOrder getHistogramNumColumns() const;
     bool getHistogramAutofitControlScale() const;
@@ -334,7 +334,7 @@ class ParaverConfig
       string defaultName;
       string nameFormat;
       string defaultCFG;
-      UINT32 precision;
+      PRV_UINT32 precision;
       bool viewEventsLines;
       bool viewCommunicationsLines;
       bool viewFunctionAsColor;
@@ -342,7 +342,7 @@ class ParaverConfig
       DrawModeMethod drawmodeTime;
       DrawModeMethod drawmodeObjects;
       GradientColor::TGradientFunction gradientFunction;
-      UINT32 pixelSize;
+      PRV_UINT32 pixelSize;
       bool whatWhereSemantic;
       bool whatWhereEvents;
       bool whatWhereCommunications;
@@ -387,7 +387,7 @@ class ParaverConfig
       bool viewEmptyColumns;
       bool scientificNotation;
       bool thousandSep;
-      UINT32 precision;
+      PRV_UINT32 precision;
       bool showUnits;
       TObjectOrder histoNumColumns;
       bool autofitControlScale;
@@ -587,7 +587,7 @@ class ParaverConfig
     {
       if ( version == 0)
       {
-        UINT32 prec;
+        PRV_UINT32 prec;
         TObjectOrder columns;
         bool units;
         bool thousSep;

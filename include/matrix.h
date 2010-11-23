@@ -38,30 +38,30 @@ template <typename ValueType>
 class Matrix
 {
   public:
-    Matrix( UINT32 numCols, UINT16 numStats );
-    Matrix( TObjectOrder currentRow, UINT32 numCols, UINT16 numStats );
+    Matrix( PRV_UINT32 numCols, PRV_UINT16 numStats );
+    Matrix( TObjectOrder currentRow, PRV_UINT32 numCols, PRV_UINT16 numStats );
     Matrix( Matrix<ValueType>& source );
     ~Matrix();
 
-    void init( UINT16 idStat );
+    void init( PRV_UINT16 idStat );
     void init( );
-    void setValue( UINT32 col, UINT16 idStat, ValueType semVal );
-    void setValue( UINT32 col, ValueType semVal );
-    void setValue( UINT32 col, const vector<ValueType>& semVal );
-    void addValue( UINT32 col, UINT16 idStat, ValueType semVal );
-    void addValue( UINT32 col, ValueType semVal );
-    void addValue( UINT32 col, const vector<ValueType>& semVal );
-    ValueType getCurrentValue( UINT32 col, UINT16 idStat ) const;
-    vector<ValueType> getCurrentValue( UINT32 col ) const;
-    TObjectOrder getCurrentRow( UINT32 col ) const;
-    bool currentCellModified( UINT32 col ) const;
+    void setValue( PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal );
+    void setValue( PRV_UINT32 col, ValueType semVal );
+    void setValue( PRV_UINT32 col, const vector<ValueType>& semVal );
+    void addValue( PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal );
+    void addValue( PRV_UINT32 col, ValueType semVal );
+    void addValue( PRV_UINT32 col, const vector<ValueType>& semVal );
+    ValueType getCurrentValue( PRV_UINT32 col, PRV_UINT16 idStat ) const;
+    vector<ValueType> getCurrentValue( PRV_UINT32 col ) const;
+    TObjectOrder getCurrentRow( PRV_UINT32 col ) const;
+    bool currentCellModified( PRV_UINT32 col ) const;
     void newRow( );
-    void newRow( UINT32 col, TObjectOrder row );
+    void newRow( PRV_UINT32 col, TObjectOrder row );
     void finish( );
-    void setNextCell( UINT32 col );
-    void setFirstCell( UINT32 col );
-    bool endCell( UINT32 col );
-    void eraseColumns( UINT32 ini_col, UINT32 fin_col );
+    void setNextCell( PRV_UINT32 col );
+    void setFirstCell( PRV_UINT32 col );
+    bool endCell( PRV_UINT32 col );
+    void eraseColumns( PRV_UINT32 ini_col, PRV_UINT32 fin_col );
 
     void print() const;
 

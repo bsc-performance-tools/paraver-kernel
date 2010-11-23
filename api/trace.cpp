@@ -136,12 +136,12 @@ string TraceProxy::getTraceNameNumbered() const
   return name;
 }
 
-void TraceProxy::setInstanceNumber( UINT32 whichInstanceNumber )
+void TraceProxy::setInstanceNumber( PRV_UINT32 whichInstanceNumber )
 {
   instanceNumber = whichInstanceNumber;
 }
 
-void TraceProxy::dumpFile( const string& whichFile, INT32 numIter ) const
+void TraceProxy::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
 {
   myTrace->dumpFile( whichFile, numIter );
 }
@@ -360,7 +360,7 @@ void TraceProxy::parsePCF( const string& whichFile )
       tmpColor.red = ( *it )->get_color1();
       tmpColor.green = ( *it )->get_color2();
       tmpColor.blue = ( *it )->get_color3();
-      myCodeColor.setColor( ( UINT32 )( *it )->get_key(), tmpColor );
+      myCodeColor.setColor( ( PRV_UINT32 )( *it )->get_key(), tmpColor );
     }
   }
 

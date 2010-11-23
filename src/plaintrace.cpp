@@ -45,18 +45,18 @@ PlainTrace::PlainTrace( const ProcessModel& whichProcessModel,
   numCPUs = resourceModel.totalCPUs();
 
   for ( TThreadOrder i = 0; i < numThreads; ++i )
-    traceIndex.push_back( Index<pair<UINT32, UINT32> >( 1000 ) );
+    traceIndex.push_back( Index<pair<PRV_UINT32, PRV_UINT32> >( 1000 ) );
 }
 
 void PlainTrace::insert( MemoryBlocks *blocks )
 {
   myBlocks = dynamic_cast<PlainBlocks *>( blocks );
 
-  for ( UINT16 i = 0; i < blocks->getCountInserted(); i++ )
+  for ( PRV_UINT16 i = 0; i < blocks->getCountInserted(); i++ )
   {
     TLastRecord *tmpLast = ( TLastRecord * )blocks->getLastRecord( i );
     traceIndex[ tmpLast->thread ].indexRecord( tmpLast->time,
-        pair<UINT32, UINT32>( tmpLast->block,
+        pair<PRV_UINT32, PRV_UINT32>( tmpLast->block,
                               tmpLast->pos )
                                              );
   }
@@ -86,15 +86,15 @@ MemoryTrace::iterator* PlainTrace::threadBegin( TThreadOrder whichThread ) const
 
 MemoryTrace::iterator* PlainTrace::threadEnd( TThreadOrder whichThread ) const
 {
-  UINT32 block = myBlocks->blocks[ whichThread ].size() - 1;
-  UINT32 pos = myBlocks->currentRecord[ whichThread ];
+  PRV_UINT32 block = myBlocks->blocks[ whichThread ].size() - 1;
+  PRV_UINT32 pos = myBlocks->currentRecord[ whichThread ];
   return new PlainTrace::ThreadIterator( myBlocks, block, pos, whichThread );
 }
 
 MemoryTrace::iterator* PlainTrace::CPUBegin( TCPUOrder whichCPU ) const
 {
-  vector<UINT32> block;
-  vector<UINT32> pos;
+  vector<PRV_UINT32> block;
+  vector<PRV_UINT32> pos;
   TThreadOrder numThreads;
   vector<TThreadOrder> threads;
   TNodeOrder tmpNode;
@@ -112,8 +112,8 @@ MemoryTrace::iterator* PlainTrace::CPUBegin( TCPUOrder whichCPU ) const
 
 MemoryTrace::iterator* PlainTrace::CPUEnd( TCPUOrder whichCPU ) const
 {
-  vector<UINT32> block;
-  vector<UINT32> pos;
+  vector<PRV_UINT32> block;
+  vector<PRV_UINT32> pos;
   TThreadOrder numThreads;
   vector<TThreadOrder> threads;
   TNodeOrder tmpNode;
@@ -146,7 +146,7 @@ void PlainTrace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIte
 
   for ( TThreadOrder ii = 0; ii < numThreads; ++ii )
   {
-    pair<UINT32, UINT32> blockPos;
+    pair<PRV_UINT32, PRV_UINT32> blockPos;
     ThreadIterator *tmpIt;
     if ( traceIndex[ ii ].findRecord( whichTime, blockPos ) )
     {
@@ -179,8 +179,8 @@ void PlainTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
 
   for ( TCPUOrder ii = 0; ii < numCPUs; ++ii )
   {
-    vector<UINT32> block;
-    vector<UINT32> pos;
+    vector<PRV_UINT32> block;
+    vector<PRV_UINT32> pos;
     TThreadOrder numThreads;
     vector<TThreadOrder> threads;
     TNodeOrder tmpNode;
@@ -192,7 +192,7 @@ void PlainTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
     numThreads = threads.size();
     for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )
     {
-      pair<UINT32, UINT32> blockPos;
+      pair<PRV_UINT32, PRV_UINT32> blockPos;
       if ( traceIndex[ iThread ].findRecord( whichTime, blockPos ) )
       {
         block.push_back( blockPos.first );
@@ -287,7 +287,7 @@ inline TCommID      PlainTrace::iterator::getCommIndex() const
  * MemoryTrace Inherited ThreadIterator.
  **************************************************************************/
 
-PlainTrace::ThreadIterator::ThreadIterator( PlainBlocks *whichBlocks, UINT32 whichBlock, UINT32 whichPos,
+PlainTrace::ThreadIterator::ThreadIterator( PlainBlocks *whichBlocks, PRV_UINT32 whichBlock, PRV_UINT32 whichPos,
     TThreadOrder whichThread )
     : PlainTrace::iterator( whichBlocks ), thread( whichThread ), block( whichBlock ), pos( whichPos )
 {
@@ -364,7 +364,7 @@ MemoryTrace::iterator& PlainTrace::ThreadIterator::operator=( const MemoryTrace:
  * MemoryTrace Inherited CPUIterator.
  **************************************************************************/
 
-PlainTrace::CPUIterator::CPUIterator( PlainBlocks *whichBlocks, vector<UINT32>& whichBlock, vector<UINT32>& whichPos,
+PlainTrace::CPUIterator::CPUIterator( PlainBlocks *whichBlocks, vector<PRV_UINT32>& whichBlock, vector<PRV_UINT32>& whichPos,
                                       TThreadOrder whichNumThreads, vector<TThreadOrder>& whichThreads, TCPUOrder whichCPU )
     : PlainTrace::iterator( whichBlocks ), cpu( whichCPU ), numThreads( whichNumThreads ),
     threads( whichThreads ), block( whichBlock ), pos( whichPos )

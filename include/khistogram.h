@@ -51,9 +51,9 @@ class RowsTranslator
     RowsTranslator( vector<KWindow *>& windows );
     ~RowsTranslator();
 
-    TObjectOrder globalTranslate( UINT16 winIndex,
+    TObjectOrder globalTranslate( PRV_UINT16 winIndex,
                                   TObjectOrder rowIndex ) const;
-    void getRowChilds( UINT16 winIndex,
+    void getRowChilds( PRV_UINT16 winIndex,
                        TObjectOrder rowIndex,
                        TObjectOrder& iniRow,
                        TObjectOrder& endRow ) const;
@@ -174,23 +174,23 @@ class KHistogram : public Histogram
     THistogramColumn getNumColumns() const;
     TObjectOrder getNumRows() const;
 
-    TSemanticValue getCurrentValue( UINT32 col,
-                                    UINT16 idStat,
-                                    UINT32 plane = 0 ) const;
-    UINT32 getCurrentRow( UINT32 col, UINT32 plane = 0 ) const;
-    void setNextCell( UINT32 col, UINT32 plane = 0 );
-    void setFirstCell( UINT32 col, UINT32 plane = 0 );
-    bool endCell( UINT32 col, UINT32 plane = 0 );
-    bool planeWithValues( UINT32 plane = 0 ) const;
+    TSemanticValue getCurrentValue( PRV_UINT32 col,
+                                    PRV_UINT16 idStat,
+                                    PRV_UINT32 plane = 0 ) const;
+    PRV_UINT32 getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const;
+    void setNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
+    void setFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
+    bool endCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
+    bool planeWithValues( PRV_UINT32 plane = 0 ) const;
 
-    TSemanticValue getCommCurrentValue( UINT32 col,
-                                        UINT16 idStat,
-                                        UINT32 plane = 0 ) const;
-    UINT32 getCommCurrentRow( UINT32 col, UINT32 plane = 0 ) const;
-    void setCommNextCell( UINT32 col, UINT32 plane = 0 );
-    void setCommFirstCell( UINT32 col, UINT32 plane = 0 );
-    bool endCommCell( UINT32 col, UINT32 plane = 0 );
-    bool planeCommWithValues( UINT32 plane = 0 ) const;
+    TSemanticValue getCommCurrentValue( PRV_UINT32 col,
+                                        PRV_UINT16 idStat,
+                                        PRV_UINT32 plane = 0 ) const;
+    PRV_UINT32 getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const;
+    void setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
+    void setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
+    bool endCommCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
+    bool planeCommWithValues( PRV_UINT32 plane = 0 ) const;
 
     HistogramTotals *getColumnTotals() const;
     HistogramTotals *getCommColumnTotals() const;
@@ -208,7 +208,7 @@ class KHistogram : public Histogram
                   vector<TObjectOrder>& selectedRows );
 
     void getGroupsLabels( vector<string>& onVector ) const;
-    void getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const;
+    void getStatisticsLabels( vector<string>& onVector, PRV_UINT32 whichGroup ) const;
     string getFirstStatistic() const;
     string getFirstCommStatistic() const;
 
@@ -281,10 +281,10 @@ class KHistogram : public Histogram
     void recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                              TObjectOrder fromRow, TObjectOrder toRow,
                              vector<TObjectOrder>& selectedRows, bool needInit,
-                             UINT16 winIndex = 0, CalculateData *data = NULL );
+                             PRV_UINT16 winIndex = 0, CalculateData *data = NULL );
     void calculate( TObjectOrder iRow,
                     TRecordTime fromTime, TRecordTime toTime,
-                    UINT16 winIndex, CalculateData *data, bool& needInit );
+                    PRV_UINT16 winIndex, CalculateData *data, bool& needInit );
     void finishRow( CalculateData *data );
 };
 

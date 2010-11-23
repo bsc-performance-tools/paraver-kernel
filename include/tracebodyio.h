@@ -61,10 +61,10 @@ class TraceBodyIO
     virtual void write( fstream& whichStream,
                         const KTrace& whichTrace,
                         MemoryTrace::iterator *record,
-                        INT32 numIter = 0 ) const = 0;
+                        PRV_INT32 numIter = 0 ) const = 0;
     virtual void writeCommInfo( fstream& whichStream,
                                 const KTrace& whichTrace,
-                                INT32 numIter = 1 ) const = 0;
+                                PRV_INT32 numIter = 1 ) const = 0;
 
     static TraceBodyIO *createTraceBody( TraceStream *file);
     static TraceBodyIO *createTraceBody();

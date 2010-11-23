@@ -85,7 +85,7 @@ void TextOutput::dumpHistogram( Histogram *whichHisto, string& strOutputFile )
   THistogramColumn numPlanes;
   THistogramColumn numColumns;
   TObjectOrder numRows;
-  UINT16 currentStat;
+  PRV_UINT16 currentStat;
   ofstream outputFile;
 
   whichHisto->getIdStat( whichHisto->getCurrentStat(), currentStat );

@@ -57,7 +57,7 @@ class PreviousFiles
     static const string previousTracesFile;
     static const string previousCFGsFile;
 
-    static const UINT16 SIZE = 20;
+    static const PRV_UINT16 SIZE = 20;
 
   private:
     PreviousFiles( const string &filename );

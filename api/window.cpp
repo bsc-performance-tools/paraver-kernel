@@ -149,7 +149,7 @@ Filter *WindowProxy::getFilter() const
   return myFilter;
 }
 
-void WindowProxy::setFactor( UINT16 whichFactor, TSemanticValue newValue )
+void WindowProxy::setFactor( PRV_UINT16 whichFactor, TSemanticValue newValue )
 {
   if ( myWindow->isDerivedWindow() )
   {
@@ -159,12 +159,12 @@ void WindowProxy::setFactor( UINT16 whichFactor, TSemanticValue newValue )
   }
 }
 
-TSemanticValue WindowProxy::getFactor( UINT16 whichFactor ) const
+TSemanticValue WindowProxy::getFactor( PRV_UINT16 whichFactor ) const
 {
   return myWindow->getFactor( whichFactor );
 }
 
-void WindowProxy::setParent( UINT16 whichParent, Window *whichWindow )
+void WindowProxy::setParent( PRV_UINT16 whichParent, Window *whichWindow )
 {
   if ( myWindow->isDerivedWindow() )
   {
@@ -205,7 +205,7 @@ Window *WindowProxy::getChild()
 }
 
 
-Window *WindowProxy::getParent( UINT16 whichParent )
+Window *WindowProxy::getParent( PRV_UINT16 whichParent )
 {
   switch ( whichParent )
   {
@@ -691,42 +691,42 @@ string WindowProxy::getName() const
   return name;
 }
 
-UINT16 WindowProxy::getPosX() const
+PRV_UINT16 WindowProxy::getPosX() const
 {
   return posX;
 }
 
-void WindowProxy::setPosX( UINT16 whichPos )
+void WindowProxy::setPosX( PRV_UINT16 whichPos )
 {
   posX = whichPos;
 }
 
-UINT16 WindowProxy::getPosY() const
+PRV_UINT16 WindowProxy::getPosY() const
 {
   return posY;
 }
 
-void WindowProxy::setPosY( UINT16 whichPos )
+void WindowProxy::setPosY( PRV_UINT16 whichPos )
 {
   posY = whichPos;
 }
 
-UINT16 WindowProxy::getWidth() const
+PRV_UINT16 WindowProxy::getWidth() const
 {
   return width;
 }
 
-void WindowProxy::setWidth( UINT16 whichPos )
+void WindowProxy::setWidth( PRV_UINT16 whichPos )
 {
   width = whichPos;
 }
 
-UINT16 WindowProxy::getHeight() const
+PRV_UINT16 WindowProxy::getHeight() const
 {
   return height;
 }
 
-void WindowProxy::setHeight( UINT16 whichPos )
+void WindowProxy::setHeight( PRV_UINT16 whichPos )
 {
   height = whichPos;
 }
@@ -775,7 +775,7 @@ void WindowProxy::setShowChildrenWindow( bool newValue )
 {
   if ( getParent( 0 ) != NULL )
   {
-    for ( UINT16 i = 0; i < 2; ++i )
+    for ( PRV_UINT16 i = 0; i < 2; ++i )
     {
       getParent( i )->setShowWindow( newValue );
       getParent( i )->setShowChildrenWindow( newValue );
@@ -1160,13 +1160,13 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel,
   }
 }
 
-void WindowProxy::getGroupLabels( UINT32 whichGroup, vector<string>& onVector ) const
+void WindowProxy::getGroupLabels( PRV_UINT32 whichGroup, vector<string>& onVector ) const
 {
   myWindow->getGroupLabels( whichGroup, onVector );
 }
 
 bool WindowProxy::getParametersOfFunction( string whichFunction,
-    UINT32 &numParameters,
+    PRV_UINT32 &numParameters,
     vector<string> &nameParameters,
     vector< vector< double > >&defaultParameters ) const
 {

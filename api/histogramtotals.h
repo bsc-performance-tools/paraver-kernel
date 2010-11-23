@@ -39,35 +39,35 @@ class HistogramTotals
 
     virtual ~HistogramTotals() {}
 
-    virtual TSemanticValue getTotal( UINT16 idStat,
+    virtual TSemanticValue getTotal( PRV_UINT16 idStat,
                                      THistogramColumn whichColumn,
                                      THistogramColumn whichPlane = 0 ) const = 0;
-    virtual TSemanticValue getAverage( UINT16 idStat,
+    virtual TSemanticValue getAverage( PRV_UINT16 idStat,
                                        THistogramColumn whichColumn,
                                        THistogramColumn whichPlane = 0 ) const = 0;
-    virtual TSemanticValue getMaximum( UINT16 idStat,
+    virtual TSemanticValue getMaximum( PRV_UINT16 idStat,
                                        THistogramColumn whichColumn,
                                        THistogramColumn whichPlane = 0 ) const = 0;
-    virtual TSemanticValue getMinimum( UINT16 idStat,
+    virtual TSemanticValue getMinimum( PRV_UINT16 idStat,
                                        THistogramColumn whichColumn,
                                        THistogramColumn whichPlane = 0 ) const = 0;
-    virtual TSemanticValue getStdev( UINT16 idStat,
+    virtual TSemanticValue getStdev( PRV_UINT16 idStat,
                                      THistogramColumn whichColumn,
                                      THistogramColumn whichPlane = 0 ) const = 0;
-    virtual TSemanticValue getAvgDivMax( UINT16 idStat,
+    virtual TSemanticValue getAvgDivMax( PRV_UINT16 idStat,
                                          THistogramColumn whichColumn,
                                          THistogramColumn whichPlane = 0 ) const = 0;
     virtual void getAll( vector<TSemanticValue>& where,
-                         UINT16 idStat,
+                         PRV_UINT16 idStat,
                          THistogramColumn whichColumn,
                          THistogramColumn whichPlane = 0 ) const = 0;
 
-    virtual vector<int>& sortByTotal( UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
-    virtual vector<int>& sortByAverage( UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
-    virtual vector<int>& sortByMaximum( UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
-    virtual vector<int>& sortByMinimum( UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
-    virtual vector<int>& sortByStdev( UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
-    virtual vector<int>& sortByAvgDivMax( UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
+    virtual vector<int>& sortByTotal( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
+    virtual vector<int>& sortByAverage( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
+    virtual vector<int>& sortByMaximum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
+    virtual vector<int>& sortByMinimum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
+    virtual vector<int>& sortByStdev( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
+    virtual vector<int>& sortByAvgDivMax( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
 
   protected:
 
@@ -80,35 +80,35 @@ class HistogramTotalsProxy: public HistogramTotals
   public:
     virtual ~HistogramTotalsProxy() {}
 
-    virtual TSemanticValue getTotal( UINT16 idStat,
+    virtual TSemanticValue getTotal( PRV_UINT16 idStat,
                                      THistogramColumn whichColumn,
                                      THistogramColumn whichPlane = 0 ) const;
-    virtual TSemanticValue getAverage( UINT16 idStat,
+    virtual TSemanticValue getAverage( PRV_UINT16 idStat,
                                        THistogramColumn whichColumn,
                                        THistogramColumn whichPlane = 0 ) const;
-    virtual TSemanticValue getMaximum( UINT16 idStat,
+    virtual TSemanticValue getMaximum( PRV_UINT16 idStat,
                                        THistogramColumn whichColumn,
                                        THistogramColumn whichPlane = 0 ) const;
-    virtual TSemanticValue getMinimum( UINT16 idStat,
+    virtual TSemanticValue getMinimum( PRV_UINT16 idStat,
                                        THistogramColumn whichColumn,
                                        THistogramColumn whichPlane = 0 ) const;
-    virtual TSemanticValue getStdev( UINT16 idStat,
+    virtual TSemanticValue getStdev( PRV_UINT16 idStat,
                                      THistogramColumn whichColumn,
                                      THistogramColumn whichPlane = 0 ) const;
-    virtual TSemanticValue getAvgDivMax( UINT16 idStat,
+    virtual TSemanticValue getAvgDivMax( PRV_UINT16 idStat,
                                          THistogramColumn whichColumn,
                                          THistogramColumn whichPlane = 0 ) const;
     virtual void getAll( vector<TSemanticValue>& where,
-                         UINT16 idStat,
+                         PRV_UINT16 idStat,
                          THistogramColumn whichColumn,
                          THistogramColumn whichPlane = 0 ) const;
 
-    virtual vector<int>& sortByTotal( UINT16 idStat, THistogramColumn whichPlane = 0 );
-    virtual vector<int>& sortByAverage( UINT16 idStat, THistogramColumn whichPlane = 0 );
-    virtual vector<int>& sortByMaximum( UINT16 idStat, THistogramColumn whichPlane = 0 );
-    virtual vector<int>& sortByMinimum( UINT16 idStat, THistogramColumn whichPlane = 0 );
-    virtual vector<int>& sortByStdev( UINT16 idStat, THistogramColumn whichPlane = 0 );
-    virtual vector<int>& sortByAvgDivMax( UINT16 idStat, THistogramColumn whichPlane = 0 );
+    virtual vector<int>& sortByTotal( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    virtual vector<int>& sortByAverage( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    virtual vector<int>& sortByMaximum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    virtual vector<int>& sortByMinimum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    virtual vector<int>& sortByStdev( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    virtual vector<int>& sortByAvgDivMax( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
 
   protected:
 

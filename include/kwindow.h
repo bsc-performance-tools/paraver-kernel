@@ -166,9 +166,9 @@ class KWindow: public Window
     TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime );
 
     virtual KWindow *clone();
-    void getGroupLabels(  UINT32 whichGroup, vector<string>& onVector ) const;
+    void getGroupLabels(  PRV_UINT32 whichGroup, vector<string>& onVector ) const;
     bool getParametersOfFunction( string whichFunction,
-                                   UINT32 &numParameters,
+                                   PRV_UINT32 &numParameters,
                                    vector<string> &nameParameters,
                                    vector< vector < double > > &defaultValues  ) const;
 
@@ -350,8 +350,8 @@ class KDerivedWindow: public KWindow
 
     virtual ~KDerivedWindow();
 
-    virtual void setParent( UINT16 whichParent, Window *whichWindow );
-    virtual Window *getParent( UINT16 whichParent ) const;
+    virtual void setParent( PRV_UINT16 whichParent, Window *whichWindow );
+    virtual Window *getParent( PRV_UINT16 whichParent ) const;
 
     virtual void setLevel( TWindowLevel whichLevel );
     virtual TWindowLevel getMinAcceptableLevel() const;
@@ -391,12 +391,12 @@ class KDerivedWindow: public KWindow
       return true;
     }
 
-    void setFactor( UINT16 whichFactor, TSemanticValue newValue )
+    void setFactor( PRV_UINT16 whichFactor, TSemanticValue newValue )
     {
       factor[ whichFactor ] = newValue;
     }
 
-    TSemanticValue getFactor( UINT16 whichFactor ) const
+    TSemanticValue getFactor( PRV_UINT16 whichFactor ) const
     {
       return factor[ whichFactor ];
     }

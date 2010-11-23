@@ -74,7 +74,7 @@ PreviousFiles::~PreviousFiles()
 
 void PreviousFiles::read( fstream &myFile )
 {
-  UINT16 lines = 0;
+  PRV_UINT16 lines = 0;
 
   while ( !myFile.eof() && lines < SIZE )
   {

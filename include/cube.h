@@ -37,42 +37,42 @@ template <typename ValueType>
 class Cube
 {
   public:
-    Cube( UINT32 numPlanes, UINT32 numCols, UINT16 numStats );
+    Cube( PRV_UINT32 numPlanes, PRV_UINT32 numCols, PRV_UINT16 numStats );
     Cube( Cube<ValueType>& source );
     ~Cube();
 
-    void init( UINT16 idStat );
+    void init( PRV_UINT16 idStat );
     void init( );
-    void setValue( UINT32 plane, UINT32 col, UINT16 idStat, ValueType semVal );
-    void setValue( UINT32 plane, UINT32 col, ValueType semVal );
-    void setValue( UINT32 plane, UINT32 col, const vector<ValueType>& semVal );
-    void addValue( UINT32 plane, UINT32 col, UINT16 idStat, ValueType semVal );
-    void addValue( UINT32 plane, UINT32 col, ValueType semVal );
-    void addValue( UINT32 plane, UINT32 col, const vector<ValueType>& semVal );
-    ValueType getCurrentValue( UINT32 plane, UINT32 col, UINT16 idStat ) const;
-    vector<ValueType> getCurrentValue( UINT32 plane, UINT32 col ) const;
-    UINT32 getCurrentRow( UINT32 plane, UINT32 col ) const;
-    UINT32 getCurrentRow( ) const;
-    bool currentCellModified( UINT32 plane, UINT32 col ) const;
+    void setValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal );
+    void setValue( PRV_UINT32 plane, PRV_UINT32 col, ValueType semVal );
+    void setValue( PRV_UINT32 plane, PRV_UINT32 col, const vector<ValueType>& semVal );
+    void addValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal );
+    void addValue( PRV_UINT32 plane, PRV_UINT32 col, ValueType semVal );
+    void addValue( PRV_UINT32 plane, PRV_UINT32 col, const vector<ValueType>& semVal );
+    ValueType getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat ) const;
+    vector<ValueType> getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col ) const;
+    PRV_UINT32 getCurrentRow( PRV_UINT32 plane, PRV_UINT32 col ) const;
+    PRV_UINT32 getCurrentRow( ) const;
+    bool currentCellModified( PRV_UINT32 plane, PRV_UINT32 col ) const;
     void newRow( );
-    void newRow( UINT32 plane, UINT32 col, UINT32 row );
+    void newRow( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT32 row );
     void finish( );
-    void setNextCell( UINT32 plane, UINT32 col );
-    void setFirstCell( UINT32 plane, UINT32 col );
-    bool endCell( UINT32 plane, UINT32 col );
-    bool planeWithValues( UINT32 plane ) const;
-    UINT32 getPlanes( ) const;
-    void eraseColumns( UINT32 ini_col, UINT32 fin_col );
-    void erasePlanes( UINT32 ini_plane, UINT32 fin_plane );
+    void setNextCell( PRV_UINT32 plane, PRV_UINT32 col );
+    void setFirstCell( PRV_UINT32 plane, PRV_UINT32 col );
+    bool endCell( PRV_UINT32 plane, PRV_UINT32 col );
+    bool planeWithValues( PRV_UINT32 plane ) const;
+    PRV_UINT32 getPlanes( ) const;
+    void eraseColumns( PRV_UINT32 ini_col, PRV_UINT32 fin_col );
+    void erasePlanes( PRV_UINT32 ini_plane, PRV_UINT32 fin_plane );
 
     void print() const;
 
   private:
     vector<Matrix<ValueType> *> planes;
-    UINT32 nplanes;
-    UINT32 ncols;
-    UINT32 nstat;
-    UINT32 crow;
+    PRV_UINT32 nplanes;
+    PRV_UINT32 ncols;
+    PRV_UINT32 nstat;
+    PRV_UINT32 crow;
 };
 
 #include "src/cube.cpp"

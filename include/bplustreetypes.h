@@ -174,9 +174,9 @@ namespace bplustree
     return record->type & END;
   }
 
-  static inline UINT16 getTypeOrdered( TRecord *r )
+  static inline PRV_UINT16 getTypeOrdered( TRecord *r )
   {
-    UINT16 ret;
+    PRV_UINT16 ret;
 
     if ( isEvent( r ) )
       ret = 6;
@@ -215,7 +215,7 @@ namespace bplustree
   /*
   #define getTypeOrdered(r) \
     { \
-      UINT8 ret; \
+      PRV_UINT8 ret; \
       \
       if (Is_state(r)) \
       { \

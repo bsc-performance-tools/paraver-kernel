@@ -51,7 +51,7 @@ void createFilter()
   functions[0].push_back( new FilterRange() );
 
 
-  for ( UINT16 i = 0; i < functions[0].size(); i++ )
+  for ( PRV_UINT16 i = 0; i < functions[0].size(); i++ )
     names.push_back( functions[0][i]->getName() );
 
 

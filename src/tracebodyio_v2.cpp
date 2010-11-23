@@ -89,7 +89,7 @@ void TraceBodyIO_v2::read( TraceStream *file, MemoryBlocks& records,
 void TraceBodyIO_v2::write( fstream& whichStream,
                             const KTrace& whichTrace,
                             MemoryTrace::iterator *record,
-                            INT32 numIter ) const
+                            PRV_INT32 numIter ) const
 {
   string line;
   bool writeReady;
@@ -128,11 +128,11 @@ void TraceBodyIO_v2::write( fstream& whichStream,
 void TraceBodyIO_v2::writeEvents( fstream& whichStream,
                                   const KTrace& whichTrace,
                                   vector<MemoryTrace::iterator *>& recordList,
-                                  INT32 numIter ) const
+                                  PRV_INT32 numIter ) const
 {
   string line;
 
-  for ( UINT16 i = 0; i < recordList.size(); i++ )
+  for ( PRV_UINT16 i = 0; i < recordList.size(); i++ )
   {
     if ( i > 0 )
     {
@@ -149,11 +149,11 @@ void TraceBodyIO_v2::writeEvents( fstream& whichStream,
 
 void TraceBodyIO_v2::writeCommInfo( fstream& whichStream,
                                     const KTrace& whichTrace,
-                                    INT32 numIter ) const
+                                    PRV_INT32 numIter ) const
 {
   TRecordTime endTraceTime = whichTrace.getEndTime();
 
-  for ( INT32 i = 0; i < numIter; ++i )
+  for ( PRV_INT32 i = 0; i < numIter; ++i )
   {
     TRecordTime baseTime = endTraceTime * i;
 
@@ -521,7 +521,7 @@ bool TraceBodyIO_v2::readCommon( istringstream& line,
 bool TraceBodyIO_v2::writeState( string& line,
                                  const KTrace& whichTrace,
                                  MemoryTrace::iterator *record,
-                                 INT32 numIter ) const
+                                 PRV_INT32 numIter ) const
 {
   ostringstream ostr;
   ostr << fixed;
@@ -545,7 +545,7 @@ bool TraceBodyIO_v2::writeEvent( string& line,
                                  const KTrace& whichTrace,
                                  MemoryTrace::iterator *record,
                                  bool needCommons,
-                                 INT32 numIter ) const
+                                 PRV_INT32 numIter ) const
 {
   TRecordType firstType;
   TRecordTime firstTime;
@@ -582,7 +582,7 @@ bool TraceBodyIO_v2::writeEvent( string& line,
 bool TraceBodyIO_v2::writeCommRecord( string& line,
                                       const KTrace& whichTrace,
                                       MemoryTrace::iterator *record,
-                                      INT32 numIter ) const
+                                      PRV_INT32 numIter ) const
 {
   ostringstream ostr;
   TCommID commID;
@@ -622,7 +622,7 @@ bool TraceBodyIO_v2::writeCommRecord( string& line,
 bool TraceBodyIO_v2::writeGlobalComm( string& line,
                                       const KTrace& whichTrace,
                                       MemoryTrace::iterator *record,
-                                      INT32 numIter ) const
+                                      PRV_INT32 numIter ) const
 {
   return true;
 }
@@ -631,7 +631,7 @@ bool TraceBodyIO_v2::writeGlobalComm( string& line,
 void TraceBodyIO_v2::writeCommon( ostringstream& line,
                                   const KTrace& whichTrace,
                                   MemoryTrace::iterator *record,
-                                  INT32 numIter ) const
+                                  PRV_INT32 numIter ) const
 {
   if ( whichTrace.existResourceInfo() )
     line << record->getCPU() + 1 << ':';

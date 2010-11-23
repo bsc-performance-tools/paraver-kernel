@@ -97,7 +97,7 @@ namespace NoLoad
           {}
 
           ThreadIterator( NoLoadBlocks *whichBlocks, TThreadOrder whichThread,
-                          TRecord *whichRecord, INT64 whichOffset, INT16 whichPos );
+                          TRecord *whichRecord, PRV_INT64 whichOffset, PRV_INT16 whichPos );
 
           virtual ~ThreadIterator();
 
@@ -110,8 +110,8 @@ namespace NoLoad
 
         private:
           TThreadOrder thread;
-          INT64 offset;
-          UINT16 recPos;
+          PRV_INT64 offset;
+          PRV_UINT16 recPos;
 
           friend class NoLoadTrace;
       };
@@ -124,7 +124,7 @@ namespace NoLoad
 
           CPUIterator( NoLoadBlocks *whichBlocks, TCPUOrder whichCPU,
                        vector<TThreadOrder>& whichThreads, vector<TRecord *>& whichRecords,
-                       vector<INT64>& whichOffsets, vector<UINT16>& whichPos, bool notMove = false );
+                       vector<PRV_INT64>& whichOffsets, vector<PRV_UINT16>& whichPos, bool notMove = false );
 
           virtual ~CPUIterator();
 
@@ -139,8 +139,8 @@ namespace NoLoad
           TCPUOrder cpu;
           vector<TThreadOrder> threads;
           vector<TRecord *> threadRecords;
-          vector<INT64> offset;
-          vector<UINT16> recPos;
+          vector<PRV_INT64> offset;
+          vector<PRV_UINT16> recPos;
           TThreadOrder lastThread;
 
           TThreadOrder minThread();

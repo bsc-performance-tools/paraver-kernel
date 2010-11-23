@@ -52,7 +52,7 @@ TSemanticValue ActiveThreadValues::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
-  for( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  for( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
     if( parameters[ VALUES ][ i ] == myInfo->values[ 0 ] )
       return myInfo->values[ 0 ];
@@ -66,7 +66,7 @@ TSemanticValue ActiveThreadValuesSign::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
-  for( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  for( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
     if( parameters[ VALUES ][ i ] == myInfo->values[ 0 ] )
       return 1;

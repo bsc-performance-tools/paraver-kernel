@@ -39,10 +39,10 @@ using namespace std;
 class TraceBodyIO_v1 : public TraceBodyIO
 {
   public:
-    static const UINT8 StateRecord = '1';
-    static const UINT8 EventRecord = '2';
-    static const UINT8 CommRecord = '3';
-    static const UINT8 GlobalCommRecord = '4';
+    static const PRV_UINT8 StateRecord = '1';
+    static const PRV_UINT8 EventRecord = '2';
+    static const PRV_UINT8 CommRecord = '3';
+    static const PRV_UINT8 GlobalCommRecord = '4';
 
     bool ordered() const;
     void read( TraceStream *file, MemoryBlocks& records,
@@ -50,10 +50,10 @@ class TraceBodyIO_v1 : public TraceBodyIO
     void write( fstream& whichStream,
                 const KTrace& whichTrace,
                 MemoryTrace::iterator *record,
-                INT32 numIter = 0 ) const;
+                PRV_INT32 numIter = 0 ) const;
     void writeCommInfo( fstream& whichStream,
                         const KTrace& whichTrace,
-                        INT32 numIter = 1 ) const;
+                        PRV_INT32 numIter = 1 ) const;
     void writeEvents( fstream& whichStream,
                       const KTrace& whichTrace,
                       vector<MemoryTrace::iterator *>& recordList ) const;

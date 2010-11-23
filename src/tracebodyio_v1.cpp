@@ -82,7 +82,7 @@ void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
 void TraceBodyIO_v1::write( fstream& whichStream,
                             const KTrace& whichTrace,
                             MemoryTrace::iterator *record,
-                            INT32 numIter ) const
+                            PRV_INT32 numIter ) const
 {
   bool writeReady;
   TRecordType type = record->getType();
@@ -117,7 +117,7 @@ void TraceBodyIO_v1::writeEvents( fstream& whichStream,
                                   const KTrace& whichTrace,
                                   vector<MemoryTrace::iterator *>& recordList ) const
 {
-  for ( UINT16 i = 0; i < recordList.size(); i++ )
+  for ( PRV_UINT16 i = 0; i < recordList.size(); i++ )
   {
     if ( i > 0 )
     {
@@ -133,7 +133,7 @@ void TraceBodyIO_v1::writeEvents( fstream& whichStream,
 
 void TraceBodyIO_v1::writeCommInfo( fstream& whichStream,
                                     const KTrace& whichTrace,
-                                    INT32 numIter ) const
+                                    PRV_INT32 numIter ) const
 {}
 
 /**********************

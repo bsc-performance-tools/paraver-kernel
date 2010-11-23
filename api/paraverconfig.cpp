@@ -234,7 +234,7 @@ void ParaverConfig::setTimelineDefaultCFG( string whichDefaultCFG )
   xmlTimeline.defaultCFG = whichDefaultCFG;
 }
 
-void ParaverConfig::setTimelinePrecision( UINT32 whichPrecision )
+void ParaverConfig::setTimelinePrecision( PRV_UINT32 whichPrecision )
 {
   xmlTimeline.precision = whichPrecision;
 }
@@ -274,7 +274,7 @@ void ParaverConfig::setTimelineGradientFunction( GradientColor::TGradientFunctio
   xmlTimeline.gradientFunction = whichGradientFunction;
 }
 
-void ParaverConfig::setTimelinePixelSize( UINT32 whichPixelSize )
+void ParaverConfig::setTimelinePixelSize( PRV_UINT32 whichPixelSize )
 {
   xmlTimeline.pixelSize = whichPixelSize;
 }
@@ -330,7 +330,7 @@ string ParaverConfig::getTimelineDefaultCFG() const
   return xmlTimeline.defaultCFG;
 }
 
-UINT32 ParaverConfig::getTimelinePrecision() const
+PRV_UINT32 ParaverConfig::getTimelinePrecision() const
 {
   return xmlTimeline.precision;
 }
@@ -370,7 +370,7 @@ GradientColor::TGradientFunction ParaverConfig::getTimelineGradientFunction() co
   return xmlTimeline.gradientFunction;
 }
 
-UINT32 ParaverConfig::getTimelinePixelSize() const
+PRV_UINT32 ParaverConfig::getTimelinePixelSize() const
 {
   return xmlTimeline.pixelSize;
 }
@@ -447,7 +447,7 @@ void ParaverConfig::setHistogramThousandSep( bool whichThousandSep )
   xmlHistogram.thousandSep = whichThousandSep;
 }
 
-void ParaverConfig::setHistogramPrecision( UINT32 whichPrecision )
+void ParaverConfig::setHistogramPrecision( PRV_UINT32 whichPrecision )
 {
   xmlHistogram.precision = whichPrecision;
 }
@@ -542,7 +542,7 @@ bool ParaverConfig::getHistogramThousandSep() const
   return xmlHistogram.thousandSep;
 }
 
-UINT32 ParaverConfig::getHistogramPrecision() const
+PRV_UINT32 ParaverConfig::getHistogramPrecision() const
 {
   return xmlHistogram.precision;
 }
@@ -1149,7 +1149,7 @@ void ParaverConfig::unLoadMap()
 void WWNumDecimals::parseLine( istringstream& line, ParaverConfig& config )
 {
   string strNumDecimals;
-  UINT32 precision;
+  PRV_UINT32 precision;
 
   getline( line, strNumDecimals );
   istringstream streamNumDecimals( strNumDecimals );

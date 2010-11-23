@@ -67,20 +67,20 @@ PlainBlocks::~PlainBlocks()
   {
     if ( ( blocks[ iThread ] )[ 0 ] != NULL )
     {
-      for ( UINT32 i = 0; i < blocks[ iThread ].size(); i++ )
+      for ( PRV_UINT32 i = 0; i < blocks[ iThread ].size(); i++ )
         delete[] ( blocks[ iThread ] )[ i ];
     }
     blocks[ iThread ].clear();
   }
 
-  for ( UINT32 i = 0; i < communications.size(); i++ )
+  for ( PRV_UINT32 i = 0; i < communications.size(); i++ )
     delete communications[i];
 
   blocks.clear();
   communications.clear();
 }
 
-TData *PlainBlocks::getLastRecord( UINT16 position ) const
+TData *PlainBlocks::getLastRecord( PRV_UINT16 position ) const
 {
   return ( TData * )&lastRecords[ position ];
 }
@@ -371,8 +371,8 @@ TRecordTime PlainBlocks::getPhysicalReceive( TCommID whichComm ) const
 TRecordTime PlainBlocks::getLastRecordTime() const
 {
   TThreadOrder thread = lastRecords[ lastRecords.size() - 1 ].thread;
-  UINT32 block = lastRecords[ lastRecords.size() - 1 ].block;
-  UINT32 pos = lastRecords[ lastRecords.size() - 1 ].pos;
+  PRV_UINT32 block = lastRecords[ lastRecords.size() - 1 ].block;
+  PRV_UINT32 pos = lastRecords[ lastRecords.size() - 1 ].pos;
   TRecordTime time = blocks[ thread ][ block ][ pos ].time;
 
   return time;

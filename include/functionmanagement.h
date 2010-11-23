@@ -62,12 +62,12 @@ class FunctionManagement
     ~FunctionManagement();
 
     T *getFunction( const string& ) const;
-    UINT32 numGroups() const;
+    PRV_UINT32 numGroups() const;
     void getNameGroups( vector<string>& );
     void getAll( vector<T *>& ) const;
-    void getAll( vector<T *>&, UINT32 ) const;
+    void getAll( vector<T *>&, PRV_UINT32 ) const;
     void getAll( vector<string>& ) const;
-    void getAll( vector<string>&, UINT32 ) const;
+    void getAll( vector<string>&, PRV_UINT32 ) const;
 };
 
 #include "src/functionmanagement.cpp"

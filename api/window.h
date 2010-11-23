@@ -70,18 +70,18 @@ class Window
     }
 
     //DerivedWindow
-    virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue ) {}
-    virtual TSemanticValue getFactor( UINT16 whichFactor ) const
+    virtual void setFactor( PRV_UINT16 whichFactor, TSemanticValue newValue ) {}
+    virtual TSemanticValue getFactor( PRV_UINT16 whichFactor ) const
     {
       return 1.0;
     }
-    virtual void setParent( UINT16 whichParent, Window *whichWindow ) {}
+    virtual void setParent( PRV_UINT16 whichParent, Window *whichWindow ) {}
     virtual void setChild( Window *whichWindow ) {}
     virtual Window *getChild()
     {
       return NULL;
     }
-    virtual Window *getParent( UINT16 whichParent )
+    virtual Window *getParent( PRV_UINT16 whichParent )
     {
       return NULL;
     }
@@ -188,32 +188,32 @@ class Window
       return "";
     }
 
-    virtual UINT16 getPosX() const
+    virtual PRV_UINT16 getPosX() const
     {
       return 0;
     }
-    virtual void setPosX( UINT16 whichPos )
+    virtual void setPosX( PRV_UINT16 whichPos )
     {}
 
-    virtual UINT16 getPosY() const
+    virtual PRV_UINT16 getPosY() const
     {
       return 0;
     }
-    virtual void setPosY( UINT16 whichPos )
+    virtual void setPosY( PRV_UINT16 whichPos )
     {}
 
-    virtual UINT16 getWidth() const
+    virtual PRV_UINT16 getWidth() const
     {
       return 0;
     }
-    virtual void setWidth( UINT16 whichPos )
+    virtual void setWidth( PRV_UINT16 whichPos )
     {}
 
-    virtual UINT16 getHeight() const
+    virtual PRV_UINT16 getHeight() const
     {
       return 0;
     }
-    virtual void setHeight( UINT16 whichPos )
+    virtual void setHeight( PRV_UINT16 whichPos )
     {}
     virtual void setDrawModeObject( DrawModeMethod method )
     {}
@@ -373,9 +373,9 @@ class Window
                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels = false )
     {}
 
-    virtual void getGroupLabels( UINT32 whichGroup, vector<string>& onVector ) const = 0;
+    virtual void getGroupLabels( PRV_UINT32 whichGroup, vector<string>& onVector ) const = 0;
     virtual bool getParametersOfFunction( string whichFunction,
-                                          UINT32 &numParameters,
+                                          PRV_UINT32 &numParameters,
                                           vector<string> &nameParameters,
                                           vector< vector< double > >&defaultParameters ) const = 0;
 
@@ -396,12 +396,12 @@ class WindowProxy: public Window
     virtual Filter *getFilter() const;
 
     //DerivedWindow
-    virtual void setFactor( UINT16 whichFactor, TSemanticValue newValue );
-    virtual TSemanticValue getFactor( UINT16 whichFactor ) const;
-    virtual void setParent( UINT16 whichParent, Window *whichWindow );
+    virtual void setFactor( PRV_UINT16 whichFactor, TSemanticValue newValue );
+    virtual TSemanticValue getFactor( PRV_UINT16 whichFactor ) const;
+    virtual void setParent( PRV_UINT16 whichParent, Window *whichWindow );
     virtual void setChild( Window *whichWindow );
     virtual Window *getChild();
-    virtual Window *getParent( UINT16 whichParent );
+    virtual Window *getParent( PRV_UINT16 whichParent );
 
     virtual Window *clone( );
 
@@ -468,14 +468,14 @@ class WindowProxy: public Window
     virtual Window *getConcrete() const;
     virtual void setName( const string& whichName );
     virtual string getName() const;
-    virtual UINT16 getPosX() const;
-    virtual void setPosX( UINT16 whichPos );
-    virtual UINT16 getPosY() const;
-    virtual void setPosY( UINT16 whichPos );
-    virtual UINT16 getWidth() const;
-    virtual void setWidth( UINT16 whichPos );
-    virtual UINT16 getHeight() const;
-    virtual void setHeight( UINT16 whichPos );
+    virtual PRV_UINT16 getPosX() const;
+    virtual void setPosX( PRV_UINT16 whichPos );
+    virtual PRV_UINT16 getPosY() const;
+    virtual void setPosY( PRV_UINT16 whichPos );
+    virtual PRV_UINT16 getWidth() const;
+    virtual void setWidth( PRV_UINT16 whichPos );
+    virtual PRV_UINT16 getHeight() const;
+    virtual void setHeight( PRV_UINT16 whichPos );
     virtual void setDrawModeObject( DrawModeMethod method );
     virtual DrawModeMethod getDrawModeObject() const;
     virtual void setDrawModeTime( DrawModeMethod method );
@@ -536,9 +536,9 @@ class WindowProxy: public Window
                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels = false );
 //    virtual TObjectOrder getFirstSelectedRow();
 //    virtual TObjectOrder getLastSelectedRow();
-    virtual void getGroupLabels( UINT32 whichGroup, vector<string>& onVector ) const;
+    virtual void getGroupLabels( PRV_UINT32 whichGroup, vector<string>& onVector ) const;
     virtual bool getParametersOfFunction( string whichFunction,
-                                          UINT32 &numParameters,
+                                          PRV_UINT32 &numParameters,
                                           vector<string> &nameParameters,
                                           vector< vector< double > >&defaultParameters ) const;
 
@@ -549,10 +549,10 @@ class WindowProxy: public Window
 
     bool destroy;
 
-    UINT16 posX;
-    UINT16 posY;
-    UINT16 width;
-    UINT16 height;
+    PRV_UINT16 posX;
+    PRV_UINT16 posY;
+    PRV_UINT16 width;
+    PRV_UINT16 height;
 
     TRecordTime winBeginTime;
     TRecordTime winEndTime;

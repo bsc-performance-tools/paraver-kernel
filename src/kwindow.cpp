@@ -127,10 +127,10 @@ TRecordTime KWindow::traceUnitsToWindowUnits( TRecordTime whichTime )
     tmpTime = whichTime;
   else
   {
-    UINT16 from = myTrace->getTimeUnit() > timeUnit ? timeUnit : myTrace->getTimeUnit();
-    UINT16 to = myTrace->getTimeUnit() > timeUnit ? myTrace->getTimeUnit() : timeUnit;
+    PRV_UINT16 from = myTrace->getTimeUnit() > timeUnit ? timeUnit : myTrace->getTimeUnit();
+    PRV_UINT16 to = myTrace->getTimeUnit() > timeUnit ? myTrace->getTimeUnit() : timeUnit;
 
-    for( UINT16 i = from + 1; i <= to; i++ )
+    for( PRV_UINT16 i = from + 1; i <= to; i++ )
       factor *= factorTable[ i ];
 
     if( myTrace->getTimeUnit() > timeUnit )
@@ -151,10 +151,10 @@ TRecordTime KWindow::windowUnitsToTraceUnits( TRecordTime whichTime )
     tmpTime = whichTime;
   else
   {
-    UINT16 from = myTrace->getTimeUnit() > timeUnit ? timeUnit : myTrace->getTimeUnit();
-    UINT16 to = myTrace->getTimeUnit() > timeUnit ? myTrace->getTimeUnit() : timeUnit;
+    PRV_UINT16 from = myTrace->getTimeUnit() > timeUnit ? timeUnit : myTrace->getTimeUnit();
+    PRV_UINT16 to = myTrace->getTimeUnit() > timeUnit ? myTrace->getTimeUnit() : timeUnit;
 
-    for( UINT16 i = from + 1; i <= to; i++ )
+    for( PRV_UINT16 i = from + 1; i <= to; i++ )
       factor *= factorTable[ i ];
 
     if( myTrace->getTimeUnit() > timeUnit )
@@ -176,14 +176,14 @@ KWindow *KWindow::clone()
   return NULL;
 }
 
-void KWindow::getGroupLabels( UINT32 whichGroup, vector<string>& onVector ) const
+void KWindow::getGroupLabels( PRV_UINT32 whichGroup, vector<string>& onVector ) const
 {
   FunctionManagement<SemanticFunction>::getInstance()->getAll( onVector, whichGroup );
 }
 
 
 bool KWindow::getParametersOfFunction( string whichFunction,
-                                       UINT32 &numParameters,
+                                       PRV_UINT32 &numParameters,
                                        vector< string > &nameParameters,
                                        vector< vector < double > > &defaultValues ) const
 {
@@ -197,7 +197,7 @@ bool KWindow::getParametersOfFunction( string whichFunction,
 
     nameParameters.clear();
     defaultValues.clear();
-    for( UINT32 i = 0; i < numParameters; ++i )
+    for( PRV_UINT32 i = 0; i < numParameters; ++i )
     {
       nameParameters.push_back( tmp->getParamName( TParamIndex( i ) ) );
       defaultValues.push_back( tmp->getParam( TParamIndex( i ) ) );
@@ -345,7 +345,7 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
 {
   TObjectOrder objectSize = 0;
 
-  for( UINT8 i = WORKLOAD; i <= COMPOSECPU; i++ )
+  for( PRV_UINT8 i = WORKLOAD; i <= COMPOSECPU; i++ )
   {
     if( functions[ i ] != NULL )
       functions[ i ]->init( this );
@@ -1004,7 +1004,7 @@ void KDerivedWindow::init( TRecordTime initialTime, TCreateList create, bool upd
 /*  TObjectOrder objectSize = 0;
   TWindowLevel tmpLevel = getLevel();
 */
-  for( UINT8 i = WORKLOAD; i <= DERIVED; ++i )
+  for( PRV_UINT8 i = WORKLOAD; i <= DERIVED; ++i )
   {
     if( functions[ i ] != NULL )
       functions[ i ]->init( this );
@@ -1028,7 +1028,7 @@ void KDerivedWindow::init( TRecordTime initialTime, TCreateList create, bool upd
   if( initFromBegin() )
     initialTime = 0;
 
-  for( UINT16 i = 0; i < parents.size(); i++ )
+  for( PRV_UINT16 i = 0; i < parents.size(); i++ )
     parents[ i ]->init( initialTime, create );
 }
 
@@ -1111,14 +1111,14 @@ Interval *KDerivedWindow::getLevelInterval( TWindowLevel whichLevel,
   return NULL;
 }
 
-void KDerivedWindow::setParent( UINT16 whichParent, Window *whichWindow )
+void KDerivedWindow::setParent( PRV_UINT16 whichParent, Window *whichWindow )
 {
   parents[ whichParent ] = ( KWindow* )whichWindow;
   if( parents[ 0 ] != NULL && parents[ 1 ] != NULL )
     setup( NULL );
 }
 
-Window *KDerivedWindow::getParent( UINT16 whichParent ) const
+Window *KDerivedWindow::getParent( PRV_UINT16 whichParent ) const
 {
   return parents[whichParent];
 }
@@ -1133,7 +1133,7 @@ TWindowLevel KDerivedWindow::getMinAcceptableLevel() const
 {
   TWindowLevel tmp = NONE;
 
-  for( UINT16 i = 0; i < parents.size(); i++ )
+  for( PRV_UINT16 i = 0; i < parents.size(); i++ )
   {
     if( parents[ i ] != NULL && parents[ i ]->getLevel() > tmp )
       tmp = parents[ i ]->getLevel();
@@ -1154,7 +1154,7 @@ KWindow *KDerivedWindow::clone()
     clonedKDerivedWindow->factor[i] = factor[ i ];
   }
 
-  for ( UINT16 i = 0; i <= DERIVED; i++ )
+  for ( PRV_UINT16 i = 0; i <= DERIVED; i++ )
   {
     if( functions[ i ] != NULL )
       clonedKDerivedWindow->functions[ i ] = functions[ i ]->clone();

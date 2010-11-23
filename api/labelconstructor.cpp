@@ -150,7 +150,7 @@ inline string chomp( TSemanticValue& number )
   number /= 1000.0;
   number = floor( number );
   TSemanticValue remainder = origValue - number * 1000.0;
-  INT32 intRemainder = INT32( remainder );
+  PRV_INT32 intRemainder = PRV_INT32( remainder );
 
   if ( number == 0 )
     return boost::lexical_cast<std::string>( intRemainder );
@@ -207,7 +207,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
     else
       tmp << fixed;
     tmp.precision( ParaverConfig::getInstance()->getHistogramPrecision() );
-    value -= INT64( origValue );
+    value -= PRV_INT64( origValue );
     if ( value > 0 )
     {
       tmp << value;
@@ -251,7 +251,7 @@ string LabelConstructor::histoTotalLabel( THistoTotals whichTotal )
   return "";
 }
 
-string LabelConstructor::numberWithSeparators( TSemanticValue value, UINT32 precision, TTimeUnit unit )
+string LabelConstructor::numberWithSeparators( TSemanticValue value, PRV_UINT32 precision, TTimeUnit unit )
 {
   label.clear();
   label.str( "" );
@@ -276,7 +276,7 @@ string LabelConstructor::numberWithSeparators( TSemanticValue value, UINT32 prec
     tmp.str( "" );
     tmp << fixed;
     tmp.precision( precision );
-    value -= INT64( origValue );
+    value -= PRV_INT64( origValue );
     if ( unit != NS && value > 0 )
     {
       tmp << value;
@@ -290,7 +290,7 @@ string LabelConstructor::numberWithSeparators( TSemanticValue value, UINT32 prec
   return label.str();
 }
 
-string LabelConstructor::timeLabel( TTime value, TTimeUnit unit, UINT32 precision )
+string LabelConstructor::timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 precision )
 {
   sstrTimeLabel.clear();
   sstrTimeLabel.str( "" );
@@ -310,7 +310,7 @@ string LabelConstructor::timeLabel( TTime value, TTimeUnit unit, UINT32 precisio
 
 
 bool LabelConstructor::getTimeValue( const string& timeLabel,
-                                     TTimeUnit unit, UINT32 precision,
+                                     TTimeUnit unit, PRV_UINT32 precision,
                                      TTime& value )
 {
   bool done = false;
@@ -343,14 +343,14 @@ bool LabelConstructor::getTimeValue( const string& timeLabel,
 
 string LabelConstructor::semanticLabel( const Window * whichWindow,
                                         TSemanticValue value,
-                                        bool text, UINT32 precision )
+                                        bool text, PRV_UINT32 precision )
 {
   sstrSemanticLabel.clear();
   sstrSemanticLabel.str( "" );
   SemanticInfoType infoType = whichWindow->getSemanticInfoType();
 
   sstrSemanticLabel << fixed;
-  if ( ( value - INT64( value ) ) > 0.0 )
+  if ( ( value - PRV_INT64( value ) ) > 0.0 )
     sstrSemanticLabel.precision( precision );
   else
     sstrSemanticLabel.precision( 0 );

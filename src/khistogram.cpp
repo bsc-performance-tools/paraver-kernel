@@ -85,7 +85,7 @@ RowsTranslator::~RowsTranslator()
 {}
 
 
-inline TObjectOrder RowsTranslator::globalTranslate( UINT16 winIndex,
+inline TObjectOrder RowsTranslator::globalTranslate( PRV_UINT16 winIndex,
     TObjectOrder rowIndex ) const
 {
   // This method will translate Kwindow rows to 2D rows.
@@ -93,7 +93,7 @@ inline TObjectOrder RowsTranslator::globalTranslate( UINT16 winIndex,
 }
 
 
-inline void RowsTranslator::getRowChilds( UINT16 winIndex,
+inline void RowsTranslator::getRowChilds( PRV_UINT16 winIndex,
     TObjectOrder rowIndex,
     TObjectOrder& iniRow,
     TObjectOrder& endRow ) const
@@ -524,9 +524,9 @@ inline TObjectOrder KHistogram::getNumRows() const
 }
 
 
-inline TSemanticValue KHistogram::getCurrentValue( UINT32 col,
-    UINT16 idStat,
-    UINT32 plane ) const
+inline TSemanticValue KHistogram::getCurrentValue( PRV_UINT32 col,
+    PRV_UINT16 idStat,
+    PRV_UINT32 plane ) const
 {
   if ( getThreeDimensions() )
     return cube->getCurrentValue( plane, col, idStat );
@@ -536,7 +536,7 @@ inline TSemanticValue KHistogram::getCurrentValue( UINT32 col,
   return TSemanticValue( 0 );
 }
 
-inline UINT32 KHistogram::getCurrentRow( UINT32 col, UINT32 plane ) const
+inline PRV_UINT32 KHistogram::getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
 {
   if ( getThreeDimensions() )
     return cube->getCurrentRow( plane, col );
@@ -546,7 +546,7 @@ inline UINT32 KHistogram::getCurrentRow( UINT32 col, UINT32 plane ) const
   return 0;
 }
 
-inline void KHistogram::setNextCell( UINT32 col, UINT32 plane )
+inline void KHistogram::setNextCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
   if ( getThreeDimensions() )
     cube->setNextCell( plane, col );
@@ -554,7 +554,7 @@ inline void KHistogram::setNextCell( UINT32 col, UINT32 plane )
     matrix->setNextCell( col );
 }
 
-inline void KHistogram::setFirstCell( UINT32 col, UINT32 plane )
+inline void KHistogram::setFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
   if ( getThreeDimensions() )
     cube->setFirstCell( plane, col );
@@ -562,7 +562,7 @@ inline void KHistogram::setFirstCell( UINT32 col, UINT32 plane )
     matrix->setFirstCell( col );
 }
 
-inline bool KHistogram::endCell( UINT32 col, UINT32 plane )
+inline bool KHistogram::endCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
   if ( getThreeDimensions() )
     return cube->endCell( plane, col );
@@ -572,7 +572,7 @@ inline bool KHistogram::endCell( UINT32 col, UINT32 plane )
   return true;
 }
 
-inline bool KHistogram::planeWithValues( UINT32 plane ) const
+inline bool KHistogram::planeWithValues( PRV_UINT32 plane ) const
 {
   if ( getThreeDimensions() )
     return cube->planeWithValues( plane );
@@ -581,9 +581,9 @@ inline bool KHistogram::planeWithValues( UINT32 plane ) const
 }
 
 
-inline TSemanticValue KHistogram::getCommCurrentValue( UINT32 col,
-    UINT16 idStat,
-    UINT32 plane ) const
+inline TSemanticValue KHistogram::getCommCurrentValue( PRV_UINT32 col,
+    PRV_UINT16 idStat,
+    PRV_UINT32 plane ) const
 {
   if ( getThreeDimensions() )
     return commCube->getCurrentValue( plane, col, idStat );
@@ -593,7 +593,7 @@ inline TSemanticValue KHistogram::getCommCurrentValue( UINT32 col,
   return TSemanticValue( 0 );
 }
 
-inline UINT32 KHistogram::getCommCurrentRow( UINT32 col, UINT32 plane ) const
+inline PRV_UINT32 KHistogram::getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
 {
   if ( getThreeDimensions() )
     return commCube->getCurrentRow( plane, col );
@@ -603,7 +603,7 @@ inline UINT32 KHistogram::getCommCurrentRow( UINT32 col, UINT32 plane ) const
   return 0;
 }
 
-inline void KHistogram::setCommNextCell( UINT32 col, UINT32 plane )
+inline void KHistogram::setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
   if ( getThreeDimensions() )
     commCube->setNextCell( plane, col );
@@ -611,7 +611,7 @@ inline void KHistogram::setCommNextCell( UINT32 col, UINT32 plane )
     commMatrix->setNextCell( col );
 }
 
-inline void KHistogram::setCommFirstCell( UINT32 col, UINT32 plane )
+inline void KHistogram::setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
   if ( getThreeDimensions() )
     commCube->setFirstCell( plane, col );
@@ -619,7 +619,7 @@ inline void KHistogram::setCommFirstCell( UINT32 col, UINT32 plane )
     commMatrix->setFirstCell( col );
 }
 
-inline bool KHistogram::endCommCell( UINT32 col, UINT32 plane )
+inline bool KHistogram::endCommCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
   if ( getThreeDimensions() )
     return commCube->endCell( plane, col );
@@ -629,7 +629,7 @@ inline bool KHistogram::endCommCell( UINT32 col, UINT32 plane )
   return true;
 }
 
-inline bool KHistogram::planeCommWithValues( UINT32 plane ) const
+inline bool KHistogram::planeCommWithValues( PRV_UINT32 plane ) const
 {
   if ( getThreeDimensions() )
     return commCube->planeWithValues( plane );
@@ -919,7 +919,7 @@ void KHistogram::initStatistics()
 void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                                      TObjectOrder fromRow, TObjectOrder toRow,
                                      vector<TObjectOrder>& selectedRows, bool needInit,
-                                     UINT16 winIndex, CalculateData *data )
+                                     PRV_UINT16 winIndex, CalculateData *data )
 {
   Window *currentWindow = orderedWindows[ winIndex ];
 
@@ -988,7 +988,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 
 void KHistogram::calculate( TObjectOrder iRow,
                             TRecordTime fromTime, TRecordTime toTime,
-                            UINT16 winIndex, CalculateData *data, bool& needInit )
+                            PRV_UINT16 winIndex, CalculateData *data, bool& needInit )
 {
   TObjectOrder childFromRow;
   TObjectOrder childToRow;
@@ -1041,7 +1041,7 @@ void KHistogram::calculate( TObjectOrder iRow,
       data->comm = itComm;
       vector<bool> filter = statistics.filterAllComm( data );
       vector<TSemanticValue> values = statistics.executeAllComm( data );
-      for ( UINT16 iStat = 0; iStat < filter.size(); iStat++ )
+      for ( PRV_UINT16 iStat = 0; iStat < filter.size(); iStat++ )
       {
         if ( filter[ iStat ] )
         {
@@ -1073,7 +1073,7 @@ void KHistogram::calculate( TObjectOrder iRow,
           vector<bool> filter = statistics.filterAll( data );
           vector<TSemanticValue> values = statistics.executeAll( data );
 
-          for ( UINT16 iStat = 0; iStat < filter.size(); ++iStat )
+          for ( PRV_UINT16 iStat = 0; iStat < filter.size(); ++iStat )
           {
             if ( filter[ iStat ] )
             {
@@ -1094,7 +1094,7 @@ void KHistogram::calculate( TObjectOrder iRow,
       vector<bool> filter = statistics.filterAll( data );
       vector<TSemanticValue> values = statistics.executeAll( data );
 
-      for ( UINT16 iStat = 0; iStat < filter.size(); ++iStat )
+      for ( PRV_UINT16 iStat = 0; iStat < filter.size(); ++iStat )
       {
         if ( filter[ iStat ] )
         {
@@ -1146,7 +1146,7 @@ void KHistogram::finishRow( CalculateData *data )
             values = statistics.finishRowAllComm( values, iColumn, iPlane );
 
             commCube->setValue( iPlane, iColumn, values );
-            for ( UINT16 iStat = 0; iStat < values.size(); ++iStat )
+            for ( PRV_UINT16 iStat = 0; iStat < values.size(); ++iStat )
             {
               commTotals->newValue( values[ iStat ], iStat, iColumn, iPlane );
               rowCommTotals->newValue( values[ iStat ], iStat, data->row, iPlane );
@@ -1167,7 +1167,7 @@ void KHistogram::finishRow( CalculateData *data )
         values = statistics.finishRowAllComm( values, iColumn );
 
         commMatrix->setValue( iColumn, values );
-        for ( UINT16 iStat = 0; iStat < values.size(); ++iStat )
+        for ( PRV_UINT16 iStat = 0; iStat < values.size(); ++iStat )
         {
           commTotals->newValue( values[ iStat ], iStat, iColumn );
           rowCommTotals->newValue( values[ iStat ], iStat, data->row );
@@ -1194,7 +1194,7 @@ void KHistogram::finishRow( CalculateData *data )
             values = statistics.finishRowAll( values, iColumn, iPlane );
 
             cube->setValue( iPlane, iColumn, values );
-            for ( UINT16 iStat = 0; iStat < values.size(); iStat++ )
+            for ( PRV_UINT16 iStat = 0; iStat < values.size(); iStat++ )
             {
               totals->newValue( values[ iStat ], iStat, iColumn, iPlane );
               rowTotals->newValue( values[ iStat ], iStat, data->row, iPlane );
@@ -1214,7 +1214,7 @@ void KHistogram::finishRow( CalculateData *data )
         vector<TSemanticValue> values = matrix->getCurrentValue( iColumn );
         values = statistics.finishRowAll( values, iColumn );
         matrix->setValue( iColumn, values );
-        for ( UINT16 iStat = 0; iStat < values.size(); iStat++ )
+        for ( PRV_UINT16 iStat = 0; iStat < values.size(); iStat++ )
         {
           totals->newValue( values[ iStat ], iStat, iColumn );
           rowTotals->newValue( values[ iStat ], iStat, data->row );
@@ -1257,7 +1257,7 @@ void KHistogram::getGroupsLabels( vector<string>& onVector ) const
   FunctionManagement<HistogramStatistic>::getInstance()->getNameGroups( onVector );
 }
 
-void KHistogram::getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const
+void KHistogram::getStatisticsLabels( vector<string>& onVector, PRV_UINT32 whichGroup ) const
 {
   FunctionManagement<HistogramStatistic>::getInstance()->getAll( onVector, whichGroup );
 }

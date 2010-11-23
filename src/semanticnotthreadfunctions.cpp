@@ -106,7 +106,7 @@ TSemanticValue Activity::execute( const SemanticInfo *info )
   TSemanticValue tmp = 0;
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
-  for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  for ( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
     if ( myInfo->values[ 0 ] == parameters[ VALUES ][ i ] )
     {
@@ -133,7 +133,7 @@ TSemanticValue InActivity::execute( const SemanticInfo *info )
   TSemanticValue tmp = 0;
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
-  for ( UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
+  for ( PRV_UINT32 i = 0; i < parameters[ VALUES ].size(); i++ )
   {
     if ( myInfo->values[ 0 ] == parameters[ VALUES ][ i ] )
     {

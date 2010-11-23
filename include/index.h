@@ -36,13 +36,13 @@
 
 using std::map;
 
-static UINT32 INDEX_STEP = 10000;
+static PRV_UINT32 INDEX_STEP = 10000;
 
 template <typename RecordType>
 class Index
 {
   public:
-    Index( UINT32 step = INDEX_STEP );
+    Index( PRV_UINT32 step = INDEX_STEP );
     ~Index();
 
     void indexRecord( TRecordTime time, RecordType rec );
@@ -51,9 +51,9 @@ class Index
   private:
     typedef map< TRecordTime, RecordType > TTraceIndex;
 
-    UINT32 indexStep;
+    PRV_UINT32 indexStep;
     TTraceIndex baseIndex;
-    UINT32 counter;
+    PRV_UINT32 counter;
 };
 
 #include "src/index.cpp"

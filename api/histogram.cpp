@@ -393,66 +393,66 @@ TObjectOrder HistogramProxy::getNumRows() const
 }
 
 
-TSemanticValue HistogramProxy::getCurrentValue( UINT32 col,
-    UINT16 idStat,
-    UINT32 plane ) const
+TSemanticValue HistogramProxy::getCurrentValue( PRV_UINT32 col,
+    PRV_UINT16 idStat,
+    PRV_UINT32 plane ) const
 {
   return myHisto->getCurrentValue( col, idStat, plane );
 }
 
-UINT32 HistogramProxy::getCurrentRow( UINT32 col, UINT32 plane ) const
+PRV_UINT32 HistogramProxy::getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
 {
   return myHisto->getCurrentRow( col, plane );
 }
 
-void HistogramProxy::setNextCell( UINT32 col, UINT32 plane )
+void HistogramProxy::setNextCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
   myHisto->setNextCell( col, plane );
 }
 
-void HistogramProxy::setFirstCell( UINT32 col, UINT32 plane )
+void HistogramProxy::setFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
   myHisto->setFirstCell( col, plane );
 }
 
-bool HistogramProxy::endCell( UINT32 col, UINT32 plane )
+bool HistogramProxy::endCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
   return myHisto->endCell( col, plane );
 }
 
-bool HistogramProxy::planeWithValues( UINT32 plane ) const
+bool HistogramProxy::planeWithValues( PRV_UINT32 plane ) const
 {
   return myHisto->planeWithValues( plane );
 }
 
-TSemanticValue HistogramProxy::getCommCurrentValue( UINT32 col,
-    UINT16 idStat,
-    UINT32 plane ) const
+TSemanticValue HistogramProxy::getCommCurrentValue( PRV_UINT32 col,
+    PRV_UINT16 idStat,
+    PRV_UINT32 plane ) const
 {
   return myHisto->getCommCurrentValue( col, idStat, plane );
 }
 
-UINT32 HistogramProxy::getCommCurrentRow( UINT32 col, UINT32 plane ) const
+PRV_UINT32 HistogramProxy::getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
 {
   return myHisto->getCommCurrentRow( col, plane );
 }
 
-void HistogramProxy::setCommNextCell( UINT32 col, UINT32 plane )
+void HistogramProxy::setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
   myHisto->setCommNextCell( col, plane );
 }
 
-void HistogramProxy::setCommFirstCell( UINT32 col, UINT32 plane )
+void HistogramProxy::setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
   myHisto->setCommFirstCell( col, plane );
 }
 
-bool HistogramProxy::endCommCell( UINT32 col, UINT32 plane )
+bool HistogramProxy::endCommCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
   return myHisto->endCommCell( col, plane );
 }
 
-bool HistogramProxy::planeCommWithValues( UINT32 plane ) const
+bool HistogramProxy::planeCommWithValues( PRV_UINT32 plane ) const
 {
   return myHisto->planeCommWithValues( plane );
 }
@@ -529,7 +529,7 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
   {
     THistogramLimit nPlanes = getNumPlanes();
     THistogramLimit min, max;
-    UINT32 i;
+    PRV_UINT32 i;
     bool commFuturePlane = true;
     i = selectedPlane = commSelectedPlane = 0;
 
@@ -567,7 +567,7 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
   else if ( getThreeDimensions() )
   {
     THistogramLimit nPlanes = getNumPlanes();
-    UINT32 i;
+    PRV_UINT32 i;
 
     if ( !planeWithValues( selectedPlane ) )
     {
@@ -630,12 +630,12 @@ bool HistogramProxy::getScientificNotation() const
   return scientificNotation;
 }
 
-void HistogramProxy::setNumDecimals( UINT16 newValue )
+void HistogramProxy::setNumDecimals( PRV_UINT16 newValue )
 {
   numDecimals = newValue;
 }
 
-UINT16 HistogramProxy::getNumDecimals() const
+PRV_UINT16 HistogramProxy::getNumDecimals() const
 {
   return numDecimals;
 }
@@ -766,8 +766,8 @@ void HistogramProxy::recalcGradientLimits()
   TSemanticValue tmpMin = std::numeric_limits<TSemanticValue>::max();
   TSemanticValue tmpMax = 0.0;
   HistogramTotals *totals = NULL;
-  UINT32 plane;
-  UINT16 idStat;
+  PRV_UINT32 plane;
+  PRV_UINT16 idStat;
   THistogramColumn numColumns = getNumColumns( getCurrentStat() );
 
   getIdStat( getCurrentStat(), idStat );
@@ -841,17 +841,17 @@ double HistogramProxy::getPlaneMinValue() const
   return planeMinValue;
 }
 
-void HistogramProxy::setSelectedPlane( INT32 plane )
+void HistogramProxy::setSelectedPlane( PRV_INT32 plane )
 {
   selectedPlane = plane;
 }
 
-INT32 HistogramProxy::getSelectedPlane() const
+PRV_INT32 HistogramProxy::getSelectedPlane() const
 {
   return selectedPlane;
 }
 
-INT32 HistogramProxy::getCommSelectedPlane() const
+PRV_INT32 HistogramProxy::getCommSelectedPlane() const
 {
   return commSelectedPlane;
 }
@@ -1050,7 +1050,7 @@ bool HistogramProxy::getCalculateAll() const
   return calculateAll;
 }
 
-bool HistogramProxy::getIdStat( const string& whichStat, UINT16& idStat ) const
+bool HistogramProxy::getIdStat( const string& whichStat, PRV_UINT16& idStat ) const
 {
   idStat = 0;
   const vector<string> *vStat;
@@ -1183,42 +1183,42 @@ void HistogramProxy::setDestroy( bool newValue )
 }
 
 
-UINT16 HistogramProxy::getPosX() const
+PRV_UINT16 HistogramProxy::getPosX() const
 {
   return posX;
 }
 
-void HistogramProxy::setPosX( UINT16 whichPos )
+void HistogramProxy::setPosX( PRV_UINT16 whichPos )
 {
   posX = whichPos;
 }
 
-UINT16 HistogramProxy::getPosY() const
+PRV_UINT16 HistogramProxy::getPosY() const
 {
   return posY;
 }
 
-void HistogramProxy::setPosY( UINT16 whichPos )
+void HistogramProxy::setPosY( PRV_UINT16 whichPos )
 {
   posY = whichPos;
 }
 
-UINT16 HistogramProxy::getWidth() const
+PRV_UINT16 HistogramProxy::getWidth() const
 {
   return width;
 }
 
-void HistogramProxy::setWidth( UINT16 whichPos )
+void HistogramProxy::setWidth( PRV_UINT16 whichPos )
 {
   width = whichPos;
 }
 
-UINT16 HistogramProxy::getHeight() const
+PRV_UINT16 HistogramProxy::getHeight() const
 {
   return height;
 }
 
-void HistogramProxy::setHeight( UINT16 whichPos )
+void HistogramProxy::setHeight( PRV_UINT16 whichPos )
 {
   height = whichPos;
 }
@@ -1268,7 +1268,7 @@ void HistogramProxy::getGroupsLabels( vector<string>& onVector ) const
   myHisto->getGroupsLabels( onVector );
 }
 
-void HistogramProxy::getStatisticsLabels( vector<string>& onVector, UINT32 whichGroup ) const
+void HistogramProxy::getStatisticsLabels( vector<string>& onVector, PRV_UINT32 whichGroup ) const
 {
   myHisto->getStatisticsLabels( onVector, whichGroup );
 }

@@ -203,9 +203,9 @@ void createSemantic()
   functions[7].push_back( new InCPUID() );
 
 
-  for ( UINT16 iGroup = 0; iGroup < functions.size(); iGroup++ )
+  for ( PRV_UINT16 iGroup = 0; iGroup < functions.size(); iGroup++ )
   {
-    for ( UINT16 iFunction = 0; iFunction < functions[ iGroup ].size(); iFunction++ )
+    for ( PRV_UINT16 iFunction = 0; iFunction < functions[ iGroup ].size(); iFunction++ )
       names.push_back( functions[ iGroup ][ iFunction ]->getName() );
   }
 

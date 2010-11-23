@@ -46,7 +46,7 @@ class MemoryBlocks
     virtual ~MemoryBlocks()
     {}
 
-    virtual TData *getLastRecord( UINT16 position ) const = 0;
+    virtual TData *getLastRecord( PRV_UINT16 position ) const = 0;
     virtual void newRecord() = 0;
     virtual void setType( TRecordType whichType ) = 0;
     virtual void setTime( TRecordTime whichTime ) = 0;
@@ -98,7 +98,7 @@ class MemoryBlocks
 
     virtual TRecordTime getLastRecordTime() const = 0;
 
-    virtual UINT32 getCountInserted() const
+    virtual PRV_UINT32 getCountInserted() const
     {
       return countInserted;
     }
@@ -113,7 +113,7 @@ class MemoryBlocks
 
   protected:
     // Number of new records inserted in the last operation
-    UINT32 countInserted;
+    PRV_UINT32 countInserted;
 
   private:
 };
