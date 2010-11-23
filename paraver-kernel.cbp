@@ -189,12 +189,7 @@
 		<Unit filename="../common-files/pcfparser/UIParaverTraceConfig.h">
 			<Option target="api" />
 		</Unit>
-		<Unit filename="../common-files/types.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-			<Option target="Application test" />
-			<Option target="paramedir" />
-		</Unit>
+		<Unit filename="../common-files/prvtypes.h" />
 		<Unit filename="../common-files/vectorutils.h">
 			<Option target="Debug" />
 			<Option target="Release" />
