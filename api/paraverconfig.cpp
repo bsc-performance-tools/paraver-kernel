@@ -66,6 +66,8 @@ ParaverConfig::ParaverConfig()
   xmlGlobal.applyFollowingCFGsToAllTraces = false;
   xmlGlobal.fillStateGaps = true;
   xmlGlobal.singleInstance = true;
+  xmlGlobal.mainWindowWidth = 300;
+  xmlGlobal.mainWindowHeight = 600;
 
   xmlTimeline.defaultName = "New window # %N";
   xmlTimeline.nameFormat = "%W @ %T";
@@ -188,6 +190,16 @@ void ParaverConfig::setGlobalSingleInstance( bool whichSingleInstance )
   xmlGlobal.singleInstance = whichSingleInstance;
 }
 
+void ParaverConfig::setMainWindowWidth( unsigned int whichWidth )
+{
+  xmlGlobal.mainWindowWidth = whichWidth;
+}
+
+void ParaverConfig::setMainWindowHeight( unsigned int whichHeight )
+{
+  xmlGlobal.mainWindowHeight = whichHeight;
+}
+
 string ParaverConfig::getGlobalTracesPath() const
 {
   return xmlGlobal.tracesPath;
@@ -216,6 +228,16 @@ bool ParaverConfig::getGlobalFillStateGaps() const
 bool ParaverConfig::getGlobalSingleInstance() const
 {
   return xmlGlobal.singleInstance;
+}
+
+unsigned int ParaverConfig::getMainWindowWidth() const
+{
+  return xmlGlobal.mainWindowWidth;
+}
+
+unsigned int ParaverConfig::getMainWindowHeight() const
+{
+  return xmlGlobal.mainWindowHeight;
 }
 
 // TIMELINES XML SECTION

@@ -92,6 +92,8 @@ class ParaverConfig
     void setGlobalApplyFollowingCFGsToAllTraces( bool whichApplyFollowingCFGsToAllTraces );
     void setGlobalFillStateGaps( bool whichFillStateGaps );
     void setGlobalSingleInstance( bool whichSingleInstance );
+    void setMainWindowWidth( unsigned int whichWidth );
+    void setMainWindowHeight( unsigned int whichHeight );
 
     string getGlobalTracesPath() const;
     string getGlobalCFGsPath() const;
@@ -99,6 +101,8 @@ class ParaverConfig
     bool getGlobalApplyFollowingCFGsToAllTraces() const;
     bool getGlobalFillStateGaps() const;
     bool getGlobalSingleInstance() const;
+    unsigned int getMainWindowWidth() const;
+    unsigned int getMainWindowHeight() const;
 
     // TIMELINES XML SECTION
     void setTimelineDefaultName( string whichDefaultName );
@@ -293,6 +297,11 @@ class ParaverConfig
         ar & boost::serialization::make_nvp( "fill_state_gaps", fillStateGaps );
         if( version >= 1 )
           ar & boost::serialization::make_nvp( "single_instance", singleInstance );
+        if( version >= 2 )
+        {
+          ar & boost::serialization::make_nvp( "main_window_width", mainWindowWidth );
+          ar & boost::serialization::make_nvp( "main_window_height", mainWindowHeight );
+        }
       }
 
       string tracesPath; // also for paraload.sig!
@@ -301,6 +310,8 @@ class ParaverConfig
       bool applyFollowingCFGsToAllTraces;
       bool fillStateGaps;
       bool singleInstance;
+      unsigned int mainWindowWidth;
+      unsigned int mainWindowHeight;
 
     } xmlGlobal;
 
@@ -613,7 +624,7 @@ class ParaverConfig
 
 // Second version: introducing some structure
 BOOST_CLASS_VERSION( ParaverConfig, 1)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 1)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 2)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 0)
