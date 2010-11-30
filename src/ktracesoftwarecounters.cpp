@@ -54,8 +54,8 @@ KTraceSoftwareCounters::KTraceSoftwareCounters( char *trace_in,
 {
   min_state_time = 0;
   last_type_mark = -1;
-  type_of_counters = 0;
-  keep_events = 0;
+  type_of_counters = false;
+  keep_events = false;
   frequency = 1;
   total_iters = 0;
   first_state_elem = NULL;
@@ -78,12 +78,12 @@ void KTraceSoftwareCounters::read_sc_args()
   int i, j, k;
   char *words[16], *word_type, *word_values, *word_value;
 
-  all_types = 1;
-  global_counters = 0;
-  acumm_values = 0;
-  remove_states = 0;
-  only_in_bursts = 0;
-  summarize_bursts = 0;
+  all_types = true;
+  global_counters = false;
+  acumm_values = false;
+  remove_states = false;
+  only_in_bursts = false;
+  summarize_bursts = false;
 
   type_of_counters = exec_options->sc_onInterval;
 
@@ -100,7 +100,7 @@ void KTraceSoftwareCounters::read_sc_args()
 
   if ( strlen( exec_options->types ) > 0 )
   {
-    all_types = 0;
+    all_types = false;
     words[0] = strtok( exec_options->types, ";" );
 
     i = 1;
@@ -114,12 +114,12 @@ void KTraceSoftwareCounters::read_sc_args()
       types.type_values[types.next_free_slot].type = atoll( word_type );
       if ( ( word_values = strtok( NULL, ":" ) ) == NULL )
       {
-        types.type_values[types.next_free_slot].all_values = 1;
+        types.type_values[types.next_free_slot].all_values = true;
       }
       else
       {
         word_value = strtok( word_values, "," );
-        types.type_values[types.next_free_slot].all_values = 0;
+        types.type_values[types.next_free_slot].all_values = false;
         types.type_values[types.next_free_slot].values[0] = atoll( word_value );
         types.type_values[types.next_free_slot].values[1] = 0;
         j = 1;
@@ -140,7 +140,7 @@ void KTraceSoftwareCounters::read_sc_args()
 
   if ( strlen( exec_options->types_kept ) > 0 )
   {
-    keep_events = 1;
+    keep_events = true;
     words[0] = strtok( exec_options->types_kept, ";" );
     types_to_keep.type[types_to_keep.next_free_slot] = atoll( words[0] );
     types_to_keep.next_free_slot++;
@@ -162,8 +162,8 @@ void KTraceSoftwareCounters::read_sc_args()
 
   only_in_bursts = exec_options->sc_only_in_bursts;
 
-  if ( ( summarize_bursts = exec_options->sc_summarize_states ) == 1 )
-    remove_states = 1;
+  if ( ( summarize_bursts = exec_options->sc_summarize_states ) )
+    remove_states = true;
 }
 
 
@@ -251,38 +251,38 @@ void KTraceSoftwareCounters::write_pcf( char *file_out )
 
 
 /* Return 0: not allowd call type; Return 1: allowed call type */
-int KTraceSoftwareCounters::allowed_type( unsigned long long type, unsigned long long value )
+bool KTraceSoftwareCounters::allowed_type( unsigned long long type, unsigned long long value )
 {
   int i, j;
 
   if ( value == 0 )
-    return 0;
+    return false;
 
   /* Searching for that type and value */
   for ( i = 0; i < types.next_free_slot; i++ )
   {
     if ( types.type_values[i].type == type )
     {
-      if ( types.type_values[i].all_values == 1 )
-        return 1;
+      if ( types.type_values[i].all_values )
+        return true;
 
 
 // BUG EN POTENCIA: NO RECORRE TODA LA LISTA DE VALORES!!!
       for ( j = 0; j < 16; j++ )
       {
         if ( types.type_values[i].values[j] == 0 )
-          return 0;
+          return false;
 
         if ( types.type_values[i].values[j] == value )
-          return 1;
+          return true;
       }
     }
   }
 
-  return 0;
+  return false;
 }
 
-int KTraceSoftwareCounters::allowed_type_mark( unsigned long long type )
+bool KTraceSoftwareCounters::allowed_type_mark( unsigned long long type )
 {
   int i;
 
@@ -290,10 +290,10 @@ int KTraceSoftwareCounters::allowed_type_mark( unsigned long long type )
   for ( i = 0; i <= last_type_mark; i++ )
   {
     if ( type_marks[i] == type )
-      return 1;
+      return true;
   }
 
-  return 0;
+  return false;
 }
 
 
@@ -337,7 +337,7 @@ int KTraceSoftwareCounters::inc_counter( int appl, int task, int thread, unsigne
     {
       threads[i].counters[j].type = type;
       threads[i].counters[j].value = value;
-      threads[i].counters[j].last_is_zero = 0;
+      threads[i].counters[j].last_is_zero = false;
 
       if ( !acumm_values )
         threads[i].counters[j].num = 1;
@@ -387,7 +387,8 @@ void KTraceSoftwareCounters::put_zeros( void )
 /* Flushing of the events buffer */
 void KTraceSoftwareCounters::flush_all_events( void )
 {
-  int i, j, print_record, thread_id;
+  bool print_record;
+  int i, j, thread_id;
   char record[256], record_aux[64];
 
   struct ParaverEvent *p, *q;
@@ -397,7 +398,7 @@ void KTraceSoftwareCounters::flush_all_events( void )
   {
     sprintf( record, "2:%d:%d:%d:%d:%lld", p->cpu, threads[p->thread_id].appl, threads[p->thread_id].task, threads[p->thread_id].thread, p->timestamp );
 
-    print_record = 0;
+    print_record = false;
     for ( i = 0; i < 16; i++ )
     {
       if ( p->type[i] == 0 )
@@ -420,16 +421,16 @@ void KTraceSoftwareCounters::flush_all_events( void )
             {
               sprintf( record_aux, ":%lld:%lld", p->type[i], p->value[i] );
               strcat( record, record_aux );
-              print_record = 1;
+              print_record = false;
               threads[thread_id].calls.top++;
               threads[thread_id].calls.type[threads[thread_id].calls.top] = p->type[i];
-              threads[thread_id].calls.valid[threads[thread_id].calls.top] = 1;
+              threads[thread_id].calls.valid[threads[thread_id].calls.top] = true;
             }
             else
             {
               threads[thread_id].calls.top++;
               threads[thread_id].calls.type[threads[thread_id].calls.top] = p->type[i];
-              threads[thread_id].calls.valid[threads[thread_id].calls.top] = 0;
+              threads[thread_id].calls.valid[threads[thread_id].calls.top] = false;
             }
             break;
           }
@@ -441,11 +442,11 @@ void KTraceSoftwareCounters::flush_all_events( void )
         {
           sprintf( record_aux, ":%lld:%lld", p->type[i], p->value[i] );
           strcat( record, record_aux );
-          print_record = 1;
+          print_record = true;
 
           threads[thread_id].calls.top++;
           threads[thread_id].calls.type[threads[thread_id].calls.top] = p->type[i];
-          threads[thread_id].calls.valid[threads[thread_id].calls.top] = 1;
+          threads[thread_id].calls.valid[threads[thread_id].calls.top] = true;
         }
       }
       else
@@ -460,7 +461,7 @@ void KTraceSoftwareCounters::flush_all_events( void )
           {
             sprintf( record_aux, ":%lld:0", p->type[i] );
             strcat( record, record_aux );
-            print_record = 1;
+            print_record = true;
           }
           threads[thread_id].calls.top--;
         }
@@ -470,7 +471,7 @@ void KTraceSoftwareCounters::flush_all_events( void )
     if ( print_record )
     {
       fprintf( outfile, "%s\n", record );
-      print_record = 0;
+      print_record = false;
     }
 
     q = p;
@@ -513,10 +514,10 @@ void KTraceSoftwareCounters::put_all_counters( void )
       /* If the counters is 0, we mark that in order to put a 0 counter */
       /* in the period before of a non-zero counter of the same type */
       /*         if(threads[i].counters[j].num == 0)
-        threads[i].counters[j].last_is_zero = 1;
+        threads[i].counters[j].last_is_zero = true;
                else {
         threads[i].counters[j].num=0;
-        threads[i].counters[j].last_is_zero = 0;
+        threads[i].counters[j].last_is_zero = false;
         }*/
     }
   }
@@ -567,7 +568,7 @@ void KTraceSoftwareCounters::put_counters_by_thread( int appl, int task, int thr
       event->value = 0;
       event->next = NULL;
 
-      threads[i].counters[j].last_is_zero = 1;
+      threads[i].counters[j].last_is_zero = true;
 
       if ( threads[thread_pointer[appl][task][thread]].first_event_counter == NULL )
       {
@@ -607,7 +608,7 @@ void KTraceSoftwareCounters::put_counters_by_thread( int appl, int task, int thr
       event->value = threads[i].counters[j].num;
       event->next = NULL;
 
-      threads[i].counters[j].last_is_zero = 0;
+      threads[i].counters[j].last_is_zero = false;
 
       if ( threads[thread_pointer[appl][task][thread]].first_event_counter == NULL )
       {
@@ -662,7 +663,7 @@ void KTraceSoftwareCounters::ini_progress_bar( char *file_name, ProgressControll
   else
     total_iters = 100000;
 
-  current_readed_size = 0;
+  current_read_size = 0;
 
   if( progress != NULL)
     progress->setEndLimit( total_trace_size );
@@ -674,19 +675,19 @@ void KTraceSoftwareCounters::show_progress_bar( ProgressController *progress )
 //  double current_showed, i, j;
 
 #if defined(FreeBSD)
-  current_readed_size = ftello( infile );
+  current_read_size = ftello( infile );
 #elif defined(WIN32)
-  current_readed_size = _ftelli64( infile );
+  current_read_size = _ftelli64( infile );
 #else
-  current_readed_size = ftello64( infile );
+  current_read_size = ftello64( infile );
 #endif
 
-/*  i = ( double )( current_readed_size );
+/*  i = ( double )( current_read_size );
   j = ( double )( total_trace_size );
   current_showed = i / j;
 */
   if( progress != NULL)
-    progress->setCurrentProgress( current_readed_size );
+    progress->setCurrentProgress( current_read_size );
 }
 
 
@@ -728,10 +729,10 @@ void KTraceSoftwareCounters::put_counters_on_state_by_thread( int appl, int task
     threads[i].counters[j].num = 0;
     /*
              if(threads[i].counters[j].num == 0)
-                    threads[i].counters[j].last_is_zero = 1;
+                    threads[i].counters[j].last_is_zero = true;
              else {
                     threads[i].counters[j].num=0;
-                    threads[i].counters[j].last_is_zero = 0;
+                    threads[i].counters[j].last_is_zero = false;
              }
       */
   }
@@ -751,7 +752,8 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
 {
   int id, cpu, appl, task, thread, state;
   unsigned long long time_1, time_2, type, value;
-  char *word, buffer[2048], print_line = 0;
+  char *word, buffer[2048];
+  bool print_line = false;
   int thread_id, i, j;
   unsigned long num_iters = 0;
 
@@ -846,7 +848,7 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
             if ( types_to_keep.type[i] == type )
             {
               sprintf( buffer, "%s%lld:%lld", buffer, type, value );
-              print_line = 1;
+              print_line = true;
               break;
             }
           }
@@ -876,7 +878,7 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
               if ( types_to_keep.type[i] == type )
               {
                 sprintf( buffer, "%s%lld:%lld", buffer, type, value );
-                print_line = 1;
+                print_line = true;
                 break;
               }
             }
@@ -894,7 +896,7 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
         if ( print_line )
         {
           fprintf( outfile, "%s\n", buffer );
-          print_line = 0;
+          print_line = false;
         }
 
         break;
@@ -1168,10 +1170,10 @@ void KTraceSoftwareCounters::put_counters_on_state( struct KTraceSoftwareCounter
     threads[i].counters[j].num = 0;
     /*
              if(threads[i].counters[j].num == 0)
-                    threads[i].counters[j].last_is_zero = 1;
+                    threads[i].counters[j].last_is_zero = true;
              else {
                     threads[i].counters[j].num=0;
-                    threads[i].counters[j].last_is_zero = 0;
+                    threads[i].counters[j].last_is_zero = false;
              }*/
   }
 
@@ -1188,7 +1190,8 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
 {
   int id, cpu, appl, task, thread, state;
   unsigned long long time_1, time_2, type, value;
-  char *word, buffer[2048], print_line = 0;
+  char *word, buffer[2048];
+  bool print_line = false;
   struct state_queue_elem *p, *q;
   int i, j;
   unsigned long num_iters = 0;
@@ -1291,7 +1294,7 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
           if ( types_to_keep.type[j] == type )
           {
             sprintf( buffer, "%s%lld:%lld", buffer, type, value );
-            print_line = 1;
+            print_line = true;
             break;
           }
         }
@@ -1314,7 +1317,7 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
             if ( types_to_keep.type[i] == type )
             {
               sprintf( buffer, "%s%lld:%lld", buffer, type, value );
-              print_line = 1;
+              print_line = true;
               break;
             }
           }
@@ -1326,7 +1329,7 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
       if ( print_line )
       {
         fprintf( outfile, "%s\n", buffer );
-        print_line = 0;
+        print_line = false;
       }
 
       continue;
@@ -1349,8 +1352,8 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
 
 void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressController *progress )
 {
-  int is_zip;
-  char *tmp_dir, *c, trace_name[512], *trace_header;
+  bool is_zip = false;
+  char *tmp_dir = NULL, *c, trace_name[512], *trace_header;
   int i, j, k;
 
   /* Ini data */
@@ -1383,7 +1386,7 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressC
         system( line );
         sprintf( line, "%s/tmp.prv", tmp_dir );
         strcpy( trace_name, line );
-        is_zip = 1;
+        is_zip = true;
       }
       else
       {
@@ -1393,7 +1396,6 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressC
     }
     else
     {
-      is_zip = 0;
       strcpy( trace_name, trace_in );
     }
   }

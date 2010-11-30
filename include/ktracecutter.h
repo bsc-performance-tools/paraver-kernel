@@ -50,11 +50,11 @@ class KTraceCutter : public TraceCutter
     virtual void set_minimum_time_percentage( unsigned long long minimumPercentage );
     virtual void set_maximum_time_percentage( unsigned long long maximumPercentage );
     virtual void set_tasks_list( char *tasksList );
-    virtual void set_original_time( char originalTime );
+    virtual void set_original_time( bool originalTime );
     virtual void set_max_trace_size( int traceSize );
-    virtual void set_break_states( int breakStates );
-    virtual void set_remFirstStates( int remStates );
-    virtual void set_remLastStates( int remStates );
+    virtual void set_break_states( bool breakStates );
+    virtual void set_remFirstStates( bool remStates );
+    virtual void set_remLastStates( bool remStates );
 
     virtual void execute( char *trace_in,
                           char *trace_out,
@@ -71,12 +71,12 @@ class KTraceCutter : public TraceCutter
 
     unsigned int min_perc;
     unsigned int max_perc;
-    unsigned int by_time;
-    unsigned int old_times;
+    bool by_time;
+    bool old_times;
     unsigned int max_size;
-    unsigned int is_zip;
+    bool is_zip;
     unsigned int cut_tasks;
-    unsigned int break_states;
+    bool break_states;
     unsigned long long time_min;
     unsigned long long time_max;
     unsigned long long total_time;
@@ -86,15 +86,15 @@ class KTraceCutter : public TraceCutter
     unsigned long long total_size;
     unsigned long long trace_time;
     int num_tasks;
-    int usefull_tasks;
+    int useful_tasks;
     int init_task_counter;
-    unsigned int remFirstStates;
-    unsigned int remLastStates;
-    unsigned int first_time_caught;
+    bool remFirstStates;
+    bool remLastStates;
+    bool first_time_caught;
 
     /* Parameters for showing percentage */
     unsigned long long total_trace_size;
-    unsigned long long current_readed_size;
+    unsigned long long current_read_size;
     unsigned long total_cutter_iters;
 
     /* Vars for saving the HC that will appear on the trace */
@@ -108,7 +108,7 @@ class KTraceCutter : public TraceCutter
       int task;
       int thread;
       unsigned long long last_time;
-      char finished;
+      bool finished;
       unsigned long long event_queue[20];
       int first;
       int last;
@@ -144,7 +144,7 @@ class KTraceCutter : public TraceCutter
                        unsigned long long value );
     void load_counters_of_pcf( char *trace_name );
     void shift_trace_to_zero( char *nameIn, char *nameOut );
-    int is_selected_task( int task_id );
+    bool is_selected_task( int task_id );
 };
 
 #endif // _KTRACECUTTER_H_

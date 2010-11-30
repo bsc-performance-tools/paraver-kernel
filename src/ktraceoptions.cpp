@@ -163,7 +163,7 @@ void KTraceOptions::init()
   set_all_states( false );
   //set_filter_by_call_time( false );
   init_state_names();
-  set_min_state_time( 0 ); // Not present in ParaverConfig.
+  set_min_state_time( 0 ); // Not present in ParaverConfig?
 
   set_filter_events( !ParaverConfig::getInstance()->getFilterDiscardEvents() );
   set_discard_given_types( false );
@@ -193,7 +193,10 @@ void KTraceOptions::init()
 }
 
 
-void KTraceOptions::parse_type( xmlDocPtr doc, xmlNodePtr cur, struct TraceOptions::allowed_types *types, int *last_type )
+void KTraceOptions::parse_type( xmlDocPtr doc,
+                                xmlNodePtr cur,
+                                struct TraceOptions::allowed_types *types,
+                                int &last_type )
 {
   xmlChar *word;
   int index;
@@ -203,13 +206,13 @@ void KTraceOptions::parse_type( xmlDocPtr doc, xmlNodePtr cur, struct TraceOptio
   word = xmlGetProp( cur, ( const xmlChar * )"min_time" );
   if ( word != NULL )
   {
-    filter_by_call_time = 1;
-    types[*last_type].min_call_time = atoll( ( char * )word );
+    filter_by_call_time = true;
+    types[last_type].min_call_time = atoll( ( char * )word );
 
     xmlFree( word );
   }
   else
-    types[*last_type].min_call_time = 0;
+    types[last_type].min_call_time = 0;
 
   /* Get values */
   word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
@@ -218,16 +221,16 @@ void KTraceOptions::parse_type( xmlDocPtr doc, xmlNodePtr cur, struct TraceOptio
   if ( ( c = strchr( ( char * )word, '-' ) ) != NULL )
   {
     *c = '\0';
-    types[*last_type].type = atoll( ( char * )word );
-    types[*last_type].max_type = atoll( ++c );
-    ( *last_type )++;
+    types[last_type].type = atoll( ( char * )word );
+    types[last_type].max_type = atoll( ++c );
+    last_type++;
 
     return;
   }
   else
   {
-    types[*last_type].type = atoll( ( char * )word );
-    types[*last_type].max_type = 0;
+    types[last_type].type = atoll( ( char * )word );
+    types[last_type].max_type = 0;
   }
   index = 0;
 
@@ -237,15 +240,15 @@ void KTraceOptions::parse_type( xmlDocPtr doc, xmlNodePtr cur, struct TraceOptio
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"value" ) )
     {
       word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      types[*last_type].value[index] = atoll( ( char * )word );
+      types[last_type].value[index] = atoll( ( char * )word );
       index++;
     }
 
     cur = cur->next;
   }
 
-  types[*last_type].last_value = index;
-  ( *last_type )++;
+  types[last_type].last_value = index;
+  last_type++;
 }
 
 
@@ -270,8 +273,8 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"types" ) )
     {
 
-      filter_events = 1;
-      discard_given_types = 0;
+      filter_events = true;
+      discard_given_types = false;
 
       /* Get properties */
       word = xmlGetProp( cur, ( const xmlChar * )"use" );
@@ -290,7 +293,7 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
       while ( child != NULL )
       {
         if ( !xmlStrcmp( child->name, ( const xmlChar * )"type" ) )
-          parse_type( doc, child, filter_types, &( filter_last_type ) );
+          parse_type( doc, child, filter_types, filter_last_type );
 
         child = child->next;
       }
@@ -298,7 +301,7 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"comms" ) )
     {
-      filter_comms = 1;
+      filter_comms = true;
       child = cur->xmlChildrenNode;
       //child = child->next;  ??
       if ( child != NULL )
@@ -312,8 +315,8 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"states" ) )
     {
-      filter_states = 1;
-      all_states = 0;
+      filter_states = true;
+      all_states = false;
       child = cur->xmlChildrenNode;
 
       /* searching which states wants to keep */
@@ -327,7 +330,7 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
       word_aux = strtok( ( char * )word, "," );
 
       if ( strstr( word_aux, "All" ) != NULL )
-        all_states = 1;
+        all_states = true;
       else
       {
         /* Patch in order to allow tag without name */
@@ -431,7 +434,7 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"original_time" ) )
     {
       word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      original_time = atoi( ( char * )word );
+      original_time = (bool)atoi( ( char * )word );
       xmlFree( word );
     }
 
@@ -446,7 +449,7 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"by_time" ) )
     {
       word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      by_time = atoi( ( char * )word );
+      by_time = (bool)atoi( ( char * )word );
       xmlFree( word );
     }
 
@@ -484,21 +487,21 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"break_states" ) )
     {
       word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      break_states = atoi( ( char * )word );
+      break_states = (bool)atoi( ( char * )word );
       xmlFree( word );
     }
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"remove_first_states" ) )
     {
       word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      remFirstStates = atoi( ( char * )word );
+      remFirstStates = (bool)atoi( ( char * )word );
       xmlFree( word );
     }
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"remove_last_states" ) )
     {
       word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-      remLastStates = atoi( ( char * )word );
+      remLastStates = (bool)atoi( ( char * )word );
       xmlFree( word );
     }
 
@@ -537,7 +540,7 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
         if ( !xmlStrcmp( child->name, ( const xmlChar * )"by_intervals_vs_by_states" ) )
         {
           word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_onInterval = atoi( ( char * )word );
+          sc_onInterval = (bool)atoi( ( char * )word );
           xmlFree( word );
         }
 
@@ -578,35 +581,35 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
         if ( !xmlStrcmp( child->name, ( const xmlChar * )"count_events_vs_acummulate_values" ) )
         {
           word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_acumm_counters = atoi( ( char * )word );
+          sc_acumm_counters = (bool)atoi( ( char * )word );
           xmlFree( word );
         }
 
         if ( !xmlStrcmp( child->name, ( const xmlChar * )"remove_states" ) )
         {
           word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_remove_states = atoi( ( char * )word );
+          sc_remove_states = (bool)atoi( ( char * )word );
           xmlFree( word );
         }
 
         if ( !xmlStrcmp( child->name, ( const xmlChar * )"summarize_useful_states" ) )
         {
           word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_summarize_states = atoi( ( char * )word );
+          sc_summarize_states = (bool)atoi( ( char * )word );
           xmlFree( word );
         }
 
         if ( !xmlStrcmp( child->name, ( const xmlChar * )"global_counters" ) )
         {
           word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_global_counters = atoi( ( char * )word );
+          sc_global_counters = (bool)atoi( ( char * )word );
           xmlFree( word );
         }
 
         if ( !xmlStrcmp( child->name, ( const xmlChar * )"only_in_burst_counting" ) )
         {
           word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-          sc_only_in_bursts = atoi( ( char * )word );
+          sc_only_in_bursts = (bool)atoi( ( char * )word );
           xmlFree( word );
         }
 
@@ -666,10 +669,10 @@ vector<int> KTraceOptions::parseDoc( char *docname )
   min_comm_size = 0;
   filter_last_type = 0;
 
-  original_time = 1;
+  original_time = true;
   tasks_list[0] = '\0';
 
-  filter_by_call_time = 0;
+  filter_by_call_time = false;
 
   if ( docname == NULL ) return order;
 

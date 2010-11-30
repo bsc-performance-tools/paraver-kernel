@@ -61,17 +61,17 @@ class KTraceOptions: public TraceOptions
     int max_trace_size;
 
     /* Parameters for filtering */
-    char filter_events;
-    char filter_states;
-    char filter_comms;
-    char discard_given_types;
-    char filter_by_call_time;
+    bool filter_events;
+    bool filter_states;
+    bool filter_comms;
+    bool discard_given_types;
+    bool filter_by_call_time;
     char *state_names[MAXSTATES];
-    char all_states;
+    bool all_states;
     unsigned long long min_state_time;
     int min_comm_size; // ---->    should be TCommSize
     TFilterTypes filter_types;
-    int filter_last_type;
+    int filter_last_type; // just a counter
 
     /* Parameters for cutting */
     bool by_time;
@@ -79,10 +79,10 @@ class KTraceOptions: public TraceOptions
     unsigned long long max_cutting_time;
     int min_percentage;
     int max_percentage;
-    char original_time;
-    int break_states;
-    int remFirstStates;
-    int remLastStates;
+    bool original_time;
+    bool break_states;
+    bool remFirstStates;
+    bool remLastStates;
     char tasks_list[256];
 
     // not used?
@@ -94,12 +94,12 @@ class KTraceOptions: public TraceOptions
     unsigned long long comm_fusion_small_interval;
 
     /* Parameters for software counters */
-    int sc_onInterval;
-    int sc_global_counters;
-    int sc_acumm_counters;
-    int sc_summarize_states;
-    int sc_only_in_bursts;
-    int sc_remove_states;
+    bool sc_onInterval;
+    bool sc_global_counters;
+    bool sc_acumm_counters;
+    bool sc_summarize_states;
+    bool sc_only_in_bursts;
+    bool sc_remove_states;
 
     // unsigned long long sc_interval; splits in next two
     unsigned long long sc_sampling_interval;
@@ -179,22 +179,22 @@ class KTraceOptions: public TraceOptions
       }
     }
 
-    inline void set_original_time( char whichOriginalTime )
+    inline void set_original_time( bool whichOriginalTime )
     {
       original_time = whichOriginalTime;
     }
 
-    inline void set_break_states( int whichBreakStates )
+    inline void set_break_states( bool whichBreakStates )
     {
       break_states = whichBreakStates;
     }
 
-    inline void set_remFirstStates( int whichRemStates )
+    inline void set_remFirstStates( bool whichRemStates )
     {
       remFirstStates = whichRemStates;
     }
 
-    inline void set_remLastStates( int whichRemStates )
+    inline void set_remLastStates( bool whichRemStates )
     {
       remLastStates = whichRemStates;
     }
@@ -240,48 +240,48 @@ class KTraceOptions: public TraceOptions
       }
     }
 
-    inline char get_original_time() const
+    inline bool get_original_time() const
     {
       return original_time;
     }
 
-    inline int get_break_states() const
+    inline bool get_break_states() const
     {
       return break_states;
     }
 
-    inline int get_remFirstStates() const
+    inline bool get_remFirstStates() const
     {
       return remFirstStates;
     }
 
-    inline int get_remLastStates() const
+    inline bool get_remLastStates() const
     {
       return remLastStates;
     }
 
     /* Sets for filtering */
-    inline void set_filter_events( char whichFilterEvents )
+    inline void set_filter_events( bool whichFilterEvents )
     {
       filter_events = whichFilterEvents;
     }
 
-    inline void set_filter_states( char whichFilterStates )
+    inline void set_filter_states( bool whichFilterStates )
     {
       filter_states = whichFilterStates;
     }
 
-    inline void set_filter_comms( char whichFilterComms )
+    inline void set_filter_comms( bool whichFilterComms )
     {
       filter_comms = whichFilterComms;
     }
 
-    inline void set_discard_given_types( char whichDiscardGivenTypes )
+    inline void set_discard_given_types( bool whichDiscardGivenTypes )
     {
       discard_given_types = whichDiscardGivenTypes;
     }
 
-    inline void set_filter_by_call_time( char whichFilterByCallTime )
+    inline void set_filter_by_call_time( bool whichFilterByCallTime )
     {
       filter_by_call_time = whichFilterByCallTime;
     }
@@ -305,7 +305,7 @@ class KTraceOptions: public TraceOptions
       }
     }
 
-    inline void set_all_states( char whichAllStates )
+    inline void set_all_states( bool whichAllStates )
     {
       all_states = whichAllStates;
     }
@@ -328,32 +328,32 @@ class KTraceOptions: public TraceOptions
       }
     }
 
-    inline void set_filter_last_type(  int whichFilterLastType )
+    inline void set_filter_last_type( int whichFilterLastType )
     {
       filter_last_type = whichFilterLastType;
     }
 
-    inline char get_filter_events() const
+    inline bool get_filter_events() const
     {
       return filter_events;
     }
 
-    inline char get_filter_states() const
+    inline bool get_filter_states() const
     {
       return filter_states;
     }
 
-    inline char get_filter_comms() const
+    inline bool get_filter_comms() const
     {
       return filter_comms;
     }
 
-    inline char get_discard_given_types() const
+    inline bool get_discard_given_types() const
     {
       return discard_given_types;
     }
 
-    inline char get_filter_by_call_time() const
+    inline bool get_filter_by_call_time() const
     {
       return filter_by_call_time;
     }
@@ -369,7 +369,7 @@ class KTraceOptions: public TraceOptions
       }
     }
 
-    inline char get_all_states() const
+    inline bool get_all_states() const
     {
       return all_states;
     }
@@ -398,7 +398,7 @@ class KTraceOptions: public TraceOptions
     }
 
     /* Sets for Software Counters */
-    inline void set_sc_onInterval( int whichSCOnInterval )
+    inline void set_sc_onInterval( bool whichSCOnInterval )
     {
       sc_onInterval = whichSCOnInterval;
     }
@@ -413,27 +413,27 @@ class KTraceOptions: public TraceOptions
       sc_minimum_burst_time = whichSCMinimumBurstTime;
     }
 
-    inline void set_sc_global_counters( int whichSCGlobalCounters )
+    inline void set_sc_global_counters( bool whichSCGlobalCounters )
     {
       sc_global_counters = whichSCGlobalCounters;
     }
 
-    inline void set_sc_acumm_counters( int whichSCAcummCounters )
+    inline void set_sc_acumm_counters( bool whichSCAcummCounters )
     {
       sc_acumm_counters = whichSCAcummCounters;
     }
 
-    inline void set_sc_summarize_states( int whichSCSummarizeStates )
+    inline void set_sc_summarize_states( bool whichSCSummarizeStates )
     {
       sc_summarize_states = whichSCSummarizeStates;
     }
 
-    inline void set_sc_only_in_bursts( int whichSCOnlyInBursts )
+    inline void set_sc_only_in_bursts( bool whichSCOnlyInBursts )
     {
       sc_only_in_bursts = whichSCOnlyInBursts;
     }
 
-    inline void set_sc_remove_states( int whichSCRemoveStates )
+    inline void set_sc_remove_states( bool whichSCRemoveStates )
     {
       sc_remove_states = whichSCRemoveStates;
     }
@@ -453,7 +453,7 @@ class KTraceOptions: public TraceOptions
       types_kept = whichTypesKept;
     }
 
-    inline int get_sc_onInterval() const
+    inline bool get_sc_onInterval() const
     {
       return sc_onInterval;
     }
@@ -468,27 +468,27 @@ class KTraceOptions: public TraceOptions
       return sc_minimum_burst_time;
     }
 
-    inline int get_sc_global_counters() const
+    inline bool get_sc_global_counters() const
     {
       return sc_global_counters;
     }
 
-    inline int get_sc_acumm_counters() const
+    inline bool get_sc_acumm_counters() const
     {
       return sc_acumm_counters;
     }
 
-    inline int get_sc_summarize_states() const
+    inline bool get_sc_summarize_states() const
     {
       return sc_summarize_states;
     }
 
-    inline int get_sc_only_in_bursts() const
+    inline bool get_sc_only_in_bursts() const
     {
       return sc_only_in_bursts;
     }
 
-    inline int get_sc_remove_states() const
+    inline bool get_sc_remove_states() const
     {
       return sc_remove_states;
     }
@@ -547,7 +547,10 @@ class KTraceOptions: public TraceOptions
   private:
     void init();
     void init_filter_types();
-    void parse_type( xmlDocPtr doc, xmlNodePtr cur, struct TraceOptions::allowed_types *types, int *last_type );
+    void parse_type( xmlDocPtr doc,
+                     xmlNodePtr cur,
+                     struct TraceOptions::allowed_types *types,
+                     int &last_type );
     void parse_filter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cur );

@@ -52,33 +52,10 @@ class KTraceFilter: public TraceFilter
     FILE *infile;
     FILE *outfile;
     gzFile gzInfile;
-    /*
-        unsigned int min_perc;
-        unsigned int max_perc;
-        unsigned int by_time;
-        unsigned int old_times;
-        unsigned int max_size;
-        unsigned int is_zip;
-        unsigned int cut_tasks;
-        unsigned int break_states;
-        unsigned long long time_min;
-        unsigned long long time_max;
-        unsigned long long total_time;
-        unsigned long long first_record_time;
-        unsigned long long last_record_time;
-        unsigned long long current_size;
-        unsigned long long total_size;
-        unsigned long long trace_time;
-        int num_tasks;
-        int usefull_tasks;
-        int init_task_counter;
-        unsigned int remFirstStates;
-        unsigned int remLastStates;
-        unsigned int first_time_caught;
-    */
+
     /* Parameters for showing percentage */
     unsigned long long total_trace_size;
-    unsigned long long current_readed_size;
+    unsigned long long current_read_size;
     // unsigned long total_cutter_iters;
     unsigned long total_iters;
 
@@ -89,15 +66,15 @@ class KTraceFilter: public TraceFilter
     KTraceOptions *exec_options;
 
     /* Execution parameters */
-    char show_states;
-    char show_comms;
-    char show_events;
-    char filter_all_types;
-    char all_states;
-    char filter_by_call_time;
+    bool show_states;
+    bool show_comms;
+    bool show_events;
+    bool filter_all_types;
+    bool all_states;
+    bool filter_by_call_time;
     unsigned long long min_state_time;
     int min_comm_size;
-    int is_zip_filter;
+    bool is_zip_filter;
 
     struct states_info
     {
@@ -110,7 +87,7 @@ class KTraceFilter: public TraceFilter
     struct buffer_elem
     {
       char *record;
-      char dump;
+      bool dump;
       int appl;
       int task;
       int thread;
@@ -122,24 +99,6 @@ class KTraceFilter: public TraceFilter
     struct buffer_elem *buffer_last;
 
     struct buffer_elem *thread_call_info[MAX_APPL][MAX_TASK][MAX_THREAD];
-
-    /*
-        void read_cutter_params();
-        void proces_cutter_header( char *header,
-                                   char *trace_in_name,
-                                   char *trace_out_name );
-        void adjust_to_final_time();
-        void ini_cutter_progress_bar( char *file_name );
-        void show_cutter_progress_bar();
-        void update_queue( int appl, int task, int thread,
-                           unsigned long long type,
-                           unsigned long long value );
-        void load_counters_of_pcf( char *trace_name );
-        void shift_trace_to_zero( char *nameIn, char *nameOut );
-        int is_selected_task( int task_id );
-
-        void execute( char *trace_in, char *trace_out );
-    */
 
     void read_params();
     void filter_process_header( char *header );

@@ -50,13 +50,13 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
       unsigned long long type;
       unsigned long long value;
       unsigned long long num;
-      short last_is_zero;
+      bool last_is_zero;
     };
 
     struct stack
     {
       unsigned long long type[5];
-      int valid[5];
+      bool valid[5];
       int top;
     };
 
@@ -99,7 +99,7 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     struct type_values
     {
       unsigned long long type;
-      int all_values;
+      bool all_values;
       unsigned long long values[16];
     };
 
@@ -125,12 +125,12 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     char line[MAX_LINE_SIZE];  /* Buffer for reading trace records */
 
     /* Execution parameters */
-    int all_types;
-    int global_counters;
-    int acumm_values;
-    int remove_states;
-    int only_in_bursts;
-    int summarize_bursts;
+    bool all_types;
+    bool global_counters;
+    bool acumm_values;
+    bool remove_states;
+    bool only_in_bursts;
+    bool summarize_bursts;
     unsigned long long interval;
     unsigned long long last_time;
     unsigned long long trace_time;
@@ -138,8 +138,8 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     unsigned long long min_state_time;
     struct sc_allowed_types types;
     int last_type_mark;
-    int type_of_counters;
-    char keep_events;
+    bool type_of_counters;
+    bool keep_events;
     int frequency;
 
     /* Trace in and trace out */
@@ -159,7 +159,7 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
 
     /* Parameters for showing percentage */
     unsigned long long total_trace_size;
-    unsigned long long current_readed_size;
+    unsigned long long current_read_size;
     unsigned long total_iters;
 
     /* Struct needed for the mode SC_BY_STATE */
@@ -171,9 +171,10 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     void read_sc_args();
     void proces_header( char *header, FILE *in, FILE *out );
     void write_pcf( char *file_out );
-    int allowed_type( unsigned long long type, unsigned long long value );
-    int allowed_type_mark( unsigned long long type );
-    int inc_counter( int appl, int task, int thread, unsigned long long type, unsigned long long value );
+    bool allowed_type( unsigned long long type, unsigned long long value );
+    bool allowed_type_mark( unsigned long long type );
+    int inc_counter( int appl, int task, int thread,
+                     unsigned long long type, unsigned long long value );
     void put_zeros( void );
     void flush_all_events( void );
     void put_all_counters( void );

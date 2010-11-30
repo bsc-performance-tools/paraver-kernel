@@ -76,13 +76,13 @@ class TraceOptions
     {}
     virtual void set_tasks_list( char *tasksList )
     {}
-    virtual void set_original_time( char originalTime )
+    virtual void set_original_time( bool originalTime )
     {}
-    virtual void set_break_states( int breakStates )
+    virtual void set_break_states( bool breakStates )
     {}
-    virtual void set_remFirstStates( int remStates )
+    virtual void set_remFirstStates( bool remStates )
     {}
-    virtual void set_remLastStates( int remStates )
+    virtual void set_remLastStates( bool remStates )
     {}
 
     virtual bool get_by_time() const
@@ -97,31 +97,30 @@ class TraceOptions
     { return 0; }
     virtual void get_tasks_list( TTasksList &whichTasksList ) const
     { }
-    virtual char get_original_time() const
+    virtual bool get_original_time() const
     { return 0; }
-    virtual int get_break_states() const
+    virtual bool get_break_states() const
     { return 0; }
-    virtual int get_remFirstStates() const
+    virtual bool get_remFirstStates() const
     { return 0; }
-    virtual int get_remLastStates() const
+    virtual bool get_remLastStates() const
     { return 0; }
-
 
 
     /* Sets for filtering */
-    virtual void set_filter_events( char filterEvents )
+    virtual void set_filter_events( bool filterEvents )
     {}
-    virtual void set_filter_states( char filterStates )
+    virtual void set_filter_states( bool filterStates )
     {}
-    virtual void set_filter_comms( char filterComms )
+    virtual void set_filter_comms( bool filterComms )
     {}
-    virtual void set_discard_given_types( char discardGivenTypes )
+    virtual void set_discard_given_types( bool discardGivenTypes )
     {}
-    virtual void set_filter_by_call_time( char filterByCallTime )
+    virtual void set_filter_by_call_time( bool filterByCallTime )
     {}
     virtual void set_state_names( TStateNames stateNames )
     {}
-    virtual void set_all_states( char allStates )
+    virtual void set_all_states( bool allStates )
     {}
     virtual void set_min_state_time( unsigned long long minStateTime )
     {}
@@ -129,22 +128,22 @@ class TraceOptions
     {}
     virtual void set_filter_types( TFilterTypes filterTypes )
     {}
-    virtual void set_filter_last_type(  int filterLastType )
+    virtual void set_filter_last_type( int filterLastType )
     {}
 
-    virtual char get_filter_events() const
+    virtual bool get_filter_events() const
     { return 0; }
-    virtual char get_filter_states() const
+    virtual bool get_filter_states() const
     { return 0; }
-    virtual char get_filter_comms() const
+    virtual bool get_filter_comms() const
     { return 0; }
-    virtual char get_discard_given_types() const
+    virtual bool get_discard_given_types() const
     { return 0; }
-    virtual char get_filter_by_call_time() const
+    virtual bool get_filter_by_call_time() const
     { return 0; }
     virtual void get_state_names( TStateNames &stateNames ) const
     {}
-    virtual char get_all_states() const
+    virtual bool get_all_states() const
     { return 0; }
     virtual unsigned long long get_min_state_time() const
     { return 0; }
@@ -155,22 +154,22 @@ class TraceOptions
     virtual int get_filter_last_type() const
     { return 0; }
 
-    /* Sets for Sofware Counters */
-    virtual void set_sc_onInterval( int scOnInterval )
+    /* Sets for Software Counters */
+    virtual void set_sc_onInterval( bool scOnInterval )
     {}
     virtual void set_sc_sampling_interval( unsigned long long scInterval )
     {}
     virtual void set_sc_minimum_burst_time( unsigned long long scInterval )
     {}
-    virtual void set_sc_global_counters( int scGlobalCounters )
+    virtual void set_sc_global_counters( bool scGlobalCounters )
     {}
-    virtual void set_sc_acumm_counters( int scAcummCounters )
+    virtual void set_sc_acumm_counters( bool scAcummCounters )
     {}
-    virtual void set_sc_summarize_states( int scSummarizeStates )
+    virtual void set_sc_summarize_states( bool scSummarizeStates )
     {}
-    virtual void set_sc_only_in_bursts( int scOnlyInBursts )
+    virtual void set_sc_only_in_bursts( bool scOnlyInBursts )
     {}
-    virtual void set_sc_remove_states( int scRemoveStates )
+    virtual void set_sc_remove_states( bool scRemoveStates )
     {}
     virtual void set_sc_frequency( int scFrequency )
     {}
@@ -179,21 +178,21 @@ class TraceOptions
     virtual void set_sc_types_kept( char *typesKept )
     {}
 
-    virtual int get_sc_onInterval() const
+    virtual bool get_sc_onInterval() const
     { return 0; }
     virtual unsigned long long get_sc_sampling_interval() const
     { return 0; }
     virtual unsigned long long get_sc_minimum_burst_time() const
     { return 0; }
-    virtual int get_sc_global_counters() const
+    virtual bool get_sc_global_counters() const
     { return 0; }
-    virtual int get_sc_acumm_counters() const
+    virtual bool get_sc_acumm_counters() const
     { return 0; }
-    virtual int get_sc_summarize_states() const
+    virtual bool get_sc_summarize_states() const
     { return 0; }
-    virtual int get_sc_only_in_bursts() const
+    virtual bool get_sc_only_in_bursts() const
     { return 0; }
-    virtual int get_sc_remove_states() const
+    virtual bool get_sc_remove_states() const
     { return 0; }
     //virtual unsigned long long get_sc_interval()
     //{ return 0; }
@@ -250,10 +249,10 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_minimum_time_percentage( unsigned long long whichMinimumTimePercentage );
     virtual void set_maximum_time_percentage( unsigned long long whichMaximumTimePercentage );
     virtual void set_tasks_list( TTasksList &tasksList );
-    virtual void set_original_time( char originalTime );
-    virtual void set_break_states( int breakStates );
-    virtual void set_remFirstStates( int remStates );
-    virtual void set_remLastStates( int remStates );
+    virtual void set_original_time( bool originalTime );
+    virtual void set_break_states( bool breakStates );
+    virtual void set_remFirstStates( bool remStates );
+    virtual void set_remLastStates( bool remStates );
 
     virtual bool get_by_time() const;
     virtual unsigned long long get_min_cutting_time() const;
@@ -261,57 +260,57 @@ class TraceOptionsProxy :public TraceOptions
     virtual unsigned long long get_minimum_time_percentage() const;
     virtual unsigned long long get_maximum_time_percentage() const;
     virtual void get_tasks_list( TTasksList &whichTasksList ) const;
-    virtual char get_original_time() const;
-    virtual int get_break_states() const;
-    virtual int get_remFirstStates() const;
-    virtual int get_remLastStates() const;
+    virtual bool get_original_time() const;
+    virtual bool get_break_states() const;
+    virtual bool get_remFirstStates() const;
+    virtual bool get_remLastStates() const;
 
     /* Sets for filtering */
-    virtual void set_filter_events( char filterEvents );
-    virtual void set_filter_states( char filterStates );
-    virtual void set_filter_comms( char filterComms );
-    virtual void set_discard_given_types( char discardGivenTypes );
-    virtual void set_filter_by_call_time( char filterByCallTime );
+    virtual void set_filter_events( bool filterEvents );
+    virtual void set_filter_states( bool filterStates );
+    virtual void set_filter_comms( bool filterComms );
+    virtual void set_discard_given_types( bool discardGivenTypes );
+    virtual void set_filter_by_call_time( bool filterByCallTime );
     virtual void set_state_names( TStateNames stateNames );
-    virtual void set_all_states( char allStates );
+    virtual void set_all_states( bool allStates );
     virtual void set_min_state_time( unsigned long long minStateTime );
     virtual void set_min_comm_size( int minCommSize );
     virtual void set_filter_types( TFilterTypes filterTypes );
-    virtual void set_filter_last_type(  int filterLastType );
+    virtual void set_filter_last_type( int filterLastType );
 
-    virtual char get_filter_events() const;
-    virtual char get_filter_states() const;
-    virtual char get_filter_comms() const;
-    virtual char get_discard_given_types() const;
-    virtual char get_filter_by_call_time() const;
+    virtual bool get_filter_events() const;
+    virtual bool get_filter_states() const;
+    virtual bool get_filter_comms() const;
+    virtual bool get_discard_given_types() const;
+    virtual bool get_filter_by_call_time() const;
     virtual void get_state_names( TStateNames &stateNames ) const;
-    virtual char get_all_states() const;
+    virtual bool get_all_states() const;
     virtual unsigned long long get_min_state_time() const;
     virtual int get_min_comm_size() const;
     virtual void get_filter_types( TFilterTypes &filterTypes ) const;
     virtual int get_filter_last_type() const;
 
     /* Sets for Software Counters */
-    virtual void set_sc_onInterval( int scOnInterval );
+    virtual void set_sc_onInterval( bool scOnInterval );
     virtual void set_sc_sampling_interval( unsigned long long scInterval );
     virtual void set_sc_minimum_burst_time( unsigned long long scInterval );
-    virtual void set_sc_global_counters( int scGlobalCounters );
-    virtual void set_sc_acumm_counters( int scAcummCounters );
-    virtual void set_sc_summarize_states( int scSummarizeStates );
-    virtual void set_sc_only_in_bursts( int scOnlyInBursts );
-    virtual void set_sc_remove_states( int scRemoveStates );
+    virtual void set_sc_global_counters( bool scGlobalCounters );
+    virtual void set_sc_acumm_counters( bool scAcummCounters );
+    virtual void set_sc_summarize_states( bool scSummarizeStates );
+    virtual void set_sc_only_in_bursts( bool scOnlyInBursts );
+    virtual void set_sc_remove_states( bool scRemoveStates );
     virtual void set_sc_frequency( int scFrequency );
     virtual void set_sc_types( char *whichTypes );
     virtual void set_sc_types_kept( char *typesKept );
 
-    virtual int get_sc_onInterval() const;
+    virtual bool get_sc_onInterval() const;
     virtual unsigned long long get_sc_sampling_interval() const;
     virtual unsigned long long get_sc_minimum_burst_time() const;
-    virtual int get_sc_global_counters() const;
-    virtual int get_sc_acumm_counters() const;
-    virtual int get_sc_summarize_states() const;
-    virtual int get_sc_only_in_bursts() const;
-    virtual int get_sc_remove_states() const;
+    virtual bool get_sc_global_counters() const;
+    virtual bool get_sc_acumm_counters() const;
+    virtual bool get_sc_summarize_states() const;
+    virtual bool get_sc_only_in_bursts() const;
+    virtual bool get_sc_remove_states() const;
     virtual char *get_sc_types() const;
     virtual char *get_sc_types_kept() const;
 
