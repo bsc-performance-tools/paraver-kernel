@@ -49,6 +49,7 @@
 using namespace std;
 
 bool showHelp = false;
+bool onlySelectedPlane = false;
 bool multipleFiles = false;
 bool dumpTrace = false;
 bool noLoad = false;
@@ -78,6 +79,9 @@ void printHelp()
   cout << "  paramedir [OPTION] trc {xml} cfg {out | cfg}*" << endl;
   cout << endl;
   cout << "    -h: Prints this help" << endl;
+  cout << endl;
+  cout << "  Histogram options:" << endl;
+  cout << "    -p: Only the selected plane of a 3D histogram is printed. Default is to print all of them." << endl;
   cout << endl;
   cout << "  Output file options:" << endl;
   cout << "    -m: Prints on multiple files." << endl;
@@ -150,6 +154,8 @@ void activateOption( char *argument, vector< int > &filterToolOrder )
 {
   if ( argument[ 1 ] == 'h' )
     showHelp = true;
+  else if ( argument[ 1 ] == 'p' )
+    onlySelectedPlane = true;
   else if ( argument[ 1 ] == 'm' )
     multipleFiles = true;
   else if ( argument[ 1 ] == 'd' )
@@ -394,7 +400,7 @@ void loadCFGs( KernelConnection *myKernel )
 
       if ( histograms.begin() != histograms.end() &&
            histograms[ histograms.size() - 1 ] != NULL )
-        output.dumpHistogram( histograms[ histograms.size() - 1 ], it->second );
+        output.dumpHistogram( histograms[ histograms.size() - 1 ], it->second, onlySelectedPlane );
       else if( windows.begin() != windows.end() &&
                windows[ windows.size() - 1 ] != NULL )
         output.dumpWindow( windows[ windows.size() - 1 ], it->second );

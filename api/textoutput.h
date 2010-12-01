@@ -15,7 +15,7 @@ class TextOutput
     ~TextOutput();
 
     void dumpWindow( Window *whichWindow, string& strOutputFile );
-    void dumpHistogram( Histogram *whichHisto, string& strOutputFile );
+    void dumpHistogram( Histogram *whichHisto, string& strOutputFile, bool onlySelectedPlane = false );
 
     bool getMultipleFiles() const;
     void setMultipleFiles( bool newValue );
