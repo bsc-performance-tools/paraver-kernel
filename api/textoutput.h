@@ -67,20 +67,20 @@ class TextOutput
                         ofstream &outputFile );
 
     void dumpMatrixCommHorizontal( Histogram *whichHisto,
-                               TObjectOrder numRows,
-                               THistogramColumn numColumns,
-                               PRV_UINT16 currentStat,
-                               vector<THistogramColumn> printedColumns,
-                               THistogramColumn iPlane,
-                               ofstream &outputfile );
+                                   TObjectOrder numRows,
+                                   THistogramColumn numColumns,
+                                   PRV_UINT16 currentStat,
+                                   vector<THistogramColumn> printedColumns,
+                                   THistogramColumn iPlane,
+                                   ofstream &outputfile );
 
     void dumpMatrixCommVertical( Histogram *whichHisto,
-                             TObjectOrder numRows,
-                             THistogramColumn numColumns,
-                             PRV_UINT16 currentStat,
-                             vector<THistogramColumn> printedColumns,
-                             THistogramColumn iPlane,
-                             ofstream &outputfile );
+                                 TObjectOrder numRows,
+                                 THistogramColumn numColumns,
+                                 PRV_UINT16 currentStat,
+                                 vector<THistogramColumn> printedColumns,
+                                 THistogramColumn iPlane,
+                                 ofstream &outputfile );
 
 };
 

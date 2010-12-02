@@ -322,13 +322,14 @@ void TextOutput::dumpMatrixVertical( Histogram *whichHisto,
   }
 }
 
+
 void TextOutput::dumpMatrixCommHorizontal( Histogram *whichHisto,
-                                       TObjectOrder numRows,
-                                       THistogramColumn numColumns,
-                                       PRV_UINT16 currentStat,
-                                       vector<THistogramColumn> printedColumns,
-                                       THistogramColumn iPlane,
-                                       ofstream &outputFile )
+                                           TObjectOrder numRows,
+                                           THistogramColumn numColumns,
+                                           PRV_UINT16 currentStat,
+                                           vector<THistogramColumn> printedColumns,
+                                           THistogramColumn iPlane,
+                                           ofstream &outputFile )
 {
   outputFile << endl;
 
@@ -355,15 +356,13 @@ void TextOutput::dumpMatrixCommHorizontal( Histogram *whichHisto,
 }
 
 
-
-
 void TextOutput::dumpMatrixCommVertical( Histogram *whichHisto,
-                                     TObjectOrder numRows,
-                                     THistogramColumn numColumns,
-                                     PRV_UINT16 currentStat,
-                                     vector<THistogramColumn> printedColumns,
-                                     THistogramColumn iPlane,
-                                     ofstream &outputFile )
+                                         TObjectOrder numRows,
+                                         THistogramColumn numColumns,
+                                         PRV_UINT16 currentStat,
+                                         vector<THistogramColumn> printedColumns,
+                                         THistogramColumn iPlane,
+                                         ofstream &outputFile )
 {
   for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
     outputFile << whichHisto->getRowLabel( iRow ) << "\t";
