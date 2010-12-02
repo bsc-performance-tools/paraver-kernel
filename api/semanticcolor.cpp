@@ -368,6 +368,31 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
 bool GradientColor::calcValue( rgb whichColor, TSemanticValue& returnValue ) const
 {
   returnValue = 0.0;
+  if( whichColor == belowOutlierColor || whichColor == belowOutlierColor )
+    return false;
+
+  double colorValue, begin, end;
+  if( redStep >= greenStep && redStep >= blueStep )
+  {
+    colorValue = whichColor.red;
+    begin = beginGradientColor.red;
+    end = endGradientColor.red;
+  }
+  else if( greenStep >= blueStep )
+  {
+    colorValue = whichColor.green;
+    begin = beginGradientColor.green;
+    end = endGradientColor.green;
+  }
+  else
+  {
+    colorValue = whichColor.blue;
+    begin = beginGradientColor.blue;
+    end = endGradientColor.blue;
+  }
+
+  returnValue = ( colorValue - begin ) / ( end - begin );
+
   return true;
 }
 
