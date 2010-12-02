@@ -69,6 +69,8 @@ class SemanticColor
                            TSemanticValue minimum,
                            TSemanticValue maximum ) const = 0;
 
+    virtual bool calcValue( rgb whichColor, TSemanticValue& returnValue ) const = 0;
+
   private:
     static PRV_UINT32 numColors;
     static rgb codeColor[];
@@ -90,6 +92,7 @@ class CodeColor: public SemanticColor
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
                    TSemanticValue maximum ) const;
+    bool calcValue( rgb whichColor, TSemanticValue& returnValue ) const;
 
   private:
     vector<rgb> colors;
@@ -137,6 +140,7 @@ class GradientColor: public SemanticColor
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
                    TSemanticValue maximum ) const;
+    bool calcValue( rgb whichColor, TSemanticValue& returnValue ) const;
 
     void copy( GradientColor &destiny );
 

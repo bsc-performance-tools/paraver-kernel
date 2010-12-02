@@ -55,6 +55,16 @@ struct rgb
   ParaverColor red;
   ParaverColor green;
   ParaverColor blue;
+
+  bool operator==( const rgb& b ) const
+  {
+    return red == b.red && green == b.green && blue == b.blue;
+  }
+
+  bool operator!=( const rgb& b ) const
+  {
+    return !( *this == b );
+  }
 };
 
 #endif // PARAVERTYPES_H_INCLUDED

@@ -186,6 +186,24 @@ rgb CodeColor::calcColor( TSemanticValue whichValue,
   return getColor( static_cast< PRV_UINT32 >( whichValue ) );
 }
 
+bool CodeColor::calcValue( rgb whichColor, TSemanticValue& returnValue ) const
+{
+  bool found = false;
+  returnValue = 0;
+
+  for( PRV_UINT32 i = 0; i < colors.size(); ++i )
+  {
+    if( whichColor == colors[ i ] )
+    {
+      returnValue = i;
+      found = true;
+      break;
+    }
+  }
+
+  return found;
+}
+
 // GRADIENTCOLOR METHODS
 GradientColor::GradientColor( )
 {
@@ -345,6 +363,12 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
   }
 
   return returnColor;
+}
+
+bool GradientColor::calcValue( rgb whichColor, TSemanticValue& returnValue ) const
+{
+  returnValue = 0.0;
+  return true;
 }
 
 void GradientColor::recalcSteps()
