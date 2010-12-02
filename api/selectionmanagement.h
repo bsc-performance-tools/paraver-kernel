@@ -31,6 +31,8 @@
 #define _SELECTION_MANAGEMENT_H
 
 #include <vector>
+#include "prvtypes.h"
+#include "paraverkerneltypes.h"
 //#include "trace.h"
 class Trace;
 class HistogramTotals;

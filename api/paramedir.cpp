@@ -50,6 +50,7 @@ using namespace std;
 
 bool showHelp = false;
 bool onlySelectedPlane = false;
+bool hideEmptyColumns = false;
 bool multipleFiles = false;
 bool dumpTrace = false;
 bool noLoad = false;
@@ -81,10 +82,11 @@ void printHelp()
   cout << "    -h: Prints this help" << endl;
   cout << endl;
   cout << "  Histogram options:" << endl;
-  cout << "    -p: Only the selected plane of a 3D histogram is printed. Default is to print all of them." << endl;
+  cout << "    -p: Only the selected Plane of a 3D histogram is printed. Default is to print all of them." << endl;
+  cout << "    -e: Hide Empty columns" << endl;
   cout << endl;
   cout << "  Output file options:" << endl;
-  cout << "    -m: Prints on multiple files." << endl;
+  cout << "    -m: Prints on Multiple files." << endl;
   cout << endl;
   cout << "  Cutter/Filter options ( needed unique xml file with cutter/filter options):" << endl;
   cout << "    -c: Apply Cutter." << endl;
@@ -156,6 +158,8 @@ void activateOption( char *argument, vector< int > &filterToolOrder )
     showHelp = true;
   else if ( argument[ 1 ] == 'p' )
     onlySelectedPlane = true;
+  else if ( argument[ 1 ] == 'e' )
+    hideEmptyColumns = true;
   else if ( argument[ 1 ] == 'm' )
     multipleFiles = true;
   else if ( argument[ 1 ] == 'd' )
@@ -400,7 +404,10 @@ void loadCFGs( KernelConnection *myKernel )
 
       if ( histograms.begin() != histograms.end() &&
            histograms[ histograms.size() - 1 ] != NULL )
-        output.dumpHistogram( histograms[ histograms.size() - 1 ], it->second, onlySelectedPlane );
+        output.dumpHistogram( histograms[ histograms.size() - 1 ],
+                              it->second,
+                              onlySelectedPlane,
+                              hideEmptyColumns );
       else if( windows.begin() != windows.end() &&
                windows[ windows.size() - 1 ] != NULL )
         output.dumpWindow( windows[ windows.size() - 1 ], it->second );

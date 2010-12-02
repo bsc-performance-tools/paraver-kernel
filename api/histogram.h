@@ -316,6 +316,13 @@ class Histogram
       return "Unnamed plane";
     }
 
+    virtual THistogramColumn getPlaneColumns( THistogramColumn iPlane,
+                                              bool hideEmptyColumns,
+                                              vector<THistogramColumn> &noVoidColumns ) const
+    {
+      return 0;
+    }
+
     // Zoom history
     typedef struct TZoomInfo
     {
@@ -559,6 +566,9 @@ class HistogramProxy : public Histogram
     virtual string getRowLabel( TObjectOrder whichRow ) const;
     virtual string getColumnLabel( THistogramColumn whichColumn ) const;
     virtual string getPlaneLabel( THistogramColumn whichPlane ) const;
+    virtual THistogramColumn getPlaneColumns( THistogramColumn iPlane,
+                                              bool hideEmptyColumns,
+                                              vector<THistogramColumn> &noVoidColumns ) const;
 
     // Zoom history
     virtual bool isZoomEmpty() const;

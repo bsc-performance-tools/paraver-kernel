@@ -964,6 +964,44 @@ string HistogramProxy::getPlaneLabel( THistogramColumn whichPlane ) const
          getExtraControlDelta() );
 }
 
+THistogramColumn HistogramProxy::getPlaneColumns( THistogramColumn iPlane,
+                                                  bool hideEmptyColumns, // need to override cfg value
+                                                  vector<THistogramColumn> &columns ) const
+{
+  THistogramColumn numColumns = 0;
+
+  PRV_UINT16 idStat;
+
+  if( getIdStat( getCurrentStat(), idStat ) )
+  {
+    bool commStat = itsCommunicationStat( getCurrentStat() );
+    numColumns = getNumColumns( getCurrentStat() );
+
+    if ( hideEmptyColumns )
+    {
+      // Return only the columns with values
+      SelectionManagement<THistogramColumn,int> columnSelection;
+
+      if( commStat )
+        columnSelection.init( getCommColumnTotals(), idStat, numColumns, iPlane );
+      else
+        columnSelection.init( getColumnTotals(), idStat, numColumns, iPlane );
+
+      columnSelection.getSelected( columns );
+
+      numColumns = columns.size();
+    }
+    else
+    {
+      // return all the columns ??
+      for( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+        columns.push_back( iColumn );
+    }
+  }
+
+  return numColumns;
+}
+
 bool HistogramProxy::isZoomEmpty() const
 {
   return zoomHistory.isEmpty();
