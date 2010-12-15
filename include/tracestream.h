@@ -65,6 +65,8 @@ class TraceStream
     static TraceStream *openFile( const string& filename );
 
     static TTraceSize getTraceFileSize( const string& filename );
+
+    static const double GZIP_COMPRESSION_RATIO;
 };
 
 

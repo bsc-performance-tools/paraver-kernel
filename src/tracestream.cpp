@@ -33,6 +33,8 @@
 #include <stdlib.h>
 #endif
 
+const double TraceStream::GZIP_COMPRESSION_RATIO = 6.3;
+
 TraceStream *TraceStream::openFile( const string& filename )
 {
   string strExt = filename.substr( filename.length() - 3 );
@@ -48,7 +50,7 @@ TTraceSize TraceStream::getTraceFileSize( const string& filename )
   string strExt = filename.substr( filename.length() - 3 );
 
   if ( strExt.compare( ".gz" ) == 0 )
-    return Compressed::getTraceFileSize( filename );
+    return NotCompressed::getTraceFileSize( filename ) * GZIP_COMPRESSION_RATIO;
   else
     return NotCompressed::getTraceFileSize( filename );
 }
