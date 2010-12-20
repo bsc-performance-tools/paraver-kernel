@@ -839,12 +839,14 @@ rgb WindowProxy::calcColor( TSemanticValue whichValue, Window& whichWindow )
   return myGradientColor.calcColor( whichValue, minimumY, maximumY );
 }
 
-bool WindowProxy::calcValueFromColor( rgb whichColor, TSemanticValue& returnValue ) const
+bool WindowProxy::calcValueFromColor( rgb whichColor,
+                                      TSemanticValue& firstValue,
+                                      TSemanticValue& secondValue ) const
 {
   if ( codeColor )
-    return myCodeColor.calcValue( whichColor, returnValue );
+    return myCodeColor.calcValue( whichColor, firstValue );
 
-  return myGradientColor.calcValue( whichColor, returnValue );
+  return myGradientColor.calcValue( whichColor, minimumY, maximumY, firstValue, secondValue );
 }
 
 bool WindowProxy::getChanged() const

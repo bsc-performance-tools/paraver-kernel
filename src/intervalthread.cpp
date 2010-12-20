@@ -35,6 +35,7 @@ KRecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
 {
   createList = NOCREATE;
   currentValue = 0.0;
+  info.callingInterval = this;
 
   if ( displayList == NULL )
     displayList = &myDisplayList;
@@ -71,7 +72,6 @@ KRecordList *IntervalThread::calcNext( KRecordList *displayList, bool initCalc )
     *begin = *end;
   }
 
-  info.callingInterval = this;
   info.it = begin;
   currentValue = function->execute( &info );
   end = getNextRecord( end, displayList );
@@ -91,7 +91,6 @@ KRecordList *IntervalThread::calcPrev( KRecordList *displayList, bool initCalc )
   }
 
   begin = getPrevRecord( begin, displayList );
-  info.callingInterval = this;
   info.it = begin;
   currentValue = function->execute( &info );
 

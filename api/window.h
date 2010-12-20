@@ -276,9 +276,11 @@ class Window
       rgb tmp = { 0, 0, 0 };
       return tmp;
     }
-    virtual bool calcValueFromColor( rgb whichColor, TSemanticValue& returnValue ) const
+    virtual bool calcValueFromColor( rgb whichColor,
+                                     TSemanticValue& firstValue,
+                                     TSemanticValue& secondValue ) const
     {
-      return 0.0;
+      return true;
     }
     virtual bool getChanged() const
     {
@@ -500,7 +502,9 @@ class WindowProxy: public Window
     virtual void allowOutOfScale( bool activate );
     virtual void allowOutliers( bool activate );
     virtual rgb calcColor( TSemanticValue whichValue, Window& whichWindow );
-    virtual bool calcValueFromColor( rgb whichColor, TSemanticValue& returnValue ) const;
+    virtual bool calcValueFromColor( rgb whichColor,
+                                     TSemanticValue& firstValue,
+                                     TSemanticValue& secondValue ) const;
     virtual bool getChanged() const;
     virtual void setChanged( bool newValue );
     virtual bool getRedraw() const;

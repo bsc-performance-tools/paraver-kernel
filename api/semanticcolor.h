@@ -69,8 +69,6 @@ class SemanticColor
                            TSemanticValue minimum,
                            TSemanticValue maximum ) const = 0;
 
-    virtual bool calcValue( rgb whichColor, TSemanticValue& returnValue ) const = 0;
-
   private:
     static PRV_UINT32 numColors;
     static rgb codeColor[];
@@ -140,7 +138,11 @@ class GradientColor: public SemanticColor
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
                    TSemanticValue maximum ) const;
-    bool calcValue( rgb whichColor, TSemanticValue& returnValue ) const;
+    bool calcValue( rgb whichColor,
+                    TSemanticValue minimum,
+                    TSemanticValue maximum,
+                    TSemanticValue& beginRange,
+                    TSemanticValue& endRange ) const;
 
     void copy( GradientColor &destiny );
 
@@ -174,6 +176,19 @@ class GradientColor: public SemanticColor
     inline rgb functionExp( TSemanticValue whichValue,
                             TSemanticValue minimum,
                             TSemanticValue maximum ) const;
+
+    inline bool calcValueLinear( double colorValue, double begin, double end,
+                                 TSemanticValue& beginRange,
+                                 TSemanticValue& endRange ) const;
+    inline bool calcValueSteps( double colorValue, double begin, double end,
+                                TSemanticValue& beginRange,
+                                TSemanticValue& endRange ) const;
+    inline bool calcValueLog( double colorValue, double begin, double end,
+                              TSemanticValue& beginRange,
+                              TSemanticValue& endRange ) const;
+    inline bool calcValueExp( double colorValue, double begin, double end,
+                              TSemanticValue& beginRange,
+                              TSemanticValue& endRange ) const;
 
 };
 

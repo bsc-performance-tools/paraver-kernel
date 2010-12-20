@@ -36,6 +36,7 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
 {
   TRecordTime myInitTime;
   info.values.clear();
+  info.callingInterval = this;
 
   createList = create;
   currentValue = 0.0;
@@ -109,7 +110,6 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
   {
     begin = childIntervals[ 0 ]->getBegin();
     end = childIntervals[ 0 ]->getEnd();
-    info.callingInterval = this;
     info.values.push_back( childIntervals[ 0 ]->getValue() );
     currentValue = function->execute( &info );
   }
@@ -171,7 +171,6 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
     begin = childIntervals[ 0 ]->getBegin();
     end = childIntervals[ 0 ]->getEnd();
     info.values.push_back( childIntervals[ 0 ]->getValue() );
-    info.callingInterval = this;
     currentValue = function->execute( &info );
   }
 
@@ -218,7 +217,6 @@ KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc 
     begin = childIntervals[ 0 ]->getBegin();
     end = childIntervals[ 0 ]->getEnd();
     info.values.push_back( childIntervals[ 0 ]->getValue() );
-    info.callingInterval = this;
     currentValue = function->execute( &info );
   }
 

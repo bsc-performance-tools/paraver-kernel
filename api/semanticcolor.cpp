@@ -168,7 +168,8 @@ void CodeColor::setColor( PRV_UINT32 pos, rgb color )
   {
     while( pos >= colors.size() )
     {
-      vector<rgb>::iterator pos = colors.end(); --pos;
+      vector<rgb>::iterator pos = colors.end();
+      --pos;
       colors.insert( pos, colors.begin(), colors.end() );
     }
   }
@@ -365,10 +366,14 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
   return returnColor;
 }
 
-bool GradientColor::calcValue( rgb whichColor, TSemanticValue& returnValue ) const
+bool GradientColor::calcValue( rgb whichColor,
+                               TSemanticValue minimum,
+                               TSemanticValue maximum,
+                               TSemanticValue& beginRange,
+                               TSemanticValue& endRange ) const
 {
-  returnValue = 0.0;
-  if( whichColor == belowOutlierColor || whichColor == belowOutlierColor )
+  beginRange = endRange = 0.0;
+  if( whichColor == belowOutlierColor || whichColor == aboveOutlierColor )
     return false;
 
   double colorValue, begin, end;
@@ -391,9 +396,33 @@ bool GradientColor::calcValue( rgb whichColor, TSemanticValue& returnValue ) con
     end = endGradientColor.blue;
   }
 
-  returnValue = ( colorValue - begin ) / ( end - begin );
+  bool result;
+  switch ( function )
+  {
+    case LINEAR:
+      result = calcValueLinear( colorValue, begin, end, beginRange, endRange );
+      break;
 
-  return true;
+    case STEPS:
+      result = calcValueSteps( colorValue, begin, end, beginRange, endRange );
+      break;
+
+    case LOGARITHMIC:
+      result = calcValueLog( colorValue, begin, end, beginRange, endRange );
+      break;
+
+    case EXPONENTIAL:
+      result = calcValueExp( colorValue, begin, end, beginRange, endRange );
+      break;
+    default:
+      return false;
+      break;
+  }
+
+  beginRange = ( beginRange * ( maximum - minimum ) ) + minimum;
+  endRange = ( endRange * ( maximum - minimum ) ) + minimum;
+
+  return result;
 }
 
 void GradientColor::recalcSteps()
@@ -424,9 +453,9 @@ rgb GradientColor::functionLinear( TSemanticValue whichValue,
 {
   rgb tmpColor = beginGradientColor;
 
-  tmpColor.red += ( ParaverColor ) lround( redStep * whichValue );
-  tmpColor.green += ( ParaverColor ) lround( greenStep * whichValue );
-  tmpColor.blue += ( ParaverColor ) lround( blueStep * whichValue );
+  tmpColor.red += ( ParaverColor ) floor( redStep * whichValue );
+  tmpColor.green += ( ParaverColor ) floor( greenStep * whichValue );
+  tmpColor.blue += ( ParaverColor ) floor( blueStep * whichValue );
 
   return tmpColor;
 }
@@ -438,9 +467,9 @@ rgb GradientColor::functionSteps( TSemanticValue whichValue,
   rgb tmpColor = beginGradientColor;
 
   double stepNorm = floor( numSteps * whichValue ) / numSteps;
-  tmpColor.red += ( ParaverColor ) lround( redStep * stepNorm );
-  tmpColor.green += ( ParaverColor ) lround( greenStep * stepNorm );
-  tmpColor.blue += ( ParaverColor ) lround( blueStep * stepNorm );
+  tmpColor.red += ( ParaverColor ) floor( redStep * stepNorm );
+  tmpColor.green += ( ParaverColor ) floor( greenStep * stepNorm );
+  tmpColor.blue += ( ParaverColor ) floor( blueStep * stepNorm );
 
   return tmpColor;
 }
@@ -451,10 +480,10 @@ rgb GradientColor::functionLog( TSemanticValue whichValue,
 {
   rgb tmpColor = beginGradientColor;
 
-  double stepNorm = log( (double)(whichValue * 100 + 1) ) / log( (double)101 );
-  tmpColor.red += ( ParaverColor ) lround( redStep * stepNorm );
-  tmpColor.green += ( ParaverColor ) lround( greenStep * stepNorm );
-  tmpColor.blue += ( ParaverColor ) lround( blueStep * stepNorm );
+  double stepNorm = log( ( double )( whichValue * 100 + 1 ) ) / log( ( double )101 );
+  tmpColor.red += ( ParaverColor ) floor( redStep * stepNorm );
+  tmpColor.green += ( ParaverColor ) floor( greenStep * stepNorm );
+  tmpColor.blue += ( ParaverColor ) floor( blueStep * stepNorm );
 
   return tmpColor;
 }
@@ -465,10 +494,91 @@ rgb GradientColor::functionExp( TSemanticValue whichValue,
 {
   rgb tmpColor = beginGradientColor;
 
-  double stepNorm = exp( (double)(whichValue * 10) ) / exp( (double)10 );
-  tmpColor.red += ( ParaverColor ) lround( redStep * stepNorm );
-  tmpColor.green += ( ParaverColor ) lround( greenStep * stepNorm );
-  tmpColor.blue += ( ParaverColor ) lround( blueStep * stepNorm );
+  double stepNorm = exp( ( double )( whichValue * 10 ) ) / exp( ( double )10 );
+  tmpColor.red += ( ParaverColor ) floor( redStep * stepNorm );
+  tmpColor.green += ( ParaverColor ) floor( greenStep * stepNorm );
+  tmpColor.blue += ( ParaverColor ) floor( blueStep * stepNorm );
 
   return tmpColor;
+}
+
+bool GradientColor::calcValueLinear( double colorValue, double begin, double end,
+                                     TSemanticValue& beginRange,
+                                     TSemanticValue& endRange ) const
+{
+  double dif = 1;
+
+  beginRange = ( colorValue - begin ) / ( end - begin );
+  endRange = ( colorValue + dif - begin ) / ( end - begin );
+
+  if( colorValue == end )
+  {
+    endRange = end / ( end - begin );
+  }
+  else if( colorValue == 0 )
+  {
+    beginRange = 0;
+  }
+
+  return true;
+}
+
+bool GradientColor::calcValueSteps( double colorValue, double begin, double end,
+                                    TSemanticValue& beginRange,
+                                    TSemanticValue& endRange ) const
+{
+  double dif = 1;
+
+  begin /= numSteps;
+  end /= numSteps;
+  colorValue /= numSteps;
+  dif = ( end - begin ) / numSteps;
+
+  beginRange = ( colorValue - begin ) / ( end - begin );
+  endRange = ( colorValue + dif - begin ) / ( end - begin );
+
+  if( colorValue == end )
+  {
+    endRange = end / ( end - begin );
+  }
+  else if( colorValue == 0 )
+  {
+    beginRange = 0;
+  }
+
+  return true;
+}
+
+bool GradientColor::calcValueLog( double colorValue, double begin, double end,
+                                  TSemanticValue& beginRange,
+                                  TSemanticValue& endRange ) const
+{
+  double dif = 1;
+//  double stepNorm = log( ( double )( whichValue * 100 + 1 ) ) / log( ( double )101 );
+
+  begin = log( begin + 1 );
+  end = log( end + 1 );
+  colorValue = log( colorValue + 1 );
+  dif = ( end - begin ) / log( ( double )101 );
+
+  beginRange = ( colorValue - dif - begin ) / ( end - begin );
+  endRange = ( colorValue - begin ) / ( end - begin );
+
+  if( colorValue == end )
+  {
+    endRange = end / ( end - begin );
+  }
+  else if( colorValue == 0 )
+  {
+    beginRange = 0;
+  }
+
+  return true;
+}
+
+bool GradientColor::calcValueExp( double colorValue, double begin, double end,
+                                  TSemanticValue& beginRange,
+                                  TSemanticValue& endRange ) const
+{
+  return true;
 }

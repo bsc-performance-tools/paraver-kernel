@@ -43,7 +43,7 @@ class IntervalDerived: public IntervalHigh
     IntervalDerived()
     {
       function = NULL;
-    }
+   }
 
     IntervalDerived( KDerivedWindow *whichWindow, TWindowLevel whichLevel,
                      TObjectOrder whichOrder ):

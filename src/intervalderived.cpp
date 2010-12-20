@@ -35,6 +35,7 @@ KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
 {
   TRecordTime myInitTime;
   info.values.clear();
+  info.callingInterval = this;
 
   createList = create;
   currentValue = 0.0;
@@ -122,8 +123,6 @@ KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc 
     end = NULL;
   }
 
-  info.callingInterval = this;
-
   for ( TObjectOrder i = 0; i < childIntervals.size(); i++ )
   {
     if ( childIntervals[ i ]->getEnd()->getTime() <= begin->getTime() )
@@ -169,8 +168,6 @@ KRecordList *IntervalDerived::calcPrev( KRecordList *displayList, bool initCalc 
     delete begin;
     begin = NULL;
   }
-
-  info.callingInterval = this;
 
   for ( TObjectOrder i = 0; i < childIntervals.size(); i++ )
   {
