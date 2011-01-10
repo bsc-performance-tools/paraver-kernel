@@ -998,6 +998,11 @@ unsigned int WindowProxy::getSyncGroup() const
   return syncGroup;
 }
 
+SelectionManagement< TObjectOrder, TWindowLevel > *WindowProxy::getSelectedRows()
+{
+  return &selectedRow;
+}
+
 void WindowProxy::setSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
 {
   selectedRow.setSelected( selected, onLevel );

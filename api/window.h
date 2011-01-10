@@ -363,6 +363,10 @@ class Window
     }
 
 
+    virtual SelectionManagement< TObjectOrder, TWindowLevel > *getSelectedRows()
+    {
+      return NULL;
+    }
     virtual void setSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
     {}
     virtual void setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selection )
@@ -535,6 +539,7 @@ class WindowProxy: public Window
     virtual bool isSync() const;
     virtual unsigned int getSyncGroup() const;
 
+    virtual SelectionManagement< TObjectOrder, TWindowLevel > *getSelectedRows();
     virtual void setSelectedRows( TWindowLevel onLevel, vector< bool > &selected );
     virtual void setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected );
     virtual void getSelectedRows( TWindowLevel onLevel, vector< bool > &selected, bool lookUpLevels = false );
@@ -586,8 +591,8 @@ class WindowProxy: public Window
     string name;
     CodeColor myCodeColor;
     GradientColor myGradientColor;
-    bool codeColor;
     DrawModeMethod drawModeObject;
+    bool codeColor;
     DrawModeMethod drawModeTime;
     bool showWindow;
     bool raise;
