@@ -342,6 +342,12 @@
 		<Unit filename="api/selectionmanagement.h">
 			<Option target="api" />
 		</Unit>
+		<Unit filename="api/selectionrowsutils.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/selectionrowsutils.h">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="api/semanticcolor.cpp">
 			<Option target="api" />
 		</Unit>
