@@ -65,7 +65,8 @@ void LabelConstructor::init()
 
 string LabelConstructor::objectLabel( TObjectOrder globalOrder,
                                       TWindowLevel level,
-                                      Trace *whichTrace )
+                                      Trace *whichTrace,
+                                      bool showLevelTag )
 {
   string rowStr( whichTrace->getRowLabel( level, globalOrder ) );
   label.clear();
@@ -80,30 +81,55 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
     TTaskOrder task;
     TThreadOrder thread;
     whichTrace->getThreadLocation( globalOrder, appl, task, thread );
-    label << LEVEL_THREAD << ' ' << appl + 1 << '.' << task + 1 << '.' << thread + 1;
+    if ( showLevelTag )
+      label << LEVEL_THREAD << ' ' << appl + 1 << '.' << task + 1 << '.' << thread + 1;
+    else
+      label << appl + 1 << '.' << task + 1 << '.' << thread + 1;
   }
   else if ( level == TASK )
   {
     TApplOrder appl;
     TTaskOrder task;
     whichTrace->getTaskLocation( globalOrder, appl, task );
-    label << LEVEL_TASK << ' ' << appl + 1 << '.' << task + 1;
+    if ( showLevelTag )
+      label << LEVEL_TASK << ' ' << appl + 1 << '.' << task + 1;
+    else
+      label << appl + 1 << '.' << task + 1;
   }
   else if ( level == APPLICATION )
-    label << LEVEL_APPLICATION << ' ' << globalOrder + 1;
+  {
+    if ( showLevelTag )
+      label << LEVEL_APPLICATION << ' ' << globalOrder + 1;
+    else
+      label << globalOrder + 1;
+  }
   else if ( level == WORKLOAD )
-    label << LEVEL_WORKLOAD;
+  {
+    if ( showLevelTag )
+      label << LEVEL_WORKLOAD;
+  }
   else if ( level == CPU )
   {
     TNodeOrder node;
     TCPUOrder cpu;
     whichTrace->getCPULocation( globalOrder, node, cpu );
-    label << LEVEL_CPU << ' ' << node + 1 << '.' << cpu + 1;
+    if ( showLevelTag )
+      label << LEVEL_CPU << ' ' << node + 1 << '.' << cpu + 1;
+    else
+      label << node + 1 << '.' << cpu + 1;
   }
   else if ( level == NODE )
-    label << LEVEL_NODE << ' ' << globalOrder + 1;
+  {
+    if ( showLevelTag )
+      label << LEVEL_NODE << ' ' << globalOrder + 1;
+    else
+      label << globalOrder + 1;
+  }
   else if ( level == SYSTEM )
-    label << LEVEL_SYSTEM;
+  {
+    if ( showLevelTag )
+      label << LEVEL_SYSTEM;
+  }
 
   return label.str();
 }

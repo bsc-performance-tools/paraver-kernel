@@ -43,7 +43,8 @@ class LabelConstructor
 
     static string objectLabel( TObjectOrder globalOrder,
                                TWindowLevel level,
-                               Trace *whichTrace );
+                               Trace *whichTrace,
+                               bool showLevelTag = true );
 
     static string histoColumnLabel( THistogramColumn whichColumn,
                                     const Window *whichWindow,
