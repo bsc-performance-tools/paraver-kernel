@@ -38,6 +38,7 @@
 #include "loadedwindows.h"
 #include "paraverconfig.h"
 #include "syncwindows.h"
+#include "selectionrowsutils.h"
 
 Window *Window::create( KernelConnection *whichKernel, Trace *whichTrace )
 {
@@ -1107,51 +1108,6 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selecte
   }
 }
 
-void WindowProxy::getAllLevelsSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected )
-{
-  vector< TObjectOrder > allLevelsSelected;
-  TObjectOrder iAppl, iTask, globalTask, iNode, aux;
-  switch ( onLevel )
-  {
-    case TASK:
-      for ( vector< TObjectOrder >::iterator it = selected.begin(); it != selected.end(); ++it )
-      {
-        getTrace()->getTaskLocation( *it, iAppl, aux );
-        if ( selectedRow.isSelectedPosition( iAppl, APPLICATION ) )
-          allLevelsSelected.push_back( *it );
-      }
-
-      break;
-
-    case THREAD:
-      for ( vector< TObjectOrder >::iterator it = selected.begin(); it != selected.end(); ++it )
-      {
-        getTrace()->getThreadLocation( *it, iAppl, iTask, aux );
-        globalTask = getTrace()->getGlobalTask( iAppl, iTask );
-
-        if ( selectedRow.isSelectedPosition( iAppl, APPLICATION ) &&
-             selectedRow.isSelectedPosition( globalTask, TASK ) )
-          allLevelsSelected.push_back( *it );
-      }
-
-      break;
-
-    case CPU:
-      for ( vector< TObjectOrder >::iterator it = selected.begin(); it != selected.end(); ++it )
-      {
-        getTrace()->getCPULocation( *it, iNode, aux );
-        if ( selectedRow.isSelectedPosition( iNode, NODE ) )
-          allLevelsSelected.push_back( *it );
-      }
-      break;
-
-    default:
-      break;
-  }
-
-  if ( allLevelsSelected.size() > 0 )
-    selected.swap( allLevelsSelected );
-}
 
 void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected, bool lookUpLevels )
 {
@@ -1159,7 +1115,7 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > 
 
   if ( lookUpLevels )
   {
-    getAllLevelsSelectedRows( onLevel, selected );
+    SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), selectedRow, onLevel, selected );
   }
 }
 
@@ -1171,7 +1127,7 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel,
 
   if ( lookUpLevels )
   {
-    getAllLevelsSelectedRows( onLevel, selected );
+    SelectionRowsUtils::getAllLevelsSelectedRows( getTrace(), selectedRow, onLevel, selected );
   }
 }
 

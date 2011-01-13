@@ -60,7 +60,7 @@ class SelectionManagement
     void getSelected( vector< SelType > &selection, LevelType level = (LevelType)0 );
     void getSelected( vector< SelType > &selection, SelType first, SelType last, LevelType level = (LevelType)0 );
 
-    bool isSelectedPosition( SelType whichSelected, LevelType level = (LevelType)0 );
+    bool isSelectedPosition( SelType whichSelected, LevelType level = (LevelType)0 ) const;
 
   private:
     vector< vector< bool > > selected;

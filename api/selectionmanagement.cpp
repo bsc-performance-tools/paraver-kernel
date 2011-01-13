@@ -208,7 +208,7 @@ void SelectionManagement< SelType, LevelType >::setSelected( vector< SelType > &
 
 template < typename SelType, typename LevelType >
 bool SelectionManagement< SelType, LevelType >::isSelectedPosition( SelType whichSelected,
-    LevelType level )
+    LevelType level ) const
 {
   return selected[ level ][ whichSelected ];
 }
