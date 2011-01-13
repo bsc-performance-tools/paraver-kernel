@@ -556,17 +556,19 @@ bool GradientColor::calcValueLog( double colorValue, double begin, double end,
   double dif = 1;
 //  double stepNorm = log( ( double )( whichValue * 100 + 1 ) ) / log( ( double )101 );
 
-  begin = log( begin + 1 );
-  end = log( end + 1 );
-  colorValue = log( colorValue + 1 );
-  dif = ( end - begin ) / log( ( double )101 );
+  //begin = exp( begin / 100 );
+  //end = exp( end / 100 );
+  double tmpColorValue = ( colorValue - 1 ) / 100;
+  colorValue = exp( colorValue / 100 );
+//  dif = ( end - begin ) / log( ( double )101 );
+  dif = exp( tmpColorValue );
 
-  beginRange = ( colorValue - dif - begin ) / ( end - begin );
-  endRange = ( colorValue - begin ) / ( end - begin );
+  beginRange = ( dif/* - begin*/ ) / exp( ( end - begin ) / 100 );
+  endRange = ( colorValue/* - begin*/ ) / exp( ( end - begin ) / 100 );
 
-  if( colorValue == end )
+  if( colorValue == exp( end / 100 ) )
   {
-    endRange = end / ( end - begin );
+    endRange = 1;
   }
   else if( colorValue == 0 )
   {
