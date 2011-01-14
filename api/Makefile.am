@@ -16,6 +16,7 @@ libparaver_api_la_SOURCES = \
                     progresscontroller.cpp \
                     recordlist.cpp \
                     rowlabels.cpp \
+                    selectionrowsutils.cpp \
                     semanticcolor.cpp \
                     statelabels.cpp \
                     syncwindows.cpp \
@@ -60,6 +61,7 @@ include_HEADERS = \
                   recordlist.h\
                   rowlabels.h\
                   selectionmanagement.h\
+                  selectionrowsutils.h \
                   semanticcolor.h\
                   statelabels.h\
                   syncwindows.h\
