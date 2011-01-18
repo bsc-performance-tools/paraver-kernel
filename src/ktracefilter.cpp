@@ -699,7 +699,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
 
         if ( exec_options->min_comm_size > 0 )
         {
-          sscanf( line, "%*d:%*d:%*d:%*d:%*d:%*lld:%*lld:%*d:%*d:%*d:%*d:%*lld:%*lld:%d:%*d\n", &size );
+          sscanf( line, "%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%d:%*d\n", &size );
 
           if ( size < exec_options->min_comm_size )
             break;

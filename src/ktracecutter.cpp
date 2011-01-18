@@ -272,7 +272,7 @@ void KTraceCutter::proces_cutter_header( char *header,
     gzseek( gzInfile, -( strlen( header ) ), SEEK_CUR );
 
   /* Writing of the current cut offset */
-  if ( trace_in_name != "\0" )
+  if ( trace_in_name[ 0 ] != '\0' )
     current_size += fprintf( outfile, "# %s: Offset %lld from %s\n", trace_out_name, time_min, trace_in_name );
 }
 
