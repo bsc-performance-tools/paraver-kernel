@@ -916,8 +916,8 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
 
 void KTraceSoftwareCounters::flush_counter_buffers( void )
 {
-  int i, end_flush = 0, current_thread;
-  unsigned long long current_time;
+  int i, end_flush = 0, current_thread = 0;
+  unsigned long long current_time = 0;
   struct counter_event *printed_event;
 
   while ( !end_flush )
@@ -1097,6 +1097,9 @@ void KTraceSoftwareCounters::sc_by_event( ProgressController *progress )
 void KTraceSoftwareCounters::insert_in_queue_state( int thread_id, unsigned long long time )
 {
   struct state_queue_elem *p, *q, *new_elem;
+  p = NULL;
+  q = NULL;
+  new_elem = NULL;
 
   if ( ( new_elem = ( struct state_queue_elem * )malloc( sizeof( struct state_queue_elem ) ) ) == NULL )
   {
@@ -1195,6 +1198,9 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
   struct state_queue_elem *p, *q;
   int i, j;
   unsigned long num_iters = 0;
+
+  p = NULL;
+  q = NULL;
 
   /* Trace processing */
   while ( fscanf( infile, "%d:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF )
