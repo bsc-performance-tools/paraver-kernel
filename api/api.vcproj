@@ -272,6 +272,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\selectionrowsutils.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\semanticcolor.cpp"
 				>
 			</File>
@@ -459,6 +463,10 @@
 			</File>
 			<File
 				RelativePath=".\selectionmanagement.h"
+				>
+			</File>
+			<File
+				RelativePath=".\selectionrowsutils.h"
 				>
 			</File>
 			<File
