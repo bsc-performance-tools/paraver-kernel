@@ -35,7 +35,9 @@ bool KFilter::passFilter( MemoryTrace::iterator *it )
 {
   if ( it->getType() & EVENT )
     return filterEvents( it );
-  else if ( it->getType() & COMM )
+  else if ( it->getType() & COMM ||
+            it->getType() & RSEND ||
+            it->getType() & RRECV )
     return filterComms( it );
   return true;
 }
@@ -43,7 +45,6 @@ bool KFilter::passFilter( MemoryTrace::iterator *it )
 bool KFilter::filterComms( MemoryTrace::iterator *it )
 {
   bool stop = true;
-  bool tmpResult = functionCommFrom->getDefaultValue();
   TSemanticValue info;
 
   if ( !( logical && physical ) )
@@ -68,6 +69,7 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
     }
   }
 
+  bool tmpResult = functionCommFrom->getDefaultValue();
   if ( existCommFrom )
   {
     if ( window->getLevel() >= SYSTEM )
@@ -94,10 +96,9 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
   else if( opFromTo == OR && tmpResult )
     return true;
 
+  tmpResult = functionCommTo->getDefaultValue();
   if ( existCommTo )
   {
-    tmpResult = functionCommTo->getDefaultValue();
-
     if ( window->getLevel() >= SYSTEM )
     {
       TCPUOrder tmpCPU = window->getTrace()->getReceiverCPU( it->getCommIndex() );
@@ -138,10 +139,9 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
   else if( opTagSize == OR && tmpResult )
     return true;
 
+  tmpResult = functionCommSizes->getDefaultValue();
   if ( existCommSize )
   {
-    tmpResult = functionCommSizes->getDefaultValue();
-
     info = ( TSemanticValue ) window->getTrace()->getCommSize( it->getCommIndex() );
     for ( PRV_UINT32 i = 0; i < commSizes.size(); i++ )
     {
