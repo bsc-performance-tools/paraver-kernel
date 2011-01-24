@@ -83,7 +83,12 @@ class KWindow: public Window
 
     virtual TWindowLevel getMinAcceptableLevel() const
     {
-      return THREAD;
+      TWindowLevel minAcceptableLevel = THREAD;
+
+      if ( level >= SYSTEM && level <= CPU )
+        minAcceptableLevel = CPU;
+
+      return minAcceptableLevel;
     }
 
     void setTimeUnit( TTimeUnit whichUnit )
