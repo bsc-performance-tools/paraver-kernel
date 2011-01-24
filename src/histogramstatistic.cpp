@@ -299,11 +299,9 @@ string StatNumSends::name = "#Sends";
 
 TObjectOrder StatNumSends::getPartner( CalculateData *data )
 {
-  /*  if ( controlWin->getLevel() >= SYSTEM )
-      return controlWin->getTrace()->getReceiverCPU( data->comm->getCommIndex() );
-    else
-      return controlWin->getTrace()->getReceiverThread( data->comm->getCommIndex() );*/
-  return data->comm->getCommPartnerObject();
+  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+    return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
+  return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() );
 }
 
 void StatNumSends::init( KHistogram *whichHistogram )
@@ -357,11 +355,9 @@ string StatNumReceives::name = "#Receives";
 
 TObjectOrder StatNumReceives::getPartner( CalculateData *data )
 {
-  /*  if ( controlWin->getLevel() >= SYSTEM )
-      return controlWin->getTrace()->getSenderCPU( data->comm->getCommIndex() );
-    else
-      return controlWin->getTrace()->getSenderThread( data->comm->getCommIndex() );*/
-  return data->comm->getCommPartnerObject();
+  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+    return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
+  return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() );
 }
 
 void StatNumReceives::init( KHistogram *whichHistogram )
@@ -415,11 +411,9 @@ string StatBytesSent::name = "Bytes sent";
 
 TObjectOrder StatBytesSent::getPartner( CalculateData *data )
 {
-  /*  if ( controlWin->getLevel() >= SYSTEM )
-      return controlWin->getTrace()->getReceiverCPU( data->comm->getCommIndex() );
-    else
-      return controlWin->getTrace()->getReceiverThread( data->comm->getCommIndex() );*/
-  return data->comm->getCommPartnerObject();
+  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+    return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
+  return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() );
 }
 
 void StatBytesSent::init( KHistogram *whichHistogram )
@@ -473,11 +467,9 @@ string StatBytesReceived::name = "Bytes received";
 
 TObjectOrder StatBytesReceived::getPartner( CalculateData *data )
 {
-  /*  if ( controlWin->getLevel() >= SYSTEM )
-      return controlWin->getTrace()->getSenderCPU( data->comm->getCommIndex() );
-    else
-      return controlWin->getTrace()->getSenderThread( data->comm->getCommIndex() );*/
-  return data->comm->getCommPartnerObject();
+  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+    return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
+  return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() );
 }
 
 void StatBytesReceived::init( KHistogram *whichHistogram )
@@ -531,11 +523,9 @@ string StatAvgBytesSent::name = "Average bytes sent";
 
 TObjectOrder StatAvgBytesSent::getPartner( CalculateData *data )
 {
-  /*  if ( controlWin->getLevel() >= SYSTEM )
-      return controlWin->getTrace()->getReceiverCPU( data->comm->getCommIndex() );
-    else
-      return controlWin->getTrace()->getReceiverThread( data->comm->getCommIndex() );*/
-  return data->comm->getCommPartnerObject();
+  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+    return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
+  return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() );
 }
 
 void StatAvgBytesSent::init( KHistogram *whichHistogram )
@@ -616,11 +606,9 @@ string StatAvgBytesReceived::name = "Average bytes received";
 
 TObjectOrder StatAvgBytesReceived::getPartner( CalculateData *data )
 {
-/*  if ( controlWin->getLevel() >= SYSTEM )
-    return controlWin->getTrace()->getSenderCPU( data->comm->getCommIndex() );
-  else
-    return controlWin->getTrace()->getSenderThread( data->comm->getCommIndex() );*/
-  return data->comm->getCommPartnerObject();
+  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+    return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
+  return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() );
 }
 
 void StatAvgBytesReceived::init( KHistogram *whichHistogram )
@@ -701,11 +689,9 @@ string StatMinBytesSent::name = "Minimum bytes sent";
 
 TObjectOrder StatMinBytesSent::getPartner( CalculateData *data )
 {
-  /*  if ( controlWin->getLevel() >= SYSTEM )
-      return controlWin->getTrace()->getReceiverCPU( data->comm->getCommIndex() );
-    else
-      return controlWin->getTrace()->getReceiverThread( data->comm->getCommIndex() );*/
-  return data->comm->getCommPartnerObject();
+  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+    return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
+  return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() );
 }
 
 void StatMinBytesSent::init( KHistogram *whichHistogram )
@@ -796,11 +782,9 @@ string StatMinBytesReceived::name = "Minimum bytes received";
 
 TObjectOrder StatMinBytesReceived::getPartner( CalculateData *data )
 {
-  /*  if ( controlWin->getLevel() >= SYSTEM )
-      return controlWin->getTrace()->getSenderCPU( data->comm->getCommIndex() );
-    else
-      return controlWin->getTrace()->getSenderThread( data->comm->getCommIndex() );*/
-  return data->comm->getCommPartnerObject();
+  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+    return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
+  return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() );
 }
 
 void StatMinBytesReceived::init( KHistogram *whichHistogram )
@@ -891,11 +875,9 @@ string StatMaxBytesSent::name = "Maximum bytes sent";
 
 TObjectOrder StatMaxBytesSent::getPartner( CalculateData *data )
 {
-  /*  if ( controlWin->getLevel() >= SYSTEM )
-      return controlWin->getTrace()->getReceiverCPU( data->comm->getCommIndex() );
-    else
-      return controlWin->getTrace()->getReceiverThread( data->comm->getCommIndex() );*/
-  return data->comm->getCommPartnerObject();
+  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+    return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
+  return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() );
 }
 
 void StatMaxBytesSent::init( KHistogram *whichHistogram )
@@ -981,11 +963,9 @@ string StatMaxBytesReceived::name = "Maximum bytes received";
 
 TObjectOrder StatMaxBytesReceived::getPartner( CalculateData *data )
 {
-  /*  if ( controlWin->getLevel() >= SYSTEM )
-      return controlWin->getTrace()->getSenderCPU( data->comm->getCommIndex() );
-    else
-      return controlWin->getTrace()->getSenderThread( data->comm->getCommIndex() );*/
-  return data->comm->getCommPartnerObject();
+  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+    return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
+  return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() );
 }
 
 void StatMaxBytesReceived::init( KHistogram *whichHistogram )

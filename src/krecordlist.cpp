@@ -74,9 +74,9 @@ void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
   tmp.setType( it->getType() );
   tmp.setTime( it->getTime() );
   if ( window->getLevel() >= WORKLOAD && window->getLevel() <= THREAD )
-    tmp.setOrder( window->threadObjectToWindowObject( it->getOrder() ) );
+    tmp.setOrder( it->getOrder() );
   else if ( window->getLevel() >= SYSTEM && window->getLevel() <= CPU )
-    tmp.setOrder( window->cpuObjectToWindowObject( it->getOrder() ) );
+    tmp.setOrder( it->getOrder() );
 
   if ( tmp.getType() & EVENT )
   {
@@ -93,11 +93,9 @@ void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
     if ( it->getType() & SEND )
     {
       if ( level >= WORKLOAD && level <= THREAD )
-        tmp.setCommPartnerObject( window->threadObjectToWindowObject(
-                                    trace->getReceiverThread( id ) ) );
+        tmp.setCommPartnerObject( trace->getReceiverThread( id ) );
       else if ( level >= SYSTEM && level <= CPU )
-        tmp.setCommPartnerObject( window->cpuObjectToWindowObject(
-                                    trace->getReceiverCPU( id ) ) );
+        tmp.setCommPartnerObject( trace->getReceiverCPU( id ) );
 
       if ( it->getType() & LOG )
       {
@@ -111,11 +109,9 @@ void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
     else if ( it->getType() & RECV )
     {
       if ( level >= WORKLOAD && level <= THREAD )
-        tmp.setCommPartnerObject( window->threadObjectToWindowObject(
-                                    trace->getSenderThread( id ) ) );
+        tmp.setCommPartnerObject( trace->getSenderThread( id ) );
       else if ( level >= SYSTEM && level <= CPU )
-        tmp.setCommPartnerObject( window->cpuObjectToWindowObject(
-                                    trace->getSenderCPU( id ) ) );
+        tmp.setCommPartnerObject( trace->getSenderCPU( id ) );
 
       if ( it->getType() & LOG )
       {

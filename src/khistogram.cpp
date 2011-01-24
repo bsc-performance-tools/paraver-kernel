@@ -1045,7 +1045,11 @@ void KHistogram::calculate( TObjectOrder iRow,
       {
         if ( filter[ iStat ] )
         {
-          TObjectOrder column = data->comm->getCommPartnerObject();
+          TObjectOrder column;
+          if ( controlWindow->getLevel() >= WORKLOAD && controlWindow->getLevel() <= THREAD )
+            column = controlWindow->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
+          else
+            column = controlWindow->cpuObjectToWindowObject( data->comm->getCommPartnerObject() );
           if ( getThreeDimensions() )
             commCube->addValue( data->plane, column, values );
           else
