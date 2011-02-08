@@ -3555,7 +3555,9 @@ void Analyzer2DComputeYScale::printLine( ofstream& cfgFile,
     const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_COMPUTEYSCALE << " ";
-  if ( options.histoComputeYScale )
+  if ( options.histoComputeYScale ||
+       ( *it )->getCompute2DScale() ||
+       ( *it )->getCompute3DScale() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -3675,7 +3677,8 @@ void Analyzer2DComputeGradient::printLine( ofstream& cfgFile,
     const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_COMPUTEGRADIENT << " ";
-  if ( options.histoComputeGradient )
+  if ( options.histoComputeGradient ||
+       ( *it )->getComputeGradient() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
