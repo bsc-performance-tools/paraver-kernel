@@ -42,6 +42,7 @@ class SyncWindows
 
     bool addWindow( Window *whichWindow, unsigned int whichGroup = 0 );
     void removeWindow( Window *whichWindow, unsigned int whichGroup = 0 );
+    void removeAll( unsigned int whichGroup = 0 );
 
     int newGroup();
     int getNumGroups() const;
@@ -52,7 +53,7 @@ class SyncWindows
 
     static SyncWindows *instance;
     vector<vector<Window *> > syncGroups;
-
+    bool removingAll;
 };
 
 #endif // SYNCWINDOWS_H_INCLUDED

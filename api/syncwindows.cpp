@@ -42,6 +42,7 @@ SyncWindows *SyncWindows::getInstance()
 SyncWindows::SyncWindows()
 {
   syncGroups.push_back( vector<Window *>() );
+  removingAll = false;
 }
 
 SyncWindows::~SyncWindows()
@@ -67,7 +68,7 @@ bool SyncWindows::addWindow( Window *whichWindow, unsigned int whichGroup )
 
 void SyncWindows::removeWindow( Window *whichWindow, unsigned int whichGroup )
 {
-  if( whichGroup >= syncGroups.size() )
+  if( whichGroup >= syncGroups.size() || removingAll )
     return;
 
   for( vector<Window *>::iterator it = syncGroups[ whichGroup ].begin();
@@ -79,6 +80,21 @@ void SyncWindows::removeWindow( Window *whichWindow, unsigned int whichGroup )
       break;
     }
   }
+}
+
+void SyncWindows::removeAll( unsigned int whichGroup )
+{
+  if( whichGroup >= syncGroups.size() )
+    return;
+
+  removingAll = true;
+
+  for( vector<Window *>::iterator it = syncGroups[ whichGroup ].begin();
+       it != syncGroups[ whichGroup ].end(); ++it )
+    (*it)->removeFromSync();
+
+  syncGroups[ whichGroup ].clear();
+  removingAll = false;
 }
 
 int SyncWindows::newGroup()
