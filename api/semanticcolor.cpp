@@ -29,12 +29,24 @@
 
 #include <math.h>
 #include <iostream>
+#ifdef WIN32
+#include <hash_set>
+#else
+#include <ext/hash_set>
+#endif
 #include "semanticcolor.h"
 #include "window.h"
 #include "paraverconfig.h"
 
 #ifdef WIN32
 #define lround floor
+#endif
+
+using namespace std;
+#ifdef WIN32
+using namespace stdext;
+#else
+using namespace __gnu_cxx;
 #endif
 
 rgb SemanticColor::BACKGROUND = { 0, 0, 0 };
@@ -139,11 +151,14 @@ rgb SemanticColor::getBelowOutlierColor()
 }
 
 // CODECOLOR METHODS
+const int CodeColor::MAX_COLORS = 65000;
+
 CodeColor::CodeColor( )
 {
   rgb* codeColor = SemanticColor::getCodeColors();
   for ( PRV_UINT32 i = 0; i < SemanticColor::getNumColors(); i++ )
     colors.push_back( codeColor[ i ] );
+  expandColors();
 }
 
 CodeColor::~CodeColor()
@@ -174,6 +189,66 @@ void CodeColor::setColor( PRV_UINT32 pos, rgb color )
     }
   }
   colors[ pos ] = color;
+}
+
+struct eqrgb
+{
+  bool operator()( rgb color1, rgb color2 ) const
+  {
+    return color1 == color2;
+  }
+};
+
+struct hashrgb
+{
+  bool operator()( rgb color ) const
+  {
+    return color.red + ( color.blue * 256 ) + (color.green * 65536 );
+  }
+};
+
+void CodeColor::expandColors()
+{
+  unsigned int iterations = MAX_COLORS / colors.size() / 3;
+  unsigned int numBaseColors = colors.size();
+  hash_set<rgb, hashrgb, eqrgb> insertedColors;
+  insertedColors.insert( colors.begin(), colors.end() );
+
+  unsigned int baseColor = 0;
+  for( unsigned int i = 0; i < iterations; ++i )
+  {
+    while( baseColor > colors.size() )
+      --baseColor;
+
+    for( unsigned int redBaseColor = baseColor; redBaseColor < numBaseColors + baseColor; ++redBaseColor )
+    {
+      rgb tmp = colors[ redBaseColor ];
+      ++tmp.red;
+      pair<hash_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
+      if( result.second )
+        colors.push_back( tmp );
+    }
+
+    for( unsigned int greenBaseColor = baseColor; greenBaseColor < numBaseColors + baseColor; ++greenBaseColor )
+    {
+      rgb tmp = colors[ greenBaseColor ];
+      ++tmp.green;
+      pair<hash_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
+      if( result.second )
+        colors.push_back( tmp );
+    }
+
+    for( unsigned int blueBaseColor = baseColor; blueBaseColor < numBaseColors + baseColor; ++blueBaseColor )
+    {
+      rgb tmp = colors[ blueBaseColor ];
+      ++tmp.blue;
+      pair<hash_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
+      if( result.second )
+        colors.push_back( tmp );
+    }
+
+    baseColor += numBaseColors;
+  }
 }
 
 rgb CodeColor::calcColor( TSemanticValue whichValue,

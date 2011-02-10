@@ -96,6 +96,9 @@ class CodeColor: public SemanticColor
     vector<rgb> colors;
 
     inline rgb getColor( PRV_UINT32 pos ) const;
+    void expandColors();
+
+    static const int MAX_COLORS;
 };
 
 

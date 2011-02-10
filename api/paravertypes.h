@@ -63,7 +63,7 @@ struct rgb
 
   bool operator!=( const rgb& b ) const
   {
-    return !( *this == b );
+    return !( red == b.red && green == b.green && blue == b.blue );
   }
 };
 
