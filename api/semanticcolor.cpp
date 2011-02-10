@@ -60,7 +60,7 @@ rgb SemanticColor::codeColor[ ] =
   { 117, 195, 255 }, //  0 - Idle
   {   0,   0, 255 }, //  1 - Running
   { 255, 255, 255 }, //  2 - Not created
-  {   0, 170,   0 }, //  3 - Waiting a message
+  { 255,   0,   0 }, //  3 - Waiting a message
   { 255,   0, 174 }, //  4 - Blocked
   { 179,   0,   0 }, //  5 - Thread Synchronization
   { 0,   255,   0 }, //  6 - Test/Probe
