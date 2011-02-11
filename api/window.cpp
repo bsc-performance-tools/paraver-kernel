@@ -127,6 +127,7 @@ void WindowProxy::init()
     winEndTime = myTrace->getEndTime();
     myCodeColor = myTrace->getCodeColor();
     selectedRow.init( getTrace() );
+    zoomHistory.addZoom( 0, winEndTime, 0, getWindowLevelObjects() - 1 );
   }
 
   sync = false;
@@ -951,6 +952,11 @@ void WindowProxy::addZoom( TTime beginTime, TTime endTime, bool isBroadCast )
   if( sync && !isBroadCast )
     SyncWindows::getInstance()->broadcastTime( syncGroup, this, beginTime, endTime );
   zoomHistory.addZoom( beginTime, endTime );
+}
+
+void WindowProxy::addZoom( TObjectOrder beginObject, TObjectOrder endObject )
+{
+  zoomHistory.addZoom( beginObject, endObject );
 }
 
 void WindowProxy::setZoomFirstDimension( pair<TTime, TTime> &dim )

@@ -81,6 +81,7 @@
 #define OLDCFG_TAG_WNDW_SCALE_RELATIVE "window_scale_relative"
 #define OLDCFG_TAG_WNDW_OBJECT "window_object"
 #define OLDCFG_TAG_WNDW_IDENTIFIERS "window_identifiers"
+#define OLDCFG_TAG_WNDW_ZOOM_OBJECTS "window_zoom_objects"
 #define OLDCFG_TAG_WNDW_BEGIN_TIME "window_begin_time"
 #define OLDCFG_TAG_WNDW_STOP_TIME "window_stop_time"
 #define OLDCFG_TAG_WNDW_END_TIME "window_end_time"

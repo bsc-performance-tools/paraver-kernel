@@ -151,7 +151,7 @@ rgb SemanticColor::getBelowOutlierColor()
 }
 
 // CODECOLOR METHODS
-const int CodeColor::MAX_COLORS = 65000;
+const int CodeColor::MAX_COLORS = 32000;
 
 CodeColor::CodeColor( )
 {

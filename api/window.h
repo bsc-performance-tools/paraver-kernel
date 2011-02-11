@@ -332,6 +332,8 @@ class Window
     {}
     virtual void addZoom( TTime beginTime, TTime endTime, bool isBroadCast = false )
     {}
+    virtual void addZoom( TObjectOrder beginObject, TObjectOrder endObject )
+    {}
     virtual void nextZoom()
     {}
     virtual void prevZoom()
@@ -527,6 +529,7 @@ class WindowProxy: public Window
                           TObjectOrder beginObject, TObjectOrder endObject,
                           bool isBroadCast = false );
     virtual void addZoom( TTime beginTime, TTime endTime, bool isBroadCast = false );
+    virtual void addZoom( TObjectOrder beginObject, TObjectOrder endObject );
     virtual void nextZoom();
     virtual void prevZoom();
     virtual void setZoomFirstDimension( pair<TTime, TTime> &dim );

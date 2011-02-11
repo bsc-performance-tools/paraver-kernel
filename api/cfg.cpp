@@ -323,8 +323,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
   // Init first zoom for all windows
   for ( vector<Window *>::iterator it = windows.begin(); it != windows.end(); ++it )
-    ( *it )->addZoom( ( *it )->getWindowBeginTime(), ( *it )->getWindowEndTime(),
-                      0, ( *it )->getWindowLevelObjects() - 1 );
+    ( *it )->addZoom( ( *it )->getWindowBeginTime(), ( *it )->getWindowEndTime() );
 
   // Because old paraver set window_open to false for all windows
   if ( histograms.begin() == histograms.end() )
@@ -425,6 +424,7 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowMinimumY::printLine( cfgFile, it );
     WindowComputeYMax::printLine( cfgFile, options, it );
     WindowLevel::printLine( cfgFile, it );
+    WindowZoomObjects::printLine( cfgFile, it );
     WindowScaleRelative::printLine( cfgFile, options, it );
     WindowEndTimeRelative::printLine( cfgFile, options, it );
     WindowObject::printLine( cfgFile, it );
@@ -539,6 +539,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_OBJECT]              = new WindowObject();
   cfgTagFunctions[OLDCFG_TAG_WNDW_IDENTIFIERS]         = new WindowIdentifiers();
 
+  cfgTagFunctions[OLDCFG_TAG_WNDW_ZOOM_OBJECTS]        = new WindowZoomObjects();
   cfgTagFunctions[OLDCFG_TAG_WNDW_BEGIN_TIME]          = new WindowBeginTime();
   cfgTagFunctions[OLDCFG_TAG_WNDW_STOP_TIME]           = new WindowStopTime();
   cfgTagFunctions[OLDCFG_TAG_WNDW_END_TIME]            = new WindowEndTime();
@@ -1186,6 +1187,52 @@ void WindowIdentifiers::printLine( ofstream& cfgFile,
   cfgFile << CFGLoader::findWindow( ( *it )->getParent( 0 ), allWindows ) + 1 << " ";
   cfgFile << CFGLoader::findWindow( ( *it )->getParent( 1 ), allWindows ) + 1;
   cfgFile << endl;
+}
+
+bool WindowZoomObjects::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                   Trace *whichTrace,
+                                   vector<Window *>& windows,
+                                   vector<Histogram *>& histograms )
+{
+  string strObject;
+  TObjectOrder firstObject;
+  TObjectOrder lastObject;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strObject, ' ' );
+  istringstream tmpStreamFirst( strObject );
+  if ( !( tmpStreamFirst >> firstObject ) )
+    return false;
+
+  if( firstObject > windows[ windows.size() - 1 ]->getWindowLevelObjects() - 1 )
+    firstObject = windows[ windows.size() - 1 ]->getWindowLevelObjects() - 1;
+
+  getline( line, strObject, ' ' );
+  istringstream tmpStreamLast( strObject );
+  if ( !( tmpStreamLast >> lastObject ) )
+    return false;
+
+  if( lastObject > windows[ windows.size() - 1 ]->getWindowLevelObjects() - 1 )
+    lastObject = windows[ windows.size() - 1 ]->getWindowLevelObjects() - 1;
+
+  windows[ windows.size() - 1 ]->addZoom( firstObject, lastObject );
+
+  return true;
+}
+
+void WindowZoomObjects::printLine( ofstream& cfgFile,
+                                   const vector<Window *>::const_iterator it )
+{
+  pair<TObjectOrder, TObjectOrder> currentZoom = (*it)->getZoomSecondDimension();
+  if( currentZoom.first > 0 || currentZoom.second < (*it)->getWindowLevelObjects() )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_ZOOM_OBJECTS << " ";
+    cfgFile << currentZoom.first << " ";
+    cfgFile << currentZoom.second;
+    cfgFile << endl;
+  }
 }
 
 bool WindowScaleRelative::parseLine( KernelConnection *whichKernel, istringstream& line,
