@@ -83,6 +83,8 @@ class CodeColor: public SemanticColor
 {
   public:
     CodeColor();
+    CodeColor( Window *dummy )
+    {}
     ~CodeColor();
 
     PRV_UINT32 getNumColors() const;

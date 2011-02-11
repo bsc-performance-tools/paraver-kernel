@@ -58,7 +58,8 @@ Window *Window::create( KernelConnection *whichKernel, Window *parent1, Window *
 Window::Window( KernelConnection *whichKernel ) : myKernel( whichKernel )
 {}
 
-WindowProxy::WindowProxy()
+WindowProxy::WindowProxy():
+  myCodeColor( this )
 {
   parent1 = NULL;
   parent2 = NULL;
@@ -67,7 +68,7 @@ WindowProxy::WindowProxy()
 }
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
-  Window( whichKernel ), myTrace( whichTrace )
+  Window( whichKernel ), myTrace( whichTrace ), myCodeColor( this )
 {
   parent1 = NULL;
   parent2 = NULL;
@@ -78,7 +79,7 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
                           Window *whichParent2 ):
-  Window( whichKernel ), myTrace( whichParent1->getTrace() )
+  Window( whichKernel ), myTrace( whichParent1->getTrace() ), myCodeColor( this )
 {
   parent1 = whichParent1;
   parent1->setChild( this );
@@ -90,7 +91,7 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
 }
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel ):
-  Window( whichKernel ), myTrace( NULL )
+  Window( whichKernel ), myTrace( NULL ), myCodeColor( this )
 {
   parent1 = NULL;
   parent2 = NULL;
