@@ -191,6 +191,28 @@ void CodeColor::setColor( PRV_UINT32 pos, rgb color )
   colors[ pos ] = color;
 }
 
+#ifdef WIN32
+namespace stdext 
+{
+  template<> class hash_compare<rgb> 
+  {
+    public :
+      static const size_t bucket_size = 4;
+      static const size_t min_buckets = 8;
+      hash_compare() { }
+ 
+      size_t operator()(const rgb &color) const 
+      {
+        return color.red + ( color.blue * 256 ) + (color.green * 65536 );
+      }
+ 
+      bool operator()(const rgb &color1, const rgb &color2) const
+      {
+        return color1 == color2;
+      }
+  };
+}
+#else
 struct eqrgb
 {
   bool operator()( rgb color1, rgb color2 ) const
@@ -201,48 +223,72 @@ struct eqrgb
 
 struct hashrgb
 {
-  bool operator()( rgb color ) const
+  size_t operator()( rgb color ) const
   {
     return color.red + ( color.blue * 256 ) + (color.green * 65536 );
   }
 };
+#endif
+
 
 void CodeColor::expandColors()
 {
   unsigned int iterations = MAX_COLORS / colors.size() / 3;
   unsigned int numBaseColors = colors.size();
+#ifdef WIN32
+  hash_set<rgb> insertedColors;
+#else
   hash_set<rgb, hashrgb, eqrgb> insertedColors;
+#endif
   insertedColors.insert( colors.begin(), colors.end() );
 
   unsigned int baseColor = 0;
   for( unsigned int i = 0; i < iterations; ++i )
   {
-    while( baseColor > colors.size() )
+    while( baseColor > colors.size() - 1 )
       --baseColor;
 
     for( unsigned int redBaseColor = baseColor; redBaseColor < numBaseColors + baseColor; ++redBaseColor )
     {
+      if( redBaseColor > colors.size() - 1 )
+        break;
       rgb tmp = colors[ redBaseColor ];
       ++tmp.red;
+#ifdef WIN32
+      pair<hash_set<rgb>::iterator, bool > result = insertedColors.insert( tmp );
+#else
       pair<hash_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
+#endif
       if( result.second )
         colors.push_back( tmp );
     }
 
     for( unsigned int greenBaseColor = baseColor; greenBaseColor < numBaseColors + baseColor; ++greenBaseColor )
     {
+      if( greenBaseColor > colors.size() - 1)
+        break;
       rgb tmp = colors[ greenBaseColor ];
       ++tmp.green;
+#ifdef WIN32
+      pair<hash_set<rgb>::iterator, bool > result = insertedColors.insert( tmp );
+#else
       pair<hash_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
+#endif
       if( result.second )
         colors.push_back( tmp );
     }
 
     for( unsigned int blueBaseColor = baseColor; blueBaseColor < numBaseColors + baseColor; ++blueBaseColor )
     {
+      if( blueBaseColor > colors.size() - 1 )
+        break;
       rgb tmp = colors[ blueBaseColor ];
       ++tmp.blue;
+#ifdef WIN32
+      pair<hash_set<rgb>::iterator, bool > result = insertedColors.insert( tmp );
+#else
       pair<hash_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
+#endif
       if( result.second )
         colors.push_back( tmp );
     }
