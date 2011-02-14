@@ -752,7 +752,7 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
 {
   int id, cpu, appl, task, thread, state;
   unsigned long long time_1, time_2, type, value;
-  char *word, buffer[2048];
+  char *word, buffer[MAX_LINE_SIZE];
   bool print_line = false;
   int thread_id, i, j;
   unsigned long num_iters = 0;
@@ -1193,7 +1193,7 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
 {
   int id, cpu, appl, task, thread, state;
   unsigned long long time_1, time_2, type, value;
-  char *word, buffer[2048];
+  char *word, buffer[MAX_LINE_SIZE];
   bool print_line = false;
   struct state_queue_elem *p, *q;
   int i, j;

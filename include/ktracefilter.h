@@ -46,7 +46,7 @@ class KTraceFilter: public TraceFilter
 
   private:
     /* Buffer for reading trace records */
-    char line[4096];
+    char line[MAX_LINE_SIZE];
 
     /* Trace in and trace out */
     FILE *infile;

@@ -646,7 +646,7 @@ void KTraceCutter::execute( char *trace_in,
                             ProgressController *progress )
 {
   char *c, *tmp_dir, *word, *trace_header;
-  char trace_name[1024], buffer[1024];
+  char trace_name[1024], buffer[MAX_LINE_SIZE];
   bool end_parsing = false;
   bool reset_counters;
   char trace_file_out[2048];

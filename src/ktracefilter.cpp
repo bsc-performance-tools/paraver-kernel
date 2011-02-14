@@ -353,7 +353,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
   bool end_line;
   int i, j, k, num_char, print_record, state, size, appl, task, thread;
   unsigned long long time_1, time_2, type, value;
-  char *word, event_record[1024], trace_name[2048], *c, *trace_header;
+  char *word, event_record[MAX_LINE_SIZE], trace_name[2048], *c, *trace_header;
   char pcf_file[2048];
   unsigned long num_iters = 0;
   bool end_parsing = false;
