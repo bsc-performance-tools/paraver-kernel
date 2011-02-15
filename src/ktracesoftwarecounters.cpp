@@ -628,7 +628,7 @@ void KTraceSoftwareCounters::put_counters_by_thread( int appl, int task, int thr
 
 void KTraceSoftwareCounters::ini_progress_bar( char *file_name, ProgressController *progress )
 {
-#if defined(FreeBSD)
+#if defined(__FreeBSD__)
   struct stat file_info;
 #elif defined(WIN32)
   struct _stat64 file_info;
@@ -636,7 +636,7 @@ void KTraceSoftwareCounters::ini_progress_bar( char *file_name, ProgressControll
   struct stat64 file_info;
 #endif
 
-#if defined(FreeBSD)
+#if defined(__FreeBSD__)
   if ( stat( file_name, &file_info ) < 0 )
   {
     perror( "Error calling stat" );
@@ -674,7 +674,7 @@ void KTraceSoftwareCounters::show_progress_bar( ProgressController *progress )
 {
 //  double current_showed, i, j;
 
-#if defined(FreeBSD)
+#if defined(__FreeBSD__)
   current_read_size = ftello( infile );
 #elif defined(WIN32)
   current_read_size = _ftelli64( infile );
@@ -1406,7 +1406,7 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressC
     }
   }
 
-#if defined(FreeBSD)
+#if defined(__FreeBSD__)
   if ( ( infile = fopen( trace_name, "r" ) ) == NULL )
   {
     printf( "Error Opening File %s\n", trace_name );

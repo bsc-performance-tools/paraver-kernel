@@ -125,7 +125,14 @@ TTraceSize NotCompressed::getTraceFileSize( const string& filename )
   FILE *traceFile;
   TTraceSize tmpSize;
 
-#ifdef WIN32
+#ifdef __FreeBSD__
+	if ( (traceFile = fopen (filename.c_str(), "r" ) ) == NULL )
+	{
+		printf ( "Error Opening File %s\n", filename.c_str() );
+		return 0;
+	}
+
+#elif WIN32
   if ( fopen_s( &traceFile, filename.c_str(), "r" ) != 0 )
   {
     printf( "Error Opening File %s\n", filename.c_str() );
