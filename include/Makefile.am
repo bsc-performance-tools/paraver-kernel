@@ -30,7 +30,7 @@ noinst_HEADERS = \
                           ktracefilter.h \
                           ktraceoptions.h \
                           ktracesoftwarecounters.h \
-													kwindowexception.h\
+                          kwindowexception.h\
                           kwindow.h\
                           matrix.h\
                           memoryblocks.h\
