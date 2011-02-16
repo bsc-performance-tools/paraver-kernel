@@ -42,6 +42,7 @@
 #include "paraverconfig.h"
 #include "textoutput.h"
 #include "traceoptions.h"
+#include "labelconstructor.h" // for getDate
 
 // for strdup
 #include <string.h>
@@ -123,24 +124,13 @@ void printVersion()
 {
   cout << "paramedir " << VERSION;
 
-  string currentDate( __DATE__ );
-  string currentDay = currentDate.substr( 4, 2 );
+  bool reverseOrder = true;
+  string auxDate = LabelConstructor::getDate( reverseOrder );
 
-  if ( currentDay.compare("??") != 0 )
-  {
-    string currentYear  = currentDate.substr( 7, 4 );
-    string currentMonth = currentDate.substr( 0, 3 );
-    string months = "JanFebMarAprMayJunJulAugSepOctNovDec";
-    stringstream auxDay( currentDay );
-    int numericDay;
-    auxDay >> numericDay;
-    cout << " Build " << currentYear;
-    cout << setfill('0');
-    cout << setw(2) << ( months.find( currentMonth ) / 3 ) + 1;
-    cout << setw(2) << numericDay;
-  }
+  if ( auxDate.compare("") != 0 )
+    cout << " Build ";
 
-  cout << endl;
+  cout << auxDate << endl;
 }
 
 

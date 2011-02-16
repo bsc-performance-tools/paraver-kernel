@@ -93,6 +93,8 @@ class LabelConstructor
 
     static void getGUIGroupLabels( const TGroupID group, vector< string > &labels );
 
+    static string getDate( bool reverseOrder = false );
+
   private:
     static stringstream label;
     static stringstream columnLabel;

@@ -581,3 +581,42 @@ void LabelConstructor::getGUIGroupLabels( const TGroupID groupID, vector< string
       break;
   }
 }
+
+
+string LabelConstructor::getDate( bool reverseOrder )
+{
+  string resultString("");
+
+  string currentDate( __DATE__ );
+  string currentDay = currentDate.substr( 4, 2 );
+
+  if ( currentDay.compare("??") != 0 )
+  {
+    stringstream reverseDate;
+    string currentYear  = currentDate.substr( 7, 4 );
+    string currentMonth = currentDate.substr( 0, 3 );
+    string months = "JanFebMarAprMayJunJulAugSepOctNovDec";
+    stringstream auxDay( currentDay );
+    int numericDay;
+    auxDay >> numericDay;
+
+    if ( reverseOrder )
+    {
+      reverseDate << currentYear;
+      reverseDate << setfill('0');
+      reverseDate << setw(2) << ( months.find( currentMonth ) / 3 ) + 1;
+      reverseDate << setw(2) << numericDay;
+    }
+    else
+    {
+      reverseDate << setfill('0');
+      reverseDate << setw(2) << numericDay;
+      reverseDate << setw(2) << ( months.find( currentMonth ) / 3 ) + 1;
+      reverseDate << currentYear;
+    }
+
+    resultString = reverseDate.str();
+  }
+
+  return resultString;
+}
