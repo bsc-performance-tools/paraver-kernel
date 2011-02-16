@@ -125,10 +125,11 @@ void printVersion()
 
   string currentDate( __DATE__ );
   string currentDay = currentDate.substr( 4, 2 );
+
   if ( currentDay.compare("??") != 0 )
   {
-    string currentYear   = currentDate.substr( 7, 4 );
-    string currentMonth  = currentDate.substr( 0, 3 );
+    string currentYear  = currentDate.substr( 7, 4 );
+    string currentMonth = currentDate.substr( 0, 3 );
     string months = "JanFebMarAprMayJunJulAugSepOctNovDec";
     stringstream auxDay( currentDay );
     int numericDay;
