@@ -49,6 +49,7 @@
 using namespace std;
 
 bool showHelp = false;
+bool showVersion = false;
 bool onlySelectedPlane = false;
 bool hideEmptyColumns = false;
 bool multipleFiles = false;
@@ -80,6 +81,7 @@ void printHelp()
   cout << "  paramedir [OPTION] trc {xml} cfg {out | cfg}*" << endl;
   cout << endl;
   cout << "    -h: Prints this help" << endl;
+  cout << "    -v: Prints version" << endl;
   cout << endl;
   cout << "  Histogram options:" << endl;
   cout << "    -p: Only the selected Plane of a 3D histogram is printed. Default is to print all of them." << endl;
@@ -113,6 +115,30 @@ void printHelp()
   cout << "    paramedir -s -c -f linpack.prv cut_filter_options.xml mpi_stats.cfg" << endl;
   cout << "      Reads parameters of the software counters, cutter and filter from the xml and applies them to" << endl;
   cout << "      linpack.prv trace, and the filtered trace is loaded and used to compute mpi_stats.cfg." << endl;
+  cout << endl;
+}
+
+
+void printVersion()
+{
+  cout << "paramedir " << VERSION;
+
+  string currentDate( __DATE__ );
+  string currentDay = currentDate.substr( 4, 2 );
+  if ( currentDay.compare("??") != 0 )
+  {
+    string currentYear   = currentDate.substr( 7, 4 );
+    string currentMonth  = currentDate.substr( 0, 3 );
+    string months = "JanFebMarAprMayJunJulAugSepOctNovDec";
+    stringstream auxDay( currentDay );
+    int numericDay;
+    auxDay >> numericDay;
+    cout << " Build " << currentYear;
+    cout << setfill('0');
+    cout << setw(2) << ( months.find( currentMonth ) / 3 ) + 1;
+    cout << setw(2) << numericDay;
+  }
+
   cout << endl;
 }
 
@@ -156,6 +182,8 @@ void activateOption( char *argument, vector< int > &filterToolOrder )
 {
   if ( argument[ 1 ] == 'h' )
     showHelp = true;
+  else if ( argument[ 1 ] == 'v' )
+    showVersion = true;
   else if ( argument[ 1 ] == 'p' )
     onlySelectedPlane = true;
   else if ( argument[ 1 ] == 'e' )
@@ -455,6 +483,8 @@ int main( int argc, char *argv[] )
     // Execute
     if ( showHelp )
       printHelp();
+    else if ( showVersion )
+      printVersion();
     else if ( anyTrace() )
     {
       if ( anyFilter() )
