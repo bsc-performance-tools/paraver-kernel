@@ -1225,8 +1225,8 @@ bool WindowZoomObjects::parseLine( KernelConnection *whichKernel, istringstream&
 void WindowZoomObjects::printLine( ofstream& cfgFile,
                                    const vector<Window *>::const_iterator it )
 {
-  pair<TObjectOrder, TObjectOrder> currentZoom = (*it)->getZoomSecondDimension();
-  if( currentZoom.first > 0 || currentZoom.second < (*it)->getWindowLevelObjects() )
+  pair<TObjectOrder, TObjectOrder> currentZoom = ( *it )->getZoomSecondDimension();
+  if( currentZoom.first > 0 || currentZoom.second < ( *it )->getWindowLevelObjects() )
   {
     cfgFile << OLDCFG_TAG_WNDW_ZOOM_OBJECTS << " ";
     cfgFile << currentZoom.first << " ";
@@ -3604,7 +3604,8 @@ void Analyzer2DComputeYScale::printLine( ofstream& cfgFile,
   cfgFile << OLDCFG_TAG_AN2D_COMPUTEYSCALE << " ";
   if ( options.histoComputeYScale ||
        ( *it )->getCompute2DScale() ||
-       ( *it )->getCompute3DScale() )
+       ( ( *it )->getThreeDimensions() && ( *it )->getCompute3DScale() )
+     )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
