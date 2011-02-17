@@ -122,7 +122,7 @@ void printHelp()
 
 void printVersion()
 {
-  cout << "paramedir " << VERSION;
+  cout << PACKAGE_STRING;
 
   bool reverseOrder = true;
   string auxDate = LabelConstructor::getDate( reverseOrder );
