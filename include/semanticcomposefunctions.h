@@ -1735,4 +1735,140 @@ class ComposeJoinBursts: public SemanticCompose
 
 };
 
+class ComposeBeginTime: public SemanticCompose
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    ComposeBeginTime()
+    {
+      setDefaultParam();
+    }
+
+    ~ComposeBeginTime()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+
+    virtual void init( KWindow *whichWindow )
+    {}
+
+    virtual string getName()
+    {
+      return ComposeBeginTime::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeBeginTime( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return TIME_TYPE;
+    }
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      TParamValue tmp;
+
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+
+      return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
+
+  private:
+    static const bool initFromBegin = false;
+    static string name;
+
+};
+
+class ComposeEndTime: public SemanticCompose
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    ComposeEndTime()
+    {
+      setDefaultParam();
+    }
+
+    ~ComposeEndTime()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+
+    virtual void init( KWindow *whichWindow )
+    {}
+
+    virtual string getName()
+    {
+      return ComposeEndTime::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeEndTime( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return TIME_TYPE;
+    }
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      TParamValue tmp;
+
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+
+      return tmp;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
+
+  private:
+    static const bool initFromBegin = false;
+    static string name;
+
+};
+
 #endif // SEMANTICCOMPOSEFUNCTIONS_H_INCLUDED

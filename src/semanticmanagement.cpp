@@ -72,6 +72,8 @@ void createSemantic()
   functions[0].push_back( new ComposeNestingLevel() );
   functions[0].push_back( new ComposeDelta() );
   functions[0].push_back( new ComposeBurstTime() );
+  functions[0].push_back( new ComposeBeginTime() );
+  functions[0].push_back( new ComposeEndTime() );
   functions[0].push_back( new ComposeJoinBursts() );
 
 

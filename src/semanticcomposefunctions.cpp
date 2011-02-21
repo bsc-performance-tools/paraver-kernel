@@ -485,3 +485,23 @@ TSemanticValue ComposeJoinBursts::execute( const SemanticInfo *info )
 
   return myInfo->values[ 0 ];
 }
+
+
+string ComposeBeginTime::name = "Begin Time";
+TSemanticValue ComposeBeginTime::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  TSemanticValue result = myInfo->callingInterval->getBegin()->getTime();
+  result = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( result );
+  return result;
+}
+
+
+string ComposeEndTime::name = "End Time";
+TSemanticValue ComposeEndTime::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  TSemanticValue result = myInfo->callingInterval->getEnd()->getTime();
+  result = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( result );
+  return result;
+}
