@@ -176,11 +176,16 @@ TraceCutter *LocalKernel::newTraceCutter( //TraceCutter *concreteTraceCutter,
                                                      trace_out,
                                                      options );
 */
-  return new KTraceCutter( trace_in, trace_out, options,
-                           (KProgressController *)progress->getConcrete() );
+  KProgressController *tmpKProgressControler = NULL;
+
+  if ( progress != NULL )
+    tmpKProgressControler = (KProgressController *)progress->getConcrete();
+
+  return new KTraceCutter( trace_in, trace_out, options, tmpKProgressControler );
 //  return ( TraceCutter *) myCutter;
 
 }
+
 
 TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
                                           char *trace_out,
@@ -189,8 +194,14 @@ TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
 {
 //  TraceOptionsProxy *myOptions = new TraceOptionsProxy( this );
 //  myOptions->myTraceOptions = options;
-  return new KTraceFilter( trace_in, trace_out, options,
-                           (KProgressController *)progress->getConcrete() );
+
+  KProgressController *tmpKProgressControler = NULL;
+
+  if ( progress != NULL )
+    tmpKProgressControler = (KProgressController *)progress->getConcrete();
+
+  return new KTraceFilter( trace_in, trace_out, options, tmpKProgressControler );
+
 }
 
 
@@ -199,8 +210,13 @@ TraceSoftwareCounters *LocalKernel::newTraceSoftwareCounters( char *trace_in,
                                                               TraceOptions *options,
                                                               ProgressController *progress ) const
 {
-  return new KTraceSoftwareCounters( trace_in, trace_out, options,
-                                     (KProgressController *)progress->getConcrete() );
+
+  KProgressController *tmpKProgressControler = NULL;
+
+  if ( progress != NULL )
+    tmpKProgressControler = (KProgressController *)progress->getConcrete();
+
+  return new KTraceSoftwareCounters( trace_in, trace_out, options, tmpKProgressControler );
 }
 
 void LocalKernel::getAllStatistics( vector<string>& onVector ) const

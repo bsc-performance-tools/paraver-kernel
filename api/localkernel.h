@@ -60,15 +60,15 @@ class LocalKernel: public KernelConnection
                                          char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options,
-                                         ProgressController *progress ) const;
+                                         ProgressController *progress = NULL) const;
     virtual TraceFilter *newTraceFilter( char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options,
-                                         ProgressController *progress ) const;
+                                         ProgressController *progress = NULL ) const;
     virtual TraceSoftwareCounters *newTraceSoftwareCounters( char *trace_in,
                                                              char *trace_out,
                                                              TraceOptions *options,
-                                                             ProgressController *progress ) const;
+                                                             ProgressController *progress = NULL ) const;
 
     virtual void getAllStatistics( vector<string>& onVector ) const;
     virtual void getAllFilterFunctions( vector<string>& onVector ) const;

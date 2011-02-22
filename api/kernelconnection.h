@@ -69,15 +69,15 @@ class KernelConnection
     virtual TraceCutter *newTraceCutter( char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options,
-                                         ProgressController *progress ) const = 0;
+                                         ProgressController *progress = NULL ) const = 0;
     virtual TraceFilter *newTraceFilter( char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options,
-                                         ProgressController *progress ) const = 0;
+                                         ProgressController *progress = NULL ) const = 0;
     virtual TraceSoftwareCounters *newTraceSoftwareCounters( char *trace_in,
                                                              char *trace_out,
                                                              TraceOptions *options,
-                                                             ProgressController *progress ) const = 0;
+                                                             ProgressController *progress = NULL ) const = 0;
 
     virtual void getAllStatistics( vector<string>& onVector ) const = 0;
     virtual void getAllFilterFunctions( vector<string>& onVector ) const = 0;

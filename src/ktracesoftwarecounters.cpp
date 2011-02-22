@@ -686,6 +686,11 @@ void KTraceSoftwareCounters::show_progress_bar( ProgressController *progress )
   j = ( double )( total_trace_size );
   current_showed = i / j;
 */
+
+// DOESN'T WORK ON COMPRESSED TRACE
+//  if ( is_zip_filter )
+//    current_read_size = current_read_size / COMPRESSION_RATIO_GZIP;
+
   if( progress != NULL)
     progress->setCurrentProgress( current_read_size );
 }

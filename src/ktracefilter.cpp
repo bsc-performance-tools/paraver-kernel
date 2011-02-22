@@ -278,6 +278,9 @@ void KTraceFilter::show_progress_bar( ProgressController *progress )
 
   current_showed = i / j;
 */
+  if ( is_zip_filter )
+    current_read_size = current_read_size / COMPRESSION_RATIO_GZIP;
+
   if( progress != NULL)
     progress->setCurrentProgress( current_read_size );
 }

@@ -392,7 +392,11 @@ void KTraceCutter::show_cutter_progress_bar( ProgressController *progress )
 
   current_showed = i / j;*/
 
-  progress->setCurrentProgress( current_read_size );
+  if ( is_zip )
+    current_read_size = current_read_size / COMPRESSION_RATIO_GZIP;
+
+  if (progress != NULL )
+    progress->setCurrentProgress( current_read_size );
 }
 
 

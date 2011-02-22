@@ -341,24 +341,21 @@ string applyFilters( KernelConnection *myKernel,
       case INC_CHOP_COUNTER:
         traceCutter = myKernel->newTraceCutter( tmpNameIn,
                                                 tmpNameOut,
-                                                traceOptions,
-                                                NULL );
+                                                traceOptions );
         myKernel->copyPCF( tmpNameIn, tmpNameOut );
         break;
 
       case INC_FILTER_COUNTER:
         traceFilter = myKernel->newTraceFilter( tmpNameIn,
                                                 tmpNameOut,
-                                                traceOptions,
-                                                NULL );
+                                                traceOptions );
         myKernel->copyPCF( tmpNameIn, tmpNameOut );
         break;
 
       case INC_SC_COUNTER:
         traceSoftwareCounters = myKernel->newTraceSoftwareCounters( tmpNameIn,
                                                                     tmpNameOut,
-                                                                    traceOptions,
-                                                                    NULL );
+                                                                    traceOptions );
         break;
 
       default:
@@ -505,5 +502,5 @@ int main( int argc, char *argv[] )
     }
   }
 
-  return 1;
+  return 0;
 }

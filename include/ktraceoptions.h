@@ -49,6 +49,7 @@
 #define MAX_VALUES 100
 #define MAX_THREADS 20000
 #define MAXSTATES 20
+#define COMPRESSION_RATIO_GZIP 8
 
 // only for cout, delete this 2 lines
 #include <iostream>
