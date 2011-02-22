@@ -1,0 +1,71 @@
+<!-- *********************************************************************** -->
+<!--                    PARAVER TRACE FILTER CONFIGURATION                   -->
+<!--                             PERFORMANCE TOOLS                           -->
+<!--  Barcelona Supercomputing Center - Centro Nacional de Supercomputacion  -->
+<!-- *********************************************************************** -->
+
+<config>
+
+<!-- *********************************************************************** -->
+<!-- ***  CUTTER SECTION *************************************************** -->
+<!-- *********************************************************************** -->
+
+  <cutter>
+    <!-- === Output trace limits : Tasks =================================== -->
+    <!--  To select all tasks, delete or comment this section.               -->
+    <!--  To select some tasks, list its identifiers or range or identifiers -->
+    <!--  separated by commas:                                               -->
+    <!--    <tasks>1</tasks>                                                 -->
+    <!--    <tasks>27-29</tasks>                                             -->
+    <!--    <tasks>1-24,27-29,31</tasks>                                     -->
+    <!-- =================================================================== -->  
+
+    <tasks>1-256</tasks> 
+    
+    <!-- === Output trace limits : Size ==================================== -->
+    <!--  To fix the maximum size X (MBytes) for the output trace.           -->
+    <!--    <max_trace_size>X</max_trace_size>                               -->
+    <!-- =================================================================== -->  
+
+    <max_trace_size>100</max_trace_size>
+        
+    <!-- === Output trace limits : Times =================================== -->
+    <!--  To select time cutting behaviour, place 0 or 1:                    -->
+    <!--    1 => by time (in nanoseconds)                                    -->
+    <!--    0 => by time percentage                                          -->
+    <!--  Only corresponding parameters will be used.                        -->
+    <!-- =================================================================== -->  
+    <by_time>1</by_time>
+
+    <minimum_time>0</minimum_time>
+    <maximum_time>1000000000</maximum_time>
+
+    <minimum_time_percentage>0</minimum_time_percentage>
+    <maximum_time_percentage>25</maximum_time_percentage>
+    
+    <!-- === Output trace changes : Times ================================== -->
+    <!--  Keeps times of the original trace, if this flag isn't specified,   -->
+    <!--    the new cutted trace will start at time 0.                       -->
+    <!-- =================================================================== -->  
+
+    <original_time>0</original_time>
+    
+    <!-- === Output trace changes : States ================================= -->
+    <!-- When cutting without original time, don't split states due to the   -->
+    <!--   cut.                                                              -->
+    <!-- if ( original_time == 1 ) this value is overriden                   -->
+    <!-- if ( original_time == 1 ) this value is overriden                   -->
+    <!--                                                                     -->
+    <!--  To remove state records that exceed any of the limits of the cut:  -->
+    <!--    <remove_first_states>0</remove_first_states>                     -->
+    <!--    <remove_last_states>1</remove_last_states>                       -->
+    <!-- =================================================================== -->  
+
+    <break_states>1</break_states>
+
+    <remove_first_states>0</remove_first_states>
+    <remove_last_states>0</remove_last_states>
+
+  </cutter>
+
+</config>

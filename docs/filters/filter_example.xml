@@ -1,0 +1,69 @@
+<!-- *********************************************************************** -->
+<!--                    PARAVER TRACE FILTER CONFIGURATION                   -->
+<!--                             PERFORMANCE TOOLS                           -->
+<!--  Barcelona Supercomputing Center - Centro Nacional de Supercomputacion  -->
+<!-- *********************************************************************** -->
+
+<config>
+
+<!-- *********************************************************************** -->
+<!-- *** FILTER SECTION **************************************************** -->
+<!-- *********************************************************************** -->
+
+  <filter>
+
+    <!-- === Main filter section =========================================== -->
+    <!--  To discard state, event or communication records, place 0 or 1:    -->
+    <!--    1 => Records are discarded                                       -->
+    <!--    0 => Records are filtered                                        -->
+    <!-- =================================================================== -->  
+    <discard_states>0</discard_states>
+    <discard_events>1</discard_events>
+    <discard_communications>1</discard_communications>
+
+    <!-- === States section ================================================ -->
+    <!--  To select all states:                                              -->
+    <!--    <states>All</states>                                             -->
+    <!--  To select some states, separate with commas:                       -->
+    <!--    <states>Running,Overhead</states>                                -->
+    <!--  To select none, place 1 in <discard_states>.                       -->
+    <!-- =================================================================== -->  
+
+		<states>Running</states>
+
+    <!-- === Events section ================================================ -->
+    <!--  To select "filter" as behaviour, change external xml tag to:       -->
+    <!--    <types>                                                          -->
+    <!--  To select "discard" behaviour, change external xml tag to:         -->
+    <!--    <types use="discard">                                            -->
+    <!--                                                                     -->
+    <!--  Then select type, range of types, or pairs type-value using inner  --> 
+    <!--  <type> tag, like:                                                  -->
+    <!--    <type>50000001</type>                                            -->
+    <!--    <type>50000002-50000003</type>                                   -->
+    <!--    <type>50000001                                                   -->
+    <!--      <value>34</value>                                              -->
+    <!--    </type>                                                          -->
+    <!--  To select none, place 1 in <discard_events>.                       -->
+    <!-- =================================================================== -->  
+    
+    <types>
+		  <type>50000001  
+        <value>34</value>
+      </type>
+	    <type>50000002-50000003</type> 
+   	</types>
+
+    <!-- === Communications section ======================================== -->
+    <!--  To select communication with size equal or greater than X Bytes:   -->
+    <!--    <comms>X</comms>                                                 -->
+    <!-- =================================================================== -->  
+
+    <comms>2000000</comms>
+
+  </filter>
+
+<!-- *********************************************************************** -->
+
+</config>
+
