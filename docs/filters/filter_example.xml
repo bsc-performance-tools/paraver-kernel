@@ -15,7 +15,7 @@
     <!-- === Main filter section =========================================== -->
     <!--  To discard state, event or communication records, place 0 or 1:    -->
     <!--    1 => Records are discarded                                       -->
-    <!--    0 => Records are filtered                                        -->
+    <!--    0 => Records are kept                                            -->
     <!-- =================================================================== -->  
     <discard_states>0</discard_states>
     <discard_events>1</discard_events>
@@ -26,10 +26,13 @@
     <!--    <states>All</states>                                             -->
     <!--  To select some states, separate with commas:                       -->
     <!--    <states>Running,Overhead</states>                                -->
-    <!--  To select none, place 1 in <discard_states>.                       -->
+		<!--  To select none, place 1 in <discard_states>.                       -->
+    <!--  To set minimum global duration in time units, set <min_duration>   -->			
     <!-- =================================================================== -->  
 
-		<states>Running</states>
+		<states>Running
+			<min_duration>10000</min_duration>
+		</states>
 
     <!-- === Events section ================================================ -->
     <!--  To select "filter" as behaviour, change external xml tag to:       -->

@@ -79,7 +79,7 @@ string strTrace( "" );
 void printHelp()
 {
   cout << "USAGE" << endl;
-  cout << "  paramedir [OPTION] trc {xml} cfg {out | cfg}*" << endl;
+  cout << "  paramedir [OPTION] trc {xml} cfg {cfgout | cfg}*" << endl;
   cout << endl;
   cout << "    -h: Prints this help" << endl;
   cout << "    -v: Prints version" << endl;
@@ -101,7 +101,7 @@ void printHelp()
   cout << "    trc: Paraver trace filename ( with extension .prv or .prv.gz )." << endl;
   cout << "    xml: Options for cutter/filter/software counters ( with extension .xml )." << endl;
   cout << "    cfg: Paraver configuration filename ( with extension .cfg ). If present, trace's loaded." << endl;
-  cout << "    out: Filename for output ( default name is cfg filename without, with extension .mcr )." << endl;
+  cout << "    out: Filename for cfg output ( default name is cfg filename without, with extension .mcr )." << endl;
   cout << endl;
   cout << "  Examples:" << endl;
   cout << "    paramedir -m linpack.prv.gz mpi_stats.cfg" << endl;
@@ -113,9 +113,11 @@ void printHelp()
   cout << "    paramedir -f linpack.prv just_MPI_calls.xml" << endl;
   cout << "      Filters mpi calls of linpack.prv. Doesn't load it, just writes the file." << endl;
   cout << endl;
-  cout << "    paramedir -s -c -f linpack.prv cut_filter_options.xml mpi_stats.cfg" << endl;
-  cout << "      Reads parameters of the software counters, cutter and filter from the xml and applies them to" << endl;
-  cout << "      linpack.prv trace, and the filtered trace is loaded and used to compute mpi_stats.cfg." << endl;
+  cout << "    paramedir -s -c -f linpack.prv cut_filter_options.xml mpi_stats.cfg my_mpi_values.txt" << endl;
+  cout << "      Reads parameters of the software counters, cutter and filter from the xml and applies them" << endl;
+  cout << "      pipelined in the given order ( trace -> software counters | cutter | filter -> result trace)" << endl;
+  cout << "      to linpack.prv trace, and the filtered trace is loaded and used to compute mpi_stats.cfg." << endl;
+  cout << "      The computed mpi results are saved int my_mpi_values.txt." << endl;
   cout << endl;
 }
 
