@@ -26,13 +26,13 @@
     <!--    <states>All</states>                                             -->
     <!--  To select some states, separate with commas:                       -->
     <!--    <states>Running,Overhead</states>                                -->
-		<!--  To select none, place 1 in <discard_states>.                       -->
+    <!--  To select none, place 1 in <discard_states>.                       -->
     <!--  To set minimum global duration in time units, set <min_duration>   -->			
     <!-- =================================================================== -->  
 
-		<states>Running
-			<min_duration>10000</min_duration>
-		</states>
+    <states>Running
+     	<min_duration>10000</min_duration>
+    </states>
 
     <!-- === Events section ================================================ -->
     <!--  To select "filter" as behaviour, change external xml tag to:       -->
@@ -51,10 +51,10 @@
     <!-- =================================================================== -->  
     
     <types>
-		  <type>50000001  
+      <type>50000001  
         <value>34</value>
       </type>
-	    <type>50000002-50000003</type> 
+      <type>50000002-50000003</type> 
    	</types>
 
     <!-- === Communications section ======================================== -->

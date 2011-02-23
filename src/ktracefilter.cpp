@@ -41,6 +41,8 @@
 //#include "filters_wait_window.h"
 #include "ktracefilter.h"
 #include "kprogresscontroller.h"
+#include "tracestream.h" // for GZIP_COMPRESSION_RATIO
+
 
 #ifdef WIN32
 #define atoll _atoi64
@@ -279,7 +281,7 @@ void KTraceFilter::show_progress_bar( ProgressController *progress )
   current_showed = i / j;
 */
   if ( is_zip_filter )
-    current_read_size = current_read_size / COMPRESSION_RATIO_GZIP;
+    current_read_size = current_read_size / TraceStream::GZIP_COMPRESSION_RATIO;
 
   if( progress != NULL)
     progress->setCurrentProgress( current_read_size );

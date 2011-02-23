@@ -41,6 +41,8 @@
 
 #include "ktracecutter.h"
 #include "kprogresscontroller.h"
+#include "tracestream.h" // for GZIP_COMPRESSION_RATIO
+
 
 #ifdef WIN32
 #define atoll _atoi64
@@ -129,9 +131,7 @@ void KTraceCutter::read_cutter_params()
   total_time = time_max - time_min;
   min_perc = exec_options->min_percentage;
   max_perc = exec_options->max_percentage;
-
-  if ( exec_options->original_time )
-    old_times = true;
+  old_times = exec_options->original_time;
 
   if ( exec_options->tasks_list[0] != '\0' )
   {
@@ -393,7 +393,7 @@ void KTraceCutter::show_cutter_progress_bar( ProgressController *progress )
   current_showed = i / j;*/
 
   if ( is_zip )
-    current_read_size = current_read_size / COMPRESSION_RATIO_GZIP;
+    current_read_size = current_read_size / TraceStream::GZIP_COMPRESSION_RATIO;
 
   if (progress != NULL )
     progress->setCurrentProgress( current_read_size );
