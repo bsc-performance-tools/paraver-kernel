@@ -64,6 +64,7 @@ WindowProxy::WindowProxy():
   parent1 = NULL;
   parent2 = NULL;
   myTrace = NULL;
+  myFilter = NULL;
   init();
 }
 
@@ -137,7 +138,7 @@ void WindowProxy::init()
 
 WindowProxy::~WindowProxy()
 {
-  if ( myFilter != NULL )
+  if ( !myWindow->isDerivedWindow() && myFilter != NULL )
     delete myFilter;
   LoadedWindows::getInstance()->eraseWindow( this );
   if( sync )
