@@ -1226,7 +1226,7 @@ void WindowZoomObjects::printLine( ofstream& cfgFile,
                                    const vector<Window *>::const_iterator it )
 {
   pair<TObjectOrder, TObjectOrder> currentZoom = ( *it )->getZoomSecondDimension();
-  if( currentZoom.first > 0 || currentZoom.second < ( *it )->getWindowLevelObjects() )
+  if( currentZoom.first > 0 || currentZoom.second < ( *it )->getWindowLevelObjects() - 1 )
   {
     cfgFile << OLDCFG_TAG_WNDW_ZOOM_OBJECTS << " ";
     cfgFile << currentZoom.first << " ";
