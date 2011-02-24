@@ -287,7 +287,8 @@ Window *WindowProxy::clone( )
 
   clonedWindow->sync = sync;
   clonedWindow->syncGroup = syncGroup;
-  SyncWindows::getInstance()->addWindow( clonedWindow, syncGroup );
+  if( clonedWindow->sync )
+    SyncWindows::getInstance()->addWindow( clonedWindow, syncGroup );
 
   return clonedWindow;
 }
