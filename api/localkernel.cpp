@@ -410,7 +410,7 @@ void LocalKernel::getNewTraceName( char *name, char *new_trace_name, int action 
     switch ( action )
     {
       case INC_CHOP_COUNTER:
-        if ( strstr( new_trace_name, "chop" ) != NULL )
+        if ( strstr( new_trace_name, ".chop" ) != NULL )
           sprintf( new_trace_name, "%s%d.prv", new_trace_name, trace_names_table[i].num_chop );
         else
           sprintf( new_trace_name, "%schop%d.prv", new_trace_name, trace_names_table[i].num_chop );
@@ -427,7 +427,7 @@ void LocalKernel::getNewTraceName( char *name, char *new_trace_name, int action 
 
 
       case INC_FILTER_COUNTER:
-        if ( strstr( new_trace_name, "filter" ) != NULL )
+        if ( strstr( new_trace_name, ".filter" ) != NULL )
           sprintf( new_trace_name, "%s%d.prv", new_trace_name, trace_names_table[i].num_filter );
         else
           sprintf( new_trace_name, "%sfilter%d.prv", new_trace_name, trace_names_table[i].num_filter );

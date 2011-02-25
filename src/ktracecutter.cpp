@@ -564,7 +564,6 @@ void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut )
   fgets( trace_header, MAX_TRACE_HEADER, infile );
   sscanf( trace_header, "%*d:%*d:%*d:%*d:%*d:%lld:", &timeOffset );
 
-
   bool end_read = false;
   while ( !end_read )
   {
