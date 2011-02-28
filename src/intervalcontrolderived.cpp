@@ -69,34 +69,33 @@ KRecordList *IntervalControlDerived::init( TRecordTime initialTime, TCreateList 
 
   if ( window->getLevel() >= SYSTEM )
   {
-    begin = window->copyCPUIterator( childIntervals[ 0 ]->getBegin() );
-    end = window->copyCPUIterator( childIntervals[ 0 ]->getEnd() );
+    begin = window->copyCPUIterator( childIntervals[ 1 ]->getBegin() );
+    end = window->copyCPUIterator( childIntervals[ 1 ]->getEnd() );
   }
   else
   {
-    begin = window->copyThreadIterator( childIntervals[ 0 ]->getBegin() );
-    end = window->copyThreadIterator( childIntervals[ 0 ]->getEnd() );
+    begin = window->copyThreadIterator( childIntervals[ 1 ]->getBegin() );
+    end = window->copyThreadIterator( childIntervals[ 1 ]->getEnd() );
   }
+  while ( childIntervals[ 0 ]->getEnd()->getTime() < begin->getTime() )
+    childIntervals[ 0 ]->calcNext( displayList );
 
-  while ( childIntervals[ 1 ]->getEnd()->getTime() <= begin->getTime() )
-    childIntervals[ 1 ]->calcNext( displayList );
-
-  if ( childIntervals[ 1 ]->getEnd()->getTime() > begin->getTime() )
+  if ( childIntervals[ 0 ]->getEnd()->getTime() > begin->getTime() )
   {
     info.values.clear();
     info.values.push_back( currentValue );
-    info.values.push_back( childIntervals[ 1 ]->getValue() *
-                           window->getFactor( 1 ) );
+    info.values.push_back( childIntervals[ 0 ]->getValue() *
+                           window->getFactor( 0 ) );
     currentValue = function->execute( &info );
   }
 
-  while ( childIntervals[ 1 ]->getEnd()->getTime() < end->getTime() )
+  while ( childIntervals[ 0 ]->getEnd()->getTime() < end->getTime() )
   {
-    childIntervals[ 1 ]->calcNext( displayList );
+    childIntervals[ 0 ]->calcNext( displayList );
     info.values.clear();
     info.values.push_back( currentValue );
-    info.values.push_back( childIntervals[ 1 ]->getValue() *
-                           window->getFactor( 1 ) );
+    info.values.push_back( childIntervals[ 0 ]->getValue() *
+                           window->getFactor( 0 ) );
     currentValue = function->execute( &info );
   }
 
@@ -129,41 +128,41 @@ KRecordList *IntervalControlDerived::calcNext( KRecordList *displayList, bool in
 
   info.callingInterval = this;
 
-  childIntervals[ 0 ]->calcNext( displayList );
+  childIntervals[ 1 ]->calcNext( displayList );
 
   if ( window->getLevel() >= SYSTEM )
   {
-    begin = window->copyCPUIterator( childIntervals[ 0 ]->getBegin() );
-    end = window->copyCPUIterator( childIntervals[ 0 ]->getEnd() );
+    begin = window->copyCPUIterator( childIntervals[ 1 ]->getBegin() );
+    end = window->copyCPUIterator( childIntervals[ 1 ]->getEnd() );
   }
   else
   {
-    begin = window->copyThreadIterator( childIntervals[ 0 ]->getBegin() );
-    end = window->copyThreadIterator( childIntervals[ 0 ]->getEnd() );
+    begin = window->copyThreadIterator( childIntervals[ 1 ]->getBegin() );
+    end = window->copyThreadIterator( childIntervals[ 1 ]->getEnd() );
   }
 
   if( begin->getTime() == window->getTrace()->getEndTime() )
     return displayList;
 
-  while ( childIntervals[ 1 ]->getEnd()->getTime() <= begin->getTime() )
-    childIntervals[ 1 ]->calcNext( displayList );
+  while ( childIntervals[ 0 ]->getEnd()->getTime() <= begin->getTime() )
+    childIntervals[ 0 ]->calcNext( displayList );
 
-  if ( childIntervals[ 1 ]->getEnd()->getTime() > begin->getTime() )
+  if ( childIntervals[ 0 ]->getEnd()->getTime() > begin->getTime() )
   {
     info.values.clear();
     info.values.push_back( currentValue );
-    info.values.push_back( childIntervals[ 1 ]->getValue() *
-                           window->getFactor( 1 ) );
+    info.values.push_back( childIntervals[ 0 ]->getValue() *
+                           window->getFactor( 0 ) );
     currentValue = function->execute( &info );
   }
 
-  while ( childIntervals[ 1 ]->getEnd()->getTime() < end->getTime() )
+  while ( childIntervals[ 0 ]->getEnd()->getTime() < end->getTime() )
   {
-    childIntervals[ 1 ]->calcNext( displayList );
+    childIntervals[ 0 ]->calcNext( displayList );
     info.values.clear();
     info.values.push_back( currentValue );
-    info.values.push_back( childIntervals[ 1 ]->getValue() *
-                           window->getFactor( 1 ) );
+    info.values.push_back( childIntervals[ 0 ]->getValue() *
+                           window->getFactor( 0 ) );
     currentValue = function->execute( &info );
   }
 
@@ -193,38 +192,38 @@ KRecordList *IntervalControlDerived::calcPrev( KRecordList *displayList, bool in
 
   info.callingInterval = this;
 
-  childIntervals[ 0 ]->calcPrev( displayList );
+  childIntervals[ 1 ]->calcPrev( displayList );
 
   if ( window->getLevel() >= SYSTEM )
   {
-    begin = window->copyCPUIterator( childIntervals[ 0 ]->getBegin() );
-    end = window->copyCPUIterator( childIntervals[ 0 ]->getEnd() );
+    begin = window->copyCPUIterator( childIntervals[ 1 ]->getBegin() );
+    end = window->copyCPUIterator( childIntervals[ 1 ]->getEnd() );
   }
   else
   {
-    begin = window->copyThreadIterator( childIntervals[ 0 ]->getBegin() );
-    end = window->copyThreadIterator( childIntervals[ 0 ]->getEnd() );
+    begin = window->copyThreadIterator( childIntervals[ 1 ]->getBegin() );
+    end = window->copyThreadIterator( childIntervals[ 1 ]->getEnd() );
   }
 
-  while ( childIntervals[ 1 ]->getEnd()->getTime() <= begin->getTime() )
-    childIntervals[ 1 ]->calcPrev( displayList );
+  while ( childIntervals[ 0 ]->getEnd()->getTime() <= begin->getTime() )
+    childIntervals[ 0 ]->calcPrev( displayList );
 
-  if ( childIntervals[ 1 ]->getEnd()->getTime() > begin->getTime() )
+  if ( childIntervals[ 0 ]->getEnd()->getTime() > begin->getTime() )
   {
     info.values.clear();
     info.values.push_back( currentValue );
-    info.values.push_back( childIntervals[ 1 ]->getValue() *
-                           window->getFactor( 1 ) );
+    info.values.push_back( childIntervals[ 0 ]->getValue() *
+                           window->getFactor( 0 ) );
     currentValue = function->execute( &info );
   }
 
-  while ( childIntervals[ 1 ]->getEnd()->getTime() < end->getTime() )
+  while ( childIntervals[ 0 ]->getEnd()->getTime() < end->getTime() )
   {
-    childIntervals[ 1 ]->calcPrev( displayList );
+    childIntervals[ 0 ]->calcPrev( displayList );
     info.values.clear();
     info.values.push_back( currentValue );
-    info.values.push_back( childIntervals[ 1 ]->getValue() *
-                           window->getFactor( 1 ) );
+    info.values.push_back( childIntervals[ 0 ]->getValue() *
+                           window->getFactor( 0 ) );
     currentValue = function->execute( &info );
   }
 
