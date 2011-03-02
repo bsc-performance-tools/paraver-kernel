@@ -99,6 +99,8 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   redraw = false;
   recalc = false;
 
+  codeColor = Histogram::getCodeColor();
+
   zoomHistory.clear();
 }
 
@@ -1349,4 +1351,14 @@ bool HistogramProxy::getRecalc() const
 void HistogramProxy::setRecalc( bool newValue )
 {
   recalc = newValue;
+}
+
+bool HistogramProxy::getCodeColor() const
+{
+  return codeColor;
+}
+
+void HistogramProxy::setCodeColor( bool newValue )
+{
+  codeColor = newValue;
 }

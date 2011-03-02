@@ -423,6 +423,12 @@ class Histogram
     }
     virtual void setRecalc( bool newValue )
     {}
+    virtual bool getCodeColor() const
+    {
+      return false;
+    }
+    virtual void setCodeColor( bool newValue )
+    {}
 
   protected:
     KernelConnection *myKernel;
@@ -630,6 +636,8 @@ class HistogramProxy : public Histogram
     virtual void setRedraw( bool newValue );
     virtual bool getRecalc() const;
     virtual void setRecalc( bool newValue );
+    virtual bool getCodeColor() const;
+    virtual void setCodeColor( bool newValue );
 
   private:
     string name;
@@ -667,6 +675,7 @@ class HistogramProxy : public Histogram
     bool changed;
     bool redraw;
     bool recalc;
+    bool codeColor;
 
     TRecordTime winBeginTime;
     TRecordTime winEndTime;
