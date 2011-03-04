@@ -233,6 +233,10 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
     string cfgTag;
 
     getline( cfgFile, strLine );
+
+    if ( strLine.length() > 0 && strLine[ strLine.length() - 1 ] == '\r' )
+      strLine = strLine.substr( 0, strLine.length() - 1 );
+
     if ( strLine.length() == 0 )
       continue;
     else if ( strLine[ 0 ] == '#' )

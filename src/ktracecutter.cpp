@@ -602,7 +602,6 @@ void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut )
 
         break;
 
-
       default:
         break;
     }
