@@ -60,7 +60,7 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
     {
       if ( !physical )
       {
-        if ( !( logical && ( ( it->getType() & RECV ) &&
+        if ( !( logical && ( ( it->getType() & RECV || it->getType() & RRECV ) &&
                              ( window->getTrace()->getLogicalReceive( it->getCommIndex() ) <
                                window->getTrace()->getPhysicalReceive( it->getCommIndex() ) ) ) )
            )
