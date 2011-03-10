@@ -115,14 +115,14 @@ void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
 
       if ( it->getType() & LOG )
       {
-        if ( trace->getLogicalReceive( id ) < trace->getPhysicalReceive( id ) )
+        if ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) )
           return;
         tmp.setCommPartnerTime( trace->getLogicalSend( id ) );
       }
       else if ( it->getType() & PHY )
       {
         tmp.setCommPartnerTime( trace->getPhysicalSend( id ) );
-        if ( trace->getLogicalReceive( id ) < trace->getPhysicalReceive( id ) )
+        if ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) )
         {
           if ( window->getFilter()->getPhysical() )
           {
