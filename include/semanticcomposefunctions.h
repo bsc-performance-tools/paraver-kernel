@@ -1730,7 +1730,7 @@ class ComposeJoinBursts: public SemanticCompose
     }
 
   private:
-    static const bool initFromBegin = false;
+    static const bool initFromBegin = true;
     static string name;
 
 };
