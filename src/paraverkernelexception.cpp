@@ -43,6 +43,7 @@ const char *ParaverKernelException::errorMessage[] =
     "Cannot open trace file: ",
     "Null pointer in operand: ",
     "Memory error: ",
+    "Gzipped files not supported on Windows: ",
     NULL
   };
 

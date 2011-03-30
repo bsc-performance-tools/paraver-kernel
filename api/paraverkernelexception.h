@@ -50,6 +50,7 @@ class ParaverKernelException : public std::exception
       cannotOpenTrace,
       nullOperand,
       memoryError,
+      gzipNotSupported,
       LAST
     } TErrorCode;
 

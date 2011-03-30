@@ -28,6 +28,7 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "tracestream.h"
+#include "ParaverKernelException.h"
 #include <iostream>
 #ifndef WIN32
 #include <stdlib.h>
@@ -180,7 +181,25 @@ void Compressed::close()
 
 void Compressed::getline( string& strLine )
 {
+#ifndef WIN32
   gzgets( file, tmpLine, LINESIZE );
+#else
+  throw ParaverKernelException( ParaverKernelException::gzipNotSupported );
+  int c;
+  c = gzgetc( file );
+  PRV_UINT32 i = 0;
+  while( c != '\n' )
+  {
+    if( c == '\r' )
+      continue;
+    if( c == -1 )
+      break;
+    tmpLine[ i ] = c;
+    c = gzgetc( file );
+    ++i;
+  }
+  tmpLine[ i ] = '\0';
+#endif
   strLine = tmpLine;
 }
 

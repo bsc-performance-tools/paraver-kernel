@@ -41,6 +41,7 @@ TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file )
   TraceBodyIO *ret;
   string firstLine;
 
+#ifndef WIN32
   file->getline( firstLine );
   if ( firstLine.compare( "new format" ) == 0 )
   {
@@ -51,6 +52,10 @@ TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file )
     ret = new TraceBodyIO_v1();
     file->seekbegin();
   }
+#else
+  ret = new TraceBodyIO_v1();
+#endif
+
   return ret;
 }
 
