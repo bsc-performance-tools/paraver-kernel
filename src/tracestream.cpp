@@ -28,7 +28,7 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "tracestream.h"
-#include "ParaverKernelException.h"
+#include "paraverkernelexception.h"
 #include <iostream>
 #ifndef WIN32
 #include <stdlib.h>
