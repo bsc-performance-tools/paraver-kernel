@@ -960,12 +960,11 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
       currentWindow->calcNext( iRow );
     }
 
-    childInit = true;
+    childInit = needInit;
     while ( currentWindow->getEndTime( iRow ) < toTime )
     {
       calculate( iRow, fromTime, toTime, winIndex, data, childInit );
       currentWindow->calcNext( iRow );
-//      childInit = false;
     }
 
     if ( currentWindow->getBeginTime( iRow ) < toTime )
@@ -1028,6 +1027,9 @@ void KHistogram::calculate( TObjectOrder iRow,
                     toTime;
 
     // Communication statistics
+    vector<bool> filter;
+    vector<TSemanticValue> values;
+
     RecordList::iterator itComm = data->rList->begin();
     while ( itComm != data->rList->end() &&
             itComm->getTime() >= fromTime &&
@@ -1039,8 +1041,8 @@ void KHistogram::calculate( TObjectOrder iRow,
         continue;
       }
       data->comm = itComm;
-      vector<bool> filter = statistics.filterAllComm( data );
-      vector<TSemanticValue> values = statistics.executeAllComm( data );
+      filter = statistics.filterAllComm( data );
+      values = statistics.executeAllComm( data );
       for ( PRV_UINT16 iStat = 0; iStat < filter.size(); iStat++ )
       {
         if ( filter[ iStat ] )
@@ -1074,8 +1076,8 @@ void KHistogram::calculate( TObjectOrder iRow,
       {
         if ( columnTranslator->getColumn( *it, column ) )
         {
-          vector<bool> filter = statistics.filterAll( data );
-          vector<TSemanticValue> values = statistics.executeAll( data );
+          filter = statistics.filterAll( data );
+          values = statistics.executeAll( data );
 
           for ( PRV_UINT16 iStat = 0; iStat < filter.size(); ++iStat )
           {
@@ -1095,8 +1097,8 @@ void KHistogram::calculate( TObjectOrder iRow,
     }
     else
     {
-      vector<bool> filter = statistics.filterAll( data );
-      vector<TSemanticValue> values = statistics.executeAll( data );
+      filter = statistics.filterAll( data );
+      values = statistics.executeAll( data );
 
       for ( PRV_UINT16 iStat = 0; iStat < filter.size(); ++iStat )
       {
@@ -1122,11 +1124,9 @@ void KHistogram::calculate( TObjectOrder iRow,
                   toTime;
     rowsTranslator->getRowChilds( winIndex, iRow, childFromRow, childToRow );
 
-    vector<TObjectOrder> tmp;
-    if( currentWindow == orderedWindows[ winIndex + 1 ] )
-      needInit = false;
+    vector<TObjectOrder> *dummy = NULL;
     recursiveExecution( childFromTime, childToTime, childFromRow, childToRow,
-                        tmp, needInit, winIndex + 1, data );
+                        *dummy, needInit, winIndex + 1, data );
     needInit = false;
   }
 }
@@ -1134,6 +1134,8 @@ void KHistogram::calculate( TObjectOrder iRow,
 
 void KHistogram::finishRow( CalculateData *data )
 {
+  vector<TSemanticValue> values;
+
   if ( getThreeDimensions() )
   {
     for ( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns();
@@ -1142,11 +1144,11 @@ void KHistogram::finishRow( CalculateData *data )
       if ( commCube->planeWithValues( iPlane ) )
       {
         for ( TObjectOrder iColumn = 0;
-              iColumn < rowsTranslator->totalRows(); iColumn++ )
+              iColumn < rowsTranslator->totalRows(); ++iColumn )
         {
           if ( commCube->currentCellModified( iPlane, iColumn ) )
           {
-            vector<TSemanticValue> values = commCube->getCurrentValue( iPlane, iColumn );
+            values = commCube->getCurrentValue( iPlane, iColumn );
             values = statistics.finishRowAllComm( values, iColumn, iPlane );
 
             commCube->setValue( iPlane, iColumn, values );
@@ -1163,11 +1165,11 @@ void KHistogram::finishRow( CalculateData *data )
   else
   {
     for ( TObjectOrder iColumn = 0;
-          iColumn < rowsTranslator->totalRows(); iColumn++ )
+          iColumn < rowsTranslator->totalRows(); ++iColumn )
     {
       if ( commMatrix->currentCellModified( iColumn ) )
       {
-        vector<TSemanticValue> values = commMatrix->getCurrentValue( iColumn );
+        values = commMatrix->getCurrentValue( iColumn );
         values = statistics.finishRowAllComm( values, iColumn );
 
         commMatrix->setValue( iColumn, values );
@@ -1185,20 +1187,20 @@ void KHistogram::finishRow( CalculateData *data )
   if ( getThreeDimensions() )
   {
     for ( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns();
-          iPlane++ )
+          ++iPlane )
     {
       if ( cube->planeWithValues( iPlane ) )
       {
         for ( THistogramColumn iColumn = 0;
-              iColumn < columnTranslator->totalColumns(); iColumn++ )
+              iColumn < columnTranslator->totalColumns(); ++iColumn )
         {
           if ( cube->currentCellModified( iPlane, iColumn ) )
           {
-            vector<TSemanticValue> values = cube->getCurrentValue( iPlane, iColumn );
+            values = cube->getCurrentValue( iPlane, iColumn );
             values = statistics.finishRowAll( values, iColumn, iPlane );
 
             cube->setValue( iPlane, iColumn, values );
-            for ( PRV_UINT16 iStat = 0; iStat < values.size(); iStat++ )
+            for ( PRV_UINT16 iStat = 0; iStat < values.size(); ++iStat )
             {
               totals->newValue( values[ iStat ], iStat, iColumn, iPlane );
               rowTotals->newValue( values[ iStat ], iStat, data->row, iPlane );
@@ -1211,14 +1213,14 @@ void KHistogram::finishRow( CalculateData *data )
   else
   {
     for ( THistogramColumn iColumn = 0;
-          iColumn < columnTranslator->totalColumns(); iColumn++ )
+          iColumn < columnTranslator->totalColumns(); ++iColumn )
     {
       if ( matrix->currentCellModified( iColumn ) )
       {
-        vector<TSemanticValue> values = matrix->getCurrentValue( iColumn );
+        values = matrix->getCurrentValue( iColumn );
         values = statistics.finishRowAll( values, iColumn );
         matrix->setValue( iColumn, values );
-        for ( PRV_UINT16 iStat = 0; iStat < values.size(); iStat++ )
+        for ( PRV_UINT16 iStat = 0; iStat < values.size(); ++iStat )
         {
           totals->newValue( values[ iStat ], iStat, iColumn );
           rowTotals->newValue( values[ iStat ], iStat, data->row );

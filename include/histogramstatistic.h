@@ -915,7 +915,12 @@ class Statistics
     Statistics() {}
     ~Statistics() {}
 
+    static vector<TSemanticValue> zeroVector;
+    static vector<vector<TSemanticValue> > zeroMatrix;
+    static vector<vector<TSemanticValue> > zeroCommMatrix;
+
     static int getNumCommStats();
+
     void initAllComm( KHistogram *whichHistogram );
     void resetAllComm();
     vector<bool> filterAllComm( CalculateData *data );

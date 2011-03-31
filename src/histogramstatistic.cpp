@@ -62,6 +62,10 @@ inline bool filterBurstTime( TRecordTime burstTime, KHistogram *histogram )
          burstTime <= histogram->getBurstMax();
 }
 
+vector<TSemanticValue> Statistics::zeroVector;
+vector<vector<TSemanticValue> > Statistics::zeroMatrix;
+vector<vector<TSemanticValue> > Statistics::zeroCommMatrix;
+
 int Statistics::getNumCommStats()
 {
   return Statistics::numCommStats;
@@ -74,6 +78,9 @@ int Statistics::getNumStats()
 
 void Statistics::initAllComm( KHistogram *whichHistogram )
 {
+  for ( THistogramColumn iPlane = 0; iPlane < whichHistogram->getNumPlanes(); ++iPlane )
+    zeroCommMatrix.push_back( vector<TSemanticValue>( whichHistogram->getControlWindow()->getWindowLevelObjects(), 0.0 ) );
+
   statNumSends.init( whichHistogram );
   statNumReceives.init( whichHistogram );
   statBytesSent.init( whichHistogram );
@@ -169,6 +176,12 @@ vector<TSemanticValue> Statistics::finishRowAllComm( vector<TSemanticValue>& cel
 
 void Statistics::initAll( KHistogram *whichHistogram )
 {
+  for ( THistogramColumn iPlane = 0; iPlane < whichHistogram->getNumPlanes(); ++iPlane )
+  {
+    zeroMatrix.push_back( vector<TSemanticValue>( whichHistogram->getNumColumns(), 0.0 ) );
+    zeroVector.push_back( 0.0 );
+  }
+
   statTime.init( whichHistogram );
   statPercTime.init( whichHistogram );
   statPercTimeNotZero.init( whichHistogram );
@@ -530,35 +543,14 @@ TObjectOrder StatAvgBytesSent::getPartner( CalculateData *data )
 
 void StatAvgBytesSent::init( KHistogram *whichHistogram )
 {
-  THistogramColumn numPlanes;
-  TObjectOrder numColumns;
-
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
-
-  numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getControlWindow()->getWindowLevelObjects();
-
-  numComms.clear();
-  numComms.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
-    numComms.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
+  numComms = Statistics::zeroCommMatrix;
 }
 
 void StatAvgBytesSent::reset()
 {
-  vector<vector<TSemanticValue> >::iterator itPlane = numComms.begin();
-
-  while ( itPlane != numComms.end() )
-  {
-    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
-    while ( itColumn != ( *itPlane ).end() )
-    {
-      ( *itColumn ) = 0.0;
-      ++itColumn;
-    }
-    ++itPlane;
-  }
+  numComms = Statistics::zeroCommMatrix;
 }
 
 bool StatAvgBytesSent::filter( CalculateData *data ) const
@@ -613,35 +605,14 @@ TObjectOrder StatAvgBytesReceived::getPartner( CalculateData *data )
 
 void StatAvgBytesReceived::init( KHistogram *whichHistogram )
 {
-  THistogramColumn numPlanes;
-  TObjectOrder numColumns;
-
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
-
-  numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getControlWindow()->getWindowLevelObjects();
-
-  numComms.clear();
-  numComms.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
-    numComms.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
+  numComms = Statistics::zeroCommMatrix;
 }
 
 void StatAvgBytesReceived::reset()
 {
-  vector<vector<TSemanticValue> >::iterator itPlane = numComms.begin();
-
-  while ( itPlane != numComms.end() )
-  {
-    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
-    while ( itColumn != ( *itPlane ).end() )
-    {
-      ( *itColumn ) = 0.0;
-      ++itColumn;
-    }
-    ++itPlane;
-  }
+  numComms = Statistics::zeroCommMatrix;
 }
 
 bool StatAvgBytesReceived::filter( CalculateData *data ) const
@@ -696,35 +667,14 @@ TObjectOrder StatMinBytesSent::getPartner( CalculateData *data )
 
 void StatMinBytesSent::init( KHistogram *whichHistogram )
 {
-  THistogramColumn numPlanes;
-  TObjectOrder numColumns;
-
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
-
-  numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getControlWindow()->getWindowLevelObjects();
-
-  min.clear();
-  min.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
-    min.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
+  min = Statistics::zeroCommMatrix;
 }
 
 void StatMinBytesSent::reset()
 {
-  vector<vector<TSemanticValue> >::iterator itPlane = min.begin();
-
-  while ( itPlane != min.end() )
-  {
-    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
-    while ( itColumn != ( *itPlane ).end() )
-    {
-      ( *itColumn ) = 0.0;
-      ++itColumn;
-    }
-    ++itPlane;
-  }
+  min = Statistics::zeroCommMatrix;
 }
 
 bool StatMinBytesSent::filter( CalculateData *data ) const
@@ -789,35 +739,14 @@ TObjectOrder StatMinBytesReceived::getPartner( CalculateData *data )
 
 void StatMinBytesReceived::init( KHistogram *whichHistogram )
 {
-  THistogramColumn numPlanes;
-  TObjectOrder numColumns;
-
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
-
-  numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getControlWindow()->getWindowLevelObjects();
-
-  min.clear();
-  min.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
-    min.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
+  min = Statistics::zeroCommMatrix;
 }
 
 void StatMinBytesReceived::reset()
 {
-  vector<vector<TSemanticValue> >::iterator itPlane = min.begin();
-
-  while ( itPlane != min.end() )
-  {
-    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
-    while ( itColumn != ( *itPlane ).end() )
-    {
-      ( *itColumn ) = 0.0;
-      ++itColumn;
-    }
-    ++itPlane;
-  }
+  min = Statistics::zeroCommMatrix;
 }
 
 bool StatMinBytesReceived::filter( CalculateData *data ) const
@@ -882,35 +811,14 @@ TObjectOrder StatMaxBytesSent::getPartner( CalculateData *data )
 
 void StatMaxBytesSent::init( KHistogram *whichHistogram )
 {
-  THistogramColumn numPlanes;
-  TObjectOrder numColumns;
-
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
-
-  numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getControlWindow()->getWindowLevelObjects();
-
-  max.clear();
-  max.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
-    max.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
+  max = Statistics::zeroCommMatrix;
 }
 
 void StatMaxBytesSent::reset()
 {
-  vector<vector<TSemanticValue> >::iterator itPlane = max.begin();
-
-  while ( itPlane != max.end() )
-  {
-    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
-    while ( itColumn != ( *itPlane ).end() )
-    {
-      ( *itColumn ) = 0.0;
-      ++itColumn;
-    }
-    ++itPlane;
-  }
+  max = Statistics::zeroCommMatrix;
 }
 
 bool StatMaxBytesSent::filter( CalculateData *data ) const
@@ -970,35 +878,14 @@ TObjectOrder StatMaxBytesReceived::getPartner( CalculateData *data )
 
 void StatMaxBytesReceived::init( KHistogram *whichHistogram )
 {
-  THistogramColumn numPlanes;
-  TObjectOrder numColumns;
-
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
-
-  numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getControlWindow()->getWindowLevelObjects();
-
-  max.clear();
-  max.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
-    max.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
+  max = Statistics::zeroCommMatrix;
 }
 
 void StatMaxBytesReceived::reset()
 {
-  vector<vector<TSemanticValue> >::iterator itPlane = max.begin();
-
-  while ( itPlane != max.end() )
-  {
-    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
-    while ( itColumn != ( *itPlane ).end() )
-    {
-      ( *itColumn ) = 0.0;
-      ++itColumn;
-    }
-    ++itPlane;
-  }
+  max = Statistics::zeroCommMatrix;
 }
 
 bool StatMaxBytesReceived::filter( CalculateData *data ) const
@@ -1113,32 +1000,14 @@ string StatPercTime::name = "% Time";
 
 void StatPercTime::init( KHistogram *whichHistogram )
 {
-  THistogramColumn numPlanes;
-
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
-
-  rowTotal.clear();
-  if ( myHistogram->getThreeDimensions() )
-    numPlanes = myHistogram->getNumPlanes();
-  else
-    numPlanes = 1;
-
-  rowTotal.clear();
-  rowTotal.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
-    rowTotal.push_back( 0.0 );
+  rowTotal = Statistics::zeroVector;
 }
 
 void StatPercTime::reset()
 {
-  vector<TSemanticValue>::iterator it = rowTotal.begin();
-
-  while ( it != rowTotal.end() )
-  {
-    ( *it ) = 0.0;
-    ++it;
-  }
+  rowTotal = Statistics::zeroVector;
 }
 
 bool StatPercTime::filter( CalculateData *data ) const
@@ -1196,32 +1065,14 @@ string StatPercTimeNotZero::name = "% Time Not Zero";
 
 void StatPercTimeNotZero::init( KHistogram *whichHistogram )
 {
-  THistogramColumn numPlanes;
-
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
-
-  rowTotal.clear();
-  if ( myHistogram->getThreeDimensions() )
-    numPlanes = myHistogram->getNumPlanes();
-  else
-    numPlanes = 1;
-
-  rowTotal.clear();
-  rowTotal.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
-    rowTotal.push_back( 0.0 );
+  rowTotal = Statistics::zeroVector;
 }
 
 void StatPercTimeNotZero::reset()
 {
-  vector<TSemanticValue>::iterator it = rowTotal.begin();
-
-  while ( it != rowTotal.end() )
-  {
-    ( *it ) = 0.0;
-    ++it;
-  }
+  rowTotal = Statistics::zeroVector;
 }
 
 bool StatPercTimeNotZero::filter( CalculateData *data ) const
@@ -1402,31 +1253,13 @@ string StatPercNumBursts::name = "% # Bursts";
 
 void StatPercNumBursts::init( KHistogram *whichHistogram )
 {
-  THistogramColumn numPlanes;
-
   myHistogram = whichHistogram;
-
-  rowTotal.clear();
-  if ( myHistogram->getThreeDimensions() )
-    numPlanes = myHistogram->getNumPlanes();
-  else
-    numPlanes = 1;
-
-  rowTotal.clear();
-  rowTotal.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
-    rowTotal.push_back( 0.0 );
+  rowTotal = Statistics::zeroVector;
 }
 
 void StatPercNumBursts::reset()
 {
-  vector<TSemanticValue>::iterator it = rowTotal.begin();
-
-  while ( it != rowTotal.end() )
-  {
-    ( *it ) = 0.0;
-    ++it;
-  }
+  rowTotal = Statistics::zeroVector;
 }
 
 bool StatPercNumBursts::filter( CalculateData *data ) const
@@ -1544,38 +1377,14 @@ string StatAvgValue::name = "Average value";
 
 void StatAvgValue::init( KHistogram *whichHistogram )
 {
-  THistogramColumn numPlanes;
-  TObjectOrder numColumns;
-
   myHistogram = whichHistogram;
   dataWin = myHistogram->getDataWindow();
-
-  numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getNumColumns();
-
-  numValues.clear();
-  numValues.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
-    numValues.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
-
+  numValues = Statistics::zeroMatrix;
 }
 
 void StatAvgValue::reset()
 {
-
-  vector<vector<TSemanticValue> >::iterator itPlane = numValues.begin();
-
-  while ( itPlane != numValues.end() )
-  {
-    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
-    while ( itColumn != ( *itPlane ).end() )
-    {
-      ( *itColumn ) = 0.0;
-      ++itColumn;
-    }
-    ++itPlane;
-  }
-
+  numValues = Statistics::zeroMatrix;
 }
 
 bool StatAvgValue::filter( CalculateData *data ) const
@@ -1634,35 +1443,14 @@ string StatMaximum::name = "Maximum";
 
 void StatMaximum::init( KHistogram *whichHistogram )
 {
-  THistogramColumn numPlanes;
-  TObjectOrder numColumns;
-
   myHistogram = whichHistogram;
   dataWin = myHistogram->getDataWindow();
-
-  numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getNumColumns();
-
-  max.clear();
-  max.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
-    max.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
+  max = Statistics::zeroMatrix;
 }
 
 void StatMaximum::reset()
 {
-  vector<vector<TSemanticValue> >::iterator itPlane = max.begin();
-
-  while ( itPlane != max.end() )
-  {
-    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
-    while ( itColumn != ( *itPlane ).end() )
-    {
-      ( *itColumn ) = 0.0;
-      ++itColumn;
-    }
-    ++itPlane;
-  }
+  max = Statistics::zeroMatrix;
 }
 
 bool StatMaximum::filter( CalculateData *data ) const
@@ -1709,36 +1497,15 @@ string StatAvgBurstTime::name = "Average Burst Time";
 
 void StatAvgBurstTime::init( KHistogram *whichHistogram )
 {
-  THistogramColumn numPlanes;
-  TObjectOrder numColumns;
-
   myHistogram = whichHistogram;
   controlWin = myHistogram->getControlWindow();
   dataWin = myHistogram->getDataWindow();
-
-  numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getNumColumns();
-
-  numValues.clear();
-  numValues.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
-    numValues.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
+  numValues = Statistics::zeroMatrix;
 }
 
 void StatAvgBurstTime::reset()
 {
-  vector<vector<TSemanticValue> >::iterator itPlane = numValues.begin();
-
-  while ( itPlane != numValues.end() )
-  {
-    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
-    while ( itColumn != ( *itPlane ).end() )
-    {
-      ( *itColumn ) = 0.0;
-      ++itColumn;
-    }
-    ++itPlane;
-  }
+  numValues = Statistics::zeroMatrix;
 }
 
 bool StatAvgBurstTime::filter( CalculateData *data ) const
@@ -1806,45 +1573,16 @@ string StatStdevBurstTime::name = "Stdev Burst Time";
 
 void StatStdevBurstTime::init( KHistogram *whichHistogram )
 {
-  THistogramColumn numPlanes;
-  TObjectOrder numColumns;
-
   myHistogram = whichHistogram;
   dataWin = myHistogram->getDataWindow();
-
-  numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getNumColumns();
-
-  numValues.clear();
-  qValues.clear();
-  numValues.reserve( numPlanes );
-  qValues.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
-  {
-    numValues.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
-    qValues.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
-  }
+  numValues = Statistics::zeroMatrix;
+  qValues = Statistics::zeroMatrix;
 }
 
 void StatStdevBurstTime::reset()
 {
-  vector<vector<TSemanticValue> >::iterator itPlaneN = numValues.begin();
-  vector<vector<TSemanticValue> >::iterator itPlaneQ = qValues.begin();
-
-  while ( itPlaneN != numValues.end() )
-  {
-    vector<TSemanticValue>::iterator itColumnN = ( *itPlaneN ).begin();
-    vector<TSemanticValue>::iterator itColumnQ = ( *itPlaneQ ).begin();
-    while ( itColumnN != ( *itPlaneN ).end() )
-    {
-      ( *itColumnN ) = 0.0;
-      ++itColumnN;
-      ( *itColumnQ ) = 0.0;
-      ++itColumnQ;
-    }
-    ++itPlaneN;
-    ++itPlaneQ;
-  }
+  numValues = Statistics::zeroMatrix;
+  qValues = Statistics::zeroMatrix;
 }
 
 bool StatStdevBurstTime::filter( CalculateData *data ) const
@@ -1923,35 +1661,14 @@ string StatAvgPerBurst::name = "Average per Burst";
 
 void StatAvgPerBurst::init( KHistogram *whichHistogram )
 {
-  THistogramColumn numPlanes;
-  TObjectOrder numColumns;
-
   myHistogram = whichHistogram;
   dataWin = myHistogram->getDataWindow();
-
-  numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getNumColumns();
-
-  numValues.clear();
-  numValues.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
-    numValues.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
+  numValues = Statistics::zeroMatrix;
 }
 
 void StatAvgPerBurst::reset()
 {
-  vector<vector<TSemanticValue> >::iterator itPlane = numValues.begin();
-
-  while ( itPlane != numValues.end() )
-  {
-    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
-    while ( itColumn != ( *itPlane ).end() )
-    {
-      ( *itColumn ) = 0.0;
-      ++itColumn;
-    }
-    ++itPlane;
-  }
+  numValues = Statistics::zeroMatrix;
 }
 
 bool StatAvgPerBurst::filter( CalculateData *data ) const
@@ -2008,35 +1725,14 @@ string StatAvgValueNotZero::name = "Average value != 0";
 
 void StatAvgValueNotZero::init( KHistogram *whichHistogram )
 {
-  THistogramColumn numPlanes;
-  TObjectOrder numColumns;
-
   myHistogram = whichHistogram;
   dataWin = myHistogram->getDataWindow();
-
-  numPlanes = myHistogram->getNumPlanes();
-  numColumns = myHistogram->getNumColumns();
-
-  numValues.clear();
-  numValues.reserve( numPlanes );
-  for ( THistogramColumn iPlane = 0; iPlane < numPlanes; ++iPlane )
-    numValues.push_back( vector<TSemanticValue>( numColumns, 0.0 ) );
+  numValues = Statistics::zeroMatrix;
 }
 
 void StatAvgValueNotZero::reset()
 {
-  vector<vector<TSemanticValue> >::iterator itPlane = numValues.begin();
-
-  while ( itPlane != numValues.end() )
-  {
-    vector<TSemanticValue>::iterator itColumn = ( *itPlane ).begin();
-    while ( itColumn != ( *itPlane ).end() )
-    {
-      ( *itColumn ) = 0.0;
-      ++itColumn;
-    }
-    ++itPlane;
-  }
+  numValues = Statistics::zeroMatrix;
 }
 
 bool StatAvgValueNotZero::filter( CalculateData *data ) const
