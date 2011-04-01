@@ -6,8 +6,8 @@ echo "autoheader"
 autoheader
 echo "autoconf"
 autoconf
-echo "glibtoolize --automake -c"
-glibtoolize --automake -c
+echo "libtoolize --automake -c"
+libtoolize --automake -c
 echo "automake -a -c"
 automake -a -c
 
