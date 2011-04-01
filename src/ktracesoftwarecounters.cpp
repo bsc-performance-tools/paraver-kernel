@@ -674,7 +674,7 @@ void KTraceSoftwareCounters::show_progress_bar( ProgressController *progress )
 {
 //  double current_showed, i, j;
 
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__APPLE__)
   current_read_size = ftello( infile );
 #elif defined(WIN32)
   current_read_size = _ftelli64( infile );
@@ -1411,7 +1411,7 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressC
     }
   }
 
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__APPLE__)
   if ( ( infile = fopen( trace_name, "r" ) ) == NULL )
   {
     printf( "Error Opening File %s\n", trace_name );

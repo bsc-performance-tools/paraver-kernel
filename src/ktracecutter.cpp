@@ -369,7 +369,7 @@ void KTraceCutter::show_cutter_progress_bar( ProgressController *progress )
 //  double current_showed, i, j;
 
 
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__APPLE__)
   if ( !is_zip )
     current_read_size = ( unsigned long long )ftello( infile );
   else
@@ -507,7 +507,7 @@ void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut )
   int cpu, appl, task, thread, state, cpu_2, appl_2, task_2, thread_2;
   char *trace_header;
 
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__APPLE__)
   if ( ( infile = fopen( nameIn, "r" ) ) == NULL )
   {
     perror( "ERROR" );
@@ -531,7 +531,7 @@ void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut )
 
 
 
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__APPLE__)
   if ( ( outfile = fopen( nameOut, "w" ) ) == NULL )
   {
     perror( "ERROR" );
@@ -709,7 +709,7 @@ void KTraceCutter::execute( char *trace_in,
   /* Open the files.  If NULL is returned there was an error */
   if ( !is_zip )
   {
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__APPLE__)
     if ( ( infile = fopen( trace_name, "r" ) ) == NULL )
     {
       perror( "ERROR" );
@@ -757,7 +757,7 @@ void KTraceCutter::execute( char *trace_in,
   else
     strcpy( trace_file_out, trace_out );
 
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__APPLE__)
   if ( ( outfile = fopen( trace_file_out, "w" ) ) == NULL )
   {
     printf( "Error Opening KCutter Ouput File %s\n", trace_file_out );

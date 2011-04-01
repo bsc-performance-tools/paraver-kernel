@@ -126,7 +126,7 @@ TTraceSize NotCompressed::getTraceFileSize( const string& filename )
   FILE *traceFile;
   TTraceSize tmpSize;
 
-#ifdef __FreeBSD__
+#if defined (__FreeBSD__) || defined(__APPLE__)
 	if ( (traceFile = fopen (filename.c_str(), "r" ) ) == NULL )
 	{
 		printf ( "Error Opening File %s\n", filename.c_str() );

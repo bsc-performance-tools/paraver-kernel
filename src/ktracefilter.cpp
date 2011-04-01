@@ -258,7 +258,7 @@ void KTraceFilter::ini_progress_bar( char *file_name, ProgressController *progre
 void KTraceFilter::show_progress_bar( ProgressController *progress )
 {
 //  double current_showed, i, j;
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__APPLE__)
   if ( !is_zip_filter )
     current_read_size = ( unsigned long long )ftello( infile );
   else
@@ -399,7 +399,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
   /* Open the files.  If NULL is returned there was an error */
   if ( !is_zip_filter )
   {
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__APPLE__)
     if ( ( infile = fopen( trace_name, "r" ) ) == NULL )
     {
       perror( "ERROR" );
@@ -431,7 +431,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
     }
   }
 
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__APPLE__)
   if ( ( outfile = fopen( trace_out, "w" ) ) == NULL )
   {
     printf( "Error Opening File %s\n", trace_out );
