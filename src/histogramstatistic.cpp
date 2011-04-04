@@ -78,6 +78,7 @@ int Statistics::getNumStats()
 
 void Statistics::initAllComm( KHistogram *whichHistogram )
 {
+  zeroCommMatrix.clear();
   for ( THistogramColumn iPlane = 0; iPlane < whichHistogram->getNumPlanes(); ++iPlane )
     zeroCommMatrix.push_back( vector<TSemanticValue>( whichHistogram->getControlWindow()->getWindowLevelObjects(), 0.0 ) );
 
@@ -176,6 +177,8 @@ vector<TSemanticValue> Statistics::finishRowAllComm( vector<TSemanticValue>& cel
 
 void Statistics::initAll( KHistogram *whichHistogram )
 {
+  zeroMatrix.clear();
+  zeroVector.clear();
   for ( THistogramColumn iPlane = 0; iPlane < whichHistogram->getNumPlanes(); ++iPlane )
   {
     zeroMatrix.push_back( vector<TSemanticValue>( whichHistogram->getNumColumns(), 0.0 ) );
