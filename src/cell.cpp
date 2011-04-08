@@ -36,6 +36,12 @@
 using namespace std;
 
 template <typename ValueType>
+Cell<ValueType>::Cell():
+    row( 0 ), nStats( 0 )
+{}
+
+
+template <typename ValueType>
 Cell<ValueType>::Cell( TObjectOrder idRow, PRV_UINT16 numStats ):
     row( idRow ), nStats( numStats )
 {
@@ -43,7 +49,7 @@ Cell<ValueType>::Cell( TObjectOrder idRow, PRV_UINT16 numStats ):
 }
 
 template <typename ValueType>
-Cell<ValueType>::Cell( Cell< ValueType >& source ):
+Cell<ValueType>::Cell( const Cell< ValueType >& source ):
     row( source.row ), nStats( source.nStats )
 {
   values = source.values;
@@ -148,6 +154,13 @@ template <typename ValueType>
 inline void Cell<ValueType>::setRow( TObjectOrder row )
 {
   this->row = row;
+}
+
+
+template <typename ValueType>
+inline bool Cell<ValueType>::operator==( const ValueType& anotherCell ) const
+{
+  return row == anotherCell.row;
 }
 
 

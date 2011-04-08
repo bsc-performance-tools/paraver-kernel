@@ -182,6 +182,11 @@ class KHistogram : public Histogram
     void setFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
     bool endCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
     bool planeWithValues( PRV_UINT32 plane = 0 ) const;
+    bool getCellValue( TSemanticValue& semVal,
+                       PRV_UINT32 whichRow,
+                       PRV_UINT32 whichCol,
+                       PRV_UINT16 idStat,
+                       PRV_UINT32 whichPlane = 0 ) const;
 
     TSemanticValue getCommCurrentValue( PRV_UINT32 col,
                                         PRV_UINT16 idStat,
@@ -191,6 +196,11 @@ class KHistogram : public Histogram
     void setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
     bool endCommCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
     bool planeCommWithValues( PRV_UINT32 plane = 0 ) const;
+    bool getCommCellValue( TSemanticValue& semVal,
+                           PRV_UINT32 whichRow,
+                           PRV_UINT32 whichCol,
+                           PRV_UINT16 idStat,
+                           PRV_UINT32 whichPlane = 0 ) const;
 
     HistogramTotals *getColumnTotals() const;
     HistogramTotals *getCommColumnTotals() const;

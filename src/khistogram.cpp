@@ -129,7 +129,7 @@ ColumnTranslator::ColumnTranslator( const ColumnTranslator& source )
 ColumnTranslator::ColumnTranslator( THistogramLimit whichMin,
                                     THistogramLimit whichMax,
                                     THistogramLimit whichDelta ):
-    minLimit( whichMin ), maxLimit( whichMax ), delta( whichDelta )
+  minLimit( whichMin ), maxLimit( whichMax ), delta( whichDelta )
 {
   // PRECOND: Min < Max
   numColumns = THistogramColumn( ceil( ( maxLimit - minLimit ) / delta ) );
@@ -581,6 +581,18 @@ inline bool KHistogram::planeWithValues( PRV_UINT32 plane ) const
 }
 
 
+inline bool KHistogram::getCellValue( TSemanticValue& semVal,
+                                      PRV_UINT32 whichRow,
+                                      PRV_UINT32 whichCol,
+                                      PRV_UINT16 idStat,
+                                      PRV_UINT32 whichPlane ) const
+{
+  if( getThreeDimensions() )
+    return cube->getCellValue( semVal, whichPlane, whichRow, whichCol, idStat );
+
+  return matrix->getCellValue( semVal, whichRow, whichCol, idStat );
+}
+
 inline TSemanticValue KHistogram::getCommCurrentValue( PRV_UINT32 col,
     PRV_UINT16 idStat,
     PRV_UINT32 plane ) const
@@ -637,6 +649,17 @@ inline bool KHistogram::planeCommWithValues( PRV_UINT32 plane ) const
   return true;
 }
 
+inline bool KHistogram::getCommCellValue( TSemanticValue& semVal,
+    PRV_UINT32 whichRow,
+    PRV_UINT32 whichCol,
+    PRV_UINT16 idStat,
+    PRV_UINT32 whichPlane ) const
+{
+  if( getThreeDimensions() )
+    return commCube->getCellValue( semVal, whichPlane, whichRow, whichCol, idStat );
+
+  return commMatrix->getCellValue( semVal, whichRow, whichCol, idStat );
+}
 
 inline HistogramTotals *KHistogram::getColumnTotals() const
 {
@@ -948,7 +971,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 
     if( needInit )
     {
-      if( winIndex == 0 )
+      if( orderedWindows[ winIndex ] == orderedWindows[ 0 ] )
         currentWindow->initRow( iRow, fromTime, CREATECOMMS );
       else
         currentWindow->initRow( iRow, fromTime, NOCREATE );

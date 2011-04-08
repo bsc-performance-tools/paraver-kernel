@@ -52,7 +52,7 @@ Histogram::Histogram( KernelConnection *whichKernel ) : myKernel( whichKernel )
 {}
 
 HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
-    Histogram( whichKernel )
+  Histogram( whichKernel )
 {
   destroy = false;
 
@@ -427,6 +427,15 @@ bool HistogramProxy::planeWithValues( PRV_UINT32 plane ) const
   return myHisto->planeWithValues( plane );
 }
 
+bool HistogramProxy::getCellValue( TSemanticValue& semVal,
+                                   PRV_UINT32 whichRow,
+                                   PRV_UINT32 whichCol,
+                                   PRV_UINT16 idStat,
+                                   PRV_UINT32 whichPlane ) const
+{
+  return myHisto->getCellValue( semVal, whichRow, whichCol, idStat, whichPlane );
+}
+
 TSemanticValue HistogramProxy::getCommCurrentValue( PRV_UINT32 col,
     PRV_UINT16 idStat,
     PRV_UINT32 plane ) const
@@ -457,6 +466,15 @@ bool HistogramProxy::endCommCell( PRV_UINT32 col, PRV_UINT32 plane )
 bool HistogramProxy::planeCommWithValues( PRV_UINT32 plane ) const
 {
   return myHisto->planeCommWithValues( plane );
+}
+
+bool HistogramProxy::getCommCellValue( TSemanticValue& semVal,
+                                       PRV_UINT32 whichRow,
+                                       PRV_UINT32 whichCol,
+                                       PRV_UINT16 idStat,
+                                       PRV_UINT32 whichPlane ) const
+{
+  return myHisto->getCommCellValue( semVal, whichRow, whichCol, idStat, whichPlane );
 }
 
 HistogramTotals *HistogramProxy::getTotals( const string& whichStat ) const
@@ -967,8 +985,8 @@ string HistogramProxy::getPlaneLabel( THistogramColumn whichPlane ) const
 }
 
 THistogramColumn HistogramProxy::getPlaneColumns( THistogramColumn iPlane,
-                                                  bool hideEmptyColumns, // need to override cfg value
-                                                  vector<THistogramColumn> &columns ) const
+    bool hideEmptyColumns, // need to override cfg value
+    vector<THistogramColumn> &columns ) const
 {
   THistogramColumn numColumns = 0;
 
@@ -982,7 +1000,7 @@ THistogramColumn HistogramProxy::getPlaneColumns( THistogramColumn iPlane,
     if ( hideEmptyColumns )
     {
       // Return only the columns with values
-      SelectionManagement<THistogramColumn,int> columnSelection;
+      SelectionManagement<THistogramColumn, int> columnSelection;
 
       if( commStat )
         columnSelection.init( getCommColumnTotals(), idStat, numColumns, iPlane );

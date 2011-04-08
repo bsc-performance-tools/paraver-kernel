@@ -338,6 +338,7 @@ TSemanticValue StatNumSends::execute( CalculateData *data )
 {
   if ( data->comm->getType() & SEND )
     return 1;
+
   return 0;
 }
 

@@ -222,6 +222,25 @@ inline void Matrix<ValueType>::eraseColumns( PRV_UINT32 ini_col, PRV_UINT32 fin_
 
 
 template <typename ValueType>
+inline bool Matrix<ValueType>::getCellValue( ValueType& semVal,
+    int whichRow,
+    PRV_UINT32 whichCol,
+    PRV_UINT16 idStat ) const
+{
+  return cols[ whichCol ].getCellValue( semVal, whichRow, idStat );
+}
+
+
+template <typename ValueType>
+inline bool Matrix<ValueType>::getCellValue( vector<ValueType>& semVal,
+    int whichRow,
+    PRV_UINT32 whichCol ) const
+{
+  return cols[ whichCol ].getCellValue( semVal, whichRow );
+}
+
+
+template <typename ValueType>
 inline void Matrix<ValueType>::print() const
 {
   for ( PRV_UINT32 ii = 0; ii < ( PRV_UINT32 )cols.size(); ii++ )

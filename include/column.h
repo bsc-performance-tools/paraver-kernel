@@ -68,12 +68,15 @@ class Column
     bool endCell( );
     void print() const;
 
+    bool getCellValue( ValueType& semVal, int whichRow, short idStat ) const;
+    bool getCellValue( vector<ValueType>& semVal, int whichRow ) const;
+
   private:
-    vector<Cell<ValueType> *> cells;
-    typename vector<Cell<ValueType> *>::iterator it_cell;
+    vector<Cell<ValueType> > cells;
+    typename vector<Cell<ValueType> >::iterator it_cell;
 
     short nstat;
-    Cell<ValueType> *current_cell;
+    Cell<ValueType> current_cell;
     bool modified;
     unsigned int n_cells;
     bool *finished;

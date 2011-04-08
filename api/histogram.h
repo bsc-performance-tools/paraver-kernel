@@ -120,6 +120,11 @@ class Histogram
     virtual void setFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) = 0;
     virtual bool endCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) = 0;
     virtual bool planeWithValues( PRV_UINT32 plane = 0 ) const = 0;
+    virtual bool getCellValue( TSemanticValue& semVal,
+                               PRV_UINT32 whichRow,
+                               PRV_UINT32 whichCol,
+                               PRV_UINT16 idStat,
+                               PRV_UINT32 whichPlane = 0 ) const = 0;
 
     virtual TSemanticValue getCommCurrentValue( PRV_UINT32 col,
         PRV_UINT16 idStat,
@@ -129,6 +134,11 @@ class Histogram
     virtual void setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) = 0;
     virtual bool endCommCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) = 0;
     virtual bool planeCommWithValues( PRV_UINT32 plane = 0 ) const = 0;
+    virtual bool getCommCellValue( TSemanticValue& semVal,
+                                   PRV_UINT32 whichRow,
+                                   PRV_UINT32 whichCol,
+                                   PRV_UINT16 idStat,
+                                   PRV_UINT32 whichPlane = 0 ) const = 0;
 
     virtual HistogramTotals *getColumnTotals() const = 0;
     virtual HistogramTotals *getCommColumnTotals() const = 0;
@@ -502,6 +512,12 @@ class HistogramProxy : public Histogram
     virtual void setFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
     virtual bool endCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
     virtual bool planeWithValues( PRV_UINT32 plane = 0 ) const;
+    virtual bool getCellValue( TSemanticValue& semVal,
+                               PRV_UINT32 whichRow,
+                               PRV_UINT32 whichCol,
+                               PRV_UINT16 idStat,
+                               PRV_UINT32 whichPlane = 0 ) const;
+
     virtual TSemanticValue getCommCurrentValue( PRV_UINT32 col,
         PRV_UINT16 idStat,
         PRV_UINT32 plane = 0 ) const;
@@ -510,6 +526,11 @@ class HistogramProxy : public Histogram
     virtual void setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
     virtual bool endCommCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
     virtual bool planeCommWithValues( PRV_UINT32 plane = 0 ) const;
+    virtual bool getCommCellValue( TSemanticValue& semVal,
+                                   PRV_UINT32 whichRow,
+                                   PRV_UINT32 whichCol,
+                                   PRV_UINT16 idStat,
+                                   PRV_UINT32 whichPlane = 0 ) const;
 
     virtual HistogramTotals *getTotals( const string& whichStat ) const;
     virtual HistogramTotals *getColumnTotals() const;

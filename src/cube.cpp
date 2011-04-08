@@ -35,7 +35,7 @@ using namespace std;
 
 template <typename ValueType>
 Cube<ValueType>::Cube( PRV_UINT32 numPlanes, PRV_UINT32 numCols, PRV_UINT16 numStats ):
-    nplanes( 0 ), ncols( numCols ), nstat( numStats ), crow( 0 )
+  nplanes( 0 ), ncols( numCols ), nstat( numStats ), crow( 0 )
 {
   Matrix<ValueType> *tmp_mat = NULL;
 
@@ -48,7 +48,7 @@ Cube<ValueType>::Cube( PRV_UINT32 numPlanes, PRV_UINT32 numCols, PRV_UINT16 numS
 
 template <typename ValueType>
 Cube<ValueType>::Cube( Cube<ValueType>& source ):
-    nplanes( source.nplanes ), ncols( source.ncols ), nstat( source.nstat ), crow( source.crow )
+  nplanes( source.nplanes ), ncols( source.ncols ), nstat( source.nstat ), crow( source.crow )
 {
   typename vector< Matrix<ValueType> *>::iterator it_mat;
 
@@ -376,6 +376,33 @@ inline void Cube<ValueType>::erasePlanes( PRV_UINT32 ini_plane, PRV_UINT32 fin_p
   }
 
   planes.erase( it_ini, it_fin );
+}
+
+
+template <typename ValueType>
+inline bool Cube<ValueType>::getCellValue( ValueType& semVal,
+    PRV_UINT32 whichPlane,
+    int whichRow,
+    PRV_UINT32 whichCol,
+    PRV_UINT16 idStat ) const
+{
+  if( !planeWithValues( whichPlane ) )
+    return false;
+
+  return planes[ whichPlane ]->getCellValue( semVal, whichRow, whichCol, idStat );
+}
+
+
+template <typename ValueType>
+inline bool Cube<ValueType>::getCellValue( vector<ValueType>& semVal,
+    PRV_UINT32 whichPlane,
+    int whichRow,
+    PRV_UINT32 whichCol ) const
+{
+  if( !planeWithValues( whichPlane ) )
+    return false;
+
+  return planes[ whichPlane ]->getCellValue( semVal, whichRow, whichCol );
 }
 
 

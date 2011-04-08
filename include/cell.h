@@ -37,8 +37,9 @@ template <typename ValueType>
 class Cell
 {
   public:
+    Cell();
     Cell( TObjectOrder idRow, PRV_UINT16 numStats );
-    Cell( Cell< ValueType >& source );
+    Cell( const Cell< ValueType >& source );
     ~Cell();
 
     void init( PRV_UINT16 idStat );
@@ -53,6 +54,8 @@ class Cell
     vector<ValueType> getValue() const;
     TObjectOrder getRow( ) const;
     void setRow( TObjectOrder row );
+
+    bool operator==( const ValueType& anotherCell ) const;
 
     void print() const;
 
