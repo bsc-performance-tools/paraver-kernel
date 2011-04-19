@@ -491,7 +491,7 @@ void KTraceCutter::load_counters_of_pcf( char *trace_name )
       counters[last_counter] = atoll( id );
       last_counter++;
 
-      if ( last_counter == 50 )
+      if ( last_counter == 500 )
       {
         printf( "NO more memory for loading counters of .pcf\n" );
         return;

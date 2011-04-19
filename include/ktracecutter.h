@@ -98,7 +98,7 @@ class KTraceCutter : public TraceCutter
     unsigned long total_cutter_iters;
 
     /* Vars for saving the HC that will appear on the trace */
-    unsigned long long counters[50];
+    unsigned long long counters[500];
     int last_counter;
 
     /* Struct for the case of MAX_TRACE_SIZE */
