@@ -60,6 +60,10 @@ class IntervalCompose: public IntervalHigh
         delete endRecord;
       if( beginRecord != NULL )
         delete beginRecord;
+      if( begin != NULL )
+        delete begin;
+      if( end != NULL )
+        delete end;
     }
 
     virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
@@ -82,6 +86,7 @@ class IntervalCompose: public IntervalHigh
 
     virtual void setChilds()
     {
+      childIntervals.clear();
       if ( level == TOPCOMPOSE1 )
       {
         if ( lastLevel != TOPCOMPOSE2 )
@@ -94,7 +99,6 @@ class IntervalCompose: public IntervalHigh
       {
         if ( lastLevel != getWindowLevel() )
         {
-          childIntervals.clear();
           lastLevel = getWindowLevel();
           childIntervals.push_back( getWindowInterval(
                                     getComposeLevel( getWindowLevel() ), order ) );
