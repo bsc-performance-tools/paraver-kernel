@@ -365,3 +365,4 @@ void FilterProxy::copyCommunicationsSection( Filter *whichFilter )
       setOpTagSizeOr();
   }
 }
+

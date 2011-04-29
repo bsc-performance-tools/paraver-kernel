@@ -345,15 +345,31 @@ void LocalKernel::getNewTraceName( char *name, char *new_trace_name, int action 
 
   strcpy( path_name_backup, new_trace_name );
 
+  // first: look for name in the table
+  // precond: trace_names_table_last < MAX_TRACES_HISTORY_LENGTH
   for ( i = 0; i < trace_names_table_last; i++ )
-    if ( !strcmp( name, trace_names_table[i].name ) ) break;
+    if ( !strcmp( name, trace_names_table[i].name ) )
+      break;
 
+  // second: found? --> ok; not found? --> insert it!
   if ( i == trace_names_table_last )
   {
-    trace_names_table[trace_names_table_last].name = ( char * )strdup( name );
-    trace_names_table[trace_names_table_last].num_chop = 0;
-    trace_names_table[trace_names_table_last].num_sc = 0;
-    trace_names_table[trace_names_table_last].num_filter = 0;
+    // not found!
+    if ( trace_names_table_last >= MAX_TRACES_HISTORY_LENGTH )
+    {
+      // we haven't room; insert as a circular buffer, from the beginning
+      trace_names_table_last = 0;
+      i = 0;
+      free( trace_names_table[ trace_names_table_last ].name );
+    }
+
+    // insert it
+    trace_names_table[ trace_names_table_last ].name = ( char * )strdup( name );
+    trace_names_table[ trace_names_table_last ].num_chop = 0;
+    trace_names_table[ trace_names_table_last ].num_sc = 0;
+    trace_names_table[ trace_names_table_last ].num_filter = 0;
+
+    // and advance counter
     trace_names_table_last++;
   }
 

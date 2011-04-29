@@ -95,7 +95,8 @@ class LocalKernel: public KernelConnection
       int num_sc;
     };
 
-    struct traces_table trace_names_table[10];
+    #define MAX_TRACES_HISTORY_LENGTH 256
+    struct traces_table trace_names_table[ MAX_TRACES_HISTORY_LENGTH ];
     int trace_names_table_last; // should be static?
 
     void copyFile( char *in, char *out );
