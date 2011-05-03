@@ -93,13 +93,13 @@ bool EventLabels::getEventValueLabel( TEventType type, TEventValue value, string
   map<TEventType, map<TEventValue, string> >::const_iterator it = eventValueLabel.find( type );
   if ( it == eventValueLabel.end() )
   {
-    onStr = unknownLabel;
+    //onStr = unknownLabel;
     return false;
   }
   map<TEventValue, string>::const_iterator itVal = ( *it ).second.find( value );
   if ( itVal == ( *it ).second.end() )
   {
-    onStr = unknownLabel;
+    //onStr = unknownLabel;
     return false;
   }
   onStr = ( *itVal ).second;
@@ -124,6 +124,6 @@ bool EventLabels::getEventValueLabel( TEventValue value, string& onStr ) const
 
   if ( found )
     return true;
-  onStr = unknownLabel;
+  //onStr = unknownLabel;
   return false;
 }
