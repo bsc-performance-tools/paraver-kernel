@@ -1105,10 +1105,19 @@ bool WindowComputeYMax::parseLine( KernelConnection *whichKernel, istringstream&
                                    vector<Window *>& windows,
                                    vector<Histogram *>& histograms )
 {
+  string strBool;
+
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
-  windows[ windows.size() - 1 ]->setComputeYMaxOnInit( true );
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+    windows[ windows.size() - 1 ]->setComputeYMaxOnInit( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+    windows[ windows.size() - 1 ]->setComputeYMaxOnInit( true );
+  else
+    return false;
 
   return true;
 }
