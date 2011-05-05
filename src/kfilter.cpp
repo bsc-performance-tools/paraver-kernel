@@ -159,9 +159,10 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
   if ( existBandWidth )
   {
     info = ( TSemanticValue ) window->getTrace()->getCommSize( it->getCommIndex() )
-           / ( TSemanticValue )
-           ( window->getTrace()->getPhysicalReceive( it->getCommIndex() ) -
-             window->getTrace()->getPhysicalSend( it->getCommIndex() ) );
+           / ( TSemanticValue ) window->traceUnitsToWindowUnits(
+              ( window->getTrace()->getPhysicalReceive( it->getCommIndex() ) -
+                window->getTrace()->getPhysicalSend( it->getCommIndex() ) )
+              );
     for ( PRV_UINT32 i = 0; i < bandWidth.size(); i++ )
     {
       stop = functionBandWidth->execute( ( TSemanticValue ) bandWidth[ i ], info );
