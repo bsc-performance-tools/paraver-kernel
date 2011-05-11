@@ -940,10 +940,10 @@ TSemanticValue CommRecvPartner::execute( const SemanticInfo *info )
 
   if ( myInfo->callingInterval->getLevel() == THREAD )
     tmp = myInfo->callingInterval->getWindow()->getTrace()->getSenderThread(
-            myInfo->it->getCommIndex() );
+            myInfo->it->getCommIndex() ) + 1;
   else if ( myInfo->callingInterval->getLevel() == CPU )
     tmp = myInfo->callingInterval->getWindow()->getTrace()->getSenderCPU(
-            myInfo->it->getCommIndex() );
+            myInfo->it->getCommIndex() ) + 1;
 
   return tmp;
 }
@@ -961,10 +961,10 @@ TSemanticValue CommPartner::execute( const SemanticInfo *info )
 
   if ( myInfo->callingInterval->getLevel() == THREAD )
     tmp = myInfo->callingInterval->getWindow()->getTrace()->getReceiverThread(
-            myInfo->it->getCommIndex() );
+            myInfo->it->getCommIndex() ) + 1;
   else if ( myInfo->callingInterval->getLevel() == CPU )
     tmp = myInfo->callingInterval->getWindow()->getTrace()->getReceiverCPU(
-            myInfo->it->getCommIndex() );
+            myInfo->it->getCommIndex() ) + 1;
 
   return tmp;
 }
