@@ -265,6 +265,12 @@ class Window
     {
       return false;
     }
+    virtual PRV_UINT16 getPixelSize() const
+    {
+      return 1;
+    }
+    virtual void setPixelSize( PRV_UINT16 whichSize )
+    {}
     virtual void setGradientColorMode()
     {}
     virtual void allowOutOfScale( bool activate )
@@ -504,6 +510,8 @@ class WindowProxy: public Window
     virtual bool IsCodeColorSet() const;
     virtual bool IsGradientColorSet() const;
     virtual bool IsNotNullGradientColorSet() const;
+    virtual PRV_UINT16 getPixelSize() const;
+    virtual void setPixelSize( PRV_UINT16 whichSize );
 
     virtual void allowOutOfScale( bool activate );
     virtual void allowOutliers( bool activate );
@@ -604,6 +612,7 @@ class WindowProxy: public Window
     bool commLines;
     bool flags;
     bool functionLineColor;
+    PRV_UINT16 pixelSize;
 
     // Zoom history
     ZoomHistory<TTime, TObjectOrder> zoomHistory;

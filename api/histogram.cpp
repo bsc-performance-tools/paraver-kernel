@@ -90,6 +90,11 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   drawModeObjects = Histogram::getDrawModeObjects();
   drawModeColumns = Histogram::getDrawModeColumns();
   myGradientColor.setGradientFunction( ParaverConfig::getInstance()->getHistogramGradientFunction() );
+  if( ParaverConfig::getInstance()->getHistogramPixelSize() >= 0 &&
+      ParaverConfig::getInstance()->getHistogramPixelSize() <= 3 )
+    pixelSize = pow( 2, ParaverConfig::getInstance()->getHistogramPixelSize() );
+  else
+    pixelSize = ParaverConfig::getInstance()->getHistogramPixelSize();
 
   setCalculateAll( Histogram::getCalculateAll() );
   currentStat = Histogram::getCurrentStat();
@@ -1379,4 +1384,14 @@ bool HistogramProxy::getCodeColor() const
 void HistogramProxy::setCodeColor( bool newValue )
 {
   codeColor = newValue;
+}
+
+PRV_UINT16 HistogramProxy::getPixelSize() const
+{
+  return pixelSize;
+}
+
+void HistogramProxy::setPixelSize( PRV_UINT16 whichSize )
+{
+  pixelSize = whichSize;
 }

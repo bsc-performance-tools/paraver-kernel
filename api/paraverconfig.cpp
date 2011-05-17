@@ -108,6 +108,7 @@ ParaverConfig::ParaverConfig()
   xmlHistogram.saveTextAsMatrix = true;
   xmlHistogram.saveTextFormat = CSV;
   xmlHistogram.saveImageFormat = JPG;
+  xmlHistogram.pixelSize = 0;
 
   // Filter Globals
   xmlFilters.filterTraceUpToMB = 500.0;
@@ -529,6 +530,11 @@ void ParaverConfig::setHistogramSaveImageFormat( TImageFormat whichSaveImageForm
   xmlHistogram.saveImageFormat = whichSaveImageFormat;
 }
 
+void ParaverConfig::setHistogramPixelSize( PRV_UINT16 whichPixelSize )
+{
+  xmlHistogram.pixelSize = whichPixelSize;
+}
+
 bool ParaverConfig::getHistogramViewZoom() const
 {
   return xmlHistogram.viewZoom;
@@ -624,6 +630,10 @@ ParaverConfig::TImageFormat ParaverConfig::getHistogramSaveImageFormat() const
   return xmlHistogram.saveImageFormat;
 }
 
+PRV_UINT16 ParaverConfig::getHistogramPixelSize() const
+{
+  return xmlHistogram.pixelSize;
+}
 
 // FILTERS XML SECTION : GLOBAL
 void ParaverConfig::setFiltersFilterTraceUpToMB( float whichFilterTraceUpToMB )

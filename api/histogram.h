@@ -439,6 +439,12 @@ class Histogram
     }
     virtual void setCodeColor( bool newValue )
     {}
+    virtual PRV_UINT16 getPixelSize() const
+    {
+      return 1;
+    }
+    virtual void setPixelSize( PRV_UINT16 whichSize )
+    {}
 
   protected:
     KernelConnection *myKernel;
@@ -659,6 +665,8 @@ class HistogramProxy : public Histogram
     virtual void setRecalc( bool newValue );
     virtual bool getCodeColor() const;
     virtual void setCodeColor( bool newValue );
+    virtual PRV_UINT16 getPixelSize() const;
+    virtual void setPixelSize( PRV_UINT16 whichSize );
 
   private:
     string name;
@@ -697,6 +705,7 @@ class HistogramProxy : public Histogram
     bool redraw;
     bool recalc;
     bool codeColor;
+    PRV_UINT16 pixelSize;
 
     TRecordTime winBeginTime;
     TRecordTime winEndTime;

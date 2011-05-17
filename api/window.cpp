@@ -114,6 +114,11 @@ void WindowProxy::init()
   myGradientColor.setGradientFunction( ParaverConfig::getInstance()->getTimelineGradientFunction() );
   drawModeObject = ParaverConfig::getInstance()->getTimelineDrawmodeObjects();
   drawModeTime = ParaverConfig::getInstance()->getTimelineDrawmodeTime();
+  if( ParaverConfig::getInstance()->getTimelinePixelSize() >= 0 &&
+      ParaverConfig::getInstance()->getTimelinePixelSize() <= 3 )
+    pixelSize = pow( 2, ParaverConfig::getInstance()->getTimelinePixelSize() );
+  else
+    pixelSize = ParaverConfig::getInstance()->getTimelinePixelSize();
   showWindow = true;
   raise = false;
   changed = false;
@@ -825,6 +830,16 @@ bool WindowProxy::IsNotNullGradientColorSet() const
   return ( !codeColor && !( myGradientColor.getAllowOutOfScale() ) );
 }
 
+
+PRV_UINT16 WindowProxy::getPixelSize() const
+{
+  return pixelSize;
+}
+
+void WindowProxy::setPixelSize( PRV_UINT16 whichSize )
+{
+  pixelSize = whichSize;
+}
 
 void WindowProxy::allowOutOfScale( bool activate )
 {
