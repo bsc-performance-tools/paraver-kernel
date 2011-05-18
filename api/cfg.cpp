@@ -439,6 +439,7 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowOpen::printLine( cfgFile, it );
     WindowDrawMode::printLine( cfgFile, it );
     WindowDrawModeRows::printLine( cfgFile, it );
+    WindowPixelSize::printLine( cfgFile, it );
     WindowSelectedFunctions::printLine( cfgFile, it );
     WindowComposeFunctions::printLine( cfgFile, it );
     WindowSemanticModule::printLine( cfgFile, it );
@@ -481,6 +482,7 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DComputeGradient::printLine( cfgFile, options, it );
     Analyzer2DMinimumGradient::printLine( cfgFile, it );
     Analyzer2DMaximumGradient::printLine( cfgFile, it );
+    Analyzer2DPixelSize::printLine( cfgFile, it );
     if ( ( *it )->getThreeDimensions() )
     {
       Analyzer3DControlWindow::printLine( cfgFile, allWindows, it );
@@ -565,6 +567,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_OPEN]                = new WindowOpen();
   cfgTagFunctions[OLDCFG_TAG_WNDW_DRAW_MODE]           = new WindowDrawMode();
   cfgTagFunctions[OLDCFG_TAG_WNDW_DRAW_MODE_ROWS]      = new WindowDrawModeRows();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_PIXEL_SIZE]          = new WindowPixelSize();
 
   // Histogram options
 
@@ -604,6 +607,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN2D_COMPUTEGRADIENT]      = new Analyzer2DComputeGradient();
   cfgTagFunctions[OLDCFG_TAG_AN2D_MINIMUMGRADIENT]      = new Analyzer2DMinimumGradient();
   cfgTagFunctions[OLDCFG_TAG_AN2D_MAXIMUMGRADIENT]      = new Analyzer2DMaximumGradient();
+  cfgTagFunctions[OLDCFG_TAG_AN2D_PIXEL_SIZE]           = new Analyzer2DPixelSize();
 
   // 3D Histogram
   cfgTagFunctions[OLDCFG_TAG_AN3D_CONTROLWINDOW]        = new Analyzer3DControlWindow();
@@ -2816,6 +2820,35 @@ void WindowDrawModeRows::printLine( ofstream& cfgFile,
   cfgFile << endl;
 }
 
+bool WindowPixelSize::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                 Trace *whichTrace,
+                                 vector<Window *>& windows,
+                                 vector<Histogram *>& histograms )
+{
+  string strSize;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strSize, ' ' );
+  istringstream tmpStream( strSize );
+  PRV_UINT16 size;
+
+  if ( !( tmpStream >> size ) )
+    return false;
+
+  windows[ windows.size() - 1 ]->setPixelSize( size );
+
+  return true;
+}
+
+void WindowPixelSize::printLine( ofstream& cfgFile,
+                                 const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_PIXEL_SIZE << " " << (*it)->getPixelSize() << endl;
+}
+
+
 bool Analyzer2DCreate::parseLine( KernelConnection *whichKernel, istringstream& line,
                                   Trace *whichTrace,
                                   vector<Window *>& windows,
@@ -3801,6 +3834,39 @@ void Analyzer2DMaximumGradient::printLine( ofstream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_AN2D_MAXIMUMGRADIENT << " " << ( *it )->getMaxGradient() << endl;
 }
+
+
+bool Analyzer2DPixelSize::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                     Trace *whichTrace,
+                                     vector<Window *>& windows,
+                                     vector<Histogram *>& histograms )
+{
+  string strSize;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strSize );
+  istringstream tmpStream( strSize );
+  PRV_UINT16 size;
+
+  if ( !( tmpStream >> size ) )
+    return false;
+
+  histograms[ histograms.size() - 1 ]->setPixelSize( size );
+
+  return true;
+}
+
+
+void Analyzer2DPixelSize::printLine( ofstream& cfgFile,
+                                     const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_PIXEL_SIZE << " " << (*it)->getPixelSize() << endl;
+}
+
 
 bool Analyzer3DControlWindow::parseLine( KernelConnection *whichKernel, istringstream& line,
     Trace *whichTrace,

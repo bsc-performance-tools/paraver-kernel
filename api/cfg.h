@@ -739,6 +739,22 @@ class WindowDrawModeRows: public TagFunction
 };
 
 
+class WindowPixelSize: public TagFunction
+{
+  public:
+    WindowPixelSize()
+    {}
+    virtual ~WindowPixelSize()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Window *>::const_iterator it );
+};
+
+
 class Analyzer2DCreate: public TagFunction
 {
   public:
@@ -1197,6 +1213,22 @@ class Analyzer2DMaximumGradient: public TagFunction
     Analyzer2DMaximumGradient()
     {}
     virtual ~Analyzer2DMaximumGradient()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const vector<Histogram *>::const_iterator it );
+};
+
+
+class Analyzer2DPixelSize: public TagFunction
+{
+  public:
+    Analyzer2DPixelSize()
+    {}
+    virtual ~Analyzer2DPixelSize()
     {}
     virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
                             Trace *whichTrace,

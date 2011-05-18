@@ -99,13 +99,14 @@
 #define OLDCFG_TAG_WNDW_OPEN "window_open"
 #define OLDCFG_TAG_WNDW_DRAW_MODE "window_drawmode"
 #define OLDCFG_TAG_WNDW_DRAW_MODE_ROWS "window_drawmode_rows"
+#define OLDCFG_TAG_WNDW_PIXEL_SIZE "window_pixel_size"
+
 #define OLDCFG_TAG_AN2D_NEW "< NEW ANALYZER2D >"
 #define OLDCFG_TAG_AN2D_NAME "Analyzer2D.Name:"
 #define OLDCFG_TAG_AN2D_X "Analyzer2D.X:"
 #define OLDCFG_TAG_AN2D_Y "Analyzer2D.Y:"
 #define OLDCFG_TAG_AN2D_WIDTH "Analyzer2D.Width:"
 #define OLDCFG_TAG_AN2D_HEIGHT "Analyzer2D.Height:"
-
 #define OLDCFG_TAG_AN2D_CONTROL_WINDOW "Analyzer2D.ControlWindow:"
 #define OLDCFG_TAG_AN2D_DATA_WINDOW "Analyzer2D.DataWindow:"
 #define OLDCFG_TAG_AN2D_STATISTIC "Analyzer2D.Statistic:"
@@ -134,6 +135,7 @@
 #define OLDCFG_TAG_AN2D_COMPUTEGRADIENT "Analyzer2D.ComputeGradient:"
 #define OLDCFG_TAG_AN2D_MINIMUMGRADIENT "Analyzer2D.MinimumGradient:"
 #define OLDCFG_TAG_AN2D_MAXIMUMGRADIENT "Analyzer2D.MaximumGradient:"
+#define OLDCFG_TAG_AN2D_PIXEL_SIZE "Analyzer2D.PixelSize:"
 #define OLDCFG_TAG_AN3D_CONTROLWINDOW "Analyzer2D.3D_ControlWindow:"
 #define OLDCFG_TAG_AN3D_MINIMUM "Analyzer2D.3D_Minimum:"
 #define OLDCFG_TAG_AN3D_MAXIMUM "Analyzer2D.3D_Maximum:"
