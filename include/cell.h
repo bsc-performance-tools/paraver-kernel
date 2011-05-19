@@ -56,6 +56,7 @@ class Cell
     void setRow( TObjectOrder row );
 
     bool operator==( const ValueType& anotherCell ) const;
+    bool operator<( const ValueType& anotherCell ) const;
 
     void print() const;
 

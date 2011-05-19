@@ -165,6 +165,12 @@ inline bool Cell<ValueType>::operator==( const ValueType& anotherCell ) const
 
 
 template <typename ValueType>
+inline bool Cell<ValueType>::operator<( const ValueType& anotherCell ) const
+{
+  return row < anotherCell.row;
+}
+
+template <typename ValueType>
 inline void Cell<ValueType>::print( ) const
 {
   cout << "[" << row << "] " ;

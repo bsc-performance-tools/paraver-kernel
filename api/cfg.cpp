@@ -1118,7 +1118,7 @@ bool WindowComputeYMax::parseLine( KernelConnection *whichKernel, istringstream&
 
   if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
     windows[ windows.size() - 1 ]->setComputeYMaxOnInit( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+  else if ( strBool == "" || strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     windows[ windows.size() - 1 ]->setComputeYMaxOnInit( true );
   else
     return false;
