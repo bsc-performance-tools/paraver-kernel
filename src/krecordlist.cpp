@@ -124,7 +124,7 @@ void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
         tmp.setCommPartnerTime( trace->getPhysicalSend( id ) );
         if ( trace->getLogicalReceive( id ) <= trace->getPhysicalReceive( id ) )
         {
-          if ( window->getFilter()->getPhysical() )
+          if ( window->getFilter()->getPhysical() && window->getFilter()->getLogical() )
           {
             // Inserts the physical comm
             list.insert( tmp );
