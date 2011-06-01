@@ -129,9 +129,13 @@ void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
             // Inserts the physical comm
             list.insert( tmp );
           }
-          // Prepares the logical comm for insert later
-          tmp.setType( tmp.getType() - PHY + LOG );
-          tmp.setCommPartnerTime( trace->getLogicalSend( id ) );
+
+          if( window->getFilter()->getLogical() )
+          {
+            // Prepares the logical comm for insert later
+            tmp.setType( tmp.getType() - PHY + LOG );
+            tmp.setCommPartnerTime( trace->getLogicalSend( id ) );
+          }
         }
       }
     }

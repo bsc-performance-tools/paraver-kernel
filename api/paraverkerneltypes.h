@@ -30,6 +30,7 @@
 #ifndef PARAVERKERNELTYPES_H_INCLUDED
 #define PARAVERKERNELTYPES_H_INCLUDED
 
+#include <stddef.h>
 #include <vector>
 #include "prvtypes.h"
 
