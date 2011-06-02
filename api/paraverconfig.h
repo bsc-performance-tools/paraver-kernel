@@ -122,6 +122,7 @@ class ParaverConfig
     void setTimelineWhatWhereCommunications( bool whichWhatWhereCommunications );
     void setTimelineWhatWherePreviousNext( bool whichWhatWherePreviousNext );
     void setTimelineWhatWhereText( bool whichWhatWhereText );
+    void setTimelineWhatWhereEventPixels( PRV_INT16 eventPixels );
     void setTimelineSaveTextFormat( TTextFormat whichSaveTextFormat );
     void setTimelineSaveImageFormat( TImageFormat whichSaveImageFormat );
 
@@ -142,6 +143,7 @@ class ParaverConfig
     bool getTimelineWhatWhereCommunications() const;
     bool getTimelineWhatWherePreviousNext() const;
     bool getTimelineWhatWhereText() const;
+    PRV_INT16 getTimelineWhatWhereEventPixels() const;
     TTextFormat getTimelineSaveTextFormat() const;
     TImageFormat getTimelineSaveImageFormat() const;
 
@@ -342,6 +344,8 @@ class ParaverConfig
         ar & boost::serialization::make_nvp( "what_where_text", whatWhereText );
         ar & boost::serialization::make_nvp( "save_text_format", saveTextFormat );
         ar & boost::serialization::make_nvp( "save_image_format", saveImageFormat );
+        if( version >= 1 )
+          ar & boost::serialization::make_nvp( "what_where_event_pixels", whatWhereEventPixels );
       }
 
       string defaultName;
@@ -361,6 +365,7 @@ class ParaverConfig
       bool whatWhereCommunications;
       bool whatWherePreviousNext;
       bool whatWhereText;
+      PRV_UINT16 whatWhereEventPixels;
       TTextFormat saveTextFormat;
       TImageFormat saveImageFormat;
 
@@ -391,7 +396,7 @@ class ParaverConfig
         ar & boost::serialization::make_nvp( "save_image_format", saveImageFormat );
         if( version >= 1 )
           ar & boost::serialization::make_nvp( "view_first_row_colored", viewFirstRowColored );
-        else if( version >= 2 )
+        if( version >= 3 )
           ar & boost::serialization::make_nvp( "pixel_size_histogram", pixelSize );
       }
 
@@ -630,8 +635,8 @@ class ParaverConfig
 // Second version: introducing some structure
 BOOST_CLASS_VERSION( ParaverConfig, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 2)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 0)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 2)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 1)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 3)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilter, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersRange, 0)

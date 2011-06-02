@@ -86,6 +86,7 @@ ParaverConfig::ParaverConfig()
   xmlTimeline.whatWhereCommunications = true;
   xmlTimeline.whatWherePreviousNext = false;
   xmlTimeline.whatWhereText = true;
+  xmlTimeline.whatWhereEventPixels = 5;
   xmlTimeline.saveTextFormat = CSV;
   xmlTimeline.saveImageFormat = PNG;
 
@@ -327,6 +328,11 @@ void ParaverConfig::setTimelineWhatWhereText( bool whichWhatWhereText )
   xmlTimeline.whatWhereText = whichWhatWhereText;
 }
 
+void ParaverConfig::setTimelineWhatWhereEventPixels( PRV_INT16 eventPixels )
+{
+  xmlTimeline.whatWhereEventPixels = eventPixels;
+}
+
 void ParaverConfig::setTimelineSaveTextFormat( TTextFormat whichSaveTextFormat )
 {
   xmlTimeline.saveTextFormat = whichSaveTextFormat;
@@ -421,6 +427,11 @@ bool ParaverConfig::getTimelineWhatWherePreviousNext() const
 bool ParaverConfig::getTimelineWhatWhereText() const
 {
   return xmlTimeline.whatWhereText;
+}
+
+PRV_INT16 ParaverConfig::getTimelineWhatWhereEventPixels() const
+{
+  return xmlTimeline.whatWhereEventPixels;
 }
 
 ParaverConfig::TTextFormat ParaverConfig::getTimelineSaveTextFormat() const
