@@ -116,7 +116,7 @@ void WindowProxy::init()
   drawModeTime = ParaverConfig::getInstance()->getTimelineDrawmodeTime();
   if( ParaverConfig::getInstance()->getTimelinePixelSize() >= 0 &&
       ParaverConfig::getInstance()->getTimelinePixelSize() <= 3 )
-    pixelSize = pow( 2, ParaverConfig::getInstance()->getTimelinePixelSize() );
+    pixelSize = (PRV_UINT16)pow( float(2), (int)ParaverConfig::getInstance()->getTimelinePixelSize() );
   else
     pixelSize = ParaverConfig::getInstance()->getTimelinePixelSize();
   showWindow = true;

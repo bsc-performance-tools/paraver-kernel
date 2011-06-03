@@ -92,7 +92,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   myGradientColor.setGradientFunction( ParaverConfig::getInstance()->getHistogramGradientFunction() );
   if( ParaverConfig::getInstance()->getHistogramPixelSize() >= 0 &&
       ParaverConfig::getInstance()->getHistogramPixelSize() <= 3 )
-    pixelSize = pow( 2, ParaverConfig::getInstance()->getHistogramPixelSize() );
+    pixelSize = (PRV_UINT16)pow( float(2), (int)ParaverConfig::getInstance()->getHistogramPixelSize() );
   else
     pixelSize = ParaverConfig::getInstance()->getHistogramPixelSize();
 
