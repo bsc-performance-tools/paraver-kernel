@@ -4,11 +4,11 @@ SUBDIRS = \
           src \
           api
 
-bin_PROGRAMS = paramedir
-paramedir_SOURCES = \
+bin_PROGRAMS = paramedir.bin
+paramedir_bin_SOURCES = \
                     api/paramedir.cpp
 
-paramedir_LDADD = \
+paramedir_bin_LDADD = \
                   -lz \
                   api/libparaver-api.la \
                   src/libparaver-kernel.la 
