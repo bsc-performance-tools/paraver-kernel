@@ -37,17 +37,17 @@
 
 #include "traceoptions.h"
 
-#define MAX_TRACE_HEADER 131072
-#define MAX_HEADER_SIZE 131072
+#define MAX_TRACE_HEADER 1048576 
+#define MAX_HEADER_SIZE 1048576
 #define MAX_APPL 2
-#define MAX_TASK 20000
+#define MAX_TASK 65536
 #define MAX_THREAD 10
 #define MAX_SELECTED_TASKS 30
 #define MAX_LINE_SIZE 8192
 /* sofware counters */
 /*#define MAX_TYPES 100 */
 #define MAX_VALUES 100
-#define MAX_THREADS 20000
+#define MAX_THREADS 65536
 #define MAXSTATES 20
 
 // only for cout, delete this 2 lines
