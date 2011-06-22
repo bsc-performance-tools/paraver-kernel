@@ -560,7 +560,7 @@ BPlusInternal *BPlusInternal::splitAndInsert( BPlusNode *newNode,
 RecordLeaf *BPlusInternal::insert( RecordLeaf *rl, BPlusNode *&newChild )
 {
   BPlusNode *newNode;
-  RecordLeaf *retKey, *other;
+  RecordLeaf *retKey;
   PRV_UINT16 pos;
   bool inserted( false );
 
@@ -596,7 +596,6 @@ RecordLeaf *BPlusInternal::insert( RecordLeaf *rl, BPlusNode *&newChild )
     else
     {
       newChild = splitAndInsert( newNode, retKey );
-      other = newChild->minKeyTotal();
     }
   }
 

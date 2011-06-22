@@ -585,13 +585,11 @@ bool TraceBodyIO_v2::writeCommRecord( string& line,
                                       PRV_INT32 numIter ) const
 {
   ostringstream ostr;
-  TCommID commID;
   TRecordType type;
   ostr << fixed;
   ostr << dec;
   ostr.precision( 0 );
 
-  commID = record->getCommIndex();
   type = record->getType();
 
   if ( type == ( COMM + LOG + SEND ) )

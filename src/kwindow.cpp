@@ -343,8 +343,6 @@ KSingleWindow::~KSingleWindow()
 
 void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
-  TObjectOrder objectSize = 0;
-
   for( PRV_UINT8 i = WORKLOAD; i <= COMPOSECPU; i++ )
   {
     if( functions[ i ] != NULL )
@@ -379,8 +377,6 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
       }
     }
   }
-
-  objectSize = getWindowLevelObjects();
 }
 
 void KSingleWindow::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits )
