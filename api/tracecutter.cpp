@@ -89,7 +89,7 @@ void TraceCutterProxy::set_tasks_list( char *tasksList )
   myTraceCutter->set_tasks_list( tasksList );
 }
 
-void TraceCutterProxy::set_original_time( char originalTime )
+void TraceCutterProxy::set_original_time( int originalTime )
 {
   myTraceCutter->set_original_time ( originalTime );
 }

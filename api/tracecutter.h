@@ -59,7 +59,7 @@ class TraceCutter
     {}
     virtual void set_tasks_list( char *tasksList )
     {}
-    virtual void set_original_time( char originalTime )
+    virtual void set_original_time( int originalTime )
     {}
     virtual void set_max_trace_size( int traceSize )
     {}
@@ -82,7 +82,7 @@ class TraceCutterProxy : public TraceCutter
     virtual void set_minimum_time_percentage( unsigned long long minimumPercentage );
     virtual void set_maximum_time_percentage( unsigned long long maximumPercentage );
     virtual void set_tasks_list( char *tasksList );
-    virtual void set_original_time( char originalTime );
+    virtual void set_original_time( int originalTime );
     virtual void set_max_trace_size( int traceSize );
     virtual void set_break_states( int breakStates );
     virtual void set_remFirstStates( int remStates );

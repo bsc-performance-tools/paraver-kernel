@@ -561,7 +561,12 @@ void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut )
 
   proces_cutter_header( trace_header, (char *)string("\0").c_str(), (char *)string("\0").c_str() );
 
+#ifdef WIN32
+  while( !( trace_header[0] == '1' || trace_header[0] == '2' || trace_header[0] == '3' ) )
+    fgets( trace_header, MAX_TRACE_HEADER, infile );
+#else
   fgets( trace_header, MAX_TRACE_HEADER, infile );
+#endif
   sscanf( trace_header, "%*d:%*d:%*d:%*d:%*d:%lld:", &timeOffset );
 
   bool end_read = false;
