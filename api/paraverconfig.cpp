@@ -68,6 +68,8 @@ ParaverConfig::ParaverConfig()
   xmlGlobal.singleInstance = true;
   xmlGlobal.mainWindowWidth = 300;
   xmlGlobal.mainWindowHeight = 600;
+  xmlGlobal.sessionPath = homedir;
+  xmlGlobal.sessionSaveTime = 0;
 
   xmlTimeline.defaultName = "New window # %N";
   xmlTimeline.nameFormat = "%W @ %T";
@@ -202,6 +204,16 @@ void ParaverConfig::setMainWindowHeight( unsigned int whichHeight )
   xmlGlobal.mainWindowHeight = whichHeight;
 }
 
+void ParaverConfig::setGlobalSessionPath( string whichSessionPath )
+{
+  xmlGlobal.sessionPath = whichSessionPath;
+}
+
+void ParaverConfig::setGlobalSessionSaveTime( PRV_UINT16 whichSessionSaveTime )
+{
+  xmlGlobal.sessionSaveTime = whichSessionSaveTime;
+}
+
 string ParaverConfig::getGlobalTracesPath() const
 {
   return xmlGlobal.tracesPath;
@@ -240,6 +252,16 @@ unsigned int ParaverConfig::getMainWindowWidth() const
 unsigned int ParaverConfig::getMainWindowHeight() const
 {
   return xmlGlobal.mainWindowHeight;
+}
+
+string ParaverConfig::getGlobalSessionPath() const
+{
+  return xmlGlobal.sessionPath;
+}
+
+PRV_UINT16 ParaverConfig::getGlobalSessionSaveTime() const
+{
+  return xmlGlobal.sessionSaveTime;
 }
 
 // TIMELINES XML SECTION

@@ -33,6 +33,7 @@
 #include "intervalhigh.h"
 #include "semanticcpu.h"
 #include "semanticthread.h"
+#include "semanticcompose.h"
 
 class KSingleWindow;
 class SemanticCPU;
@@ -78,6 +79,7 @@ class IntervalCPU: public IntervalHigh
     KSingleWindow *window;
     SemanticCPU *function;
     SemanticThread *functionThread;
+    SemanticCompose *functionComposeThread;
     TCreateList createList;
 
   private:

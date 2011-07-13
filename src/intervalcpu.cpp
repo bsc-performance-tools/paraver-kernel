@@ -42,6 +42,7 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
 
   function = ( SemanticCPU * ) window->getSemanticFunction( level );
   functionThread = ( SemanticThread * ) window->getSemanticFunction( THREAD );
+  functionComposeThread = ( SemanticCompose * ) window->getSemanticFunction( COMPOSETHREAD );
 
   if ( begin != NULL )
     delete begin;
@@ -76,13 +77,18 @@ KRecordList *IntervalCPU::calcNext( KRecordList *displayList, bool initCalc )
     *begin = *end;
   }
 
-  threadInfo.callingInterval = this;
+  threadInfo.callingInterval = getWindowInterval( THREAD, begin->getOrder() );
   highInfo.callingInterval = this;
   threadInfo.it = begin;
   if( begin->getType() == STATE + END )
     highInfo.values.push_back( 0.0 );
   else
-    highInfo.values.push_back( functionThread->execute( &threadInfo ) );
+  {
+    SemanticHighInfo tmpHighInfo;
+    tmpHighInfo.callingInterval = getWindowInterval( COMPOSETHREAD, begin->getThread() );
+    tmpHighInfo.values.push_back( functionThread->execute( &threadInfo ) );
+    highInfo.values.push_back( functionComposeThread->execute( &tmpHighInfo ) );
+  }
   currentValue = function->execute( &highInfo );
   end = getNextRecord( end, displayList );
 

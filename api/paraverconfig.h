@@ -94,6 +94,8 @@ class ParaverConfig
     void setGlobalSingleInstance( bool whichSingleInstance );
     void setMainWindowWidth( unsigned int whichWidth );
     void setMainWindowHeight( unsigned int whichHeight );
+    void setGlobalSessionPath( string whichSessionPath );
+    void setGlobalSessionSaveTime( PRV_UINT16 whichSessionSaveTime );
 
     string getGlobalTracesPath() const;
     string getGlobalCFGsPath() const;
@@ -103,6 +105,8 @@ class ParaverConfig
     bool getGlobalSingleInstance() const;
     unsigned int getMainWindowWidth() const;
     unsigned int getMainWindowHeight() const;
+    string getGlobalSessionPath() const;
+    PRV_UINT16 getGlobalSessionSaveTime() const;
 
     // TIMELINES XML SECTION
     void setTimelineDefaultName( string whichDefaultName );
@@ -306,6 +310,11 @@ class ParaverConfig
           ar & boost::serialization::make_nvp( "main_window_width", mainWindowWidth );
           ar & boost::serialization::make_nvp( "main_window_height", mainWindowHeight );
         }
+        if( version >= 3 )
+        {
+          ar & boost::serialization::make_nvp( "session_path", sessionPath );
+          ar & boost::serialization::make_nvp( "session_save_time", sessionSaveTime );
+        }
       }
 
       string tracesPath; // also for paraload.sig!
@@ -316,6 +325,8 @@ class ParaverConfig
       bool singleInstance;
       unsigned int mainWindowWidth;
       unsigned int mainWindowHeight;
+      string sessionPath;
+      PRV_UINT16 sessionSaveTime;
 
     } xmlGlobal;
 
@@ -634,7 +645,7 @@ class ParaverConfig
 
 // Second version: introducing some structure
 BOOST_CLASS_VERSION( ParaverConfig, 1)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 2)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 3)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 3)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 0)
