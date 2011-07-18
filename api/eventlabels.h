@@ -52,6 +52,8 @@ class EventLabels
     bool getEventTypeLabel( TEventType type, string& onStr ) const;
     bool getEventValueLabel( TEventType type, TEventValue value, string& onStr ) const;
     bool getEventValueLabel( TEventValue value, string& onStr ) const;
+    bool getValues( TEventType type, vector<string> &values ) const;
+    bool getValues( TEventType type, map<TEventValue, string> &values ) const;
 
   protected:
 

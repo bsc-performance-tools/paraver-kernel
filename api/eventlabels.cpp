@@ -127,3 +127,39 @@ bool EventLabels::getEventValueLabel( TEventValue value, string& onStr ) const
   //onStr = unknownLabel;
   return false;
 }
+
+
+bool EventLabels::getValues( TEventType type, vector<string> &values ) const
+{
+  map< TEventType, map< TEventValue, string > >::const_iterator it = eventValueLabel.find( type );
+  if ( it == eventValueLabel.end() )
+  {
+    //onStr = unknownLabel;
+    return false;
+  }
+  else
+  {
+    for ( map< TEventValue, string >::const_iterator it2 = (*it).second.begin(); it2 != (*it).second.end(); ++it2 )
+      values.push_back((*it2).second );
+  }
+
+  return true;
+}
+
+
+bool EventLabels::getValues( TEventType type, map<TEventValue, string> &values ) const
+{
+  map< TEventType, map< TEventValue, string > >::const_iterator it = eventValueLabel.find( type );
+  if ( it == eventValueLabel.end() )
+  {
+    //onStr = unknownLabel;
+    return false;
+  }
+  else
+  {
+    for ( map<TEventValue, string>::const_iterator it2 = (*it).second.begin(); it2 != (*it).second.end(); ++it2 )
+      values[ (*it2).first ] = (*it2).second;
+  }
+
+  return true;
+}

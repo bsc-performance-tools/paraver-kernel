@@ -70,7 +70,8 @@ class LabelConstructor
 
     static string eventValueLabel( Window *whichWindow,
                                    TEventType whichType,
-                                   TEventValue whichValue );
+                                   TEventValue whichValue,
+                                   bool writeValueAsPrefix = false );
 
     static string numberWithSeparators( TSemanticValue value,
                                         PRV_UINT32 precision,

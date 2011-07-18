@@ -519,16 +519,24 @@ string LabelConstructor::eventLabel( Window *whichWindow,
   return label.str();
 }
 
+
 string LabelConstructor::eventValueLabel( Window *whichWindow,
-    TEventType whichType,
-    TEventValue whichValue )
+                                          TEventType whichType,
+                                          TEventValue whichValue,
+                                          bool writeValueAsPrefix )
 {
   string tmpstr;
+  stringstream retstr;
 
   if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( whichType, whichValue, tmpstr ) )
-    return "";
+    retstr << "";
+  else if ( writeValueAsPrefix )
+//    retstr << whichType << "::" << whichValue << " " << tmpstr;
+    retstr << whichValue << " " << tmpstr;
+  else
+    retstr << tmpstr;
 
-  return tmpstr;
+  return retstr.str();
 }
 
 
