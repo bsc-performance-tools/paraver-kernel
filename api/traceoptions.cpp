@@ -253,6 +253,11 @@ void TraceOptionsProxy::get_state_names( TStateNames &stateNames ) const
   return myTraceOptions->get_state_names( stateNames );
 }
 
+void TraceOptionsProxy::get_state_names( string &stateList ) const
+{
+  return myTraceOptions->get_state_names( stateList );
+}
+
 bool TraceOptionsProxy::get_all_states() const
 {
   return myTraceOptions->get_all_states();
@@ -428,6 +433,11 @@ void TraceOptionsProxy::set_events_plot( int eventsPlot )
 vector< int > TraceOptionsProxy::parseDoc( char *docname )
 {
   return myTraceOptions->parseDoc( docname );
+}
+
+bool TraceOptionsProxy::saveXML( vector< int > &filterOrder, string fileName )
+{
+  return myTraceOptions->saveXML( filterOrder, fileName );
 }
 
 TraceOptions *TraceOptionsProxy::getConcrete()

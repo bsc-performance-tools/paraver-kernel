@@ -34,10 +34,11 @@
 
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
+#include <libxml/xmlwriter.h>
 
 #include "traceoptions.h"
 
-#define MAX_TRACE_HEADER 1048576 
+#define MAX_TRACE_HEADER 1048576
 #define MAX_HEADER_SIZE 1048576
 #define MAX_APPL 2
 #define MAX_TASK 65536
@@ -369,6 +370,24 @@ class KTraceOptions: public TraceOptions
       }
     }
 
+    inline void get_state_names( string &stateList ) const
+    {
+      for( unsigned int i = 0; i < MAXSTATES; ++i )
+      {
+        if ( state_names[ i ] != NULL )
+        {
+          if ( i > 0 )
+          {
+            stateList = stateList + string( "," );
+          }
+
+          stateList =  stateList + string( state_names[ i ] );
+        }
+        else
+          break;
+      }
+    }
+
     inline bool get_all_states() const
     {
       return all_states;
@@ -543,6 +562,7 @@ class KTraceOptions: public TraceOptions
 
 
     vector<int> parseDoc( char *docname );
+    bool saveXML( vector< int > &filterOrder, string fileName );
 
   private:
     void init();
@@ -555,6 +575,10 @@ class KTraceOptions: public TraceOptions
     void parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur );
+
+    void saveXMLCutter( xmlTextWriterPtr &writer );
+    void saveXMLFilter( xmlTextWriterPtr &writer );
+    void saveXMLSoftwareCounters( xmlTextWriterPtr &writer );
 };
 
 #endif // _KTRACEOPTIONS_H_

@@ -37,6 +37,9 @@ using namespace std;
 #include "ktraceoptions.h"
 #include "paraverconfig.h"
 
+#include <libxml/encoding.h>
+
+
 #ifdef WIN32
 #define atoll _atoi64
 #endif
@@ -728,4 +731,173 @@ vector<int> KTraceOptions::parseDoc( char *docname )
   xmlFreeDoc( doc );
 
   return order;
+}
+
+#define MY_ENCODING "UTF-8"
+
+bool KTraceOptions::saveXML( vector< int > &filterOrder, string fileName )
+{
+  int rc;
+  xmlTextWriterPtr writer;
+  xmlDocPtr doc;
+
+  writer = xmlNewTextWriterDoc( &doc, 0 );
+
+  rc = xmlTextWriterSetIndent( writer, 2 );
+
+  rc = xmlTextWriterStartDocument( writer, NULL, MY_ENCODING, NULL );
+
+  rc = xmlTextWriterStartElement( writer, BAD_CAST "config");
+
+
+  for( unsigned int i = 0; i < filterOrder.size(); ++i )
+  {
+    switch ( filterOrder[i] )
+    {
+      case INC_CHOP_COUNTER:
+        saveXMLCutter( writer );
+        break;
+
+      case INC_FILTER_COUNTER:
+        saveXMLFilter( writer );
+        break;
+
+      case INC_SC_COUNTER:
+        saveXMLSoftwareCounters( writer );
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  rc = xmlTextWriterEndDocument( writer );
+
+  xmlFreeTextWriter( writer );
+  xmlSaveFileEnc( fileName.c_str(), doc, MY_ENCODING);
+  xmlFreeDoc(doc);
+
+  return true;
+}
+
+void KTraceOptions::saveXMLCutter( xmlTextWriterPtr &writer )
+{
+  int rc;
+  rc = xmlTextWriterStartElement( writer, BAD_CAST "cutter");
+ // rc = xmlTextWriterSetIndent( writer, 2 );
+
+  TTasksList auxTask;
+  get_tasks_list( auxTask );
+
+  rc = xmlTextWriterWriteElement( writer, BAD_CAST "tasks", BAD_CAST auxTask );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "max_trace_size", "%d", get_max_trace_size());
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "by_time", "%d", (int)get_by_time() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "minimum_time", "%lld", get_min_cutting_time() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "maximum_time", "%lld", get_max_cutting_time() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "minimum_time_percentage", "%lld", get_minimum_time_percentage() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "maximum_time_percentage", "%lld", get_maximum_time_percentage() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "original_time", "%d", (int)get_original_time() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "break_states", "%d", (int)get_break_states() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "remove_first_states", "%d", (int)get_remFirstStates() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "remove_last_states", "%d", (int)get_remLastStates() );
+
+  rc = xmlTextWriterEndElement( writer ); // cutter
+}
+
+
+void KTraceOptions::saveXMLFilter( xmlTextWriterPtr &writer )
+{
+  int rc;
+  rc = xmlTextWriterStartElement( writer, BAD_CAST "filter");
+//  rc = xmlTextWriterSetIndent( writer, 2 );
+
+  // STATES SECTION
+  if ( get_all_states() )
+    rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "states", "%s", BAD_CAST "All");
+  else
+  {
+    string auxStates;
+    get_state_names( auxStates );
+    rc = xmlTextWriterWriteElement( writer, BAD_CAST "states", BAD_CAST auxStates.c_str() );
+  }
+
+  rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "discard_states", "%d", (int)!get_filter_states() );
+  rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "discard_events", "%d", (int)!get_filter_events() );
+  rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "discard_communications", "%d", (int)!get_filter_comms() );
+
+  // EVENT TYPES SECTION
+  rc = xmlTextWriterStartElement( writer, BAD_CAST "types");
+  if ( get_filter_events() )
+  {
+    if ( get_discard_given_types() )
+      rc = xmlTextWriterWriteAttribute( writer, BAD_CAST "use", BAD_CAST "discard");
+
+    TFilterTypes auxTypes;
+    get_filter_types( auxTypes );
+    for( int itype = 0; itype < get_filter_last_type(); ++itype )
+    {
+      stringstream typeStr;
+      typeStr << auxTypes[ itype ].type;
+      if ( auxTypes[ itype ].max_type != 0 )
+      {
+        typeStr << string( "-" );
+        typeStr << auxTypes[ itype ].max_type;
+      }
+
+      string auxStrTypes( typeStr.str() );
+
+      if ( auxTypes[ itype ].last_value == 0 )
+        rc = xmlTextWriterWriteElement( writer, BAD_CAST "type", BAD_CAST auxStrTypes.c_str() );
+      else
+      {
+        // write all values
+        rc = xmlTextWriterStartElement( writer, BAD_CAST "type");
+        rc = xmlTextWriterWriteFormatRaw( writer, "%s",BAD_CAST auxStrTypes.c_str() );
+        for( int ivalue = 0; ivalue < auxTypes[ itype ].last_value; ++ivalue )
+        {
+          rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "value", "%lld", auxTypes[ itype ].value[ ivalue ] );
+        }
+
+        rc = xmlTextWriterEndElement( writer ); // type
+      }
+    }
+  }
+
+  rc = xmlTextWriterEndElement( writer ); // types
+
+  // COMMUNICATIONS SECTION
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "comms", "%d", get_min_comm_size() );
+
+  rc = xmlTextWriterEndElement( writer ); // filter
+}
+
+
+void KTraceOptions::saveXMLSoftwareCounters( xmlTextWriterPtr &writer )
+{
+  int rc;
+  rc = xmlTextWriterStartElement( writer, BAD_CAST "software_counters");
+  //rc = xmlTextWriterSetIndent( writer, 2 );
+
+  rc = xmlTextWriterStartElement( writer, BAD_CAST "range");
+  //rc = xmlTextWriterSetIndent( writer, 2 );
+
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "by_intervals_vs_by_states", "%d", (int)get_sc_onInterval() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "sampling_interval", "%lld", get_sc_sampling_interval() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "minimum_burst_time", "%lld", get_sc_minimum_burst_time() );
+  rc = xmlTextWriterWriteElement( writer, BAD_CAST "events", BAD_CAST get_sc_types() );
+
+  rc = xmlTextWriterEndElement( writer ); // range
+
+  rc = xmlTextWriterStartElement( writer, BAD_CAST "algorithm" );
+  //rc = xmlTextWriterSetIndent( writer, 2 );
+
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "count_events_vs_acummulate_values", "%d", (int)!get_sc_acumm_counters() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "remove_states", "%d", (int)get_sc_remove_states() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "summarize_useful_states", "%d", (int)get_sc_summarize_states() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "global_counters", "%d", (int)get_sc_global_counters() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "only_in_burst_counting", "%d", (int)get_sc_only_in_bursts() );
+  rc = xmlTextWriterWriteElement( writer, BAD_CAST "keep_events", BAD_CAST get_sc_types_kept() );
+
+  rc = xmlTextWriterEndElement( writer ); // algorithm
+  rc = xmlTextWriterEndElement( writer ); // software_counters
 }

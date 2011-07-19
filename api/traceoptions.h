@@ -143,6 +143,8 @@ class TraceOptions
     { return 0; }
     virtual void get_state_names( TStateNames &stateNames ) const
     {}
+    virtual void get_state_names( string &stateList ) const
+    {}
     virtual bool get_all_states() const
     { return 0; }
     virtual unsigned long long get_min_state_time() const
@@ -223,6 +225,12 @@ class TraceOptions
       return v;
     }
 
+    virtual bool saveXML( vector< int > &filterOrder, string fileName )
+    {
+      return true;
+    }
+
+
     virtual TraceOptions *getConcrete()
     {
       return NULL;
@@ -284,6 +292,7 @@ class TraceOptionsProxy :public TraceOptions
     virtual bool get_discard_given_types() const;
     virtual bool get_filter_by_call_time() const;
     virtual void get_state_names( TStateNames &stateNames ) const;
+    virtual void get_state_names( string &stateList ) const;
     virtual bool get_all_states() const;
     virtual unsigned long long get_min_state_time() const;
     virtual int get_min_comm_size() const;
@@ -325,6 +334,8 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_events_plot( int eventsPlot );
 
     virtual vector< int > parseDoc( char *docname );
+    bool saveXML( vector< int > &filterOrder, string fileName );
+
     virtual TraceOptions *getConcrete();
 
   protected:
