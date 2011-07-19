@@ -68,7 +68,13 @@ ParaverConfig::ParaverConfig()
   xmlGlobal.singleInstance = true;
   xmlGlobal.mainWindowWidth = 300;
   xmlGlobal.mainWindowHeight = 600;
-  xmlGlobal.sessionPath = homedir;
+  string strFile( homedir );
+#ifdef WIN32
+  strFile.append( "\\paraver\" );
+#else
+  strFile.append( "/.paraver/" );
+#endif
+  xmlGlobal.sessionPath = strFile;
   xmlGlobal.sessionSaveTime = 0;
 
   xmlTimeline.defaultName = "New window # %N";
