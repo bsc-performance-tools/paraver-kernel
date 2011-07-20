@@ -889,7 +889,15 @@ void KTraceOptions::saveXMLSoftwareCounters( xmlTextWriterPtr &writer )
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "summarize_useful_states", "%d", (int)get_sc_summarize_states() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "global_counters", "%d", (int)get_sc_global_counters() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "only_in_burst_counting", "%d", (int)get_sc_only_in_bursts() );
-  rc = xmlTextWriterWriteElement( writer, BAD_CAST "keep_events", BAD_CAST get_sc_types_kept() );
+
+  if ( string( get_sc_types_kept() ).length() > 0 )
+  {
+    rc = xmlTextWriterWriteElement( writer, BAD_CAST "keep_events", BAD_CAST get_sc_types_kept() );
+  }
+  else
+  {
+  //  rc = xmlTextWriterWriteElement( writer, BAD_CAST "keep_events", BAD_CAST "" );
+  }
 
   rc = xmlTextWriterEndElement( writer ); // algorithm
   rc = xmlTextWriterEndElement( writer ); // software_counters
