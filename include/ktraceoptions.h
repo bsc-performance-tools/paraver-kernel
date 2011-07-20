@@ -52,8 +52,8 @@
 #define MAXSTATES 20
 
 // only for cout, delete this 2 lines
-#include <iostream>
-using namespace std;
+//#include <iostream>
+//using namespace std;
 
 class KTraceOptions: public TraceOptions
 {

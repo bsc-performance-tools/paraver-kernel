@@ -519,16 +519,9 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
   xmlChar *word;
 
 /* PARAMETERS TO FILL
-    int sc_onInterval;
     int sc_global_counters;
-    int sc_acumm_counters;
-    int sc_summarize_states;
-    int sc_only_in_bursts;
-    int sc_remove_states;
     unsigned long long sc_interval;
     int sc_frequency;
-    char *types;
-    char *types_kept;
 */
   while ( cur != NULL )
   {
