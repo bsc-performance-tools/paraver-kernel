@@ -70,7 +70,7 @@ ParaverConfig::ParaverConfig()
   xmlGlobal.mainWindowHeight = 600;
   string strFile( homedir );
 #ifdef WIN32
-  strFile.append( "\\paraver\" );
+  strFile.append( "\\paraver\\" );
 #else
   strFile.append( "/.paraver/" );
 #endif
