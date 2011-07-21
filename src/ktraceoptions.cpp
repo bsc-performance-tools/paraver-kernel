@@ -752,7 +752,6 @@ bool KTraceOptions::saveXML( vector< int > &filterOrder, string fileName )
 
   rc = xmlTextWriterStartElement( writer, BAD_CAST "config");
 
-
   for( unsigned int i = 0; i < filterOrder.size(); ++i )
   {
     switch ( filterOrder[i] )
