@@ -834,9 +834,13 @@ void KTraceOptions::saveXMLFilter( xmlTextWriterPtr &writer )
   rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "discard_communications", "%d", (int)!get_filter_comms() );
 
   // EVENT TYPES SECTION
-  rc = xmlTextWriterStartElement( writer, BAD_CAST "types");
+
+  // Bad solution: when events are discarded, no event tag is written
+  // Better is finally detect "" as "no event in the list"
+
   if ( get_filter_events() )
   {
+    rc = xmlTextWriterStartElement( writer, BAD_CAST "types");
     if ( get_discard_given_types() )
       rc = xmlTextWriterWriteAttribute( writer, BAD_CAST "use", BAD_CAST "discard");
 
@@ -869,9 +873,9 @@ void KTraceOptions::saveXMLFilter( xmlTextWriterPtr &writer )
         rc = xmlTextWriterEndElement( writer ); // type
       }
     }
+    rc = xmlTextWriterEndElement( writer ); // types
   }
 
-  rc = xmlTextWriterEndElement( writer ); // types
 
   // COMMUNICATIONS SECTION
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "comms", "%d", get_min_comm_size() );
