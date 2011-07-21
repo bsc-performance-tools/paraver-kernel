@@ -88,6 +88,7 @@ class ParaverConfig
     // GLOBAL XML SECTION
     void setGlobalTracesPath( string whichTracesPath );
     void setGlobalCFGsPath( string whichCfgsPath );
+    void setGlobalXMLsPath( string whichXMLsPath );
     void setGlobalTmpPath( string whichTmpPath );
     void setGlobalApplyFollowingCFGsToAllTraces( bool whichApplyFollowingCFGsToAllTraces );
     void setGlobalFillStateGaps( bool whichFillStateGaps );
@@ -99,6 +100,7 @@ class ParaverConfig
 
     string getGlobalTracesPath() const;
     string getGlobalCFGsPath() const;
+    string getGlobalXMLsPath() const;
     string getGlobalTmpPath() const;
     bool getGlobalApplyFollowingCFGsToAllTraces() const;
     bool getGlobalFillStateGaps() const;

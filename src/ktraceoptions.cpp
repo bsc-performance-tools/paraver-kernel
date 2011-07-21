@@ -298,7 +298,8 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
         if ( !xmlStrcmp( child->name, ( const xmlChar * )"type" ) )
           parse_type( doc, child, filter_types, filter_last_type );
 
-        child = child->next;
+        if( child != NULL )    // BAD FORMED XMLs
+          child = child->next;
       }
     }
 
