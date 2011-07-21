@@ -576,6 +576,8 @@ class KTraceOptions: public TraceOptions
     void parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur );
 
+    void pushBackUniqueFilterIdentifier( int filterID, vector< int > &order );
+
     void saveXMLCutter( xmlTextWriterPtr &writer );
     void saveXMLFilter( xmlTextWriterPtr &writer );
     void saveXMLSoftwareCounters( xmlTextWriterPtr &writer );

@@ -695,7 +695,6 @@ string ParaverConfig::getFiltersXMLPath() const
   return xmlFilters.xmlPath;
 }
 
-
 // FILTERS XML SECTION : CUTTER
 void ParaverConfig::setCutterByTime( bool whichByTime )
 {

@@ -653,6 +653,15 @@ void KTraceOptions::parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur )
   }
 }
 
+void KTraceOptions::pushBackUniqueFilterIdentifier( int filterID, vector< int > &order )
+{
+  // if same kind of filter is repeated, last is loaded, pushed in proper order
+  vector< int >::iterator it = find( order.begin(), order.end(), filterID );
+  if ( it != order.end() )
+    order.erase( it );
+  order.push_back( filterID );
+}
+
 // The real constructor
 vector<int> KTraceOptions::parseDoc( char *docname )
 {
@@ -699,19 +708,19 @@ vector<int> KTraceOptions::parseDoc( char *docname )
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"cutter" ) )
     {
       parse_cutter_params( doc, cur->xmlChildrenNode );
-      order.push_back( INC_CHOP_COUNTER );
+      pushBackUniqueFilterIdentifier( INC_CHOP_COUNTER, order );
     }
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"filter" ) )
     {
       parse_filter_params( doc, cur->xmlChildrenNode );
-      order.push_back( INC_FILTER_COUNTER );
+      pushBackUniqueFilterIdentifier( INC_FILTER_COUNTER, order );
     }
 
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"software_counters" ) )
     {
       parse_software_counters_params( doc, cur->xmlChildrenNode );
-      order.push_back( INC_SC_COUNTER );
+      pushBackUniqueFilterIdentifier( INC_SC_COUNTER, order );
     }
 
     /*
