@@ -834,11 +834,8 @@ void KTraceOptions::saveXMLFilter( xmlTextWriterPtr &writer )
   rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "discard_communications", "%d", (int)!get_filter_comms() );
 
   // EVENT TYPES SECTION
-
-  // Bad solution: when events are discarded, no event tag is written
-  // Better is finally detect "" as "no event in the list"
-
-  if ( get_filter_events() )
+  // tag isn't written if no type in the list
+  if ( get_filter_last_type() > 0 )
   {
     rc = xmlTextWriterStartElement( writer, BAD_CAST "types");
     if ( get_discard_given_types() )
