@@ -903,7 +903,7 @@ void HistogramProxy::compute2DScale()
   controlWindow->setMaximumY( tmpMaxY );
 
   setControlMin( minY );
-  setControlMax( maxY );
+  setControlMax( maxY * 1.05 );
 
   if ( ( maxY - minY ) == 0 )
   {

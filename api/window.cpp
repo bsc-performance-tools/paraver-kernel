@@ -676,6 +676,11 @@ TObjectOrder WindowProxy::getWindowLevelObjects()
   return myWindow->getWindowLevelObjects();
 }
 
+TRecordTime WindowProxy::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits )
+{
+  return myWindow->customUnitsToTraceUnits( whichTime, whichUnits );
+}
+
 TRecordTime WindowProxy::traceUnitsToWindowUnits( TRecordTime whichTime )
 {
   return myWindow->traceUnitsToWindowUnits( whichTime );
