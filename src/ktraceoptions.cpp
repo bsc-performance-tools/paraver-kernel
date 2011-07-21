@@ -44,6 +44,8 @@ using namespace std;
 #define atoll _atoi64
 #endif
 
+#define FILTER_XML_ENCODING "UTF-8"
+
 KTraceOptions::KTraceOptions()
 {
   init();
@@ -653,6 +655,7 @@ void KTraceOptions::parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur )
   }
 }
 
+
 void KTraceOptions::pushBackUniqueFilterIdentifier( int filterID, vector< int > &order )
 {
   // if same kind of filter is repeated, last is loaded, pushed in proper order
@@ -661,6 +664,7 @@ void KTraceOptions::pushBackUniqueFilterIdentifier( int filterID, vector< int > 
     order.erase( it );
   order.push_back( filterID );
 }
+
 
 // The real constructor
 vector<int> KTraceOptions::parseDoc( char *docname )
@@ -736,7 +740,6 @@ vector<int> KTraceOptions::parseDoc( char *docname )
   return order;
 }
 
-#define MY_ENCODING "UTF-8"
 
 bool KTraceOptions::saveXML( vector< int > &filterOrder, string fileName )
 {
@@ -746,9 +749,10 @@ bool KTraceOptions::saveXML( vector< int > &filterOrder, string fileName )
 
   writer = xmlNewTextWriterDoc( &doc, 0 );
 
-  rc = xmlTextWriterSetIndent( writer, 2 );
+  rc = xmlTextWriterSetIndent( writer, 1 ); // 0 => no indent, > 1 => indent
+  rc = xmlTextWriterSetIndentString( writer, BAD_CAST "  " );
 
-  rc = xmlTextWriterStartDocument( writer, NULL, MY_ENCODING, NULL );
+  rc = xmlTextWriterStartDocument( writer, NULL, FILTER_XML_ENCODING, NULL );
 
   rc = xmlTextWriterStartElement( writer, BAD_CAST "config");
 
@@ -776,7 +780,7 @@ bool KTraceOptions::saveXML( vector< int > &filterOrder, string fileName )
   rc = xmlTextWriterEndDocument( writer );
 
   xmlFreeTextWriter( writer );
-  xmlSaveFileEnc( fileName.c_str(), doc, MY_ENCODING);
+  xmlSaveFileEnc( fileName.c_str(), doc, FILTER_XML_ENCODING );
   xmlFreeDoc(doc);
 
   return true;
@@ -785,8 +789,9 @@ bool KTraceOptions::saveXML( vector< int > &filterOrder, string fileName )
 void KTraceOptions::saveXMLCutter( xmlTextWriterPtr &writer )
 {
   int rc;
+
+  rc = xmlTextWriterWriteComment( writer, BAD_CAST " CUTTER OPTIONS " );
   rc = xmlTextWriterStartElement( writer, BAD_CAST "cutter");
- // rc = xmlTextWriterSetIndent( writer, 2 );
 
   TTasksList auxTask;
   get_tasks_list( auxTask );
@@ -810,8 +815,9 @@ void KTraceOptions::saveXMLCutter( xmlTextWriterPtr &writer )
 void KTraceOptions::saveXMLFilter( xmlTextWriterPtr &writer )
 {
   int rc;
+
+  rc = xmlTextWriterWriteComment( writer, BAD_CAST " FILTER OPTIONS " );
   rc = xmlTextWriterStartElement( writer, BAD_CAST "filter");
-//  rc = xmlTextWriterSetIndent( writer, 2 );
 
   // STATES SECTION
   if ( get_all_states() )
@@ -877,11 +883,11 @@ void KTraceOptions::saveXMLFilter( xmlTextWriterPtr &writer )
 void KTraceOptions::saveXMLSoftwareCounters( xmlTextWriterPtr &writer )
 {
   int rc;
+
+  rc = xmlTextWriterWriteComment( writer, BAD_CAST " SOFTWARE COUNTERS OPTIONS " );
   rc = xmlTextWriterStartElement( writer, BAD_CAST "software_counters");
-  //rc = xmlTextWriterSetIndent( writer, 2 );
 
   rc = xmlTextWriterStartElement( writer, BAD_CAST "range");
-  //rc = xmlTextWriterSetIndent( writer, 2 );
 
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "by_intervals_vs_by_states", "%d", (int)get_sc_onInterval() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "sampling_interval", "%lld", get_sc_sampling_interval() );
@@ -891,7 +897,6 @@ void KTraceOptions::saveXMLSoftwareCounters( xmlTextWriterPtr &writer )
   rc = xmlTextWriterEndElement( writer ); // range
 
   rc = xmlTextWriterStartElement( writer, BAD_CAST "algorithm" );
-  //rc = xmlTextWriterSetIndent( writer, 2 );
 
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "count_events_vs_acummulate_values", "%d", (int)!get_sc_acumm_counters() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "remove_states", "%d", (int)get_sc_remove_states() );
