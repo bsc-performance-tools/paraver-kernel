@@ -796,7 +796,8 @@ void KTraceOptions::saveXMLCutter( xmlTextWriterPtr &writer )
   TTasksList auxTask;
   get_tasks_list( auxTask );
 
-  rc = xmlTextWriterWriteElement( writer, BAD_CAST "tasks", BAD_CAST auxTask );
+  if ( auxTask[0] !=  '\0')
+    rc = xmlTextWriterWriteElement( writer, BAD_CAST "tasks", BAD_CAST auxTask );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "max_trace_size", "%d", get_max_trace_size());
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "by_time", "%d", (int)get_by_time() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "minimum_time", "%lld", get_min_cutting_time() );
