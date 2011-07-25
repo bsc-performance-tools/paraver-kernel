@@ -798,6 +798,12 @@ void KTraceOptions::saveXMLCutter( xmlTextWriterPtr &writer )
 
   if ( auxTask[0] !=  '\0')
     rc = xmlTextWriterWriteElement( writer, BAD_CAST "tasks", BAD_CAST auxTask );
+  else
+  {
+    rc = xmlTextWriterWriteComment( writer, BAD_CAST "empty tasks list" );
+    rc = xmlTextWriterWriteComment( writer, BAD_CAST "<tasks></tasks>" );
+  }
+
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "max_trace_size", "%d", get_max_trace_size());
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "by_time", "%d", (int)get_by_time() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "minimum_time", "%lld", get_min_cutting_time() );
@@ -873,6 +879,11 @@ void KTraceOptions::saveXMLFilter( xmlTextWriterPtr &writer )
     }
     rc = xmlTextWriterEndElement( writer ); // types
   }
+  else
+  {
+    rc = xmlTextWriterWriteComment( writer, BAD_CAST "empty types list" );
+    rc = xmlTextWriterWriteComment( writer, BAD_CAST "<types></types>" );
+  }
 
 
   // COMMUNICATIONS SECTION
@@ -912,7 +923,8 @@ void KTraceOptions::saveXMLSoftwareCounters( xmlTextWriterPtr &writer )
   }
   else
   {
-  //  rc = xmlTextWriterWriteElement( writer, BAD_CAST "keep_events", BAD_CAST "" );
+    rc = xmlTextWriterWriteComment( writer, BAD_CAST "empty keep_events list" );
+    rc = xmlTextWriterWriteComment( writer, BAD_CAST "<keep_events></keep_events>" );
   }
 
   rc = xmlTextWriterEndElement( writer ); // algorithm
