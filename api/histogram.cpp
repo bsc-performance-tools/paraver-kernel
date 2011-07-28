@@ -863,6 +863,8 @@ void HistogramProxy::setPlaneMinValue( double whichMin )
 
 double HistogramProxy::getPlaneMinValue() const
 {
+  if( !futurePlane )
+    return getExtraControlDelta() * getSelectedPlane() + getExtraControlMin();
   return planeMinValue;
 }
 
