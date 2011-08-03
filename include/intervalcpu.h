@@ -81,6 +81,7 @@ class IntervalCPU: public IntervalHigh
     SemanticThread *functionThread;
     SemanticCompose *functionComposeThread;
     TCreateList createList;
+    vector<TSemanticValue> threadState;
 
   private:
     virtual MemoryTrace::iterator *getNextRecord( MemoryTrace::iterator *it,
