@@ -76,7 +76,7 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
   end = window->copyCPUIterator( begin );
 
   if ( ( !function->getInitFromBegin() ) && ( !functionThread->getInitFromBegin() ) &&
-       ( initialTime > 0.0 ) )
+       ( !functionComposeThread->getInitFromBegin() ) && ( initialTime > 0.0 ) )
     calcPrev( displayList, true );
 
   calcNext( displayList, true );
