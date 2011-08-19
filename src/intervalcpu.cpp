@@ -51,27 +51,7 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
 
   threadState.clear();
   threadState.insert( threadState.begin(), window->getTrace()->totalThreads(), 0.0 );
-// se necesitan los dos: getCPURecordByTime para el recorrido dentro del intervalo
-// de CPU, y getThreadRecordByTime para los recorridos de los intervalos de thread
-// !!! Para cada CPU hay que reiniciar los intervalos de thread que le tocan por si
-//     acaso estamos dibujando por CPU !!!
-// VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-// !!! Aunque quizas seria mejor crear en cada intervalo de CPU todos sus posibles
-//     intervalos de thread para que no hubiera conflicto entre ellos !!!
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-// Por culpa de funciones como Stacked se han de copiar (clonar) las funciones semanticas
-// de los compose thread y thread en cada intervalo de CPU y que se asignen directamente
-// a esos intervalos, debiendo cambiar los constructores o los init para que admitan
-// esa posibilidad. No deberia haber ningun problema por usar el constructor por copia
-// por defecto.
-// Ademas en los intervalos de compose tambien se tiene que poder
-// pàsar los intervalos de thread para que no use los de la ventana.
-// El problema puede estar en la copia de iteradores que se hace en los compose,
-// ya que mira si la ventana esta a nivel de recursos o procesos. Quizas hay que
-// meter otra opcion que sea si el intervalo por debajo es thread que siempre copie
-// los iteradores por procesos.
-// Luego en la CPU (aqui) solo se miraran los tiempos y se usaran los propios iteradores
-// de CPU para delimitar el intervalo semantico.
+
   begin = window->copyCPUIterator( window->getThreadRecordByTime( order ) );
   end = window->copyCPUIterator( begin );
 
@@ -169,7 +149,7 @@ MemoryTrace::iterator *IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
       if ( functionThread->validRecord( it ) )
         break;
     }
-    if( it->getThread() != threadOrder )
+    if( it->getType() & RSEND && it->getType() & RRECV && it->getThread() != threadOrder )
       break;
     ++( *it );
   }
