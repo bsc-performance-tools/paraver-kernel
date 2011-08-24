@@ -68,6 +68,10 @@ class LabelConstructor
                               TEventValue whichValue,
                               bool text );
 
+    static string eventTypeLabel( Window *whichWindow,
+                                  TEventType whichType,
+                                  bool text );
+
     static string eventValueLabel( Window *whichWindow,
                                    TEventType whichType,
                                    TEventValue whichValue,

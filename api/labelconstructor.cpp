@@ -520,6 +520,28 @@ string LabelConstructor::eventLabel( Window *whichWindow,
 }
 
 
+string LabelConstructor::eventTypeLabel( Window *whichWindow,
+                                         TEventType whichType,
+                                         bool text )
+{
+  label.clear();
+  label.str( "" );
+  string tmpstr;
+
+  if ( !text )
+    label << "Type is " << whichType;
+  else
+  {
+    if ( !whichWindow->getTrace()->getEventLabels().getEventTypeLabel( whichType, tmpstr ) )
+      label << tmpstr << " type " << whichType;
+    else
+      label << tmpstr;
+  }
+
+  return label.str();
+}
+
+
 string LabelConstructor::eventValueLabel( Window *whichWindow,
                                           TEventType whichType,
                                           TEventValue whichValue,
