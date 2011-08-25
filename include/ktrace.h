@@ -159,6 +159,11 @@ class KTrace: public Trace
                              TEventType& returnType,
                              TEventValue& returnValue ) const;
 
+    bool findNextEvent( TThreadOrder whichThread,
+                        TRecordTime whichTime,
+                        TEventType whichEvent,
+                        TRecordTime& foundTime ) const;
+
     virtual bool getFillStateGaps() const;
     virtual void setFillStateGaps( bool fill );
 

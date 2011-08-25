@@ -120,6 +120,11 @@ class Trace
                                      TEventType& returnType,
                                      TEventValue& returnValue ) const = 0;
 
+    virtual bool findNextEvent( TThreadOrder whichThread,
+                                TRecordTime whichTime,
+                                TEventType whichEvent,
+                                TRecordTime& foundTime ) const = 0;
+
     virtual bool getFillStateGaps() const = 0;
 
     virtual void setFillStateGaps( bool fill ) = 0;
@@ -272,6 +277,11 @@ class TraceProxy: public Trace
                                      const vector<TEventType>& whichEvent,
                                      TEventType& returnType,
                                      TEventValue& returnValue ) const;
+
+    virtual bool findNextEvent( TThreadOrder whichThread,
+                                TRecordTime whichTime,
+                                TEventType whichEvent,
+                                TRecordTime& foundTime ) const;
 
     virtual bool getFillStateGaps() const;
     virtual void setFillStateGaps( bool fill );

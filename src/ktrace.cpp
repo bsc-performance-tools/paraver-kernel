@@ -693,6 +693,39 @@ bool KTrace::findLastEventValue( TThreadOrder whichThread,
   return result;
 }
 
+bool KTrace::findNextEvent( TThreadOrder whichThread,
+                            TRecordTime whichTime,
+                            TEventType whichEvent,
+                            TRecordTime& foundTime ) const
+{
+  bool found = false;
+  vector<MemoryTrace::iterator *> listIter;
+  MemoryTrace::iterator *it;
+
+  listIter.insert( listIter.begin(), totalThreads(), NULL );
+  getRecordByTimeThread( listIter, whichTime );
+  it = listIter[ whichThread ];
+  while( it->getTime() < whichTime )
+    ++( *it );
+
+  while ( !it->isNull() && !found )
+  {
+    if ( ( it->getType() & EVENT ) && ( it->getEventType() == whichEvent ) && ( it->getTime() != whichTime ) )
+    {
+      foundTime = it->getTime();
+      found = true;
+      break;
+    }
+    ++( *it );
+  }
+
+  for ( vector<MemoryTrace::iterator *>::iterator itErase = listIter.begin();
+        itErase != listIter.end(); ++itErase )
+    delete *itErase;
+
+  return found;
+}
+
 bool KTrace::getFillStateGaps() const
 {
   return fillStateGaps;

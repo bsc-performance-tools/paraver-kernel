@@ -454,6 +454,14 @@ bool TraceProxy::findLastEventValue( TThreadOrder whichThread,
   return myTrace->findLastEventValue( whichThread, whichTime, whichEvent, returnType, returnValue );
 }
 
+bool TraceProxy::findNextEvent( TThreadOrder whichThread,
+                                TRecordTime whichTime,
+                                TEventType whichEvent,
+                                TRecordTime& foundTime ) const
+{
+  return myTrace->findNextEvent( whichThread, whichTime, whichEvent, foundTime );
+}
+
 bool TraceProxy::getFillStateGaps() const
 {
   return myTrace->getFillStateGaps();
