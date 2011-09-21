@@ -290,7 +290,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
   if ( !someEventsExist )
   {
-    if ( !whichKernel->userMessage( "None of the events specified in the filter appears in the trace. Continue loading CFG file?" ) )
+    if ( !whichKernel->userMessage( "None of the events specified in the filter appear in the trace. Continue loading CFG file?" ) )
     {
       for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
         delete *itHisto;
@@ -306,7 +306,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   }
   else if ( someEventsNotExist )
   {
-    if ( !whichKernel->userMessage( "Some of the events specified in the filter not appears in the trace. Continue loading CFG file?" ) )
+    if ( !whichKernel->userMessage( "Some of the events specified in the filter doesn't appear in the trace. Continue loading CFG file?" ) )
     {
       for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
       {
@@ -615,6 +615,10 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN3D_MAXIMUM]              = new Analyzer3DMaximum();
   cfgTagFunctions[OLDCFG_TAG_AN3D_DELTA]                = new Analyzer3DDelta();
   cfgTagFunctions[OLDCFG_TAG_AN3D_FIXEDVALUE]           = new Analyzer3DFixedValue();
+
+#ifdef P4D
+  cfgTagFunctions[ P4D ] = new P4D();
+#endif
 }
 
 void CFGLoader::unLoadMap()
