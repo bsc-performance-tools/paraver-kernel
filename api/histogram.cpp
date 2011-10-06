@@ -594,6 +594,9 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
     THistogramLimit nPlanes = getNumPlanes();
     PRV_UINT32 i;
 
+    if( selectedPlane >= nPlanes )
+      selectedPlane = 0;
+
     if ( !planeWithValues( selectedPlane ) )
     {
       i = selectedPlane = 0;
