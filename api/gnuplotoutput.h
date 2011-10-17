@@ -11,9 +11,10 @@ class GNUPlotOutput: public Output
 
     virtual void dumpWindow( Window *whichWindow, string& strOutputFile );
     virtual void dumpHistogram( Histogram *whichHisto,
-                        string& strOutputFile,
-                        bool onlySelectedPlane = false,
-                        bool hideEmptyColumns = false );
+                                string& strOutputFile,
+                                bool onlySelectedPlane = false,
+                                bool hideEmptyColumns = false,
+                                bool withLabels = true );
 
     virtual bool getMultipleFiles() const;
     virtual void setMultipleFiles( bool newValue );

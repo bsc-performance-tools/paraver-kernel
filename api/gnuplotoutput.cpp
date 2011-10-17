@@ -37,9 +37,25 @@ void GNUPlotOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
 void GNUPlotOutput::dumpHistogram( Histogram *whichHisto,
                                    string& strOutputFile,
                                    bool onlySelectedPlane,
-                                   bool hideEmptyColumns )
+                                   bool hideEmptyColumns,
+                                   bool withLabels )
 {
+  if( strOutputFile.rfind( string( ".gnuplot" ) ) == string::npos )
+    strOutputFile += ".gnuplot";
 
+  Output *textOutput = Output::createOutput( Output::TEXT );
+  string strTextOutputFilename = strOutputFile + string( ".csv" );
+
+  textOutput->setMultipleFiles( false );
+  textOutput->dumpHistogram( whichHisto, strTextOutputFilename, onlySelectedPlane, hideEmptyColumns, false );
+
+  delete textOutput;
+
+  ofstream outputFile;
+  outputFile.open( strOutputFile.c_str() );
+  outputFile << "splot " << "\""<< strTextOutputFilename << "\" matrix with pm3d" << endl;
+  outputFile << "pause -1" << endl;
+  outputFile.close();
 }
 
 bool GNUPlotOutput::getMultipleFiles() const

@@ -24,9 +24,10 @@ class Output
 
     virtual void dumpWindow( Window *whichWindow, string& strOutputFile ) = 0;
     virtual void dumpHistogram( Histogram *whichHisto,
-                        string& strOutputFile,
-                        bool onlySelectedPlane = false,
-                        bool hideEmptyColumns = false ) = 0;
+                                string& strOutputFile,
+                                bool onlySelectedPlane = false,
+                                bool hideEmptyColumns = false,
+                                bool withLabels = true ) = 0;
 
     virtual bool getMultipleFiles() const = 0;
     virtual void setMultipleFiles( bool newValue ) = 0;

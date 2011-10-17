@@ -86,7 +86,8 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
 void TextOutput::dumpHistogram( Histogram *whichHisto,
                                 string& strOutputFile,
                                 bool onlySelectedPlane,
-                                bool hideEmptyColumns )
+                                bool hideEmptyColumns,
+                                bool withLabels )
 {
   THistogramColumn numPlanes;
   THistogramColumn numColumns;
@@ -130,7 +131,7 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
     {
       if ( whichHisto->planeWithValues( iPlane ) )
       {
-        if ( numPlanes > 1 )
+        if ( numPlanes > 1 && withLabels )
           outputFile << whichHisto->getPlaneLabel( iPlane ) << endl;
 
         outputFile << "\t";
@@ -142,42 +143,49 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
         for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
         {
           whichHisto->setFirstCell( printedColumns[ iColumn ], iPlane );
-          if ( whichHisto->getHorizontal() )
+          if ( whichHisto->getHorizontal() && withLabels )
             outputFile << whichHisto->getColumnLabel( printedColumns[ iColumn ] ) << "\t";
         }
 
         // Dump data
-        HistogramTotals *totals;
+        HistogramTotals *totals = NULL;
         if ( whichHisto->getHorizontal() )
         {
-          dumpMatrixHorizontal( whichHisto, numRows, numColumns, currentStat, printedColumns, iPlane, outputFile );
+          dumpMatrixHorizontal( whichHisto, numRows, numColumns, currentStat, printedColumns, iPlane, outputFile, withLabels );
 
           outputFile << endl;
 
-          totals = whichHisto->getColumnTotals();
-          dumpTotalColumns( totals, string("Total"),   &HistogramTotals::getTotal,     currentStat, printedColumns, iPlane, outputFile );
-          dumpTotalColumns( totals, string("Average"), &HistogramTotals::getAverage,   currentStat, printedColumns, iPlane, outputFile );
-          dumpTotalColumns( totals, string("Maximum"), &HistogramTotals::getMaximum,   currentStat, printedColumns, iPlane, outputFile );
-          dumpTotalColumns( totals, string("Minimum"), &HistogramTotals::getMinimum,   currentStat, printedColumns, iPlane, outputFile );
-          dumpTotalColumns( totals, string("Stdev"),   &HistogramTotals::getStdev,     currentStat, printedColumns, iPlane, outputFile );
-          dumpTotalColumns( totals, string("Avg/Max"), &HistogramTotals::getAvgDivMax, currentStat, printedColumns, iPlane, outputFile );
+          if( withLabels )
+          {
+            totals = whichHisto->getColumnTotals();
+            dumpTotalColumns( totals, string("Total"),   &HistogramTotals::getTotal,     currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( totals, string("Average"), &HistogramTotals::getAverage,   currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( totals, string("Maximum"), &HistogramTotals::getMaximum,   currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( totals, string("Minimum"), &HistogramTotals::getMinimum,   currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( totals, string("Stdev"),   &HistogramTotals::getStdev,     currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( totals, string("Avg/Max"), &HistogramTotals::getAvgDivMax, currentStat, printedColumns, iPlane, outputFile );
+          }
         }
         else
         {
-          dumpMatrixVertical( whichHisto, numRows, numColumns, currentStat, printedColumns, iPlane, outputFile );
+          dumpMatrixVertical( whichHisto, numRows, numColumns, currentStat, printedColumns, iPlane, outputFile, withLabels );
 
           outputFile << endl;
 
-          totals = whichHisto->getRowTotals();
-          dumpTotalRows( totals, string("Total"),   &HistogramTotals::getTotal,     currentStat, numRows, iPlane, outputFile );
-          dumpTotalRows( totals, string("Average"), &HistogramTotals::getAverage,   currentStat, numRows, iPlane, outputFile );
-          dumpTotalRows( totals, string("Maximum"), &HistogramTotals::getMaximum,   currentStat, numRows, iPlane, outputFile );
-          dumpTotalRows( totals, string("Minimum"), &HistogramTotals::getMinimum,   currentStat, numRows, iPlane, outputFile );
-          dumpTotalRows( totals, string("Stdev"),   &HistogramTotals::getStdev,     currentStat, numRows, iPlane, outputFile );
-          dumpTotalRows( totals, string("Avg/Max"), &HistogramTotals::getAvgDivMax, currentStat, numRows, iPlane, outputFile );
+          if( withLabels )
+          {
+            totals = whichHisto->getRowTotals();
+            dumpTotalRows( totals, string("Total"),   &HistogramTotals::getTotal,     currentStat, numRows, iPlane, outputFile );
+            dumpTotalRows( totals, string("Average"), &HistogramTotals::getAverage,   currentStat, numRows, iPlane, outputFile );
+            dumpTotalRows( totals, string("Maximum"), &HistogramTotals::getMaximum,   currentStat, numRows, iPlane, outputFile );
+            dumpTotalRows( totals, string("Minimum"), &HistogramTotals::getMinimum,   currentStat, numRows, iPlane, outputFile );
+            dumpTotalRows( totals, string("Stdev"),   &HistogramTotals::getStdev,     currentStat, numRows, iPlane, outputFile );
+            dumpTotalRows( totals, string("Avg/Max"), &HistogramTotals::getAvgDivMax, currentStat, numRows, iPlane, outputFile );
+          }
         }
 
-        delete totals;
+        if( totals != NULL )
+          delete totals;
         outputFile << endl;
       } // plane whith values
 
@@ -197,7 +205,7 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
     {
       if ( whichHisto->planeCommWithValues( iPlane ) )
       {
-        if ( numPlanes > 1 )
+        if ( numPlanes > 1 && withLabels )
           outputFile << whichHisto->getPlaneLabel( iPlane ) << endl;
 
         outputFile << "\t";
@@ -209,41 +217,48 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
         for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
         {
           whichHisto->setCommFirstCell( printedColumns[ iColumn ], iPlane );
-          if ( whichHisto->getHorizontal() )
+          if ( whichHisto->getHorizontal() && withLabels )
             outputFile << whichHisto->getColumnLabel( printedColumns[ iColumn ] ) << "\t";
         }
 
-        HistogramTotals *totals;
+        HistogramTotals *totals = NULL;
         if ( whichHisto->getHorizontal() )
         {
-          dumpMatrixCommHorizontal( whichHisto, numRows, numColumns, currentStat, printedColumns, iPlane, outputFile );
+          dumpMatrixCommHorizontal( whichHisto, numRows, numColumns, currentStat, printedColumns, iPlane, outputFile, withLabels );
 
           outputFile << endl;
 
-          totals = whichHisto->getCommColumnTotals();
-          dumpTotalColumns( totals, string("Total"),   &HistogramTotals::getTotal,     currentStat, printedColumns, iPlane, outputFile );
-          dumpTotalColumns( totals, string("Average"), &HistogramTotals::getAverage,   currentStat, printedColumns, iPlane, outputFile );
-          dumpTotalColumns( totals, string("Maximum"), &HistogramTotals::getMaximum,   currentStat, printedColumns, iPlane, outputFile );
-          dumpTotalColumns( totals, string("Minimum"), &HistogramTotals::getMinimum,   currentStat, printedColumns, iPlane, outputFile );
-          dumpTotalColumns( totals, string("Stdev"),   &HistogramTotals::getStdev,     currentStat, printedColumns, iPlane, outputFile );
-          dumpTotalColumns( totals, string("Avg/Max"), &HistogramTotals::getAvgDivMax, currentStat, printedColumns, iPlane, outputFile );
+          if( withLabels )
+          {
+            totals = whichHisto->getCommColumnTotals();
+            dumpTotalColumns( totals, string("Total"),   &HistogramTotals::getTotal,     currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( totals, string("Average"), &HistogramTotals::getAverage,   currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( totals, string("Maximum"), &HistogramTotals::getMaximum,   currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( totals, string("Minimum"), &HistogramTotals::getMinimum,   currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( totals, string("Stdev"),   &HistogramTotals::getStdev,     currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( totals, string("Avg/Max"), &HistogramTotals::getAvgDivMax, currentStat, printedColumns, iPlane, outputFile );
+          }
         }
         else
         {
-          dumpMatrixCommVertical( whichHisto, numRows, numColumns, currentStat, printedColumns, iPlane, outputFile );
+          dumpMatrixCommVertical( whichHisto, numRows, numColumns, currentStat, printedColumns, iPlane, outputFile, withLabels );
 
           outputFile << endl;
 
-          totals = whichHisto->getCommRowTotals();
-          dumpTotalRows( totals, string("Total"),   &HistogramTotals::getTotal,     currentStat, numRows, iPlane, outputFile );
-          dumpTotalRows( totals, string("Average"), &HistogramTotals::getAverage,   currentStat, numRows, iPlane, outputFile );
-          dumpTotalRows( totals, string("Maximum"), &HistogramTotals::getMaximum,   currentStat, numRows, iPlane, outputFile );
-          dumpTotalRows( totals, string("Minimum"), &HistogramTotals::getMinimum,   currentStat, numRows, iPlane, outputFile );
-          dumpTotalRows( totals, string("Stdev"),   &HistogramTotals::getStdev,     currentStat, numRows, iPlane, outputFile );
-          dumpTotalRows( totals, string("Avg/Max"), &HistogramTotals::getAvgDivMax, currentStat, numRows, iPlane, outputFile );
+          if( withLabels )
+          {
+            totals = whichHisto->getCommRowTotals();
+            dumpTotalRows( totals, string("Total"),   &HistogramTotals::getTotal,     currentStat, numRows, iPlane, outputFile );
+            dumpTotalRows( totals, string("Average"), &HistogramTotals::getAverage,   currentStat, numRows, iPlane, outputFile );
+            dumpTotalRows( totals, string("Maximum"), &HistogramTotals::getMaximum,   currentStat, numRows, iPlane, outputFile );
+            dumpTotalRows( totals, string("Minimum"), &HistogramTotals::getMinimum,   currentStat, numRows, iPlane, outputFile );
+            dumpTotalRows( totals, string("Stdev"),   &HistogramTotals::getStdev,     currentStat, numRows, iPlane, outputFile );
+            dumpTotalRows( totals, string("Avg/Max"), &HistogramTotals::getAvgDivMax, currentStat, numRows, iPlane, outputFile );
+          }
         }
 
-        delete totals;
+        if( totals != NULL )
+          delete totals;
         outputFile << endl;
       } // plane whith values
 
@@ -264,13 +279,15 @@ void TextOutput::dumpMatrixHorizontal( Histogram *whichHisto,
                                        PRV_UINT16 currentStat,
                                        vector<THistogramColumn> printedColumns,
                                        THistogramColumn iPlane,
-                                       ofstream &outputFile )
+                                       ofstream &outputFile,
+                                       bool withLabels )
 {
   outputFile << endl;
 
   for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
   {
-    outputFile << whichHisto->getRowLabel( iRow ) << "\t";
+    if( withLabels )
+      outputFile << whichHisto->getRowLabel( iRow ) << "\t";
     for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
     {
       if ( !whichHisto->endCell( printedColumns[ iColumn ], iPlane ) )
@@ -297,15 +314,20 @@ void TextOutput::dumpMatrixVertical( Histogram *whichHisto,
                                      PRV_UINT16 currentStat,
                                      vector<THistogramColumn> printedColumns,
                                      THistogramColumn iPlane,
-                                     ofstream &outputFile )
+                                     ofstream &outputFile,
+                                     bool withLabels )
 {
-  for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
-    outputFile << whichHisto->getRowLabel( iRow ) << "\t";
+  if( withLabels )
+  {
+    for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+      outputFile << whichHisto->getRowLabel( iRow ) << "\t";
+  }
 
   outputFile << endl;
   for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
   {
-    outputFile << whichHisto->getColumnLabel( printedColumns[ iColumn ] ) << "\t";
+    if( withLabels )
+      outputFile << whichHisto->getColumnLabel( printedColumns[ iColumn ] ) << "\t";
     for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
     {
       if ( !whichHisto->endCell( printedColumns[ iColumn ], iPlane ) )
@@ -332,13 +354,15 @@ void TextOutput::dumpMatrixCommHorizontal( Histogram *whichHisto,
                                            PRV_UINT16 currentStat,
                                            vector<THistogramColumn> printedColumns,
                                            THistogramColumn iPlane,
-                                           ofstream &outputFile )
+                                           ofstream &outputFile,
+                                           bool withLabels )
 {
   outputFile << endl;
 
   for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
   {
-    outputFile << whichHisto->getRowLabel( iRow ) << "\t";
+    if( withLabels )
+      outputFile << whichHisto->getRowLabel( iRow ) << "\t";
     for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
     {
       if ( !whichHisto->endCommCell( printedColumns[ iColumn ], iPlane ) )
@@ -365,15 +389,20 @@ void TextOutput::dumpMatrixCommVertical( Histogram *whichHisto,
                                          PRV_UINT16 currentStat,
                                          vector<THistogramColumn> printedColumns,
                                          THistogramColumn iPlane,
-                                         ofstream &outputFile )
+                                         ofstream &outputFile,
+                                         bool withLabels )
 {
-  for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
-    outputFile << whichHisto->getRowLabel( iRow ) << "\t";
+  if( withLabels )
+  {
+    for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+      outputFile << whichHisto->getRowLabel( iRow ) << "\t";
+  }
 
   outputFile << endl;
   for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
   {
-    outputFile << whichHisto->getColumnLabel( printedColumns[ iColumn ] ) << "\t";
+    if( withLabels )
+      outputFile << whichHisto->getColumnLabel( printedColumns[ iColumn ] ) << "\t";
     for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
     {
       if ( !whichHisto->endCommCell( printedColumns[ iColumn ], iPlane ) )

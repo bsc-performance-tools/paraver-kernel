@@ -22,7 +22,8 @@ class TextOutput:public Output
     void dumpHistogram( Histogram *whichHisto,
                         string& strOutputFile,
                         bool onlySelectedPlane = false,
-                        bool hideEmptyColumns = false );
+                        bool hideEmptyColumns = false,
+                        bool withLabels = true );
 
     bool getMultipleFiles() const;
     void setMultipleFiles( bool newValue );
@@ -41,7 +42,8 @@ class TextOutput:public Output
                                PRV_UINT16 currentStat,
                                vector<THistogramColumn> printedColumns,
                                THistogramColumn iPlane,
-                               ofstream &outputfile );
+                               ofstream &outputfile,
+                               bool withLabels );
 
     void dumpMatrixVertical( Histogram *whichHisto,
                              TObjectOrder numRows,
@@ -49,7 +51,8 @@ class TextOutput:public Output
                              PRV_UINT16 currentStat,
                              vector<THistogramColumn> printedColumns,
                              THistogramColumn iPlane,
-                             ofstream &outputfile );
+                             ofstream &outputfile,
+                             bool withLabels );
 
     void dumpTotalColumns( HistogramTotals *totals,
                            string totalName,
@@ -73,7 +76,8 @@ class TextOutput:public Output
                                    PRV_UINT16 currentStat,
                                    vector<THistogramColumn> printedColumns,
                                    THistogramColumn iPlane,
-                                   ofstream &outputfile );
+                                   ofstream &outputfile,
+                                   bool withLabels );
 
     void dumpMatrixCommVertical( Histogram *whichHisto,
                                  TObjectOrder numRows,
@@ -81,7 +85,8 @@ class TextOutput:public Output
                                  PRV_UINT16 currentStat,
                                  vector<THistogramColumn> printedColumns,
                                  THistogramColumn iPlane,
-                                 ofstream &outputfile );
+                                 ofstream &outputfile,
+                                 bool withLabels );
 
 };
 
