@@ -222,6 +222,12 @@
 			<Option target="Release" />
 			<Option target="api" />
 		</Unit>
+		<Unit filename="api/gnuplotoutput.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/gnuplotoutput.h">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="api/histogram.cpp">
 			<Option target="api" />
 		</Unit>
@@ -265,6 +271,12 @@
 			<Option target="api" />
 		</Unit>
 		<Unit filename="api/localkernel.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/output.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/output.h">
 			<Option target="api" />
 		</Unit>
 		<Unit filename="api/paramedir.cpp">

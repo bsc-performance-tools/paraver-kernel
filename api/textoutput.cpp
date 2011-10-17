@@ -11,6 +11,9 @@ TextOutput::~TextOutput()
 
 void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
 {
+  if( strOutputFile.rfind( string( ".csv" ) ) == string::npos )
+    strOutputFile += ".csv";
+
   TRecordTime beginTime;
   TRecordTime endTime;
   ofstream outputFile;

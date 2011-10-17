@@ -6,11 +6,13 @@ libparaver_api_la_SOURCES = \
                     drawmode.cpp \
                     eventlabels.cpp \
                     filter.cpp \
+                    gnuplotoutput.cpp \
                     histogram.cpp \
                     histogramtotals.cpp \
                     labelconstructor.cpp \
                     loadedwindows.cpp \
                     localkernel.cpp \
+                    output.cpp \
                     paraverconfig.cpp \
                     previousfiles.cpp \
                     progresscontroller.cpp \
@@ -43,12 +45,14 @@ include_HEADERS = \
                   drawmode.h\
                   eventlabels.h\
                   filter.h\
+                  gnuplotoutput.h\
                   histogram.h\
                   histogramtotals.h\
                   kernelconnection.h\
                   labelconstructor.h\
                   loadedwindows.h\
                   localkernel.h\
+                  output.h\
                   paramedir.h\
                   paraverconfig.h\
                   paraverkernelexception.h\

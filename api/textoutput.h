@@ -2,6 +2,7 @@
 #define TEXTOUTPUT_H_INCLUDED
 
 #include <string>
+#include "output.h"
 #include "selectionmanagement.h"
 #include "prvtypes.h"
 #include "histogram.h"
@@ -11,7 +12,7 @@ using std::string;
 class Window;
 class Histogram;
 
-class TextOutput
+class TextOutput:public Output
 {
   public:
     TextOutput();
