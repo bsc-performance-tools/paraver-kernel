@@ -192,20 +192,20 @@ void CodeColor::setColor( PRV_UINT32 pos, rgb color )
 }
 
 #ifdef WIN32
-namespace stdext 
+namespace stdext
 {
-  template<> class hash_compare<rgb> 
+  template<> class hash_compare<rgb>
   {
     public :
       static const size_t bucket_size = 4;
       static const size_t min_buckets = 8;
       hash_compare() { }
- 
-      size_t operator()(const rgb &color) const 
+
+      size_t operator()(const rgb &color) const
       {
         return color.red + ( color.blue * 256 ) + (color.green * 65536 );
       }
- 
+
       bool operator()(const rgb &color1, const rgb &color2) const
       {
         return color1 == color2;
@@ -375,7 +375,7 @@ inline void GradientColor::setAboveOutlierColor( rgb color )
   aboveOutlierColor = color;
 }
 
-inline rgb GradientColor::getAboveOutlierColor() const
+rgb GradientColor::getAboveOutlierColor() const
 {
   return aboveOutlierColor;
 }
@@ -385,7 +385,7 @@ inline void GradientColor::setBelowOutlierColor( rgb color )
   belowOutlierColor = color;
 }
 
-inline rgb GradientColor::getBelowOutlierColor() const
+rgb GradientColor::getBelowOutlierColor() const
 {
   return belowOutlierColor;
 }
