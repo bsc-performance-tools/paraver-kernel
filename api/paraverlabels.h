@@ -229,7 +229,7 @@ static const string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
 // New cfg label definitions
 #define CFG_TAG_WNDW_END_TIME_RELATIVE "window_end_time_relative"
 
-// GUI Group of Labels
+// GUI Misc Labels
 #define GUI_COLORS_CODE_COLOR             "Code Color"
 #define GUI_COLORS_GRADIENT_COLOR         "Gradient Color"
 #define GUI_COLORS_NOT_NULL_GRADIENT      "Not Null Gradient"
@@ -253,5 +253,58 @@ static const string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
 #define GUI_IMAGE_FORMAT_XPM              "XPM"
 #define GUI_TEXT_FORMAT_CSV               "CSV"
 #define GUI_TEXT_FORMAT_PLAIN             "Plain"
+
+// GUI Single Timeline property labels
+enum TSingleTimelineProperties
+{
+  SINGLE_NAME = 0,
+  SINGLE_BEGINTIME,
+  SINGLE_ENDTIME,
+  SINGLE_SEMANTICMINIMUM,
+  SINGLE_SEMANTICMAXIMUM,
+  SINGLE_LEVEL
+};
+
+static const string SingleTimelinePropertyLabels[] =
+{
+  "Name",
+  "Begin time",
+  "End time",
+  "Semantic Minimum",
+  "Semantic Maximum",
+  "Level"
+};
+
+// GUI Derived Timeline property labels
+enum TDerivedTimelineProperties
+{
+  DERIVED_NAME = 0,
+  DERIVED_BEGINTIME,
+  DERIVED_ENDTIME,
+  DERIVED_SEMANTICMINIMUM,
+  DERIVED_SEMANTICMAXIMUM,
+  DERIVED_LEVEL
+};
+
+static const string DerivedTimelinePropertyLabels[] =
+{
+  "Name",
+  "Begin time",
+  "End time",
+  "Semantic Minimum",
+  "Semantic Maximum",
+  "Level"
+};
+
+// GUI Histogram property labels
+enum THistogramProperties
+{
+
+};
+
+static const string HistogramPropertyLabels[] =
+{
+  ""
+};
 
 #endif // PARAVERLABELS_H_INCLUDED
