@@ -60,6 +60,7 @@
 #define OLDCFG_LVL_COMPOSE1         "compose1"
 #define OLDCFG_LVL_COMPOSE2         "compose2"
 
+// TIMELINE CFGs TAGS
 #define OLDCFG_TAG_WNDW_NAME      "window_name"
 #define OLDCFG_TAG_WNDW_TYPE      "window_type"
 #define OLDCFG_TAG_WNDW_ID        "window_id"
@@ -101,6 +102,7 @@
 #define OLDCFG_TAG_WNDW_DRAW_MODE_ROWS "window_drawmode_rows"
 #define OLDCFG_TAG_WNDW_PIXEL_SIZE "window_pixel_size"
 
+// HISTOGRAM CFGs TAGS
 #define OLDCFG_TAG_AN2D_NEW "< NEW ANALYZER2D >"
 #define OLDCFG_TAG_AN2D_NAME "Analyzer2D.Name:"
 #define OLDCFG_TAG_AN2D_X "Analyzer2D.X:"
@@ -194,6 +196,9 @@
 #define OLDCFG_VAL_LIMIT_REGION    "Region"
 
 #define OLDCFG_VAL_AN2D_ACCUM_SEMANTIC "Semantic"
+
+#define CFG_TAG_ALIAS_CFG4D "cfg4d"
+#define CFG_TAG_CFG4D_ENABLED "CFG4D_ENABLED"
 
 // STRING CONSTRUCTION LABELS FOR THE GUI
 #define LEVEL_WORKLOAD     "WORKLOAD"
@@ -301,7 +306,9 @@ enum TSingleTimelineProperties
   SINGLE_CPU
 };
 
-static const string SingleTimelinePropertyLabels[] =
+static const int TOTAL_SINGLE_PROPERTIES = SINGLE_CPU + 1;
+
+static const string SingleTimelinePropertyLabels[ TOTAL_SINGLE_PROPERTIES ] =
 {
   "Name",
   "Begin time",
@@ -376,7 +383,9 @@ enum TDerivedTimelineProperties
   DERIVED_FACTOR2
 };
 
-static const string DerivedTimelinePropertyLabels[] =
+static const int TOTAL_DERIVED_PROPERTIES = DERIVED_FACTOR2 + 1;
+
+static const string DerivedTimelinePropertyLabels[ TOTAL_DERIVED_PROPERTIES ] =
 {
   "Name",
   "Begin time",
@@ -407,12 +416,14 @@ static const string DerivedTimelinePropertyLabels[] =
 // GUI Histogram property labels
 enum THistogramProperties
 {
-
+  HISTOGRAM_NAME = 0
 };
 
-static const string HistogramPropertyLabels[] =
+static const int TOTAL_HISTOGRAM_PROPERTIES = HISTOGRAM_NAME + 1;
+
+static const string HistogramPropertyLabels[ TOTAL_HISTOGRAM_PROPERTIES ] =
 {
-  ""
+  "Name"
 };
 
 #endif // PARAVERLABELS_H_INCLUDED
