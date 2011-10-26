@@ -416,14 +416,46 @@ static const string DerivedTimelinePropertyLabels[ TOTAL_DERIVED_PROPERTIES ] =
 // GUI Histogram property labels
 enum THistogramProperties
 {
-  HISTOGRAM_NAME = 0
+  HISTOGRAM_NAME = 0,
+  HISTOGRAM_BEGINTIME,
+  HISTOGRAM_ENDTIME,
+  HISTOGRAM_CONTROLWINDOW,
+  HISTOGRAM_CONTROLMINIMUM,
+  HISTOGRAM_CONTROLMAXIMUM,
+  HISTOGRAM_CONTROLDELTA,
+  HISTOGRAM_TYPE,
+  HISTOGRAM_STATISTIC,
+  HISTOGRAM_MINIMUMGRADIENT,
+  HISTOGRAM_MAXIMUMGRADIENT,
+  HISTOGRAM_DATAWINDOW,
+  HISTOGRAM_3D3RDWINDOW,
+  HISTOGRAM_3DMINIMUM,
+  HISTOGRAM_3DMAXIMUM,
+  HISTOGRAM_3DDELTA,
+  HISTOGRAM_3DPLANE
 };
 
-static const int TOTAL_HISTOGRAM_PROPERTIES = HISTOGRAM_NAME + 1;
+static const int TOTAL_HISTOGRAM_PROPERTIES = HISTOGRAM_3DPLANE + 1;
 
 static const string HistogramPropertyLabels[ TOTAL_HISTOGRAM_PROPERTIES ] =
 {
-  "Name"
+  "Name",
+  "Begin time",
+  "End time",
+  "Control.Window",
+  "Control.Minimum",
+  "Control.Maximum",
+  "Control.Delta",
+  "Type",
+  "Statistic",
+  "Minimum Gradient",
+  "Maximum Gradient",
+  "Data.Window",
+  "3D.3rd Window",
+  "3D.Minimum",
+  "3D.Maximum",
+  "3D.Delta",
+  "3D.Plane"
 };
 
 #endif // PARAVERLABELS_H_INCLUDED
