@@ -49,7 +49,7 @@ typedef TObjectOrder  TCPUOrder;
 
 typedef double        TTime;
 typedef TTime         TRecordTime;
-typedef PRV_UINT16         TTimeUnit;
+typedef PRV_UINT16    TTimeUnit;
 /*
  *  TTimeUnit defines
  */

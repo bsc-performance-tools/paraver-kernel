@@ -107,6 +107,9 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   codeColor = Histogram::getCodeColor();
 
   zoomHistory.clear();
+
+  isCFG4DEnabled = false;
+  CFG4DMode = false;
 }
 
 HistogramProxy::~HistogramProxy()
@@ -1235,6 +1238,12 @@ Histogram *HistogramProxy::clone()
 
   myGradientColor.copy( clonedHistogramProxy->myGradientColor );
 
+  // CFG4D
+  clonedHistogramProxy->isCFG4DEnabled = isCFG4DEnabled;
+  clonedHistogramProxy->CFG4DMode = CFG4DMode;
+
+  clonedHistogramProxy->propertiesAliasCFG4D = propertiesAliasCFG4D;
+
   return clonedHistogramProxy;
 }
 
@@ -1400,3 +1409,127 @@ void HistogramProxy::setPixelSize( PRV_UINT16 whichSize )
 {
   pixelSize = whichSize;
 }
+
+void HistogramProxy::setCFG4DMode( bool mode )
+{
+  CFG4DMode = mode;
+}
+
+bool HistogramProxy::getCFG4DMode( ) const
+{
+  return CFG4DMode;
+}
+
+bool HistogramProxy::getCFG4DEnabled() const
+{
+  return isCFG4DEnabled;
+}
+
+void HistogramProxy::setCFG4DEnabled( bool enabled )
+{
+  isCFG4DEnabled = enabled;
+}
+
+
+bool HistogramProxy::existsCFG4DAlias( const string &property ) const
+{
+  bool found = false;
+
+  if ( propertiesAliasCFG4D.size() > 0 )
+  {
+    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    if ( itAlias != propertiesAliasCFG4D.end() )
+    {
+      found = true;
+    }
+  }
+
+  return found;
+}
+
+
+bool HistogramProxy::existsCFG4DAlias( const THistogramProperties &propertyIndex ) const
+{
+  bool found = false;
+
+  if ( propertiesAliasCFG4D.size() > 0 )
+  {
+    string property( HistogramPropertyLabels[ propertyIndex ] );
+
+    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    if ( itAlias != propertiesAliasCFG4D.end() )
+    {
+      found = true;
+    }
+  }
+
+  return found;
+}
+
+
+string HistogramProxy::getCFG4DAlias( const string &property ) const
+{
+  string alias = "";
+
+  if ( propertiesAliasCFG4D.size() > 0 )
+  {
+    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    if ( itAlias != propertiesAliasCFG4D.end() )
+    {
+      alias = itAlias->second;
+    }
+  }
+
+  return alias;
+}
+
+
+string HistogramProxy::getCFG4DAlias( const THistogramProperties &propertyIndex ) const
+{
+  string alias = "";
+
+  if ( propertiesAliasCFG4D.size() > 0 )
+  {
+    string property( HistogramPropertyLabels[ propertyIndex ] );
+
+    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    if ( itAlias != propertiesAliasCFG4D.end() )
+    {
+      alias = itAlias->second;
+    }
+  }
+
+  return alias;
+}
+
+
+void HistogramProxy::setCFG4DAlias( const string &property, const string &alias )
+{
+  propertiesAliasCFG4D[ property ] = alias;
+}
+
+
+void  HistogramProxy::setCFG4DAliasList( const map< string, string >& aliasList )
+{
+  propertiesAliasCFG4D = aliasList;
+}
+
+const map< string, string > HistogramProxy::getCFG4DAliasList() const
+{
+  return propertiesAliasCFG4D;
+}
+
+
+const vector< string > HistogramProxy::getCFG4DFullTagList()
+{
+  vector< string > tags;
+
+  for ( int iTag = 0; iTag < TOTAL_HISTOGRAM_PROPERTIES; ++iTag )
+  {
+    tags.push_back( HistogramPropertyLabels[ iTag ] );
+  }
+
+  return tags;
+}
+
+

@@ -414,8 +414,9 @@ void loadCFGs( KernelConnection *myKernel )
   {
     vector<Window *> windows;
     vector<Histogram *> histograms;
+    SaveOptions options; // P4D: Should options.enabledP4DMode be taken in this context?
 
-    if ( CFGLoader::loadCFG( myKernel, it->first, trace, windows, histograms ) )
+    if ( CFGLoader::loadCFG( myKernel, it->first, trace, windows, histograms, options ) )
     {
       TextOutput output;
       output.setMultipleFiles( multipleFiles );

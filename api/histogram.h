@@ -36,6 +36,7 @@
 #include "semanticcolor.h"
 #include "drawmode.h"
 #include "zoomhistory.h"
+#include "paraverlabels.h"
 
 #ifdef WIN32
 #undef max
@@ -446,6 +447,56 @@ class Histogram
     virtual void setPixelSize( PRV_UINT16 whichSize )
     {}
 
+    // CFG4D
+    virtual void setCFG4DEnabled( bool enabled )
+    {}
+    virtual bool getCFG4DEnabled() const
+    {
+      return false;
+    }
+
+    virtual void setCFG4DMode( bool mode )
+    {}
+    virtual bool getCFG4DMode() const
+    {
+      return false;
+    }
+
+    virtual bool existsCFG4DAlias( const string &property ) const
+    {
+      return false;
+    }
+
+    virtual bool existsCFG4DAlias( const THistogramProperties &propertyIndex ) const
+    {
+      return false;
+    }
+
+    virtual string getCFG4DAlias( const string &property ) const
+    {
+      return string( "" );
+    }
+
+    virtual string getCFG4DAlias( const THistogramProperties &propertyIndex ) const
+    {
+      return string( "" );
+    }
+
+    virtual void setCFG4DAlias( const string &property, const string &alias )
+    {}
+
+    virtual void setCFG4DAliasList( const map< string, string >& aliasList )
+    {}
+
+    virtual const map< string, string > getCFG4DAliasList() const
+    {
+      return map< string, string >();
+    }
+    virtual const vector< string > getCFG4DFullTagList()
+    {
+      return vector< string >();
+    }
+
   protected:
     KernelConnection *myKernel;
 
@@ -668,6 +719,30 @@ class HistogramProxy : public Histogram
     virtual PRV_UINT16 getPixelSize() const;
     virtual void setPixelSize( PRV_UINT16 whichSize );
 
+    // CFG4D
+    // Enabled => mode = false
+    virtual void setCFG4DEnabled( bool enabled );
+    virtual bool getCFG4DEnabled() const;
+
+    // If CFG4D is enabled, mode can be changed:
+    //   false => no CFG4D replacement
+    //   true  => CFG4D replacement
+    virtual void setCFG4DMode( bool mode );
+    virtual bool getCFG4DMode() const;
+
+    virtual bool existsCFG4DAlias( const string &property ) const; // DEPRECATED
+    virtual bool existsCFG4DAlias( const THistogramProperties &propertyIndex ) const;
+
+    virtual void setCFG4DAlias( const string &property, const string &alias );
+
+    virtual string getCFG4DAlias( const string &property ) const; // DEPRECATED
+    virtual string getCFG4DAlias( const THistogramProperties &propertyIndex ) const;
+
+    virtual void setCFG4DAliasList( const map< string, string >& aliasList );
+    virtual const map< string, string > getCFG4DAliasList() const;
+
+    virtual const vector< string > getCFG4DFullTagList();
+
   private:
     string name;
 
@@ -729,6 +804,11 @@ class HistogramProxy : public Histogram
     Histogram *myHisto;
 
     int number_of_clones;
+
+    // CFG4D
+    bool isCFG4DEnabled;
+    bool CFG4DMode;
+    map< string, string > propertiesAliasCFG4D;
 
     HistogramProxy( KernelConnection *whichKernel );
 

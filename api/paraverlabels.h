@@ -351,7 +351,7 @@ static const string SingleTimelinePropertyLabels[ TOTAL_SINGLE_PROPERTIES ] =
   "Compose Node",
   "Node",
   "Compose CPU",
-  "CPU"
+  "CPU",
 };
 
 // GUI Derived Timeline property labels
@@ -392,7 +392,7 @@ static const string DerivedTimelinePropertyLabels[ TOTAL_DERIVED_PROPERTIES ] =
   "End time",
   "Semantic Minimum",
   "Semantic Maximum",
-  "Level"
+  "Level",
   "Time unit",
   "Top Compose 1",
   "Top Compose 2",

@@ -30,6 +30,8 @@
 #include <iostream>
 #include <sstream>
 
+#include <algorithm> // CFG4D
+
 #include "kernelconnection.h"
 #include "filter.h"
 #include "trace.h"
@@ -139,6 +141,9 @@ void WindowProxy::init()
 
   sync = false;
   syncGroup = 0;
+
+  isCFG4DEnabled = false;
+  CFG4DMode = false;
 }
 
 WindowProxy::~WindowProxy()
@@ -294,6 +299,11 @@ Window *WindowProxy::clone( )
   clonedWindow->syncGroup = syncGroup;
   if( clonedWindow->sync )
     SyncWindows::getInstance()->addWindow( clonedWindow, syncGroup );
+
+  // CFG4D
+  clonedWindow->isCFG4DEnabled   = isCFG4DEnabled;
+  clonedWindow->CFG4DMode   = CFG4DMode;
+  clonedWindow->propertiesAliasCFG4D = propertiesAliasCFG4D;
 
   return clonedWindow;
 }
@@ -1175,3 +1185,178 @@ bool WindowProxy::getParametersOfFunction( string whichFunction,
          nameParameters,
          defaultParameters );
 }
+
+
+void WindowProxy::setCFG4DMode( bool mode )
+{
+  CFG4DMode = mode;
+}
+
+bool WindowProxy::getCFG4DMode( ) const
+{
+  return CFG4DMode;
+}
+
+bool WindowProxy::getCFG4DEnabled() const
+{
+  return isCFG4DEnabled;
+}
+
+void WindowProxy::setCFG4DEnabled( bool enabled )
+{
+  isCFG4DEnabled = enabled;
+}
+
+
+bool WindowProxy::existsCFG4DAlias( const string &property ) const
+{
+  bool found = false;
+
+  if ( propertiesAliasCFG4D.size() > 0 )
+  {
+    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    if ( itAlias != propertiesAliasCFG4D.end() )
+    {
+      found = true;
+    }
+  }
+
+  return found;
+}
+
+
+
+bool WindowProxy::existsCFG4DAlias( const TSingleTimelineProperties &propertyIndex ) const
+{
+  bool found = false;
+
+  if ( propertiesAliasCFG4D.size() > 0 )
+  {
+    string property( SingleTimelinePropertyLabels[ propertyIndex ] );
+
+    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    if ( itAlias != propertiesAliasCFG4D.end() )
+    {
+      found = true;
+    }
+  }
+
+  return found;
+}
+
+
+bool WindowProxy::existsCFG4DAlias( const TDerivedTimelineProperties &propertyIndex ) const
+{
+  bool found = false;
+
+  if ( propertiesAliasCFG4D.size() > 0 )
+  {
+    string property( DerivedTimelinePropertyLabels[ propertyIndex ] );
+
+    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    if ( itAlias != propertiesAliasCFG4D.end() )
+    {
+      found = true;
+    }
+  }
+
+  return found;
+}
+
+
+string WindowProxy::getCFG4DAlias( const string &property ) const
+{
+  string alias = "";
+
+  if ( propertiesAliasCFG4D.size() > 0 )
+  {
+    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    if ( itAlias != propertiesAliasCFG4D.end() )
+    {
+      alias = itAlias->second;
+    }
+  }
+
+  return alias;
+}
+
+
+string WindowProxy::getCFG4DAlias( const TSingleTimelineProperties &propertyIndex ) const
+{
+  string alias = "";
+
+  if ( propertiesAliasCFG4D.size() > 0 )
+  {
+    string property( SingleTimelinePropertyLabels[ propertyIndex ] );
+
+    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    if ( itAlias != propertiesAliasCFG4D.end() )
+    {
+      alias = itAlias->second;
+    }
+  }
+
+  return alias;
+}
+
+
+string WindowProxy::getCFG4DAlias( const TDerivedTimelineProperties &propertyIndex ) const
+{
+  string alias = "";
+
+  if ( propertiesAliasCFG4D.size() > 0 )
+  {
+    string property( DerivedTimelinePropertyLabels[ propertyIndex ] );
+
+    map< string, string >::const_iterator itAlias = propertiesAliasCFG4D.find( property );
+    if ( itAlias != propertiesAliasCFG4D.end() )
+    {
+      alias = itAlias->second;
+    }
+  }
+
+  return alias;
+}
+
+
+void WindowProxy::setCFG4DAlias( const string &property, const string &alias )
+{
+  propertiesAliasCFG4D[ property ] = alias;
+}
+
+
+void WindowProxy::setCFG4DAliasList( const map< string, string >& aliasList )
+{
+  propertiesAliasCFG4D = aliasList;
+}
+
+
+const map< string, string > WindowProxy::getCFG4DAliasList() const
+{
+  return propertiesAliasCFG4D;
+}
+
+const vector< string > WindowProxy::getCFG4DFullTagList()
+{
+  vector< string > tags;
+
+  if ( isDerivedWindow() )
+  {
+    for ( int iTag = 0; iTag < TOTAL_DERIVED_PROPERTIES; ++iTag )
+    {
+      tags.push_back( DerivedTimelinePropertyLabels[ iTag ] );
+    }
+  }
+  else
+  {
+    for ( int iTag = 0; iTag < TOTAL_SINGLE_PROPERTIES; ++iTag )
+    {
+      tags.push_back( SingleTimelinePropertyLabels[ iTag ] );
+    }
+  }
+
+  return tags;
+}
+
+
+
