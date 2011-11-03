@@ -107,7 +107,7 @@ ParaverConfig::ParaverConfig()
   xmlHistogram.thousandSep = true;
   xmlHistogram.precision = 2;
   xmlHistogram.showUnits = true;
-  xmlHistogram.histoNumColumns = 20;
+  xmlHistogram.histoNumColumns = 200;
   xmlHistogram.autofitControlScale = true;
   xmlHistogram.autofitDataGradient = true;
   xmlHistogram.autofitThirdDimensionScale = true;
