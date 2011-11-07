@@ -1189,6 +1189,15 @@ bool WindowProxy::getParametersOfFunction( string whichFunction,
 
 void WindowProxy::setCFG4DMode( bool mode )
 {
+  if( isDerivedWindow() )
+  {
+    if ( parent1 != NULL)
+      parent1->setCFG4DMode( mode );
+
+    if ( parent2 != NULL)
+      parent2->setCFG4DMode( mode );
+  }
+
   CFG4DMode = mode;
 }
 
@@ -1204,9 +1213,17 @@ bool WindowProxy::getCFG4DEnabled() const
 
 void WindowProxy::setCFG4DEnabled( bool enabled )
 {
+  if( isDerivedWindow() )
+  {
+    if ( parent1 != NULL)
+      parent1->setCFG4DEnabled( enabled );
+
+    if ( parent2 != NULL)
+      parent2->setCFG4DEnabled( enabled );
+  }
+
   isCFG4DEnabled = enabled;
 }
-
 
 bool WindowProxy::existsCFG4DAlias( const string &property ) const
 {

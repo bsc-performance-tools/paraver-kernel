@@ -1412,6 +1412,15 @@ void HistogramProxy::setPixelSize( PRV_UINT16 whichSize )
 
 void HistogramProxy::setCFG4DMode( bool mode )
 {
+  if ( controlWindow != NULL )
+    controlWindow->setCFG4DMode( mode );
+
+  if ( dataWindow != NULL )
+    dataWindow->setCFG4DMode( mode );
+
+  if ( extraControlWindow != NULL )
+    extraControlWindow->setCFG4DMode( mode );
+
   CFG4DMode = mode;
 }
 
@@ -1427,6 +1436,16 @@ bool HistogramProxy::getCFG4DEnabled() const
 
 void HistogramProxy::setCFG4DEnabled( bool enabled )
 {
+
+  if ( controlWindow != NULL )
+    controlWindow->setCFG4DEnabled( enabled );
+
+  if ( dataWindow != NULL )
+    dataWindow->setCFG4DEnabled( enabled );
+
+  if ( extraControlWindow != NULL )
+    extraControlWindow->setCFG4DEnabled( enabled );
+
   isCFG4DEnabled = enabled;
 }
 
