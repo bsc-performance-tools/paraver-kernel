@@ -180,6 +180,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\gnuplotoutput.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\histogram.cpp"
 				>
 			</File>
@@ -201,6 +205,10 @@
 			</File>
 			<File
 				RelativePath=".\localkernel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\output.cpp"
 				>
 			</File>
 			<File
@@ -366,6 +374,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\gnuplotoutput.h"
+				>
+			</File>
+			<File
 				RelativePath=".\histogram.h"
 				>
 			</File>
@@ -391,6 +403,10 @@
 			</File>
 			<File
 				RelativePath=".\localkernel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\output.h"
 				>
 			</File>
 			<File
