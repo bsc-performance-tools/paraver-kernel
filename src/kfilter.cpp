@@ -158,11 +158,23 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
   tmpResult = functionBandWidth->getDefaultValue();
   if ( existBandWidth )
   {
-    info = ( TSemanticValue ) window->getTrace()->getCommSize( it->getCommIndex() )
-           / ( TSemanticValue ) window->traceUnitsToWindowUnits(
-              ( window->getTrace()->getPhysicalReceive( it->getCommIndex() ) -
-                window->getTrace()->getPhysicalSend( it->getCommIndex() ) )
-              );
+    TRecordTime time;
+    TCommID id = it->getCommIndex();
+
+    if ( window->getFilter()->getLogical() &&
+         window->getTrace()->getLogicalReceive( id ) > window->getTrace()->getPhysicalReceive( id ) )
+      time = window->getTrace()->getLogicalReceive( id ) - window->getTrace()->getLogicalSend( id );
+    else
+    {
+      if ( window->getFilter()->getPhysical() )
+        time = window->getTrace()->getPhysicalReceive( id ) - window->getTrace()->getPhysicalSend( id );
+      else
+        time = window->getTrace()->getPhysicalReceive( id ) - window->getTrace()->getLogicalSend( id );
+    }
+
+    info = ( TSemanticValue ) window->getTrace()->getCommSize( id )
+           / ( TSemanticValue ) window->traceUnitsToWindowUnits( time );
+
     for ( PRV_UINT32 i = 0; i < bandWidth.size(); i++ )
     {
       stop = functionBandWidth->execute( ( TSemanticValue ) bandWidth[ i ], info );
