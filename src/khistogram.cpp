@@ -1286,7 +1286,9 @@ void KHistogram::getGroupsLabels( vector<string>& onVector ) const
   FunctionManagement<HistogramStatistic>::getInstance()->getNameGroups( onVector );
 }
 
-void KHistogram::getStatisticsLabels( vector<string>& onVector, PRV_UINT32 whichGroup ) const
+void KHistogram::getStatisticsLabels( vector<string>& onVector,
+                                      PRV_UINT32 whichGroup,
+                                      bool dummy ) const
 {
   FunctionManagement<HistogramStatistic>::getInstance()->getAll( onVector, whichGroup );
 }

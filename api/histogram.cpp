@@ -1243,6 +1243,7 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->CFG4DMode = CFG4DMode;
 
   clonedHistogramProxy->propertiesAliasCFG4D = propertiesAliasCFG4D;
+  clonedHistogramProxy->statisticsAliasCFG4D = statisticsAliasCFG4D;
 
   return clonedHistogramProxy;
 }
@@ -1345,9 +1346,27 @@ void HistogramProxy::getGroupsLabels( vector<string>& onVector ) const
   myHisto->getGroupsLabels( onVector );
 }
 
-void HistogramProxy::getStatisticsLabels( vector<string>& onVector, PRV_UINT32 whichGroup ) const
+void HistogramProxy::getStatisticsLabels( vector<string>& onVector,
+                                          PRV_UINT32 whichGroup,
+                                          bool getOriginalList ) const
 {
-  myHisto->getStatisticsLabels( onVector, whichGroup );
+  if ( getOriginalList )
+  {
+    myHisto->getStatisticsLabels( onVector, whichGroup );
+  }
+  else
+  {
+    vector< string > fullList;
+    myHisto->getStatisticsLabels( fullList, whichGroup );
+    map< string, string >::const_iterator itStat;
+
+    for( vector< string >::iterator it = fullList.begin(); it != fullList.end(); ++it )
+    {
+      itStat = statisticsAliasCFG4D.find( *it );
+      if ( itStat != statisticsAliasCFG4D.end() )
+      onVector.push_back( itStat->second );
+    }
+  }
 }
 
 string HistogramProxy::getFirstStatistic() const
@@ -1527,10 +1546,21 @@ void HistogramProxy::setCFG4DAlias( const string &property, const string &alias 
   propertiesAliasCFG4D[ property ] = alias;
 }
 
+void HistogramProxy::setCFG4DStatisticAlias( const string &statistic, const string &alias )
+{
+  statisticsAliasCFG4D[ statistic ] = alias;
+}
+
 
 void  HistogramProxy::setCFG4DAliasList( const map< string, string >& aliasList )
 {
   propertiesAliasCFG4D = aliasList;
+}
+
+
+void  HistogramProxy::setCFG4DStatisticsAliasList( const map< string, string >& statisticsAliasList )
+{
+  statisticsAliasCFG4D = statisticsAliasList;
 }
 
 const map< string, string > HistogramProxy::getCFG4DAliasList() const
@@ -1538,6 +1568,10 @@ const map< string, string > HistogramProxy::getCFG4DAliasList() const
   return propertiesAliasCFG4D;
 }
 
+const map< string, string > HistogramProxy::getCFG4DStatisticsAliasList() const
+{
+  return statisticsAliasCFG4D;
+}
 
 const vector< string > HistogramProxy::getCFG4DFullTagList()
 {
@@ -1550,5 +1584,3 @@ const vector< string > HistogramProxy::getCFG4DFullTagList()
 
   return tags;
 }
-
-

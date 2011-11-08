@@ -522,6 +522,7 @@ bool CFGLoader::saveCFG( const string& filename,
     {
       cfgFile << endl;
       TagAliasCFG4D::printAliasList( cfgFile, it );
+      TagAliasStatisticCFG4D::printAliasList( cfgFile, it );
     }
     cfgFile << endl;
   }
@@ -647,7 +648,8 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN3D_DELTA]                = new Analyzer3DDelta();
   cfgTagFunctions[OLDCFG_TAG_AN3D_FIXEDVALUE]           = new Analyzer3DFixedValue();
 
-  cfgTagFunctions[ CFG_TAG_ALIAS_CFG4D ]                  = new TagAliasCFG4D();
+  cfgTagFunctions[ CFG_TAG_ALIAS_CFG4D ]                = new TagAliasCFG4D();
+  cfgTagFunctions[ CFG_TAG_STATISTIC_ALIAS_CFG4D ]      = new TagAliasStatisticCFG4D();
 }
 
 void CFGLoader::unLoadMap()
@@ -4472,6 +4474,7 @@ void TagAliasCFG4D::printAliasList( ofstream& cfgFile,
   }
 }
 
+
 void TagAliasCFG4D::printAliasList( ofstream& cfgFile,
                                     const vector<Histogram *>::const_iterator it )
 {
@@ -4482,4 +4485,48 @@ void TagAliasCFG4D::printAliasList( ofstream& cfgFile,
     cfgFile << CFG_TAG_ALIAS_CFG4D << " ";
     cfgFile << item->first << "|" << item->second << endl;
   }
+}
+
+
+string TagAliasStatisticCFG4D::tagCFG = "";
+
+bool TagAliasStatisticCFG4D::parseLine( KernelConnection *whichKernel,
+                                        istringstream& line,
+                                        Trace *whichTrace,
+                                        vector<Window *>& windows,
+                                        vector<Histogram *>& histograms )
+{
+  string currentStatisticCFG4DTag;
+  string currentStatisticCFG4DAlias;
+
+  getline( line, currentStatisticCFG4DTag, '|' );
+  getline( line, currentStatisticCFG4DAlias );
+
+  if ( !isWindowTag )
+  {
+    // HISTOGRAM
+    if ( histograms[ histograms.size() - 1 ] == NULL )
+      return false;
+
+    // It has been created
+    histograms[ histograms.size() - 1 ]->setCFG4DEnabled( true );
+    histograms[ histograms.size() - 1 ]->setCFG4DMode( true );
+    histograms[ histograms.size() - 1 ]->setCFG4DStatisticAlias(
+            currentStatisticCFG4DTag, currentStatisticCFG4DAlias );
+  }
+
+  return true;
+}
+
+void TagAliasStatisticCFG4D::printAliasList( ofstream& cfgFile,
+                                             const vector<Histogram *>::const_iterator it )
+{
+    map< string, string > tmpAlias( (*it)->getCFG4DStatisticsAliasList() );
+
+  for ( map< string, string >::iterator item = tmpAlias.begin(); item != tmpAlias.end(); ++item )
+  {
+    cfgFile << CFG_TAG_STATISTIC_ALIAS_CFG4D << " ";
+    cfgFile << item->first << "|" << item->second << endl;
+  }
+
 }

@@ -157,7 +157,9 @@ class Histogram
     virtual string getUnitsLabel( const string& whichStat ) const = 0;
 
     virtual void getGroupsLabels( vector<string>& onVector ) const = 0;
-    virtual void getStatisticsLabels( vector<string>& onVector, PRV_UINT32 whichGroup ) const = 0;
+    virtual void getStatisticsLabels( vector<string>& onVector,
+                                      PRV_UINT32 whichGroup,
+                                      bool getOriginalList = true ) const = 0;
     virtual string getFirstStatistic() const = 0;
     virtual string getFirstCommStatistic() const = 0;
 
@@ -484,14 +486,25 @@ class Histogram
 
     virtual void setCFG4DAlias( const string &property, const string &alias )
     {}
+    virtual void setCFG4DStatisticAlias( const string &statistic, const string &alias )
+    {}
 
     virtual void setCFG4DAliasList( const map< string, string >& aliasList )
+    {}
+
+    virtual void setCFG4DStatisticsAliasList( const map< string, string >& statisticsAliasList )
     {}
 
     virtual const map< string, string > getCFG4DAliasList() const
     {
       return map< string, string >();
     }
+
+    virtual const map< string, string > getCFG4DStatisticsAliasList() const
+    {
+      return map< string, string >();
+    }
+
     virtual const vector< string > getCFG4DFullTagList()
     {
       return vector< string >();
@@ -683,7 +696,9 @@ class HistogramProxy : public Histogram
 
     string getUnitsLabel( const string& whichStat ) const;
     virtual void getGroupsLabels( vector<string>& onVector ) const;
-    virtual void getStatisticsLabels( vector<string>& onVector, PRV_UINT32 whichGroup ) const;
+    virtual void getStatisticsLabels( vector<string>& onVector,
+                                      PRV_UINT32 whichGroup,
+                                      bool getOriginalList = true ) const;
     virtual string getFirstStatistic() const;
     virtual string getFirstCommStatistic() const;
 
@@ -734,12 +749,15 @@ class HistogramProxy : public Histogram
     virtual bool existsCFG4DAlias( const THistogramProperties &propertyIndex ) const;
 
     virtual void setCFG4DAlias( const string &property, const string &alias );
+    virtual void setCFG4DStatisticAlias( const string &statistic, const string &alias );
 
     virtual string getCFG4DAlias( const string &property ) const; // DEPRECATED
     virtual string getCFG4DAlias( const THistogramProperties &propertyIndex ) const;
 
     virtual void setCFG4DAliasList( const map< string, string >& aliasList );
+    virtual void setCFG4DStatisticsAliasList( const map< string, string >& aliasList );
     virtual const map< string, string > getCFG4DAliasList() const;
+    virtual const map< string, string > getCFG4DStatisticsAliasList() const;
 
     virtual const vector< string > getCFG4DFullTagList();
 
@@ -809,6 +827,7 @@ class HistogramProxy : public Histogram
     bool isCFG4DEnabled;
     bool CFG4DMode;
     map< string, string > propertiesAliasCFG4D;
+    map< string, string > statisticsAliasCFG4D;
 
     HistogramProxy( KernelConnection *whichKernel );
 

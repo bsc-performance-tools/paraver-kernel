@@ -218,7 +218,9 @@ class KHistogram : public Histogram
                   vector<TObjectOrder>& selectedRows );
 
     void getGroupsLabels( vector<string>& onVector ) const;
-    void getStatisticsLabels( vector<string>& onVector, PRV_UINT32 whichGroup ) const;
+    void getStatisticsLabels( vector<string>& onVector,
+                              PRV_UINT32 whichGroup,
+                              bool dummy ) const;
     string getFirstStatistic() const;
     string getFirstCommStatistic() const;
 

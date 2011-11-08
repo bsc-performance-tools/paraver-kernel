@@ -1965,4 +1965,28 @@ class TagAliasCFG4D: public TagFunction
     static string tagCFG;
 };
 
+
+
+class TagAliasStatisticCFG4D: public TagFunction
+{
+  public:
+    TagAliasStatisticCFG4D()
+    {}
+
+    virtual ~TagAliasStatisticCFG4D()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+
+    static const string &getTagCFG() { return tagCFG; }
+
+    static void printAliasList( ofstream& cfgFile,
+                                const vector<Histogram *>::const_iterator it );
+
+  protected:
+    static string tagCFG;
+};
+
 #endif // CFG_H_INCLUDED
