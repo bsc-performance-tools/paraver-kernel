@@ -62,6 +62,7 @@ ParaverConfig::ParaverConfig()
 
   xmlGlobal.tracesPath = homedir; // also for paraload.sig!
   xmlGlobal.cfgsPath = homedir;
+  xmlGlobal.tutorialsPath = homedir;
   xmlGlobal.tmpPath = homedir; // errors, logs, working dir
   xmlGlobal.applyFollowingCFGsToAllTraces = false;
   xmlGlobal.fillStateGaps = true;
@@ -180,6 +181,11 @@ void ParaverConfig::setGlobalCFGsPath( string whichCfgsPath )
   xmlGlobal.cfgsPath = whichCfgsPath;
 }
 
+void ParaverConfig::setGlobalTutorialsPath( string whichTutorialsPath )
+{
+  xmlGlobal.tutorialsPath = whichTutorialsPath;
+}
+
 void ParaverConfig::setGlobalTmpPath( string whichTmpPath )
 {
   xmlGlobal.tmpPath = whichTmpPath;
@@ -228,6 +234,11 @@ string ParaverConfig::getGlobalTracesPath() const
 string ParaverConfig::getGlobalCFGsPath() const
 {
   return xmlGlobal.cfgsPath ;
+}
+
+string ParaverConfig::getGlobalTutorialsPath() const
+{
+  return xmlGlobal.tutorialsPath ;
 }
 
 string ParaverConfig::getGlobalTmpPath() const

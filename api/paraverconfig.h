@@ -89,6 +89,7 @@ class ParaverConfig
     void setGlobalTracesPath( string whichTracesPath );
     void setGlobalCFGsPath( string whichCfgsPath );
     void setGlobalXMLsPath( string whichXMLsPath );
+    void setGlobalTutorialsPath( string whichTutorialsPath );
     void setGlobalTmpPath( string whichTmpPath );
     void setGlobalApplyFollowingCFGsToAllTraces( bool whichApplyFollowingCFGsToAllTraces );
     void setGlobalFillStateGaps( bool whichFillStateGaps );
@@ -101,6 +102,7 @@ class ParaverConfig
     string getGlobalTracesPath() const;
     string getGlobalCFGsPath() const;
     string getGlobalXMLsPath() const;
+    string getGlobalTutorialsPath() const;
     string getGlobalTmpPath() const;
     bool getGlobalApplyFollowingCFGsToAllTraces() const;
     bool getGlobalFillStateGaps() const;
@@ -303,6 +305,10 @@ class ParaverConfig
         ar & boost::serialization::make_nvp( "traces_path", tracesPath );
         ar & boost::serialization::make_nvp( "cfgs_path", cfgsPath );
         ar & boost::serialization::make_nvp( "tmp_path", tmpPath );
+        if ( version >= 4 )
+        {
+          ar & boost::serialization::make_nvp( "tutorials_path", tutorialsPath );
+        }
         // ar & boost::serialization::make_nvp( "apply_following_cfgs_to_all_traces", applyFollowingCFGsToAllTraces );
         ar & boost::serialization::make_nvp( "fill_state_gaps", fillStateGaps );
         if( version >= 1 )
@@ -321,6 +327,7 @@ class ParaverConfig
 
       string tracesPath; // also for paraload.sig!
       string cfgsPath;
+      string tutorialsPath;
       string tmpPath;    // errors, logs, working dir
       bool applyFollowingCFGsToAllTraces;
       bool fillStateGaps;
@@ -647,7 +654,7 @@ class ParaverConfig
 
 // Second version: introducing some structure
 BOOST_CLASS_VERSION( ParaverConfig, 1)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 3)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 4)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 3)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 0)
