@@ -348,6 +348,23 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   if ( histograms.begin() == histograms.end() )
     windows[ windows.size() - 1 ]->setShowWindow( true );
 
+  // If enabled CFG4D mode, all the windows and histograms must be presented that way.
+  if ( options.enabledCFG4DMode )
+  {
+    for ( vector<Window *>::iterator it = windows.begin(); it != windows.end(); ++it )
+    {
+      (*it)->setCFG4DEnabled( true );
+      (*it)->setCFG4DMode( true );
+    }
+
+    for ( vector<Histogram *>::iterator it = histograms.begin(); it != histograms.end(); ++it )
+    {
+      (*it)->setCFG4DEnabled( true );
+      (*it)->setCFG4DMode( true );
+    }
+  }
+
+
   return true;
 }
 
@@ -4442,8 +4459,6 @@ bool TagAliasCFG4D::parseLine( KernelConnection *whichKernel,
       return false;
 
     // It has been created
-    windows[ windows.size() -1 ]->setCFG4DEnabled( true );
-    windows[ windows.size() -1 ]->setCFG4DMode( true );
     windows[ windows.size() -1 ]->setCFG4DAlias( currentCFG4DTag, currentCFG4DAlias );
   }
   else
@@ -4453,8 +4468,6 @@ bool TagAliasCFG4D::parseLine( KernelConnection *whichKernel,
       return false;
 
     // It has been created
-    histograms[ histograms.size() - 1 ]->setCFG4DEnabled( true );
-    histograms[ histograms.size() - 1 ]->setCFG4DMode( true );
     histograms[ histograms.size() - 1 ]->setCFG4DAlias( currentCFG4DTag, currentCFG4DAlias );
   }
 
@@ -4509,8 +4522,6 @@ bool TagAliasStatisticCFG4D::parseLine( KernelConnection *whichKernel,
       return false;
 
     // It has been created
-    histograms[ histograms.size() - 1 ]->setCFG4DEnabled( true );
-    histograms[ histograms.size() - 1 ]->setCFG4DMode( true );
     histograms[ histograms.size() - 1 ]->setCFG4DStatisticAlias(
             currentStatisticCFG4DTag, currentStatisticCFG4DAlias );
   }
