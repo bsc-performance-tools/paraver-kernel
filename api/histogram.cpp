@@ -917,13 +917,7 @@ void HistogramProxy::compute2DScale()
   {
     setControlDelta( 1.0 );
   }
-  else if ( ( maxY - minY ) < 1.0 )
-  {
-    setControlDelta( ( maxY - minY ) /
-                     ParaverConfig::getInstance()->getHistogramNumColumns() );
-  }
-  else if ( ( maxY - minY ) <
-            ParaverConfig::getInstance()->getHistogramNumColumns() )
+  else if ( controlWindow->IsCodeColorSet() )
   {
     setControlDelta( 1.0 );
   }
@@ -957,13 +951,7 @@ void HistogramProxy::compute3DScale()
   {
     setExtraControlDelta( 1.0 );
   }
-  else if ( ( maxY - minY ) < 1.0 )
-  {
-    setExtraControlDelta( ( maxY - minY ) /
-                          ParaverConfig::getInstance()->getHistogramNumColumns() );
-  }
-  else if ( ( maxY - minY ) <
-            ParaverConfig::getInstance()->getHistogramNumColumns() )
+  else if( extraControlWindow->IsCodeColorSet() )
   {
     setExtraControlDelta( 1.0 );
   }
