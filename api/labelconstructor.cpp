@@ -198,7 +198,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
   if ( value == numeric_limits<double>::infinity() )
     return "inf";
 
-  if ( whichHisto->getScientificNotation() )
+  if ( ParaverConfig::getInstance()->getHistogramScientificNotation() )
     label << scientific;
   else
     label << fixed;
@@ -207,8 +207,8 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
 
   if ( value == 0 )
     label << "0";
-  else if ( whichHisto->getThousandSeparator() &&
-            !whichHisto->getScientificNotation() )
+  else if ( ParaverConfig::getInstance()->getHistogramThousandSep() &&
+            !ParaverConfig::getInstance()->getHistogramScientificNotation() )
   {
     if( value < 0.0 )
     {
@@ -228,7 +228,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
 
     tmp.clear();
     tmp.str( "" );
-    if ( whichHisto->getScientificNotation() )
+    if ( ParaverConfig::getInstance()->getHistogramScientificNotation() )
       tmp << scientific;
     else
       tmp << fixed;
@@ -247,7 +247,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
   else
     label << value;
 
-  if ( showUnits && whichHisto->getShowUnits() &&
+  if ( showUnits && ParaverConfig::getInstance()->getHistogramShowUnits() &&
        !whichHisto->itsCommunicationStat( whichHisto->getCurrentStat() ) )
     label << " " << whichHisto->getUnitsLabel( whichHisto->getCurrentStat() );
 
