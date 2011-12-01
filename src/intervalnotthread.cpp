@@ -36,6 +36,7 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
   TRecordTime myInitTime;
   info.values.clear();
   info.callingInterval = this;
+  info.lastChanged = 0;
 
   createList = create;
   currentValue = 0.0;
@@ -124,7 +125,10 @@ KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCal
   for ( TObjectOrder i = 0; i < childIntervals.size(); i++ )
   {
     if ( childIntervals[ i ]->getEnd()->getTime() <= begin->getTime() )
+    {
       childIntervals[ i ]->calcNext( displayList );
+      info.lastChanged = i;
+    }
 
     if ( end == NULL ||
          childIntervals[ i ]->getEnd()->getTime() < end->getTime() )

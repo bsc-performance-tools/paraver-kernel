@@ -52,6 +52,7 @@ struct SemanticThreadInfo: public SemanticInfo
 struct SemanticHighInfo: public SemanticInfo
 {
   vector<TSemanticValue> values;
+  TObjectOrder lastChanged;
 };
 
 #endif // SEMANTICINFO_H_INCLUDED

@@ -703,7 +703,8 @@ class ChangedValue: public SemanticNotThread
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow );
+    virtual void init( KWindow *whichWindow )
+    {}
 
     virtual string getName()
     {
@@ -743,7 +744,6 @@ class ChangedValue: public SemanticNotThread
     static const bool initFromBegin = true;
     static string name;
 
-    vector<TSemanticValue> lastValues;
 };
 
 #endif // SEMANTICNOTTHREADFUNCTIONS_H_INCLUDED
