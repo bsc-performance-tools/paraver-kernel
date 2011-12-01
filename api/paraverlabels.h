@@ -139,6 +139,7 @@
 #define OLDCFG_TAG_AN2D_MAXIMUMGRADIENT "Analyzer2D.MaximumGradient:"
 #define OLDCFG_TAG_AN2D_PIXEL_SIZE "Analyzer2D.PixelSize:"
 #define OLDCFG_TAG_AN3D_CONTROLWINDOW "Analyzer2D.3D_ControlWindow:"
+#define OLDCFG_TAG_AN3D_COMPUTEYSCALE "Analyzer3D.ComputeYScale:"
 #define OLDCFG_TAG_AN3D_MINIMUM "Analyzer2D.3D_Minimum:"
 #define OLDCFG_TAG_AN3D_MAXIMUM "Analyzer2D.3D_Maximum:"
 #define OLDCFG_TAG_AN3D_DELTA "Analyzer2D.3D_Delta:"

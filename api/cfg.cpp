@@ -529,6 +529,7 @@ bool CFGLoader::saveCFG( const string& filename,
     if ( ( *it )->getThreeDimensions() )
     {
       Analyzer3DControlWindow::printLine( cfgFile, allWindows, it );
+      Analyzer3DComputeYScale::printLine( cfgFile, options, it );
       Analyzer3DMinimum::printLine( cfgFile, it );
       Analyzer3DMaximum::printLine( cfgFile, it );
       Analyzer3DDelta::printLine( cfgFile, it );
@@ -660,6 +661,7 @@ void CFGLoader::loadMap()
 
   // 3D Histogram
   cfgTagFunctions[OLDCFG_TAG_AN3D_CONTROLWINDOW]        = new Analyzer3DControlWindow();
+  cfgTagFunctions[OLDCFG_TAG_AN3D_COMPUTEYSCALE]        = new Analyzer3DComputeYScale();
   cfgTagFunctions[OLDCFG_TAG_AN3D_MINIMUM]              = new Analyzer3DMinimum();
   cfgTagFunctions[OLDCFG_TAG_AN3D_MAXIMUM]              = new Analyzer3DMaximum();
   cfgTagFunctions[OLDCFG_TAG_AN3D_DELTA]                = new Analyzer3DDelta();
@@ -675,108 +677,6 @@ void CFGLoader::unLoadMap()
         it != cfgTagFunctions.end();
         ++it )
     delete ( *it ).second;
-}
-
-
-const vector< string > CFGLoader::getTagCFGFullList( Window *whichWindow )
-{
-  vector< string > tags;
-
-  tags.push_back( WindowName::getTagCFG() );
-  tags.push_back( WindowType::getTagCFG() );
-  if ( whichWindow->isDerivedWindow() )
-  {
-    tags.push_back( WindowFactors::getTagCFG() );
-    tags.push_back( WindowOperation::getTagCFG() );
-    tags.push_back( WindowIdentifiers::getTagCFG() );
-  }
-  tags.push_back( WindowPositionX::getTagCFG() );
-  tags.push_back( WindowPositionY::getTagCFG() );
-  tags.push_back( WindowWidth::getTagCFG() );
-  tags.push_back( WindowHeight::getTagCFG() );
-  tags.push_back( WindowCommLines::getTagCFG() );
-  tags.push_back( WindowFlagsEnabled::getTagCFG() );
-  tags.push_back( WindowNonColorMode::getTagCFG() );
-  tags.push_back( WindowColorMode::getTagCFG() );
-  if ( !whichWindow->isDerivedWindow() )
-  {
-    tags.push_back( WindowFilterLogical::getTagCFG() );
-    tags.push_back( WindowFilterPhysical::getTagCFG() );
-    tags.push_back( WindowFilterBoolOpFromTo::getTagCFG() );
-    tags.push_back( WindowFilterBoolOpTagSize::getTagCFG() );
-    tags.push_back( WindowFilterBoolOpTypeVal::getTagCFG() );
-  }
-  tags.push_back( WindowUnits::getTagCFG() );
-  tags.push_back( WindowMaximumY::getTagCFG() );
-  tags.push_back( WindowMinimumY::getTagCFG() );
-  tags.push_back( WindowComputeYMax::getTagCFG() );
-  tags.push_back( WindowLevel::getTagCFG() );
-  tags.push_back( WindowZoomObjects::getTagCFG() );
-  tags.push_back( WindowScaleRelative::getTagCFG() );
-  tags.push_back( WindowEndTimeRelative::getTagCFG() );
-  tags.push_back( WindowObject::getTagCFG() );
-  tags.push_back( WindowBeginTime::getTagCFG() );
-  tags.push_back( WindowEndTime::getTagCFG() );
-  tags.push_back( WindowStopTime::getTagCFG() );
-  tags.push_back( WindowBeginTimeRelative::getTagCFG() );
-  tags.push_back( WindowOpen::getTagCFG() );
-  tags.push_back( WindowDrawMode::getTagCFG() );
-  tags.push_back( WindowDrawModeRows::getTagCFG() );
-  tags.push_back( WindowPixelSize::getTagCFG() );
-  tags.push_back( WindowSelectedFunctions::getTagCFG() );
-  tags.push_back( WindowComposeFunctions::getTagCFG() );
-  tags.push_back( WindowSemanticModule::getTagCFG() );
-  if ( !whichWindow->isDerivedWindow() )
-    tags.push_back( WindowFilterModule::getTagCFG() );
-
-  return tags;
-}
-
-
-const vector< string > CFGLoader::getTagCFGFullList( Histogram *whichHistogram )
-{
-  vector< string > tags;
-
-  tags.push_back( Analyzer2DCreate::getTagCFG() );
-  tags.push_back( Analyzer2DName::getTagCFG() );
-  tags.push_back( Analyzer2DX::getTagCFG() );
-  tags.push_back( Analyzer2DY::getTagCFG() );
-  tags.push_back( Analyzer2DWidth::getTagCFG() );
-  tags.push_back( Analyzer2DHeight::getTagCFG() );
-  tags.push_back( Analyzer2DControlWindow::getTagCFG() );
-  tags.push_back( Analyzer2DDataWindow::getTagCFG() );
-  tags.push_back( Analyzer2DAccumulator::getTagCFG() );
-  tags.push_back( Analyzer2DStatistic::getTagCFG() );
-  tags.push_back( Analyzer2DCalculateAll::getTagCFG() );
-  tags.push_back( Analyzer2DHideColumns::getTagCFG() );
-  tags.push_back( Analyzer2DHorizontal::getTagCFG() );
-  tags.push_back( Analyzer2DColor::getTagCFG() );
-  tags.push_back( Analyzer2DSemanticColor::getTagCFG() );
-  tags.push_back( Analyzer2DZoom::getTagCFG() );
-  tags.push_back( Analyzer2DAccumulateByControlWindow::getTagCFG() );
-  tags.push_back( Analyzer2DSortCols::getTagCFG() );
-  tags.push_back( Analyzer2DSortCriteria::getTagCFG() );
-  tags.push_back( Analyzer2DParameters::getTagCFG() );
-  tags.push_back( Analyzer2DAnalysisLimits::getTagCFG() );
-  tags.push_back( Analyzer2DRelativeTime::getTagCFG() );
-  tags.push_back( Analyzer2DComputeYScale::getTagCFG() );
-  tags.push_back( Analyzer2DMinimum::getTagCFG() );
-  tags.push_back( Analyzer2DMaximum::getTagCFG() );
-  tags.push_back( Analyzer2DDelta::getTagCFG() );
-  tags.push_back( Analyzer2DComputeGradient::getTagCFG() );
-  tags.push_back( Analyzer2DMinimumGradient::getTagCFG() );
-  tags.push_back( Analyzer2DMaximumGradient::getTagCFG() );
-  tags.push_back( Analyzer2DPixelSize::getTagCFG() );
-  if ( whichHistogram->getThreeDimensions() )
-  {
-    tags.push_back( Analyzer3DControlWindow::getTagCFG() );
-    tags.push_back( Analyzer3DMinimum::getTagCFG() );
-    tags.push_back( Analyzer3DMaximum::getTagCFG() );
-    tags.push_back( Analyzer3DDelta::getTagCFG() );
-    tags.push_back( Analyzer3DFixedValue::getTagCFG() );
-  }
-
-  return tags;
 }
 
 
@@ -4015,9 +3915,9 @@ bool Analyzer2DComputeYScale::parseLine( KernelConnection *whichKernel,
   getline( line, strBool, ' ' );
 
   if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
-    histograms[ histograms.size() - 1 ]->setComputeScale( false );
+    histograms[ histograms.size() - 1 ]->setCompute2DScale( false );
   else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
-    histograms[ histograms.size() - 1 ]->setComputeScale( true );
+    histograms[ histograms.size() - 1 ]->setCompute2DScale( true );
   else
     return false;
 
@@ -4029,10 +3929,7 @@ void Analyzer2DComputeYScale::printLine( ofstream& cfgFile,
     const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_COMPUTEYSCALE << " ";
-  if ( options.histoComputeYScale ||
-       ( *it )->getCompute2DScale() ||
-       ( ( *it )->getThreeDimensions() && ( *it )->getCompute3DScale() )
-     )
+  if ( ( *it )->getCompute2DScale() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -4306,6 +4203,46 @@ void Analyzer3DControlWindow::printLine( ofstream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_AN3D_CONTROLWINDOW << " ";
   cfgFile << CFGLoader::findWindow( ( *it )->getExtraControlWindow(), allWindows ) + 1;
+  cfgFile << endl;
+}
+
+
+string Analyzer3DComputeYScale::tagCFG = OLDCFG_TAG_AN3D_COMPUTEYSCALE;
+
+bool Analyzer3DComputeYScale::parseLine( KernelConnection *whichKernel,
+                                         istringstream& line,
+                                         Trace *whichTrace,
+                                         vector<Window *>& windows,
+                                         vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setCompute3DScale( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setCompute3DScale( true );
+  else
+    return false;
+
+  return true;
+}
+
+void Analyzer3DComputeYScale::printLine( ofstream& cfgFile,
+    const SaveOptions& options,
+    const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN3D_COMPUTEYSCALE << " ";
+  if ( ( *it )->getCompute3DScale() )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
   cfgFile << endl;
 }
 

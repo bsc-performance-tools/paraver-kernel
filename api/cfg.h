@@ -79,7 +79,6 @@ public:
     windowComputeYMaxOnLoad = false;
     windowScaleRelative = true;
     windowBeginTimeRelative = true;
-    histoComputeYScale = false;
     histoComputeGradient = true;
     histoAllTrace = true;
     enabledCFG4DMode = false;
@@ -89,7 +88,6 @@ public:
   bool windowComputeYMaxOnLoad;
   bool windowScaleRelative;
   bool windowBeginTimeRelative;
-  bool histoComputeYScale;
   bool histoComputeGradient;
   bool histoAllTrace;
   bool enabledCFG4DMode;
@@ -1834,6 +1832,31 @@ class Analyzer3DControlWindow: public TagFunction
                             vector<Histogram *>& histograms );
     static void printLine( ofstream& cfgFile,
                            const vector<Window *>& allWindows,
+                           const vector<Histogram *>::const_iterator it );
+
+    static const string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static string tagCFG;
+
+};
+
+
+class Analyzer3DComputeYScale: public TagFunction
+{
+  public:
+    Analyzer3DComputeYScale()
+    {}
+
+    virtual ~Analyzer3DComputeYScale()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+                            Trace *whichTrace,
+                            vector<Window *>& windows,
+                            vector<Histogram *>& histograms );
+    static void printLine( ofstream& cfgFile,
+                           const SaveOptions& options,
                            const vector<Histogram *>::const_iterator it );
 
     static const string &getTagCFG() { return tagCFG; }
