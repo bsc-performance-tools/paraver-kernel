@@ -680,4 +680,70 @@ class AddObjectsI: public SemanticNotThread
 
 };
 
+
+class ChangedValue: public SemanticNotThread
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    ChangedValue()
+    {
+      setDefaultParam();
+    }
+
+    ~ChangedValue()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual void init( KWindow *whichWindow );
+
+    virtual string getName()
+    {
+      return ChangedValue::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ChangedValue( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return SAME_TYPE;
+    }
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+
+      return ( TParamValue ) 0;
+    }
+    virtual string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
+
+  private:
+    static const bool initFromBegin = true;
+    static string name;
+
+    vector<TSemanticValue> lastValues;
+};
+
 #endif // SEMANTICNOTTHREADFUNCTIONS_H_INCLUDED

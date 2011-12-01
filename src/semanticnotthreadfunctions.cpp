@@ -29,6 +29,7 @@
 
 #include "semanticnotthreadfunctions.h"
 #include "paraverstatisticfunctions.h"
+#include "kwindow.h"
 
 string Adding::name = "Adding";
 TSemanticValue Adding::execute( const SemanticInfo *info )
@@ -197,6 +198,36 @@ TSemanticValue AddObjectsI::execute( const SemanticInfo *info )
 
   for( TObjectOrder i = 0; i < parameters[ OBJECTS ].size(); i++ )
     tmp += myInfo->values[ ( TObjectOrder ) parameters[ OBJECTS ][ i ] ];
+
+  return tmp;
+}
+
+
+string ChangedValue::name = "Changed value";
+void ChangedValue::init( KWindow *whichWindow )
+{
+  lastValues.clear();
+}
+
+TSemanticValue ChangedValue::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp = 0.0;
+
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+
+  if( lastValues.size() != 0 )
+  {
+    for ( TObjectOrder i = 0; i < myInfo->values.size(); i++ )
+    {
+      if( myInfo->values[ i ] != lastValues[ i ] )
+      {
+        tmp = myInfo->values[ i ];
+        break;
+      }
+    }
+  }
+
+  lastValues = myInfo->values;
 
   return tmp;
 }

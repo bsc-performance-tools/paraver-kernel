@@ -124,6 +124,7 @@ void createSemantic()
   functions[3].push_back( new NotThreadMode() );
   functions[3].push_back( new ObjectI() );
   functions[3].push_back( new AddObjectsI() );
+  functions[3].push_back( new ChangedValue() );
 
 
   /**************************
