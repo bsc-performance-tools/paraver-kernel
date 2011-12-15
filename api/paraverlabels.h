@@ -259,6 +259,7 @@ static const string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
 #define GUI_IMAGE_FORMAT_PNG              "PNG"
 #define GUI_IMAGE_FORMAT_XPM              "XPM"
 #define GUI_TEXT_FORMAT_CSV               "CSV"
+#define GUI_TEXT_FORMAT_GNUPLOT           "GNUPlot"
 #define GUI_TEXT_FORMAT_PLAIN             "Plain"
 
 // GUI Single Timeline property labels

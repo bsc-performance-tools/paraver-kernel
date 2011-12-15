@@ -73,6 +73,7 @@ class ParaverConfig
     enum TTextFormat // << also matrix-row format
     {
       CSV = 0,
+      GNUPLOT,
       PLAIN
     };
 

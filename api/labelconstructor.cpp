@@ -604,7 +604,7 @@ void LabelConstructor::getGUIGroupLabels( const TGroupID groupID, vector< string
 
     case TEXT_FORMAT:
       labels.push_back( GUI_TEXT_FORMAT_CSV );
-      labels.push_back( GUI_TEXT_FORMAT_PLAIN );
+      labels.push_back( GUI_TEXT_FORMAT_GNUPLOT );
       break;
 
     default:
