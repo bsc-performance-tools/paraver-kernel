@@ -1184,6 +1184,7 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->computeGradient = computeGradient;
   clonedHistogramProxy->showColor = showColor;
   clonedHistogramProxy->zoom = zoom;
+  clonedHistogramProxy->pixelSize = pixelSize;
   clonedHistogramProxy->futurePlane = futurePlane;
   clonedHistogramProxy->planeMinValue = planeMinValue;
   clonedHistogramProxy->selectedPlane = selectedPlane;
