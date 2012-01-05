@@ -228,7 +228,7 @@ bool KWindow::getParametersOfFunction( string whichFunction,
       defaultValues.push_back( tmp->getParam( TParamIndex( i ) ) );
     }
 
-    delete tmp; // getFunctions performs a clone
+    delete tmp; // getFunctions returns a clone
 
     done = true;
   }

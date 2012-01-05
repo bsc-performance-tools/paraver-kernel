@@ -487,6 +487,7 @@ bool CFGLoader::saveCFG( const string& filename,
     {
       cfgFile << endl;
       TagAliasCFG4D::printAliasList( cfgFile, it );
+      TagAliasParamCFG4D::printAliasList( cfgFile, it );
     }
 
     cfgFile << endl;
@@ -669,6 +670,7 @@ void CFGLoader::loadMap()
 
   cfgTagFunctions[ CFG_TAG_ALIAS_CFG4D ]                = new TagAliasCFG4D();
   cfgTagFunctions[ CFG_TAG_STATISTIC_ALIAS_CFG4D ]      = new TagAliasStatisticCFG4D();
+  cfgTagFunctions[ CFG_TAG_PARAM_ALIAS_CFG4D ]          = new TagAliasParamCFG4D();
 }
 
 void CFGLoader::unLoadMap()
@@ -4469,12 +4471,73 @@ bool TagAliasStatisticCFG4D::parseLine( KernelConnection *whichKernel,
 void TagAliasStatisticCFG4D::printAliasList( ofstream& cfgFile,
                                              const vector<Histogram *>::const_iterator it )
 {
-    map< string, string > tmpAlias( (*it)->getCFG4DStatisticsAliasList() );
+  map< string, string > tmpAlias( (*it)->getCFG4DStatisticsAliasList() );
 
   for ( map< string, string >::iterator item = tmpAlias.begin(); item != tmpAlias.end(); ++item )
   {
     cfgFile << CFG_TAG_STATISTIC_ALIAS_CFG4D << " ";
     cfgFile << item->first << "|" << item->second << endl;
   }
-
 }
+
+string TagAliasParamCFG4D::tagCFG = "";
+
+bool TagAliasParamCFG4D::parseLine( KernelConnection *whichKernel,
+                                    istringstream& line,
+                                    Trace *whichTrace,
+                                    vector<Window *>& windows,
+                                    vector<Histogram *>& histograms )
+{
+  string currentStatisticCFG4DSemanticLevel;
+  string currentStatisticCFG4DSemanticFunction;
+  string currentStatisticCFG4DSemanticNumParam;
+  string currentStatisticCFG4DAlias;
+
+  getline( line, currentStatisticCFG4DSemanticLevel, '|' );
+  getline( line, currentStatisticCFG4DSemanticFunction, '|' );
+  getline( line, currentStatisticCFG4DSemanticNumParam, '|' );
+  getline( line, currentStatisticCFG4DAlias );
+
+  if ( isWindowTag )
+  {
+    // HISTOGRAM
+    if ( windows[ windows.size() - 1 ] == NULL )
+      return false;
+
+    PRV_UINT32 auxNumParam;
+    istringstream tmpValue( currentStatisticCFG4DSemanticNumParam );
+    if ( !( tmpValue >> auxNumParam ) )
+      return false;
+
+    // It has been created
+    windows[ windows.size() - 1 ]->setCFG4DParamAlias(
+            currentStatisticCFG4DSemanticLevel,
+            currentStatisticCFG4DSemanticFunction,
+            auxNumParam,
+            currentStatisticCFG4DAlias );
+  }
+
+  return true;
+}
+
+
+void TagAliasParamCFG4D::printAliasList( ofstream& cfgFile,
+                                         const vector<Window *>::const_iterator it )
+{
+  string level;
+  string function;
+  PRV_UINT32 param;
+  string aliasName;
+
+  Window::TParamAlias tmpAlias( (*it)->getCFG4DParamAliasList() ); // funcion + num param
+
+  for ( Window::TParamAlias::iterator item = tmpAlias.begin(); item != tmpAlias.end(); ++item )
+  {
+    cfgFile << CFG_TAG_PARAM_ALIAS_CFG4D << " ";
+
+    (*it)->getCFG4DParamAlias( item, level, function, param, aliasName );
+
+    cfgFile << level << "|" << function << "|" << param << "|" << aliasName << endl;
+  }
+}
+

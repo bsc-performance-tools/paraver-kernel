@@ -304,6 +304,7 @@ Window *WindowProxy::clone( )
   clonedWindow->isCFG4DEnabled   = isCFG4DEnabled;
   clonedWindow->CFG4DMode   = CFG4DMode;
   clonedWindow->propertiesAliasCFG4D = propertiesAliasCFG4D;
+  clonedWindow->paramAliasCFG4D = paramAliasCFG4D;
 
   return clonedWindow;
 }
@@ -1375,5 +1376,29 @@ const vector< string > WindowProxy::getCFG4DFullTagList()
   return tags;
 }
 
+void WindowProxy::setCFG4DParamAlias( string semanticLevel,
+                                      string function,
+                                      PRV_UINT32 numParameter,
+                                      string paramAlias )
+{
+  TParamAliasKey key( make_pair( make_pair( semanticLevel, function ), numParameter ) );
+  paramAliasCFG4D[ key ] = paramAlias;
+}
 
+const Window::TParamAlias WindowProxy::getCFG4DParamAliasList() const
+{
+  return paramAliasCFG4D;
+}
+
+void WindowProxy::getCFG4DParamAlias( const TParamAlias::iterator it,
+                                            string &semanticLevel,
+                                            string &function,
+                                            PRV_UINT32 &numParameter,
+                                            string &paramAlias) const
+{
+  semanticLevel = it->first.first.first;
+  function = it->first.first.second;
+  numParameter = it->first.second;
+  paramAlias = it->second;
+}
 

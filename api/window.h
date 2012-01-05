@@ -459,6 +459,28 @@ class Window
       return vector< string >();
     }
 
+    virtual void setCFG4DParamAlias( string semanticLevel,
+                                     string function,
+                                     PRV_UINT32 numParameter,
+                                     string paramAlias )
+    {}
+
+    typedef pair< pair< string, string >, PRV_UINT32 > TParamAliasKey;
+    typedef map< TParamAliasKey, string > TParamAlias;
+    virtual const TParamAlias getCFG4DParamAliasList() const
+    {
+      return TParamAlias();
+    }
+
+    virtual void getCFG4DParamAlias( const TParamAlias::iterator it,
+                                     string &semanticLevel,
+                                     string &function,
+                                     PRV_UINT32 &numParameter,
+                                     string &paramAlias) const
+    {
+    }
+
+
   protected:
     KernelConnection *myKernel;
 
@@ -470,7 +492,7 @@ class WindowProxy: public Window
   public:
     virtual ~WindowProxy();
 
-    // Specefic for WindowProxy because Single and Derived window
+    // Specific for WindowProxy because Single and Derived window
     // SingleWindow
     virtual Filter *getFilter() const;
 
@@ -654,6 +676,17 @@ class WindowProxy: public Window
 
     virtual const vector< string > getCFG4DFullTagList();
 
+    virtual void setCFG4DParamAlias( string semanticLevel,
+                                     string function,
+                                     PRV_UINT32 numParameter,
+                                     string paramAlias );
+    virtual const TParamAlias getCFG4DParamAliasList() const;
+    virtual void getCFG4DParamAlias( const TParamAlias::iterator it,
+                                     string &semanticLevel,
+                                     string &function,
+                                     PRV_UINT32 &numParameter,
+                                     string &paramAlias) const;
+
   private:
     Window *myWindow;
     Trace *myTrace;
@@ -714,6 +747,7 @@ class WindowProxy: public Window
     bool isCFG4DEnabled;
     bool CFG4DMode;
     map< string, string > propertiesAliasCFG4D;
+    TParamAlias paramAliasCFG4D;
 
     // For Clone
     WindowProxy();
