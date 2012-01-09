@@ -54,6 +54,7 @@ class KernelConnection
     virtual ~KernelConnection() {}
 
     virtual bool checkTraceSize( const string& filename, TTraceSize maxSize ) const = 0;
+    virtual TTraceSize getTraceSize( const string& filename ) const = 0;
     virtual Trace *newTrace( const string& whichFile, bool noLoad, ProgressController *progress ) const = 0;
     virtual string getPCFFileLocation( const string& traceFile ) const = 0;
     virtual string getROWFileLocation( const string& traceFile ) const = 0;

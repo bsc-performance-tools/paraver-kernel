@@ -43,6 +43,7 @@ class LocalKernel: public KernelConnection
     virtual ~LocalKernel();
 
     virtual bool checkTraceSize( const string& filename, TTraceSize maxSize ) const;
+    virtual TTraceSize getTraceSize( const string& filename ) const;
     virtual Trace *newTrace( const string& whichFile, bool noLoad, ProgressController *progress = NULL ) const;
     virtual string getPCFFileLocation( const string& traceFile ) const;
     virtual string getROWFileLocation( const string& traceFile ) const;

@@ -78,6 +78,11 @@ bool LocalKernel::checkTraceSize( const string& filename, TTraceSize maxSize ) c
   return false;
 }
 
+TTraceSize LocalKernel::getTraceSize( const string& filename ) const
+{
+  return TraceStream::getTraceFileSize( filename );
+}
+
 Trace *LocalKernel::newTrace( const string& whichFile, bool noLoad, ProgressController *progress ) const
 {
   if ( progress == NULL )
