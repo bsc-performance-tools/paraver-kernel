@@ -56,6 +56,8 @@ class LoadedWindows
     void eraseHisto( Histogram *whichHisto );
     Window *getWindow( TWindowID id ) const;
     Histogram *getHisto( TWindowID id ) const;
+    bool emptyWindows() const;
+    bool emptyHistograms() const;
     void getAll( vector<Window *>& onVector ) const;
     void getAll( vector<TWindowID>& onVector ) const;
 

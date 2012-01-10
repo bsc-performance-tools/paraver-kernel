@@ -246,3 +246,13 @@ bool LoadedWindows::notInParents( Window *whichWindow, Window *inParents ) const
 
   return result;
 }
+
+bool LoadedWindows::emptyWindows() const
+{
+  return windows.empty();
+}
+
+bool LoadedWindows::emptyHistograms() const
+{
+  return histograms.empty();
+}
