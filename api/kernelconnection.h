@@ -70,6 +70,7 @@ class KernelConnection
     virtual TraceCutter *newTraceCutter( char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options,
+                                         const vector< TEventType > &whichTypesWithValuesZero,
                                          ProgressController *progress = NULL ) const = 0;
     virtual TraceFilter *newTraceFilter( char *trace_in,
                                          char *trace_out,

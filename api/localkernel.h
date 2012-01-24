@@ -61,6 +61,7 @@ class LocalKernel: public KernelConnection
                                          char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options,
+                                         const vector< TEventType > &whichTypesWithValuesZero,
                                          ProgressController *progress = NULL) const;
     virtual TraceFilter *newTraceFilter( char *trace_in,
                                          char *trace_out,

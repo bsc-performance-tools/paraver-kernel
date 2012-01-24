@@ -351,6 +351,7 @@ class TraceOptionsProxy :public TraceOptions
     friend TraceCutter *LocalKernel::newTraceCutter( char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options,
+                                         const vector< TEventType > &whichTypesWithValuesZero,
                                          ProgressController *progress ) const;
     friend TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
                                           char *trace_out,

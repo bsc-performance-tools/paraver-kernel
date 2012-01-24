@@ -32,6 +32,11 @@
 #include "traceoptions.h"
 //#include "ktracecutter.h"
 #include "kernelconnection.h"
+#include "pcfparser/ParaverTraceConfig.h"
+using namespace libparaver;
+#include <map>
+#include <string.h>
+#include "eventlabels.h"
 
 TraceCutter *TraceCutter::create(  KernelConnection *whichKernel,
                                    char *traceIn,
@@ -49,7 +54,32 @@ TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
                                     TraceOptions *options,
                                     ProgressController *progress )
 {
-  myTraceCutter = whichKernel->newTraceCutter( traceIn, traceOut, options, progress );
+  char *pcf_name, *c;
+
+  pcf_name = strdup( traceIn );
+  c = strrchr( pcf_name, '.' );
+  sprintf( c, ".pcf" );
+
+  ParaverTraceConfig *config = new ParaverTraceConfig( string( pcf_name ) );
+  EventLabels myEventLabels = EventLabels( *config, set<TEventType>() );
+  vector< TEventType > allTypes;
+  vector< TEventType > typesWithValueZero;
+  EventLabels labels;
+  labels.getTypes( allTypes );
+  map< TEventValue, string > currentEventValues;
+  for( vector< TEventType >::iterator it = allTypes.begin(); it != allTypes.end(); ++it )
+  {
+    if ( labels.getValues( *it, currentEventValues ) )
+    {
+      if ( currentEventValues.find( TEventValue( 0 )) != currentEventValues.end() )
+      {
+        typesWithValueZero.push_back( *it );
+      }
+      currentEventValues.clear();
+    }
+  }
+
+  myTraceCutter = whichKernel->newTraceCutter( traceIn, traceOut, options, typesWithValueZero, progress );
 }
 
 

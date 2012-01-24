@@ -317,6 +317,16 @@ string applyFilters( KernelConnection *myKernel,
   char tmpNameIn[1024], tmpNameOut[1024], tmpPathOut[1024];
   string strOutputFile, strPathOut;
 
+  // Only for cutter
+  char *pcf_name;
+  vector< TEventType > allTypes;
+  vector< TEventType > typesWithValueZero;
+  EventLabels labels;
+  map< TEventValue, string > currentEventValues;
+  ParaverTraceConfig *config;
+  FILE *pcfFile;
+
+
   traceOptions = myKernel->newTraceOptions( );
   // The order is given by the command line, not the xml file.
   vector<int> xmlToolOrder = traceOptions->parseDoc( (char *)strXMLOptions.c_str() );
@@ -341,9 +351,34 @@ string applyFilters( KernelConnection *myKernel,
     switch( filterToolOrder[i] )
     {
       case INC_CHOP_COUNTER:
+        pcf_name = myKernel->composeName( tmpNameIn, (char *)"pcf" );
+
+        if(( pcfFile = fopen( pcf_name, "r" )) != NULL )
+        {
+          fclose( pcfFile );
+
+          config = new ParaverTraceConfig( pcf_name );
+          labels = EventLabels( *config, set<TEventType>() );
+          labels.getTypes( allTypes );
+          for( vector< TEventType >::iterator it = allTypes.begin(); it != allTypes.end(); ++it )
+          {
+            if ( labels.getValues( *it, currentEventValues ) )
+            {
+              if ( currentEventValues.find( TEventValue( 0 )) != currentEventValues.end() )
+              {
+                typesWithValueZero.push_back( *it );
+              }
+              currentEventValues.clear();
+            }
+          }
+
+          delete config;
+        }
+
         traceCutter = myKernel->newTraceCutter( tmpNameIn,
                                                 tmpNameOut,
-                                                traceOptions );
+                                                traceOptions,
+                                                typesWithValueZero );
         myKernel->copyPCF( tmpNameIn, tmpNameOut );
         break;
 

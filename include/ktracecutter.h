@@ -34,6 +34,7 @@
 #include "zlib.h"
 
 #include "tracecutter.h"
+#include <set>
 
 class KTraceCutter : public TraceCutter
 {
@@ -41,6 +42,7 @@ class KTraceCutter : public TraceCutter
     KTraceCutter( char *&trace_in,
                   char *&trace_out,
                   TraceOptions *options,
+                  const vector< TEventType > &whichTypesWithValuesZero,
                   ProgressController *progress );
     virtual ~KTraceCutter();
 
@@ -72,7 +74,7 @@ class KTraceCutter : public TraceCutter
     unsigned int min_perc;
     unsigned int max_perc;
     bool by_time;
-    bool old_times;
+    bool originalTime;
     unsigned int max_size;
     bool is_zip;
     unsigned int cut_tasks;
@@ -101,27 +103,23 @@ class KTraceCutter : public TraceCutter
     unsigned long long counters[500];
     int last_counter;
 
+    // Event types scanned from .pcf file with declared value 0.
+    set< TEventType > PCFEventTypesWithValuesZero;
+
     /* Struct for the case of MAX_TRACE_SIZE */
-    struct thread_info
+    class thread_info
     {
-      int appl;
-      int task;
-      int thread;
-      unsigned long long last_time;
-      bool finished;
-      unsigned long long event_queue[20];
-      int first;
-      int last;
-      struct thread_info *next;
-      struct thread_info *previous;
+      public:
+        unsigned long long last_time;
+        bool finished;
+        TCPUOrder lastCPU; // last CPU to be able to write trailing records.
+        set< TEventType >      eventTypesWithoutPCFZeros; //
+        multiset< TEventType > eventTypesWithPCFZeros; //
     };
 
-    struct thread_info *tasks[MAX_APPL][MAX_TASK][MAX_THREAD];
-    struct thread_info *first;
-    struct thread_info *last;
-
-
     /* struct for cutting only selected tasks */
+    thread_info *tasks[MAX_APPL][MAX_TASK][MAX_THREAD];
+
     struct selected_tasks
     {
       int min_task_id;
@@ -148,5 +146,3 @@ class KTraceCutter : public TraceCutter
 };
 
 #endif // _KTRACECUTTER_H_
-
-
