@@ -459,25 +459,61 @@ class Window
       return vector< string >();
     }
 
+    typedef pair< pair< string, string >, PRV_UINT32 > TParamAliasKey;
+    typedef map< TParamAliasKey, string > TParamAlias;
+
+    virtual void setCFG4DParamAlias( const TParamAlias &whichParamAlias )
+    {}
+
     virtual void setCFG4DParamAlias( string semanticLevel,
                                      string function,
                                      PRV_UINT32 numParameter,
                                      string paramAlias )
     {}
 
-    typedef pair< pair< string, string >, PRV_UINT32 > TParamAliasKey;
-    typedef map< TParamAliasKey, string > TParamAlias;
+    virtual const vector< TParamAliasKey > getCFG4DCurrentSelectedFullParamList()
+    {
+      return vector< TParamAliasKey >();
+    }
+
     virtual const TParamAlias getCFG4DParamAliasList() const
     {
       return TParamAlias();
     }
 
-    virtual void getCFG4DParamAlias( const TParamAlias::iterator it,
-                                     string &semanticLevel,
-                                     string &function,
-                                     PRV_UINT32 &numParameter,
-                                     string &paramAlias) const
+    virtual void splitCFG4DParamAliasKey( const TParamAliasKey &pk,
+                                          string &semanticLevel,
+                                          string &function,
+                                          PRV_UINT32 &numParameter ) const
     {
+    }
+
+    virtual const TParamAliasKey buildCFG4DParamAliasKey( const string &semanticLevel,
+                                                          const string &function,
+                                                          const PRV_UINT32 &numParameter ) const
+    {
+      return TParamAliasKey();
+    }
+
+    virtual Window::TParamAliasKey getCFG4DParamAliasKey( const TParamAlias::iterator it ) const
+    {
+      return TParamAliasKey();
+    }
+
+    virtual const string getCFG4DParamAlias( const TParamAliasKey &pk ) const
+    {
+      return string( "" );
+    }
+
+    virtual const string getCFG4DParamAlias( const TParamAlias::iterator &it ) const
+    {
+      return string( "" );
+    }
+
+    virtual vector<Window::TParamAliasKey > getCFG4DParamKeysBySemanticLevel( string whichSemanticLevel,
+                                                                              const vector< Window::TParamAliasKey > &whichParamAlias = vector<Window::TParamAliasKey >() ) const
+    {
+      return vector<Window::TParamAliasKey >();
     }
 
 
@@ -676,17 +712,30 @@ class WindowProxy: public Window
 
     virtual const vector< string > getCFG4DFullTagList();
 
+    // Returns the keys ( semantic level, function, num parameter ) of the parameters
+    //   of the current selected functions in the visible levels.
+    virtual const vector< TParamAliasKey > getCFG4DCurrentSelectedFullParamList();
+    virtual void setCFG4DParamAlias( const TParamAlias &whichParamAlias );
     virtual void setCFG4DParamAlias( string semanticLevel,
                                      string function,
                                      PRV_UINT32 numParameter,
                                      string paramAlias );
     virtual const TParamAlias getCFG4DParamAliasList() const;
-    virtual void getCFG4DParamAlias( const TParamAlias::iterator it,
-                                     string &semanticLevel,
-                                     string &function,
-                                     PRV_UINT32 &numParameter,
-                                     string &paramAlias) const;
+    virtual void splitCFG4DParamAliasKey( const TParamAliasKey &pk,
+                                          string &semanticLevel,
+                                          string &function,
+                                          PRV_UINT32 &numParameter ) const;
 
+    virtual Window::TParamAliasKey getCFG4DParamAliasKey( const TParamAlias::iterator it ) const;
+    virtual const string getCFG4DParamAlias( const TParamAlias::iterator &it ) const;
+    virtual const string getCFG4DParamAlias( const TParamAliasKey &pk ) const;
+    virtual vector< Window::TParamAliasKey > getCFG4DParamKeysBySemanticLevel(
+                    string whichSemanticLevel,
+                    const vector< Window::TParamAliasKey > &whichParamAlias = vector<Window::TParamAliasKey >()  ) const;
+    virtual const Window::TParamAliasKey buildCFG4DParamAliasKey(
+                                                const string &semanticLevel,
+                                                const string &function,
+                                                const PRV_UINT32 &numParameter ) const;
   private:
     Window *myWindow;
     Trace *myTrace;

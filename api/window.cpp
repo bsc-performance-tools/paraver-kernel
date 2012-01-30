@@ -1376,6 +1376,78 @@ const vector< string > WindowProxy::getCFG4DFullTagList()
   return tags;
 }
 
+
+const vector< Window::TParamAliasKey > WindowProxy::getCFG4DCurrentSelectedFullParamList()
+{
+  vector< TParamAliasKey > retKeys;
+
+  TWindowLevel curLevel, beginLevel, endLevel, beginCompose, endCompose;
+
+  string semanticLevel, semanticFunction;
+  PRV_UINT32 numParameter;
+  TParamAliasKey key;
+
+  beginLevel = getLevel();
+
+  switch ( beginLevel )
+  {
+    case WORKLOAD:
+    case APPLICATION:
+    case TASK:
+    case THREAD:
+      endLevel = THREAD;
+      beginCompose = COMPOSEAPPLICATION;
+      endCompose = COMPOSETHREAD;
+      break;
+
+    case SYSTEM:
+    case NODE:
+    case CPU:
+      endLevel = CPU;
+      beginCompose = COMPOSESYSTEM;
+      endCompose = COMPOSECPU;
+      break;
+
+    default:
+      break;
+  }
+
+  for( int level = TOPCOMPOSE1; level <= TOPCOMPOSE2; ++level )
+  {
+    curLevel = static_cast< TWindowLevel >( level );
+    semanticLevel = TimelineLevelLabels[ curLevel ];
+    semanticFunction = getLevelFunction( curLevel );
+    numParameter = getFunctionNumParam( curLevel );
+    for( PRV_UINT32 i = 0; i < (PRV_UINT32)numParameter; ++i )
+    {
+      key = make_pair( make_pair( semanticLevel, semanticFunction ), i );
+      retKeys.push_back( key );
+    }
+  }
+
+  for( int level = beginLevel; level <= endLevel; ++level )
+  {
+    curLevel = static_cast< TWindowLevel >( level );
+    semanticLevel = TimelineLevelLabels[ curLevel ];
+    semanticFunction = getLevelFunction( curLevel );
+    numParameter = getFunctionNumParam( curLevel );
+    for( PRV_UINT32 i = 0; i < (PRV_UINT32)numParameter; ++i )
+    {
+      key = make_pair( make_pair( semanticLevel, semanticFunction ), i );
+      retKeys.push_back( key );
+    }
+  }
+
+  return retKeys;
+}
+
+
+void WindowProxy::setCFG4DParamAlias( const TParamAlias &whichParamAlias )
+{
+  paramAliasCFG4D = whichParamAlias;
+}
+
+
 void WindowProxy::setCFG4DParamAlias( string semanticLevel,
                                       string function,
                                       PRV_UINT32 numParameter,
@@ -1390,15 +1462,75 @@ const Window::TParamAlias WindowProxy::getCFG4DParamAliasList() const
   return paramAliasCFG4D;
 }
 
-void WindowProxy::getCFG4DParamAlias( const TParamAlias::iterator it,
-                                            string &semanticLevel,
-                                            string &function,
-                                            PRV_UINT32 &numParameter,
-                                            string &paramAlias) const
+void WindowProxy::splitCFG4DParamAliasKey( const TParamAliasKey &pk,
+                                           string &semanticLevel,
+                                           string &function,
+                                           PRV_UINT32 &numParameter ) const
 {
-  semanticLevel = it->first.first.first;
-  function = it->first.first.second;
-  numParameter = it->first.second;
-  paramAlias = it->second;
+  semanticLevel = pk.first.first;
+  function = pk.first.second;
+  numParameter = pk.second;
 }
 
+
+const Window::TParamAliasKey WindowProxy::buildCFG4DParamAliasKey( const string &semanticLevel,
+                                                                   const string &function,
+                                                                   const PRV_UINT32 &numParameter ) const
+{
+  TParamAliasKey key( make_pair( make_pair( semanticLevel, function ), numParameter ) );
+  return key;
+}
+
+
+Window::TParamAliasKey WindowProxy::getCFG4DParamAliasKey( const TParamAlias::iterator it ) const
+{
+  return it->first;
+}
+
+const string WindowProxy::getCFG4DParamAlias( const TParamAlias::iterator &it ) const
+{
+  return it->second;
+}
+
+
+const string WindowProxy::getCFG4DParamAlias( const TParamAliasKey &pk ) const
+{
+  TParamAlias::const_iterator it = paramAliasCFG4D.find( pk );
+  return ( it != paramAliasCFG4D.end()? it->second:string("") );
+}
+
+
+vector< Window::TParamAliasKey > WindowProxy::getCFG4DParamKeysBySemanticLevel( string whichSemanticLevel,
+                                                                                const vector< Window::TParamAliasKey > &whichParamAliasKey ) const
+{
+  vector< TParamAliasKey > retKeys;
+  string semanticLevel, function;
+  PRV_UINT32 numParameter;
+
+  // change to a single class, inside Window
+  if ( whichParamAliasKey.size() > 0 )
+  {
+    for( vector< TParamAliasKey >::const_iterator it = whichParamAliasKey.begin(); it != whichParamAliasKey.end(); ++it )
+    {
+      splitCFG4DParamAliasKey( *it, semanticLevel, function, numParameter );
+      if ( semanticLevel == whichSemanticLevel )
+      {
+        retKeys.push_back( *it );
+      }
+    }
+  }
+  else
+  {
+    for( TParamAlias::const_iterator it = paramAliasCFG4D.begin(); it != paramAliasCFG4D.end(); ++it )
+    {
+      splitCFG4DParamAliasKey( it->first, semanticLevel, function, numParameter );
+      if ( semanticLevel == whichSemanticLevel )
+      {
+        retKeys.push_back( (Window::TParamAliasKey) it->first );
+      }
+    }
+  }
+
+
+  return retKeys;
+}

@@ -122,10 +122,7 @@ bool EventLabels::getEventValueLabel( TEventValue value, string& onStr ) const
     ++it;
   }
 
-  if ( found )
-    return true;
-  //onStr = unknownLabel;
-  return false;
+  return found;
 }
 
 

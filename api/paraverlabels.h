@@ -263,6 +263,31 @@ static const string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
 #define GUI_TEXT_FORMAT_GNUPLOT           "GNUPlot"
 #define GUI_TEXT_FORMAT_PLAIN             "Plain"
 
+
+// GUI Semantic Levels - INDEXED WITH TWindowLevel
+static const string TimelineLevelLabels[ DERIVED + 1 ] =
+{
+  "None",
+  "Workload",
+  "Application",
+  "Task",
+  "Thread",
+  "System",
+  "Node",
+  "CPU",
+  "Top Compose 1",
+  "Top Compose 2",
+  "Compose Workload",
+  "Compose Appl",
+  "Compose Task",
+  "Compose Thread",
+  "Compose System",
+  "Compose Node",
+  "Compose CPU",
+  "Derived"
+};
+
+
 // GUI Single Timeline property labels
 enum TSingleTimelineProperties
 {

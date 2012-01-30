@@ -4524,6 +4524,7 @@ bool TagAliasParamCFG4D::parseLine( KernelConnection *whichKernel,
 void TagAliasParamCFG4D::printAliasList( ofstream& cfgFile,
                                          const vector<Window *>::const_iterator it )
 {
+  Window::TParamAliasKey aliasKey;
   string level;
   string function;
   PRV_UINT32 param;
@@ -4535,7 +4536,9 @@ void TagAliasParamCFG4D::printAliasList( ofstream& cfgFile,
   {
     cfgFile << CFG_TAG_PARAM_ALIAS_CFG4D << " ";
 
-    (*it)->getCFG4DParamAlias( item, level, function, param, aliasName );
+    aliasKey  = (*it)->getCFG4DParamAliasKey( item );
+    (*it)->splitCFG4DParamAliasKey( aliasKey, level, function, param );
+    aliasName = (*it)->getCFG4DParamAlias( item );
 
     cfgFile << level << "|" << function << "|" << param << "|" << aliasName << endl;
   }
