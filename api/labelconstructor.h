@@ -107,6 +107,7 @@ class LabelConstructor
     static stringstream sstrTimeLabel;
     static stringstream sstrSemanticLabel;
 
+    static string rowStr;
     static char separator;
     static char point;
 };

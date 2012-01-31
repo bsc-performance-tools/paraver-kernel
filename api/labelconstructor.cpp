@@ -43,8 +43,9 @@ stringstream LabelConstructor::columnLabel;
 stringstream LabelConstructor::tmp;
 stringstream LabelConstructor::sstrTimeLabel;
 stringstream LabelConstructor::sstrSemanticLabel;
-char LabelConstructor::separator;
-char LabelConstructor::point;
+string       LabelConstructor::rowStr;
+char         LabelConstructor::separator;
+char         LabelConstructor::point;
 
 void LabelConstructor::init()
 {
@@ -68,7 +69,7 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
                                       Trace *whichTrace,
                                       bool showLevelTag )
 {
-  string rowStr( whichTrace->getRowLabel( level, globalOrder ) );
+  rowStr = whichTrace->getRowLabel( level, globalOrder );
   label.clear();
   label.str( "" );
 
