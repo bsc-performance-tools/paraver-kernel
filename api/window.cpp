@@ -1396,7 +1396,7 @@ const vector< Window::TParamAliasKey > WindowProxy::getCFG4DCurrentSelectedFullP
     case TASK:
     case THREAD:
       endLevel = THREAD;
-      beginCompose = COMPOSEAPPLICATION;
+      beginCompose = COMPOSEWORKLOAD;
       endCompose = COMPOSETHREAD;
       break;
 
@@ -1413,6 +1413,19 @@ const vector< Window::TParamAliasKey > WindowProxy::getCFG4DCurrentSelectedFullP
   }
 
   for( int level = TOPCOMPOSE1; level <= TOPCOMPOSE2; ++level )
+  {
+    curLevel = static_cast< TWindowLevel >( level );
+    semanticLevel = TimelineLevelLabels[ curLevel ];
+    semanticFunction = getLevelFunction( curLevel );
+    numParameter = getFunctionNumParam( curLevel );
+    for( PRV_UINT32 i = 0; i < (PRV_UINT32)numParameter; ++i )
+    {
+      key = make_pair( make_pair( semanticLevel, semanticFunction ), i );
+      retKeys.push_back( key );
+    }
+  }
+
+  for( int level = beginCompose; level <= endCompose; ++level )
   {
     curLevel = static_cast< TWindowLevel >( level );
     semanticLevel = TimelineLevelLabels[ curLevel ];
