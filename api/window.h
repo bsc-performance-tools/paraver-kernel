@@ -40,6 +40,79 @@
 #include "selectionmanagement.h"
 #include "paraverlabels.h"
 
+#ifdef WIN32
+#include <hash_set>
+#else
+#include <ext/hash_set>
+#endif
+
+#ifdef WIN32
+using namespace stdext;
+#else
+using namespace __gnu_cxx;
+#endif
+
+struct commCoord
+{
+  PRV_INT32 fromTime;
+  PRV_INT32 toTime;
+  PRV_INT32 toRow;
+  TRecordType recType;
+
+  bool operator==( const commCoord& b ) const
+  {
+    return fromTime == b.fromTime &&
+           toTime   == b.toTime   &&
+           toRow    == b.toRow    &&
+           recType  == b.recType;
+  }
+
+#ifdef WIN32
+  bool operator<( const commCoord& b ) const
+  {
+    return true;
+  }
+
+  size_t hash() const {
+    return ( ( fromTime + toTime + toRow ) * 100 ) + recType;
+  }
+#endif
+};
+
+#ifdef WIN32
+  namespace stdext
+  {
+    template<> class hash_compare<commCoord>
+    {
+      public :
+        static const size_t bucket_size = 4;
+        static const size_t min_buckets = 8;
+        hash_compare() { }
+
+        size_t operator()(const commCoord &cc) const
+        {
+          return cc.hash();
+        }
+
+        bool operator()(const commCoord &cc1, const commCoord &cc2) const
+        {
+          return (cc1 < cc2);
+        }
+    };
+  }
+#endif
+
+#ifndef WIN32
+struct hashCommCoord
+{
+  size_t operator()( const commCoord& x ) const
+  {
+    return ( ( x.fromTime + x.toTime + x.toRow ) * 100 ) + x.recType;
+  }
+};
+#endif
+
+
 class KernelConnection;
 class Trace;
 class RecordList;
@@ -516,6 +589,50 @@ class Window
       return vector<Window::TParamAliasKey >();
     }
 
+#ifdef PARALLEL_ENABLED
+#ifdef WIN32
+    virtual void drawRow( TObjectOrder firstRow, TObjectOrder lastRow,
+                          vector<TObjectOrder>& selectedSet, vector<bool>& selected,
+                          TTime timeStep,
+                          PRV_INT32 timePos, PRV_INT32 objectAxisPos,
+                          bool& drawCaution,
+                          vector< PRV_INT32 >& objectPosList,
+                          vector< TSemanticValue >& valuesToDraw,
+                          hash_set< PRV_INT32 >& eventsToDraw,
+                          hash_set<commCoord>& commsToDraw )
+#else
+    virtual void drawRow( TObjectOrder firstRow, TObjectOrder lastRow,
+                          vector<TObjectOrder>& selectedSet, vector<bool>& selected,
+                          TTime timeStep,
+                          PRV_INT32 timePos, PRV_INT32 objectAxisPos,
+                          bool& drawCaution,
+                          vector< PRV_INT32 >& objectPosList,
+                          vector< TSemanticValue >& valuesToDraw,
+                          hash_set< PRV_INT32 >& eventsToDraw,
+                          hash_set<commCoord,hashCommCoord>& commsToDraw )
+#endif
+    {}
+
+#ifdef WIN32
+    virtual void drawRecords( RecordList *records,
+                              TTime from, TTime to, TTime step,
+                              PRV_INT32 timePos, PRV_INT32 objectAxisPos,
+                              vector<bool>& selected,
+                              vector< PRV_INT32 >& objectPosList,
+                              hash_set< PRV_INT32 >& eventsToDraw,
+                              hash_set<commCoord>& commsToDraw )
+#else
+    virtual void drawRecords( RecordList *records,
+                              TTime from, TTime to, TTime step,
+                              PRV_INT32 timePos, PRV_INT32 objectAxisPos,
+                              vector<bool>& selected,
+                              vector< PRV_INT32 >& objectPosList,
+                              hash_set< PRV_INT32 >& eventsToDraw,
+                              hash_set< commCoord,hashCommCoord>& commsToDraw  )
+#endif
+  {}
+
+#endif
 
   protected:
     KernelConnection *myKernel;
@@ -736,6 +853,46 @@ class WindowProxy: public Window
                                                 const string &semanticLevel,
                                                 const string &function,
                                                 const PRV_UINT32 &numParameter ) const;
+
+
+#ifdef PARALLEL_ENABLED
+#ifdef WIN32
+    virtual void drawRow( TObjectOrder firstRow, TObjectOrder lastRow,
+                          vector<TObjectOrder>& selectedSet, vector<bool>& selected,
+                          TTime timeStep,
+                          PRV_INT32 timePos, PRV_INT32 objectAxisPos,
+                          bool& drawCaution,
+                          vector< PRV_INT32 >& objectPosList,
+                          vector< TSemanticValue >& valuesToDraw,
+                          hash_set< PRV_INT32 >& eventsToDraw,
+                          hash_set<commCoord>& commsToDraw );
+    virtual void drawRecords( RecordList *records,
+                              TTime from, TTime to, TTime step,
+                              PRV_INT32 timePos, PRV_INT32 objectAxisPos,
+                              vector<bool>& selected,
+                              vector< PRV_INT32 >& objectPosList,
+                              hash_set< PRV_INT32 >& eventsToDraw,
+                              hash_set<commCoord>& commsToDraw );
+#else
+    virtual void drawRow( TObjectOrder firstRow, TObjectOrder lastRow,
+                          vector<TObjectOrder>& selectedSet, vector<bool>& selected,
+                          TTime timeStep,
+                          PRV_INT32 timePos, PRV_INT32 objectAxisPos,
+                          bool& drawCaution,
+                          vector< PRV_INT32 >& objectPosList,
+                          vector< TSemanticValue >& valuesToDraw,
+                          hash_set< PRV_INT32 >& eventsToDraw,
+                          hash_set<commCoord,hashCommCoord>& commsToDraw );
+    virtual void drawRecords( RecordList *records,
+                              TTime from, TTime to, TTime step,
+                              PRV_INT32 timePos, PRV_INT32 objectAxisPos,
+                              vector<bool>& selected,
+                              vector< PRV_INT32 >& objectPosList,
+                              hash_set< PRV_INT32 >& eventsToDraw,
+                              hash_set< commCoord,hashCommCoord>& commsToDraw );
+#endif
+#endif
+
   private:
     Window *myWindow;
     Trace *myTrace;

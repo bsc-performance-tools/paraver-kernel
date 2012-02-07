@@ -1547,3 +1547,155 @@ vector< Window::TParamAliasKey > WindowProxy::getCFG4DParamKeysBySemanticLevel( 
 
   return retKeys;
 }
+
+#ifdef PARALLEL_ENABLED
+#ifdef WIN32
+void WindowProxy::drawRow( TObjectOrder firstRow, TObjectOrder lastRow,
+                           vector<TObjectOrder>& selectedSet, vector<bool>& selected,
+                           TTime timeStep,
+                           PRV_INT32 timePos, PRV_INT32 objectAxisPos,
+                           bool& drawCaution,
+                           vector< PRV_INT32 >& objectPosList,
+                           vector< TSemanticValue >& valuesToDraw,
+                           hash_set< PRV_INT32 >& eventsToDraw,
+                           hash_set<commCoord>& commsToDraw )
+#else
+void WindowProxy::drawRow( TObjectOrder firstRow, TObjectOrder lastRow,
+                           vector<TObjectOrder>& selectedSet, vector<bool>& selected,
+                           TTime timeStep,
+                           PRV_INT32 timePos, PRV_INT32 objectAxisPos,
+                           bool& drawCaution,
+                           vector< PRV_INT32 >& objectPosList,
+                           vector< TSemanticValue >& valuesToDraw,
+                           hash_set< PRV_INT32 >& eventsToDraw,
+                           hash_set<commCoord,hashCommCoord>& commsToDraw )
+#endif
+{
+  float magnify = float( getPixelSize() );
+
+  vector<TSemanticValue> timeValues;
+  vector<TSemanticValue> rowValues;
+
+  vector<TObjectOrder>::iterator first = find( selectedSet.begin(), selectedSet.end(), firstRow );
+  vector<TObjectOrder>::iterator last  = find( selectedSet.begin(), selectedSet.end(), lastRow );
+
+  for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
+    initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS );
+
+  for( TTime currentTime = getWindowBeginTime() + timeStep;
+       currentTime <= getWindowEndTime() && currentTime <= getTrace()->getEndTime();
+       currentTime += timeStep )
+  {
+    rowValues.clear();
+    for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
+    {
+      timeValues.clear();
+
+      while( getEndTime( *row ) <= currentTime - timeStep )
+        calcNext( *row );
+
+      timeValues.push_back( getValue( *row ) );
+      while( getEndTime( *row ) < currentTime )
+      {
+        calcNext( *row );
+        TSemanticValue currentValue = getValue( *row );
+        timeValues.push_back( currentValue );
+        if( currentValue != 0 && ( currentValue < getMinimumY()
+                                   || currentValue > getMaximumY() ) )
+          drawCaution = true;
+      }
+      rowValues.push_back( DrawMode::selectValue( timeValues, getDrawModeTime() ) );
+
+      RecordList *rl = getRecordList( *row );
+      if( rl != NULL )
+        drawRecords( rl,
+                     currentTime - timeStep, currentTime, timeStep / magnify,
+                     timePos, objectAxisPos,
+                     selected,
+                     objectPosList, eventsToDraw, commsToDraw );
+    }
+    valuesToDraw.push_back( DrawMode::selectValue( rowValues, getDrawModeObject() ) );
+    timePos += (int) magnify ;
+  }
+
+  // Erase events and comms remaining in RecordLists
+  for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
+  {
+    RecordList *rl = getRecordList( *row );
+    rl->erase( rl->begin(), rl->end() );
+  }
+}
+
+#ifdef WIN32
+void WindowProxy::drawRecords( RecordList *records,
+                               TTime from, TTime to, TTime step,
+                               PRV_INT32 timePos, PRV_INT32 objectAxisPos,
+                               vector<bool>& selected,
+                               vector< PRV_INT32 >& objectPosList,
+                               hash_set< PRV_INT32 >& eventsToDraw,
+                               hash_set<commCoord>& commsToDraw )
+#else
+void WindowProxy::drawRecords( RecordList *records,
+                               TTime from, TTime to, TTime step,
+                               PRV_INT32 timePos, PRV_INT32 objectAxisPos,
+                               vector<bool>& selected,
+                               vector< PRV_INT32 >& objectPosList,
+                               hash_set< PRV_INT32 >& eventsToDraw,
+                               hash_set< commCoord,hashCommCoord>& commsToDraw  )
+#endif
+{
+  bool existEvents = false;
+  TObjectOrder beginRow = getZoomSecondDimension().first;
+  TObjectOrder endRow =  getZoomSecondDimension().second;
+
+  RecordList::iterator it = records->begin();
+
+  step = ( 1 / step );
+
+  while( it != records->end() && it->getTime() < from )
+    ++it;
+  while( it != records->end() && it->getTime() <= to )
+  {
+    TRecordType recType = it->getType();
+
+    if( recType & EVENT )
+      existEvents = true;
+    else
+    {
+      TObjectOrder partnerObject;
+      if ( getLevel() >= WORKLOAD && getLevel() <= THREAD )
+        partnerObject = threadObjectToWindowObject( it->getCommPartnerObject() );
+      else
+        partnerObject = cpuObjectToWindowObject( it->getCommPartnerObject() );
+
+      if( ( recType & COMM ) &&
+          partnerObject >= beginRow && partnerObject <= endRow && selected[ partnerObject ] &&
+          ( ( recType & RECV ) ||
+            ( ( recType & SEND ) && it->getCommPartnerTime() > getWindowEndTime() ) )
+        )
+      {
+        PRV_INT32 posPartner = ( ( it->getCommPartnerTime() - getWindowBeginTime() ) * step );
+        posPartner += objectAxisPos;
+        if( posPartner > 10000 )
+          posPartner = 10000;
+        else if( posPartner < -10000 )
+          posPartner = -10000;
+        commCoord tmpComm;
+        tmpComm.recType = recType;
+        tmpComm.fromTime = timePos;
+        tmpComm.toTime = posPartner;
+        tmpComm.toRow = objectPosList[ partnerObject ];
+        commsToDraw.insert( tmpComm );
+      }
+    }
+    ++it;
+  }
+
+  if( existEvents )
+    eventsToDraw.insert( timePos );
+
+  records->erase( records->begin(), it );
+}
+
+
+#endif // PARALLEL ENABLED
