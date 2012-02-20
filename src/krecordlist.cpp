@@ -69,7 +69,8 @@ bool KRecordList::newRecords() const
 
 void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
 {
-  static RLRecord tmp;
+  //static RLRecord tmp;
+  RLRecord tmp;
   TCommID id = it->getCommIndex();
   tmp.setType( it->getType() );
   tmp.setTime( it->getTime() );

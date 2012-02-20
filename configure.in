@@ -23,22 +23,22 @@ AC_CONFIG_MACRO_DIR([m4])
 #    Checks for programs    #
 #############################
 
+# Search for libtool support
+AC_LIBTOOL_WIN32_DLL
+AM_PROG_LIBTOOL
+
+AX_PROG_ENABLE_TRACING
+AX_PROG_WITH_EXTRAE
+AX_PROG_ENABLE_PARALLEL
+
 # Search for available compilers and preprocessor
 AC_PROG_CC(gcc xlc cc)
 AC_PROG_CXX(g++ xlC CC)
 AC_PROG_CPP
 AC_PROG_CXXCPP
 
-# Search for libtool support
-AC_LIBTOOL_WIN32_DLL
-AM_PROG_LIBTOOL
-
 AX_BOOST_BASE(1.36)
 AX_BOOST_SERIALIZATION
-AX_PROG_ENABLE_TRACING
-AX_PROG_WITH_EXTRAE
-AX_PROG_ENABLE_PARALLEL
-
 ######################################################################
 #    Checks for typedefs, structures and compiler characteristics    #
 ######################################################################

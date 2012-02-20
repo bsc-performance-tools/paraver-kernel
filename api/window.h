@@ -112,7 +112,6 @@ struct hashCommCoord
 };
 #endif
 
-
 class KernelConnection;
 class Trace;
 class RecordList;
@@ -237,7 +236,15 @@ class Window
     virtual RecordList *getRecordList( TObjectOrder whichObject ) = 0;
     virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true ) = 0;
     virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits = true ) = 0;
+    virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create,
+                          TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
+                          bool updateLimits = true )
+    {}
     virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true ) = 0;
+    virtual RecordList *calcNext( TObjectOrder whichObject,
+                                  TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
+                                  bool updateLimits = true )
+    { return NULL; }
     virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true ) = 0;
     virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const = 0;
     virtual TRecordTime getEndTime( TObjectOrder whichObject ) const = 0;
@@ -589,50 +596,90 @@ class Window
       return vector<Window::TParamAliasKey >();
     }
 
-#ifdef PARALLEL_ENABLED
 #ifdef WIN32
-    virtual void drawRow( TObjectOrder firstRow, TObjectOrder lastRow,
-                          vector<TObjectOrder>& selectedSet, vector<bool>& selected,
-                          TTime timeStep,
-                          PRV_INT32 timePos, PRV_INT32 objectAxisPos,
-                          bool& drawCaution,
-                          vector< PRV_INT32 >& objectPosList,
-                          vector< TSemanticValue >& valuesToDraw,
-                          hash_set< PRV_INT32 >& eventsToDraw,
-                          hash_set<commCoord>& commsToDraw )
+    virtual void computeSemanticParallel( vector< TObjectOrder >& selectedSet,
+                                          vector< bool >& selected,
+                                          TTime timeStep,
+                                          PRV_INT32 timePos,
+                                          PRV_INT32 objectAxisPos,
+                                          vector< PRV_INT32 >& objectPosList,
+                                          TObjectOrder maxObj,
+                                          bool& drawCaution,                      // I/O
+                                          vector< vector< TSemanticValue > >& valuesToDraw, // I/O
+                                          vector< hash_set< PRV_INT32 > >& eventsToDraw,    // I/O
+                                          vector< hash_set< commCoord > >& commsToDraw )    // I/O
 #else
-    virtual void drawRow( TObjectOrder firstRow, TObjectOrder lastRow,
-                          vector<TObjectOrder>& selectedSet, vector<bool>& selected,
-                          TTime timeStep,
-                          PRV_INT32 timePos, PRV_INT32 objectAxisPos,
-                          bool& drawCaution,
-                          vector< PRV_INT32 >& objectPosList,
-                          vector< TSemanticValue >& valuesToDraw,
-                          hash_set< PRV_INT32 >& eventsToDraw,
-                          hash_set<commCoord,hashCommCoord>& commsToDraw )
+    virtual void computeSemanticParallel( vector< TObjectOrder >& selectedSet,
+                                          vector< bool >& selected,
+                                          TTime timeStep,
+                                          PRV_INT32 timePos,
+                                          PRV_INT32 objectAxisPos,
+                                          vector< PRV_INT32 >& objectPosList,
+                                          TObjectOrder maxObj,
+                                          bool& drawCaution,                                  // I/O
+                                          vector< vector< TSemanticValue > >& valuesToDraw,             // I/O
+                                          vector< hash_set< PRV_INT32 > >& eventsToDraw,                // I/O
+                                          vector< hash_set< commCoord, hashCommCoord > >& commsToDraw ) // I/O
 #endif
     {}
 
 #ifdef WIN32
-    virtual void drawRecords( RecordList *records,
-                              TTime from, TTime to, TTime step,
-                              PRV_INT32 timePos, PRV_INT32 objectAxisPos,
-                              vector<bool>& selected,
-                              vector< PRV_INT32 >& objectPosList,
-                              hash_set< PRV_INT32 >& eventsToDraw,
-                              hash_set<commCoord>& commsToDraw )
+    virtual void computeSemanticRowParallel( TObjectOrder firstRow,
+                                             TObjectOrder lastRow,
+                                             vector< TObjectOrder >& selectedSet,
+                                             vector< bool >& selected,
+                                             TTime timeStep,
+                                             PRV_INT32 timePos,
+                                             PRV_INT32 objectAxisPos,
+                                             vector< PRV_INT32 >& objectPosList,
+                                             int& drawCaution,                      // I/O
+                                             TSemanticValue &rowComputedMaxY,
+                                             TSemanticValue &rowComputedMinY,
+                                             vector< TSemanticValue >& valuesToDraw, // I/O
+                                             hash_set< PRV_INT32 >& eventsToDraw,    // I/O
+                                             hash_set< commCoord >& commsToDraw )    // I/O
 #else
-    virtual void drawRecords( RecordList *records,
-                              TTime from, TTime to, TTime step,
-                              PRV_INT32 timePos, PRV_INT32 objectAxisPos,
-                              vector<bool>& selected,
-                              vector< PRV_INT32 >& objectPosList,
-                              hash_set< PRV_INT32 >& eventsToDraw,
-                              hash_set< commCoord,hashCommCoord>& commsToDraw  )
+    virtual void computeSemanticRowParallel( TObjectOrder firstRow,
+                                             TObjectOrder lastRow,
+                                             vector< TObjectOrder >& selectedSet,
+                                             vector< bool >& selected,
+                                             TTime timeStep,
+                                             PRV_INT32 timePos,
+                                             PRV_INT32 objectAxisPos,
+                                             vector< PRV_INT32 >& objectPosList,
+                                             int& drawCaution,                                  // I/O
+                                             TSemanticValue &rowComputedMaxY,
+                                             TSemanticValue &rowComputedMinY,
+                                             vector< TSemanticValue >& valuesToDraw,             // I/O
+                                             hash_set< PRV_INT32 >& eventsToDraw,                // I/O
+                                             hash_set< commCoord, hashCommCoord >& commsToDraw ) // I/O
+#endif
+    {}
+
+#ifdef WIN32
+    virtual void computeEventsCommsParallel( RecordList *records,
+                                             TTime from,
+                                             TTime to,
+                                             TTime step,
+                                             PRV_INT32 timePos,
+                                             PRV_INT32 objectAxisPos,
+                                             vector< bool >& selected,
+                                             vector< PRV_INT32 >& objectPosList,
+                                             hash_set< PRV_INT32 >& eventsToDraw, // I/O
+                                             hash_set< commCoord >& commsToDraw ) // I/O
+#else
+    virtual void computeEventsCommsParallel( RecordList *records,
+                                             TTime from,
+                                             TTime to,
+                                             TTime step,
+                                             PRV_INT32 timePos,
+                                             PRV_INT32 objectAxisPos,
+                                             vector< bool >& selected,
+                                             vector< PRV_INT32 >& objectPosList,
+                                             hash_set< PRV_INT32 >& eventsToDraw,                // I/O
+                                             hash_set< commCoord, hashCommCoord >& commsToDraw ) // I/O
 #endif
   {}
-
-#endif
 
   protected:
     KernelConnection *myKernel;
@@ -704,7 +751,13 @@ class WindowProxy: public Window
     virtual RecordList *getRecordList( TObjectOrder whichObject );
     virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true );
     virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits = true );
+    virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create,
+                          TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
+                          bool updateLimits = true );
     virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true );
+    virtual RecordList *calcNext( TObjectOrder whichObject,
+                                  TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
+                                  bool updateLimits = true );
     virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true );
     virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const;
     virtual TRecordTime getEndTime( TObjectOrder whichObject ) const;
@@ -855,43 +908,85 @@ class WindowProxy: public Window
                                                 const PRV_UINT32 &numParameter ) const;
 
 
-#ifdef PARALLEL_ENABLED
 #ifdef WIN32
-    virtual void drawRow( TObjectOrder firstRow, TObjectOrder lastRow,
-                          vector<TObjectOrder>& selectedSet, vector<bool>& selected,
-                          TTime timeStep,
-                          PRV_INT32 timePos, PRV_INT32 objectAxisPos,
-                          bool& drawCaution,
-                          vector< PRV_INT32 >& objectPosList,
-                          vector< TSemanticValue >& valuesToDraw,
-                          hash_set< PRV_INT32 >& eventsToDraw,
-                          hash_set<commCoord>& commsToDraw );
-    virtual void drawRecords( RecordList *records,
-                              TTime from, TTime to, TTime step,
-                              PRV_INT32 timePos, PRV_INT32 objectAxisPos,
-                              vector<bool>& selected,
-                              vector< PRV_INT32 >& objectPosList,
-                              hash_set< PRV_INT32 >& eventsToDraw,
-                              hash_set<commCoord>& commsToDraw );
+    virtual void computeSemanticParallel( vector< TObjectOrder >& selectedSet,
+                                          vector< bool >& selected,
+                                          TTime timeStep,
+                                          PRV_INT32 timePos,
+                                          PRV_INT32 objectAxisPos,
+                                          vector< PRV_INT32 >& objectPosList,
+                                          TObjectOrder maxObj,
+                                          bool& drawCaution,                      // O
+                                          vector< vector< TSemanticValue > >& valuesToDraw, // O
+                                          vector< hash_set< PRV_INT32 > >& eventsToDraw,    // O
+                                          vector< hash_set< commCoord > >& commsToDraw );   // O
+
+    virtual void computeSemanticRowParallel( TObjectOrder firstRow,
+                                             TObjectOrder lastRow,
+                                             vector< TObjectOrder >& selectedSet,
+                                             vector< bool >& selected,
+                                             TTime timeStep,
+                                             PRV_INT32 timePos,
+                                             PRV_INT32 objectAxisPos,
+                                             vector< PRV_INT32 >& objectPosList,
+                                             int& drawCaution,  // O
+                                             TSemanticValue &rowComputedMaxY,
+                                             TSemanticValue &rowComputedMinY,
+                                             vector< TSemanticValue >& valuesToDraw, // O
+                                             hash_set< PRV_INT32 >& eventsToDraw,    // O
+                                             hash_set< commCoord >& commsToDraw );   // O
+
+    virtual void computeEventsCommsParallel( RecordList *records,
+                                             TTime from,
+                                             TTime to,
+                                             TTime step,
+                                             PRV_INT32 timePos,
+                                             PRV_INT32 objectAxisPos,
+                                             vector< bool >& selected,
+                                             vector< PRV_INT32 >& objectPosList,
+                                             hash_set< PRV_INT32 >& eventsToDraw,  // I/O
+                                             hash_set< commCoord >& commsToDraw ); // I/O
 #else
-    virtual void drawRow( TObjectOrder firstRow, TObjectOrder lastRow,
-                          vector<TObjectOrder>& selectedSet, vector<bool>& selected,
-                          TTime timeStep,
-                          PRV_INT32 timePos, PRV_INT32 objectAxisPos,
-                          bool& drawCaution,
-                          vector< PRV_INT32 >& objectPosList,
-                          vector< TSemanticValue >& valuesToDraw,
-                          hash_set< PRV_INT32 >& eventsToDraw,
-                          hash_set<commCoord,hashCommCoord>& commsToDraw );
-    virtual void drawRecords( RecordList *records,
-                              TTime from, TTime to, TTime step,
-                              PRV_INT32 timePos, PRV_INT32 objectAxisPos,
-                              vector<bool>& selected,
-                              vector< PRV_INT32 >& objectPosList,
-                              hash_set< PRV_INT32 >& eventsToDraw,
-                              hash_set< commCoord,hashCommCoord>& commsToDraw );
-#endif
-#endif
+    virtual void computeSemanticParallel( vector< TObjectOrder >& selectedSet,
+                                          vector< bool >& selected,
+                                          TTime timeStep,
+                                          PRV_INT32 timePos,
+                                          PRV_INT32 objectAxisPos,
+                                          vector< PRV_INT32 >& objectPosList,
+                                          TObjectOrder maxObj,
+                                          bool& drawCaution,                                   // I/O
+                                          vector< vector< TSemanticValue > >& valuesToDraw,              // I/O
+                                          vector< hash_set< PRV_INT32 > >& eventsToDraw,                 // I/O
+                                          vector< hash_set< commCoord, hashCommCoord > >& commsToDraw ); // I/O
+
+#pragma omp task shared(firstRow,lastRow,selectedSet,selected,timeStep,timePos,objectAxisPos, objectPosList, \
+                        drawCaution, rowComputedMaxY, rowComputedMinY,valuesToDraw,eventsToDraw,commsToDraw)
+    virtual void computeSemanticRowParallel( TObjectOrder firstRow,
+                                             TObjectOrder lastRow,
+                                             vector< TObjectOrder >& selectedSet,
+                                             vector< bool >& selected,
+                                             TTime timeStep,
+                                             PRV_INT32 timePos,
+                                             PRV_INT32 objectAxisPos,
+                                             vector< PRV_INT32 >& objectPosList,
+                                             int& drawCaution,                                   // I/O
+                                             TSemanticValue &rowComputedMaxY,
+                                             TSemanticValue &rowComputedMinY,
+                                             vector< TSemanticValue >& valuesToDraw,              // I/O
+                                             hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
+                                             hash_set< commCoord, hashCommCoord >& commsToDraw ); // I/O
+
+    virtual void computeEventsCommsParallel( RecordList *records,
+                                             TTime from,
+                                             TTime to,
+                                             TTime step,
+                                             PRV_INT32 timePos,
+                                             PRV_INT32 objectAxisPos,
+                                             vector< bool >& selected,
+                                             vector< PRV_INT32 >& objectPosList,
+                                             hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
+                                             hash_set< commCoord, hashCommCoord >& commsToDraw ); // I/O
+#endif // WIN32
 
   private:
     Window *myWindow;

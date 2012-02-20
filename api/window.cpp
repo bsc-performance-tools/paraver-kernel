@@ -614,6 +614,24 @@ void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCrea
   }
 }
 
+void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create,
+                           TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
+                           bool updateLimits )
+{
+  myWindow->initRow( whichRow, initialTime, create );
+  if ( myLists[ whichRow ] == NULL )
+    myLists[ whichRow ] = RecordList::create( myWindow->getRecordList( whichRow ) );
+
+  if ( updateLimits )
+  {
+    TSemanticValue objValue = myWindow->getValue( whichRow );
+    if ( rowComputedMaxY < objValue )
+      rowComputedMaxY = objValue;
+    if ( rowComputedMinY == 0 || ( rowComputedMinY > objValue && objValue != 0 ) )
+      rowComputedMinY = objValue;
+  }
+}
+
 RecordList *WindowProxy::calcNext( TObjectOrder whichObject, bool updateLimits )
 {
   if ( myLists[ whichObject ] == NULL )
@@ -628,6 +646,27 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject, bool updateLimits )
       computedMaxY = objValue;
     if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
       computedMinY = objValue;
+  }
+
+  return myLists[ whichObject ];
+}
+
+RecordList *WindowProxy::calcNext( TObjectOrder whichObject,
+                                   TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
+                                   bool updateLimits )
+{
+  if ( myLists[ whichObject ] == NULL )
+    myLists[ whichObject ] = RecordList::create( myWindow->calcNext( whichObject ) );
+  else
+    myWindow->calcNext( whichObject );
+
+  if ( updateLimits )
+  {
+    TSemanticValue objValue = myWindow->getValue( whichObject );
+    if ( rowComputedMaxY < objValue )
+      rowComputedMaxY = objValue;
+    if ( rowComputedMinY == 0 || ( rowComputedMinY > objValue && objValue != 0 ) )
+      rowComputedMinY = objValue;
   }
 
   return myLists[ whichObject ];
@@ -1548,27 +1587,149 @@ vector< Window::TParamAliasKey > WindowProxy::getCFG4DParamKeysBySemanticLevel( 
   return retKeys;
 }
 
-#ifdef PARALLEL_ENABLED
 #ifdef WIN32
-void WindowProxy::drawRow( TObjectOrder firstRow, TObjectOrder lastRow,
-                           vector<TObjectOrder>& selectedSet, vector<bool>& selected,
-                           TTime timeStep,
-                           PRV_INT32 timePos, PRV_INT32 objectAxisPos,
-                           bool& drawCaution,
-                           vector< PRV_INT32 >& objectPosList,
-                           vector< TSemanticValue >& valuesToDraw,
-                           hash_set< PRV_INT32 >& eventsToDraw,
-                           hash_set<commCoord>& commsToDraw )
+void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
+                                           vector< bool >& selected,
+                                           TTime timeStep,
+                                           PRV_INT32 timePos,
+                                           PRV_INT32 objectAxisPos,
+                                           vector< PRV_INT32 >& objectPosList,
+                                           TObjectOrder maxObj,
+                                           bool& drawCaution,
+                                           vector< vector< TSemanticValue > >& valuesToDraw,
+                                           vector< hash_set< PRV_INT32 > >& eventsToDraw,
+                                           vector< hash_set< commCoord > >& commsToDraw )
 #else
-void WindowProxy::drawRow( TObjectOrder firstRow, TObjectOrder lastRow,
-                           vector<TObjectOrder>& selectedSet, vector<bool>& selected,
-                           TTime timeStep,
-                           PRV_INT32 timePos, PRV_INT32 objectAxisPos,
-                           bool& drawCaution,
-                           vector< PRV_INT32 >& objectPosList,
-                           vector< TSemanticValue >& valuesToDraw,
-                           hash_set< PRV_INT32 >& eventsToDraw,
-                           hash_set<commCoord,hashCommCoord>& commsToDraw )
+void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
+                                           vector< bool >& selected,
+                                           TTime timeStep,
+                                           PRV_INT32 timePos,
+                                           PRV_INT32 objectAxisPos,
+                                           vector< PRV_INT32 >& objectPosList,
+                                           TObjectOrder maxObj,
+                                           bool& drawCaution,
+                                           vector< vector< TSemanticValue > >& valuesToDraw,
+                                           vector< hash_set< PRV_INT32 > >& eventsToDraw,
+                                           vector< hash_set< commCoord, hashCommCoord > >& commsToDraw )
+#endif
+{
+  vector< int > tmpDrawCaution;
+  vector< TSemanticValue > tmpComputedMaxY;
+  vector< TSemanticValue > tmpComputedMinY;
+
+cout << "[ WindowProxy::computeSemanticRowParallel ] Entry!" << endl;
+
+  int numRows;
+  vector<TObjectOrder>::iterator endIt = selectedSet.end();
+  for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != endIt; ++obj )
+  {
+    TObjectOrder firstObj = *obj;
+    TObjectOrder lastObj = firstObj;
+    while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
+    {
+      ++obj;
+      ++numRows;
+      lastObj = *obj;
+    }
+  }
+
+  valuesToDraw.reserve( numRows );
+  eventsToDraw.reserve( numRows );
+  commsToDraw.reserve( numRows );
+  tmpDrawCaution.reserve( numRows );
+  tmpComputedMaxY.reserve( numRows );
+  tmpComputedMinY.reserve( numRows );
+
+  // Drawmode: Group objects with same wxCoord in objectPosList
+  for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != endIt; ++obj )
+  {
+    TObjectOrder firstObj = *obj;
+    TObjectOrder lastObj = firstObj;
+    while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
+    {
+      ++obj;
+      lastObj = *obj;
+    }
+    valuesToDraw.push_back( vector< TSemanticValue >() );
+
+    eventsToDraw.push_back( hash_set< PRV_INT32 >() );
+#ifdef WIN32
+    commsToDraw.push_back( hash_set< commCoord >() );
+#else
+    commsToDraw.push_back( hash_set< commCoord, hashCommCoord >() );
+#endif
+
+    tmpDrawCaution.push_back( drawCaution );
+    tmpComputedMaxY.push_back( 0.0 );
+    tmpComputedMinY.push_back( 0.0 );
+
+    computeSemanticRowParallel(
+            firstObj, lastObj, selectedSet, selected, timeStep, timePos,
+            objectAxisPos, objectPosList,
+            tmpDrawCaution[ tmpDrawCaution.size() - 1 ],
+            tmpComputedMaxY[ tmpComputedMaxY.size() - 1 ],
+            tmpComputedMinY[ tmpComputedMinY.size() - 1 ],
+            valuesToDraw[ valuesToDraw.size() - 1 ],
+            eventsToDraw[ eventsToDraw.size() - 1 ],
+            commsToDraw[ commsToDraw.size() - 1 ] );
+  }
+//#pragma css barrier
+#pragma omp taskwait
+
+cout << "[ WindowProxy::computeSemanticRowParallel ] omp taskwait finished!" << endl;
+
+  for( vector< int >::iterator it = tmpDrawCaution.begin(); it != tmpDrawCaution.end(); ++it )
+  {
+    if ( *it )
+    {
+      drawCaution = true;
+      break;
+    }
+  }
+cout << "[ WindowProxy::computeSemanticRowParallel ] tmpDrawCaution for{} finished!" << endl;
+
+  for( size_t pos = 0; pos < tmpComputedMaxY.size(); ++pos )
+  {
+    drawCaution = drawCaution || tmpDrawCaution[ pos ];
+    computedMaxY = computedMaxY > tmpComputedMaxY[ pos ] ? computedMaxY : tmpComputedMaxY[ pos ];
+    if ( computedMinY == 0.0 )
+      computedMinY = tmpComputedMinY[ pos ];
+    else
+      computedMinY = computedMinY < tmpComputedMinY[ pos ] ? computedMinY : tmpComputedMinY[ pos ];
+  }
+cout << "[ WindowProxy::computeSemanticRowParallel ] tmpComputedMaxY for{} finished!" << endl;
+}
+
+#ifdef WIN32
+void WindowProxy::computeSemanticRowParallel( TObjectOrder firstRow,
+                                              TObjectOrder lastRow,
+                                              vector< TObjectOrder >& selectedSet,
+                                              vector< bool >& selected,
+                                              TTime timeStep,
+                                              PRV_INT32 timePos,
+                                              PRV_INT32 objectAxisPos,
+                                              vector< PRV_INT32 >& objectPosList,
+                                              int& drawCaution,
+                                              TSemanticValue& rowComputedMaxY,
+                                              TSemanticValue& rowComputedMinY,
+                                              vector< TSemanticValue >& valuesToDraw,
+                                              hash_set< PRV_INT32 >& eventsToDraw,
+                                              hash_set< commCoord >& commsToDraw )
+#else
+void WindowProxy::computeSemanticRowParallel( TObjectOrder firstRow,
+                                              TObjectOrder lastRow,
+                                              vector< TObjectOrder >& selectedSet,
+                                              vector< bool >& selected,
+                                              TTime timeStep,
+                                              PRV_INT32 timePos,
+                                              PRV_INT32 objectAxisPos,
+                                              vector< PRV_INT32 >& objectPosList,
+                                              int& drawCaution,
+                                              TSemanticValue& rowComputedMaxY,
+                                              TSemanticValue& rowComputedMinY,
+                                              vector< TSemanticValue >& valuesToDraw,
+                                              hash_set< PRV_INT32 >& eventsToDraw,
+                                              hash_set< commCoord, hashCommCoord >& commsToDraw )
 #endif
 {
   float magnify = float( getPixelSize() );
@@ -1580,7 +1741,7 @@ void WindowProxy::drawRow( TObjectOrder firstRow, TObjectOrder lastRow,
   vector<TObjectOrder>::iterator last  = find( selectedSet.begin(), selectedSet.end(), lastRow );
 
   for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
-    initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS );
+    initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS, rowComputedMaxY, rowComputedMinY );
 
   for( TTime currentTime = getWindowBeginTime() + timeStep;
        currentTime <= getWindowEndTime() && currentTime <= getTrace()->getEndTime();
@@ -1592,12 +1753,12 @@ void WindowProxy::drawRow( TObjectOrder firstRow, TObjectOrder lastRow,
       timeValues.clear();
 
       while( getEndTime( *row ) <= currentTime - timeStep )
-        calcNext( *row );
+        calcNext( *row, rowComputedMaxY, rowComputedMinY  );
 
       timeValues.push_back( getValue( *row ) );
       while( getEndTime( *row ) < currentTime )
       {
-        calcNext( *row );
+        calcNext( *row, rowComputedMaxY, rowComputedMinY  );
         TSemanticValue currentValue = getValue( *row );
         timeValues.push_back( currentValue );
         if( currentValue != 0 && ( currentValue < getMinimumY()
@@ -1608,11 +1769,11 @@ void WindowProxy::drawRow( TObjectOrder firstRow, TObjectOrder lastRow,
 
       RecordList *rl = getRecordList( *row );
       if( rl != NULL )
-        drawRecords( rl,
-                     currentTime - timeStep, currentTime, timeStep / magnify,
-                     timePos, objectAxisPos,
-                     selected,
-                     objectPosList, eventsToDraw, commsToDraw );
+        computeEventsCommsParallel( rl,
+                                    currentTime - timeStep, currentTime, timeStep / magnify,
+                                    timePos, objectAxisPos,
+                                    selected, objectPosList,
+                                    eventsToDraw, commsToDraw );
     }
     valuesToDraw.push_back( DrawMode::selectValue( rowValues, getDrawModeObject() ) );
     timePos += (int) magnify ;
@@ -1627,21 +1788,27 @@ void WindowProxy::drawRow( TObjectOrder firstRow, TObjectOrder lastRow,
 }
 
 #ifdef WIN32
-void WindowProxy::drawRecords( RecordList *records,
-                               TTime from, TTime to, TTime step,
-                               PRV_INT32 timePos, PRV_INT32 objectAxisPos,
-                               vector<bool>& selected,
-                               vector< PRV_INT32 >& objectPosList,
-                               hash_set< PRV_INT32 >& eventsToDraw,
-                               hash_set<commCoord>& commsToDraw )
+void WindowProxy::computeEventsCommsParallel( RecordList *records,
+                                              TTime from,
+                                              TTime to,
+                                              TTime step,
+                                              PRV_INT32 timePos,
+                                              PRV_INT32 objectAxisPos,
+                                              vector< bool >& selected,
+                                              vector< PRV_INT32 >& objectPosList,
+                                              hash_set< PRV_INT32 >& eventsToDraw,
+                                              hash_set< commCoord >& commsToDraw )
 #else
-void WindowProxy::drawRecords( RecordList *records,
-                               TTime from, TTime to, TTime step,
-                               PRV_INT32 timePos, PRV_INT32 objectAxisPos,
-                               vector<bool>& selected,
-                               vector< PRV_INT32 >& objectPosList,
-                               hash_set< PRV_INT32 >& eventsToDraw,
-                               hash_set< commCoord,hashCommCoord>& commsToDraw  )
+void WindowProxy::computeEventsCommsParallel( RecordList *records,
+                                              TTime from,
+                                              TTime to,
+                                              TTime step,
+                                              PRV_INT32 timePos,
+                                              PRV_INT32 objectAxisPos,
+                                              vector< bool >& selected,
+                                              vector< PRV_INT32 >& objectPosList,
+                                              hash_set< PRV_INT32 >& eventsToDraw,
+                                              hash_set< commCoord, hashCommCoord >& commsToDraw )
 #endif
 {
   bool existEvents = false;
@@ -1696,6 +1863,3 @@ void WindowProxy::drawRecords( RecordList *records,
 
   records->erase( records->begin(), it );
 }
-
-
-#endif // PARALLEL ENABLED

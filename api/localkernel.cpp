@@ -66,7 +66,8 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( string ) ) :
 }
 
 LocalKernel::~LocalKernel()
-{}
+{
+}
 
 bool LocalKernel::checkTraceSize( const string& filename, TTraceSize maxSize ) const
 {
