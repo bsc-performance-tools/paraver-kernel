@@ -961,6 +961,10 @@ class ComposeIsEqual: public SemanticCompose
       return new ComposeIsEqual( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return SAME_TYPE;
+    }
 
   protected:
     virtual const bool getMyInitFromBegin()
