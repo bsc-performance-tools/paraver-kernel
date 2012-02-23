@@ -1121,7 +1121,7 @@ Interval *KDerivedWindow::getLevelInterval( TWindowLevel whichLevel,
   else if( whichLevel == NODE )
     return &intervalNode[ whichOrder ];
   else if( whichLevel == COMPOSECPU )
-    return &intervalComposeCPU[ whichOrder - 1 ];
+    return &intervalComposeCPU[ whichOrder ];
   else if( whichLevel == DERIVED )
   {
     if( ( ( SemanticDerived * )functions[ DERIVED ] )->isControlDerived() )

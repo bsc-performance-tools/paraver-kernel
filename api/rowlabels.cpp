@@ -139,6 +139,7 @@ string RowLabels::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) 
         whichRow > tmpvector->size() )
       return "";
     else
+      if( whichLevel == CPU ) --whichRow;
       return (*tmpvector)[ whichRow ];
   }
 

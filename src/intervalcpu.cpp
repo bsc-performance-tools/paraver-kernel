@@ -149,7 +149,8 @@ MemoryTrace::iterator *IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
       if ( functionThread->validRecord( it ) )
         break;
     }
-    if( !( it->getType() & RSEND || it->getType() & RRECV ) && it->getThread() != threadOrder )
+    if( !( it->getType() & RSEND || it->getType() & RRECV || it->getType() & COMM )
+        && it->getThread() != threadOrder )
       break;
     ++( *it );
   }
