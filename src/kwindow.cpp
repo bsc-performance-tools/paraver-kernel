@@ -311,7 +311,7 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
   intervalComposeCPU.reserve( myTrace->totalCPUs() );
   for( TCPUOrder i = 0; i < myTrace->totalCPUs(); i++ )
   {
-    intervalCPU.push_back( IntervalCPU( this, CPU, i ) );
+    intervalCPU.push_back( IntervalCPU( this, CPU, i + 1 ) );
     intervalComposeCPU.push_back( IntervalCompose( this, COMPOSECPU, i ) );
   }
 
@@ -1121,7 +1121,7 @@ Interval *KDerivedWindow::getLevelInterval( TWindowLevel whichLevel,
   else if( whichLevel == NODE )
     return &intervalNode[ whichOrder ];
   else if( whichLevel == COMPOSECPU )
-    return &intervalComposeCPU[ whichOrder ];
+    return &intervalComposeCPU[ whichOrder - 1 ];
   else if( whichLevel == DERIVED )
   {
     if( ( ( SemanticDerived * )functions[ DERIVED ] )->isControlDerived() )

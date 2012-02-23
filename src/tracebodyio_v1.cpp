@@ -191,7 +191,7 @@ inline void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records
   records.newRecord();
   records.setType( STATE + BEGIN );
   records.setTime( time );
-  records.setCPU( CPU - 1 );
+  records.setCPU( CPU );
   records.setThread( appl - 1, task - 1, thread - 1 );
   records.setState( state );
   records.setStateEndTime( endtime );
@@ -201,7 +201,7 @@ inline void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records
     records.newRecord();
     records.setType( STATE + END );
     records.setTime( endtime );
-    records.setCPU( CPU - 1 );
+    records.setCPU( CPU );
     records.setThread( appl - 1, task - 1, thread - 1 );
     records.setState( state );
     records.setStateEndTime( time );
@@ -262,7 +262,7 @@ inline void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records
     records.newRecord();
     records.setType( EVENT );
     records.setTime( time );
-    records.setCPU( CPU - 1 );
+    records.setCPU( CPU );
     records.setThread( appl - 1, task - 1, thread - 1 );
     records.setEventType( eventtype );
     records.setEventValue( eventvalue );
@@ -358,9 +358,9 @@ inline void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records 
   }
 
   records.newComm();
-  records.setSenderCPU( CPU - 1 );
+  records.setSenderCPU( CPU );
   records.setSenderThread( appl - 1, task - 1, thread - 1 );
-  records.setReceiverCPU( remoteCPU - 1 );
+  records.setReceiverCPU( remoteCPU );
   records.setReceiverThread( remoteAppl - 1, remoteTask - 1, remoteThread - 1 );
   records.setLogicalSend( logSend );
   records.setPhysicalSend( phySend );
@@ -488,7 +488,7 @@ bool TraceBodyIO_v1::writeComm( string& line,
   writeCommon( ostr, whichTrace, record );
   ostr << whichTrace.getPhysicalSend( commID ) << ':';
   if ( whichTrace.existResourceInfo() )
-    ostr << whichTrace.getReceiverCPU( commID ) + 1 << ':';
+    ostr << whichTrace.getReceiverCPU( commID ) << ':';
   else
     ostr << '0' << ':';
   whichTrace.getThreadLocation( whichTrace.getReceiverThread( commID ),
@@ -522,7 +522,7 @@ void TraceBodyIO_v1::writeCommon( ostringstream& line,
   TThreadOrder thread;
 
   if ( whichTrace.existResourceInfo() )
-    line << record->getCPU() + 1 << ':';
+    line << record->getCPU() << ':';
   else
     line << '0' << ':';
 

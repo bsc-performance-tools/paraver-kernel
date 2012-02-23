@@ -52,7 +52,7 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
   threadState.clear();
   threadState.insert( threadState.begin(), window->getTrace()->totalThreads(), 0.0 );
 
-  begin = window->copyCPUIterator( window->getThreadRecordByTime( order ) );
+  begin = window->copyCPUIterator( window->getThreadRecordByTime( order - 1 ) );
   end = window->copyCPUIterator( begin );
 
   if ( ( !function->getInitFromBegin() ) && ( !functionThread->getInitFromBegin() ) &&
@@ -157,7 +157,7 @@ MemoryTrace::iterator *IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
   if ( it->isNull() )
   {
     delete it;
-    it = window->getCPUEndRecord( order );
+    it = window->getCPUEndRecord( order - 1 );
   }
 
   return it;
@@ -186,7 +186,7 @@ MemoryTrace::iterator *IntervalCPU::getPrevRecord( MemoryTrace::iterator *it,
   if ( it->isNull() )
   {
     delete it;
-    it = window->getCPUBeginRecord( order );
+    it = window->getCPUBeginRecord( order - 1 );
   }
 
   return it;

@@ -111,13 +111,23 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
   }
   else if ( level == CPU )
   {
-    TNodeOrder node;
-    TCPUOrder cpu;
-    whichTrace->getCPULocation( globalOrder, node, cpu );
-    if ( showLevelTag )
-      label << LEVEL_CPU << ' ' << node + 1 << '.' << cpu + 1;
+    if( globalOrder == 0 )
+    {
+      if ( showLevelTag )
+        label << LEVEL_CPU << ' ' << "0";
+      else
+        label << "0";
+    }
     else
-      label << node + 1 << '.' << cpu + 1;
+    {
+      TNodeOrder node;
+      TCPUOrder cpu;
+      whichTrace->getCPULocation( globalOrder, node, cpu );
+      if ( showLevelTag )
+        label << LEVEL_CPU << ' ' << node + 1 << '.' << cpu + 1;
+      else
+        label << node + 1 << '.' << cpu + 1;
+    }
   }
   else if ( level == NODE )
   {

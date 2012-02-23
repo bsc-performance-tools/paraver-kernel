@@ -1656,7 +1656,7 @@ bool WindowObject::parseLine( KernelConnection *whichKernel, istringstream& line
           return true;
 
         getline( line, strVoid, '{' );
-        TObjectOrder beginObject = win->getTrace()->getGlobalCPU( node, 0 );
+        TObjectOrder beginObject = win->getTrace()->getGlobalCPU( node, 1 );
         if ( !genericParseObjects( line, numObjects, beginObject, selObjects, win->getLevel() == level ) )
           return false;
         win->setSelectedRows( CPU, selObjects );

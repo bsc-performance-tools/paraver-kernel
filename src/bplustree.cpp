@@ -115,13 +115,17 @@ void UnloadedTrace::append( TRecord *rini, TRecord *rfin )
     if ( numCPUs > 0 )
     {
       cpu = current->CPU;
-      if( cpu < numCPUs )
+      if( cpu > 0 )
       {
-        if ( CPUFirst[ cpu ] == NULL )
+        --cpu;
+        if( cpu < numCPUs )
         {
-          CPUFirst[ cpu ] = current;
+          if ( CPUFirst[ cpu ] == NULL )
+          {
+            CPUFirst[ cpu ] = current;
+          }
+          CPULast[ cpu ] = current;
         }
-        CPULast[ cpu ] = current;
       }
     }
     current = current->next;
@@ -863,8 +867,8 @@ TTime BPlusTree::finish( TTime headerTime )
   tmpEnd.time = headerTime;
   for ( TCPUOrder i = 0; i < numCPUs; ++i )
   {
-    tmpBegin.CPU = i;
-    tmpEnd.CPU = i;
+    tmpBegin.CPU = i + 1;
+    tmpEnd.CPU = i + 1;
     tmpBegin.next = unloadedTrace->getCPUBegin( i );
     tmpBegin.prev = NULL;
     tmpEnd.next = NULL;
@@ -1076,7 +1080,7 @@ void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
   {
     if ( listIter[ current->CPU ] == NULL )
     {
-      listIter[ current->CPU ] = new BPlusTree::CPUIterator( current );
+      listIter[ current->CPU - 1 ] = new BPlusTree::CPUIterator( current );
       ++filled;
     }
     current = current->prev;

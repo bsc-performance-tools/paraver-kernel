@@ -133,7 +133,7 @@ class IntervalNotThread: public IntervalHigh
           for ( TCPUOrder i = getWindowTrace()->getFirstCPU( order );
                 i <= getWindowTrace()->getLastCPU( order ); i++ )
           {
-            childIntervals.push_back( getWindowInterval( COMPOSECPU, i ) );
+            childIntervals.push_back( getWindowInterval( COMPOSECPU, i - 1 ) );
           }
         }
       }

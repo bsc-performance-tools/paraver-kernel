@@ -50,7 +50,9 @@ TCPUOrder ResourceModel::totalCPUs() const
 TCPUOrder ResourceModel::getGlobalCPU( const TNodeOrder& inNode,
                                        const TCPUOrder& inCPU ) const
 {
-  return nodes[ inNode ].CPUs[ inCPU ].traceGlobalOrder;
+  if( inCPU == 0 )
+    return 0;
+  return nodes[ inNode ].CPUs[ inCPU - 1 ].traceGlobalOrder;
 }
 
 
@@ -58,21 +60,29 @@ void ResourceModel::getCPULocation( TCPUOrder globalCPU,
                                     TNodeOrder& inNode,
                                     TCPUOrder& inCPU ) const
 {
-  inNode = CPUs[ globalCPU ].node;
-  inCPU = CPUs[ globalCPU ].CPU;
+  if( globalCPU == 0 )
+  {
+    inNode = 0;
+    inCPU = 0;
+  }
+  else
+  {
+    inNode = CPUs[ globalCPU - 1 ].node;
+    inCPU = CPUs[ globalCPU - 1 ].CPU;
+  }
 }
 
 
 TCPUOrder ResourceModel::getFirstCPU( TNodeOrder inNode ) const
 {
-  return nodes[ inNode ].CPUs[ 0 ].traceGlobalOrder;
+  return nodes[ inNode ].CPUs[ 0 ].traceGlobalOrder + 1;
 }
 
 
 TCPUOrder ResourceModel::getLastCPU( TNodeOrder inNode ) const
 {
   return nodes[ inNode ].CPUs[
-           nodes[ inNode ].CPUs.size() - 1 ].traceGlobalOrder;
+           nodes[ inNode ].CPUs.size() - 1 ].traceGlobalOrder + 1;
 }
 
 

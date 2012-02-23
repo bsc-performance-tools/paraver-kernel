@@ -35,6 +35,7 @@
 #include "progresscontroller.h"
 #include <sstream>
 #include "paraverconfig.h"
+#include "extrae_user_events.h"
 
 using namespace libparaver;
 
