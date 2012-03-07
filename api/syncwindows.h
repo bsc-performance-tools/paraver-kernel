@@ -52,7 +52,7 @@ class SyncWindows
     SyncWindows();
 
     static SyncWindows *instance;
-    vector<vector<Window *> > syncGroups;
+    std::vector<std::vector<Window *> > syncGroups;
     bool removingAll;
 };
 

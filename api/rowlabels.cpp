@@ -32,6 +32,11 @@
 #include "rowlabels.h"
 #include "paraverlabels.h"
 
+using std::string;
+using std::vector;
+using std::ifstream;
+using std::istringstream;
+
 RowLabels::RowLabels()
 {}
 

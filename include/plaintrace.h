@@ -123,8 +123,8 @@ namespace Plain
           CPUIterator()
           {}
 
-          CPUIterator( PlainBlocks *whichBlocks, vector<PRV_UINT32>& whichBlock, vector<PRV_UINT32>& whichPos,
-                       TThreadOrder whichNumThreads, vector<TThreadOrder>& whichThreads, TCPUOrder whichCPU );
+          CPUIterator( PlainBlocks *whichBlocks, std::vector<PRV_UINT32>& whichBlock, std::vector<PRV_UINT32>& whichPos,
+                       TThreadOrder whichNumThreads, std::vector<TThreadOrder>& whichThreads, TCPUOrder whichCPU );
 
           virtual ~CPUIterator();
 
@@ -138,11 +138,11 @@ namespace Plain
         private:
           TCPUOrder cpu;
           TThreadOrder numThreads;
-          vector<TThreadOrder> threads;
-          vector<PRV_UINT32> block;
-          vector<PRV_UINT32> pos;
-          vector<PRV_UINT32> lastBlock;
-          vector<PRV_UINT32> lastPos;
+          std::vector<TThreadOrder> threads;
+          std::vector<PRV_UINT32> block;
+          std::vector<PRV_UINT32> pos;
+          std::vector<PRV_UINT32> lastBlock;
+          std::vector<PRV_UINT32> lastPos;
           TThreadOrder lastThread;
 
           TThreadOrder minThread();
@@ -167,9 +167,9 @@ namespace Plain
       virtual MemoryTrace::iterator* CPUEnd( TCPUOrder whichCPU ) const;
 
 
-      virtual void getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
+      virtual void getRecordByTimeThread( std::vector<MemoryTrace::iterator *>& listIter,
                                           TRecordTime whichTime ) const;
-      virtual void getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
+      virtual void getRecordByTimeCPU( std::vector<MemoryTrace::iterator *>& listIter,
                                        TRecordTime whichTime ) const;
 
       MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it );
@@ -183,7 +183,7 @@ namespace Plain
       const ResourceModel& resourceModel;
       TThreadOrder numThreads;
       TCPUOrder numCPUs;
-      vector<Index<pair<PRV_UINT32, PRV_UINT32> > > traceIndex;
+      std::vector<Index<std::pair<PRV_UINT32, PRV_UINT32> > > traceIndex;
       PlainBlocks *myBlocks;
   };
 }

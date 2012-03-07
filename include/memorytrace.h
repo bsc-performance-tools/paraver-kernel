@@ -35,8 +35,6 @@
 
 class MemoryBlocks;
 
-using namespace std;
-
 typedef struct {} TData;
 
 class MemoryTrace
@@ -93,9 +91,9 @@ class MemoryTrace
     virtual MemoryTrace::iterator* CPUEnd( TCPUOrder whichCPU ) const = 0;
 
 
-    virtual void getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
+    virtual void getRecordByTimeThread( std::vector<MemoryTrace::iterator *>& listIter,
                                         TRecordTime whichTime ) const = 0;
-    virtual void getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
+    virtual void getRecordByTimeCPU( std::vector<MemoryTrace::iterator *>& listIter,
                                      TRecordTime whichTime ) const = 0;
 
     virtual MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it ) = 0;

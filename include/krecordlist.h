@@ -57,7 +57,7 @@ class KRecordList: public RecordList
   protected:
 
   private:
-    multiset<RLRecord, ltrecord> list;
+    std::multiset<RLRecord, ltrecord> list;
     bool newRec;
 };
 

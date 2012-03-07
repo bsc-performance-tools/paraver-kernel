@@ -52,19 +52,19 @@ class SelectionManagement
 
     void copy( const SelectionManagement &selection );
 
-    void setSelected( vector< bool > &selection, LevelType level = (LevelType)0 );
-    void setSelected( vector< SelType > &selection, SelType maxElems, LevelType level = (LevelType)0 );
+    void setSelected( std::vector< bool > &selection, LevelType level = (LevelType)0 );
+    void setSelected( std::vector< SelType > &selection, SelType maxElems, LevelType level = (LevelType)0 );
 
-    void getSelected( vector< bool > &selection, LevelType level = (LevelType)0 );
-    void getSelected( vector< bool > &selection, SelType first, SelType last, LevelType level = (LevelType)0 );
-    void getSelected( vector< SelType > &selection, LevelType level = (LevelType)0 );
-    void getSelected( vector< SelType > &selection, SelType first, SelType last, LevelType level = (LevelType)0 );
+    void getSelected( std::vector< bool > &selection, LevelType level = (LevelType)0 );
+    void getSelected( std::vector< bool > &selection, SelType first, SelType last, LevelType level = (LevelType)0 );
+    void getSelected( std::vector< SelType > &selection, LevelType level = (LevelType)0 );
+    void getSelected( std::vector< SelType > &selection, SelType first, SelType last, LevelType level = (LevelType)0 );
 
     bool isSelectedPosition( SelType whichSelected, LevelType level = (LevelType)0 ) const;
 
   private:
-    vector< vector< bool > > selected;
-    vector< vector< SelType > > selectedSet;
+    std::vector< std::vector< bool > > selected;
+    std::vector< std::vector< SelType > > selectedSet;
 };
 
 

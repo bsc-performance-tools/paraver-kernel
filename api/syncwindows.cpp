@@ -30,6 +30,8 @@
 #include "syncwindows.h"
 #include "window.h"
 
+using std::vector;
+
 SyncWindows *SyncWindows::instance = NULL;
 
 SyncWindows *SyncWindows::getInstance()

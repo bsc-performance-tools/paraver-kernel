@@ -34,8 +34,6 @@
 #include <vector>
 #include "prvtypes.h"
 
-using namespace std;
-
 typedef unsigned long long TTraceSize;
 
 typedef PRV_UINT16        TObjectOrder;
@@ -116,7 +114,7 @@ enum TWindowLevel
 
 // Semantic function definitions
 typedef PRV_UINT16 TParamIndex;
-typedef vector<double> TParamValue;
+typedef std::vector<double> TParamValue;
 
 // Semantic record list definitions
 typedef PRV_UINT16 TCreateList;

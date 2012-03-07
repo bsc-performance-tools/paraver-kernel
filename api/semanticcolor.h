@@ -95,7 +95,7 @@ class CodeColor: public SemanticColor
     bool calcValue( rgb whichColor, TSemanticValue& returnValue ) const;
 
   private:
-    vector<rgb> colors;
+    std::vector<rgb> colors;
 
     inline rgb getColor( PRV_UINT32 pos ) const;
     void expandColors();

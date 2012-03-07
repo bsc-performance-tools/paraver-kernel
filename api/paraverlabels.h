@@ -212,7 +212,7 @@
 #define LEVEL_NODE         "NODE"
 #define LEVEL_CPU          "CPU"
 
-static const string LABEL_TIMEUNIT[ DAY + 1 ] =
+static const std::string LABEL_TIMEUNIT[ DAY + 1 ] =
 {
   "ns",
   "us",
@@ -223,7 +223,7 @@ static const string LABEL_TIMEUNIT[ DAY + 1 ] =
   "d"
 };
 
-static const string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
+static const std::string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
 {
   "Nanoseconds",
   "Microseconds",
@@ -265,7 +265,7 @@ static const string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
 
 
 // GUI Semantic Levels - INDEXED WITH TWindowLevel
-static const string TimelineLevelLabels[ DERIVED + 1 ] =
+static const std::string TimelineLevelLabels[ DERIVED + 1 ] =
 {
   "None",
   "Workload",
@@ -337,7 +337,7 @@ enum TSingleTimelineProperties
 
 static const int TOTAL_SINGLE_PROPERTIES = SINGLE_CPU + 1;
 
-static const string SingleTimelinePropertyLabels[ TOTAL_SINGLE_PROPERTIES ] =
+static const std::string SingleTimelinePropertyLabels[ TOTAL_SINGLE_PROPERTIES ] =
 {
   "Name",
   "Begin time",
@@ -414,7 +414,7 @@ enum TDerivedTimelineProperties
 
 static const int TOTAL_DERIVED_PROPERTIES = DERIVED_FACTOR2 + 1;
 
-static const string DerivedTimelinePropertyLabels[ TOTAL_DERIVED_PROPERTIES ] =
+static const std::string DerivedTimelinePropertyLabels[ TOTAL_DERIVED_PROPERTIES ] =
 {
   "Name",
   "Begin time",
@@ -466,7 +466,7 @@ enum THistogramProperties
 
 static const int TOTAL_HISTOGRAM_PROPERTIES = HISTOGRAM_3DPLANE + 1;
 
-static const string HistogramPropertyLabels[ TOTAL_HISTOGRAM_PROPERTIES ] =
+static const std::string HistogramPropertyLabels[ TOTAL_HISTOGRAM_PROPERTIES ] =
 {
   "Name",
   "Begin time",

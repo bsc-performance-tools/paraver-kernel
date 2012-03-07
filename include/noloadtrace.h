@@ -123,8 +123,8 @@ namespace NoLoad
           {}
 
           CPUIterator( NoLoadBlocks *whichBlocks, TCPUOrder whichCPU,
-                       vector<TThreadOrder>& whichThreads, vector<TRecord *>& whichRecords,
-                       vector<PRV_INT64>& whichOffsets, vector<PRV_UINT16>& whichPos, bool notMove = false );
+                       std::vector<TThreadOrder>& whichThreads, std::vector<TRecord *>& whichRecords,
+                       std::vector<PRV_INT64>& whichOffsets, std::vector<PRV_UINT16>& whichPos, bool notMove = false );
 
           virtual ~CPUIterator();
 
@@ -137,10 +137,10 @@ namespace NoLoad
 
         private:
           TCPUOrder cpu;
-          vector<TThreadOrder> threads;
-          vector<TRecord *> threadRecords;
-          vector<PRV_INT64> offset;
-          vector<PRV_UINT16> recPos;
+          std::vector<TThreadOrder> threads;
+          std::vector<TRecord *> threadRecords;
+          std::vector<PRV_INT64> offset;
+          std::vector<PRV_UINT16> recPos;
           TThreadOrder lastThread;
 
           TThreadOrder minThread();
@@ -168,9 +168,9 @@ namespace NoLoad
       virtual MemoryTrace::iterator* CPUEnd( TCPUOrder whichCPU ) const;
 
 
-      virtual void getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
+      virtual void getRecordByTimeThread( std::vector<MemoryTrace::iterator *>& listIter,
                                           TRecordTime whichTime ) const;
-      virtual void getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
+      virtual void getRecordByTimeCPU( std::vector<MemoryTrace::iterator *>& listIter,
                                        TRecordTime whichTime ) const;
 
       virtual MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it );

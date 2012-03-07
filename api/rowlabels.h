@@ -37,22 +37,22 @@ class RowLabels
 {
   public:
     RowLabels();
-    RowLabels( const string& filename );
+    RowLabels( const std::string& filename );
     ~RowLabels();
 
-    string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const;
+    std::string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const;
 
   protected:
 
   private:
-    vector<string> workload;
-    vector<string> appl;
-    vector<string> task;
-    vector<string> thread;
+    std::vector<std::string> workload;
+    std::vector<std::string> appl;
+    std::vector<std::string> task;
+    std::vector<std::string> thread;
 
-    vector<string> system;
-    vector<string> node;
-    vector<string> cpu;
+    std::vector<std::string> system;
+    std::vector<std::string> node;
+    std::vector<std::string> cpu;
 };
 
 

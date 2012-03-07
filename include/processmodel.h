@@ -34,8 +34,6 @@
 #include <string>
 #include "processmodelappl.h"
 
-using namespace std;
-
 class ProcessModel
 {
 

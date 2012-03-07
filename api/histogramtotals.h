@@ -57,17 +57,17 @@ class HistogramTotals
     virtual TSemanticValue getAvgDivMax( PRV_UINT16 idStat,
                                          THistogramColumn whichColumn,
                                          THistogramColumn whichPlane = 0 ) const = 0;
-    virtual void getAll( vector<TSemanticValue>& where,
+    virtual void getAll( std::vector<TSemanticValue>& where,
                          PRV_UINT16 idStat,
                          THistogramColumn whichColumn,
                          THistogramColumn whichPlane = 0 ) const = 0;
 
-    virtual vector<int>& sortByTotal( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
-    virtual vector<int>& sortByAverage( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
-    virtual vector<int>& sortByMaximum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
-    virtual vector<int>& sortByMinimum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
-    virtual vector<int>& sortByStdev( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
-    virtual vector<int>& sortByAvgDivMax( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
+    virtual std::vector<int>& sortByTotal( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
+    virtual std::vector<int>& sortByAverage( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
+    virtual std::vector<int>& sortByMaximum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
+    virtual std::vector<int>& sortByMinimum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
+    virtual std::vector<int>& sortByStdev( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
+    virtual std::vector<int>& sortByAvgDivMax( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) = 0;
 
   protected:
 
@@ -98,17 +98,17 @@ class HistogramTotalsProxy: public HistogramTotals
     virtual TSemanticValue getAvgDivMax( PRV_UINT16 idStat,
                                          THistogramColumn whichColumn,
                                          THistogramColumn whichPlane = 0 ) const;
-    virtual void getAll( vector<TSemanticValue>& where,
+    virtual void getAll( std::vector<TSemanticValue>& where,
                          PRV_UINT16 idStat,
                          THistogramColumn whichColumn,
                          THistogramColumn whichPlane = 0 ) const;
 
-    virtual vector<int>& sortByTotal( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
-    virtual vector<int>& sortByAverage( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
-    virtual vector<int>& sortByMaximum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
-    virtual vector<int>& sortByMinimum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
-    virtual vector<int>& sortByStdev( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
-    virtual vector<int>& sortByAvgDivMax( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    virtual std::vector<int>& sortByTotal( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    virtual std::vector<int>& sortByAverage( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    virtual std::vector<int>& sortByMaximum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    virtual std::vector<int>& sortByMinimum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    virtual std::vector<int>& sortByStdev( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    virtual std::vector<int>& sortByAvgDivMax( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
 
   protected:
 

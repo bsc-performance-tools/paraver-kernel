@@ -29,6 +29,8 @@
 
 #include "histogramtotals.h"
 
+using std::vector;
+
 HistogramTotals *HistogramTotals::create( HistogramTotals *whichTotals )
 {
   return new HistogramTotalsProxy( whichTotals );
