@@ -45,12 +45,12 @@ class Cube
     void init( );
     void setValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal );
     void setValue( PRV_UINT32 plane, PRV_UINT32 col, ValueType semVal );
-    void setValue( PRV_UINT32 plane, PRV_UINT32 col, const vector<ValueType>& semVal );
+    void setValue( PRV_UINT32 plane, PRV_UINT32 col, const std::vector<ValueType>& semVal );
     void addValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal );
     void addValue( PRV_UINT32 plane, PRV_UINT32 col, ValueType semVal );
-    void addValue( PRV_UINT32 plane, PRV_UINT32 col, const vector<ValueType>& semVal );
+    void addValue( PRV_UINT32 plane, PRV_UINT32 col, const std::vector<ValueType>& semVal );
     ValueType getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat ) const;
-    vector<ValueType> getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col ) const;
+    std::vector<ValueType> getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col ) const;
     PRV_UINT32 getCurrentRow( PRV_UINT32 plane, PRV_UINT32 col ) const;
     PRV_UINT32 getCurrentRow( ) const;
     bool currentCellModified( PRV_UINT32 plane, PRV_UINT32 col ) const;
@@ -66,12 +66,12 @@ class Cube
     void erasePlanes( PRV_UINT32 ini_plane, PRV_UINT32 fin_plane );
 
     bool getCellValue( ValueType& semVal, PRV_UINT32 whichPlane, int whichRow, PRV_UINT32 whichCol, PRV_UINT16 idStat ) const;
-    bool getCellValue( vector<ValueType>& semVal, PRV_UINT32 whichPlane, int whichRow, PRV_UINT32 whichCol ) const;
+    bool getCellValue( std::vector<ValueType>& semVal, PRV_UINT32 whichPlane, int whichRow, PRV_UINT32 whichCol ) const;
 
     void print() const;
 
   private:
-    vector<Matrix<ValueType> *> planes;
+    std::vector<Matrix<ValueType> *> planes;
     PRV_UINT32 nplanes;
     PRV_UINT32 ncols;
     PRV_UINT32 nstat;

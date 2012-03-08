@@ -43,12 +43,12 @@ class RowsTranslator
 {
   public:
     /*
-        PRECOND1: windows vector comes downwards level ordered.
-        PRECOND2: KWindows in window vector have same hierarchy.
-        PRECOND3: windows vector size is 2 or 3 KWindows.
+        PRECOND1: windows std::vector comes downwards level ordered.
+        PRECOND2: KWindows in window std::vector have same hierarchy.
+        PRECOND3: windows std::vector size is 2 or 3 KWindows.
     */
     RowsTranslator( const RowsTranslator& source );
-    RowsTranslator( vector<KWindow *>& windows );
+    RowsTranslator( std::vector<KWindow *>& windows );
     ~RowsTranslator();
 
     TObjectOrder globalTranslate( PRV_UINT16 winIndex,
@@ -67,11 +67,11 @@ class RowsTranslator
     struct RowChildInfo
     {
       bool oneToOne;
-      vector< pair< TObjectOrder, TObjectOrder > > rowChilds;
+      std::vector< std::pair< TObjectOrder, TObjectOrder > > rowChilds;
       TObjectOrder numRows;
     };
 
-    vector< RowChildInfo > childInfo;
+    std::vector< RowChildInfo > childInfo;
 };
 
 
@@ -208,21 +208,21 @@ class KHistogram : public Histogram
     HistogramTotals *getCommRowTotals() const;
 
     void clearStatistics();
-    void pushbackStatistic( const string& whichStatistic );
+    void pushbackStatistic( const std::string& whichStatistic );
 
-    bool itsCommunicationStat( const string& whichStat ) const;
+    bool itsCommunicationStat( const std::string& whichStat ) const;
 
-    string getUnitsLabel( const string& whichStat ) const;
+    std::string getUnitsLabel( const std::string& whichStat ) const;
 
     void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
-                  vector<TObjectOrder>& selectedRows );
+                  std::vector<TObjectOrder>& selectedRows );
 
-    void getGroupsLabels( vector<string>& onVector ) const;
-    void getStatisticsLabels( vector<string>& onVector,
+    void getGroupsLabels( std::vector<std::string>& onVector ) const;
+    void getStatisticsLabels( std::vector<std::string>& onVector,
                               PRV_UINT32 whichGroup,
                               bool dummy ) const;
-    string getFirstStatistic() const;
-    string getFirstCommStatistic() const;
+    std::string getFirstStatistic() const;
+    std::string getFirstCommStatistic() const;
 
     bool getControlOutOfLimits() const;
     bool getExtraOutOfLimits() const;
@@ -263,11 +263,11 @@ class KHistogram : public Histogram
 
     bool inclusive;
 
-    /*vector<HistogramStatistic *> statisticFunctions;
-    vector<HistogramStatistic *> commStatisticFunctions;*/
+    /*std::vector<HistogramStatistic *> statisticFunctions;
+    std::vector<HistogramStatistic *> commStatisticFunctions;*/
     Statistics statistics;
 
-    vector<KWindow *> orderedWindows;
+    std::vector<KWindow *> orderedWindows;
     RowsTranslator *rowsTranslator;
     ColumnTranslator *columnTranslator;
     ColumnTranslator *planeTranslator;
@@ -292,7 +292,7 @@ class KHistogram : public Histogram
     void initStatistics();
     void recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                              TObjectOrder fromRow, TObjectOrder toRow,
-                             vector<TObjectOrder>& selectedRows, bool needInit,
+                             std::vector<TObjectOrder>& selectedRows, bool needInit,
                              PRV_UINT16 winIndex = 0, CalculateData *data = NULL );
     void calculate( TObjectOrder iRow,
                     TRecordTime fromTime, TRecordTime toTime,

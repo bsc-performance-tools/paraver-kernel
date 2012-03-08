@@ -47,12 +47,12 @@ class Matrix
     void init( );
     void setValue( PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal );
     void setValue( PRV_UINT32 col, ValueType semVal );
-    void setValue( PRV_UINT32 col, const vector<ValueType>& semVal );
+    void setValue( PRV_UINT32 col, const std::vector<ValueType>& semVal );
     void addValue( PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal );
     void addValue( PRV_UINT32 col, ValueType semVal );
-    void addValue( PRV_UINT32 col, const vector<ValueType>& semVal );
+    void addValue( PRV_UINT32 col, const std::vector<ValueType>& semVal );
     ValueType getCurrentValue( PRV_UINT32 col, PRV_UINT16 idStat ) const;
-    vector<ValueType> getCurrentValue( PRV_UINT32 col ) const;
+    std::vector<ValueType> getCurrentValue( PRV_UINT32 col ) const;
     TObjectOrder getCurrentRow( PRV_UINT32 col ) const;
     bool currentCellModified( PRV_UINT32 col ) const;
     void newRow( );
@@ -64,12 +64,12 @@ class Matrix
     void eraseColumns( PRV_UINT32 ini_col, PRV_UINT32 fin_col );
 
     bool getCellValue( ValueType& semVal, int whichRow, PRV_UINT32 whichCol, PRV_UINT16 idStat ) const;
-    bool getCellValue( vector<ValueType>& semVal, int whichRow, PRV_UINT32 whichCol ) const;
+    bool getCellValue( std::vector<ValueType>& semVal, int whichRow, PRV_UINT32 whichCol ) const;
 
     void print() const;
 
   private:
-    vector<Column<ValueType> > cols;
+    std::vector<Column<ValueType> > cols;
     bool finished;
 };
 

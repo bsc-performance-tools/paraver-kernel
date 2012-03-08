@@ -30,8 +30,6 @@
 #include <string>
 #include <iostream>
 
-using namespace std;
-
 template <typename ValueType>
 Column<ValueType>::Column( short numStats, bool *mat_finished ):
   nstat( numStats ), modified( false ), n_cells( 0 ), finished( mat_finished )

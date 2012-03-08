@@ -30,9 +30,6 @@
 #include <string>
 #include <iostream>
 
-using namespace std;
-
-
 template <typename ValueType>
 Cube<ValueType>::Cube( PRV_UINT32 numPlanes, PRV_UINT32 numCols, PRV_UINT16 numStats ):
   nplanes( 0 ), ncols( numCols ), nstat( numStats ), crow( 0 )
@@ -50,7 +47,7 @@ template <typename ValueType>
 Cube<ValueType>::Cube( Cube<ValueType>& source ):
   nplanes( source.nplanes ), ncols( source.ncols ), nstat( source.nstat ), crow( source.crow )
 {
-  typename vector< Matrix<ValueType> *>::iterator it_mat;
+  typename std::vector< Matrix<ValueType> *>::iterator it_mat;
 
   for ( it_mat = source.planes.begin(); it_mat != source.planes.end(); ++it_mat )
     if ( *it_mat != NULL )
@@ -130,7 +127,7 @@ inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, ValueTy
 
 
 template <typename ValueType>
-inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, const vector<ValueType>& semVal )
+inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, const std::vector<ValueType>& semVal )
 {
   if ( planes[ plane ] == NULL )
   {
@@ -169,7 +166,7 @@ inline void Cube<ValueType>::addValue( PRV_UINT32 plane, PRV_UINT32 col, ValueTy
 
 
 template <typename ValueType>
-inline void Cube<ValueType>::addValue( PRV_UINT32 plane, PRV_UINT32 col, const vector<ValueType>& semVal )
+inline void Cube<ValueType>::addValue( PRV_UINT32 plane, PRV_UINT32 col, const std::vector<ValueType>& semVal )
 {
   if ( planes[ plane ] == NULL )
   {
@@ -195,12 +192,12 @@ inline ValueType Cube<ValueType>::getCurrentValue( PRV_UINT32 plane, PRV_UINT32 
 
 
 template <typename ValueType>
-inline vector<ValueType> Cube<ValueType>::getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col ) const
+inline std::vector<ValueType> Cube<ValueType>::getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col ) const
 {
   if ( planes[ plane ] != NULL )
     return planes[ plane ]->getCurrentValue( col );
 
-  vector<ValueType> tmp;
+  std::vector<ValueType> tmp;
 
   return tmp;
 }
@@ -360,7 +357,7 @@ inline void Cube<ValueType>::erasePlanes( PRV_UINT32 ini_plane, PRV_UINT32 fin_p
   if ( fin_plane >= ( PRV_UINT32 ) planes.size() )
     return;
 
-  typename vector<Matrix<ValueType> *>::iterator it_ini, it_fin;
+  typename std::vector<Matrix<ValueType> *>::iterator it_ini, it_fin;
   PRV_UINT32 i;
 
   it_ini = planes.begin();
@@ -394,7 +391,7 @@ inline bool Cube<ValueType>::getCellValue( ValueType& semVal,
 
 
 template <typename ValueType>
-inline bool Cube<ValueType>::getCellValue( vector<ValueType>& semVal,
+inline bool Cube<ValueType>::getCellValue( std::vector<ValueType>& semVal,
     PRV_UINT32 whichPlane,
     int whichRow,
     PRV_UINT32 whichCol ) const
@@ -413,9 +410,9 @@ inline void Cube<ValueType>::print() const
   {
     for ( PRV_UINT32 ii = 0; ii < planes.size(); ++ii )
     {
-      cout << endl;
-      cout << "******************************************************" << endl;
-      cout << "----------Plane " << ii << "----------" << endl;
+      std::cout << std::endl;
+      std::cout << "******************************************************" << std::endl;
+      std::cout << "----------Plane " << ii << "----------" << std::endl;
       if ( planes[ ii ] != NULL )
         planes[ ii ]->print();
     }

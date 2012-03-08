@@ -30,9 +30,6 @@
 #include <string>
 #include <iostream>
 
-using namespace std;
-
-
 template <typename ValueType>
 Matrix<ValueType>::Matrix( PRV_UINT32 numCols, PRV_UINT16 numStats ):
   finished( false )
@@ -97,7 +94,7 @@ inline void Matrix<ValueType>::setValue( PRV_UINT32 col, ValueType semVal )
 
 
 template <typename ValueType>
-inline void Matrix<ValueType>::setValue( PRV_UINT32 col, const vector<ValueType>& semVal )
+inline void Matrix<ValueType>::setValue( PRV_UINT32 col, const std::vector<ValueType>& semVal )
 {
   cols[ col ].setValue( semVal );
 }
@@ -118,7 +115,7 @@ inline void Matrix<ValueType>::addValue( PRV_UINT32 col, ValueType semVal )
 
 
 template <typename ValueType>
-inline void Matrix<ValueType>::addValue( PRV_UINT32 col, const vector<ValueType>& semVal )
+inline void Matrix<ValueType>::addValue( PRV_UINT32 col, const std::vector<ValueType>& semVal )
 {
   cols[ col ].addValue( semVal );
 }
@@ -132,7 +129,7 @@ inline ValueType Matrix<ValueType>::getCurrentValue( PRV_UINT32 col, PRV_UINT16 
 
 
 template <typename ValueType>
-inline vector<ValueType> Matrix<ValueType>::getCurrentValue( PRV_UINT32 col ) const
+inline std::vector<ValueType> Matrix<ValueType>::getCurrentValue( PRV_UINT32 col ) const
 {
   return cols[ col ].getCurrentValue();
 }
@@ -209,7 +206,7 @@ inline void Matrix<ValueType>::eraseColumns( PRV_UINT32 ini_col, PRV_UINT32 fin_
   if ( fin_col >= ( int ) cols.size() )
     return;
 
-  typename vector<Column<ValueType> >::iterator it_ini, it_fin;
+  typename std::vector<Column<ValueType> >::iterator it_ini, it_fin;
   PRV_UINT32 i;
 
   it_ini = cols.begin();
@@ -232,7 +229,7 @@ inline bool Matrix<ValueType>::getCellValue( ValueType& semVal,
 
 
 template <typename ValueType>
-inline bool Matrix<ValueType>::getCellValue( vector<ValueType>& semVal,
+inline bool Matrix<ValueType>::getCellValue( std::vector<ValueType>& semVal,
     int whichRow,
     PRV_UINT32 whichCol ) const
 {
@@ -245,7 +242,7 @@ inline void Matrix<ValueType>::print() const
 {
   for ( PRV_UINT32 ii = 0; ii < ( PRV_UINT32 )cols.size(); ii++ )
   {
-    cout << "----------Column " << ii << "----------" << endl;
+    std::cout << "----------Column " << ii << "----------" << std::endl;
     cols[ ii ].print();
   }
 }
