@@ -35,36 +35,34 @@
 #include <zlib.h>
 #include "paraverkerneltypes.h"
 
-using namespace std;
-
 class TraceStream
 {
   public:
     TraceStream()
     {}
 
-    TraceStream( const string& filename )
+    TraceStream( const std::string& filename )
     {}
 
     virtual ~TraceStream()
     {}
 
-    virtual void open( const string& filename ) = 0;
+    virtual void open( const std::string& filename ) = 0;
     virtual void close() = 0;
-    virtual void getline( string& strLine ) = 0;
+    virtual void getline( std::string& strLine ) = 0;
     virtual bool eof() = 0;
     virtual void seekbegin() = 0;
     virtual void seekend() = 0;
-    virtual void seekg( streampos pos ) = 0;
-    virtual streampos tellg() = 0;
+    virtual void seekg( std::streampos pos ) = 0;
+    virtual std::streampos tellg() = 0;
     virtual bool canseekend() = 0;
     virtual bool good() const = 0;
     virtual void clear() = 0;
     virtual int peek() = 0;
 
-    static TraceStream *openFile( const string& filename );
+    static TraceStream *openFile( const std::string& filename );
 
-    static TTraceSize getTraceFileSize( const string& filename );
+    static TTraceSize getTraceFileSize( const std::string& filename );
 
     static const double GZIP_COMPRESSION_RATIO;
 };
@@ -76,28 +74,28 @@ class NotCompressed: public TraceStream
     NotCompressed()
     {}
 
-    NotCompressed( const string& filename );
+    NotCompressed( const std::string& filename );
 
     virtual ~NotCompressed()
     {}
 
-    virtual void open( const string& filename );
+    virtual void open( const std::string& filename );
     virtual void close();
-    virtual void getline( string& strLine );
+    virtual void getline( std::string& strLine );
     virtual bool eof();
     virtual void seekbegin();
     virtual void seekend();
-    virtual void seekg( streampos pos );
-    virtual streampos tellg();
+    virtual void seekg( std::streampos pos );
+    virtual std::streampos tellg();
     virtual bool canseekend();
     virtual bool good() const;
     virtual void clear();
     virtual int peek();
 
-    static TTraceSize getTraceFileSize( const string& filename );
+    static TTraceSize getTraceFileSize( const std::string& filename );
 
 private:
-    ifstream file;
+    std::ifstream file;
 
 };
 
@@ -108,25 +106,25 @@ class Compressed: public TraceStream
     Compressed()
     {}
 
-    Compressed( const string& filename );
+    Compressed( const std::string& filename );
 
     virtual ~Compressed()
     {}
 
-    virtual void open( const string& filename );
+    virtual void open( const std::string& filename );
     virtual void close();
-    virtual void getline( string& strLine );
+    virtual void getline( std::string& strLine );
     virtual bool eof();
     virtual void seekbegin();
     virtual void seekend();
-    virtual void seekg( streampos pos );
-    virtual streampos tellg();
+    virtual void seekg( std::streampos pos );
+    virtual std::streampos tellg();
     virtual bool canseekend();
     virtual bool good() const;
     virtual void clear();
     virtual int peek();
 
-    static TTraceSize getTraceFileSize( const string& filename );
+    static TTraceSize getTraceFileSize( const std::string& filename );
 
   private:
     static const PRV_UINT32 LINESIZE = 1000 * 1024;

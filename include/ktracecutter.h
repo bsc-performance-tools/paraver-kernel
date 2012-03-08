@@ -42,7 +42,7 @@ class KTraceCutter : public TraceCutter
     KTraceCutter( char *&trace_in,
                   char *&trace_out,
                   TraceOptions *options,
-                  const vector< TEventType > &whichTypesWithValuesZero,
+                  const std::vector< TEventType > &whichTypesWithValuesZero,
                   ProgressController *progress );
     virtual ~KTraceCutter();
 
@@ -104,7 +104,7 @@ class KTraceCutter : public TraceCutter
     int last_counter;
 
     // Event types scanned from .pcf file with declared value 0.
-    set< TEventType > PCFEventTypesWithValuesZero;
+    std::set< TEventType > PCFEventTypesWithValuesZero;
 
     /* Struct for the case of MAX_TRACE_SIZE */
     class thread_info
@@ -113,8 +113,8 @@ class KTraceCutter : public TraceCutter
         unsigned long long last_time;
         bool finished;
         TCPUOrder lastCPU; // last CPU to be able to write trailing records.
-        set< TEventType >      eventTypesWithoutPCFZeros; //
-        multiset< TEventType > eventTypesWithPCFZeros; //
+        std::set< TEventType >      eventTypesWithoutPCFZeros; //
+        std::multiset< TEventType > eventTypesWithPCFZeros; //
     };
 
     /* struct for cutting only selected tasks */

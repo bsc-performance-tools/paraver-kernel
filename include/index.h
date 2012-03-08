@@ -34,8 +34,6 @@
 
 #include <map>
 
-using std::map;
-
 static PRV_UINT32 INDEX_STEP = 10000;
 
 template <typename RecordType>
@@ -49,7 +47,7 @@ class Index
     bool findRecord( TRecordTime time, RecordType& record ) const;
 
   private:
-    typedef map< TRecordTime, RecordType > TTraceIndex;
+    typedef std::map< TRecordTime, RecordType > TTraceIndex;
 
     PRV_UINT32 indexStep;
     TTraceIndex baseIndex;

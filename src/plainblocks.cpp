@@ -32,6 +32,7 @@
 #include "paraverkernelexception.h"
 
 using namespace Plain;
+using namespace std;
 
 const TRecordType PlainBlocks::commTypes[] =
 {

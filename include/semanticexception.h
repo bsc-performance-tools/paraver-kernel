@@ -55,7 +55,7 @@ class SemanticException: public ParaverKernelException
 
   protected:
 
-    static string moduleMessage;
+    static std::string moduleMessage;
 
     TErrorCode code;
 
@@ -67,7 +67,7 @@ class SemanticException: public ParaverKernelException
       return errorMessage[ code ];
     }
 
-    virtual string& specificModuleMessage() const
+    virtual std::string& specificModuleMessage() const
     {
       return moduleMessage;
     }

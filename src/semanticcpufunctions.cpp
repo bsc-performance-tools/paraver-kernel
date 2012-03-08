@@ -29,6 +29,8 @@
 
 #include "semanticcpufunctions.h"
 
+using namespace std;
+
 string ActiveThread::name = "Active Thd";
 TSemanticValue ActiveThread::execute( const SemanticInfo *info )
 {

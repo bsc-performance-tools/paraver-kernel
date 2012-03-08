@@ -31,6 +31,8 @@
 #include "paraverstatisticfunctions.h"
 #include "kwindow.h"
 
+using namespace std;
+
 string Adding::name = "Adding";
 TSemanticValue Adding::execute( const SemanticInfo *info )
 {

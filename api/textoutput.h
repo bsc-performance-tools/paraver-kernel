@@ -1,3 +1,32 @@
+/*****************************************************************************\
+ *                        ANALYSIS PERFORMANCE TOOLS                         *
+ *                               libparaver-api                              *
+ *                      API Library for libparaver-kernel                    *
+ *****************************************************************************
+ *     ___     This library is free software; you can redistribute it and/or *
+ *    /  __         modify it under the terms of the GNU LGPL as published   *
+ *   /  /  _____    by the Free Software Foundation; either version 2.1      *
+ *  /  /  /     \   of the License, or (at your option) any later version.   *
+ * (  (  ( B S C )                                                           *
+ *  \  \  \_____/   This library is distributed in hope that it will be      *
+ *   \  \__         useful but WITHOUT ANY WARRANTY; without even the        *
+ *    \___          implied warranty of MERCHANTABILITY or FITNESS FOR A     *
+ *                  PARTICULAR PURPOSE. See the GNU LGPL for more details.   *
+ *                                                                           *
+ * You should have received a copy of the GNU Lesser General Public License  *
+ * along with this library; if not, write to the Free Software Foundation,   *
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA          *
+ * The GNU LEsser General Public License is contained in the file COPYING.   *
+ *                                 ---------                                 *
+ *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
+\*****************************************************************************/
+
+/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
+ | @file: $HeadURL$
+ | @last_commit: $Date$
+ | @version:     $Revision$
+\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
 #ifndef TEXTOUTPUT_H_INCLUDED
 #define TEXTOUTPUT_H_INCLUDED
 
@@ -6,8 +35,6 @@
 #include "selectionmanagement.h"
 #include "prvtypes.h"
 #include "histogram.h"
-
-using std::string;
 
 class Window;
 class Histogram;
@@ -18,9 +45,9 @@ class TextOutput:public Output
     TextOutput();
     ~TextOutput();
 
-    void dumpWindow( Window *whichWindow, string& strOutputFile );
+    void dumpWindow( Window *whichWindow, std::string& strOutputFile );
     void dumpHistogram( Histogram *whichHisto,
-                        string& strOutputFile,
+                        std::string& strOutputFile,
                         bool onlySelectedPlane = false,
                         bool hideEmptyColumns = false,
                         bool withLabels = true );
@@ -55,7 +82,7 @@ class TextOutput:public Output
                              bool withLabels );
 
     void dumpTotalColumns( HistogramTotals *totals,
-                           string totalName,
+                           std::string totalName,
                            THistogramTotalsMethod totalFunction,
                            PRV_UINT16 currentStat,
                            vector<THistogramColumn> printedColumns,
@@ -63,7 +90,7 @@ class TextOutput:public Output
                            ofstream &outputFile );
 
     void dumpTotalRows( HistogramTotals *totals,
-                        string totalName,
+                        std::string totalName,
                         THistogramTotalsMethod totalFunction,
                         PRV_UINT16 currentStat,
                         TObjectOrder numRows,

@@ -35,8 +35,6 @@
 #include "memorytrace.h"
 #include "filter.h"
 
-using namespace std;
-
 class KSingleWindow;
 class KWindow;
 
@@ -50,7 +48,7 @@ class FilterFunction
 
     virtual bool execute( TSemanticValue param, TSemanticValue data ) = 0;
 
-    virtual string getName() = 0;
+    virtual std::string getName() = 0;
     virtual FilterFunction *clone() = 0;
 
     virtual bool getDefaultValue() const
@@ -79,7 +77,7 @@ class FilterAll: public FilterFunction
 
     virtual bool execute( TSemanticValue param, TSemanticValue data );
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return FilterAll::name;
     }
@@ -102,7 +100,7 @@ class FilterAll: public FilterFunction
   protected:
 
   private:
-    static string name;
+    static std::string name;
 
 };
 
@@ -116,7 +114,7 @@ class FilterNotEqual: public FilterFunction
 
     virtual bool execute( TSemanticValue param, TSemanticValue data );
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return FilterNotEqual::name;
     }
@@ -129,7 +127,7 @@ class FilterNotEqual: public FilterFunction
   protected:
 
   private:
-    static string name;
+    static std::string name;
 
 
 };
@@ -144,7 +142,7 @@ class FilterEqual: public FilterFunction
 
     virtual bool execute( TSemanticValue param, TSemanticValue data );
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return FilterEqual::name;
     }
@@ -157,7 +155,7 @@ class FilterEqual: public FilterFunction
   protected:
 
   private:
-    static string name;
+    static std::string name;
 
 
 };
@@ -172,7 +170,7 @@ class FilterGreater: public FilterFunction
 
     virtual bool execute( TSemanticValue param, TSemanticValue data );
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return FilterGreater::name;
     }
@@ -185,7 +183,7 @@ class FilterGreater: public FilterFunction
   protected:
 
   private:
-    static string name;
+    static std::string name;
 
 };
 
@@ -199,7 +197,7 @@ class FilterFewer: public FilterFunction
 
     virtual bool execute( TSemanticValue param, TSemanticValue data );
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return FilterFewer::name;
     }
@@ -212,7 +210,7 @@ class FilterFewer: public FilterFunction
   protected:
 
   private:
-    static string name;
+    static std::string name;
 
 };
 
@@ -227,7 +225,7 @@ class FilterNone: public FilterFunction
 
     virtual bool execute( TSemanticValue param, TSemanticValue data );
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return FilterNone::name;
     }
@@ -245,7 +243,7 @@ class FilterNone: public FilterFunction
   protected:
 
   private:
-    static string name;
+    static std::string name;
 
 };
 
@@ -261,7 +259,7 @@ class FilterRange: public FilterFunction
 
     virtual bool execute( TSemanticValue param, TSemanticValue data );
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return FilterRange::name;
     }
@@ -277,7 +275,7 @@ class FilterRange: public FilterFunction
     static const bool MINOR = true;
     static const bool MAJOR = false;
     bool position;
-    static string name;
+    static std::string name;
 
 };
 
@@ -368,47 +366,47 @@ class KFilter : public Filter
 
     void clearCommFrom();
     void insertCommFrom( TObjectOrder value );
-    void getCommFrom( vector<TObjectOrder>& onVector ) const;
-    void setCommFromFunction( string newFunction );
-    string getCommFromFunction() const;
+    void getCommFrom( std::vector<TObjectOrder>& onVector ) const;
+    void setCommFromFunction( std::string newFunction );
+    std::string getCommFromFunction() const;
 
     void clearCommTo();
     void insertCommTo( TObjectOrder value );
-    void getCommTo( vector<TObjectOrder>& onVector ) const;
-    void setCommToFunction( string newFunction );
-    string getCommToFunction() const;
+    void getCommTo( std::vector<TObjectOrder>& onVector ) const;
+    void setCommToFunction( std::string newFunction );
+    std::string getCommToFunction() const;
 
     void clearCommTags();
     void insertCommTag( TCommTag value );
-    void getCommTag( vector<TCommTag>& onVector ) const;
-    void setCommTagFunction( string newFunction );
-    string getCommTagFunction() const;
+    void getCommTag( std::vector<TCommTag>& onVector ) const;
+    void setCommTagFunction( std::string newFunction );
+    std::string getCommTagFunction() const;
 
     void clearCommSizes();
     void insertCommSize( TCommSize value );
-    void getCommSize( vector<TCommSize>& onVector ) const;
-    void setCommSizeFunction( string newFunction );
-    string getCommSizeFunction() const;
+    void getCommSize( std::vector<TCommSize>& onVector ) const;
+    void setCommSizeFunction( std::string newFunction );
+    std::string getCommSizeFunction() const;
 
     void clearBandWidth();
     void insertBandWidth( TSemanticValue value );
-    void getBandWidth( vector<TSemanticValue>& onVector ) const;
-    void setBandWidthFunction( string newFunction );
-    string getBandWidthFunction() const;
+    void getBandWidth( std::vector<TSemanticValue>& onVector ) const;
+    void setBandWidthFunction( std::string newFunction );
+    std::string getBandWidthFunction() const;
 
     void clearEventTypes();
     void insertEventType( TEventType value );
-    void getEventType( vector<TEventType>& onVector ) const;
-    void setEventTypeFunction( string newFunction );
-    string getEventTypeFunction() const;
-    void getValidEvents( vector<TEventType>& onVector,
-                         const set<TEventType>& eventsLoaded ) const;
+    void getEventType( std::vector<TEventType>& onVector ) const;
+    void setEventTypeFunction( std::string newFunction );
+    std::string getEventTypeFunction() const;
+    void getValidEvents( std::vector<TEventType>& onVector,
+                         const std::set<TEventType>& eventsLoaded ) const;
 
     void clearEventValues();
     void insertEventValue( TEventValue value );
-    void getEventValue( vector<TEventValue>& onVector ) const;
-    void setEventValueFunction( string newFunction );
-    string getEventValueFunction() const;
+    void getEventValue( std::vector<TEventValue>& onVector ) const;
+    void setEventValueFunction( std::string newFunction );
+    std::string getEventValueFunction() const;
 
 
     void setOpFromToAnd()
@@ -458,37 +456,37 @@ class KFilter : public Filter
     bool physical;
 
     bool existCommFrom;
-    vector<TObjectOrder> commFrom;
+    std::vector<TObjectOrder> commFrom;
     FilterFunction *functionCommFrom;
 
     bool opFromTo;
 
     bool existCommTo;
-    vector<TObjectOrder> commTo;
+    std::vector<TObjectOrder> commTo;
     FilterFunction *functionCommTo;
 
     bool existCommTags;
-    vector<TCommTag> commTags;
+    std::vector<TCommTag> commTags;
     FilterFunction *functionCommTags;
 
     bool opTagSize;
 
     bool existCommSize;
-    vector<TCommSize> commSizes;
+    std::vector<TCommSize> commSizes;
     FilterFunction *functionCommSizes;
 
     bool existBandWidth;
-    vector<TSemanticValue> bandWidth;
+    std::vector<TSemanticValue> bandWidth;
     FilterFunction *functionBandWidth;
 
     bool existEventTypes;
-    vector<TEventType> eventTypes;
+    std::vector<TEventType> eventTypes;
     FilterFunction *functionEventTypes;
 
     bool opTypeValue;
 
     bool existEventValues;
-    vector<TEventValue> eventValues;
+    std::vector<TEventValue> eventValues;
     FilterFunction *functionEventValues;
 
     bool filterComms( MemoryTrace::iterator *it );

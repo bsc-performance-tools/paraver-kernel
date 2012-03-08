@@ -45,7 +45,7 @@ class ProcessModelAppl
 
   protected:
     TApplOrder traceGlobalOrder;
-    vector<ProcessModelTask> tasks;
+    std::vector<ProcessModelTask> tasks;
 
   private:
     friend class ProcessModel;

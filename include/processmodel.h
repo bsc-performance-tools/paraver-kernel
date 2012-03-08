@@ -43,7 +43,7 @@ class ProcessModel
       ready = false;
     }
 
-    ProcessModel( istringstream& headerInfo );
+    ProcessModel( std::istringstream& headerInfo );
 
     ~ProcessModel()
     {}
@@ -53,7 +53,7 @@ class ProcessModel
       return ready;
     }
 
-    void dumpToFile( fstream& file ) const;
+    void dumpToFile( std::fstream& file ) const;
 
     TApplOrder totalApplications() const;
 
@@ -77,7 +77,7 @@ class ProcessModel
     TThreadOrder getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const;
     TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask )const;
 
-    void getThreadsPerNode( TNodeOrder inNode, vector<TThreadOrder>& onVector ) const;
+    void getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& onVector ) const;
 
     bool isValidThread( TThreadOrder whichThread ) const;
     bool isValidThread( TApplOrder whichAppl,
@@ -103,9 +103,9 @@ class ProcessModel
       TTaskOrder task;
     };
 
-    vector<ThreadLocation> threads;
-    vector<TaskLocation> tasks;
-    vector<ProcessModelAppl> applications;
+    std::vector<ThreadLocation> threads;
+    std::vector<TaskLocation> tasks;
+    std::vector<ProcessModelAppl> applications;
 
     bool ready;
 

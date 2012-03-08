@@ -33,8 +33,6 @@
 
 #include "paraverkerneltypes.h"
 
-using namespace std;
-
 template <typename ValueType>
 Cell<ValueType>::Cell():
     row( 0 ), nStats( 0 )
@@ -93,7 +91,7 @@ inline void Cell<ValueType>::setValue( ValueType semVal )
 
 
 template <typename ValueType>
-inline void Cell<ValueType>::setValue( const vector<ValueType>& semVal )
+inline void Cell<ValueType>::setValue( const std::vector<ValueType>& semVal )
 {
   values = semVal;
 }
@@ -116,7 +114,7 @@ inline void Cell<ValueType>::addValue( ValueType semVal )
 
 
 template <typename ValueType>
-inline void Cell<ValueType>::addValue( const vector<ValueType>& semVal )
+inline void Cell<ValueType>::addValue( const std::vector<ValueType>& semVal )
 {
   for ( PRV_UINT16 ii = 0; ii < nStats; ++ii )
     values[ ii ] += semVal[ ii ];
@@ -137,7 +135,7 @@ inline ValueType Cell<ValueType>::getValue( PRV_UINT16 idStat ) const
 
 
 template <typename ValueType>
-inline vector<ValueType> Cell<ValueType>::getValue() const
+inline std::vector<ValueType> Cell<ValueType>::getValue() const
 {
   return values;
 }
@@ -173,12 +171,12 @@ inline bool Cell<ValueType>::operator<( const ValueType& anotherCell ) const
 template <typename ValueType>
 inline void Cell<ValueType>::print( ) const
 {
-  cout << "[" << row << "] " ;
+  std::cout << "[" << row << "] " ;
   for ( PRV_UINT16 ii = 0; ii < nStats; ++ii )
   {
-    cout << values[ ii ];
-    cout << " ";
+    std::cout << values[ ii ];
+    std::cout << " ";
   }
 
-  cout << endl;
+  std::cout << std::endl;
 }

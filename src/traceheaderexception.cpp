@@ -30,6 +30,8 @@
 #include <string>
 #include "traceheaderexception.h"
 
+using std::string;
+
 string TraceHeaderException::moduleMessage( "Trace header: " );
 
 const char *TraceHeaderException::errorMessage[] =

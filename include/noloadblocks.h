@@ -43,8 +43,6 @@
 using Plain::TRecord;
 using Plain::TCommInfo;
 
-using namespace std;
-
 namespace NoLoad
 {
   class NoLoadBlocks: public MemoryBlocks

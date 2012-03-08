@@ -55,7 +55,7 @@ class PropertyFunction
     {}
     virtual ~PropertyFunction()
     {}
-    virtual void parseLine( istringstream& line, ParaverConfig& config ) = 0;
+    virtual void parseLine( std::istringstream& line, ParaverConfig& config ) = 0;
 };
 
 class ParaverConfig
@@ -87,36 +87,36 @@ class ParaverConfig
     static bool writeDefaultConfig();
 
     // GLOBAL XML SECTION
-    void setGlobalTracesPath( string whichTracesPath );
-    void setGlobalCFGsPath( string whichCfgsPath );
-    void setGlobalXMLsPath( string whichXMLsPath );
-    void setGlobalTutorialsPath( string whichTutorialsPath );
-    void setGlobalTmpPath( string whichTmpPath );
+    void setGlobalTracesPath( std::string whichTracesPath );
+    void setGlobalCFGsPath( std::string whichCfgsPath );
+    void setGlobalXMLsPath( std::string whichXMLsPath );
+    void setGlobalTutorialsPath( std::string whichTutorialsPath );
+    void setGlobalTmpPath( std::string whichTmpPath );
     void setGlobalApplyFollowingCFGsToAllTraces( bool whichApplyFollowingCFGsToAllTraces );
     void setGlobalFillStateGaps( bool whichFillStateGaps );
     void setGlobalSingleInstance( bool whichSingleInstance );
     void setMainWindowWidth( unsigned int whichWidth );
     void setMainWindowHeight( unsigned int whichHeight );
-    void setGlobalSessionPath( string whichSessionPath );
+    void setGlobalSessionPath( std::string whichSessionPath );
     void setGlobalSessionSaveTime( PRV_UINT16 whichSessionSaveTime );
 
-    string getGlobalTracesPath() const;
-    string getGlobalCFGsPath() const;
-    string getGlobalXMLsPath() const;
-    string getGlobalTutorialsPath() const;
-    string getGlobalTmpPath() const;
+    std::string getGlobalTracesPath() const;
+    std::string getGlobalCFGsPath() const;
+    std::string getGlobalXMLsPath() const;
+    std::string getGlobalTutorialsPath() const;
+    std::string getGlobalTmpPath() const;
     bool getGlobalApplyFollowingCFGsToAllTraces() const;
     bool getGlobalFillStateGaps() const;
     bool getGlobalSingleInstance() const;
     unsigned int getMainWindowWidth() const;
     unsigned int getMainWindowHeight() const;
-    string getGlobalSessionPath() const;
+    std::string getGlobalSessionPath() const;
     PRV_UINT16 getGlobalSessionSaveTime() const;
 
     // TIMELINES XML SECTION
-    void setTimelineDefaultName( string whichDefaultName );
-    void setTimelineNameFormat( string whichNameFormat );
-    void setTimelineDefaultCFG( string whichDefaultCFG );
+    void setTimelineDefaultName( std::string whichDefaultName );
+    void setTimelineNameFormat( std::string whichNameFormat );
+    void setTimelineDefaultCFG( std::string whichDefaultCFG );
     void setTimelinePrecision( PRV_UINT32 whichPrecision );
     void setTimelineViewEventsLines( bool whichViewEventLines );
     void setTimelineViewCommunicationsLines( bool whichViewCommunicationsLines );
@@ -135,9 +135,9 @@ class ParaverConfig
     void setTimelineSaveTextFormat( TTextFormat whichSaveTextFormat );
     void setTimelineSaveImageFormat( TImageFormat whichSaveImageFormat );
 
-    string getTimelineDefaultName() const;
-    string getTimelineNameFormat() const;
-    string getTimelineDefaultCFG() const;
+    std::string getTimelineDefaultName() const;
+    std::string getTimelineNameFormat() const;
+    std::string getTimelineDefaultCFG() const;
     PRV_UINT32 getTimelinePrecision() const;
     bool getTimelineViewEventsLines() const;
     bool getTimelineViewCommunicationsLines() const;
@@ -201,10 +201,10 @@ class ParaverConfig
 
     // FILTERS XML SECTION : GLOBAL
     void setFiltersFilterTraceUpToMB( float whichFilterTraceUpToMB );
-    void setFiltersXMLPath( string whichXMLPath );
+    void setFiltersXMLPath( std::string whichXMLPath );
 
     float getFiltersFilterTraceUpToMB() const;
-    string getFiltersXMLPath() const;
+    std::string getFiltersXMLPath() const;
 
     // FILTERS XML SECTION : Cutter
     void setCutterByTime( bool whichByTime );
@@ -244,24 +244,24 @@ class ParaverConfig
     void setSoftwareCountersInvervalsOrStates( bool whichIntervalsOrStates );
     void setSoftwareCountersSamplingInterval( TTime whichSamplingInterval );
     void setSoftwareCountersMinimumBurstTime( TTime whichMinimumBurstTime );
-    void setSoftwareCountersTypes( string whichTypes );
+    void setSoftwareCountersTypes( std::string whichTypes );
     void setSoftwareCountersCountEventsOrAcummulateValues( bool whichCountEventsOrAcummulateValues );
     void setSoftwareCountersRemoveStates( bool whichRemoveStates );
     void setSoftwareCountersSummarizeStates( bool whichSummarizeStates );
     void setSoftwareCountersGlobalCounters( bool whichGlobalCounters );
     void setSoftwareCountersOnlyInBursts( bool whichOnlyInBursts );
-    void setSoftwareCountersTypesKept( string whichTypesKept );
+    void setSoftwareCountersTypesKept( std::string whichTypesKept );
 
     bool getSoftwareCountersInvervalsOrStates();
     TTime getSoftwareCountersSamplingInterval();
     TTime getSoftwareCountersMinimumBurstTime();
-    string getSoftwareCountersTypes();
+    std::string getSoftwareCountersTypes();
     bool getSoftwareCountersCountEventsOrAcummulateValues();
     bool getSoftwareCountersRemoveStates();
     bool getSoftwareCountersSummarizeStates();
     bool getSoftwareCountersGlobalCounters();
     bool getSoftwareCountersOnlyInBursts();
-    string getSoftwareCountersTypesKept();
+    std::string getSoftwareCountersTypesKept();
 
     // COLORS XML SECTION
     void setColorsTimelineBackground( rgb whichTimelineBackground );
@@ -286,14 +286,14 @@ class ParaverConfig
     rgb getColorsBeginGradient() const;
     rgb getColorsEndGradient() const;
 
-    void saveXML( const string &filename );
-    void loadXML( const string &filename );
+    void saveXML( const std::string &filename );
+    void loadXML( const std::string &filename );
 
   private:
     friend class boost::serialization::access;
 
     static ParaverConfig *instance;
-    map<string, PropertyFunction *> propertyFunctions;
+    std::map<std::string, PropertyFunction *> propertyFunctions;
 
     void loadMap();
     void unLoadMap();
@@ -326,16 +326,16 @@ class ParaverConfig
         }
       }
 
-      string tracesPath; // also for paraload.sig!
-      string cfgsPath;
-      string tutorialsPath;
-      string tmpPath;    // errors, logs, working dir
+      std::string tracesPath; // also for paraload.sig!
+      std::string cfgsPath;
+      std::string tutorialsPath;
+      std::string tmpPath;    // errors, logs, working dir
       bool applyFollowingCFGsToAllTraces;
       bool fillStateGaps;
       bool singleInstance;
       unsigned int mainWindowWidth;
       unsigned int mainWindowHeight;
-      string sessionPath;
+      std::string sessionPath;
       PRV_UINT16 sessionSaveTime;
 
     } xmlGlobal;
@@ -369,9 +369,9 @@ class ParaverConfig
           ar & boost::serialization::make_nvp( "what_where_event_pixels", whatWhereEventPixels );
       }
 
-      string defaultName;
-      string nameFormat;
-      string defaultCFG;
+      std::string defaultName;
+      std::string nameFormat;
+      std::string defaultCFG;
       PRV_UINT32 precision;
       bool viewEventsLines;
       bool viewCommunicationsLines;
@@ -506,7 +506,7 @@ class ParaverConfig
       bool intervalsOrStates;
       TTime samplingInterval;
       TTime minimumBurstTime;
-      string types;
+      std::string types;
 
     };
 
@@ -528,7 +528,7 @@ class ParaverConfig
       bool summarizeStates;
       bool globalCounters;
       bool onlyInBursts;
-      string typesKept;
+      std::string typesKept;
 
     };
 
@@ -578,7 +578,7 @@ class ParaverConfig
       }
 
       float filterTraceUpToMB;
-      string xmlPath;
+      std::string xmlPath;
 
       // Second level xml; needed a variable.
       // Next filters, same way.
@@ -669,25 +669,25 @@ BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesColor, 1)
 // WhatWhere.num_decimals
 class WWNumDecimals: public PropertyFunction
 {
-    void parseLine( istringstream& line, ParaverConfig& config );
+    void parseLine( std::istringstream& line, ParaverConfig& config );
 };
 
 // Analyzer2D.num_columns
 class HistoNumColumns: public PropertyFunction
 {
-    void parseLine( istringstream& line, ParaverConfig& config );
+    void parseLine( std::istringstream& line, ParaverConfig& config );
 };
 
 // Analyzer2D.units
 class HistoUnits: public PropertyFunction
 {
-    void parseLine( istringstream& line, ParaverConfig& config );
+    void parseLine( std::istringstream& line, ParaverConfig& config );
 };
 
 // Analyzer2D.thousandsep
 class HistoThousanSep: public PropertyFunction
 {
-    void parseLine( istringstream& line, ParaverConfig& config );
+    void parseLine( std::istringstream& line, ParaverConfig& config );
 };
 
 #endif // PARAVERCONFIG_H_INCLUDED

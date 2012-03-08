@@ -33,7 +33,6 @@
 #include <vector>
 #include "paraverkerneltypes.h"
 
-using namespace std;
 
 enum DrawModeMethod
 {
@@ -45,7 +44,7 @@ enum DrawModeMethod
 class DrawMode
 {
   public:
-    static TSemanticValue selectValue( vector<TSemanticValue>& v,
+    static TSemanticValue selectValue( std::vector<TSemanticValue>& v,
                                        DrawModeMethod method );
 };
 

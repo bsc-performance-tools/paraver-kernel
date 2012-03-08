@@ -44,8 +44,6 @@
 #include "kfilter.h"
 #include "window.h"
 
-using namespace std;
-
 class KWindow: public Window
 {
   public:

@@ -35,6 +35,7 @@
 #include "semanticthreadfunctions.h"
 #include "functionmanagement.h"
 
+using namespace std;
 
 void createSemantic()
 {

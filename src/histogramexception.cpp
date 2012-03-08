@@ -30,6 +30,8 @@
 #include <string>
 #include "histogramexception.h"
 
+using std::string;
+
 string HistogramException::moduleMessage( "Histogram: " );
 
 const char *HistogramException::errorMessage[] =

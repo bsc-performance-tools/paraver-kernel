@@ -29,6 +29,8 @@
 
 #include "filter.h"
 
+using namespace std;
+
 void Filter::getAllFilterFunctions( vector<string>& onVector ) const
 {
   myKernel->getAllFilterFunctions( onVector );

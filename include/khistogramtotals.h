@@ -35,8 +35,6 @@
 #include "vectorutils.h"
 #include "histogramtotals.h"
 
-using namespace std;
-
 class KHistogramTotals: public HistogramTotals
 {
   public:

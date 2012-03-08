@@ -30,6 +30,8 @@
 #include <sstream>
 #include "paraverkernelexception.h"
 
+using namespace std;
+
 ostream& ParaverKernelException::defaultPrintStream( cerr );
 
 string ParaverKernelException::kernelMessage( "Paraver kernel exception: " );

@@ -31,6 +31,7 @@
 #include "semanticcomposefunctions.h"
 #include "kwindow.h"
 
+using namespace std;
 
 string ComposeAsIs::name = "As Is";
 TSemanticValue ComposeAsIs::execute( const SemanticInfo *info )

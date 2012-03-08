@@ -30,6 +30,8 @@
 #include "kernelconnection.h"
 #include "traceoptions.h"
 
+using namespace std;
+
 //TraceOptions *TraceOptions::create( KernelConnection *whichKernel, char *xmldocname )
 TraceOptions *TraceOptions::create( KernelConnection *whichKernel )
 {

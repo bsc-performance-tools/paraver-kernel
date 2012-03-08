@@ -39,25 +39,25 @@ ZoomHistory<Dimension1,Dimension2>::~ZoomHistory( )
 }
 
 template <typename Dimension1, typename Dimension2>
-pair<Dimension1, Dimension1> ZoomHistory<Dimension1,Dimension2>::getFirstDimension() const
+std::pair<Dimension1, Dimension1> ZoomHistory<Dimension1,Dimension2>::getFirstDimension() const
 {
   return zooms[ currentZoom ].first;
 }
 
 template <typename Dimension1, typename Dimension2>
-pair<Dimension2, Dimension2> ZoomHistory<Dimension1,Dimension2>::getSecondDimension() const
+std::pair<Dimension2, Dimension2> ZoomHistory<Dimension1,Dimension2>::getSecondDimension() const
 {
   return zooms[ currentZoom ].second;
 }
 
 template <typename Dimension1, typename Dimension2>
-void ZoomHistory<Dimension1,Dimension2>::setFirstDimension( pair<Dimension1, Dimension1> &dim )
+void ZoomHistory<Dimension1,Dimension2>::setFirstDimension( std::pair<Dimension1, Dimension1> &dim )
 {
   zooms[ currentZoom ].first = dim;
 }
 
 template <typename Dimension1, typename Dimension2>
-void ZoomHistory<Dimension1,Dimension2>::setSecondDimension(  pair<Dimension2, Dimension2> &dim )
+void ZoomHistory<Dimension1,Dimension2>::setSecondDimension(  std::pair<Dimension2, Dimension2> &dim )
 {
   zooms[ currentZoom ].second = dim;
 }

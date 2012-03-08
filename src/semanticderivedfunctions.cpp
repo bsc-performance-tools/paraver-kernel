@@ -30,6 +30,8 @@
 #include "semanticderivedfunctions.h"
 #include "kwindow.h"
 
+using namespace std;
+
 string DerivedAdd::name = "add";
 TSemanticValue DerivedAdd::execute( const SemanticInfo *info )
 {

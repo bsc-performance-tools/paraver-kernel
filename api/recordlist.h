@@ -35,8 +35,6 @@
 
 class KernelConnection;
 
-using std::set;
-
 struct RLEvent
 {
   TEventType type;

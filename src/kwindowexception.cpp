@@ -30,6 +30,8 @@
 #include <string>
 #include "kwindowexception.h"
 
+using std::string;
+
 string KWindowException::moduleMessage( "Kernel window: " );
 
 const char *KWindowException::errorMessage[] =

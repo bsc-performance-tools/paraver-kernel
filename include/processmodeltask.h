@@ -33,8 +33,6 @@
 #include <vector>
 #include "processmodelthread.h"
 
-using namespace std;
-
 class ProcessModelTask
 {
 
@@ -47,7 +45,7 @@ class ProcessModelTask
 
   protected:
     TTaskOrder traceGlobalOrder;
-    vector<ProcessModelThread> threads;
+    std::vector<ProcessModelThread> threads;
 
   private:
     friend class ProcessModel;

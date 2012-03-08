@@ -38,8 +38,6 @@
 
 class KWindow;
 
-using namespace std;
-
 class SemanticFunction
 {
   public:
@@ -77,7 +75,7 @@ class SemanticFunction
       parameters[whichParam] = newValue;
     }
 
-    virtual string getParamName( TParamIndex whichParam ) const
+    virtual std::string getParamName( TParamIndex whichParam ) const
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -88,11 +86,11 @@ class SemanticFunction
 
     virtual void init( KWindow *whichWindow ) = 0;
 
-    virtual string getName() = 0;
+    virtual std::string getName() = 0;
 
     virtual SemanticFunction *clone() = 0;
 
-    virtual vector<vector<TSemanticValue> > *getStack()
+    virtual std::vector<std::vector<TSemanticValue> > *getStack()
     {
       return NULL;
     }
@@ -103,11 +101,11 @@ class SemanticFunction
     }
 
   protected:
-    vector<TParamValue> parameters;
-    vector<string> parametersName;
+    std::vector<TParamValue> parameters;
+    std::vector<std::string> parametersName;
 
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) = 0;
-    virtual string getDefaultParamName( TParamIndex whichParam ) = 0;
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) = 0;
 
     // Must initialize from the beginning of the trace
     virtual const bool getMyInitFromBegin() = 0;

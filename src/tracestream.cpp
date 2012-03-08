@@ -34,6 +34,8 @@
 #include <stdlib.h>
 #endif
 
+using namespace std;
+
 const double TraceStream::GZIP_COMPRESSION_RATIO = 6.3;
 
 TraceStream *TraceStream::openFile( const string& filename )

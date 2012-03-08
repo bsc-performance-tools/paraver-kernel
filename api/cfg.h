@@ -33,6 +33,7 @@
 #include <map>
 #include <vector>
 #include <sstream>
+#include <string>
 #include "paraverkerneltypes.h"
 
 class KernelConnection;
@@ -40,9 +41,7 @@ class Window;
 class Trace;
 class Histogram;
 
-using namespace std;
-
-TWindowLevel stringToLevel( const string& strLevel );
+TWindowLevel stringToLevel( const std::string& strLevel );
 
 class TagFunction
 {
@@ -53,21 +52,21 @@ class TagFunction
     virtual ~TagFunction()
     {}
 
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms )
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms )
     {
       return false;
     }
 
-    virtual void setCurrentNameTag( const string & whichCurrentNameTag )
+    virtual void setCurrentNameTag( const std::string & whichCurrentNameTag )
     {
       currentNameTag = whichCurrentNameTag;
     }
 
   protected:
-    static string currentNameTag; // because windows are created after name tag
+    static std::string currentNameTag; // because windows are created after name tag
     static bool isWindowTag;
  };
 
@@ -84,7 +83,7 @@ public:
     enabledCFG4DMode = false;
   }
 
-  string description;
+  std::string description;
   bool windowComputeYMaxOnLoad;
   bool windowScaleRelative;
   bool windowBeginTimeRelative;
@@ -97,34 +96,34 @@ public:
 class CFGLoader
 {
   private:
-    static map<string, TagFunction *> cfgTagFunctions;
+    static std::map<std::string, TagFunction *> cfgTagFunctions;
     static void loadMap();
     static void unLoadMap();
     static void pushbackWindow( Window *whichWindow,
-                                vector<Window *>& allWindows );
-    static void pushbackAllWindows( const vector<Window *>& selected,
-                                    const vector<Histogram *>& selectedHistos,
-                                    vector<Window *>& allWindows );
+                                std::vector<Window *>& allWindows );
+    static void pushbackAllWindows( const std::vector<Window *>& selected,
+                                    const std::vector<Histogram *>& selectedHistos,
+                                    std::vector<Window *>& allWindows );
 
   public:
-    static bool isCFGFile( const string& filename );
+    static bool isCFGFile( const std::string& filename );
     static bool loadCFG( KernelConnection *whichKernel,
-                         const string& filename,
+                         const std::string& filename,
                          Trace *whichTrace,
-                         vector<Window *>& windows,
-                         vector<Histogram *>& histograms,
+                         std::vector<Window *>& windows,
+                         std::vector<Histogram *>& histograms,
                          SaveOptions &options );
-    static bool saveCFG( const string& filename,
+    static bool saveCFG( const std::string& filename,
                          const SaveOptions& options,
-                         const vector<Window *>& windows,
-                         const vector<Histogram *>& histograms );
+                         const std::vector<Window *>& windows,
+                         const std::vector<Histogram *>& histograms );
     static int findWindow( const Window *whichWindow,
-                           const vector<Window *>& allWindows );
+                           const std::vector<Window *>& allWindows );
     // CFG4D
-    static const vector< string > getTagCFGFullList( Window *whichWindow );
-    static const vector< string > getTagCFGFullList( Histogram *whichHistogram );
+    static const std::vector< std::string > getTagCFGFullList( Window *whichWindow );
+    static const std::vector< std::string > getTagCFGFullList( Histogram *whichHistogram );
 
-    static string errorLine;
+    static std::string errorLine;
 };
 
 
@@ -136,18 +135,18 @@ class WindowName: public TagFunction
 
     virtual ~WindowName()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 };
 
 
@@ -159,18 +158,18 @@ class WindowType: public TagFunction
 
     virtual ~WindowType()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -183,18 +182,18 @@ class WindowFactors: public TagFunction
 
     virtual ~WindowFactors()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -207,18 +206,18 @@ class WindowPositionX: public TagFunction
 
     virtual ~WindowPositionX()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -231,18 +230,18 @@ class WindowPositionY: public TagFunction
 
     virtual ~WindowPositionY()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -255,18 +254,18 @@ class WindowWidth: public TagFunction
 
     virtual ~WindowWidth()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -279,18 +278,18 @@ class WindowHeight: public TagFunction
 
     virtual ~WindowHeight()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -303,18 +302,18 @@ class WindowCommLines: public TagFunction
 
     virtual ~WindowCommLines()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -327,18 +326,18 @@ class WindowFlagsEnabled: public TagFunction
 
     virtual ~WindowFlagsEnabled()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -351,18 +350,18 @@ class WindowNonColorMode: public TagFunction
 
     virtual ~WindowNonColorMode()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -375,18 +374,18 @@ class WindowColorMode: public TagFunction
 
     virtual ~WindowColorMode()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -399,18 +398,18 @@ class WindowUnits: public TagFunction
 
     virtual ~WindowUnits()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -423,18 +422,18 @@ class WindowOperation: public TagFunction
 
     virtual ~WindowOperation()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -447,18 +446,18 @@ class WindowMaximumY: public TagFunction
 
     virtual ~WindowMaximumY()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -471,18 +470,18 @@ class WindowMinimumY: public TagFunction
 
     virtual ~WindowMinimumY()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -495,19 +494,19 @@ class WindowComputeYMax: public TagFunction
 
     virtual ~WindowComputeYMax()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const vector<Window *>::const_iterator it );
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -520,18 +519,18 @@ class WindowLevel: public TagFunction
 
     virtual ~WindowLevel()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -544,18 +543,18 @@ class WindowZoomObjects: public TagFunction
 
     virtual ~WindowZoomObjects()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -568,19 +567,19 @@ class WindowIdentifiers: public TagFunction
 
     virtual ~WindowIdentifiers()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>& allWindows,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>& allWindows,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -593,19 +592,19 @@ class WindowScaleRelative: public TagFunction
 
     virtual ~WindowScaleRelative()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const vector<Window *>::const_iterator it );
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -618,19 +617,19 @@ class WindowEndTimeRelative: public TagFunction
 
     virtual ~WindowEndTimeRelative()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const vector<Window *>::const_iterator it );
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -643,18 +642,18 @@ class WindowObject: public TagFunction
 
     virtual ~WindowObject()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -667,19 +666,19 @@ class WindowBeginTime: public TagFunction
 
     virtual ~WindowBeginTime()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const vector<Window *>::const_iterator it );
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -692,19 +691,19 @@ class WindowEndTime: public TagFunction
 
     virtual ~WindowEndTime()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const vector<Window *>::const_iterator it );
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -717,19 +716,19 @@ class WindowStopTime: public TagFunction
 
     virtual ~WindowStopTime()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const vector<Window *>::const_iterator it );
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -742,19 +741,19 @@ class WindowBeginTimeRelative: public TagFunction
 
     virtual ~WindowBeginTimeRelative()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const vector<Window *>::const_iterator it );
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -767,18 +766,18 @@ class WindowNumberOfRow: public TagFunction
 
     virtual ~WindowNumberOfRow()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -790,18 +789,18 @@ class WindowSelectedFunctions: public TagFunction
 
     virtual ~WindowSelectedFunctions()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -814,18 +813,18 @@ class WindowComposeFunctions: public TagFunction
 
     virtual ~WindowComposeFunctions()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -838,18 +837,18 @@ class WindowSemanticModule: public TagFunction
 
     virtual ~WindowSemanticModule()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -862,18 +861,18 @@ class WindowFilterModule: public TagFunction
 
     virtual ~WindowFilterModule()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -886,18 +885,18 @@ class WindowFilterLogical: public TagFunction
 
     virtual ~WindowFilterLogical()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -910,18 +909,18 @@ class WindowFilterPhysical: public TagFunction
 
     virtual ~WindowFilterPhysical()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -934,18 +933,18 @@ class WindowFilterBoolOpFromTo: public TagFunction
 
     virtual ~WindowFilterBoolOpFromTo()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -958,18 +957,18 @@ class WindowFilterBoolOpTagSize: public TagFunction
 
     virtual ~WindowFilterBoolOpTagSize()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -982,18 +981,18 @@ class WindowFilterBoolOpTypeVal: public TagFunction
 
     virtual ~WindowFilterBoolOpTypeVal()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1006,18 +1005,18 @@ class WindowOpen: public TagFunction
 
     virtual ~WindowOpen()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1030,18 +1029,18 @@ class WindowDrawMode: public TagFunction
 
     virtual ~WindowDrawMode()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1054,18 +1053,18 @@ class WindowDrawModeRows: public TagFunction
 
     virtual ~WindowDrawModeRows()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1078,18 +1077,18 @@ class WindowPixelSize: public TagFunction
 
     virtual ~WindowPixelSize()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1102,18 +1101,18 @@ class Analyzer2DCreate: public TagFunction
 
     virtual ~Analyzer2DCreate()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1126,18 +1125,18 @@ class Analyzer2DName: public TagFunction
 
     virtual ~Analyzer2DName()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1150,18 +1149,18 @@ class Analyzer2DX: public TagFunction
 
     virtual ~Analyzer2DX()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1174,18 +1173,18 @@ class Analyzer2DY: public TagFunction
 
     virtual ~Analyzer2DY()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1198,18 +1197,18 @@ class Analyzer2DWidth: public TagFunction
 
     virtual ~Analyzer2DWidth()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1222,18 +1221,18 @@ class Analyzer2DHeight: public TagFunction
 
     virtual ~Analyzer2DHeight()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1246,19 +1245,19 @@ class Analyzer2DControlWindow: public TagFunction
 
     virtual ~Analyzer2DControlWindow()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>& allWindows,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>& allWindows,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1271,19 +1270,19 @@ class Analyzer2DDataWindow: public TagFunction
 
     virtual ~Analyzer2DDataWindow()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>& allWindows,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>& allWindows,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1296,18 +1295,18 @@ class Analyzer2DStatistic: public TagFunction
 
     virtual ~Analyzer2DStatistic()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1320,18 +1319,18 @@ class Analyzer2DCalculateAll: public TagFunction
 
     virtual ~Analyzer2DCalculateAll()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1344,18 +1343,18 @@ class Analyzer2DHideColumns: public TagFunction
 
     virtual ~Analyzer2DHideColumns()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1368,18 +1367,18 @@ class Analyzer2DHorizontal: public TagFunction
 
     virtual ~Analyzer2DHorizontal()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1392,18 +1391,18 @@ class Analyzer2DColor: public TagFunction
 
     virtual ~Analyzer2DColor()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1416,18 +1415,18 @@ class Analyzer2DSemanticColor: public TagFunction
 
     virtual ~Analyzer2DSemanticColor()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1440,18 +1439,18 @@ class Analyzer2DZoom: public TagFunction
 
     virtual ~Analyzer2DZoom()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1464,18 +1463,18 @@ class Analyzer2DAccumulator: public TagFunction
 
     virtual ~Analyzer2DAccumulator()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1488,18 +1487,18 @@ class Analyzer2DAccumulateByControlWindow: public TagFunction
 
     virtual ~Analyzer2DAccumulateByControlWindow()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1512,18 +1511,18 @@ class Analyzer2DSortCols: public TagFunction
 
     virtual ~Analyzer2DSortCols()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1536,18 +1535,18 @@ class Analyzer2DSortCriteria: public TagFunction
 
     virtual ~Analyzer2DSortCriteria()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1560,18 +1559,18 @@ class Analyzer2DParameters: public TagFunction
 
     virtual ~Analyzer2DParameters()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1584,19 +1583,19 @@ class Analyzer2DAnalysisLimits: public TagFunction
 
     virtual ~Analyzer2DAnalysisLimits()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const vector<Histogram *>::const_iterator it );
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1609,18 +1608,18 @@ class Analyzer2DRelativeTime: public TagFunction
 
     virtual ~Analyzer2DRelativeTime()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1633,19 +1632,19 @@ class Analyzer2DComputeYScale: public TagFunction
 
     virtual ~Analyzer2DComputeYScale()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const vector<Histogram *>::const_iterator it );
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1658,18 +1657,18 @@ class Analyzer2DMinimum: public TagFunction
 
     virtual ~Analyzer2DMinimum()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1682,18 +1681,18 @@ class Analyzer2DMaximum: public TagFunction
 
     virtual ~Analyzer2DMaximum()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1706,18 +1705,18 @@ class Analyzer2DDelta: public TagFunction
 
     virtual ~Analyzer2DDelta()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1730,19 +1729,19 @@ class Analyzer2DComputeGradient: public TagFunction
 
     virtual ~Analyzer2DComputeGradient()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const vector<Histogram *>::const_iterator it );
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1754,18 +1753,18 @@ class Analyzer2DMinimumGradient: public TagFunction
 
     virtual ~Analyzer2DMinimumGradient()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1778,18 +1777,18 @@ class Analyzer2DMaximumGradient: public TagFunction
 
     virtual ~Analyzer2DMaximumGradient()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1802,18 +1801,18 @@ class Analyzer2DPixelSize: public TagFunction
 
     virtual ~Analyzer2DPixelSize()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1826,19 +1825,19 @@ class Analyzer3DControlWindow: public TagFunction
 
     virtual ~Analyzer3DControlWindow()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Window *>& allWindows,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>& allWindows,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1851,19 +1850,19 @@ class Analyzer3DComputeYScale: public TagFunction
 
     virtual ~Analyzer3DComputeYScale()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const vector<Histogram *>::const_iterator it );
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1876,18 +1875,18 @@ class Analyzer3DMinimum: public TagFunction
 
     virtual ~Analyzer3DMinimum()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1900,18 +1899,18 @@ class Analyzer3DMaximum: public TagFunction
 
     virtual ~Analyzer3DMaximum()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1924,18 +1923,18 @@ class Analyzer3DDelta: public TagFunction
 
     virtual ~Analyzer3DDelta()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1948,18 +1947,18 @@ class Analyzer3DFixedValue: public TagFunction
 
     virtual ~Analyzer3DFixedValue()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
-    static void printLine( ofstream& cfgFile,
-                           const vector<Histogram *>::const_iterator it );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 
 };
 
@@ -1972,20 +1971,20 @@ class TagAliasCFG4D: public TagFunction
 
     virtual ~TagAliasCFG4D()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
-    static void printAliasList( ofstream& cfgFile,
-                                const vector<Window *>::const_iterator it );
-    static void printAliasList( ofstream& cfgFile,
-                                const vector<Histogram *>::const_iterator it );
+    static void printAliasList( std::ofstream& cfgFile,
+                                const std::vector<Window *>::const_iterator it );
+    static void printAliasList( std::ofstream& cfgFile,
+                                const std::vector<Histogram *>::const_iterator it );
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 };
 
 
@@ -1998,18 +1997,18 @@ class TagAliasStatisticCFG4D: public TagFunction
 
     virtual ~TagAliasStatisticCFG4D()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
-    static void printAliasList( ofstream& cfgFile,
-                                const vector<Histogram *>::const_iterator it );
+    static void printAliasList( std::ofstream& cfgFile,
+                                const std::vector<Histogram *>::const_iterator it );
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 };
 
 
@@ -2021,18 +2020,18 @@ class TagAliasParamCFG4D: public TagFunction
 
     virtual ~TagAliasParamCFG4D()
     {}
-    virtual bool parseLine( KernelConnection *whichKernel, istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            vector<Window *>& windows,
-                            vector<Histogram *>& histograms );
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
 
-    static const string &getTagCFG() { return tagCFG; }
+    static const std::string &getTagCFG() { return tagCFG; }
 
-    static void printAliasList( ofstream& cfgFile,
-                                const vector<Window *>::const_iterator it );
+    static void printAliasList( std::ofstream& cfgFile,
+                                const std::vector<Window *>::const_iterator it );
 
   protected:
-    static string tagCFG;
+    static std::string tagCFG;
 };
 
 #endif // CFG_H_INCLUDED

@@ -30,6 +30,8 @@
 #include "semanticthreadfunctions.h"
 #include "kwindow.h"
 
+using namespace std;
+
 bool stateOnSameTime( MemoryTrace::iterator *it, KSingleWindow *window )
 {
   bool finish = false;

@@ -56,7 +56,7 @@ Column<ValueType>::Column( const Column<ValueType>& source ):
 {
   current_cell = Cell<ValueType>( source.current_cell );
 
-  typename vector<Cell<ValueType> >::const_iterator it_aux;
+  typename std::vector<Cell<ValueType> >::const_iterator it_aux;
   for ( it_aux = source.cells.begin(); it_aux != source.cells.end(); ++it_aux )
     cells.push_back( Cell<ValueType>( *it_aux ) );
 }
@@ -126,7 +126,7 @@ inline void Column<ValueType>::setValue( ValueType semVal )
 
 
 template <typename ValueType>
-inline void Column<ValueType>::setValue( const vector<ValueType>& semVal )
+inline void Column<ValueType>::setValue( const std::vector<ValueType>& semVal )
 {
   if ( *finished )
   {
@@ -175,7 +175,7 @@ inline void Column<ValueType>::addValue( ValueType semVal )
 
 
 template <typename ValueType>
-inline void Column<ValueType>::addValue( const vector<ValueType>& semVal )
+inline void Column<ValueType>::addValue( const std::vector<ValueType>& semVal )
 {
   if ( modified == false )
   {
@@ -204,7 +204,7 @@ inline ValueType Column<ValueType>::getCurrentValue( short idStat ) const
 
 
 template <typename ValueType>
-inline vector<ValueType> Column<ValueType>::getCurrentValue() const
+inline std::vector<ValueType> Column<ValueType>::getCurrentValue() const
 {
   if ( *finished )
   {
@@ -304,7 +304,7 @@ inline bool Column<ValueType>::getCellValue( ValueType& semVal,
 {
   Cell<ValueType> tmpCell( whichRow, 0 );
 
-  typename vector<Cell<ValueType> >::const_iterator result;
+  typename std::vector<Cell<ValueType> >::const_iterator result;
   for( result = cells.begin(); result != cells.end(); ++result )
     if( result->getRow() == whichRow ) break;
 
@@ -318,12 +318,12 @@ inline bool Column<ValueType>::getCellValue( ValueType& semVal,
 
 
 template <typename ValueType>
-inline bool Column<ValueType>::getCellValue( vector<ValueType>& semVal,
+inline bool Column<ValueType>::getCellValue( std::vector<ValueType>& semVal,
     int whichRow ) const
 {
   Cell<ValueType> tmpCell( whichRow, 0 );
 
-  typename vector<Cell<ValueType> >::iterator result = find( cells.begin(), cells.end(), tmpCell );
+  typename std::vector<Cell<ValueType> >::iterator result = find( cells.begin(), cells.end(), tmpCell );
   if( result == cells.end() )
     return false;
   else
@@ -339,6 +339,6 @@ inline void Column<ValueType>::print() const
   for ( unsigned int ii = 0; ii < n_cells; ii++ )
   {
     cells[ ii ].print();
-    cout << endl;
+    std::cout << std::endl;
   }
 }

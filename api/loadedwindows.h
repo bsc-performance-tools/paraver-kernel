@@ -31,9 +31,8 @@
 #define LOADEDWINDOWS_H_INCLUDED
 
 #include <map>
+#include <vector>
 #include "paraverkerneltypes.h"
-
-using namespace std;
 
 class Window;
 class Histogram;
@@ -58,17 +57,17 @@ class LoadedWindows
     Histogram *getHisto( TWindowID id ) const;
     bool emptyWindows() const;
     bool emptyHistograms() const;
-    void getAll( vector<Window *>& onVector ) const;
-    void getAll( vector<TWindowID>& onVector ) const;
+    void getAll( std::vector<Window *>& onVector ) const;
+    void getAll( std::vector<TWindowID>& onVector ) const;
 
-    void getAll( vector<Histogram *>& onVector ) const;
-    void getAll( Trace *whichTrace, vector< Window *>& onVector ) const;
-    void getAll( Trace *whichTrace, vector< Histogram *>& onVector ) const;
+    void getAll( std::vector<Histogram *>& onVector ) const;
+    void getAll( Trace *whichTrace, std::vector< Window *>& onVector ) const;
+    void getAll( Trace *whichTrace, std::vector< Histogram *>& onVector ) const;
 
     // Histogram windows selection related methods
-    void getValidControlWindow( Window *dataWindow, Window *controlWindow, vector<TWindowID>& onVector ) const;
+    void getValidControlWindow( Window *dataWindow, Window *controlWindow, std::vector<TWindowID>& onVector ) const;
     void getValidDataWindow( Window *controlWindow, Window *extraWindow,
-                             vector<TWindowID>& onVector ) const;
+                             std::vector<TWindowID>& onVector ) const;
   protected:
 
   private:
@@ -76,8 +75,8 @@ class LoadedWindows
 
     static LoadedWindows *instance;
 
-    map<TWindowID, Window *> windows;
-    map<TWindowID, Histogram *> histograms;
+    std::map<TWindowID, Window *> windows;
+    std::map<TWindowID, Histogram *> histograms;
     TWindowID currentID;
     TWindowID currentHistoID;
 

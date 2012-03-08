@@ -32,6 +32,7 @@
 #include "filtermanagement.h"
 #include "functionmanagement.h"
 
+using namespace std;
 
 void createFilter()
 {

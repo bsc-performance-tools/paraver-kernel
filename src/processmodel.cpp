@@ -36,6 +36,8 @@
 
 #include <stdlib.h>
 
+using namespace std;
+
 TApplOrder ProcessModel::totalApplications() const
 {
   return applications.size();

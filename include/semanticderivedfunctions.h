@@ -63,7 +63,7 @@ class DerivedAdd: public SemanticDerived
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return DerivedAdd::name;
     }
@@ -84,7 +84,7 @@ class DerivedAdd: public SemanticDerived
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -94,7 +94,7 @@ class DerivedAdd: public SemanticDerived
   private:
     static const bool initFromBegin = false;
     static const bool controlDerived = false;
-    static string name;
+    static std::string name;
 };
 
 
@@ -129,7 +129,7 @@ class DerivedProduct: public SemanticDerived
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return DerivedProduct::name;
     }
@@ -151,7 +151,7 @@ class DerivedProduct: public SemanticDerived
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -161,7 +161,7 @@ class DerivedProduct: public SemanticDerived
   private:
     static const bool initFromBegin = false;
     static const bool controlDerived = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -197,7 +197,7 @@ class DerivedSubstract: public SemanticDerived
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return DerivedSubstract::name;
     }
@@ -219,7 +219,7 @@ class DerivedSubstract: public SemanticDerived
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -229,7 +229,7 @@ class DerivedSubstract: public SemanticDerived
   private:
     static const bool initFromBegin = false;
     static const bool controlDerived = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -264,7 +264,7 @@ class DerivedDivide: public SemanticDerived
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return DerivedDivide::name;
     }
@@ -286,7 +286,7 @@ class DerivedDivide: public SemanticDerived
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -296,7 +296,7 @@ class DerivedDivide: public SemanticDerived
   private:
     static const bool initFromBegin = false;
     static const bool controlDerived = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -331,7 +331,7 @@ class DerivedMaximum: public SemanticDerived
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return DerivedMaximum::name;
     }
@@ -353,7 +353,7 @@ class DerivedMaximum: public SemanticDerived
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -363,7 +363,7 @@ class DerivedMaximum: public SemanticDerived
   private:
     static const bool initFromBegin = false;
     static const bool controlDerived = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -398,7 +398,7 @@ class DerivedMinimum: public SemanticDerived
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return DerivedMinimum::name;
     }
@@ -420,7 +420,7 @@ class DerivedMinimum: public SemanticDerived
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -430,7 +430,7 @@ class DerivedMinimum: public SemanticDerived
   private:
     static const bool initFromBegin = false;
     static const bool controlDerived = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -465,7 +465,7 @@ class DerivedDifferent: public SemanticDerived
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return DerivedDifferent::name;
     }
@@ -487,7 +487,7 @@ class DerivedDifferent: public SemanticDerived
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -497,7 +497,7 @@ class DerivedDifferent: public SemanticDerived
   private:
     static const bool initFromBegin = false;
     static const bool controlDerived = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -531,7 +531,7 @@ class ControlDerivedClearBy: public SemanticDerived
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow );
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ControlDerivedClearBy::name;
     }
@@ -553,7 +553,7 @@ class ControlDerivedClearBy: public SemanticDerived
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -563,11 +563,11 @@ class ControlDerivedClearBy: public SemanticDerived
   private:
     static const bool initFromBegin = true;
     static const bool controlDerived = false;
-    static string name;
+    static std::string name;
 
-    vector<TSemanticValue> prevValue;
-    vector<TSemanticValue> state;
-    vector<TSemanticValue> prevResult;
+    std::vector<TSemanticValue> prevValue;
+    std::vector<TSemanticValue> state;
+    std::vector<TSemanticValue> prevResult;
 
 };
 
@@ -602,7 +602,7 @@ class ControlDerivedMaximum: public SemanticDerived
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ControlDerivedMaximum::name;
     }
@@ -624,7 +624,7 @@ class ControlDerivedMaximum: public SemanticDerived
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -634,7 +634,7 @@ class ControlDerivedMaximum: public SemanticDerived
   private:
     static const bool initFromBegin = false;
     static const bool controlDerived = true;
-    static string name;
+    static std::string name;
 
 };
 
@@ -669,7 +669,7 @@ class ControlDerivedAdd: public SemanticDerived
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ControlDerivedAdd::name;
     }
@@ -691,7 +691,7 @@ class ControlDerivedAdd: public SemanticDerived
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -701,7 +701,7 @@ class ControlDerivedAdd: public SemanticDerived
   private:
     static const bool initFromBegin = false;
     static const bool controlDerived = true;
-    static string name;
+    static std::string name;
 
 };
 

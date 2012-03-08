@@ -54,7 +54,7 @@ class KWindowException: public ParaverKernelException
     }
 
   protected:
-    static string moduleMessage;
+    static std::string moduleMessage;
     TErrorCode code;
 
   private:
@@ -63,7 +63,7 @@ class KWindowException: public ParaverKernelException
     {
       return errorMessage[ code ];
     }
-    virtual string& specificModuleMessage() const
+    virtual std::string& specificModuleMessage() const
     {
       return moduleMessage;
     }

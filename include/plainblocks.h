@@ -124,11 +124,11 @@ namespace Plain
       } TCommType;
       static const TRecordType commTypes[commTypeSize];
       static const PRV_UINT32 blockSize = 10000;
-      vector<PRV_UINT32> currentRecord;
-      vector<TRecord *> currentBlock;
-      vector<TLastRecord> lastRecords;
-      vector<vector<TRecord *> > blocks;
-      vector<TCommInfo *> communications;
+      std::vector<PRV_UINT32> currentRecord;
+      std::vector<TRecord *> currentBlock;
+      std::vector<TLastRecord> lastRecords;
+      std::vector<std::vector<TRecord *> > blocks;
+      std::vector<TCommInfo *> communications;
       TCommID currentComm;
       const ResourceModel& resourceModel;
       const ProcessModel& processModel;

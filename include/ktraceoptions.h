@@ -53,7 +53,6 @@
 
 // only for cout, delete this 2 lines
 //#include <iostream>
-//using namespace std;
 
 class KTraceOptions: public TraceOptions
 {
@@ -370,7 +369,7 @@ class KTraceOptions: public TraceOptions
       }
     }
 
-    inline void get_state_names( string &stateList ) const
+    inline void get_state_names( std::string &stateList ) const
     {
       for( unsigned int i = 0; i < MAXSTATES; ++i )
       {
@@ -378,10 +377,10 @@ class KTraceOptions: public TraceOptions
         {
           if ( i > 0 )
           {
-            stateList = stateList + string( "," );
+            stateList = stateList + std::string( "," );
           }
 
-          stateList =  stateList + string( state_names[ i ] );
+          stateList =  stateList + std::string( state_names[ i ] );
         }
         else
           break;
@@ -561,8 +560,8 @@ class KTraceOptions: public TraceOptions
     }
 
 
-    vector<int> parseDoc( char *docname );
-    bool saveXML( vector< int > &filterOrder, string fileName );
+    std::vector<int> parseDoc( char *docname );
+    bool saveXML( std::vector< int > &filterOrder, std::string fileName );
 
   private:
     void init();
@@ -576,7 +575,7 @@ class KTraceOptions: public TraceOptions
     void parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur );
 
-    void pushBackUniqueFilterIdentifier( int filterID, vector< int > &order );
+    void pushBackUniqueFilterIdentifier( int filterID, std::vector< int > &order );
 
     void saveXMLCutter( xmlTextWriterPtr &writer );
     void saveXMLFilter( xmlTextWriterPtr &writer );

@@ -57,7 +57,7 @@ class Adding: public SemanticNotThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return Adding::name;
     }
@@ -79,7 +79,7 @@ class Adding: public SemanticNotThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -88,7 +88,7 @@ class Adding: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 };
 
 
@@ -117,7 +117,7 @@ class AddingSign: public SemanticNotThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return AddingSign::name;
     }
@@ -139,7 +139,7 @@ class AddingSign: public SemanticNotThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -148,7 +148,7 @@ class AddingSign: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -178,7 +178,7 @@ class Average: public SemanticNotThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return Average::name;
     }
@@ -200,7 +200,7 @@ class Average: public SemanticNotThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -209,7 +209,7 @@ class Average: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -239,7 +239,7 @@ class Maximum: public SemanticNotThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return Maximum::name;
     }
@@ -265,7 +265,7 @@ class Maximum: public SemanticNotThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -274,7 +274,7 @@ class Maximum: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -304,7 +304,7 @@ class Minimum: public SemanticNotThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return Minimum::name;
     }
@@ -330,7 +330,7 @@ class Minimum: public SemanticNotThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -339,7 +339,7 @@ class Minimum: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -370,7 +370,7 @@ class Activity: public SemanticNotThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return Activity::name;
     }
@@ -396,7 +396,7 @@ class Activity: public SemanticNotThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -405,7 +405,7 @@ class Activity: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -436,7 +436,7 @@ class InActivity: public SemanticNotThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return InActivity::name;
     }
@@ -463,7 +463,7 @@ class InActivity: public SemanticNotThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -472,7 +472,7 @@ class InActivity: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -502,7 +502,7 @@ class NotThreadMode: public SemanticNotThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return NotThreadMode::name;
     }
@@ -529,7 +529,7 @@ class NotThreadMode: public SemanticNotThread
 
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -538,7 +538,7 @@ class NotThreadMode: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -569,7 +569,7 @@ class ObjectI: public SemanticNotThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ObjectI::name;
     }
@@ -600,7 +600,7 @@ class ObjectI: public SemanticNotThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -609,7 +609,7 @@ class ObjectI: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -640,7 +640,7 @@ class AddObjectsI: public SemanticNotThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return AddObjectsI::name;
     }
@@ -667,7 +667,7 @@ class AddObjectsI: public SemanticNotThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -676,7 +676,7 @@ class AddObjectsI: public SemanticNotThread
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -706,7 +706,7 @@ class ChangedValue: public SemanticNotThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ChangedValue::name;
     }
@@ -733,7 +733,7 @@ class ChangedValue: public SemanticNotThread
 
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -742,7 +742,7 @@ class ChangedValue: public SemanticNotThread
 
   private:
     static const bool initFromBegin = true;
-    static string name;
+    static std::string name;
 
 };
 

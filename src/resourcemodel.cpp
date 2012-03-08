@@ -34,6 +34,7 @@
 #include "resourcemodel.h"
 #include "traceheaderexception.h"
 
+using namespace std;
 
 TNodeOrder ResourceModel::totalNodes() const
 {

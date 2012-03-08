@@ -31,6 +31,7 @@
 #include "statisticmanagement.h"
 #include "functionmanagement.h"
 
+using namespace std;
 
 void createStatistic()
 {

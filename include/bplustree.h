@@ -94,12 +94,12 @@ namespace bplustree
       TRecord *last;
 
       // List by thread.
-      vector<TRecord *> threadFirst;
-      vector<TRecord *> threadLast;
+      std::vector<TRecord *> threadFirst;
+      std::vector<TRecord *> threadLast;
 
       // List by CPU.
-      vector<TRecord *> CPUFirst;
-      vector<TRecord *> CPULast;
+      std::vector<TRecord *> CPUFirst;
+      std::vector<TRecord *> CPULast;
   };
 
 
@@ -147,7 +147,7 @@ namespace bplustree
       virtual bool partialDelete( RecordLeaf *limit_key,
                                   BPlusNode **valid_predecessor ) = 0;
       //virtual PRV_UINT16 countElems() = 0;
-      virtual void print( string indent ) = 0;
+      virtual void print( std::string indent ) = 0;
   };
 
 
@@ -184,7 +184,7 @@ namespace bplustree
                                       RecordLeaf *&last_leaf,
                                       Index<TRecord *> *traceIndex );
 
-      virtual void print( string indent );
+      virtual void print( std::string indent );
       virtual bool partialDelete( RecordLeaf *limit_key,
                                   BPlusNode **valid_predecessor );
 
@@ -224,7 +224,7 @@ namespace bplustree
       virtual bool getLeafData( PRV_UINT16 ii, TRecord *&data );
       virtual bool getLeafKey( PRV_UINT16 ii,  RecordLeaf *&key );
 
-      virtual void print( string indent );
+      virtual void print( std::string indent );
       virtual PRV_UINT32 linkRecords( TRecord **ini,
                                       TRecord **fin,
                                       PRV_INT32 &recs2link,
@@ -244,10 +244,10 @@ namespace bplustree
       PRV_UINT32 unloadThreshold;
       PRV_UINT32 unloadPercent;
       Index<TRecord *> *traceIndex;
-      vector< TRecord > emptyThreadBegin;
-      vector< TRecord > emptyThreadEnd;
-      vector< TRecord > emptyCPUBegin;
-      vector< TRecord > emptyCPUEnd;
+      std::vector< TRecord > emptyThreadBegin;
+      std::vector< TRecord > emptyThreadEnd;
+      std::vector< TRecord > emptyCPUBegin;
+      std::vector< TRecord > emptyCPUEnd;
 
       void insert( TRecord *r );
 
@@ -383,9 +383,9 @@ namespace bplustree
       virtual MemoryTrace::iterator* CPUBegin( TCPUOrder whichCPU ) const;
       virtual MemoryTrace::iterator* CPUEnd( TCPUOrder whichCPU ) const;
 
-      virtual void getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
+      virtual void getRecordByTimeThread( std::vector<MemoryTrace::iterator *>& listIter,
                                           TRecordTime whichTime ) const;
-      virtual void getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
+      virtual void getRecordByTimeCPU( std::vector<MemoryTrace::iterator *>& listIter,
                                        TRecordTime whichTime ) const;
 
   };

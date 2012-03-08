@@ -36,8 +36,6 @@
 
 typedef int TExceptionLine;
 
-using namespace std;
-
 class ParaverKernelException : public std::exception
 {
 
@@ -54,7 +52,7 @@ class ParaverKernelException : public std::exception
       LAST
     } TErrorCode;
 
-    static ostream& defaultPrintStream;
+    static std::ostream& defaultPrintStream;
 
     ParaverKernelException( TErrorCode whichCode = undefined,
                             const char *whichAuxMessage = "",
@@ -63,27 +61,27 @@ class ParaverKernelException : public std::exception
         code( whichCode ),
         auxMessage( whichAuxMessage ),
         file( whichFile ),
-        line( whichLine ) 
+        line( whichLine )
     {};
 
     ~ParaverKernelException() throw() {};
 
     const char *what() throw();
 
-    void printMessage( ostream& printStream = defaultPrintStream )
+    void printMessage( std::ostream& printStream = defaultPrintStream )
     {
       printStream << what();
     }
 
   protected:
 
-    static string kernelMessage;
+    static std::string kernelMessage;
 
-    static string moduleMessage;
+    static std::string moduleMessage;
 
     TErrorCode code;
 
-    string auxMessage;
+    std::string auxMessage;
 
     const char *file;
 
@@ -91,14 +89,14 @@ class ParaverKernelException : public std::exception
 
   private:
     static const char *errorMessage[];
-    string message;
+    std::string message;
 
     virtual const char *specificErrorMessage() const
     {
       return errorMessage[ code ];
     }
 
-    virtual string& specificModuleMessage() const
+    virtual std::string& specificModuleMessage() const
 
     {
       return moduleMessage;

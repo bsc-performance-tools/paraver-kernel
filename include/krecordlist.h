@@ -34,8 +34,6 @@
 #include "recordlist.h"
 #include "memorytrace.h"
 
-using std::set;
-
 class KWindow;
 
 class KRecordList: public RecordList

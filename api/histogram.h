@@ -147,21 +147,21 @@ class Histogram
     virtual HistogramTotals *getCommRowTotals() const = 0;
 
     virtual void clearStatistics() = 0;
-    virtual void pushbackStatistic( const string& whichStatistic ) = 0;
+    virtual void pushbackStatistic( const std::string& whichStatistic ) = 0;
 
     virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
-                          vector<TObjectOrder>& selectedRows ) = 0;
+                          std::vector<TObjectOrder>& selectedRows ) = 0;
 
-    virtual bool itsCommunicationStat( const string& whichStat ) const = 0;
+    virtual bool itsCommunicationStat( const std::string& whichStat ) const = 0;
 
-    virtual string getUnitsLabel( const string& whichStat ) const = 0;
+    virtual std::string getUnitsLabel( const std::string& whichStat ) const = 0;
 
-    virtual void getGroupsLabels( vector<string>& onVector ) const = 0;
-    virtual void getStatisticsLabels( vector<string>& onVector,
+    virtual void getGroupsLabels( std::vector<std::string>& onVector ) const = 0;
+    virtual void getStatisticsLabels( std::vector<std::string>& onVector,
                                       PRV_UINT32 whichGroup,
                                       bool getOriginalList = true ) const = 0;
-    virtual string getFirstStatistic() const = 0;
-    virtual string getFirstCommStatistic() const = 0;
+    virtual std::string getFirstStatistic() const = 0;
+    virtual std::string getFirstCommStatistic() const = 0;
 
     virtual bool getControlOutOfLimits() const = 0;
     virtual bool getExtraOutOfLimits() const = 0;
@@ -199,7 +199,7 @@ class Histogram
     }
     virtual void setHeight( PRV_UINT16 whichPos )
     {}
-    virtual HistogramTotals *getTotals( const string& whichStat ) const
+    virtual HistogramTotals *getTotals( const std::string& whichStat ) const
     {
       return NULL;
     }
@@ -316,22 +316,22 @@ class Histogram
     }
     virtual void compute2DScale() {}
     virtual void compute3DScale() {}
-    virtual string getRowLabel( TObjectOrder whichRow ) const
+    virtual std::string getRowLabel( TObjectOrder whichRow ) const
     {
       return "Unnamed row";
     }
-    virtual string getColumnLabel( THistogramColumn whichColumn ) const
+    virtual std::string getColumnLabel( THistogramColumn whichColumn ) const
     {
       return "Unnamed column";
     }
-    virtual string getPlaneLabel( THistogramColumn whichPlane ) const
+    virtual std::string getPlaneLabel( THistogramColumn whichPlane ) const
     {
       return "Unnamed plane";
     }
 
     virtual THistogramColumn getPlaneColumns( THistogramColumn iPlane,
                                               bool hideEmptyColumns,
-                                              vector<THistogramColumn> &noVoidColumns ) const
+                                              std::vector<THistogramColumn> &noVoidColumns ) const
     {
       return 0;
     }
@@ -364,21 +364,21 @@ class Histogram
     {}
     virtual void addZoom( TZoomInfo columnInfo, TZoomInfo dummy )
     {}
-    virtual void setZoomFirstDimension( pair<TZoomInfo, TZoomInfo> &zinfo )
+    virtual void setZoomFirstDimension( std::pair<TZoomInfo, TZoomInfo> &zinfo )
     {}
-    virtual void setZoomSecondDimension( pair<TObjectOrder, TObjectOrder> &objects )
+    virtual void setZoomSecondDimension( std::pair<TObjectOrder, TObjectOrder> &objects )
     {}
-    virtual pair<TZoomInfo, TZoomInfo> getZoomFirstDimension() const
+    virtual std::pair<TZoomInfo, TZoomInfo> getZoomFirstDimension() const
     {
-      return pair<TZoomInfo, TZoomInfo>();
+      return std::pair<TZoomInfo, TZoomInfo>();
     }
-    virtual pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const
+    virtual std::pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const
     {
-      return pair<TObjectOrder, TObjectOrder>();
+      return std::pair<TObjectOrder, TObjectOrder>();
     }
 
-    virtual void setName( const string& whichName ) {}
-    virtual string getName() const
+    virtual void setName( const std::string& whichName ) {}
+    virtual std::string getName() const
     {
       return "Unnamed histogram";
     }
@@ -387,16 +387,16 @@ class Histogram
     {
       return true;
     }
-    virtual bool getIdStat( const string& whichStat, PRV_UINT16& idStat ) const
+    virtual bool getIdStat( const std::string& whichStat, PRV_UINT16& idStat ) const
     {
       return false;
     }
-    virtual void setCurrentStat( const string& whichStat ) {}
-    virtual string getCurrentStat() const
+    virtual void setCurrentStat( const std::string& whichStat ) {}
+    virtual std::string getCurrentStat() const
     {
       return "";
     }
-    virtual THistogramColumn getNumColumns( const string& whichStat ) const
+    virtual THistogramColumn getNumColumns( const std::string& whichStat ) const
     {
       return getNumColumns();
     }
@@ -464,7 +464,7 @@ class Histogram
       return false;
     }
 
-    virtual bool existsCFG4DAlias( const string &property ) const
+    virtual bool existsCFG4DAlias( const std::string &property ) const
     {
       return false;
     }
@@ -474,40 +474,40 @@ class Histogram
       return false;
     }
 
-    virtual string getCFG4DAlias( const string &property ) const
+    virtual std::string getCFG4DAlias( const std::string &property ) const
     {
-      return string( "" );
+      return std::string( "" );
     }
 
-    virtual string getCFG4DAlias( const THistogramProperties &propertyIndex ) const
+    virtual std::string getCFG4DAlias( const THistogramProperties &propertyIndex ) const
     {
-      return string( "" );
+      return std::string( "" );
     }
 
-    virtual void setCFG4DAlias( const string &property, const string &alias )
+    virtual void setCFG4DAlias( const std::string &property, const std::string &alias )
     {}
-    virtual void setCFG4DStatisticAlias( const string &statistic, const string &alias )
-    {}
-
-    virtual void setCFG4DAliasList( const map< string, string >& aliasList )
+    virtual void setCFG4DStatisticAlias( const std::string &statistic, const std::string &alias )
     {}
 
-    virtual void setCFG4DStatisticsAliasList( const map< string, string >& statisticsAliasList )
+    virtual void setCFG4DAliasList( const std::map< std::string, std::string >& aliasList )
     {}
 
-    virtual const map< string, string > getCFG4DAliasList() const
+    virtual void setCFG4DStatisticsAliasList( const std::map< std::string, std::string >& statisticsAliasList )
+    {}
+
+    virtual const std::map< std::string, std::string > getCFG4DAliasList() const
     {
-      return map< string, string >();
+      return std::map< std::string, std::string >();
     }
 
-    virtual const map< string, string > getCFG4DStatisticsAliasList() const
+    virtual const std::map< std::string, std::string > getCFG4DStatisticsAliasList() const
     {
-      return map< string, string >();
+      return std::map< std::string, std::string >();
     }
 
-    virtual const vector< string > getCFG4DFullTagList()
+    virtual const std::vector< std::string > getCFG4DFullTagList()
     {
-      return vector< string >();
+      return std::vector< std::string >();
     }
 
   protected:
@@ -572,7 +572,7 @@ class HistogramProxy : public Histogram
     virtual bool getInclusive() const;
 
     virtual THistogramColumn getNumPlanes() const;
-    virtual THistogramColumn getNumColumns( const string& whichStat ) const;
+    virtual THistogramColumn getNumColumns( const std::string& whichStat ) const;
     virtual TObjectOrder getNumRows() const;
     virtual TSemanticValue getCurrentValue( PRV_UINT32 col,
                                             PRV_UINT16 idStat,
@@ -602,17 +602,17 @@ class HistogramProxy : public Histogram
                                    PRV_UINT16 idStat,
                                    PRV_UINT32 whichPlane = 0 ) const;
 
-    virtual HistogramTotals *getTotals( const string& whichStat ) const;
+    virtual HistogramTotals *getTotals( const std::string& whichStat ) const;
     virtual HistogramTotals *getColumnTotals() const;
     virtual HistogramTotals *getCommColumnTotals() const;
     virtual HistogramTotals *getRowTotals() const;
     virtual HistogramTotals *getCommRowTotals() const;
 
     virtual void clearStatistics();
-    virtual void pushbackStatistic( const string& whichStatistic );
+    virtual void pushbackStatistic( const std::string& whichStatistic );
 
     virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
-                          vector<TObjectOrder>& selectedRows );
+                          std::vector<TObjectOrder>& selectedRows );
 
     virtual void setHorizontal( bool newValue );
     virtual bool getHorizontal() const;
@@ -660,12 +660,12 @@ class HistogramProxy : public Histogram
     virtual void compute2DScale();
     virtual void compute3DScale();
 
-    virtual string getRowLabel( TObjectOrder whichRow ) const;
-    virtual string getColumnLabel( THistogramColumn whichColumn ) const;
-    virtual string getPlaneLabel( THistogramColumn whichPlane ) const;
+    virtual std::string getRowLabel( TObjectOrder whichRow ) const;
+    virtual std::string getColumnLabel( THistogramColumn whichColumn ) const;
+    virtual std::string getPlaneLabel( THistogramColumn whichPlane ) const;
     virtual THistogramColumn getPlaneColumns( THistogramColumn iPlane,
                                               bool hideEmptyColumns,
-                                              vector<THistogramColumn> &noVoidColumns ) const;
+                                              std::vector<THistogramColumn> &noVoidColumns ) const;
 
     // Zoom history
     virtual bool isZoomEmpty() const;
@@ -676,31 +676,31 @@ class HistogramProxy : public Histogram
     virtual void addZoom( TZoomInfo columnInfo, TZoomInfo dummy,
                           TObjectOrder beginObject, TObjectOrder endObject );
     virtual void addZoom( TZoomInfo columnInfo, TZoomInfo dummy );
-    virtual void setZoomFirstDimension( pair<TZoomInfo, TZoomInfo> &zinfo );
-    virtual void setZoomSecondDimension( pair<TObjectOrder, TObjectOrder> &objects );
-    virtual pair<TZoomInfo, TZoomInfo> getZoomFirstDimension() const;
-    virtual pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const;
+    virtual void setZoomFirstDimension( std::pair<TZoomInfo, TZoomInfo> &zinfo );
+    virtual void setZoomSecondDimension( std::pair<TObjectOrder, TObjectOrder> &objects );
+    virtual std::pair<TZoomInfo, TZoomInfo> getZoomFirstDimension() const;
+    virtual std::pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const;
 
-    virtual void setName( const string& whichName );
-    virtual string getName() const;
+    virtual void setName( const std::string& whichName );
+    virtual std::string getName() const;
 
     virtual void setCalculateAll( bool status );
     virtual bool getCalculateAll() const;
 
-    virtual bool getIdStat( const string& whichStat, PRV_UINT16& idStat ) const;
+    virtual bool getIdStat( const std::string& whichStat, PRV_UINT16& idStat ) const;
 
-    virtual void setCurrentStat( const string& whichStat );
-    virtual string getCurrentStat() const;
+    virtual void setCurrentStat( const std::string& whichStat );
+    virtual std::string getCurrentStat() const;
 
-    bool itsCommunicationStat( const string& whichStat ) const;
+    bool itsCommunicationStat( const std::string& whichStat ) const;
 
-    string getUnitsLabel( const string& whichStat ) const;
-    virtual void getGroupsLabels( vector<string>& onVector ) const;
-    virtual void getStatisticsLabels( vector<string>& onVector,
+    std::string getUnitsLabel( const std::string& whichStat ) const;
+    virtual void getGroupsLabels( std::vector<std::string>& onVector ) const;
+    virtual void getStatisticsLabels( std::vector<std::string>& onVector,
                                       PRV_UINT32 whichGroup,
                                       bool getOriginalList = true ) const;
-    virtual string getFirstStatistic() const;
-    virtual string getFirstCommStatistic() const;
+    virtual std::string getFirstStatistic() const;
+    virtual std::string getFirstCommStatistic() const;
 
     virtual bool getControlOutOfLimits() const;
     virtual bool getExtraOutOfLimits() const;
@@ -745,24 +745,24 @@ class HistogramProxy : public Histogram
     virtual void setCFG4DMode( bool mode );
     virtual bool getCFG4DMode() const;
 
-    virtual bool existsCFG4DAlias( const string &property ) const; // DEPRECATED
+    virtual bool existsCFG4DAlias( const std::string &property ) const; // DEPRECATED
     virtual bool existsCFG4DAlias( const THistogramProperties &propertyIndex ) const;
 
-    virtual void setCFG4DAlias( const string &property, const string &alias );
-    virtual void setCFG4DStatisticAlias( const string &statistic, const string &alias );
+    virtual void setCFG4DAlias( const std::string &property, const std::string &alias );
+    virtual void setCFG4DStatisticAlias( const std::string &statistic, const std::string &alias );
 
-    virtual string getCFG4DAlias( const string &property ) const; // DEPRECATED
-    virtual string getCFG4DAlias( const THistogramProperties &propertyIndex ) const;
+    virtual std::string getCFG4DAlias( const std::string &property ) const; // DEPRECATED
+    virtual std::string getCFG4DAlias( const THistogramProperties &propertyIndex ) const;
 
-    virtual void setCFG4DAliasList( const map< string, string >& aliasList );
-    virtual void setCFG4DStatisticsAliasList( const map< string, string >& aliasList );
-    virtual const map< string, string > getCFG4DAliasList() const;
-    virtual const map< string, string > getCFG4DStatisticsAliasList() const;
+    virtual void setCFG4DAliasList( const std::map< std::string, std::string >& aliasList );
+    virtual void setCFG4DStatisticsAliasList( const std::map< std::string, std::string >& aliasList );
+    virtual const std::map< std::string, std::string > getCFG4DAliasList() const;
+    virtual const std::map< std::string, std::string > getCFG4DStatisticsAliasList() const;
 
-    virtual const vector< string > getCFG4DFullTagList();
+    virtual const std::vector< std::string > getCFG4DFullTagList();
 
   private:
-    string name;
+    std::string name;
 
     bool destroy;
 
@@ -813,9 +813,9 @@ class HistogramProxy : public Histogram
     Trace *myTrace;
 
     bool calculateAll;
-    string currentStat;
-    vector<string> calcStat;
-    vector<string> commCalcStat;
+    std::string currentStat;
+    std::vector<std::string> calcStat;
+    std::vector<std::string> commCalcStat;
 
     GradientColor myGradientColor;
 
@@ -826,8 +826,8 @@ class HistogramProxy : public Histogram
     // CFG4D
     bool isCFG4DEnabled;
     bool CFG4DMode;
-    map< string, string > propertiesAliasCFG4D;
-    map< string, string > statisticsAliasCFG4D;
+    std::map< std::string, std::string > propertiesAliasCFG4D;
+    std::map< std::string, std::string > statisticsAliasCFG4D;
 
     HistogramProxy( KernelConnection *whichKernel );
 

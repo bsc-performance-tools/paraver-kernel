@@ -31,6 +31,7 @@
 #include "bplustreeexception.h"
 
 using namespace bplustree;
+using std::string;
 
 string BPlusTreeException::moduleMessage( "BPlusTree: " );
 

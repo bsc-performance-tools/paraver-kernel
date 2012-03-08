@@ -31,9 +31,6 @@
 #define SELECTIONROWSUTILS_H_INCLUDED
 
 #include <vector>
-
-using namespace std;
-
 #include "paraverkerneltypes.h"
 #include "selectionmanagement.h"
 
@@ -45,7 +42,7 @@ class SelectionRowsUtils
     static void getAllLevelsSelectedRows( const Trace* whichTrace,
                                           const SelectionManagement< TObjectOrder, TWindowLevel > &selectedRow,
                                           TWindowLevel onLevel,
-                                          vector< TObjectOrder > &selected );
+                                          std::vector< TObjectOrder > &selected );
 };
 
 #endif // SELECTIONROWSUTILS_H_INCLUDED

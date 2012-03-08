@@ -36,8 +36,6 @@
 
 class KWindow;
 
-using namespace std;
-
 class Interval
 {
   public:

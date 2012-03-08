@@ -46,18 +46,16 @@ class TraceCutter;
 class TraceFilter;
 class TraceSoftwareCounters;
 
-using namespace std;
-
 class KernelConnection
 {
   public:
     virtual ~KernelConnection() {}
 
-    virtual bool checkTraceSize( const string& filename, TTraceSize maxSize ) const = 0;
-    virtual TTraceSize getTraceSize( const string& filename ) const = 0;
-    virtual Trace *newTrace( const string& whichFile, bool noLoad, ProgressController *progress ) const = 0;
-    virtual string getPCFFileLocation( const string& traceFile ) const = 0;
-    virtual string getROWFileLocation( const string& traceFile ) const = 0;
+    virtual bool checkTraceSize( const std::string& filename, TTraceSize maxSize ) const = 0;
+    virtual TTraceSize getTraceSize( const std::string& filename ) const = 0;
+    virtual Trace *newTrace( const std::string& whichFile, bool noLoad, ProgressController *progress ) const = 0;
+    virtual std::string getPCFFileLocation( const std::string& traceFile ) const = 0;
+    virtual std::string getROWFileLocation( const std::string& traceFile ) const = 0;
     virtual Window *newSingleWindow() const = 0;
     virtual Window *newSingleWindow( Trace *whichTrace ) const = 0;
     virtual Window *newDerivedWindow() const = 0;
@@ -70,7 +68,7 @@ class KernelConnection
     virtual TraceCutter *newTraceCutter( char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options,
-                                         const vector< TEventType > &whichTypesWithValuesZero,
+                                         const std::vector< TEventType > &whichTypesWithValuesZero,
                                          ProgressController *progress = NULL ) const = 0;
     virtual TraceFilter *newTraceFilter( char *trace_in,
                                          char *trace_out,
@@ -81,12 +79,12 @@ class KernelConnection
                                                              TraceOptions *options,
                                                              ProgressController *progress = NULL ) const = 0;
 
-    virtual void getAllStatistics( vector<string>& onVector ) const = 0;
-    virtual void getAllFilterFunctions( vector<string>& onVector ) const = 0;
+    virtual void getAllStatistics( std::vector<std::string>& onVector ) const = 0;
+    virtual void getAllFilterFunctions( std::vector<std::string>& onVector ) const = 0;
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
-                                          vector<string>& onVector ) const = 0;
+                                          std::vector<std::string>& onVector ) const = 0;
 
-    virtual bool userMessage( const string& message ) const = 0;
+    virtual bool userMessage( const std::string& message ) const = 0;
 
     #define INC_CHOP_COUNTER 0
     #define INC_SC_COUNTER 1

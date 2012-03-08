@@ -34,8 +34,6 @@
 #include <string>
 #include "resourcemodelnode.h"
 
-using namespace std;
-
 class ResourceModel
 {
   public:
@@ -44,7 +42,7 @@ class ResourceModel
       ready = false;
     }
 
-    ResourceModel( istringstream& headerInfo );
+    ResourceModel( std::istringstream& headerInfo );
 
     ~ResourceModel()
     {}
@@ -54,7 +52,7 @@ class ResourceModel
       return ready;
     }
 
-    void dumpToFile( fstream& file ) const;
+    void dumpToFile( std::fstream& file ) const;
 
     TNodeOrder totalNodes() const;
 
@@ -74,8 +72,8 @@ class ResourceModel
       TCPUOrder CPU;
     };
 
-    vector<CPULocation> CPUs;
-    vector<ResourceModelNode> nodes;
+    std::vector<CPULocation> CPUs;
+    std::vector<ResourceModelNode> nodes;
     bool ready;
 
   private:

@@ -33,8 +33,6 @@
 #include <vector>
 #include "resourcemodelcpu.h"
 
-using namespace std;
-
 class ResourceModelNode
 {
   public:
@@ -46,7 +44,7 @@ class ResourceModelNode
 
   protected:
     TNodeOrder traceGlobalOrder;
-    vector<ResourceModelCPU> CPUs;
+    std::vector<ResourceModelCPU> CPUs;
 
   private:
     friend class ResourceModel;

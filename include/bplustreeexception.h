@@ -61,7 +61,7 @@ namespace bplustree
 
     protected:
 
-      static string moduleMessage;
+      static std::string moduleMessage;
 
       TErrorCode code;
 
@@ -73,7 +73,7 @@ namespace bplustree
         return errorMessage[ code ];
       }
 
-      virtual string& specificModuleMessage() const
+      virtual std::string& specificModuleMessage() const
       {
         return moduleMessage;
       }

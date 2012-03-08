@@ -33,8 +33,6 @@
 #include "tracebodyio.h"
 #include "tracestream.h"
 
-using namespace std;
-
 // Paraver trace old format file
 class TraceBodyIO_v1 : public TraceBodyIO
 {

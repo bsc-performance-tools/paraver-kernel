@@ -47,6 +47,8 @@
 #define atoll _atoi64
 #endif
 
+using namespace std;
+
 KTraceCutter::KTraceCutter( char *&trace_in,
                             char *&trace_out,
                             TraceOptions *options,

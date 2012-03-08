@@ -32,7 +32,6 @@
 
 #include <string>
 #include <fstream>
-using namespace std;
 #include <vector>
 
 #include "paraverkerneltypes.h"
@@ -51,24 +50,24 @@ class PreviousFiles
 
     ~PreviousFiles();
 
-    bool add( const string &newFile );
-    const vector<string>& getFiles() const;
+    bool add( const std::string &newFile );
+    const std::vector<std::string>& getFiles() const;
 
-    static const string previousTracesFile;
-    static const string previousCFGsFile;
+    static const std::string previousTracesFile;
+    static const std::string previousCFGsFile;
 
     static const PRV_UINT16 SIZE = 20;
 
   private:
-    PreviousFiles( const string &filename );
+    PreviousFiles( const std::string &filename );
 
-    fstream myFile;
-    string  myFileName;
-    vector< string > listFiles;
+    std::fstream myFile;
+    std::string  myFileName;
+    std::vector< std::string > listFiles;
 
     void create();
     bool update();
-    void read( fstream &myFile );
+    void read( std::fstream &myFile );
 };
 
 

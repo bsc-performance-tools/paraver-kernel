@@ -29,6 +29,8 @@
 
 #include "semanticexception.h"
 
+using std::string;
+
 string SemanticException::moduleMessage( "Trace header: " );
 
 const char *SemanticException::errorMessage[] =

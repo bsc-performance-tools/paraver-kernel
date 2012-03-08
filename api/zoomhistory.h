@@ -30,8 +30,6 @@
 #ifndef _ZOOMHISTORY_H
 #define _ZOOMHISTORY_H
 
-using namespace std;
-
 //#include <utility>
 #include <vector>
 
@@ -47,10 +45,10 @@ class ZoomHistory
     void addZoom( Dimension1 begin, Dimension1 end );
     void addZoom( Dimension2 begin, Dimension2 end );
 
-    void setFirstDimension( pair<Dimension1, Dimension1> &dim );
-    void setSecondDimension( pair<Dimension2, Dimension2> &dim );
-    pair<Dimension1, Dimension1> getFirstDimension() const;
-    pair<Dimension2, Dimension2> getSecondDimension() const;
+    void setFirstDimension( std::pair<Dimension1, Dimension1> &dim );
+    void setSecondDimension( std::pair<Dimension2, Dimension2> &dim );
+    std::pair<Dimension1, Dimension1> getFirstDimension() const;
+    std::pair<Dimension2, Dimension2> getSecondDimension() const;
 
     bool isEmpty() const;
     bool emptyNextZoom() const;
@@ -63,7 +61,7 @@ class ZoomHistory
     void clear();
   private:
     int currentZoom;
-    vector< pair< pair<Dimension1,Dimension1>, pair<Dimension2, Dimension2> > > zooms;
+    std::vector< std::pair< std::pair<Dimension1,Dimension1>, std::pair<Dimension2, Dimension2> > > zooms;
 };
 
 #include "zoomhistory.cpp"

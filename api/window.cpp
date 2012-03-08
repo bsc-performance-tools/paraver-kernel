@@ -1617,8 +1617,6 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   vector< TSemanticValue > tmpComputedMaxY;
   vector< TSemanticValue > tmpComputedMinY;
 
-cout << "[ WindowProxy::computeSemanticRowParallel ] Entry!" << endl;
-
   int numRows;
   vector<TObjectOrder>::iterator endIt = selectedSet.end();
   for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != endIt; ++obj )
@@ -1676,8 +1674,6 @@ cout << "[ WindowProxy::computeSemanticRowParallel ] Entry!" << endl;
 //#pragma css barrier
 #pragma omp taskwait
 
-cout << "[ WindowProxy::computeSemanticRowParallel ] omp taskwait finished!" << endl;
-
   for( vector< int >::iterator it = tmpDrawCaution.begin(); it != tmpDrawCaution.end(); ++it )
   {
     if ( *it )
@@ -1686,7 +1682,6 @@ cout << "[ WindowProxy::computeSemanticRowParallel ] omp taskwait finished!" << 
       break;
     }
   }
-cout << "[ WindowProxy::computeSemanticRowParallel ] tmpDrawCaution for{} finished!" << endl;
 
   for( size_t pos = 0; pos < tmpComputedMaxY.size(); ++pos )
   {
@@ -1697,7 +1692,6 @@ cout << "[ WindowProxy::computeSemanticRowParallel ] tmpDrawCaution for{} finish
     else
       computedMinY = computedMinY < tmpComputedMinY[ pos ] ? computedMinY : tmpComputedMinY[ pos ];
   }
-cout << "[ WindowProxy::computeSemanticRowParallel ] tmpComputedMaxY for{} finished!" << endl;
 }
 
 #ifdef WIN32

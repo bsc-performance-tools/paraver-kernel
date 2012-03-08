@@ -35,8 +35,6 @@
 #include "interval.h"
 #include "memorytrace.h"
 
-using namespace std;
-
 struct SemanticInfo
 {
   Interval *callingInterval;
@@ -51,7 +49,7 @@ struct SemanticThreadInfo: public SemanticInfo
 
 struct SemanticHighInfo: public SemanticInfo
 {
-  vector<TSemanticValue> values;
+  std::vector<TSemanticValue> values;
   TObjectOrder lastChanged;
 };
 

@@ -60,7 +60,7 @@ class ComposeAsIs: public SemanticCompose
     {}
 
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeAsIs::name;
     }
@@ -86,7 +86,7 @@ class ComposeAsIs: public SemanticCompose
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -94,7 +94,7 @@ class ComposeAsIs: public SemanticCompose
     }
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 };
 
 
@@ -124,7 +124,7 @@ class ComposeSign: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeSign::name;
     }
@@ -145,7 +145,7 @@ class ComposeSign: public SemanticCompose
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -154,7 +154,7 @@ class ComposeSign: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -185,7 +185,7 @@ class ComposeUnsign: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeUnsign::name;
     }
@@ -206,7 +206,7 @@ class ComposeUnsign: public SemanticCompose
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -215,7 +215,7 @@ class ComposeUnsign: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -247,7 +247,7 @@ class ComposeMod: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeMod::name;
     }
@@ -272,7 +272,7 @@ class ComposeMod: public SemanticCompose
         tmp.push_back( 1 );
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -281,7 +281,7 @@ class ComposeMod: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -313,7 +313,7 @@ class ComposeModPlus1: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeModPlus1::name;
     }
@@ -339,7 +339,7 @@ class ComposeModPlus1: public SemanticCompose
         tmp.push_back( 1 );
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -348,7 +348,7 @@ class ComposeModPlus1: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -380,7 +380,7 @@ class ComposeDivide: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeDivide::name;
     }
@@ -405,7 +405,7 @@ class ComposeDivide: public SemanticCompose
         tmp.push_back( 1 );
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -414,7 +414,7 @@ class ComposeDivide: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -446,7 +446,7 @@ class ComposeProduct: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeProduct::name;
     }
@@ -472,7 +472,7 @@ class ComposeProduct: public SemanticCompose
         tmp.push_back( 0 );
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -481,7 +481,7 @@ class ComposeProduct: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -513,7 +513,7 @@ class ComposeAdding: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeAdding::name;
     }
@@ -538,7 +538,7 @@ class ComposeAdding: public SemanticCompose
         tmp.push_back( 0 );
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -547,7 +547,7 @@ class ComposeAdding: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -579,7 +579,7 @@ class ComposeSubstract: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeSubstract::name;
     }
@@ -605,7 +605,7 @@ class ComposeSubstract: public SemanticCompose
         tmp.push_back( 0 );
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -614,7 +614,7 @@ class ComposeSubstract: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -647,7 +647,7 @@ class ComposeSelectRange: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeSelectRange::name;
     }
@@ -680,7 +680,7 @@ class ComposeSelectRange: public SemanticCompose
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -693,7 +693,7 @@ class ComposeSelectRange: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 };
 
 
@@ -725,7 +725,7 @@ class ComposeSelectRangeOpen: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeSelectRangeOpen::name;
     }
@@ -758,7 +758,7 @@ class ComposeSelectRangeOpen: public SemanticCompose
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -771,7 +771,7 @@ class ComposeSelectRangeOpen: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 };
 
 
@@ -803,7 +803,7 @@ class ComposeIsInRange: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeIsInRange::name;
     }
@@ -832,7 +832,7 @@ class ComposeIsInRange: public SemanticCompose
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -845,7 +845,7 @@ class ComposeIsInRange: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -878,7 +878,7 @@ class ComposeIsInRangeOpen: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeIsInRangeOpen::name;
     }
@@ -907,7 +907,7 @@ class ComposeIsInRangeOpen: public SemanticCompose
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -920,7 +920,7 @@ class ComposeIsInRangeOpen: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 };
 
 
@@ -951,7 +951,7 @@ class ComposeIsEqual: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeIsEqual::name;
     }
@@ -982,7 +982,7 @@ class ComposeIsEqual: public SemanticCompose
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -991,7 +991,7 @@ class ComposeIsEqual: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1023,7 +1023,7 @@ class ComposeIsEqualSign: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeIsEqualSign::name;
     }
@@ -1050,7 +1050,7 @@ class ComposeIsEqualSign: public SemanticCompose
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1059,7 +1059,7 @@ class ComposeIsEqualSign: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1091,7 +1091,7 @@ class ComposeFloor: public SemanticCompose
     {}
 
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeFloor::name;
     }
@@ -1117,7 +1117,7 @@ class ComposeFloor: public SemanticCompose
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1125,7 +1125,7 @@ class ComposeFloor: public SemanticCompose
     }
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 };
 
 
@@ -1156,7 +1156,7 @@ class ComposeCeil: public SemanticCompose
     {}
 
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeCeil::name;
     }
@@ -1182,7 +1182,7 @@ class ComposeCeil: public SemanticCompose
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1190,7 +1190,7 @@ class ComposeCeil: public SemanticCompose
     }
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 };
 
 
@@ -1221,7 +1221,7 @@ class ComposeRound: public SemanticCompose
     {}
 
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeRound::name;
     }
@@ -1247,7 +1247,7 @@ class ComposeRound: public SemanticCompose
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1255,7 +1255,7 @@ class ComposeRound: public SemanticCompose
     }
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 };
 
 
@@ -1286,7 +1286,7 @@ class ComposeAbs: public SemanticCompose
     {}
 
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeAbs::name;
     }
@@ -1312,7 +1312,7 @@ class ComposeAbs: public SemanticCompose
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1320,7 +1320,7 @@ class ComposeAbs: public SemanticCompose
     }
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 };
 
 
@@ -1349,7 +1349,7 @@ class ComposeStackedValue: public SemanticCompose
 
     virtual void init( KWindow *whichWindow );
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeStackedValue::name;
     }
@@ -1378,23 +1378,23 @@ class ComposeStackedValue: public SemanticCompose
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return "";
     }
 
-    virtual vector<vector<TSemanticValue> > *getStack()
+    virtual std::vector<std::vector<TSemanticValue> > *getStack()
     {
       return &myStack;
     }
 
   private:
     static const bool initFromBegin = true;
-    static string name;
+    static std::string name;
 
-    vector<vector<TSemanticValue> > myStack;
+    std::vector<std::vector<TSemanticValue> > myStack;
 };
 
 
@@ -1424,7 +1424,7 @@ class ComposeInStackedValue: public SemanticCompose
 
     virtual void init( KWindow *whichWindow );
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeInStackedValue::name;
     }
@@ -1451,23 +1451,23 @@ class ComposeInStackedValue: public SemanticCompose
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       return "Value";
     }
 
-    virtual vector<vector<TSemanticValue> > *getStack()
+    virtual std::vector<std::vector<TSemanticValue> > *getStack()
     {
       return &myStack;
     }
 
   private:
     static const bool initFromBegin = true;
-    static string name;
+    static std::string name;
 
-    vector<vector<TSemanticValue> > myStack;
+    std::vector<std::vector<TSemanticValue> > myStack;
 };
 
 
@@ -1496,7 +1496,7 @@ class ComposeNestingLevel: public SemanticCompose
 
     virtual void init( KWindow *whichWindow );
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeNestingLevel::name;
     }
@@ -1521,7 +1521,7 @@ class ComposeNestingLevel: public SemanticCompose
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1530,9 +1530,9 @@ class ComposeNestingLevel: public SemanticCompose
 
   private:
     static const bool initFromBegin = true;
-    static string name;
+    static std::string name;
 
-    vector<TSemanticValue> myStack;
+    std::vector<TSemanticValue> myStack;
 };
 
 
@@ -1561,7 +1561,7 @@ class ComposeDelta: public SemanticCompose
 
     virtual void init( KWindow *whichWindow );
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeDelta::name;
     }
@@ -1591,7 +1591,7 @@ class ComposeDelta: public SemanticCompose
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1600,10 +1600,10 @@ class ComposeDelta: public SemanticCompose
 
   private:
     static const bool initFromBegin = true;
-    static string name;
+    static std::string name;
 
-    vector<TSemanticValue> prevValue;
-    vector<TSemanticValue> semPrevValue;
+    std::vector<TSemanticValue> prevValue;
+    std::vector<TSemanticValue> semPrevValue;
 };
 
 
@@ -1633,7 +1633,7 @@ class ComposeBurstTime: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeBurstTime::name;
     }
@@ -1662,7 +1662,7 @@ class ComposeBurstTime: public SemanticCompose
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1671,7 +1671,7 @@ class ComposeBurstTime: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1702,7 +1702,7 @@ class ComposeJoinBursts: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeJoinBursts::name;
     }
@@ -1731,7 +1731,7 @@ class ComposeJoinBursts: public SemanticCompose
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1740,7 +1740,7 @@ class ComposeJoinBursts: public SemanticCompose
 
   private:
     static const bool initFromBegin = true;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1770,7 +1770,7 @@ class ComposeBeginTime: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeBeginTime::name;
     }
@@ -1799,7 +1799,7 @@ class ComposeBeginTime: public SemanticCompose
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1808,7 +1808,7 @@ class ComposeBeginTime: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1838,7 +1838,7 @@ class ComposeEndTime: public SemanticCompose
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ComposeEndTime::name;
     }
@@ -1867,7 +1867,7 @@ class ComposeEndTime: public SemanticCompose
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1876,7 +1876,7 @@ class ComposeEndTime: public SemanticCompose
 
   private:
     static const bool initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 

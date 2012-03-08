@@ -39,8 +39,6 @@
 #include "processmodel.h"
 #include "resourcemodel.h"
 
-using namespace std;
-
 class TraceBodyIO;
 
 class KTrace: public Trace

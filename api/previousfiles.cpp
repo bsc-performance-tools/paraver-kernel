@@ -30,6 +30,8 @@
 #include <stdlib.h>
 #include "previousfiles.h"
 
+using namespace std;
+
 #ifdef WIN32
 const string PreviousFiles::previousTracesFile = "\\paraver\\paraverdb";
 const string PreviousFiles::previousCFGsFile = "\\paraver\\paravercfgdb";

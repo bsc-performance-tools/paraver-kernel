@@ -69,7 +69,7 @@ class StateAsIs: public SemanticThread
     virtual void init( KWindow *whichWindow );
 //    {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return StateAsIs::name;
     }
@@ -104,7 +104,7 @@ class StateAsIs: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -114,7 +114,7 @@ class StateAsIs: public SemanticThread
     static const TRecordType  validateMask = STATE + BEGIN;
     static const TRecordType  validateMaskFillGaps = STATE;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
     bool fillStateGaps;
     KSingleWindow *myWindow;
 };
@@ -141,7 +141,7 @@ class Useful: public SemanticThread
     virtual void init( KWindow *whichWindow );
 //    {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return Useful::name;
     }
@@ -176,7 +176,7 @@ class Useful: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -186,7 +186,7 @@ class Useful: public SemanticThread
     static const TRecordType  validateMask = STATE + BEGIN;
     static const TRecordType  validateMaskFillGaps = STATE;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
     bool fillStateGaps;
     KSingleWindow *myWindow;
 };
@@ -213,7 +213,7 @@ class StateSign: public SemanticThread
     virtual void init( KWindow *whichWindow );
 //    {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return StateSign::name;
     }
@@ -243,7 +243,7 @@ class StateSign: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -253,7 +253,7 @@ class StateSign: public SemanticThread
     static const TRecordType  validateMask = STATE + BEGIN;
     static const TRecordType  validateMaskFillGaps = STATE;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
     bool fillStateGaps;
     KSingleWindow *myWindow;
 };
@@ -281,7 +281,7 @@ class GivenState: public SemanticThread
     virtual void init( KWindow *whichWindow );
 //    {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return GivenState::name;
     }
@@ -321,7 +321,7 @@ class GivenState: public SemanticThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -331,7 +331,7 @@ class GivenState: public SemanticThread
     static const TRecordType  validateMask = STATE + BEGIN;
     static const TRecordType  validateMaskFillGaps = STATE;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
     bool fillStateGaps;
     KSingleWindow *myWindow;
 };
@@ -359,7 +359,7 @@ class InState: public SemanticThread
     virtual void init( KWindow *whichWindow );
 //    {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return InState::name;
     }
@@ -394,7 +394,7 @@ class InState: public SemanticThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -404,7 +404,7 @@ class InState: public SemanticThread
     static const TRecordType  validateMask = STATE + BEGIN;
     static const TRecordType  validateMaskFillGaps = STATE;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
     bool fillStateGaps;
     KSingleWindow *myWindow;
 };
@@ -432,7 +432,7 @@ class NotInState: public SemanticThread
     virtual void init( KWindow *whichWindow );
 //    {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return NotInState::name;
     }
@@ -467,7 +467,7 @@ class NotInState: public SemanticThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -477,7 +477,7 @@ class NotInState: public SemanticThread
     static const TRecordType  validateMask = STATE + BEGIN;
     static const TRecordType  validateMaskFillGaps = STATE;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
     bool fillStateGaps;
     KSingleWindow *myWindow;
 };
@@ -505,7 +505,7 @@ class StateRecordDuration: public SemanticThread
     virtual void init( KWindow *whichWindow );
 //    {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return StateRecordDuration::name;
     }
@@ -545,7 +545,7 @@ class StateRecordDuration: public SemanticThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -555,7 +555,7 @@ class StateRecordDuration: public SemanticThread
     static const TRecordType  validateMask = STATE + BEGIN;
     static const TRecordType  validateMaskFillGaps = STATE;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
     bool fillStateGaps;
     KSingleWindow *myWindow;
 };
@@ -586,7 +586,7 @@ class LastEventType: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return LastEventType::name;
     }
@@ -616,7 +616,7 @@ class LastEventType: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -625,7 +625,7 @@ class LastEventType: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -651,7 +651,7 @@ class LastEventValue: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return LastEventValue::name;
     }
@@ -681,7 +681,7 @@ class LastEventValue: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -690,7 +690,7 @@ class LastEventValue: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -716,7 +716,7 @@ class LastEventValueWOBursts: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return LastEventValueWOBursts::name;
     }
@@ -746,7 +746,7 @@ class LastEventValueWOBursts: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -755,7 +755,7 @@ class LastEventValueWOBursts: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -781,7 +781,7 @@ class NextEventType: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return NextEventType::name;
     }
@@ -811,7 +811,7 @@ class NextEventType: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -820,7 +820,7 @@ class NextEventType: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -846,7 +846,7 @@ class NextEventValue: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return NextEventValue::name;
     }
@@ -876,7 +876,7 @@ class NextEventValue: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -885,7 +885,7 @@ class NextEventValue: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -912,7 +912,7 @@ class AverageNextEventValue: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return AverageNextEventValue::name;
     }
@@ -943,7 +943,7 @@ class AverageNextEventValue: public SemanticThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -952,7 +952,7 @@ class AverageNextEventValue: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -979,7 +979,7 @@ class AverageLastEventValue: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return AverageLastEventValue::name;
     }
@@ -1010,7 +1010,7 @@ class AverageLastEventValue: public SemanticThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1019,7 +1019,7 @@ class AverageLastEventValue: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1046,7 +1046,7 @@ class GivenEventValue: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return GivenEventValue::name;
     }
@@ -1081,7 +1081,7 @@ class GivenEventValue: public SemanticThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1090,7 +1090,7 @@ class GivenEventValue: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1117,7 +1117,7 @@ class InEventValue: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return InEventValue::name;
     }
@@ -1148,7 +1148,7 @@ class InEventValue: public SemanticThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1157,7 +1157,7 @@ class InEventValue: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1183,7 +1183,7 @@ class IntervalBetweenEvents: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return IntervalBetweenEvents::name;
     }
@@ -1213,7 +1213,7 @@ class IntervalBetweenEvents: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1222,7 +1222,7 @@ class IntervalBetweenEvents: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1249,7 +1249,7 @@ class NotInEventValue: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return NotInEventValue::name;
     }
@@ -1280,7 +1280,7 @@ class NotInEventValue: public SemanticThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1289,7 +1289,7 @@ class NotInEventValue: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1317,7 +1317,7 @@ class InEventRange: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return InEventRange::name;
     }
@@ -1350,7 +1350,7 @@ class InEventRange: public SemanticThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1363,7 +1363,7 @@ class InEventRange: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1389,7 +1389,7 @@ class EventBytes: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return EventBytes::name;
     }
@@ -1419,7 +1419,7 @@ class EventBytes: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1428,7 +1428,7 @@ class EventBytes: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1454,7 +1454,7 @@ class EventSentBytes: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return EventSentBytes::name;
     }
@@ -1484,7 +1484,7 @@ class EventSentBytes: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1493,7 +1493,7 @@ class EventSentBytes: public SemanticThread
   private:
     static const TRecordType  validateMask = EVENT;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 };
 
 /**************************
@@ -1521,7 +1521,7 @@ class LastTag: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return LastTag::name;
     }
@@ -1551,7 +1551,7 @@ class LastTag: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1560,7 +1560,7 @@ class LastTag: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + PHY + RECV;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1586,7 +1586,7 @@ class CommSize: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return CommSize::name;
     }
@@ -1616,7 +1616,7 @@ class CommSize: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1625,7 +1625,7 @@ class CommSize: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1651,7 +1651,7 @@ class CommRecvPartner: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return CommRecvPartner::name;
     }
@@ -1681,7 +1681,7 @@ class CommRecvPartner: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1690,7 +1690,7 @@ class CommRecvPartner: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + LOG + RECV;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1716,7 +1716,7 @@ class CommPartner: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return CommPartner::name;
     }
@@ -1746,7 +1746,7 @@ class CommPartner: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1755,7 +1755,7 @@ class CommPartner: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + LOG + SEND;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1781,7 +1781,7 @@ class LastSendDuration: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return LastSendDuration::name;
     }
@@ -1811,7 +1811,7 @@ class LastSendDuration: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1820,7 +1820,7 @@ class LastSendDuration: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + LOG + SEND;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1846,7 +1846,7 @@ class NextRecvDuration: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return NextRecvDuration::name;
     }
@@ -1876,7 +1876,7 @@ class NextRecvDuration: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1885,7 +1885,7 @@ class NextRecvDuration: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + LOG + RECV;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1911,7 +1911,7 @@ class SendBytesInTransit: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return SendBytesInTransit::name;
     }
@@ -1941,7 +1941,7 @@ class SendBytesInTransit: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -1950,7 +1950,7 @@ class SendBytesInTransit: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + SEND + RRECV;
     static const bool         initFromBegin = true;
-    static string name;
+    static std::string name;
 
 };
 
@@ -1976,7 +1976,7 @@ class SendMessagesInTransit: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return SendMessagesInTransit::name;
     }
@@ -2002,7 +2002,7 @@ class SendMessagesInTransit: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -2011,7 +2011,7 @@ class SendMessagesInTransit: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + SEND + RRECV;
     static const bool         initFromBegin = true;
-    static string name;
+    static std::string name;
 
 };
 
@@ -2037,7 +2037,7 @@ class SendBandWidth: public SemanticThread
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow );
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return SendBandWidth::name;
     }
@@ -2072,7 +2072,7 @@ class SendBandWidth: public SemanticThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -2081,10 +2081,10 @@ class SendBandWidth: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + SEND + RRECV;
     static const bool         initFromBegin = true;
-    static string name;
+    static std::string name;
 
 
-    vector<PRV_INT64> bandwidth;
+    std::vector<PRV_INT64> bandwidth;
 };
 
 
@@ -2109,7 +2109,7 @@ class RecvBytesInTransit: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return RecvBytesInTransit::name;
     }
@@ -2139,7 +2139,7 @@ class RecvBytesInTransit: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -2148,7 +2148,7 @@ class RecvBytesInTransit: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + RECV + RSEND;
     static const bool         initFromBegin = true;
-    static string name;
+    static std::string name;
 
 };
 
@@ -2174,7 +2174,7 @@ class RecvMessagesInTransit: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return RecvMessagesInTransit::name;
     }
@@ -2200,7 +2200,7 @@ class RecvMessagesInTransit: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -2209,7 +2209,7 @@ class RecvMessagesInTransit: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + RECV + RSEND;
     static const bool         initFromBegin = true;
-    static string name;
+    static std::string name;
 
 };
 
@@ -2235,7 +2235,7 @@ class RecvBandWidth: public SemanticThread
     virtual TSemanticValue execute( const SemanticInfo *info );
     virtual void init( KWindow *whichWindow );
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return RecvBandWidth::name;
     }
@@ -2270,7 +2270,7 @@ class RecvBandWidth: public SemanticThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -2279,10 +2279,10 @@ class RecvBandWidth: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + RECV + RSEND;
     static const bool         initFromBegin = true;
-    static string name;
+    static std::string name;
 
 
-    vector<PRV_INT64> bandwidth;
+    std::vector<PRV_INT64> bandwidth;
 };
 
 
@@ -2307,7 +2307,7 @@ class RecvNegativeMessages: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return RecvNegativeMessages::name;
     }
@@ -2333,7 +2333,7 @@ class RecvNegativeMessages: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -2342,7 +2342,7 @@ class RecvNegativeMessages: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + RECV + RSEND;
     static const bool         initFromBegin = true;
-    static string name;
+    static std::string name;
 
 };
 
@@ -2368,7 +2368,7 @@ class RecvNegativeBytes: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return RecvNegativeBytes::name;
     }
@@ -2398,7 +2398,7 @@ class RecvNegativeBytes: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -2407,7 +2407,7 @@ class RecvNegativeBytes: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + RECV + RSEND;
     static const bool         initFromBegin = true;
-    static string name;
+    static std::string name;
 
 };
 
@@ -2433,7 +2433,7 @@ class NumberReceives: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return NumberReceives::name;
     }
@@ -2459,7 +2459,7 @@ class NumberReceives: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -2468,7 +2468,7 @@ class NumberReceives: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + RECV;
     static const bool         initFromBegin = true;
-    static string name;
+    static std::string name;
 
 };
 
@@ -2494,7 +2494,7 @@ class NumberReceiveBytes: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return NumberReceiveBytes::name;
     }
@@ -2524,7 +2524,7 @@ class NumberReceiveBytes: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -2533,7 +2533,7 @@ class NumberReceiveBytes: public SemanticThread
   private:
     static const TRecordType  validateMask = COMM + RECV;
     static const bool         initFromBegin = true;
-    static string name;
+    static std::string name;
 
 };
 
@@ -2563,7 +2563,7 @@ class ApplicationID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ApplicationID::name;
     }
@@ -2593,7 +2593,7 @@ class ApplicationID: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -2602,7 +2602,7 @@ class ApplicationID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -2628,7 +2628,7 @@ class TaskID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return TaskID::name;
     }
@@ -2658,7 +2658,7 @@ class TaskID: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -2667,7 +2667,7 @@ class TaskID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -2693,7 +2693,7 @@ class ThreadID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return ThreadID::name;
     }
@@ -2723,7 +2723,7 @@ class ThreadID: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -2732,7 +2732,7 @@ class ThreadID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -2758,7 +2758,7 @@ class NodeID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return NodeID::name;
     }
@@ -2788,7 +2788,7 @@ class NodeID: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -2797,7 +2797,7 @@ class NodeID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -2823,7 +2823,7 @@ class CPUID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return CPUID::name;
     }
@@ -2853,7 +2853,7 @@ class CPUID: public SemanticThread
         throw SemanticException( SemanticException::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -2862,7 +2862,7 @@ class CPUID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -2889,7 +2889,7 @@ class InApplicationID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return InApplicationID::name;
     }
@@ -2920,7 +2920,7 @@ class InApplicationID: public SemanticThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -2929,7 +2929,7 @@ class InApplicationID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -2956,7 +2956,7 @@ class InTaskID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return InTaskID::name;
     }
@@ -2987,7 +2987,7 @@ class InTaskID: public SemanticThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -2996,7 +2996,7 @@ class InTaskID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -3023,7 +3023,7 @@ class InThreadID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return InThreadID::name;
     }
@@ -3054,7 +3054,7 @@ class InThreadID: public SemanticThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -3063,7 +3063,7 @@ class InThreadID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -3090,7 +3090,7 @@ class InNodeID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return InNodeID::name;
     }
@@ -3121,7 +3121,7 @@ class InNodeID: public SemanticThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -3130,7 +3130,7 @@ class InNodeID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 
@@ -3157,7 +3157,7 @@ class InCPUID: public SemanticThread
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual string getName()
+    virtual std::string getName()
     {
       return InCPUID::name;
     }
@@ -3188,7 +3188,7 @@ class InCPUID: public SemanticThread
 
       return tmp;
     }
-    virtual string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
@@ -3197,7 +3197,7 @@ class InCPUID: public SemanticThread
   private:
     static const TRecordType  validateMask = STATE;
     static const bool         initFromBegin = false;
-    static string name;
+    static std::string name;
 
 };
 

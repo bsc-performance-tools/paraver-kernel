@@ -27,9 +27,6 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-#include <vector>
-#include <map>
-
 
 template <class T>
 FunctionManagement<T> *FunctionManagement<T>::inst = NULL;
@@ -38,7 +35,7 @@ FunctionManagement<T> *FunctionManagement<T>::inst = NULL;
 template <class T>
 FunctionManagement<T>::~FunctionManagement()
 {
-  typename map<string, T*>::iterator it = hash.begin();
+  typename std::map<std::string, T*>::iterator it = hash.begin();
   while ( it != hash.end() )
   {
     delete ( *it ).second;
@@ -50,9 +47,9 @@ FunctionManagement<T>::~FunctionManagement()
 
 
 template <class T>
-FunctionManagement<T>::FunctionManagement( vector<string>& whichGroups,
-    vector<string>& whichFunctions,
-    vector<vector<T *> >& objects )
+FunctionManagement<T>::FunctionManagement( std::vector<std::string>& whichGroups,
+    std::vector<std::string>& whichFunctions,
+    std::vector<std::vector<T *> >& objects )
 {
   PRV_UINT32 iName = 0;
 
@@ -60,10 +57,10 @@ FunctionManagement<T>::FunctionManagement( vector<string>& whichGroups,
 
   for ( PRV_UINT32 iGroup = 0; iGroup < objects.size(); iGroup++ )
   {
-    groups.push_back( vector<T *>() );
+    groups.push_back( std::vector<T *>() );
     for ( PRV_UINT32 iObject = 0; iObject < objects[ iGroup ].size(); iObject++ )
     {
-      hash.insert( pair<string, T*>( whichFunctions[ iName ], objects[ iGroup ][ iObject ] ) );
+      hash.insert( std::pair<std::string, T*>( whichFunctions[ iName ], objects[ iGroup ][ iObject ] ) );
       groups[ iGroup ].push_back( objects[ iGroup ][ iObject ] );
       iName++;
     }
@@ -79,9 +76,9 @@ FunctionManagement<T> *FunctionManagement<T>::getInstance()
 
 
 template <class T>
-FunctionManagement<T> *FunctionManagement<T>::getInstance( vector<string>& whichGroups,
-    vector<string>& whichFunctions,
-    vector<vector<T *> >& objects )
+FunctionManagement<T> *FunctionManagement<T>::getInstance( std::vector<std::string>& whichGroups,
+    std::vector<std::string>& whichFunctions,
+    std::vector<std::vector<T *> >& objects )
 {
   if ( inst == NULL )
     inst = new FunctionManagement( whichGroups, whichFunctions, objects );
@@ -90,11 +87,11 @@ FunctionManagement<T> *FunctionManagement<T>::getInstance( vector<string>& which
 
 
 template <class T>
-T *FunctionManagement<T>::getFunction( const string& name ) const
+T *FunctionManagement<T>::getFunction( const std::string& name ) const
 {
   T *retval = NULL;
 
-  typename map<string, T*>::const_iterator it = hash.find( name );
+  typename std::map<std::string, T*>::const_iterator it = hash.find( name );
   if ( it != hash.end() )
     retval = ( ( *it ).second )->clone();
 
@@ -109,7 +106,7 @@ PRV_UINT32 FunctionManagement<T>::numGroups() const
 
 
 template <class T>
-void FunctionManagement<T>::getAll( vector<T *>& onVector ) const
+void FunctionManagement<T>::getAll( std::vector<T *>& onVector ) const
 {
   for ( PRV_UINT32 iGroup = 0; iGroup < groups.size(); iGroup++ )
   {
@@ -120,7 +117,7 @@ void FunctionManagement<T>::getAll( vector<T *>& onVector ) const
 
 
 template <class T>
-void FunctionManagement<T>::getAll( vector<T *>& onVector, PRV_UINT32 whichGroup ) const
+void FunctionManagement<T>::getAll( std::vector<T *>& onVector, PRV_UINT32 whichGroup ) const
 {
   for ( PRV_UINT32 iObject = 0; iObject < groups[ whichGroup ].size(); iObject++ )
     onVector.push_back( groups[ whichGroup ][ iObject ] );
@@ -128,14 +125,14 @@ void FunctionManagement<T>::getAll( vector<T *>& onVector, PRV_UINT32 whichGroup
 
 
 template <class T>
-void FunctionManagement<T>::getNameGroups( vector<string>& onVector )
+void FunctionManagement<T>::getNameGroups( std::vector<std::string>& onVector )
 {
   onVector = nameGroups;
 }
 
 
 template <class T>
-void FunctionManagement<T>::getAll( vector<string>& onVector ) const
+void FunctionManagement<T>::getAll( std::vector<std::string>& onVector ) const
 {
   for ( PRV_UINT32 iGroup = 0; iGroup < groups.size(); iGroup++ )
   {
@@ -146,7 +143,7 @@ void FunctionManagement<T>::getAll( vector<string>& onVector ) const
 
 
 template <class T>
-void FunctionManagement<T>::getAll( vector<string>& onVector, PRV_UINT32 whichGroup ) const
+void FunctionManagement<T>::getAll( std::vector<std::string>& onVector, PRV_UINT32 whichGroup ) const
 {
   for ( PRV_UINT32 iObject = 0; iObject < groups[ whichGroup ].size(); iObject++ )
     onVector.push_back( ( groups[ whichGroup ][ iObject ] )->getName() );

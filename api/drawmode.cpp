@@ -32,6 +32,8 @@
 #include <stdlib.h>
 #include "drawmode.h"
 
+using std::vector;
+
 // LAST is the default method
 template <int method>
 inline TSemanticValue selectMethod( vector<TSemanticValue>& v )

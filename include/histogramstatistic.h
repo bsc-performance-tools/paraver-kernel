@@ -39,8 +39,6 @@ class Window;
 
 struct CalculateData;
 
-using namespace std;
-
 class HistogramStatistic
 {
   public:
@@ -58,8 +56,8 @@ class HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 ) = 0;
 
-    virtual string getName() const = 0;
-    virtual string getUnits( const KHistogram *whichHisto ) const = 0;
+    virtual std::string getName() const = 0;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const = 0;
     virtual HistogramStatistic *clone() = 0;
 
   protected:
@@ -90,13 +88,13 @@ class StatNumSends: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *controlWin;
 };
 
@@ -121,13 +119,13 @@ class StatNumReceives: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *controlWin;
 };
 
@@ -152,13 +150,13 @@ class StatBytesSent: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *controlWin;
 };
 
@@ -183,13 +181,13 @@ class StatBytesReceived: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *controlWin;
 };
 
@@ -214,15 +212,15 @@ class StatAvgBytesSent: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *controlWin;
-    vector<vector<TSemanticValue> > numComms;
+    std::vector<std::vector<TSemanticValue> > numComms;
 };
 
 
@@ -246,15 +244,15 @@ class StatAvgBytesReceived: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *controlWin;
-    vector<vector<TSemanticValue> > numComms;
+    std::vector<std::vector<TSemanticValue> > numComms;
 };
 
 
@@ -278,15 +276,15 @@ class StatMinBytesSent: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *controlWin;
-    vector<vector<TSemanticValue> > min;
+    std::vector<std::vector<TSemanticValue> > min;
 };
 
 
@@ -310,15 +308,15 @@ class StatMinBytesReceived: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *controlWin;
-    vector<vector<TSemanticValue> > min;
+    std::vector<std::vector<TSemanticValue> > min;
 };
 
 
@@ -342,15 +340,15 @@ class StatMaxBytesSent: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *controlWin;
-    vector<vector<TSemanticValue> > max;
+    std::vector<std::vector<TSemanticValue> > max;
 };
 
 
@@ -374,15 +372,15 @@ class StatMaxBytesReceived: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *controlWin;
-    vector<vector<TSemanticValue> > max;
+    std::vector<std::vector<TSemanticValue> > max;
 };
 
 
@@ -412,13 +410,13 @@ class StatTime: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *controlWin;
 };
 
@@ -446,15 +444,15 @@ class StatPercTime: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *controlWin;
-    vector<TSemanticValue> rowTotal;
+    std::vector<TSemanticValue> rowTotal;
 };
 
 
@@ -481,15 +479,15 @@ class StatPercTimeNotZero: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *controlWin;
-    vector<TSemanticValue> rowTotal;
+    std::vector<TSemanticValue> rowTotal;
 };
 
 
@@ -516,13 +514,13 @@ class StatPercTimeWindow: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *controlWin;
 };
 
@@ -550,13 +548,13 @@ class StatNumBursts: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
 };
 
 
@@ -583,14 +581,14 @@ class StatPercNumBursts: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
-    vector<TSemanticValue> rowTotal;
+    static std::string name;
+    std::vector<TSemanticValue> rowTotal;
 };
 
 
@@ -617,13 +615,13 @@ class StatIntegral: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *dataWin;
 };
 
@@ -651,15 +649,15 @@ class StatAvgValue: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *dataWin;
-    vector<vector<TSemanticValue> > numValues;
+    std::vector<std::vector<TSemanticValue> > numValues;
 };
 
 
@@ -686,15 +684,15 @@ class StatMaximum: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *dataWin;
-    vector<vector<TSemanticValue> > max;
+    std::vector<std::vector<TSemanticValue> > max;
 };
 
 
@@ -721,16 +719,16 @@ class StatAvgBurstTime: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *controlWin;
     Window *dataWin;
-    vector<vector<TSemanticValue> > numValues;
+    std::vector<std::vector<TSemanticValue> > numValues;
 };
 
 
@@ -757,16 +755,16 @@ class StatStdevBurstTime: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *dataWin;
-    vector<vector<TSemanticValue> > numValues;
-    vector<vector<TSemanticValue> > qValues;
+    std::vector<std::vector<TSemanticValue> > numValues;
+    std::vector<std::vector<TSemanticValue> > qValues;
 };
 
 
@@ -793,15 +791,15 @@ class StatAvgPerBurst: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *dataWin;
-    vector<vector<TSemanticValue> > numValues;
+    std::vector<std::vector<TSemanticValue> > numValues;
 };
 
 
@@ -828,15 +826,15 @@ class StatAvgValueNotZero: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *dataWin;
-    vector<vector<TSemanticValue> > numValues;
+    std::vector<std::vector<TSemanticValue> > numValues;
 };
 
 
@@ -863,13 +861,13 @@ class StatNumBurstsNotZero: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *dataWin;
 };
 
@@ -897,14 +895,14 @@ class StatSumBursts: public HistogramStatistic
                                       THistogramColumn column,
                                       THistogramColumn plane = 0 );
 
-    virtual string getName() const;
-    virtual string getUnits( const KHistogram *whichHisto ) const;
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
     virtual HistogramStatistic *clone();
 
   protected:
 
   private:
-    static string name;
+    static std::string name;
     Window *dataWin;
 };
 
@@ -915,26 +913,26 @@ class Statistics
     Statistics() {}
     ~Statistics() {}
 
-    static vector<TSemanticValue> zeroVector;
-    static vector<vector<TSemanticValue> > zeroMatrix;
-    static vector<vector<TSemanticValue> > zeroCommMatrix;
+    static std::vector<TSemanticValue> zeroVector;
+    static std::vector<std::vector<TSemanticValue> > zeroMatrix;
+    static std::vector<std::vector<TSemanticValue> > zeroCommMatrix;
 
     static int getNumCommStats();
 
     void initAllComm( KHistogram *whichHistogram );
     void resetAllComm();
-    vector<bool> filterAllComm( CalculateData *data );
-    vector<TSemanticValue> executeAllComm( CalculateData *data );
-    vector<TSemanticValue> finishRowAllComm( vector<TSemanticValue>& cellValue,
+    std::vector<bool> filterAllComm( CalculateData *data );
+    std::vector<TSemanticValue> executeAllComm( CalculateData *data );
+    std::vector<TSemanticValue> finishRowAllComm( std::vector<TSemanticValue>& cellValue,
         THistogramColumn column,
         THistogramColumn plane = 0 );
 
     static int getNumStats();
     void initAll( KHistogram *whichHistogram );
     void resetAll();
-    vector<bool> filterAll( CalculateData *data );
-    vector<TSemanticValue> executeAll( CalculateData *data );
-    vector<TSemanticValue> finishRowAll( vector<TSemanticValue>& cellValue,
+    std::vector<bool> filterAll( CalculateData *data );
+    std::vector<TSemanticValue> executeAll( CalculateData *data );
+    std::vector<TSemanticValue> finishRowAll( std::vector<TSemanticValue>& cellValue,
                                          THistogramColumn column,
                                          THistogramColumn plane = 0 );
 

@@ -39,14 +39,14 @@ class LocalKernel: public KernelConnection
   public:
     static void init();
 
-    LocalKernel( bool (*messageFunction)(string) );
+    LocalKernel( bool (*messageFunction)(std::string) );
     virtual ~LocalKernel();
 
-    virtual bool checkTraceSize( const string& filename, TTraceSize maxSize ) const;
-    virtual TTraceSize getTraceSize( const string& filename ) const;
-    virtual Trace *newTrace( const string& whichFile, bool noLoad, ProgressController *progress = NULL ) const;
-    virtual string getPCFFileLocation( const string& traceFile ) const;
-    virtual string getROWFileLocation( const string& traceFile ) const;
+    virtual bool checkTraceSize( const std::string& filename, TTraceSize maxSize ) const;
+    virtual TTraceSize getTraceSize( const std::string& filename ) const;
+    virtual Trace *newTrace( const std::string& whichFile, bool noLoad, ProgressController *progress = NULL ) const;
+    virtual std::string getPCFFileLocation( const std::string& traceFile ) const;
+    virtual std::string getROWFileLocation( const std::string& traceFile ) const;
     virtual Window *newSingleWindow() const;
     virtual Window *newSingleWindow( Trace *whichTrace ) const;
     virtual Window *newDerivedWindow() const;
@@ -61,7 +61,7 @@ class LocalKernel: public KernelConnection
                                          char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options,
-                                         const vector< TEventType > &whichTypesWithValuesZero,
+                                         const std::vector< TEventType > &whichTypesWithValuesZero,
                                          ProgressController *progress = NULL) const;
     virtual TraceFilter *newTraceFilter( char *trace_in,
                                          char *trace_out,
@@ -72,12 +72,12 @@ class LocalKernel: public KernelConnection
                                                              TraceOptions *options,
                                                              ProgressController *progress = NULL ) const;
 
-    virtual void getAllStatistics( vector<string>& onVector ) const;
-    virtual void getAllFilterFunctions( vector<string>& onVector ) const;
+    virtual void getAllStatistics( std::vector<std::string>& onVector ) const;
+    virtual void getAllFilterFunctions( std::vector<std::string>& onVector ) const;
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
-                                          vector<string>& onVector ) const;
+                                          std::vector<std::string>& onVector ) const;
 
-    virtual bool userMessage( const string& message ) const;
+    virtual bool userMessage( const std::string& message ) const;
 
     virtual void copyPCF( char *name, char *traceToLoad );
     virtual void copyROW( char *name, char *traceToLoad );
@@ -87,7 +87,7 @@ class LocalKernel: public KernelConnection
   protected:
 
   private:
-    bool (*myMessageFunction)(string);
+    bool (*myMessageFunction)(std::string);
 
     // FILTERS
     struct traces_table {

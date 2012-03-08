@@ -35,8 +35,6 @@
 #include "bplustreetypes.h"
 #include "processmodel.h"
 
-using namespace std;
-
 namespace bplustree
 {
   class BPlusTreeBlocks : public MemoryBlocks
@@ -145,9 +143,9 @@ namespace bplustree
       static const PRV_UINT32 blockSize = 100000;
       PRV_UINT32 currentRecord;
       TRecord *currentBlock;
-      vector<TRecord *> lastRecords;
-      vector<TRecord *> blocks;
-      vector<TCommInfo *> communications;
+      std::vector<TRecord *> lastRecords;
+      std::vector<TRecord *> blocks;
+      std::vector<TCommInfo *> communications;
       TCommID currentComm;
       TRecord *commRecords[ commTypeSize ];
       ProcessModel& traceModel;

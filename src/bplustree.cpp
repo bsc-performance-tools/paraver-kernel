@@ -34,8 +34,10 @@
 #include "bplustree.h"
 #include "bplustreeexception.h"
 
-//using namespace std;
 using std::vector;
+using std::string;
+using std::cout;
+using std::endl;
 using namespace bplustree;
 
 /******************************************************************************

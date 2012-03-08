@@ -40,7 +40,6 @@
 #include "ktrace.h"
 #include "tracestream.h"
 
-using namespace std;
 #ifdef WIN32
 using namespace stdext;
 #else

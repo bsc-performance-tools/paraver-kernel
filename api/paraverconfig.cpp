@@ -39,6 +39,7 @@
 #endif
 #include "paraverconfig.h"
 
+using namespace std;
 
 ParaverConfig *ParaverConfig::instance = NULL;
 

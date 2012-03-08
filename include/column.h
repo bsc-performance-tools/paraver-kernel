@@ -30,13 +30,8 @@
 #ifndef _COLUMN_H
 #define _COLUMN_H
 
-/*#include <deque>
-
-using std::deque;*/
+/*#include <deque>*/
 #include <vector>
-
-using std::vector;
-
 #include "cell.h"
 
 
@@ -53,12 +48,12 @@ class Column
     void init( );
     void setValue( short idStat, ValueType semVal );
     void setValue( ValueType semVal );
-    void setValue( const vector<ValueType>& semVal );
+    void setValue( const std::vector<ValueType>& semVal );
     void addValue( short idStat, ValueType semVal );
     void addValue( ValueType semVal );
-    void addValue( const vector<ValueType>& semVal );
+    void addValue( const std::vector<ValueType>& semVal );
     ValueType getCurrentValue( short idStat ) const;
-    vector<ValueType> getCurrentValue() const;
+    std::vector<ValueType> getCurrentValue() const;
     int getCurrentRow( ) const;
     bool currentCellModified( ) const;
     void newRow( );
@@ -69,11 +64,11 @@ class Column
     void print() const;
 
     bool getCellValue( ValueType& semVal, int whichRow, short idStat ) const;
-    bool getCellValue( vector<ValueType>& semVal, int whichRow ) const;
+    bool getCellValue( std::vector<ValueType>& semVal, int whichRow ) const;
 
   private:
-    vector<Cell<ValueType> > cells;
-    typename vector<Cell<ValueType> >::iterator it_cell;
+    std::vector<Cell<ValueType> > cells;
+    typename std::vector<Cell<ValueType> >::iterator it_cell;
 
     short nstat;
     Cell<ValueType> current_cell;
