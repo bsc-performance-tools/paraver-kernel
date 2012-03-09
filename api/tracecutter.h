@@ -31,7 +31,6 @@
 #define TRACECUTTER_H_INCLUDED
 
 #include <string>
-using std::string;
 
 class TraceOptions;
 class KernelConnection;
@@ -46,17 +45,17 @@ class TraceCutter
                                 TraceOptions *options,
                                 ProgressController *progress );
 
-    static string getID()
+    static std::string getID()
     {
       return TraceCutter::traceToolID;
     }
 
-    static string getName()
+    static std::string getName()
     {
       return TraceCutter::traceToolName;
     }
 
-    static string getExtension()
+    static std::string getExtension()
     {
       return TraceCutter::traceToolExtension;
     }
@@ -88,9 +87,9 @@ class TraceCutter
     {}
 
   private:
-    static string traceToolID;
-    static string traceToolName;
-    static string traceToolExtension;
+    static std::string traceToolID;
+    static std::string traceToolName;
+    static std::string traceToolExtension;
 };
 
 class TraceCutterProxy : public TraceCutter

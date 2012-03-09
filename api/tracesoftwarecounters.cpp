@@ -30,6 +30,8 @@
 #include "tracesoftwarecounters.h"
 #include "kernelconnection.h"
 
+using namespace std;
+
 string TraceSoftwareCounters::traceToolID = "software_counters";
 string TraceSoftwareCounters::traceToolName = "Software Counters";
 string TraceSoftwareCounters::traceToolExtension = "sc";

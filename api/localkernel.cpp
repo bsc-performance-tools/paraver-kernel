@@ -48,6 +48,8 @@
 #include "tracestream.h"
 #include <string.h>
 
+using namespace std;
+
 void LocalKernel::init()
 {
   srand( time( NULL ) );
