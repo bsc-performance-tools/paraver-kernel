@@ -31,7 +31,6 @@
 #define HISTOGRAMSTATISTIC_H_INCLUDED
 
 #include <string>
-#include <vector>
 #include "paraverkerneltypes.h"
 
 class KHistogram;

@@ -41,47 +41,47 @@ class LabelConstructor
   public:
     static void init();
 
-    static string objectLabel( TObjectOrder globalOrder,
+    static std::string objectLabel( TObjectOrder globalOrder,
                                TWindowLevel level,
                                Trace *whichTrace,
                                bool showLevelTag = true );
 
-    static string histoColumnLabel( THistogramColumn whichColumn,
+    static std::string histoColumnLabel( THistogramColumn whichColumn,
                                     const Window *whichWindow,
                                     THistogramLimit min,
                                     THistogramLimit max,
                                     THistogramLimit delta );
 
-    static string histoCellLabel( const Histogram *whichHisto,
+    static std::string histoCellLabel( const Histogram *whichHisto,
                                   TSemanticValue value,
                                   bool showUnits );
 
-    static string histoTotalLabel( THistoTotals whichTotal );
+    static std::string histoTotalLabel( THistoTotals whichTotal );
 
-    static string timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 precision );
+    static std::string timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 precision );
 
-    static string semanticLabel( const Window * whichWindow, TSemanticValue value,
+    static std::string semanticLabel( const Window * whichWindow, TSemanticValue value,
                                  bool text, PRV_UINT32 precision );
 
-    static string eventLabel( Window *whichWindow,
+    static std::string eventLabel( Window *whichWindow,
                               TEventType whichType,
                               TEventValue whichValue,
                               bool text );
 
-    static string eventTypeLabel( Window *whichWindow,
+    static std::string eventTypeLabel( Window *whichWindow,
                                   TEventType whichType,
                                   bool text );
 
-    static string eventValueLabel( Window *whichWindow,
+    static std::string eventValueLabel( Window *whichWindow,
                                    TEventType whichType,
                                    TEventValue whichValue,
                                    bool writeValueAsPrefix = false );
 
-    static string numberWithSeparators( TSemanticValue value,
+    static std::string numberWithSeparators( TSemanticValue value,
                                         PRV_UINT32 precision,
                                         TTimeUnit unit = MS );
 
-    static bool getTimeValue( const string& timeLabel,
+    static bool getTimeValue( const std::string& timeLabel,
                               TTimeUnit unit,
                               PRV_UINT32 precision,
                               TTime& value );
@@ -96,18 +96,18 @@ class LabelConstructor
       TEXT_FORMAT
     };
 
-    static void getGUIGroupLabels( const TGroupID group, vector< string > &labels );
+    static void getGUIGroupLabels( const TGroupID group, std::vector< std::string > &labels );
 
-    static string getDate( bool reverseOrder = false );
+    static std::string getDate( bool reverseOrder = false );
 
   private:
-    static stringstream label;
-    static stringstream columnLabel;
-    static stringstream tmp;
-    static stringstream sstrTimeLabel;
-    static stringstream sstrSemanticLabel;
+    static std::stringstream label;
+    static std::stringstream columnLabel;
+    static std::stringstream tmp;
+    static std::stringstream sstrTimeLabel;
+    static std::stringstream sstrSemanticLabel;
 
-    static string rowStr;
+    static std::string rowStr;
     static char separator;
     static char point;
 };

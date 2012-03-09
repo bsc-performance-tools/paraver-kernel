@@ -39,19 +39,19 @@ using namespace libparaver;
 class StateLabels
 {
   public:
-    static const string unknownLabel;
+    static const std::string unknownLabel;
 
     StateLabels();
     StateLabels( const ParaverTraceConfig& config );
     ~StateLabels();
 
-    void getStates( vector<TState>& onVector ) const;
-    bool getStateLabel( TState state, string& onStr ) const;
+    void getStates( std::vector<TState>& onVector ) const;
+    bool getStateLabel( TState state, std::string& onStr ) const;
 
   protected:
 
   private:
-    map<TState, string> stateLabel;
+    std::map<TState, std::string> stateLabel;
 };
 
 

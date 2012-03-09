@@ -67,27 +67,27 @@ class TextOutput:public Output
                                TObjectOrder numRows,
                                THistogramColumn numColumns,
                                PRV_UINT16 currentStat,
-                               vector<THistogramColumn> printedColumns,
+                               std::vector<THistogramColumn> printedColumns,
                                THistogramColumn iPlane,
-                               ofstream &outputfile,
+                               std::ofstream &outputfile,
                                bool withLabels );
 
     void dumpMatrixVertical( Histogram *whichHisto,
                              TObjectOrder numRows,
                              THistogramColumn numColumns,
                              PRV_UINT16 currentStat,
-                             vector<THistogramColumn> printedColumns,
+                             std::vector<THistogramColumn> printedColumns,
                              THistogramColumn iPlane,
-                             ofstream &outputfile,
+                             std::ofstream &outputfile,
                              bool withLabels );
 
     void dumpTotalColumns( HistogramTotals *totals,
                            std::string totalName,
                            THistogramTotalsMethod totalFunction,
                            PRV_UINT16 currentStat,
-                           vector<THistogramColumn> printedColumns,
+                           std::vector<THistogramColumn> printedColumns,
                            THistogramColumn iPlane,
-                           ofstream &outputFile );
+                           std::ofstream &outputFile );
 
     void dumpTotalRows( HistogramTotals *totals,
                         std::string totalName,
@@ -95,24 +95,24 @@ class TextOutput:public Output
                         PRV_UINT16 currentStat,
                         TObjectOrder numRows,
                         THistogramColumn iPlane,
-                        ofstream &outputFile );
+                        std::ofstream &outputFile );
 
     void dumpMatrixCommHorizontal( Histogram *whichHisto,
                                    TObjectOrder numRows,
                                    THistogramColumn numColumns,
                                    PRV_UINT16 currentStat,
-                                   vector<THistogramColumn> printedColumns,
+                                   std::vector<THistogramColumn> printedColumns,
                                    THistogramColumn iPlane,
-                                   ofstream &outputfile,
+                                   std::ofstream &outputfile,
                                    bool withLabels );
 
     void dumpMatrixCommVertical( Histogram *whichHisto,
                                  TObjectOrder numRows,
                                  THistogramColumn numColumns,
                                  PRV_UINT16 currentStat,
-                                 vector<THistogramColumn> printedColumns,
+                                 std::vector<THistogramColumn> printedColumns,
                                  THistogramColumn iPlane,
-                                 ofstream &outputfile,
+                                 std::ofstream &outputfile,
                                  bool withLabels );
 
 };

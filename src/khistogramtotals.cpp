@@ -32,6 +32,7 @@
 #include "khistogramtotals.h"
 #include "paraverkerneltypes.h"
 
+using namespace std;
 
 KHistogramTotals::KHistogramTotals( KHistogramTotals *& source )
 {

@@ -34,6 +34,8 @@
 #include "semanticcpu.h"
 #include "semanticthread.h"
 #include "semanticcompose.h"
+#include "intervalcompose.h"
+#include "intervalthread.h"
 
 class KSingleWindow;
 class SemanticCPU;
@@ -46,6 +48,8 @@ class IntervalCPU: public IntervalHigh
       begin = NULL;
       end = NULL;
       function = NULL;
+      functionThread = NULL;
+      functionComposeThread = NULL;
     }
 
     IntervalCPU( KSingleWindow *whichWindow, TWindowLevel whichLevel,
@@ -55,6 +59,8 @@ class IntervalCPU: public IntervalHigh
       begin = NULL;
       end = NULL;
       function = NULL;
+      functionThread = NULL;
+      functionComposeThread = NULL;
     }
 
     virtual ~IntervalCPU()
@@ -81,7 +87,9 @@ class IntervalCPU: public IntervalHigh
     SemanticThread *functionThread;
     SemanticCompose *functionComposeThread;
     TCreateList createList;
-    vector<TSemanticValue> threadState;
+    /* to delete */std::vector<TSemanticValue> threadState;
+    std::vector<IntervalCompose> intervalCompose;
+    std::vector<IntervalThread> intervalThread;
 
   private:
     virtual MemoryTrace::iterator *getNextRecord( MemoryTrace::iterator *it,

@@ -40,26 +40,26 @@ using namespace libparaver;
 class EventLabels
 {
   public:
-    static const string unknownLabel;
+    static const std::string unknownLabel;
 
     EventLabels();
-    EventLabels( const set<TEventType>& eventsLoaded );
+    EventLabels( const std::set<TEventType>& eventsLoaded );
     EventLabels( const ParaverTraceConfig& config,
-                 const set<TEventType>& eventsLoaded );
+                 const std::set<TEventType>& eventsLoaded );
     ~EventLabels();
 
-    void getTypes( vector<TEventType>& onVector ) const;
-    bool getEventTypeLabel( TEventType type, string& onStr ) const;
-    bool getEventValueLabel( TEventType type, TEventValue value, string& onStr ) const;
-    bool getEventValueLabel( TEventValue value, string& onStr ) const;
-    bool getValues( TEventType type, vector<string> &values ) const;
-    bool getValues( TEventType type, map<TEventValue, string> &values ) const;
+    void getTypes( std::vector<TEventType>& onVector ) const;
+    bool getEventTypeLabel( TEventType type, std::string& onStr ) const;
+    bool getEventValueLabel( TEventType type, TEventValue value, std::string& onStr ) const;
+    bool getEventValueLabel( TEventValue value, std::string& onStr ) const;
+    bool getValues( TEventType type, std::vector<std::string> &values ) const;
+    bool getValues( TEventType type, std::map<TEventValue, std::string> &values ) const;
 
   protected:
 
   private:
-    map<TEventType, string> eventTypeLabel;
-    map<TEventType, map<TEventValue, string> > eventValueLabel;
+    std::map<TEventType, std::string> eventTypeLabel;
+    std::map<TEventType, std::map<TEventValue, std::string> > eventValueLabel;
 };
 
 

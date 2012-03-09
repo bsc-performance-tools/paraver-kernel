@@ -42,6 +42,8 @@
 #include "syncwindows.h"
 #include "selectionrowsutils.h"
 
+using namespace std;
+
 Window *Window::create( KernelConnection *whichKernel, Trace *whichTrace )
 {
   return new WindowProxy( whichKernel, whichTrace );

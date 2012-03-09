@@ -31,6 +31,8 @@
 #include "window.h"
 #include "histogram.h"
 
+using namespace std;
+
 TextOutput::TextOutput()
     : multipleFiles( false )
 {}

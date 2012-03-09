@@ -43,7 +43,7 @@ class ProgressController;
 class Trace
 {
   public:
-    static Trace *create( KernelConnection *whichKernel, const string& whichFile,
+    static Trace *create( KernelConnection *whichKernel, const std::string& whichFile,
                           bool noLoad, ProgressController *progress );
 
     Trace() {}
@@ -52,10 +52,10 @@ class Trace
 
     TObjectOrder getLevelObjects( TWindowLevel onLevel ) const;
 
-    virtual string getFileName() const = 0;
-    virtual string getTraceName() const = 0;
+    virtual std::string getFileName() const = 0;
+    virtual std::string getTraceName() const = 0;
 
-    virtual void dumpFile( const string& whichFile, PRV_INT32 numIter = 1 ) const = 0;
+    virtual void dumpFile( const std::string& whichFile, PRV_INT32 numIter = 1 ) const = 0;
 
     virtual TApplOrder totalApplications() const = 0;
     virtual TTaskOrder totalTasks() const = 0;
@@ -112,11 +112,11 @@ class Trace
     virtual TTimeUnit getTimeUnit() const = 0;
 
     virtual bool eventLoaded( TEventType whichType ) const = 0;
-    virtual const set<TEventType>& getLoadedEvents() const = 0;
+    virtual const std::set<TEventType>& getLoadedEvents() const = 0;
 
     virtual bool findLastEventValue( TThreadOrder whichThread,
                                      TRecordTime whichTime,
-                                     const vector<TEventType>& whichEvent,
+                                     const std::vector<TEventType>& whichEvent,
                                      TEventType& returnType,
                                      TEventValue& returnValue ) const = 0;
 
@@ -139,11 +139,11 @@ class Trace
     {
       return NULL;
     }
-    virtual string getFileNameNumbered() const
+    virtual std::string getFileNameNumbered() const
     {
       return "";
     }
-    virtual string getTraceNameNumbered() const
+    virtual std::string getTraceNameNumbered() const
     {
       return "";
     }
@@ -168,12 +168,12 @@ class Trace
       StateLabels *tmp = NULL;
       return *tmp;
     }
-    virtual string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const
+    virtual std::string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const
     {
       return "";
     }
 
-    virtual string getDefaultSemanticFunc( TWindowLevel whichLevel ) const
+    virtual std::string getDefaultSemanticFunc( TWindowLevel whichLevel ) const
     {
       return "";
     }
@@ -196,13 +196,13 @@ class TraceProxy: public Trace
   public:
     virtual ~TraceProxy();
 
-    virtual string getFileName() const;
-    virtual string getTraceName() const;
-    virtual string getFileNameNumbered() const;
-    virtual string getTraceNameNumbered() const;
+    virtual std::string getFileName() const;
+    virtual std::string getTraceName() const;
+    virtual std::string getFileNameNumbered() const;
+    virtual std::string getTraceNameNumbered() const;
     virtual void setInstanceNumber( PRV_UINT32 whichInstanceNumber );
 
-    virtual void dumpFile( const string& whichFile, PRV_INT32 numIter = 1 ) const;
+    virtual void dumpFile( const std::string& whichFile, PRV_INT32 numIter = 1 ) const;
 
     virtual TApplOrder totalApplications() const;
     virtual TTaskOrder totalTasks() const;
@@ -265,16 +265,16 @@ class TraceProxy: public Trace
     virtual const GradientColor& getGradientColor() const;
     virtual const EventLabels& getEventLabels() const;
     virtual const StateLabels& getStateLabels() const;
-    virtual string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const;
+    virtual std::string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const;
 
-    virtual string getDefaultSemanticFunc( TWindowLevel whichLevel ) const;
+    virtual std::string getDefaultSemanticFunc( TWindowLevel whichLevel ) const;
 
     virtual bool eventLoaded( TEventType whichType ) const;
-    virtual const set<TEventType>& getLoadedEvents() const;
+    virtual const std::set<TEventType>& getLoadedEvents() const;
 
     virtual bool findLastEventValue( TThreadOrder whichThread,
                                      TRecordTime whichTime,
-                                     const vector<TEventType>& whichEvent,
+                                     const std::vector<TEventType>& whichEvent,
                                      TEventType& returnType,
                                      TEventValue& returnValue ) const;
 
@@ -299,16 +299,16 @@ class TraceProxy: public Trace
     StateLabels myStateLabels;
     RowLabels myRowLabels;
 
-    string myDefaultTaskSemanticFunc;
-    string myDefaultThreadSemanticFunc;
+    std::string myDefaultTaskSemanticFunc;
+    std::string myDefaultThreadSemanticFunc;
 
-    TraceProxy( KernelConnection *whichKernel, const string& whichFile,
+    TraceProxy( KernelConnection *whichKernel, const std::string& whichFile,
                 bool noLoad, ProgressController *progress );
 
-    void parsePCF( const string& whichFile );
-    void parseROW( const string& whichFile );
+    void parsePCF( const std::string& whichFile );
+    void parseROW( const std::string& whichFile );
 
-    friend Trace *Trace::create( KernelConnection *, const string&, bool noLoad, ProgressController * );
+    friend Trace *Trace::create( KernelConnection *, const std::string&, bool noLoad, ProgressController * );
 };
 
 #endif // TRACE_H_INCLUDED

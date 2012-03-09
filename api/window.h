@@ -221,9 +221,9 @@ class Window
     virtual TTimeUnit getTimeUnit() const = 0;
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const = 0;
     virtual bool setLevelFunction( TWindowLevel whichLevel,
-                                   const string& whichFunction ) = 0;
-    virtual string getLevelFunction( TWindowLevel whichLevel ) = 0;
-    virtual string getFirstUsefulFunction( ) = 0;
+                                   const std::string& whichFunction ) = 0;
+    virtual std::string getLevelFunction( TWindowLevel whichLevel ) = 0;
+    virtual std::string getFirstUsefulFunction( ) = 0;
     virtual TWindowLevel getFirstFreeCompose() const = 0;
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
@@ -231,7 +231,7 @@ class Window
     virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const = 0;
     virtual TParamValue getFunctionParam( TWindowLevel whichLevel,
                                           TParamIndex whichParam ) const = 0;
-    virtual string getFunctionParamName( TWindowLevel whichLevel,
+    virtual std::string getFunctionParamName( TWindowLevel whichLevel,
                                          TParamIndex whichParam ) const = 0;
     virtual RecordList *getRecordList( TObjectOrder whichObject ) = 0;
     virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true ) = 0;
@@ -264,10 +264,10 @@ class Window
       return NULL;
     }
 
-    virtual void setName( const string& whichName )
+    virtual void setName( const std::string& whichName )
     {}
 
-    virtual string getName() const
+    virtual std::string getName() const
     {
       return "";
     }
@@ -403,7 +403,7 @@ class Window
     virtual void setDrawFunctionLineColor( bool newValue )
     {}
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
-                                          vector<string>& onVector ) const
+                                          vector<std::string>& onVector ) const
     {}
 
     virtual bool emptyPrevZoom() const
@@ -475,10 +475,10 @@ class Window
                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels = false )
     {}
 
-    virtual void getGroupLabels( PRV_UINT32 whichGroup, vector<string>& onVector ) const = 0;
-    virtual bool getParametersOfFunction( string whichFunction,
+    virtual void getGroupLabels( PRV_UINT32 whichGroup, vector<std::string>& onVector ) const = 0;
+    virtual bool getParametersOfFunction( std::string whichFunction,
                                           PRV_UINT32 &numParameters,
-                                          vector<string> &nameParameters,
+                                          vector<std::string> &nameParameters,
                                           vector< vector< double > >&defaultParameters ) const = 0;
 
     // CFG4D
@@ -496,7 +496,7 @@ class Window
       return false;
     }
 
-    virtual bool existsCFG4DAlias( const string &property ) const
+    virtual bool existsCFG4DAlias( const std::string &property ) const
     {
       return false;
     }
@@ -510,45 +510,45 @@ class Window
       return false;
     }
 
-    virtual void setCFG4DAlias( const string &property, const string &alias )
+    virtual void setCFG4DAlias( const std::string &property, const std::string &alias )
     {}
 
-    virtual string getCFG4DAlias( const string &property ) const
+    virtual std::string getCFG4DAlias( const std::string &property ) const
     {
-      return string( "" );
+      return std::string( "" );
     }
-    virtual string getCFG4DAlias( const TSingleTimelineProperties &propertyIndex ) const
+    virtual std::string getCFG4DAlias( const TSingleTimelineProperties &propertyIndex ) const
     {
-      return string( "" );
+      return std::string( "" );
     }
-    virtual string getCFG4DAlias( const TDerivedTimelineProperties &propertyIndex ) const
+    virtual std::string getCFG4DAlias( const TDerivedTimelineProperties &propertyIndex ) const
     {
-      return string( "" );
+      return std::string( "" );
     }
 
-    virtual void setCFG4DAliasList( const map< string, string >& aliasList )
+    virtual void setCFG4DAliasList( const std::map< std::string, std::string >& aliasList )
     {}
 
-    virtual const map< string, string > getCFG4DAliasList() const
+    virtual const std::map< std::string, std::string > getCFG4DAliasList() const
     {
-      return map< string, string >();
+      return std::map< std::string, std::string >();
     }
 
-    virtual const vector< string > getCFG4DFullTagList()
+    virtual const vector< std::string > getCFG4DFullTagList()
     {
-      return vector< string >();
+      return vector< std::string >();
     }
 
-    typedef pair< pair< string, string >, PRV_UINT32 > TParamAliasKey;
-    typedef map< TParamAliasKey, string > TParamAlias;
+    typedef pair< pair< std::string, std::string >, PRV_UINT32 > TParamAliasKey;
+    typedef std::map< TParamAliasKey, std::string > TParamAlias;
 
     virtual void setCFG4DParamAlias( const TParamAlias &whichParamAlias )
     {}
 
-    virtual void setCFG4DParamAlias( string semanticLevel,
-                                     string function,
+    virtual void setCFG4DParamAlias( std::string semanticLevel,
+                                     std::string function,
                                      PRV_UINT32 numParameter,
-                                     string paramAlias )
+                                     std::string paramAlias )
     {}
 
     virtual const vector< TParamAliasKey > getCFG4DCurrentSelectedFullParamList()
@@ -562,14 +562,14 @@ class Window
     }
 
     virtual void splitCFG4DParamAliasKey( const TParamAliasKey &pk,
-                                          string &semanticLevel,
-                                          string &function,
+                                          std::string &semanticLevel,
+                                          std::string &function,
                                           PRV_UINT32 &numParameter ) const
     {
     }
 
-    virtual const TParamAliasKey buildCFG4DParamAliasKey( const string &semanticLevel,
-                                                          const string &function,
+    virtual const TParamAliasKey buildCFG4DParamAliasKey( const std::string &semanticLevel,
+                                                          const std::string &function,
                                                           const PRV_UINT32 &numParameter ) const
     {
       return TParamAliasKey();
@@ -580,17 +580,17 @@ class Window
       return TParamAliasKey();
     }
 
-    virtual const string getCFG4DParamAlias( const TParamAliasKey &pk ) const
+    virtual const std::string getCFG4DParamAlias( const TParamAliasKey &pk ) const
     {
-      return string( "" );
+      return std::string( "" );
     }
 
-    virtual const string getCFG4DParamAlias( const TParamAlias::iterator &it ) const
+    virtual const std::string getCFG4DParamAlias( const TParamAlias::iterator &it ) const
     {
-      return string( "" );
+      return std::string( "" );
     }
 
-    virtual vector<Window::TParamAliasKey > getCFG4DParamKeysBySemanticLevel( string whichSemanticLevel,
+    virtual vector<Window::TParamAliasKey > getCFG4DParamKeysBySemanticLevel( std::string whichSemanticLevel,
                                                                               const vector< Window::TParamAliasKey > &whichParamAlias = vector<Window::TParamAliasKey >() ) const
     {
       return vector<Window::TParamAliasKey >();
@@ -736,9 +736,9 @@ class WindowProxy: public Window
     virtual TTimeUnit getTimeUnit() const;
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const;
     virtual bool setLevelFunction( TWindowLevel whichLevel,
-                                   const string& whichFunction );
-    virtual string getLevelFunction( TWindowLevel whichLevel );
-    virtual string getFirstUsefulFunction( );
+                                   const std::string& whichFunction );
+    virtual std::string getLevelFunction( TWindowLevel whichLevel );
+    virtual std::string getFirstUsefulFunction( );
     virtual TWindowLevel getFirstFreeCompose() const;
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
@@ -746,7 +746,7 @@ class WindowProxy: public Window
     virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const;
     virtual TParamValue getFunctionParam( TWindowLevel whichLevel,
                                           TParamIndex whichParam ) const;
-    virtual string getFunctionParamName( TWindowLevel whichLevel,
+    virtual std::string getFunctionParamName( TWindowLevel whichLevel,
                                          TParamIndex whichParam ) const;
     virtual RecordList *getRecordList( TObjectOrder whichObject );
     virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true );
@@ -771,11 +771,11 @@ class WindowProxy: public Window
     virtual TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime );
     virtual SemanticInfoType getSemanticInfoType() const;
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
-                                          vector<string>& onVector ) const;
+                                          vector<std::string>& onVector ) const;
 
     virtual Window *getConcrete() const;
-    virtual void setName( const string& whichName );
-    virtual string getName() const;
+    virtual void setName( const std::string& whichName );
+    virtual std::string getName() const;
     virtual PRV_UINT16 getPosX() const;
     virtual void setPosX( PRV_UINT16 whichPos );
     virtual PRV_UINT16 getPosY() const;
@@ -851,10 +851,10 @@ class WindowProxy: public Window
                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels = false );
 //    virtual TObjectOrder getFirstSelectedRow();
 //    virtual TObjectOrder getLastSelectedRow();
-    virtual void getGroupLabels( PRV_UINT32 whichGroup, vector<string>& onVector ) const;
-    virtual bool getParametersOfFunction( string whichFunction,
+    virtual void getGroupLabels( PRV_UINT32 whichGroup, vector<std::string>& onVector ) const;
+    virtual bool getParametersOfFunction( std::string whichFunction,
                                           PRV_UINT32 &numParameters,
-                                          vector<string> &nameParameters,
+                                          vector<std::string> &nameParameters,
                                           vector< vector< double > >&defaultParameters ) const;
 
     // CFG4D
@@ -867,44 +867,44 @@ class WindowProxy: public Window
     virtual void setCFG4DMode( bool mode );
     virtual bool getCFG4DMode() const;
 
-    virtual bool existsCFG4DAlias( const string &property ) const; // DEPRECATED
+    virtual bool existsCFG4DAlias( const std::string &property ) const; // DEPRECATED
     virtual bool existsCFG4DAlias( const TSingleTimelineProperties &propertyIndex ) const;
     virtual bool existsCFG4DAlias( const TDerivedTimelineProperties &propertyIndex ) const;
 
-    virtual string getCFG4DAlias( const string &property ) const; // DEPRECATED
-    virtual string getCFG4DAlias( const TSingleTimelineProperties &propertyIndex ) const;
-    virtual string getCFG4DAlias( const TDerivedTimelineProperties &propertyIndex ) const;
+    virtual std::string getCFG4DAlias( const std::string &property ) const; // DEPRECATED
+    virtual std::string getCFG4DAlias( const TSingleTimelineProperties &propertyIndex ) const;
+    virtual std::string getCFG4DAlias( const TDerivedTimelineProperties &propertyIndex ) const;
 
-    virtual void setCFG4DAlias( const string &property, const string &alias );
+    virtual void setCFG4DAlias( const std::string &property, const std::string &alias );
 
-    virtual void setCFG4DAliasList( const map< string, string >& aliasList );
-    virtual const map< string, string > getCFG4DAliasList() const;
+    virtual void setCFG4DAliasList( const std::map< std::string, std::string >& aliasList );
+    virtual const std::map< std::string, std::string > getCFG4DAliasList() const;
 
-    virtual const vector< string > getCFG4DFullTagList();
+    virtual const vector< std::string > getCFG4DFullTagList();
 
     // Returns the keys ( semantic level, function, num parameter ) of the parameters
     //   of the current selected functions in the visible levels.
     virtual const vector< TParamAliasKey > getCFG4DCurrentSelectedFullParamList();
     virtual void setCFG4DParamAlias( const TParamAlias &whichParamAlias );
-    virtual void setCFG4DParamAlias( string semanticLevel,
-                                     string function,
+    virtual void setCFG4DParamAlias( std::string semanticLevel,
+                                     std::string function,
                                      PRV_UINT32 numParameter,
-                                     string paramAlias );
+                                     std::string paramAlias );
     virtual const TParamAlias getCFG4DParamAliasList() const;
     virtual void splitCFG4DParamAliasKey( const TParamAliasKey &pk,
-                                          string &semanticLevel,
-                                          string &function,
+                                          std::string &semanticLevel,
+                                          std::string &function,
                                           PRV_UINT32 &numParameter ) const;
 
     virtual Window::TParamAliasKey getCFG4DParamAliasKey( const TParamAlias::iterator it ) const;
-    virtual const string getCFG4DParamAlias( const TParamAlias::iterator &it ) const;
-    virtual const string getCFG4DParamAlias( const TParamAliasKey &pk ) const;
+    virtual const std::string getCFG4DParamAlias( const TParamAlias::iterator &it ) const;
+    virtual const std::string getCFG4DParamAlias( const TParamAliasKey &pk ) const;
     virtual vector< Window::TParamAliasKey > getCFG4DParamKeysBySemanticLevel(
-                    string whichSemanticLevel,
+                    std::string whichSemanticLevel,
                     const vector< Window::TParamAliasKey > &whichParamAlias = vector<Window::TParamAliasKey >()  ) const;
     virtual const Window::TParamAliasKey buildCFG4DParamAliasKey(
-                                                const string &semanticLevel,
-                                                const string &function,
+                                                const std::string &semanticLevel,
+                                                const std::string &function,
                                                 const PRV_UINT32 &numParameter ) const;
 
 
@@ -1020,7 +1020,7 @@ class WindowProxy: public Window
     bool usedByHistogram;
 
     // GUI related attributes
-    string name;
+    std::string name;
     CodeColor myCodeColor;
     GradientColor myGradientColor;
     DrawModeMethod drawModeObject;
@@ -1047,7 +1047,7 @@ class WindowProxy: public Window
     // CFG4D
     bool isCFG4DEnabled;
     bool CFG4DMode;
-    map< string, string > propertiesAliasCFG4D;
+    std::map< std::string, std::string > propertiesAliasCFG4D;
     TParamAlias paramAliasCFG4D;
 
     // For Clone

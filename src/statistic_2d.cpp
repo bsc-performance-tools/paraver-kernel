@@ -31,8 +31,6 @@
 #include <iostream>
 #include <string.h>
 
-using namespace std;
-
 template <typename ValueType>
 inline void Statistic_2D<ValueType>::init()
 {
@@ -71,5 +69,5 @@ inline ValueType Statistic_2D<ValueType>::getValue()
 template <typename ValueType>
 inline void Statistic_2D<ValueType>::print()
 {
-  cout << value;
+  std::cout << value;
 }

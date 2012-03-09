@@ -41,6 +41,8 @@
 #undef min
 #endif
 
+using namespace std;
+
 RowsTranslator::RowsTranslator( const RowsTranslator& source )
 {
   for ( size_t ii = 0; ii < source.childInfo.size() - 1; ii++ )

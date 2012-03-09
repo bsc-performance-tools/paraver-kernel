@@ -38,6 +38,8 @@
 #include "filter.h"
 #include "kfilter.h"
 
+using namespace std;
+
 stringstream LabelConstructor::label;
 stringstream LabelConstructor::columnLabel;
 stringstream LabelConstructor::tmp;

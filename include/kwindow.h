@@ -133,10 +133,10 @@ class KWindow: public Window
     }
 
     virtual bool setLevelFunction( TWindowLevel whichLevel,
-                                   const string& whichFunction ) = 0;
-    virtual string getLevelFunction( TWindowLevel whichLevel ) = 0;
+                                   const std::string& whichFunction ) = 0;
+    virtual std::string getLevelFunction( TWindowLevel whichLevel ) = 0;
     virtual SemanticFunction *getSemanticFunction( TWindowLevel whichLevel ) = 0;
-    virtual string getFirstUsefulFunction( ) = 0;
+    virtual std::string getFirstUsefulFunction( ) = 0;
     virtual TWindowLevel getFirstFreeCompose() const = 0;
     virtual SemanticFunction *getFirstSemUsefulFunction() = 0;
     virtual void setFunctionParam( TWindowLevel whichLevel,
@@ -170,19 +170,19 @@ class KWindow: public Window
     TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime );
 
     virtual KWindow *clone();
-    void getGroupLabels(  PRV_UINT32 whichGroup, vector<string>& onVector ) const;
-    bool getParametersOfFunction( string whichFunction,
+    void getGroupLabels(  PRV_UINT32 whichGroup, std::vector<std::string>& onVector ) const;
+    bool getParametersOfFunction( std::string whichFunction,
                                    PRV_UINT32 &numParameters,
-                                   vector<string> &nameParameters,
-                                   vector< vector < double > > &defaultValues  ) const;
+                                   std::vector<std::string> &nameParameters,
+                                   std::vector< std::vector < double > > &defaultValues  ) const;
 
   protected:
     KTrace *myTrace;
     TWindowLevel level;
     TTimeUnit timeUnit;
 
-    vector<IntervalCompose> intervalTopCompose1;
-    vector<IntervalCompose> intervalTopCompose2;
+    std::vector<IntervalCompose> intervalTopCompose1;
+    std::vector<IntervalCompose> intervalTopCompose2;
 
     SemanticInfoType getTopComposeSemanticInfoType() const;
     virtual void initSemanticFunctions() = 0;
@@ -249,10 +249,10 @@ class KSingleWindow: public KWindow
     }
 
     virtual bool setLevelFunction( TWindowLevel whichLevel,
-                                   const string& whichFunction );
-    virtual string getLevelFunction( TWindowLevel whichLevel );
+                                   const std::string& whichFunction );
+    virtual std::string getLevelFunction( TWindowLevel whichLevel );
     virtual SemanticFunction *getSemanticFunction( TWindowLevel whichLevel );
-    virtual string getFirstUsefulFunction( );
+    virtual std::string getFirstUsefulFunction( );
     virtual TWindowLevel getFirstFreeCompose() const;
     virtual SemanticFunction *getFirstSemUsefulFunction();
     virtual void setFunctionParam( TWindowLevel whichLevel,
@@ -261,7 +261,7 @@ class KSingleWindow: public KWindow
     virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const;
     virtual TParamValue getFunctionParam( TWindowLevel whichLevel,
                                           TParamIndex whichParam ) const;
-    virtual string getFunctionParamName( TWindowLevel whichLevel,
+    virtual std::string getFunctionParamName( TWindowLevel whichLevel,
                                          TParamIndex whichParam ) const;
 
     virtual bool initFromBegin() const;
@@ -293,24 +293,24 @@ class KSingleWindow: public KWindow
     virtual KWindow *clone();
 
   protected:
-    vector<MemoryTrace::iterator *> recordsByTime;
+    std::vector<MemoryTrace::iterator *> recordsByTime;
 
     // Semantic interval structure
-    vector<IntervalCompose> intervalComposeWorkload;
-    vector<IntervalNotThread> intervalWorkload;
-    vector<IntervalCompose> intervalComposeApplication;
-    vector<IntervalNotThread> intervalApplication;
-    vector<IntervalCompose> intervalComposeTask;
-    vector<IntervalNotThread> intervalTask;
-    vector<IntervalCompose> intervalComposeThread;
-    vector<IntervalThread> intervalThread;
+    std::vector<IntervalCompose> intervalComposeWorkload;
+    std::vector<IntervalNotThread> intervalWorkload;
+    std::vector<IntervalCompose> intervalComposeApplication;
+    std::vector<IntervalNotThread> intervalApplication;
+    std::vector<IntervalCompose> intervalComposeTask;
+    std::vector<IntervalNotThread> intervalTask;
+    std::vector<IntervalCompose> intervalComposeThread;
+    std::vector<IntervalThread> intervalThread;
 
-    vector<IntervalCompose> intervalComposeSystem;
-    vector<IntervalNotThread> intervalSystem;
-    vector<IntervalCompose> intervalComposeNode;
-    vector<IntervalNotThread> intervalNode;
-    vector<IntervalCompose> intervalComposeCPU;
-    vector<IntervalCPU> intervalCPU;
+    std::vector<IntervalCompose> intervalComposeSystem;
+    std::vector<IntervalNotThread> intervalSystem;
+    std::vector<IntervalCompose> intervalComposeNode;
+    std::vector<IntervalNotThread> intervalNode;
+    std::vector<IntervalCompose> intervalComposeCPU;
+    std::vector<IntervalCPU> intervalCPU;
 
   private:
     virtual void initSemanticFunctions();
@@ -361,10 +361,10 @@ class KDerivedWindow: public KWindow
     virtual TWindowLevel getMinAcceptableLevel() const;
 
     virtual bool setLevelFunction( TWindowLevel whichLevel,
-                                   const string& whichFunction );
-    virtual string getLevelFunction( TWindowLevel whichLevel );
+                                   const std::string& whichFunction );
+    virtual std::string getLevelFunction( TWindowLevel whichLevel );
     virtual SemanticFunction *getSemanticFunction( TWindowLevel whichLevel );
-    virtual string getFirstUsefulFunction( );
+    virtual std::string getFirstUsefulFunction( );
     virtual TWindowLevel getFirstFreeCompose() const;
     virtual SemanticFunction *getFirstSemUsefulFunction();
     virtual void setFunctionParam( TWindowLevel whichLevel,
@@ -373,7 +373,7 @@ class KDerivedWindow: public KWindow
     virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const;
     virtual TParamValue getFunctionParam( TWindowLevel whichLevel,
                                           TParamIndex whichParam ) const;
-    virtual string getFunctionParamName( TWindowLevel whichLevel,
+    virtual std::string getFunctionParamName( TWindowLevel whichLevel,
                                          TParamIndex whichParam ) const;
 
     virtual bool initFromBegin() const;
@@ -410,26 +410,26 @@ class KDerivedWindow: public KWindow
     virtual KWindow *clone();
 
   protected:
-    vector<KWindow *> parents;
-    vector<TSemanticValue> factor;
+    std::vector<KWindow *> parents;
+    std::vector<TSemanticValue> factor;
 
     // Semantic interval structure
-    vector<IntervalCompose> intervalComposeWorkload;
-    vector<IntervalNotThread> intervalWorkload;
-    vector<IntervalCompose> intervalComposeApplication;
-    vector<IntervalNotThread> intervalApplication;
-    vector<IntervalCompose> intervalComposeTask;
-    vector<IntervalNotThread> intervalTask;
-    vector<IntervalCompose> intervalComposeThread;
+    std::vector<IntervalCompose> intervalComposeWorkload;
+    std::vector<IntervalNotThread> intervalWorkload;
+    std::vector<IntervalCompose> intervalComposeApplication;
+    std::vector<IntervalNotThread> intervalApplication;
+    std::vector<IntervalCompose> intervalComposeTask;
+    std::vector<IntervalNotThread> intervalTask;
+    std::vector<IntervalCompose> intervalComposeThread;
 
-    vector<IntervalCompose> intervalComposeSystem;
-    vector<IntervalNotThread> intervalSystem;
-    vector<IntervalCompose> intervalComposeNode;
-    vector<IntervalNotThread> intervalNode;
-    vector<IntervalCompose> intervalComposeCPU;
+    std::vector<IntervalCompose> intervalComposeSystem;
+    std::vector<IntervalNotThread> intervalSystem;
+    std::vector<IntervalCompose> intervalComposeNode;
+    std::vector<IntervalNotThread> intervalNode;
+    std::vector<IntervalCompose> intervalComposeCPU;
 
-    vector<IntervalDerived> intervalDerived;
-    vector<IntervalControlDerived> intervalControlDerived;
+    std::vector<IntervalDerived> intervalDerived;
+    std::vector<IntervalControlDerived> intervalControlDerived;
 
     SemanticFunction *functions[ DERIVED + 1 ];
 //    SemanticFunction *functions[ 3 ];

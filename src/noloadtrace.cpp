@@ -33,6 +33,7 @@
 #include "resourcemodel.h"
 
 using namespace NoLoad;
+using namespace std;
 
 NoLoadTrace::NoLoadTrace( MemoryBlocks *whichBlocks,
                           const ProcessModel& whichProcessModel,

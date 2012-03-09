@@ -38,6 +38,7 @@
 //#include "extrae_user_events.h"
 
 using namespace libparaver;
+using namespace std;
 
 Trace *Trace::create( KernelConnection *whichKernel, const string& whichFile,
                       bool noLoad, ProgressController *progress )

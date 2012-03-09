@@ -138,7 +138,7 @@ namespace NoLoad
       PRV_INT64 endFileOffset;
 
       vector<Index<PRV_INT64> > traceIndex;
-      map<PRV_INT64, fileLineData *> blocks;
+      std::map<PRV_INT64, fileLineData *> blocks;
       vector<PRV_INT64> beginThread;
       vector<TRecord> emptyBeginRecords;
       vector<TRecord> emptyEndRecords;

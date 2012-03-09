@@ -70,7 +70,7 @@ void ZoomHistory<Dimension1,Dimension2>::addZoom( Dimension1 begin1, Dimension1 
   if ( currentZoom < (int)zooms.size() - 1 )
     zooms.resize( currentZoom + 1 );
 
-  zooms.push_back( make_pair( make_pair(begin1,end1), make_pair(begin2,end2)));
+  zooms.push_back( std::make_pair( std::make_pair(begin1,end1), std::make_pair(begin2,end2)));
   currentZoom = zooms.size() - 1;
 }
 
@@ -80,8 +80,8 @@ void ZoomHistory<Dimension1,Dimension2>::addZoom( Dimension1 begin, Dimension1 e
   if ( currentZoom < (int)zooms.size() - 1 )
     zooms.resize( currentZoom + 1 );
 
-  zooms.push_back( make_pair( make_pair( begin,end ),
-                              make_pair( zooms[currentZoom].second.first, zooms[currentZoom].second.second )));
+  zooms.push_back( std::make_pair( std::make_pair( begin,end ),
+                              std::make_pair( zooms[currentZoom].second.first, zooms[currentZoom].second.second )));
   ++currentZoom;
 }
 
@@ -91,8 +91,8 @@ void ZoomHistory<Dimension1,Dimension2>::addZoom( Dimension2 begin, Dimension2 e
   if ( currentZoom < (int)zooms.size() - 1 )
     zooms.resize( currentZoom + 1 );
 
-  zooms.push_back( make_pair( make_pair( zooms[currentZoom].first.first, zooms[currentZoom].first.second ),
-                              make_pair( begin, end )));
+  zooms.push_back( std::make_pair( std::make_pair( zooms[currentZoom].first.first, zooms[currentZoom].first.second ),
+                              std::make_pair( begin, end )));
   ++currentZoom;
 }
 

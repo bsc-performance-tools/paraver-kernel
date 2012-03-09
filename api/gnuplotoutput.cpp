@@ -32,7 +32,7 @@
 #include "histogram.h"
 #include "labelconstructor.h"
 
-using std::string;
+using namespace std;
 
 void GNUPlotOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
 {

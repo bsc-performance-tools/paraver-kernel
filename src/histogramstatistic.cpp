@@ -34,6 +34,8 @@
 #include "ktrace.h"
 #include "paraverlabels.h"
 
+using namespace std;
+
 int Statistics::numCommStats = 10;
 int Statistics::numStats = 15;
 

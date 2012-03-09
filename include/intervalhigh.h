@@ -47,7 +47,7 @@ class IntervalHigh: public Interval
     {}
 
   protected:
-    vector<Interval *> childIntervals;
+    std::vector<Interval *> childIntervals;
     TWindowLevel lastLevel;
 
     virtual void setChilds() = 0;

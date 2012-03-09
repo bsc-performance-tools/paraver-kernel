@@ -37,6 +37,7 @@
 #include "functionmanagement.h"
 #include "semanticmanagement.h"
 
+using namespace std;
 
 TObjectOrder KWindow::cpuObjectToWindowObject( TCPUOrder whichCPU )
 {

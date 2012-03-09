@@ -49,12 +49,12 @@ class KTrace: public Trace
       ready = false;
     }
 
-    KTrace( const string& whichFile, ProgressController *progress, bool noLoad );
+    KTrace( const std::string& whichFile, ProgressController *progress, bool noLoad );
 
     ~KTrace();
 
-    string getFileName() const;
-    string getTraceName() const;
+    std::string getFileName() const;
+    std::string getTraceName() const;
 
     MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it )
     {
@@ -69,7 +69,7 @@ class KTrace: public Trace
       return memTrace->copyCPUIterator( it );
     }
 
-    void dumpFile( const string& whichFile, PRV_INT32 numIter = 1 ) const;
+    void dumpFile( const std::string& whichFile, PRV_INT32 numIter = 1 ) const;
 
     TApplOrder totalApplications() const;
     TTaskOrder totalTasks() const;
@@ -144,16 +144,16 @@ class KTrace: public Trace
     MemoryTrace::iterator* CPUBegin( TCPUOrder whichCPU ) const;
     MemoryTrace::iterator* CPUEnd( TCPUOrder whichCPU ) const;
 
-    void getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
+    void getRecordByTimeThread( std::vector<MemoryTrace::iterator *>& listIter,
                                 TRecordTime whichTime ) const;
-    void getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
+    void getRecordByTimeCPU( std::vector<MemoryTrace::iterator *>& listIter,
                              TRecordTime whichTime ) const;
 
-    const set<TEventType>& getLoadedEvents() const;
+    const std::set<TEventType>& getLoadedEvents() const;
 
     bool findLastEventValue( TThreadOrder whichThread,
                              TRecordTime whichTime,
-                             const vector<TEventType>& whichEvent,
+                             const std::vector<TEventType>& whichEvent,
                              TEventType& returnType,
                              TEventValue& returnValue ) const;
 
@@ -176,10 +176,10 @@ class KTrace: public Trace
     TraceBodyIO *body;
 
   private:
-    string fileName;
-    string date;
-    vector<string> communicators;
-    set<TEventType> events;
+    std::string fileName;
+    std::string date;
+    std::vector<std::string> communicators;
+    std::set<TEventType> events;
     bool fillStateGaps;
 };
 

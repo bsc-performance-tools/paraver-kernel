@@ -45,52 +45,52 @@ class TraceBodyIO_v1 : public TraceBodyIO
     bool ordered() const;
     void read( TraceStream *file, MemoryBlocks& records,
                hash_set<TEventType>& events ) const;
-    void write( fstream& whichStream,
+    void write( std::fstream& whichStream,
                 const KTrace& whichTrace,
                 MemoryTrace::iterator *record,
                 PRV_INT32 numIter = 0 ) const;
-    void writeCommInfo( fstream& whichStream,
+    void writeCommInfo( std::fstream& whichStream,
                         const KTrace& whichTrace,
                         PRV_INT32 numIter = 1 ) const;
-    void writeEvents( fstream& whichStream,
+    void writeEvents( std::fstream& whichStream,
                       const KTrace& whichTrace,
-                      vector<MemoryTrace::iterator *>& recordList ) const;
+                      std::vector<MemoryTrace::iterator *>& recordList ) const;
   protected:
 
   private:
-    void readState( const string& line, MemoryBlocks& records ) const;
-    void readEvent( const string& line, MemoryBlocks& records,
+    void readState( const std::string& line, MemoryBlocks& records ) const;
+    void readEvent( const std::string& line, MemoryBlocks& records,
                     hash_set<TEventType>& events ) const;
-    void readComm( const string& line, MemoryBlocks& records ) const;
-    void readGlobalComm( const string& line, MemoryBlocks& records ) const;
-    bool readCommon( istringstream& line,
+    void readComm( const std::string& line, MemoryBlocks& records ) const;
+    void readGlobalComm( const std::string& line, MemoryBlocks& records ) const;
+    bool readCommon( std::istringstream& line,
                      TCPUOrder& CPU,
                      TApplOrder& appl,
                      TTaskOrder& task,
                      TThreadOrder& thread,
                      TRecordTime& time ) const;
 
-    bool writeState( string& line,
+    bool writeState( std::string& line,
                      const KTrace& whichTrace,
                      const MemoryTrace::iterator *record ) const;
-    bool writeEvent( string& line,
+    bool writeEvent( std::string& line,
                      const KTrace& whichTrace,
                      const MemoryTrace::iterator *record,
                      bool needCommons = true ) const;
-    bool writeComm( string& line,
+    bool writeComm( std::string& line,
                     const KTrace& whichTrace,
                     const MemoryTrace::iterator *record ) const;
-    bool writeGlobalComm( string& line,
+    bool writeGlobalComm( std::string& line,
                           const KTrace& whichTrace,
                           const MemoryTrace::iterator *record ) const;
-    void writeCommon( ostringstream& line,
+    void writeCommon( std::ostringstream& line,
                       const KTrace& whichTrace,
                       const MemoryTrace::iterator *record ) const;
 
-    static istringstream fieldStream;
-    static istringstream strLine;
-    static string tmpstring;
-    static string line;
+    static std::istringstream fieldStream;
+    static std::istringstream strLine;
+    static std::string tmpstring;
+    static std::string line;
 };
 
 

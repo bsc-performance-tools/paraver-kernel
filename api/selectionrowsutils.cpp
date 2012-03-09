@@ -29,6 +29,8 @@
 
 #include "selectionrowsutils.h"
 
+using namespace std;
+
 void SelectionRowsUtils::getAllLevelsSelectedRows( const Trace* whichTrace,
                                                    const SelectionManagement< TObjectOrder, TWindowLevel > &selectedRow,
                                                    TWindowLevel onLevel,

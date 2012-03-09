@@ -50,13 +50,13 @@ void SelectionManagement< SelType, LevelType >::init( Trace *trace )
   selected.clear();
   selectedSet.clear();
 
-  vector< bool > auxSelected;
+  std::vector< bool > auxSelected;
 
   for ( PRV_UINT32 level = ( PRV_UINT32 )NONE; level <= ( PRV_UINT32 )CPU; ++level )
   {
     auxSelected.clear();
-    selected.push_back( vector< bool >( ) );
-    selectedSet.push_back( vector< TObjectOrder >( ) );
+    selected.push_back( std::vector< bool >( ) );
+    selectedSet.push_back( std::vector< TObjectOrder >( ) );
 
     switch ( level )
     {
@@ -116,10 +116,10 @@ void SelectionManagement< SelType, LevelType >::init( HistogramTotals *totals,
   selected.clear();
   selectedSet.clear();
 
-  selected.push_back( vector< bool >( ) );
-  selectedSet.push_back( vector< SelType >( ) );
+  selected.push_back( std::vector< bool >( ) );
+  selectedSet.push_back( std::vector< SelType >( ) );
 
-  vector< bool > auxSelected;
+  std::vector< bool > auxSelected;
   for ( THistogramColumn i = 0; i < numColumns; ++i )
   {
     if ( totals->getTotal( idStat, i, whichPlane ) == 0 )
@@ -141,7 +141,7 @@ void SelectionManagement<SelType, LevelType>::copy( const SelectionManagement &s
 
 
 template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::setSelected( vector< bool > &selection,
+void SelectionManagement< SelType, LevelType >::setSelected( std::vector< bool > &selection,
     LevelType level )
 {
   selectedSet[ level ].clear();
@@ -169,7 +169,7 @@ void SelectionManagement< SelType, LevelType >::setSelected( vector< bool > &sel
 
 
 template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::setSelected( vector< SelType > &selection,
+void SelectionManagement< SelType, LevelType >::setSelected( std::vector< SelType > &selection,
     SelType maxElems,
     LevelType level )
 {
@@ -177,7 +177,7 @@ void SelectionManagement< SelType, LevelType >::setSelected( vector< SelType > &
   selected[ level ].clear();
   selectedSet[ level ] = selection;
 
-  typename vector<SelType>::iterator it;
+  typename std::vector<SelType>::iterator it;
 
   // Delete any SelType greater than maxElems ( number of level objects)
   it = std::find_if( selectedSet[ level ].begin(),
@@ -215,7 +215,7 @@ bool SelectionManagement< SelType, LevelType >::isSelectedPosition( SelType whic
 
 
 template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::getSelected( vector< bool > &whichSelected,
+void SelectionManagement< SelType, LevelType >::getSelected( std::vector< bool > &whichSelected,
     LevelType level )
 {
   whichSelected = selected[ level ];
@@ -223,7 +223,7 @@ void SelectionManagement< SelType, LevelType >::getSelected( vector< bool > &whi
 
 
 template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::getSelected( vector< bool > &whichSelected,
+void SelectionManagement< SelType, LevelType >::getSelected( std::vector< bool > &whichSelected,
     SelType first,
     SelType last,
     LevelType level )
@@ -235,7 +235,7 @@ void SelectionManagement< SelType, LevelType >::getSelected( vector< bool > &whi
 }
 
 template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::getSelected( vector< SelType > &whichSelected,
+void SelectionManagement< SelType, LevelType >::getSelected( std::vector< SelType > &whichSelected,
     LevelType level )
 {
   whichSelected = selectedSet[ level ];
@@ -243,13 +243,13 @@ void SelectionManagement< SelType, LevelType >::getSelected( vector< SelType > &
 
 
 template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::getSelected( vector< SelType > &whichSelected,
+void SelectionManagement< SelType, LevelType >::getSelected( std::vector< SelType > &whichSelected,
     SelType first,
     SelType last,
     LevelType level )
 {
   whichSelected.clear();
-  typename vector< SelType >::iterator it;
+  typename std::vector< SelType >::iterator it;
   for ( it = selectedSet[ level ].begin(); it != selectedSet[ level ].end(); ++it )
   {
     if ( ( *it >= first ) && ( *it <= last ) )

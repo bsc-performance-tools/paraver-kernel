@@ -31,6 +31,8 @@
 #include "kwindow.h"
 #include "functionmanagement.h"
 
+using namespace std;
+
 bool KFilter::passFilter( MemoryTrace::iterator *it )
 {
   if ( it->getType() & EVENT )

@@ -30,6 +30,8 @@
 #include "tracebodyio_v1.h"
 #include "tracebodyio_v2.h"
 
+using namespace std;
+
 TraceBodyIO::TraceBodyIO()
 {}
 

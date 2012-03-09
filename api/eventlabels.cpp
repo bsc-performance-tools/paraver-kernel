@@ -31,6 +31,8 @@
 #include "pcfparser/ParaverEventType.h"
 #include "pcfparser/ParaverEventValue.h"
 
+using namespace std;
+
 const string EventLabels::unknownLabel = "Unknown";
 
 EventLabels::EventLabels()

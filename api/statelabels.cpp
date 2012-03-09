@@ -30,6 +30,8 @@
 #include "statelabels.h"
 #include "../common-files/pcfparser/ParaverState.h"
 
+using namespace std;
+
 const string StateLabels::unknownLabel = "Unknown";
 
 StateLabels::StateLabels()

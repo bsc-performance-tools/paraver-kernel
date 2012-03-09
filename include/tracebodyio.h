@@ -57,11 +57,11 @@ class TraceBodyIO
     virtual bool ordered() const = 0;
     virtual void read( TraceStream *file, MemoryBlocks& records,
                        hash_set<TEventType>& events ) const = 0;
-    virtual void write( fstream& whichStream,
+    virtual void write( std::fstream& whichStream,
                         const KTrace& whichTrace,
                         MemoryTrace::iterator *record,
                         PRV_INT32 numIter = 0 ) const = 0;
-    virtual void writeCommInfo( fstream& whichStream,
+    virtual void writeCommInfo( std::fstream& whichStream,
                                 const KTrace& whichTrace,
                                 PRV_INT32 numIter = 1 ) const = 0;
 

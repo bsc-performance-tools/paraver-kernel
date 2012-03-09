@@ -42,6 +42,8 @@
 #undef max
 #endif
 
+using namespace std;
+
 Histogram *Histogram::create( KernelConnection *whichKernel )
 {
   return new HistogramProxy( whichKernel );
