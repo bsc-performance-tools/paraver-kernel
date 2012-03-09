@@ -86,12 +86,17 @@ class KernelConnection
 
     virtual bool userMessage( const std::string& message ) const = 0;
 
+/*
     #define INC_CHOP_COUNTER 0
     #define INC_SC_COUNTER 1
     #define INC_FILTER_COUNTER 2
+*/
     virtual void copyPCF( char *name, char *traceToLoad ) = 0;
     virtual void copyROW( char *name, char *traceToLoad ) = 0;
-    virtual void getNewTraceName( char *name, char *new_trace_name, int action ) = 0;
+    virtual void getNewTraceName( char *name,
+                                  char *new_trace_name,
+                                  std::string action,
+                                  bool saveNewNameInfo = true ) = 0;
     virtual char *composeName( char *name, char *newExtension ) = 0;
 
 

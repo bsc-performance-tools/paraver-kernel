@@ -30,10 +30,11 @@
 #ifndef TRACEFILTER_H_INCLUDED
 #define TRACEFILTER_H_INCLUDED
 
+#include "localkernel.h"
+
 class TraceOptions;
 class KernelConnection;
 class ProgressController;
-#include "localkernel.h"
 
 class TraceFilter
 {
@@ -44,9 +45,28 @@ class TraceFilter
                                 TraceOptions *options,
                                 ProgressController *progress );
 
+    static std::string getID()
+    {
+      return TraceFilter::traceToolID;
+    }
+
+    static std::string getName()
+    {
+      return TraceFilter::traceToolName;
+    }
+
+    static std::string getExtension()
+    {
+      return TraceFilter::traceToolExtension;
+    }
+
     virtual ~TraceFilter()
     {}
 
+  private:
+    static std::string traceToolID;
+    static std::string traceToolName;
+    static std::string traceToolExtension;
 };
 
 class TraceFilterProxy : public TraceFilter

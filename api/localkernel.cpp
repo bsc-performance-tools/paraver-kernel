@@ -178,7 +178,7 @@ TraceCutter *LocalKernel::newTraceCutter( //TraceCutter *concreteTraceCutter,
 
   //TraceOptionsProxy *myOptions = new TraceOptionsProxy( this );
   //myOptions->myTraceOptions = options;
-  /*TraceCutterProxy *myCutter = new TraceCutterProxy( this,
+/*  TraceCutterProxy *myCutter = new TraceCutterProxy( this,
                                                      trace_in,
                                                      trace_out,
                                                      options );
@@ -328,7 +328,10 @@ void LocalKernel::copyROW( char *name, char *traceToLoad )
   free( rowOut );
 }
 
-void LocalKernel::getNewTraceName( char *name, char *new_trace_name, int action )
+void LocalKernel::getNewTraceName( char *name,
+                                   char *new_trace_name,
+                                   string action,
+                                   bool saveNewNameInfo )
 {
   /* Putting on table of names in order to generate new trace names */
   int i;
@@ -341,6 +344,9 @@ void LocalKernel::getNewTraceName( char *name, char *new_trace_name, int action 
   char path_name_backup[1024];
   char traceToLoad[1024];
   char *traces_home;
+
+  // Used when
+  struct traces_table currentName;
 
   traceToLoad[0] = '\0';
   /* De forma provisional agafem var entorn */
@@ -358,47 +364,59 @@ void LocalKernel::getNewTraceName( char *name, char *new_trace_name, int action 
     if ( !strcmp( name, trace_names_table[i].name ) )
       break;
 
-  // second: found? --> ok; not found? --> insert it!
+    // second: found? --> ok; not found? --> insert it!
   if ( i == trace_names_table_last )
   {
-    // not found!
-    if ( trace_names_table_last >= MAX_TRACES_HISTORY_LENGTH )
+    if ( saveNewNameInfo )
     {
-      // we haven't room; insert as a circular buffer, from the beginning
-      trace_names_table_last = 0;
-      i = 0;
-      free( trace_names_table[ trace_names_table_last ].name );
+      // not found!
+      if ( trace_names_table_last >= MAX_TRACES_HISTORY_LENGTH )
+      {
+        // we haven't room; insert as a circular buffer, from the beginning
+        trace_names_table_last = 0;
+        i = 0;
+        free( trace_names_table[ trace_names_table_last ].name );
+      }
+
+      // insert it
+      trace_names_table[ trace_names_table_last ].name = ( char * )strdup( name );
+      trace_names_table[ trace_names_table_last ].num_chop = 0;
+      trace_names_table[ trace_names_table_last ].num_sc = 0;
+      trace_names_table[ trace_names_table_last ].num_filter = 0;
+
+      // and advance counter
+      trace_names_table_last++;
     }
-
-    // insert it
-    trace_names_table[ trace_names_table_last ].name = ( char * )strdup( name );
-    trace_names_table[ trace_names_table_last ].num_chop = 0;
-    trace_names_table[ trace_names_table_last ].num_sc = 0;
-    trace_names_table[ trace_names_table_last ].num_filter = 0;
-
-    // and advance counter
-    trace_names_table_last++;
+    else
+    {
+      currentName.name = ( char * )strdup( name );
+      currentName.num_chop = 0;
+      currentName.num_sc = 0;
+      currentName.num_filter = 0;
+    }
+  }
+  else
+  {
+    currentName = trace_names_table[ i ];
   }
 
   /* Generating the new trace name and preventing to erase old chops */
   do
   {
-    switch ( action )
+    if ( action == TraceCutter::getID() )
     {
-      case INC_CHOP_COUNTER:
-        trace_names_table[i].num_chop++;
-        break;
-
-      case INC_SC_COUNTER:
-        trace_names_table[i].num_sc++;
-        break;
-
-      case INC_FILTER_COUNTER:
-        trace_names_table[i].num_filter++;
-        break;
-
-      default:
-        break;
+      currentName.num_chop++;
+    }
+    else if ( action == TraceFilter::getID() )
+    {
+      currentName.num_filter++;
+    }
+    else if ( action == TraceSoftwareCounters::getID() )
+    {
+      currentName.num_sc++;
+    }
+    else
+    {
     }
 
     sprintf( new_trace_name, "%s", path_name_backup );
@@ -430,40 +448,50 @@ void LocalKernel::getNewTraceName( char *name, char *new_trace_name, int action 
     else
       new_trace_name[strlen( new_trace_name )-3] = '\0';
 
-    switch ( action )
+    string dotExtension(".");
+    string toolInfix( "" );
+    int numInfix = 0;
+    if ( action == TraceCutter::getID() )
     {
-      case INC_CHOP_COUNTER:
-        if ( strstr( new_trace_name, ".chop" ) != NULL )
-          sprintf( new_trace_name, "%s%d.prv", new_trace_name, trace_names_table[i].num_chop );
-        else
-          sprintf( new_trace_name, "%schop%d.prv", new_trace_name, trace_names_table[i].num_chop );
+      dotExtension += TraceCutter::getExtension();
 
-        break;
+      if ( strstr( new_trace_name, dotExtension.c_str() ) == NULL )
+        toolInfix = TraceCutter::getExtension();
 
-      case INC_SC_COUNTER:
-        if ( strstr( new_trace_name, ".sc" ) != NULL )
-          sprintf( new_trace_name, "%s%d.prv", new_trace_name, trace_names_table[i].num_sc );
-        else
-          sprintf( new_trace_name, "%ssc%d.prv", new_trace_name, trace_names_table[i].num_sc );
-
-        break;
-
-
-      case INC_FILTER_COUNTER:
-        if ( strstr( new_trace_name, ".filter" ) != NULL )
-          sprintf( new_trace_name, "%s%d.prv", new_trace_name, trace_names_table[i].num_filter );
-        else
-          sprintf( new_trace_name, "%sfilter%d.prv", new_trace_name, trace_names_table[i].num_filter );
-
-        break;
-
-      default:
-        break;
+      numInfix = currentName.num_chop;
     }
+    else if ( action == TraceFilter::getID() )
+    {
+      dotExtension += TraceFilter::getExtension();
+
+      if ( strstr( new_trace_name, dotExtension.c_str() ) == NULL )
+        toolInfix = TraceFilter::getExtension();
+
+      numInfix = currentName.num_filter;
+    }
+    else if ( action == TraceSoftwareCounters::getID() )
+    {
+      dotExtension += TraceSoftwareCounters::getExtension();
+
+      if ( strstr( new_trace_name, dotExtension.c_str() ) == NULL )
+        toolInfix = TraceSoftwareCounters::getExtension();
+
+      numInfix = currentName.num_sc;
+    }
+    else
+    {
+    }
+
+    sprintf( new_trace_name, "%s%s%d.prv", new_trace_name, toolInfix.c_str(), numInfix );
   }
 #ifndef WIN32
   while ( stat( new_trace_name, &file_info ) == 0 );
 #else
   while ( _stat64( new_trace_name, &file_info ) == 0 );
 #endif
+
+  if ( saveNewNameInfo )
+  {
+    trace_names_table[ i ] = currentName;
+  }
 }

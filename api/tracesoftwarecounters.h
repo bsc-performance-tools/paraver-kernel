@@ -30,6 +30,9 @@
 #ifndef TRACESOFTWARECOUNTERS_H_INCLUDED
 #define TRACESOFTWARECOUNTERS_H_INCLUDED
 
+#include <string>
+using namespace std;
+
 class TraceOptions;
 class KernelConnection;
 class ProgressController;
@@ -43,9 +46,28 @@ class TraceSoftwareCounters
                                           TraceOptions *options,
                                           ProgressController *progress );
 
+    static string getID()
+    {
+      return TraceSoftwareCounters::traceToolID;
+    }
+
+    static string getName()
+    {
+      return TraceSoftwareCounters::traceToolName;
+    }
+
+    static string getExtension()
+    {
+      return TraceSoftwareCounters::traceToolExtension;
+    }
+
     virtual ~TraceSoftwareCounters()
     {}
 
+  private:
+    static string traceToolID;
+    static string traceToolName;
+    static string traceToolExtension;
 };
 
 class TraceSoftwareCountersProxy : public TraceSoftwareCounters

@@ -504,6 +504,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
       throw TraceHeaderException( TraceHeaderException::invalidTime,
                                   tmpstr.c_str() );
     }
+    else cout << traceEndTime << endl;
   }
 
   if ( !file->canseekend() )
@@ -611,6 +612,9 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
 
 // End reading the body
   traceEndTime = memTrace->finish( traceEndTime );
+
+  cout << traceEndTime << endl;
+
   if ( !( noLoad && body->ordered() ) )
   {
     file->close();

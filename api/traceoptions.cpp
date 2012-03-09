@@ -432,12 +432,12 @@ void TraceOptionsProxy::set_events_plot( int eventsPlot )
   myTraceOptions->set_events_plot( eventsPlot );
 }
 
-vector< int > TraceOptionsProxy::parseDoc( char *docname )
+vector< string > TraceOptionsProxy::parseDoc( char *docname )
 {
   return myTraceOptions->parseDoc( docname );
 }
 
-bool TraceOptionsProxy::saveXML( vector< int > &filterOrder, string fileName )
+bool TraceOptionsProxy::saveXML( vector< string > &filterOrder, string fileName )
 {
   return myTraceOptions->saveXML( filterOrder, fileName );
 }

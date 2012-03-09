@@ -38,6 +38,10 @@ using namespace libparaver;
 #include <string.h>
 #include "eventlabels.h"
 
+string TraceCutter::traceToolID = "cutter";
+string TraceCutter::traceToolName = "Cutter";
+string TraceCutter::traceToolExtension = "chop";
+
 TraceCutter *TraceCutter::create(  KernelConnection *whichKernel,
                                    char *traceIn,
                                    char *traceOut,

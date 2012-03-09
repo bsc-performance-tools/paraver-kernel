@@ -31,6 +31,10 @@
 #include "kernelconnection.h"
 
 
+std::string TraceFilter::traceToolID = "filter";
+std::string TraceFilter::traceToolName = "Filter";
+std::string TraceFilter::traceToolExtension = "filter";
+
 TraceFilter *TraceFilter::create( KernelConnection *whichKernel,
                                   char *traceIn,
                                   char *traceOut,

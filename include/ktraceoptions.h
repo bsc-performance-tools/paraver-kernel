@@ -51,8 +51,10 @@
 #define MAX_THREADS 65536
 #define MAXSTATES 20
 
-// only for cout, delete this 2 lines
-//#include <iostream>
+//using namespace std;
+//#include "tracecutter.h"
+//#include "tracefilter.h"
+//#include "tracesoftwarecounters.h"
 
 class KTraceOptions: public TraceOptions
 {
@@ -559,9 +561,8 @@ class KTraceOptions: public TraceOptions
       events_plot = whichEventsPlot;
     }
 
-
-    std::vector<int> parseDoc( char *docname );
-    bool saveXML( std::vector< int > &filterOrder, std::string fileName );
+    std::vector< std::string > parseDoc( char *docname );
+    bool saveXML( std::vector< std::string > &filterOrder, std::string fileName );
 
   private:
     void init();
@@ -575,7 +576,7 @@ class KTraceOptions: public TraceOptions
     void parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cur );
     void parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur );
 
-    void pushBackUniqueFilterIdentifier( int filterID, std::vector< int > &order );
+    void pushBackUniqueFilterIdentifier( std::string filterID, std::vector< std::string > &order );
 
     void saveXMLCutter( xmlTextWriterPtr &writer );
     void saveXMLFilter( xmlTextWriterPtr &writer );

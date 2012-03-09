@@ -30,6 +30,10 @@
 #include "tracesoftwarecounters.h"
 #include "kernelconnection.h"
 
+string TraceSoftwareCounters::traceToolID = "software_counters";
+string TraceSoftwareCounters::traceToolName = "Software Counters";
+string TraceSoftwareCounters::traceToolExtension = "sc";
+
 TraceSoftwareCounters *TraceSoftwareCounters::create( KernelConnection *whichKernel,
                                   char *traceIn,
                                   char *traceOut,

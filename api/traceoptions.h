@@ -219,13 +219,13 @@ class TraceOptions
     virtual void set_events_plot( int eventsPlot )
     {}
 
-    virtual std::vector< int > parseDoc( char *docname )
+    virtual std::vector< std::string > parseDoc( char *docname )
     {
-      std::vector< int > v;
+      std::vector< std::string > v;
       return v;
     }
 
-    virtual bool saveXML( std::vector< int > &filterOrder, std::string fileName )
+    virtual bool saveXML( std::vector< std::string > &filterOrder, std::string fileName )
     {
       return true;
     }
@@ -333,8 +333,8 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_comms_plot( int commsPlot );
     virtual void set_events_plot( int eventsPlot );
 
-    virtual std::vector< int > parseDoc( char *docname );
-    bool saveXML( std::vector< int > &filterOrder, std::string fileName );
+    virtual std::vector< std::string > parseDoc( char *docname );
+    bool saveXML( std::vector< std::string > &filterOrder, std::string fileName );
 
     virtual TraceOptions *getConcrete();
 

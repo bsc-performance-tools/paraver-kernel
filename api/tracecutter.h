@@ -30,7 +30,9 @@
 #ifndef TRACECUTTER_H_INCLUDED
 #define TRACECUTTER_H_INCLUDED
 
-//#include "traceoptions.h"
+#include <string>
+using std::string;
+
 class TraceOptions;
 class KernelConnection;
 class ProgressController;
@@ -43,6 +45,21 @@ class TraceCutter
                                 char *traceOut,
                                 TraceOptions *options,
                                 ProgressController *progress );
+
+    static string getID()
+    {
+      return TraceCutter::traceToolID;
+    }
+
+    static string getName()
+    {
+      return TraceCutter::traceToolName;
+    }
+
+    static string getExtension()
+    {
+      return TraceCutter::traceToolExtension;
+    }
 
     virtual ~TraceCutter()
     {}
@@ -69,6 +86,11 @@ class TraceCutter
     {}
     virtual void set_remLastStates( int remStates )
     {}
+
+  private:
+    static string traceToolID;
+    static string traceToolName;
+    static string traceToolExtension;
 };
 
 class TraceCutterProxy : public TraceCutter

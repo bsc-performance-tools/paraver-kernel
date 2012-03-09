@@ -1617,19 +1617,23 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   vector< TSemanticValue > tmpComputedMaxY;
   vector< TSemanticValue > tmpComputedMinY;
 
-  int numRows;
-  vector<TObjectOrder>::iterator endIt = selectedSet.end();
-  for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != endIt; ++obj )
+// cout << "[ WindowProxy::computeSemanticParallel ] Entry!" << endl;
+
+  int numRows = 0;
+  for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
   {
     TObjectOrder firstObj = *obj;
     TObjectOrder lastObj = firstObj;
     while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
     {
       ++obj;
-      ++numRows;
       lastObj = *obj;
     }
+
+    ++numRows;
   }
+
+// cout << "[ WindowProxy::computeSemanticParallel ] tras bucle agrupacio filas, numRows =  " << numRows  << endl;
 
   valuesToDraw.reserve( numRows );
   eventsToDraw.reserve( numRows );
@@ -1638,8 +1642,10 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   tmpComputedMaxY.reserve( numRows );
   tmpComputedMinY.reserve( numRows );
 
+// cout << "[ WindowProxy::computeSemanticParallel ] tras reserve" << endl;
+
   // Drawmode: Group objects with same wxCoord in objectPosList
-  for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != endIt; ++obj )
+  for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
   {
     TObjectOrder firstObj = *obj;
     TObjectOrder lastObj = firstObj;
@@ -1674,6 +1680,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
 //#pragma css barrier
 #pragma omp taskwait
 
+// cout << "[ WindowProxy::computeSemanticParallel ] omp taskwait finished!" << endl;
   for( vector< int >::iterator it = tmpDrawCaution.begin(); it != tmpDrawCaution.end(); ++it )
   {
     if ( *it )
@@ -1682,6 +1689,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
       break;
     }
   }
+// cout << "[ WindowProxy::computeSemanticParallel ] tmpDrawCaution for{} finished!" << endl;
 
   for( size_t pos = 0; pos < tmpComputedMaxY.size(); ++pos )
   {
@@ -1692,6 +1700,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
     else
       computedMinY = computedMinY < tmpComputedMinY[ pos ] ? computedMinY : tmpComputedMinY[ pos ];
   }
+// cout << "[ WindowProxy::computeSemanticParallel ] tmpComputedMaxY for{} finished!" << endl;
 }
 
 #ifdef WIN32
@@ -1726,6 +1735,8 @@ void WindowProxy::computeSemanticRowParallel( TObjectOrder firstRow,
                                               hash_set< commCoord, hashCommCoord >& commsToDraw )
 #endif
 {
+// cout << "[ WindowProxy::computeSemanticRowParallel ] Entry" << endl;
+
   float magnify = float( getPixelSize() );
 
   vector<TSemanticValue> timeValues;
@@ -1779,6 +1790,9 @@ void WindowProxy::computeSemanticRowParallel( TObjectOrder firstRow,
     RecordList *rl = getRecordList( *row );
     rl->erase( rl->begin(), rl->end() );
   }
+
+// cout << "[ WindowProxy::computeSemanticRowParallel ] Exit" << endl;
+
 }
 
 #ifdef WIN32
