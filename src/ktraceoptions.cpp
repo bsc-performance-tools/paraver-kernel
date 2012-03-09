@@ -36,6 +36,9 @@ using namespace std;
 
 #include "ktraceoptions.h"
 #include "paraverconfig.h"
+#include "tracecutter.h"
+#include "tracefilter.h"
+#include "tracesoftwarecounters.h"
 
 #include <libxml/encoding.h>
 
@@ -656,10 +659,10 @@ void KTraceOptions::parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur )
 }
 
 
-void KTraceOptions::pushBackUniqueFilterIdentifier( int filterID, vector< int > &order )
+void KTraceOptions::pushBackUniqueFilterIdentifier( string filterID, vector< string > &order )
 {
   // if same kind of filter is repeated, last is loaded, pushed in proper order
-  vector< int >::iterator it = find( order.begin(), order.end(), filterID );
+  vector< string >::iterator it = find( order.begin(), order.end(), filterID );
   if ( it != order.end() )
     order.erase( it );
   order.push_back( filterID );
@@ -667,9 +670,9 @@ void KTraceOptions::pushBackUniqueFilterIdentifier( int filterID, vector< int > 
 
 
 // The real constructor
-vector<int> KTraceOptions::parseDoc( char *docname )
+vector< string > KTraceOptions::parseDoc( char *docname )
 {
-  vector< int > order;
+  vector< string > order;
 
   xmlDocPtr doc;
   xmlNodePtr cur;
@@ -709,22 +712,22 @@ vector<int> KTraceOptions::parseDoc( char *docname )
   cur = cur->xmlChildrenNode;
   while ( cur != NULL )
   {
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"cutter" ) )
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )TraceCutter::getID().c_str() ) )
     {
       parse_cutter_params( doc, cur->xmlChildrenNode );
-      pushBackUniqueFilterIdentifier( INC_CHOP_COUNTER, order );
+      pushBackUniqueFilterIdentifier( TraceCutter::getID(), order );
     }
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"filter" ) )
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )TraceFilter::getID().c_str() ) )
     {
       parse_filter_params( doc, cur->xmlChildrenNode );
-      pushBackUniqueFilterIdentifier( INC_FILTER_COUNTER, order );
+      pushBackUniqueFilterIdentifier( TraceFilter::getID(), order );
     }
 
-    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"software_counters" ) )
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )TraceSoftwareCounters::getID().c_str() ) )
     {
       parse_software_counters_params( doc, cur->xmlChildrenNode );
-      pushBackUniqueFilterIdentifier( INC_SC_COUNTER, order );
+      pushBackUniqueFilterIdentifier( TraceSoftwareCounters::getID(), order );
     }
 
     /*
@@ -741,7 +744,7 @@ vector<int> KTraceOptions::parseDoc( char *docname )
 }
 
 
-bool KTraceOptions::saveXML( vector< int > &filterOrder, string fileName )
+bool KTraceOptions::saveXML( vector< string > &filterOrder, string fileName )
 {
   int rc;
   xmlTextWriterPtr writer;
@@ -758,22 +761,20 @@ bool KTraceOptions::saveXML( vector< int > &filterOrder, string fileName )
 
   for( unsigned int i = 0; i < filterOrder.size(); ++i )
   {
-    switch ( filterOrder[i] )
+    if ( filterOrder[i] == TraceCutter::getID() )
     {
-      case INC_CHOP_COUNTER:
-        saveXMLCutter( writer );
-        break;
-
-      case INC_FILTER_COUNTER:
-        saveXMLFilter( writer );
-        break;
-
-      case INC_SC_COUNTER:
-        saveXMLSoftwareCounters( writer );
-        break;
-
-      default:
-        break;
+      saveXMLCutter( writer );
+    }
+    else if  ( filterOrder[i] == TraceFilter::getID() )
+    {
+      saveXMLFilter( writer );
+    }
+    else if  ( filterOrder[i] == TraceSoftwareCounters::getID() )
+    {
+      saveXMLSoftwareCounters( writer );
+    }
+    else
+    {
     }
   }
 

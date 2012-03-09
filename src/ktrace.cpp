@@ -613,7 +613,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
 // End reading the body
   traceEndTime = memTrace->finish( traceEndTime );
 
-  cout << traceEndTime << endl;
+//  cout << traceEndTime << endl;
 
   if ( !( noLoad && body->ordered() ) )
   {

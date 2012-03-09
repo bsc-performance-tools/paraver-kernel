@@ -1089,13 +1089,13 @@ void KTraceCutter::execute( char *trace_in,
         }
 
         if ( originalTime )
-          current_size += fprintf( outfile, "%d:%d:%d:%d:%d:%lld:%s", id, cpu, appl, task, thread, time_1, line );
+          current_size += fprintf( outfile, "%d:%d:%d:%d:%d:%lld:%s\n", id, cpu, appl, task, thread, time_1, line );
         else
         {
           if ( time_1 >= time_min && time_1 <= time_max )
           {
             time_1 = time_1 - time_min;
-            current_size += fprintf( outfile, "%d:%d:%d:%d:%d:%lld:%s", id, cpu, appl, task, thread, time_1, line );
+            current_size += fprintf( outfile, "%d:%d:%d:%d:%d:%lld:%s\n", id, cpu, appl, task, thread, time_1, line );
           }
         }
 
