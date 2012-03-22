@@ -32,6 +32,8 @@
 
 #include <string>
 #include <vector>
+#include <map>
+
 #include "paraverkerneltypes.h"
 
 class Window;
@@ -45,6 +47,8 @@ class TraceOptions;
 class TraceCutter;
 class TraceFilter;
 class TraceSoftwareCounters;
+
+typedef std::pair< unsigned long long, unsigned long long > TTypeValuePair;
 
 class KernelConnection
 {
@@ -73,7 +77,9 @@ class KernelConnection
     virtual TraceFilter *newTraceFilter( char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options,
-                                         ProgressController *progress = NULL ) const = 0;
+                                         ProgressController *progress = NULL,
+                                         const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable =
+                                           std::map< TTypeValuePair, TTypeValuePair >() ) const = 0;
     virtual TraceSoftwareCounters *newTraceSoftwareCounters( char *trace_in,
                                                              char *trace_out,
                                                              TraceOptions *options,
@@ -97,8 +103,19 @@ class KernelConnection
                                   char *new_trace_name,
                                   std::string action,
                                   bool saveNewNameInfo = true ) = 0;
+    // Returns modified fullPathTracName, with appended or modified filter suffix.
+    virtual std::string getNewTraceName( const std::string& fullPathTraceName,
+                                         const std::string& traceFilterID ) const = 0;
+
+    // Returns modified fullPathTracName, with appended or modified filter suffixes.
+    virtual std::string getNewTraceName( const std::string& fullPathTraceName,
+                                         const std::vector< std::string >& traceFilterID,
+                                         const bool commitName = false ) const = 0;
+
     virtual char *composeName( char *name, char *newExtension ) = 0;
 
+    inline virtual std::string getPathSeparator() const = 0;
+    inline virtual void setPathSeparator( const std::string& whichPath ) = 0;
 
   protected:
 

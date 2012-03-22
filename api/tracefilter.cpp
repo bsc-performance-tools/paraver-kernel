@@ -39,9 +39,10 @@ TraceFilter *TraceFilter::create( KernelConnection *whichKernel,
                                   char *traceIn,
                                   char *traceOut,
                                   TraceOptions *options,
-                                  ProgressController *progress )
+                                  ProgressController *progress,
+                                  const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable )
 {
-  return new TraceFilterProxy( whichKernel, traceIn, traceOut, options, progress );
+  return new TraceFilterProxy( whichKernel, traceIn, traceOut, options, progress, whichTranslationTable );
 }
 
 
@@ -49,9 +50,10 @@ TraceFilterProxy::TraceFilterProxy( KernelConnection *whichKernel,
                                   char *traceIn,
                                   char *traceOut,
                                   TraceOptions *options,
-                                  ProgressController *progress )
+                                  ProgressController *progress,
+                                  const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable )
 {
-  myTraceFilter = whichKernel->newTraceFilter( traceIn, traceOut, options, progress );
+  myTraceFilter = whichKernel->newTraceFilter( traceIn, traceOut, options, progress, whichTranslationTable );
 }
 
 TraceFilterProxy::~TraceFilterProxy()

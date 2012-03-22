@@ -48,14 +48,18 @@
 #define atoll _atoi64
 #endif
 
+#include <iostream>
+
 KTraceFilter::KTraceFilter( char *trace_in,
                             char *trace_out,
                             TraceOptions *options,
-                            ProgressController *progress )
+                            ProgressController *progress,
+                            const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable )
 {
   is_zip_filter = false;
 
   exec_options = new KTraceOptions( (KTraceOptions *)options );
+  translationTable = whichTranslationTable;
   execute( trace_in, trace_out, progress );
 }
 
@@ -604,6 +608,18 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
         word = strtok( NULL, ":" );
         value = atoll( word );
 
+        if ( translationTable.size() > 0 )
+        {
+          TTypeValuePair p = std::make_pair( type, value );
+
+          std::map< TTypeValuePair, TTypeValuePair >::const_iterator it = translationTable.find(p);
+          if ( it != translationTable.end() )
+          {
+            type  = it->second.first;
+            value = it->second.second;
+          }
+        }
+
         if ( ( i = filter_allowed_type( appl, task, thread, time_1, type, value ) ) > 0 )
         {
           print_record = 1;
@@ -623,6 +639,19 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
             type = atoll( word );
             word = strtok( NULL, ":" );
             value = atoll( word );
+
+
+            if ( translationTable.size() > 0 )
+            {
+              TTypeValuePair p = std::make_pair( type, value );
+
+              std::map< TTypeValuePair, TTypeValuePair >::const_iterator it = translationTable.find(p);
+              if ( it != translationTable.end() )
+              {
+                type  = it->second.first;
+                value = it->second.second;
+              }
+            }
 
             if ( ( i = filter_allowed_type( appl, task, thread, time_1, type, value ) ) > 0 )
             {

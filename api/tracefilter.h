@@ -30,6 +30,8 @@
 #ifndef TRACEFILTER_H_INCLUDED
 #define TRACEFILTER_H_INCLUDED
 
+#include <map>
+
 #include "localkernel.h"
 
 class TraceOptions;
@@ -39,11 +41,13 @@ class ProgressController;
 class TraceFilter
 {
   public:
-    static TraceFilter *create( KernelConnection *whichKernel,
+   static TraceFilter *create( KernelConnection *whichKernel,
                                 char *traceIn,
                                 char *traceOut,
                                 TraceOptions *options,
-                                ProgressController *progress );
+                                ProgressController *progress,
+                                const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable =
+                                  std::map< TTypeValuePair, TTypeValuePair >() );
 
     static std::string getID()
     {
@@ -81,13 +85,15 @@ class TraceFilterProxy : public TraceFilter
                       char *traceIn,
                       char *traceOut,
                       TraceOptions *options,
-                      ProgressController *progress );
+                      ProgressController *progress,
+                      const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable );
 
     friend TraceFilter *TraceFilter::create( KernelConnection *kernelConnection,
                                              char *traceIn,
                                              char *traceOut,
                                              TraceOptions *options,
-                                             ProgressController *progress );
+                                             ProgressController *progress,
+                                             const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable );
 };
 
 

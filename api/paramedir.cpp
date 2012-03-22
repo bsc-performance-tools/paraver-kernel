@@ -364,7 +364,33 @@ string applyFilters( KernelConnection *myKernel,
     }
     else if ( filterToolOrder[i] == TraceFilter::getID() )
     {
+#if 1
       traceFilter = myKernel->newTraceFilter( tmpNameIn, tmpNameOut, traceOptions );
+#else
+      map< TTypeValuePair, TTypeValuePair > translation;
+      translation[ make_pair( 30000000, 2 ) ] = make_pair( 666, 999 );
+      translation[ make_pair( 30000001, 2 ) ] = make_pair( 666666, 999999 );
+      translation[ make_pair( 30000002, 2 ) ] = make_pair( 666666666, 999999999 );
+      translation[ make_pair( 30000003, 2 ) ] = make_pair( 666666666666, 999999999999 );
+
+      TraceOptions *opts = myKernel->newTraceOptions( );
+
+      opts->set_filter_by_call_time( false );
+
+      opts->set_filter_states( true );
+      opts->set_all_states( true );
+
+      opts->set_filter_events( true );
+      opts->set_discard_given_types( true );
+      TraceOptions::TFilterTypes dummyTypes;
+      dummyTypes[0].type = 1234567890;
+      opts->set_filter_last_type( 1 );
+
+      opts->set_filter_comms( true );
+      opts->set_min_comm_size( 1 );
+
+      traceFilter = myKernel->newTraceFilter( tmpNameIn, tmpNameOut, opts, NULL, translation );
+#endif
       myKernel->copyPCF( tmpNameIn, tmpNameOut );
     }
     else if ( filterToolOrder[i] == TraceSoftwareCounters::getID() )

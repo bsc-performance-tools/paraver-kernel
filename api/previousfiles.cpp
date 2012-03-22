@@ -35,9 +35,11 @@ using namespace std;
 #ifdef WIN32
 const string PreviousFiles::previousTracesFile = "\\paraver\\paraverdb";
 const string PreviousFiles::previousCFGsFile = "\\paraver\\paravercfgdb";
+const string PreviousFiles::previousCutFilteredTraces = "\\paraver\\paravercutfilteredtracesdb";
 #else
 const string PreviousFiles::previousTracesFile = "/.paraver/paraverdb";
 const string PreviousFiles::previousCFGsFile = "/.paraver/paravercfgdb";
+const string PreviousFiles::previousCutFilteredTraces = "/.paraver/paravercutfilteredtracesdb";
 #endif
 
 PreviousFiles::PreviousFiles( const string &filename )
@@ -124,6 +126,7 @@ bool PreviousFiles::add( const string &newFile )
 
   return update();
 }
+
 
 const vector<string>& PreviousFiles::getFiles() const
 {

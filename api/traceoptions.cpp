@@ -30,7 +30,15 @@
 #include "kernelconnection.h"
 #include "traceoptions.h"
 
+// Only for getIDsAvailableTraceTools
+#include "tracefilter.h"
+#include "tracecutter.h"
+#include "tracesoftwarecounters.h"
+
+
 using namespace std;
+
+vector< string > TraceOptionsProxy::IDsAvailableTraceTools;
 
 //TraceOptions *TraceOptions::create( KernelConnection *whichKernel, char *xmldocname )
 TraceOptions *TraceOptions::create( KernelConnection *whichKernel )
@@ -44,6 +52,10 @@ TraceOptionsProxy::TraceOptionsProxy( const KernelConnection *whichKernel )
 {
 //  myTraceOptions = whichKernel->newTraceOptions( xmldocname );
   myTraceOptions = whichKernel->newTraceOptions();
+
+  IDsAvailableTraceTools.push_back( TraceCutter::getID() );
+  IDsAvailableTraceTools.push_back( TraceFilter::getID() );
+  IDsAvailableTraceTools.push_back( TraceSoftwareCounters::getID() );
 
   //if ( xmldocname != NULL )
   //  myTraceOptions->parseDoc( xmldocname );
@@ -447,3 +459,47 @@ TraceOptions *TraceOptionsProxy::getConcrete()
   return myTraceOptions;
 }
 
+vector< string > TraceOptionsProxy::getIDsAvailableTraceTools()
+{
+  return IDsAvailableTraceTools;
+}
+
+string TraceOptionsProxy::getTraceToolName( const string& toolID )
+{
+  string toolStr;
+
+  if ( toolID == TraceCutter::getID() )
+  {
+    toolStr = TraceCutter::getName();
+  }
+  else if ( toolID == TraceFilter::getID() )
+  {
+    toolStr = TraceFilter::getName();
+  }
+  else //  ( toolID == TraceSoftwareCounters::getID() )
+  {
+    toolStr = TraceSoftwareCounters::getName();
+  }
+
+  return toolStr;
+}
+
+string TraceOptionsProxy::getTraceToolExtension( const string& toolID )
+{
+  string toolStr;
+
+  if ( toolID == TraceCutter::getID() )
+  {
+    toolStr = TraceCutter::getExtension();
+  }
+  else if ( toolID == TraceFilter::getID() )
+  {
+    toolStr = TraceFilter::getExtension();
+  }
+  else //  ( toolID == TraceSoftwareCounters::getID() )
+  {
+    toolStr = TraceSoftwareCounters::getExtension();
+  }
+
+  return toolStr;
+}

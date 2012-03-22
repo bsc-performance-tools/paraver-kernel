@@ -30,6 +30,8 @@
 #ifndef _KTRACEFILTER_H_
 #define _KTRACEFILTER_H_
 
+#include <map>
+
 #include "ktraceoptions.h"
 #include "zlib.h"
 #include "tracefilter.h"
@@ -40,7 +42,9 @@ class KTraceFilter: public TraceFilter
     KTraceFilter( char *trace_in,
                   char *trace_out,
                   TraceOptions *options,
-                  ProgressController *progress );
+                  ProgressController *progress,
+                  const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable =
+                    std::map< TTypeValuePair, TTypeValuePair >() );
     virtual ~KTraceFilter();
     virtual void execute( char *trace_in, char *trace_out, ProgressController *progress );
 
@@ -99,6 +103,8 @@ class KTraceFilter: public TraceFilter
     struct buffer_elem *buffer_last;
 
     struct buffer_elem *thread_call_info[MAX_APPL][MAX_TASK][MAX_THREAD];
+
+    std::map<TTypeValuePair, TTypeValuePair> translationTable;
 
     void read_params();
     void filter_process_header( char *header );

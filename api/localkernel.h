@@ -30,9 +30,12 @@
 #ifndef LOCALKERNEL_H_INCLUDED
 #define LOCALKERNEL_H_INCLUDED
 
+#include <map>
+
 #include "kernelconnection.h"
 
 class KWindow;
+class PreviousFiles;
 
 class LocalKernel: public KernelConnection
 {
@@ -66,7 +69,9 @@ class LocalKernel: public KernelConnection
     virtual TraceFilter *newTraceFilter( char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options,
-                                         ProgressController *progress = NULL ) const;
+                                         ProgressController *progress = NULL,
+                                         const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable =
+                                           std::map< TTypeValuePair, TTypeValuePair >() ) const;
     virtual TraceSoftwareCounters *newTraceSoftwareCounters( char *trace_in,
                                                              char *trace_out,
                                                              TraceOptions *options,
@@ -81,15 +86,32 @@ class LocalKernel: public KernelConnection
 
     virtual void copyPCF( char *name, char *traceToLoad );
     virtual void copyROW( char *name, char *traceToLoad );
+
+    // WILL BE SUBSTITUTED
     virtual void getNewTraceName( char *name,
                                   char *new_trace_name,
                                   std::string action,
                                   bool saveNewNameInfo = true );
+
+    // Returns modified fullPathTracName, with appended or modified filter suffix.
+    virtual std::string getNewTraceName( const std::string& fullPathTraceName,
+                                         const std::string& traceFilterID ) const;
+
+    // Returns modified fullPathTracName, with appended or modified filter suffixes.
+    virtual std::string getNewTraceName( const std::string& fullPathTraceName,
+                                         const std::vector< std::string >& traceFilterID,
+                                         const bool commitName = false ) const;
+
     virtual char *composeName( char *name, char *newExtension );
+
+    inline virtual std::string getPathSeparator() const { return pathSeparator; }
+    inline virtual void setPathSeparator( const std::string& whichPath ) { pathSeparator = whichPath; }
 
   protected:
 
   private:
+    std::string pathSeparator;
+
     bool (*myMessageFunction)(std::string);
 
     // FILTERS
@@ -103,6 +125,11 @@ class LocalKernel: public KernelConnection
     #define MAX_TRACES_HISTORY_LENGTH 256
     struct traces_table trace_names_table[ MAX_TRACES_HISTORY_LENGTH ];
     int trace_names_table_last; // should be static?
+
+    // Paraver user file that stores path and names of last cutted/filtered traces
+    // It's opened/created in LocalKernel constructor.
+    // And written in getNewTraceName when commitName == true
+    PreviousFiles *prevTraceNames;
 
     void copyFile( char *in, char *out );
 };

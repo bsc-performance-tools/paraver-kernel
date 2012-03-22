@@ -47,6 +47,10 @@ class PreviousFiles
     {
       return new PreviousFiles( previousCFGsFile );
     }
+    static PreviousFiles *createPreviousCutFilteredTraces()
+    {
+      return new PreviousFiles( previousCutFilteredTraces );
+    }
 
     ~PreviousFiles();
 
@@ -55,6 +59,7 @@ class PreviousFiles
 
     static const std::string previousTracesFile;
     static const std::string previousCFGsFile;
+    static const std::string previousCutFilteredTraces;
 
     static const PRV_UINT16 SIZE = 20;
 

@@ -338,10 +338,15 @@ class TraceOptionsProxy :public TraceOptions
 
     virtual TraceOptions *getConcrete();
 
+    static std::vector< std::string > getIDsAvailableTraceTools();
+    static std::string getTraceToolName( const std::string& toolID );
+    static std::string getTraceToolExtension( const std::string& toolID );
+
   protected:
 
   private:
     TraceOptions *myTraceOptions;
+    static std::vector< std::string > IDsAvailableTraceTools;
 
     // TraceOptionsProxy( const KernelConnection *whichKernel, char *xmldocname );
     TraceOptionsProxy( const KernelConnection *whichKernel );
@@ -356,6 +361,7 @@ class TraceOptionsProxy :public TraceOptions
     friend TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
                                           char *trace_out,
                                           TraceOptions *options,
-                                          ProgressController *progress ) const;
+                                          ProgressController *progress,
+                                          const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable ) const;
 };
 #endif // TRACEOPTIONS_H_INCLUDED

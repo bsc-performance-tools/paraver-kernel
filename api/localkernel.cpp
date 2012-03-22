@@ -40,6 +40,8 @@
 #include "krecordlist.h"
 #include "kprogresscontroller.h"
 #include "labelconstructor.h"
+#include "previousfiles.h"
+
 
 #include "ktraceoptions.h"
 #include "ktracecutter.h"
@@ -57,18 +59,24 @@ void LocalKernel::init()
   createFilter();
   createSemantic();
   createStatistic();
+
   LabelConstructor::init();
 }
 
 LocalKernel::LocalKernel( bool ( *messageFunction )( string ) ) :
     myMessageFunction( messageFunction )
 {
+  setPathSeparator( string( "/") ); // FIXME
+
   // FILTERS
   trace_names_table_last = 0;
+
+  PreviousFiles *prevTraceNames = PreviousFiles::createPreviousCutFilteredTraces();
 }
 
 LocalKernel::~LocalKernel()
 {
+//  deleted prevTracesNames;
 }
 
 bool LocalKernel::checkTraceSize( const string& filename, TTraceSize maxSize ) const
@@ -199,7 +207,8 @@ TraceCutter *LocalKernel::newTraceCutter( //TraceCutter *concreteTraceCutter,
 TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
                                           char *trace_out,
                                           TraceOptions *options,
-                                          ProgressController *progress ) const
+                                          ProgressController *progress,
+                                          const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable ) const
 {
 //  TraceOptionsProxy *myOptions = new TraceOptionsProxy( this );
 //  myOptions->myTraceOptions = options;
@@ -209,7 +218,7 @@ TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
   if ( progress != NULL )
     tmpKProgressControler = (KProgressController *)progress->getConcrete();
 
-  return new KTraceFilter( trace_in, trace_out, options, tmpKProgressControler );
+  return new KTraceFilter( trace_in, trace_out, options, tmpKProgressControler, whichTranslationTable );
 
 }
 
@@ -496,4 +505,189 @@ void LocalKernel::getNewTraceName( char *name,
   {
     trace_names_table[ i ] = currentName;
   }
+}
+
+
+string LocalKernel::getNewTraceName( const string& fullPathTraceName,
+                                     const string& traceFilterID ) const
+{
+  string newTraceName = fullPathTraceName;
+  return newTraceName;
+}
+
+
+// precond1: fullPathTraceName is well formed ( ends with *.prv.gz or *.prv, and path exists)
+// precond2: traceids belong to available tools and are inserted in order
+string LocalKernel::getNewTraceName( const string& fullPathTraceName,
+                                     const vector< string >& traceFilterID,
+                                     const bool commitName ) const
+{
+  string newTraceName;
+  /*
+  string retTraceName;
+
+  map< string, int > toolNumberedSuffix; // ( key = id, value = version )
+  map< string, string > toolExtension;   // ( key = id, value = extension )
+
+  string auxTraceName;
+  string fullPath = "";
+  string auxPath;
+  string newTraceNameGzipped;
+  char *tracesHome;
+
+#ifndef WIN32
+  struct stat file_info;
+#else
+  struct _stat64 file_info;
+#endif
+
+  // Constants
+  string gzippedPrvSuffix = string( ".prv.gz" );
+  string prvSuffix = string( ".prv" );
+  string pathSep = getPathSeparator();
+
+  // Blind build of the new trace name
+  size_t uniqueStartingPos = fullPathTraceName.length() - gzippedPrvSuffix.length();
+  size_t prvSuffixStartPos = fullPathTraceName.rfind( gzippedPrvSuffix, uniqueStartingPos );
+  if ( prvSuffixStartPos == string::npos )
+  {
+    uniqueStartingPos = fullPathTraceName.length() - prvSuffix.length();
+    prvSuffixStartPos = fullPathTraceName.rfind( prvSuffix, uniqueStartingPos );
+  }
+
+  retTraceName = fullPathTraceName.substr( 0, prvSuffixStartPos );
+
+  for( vector< string >::iterator id = traceFilterID.begin(); id != traceFilterID.end(); ++id )
+  {
+    retTraceName = retTraceName +
+            string( "." ) + TraceOptionsProxy::getTraceToolExtension( *id ) + string("1");
+  }
+
+  newTraceName
+
+  for( vector< string >::iterator id = availableTraceToolsIDs.begin(); id != availableTraceToolsIDs.end(); ++id )
+  {
+     prvExtension = TraceOptionsProxy::getTraceToolExtension( *id );
+      dottedExtension = string( "." ) + extension;
+      infixStartPos = tr->rfind( dottedExtension );
+
+
+  // Initialize variables to describe current state
+  vector< string > availableTraceToolsIDs = TraceOptionsProxy::getIDsAvailableTraceTools();
+  vector< string > tracesHistory = prevTraceNames->getFiles();
+
+  for( vector< string >::iterator tr = tracesHistory.begin(); tr != tracesHistory.end(); ++tr )
+  {
+    // Look for fullPathTraceName
+    // found --> read suffixes and increment
+    // !found --> append ordered suffixes with versions = 1
+    // in both cases, add to list
+
+    toolNumberedSuffix[ *tr ] = map< string, int >();
+    toolExtension[ *tr ] =  map< string, string >();
+
+    for( vector< string >::iterator id = availableTraceToolsIDs.begin(); id != availableTraceToolsIDs.end(); ++id )
+    {
+      extension = TraceOptionsProxy::getTraceToolExtension( *id );
+      dottedExtension = string( "." ) + extension;
+      infixStartPos = tr->rfind( dottedExtension );
+      if ( infixStartPos != string::npos )
+      {
+        // found! => get the number
+        infixStartNumberPos = infixStartPos + toolExtension[ *it ].length() + 1;
+        infixFinalDotPos = auxTraceName.find( string("."), infixStartNumberPos );
+        if ( infixStartPos != string::npos )
+        {
+          auxStrNumber = auxTraceName.substr( infixStartNumberPos,
+                                              infixFinalDotPos - infixStartNumberPos );
+          stringstream auxStrStrNumber( auxStrNumber );
+          if ( !( auxStrStrNumber >> auxNumber ).fail() )
+          {
+            toolNumberedSuffix[ *it ] = auxNumber;
+      toolNumberedSuffix[ *tr ][ *at ] = 0;
+      toolExtension[ *tr ][ *at ] = TraceOptionsProxy::getTraceToolExtension( *it );
+
+          }
+        }
+      }
+    }
+  }
+
+  // Does fullPathTraceName contains the numbered infix?
+
+  // Step 1: Forget the path to the base directory
+  size_t lastPathSepPos = fullPathTraceName.find_last_of( pathSep );
+  if ( lastPathSepPos != string::npos )
+  {
+    auxTraceName = fullPathTraceName.substr( lastPathSepPos );
+    auxPath = fullPathTraceName.substr( 0, lastPathSepPos );
+cout << "auxTraceName" << auxTraceName << endl;
+    //fullPath =
+  }
+
+  // Step 2: Find tools substrings in trace name (i.e, for cutter, ".chop")
+  // Must be done for every filter in same order
+  string auxExtension, auxStrNumber;
+  size_t infixStartPos,infixStartNumberPos,infixFinalDotPos;
+  PRV_UINT32 auxNumber;
+
+  for( vector< string >::iterator it = tmpAvailableTraceTools.begin();
+          it != tmpAvailableTraceTools.end(); ++it )
+  {
+    auxExtension = string( "." ) + toolExtension[ *it ];
+    infixStartPos = auxTraceName.rfind( auxExtension );
+    if ( infixStartPos != string::npos )
+    {
+      // found! => get the number
+      infixStartNumberPos = infixStartPos + toolExtension[ *it ].length() + 1;
+      infixFinalDotPos = auxTraceName.find( string("."), infixStartNumberPos );
+      if ( infixStartPos != string::npos )
+      {
+        auxStrNumber = auxTraceName.substr( infixStartNumberPos,
+                                            infixFinalDotPos - infixStartNumberPos );
+        stringstream auxStrStrNumber( auxStrNumber );
+        if ( !( auxStrStrNumber >> auxNumber ).fail() )
+        {
+          toolNumberedSuffix[ *it ] = auxNumber;
+        }
+      }
+    }
+  }
+
+  // Get current directory
+  // Today, getenv( "TRACES_HOME" )) ) is almost deprecated
+  if (( tracesHome = getenv( "PWD" )) != NULL)
+  {
+    fullPath = string ( tracesHome );
+  }
+
+  // Step 3: Test existance
+  do
+  {
+    newTraceName = auxPath + pathSep;
+    for( vector< string >::const_iterator it = traceFilterID.begin(); it != traceFilterID.end(); ++it )
+    {
+      stringstream auxStrStrNumber;
+      auxStrStrNumber << toolNumberedSuffix[ *it ];
+      newTraceName = newTraceName +
+                     string(".") +
+                     toolExtension[ *it ] +
+                     auxStrStrNumber.str();
+    }
+
+    newTraceName += string( ".prv" );
+    newTraceNameGzipped = newTraceName + string( ".prv.gz" );
+  }
+#ifndef WIN32
+  while (( stat( newTraceName.c_str(), &file_info ) == 0 ) ||
+         ( stat( newTraceNameGzipped.c_str(), &file_info ) == 0 ));
+#else
+  while (( _stat64( newTraceName.c_str(), &file_info ) == 0 ) ||
+         ( _stat64( newTraceNameGzipped.c_str(), &file_info ) == 0 ));
+#endif
+
+cout << "newTraceName: " << newTraceName << endl;
+
+*/
+  return newTraceName;
 }
