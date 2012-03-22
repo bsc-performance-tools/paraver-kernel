@@ -77,9 +77,8 @@ class KernelConnection
     virtual TraceFilter *newTraceFilter( char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options,
-                                         ProgressController *progress = NULL,
-                                         const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable =
-                                           std::map< TTypeValuePair, TTypeValuePair >() ) const = 0;
+                                         const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
+                                         ProgressController *progress = NULL ) const = 0;
     virtual TraceSoftwareCounters *newTraceSoftwareCounters( char *trace_in,
                                                              char *trace_out,
                                                              TraceOptions *options,

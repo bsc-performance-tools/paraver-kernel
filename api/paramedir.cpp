@@ -364,10 +364,10 @@ string applyFilters( KernelConnection *myKernel,
     }
     else if ( filterToolOrder[i] == TraceFilter::getID() )
     {
-#if 1
-      traceFilter = myKernel->newTraceFilter( tmpNameIn, tmpNameOut, traceOptions );
-#else
       map< TTypeValuePair, TTypeValuePair > translation;
+#if 0
+      traceFilter = myKernel->newTraceFilter( tmpNameIn, tmpNameOut, traceOptions, translation );
+#else
       translation[ make_pair( 30000000, 2 ) ] = make_pair( 666, 999 );
       translation[ make_pair( 30000001, 2 ) ] = make_pair( 666666, 999999 );
       translation[ make_pair( 30000002, 2 ) ] = make_pair( 666666666, 999999999 );
@@ -389,7 +389,7 @@ string applyFilters( KernelConnection *myKernel,
       opts->set_filter_comms( true );
       opts->set_min_comm_size( 1 );
 
-      traceFilter = myKernel->newTraceFilter( tmpNameIn, tmpNameOut, opts, NULL, translation );
+      traceFilter = myKernel->newTraceFilter( tmpNameIn, tmpNameOut, opts, translation );
 #endif
       myKernel->copyPCF( tmpNameIn, tmpNameOut );
     }

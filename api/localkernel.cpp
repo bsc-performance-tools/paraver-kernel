@@ -207,8 +207,8 @@ TraceCutter *LocalKernel::newTraceCutter( //TraceCutter *concreteTraceCutter,
 TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
                                           char *trace_out,
                                           TraceOptions *options,
-                                          ProgressController *progress,
-                                          const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable ) const
+                                          const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
+                                          ProgressController *progress ) const
 {
 //  TraceOptionsProxy *myOptions = new TraceOptionsProxy( this );
 //  myOptions->myTraceOptions = options;
@@ -218,7 +218,7 @@ TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
   if ( progress != NULL )
     tmpKProgressControler = (KProgressController *)progress->getConcrete();
 
-  return new KTraceFilter( trace_in, trace_out, options, tmpKProgressControler, whichTranslationTable );
+  return new KTraceFilter( trace_in, trace_out, options, whichTranslationTable, tmpKProgressControler );
 
 }
 
@@ -554,7 +554,7 @@ string LocalKernel::getNewTraceName( const string& fullPathTraceName,
     uniqueStartingPos = fullPathTraceName.length() - prvSuffix.length();
     prvSuffixStartPos = fullPathTraceName.rfind( prvSuffix, uniqueStartingPos );
   }
-
+newTraceFilter
   retTraceName = fullPathTraceName.substr( 0, prvSuffixStartPos );
 
   for( vector< string >::iterator id = traceFilterID.begin(); id != traceFilterID.end(); ++id )

@@ -69,9 +69,8 @@ class LocalKernel: public KernelConnection
     virtual TraceFilter *newTraceFilter( char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options,
-                                         ProgressController *progress = NULL,
-                                         const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable =
-                                           std::map< TTypeValuePair, TTypeValuePair >() ) const;
+                                         const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
+                                         ProgressController *progress = NULL ) const;
     virtual TraceSoftwareCounters *newTraceSoftwareCounters( char *trace_in,
                                                              char *trace_out,
                                                              TraceOptions *options,
