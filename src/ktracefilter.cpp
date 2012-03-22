@@ -53,8 +53,8 @@
 KTraceFilter::KTraceFilter( char *trace_in,
                             char *trace_out,
                             TraceOptions *options,
-                            ProgressController *progress,
-                            const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable )
+                            const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
+                            ProgressController *progress )
 {
   is_zip_filter = false;
 

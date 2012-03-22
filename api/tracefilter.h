@@ -46,8 +46,7 @@ class TraceFilter
                                 char *traceOut,
                                 TraceOptions *options,
                                 ProgressController *progress,
-                                const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable =
-                                  std::map< TTypeValuePair, TTypeValuePair >() );
+                                const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable );
 
     static std::string getID()
     {
@@ -85,15 +84,15 @@ class TraceFilterProxy : public TraceFilter
                       char *traceIn,
                       char *traceOut,
                       TraceOptions *options,
-                      ProgressController *progress,
-                      const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable );
+                      const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
+                      ProgressController *progress );
 
     friend TraceFilter *TraceFilter::create( KernelConnection *kernelConnection,
                                              char *traceIn,
                                              char *traceOut,
                                              TraceOptions *options,
                                              ProgressController *progress,
-                                             const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable );
+                                             const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable );
 };
 
 

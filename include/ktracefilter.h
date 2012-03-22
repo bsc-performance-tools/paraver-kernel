@@ -42,9 +42,8 @@ class KTraceFilter: public TraceFilter
     KTraceFilter( char *trace_in,
                   char *trace_out,
                   TraceOptions *options,
-                  ProgressController *progress,
-                  const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable =
-                    std::map< TTypeValuePair, TTypeValuePair >() );
+                  const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
+                  ProgressController *progress );
     virtual ~KTraceFilter();
     virtual void execute( char *trace_in, char *trace_out, ProgressController *progress );
 

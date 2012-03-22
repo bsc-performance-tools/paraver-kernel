@@ -361,7 +361,7 @@ class TraceOptionsProxy :public TraceOptions
     friend TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
                                           char *trace_out,
                                           TraceOptions *options,
-                                          ProgressController *progress,
-                                          const std::map< TTypeValuePair, TTypeValuePair > whichTranslationTable ) const;
+                                          const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
+                                          ProgressController *progress ) const;
 };
 #endif // TRACEOPTIONS_H_INCLUDED

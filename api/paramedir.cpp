@@ -365,7 +365,7 @@ string applyFilters( KernelConnection *myKernel,
     else if ( filterToolOrder[i] == TraceFilter::getID() )
     {
       map< TTypeValuePair, TTypeValuePair > translation;
-#if 0
+#if 1
       traceFilter = myKernel->newTraceFilter( tmpNameIn, tmpNameOut, traceOptions, translation );
 #else
       translation[ make_pair( 30000000, 2 ) ] = make_pair( 666, 999 );
