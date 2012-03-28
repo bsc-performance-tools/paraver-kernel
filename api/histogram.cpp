@@ -921,11 +921,12 @@ void HistogramProxy::compute2DScale()
   }
   else if ( controlWindow->IsCodeColorSet() )
   {
+    setControlMax( floor( maxY * 1.05 ) );
     setControlDelta( 1.0 );
   }
   else
   {
-    setControlDelta( ( maxY - minY ) /
+    setControlDelta( ( ( maxY * 1.05 ) - minY ) /
                      ParaverConfig::getInstance()->getHistogramNumColumns() );
   }
 }

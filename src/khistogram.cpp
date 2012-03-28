@@ -971,7 +971,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     if ( currentWindow == dataWindow )
       data->dataRow = iRow;
 
-    if( needInit )
+    if( needInit && ( winIndex == 0 || ( winIndex > 0 && orderedWindows[ winIndex ] != orderedWindows[ winIndex - 1 ] ) ) )
     {
       if( orderedWindows[ winIndex ] == orderedWindows[ 0 ] )
         currentWindow->initRow( iRow, fromTime, CREATECOMMS );
