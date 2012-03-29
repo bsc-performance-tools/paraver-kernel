@@ -69,6 +69,10 @@ class IntervalCPU: public IntervalHigh
         delete begin;
       if ( end != NULL )
         delete end;
+      if( functionThread != NULL )
+        delete functionThread;
+      if( functionComposeThread != NULL )
+        delete functionComposeThread;
     }
 
     virtual KRecordList *init( TRecordTime initialTime, TCreateList create,

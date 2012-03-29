@@ -51,10 +51,6 @@
 #define MAX_THREADS 65536
 #define MAXSTATES 20
 
-//using namespace std;
-//#include "tracecutter.h"
-//#include "tracefilter.h"
-//#include "tracesoftwarecounters.h"
 
 class KTraceOptions: public TraceOptions
 {
