@@ -147,11 +147,15 @@ TThreadOrder KTrace::getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) cons
 }
 
 
-TThreadOrder KTrace::getLastThread( TApplOrder inAppl, TTaskOrder inTask )const
+TThreadOrder KTrace::getLastThread( TApplOrder inAppl, TTaskOrder inTask ) const
 {
   return traceProcessModel.getLastThread( inAppl, inTask );
 }
 
+void KTrace::getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& onVector ) const
+{
+  traceProcessModel.getThreadsPerNode( inNode, onVector );
+}
 
 bool KTrace::existResourceInfo() const
 {

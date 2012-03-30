@@ -44,7 +44,8 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
   if ( displayList == NULL )
     displayList = &myDisplayList;
 
-  function = ( SemanticCompose * ) window->getSemanticFunction( level );
+  if( !notWindowInits )
+    function = ( SemanticCompose * ) window->getSemanticFunction( level );
 
   if ( endRecord != NULL )
   {
@@ -72,7 +73,8 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
     joinBursts = false;
   }
 
-  setChilds();
+  if( !notWindowInits )
+    setChilds();
 
   if ( function->getInitFromBegin() )
     myInitTime = 0.0;
@@ -83,13 +85,13 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
 
   if( begin != NULL && begin != beginRecord )
     delete begin;
-  if( window->getLevel() >= APPLICATION && window->getLevel() <= THREAD )
+  if( childIntervals[ 0 ]->getLevel() >= APPLICATION && childIntervals[ 0 ]->getLevel() <= THREAD )
     begin = window->copyThreadIterator( childIntervals[ 0 ]->getBegin() );
   else
     begin = window->copyCPUIterator( childIntervals[ 0 ]->getBegin() );
   if( end != NULL )
     delete end;
-  if( window->getLevel() >= APPLICATION && window->getLevel() <= THREAD )
+  if( childIntervals[ 0 ]->getLevel() >= APPLICATION && childIntervals[ 0 ]->getLevel() <= THREAD )
     end = window->copyThreadIterator( childIntervals[ 0 ]->getEnd() );
   else
     end = window->copyCPUIterator(  childIntervals[ 0 ]->getEnd() );
@@ -104,7 +106,7 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
     {
       if( end != NULL )
         delete end;
-      if( window->getLevel() >= APPLICATION && window->getLevel() <= THREAD )
+      if( childIntervals[ 0 ]->getLevel() >= APPLICATION && childIntervals[ 0 ]->getLevel() <= THREAD )
         end = window->copyThreadIterator( childIntervals[ 0 ]->getEnd() );
       else
         end = window->copyCPUIterator( childIntervals[ 0 ]->getEnd() );
@@ -117,7 +119,7 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
       // lastEnd to control loop!
       if( lastEnd != NULL && lastEnd != endRecord )
         delete lastEnd;
-      if( window->getLevel() >= APPLICATION && window->getLevel() <= THREAD )
+      if( childIntervals[ 0 ]->getLevel() >= APPLICATION && childIntervals[ 0 ]->getLevel() <= THREAD )
         lastEnd = window->copyThreadIterator( end );
       else
         lastEnd = window->copyCPUIterator( end );
@@ -158,13 +160,13 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
 
     if( begin != NULL && begin != beginRecord )
       delete begin;
-    if( window->getLevel() >= APPLICATION && window->getLevel() <= THREAD )
+    if( childIntervals[ 0 ]->getLevel() >= APPLICATION && childIntervals[ 0 ]->getLevel() <= THREAD )
       begin = window->copyThreadIterator( childIntervals[ 0 ]->getBegin() );
     else
       begin = window->copyCPUIterator( childIntervals[ 0 ]->getBegin() );
     if( end != NULL )
       delete end;
-    if( window->getLevel() >= APPLICATION && window->getLevel() <= THREAD )
+    if( childIntervals[ 0 ]->getLevel() >= APPLICATION && childIntervals[ 0 ]->getLevel() <= THREAD )
       end = window->copyThreadIterator( childIntervals[ 0 ]->getEnd() );
     else
       end = window->copyCPUIterator(  childIntervals[ 0 ]->getEnd() );
@@ -182,7 +184,7 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
     {
       if( end != NULL )
         delete end;
-      if( window->getLevel() >= APPLICATION && window->getLevel() <= THREAD )
+      if( childIntervals[ 0 ]->getLevel() >= APPLICATION && childIntervals[ 0 ]->getLevel() <= THREAD )
         end = window->copyThreadIterator( childIntervals[ 0 ]->getEnd() );
       else
         end = window->copyCPUIterator( childIntervals[ 0 ]->getEnd() );
@@ -195,7 +197,7 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
       // lastEnd to control loop!
       if( lastEnd != NULL && lastEnd != endRecord )
         delete lastEnd;
-      if( window->getLevel() >= APPLICATION && window->getLevel() <= THREAD )
+      if( childIntervals[ 0 ]->getLevel() >= APPLICATION && childIntervals[ 0 ]->getLevel() <= THREAD )
         lastEnd = window->copyThreadIterator( end );
       else
         lastEnd = window->copyCPUIterator( end );
@@ -209,13 +211,13 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
     childIntervals[ 0 ]->calcNext( displayList );
     if( begin != NULL && begin != beginRecord )
       delete begin;
-    if( window->getLevel() >= APPLICATION && window->getLevel() <= THREAD )
+    if( childIntervals[ 0 ]->getLevel() >= APPLICATION && childIntervals[ 0 ]->getLevel() <= THREAD )
       begin = window->copyThreadIterator( childIntervals[ 0 ]->getBegin() );
     else
       begin = window->copyCPUIterator( childIntervals[ 0 ]->getBegin() );
     if( end != NULL )
       delete end;
-    if( window->getLevel() >= APPLICATION && window->getLevel() <= THREAD )
+    if( childIntervals[ 0 ]->getLevel() >= APPLICATION && childIntervals[ 0 ]->getLevel() <= THREAD )
       end = window->copyThreadIterator( childIntervals[ 0 ]->getEnd() );
     else
       end = window->copyCPUIterator(  childIntervals[ 0 ]->getEnd() );
@@ -258,7 +260,7 @@ KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc 
       // firstBegin to control loop!
       if( firstBegin != NULL && firstBegin != beginRecord )
         delete firstBegin;
-      if( window->getLevel() >= APPLICATION && window->getLevel() <= THREAD )
+      if( childIntervals[ 0 ]->getLevel() >= APPLICATION && childIntervals[ 0 ]->getLevel() <= THREAD )
         firstBegin = window->copyThreadIterator( begin );
       else
         firstBegin = window->copyCPUIterator( begin );

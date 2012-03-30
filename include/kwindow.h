@@ -215,7 +215,7 @@ class KSingleWindow: public KWindow
 
     MemoryTrace::iterator *getThreadRecordByTime( TThreadOrder whichOrder )
     {
-      return recordsByTime[whichOrder];
+      return recordsByTimeThread[whichOrder];
     }
 
     MemoryTrace::iterator *getThreadEndRecord( TThreadOrder whichOrder )
@@ -240,7 +240,7 @@ class KSingleWindow: public KWindow
 
     MemoryTrace::iterator *getCPURecordByTime( TCPUOrder whichOrder )
     {
-      return recordsByTime[whichOrder];
+      return recordsByTimeCPU[whichOrder];
     }
 
     bool passFilter( MemoryTrace::iterator *it )
@@ -293,7 +293,8 @@ class KSingleWindow: public KWindow
     virtual KWindow *clone();
 
   protected:
-    std::vector<MemoryTrace::iterator *> recordsByTime;
+    std::vector<MemoryTrace::iterator *> recordsByTimeThread;
+    std::vector<MemoryTrace::iterator *> recordsByTimeCPU;
 
     // Semantic interval structure
     std::vector<IntervalCompose> intervalComposeWorkload;

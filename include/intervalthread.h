@@ -71,6 +71,11 @@ class IntervalThread: public Interval
       return ( KWindow * ) window;
     }
 
+    virtual void setSemanticFunction( SemanticThread *whichFunction )
+    {
+      function = whichFunction;
+    }
+
   protected:
     KSingleWindow *window;
     SemanticThread *function;

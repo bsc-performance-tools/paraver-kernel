@@ -245,26 +245,28 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 {
   initSemanticFunctions();
 
+  recordsByTimeThread.reserve( myTrace->totalThreads() );
+  for( TThreadOrder i = 0; i < myTrace->totalThreads(); ++i )
+    recordsByTimeThread.push_back( NULL );
+  recordsByTimeCPU.reserve( myTrace->totalCPUs() );
+  for( TCPUOrder i = 0; i < myTrace->totalCPUs(); ++i )
+    recordsByTimeCPU.push_back( NULL );
   if( myTrace->totalThreads() > myTrace->totalCPUs() )
   {
-    recordsByTime.reserve( myTrace->totalThreads() );
     intervalTopCompose1.reserve( myTrace->totalThreads() );
     intervalTopCompose2.reserve( myTrace->totalThreads() );
-    for( TThreadOrder i = 0; i < myTrace->totalThreads(); i++ )
+    for( TThreadOrder i = 0; i < myTrace->totalThreads(); ++i )
     {
-      recordsByTime.push_back( NULL );
       intervalTopCompose1.push_back( IntervalCompose( this, TOPCOMPOSE1, i ) );
       intervalTopCompose2.push_back( IntervalCompose( this, TOPCOMPOSE2, i ) );
     }
   }
   else
   {
-    recordsByTime.reserve( myTrace->totalCPUs() );
     intervalTopCompose1.reserve( myTrace->totalCPUs() );
     intervalTopCompose2.reserve( myTrace->totalCPUs() );
-    for( TCPUOrder i = 0; i < myTrace->totalCPUs(); i++ )
+    for( TCPUOrder i = 0; i < myTrace->totalCPUs(); ++i )
     {
-      recordsByTime.push_back( NULL );
       intervalTopCompose1.push_back( IntervalCompose( this, TOPCOMPOSE1, i ) );
       intervalTopCompose2.push_back( IntervalCompose( this, TOPCOMPOSE2, i ) );
     }
@@ -357,12 +359,19 @@ KSingleWindow::~KSingleWindow()
   if( functions[ CPU ] != NULL )
     delete functions[ CPU ];
 
-  for( TObjectOrder i = 0; i < recordsByTime.size(); i++ )
+  for( TObjectOrder i = 0; i < recordsByTimeThread.size(); ++i )
   {
-    if( recordsByTime[ i ] != NULL )
-      delete recordsByTime[ i ];
+    if( recordsByTimeThread[ i ] != NULL )
+      delete recordsByTimeThread[ i ];
   }
-  recordsByTime.clear();
+  recordsByTimeThread.clear();
+
+  for( TObjectOrder i = 0; i < recordsByTimeCPU.size(); ++i )
+  {
+    if( recordsByTimeCPU[ i ] != NULL )
+      delete recordsByTimeCPU[ i ];
+  }
+  recordsByTimeCPU.clear();
 
   delete myFilter;
 }
@@ -378,29 +387,26 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
   if( level >= SYSTEM )
   {
     if( initialTime > 0 && !initFromBegin() )
-      myTrace->getRecordByTimeCPU( recordsByTime, initialTime );
+      myTrace->getRecordByTimeCPU( recordsByTimeCPU, initialTime );
     else
     {
       for( TCPUOrder i = 0; i < myTrace->totalCPUs(); i++ )
       {
-        if( recordsByTime[ i ] != NULL )
-          delete recordsByTime[ i ];
-        recordsByTime[ i ] = myTrace->CPUBegin( i );
+        if( recordsByTimeCPU[ i ] != NULL )
+          delete recordsByTimeCPU[ i ];
+        recordsByTimeCPU[ i ] = myTrace->CPUBegin( i );
       }
     }
   }
+  if( initialTime > 0 && !initFromBegin() )
+    myTrace->getRecordByTimeThread( recordsByTimeThread, initialTime );
   else
   {
-    if( initialTime > 0 && !initFromBegin() )
-      myTrace->getRecordByTimeThread( recordsByTime, initialTime );
-    else
+    for( TThreadOrder i = 0; i < myTrace->totalThreads(); i++ )
     {
-      for( TThreadOrder i = 0; i < myTrace->totalThreads(); i++ )
-      {
-        if( recordsByTime[ i ] != NULL )
-          delete recordsByTime[ i ];
-        recordsByTime[ i ] = myTrace->threadBegin( i );
-      }
+      if( recordsByTimeThread[ i ] != NULL )
+        delete recordsByTimeThread[ i ];
+      recordsByTimeThread[ i ] = myTrace->threadBegin( i );
     }
   }
 }

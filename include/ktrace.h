@@ -90,7 +90,8 @@ class KTrace: public Trace
                             TTaskOrder& inTask,
                             TThreadOrder& inThread ) const;
     TThreadOrder getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const;
-    TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask )const;
+    TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask ) const;
+    void getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& onVector ) const;
 
     bool existResourceInfo() const;
     TNodeOrder totalNodes() const;

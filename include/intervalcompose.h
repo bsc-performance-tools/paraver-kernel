@@ -76,6 +76,17 @@ class IntervalCompose: public IntervalHigh
       return window;
     }
 
+    virtual void setSemanticFunction( SemanticCompose *whichFunction )
+    {
+      function = whichFunction;
+    }
+
+    virtual void setCustomChild( Interval *whichChild )
+    {
+      childIntervals.clear();
+      childIntervals.push_back( whichChild );
+    }
+
     SemanticHighInfo info;
     unsigned long long counter;
 

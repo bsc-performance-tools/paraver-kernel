@@ -211,6 +211,11 @@ TThreadOrder TraceProxy::getLastThread( TApplOrder inAppl, TTaskOrder inTask ) c
   return myTrace->getLastThread( inAppl, inTask );
 }
 
+void TraceProxy::getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& onVector ) const
+{
+  myTrace->getThreadsPerNode( inNode, onVector );
+}
+
 bool TraceProxy::existResourceInfo() const
 {
   return myTrace->existResourceInfo();

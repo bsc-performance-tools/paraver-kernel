@@ -53,15 +53,7 @@ class IntervalCPU: public IntervalHigh
     }
 
     IntervalCPU( KSingleWindow *whichWindow, TWindowLevel whichLevel,
-                 TObjectOrder whichOrder ):
-        IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
-    {
-      begin = NULL;
-      end = NULL;
-      function = NULL;
-      functionThread = NULL;
-      functionComposeThread = NULL;
-    }
+                 TObjectOrder whichOrder );
 
     virtual ~IntervalCPU()
     {
@@ -91,9 +83,9 @@ class IntervalCPU: public IntervalHigh
     SemanticThread *functionThread;
     SemanticCompose *functionComposeThread;
     TCreateList createList;
-    /* to delete */std::vector<TSemanticValue> threadState;
-    std::vector<IntervalCompose> intervalCompose;
-    std::vector<IntervalThread> intervalThread;
+    std::vector<IntervalCompose *> intervalCompose;
+    std::vector<IntervalThread *> intervalThread;
+    std::map<TThreadOrder, TThreadOrder> threadOrderOnCPU;
 
   private:
     virtual MemoryTrace::iterator *getNextRecord( MemoryTrace::iterator *it,

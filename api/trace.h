@@ -76,7 +76,8 @@ class Trace
                                     TTaskOrder& inTask,
                                     TThreadOrder& inThread ) const = 0;
     virtual TThreadOrder getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const = 0;
-    virtual TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask )const = 0;
+    virtual TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask ) const = 0;
+    virtual void getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& onVector ) const = 0;
 
     virtual bool existResourceInfo() const = 0;
     virtual TNodeOrder totalNodes() const = 0;
@@ -223,7 +224,8 @@ class TraceProxy: public Trace
                                     TTaskOrder& inTask,
                                     TThreadOrder& inThread ) const;
     virtual TThreadOrder getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const;
-    virtual TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask )const;
+    virtual TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask ) const;
+    virtual void getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& onVector ) const;
 
     virtual bool existResourceInfo() const;
     virtual TNodeOrder totalNodes() const;

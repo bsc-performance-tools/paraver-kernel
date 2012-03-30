@@ -44,6 +44,7 @@ class Interval
       begin = NULL;
       end = NULL;
       currentValue = 0.0;
+      notWindowInits = false;
     }
 
     Interval( TWindowLevel whichLevel, TObjectOrder whichOrder ):
@@ -52,6 +53,7 @@ class Interval
       begin = NULL;
       end = NULL;
       currentValue = 0.0;
+      notWindowInits = false;
     }
 
     virtual ~Interval()
@@ -99,6 +101,16 @@ class Interval
       return &myDisplayList;
     }
 
+    bool getNotWindowInits() const
+    {
+      return notWindowInits;
+    }
+
+    void setNotWindowInits( bool whichValue )
+    {
+      notWindowInits = whichValue;
+    }
+
     virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
                               KRecordList *displayList = NULL ) = 0;
     virtual KRecordList *calcNext( KRecordList *displayList = NULL, bool initCalc = false ) = 0;
@@ -113,6 +125,8 @@ class Interval
     MemoryTrace::iterator *end;
     TSemanticValue currentValue;
     KRecordList myDisplayList;
+    bool notWindowInits;
+
   private:
 
 };
