@@ -276,6 +276,12 @@ TObjectOrder KTrace::getLast( TObjectOrder globalOrder,
   return 0;
 }
 
+bool KTrace::getSameObjectStruct( Trace *compareTo ) const
+{
+  KTrace *tmpTrace = (KTrace *)compareTo;
+  return traceProcessModel == tmpTrace->traceProcessModel &&
+         traceResourceModel == tmpTrace->traceResourceModel;
+}
 
 
 TCommID KTrace::getTotalComms() const

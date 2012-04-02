@@ -97,6 +97,8 @@ class Trace
                                   TWindowLevel fromLevel,
                                   TWindowLevel toLevel ) const = 0;
 
+    virtual bool getSameObjectStruct( Trace *compareTo ) const = 0;
+
     // Communication info getters
     virtual TThreadOrder getSenderThread( TCommID whichComm ) const = 0;
     virtual TCPUOrder getSenderCPU( TCommID whichComm ) const = 0;
@@ -244,6 +246,8 @@ class TraceProxy: public Trace
     virtual TObjectOrder getLast( TObjectOrder globalOrder,
                                   TWindowLevel fromLevel,
                                   TWindowLevel toLevel ) const;
+
+    virtual bool getSameObjectStruct( Trace *compareTo ) const;
 
     // Communication info getters
     virtual TThreadOrder getSenderThread( TCommID whichComm ) const;

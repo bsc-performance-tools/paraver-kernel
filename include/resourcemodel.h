@@ -47,6 +47,8 @@ class ResourceModel
     ~ResourceModel()
     {}
 
+    bool operator==( const ResourceModel& other ) const;
+
     bool isReady() const
     {
       return ready;
@@ -70,6 +72,12 @@ class ResourceModel
     {
       TNodeOrder node;
       TCPUOrder CPU;
+
+      bool operator==( const CPULocation& other ) const
+      {
+        return node == other.node &&
+               CPU  == other.CPU;
+      }
     };
 
     std::vector<CPULocation> CPUs;

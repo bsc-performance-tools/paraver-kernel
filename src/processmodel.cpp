@@ -38,6 +38,13 @@
 
 using namespace std;
 
+bool ProcessModel::operator==( const ProcessModel& other ) const
+{
+  return applications == other.applications &&
+         tasks        == other.tasks        &&
+         threads      == other.threads;
+}
+
 TApplOrder ProcessModel::totalApplications() const
 {
   return applications.size();

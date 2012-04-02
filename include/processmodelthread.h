@@ -45,6 +45,12 @@ class ProcessModelThread
     ~ProcessModelThread()
     {}
 
+    bool operator==( const ProcessModelThread& other ) const
+    {
+      return traceGlobalOrder == other.traceGlobalOrder &&
+             nodeExecution    == other.nodeExecution;
+    }
+
   protected:
     TThreadOrder  traceGlobalOrder;
     TNodeOrder    nodeExecution;

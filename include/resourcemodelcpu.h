@@ -41,6 +41,11 @@ class ResourceModelCPU
     ~ResourceModelCPU()
     {}
 
+    bool operator==( const ResourceModelCPU& other ) const
+    {
+      return traceGlobalOrder == other.traceGlobalOrder;
+    }
+
   protected:
     TCPUOrder traceGlobalOrder;
 

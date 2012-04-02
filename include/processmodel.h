@@ -48,6 +48,8 @@ class ProcessModel
     ~ProcessModel()
     {}
 
+    bool operator==( const ProcessModel& other ) const;
+
     bool isReady() const
     {
       return ready;
@@ -95,12 +97,25 @@ class ProcessModel
       TApplOrder appl;
       TTaskOrder task;
       TThreadOrder thread;
+
+      bool operator==( const ThreadLocation& other ) const
+      {
+        return appl   == other.appl &&
+               task   == other.task &&
+               thread == other.thread;
+      }
     };
 
     struct TaskLocation
     {
       TApplOrder appl;
       TTaskOrder task;
+
+      bool operator==( const TaskLocation& other ) const
+      {
+        return appl == other.appl &&
+               task == other.task;
+      }
     };
 
     std::vector<ThreadLocation> threads;

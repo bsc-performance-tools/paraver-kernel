@@ -42,6 +42,12 @@ class ResourceModelNode
     ~ResourceModelNode()
     {}
 
+    bool operator==( const ResourceModelNode& other ) const
+    {
+      return traceGlobalOrder == other.traceGlobalOrder &&
+             CPUs             == other.CPUs;
+    }
+
   protected:
     TNodeOrder traceGlobalOrder;
     std::vector<ResourceModelCPU> CPUs;

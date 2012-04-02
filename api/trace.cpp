@@ -268,6 +268,11 @@ TObjectOrder TraceProxy::getLast( TObjectOrder globalOrder,
   return myTrace->getLast( globalOrder, fromLevel, toLevel );
 }
 
+bool TraceProxy::getSameObjectStruct( Trace *compareTo ) const
+{
+  return myTrace->getSameObjectStruct( compareTo->getConcrete() );
+}
+
 TThreadOrder TraceProxy::getSenderThread( TCommID whichComm ) const
 {
   return myTrace->getSenderThread( whichComm );

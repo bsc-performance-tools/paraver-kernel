@@ -36,6 +36,12 @@
 
 using namespace std;
 
+bool ResourceModel::operator==( const ResourceModel& other ) const
+{
+  return nodes == other.nodes &&
+         CPUs  == other.CPUs;
+}
+
 TNodeOrder ResourceModel::totalNodes() const
 {
   return nodes.size();

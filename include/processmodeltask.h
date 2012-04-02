@@ -43,6 +43,12 @@ class ProcessModelTask
     ~ProcessModelTask()
     {}
 
+    bool operator==( const ProcessModelTask& other ) const
+    {
+      return traceGlobalOrder == other.traceGlobalOrder &&
+             threads          == other.threads;
+    }
+
   protected:
     TTaskOrder traceGlobalOrder;
     std::vector<ProcessModelThread> threads;
