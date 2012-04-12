@@ -32,6 +32,7 @@
 
 #include <stddef.h>
 #include <vector>
+#include <string>
 #include "prvtypes.h"
 
 typedef unsigned long long TTraceSize;
@@ -155,6 +156,13 @@ enum TSemanticGroup
   COMPOSE_GROUP = 0, DERIVED_GROUP, CPU_GROUP, NOTTHREAD_GROUP, STATE_GROUP,
   EVENT_GROUP, COMM_GROUP, OBJECT_GROUP
 };
+
+static const std::string GZIPPEDPRVSUFFIX = ".prv.gz";
+static const std::string PRVSUFFIX = ".prv";
+static const std::string CFGSUFFIX = ".cfg";
+static const std::string PCFSUFFIX = ".pcf";
+static const std::string ROWSUFFIX = ".row";
+static const std::string FILTERSEP = ".";
 
 
 /*

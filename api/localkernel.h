@@ -59,6 +59,8 @@ class LocalKernel: public KernelConnection
     virtual ProgressController *newProgressController() const;
     virtual Filter *newFilter( Filter *concreteFilter ) const;
 
+    virtual std::string getToolID( const std::string &toolName ) const;
+    virtual std::string getToolName( const std::string &toolID ) const;
     virtual TraceOptions *newTraceOptions() const;
     virtual TraceCutter *newTraceCutter( //TraceCutter *concreteTraceCutter,
                                          char *trace_in,
@@ -94,14 +96,23 @@ class LocalKernel: public KernelConnection
 
     // Returns modified fullPathTracName, with appended or modified filter suffix.
     virtual std::string getNewTraceName( const std::string& fullPathTraceName,
-                                         const std::string& traceFilterID ) const;
+                                         const std::string& traceFilterID,
+                                         const bool commitName = false ) const;
 
     // Returns modified fullPathTracName, with appended or modified filter suffixes.
     virtual std::string getNewTraceName( const std::string& fullPathTraceName,
                                          const std::vector< std::string >& traceFilterID,
                                          const bool commitName = false ) const;
 
+    // Returns modified fullPathTracName, with appended or modified filter suffixes.
+    // Takes path as root for the trace
+    virtual std::string getNewTraceName( const std::string& fullPathTraceName,
+                                         const std::string& outputPath,
+                                         const std::vector< std::string >& traceFilterID,
+                                         const bool commitName = false ) const;
+
     virtual char *composeName( char *name, char *newExtension );
+    virtual void commitNewTraceName( const std::string& newTraceName ) const;
 
     inline virtual std::string getPathSeparator() const { return pathSeparator; }
     inline virtual void setPathSeparator( const std::string& whichPath ) { pathSeparator = whichPath; }

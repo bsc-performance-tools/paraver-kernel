@@ -35,14 +35,14 @@ using namespace std;
 #ifdef WIN32
 const string PreviousFiles::previousTracesFile = "\\paraver\\paraverdb";
 const string PreviousFiles::previousCFGsFile = "\\paraver\\paravercfgdb";
-const string PreviousFiles::previousCutFilteredTraces = "\\paraver\\paravercutfilteredtracesdb";
+const string PreviousFiles::previousTreatedTracesFile = "\\paraver\\paravertreatedtracesdb";
 #else
 const string PreviousFiles::previousTracesFile = "/.paraver/paraverdb";
 const string PreviousFiles::previousCFGsFile = "/.paraver/paravercfgdb";
-const string PreviousFiles::previousCutFilteredTraces = "/.paraver/paravercutfilteredtracesdb";
+const string PreviousFiles::previousTreatedTracesFile = "/.paraver/paravertreatedtracesdb";
 #endif
 
-PreviousFiles::PreviousFiles( const string &filename )
+PreviousFiles::PreviousFiles( const string &filename, bool purge )
 {
   fstream myFile;
   string homedir;
@@ -65,6 +65,28 @@ PreviousFiles::PreviousFiles( const string &filename )
   {
     read( myFile );
     myFile.close();
+  }
+
+  if ( purge )
+  {
+    vector< string > v;
+
+    // Test existance
+    for( vector< string >::iterator it = listFiles.begin(); it != listFiles.end(); ++it )
+    {
+      myFile.open( (*it).c_str(), ios::in );
+      if ( !myFile.fail() )
+      {
+        myFile.close();
+        v.push_back( *it );
+      }
+    }
+
+    // The traces list is updated
+    v.swap( listFiles );
+
+    // The file is also updated
+    update();
   }
 }
 

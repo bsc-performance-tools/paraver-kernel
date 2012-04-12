@@ -378,9 +378,13 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
 
       if ( child != NULL )
       {
-        word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
-        min_state_time = atoll( ( char * )word );
-        xmlFree( word );
+        if ( !xmlStrcmp( child->name, ( const xmlChar * )"min_state_time" ) )
+        {
+          word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
+          min_state_time = atoll( ( char * )word );
+ cout << "ENTER " << min_state_time << endl;
+          xmlFree( word );
+        }
       }
     }
 
@@ -828,14 +832,21 @@ void KTraceOptions::saveXMLFilter( xmlTextWriterPtr &writer )
   rc = xmlTextWriterStartElement( writer, BAD_CAST "filter");
 
   // STATES SECTION
+  rc = xmlTextWriterStartElement( writer, BAD_CAST "states");
+
   if ( get_all_states() )
-    rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "states", "%s", BAD_CAST "All");
+    //rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "states", "%s", BAD_CAST "All");
+    rc = xmlTextWriterWriteFormatRaw( writer, "%s",BAD_CAST "All" );
   else
   {
     string auxStates;
     get_state_names( auxStates );
-    rc = xmlTextWriterWriteElement( writer, BAD_CAST "states", BAD_CAST auxStates.c_str() );
+    //rc = xmlTextWriterWriteElement( writer, BAD_CAST "states", BAD_CAST auxStates.c_str() );
+    rc = xmlTextWriterWriteFormatRaw( writer, "%s",BAD_CAST auxStates.c_str() );
   }
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "min_state_time", "%d", (int)get_min_state_time() );
+  rc = xmlTextWriterEndElement( writer ); // states
+
 
   rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "discard_states", "%d", (int)!get_filter_states() );
   rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "discard_events", "%d", (int)!get_filter_events() );

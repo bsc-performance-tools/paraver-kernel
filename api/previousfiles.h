@@ -47,9 +47,9 @@ class PreviousFiles
     {
       return new PreviousFiles( previousCFGsFile );
     }
-    static PreviousFiles *createPreviousCutFilteredTraces()
+    static PreviousFiles *createPreviousTreatedTraces()
     {
-      return new PreviousFiles( previousCutFilteredTraces );
+      return new PreviousFiles( previousTreatedTracesFile, true );
     }
 
     ~PreviousFiles();
@@ -59,12 +59,12 @@ class PreviousFiles
 
     static const std::string previousTracesFile;
     static const std::string previousCFGsFile;
-    static const std::string previousCutFilteredTraces;
+    static const std::string previousTreatedTracesFile;
 
     static const PRV_UINT16 SIZE = 20;
 
   private:
-    PreviousFiles( const std::string &filename );
+    PreviousFiles( const std::string &filename, bool purge = false );
 
     std::fstream myFile;
     std::string  myFileName;

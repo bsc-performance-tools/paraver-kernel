@@ -68,6 +68,8 @@ class KernelConnection
     virtual ProgressController *newProgressController() const = 0;
     virtual Filter *newFilter( Filter *concreteFilter ) const = 0;
 
+    virtual std::string getToolID( const std::string &toolName ) const = 0;
+    virtual std::string getToolName( const std::string &toolID ) const = 0;
     virtual TraceOptions *newTraceOptions() const = 0;
     virtual TraceCutter *newTraceCutter( char *trace_in,
                                          char *trace_out,
@@ -91,11 +93,6 @@ class KernelConnection
 
     virtual bool userMessage( const std::string& message ) const = 0;
 
-/*
-    #define INC_CHOP_COUNTER 0
-    #define INC_SC_COUNTER 1
-    #define INC_FILTER_COUNTER 2
-*/
     virtual void copyPCF( char *name, char *traceToLoad ) = 0;
     virtual void copyROW( char *name, char *traceToLoad ) = 0;
     virtual void getNewTraceName( char *name,
@@ -104,14 +101,22 @@ class KernelConnection
                                   bool saveNewNameInfo = true ) = 0;
     // Returns modified fullPathTracName, with appended or modified filter suffix.
     virtual std::string getNewTraceName( const std::string& fullPathTraceName,
-                                         const std::string& traceFilterID ) const = 0;
+                                         const std::string& traceFilterID,
+                                         const bool commitName = false ) const = 0;
 
     // Returns modified fullPathTracName, with appended or modified filter suffixes.
     virtual std::string getNewTraceName( const std::string& fullPathTraceName,
                                          const std::vector< std::string >& traceFilterID,
                                          const bool commitName = false ) const = 0;
 
+    virtual std::string getNewTraceName( const std::string& fullPathTraceName,
+                                         const std::string& outputPath,
+                                         const std::vector< std::string >& traceFilterID,
+                                         const bool commitName = false ) const = 0;
+
     virtual char *composeName( char *name, char *newExtension ) = 0;
+    virtual void commitNewTraceName( const std::string& newTraceName ) const = 0;
+
 
     inline virtual std::string getPathSeparator() const = 0;
     inline virtual void setPathSeparator( const std::string& whichPath ) = 0;

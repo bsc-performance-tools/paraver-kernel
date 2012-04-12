@@ -70,8 +70,6 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( string ) ) :
 
   // FILTERS
   trace_names_table_last = 0;
-
-  PreviousFiles *prevTraceNames = PreviousFiles::createPreviousCutFilteredTraces();
 }
 
 LocalKernel::~LocalKernel()
@@ -171,36 +169,57 @@ Filter *LocalKernel::newFilter( Filter *concreteFilter ) const
   return ( Filter * ) tmpFilter;
 }
 
+string LocalKernel::getToolID( const string &toolName ) const
+{
+  string auxStr;
+
+  if ( toolName == TraceCutter::getName() )
+    auxStr = TraceCutter::getID();
+  else if ( toolName == TraceFilter::getName() )
+    auxStr = TraceFilter::getID();
+  else if ( toolName == TraceSoftwareCounters::getName() )
+    auxStr = TraceSoftwareCounters::getID();
+  else
+    auxStr = "";
+
+  return auxStr;
+}
+
+
+std::string LocalKernel::getToolName( const string &toolID ) const
+{
+  string auxStr;
+
+  if ( toolID == TraceCutter::getID() )
+    auxStr = TraceCutter::getName();
+  else if ( toolID == TraceFilter::getID() )
+    auxStr = TraceFilter::getName();
+  else if ( toolID == TraceSoftwareCounters::getID() )
+    auxStr = TraceSoftwareCounters::getName();
+  else
+    auxStr = "";
+
+  return auxStr;
+}
+
+
 TraceOptions *LocalKernel::newTraceOptions() const
 {
   return new KTraceOptions( this );
 }
 
-TraceCutter *LocalKernel::newTraceCutter( //TraceCutter *concreteTraceCutter,
-                                          char *trace_in,
+TraceCutter *LocalKernel::newTraceCutter( char *trace_in,
                                           char *trace_out,
                                           TraceOptions *options,
                                           const vector< TEventType > &whichTypesWithValuesZero,
                                           ProgressController *progress ) const
 {
-//  cout << "LocalKernel::newTraceCutter: tracein " << trace_in  << endl;
-//  cout << "LocalKernel::newTraceCutter: traceout" << trace_out << endl;
-
-  //TraceOptionsProxy *myOptions = new TraceOptionsProxy( this );
-  //myOptions->myTraceOptions = options;
-/*  TraceCutterProxy *myCutter = new TraceCutterProxy( this,
-                                                     trace_in,
-                                                     trace_out,
-                                                     options );
-*/
   KProgressController *tmpKProgressControler = NULL;
 
   if ( progress != NULL )
     tmpKProgressControler = (KProgressController *)progress->getConcrete();
 
   return new KTraceCutter( trace_in, trace_out, options,  whichTypesWithValuesZero , tmpKProgressControler);
-//  return ( TraceCutter *) myCutter;
-
 }
 
 
@@ -210,16 +229,12 @@ TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
                                           const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
                                           ProgressController *progress ) const
 {
-//  TraceOptionsProxy *myOptions = new TraceOptionsProxy( this );
-//  myOptions->myTraceOptions = options;
-
   KProgressController *tmpKProgressControler = NULL;
 
   if ( progress != NULL )
     tmpKProgressControler = (KProgressController *)progress->getConcrete();
 
   return new KTraceFilter( trace_in, trace_out, options, whichTranslationTable, tmpKProgressControler );
-
 }
 
 
@@ -228,7 +243,6 @@ TraceSoftwareCounters *LocalKernel::newTraceSoftwareCounters( char *trace_in,
                                                               TraceOptions *options,
                                                               ProgressController *progress ) const
 {
-
   KProgressController *tmpKProgressControler = NULL;
 
   if ( progress != NULL )
@@ -505,14 +519,19 @@ void LocalKernel::getNewTraceName( char *name,
   {
     trace_names_table[ i ] = currentName;
   }
+
+  std::cout << "nombre: " << string( new_trace_name ) << endl;
 }
 
 
 string LocalKernel::getNewTraceName( const string& fullPathTraceName,
-                                     const string& traceFilterID ) const
+                                     const string& traceFilterID,
+                                     const bool commitName ) const
 {
-  string newTraceName = fullPathTraceName;
-  return newTraceName;
+  vector< string > auxIDs;
+  auxIDs.push_back( traceFilterID );
+
+  return getNewTraceName( fullPathTraceName, auxIDs, commitName );
 }
 
 
@@ -522,172 +541,202 @@ string LocalKernel::getNewTraceName( const string& fullPathTraceName,
                                      const vector< string >& traceFilterID,
                                      const bool commitName ) const
 {
-  string newTraceName;
-  /*
-  string retTraceName;
+  string newTraceName, newTraceNamePrv, newTraceNamePrvGz;
 
-  map< string, int > toolNumberedSuffix; // ( key = id, value = version )
-  map< string, string > toolExtension;   // ( key = id, value = extension )
-
-  string auxTraceName;
-  string fullPath = "";
-  string auxPath;
-  string newTraceNameGzipped;
-  char *tracesHome;
+  map< string, int > toolNumberedSuffix;
 
 #ifndef WIN32
-  struct stat file_info;
+  struct stat fileInfo;
 #else
-  struct _stat64 file_info;
+  struct _stat64 fileInfo;
 #endif
-
-  // Constants
-  string gzippedPrvSuffix = string( ".prv.gz" );
-  string prvSuffix = string( ".prv" );
-  string pathSep = getPathSeparator();
-
-  // Blind build of the new trace name
-  size_t uniqueStartingPos = fullPathTraceName.length() - gzippedPrvSuffix.length();
-  size_t prvSuffixStartPos = fullPathTraceName.rfind( gzippedPrvSuffix, uniqueStartingPos );
-  if ( prvSuffixStartPos == string::npos )
-  {
-    uniqueStartingPos = fullPathTraceName.length() - prvSuffix.length();
-    prvSuffixStartPos = fullPathTraceName.rfind( prvSuffix, uniqueStartingPos );
-  }
-newTraceFilter
-  retTraceName = fullPathTraceName.substr( 0, prvSuffixStartPos );
-
-  for( vector< string >::iterator id = traceFilterID.begin(); id != traceFilterID.end(); ++id )
-  {
-    retTraceName = retTraceName +
-            string( "." ) + TraceOptionsProxy::getTraceToolExtension( *id ) + string("1");
-  }
-
-  newTraceName
-
-  for( vector< string >::iterator id = availableTraceToolsIDs.begin(); id != availableTraceToolsIDs.end(); ++id )
-  {
-     prvExtension = TraceOptionsProxy::getTraceToolExtension( *id );
-      dottedExtension = string( "." ) + extension;
-      infixStartPos = tr->rfind( dottedExtension );
-
-
-  // Initialize variables to describe current state
-  vector< string > availableTraceToolsIDs = TraceOptionsProxy::getIDsAvailableTraceTools();
-  vector< string > tracesHistory = prevTraceNames->getFiles();
-
-  for( vector< string >::iterator tr = tracesHistory.begin(); tr != tracesHistory.end(); ++tr )
-  {
-    // Look for fullPathTraceName
-    // found --> read suffixes and increment
-    // !found --> append ordered suffixes with versions = 1
-    // in both cases, add to list
-
-    toolNumberedSuffix[ *tr ] = map< string, int >();
-    toolExtension[ *tr ] =  map< string, string >();
-
-    for( vector< string >::iterator id = availableTraceToolsIDs.begin(); id != availableTraceToolsIDs.end(); ++id )
-    {
-      extension = TraceOptionsProxy::getTraceToolExtension( *id );
-      dottedExtension = string( "." ) + extension;
-      infixStartPos = tr->rfind( dottedExtension );
-      if ( infixStartPos != string::npos )
-      {
-        // found! => get the number
-        infixStartNumberPos = infixStartPos + toolExtension[ *it ].length() + 1;
-        infixFinalDotPos = auxTraceName.find( string("."), infixStartNumberPos );
-        if ( infixStartPos != string::npos )
-        {
-          auxStrNumber = auxTraceName.substr( infixStartNumberPos,
-                                              infixFinalDotPos - infixStartNumberPos );
-          stringstream auxStrStrNumber( auxStrNumber );
-          if ( !( auxStrStrNumber >> auxNumber ).fail() )
-          {
-            toolNumberedSuffix[ *it ] = auxNumber;
-      toolNumberedSuffix[ *tr ][ *at ] = 0;
-      toolExtension[ *tr ][ *at ] = TraceOptionsProxy::getTraceToolExtension( *it );
-
-          }
-        }
-      }
-    }
-  }
-
-  // Does fullPathTraceName contains the numbered infix?
-
-  // Step 1: Forget the path to the base directory
-  size_t lastPathSepPos = fullPathTraceName.find_last_of( pathSep );
-  if ( lastPathSepPos != string::npos )
-  {
-    auxTraceName = fullPathTraceName.substr( lastPathSepPos );
-    auxPath = fullPathTraceName.substr( 0, lastPathSepPos );
-cout << "auxTraceName" << auxTraceName << endl;
-    //fullPath =
-  }
-
-  // Step 2: Find tools substrings in trace name (i.e, for cutter, ".chop")
-  // Must be done for every filter in same order
-  string auxExtension, auxStrNumber;
-  size_t infixStartPos,infixStartNumberPos,infixFinalDotPos;
-  PRV_UINT32 auxNumber;
-
-  for( vector< string >::iterator it = tmpAvailableTraceTools.begin();
-          it != tmpAvailableTraceTools.end(); ++it )
-  {
-    auxExtension = string( "." ) + toolExtension[ *it ];
-    infixStartPos = auxTraceName.rfind( auxExtension );
-    if ( infixStartPos != string::npos )
-    {
-      // found! => get the number
-      infixStartNumberPos = infixStartPos + toolExtension[ *it ].length() + 1;
-      infixFinalDotPos = auxTraceName.find( string("."), infixStartNumberPos );
-      if ( infixStartPos != string::npos )
-      {
-        auxStrNumber = auxTraceName.substr( infixStartNumberPos,
-                                            infixFinalDotPos - infixStartNumberPos );
-        stringstream auxStrStrNumber( auxStrNumber );
-        if ( !( auxStrStrNumber >> auxNumber ).fail() )
-        {
-          toolNumberedSuffix[ *it ] = auxNumber;
-        }
-      }
-    }
-  }
 
   // Get current directory
   // Today, getenv( "TRACES_HOME" )) ) is almost deprecated
+/*
   if (( tracesHome = getenv( "PWD" )) != NULL)
   {
     fullPath = string ( tracesHome );
   }
+*/
 
-  // Step 3: Test existance
-  do
+  // Constants
+  string PATHSEP = getPathSeparator();
+
+  // Latest treated traces history
+  PreviousFiles *recentTraces = PreviousFiles::createPreviousTreatedTraces();
+
+  // Initialization of toolNumberedSuffix
+  for( vector< string >::const_iterator id = traceFilterID.begin(); id != traceFilterID.end(); ++id )
   {
-    newTraceName = auxPath + pathSep;
-    for( vector< string >::const_iterator it = traceFilterID.begin(); it != traceFilterID.end(); ++it )
+    toolNumberedSuffix[ *id ] = 1;
+  }
+
+  // Find original trace name, without extension
+  size_t prvSuffixStartPos = fullPathTraceName.rfind( GZIPPEDPRVSUFFIX,
+                                                      fullPathTraceName.length() - GZIPPEDPRVSUFFIX.length() );
+  if ( prvSuffixStartPos == string::npos )
+  {
+    // by precond 1, it exists.
+    prvSuffixStartPos = fullPathTraceName.rfind( PRVSUFFIX,
+                                                 fullPathTraceName.length() - PRVSUFFIX.length() );
+    if ( prvSuffixStartPos == string::npos )
+    {
+      prvSuffixStartPos = fullPathTraceName.length();
+    }
+  }
+
+  // Blind build of the new trace name
+  string originalTraceNameWithoutExtension = fullPathTraceName.substr( 0, prvSuffixStartPos );
+
+  bool newName = false;
+  while( !newName )
+  {
+    // New name prefix
+    newTraceName = originalTraceNameWithoutExtension;
+    for( vector< string >::const_iterator id = traceFilterID.begin(); id != traceFilterID.end(); ++id )
     {
       stringstream auxStrStrNumber;
-      auxStrStrNumber << toolNumberedSuffix[ *it ];
+      auxStrStrNumber << toolNumberedSuffix[ *id ];
       newTraceName = newTraceName +
-                     string(".") +
-                     toolExtension[ *it ] +
+                     FILTERSEP +
+                     TraceOptionsProxy::getTraceToolExtension( *id ) +
                      auxStrStrNumber.str();
     }
 
-    newTraceName += string( ".prv" );
-    newTraceNameGzipped = newTraceName + string( ".prv.gz" );
-  }
-#ifndef WIN32
-  while (( stat( newTraceName.c_str(), &file_info ) == 0 ) ||
-         ( stat( newTraceNameGzipped.c_str(), &file_info ) == 0 ));
+    // Build new names
+    newTraceNamePrv = newTraceName + PRVSUFFIX;
+    newTraceNamePrvGz = newTraceName + GZIPPEDPRVSUFFIX;
+
+   // Do these new names exist (in current dir)?
+ #ifndef WIN32
+    newName = ( stat( newTraceNamePrv.c_str(), &fileInfo ) != 0 ) &&
+              ( stat( newTraceNamePrvGz.c_str(), &fileInfo ) != 0 );
 #else
-  while (( _stat64( newTraceName.c_str(), &file_info ) == 0 ) ||
-         ( _stat64( newTraceNameGzipped.c_str(), &file_info ) == 0 ));
+    newName = ( _stat64( newTraceNamePrv.c_str(), &fileInfo ) != 0 ) &&
+              ( _stat64( newTraceNamePrvGz.c_str(), &fileInfo ) != 0 );
 #endif
 
-cout << "newTraceName: " << newTraceName << endl;
+    if ( newName )
+    {
+      // Seems that we got a new name, because it wasn't found in current dir
+      // Now SEARCH IN TRACES HISTORY (idea: other recent directories?)
+      vector< string > history = recentTraces->getFiles();
+      for( vector< string >::iterator it = history.begin(); it != history.end(); ++it )
+      {
+        // Does path + trace match with current history line?
+        if ( *it == newTraceNamePrv || *it == newTraceNamePrvGz )
+        {
+          // Found! => Not a new name; break loop through history
+          newName = false;
+          break;
+        }
+        else
+        {
+          // Does trace or trace.gz (without path) match with same part of current history line?
 
-*/
-  return newTraceName;
+          // Extract history name
+          size_t historyNameStartPos = it->rfind( PATHSEP );
+          if ( historyNameStartPos == string::npos )
+          {
+            historyNameStartPos = 0;
+          }
+          string auxHistName = it->substr( historyNameStartPos );
+
+          // Extract new name
+          size_t newNameStartPos = newTraceNamePrv.rfind( PATHSEP );
+          if ( newNameStartPos == string::npos )
+          {
+            newNameStartPos = 0;
+          }
+          string auxNewName = newTraceNamePrv.substr( newNameStartPos );
+
+          // Extract new name with gz suffix
+          size_t newNameGzStartPos = newTraceNamePrvGz.rfind( PATHSEP );
+          if ( newNameGzStartPos == string::npos )
+          {
+            newNameGzStartPos = 0;
+          }
+          string auxNewGzName = newTraceNamePrvGz.substr( newNameGzStartPos );
+
+          // and check them
+          if( auxHistName == auxNewName || auxHistName == auxNewGzName )
+          {
+            // Found! => Not a new name; break loop through history
+            newName = false;
+            break;
+          }
+        }
+      }
+    }
+
+    if ( !newName )
+    {
+      // Found! => Increment version
+      toolNumberedSuffix[ traceFilterID[ traceFilterID.size() - 1 ] ]++;
+    }
+  }
+
+  if ( commitName )
+  {
+    // Update traces history
+    recentTraces->add( newTraceNamePrv );
+  }
+
+  delete recentTraces;
+
+  return newTraceNamePrv;
+}
+
+
+void LocalKernel::commitNewTraceName( const string& newTraceName ) const
+{
+  PreviousFiles *recentTraces = PreviousFiles::createPreviousTreatedTraces();
+  recentTraces->add( newTraceName );
+  delete recentTraces;
+}
+
+
+string LocalKernel::getNewTraceName( const string& fullPathTraceName,
+                                     const string& outputPath,
+                                     const vector< string >& traceFilterID,
+                                     const bool commitName ) const
+{
+  string newName;
+
+  if ( outputPath != "" )
+  {
+    // Remove old path
+    string PATHSEP = getPathSeparator();
+
+    size_t pathSeparatorFinalPos = fullPathTraceName.rfind( PATHSEP );
+    if ( pathSeparatorFinalPos == string::npos )
+    {
+      pathSeparatorFinalPos = 0;
+    }
+
+    string traceName;
+    if ( pathSeparatorFinalPos == fullPathTraceName.length() - 1 )
+    {
+      traceName = "tmp.prv";
+    }
+    else
+    {
+      traceName = fullPathTraceName.substr( pathSeparatorFinalPos + 1, fullPathTraceName.length() );
+    }
+
+    string auxPath;
+    if ( outputPath.substr( outputPath.length() - 1 , 1 ) != PATHSEP )
+      auxPath = outputPath + PATHSEP + traceName;
+    else
+      auxPath = outputPath + traceName;
+
+    newName = getNewTraceName( auxPath, traceFilterID, commitName );
+  }
+  else
+  {
+    newName = getNewTraceName( fullPathTraceName, traceFilterID, commitName );
+  }
+
+  return newName;
 }
