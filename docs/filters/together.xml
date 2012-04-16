@@ -90,9 +90,12 @@
     <!--  To select some states, separate with commas:                       -->
     <!--    <states>Running,Overhead</states>                                -->
     <!--  To select none, place 1 in <discard_states>.                       -->
+    <!--  To set minimum state duration in time units, set <min_state_time>  -->
     <!-- =================================================================== -->  
 
-		<states>Running</states>
+    <states>Running
+     	<min_state_time>10000</min_state_time>
+    </states>
 
     <!-- === Events section ================================================ -->
     <!--  To select "filter" as behaviour, change external xml tag to:       -->
