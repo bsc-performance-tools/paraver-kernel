@@ -61,6 +61,8 @@ KTraceOptions::KTraceOptions( const TraceOptions &auxwhichTraceOptions ): TraceO
 
 KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
 {
+  init();
+
   // Global Default Options
   set_max_trace_size( whichTraceOptions->get_max_trace_size() );
 
@@ -169,7 +171,8 @@ void KTraceOptions::init()
 // problem --> derived fields?; minimum default info?
   set_filter_states( !ParaverConfig::getInstance()->getFilterDiscardStates() );
   set_all_states( false );
-  //set_filter_by_call_time( false );
+  // TODO: IMPLEMENT FILTER_BY_CALL_TIME
+  set_filter_by_call_time( false );
   init_state_names();
   set_min_state_time( 0 ); // Not present in ParaverConfig?
 
@@ -382,7 +385,6 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
         {
           word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 );
           min_state_time = atoll( ( char * )word );
- cout << "ENTER " << min_state_time << endl;
           xmlFree( word );
         }
       }

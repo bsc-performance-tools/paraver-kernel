@@ -379,8 +379,6 @@ void LocalKernel::getNewTraceName( char *name,
   if (( traces_home = getenv( "PWD" )) != NULL)
     sprintf(traceToLoad,"%s",traces_home);
 
-//cout << traceToLoad << endl;
-
   strcpy( path_name_backup, new_trace_name );
 
   // first: look for name in the table
@@ -519,8 +517,6 @@ void LocalKernel::getNewTraceName( char *name,
   {
     trace_names_table[ i ] = currentName;
   }
-
-  std::cout << "nombre: " << string( new_trace_name ) << endl;
 }
 
 

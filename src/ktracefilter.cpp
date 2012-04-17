@@ -543,7 +543,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
             /* Insert on event buffer */
             if ( ( new_elem = ( struct buffer_elem * )malloc( sizeof( struct buffer_elem ) ) ) == NULL )
             {
-              printf( "NO MORE MEMORY!!!!!!\n" );
+              printf( "NO MORE MEMORY!\n" );
               exit( 1 );
             }
 
@@ -683,7 +683,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
             /* Insert on buffer */
             if ( ( new_elem = ( struct buffer_elem * )malloc( sizeof( struct buffer_elem ) ) ) == NULL )
             {
-              printf( "NO MORE MEMORY!!!!!!\n" );
+              printf( "NO MORE MEMORY!!\n" );
               exit( 1 );
             }
 
@@ -747,7 +747,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
           /* Insert on event buffer */
           if ( ( new_elem = ( struct buffer_elem * )malloc( sizeof( struct buffer_elem ) ) ) == NULL )
           {
-            printf( "NO MORE MEMORY!!!!!!\n" );
+            printf( "NO MORE MEMORY!!!\n" );
             exit( 1 );
           }
 
@@ -778,7 +778,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
           /* Insert on event buffer */
           if ( ( new_elem = ( struct buffer_elem * )malloc( sizeof( struct buffer_elem ) ) ) == NULL )
           {
-            printf( "NO MORE MEMORY!!!!!!\n" );
+            printf( "NO MORE MEMORY!!!!\n" );
             exit( 1 );
           }
 

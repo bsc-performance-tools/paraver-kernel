@@ -114,8 +114,8 @@ class LocalKernel: public KernelConnection
     virtual char *composeName( char *name, char *newExtension );
     virtual void commitNewTraceName( const std::string& newTraceName ) const;
 
-    inline virtual std::string getPathSeparator() const { return pathSeparator; }
-    inline virtual void setPathSeparator( const std::string& whichPath ) { pathSeparator = whichPath; }
+    virtual std::string getPathSeparator() const { return pathSeparator; }
+    virtual void setPathSeparator( const std::string& whichPath ) { pathSeparator = whichPath; }
 
   protected:
 

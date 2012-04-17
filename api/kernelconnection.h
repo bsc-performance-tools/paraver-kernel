@@ -118,8 +118,8 @@ class KernelConnection
     virtual void commitNewTraceName( const std::string& newTraceName ) const = 0;
 
 
-    inline virtual std::string getPathSeparator() const = 0;
-    inline virtual void setPathSeparator( const std::string& whichPath ) = 0;
+    virtual std::string getPathSeparator() const = 0;
+    virtual void setPathSeparator( const std::string& whichPath ) = 0;
 
   protected:
 

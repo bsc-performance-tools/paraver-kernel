@@ -31,6 +31,11 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
+
+//#include <boost/filesystem.hpp>
+//#include <boost/error_code.hpp>
+//using namespace boost::filesystem;
+
 #include "localkernel.h"
 #include "paramedir.h"
 #include "cfg.h"
@@ -49,7 +54,7 @@
 #include "tracesoftwarecounters.h"
 
 // for strdup
-#include <string.h>
+//#include <string.h>
 
 using namespace std;
 
@@ -295,9 +300,11 @@ string applyFilters( KernelConnection *myKernel,
                      vector< string > &filterToolOrder,
                      vector< string > &tmpFiles )
 {
-  string tmpTraceIn, tmpTraceOut;
-  char tmpNameIn[1024], tmpNameOut[1024], tmpPathOut[1024];
-  string strOutputFile, strPathOut;
+ // string tmpTraceIn, tmpTraceOut;
+  string tmpNameIn, tmpNameOut;
+  string fullTmpNameIn;
+//  string tmpNameIn, tmpNameOut, tmpPathOut;
+ // string strOutputFile, strPathOut;
 
   // Only for cutter
   char *pcf_name;
@@ -308,31 +315,59 @@ string applyFilters( KernelConnection *myKernel,
   ParaverTraceConfig *config;
   FILE *pcfFile;
 
-
   traceOptions = myKernel->newTraceOptions( );
   // The order is given by the command line, not the xml file.
   vector< string > xmlToolOrder = traceOptions->parseDoc( (char *)strXMLOptions.c_str() );
 
   // Concatenate Filter Utilities
-  strcpy( tmpNameOut, (char *)strTrace.c_str() );
+  tmpNameOut = strTrace;
 
+  string PATHSEP = myKernel->getPathSeparator();
+  if ( tmpNameOut.substr( 0, 1 ) != PATHSEP )
+  {
+    char *currentWorkingDir = getenv( "PWD" );
+    if ( currentWorkingDir != NULL)
+    {
+      string auxPWD( currentWorkingDir );
+      if ( auxPWD.substr( auxPWD.length() - 1, 1 ) == PATHSEP )
+        tmpNameOut = currentWorkingDir + tmpNameOut;
+      else
+        tmpNameOut = currentWorkingDir + PATHSEP + tmpNameOut;
+    }
+  }
+
+  fullTmpNameIn = tmpNameOut;
+/*
   size_t pos = strTrace.find_last_of( '/' );
   if ( pos != string::npos )
     strPathOut = strTrace.substr( 0, pos );
   else
     strPathOut = strTrace;
+*/
 
-  strcpy( tmpPathOut, (char *)strPathOut.c_str() );
+  //tmpPathOut = strPathOut;
 
   for( PRV_UINT16 i = 0; i < filterToolOrder.size(); ++i )
   {
-    strcpy( tmpNameIn, tmpNameOut );
-    myKernel->getNewTraceName( tmpNameIn, tmpPathOut, filterToolOrder[ i ] );
-    strcpy( tmpNameOut, tmpPathOut );
+    tmpNameIn = tmpNameOut;
+
+    if ( i < filterToolOrder.size() - 1 )
+    {
+      // Get partial name (one tool) and don't modify file that list recent treated traces
+      //tmpNameIn += "x";
+      tmpNameOut = myKernel->getNewTraceName( tmpNameIn , filterToolOrder[ i ], false );
+    }
+    else
+    {
+      // Get full name (all tools) and append to file that list recent treated traces
+      tmpNameOut = myKernel->getNewTraceName( fullTmpNameIn, filterToolOrder, true );
+    }
+    //myKernel->getNewTraceName( tmpNameIn, tmpPathOut, filterToolOrder[ i ] );
+    //tmpNameOut = tmpPathOut;
 
     if ( filterToolOrder[i] == TraceCutter::getID() )
     {
-      pcf_name = myKernel->composeName( tmpNameIn, (char *)"pcf" );
+      pcf_name = myKernel->composeName( (char *)tmpNameIn.c_str(), (char *)"pcf" );
 
       if(( pcfFile = fopen( pcf_name, "r" )) != NULL )
       {
@@ -356,17 +391,20 @@ string applyFilters( KernelConnection *myKernel,
         delete config;
       }
 
-      traceCutter = myKernel->newTraceCutter( tmpNameIn,
-                                              tmpNameOut,
+      traceCutter = myKernel->newTraceCutter( (char *)tmpNameIn.c_str(),
+                                              (char *)tmpNameOut.c_str(),
                                               traceOptions,
                                               typesWithValueZero );
-      myKernel->copyPCF( tmpNameIn, tmpNameOut );
+      myKernel->copyPCF( (char *)tmpNameIn.c_str(), (char *)tmpNameOut.c_str() );
     }
     else if ( filterToolOrder[i] == TraceFilter::getID() )
     {
       map< TTypeValuePair, TTypeValuePair > translation;
 #if 1
-      traceFilter = myKernel->newTraceFilter( tmpNameIn, tmpNameOut, traceOptions, translation );
+      traceFilter = myKernel->newTraceFilter( (char *)tmpNameIn.c_str(),
+                                              (char *)tmpNameOut.c_str(),
+                                              traceOptions,
+                                              translation );
 #else
       translation[ make_pair( 30000000, 2 ) ] = make_pair( 666, 999 );
       translation[ make_pair( 30000001, 2 ) ] = make_pair( 666666, 999999 );
@@ -391,19 +429,19 @@ string applyFilters( KernelConnection *myKernel,
 
       traceFilter = myKernel->newTraceFilter( tmpNameIn, tmpNameOut, opts, translation );
 #endif
-      myKernel->copyPCF( tmpNameIn, tmpNameOut );
+      myKernel->copyPCF( (char *)tmpNameIn.c_str(), (char *)tmpNameOut.c_str() );
     }
     else if ( filterToolOrder[i] == TraceSoftwareCounters::getID() )
     {
-      traceSoftwareCounters = myKernel->newTraceSoftwareCounters( tmpNameIn,
-                                                                  tmpNameOut,
+      traceSoftwareCounters = myKernel->newTraceSoftwareCounters( (char *)tmpNameIn.c_str(),
+                                                                  (char *)tmpNameOut.c_str(),
                                                                   traceOptions );
     }
     else
     {
     }
 
-    myKernel->copyROW( tmpNameIn, tmpNameOut );
+    myKernel->copyROW( (char *)tmpNameIn.c_str(), (char *)tmpNameOut.c_str() );
     tmpFiles.push_back( tmpNameOut );
   }
 
@@ -422,10 +460,9 @@ string applyFilters( KernelConnection *myKernel,
   delete traceOptions;
   delete traceCutter;
   delete traceFilter;
-//  delete traceCommunicationsFusionTrace;
   delete traceSoftwareCounters;
 
-  return string( tmpNameOut );
+  return tmpNameOut;
 }
 
 
