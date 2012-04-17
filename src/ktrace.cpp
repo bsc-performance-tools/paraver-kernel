@@ -514,7 +514,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
       throw TraceHeaderException( TraceHeaderException::invalidTime,
                                   tmpstr.c_str() );
     }
-    else cout << traceEndTime << endl;
+ //   else cout << traceEndTime << endl;
   }
 
   if ( !file->canseekend() )
