@@ -283,7 +283,7 @@ Window *WindowProxy::clone( )
   clonedWindow->commLines = commLines;
   clonedWindow->flags = flags;
   clonedWindow->functionLineColor = functionLineColor;
-  clonedWindow->child = child;
+  clonedWindow->child = NULL;
   clonedWindow->posX = posX;
   clonedWindow->posY = posY;
   clonedWindow->width = width;
