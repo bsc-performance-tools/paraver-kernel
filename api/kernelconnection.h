@@ -114,7 +114,7 @@ class KernelConnection
                                          const std::vector< std::string >& traceFilterID,
                                          const bool commitName = false ) const = 0;
 
-    virtual char *composeName( char *name, char *newExtension ) = 0;
+    //virtual char *composeName( char *name, char *newExtension ) = 0;
     virtual void commitNewTraceName( const std::string& newTraceName ) const = 0;
 
 

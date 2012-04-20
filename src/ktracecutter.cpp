@@ -47,6 +47,7 @@
 #define atoll _atoi64
 #endif
 
+#include <iostream>
 using namespace std;
 
 KTraceCutter::KTraceCutter( char *&trace_in,
@@ -179,6 +180,7 @@ void KTraceCutter::proces_cutter_header( char *header,
 {
   int num_comms;
   char *word;
+  char auxLine[ MAX_TRACE_HEADER + 1 ];
 
   word = strtok( header, ":" );
   current_size += fprintf( outfile, "%s:", word );
@@ -235,15 +237,16 @@ void KTraceCutter::proces_cutter_header( char *header,
     return;
 
   num_comms = atoi( header );
-
+//std::cout << "num_comms: " << num_comms << std::endl;
   while ( num_comms > 0 )
   {
     if ( !is_zip )
-      fgets( header, MAX_TRACE_HEADER, infile );
+      fgets( auxLine, MAX_TRACE_HEADER, infile );
     else
-      gzgets( gzInfile, header, MAX_TRACE_HEADER );
+      gzgets( gzInfile, auxLine, MAX_TRACE_HEADER );
 
-    current_size += fprintf( outfile, "%s", header );
+    current_size += fprintf( outfile, "%s", auxLine );
+//printf("%s\n",auxLine);
     num_comms--;
   }
 
@@ -251,11 +254,11 @@ void KTraceCutter::proces_cutter_header( char *header,
 
   /* Reading first if we have old offsets into the trace */
   if ( !is_zip )
-    fgets( header, MAX_TRACE_HEADER, infile );
+    fgets( auxLine, MAX_TRACE_HEADER, infile );
   else
-    gzgets( gzInfile, header, MAX_TRACE_HEADER );
+    gzgets( gzInfile, auxLine, MAX_TRACE_HEADER );
 
-  while ( header[0] == '#' )
+  while ( auxLine[0] == '#' )
   {
     if ( !is_zip )
     {
@@ -268,22 +271,22 @@ void KTraceCutter::proces_cutter_header( char *header,
         break;
     }
 
-    current_size += fprintf( outfile, "%s", header );
+    current_size += fprintf( outfile, "%s", auxLine );
 
     if ( !is_zip )
-      fgets( header, MAX_TRACE_HEADER, infile );
+      fgets( auxLine, MAX_TRACE_HEADER, infile );
     else
-      gzgets( gzInfile, header, MAX_TRACE_HEADER );
+      gzgets( gzInfile, auxLine, MAX_TRACE_HEADER );
   }
 
   if ( !is_zip )
 #ifdef WIN32
     _fseeki64( infile, 0, SEEK_SET );
 #else
-    fseek( infile, -( strlen( header ) ), SEEK_CUR );
+    fseek( infile, -( strlen( auxLine ) ), SEEK_CUR );
 #endif
   else
-    gzseek( gzInfile, -( strlen( header ) ), SEEK_CUR );
+    gzseek( gzInfile, -( strlen( auxLine ) ), SEEK_CUR );
 
   /* Writing of the current cut offset */
   if ( trace_in_name[ 0 ] != '\0' )
@@ -504,10 +507,21 @@ void KTraceCutter::load_counters_of_pcf( char *trace_name )
 {
   char *pcf_name, *c;
   FILE *pcf;
-
+/*
   pcf_name = strdup( trace_name );
-  c = strrchr( pcf_name, '.' );
+  if ( !is_zipped )
+  {
+    c = strrchr( pcf_name, '.' );
+  }
+  else
+  {
+    c = strrchr( pcf_name, '.' );
+  }
+
+
   sprintf( c, ".pcf" );
+*/
+  pcf_name = LocalKernel::composeName( trace_name, (char *)"pcf" );
 
   last_counter = 0;
   if ( ( pcf = fopen( pcf_name, "r" ) ) == NULL )
@@ -529,33 +543,44 @@ void KTraceCutter::load_counters_of_pcf( char *trace_name )
   }
 }
 
-void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut )
+void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut, bool is_zip )
 {
   unsigned long long timeOffset = 0, time_1, time_2, time_3, time_4;
   int cpu, appl, task, thread, state, cpu_2, appl_2, task_2, thread_2;
   char *trace_header;
 
+  if ( !is_zip )
+  {
 #if defined(__FreeBSD__) || defined(__APPLE__)
-  if ( ( infile = fopen( nameIn, "r" ) ) == NULL )
-  {
-    perror( "ERROR" );
-    printf( "KCutter: Error Opening File %s\n", nameIn );
-    exit( 1 );
-  }
+    if ( ( infile = fopen( nameIn, "r" ) ) == NULL )
+    {
+      perror( "ERROR" );
+      printf( "KCutter: Error Opening File %s\n", nameIn );
+      exit( 1 );
+    }
 #elif defined(WIN32)
-  if ( fopen_s( &infile, nameIn, "r" ) != 0 )
-  {
-    printf( "KCutter: Error Opening File %s\n", nameIn );
-    exit( 1 );
-  }
+    if ( fopen_s( &infile, nameIn, "r" ) != 0 )
+    {
+      printf( "KCutter: Error Opening File %s\n", nameIn );
+      exit( 1 );
+    }
 #else
-  if ( ( infile = fopen64( nameIn, "r" ) ) == NULL )
-  {
-    perror( "ERROR" );
-    printf( "KCutter: Error Opening File %s\n", nameIn );
-    exit( 1 );
-  }
+    if ( ( infile = fopen64( nameIn, "r" ) ) == NULL )
+    {
+      perror( "ERROR" );
+      printf( "KCutter: Error Opening File %s\n", nameIn );
+      exit( 1 );
+    }
 #endif
+  }
+  else
+  {
+    if ( ( gzInfile = gzopen( nameIn, "rb" ) ) == NULL )
+    {
+      printf( "KCutter: Error opening compressed trace\n" );
+      exit( 1 );
+    }
+  }
 
 #if defined(__FreeBSD__) || defined(__APPLE__)
   if ( ( outfile = fopen( nameOut, "w" ) ) == NULL )
@@ -582,15 +607,39 @@ void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut )
   /* Process header */
   total_time = last_record_time - first_record_time;
   trace_header = ( char * ) malloc( sizeof( char ) * MAX_TRACE_HEADER );
-  fgets( trace_header, MAX_TRACE_HEADER, infile );
+  if ( !is_zip )
+  {
+    fgets( trace_header, MAX_TRACE_HEADER, infile );
+  }
+  else
+  {
+    gzgets( gzInfile, trace_header, MAX_TRACE_HEADER );
+  }
 
+  //proces_cutter_header( trace_header, (char *)string("\0").c_str(), (char *)string("\0").c_str() );
   proces_cutter_header( trace_header, (char *)string("\0").c_str(), (char *)string("\0").c_str() );
 
 #ifdef WIN32
   while( !( trace_header[0] == '1' || trace_header[0] == '2' || trace_header[0] == '3' ) )
-    fgets( trace_header, MAX_TRACE_HEADER, infile );
+  {
+    if ( !is_zip )
+    {
+      fgets( trace_header, MAX_TRACE_HEADER, infile );
+    }
+    else
+    {
+      gzgets( gzInfile, trace_header, MAX_TRACE_HEADER );
+    }
+  }
 #else
-  fgets( trace_header, MAX_TRACE_HEADER, infile );
+  if ( !is_zip )
+  {
+    fgets( trace_header, MAX_TRACE_HEADER, infile );
+  }
+  else
+  {
+    gzgets( gzInfile, trace_header, MAX_TRACE_HEADER );
+  }
 #endif
   sscanf( trace_header, "%*d:%*d:%*d:%*d:%*d:%lld:", &timeOffset );
 
@@ -641,13 +690,31 @@ void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut )
     }
 
     /* Read one more record is possible */
-    if ( feof( infile ) )
-      end_read = true;
+    if ( !is_zip )
+    {
+      if ( feof( infile ) )
+        end_read = true;
+      else
+        fgets( trace_header, MAX_TRACE_HEADER, infile );
+    }
     else
-      fgets( trace_header, MAX_TRACE_HEADER, infile );
+    {
+      if ( gzeof( gzInfile ) )
+        end_read = true;
+      else
+        gzgets( gzInfile, trace_header, MAX_TRACE_HEADER );
+    }
   }
 
-  fclose( infile );
+  if ( !is_zip )
+  {
+    fclose( infile );
+  }
+  else
+  {
+    gzclose( gzInfile );
+  }
+
   fclose( outfile );
   unlink( nameIn );
 }
@@ -838,13 +905,11 @@ void KTraceCutter::execute( char *trace_in,
     }
     else
     {
-      if ( gzeof( gzInfile ) )
+      if ( gzeof( gzInfile ) || gzgets( gzInfile, line, sizeof( line ) ) == Z_NULL )
       {
         end_parsing = true;
         continue;
       }
-
-      gzgets( gzInfile, line, sizeof( line ) );
     }
 
     if ( num_iters == total_cutter_iters )
@@ -1135,6 +1200,6 @@ void KTraceCutter::execute( char *trace_in,
 
   if ( !break_states )  // Wouldn't it be !originalTime ?
   {
-    shift_trace_to_zero( trace_file_out, trace_out );
+    shift_trace_to_zero( trace_file_out, trace_out, is_zip );
   }
 }

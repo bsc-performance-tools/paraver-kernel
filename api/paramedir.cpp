@@ -367,7 +367,8 @@ string applyFilters( KernelConnection *myKernel,
 
     if ( filterToolOrder[i] == TraceCutter::getID() )
     {
-      pcf_name = myKernel->composeName( (char *)tmpNameIn.c_str(), (char *)"pcf" );
+      //pcf_name = myKernel->composeName( (char *)tmpNameIn.c_str(), (char *)"pcf" );
+      pcf_name = LocalKernel::composeName( (char *)tmpNameIn.c_str(), (char *)"pcf" );
 
       if(( pcfFile = fopen( pcf_name, "r" )) != NULL )
       {
@@ -449,8 +450,10 @@ string applyFilters( KernelConnection *myKernel,
   char *pcfName, *rowName;
   for( PRV_UINT16 i = 0; i < tmpFiles.size() - 1; ++i )
   {
-    pcfName = myKernel->composeName( (char *)tmpFiles[ i ].c_str(), (char *)string("pcf").c_str() );
-    rowName = myKernel->composeName( (char *)tmpFiles[ i ].c_str(), (char *)string("row").c_str() );
+    //pcfName = myKernel->composeName( (char *)tmpFiles[ i ].c_str(), (char *)string("pcf").c_str() );
+    pcfName = LocalKernel::composeName( (char *)tmpFiles[ i ].c_str(), (char *)string("pcf").c_str() );
+    //rowName = myKernel->composeName( (char *)tmpFiles[ i ].c_str(), (char *)string("row").c_str() );
+    rowName = LocalKernel::composeName( (char *)tmpFiles[ i ].c_str(), (char *)string("row").c_str() );
     remove( tmpFiles[ i ].c_str() );
     remove( pcfName );
     remove( rowName );

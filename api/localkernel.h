@@ -111,7 +111,8 @@ class LocalKernel: public KernelConnection
                                          const std::vector< std::string >& traceFilterID,
                                          const bool commitName = false ) const;
 
-    virtual char *composeName( char *name, char *newExtension );
+    //virtual char *composeName( char *name, char *newExtension );
+    static char *composeName( char *name, char *newExtension );
     virtual void commitNewTraceName( const std::string& newTraceName ) const;
 
     virtual std::string getPathSeparator() const { return pathSeparator; }

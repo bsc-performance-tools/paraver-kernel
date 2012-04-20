@@ -141,7 +141,7 @@ class KTraceCutter : public TraceCutter
                        unsigned long long type,
                        unsigned long long value );
     void load_counters_of_pcf( char *trace_name );
-    void shift_trace_to_zero( char *nameIn, char *nameOut );
+    void shift_trace_to_zero( char *nameIn, char *nameOut, bool is_zip );
     bool is_selected_task( int task_id );
 };
 
