@@ -569,13 +569,13 @@ string LocalKernel::getNewTraceName( const string& fullPathTraceName,
   }
 
   // Find original trace name, without extension
-  size_t prvSuffixStartPos = fullPathTraceName.rfind( GZIPPEDPRVSUFFIX,
-                                                      fullPathTraceName.length() - GZIPPEDPRVSUFFIX.length() );
+  size_t prvSuffixStartPos = fullPathTraceName.rfind( GZIPPED_PRV_SUFFIX,
+                                                      fullPathTraceName.length() - GZIPPED_PRV_SUFFIX.length() );
   if ( prvSuffixStartPos == string::npos )
   {
     // by precond 1, it exists.
-    prvSuffixStartPos = fullPathTraceName.rfind( PRVSUFFIX,
-                                                 fullPathTraceName.length() - PRVSUFFIX.length() );
+    prvSuffixStartPos = fullPathTraceName.rfind( PRV_SUFFIX,
+                                                 fullPathTraceName.length() - PRV_SUFFIX.length() );
     if ( prvSuffixStartPos == string::npos )
     {
       prvSuffixStartPos = fullPathTraceName.length();
@@ -595,14 +595,14 @@ string LocalKernel::getNewTraceName( const string& fullPathTraceName,
       stringstream auxStrStrNumber;
       auxStrStrNumber << toolNumberedSuffix[ *id ];
       newTraceName = newTraceName +
-                     FILTERSEP +
+                     FILTER_SEP +
                      TraceOptionsProxy::getTraceToolExtension( *id ) +
                      auxStrStrNumber.str();
     }
 
     // Build new names
-    newTraceNamePrv = newTraceName + PRVSUFFIX;
-    newTraceNamePrvGz = newTraceName + GZIPPEDPRVSUFFIX;
+    newTraceNamePrv = newTraceName + PRV_SUFFIX;
+    newTraceNamePrvGz = newTraceName + GZIPPED_PRV_SUFFIX;
 
    // Do these new names exist (in current dir)?
  #ifndef WIN32

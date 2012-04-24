@@ -201,16 +201,16 @@ string levelToStringHisto( TWindowLevel whichLevel )
   return "";
 }
 
-
+// Smarter detections welcome!
 bool CFGLoader::isCFGFile( const string& filename )
 {
   bool isCFG = false;
   string cfgExt;
 
-  if ( filename.length() > 4 )
+  if ( filename.length() > CFG_SUFFIX.length() )
   {
-    cfgExt = filename.substr( filename.length() - 4 );
-    isCFG = ( cfgExt.compare( ".cfg" ) == 0 );
+    cfgExt = filename.substr( filename.length() - CFG_SUFFIX.length() );
+    isCFG = ( cfgExt.compare( CFG_SUFFIX ) == 0 );
   }
 
   return isCFG;

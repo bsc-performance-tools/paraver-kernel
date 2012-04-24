@@ -47,6 +47,19 @@ TraceOptions *TraceOptions::create( KernelConnection *whichKernel )
   return new TraceOptionsProxy( whichKernel );
 }
 
+// Smarter detections welcome!
+bool TraceOptions::isTraceToolsOptionsFile( const string& xmlFileName )
+{
+  string auxName( xmlFileName );
+  string suffix( "" );
+
+  if ( auxName.length() > TRACE_TOOL_OPTIONS_SUFFIX.length() )
+    suffix = auxName.substr( auxName.length() - TRACE_TOOL_OPTIONS_SUFFIX.length() );
+
+  return ( suffix.compare( TRACE_TOOL_OPTIONS_SUFFIX ) == 0 );
+}
+
+
 // TraceOptionsProxy::TraceOptionsProxy( const KernelConnection *whichKernel, char *xmldocname )
 TraceOptionsProxy::TraceOptionsProxy( const KernelConnection *whichKernel )
 {

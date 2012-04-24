@@ -45,6 +45,7 @@ class Trace
   public:
     static Trace *create( KernelConnection *whichKernel, const std::string& whichFile,
                           bool noLoad, ProgressController *progress );
+    static bool isTraceFile( const std::string& filename );
 
     Trace() {}
     Trace( KernelConnection *whichKernel );

@@ -145,35 +145,6 @@ bool isOption( char *argument )
 }
 
 
-bool isTrace( char *argument )
-{
-  string auxName( argument );
-  string suffixCompressed( "" );
-  string suffixNotCompressed( "" );
-
-  if ( auxName.length() > string(".prv.gz").length() )
-    suffixCompressed = auxName.substr( auxName.length() - string(".prv.gz").length() );
-
-  if ( auxName.length() > string(".prv").length() )
-    suffixNotCompressed = auxName.substr( auxName.length() - string(".prv").length() );
-
-  return (( suffixCompressed.compare( ".prv.gz" ) == 0 ) ||
-          ( suffixNotCompressed.compare( ".prv" ) == 0 ));
-}
-
-
-bool isXML( char *argument )
-{
-  string auxName( argument );
-  string suffix( "" );
-
-  if ( auxName.length() > string(".xml").length() )
-    suffix = auxName.substr( auxName.length() - string(".xml").length() );
-
-  return ( suffix.compare( ".xml" ) == 0 );
-}
-
-
 void activateOption( char *argument, vector< string > &filterToolOrder )
 {
   if ( argument[ 1 ] == 'h' )
@@ -242,18 +213,18 @@ void readParameters( int argc,
       getDumpIterations( currentArg, arguments );
 #endif
     }
-    else if ( isTrace( arguments[ currentArg ] ))
+    else if ( Trace::isTraceFile( string( arguments[ currentArg ] )))
     {
       strTrace = string( arguments[ currentArg ] );
     }
-    else if ( isXML( arguments[ currentArg ] ))
+    else if ( TraceOptions::isTraceToolsOptionsFile( string( arguments[ currentArg ] )))
     {
       strXMLOptions = string( arguments[ currentArg ] );
     }
-    else if ( CFGLoader::isCFGFile( arguments[ currentArg ] ))
+    else if ( CFGLoader::isCFGFile( string( arguments[ currentArg ] )))
     {
       string strCfg( arguments[ currentArg ] );
-      strOutputFile = strCfg.substr( 0, strCfg.length() - 4 );
+      strOutputFile = strCfg.substr( 0, strCfg.length() - CFG_SUFFIX.length() );
       cfgs[ arguments[ currentArg ] ] = strOutputFile;
       previousCFGPosition = currentArg;
     }

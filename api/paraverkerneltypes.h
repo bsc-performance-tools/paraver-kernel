@@ -158,12 +158,14 @@ enum TSemanticGroup
   EVENT_GROUP, COMM_GROUP, OBJECT_GROUP
 };
 
-static const std::string GZIPPEDPRVSUFFIX = ".prv.gz";
-static const std::string PRVSUFFIX = ".prv";
-static const std::string CFGSUFFIX = ".cfg";
-static const std::string PCFSUFFIX = ".pcf";
-static const std::string ROWSUFFIX = ".row";
-static const std::string FILTERSEP = ".";
+static const std::string        GZIPPED_PRV_SUFFIX = ".prv.gz";
+static const std::string                PRV_SUFFIX = ".prv";
+static const std::string                CFG_SUFFIX = ".cfg";
+static const std::string                PCF_SUFFIX = ".pcf";
+static const std::string                ROW_SUFFIX = ".row";
+static const std::string TRACE_TOOL_OPTIONS_SUFFIX = ".xml";
+
+static const std::string FILTER_SEP = ".";
 
 
 /*
