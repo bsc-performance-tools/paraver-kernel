@@ -133,15 +133,16 @@ class KTraceCutter : public TraceCutter
     void read_cutter_params();
     void proces_cutter_header( char *header,
                                char *trace_in_name,
-                               char *trace_out_name );
-    void adjust_to_final_time();
+                               char *trace_out_name,
+                               bool is_zip );
+    void appendLastZerosToUnclosedEvents();
     void ini_cutter_progress_bar( char *file_name, ProgressController *progress );
     void show_cutter_progress_bar( ProgressController *progress );
     void update_queue( int appl, int task, int thread,
                        unsigned long long type,
                        unsigned long long value );
     void load_counters_of_pcf( char *trace_name );
-    void shift_trace_to_zero( char *nameIn, char *nameOut, bool is_zip );
+    void shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nameOut, bool is_zip );
     bool is_selected_task( int task_id );
 };
 

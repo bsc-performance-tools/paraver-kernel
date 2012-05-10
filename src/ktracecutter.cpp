@@ -128,7 +128,6 @@ void KTraceCutter::read_cutter_params()
 {
   char *word, *buffer;
 
-  //by_time = true;
   by_time = exec_options->by_time;
   time_min = exec_options->min_cutting_time;
   time_max = exec_options->max_cutting_time;
@@ -136,7 +135,6 @@ void KTraceCutter::read_cutter_params()
   min_perc = exec_options->min_percentage;
   max_perc = exec_options->max_percentage;
   originalTime = exec_options->original_time;
-
   if ( exec_options->tasks_list[0] != '\0' )
   {
     cut_tasks = true;
@@ -151,7 +149,6 @@ void KTraceCutter::read_cutter_params()
         wanted_tasks[j].min_task_id = atoll( word );
         wanted_tasks[j].max_task_id = atoll( ++buffer );
         wanted_tasks[j].range = 1;
-
       }
       else
       {
@@ -170,18 +167,23 @@ void KTraceCutter::read_cutter_params()
   break_states = exec_options->break_states;
   remFirstStates = exec_options->remFirstStates;
   remLastStates = exec_options->remLastStates;
+
+  if ( originalTime )
+    break_states = false; // Assigned ONLY if originalTime == true, else KEEP value.
 }
 
 
 /* For processing the Paraver header */
 void KTraceCutter::proces_cutter_header( char *header,
                                          char *trace_in_name,
-                                         char *trace_out_name )
+                                         char *trace_out_name,
+                                         bool is_zip )
 {
   int num_comms;
   char *word;
   char auxLine[ MAX_TRACE_HEADER + 1 ];
 
+  // PARSE variable header
   word = strtok( header, ":" );
   current_size += fprintf( outfile, "%s:", word );
 
@@ -236,17 +238,20 @@ void KTraceCutter::proces_cutter_header( char *header,
   if ( strchr( header, ')' ) != NULL )
     return;
 
+  // NOW READ FROM GLOBAL VARIABLE infile
   num_comms = atoi( header );
-//std::cout << "num_comms: " << num_comms << std::endl;
   while ( num_comms > 0 )
   {
     if ( !is_zip )
+    {
       fgets( auxLine, MAX_TRACE_HEADER, infile );
+    }
     else
+    {
       gzgets( gzInfile, auxLine, MAX_TRACE_HEADER );
+    }
 
     current_size += fprintf( outfile, "%s", auxLine );
-//printf("%s\n",auxLine);
     num_comms--;
   }
 
@@ -289,17 +294,18 @@ void KTraceCutter::proces_cutter_header( char *header,
     gzseek( gzInfile, -( strlen( auxLine ) ), SEEK_CUR );
 
   /* Writing of the current cut offset */
-  if ( trace_in_name[ 0 ] != '\0' )
+  if ( trace_in_name != NULL )
     current_size += fprintf( outfile, "# %s: Offset %lld from %s\n", trace_out_name, time_min, trace_in_name );
 }
 
 
-void KTraceCutter::adjust_to_final_time()
+void KTraceCutter::appendLastZerosToUnclosedEvents()
 {
   TCPUOrder cpu;
   int writtenChars = 0;
   bool needEOL = false;
-  bool writtenComment = false;
+  bool writtenCommentWithout = false;
+  bool writtenCommentWith    = false;
 
   for( unsigned int appl = 0; appl < MAX_APPL; ++appl )
   {
@@ -310,14 +316,18 @@ void KTraceCutter::adjust_to_final_time()
         if ( tasks[appl][task][thread] != NULL )
         {
           cpu = tasks[appl][task][thread]->lastCPU;
+
           writtenChars = 0;
+          needEOL = false;
 
           if( tasks[appl][task][thread]->eventTypesWithoutPCFZeros.size() > 0 )
           {
-            if ( !writtenComment )
+            if ( !writtenCommentWithout )
             {
-              fprintf( outfile, "# Appending events with value 0 \n");
-              writtenComment = true;
+              fprintf( outfile, "# Appending events with value 0");
+              fprintf( outfile, "\n");
+              writtenCommentWithout = true;
+              needEOL = false;
             }
 
             for ( set< TEventType >::iterator it = tasks[appl][task][thread]->eventTypesWithoutPCFZeros.begin();
@@ -344,16 +354,21 @@ void KTraceCutter::adjust_to_final_time()
             }
 
             if( needEOL )
+            {
               fprintf( outfile, "\n" );  // because we know theres's one at least.
+              needEOL = false;
+            }
           }
 
           writtenChars = 0;
+          needEOL = false;
+
           if( tasks[appl][task][thread]->eventTypesWithPCFZeros.size() > 0 )
           {
-            if ( !writtenComment )
+            if ( !writtenCommentWith )
             {
-              fprintf( outfile, "# Appending events with value 0 \n");
-              writtenComment = true;
+              fprintf( outfile, "# Appending PCF events with value 0\n");
+              writtenCommentWith = true;
             }
 
             for ( multiset< TEventType >::iterator it = tasks[appl][task][thread]->eventTypesWithPCFZeros.begin();
@@ -380,7 +395,10 @@ void KTraceCutter::adjust_to_final_time()
             }
 
             if( needEOL )
+            {
               fprintf( outfile, "\n" );  // because we know theres's one at least.
+              needEOL = false;
+            }
           }
         }
       }
@@ -505,22 +523,9 @@ void KTraceCutter::update_queue( int appl, int task, int thread,
 
 void KTraceCutter::load_counters_of_pcf( char *trace_name )
 {
-  char *pcf_name, *c;
+  char *pcf_name;
   FILE *pcf;
-/*
-  pcf_name = strdup( trace_name );
-  if ( !is_zipped )
-  {
-    c = strrchr( pcf_name, '.' );
-  }
-  else
-  {
-    c = strrchr( pcf_name, '.' );
-  }
 
-
-  sprintf( c, ".pcf" );
-*/
   pcf_name = LocalKernel::composeName( trace_name, (char *)"pcf" );
 
   last_counter = 0;
@@ -543,7 +548,9 @@ void KTraceCutter::load_counters_of_pcf( char *trace_name )
   }
 }
 
-void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut, bool is_zip )
+// Substract to all the times in the trace the first time of the first record
+// Doesn't change header
+void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nameOut, bool is_zip )
 {
   unsigned long long timeOffset = 0, time_1, time_2, time_3, time_4;
   int cpu, appl, task, thread, state, cpu_2, appl_2, task_2, thread_2;
@@ -616,8 +623,10 @@ void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut, bool is_zip
     gzgets( gzInfile, trace_header, MAX_TRACE_HEADER );
   }
 
-  //proces_cutter_header( trace_header, (char *)string("\0").c_str(), (char *)string("\0").c_str() );
-  proces_cutter_header( trace_header, (char *)string("\0").c_str(), (char *)string("\0").c_str() );
+  // Consume header
+  proces_cutter_header( trace_header, NULL, NULL, is_zip );
+
+  bool end_read = false;
 
 #ifdef WIN32
   while( !( trace_header[0] == '1' || trace_header[0] == '2' || trace_header[0] == '3' ) )
@@ -632,18 +641,34 @@ void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut, bool is_zip
     }
   }
 #else
+  /* Read one more record if possible */
   if ( !is_zip )
   {
-    fgets( trace_header, MAX_TRACE_HEADER, infile );
+    if ( feof( infile ) )
+      end_read = true;
+    else
+    {
+      char *auxLine = fgets( trace_header, MAX_TRACE_HEADER, infile );
+      if ( auxLine == NULL )
+        end_read = true;
+    }
   }
   else
   {
-    gzgets( gzInfile, trace_header, MAX_TRACE_HEADER );
+    if ( gzeof( gzInfile ) )
+      end_read = true;
+    else
+    {
+      char *auxLine = gzgets( gzInfile, trace_header, MAX_TRACE_HEADER );;
+      if ( auxLine == Z_NULL )
+        end_read = true;
+    }
   }
 #endif
-  sscanf( trace_header, "%*d:%*d:%*d:%*d:%*d:%lld:", &timeOffset );
+  // Get time of the first record ignoring any other field.
+  if (!end_read)
+    sscanf( trace_header, "%*d:%*d:%*d:%*d:%*d:%lld:", &timeOffset );
 
-  bool end_read = false;
   while ( !end_read )
   {
     switch ( trace_header[0] )
@@ -685,24 +710,37 @@ void KTraceCutter::shift_trace_to_zero( char *nameIn, char *nameOut, bool is_zip
 
         break;
 
+      case '4':
+      case '#':
+        fprintf( outfile, "%s\n", trace_header );
+        break;
+
       default:
         break;
     }
 
-    /* Read one more record is possible */
+    /* Read one more record if possible */
     if ( !is_zip )
     {
       if ( feof( infile ) )
         end_read = true;
       else
-        fgets( trace_header, MAX_TRACE_HEADER, infile );
+      {
+        char *auxLine = fgets( trace_header, MAX_TRACE_HEADER, infile );
+        if ( auxLine == NULL )
+          end_read = true;
+      }
     }
     else
     {
       if ( gzeof( gzInfile ) )
         end_read = true;
       else
-        gzgets( gzInfile, trace_header, MAX_TRACE_HEADER );
+      {
+        char *auxLine = gzgets( gzInfile, trace_header, MAX_TRACE_HEADER );
+        if ( auxLine == Z_NULL )
+          end_read = true;
+      }
     }
   }
 
@@ -836,7 +874,7 @@ void KTraceCutter::execute( char *trace_in,
     }
   }
 
-  if ( !break_states )
+  if ( break_states )
   {
     if ( ( tmp_dir = getenv( "TMPDIR" ) ) == NULL )
       tmp_dir = getenv( "PWD" );
@@ -883,15 +921,15 @@ void KTraceCutter::execute( char *trace_in,
     gzgets( gzInfile, trace_header, MAX_TRACE_HEADER );
   }
 
-  proces_cutter_header( trace_header, trace_in, trace_out );
+  proces_cutter_header( trace_header, trace_in, trace_out, is_zip );
   free( trace_header );
 
   /* We process the trace like the originalTime version */
-  if ( !break_states )
-    originalTime = true;
+
+  bool maxTimeReached = false;
 
   /* Processing the trace records */
-  while ( !end_parsing )
+  while ( !end_parsing && !maxTimeReached )
   {
     /* Read one more record is possible */
     if ( !is_zip )
@@ -929,10 +967,11 @@ void KTraceCutter::execute( char *trace_in,
                 &id, &cpu, &appl, &task, &thread, &time_1, &time_2, &state );
 
         /* If is a not traceable thread, get next record */
-        if ( cut_tasks && !is_selected_task( task ) ) break;
+        if ( cut_tasks && !is_selected_task( task ) )
+          break;
 
-        if ( time_2 <= time_min ) break;
-
+        if ( time_2 <= time_min )
+          break;
 
         if ( time_1 < time_min && time_2 >= time_min && remFirstStates )
           break;
@@ -954,81 +993,75 @@ void KTraceCutter::execute( char *trace_in,
 
         if ( !originalTime && time_1 > time_max )
         {
-          fclose( outfile );
-
-          if ( !is_zip )
-            fclose( infile );
-          else
-            gzclose( gzInfile );
-
-          return;
-        }
-
-        if ( tasks[appl-1][task-1][thread-1] == NULL )
-        {
-         if (( p = new thread_info() ) == NULL )
-          {
-            perror( "No more memory!!!\n" );
-            exit( 1 );
-          }
-
-          tasks[appl-1][task-1][thread-1] = p;
-          num_tasks++;
-          useful_tasks++;
-          init_task_counter = 1;
-          p->finished = true;
-          p->lastCPU = cpu;
-          p->last_time = 0;
-
-          p->eventTypesWithoutPCFZeros.clear();
-          p->eventTypesWithPCFZeros.clear();
-
-          /* Have to reset HC and the begining of cut */
-          reset_counters = true;
-        }
-
-        if ( !originalTime )
-        {
-          if ( time_2 >= time_max )
-            time_2 = total_time;
-          else
-            time_2 = time_2 - time_min;
-
-          if ( time_1 <= time_min )
-            time_1 = 0;
-          else
-            time_1 = time_1 - time_min;
-        }
-
-        tasks[appl-1][task-1][thread-1]->last_time = time_2;
-
-
-        if ( !first_time_caught )
-        {
-          first_record_time = time_1;
-          first_time_caught = true;
+          maxTimeReached = true;
         }
         else
         {
-          if ( time_1 < first_record_time )
+          if ( tasks[appl-1][task-1][thread-1] == NULL )
+          {
+            if (( p = new thread_info() ) == NULL )
+            {
+              perror( "No more memory!!!\n" );
+              exit( 1 );
+            }
+
+            tasks[appl-1][task-1][thread-1] = p;
+            num_tasks++;
+            useful_tasks++;
+            init_task_counter = 1;
+            p->finished = true;
+            p->lastCPU = cpu;
+            p->last_time = 0;
+
+            p->eventTypesWithoutPCFZeros.clear();
+            p->eventTypesWithPCFZeros.clear();
+
+            /* Have to reset HC and the begining of cut */
+            reset_counters = true;
+          }
+
+          if ( !originalTime )
+          {
+            if ( time_2 >= time_max )
+              time_2 = total_time;
+            else
+              time_2 = time_2 - time_min;
+
+            if ( time_1 <= time_min )
+              time_1 = 0;
+            else
+              time_1 = time_1 - time_min;
+          }
+
+          tasks[appl-1][task-1][thread-1]->last_time = time_2;
+
+          if ( !first_time_caught )
+          {
             first_record_time = time_1;
-        }
+            first_time_caught = true;
+          }
+          else
+          {
+            if ( time_1 < first_record_time )
+              first_record_time = time_1;
+          }
 
-        last_record_time = time_2;
+          last_record_time = time_2;
 
-        current_size += fprintf( outfile, "%d:%d:%d:%d:%d:%lld:%lld:%d\n",
-                                 id, cpu, appl, task, thread, time_1, time_2, state );
+          current_size += fprintf( outfile, "%d:%d:%d:%d:%d:%lld:%lld:%d\n",
+                                   id, cpu, appl, task, thread, time_1, time_2, state );
 
-        if ( reset_counters )
-        {
-          reset_counters = false;
-          sprintf( line, "2:%d:%d:%d:%d:%lld", cpu, appl, task, thread, time_1 );
+          if ( reset_counters )
+          {
+            reset_counters = false;
+            sprintf( line, "2:%d:%d:%d:%d:%lld", cpu, appl, task, thread, time_1 );
 
-          for ( i = 0; i < last_counter; i++ )
-            sprintf( line, "%s:%lld:0", line, counters[i] );
+            for ( i = 0; i < last_counter; i++ )
+              sprintf( line, "%s:%lld:0", line, counters[i] );
 
-          if ( i > 0 )
-            current_size += fprintf( outfile, "%s\n", line );
+            if ( i > 0 )
+              current_size += fprintf( outfile, "%s\n", line );
+          }
         }
 
         break;
@@ -1107,16 +1140,9 @@ void KTraceCutter::execute( char *trace_in,
           /* if time outside the cut, finish */
           if ( time_1 > time_max && !originalTime ) // PROBLEM: DISORDERED TRACES
           {
-            fclose( outfile );
-            if ( !is_zip )
-              fclose( infile );
-            else
-              gzclose( gzInfile );
-
-            return;
+            maxTimeReached = true;
           }
-
-          if ( time_4 <= time_max && time_2 <= time_max )
+          else if ( time_4 <= time_max && time_2 <= time_max )
           {
             if ( !originalTime )
             {
@@ -1144,30 +1170,26 @@ void KTraceCutter::execute( char *trace_in,
         /* If time out of the cut, exit */
         if ( time_1 > time_max && !originalTime )
         {
-          fclose( outfile );
-          if ( !is_zip )
-            fclose( infile );
-          else
-            gzclose( gzInfile );
-
-          return;
+          maxTimeReached = true;
         }
-
-        if ( originalTime )
-          current_size += fprintf( outfile, "%d:%d:%d:%d:%d:%lld:%s\n", id, cpu, appl, task, thread, time_1, line );
         else
         {
-          if ( time_1 >= time_min && time_1 <= time_max )
-          {
-            time_1 = time_1 - time_min;
+          if ( originalTime )
             current_size += fprintf( outfile, "%d:%d:%d:%d:%d:%lld:%s\n", id, cpu, appl, task, thread, time_1, line );
+          else
+          {
+            if ( time_1 >= time_min && time_1 <= time_max )
+            {
+              time_1 = time_1 - time_min;
+              current_size += fprintf( outfile, "%d:%d:%d:%d:%d:%lld:%s\n", id, cpu, appl, task, thread, time_1, line );
+            }
           }
         }
 
         break;
 
       case '#':
-        current_size += fprintf( outfile, "%s", line );
+        current_size += fprintf( outfile, "%s\n", line );
 
         break;
 
@@ -1183,23 +1205,17 @@ void KTraceCutter::execute( char *trace_in,
       break;
   }
 
-  if ( !break_states ) originalTime = false;
-
-  if ( originalTime )
-  {
-    adjust_to_final_time();
-  }
+  appendLastZerosToUnclosedEvents();
 
   /* Close the files */
-
   fclose( outfile );
   if ( !is_zip )
     fclose( infile );
   else
     gzclose( gzInfile );
 
-  if ( !break_states )  // Wouldn't it be !originalTime ?
+  if ( break_states )   // trace_file_out is a tmpfile!!
   {
-    shift_trace_to_zero( trace_file_out, trace_out, is_zip );
+    shiftLeft_TraceTimes_ToStartFromZero( trace_file_out, trace_out, false );
   }
 }

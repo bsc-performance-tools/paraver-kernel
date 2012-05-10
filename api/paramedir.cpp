@@ -249,7 +249,6 @@ void readParameters( int argc,
   // IMPROVE: Detect which kind of xml do we have.
 }
 
-
 bool anyTrace()
 {
   return ( strTrace != "" );
