@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <!-- CUTTER OPTIONS -->
+  <cutter>
+    <!--empty tasks list-->
+    <!--<tasks></tasks>-->
+    <max_trace_size>0</max_trace_size>
+    <by_time>1</by_time>
+    <minimum_time>106933</minimum_time>
+    <maximum_time>107202</maximum_time>
+    <minimum_time_percentage>0</minimum_time_percentage>
+    <maximum_time_percentage>100</maximum_time_percentage>
+    <original_time>1</original_time>
+    <break_states>0</break_states>
+    <remove_first_states>1</remove_first_states>
+    <remove_last_states>0</remove_last_states>
+  </cutter>
+</config>
