@@ -140,16 +140,14 @@ string RowLabels::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) 
     return "";
   else
   {
-    if( tmpvector->begin() == tmpvector->end() ||
-        whichRow > tmpvector->size() )
+    if( tmpvector->begin() == tmpvector->end() || whichRow > tmpvector->size() )
       return "";
     else
     {
       if( whichLevel == CPU && whichRow > 0 )
-      {
         --whichRow;
-        return (*tmpvector)[ whichRow ];
-      }
+
+      return (*tmpvector)[ whichRow ];
     }
   }
 
