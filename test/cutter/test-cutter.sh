@@ -8,15 +8,10 @@
 ask()
 {
   echo
-  echo ">>> $1? (n)"
+  echo -n ">>> $1? (n)"
   read answer
-  if [[ "$answer" = S || "$answer" = s || "$answer" = Y || "$answer" = y ]]; then
-    return 1
-  else
-    echo
-    echo "Bye!"
-    exit
-  fi
+  test "$answer" = "S" -o "$answer" = "s" -o "$answer" = "Y" -o "$answer" = "y" 
+  return $?
 }
 
 existsDir()
@@ -36,14 +31,13 @@ existsDir()
 # MAIN
 # *****************************************************************************
 
-
-echo
-echo "**********************"
-echo "*---[ PARAMETERS ]---*"
-echo "**********************"
-
 echo
 echo "Usage: $0 <testdir> <PARAVER_HOME> <testtrace>"
+
+echo
+echo "**********************"
+echo "*     PARAMETERS     *"
+echo "**********************"
 
 if [ $# -eq 3 ]; then
 
@@ -80,8 +74,8 @@ else
 
 fi
 
-trace[0]=$testtrace.prv
-trace[1]=$testtrace.prv.gz
+trace[0]="$testtrace.prv   "
+trace[1]="$testtrace.prv.gz"
 
 echo
 echo "test dir      = $testdir"
@@ -90,74 +84,82 @@ echo "paramedir     = $baseprv/paramedir"
 echo "test trace    = ${trace[0]}"
 echo "test trace gz = ${trace[1]}"
 
-ask "Continue" 
 
 echo  
-echo "  Checking $testdir..."
+echo -n "  Checking $testdir ... "
 existsDir $testdir
 if [ $? = 0 ]; then
-  echo "  Not found! Created."
+  echo "Not found!"
   mkdir $testdir
+  echo "Created $testdir."
 else
-  echo "  Found $testdir."
+  echo "Found $testdir."
 fi
 echo
 
 #TODO test existance of both .prv.gz and .prv traces
+ask "Execute battery of cuts using paramedir and xmls" 
+if [ $? = 0 ]; then
+  echo
+  echo "****************************"
+  echo "*     CUTTER EXECUTION     *"
+  echo "****************************"
+  echo "Xml parameters:"
+  echo "  * Constant: { <by_time> }"
+  echo "  * Variable: { <original_time>, <break_states>, <remove_first_state>, <remove_last_state> }"
+  echo
 
 
-echo
-echo "*******************************"
-echo "*---[ EXECUTION : BY TIME ]---*"
-echo "*******************************"
+  for i in `seq 0 1`; do
+    for j in `seq 0 1`; do
+      for k in `seq 0 1`; do
+        for l in `seq 0 1`; do
+          # to copy from first xml
+          # cp cut.bytime.orig-1.brk-1.rmfirst-0.rmlast-1.xml cut.bytime.orig-$i.brk-$j.rmfirst-$k.rmlast-$l.xml 
+          for m in `seq 0 1`; do
 
-
-for i in `seq 0 1`; do
-  for j in `seq 0 1`; do
-    for k in `seq 0 1`; do
-      for l in `seq 0 1`; do
-        # to copy from first xml
-        # cp cut.bytime.orig-1.brk-1.rmfirst-0.rmlast-1.xml cut.bytime.orig-$i.brk-$j.rmfirst-$k.rmlast-$l.xml 
-        for m in `seq 0 1`; do
-
-          echo
-          echo "Original time: $i Break states: $j Remove first: $k Remove last: $l Gzipped: $m"
-          echo
-          echo "  Executing $baseprv/paramedir ${trace[${m}]} -c cut.bytime.orig-${i}.brk-${j}.rmfirst-${k}.rmlast-${l}.xml... "
-          $baseprv/paramedir ${trace[${m}]} -c cut.bytime.orig-${i}.brk-${j}.rmfirst-${k}.rmlast-${l}.xml
+            echo -n "Executing: $baseprv/paramedir ${trace[${m}]} -c cut.bytime.orig-${i}.brk-${j}.rmfirst-${k}.rmlast-${l}.xml ... "
+            $baseprv/paramedir ${trace[${m}]} -c cut.bytime.orig-${i}.brk-${j}.rmfirst-${k}.rmlast-${l}.xml &> /dev/null
           
-          mv $testtrace.chop1.prv $testdir/cut.bytime.orig-${i}.brk-${j}.rmfirst-${k}.rmlast-${l}.gz-$m.prv &> /dev/null
-          cp $testtrace.pcf       $testdir/cut.bytime.orig-${i}.brk-${j}.rmfirst-${k}.rmlast-${l}.gz-$m.pcf &> /dev/null
-          cp $testtrace.row       $testdir/cut.bytime.orig-${i}.brk-${j}.rmfirst-${k}.rmlast-${l}.gz-$m.row &> /dev/null
+            mv $testtrace.chop1.prv $testdir/cut.bytime.orig-${i}.brk-${j}.rmfirst-${k}.rmlast-${l}.gz-$m.prv &> /dev/null
+            cp $testtrace.pcf       $testdir/cut.bytime.orig-${i}.brk-${j}.rmfirst-${k}.rmlast-${l}.gz-$m.pcf &> /dev/null
+            cp $testtrace.row       $testdir/cut.bytime.orig-${i}.brk-${j}.rmfirst-${k}.rmlast-${l}.gz-$m.row &> /dev/null
 
-          echo "  ...done."
+            echo "Done."
 
+          done
         done
       done
     done
   done
-done
+fi
 
 ask "Analyze with wxparaver"
+if [ $? = 0 ]; then
+  echo
+  echo "**********************************"
+  echo "*     ANALYZE WITH WXPARAVER     *"
+  echo "**********************************"
 
-echo
-echo "**********************************"
-echo "*---[ ANALYZE WITH WXPARAVER ]---*"
-echo "**********************************"
 
+  for i in `seq 0 1`; do
+    for j in `seq 0 1`; do
+      for k in `seq 0 1`; do
+        for l in `seq 0 1`; do
+          for m in `seq 0 1`; do
 
-for i in `seq 0 1`; do
-  for j in `seq 0 1`; do
-    for k in `seq 0 1`; do
-      for l in `seq 0 1`; do
-        for m in `seq 0 1`; do
+            echo -n "  Executing: wxparaver $testdir/cut.bytime.orig-${i}.brk-${j}.rmfirst-${k}.rmlast-${l}.gz-${m}.prv zoom.state_as_is.originaltime-${i}.cfg & ... " 
+            wxparaver $testdir/cut.bytime.orig-${i}.brk-${j}.rmfirst-${k}.rmlast-${l}.gz-${m}.prv zoom.state_as_is.originaltime-${i}.cfg & 
+            sleep 3
+            echo "Done."
 
-          echo "Original time: $i Break states: $j Remove first: $k Remove last: $l Gzipped: $m"
-          wxparaver $testdir/cut.bytime.orig-${i}.brk-${j}.rmfirst-${k}.rmlast-${l}.gz-${m}.prv zoom.state_as_is.originaltime-${i}.cfg & 
-          sleep 3
-
+          done
         done
       done
     done
   done
-done
+fi
+
+echo
+echo
+
