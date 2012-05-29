@@ -148,7 +148,7 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
     for ( PRV_UINT32 i = 0; i < commSizes.size(); i++ )
     {
       stop = functionCommSizes->execute( ( TSemanticValue ) commSizes[ i ], info );
-      if ( stop == false )
+      if ( stop ) // == false?
         break;
     }
     tmpResult = functionCommSizes->getResult();
