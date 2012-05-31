@@ -135,7 +135,7 @@ class KTraceCutter : public TraceCutter
                                char *trace_in_name,
                                char *trace_out_name,
                                bool is_zip );
-    void appendLastZerosToUnclosedEvents();
+    void appendLastZerosToUnclosedEvents( const unsigned long long &final_time );
     void ini_cutter_progress_bar( char *file_name, ProgressController *progress );
     void show_cutter_progress_bar( ProgressController *progress );
     void update_queue( int appl, int task, int thread,
