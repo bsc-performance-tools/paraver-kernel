@@ -148,7 +148,7 @@ enum SemanticInfoType
   EVENTVALUE_TYPE,
   COMMSIZE_TYPE,
   COMMTAG_TYPE,
-  BANDWIDTH_TYPE,
+  BANDWIDTH_TYPE
 };
 
 enum TSemanticGroup
