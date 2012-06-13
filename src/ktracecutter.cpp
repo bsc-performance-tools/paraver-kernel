@@ -32,6 +32,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <math.h>
+#include <algorithm>
+#include <vector>
+
 #ifndef WIN32
 #include <unistd.h>
 #else
@@ -618,6 +621,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nam
 
   /* Process header */
   total_time = last_record_time - first_record_time;
+
   trace_header = ( char * ) malloc( sizeof( char ) * MAX_TRACE_HEADER );
   if ( !is_zip )
   {
@@ -1156,7 +1160,22 @@ void KTraceCutter::execute( char *trace_in,
       //    if ( !originalTime )
       //      time_1 = time_1 - time_min;
 
-          last_record_time = time_1;
+          //last_record_time = time_1;
+
+          if ( !first_time_caught )
+          {
+            first_record_time = time_1;
+            first_time_caught = true;
+          }
+          else
+          {
+            if ( time_1 < first_record_time )
+              first_record_time = time_1;
+          }
+
+          if ( time_1 > last_record_time )
+             last_record_time = time_1;
+
           current_size += fprintf( outfile, "%d:%d:%d:%d:%d:%lld:%s\n",
                                    id, cpu, appl, task, thread, time_1, line );
 
@@ -1214,7 +1233,28 @@ void KTraceCutter::execute( char *trace_in,
               time_4 = time_4 - time_min;
             }
 */
-            last_record_time = time_3;
+            // last_record_time = time_3;
+            vector< unsigned long long > times;
+
+            times.push_back( time_1 );
+            times.push_back( time_2 );
+            times.push_back( time_3 );
+            times.push_back( time_4 );
+            sort( times.begin(), times.end() );
+
+            if ( !first_time_caught )
+            {
+              first_record_time = times[0];
+              first_time_caught = true;
+            }
+            else
+            {
+              if ( times[0] < first_record_time )
+                first_record_time = times[0];
+            }
+
+            if ( times[3] > last_record_time )
+              last_record_time = times[3];
 
             current_size += fprintf( outfile, "%d:%d:%d:%d:%d:%lld:%lld:%d:%d:%d:%d:%lld:%lld:%d:%d\n",
                                      id,
@@ -1249,7 +1289,23 @@ void KTraceCutter::execute( char *trace_in,
           }
   */
           if ( time_1 >= time_min && time_1 <= time_max )
+          {
+            if ( !first_time_caught )
+            {
+              first_record_time = time_1;
+              first_time_caught = true;
+            }
+            else
+            {
+              if ( time_1 < first_record_time )
+                first_record_time = time_1;
+            }
+
+            if ( time_1 > last_record_time )
+              last_record_time = time_1;
+
             current_size += fprintf( outfile, "%d:%d:%d:%d:%d:%lld:%s\n", id, cpu, appl, task, thread, time_1, line );
+          }
         }
 
         break;
@@ -1271,8 +1327,9 @@ void KTraceCutter::execute( char *trace_in,
       break;
   }
 
-  if ( !originalTime )
-    appendLastZerosToUnclosedEvents( total_time );
+  if ( last_record_time > time_max )
+  //if ( !originalTime )
+    appendLastZerosToUnclosedEvents( last_record_time );
   else
     appendLastZerosToUnclosedEvents( time_max );
 

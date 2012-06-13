@@ -357,7 +357,8 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
         else
         {
           state_names[0] = strdup( word_aux );
-
+//cout << "KTraceOptions::parse_filter_params->" << word_aux << "|" <<endl;
+//cout << "KTraceOptions::parse_filter_params->" << state_names[0] << "|" <<endl;
           if ( !onlyOneState )
           {
             for ( i = 1; i < MAXSTATES; i++ )
@@ -844,9 +845,15 @@ void KTraceOptions::saveXMLFilter( xmlTextWriterPtr &writer )
     string auxStates;
     get_state_names( auxStates );
     //rc = xmlTextWriterWriteElement( writer, BAD_CAST "states", BAD_CAST auxStates.c_str() );
-    rc = xmlTextWriterWriteFormatRaw( writer, "%s",BAD_CAST auxStates.c_str() );
+//cout << "KTraceOptions::saveXMLFilter->" << auxStates << "|" <<endl;
+//cout << "KTraceOptions::saveXMLFilter->" << auxStates.c_str() << "|" <<endl;
+    rc = xmlTextWriterWriteFormatRaw( writer, "%s\n",BAD_CAST auxStates.c_str() );
   }
+
+  //rc = xmlTextWriterSetIndent( writer, 0 );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "min_state_time", "%d", (int)get_min_state_time() );
+  //rc = xmlTextWriterSetIndent( writer, 1 );
+
   rc = xmlTextWriterEndElement( writer ); // states
 
 

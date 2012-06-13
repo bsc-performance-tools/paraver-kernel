@@ -42,7 +42,7 @@
 #define MAX_HEADER_SIZE 1048576
 #define MAX_APPL 2
 #define MAX_TASK 65536
-#define MAX_THREAD 10
+#define MAX_THREAD 16
 #define MAX_SELECTED_TASKS 30
 #define MAX_LINE_SIZE 8192
 /* sofware counters */
