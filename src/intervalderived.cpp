@@ -41,7 +41,10 @@ KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
   currentValue = 0.0;
 
   if ( displayList == NULL )
+  {
     displayList = &myDisplayList;
+    displayList->clear();
+  }
 
   function = ( SemanticDerived * ) window->getSemanticFunction( level );
 

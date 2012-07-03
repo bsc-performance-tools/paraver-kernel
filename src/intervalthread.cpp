@@ -38,7 +38,10 @@ KRecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
   info.callingInterval = this;
 
   if ( displayList == NULL )
+  {
     displayList = &myDisplayList;
+    displayList->clear();
+  }
 
   if( !notWindowInits )
     function = ( SemanticThread * ) window->getSemanticFunction( level );

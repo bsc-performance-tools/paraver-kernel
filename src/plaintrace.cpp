@@ -64,7 +64,7 @@ void PlainTrace::insert( MemoryBlocks *blocks )
   blocks->resetCountInserted();
 }
 
-TTime PlainTrace::finish( TTime headerTime )
+TTime PlainTrace::finish( TTime headerTime, Trace *whichTrace )
 {
   return headerTime;
 }

@@ -1054,11 +1054,10 @@ void KHistogram::calculate( TObjectOrder iRow,
     // Communication statistics
     vector<bool> filter;
     vector<TSemanticValue> values;
-
     RecordList::iterator itComm = data->rList->begin();
     while ( itComm != data->rList->end() &&
-            itComm->getTime() >= fromTime &&
-            itComm->getTime() <= toTime )
+            itComm->getTime() >= getBeginTime() &&
+            itComm->getTime() <= getEndTime() )
     {
       if ( !( itComm->getType() & COMM ) )
       {
@@ -1076,7 +1075,7 @@ void KHistogram::calculate( TObjectOrder iRow,
           if ( controlWindow->getLevel() >= WORKLOAD && controlWindow->getLevel() <= THREAD )
             column = controlWindow->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
           else
-            column = controlWindow->cpuObjectToWindowObject( data->comm->getCommPartnerObject() );
+            column = controlWindow->cpuObjectToWindowObject( data->comm->getCommPartnerObject() ) - 1;
           if ( getThreeDimensions() )
             commCube->addValue( data->plane, column, values );
           else

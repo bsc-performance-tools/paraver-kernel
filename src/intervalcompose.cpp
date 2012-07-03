@@ -42,7 +42,10 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
   currentValue = 0.0;
 
   if ( displayList == NULL )
+  {
     displayList = &myDisplayList;
+    displayList->clear();
+  }
 
   if( !notWindowInits )
     function = ( SemanticCompose * ) window->getSemanticFunction( level );
@@ -271,8 +274,19 @@ KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc 
   else
   {
     childIntervals[ 0 ]->calcPrev( displayList );
-    begin = childIntervals[ 0 ]->getBegin();
-    end = childIntervals[ 0 ]->getEnd();
+    if( begin != NULL && begin != beginRecord )
+      delete begin;
+    if( childIntervals[ 0 ]->getLevel() >= APPLICATION && childIntervals[ 0 ]->getLevel() <= THREAD )
+      begin = window->copyThreadIterator( childIntervals[ 0 ]->getBegin() );
+    else
+      begin = window->copyCPUIterator( childIntervals[ 0 ]->getBegin() );
+    if( end != NULL )
+      delete end;
+    if( childIntervals[ 0 ]->getLevel() >= APPLICATION && childIntervals[ 0 ]->getLevel() <= THREAD )
+      end = window->copyThreadIterator( childIntervals[ 0 ]->getEnd() );
+    else
+      end = window->copyCPUIterator(  childIntervals[ 0 ]->getEnd() );
+
     info.values.push_back( childIntervals[ 0 ]->getValue() );
     currentValue = function->execute( &info );
   }

@@ -34,6 +34,7 @@
 #include "paraverkerneltypes.h"
 
 class MemoryBlocks;
+class Trace;
 
 typedef struct {} TData;
 
@@ -81,7 +82,7 @@ class MemoryTrace
     {}
 
     virtual void insert( MemoryBlocks *blocks ) = 0;
-    virtual TTime finish( TTime headerTime ) = 0;
+    virtual TTime finish( TTime headerTime, Trace *whichTrace ) = 0;
     virtual MemoryTrace::iterator* begin() const = 0;
     virtual MemoryTrace::iterator* end() const = 0;
 

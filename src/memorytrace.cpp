@@ -29,6 +29,7 @@
 
 #include "memorytrace.h"
 #include <iostream>
+
 using namespace std;
 MemoryTrace::iterator::iterator()
 {}

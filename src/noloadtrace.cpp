@@ -51,7 +51,7 @@ void NoLoadTrace::insert( MemoryBlocks *blocks )
   blocks->resetCountInserted();
 }
 
-TTime NoLoadTrace::finish( TTime headerTime )
+TTime NoLoadTrace::finish( TTime headerTime, Trace *whichTrace )
 {
   return headerTime;
 }

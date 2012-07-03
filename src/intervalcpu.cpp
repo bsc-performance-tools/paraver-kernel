@@ -70,7 +70,10 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
   currentValue = 0.0;
 
   if ( displayList == NULL )
+  {
     displayList = &myDisplayList;
+    displayList->clear();
+  }
 
   function = ( SemanticCPU * ) window->getSemanticFunction( level );
   if( functionThread != NULL ) delete functionThread;
@@ -124,7 +127,8 @@ KRecordList *IntervalCPU::calcNext( KRecordList *displayList, bool initCalc )
     highInfo.values.push_back( 0.0 );
   else
   {
-    while( currentThread->getEndTime() <= begin->getTime() )
+    while( currentThread->getEndTime() <= begin->getTime() &&
+           currentThread->getBeginTime() < window->getTrace()->getEndTime() )
       currentThread->calcNext( NULL );
     highInfo.values.push_back( currentThread->getValue() );
   }
@@ -150,16 +154,16 @@ KRecordList *IntervalCPU::calcPrev( KRecordList *displayList, bool initCalc )
   begin = getPrevRecord( begin, displayList );
   highInfo.callingInterval = this;
   Interval *currentThread = intervalCompose[ threadOrderOnCPU[ begin->getThread() ] ];
-    while( currentThread->getBeginTime() > begin->getTime() )
-      currentThread->calcPrev( NULL );
-    highInfo.values.push_back( currentThread->getValue() );
+  while( currentThread->getBeginTime() >= begin->getTime() &&
+         currentThread->getEndTime() > 0.0 )
+    currentThread->calcPrev( NULL );
+  highInfo.values.push_back( currentThread->getValue() );
   currentValue = function->execute( &highInfo );
 
   if ( initCalc )
   {
     *end = *begin;
   }
-
 
   return displayList;
 }
@@ -201,6 +205,7 @@ MemoryTrace::iterator *IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
 MemoryTrace::iterator *IntervalCPU::getPrevRecord( MemoryTrace::iterator *it,
     KRecordList *displayList )
 {
+  TThreadOrder threadOrder = it->getThread();
   --( *it );
   while ( !it->isNull() )
   {
@@ -214,6 +219,9 @@ MemoryTrace::iterator *IntervalCPU::getPrevRecord( MemoryTrace::iterator *it,
       if ( functionThread->validRecord( it ) )
         break;
     }
+    if( !( it->getType() & RSEND || it->getType() & RRECV || it->getType() & COMM )
+        && it->getThread() != threadOrder )
+      break;
     --( *it );
   }
 

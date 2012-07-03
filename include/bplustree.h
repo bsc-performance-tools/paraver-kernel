@@ -269,7 +269,7 @@ namespace bplustree
                  const PRV_UINT32 uthresh  = UNLOAD_RECORDS_THRESHOLD,
                  const PRV_UINT32 upercent = UNLOAD_PERCENT );
       ~BPlusTree();
-      virtual TTime finish( TTime headerTime );
+      virtual TTime finish( TTime headerTime, Trace *whichTrace );
       void insert( MemoryBlocks *blocks );
 
       inline  BPlusNode *getIni()

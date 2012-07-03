@@ -158,7 +158,7 @@ namespace NoLoad
       virtual ~NoLoadTrace();
 
       virtual void insert( MemoryBlocks *blocks );
-      virtual TTime finish( TTime headerTime );
+      virtual TTime finish( TTime headerTime, Trace *whichTrace );
       virtual MemoryTrace::iterator* begin() const;
       virtual MemoryTrace::iterator* end() const;
 

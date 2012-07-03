@@ -33,6 +33,7 @@
 
 #include "bplustree.h"
 #include "bplustreeexception.h"
+#include "trace.h"
 
 using std::vector;
 using std::string;
@@ -835,7 +836,7 @@ BPlusTree::~BPlusTree()
 }
 
 
-TTime BPlusTree::finish( TTime headerTime )
+TTime BPlusTree::finish( TTime headerTime, Trace *whichTrace )
 {
   TRecord tmpBegin, tmpEnd;
 
@@ -871,6 +872,13 @@ TTime BPlusTree::finish( TTime headerTime )
   {
     tmpBegin.CPU = i + 1;
     tmpEnd.CPU = i + 1;
+    TNodeOrder tmpNode;
+    TCPUOrder tmpCPU;
+    whichTrace->getCPULocation( i + 1, tmpNode, tmpCPU );
+    std::vector<TThreadOrder> tmpThreads;
+    whichTrace->getThreadsPerNode( tmpNode, tmpThreads );
+    tmpBegin.thread = tmpThreads[ 0 ];
+    tmpEnd.thread = tmpThreads[ 0 ];
     tmpBegin.next = unloadedTrace->getCPUBegin( i );
     tmpBegin.prev = NULL;
     tmpEnd.next = NULL;

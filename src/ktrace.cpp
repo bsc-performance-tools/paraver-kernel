@@ -621,7 +621,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     events.insert( *it );
 
 // End reading the body
-  traceEndTime = memTrace->finish( traceEndTime );
+  traceEndTime = memTrace->finish( traceEndTime, this );
 
 //  cout << traceEndTime << endl;
 
