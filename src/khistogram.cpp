@@ -1014,6 +1014,7 @@ void KHistogram::calculate( TObjectOrder iRow,
                             TRecordTime fromTime, TRecordTime toTime,
                             PRV_UINT16 winIndex, CalculateData *data, bool& needInit )
 {
+  static bool calcSemanticStats = true;
   TObjectOrder childFromRow;
   TObjectOrder childToRow;
   TRecordTime childFromTime;
@@ -1027,8 +1028,10 @@ void KHistogram::calculate( TObjectOrder iRow,
     {
       if ( controlWindow->getValue( iRow ) != 0 )
         controlOutOfLimits = true;
-      return;
+      calcSemanticStats = false;
     }
+    else
+      calcSemanticStats = true;
     data->rList = controlWindow->getRecordList( iRow );
   }
   if ( getThreeDimensions() && currentWindow == xtraControlWindow )
@@ -1059,7 +1062,9 @@ void KHistogram::calculate( TObjectOrder iRow,
             itComm->getTime() >= getBeginTime() &&
             itComm->getTime() <= getEndTime() )
     {
-      if ( !( itComm->getType() & COMM ) )
+      if ( !( itComm->getType() & COMM ) ||
+           !( itComm->getTime() >= fromTime && itComm->getTime() <= toTime )
+         )
       {
         ++itComm;
         continue;
@@ -1088,6 +1093,9 @@ void KHistogram::calculate( TObjectOrder iRow,
     }
 
     data->rList->erase( data->rList->begin(), itComm );
+
+    if( !calcSemanticStats )
+      return;
 
     // Semantic statistics
     if ( inclusive )
