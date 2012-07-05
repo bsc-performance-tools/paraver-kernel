@@ -128,7 +128,7 @@ namespace NoLoad
         PRV_INT16 numUseds;
         PRV_INT64 endOffset;
         TThreadOrder thread;
-        vector<TRecord> records;
+        std::vector<TRecord> records;
       };
 
       const ResourceModel& resourceModel;
@@ -137,13 +137,13 @@ namespace NoLoad
       TraceStream *file;
       PRV_INT64 endFileOffset;
 
-      vector<Index<PRV_INT64> > traceIndex;
+      std::vector<Index<PRV_INT64> > traceIndex;
       std::map<PRV_INT64, fileLineData *> blocks;
-      vector<PRV_INT64> beginThread;
-      vector<TRecord> emptyBeginRecords;
-      vector<TRecord> emptyEndRecords;
+      std::vector<PRV_INT64> beginThread;
+      std::vector<TRecord> emptyBeginRecords;
+      std::vector<TRecord> emptyEndRecords;
 
-      vector<TCommInfo *> communications;
+      std::vector<TCommInfo *> communications;
       TCommID currentComm;
 
       fileLineData *lastData;

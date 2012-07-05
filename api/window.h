@@ -403,7 +403,7 @@ class Window
     virtual void setDrawFunctionLineColor( bool newValue )
     {}
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
-                                          vector<std::string>& onVector ) const
+                                          std::vector<std::string>& onVector ) const
     {}
 
     virtual bool emptyPrevZoom() const
@@ -428,17 +428,17 @@ class Window
     {}
     virtual void prevZoom()
     {}
-    virtual void setZoomFirstDimension( pair<TTime, TTime> &dim )
+    virtual void setZoomFirstDimension( std::pair<TTime, TTime> &dim )
     {}
-    virtual void setZoomSecondDimension( pair<TObjectOrder, TObjectOrder>  &dim )
+    virtual void setZoomSecondDimension( std::pair<TObjectOrder, TObjectOrder>  &dim )
     {}
-    virtual pair<TTime, TTime> getZoomFirstDimension() const
+    virtual std::pair<TTime, TTime> getZoomFirstDimension() const
     {
-      return pair<TTime, TTime>();
+      return std::pair<TTime, TTime>();
     }
-    virtual pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const
+    virtual std::pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const
     {
-      return pair<TObjectOrder, TObjectOrder>();
+      return std::pair<TObjectOrder, TObjectOrder>();
     }
 
     virtual void addToSyncGroup( unsigned int whichGroup )
@@ -459,27 +459,27 @@ class Window
     {
       return NULL;
     }
-    virtual void setSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
+    virtual void setSelectedRows( TWindowLevel onLevel, std::vector< bool > &selected )
     {}
-    virtual void setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selection )
+    virtual void setSelectedRows( TWindowLevel onLevel, std::vector< TObjectOrder > &selection )
     {}
-    virtual void getSelectedRows( TWindowLevel onLevel, vector< bool > &selected, bool lookUpLevels = false )
+    virtual void getSelectedRows( TWindowLevel onLevel, std::vector< bool > &selected, bool lookUpLevels = false )
     {}
-    virtual void getSelectedRows( TWindowLevel onLevel, vector< bool > &selected,
+    virtual void getSelectedRows( TWindowLevel onLevel, std::vector< bool > &selected,
                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels = false )
     {}
-    virtual void getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selection, bool lookUpLevels = false )
+    virtual void getSelectedRows( TWindowLevel onLevel, std::vector< TObjectOrder > &selection, bool lookUpLevels = false )
     {}
     virtual void getSelectedRows( TWindowLevel onLevel,
-                                  vector< TObjectOrder > &selection,
+                                  std::vector< TObjectOrder > &selection,
                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels = false )
     {}
 
-    virtual void getGroupLabels( PRV_UINT32 whichGroup, vector<std::string>& onVector ) const = 0;
+    virtual void getGroupLabels( PRV_UINT32 whichGroup, std::vector<std::string>& onVector ) const = 0;
     virtual bool getParametersOfFunction( std::string whichFunction,
                                           PRV_UINT32 &numParameters,
-                                          vector<std::string> &nameParameters,
-                                          vector< vector< double > >&defaultParameters ) const = 0;
+                                          std::vector<std::string> &nameParameters,
+                                          std::vector< std::vector< double > >&defaultParameters ) const = 0;
 
     // CFG4D
     virtual void setCFG4DEnabled( bool enabled )
@@ -534,12 +534,12 @@ class Window
       return std::map< std::string, std::string >();
     }
 
-    virtual const vector< std::string > getCFG4DFullTagList()
+    virtual const std::vector< std::string > getCFG4DFullTagList()
     {
-      return vector< std::string >();
+      return std::vector< std::string >();
     }
 
-    typedef pair< pair< std::string, std::string >, PRV_UINT32 > TParamAliasKey;
+    typedef std::pair< std::pair< std::string, std::string >, PRV_UINT32 > TParamAliasKey;
     typedef std::map< TParamAliasKey, std::string > TParamAlias;
 
     virtual void setCFG4DParamAlias( const TParamAlias &whichParamAlias )
@@ -551,9 +551,9 @@ class Window
                                      std::string paramAlias )
     {}
 
-    virtual const vector< TParamAliasKey > getCFG4DCurrentSelectedFullParamList()
+    virtual const std::vector< TParamAliasKey > getCFG4DCurrentSelectedFullParamList()
     {
-      return vector< TParamAliasKey >();
+      return std::vector< TParamAliasKey >();
     }
 
     virtual const TParamAlias getCFG4DParamAliasList() const
@@ -590,67 +590,67 @@ class Window
       return std::string( "" );
     }
 
-    virtual vector<Window::TParamAliasKey > getCFG4DParamKeysBySemanticLevel( std::string whichSemanticLevel,
-                                                                              const vector< Window::TParamAliasKey > &whichParamAlias = vector<Window::TParamAliasKey >() ) const
+    virtual std::vector<Window::TParamAliasKey > getCFG4DParamKeysBySemanticLevel( std::string whichSemanticLevel,
+				                                                                   const std::vector< Window::TParamAliasKey > &whichParamAlias = std::vector<Window::TParamAliasKey >() ) const
     {
-      return vector<Window::TParamAliasKey >();
+      return std::vector<Window::TParamAliasKey >();
     }
 
 #ifdef WIN32
-    virtual void computeSemanticParallel( vector< TObjectOrder >& selectedSet,
-                                          vector< bool >& selected,
+    virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
+                                          std::vector< bool >& selected,
                                           TTime timeStep,
                                           PRV_INT32 timePos,
                                           PRV_INT32 objectAxisPos,
-                                          vector< PRV_INT32 >& objectPosList,
+                                          std::vector< PRV_INT32 >& objectPosList,
                                           TObjectOrder maxObj,
                                           bool& drawCaution,                      // I/O
-                                          vector< vector< TSemanticValue > >& valuesToDraw, // I/O
-                                          vector< hash_set< PRV_INT32 > >& eventsToDraw,    // I/O
-                                          vector< hash_set< commCoord > >& commsToDraw )    // I/O
+                                          std::vector< std::vector< TSemanticValue > >& valuesToDraw, // I/O
+                                          std::vector< hash_set< PRV_INT32 > >& eventsToDraw,    // I/O
+                                          std::vector< hash_set< commCoord > >& commsToDraw )    // I/O
 #else
-    virtual void computeSemanticParallel( vector< TObjectOrder >& selectedSet,
-                                          vector< bool >& selected,
+    virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
+                                          std::vector< bool >& selected,
                                           TTime timeStep,
                                           PRV_INT32 timePos,
                                           PRV_INT32 objectAxisPos,
-                                          vector< PRV_INT32 >& objectPosList,
+                                          std::vector< PRV_INT32 >& objectPosList,
                                           TObjectOrder maxObj,
                                           bool& drawCaution,                                  // I/O
-                                          vector< vector< TSemanticValue > >& valuesToDraw,             // I/O
-                                          vector< hash_set< PRV_INT32 > >& eventsToDraw,                // I/O
-                                          vector< hash_set< commCoord, hashCommCoord > >& commsToDraw ) // I/O
+                                          std::vector< std::vector< TSemanticValue > >& valuesToDraw,             // I/O
+                                          std::vector< hash_set< PRV_INT32 > >& eventsToDraw,                // I/O
+                                          std::vector< hash_set< commCoord, hashCommCoord > >& commsToDraw ) // I/O
 #endif
     {}
 
 #ifdef WIN32
     virtual void computeSemanticRowParallel( TObjectOrder firstRow,
                                              TObjectOrder lastRow,
-                                             vector< TObjectOrder >& selectedSet,
-                                             vector< bool >& selected,
+                                             std::vector< TObjectOrder >& selectedSet,
+                                             std::vector< bool >& selected,
                                              TTime timeStep,
                                              PRV_INT32 timePos,
                                              PRV_INT32 objectAxisPos,
-                                             vector< PRV_INT32 >& objectPosList,
+                                             std::vector< PRV_INT32 >& objectPosList,
                                              int& drawCaution,                      // I/O
                                              TSemanticValue &rowComputedMaxY,
                                              TSemanticValue &rowComputedMinY,
-                                             vector< TSemanticValue >& valuesToDraw, // I/O
+                                             std::vector< TSemanticValue >& valuesToDraw, // I/O
                                              hash_set< PRV_INT32 >& eventsToDraw,    // I/O
                                              hash_set< commCoord >& commsToDraw )    // I/O
 #else
     virtual void computeSemanticRowParallel( TObjectOrder firstRow,
                                              TObjectOrder lastRow,
-                                             vector< TObjectOrder >& selectedSet,
-                                             vector< bool >& selected,
+                                             std::vector< TObjectOrder >& selectedSet,
+                                             std::vector< bool >& selected,
                                              TTime timeStep,
                                              PRV_INT32 timePos,
                                              PRV_INT32 objectAxisPos,
-                                             vector< PRV_INT32 >& objectPosList,
+                                             std::vector< PRV_INT32 >& objectPosList,
                                              int& drawCaution,                                  // I/O
                                              TSemanticValue &rowComputedMaxY,
                                              TSemanticValue &rowComputedMinY,
-                                             vector< TSemanticValue >& valuesToDraw,             // I/O
+                                             std::vector< TSemanticValue >& valuesToDraw,             // I/O
                                              hash_set< PRV_INT32 >& eventsToDraw,                // I/O
                                              hash_set< commCoord, hashCommCoord >& commsToDraw ) // I/O
 #endif
@@ -663,8 +663,8 @@ class Window
                                              TTime step,
                                              PRV_INT32 timePos,
                                              PRV_INT32 objectAxisPos,
-                                             vector< bool >& selected,
-                                             vector< PRV_INT32 >& objectPosList,
+                                             std::vector< bool >& selected,
+                                             std::vector< PRV_INT32 >& objectPosList,
                                              hash_set< PRV_INT32 >& eventsToDraw, // I/O
                                              hash_set< commCoord >& commsToDraw ) // I/O
 #else
@@ -674,8 +674,8 @@ class Window
                                              TTime step,
                                              PRV_INT32 timePos,
                                              PRV_INT32 objectAxisPos,
-                                             vector< bool >& selected,
-                                             vector< PRV_INT32 >& objectPosList,
+                                             std::vector< bool >& selected,
+                                             std::vector< PRV_INT32 >& objectPosList,
                                              hash_set< PRV_INT32 >& eventsToDraw,                // I/O
                                              hash_set< commCoord, hashCommCoord >& commsToDraw ) // I/O
 #endif
@@ -771,7 +771,7 @@ class WindowProxy: public Window
     virtual TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime );
     virtual SemanticInfoType getSemanticInfoType() const;
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
-                                          vector<std::string>& onVector ) const;
+                                          std::vector<std::string>& onVector ) const;
 
     virtual Window *getConcrete() const;
     virtual void setName( const std::string& whichName );
@@ -830,10 +830,10 @@ class WindowProxy: public Window
     virtual void addZoom( TObjectOrder beginObject, TObjectOrder endObject );
     virtual void nextZoom();
     virtual void prevZoom();
-    virtual void setZoomFirstDimension( pair<TTime, TTime> &dim );
-    virtual void setZoomSecondDimension( pair<TObjectOrder, TObjectOrder>  &dim );
-    virtual pair<TTime, TTime> getZoomFirstDimension() const;
-    virtual pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const;
+    virtual void setZoomFirstDimension( std::pair<TTime, TTime> &dim );
+    virtual void setZoomSecondDimension( std::pair<TObjectOrder, TObjectOrder>  &dim );
+    virtual std::pair<TTime, TTime> getZoomFirstDimension() const;
+    virtual std::pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const;
 
     virtual void addToSyncGroup( unsigned int whichGroup );
     virtual void removeFromSync();
@@ -841,21 +841,21 @@ class WindowProxy: public Window
     virtual unsigned int getSyncGroup() const;
 
     virtual SelectionManagement< TObjectOrder, TWindowLevel > *getSelectedRows();
-    virtual void setSelectedRows( TWindowLevel onLevel, vector< bool > &selected );
-    virtual void setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected );
-    virtual void getSelectedRows( TWindowLevel onLevel, vector< bool > &selected, bool lookUpLevels = false );
-    virtual void getSelectedRows( TWindowLevel onLevel, vector< bool > &selected,
+    virtual void setSelectedRows( TWindowLevel onLevel, std::vector< bool > &selected );
+    virtual void setSelectedRows( TWindowLevel onLevel, std::vector< TObjectOrder > &selected );
+    virtual void getSelectedRows( TWindowLevel onLevel, std::vector< bool > &selected, bool lookUpLevels = false );
+    virtual void getSelectedRows( TWindowLevel onLevel, std::vector< bool > &selected,
                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels = false );
-    virtual void getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected, bool lookUpLevels = false );
-    virtual void getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected,
+    virtual void getSelectedRows( TWindowLevel onLevel, std::vector< TObjectOrder > &selected, bool lookUpLevels = false );
+    virtual void getSelectedRows( TWindowLevel onLevel, std::vector< TObjectOrder > &selected,
                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels = false );
 //    virtual TObjectOrder getFirstSelectedRow();
 //    virtual TObjectOrder getLastSelectedRow();
-    virtual void getGroupLabels( PRV_UINT32 whichGroup, vector<std::string>& onVector ) const;
+    virtual void getGroupLabels( PRV_UINT32 whichGroup, std::vector<std::string>& onVector ) const;
     virtual bool getParametersOfFunction( std::string whichFunction,
                                           PRV_UINT32 &numParameters,
-                                          vector<std::string> &nameParameters,
-                                          vector< vector< double > >&defaultParameters ) const;
+                                          std::vector<std::string> &nameParameters,
+                                          std::vector< std::vector< double > >&defaultParameters ) const;
 
     // CFG4D
     virtual void setCFG4DEnabled( bool enabled );
@@ -880,11 +880,11 @@ class WindowProxy: public Window
     virtual void setCFG4DAliasList( const std::map< std::string, std::string >& aliasList );
     virtual const std::map< std::string, std::string > getCFG4DAliasList() const;
 
-    virtual const vector< std::string > getCFG4DFullTagList();
+    virtual const std::vector< std::string > getCFG4DFullTagList();
 
     // Returns the keys ( semantic level, function, num parameter ) of the parameters
     //   of the current selected functions in the visible levels.
-    virtual const vector< TParamAliasKey > getCFG4DCurrentSelectedFullParamList();
+    virtual const std::vector< TParamAliasKey > getCFG4DCurrentSelectedFullParamList();
     virtual void setCFG4DParamAlias( const TParamAlias &whichParamAlias );
     virtual void setCFG4DParamAlias( std::string semanticLevel,
                                      std::string function,
@@ -899,9 +899,9 @@ class WindowProxy: public Window
     virtual Window::TParamAliasKey getCFG4DParamAliasKey( const TParamAlias::iterator it ) const;
     virtual const std::string getCFG4DParamAlias( const TParamAlias::iterator &it ) const;
     virtual const std::string getCFG4DParamAlias( const TParamAliasKey &pk ) const;
-    virtual vector< Window::TParamAliasKey > getCFG4DParamKeysBySemanticLevel(
+    virtual std::vector< Window::TParamAliasKey > getCFG4DParamKeysBySemanticLevel(
                     std::string whichSemanticLevel,
-                    const vector< Window::TParamAliasKey > &whichParamAlias = vector<Window::TParamAliasKey >()  ) const;
+                    const std::vector< Window::TParamAliasKey > &whichParamAlias = std::vector<Window::TParamAliasKey >()  ) const;
     virtual const Window::TParamAliasKey buildCFG4DParamAliasKey(
                                                 const std::string &semanticLevel,
                                                 const std::string &function,
@@ -909,30 +909,30 @@ class WindowProxy: public Window
 
 
 #ifdef WIN32
-    virtual void computeSemanticParallel( vector< TObjectOrder >& selectedSet,
-                                          vector< bool >& selected,
+    virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
+                                          std::vector< bool >& selected,
                                           TTime timeStep,
                                           PRV_INT32 timePos,
                                           PRV_INT32 objectAxisPos,
-                                          vector< PRV_INT32 >& objectPosList,
+                                          std::vector< PRV_INT32 >& objectPosList,
                                           TObjectOrder maxObj,
                                           bool& drawCaution,                      // O
-                                          vector< vector< TSemanticValue > >& valuesToDraw, // O
-                                          vector< hash_set< PRV_INT32 > >& eventsToDraw,    // O
-                                          vector< hash_set< commCoord > >& commsToDraw );   // O
+                                          std::vector< std::vector< TSemanticValue > >& valuesToDraw, // O
+                                          std::vector< hash_set< PRV_INT32 > >& eventsToDraw,    // O
+                                          std::vector< hash_set< commCoord > >& commsToDraw );   // O
 
     virtual void computeSemanticRowParallel( TObjectOrder firstRow,
                                              TObjectOrder lastRow,
-                                             vector< TObjectOrder >& selectedSet,
-                                             vector< bool >& selected,
+                                             std::vector< TObjectOrder >& selectedSet,
+                                             std::vector< bool >& selected,
                                              TTime timeStep,
                                              PRV_INT32 timePos,
                                              PRV_INT32 objectAxisPos,
-                                             vector< PRV_INT32 >& objectPosList,
+                                             std::vector< PRV_INT32 >& objectPosList,
                                              int& drawCaution,  // O
                                              TSemanticValue &rowComputedMaxY,
                                              TSemanticValue &rowComputedMinY,
-                                             vector< TSemanticValue >& valuesToDraw, // O
+                                             std::vector< TSemanticValue >& valuesToDraw, // O
                                              hash_set< PRV_INT32 >& eventsToDraw,    // O
                                              hash_set< commCoord >& commsToDraw );   // O
 
@@ -942,37 +942,37 @@ class WindowProxy: public Window
                                              TTime step,
                                              PRV_INT32 timePos,
                                              PRV_INT32 objectAxisPos,
-                                             vector< bool >& selected,
-                                             vector< PRV_INT32 >& objectPosList,
+                                             std::vector< bool >& selected,
+                                             std::vector< PRV_INT32 >& objectPosList,
                                              hash_set< PRV_INT32 >& eventsToDraw,  // I/O
                                              hash_set< commCoord >& commsToDraw ); // I/O
 #else
-    virtual void computeSemanticParallel( vector< TObjectOrder >& selectedSet,
-                                          vector< bool >& selected,
+    virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
+                                          std::vector< bool >& selected,
                                           TTime timeStep,
                                           PRV_INT32 timePos,
                                           PRV_INT32 objectAxisPos,
-                                          vector< PRV_INT32 >& objectPosList,
+                                          std::vector< PRV_INT32 >& objectPosList,
                                           TObjectOrder maxObj,
                                           bool& drawCaution,                                   // I/O
-                                          vector< vector< TSemanticValue > >& valuesToDraw,              // I/O
-                                          vector< hash_set< PRV_INT32 > >& eventsToDraw,                 // I/O
-                                          vector< hash_set< commCoord, hashCommCoord > >& commsToDraw ); // I/O
+                                          std::vector< std::vector< TSemanticValue > >& valuesToDraw,              // I/O
+                                          std::vector< hash_set< PRV_INT32 > >& eventsToDraw,                 // I/O
+                                          std::vector< hash_set< commCoord, hashCommCoord > >& commsToDraw ); // I/O
 
 #pragma omp task shared(firstRow,lastRow,selectedSet,selected,timeStep,timePos,objectAxisPos, objectPosList, \
                         drawCaution, rowComputedMaxY, rowComputedMinY,valuesToDraw,eventsToDraw,commsToDraw)
     virtual void computeSemanticRowParallel( TObjectOrder firstRow,
                                              TObjectOrder lastRow,
-                                             vector< TObjectOrder >& selectedSet,
-                                             vector< bool >& selected,
+                                             std::vector< TObjectOrder >& selectedSet,
+                                             std::vector< bool >& selected,
                                              TTime timeStep,
                                              PRV_INT32 timePos,
                                              PRV_INT32 objectAxisPos,
-                                             vector< PRV_INT32 >& objectPosList,
+                                             std::vector< PRV_INT32 >& objectPosList,
                                              int& drawCaution,                                   // I/O
                                              TSemanticValue &rowComputedMaxY,
                                              TSemanticValue &rowComputedMinY,
-                                             vector< TSemanticValue >& valuesToDraw,              // I/O
+                                             std::vector< TSemanticValue >& valuesToDraw,              // I/O
                                              hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
                                              hash_set< commCoord, hashCommCoord >& commsToDraw ); // I/O
 
@@ -982,8 +982,8 @@ class WindowProxy: public Window
                                              TTime step,
                                              PRV_INT32 timePos,
                                              PRV_INT32 objectAxisPos,
-                                             vector< bool >& selected,
-                                             vector< PRV_INT32 >& objectPosList,
+                                             std::vector< bool >& selected,
+                                             std::vector< PRV_INT32 >& objectPosList,
                                              hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
                                              hash_set< commCoord, hashCommCoord >& commsToDraw ); // I/O
 #endif // WIN32
@@ -1010,7 +1010,7 @@ class WindowProxy: public Window
     TSemanticValue computedMaxY;
     TSemanticValue computedMinY;
 
-    vector<RecordList *> myLists;
+    std::vector<RecordList *> myLists;
 
     // Must store the associated proxies
     Window *parent1;
@@ -1063,7 +1063,7 @@ class WindowProxy: public Window
 
     void init();
 
-    void getAllLevelsSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected );
+    void getAllLevelsSelectedRows( TWindowLevel onLevel, std::vector< TObjectOrder > &selected );
 
     friend Window *Window::create( KernelConnection *, Trace * );
     friend Window *Window::create( KernelConnection * );
