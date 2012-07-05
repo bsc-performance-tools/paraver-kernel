@@ -1088,7 +1088,7 @@ void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
   // Backward search filling vector of iterators.
   while ( ( current != NULL ) && ( filled < numCPUs ) )
   {
-    if ( listIter[ current->CPU ] == NULL )
+    if ( listIter[ current->CPU - 1 ] == NULL )
     {
       listIter[ current->CPU - 1 ] = new BPlusTree::CPUIterator( current );
       ++filled;

@@ -390,7 +390,7 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
       myTrace->getRecordByTimeCPU( recordsByTimeCPU, initialTime );
     else
     {
-      for( TCPUOrder i = 0; i < myTrace->totalCPUs(); i++ )
+      for( TCPUOrder i = 0; i < myTrace->totalCPUs(); ++i )
       {
         if( recordsByTimeCPU[ i ] != NULL )
           delete recordsByTimeCPU[ i ];
@@ -402,7 +402,7 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
     myTrace->getRecordByTimeThread( recordsByTimeThread, initialTime );
   else
   {
-    for( TThreadOrder i = 0; i < myTrace->totalThreads(); i++ )
+    for( TThreadOrder i = 0; i < myTrace->totalThreads(); ++i )
     {
       if( recordsByTimeThread[ i ] != NULL )
         delete recordsByTimeThread[ i ];
