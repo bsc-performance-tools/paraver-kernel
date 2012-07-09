@@ -168,7 +168,7 @@ ProcessModel::ProcessModel( istringstream& headerInfo )
 
       istringstream sstreamNumberNode( stringNumberNode );
 
-      if ( !( sstreamNumberNode >> numberNode ) )
+      if ( !( sstreamNumberNode >> numberNode ) || numberNode == 0 )
       {
         throw TraceHeaderException( TraceHeaderException::invalidNodeNumber,
                                     stringNumberNode.c_str() );
