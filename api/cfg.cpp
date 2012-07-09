@@ -1810,8 +1810,8 @@ void writeCPU( ofstream& cfgFile,
   vector<bool> selectedSet;
 
   ( *it )->getSelectedRows( CPU, selectedSet,
-                            ( *it )->getTrace()->getFirstCPU( whichNode ),
-                            ( *it )->getTrace()->getLastCPU( whichNode ) );
+                            ( *it )->getTrace()->getFirstCPU( whichNode ) - 1,
+                            ( *it )->getTrace()->getLastCPU( whichNode ) - 1 );
   cfgFile << OLDCFG_TAG_WNDW_OBJECT << " cpu { " << whichNode << ", " << selectedSet.size() << ", { ";
   genericWriteObjects( cfgFile, selectedSet, ( *it )->getLevel() == CPU );
   cfgFile << " } }" << endl;
