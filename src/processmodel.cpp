@@ -179,7 +179,7 @@ ProcessModel::ProcessModel( istringstream& headerInfo )
       {
         if( globalThreads < std::numeric_limits<TThreadOrder>::max() )
         {
-          applications[ countAppl ].tasks[ countTask ].threads.push_back( ProcessModelThread( globalThreads, numberNode - 1 ) );
+          applications[ countAppl ].tasks[ countTask ].threads.push_back( ProcessModelThread( globalThreads, numberNode ) );
           threads.push_back( ThreadLocation() );
           threads[ globalThreads ].appl = countAppl;
           threads[ globalThreads ].task = countTask;
