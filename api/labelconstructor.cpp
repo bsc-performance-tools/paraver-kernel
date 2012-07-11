@@ -84,7 +84,7 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
     TTaskOrder task;
     TThreadOrder thread;
     if( globalOrder >= whichTrace->totalThreads() )
-      label << "Not valid thread: " << globalOrder;
+      label << "Not valid thread: " << globalOrder + 1;
     else
     {
       whichTrace->getThreadLocation( globalOrder, appl, task, thread );
@@ -99,7 +99,7 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
     TApplOrder appl;
     TTaskOrder task;
     if( globalOrder >= whichTrace->totalTasks() )
-      label << "Not valid task: " << globalOrder;
+      label << "Not valid task: " << globalOrder + 1;
     else
     {
       whichTrace->getTaskLocation( globalOrder, appl, task );
@@ -112,7 +112,7 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
   else if ( level == APPLICATION )
   {
     if( globalOrder >= whichTrace->totalApplications() )
-      label << "Not valid application: " << globalOrder;
+      label << "Not valid application: " << globalOrder + 1;
     else
     {
       if ( showLevelTag )
@@ -140,7 +140,7 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
       TNodeOrder node;
       TCPUOrder cpu;
       if( globalOrder >= whichTrace->totalCPUs() )
-        label << "Not valid CPU: " << globalOrder;
+        label << "Not valid CPU: " << globalOrder + 1;
       else
       {
         whichTrace->getCPULocation( globalOrder, node, cpu );
@@ -154,7 +154,7 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
   else if ( level == NODE )
   {
     if( globalOrder >= whichTrace->totalNodes() )
-      label << "Not valid node: " << globalOrder;
+      label << "Not valid node: " << globalOrder + 1;
     else
     {
       if ( showLevelTag )
