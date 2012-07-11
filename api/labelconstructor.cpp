@@ -83,28 +83,43 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
     TApplOrder appl;
     TTaskOrder task;
     TThreadOrder thread;
-    whichTrace->getThreadLocation( globalOrder, appl, task, thread );
-    if ( showLevelTag )
-      label << LEVEL_THREAD << ' ' << appl + 1 << '.' << task + 1 << '.' << thread + 1;
+    if( globalOrder >= whichTrace->totalThreads() )
+      label << "Not valid thread: " << globalOrder;
     else
-      label << appl + 1 << '.' << task + 1 << '.' << thread + 1;
+    {
+      whichTrace->getThreadLocation( globalOrder, appl, task, thread );
+      if ( showLevelTag )
+        label << LEVEL_THREAD << ' ' << appl + 1 << '.' << task + 1 << '.' << thread + 1;
+      else
+        label << appl + 1 << '.' << task + 1 << '.' << thread + 1;
+    }
   }
   else if ( level == TASK )
   {
     TApplOrder appl;
     TTaskOrder task;
-    whichTrace->getTaskLocation( globalOrder, appl, task );
-    if ( showLevelTag )
-      label << LEVEL_TASK << ' ' << appl + 1 << '.' << task + 1;
+    if( globalOrder >= whichTrace->totalTasks() )
+      label << "Not valid task: " << globalOrder;
     else
-      label << appl + 1 << '.' << task + 1;
+    {
+      whichTrace->getTaskLocation( globalOrder, appl, task );
+      if ( showLevelTag )
+        label << LEVEL_TASK << ' ' << appl + 1 << '.' << task + 1;
+      else
+        label << appl + 1 << '.' << task + 1;
+    }
   }
   else if ( level == APPLICATION )
   {
-    if ( showLevelTag )
-      label << LEVEL_APPLICATION << ' ' << globalOrder + 1;
+    if( globalOrder >= whichTrace->totalApplications() )
+      label << "Not valid application: " << globalOrder;
     else
-      label << globalOrder + 1;
+    {
+      if ( showLevelTag )
+        label << LEVEL_APPLICATION << ' ' << globalOrder + 1;
+      else
+        label << globalOrder + 1;
+    }
   }
   else if ( level == WORKLOAD )
   {
@@ -124,19 +139,29 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
     {
       TNodeOrder node;
       TCPUOrder cpu;
-      whichTrace->getCPULocation( globalOrder, node, cpu );
-      if ( showLevelTag )
-        label << LEVEL_CPU << ' ' << node + 1 << '.' << cpu + 1;
+      if( globalOrder >= whichTrace->totalCPUs() )
+        label << "Not valid CPU: " << globalOrder;
       else
-        label << node + 1 << '.' << cpu + 1;
+      {
+        whichTrace->getCPULocation( globalOrder, node, cpu );
+        if ( showLevelTag )
+          label << LEVEL_CPU << ' ' << node + 1 << '.' << cpu + 1;
+        else
+          label << node + 1 << '.' << cpu + 1;
+      }
     }
   }
   else if ( level == NODE )
   {
-    if ( showLevelTag )
-      label << LEVEL_NODE << ' ' << globalOrder + 1;
+    if( globalOrder >= whichTrace->totalNodes() )
+      label << "Not valid node: " << globalOrder;
     else
-      label << globalOrder + 1;
+    {
+      if ( showLevelTag )
+        label << LEVEL_NODE << ' ' << globalOrder + 1;
+      else
+        label << globalOrder + 1;
+    }
   }
   else if ( level == SYSTEM )
   {
