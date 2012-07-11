@@ -200,7 +200,7 @@ class Window
     virtual void setMinimumY( TSemanticValue whichMin ) {}
     virtual TSemanticValue getMaximumY()
     {
-      return 17.0;
+      return 18.0;
     }
     virtual TSemanticValue getMinimumY()
     {

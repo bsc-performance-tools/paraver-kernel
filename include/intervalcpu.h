@@ -88,6 +88,8 @@ class IntervalCPU: public IntervalHigh
     std::map<TThreadOrder, TThreadOrder> threadOrderOnCPU;
 
   private:
+    bool emptyCPU;
+
     virtual MemoryTrace::iterator *getNextRecord( MemoryTrace::iterator *it,
         KRecordList *displayList );
     virtual MemoryTrace::iterator *getPrevRecord( MemoryTrace::iterator *it,

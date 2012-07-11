@@ -40,25 +40,33 @@ IntervalCPU::IntervalCPU( KSingleWindow *whichWindow, TWindowLevel whichLevel,
   function = NULL;
   functionThread = NULL;
   functionComposeThread = NULL;
+  emptyCPU = false;
 
   TNodeOrder tmpNode;
   TCPUOrder tmpCPU;
   window->getTrace()->getCPULocation( whichOrder, tmpNode, tmpCPU );
   std::vector<TThreadOrder> tmpThreads;
   window->getTrace()->getThreadsPerNode( tmpNode, tmpThreads );
-  int i = 0;
-  for( std::vector<TThreadOrder>::iterator it = tmpThreads.begin(); it != tmpThreads.end(); ++it )
+  if( tmpThreads.empty() )
   {
-    intervalThread.push_back( new IntervalThread( whichWindow, THREAD, *it ) );
-    intervalThread[ i ]->setNotWindowInits( true );
+    emptyCPU = true;
+  }
+  else
+  {
+    int i = 0;
+    for( std::vector<TThreadOrder>::iterator it = tmpThreads.begin(); it != tmpThreads.end(); ++it )
+    {
+      intervalThread.push_back( new IntervalThread( whichWindow, THREAD, *it ) );
+      intervalThread[ i ]->setNotWindowInits( true );
 
-    intervalCompose.push_back( new IntervalCompose( whichWindow, COMPOSETHREAD, *it ) );
-    intervalCompose[ i ]->setNotWindowInits( true );
-    intervalCompose[ i ]->setCustomChild( intervalThread[ i ] );
+      intervalCompose.push_back( new IntervalCompose( whichWindow, COMPOSETHREAD, *it ) );
+      intervalCompose[ i ]->setNotWindowInits( true );
+      intervalCompose[ i ]->setCustomChild( intervalThread[ i ] );
 
-    threadOrderOnCPU[ *it ] = i;
+      threadOrderOnCPU[ *it ] = i;
 
-    ++i;
+      ++i;
+    }
   }
 }
 
@@ -69,7 +77,7 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
   createList = create;
   currentValue = 0.0;
 
-  if ( displayList == NULL )
+  if( displayList == NULL )
   {
     displayList = &myDisplayList;
     displayList->clear();
@@ -81,6 +89,18 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
   if( functionComposeThread != NULL ) delete functionComposeThread;
   functionComposeThread = ( SemanticCompose * ) window->getSemanticFunction( COMPOSETHREAD )->clone();
 
+  if( begin != NULL )
+    delete begin;
+  if( end != NULL )
+    delete end;
+
+  if( emptyCPU )
+  {
+    begin = window->copyCPUIterator( window->getCPUBeginRecord( order - 1 ) );
+    end = window->copyCPUIterator( window->getCPUEndRecord( order - 1 ) );
+    return displayList;
+  }
+
   for( unsigned int i = 0; i < intervalCompose.size(); ++i )
   {
     intervalCompose[ i ]->setSemanticFunction( functionComposeThread );
@@ -89,20 +109,15 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
     intervalCompose[ i ]->init( initialTime, NOCREATE, NULL );
   }
 
-  if ( begin != NULL )
-    delete begin;
-  if ( end != NULL )
-    delete end;
-
   begin = window->copyCPUIterator( window->getCPURecordByTime( order - 1 ) );
   end = window->copyCPUIterator( begin );
 
-  if ( ( !function->getInitFromBegin() ) && ( !functionThread->getInitFromBegin() ) &&
-       ( !functionComposeThread->getInitFromBegin() ) && ( initialTime > 0.0 ) )
+  if(( !function->getInitFromBegin() ) && ( !functionThread->getInitFromBegin() ) &&
+      ( !functionComposeThread->getInitFromBegin() ) && ( initialTime > 0.0 ) )
     calcPrev( displayList, true );
 
   calcNext( displayList, true );
-  while ( ( !end->isNull() ) && ( end->getTime() <= initialTime ) )
+  while(( !end->isNull() ) && ( end->getTime() <= initialTime ) )
     calcNext( displayList );
 
   return displayList;
@@ -113,15 +128,18 @@ KRecordList *IntervalCPU::calcNext( KRecordList *displayList, bool initCalc )
 {
   SemanticHighInfo highInfo;
 
-  if ( displayList == NULL )
+  if( displayList == NULL )
     displayList = &myDisplayList;
 
-  if ( !initCalc )
+  if( !initCalc )
   {
     *begin = *end;
   }
 
-  Interval *currentThread = intervalCompose[ threadOrderOnCPU[ begin->getThread() ] ];
+  if( emptyCPU )
+    return displayList;
+
+  Interval *currentThread = intervalCompose[ threadOrderOnCPU[ begin->getThread()] ];
   highInfo.callingInterval = this;
   if( begin->getType() == STATE + END )
     highInfo.values.push_back( 0.0 );
@@ -143,24 +161,27 @@ KRecordList *IntervalCPU::calcPrev( KRecordList *displayList, bool initCalc )
 {
   SemanticHighInfo highInfo;
 
-  if ( displayList == NULL )
+  if( displayList == NULL )
     displayList = &myDisplayList;
 
-  if ( !initCalc )
+  if( !initCalc )
   {
     *end = *begin;
   }
 
+  if( emptyCPU )
+    return displayList;
+
   begin = getPrevRecord( begin, displayList );
   highInfo.callingInterval = this;
-  Interval *currentThread = intervalCompose[ threadOrderOnCPU[ begin->getThread() ] ];
+  Interval *currentThread = intervalCompose[ threadOrderOnCPU[ begin->getThread()] ];
   while( currentThread->getBeginTime() >= begin->getTime() &&
          currentThread->getEndTime() > 0.0 )
     currentThread->calcPrev( NULL );
   highInfo.values.push_back( currentThread->getValue() );
   currentValue = function->execute( &highInfo );
 
-  if ( initCalc )
+  if( initCalc )
   {
     *end = *begin;
   }
@@ -174,16 +195,16 @@ MemoryTrace::iterator *IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
 {
   TThreadOrder threadOrder = it->getThread();
   ++( *it );
-  while ( !it->isNull() )
+  while( !it->isNull() )
   {
-    if ( window->passFilter( it ) )
+    if( window->passFilter( it ) )
     {
-      if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
-           ||
-           ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
+      if((( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
+          ||
+          (( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
         displayList->insert( window, it );
 
-      if ( functionThread->validRecord( it ) )
+      if( functionThread->validRecord( it ) )
         break;
     }
     if( !( it->getType() & RSEND || it->getType() & RRECV || it->getType() & COMM )
@@ -192,7 +213,7 @@ MemoryTrace::iterator *IntervalCPU::getNextRecord( MemoryTrace::iterator *it,
     ++( *it );
   }
 
-  if ( it->isNull() )
+  if( it->isNull() )
   {
     delete it;
     it = window->getCPUEndRecord( order - 1 );
@@ -207,16 +228,16 @@ MemoryTrace::iterator *IntervalCPU::getPrevRecord( MemoryTrace::iterator *it,
 {
   TThreadOrder threadOrder = it->getThread();
   --( *it );
-  while ( !it->isNull() )
+  while( !it->isNull() )
   {
-    if ( window->passFilter( it ) )
+    if( window->passFilter( it ) )
     {
-      if ( ( ( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
-           ||
-           ( ( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
+      if((( createList & CREATEEVENTS ) && ( it->getType() & EVENT ) )
+          ||
+          (( createList & CREATECOMMS ) && ( it->getType() & COMM ) ) )
         displayList->insert( window, it );
 
-      if ( functionThread->validRecord( it ) )
+      if( functionThread->validRecord( it ) )
         break;
     }
     if( !( it->getType() & RSEND || it->getType() & RRECV || it->getType() & COMM )
@@ -225,7 +246,7 @@ MemoryTrace::iterator *IntervalCPU::getPrevRecord( MemoryTrace::iterator *it,
     --( *it );
   }
 
-  if ( it->isNull() )
+  if( it->isNull() )
   {
     delete it;
     it = window->getCPUBeginRecord( order - 1 );

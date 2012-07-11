@@ -877,8 +877,16 @@ TTime BPlusTree::finish( TTime headerTime, Trace *whichTrace )
     whichTrace->getCPULocation( i + 1, tmpNode, tmpCPU );
     std::vector<TThreadOrder> tmpThreads;
     whichTrace->getThreadsPerNode( tmpNode, tmpThreads );
-    tmpBegin.thread = tmpThreads[ 0 ];
-    tmpEnd.thread = tmpThreads[ 0 ];
+    if( tmpThreads.empty() )
+    {
+      tmpBegin.thread = 0;
+      tmpEnd.thread = 0;
+    }
+    else
+    {
+      tmpBegin.thread = tmpThreads[ 0 ];
+      tmpEnd.thread = tmpThreads[ 0 ];
+    }
     tmpBegin.next = unloadedTrace->getCPUBegin( i );
     tmpBegin.prev = NULL;
     tmpEnd.next = NULL;
