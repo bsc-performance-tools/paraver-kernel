@@ -33,6 +33,7 @@
 #include <limits>
 #include "processmodel.h"
 #include "traceheaderexception.h"
+#include "trace.h"
 
 #include <stdlib.h>
 
@@ -98,7 +99,7 @@ void ProcessModel::getThreadLocation( TThreadOrder globalThread,
 }
 
 
-ProcessModel::ProcessModel( istringstream& headerInfo )
+ProcessModel::ProcessModel( istringstream& headerInfo, Trace *whichTrace )
 {
   TApplOrder numberApplications;
   TTaskOrder globalTasks = 0;
@@ -168,7 +169,8 @@ ProcessModel::ProcessModel( istringstream& headerInfo )
 
       istringstream sstreamNumberNode( stringNumberNode );
 
-      if ( !( sstreamNumberNode >> numberNode ) || numberNode == 0 )
+      if ( !( sstreamNumberNode >> numberNode ) ||
+           ( numberNode == 0 && whichTrace->existResourceInfo() ) )
       {
         throw TraceHeaderException( TraceHeaderException::invalidNodeNumber,
                                     stringNumberNode.c_str() );

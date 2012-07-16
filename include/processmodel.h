@@ -34,6 +34,8 @@
 #include <string>
 #include "processmodelappl.h"
 
+class Trace;
+
 class ProcessModel
 {
 
@@ -43,7 +45,7 @@ class ProcessModel
       ready = false;
     }
 
-    ProcessModel( std::istringstream& headerInfo );
+    ProcessModel( std::istringstream& headerInfo, Trace *whichTrace );
 
     ~ProcessModel()
     {}
