@@ -139,7 +139,7 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
     {
       TNodeOrder node;
       TCPUOrder cpu;
-      if( globalOrder >= whichTrace->totalCPUs() )
+      if( globalOrder > whichTrace->totalCPUs() )
         label << "Not valid CPU: " << globalOrder + 1;
       else
       {

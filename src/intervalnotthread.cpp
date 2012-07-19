@@ -95,7 +95,7 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
   }
   currentValue = function->execute( &info );
 
-  while ( end->getTime() < initialTime )
+  while ( end->getTime() < initialTime && begin->getTime() < window->getTrace()->getEndTime() )
     calcNext( displayList );
 
   return displayList;

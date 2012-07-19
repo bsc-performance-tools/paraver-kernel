@@ -51,6 +51,13 @@ KRecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
   if ( end != NULL )
     delete end;
 
+  if( initialTime >= window->getTrace()->getEndTime() )
+  {
+    begin = window->getThreadEndRecord( order );
+    end = window->copyThreadIterator( begin );
+    return displayList;
+  }
+
   begin = window->copyThreadIterator( window->getThreadRecordByTime( order ) );
   end = window->copyThreadIterator( begin );
 

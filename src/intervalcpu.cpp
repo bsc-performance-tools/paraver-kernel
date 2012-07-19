@@ -94,6 +94,13 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
   if( end != NULL )
     delete end;
 
+  if( initialTime >= window->getTrace()->getEndTime() )
+  {
+    begin = window->getCPUEndRecord( order - 1 );
+    end = window->copyCPUIterator( begin );
+    return displayList;
+  }
+
   if( emptyCPU )
   {
     begin = window->copyCPUIterator( window->getCPUBeginRecord( order - 1 ) );
