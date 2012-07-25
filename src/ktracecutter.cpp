@@ -332,10 +332,8 @@ void KTraceCutter::appendLastZerosToUnclosedEvents( const unsigned long long &fi
           {
             if ( !writtenCommentWithout )
             {
-              fprintf( outfile, "# Appending events with value 0");
-              fprintf( outfile, "\n");
+              fprintf( outfile, "# Appending events with value 0\n");
               writtenCommentWithout = true;
-              needEOL = false;
             }
 
             for ( set< TEventType >::iterator it = tasks[appl][task][thread]->eventTypesWithoutPCFZeros.begin();
@@ -343,33 +341,37 @@ void KTraceCutter::appendLastZerosToUnclosedEvents( const unsigned long long &fi
             {
               if ( writtenChars == 0 )
               {
-                writtenChars+= fprintf( outfile, "2:%d:%d:%d:%d:%lld:%lld:0",
-                                        cpu, appl + 1, task + 1, thread + 1, final_time, (unsigned long long)*it );
+                // Write new line
+                writtenChars += fprintf( outfile, "2:%d:%d:%d:%d:%lld:%lld:0",
+                                         cpu, appl + 1, task + 1, thread + 1,
+                                         final_time, (unsigned long long)*it );
 
                 needEOL = true;
               }
               else if ( writtenChars + 32 > MAX_LINE_SIZE )
               {
+                // Too many events: close current line
                 fprintf( outfile, "\n" );
-                writtenChars = 0; // almost overflow
+                writtenChars = 0;
                 needEOL = false;
               }
               else
               {
-                writtenChars+= fprintf( outfile, ":%lld:0", (unsigned long long)*it );
+                // Append to current line
+                writtenChars += fprintf( outfile, ":%lld:0", (unsigned long long)*it );
                 needEOL = true;
               }
             }
 
             if( needEOL )
             {
+              // Close current line
               fprintf( outfile, "\n" );  // because we know theres's one at least.
+              writtenChars = 0;
               needEOL = false;
             }
           }
 
-          writtenChars = 0;
-          needEOL = false;
 
           if( tasks[appl][task][thread]->eventTypesWithPCFZeros.size() > 0 )
           {
@@ -384,19 +386,22 @@ void KTraceCutter::appendLastZerosToUnclosedEvents( const unsigned long long &fi
             {
               if ( writtenChars == 0 )
               {
+                // Write new line
                 writtenChars+= fprintf( outfile, "2:%d:%d:%d:%d:%lld:%lld:0",
                                         cpu, appl + 1, task + 1, thread + 1, final_time, (unsigned long long)*it );
 
                 needEOL = true;
               }
-              else if ( writtenChars + 32 > MAX_LINE_SIZE ) // overflow?
+              else if ( writtenChars + 32 > MAX_LINE_SIZE )
               {
+                // Too many events: close current line
                 fprintf( outfile, "\n" );
                 writtenChars = 0;
                 needEOL = false;
               }
               else
               {
+                // Append to current line
                 writtenChars+= fprintf( outfile, ":%lld:0", (unsigned long long)*it );
                 needEOL = true;
               }
@@ -404,8 +409,13 @@ void KTraceCutter::appendLastZerosToUnclosedEvents( const unsigned long long &fi
 
             if( needEOL )
             {
+              // Close current line
               fprintf( outfile, "\n" );  // because we know theres's one at least.
-              needEOL = false;
+
+              // Not needed here due to thread loop initializations
+
+              //writtenChars = 0;
+              //needEOL = false;
             }
           }
         }
@@ -668,15 +678,13 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nam
       end_read = true;
     else
     {
-      char *auxLine = gzgets( gzInfile, trace_header, MAX_TRACE_HEADER );;
+      char *auxLine = gzgets( gzInfile, trace_header, MAX_TRACE_HEADER );
       if ( auxLine == Z_NULL )
         end_read = true;
     }
   }
 #endif
   // Get time of the first record ignoring any other field.
-  //cout << trace_header << endl;
-
 
   if (!end_read)
     sscanf( trace_header, "%*d:%*d:%*d:%*d:%*d:%lld:", &timeOffset );
@@ -700,7 +708,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nam
 
 
       case '2':
-        sscanf( trace_header, "%*d:%d:%d:%d:%d:%lld:%s", &cpu, &appl, &task, &thread, &time_1, line );
+        sscanf( trace_header, "%*d:%d:%d:%d:%d:%lld:%s\n", &cpu, &appl, &task, &thread, &time_1, line );
 
         time_1 = time_1 - timeOffset;
 
@@ -709,7 +717,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nam
         break;
 
       case '3':
-        sscanf( trace_header, "%*d:%d:%d:%d:%d:%lld:%lld:%d:%d:%d:%d:%lld:%lld:%s",
+        sscanf( trace_header, "%*d:%d:%d:%d:%d:%lld:%lld:%d:%d:%d:%d:%lld:%lld:%s\n",
                 &cpu,   &appl,   &task,   &thread,   &time_1, &time_2,
                 &cpu_2, &appl_2, &task_2, &thread_2, &time_3, &time_4, line );
 
@@ -726,7 +734,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nam
 
       case '4':
       case '#':
-        fprintf( outfile, "%s\n", trace_header );
+        fprintf( outfile, "%s", trace_header );
         break;
 
       default:
