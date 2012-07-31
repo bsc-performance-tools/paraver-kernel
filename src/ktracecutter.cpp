@@ -683,10 +683,13 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nam
     }
   }
 #endif
-  // Get time of the first record ignoring any other field.
 
+  // Get time of the first record ignoring any other field.
   if (!end_read)
     sscanf( trace_header, "%*d:%*d:%*d:%*d:%*d:%lld:", &timeOffset );
+
+  // Override it: we have the minimum time of the written records.
+  timeOffset = first_record_time;
 
   while ( !end_read )
   {
