@@ -114,7 +114,7 @@ class KTraceCutter : public TraceCutter
         bool finished;
         TCPUOrder lastCPU; // last CPU to be able to write trailing records.
         std::set< TEventType >      eventTypesWithoutPCFZeros; //
-        std::multiset< TEventType > eventTypesWithPCFZeros; //
+        std::multiset< TEventType > eventTypesWithPCFZeros;    //
     };
 
     /* struct for cutting only selected tasks */
@@ -135,6 +135,16 @@ class KTraceCutter : public TraceCutter
                                char *trace_in_name,
                                char *trace_out_name,
                                bool is_zip );
+    const std::set< TEventType > mergeDuplicates( const std::multiset< TEventType>& eventTypesWithPCFZeros );
+    void dumpEventsSet( const std::set< TEventType >& closingEventTypes,
+                        unsigned int cpu,
+                        unsigned int appl,
+                        unsigned int task,
+                        unsigned int thread,
+                        const unsigned long long &final_time,
+                        int &numWrittenChars,
+                        bool &needEOL,
+                        bool &writtenComment );
     void appendLastZerosToUnclosedEvents( const unsigned long long &final_time );
     void ini_cutter_progress_bar( char *file_name, ProgressController *progress );
     void show_cutter_progress_bar( ProgressController *progress );

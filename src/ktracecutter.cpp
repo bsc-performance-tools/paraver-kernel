@@ -293,7 +293,7 @@ void KTraceCutter::proces_cutter_header( char *header,
   }
 
   if ( !is_zip )
-#ifdef WIN32
+#ifdef WIN32append
     _fseeki64( infile, 0, SEEK_SET );
 #else
     fseek( infile, -( strlen( auxLine ) ), SEEK_CUR );
@@ -307,13 +307,79 @@ void KTraceCutter::proces_cutter_header( char *header,
 }
 
 
+const set< TEventType > KTraceCutter::mergeDuplicates( const multiset< TEventType>& eventTypesWithPCFZeros )
+{
+  set< TEventType > uniqueEventTypes;
+
+  for ( multiset< TEventType >::iterator it = eventTypesWithPCFZeros.begin();
+        it != eventTypesWithPCFZeros.end(); ++it )
+  {
+    uniqueEventTypes.insert( *it );
+  }
+
+  return uniqueEventTypes;
+}
+
+
+void KTraceCutter::dumpEventsSet( const set< TEventType >& closingEventTypes,
+                                  unsigned int cpu,
+                                  unsigned int appl,
+                                  unsigned int task,
+                                  unsigned int thread,
+                                  const unsigned long long &final_time,
+                                  int &numWrittenChars,
+                                  bool &needEOL,
+                                  bool &writtenComment )
+{
+  if ( !writtenComment )
+  {
+    fprintf( outfile, "# Appending events with value 0\n");
+    writtenComment = true;
+  }
+
+  for ( set< TEventType >::iterator it = closingEventTypes.begin(); it != closingEventTypes.end(); ++it )
+  {
+    if ( numWrittenChars == 0 )
+    {
+      // Write new line
+      numWrittenChars += fprintf( outfile, "2:%d:%d:%d:%d:%lld:%lld:0",
+                               cpu, appl + 1, task + 1, thread + 1,
+                               final_time, (unsigned long long)*it );
+
+      needEOL = true;
+    }
+    else if ( numWrittenChars + 32 > MAX_LINE_SIZE )
+    {
+      // Too many events: close current line
+      fprintf( outfile, "\n" );
+      numWrittenChars = 0;
+      needEOL = false;
+    }
+    else
+    {
+      // Append to current line
+      numWrittenChars += fprintf( outfile, ":%lld:0", (unsigned long long)*it );
+      needEOL = true;
+    }
+  }
+
+  if( needEOL )
+  {
+    // Close current line
+    fprintf( outfile, "\n" );  // because we know theres's one at least.
+    numWrittenChars = 0;
+    needEOL = false;
+  }
+}
+
+
 void KTraceCutter::appendLastZerosToUnclosedEvents( const unsigned long long &final_time )
 {
   TCPUOrder cpu;
-  int writtenChars = 0;
+  int numWrittenChars = 0;
   bool needEOL = false;
-  bool writtenCommentWithout = false;
-  bool writtenCommentWith    = false;
+  bool writtenComment = false;
+  set< TEventType > currentEventTypesWithPCFZeros;
 
   for( unsigned int appl = 0; appl < MAX_APPL; ++appl )
   {
@@ -325,98 +391,31 @@ void KTraceCutter::appendLastZerosToUnclosedEvents( const unsigned long long &fi
         {
           cpu = tasks[appl][task][thread]->lastCPU;
 
-          writtenChars = 0;
+          numWrittenChars = 0;
           needEOL = false;
 
           if( tasks[appl][task][thread]->eventTypesWithoutPCFZeros.size() > 0 )
           {
-            if ( !writtenCommentWithout )
-            {
-              fprintf( outfile, "# Appending events with value 0\n");
-              writtenCommentWithout = true;
-            }
-
-            for ( set< TEventType >::iterator it = tasks[appl][task][thread]->eventTypesWithoutPCFZeros.begin();
-                  it != tasks[appl][task][thread]->eventTypesWithoutPCFZeros.end(); ++it )
-            {
-              if ( writtenChars == 0 )
-              {
-                // Write new line
-                writtenChars += fprintf( outfile, "2:%d:%d:%d:%d:%lld:%lld:0",
-                                         cpu, appl + 1, task + 1, thread + 1,
-                                         final_time, (unsigned long long)*it );
-
-                needEOL = true;
-              }
-              else if ( writtenChars + 32 > MAX_LINE_SIZE )
-              {
-                // Too many events: close current line
-                fprintf( outfile, "\n" );
-                writtenChars = 0;
-                needEOL = false;
-              }
-              else
-              {
-                // Append to current line
-                writtenChars += fprintf( outfile, ":%lld:0", (unsigned long long)*it );
-                needEOL = true;
-              }
-            }
-
-            if( needEOL )
-            {
-              // Close current line
-              fprintf( outfile, "\n" );  // because we know theres's one at least.
-              writtenChars = 0;
-              needEOL = false;
-            }
+            dumpEventsSet( tasks[appl][task][thread]->eventTypesWithoutPCFZeros,
+                           cpu, appl, task, thread,
+                           final_time,
+                           numWrittenChars,
+                           needEOL,
+                           writtenComment );
           }
-
 
           if( tasks[appl][task][thread]->eventTypesWithPCFZeros.size() > 0 )
           {
-            if ( !writtenCommentWith )
-            {
-              fprintf( outfile, "# Appending PCF events with value 0\n");
-              writtenCommentWith = true;
-            }
 
-            for ( multiset< TEventType >::iterator it = tasks[appl][task][thread]->eventTypesWithPCFZeros.begin();
-                  it != tasks[appl][task][thread]->eventTypesWithPCFZeros.end(); ++it )
-            {
-              if ( writtenChars == 0 )
-              {
-                // Write new line
-                writtenChars+= fprintf( outfile, "2:%d:%d:%d:%d:%lld:%lld:0",
-                                        cpu, appl + 1, task + 1, thread + 1, final_time, (unsigned long long)*it );
+            // Avoid long queues of zeros with same event type
+            currentEventTypesWithPCFZeros = mergeDuplicates( tasks[appl][task][thread]->eventTypesWithPCFZeros );
 
-                needEOL = true;
-              }
-              else if ( writtenChars + 32 > MAX_LINE_SIZE )
-              {
-                // Too many events: close current line
-                fprintf( outfile, "\n" );
-                writtenChars = 0;
-                needEOL = false;
-              }
-              else
-              {
-                // Append to current line
-                writtenChars+= fprintf( outfile, ":%lld:0", (unsigned long long)*it );
-                needEOL = true;
-              }
-            }
-
-            if( needEOL )
-            {
-              // Close current line
-              fprintf( outfile, "\n" );  // because we know theres's one at least.
-
-              // Not needed here due to thread loop initializations
-
-              //writtenChars = 0;
-              //needEOL = false;
-            }
+            dumpEventsSet( currentEventTypesWithPCFZeros,
+                           cpu, appl, task, thread,
+                           final_time,
+                           numWrittenChars,
+                           needEOL,
+                           writtenComment );
           }
         }
       }
