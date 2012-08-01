@@ -34,6 +34,7 @@
 #include <math.h>
 #include <algorithm>
 #include <vector>
+#include <string>
 
 #ifndef WIN32
 #include <unistd.h>
@@ -735,8 +736,14 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nam
         break;
 
       case '4':
+        sscanf( trace_header, "%s\n", line );
+        fprintf( outfile, "%s\n", line );
+        break;
+
       case '#':
-        fprintf( outfile, "%s", trace_header );
+        sscanf( trace_header, "%s\n", line );
+        if ( string( line ).compare( string( " Appending events with value 0" ) ) == 0 )
+          fprintf( outfile, "%s\n", line );
         break;
 
       default:
@@ -1321,7 +1328,8 @@ void KTraceCutter::execute( char *trace_in,
         break;
 
       case '#':
-        current_size += fprintf( outfile, "%s\n", line );
+        sscanf( line, "%s\n", buffer );
+        current_size += fprintf( outfile, "%s\n", buffer );
 
         break;
 
