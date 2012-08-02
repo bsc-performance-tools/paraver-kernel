@@ -92,8 +92,8 @@ ParaverConfig::ParaverConfig()
   xmlTimeline.gradientFunction = GradientColor::LINEAR;
   xmlTimeline.pixelSize = 0;
   xmlTimeline.whatWhereSemantic = true;
-  xmlTimeline.whatWhereEvents = true;
-  xmlTimeline.whatWhereCommunications = true;
+  xmlTimeline.whatWhereEvents = false;
+  xmlTimeline.whatWhereCommunications = false;
   xmlTimeline.whatWherePreviousNext = false;
   xmlTimeline.whatWhereText = true;
   xmlTimeline.whatWhereEventPixels = 5;
