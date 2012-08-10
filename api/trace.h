@@ -46,6 +46,8 @@ class Trace
     static Trace *create( KernelConnection *whichKernel, const std::string& whichFile,
                           bool noLoad, ProgressController *progress );
     static bool isTraceFile( const std::string& filename );
+    static bool isOTF2TraceFile( const std::string& filename );
+
 
     Trace() {}
     Trace( KernelConnection *whichKernel );

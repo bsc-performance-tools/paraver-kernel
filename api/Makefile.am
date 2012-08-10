@@ -52,6 +52,7 @@ include_HEADERS = \
                   labelconstructor.h\
                   loadedwindows.h\
                   localkernel.h\
+									otf2prv.h\
                   output.h\
                   paramedir.h\
                   paraverconfig.h\

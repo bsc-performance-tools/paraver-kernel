@@ -165,6 +165,8 @@ static const std::string                PCF_SUFFIX = ".pcf";
 static const std::string                ROW_SUFFIX = ".row";
 static const std::string TRACE_TOOL_OPTIONS_SUFFIX = ".xml";
 
+static const std::string               OTF2_SUFFIX = ".otf";
+
 static const std::string FILTER_SEP = ".";
 
 

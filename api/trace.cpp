@@ -65,6 +65,18 @@ bool Trace::isTraceFile( const string& filename )
 }
 
 
+bool Trace::isOTF2TraceFile( const string& filename )
+{
+  string auxName( filename );
+  string suffix( "" );
+
+  if ( auxName.length() > OTF2_SUFFIX.length() )
+    suffix = auxName.substr( auxName.length() - OTF2_SUFFIX.length() );
+
+  return ( ( suffix.compare( OTF2_SUFFIX ) == 0 ));
+}
+
+
 Trace::Trace( KernelConnection *whichKernel ):
     myKernel( whichKernel )
 {}
