@@ -43,6 +43,7 @@ using std::string;
 // GLOBAL VARIABLES
 bool showHelp = false;
 bool showVersion = false;
+bool verbose = false;
 Trace *trace;
 string strOTF2Trace( "" );
 string strPRVTrace( "" );
@@ -110,7 +111,7 @@ void readParameters( int argc, char *arguments[] )
 
   while ( currentArg < argc )
   {
-    if ( isOption( arguments[ currentArg ] ))localkernel
+    if ( isOption( arguments[ currentArg ] ))
     {
       activateOption( arguments[ currentArg ] );
     }
@@ -162,6 +163,7 @@ bool translate()
 
   Finish( parameters );
 */
+  return true;
 }
 
 // *****************************************************************************
