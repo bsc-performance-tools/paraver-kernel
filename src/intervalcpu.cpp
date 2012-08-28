@@ -155,7 +155,10 @@ KRecordList *IntervalCPU::calcNext( KRecordList *displayList, bool initCalc )
     while( currentThread->getEndTime() <= begin->getTime() &&
            currentThread->getBeginTime() < window->getTrace()->getEndTime() )
       currentThread->calcNext( NULL );
-    highInfo.values.push_back( currentThread->getValue() );
+    if( currentThread->getBegin()->getCPU() != order )
+      highInfo.values.push_back( 0.0 );
+    else
+      highInfo.values.push_back( currentThread->getValue() );
   }
   currentValue = function->execute( &highInfo );
   end = getNextRecord( end, displayList );
