@@ -64,3 +64,22 @@ AC_DEFUN([AX_PROG_ENABLE_PARALLEL],
     PRVCXX="g++ xlC CC"
   fi
 ])
+
+# AX_PROG_WITH_OTF2
+# -----------------
+AC_DEFUN([AX_PROG_WITH_OTF2],
+[
+  AC_ARG_WITH(otf2,
+    AC_HELP_STRING(
+      [--with-otf2@<:@=DIR@:>@],
+      [Specify otf2 library base install directory. Default: /usr/local]
+    ),
+    [OTF2_DIR=${withval}],
+    [OTF2_DIR=/usr/local]
+  )
+  CPPFLAGS="$CPPFLAGS -I$OTF2_DIR/include"
+  CXXFLAGS="$CXXFLAGS -I$OTF2_DIR/include"
+  CFLAGS="$CFLAGS -L$OTF2_DIR/include"
+  LIBS="$LIBS -L$OTF2_DIR/lib"
+  LDFLAGS="$LDFLAGS -L$OTF2_DIR/lib -lotf2 -lscorep_utilities"
+])

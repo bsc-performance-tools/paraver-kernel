@@ -30,6 +30,7 @@ AM_PROG_LIBTOOL
 AX_PROG_ENABLE_TRACING
 AX_PROG_WITH_EXTRAE
 AX_PROG_ENABLE_PARALLEL
+AX_PROG_WITH_OTF2
 
 # Search for available compilers and preprocessor
 AC_PROG_CC(gcc xlc cc)

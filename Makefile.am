@@ -20,7 +20,9 @@ otf2prv_bin_SOURCES = \
 
 otf2prv_bin_LDADD = \
 										api/libparaver-api.la \
-										src/libparaver-kernel.la
+										src/libparaver-kernel.la \
+										-lotf2 \
+										-lscorep_utilities
 
 # Erases everything which should not be uploaded to CVS
 mrproper: distclean
