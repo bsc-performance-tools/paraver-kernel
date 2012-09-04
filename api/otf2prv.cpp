@@ -43,7 +43,7 @@
 //using std::string;
 using namespace std;
 //
-const string OTF2_VERSION_STRING = "0.5";
+const string OTF2_VERSION_STRING = "0.7";
 
 // GLOBAL VARIABLES
 bool showHelp = false;
@@ -147,6 +147,102 @@ GlobDefClockProperties_print
 
   return SCOREP_SUCCESS;
 }
+
+SCOREP_Error_Code
+GlobDefSystemTreeNode_print
+(
+    void*    userData,
+    uint32_t nodeID,
+    uint32_t name,
+    uint32_t className,
+    uint32_t nodeParent
+)
+{
+  otf2_print_data* data = ( otf2_print_data* )userData;
+
+  // Translation: node of nodes => SYSTEM, NODE
+  // How to translate many systems?
+  // Many systems to one system and all the nodes merged?
+
+  if ( nodeParent != OTF2_UNDEFINED_UINT32 )
+  {
+    // Add node to our structure
+
+    // Keep name for ROW file
+    // Use Hash de scorep?
+  }
+  else
+  {
+    // System
+  }
+/*
+  // Adds to the hash
+  // See otf2_print : otf2_print_add_def64_name
+  otf2_print_add_system_tree_node( data,
+                                   nodeID,
+                                   name );
+
+        printf( "%-*s %12u  Name: %s, Class: %s, Parent: %s\n",
+                otf2_DEF_COLUMN_WIDTH, "SYSTEM_TREE_NODE",
+                nodeID,
+                otf2_print_get_def_name( data->strings, name ),
+                otf2_print_get_def_name( data->strings, className ),
+                otf2_print_get_def_name( data->system_tree_nodes, nodeParent ) );
+
+*/
+
+  return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code
+GlobDefLocationGroup_print
+(
+    void*                  userData,
+    uint32_t               groupID,
+    uint32_t               name,
+    OTF2_LocationGroupType type,
+    uint32_t               systemTreeParent
+)
+{
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    // LocationGroup: { UNKNOWN, PROCESS }
+    // In both cases PROCESS?
+
+    // Tranlation: Map TASK->NODE
+
+
+
+
+/*
+     otf2_print_add_location_group( data,
+                                    groupID,
+                                    name );
+
+     // Print definition if selected.
+     if ( otf2_GLOBDEFS )
+     {
+         printf( "%-*s %12u  Name: %s, Type: %s, Parent: %s\n",
+                 otf2_DEF_COLUMN_WIDTH, "LOCATION_GROUP",
+                 groupID,
+                 otf2_print_get_def_name( data->strings, name ),
+                 otf2_print_get_location_group_type( type ),
+                 otf2_print_get_def_name( data->system_tree_nodes,
+                                          systemTreeParent ) );
+     }
+
+        if ( systemTreeParent != OTF2_UNDEFINED_UINT32 )
+        {
+        }
+    }
+*/
+    return SCOREP_SUCCESS;
+}
+
+
+
+// ******* de la web
 
 
 SCOREP_Error_Code Enter_print( uint64_t locationID,
@@ -302,7 +398,14 @@ bool translate()
   OTF2_GlobalDefReaderCallbacks* global_def_callbacks = OTF2_GlobalDefReaderCallbacks_New();
 
   OTF2_GlobalDefReaderCallbacks_SetClockPropertiesCallback( global_def_callbacks, GlobDefClockProperties_print );
+  OTF2_GlobalDefReaderCallbacks_SetSystemTreeNodeCallback( global_def_callbacks, GlobDefSystemTreeNode_print );
+  //OTF2_GlobalDefReaderCallbacks_SetLocationGroupCallback( global_def_callbacks, GlobDefLocationGroup_print );
+  //OTF2_GlobalDefReaderCallbacks_SetLocationCallback( global_def_callbacks, GlobDefLocation_print );
   OTF2_GlobalDefReaderCallbacks_SetLocationCallback( global_def_callbacks, &GlobDefLocation_Register );
+
+  //OTF2_GlobalDefReaderCallbacks_SetRegionCallback( global_def_callbacks, GlobDefRegion_print );
+  //OTF2_GlobalDefReaderCallbacks_SetGroupCallback( global_def_callbacks, GlobDefGroup_print );
+  //OTF2_GlobalDefReaderCallbacks_SetMpiCommCallback( global_def_callbacks, GlobDefMpiComm_print );
 
   OTF2_Reader_RegisterGlobalDefCallbacks( reader, global_def_reader, global_def_callbacks, reader );
   OTF2_GlobalDefReaderCallbacks_Delete( global_def_callbacks );

@@ -113,7 +113,14 @@
 					<Add option="-g" />
 					<Add directory="include" />
 					<Add directory="../common-files" />
+					<Add directory="../otf2/include" />
 				</Compiler>
+				<Linker>
+					<Add library="libotf2" />
+					<Add library="libscorep_utilities" />
+					<Add directory="../otf2/lib" />
+					<Add directory="./" />
+				</Linker>
 			</Target>
 		</Build>
 		<VirtualTargets>
