@@ -44,7 +44,7 @@
 //using std::string;
 using namespace std;
 //
-const string OTF2_VERSION_STRING = "0.7";
+const string OTF2_VERSION_STRING = "0.8";
 
 // GLOBAL VARIABLES
 bool showHelp = false;
@@ -241,6 +241,84 @@ GlobDefLocationGroup_print
     return SCOREP_SUCCESS;
 }
 
+SCOREP_Error_Code
+GlobDefLocation_print
+(
+    void*             userData,
+    uint64_t          locationID,
+    uint32_t          name,
+    OTF2_LocationType locationType,
+    uint64_t          numberOfEvents,
+    uint32_t          locationGroup
+)
+{
+    otf2_print_data* data = ( otf2_print_data* )userData;
+/*
+    otf2_print_add_location( data, locationID, name );
+
+    // Print definition if selected.
+    if ( otf2_GLOBDEFS )
+    {
+        printf( "%-*s %12" PRIu64 "  Name: %s, Type: %s, "
+                "# Events: %" PRIu64 ", Group: %s\n",
+                otf2_DEF_COLUMN_WIDTH, "LOCATION",
+                locationID,
+                otf2_print_get_def_name( data->strings, name ),
+                otf2_print_get_location_type( locationType ),
+                numberOfEvents,
+                otf2_print_get_def_name( data->location_groups, locationGroup ) );
+    }
+
+
+    // Only proceed if either no local location is selected (i.e. read all) or
+    // location ID matches provided location ID.
+    if ( otf2_LOCAL != OTF2_UNDEFINED_UINT64 && otf2_LOCAL != locationID )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    // add location to the list of locations to read events from
+    otf2_print_add_location_to_read( data, locationID );
+
+    otf2_LOCAL_FOUND = true;
+*/
+   return SCOREP_SUCCESS;
+}
+
+SCOREP_Error_Code
+MpiSend_print
+(
+    uint64_t            locationID,
+    uint64_t            time,
+    void*               userData,
+    OTF2_AttributeList* attributes,
+    uint32_t            receiver,
+    uint32_t            communicator,
+    uint32_t            msgTag,
+    uint64_t            msgLength
+)
+{
+  otf2_print_data* data = ( otf2_print_data* )userData;
+/*
+  printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Receiver: %u, "
+            "Communicator: %s, "
+            "Tag: %u, Length: %" PRIu64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "MPI_SEND",
+            locationID, time,
+            receiver,
+            otf2_print_get_def_name( data->mpi_comms, communicator ),
+            msgTag,
+            msgLength );
+
+    otf2_print_attributes( data, attributes );
+*/
+
+
+    return SCOREP_SUCCESS;
+}
+
+
+
 
 
 // ******* de la web
@@ -427,8 +505,11 @@ bool translate()
   // Read communications
   OTF2_GlobalEvtReader* global_evt_reader = OTF2_Reader_GetGlobalEvtReader( reader );
   OTF2_GlobalEvtReaderCallbacks* event_callbacks = OTF2_GlobalEvtReaderCallbacks_New();
-  OTF2_GlobalEvtReaderCallbacks_SetEnterCallback( event_callbacks, &Enter_print );
-  OTF2_GlobalEvtReaderCallbacks_SetLeaveCallback( event_callbacks, &Leave_print );
+  OTF2_GlobalEvtReaderCallbacks_SetEnterCallback( event_callbacks, Enter_print );
+  OTF2_GlobalEvtReaderCallbacks_SetLeaveCallback( event_callbacks, Leave_print );
+  OTF2_GlobalEvtReaderCallbacks_SetMpiSendCallback( event_callbacks, MpiSend_print );
+
+
   OTF2_Reader_RegisterGlobalEvtCallbacks( reader, global_evt_reader, event_callbacks, NULL );
   OTF2_GlobalEvtReaderCallbacks_Delete( event_callbacks );
 
