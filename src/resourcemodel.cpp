@@ -93,6 +93,27 @@ TCPUOrder ResourceModel::getLastCPU( TNodeOrder inNode ) const
 }
 
 
+void ResourceModel::addNode( TNodeOrder whichNode )
+{
+  nodes.push_back( ResourceModelNode( whichNode ) );
+}
+
+void ResourceModel::addCPU( TNodeOrder whichNode, TCPUOrder whichCPU )
+{
+  if( whichNode >= nodes.size() )
+  {
+    stringstream tmpstr;
+    tmpstr << whichNode;
+    throw TraceHeaderException( TraceHeaderException::invalidNodeNumber,
+                                tmpstr.str().c_str() );
+  }
+
+  nodes[ whichNode ].CPUs.push_back( ResourceModelCPU( whichCPU ) );
+  CPUs.push_back( CPULocation() );
+  CPUs[ CPUs.size() - 1 ].node = whichNode;
+  CPUs[ CPUs.size() - 1 ].CPU = nodes[ whichNode ].CPUs.size() - 1;
+}
+
 ResourceModel::ResourceModel( istringstream& headerInfo )
 {
   string stringNumberNodes;

@@ -31,6 +31,7 @@
 #include <string>
 
 #include <otf2/otf2.h>
+#include <scorep_utility/SCOREP_UtilityTypes.h>
 #include "otf2prv.h"
 
 #include "prvtypes.h"

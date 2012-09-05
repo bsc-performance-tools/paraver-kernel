@@ -54,11 +54,16 @@ class ResourceModel
       return ready;
     }
 
+    void setReady( bool newValue )
+    {
+      ready = newValue;
+    }
+
     void dumpToFile( std::fstream& file ) const;
 
     TNodeOrder totalNodes() const;
-
     TCPUOrder totalCPUs() const;
+
     TCPUOrder getGlobalCPU( const TNodeOrder& inNode,
                             const TCPUOrder& inCPU ) const;
     void getCPULocation( TCPUOrder globalCPU,
@@ -66,6 +71,9 @@ class ResourceModel
                          TCPUOrder& inCPU ) const;
     TCPUOrder getFirstCPU( TNodeOrder inNode ) const;
     TCPUOrder getLastCPU( TNodeOrder inNode ) const;
+
+    void addNode( TNodeOrder whichNode );
+    void addCPU( TNodeOrder whichNode, TCPUOrder whichCPU );
 
   protected:
     struct CPULocation

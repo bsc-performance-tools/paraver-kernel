@@ -33,7 +33,7 @@ AC_DEFUN([AX_PROG_WITH_EXTRAE],
   if test "${enable_tracing}" = "yes" ; then
     CPPFLAGS="$CPPFLAGS -I$EXTRAE_DIR/include"
     CXXFLAGS="$CXXFLAGS -I$EXTRAE_DIR/include"
-    CFLAGS="$CFLAGS -L$EXTRAE_DIR/include"
+    CFLAGS="$CFLAGS -I$EXTRAE_DIR/include"
     LIBS="$LIBS -L$EXTRAE_DIR/lib"
     LDFLAGS="$LDFLAGS -L$EXTRAE_DIR/lib -lseqtrace"
   fi
@@ -77,9 +77,9 @@ AC_DEFUN([AX_PROG_WITH_OTF2],
     [OTF2_DIR=${withval}],
     [OTF2_DIR=/usr/local]
   )
-  CPPFLAGS="$CPPFLAGS -I$OTF2_DIR/include"
-  CXXFLAGS="$CXXFLAGS -I$OTF2_DIR/include"
-  CFLAGS="$CFLAGS -L$OTF2_DIR/include"
-  LIBS="$LIBS -L$OTF2_DIR/lib"
-  LDFLAGS="$LDFLAGS -L$OTF2_DIR/lib -lotf2 -lscorep_utilities"
+  CPPFLAGS_OTF2="-I$OTF2_DIR/include"
+  CXXFLAGS_OTF2="-I$OTF2_DIR/include"
+  CFLAGS_OTF2="-I$OTF2_DIR/include"
+  LIBS_OTF2="-L$OTF2_DIR/lib"
+  LDFLAGS_OTF2="-L$OTF2_DIR/lib -lotf2 -lscorep_utilities"
 ])
