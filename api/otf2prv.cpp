@@ -40,6 +40,8 @@
 #include "trace.h"
 #include "labelconstructor.h" // for getDate
 #include "paraverlabels.h"
+#include "resourcemodel.h"
+#include "processmodel.h"
 
 //using std::string;
 using namespace std;
@@ -60,6 +62,9 @@ TTimeUnit timeUnit = NS;
 string strTimeUnit("");
 PRV_UINT64 timerResolution;
 PRV_UINT64 maxTraceTime;
+ResourceModel *resourcesModel;
+ProcessModel *processModel;
+
 
 // *****************************************************************************
 // 3rd LEVEL - PRV Write
@@ -81,28 +86,19 @@ void writeHeaderTimes()
 
   file << "_" << LABEL_TIMEUNIT[ timeUnit ];
   file << ':';
-
-  file << endl;
 }
 
 
 void writeHeaderResourceModel()
 {
-  ostringstream ostr;
-
-  ostr << fixed;
-  ostr << dec;
-  ostr.precision( 0 );
+  resourcesModel->dumpToFile( file );
+  file << ':';
 }
 
 
 void writeHeaderProcessModel()
 {
-  ostringstream ostr;
-
-  ostr << fixed;
-  ostr << dec;
-  ostr.precision( 0 );
+  processModel->dumpToFile( file );
 }
 
 
@@ -168,6 +164,7 @@ GlobDefSystemTreeNode_print
   if ( nodeParent != OTF2_UNDEFINED_UINT32 )
   {
     // Add node to our structure
+    resourcesModel->addNode( nodeID );
 
     // Keep name for ROW file
     // Use Hash de scorep?
@@ -207,6 +204,8 @@ GlobDefLocationGroup_print
 )
 {
     otf2_print_data* data = ( otf2_print_data* )userData;
+
+    processModel->addTask( 0, groupID );
 
     // LocationGroup: { UNKNOWN, PROCESS }
     // In both cases PROCESS?
@@ -588,6 +587,11 @@ int main( int argc, char *argv[] )
       printVersion();
     else if ( anyOTF2Trace() )
     {
+      // asi a pelo?
+      resourcesModel = new ResourceModel();
+      processModel = new ProcessModel();
+      processModel->addApplication( 0 );
+
       buildPRVTraceName();
       openPRV();
       if ( translate() )
@@ -599,7 +603,11 @@ int main( int argc, char *argv[] )
         // Error:
         globalError = -1;
       }
+
       file.close();
+
+      delete resourcesModel;
+      delete processModel;
     }
   }
 
