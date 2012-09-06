@@ -330,6 +330,9 @@ void ProcessModel::addTask( TApplOrder whichAppl, TTaskOrder whichTask )
   }
 
   applications[ whichAppl ].tasks.push_back( ProcessModelTask( whichTask ) );
+  tasks.push_back( TaskLocation() );
+  tasks[ tasks.size() - 1 ].appl = whichAppl;
+  tasks[ tasks.size() - 1 ].task = applications[ whichAppl ].tasks.size() - 1;
 }
 
 void ProcessModel::addThread( TApplOrder whichAppl, TTaskOrder whichTask,
@@ -351,4 +354,8 @@ void ProcessModel::addThread( TApplOrder whichAppl, TTaskOrder whichTask,
   }
 
   applications[ whichAppl ].tasks[ whichTask ].threads.push_back( ProcessModelThread( whichThread, execNode ) );
+  threads.push_back( ThreadLocation() );
+  threads[ threads.size() - 1 ].appl = whichAppl;
+  threads[ threads.size() - 1 ].task = applications[ whichAppl ].tasks[ whichTask ].traceGlobalOrder;
+  threads[ threads.size() - 1 ].thread = applications[ whichAppl ].tasks[ whichTask ].threads.size() - 1;
 }
