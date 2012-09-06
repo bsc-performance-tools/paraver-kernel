@@ -57,6 +57,11 @@ class ProcessModel
       return ready;
     }
 
+    void setReady( bool newValue )
+    {
+      ready = newValue;
+    }
+
     void dumpToFile( std::fstream& file ) const;
 
     TApplOrder totalApplications() const;
@@ -91,6 +96,11 @@ class ProcessModel
     bool isValidTask( TApplOrder whichAppl,
                         TTaskOrder whichTask ) const;
     bool isValidAppl( TApplOrder whichAppl ) const;
+
+    void addApplication( TApplOrder whichAppl );
+    void addTask( TApplOrder whichAppl, TTaskOrder whichTask );
+    void addThread( TApplOrder whichAppl, TTaskOrder whichTask,
+                    TThreadOrder whichThread, TNodeOrder execNode );
 
   protected:
 

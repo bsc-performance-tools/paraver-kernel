@@ -313,3 +313,42 @@ bool ProcessModel::isValidAppl( TApplOrder whichAppl ) const
 {
   return whichAppl < applications.size();
 }
+
+void ProcessModel::addApplication( TApplOrder whichAppl )
+{
+  applications.push_back( ProcessModelAppl( whichAppl ) );
+}
+
+void ProcessModel::addTask( TApplOrder whichAppl, TTaskOrder whichTask )
+{
+  if( whichAppl > applications.size() )
+  {
+    stringstream tmpstr;
+    tmpstr << whichAppl;
+    throw TraceHeaderException( TraceHeaderException::invalidApplNumber,
+                                tmpstr.str().c_str() );
+  }
+
+  applications[ whichAppl ].tasks.push_back( ProcessModelTask( whichTask ) );
+}
+
+void ProcessModel::addThread( TApplOrder whichAppl, TTaskOrder whichTask,
+                              TThreadOrder whichThread, TNodeOrder execNode )
+{
+  if( whichAppl > applications.size() )
+  {
+    stringstream tmpstr;
+    tmpstr << whichAppl;
+    throw TraceHeaderException( TraceHeaderException::invalidApplNumber,
+                                tmpstr.str().c_str() );
+  }
+  else if( whichTask > applications[ whichAppl ].tasks.size() )
+  {
+    stringstream tmpstr;
+    tmpstr << whichAppl;
+    throw TraceHeaderException( TraceHeaderException::invalidTaskNumber,
+                                tmpstr.str().c_str() );
+  }
+
+  applications[ whichAppl ].tasks[ whichTask ].threads.push_back( ProcessModelThread( whichThread, execNode ) );
+}
