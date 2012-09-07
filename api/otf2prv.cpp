@@ -62,6 +62,9 @@ TTimeUnit timeUnit = NS;
 string strTimeUnit("");
 PRV_UINT64 timerResolution;
 PRV_UINT64 maxTraceTime;
+
+uint32_t systems = 0;
+
 ResourceModel *resourcesModel;
 ProcessModel *processModel;
 
@@ -104,11 +107,7 @@ void writeHeaderProcessModel()
 
 void writeHeaderCommunicators()
 {
-  ostringstream ostr;
-
-  ostr << fixed;
-  ostr << dec;
-  ostr.precision( 0 );
+  file << ',0' << endl;
 }
 
 
@@ -164,14 +163,14 @@ GlobDefSystemTreeNode_print
   if ( nodeParent != OTF2_UNDEFINED_UINT32 )
   {
     // Add node to our structure
-    resourcesModel->addNode( nodeID );
+    resourcesModel->addNode( nodeID - systems );
 
     // Keep name for ROW file
     // Use Hash de scorep?
   }
   else
   {
-    // System
+    ++systems;
   }
 /*
   // Adds to the hash
@@ -491,6 +490,9 @@ bool translate()
   uint64_t definitions_read = 0;
   OTF2_Reader_ReadAllGlobalDefinitions( reader, global_def_reader, &definitions_read );
 
+  resourcesModel->setReady( true );
+  processModel->setReady( true );
+
   // WRITE HEADER
   writeHeaderTimes();
   writeHeaderResourceModel();
@@ -587,7 +589,6 @@ int main( int argc, char *argv[] )
       printVersion();
     else if ( anyOTF2Trace() )
     {
-      // asi a pelo?
       resourcesModel = new ResourceModel();
       processModel = new ProcessModel();
       processModel->addApplication( 0 );
