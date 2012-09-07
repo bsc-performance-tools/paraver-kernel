@@ -107,7 +107,7 @@ void writeHeaderProcessModel()
 
 void writeHeaderCommunicators()
 {
-  file << ',0' << endl;
+  file << ",0" << endl;
 }
 
 
