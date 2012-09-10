@@ -29,6 +29,8 @@
 
 #include <fstream>
 #include <sstream>
+#include <algorithm>
+
 #include "rowlabels.h"
 #include "paraverlabels.h"
 
@@ -155,4 +157,41 @@ string RowLabels::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) 
   }
 
   return "";
+}
+
+
+void RowLabels::pushBack( TWindowLevel whichLevel, const string& rowLabel )
+{
+  vector<string> *tmpvector = NULL;
+  switch( whichLevel )
+  {
+    case THREAD:
+      tmpvector = &thread;
+      break;
+    case TASK:
+      tmpvector = &task;
+      break;
+    case APPLICATION:
+      tmpvector = &appl;
+      break;
+    case WORKLOAD:
+      tmpvector = &workload;
+      break;
+    case CPU:
+      tmpvector = &cpu;
+      break;
+    case NODE:
+      tmpvector = &node;
+      break;
+    case SYSTEM:
+      tmpvector = &system;
+      break;
+    default:
+      tmpvector = NULL;
+  }
+
+  if( tmpvector != NULL )
+  {
+    tmpvector->push_back( rowLabel );
+  }
 }

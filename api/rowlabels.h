@@ -31,6 +31,7 @@
 #define ROWLABELS_H_INCLUDED
 
 #include <string>
+#include <vector>
 #include "paraverkerneltypes.h"
 
 class RowLabels
@@ -41,6 +42,7 @@ class RowLabels
     ~RowLabels();
 
     std::string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const;
+    void pushBack( TWindowLevel whichLevel, const std::string& rowLabel );
 
   protected:
 
