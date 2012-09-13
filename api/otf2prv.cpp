@@ -46,34 +46,42 @@
 //using std::string;
 using namespace std;
 //
-const string OTF2_VERSION_STRING = "0.8";
-
-// GLOBAL VARIABLES
-bool showHelp = false;
-bool showVersion = false;
-bool verbose = false;
+const string OTF2_VERSION_STRING = "0.9";
 
 Trace *trace;
-string strOTF2Trace( "" );
-string strPRVTrace( "" );
-std::fstream file;
 
-TTimeUnit timeUnit = NS;
-string strTimeUnit("");
-PRV_UINT64 timerResolution;
-PRV_UINT64 maxTraceTime;
+typedef struct MainOptionsStruct MainOptions;
 
-uint32_t systems = 0;
+struct MainOptionsStruct
+{
+  bool showHelp;
+  bool showVersion;
+};
 
-ResourceModel *resourcesModel;
-ProcessModel *processModel;
+typedef struct TranslationDataStruct TranslationData;
+
+struct TranslationDataStruct
+{
+  bool verbose;
+
+  TTimeUnit timeUnit;
+  // PRV_UINT64 timerResolution;
+  PRV_UINT64 maxTraceTime;
+
+  ResourceModel *resourcesModel;
+  ProcessModel *processModel;
+  RowLabels *rowLabels;
+  map< uint32_t, string > symbols;
+  map< uint32_t, TNodeOrder > systemTreeNode2GlobalNode;
+  map< uint32_t, TNodeOrder > locationGroup2GlobalNode;
+};
 
 
 // *****************************************************************************
 // 3rd LEVEL - PRV Write
 // *****************************************************************************
 
-void writeHeaderTimes()
+void writeHeaderTimes( TranslationData *tmpData, std::fstream &file )
 {
   ostringstream ostr;
 
@@ -84,28 +92,28 @@ void writeHeaderTimes()
   file << "#Paraver ";
   file << "()" << ':';
 
-  ostr << maxTraceTime;
+  ostr << tmpData->maxTraceTime;
   file << ostr.str();
 
-  file << "_" << LABEL_TIMEUNIT[ timeUnit ];
+  file << "_" << LABEL_TIMEUNIT[ tmpData->timeUnit ];
   file << ':';
 }
 
 
-void writeHeaderResourceModel()
+void writeHeaderResourceModel( TranslationData *tmpData, std::fstream &file )
 {
-  resourcesModel->dumpToFile( file );
+  tmpData->resourcesModel->dumpToFile( file );
   file << ':';
 }
 
 
-void writeHeaderProcessModel()
+void writeHeaderProcessModel( TranslationData *tmpData, std::fstream &file )
 {
-  processModel->dumpToFile( file );
+  tmpData->processModel->dumpToFile( file );
 }
 
 
-void writeHeaderCommunicators()
+void writeHeaderCommunicators( TranslationData *tmpData, std::fstream &file )
 {
   file << ",0" << endl;
 }
@@ -114,6 +122,15 @@ void writeHeaderCommunicators()
 // *****************************************************************************
 // 2nd LEVEL - OTF2 level
 // *****************************************************************************
+
+
+void openPRV( const string &strPRVTrace, std::fstream &file )
+{
+  file.open( strPRVTrace.c_str(), fstream::out | fstream::trunc );
+  file << fixed;
+  file << dec;
+  file.precision( 0 );
+}
 
 
 SCOREP_Error_Code
@@ -125,24 +142,36 @@ GlobDefClockProperties_print
     uint64_t trace_length
 )
 {
-  /* Dummies to suppress compiler warnings for unused parameters. */
-  ( void )userData;
+  TranslationData *transData = ( TranslationData * )userData;
 
-  if ( timer_resolution <= 1 )
-    timeUnit = SEC;
-  else if ( timer_resolution <= 1000 )
-    timeUnit = MS;
-  else if ( timer_resolution <= 1000000 )
-    timeUnit = US;
-  else if ( timer_resolution <= 1000000000 )
-    timeUnit = NS;
+  if ( timer_resolution <= 1E3 - 1 )
+    transData->timeUnit = SEC;
+  else if ( timer_resolution <= 1E6 - 1 )
+    transData->timeUnit = MS;
+  else if ( timer_resolution <= 1E9 - 1 )
+    transData->timeUnit = US;
   else
-    timeUnit = NS;
+    transData->timeUnit = NS;
 
-  maxTraceTime = global_offset + trace_length;
+  transData->maxTraceTime = global_offset + trace_length;
 
   return SCOREP_SUCCESS;
 }
+
+
+SCOREP_Error_Code
+GlobDefString_print
+(
+    void*       userData,
+    uint32_t    stringID,
+    const char* string
+)
+{
+  TranslationData *transData = ( TranslationData * )userData;
+
+  transData->symbols[ stringID ] = std::string( string );
+}
+
 
 SCOREP_Error_Code
 GlobDefSystemTreeNode_print
@@ -154,44 +183,35 @@ GlobDefSystemTreeNode_print
     uint32_t nodeParent
 )
 {
-  otf2_print_data* data = ( otf2_print_data* )userData;
+  TranslationData *transData = ( TranslationData * )userData;
 
   // Translation: node of nodes => SYSTEM, NODE
   // How to translate many systems?
   // Many systems to one system and all the nodes merged?
+std::cout << nodeID << " " << name << " " << className << " "<< nodeParent << std::endl;
 
   if ( nodeParent != OTF2_UNDEFINED_UINT32 )
   {
     // Add node to our structure
-    resourcesModel->addNode( nodeID - systems );
+    transData->resourcesModel->addNode();
+    transData->systemTreeNode2GlobalNode[ nodeID ] = transData->resourcesModel->totalNodes() - 1;
 
     // Keep name for ROW file
-    // Use Hash de scorep?
+
+    transData->rowLabels->pushBack( NODE, transData->symbols[ name ] );
   }
   else
   {
-    ++systems;
+    transData->rowLabels->pushBack( SYSTEM, transData->symbols[ name ] );
   }
-/*
-  // Adds to the hash
-  // See otf2_print : otf2_print_add_def64_name
-  otf2_print_add_system_tree_node( data,
-                                   nodeID,
-                                   name );
-
-        printf( "%-*s %12u  Name: %s, Class: %s, Parent: %s\n",
-                otf2_DEF_COLUMN_WIDTH, "SYSTEM_TREE_NODE",
-                nodeID,
-                otf2_print_get_def_name( data->strings, name ),
-                otf2_print_get_def_name( data->strings, className ),
-                otf2_print_get_def_name( data->system_tree_nodes, nodeParent ) );
-
-*/
 
   return SCOREP_SUCCESS;
 }
 
 
+// LocationGroup: { UNKNOWN, PROCESS }
+// Translation: Map TASK->NODE
+// Assumed OTF2 precond: groupID always growing in 1 unit.
 SCOREP_Error_Code
 GlobDefLocationGroup_print
 (
@@ -202,16 +222,12 @@ GlobDefLocationGroup_print
     uint32_t               systemTreeParent
 )
 {
-    otf2_print_data* data = ( otf2_print_data* )userData;
+  TranslationData *transData = ( TranslationData * )userData;
 
-    processModel->addTask( 0, groupID );
-
-    // LocationGroup: { UNKNOWN, PROCESS }
-    // In both cases PROCESS?
-
-    // Tranlation: Map TASK->NODE
-
-
+  TApplOrder currentApplication = transData->processModel->totalApplications() - 1;
+  transData->processModel->addTask( currentApplication );
+  transData->rowLabels->pushBack( TASK, transData->symbols[ name ] );
+  transData->locationGroup2GlobalNode[ groupID ] = systemTreeParent; // undefined?
 
 
 /*
@@ -250,7 +266,18 @@ GlobDefLocation_print
     uint32_t          locationGroup
 )
 {
-    otf2_print_data* data = ( otf2_print_data* )userData;
+  TranslationData *transData = ( TranslationData * )userData;
+
+  // Adds CPU and THREAD to a NODE - TASK
+  if ( locationType == OTF2_LOCATION_TYPE_CPU_THREAD )
+  {
+    TApplOrder currentApplication = transData->processModel->totalApplications() - 1;
+    TNodeOrder currentNode = transData->systemTreeNode2GlobalNode[
+            transData->locationGroup2GlobalNode[ locationGroup ] ];
+
+    transData->processModel->addThread( currentApplication, locationGroup, currentNode );
+    transData->resourcesModel->addCPU( currentNode );
+  }
 /*
     otf2_print_add_location( data, locationID, name );
 
@@ -296,7 +323,7 @@ MpiSend_print
     uint64_t            msgLength
 )
 {
-  otf2_print_data* data = ( otf2_print_data* )userData;
+  TranslationData *transData = ( TranslationData * )userData;
 /*
   printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Receiver: %u, "
             "Communicator: %s, "
@@ -314,11 +341,6 @@ MpiSend_print
 
     return SCOREP_SUCCESS;
 }
-
-
-
-
-
 // ******* de la web
 
 
@@ -415,20 +437,27 @@ bool isOption( char *argument )
 }
 
 
-void activateOption( char *argument )
+void activateOption( char *argument,
+                     MainOptions &options,
+                     TranslationData &transData )
 {
   if ( argument[ 1 ] == 'h' )
-    showHelp = true;
+    options.showHelp = true;
   else if ( argument[ 1 ] == 'i' )
-    showVersion = true;
+    options.showVersion = true;
   else if ( argument[ 1 ] == 'v')
-    verbose = true;
+    transData.verbose = true;
   else
     std::cout << "Unknown option " << argument << std::endl;
 }
 
 
-void readParameters( int argc, char *arguments[] )
+void readParameters( int argc,
+                     char *arguments[],
+                     MainOptions &options,
+                     TranslationData &transData,
+                     string &strOTF2Trace,
+                     string &strPRVTrace )
 {
   PRV_INT32 currentArg = 1;
 
@@ -436,7 +465,7 @@ void readParameters( int argc, char *arguments[] )
   {
     if ( isOption( arguments[ currentArg ] ))
     {
-      activateOption( arguments[ currentArg ] );
+      activateOption( arguments[ currentArg ], options, transData );
     }
     else if ( Trace::isTraceFile( string( arguments[ currentArg ] )))
     {
@@ -456,112 +485,124 @@ void readParameters( int argc, char *arguments[] )
 }
 
 
-bool anyOTF2Trace()
+bool anyOTF2Trace( const string &strOTF2Trace )
 {
   return ( strOTF2Trace != "" );
 }
 
 
-bool translate()
+bool translate( const string &strOTF2Trace,
+                const string &strPRVTrace,
+                TranslationData *tmpData )
 {
-  // BUILD HEADER
-  // Open otf2 trace
-  OTF2_Reader* reader = OTF2_Reader_Open( strOTF2Trace.c_str() );
+  bool translationReady = false;
+  std::fstream file;
+  openPRV( strPRVTrace, file );
 
-  // Initialize
+  if ( file.good() )
+  {
+    OTF2_Reader* reader = OTF2_Reader_Open( strOTF2Trace.c_str() );
+    if ( reader != NULL )
+    {
+      // BUILD HEADER
+      // Initialize callbacks for get last time
+      OTF2_GlobalDefReader* global_def_reader = OTF2_Reader_GetGlobalDefReader( reader );
+      OTF2_GlobalDefReaderCallbacks* global_def_callbacks = OTF2_GlobalDefReaderCallbacks_New();
 
-  // Initialize callbacks for get last time
-  OTF2_GlobalDefReader* global_def_reader = OTF2_Reader_GetGlobalDefReader( reader );
-  OTF2_GlobalDefReaderCallbacks* global_def_callbacks = OTF2_GlobalDefReaderCallbacks_New();
+      OTF2_GlobalDefReaderCallbacks_SetClockPropertiesCallback( global_def_callbacks, GlobDefClockProperties_print );
+      OTF2_GlobalDefReaderCallbacks_SetSystemTreeNodeCallback( global_def_callbacks, GlobDefSystemTreeNode_print );
+      OTF2_GlobalDefReaderCallbacks_SetLocationGroupCallback( global_def_callbacks, GlobDefLocationGroup_print );
+      OTF2_GlobalDefReaderCallbacks_SetLocationCallback( global_def_callbacks, GlobDefLocation_print );
+      //OTF2_GlobalDefReaderCallbacks_SetLocationCallback( global_def_callbacks, GlobDefLocation_Register );
 
-  OTF2_GlobalDefReaderCallbacks_SetClockPropertiesCallback( global_def_callbacks, GlobDefClockProperties_print );
-  OTF2_GlobalDefReaderCallbacks_SetSystemTreeNodeCallback( global_def_callbacks, GlobDefSystemTreeNode_print );
-  //OTF2_GlobalDefReaderCallbacks_SetLocationGroupCallback( global_def_callbacks, GlobDefLocationGroup_print );
-  //OTF2_GlobalDefReaderCallbacks_SetLocationCallback( global_def_callbacks, GlobDefLocation_print );
-  OTF2_GlobalDefReaderCallbacks_SetLocationCallback( global_def_callbacks, &GlobDefLocation_Register );
+      //OTF2_GlobalDefReaderCallbacks_SetRegionCallback( global_def_callbacks, GlobDefRegion_print );
+      //OTF2_GlobalDefReaderCallbacks_SetGroupCallback( global_def_callbacks, GlobDefGroup_print );
+      //OTF2_GlobalDefReaderCallbacks_SetMpiCommCallback( global_def_callbacks, GlobDefMpiComm_print );
 
-  //OTF2_GlobalDefReaderCallbacks_SetRegionCallback( global_def_callbacks, GlobDefRegion_print );
-  //OTF2_GlobalDefReaderCallbacks_SetGroupCallback( global_def_callbacks, GlobDefGroup_print );
-  //OTF2_GlobalDefReaderCallbacks_SetMpiCommCallback( global_def_callbacks, GlobDefMpiComm_print );
+      OTF2_Reader_RegisterGlobalDefCallbacks( reader, global_def_reader, global_def_callbacks, (void *)tmpData );
+      OTF2_GlobalDefReaderCallbacks_Delete( global_def_callbacks );
 
-  OTF2_Reader_RegisterGlobalDefCallbacks( reader, global_def_reader, global_def_callbacks, reader );
-  OTF2_GlobalDefReaderCallbacks_Delete( global_def_callbacks );
+      uint64_t definitions_read = 0;
+      OTF2_Reader_ReadAllGlobalDefinitions( reader, global_def_reader, &definitions_read );
 
-  uint64_t definitions_read = 0;
-  OTF2_Reader_ReadAllGlobalDefinitions( reader, global_def_reader, &definitions_read );
+      tmpData->resourcesModel->setReady( true );
+      tmpData->processModel->setReady( true );
 
-  resourcesModel->setReady( true );
-  processModel->setReady( true );
+      // WRITE HEADER
+      writeHeaderTimes( tmpData, file );
+      writeHeaderResourceModel( tmpData, file );
+      writeHeaderProcessModel( tmpData, file );
+      writeHeaderCommunicators( tmpData, file );
 
-  // WRITE HEADER
-  writeHeaderTimes();
-  writeHeaderResourceModel();
-  writeHeaderProcessModel();
-  writeHeaderCommunicators();
-
-  // TRANSLATE EVENTS
-  // Initialize callbacks for events
-  // Write events
-  // Read states
-  // Read communications
-  OTF2_GlobalEvtReader* global_evt_reader = OTF2_Reader_GetGlobalEvtReader( reader );
-  OTF2_GlobalEvtReaderCallbacks* event_callbacks = OTF2_GlobalEvtReaderCallbacks_New();
-  OTF2_GlobalEvtReaderCallbacks_SetEnterCallback( event_callbacks, Enter_print );
-  OTF2_GlobalEvtReaderCallbacks_SetLeaveCallback( event_callbacks, Leave_print );
-  OTF2_GlobalEvtReaderCallbacks_SetMpiSendCallback( event_callbacks, MpiSend_print );
+      // TRANSLATE EVENTS
+      // Initialize callbacks for events
+      // Write events
+      // Read states
+      // Read communications
+      OTF2_GlobalEvtReader* global_evt_reader = OTF2_Reader_GetGlobalEvtReader( reader );
+      OTF2_GlobalEvtReaderCallbacks* event_callbacks = OTF2_GlobalEvtReaderCallbacks_New();
+      OTF2_GlobalEvtReaderCallbacks_SetEnterCallback( event_callbacks, Enter_print );
+      OTF2_GlobalEvtReaderCallbacks_SetLeaveCallback( event_callbacks, Leave_print );
+      OTF2_GlobalEvtReaderCallbacks_SetMpiSendCallback( event_callbacks, MpiSend_print );
 
 
-  OTF2_Reader_RegisterGlobalEvtCallbacks( reader, global_evt_reader, event_callbacks, NULL );
-  OTF2_GlobalEvtReaderCallbacks_Delete( event_callbacks );
+      OTF2_Reader_RegisterGlobalEvtCallbacks( reader, global_evt_reader, event_callbacks, NULL );
+      OTF2_GlobalEvtReaderCallbacks_Delete( event_callbacks );
 
-  // Read simbolic info
-  // Read until last time
-  uint64_t events_read = 0;
-  OTF2_Reader_ReadAllGlobalEvents( reader, global_evt_reader, &events_read );
+      // Read simbolic info
+      // Read until last time
+      uint64_t events_read = 0;
+      OTF2_Reader_ReadAllGlobalEvents( reader, global_evt_reader, &events_read );
 
-  // Close otf2 trace
-  OTF2_Reader_Close( reader );
+      // Close otf2 trace
+      OTF2_Reader_Close( reader );
 
-  // Summarized log of events not translated
+      // Summarized log of events not translated
 
-  // WRITE PCF
+      // WRITE PCF
 
-  // WRITE ROW
+      // WRITE ROW
 
-/*
-  // old algorithm
+      /*
+      // old algorithm
 
-  Initialize_Translation( parameters ))
-  Translate(  parameters->otf_trace_name, Get_EVENTS_Name( parameters ), tmp_fd, pcf_fd );
-  Generate_PCF( sym_otf_info, pcf_fd );
-  Generate_Paraver_Header( header, prv_fd );
-  Dump_Communications( comms );
-  Merge_Files( prv_fd, tmp_fd, comm_fd );
-  stats.otf_unmatched_sends    = Log_Unmatched_Comms( comms, ERROR_SEND );
-  stats.otf_unmatched_receives = Log_Unmatched_Comms( unmatched_receives, ERROR_RECEIVE );
-  Print_Statistics( &stats, parameters, argc, argv );
-  Print_Otf_Symbolic_Info( sym_otf_info   );
-  Finish( parameters );
-*/
+      Initialize_Translation( parameters ))
+      Translate(  parameters->otf_trace_name, Get_EVENTS_Name( parameters ), tmp_fd, pcf_fd );
+      Generate_PCF( sym_otf_info, pcf_fd );
+      Generate_Paraver_Header( header, prv_fd );
+      Dump_Communications( comms );
+      Merge_Files( prv_fd, tmp_fd, comm_fd );
+      stats.otf_unmatched_sends    = Log_Unmatched_Comms( comms, ERROR_SEND );
+      stats.otf_unmatched_receives = Log_Unmatched_Comms( unmatched_receives, ERROR_RECEIVE );
+      Print_Statistics( &stats, parameters, argc, argv );
+      Print_Otf_Symbolic_Info( sym_otf_info   );
+      Finish( parameters );
+      */
+      file.close();
 
-  return true;
+      translationReady = true;
+
+    }
+    else
+    {
+      std::cout << "ERROR: OTF2 Reader: Unable to open " << strOTF2Trace << std::endl;
+    }
+  }
+
+  return translationReady;
 }
 
 
-void buildPRVTraceName()
+std::string buildPRVTraceName( const string &strOTF2Trace, const string &strPRVTrace )
 {
+  std::string auxPRVTrace( strPRVTrace );
+
   if ( strPRVTrace.compare( "" ) == 0 )
   {
-    strPRVTrace = strOTF2Trace + ".prv";
+    auxPRVTrace = strOTF2Trace + ".prv";
   }
-}
 
-std::fstream & openPRV()
-{
-  file.open( strPRVTrace.c_str(), fstream::out | fstream::trunc );
-  file << fixed;
-  file << dec;
-  file.precision( 0 );
+  return auxPRVTrace;
 }
 
 // *****************************************************************************
@@ -581,23 +622,37 @@ int main( int argc, char *argv[] )
     ParaverConfig *config = ParaverConfig::getInstance();
     config->readParaverConfigFile();
 
-    readParameters( argc, argv );
+    MainOptions options;
+    options.showHelp = false;
+    options.showVersion = false;
 
-    if ( showHelp )
+    TranslationData tmpData;
+    tmpData.verbose = false;
+
+
+    string strOTF2Trace = string( "" );
+    string strPRVTrace = string( "" );
+
+    // Set parameters
+    readParameters( argc, argv, options, tmpData, strOTF2Trace, strPRVTrace );
+
+    if ( options.showHelp )
       printHelp();
-    else if ( showVersion )
+    else if ( options.showVersion )
       printVersion();
-    else if ( anyOTF2Trace() )
+    else if ( anyOTF2Trace( strOTF2Trace ) )
     {
-      resourcesModel = new ResourceModel();
-      processModel = new ProcessModel();
-      processModel->addApplication( 0 );
+      tmpData.timeUnit = NS;
+      tmpData.resourcesModel = new ResourceModel();
+      tmpData.processModel = new ProcessModel();
+      tmpData.processModel->addApplication();
+      tmpData.rowLabels = new RowLabels();
 
-      buildPRVTraceName();
-      openPRV();
-      if ( translate() )
+      if ( translate( strOTF2Trace,
+                      buildPRVTraceName( strOTF2Trace, strPRVTrace ),
+                      &tmpData ) )
       {
-        std::cout << "Done" << std::endl;
+        std::cout << "Done." << std::endl;
       }
       else
       {
@@ -605,10 +660,9 @@ int main( int argc, char *argv[] )
         globalError = -1;
       }
 
-      file.close();
-
-      delete resourcesModel;
-      delete processModel;
+      delete tmpData.resourcesModel;
+      delete tmpData.processModel;
+      delete tmpData.rowLabels;
     }
   }
 

@@ -97,10 +97,9 @@ class ProcessModel
                         TTaskOrder whichTask ) const;
     bool isValidAppl( TApplOrder whichAppl ) const;
 
-    void addApplication( TApplOrder whichAppl );
-    void addTask( TApplOrder whichAppl, TTaskOrder whichTask );
-    void addThread( TApplOrder whichAppl, TTaskOrder whichTask,
-                    TThreadOrder whichThread, TNodeOrder execNode );
+    void addApplication();
+    void addTask( TApplOrder whichAppl );
+    void addThread( TApplOrder whichAppl, TTaskOrder whichTask, TNodeOrder execNode );
 
   protected:
 

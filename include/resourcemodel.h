@@ -72,8 +72,8 @@ class ResourceModel
     TCPUOrder getFirstCPU( TNodeOrder inNode ) const;
     TCPUOrder getLastCPU( TNodeOrder inNode ) const;
 
-    void addNode( TNodeOrder whichNode );
-    void addCPU( TNodeOrder whichNode, TCPUOrder whichCPU );
+    void addNode();
+    void addCPU( TNodeOrder whichNode );
 
   protected:
     struct CPULocation

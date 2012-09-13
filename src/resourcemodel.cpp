@@ -93,12 +93,12 @@ TCPUOrder ResourceModel::getLastCPU( TNodeOrder inNode ) const
 }
 
 
-void ResourceModel::addNode( TNodeOrder whichNode )
+void ResourceModel::addNode()
 {
-  nodes.push_back( ResourceModelNode( whichNode ) );
+  nodes.push_back( ResourceModelNode( nodes.size() ) );
 }
 
-void ResourceModel::addCPU( TNodeOrder whichNode, TCPUOrder whichCPU )
+void ResourceModel::addCPU( TNodeOrder whichNode )
 {
   if( whichNode >= nodes.size() )
   {
@@ -108,10 +108,10 @@ void ResourceModel::addCPU( TNodeOrder whichNode, TCPUOrder whichCPU )
                                 tmpstr.str().c_str() );
   }
 
-  nodes[ whichNode ].CPUs.push_back( ResourceModelCPU( whichCPU ) );
   CPUs.push_back( CPULocation() );
   CPUs[ CPUs.size() - 1 ].node = whichNode;
-  CPUs[ CPUs.size() - 1 ].CPU = nodes[ whichNode ].CPUs.size() - 1;
+  CPUs[ CPUs.size() - 1 ].CPU = nodes[ whichNode ].CPUs.size();
+  nodes[ whichNode ].CPUs.push_back( ResourceModelCPU( CPUs.size() - 1 ) );
 }
 
 ResourceModel::ResourceModel( istringstream& headerInfo )

@@ -218,7 +218,7 @@ void ProcessModel::dumpToFile( fstream& file ) const
     for ( TTaskOrder iTask = 0; iTask < applications[ iAppl ].tasks.size(); ++iTask )
     {
       ostr << applications[ iAppl ].tasks[ iTask ].threads.size() << ':';
-      ostr << applications[ iAppl ].tasks[ iTask ].threads[ 0 ].nodeExecution;
+      ostr << applications[ iAppl ].tasks[ iTask ].threads[ 0 ].nodeExecution + 1;
 
       if ( iTask < applications[ iAppl ].tasks.size() - 1 )
         ostr << ',';
@@ -314,12 +314,12 @@ bool ProcessModel::isValidAppl( TApplOrder whichAppl ) const
   return whichAppl < applications.size();
 }
 
-void ProcessModel::addApplication( TApplOrder whichAppl )
+void ProcessModel::addApplication()
 {
-  applications.push_back( ProcessModelAppl( whichAppl ) );
+  applications.push_back( ProcessModelAppl( applications.size() ) );
 }
 
-void ProcessModel::addTask( TApplOrder whichAppl, TTaskOrder whichTask )
+void ProcessModel::addTask( TApplOrder whichAppl )
 {
   if( whichAppl > applications.size() )
   {
@@ -329,14 +329,15 @@ void ProcessModel::addTask( TApplOrder whichAppl, TTaskOrder whichTask )
                                 tmpstr.str().c_str() );
   }
 
-  applications[ whichAppl ].tasks.push_back( ProcessModelTask( whichTask ) );
   tasks.push_back( TaskLocation() );
   tasks[ tasks.size() - 1 ].appl = whichAppl;
-  tasks[ tasks.size() - 1 ].task = applications[ whichAppl ].tasks.size() - 1;
+  tasks[ tasks.size() - 1 ].task = applications[ whichAppl ].tasks.size();
+  applications[ whichAppl ].tasks.push_back( ProcessModelTask( tasks.size() - 1 ) );
+
 }
 
 void ProcessModel::addThread( TApplOrder whichAppl, TTaskOrder whichTask,
-                              TThreadOrder whichThread, TNodeOrder execNode )
+                              TNodeOrder execNode )
 {
   if( whichAppl > applications.size() )
   {
@@ -353,9 +354,11 @@ void ProcessModel::addThread( TApplOrder whichAppl, TTaskOrder whichTask,
                                 tmpstr.str().c_str() );
   }
 
-  applications[ whichAppl ].tasks[ whichTask ].threads.push_back( ProcessModelThread( whichThread, execNode ) );
   threads.push_back( ThreadLocation() );
   threads[ threads.size() - 1 ].appl = whichAppl;
-  threads[ threads.size() - 1 ].task = applications[ whichAppl ].tasks[ whichTask ].traceGlobalOrder;
-  threads[ threads.size() - 1 ].thread = applications[ whichAppl ].tasks[ whichTask ].threads.size() - 1;
+  //threads[ threads.size() - 1 ].task = applications[ whichAppl ].tasks[ whichTask ].traceGlobalOrder;
+  threads[ threads.size() - 1 ].task = whichTask;
+  threads[ threads.size() - 1 ].thread = applications[ whichAppl ].tasks[ whichTask ].threads.size();
+  applications[ whichAppl ].tasks[ whichTask ].threads.push_back( ProcessModelThread( threads.size() - 1, execNode ) );
+
 }
