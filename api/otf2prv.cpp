@@ -72,8 +72,8 @@ struct TranslationDataStruct
   ProcessModel *processModel;
   RowLabels *rowLabels;
   map< uint32_t, string > symbols;
+  map< uint32_t, uint32_t > locationGroup2SystemTreeNode;
   map< uint32_t, TNodeOrder > systemTreeNode2GlobalNode;
-  map< uint32_t, TNodeOrder > locationGroup2GlobalNode;
 };
 
 
@@ -227,7 +227,7 @@ GlobDefLocationGroup_print
   TApplOrder currentApplication = transData->processModel->totalApplications() - 1;
   transData->processModel->addTask( currentApplication );
   transData->rowLabels->pushBack( TASK, transData->symbols[ name ] );
-  transData->locationGroup2GlobalNode[ groupID ] = systemTreeParent; // undefined?
+  transData->locationGroup2SystemTreeNode[ groupID ] = systemTreeParent; // undefined?
 
 
 /*
@@ -273,7 +273,7 @@ GlobDefLocation_print
   {
     TApplOrder currentApplication = transData->processModel->totalApplications() - 1;
     TNodeOrder currentNode = transData->systemTreeNode2GlobalNode[
-            transData->locationGroup2GlobalNode[ locationGroup ] ];
+            transData->locationGroup2SystemTreeNode[ locationGroup ] ];
 
     transData->processModel->addThread( currentApplication, locationGroup, currentNode );
     transData->resourcesModel->addCPU( currentNode );
