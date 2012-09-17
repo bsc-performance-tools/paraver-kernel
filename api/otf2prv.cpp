@@ -74,6 +74,10 @@ struct TranslationDataStruct
   map< uint32_t, string > symbols;
   map< uint32_t, uint32_t > locationGroup2SystemTreeNode;
   map< uint32_t, TNodeOrder > systemTreeNode2GlobalNode;
+
+  map< int, string > eventValueLabel;
+  map< int, string > eventTypeLabel;
+  map< int, int > eventValue2Type;
 };
 
 
@@ -491,6 +495,31 @@ bool anyOTF2Trace( const string &strOTF2Trace )
 }
 
 
+void initialize( TranslationData &tmpData )
+{
+  tmpData.timeUnit = NS;
+  tmpData.resourcesModel = new ResourceModel();
+  tmpData.processModel = new ProcessModel();
+  tmpData.processModel->addApplication();
+  tmpData.rowLabels = new RowLabels();
+
+  for( uint32_t i = 0; i < NUM_MPI_BLOCK_GROUPS; ++i )
+  {
+    tmpData.eventTypeLabel[ prv_block_groups[ i ].type ] = string( prv_block_groups[ i ].label );
+  }
+
+  for( uint32_t i = 0; i < NUM_MPI_PRV_ELEMENTS; ++i )
+  {
+    tmpData.eventValueLabel[ mpi_prv_val_label[ i ].value ] = string( mpi_prv_val_label[ i ].label );
+  }
+
+  for( uint32_t i = 0; i < NUM_MPI_PRV_ELEMENTS; ++i )
+  {
+    tmpData.eventValue2Type [ event_mpit2prv[ i ].valor_prv ] = event_mpit2prv[ i ].tipus_prv;
+  }
+}
+
+
 bool translate( const string &strOTF2Trace,
                 const string &strPRVTrace,
                 TranslationData *tmpData )
@@ -642,11 +671,7 @@ int main( int argc, char *argv[] )
       printVersion();
     else if ( anyOTF2Trace( strOTF2Trace ) )
     {
-      tmpData.timeUnit = NS;
-      tmpData.resourcesModel = new ResourceModel();
-      tmpData.processModel = new ProcessModel();
-      tmpData.processModel->addApplication();
-      tmpData.rowLabels = new RowLabels();
+      initialize( tmpData );
 
       if ( translate( strOTF2Trace,
                       buildPRVTraceName( strOTF2Trace, strPRVTrace ),
