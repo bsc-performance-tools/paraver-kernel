@@ -81,5 +81,5 @@ AC_DEFUN([AX_PROG_WITH_OTF2],
   CXXFLAGS_OTF2="-I$OTF2_DIR/include"
   CFLAGS_OTF2="-I$OTF2_DIR/include"
   LIBS_OTF2="-L$OTF2_DIR/lib"
-  LDFLAGS_OTF2="-L$OTF2_DIR/lib -lotf2 -lscorep_utilities"
+  LDFLAGS_OTF2="-L$OTF2_DIR/lib -lotf2"
 ])

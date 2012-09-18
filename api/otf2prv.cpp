@@ -46,7 +46,7 @@
 //using std::string;
 using namespace std;
 //
-const string OTF2_VERSION_STRING = "0.9";
+const string OTF2_VERSION_STRING = "0.10";
 
 Trace *trace;
 
@@ -405,9 +405,17 @@ void printHelp()
   std::cout << "USAGE" << std::endl;
   std::cout << "  otf2prv [OPTION] trc.otf2 [trc.prv]" << std::endl;
   std::cout << std::endl;
-  std::cout << "    -h: Prints this help" << std::endl;
-  std::cout << "    -i: Prints info about version" << std::endl;
-  std::cout << "    -v: Set verbose mode" << std::endl;
+  std::cout << "    -h, --help: Prints this help" << std::endl;
+  std::cout << "    -v, --version: Show version" << std::endl;
+  std::cout <<  "[in development]    -l [file], --log: Set verbose mode"
+        " and print it to the stdout, or if present, to file." << std::endl;
+  std::cout << "[in development]    -i, --info: Translate only pcf and row files."
+        " Also an empty prv including only header and idle states." << std::endl;
+  std::cout << "[in development]    -e, --events: Translate event records." << std::endl;
+  std::cout << "[in development]    -s, --states: Translate states records." << std::endl;
+  std::cout << "[in development]    -c, --communications: Translate communication records." << std::endl;
+  std::cout << " By default all kind of records are translated. If a subset is wanted,"
+        " its specific options must be given." << std::endl;
   std::cout << std::endl;
   std::cout << "  Parameters:" << std::endl;
   std::cout << "    trc.otf2: OTF2 trace filename." << std::endl;
@@ -416,6 +424,8 @@ void printHelp()
   std::cout << "  Examples:" << std::endl;
   std::cout << "    otf2prv linpack.otf2" << std::endl;
   std::cout << "      Generates translation from linpack OTF2 trace to linpack.prv PRV trace." << std::endl;
+  std::cout << "    otf2prv -e -c linpack.otf2" << std::endl;
+  std::cout << "      Same than before, but including only events." << std::endl;
   std::cout << std::endl;
 }
 
