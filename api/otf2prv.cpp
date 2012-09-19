@@ -28,10 +28,10 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include <iostream>
+#include <sstream>
 #include <string>
 
 #include <otf2/otf2.h>
-#include <scorep_utility/SCOREP_UtilityTypes.h>
 #include "otf2prv.h"
 
 #include "prvtypes.h"
@@ -43,10 +43,9 @@
 #include "resourcemodel.h"
 #include "processmodel.h"
 
-//using std::string;
 using namespace std;
-//
-const string OTF2_VERSION_STRING = "0.10";
+
+const string OTF2_VERSION_STRING = "0.12"; // Added entry/leave callbacks
 
 Trace *trace;
 
@@ -62,7 +61,15 @@ typedef struct TranslationDataStruct TranslationData;
 
 struct TranslationDataStruct
 {
-  bool verbose;
+  OTF2_Reader *reader;
+  std::fstream *PRVFile;
+
+  bool printLog;
+  std::ostream *logFile; // printLog == true => logFile exists and is open.
+
+  bool translateStates;
+  bool translateEvents;
+  bool translateCommunications;
 
   TTimeUnit timeUnit;
   // PRV_UINT64 timerResolution;
@@ -75,17 +82,56 @@ struct TranslationDataStruct
   map< uint32_t, uint32_t > locationGroup2SystemTreeNode;
   map< uint32_t, TNodeOrder > systemTreeNode2GlobalNode;
 
-  map< int, string > eventValueLabel;
-  map< int, string > eventTypeLabel;
-  map< int, int > eventValue2Type;
+  map< string, int > PRVEvent_ValueLabel2Value;
+  map< int, int >    PRVEvent_Value2Type;
+  map< int, string > PRVEvent_Type2TypeLabel;
+
+  map< string, int > PRVEvent_TypeLabel2Value;
+
+  // MPI maps values
+  map< uint32_t, int > OTF2Region2PRVEventValue;
+  map< uint32_t, int > OTF2Region2PRVEventType;
 };
 
 
 // *****************************************************************************
 // 3rd LEVEL - PRV Write
 // *****************************************************************************
+void writeLog( TranslationData *tmpData,
+               const string & message )
+{
+  if ( tmpData->printLog )
+  {
+    (*tmpData->logFile) << message << std::endl;
+  }
+}
 
-void writeHeaderTimes( TranslationData *tmpData, std::fstream &file )
+
+void writeLog( TranslationData *tmpData,
+               const string & message,
+               const string & value )
+{
+  if ( tmpData->printLog )
+  {
+    (*tmpData->logFile) << message << ": " << value << std::endl;
+  }
+}
+
+
+void writeLog( TranslationData *tmpData,
+               const string & message,
+               const uint32_t & value )
+{
+  if ( tmpData->printLog )
+  {
+    stringstream aux( message );
+    aux << value;
+    (*tmpData->logFile) << message << ": " << aux.str() << std::endl;
+  }
+}
+
+
+void writeHeaderTimes( TranslationData *tmpData )
 {
   ostringstream ostr;
 
@@ -93,33 +139,33 @@ void writeHeaderTimes( TranslationData *tmpData, std::fstream &file )
   ostr << dec;
   ostr.precision( 0 );
 
-  file << "#Paraver ";
-  file << "()" << ':';
+  *tmpData->PRVFile << "#Paraver ";
+  *tmpData->PRVFile << "()" << ":";
 
   ostr << tmpData->maxTraceTime;
-  file << ostr.str();
+  *tmpData->PRVFile << ostr.str();
 
-  file << "_" << LABEL_TIMEUNIT[ tmpData->timeUnit ];
-  file << ':';
+  *tmpData->PRVFile << "_" << LABEL_TIMEUNIT[ tmpData->timeUnit ];
+  *tmpData->PRVFile << ":";
 }
 
 
-void writeHeaderResourceModel( TranslationData *tmpData, std::fstream &file )
+void writeHeaderResourceModel( TranslationData *tmpData )
 {
-  tmpData->resourcesModel->dumpToFile( file );
-  file << ':';
+  tmpData->resourcesModel->dumpToFile( *tmpData->PRVFile );
+  *tmpData->PRVFile << ":";
 }
 
 
-void writeHeaderProcessModel( TranslationData *tmpData, std::fstream &file )
+void writeHeaderProcessModel( TranslationData *tmpData )
 {
-  tmpData->processModel->dumpToFile( file );
+  tmpData->processModel->dumpToFile( *tmpData->PRVFile );
 }
 
 
-void writeHeaderCommunicators( TranslationData *tmpData, std::fstream &file )
+void writeHeaderCommunicators( TranslationData *tmpData )
 {
-  file << ",0" << endl;
+  *tmpData->PRVFile << ",0" << endl;
 }
 
 
@@ -137,14 +183,10 @@ void openPRV( const string &strPRVTrace, std::fstream &file )
 }
 
 
-SCOREP_Error_Code
-GlobDefClockProperties_print
-(
-    void*    userData,
-    uint64_t timer_resolution,
-    uint64_t global_offset,
-    uint64_t trace_length
-)
+SCOREP_Error_Code GlobDefClockPropertiesHandler( void*    userData,
+                                                 uint64_t timer_resolution,
+                                                 uint64_t global_offset,
+                                                 uint64_t trace_length )
 {
   TranslationData *transData = ( TranslationData * )userData;
 
@@ -163,29 +205,23 @@ GlobDefClockProperties_print
 }
 
 
-SCOREP_Error_Code
-GlobDefString_print
-(
-    void*       userData,
-    uint32_t    stringID,
-    const char* string
-)
+SCOREP_Error_Code GlobDefStringHandler( void*       userData,
+                                        uint32_t    stringID,
+                                        const char* string )
 {
   TranslationData *transData = ( TranslationData * )userData;
 
   transData->symbols[ stringID ] = std::string( string );
+
+  writeLog( transData, "Registering STRING", transData->symbols[ stringID ] );
 }
 
 
-SCOREP_Error_Code
-GlobDefSystemTreeNode_print
-(
-    void*    userData,
-    uint32_t nodeID,
-    uint32_t name,
-    uint32_t className,
-    uint32_t nodeParent
-)
+SCOREP_Error_Code GlobDefSystemTreeNodeHandler( void*    userData,
+                                                uint32_t nodeID,
+                                                uint32_t name,
+                                                uint32_t className,
+                                                uint32_t nodeParent )
 {
   TranslationData *transData = ( TranslationData * )userData;
 
@@ -216,15 +252,11 @@ std::cout << nodeID << " " << name << " " << className << " "<< nodeParent << st
 // LocationGroup: { UNKNOWN, PROCESS }
 // Translation: Map TASK->NODE
 // Assumed OTF2 precond: groupID always growing in 1 unit.
-SCOREP_Error_Code
-GlobDefLocationGroup_print
-(
-    void*                  userData,
-    uint32_t               groupID,
-    uint32_t               name,
-    OTF2_LocationGroupType type,
-    uint32_t               systemTreeParent
-)
+SCOREP_Error_Code GlobDefLocationGroupHandler( void*                  userData,
+                                               uint32_t               groupID,
+                                               uint32_t               name,
+                                               OTF2_LocationGroupType type,
+                                               uint32_t               systemTreeParent )
 {
   TranslationData *transData = ( TranslationData * )userData;
 
@@ -235,7 +267,7 @@ GlobDefLocationGroup_print
 
 
 /*
-     otf2_print_add_location_group( data,
+     otf2Handler_add_location_group( data,
                                     groupID,
                                     name );
 
@@ -245,9 +277,9 @@ GlobDefLocationGroup_print
          printf( "%-*s %12u  Name: %s, Type: %s, Parent: %s\n",
                  otf2_DEF_COLUMN_WIDTH, "LOCATION_GROUP",
                  groupID,
-                 otf2_print_get_def_name( data->strings, name ),
-                 otf2_print_get_location_group_type( type ),
-                 otf2_print_get_def_name( data->system_tree_nodes,
+                 otf2Handler_get_def_name( data->strings, name ),
+                 otf2Handler_get_location_group_type( type ),
+                 otf2Handler_get_def_name( data->system_tree_nodes,
                                           systemTreeParent ) );
      }
 
@@ -259,16 +291,12 @@ GlobDefLocationGroup_print
     return SCOREP_SUCCESS;
 }
 
-SCOREP_Error_Code
-GlobDefLocation_print
-(
-    void*             userData,
-    uint64_t          locationID,
-    uint32_t          name,
-    OTF2_LocationType locationType,
-    uint64_t          numberOfEvents,
-    uint32_t          locationGroup
-)
+SCOREP_Error_Code GlobDefLocationHandler( void*             userData,
+                                          uint64_t          locationID,
+                                          uint32_t          name,
+                                          OTF2_LocationType locationType,
+                                          uint64_t          numberOfEvents,
+                                          uint32_t          locationGroup )
 {
   TranslationData *transData = ( TranslationData * )userData;
 
@@ -282,8 +310,18 @@ GlobDefLocation_print
     transData->processModel->addThread( currentApplication, locationGroup, currentNode );
     transData->resourcesModel->addCPU( currentNode );
   }
+
+  // PROGRAM LOCAL READ
+  OTF2_EvtReader* evt_reader = OTF2_Reader_GetEvtReader( transData->reader, locationID );
+  OTF2_DefReader* def_reader = OTF2_Reader_GetDefReader( transData->reader, locationID );
+
+  uint64_t definitions_read = 0;
+  OTF2_Reader_ReadAllLocalDefinitions( transData->reader, def_reader, &definitions_read );
+
+
+
 /*
-    otf2_print_add_location( data, locationID, name );
+    otf2Handler_add_location( data, locationID, name );
 
     // Print definition if selected.
     if ( otf2_GLOBDEFS )
@@ -292,10 +330,10 @@ GlobDefLocation_print
                 "# Events: %" PRIu64 ", Group: %s\n",
                 otf2_DEF_COLUMN_WIDTH, "LOCATION",
                 locationID,
-                otf2_print_get_def_name( data->strings, name ),
-                otf2_print_get_location_type( locationType ),
+                otf2Handler_get_def_name( data->strings, name ),
+                otf2Handler_get_location_type( locationType ),
                 numberOfEvents,
-                otf2_print_get_def_name( data->location_groups, locationGroup ) );
+                otf2Handler_get_def_name( data->location_groups, locationGroup ) );
     }
 
 
@@ -307,25 +345,68 @@ GlobDefLocation_print
     }
 
     // add location to the list of locations to read events from
-    otf2_print_add_location_to_read( data, locationID );
+    otf2Handler_add_location_to_read( data, locationID );
 
     otf2_LOCAL_FOUND = true;
 */
    return SCOREP_SUCCESS;
 }
 
-SCOREP_Error_Code
-MpiSend_print
-(
-    uint64_t            locationID,
-    uint64_t            time,
-    void*               userData,
-    OTF2_AttributeList* attributes,
-    uint32_t            receiver,
-    uint32_t            communicator,
-    uint32_t            msgTag,
-    uint64_t            msgLength
-)
+// *** otf2->prv translation concepts ***
+// regionID: Every Entry/Leave record
+// name: Key to the label used
+// regionType: otf2-print uses it as groupType?
+SCOREP_Error_Code GlobDefRegionHandler( void*           userData,
+                                        uint32_t        regionID,
+                                        uint32_t        name,
+                                        uint32_t        description,
+                                        OTF2_RegionType regionType,
+                                        uint32_t        sourceFile,
+                                        uint32_t        beginLineNumber,
+                                        uint32_t        endLineNumber )
+{
+
+  TranslationData *transData = ( TranslationData * )userData;
+
+  bool found;
+  map< string, int >::iterator it =
+          transData->PRVEvent_ValueLabel2Value.find( transData->symbols[ name ] );
+
+  found = ( it != transData->PRVEvent_ValueLabel2Value.end() );
+  if ( found )
+  {
+    transData->OTF2Region2PRVEventValue[ regionID ] = it->second;
+    writeLog( transData, "Registered REGION as VALUE: ", transData->symbols[ name ] );
+  }
+  else
+  {
+    map< string, int >::iterator it2 =
+            transData->PRVEvent_TypeLabel2Value.find( transData->symbols[ name ] );
+
+    found = ( it2 != transData->PRVEvent_TypeLabel2Value.end() );
+    if ( found )
+    {
+      transData->OTF2Region2PRVEventType[ regionID ] = it2->second;
+      writeLog( transData, "Registered REGION as TYPE : ", transData->symbols[ name ] );
+    }
+    else
+    {
+      writeLog( transData, "** NOT FOUND ", transData->symbols[ name ] );
+    }
+  }
+
+  return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code MpiSendHandler( uint64_t            locationID,
+                                  uint64_t            time,
+                                  void*               userData,
+                                  OTF2_AttributeList* attributes,
+                                  uint32_t            receiver,
+                                  uint32_t            communicator,
+                                  uint32_t            msgTag,
+                                  uint64_t            msgLength )
 {
   TranslationData *transData = ( TranslationData * )userData;
 /*
@@ -335,11 +416,11 @@ MpiSend_print
             otf2_EVENT_COLUMN_WIDTH, "MPI_SEND",
             locationID, time,
             receiver,
-            otf2_print_get_def_name( data->mpi_comms, communicator ),
+            otf2Handler_get_def_name( data->mpi_comms, communicator ),
             msgTag,
             msgLength );
 
-    otf2_print_attributes( data, attributes );
+    otf2Handler_attributes( data, attributes );
 */
 
 
@@ -348,53 +429,86 @@ MpiSend_print
 // ******* de la web
 
 
-SCOREP_Error_Code Enter_print( uint64_t locationID,
-                               uint64_t time,
-                               void* userData,
-                               OTF2_AttributeList* attributes,
-                               uint32_t regionID )
+SCOREP_Error_Code EnterHandler( uint64_t locationID,
+                                uint64_t time,
+                                void* userData,
+                                OTF2_AttributeList* attributes,
+                                uint32_t regionID )
 {
-  cout << "Entering region " << regionID;
-  cout << "at location: " << locationID;
-  cout << " at time " << time << endl;
-  //printf( "Entering region %u at location: %" PRIu64 " at time %" PRIu64 ".\n", regionID, locationID, time );
+  TranslationData *transData = ( TranslationData * )userData;
+
+  map< uint32_t, int >::iterator it = transData->OTF2Region2PRVEventValue.find( regionID );
+  if ( it != transData->OTF2Region2PRVEventValue.end() )
+  {
+    stringstream eventRecord;
+    eventRecord << fixed;
+    eventRecord << dec;
+    eventRecord.precision( 0 );
+
+    eventRecord << "2" << ":";
+    //eventRecord << transData->processModel->totalApplications() - 1 << ":"; // CPU
+    eventRecord << transData->processModel->totalApplications() - 1 << ":"; // APP
+    //eventRecord << transData->processModel->totalApplications() - 1 << ":"; // TASK
+    //eventRecord << transData->processModel->totalApplications() - 1 << ":"; // THREAD
+    eventRecord << time << ":";
+    eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":";
+    eventRecord << it->second << std::endl;
+
+    *transData->PRVFile << eventRecord.str(); // change to Trace write.
+
+    writeLog( transData, eventRecord.str() );
+  }
+  else
+  {
+
+    //map< uint32_t, int >::iterator it2 =
+      //      transData->OTF2Region2PRVTypeValue.find( regionID );
+  }
+
 
   return SCOREP_SUCCESS;
 }
 
 
-SCOREP_Error_Code Leave_print( uint64_t locationID,
-                               uint64_t time,
-                               void* userData,
-                               OTF2_AttributeList* attributes,
-                               uint32_t regionID )
+SCOREP_Error_Code LeaveHandler( uint64_t locationID,
+                                uint64_t time,
+                                void* userData,
+                                OTF2_AttributeList* attributes,
+                                uint32_t regionID )
 {
-  cout << "Entering region " << regionID;
-  cout << " at location: " << locationID;
-  cout << " at time " << time << endl;
-//  printf( "Leaving region %u at location: %" PRIu64 " at time %" PRIu64 ".\n", regionID, locationID, time );
+  TranslationData *transData = ( TranslationData * )userData;
+
+  map< uint32_t, int >::iterator it = transData->OTF2Region2PRVEventValue.find( regionID );
+  if ( it != transData->OTF2Region2PRVEventValue.end() )
+  {
+    stringstream eventRecord;
+    eventRecord << fixed;
+    eventRecord << dec;
+    eventRecord.precision( 0 );
+
+    eventRecord << "2" << ":";
+    //eventRecord << transData->processModel->totalApplications() - 1 << ":"; // CPU
+    eventRecord << transData->processModel->totalApplications() - 1 << ":"; // APP
+    //eventRecord << transData->processModel->totalApplications() - 1 << ":"; // TASK
+    //eventRecord << transData->processModel->totalApplications() - 1 << ":"; // THREAD
+    eventRecord << time << ":";
+    eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":"; // TYPE
+    eventRecord << "0" << std::endl; // VALUE
+
+    *transData->PRVFile << eventRecord.str();  // change to Trace write.
+
+    writeLog( transData, eventRecord.str() );
+  }
+  else
+  {
+
+    //map< uint32_t, int >::iterator it2 =
+      //      transData->OTF2Region2PRVTypeValue.find( regionID );
+  }
+
 
   return SCOREP_SUCCESS;
 }
-
-
-SCOREP_Error_Code GlobDefLocation_Register( void*             userData,
-                                            uint64_t          locationIdentifier,
-                                            uint32_t          name,
-                                            OTF2_LocationType location_type,
-                                            uint64_t          numberOfEvents,
-                                            uint32_t          locationGroup )
-{
-  OTF2_Reader* reader = ( OTF2_Reader* )userData;
-  OTF2_EvtReader* evt_reader = OTF2_Reader_GetEvtReader( reader, locationIdentifier );
-  OTF2_DefReader* def_reader = OTF2_Reader_GetDefReader( reader, locationIdentifier );
-
-  uint64_t definitions_read = 0;
-  OTF2_Reader_ReadAllLocalDefinitions( reader, def_reader, &definitions_read );
-
-  return SCOREP_SUCCESS;
-}
-
 
 // *****************************************************************************
 // 1st LEVEL - GENERAL
@@ -408,7 +522,7 @@ void printHelp()
   std::cout << "    -h, --help: Prints this help" << std::endl;
   std::cout << "    -v, --version: Show version" << std::endl;
   std::cout <<  "[in development]    -l [file], --log: Set verbose mode"
-        " and print it to the stdout, or if present, to file." << std::endl;
+        " and  the stdout, or if present, to file." << std::endl;
   std::cout << "[in development]    -i, --info: Translate only pcf and row files."
         " Also an empty prv including only header and idle states." << std::endl;
   std::cout << "[in development]    -e, --events: Translate event records." << std::endl;
@@ -455,14 +569,34 @@ void activateOption( char *argument,
                      MainOptions &options,
                      TranslationData &transData )
 {
+  transData.translateStates = false;
+  transData.translateEvents = false;
+  transData.translateCommunications = false;
+
   if ( argument[ 1 ] == 'h' )
     options.showHelp = true;
-  else if ( argument[ 1 ] == 'i' )
+  else if ( argument[ 1 ] == 'v' )
     options.showVersion = true;
-  else if ( argument[ 1 ] == 'v')
-    transData.verbose = true;
+  else if ( argument[ 1 ] == 'l')
+  {
+    transData.printLog = true;
+  }
+  else if ( argument[ 1 ] == 's')
+    transData.translateStates = true;
+  else if ( argument[ 1 ] == 'e' )
+    transData.translateEvents = true;
+  else if ( argument[ 1 ] == 'c')
+    transData.translateCommunications = true;
   else
     std::cout << "Unknown option " << argument << std::endl;
+
+  // If no translation option about records is given, default is translate them all.
+  if ( !transData.translateStates && !transData.translateStates && !transData.translateCommunications )
+  {
+    transData.translateStates = true;
+    transData.translateEvents = true;
+    transData.translateCommunications = true;
+  }
 }
 
 
@@ -507,25 +641,32 @@ bool anyOTF2Trace( const string &strOTF2Trace )
 
 void initialize( TranslationData &tmpData )
 {
+std::cout << "initialize:: " << endl;
   tmpData.timeUnit = NS;
   tmpData.resourcesModel = new ResourceModel();
   tmpData.processModel = new ProcessModel();
   tmpData.processModel->addApplication();
   tmpData.rowLabels = new RowLabels();
 
+std::cout << "MPI types" << std::endl;
   for( uint32_t i = 0; i < NUM_MPI_BLOCK_GROUPS; ++i )
   {
-    tmpData.eventTypeLabel[ prv_block_groups[ i ].type ] = string( prv_block_groups[ i ].label );
+std::cout << prv_block_groups[ i ].type << " "<< prv_block_groups[ i ].label << std::endl;
+    tmpData.PRVEvent_Type2TypeLabel[ prv_block_groups[ i ].type ] = string( prv_block_groups[ i ].label );
   }
 
+std::cout << "MPI values" << std::endl;
   for( uint32_t i = 0; i < NUM_MPI_PRV_ELEMENTS; ++i )
   {
-    tmpData.eventValueLabel[ mpi_prv_val_label[ i ].value ] = string( mpi_prv_val_label[ i ].label );
+std::cout << string( mpi_prv_val_label[ i ].label ) << " "<< mpi_prv_val_label[ i ].value << std::endl;
+    tmpData.PRVEvent_ValueLabel2Value[ string( mpi_prv_val_label[ i ].label ) ] = mpi_prv_val_label[ i ].value;
   }
 
+std::cout << "MPI values to types" << std::endl;
   for( uint32_t i = 0; i < NUM_MPI_PRV_ELEMENTS; ++i )
   {
-    tmpData.eventValue2Type [ event_mpit2prv[ i ].valor_prv ] = event_mpit2prv[ i ].tipus_prv;
+std::cout << event_mpit2prv[ i ].valor_prv << " "<< event_mpit2prv[ i ].tipus_prv << std::endl;
+    tmpData.PRVEvent_Value2Type [ event_mpit2prv[ i ].valor_prv ] = event_mpit2prv[ i ].tipus_prv;
   }
 }
 
@@ -543,20 +684,22 @@ bool translate( const string &strOTF2Trace,
     OTF2_Reader* reader = OTF2_Reader_Open( strOTF2Trace.c_str() );
     if ( reader != NULL )
     {
+      tmpData->reader = reader;
+      tmpData->PRVFile = &file;
+
       // BUILD HEADER
       // Initialize callbacks for get last time
       OTF2_GlobalDefReader* global_def_reader = OTF2_Reader_GetGlobalDefReader( reader );
       OTF2_GlobalDefReaderCallbacks* global_def_callbacks = OTF2_GlobalDefReaderCallbacks_New();
 
-      OTF2_GlobalDefReaderCallbacks_SetClockPropertiesCallback( global_def_callbacks, GlobDefClockProperties_print );
-      OTF2_GlobalDefReaderCallbacks_SetSystemTreeNodeCallback( global_def_callbacks, GlobDefSystemTreeNode_print );
-      OTF2_GlobalDefReaderCallbacks_SetLocationGroupCallback( global_def_callbacks, GlobDefLocationGroup_print );
-      OTF2_GlobalDefReaderCallbacks_SetLocationCallback( global_def_callbacks, GlobDefLocation_print );
-      //OTF2_GlobalDefReaderCallbacks_SetLocationCallback( global_def_callbacks, GlobDefLocation_Register );
-
-      //OTF2_GlobalDefReaderCallbacks_SetRegionCallback( global_def_callbacks, GlobDefRegion_print );
-      //OTF2_GlobalDefReaderCallbacks_SetGroupCallback( global_def_callbacks, GlobDefGroup_print );
-      //OTF2_GlobalDefReaderCallbacks_SetMpiCommCallback( global_def_callbacks, GlobDefMpiComm_print );
+      OTF2_GlobalDefReaderCallbacks_SetClockPropertiesCallback( global_def_callbacks, GlobDefClockPropertiesHandler );
+      OTF2_GlobalDefReaderCallbacks_SetStringCallback( global_def_callbacks, GlobDefStringHandler );
+      OTF2_GlobalDefReaderCallbacks_SetSystemTreeNodeCallback( global_def_callbacks, GlobDefSystemTreeNodeHandler );
+      OTF2_GlobalDefReaderCallbacks_SetLocationGroupCallback( global_def_callbacks, GlobDefLocationGroupHandler );
+      OTF2_GlobalDefReaderCallbacks_SetLocationCallback( global_def_callbacks, GlobDefLocationHandler );
+      OTF2_GlobalDefReaderCallbacks_SetRegionCallback( global_def_callbacks, GlobDefRegionHandler );
+      //OTF2_GlobalDefReaderCallbacks_SetGroupCallback( global_def_callbacks, GlobDefGroupHandler );
+      //OTF2_GlobalDefReaderCallbacks_SetMpiCommCallback( global_def_callbacks, GlobDefMpiCommHandler );
 
       OTF2_Reader_RegisterGlobalDefCallbacks( reader, global_def_reader, global_def_callbacks, (void *)tmpData );
       OTF2_GlobalDefReaderCallbacks_Delete( global_def_callbacks );
@@ -568,10 +711,10 @@ bool translate( const string &strOTF2Trace,
       tmpData->processModel->setReady( true );
 
       // WRITE HEADER
-      writeHeaderTimes( tmpData, file );
-      writeHeaderResourceModel( tmpData, file );
-      writeHeaderProcessModel( tmpData, file );
-      writeHeaderCommunicators( tmpData, file );
+      writeHeaderTimes( tmpData );
+      writeHeaderResourceModel( tmpData );
+      writeHeaderProcessModel( tmpData );
+      writeHeaderCommunicators( tmpData );
 
       // TRANSLATE EVENTS
       // Initialize callbacks for events
@@ -580,12 +723,12 @@ bool translate( const string &strOTF2Trace,
       // Read communications
       OTF2_GlobalEvtReader* global_evt_reader = OTF2_Reader_GetGlobalEvtReader( reader );
       OTF2_GlobalEvtReaderCallbacks* event_callbacks = OTF2_GlobalEvtReaderCallbacks_New();
-      OTF2_GlobalEvtReaderCallbacks_SetEnterCallback( event_callbacks, Enter_print );
-      OTF2_GlobalEvtReaderCallbacks_SetLeaveCallback( event_callbacks, Leave_print );
-      OTF2_GlobalEvtReaderCallbacks_SetMpiSendCallback( event_callbacks, MpiSend_print );
+      OTF2_GlobalEvtReaderCallbacks_SetEnterCallback( event_callbacks, EnterHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetLeaveCallback( event_callbacks, LeaveHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetMpiSendCallback( event_callbacks, MpiSendHandler );
 
 
-      OTF2_Reader_RegisterGlobalEvtCallbacks( reader, global_evt_reader, event_callbacks, NULL );
+      OTF2_Reader_RegisterGlobalEvtCallbacks( reader, global_evt_reader, event_callbacks, (void *)tmpData );
       OTF2_GlobalEvtReaderCallbacks_Delete( event_callbacks );
 
       // Read simbolic info
@@ -666,8 +809,8 @@ int main( int argc, char *argv[] )
     options.showVersion = false;
 
     TranslationData tmpData;
-    tmpData.verbose = false;
-
+    tmpData.printLog = false;
+    tmpData.logFile = &std::cout;
 
     string strOTF2Trace = string( "" );
     string strPRVTrace = string( "" );

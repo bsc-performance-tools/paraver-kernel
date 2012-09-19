@@ -42,14 +42,16 @@ struct t_event_mpit2prv
 struct t_prv_type_info
 {
   int type;
-  char *label;
+  //char *label;
+  std::string label;
   int flag_color;
 };
 
 struct t_prv_val_label
 {
   int value;
-  char *label;
+  //char *label;
+  std::string label;
 };
 
 // EXTRAE TRUNK (2.2.1)
