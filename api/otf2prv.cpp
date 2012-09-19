@@ -74,6 +74,7 @@ struct TranslationDataStruct
   TTimeUnit timeUnit;
   // PRV_UINT64 timerResolution;
   PRV_UINT64 maxTraceTime;
+  PRV_UINT64 globalOffset;
 
   ResourceModel *resourcesModel;
   ProcessModel *processModel;
@@ -203,7 +204,9 @@ SCOREP_Error_Code GlobDefClockPropertiesHandler( void*    userData,
   else
     transData->timeUnit = NS;
 
-  transData->maxTraceTime = global_offset + trace_length;
+  //transData->maxTraceTime = global_offset + trace_length;
+  transData->maxTraceTime = trace_length;
+  transData->globalOffset = global_offset;
 
   return SCOREP_SUCCESS;
 }
@@ -232,7 +235,6 @@ SCOREP_Error_Code GlobDefSystemTreeNodeHandler( void*    userData,
   // Translation: node of nodes => SYSTEM, NODE
   // How to translate many systems?
   // Many systems to one system and all the nodes merged?
-std::cout << nodeID << " " << name << " " << className << " "<< nodeParent << std::endl;
 
   if ( nodeParent != OTF2_UNDEFINED_UINT32 )
   {
@@ -241,7 +243,6 @@ std::cout << nodeID << " " << name << " " << className << " "<< nodeParent << st
     transData->systemTreeNode2GlobalNode[ nodeID ] = transData->resourcesModel->totalNodes() - 1;
 
     // Keep name for ROW file
-
     transData->rowLabels->pushBack( NODE, transData->symbols[ name ] );
   }
   else
@@ -380,7 +381,6 @@ SCOREP_Error_Code GlobDefRegionHandler( void*           userData,
                                         uint32_t        beginLineNumber,
                                         uint32_t        endLineNumber )
 {
-
   TranslationData *transData = ( TranslationData * )userData;
 
   bool found;
@@ -465,7 +465,8 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
     eventRecord << transData->processModel->totalApplications() << ":"; // APP
     eventRecord << transData->location2Task[ locationID ] << ":"; // TASK
     eventRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
-    eventRecord << time << ":";
+    // eventRecord << time << ":";
+    eventRecord << time - transData->globalOffset << ":";
     eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":";
     eventRecord << it->second << std::endl;
 
@@ -506,7 +507,8 @@ SCOREP_Error_Code LeaveHandler( uint64_t locationID,
     eventRecord << transData->processModel->totalApplications() << ":"; // APP
     eventRecord << transData->location2Task[ locationID ] << ":"; // TASK
     eventRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
-    eventRecord << time << ":";
+    // eventRecord << time  << ":";
+    eventRecord << time - transData->globalOffset << ":";
     eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":";
     eventRecord << "0" << std::endl; // VALUE
 
