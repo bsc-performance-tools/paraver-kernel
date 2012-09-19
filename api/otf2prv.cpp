@@ -30,6 +30,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <map>
 
 #include <otf2/otf2.h>
 #include "otf2prv.h"
@@ -66,7 +67,6 @@ struct TranslationDataStruct
 
   bool printLog;
   std::ostream *logFile; // printLog == true => logFile exists and is open.
-
   bool translateStates;
   bool translateEvents;
   bool translateCommunications;
@@ -81,6 +81,10 @@ struct TranslationDataStruct
   map< uint32_t, string > symbols;
   map< uint32_t, uint32_t > locationGroup2SystemTreeNode;
   map< uint32_t, TNodeOrder > systemTreeNode2GlobalNode;
+
+  map< uint32_t, TTaskOrder > location2Task;
+  map< uint32_t, TThreadOrder > location2Thread;
+  map< uint32_t, TCPUOrder > location2CPU;
 
   map< string, int > PRVEvent_ValueLabel2Value;
   map< int, int >    PRVEvent_Value2Type;
@@ -307,8 +311,19 @@ SCOREP_Error_Code GlobDefLocationHandler( void*             userData,
     TNodeOrder currentNode = transData->systemTreeNode2GlobalNode[
             transData->locationGroup2SystemTreeNode[ locationGroup ] ];
 
-    transData->processModel->addThread( currentApplication, locationGroup, currentNode );
-    transData->resourcesModel->addCPU( currentNode );
+    transData->processModel->addThread( currentApplication, locationGroup, currentNode ); // podria addThread devolver el global?
+    transData->resourcesModel->addCPU( currentNode ); // podria addCPU devolver el global?
+
+    TThreadOrder globalThread = transData->processModel->getLastThread( currentApplication, locationGroup );
+    TApplOrder app;
+    TTaskOrder task;
+    TThreadOrder thread;
+    transData->processModel->getThreadLocation( globalThread, app, task, thread );
+
+    transData->location2Task[ locationID ] = task + 1;
+    transData->location2Thread[ locationID ] = thread + 1;
+    transData->location2CPU[ locationID ] = transData->resourcesModel->getLastCPU( currentNode );
+
   }
 
   // PROGRAM LOCAL READ
@@ -446,10 +461,10 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
     eventRecord.precision( 0 );
 
     eventRecord << "2" << ":";
-    //eventRecord << transData->processModel->totalApplications() - 1 << ":"; // CPU
-    eventRecord << transData->processModel->totalApplications() - 1 << ":"; // APP
-    //eventRecord << transData->processModel->totalApplications() - 1 << ":"; // TASK
-    //eventRecord << transData->processModel->totalApplications() - 1 << ":"; // THREAD
+    eventRecord << transData->location2CPU[ locationID ] << ":"; // CPU
+    eventRecord << transData->processModel->totalApplications() << ":"; // APP
+    eventRecord << transData->location2Task[ locationID ] << ":"; // TASK
+    eventRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
     eventRecord << time << ":";
     eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":";
     eventRecord << it->second << std::endl;
@@ -487,12 +502,12 @@ SCOREP_Error_Code LeaveHandler( uint64_t locationID,
     eventRecord.precision( 0 );
 
     eventRecord << "2" << ":";
-    //eventRecord << transData->processModel->totalApplications() - 1 << ":"; // CPU
-    eventRecord << transData->processModel->totalApplications() - 1 << ":"; // APP
-    //eventRecord << transData->processModel->totalApplications() - 1 << ":"; // TASK
-    //eventRecord << transData->processModel->totalApplications() - 1 << ":"; // THREAD
+    eventRecord << transData->location2CPU[ locationID ] << ":"; // CPU
+    eventRecord << transData->processModel->totalApplications() << ":"; // APP
+    eventRecord << transData->location2Task[ locationID ] << ":"; // TASK
+    eventRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
     eventRecord << time << ":";
-    eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":"; // TYPE
+    eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":";
     eventRecord << "0" << std::endl; // VALUE
 
     *transData->PRVFile << eventRecord.str();  // change to Trace write.
