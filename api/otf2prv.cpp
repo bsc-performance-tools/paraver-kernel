@@ -46,7 +46,7 @@
 
 using namespace std;
 
-const string OTF2_VERSION_STRING = "0.12"; // Added entry/leave callbacks
+const string OTF2_VERSION_STRING = "0.16"; // Added level wirte
 
 Trace *trace;
 
