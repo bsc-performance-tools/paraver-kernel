@@ -30,6 +30,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <stack>
 #include <map>
 
 #include <otf2/otf2.h>
@@ -67,35 +68,39 @@ struct TranslationDataStruct
 
   bool printLog;
   std::ostream *logFile; // printLog == true => logFile exists and is open.
-  bool translateStates;
-  bool translateEvents;
-  bool translateCommunications;
 
   TTimeUnit timeUnit;
   // PRV_UINT64 timerResolution;
   PRV_UINT64 maxTraceTime;
   PRV_UINT64 globalOffset;
 
-  ResourceModel *resourcesModel;
-  ProcessModel *processModel;
-  RowLabels *rowLabels;
-  map< uint32_t, string > symbols;
-  map< uint32_t, uint32_t > locationGroup2SystemTreeNode;
+  ResourceModel *resourcesModel; // to the Trace*
+  ProcessModel  *processModel;   // to the Trace*
+  RowLabels     *rowLabels;      // to the Trace*
+
+  // PRV LOCAL MAPS --> TO THE API
+  map< string, int > PRVEvent_ValueLabel2Value; //
+  map< string, int > PRVEvent_TypeLabel2Type;   //
+  map< int, int >    PRVEvent_Value2Type;     // N - 1
+
+  map< uint32_t, int > OTF2Region2PRVEventValue;
+  map< uint32_t, int > OTF2Region2PRVEventType; //?
+
+  // Keep OTF2 definitions
+  map< uint32_t, string >     symbols;
+  map< uint32_t, uint32_t >   locationGroup2SystemTreeNode;
   map< uint32_t, TNodeOrder > systemTreeNode2GlobalNode;
 
-  map< uint32_t, TTaskOrder > location2Task;
+  // Once dumpTrace is done, this maps can be deleted.
+  // Here only for cout purposes.
+  map< uint32_t, TTaskOrder >   location2Task;
   map< uint32_t, TThreadOrder > location2Thread;
-  map< uint32_t, TCPUOrder > location2CPU;
+  map< uint32_t, TCPUOrder >    location2CPU;
 
-  map< string, int > PRVEvent_ValueLabel2Value;
-  map< int, int >    PRVEvent_Value2Type;
-  map< int, string > PRVEvent_Type2TypeLabel;
-
-  map< string, int > PRVEvent_TypeLabel2Value;
-
-  // MPI maps values
-  map< uint32_t, int > OTF2Region2PRVEventValue;
-  map< uint32_t, int > OTF2Region2PRVEventType;
+  //map< uint32_t, OTF2_TypeID > attributeType;
+  map< uint32_t, string > attributeName;
+  // States generation
+  map< uint32_t, stack< TState > > lastState; // p.e: lastState[ location ].push( IDLE );
 };
 
 
@@ -136,6 +141,40 @@ void writeLog( TranslationData *tmpData,
 }
 
 
+void writeLog( TranslationData *tmpData,
+               const string & message,
+               const uint32_t & value1,
+               const uint32_t & value2 )
+{
+  if ( tmpData->printLog )
+  {
+    (*tmpData->logFile) << message << ": ";
+
+    stringstream aux;
+    aux << value1;
+    (*tmpData->logFile) << aux.str() << " - ";
+
+    aux.clear();
+    aux << value2;
+    (*tmpData->logFile) << aux.str() << std::endl;
+  }
+}
+
+
+void writeLog( TranslationData *tmpData,
+               const string & message1,
+               const string & message2,
+               const uint32_t & value )
+{
+  if ( tmpData->printLog )
+  {
+    stringstream aux;
+    aux << value;
+    (*tmpData->logFile) << message1 << " " << message2 << ": " << aux.str() << std::endl;
+  }
+}
+
+
 void writeHeaderTimes( TranslationData *tmpData )
 {
   ostringstream ostr;
@@ -161,24 +200,15 @@ void writeHeaderResourceModel( TranslationData *tmpData )
   *tmpData->PRVFile << ":";
 }
 
-
 void writeHeaderProcessModel( TranslationData *tmpData )
 {
   tmpData->processModel->dumpToFile( *tmpData->PRVFile );
-}
-
-
-void writeHeaderCommunicators( TranslationData *tmpData )
-{
   *tmpData->PRVFile << ",0" << endl;
 }
-
 
 // *****************************************************************************
 // 2nd LEVEL - OTF2 level
 // *****************************************************************************
-
-
 void openPRV( const string &strPRVTrace, std::fstream &file )
 {
   file.open( strPRVTrace.c_str(), fstream::out | fstream::trunc );
@@ -208,6 +238,8 @@ SCOREP_Error_Code GlobDefClockPropertiesHandler( void*    userData,
   transData->maxTraceTime = trace_length;
   transData->globalOffset = global_offset;
 
+  writeLog( transData, "[DEF] CLOCK (max, offset):", trace_length, global_offset );
+
   return SCOREP_SUCCESS;
 }
 
@@ -220,7 +252,7 @@ SCOREP_Error_Code GlobDefStringHandler( void*       userData,
 
   transData->symbols[ stringID ] = std::string( string );
 
-  writeLog( transData, "Registering STRING", transData->symbols[ stringID ] );
+  writeLog( transData, "[DEF] STRING", transData->symbols[ stringID ] );
 }
 
 
@@ -296,6 +328,7 @@ SCOREP_Error_Code GlobDefLocationGroupHandler( void*                  userData,
     return SCOREP_SUCCESS;
 }
 
+
 SCOREP_Error_Code GlobDefLocationHandler( void*             userData,
                                           uint64_t          locationID,
                                           uint32_t          name,
@@ -325,9 +358,11 @@ SCOREP_Error_Code GlobDefLocationHandler( void*             userData,
     transData->location2Thread[ locationID ] = thread + 1;
     transData->location2CPU[ locationID ] = transData->resourcesModel->getLastCPU( currentNode );
 
+    // Initialize lastState queue
+    transData->lastState[ globalThread ] = stack< TState >();
   }
 
-  // PROGRAM LOCAL READ
+  // Set Callbacks for Local read
   OTF2_EvtReader* evt_reader = OTF2_Reader_GetEvtReader( transData->reader, locationID );
   OTF2_DefReader* def_reader = OTF2_Reader_GetDefReader( transData->reader, locationID );
 
@@ -383,35 +418,55 @@ SCOREP_Error_Code GlobDefRegionHandler( void*           userData,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  bool found;
-  map< string, int >::iterator it =
-          transData->PRVEvent_ValueLabel2Value.find( transData->symbols[ name ] );
+  map< string, int >::iterator it;
 
-  found = ( it != transData->PRVEvent_ValueLabel2Value.end() );
-  if ( found )
+  it = transData->PRVEvent_ValueLabel2Value.find( transData->symbols[ name ] );
+  if (  ( it != transData->PRVEvent_ValueLabel2Value.end() ) )
   {
+    // TYPE symbolic - VALUE symbolic
     transData->OTF2Region2PRVEventValue[ regionID ] = it->second;
-    writeLog( transData, "Registered REGION as VALUE: ", transData->symbols[ name ] );
+    writeLog( transData, "[DEF] REGION as VALUE: ", transData->symbols[ name ] );
   }
   else
   {
-    map< string, int >::iterator it2 =
-            transData->PRVEvent_TypeLabel2Value.find( transData->symbols[ name ] );
+    it = transData->PRVEvent_TypeLabel2Type.find( transData->symbols[ name ] );
 
-    found = ( it2 != transData->PRVEvent_TypeLabel2Value.end() );
-    if ( found )
+    if ( it != transData->PRVEvent_TypeLabel2Type.end() )
     {
-      transData->OTF2Region2PRVEventType[ regionID ] = it2->second;
-      writeLog( transData, "Registered REGION as TYPE : ", transData->symbols[ name ] );
+      // TYPE symbolic - VALUE variable
+      transData->OTF2Region2PRVEventType[ regionID ] = it->second;
+      writeLog( transData, "[DEF] REGION as TYPE : ", transData->symbols[ name ] );
     }
     else
     {
-      writeLog( transData, "** NOT FOUND ", transData->symbols[ name ] );
+      // Careful with colision
+      // TODO: Substitute by API call
+      // transData->PRVEvent_TypeLabel2Value[ transData->symbols[ name ] ] = getNewType( transData->symbols[ name ] );
+      transData->PRVEvent_TypeLabel2Type[ transData->symbols[ name ] ] = 80200000 + regionID;
+      transData->OTF2Region2PRVEventType[ regionID ] = 80200000 + regionID;
+      writeLog( transData, "[DEF] REGION as NEW TYPE : ", transData->symbols[ name ] );
     }
   }
 
   return SCOREP_SUCCESS;
 }
+
+
+SCOREP_Error_Code GlobDefAttributeHandler( void*       userData,
+                                           uint32_t    attributeID,
+                                           uint32_t    name,
+                                           OTF2_TypeID type )
+{
+  TranslationData *transData = ( TranslationData * )userData;
+
+  transData->attributeName[ attributeID ] = transData->symbols[ name ]; // Quick access
+  writeLog( transData, "[DEF] ATTRIBUTE : ", transData->symbols[ name ], attributeID );
+
+  // transData->attributeType[ attributeID ] = OTF2_TypeID; // Needed?
+
+  return  SCOREP_SUCCESS;
+}
+
 
 
 SCOREP_Error_Code MpiSendHandler( uint64_t            locationID,
@@ -424,22 +479,60 @@ SCOREP_Error_Code MpiSendHandler( uint64_t            locationID,
                                   uint64_t            msgLength )
 {
   TranslationData *transData = ( TranslationData * )userData;
-/*
-  printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Receiver: %u, "
-            "Communicator: %s, "
-            "Tag: %u, Length: %" PRIu64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "MPI_SEND",
-            locationID, time,
-            receiver,
-            otf2Handler_get_def_name( data->mpi_comms, communicator ),
-            msgTag,
-            msgLength );
 
-    otf2Handler_attributes( data, attributes );
-*/
+  writeLog( transData, "[EVT] MpiSend : ", locationID, receiver );
 
+  if ( OTF2_AttributeList_GetNumberOfElements( attributes ) > 0 )
+  {
+    uint32_t index = 0;
+    uint32_t attributeID;
+    OTF2_TypeID type;
+    OTF2_AttributeValue value;
+    SCOREP_Error_Code error;
+    error = OTF2_AttributeList_GetAttributeByIndex( attributes,
+                                                    index,
+                                                    &attributeID,
+                                                    &type,
+                                                    &value );
+    if ( transData->attributeName[ attributeID ].compare( string( "rcv time" ) ) == 0  &&
+         type == OTF2_UINT64_T )
+    {
+      stringstream commRecord;
+      commRecord << fixed;
+      commRecord << dec;
+      commRecord.precision( 0 );
 
-    return SCOREP_SUCCESS;
+      commRecord << "3" << ":";
+
+      // Sender
+      commRecord << transData->location2CPU[ locationID ] << ":"; // CPU
+      commRecord << transData->processModel->totalApplications() << ":"; // APP
+      commRecord << transData->location2Task[ locationID ] << ":"; // TASK
+      commRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
+
+      commRecord << time - transData->globalOffset << ":"; // Logical Send
+      commRecord << time - transData->globalOffset << ":"; // Physical Send
+
+      // Receiver
+      commRecord << transData->location2CPU[ locationID ] << ":"; // CPU
+      commRecord << transData->processModel->totalApplications() << ":"; // APP
+      commRecord << transData->location2Task[ locationID ] << ":"; // TASK
+      commRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
+
+      commRecord << value.uint64 - transData->globalOffset << ":"; // Logical Receive
+      commRecord << value.uint64 - transData->globalOffset << ":"; // Physical Receive
+
+      // Tag:Length
+      commRecord << msgTag << ":";
+      commRecord << msgLength << std::endl;
+
+      *transData->PRVFile << commRecord.str(); // change to Trace write.
+
+      writeLog( transData, commRecord.str() );
+    }
+  }
+
+  return SCOREP_SUCCESS;
 }
 // ******* de la web
 
@@ -476,7 +569,6 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
   }
   else
   {
-
     //map< uint32_t, int >::iterator it2 =
       //      transData->OTF2Region2PRVTypeValue.find( regionID );
   }
@@ -538,15 +630,8 @@ void printHelp()
   std::cout << std::endl;
   std::cout << "    -h, --help: Prints this help" << std::endl;
   std::cout << "    -v, --version: Show version" << std::endl;
-  std::cout <<  "[in development]    -l [file], --log: Set verbose mode"
-        " and  the stdout, or if present, to file." << std::endl;
-  std::cout << "[in development]    -i, --info: Translate only pcf and row files."
-        " Also an empty prv including only header and idle states." << std::endl;
-  std::cout << "[in development]    -e, --events: Translate event records." << std::endl;
-  std::cout << "[in development]    -s, --states: Translate states records." << std::endl;
-  std::cout << "[in development]    -c, --communications: Translate communication records." << std::endl;
-  std::cout << " By default all kind of records are translated. If a subset is wanted,"
-        " its specific options must be given." << std::endl;
+  std::cout <<  "[in development]    -l [file], --log: Set log mode "
+                "to the stdout or to file, if present."  << std::endl;
   std::cout << std::endl;
   std::cout << "  Parameters:" << std::endl;
   std::cout << "    trc.otf2: OTF2 trace filename." << std::endl;
@@ -555,8 +640,6 @@ void printHelp()
   std::cout << "  Examples:" << std::endl;
   std::cout << "    otf2prv linpack.otf2" << std::endl;
   std::cout << "      Generates translation from linpack OTF2 trace to linpack.prv PRV trace." << std::endl;
-  std::cout << "    otf2prv -e -c linpack.otf2" << std::endl;
-  std::cout << "      Same than before, but including only events." << std::endl;
   std::cout << std::endl;
 }
 
@@ -586,10 +669,6 @@ void activateOption( char *argument,
                      MainOptions &options,
                      TranslationData &transData )
 {
-  transData.translateStates = false;
-  transData.translateEvents = false;
-  transData.translateCommunications = false;
-
   if ( argument[ 1 ] == 'h' )
     options.showHelp = true;
   else if ( argument[ 1 ] == 'v' )
@@ -598,22 +677,8 @@ void activateOption( char *argument,
   {
     transData.printLog = true;
   }
-  else if ( argument[ 1 ] == 's')
-    transData.translateStates = true;
-  else if ( argument[ 1 ] == 'e' )
-    transData.translateEvents = true;
-  else if ( argument[ 1 ] == 'c')
-    transData.translateCommunications = true;
   else
     std::cout << "Unknown option " << argument << std::endl;
-
-  // If no translation option about records is given, default is translate them all.
-  if ( !transData.translateStates && !transData.translateStates && !transData.translateCommunications )
-  {
-    transData.translateStates = true;
-    transData.translateEvents = true;
-    transData.translateCommunications = true;
-  }
 }
 
 
@@ -658,32 +723,35 @@ bool anyOTF2Trace( const string &strOTF2Trace )
 
 void initialize( TranslationData &tmpData )
 {
-std::cout << "initialize:: " << endl;
   tmpData.timeUnit = NS;
+
+  tmpData.maxTraceTime = 0;
+  tmpData.globalOffset = 0;
+
   tmpData.resourcesModel = new ResourceModel();
   tmpData.processModel = new ProcessModel();
   tmpData.processModel->addApplication();
   tmpData.rowLabels = new RowLabels();
 
-std::cout << "MPI types" << std::endl;
+  writeLog( &tmpData, "[REC] Labels for MPI types" );
   for( uint32_t i = 0; i < NUM_MPI_BLOCK_GROUPS; ++i )
   {
-std::cout << prv_block_groups[ i ].type << " "<< prv_block_groups[ i ].label << std::endl;
-    tmpData.PRVEvent_Type2TypeLabel[ prv_block_groups[ i ].type ] = string( prv_block_groups[ i ].label );
+    writeLog( &tmpData, "[REC]     ", prv_block_groups[ i ].label, prv_block_groups[ i ].type );
+    tmpData.PRVEvent_TypeLabel2Type[ prv_block_groups[ i ].label ] = prv_block_groups[ i ].type;
   }
 
-std::cout << "MPI values" << std::endl;
+  writeLog( &tmpData, "[REC] Labels for MPI values" );
   for( uint32_t i = 0; i < NUM_MPI_PRV_ELEMENTS; ++i )
   {
-std::cout << string( mpi_prv_val_label[ i ].label ) << " "<< mpi_prv_val_label[ i ].value << std::endl;
+    writeLog( &tmpData, "[REC]     ", mpi_prv_val_label[ i ].label, mpi_prv_val_label[ i ].value );
     tmpData.PRVEvent_ValueLabel2Value[ string( mpi_prv_val_label[ i ].label ) ] = mpi_prv_val_label[ i ].value;
   }
 
-std::cout << "MPI values to types" << std::endl;
+  writeLog( &tmpData, "[REC] Declare values of every type" );
   for( uint32_t i = 0; i < NUM_MPI_PRV_ELEMENTS; ++i )
   {
-std::cout << event_mpit2prv[ i ].valor_prv << " "<< event_mpit2prv[ i ].tipus_prv << std::endl;
-    tmpData.PRVEvent_Value2Type [ event_mpit2prv[ i ].valor_prv ] = event_mpit2prv[ i ].tipus_prv;
+    writeLog( &tmpData, "[REC]     ", event_mpit2prv[ i ].tipus_prv, event_mpit2prv[ i ].valor_prv );
+    tmpData.PRVEvent_Value2Type[ event_mpit2prv[ i ].valor_prv ] = event_mpit2prv[ i ].tipus_prv;
   }
 }
 
@@ -698,14 +766,18 @@ bool translate( const string &strOTF2Trace,
 
   if ( file.good() )
   {
+    writeLog( tmpData, "[FILE] Opened ", strPRVTrace );
     OTF2_Reader* reader = OTF2_Reader_Open( strOTF2Trace.c_str() );
     if ( reader != NULL )
     {
+      writeLog( tmpData, "[FILE] Opened ", strOTF2Trace );
+
       tmpData->reader = reader;
       tmpData->PRVFile = &file;
 
       // BUILD HEADER
-      // Initialize callbacks for get last time
+      writeLog( tmpData, "[REC] Registering OTF2 Callbacks" );
+
       OTF2_GlobalDefReader* global_def_reader = OTF2_Reader_GetGlobalDefReader( reader );
       OTF2_GlobalDefReaderCallbacks* global_def_callbacks = OTF2_GlobalDefReaderCallbacks_New();
 
@@ -716,6 +788,8 @@ bool translate( const string &strOTF2Trace,
       OTF2_GlobalDefReaderCallbacks_SetLocationCallback( global_def_callbacks, GlobDefLocationHandler );
       OTF2_GlobalDefReaderCallbacks_SetRegionCallback( global_def_callbacks, GlobDefRegionHandler );
       //OTF2_GlobalDefReaderCallbacks_SetGroupCallback( global_def_callbacks, GlobDefGroupHandler );
+      OTF2_GlobalDefReaderCallbacks_SetAttributeCallback( global_def_callbacks, GlobDefAttributeHandler );
+
       //OTF2_GlobalDefReaderCallbacks_SetMpiCommCallback( global_def_callbacks, GlobDefMpiCommHandler );
 
       OTF2_Reader_RegisterGlobalDefCallbacks( reader, global_def_reader, global_def_callbacks, (void *)tmpData );
@@ -728,10 +802,11 @@ bool translate( const string &strOTF2Trace,
       tmpData->processModel->setReady( true );
 
       // WRITE HEADER
+
       writeHeaderTimes( tmpData );
       writeHeaderResourceModel( tmpData );
       writeHeaderProcessModel( tmpData );
-      writeHeaderCommunicators( tmpData );
+      // writeHeaderCommunicators( tmpData ); // must be written by proccess model
 
       // TRANSLATE EVENTS
       // Initialize callbacks for events
