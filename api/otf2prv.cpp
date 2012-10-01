@@ -47,7 +47,7 @@
 
 using namespace std;
 
-const string OTF2_VERSION_STRING = "0.16"; // Added level wirte
+const string OTF2_VERSION_STRING = "0.17"; // Added communications
 
 Trace *trace;
 
@@ -302,7 +302,6 @@ SCOREP_Error_Code GlobDefLocationGroupHandler( void*                  userData,
   transData->rowLabels->pushBack( TASK, transData->symbols[ name ] );
   transData->locationGroup2SystemTreeNode[ groupID ] = systemTreeParent; // undefined?
 
-
 /*
      otf2Handler_add_location_group( data,
                                     groupID,
@@ -442,9 +441,9 @@ SCOREP_Error_Code GlobDefRegionHandler( void*           userData,
       // Careful with colision
       // TODO: Substitute by API call
       // transData->PRVEvent_TypeLabel2Value[ transData->symbols[ name ] ] = getNewType( transData->symbols[ name ] );
-      transData->PRVEvent_TypeLabel2Type[ transData->symbols[ name ] ] = 80200000 + regionID;
-      transData->OTF2Region2PRVEventType[ regionID ] = 80200000 + regionID;
-      writeLog( transData, "[DEF] REGION as NEW TYPE : ", transData->symbols[ name ] );
+      transData->PRVEvent_TypeLabel2Type[ transData->symbols[ name ] ] = USER_FUNCTION;
+      transData->OTF2Region2PRVEventType[ regionID ] = USER_FUNCTION;
+      writeLog( transData, "[DEF] REGION as USER FUNCTION : ", transData->symbols[ name ] );
     }
   }
 
@@ -545,7 +544,8 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  map< uint32_t, int >::iterator it = transData->OTF2Region2PRVEventValue.find( regionID );
+  map< uint32_t, int >::iterator it;
+  it = transData->OTF2Region2PRVEventValue.find( regionID );
   if ( it != transData->OTF2Region2PRVEventValue.end() )
   {
     stringstream eventRecord;
@@ -569,15 +569,34 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
   }
   else
   {
-    //map< uint32_t, int >::iterator it2 =
-      //      transData->OTF2Region2PRVTypeValue.find( regionID );
-  }
+    it = transData->OTF2Region2PRVEventType.find( regionID );
+    if ( it != transData->OTF2Region2PRVEventType.end() )
+    {
+      stringstream eventRecord;
+      eventRecord << fixed;
+      eventRecord << dec;
+      eventRecord.precision( 0 );
 
+      eventRecord << "2" << ":";
+      eventRecord << transData->location2CPU[ locationID ] << ":"; // CPU
+      eventRecord << transData->processModel->totalApplications() << ":"; // APP
+      eventRecord << transData->location2Task[ locationID ] << ":"; // TASK
+      eventRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
+      // eventRecord << time << ":";
+      eventRecord << time - transData->globalOffset << ":";
+      eventRecord << it->second << ":";
+      eventRecord << regionID << std::endl;
+
+      *transData->PRVFile << eventRecord.str(); // change to Trace write.
+
+      writeLog( transData, eventRecord.str() );
+    }
+  }
 
   return SCOREP_SUCCESS;
 }
 
-
+// This function is completely simmetric to Entry Handler, but writing 0's
 SCOREP_Error_Code LeaveHandler( uint64_t locationID,
                                 uint64_t time,
                                 void* userData,
@@ -610,9 +629,28 @@ SCOREP_Error_Code LeaveHandler( uint64_t locationID,
   }
   else
   {
+    it = transData->OTF2Region2PRVEventType.find( regionID );
+    if ( it != transData->OTF2Region2PRVEventType.end() )
+    {
+      stringstream eventRecord;
+      eventRecord << fixed;
+      eventRecord << dec;
+      eventRecord.precision( 0 );
 
-    //map< uint32_t, int >::iterator it2 =
-      //      transData->OTF2Region2PRVTypeValue.find( regionID );
+      eventRecord << "2" << ":";
+      eventRecord << transData->location2CPU[ locationID ] << ":"; // CPU
+      eventRecord << transData->processModel->totalApplications() << ":"; // APP
+      eventRecord << transData->location2Task[ locationID ] << ":"; // TASK
+      eventRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
+      // eventRecord << time << ":";
+      eventRecord << time - transData->globalOffset << ":";
+      eventRecord << it->second << ":";
+      eventRecord << 0 << std::endl;
+
+      *transData->PRVFile << eventRecord.str(); // change to Trace write.
+
+      writeLog( transData, eventRecord.str() );
+    }
   }
 
 

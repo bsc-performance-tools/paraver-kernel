@@ -55,6 +55,9 @@ struct t_prv_val_label
 };
 
 // EXTRAE TRUNK (2.2.1)
+
+#define USER_FUNCTION 60000019
+
 // MPI_EventEncoding.h
 // mpi_prv_events.c, .h
 #define NUM_MPI_BLOCK_GROUPS 2
