@@ -246,15 +246,18 @@ SCOREP_Error_Code GlobDefClockPropertiesHandler( void*    userData,
 }
 
 
-SCOREP_Error_Code GlobDefCallsiteHandler( void*    userdata,
-    uint32_t callsite_identifier,
-    uint32_t source_file,
-    uint32_t line_number,
-    uint32_t region_entered,
-    uint32_t region_left )
+SCOREP_Error_Code GlobDefCallsiteHandler( void*    userData,
+                                          uint32_t callsite_identifier,
+                                          uint32_t source_file,
+                                          uint32_t line_number,
+                                          uint32_t region_entered,
+                                          uint32_t region_left )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  writeLog( transData, "[DEF-???] : CALLSITE" );
   /*
-    otf2_print_data* data = ( otf2_print_data* )userdata;
+    otf2_print_data* data = ( otf2_print_data* )userData;
 
     printf( "%-*s %12u  File: %s, Line: %u, "
             "Region entered: %s, Region left: %s\n",
@@ -269,13 +272,16 @@ SCOREP_Error_Code GlobDefCallsiteHandler( void*    userdata,
 }
 
 
-SCOREP_Error_Code GlobDefCallpathHandler( void*    userdata,
-    uint32_t callpath_identifier,
-    uint32_t parent_callpath,
-    uint32_t region_identifier )
+SCOREP_Error_Code GlobDefCallpathHandler( void*    userData,
+                                          uint32_t callpath_identifier,
+                                          uint32_t parent_callpath,
+                                          uint32_t region_identifier )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  writeLog( transData, "[DEF-???] : CALLPATH" );
   /*
-    otf2_print_data* data = ( otf2_print_data* )userdata;
+    otf2_print_data* data = ( otf2_print_data* )userData;
 
     printf( "%-*s %12u  Region: %s, Parent: %s\n",
             otf2_DEF_COLUMN_WIDTH, "CALLPATH",
@@ -287,14 +293,18 @@ SCOREP_Error_Code GlobDefCallpathHandler( void*    userdata,
 }
 
 
-SCOREP_Error_Code GlobDefMpiCommHandler( void*    userdata,
-    uint32_t comm_id,
-    uint32_t comm_name,
-    uint32_t group_id,
-    uint32_t comm_parent )
+SCOREP_Error_Code GlobDefMpiCommHandler( void*    userData,
+                                         uint32_t comm_id,
+                                         uint32_t comm_name,
+                                         uint32_t group_id,
+                                         uint32_t comm_parent )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  writeLog( transData, "[DEF-???] : MPICOMM" );
+
   /*
-    otf2_print_data* data = ( otf2_print_data* )userdata;
+    otf2_print_data* data = ( otf2_print_data* )userData;
 
     otf2_print_add_mpi_comm( data,
                              comm_id,
@@ -315,17 +325,21 @@ SCOREP_Error_Code GlobDefMpiCommHandler( void*    userdata,
     return SCOREP_SUCCESS;
 }
 
+
 SCOREP_Error_Code GlobDefMetricMemberHandler( void*           userData,
-    uint32_t        metric_member_id,
-    uint32_t        name,
-    uint32_t        description,
-    OTF2_MetricType type,
-    OTF2_MetricMode mode,
-    OTF2_TypeID     value_type,
-    OTF2_MetricBase base,
-    int64_t         exponent,
-    uint32_t        unit )
+                                              uint32_t        metric_member_id,
+                                              uint32_t        name,
+                                              uint32_t        description,
+                                              OTF2_MetricType type,
+                                              OTF2_MetricMode mode,
+                                              OTF2_TypeID     value_type,
+                                              OTF2_MetricBase base,
+                                              int64_t         exponent,
+                                              uint32_t        unit )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  writeLog( transData, "[DEF-???] : METRIC MEMBER" );
   /*
     otf2_print_data* data = ( otf2_print_data* )userData;
 
@@ -367,11 +381,14 @@ SCOREP_Error_Code GlobDefMetricMemberHandler( void*           userData,
 
 
 SCOREP_Error_Code GlobDefMetricClassHandler( void*                 userData,
-    uint32_t              metric_class_id,
-    uint8_t               number_of_metrics,
-    const uint32_t*       metric_members,
-    OTF2_MetricOccurrence occurrence )
+                                             uint32_t              metric_class_id,
+                                             uint8_t               number_of_metrics,
+                                             const uint32_t*       metric_members,
+                                             OTF2_MetricOccurrence occurrence )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  writeLog( transData, "[DEF-???] : METRIC CLASS" );
   /*
     otf2_print_data* data = ( otf2_print_data* )userData;
 
@@ -396,12 +413,15 @@ SCOREP_Error_Code GlobDefMetricClassHandler( void*                 userData,
 
 
 SCOREP_Error_Code GlobDefMetricInstanceHandler( void*            userData,
-    uint32_t         metricInstanceID,
-    uint32_t         metricClass,
-    uint64_t         recorder,
-    OTF2_MetricScope scopeType,
-    uint64_t         scope )
+                                                uint32_t         metricInstanceID,
+                                                uint32_t         metricClass,
+                                                uint64_t         recorder,
+                                                OTF2_MetricScope scopeType,
+                                                uint64_t         scope )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  writeLog( transData, "[DEF-???] : METRIC INSTANCE" );
   /*
     otf2_print_data* data = ( otf2_print_data* )userData;
 
@@ -417,11 +437,15 @@ SCOREP_Error_Code GlobDefMetricInstanceHandler( void*            userData,
     return SCOREP_SUCCESS;
 }
 
+
 SCOREP_Error_Code GlobDefParameterHandler( void*              userData,
-                        uint32_t           parameterID,
-                        uint32_t           name,
-                        OTF2_ParameterType type )
+                                           uint32_t           parameterID,
+                                           uint32_t           name,
+                                           OTF2_ParameterType type )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  writeLog( transData, "[DEF-???] : PARAMETER" );
   /*
     otf2_print_data* data = ( otf2_print_data* )userData;
 
@@ -446,6 +470,9 @@ SCOREP_Error_Code GlobDefParameterHandler( void*              userData,
 
 SCOREP_Error_Code GlobDefUnknownHandler( void* userData )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  writeLog( transData, "[DEF-???] : UNKNOWN" );
 /*
     ( void )userData;
 
@@ -457,9 +484,12 @@ SCOREP_Error_Code GlobDefUnknownHandler( void* userData )
 
 
 SCOREP_Error_Code DefMappingTableHandler( void*             userData,
-    OTF2_MappingType  mapType,
-    const OTF2_IdMap* iDMap )
+                                          OTF2_MappingType  mapType,
+                                          const OTF2_IdMap* iDMap )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  writeLog( transData, "[DEF-???] : MAPPING TABLE" );
   /*
     uint64_t* location_id_ptr = userData;
 
@@ -495,10 +525,15 @@ SCOREP_Error_Code DefMappingTableHandler( void*             userData,
 }
 
 SCOREP_Error_Code DefClockOffsetHandler( void*    userData,
-    uint64_t time,
-    int64_t  offset,
-    double   stddev )
+                                         uint64_t time,
+                                         int64_t  offset,
+                                         double   stddev )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  writeLog( transData, "[DEF-???] : " );
+
+  return SCOREP_SUCCESS;
 }
 
 
@@ -704,13 +739,18 @@ SCOREP_Error_Code GlobDefAttributeHandler( void*       userData,
 }
 
 
-
 SCOREP_Error_Code BufferFlushHandler( uint64_t            locationID,
-                                     uint64_t            time,
-                                     void*               userData,
-                                     OTF2_AttributeList* attributes,
-                                     OTF2_TimeStamp      stopTime )
+                                      uint64_t            time,
+                                      void*               userData,
+                                      OTF2_AttributeList* attributes,
+                                      OTF2_TimeStamp      stopTime )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: BufferFlush" << endl;
+
+  writeLog( transData, "[EVT-???] : BufferFlush" );
+
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -729,12 +769,19 @@ SCOREP_Error_Code BufferFlushHandler( uint64_t            locationID,
     return SCOREP_SUCCESS;
 }
 
+
 SCOREP_Error_Code MeasurementOnOffHandler( uint64_t             locationID,
-                                          uint64_t             time,
-                                          void*                userData,
-                                          OTF2_AttributeList*  attributes,
-                                          OTF2_MeasurementMode mode )
+                                           uint64_t             time,
+                                           void*                userData,
+                                           OTF2_AttributeList*  attributes,
+                                           OTF2_MeasurementMode mode )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: MeasurementOnOff" << endl;
+
+  writeLog( transData, "[EVT-???] : MeasurementOnOff" );
+
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -755,15 +802,21 @@ SCOREP_Error_Code MeasurementOnOffHandler( uint64_t             locationID,
 
 
 SCOREP_Error_Code MpiIsendHandler( uint64_t            locationID,
-                                  uint64_t            time,
-                                  void*               userData,
-                                  OTF2_AttributeList* attributes,
-                                  uint32_t            receiver,
-                                  uint32_t            communicator,
-                                  uint32_t            msgTag,
-                                  uint64_t            msgLength,
-                                  uint64_t            requestID )
+                                   uint64_t            time,
+                                   void*               userData,
+                                   OTF2_AttributeList* attributes,
+                                   uint32_t            receiver,
+                                   uint32_t            communicator,
+                                   uint32_t            msgTag,
+                                   uint64_t            msgLength,
+                                   uint64_t            requestID )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: MpiIsend" << endl;
+
+  writeLog( transData, "[EVT-???] : MpiIsend" );
+
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -790,11 +843,17 @@ SCOREP_Error_Code MpiIsendHandler( uint64_t            locationID,
 
 
 SCOREP_Error_Code MpiIsendCompleteHandler( uint64_t            locationID,
-                                          uint64_t            time,
-                                          void*               userData,
-                                          OTF2_AttributeList* attributes,
-                                          uint64_t            requestID )
+                                           uint64_t            time,
+                                           void*               userData,
+                                           OTF2_AttributeList* attributes,
+                                           uint64_t            requestID )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: MpiIsendComplete" << endl;
+
+  writeLog( transData, "[EVT-???] : MpiIsendComplete" );
+
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -815,11 +874,17 @@ SCOREP_Error_Code MpiIsendCompleteHandler( uint64_t            locationID,
 
 
 SCOREP_Error_Code MpiIrecvRequestHandler( uint64_t            locationID,
-                                         uint64_t            time,
-                                         void*               userData,
-                                         OTF2_AttributeList* attributes,
-                                         uint64_t            requestID )
+                                          uint64_t            time,
+                                          void*               userData,
+                                          OTF2_AttributeList* attributes,
+                                          uint64_t            requestID )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: MpiIrecvRequest" << endl;
+
+  writeLog( transData, "[EVT-???] : MpiIrecvRequest" );
+
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -838,15 +903,21 @@ SCOREP_Error_Code MpiIrecvRequestHandler( uint64_t            locationID,
     return SCOREP_SUCCESS;
 }
 
+
 SCOREP_Error_Code MpiRecvHandler( uint64_t            locationID,
-                                 uint64_t            time,
-                                 void*               userData,
-                                 OTF2_AttributeList* attributes,
-                                 uint32_t            sender,
-                                 uint32_t            communicator,
-                                 uint32_t            msgTag,
-                                 uint64_t            msgLength )
+                                  uint64_t            time,
+                                  void*               userData,
+                                  OTF2_AttributeList* attributes,
+                                  uint32_t            sender,
+                                  uint32_t            communicator,
+                                  uint32_t            msgTag,
+                                  uint64_t            msgLength )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: MpiRecv" << endl;
+
+  writeLog( transData, "[EVT-???] : MpiRecv" );
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -869,16 +940,23 @@ SCOREP_Error_Code MpiRecvHandler( uint64_t            locationID,
     return SCOREP_SUCCESS;
 }
 
+
 SCOREP_Error_Code MpiIrecvHandler( uint64_t            locationID,
-                                  uint64_t            time,
-                                  void*               userData,
-                                  OTF2_AttributeList* attributes,
-                                  uint32_t            sender,
-                                  uint32_t            communicator,
-                                  uint32_t            msgTag,
-                                  uint64_t            msgLength,
-                                  uint64_t            requestID )
+                                   uint64_t            time,
+                                   void*               userData,
+                                   OTF2_AttributeList* attributes,
+                                   uint32_t            sender,
+                                   uint32_t            communicator,
+                                   uint32_t            msgTag,
+                                   uint64_t            msgLength,
+                                   uint64_t            requestID )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: MpiIrecv" << endl;
+
+  writeLog( transData, "[EVT-???] : MpiIrecv" );
+
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -904,11 +982,17 @@ SCOREP_Error_Code MpiIrecvHandler( uint64_t            locationID,
 
 
 SCOREP_Error_Code MpiRequestTestHandler( uint64_t            locationID,
-                                        uint64_t            time,
-                                        void*               userData,
-                                        OTF2_AttributeList* attributes,
-                                        uint64_t            requestID )
+                                         uint64_t            time,
+                                         void*               userData,
+                                         OTF2_AttributeList* attributes,
+                                         uint64_t            requestID )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: MpiRequestTest" << endl;
+
+  writeLog( transData, "[EVT-???] : MpiRequestTest" );
+
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -927,12 +1011,19 @@ SCOREP_Error_Code MpiRequestTestHandler( uint64_t            locationID,
     return SCOREP_SUCCESS;
 }
 
+
 SCOREP_Error_Code MpiRequestCancelledHandler( uint64_t            locationID,
-                                             uint64_t            time,
-                                             void*               userData,
-                                             OTF2_AttributeList* attributes,
-                                             uint64_t            requestID )
+                                              uint64_t            time,
+                                              void*               userData,
+                                              OTF2_AttributeList* attributes,
+                                              uint64_t            requestID )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: MpiRequestCancelled" << endl;
+
+  writeLog( transData, "[EVT-???] : MpiRequestCancelled" );
+
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -951,11 +1042,17 @@ SCOREP_Error_Code MpiRequestCancelledHandler( uint64_t            locationID,
     return SCOREP_SUCCESS;
 }
 
+
 SCOREP_Error_Code MpiCollectiveBeginHandler( uint64_t            locationID,
-                                            uint64_t            time,
-                                            void*               userData,
-                                            OTF2_AttributeList* attribute )
+                                             uint64_t            time,
+                                             void*               userData,
+                                             OTF2_AttributeList* attribute )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: MpiCollectiveBegin" << endl;
+
+  writeLog( transData, "[EVT-???] : MpiCollectiveBegin" );
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -975,15 +1072,21 @@ SCOREP_Error_Code MpiCollectiveBeginHandler( uint64_t            locationID,
 
 
 SCOREP_Error_Code MpiCollectiveEndHandler( uint64_t               locationID,
-                                          uint64_t               time,
-                                          void*                  userData,
-                                          OTF2_AttributeList*    attributes,
-                                          OTF2_MpiCollectiveType type,
-                                          uint32_t               commId,
-                                          uint32_t               root,
-                                          uint64_t               sizeSent,
-                                          uint64_t               sizeReceived )
+                                           uint64_t               time,
+                                           void*                  userData,
+                                           OTF2_AttributeList*    attributes,
+                                           OTF2_MpiCollectiveType type,
+                                           uint32_t               commId,
+                                           uint32_t               root,
+                                           uint64_t               sizeSent,
+                                           uint64_t               sizeReceived )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: MpiCollectiveEnd" << endl;
+
+  writeLog( transData, "[EVT-???] : MpiCollectiveEnd" );
+
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -1007,12 +1110,19 @@ SCOREP_Error_Code MpiCollectiveEndHandler( uint64_t               locationID,
     return SCOREP_SUCCESS;
 }
 
+
 SCOREP_Error_Code OmpForkHandler( uint64_t            locationID,
-                                 uint64_t            time,
-                                 void*               userData,
-                                 OTF2_AttributeList* attributes,
-                                 uint32_t            numberOfRequestedThreads )
+                                  uint64_t            time,
+                                  void*               userData,
+                                  OTF2_AttributeList* attributes,
+                                  uint32_t            numberOfRequestedThreads )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: OmpFork" << endl;
+
+  writeLog( transData, "[EVT-???] : OmpFork" );
+
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -1031,11 +1141,18 @@ SCOREP_Error_Code OmpForkHandler( uint64_t            locationID,
     return SCOREP_SUCCESS;
 }
 
+
 SCOREP_Error_Code OmpJoinHandler( uint64_t            locationID,
-                                 uint64_t            time,
-                                 void*               userData,
-                                 OTF2_AttributeList* attributes )
+                                  uint64_t            time,
+                                  void*               userData,
+                                  OTF2_AttributeList* attributes )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: OmpJoin" << endl;
+
+  writeLog( transData, "[EVT-???] : OmpJoin" );
+
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -1053,13 +1170,21 @@ SCOREP_Error_Code OmpJoinHandler( uint64_t            locationID,
     return SCOREP_SUCCESS;
 }
 
+
 SCOREP_Error_Code OmpAcquireLockHandler( uint64_t            locationID,
-                                        uint64_t            time,
-                                        void*               userData,
-                                        OTF2_AttributeList* attributes,
-                                        uint32_t            lockID,
-                                        uint32_t            acquisitionOrder )
-{/*
+                                         uint64_t            time,
+                                         void*               userData,
+                                         OTF2_AttributeList* attributes,
+                                         uint32_t            lockID,
+                                         uint32_t            acquisitionOrder )
+{
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: OmpAcquireLock" << endl;
+
+  writeLog( transData, "[EVT-???] : OmpAcquireLock" );
+
+  /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
         return SCOREP_SUCCESS;
@@ -1081,12 +1206,18 @@ SCOREP_Error_Code OmpAcquireLockHandler( uint64_t            locationID,
 
 
 SCOREP_Error_Code OmpReleaseLockHandler( uint64_t            locationID,
-                                        uint64_t            time,
-                                        void*               userData,
-                                        OTF2_AttributeList* attributes,
-                                        uint32_t            lockID,
-                                        uint32_t            acquisitionOrder )
+                                         uint64_t            time,
+                                         void*               userData,
+                                         OTF2_AttributeList* attributes,
+                                         uint32_t            lockID,
+                                         uint32_t            acquisitionOrder )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: OmpReleaseLock" << endl;
+
+  writeLog( transData, "[EVT-???] : OmpReleaseLock" );
+
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -1109,11 +1240,17 @@ SCOREP_Error_Code OmpReleaseLockHandler( uint64_t            locationID,
 
 
 SCOREP_Error_Code OmpTaskCreateHandler( uint64_t            locationID,
-                                       uint64_t            time,
-                                       void*               userData,
-                                       OTF2_AttributeList* attributes,
-                                       uint64_t            taskID )
+                                        uint64_t            time,
+                                        void*               userData,
+                                        OTF2_AttributeList* attributes,
+                                        uint64_t            taskID )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: OmpTaskCreate" << endl;
+
+  writeLog( transData, "[EVT-???] : OmpTaskCreate" );
+
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -1134,11 +1271,17 @@ SCOREP_Error_Code OmpTaskCreateHandler( uint64_t            locationID,
 
 
 SCOREP_Error_Code OmpTaskSwitchHandler( uint64_t            locationID,
-                                       uint64_t            time,
-                                       void*               userData,
-                                       OTF2_AttributeList* attributes,
-                                       uint64_t            taskID )
+                                        uint64_t            time,
+                                        void*               userData,
+                                        OTF2_AttributeList* attributes,
+                                        uint64_t            taskID )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: OmpTaskSwitch" << endl;
+
+  writeLog( transData, "[EVT-???] : OmpTaskSwitch" );
+
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -1159,11 +1302,17 @@ SCOREP_Error_Code OmpTaskSwitchHandler( uint64_t            locationID,
 
 
 SCOREP_Error_Code OmpTaskCompleteHandler( uint64_t            locationID,
-                                        uint64_t            time,
-                                        void*               userData,
-                                        OTF2_AttributeList* attributes,
-                                        uint64_t            taskID )
+                                         uint64_t            time,
+                                         void*               userData,
+                                         OTF2_AttributeList* attributes,
+                                         uint64_t            taskID )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: OmpTaskComplete" << endl;
+
+  writeLog( transData, "[EVT-???] : OmpTaskComplete" );
+
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -1184,14 +1333,19 @@ SCOREP_Error_Code OmpTaskCompleteHandler( uint64_t            locationID,
 
 
 SCOREP_Error_Code MetricHandler( uint64_t                locationID,
-    uint64_t                time,
-    void*                   userData,
-    OTF2_AttributeList*     attributes,
-    uint32_t                metricID,
-    uint8_t                 numberOfMetrics,
-    const OTF2_TypeID*      typeIDs,
-    const OTF2_MetricValue* values )
+                                 uint64_t                time,
+                                 void*                   userData,
+                                 OTF2_AttributeList*     attributes,
+                                 uint32_t                metricID,
+                                 uint8_t                 numberOfMetrics,
+                                 const OTF2_TypeID*      typeIDs,
+                                 const OTF2_MetricValue* values )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: Metric" << endl;
+
+  writeLog( transData, "[EVT-???] : Metric" );
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -1238,13 +1392,19 @@ SCOREP_Error_Code MetricHandler( uint64_t                locationID,
     return SCOREP_SUCCESS;
 }
 
+
 SCOREP_Error_Code ParameterStringHandler( uint64_t            locationID,
-                       uint64_t            time,
-                       void*               userData,
-                       OTF2_AttributeList* attributes,
-                       uint32_t            parameter,
-                       uint32_t            value )
+                                          uint64_t            time,
+                                          void*               userData,
+                                          OTF2_AttributeList* attributes,
+                                          uint32_t            parameter,
+                                          uint32_t            value )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: ParameterString" << endl;
+
+  writeLog( transData, "[EVT-???] : ParameterString" );
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -1265,13 +1425,19 @@ SCOREP_Error_Code ParameterStringHandler( uint64_t            locationID,
     return SCOREP_SUCCESS;
 }
 
+
 SCOREP_Error_Code ParameterIntHandler( uint64_t            locationID,
-                    uint64_t            time,
-                    void*               userData,
-                    OTF2_AttributeList* attributes,
-                    uint32_t            parameter,
-                    int64_t             value )
+                                       uint64_t            time,
+                                       void*               userData,
+                                       OTF2_AttributeList* attributes,
+                                       uint32_t            parameter,
+                                       int64_t             value )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: ParameterInt" << endl;
+
+  writeLog( transData, "[EVT-???] : ParameterInt" );
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -1292,13 +1458,19 @@ SCOREP_Error_Code ParameterIntHandler( uint64_t            locationID,
     return SCOREP_SUCCESS;
 }
 
+
 SCOREP_Error_Code ParameterUnsignedIntHandler( uint64_t            locationID,
-                            uint64_t            time,
-                            void*               userData,
-                            OTF2_AttributeList* attributes,
-                            uint32_t            parameter,
-                            uint64_t            value )
+                                               uint64_t            time,
+                                               void*               userData,
+                                               OTF2_AttributeList* attributes,
+                                               uint32_t            parameter,
+                                               uint64_t            value )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: ParameterUnsignedInt" << endl;
+
+  writeLog( transData, "[EVT-???] : ParameterUnsignedInt" );
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -1319,11 +1491,17 @@ SCOREP_Error_Code ParameterUnsignedIntHandler( uint64_t            locationID,
     return SCOREP_SUCCESS;
 }
 
+
 SCOREP_Error_Code UnknownHandler( uint64_t            locationID,
-    uint64_t            time,
-    void*               userData,
-    OTF2_AttributeList* attributes )
+                                  uint64_t            time,
+                                  void*               userData,
+                                  OTF2_AttributeList* attributes )
 {
+  TranslationData *transData = ( TranslationData * )userData;
+
+  *transData->PRVFile << "# OTF2 event not translated: Unknown" << endl;
+
+  writeLog( transData, "[EVT-???] : Unknown" );
   /*
     if ( time < otf2_MINTIME || time > otf2_MAXTIME )
     {
@@ -1340,7 +1518,6 @@ SCOREP_Error_Code UnknownHandler( uint64_t            locationID,
     */
     return SCOREP_SUCCESS;
 }
-
 
 
 SCOREP_Error_Code MpiSendHandler( uint64_t            locationID,
@@ -1470,6 +1647,7 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
   return SCOREP_SUCCESS;
 }
 
+
 // This function is completely simmetric to Entry Handler, but writing 0's
 SCOREP_Error_Code LeaveHandler( uint64_t locationID,
                                 uint64_t time,
@@ -1527,9 +1705,9 @@ SCOREP_Error_Code LeaveHandler( uint64_t locationID,
     }
   }
 
-
   return SCOREP_SUCCESS;
 }
+
 
 // *****************************************************************************
 // 1st LEVEL - GENERAL
@@ -1824,6 +2002,7 @@ std::string buildPRVTraceName( const string &strOTF2Trace, const string &strPRVT
 
   return auxPRVTrace;
 }
+
 
 // *****************************************************************************
 // MAIN
