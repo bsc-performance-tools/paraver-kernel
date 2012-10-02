@@ -327,7 +327,7 @@ void KTraceCutter::dumpEventsSet( const set< TEventType >& closingEventTypes,
                                   unsigned int appl,
                                   unsigned int task,
                                   unsigned int thread,
-                                  const unsigned long long &final_time,
+                                  const unsigned long long final_time,
                                   int &numWrittenChars,
                                   bool &needEOL,
                                   bool &writtenComment )
@@ -374,7 +374,7 @@ void KTraceCutter::dumpEventsSet( const set< TEventType >& closingEventTypes,
 }
 
 
-void KTraceCutter::appendLastZerosToUnclosedEvents( const unsigned long long &final_time )
+void KTraceCutter::appendLastZerosToUnclosedEvents( const unsigned long long final_time )
 {
   TCPUOrder cpu;
   int numWrittenChars = 0;

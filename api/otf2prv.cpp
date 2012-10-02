@@ -33,6 +33,7 @@
 #include <stack>
 #include <map>
 
+#include <scorep_utility/SCOREP_UtilityTypes.h>
 #include <otf2/otf2.h>
 #include "otf2prv.h"
 

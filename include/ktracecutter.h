@@ -141,11 +141,11 @@ class KTraceCutter : public TraceCutter
                         unsigned int appl,
                         unsigned int task,
                         unsigned int thread,
-                        const unsigned long long &final_time,
+                        const unsigned long long final_time,
                         int &numWrittenChars,
                         bool &needEOL,
                         bool &writtenComment );
-    void appendLastZerosToUnclosedEvents( const unsigned long long &final_time );
+    void appendLastZerosToUnclosedEvents( const unsigned long long final_time );
     void ini_cutter_progress_bar( char *file_name, ProgressController *progress );
     void show_cutter_progress_bar( ProgressController *progress );
     void update_queue( int appl, int task, int thread,
