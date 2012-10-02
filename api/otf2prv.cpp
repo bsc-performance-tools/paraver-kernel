@@ -84,7 +84,7 @@ struct TranslationDataStruct
   map< int, int >    PRVEvent_Value2Type;     // N - 1
 
   map< uint32_t, int > OTF2Region2PRVEventValue;
-  map< uint32_t, int > OTF2Region2PRVEventType; //?
+  map< uint32_t, int > OTF2Region2PRVEventType;
 
   // Keep OTF2 definitions
   map< uint32_t, string >     symbols;
@@ -200,6 +200,7 @@ void writeHeaderResourceModel( TranslationData *tmpData )
   *tmpData->PRVFile << ":";
 }
 
+
 void writeHeaderProcessModel( TranslationData *tmpData )
 {
   tmpData->processModel->dumpToFile( *tmpData->PRVFile );
@@ -241,6 +242,262 @@ SCOREP_Error_Code GlobDefClockPropertiesHandler( void*    userData,
   writeLog( transData, "[DEF] CLOCK (max, offset):", trace_length, global_offset );
 
   return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code GlobDefCallsiteHandler( void*    userdata,
+    uint32_t callsite_identifier,
+    uint32_t source_file,
+    uint32_t line_number,
+    uint32_t region_entered,
+    uint32_t region_left )
+{
+  /*
+    otf2_print_data* data = ( otf2_print_data* )userdata;
+
+    printf( "%-*s %12u  File: %s, Line: %u, "
+            "Region entered: %s, Region left: %s\n",
+            otf2_DEF_COLUMN_WIDTH, "CALLSITE",
+            callsite_identifier,
+            otf2_print_get_def_name( data->strings, source_file ),
+            line_number,
+            otf2_print_get_def_name( data->regions, region_entered ),
+            otf2_print_get_def_name( data->regions, region_left ) );
+*/
+    return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code GlobDefCallpathHandler( void*    userdata,
+    uint32_t callpath_identifier,
+    uint32_t parent_callpath,
+    uint32_t region_identifier )
+{
+  /*
+    otf2_print_data* data = ( otf2_print_data* )userdata;
+
+    printf( "%-*s %12u  Region: %s, Parent: %s\n",
+            otf2_DEF_COLUMN_WIDTH, "CALLPATH",
+            callpath_identifier,
+            otf2_print_get_def_name( data->regions, region_identifier ),
+            otf2_print_get_id( parent_callpath ) );
+*/
+    return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code GlobDefMpiCommHandler( void*    userdata,
+    uint32_t comm_id,
+    uint32_t comm_name,
+    uint32_t group_id,
+    uint32_t comm_parent )
+{
+  /*
+    otf2_print_data* data = ( otf2_print_data* )userdata;
+
+    otf2_print_add_mpi_comm( data,
+                             comm_id,
+                             comm_name );
+
+    if ( !otf2_GLOBDEFS )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    printf( "%-*s %12u  Name: %s, Group: %s, Parent Communicator: %s\n",
+            otf2_DEF_COLUMN_WIDTH, "MPI_COMM",
+            comm_id,
+            otf2_print_get_def_name( data->strings, comm_name ),
+            otf2_print_get_def_name( data->groups, group_id ),
+            otf2_print_get_def_name( data->mpi_comms, comm_parent ) );
+*/
+    return SCOREP_SUCCESS;
+}
+
+SCOREP_Error_Code GlobDefMetricMemberHandler( void*           userData,
+    uint32_t        metric_member_id,
+    uint32_t        name,
+    uint32_t        description,
+    OTF2_MetricType type,
+    OTF2_MetricMode mode,
+    OTF2_TypeID     value_type,
+    OTF2_MetricBase base,
+    int64_t         exponent,
+    uint32_t        unit )
+{
+  /*
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    otf2_print_add_metric( data,
+                           metric_member_id,
+                           name );
+
+    if ( !otf2_GLOBDEFS )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    uint8_t base_number = 0;
+    switch ( base )
+    {
+        case OTF2_BASE_BINARY:
+            base_number = 2;
+            break;
+        case OTF2_BASE_DECIMAL:
+            base_number = 10;
+            break;
+    }
+
+    printf( "%-*s %12u  Name: %s, Descr.: %s, Type: %s, "
+            "Mode: %s, Value Type: %s, Base: %u, Exponent: %" PRId64 ", "
+            "Unit: %s\n",
+            otf2_DEF_COLUMN_WIDTH, "METRIC_MEMBER",
+            metric_member_id,
+            otf2_print_get_def_name( data->strings, name ),
+            otf2_print_get_def_name( data->strings, description ),
+            otf2_print_get_metric_type( type ),
+            otf2_print_get_metric_mode( mode ),
+            otf2_print_get_type_id( value_type ),
+            base_number, exponent,
+            otf2_print_get_def_name( data->strings, unit ) );
+*/
+    return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code GlobDefMetricClassHandler( void*                 userData,
+    uint32_t              metric_class_id,
+    uint8_t               number_of_metrics,
+    const uint32_t*       metric_members,
+    OTF2_MetricOccurrence occurrence )
+{
+  /*
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %12u  Occurrence: %s, %u Members: ",
+            otf2_DEF_COLUMN_WIDTH, "METRIC_CLASS",
+            metric_class_id,
+            otf2_print_get_metric_occurrence( occurrence ),
+            number_of_metrics );
+
+    const char* sep = "";
+    for ( uint8_t i = 0; i < number_of_metrics; i++ )
+    {
+        printf( "%s%s",
+                sep,
+                otf2_print_get_def_name( data->metrics, metric_members[ i ] ) );
+        sep = ", ";
+    }
+    printf( "\n" );
+*/
+    return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code GlobDefMetricInstanceHandler( void*            userData,
+    uint32_t         metricInstanceID,
+    uint32_t         metricClass,
+    uint64_t         recorder,
+    OTF2_MetricScope scopeType,
+    uint64_t         scope )
+{
+  /*
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %12u  Class: %u, Recorder: %s, "
+            "Scope: %s %s\n",
+            otf2_DEF_COLUMN_WIDTH, "METRIC_INSTANCE",
+            metricInstanceID,
+            metricClass,
+            otf2_print_get_def64_name( data->locations, recorder ),
+            otf2_print_get_metric_scope( scopeType ),
+            otf2_print_get_scope_name( data, scopeType, scope ) );
+*/
+    return SCOREP_SUCCESS;
+}
+
+SCOREP_Error_Code GlobDefParameterHandler( void*              userData,
+                        uint32_t           parameterID,
+                        uint32_t           name,
+                        OTF2_ParameterType type )
+{
+  /*
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    otf2_print_add_parameter( data,
+                              parameterID,
+                              name );
+
+    if ( !otf2_GLOBDEFS )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    printf( "%-*s %12u  Name: %s, Type: %s\n",
+            otf2_DEF_COLUMN_WIDTH, "PARAMETER",
+            parameterID,
+            otf2_print_get_def_name( data->strings, name ),
+            otf2_print_get_parameter_type( type ) );
+*/
+    return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code GlobDefUnknownHandler( void* userData )
+{
+/*
+    ( void )userData;
+
+    printf( "%-*s\n",
+            otf2_DEF_COLUMN_WIDTH, "UNKNOWN" );
+*/
+    return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code DefMappingTableHandler( void*             userData,
+    OTF2_MappingType  mapType,
+    const OTF2_IdMap* iDMap )
+{
+  /*
+    uint64_t* location_id_ptr = userData;
+
+    printf( "%-*s %12" PRIu64 "  Type: %s, ",
+            otf2_DEF_COLUMN_WIDTH, "MAPPING_TABLE",
+            *location_id_ptr,
+            otf2_print_get_mapping_type( mapType ) );
+
+    OTF2_IdMapMode map_mode;
+    OTF2_IdMap_GetMode( iDMap, &map_mode );
+
+    const char*                 sep;
+    OTF2_IdMap_TraverseCallback traverse_cb;
+    const char*                 end;
+    if ( map_mode == OTF2_ID_MAP_DENSE )
+    {
+        sep         = "[";
+        traverse_cb = map_traverse_dense;
+        end         = "]";
+    }
+    else
+    {
+        sep         = "{";
+        traverse_cb = map_traverse_sparse;
+        end         = "}";
+    }
+
+    OTF2_IdMap_Traverse( iDMap, traverse_cb, &sep );
+
+    puts( end );
+*/
+    return SCOREP_SUCCESS;
+}
+
+SCOREP_Error_Code DefClockOffsetHandler( void*    userData,
+    uint64_t time,
+    int64_t  offset,
+    double   stddev )
+{
 }
 
 
@@ -302,29 +559,7 @@ SCOREP_Error_Code GlobDefLocationGroupHandler( void*                  userData,
   transData->rowLabels->pushBack( TASK, transData->symbols[ name ] );
   transData->locationGroup2SystemTreeNode[ groupID ] = systemTreeParent; // undefined?
 
-/*
-     otf2Handler_add_location_group( data,
-                                    groupID,
-                                    name );
-
-     // Print definition if selected.
-     if ( otf2_GLOBDEFS )
-     {
-         printf( "%-*s %12u  Name: %s, Type: %s, Parent: %s\n",
-                 otf2_DEF_COLUMN_WIDTH, "LOCATION_GROUP",
-                 groupID,
-                 otf2Handler_get_def_name( data->strings, name ),
-                 otf2Handler_get_location_group_type( type ),
-                 otf2Handler_get_def_name( data->system_tree_nodes,
-                                          systemTreeParent ) );
-     }
-
-        if ( systemTreeParent != OTF2_UNDEFINED_UINT32 )
-        {
-        }
-    }
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -367,7 +602,6 @@ SCOREP_Error_Code GlobDefLocationHandler( void*             userData,
 
   uint64_t definitions_read = 0;
   OTF2_Reader_ReadAllLocalDefinitions( transData->reader, def_reader, &definitions_read );
-
 
 
 /*
@@ -459,11 +693,651 @@ SCOREP_Error_Code GlobDefAttributeHandler( void*       userData,
   TranslationData *transData = ( TranslationData * )userData;
 
   transData->attributeName[ attributeID ] = transData->symbols[ name ]; // Quick access
-  writeLog( transData, "[DEF] ATTRIBUTE : ", transData->symbols[ name ], attributeID );
 
+  // The translator only uses otf2_msg_match
   // transData->attributeType[ attributeID ] = OTF2_TypeID; // Needed?
 
+  writeLog( transData, "[DEF] ATTRIBUTE : ", transData->symbols[ name ], attributeID );
+
   return  SCOREP_SUCCESS;
+}
+
+
+
+SCOREP_Error_Code BufferFlushHandler( uint64_t            locationID,
+                                     uint64_t            time,
+                                     void*               userData,
+                                     OTF2_AttributeList* attributes,
+                                     OTF2_TimeStamp      stopTime )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Stop Time: %" PRIu64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "BUFFER_FLUSH",
+            locationID, time, stopTime );
+
+    otf2_print_attributes( data, attributes );
+    */
+
+    return SCOREP_SUCCESS;
+}
+
+SCOREP_Error_Code MeasurementOnOffHandler( uint64_t             locationID,
+                                          uint64_t             time,
+                                          void*                userData,
+                                          OTF2_AttributeList*  attributes,
+                                          OTF2_MeasurementMode mode )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Mode: %s\n",
+            otf2_EVENT_COLUMN_WIDTH, "MEASUREMENT_ON_OFF",
+            locationID, time,
+            otf2_print_get_measurement_mode( mode ) );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code MpiIsendHandler( uint64_t            locationID,
+                                  uint64_t            time,
+                                  void*               userData,
+                                  OTF2_AttributeList* attributes,
+                                  uint32_t            receiver,
+                                  uint32_t            communicator,
+                                  uint32_t            msgTag,
+                                  uint64_t            msgLength,
+                                  uint64_t            requestID )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Receiver: %u, Communicator: %s, "
+            "Tag: %u, Length: %" PRIu64 ", Request: %" PRIu64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "MPI_ISEND",
+            locationID, time,
+            receiver,
+            otf2_print_get_def_name( data->mpi_comms, communicator ),
+            msgTag,
+            msgLength,
+            requestID );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code MpiIsendCompleteHandler( uint64_t            locationID,
+                                          uint64_t            time,
+                                          void*               userData,
+                                          OTF2_AttributeList* attributes,
+                                          uint64_t            requestID )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Request: %" PRIu64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "MPI_ISEND_COMPLETE",
+            locationID, time,
+            requestID );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code MpiIrecvRequestHandler( uint64_t            locationID,
+                                         uint64_t            time,
+                                         void*               userData,
+                                         OTF2_AttributeList* attributes,
+                                         uint64_t            requestID )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Request: %" PRIu64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "MPI_IRECV_REQUEST",
+            locationID, time,
+            requestID );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+SCOREP_Error_Code MpiRecvHandler( uint64_t            locationID,
+                                 uint64_t            time,
+                                 void*               userData,
+                                 OTF2_AttributeList* attributes,
+                                 uint32_t            sender,
+                                 uint32_t            communicator,
+                                 uint32_t            msgTag,
+                                 uint64_t            msgLength )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Sender: %u, communicator: %s, "
+            "Tag: %u, Length: %" PRIu64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "MPI_RECV",
+            locationID, time,
+            sender,
+            otf2_print_get_def_name( data->mpi_comms, communicator ),
+            msgTag,
+            msgLength );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+SCOREP_Error_Code MpiIrecvHandler( uint64_t            locationID,
+                                  uint64_t            time,
+                                  void*               userData,
+                                  OTF2_AttributeList* attributes,
+                                  uint32_t            sender,
+                                  uint32_t            communicator,
+                                  uint32_t            msgTag,
+                                  uint64_t            msgLength,
+                                  uint64_t            requestID )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Sender: %u, Communicator: %s, "
+            "Tag: %u, Length: %" PRIu64 ", Request: %" PRIu64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "MPI_IRECV",
+            locationID, time,
+            sender,
+            otf2_print_get_def_name( data->mpi_comms, communicator ),
+            msgTag,
+            msgLength,
+            requestID );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code MpiRequestTestHandler( uint64_t            locationID,
+                                        uint64_t            time,
+                                        void*               userData,
+                                        OTF2_AttributeList* attributes,
+                                        uint64_t            requestID )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Request: %" PRIu64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "MPI_REQUEST_TEST",
+            locationID, time,
+            requestID );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+SCOREP_Error_Code MpiRequestCancelledHandler( uint64_t            locationID,
+                                             uint64_t            time,
+                                             void*               userData,
+                                             OTF2_AttributeList* attributes,
+                                             uint64_t            requestID )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Request: %" PRIu64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "MPI_REQUEST_CANCELLED",
+            locationID, time,
+            requestID );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+SCOREP_Error_Code MpiCollectiveBeginHandler( uint64_t            locationID,
+                                            uint64_t            time,
+                                            void*               userData,
+                                            OTF2_AttributeList* attribute )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "MPI_COLLECTIVE_BEGIN",
+            locationID, time );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code MpiCollectiveEndHandler( uint64_t               locationID,
+                                          uint64_t               time,
+                                          void*                  userData,
+                                          OTF2_AttributeList*    attributes,
+                                          OTF2_MpiCollectiveType type,
+                                          uint32_t               commId,
+                                          uint32_t               root,
+                                          uint64_t               sizeSent,
+                                          uint64_t               sizeReceived )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Type: %s, Communicator: %s, "
+            "Root: %s, Sent: %" PRIu64 ", Received: %" PRIu64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "MPI_COLLECTIVE_END",
+            locationID, time,
+            otf2_print_get_mpi_collective_type( type ),
+            otf2_print_get_def_name( data->mpi_comms, commId ),
+            otf2_print_get_id( root ),
+            sizeSent,
+            sizeReceived );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+SCOREP_Error_Code OmpForkHandler( uint64_t            locationID,
+                                 uint64_t            time,
+                                 void*               userData,
+                                 OTF2_AttributeList* attributes,
+                                 uint32_t            numberOfRequestedThreads )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  # Requested Threads: %u\n",
+            otf2_EVENT_COLUMN_WIDTH, "OPENMP_FORK",
+            locationID, time,
+            numberOfRequestedThreads );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+SCOREP_Error_Code OmpJoinHandler( uint64_t            locationID,
+                                 uint64_t            time,
+                                 void*               userData,
+                                 OTF2_AttributeList* attributes )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "OPENMP_JOIN",
+            locationID, time );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+SCOREP_Error_Code OmpAcquireLockHandler( uint64_t            locationID,
+                                        uint64_t            time,
+                                        void*               userData,
+                                        OTF2_AttributeList* attributes,
+                                        uint32_t            lockID,
+                                        uint32_t            acquisitionOrder )
+{/*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Lock: %u, "
+            "Acquisition Order: %u\n",
+            otf2_EVENT_COLUMN_WIDTH, "OPENMP_ACQUIRE_LOCK",
+            locationID, time,
+            lockID,
+            acquisitionOrder );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code OmpReleaseLockHandler( uint64_t            locationID,
+                                        uint64_t            time,
+                                        void*               userData,
+                                        OTF2_AttributeList* attributes,
+                                        uint32_t            lockID,
+                                        uint32_t            acquisitionOrder )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Lock: %u, "
+            "Acquisition Order: %u\n",
+            otf2_EVENT_COLUMN_WIDTH, "OPENMP_RELEASE_LOCK",
+            locationID, time,
+            lockID,
+            acquisitionOrder );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code OmpTaskCreateHandler( uint64_t            locationID,
+                                       uint64_t            time,
+                                       void*               userData,
+                                       OTF2_AttributeList* attributes,
+                                       uint64_t            taskID )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Task: %" PRIu64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "OPENMP_TASK_CREATE",
+            locationID, time,
+            taskID );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code OmpTaskSwitchHandler( uint64_t            locationID,
+                                       uint64_t            time,
+                                       void*               userData,
+                                       OTF2_AttributeList* attributes,
+                                       uint64_t            taskID )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Task: %" PRIu64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "OPENMP_TASK_SWITCH",
+            locationID, time,
+            taskID );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code OmpTaskCompleteHandler( uint64_t            locationID,
+                                        uint64_t            time,
+                                        void*               userData,
+                                        OTF2_AttributeList* attributes,
+                                        uint64_t            taskID )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Task: %" PRIu64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "OPENMP_TASK_COMPLETE",
+            locationID, time,
+            taskID );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+
+SCOREP_Error_Code MetricHandler( uint64_t                locationID,
+    uint64_t                time,
+    void*                   userData,
+    OTF2_AttributeList*     attributes,
+    uint32_t                metricID,
+    uint8_t                 numberOfMetrics,
+    const OTF2_TypeID*      typeIDs,
+    const OTF2_MetricValue* values )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Metric: %s, "
+            "%u Values: ",
+            otf2_EVENT_COLUMN_WIDTH, "METRIC",
+            locationID, time,
+            otf2_print_get_id( metricID ),
+            numberOfMetrics );
+
+    const char* sep = "";
+    for ( uint8_t i = 0; i < numberOfMetrics; i++ )
+    {
+        switch ( typeIDs[ i ] )
+        {
+            case OTF2_INT64_T:
+                printf( "%s(INT64_T; %" PRId64 ")", sep, values[ i ].signed_int );
+                break;
+            case OTF2_UINT64_T:
+                printf( "%s(UINT64_T; %" PRIu64 ")", sep, values[ i ].unsigned_int );
+                break;
+            case OTF2_DOUBLE:
+                printf( "%s(DOUBLE; %f)", sep, values[ i ].floating_point );
+                break;
+            default:
+            {
+                printf( "%s(%s; %08" PRIx64 ")",
+                        sep,
+                        otf2_print_get_invalid( typeIDs[ i ] ),
+                        values[ i ].unsigned_int );
+            }
+        }
+        sep = ", ";
+    }
+    printf( "\n" );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+SCOREP_Error_Code ParameterStringHandler( uint64_t            locationID,
+                       uint64_t            time,
+                       void*               userData,
+                       OTF2_AttributeList* attributes,
+                       uint32_t            parameter,
+                       uint32_t            value )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Parameter: %s, "
+            "Value: %s\n",
+            otf2_EVENT_COLUMN_WIDTH, "PARAMETER_STRING",
+            locationID, time,
+            otf2_print_get_def_name( data->parameters, parameter ),
+            otf2_print_get_def_name( data->strings, value ) );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+SCOREP_Error_Code ParameterIntHandler( uint64_t            locationID,
+                    uint64_t            time,
+                    void*               userData,
+                    OTF2_AttributeList* attributes,
+                    uint32_t            parameter,
+                    int64_t             value )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Parameter: %s, "
+            "Value: %" PRIi64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "PARAMETER_INT64",
+            locationID, time,
+            otf2_print_get_def_name( data->parameters, parameter ),
+            value );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+SCOREP_Error_Code ParameterUnsignedIntHandler( uint64_t            locationID,
+                            uint64_t            time,
+                            void*               userData,
+                            OTF2_AttributeList* attributes,
+                            uint32_t            parameter,
+                            uint64_t            value )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Parameter: %s, "
+            "Value: %" PRIu64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "PARAMETER_UINT64",
+            locationID, time,
+            otf2_print_get_def_name( data->parameters, parameter ),
+            value );
+
+    otf2_print_attributes( data, attributes );
+*/
+    return SCOREP_SUCCESS;
+}
+
+SCOREP_Error_Code UnknownHandler( uint64_t            locationID,
+    uint64_t            time,
+    void*               userData,
+    OTF2_AttributeList* attributes )
+{
+  /*
+    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
+    {
+        return SCOREP_SUCCESS;
+    }
+
+    otf2_print_data* data = ( otf2_print_data* )userData;
+
+    printf( "%-*s %15" PRIu64 " %20" PRIu64 "\n",
+            otf2_EVENT_COLUMN_WIDTH, "UNKNOWN",
+            locationID, time );
+
+    otf2_print_attributes( data, attributes );
+    */
+    return SCOREP_SUCCESS;
 }
 
 
@@ -533,7 +1407,6 @@ SCOREP_Error_Code MpiSendHandler( uint64_t            locationID,
 
   return SCOREP_SUCCESS;
 }
-// ******* de la web
 
 
 SCOREP_Error_Code EnterHandler( uint64_t locationID,
@@ -819,19 +1692,30 @@ bool translate( const string &strOTF2Trace,
       OTF2_GlobalDefReader* global_def_reader = OTF2_Reader_GetGlobalDefReader( reader );
       OTF2_GlobalDefReaderCallbacks* global_def_callbacks = OTF2_GlobalDefReaderCallbacks_New();
 
-      OTF2_GlobalDefReaderCallbacks_SetClockPropertiesCallback( global_def_callbacks, GlobDefClockPropertiesHandler );
+      OTF2_GlobalDefReaderCallbacks_SetUnknownCallback( global_def_callbacks, GlobDefUnknownHandler );
       OTF2_GlobalDefReaderCallbacks_SetStringCallback( global_def_callbacks, GlobDefStringHandler );
       OTF2_GlobalDefReaderCallbacks_SetSystemTreeNodeCallback( global_def_callbacks, GlobDefSystemTreeNodeHandler );
       OTF2_GlobalDefReaderCallbacks_SetLocationGroupCallback( global_def_callbacks, GlobDefLocationGroupHandler );
       OTF2_GlobalDefReaderCallbacks_SetLocationCallback( global_def_callbacks, GlobDefLocationHandler );
       OTF2_GlobalDefReaderCallbacks_SetRegionCallback( global_def_callbacks, GlobDefRegionHandler );
       //OTF2_GlobalDefReaderCallbacks_SetGroupCallback( global_def_callbacks, GlobDefGroupHandler );
-      OTF2_GlobalDefReaderCallbacks_SetAttributeCallback( global_def_callbacks, GlobDefAttributeHandler );
-
       //OTF2_GlobalDefReaderCallbacks_SetMpiCommCallback( global_def_callbacks, GlobDefMpiCommHandler );
+      OTF2_GlobalDefReaderCallbacks_SetMetricMemberCallback( global_def_callbacks, GlobDefMetricMemberHandler );
+      OTF2_GlobalDefReaderCallbacks_SetAttributeCallback( global_def_callbacks, GlobDefAttributeHandler );
+      OTF2_GlobalDefReaderCallbacks_SetParameterCallback( global_def_callbacks, GlobDefParameterHandler );
+
+      // This group was protected in otf2-print by an if
+      OTF2_GlobalDefReaderCallbacks_SetClockPropertiesCallback( global_def_callbacks, GlobDefClockPropertiesHandler );
+      OTF2_GlobalDefReaderCallbacks_SetCallsiteCallback( global_def_callbacks, GlobDefCallsiteHandler );
+      OTF2_GlobalDefReaderCallbacks_SetCallpathCallback( global_def_callbacks, GlobDefCallpathHandler );
+      OTF2_GlobalDefReaderCallbacks_SetMetricClassCallback( global_def_callbacks, GlobDefMetricClassHandler );
+      OTF2_GlobalDefReaderCallbacks_SetMetricInstanceCallback( global_def_callbacks, GlobDefMetricInstanceHandler );
 
       OTF2_Reader_RegisterGlobalDefCallbacks( reader, global_def_reader, global_def_callbacks, (void *)tmpData );
       OTF2_GlobalDefReaderCallbacks_Delete( global_def_callbacks );
+
+
+
 
       uint64_t definitions_read = 0;
       OTF2_Reader_ReadAllGlobalDefinitions( reader, global_def_reader, &definitions_read );
@@ -853,10 +1737,33 @@ bool translate( const string &strOTF2Trace,
       // Read communications
       OTF2_GlobalEvtReader* global_evt_reader = OTF2_Reader_GetGlobalEvtReader( reader );
       OTF2_GlobalEvtReaderCallbacks* event_callbacks = OTF2_GlobalEvtReaderCallbacks_New();
+
+      OTF2_GlobalEvtReaderCallbacks_SetUnknownCallback( event_callbacks, UnknownHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetBufferFlushCallback( event_callbacks, BufferFlushHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetMeasurementOnOffCallback( event_callbacks, MeasurementOnOffHandler );
       OTF2_GlobalEvtReaderCallbacks_SetEnterCallback( event_callbacks, EnterHandler );
       OTF2_GlobalEvtReaderCallbacks_SetLeaveCallback( event_callbacks, LeaveHandler );
       OTF2_GlobalEvtReaderCallbacks_SetMpiSendCallback( event_callbacks, MpiSendHandler );
-
+      OTF2_GlobalEvtReaderCallbacks_SetMpiIsendCallback( event_callbacks, MpiIsendHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetMpiIsendCompleteCallback( event_callbacks, MpiIsendCompleteHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetMpiIrecvRequestCallback( event_callbacks, MpiIrecvRequestHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetMpiRecvCallback( event_callbacks, MpiRecvHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetMpiIrecvCallback( event_callbacks, MpiIrecvHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetMpiRequestTestCallback( event_callbacks, MpiRequestTestHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetMpiRequestCancelledCallback( event_callbacks, MpiRequestCancelledHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetMpiCollectiveBeginCallback( event_callbacks, MpiCollectiveBeginHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetMpiCollectiveEndCallback( event_callbacks, MpiCollectiveEndHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetOmpForkCallback( event_callbacks, OmpForkHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetOmpJoinCallback( event_callbacks, OmpJoinHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetOmpAcquireLockCallback( event_callbacks, OmpAcquireLockHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetOmpReleaseLockCallback( event_callbacks, OmpReleaseLockHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetOmpTaskCreateCallback( event_callbacks, OmpTaskCreateHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetOmpTaskSwitchCallback( event_callbacks, OmpTaskSwitchHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetOmpTaskCompleteCallback( event_callbacks, OmpTaskCompleteHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetMetricCallback( event_callbacks, MetricHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetParameterStringCallback( event_callbacks, ParameterStringHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetParameterIntCallback( event_callbacks, ParameterIntHandler );
+      OTF2_GlobalEvtReaderCallbacks_SetParameterUnsignedIntCallback( event_callbacks, ParameterUnsignedIntHandler );
 
       OTF2_Reader_RegisterGlobalEvtCallbacks( reader, global_evt_reader, event_callbacks, (void *)tmpData );
       OTF2_GlobalEvtReaderCallbacks_Delete( event_callbacks );
