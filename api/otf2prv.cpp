@@ -50,8 +50,6 @@ using namespace std;
 
 const string OTF2_VERSION_STRING = "0.17"; // Added communications
 
-Trace *trace;
-
 typedef struct MainOptionsStruct MainOptions;
 
 struct MainOptionsStruct
@@ -78,6 +76,7 @@ struct TranslationDataStruct
   ResourceModel *resourcesModel; // to the Trace*
   ProcessModel  *processModel;   // to the Trace*
   RowLabels     *rowLabels;      // to the Trace*
+  Trace         *trace;
 
   // PRV LOCAL MAPS --> TO THE API
   map< string, int > PRVEvent_ValueLabel2Value; //
@@ -207,6 +206,13 @@ void writeHeaderProcessModel( TranslationData *tmpData )
   tmpData->processModel->dumpToFile( *tmpData->PRVFile );
   *tmpData->PRVFile << ",0" << endl;
 }
+
+
+void writeComment( TranslationData *tmpData, const string &otf2Trace )
+{
+  *tmpData->PRVFile << "# Translated from OTF2 trace " << otf2Trace << endl;
+}
+
 
 // *****************************************************************************
 // 2nd LEVEL - OTF2 level
@@ -1612,9 +1618,9 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
     // eventRecord << time << ":";
     eventRecord << time - transData->globalOffset << ":";
     eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":";
-    eventRecord << it->second << std::endl;
+    eventRecord << it->second;
 
-    *transData->PRVFile << eventRecord.str(); // change to Trace write.
+    *transData->PRVFile << eventRecord.str() << std::endl; // change to Trace write.
 
     writeLog( transData, eventRecord.str() );
   }
@@ -1636,9 +1642,9 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
       // eventRecord << time << ":";
       eventRecord << time - transData->globalOffset << ":";
       eventRecord << it->second << ":";
-      eventRecord << regionID << std::endl;
+      eventRecord << regionID;
 
-      *transData->PRVFile << eventRecord.str(); // change to Trace write.
+      *transData->PRVFile << eventRecord.str()  << std::endl; // change to Trace write.
 
       writeLog( transData, eventRecord.str() );
     }
@@ -1673,9 +1679,9 @@ SCOREP_Error_Code LeaveHandler( uint64_t locationID,
     // eventRecord << time  << ":";
     eventRecord << time - transData->globalOffset << ":";
     eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":";
-    eventRecord << "0" << std::endl; // VALUE
+    eventRecord << "0"; // VALUE
 
-    *transData->PRVFile << eventRecord.str();  // change to Trace write.
+    *transData->PRVFile << eventRecord.str() << std::endl;  // change to Trace write.
 
     writeLog( transData, eventRecord.str() );
   }
@@ -1697,9 +1703,9 @@ SCOREP_Error_Code LeaveHandler( uint64_t locationID,
       // eventRecord << time << ":";
       eventRecord << time - transData->globalOffset << ":";
       eventRecord << it->second << ":";
-      eventRecord << 0 << std::endl;
+      eventRecord << "0";  // VALUE
 
-      *transData->PRVFile << eventRecord.str(); // change to Trace write.
+      *transData->PRVFile << eventRecord.str()  << std::endl; // change to Trace write.
 
       writeLog( transData, eventRecord.str() );
     }
@@ -1908,6 +1914,8 @@ bool translate( const string &strOTF2Trace,
       writeHeaderResourceModel( tmpData );
       writeHeaderProcessModel( tmpData );
       // writeHeaderCommunicators( tmpData ); // must be written by proccess model
+
+      writeComment( tmpData, strOTF2Trace );
 
       // TRANSLATE EVENTS
       // Initialize callbacks for events
