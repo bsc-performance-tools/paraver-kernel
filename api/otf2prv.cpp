@@ -32,6 +32,7 @@
 #include <string>
 #include <stack>
 #include <map>
+#include <wordexp.h>
 
 #include <scorep_utility/SCOREP_UtilityTypes.h>
 #include <otf2/otf2.h>
@@ -210,7 +211,24 @@ void writeHeaderProcessModel( TranslationData *tmpData )
 
 void writeComment( TranslationData *tmpData, const string &otf2Trace )
 {
-  *tmpData->PRVFile << "# Translated from OTF2 trace " << otf2Trace << endl;
+  wordexp_t wordInfo;
+  char **auxPathExpanded;
+  string otf2TraceExpanded;
+
+  *tmpData->PRVFile << "# Translated from OTF2 trace ";
+
+  wordexp( otf2Trace.c_str(), &wordInfo, 0 );
+  auxPathExpanded = wordInfo.we_wordv;
+  if ( wordInfo.we_wordc > 0 )
+  {
+    *tmpData->PRVFile << auxPathExpanded[ 0 ] << endl;
+  }
+  else
+  {
+    *tmpData->PRVFile << otf2Trace << endl;
+  }
+
+  wordfree( &wordInfo );
 }
 
 
@@ -1571,10 +1589,10 @@ SCOREP_Error_Code MpiSendHandler( uint64_t            locationID,
       commRecord << time - transData->globalOffset << ":"; // Physical Send
 
       // Receiver
-      commRecord << transData->location2CPU[ locationID ] << ":"; // CPU
+      commRecord << transData->location2CPU[ receiver ] << ":"; // CPU
       commRecord << transData->processModel->totalApplications() << ":"; // APP
-      commRecord << transData->location2Task[ locationID ] << ":"; // TASK
-      commRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
+      commRecord << transData->location2Task[ receiver ] << ":"; // TASK
+      commRecord << transData->location2Thread[ receiver ] << ":"; // THREAD
 
       commRecord << value.uint64 - transData->globalOffset << ":"; // Logical Receive
       commRecord << value.uint64 - transData->globalOffset << ":"; // Physical Receive
