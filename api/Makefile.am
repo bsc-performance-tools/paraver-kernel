@@ -52,7 +52,7 @@ include_HEADERS = \
                   labelconstructor.h\
                   loadedwindows.h\
                   localkernel.h\
-									otf2prv.h\
+                  otf2prv.h\
                   output.h\
                   paramedir.h\
                   paraverconfig.h\
@@ -80,6 +80,10 @@ include_HEADERS = \
                   zoomhistory.h\
                   selectionmanagement.cpp\
                   zoomhistory.cpp
+
+install-data-hook:
+	$(mkdir_p) $(includedir)/pcfparser
+	cp -f ../../common-files/pcfparser/ParaverTraceConfig.h $(includedir)/pcfparser
 
 
 # Erases everything which should not be uploaded to CVS
