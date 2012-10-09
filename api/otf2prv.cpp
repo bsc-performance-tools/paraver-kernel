@@ -65,8 +65,10 @@ struct TranslationDataStruct
 {
   OTF2_Reader *reader;
   std::fstream *PRVFile;
+  std::fstream *externalTranslationTableFile;
 
   bool printLog;
+  bool useExternalTranslationTable;
   std::ostream *logFile; // printLog == true => logFile exists and is open.
 
   TTimeUnit timeUnit;
@@ -1795,6 +1797,10 @@ void activateOption( char *argument,
   {
     transData.printLog = true;
   }
+  else if ( argument[ 1 ] == 't')
+  {
+    transData.useExternalTranslationTable = true;
+  }
   else
     std::cout << "Unknown option " << argument << std::endl;
 }
@@ -1805,7 +1811,8 @@ void readParameters( int argc,
                      MainOptions &options,
                      TranslationData &transData,
                      string &strOTF2Trace,
-                     string &strPRVTrace )
+                     string &strPRVTrace,
+                     string &strExternalTable )
 {
   PRV_INT32 currentArg = 1;
 
@@ -1814,6 +1821,17 @@ void readParameters( int argc,
     if ( isOption( arguments[ currentArg ] ))
     {
       activateOption( arguments[ currentArg ], options, transData );
+      if ( transData.useExternalTranslationTable )
+      {
+        if ( currentArg + 1 < argc )
+        {
+          strExternalTable = string( arguments[ ++currentArg ] );
+        }
+        else
+        {
+          transData.useExternalTranslationTable = false;
+        }
+      }
     }
     else if ( Trace::isTraceFile( string( arguments[ currentArg ] )))
     {
@@ -1892,6 +1910,8 @@ bool translate( const string &strOTF2Trace,
 
       tmpData->reader = reader;
       tmpData->PRVFile = &file;
+
+      // OPEN TRANSLATION TABLE
 
       // BUILD HEADER
       writeLog( tmpData, "[REC] Registering OTF2 Callbacks" );
@@ -2057,13 +2077,15 @@ int main( int argc, char *argv[] )
 
     TranslationData tmpData;
     tmpData.printLog = false;
+    tmpData.useExternalTranslationTable = false;
     tmpData.logFile = &std::cout;
 
     string strOTF2Trace = string( "" );
     string strPRVTrace = string( "" );
+    string strExternalTable = string( "" );
 
     // Set parameters
-    readParameters( argc, argv, options, tmpData, strOTF2Trace, strPRVTrace );
+    readParameters( argc, argv, options, tmpData, strOTF2Trace, strPRVTrace, strExternalTable );
 
     if ( options.showHelp )
       printHelp();
