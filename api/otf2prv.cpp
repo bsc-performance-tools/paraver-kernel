@@ -28,6 +28,7 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <string>
 #include <stack>
@@ -49,7 +50,7 @@
 
 using namespace std;
 
-const string OTF2_VERSION_STRING = "0.18"; // solved bug thread
+const string OTF2_VERSION_STRING = "0.26"; // added -t table
 
 typedef struct MainOptionsStruct MainOptions;
 
@@ -57,6 +58,7 @@ struct MainOptionsStruct
 {
   bool showHelp;
   bool showVersion;
+  bool printExternalTableExample;
 };
 
 typedef struct TranslationDataStruct TranslationData;
@@ -65,7 +67,6 @@ struct TranslationDataStruct
 {
   OTF2_Reader *reader;
   std::fstream *PRVFile;
-  std::fstream *externalTranslationTableFile;
 
   bool printLog;
   bool useExternalTranslationTable;
@@ -84,7 +85,8 @@ struct TranslationDataStruct
   // PRV LOCAL MAPS --> TO THE API
   map< string, int > PRVEvent_ValueLabel2Value; //
   map< string, int > PRVEvent_TypeLabel2Type;   //
-  map< int, int >    PRVEvent_Value2Type;     // N - 1
+  //map< int, int >    PRVEvent_Value2Type;     // N - 1
+  map< string, int >    PRVEvent_ValueLabel2Type;     // N - 1
 
   map< uint32_t, int > OTF2Region2PRVEventValue;
   map< uint32_t, int > OTF2Region2PRVEventType;
@@ -157,9 +159,10 @@ void writeLog( TranslationData *tmpData,
     aux << value1;
     (*tmpData->logFile) << aux.str() << " - ";
 
-    aux.clear();
-    aux << value2;
-    (*tmpData->logFile) << aux.str() << std::endl;
+    stringstream aux2;
+    aux2.clear();
+    aux2 << value2;
+    (*tmpData->logFile) << aux2.str() << std::endl;
   }
 }
 
@@ -243,6 +246,181 @@ void openPRV( const string &strPRVTrace, std::fstream &file )
   file << fixed;
   file << dec;
   file.precision( 0 );
+}
+
+
+void loadExternalTranslationTable( const string &strExternalTrace,
+                                   TranslationData *tmpData )
+{
+  string line;
+  string token;
+  vector< string > tokens;
+  vector< string > PRVID;
+  string auxOTF2Label;
+  string auxPRVLabel;
+  int oldType;
+  int newType;
+  int oldValue;
+  int newValue;
+
+  if ( tmpData->useExternalTranslationTable )
+  {
+    ifstream extTableFile( strExternalTrace.c_str() );
+    if ( extTableFile.good() )
+    {
+      while( !extTableFile.eof() )
+      {
+        tokens.clear();
+        PRVID.clear();
+
+        getline( extTableFile, line );
+        if ( line.length() == 0 )
+          continue;
+
+        if ( line[0] == '#' ||
+             line[0] == ' ' )
+          continue;
+
+        writeLog( tmpData, "[MSK] External definition ", line);
+
+        istringstream auxLine( line );
+        while( !auxLine.eof() )
+        {
+          getline( auxLine, token, '"' );
+
+          if ( token.length() > 0 )
+          {
+            tokens.push_back( token );
+            // writeLog( tmpData, "[MSK] External Token ", token);
+            break;
+          }
+        }
+
+        while( !auxLine.eof() )
+        {
+          getline( auxLine, token, ' ' );
+
+          if ( token.length() > 1 )
+          {
+            tokens.push_back( token );
+            // writeLog( tmpData, "[MSK] External Token ", token);
+            break;
+          }
+        }
+
+        while( !auxLine.eof() )
+        {
+          getline( auxLine, token, '"' );
+
+          if ( token.length() > 0 )
+          {
+            tokens.push_back( token );
+            // writeLog( tmpData, "[MSK] External Token ", token);
+            break;
+          }
+        }
+
+        if ( tokens.size() < 2 || tokens.size() > 4 )
+          continue;
+
+        // writeLog( tmpData, "[MSK] Token 0 ", tokens[ 0 ] );
+        // writeLog( tmpData, "[MSK] Token 1 ", tokens[ 1 ] );
+        // if (tokens.size() > 2 )
+        //  writeLog( tmpData, "[MSK] Token 2 ", tokens[ 2 ] );
+
+        istringstream auxNumber( tokens[ 1 ] );
+        while( !auxNumber.eof() )
+        {
+          getline( auxNumber, token, ':' );
+          // writeLog( tmpData, "[MSK] External subtoken ", token);
+          PRVID.push_back( token );
+        }
+
+        if ( PRVID.size() > 2 )
+          continue;
+
+        // TYPE?
+        istringstream auxType( PRVID[0] );
+        if ( !( auxType >> newType ) )
+          continue;
+
+        map< string, int >::iterator it;
+        if ( PRVID.size() == 1 )
+        {
+          // Insert new type
+          map< string, int >::iterator itType;
+          itType = tmpData->PRVEvent_TypeLabel2Type.find( tokens[0] );
+          if ( itType != tmpData->PRVEvent_TypeLabel2Type.end() )
+          {
+            // old type existed
+            oldType = itType->second;
+            writeLog( tmpData, "[MSK] Changed relation between TYPE LABEL -> TYPE : " );
+            writeLog( tmpData, "        from :", tokens[0], oldType );
+            writeLog( tmpData, "        to   :", tokens[0], newType );
+          }
+
+          tmpData->PRVEvent_TypeLabel2Type[ tokens[0] ] = newType;
+
+          for( map< uint32_t, int >::iterator it = tmpData->OTF2Region2PRVEventType.begin();
+                    it != tmpData->OTF2Region2PRVEventType.end();
+                    ++it )
+          {
+            if ( it->second == oldType )
+            {
+              it->second = newType;
+              writeLog( tmpData, "[MSK] Changed relation between REGION -> TYPE: " );
+              writeLog( tmpData, "        from :", it->first, oldType );
+              writeLog( tmpData, "        to   :", it->first, newType );
+            }
+          }
+
+          writeLog( tmpData, "[MSK] Assigned TYPE: ", tokens[0], newType );
+        }
+
+        if ( PRVID.size() == 2 )
+        {
+          // VALUE?
+          istringstream auxValue( PRVID[1] );
+          if ( !( auxValue >> newValue ) )
+            continue;
+
+          // Insert new type-value
+          map< string, int >::iterator it;
+          it = tmpData->PRVEvent_ValueLabel2Value.find( tokens[0] );
+          if ( it != tmpData->PRVEvent_ValueLabel2Value.end() )
+          {
+            // old value existed
+            oldValue = it->second;
+            writeLog( tmpData, "[MSK] Changed relation between VALUE LABEL -> VALUE : " );
+            writeLog( tmpData, "        from :", tokens[0], oldValue );
+            writeLog( tmpData, "        to   :", tokens[0], newValue );
+          }
+
+          tmpData->PRVEvent_ValueLabel2Value[ tokens[0] ] = newValue;
+          tmpData->PRVEvent_ValueLabel2Type[ tokens[0] ]  = newType;
+          writeLog( tmpData, "[MSK] Assigned VALUE: ", tokens[ 0 ], newValue );
+
+          for( map< uint32_t, int >::iterator it2 = tmpData->OTF2Region2PRVEventValue.begin();
+                    it2 != tmpData->OTF2Region2PRVEventValue.end();
+                    ++it2 )
+          {
+            if ( it2->second == oldValue )
+            {
+              it2->second = newValue;
+              writeLog( tmpData, "[MSK] Changed relation between REGION -> VALUE: " );
+              writeLog( tmpData, "        from :", it2->first, oldValue );
+              writeLog( tmpData, "        to   :", it2->first, newValue );
+            }
+          }
+        }
+
+        if ( tokens.size() == 3 )
+        {
+          // TODO: NEW LABEL
+        }
+      }
+    }
+  }
 }
 
 
@@ -713,6 +891,7 @@ SCOREP_Error_Code GlobDefRegionHandler( void*           userData,
                                         uint32_t        endLineNumber )
 {
   TranslationData *transData = ( TranslationData * )userData;
+  ++regionID;
 
   map< string, int >::iterator it;
 
@@ -721,6 +900,8 @@ SCOREP_Error_Code GlobDefRegionHandler( void*           userData,
   {
     // TYPE symbolic - VALUE symbolic
     transData->OTF2Region2PRVEventValue[ regionID ] = it->second;
+    transData->OTF2Region2PRVEventType[ regionID ] =
+            transData->PRVEvent_ValueLabel2Type[ transData->symbols[ name ] ];
     writeLog( transData, "[DEF] REGION as VALUE: ", transData->symbols[ name ] );
   }
   else
@@ -1621,6 +1802,7 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
                                 uint32_t regionID )
 {
   TranslationData *transData = ( TranslationData * )userData;
+  ++regionID;
 
   map< uint32_t, int >::iterator it;
   it = transData->OTF2Region2PRVEventValue.find( regionID );
@@ -1640,7 +1822,8 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
     eventRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
     // eventRecord << time << ":";
     eventRecord << time - transData->globalOffset << ":";
-    eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":";
+    // eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":";
+    eventRecord << transData->OTF2Region2PRVEventType[ regionID ] << ":";
     eventRecord << it->second;
 
     *transData->PRVFile << eventRecord.str() << std::endl; // change to Trace write.
@@ -1666,7 +1849,7 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
       // eventRecord << time << ":";
       eventRecord << time - transData->globalOffset << ":";
       eventRecord << it->second << ":";
-      eventRecord << regionID;
+      eventRecord << regionID; // +1
 
       *transData->PRVFile << eventRecord.str()  << std::endl; // change to Trace write.
 
@@ -1686,6 +1869,7 @@ SCOREP_Error_Code LeaveHandler( uint64_t locationID,
                                 uint32_t regionID )
 {
   TranslationData *transData = ( TranslationData * )userData;
+  ++regionID;
 
   map< uint32_t, int >::iterator it = transData->OTF2Region2PRVEventValue.find( regionID );
   if ( it != transData->OTF2Region2PRVEventValue.end() )
@@ -1702,7 +1886,9 @@ SCOREP_Error_Code LeaveHandler( uint64_t locationID,
     eventRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
     // eventRecord << time  << ":";
     eventRecord << time - transData->globalOffset << ":";
-    eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":";
+    //eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":";
+    eventRecord << transData->OTF2Region2PRVEventType[ regionID ] << ":";
+
     eventRecord << "0"; // VALUE
 
     *transData->PRVFile << eventRecord.str() << std::endl;  // change to Trace write.
@@ -1745,29 +1931,42 @@ SCOREP_Error_Code LeaveHandler( uint64_t locationID,
 
 void printHelp()
 {
+  std::cout << std::endl;
   std::cout << "USAGE" << std::endl;
   std::cout << "  otf2prv [OPTION] trc.otf2 [trc.prv]" << std::endl;
   std::cout << std::endl;
-  std::cout << "    -h, --help: Prints this help" << std::endl;
-  std::cout << "    -v, --version: Show version" << std::endl;
-  std::cout <<  "[in development]    -l [file], --log: Set log mode "
-                "to the stdout or to file, if present."  << std::endl;
+  std::cout << "  Options:" << std::endl;
+  std::cout << "    -h: Prints this help." << std::endl;
+  std::cout << "    -v: Show version." << std::endl;
+  std::cout << "    -t [translation_table] : Masks hardcoded events with the ones"
+               " defined in file translation_table." << std::endl;
+  std::cout << "                             If no table is given, an example of"
+               " that table is written to the stdout." << std::endl;
+  std::cout <<  "    -l: Prints log information to the stdout."  << std::endl;
   std::cout << std::endl;
   std::cout << "  Parameters:" << std::endl;
   std::cout << "    trc.otf2: OTF2 trace filename." << std::endl;
-  std::cout << "    trc.prv: Paraver trace filename." << std::endl;
+  std::cout << "    trc.prv: Paraver trace filename (optional; default is trc.otf2.prv)." << std::endl;
   std::cout << std::endl;
   std::cout << "  Examples:" << std::endl;
-  std::cout << "    otf2prv linpack.otf2" << std::endl;
-  std::cout << "      Generates translation from linpack OTF2 trace to linpack.prv PRV trace." << std::endl;
+  std::cout << "    $ otf2prv linpack.otf2" << std::endl;
+  std::cout << "          Generates translation from linpack OTF2 trace to linpack.prv PRV trace." << std::endl;
+  std::cout << std::endl;
+  std::cout << "    $ otf2prv -t > mask_example.txt" << std::endl;
+  std::cout << "          Writes example of translation table." << std::endl;
+  std::cout << std::endl;
+  std::cout << "    $ otf2prv -l -t mask_mpi_types.txt linpack.otf2 newtrans.prv &> tmp.log" << std::endl;
+  std::cout << "          Same than first example, but using external translation table "
+               "and also printing log information of the generation of newtrans.prv trace." << std::endl;
   std::cout << std::endl;
 }
 
 
 void printVersion()
 {
-  // std::cout << PACKAGE_STRING;
-  std::cout << OTF2_VERSION_STRING;
+  //std::cout << PACKAGE_STRING;
+  std::cout << "otf2prv ";
+  std::cout << OTF2_VERSION_STRING << " (OTF2)";
 
   bool reverseOrder = true;
   string auxDate = LabelConstructor::getDate( reverseOrder );
@@ -1776,6 +1975,43 @@ void printVersion()
     std::cout << " Build ";
 
   std::cout << auxDate << std::endl;
+}
+
+void printExternalTableExample()
+{
+  std::cout << "#######################################"
+               "#######################################" << std::endl;
+  std::cout << "# otf2prv mask table example" << std::endl;
+  std::cout << "#" << std::endl;
+  std::cout << "#   <#> used for comments." << std::endl;
+  std::cout << "#   This information is used for transl"
+               "ation instead harcoded values." <<std::endl;
+  std::cout << "#   Field <string> is matched against O"
+               "TF2 defined strings." <<std::endl;
+  std::cout << "#   New labels will be written in the p"
+               "cf file. They're optional." <<std::endl;
+  std::cout << "#   It's mandatory to define any new ty"
+               "pe before defining new values for it." <<std::endl;
+  std::cout << "#" << std::endl;
+  std::cout << "#####################################"
+    "#########################################" << std::endl;
+  std::cout << std::endl;
+  std::cout << "#" << std::endl;
+  std::cout << "# FIELDS FOR TYPES:" << std::endl;
+  std::cout << "#   string   new_type   [new_type_label]" << std::endl;
+  std::cout << std::endl;
+  std::cout << "\"MPI Other\" 50000003" << std::endl;
+  std::cout << "\"MPI Other\" 50000003 \"MPI Other\"" << std::endl;
+  std::cout << std::endl;
+  std::cout << "#" << std::endl;
+  std::cout << "# FIELDS FOR VALUES:" << std::endl;
+  std::cout << "#   string   new_type:new_value   [new_value_label]" << std::endl;
+  std::cout << std::endl;
+  std::cout << "\"MPI_Init\"     50000003:31 \"MPI_Init\"" << std::endl;
+  std::cout << "\"MPI_Finalize\" 50000003:32" << std::endl;
+  std::cout << "\"MPI_Send\"     50000002:666" << std::endl;
+  std::cout << "\"MPI_Recv\"     50000002:999" << std::endl;
+  std::cout << std::endl;
 }
 
 
@@ -1830,6 +2066,7 @@ void readParameters( int argc,
         else
         {
           transData.useExternalTranslationTable = false;
+          options.printExternalTableExample = true;
         }
       }
     }
@@ -1879,21 +2116,28 @@ void initialize( TranslationData &tmpData )
   writeLog( &tmpData, "[REC] Labels for MPI values" );
   for( uint32_t i = 0; i < NUM_MPI_PRV_ELEMENTS; ++i )
   {
-    writeLog( &tmpData, "[REC]     ", mpi_prv_val_label[ i ].label, mpi_prv_val_label[ i ].value );
     tmpData.PRVEvent_ValueLabel2Value[ string( mpi_prv_val_label[ i ].label ) ] = mpi_prv_val_label[ i ].value;
+    writeLog( &tmpData, "[REC]     ", mpi_prv_val_label[ i ].label, mpi_prv_val_label[ i ].value );
+    tmpData.PRVEvent_ValueLabel2Type[ string( mpi_prv_val_label[ i ].label ) ] =
+            event_mpit2prv[ mpi_prv_val_label[ i ].value ].tipus_prv;
+    writeLog( &tmpData, "[REC]     ",
+              mpi_prv_val_label[ i ].label,
+              event_mpit2prv[ mpi_prv_val_label[ i ].value ].tipus_prv );
   }
-
+/*
   writeLog( &tmpData, "[REC] Declare values of every type" );
   for( uint32_t i = 0; i < NUM_MPI_PRV_ELEMENTS; ++i )
   {
     writeLog( &tmpData, "[REC]     ", event_mpit2prv[ i ].tipus_prv, event_mpit2prv[ i ].valor_prv );
-    tmpData.PRVEvent_Value2Type[ event_mpit2prv[ i ].valor_prv ] = event_mpit2prv[ i ].tipus_prv;
+    tmpData.PRVEvent_ValueLabel2Type[ event_mpit2prv[ i ].valor_prv ] = event_mpit2prv[ i ].tipus_prv;
   }
+  */
 }
 
 
 bool translate( const string &strOTF2Trace,
                 const string &strPRVTrace,
+                const string &strExternalTable,
                 TranslationData *tmpData )
 {
   bool translationReady = false;
@@ -1910,8 +2154,6 @@ bool translate( const string &strOTF2Trace,
 
       tmpData->reader = reader;
       tmpData->PRVFile = &file;
-
-      // OPEN TRANSLATION TABLE
 
       // BUILD HEADER
       writeLog( tmpData, "[REC] Registering OTF2 Callbacks" );
@@ -1941,14 +2183,16 @@ bool translate( const string &strOTF2Trace,
       OTF2_Reader_RegisterGlobalDefCallbacks( reader, global_def_reader, global_def_callbacks, (void *)tmpData );
       OTF2_GlobalDefReaderCallbacks_Delete( global_def_callbacks );
 
-
-
-
       uint64_t definitions_read = 0;
       OTF2_Reader_ReadAllGlobalDefinitions( reader, global_def_reader, &definitions_read );
 
       tmpData->resourcesModel->setReady( true );
       tmpData->processModel->setReady( true );
+
+      // LOAD TRANSLATION TABLE
+      // After reading DEF info of the trace, and before writing any .pcf file, because types or values
+      //   may be masked.
+      loadExternalTranslationTable( strExternalTable, tmpData );
 
       // WRITE HEADER
 
@@ -2074,6 +2318,7 @@ int main( int argc, char *argv[] )
     MainOptions options;
     options.showHelp = false;
     options.showVersion = false;
+    options.printExternalTableExample = false;
 
     TranslationData tmpData;
     tmpData.printLog = false;
@@ -2091,12 +2336,15 @@ int main( int argc, char *argv[] )
       printHelp();
     else if ( options.showVersion )
       printVersion();
+    else if ( options.printExternalTableExample )
+      printExternalTableExample();
     else if ( anyOTF2Trace( strOTF2Trace ) )
     {
       initialize( tmpData );
 
       if ( translate( strOTF2Trace,
                       buildPRVTraceName( strOTF2Trace, strPRVTrace ),
+                      strExternalTable,
                       &tmpData ) )
       {
         std::cout << "Done." << std::endl;
