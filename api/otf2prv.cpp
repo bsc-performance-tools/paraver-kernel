@@ -50,7 +50,7 @@
 
 using namespace std;
 
-const string OTF2_VERSION_STRING = "0.26"; // added -t table
+const string OTF2_VERSION_STRING = "0.29"; // added -t table
 
 typedef struct MainOptionsStruct MainOptions;
 
