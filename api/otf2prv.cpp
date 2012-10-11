@@ -91,6 +91,9 @@ struct TranslationDataStruct
   map< uint32_t, int > OTF2Region2PRVEventValue;
   map< uint32_t, int > OTF2Region2PRVEventType;
 
+  map< uint32_t, uint32_t > regionName;// RegionId -> NameID
+  map< string, uint32_t > regionIdent;  // Name -> regionI
+
   // Keep OTF2 definitions
   map< uint32_t, string >     symbols;
   map< uint32_t, uint32_t >   locationGroup2SystemTreeNode;
@@ -360,19 +363,7 @@ void loadExternalTranslationTable( const string &strExternalTrace,
           }
 
           tmpData->PRVEvent_TypeLabel2Type[ tokens[0] ] = newType;
-
-          for( map< uint32_t, int >::iterator it = tmpData->OTF2Region2PRVEventType.begin();
-                    it != tmpData->OTF2Region2PRVEventType.end();
-                    ++it )
-          {
-            if ( it->second == oldType )
-            {
-              it->second = newType;
-              writeLog( tmpData, "[MSK] Changed relation between REGION -> TYPE: " );
-              writeLog( tmpData, "        from :", it->first, oldType );
-              writeLog( tmpData, "        to   :", it->first, newType );
-            }
-          }
+          tmpData->OTF2Region2PRVEventType[ tmpData->regionIdent[ tokens[0] ] ] = newType;
 
           writeLog( tmpData, "[MSK] Assigned TYPE: ", tokens[0], newType );
         }
@@ -397,19 +388,33 @@ void loadExternalTranslationTable( const string &strExternalTrace,
           }
 
           tmpData->PRVEvent_ValueLabel2Value[ tokens[0] ] = newValue;
-          tmpData->PRVEvent_ValueLabel2Type[ tokens[0] ]  = newType;
+          //tmpData->PRVEvent_ValueLabel2Type[ tokens[0] ]  = newType;
+          tmpData->OTF2Region2PRVEventValue[ tmpData->regionIdent[ tokens[0] ] ] = newValue;
+          tmpData->OTF2Region2PRVEventType[ tmpData->regionIdent[ tokens[0] ] ] = newType;
           writeLog( tmpData, "[MSK] Assigned VALUE: ", tokens[ 0 ], newValue );
 
-          for( map< uint32_t, int >::iterator it2 = tmpData->OTF2Region2PRVEventValue.begin();
-                    it2 != tmpData->OTF2Region2PRVEventValue.end();
-                    ++it2 )
+          // We must check if it was defined before as a type, deleting it
+          it = tmpData->PRVEvent_TypeLabel2Type.find( tokens[0] );
+          if ( it != tmpData->PRVEvent_TypeLabel2Type.end() && it->second == USER_FUNCTION )
           {
-            if ( it2->second == oldValue )
+            writeLog( tmpData,
+                      "[MSK] Deleted previous relation between TYPE LABEL -> TYPE: ",
+                      tokens[ 0 ], it->second );
+            tmpData->PRVEvent_TypeLabel2Type.erase( it->first );
+          }
+
+          for( map<uint32_t, int>::iterator it2 = tmpData->OTF2Region2PRVEventType.begin();
+               it2 != tmpData->OTF2Region2PRVEventType.end();
+                ++it2 )
+          {
+            string regionName = tmpData->symbols[ tmpData->regionName[ it2->first ] ];
+            if ( regionName.compare( tokens[ 0 ] ) == 0 && it2->second == USER_FUNCTION )
             {
-              it2->second = newValue;
-              writeLog( tmpData, "[MSK] Changed relation between REGION -> VALUE: " );
-              writeLog( tmpData, "        from :", it2->first, oldValue );
-              writeLog( tmpData, "        to   :", it2->first, newValue );
+              writeLog( tmpData,
+                        "[MSK] Deleted previous relation between REGION -> TYPE: ",
+                        tokens[0], it->second );
+              tmpData->OTF2Region2PRVEventType.erase( it2->first );
+              break;
             }
           }
         }
@@ -923,6 +928,10 @@ SCOREP_Error_Code GlobDefRegionHandler( void*           userData,
       transData->OTF2Region2PRVEventType[ regionID ] = USER_FUNCTION;
       writeLog( transData, "[DEF] REGION as USER FUNCTION : ", transData->symbols[ name ] );
     }
+
+    transData->regionName[ regionID ] = name;
+    transData->regionIdent[ transData->symbols[ name ] ] = regionID;
+
   }
 
   return SCOREP_SUCCESS;
