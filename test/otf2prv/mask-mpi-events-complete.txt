@@ -1,0 +1,277 @@
+##############################################################################
+# otf2prv mask table example
+#
+# These values are placed instead harcoded values.
+# In OTF2, natural identifiers are strings, not inner codes.
+# New labels could be given to redefine OTF2 labels.
+##############################################################################
+
+#
+# FIELDS FOR TYPES:
+#   otf2_string   new_type   [new_type_label]
+
+"MPI Point-to-point"  50000001
+"MPI Collective Comm" 50000002
+"MPI Other"           50000003 
+"OpenMP Regions"      60000018
+
+#
+# FIELDS FOR VALUES:
+#   otf2_string   new_type:new_value   [new_value_label]
+
+"MPI_Bsend"  50000001:33     
+"MPI_Bsend_init"  50000001:112   
+"MPI_Cancel"  50000001:40     
+"MPI_Ibsend" 50000001:36     
+"MPI_Iprobe"  50000001:62  "MPI_Iprobe"
+"MPI_Irecv"   50000001:4   "MPI_Irecv"
+"MPI_Irsend" 50000001:38     
+"MPI_Isend" 50000001:3      
+"MPI_Issend" 50000001:37     
+"MPI_Probe"   50000001:61  "MPI_Probe"
+"MPI_Recv"    50000001:2   "MPI_Recv"
+"MPI_Recv_init" 50000001:116    
+"MPI_Rsend" 50000001:35     
+"MPI_Rsend_init" 50000001:121    
+"MPI_Send"    50000001:1   "MPI_Send"
+"MPI_Send_init" 50000001:117    
+"MPI_Sendrecv" 50000001:41     
+"MPI_Sendrecv_replace" 50000001:42     
+"MPI_Ssend" 50000001:34     
+"MPI_Ssend_init" 50000001:122    
+"MPI_Wait"    50000001:5   "MPI_Wait"
+"MPI_Waitall" 50000001:6      
+"MPI_Waitany" 50000001:59     
+"MPI_Waitsome" 50000001:60     
+"Outside MPI" 50000001:0   "Outside MPI"
+
+
+"MPI_Allgather"  50000002:17   
+"MPI_Allgatherv" 50000002:18   
+"MPI_Allreduce"  50000002:10  
+"MPI_Alltoall" 50000002:11     
+"MPI_Alltoallv"  50000002:12   
+"MPI_Barrier"    50000002:8   
+"MPI_Bcast"      50000002:7   
+"MPI_Gather" 50000002:13     
+"MPI_Gatherv" 50000002:14     
+"MPI_Reduce" 50000002:9      
+"MPI_Reduce_scatter" 50000002:80     
+"MPI_Scan" 50000002:30     
+"MPI_Scatter" 50000002:15     
+"MPI_Scatterv" 50000002:16     
+"MPI_Alltoallw" 50000002:131    
+"MPI_Exscan" 50000002:132    
+"Outside MPI"    50000002:0   
+
+
+
+"MPI_Comm_create" 50000003:21   "MPI_Comm_create"
+"MPI_Comm_dup"    50000003:22   "MPI_Comm_dup"
+"MPI_Comm_rank"   50000003:19   "MPI_Comm_rank"
+"MPI_Comm_size"   50000003:20   "MPI_Comm_size"
+"MPI_Comm_split"  50000003:23   "MPI_Comm_split"
+"MPI_Finalize"    50000003:32   "MPI_Finalize"
+"MPI_Init"        50000003:31   "MPI_Init"
+"Outside MPI"     50000003:0    "Outside MPI"
+0      End
+100    MPI_Abort
+111    MPI_Address
+81     MPI_Attr_delete
+82     MPI_Attr_get
+83     MPI_Attr_put
+113    MPI_Buffer_attach
+114    MPI_Buffer_detach
+45     MPI_Cart_coords
+43     MPI_Cart_create
+46     MPI_Cart_get
+47     MPI_Cart_map
+48     MPI_Cart_rank
+44     MPI_Cart_shift
+49     MPI_Cart_sub
+50     MPI_Cartdim_get
+29     MPI_Comm_compare
+21     MPI_Comm_create
+22     MPI_Comm_dup
+25     MPI_Comm_free
+24     MPI_Comm_group
+19     MPI_Comm_rank
+26     MPI_Comm_remote_group
+27     MPI_Comm_remote_size
+20     MPI_Comm_size
+23     MPI_Comm_split
+28     MPI_Comm_test_inter
+51     MPI_Dims_create
+102    MPI_Errhandler_create
+103    MPI_Errhandler_free
+104    MPI_Errhandler_get
+106    MPI_Errhandler_set
+101    MPI_Error_class
+105    MPI_Error_string
+32     MPI_Finalize
+118    MPI_Get_count
+119    MPI_Get_elements
+107    MPI_Get_processor_name
+51     MPI_Get_version
+54     MPI_Graph_create
+52     MPI_Graph_get
+53     MPI_Graph_map
+55     MPI_Graph_neighbors
+57     MPI_Graph_neighbors_count
+56     MPI_Graphdims_get
+95     MPI_Group_compare
+84     MPI_Group_difference
+85     MPI_Group_excl
+86     MPI_Group_free
+87     MPI_Group_incl
+88     MPI_Group_intersection
+90     MPI_Group_range_excl
+91     MPI_Group_range_incl
+89     MPI_Group_rank
+92     MPI_Group_size
+93     MPI_Group_translate_ranks
+94     MPI_Group_union
+31     MPI_Init
+108    MPI_Initialized
+96     MPI_Intercomm_create
+97     MPI_Intercomm_merge
+99     MPI_Keyval_create
+98     MPI_Keyval_free
+78     MPI_Op_create
+79     MPI_Op_free
+84     MPI_Packpack
+120    MPI_Pack_size
+86     MPI_Pcontrol
+115    MPI_Request_free
+123    MPI_Start
+124    MPI_Startall
+39     MPI_Test
+127    MPI_Test_cancelled
+125    MPI_Testall
+126    MPI_Testany
+128    MPI_Testsome
+58     MPI_Topo_test
+129    MPI_Type_commit
+130    MPI_Type_contiguous
+131    MPI_Type_extent
+132    MPI_Type_free
+133    MPI_Type_hindexed
+134    MPI_Type_hvector
+135    MPI_Type_indexed
+136    MPI_Type_lb
+137    MPI_Type_size
+138    MPI_Type_struct
+139    MPI_Type_ub
+141    MPI_Type_vector
+77     MPI_Unpack
+109    MPI_Wtick
+110    MPI_Wtime
+140    MPI_Init_thread
+134    MPI_Is_thread_main
+135    MPI_Query_thread
+143    MPI_Win_get_group
+150    MPI_File_call_errhandler
+151    MPI_File_close
+152    MPI_File_create_errhandler
+153    MPI_File_delete
+154    MPI_File_get_amode
+155    MPI_File_get_atomicity
+156    MPI_File_get_byte_offset
+157    MPI_File_get_errhandler
+158    MPI_File_get_group
+159    MPI_File_get_info
+160    MPI_File_get_position
+161    MPI_File_get_position_shared
+162    MPI_File_get_size
+163    MPI_File_get_type_extent
+164    MPI_File_get_view
+165    MPI_File_iread
+166    MPI_File_iread_at
+167    MPI_File_iread_shared
+168    MPI_File_iwrite
+169    MPI_File_iwrite_at
+170    MPI_File_iwrite_shared
+171    MPI_File_open
+172    MPI_File_preallocate
+173    MPI_File_read
+174    MPI_File_read_all
+175    MPI_File_read_all_begin
+176    MPI_File_read_all_end
+177    MPI_File_read_at
+178    MPI_File_read_at_all
+179    MPI_File_read_at_all_begin
+180    MPI_File_read_at_all_end
+181    MPI_File_read_ordered
+182    MPI_File_read_ordered_begin
+183    MPI_File_read_ordered_end
+184    MPI_File_read_shared
+185    MPI_File_seek
+186    MPI_File_seek_shared
+187    MPI_File_set_atomicity
+188    MPI_File_set_errhandler
+189    MPI_File_set_info
+190    MPI_File_set_size
+191    MPI_File_set_view
+192    MPI_File_sync
+193    MPI_File_write
+194    MPI_File_write_all
+195    MPI_File_write_all_begin
+196    MPI_File_write_all_end
+197    MPI_File_write_at
+198    MPI_File_write_at_all
+199    MPI_File_write_at_all_begin
+200    MPI_File_write_at_all_end
+201    MPI_File_write_ordered
+202    MPI_File_write_ordered_begin
+203    MPI_File_write_ordered_end
+204    MPI_File_write_shared
+
+
+
+EVENT_TYPE
+1    50000004    MPI One-sided
+VALUES
+0      End
+67     MPI_Accumulate
+66     MPI_Get
+65     MPI_Put
+70     MPI_Win_complete
+63     MPI_Win_create
+68     MPI_Win_fence
+64     MPI_Win_free
+74     MPI_Win_lock
+71     MPI_Win_post
+69     MPI_Win_start
+73     MPI_Win_test
+75     MPI_Win_unlock
+72     MPI_Win_wait
+ 
+
+
+
+"End"                   60000018:0      
+"omp_destroy_lock"      60000018:1      
+"omp_destroy_nest_lock" 60000018:2      
+"omp_get_dynamic"       60000018:3      
+"omp_get_max_threads"   60000018:4      
+"omp_get_nested"        60000018:5      
+"omp_get_num_procs"     60000018:6      
+"omp_get_num_threads"   60000018:7      
+"omp_get_thread_num"    60000018:8      
+"omp_in_parallel"       60000018:9      
+"omp_init_lock"         60000018:10      
+"omp_init_nest_lock"    60000018:11     
+"omp_set_dynamic"       60000018:12      
+"omp_set_lock"          60000018:13      
+"omp_set_nest_lock"     60000018:14      
+"omp_set_nested"        60000018:15      
+"omp_set_num_threads"   60000018:16      
+"omp_test_lock"         60000018:17      
+"omp_test_nest_lock"    60000018:18      
+"omp_unset_lock"        60000018:19      
+"omp_unset_nest_lock"   60000018:20      
+"!$omp parallel"        60000018:21
+"!$omp for"             60000018:22   
+"!$omp ibarrier"        60000018:23
+
+

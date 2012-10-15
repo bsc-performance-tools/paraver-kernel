@@ -63,10 +63,20 @@ struct MainOptionsStruct
 
 typedef struct TranslationDataStruct TranslationData;
 
+struct LocalDefClockOffsetStruct
+{
+  uint64_t time;
+  int64_t  offset;
+  double   stddev;
+};
+
+typedef struct LocalDefClockOffsetStruct LocalDefClockOffsetData;
+
 struct TranslationDataStruct
 {
   OTF2_Reader *reader;
   std::fstream *PRVFile;
+  string strOTF2Trace;
 
   bool printLog;
   bool useExternalTranslationTable;
@@ -76,6 +86,7 @@ struct TranslationDataStruct
   // PRV_UINT64 timerResolution;
   PRV_UINT64 maxTraceTime;
   PRV_UINT64 globalOffset;
+  bool correctedBeginTime;
 
   ResourceModel *resourcesModel; // to the Trace*
   ProcessModel  *processModel;   // to the Trace*
@@ -105,6 +116,9 @@ struct TranslationDataStruct
   map< uint64_t, TThreadOrder > location2Thread;
   map< uint64_t, TCPUOrder >    location2CPU;
 
+  uint64_t currentLocation;
+  map< uint64_t, LocalDefClockOffsetData > localDefClockOffset;
+
   //map< uint32_t, OTF2_TypeID > attributeType;
   map< uint32_t, string > attributeName;
   // States generation
@@ -115,76 +129,158 @@ struct TranslationDataStruct
 // *****************************************************************************
 // 3rd LEVEL - PRV Write
 // *****************************************************************************
-void writeLog( TranslationData *tmpData,
+void writeLog( TranslationData *transData,
                const string & message )
 {
-  if ( tmpData->printLog )
+  if ( transData->printLog )
   {
-    (*tmpData->logFile) << message << std::endl;
+    (*transData->logFile) << message << std::endl;
   }
 }
 
 
-void writeLog( TranslationData *tmpData,
+void writeLog( TranslationData *transData,
                const string & message,
                const string & value )
 {
-  if ( tmpData->printLog )
+  if ( transData->printLog )
   {
-    (*tmpData->logFile) << message << ": " << value << std::endl;
+    (*transData->logFile) << message << ": " << value << std::endl;
   }
 }
 
 
-void writeLog( TranslationData *tmpData,
+void writeLog( TranslationData *transData,
+               const string & message,
+               const uint64_t & value )
+{
+  if ( transData->printLog )
+  {
+    stringstream aux;
+    aux << value;
+    (*transData->logFile) << message << ": " << aux.str() << std::endl;
+  }
+}
+
+void writeLog( TranslationData *transData,
+               const string & message,
+               const int64_t & value )
+{
+  if ( transData->printLog )
+  {
+    stringstream aux;
+    aux << value;
+    (*transData->logFile) << message << ": " << aux.str() << std::endl;
+  }
+}
+
+
+
+void writeLog( TranslationData *transData,
+               const string & message,
+               const double & value )
+{
+  if ( transData->printLog )
+  {
+    stringstream aux;
+    aux << fixed;
+    aux.precision( 4 );
+    aux << value;
+    (*transData->logFile) << message << ": " << aux.str() << std::endl;
+  }
+}
+
+
+void writeLog( TranslationData *transData,
                const string & message,
                const uint32_t & value )
 {
-  if ( tmpData->printLog )
+  if ( transData->printLog )
   {
-    stringstream aux( message );
+    stringstream aux;
     aux << value;
-    (*tmpData->logFile) << message << ": " << aux.str() << std::endl;
+    (*transData->logFile) << message << ": " << aux.str() << std::endl;
   }
 }
 
-
-void writeLog( TranslationData *tmpData,
+void writeLog( TranslationData *transData,
                const string & message,
                const uint32_t & value1,
                const uint32_t & value2 )
 {
-  if ( tmpData->printLog )
+  if ( transData->printLog )
   {
-    (*tmpData->logFile) << message << ": ";
+    (*transData->logFile) << message << ": ";
 
     stringstream aux;
     aux << value1;
-    (*tmpData->logFile) << aux.str() << " - ";
+    (*transData->logFile) << aux.str() << " - ";
 
     stringstream aux2;
     aux2.clear();
     aux2 << value2;
-    (*tmpData->logFile) << aux2.str() << std::endl;
+    (*transData->logFile) << aux2.str() << std::endl;
   }
 }
 
 
-void writeLog( TranslationData *tmpData,
+
+void writeLog( TranslationData *transData,
+               const string & message,
+               const uint64_t & value1,
+               const uint32_t & value2 )
+{
+  if ( transData->printLog )
+  {
+    (*transData->logFile) << message << ": ";
+
+    stringstream aux;
+    aux << value1;
+    (*transData->logFile) << aux.str() << " - ";
+
+    stringstream aux2;
+    aux2.clear();
+    aux2 << value2;
+    (*transData->logFile) << aux2.str() << std::endl;
+  }
+}
+
+
+void writeLog( TranslationData *transData,
+               const string & message,
+               const uint64_t & value1,
+               const uint64_t & value2 )
+{
+  if ( transData->printLog )
+  {
+    (*transData->logFile) << message << ": ";
+
+    stringstream aux;
+    aux << value1;
+    (*transData->logFile) << aux.str() << " - ";
+
+    stringstream aux2;
+    aux2.clear();
+    aux2 << value2;
+    (*transData->logFile) << aux2.str() << std::endl;
+  }
+}
+
+void writeLog( TranslationData *transData,
                const string & message1,
                const string & message2,
                const uint32_t & value )
 {
-  if ( tmpData->printLog )
+  if ( transData->printLog )
   {
     stringstream aux;
     aux << value;
-    (*tmpData->logFile) << message1 << " " << message2 << ": " << aux.str() << std::endl;
+    (*transData->logFile) << message1 << " " << message2 << ": " << aux.str() << std::endl;
   }
 }
 
 
-void writeHeaderTimes( TranslationData *tmpData )
+void writeHeaderTimes( TranslationData *transData )
 {
   ostringstream ostr;
 
@@ -192,48 +288,49 @@ void writeHeaderTimes( TranslationData *tmpData )
   ostr << dec;
   ostr.precision( 0 );
 
-  *tmpData->PRVFile << "#Paraver ";
-  *tmpData->PRVFile << "()" << ":";
+  *transData->PRVFile << "#Paraver ";
+  *transData->PRVFile << "()" << ":";
 
-  ostr << tmpData->maxTraceTime;
-  *tmpData->PRVFile << ostr.str();
+  ostr << transData->maxTraceTime;
+  *transData->PRVFile << ostr.str();
 
-  *tmpData->PRVFile << "_" << LABEL_TIMEUNIT[ tmpData->timeUnit ];
-  *tmpData->PRVFile << ":";
+  *transData->PRVFile << "_" << LABEL_TIMEUNIT[ transData->timeUnit ];
+  *transData->PRVFile << ":";
 }
 
 
-void writeHeaderResourceModel( TranslationData *tmpData )
+void writeHeaderResourceModel( TranslationData *transData )
 {
-  tmpData->resourcesModel->dumpToFile( *tmpData->PRVFile );
-  *tmpData->PRVFile << ":";
+  transData->resourcesModel->dumpToFile( *transData->PRVFile );
+  *transData->PRVFile << ":";
 }
 
 
-void writeHeaderProcessModel( TranslationData *tmpData )
+void writeHeaderProcessModel( TranslationData *transData )
 {
-  tmpData->processModel->dumpToFile( *tmpData->PRVFile );
-  *tmpData->PRVFile << ",0" << endl;
+  transData->processModel->dumpToFile( *transData->PRVFile );
+  *transData->PRVFile << ",0" << endl;
 }
 
 
-void writeComment( TranslationData *tmpData, const string &otf2Trace )
+void writeComment( TranslationData *transData )
 {
   wordexp_t wordInfo;
   char **auxPathExpanded;
   string otf2TraceExpanded;
 
-  *tmpData->PRVFile << "# Translated from OTF2 trace ";
+  *transData->PRVFile << "# Translated from OTF2 trace ";
 
-  wordexp( otf2Trace.c_str(), &wordInfo, 0 );
+  string auxStr( transData->strOTF2Trace );
+  wordexp( auxStr.c_str(), &wordInfo, 0 );
   auxPathExpanded = wordInfo.we_wordv;
   if ( wordInfo.we_wordc > 0 )
   {
-    *tmpData->PRVFile << auxPathExpanded[ 0 ] << endl;
+    *transData->PRVFile << auxPathExpanded[ 0 ] << endl;
   }
   else
   {
-    *tmpData->PRVFile << otf2Trace << endl;
+    *transData->PRVFile << transData->strOTF2Trace << endl;
   }
 
   wordfree( &wordInfo );
@@ -253,7 +350,7 @@ void openPRV( const string &strPRVTrace, std::fstream &file )
 
 
 void loadExternalTranslationTable( const string &strExternalTrace,
-                                   TranslationData *tmpData )
+                                   TranslationData *transData )
 {
   string line;
   string token;
@@ -266,7 +363,7 @@ void loadExternalTranslationTable( const string &strExternalTrace,
   int oldValue;
   int newValue;
 
-  if ( tmpData->useExternalTranslationTable )
+  if ( transData->useExternalTranslationTable )
   {
     ifstream extTableFile( strExternalTrace.c_str() );
     if ( extTableFile.good() )
@@ -284,7 +381,7 @@ void loadExternalTranslationTable( const string &strExternalTrace,
              line[0] == ' ' )
           continue;
 
-        writeLog( tmpData, "[MSK] External definition ", line);
+        writeLog( transData, "[MSK] External definition ", line);
 
         istringstream auxLine( line );
         while( !auxLine.eof() )
@@ -294,7 +391,7 @@ void loadExternalTranslationTable( const string &strExternalTrace,
           if ( token.length() > 0 )
           {
             tokens.push_back( token );
-            // writeLog( tmpData, "[MSK] External Token ", token);
+            // writeLog( transData, "[MSK] External Token ", token);
             break;
           }
         }
@@ -306,7 +403,7 @@ void loadExternalTranslationTable( const string &strExternalTrace,
           if ( token.length() > 1 )
           {
             tokens.push_back( token );
-            // writeLog( tmpData, "[MSK] External Token ", token);
+            // writeLog( transData, "[MSK] External Token ", token);
             break;
           }
         }
@@ -318,7 +415,7 @@ void loadExternalTranslationTable( const string &strExternalTrace,
           if ( token.length() > 0 )
           {
             tokens.push_back( token );
-            // writeLog( tmpData, "[MSK] External Token ", token);
+            // writeLog( transData, "[MSK] External Token ", token);
             break;
           }
         }
@@ -326,16 +423,16 @@ void loadExternalTranslationTable( const string &strExternalTrace,
         if ( tokens.size() < 2 || tokens.size() > 4 )
           continue;
 
-        // writeLog( tmpData, "[MSK] Token 0 ", tokens[ 0 ] );
-        // writeLog( tmpData, "[MSK] Token 1 ", tokens[ 1 ] );
+        // writeLog( transData, "[MSK] Token 0 ", tokens[ 0 ] );
+        // writeLog( transData, "[MSK] Token 1 ", tokens[ 1 ] );
         // if (tokens.size() > 2 )
-        //  writeLog( tmpData, "[MSK] Token 2 ", tokens[ 2 ] );
+        //  writeLog( transData, "[MSK] Token 2 ", tokens[ 2 ] );
 
         istringstream auxNumber( tokens[ 1 ] );
         while( !auxNumber.eof() )
         {
           getline( auxNumber, token, ':' );
-          // writeLog( tmpData, "[MSK] External subtoken ", token);
+          // writeLog( transData, "[MSK] External subtoken ", token);
           PRVID.push_back( token );
         }
 
@@ -352,20 +449,20 @@ void loadExternalTranslationTable( const string &strExternalTrace,
         {
           // Insert new type
           map< string, int >::iterator itType;
-          itType = tmpData->PRVEvent_TypeLabel2Type.find( tokens[0] );
-          if ( itType != tmpData->PRVEvent_TypeLabel2Type.end() )
+          itType = transData->PRVEvent_TypeLabel2Type.find( tokens[0] );
+          if ( itType != transData->PRVEvent_TypeLabel2Type.end() )
           {
             // old type existed
             oldType = itType->second;
-            writeLog( tmpData, "[MSK] Changed relation between TYPE LABEL -> TYPE : " );
-            writeLog( tmpData, "        from :", tokens[0], oldType );
-            writeLog( tmpData, "        to   :", tokens[0], newType );
+            writeLog( transData, "[MSK] Changed relation between TYPE LABEL -> TYPE : " );
+            writeLog( transData, "        from :", tokens[0], oldType );
+            writeLog( transData, "        to   :", tokens[0], newType );
           }
 
-          tmpData->PRVEvent_TypeLabel2Type[ tokens[0] ] = newType;
-          tmpData->OTF2Region2PRVEventType[ tmpData->regionIdent[ tokens[0] ] ] = newType;
+          transData->PRVEvent_TypeLabel2Type[ tokens[0] ] = newType;
+          transData->OTF2Region2PRVEventType[ transData->regionIdent[ tokens[0] ] ] = newType;
 
-          writeLog( tmpData, "[MSK] Assigned TYPE: ", tokens[0], newType );
+          writeLog( transData, "[MSK] Assigned TYPE: ", tokens[0], newType );
         }
 
         if ( PRVID.size() == 2 )
@@ -377,43 +474,43 @@ void loadExternalTranslationTable( const string &strExternalTrace,
 
           // Insert new type-value
           map< string, int >::iterator it;
-          it = tmpData->PRVEvent_ValueLabel2Value.find( tokens[0] );
-          if ( it != tmpData->PRVEvent_ValueLabel2Value.end() )
+          it = transData->PRVEvent_ValueLabel2Value.find( tokens[0] );
+          if ( it != transData->PRVEvent_ValueLabel2Value.end() )
           {
             // old value existed
             oldValue = it->second;
-            writeLog( tmpData, "[MSK] Changed relation between VALUE LABEL -> VALUE : " );
-            writeLog( tmpData, "        from :", tokens[0], oldValue );
-            writeLog( tmpData, "        to   :", tokens[0], newValue );
+            writeLog( transData, "[MSK] Changed relation between VALUE LABEL -> VALUE : " );
+            writeLog( transData, "        from :", tokens[0], oldValue );
+            writeLog( transData, "        to   :", tokens[0], newValue );
           }
 
-          tmpData->PRVEvent_ValueLabel2Value[ tokens[0] ] = newValue;
-          //tmpData->PRVEvent_ValueLabel2Type[ tokens[0] ]  = newType;
-          tmpData->OTF2Region2PRVEventValue[ tmpData->regionIdent[ tokens[0] ] ] = newValue;
-          tmpData->OTF2Region2PRVEventType[ tmpData->regionIdent[ tokens[0] ] ] = newType;
-          writeLog( tmpData, "[MSK] Assigned VALUE: ", tokens[ 0 ], newValue );
+          transData->PRVEvent_ValueLabel2Value[ tokens[0] ] = newValue;
+          //transData->PRVEvent_ValueLabel2Type[ tokens[0] ]  = newType;
+          transData->OTF2Region2PRVEventValue[ transData->regionIdent[ tokens[0] ] ] = newValue;
+          transData->OTF2Region2PRVEventType[ transData->regionIdent[ tokens[0] ] ] = newType;
+          writeLog( transData, "[MSK] Assigned VALUE: ", tokens[ 0 ], newValue );
 
           // We must check if it was defined before as a type, deleting it
-          it = tmpData->PRVEvent_TypeLabel2Type.find( tokens[0] );
-          if ( it != tmpData->PRVEvent_TypeLabel2Type.end() && it->second == USER_FUNCTION )
+          it = transData->PRVEvent_TypeLabel2Type.find( tokens[0] );
+          if ( it != transData->PRVEvent_TypeLabel2Type.end() && it->second == USER_FUNCTION )
           {
-            writeLog( tmpData,
+            writeLog( transData,
                       "[MSK] Deleted previous relation between TYPE LABEL -> TYPE: ",
                       tokens[ 0 ], it->second );
-            tmpData->PRVEvent_TypeLabel2Type.erase( it->first );
+            transData->PRVEvent_TypeLabel2Type.erase( it->first );
           }
 
-          for( map<uint32_t, int>::iterator it2 = tmpData->OTF2Region2PRVEventType.begin();
-               it2 != tmpData->OTF2Region2PRVEventType.end();
+          for( map<uint32_t, int>::iterator it2 = transData->OTF2Region2PRVEventType.begin();
+               it2 != transData->OTF2Region2PRVEventType.end();
                 ++it2 )
           {
-            string regionName = tmpData->symbols[ tmpData->regionName[ it2->first ] ];
+            string regionName = transData->symbols[ transData->regionName[ it2->first ] ];
             if ( regionName.compare( tokens[ 0 ] ) == 0 && it2->second == USER_FUNCTION )
             {
-              writeLog( tmpData,
+              writeLog( transData,
                         "[MSK] Deleted previous relation between REGION -> TYPE: ",
                         tokens[0], it->second );
-              tmpData->OTF2Region2PRVEventType.erase( it2->first );
+              transData->OTF2Region2PRVEventType.erase( it2->first );
               break;
             }
           }
@@ -429,6 +526,28 @@ void loadExternalTranslationTable( const string &strExternalTrace,
 }
 
 
+SCOREP_Error_Code LocalDefClockOffsetHandler( void*    userData,
+                                              uint64_t time,
+                                              int64_t  offset,
+                                              double   stddev )
+{
+  TranslationData *transData = ( TranslationData * )userData;
+  //uint64_t* location_id_ptr = userData;
+/*
+  transData->localDefClockOffset[ transData->currentLocation ].time = time;
+  transData->localDefClockOffset[ transData->currentLocation ].offset = offset;
+  transData->localDefClockOffset[ transData->currentLocation ].stddev = stddev;
+*/
+  writeLog( transData, "[DEF][LOCAL] CLOCK OFFSET : " );
+  writeLog( transData, "             Location ID  : ", transData->currentLocation );
+  writeLog( transData, "             Clock Time   : ", time );
+  writeLog( transData, "             Clock Offset : ", offset );
+  writeLog( transData, "             Clock StDev  : ", stddev );
+
+  return SCOREP_SUCCESS;
+}
+
+
 SCOREP_Error_Code GlobDefClockPropertiesHandler( void*    userData,
                                                  uint64_t timer_resolution,
                                                  uint64_t global_offset,
@@ -436,16 +555,31 @@ SCOREP_Error_Code GlobDefClockPropertiesHandler( void*    userData,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  if ( timer_resolution <= 1E3 - 1 )
-    transData->timeUnit = SEC;
-  else if ( timer_resolution <= 1E6 - 1 )
-    transData->timeUnit = MS;
-  else if ( timer_resolution <= 1E9 - 1 )
-    transData->timeUnit = US;
-  else
-    transData->timeUnit = NS;
+  double timeUnit = 1 / (double)timer_resolution;
 
-  //transData->maxTraceTime = global_offset + trace_length;
+  if ( timeUnit >= 1 / 1E9 )
+  {
+    transData->timeUnit = NS;
+    writeLog( transData, "[DEF] CLOCK UNIT: NS ", timeUnit );
+  }
+  else if ( timeUnit >= 1 / 1E6 )
+  {
+    transData->timeUnit = US;
+    writeLog( transData, "[DEF] CLOCK UNIT: US ", timeUnit );
+  }
+  else if ( timeUnit >= 1 / 1E3 )
+  {
+    transData->timeUnit = MS;
+    writeLog( transData, "[DEF] CLOCK UNIT: MS ", timeUnit );
+  }
+  else
+  {
+    transData->timeUnit = SEC;
+    writeLog( transData, "[DEF] CLOCK UNIT: S ", timeUnit );
+  }
+
+
+  //transData->maxTraceTime = global_offset + trace_length; // ??
   transData->maxTraceTime = trace_length;
   transData->globalOffset = global_offset;
 
@@ -845,9 +979,53 @@ SCOREP_Error_Code GlobDefLocationHandler( void*             userData,
   // Set Callbacks for Local read
   OTF2_EvtReader* evt_reader = OTF2_Reader_GetEvtReader( transData->reader, locationID );
   OTF2_DefReader* def_reader = OTF2_Reader_GetDefReader( transData->reader, locationID );
+  OTF2_DefReaderCallbacks* local_def_callbacks = OTF2_DefReaderCallbacks_New();
+
+  transData->currentLocation = locationID;
+  OTF2_DefReaderCallbacks_SetClockOffsetCallback( local_def_callbacks, LocalDefClockOffsetHandler ); // ??
+
+  OTF2_Reader_RegisterDefCallbacks( transData->reader, def_reader, local_def_callbacks, (void *)transData );
 
   uint64_t definitions_read = 0;
   OTF2_Reader_ReadAllLocalDefinitions( transData->reader, def_reader, &definitions_read );
+
+  OTF2_Reader_CloseDefReader( transData->reader, def_reader );
+
+  OTF2_DefReaderCallbacks_Delete( local_def_callbacks );
+
+#if 0
+      // LOCAL DEFINITIONS
+      OTF2_DefReaderCallbacks* local_def_callbacks = OTF2_DefReaderCallbacks_New();
+
+      OTF2_DefReaderCallbacks_SetClockOffsetCallback( local_def_callbacks, GlobDefClockOffsetHandler ); // ??
+      for ( size_t i = 0; i < SCOREP_Vector_Size( user_data.locations_to_read ); i++ )
+      {
+        uint64_t* location_item      = SCOREP_Vector_At( user_data.locations_to_read, i );
+        uint64_t  locationIdentifier = *location_item;
+
+        OTF2_EvtReader* evt_reader = OTF2_Reader_GetEvtReader( reader,
+                                                               locationIdentifier );
+
+        /* Also open a definition reader and read all local definitions. */
+        OTF2_DefReader* def_reader = OTF2_Reader_GetDefReader( reader,
+                                                               locationIdentifier );
+        status = OTF2_Reader_RegisterDefCallbacks( reader,
+                                                        def_reader,
+                                                        local_def_callbacks,
+                                                        &locationIdentifier );
+
+        uint64_t definitions_read = 0;
+        status = OTF2_Reader_ReadAllLocalDefinitions( reader,
+                                                      def_reader,
+                                                      &definitions_read );
+
+        /* Close def reader, it is no longer useful and occupies memory */
+        status = OTF2_Reader_CloseDefReader( reader, def_reader );
+      }
+
+      OTF2_DefReaderCallbacks_Delete( local_def_callbacks );
+#endif
+
 
 
 /*
@@ -956,6 +1134,29 @@ SCOREP_Error_Code GlobDefAttributeHandler( void*       userData,
 }
 
 
+uint64_t correctBeginTime( TranslationData *transData, uint64_t time )
+{
+  if ( !transData->correctedBeginTime )
+  {
+    transData->correctedBeginTime = true;
+    transData->maxTraceTime = transData->maxTraceTime - ( time - transData->globalOffset );
+    transData->globalOffset = time;
+
+    // WRITE HEADER
+    writeHeaderTimes( transData );
+    writeHeaderResourceModel( transData );
+    writeHeaderProcessModel( transData );
+    // writeHeaderCommunicators( transData ); // must be written by proccess model
+
+    writeComment( transData );
+ }
+
+  time = time - transData->globalOffset;
+
+  return time;
+}
+
+
 SCOREP_Error_Code BufferFlushHandler( uint64_t            locationID,
                                       uint64_t            time,
                                       void*               userData,
@@ -963,6 +1164,8 @@ SCOREP_Error_Code BufferFlushHandler( uint64_t            locationID,
                                       OTF2_TimeStamp      stopTime )
 {
   TranslationData *transData = ( TranslationData * )userData;
+
+  time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: BufferFlush" << endl;
 
@@ -994,6 +1197,8 @@ SCOREP_Error_Code MeasurementOnOffHandler( uint64_t             locationID,
                                            OTF2_MeasurementMode mode )
 {
   TranslationData *transData = ( TranslationData * )userData;
+
+  time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: MeasurementOnOff" << endl;
 
@@ -1029,6 +1234,8 @@ SCOREP_Error_Code MpiIsendHandler( uint64_t            locationID,
                                    uint64_t            requestID )
 {
   TranslationData *transData = ( TranslationData * )userData;
+
+  time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: MpiIsend" << endl;
 
@@ -1067,6 +1274,8 @@ SCOREP_Error_Code MpiIsendCompleteHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
+  time = correctBeginTime( transData, time );
+
   *transData->PRVFile << "# OTF2 event not translated: MpiIsendComplete" << endl;
 
   writeLog( transData, "[EVT-???] : MpiIsendComplete" );
@@ -1097,6 +1306,8 @@ SCOREP_Error_Code MpiIrecvRequestHandler( uint64_t            locationID,
                                           uint64_t            requestID )
 {
   TranslationData *transData = ( TranslationData * )userData;
+
+  time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: MpiIrecvRequest" << endl;
 
@@ -1131,6 +1342,8 @@ SCOREP_Error_Code MpiRecvHandler( uint64_t            locationID,
                                   uint64_t            msgLength )
 {
   TranslationData *transData = ( TranslationData * )userData;
+
+  time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: MpiRecv" << endl;
 
@@ -1170,6 +1383,8 @@ SCOREP_Error_Code MpiIrecvHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
+  time = correctBeginTime( transData, time );
+
   *transData->PRVFile << "# OTF2 event not translated: MpiIrecv" << endl;
 
   writeLog( transData, "[EVT-???] : MpiIrecv" );
@@ -1206,6 +1421,8 @@ SCOREP_Error_Code MpiRequestTestHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
+  time = correctBeginTime( transData, time );
+
   *transData->PRVFile << "# OTF2 event not translated: MpiRequestTest" << endl;
 
   writeLog( transData, "[EVT-???] : MpiRequestTest" );
@@ -1237,6 +1454,8 @@ SCOREP_Error_Code MpiRequestCancelledHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
+  time = correctBeginTime( transData, time );
+
   *transData->PRVFile << "# OTF2 event not translated: MpiRequestCancelled" << endl;
 
   writeLog( transData, "[EVT-???] : MpiRequestCancelled" );
@@ -1266,6 +1485,8 @@ SCOREP_Error_Code MpiCollectiveBeginHandler( uint64_t            locationID,
                                              OTF2_AttributeList* attribute )
 {
   TranslationData *transData = ( TranslationData * )userData;
+
+  time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: MpiCollectiveBegin" << endl;
 
@@ -1299,6 +1520,8 @@ SCOREP_Error_Code MpiCollectiveEndHandler( uint64_t               locationID,
                                            uint64_t               sizeReceived )
 {
   TranslationData *transData = ( TranslationData * )userData;
+
+  time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: MpiCollectiveEnd" << endl;
 
@@ -1336,6 +1559,8 @@ SCOREP_Error_Code OmpForkHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
+  time = correctBeginTime( transData, time );
+
   *transData->PRVFile << "# OTF2 event not translated: OmpFork" << endl;
 
   writeLog( transData, "[EVT-???] : OmpFork" );
@@ -1365,6 +1590,8 @@ SCOREP_Error_Code OmpJoinHandler( uint64_t            locationID,
                                   OTF2_AttributeList* attributes )
 {
   TranslationData *transData = ( TranslationData * )userData;
+
+  time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: OmpJoin" << endl;
 
@@ -1396,6 +1623,8 @@ SCOREP_Error_Code OmpAcquireLockHandler( uint64_t            locationID,
                                          uint32_t            acquisitionOrder )
 {
   TranslationData *transData = ( TranslationData * )userData;
+
+  time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: OmpAcquireLock" << endl;
 
@@ -1431,6 +1660,8 @@ SCOREP_Error_Code OmpReleaseLockHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
+  time = correctBeginTime( transData, time );
+
   *transData->PRVFile << "# OTF2 event not translated: OmpReleaseLock" << endl;
 
   writeLog( transData, "[EVT-???] : OmpReleaseLock" );
@@ -1464,6 +1695,8 @@ SCOREP_Error_Code OmpTaskCreateHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
+  time = correctBeginTime( transData, time );
+
   *transData->PRVFile << "# OTF2 event not translated: OmpTaskCreate" << endl;
 
   writeLog( transData, "[EVT-???] : OmpTaskCreate" );
@@ -1495,6 +1728,8 @@ SCOREP_Error_Code OmpTaskSwitchHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
+  time = correctBeginTime( transData, time );
+
   *transData->PRVFile << "# OTF2 event not translated: OmpTaskSwitch" << endl;
 
   writeLog( transData, "[EVT-???] : OmpTaskSwitch" );
@@ -1525,6 +1760,8 @@ SCOREP_Error_Code OmpTaskCompleteHandler( uint64_t            locationID,
                                          uint64_t            taskID )
 {
   TranslationData *transData = ( TranslationData * )userData;
+
+  time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: OmpTaskComplete" << endl;
 
@@ -1559,6 +1796,8 @@ SCOREP_Error_Code MetricHandler( uint64_t                locationID,
                                  const OTF2_MetricValue* values )
 {
   TranslationData *transData = ( TranslationData * )userData;
+
+  time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: Metric" << endl;
 
@@ -1619,6 +1858,8 @@ SCOREP_Error_Code ParameterStringHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
+  time = correctBeginTime( transData, time );
+
   *transData->PRVFile << "# OTF2 event not translated: ParameterString" << endl;
 
   writeLog( transData, "[EVT-???] : ParameterString" );
@@ -1651,6 +1892,8 @@ SCOREP_Error_Code ParameterIntHandler( uint64_t            locationID,
                                        int64_t             value )
 {
   TranslationData *transData = ( TranslationData * )userData;
+
+  time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: ParameterInt" << endl;
 
@@ -1685,6 +1928,8 @@ SCOREP_Error_Code ParameterUnsignedIntHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
+  time = correctBeginTime( transData, time );
+
   *transData->PRVFile << "# OTF2 event not translated: ParameterUnsignedInt" << endl;
 
   writeLog( transData, "[EVT-???] : ParameterUnsignedInt" );
@@ -1715,6 +1960,8 @@ SCOREP_Error_Code UnknownHandler( uint64_t            locationID,
                                   OTF2_AttributeList* attributes )
 {
   TranslationData *transData = ( TranslationData * )userData;
+
+  time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: Unknown" << endl;
 
@@ -1748,6 +1995,8 @@ SCOREP_Error_Code MpiSendHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
+  time = correctBeginTime( transData, time );
+
   writeLog( transData, "[EVT] MpiSend : ", locationID, receiver );
 
   if ( OTF2_AttributeList_GetNumberOfElements( attributes ) > 0 )
@@ -1778,8 +2027,8 @@ SCOREP_Error_Code MpiSendHandler( uint64_t            locationID,
       commRecord << transData->location2Task[ locationID ] << ":"; // TASK
       commRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
 
-      commRecord << time - transData->globalOffset << ":"; // Logical Send
-      commRecord << time - transData->globalOffset << ":"; // Physical Send
+      commRecord << time << ":"; // Logical Send
+      commRecord << time << ":"; // Physical Send
 
       // Receiver
       commRecord << transData->location2CPU[ receiver ] << ":"; // CPU
@@ -1787,8 +2036,9 @@ SCOREP_Error_Code MpiSendHandler( uint64_t            locationID,
       commRecord << transData->location2Task[ receiver ] << ":"; // TASK
       commRecord << transData->location2Thread[ receiver ] << ":"; // THREAD
 
-      commRecord << value.uint64 - transData->globalOffset << ":"; // Logical Receive
-      commRecord << value.uint64 - transData->globalOffset << ":"; // Physical Receive
+      value.uint64 = correctBeginTime( transData, value.uint64 );
+      commRecord << value.uint64 << ":"; // Logical Receive
+      commRecord << value.uint64 << ":"; // Physical Receive
 
       // Tag:Length
       commRecord << msgTag << ":";
@@ -1812,6 +2062,8 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
   ++regionID;
+  time = correctBeginTime( transData, time );
+
 
   map< uint32_t, int >::iterator it;
   it = transData->OTF2Region2PRVEventValue.find( regionID );
@@ -1830,7 +2082,7 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
 
     eventRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
     // eventRecord << time << ":";
-    eventRecord << time - transData->globalOffset << ":";
+    eventRecord << time << ":";
     // eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":";
     eventRecord << transData->OTF2Region2PRVEventType[ regionID ] << ":";
     eventRecord << it->second;
@@ -1856,7 +2108,7 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
       eventRecord << transData->location2Task[ locationID ] << ":"; // TASK
       eventRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
       // eventRecord << time << ":";
-      eventRecord << time - transData->globalOffset << ":";
+      eventRecord << time << ":";
       eventRecord << it->second << ":";
       eventRecord << regionID; // +1
 
@@ -1879,6 +2131,7 @@ SCOREP_Error_Code LeaveHandler( uint64_t locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
   ++regionID;
+  time = correctBeginTime( transData, time );
 
   map< uint32_t, int >::iterator it = transData->OTF2Region2PRVEventValue.find( regionID );
   if ( it != transData->OTF2Region2PRVEventValue.end() )
@@ -1893,8 +2146,8 @@ SCOREP_Error_Code LeaveHandler( uint64_t locationID,
     eventRecord << transData->processModel->totalApplications() << ":"; // APP
     eventRecord << transData->location2Task[ locationID ] << ":"; // TASK
     eventRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
-    // eventRecord << time  << ":";
-    eventRecord << time - transData->globalOffset << ":";
+
+    eventRecord << time << ":";
     //eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":";
     eventRecord << transData->OTF2Region2PRVEventType[ regionID ] << ":";
 
@@ -1919,8 +2172,8 @@ SCOREP_Error_Code LeaveHandler( uint64_t locationID,
       eventRecord << transData->processModel->totalApplications() << ":"; // APP
       eventRecord << transData->location2Task[ locationID ] << ":"; // TASK
       eventRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
-      // eventRecord << time << ":";
-      eventRecord << time - transData->globalOffset << ":";
+
+      eventRecord << time << ":";
       eventRecord << it->second << ":";
       eventRecord << "0";  // VALUE
 
@@ -2055,7 +2308,6 @@ void readParameters( int argc,
                      char *arguments[],
                      MainOptions &options,
                      TranslationData &transData,
-                     string &strOTF2Trace,
                      string &strPRVTrace,
                      string &strExternalTable )
 {
@@ -2085,7 +2337,7 @@ void readParameters( int argc,
     }
     else if ( Trace::isOTF2TraceFile( string( arguments[ currentArg ] )))
     {
-      strOTF2Trace = string( arguments[ currentArg ] );
+      transData.strOTF2Trace = string( arguments[ currentArg ] );
     }
     else
     {
@@ -2103,51 +2355,50 @@ bool anyOTF2Trace( const string &strOTF2Trace )
 }
 
 
-void initialize( TranslationData &tmpData )
+void initialize( TranslationData &transData )
 {
-  tmpData.timeUnit = NS;
+  transData.timeUnit = NS;
 
-  tmpData.maxTraceTime = 0;
-  tmpData.globalOffset = 0;
+  transData.maxTraceTime = 0;
+  transData.globalOffset = 0;
 
-  tmpData.resourcesModel = new ResourceModel();
-  tmpData.processModel = new ProcessModel();
-  tmpData.processModel->addApplication();
-  tmpData.rowLabels = new RowLabels();
+  transData.resourcesModel = new ResourceModel();
+  transData.processModel = new ProcessModel();
+  transData.processModel->addApplication();
+  transData.rowLabels = new RowLabels();
 
-  writeLog( &tmpData, "[REC] Labels for MPI types" );
+  writeLog( &transData, "[REC] Labels for MPI types" );
   for( uint32_t i = 0; i < NUM_MPI_BLOCK_GROUPS; ++i )
   {
-    writeLog( &tmpData, "[REC]     ", prv_block_groups[ i ].label, prv_block_groups[ i ].type );
-    tmpData.PRVEvent_TypeLabel2Type[ prv_block_groups[ i ].label ] = prv_block_groups[ i ].type;
+    writeLog( &transData, "[REC]     ", prv_block_groups[ i ].label, prv_block_groups[ i ].type );
+    transData.PRVEvent_TypeLabel2Type[ prv_block_groups[ i ].label ] = prv_block_groups[ i ].type;
   }
 
-  writeLog( &tmpData, "[REC] Labels for MPI values" );
+  writeLog( &transData, "[REC] Labels for MPI values" );
   for( uint32_t i = 0; i < NUM_MPI_PRV_ELEMENTS; ++i )
   {
-    tmpData.PRVEvent_ValueLabel2Value[ string( mpi_prv_val_label[ i ].label ) ] = mpi_prv_val_label[ i ].value;
-    writeLog( &tmpData, "[REC]     ", mpi_prv_val_label[ i ].label, mpi_prv_val_label[ i ].value );
-    tmpData.PRVEvent_ValueLabel2Type[ string( mpi_prv_val_label[ i ].label ) ] =
+    transData.PRVEvent_ValueLabel2Value[ string( mpi_prv_val_label[ i ].label ) ] = mpi_prv_val_label[ i ].value;
+    writeLog( &transData, "[REC]     ", mpi_prv_val_label[ i ].label, mpi_prv_val_label[ i ].value );
+    transData.PRVEvent_ValueLabel2Type[ string( mpi_prv_val_label[ i ].label ) ] =
             event_mpit2prv[ mpi_prv_val_label[ i ].value ].tipus_prv;
-    writeLog( &tmpData, "[REC]     ",
+    writeLog( &transData, "[REC]     ",
               mpi_prv_val_label[ i ].label,
               event_mpit2prv[ mpi_prv_val_label[ i ].value ].tipus_prv );
   }
 /*
-  writeLog( &tmpData, "[REC] Declare values of every type" );
+  writeLog( &transData, "[REC] Declare values of every type" );
   for( uint32_t i = 0; i < NUM_MPI_PRV_ELEMENTS; ++i )
   {
-    writeLog( &tmpData, "[REC]     ", event_mpit2prv[ i ].tipus_prv, event_mpit2prv[ i ].valor_prv );
-    tmpData.PRVEvent_ValueLabel2Type[ event_mpit2prv[ i ].valor_prv ] = event_mpit2prv[ i ].tipus_prv;
+    writeLog( &transData, "[REC]     ", event_mpit2prv[ i ].tipus_prv, event_mpit2prv[ i ].valor_prv );
+    transData.PRVEvent_ValueLabel2Type[ event_mpit2prv[ i ].valor_prv ] = event_mpit2prv[ i ].tipus_prv;
   }
   */
 }
 
 
-bool translate( const string &strOTF2Trace,
-                const string &strPRVTrace,
+bool translate( const string &strPRVTrace,
                 const string &strExternalTable,
-                TranslationData *tmpData )
+                TranslationData *transData )
 {
   bool translationReady = false;
   std::fstream file;
@@ -2155,17 +2406,17 @@ bool translate( const string &strOTF2Trace,
 
   if ( file.good() )
   {
-    writeLog( tmpData, "[FILE] Opened ", strPRVTrace );
-    OTF2_Reader* reader = OTF2_Reader_Open( strOTF2Trace.c_str() );
+    writeLog( transData, "[FILE] Opened ", strPRVTrace );
+    OTF2_Reader* reader = OTF2_Reader_Open( transData->strOTF2Trace.c_str() );
     if ( reader != NULL )
     {
-      writeLog( tmpData, "[FILE] Opened ", strOTF2Trace );
+      writeLog( transData, "[FILE] Opened ", transData->strOTF2Trace );
 
-      tmpData->reader = reader;
-      tmpData->PRVFile = &file;
+      transData->reader = reader;
+      transData->PRVFile = &file;
 
       // BUILD HEADER
-      writeLog( tmpData, "[REC] Registering OTF2 Callbacks" );
+      writeLog( transData, "[REC] Registering OTF2 Callbacks" );
 
       OTF2_GlobalDefReader* global_def_reader = OTF2_Reader_GetGlobalDefReader( reader );
       OTF2_GlobalDefReaderCallbacks* global_def_callbacks = OTF2_GlobalDefReaderCallbacks_New();
@@ -2189,28 +2440,78 @@ bool translate( const string &strOTF2Trace,
       OTF2_GlobalDefReaderCallbacks_SetMetricClassCallback( global_def_callbacks, GlobDefMetricClassHandler );
       OTF2_GlobalDefReaderCallbacks_SetMetricInstanceCallback( global_def_callbacks, GlobDefMetricInstanceHandler );
 
-      OTF2_Reader_RegisterGlobalDefCallbacks( reader, global_def_reader, global_def_callbacks, (void *)tmpData );
+      OTF2_Reader_RegisterGlobalDefCallbacks( reader, global_def_reader, global_def_callbacks, (void *)transData );
       OTF2_GlobalDefReaderCallbacks_Delete( global_def_callbacks );
 
       uint64_t definitions_read = 0;
       OTF2_Reader_ReadAllGlobalDefinitions( reader, global_def_reader, &definitions_read );
 
-      tmpData->resourcesModel->setReady( true );
-      tmpData->processModel->setReady( true );
+/*
+      // LOG LOCAL DEFINITIONS
+      for( map< uint64_t, LocalDefClockOffsetData >::iterator it = transData->localDefClockOffset.begin();
+              it != transData->localDefClockOffset.end(); ++it )
+      {
+        writeLog( transData, "[DEF][LOCAL] CLOCK OFFSET : " );
+        writeLog( transData, "[DEF][LOCAL] Location ID  : ", it->first );
+        writeLog( transData, "             Clock Time   : ", it->second.time );
+        writeLog( transData, "             Clock Offset : ", it->second.offset );
+        writeLog( transData, "             Clock StDev  : ", it->second.stddev );
+      }
+*/
+
+#if 0
+      // LOCAL DEFINITIONS
+      OTF2_DefReaderCallbacks* local_def_callbacks = OTF2_DefReaderCallbacks_New();
+
+      OTF2_DefReaderCallbacks_SetClockOffsetCallback( local_def_callbacks, GlobDefClockOffsetHandler ); // ??
+      for ( size_t i = 0; i < SCOREP_Vector_Size( user_data.locations_to_read ); i++ )
+      {
+        uint64_t* location_item      = SCOREP_Vector_At( user_data.locations_to_read, i );
+        uint64_t  locationIdentifier = *location_item;
+
+        OTF2_EvtReader* evt_reader = OTF2_Reader_GetEvtReader( reader,
+                                                               locationIdentifier );
+
+        /* Also open a definition reader and read all local definitions. */
+        OTF2_DefReader* def_reader = OTF2_Reader_GetDefReader( reader,
+                                                               locationIdentifier );
+        status = OTF2_Reader_RegisterDefCallbacks( reader,
+                                                        def_reader,
+                                                        local_def_callbacks,
+                                                        &locationIdentifier );
+
+        uint64_t definitions_read = 0;
+        status = OTF2_Reader_ReadAllLocalDefinitions( reader,
+                                                      def_reader,
+                                                      &definitions_read );
+
+        /* Close def reader, it is no longer useful and occupies memory */
+        status = OTF2_Reader_CloseDefReader( reader, def_reader );
+      }
+
+      OTF2_DefReaderCallbacks_Delete( local_def_callbacks );
+#endif
+
+
+
+      transData->resourcesModel->setReady( true );
+      transData->processModel->setReady( true );
 
       // LOAD TRANSLATION TABLE
       // After reading DEF info of the trace, and before writing any .pcf file, because types or values
       //   may be masked.
-      loadExternalTranslationTable( strExternalTable, tmpData );
+      loadExternalTranslationTable( strExternalTable, transData );
 
+#if 0
       // WRITE HEADER
+      writeHeaderTimes( transData );
+      writeHeaderResourceModel( transData );
+      writeHeaderProcessModel( transData );
+      // writeHeaderCommunicators( transData ); // must be written by proccess model
 
-      writeHeaderTimes( tmpData );
-      writeHeaderResourceModel( tmpData );
-      writeHeaderProcessModel( tmpData );
-      // writeHeaderCommunicators( tmpData ); // must be written by proccess model
+      writeComment( transData );
+#endif
 
-      writeComment( tmpData, strOTF2Trace );
 
       // TRANSLATE EVENTS
       // Initialize callbacks for events
@@ -2247,7 +2548,7 @@ bool translate( const string &strOTF2Trace,
       OTF2_GlobalEvtReaderCallbacks_SetParameterIntCallback( event_callbacks, ParameterIntHandler );
       OTF2_GlobalEvtReaderCallbacks_SetParameterUnsignedIntCallback( event_callbacks, ParameterUnsignedIntHandler );
 
-      OTF2_Reader_RegisterGlobalEvtCallbacks( reader, global_evt_reader, event_callbacks, (void *)tmpData );
+      OTF2_Reader_RegisterGlobalEvtCallbacks( reader, global_evt_reader, event_callbacks, (void *)transData );
       OTF2_GlobalEvtReaderCallbacks_Delete( event_callbacks );
 
       // Read simbolic info
@@ -2286,7 +2587,7 @@ bool translate( const string &strOTF2Trace,
     }
     else
     {
-      std::cout << "ERROR: OTF2 Reader: Unable to open " << strOTF2Trace << std::endl;
+      std::cout << "ERROR: OTF2 Reader: Unable to open " << transData->strOTF2Trace << std::endl;
     }
   }
 
@@ -2329,17 +2630,19 @@ int main( int argc, char *argv[] )
     options.showVersion = false;
     options.printExternalTableExample = false;
 
-    TranslationData tmpData;
-    tmpData.printLog = false;
-    tmpData.useExternalTranslationTable = false;
-    tmpData.logFile = &std::cout;
+    TranslationData transData;
+    transData.printLog = false;
+    transData.useExternalTranslationTable = false;
+    transData.logFile = &std::cout;
+    transData.correctedBeginTime = false;
 
-    string strOTF2Trace = string( "" );
+    transData.strOTF2Trace = string( "" );
+
     string strPRVTrace = string( "" );
     string strExternalTable = string( "" );
 
     // Set parameters
-    readParameters( argc, argv, options, tmpData, strOTF2Trace, strPRVTrace, strExternalTable );
+    readParameters( argc, argv, options, transData, strPRVTrace, strExternalTable );
 
     if ( options.showHelp )
       printHelp();
@@ -2347,14 +2650,13 @@ int main( int argc, char *argv[] )
       printVersion();
     else if ( options.printExternalTableExample )
       printExternalTableExample();
-    else if ( anyOTF2Trace( strOTF2Trace ) )
+    else if ( anyOTF2Trace( transData.strOTF2Trace ) )
     {
-      initialize( tmpData );
+      initialize( transData );
 
-      if ( translate( strOTF2Trace,
-                      buildPRVTraceName( strOTF2Trace, strPRVTrace ),
+      if ( translate( buildPRVTraceName( transData.strOTF2Trace, strPRVTrace ),
                       strExternalTable,
-                      &tmpData ) )
+                      &transData ) )
       {
         std::cout << "Done." << std::endl;
       }
@@ -2364,9 +2666,9 @@ int main( int argc, char *argv[] )
         globalError = -1;
       }
 
-      delete tmpData.resourcesModel;
-      delete tmpData.processModel;
-      delete tmpData.rowLabels;
+      delete transData.resourcesModel;
+      delete transData.processModel;
+      delete transData.rowLabels;
     }
   }
 
