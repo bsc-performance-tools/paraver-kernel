@@ -31,6 +31,7 @@ AX_PROG_ENABLE_TRACING
 AX_PROG_WITH_EXTRAE
 AX_PROG_ENABLE_PARALLEL
 AX_PROG_WITH_OTF2
+AX_PROG_WITH_PTOOLS_COMMON_FILES
 
 # Search for available compilers and preprocessor
 AC_PROG_CC(gcc xlc cc)
@@ -58,8 +59,8 @@ AC_CHECK_TYPES([int64_t, uint64_t, int8_t, uint8_t, int32_t, uint32_t, int16_t, 
 #########################################
 
 
-CFLAGS="$CFLAGS $CFLAGS_OTF2 -Iinclude/ -Iapi/ -I../include/ -I../api/ -I../common-files/ -I../../common-files/ -I../../common-files/pcfparser -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
-CXXFLAGS="$CXXFLAGS $BOOST_CPPFLAGS $CXXFLAGS_OTF2 -Iinclude/ -Iapi/ -I../include/ -I../api/ -I../common-files/ -I../../common-files/ -I../../common-files/pcfparser -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
-LDFLAGS="$LDFLAGS $BOOST_LDFLAGS $BOOST_SERIALIZATION_LIB $LDFLAGS_OTF2 -lxml2"
+CFLAGS="$CFLAGS $CFLAGS_OTF2 $CFLAGS_PTOOLS -Iinclude/ -Iapi/ -I../include/ -I../api/ -I../common-files/ -I../../common-files/ -I../../common-files/pcfparser -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
+CXXFLAGS="$CXXFLAGS $BOOST_CPPFLAGS $CXXFLAGS_OTF2 $CXXFLAGS_PTOOLS  -Iinclude/ -Iapi/ -I../include/ -I../api/ -I../common-files/ -I../../common-files/ -I../../common-files/pcfparser -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
+LDFLAGS="$LDFLAGS $BOOST_LDFLAGS $BOOST_SERIALIZATION_LIB $LDFLAGS_OTF2 $LDFLAGS_PTOOLS -lxml2"
 
 AC_OUTPUT([Makefile src/Makefile api/Makefile include/Makefile])

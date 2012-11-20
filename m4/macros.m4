@@ -83,3 +83,23 @@ AC_DEFUN([AX_PROG_WITH_OTF2],
   LIBS_OTF2="-L$OTF2_DIR/lib"
   LDFLAGS_OTF2="-L$OTF2_DIR/lib -lotf2"
 ])
+
+# AX_PROG_WITH_PTOOLS_COMMON_FILES
+# -----------
+AC_DEFUN([AX_PROG_WITH_PTOOLS_COMMON_FILES],
+[
+   AC_ARG_WITH(ptools_common_files,
+      AC_HELP_STRING(
+         [--with-ptools-common-files@<:@=DIR@:>@],
+         [specify ptools_common_files library base install directory. Default: /usr/local]
+      ),
+      [PTOOLS_COMMON_FILES_DIR=${withval}],
+      [PTOOLS_COMMON_FILES_DIR=/usr/local]
+   )
+   CPPFLAGS_PTOOLS="-I$PTOOLS_COMMON_FILES_DIR/include"
+   CXXFLAGS_PTOOLS="-I$PTOOLS_COMMON_FILES_DIR/include"
+   CFLAGS_pTOOLS="-I$PTOOLS_COMMON_FILES_DIR/include"
+   LIBS_PTOOLS="-L$PTOOLS_COMMON_FILES_DIR/lib/ptools_common_files"
+   LDFLAGS_PTOOLS="-L$PTOOLS_COMMON_FILES_DIR/lib/ptools_common_files -lptools_common_files"
+])
+

@@ -122,6 +122,13 @@
 					<Add directory="./" />
 				</Linker>
 			</Target>
+			<Target title="ptools_common_files">
+				<Option output="libptools" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+			</Target>
 		</Build>
 		<VirtualTargets>
 			<Add alias="paramedir_all_build" targets="Debug;api;paramedir;" />
@@ -226,7 +233,15 @@
 			<Option target="api" />
 			<Option target="otf2prv" />
 		</Unit>
-		<Unit filename="../common-files/prvtypes.h" />
+		<Unit filename="../common-files/prvtypes.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Application test" />
+			<Option target="api" />
+			<Option target="paramedir" />
+			<Option target="testspeed" />
+			<Option target="otf2prv" />
+		</Unit>
 		<Unit filename="../common-files/vectorutils.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -1302,6 +1317,30 @@
 		<Unit filename="testspeed/testspeed.h">
 			<Option target="testspeed" />
 			<Option target="otf2prv" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/include/MPI_EventEncoding.h">
+			<Option target="ptools_common_files" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/include/event_description.h">
+			<Option target="ptools_common_files" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/include/event_list.h">
+			<Option target="ptools_common_files" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/include/events.h">
+			<Option target="ptools_common_files" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/include/ptools_prv_types.h">
+			<Option target="ptools_common_files" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/include/ptools_types.h">
+			<Option target="ptools_common_files" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/src/event_description.cpp">
+			<Option target="ptools_common_files" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/src/event_list.cpp">
+			<Option target="ptools_common_files" />
 		</Unit>
 		<Extensions>
 			<code_completion>
