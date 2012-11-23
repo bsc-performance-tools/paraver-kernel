@@ -1324,6 +1324,9 @@
 		<Unit filename="../ptools_common_files/trunk/include/event_description.h">
 			<Option target="ptools_common_files" />
 		</Unit>
+		<Unit filename="../ptools_common_files/trunk/include/event_encoding.h">
+			<Option target="ptools_common_files" />
+		</Unit>
 		<Unit filename="../ptools_common_files/trunk/include/event_list.h">
 			<Option target="ptools_common_files" />
 		</Unit>

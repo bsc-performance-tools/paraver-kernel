@@ -48,6 +48,10 @@
 #include "resourcemodel.h"
 #include "processmodel.h"
 
+#include "event_list.h"
+#include "event_description.h"
+#include "events.h"
+
 using namespace std;
 
 const string OTF2_VERSION_STRING = "0.29"; // added -t table
@@ -1075,6 +1079,13 @@ SCOREP_Error_Code GlobDefRegionHandler( void*           userData,
 {
   TranslationData *transData = ( TranslationData * )userData;
   ++regionID;
+  EventList *tmpList = EventList::getInstance();
+
+  if( tmpList->getByStringID( transData->symbols[ name ] ) == NULL )
+  {
+    tmpList->insert( transData->symbols[ name ], false, 0, USER_FUNCTION, regionID,
+                     USER_FUNCTION_LABEL, transData->symbols[ name ], true, STATE_RUNNING );
+  }
 
   map< string, int >::iterator it;
 
@@ -2064,6 +2075,13 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
   ++regionID;
   time = correctBeginTime( transData, time );
 
+  EventDescription *evtDesc = EventList::getInstance()->getByStringID(
+                                transData->symbols[ transData->regionName[ regionID ] ] );
+  if( evtDesc != NULL )
+  {
+    cout<<evtDesc->getStrType()<<" "<<evtDesc->getStrValue()<<endl;
+    evtDesc->setUsed( true );
+  }
 
   map< uint32_t, int >::iterator it;
   it = transData->OTF2Region2PRVEventValue.find( regionID );
@@ -2367,6 +2385,8 @@ void initialize( TranslationData &transData )
   transData.processModel->addApplication();
   transData.rowLabels = new RowLabels();
 
+  EventList::getInstance()->init();
+
   writeLog( &transData, "[REC] Labels for MPI types" );
   for( uint32_t i = 0; i < NUM_MPI_BLOCK_GROUPS; ++i )
   {
@@ -2665,6 +2685,12 @@ int main( int argc, char *argv[] )
         // Error:
         globalError = -1;
       }
+
+      cout<<"Used events"<<endl;
+      vector<EventDescription *> usedEvents;
+      EventList::getInstance()->getUsed( usedEvents );
+      for( vector<EventDescription *>::iterator it = usedEvents.begin(); it != usedEvents.end(); ++it )
+        cout<<(*it)->getStrType()<<" "<<(*it)->getStrValue()<<endl;
 
       delete transData.resourcesModel;
       delete transData.processModel;
