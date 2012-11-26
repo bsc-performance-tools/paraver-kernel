@@ -1118,10 +1118,10 @@ SCOREP_Error_Code GlobDefRegionHandler( void*           userData,
       writeLog( transData, "[DEF] REGION as USER FUNCTION : ", transData->symbols[ name ] );
     }
 
-    transData->regionName[ regionID ] = name;
-    transData->regionIdent[ transData->symbols[ name ] ] = regionID;
-
   }
+
+  transData->regionName[ regionID ] = name;
+  transData->regionIdent[ transData->symbols[ name ] ] = regionID;
 
   return SCOREP_SUCCESS;
 }
@@ -2078,10 +2078,7 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
   EventDescription *evtDesc = EventList::getInstance()->getByStringID(
                                 transData->symbols[ transData->regionName[ regionID ] ] );
   if( evtDesc != NULL )
-  {
-    cout<<evtDesc->getStrType()<<" "<<evtDesc->getStrValue()<<endl;
     evtDesc->setUsed( true );
-  }
 
   map< uint32_t, int >::iterator it;
   it = transData->OTF2Region2PRVEventValue.find( regionID );
@@ -2627,6 +2624,146 @@ std::string buildPRVTraceName( const string &strOTF2Trace, const string &strPRVT
   return auxPRVTrace;
 }
 
+std::string buildPCFFileName( const string &strOTF2Trace, const string &strPRVTrace )
+{
+  std::string auxPCFFileName( strPRVTrace );
+
+  if ( strPRVTrace.compare( "" ) == 0 )
+  {
+    auxPCFFileName = strOTF2Trace + ".pcf";
+  }
+  else
+  {
+    auxPCFFileName = strPRVTrace.substr( 0, strPRVTrace.length() - 4 ) + ".pcf";
+  }
+
+  return auxPCFFileName;
+}
+
+struct color_t states_inf[STATES_NUMBER] = {
+  {STATE_0, STATE0_LBL, STATE0_COLOR},
+  {STATE_1, STATE1_LBL, STATE1_COLOR},
+  {STATE_2, STATE2_LBL, STATE2_COLOR},
+  {STATE_3, STATE3_LBL, STATE3_COLOR},
+  {STATE_4, STATE4_LBL, STATE4_COLOR},
+  {STATE_5, STATE5_LBL, STATE5_COLOR},
+  {STATE_6, STATE6_LBL, STATE6_COLOR},
+  {STATE_7, STATE7_LBL, STATE7_COLOR},
+  {STATE_8, STATE8_LBL, STATE8_COLOR},
+  {STATE_9, STATE9_LBL, STATE9_COLOR},
+  {STATE_10, STATE10_LBL, STATE10_COLOR},
+  {STATE_11, STATE11_LBL, STATE11_COLOR},
+  {STATE_12, STATE12_LBL, STATE12_COLOR},
+  {STATE_13, STATE13_LBL, STATE13_COLOR},
+  {STATE_14, STATE14_LBL, STATE14_COLOR},
+  {STATE_15, STATE15_LBL, STATE15_COLOR},
+  {STATE_16, STATE16_LBL, STATE16_COLOR},
+  {STATE_17, STATE17_LBL, STATE17_COLOR}
+};
+
+struct color_t gradient_inf[GRADIENT_NUMBER] = {
+  {GRADIENT_0, GRADIENT0_LBL, GRADIENT0_COLOR},
+  {GRADIENT_1, GRADIENT1_LBL, GRADIENT1_COLOR},
+  {GRADIENT_2, GRADIENT2_LBL, GRADIENT2_COLOR},
+  {GRADIENT_3, GRADIENT3_LBL, GRADIENT3_COLOR},
+  {GRADIENT_4, GRADIENT4_LBL, GRADIENT4_COLOR},
+  {GRADIENT_5, GRADIENT5_LBL, GRADIENT5_COLOR},
+  {GRADIENT_6, GRADIENT6_LBL, GRADIENT6_COLOR},
+  {GRADIENT_7, GRADIENT7_LBL, GRADIENT7_COLOR},
+  {GRADIENT_8, GRADIENT8_LBL, GRADIENT8_COLOR},
+  {GRADIENT_9, GRADIENT9_LBL, GRADIENT9_COLOR},
+  {GRADIENT_10, GRADIENT10_LBL, GRADIENT10_COLOR},
+  {GRADIENT_11, GRADIENT11_LBL, GRADIENT11_COLOR},
+  {GRADIENT_12, GRADIENT12_LBL, GRADIENT12_COLOR},
+  {GRADIENT_13, GRADIENT13_LBL, GRADIENT13_COLOR},
+  {GRADIENT_14, GRADIENT14_LBL, GRADIENT14_COLOR}
+};
+
+void Paraver_state_labels( std::fstream& file )
+{
+  int i;
+
+  file<<STATES_LBL<<endl;
+  for (i = 0; i < STATES_NUMBER; i++)
+  {
+    file<<states_inf[i].value<<"    "<<states_inf[i].label<<endl;
+  }
+
+  LET_SPACES( file );
+}
+
+void Paraver_state_colors( std::fstream& file )
+{
+  int i;
+
+  file<<STATES_COLOR_LBL<<endl;
+  for (i = 0; i < STATES_NUMBER; i++)
+  {
+    file<<states_inf[i].value<<"    {"<<
+          states_inf[i].rgb[0]<<","<<states_inf[i].rgb[1]<<","<<states_inf[i].rgb[2]<<"}"<<endl;
+  }
+
+  LET_SPACES( file );
+}
+
+void Paraver_gradient_colors( std::fstream& file )
+{
+  int i;
+
+  file<<GRADIENT_COLOR_LBL<<endl;
+  for (i = 0; i < GRADIENT_NUMBER; i++)
+  {
+    file<<gradient_inf[i].value<<"    {"<<
+          gradient_inf[i].rgb[0]<<","<<gradient_inf[i].rgb[1]<<","<<gradient_inf[i].rgb[2]<<"}"<<endl;
+  }
+
+  LET_SPACES( file );
+}
+
+void Paraver_gradient_names( std::fstream& file )
+{
+  int i;
+
+  file<<GRADIENT_LBL<<endl;
+  for (i = 0; i < GRADIENT_NUMBER; i++)
+    file<<gradient_inf[i].value<<"    "<<gradient_inf[i].label<<endl;
+
+  LET_SPACES( file );
+}
+
+void writePCFFile( string strPCFFileName, vector<EventDescription *>& usedEvents )
+{
+  std::fstream file;
+  openPRV( strPCFFileName, file );
+
+  if ( file.good() )
+  {
+    file<<"DEFAULT_OPTIONS\n\n";
+    file<<"LEVEL               "<<DEFAULT_LEVEL<<endl;
+    file<<"UNITS               "<<DEFAULT_UNITS<<endl;
+    file<<"LOOK_BACK           "<<DEFAULT_LOOK_BACK<<endl;
+    file<<"SPEED               "<<DEFAULT_SPEED<<endl;
+    file<<"FLAG_ICONS          "<<DEFAULT_FLAG_ICONS<<endl;
+    file<<"NUM_OF_STATE_COLORS "<<DEFAULT_NUM_OF_STATE_COLORS<<endl;
+    file<<"YMAX_SCALE          "<<DEFAULT_YMAX_SCALE<<endl;
+
+    LET_SPACES (file);
+
+    file<<"DEFAULT_SEMANTIC\n\n";
+    file<<"THREAD_FUNC          "<<DEFAULT_THREAD_FUNC<<endl;
+
+    LET_SPACES (file);
+
+    Paraver_state_labels( file );
+    Paraver_state_colors( file );
+
+    Paraver_gradient_colors( file );
+    Paraver_gradient_names( file );
+
+  }
+
+  file.close();
+}
 
 // *****************************************************************************
 // MAIN
@@ -2686,11 +2823,9 @@ int main( int argc, char *argv[] )
         globalError = -1;
       }
 
-      cout<<"Used events"<<endl;
       vector<EventDescription *> usedEvents;
       EventList::getInstance()->getUsed( usedEvents );
-      for( vector<EventDescription *>::iterator it = usedEvents.begin(); it != usedEvents.end(); ++it )
-        cout<<(*it)->getStrType()<<" "<<(*it)->getStrValue()<<endl;
+      writePCFFile( buildPCFFileName( transData.strOTF2Trace, strPRVTrace), usedEvents );
 
       delete transData.resourcesModel;
       delete transData.processModel;
