@@ -52,6 +52,29 @@
 #include "event_description.h"
 #include "events.h"
 
+class State
+{
+  public:
+    State() {}
+    State( prvTime_t whichTime, prvState_t whichState ) :
+           beginTime( whichTime ), state( whichState ) {}
+    ~State() {}
+
+    prvTime_t getBeginTime() const { return beginTime; }
+    void setBeginTime( prvTime_t whichTime ) { beginTime = whichTime; }
+
+    prvState_t getState() const { return state; }
+    void setState( prvState_t whichState ) { state = whichState; }
+
+  protected:
+    prvTime_t beginTime;
+    prvState_t state;
+
+  private:
+
+};
+
+
 using namespace std;
 
 const string OTF2_VERSION_STRING = "0.29"; // added -t table
@@ -125,8 +148,9 @@ struct TranslationDataStruct
 
   //map< uint32_t, OTF2_TypeID > attributeType;
   map< uint32_t, string > attributeName;
+
   // States generation
-  map< TThreadOrder, stack< TState > > lastState; // p.e: lastState[ location ].push( IDLE );
+  map< TThreadOrder, stack< State > > stateStack;
 };
 
 
@@ -977,7 +1001,8 @@ SCOREP_Error_Code GlobDefLocationHandler( void*             userData,
     transData->location2CPU[ locationID ] = transData->resourcesModel->getLastCPU( currentNode );
 
     // Initialize lastState queue
-    transData->lastState[ globalThread ] = stack< TState >();
+    transData->stateStack[ globalThread ] = stack< State >();
+    transData->stateStack[ globalThread ].push( State( 0, STATE_IDLE ) );
   }
 
   // Set Callbacks for Local read
@@ -2078,12 +2103,32 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
   EventDescription *evtDesc = EventList::getInstance()->getByStringID(
                                 transData->symbols[ transData->regionName[ regionID ] ] );
   if( evtDesc != NULL )
+  {
+    if( evtDesc->getChangeState() )
+    {
+      State& tmpState = transData->stateStack[ locationID ].top();
+      stringstream stateRecord;
+
+      stateRecord << fixed;
+      stateRecord << dec;
+      stateRecord.precision( 0 );
+
+      stateRecord << "1" << ":";
+      stateRecord << transData->location2CPU[ locationID ] << ":"; // CPU
+      stateRecord << transData->processModel->totalApplications() << ":"; // APP
+      stateRecord << transData->location2Task[ locationID ] << ":"; // TASK
+      stateRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
+      stateRecord << tmpState.getBeginTime() << ":";
+      stateRecord << time << ":"; //Duration
+      stateRecord << tmpState.getState(); // State
+
+      *transData->PRVFile << stateRecord.str() << std::endl; // change to Trace write.
+
+      transData->stateStack[ locationID ].push( State( time, evtDesc->getStateTransition() ) );
+    }
+
     evtDesc->setUsed( true );
 
-  map< uint32_t, int >::iterator it;
-  it = transData->OTF2Region2PRVEventValue.find( regionID );
-  if ( it != transData->OTF2Region2PRVEventValue.end() )
-  {
     stringstream eventRecord;
     eventRecord << fixed;
     eventRecord << dec;
@@ -2099,38 +2144,12 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
     // eventRecord << time << ":";
     eventRecord << time << ":";
     // eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":";
-    eventRecord << transData->OTF2Region2PRVEventType[ regionID ] << ":";
-    eventRecord << it->second;
+    eventRecord << evtDesc->getType() << ":";
+    eventRecord << evtDesc->getValue();
 
     *transData->PRVFile << eventRecord.str() << std::endl; // change to Trace write.
 
     writeLog( transData, eventRecord.str() );
-  }
-  else
-  {
-    it = transData->OTF2Region2PRVEventType.find( regionID );
-    if ( it != transData->OTF2Region2PRVEventType.end() )
-    {
-      stringstream eventRecord;
-      eventRecord << fixed;
-      eventRecord << dec;
-      eventRecord.precision( 0 );
-//*transData->PRVFile << "Location ID: " << locationID << endl;
-
-      eventRecord << "2" << ":";
-      eventRecord << transData->location2CPU[ locationID ] << ":"; // CPU
-      eventRecord << transData->processModel->totalApplications() << ":"; // APP
-      eventRecord << transData->location2Task[ locationID ] << ":"; // TASK
-      eventRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
-      // eventRecord << time << ":";
-      eventRecord << time << ":";
-      eventRecord << it->second << ":";
-      eventRecord << regionID; // +1
-
-      *transData->PRVFile << eventRecord.str()  << std::endl; // change to Trace write.
-
-      writeLog( transData, eventRecord.str() );
-    }
   }
 
   return SCOREP_SUCCESS;
@@ -2148,9 +2167,34 @@ SCOREP_Error_Code LeaveHandler( uint64_t locationID,
   ++regionID;
   time = correctBeginTime( transData, time );
 
-  map< uint32_t, int >::iterator it = transData->OTF2Region2PRVEventValue.find( regionID );
-  if ( it != transData->OTF2Region2PRVEventValue.end() )
+  EventDescription *evtDesc = EventList::getInstance()->getByStringID(
+                                transData->symbols[ transData->regionName[ regionID ] ] );
+  if( evtDesc != NULL )
   {
+    if( evtDesc->getChangeState() )
+    {
+      State& tmpState = transData->stateStack[ locationID ].top();
+      stringstream stateRecord;
+
+      stateRecord << fixed;
+      stateRecord << dec;
+      stateRecord.precision( 0 );
+
+      stateRecord << "1" << ":";
+      stateRecord << transData->location2CPU[ locationID ] << ":"; // CPU
+      stateRecord << transData->processModel->totalApplications() << ":"; // APP
+      stateRecord << transData->location2Task[ locationID ] << ":"; // TASK
+      stateRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
+      stateRecord << tmpState.getBeginTime() << ":";
+      stateRecord << time << ":"; //Duration
+      stateRecord << tmpState.getState(); // State
+
+      *transData->PRVFile << stateRecord.str() << std::endl; // change to Trace write.
+
+      transData->stateStack[ locationID ].pop();
+      transData->stateStack[ locationID ].top().setBeginTime( time );
+    }
+
     stringstream eventRecord;
     eventRecord << fixed;
     eventRecord << dec;
@@ -2164,38 +2208,13 @@ SCOREP_Error_Code LeaveHandler( uint64_t locationID,
 
     eventRecord << time << ":";
     //eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":";
-    eventRecord << transData->OTF2Region2PRVEventType[ regionID ] << ":";
+    eventRecord << evtDesc->getType() << ":";
 
     eventRecord << "0"; // VALUE
 
     *transData->PRVFile << eventRecord.str() << std::endl;  // change to Trace write.
 
     writeLog( transData, eventRecord.str() );
-  }
-  else
-  {
-    it = transData->OTF2Region2PRVEventType.find( regionID );
-    if ( it != transData->OTF2Region2PRVEventType.end() )
-    {
-      stringstream eventRecord;
-      eventRecord << fixed;
-      eventRecord << dec;
-      eventRecord.precision( 0 );
-
-      eventRecord << "2" << ":";
-      eventRecord << transData->location2CPU[ locationID ] << ":"; // CPU
-      eventRecord << transData->processModel->totalApplications() << ":"; // APP
-      eventRecord << transData->location2Task[ locationID ] << ":"; // TASK
-      eventRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
-
-      eventRecord << time << ":";
-      eventRecord << it->second << ":";
-      eventRecord << "0";  // VALUE
-
-      *transData->PRVFile << eventRecord.str()  << std::endl; // change to Trace write.
-
-      writeLog( transData, eventRecord.str() );
-    }
   }
 
   return SCOREP_SUCCESS;
@@ -2576,6 +2595,29 @@ bool translate( const string &strPRVTrace,
       // Close otf2 trace
       OTF2_Reader_Close( reader );
 
+      for( map< TThreadOrder, stack< State > >::iterator it = transData->stateStack.begin();
+           it != transData->stateStack.end(); ++it )
+      {
+        uint64_t locationID = it->first;
+        State& tmpState = transData->stateStack[ locationID ].top();
+        stringstream stateRecord;
+
+        stateRecord << fixed;
+        stateRecord << dec;
+        stateRecord.precision( 0 );
+
+        stateRecord << "1" << ":";
+        stateRecord << transData->location2CPU[ locationID ] << ":"; // CPU
+        stateRecord << transData->processModel->totalApplications() << ":"; // APP
+        stateRecord << transData->location2Task[ locationID ] << ":"; // TASK
+        stateRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
+        stateRecord << tmpState.getBeginTime() << ":";
+        stateRecord << transData->maxTraceTime << ":"; //Duration
+        stateRecord << tmpState.getState(); // State
+
+        file << stateRecord.str() << std::endl; // change to Trace write.
+      }
+
       // Summarized log of events not translated
 
       // WRITE PCF
@@ -2731,6 +2773,32 @@ void Paraver_gradient_names( std::fstream& file )
   LET_SPACES( file );
 }
 
+void Paraver_write_events( std::fstream& file, vector<EventDescription *>& usedEvents )
+{
+  prvEventType_t lastEventType;
+
+  for( vector<EventDescription *>::iterator it = usedEvents.begin();
+       it != usedEvents.end(); ++it )
+  {
+    if( it == usedEvents.begin() || (*it)->getType() != lastEventType )
+    {
+      lastEventType = (*it)->getType();
+      LET_SPACES( file );
+      file<<TYPE_LABEL<<endl;
+      file<<"0    "<<(*it)->getType()<<"    "<<(*it)->getStrType()<<endl;
+      if( (*it)->getValue() != 0 && (*it)->getStrValue() != "" )
+      {
+        file<<VALUES_LABEL<<endl;
+        file<<"0   End"<<endl;
+      }
+    }
+    if( (*it)->getValue() != 0 && (*it)->getStrValue() != "" )
+    {
+      file<<(*it)->getValue()<<"   "<<(*it)->getStrValue()<<endl;
+    }
+  }
+}
+
 void writePCFFile( string strPCFFileName, vector<EventDescription *>& usedEvents )
 {
   std::fstream file;
@@ -2752,7 +2820,7 @@ void writePCFFile( string strPCFFileName, vector<EventDescription *>& usedEvents
     file<<"DEFAULT_SEMANTIC\n\n";
     file<<"THREAD_FUNC          "<<DEFAULT_THREAD_FUNC<<endl;
 
-    LET_SPACES (file);
+    LET_SPACES( file );
 
     Paraver_state_labels( file );
     Paraver_state_colors( file );
@@ -2760,6 +2828,9 @@ void writePCFFile( string strPCFFileName, vector<EventDescription *>& usedEvents
     Paraver_gradient_colors( file );
     Paraver_gradient_names( file );
 
+    Paraver_write_events( file, usedEvents );
+
+    LET_SPACES( file );
   }
 
   file.close();

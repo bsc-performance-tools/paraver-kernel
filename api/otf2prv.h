@@ -32,6 +32,7 @@
 
 #include "event_encoding.h"
 
+
 struct t_event_mpit2prv
 {
   int tipus_mpit;
@@ -177,6 +178,9 @@ enum MPIVal
 #define DEFAULT_YMAX_SCALE          37
 
 #define DEFAULT_THREAD_FUNC    "State As Is"
+
+#define TYPE_LABEL           "EVENT_TYPE"
+#define VALUES_LABEL         "VALUES"
 
 #define LET_SPACES(file) file<<endl<<endl
 
