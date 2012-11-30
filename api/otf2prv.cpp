@@ -585,17 +585,17 @@ SCOREP_Error_Code GlobDefClockPropertiesHandler( void*    userData,
 
   double timeUnit = 1 / (double)timer_resolution;
 
-  if ( timeUnit >= 1 / 1E9 )
+  if ( timeUnit >= ( 1 / 1E9 ))
   {
     transData->timeUnit = NS;
     writeLog( transData, "[DEF] CLOCK UNIT: NS ", timeUnit );
   }
-  else if ( timeUnit >= 1 / 1E6 )
+  else if ( timeUnit >= ( 1 / 1E6 ))
   {
     transData->timeUnit = US;
     writeLog( transData, "[DEF] CLOCK UNIT: US ", timeUnit );
   }
-  else if ( timeUnit >= 1 / 1E3 )
+  else if ( timeUnit >= (1 / 1E3 ))
   {
     transData->timeUnit = MS;
     writeLog( transData, "[DEF] CLOCK UNIT: MS ", timeUnit );
@@ -606,6 +606,8 @@ SCOREP_Error_Code GlobDefClockPropertiesHandler( void*    userData,
     writeLog( transData, "[DEF] CLOCK UNIT: S ", timeUnit );
   }
 
+  transData->timeUnit = NS;
+  writeLog( transData, "[DEF] CLOCK UNIT: NS ", timeUnit );
 
   //transData->maxTraceTime = global_offset + trace_length; // ??
   transData->maxTraceTime = trace_length;
