@@ -382,13 +382,10 @@ void loadExternalTranslationTable( const string &strExternalTrace,
 {
   string line;
   string token;
-  vector< string > tokens;
-  vector< string > PRVID;
   string auxOTF2Label;
-  string auxPRVLabel;
-  int oldType;
+  string auxTypeLabel;
+  string auxValueLabel;
   int newType;
-  int oldValue;
   int newValue;
 
   if ( transData->useExternalTranslationTable )
@@ -398,31 +395,20 @@ void loadExternalTranslationTable( const string &strExternalTrace,
     {
       while( !extTableFile.eof() )
       {
-        tokens.clear();
-        PRVID.clear();
-
         getline( extTableFile, line );
         if ( line.length() == 0 )
           continue;
 
         if ( line[0] == '#' ||
-             line[0] == ' ' )
+             line.length() == 0 )
           continue;
 
         writeLog( transData, "[MSK] External definition ", line);
 
         istringstream auxLine( line );
-        while( !auxLine.eof() )
-        {
-          getline( auxLine, token, '"' );
-
-          if ( token.length() > 0 )
-          {
-            tokens.push_back( token );
-            // writeLog( transData, "[MSK] External Token ", token);
-            break;
-          }
-        }
+        getline( auxLine, token, '"' );
+        getline( auxLine, auxOTF2Label, '"' );
+        // writeLog( transData, "[MSK] External Token ", token);
 
         while( !auxLine.eof() )
         {
@@ -430,126 +416,40 @@ void loadExternalTranslationTable( const string &strExternalTrace,
 
           if ( token.length() > 1 )
           {
-            tokens.push_back( token );
-            // writeLog( transData, "[MSK] External Token ", token);
-            break;
-          }
-        }
+            istringstream sstrTypeValue( token );
+            getline( sstrTypeValue, token, ':' );
+            istringstream auxType( token );
+            if ( !( auxType >> newType ) )
+              continue;
 
-        while( !auxLine.eof() )
-        {
-          getline( auxLine, token, '"' );
-
-          if ( token.length() > 0 )
-          {
-            tokens.push_back( token );
-            // writeLog( transData, "[MSK] External Token ", token);
-            break;
-          }
-        }
-
-        if ( tokens.size() < 2 || tokens.size() > 4 )
-          continue;
-
-        // writeLog( transData, "[MSK] Token 0 ", tokens[ 0 ] );
-        // writeLog( transData, "[MSK] Token 1 ", tokens[ 1 ] );
-        // if (tokens.size() > 2 )
-        //  writeLog( transData, "[MSK] Token 2 ", tokens[ 2 ] );
-
-        istringstream auxNumber( tokens[ 1 ] );
-        while( !auxNumber.eof() )
-        {
-          getline( auxNumber, token, ':' );
-          // writeLog( transData, "[MSK] External subtoken ", token);
-          PRVID.push_back( token );
-        }
-
-        if ( PRVID.size() > 2 )
-          continue;
-
-        // TYPE?
-        istringstream auxType( PRVID[0] );
-        if ( !( auxType >> newType ) )
-          continue;
-
-        map< string, int >::iterator it;
-        if ( PRVID.size() == 1 )
-        {
-          // Insert new type
-          map< string, int >::iterator itType;
-          itType = transData->PRVEvent_TypeLabel2Type.find( tokens[0] );
-          if ( itType != transData->PRVEvent_TypeLabel2Type.end() )
-          {
-            // old type existed
-            oldType = itType->second;
-            writeLog( transData, "[MSK] Changed relation between TYPE LABEL -> TYPE : " );
-            writeLog( transData, "        from :", tokens[0], oldType );
-            writeLog( transData, "        to   :", tokens[0], newType );
-          }
-
-          transData->PRVEvent_TypeLabel2Type[ tokens[0] ] = newType;
-          transData->OTF2Region2PRVEventType[ transData->regionIdent[ tokens[0] ] ] = newType;
-
-          writeLog( transData, "[MSK] Assigned TYPE: ", tokens[0], newType );
-        }
-
-        if ( PRVID.size() == 2 )
-        {
-          // VALUE?
-          istringstream auxValue( PRVID[1] );
-          if ( !( auxValue >> newValue ) )
-            continue;
-
-          // Insert new type-value
-          map< string, int >::iterator it;
-          it = transData->PRVEvent_ValueLabel2Value.find( tokens[0] );
-          if ( it != transData->PRVEvent_ValueLabel2Value.end() )
-          {
-            // old value existed
-            oldValue = it->second;
-            writeLog( transData, "[MSK] Changed relation between VALUE LABEL -> VALUE : " );
-            writeLog( transData, "        from :", tokens[0], oldValue );
-            writeLog( transData, "        to   :", tokens[0], newValue );
-          }
-
-          transData->PRVEvent_ValueLabel2Value[ tokens[0] ] = newValue;
-          //transData->PRVEvent_ValueLabel2Type[ tokens[0] ]  = newType;
-          transData->OTF2Region2PRVEventValue[ transData->regionIdent[ tokens[0] ] ] = newValue;
-          transData->OTF2Region2PRVEventType[ transData->regionIdent[ tokens[0] ] ] = newType;
-          writeLog( transData, "[MSK] Assigned VALUE: ", tokens[ 0 ], newValue );
-
-          // We must check if it was defined before as a type, deleting it
-          it = transData->PRVEvent_TypeLabel2Type.find( tokens[0] );
-          if ( it != transData->PRVEvent_TypeLabel2Type.end() && it->second == USER_FUNCTION )
-          {
-            writeLog( transData,
-                      "[MSK] Deleted previous relation between TYPE LABEL -> TYPE: ",
-                      tokens[ 0 ], it->second );
-            transData->PRVEvent_TypeLabel2Type.erase( it->first );
-          }
-
-          for( map<uint32_t, int>::iterator it2 = transData->OTF2Region2PRVEventType.begin();
-               it2 != transData->OTF2Region2PRVEventType.end();
-                ++it2 )
-          {
-            string regionName = transData->symbols[ transData->regionName[ it2->first ] ];
-            if ( regionName.compare( tokens[ 0 ] ) == 0 && it2->second == USER_FUNCTION )
+            getline( sstrTypeValue, token );
+            if( token.length() == 0 )
+              newValue = 0;
+            else
             {
-              writeLog( transData,
-                        "[MSK] Deleted previous relation between REGION -> TYPE: ",
-                        tokens[0], it->second );
-              transData->OTF2Region2PRVEventType.erase( it2->first );
-              break;
+              istringstream auxValue( token );
+              if ( !( auxValue >> newValue ) )
+                continue;
             }
+
+            break;
           }
         }
 
-        if ( tokens.size() == 3 )
-        {
-          // TODO: NEW LABEL
-        }
+        getline( auxLine, token, '"' );
+        getline( auxLine, auxTypeLabel, '"' );
+        getline( auxLine, token, '"' );
+        getline( auxLine, auxValueLabel, '"' );
+
+        if( newValue == 0 && auxValueLabel == "" )
+          EventList::getInstance()->insert( auxOTF2Label, false, 0, newType, newValue,
+                                            auxTypeLabel, auxValueLabel, false, STATE_IDLE );
+        else
+          EventList::getInstance()->insert( auxOTF2Label, false, 0, newType, newValue,
+                                            auxTypeLabel, auxValueLabel, true, STATE_RUNNING );
       }
     }
+    extTableFile.close();
   }
 }
 
@@ -2284,31 +2184,25 @@ void printExternalTableExample()
   std::cout << "#   <#> used for comments." << std::endl;
   std::cout << "#   This information is used for transl"
                "ation instead harcoded values." <<std::endl;
-  std::cout << "#   Field <string> is matched against O"
+  std::cout << "#   Field <otf2_string> is matched against O"
                "TF2 defined strings." <<std::endl;
-  std::cout << "#   New labels will be written in the p"
-               "cf file. They're optional." <<std::endl;
-  std::cout << "#   It's mandatory to define any new ty"
-               "pe before defining new values for it." <<std::endl;
+  std::cout << "#   Paraver labels will be written in the p"
+               "cf file." <<std::endl;
   std::cout << "#" << std::endl;
   std::cout << "#####################################"
     "#########################################" << std::endl;
   std::cout << std::endl;
   std::cout << "#" << std::endl;
-  std::cout << "# FIELDS FOR TYPES:" << std::endl;
-  std::cout << "#   string   new_type   [new_type_label]" << std::endl;
+  std::cout << "# LINE FORMAT FOR TYPES (without values) :" << std::endl;
+  std::cout << "#   <otf2_string>   <paraver_type>   <paraver_type_label>" << std::endl;
   std::cout << std::endl;
-  std::cout << "\"MPI Other\" 50000003" << std::endl;
-  std::cout << "\"MPI Other\" 50000003 \"MPI Other\"" << std::endl;
+  std::cout << "    \"MPI Other\"  50000003  \"MPI Other\"" << std::endl;
   std::cout << std::endl;
   std::cout << "#" << std::endl;
-  std::cout << "# FIELDS FOR VALUES:" << std::endl;
-  std::cout << "#   string   new_type:new_value   [new_value_label]" << std::endl;
+  std::cout << "# LINE FORMAT FOR TYPE-VALUE :" << std::endl;
+  std::cout << "#   <otf2_string>   <paraver_type>:<paraver_value>   <paraver_type_label>:<paraver_value_label>" << std::endl;
   std::cout << std::endl;
-  std::cout << "\"MPI_Init\"     50000003:31 \"MPI_Init\"" << std::endl;
-  std::cout << "\"MPI_Finalize\" 50000003:32" << std::endl;
-  std::cout << "\"MPI_Send\"     50000002:666" << std::endl;
-  std::cout << "\"MPI_Recv\"     50000002:999" << std::endl;
+  std::cout << "    \"MPI_Init\"  50000003:31  \"MPI Other\":\"MPI_Init\"" << std::endl;
   std::cout << std::endl;
 }
 
@@ -2453,6 +2347,9 @@ bool translate( const string &strPRVTrace,
       transData->reader = reader;
       transData->PRVFile = &file;
 
+      // LOAD TRANSLATION TABLE
+      loadExternalTranslationTable( strExternalTable, transData );
+
       // BUILD HEADER
       writeLog( transData, "[REC] Registering OTF2 Callbacks" );
 
@@ -2534,11 +2431,6 @@ bool translate( const string &strPRVTrace,
 
       transData->resourcesModel->setReady( true );
       transData->processModel->setReady( true );
-
-      // LOAD TRANSLATION TABLE
-      // After reading DEF info of the trace, and before writing any .pcf file, because types or values
-      //   may be masked.
-      loadExternalTranslationTable( strExternalTable, transData );
 
 #if 0
       // WRITE HEADER
