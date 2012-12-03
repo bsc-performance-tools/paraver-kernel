@@ -36,6 +36,10 @@
 #include "khistogramtotals.h"
 #include "functionmanagement.h"
 
+#ifdef TRACING_ENABLED
+#include "extrae_user_events.h"
+#endif
+
 #ifdef WIN32
 #undef max
 #undef min
@@ -728,6 +732,10 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
   if ( controlWindow == NULL )
     throw HistogramException( HistogramException::noControlWindow );
 
+#ifdef TRACING_ENABLED
+  Extrae_user_function( 300 );
+#endif
+
   if ( dataWindow == NULL )
     dataWindow = controlWindow;
 
@@ -780,6 +788,11 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
   if ( rowCommTotals != NULL )
     rowCommTotals->finish();
   // - Columns will be ordered if necesary
+
+
+#ifdef TRACING_ENABLED
+  Extrae_user_function( 0 );
+#endif
 }
 
 
@@ -965,6 +978,10 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     {
       iRow = selectedRows[ i ];
       data->row = i;
+
+#ifdef TRACING_ENABLED
+    Extrae_event( 200, i + 1 );
+#endif
     }
     if ( currentWindow == controlWindow )
       data->controlRow = iRow;
@@ -999,7 +1016,13 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
       calculate( iRow, fromTime, toTime, winIndex, data, childInit );
 
     if ( winIndex == 0 )
+    {
       finishRow( data );
+
+#ifdef TRACING_ENABLED
+      Extrae_event( 200, 0 );
+#endif
+    }
   }
 
   if ( winIndex == 0 )

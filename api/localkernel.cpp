@@ -50,6 +50,10 @@
 #include "tracestream.h"
 #include <string.h>
 
+#ifdef TRACING_ENABLED
+#include "extrae_user_events.h"
+#endif
+
 using namespace std;
 
 void LocalKernel::init()
@@ -61,6 +65,10 @@ void LocalKernel::init()
   createStatistic();
 
   LabelConstructor::init();
+
+#ifdef TRACING_ENABLED
+  Extrae_init();
+#endif
 }
 
 LocalKernel::LocalKernel( bool ( *messageFunction )( string ) ) :
@@ -75,6 +83,9 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( string ) ) :
 LocalKernel::~LocalKernel()
 {
 //  deleted prevTracesNames;
+#ifdef TRACING_ENABLED
+  Extrae_fini();
+#endif
 }
 
 bool LocalKernel::checkTraceSize( const string& filename, TTraceSize maxSize ) const
