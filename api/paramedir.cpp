@@ -277,7 +277,7 @@ string applyFilters( KernelConnection *myKernel,
  // string strOutputFile, strPathOut;
 
   // Only for cutter
-  char *pcf_name;
+  string pcf_name;
   vector< TEventType > allTypes;
   vector< TEventType > typesWithValueZero;
   EventLabels labels;
@@ -338,9 +338,9 @@ string applyFilters( KernelConnection *myKernel,
     if ( filterToolOrder[i] == TraceCutter::getID() )
     {
       //pcf_name = myKernel->composeName( (char *)tmpNameIn.c_str(), (char *)"pcf" );
-      pcf_name = LocalKernel::composeName( (char *)tmpNameIn.c_str(), (char *)"pcf" );
+      pcf_name = LocalKernel::composeName( tmpNameIn, string( "pcf" ) );
 
-      if(( pcfFile = fopen( pcf_name, "r" )) != NULL )
+      if(( pcfFile = fopen( pcf_name.c_str(), "r" )) != NULL )
       {
         fclose( pcfFile );
 
@@ -366,7 +366,7 @@ string applyFilters( KernelConnection *myKernel,
                                               (char *)tmpNameOut.c_str(),
                                               traceOptions,
                                               typesWithValueZero );
-      myKernel->copyPCF( (char *)tmpNameIn.c_str(), (char *)tmpNameOut.c_str() );
+      myKernel->copyPCF( tmpNameIn, tmpNameOut );
     }
     else if ( filterToolOrder[i] == TraceFilter::getID() )
     {
@@ -400,7 +400,7 @@ string applyFilters( KernelConnection *myKernel,
 
       traceFilter = myKernel->newTraceFilter( tmpNameIn, tmpNameOut, opts, translation );
 #endif
-      myKernel->copyPCF( (char *)tmpNameIn.c_str(), (char *)tmpNameOut.c_str() );
+      myKernel->copyPCF( tmpNameIn, tmpNameOut );
     }
     else if ( filterToolOrder[i] == TraceSoftwareCounters::getID() )
     {
@@ -412,21 +412,21 @@ string applyFilters( KernelConnection *myKernel,
     {
     }
 
-    myKernel->copyROW( (char *)tmpNameIn.c_str(), (char *)tmpNameOut.c_str() );
+    myKernel->copyROW( tmpNameIn, tmpNameOut );
     tmpFiles.push_back( tmpNameOut );
   }
 
   // Delete intermediate files
-  char *pcfName, *rowName;
+  string pcfName, rowName;
   for( PRV_UINT16 i = 0; i < tmpFiles.size() - 1; ++i )
   {
     //pcfName = myKernel->composeName( (char *)tmpFiles[ i ].c_str(), (char *)string("pcf").c_str() );
-    pcfName = LocalKernel::composeName( (char *)tmpFiles[ i ].c_str(), (char *)string("pcf").c_str() );
+    pcfName = LocalKernel::composeName( tmpFiles[ i ], string( "pcf" ) );
     //rowName = myKernel->composeName( (char *)tmpFiles[ i ].c_str(), (char *)string("row").c_str() );
-    rowName = LocalKernel::composeName( (char *)tmpFiles[ i ].c_str(), (char *)string("row").c_str() );
+    rowName = LocalKernel::composeName( tmpFiles[ i ], string( "row" ) );
     remove( tmpFiles[ i ].c_str() );
-    remove( pcfName );
-    remove( rowName );
+    remove( pcfName.c_str() );
+    remove( rowName.c_str() );
   }
 
   // Delete utilities

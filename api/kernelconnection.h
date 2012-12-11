@@ -93,8 +93,8 @@ class KernelConnection
 
     virtual bool userMessage( const std::string& message ) const = 0;
 
-    virtual void copyPCF( char *name, char *traceToLoad ) = 0;
-    virtual void copyROW( char *name, char *traceToLoad ) = 0;
+    virtual void copyPCF( const std::string& name, const std::string& traceToLoad ) = 0;
+    virtual void copyROW( const std::string& name, const std::string&traceToLoad ) = 0;
     virtual void getNewTraceName( char *name,
                                   char *new_trace_name,
                                   std::string action,

@@ -287,36 +287,36 @@ bool LocalKernel::userMessage( const string& message ) const
   return myMessageFunction( message );
 }
 
-char *LocalKernel::composeName( char *name, char *newExtension )
+std::string LocalKernel::composeName( const std::string& name,  const std::string& newExtension )
 {
-  int zip_filter = 0;
-  char *fileName = strdup( name );
-  char *aux;
+  string newFileName;
 
-  if ( ( aux = strrchr( fileName, '.' ) ) != NULL )
+  if( name.find_last_of( '.' ) != std::string::npos )
   {
-    /* The names finishes with .gz */
-    if ( !strcmp( aux, ".gz" ) )
-      zip_filter = 7;
+    if ( name.substr( name.length() - 3 ) == ".gz" )
+      newFileName = name.substr( 0, name.length() - 6 );
     else
-      zip_filter = 4;
+      newFileName = name.substr( 0, name.length() - 3 );
   }
+  else
+  {
+    newFileName = name;
+    newFileName.append( "." );
+  }
+  newFileName.append( newExtension );
 
-  fileName[ strlen( fileName ) - zip_filter ] = '\0';
-  sprintf( fileName, "%s.%s", fileName, newExtension );
-
-  return fileName;
+  return newFileName;
 }
 
-void LocalKernel::copyFile( char *in, char *out )
+void LocalKernel::copyFile( const std::string& in, const std::string& out )
 {
   FILE *fileIn, *fileOut;
   char line[2048];
 
-  if ( ( fileIn = fopen( in, "r" ) ) == NULL )
+  if ( ( fileIn = fopen( in.c_str(), "r" ) ) == NULL )
     return;
 
-  fileOut = fopen( out, "w" );
+  fileOut = fopen( out.c_str(), "w" );
 
   while ( fgets( line, sizeof( line ), fileIn ) != NULL )
     fputs( line, fileOut );
@@ -325,43 +325,20 @@ void LocalKernel::copyFile( char *in, char *out )
   fclose( fileOut );
 }
 
-void LocalKernel::copyPCF( char *name, char *traceToLoad )
+void LocalKernel::copyPCF( const std::string& name, const std::string& traceToLoad )
 {
-/*
-  char *pcfIn = strdup( name );
-  char *pcfOut = strdup( traceToLoad );
-  pcfIn[strlen( pcfIn )-4] = '\0';
-  pcfOut[strlen( pcfOut )-4] = '\0';
-  sprintf( pcfIn, "%s.pcf", pcfIn );
-  sprintf( pcfOut, "%s.pcf", pcfOut );
-*/
-  char *pcfIn  = composeName( name, (char *)string("pcf").c_str() );
-  char *pcfOut = composeName( traceToLoad, (char *)string("pcf").c_str() );
+  string pcfIn  = composeName( name, string( "pcf" ) );
+  string pcfOut = composeName( traceToLoad, string( "pcf" ) );
 
   copyFile( pcfIn, pcfOut );
-
-  free( pcfIn );
-  free( pcfOut );
 }
 
-void LocalKernel::copyROW( char *name, char *traceToLoad )
+void LocalKernel::copyROW( const std::string& name, const std::string& traceToLoad )
 {
-/*
-  char *rowIn = strdup( name );
-  char *rowOut = strdup( traceToLoad );
-  rowIn[strlen( rowIn )-4] = '\0';
-  rowOut[strlen( rowOut )-4] = '\0';
-  sprintf( rowIn, "%s.row", rowIn );
-  sprintf( rowOut, "%s.row", rowOut );
-  copyFile( rowIn, rowOut );
-*/
-  char *rowIn = composeName( name, (char *)string("row").c_str() );
-  char *rowOut = composeName( traceToLoad, (char *)string("row").c_str() );
+  string pcfIn  = composeName( name, string( "row" ) );
+  string pcfOut = composeName( traceToLoad, string( "row" ) );
 
-  copyFile( rowIn, rowOut );
-
-  free( rowIn );
-  free( rowOut );
+  copyFile( pcfIn, pcfOut );
 }
 
 void LocalKernel::getNewTraceName( char *name,

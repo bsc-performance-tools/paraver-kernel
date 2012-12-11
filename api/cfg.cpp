@@ -60,7 +60,7 @@ bool someEventsExist = false;
 bool someEventsNotExist = false;
 
 
-TWindowLevel stringToLevel( const string& strLevel )
+TWindowLevel stringToLevel( const std::string& strLevel )
 {
   TWindowLevel level = NONE;
 

@@ -85,8 +85,8 @@ class LocalKernel: public KernelConnection
 
     virtual bool userMessage( const std::string& message ) const;
 
-    virtual void copyPCF( char *name, char *traceToLoad );
-    virtual void copyROW( char *name, char *traceToLoad );
+    virtual void copyPCF( const std::string& name, const std::string& traceToLoad );
+    virtual void copyROW( const std::string& name, const std::string& traceToLoad );
 
     // WILL BE SUBSTITUTED
     virtual void getNewTraceName( char *name,
@@ -112,7 +112,7 @@ class LocalKernel: public KernelConnection
                                          const bool commitName = false ) const;
 
     //virtual char *composeName( char *name, char *newExtension );
-    static char *composeName( char *name, char *newExtension );
+    static std::string composeName( const std::string& name,  const std::string& newExtension );
     virtual void commitNewTraceName( const std::string& newTraceName ) const;
 
     virtual std::string getPathSeparator() const { return pathSeparator; }
@@ -142,7 +142,7 @@ class LocalKernel: public KernelConnection
     // And written in getNewTraceName when commitName == true
     PreviousFiles *prevTraceNames;
 
-    void copyFile( char *in, char *out );
+    void copyFile( const std::string& in, const std::string& out );
 };
 
 

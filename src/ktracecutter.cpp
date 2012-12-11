@@ -541,13 +541,13 @@ void KTraceCutter::update_queue( int appl, int task, int thread,
 
 void KTraceCutter::load_counters_of_pcf( char *trace_name )
 {
-  char *pcf_name;
+  string pcf_name;
   FILE *pcf;
 
-  pcf_name = LocalKernel::composeName( trace_name, (char *)"pcf" );
+  pcf_name = LocalKernel::composeName( string( trace_name ), string( "pcf" ) );
 
   last_counter = 0;
-  if ( ( pcf = fopen( pcf_name, "r" ) ) == NULL )
+  if ( ( pcf = fopen( pcf_name.c_str(), "r" ) ) == NULL )
     return;
 
   fclose( pcf );
