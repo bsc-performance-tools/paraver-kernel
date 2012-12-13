@@ -38,6 +38,7 @@
 
 #include "traceoptions.h"
 
+#define MAX_FILENAME_SIZE 2048
 #define MAX_TRACE_HEADER 1048576
 #define MAX_HEADER_SIZE 1048576
 #define MAX_APPL 2
