@@ -185,7 +185,8 @@ void KTraceCutter::proces_cutter_header( char *header,
 {
   int num_comms;
   char *word;
-  char auxLine[ MAX_TRACE_HEADER + 1 ];
+  // char auxLine[ MAX_TRACE_HEADER + 1 ];
+  char *auxLine = (char *) malloc( sizeof( char ) * MAX_TRACE_HEADER );
 
   // PARSE variable header
   word = strtok( header, ":" );
@@ -305,6 +306,8 @@ void KTraceCutter::proces_cutter_header( char *header,
   /* Writing of the current cut offset */
   if ( trace_in_name != NULL )
     current_size += fprintf( outfile, "# %s: Offset %lld from %s\n", trace_out_name, time_min, trace_in_name );
+
+  free( auxLine );
 }
 
 
@@ -817,10 +820,13 @@ void KTraceCutter::execute( char *trace_in,
                             ProgressController *progress )
 {
   char *c, *tmp_dir, *word, *trace_header;
-  char trace_name[1024], buffer[MAX_LINE_SIZE];
+  //char trace_name[1024], buffer[MAX_LINE_SIZE];
+  char *trace_name;
+  char *buffer;
   bool end_parsing = false;
   bool reset_counters;
-  char trace_file_out[2048];
+  //char trace_file_out[2048];
+  char *trace_file_out;
 
   unsigned int id, cpu, appl, task, thread, state, cpu_2, appl_2, task_2, thread_2, size, tag;
   unsigned long long type, value, time_1, time_2, time_3, time_4;
@@ -829,6 +835,10 @@ void KTraceCutter::execute( char *trace_in,
 
   unsigned long num_iters = 0;
   thread_info *p;
+
+  trace_name     = (char *) malloc( sizeof(char) * MAX_FILENAME_SIZE );
+  trace_file_out = (char *) malloc( sizeof(char) * MAX_FILENAME_SIZE );
+  buffer         = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
 
   /* Ini Data */
   for ( i = 0;i < MAX_APPL;i++ )
@@ -1362,4 +1372,8 @@ void KTraceCutter::execute( char *trace_in,
   {
     shiftLeft_TraceTimes_ToStartFromZero( trace_file_out, trace_out, false );
   }
+
+  free( trace_name );
+  free( trace_file_out );
+  free( buffer );
 }
