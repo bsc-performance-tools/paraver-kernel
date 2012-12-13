@@ -296,7 +296,10 @@ void KTraceFilter::load_pcf( char *pcf_name )
 {
   FILE *infile;
   unsigned int state_id;
-  char state_name[128];
+  // char state_name[128];
+  char *state_name;
+
+  state_name = (char *) malloc( sizeof(char) * MAX_STATE_NAME_SIZE );
 
   /* Open the files.  If NULL is returned there was an error */
   if ( ( infile = fopen( pcf_name, "r" ) ) == NULL )
@@ -332,6 +335,8 @@ void KTraceFilter::load_pcf( char *pcf_name )
       }
     }
   }
+
+  free( state_name );
 }
 
 
@@ -362,12 +367,18 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
   bool end_line;
   int i, j, k, num_char, print_record, state, size, appl, task, thread;
   unsigned long long time_1, time_2, type, value;
-  char *word, event_record[MAX_LINE_SIZE], trace_name[2048], *c, *trace_header;
-  char pcf_file[2048];
+  // char *word, event_record[MAX_LINE_SIZE], trace_name[2048], *c, *trace_header;
+  char *word, *event_record, *trace_name, *c, *trace_header;
+  //char pcf_file[2048];
+  char *pcf_file;
   unsigned long num_iters = 0;
   bool end_parsing = false;
   bool dump_event_buffer, call_in;
   struct buffer_elem *new_elem, *elem_aux;
+
+  event_record = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
+  trace_name   = (char *) malloc( sizeof(char) * MAX_FILENAME_SIZE );
+  pcf_file     = (char *) malloc( sizeof(char) * MAX_FILENAME_SIZE );
 
   /* ini vars. */
   show_states = false;
@@ -829,4 +840,8 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
     fclose( infile );
   else
     gzclose( gzInfile );
+
+  free( event_record );
+  free( trace_name );
+  free( pcf_file );
 }

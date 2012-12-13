@@ -389,7 +389,11 @@ void KTraceSoftwareCounters::flush_all_events( void )
 {
   bool print_record;
   int i, j, thread_id;
-  char record[256], record_aux[64];
+  //char record[256], record_aux[64];
+  char *record, *record_aux;
+
+  record = ( char * )malloc( sizeof( char ) * MAX_LINE_SIZE );
+  record_aux = ( char * )malloc( sizeof( char ) * MAX_LINE_SIZE );
 
   struct ParaverEvent *p, *q;
 
@@ -481,6 +485,9 @@ void KTraceSoftwareCounters::flush_all_events( void )
 
   first_Paraver_event = NULL;
   last_Paraver_event = NULL;
+
+  free( record );
+  free( record_aux );
 }
 
 
@@ -757,10 +764,13 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
 {
   int id, cpu, appl, task, thread, state;
   unsigned long long time_1, time_2, type, value;
-  char *word, buffer[MAX_LINE_SIZE];
+  // char *word, buffer[MAX_LINE_SIZE];
+  char *word, *buffer;
   bool print_line = false;
   int thread_id, i, j;
   unsigned long num_iters = 0;
+
+  buffer = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
 
   /* Trace processing */
   while ( fscanf( infile, "%d:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF )
@@ -916,6 +926,8 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
   last_time = trace_time - 10;
   put_all_counters();
   // ok_sc_wait_window();
+
+  free( buffer );
 }
 
 
@@ -1198,11 +1210,14 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
 {
   int id, cpu, appl, task, thread, state;
   unsigned long long time_1, time_2, type, value;
-  char *word, buffer[MAX_LINE_SIZE];
+  // char *word, buffer[MAX_LINE_SIZE];
+  char *word, *buffer;
   bool print_line = false;
   struct state_queue_elem *p, *q;
   int i, j;
   unsigned long num_iters = 0;
+
+  buffer = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
 
   p = NULL;
   q = NULL;
@@ -1358,14 +1373,19 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
   }
 
 //  ok_sc_wait_window();
+
+  free( buffer );
 }
 
 
 void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressController *progress )
 {
   bool is_zip = false;
-  char *tmp_dir = NULL, *c, trace_name[512], *trace_header;
+  // char *tmp_dir = NULL, *c, trace_name[512], *trace_header;
+  char *tmp_dir = NULL, *c, *trace_name, *trace_header;
   int i, j, k;
+
+  trace_name = (char *) malloc( sizeof(char) * MAX_FILENAME_SIZE );
 
   /* Ini data */
   first_Paraver_event = NULL;
@@ -1471,4 +1491,6 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressC
     sprintf( line, "rm %s/tmp.prv", tmp_dir );
     system( line );
   }
+
+  free( trace_name );
 }
