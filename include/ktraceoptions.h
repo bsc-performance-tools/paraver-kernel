@@ -51,6 +51,7 @@
 #define MAX_VALUES 100
 #define MAX_THREADS 65536
 #define MAXSTATES 20
+#define MAX_STATE_NAME_SIZE 256
 
 
 class KTraceOptions: public TraceOptions
