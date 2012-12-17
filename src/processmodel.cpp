@@ -39,6 +39,11 @@
 
 using namespace std;
 
+#ifdef WIN32
+#undef max
+#undef min
+#endif
+
 bool ProcessModel::operator==( const ProcessModel& other ) const
 {
   return applications == other.applications &&

@@ -295,7 +295,7 @@ void KTraceCutter::proces_cutter_header( char *header,
   }
 
   if ( !is_zip )
-#ifdef WIN32append
+#ifdef WIN32
     _fseeki64( infile, 0, SEEK_SET );
 #else
     fseek( infile, -( strlen( auxLine ) ), SEEK_CUR );
@@ -315,7 +315,7 @@ const set< TEventType > KTraceCutter::mergeDuplicates( const multiset< TEventTyp
 {
   set< TEventType > uniqueEventTypes;
 
-  for ( multiset< TEventType >::iterator it = eventTypesWithPCFZeros.begin();
+  for ( multiset< TEventType >::const_iterator it = eventTypesWithPCFZeros.begin();
         it != eventTypesWithPCFZeros.end(); ++it )
   {
     uniqueEventTypes.insert( *it );
@@ -341,7 +341,7 @@ void KTraceCutter::dumpEventsSet( const set< TEventType >& closingEventTypes,
     writtenComment = true;
   }
 
-  for ( set< TEventType >::iterator it = closingEventTypes.begin(); it != closingEventTypes.end(); ++it )
+  for ( set< TEventType >::const_iterator it = closingEventTypes.begin(); it != closingEventTypes.end(); ++it )
   {
     if ( numWrittenChars == 0 )
     {
@@ -921,11 +921,11 @@ void KTraceCutter::execute( char *trace_in,
   if ( writeToTmpFile )
   {
     if ( ( tmp_dir = getenv( "TMPDIR" ) ) == NULL )
-      tmp_dir = getenv( "PWD" );
+      tmp_dir = getenv( "TEMP" );
 
 #ifdef WIN32
-    sprintf( trace_file_out, "C:\\tmp_fileXXXXXX" );
-    _mktemp_s( trace_file_out );
+    sprintf( trace_file_out, "%s\\tmp_fileXXXXXX", tmp_dir );
+    _mktemp_s( trace_file_out, strlen( trace_file_out ) + 1 );
 #else
     sprintf( trace_file_out, "%s/tmp_fileXXXXXX", tmp_dir );
     mkstemp( trace_file_out );

@@ -74,7 +74,11 @@ void LocalKernel::init()
 LocalKernel::LocalKernel( bool ( *messageFunction )( string ) ) :
     myMessageFunction( messageFunction )
 {
-  setPathSeparator( string( "/") ); // FIXME
+#ifdef WIN32
+  setPathSeparator( string( "\\" ) );
+#else
+  setPathSeparator( string( "/" ) );
+#endif
 
   // FILTERS
   trace_names_table_last = 0;
@@ -710,6 +714,7 @@ string LocalKernel::getNewTraceName( const string& fullPathTraceName,
     }
 
     string auxPath;
+
     if ( outputPath.substr( outputPath.length() - 1 , 1 ) != PATHSEP )
       auxPath = outputPath + PATHSEP + traceName;
     else
