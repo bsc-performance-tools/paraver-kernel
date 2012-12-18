@@ -61,6 +61,7 @@ KTraceCutter::KTraceCutter( char *&trace_in,
                             const vector< TEventType > &whichTypesWithValuesZero,
                             ProgressController *progress )
 {
+  line = (char *) malloc( sizeof( char ) * MAX_TRACE_HEADER );
   total_cutter_iters = 0;
   exec_options = new KTraceOptions( (KTraceOptions *) options );
   PCFEventTypesWithValuesZero.insert( whichTypesWithValuesZero.begin(), whichTypesWithValuesZero.end() );
@@ -972,6 +973,7 @@ void KTraceCutter::execute( char *trace_in,
   /* We process the trace like the originalTime version */
 
   bool maxTimeReached = false;
+  last_record_time = 0;
 
   /* Processing the trace records */
   while ( !end_parsing && !maxTimeReached )
@@ -979,7 +981,7 @@ void KTraceCutter::execute( char *trace_in,
     /* Read one more record is possible */
     if ( !is_zip )
     {
-      if ( feof( infile ) || fgets( line, sizeof( line ), infile ) == NULL )
+      if ( feof( infile ) || fgets( line, MAX_TRACE_HEADER, infile ) == NULL )
       {
         end_parsing = true;
 
@@ -988,7 +990,7 @@ void KTraceCutter::execute( char *trace_in,
     }
     else
     {
-      if ( gzeof( gzInfile ) || gzgets( gzInfile, line, sizeof( line ) ) == Z_NULL )
+      if ( gzeof( gzInfile ) || gzgets( gzInfile, line, MAX_TRACE_HEADER ) == Z_NULL )
       {
         end_parsing = true;
         continue;

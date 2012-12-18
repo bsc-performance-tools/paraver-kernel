@@ -64,7 +64,7 @@ class KTraceCutter : public TraceCutter
 
   private:
     /* Buffer for reading trace records */
-    char line[MAX_LINE_SIZE];
+    char *line;
 
     /* Trace in and trace out */
     FILE *infile;
