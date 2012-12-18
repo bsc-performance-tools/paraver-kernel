@@ -46,6 +46,7 @@
 #include "ktracecutter.h"
 #include "kprogresscontroller.h"
 #include "tracestream.h" // for GZIP_COMPRESSION_RATIO
+#include "paraverconfig.h"
 
 #ifdef WIN32
 #define atoll _atoi64
@@ -819,7 +820,8 @@ void KTraceCutter::execute( char *trace_in,
                             char *trace_out,
                             ProgressController *progress )
 {
-  char *c, *tmp_dir, *word, *trace_header;
+  char *c, *word, *trace_header;
+  string tmp_dir;
   //char trace_name[1024], buffer[MAX_LINE_SIZE];
   char *trace_name;
   char *buffer;
@@ -920,14 +922,13 @@ void KTraceCutter::execute( char *trace_in,
 
   if ( writeToTmpFile )
   {
-    if ( ( tmp_dir = getenv( "TMPDIR" ) ) == NULL )
-      tmp_dir = getenv( "TEMP" );
+    tmp_dir = ParaverConfig::getInstance()->getGlobalTmpPath();
 
 #ifdef WIN32
-    sprintf( trace_file_out, "%s\\tmp_fileXXXXXX", tmp_dir );
+    sprintf( trace_file_out, "%s\\tmp_fileXXXXXX", tmp_dir.c_str() );
     _mktemp_s( trace_file_out, strlen( trace_file_out ) + 1 );
 #else
-    sprintf( trace_file_out, "%s/tmp_fileXXXXXX", tmp_dir );
+    sprintf( trace_file_out, "%s/tmp_fileXXXXXX", tmp_dir.c_str() );
     mkstemp( trace_file_out );
 #endif
   }

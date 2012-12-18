@@ -27,6 +27,7 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
+#include <string>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -42,6 +43,7 @@
 #include "ktraceoptions.h"
 #include "kprogresscontroller.h"
 //#include "filters_wait_window.h"
+#include "paraverconfig.h"
 
 #ifdef WIN32
 #define atoll _atoi64
@@ -1382,7 +1384,8 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressC
 {
   bool is_zip = false;
   // char *tmp_dir = NULL, *c, trace_name[512], *trace_header;
-  char *tmp_dir = NULL, *c, *trace_name, *trace_header;
+  char *c, *trace_name, *trace_header;
+  std::string tmp_dir;
   int i, j, k;
 
   trace_name = (char *) malloc( sizeof(char) * MAX_FILENAME_SIZE );
@@ -1409,21 +1412,13 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressC
     /* The name finishes with -gz */
     if ( strlen( c ) == 3 )
     {
-      tmp_dir = getenv( "TMP_DIR" );
-      if ( tmp_dir != NULL )
-      {
-        sprintf( line, "gzip -dc %s > %s/tmp.prv", trace_in, tmp_dir );
-        printf( "\nDecompressing zipped trace...\n" );
-        system( line );
-        sprintf( line, "%s/tmp.prv", tmp_dir );
-        strcpy( trace_name, line );
-        is_zip = true;
-      }
-      else
-      {
-        printf( "\nERROR: You have to set variable TMP_DIR in order to decompress de zipped trace\n" );
-        exit( 1 );
-      }
+      tmp_dir = ParaverConfig::getInstance()->getGlobalTmpPath();
+      sprintf( line, "gzip -dc %s > %s/tmp.prv", trace_in, tmp_dir.c_str() );
+      printf( "\nDecompressing zipped trace...\n" );
+      system( line );
+      sprintf( line, "%s/tmp.prv", tmp_dir.c_str() );
+      strcpy( trace_name, line );
+      is_zip = true;
     }
     else
     {
@@ -1488,7 +1483,7 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressC
   fclose( outfile );
   if ( is_zip )
   {
-    sprintf( line, "rm %s/tmp.prv", tmp_dir );
+    sprintf( line, "rm %s/tmp.prv", tmp_dir.c_str() );
     system( line );
   }
 
