@@ -317,6 +317,10 @@ class TraceProxy: public Trace
     void parsePCF( const std::string& whichFile );
     void parseROW( const std::string& whichFile );
 
+#ifdef FIXED_LABELS
+    void setFixedLabels();
+#endif
+
     friend Trace *Trace::create( KernelConnection *, const std::string&, bool noLoad, ProgressController * );
 };
 

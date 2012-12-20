@@ -123,8 +123,71 @@ TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile,
   string rowFile = myKernel->getROWFileLocation( whichFile );
   parseROW( rowFile );
 
+#ifdef FIXED_LABELS
+  setFixedLabels();
+#endif
+
   myTrace->setFillStateGaps( ParaverConfig::getInstance()->getGlobalFillStateGaps() );
 }
+
+#ifdef FIXED_LABELS
+TObjectOrder getNumLevelObjects( TWindowLevel whichLevel, Trace *myTrace )
+{
+  TObjectOrder objectSize = 0;
+
+  if( whichLevel == WORKLOAD )
+    objectSize = 1;
+  else if( whichLevel == APPLICATION )
+    objectSize = myTrace->totalApplications();
+  else if( whichLevel == TASK )
+    objectSize = myTrace->totalTasks();
+  else if( whichLevel == THREAD )
+    objectSize = myTrace->totalThreads();
+  else if( whichLevel == SYSTEM )
+    objectSize = 1;
+  else if( whichLevel == NODE )
+    objectSize = myTrace->totalNodes();
+  else if( whichLevel == CPU )
+    objectSize = myTrace->totalCPUs();
+
+  return objectSize;
+}
+
+#include "labelconstructor.h"
+
+void TraceProxy::setFixedLabels()
+{
+  RowLabels tmpRowLabels;
+  int maxLabelLength = 0;
+  std::string tmpObjectLabel;
+  std::string newObjectLabel;
+
+  for( int lvl = WORKLOAD; lvl <= CPU; ++lvl )
+  {
+    for( TObjectOrder order = 0; order < getNumLevelObjects( (TWindowLevel)lvl, this ); ++order )
+    {
+      tmpObjectLabel = LabelConstructor::objectLabel( order, (TWindowLevel)lvl, this );
+      if( tmpObjectLabel.length() > maxLabelLength )
+        maxLabelLength = tmpObjectLabel.length();
+    }
+  }
+
+  for( int lvl = WORKLOAD; lvl <= CPU; ++lvl )
+  {
+    for( TObjectOrder order = 0; order < getNumLevelObjects( (TWindowLevel)lvl, this ); ++order )
+    {
+      tmpObjectLabel = LabelConstructor::objectLabel( order, (TWindowLevel)lvl, this );
+      int numSpaces = maxLabelLength - tmpObjectLabel.length();
+      newObjectLabel.clear();
+      newObjectLabel.append( numSpaces, ' ' );
+      newObjectLabel.append( tmpObjectLabel );
+      tmpRowLabels.pushBack( (TWindowLevel)lvl, newObjectLabel );
+    }
+  }
+
+  myRowLabels = tmpRowLabels;
+}
+#endif
 
 TraceProxy::~TraceProxy()
 {
