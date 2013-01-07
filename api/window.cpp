@@ -424,7 +424,7 @@ void WindowProxy::computeYScale()
     for ( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
     {
       initRow( *obj, winBeginTime, NONE );
-      while ( getBeginTime( *obj ) < getTrace()->getEndTime() )
+      while ( getBeginTime( *obj ) < winEndTime )
         calcNext( *obj );
     }
   }
