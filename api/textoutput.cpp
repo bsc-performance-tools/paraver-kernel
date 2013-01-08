@@ -138,6 +138,7 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
 
   outputFile << fixed;
   outputFile << showpoint;
+  outputFile.precision( ParaverConfig::getInstance()->getHistogramPrecision() );
 
   numPlanes = whichHisto->getNumPlanes();
   numColumns = whichHisto->getNumColumns();
