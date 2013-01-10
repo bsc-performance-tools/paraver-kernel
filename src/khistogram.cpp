@@ -764,7 +764,11 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
 
   initTotals();
 
-  recursiveExecution( beginTime, endTime, 0, numRows - 1, selectedRows, true );
+  initTmpBuffers();
+
+  recursiveExecution( beginTime, endTime, 0, numRows - 1, selectedRows, true, true );
+
+  finishOutLimits();
 
   if ( getThreeDimensions() )
   {
@@ -953,10 +957,53 @@ void KHistogram::initStatistics()
   statistics.initAllComm( this );
 }
 
+void KHistogram::initTmpBuffers()
+{
+  tmpControlOutOfLimits.clear();
+  tmpControlOutOfLimits.insert( tmpControlOutOfLimits.begin(),
+                                controlWindow->getWindowLevelObjects(),
+                                false );
+
+  tmpXtraOutOfLimits.clear();
+  tmpXtraOutOfLimits.insert( tmpXtraOutOfLimits.begin(),
+                             xtraControlWindow->getWindowLevelObjects(),
+                             false );
+}
+
+
+void KHistogram::finishOutLimits()
+{
+  controlOutOfLimits = false;
+  for( vector<bool>::iterator it = tmpControlOutOfLimits.begin();
+       it != tmpControlOutOfLimits.end(); ++it )
+  {
+    if ( *it )
+    {
+      controlOutOfLimits = true;
+      break;
+    }
+  }
+  tmpControlOutOfLimits.clear();
+
+  xtraOutOfLimits = false;
+  for( vector<bool>::iterator it = tmpXtraOutOfLimits.begin();
+       it != tmpXtraOutOfLimits.end(); ++it )
+  {
+    if ( *it )
+    {
+      xtraOutOfLimits = true;
+      break;
+    }
+  }
+  tmpXtraOutOfLimits.clear();
+
+}
 
 void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                                      TObjectOrder fromRow, TObjectOrder toRow,
-                                     vector<TObjectOrder>& selectedRows, bool needInit,
+                                     vector<TObjectOrder>& selectedRows,
+                                     bool needInit,
+                                     bool calcSemanticStats,
                                      PRV_UINT16 winIndex, CalculateData *data )
 {
   Window *currentWindow = orderedWindows[ winIndex ];
@@ -1005,15 +1052,15 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     childInit = needInit;
     while ( currentWindow->getEndTime( iRow ) < toTime )
     {
-      calculate( iRow, fromTime, toTime, winIndex, data, childInit );
+      calculate( iRow, fromTime, toTime, winIndex, data, childInit, calcSemanticStats );
       currentWindow->calcNext( iRow );
     }
 
     if ( currentWindow->getBeginTime( iRow ) < toTime )
-      calculate( iRow, fromTime, toTime, winIndex, data, childInit );
+      calculate( iRow, fromTime, toTime, winIndex, data, childInit, calcSemanticStats );
 
     if ( currentWindow->getBeginTime( iRow ) == currentWindow->getEndTime( iRow ) )
-      calculate( iRow, fromTime, toTime, winIndex, data, childInit );
+      calculate( iRow, fromTime, toTime, winIndex, data, childInit, calcSemanticStats );
 
     if ( winIndex == 0 )
     {
@@ -1035,9 +1082,10 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 
 void KHistogram::calculate( TObjectOrder iRow,
                             TRecordTime fromTime, TRecordTime toTime,
-                            PRV_UINT16 winIndex, CalculateData *data, bool& needInit )
+                            PRV_UINT16 winIndex, CalculateData *data,
+                            bool& needInit,
+                            bool calcSemanticStats )
 {
-  static bool calcSemanticStats = true;
   TObjectOrder childFromRow;
   TObjectOrder childToRow;
   TRecordTime childFromTime;
@@ -1050,7 +1098,7 @@ void KHistogram::calculate( TObjectOrder iRow,
                                        data->column ) )
     {
       if ( controlWindow->getValue( iRow ) != 0 )
-        controlOutOfLimits = true;
+        tmpControlOutOfLimits[ iRow ] = true;
       calcSemanticStats = false;
     }
     else
@@ -1063,7 +1111,7 @@ void KHistogram::calculate( TObjectOrder iRow,
                                       data->plane ) )
     {
       if ( xtraControlWindow->getValue( iRow ) != 0 )
-        xtraOutOfLimits = true;
+        tmpXtraOutOfLimits[ iRow ] = true;
       return;
     }
   }
@@ -1181,7 +1229,7 @@ void KHistogram::calculate( TObjectOrder iRow,
 
     vector<TObjectOrder> *dummy = NULL;
     recursiveExecution( childFromTime, childToTime, childFromRow, childToRow,
-                        *dummy, needInit, winIndex + 1, data );
+                        *dummy, needInit, calcSemanticStats, winIndex + 1, data );
     needInit = false;
   }
 }

@@ -259,7 +259,9 @@ class KHistogram : public Histogram
     TCommTag commTagMax;
 
     bool controlOutOfLimits;
+    std::vector<bool> tmpControlOutOfLimits;
     bool xtraOutOfLimits;
+    std::vector<bool> tmpXtraOutOfLimits;
 
     bool inclusive;
 
@@ -290,13 +292,19 @@ class KHistogram : public Histogram
     void initTotals();
     void initSemantic( TRecordTime beginTime );
     void initStatistics();
+    void initTmpBuffers();
+    void finishOutLimits();
     void recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                              TObjectOrder fromRow, TObjectOrder toRow,
-                             std::vector<TObjectOrder>& selectedRows, bool needInit,
+                             std::vector<TObjectOrder>& selectedRows,
+                             bool needInit,
+                             bool calcSemanticStats,
                              PRV_UINT16 winIndex = 0, CalculateData *data = NULL );
     void calculate( TObjectOrder iRow,
                     TRecordTime fromTime, TRecordTime toTime,
-                    PRV_UINT16 winIndex, CalculateData *data, bool& needInit );
+                    PRV_UINT16 winIndex, CalculateData *data,
+                    bool& needInit,
+                    bool calcSemanticStats );
     void finishRow( CalculateData *data );
 };
 
