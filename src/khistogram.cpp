@@ -964,10 +964,13 @@ void KHistogram::initTmpBuffers()
                                 controlWindow->getWindowLevelObjects(),
                                 false );
 
-  tmpXtraOutOfLimits.clear();
-  tmpXtraOutOfLimits.insert( tmpXtraOutOfLimits.begin(),
-                             xtraControlWindow->getWindowLevelObjects(),
-                             false );
+  if ( getThreeDimensions() )
+  {
+    tmpXtraOutOfLimits.clear();
+    tmpXtraOutOfLimits.insert( tmpXtraOutOfLimits.begin(),
+                               xtraControlWindow->getWindowLevelObjects(),
+                               false );
+  }
 }
 
 
@@ -985,19 +988,22 @@ void KHistogram::finishOutLimits()
   }
   tmpControlOutOfLimits.clear();
 
-  xtraOutOfLimits = false;
-  for( vector<bool>::iterator it = tmpXtraOutOfLimits.begin();
-       it != tmpXtraOutOfLimits.end(); ++it )
+  if ( getThreeDimensions() )
   {
-    if ( *it )
+    xtraOutOfLimits = false;
+    for( vector<bool>::iterator it = tmpXtraOutOfLimits.begin();
+         it != tmpXtraOutOfLimits.end(); ++it )
     {
-      xtraOutOfLimits = true;
-      break;
+      if ( *it )
+      {
+        xtraOutOfLimits = true;
+        break;
+      }
     }
+    tmpXtraOutOfLimits.clear();
   }
-  tmpXtraOutOfLimits.clear();
-
 }
+
 
 void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                                      TObjectOrder fromRow, TObjectOrder toRow,
