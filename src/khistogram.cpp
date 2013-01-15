@@ -1029,13 +1029,13 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 
     if ( winIndex == 0 )
     {
-      iRow = selectedRows[ i ];
-      data->row = i;
-
 #ifdef TRACING_ENABLED
     Extrae_event( 200, i + 1 );
 #endif
+      iRow = selectedRows[ i ];
+      data->row = i;
     }
+
     if ( currentWindow == controlWindow )
       data->controlRow = iRow;
     if ( currentWindow == dataWindow )
@@ -1071,15 +1071,15 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     if ( winIndex == 0 )
     {
       finishRow( data );
-
-#ifdef TRACING_ENABLED
-      Extrae_event( 200, 0 );
-#endif
     }
   }
 
   if ( winIndex == 0 )
   {
+#ifdef TRACING_ENABLED
+      Extrae_event( 200, 0 );
+#endif
+
     delete data;
     data = NULL;
   }
