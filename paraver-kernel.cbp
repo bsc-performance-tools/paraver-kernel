@@ -607,6 +607,10 @@
 			<Option target="Release" />
 			<Option target="otf2prv" />
 		</Unit>
+		<Unit filename="include/cubebuffer.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="include/filtermanagement.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -1062,6 +1066,10 @@
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="otf2prv" />
+		</Unit>
+		<Unit filename="src/cubebuffer.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/filtermanagement.cpp">
 			<Option target="Debug" />

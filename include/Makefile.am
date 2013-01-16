@@ -7,6 +7,7 @@ noinst_HEADERS = \
                           cell.h\
                           column.h\
                           cube.h\
+													cubebuffer.h\
                           filtermanagement.h\
                           functionmanagement.h\
                           histogramexception.h\

@@ -5,6 +5,7 @@ libparaver_kernel_la_SOURCES = \
     bplustree.cpp \
     bplustreeexception.cpp \
     bplustreerecordleaf.cpp \
+		cubebuffer.cpp \
     filtermanagement.cpp \
     histogramexception.cpp \
     histogramstatistic.cpp \

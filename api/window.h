@@ -954,8 +954,8 @@ class WindowProxy: public Window
                                           PRV_INT32 objectAxisPos,
                                           std::vector< PRV_INT32 >& objectPosList,
                                           TObjectOrder maxObj,
-                                          bool& drawCaution,                                   // I/O
-                                          std::vector< std::vector< TSemanticValue > >& valuesToDraw,              // I/O
+                                          bool& drawCaution,                                                  // I/O
+                                          std::vector< std::vector< TSemanticValue > >& valuesToDraw,         // I/O
                                           std::vector< hash_set< PRV_INT32 > >& eventsToDraw,                 // I/O
                                           std::vector< hash_set< commCoord, hashCommCoord > >& commsToDraw ); // I/O
 
@@ -971,10 +971,10 @@ class WindowProxy: public Window
                                              PRV_INT32 timePos,
                                              PRV_INT32 objectAxisPos,
                                              std::vector< PRV_INT32 >& objectPosList,
-                                             int& drawCaution,                                   // I/O
+                                             int& drawCaution,                                    // I/O
                                              TSemanticValue &rowComputedMaxY,
                                              TSemanticValue &rowComputedMinY,
-                                             std::vector< TSemanticValue >& valuesToDraw,              // I/O
+                                             std::vector< TSemanticValue >& valuesToDraw,         // I/O
                                              hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
                                              hash_set< commCoord, hashCommCoord >& commsToDraw ); // I/O
 
