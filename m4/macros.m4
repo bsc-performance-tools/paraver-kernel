@@ -18,6 +18,7 @@ AC_DEFUN([AX_PROG_ENABLE_TRACING],
   fi
 ])
 
+
 # AX_PROG_WITH_EXTRAE
 # -----------
 AC_DEFUN([AX_PROG_WITH_EXTRAE],
@@ -39,8 +40,9 @@ AC_DEFUN([AX_PROG_WITH_EXTRAE],
   fi
 ])
 
+
 # AX_PROG_ENABLE_PARALLEL
-# -----------
+# -----------------------
 AC_DEFUN([AX_PROG_ENABLE_PARALLEL],
 [
   AC_ARG_ENABLE(parallel,
@@ -65,6 +67,19 @@ AC_DEFUN([AX_PROG_ENABLE_PARALLEL],
   fi
 ])
 
+
+# AX_PROG_ENABLE_OTF2PRV
+# ----------------------
+AC_DEFUN([AX_PROG_ENABLE_OTF2PRV],
+[
+  AC_ARG_ENABLE(otf2prv,
+    AC_HELP_STRING([--enable-otf2prv], [Enable otf2prv compilation. (Disabled by default)]),
+    [enable_otf2prv="${enableval}"],
+    [enable_otf2prv="no"]
+  )
+])
+
+
 # AX_PROG_WITH_OTF2
 # -----------------
 AC_DEFUN([AX_PROG_WITH_OTF2],
@@ -84,6 +99,7 @@ AC_DEFUN([AX_PROG_WITH_OTF2],
   LDFLAGS_OTF2="-L$OTF2_DIR/lib -lotf2"
 ])
 
+
 # AX_PROG_WITH_PTOOLS_COMMON_FILES
 # -----------
 AC_DEFUN([AX_PROG_WITH_PTOOLS_COMMON_FILES],
@@ -98,7 +114,7 @@ AC_DEFUN([AX_PROG_WITH_PTOOLS_COMMON_FILES],
    )
    CPPFLAGS_PTOOLS="-I$PTOOLS_COMMON_FILES_DIR/include"
    CXXFLAGS_PTOOLS="-I$PTOOLS_COMMON_FILES_DIR/include"
-   CFLAGS_pTOOLS="-I$PTOOLS_COMMON_FILES_DIR/include"
+   CFLAGS_PTOOLS="-I$PTOOLS_COMMON_FILES_DIR/include"
    LIBS_PTOOLS="-L$PTOOLS_COMMON_FILES_DIR/lib/ptools_common_files"
    LDFLAGS_PTOOLS="-L$PTOOLS_COMMON_FILES_DIR/lib/ptools_common_files -lptools_common_files"
 ])
