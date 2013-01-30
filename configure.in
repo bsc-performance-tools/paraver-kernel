@@ -68,8 +68,8 @@ AC_CHECK_TYPES([int64_t, uint64_t, int8_t, uint8_t, int32_t, uint32_t, int16_t, 
 #########################################
 
 
-CFLAGS="-Iinclude/ -Iapi/ -I../include/ -I../api/ -I../common-files/ -I../../common-files/ -I../../common-files/pcfparser $CFLAGS $CFLAGS_PTOOLS $XML_CPPFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
-CXXFLAGS="-Iinclude/ -Iapi/ -I../include/ -I../api/ -I../common-files/ -I../../common-files/ -I../../common-files/pcfparser $CXXFLAGS $BOOST_CPPFLAGS $CXXFLAGS_PTOOLS $XML_CPPFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
-LDFLAGS="$LDFLAGS $BOOST_LDFLAGS $BOOST_SERIALIZATION_LIB $LDFLAGS_PTOOLS $XML_LIBS"
+CFLAGS="-Iinclude/ -Iapi/ -I../include/ -I../api/ -I../common-files/ -I../../common-files/ -I../../common-files/pcfparser $CFLAGS $CFLAGS_PTOOLS $CFLAGS_EXTRAE $XML_CPPFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
+CXXFLAGS="-Iinclude/ -Iapi/ -I../include/ -I../api/ -I../common-files/ -I../../common-files/ -I../../common-files/pcfparser $CXXFLAGS $BOOST_CPPFLAGS $CXXFLAGS_PTOOLS $CXXFLAGS_EXTRAE $XML_CPPFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
+LDFLAGS="$LDFLAGS $BOOST_LDFLAGS $BOOST_SERIALIZATION_LIB $LDFLAGS_PTOOLS $LDFLAGS_EXTRAE $XML_LIBS"
 
 AC_OUTPUT([Makefile src/Makefile api/Makefile include/Makefile])

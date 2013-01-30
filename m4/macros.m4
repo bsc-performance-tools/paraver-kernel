@@ -32,11 +32,11 @@ AC_DEFUN([AX_PROG_WITH_EXTRAE],
     [EXTRAE_DIR=/usr/local]
   )
   if test "${enable_tracing}" = "yes" ; then
-    CPPFLAGS="$CPPFLAGS -I$EXTRAE_DIR/include"
-    CXXFLAGS="$CXXFLAGS -I$EXTRAE_DIR/include"
-    CFLAGS="$CFLAGS -I$EXTRAE_DIR/include"
-    LIBS="$LIBS -L$EXTRAE_DIR/lib"
-    LDFLAGS="$LDFLAGS -L$EXTRAE_DIR/lib -lseqtrace"
+    CPPFLAGS_EXTRAE="-I$EXTRAE_DIR/include"
+    CXXFLAGS_EXTRAE="-I$EXTRAE_DIR/include"
+    CFLAGS_EXTRE="-I$EXTRAE_DIR/include"
+    LIBS_EXTRAE="-L$EXTRAE_DIR/lib"
+    LDFLAGS_EXTRAE="-L$EXTRAE_DIR/lib -lseqtrace"
   fi
 ])
 
