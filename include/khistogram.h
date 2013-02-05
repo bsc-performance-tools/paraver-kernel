@@ -297,13 +297,13 @@ class KHistogram : public Histogram
     void recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                              TObjectOrder fromRow, TObjectOrder toRow,
                              std::vector<TObjectOrder>& selectedRows,
-                             bool needInit,
+                             std::vector<bool>& needInit,
                              bool calcSemanticStats,
                              PRV_UINT16 winIndex = 0, CalculateData *data = NULL );
     void calculate( TObjectOrder iRow,
                     TRecordTime fromTime, TRecordTime toTime,
                     PRV_UINT16 winIndex, CalculateData *data,
-                    bool& needInit,
+                    std::vector<bool>& needInit,
                     bool calcSemanticStats );
     void finishRow( CalculateData *data );
 };

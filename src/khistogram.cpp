@@ -766,7 +766,8 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
 
   initTmpBuffers();
 
-  recursiveExecution( beginTime, endTime, 0, numRows - 1, selectedRows, true, true );
+  vector<bool> needInit( 3, true );
+  recursiveExecution( beginTime, endTime, 0, numRows - 1, selectedRows, needInit, true );
 
   finishOutLimits();
 
@@ -1008,7 +1009,7 @@ void KHistogram::finishOutLimits()
 void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                                      TObjectOrder fromRow, TObjectOrder toRow,
                                      vector<TObjectOrder>& selectedRows,
-                                     bool needInit,
+                                     vector<bool>& needInit,
                                      bool calcSemanticStats,
                                      PRV_UINT16 winIndex, CalculateData *data )
 {
@@ -1024,7 +1025,6 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 
   for ( TObjectOrder i = fromRow; i <= toRow; ++i )
   {
-    bool childInit;
     TObjectOrder iRow = i;
 
     if ( winIndex == 0 )
@@ -1034,6 +1034,10 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 #endif
       iRow = selectedRows[ i ];
       data->row = i;
+
+      needInit[ 0 ] = true;
+      needInit[ 1 ] = true;
+      needInit[ 2 ] = true;
     }
 
     if ( currentWindow == controlWindow )
@@ -1041,12 +1045,14 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     if ( currentWindow == dataWindow )
       data->dataRow = iRow;
 
-    if( needInit && ( winIndex == 0 || ( winIndex > 0 && orderedWindows[ winIndex ] != orderedWindows[ winIndex - 1 ] ) ) )
+    if( needInit[ winIndex ] && ( winIndex == 0 || ( winIndex > 0 && orderedWindows[ winIndex ] != orderedWindows[ winIndex - 1 ] ) ) )
     {
       if( orderedWindows[ winIndex ] == orderedWindows[ 0 ] )
         currentWindow->initRow( iRow, fromTime, CREATECOMMS );
       else
         currentWindow->initRow( iRow, fromTime, NOCREATE );
+
+      needInit[ winIndex ] = false;
     }
 
     while ( currentWindow->getEndTime( iRow ) <= fromTime &&
@@ -1055,18 +1061,22 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
       currentWindow->calcNext( iRow );
     }
 
-    childInit = needInit;
     while ( currentWindow->getEndTime( iRow ) < toTime )
     {
-      calculate( iRow, fromTime, toTime, winIndex, data, childInit, calcSemanticStats );
+      calculate( iRow, fromTime, toTime, winIndex, data, needInit, calcSemanticStats );
       currentWindow->calcNext( iRow );
     }
 
     if ( currentWindow->getBeginTime( iRow ) < toTime )
-      calculate( iRow, fromTime, toTime, winIndex, data, childInit, calcSemanticStats );
+      calculate( iRow, fromTime, toTime, winIndex, data, needInit, calcSemanticStats );
 
-    if ( currentWindow->getBeginTime( iRow ) == currentWindow->getEndTime( iRow ) )
-      calculate( iRow, fromTime, toTime, winIndex, data, childInit, calcSemanticStats );
+    while ( currentWindow->getBeginTime( iRow ) == currentWindow->getEndTime( iRow ) &&
+            currentWindow->getEndTime( iRow ) <= toTime &&
+            currentWindow->getEndTime( iRow ) < getEndTime() )
+    {
+//      calculate( iRow, fromTime, toTime, winIndex, data, needInit, calcSemanticStats );
+      currentWindow->calcNext( iRow );
+    }
 
     if ( winIndex == 0 )
     {
@@ -1089,7 +1099,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 void KHistogram::calculate( TObjectOrder iRow,
                             TRecordTime fromTime, TRecordTime toTime,
                             PRV_UINT16 winIndex, CalculateData *data,
-                            bool& needInit,
+                            vector<bool>& needInit,
                             bool calcSemanticStats )
 {
   TObjectOrder childFromRow;
@@ -1236,7 +1246,6 @@ void KHistogram::calculate( TObjectOrder iRow,
     vector<TObjectOrder> *dummy = NULL;
     recursiveExecution( childFromTime, childToTime, childFromRow, childToRow,
                         *dummy, needInit, calcSemanticStats, winIndex + 1, data );
-    needInit = false;
   }
 }
 
