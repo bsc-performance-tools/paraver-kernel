@@ -919,7 +919,7 @@ void HistogramProxy::compute2DScale()
   {
     setControlDelta( 1.0 );
   }
-  else if ( controlWindow->IsCodeColorSet() )
+  else if ( controlWindow->IsCodeColorSet() && ( maxY - minY ) <= 10000 )
   {
     setControlMax( floor( maxY * 1.05 ) );
     setControlDelta( 1.0 );
