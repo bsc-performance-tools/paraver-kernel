@@ -216,6 +216,7 @@ void KTraceSoftwareCounters::write_pcf( char *file_out )
   c = strrchr( trace_out, '.' );
   *c = '\0';
 
+// ??
   printf( "\n" );
 
   sprintf( line, "%s.pcf", trace_out );
@@ -1414,7 +1415,7 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressC
     {
       tmp_dir = ParaverConfig::getInstance()->getGlobalTmpPath();
       sprintf( line, "gzip -dc %s > %s/tmp.prv", trace_in, tmp_dir.c_str() );
-      printf( "\nDecompressing zipped trace...\n" );
+//      printf( "\nDecompressing zipped trace...\n" );
       system( line );
       sprintf( line, "%s/tmp.prv", tmp_dir.c_str() );
       strcpy( trace_name, line );

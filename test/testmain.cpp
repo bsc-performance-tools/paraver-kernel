@@ -4,7 +4,7 @@
 #include <sstream>
 #include "paraverkerneltypes.h"
 #include "traceheaderexception.h"
-#include "paraverstatisticfuncions.h"
+#include "paraverstatisticfunctions.h"
 #include "processmodel.h"
 #include "resourcemodel.h"
 #include "trace.h"
@@ -30,6 +30,7 @@ int main( int argc, char *argv[] )
   // TESTING ProcessModel
   //--------------------------------------------------------------------------
   // GOOD STRING
+
   istringstream testStringProcessModel( "2:2(1:0,1:0):2(1:0,1:0)" );
 
   cout << "For process model " << testStringProcessModel.str() << endl;
@@ -75,6 +76,7 @@ int main( int argc, char *argv[] )
   {
     ex.printMessage();
   }
+
   //--------------------------------------------------------------------------
   // END TESTING ProcessModel
   //--------------------------------------------------------------------------
