@@ -44,6 +44,9 @@ otf2prv.bin$(EXEEXT): $(otf2prv_bin_OBJECTS) $(otf2prv_bin_DEPENDENCIES) $(EXTRA
 
 
 install-data-hook:
+	if test -f $(bindir)/paramedir ; then
+	  cp -f $(bindir)/paramedir $(bindir)/paramedir.old
+	fi
 	cp -f ./docs/paramedir $(bindir)
 	$(SED) "s|@inst_PARAVER_HOME@|$(prefix)|g" < ./docs/paramedir > $(bindir)/paramedir
 	chmod a+x $(bindir)/paramedir
@@ -51,7 +54,7 @@ install-data-hook:
 
 dist-hook:
 	$(mkdir_p) $(distdir)/docs
-	cp -f ./docs/paramedir          $(distdir)/docs
+	cp -f ./docs/paramedir $(distdir)/docs
 
 
 # Erases everything which should not be uploaded to CVS
