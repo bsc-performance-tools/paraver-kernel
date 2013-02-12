@@ -45,7 +45,7 @@ otf2prv.bin$(EXEEXT): $(otf2prv_bin_OBJECTS) $(otf2prv_bin_DEPENDENCIES) $(EXTRA
 
 install-data-hook:
 	if test -f $(bindir)/paramedir ; then \
-		cp -f $(bindir)/paramedir $(bindir)/paramedir.old ; \
+		cp -f $(bindir)/paramedir $(bindir)/old.paramedir ; \
 	fi
 	cp -f ./docs/paramedir $(bindir)
 	$(SED) "s|@inst_PARAVER_HOME@|$(prefix)|g" < ./docs/paramedir > $(bindir)/paramedir
