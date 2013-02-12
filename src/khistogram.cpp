@@ -1030,7 +1030,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     if ( winIndex == 0 )
     {
 #ifdef TRACING_ENABLED
-    Extrae_event( 200, i + 1 );
+    Extrae_eventandcounters( 200, i + 1 );
 #endif
       iRow = selectedRows[ i ];
       data->row = i;
@@ -1087,7 +1087,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
   if ( winIndex == 0 )
   {
 #ifdef TRACING_ENABLED
-      Extrae_event( 200, 0 );
+      Extrae_eventandcounters( 200, 0 );
 #endif
 
     delete data;
