@@ -121,6 +121,13 @@ class Filter;
 class Window
 {
   public:
+    enum TObjectLabels
+    {
+      ALL_LABELS = 0,
+      SPACED_LABELS,
+      POWER2_LABELS
+    };
+
     // Create Single Window
     static Window *create( KernelConnection *whichKernel, Trace *whichTrace );
     //Create Derived Window
@@ -480,6 +487,13 @@ class Window
                                           PRV_UINT32 &numParameters,
                                           std::vector<std::string> &nameParameters,
                                           std::vector< std::vector< double > >&defaultParameters ) const = 0;
+
+    virtual void setObjectLabels( Window::TObjectLabels whichLabels )
+    {}
+    virtual Window::TObjectLabels getObjectLabels() const
+    {
+      return Window::SPACED_LABELS;
+    }
 
     // CFG4D
     virtual void setCFG4DEnabled( bool enabled )
@@ -857,6 +871,9 @@ class WindowProxy: public Window
                                           std::vector<std::string> &nameParameters,
                                           std::vector< std::vector< double > >&defaultParameters ) const;
 
+    virtual void setObjectLabels( Window::TObjectLabels whichLabels );
+    virtual Window::TObjectLabels getObjectLabels() const;
+
     // CFG4D
     virtual void setCFG4DEnabled( bool enabled );
     virtual bool getCFG4DEnabled() const;
@@ -1045,6 +1062,8 @@ class WindowProxy: public Window
 
     // Row selection
     SelectionManagement< TObjectOrder, TWindowLevel > selectedRow;
+
+    Window::TObjectLabels objectLabels;
 
     // CFG4D
     bool isCFG4DEnabled;

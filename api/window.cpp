@@ -133,6 +133,8 @@ void WindowProxy::init()
   child = NULL;
   usedByHistogram = false;
 
+  objectLabels = Window::getObjectLabels();
+
   if( myTrace != NULL )
   {
     winEndTime = myTrace->getEndTime();
@@ -1228,6 +1230,15 @@ bool WindowProxy::getParametersOfFunction( string whichFunction,
          defaultParameters );
 }
 
+void WindowProxy::setObjectLabels( Window::TObjectLabels whichLabels )
+{
+  objectLabels = whichLabels;
+}
+
+Window::TObjectLabels WindowProxy::getObjectLabels() const
+{
+  return objectLabels;
+}
 
 void WindowProxy::setCFG4DMode( bool mode )
 {
