@@ -93,7 +93,8 @@ class LabelConstructor
       DRAWMODE,
       PIXEL_SIZE,
       IMAGE_FORMAT,
-      TEXT_FORMAT
+      TEXT_FORMAT,
+      OBJECT_LABELS
     };
 
     static void getGUIGroupLabels( const TGroupID group, std::vector< std::string > &labels );
@@ -101,6 +102,7 @@ class LabelConstructor
     static std::string getDate( bool reverseOrder = false );
 
   private:
+    static std::stringstream sstrObjectLabel;
     static std::stringstream label;
     static std::stringstream columnLabel;
     static std::stringstream tmp;

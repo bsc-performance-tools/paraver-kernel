@@ -91,6 +91,7 @@ ParaverConfig::ParaverConfig()
   xmlTimeline.drawmodeObjects = DRAW_MAXIMUM;
   xmlTimeline.gradientFunction = GradientColor::LINEAR;
   xmlTimeline.pixelSize = 0;
+  xmlTimeline.objectLabels = Window::SPACED_LABELS;
   xmlTimeline.whatWhereSemantic = true;
   xmlTimeline.whatWhereEvents = false;
   xmlTimeline.whatWhereCommunications = false;
@@ -343,6 +344,11 @@ void ParaverConfig::setTimelinePixelSize( PRV_UINT32 whichPixelSize )
   xmlTimeline.pixelSize = whichPixelSize;
 }
 
+void ParaverConfig::setTimelineLabels( Window::TObjectLabels whichLabels )
+{
+  xmlTimeline.objectLabels = whichLabels;
+}
+
 void ParaverConfig::setTimelineWhatWhereSemantic( bool whichWhatWhereSemantic )
 {
   xmlTimeline.whatWhereSemantic = whichWhatWhereSemantic;
@@ -442,6 +448,11 @@ GradientColor::TGradientFunction ParaverConfig::getTimelineGradientFunction() co
 PRV_UINT32 ParaverConfig::getTimelinePixelSize() const
 {
   return xmlTimeline.pixelSize;
+}
+
+Window::TObjectLabels ParaverConfig::getTimelineLabels() const
+{
+  return xmlTimeline.objectLabels;
 }
 
 bool ParaverConfig::getTimelineWhatWhereSemantic() const

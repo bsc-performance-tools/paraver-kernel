@@ -40,6 +40,7 @@
 
 using namespace std;
 
+stringstream LabelConstructor::sstrObjectLabel;
 stringstream LabelConstructor::label;
 stringstream LabelConstructor::columnLabel;
 stringstream LabelConstructor::tmp;
@@ -72,8 +73,8 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
                                       bool showLevelTag )
 {
   rowStr = whichTrace->getRowLabel( level, globalOrder );
-  label.clear();
-  label.str( "" );
+  sstrObjectLabel.clear();
+  sstrObjectLabel.str( "" );
 
   if ( rowStr != "" )
     return rowStr;
@@ -84,14 +85,14 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
     TTaskOrder task;
     TThreadOrder thread;
     if( globalOrder >= whichTrace->totalThreads() )
-      label << "Not valid thread: " << globalOrder + 1;
+      sstrObjectLabel << "Not valid thread: " << globalOrder + 1;
     else
     {
       whichTrace->getThreadLocation( globalOrder, appl, task, thread );
       if ( showLevelTag )
-        label << LEVEL_THREAD << ' ' << appl + 1 << '.' << task + 1 << '.' << thread + 1;
+        sstrObjectLabel << LEVEL_THREAD << ' ' << appl + 1 << '.' << task + 1 << '.' << thread + 1;
       else
-        label << appl + 1 << '.' << task + 1 << '.' << thread + 1;
+        sstrObjectLabel << appl + 1 << '.' << task + 1 << '.' << thread + 1;
     }
   }
   else if ( level == TASK )
@@ -99,77 +100,77 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
     TApplOrder appl;
     TTaskOrder task;
     if( globalOrder >= whichTrace->totalTasks() )
-      label << "Not valid task: " << globalOrder + 1;
+      sstrObjectLabel << "Not valid task: " << globalOrder + 1;
     else
     {
       whichTrace->getTaskLocation( globalOrder, appl, task );
       if ( showLevelTag )
-        label << LEVEL_TASK << ' ' << appl + 1 << '.' << task + 1;
+        sstrObjectLabel << LEVEL_TASK << ' ' << appl + 1 << '.' << task + 1;
       else
-        label << appl + 1 << '.' << task + 1;
+        sstrObjectLabel << appl + 1 << '.' << task + 1;
     }
   }
   else if ( level == APPLICATION )
   {
     if( globalOrder >= whichTrace->totalApplications() )
-      label << "Not valid application: " << globalOrder + 1;
+      sstrObjectLabel << "Not valid application: " << globalOrder + 1;
     else
     {
       if ( showLevelTag )
-        label << LEVEL_APPLICATION << ' ' << globalOrder + 1;
+        sstrObjectLabel << LEVEL_APPLICATION << ' ' << globalOrder + 1;
       else
-        label << globalOrder + 1;
+        sstrObjectLabel << globalOrder + 1;
     }
   }
   else if ( level == WORKLOAD )
   {
     if ( showLevelTag )
-      label << LEVEL_WORKLOAD;
+      sstrObjectLabel << LEVEL_WORKLOAD;
   }
   else if ( level == CPU )
   {
     if( globalOrder == 0 )
     {
       if ( showLevelTag )
-        label << LEVEL_CPU << ' ' << "0";
+        sstrObjectLabel << LEVEL_CPU << ' ' << "0";
       else
-        label << "0";
+        sstrObjectLabel << "0";
     }
     else
     {
       TNodeOrder node;
       TCPUOrder cpu;
       if( globalOrder > whichTrace->totalCPUs() )
-        label << "Not valid CPU: " << globalOrder + 1;
+        sstrObjectLabel << "Not valid CPU: " << globalOrder + 1;
       else
       {
         whichTrace->getCPULocation( globalOrder, node, cpu );
         if ( showLevelTag )
-          label << LEVEL_CPU << ' ' << node + 1 << '.' << cpu + 1;
+          sstrObjectLabel << LEVEL_CPU << ' ' << node + 1 << '.' << cpu + 1;
         else
-          label << node + 1 << '.' << cpu + 1;
+          sstrObjectLabel << node + 1 << '.' << cpu + 1;
       }
     }
   }
   else if ( level == NODE )
   {
     if( globalOrder >= whichTrace->totalNodes() )
-      label << "Not valid node: " << globalOrder + 1;
+      sstrObjectLabel << "Not valid node: " << globalOrder + 1;
     else
     {
       if ( showLevelTag )
-        label << LEVEL_NODE << ' ' << globalOrder + 1;
+        sstrObjectLabel << LEVEL_NODE << ' ' << globalOrder + 1;
       else
-        label << globalOrder + 1;
+        sstrObjectLabel << globalOrder + 1;
     }
   }
   else if ( level == SYSTEM )
   {
     if ( showLevelTag )
-      label << LEVEL_SYSTEM;
+      sstrObjectLabel << LEVEL_SYSTEM;
   }
 
-  return label.str();
+  return sstrObjectLabel.str();
 }
 
 
@@ -643,6 +644,12 @@ void LabelConstructor::getGUIGroupLabels( const TGroupID groupID, vector< string
     case TEXT_FORMAT:
       labels.push_back( GUI_TEXT_FORMAT_CSV );
       labels.push_back( GUI_TEXT_FORMAT_GNUPLOT );
+      break;
+
+    case OBJECT_LABELS:
+      labels.push_back( GUI_OBJECT_LABELS_ALL );
+      labels.push_back( GUI_OBJECT_LABELS_SPACED );
+      labels.push_back( GUI_OBJECT_LABELS_POWER2 );
       break;
 
     default:

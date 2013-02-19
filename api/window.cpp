@@ -133,7 +133,7 @@ void WindowProxy::init()
   child = NULL;
   usedByHistogram = false;
 
-  objectLabels = Window::getObjectLabels();
+  objectLabels = ParaverConfig::getInstance()->getTimelineLabels();
 
   if( myTrace != NULL )
   {

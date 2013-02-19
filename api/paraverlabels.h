@@ -262,6 +262,9 @@ static const std::string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
 #define GUI_TEXT_FORMAT_CSV               "CSV"
 #define GUI_TEXT_FORMAT_GNUPLOT           "GNUPlot"
 #define GUI_TEXT_FORMAT_PLAIN             "Plain"
+#define GUI_OBJECT_LABELS_ALL             "All"
+#define GUI_OBJECT_LABELS_SPACED          "Spaced"
+#define GUI_OBJECT_LABELS_POWER2          "2^n"
 
 
 // GUI Semantic Levels - INDEXED WITH TWindowLevel
