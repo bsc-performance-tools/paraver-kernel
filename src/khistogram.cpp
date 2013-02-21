@@ -1149,13 +1149,14 @@ void KHistogram::calculate( TObjectOrder iRow,
             itComm->getTime() >= getBeginTime() &&
             itComm->getTime() <= getEndTime() )
     {
-      if ( !( itComm->getType() & COMM ) ||
-           !( itComm->getTime() >= fromTime && itComm->getTime() <= toTime )
+      if ( !( itComm->getType() & COMM ) /*||
+           !( itComm->getTime() >= fromTime && itComm->getTime() <= toTime )*/
          )
       {
         ++itComm;
         continue;
       }
+
       data->comm = itComm;
       filter = statistics.filterAllComm( data );
       values = statistics.executeAllComm( data );
@@ -1166,7 +1167,9 @@ void KHistogram::calculate( TObjectOrder iRow,
           TObjectOrder column;
           if ( controlWindow->getLevel() >= WORKLOAD && controlWindow->getLevel() <= THREAD )
             column = controlWindow->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
-          else
+          else if( controlWindow->getLevel() >= SYSTEM && controlWindow->getLevel() <= NODE )
+            column = controlWindow->cpuObjectToWindowObject( data->comm->getCommPartnerObject() );
+          else // CPU
             column = controlWindow->cpuObjectToWindowObject( data->comm->getCommPartnerObject() ) - 1;
           if ( getThreeDimensions() )
             commCube->addValue( data->plane, column, values );

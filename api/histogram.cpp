@@ -967,7 +967,7 @@ void HistogramProxy::compute3DScale()
 
 string HistogramProxy::getRowLabel( TObjectOrder whichRow ) const
 {
-  if( controlWindow->getLevel() >= SYSTEM && controlWindow->getLevel() <= CPU )
+  if( controlWindow->getLevel() == CPU )
     ++whichRow;
 
   return LabelConstructor::objectLabel( whichRow, controlWindow->getLevel(),
