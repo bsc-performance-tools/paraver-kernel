@@ -653,6 +653,15 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nam
   bool end_read = false;
 
 #ifdef WIN32
+  if ( !is_zip )
+  {
+    fgets( trace_header, MAX_TRACE_HEADER, infile );
+  }
+  else
+  {
+    gzgets( gzInfile, trace_header, MAX_TRACE_HEADER );
+  }
+
   while( !( trace_header[0] == '1' || trace_header[0] == '2' || trace_header[0] == '3' ) )
   {
     if ( !is_zip )
@@ -1342,6 +1351,10 @@ void KTraceCutter::execute( char *trace_in,
 
       case '#':
         sscanf( line, "%s\n", buffer );
+#ifdef WIN32
+        if( strcmp( buffer, "#Paraver" ) == 0)
+          break;
+#endif
         current_size += fprintf( outfile, "%s\n", buffer );
 
         break;
