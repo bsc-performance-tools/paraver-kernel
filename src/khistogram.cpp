@@ -1055,15 +1055,15 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
       needInit[ winIndex ] = false;
     }
 
-    while ( currentWindow->getEndTime( iRow ) <= fromTime &&
-            currentWindow->getBeginTime( iRow ) != currentWindow->getEndTime( iRow ) )
+    while ( currentWindow->getEndTime( iRow ) <= fromTime )
     {
       currentWindow->calcNext( iRow );
     }
 
     while ( currentWindow->getEndTime( iRow ) < toTime )
     {
-      calculate( iRow, fromTime, toTime, winIndex, data, needInit, calcSemanticStats );
+      if( currentWindow->getBeginTime( iRow ) != currentWindow->getEndTime( iRow ) )
+        calculate( iRow, fromTime, toTime, winIndex, data, needInit, calcSemanticStats );
       currentWindow->calcNext( iRow );
     }
 
@@ -1074,7 +1074,6 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
             currentWindow->getEndTime( iRow ) <= toTime &&
             currentWindow->getEndTime( iRow ) < getEndTime() )
     {
-//      calculate( iRow, fromTime, toTime, winIndex, data, needInit, calcSemanticStats );
       currentWindow->calcNext( iRow );
     }
 
