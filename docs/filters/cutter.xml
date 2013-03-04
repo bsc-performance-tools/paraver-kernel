@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- *********************************************************************** -->
+<!--                    PARAVER TRACE CUTTER CONFIGURATION                   -->
+<!--                             PERFORMANCE TOOLS                           -->
+<!--  Barcelona Supercomputing Center - Centro Nacional de Supercomputacion  -->
+<!-- *********************************************************************** -->
+
+<config>
+  <!-- CUTTER OPTIONS -->
+  <cutter>
+    <tasks>1-256</tasks>
+    <max_trace_size>100</max_trace_size>
+    <by_time>1</by_time>
+    <minimum_time>0</minimum_time>
+    <maximum_time>1000000000</maximum_time>
+    <minimum_time_percentage>0</minimum_time_percentage>
+    <maximum_time_percentage>100</maximum_time_percentage>
+    <original_time>0</original_time>
+    <break_states>1</break_states>
+    <remove_first_states>0</remove_first_states>
+    <remove_last_states>0</remove_last_states>
+  </cutter>
+</config>

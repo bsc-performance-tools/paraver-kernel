@@ -6,35 +6,6 @@
 <!-- *********************************************************************** -->
 
 <config>
-  <!-- CUTTER OPTIONS -->
-  <cutter>
-    <tasks>1-256</tasks>
-    <max_trace_size>100</max_trace_size>
-    <by_time>1</by_time>
-    <minimum_time>0</minimum_time>
-    <maximum_time>1000000000</maximum_time>
-    <minimum_time_percentage>0</minimum_time_percentage>
-    <maximum_time_percentage>100</maximum_time_percentage>
-    <original_time>0</original_time>
-    <break_states>1</break_states>
-    <remove_first_states>0</remove_first_states>
-    <remove_last_states>0</remove_last_states>
-  </cutter>
-  <!-- FILTER OPTIONS -->
-  <filter>
-    <discard_states>0</discard_states>
-    <discard_events>1</discard_events>
-    <discard_communications>1</discard_communications>
-    <states>Running
-      <min_state_time>10000</min_state_time>
-    </states>
-    <types>
-      <type>50000001        <value>34</value>
-      </type>
-      <type>50000002-50000003</type>
-    </types>
-    <comms>2000000</comms>
-  </filter>
   <!-- SOFTWARE COUNTERS OPTIONS -->
   <software_counters>
     <range>
