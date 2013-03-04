@@ -834,6 +834,10 @@ void KTraceOptions::saveXMLFilter( xmlTextWriterPtr &writer )
   rc = xmlTextWriterWriteComment( writer, BAD_CAST " FILTER OPTIONS " );
   rc = xmlTextWriterStartElement( writer, BAD_CAST "filter");
 
+  rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "discard_states", "%d", (int)!get_filter_states() );
+  rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "discard_events", "%d", (int)!get_filter_events() );
+  rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "discard_communications", "%d", (int)!get_filter_comms() );
+
   // STATES SECTION
   rc = xmlTextWriterStartElement( writer, BAD_CAST "states");
 
@@ -855,11 +859,6 @@ void KTraceOptions::saveXMLFilter( xmlTextWriterPtr &writer )
   //rc = xmlTextWriterSetIndent( writer, 1 );
 
   rc = xmlTextWriterEndElement( writer ); // states
-
-
-  rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "discard_states", "%d", (int)!get_filter_states() );
-  rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "discard_events", "%d", (int)!get_filter_events() );
-  rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "discard_communications", "%d", (int)!get_filter_comms() );
 
   // EVENT TYPES SECTION
   // tag isn't written if no type in the list
