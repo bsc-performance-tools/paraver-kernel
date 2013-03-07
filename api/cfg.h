@@ -1092,6 +1092,29 @@ class WindowPixelSize: public TagFunction
 
 };
 
+class WindowLabelsToDraw: public TagFunction
+{
+  public:
+    WindowLabelsToDraw()
+    {}
+
+    virtual ~WindowLabelsToDraw()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
 
 class Analyzer2DCreate: public TagFunction
 {
@@ -1800,6 +1823,30 @@ class Analyzer2DPixelSize: public TagFunction
     {}
 
     virtual ~Analyzer2DPixelSize()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
+
+class Analyzer2DCodeColor: public TagFunction
+{
+  public:
+    Analyzer2DCodeColor()
+    {}
+
+    virtual ~Analyzer2DCodeColor()
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,

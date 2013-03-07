@@ -101,6 +101,7 @@
 #define OLDCFG_TAG_WNDW_DRAW_MODE "window_drawmode"
 #define OLDCFG_TAG_WNDW_DRAW_MODE_ROWS "window_drawmode_rows"
 #define OLDCFG_TAG_WNDW_PIXEL_SIZE "window_pixel_size"
+#define OLDCFG_TAG_WNDW_LABELS_TO_DRAW "window_labels_to_draw"
 
 // HISTOGRAM CFGs TAGS
 #define OLDCFG_TAG_AN2D_NEW "< NEW ANALYZER2D >"
@@ -138,6 +139,7 @@
 #define OLDCFG_TAG_AN2D_MINIMUMGRADIENT "Analyzer2D.MinimumGradient:"
 #define OLDCFG_TAG_AN2D_MAXIMUMGRADIENT "Analyzer2D.MaximumGradient:"
 #define OLDCFG_TAG_AN2D_PIXEL_SIZE "Analyzer2D.PixelSize:"
+#define OLDCFG_TAG_AN2D_CODE_COLOR "Analyzer2D.CodeColor:"
 #define OLDCFG_TAG_AN3D_CONTROLWINDOW "Analyzer2D.3D_ControlWindow:"
 #define OLDCFG_TAG_AN3D_COMPUTEYSCALE "Analyzer3D.ComputeYScale:"
 #define OLDCFG_TAG_AN3D_MINIMUM "Analyzer2D.3D_Minimum:"

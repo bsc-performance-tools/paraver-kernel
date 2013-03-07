@@ -477,6 +477,7 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowDrawMode::printLine( cfgFile, it );
     WindowDrawModeRows::printLine( cfgFile, it );
     WindowPixelSize::printLine( cfgFile, it );
+    WindowLabelsToDraw::printLine( cfgFile, it );
     WindowSelectedFunctions::printLine( cfgFile, it );
     WindowComposeFunctions::printLine( cfgFile, it );
     WindowSemanticModule::printLine( cfgFile, it );
@@ -527,6 +528,7 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DMinimumGradient::printLine( cfgFile, it );
     Analyzer2DMaximumGradient::printLine( cfgFile, it );
     Analyzer2DPixelSize::printLine( cfgFile, it );
+    Analyzer2DCodeColor::printLine( cfgFile, it );
     if ( ( *it )->getThreeDimensions() )
     {
       Analyzer3DControlWindow::printLine( cfgFile, allWindows, it );
@@ -619,6 +621,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_DRAW_MODE]           = new WindowDrawMode();
   cfgTagFunctions[OLDCFG_TAG_WNDW_DRAW_MODE_ROWS]      = new WindowDrawModeRows();
   cfgTagFunctions[OLDCFG_TAG_WNDW_PIXEL_SIZE]          = new WindowPixelSize();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_LABELS_TO_DRAW]      = new WindowLabelsToDraw();
 
   // Histogram options
 
@@ -659,6 +662,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN2D_MINIMUMGRADIENT]      = new Analyzer2DMinimumGradient();
   cfgTagFunctions[OLDCFG_TAG_AN2D_MAXIMUMGRADIENT]      = new Analyzer2DMaximumGradient();
   cfgTagFunctions[OLDCFG_TAG_AN2D_PIXEL_SIZE]           = new Analyzer2DPixelSize();
+  cfgTagFunctions[OLDCFG_TAG_AN2D_CODE_COLOR]           = new Analyzer2DCodeColor();
 
   // 3D Histogram
   cfgTagFunctions[OLDCFG_TAG_AN3D_CONTROLWINDOW]        = new Analyzer3DControlWindow();
@@ -3052,6 +3056,37 @@ void WindowPixelSize::printLine( ofstream& cfgFile,
 }
 
 
+string WindowLabelsToDraw::tagCFG = OLDCFG_TAG_WNDW_LABELS_TO_DRAW;
+
+bool WindowLabelsToDraw::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                 Trace *whichTrace,
+                                 vector<Window *>& windows,
+                                 vector<Histogram *>& histograms )
+{
+  string strLabels;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strLabels, ' ' );
+  istringstream tmpStream( strLabels );
+  PRV_UINT16 labels;
+
+  if ( !( tmpStream >> labels ) )
+    return false;
+
+  windows[ windows.size() - 1 ]->setObjectLabels( ( Window::TObjectLabels )labels );
+
+  return true;
+}
+
+void WindowLabelsToDraw::printLine( ofstream& cfgFile,
+                                 const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_LABELS_TO_DRAW << " " << (*it)->getObjectLabels() << endl;
+}
+
+
 string Analyzer2DCreate::tagCFG = OLDCFG_TAG_AN2D_NEW;
 
 bool Analyzer2DCreate::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -4167,6 +4202,46 @@ void Analyzer2DPixelSize::printLine( ofstream& cfgFile,
                                      const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_PIXEL_SIZE << " " << (*it)->getPixelSize() << endl;
+}
+
+
+string Analyzer2DCodeColor::tagCFG = OLDCFG_TAG_AN2D_CODE_COLOR;
+
+bool Analyzer2DCodeColor::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                     Trace *whichTrace,
+                                     vector<Window *>& windows,
+                                     vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setCodeColor( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setCodeColor( true );
+  else
+    return false;
+
+  return true;
+}
+
+
+void Analyzer2DCodeColor::printLine( ofstream& cfgFile,
+                                     const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_CODE_COLOR << " ";
+  if ( ( *it )->getCodeColor() )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
+
 }
 
 
