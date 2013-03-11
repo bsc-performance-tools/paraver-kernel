@@ -1144,12 +1144,12 @@ void KHistogram::calculate( TObjectOrder iRow,
     vector<bool> filter;
     vector<TSemanticValue> values;
     RecordList::iterator itComm = data->rList->begin();
-    while ( itComm != data->rList->end() &&
+    while ( itComm != data->rList->end()/* &&
             itComm->getTime() >= getBeginTime() &&
-            itComm->getTime() <= getEndTime() )
+            itComm->getTime() <= getEndTime()*/ )
     {
-      if ( !( itComm->getType() & COMM ) /*||
-           !( itComm->getTime() >= fromTime && itComm->getTime() <= toTime )*/
+      if ( !( itComm->getType() & COMM ) ||
+           !( itComm->getTime() >= getBeginTime() && itComm->getTime() <= getEndTime() )
          )
       {
         ++itComm;
