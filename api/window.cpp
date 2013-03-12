@@ -1842,8 +1842,10 @@ void WindowProxy::computeEventsCommsParallel( RecordList *records,
       TObjectOrder partnerObject;
       if ( getLevel() >= WORKLOAD && getLevel() <= THREAD )
         partnerObject = threadObjectToWindowObject( it->getCommPartnerObject() );
-      else
-        partnerObject = cpuObjectToWindowObject( it->getCommPartnerObject() - 1 );
+      else if( getLevel() >= SYSTEM && getLevel() <= NODE )
+        partnerObject = cpuObjectToWindowObject( it->getCommPartnerObject() );
+      else //CPU
+        partnerObject = cpuObjectToWindowObject( it->getCommPartnerObject() ) - 1;
 
       if( ( recType & COMM ) &&
           partnerObject >= beginRow && partnerObject <= endRow && selected[ partnerObject ] &&
