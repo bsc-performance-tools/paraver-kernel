@@ -976,6 +976,9 @@ string HistogramProxy::getRowLabel( TObjectOrder whichRow ) const
 
 string HistogramProxy::getColumnLabel( THistogramColumn whichColumn ) const
 {
+  if( itsCommunicationStat( getCurrentStat() ) )
+    return getRowLabel( ( TObjectOrder ) whichColumn );
+
   return LabelConstructor::histoColumnLabel( whichColumn, controlWindow,
          getControlMin(),
          getControlMax(),
