@@ -116,54 +116,6 @@ static struct t_event_mpit2prv event_mpit2prv[ NUM_MPI_PRV_ELEMENTS ] =
 //(...)
 };
 
-#if 0
-
-#define 	MPITYPE_PTOP   50000001
-#define 	MPITYPE_COLLECTIVE   50000002
-//(...)
-
-#define MPITYPE_PTOP_LABEL         "MPI Point-to-point"
-#define MPITYPE_COLLECTIVE_LABEL   "MPI Collective Comm"
-#define MPITYPE_OTHER_LABEL        "MPI Other"
-//(...)
-
-
-// (...)
-
-
-#define 	MPI_SEND_LABEL   "MPI_Send"
-#define 	MPI_RECV_LABEL   "MPI_Recv"
-#define 	MPI_ISEND_LABEL   "MPI_Isend"
-#define 	MPI_IRECV_LABEL   "MPI_Irecv"
-#define 	MPI_WAIT_LABEL   "MPI_Wait"
-#define 	MPI_WAITALL_LABEL   "MPI_Waitall"
-#define 	MPI_BCAST_LABEL   "MPI_Bcast"
-#define 	MPI_BARRIER_LABEL   "MPI_Barrier"
-#define 	MPI_REDUCE_LABEL   "MPI_Reduce"
-#define 	MPI_ALLREDUCE_LABEL   "MPI_Allreduce"
-#define   MPI_ALLTOALL_LABEL                "MPI_Alltoall"
-#define   MPI_ALLTOALLV_LABEL                "MPI_Alltoallv"
-#define 	MPI_GATHER_LABEL   "MPI_Gather"
-#define 	MPI_GATHERV_LABEL   "MPI_Gatherv"
-#define 	MPI_SCATTER_LABEL   "MPI_Scatter"
-#define 	MPI_SCATTERV_LABEL   "MPI_Scatterv"
-#define 	MPI_ALLGATHER_LABEL   "MPI_Allgather"
-#define 	MPI_ALLGATHERV_LABEL   "MPI_Allgatherv"
-// (...)
-
-enum MPIVal
-{
-  MPI_END_VAL = 0,
-  MPI_SEND_VAL, MPI_RECV_VAL, MPI_ISEND_VAL,
-  MPI_IRECV_VAL, MPI_WAIT_VAL, MPI_WAITALL_VAL, MPI_BCAST_VAL,
-  MPI_BARRIER_VAL, MPI_REDUCE_VAL, MPI_ALLREDUCE_VAL, MPI_ALLTOALL_VAL,
-  MPI_ALLTOALLV_VAL, MPI_GATHER_VAL, MPI_GATHERV_VAL, MPI_SCATTER_VAL,
-  MPI_SCATTERV_VAL, MPI_ALLGATHER_VAL, MPI_ALLGATHERV_VAL
-};
-// (...)
-
-// (...)
-#endif
 
 /*
  * Default Paraver Options

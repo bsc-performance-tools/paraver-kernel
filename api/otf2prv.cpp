@@ -41,7 +41,7 @@ using namespace std;
 const string OTF2_VERSION_STRING = "0.29"; // added -t table
 
 
-//#include <scorep_utility/SCOREP_UtilityTypes.h>
+#include <scorep_utility/SCOREP_UtilityTypes.h>
 #include <otf2/otf2.h>
 #include "otf2prv.h"
 
@@ -938,41 +938,6 @@ SCOREP_Error_Code GlobDefLocationHandler( void*             userData,
   OTF2_Reader_CloseDefReader( transData->reader, def_reader );
 
   OTF2_DefReaderCallbacks_Delete( local_def_callbacks );
-
-#if 0
-      // LOCAL DEFINITIONS
-      OTF2_DefReaderCallbacks* local_def_callbacks = OTF2_DefReaderCallbacks_New();
-
-      OTF2_DefReaderCallbacks_SetClockOffsetCallback( local_def_callbacks, GlobDefClockOffsetHandler ); // ??
-      for ( size_t i = 0; i < SCOREP_Vector_Size( user_data.locations_to_read ); i++ )
-      {
-        uint64_t* location_item      = SCOREP_Vector_At( user_data.locations_to_read, i );
-        uint64_t  locationIdentifier = *location_item;
-
-        OTF2_EvtReader* evt_reader = OTF2_Reader_GetEvtReader( reader,
-                                                               locationIdentifier );
-
-        /* Also open a definition reader and read all local definitions. */
-        OTF2_DefReader* def_reader = OTF2_Reader_GetDefReader( reader,
-                                                               locationIdentifier );
-        status = OTF2_Reader_RegisterDefCallbacks( reader,
-                                                        def_reader,
-                                                        local_def_callbacks,
-                                                        &locationIdentifier );
-
-        uint64_t definitions_read = 0;
-        status = OTF2_Reader_ReadAllLocalDefinitions( reader,
-                                                      def_reader,
-                                                      &definitions_read );
-
-        /* Close def reader, it is no longer useful and occupies memory */
-        status = OTF2_Reader_CloseDefReader( reader, def_reader );
-      }
-
-      OTF2_DefReaderCallbacks_Delete( local_def_callbacks );
-#endif
-
-
 
 /*
     otf2Handler_add_location( data, locationID, name );
@@ -2409,54 +2374,8 @@ bool translate( const string &strPRVTrace,
       }
 */
 
-#if 0
-      // LOCAL DEFINITIONS
-      OTF2_DefReaderCallbacks* local_def_callbacks = OTF2_DefReaderCallbacks_New();
-
-      OTF2_DefReaderCallbacks_SetClockOffsetCallback( local_def_callbacks, GlobDefClockOffsetHandler ); // ??
-      for ( size_t i = 0; i < SCOREP_Vector_Size( user_data.locations_to_read ); i++ )
-      {
-        uint64_t* location_item      = SCOREP_Vector_At( user_data.locations_to_read, i );
-        uint64_t  locationIdentifier = *location_item;
-
-        OTF2_EvtReader* evt_reader = OTF2_Reader_GetEvtReader( reader,
-                                                               locationIdentifier );
-
-        /* Also open a definition reader and read all local definitions. */
-        OTF2_DefReader* def_reader = OTF2_Reader_GetDefReader( reader,
-                                                               locationIdentifier );
-        status = OTF2_Reader_RegisterDefCallbacks( reader,
-                                                        def_reader,
-                                                        local_def_callbacks,
-                                                        &locationIdentifier );
-
-        uint64_t definitions_read = 0;
-        status = OTF2_Reader_ReadAllLocalDefinitions( reader,
-                                                      def_reader,
-                                                      &definitions_read );
-
-        /* Close def reader, it is no longer useful and occupies memory */
-        status = OTF2_Reader_CloseDefReader( reader, def_reader );
-      }
-
-      OTF2_DefReaderCallbacks_Delete( local_def_callbacks );
-#endif
-
-
-
       transData->resourcesModel->setReady( true );
       transData->processModel->setReady( true );
-
-#if 0
-      // WRITE HEADER
-      writeHeaderTimes( transData );
-      writeHeaderResourceModel( transData );
-      writeHeaderProcessModel( transData );
-      // writeHeaderCommunicators( transData ); // must be written by proccess model
-
-      writeComment( transData );
-#endif
-
 
       // TRANSLATE EVENTS
       // Initialize callbacks for events
@@ -2527,27 +2446,8 @@ bool translate( const string &strPRVTrace,
         file << stateRecord.str() << std::endl; // change to Trace write.
       }
 
-      // Summarized log of events not translated
+      // TODO: Summarized log of events not translated
 
-      // WRITE PCF
-
-      // WRITE ROW
-
-      /*
-      // old algorithm
-
-      Initialize_Translation( parameters ))
-      Translate(  parameters->otf_trace_name, Get_EVENTS_Name( parameters ), tmp_fd, pcf_fd );
-      Generate_PCF( sym_otf_info, pcf_fd );
-      Generate_Paraver_Header( header, prv_fd );
-      Dump_Communications( comms );
-      Merge_Files( prv_fd, tmp_fd, comm_fd );
-      stats.otf_unmatched_sends    = Log_Unmatched_Comms( comms, ERROR_SEND );
-      stats.otf_unmatched_receives = Log_Unmatched_Comms( unmatched_receives, ERROR_RECEIVE );
-      Print_Statistics( &stats, parameters, argc, argv );
-      Print_Otf_Symbolic_Info( sym_otf_info   );
-      Finish( parameters );
-      */
       file.close();
 
       translationReady = true;
