@@ -34,6 +34,7 @@
 #include <stack>
 #include <map>
 #include <wordexp.h>
+#include "event_encoding.h"
 
 
 using namespace std;
@@ -147,15 +148,6 @@ class TranslationData
   RowLabels     *rowLabels;      // to the Trace*
   Trace         *trace;
 
-  // PRV LOCAL MAPS --> TO THE API
-  map< string, int > PRVEvent_ValueLabel2Value; //
-  map< string, int > PRVEvent_TypeLabel2Type;   //
-  //map< int, int >    PRVEvent_Value2Type;     // N - 1
-  map< string, int >    PRVEvent_ValueLabel2Type;     // N - 1
-
-  map< uint32_t, int > OTF2Region2PRVEventValue;
-  map< uint32_t, int > OTF2Region2PRVEventType;
-
   map< uint32_t, uint32_t > regionName;// RegionId -> NameID
   map< string, uint32_t > regionIdent;  // Name -> regionI
 
@@ -165,7 +157,6 @@ class TranslationData
   map< uint32_t, TNodeOrder > systemTreeNode2GlobalNode;
 
   // Once dumpTrace is done, this maps can be deleted.
-  // Here only for cout purposes.
   map< uint64_t, TTaskOrder >   location2Task;
   map< uint64_t, TThreadOrder > location2Thread;
   map< uint64_t, TCPUOrder >    location2CPU;
@@ -418,7 +409,7 @@ void loadExternalTranslationTable( const string &strExternalTrace,
              line.length() == 0 )
           continue;
 
-        transData->myLog.write(  "[MSK] External definition ", line);
+        transData->myLog.write(  "[MSK] External definition", line);
 
         istringstream auxLine( line );
         getline( auxLine, token, '"' );
@@ -481,11 +472,11 @@ SCOREP_Error_Code LocalDefClockOffsetHandler( void*    userData,
   transData->localDefClockOffset[ transData->currentLocation ].offset = offset;
   transData->localDefClockOffset[ transData->currentLocation ].stddev = stddev;
 */
-  transData->myLog.write(  "[DEF][LOCAL] CLOCK OFFSET : " );
-  transData->myLog.write(  "             Location ID  : ", transData->currentLocation );
-  transData->myLog.write(  "             Clock Time   : ", time );
-  transData->myLog.write(  "             Clock Offset : ", offset );
-  transData->myLog.write(  "             Clock StDev  : ", stddev );
+  transData->myLog.write(  "[DEF][LOCAL] CLOCK OFFSET" );
+  transData->myLog.write(  "             Location ID ", transData->currentLocation );
+  transData->myLog.write(  "             Clock Time  ", time );
+  transData->myLog.write(  "             Clock Offset", offset );
+  transData->myLog.write(  "             Clock StDev ", stddev );
 
   return SCOREP_SUCCESS;
 }
@@ -544,19 +535,8 @@ SCOREP_Error_Code GlobDefCallsiteHandler( void*    userData,
   TranslationData *transData = ( TranslationData * )userData;
 
   transData->myLog.write(  "[DEF-???] : CALLSITE" );
-  /*
-    otf2_print_data* data = ( otf2_print_data* )userData;
 
-    printf( "%-*s %12u  File: %s, Line: %u, "
-            "Region entered: %s, Region left: %s\n",
-            otf2_DEF_COLUMN_WIDTH, "CALLSITE",
-            callsite_identifier,
-            otf2_print_get_def_name( data->strings, source_file ),
-            line_number,
-            otf2_print_get_def_name( data->regions, region_entered ),
-            otf2_print_get_def_name( data->regions, region_left ) );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -568,16 +548,8 @@ SCOREP_Error_Code GlobDefCallpathHandler( void*    userData,
   TranslationData *transData = ( TranslationData * )userData;
 
   transData->myLog.write(  "[DEF-???] : CALLPATH" );
-  /*
-    otf2_print_data* data = ( otf2_print_data* )userData;
 
-    printf( "%-*s %12u  Region: %s, Parent: %s\n",
-            otf2_DEF_COLUMN_WIDTH, "CALLPATH",
-            callpath_identifier,
-            otf2_print_get_def_name( data->regions, region_identifier ),
-            otf2_print_get_id( parent_callpath ) );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -591,26 +563,7 @@ SCOREP_Error_Code GlobDefMpiCommHandler( void*    userData,
 
   transData->myLog.write(  "[DEF-???] : MPICOMM" );
 
-  /*
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    otf2_print_add_mpi_comm( data,
-                             comm_id,
-                             comm_name );
-
-    if ( !otf2_GLOBDEFS )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    printf( "%-*s %12u  Name: %s, Group: %s, Parent Communicator: %s\n",
-            otf2_DEF_COLUMN_WIDTH, "MPI_COMM",
-            comm_id,
-            otf2_print_get_def_name( data->strings, comm_name ),
-            otf2_print_get_def_name( data->groups, group_id ),
-            otf2_print_get_def_name( data->mpi_comms, comm_parent ) );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -819,7 +772,7 @@ SCOREP_Error_Code DefClockOffsetHandler( void*    userData,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  transData->myLog.write(  "[DEF-???] : " );
+  transData->myLog.write(  "[DEF-???] " );
 
   return SCOREP_SUCCESS;
 }
@@ -971,7 +924,7 @@ SCOREP_Error_Code GlobDefLocationHandler( void*             userData,
    return SCOREP_SUCCESS;
 }
 
-// *** otf2->prv translation concepts ***
+
 // regionID: Every Entry/Leave record
 // name: Key to the label used
 // regionType: otf2-print uses it as groupType?
@@ -988,44 +941,53 @@ SCOREP_Error_Code GlobDefRegionHandler( void*           userData,
   ++regionID;
   EventList *tmpList = EventList::getInstance();
 
+  // Anything not registered in EventList will be coded as USER_FUNCTION and
+  //   with state STATE_RUNNING.
   if( tmpList->getByStringID( transData->symbols[ name ] ) == NULL )
   {
     tmpList->insert( transData->symbols[ name ], false, 0, USER_FUNCTION, regionID,
                      USER_FUNCTION_LABEL, transData->symbols[ name ], true, STATE_RUNNING );
-  }
+    transData->myLog.write(  "[DEF] UNREGISTERED REGION; taken as USER FUNCTION", transData->symbols[ name ] );
 
-  map< string, int >::iterator it;
-
-  it = transData->PRVEvent_ValueLabel2Value.find( transData->symbols[ name ] );
-  if (  ( it != transData->PRVEvent_ValueLabel2Value.end() ) )
-  {
-    // TYPE symbolic - VALUE symbolic
-    transData->OTF2Region2PRVEventValue[ regionID ] = it->second;
-    transData->OTF2Region2PRVEventType[ regionID ] =
-            transData->PRVEvent_ValueLabel2Type[ transData->symbols[ name ] ];
-    transData->myLog.write(  "[DEF] REGION as VALUE: ", transData->symbols[ name ] );
   }
   else
   {
-    it = transData->PRVEvent_TypeLabel2Type.find( transData->symbols[ name ] );
+    transData->myLog.write(  "[DEF] REGION", transData->symbols[ name ] );
+  }
 
-    if ( it != transData->PRVEvent_TypeLabel2Type.end() )
-    {
+//D  map< string, int >::iterator it;
+
+//D  it = transData->PRVEvent_ValueLabel2Value.find( transData->symbols[ name ] );
+//D  if (  ( it != transData->PRVEvent_ValueLabel2Value.end() ) )
+//D  {
+    // TYPE symbolic - VALUE symbolic
+// not used
+//    transData->OTF2Region2PRVEventValue[ regionID ] = it->second;
+//    transData->OTF2Region2PRVEventType[ regionID ] =
+//            transData->PRVEvent_ValueLabel2Type[ transData->symbols[ name ] ];
+//    transData->myLog.write(  "[DEF] REGION as VALUE: ", transData->symbols[ name ] );
+//D  }
+//D  else
+//D  {
+//D    it = transData->PRVEvent_TypeLabel2Type.find( transData->symbols[ name ] );
+
+//D    if ( it != transData->PRVEvent_TypeLabel2Type.end() )
+//D    {
       // TYPE symbolic - VALUE variable
-      transData->OTF2Region2PRVEventType[ regionID ] = it->second;
-      transData->myLog.write(  "[DEF] REGION as TYPE : ", transData->symbols[ name ] );
-    }
-    else
-    {
+//      transData->OTF2Region2PRVEventType[ regionID ] = it->second;
+//      transData->myLog.write(  "[DEF] REGION as TYPE : ", transData->symbols[ name ] );
+//D    }
+//D    else
+//D    {
       // Careful with colision
       // TODO: Substitute by API call
       // transData->PRVEvent_TypeLabel2Value[ transData->symbols[ name ] ] = getNewType( transData->symbols[ name ] );
-      transData->PRVEvent_TypeLabel2Type[ transData->symbols[ name ] ] = USER_FUNCTION;
-      transData->OTF2Region2PRVEventType[ regionID ] = USER_FUNCTION;
-      transData->myLog.write(  "[DEF] REGION as USER FUNCTION : ", transData->symbols[ name ] );
-    }
+//D      transData->PRVEvent_TypeLabel2Type[ transData->symbols[ name ] ] = USER_FUNCTION;
+//      transData->OTF2Region2PRVEventType[ regionID ] = USER_FUNCTION;
+//D      transData->myLog.write(  "[DEF] REGION as USER FUNCTION : ", transData->symbols[ name ] );
+//D    }
 
-  }
+//D  }
 
   transData->regionName[ regionID ] = name;
   transData->regionIdent[ transData->symbols[ name ] ] = regionID;
@@ -1046,7 +1008,7 @@ SCOREP_Error_Code GlobDefAttributeHandler( void*       userData,
   // The translator only uses otf2_msg_match
   // transData->attributeType[ attributeID ] = OTF2_TypeID; // Needed?
 
-  transData->myLog.write(  "[DEF] ATTRIBUTE : ", transData->symbols[ name ], attributeID );
+  transData->myLog.write(  "[DEF] ATTRIBUTE", transData->symbols[ name ], attributeID );
 
   return  SCOREP_SUCCESS;
 }
@@ -1083,28 +1045,13 @@ SCOREP_Error_Code BufferFlushHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: BufferFlush" << endl;
 
   transData->myLog.write(  "[EVT-???] : BufferFlush" );
 
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Stop Time: %" PRIu64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "BUFFER_FLUSH",
-            locationID, time, stopTime );
-
-    otf2_print_attributes( data, attributes );
-    */
-
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1116,28 +1063,13 @@ SCOREP_Error_Code MeasurementOnOffHandler( uint64_t             locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: MeasurementOnOff" << endl;
 
   transData->myLog.write(  "[EVT-???] : MeasurementOnOff" );
 
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Mode: %s\n",
-            otf2_EVENT_COLUMN_WIDTH, "MEASUREMENT_ON_OFF",
-            locationID, time,
-            otf2_print_get_measurement_mode( mode ) );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1153,34 +1085,13 @@ SCOREP_Error_Code MpiIsendHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: MpiIsend" << endl;
 
   transData->myLog.write(  "[EVT-???] : MpiIsend" );
 
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Receiver: %u, Communicator: %s, "
-            "Tag: %u, Length: %" PRIu64 ", Request: %" PRIu64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "MPI_ISEND",
-            locationID, time,
-            receiver,
-            otf2_print_get_def_name( data->mpi_comms, communicator ),
-            msgTag,
-            msgLength,
-            requestID );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1192,28 +1103,13 @@ SCOREP_Error_Code MpiIsendCompleteHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: MpiIsendComplete" << endl;
 
   transData->myLog.write(  "[EVT-???] : MpiIsendComplete" );
 
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Request: %" PRIu64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "MPI_ISEND_COMPLETE",
-            locationID, time,
-            requestID );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1225,28 +1121,13 @@ SCOREP_Error_Code MpiIrecvRequestHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: MpiIrecvRequest" << endl;
 
   transData->myLog.write(  "[EVT-???] : MpiIrecvRequest" );
 
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Request: %" PRIu64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "MPI_IRECV_REQUEST",
-            locationID, time,
-            requestID );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1261,31 +1142,13 @@ SCOREP_Error_Code MpiRecvHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: MpiRecv" << endl;
 
   transData->myLog.write(  "[EVT-???] : MpiRecv" );
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
 
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Sender: %u, communicator: %s, "
-            "Tag: %u, Length: %" PRIu64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "MPI_RECV",
-            locationID, time,
-            sender,
-            otf2_print_get_def_name( data->mpi_comms, communicator ),
-            msgTag,
-            msgLength );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1301,33 +1164,13 @@ SCOREP_Error_Code MpiIrecvHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: MpiIrecv" << endl;
 
   transData->myLog.write(  "[EVT-???] : MpiIrecv" );
 
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Sender: %u, Communicator: %s, "
-            "Tag: %u, Length: %" PRIu64 ", Request: %" PRIu64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "MPI_IRECV",
-            locationID, time,
-            sender,
-            otf2_print_get_def_name( data->mpi_comms, communicator ),
-            msgTag,
-            msgLength,
-            requestID );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1339,28 +1182,13 @@ SCOREP_Error_Code MpiRequestTestHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: MpiRequestTest" << endl;
 
   transData->myLog.write(  "[EVT-???] : MpiRequestTest" );
 
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Request: %" PRIu64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "MPI_REQUEST_TEST",
-            locationID, time,
-            requestID );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1372,28 +1200,13 @@ SCOREP_Error_Code MpiRequestCancelledHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: MpiRequestCancelled" << endl;
 
   transData->myLog.write(  "[EVT-???] : MpiRequestCancelled" );
 
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Request: %" PRIu64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "MPI_REQUEST_CANCELLED",
-            locationID, time,
-            requestID );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1404,26 +1217,13 @@ SCOREP_Error_Code MpiCollectiveBeginHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: MpiCollectiveBegin" << endl;
 
   transData->myLog.write(  "[EVT-???] : MpiCollectiveBegin" );
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
 
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "MPI_COLLECTIVE_BEGIN",
-            locationID, time );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1439,33 +1239,13 @@ SCOREP_Error_Code MpiCollectiveEndHandler( uint64_t               locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: MpiCollectiveEnd" << endl;
 
   transData->myLog.write(  "[EVT-???] : MpiCollectiveEnd" );
 
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Type: %s, Communicator: %s, "
-            "Root: %s, Sent: %" PRIu64 ", Received: %" PRIu64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "MPI_COLLECTIVE_END",
-            locationID, time,
-            otf2_print_get_mpi_collective_type( type ),
-            otf2_print_get_def_name( data->mpi_comms, commId ),
-            otf2_print_get_id( root ),
-            sizeSent,
-            sizeReceived );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1477,28 +1257,13 @@ SCOREP_Error_Code OmpForkHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: OmpFork" << endl;
 
   transData->myLog.write(  "[EVT-???] : OmpFork" );
 
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  # Requested Threads: %u\n",
-            otf2_EVENT_COLUMN_WIDTH, "OPENMP_FORK",
-            locationID, time,
-            numberOfRequestedThreads );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1509,27 +1274,13 @@ SCOREP_Error_Code OmpJoinHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: OmpJoin" << endl;
 
   transData->myLog.write(  "[EVT-???] : OmpJoin" );
 
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "OPENMP_JOIN",
-            locationID, time );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1542,30 +1293,13 @@ SCOREP_Error_Code OmpAcquireLockHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: OmpAcquireLock" << endl;
 
   transData->myLog.write(  "[EVT-???] : OmpAcquireLock" );
 
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Lock: %u, "
-            "Acquisition Order: %u\n",
-            otf2_EVENT_COLUMN_WIDTH, "OPENMP_ACQUIRE_LOCK",
-            locationID, time,
-            lockID,
-            acquisitionOrder );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1578,30 +1312,13 @@ SCOREP_Error_Code OmpReleaseLockHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: OmpReleaseLock" << endl;
 
   transData->myLog.write(  "[EVT-???] : OmpReleaseLock" );
 
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Lock: %u, "
-            "Acquisition Order: %u\n",
-            otf2_EVENT_COLUMN_WIDTH, "OPENMP_RELEASE_LOCK",
-            locationID, time,
-            lockID,
-            acquisitionOrder );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1613,28 +1330,13 @@ SCOREP_Error_Code OmpTaskCreateHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: OmpTaskCreate" << endl;
 
   transData->myLog.write(  "[EVT-???] : OmpTaskCreate" );
 
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Task: %" PRIu64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "OPENMP_TASK_CREATE",
-            locationID, time,
-            taskID );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1646,28 +1348,13 @@ SCOREP_Error_Code OmpTaskSwitchHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: OmpTaskSwitch" << endl;
 
   transData->myLog.write(  "[EVT-???] : OmpTaskSwitch" );
 
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Task: %" PRIu64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "OPENMP_TASK_SWITCH",
-            locationID, time,
-            taskID );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1679,28 +1366,13 @@ SCOREP_Error_Code OmpTaskCompleteHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: OmpTaskComplete" << endl;
 
   transData->myLog.write(  "[EVT-???] : OmpTaskComplete" );
 
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Task: %" PRIu64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "OPENMP_TASK_COMPLETE",
-            locationID, time,
-            taskID );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1715,26 +1387,13 @@ SCOREP_Error_Code MetricHandler( uint64_t                locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: Metric" << endl;
 
   transData->myLog.write(  "[EVT-???] : Metric" );
+
   /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
-
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Metric: %s, "
-            "%u Values: ",
-            otf2_EVENT_COLUMN_WIDTH, "METRIC",
-            locationID, time,
-            otf2_print_get_id( metricID ),
-            numberOfMetrics );
-
     const char* sep = "";
     for ( uint8_t i = 0; i < numberOfMetrics; i++ )
     {
@@ -1759,11 +1418,9 @@ SCOREP_Error_Code MetricHandler( uint64_t                locationID,
         }
         sep = ", ";
     }
-    printf( "\n" );
+  */
 
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1776,29 +1433,13 @@ SCOREP_Error_Code ParameterStringHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: ParameterString" << endl;
 
   transData->myLog.write(  "[EVT-???] : ParameterString" );
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
 
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Parameter: %s, "
-            "Value: %s\n",
-            otf2_EVENT_COLUMN_WIDTH, "PARAMETER_STRING",
-            locationID, time,
-            otf2_print_get_def_name( data->parameters, parameter ),
-            otf2_print_get_def_name( data->strings, value ) );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1811,29 +1452,13 @@ SCOREP_Error_Code ParameterIntHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: ParameterInt" << endl;
 
   transData->myLog.write(  "[EVT-???] : ParameterInt" );
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
 
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Parameter: %s, "
-            "Value: %" PRIi64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "PARAMETER_INT64",
-            locationID, time,
-            otf2_print_get_def_name( data->parameters, parameter ),
-            value );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1846,29 +1471,13 @@ SCOREP_Error_Code ParameterUnsignedIntHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: ParameterUnsignedInt" << endl;
 
   transData->myLog.write(  "[EVT-???] : ParameterUnsignedInt" );
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
 
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "  Parameter: %s, "
-            "Value: %" PRIu64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "PARAMETER_UINT64",
-            locationID, time,
-            otf2_print_get_def_name( data->parameters, parameter ),
-            value );
-
-    otf2_print_attributes( data, attributes );
-*/
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1879,26 +1488,13 @@ SCOREP_Error_Code UnknownHandler( uint64_t            locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  time = correctBeginTime( transData, time );
+  // time = correctBeginTime( transData, time );
 
   *transData->PRVFile << "# OTF2 event not translated: Unknown" << endl;
 
   transData->myLog.write(  "[EVT-???] : Unknown" );
-  /*
-    if ( time < otf2_MINTIME || time > otf2_MAXTIME )
-    {
-        return SCOREP_SUCCESS;
-    }
 
-    otf2_print_data* data = ( otf2_print_data* )userData;
-
-    printf( "%-*s %15" PRIu64 " %20" PRIu64 "\n",
-            otf2_EVENT_COLUMN_WIDTH, "UNKNOWN",
-            locationID, time );
-
-    otf2_print_attributes( data, attributes );
-    */
-    return SCOREP_SUCCESS;
+  return SCOREP_SUCCESS;
 }
 
 
@@ -1915,7 +1511,7 @@ SCOREP_Error_Code MpiSendHandler( uint64_t            locationID,
 
   time = correctBeginTime( transData, time );
 
-  transData->myLog.write(  "[EVT] MpiSend : ", locationID, receiver );
+  transData->myLog.write(  "[EVT] MpiSend", locationID, receiver );
 
   if ( OTF2_AttributeList_GetNumberOfElements( attributes ) > 0 )
   {
@@ -2016,16 +1612,13 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
     eventRecord << dec;
     eventRecord.precision( 0 );
 
-//*transData->PRVFile << "Location ID: " << locationID << endl;
     eventRecord << "2" << ":";
     eventRecord << transData->location2CPU[ locationID ] << ":"; // CPU
     eventRecord << transData->processModel->totalApplications() << ":"; // APP
     eventRecord << transData->location2Task[ locationID ] << ":"; // TASK
 
     eventRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
-    // eventRecord << time << ":";
     eventRecord << time << ":";
-    // eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":";
     eventRecord << evtDesc->getType() << ":";
     eventRecord << evtDesc->getValue();
 
@@ -2089,7 +1682,6 @@ SCOREP_Error_Code LeaveHandler( uint64_t locationID,
     eventRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
 
     eventRecord << time << ":";
-    //eventRecord << transData->PRVEvent_Value2Type[ it->second ] << ":";
     eventRecord << evtDesc->getType() << ":";
 
     eventRecord << "0"; // VALUE
@@ -2154,6 +1746,7 @@ void printVersion()
 
   std::cout << auxDate << std::endl;
 }
+
 
 void printExternalTableExample()
 {
@@ -2278,33 +1871,6 @@ void initialize( TranslationData &transData )
   transData.rowLabels = new RowLabels();
 
   EventList::getInstance()->init();
-
-  transData.myLog.write(  "[REC] Labels for MPI types" );
-  for( uint32_t i = 0; i < NUM_MPI_BLOCK_GROUPS; ++i )
-  {
-    transData.myLog.write(  "[REC]     ", prv_block_groups[ i ].label, prv_block_groups[ i ].type );
-    transData.PRVEvent_TypeLabel2Type[ prv_block_groups[ i ].label ] = prv_block_groups[ i ].type;
-  }
-
-  transData.myLog.write(  "[REC] Labels for MPI values" );
-  for( uint32_t i = 0; i < NUM_MPI_PRV_ELEMENTS; ++i )
-  {
-    transData.PRVEvent_ValueLabel2Value[ string( mpi_prv_val_label[ i ].label ) ] = mpi_prv_val_label[ i ].value;
-    transData.myLog.write(  "[REC]     ", mpi_prv_val_label[ i ].label, mpi_prv_val_label[ i ].value );
-    transData.PRVEvent_ValueLabel2Type[ string( mpi_prv_val_label[ i ].label ) ] =
-            event_mpit2prv[ mpi_prv_val_label[ i ].value ].tipus_prv;
-    transData.myLog.write(  "[REC]     ",
-              mpi_prv_val_label[ i ].label,
-              event_mpit2prv[ mpi_prv_val_label[ i ].value ].tipus_prv );
-  }
-/*
-  transData.myLog.write(  "[REC] Declare values of every type" );
-  for( uint32_t i = 0; i < NUM_MPI_PRV_ELEMENTS; ++i )
-  {
-    transData.myLog.write(  "[REC]     ", event_mpit2prv[ i ].tipus_prv, event_mpit2prv[ i ].valor_prv );
-    transData.PRVEvent_ValueLabel2Type[ event_mpit2prv[ i ].valor_prv ] = event_mpit2prv[ i ].tipus_prv;
-  }
-  */
 }
 
 
@@ -2361,27 +1927,10 @@ bool translate( const string &strPRVTrace,
       uint64_t definitions_read = 0;
       OTF2_Reader_ReadAllGlobalDefinitions( reader, global_def_reader, &definitions_read );
 
-/*
-      // LOG LOCAL DEFINITIONS
-      for( map< uint64_t, LocalDefClockOffsetData >::iterator it = transData->localDefClockOffset.begin();
-              it != transData->localDefClockOffset.end(); ++it )
-      {
-        transData->myLog.write(  "[DEF][LOCAL] CLOCK OFFSET : " );
-        transData->myLog.write(  "[DEF][LOCAL] Location ID  : ", it->first );
-        transData->myLog.write(  "             Clock Time   : ", it->second.time );
-        transData->myLog.write(  "             Clock Offset : ", it->second.offset );
-        transData->myLog.write(  "             Clock StDev  : ", it->second.stddev );
-      }
-*/
-
       transData->resourcesModel->setReady( true );
       transData->processModel->setReady( true );
 
       // TRANSLATE EVENTS
-      // Initialize callbacks for events
-      // Write events
-      // Read states
-      // Read communications
       OTF2_GlobalEvtReader* global_evt_reader = OTF2_Reader_GetGlobalEvtReader( reader );
       OTF2_GlobalEvtReaderCallbacks* event_callbacks = OTF2_GlobalEvtReaderCallbacks_New();
 
@@ -2475,6 +2024,7 @@ std::string buildPRVTraceName( const string &strOTF2Trace, const string &strPRVT
   return auxPRVTrace;
 }
 
+
 std::string buildPCFFileName( const string &strOTF2Trace, const string &strPRVTrace )
 {
   std::string auxPCFFileName( strPRVTrace );
@@ -2490,6 +2040,7 @@ std::string buildPCFFileName( const string &strOTF2Trace, const string &strPRVTr
 
   return auxPCFFileName;
 }
+
 
 struct color_t states_inf[STATES_NUMBER] = {
   {STATE_0, STATE0_LBL, STATE0_COLOR},
@@ -2512,6 +2063,7 @@ struct color_t states_inf[STATES_NUMBER] = {
   {STATE_17, STATE17_LBL, STATE17_COLOR}
 };
 
+
 struct color_t gradient_inf[GRADIENT_NUMBER] = {
   {GRADIENT_0, GRADIENT0_LBL, GRADIENT0_COLOR},
   {GRADIENT_1, GRADIENT1_LBL, GRADIENT1_COLOR},
@@ -2530,6 +2082,7 @@ struct color_t gradient_inf[GRADIENT_NUMBER] = {
   {GRADIENT_14, GRADIENT14_LBL, GRADIENT14_COLOR}
 };
 
+
 void Paraver_state_labels( std::fstream& file )
 {
   int i;
@@ -2542,6 +2095,7 @@ void Paraver_state_labels( std::fstream& file )
 
   LET_SPACES( file );
 }
+
 
 void Paraver_state_colors( std::fstream& file )
 {
@@ -2557,6 +2111,7 @@ void Paraver_state_colors( std::fstream& file )
   LET_SPACES( file );
 }
 
+
 void Paraver_gradient_colors( std::fstream& file )
 {
   int i;
@@ -2571,6 +2126,7 @@ void Paraver_gradient_colors( std::fstream& file )
   LET_SPACES( file );
 }
 
+
 void Paraver_gradient_names( std::fstream& file )
 {
   int i;
@@ -2581,6 +2137,7 @@ void Paraver_gradient_names( std::fstream& file )
 
   LET_SPACES( file );
 }
+
 
 void Paraver_write_events( std::fstream& file, vector<EventDescription *>& usedEvents )
 {
@@ -2607,6 +2164,7 @@ void Paraver_write_events( std::fstream& file, vector<EventDescription *>& usedE
     }
   }
 }
+
 
 void writePCFFile( string strPCFFileName, vector<EventDescription *>& usedEvents )
 {
@@ -2644,6 +2202,7 @@ void writePCFFile( string strPCFFileName, vector<EventDescription *>& usedEvents
 
   file.close();
 }
+
 
 // *****************************************************************************
 // MAIN
