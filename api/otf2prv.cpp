@@ -36,13 +36,11 @@
 #include <wordexp.h>
 #include "event_encoding.h"
 
-
 using namespace std;
 
-const string OTF2_VERSION_STRING = "0.29"; // added -t table
+const string OTF2_VERSION_STRING = "0.30";
 
-
-#include <scorep_utility/SCOREP_UtilityTypes.h>
+//#include <scorep_utility/SCOREP_UtilityTypes.h>
 #include <otf2/otf2.h>
 #include "otf2prv.h"
 
