@@ -38,9 +38,9 @@
 
 using namespace std;
 
-const string OTF2_VERSION_STRING = "0.30";
+const string OTF2_VERSION_STRING = "0.31";
 
-//#include <scorep_utility/SCOREP_UtilityTypes.h>
+#include <scorep_utility/SCOREP_UtilityTypes.h>
 #include <otf2/otf2.h>
 #include "otf2prv.h"
 
@@ -105,17 +105,7 @@ class TranslationLog
     ~TranslationLog() {};
 
     void enableLog( bool whichLogEnabled );
-
-    void write( const string & message );
-    void write( const string & message, const string & value );
-    void write( const string & message, const uint64_t & value );
-    void write( const string & message, const int64_t & value );
-    void write( const string & message, const double & value );
-    void write( const string & message, const uint32_t & value );
-    void write( const string & message, const uint32_t & value1, const uint32_t & value2 );
-    void write( const string & message, const uint64_t & value1, const uint32_t & value2 );
-    void write( const string & message, const uint64_t & value1, const uint64_t & value2 );
-    void write( const string & message1, const string & message2, const uint32_t & value );
+    void write( const string & types, ... );
 
   private:
     bool logEnabled;
@@ -183,131 +173,52 @@ void TranslationLog::enableLog( bool whichLogEnabled )
 }
 
 
-void TranslationLog::write( const string & message )
+void TranslationLog::write( const string & types, ... )
 {
   if ( logEnabled )
   {
-    (*logFile) << message << std::endl;
-  }
-}
+    va_list paramsList;
 
+    va_start( paramsList, types );
 
-void TranslationLog::write( const string & message, const string & value )
-{
-  if ( logEnabled )
-  {
-    (*logFile) << message << ": " << value << std::endl;
-  }
-}
+    for( size_t i = 0; i < types.length(); ++i )
+    {
+      // Type recognition and printing
+      stringstream aux;
+      switch ( types[i] )
+      {
+        case 's':
+          (*logFile) << va_arg( paramsList, const char* );
+          break;
+        case 'u':
+          (*logFile) << va_arg( paramsList, uint32_t );
+          break;
+        case 'U':
+          (*logFile) << va_arg( paramsList, uint64_t );
+          break;
+        case 'i':
+          (*logFile) << va_arg( paramsList, int32_t );
+          break;
+        case 'I':
+          (*logFile) << va_arg( paramsList, int64_t );
+          break;
+        case 'd':
+          aux << fixed;
+          aux.precision( 4 );
+          (*logFile) << va_arg( paramsList, double );
+          break;
+      }
 
-
-void TranslationLog::write( const string & message, const uint64_t & value )
-{
-  if ( logEnabled )
-  {
-    stringstream aux;
-    aux << value;
-    (*logFile) << message << ": " << aux.str() << std::endl;
-  }
-}
-
-
-void TranslationLog::write( const string & message, const int64_t & value )
-{
-  if ( logEnabled )
-  {
-    stringstream aux;
-    aux << value;
-    (*logFile) << message << ": " << aux.str() << std::endl;
-  }
-}
-
-
-void TranslationLog::write( const string & message, const double & value )
-{
-  if ( logEnabled )
-  {
-    stringstream aux;
-    aux << fixed;
-    aux.precision( 4 );
-    aux << value;
-    (*logFile) << message << ": " << aux.str() << std::endl;
-  }
-}
-
-
-void TranslationLog::write( const string & message, const uint32_t & value )
-{
-  if ( logEnabled )
-  {
-    stringstream aux;
-    aux << value;
-    (*logFile) << message << ": " << aux.str() << std::endl;
-  }
-}
-
-
-void TranslationLog::write( const string & message, const uint32_t & value1, const uint32_t & value2 )
-{
-  if ( logEnabled )
-  {
-    (*logFile) << message << ": ";
-
-    stringstream aux;
-    aux << value1;
-    (*logFile) << aux.str() << " - ";
-
-    stringstream aux2;
-    aux2.clear();
-    aux2 << value2;
-    (*logFile) << aux2.str() << std::endl;
-  }
-}
-
-
-void TranslationLog::write( const string & message, const uint64_t & value1, const uint32_t & value2 )
-{
-  if ( logEnabled )
-  {
-    (*logFile) << message << ": ";
-
-    stringstream aux;
-    aux << value1;
-    (*logFile) << aux.str() << " - ";
-
-    stringstream aux2;
-    aux2.clear();
-    aux2 << value2;
-    (*logFile) << aux2.str() << std::endl;
-  }
-}
-
-
-void TranslationLog::write( const string & message, const uint64_t & value1, const uint64_t & value2 )
-{
-  if ( logEnabled )
-  {
-    (*logFile) << message << ": ";
-
-    stringstream aux;
-    aux << value1;
-    (*logFile) << aux.str() << " - ";
-
-    stringstream aux2;
-    aux2.clear();
-    aux2 << value2;
-    (*logFile) << aux2.str() << std::endl;
-  }
-}
-
-
-void TranslationLog::write( const string & message1, const string & message2, const uint32_t & value )
-{
-  if ( logEnabled )
-  {
-    stringstream aux;
-    aux << value;
-    (*logFile) << message1 << " " << message2 << ": " << aux.str() << std::endl;
+      // Finish line?
+      if ( i == types.length() - 1 )
+      {
+        (*logFile) << std::endl;
+      }
+      else
+      {
+        (*logFile) << " ";
+      }
+    }
   }
 }
 
@@ -407,12 +318,12 @@ void loadExternalTranslationTable( const string &strExternalTrace,
              line.length() == 0 )
           continue;
 
-        transData->myLog.write(  "[MSK] External definition", line);
+        transData->myLog.write( "ss", "[MSK] External definition :", line.c_str() );
 
         istringstream auxLine( line );
         getline( auxLine, token, '"' );
         getline( auxLine, auxOTF2Label, '"' );
-        // transData->myLog.write(  "[MSK] External Token ", token);
+        // transData->myLog.write( "ss", "[MSK] External Token :", token.c_str() );
 
         while( !auxLine.eof() )
         {
@@ -470,11 +381,11 @@ SCOREP_Error_Code LocalDefClockOffsetHandler( void*    userData,
   transData->localDefClockOffset[ transData->currentLocation ].offset = offset;
   transData->localDefClockOffset[ transData->currentLocation ].stddev = stddev;
 */
-  transData->myLog.write(  "[DEF][LOCAL] CLOCK OFFSET" );
-  transData->myLog.write(  "             Location ID ", transData->currentLocation );
-  transData->myLog.write(  "             Clock Time  ", time );
-  transData->myLog.write(  "             Clock Offset", offset );
-  transData->myLog.write(  "             Clock StDev ", stddev );
+  transData->myLog.write( "s", "[DEF][LOCAL] CLOCK OFFSET  :" );
+  transData->myLog.write( "sU", "             Location ID  :", transData->currentLocation );
+  transData->myLog.write( "sU", "             Clock Time   :", time );
+  transData->myLog.write( "sI", "             Clock Offset :", offset );
+  transData->myLog.write( "sd", "             Clock StDev  :", stddev );
 
   return SCOREP_SUCCESS;
 }
@@ -492,32 +403,32 @@ SCOREP_Error_Code GlobDefClockPropertiesHandler( void*    userData,
   if ( timeUnit >= ( 1 / 1E9 ))
   {
     transData->timeUnit = NS;
-    transData->myLog.write(  "[DEF] CLOCK UNIT: NS ", timeUnit );
+    transData->myLog.write( "sd", "[DEF] CLOCK UNIT: NS :", timeUnit );
   }
   else if ( timeUnit >= ( 1 / 1E6 ))
   {
     transData->timeUnit = US;
-    transData->myLog.write(  "[DEF] CLOCK UNIT: US ", timeUnit );
+    transData->myLog.write( "sd", "[DEF] CLOCK UNIT: US :", timeUnit );
   }
   else if ( timeUnit >= (1 / 1E3 ))
   {
     transData->timeUnit = MS;
-    transData->myLog.write(  "[DEF] CLOCK UNIT: MS ", timeUnit );
+    transData->myLog.write( "sd", "[DEF] CLOCK UNIT: MS :", timeUnit );
   }
   else
   {
     transData->timeUnit = SEC;
-    transData->myLog.write(  "[DEF] CLOCK UNIT: S ", timeUnit );
+    transData->myLog.write( "sd", "[DEF] CLOCK UNIT: S :", timeUnit );
   }
 
   transData->timeUnit = NS;
-  transData->myLog.write(  "[DEF] CLOCK UNIT: NS ", timeUnit );
+  transData->myLog.write( "sd", "[DEF] CLOCK UNIT: NS :", timeUnit );
 
   //transData->maxTraceTime = global_offset + trace_length; // ??
   transData->maxTraceTime = trace_length;
   transData->globalOffset = global_offset;
 
-  transData->myLog.write(  "[DEF] CLOCK (max, offset):", trace_length, global_offset );
+  transData->myLog.write( "ssusus", "[DEF] CLOCK (max, offset):", "(", trace_length, ", ", global_offset, ")" );
 
   return SCOREP_SUCCESS;
 }
@@ -532,7 +443,7 @@ SCOREP_Error_Code GlobDefCallsiteHandler( void*    userData,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  transData->myLog.write(  "[DEF-???] : CALLSITE" );
+  transData->myLog.write( "s", "[DEF-???] : CALLSITE" );
 
   return SCOREP_SUCCESS;
 }
@@ -545,7 +456,7 @@ SCOREP_Error_Code GlobDefCallpathHandler( void*    userData,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  transData->myLog.write(  "[DEF-???] : CALLPATH" );
+  transData->myLog.write( "s", "[DEF-???] : CALLPATH" );
 
   return SCOREP_SUCCESS;
 }
@@ -559,7 +470,7 @@ SCOREP_Error_Code GlobDefMpiCommHandler( void*    userData,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  transData->myLog.write(  "[DEF-???] : MPICOMM" );
+  transData->myLog.write( "s", "[DEF-???] : MPICOMM" );
 
   return SCOREP_SUCCESS;
 }
@@ -578,7 +489,7 @@ SCOREP_Error_Code GlobDefMetricMemberHandler( void*           userData,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  transData->myLog.write(  "[DEF-???] : METRIC MEMBER" );
+  transData->myLog.write( "s", "[DEF-???] : METRIC MEMBER" );
   /*
     otf2_print_data* data = ( otf2_print_data* )userData;
 
@@ -627,7 +538,7 @@ SCOREP_Error_Code GlobDefMetricClassHandler( void*                 userData,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  transData->myLog.write(  "[DEF-???] : METRIC CLASS" );
+  transData->myLog.write( "s", "[DEF-???] : METRIC CLASS" );
   /*
     otf2_print_data* data = ( otf2_print_data* )userData;
 
@@ -660,7 +571,7 @@ SCOREP_Error_Code GlobDefMetricInstanceHandler( void*            userData,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  transData->myLog.write(  "[DEF-???] : METRIC INSTANCE" );
+  transData->myLog.write( "s", "[DEF-???] : METRIC INSTANCE" );
   /*
     otf2_print_data* data = ( otf2_print_data* )userData;
 
@@ -684,7 +595,7 @@ SCOREP_Error_Code GlobDefParameterHandler( void*              userData,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  transData->myLog.write(  "[DEF-???] : PARAMETER" );
+  transData->myLog.write( "s", "[DEF-???] : PARAMETER" );
   /*
     otf2_print_data* data = ( otf2_print_data* )userData;
 
@@ -711,7 +622,7 @@ SCOREP_Error_Code GlobDefUnknownHandler( void* userData )
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  transData->myLog.write(  "[DEF-???] : UNKNOWN" );
+  transData->myLog.write( "s", "[DEF-???] : UNKNOWN" );
 /*
     ( void )userData;
 
@@ -728,7 +639,7 @@ SCOREP_Error_Code DefMappingTableHandler( void*             userData,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  transData->myLog.write(  "[DEF-???] : MAPPING TABLE" );
+  transData->myLog.write( "s", "[DEF-???] : MAPPING TABLE" );
   /*
     uint64_t* location_id_ptr = userData;
 
@@ -770,7 +681,7 @@ SCOREP_Error_Code DefClockOffsetHandler( void*    userData,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  transData->myLog.write(  "[DEF-???] " );
+  transData->myLog.write( "s", "[DEF-???] " );
 
   return SCOREP_SUCCESS;
 }
@@ -784,7 +695,7 @@ SCOREP_Error_Code GlobDefStringHandler( void*       userData,
 
   transData->symbols[ stringID ] = std::string( string );
 
-  transData->myLog.write(  "[DEF] STRING", transData->symbols[ stringID ] );
+  transData->myLog.write( "ss", "[DEF] STRING :", transData->symbols[ stringID ].c_str() );
 }
 
 
@@ -945,12 +856,13 @@ SCOREP_Error_Code GlobDefRegionHandler( void*           userData,
   {
     tmpList->insert( transData->symbols[ name ], false, 0, USER_FUNCTION, regionID,
                      USER_FUNCTION_LABEL, transData->symbols[ name ], true, STATE_RUNNING );
-    transData->myLog.write(  "[DEF] UNREGISTERED REGION; taken as USER FUNCTION", transData->symbols[ name ] );
+    transData->myLog.write( "ss", "[DEF] UNREGISTERED REGION; taken as USER FUNCTION :",
+                           transData->symbols[ name ].c_str() );
 
   }
   else
   {
-    transData->myLog.write(  "[DEF] REGION", transData->symbols[ name ] );
+    transData->myLog.write( "ss", "[DEF] REGION :", transData->symbols[ name ].c_str() );
   }
 
 //D  map< string, int >::iterator it;
@@ -1006,7 +918,10 @@ SCOREP_Error_Code GlobDefAttributeHandler( void*       userData,
   // The translator only uses otf2_msg_match
   // transData->attributeType[ attributeID ] = OTF2_TypeID; // Needed?
 
-  transData->myLog.write(  "[DEF] ATTRIBUTE", transData->symbols[ name ], attributeID );
+  transData->myLog.write( "sssu", "[DEF] ATTRIBUTE ",
+                                  transData->symbols[ name ].c_str(),
+                                  ": ",
+                                  attributeID );
 
   return  SCOREP_SUCCESS;
 }
@@ -1047,7 +962,7 @@ SCOREP_Error_Code BufferFlushHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: BufferFlush" << endl;
 
-  transData->myLog.write(  "[EVT-???] : BufferFlush" );
+  transData->myLog.write( "s", "[EVT-???] : BufferFlush" );
 
   return SCOREP_SUCCESS;
 }
@@ -1065,7 +980,7 @@ SCOREP_Error_Code MeasurementOnOffHandler( uint64_t             locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: MeasurementOnOff" << endl;
 
-  transData->myLog.write(  "[EVT-???] : MeasurementOnOff" );
+  transData->myLog.write( "s", "[EVT-???] : MeasurementOnOff" );
 
   return SCOREP_SUCCESS;
 }
@@ -1087,7 +1002,7 @@ SCOREP_Error_Code MpiIsendHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: MpiIsend" << endl;
 
-  transData->myLog.write(  "[EVT-???] : MpiIsend" );
+  transData->myLog.write( "s", "[EVT-???] : MpiIsend" );
 
   return SCOREP_SUCCESS;
 }
@@ -1105,7 +1020,7 @@ SCOREP_Error_Code MpiIsendCompleteHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: MpiIsendComplete" << endl;
 
-  transData->myLog.write(  "[EVT-???] : MpiIsendComplete" );
+  transData->myLog.write( "s", "[EVT-???] : MpiIsendComplete" );
 
   return SCOREP_SUCCESS;
 }
@@ -1123,7 +1038,7 @@ SCOREP_Error_Code MpiIrecvRequestHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: MpiIrecvRequest" << endl;
 
-  transData->myLog.write(  "[EVT-???] : MpiIrecvRequest" );
+  transData->myLog.write( "s", "[EVT-???] : MpiIrecvRequest" );
 
   return SCOREP_SUCCESS;
 }
@@ -1144,7 +1059,7 @@ SCOREP_Error_Code MpiRecvHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: MpiRecv" << endl;
 
-  transData->myLog.write(  "[EVT-???] : MpiRecv" );
+  transData->myLog.write( "s", "[EVT-???] : MpiRecv" );
 
   return SCOREP_SUCCESS;
 }
@@ -1166,7 +1081,7 @@ SCOREP_Error_Code MpiIrecvHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: MpiIrecv" << endl;
 
-  transData->myLog.write(  "[EVT-???] : MpiIrecv" );
+  transData->myLog.write( "s", "[EVT-???] : MpiIrecv" );
 
   return SCOREP_SUCCESS;
 }
@@ -1184,7 +1099,7 @@ SCOREP_Error_Code MpiRequestTestHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: MpiRequestTest" << endl;
 
-  transData->myLog.write(  "[EVT-???] : MpiRequestTest" );
+  transData->myLog.write( "s", "[EVT-???] : MpiRequestTest" );
 
   return SCOREP_SUCCESS;
 }
@@ -1202,7 +1117,7 @@ SCOREP_Error_Code MpiRequestCancelledHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: MpiRequestCancelled" << endl;
 
-  transData->myLog.write(  "[EVT-???] : MpiRequestCancelled" );
+  transData->myLog.write( "s", "[EVT-???] : MpiRequestCancelled" );
 
   return SCOREP_SUCCESS;
 }
@@ -1219,7 +1134,7 @@ SCOREP_Error_Code MpiCollectiveBeginHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: MpiCollectiveBegin" << endl;
 
-  transData->myLog.write(  "[EVT-???] : MpiCollectiveBegin" );
+  transData->myLog.write( "s", "[EVT-???] : MpiCollectiveBegin" );
 
   return SCOREP_SUCCESS;
 }
@@ -1241,7 +1156,7 @@ SCOREP_Error_Code MpiCollectiveEndHandler( uint64_t               locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: MpiCollectiveEnd" << endl;
 
-  transData->myLog.write(  "[EVT-???] : MpiCollectiveEnd" );
+  transData->myLog.write( "s", "[EVT-???] : MpiCollectiveEnd" );
 
   return SCOREP_SUCCESS;
 }
@@ -1259,7 +1174,7 @@ SCOREP_Error_Code OmpForkHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: OmpFork" << endl;
 
-  transData->myLog.write(  "[EVT-???] : OmpFork" );
+  transData->myLog.write( "s", "[EVT-???] : OmpFork" );
 
   return SCOREP_SUCCESS;
 }
@@ -1276,7 +1191,7 @@ SCOREP_Error_Code OmpJoinHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: OmpJoin" << endl;
 
-  transData->myLog.write(  "[EVT-???] : OmpJoin" );
+  transData->myLog.write( "s", "[EVT-???] : OmpJoin" );
 
   return SCOREP_SUCCESS;
 }
@@ -1295,7 +1210,7 @@ SCOREP_Error_Code OmpAcquireLockHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: OmpAcquireLock" << endl;
 
-  transData->myLog.write(  "[EVT-???] : OmpAcquireLock" );
+  transData->myLog.write( "s", "[EVT-???] : OmpAcquireLock" );
 
   return SCOREP_SUCCESS;
 }
@@ -1314,7 +1229,7 @@ SCOREP_Error_Code OmpReleaseLockHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: OmpReleaseLock" << endl;
 
-  transData->myLog.write(  "[EVT-???] : OmpReleaseLock" );
+  transData->myLog.write( "s", "[EVT-???] : OmpReleaseLock" );
 
   return SCOREP_SUCCESS;
 }
@@ -1332,7 +1247,7 @@ SCOREP_Error_Code OmpTaskCreateHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: OmpTaskCreate" << endl;
 
-  transData->myLog.write(  "[EVT-???] : OmpTaskCreate" );
+  transData->myLog.write( "s", "[EVT-???] : OmpTaskCreate" );
 
   return SCOREP_SUCCESS;
 }
@@ -1350,7 +1265,7 @@ SCOREP_Error_Code OmpTaskSwitchHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: OmpTaskSwitch" << endl;
 
-  transData->myLog.write(  "[EVT-???] : OmpTaskSwitch" );
+  transData->myLog.write( "s", "[EVT-???] : OmpTaskSwitch" );
 
   return SCOREP_SUCCESS;
 }
@@ -1368,7 +1283,7 @@ SCOREP_Error_Code OmpTaskCompleteHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: OmpTaskComplete" << endl;
 
-  transData->myLog.write(  "[EVT-???] : OmpTaskComplete" );
+  transData->myLog.write( "s", "[EVT-???] : OmpTaskComplete" );
 
   return SCOREP_SUCCESS;
 }
@@ -1389,7 +1304,7 @@ SCOREP_Error_Code MetricHandler( uint64_t                locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: Metric" << endl;
 
-  transData->myLog.write(  "[EVT-???] : Metric" );
+  transData->myLog.write( "s", "[EVT-???] : Metric" );
 
   /*
     const char* sep = "";
@@ -1435,7 +1350,7 @@ SCOREP_Error_Code ParameterStringHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: ParameterString" << endl;
 
-  transData->myLog.write(  "[EVT-???] : ParameterString" );
+  transData->myLog.write( "s", "[EVT-???] : ParameterString" );
 
   return SCOREP_SUCCESS;
 }
@@ -1454,7 +1369,7 @@ SCOREP_Error_Code ParameterIntHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: ParameterInt" << endl;
 
-  transData->myLog.write(  "[EVT-???] : ParameterInt" );
+  transData->myLog.write( "s", "[EVT-???] : ParameterInt" );
 
   return SCOREP_SUCCESS;
 }
@@ -1473,7 +1388,7 @@ SCOREP_Error_Code ParameterUnsignedIntHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: ParameterUnsignedInt" << endl;
 
-  transData->myLog.write(  "[EVT-???] : ParameterUnsignedInt" );
+  transData->myLog.write( "s", "[EVT-???] : ParameterUnsignedInt" );
 
   return SCOREP_SUCCESS;
 }
@@ -1490,7 +1405,7 @@ SCOREP_Error_Code UnknownHandler( uint64_t            locationID,
 
   *transData->PRVFile << "# OTF2 event not translated: Unknown" << endl;
 
-  transData->myLog.write(  "[EVT-???] : Unknown" );
+  transData->myLog.write( "s", "[EVT-???] : Unknown" );
 
   return SCOREP_SUCCESS;
 }
@@ -1509,7 +1424,7 @@ SCOREP_Error_Code MpiSendHandler( uint64_t            locationID,
 
   time = correctBeginTime( transData, time );
 
-  transData->myLog.write(  "[EVT] MpiSend", locationID, receiver );
+  transData->myLog.write( "sUu", "[EVT] MpiSend :", locationID, receiver );
 
   if ( OTF2_AttributeList_GetNumberOfElements( attributes ) > 0 )
   {
@@ -1558,7 +1473,7 @@ SCOREP_Error_Code MpiSendHandler( uint64_t            locationID,
 
       *transData->PRVFile << commRecord.str(); // change to Trace write.
 
-      transData->myLog.write(  commRecord.str() );
+      transData->myLog.write( "s", commRecord.str().c_str() );
     }
   }
 
@@ -1622,7 +1537,7 @@ SCOREP_Error_Code EnterHandler( uint64_t locationID,
 
     *transData->PRVFile << eventRecord.str() << std::endl; // change to Trace write.
 
-    transData->myLog.write(  eventRecord.str() );
+    transData->myLog.write( "s", eventRecord.str().c_str() );
   }
 
   return SCOREP_SUCCESS;
@@ -1686,7 +1601,7 @@ SCOREP_Error_Code LeaveHandler( uint64_t locationID,
 
     *transData->PRVFile << eventRecord.str() << std::endl;  // change to Trace write.
 
-    transData->myLog.write(  eventRecord.str() );
+    transData->myLog.write( "s", eventRecord.str().c_str() );
   }
 
   return SCOREP_SUCCESS;
@@ -1882,11 +1797,11 @@ bool translate( const string &strPRVTrace,
 
   if ( file.good() )
   {
-    transData->myLog.write(  "[FILE] Opened ", strPRVTrace );
+    transData->myLog.write( "ss", "[FILE] Opened :", strPRVTrace.c_str() );
     OTF2_Reader* reader = OTF2_Reader_Open( transData->strOTF2Trace.c_str() );
     if ( reader != NULL )
     {
-      transData->myLog.write(  "[FILE] Opened ", transData->strOTF2Trace );
+      transData->myLog.write( "ss", "[FILE] Opened :", transData->strOTF2Trace.c_str() );
 
       transData->reader = reader;
       transData->PRVFile = &file;
@@ -1895,7 +1810,7 @@ bool translate( const string &strPRVTrace,
       loadExternalTranslationTable( strExternalTable, transData );
 
       // BUILD HEADER
-      transData->myLog.write( "[REC] Registering OTF2 Callbacks" );
+      transData->myLog.write( "s", "[REC] Registering OTF2 Callbacks" );
 
       OTF2_GlobalDefReader* global_def_reader = OTF2_Reader_GetGlobalDefReader( reader );
       OTF2_GlobalDefReaderCallbacks* global_def_callbacks = OTF2_GlobalDefReaderCallbacks_New();
