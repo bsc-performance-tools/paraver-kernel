@@ -40,7 +40,7 @@ using namespace std;
 
 const string OTF2_VERSION_STRING = "0.31";
 
-//#include <scorep_utility/SCOREP_UtilityTypes.h>
+#include <scorep_utility/SCOREP_UtilityTypes.h>
 #include <otf2/otf2.h>
 #include "otf2prv.h"
 
@@ -138,6 +138,9 @@ class TranslationData
 
   map< uint32_t, uint32_t > regionName;// RegionId -> NameID
   map< string, uint32_t > regionIdent;  // Name -> regionI
+
+  map< uint32_t, string > metricID;
+  map< uint32_t, vector<uint32_t> > metricClass;
 
   // Keep OTF2 definitions
   map< uint32_t, string >     symbols;
@@ -489,7 +492,9 @@ SCOREP_Error_Code GlobDefMetricMemberHandler( void*           userData,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  transData->myLog.write( "s", "[DEF-???] : METRIC MEMBER" );
+  transData->myLog.write( "ss", "[DEF] : METRIC MEMBER : ", transData->symbols[ name ].c_str() ) );
+
+  transData->metricID[ metric_member_id ] = transData->symbols[ name ];
   /*
     otf2_print_data* data = ( otf2_print_data* )userData;
 
@@ -538,7 +543,13 @@ SCOREP_Error_Code GlobDefMetricClassHandler( void*                 userData,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  transData->myLog.write( "s", "[DEF-???] : METRIC CLASS" );
+  transData->myLog.write( "su", "[DEF] : METRIC CLASS : ", metric_class_id );
+
+  vector<uint32_t> tmpV;
+  for( uint8_t i = 0; i < number_of_metrics; ++i )
+    tmpV.push_back( metric_members[ i ] );
+
+  transData->metricClass[ metric_class_id ] = tmpV;
   /*
     otf2_print_data* data = ( otf2_print_data* )userData;
 
@@ -1300,38 +1311,61 @@ SCOREP_Error_Code MetricHandler( uint64_t                locationID,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  // time = correctBeginTime( transData, time );
+  time = correctBeginTime( transData, time );
 
-  *transData->PRVFile << "# OTF2 event not translated: Metric" << endl;
+  for( uint8_t i = 0; i < numberOfMetrics; ++i )
+  {
+    EventDescription *evtDesc = EventList::getInstance()->getByStringID(
+                                transData->metricID[ ( transData->metricClass[ metricID ] )[ i ] ] );
 
-  transData->myLog.write( "s", "[EVT-???] : Metric" );
-
-  /*
-    const char* sep = "";
-    for ( uint8_t i = 0; i < numberOfMetrics; i++ )
+    if( evtDesc != NULL )
     {
-        switch ( typeIDs[ i ] )
-        {
-            case OTF2_INT64_T:
-                printf( "%s(INT64_T; %" PRId64 ")", sep, values[ i ].signed_int );
-                break;
-            case OTF2_UINT64_T:
-                printf( "%s(UINT64_T; %" PRIu64 ")", sep, values[ i ].unsigned_int );
-                break;
-            case OTF2_DOUBLE:
-                printf( "%s(DOUBLE; %f)", sep, values[ i ].floating_point );
-                break;
-            default:
-            {
-                printf( "%s(%s; %08" PRIx64 ")",
-                        sep,
-                        otf2_print_get_invalid( typeIDs[ i ] ),
-                        values[ i ].unsigned_int );
-            }
-        }
-        sep = ", ";
+      evtDesc->setUsed( true );
+
+      stringstream eventRecord;
+      eventRecord << fixed;
+      eventRecord << dec;
+      eventRecord.precision( 0 );
+
+      eventRecord << "2" << ":";
+      eventRecord << transData->location2CPU[ locationID ] << ":"; // CPU
+      eventRecord << transData->processModel->totalApplications() << ":"; // APP
+      eventRecord << transData->location2Task[ locationID ] << ":"; // TASK
+
+      eventRecord << transData->location2Thread[ locationID ] << ":"; // THREAD
+      eventRecord << time << ":";
+      eventRecord << evtDesc->getType() << ":";
+      switch( typeIDs[ i ] )
+      {
+        case OTF2_FLOAT:
+          eventRecord << static_cast<TEventValue>( values[ i ].floating_point );
+          break;
+
+        case OTF2_INT64_T:
+          eventRecord << static_cast<TEventValue>( values[ i ].signed_int );
+          break;
+
+        case OTF2_UINT64_T:
+          eventRecord << values[ i ].unsigned_int;
+          break;
+
+        default:
+          break;
+      }
+
+      *transData->PRVFile << eventRecord.str() << std::endl; // change to Trace write.
+
+      transData->myLog.write( "s", eventRecord.str().c_str() );
     }
-  */
+    else
+    {
+      *transData->PRVFile << "# OTF2 event not translated: Metric " <<
+                             transData->metricID[ ( transData->metricClass[ metricID ] )[ i ] ] << endl;
+      transData->myLog.write( "s", string( "# OTF2 event not translated: Metric " +
+                                   transData->metricID[ ( transData->metricClass[ metricID ] )[ i ] ] ).c_str() );
+    }
+
+  }
 
   return SCOREP_SUCCESS;
 }

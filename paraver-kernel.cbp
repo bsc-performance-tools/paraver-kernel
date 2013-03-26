@@ -1339,6 +1339,9 @@
 		<Unit filename="../ptools_common_files/trunk/include/events.h">
 			<Option target="ptools_common_files" />
 		</Unit>
+		<Unit filename="../ptools_common_files/trunk/include/papi_events.h">
+			<Option target="ptools_common_files" />
+		</Unit>
 		<Unit filename="../ptools_common_files/trunk/include/ptools_prv_types.h">
 			<Option target="ptools_common_files" />
 		</Unit>

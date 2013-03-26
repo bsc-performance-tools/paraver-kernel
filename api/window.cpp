@@ -42,6 +42,10 @@
 #include "syncwindows.h"
 #include "selectionrowsutils.h"
 
+#ifdef TRACING_ENABLED
+#include "extrae_user_events.h"
+#endif
+
 using namespace std;
 
 Window *Window::create( KernelConnection *whichKernel, Trace *whichTrace )
@@ -1632,6 +1636,9 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   vector< int > tmpDrawCaution;
   vector< TSemanticValue > tmpComputedMaxY;
   vector< TSemanticValue > tmpComputedMinY;
+#ifdef TRACING_ENABLED
+  Extrae_eventandcounters( 100, 1 );
+#endif
 
   int numRows = 0;
   for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
@@ -1677,6 +1684,9 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
     tmpComputedMaxY.push_back( 0.0 );
     tmpComputedMinY.push_back( 0.0 );
 
+#ifdef TRACING_ENABLED
+  Extrae_eventandcounters( 200, firstObj + 1 );
+#endif
     computeSemanticRowParallel(
             firstObj, lastObj, selectedSet, selected, timeStep, timePos,
             objectAxisPos, objectPosList,
@@ -1686,6 +1696,9 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
             valuesToDraw[ valuesToDraw.size() - 1 ],
             eventsToDraw[ eventsToDraw.size() - 1 ],
             commsToDraw[ commsToDraw.size() - 1 ] );
+#ifdef TRACING_ENABLED
+  Extrae_eventandcounters( 200, 0 );
+#endif
   }
 //#pragma css barrier
 #pragma omp taskwait
@@ -1708,6 +1721,9 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
     else
       computedMinY = computedMinY < tmpComputedMinY[ pos ] ? computedMinY : tmpComputedMinY[ pos ];
   }
+#ifdef TRACING_ENABLED
+  Extrae_eventandcounters( 100, 0 );
+#endif
 }
 
 #ifdef WIN32

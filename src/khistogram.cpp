@@ -733,7 +733,7 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
     throw HistogramException( HistogramException::noControlWindow );
 
 #ifdef TRACING_ENABLED
-  Extrae_user_function( 300 );
+  Extrae_eventandcounters( 300, 1 );
 #endif
 
   if ( dataWindow == NULL )
@@ -796,7 +796,7 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
 
 
 #ifdef TRACING_ENABLED
-  Extrae_user_function( 0 );
+  Extrae_eventandcounters( 300, 0 );
 #endif
 }
 
@@ -1030,7 +1030,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     if ( winIndex == 0 )
     {
 #ifdef TRACING_ENABLED
-    Extrae_eventandcounters( 200, i + 1 );
+    Extrae_eventandcounters( 400, i + 1 );
 #endif
       iRow = selectedRows[ i ];
       data->row = i;
@@ -1086,7 +1086,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
   if ( winIndex == 0 )
   {
 #ifdef TRACING_ENABLED
-      Extrae_eventandcounters( 200, 0 );
+      Extrae_eventandcounters( 400, 0 );
 #endif
 
     delete data;
