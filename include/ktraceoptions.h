@@ -109,11 +109,6 @@ class KTraceOptions: public TraceOptions
     char *types;
     char *types_kept;
 
-    /* Parameters for Stats */
-    int bursts_plot;
-    int comms_plot;
-    int events_plot;
-
   //  KTraceOptions( const KernelConnection *whichKernel, char *xmldocname );
     KTraceOptions();
     KTraceOptions( const TraceOptions &whichTraceOptions );
@@ -541,22 +536,6 @@ class KTraceOptions: public TraceOptions
     inline void set_comm_fusion_small_interval( unsigned long long whichSmallInterval )
     {
       comm_fusion_small_interval = whichSmallInterval;
-    }
-
-    /* Parameters for Stats */
-    inline void set_bursts_plot( int whichBurstsPlot )
-    {
-      bursts_plot = whichBurstsPlot;
-    }
-
-    inline void set_comms_plot( int whichCommsPlot )
-    {
-      comms_plot = whichCommsPlot;
-    }
-
-    inline void set_events_plot( int whichEventsPlot )
-    {
-      events_plot = whichEventsPlot;
     }
 
     std::vector< std::string > parseDoc( char *docname );
