@@ -126,6 +126,7 @@ class TranslationData
   bool useExternalTranslationTable;
 
   TTimeUnit timeUnit;
+  uint64_t timeResolution;
   // PRV_UINT64 timerResolution;
   PRV_UINT64 maxTraceTime;
   PRV_UINT64 globalOffset;
@@ -237,7 +238,7 @@ void writeHeaderTimes( TranslationData *transData )
   *transData->PRVFile << "#Paraver ";
   *transData->PRVFile << "()" << ":";
 
-  ostr << transData->maxTraceTime;
+  ostr << ( (double)transData->maxTraceTime / (double)transData->timeResolution ) * 1E9;
   *transData->PRVFile << ostr.str();
 
   *transData->PRVFile << "_" << LABEL_TIMEUNIT[ transData->timeUnit ];
@@ -401,9 +402,9 @@ SCOREP_Error_Code GlobDefClockPropertiesHandler( void*    userData,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  double timeUnit = 1 / (double)timer_resolution;
+  transData->timeResolution = timer_resolution;
 
-  if ( timeUnit >= ( 1 / 1E9 ))
+/*  if ( timeUnit >= ( 1 / 1E9 ))
   {
     transData->timeUnit = NS;
     transData->myLog.write( "sd", "[DEF] CLOCK UNIT: NS :", timeUnit );
@@ -423,9 +424,9 @@ SCOREP_Error_Code GlobDefClockPropertiesHandler( void*    userData,
     transData->timeUnit = SEC;
     transData->myLog.write( "sd", "[DEF] CLOCK UNIT: S :", timeUnit );
   }
-
+*/
   transData->timeUnit = NS;
-  transData->myLog.write( "sd", "[DEF] CLOCK UNIT: NS :", timeUnit );
+  transData->myLog.write( "sU", "[DEF] CLOCK UNIT: NS :", transData->timeResolution );
 
   //transData->maxTraceTime = global_offset + trace_length; // ??
   transData->maxTraceTime = trace_length;
@@ -492,7 +493,7 @@ SCOREP_Error_Code GlobDefMetricMemberHandler( void*           userData,
 {
   TranslationData *transData = ( TranslationData * )userData;
 
-  transData->myLog.write( "ss", "[DEF] : METRIC MEMBER : ", transData->symbols[ name ].c_str() ) );
+  transData->myLog.write( "ss", "[DEF] : METRIC MEMBER : ", transData->symbols[ name ].c_str() );
 
   transData->metricID[ metric_member_id ] = transData->symbols[ name ];
   /*
@@ -955,7 +956,7 @@ uint64_t correctBeginTime( TranslationData *transData, uint64_t time )
     writeComment( transData );
  }
 
-  time = time - transData->globalOffset;
+  time = ( (double)( time - transData->globalOffset ) / (double)transData->timeResolution ) * 1E9;
 
   return time;
 }
