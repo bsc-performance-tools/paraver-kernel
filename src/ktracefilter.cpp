@@ -365,7 +365,7 @@ void KTraceFilter::dump_buffer()
 void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *progress )
 {
   bool end_line;
-  int i, j, k, num_char, print_record, state, size, appl, task, thread;
+  int i, j, k, num_char, print_record, state, size, appl, task, thread, cpu;
   unsigned long long time_1, time_2, type, value;
   // char *word, event_record[MAX_LINE_SIZE], trace_name[2048], *c, *trace_header;
   char *word, *event_record, *trace_name, *c, *trace_header;
@@ -587,8 +587,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
           fputs( line, outfile );
           break;
         }
-
-        sscanf( line, "%*d:%*d:%d:%d:%d:%lld:%*s\n", &appl, &task, &thread, &time_1 );
+        sscanf( line, "%*d:%d:%d:%d:%d:%lld:%*s\n", &cpu, &appl, &task, &thread, &time_1 );
 
         i = 0;
         num_char = 0;
@@ -599,14 +598,14 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
             num_char++;
             if ( num_char == 6 )
             {
-              line[i] = '\0';
+              // line[i] = '\0';
               break;
             }
           }
           i++;
         }
 
-        sprintf( event_record, "%s", line );
+        sprintf( event_record, "2:%d:%d:%d:%d:%lld", cpu, appl, task, thread, time_1 );
 
         call_in = false;
         dump_event_buffer = false;
@@ -651,7 +650,6 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
             word = strtok( NULL, ":" );
             value = atoll( word );
 
-
             if ( translationTable.size() > 0 )
             {
               TTypeValuePair p = std::make_pair( type, value );
@@ -688,7 +686,9 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
         if ( print_record )
         {
           if ( !filter_by_call_time )
+          {
             fputs( event_record, outfile );
+          }
           else
           {
             /* Insert on buffer */
