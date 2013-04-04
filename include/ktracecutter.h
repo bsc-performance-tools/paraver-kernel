@@ -57,6 +57,7 @@ class KTraceCutter : public TraceCutter
     virtual void set_break_states( bool breakStates );
     virtual void set_remFirstStates( bool remStates );
     virtual void set_remLastStates( bool remStates );
+    virtual void set_keep_events( bool keepEvents );
 
     virtual void execute( char *trace_in,
                           char *trace_out,
@@ -92,6 +93,7 @@ class KTraceCutter : public TraceCutter
     int init_task_counter;
     bool remFirstStates;
     bool remLastStates;
+    bool keep_events;
     bool first_time_caught;
 
     /* Parameters for showing percentage */

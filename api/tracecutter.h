@@ -75,15 +75,17 @@ class TraceCutter
     {}
     virtual void set_tasks_list( char *tasksList )
     {}
-    virtual void set_original_time( int originalTime )
+    virtual void set_original_time( bool originalTime )
     {}
     virtual void set_max_trace_size( int traceSize )
     {}
-    virtual void set_break_states( int breakStates )
+    virtual void set_break_states( bool breakStates )
     {}
-    virtual void set_remFirstStates( int remStates )
+    virtual void set_remFirstStates( bool remStates )
     {}
-    virtual void set_remLastStates( int remStates )
+    virtual void set_remLastStates( bool remStates )
+    {}
+    virtual void set_keep_events( bool keepEvents )
     {}
 
   private:
@@ -103,11 +105,12 @@ class TraceCutterProxy : public TraceCutter
     virtual void set_minimum_time_percentage( unsigned long long minimumPercentage );
     virtual void set_maximum_time_percentage( unsigned long long maximumPercentage );
     virtual void set_tasks_list( char *tasksList );
-    virtual void set_original_time( int originalTime );
+    virtual void set_original_time( bool originalTime );
     virtual void set_max_trace_size( int traceSize );
-    virtual void set_break_states( int breakStates );
-    virtual void set_remFirstStates( int remStates );
-    virtual void set_remLastStates( int remStates );
+    virtual void set_break_states( bool breakStates );
+    virtual void set_remFirstStates( bool remStates );
+    virtual void set_remLastStates( bool remStates );
+    virtual void set_keep_events( bool keepEvents );
 
   private:
     TraceCutter *myTraceCutter;

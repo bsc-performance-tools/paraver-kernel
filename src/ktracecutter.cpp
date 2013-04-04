@@ -128,6 +128,10 @@ void KTraceCutter::set_remLastStates( bool remStates )
 {
 }
 
+void KTraceCutter::set_keep_events( bool keepEvents )
+{
+}
+
 
 /* Function for parsing program parameters */
 void KTraceCutter::read_cutter_params()
@@ -173,6 +177,7 @@ void KTraceCutter::read_cutter_params()
   break_states = exec_options->break_states;
   remFirstStates = exec_options->remFirstStates;
   remLastStates = exec_options->remLastStates;
+  keep_events = exec_options->keep_events;
 
   if ( originalTime )
     break_states = false; // Assigned ONLY if originalTime == true, else KEEP value.
@@ -1176,12 +1181,13 @@ void KTraceCutter::execute( char *trace_in,
         strcpy( line, buffer );
 
         /* If isn't a traceable thread, get next record */
-        if ( cut_tasks && !is_selected_task( task ) )
+        if( cut_tasks && !is_selected_task( task ) )
           break;
 
         if ( ( tasks[appl-1][task-1][thread-1] != NULL ) &&
              ( time_1 > tasks[appl-1][task-1][thread-1]->last_time ) &&
-             ( time_1 > time_max ) )
+             ( time_1 > time_max ) &&
+             !keep_events )
           break;
 
         if ( tasks[appl-1][task-1][thread-1] == NULL && time_1 > time_max )
@@ -1194,7 +1200,12 @@ void KTraceCutter::execute( char *trace_in,
           break;
 
         /* If time inside cut, adjust time */
-        if ( time_1 >= time_min )
+        if ( time_1 >= time_min ||
+             ( time_1 < time_min &&
+               tasks[appl-1][task-1][thread-1] != NULL &&
+               tasks[appl-1][task-1][thread-1]->last_time >= time_min &&
+               keep_events )
+           )
         {
       //    if ( !originalTime )
       //      time_1 = time_1 - time_min;

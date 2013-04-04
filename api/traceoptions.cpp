@@ -142,6 +142,11 @@ void TraceOptionsProxy::set_remLastStates( bool remStates )
   myTraceOptions->set_remLastStates( remStates );
 }
 
+void TraceOptionsProxy::set_keep_events( bool keepEvents )
+{
+   myTraceOptions->set_keep_events( keepEvents );
+}
+
 bool TraceOptionsProxy::get_by_time() const
 {
   return myTraceOptions->get_by_time();
@@ -192,6 +197,10 @@ bool TraceOptionsProxy::get_remLastStates() const
   return myTraceOptions->get_remLastStates();
 }
 
+bool TraceOptionsProxy::get_keep_events() const
+{
+  return myTraceOptions->get_keep_events();
+}
 
 /* Sets for filtering */
 void TraceOptionsProxy::set_filter_events( bool filterEvents )

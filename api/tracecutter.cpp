@@ -125,7 +125,7 @@ void TraceCutterProxy::set_tasks_list( char *tasksList )
   myTraceCutter->set_tasks_list( tasksList );
 }
 
-void TraceCutterProxy::set_original_time( int originalTime )
+void TraceCutterProxy::set_original_time( bool originalTime )
 {
   myTraceCutter->set_original_time ( originalTime );
 }
@@ -135,18 +135,23 @@ void TraceCutterProxy::set_max_trace_size( int traceSize )
   myTraceCutter->set_max_trace_size( traceSize );
 }
 
-void TraceCutterProxy::set_break_states( int breakStates )
+void TraceCutterProxy::set_break_states( bool breakStates )
 {
   myTraceCutter->set_break_states( breakStates );
 }
 
-void TraceCutterProxy::set_remFirstStates( int remStates )
+void TraceCutterProxy::set_remFirstStates( bool remStates )
 {
   myTraceCutter->set_remFirstStates ( remStates );
 }
 
-void TraceCutterProxy::set_remLastStates( int remStates )
+void TraceCutterProxy::set_remLastStates( bool remStates )
 {
   myTraceCutter->set_remLastStates( remStates );
+}
+
+void TraceCutterProxy::set_keep_events( bool keepEvents )
+{
+  myTraceCutter->set_keep_events( keepEvents );
 }
 

@@ -221,6 +221,7 @@ class ParaverConfig
     void setCutterBreakStates( bool breakStates );
     void setCutterRemoveFirstStates( bool removeFirstStates );
     void setCutterRemoveLastStates( bool removeLastStates );
+    void setCutterKeepEvents( bool keepEvents );
 
     bool getCutterByTime();
     TTime getCutterMinimumTime();
@@ -232,6 +233,7 @@ class ParaverConfig
     bool getCutterBreakStates();
     bool getCutterRemoveFirstStates();
     bool getCutterRemoveLastStates();
+    bool getCutterKeepEvents();
 
     // FILTERS XML SECTION : FILTER
     void setFilterDiscardStates( bool discard );
@@ -465,6 +467,8 @@ class ParaverConfig
         ar & boost::serialization::make_nvp( "break_states", breakStates );
         ar & boost::serialization::make_nvp( "remove_first_states", removeFirstStates );
         ar & boost::serialization::make_nvp( "remove_last_states", removeLastStates );
+        if( version >= 1 )
+          ar & boost::serialization::make_nvp( "keep_events", keepEvents );
       }
 
       bool byTime;
@@ -476,6 +480,7 @@ class ParaverConfig
       bool breakStates;
       bool removeFirstStates;
       bool removeLastStates;
+      bool keepEvents;
 
     };
 
@@ -664,7 +669,7 @@ BOOST_CLASS_VERSION( ParaverConfig, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 4)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 2)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 3)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 0)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilter, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersRange, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersAlgorithm, 0)

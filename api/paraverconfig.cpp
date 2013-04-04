@@ -135,6 +135,7 @@ ParaverConfig::ParaverConfig()
   xmlFilters.xmlCutterInstance.breakStates = true;
   xmlFilters.xmlCutterInstance.removeFirstStates = false;
   xmlFilters.xmlCutterInstance.removeLastStates = false;
+  xmlFilters.xmlCutterInstance.keepEvents = false;
 
   xmlFilters.xmlFilterInstance.discardStates = false;
   xmlFilters.xmlFilterInstance.discardEvents = false;
@@ -765,6 +766,11 @@ void ParaverConfig::setCutterRemoveLastStates( bool whichRemoveLastStates )
   xmlFilters.xmlCutterInstance.removeLastStates = whichRemoveLastStates;
 }
 
+void ParaverConfig::setCutterKeepEvents( bool keepEvents )
+{
+  xmlFilters.xmlCutterInstance.keepEvents = keepEvents;
+}
+
 bool ParaverConfig::getCutterByTime()
 {
   return xmlFilters.xmlCutterInstance.byTime;
@@ -809,6 +815,11 @@ bool ParaverConfig::getCutterRemoveFirstStates()
 bool ParaverConfig::getCutterRemoveLastStates()
 {
   return xmlFilters.xmlCutterInstance.removeLastStates;
+}
+
+bool ParaverConfig::getCutterKeepEvents()
+{
+  return xmlFilters.xmlCutterInstance.keepEvents;
 }
 
 // FILTERS XML SECTION : FILTER

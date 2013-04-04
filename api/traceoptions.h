@@ -86,6 +86,8 @@ class TraceOptions
     {}
     virtual void set_remLastStates( bool remStates )
     {}
+    virtual void set_keep_events( bool keepEvents )
+    {}
 
     virtual bool get_by_time() const
     { return false; }
@@ -106,6 +108,8 @@ class TraceOptions
     virtual bool get_remFirstStates() const
     { return 0; }
     virtual bool get_remLastStates() const
+    { return 0; }
+    virtual bool get_keep_events() const
     { return 0; }
 
 
@@ -263,6 +267,7 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_break_states( bool breakStates );
     virtual void set_remFirstStates( bool remStates );
     virtual void set_remLastStates( bool remStates );
+    virtual void set_keep_events( bool keepEvents );
 
     virtual bool get_by_time() const;
     virtual unsigned long long get_min_cutting_time() const;
@@ -274,6 +279,7 @@ class TraceOptionsProxy :public TraceOptions
     virtual bool get_break_states() const;
     virtual bool get_remFirstStates() const;
     virtual bool get_remLastStates() const;
+    virtual bool get_keep_events() const;
 
     /* Sets for filtering */
     virtual void set_filter_events( bool filterEvents );

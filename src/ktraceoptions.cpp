@@ -79,6 +79,7 @@ KTraceOptions::KTraceOptions( const KTraceOptions *whichTraceOptions )
   set_break_states( whichTraceOptions->get_break_states() );
   set_remFirstStates( whichTraceOptions->get_remFirstStates() );
   set_remLastStates( whichTraceOptions->get_remLastStates() );
+  set_keep_events( whichTraceOptions->get_keep_events() );
 
   // Filter Default Options: states
   set_filter_states( whichTraceOptions->get_filter_states() );
@@ -166,6 +167,7 @@ void KTraceOptions::init()
   set_break_states( ParaverConfig::getInstance()->getCutterBreakStates() );
   set_remFirstStates( ParaverConfig::getInstance()->getCutterRemoveFirstStates() );
   set_remLastStates( ParaverConfig::getInstance()->getCutterRemoveLastStates() );
+  set_keep_events( ParaverConfig::getInstance()->getCutterKeepEvents() );
 
   // Filter Default Options
 // problem --> derived fields?; minimum default info?
@@ -521,6 +523,13 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
       xmlFree( word );
     }
 
+    if ( !xmlStrcmp( cur->name, ( const xmlChar * )"keep_events" ) )
+    {
+      word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+      keep_events = (bool)atoi( ( char * )word );
+      xmlFree( word );
+    }
+
     cur = cur->next;
   }
 }
@@ -822,6 +831,7 @@ void KTraceOptions::saveXMLCutter( xmlTextWriterPtr &writer )
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "break_states", "%d", (int)get_break_states() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "remove_first_states", "%d", (int)get_remFirstStates() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "remove_last_states", "%d", (int)get_remLastStates() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "keep_events", "%d", (int)get_keep_events() );
 
   rc = xmlTextWriterEndElement( writer ); // cutter
 }

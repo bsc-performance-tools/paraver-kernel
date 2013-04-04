@@ -83,6 +83,7 @@ class KTraceOptions: public TraceOptions
     bool break_states;
     bool remFirstStates;
     bool remLastStates;
+    bool keep_events;
     char tasks_list[256];
 
     // not used?
@@ -194,6 +195,11 @@ class KTraceOptions: public TraceOptions
       remLastStates = whichRemStates;
     }
 
+    inline void set_keep_events( bool whichKeepEvents )
+    {
+      keep_events = whichKeepEvents;
+    }
+
     inline bool get_by_time() const
     {
       return by_time;
@@ -253,6 +259,11 @@ class KTraceOptions: public TraceOptions
     inline bool get_remLastStates() const
     {
       return remLastStates;
+    }
+
+    inline bool get_keep_events() const
+    {
+      return keep_events;
     }
 
     /* Sets for filtering */
