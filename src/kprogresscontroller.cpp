@@ -85,3 +85,23 @@ bool KProgressController::getStop() const
 {
   return stop;
 }
+
+void KProgressController::setMessage( std::string whichMessage )
+{
+  myPartner->setMessage( whichMessage );
+}
+
+std::string KProgressController::getMessage() const
+{
+  return myPartner->getMessage();
+}
+
+void KProgressController::clearMessageChanged()
+{
+  myPartner->clearMessageChanged();
+}
+
+bool KProgressController::getMessageChanged() const
+{
+  return myPartner->getMessageChanged();
+}

@@ -776,7 +776,8 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
   buffer = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
 
   /* Trace processing */
-  while ( fscanf( infile, "%d:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF )
+  while ( fscanf( infile, "%d:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF &&
+          !progress->getStop() )
   {
     if ( num_iters == total_iters )
     {
@@ -991,7 +992,8 @@ void KTraceSoftwareCounters::sc_by_event( ProgressController *progress )
   unsigned long num_iters = 0;
 
   /* Trace processing */
-  while ( fscanf( infile, "%d:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF )
+  while ( fscanf( infile, "%d:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF &&
+          !progress->getStop() )
   {
     if ( num_iters == total_iters )
     {

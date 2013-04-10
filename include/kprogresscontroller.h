@@ -45,8 +45,12 @@ class KProgressController: public ProgressController
     double getCurrentProgress() const;
     void setCurrentProgress( double progress );
     void setPartner( ProgressController* partner );
-    virtual void setStop( bool value );
-    virtual bool getStop() const;
+    void setStop( bool value );
+    bool getStop() const;
+    void setMessage( std::string whichMessage );
+    std::string getMessage() const;
+    void clearMessageChanged();
+    bool getMessageChanged() const;
 
   private:
     ProgressController *myPartner;

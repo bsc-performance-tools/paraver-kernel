@@ -498,7 +498,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
   free( trace_header );
 
   /* Processing the trace records */
-  while ( !end_parsing )
+  while ( !end_parsing && !progress->getStop() )
   {
     /* Read one more record is possible */
     if ( !is_zip_filter )

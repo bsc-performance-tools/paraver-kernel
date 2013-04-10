@@ -345,6 +345,7 @@ void KTraceCutter::dumpEventsSet( const set< TEventType >& closingEventTypes,
   if ( !writtenComment )
   {
     fprintf( outfile, "# Appending events with value 0\n");
+    if( writeToTmpFile ) ++total_tmp_lines;
     writtenComment = true;
   }
 
@@ -356,6 +357,7 @@ void KTraceCutter::dumpEventsSet( const set< TEventType >& closingEventTypes,
       numWrittenChars += fprintf( outfile, "2:%d:%d:%d:%d:%lld:%lld:0",
                                cpu, appl + 1, task + 1, thread + 1,
                                final_time, (unsigned long long)*it );
+      if( writeToTmpFile ) ++total_tmp_lines;
 
       needEOL = true;
     }
@@ -456,7 +458,12 @@ void KTraceCutter::ini_cutter_progress_bar( char *file_name,
   current_read_size = 0;
 
   if( progress != NULL)
-    progress->setEndLimit( total_trace_size );
+  {
+    if( writeToTmpFile )
+      progress->setEndLimit( total_trace_size * 2 );
+    else
+      progress->setEndLimit( total_trace_size );
+  }
 }
 
 
@@ -464,24 +471,25 @@ void KTraceCutter::show_cutter_progress_bar( ProgressController *progress )
 {
 //  double current_showed, i, j;
 
-
+  if( !secondPhase )
+  {
 #if defined(__FreeBSD__) || defined(__APPLE__)
-  if ( !is_zip )
-    current_read_size = ( unsigned long long )ftello( infile );
-  else
-    current_read_size = ( unsigned long )gztell( gzInfile );
+    if ( !is_zip )
+      current_read_size = ( unsigned long long )ftello( infile );
+    else
+      current_read_size = ( unsigned long )gztell( gzInfile );
 #elif defined(WIN32)
-  if ( !is_zip )
-    current_read_size = ( unsigned long long )_ftelli64( infile );
-  else
-    current_read_size = ( unsigned long )gztell( gzInfile );
+    if ( !is_zip )
+      current_read_size = ( unsigned long long )_ftelli64( infile );
+    else
+      current_read_size = ( unsigned long )gztell( gzInfile );
 #else
-  if ( !is_zip )
-    current_read_size = ( unsigned long long )ftello64( infile );
-  else
-    current_read_size = ( unsigned long )gztell( gzInfile );
+    if ( !is_zip )
+      current_read_size = ( unsigned long long )ftello64( infile );
+    else
+      current_read_size = ( unsigned long )gztell( gzInfile );
 #endif
-
+  }
 
 /*  i = ( double )( current_read_size );
   j = ( double )( total_trace_size );
@@ -492,7 +500,24 @@ void KTraceCutter::show_cutter_progress_bar( ProgressController *progress )
     current_read_size = current_read_size / TraceStream::GZIP_COMPRESSION_RATIO;
 
   if (progress != NULL )
-    progress->setCurrentProgress( current_read_size );
+  {
+    if( writeToTmpFile )
+    {
+      if( !secondPhase )
+        progress->setCurrentProgress( current_read_size );
+      else
+      {
+        if( current_tmp_lines % 10000 == 0 )
+        {
+          double tmpPerc = (double)current_tmp_lines / (double)total_tmp_lines;
+          double tmpSize = progress->getEndLimit() / 2.0;
+          progress->setCurrentProgress( tmpSize + tmpSize * tmpPerc );
+        }
+      }
+    }
+    else
+      progress->setCurrentProgress( current_read_size );
+  }
 }
 
 
@@ -578,7 +603,7 @@ void KTraceCutter::load_counters_of_pcf( char *trace_name )
 
 // Substract to all the times in the trace the first time of the first record
 // Doesn't change header
-void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nameOut, bool is_zip )
+void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nameOut, bool is_zip, ProgressController *progress )
 {
   unsigned long long timeOffset = 0, time_1, time_2, time_3, time_4;
   int cpu, appl, task, thread, state, cpu_2, appl_2, task_2, thread_2;
@@ -710,10 +735,12 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nam
 
   // Override it: we have the minimum time of the written records.
   timeOffset = first_record_time;
+  current_tmp_lines = 0;
 
   while ( !end_read )
   {
   //cout << trace_header << endl;
+    show_cutter_progress_bar( progress );
 
     switch ( trace_header[0] )
     {
@@ -725,7 +752,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nam
         time_2 = time_2 - timeOffset;
 
         fprintf( outfile, "1:%d:%d:%d:%d:%lld:%lld:%d\n", cpu, appl, task, thread, time_1, time_2, state );
-
+        ++current_tmp_lines;
         break;
 
 
@@ -735,7 +762,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nam
         time_1 = time_1 - timeOffset;
 
         fprintf( outfile, "2:%d:%d:%d:%d:%lld:%s\n", cpu, appl, task, thread, time_1, line );
-
+        ++current_tmp_lines;
         break;
 
       case '3':
@@ -751,18 +778,22 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nam
         fprintf( outfile, "3:%d:%d:%d:%d:%lld:%lld:%d:%d:%d:%d:%lld:%lld:%s\n",
                  cpu,   appl,   task,   thread,   time_1, time_2,
                  cpu_2, appl_2, task_2, thread_2, time_3, time_4, line );
-
+        ++current_tmp_lines;
         break;
 
       case '4':
         sscanf( trace_header, "%s\n", line );
         fprintf( outfile, "%s\n", line );
+        ++current_tmp_lines;
         break;
 
       case '#':
         sscanf( trace_header, "%s\n", line );
         if ( string( line ).compare( string( " Appending events with value 0" ) ) == 0 )
+        {
           fprintf( outfile, "%s\n", line );
+          ++current_tmp_lines;
+        }
         break;
 
       default:
@@ -933,7 +964,7 @@ void KTraceCutter::execute( char *trace_in,
   }
 
   //bool writeToTmpFile = !originalTime;
-  bool writeToTmpFile = break_states || !originalTime;
+  writeToTmpFile = break_states || !originalTime;
 
   if ( writeToTmpFile )
   {
@@ -988,9 +1019,11 @@ void KTraceCutter::execute( char *trace_in,
 
   bool maxTimeReached = false;
   last_record_time = 0;
+  total_tmp_lines = 0;
+  secondPhase = false;
 
   /* Processing the trace records */
-  while ( !end_parsing && !maxTimeReached )
+  while ( !end_parsing && !maxTimeReached && !progress->getStop() )
   {
     /* Read one more record is possible */
     if ( !is_zip )
@@ -1160,6 +1193,7 @@ void KTraceCutter::execute( char *trace_in,
 
           current_size += fprintf( outfile, "%d:%d:%d:%d:%d:%lld:%lld:%d\n",
                                    id, cpu, appl, task, thread, time_1, time_2, state );
+          if( writeToTmpFile ) ++total_tmp_lines;
 
           if ( reset_counters )
           {
@@ -1170,7 +1204,10 @@ void KTraceCutter::execute( char *trace_in,
               sprintf( line, "%s:%lld:0", line, counters[i] );
 
             if ( i > 0 )
+            {
               current_size += fprintf( outfile, "%s\n", line );
+              if( writeToTmpFile ) ++total_tmp_lines;
+            }
           }
         }
 
@@ -1228,6 +1265,7 @@ void KTraceCutter::execute( char *trace_in,
 
           current_size += fprintf( outfile, "%d:%d:%d:%d:%d:%lld:%s\n",
                                    id, cpu, appl, task, thread, time_1, line );
+          if( writeToTmpFile ) ++total_tmp_lines;
 
           /* For closing all the opened calls */
           end_line = false;
@@ -1310,6 +1348,7 @@ void KTraceCutter::execute( char *trace_in,
                                      id,
                                      cpu,   appl,   task,   thread,   time_1, time_2,
                                      cpu_2, appl_2, task_2, thread_2, time_3, time_4, size, tag );
+            if( writeToTmpFile ) ++total_tmp_lines;
           }
         }
 
@@ -1355,6 +1394,7 @@ void KTraceCutter::execute( char *trace_in,
               last_record_time = time_1;
 
             current_size += fprintf( outfile, "%d:%d:%d:%d:%d:%lld:%s\n", id, cpu, appl, task, thread, time_1, line );
+            if( writeToTmpFile ) ++total_tmp_lines;
           }
         }
 
@@ -1367,6 +1407,7 @@ void KTraceCutter::execute( char *trace_in,
           break;
 #endif
         current_size += fprintf( outfile, "%s\n", buffer );
+        if( writeToTmpFile ) ++total_tmp_lines;
 
         break;
 
@@ -1381,6 +1422,9 @@ void KTraceCutter::execute( char *trace_in,
     if ( init_task_counter && useful_tasks == 0 )
       break;
   }
+
+  if( progress->getStop() )
+    progress->setMessage( "Finishing cut..." );
 
   if ( last_record_time > time_max )
   //if ( !originalTime )
@@ -1397,7 +1441,8 @@ void KTraceCutter::execute( char *trace_in,
 
   if ( writeToTmpFile )   // trace_file_out is a tmpfile!!
   {
-    shiftLeft_TraceTimes_ToStartFromZero( trace_file_out, trace_out, false );
+    secondPhase = true;
+    shiftLeft_TraceTimes_ToStartFromZero( trace_file_out, trace_out, false, progress );
   }
 
   free( trace_name );

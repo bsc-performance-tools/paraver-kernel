@@ -53,6 +53,10 @@ class ProgressController
     virtual void setPartner( ProgressController* partner ) = 0;
     virtual void setStop( bool value ) = 0;
     virtual bool getStop() const = 0;
+    virtual void setMessage( std::string whichMessage ) = 0;
+    virtual std::string getMessage() const = 0;
+    virtual bool getMessageChanged() const = 0;
+    virtual void clearMessageChanged() = 0;
 
     virtual ProgressController *getConcrete() const
     {
@@ -73,8 +77,12 @@ class ProgressControllerProxy:public ProgressController
     double getCurrentProgress() const;
     void setCurrentProgress( double progress );
     void setPartner( ProgressController* partner );
-    virtual void setStop( bool value );
-    virtual bool getStop() const;
+    void setStop( bool value );
+    bool getStop() const;
+    void setMessage( std::string whichMessage );
+    std::string getMessage() const;
+    void clearMessageChanged();
+    bool getMessageChanged() const;
 
     ProgressController *getConcrete() const;
 
@@ -87,6 +95,8 @@ class ProgressControllerProxy:public ProgressController
     ProgressHandler handler;
     double endLimit;
     double currentProgress;
+    std::string message;
+    bool messageChanged;
 
     friend ProgressController *ProgressController::create( KernelConnection * );
 };

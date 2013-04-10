@@ -100,6 +100,10 @@ class KTraceCutter : public TraceCutter
     unsigned long long total_trace_size;
     unsigned long long current_read_size;
     unsigned long total_cutter_iters;
+    bool writeToTmpFile;
+    bool secondPhase;
+    unsigned long long total_tmp_lines;
+    unsigned long long current_tmp_lines;
 
     /* Vars for saving the HC that will appear on the trace */
     unsigned long long counters[500];
@@ -154,7 +158,7 @@ class KTraceCutter : public TraceCutter
                        unsigned long long type,
                        unsigned long long value );
     void load_counters_of_pcf( char *trace_name );
-    void shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nameOut, bool is_zip );
+    void shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nameOut, bool is_zip, ProgressController *progress );
     bool is_selected_task( int task_id );
 };
 

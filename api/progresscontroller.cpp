@@ -40,6 +40,8 @@ ProgressControllerProxy::ProgressControllerProxy( KernelConnection * whichKernel
 {
   setPartner( myKernel->newProgressController() );
   handler = NULL;
+  message = "";
+  messageChanged = false;
 }
 
 ProgressControllerProxy::~ProgressControllerProxy()
@@ -91,6 +93,27 @@ void ProgressControllerProxy::setStop( bool value )
 bool ProgressControllerProxy::getStop() const
 {
   return myPartner->getStop();
+}
+
+void ProgressControllerProxy::setMessage( std::string whichMessage )
+{
+  message = whichMessage;
+  messageChanged = true;
+}
+
+std::string ProgressControllerProxy::getMessage() const
+{
+  return message;
+}
+
+void ProgressControllerProxy::clearMessageChanged()
+{
+  messageChanged = false;
+}
+
+bool ProgressControllerProxy::getMessageChanged() const
+{
+  return messageChanged;
 }
 
 ProgressController *ProgressControllerProxy::getConcrete() const
