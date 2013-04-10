@@ -1228,7 +1228,8 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
   q = NULL;
 
   /* Trace processing */
-  while ( fscanf( infile, "%d:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF )
+  while ( fscanf( infile, "%d:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF &&
+          !progress->getStop() )
   {
     if ( num_iters == total_iters )
     {

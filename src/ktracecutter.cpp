@@ -460,7 +460,9 @@ void KTraceCutter::ini_cutter_progress_bar( char *file_name,
   if( progress != NULL)
   {
     if( writeToTmpFile )
+    {
       progress->setEndLimit( total_trace_size * 2 );
+    }
     else
       progress->setEndLimit( total_trace_size );
   }
@@ -499,17 +501,28 @@ void KTraceCutter::show_cutter_progress_bar( ProgressController *progress )
   if ( is_zip )
     current_read_size = current_read_size / TraceStream::GZIP_COMPRESSION_RATIO;
 
-  if (progress != NULL )
+  if ( progress != NULL )
   {
     if( writeToTmpFile )
     {
       if( !secondPhase )
+      {
         progress->setCurrentProgress( current_read_size );
+      }
       else
       {
         if( current_tmp_lines % 10000 == 0 )
         {
-          double tmpPerc = (double)current_tmp_lines / (double)total_tmp_lines;
+          double tmpPerc;
+          if ( total_tmp_lines == 0 )
+          {
+            tmpPerc = 0;
+          }
+          else
+          {
+            tmpPerc = (double)current_tmp_lines / (double)total_tmp_lines;
+          }
+
           double tmpSize = progress->getEndLimit() / 2.0;
           progress->setCurrentProgress( tmpSize + tmpSize * tmpPerc );
         }
