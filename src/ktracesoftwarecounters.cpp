@@ -991,10 +991,20 @@ void KTraceSoftwareCounters::sc_by_event( ProgressController *progress )
   int thread_id, find_mark = 0;
   unsigned long num_iters = 0;
 
+  bool end_parsing;
+
+  if ( progress != NULL )
+    end_parsing = progress->getStop();
+  else
+    end_parsing = false;
+
   /* Trace processing */
   while ( fscanf( infile, "%d:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF &&
-          !progress->getStop() )
+          !end_parsing )
   {
+    if ( progress != NULL )
+      end_parsing = progress->getStop();
+
     if ( num_iters == total_iters )
     {
       show_progress_bar( progress );
@@ -1227,10 +1237,20 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
   p = NULL;
   q = NULL;
 
+  bool end_parsing;
+
+  if ( progress != NULL )
+    end_parsing = progress->getStop();
+  else
+    end_parsing = false;
+
   /* Trace processing */
   while ( fscanf( infile, "%d:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF &&
-          !progress->getStop() )
+          !end_parsing )
   {
+    if ( progress != NULL )
+      end_parsing = progress->getStop();
+
     if ( num_iters == total_iters )
     {
       show_progress_bar( progress );
