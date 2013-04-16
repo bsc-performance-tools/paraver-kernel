@@ -913,7 +913,7 @@ void HistogramProxy::compute2DScale()
   controlWindow->setMaximumY( tmpMaxY );
 
   setControlMin( minY );
-  setControlMax( maxY * 1.05 );
+  setControlMax( maxY + ( ( maxY - minY ) * 0.05 ) );
 
   if ( ( maxY - minY ) == 0 )
   {
@@ -921,12 +921,12 @@ void HistogramProxy::compute2DScale()
   }
   else if ( controlWindow->IsCodeColorSet() && ( maxY - minY ) <= 10000 )
   {
-    setControlMax( floor( maxY * 1.05 ) );
+    setControlMax( maxY + ( ( maxY - minY ) * 0.05 ) );
     setControlDelta( 1.0 );
   }
   else
   {
-    setControlDelta( ( ( maxY * 1.05 ) - minY ) /
+    setControlDelta( ( maxY + ( ( maxY - minY ) * 0.05 ) - minY ) /
                      ParaverConfig::getInstance()->getHistogramNumColumns() );
   }
 }
