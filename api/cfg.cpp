@@ -392,12 +392,15 @@ void CFGLoader::pushbackAllWindows( const vector<Window *>& selectedWindows,
   for ( vector<Histogram *>::const_iterator it = selectedHistos.begin();
         it != selectedHistos.end(); ++it )
   {
-    pushbackWindow( ( *it )->getControlWindow(), allWindows );
-    if ( ( *it )->getControlWindow() != ( *it )->getDataWindow() )
+    if( find( selectedWindows.begin(), selectedWindows.end(), ( *it )->getControlWindow() ) == selectedWindows.end() )
+      pushbackWindow( ( *it )->getControlWindow(), allWindows );
+    if ( ( *it )->getControlWindow() != ( *it )->getDataWindow() &&
+         find( selectedWindows.begin(), selectedWindows.end(), ( *it )->getDataWindow() ) == selectedWindows.end() )
       pushbackWindow( ( *it )->getDataWindow(), allWindows );
     if ( ( *it )->getThreeDimensions() &&
          ( *it )->getExtraControlWindow() != ( *it )->getControlWindow() &&
-         ( *it )->getExtraControlWindow() != ( *it )->getDataWindow() )
+         ( *it )->getExtraControlWindow() != ( *it )->getDataWindow() &&
+         find( selectedWindows.begin(), selectedWindows.end(), ( *it )->getExtraControlWindow() ) == selectedWindows.end() )
       pushbackWindow( ( *it )->getExtraControlWindow(), allWindows );
   }
 }
