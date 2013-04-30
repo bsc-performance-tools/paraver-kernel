@@ -41,7 +41,7 @@ libparaver_api_la_SOURCES = \
                     
 include_HEADERS = \
                   cfg.h\
-                  ../config.h\
+                  ../config_types.h\
                   drawmode.h\
                   eventlabels.h\
                   filter.h\

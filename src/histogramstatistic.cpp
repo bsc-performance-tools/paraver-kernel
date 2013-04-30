@@ -1350,7 +1350,7 @@ TSemanticValue StatIntegral::execute( CalculateData *data )
   end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
         data->endTime : dataWin->getEndTime( data->dataRow );
 
-  return ( end - begin ) * dataWin->getValue( data->dataRow );
+  return dataWin->traceUnitsToWindowUnits( end - begin ) * dataWin->getValue( data->dataRow );
 }
 
 TSemanticValue StatIntegral::finishRow( TSemanticValue cellValue,

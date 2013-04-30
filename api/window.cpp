@@ -32,6 +32,7 @@
 
 #include <algorithm> // CFG4D
 
+#include "config.h"
 #include "kernelconnection.h"
 #include "filter.h"
 #include "trace.h"

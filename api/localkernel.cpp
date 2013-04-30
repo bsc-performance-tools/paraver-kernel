@@ -29,6 +29,7 @@
 
 #include <time.h>
 #include <sys/stat.h>
+#include "config.h"
 #include "localkernel.h"
 #include "kwindow.h"
 #include "khistogram.h"

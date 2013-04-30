@@ -54,7 +54,7 @@ AX_BOOST_SERIALIZATION
 ######################################################################
 #    Checks for typedefs, structures and compiler characteristics    #
 ######################################################################
-
+AC_CONFIG_HEADERS(config_types.h)
 AC_CHECK_TYPES([long, long long, char, int, short int])
 AC_CHECK_SIZEOF(long)
 AC_CHECK_SIZEOF(long long)

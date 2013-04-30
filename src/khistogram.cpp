@@ -29,6 +29,7 @@
 
 #include <math.h>
 #include <limits>
+#include "config.h"
 #include "kwindow.h"
 #include "khistogram.h"
 #include "histogramstatistic.h"

@@ -35,7 +35,7 @@
 //#include <boost/filesystem.hpp>
 //#include <boost/error_code.hpp>
 //using namespace boost::filesystem;
-
+#include "config.h"
 #include "localkernel.h"
 #include "paramedir.h"
 #include "cfg.h"
