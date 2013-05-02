@@ -57,7 +57,10 @@ bool SyncWindows::addWindow( Window *whichWindow, unsigned int whichGroup )
     return false;
 
   syncGroups[ whichGroup ].push_back( whichWindow );
-  if( syncGroups[ whichGroup ].size() > 1 )
+  if( syncGroups[ whichGroup ].size() > 1 &&
+      ( whichWindow->getWindowBeginTime() != syncGroups[ whichGroup ][ 0 ]->getWindowBeginTime() ||
+        whichWindow->getWindowEndTime() != syncGroups[ whichGroup ][ 0 ]->getWindowEndTime() )
+    )
   {
     whichWindow->setWindowBeginTime( syncGroups[ whichGroup ][ 0 ]->getWindowBeginTime(), true );
     whichWindow->setWindowEndTime( syncGroups[ whichGroup ][ 0 ]->getWindowEndTime(), true );
@@ -115,7 +118,10 @@ void SyncWindows::broadcastTime( unsigned int whichGroup, Window *sendWindow, TT
   for( vector<Window *>::iterator it = syncGroups[ whichGroup ].begin();
        it != syncGroups[ whichGroup ].end(); ++it )
   {
-    if( ( *it ) != sendWindow )
+    if( ( *it ) != sendWindow  &&
+        ( ( *it )->getWindowBeginTime() != beginTime ||
+          ( *it )->getWindowEndTime() != endTime )
+      )
     {
       ( *it )->addZoom( beginTime, endTime, true );
       ( *it )->setWindowBeginTime( beginTime, true );
