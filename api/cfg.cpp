@@ -2932,6 +2932,8 @@ bool WindowDrawMode::parseLine( KernelConnection *whichKernel,
     windows[ windows.size() - 1 ]->setDrawModeTime( DRAW_RANDNOTZERO );
   else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_AVERAGE ) == 0 )
     windows[ windows.size() - 1 ]->setDrawModeTime( DRAW_AVERAGE );
+  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_AVERAGENOT0 ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawModeTime( DRAW_AVERAGENOTZERO );
 
   return true;
 }
@@ -2959,6 +2961,9 @@ void WindowDrawMode::printLine( ofstream& cfgFile,
       break;
     case DRAW_AVERAGE:
       cfgFile << OLDCFG_VAL_DRAW_MODE_AVERAGE;
+      break;
+    case DRAW_AVERAGENOTZERO:
+      cfgFile << OLDCFG_VAL_DRAW_MODE_AVERAGENOT0;
       break;
     default:
       break;
@@ -2993,6 +2998,8 @@ bool WindowDrawModeRows::parseLine( KernelConnection *whichKernel, istringstream
     windows[ windows.size() - 1 ]->setDrawModeObject( DRAW_RANDNOTZERO );
   else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_AVERAGE ) == 0 )
     windows[ windows.size() - 1 ]->setDrawModeObject( DRAW_AVERAGE );
+  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_AVERAGENOT0 ) == 0 )
+    windows[ windows.size() - 1 ]->setDrawModeObject( DRAW_AVERAGENOTZERO );
 
   return true;
 }
@@ -3020,6 +3027,9 @@ void WindowDrawModeRows::printLine( ofstream& cfgFile,
       break;
     case DRAW_AVERAGE:
       cfgFile << OLDCFG_VAL_DRAW_MODE_AVERAGE;
+      break;
+    case DRAW_AVERAGENOTZERO:
+      cfgFile << OLDCFG_VAL_DRAW_MODE_AVERAGENOT0;
       break;
     default:
       break;

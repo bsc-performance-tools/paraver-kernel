@@ -116,6 +116,26 @@ inline TSemanticValue selectMethod<DRAW_AVERAGE>( vector<TSemanticValue>& v )
   return avg / v.size();
 }
 
+template <>
+inline TSemanticValue selectMethod<DRAW_AVERAGENOTZERO>( vector<TSemanticValue>& v )
+{
+  TSemanticValue avg = 0.0;
+  TSemanticValue times = 0.0;
+
+  for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); ++it )
+  {
+    if( *it != 0.0 )
+    {
+      avg += *it;
+      ++times;
+    }
+  }
+
+  if( times == 0.0 )
+    return 0.0;
+  return avg / times;
+}
+
 TSemanticValue DrawMode::selectValue( vector<TSemanticValue>& v,
                                       DrawModeMethod method )
 {
@@ -139,6 +159,10 @@ TSemanticValue DrawMode::selectValue( vector<TSemanticValue>& v,
 
     case DRAW_AVERAGE:
       return selectMethod<DRAW_AVERAGE>( v );
+      break;
+
+    case DRAW_AVERAGENOTZERO:
+      return selectMethod<DRAW_AVERAGENOTZERO>( v );
       break;
 
     default:
