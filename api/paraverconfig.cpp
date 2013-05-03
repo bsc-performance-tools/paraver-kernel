@@ -35,6 +35,7 @@
   #include <shlobj.h>
 #else
   #include <sys/stat.h>
+  #include <pwd.h>
   #include <sys/types.h>
 #endif
 #include "paraverconfig.h"
@@ -59,6 +60,18 @@ ParaverConfig::ParaverConfig()
   homedir.append( getenv( "HOMEPATH" ) );
 #else
   homedir = getenv( "HOME" );
+  if( homedir == string( "" ) )
+  {
+    struct passwd *pwd = getpwuid( getuid() );
+    if( pwd != NULL )
+    {
+      homedir = string( pwd->pw_dir );
+    }
+    else
+    {
+      homedir = string( "/tmp" );
+    }
+  }
 #endif
 
   xmlGlobal.tracesPath = homedir; // also for paraload.sig!
