@@ -377,10 +377,10 @@ string applyFilters( KernelConnection *myKernel,
                                               traceOptions,
                                               translation );
 #else
-      translation[ make_pair( 30000000, 2 ) ] = make_pair( 666, 999 );
-      translation[ make_pair( 30000001, 2 ) ] = make_pair( 666666, 999999 );
-      translation[ make_pair( 30000002, 2 ) ] = make_pair( 666666666, 999999999 );
-      translation[ make_pair( 30000003, 2 ) ] = make_pair( 666666666666, 999999999999 );
+      //translation[ make_pair( 30000000, 2 ) ] = make_pair( 666, 999 );
+      translation[ make_pair( 50000001, 1 ) ] = make_pair( 666666, 999999 );
+      translation[ make_pair( 50000002, 9 ) ] = make_pair( 666666666, 999999999 );
+      translation[ make_pair( 50000003, 31 ) ] = make_pair( 666666666666, 999999999999 );
 
       TraceOptions *opts = myKernel->newTraceOptions( );
 
@@ -398,7 +398,7 @@ string applyFilters( KernelConnection *myKernel,
       opts->set_filter_comms( true );
       opts->set_min_comm_size( 1 );
 
-      traceFilter = myKernel->newTraceFilter( tmpNameIn, tmpNameOut, opts, translation );
+      traceFilter = myKernel->newTraceFilter( (char *)tmpNameIn.c_str(), (char *)tmpNameOut.c_str(), opts, translation );
 #endif
       myKernel->copyPCF( tmpNameIn, tmpNameOut );
     }

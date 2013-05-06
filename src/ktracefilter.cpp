@@ -500,11 +500,16 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
   if ( progress != NULL )
     end_parsing = progress->getStop();
 
+
   /* Processing the trace records */
-  while ( !end_parsing && !progress->getStop() )
+  while ( !end_parsing )
   {
     if ( progress != NULL )
+    {
       end_parsing = progress->getStop();
+      if ( end_parsing )
+        continue;
+    }
 
     /* Read one more record is possible */
     if ( !is_zip_filter )

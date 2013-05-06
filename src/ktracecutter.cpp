@@ -1042,7 +1042,11 @@ void KTraceCutter::execute( char *trace_in,
   while ( !end_parsing && !maxTimeReached )
   {
     if( progress != NULL )
+    {
       end_parsing = progress->getStop();
+      if ( end_parsing )
+        continue;
+    }
 
     /* Read one more record is possible */
     if ( !is_zip )

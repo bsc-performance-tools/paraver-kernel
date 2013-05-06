@@ -775,10 +775,25 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
 
   buffer = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
 
+  bool end_parsing;
+
+  if ( progress != NULL )
+    end_parsing = progress->getStop();
+  else
+    end_parsing = false;
+
   /* Trace processing */
   while ( fscanf( infile, "%d:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF &&
-          !progress->getStop() )
+          !end_parsing )
   {
+    if ( progress != NULL )
+    {
+      end_parsing = progress->getStop();
+      if ( end_parsing )
+        continue;
+    }
+
+
     if ( num_iters == total_iters )
     {
       show_progress_bar( progress );
@@ -1249,7 +1264,11 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
           !end_parsing )
   {
     if ( progress != NULL )
+    {
       end_parsing = progress->getStop();
+      if ( end_parsing )
+        continue;
+    }
 
     if ( num_iters == total_iters )
     {
