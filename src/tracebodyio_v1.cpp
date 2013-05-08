@@ -186,7 +186,7 @@ inline void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records
     return;
   }
 
-  if ( time == endtime ) return;
+  //if ( time == endtime ) return;
 
   records.newRecord();
   records.setType( STATE + BEGIN );
