@@ -73,7 +73,6 @@ ParaverConfig::ParaverConfig()
     }
   }
 #endif
-  paraverConfigDir = homedir;
 
   xmlGlobal.tracesPath = homedir; // also for paraload.sig!
   xmlGlobal.cfgsPath = homedir;
@@ -90,6 +89,9 @@ ParaverConfig::ParaverConfig()
 #else
   strFile.append( "/.paraver/" );
 #endif
+
+  paraverConfigDir = strFile;
+
   xmlGlobal.sessionPath = strFile;
   xmlGlobal.sessionSaveTime = 0;
 
