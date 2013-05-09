@@ -73,6 +73,7 @@ ParaverConfig::ParaverConfig()
     }
   }
 #endif
+  paraverConfigDir = homedir;
 
   xmlGlobal.tracesPath = homedir; // also for paraload.sig!
   xmlGlobal.cfgsPath = homedir;
@@ -183,6 +184,11 @@ ParaverConfig::ParaverConfig()
 ParaverConfig::~ParaverConfig()
 {
   unLoadMap();
+}
+
+std::string ParaverConfig::getParaverConfigDir()
+{
+  return paraverConfigDir;
 }
 
 

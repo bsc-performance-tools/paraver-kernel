@@ -87,6 +87,8 @@ class ParaverConfig
     static void writeParaverConfigFile();
     static bool writeDefaultConfig();
 
+    std::string getParaverConfigDir();
+
     // GLOBAL XML SECTION
     void setGlobalTracesPath( std::string whichTracesPath );
     void setGlobalCFGsPath( std::string whichCfgsPath );
@@ -268,7 +270,8 @@ class ParaverConfig
     bool getSoftwareCountersOnlyInBursts();
     std::string getSoftwareCountersTypesKept();
 
-    // COLORS XML SECTION
+    // COLORS XML SECTION    std::string getParaverConfigDir();
+
     void setColorsTimelineBackground( rgb whichTimelineBackground );
     void setColorsTimelineAxis( rgb whichTimelineAxis );
     void setColorsTimelineUseZero( bool useZero );
@@ -299,6 +302,8 @@ class ParaverConfig
 
     static ParaverConfig *instance;
     std::map<std::string, PropertyFunction *> propertyFunctions;
+
+    std::string paraverConfigDir;
 
     void loadMap();
     void unLoadMap();
