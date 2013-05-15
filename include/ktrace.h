@@ -111,7 +111,7 @@ class KTrace: public Trace
                           TWindowLevel fromLevel,
                           TWindowLevel toLevel ) const;
 
-    bool getSameObjectStruct( Trace *compareTo ) const;
+    bool isSameObjectStruct( Trace *compareTo ) const;
 
     // Communication info getters
     TCommID getTotalComms() const;
