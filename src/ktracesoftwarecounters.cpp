@@ -330,7 +330,10 @@ int KTraceSoftwareCounters::inc_counter( int appl, int task, int thread, unsigne
         if ( !acumm_values )
           threads[i].counters[j].num++;
         else
+        {
           threads[i].counters[j].num += value;
+
+        }
         break;
       }
     }
@@ -348,6 +351,9 @@ int KTraceSoftwareCounters::inc_counter( int appl, int task, int thread, unsigne
         threads[i].counters[j].num = value;
 
       threads[i].next_free_counter++;
+
+//std::cout << "next_free_counter=" << threads[i].next_free_counter << std::endl;
+//std::cout << "type=" << threads[i].next_free_counter << std::endl;
     }
   }
 
@@ -1326,6 +1332,8 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
     {
       /* Incrementing the counters */
       fgets( line, sizeof( line ), infile );
+      if ( line[0] == '#' )
+        continue;
 
       if ( ( i = thread_pointer[appl][task][thread] ) == -1 )
       {

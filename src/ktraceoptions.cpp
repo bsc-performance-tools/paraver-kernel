@@ -941,7 +941,7 @@ void KTraceOptions::saveXMLSoftwareCounters( xmlTextWriterPtr &writer )
 
   rc = xmlTextWriterStartElement( writer, BAD_CAST "algorithm" );
 
-  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "count_events_vs_acummulate_values", "%d", (int)!get_sc_acumm_counters() );
+  rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "count_events_vs_acummulate_values", "%d", (int)get_sc_acumm_counters() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "remove_states", "%d", (int)get_sc_remove_states() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "summarize_useful_states", "%d", (int)get_sc_summarize_states() );
   rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "global_counters", "%d", (int)get_sc_global_counters() );
