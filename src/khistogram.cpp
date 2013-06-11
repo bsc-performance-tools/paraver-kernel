@@ -156,8 +156,12 @@ inline bool ColumnTranslator::getColumn( THistogramLimit whichValue,
   if ( whichValue < minLimit || whichValue > maxLimit )
     return false;
 
-  column = THistogramColumn( floor( ( ( whichValue - minLimit ) * ( ( maxLimit - minLimit ) / delta ) ) /
-                                    ( maxLimit - minLimit ) ) );
+  column = THistogramColumn( floor( whichValue - minLimit ) / delta );
+
+  /*
+    column = THistogramColumn( floor( ( ( whichValue - minLimit ) * ( ( maxLimit - minLimit ) / delta ) ) /
+                                      ( maxLimit - minLimit ) ) );
+  */
 
   if ( column >= numColumns )
     column = numColumns - 1;
