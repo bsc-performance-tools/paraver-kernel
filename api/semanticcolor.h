@@ -42,7 +42,8 @@ class SemanticColor
     {
       COLOR = 0,
       GRADIENT,
-      NOT_NULL_GRADIENT
+      NOT_NULL_GRADIENT,
+      FUNCTION_LINE
     };
 
     static rgb BACKGROUND;

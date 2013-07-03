@@ -344,15 +344,25 @@ class Window
     {}
     virtual void setCodeColorMode()
     {}
-    virtual bool IsCodeColorSet() const
+    virtual void setGradientColorMode()
+    {}
+    virtual void setNotNullGradientColorMode()
+    {}
+    virtual void setFunctionLineColorMode()
+    {}
+    virtual bool isCodeColorSet() const
     {
       return true;
     }
-    virtual bool IsGradientColorSet() const
+    virtual bool isGradientColorSet() const
     {
       return false;
     }
-    virtual bool IsNotNullGradientColorSet() const
+    virtual bool isNotNullGradientColorSet() const
+    {
+      return false;
+    }
+    virtual bool isFunctionLineColorSet() const
     {
       return false;
     }
@@ -361,8 +371,6 @@ class Window
       return 1;
     }
     virtual void setPixelSize( PRV_UINT16 whichSize )
-    {}
-    virtual void setGradientColorMode()
     {}
     virtual void allowOutOfScale( bool activate )
     {}
@@ -402,12 +410,6 @@ class Window
       return false;
     }
     virtual void setDrawFlags( bool newValue )
-    {}
-    virtual bool getDrawFunctionLineColor() const
-    {
-      return true;
-    }
-    virtual void setDrawFunctionLineColor( bool newValue )
     {}
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
                                           std::vector<std::string>& onVector ) const
@@ -811,9 +813,12 @@ class WindowProxy: public Window
     virtual void setRaiseWindow( bool newValue );
     virtual void setCodeColorMode();
     virtual void setGradientColorMode();
-    virtual bool IsCodeColorSet() const;
-    virtual bool IsGradientColorSet() const;
-    virtual bool IsNotNullGradientColorSet() const;
+    virtual void setNotNullGradientColorMode();
+    virtual void setFunctionLineColorMode();
+    virtual bool isCodeColorSet() const;
+    virtual bool isGradientColorSet() const;
+    virtual bool isNotNullGradientColorSet() const;
+    virtual bool isFunctionLineColorSet() const;
     virtual PRV_UINT16 getPixelSize() const;
     virtual void setPixelSize( PRV_UINT16 whichSize );
 
@@ -831,9 +836,6 @@ class WindowProxy: public Window
     virtual void setDrawCommLines( bool newValue );
     virtual bool getDrawFlags() const;
     virtual void setDrawFlags( bool newValue );
-    virtual bool getDrawFunctionLineColor() const;
-    virtual void setDrawFunctionLineColor( bool newValue );
-
 
     virtual bool emptyPrevZoom() const;
     virtual bool emptyNextZoom() const;
@@ -1043,15 +1045,14 @@ class WindowProxy: public Window
     CodeColor myCodeColor;
     GradientColor myGradientColor;
     DrawModeMethod drawModeObject;
-    bool codeColor;
     DrawModeMethod drawModeTime;
+    SemanticColor::TColorFunction colorMode;
     bool showWindow;
     bool raise;
     bool changed;
     bool redraw;
     bool commLines;
     bool flags;
-    bool functionLineColor;
     PRV_UINT16 pixelSize;
 
     // Zoom history

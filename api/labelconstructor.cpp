@@ -609,6 +609,7 @@ void LabelConstructor::getGUIGroupLabels( const TGroupID groupID, vector< string
       labels.push_back( GUI_COLORS_CODE_COLOR );
       labels.push_back( GUI_COLORS_GRADIENT_COLOR );
       labels.push_back( GUI_COLORS_NOT_NULL_GRADIENT );
+      labels.push_back( GUI_COLORS_FUNCTION_LINE );
       break;
 
     case GRADIENT_FUNCTION:

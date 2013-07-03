@@ -101,6 +101,7 @@ ParaverConfig::ParaverConfig()
   xmlTimeline.precision = 2;
   xmlTimeline.viewEventsLines = false;
   xmlTimeline.viewCommunicationsLines = true;
+  //DEPRECATED
   xmlTimeline.viewFunctionAsColor = true;
   xmlTimeline.color = SemanticColor::COLOR;
   xmlTimeline.drawmodeTime = DRAW_MAXIMUM;
@@ -336,6 +337,7 @@ void ParaverConfig::setTimelineViewCommunicationsLines( bool whichViewCommunicat
   xmlTimeline.viewCommunicationsLines = whichViewCommunicationsLines;
 }
 
+//DEPRECATED
 void ParaverConfig::setTimelineViewFunctionAsColor( bool whichViewFunctionAsColor )
 {
   xmlTimeline.viewFunctionAsColor = whichViewFunctionAsColor;
@@ -442,6 +444,7 @@ bool ParaverConfig::getTimelineViewCommunicationsLines() const
   return xmlTimeline.viewCommunicationsLines;
 }
 
+//DEPRECATED
 bool ParaverConfig::getTimelineViewFunctionAsColor() const
 {
   return xmlTimeline.viewFunctionAsColor;

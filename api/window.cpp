@@ -119,7 +119,11 @@ void WindowProxy::init()
   yScaleComputed = false;
   maximumY = Window::getMaximumY();
   minimumY = Window::getMinimumY();
-  codeColor = ParaverConfig::getInstance()->getTimelineColor() == SemanticColor::COLOR;
+  colorMode = ParaverConfig::getInstance()->getTimelineColor();
+  if( colorMode == SemanticColor::GRADIENT )
+    myGradientColor.allowOutOfScale( true );
+  else if( colorMode == SemanticColor::NOT_NULL_GRADIENT )
+    myGradientColor.allowOutOfScale( false );
   myGradientColor.setGradientFunction( ParaverConfig::getInstance()->getTimelineGradientFunction() );
   drawModeObject = ParaverConfig::getInstance()->getTimelineDrawmodeObjects();
   drawModeTime = ParaverConfig::getInstance()->getTimelineDrawmodeTime();
@@ -134,7 +138,6 @@ void WindowProxy::init()
   redraw = false;
   commLines = ParaverConfig::getInstance()->getTimelineViewCommunicationsLines();
   flags = ParaverConfig::getInstance()->getTimelineViewEventsLines();
-  functionLineColor = ParaverConfig::getInstance()->getTimelineViewFunctionAsColor();
   child = NULL;
   usedByHistogram = false;
 
@@ -281,7 +284,7 @@ Window *WindowProxy::clone( )
 
   clonedWindow->myCodeColor = myCodeColor;
   clonedWindow->myGradientColor = myGradientColor;
-  clonedWindow->codeColor = codeColor;
+  clonedWindow->colorMode = colorMode;
   clonedWindow->drawModeObject = drawModeObject;
   clonedWindow->drawModeTime = drawModeTime;
   clonedWindow->showWindow = showWindow;
@@ -289,7 +292,6 @@ Window *WindowProxy::clone( )
   clonedWindow->redraw = redraw;
   clonedWindow->commLines = commLines;
   clonedWindow->flags = flags;
-  clonedWindow->functionLineColor = functionLineColor;
   clonedWindow->child = NULL;
   clonedWindow->posX = posX;
   clonedWindow->posY = posY;
@@ -872,31 +874,45 @@ void WindowProxy::setRaiseWindow( bool newValue )
 
 void WindowProxy::setCodeColorMode()
 {
-  codeColor = true;
+  colorMode = SemanticColor::COLOR;
 }
 
 void WindowProxy::setGradientColorMode()
 {
-  codeColor = false;
+  colorMode = SemanticColor::GRADIENT;
+  myGradientColor.allowOutOfScale( true );
 }
 
-bool WindowProxy::IsCodeColorSet() const
+void WindowProxy::setNotNullGradientColorMode()
 {
-  return codeColor;
+  colorMode = SemanticColor::NOT_NULL_GRADIENT;
+  myGradientColor.allowOutOfScale( false );
 }
 
-bool WindowProxy::IsGradientColorSet() const
+void WindowProxy::setFunctionLineColorMode()
 {
-  return ( !codeColor && ( myGradientColor.getAllowOutOfScale() ) );
-//  return !codeColor;
+  colorMode = SemanticColor::FUNCTION_LINE;
 }
 
-
-bool WindowProxy::IsNotNullGradientColorSet() const
+bool WindowProxy::isCodeColorSet() const
 {
-  return ( !codeColor && !( myGradientColor.getAllowOutOfScale() ) );
+  return colorMode == SemanticColor::COLOR;
 }
 
+bool WindowProxy::isGradientColorSet() const
+{
+  return colorMode == SemanticColor::GRADIENT;
+}
+
+bool WindowProxy::isNotNullGradientColorSet() const
+{
+  return colorMode == SemanticColor::NOT_NULL_GRADIENT;
+}
+
+bool WindowProxy::isFunctionLineColorSet() const
+{
+  return colorMode == SemanticColor::FUNCTION_LINE;
+}
 
 PRV_UINT16 WindowProxy::getPixelSize() const
 {
@@ -920,7 +936,7 @@ void WindowProxy::allowOutliers( bool activate )
 
 rgb WindowProxy::calcColor( TSemanticValue whichValue, Window& whichWindow )
 {
-  if ( codeColor )
+  if ( colorMode == SemanticColor::COLOR )
     return myCodeColor.calcColor( whichValue, minimumY, maximumY );
 
   return myGradientColor.calcColor( whichValue, minimumY, maximumY );
@@ -930,7 +946,7 @@ bool WindowProxy::calcValueFromColor( rgb whichColor,
                                       TSemanticValue& firstValue,
                                       TSemanticValue& secondValue ) const
 {
-  if ( codeColor )
+  if ( colorMode == SemanticColor::COLOR )
     return myCodeColor.calcValue( whichColor, firstValue );
 
   return myGradientColor.calcValue( whichColor, minimumY, maximumY, firstValue, secondValue );
@@ -974,16 +990,6 @@ bool WindowProxy::getDrawFlags() const
 void WindowProxy::setDrawFlags( bool newValue )
 {
   flags = newValue;
-}
-
-bool WindowProxy::getDrawFunctionLineColor() const
-{
-  return functionLineColor;
-}
-
-void WindowProxy::setDrawFunctionLineColor( bool newValue )
-{
-  functionLineColor = newValue;
 }
 
 SemanticInfoType WindowProxy::getSemanticInfoType() const

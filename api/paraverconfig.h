@@ -362,6 +362,7 @@ class ParaverConfig
         ar & boost::serialization::make_nvp( "decimal_precision", precision );
         ar & boost::serialization::make_nvp( "view_events_lines", viewEventsLines );
         ar & boost::serialization::make_nvp( "view_communications_lines", viewCommunicationsLines );
+        //DEPRECATED
         ar & boost::serialization::make_nvp( "view_function_as_color", viewFunctionAsColor );
         ar & boost::serialization::make_nvp( "color", color );
         ar & boost::serialization::make_nvp( "drawmode_time", drawmodeTime );
@@ -387,6 +388,7 @@ class ParaverConfig
       PRV_UINT32 precision;
       bool viewEventsLines;
       bool viewCommunicationsLines;
+      //DEPRECATED
       bool viewFunctionAsColor;
       SemanticColor::TColorFunction color;
       DrawModeMethod drawmodeTime;

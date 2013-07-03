@@ -1024,10 +1024,8 @@ bool WindowNonColorMode::parseLine( KernelConnection *whichKernel, istringstream
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawFunctionLineColor( false );
-  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawFunctionLineColor( true );
+  if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+    windows[ windows.size() - 1 ]->setFunctionLineColorMode();
   else
     return false;
 
@@ -1037,7 +1035,7 @@ bool WindowNonColorMode::parseLine( KernelConnection *whichKernel, istringstream
 void WindowNonColorMode::printLine( ofstream& cfgFile,
                                     const vector<Window *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_NON_COLOR_MODE << " " << ( ( *it )->getDrawFunctionLineColor() ?
+  cfgFile << OLDCFG_TAG_WNDW_NON_COLOR_MODE << " " << ( ( *it )->isFunctionLineColorSet() ?
       OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
 
@@ -1056,18 +1054,13 @@ bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& l
 
   getline( line, strMode, ' ' );
 
+  if( windows[ windows.size() - 1 ]->isFunctionLineColorSet() )
+    return true;
+
   if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_GRADIENT ) == 0 )
-  {
     windows[ windows.size() - 1 ]->setGradientColorMode();
-    windows[ windows.size() - 1 ]->getGradientColor().allowOutOfScale( true );
-    windows[ windows.size() - 1 ]->getGradientColor().allowOutliers( true );
-  }
   else if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) == 0 )
-  {
-    windows[ windows.size() - 1 ]->setGradientColorMode();
-    windows[ windows.size() - 1 ]->getGradientColor().allowOutOfScale( false );
-    windows[ windows.size() - 1 ]->getGradientColor().allowOutliers( true );
-  }
+    windows[ windows.size() - 1 ]->setNotNullGradientColorMode();
 
   return true;
 }
@@ -1075,10 +1068,10 @@ bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& l
 void WindowColorMode::printLine( ofstream& cfgFile,
                                  const vector<Window *>::const_iterator it )
 {
-  if ( ( *it )->IsGradientColorSet() || ( *it )->IsNotNullGradientColorSet() )
+  if ( ( *it )->isGradientColorSet() || ( *it )->isNotNullGradientColorSet() )
   {
     cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " <<
-    ( ( *it )->getGradientColor().getAllowOutOfScale() ?
+    ( ( *it )->isGradientColorSet() ?
       OLDCFG_VAL_COLOR_MODE_GRADIENT : OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) << endl;
   }
 }
