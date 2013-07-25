@@ -208,7 +208,7 @@ namespace stdext
 
       bool operator()(const rgb &color1, const rgb &color2) const
       {
-        return color1 == color2;
+        return color1 < color2;
       }
   };
 }

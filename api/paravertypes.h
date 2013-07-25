@@ -65,6 +65,13 @@ struct rgb
   {
     return !( red == b.red && green == b.green && blue == b.blue );
   }
+
+#ifdef WIN32
+  bool operator<( const rgb& b ) const
+  {
+    return red < b.red || blue < b.blue || green < b.green;
+  }
+#endif
 };
 
 #endif // PARAVERTYPES_H_INCLUDED
