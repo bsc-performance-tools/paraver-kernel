@@ -1026,6 +1026,8 @@ bool WindowNonColorMode::parseLine( KernelConnection *whichKernel, istringstream
 
   if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     windows[ windows.size() - 1 ]->setFunctionLineColorMode();
+  else if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+    return true;
   else
     return false;
 
