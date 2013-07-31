@@ -1024,9 +1024,10 @@ bool WindowNonColorMode::parseLine( KernelConnection *whichKernel, istringstream
 
   getline( line, strBool, ' ' );
 
-  if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+  // TODO: non color mode is color mode !!
+  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
     windows[ windows.size() - 1 ]->setFunctionLineColorMode();
-  else if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
     return true;
   else
     return false;
@@ -1037,8 +1038,9 @@ bool WindowNonColorMode::parseLine( KernelConnection *whichKernel, istringstream
 void WindowNonColorMode::printLine( ofstream& cfgFile,
                                     const vector<Window *>::const_iterator it )
 {
+  // TODO: non color mode is color mode !!
   cfgFile << OLDCFG_TAG_WNDW_NON_COLOR_MODE << " " << ( ( *it )->isFunctionLineColorSet() ?
-      OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
+      OLDCFG_VAL_FALSE : OLDCFG_VAL_TRUE ) << endl;
 }
 
 
