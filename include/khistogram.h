@@ -38,6 +38,9 @@
 
 class KHistogramTotals;
 class KWindow;
+#ifdef PARALLEL_ENABLED
+class CubeBuffer;
+#endif
 
 class RowsTranslator
 {
@@ -279,6 +282,11 @@ class KHistogram : public Histogram
     Cube<TSemanticValue> *commCube;
     Matrix<TSemanticValue> *commMatrix;
 
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *semanticBuffer;
+    CubeBuffer *commBuffer;
+#endif
+
     KHistogramTotals *totals;
     KHistogramTotals *rowTotals;
     KHistogramTotals *commTotals;
@@ -292,8 +300,23 @@ class KHistogram : public Histogram
     void initTotals();
     void initSemantic( TRecordTime beginTime );
     void initStatistics();
-    void initTmpBuffers();
+    void initTmpBuffers( THistogramColumn planes, TObjectOrder rows );
+#ifdef PARALLEL_ENABLED
+    void finishAllRows();
+#endif
     void finishOutLimits();
+
+#ifdef PARALLEL_ENABLED
+    void parallelExecution( TRecordTime fromTime, TRecordTime toTime,
+                            TObjectOrder fromRow, TObjectOrder toRow,
+                            std::vector<TObjectOrder>& selectedRows  );
+
+#pragma omp task shared( fromTime, toTime, fromRow, toRow, selectedRows )
+    void executionTask( TRecordTime fromTime, TRecordTime toTime,
+                        TObjectOrder fromRow, TObjectOrder toRow,
+                        std::vector<TObjectOrder>& selectedRows );
+#endif
+
     void recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                              TObjectOrder fromRow, TObjectOrder toRow,
                              std::vector<TObjectOrder>& selectedRows,

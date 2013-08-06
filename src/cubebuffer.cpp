@@ -28,6 +28,7 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "cubebuffer.h"
+#include <functional>
 
 using std::vector;
 using std::map;
@@ -35,8 +36,13 @@ using std::map;
 
 CubeBuffer::CubeBuffer( PRV_UINT32 numPlanes, PRV_UINT32 numRows )
 {
+#ifdef PARALLEL_ENABLED
   map< THistogramColumn, vector< TSemanticValue > > tmpRow;
   vector< map< THistogramColumn, vector< TSemanticValue > > > tmpMatrix( numRows, tmpRow );
+#else
+  hash_map< THistogramColumn, vector< TSemanticValue > > tmpRow;
+  vector< hash_map< THistogramColumn, vector< TSemanticValue > > > tmpMatrix( numRows, tmpRow );
+#endif
   buffer.insert( buffer.begin(), numPlanes, tmpMatrix );
 }
 
@@ -47,25 +53,56 @@ CubeBuffer::~CubeBuffer()
 
 void CubeBuffer::addValue( PRV_UINT32 plane, PRV_UINT32 row, THistogramColumn col, const std::vector< TSemanticValue >& semVal )
 {
-  map< THistogramColumn, vector< TSemanticValue > >::iterator it = ( ( buffer[ plane ] )[ row ] ).find( col );
-  if ( it != ( ( buffer[ plane ] )[ row ] ).end() )
+#ifdef PARALLEL_ENABLED
+  map< THistogramColumn, vector< TSemanticValue > >& currentRow = ( ( buffer[ plane ] )[ row ] );
+
+  map< THistogramColumn, vector< TSemanticValue > >::iterator it = currentRow.find( col );
+#else
+  hash_map< THistogramColumn, vector< TSemanticValue > >& currentRow = ( ( buffer[ plane ] )[ row ] );
+
+  hash_map< THistogramColumn, vector< TSemanticValue > >::iterator it = currentRow.find( col );
+#endif
+  if ( it != currentRow.end() )
   {
     for( PRV_UINT32 i = 0; i < semVal.size(); ++i )
       ( it->second )[ i ] += semVal[ i ];
   }
   else
   {
-    ( ( buffer[ plane ] )[ row ] )[ col ] = semVal;
+    currentRow[ col ] = semVal;
   }
+}
+
+
+void CubeBuffer::setValue( PRV_UINT32 plane, PRV_UINT32 row, THistogramColumn col, const std::vector< TSemanticValue >& semVal )
+{
+  ( ( buffer[ plane ] )[ row ] )[ col ] = semVal;
 }
 
 
 bool CubeBuffer::getCellValue( std::vector< TSemanticValue >& semVal, PRV_UINT32 plane, PRV_UINT32 row, PRV_UINT32 col ) const
 {
-  map< THistogramColumn, vector< TSemanticValue > >::const_iterator it = ( ( buffer[ plane ] )[ row ] ).find( col );
-  if ( it == ( ( buffer[ plane ] )[ row ] ).end() )
+#ifdef PARALLEL_ENABLED
+  const map< THistogramColumn, vector< TSemanticValue > >& currentRow = ( ( buffer[ plane ] )[ row ] );
+  map< THistogramColumn, vector< TSemanticValue > >::const_iterator it = currentRow.find( col );
+#else
+  const hash_map< THistogramColumn, vector< TSemanticValue > >& currentRow = ( ( buffer[ plane ] )[ row ] );
+  hash_map< THistogramColumn, vector< TSemanticValue > >::const_iterator it = currentRow.find( col );
+#endif
+
+  if ( it == currentRow.end() )
     return false;
 
   semVal = it->second;
   return true;
+}
+
+
+#ifdef PARALLEL_ENABLED
+const map< THistogramColumn, vector< TSemanticValue > >& CubeBuffer::getRowValues( PRV_UINT32 plane, PRV_UINT32 row ) const
+#else
+const hash_map< THistogramColumn, vector< TSemanticValue > >& CubeBuffer::getRowValues( PRV_UINT32 plane, PRV_UINT32 row ) const
+#endif
+{
+  return ( ( buffer[ plane ] )[ row ] );
 }

@@ -35,6 +35,9 @@
 
 class KHistogram;
 class Window;
+#ifdef PARALLEL_ENABLED
+class CubeBuffer
+#endif
 
 struct CalculateData;
 
@@ -53,6 +56,7 @@ class HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data ) = 0;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 ) = 0;
 
     virtual std::string getName() const = 0;
@@ -85,6 +89,7 @@ class StatNumSends: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -116,6 +121,7 @@ class StatNumReceives: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -147,6 +153,7 @@ class StatBytesSent: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -178,6 +185,7 @@ class StatBytesReceived: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -209,6 +217,7 @@ class StatAvgBytesSent: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -219,7 +228,11 @@ class StatAvgBytesSent: public HistogramStatistic
   private:
     static std::string name;
     Window *controlWin;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *numComms;
+#else
     std::vector<std::vector<TSemanticValue> > numComms;
+#endif
 };
 
 
@@ -241,6 +254,7 @@ class StatAvgBytesReceived: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -251,7 +265,11 @@ class StatAvgBytesReceived: public HistogramStatistic
   private:
     static std::string name;
     Window *controlWin;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *numComms;
+#else
     std::vector<std::vector<TSemanticValue> > numComms;
+#endif
 };
 
 
@@ -273,6 +291,7 @@ class StatMinBytesSent: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -283,7 +302,11 @@ class StatMinBytesSent: public HistogramStatistic
   private:
     static std::string name;
     Window *controlWin;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *min;
+#else
     std::vector<std::vector<TSemanticValue> > min;
+#endif
 };
 
 
@@ -305,6 +328,7 @@ class StatMinBytesReceived: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -315,7 +339,11 @@ class StatMinBytesReceived: public HistogramStatistic
   private:
     static std::string name;
     Window *controlWin;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *min;
+#else
     std::vector<std::vector<TSemanticValue> > min;
+#endif
 };
 
 
@@ -337,6 +365,7 @@ class StatMaxBytesSent: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -347,7 +376,11 @@ class StatMaxBytesSent: public HistogramStatistic
   private:
     static std::string name;
     Window *controlWin;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *max;
+#else
     std::vector<std::vector<TSemanticValue> > max;
+#endif
 };
 
 
@@ -369,6 +402,7 @@ class StatMaxBytesReceived: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -379,7 +413,11 @@ class StatMaxBytesReceived: public HistogramStatistic
   private:
     static std::string name;
     Window *controlWin;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *max;
+#else
     std::vector<std::vector<TSemanticValue> > max;
+#endif
 };
 
 
@@ -407,6 +445,7 @@ class StatTime: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -441,6 +480,7 @@ class StatPercTime: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -451,7 +491,11 @@ class StatPercTime: public HistogramStatistic
   private:
     static std::string name;
     Window *controlWin;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *rowTotal;
+#else
     std::vector<TSemanticValue> rowTotal;
+#endif
 };
 
 
@@ -476,6 +520,7 @@ class StatPercTimeNotZero: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -486,7 +531,11 @@ class StatPercTimeNotZero: public HistogramStatistic
   private:
     static std::string name;
     Window *controlWin;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *rowTotal;
+#else
     std::vector<TSemanticValue> rowTotal;
+#endif
 };
 
 
@@ -511,6 +560,7 @@ class StatPercTimeWindow: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -545,6 +595,7 @@ class StatNumBursts: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -578,6 +629,7 @@ class StatPercNumBursts: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -587,7 +639,11 @@ class StatPercNumBursts: public HistogramStatistic
 
   private:
     static std::string name;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *rowTotal;
+#else
     std::vector<TSemanticValue> rowTotal;
+#endif
 };
 
 
@@ -612,6 +668,7 @@ class StatIntegral: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -646,6 +703,7 @@ class StatAvgValue: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -656,7 +714,11 @@ class StatAvgValue: public HistogramStatistic
   private:
     static std::string name;
     Window *dataWin;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *numValues;
+#else
     std::vector<std::vector<TSemanticValue> > numValues;
+#endif
 };
 
 
@@ -681,6 +743,7 @@ class StatMaximum: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -691,7 +754,11 @@ class StatMaximum: public HistogramStatistic
   private:
     static std::string name;
     Window *dataWin;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *max;
+#else
     std::vector<std::vector<TSemanticValue> > max;
+#endif
 };
 
 
@@ -716,6 +783,7 @@ class StatAvgBurstTime: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -727,7 +795,11 @@ class StatAvgBurstTime: public HistogramStatistic
     static std::string name;
     Window *controlWin;
     Window *dataWin;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *numValues;
+#else
     std::vector<std::vector<TSemanticValue> > numValues;
+#endif
 };
 
 
@@ -752,6 +824,7 @@ class StatStdevBurstTime: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -762,8 +835,13 @@ class StatStdevBurstTime: public HistogramStatistic
   private:
     static std::string name;
     Window *dataWin;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *numValues;
+    CubeBuffer *qValues;
+#else
     std::vector<std::vector<TSemanticValue> > numValues;
     std::vector<std::vector<TSemanticValue> > qValues;
+#endif
 };
 
 
@@ -788,6 +866,7 @@ class StatAvgPerBurst: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -798,7 +877,11 @@ class StatAvgPerBurst: public HistogramStatistic
   private:
     static std::string name;
     Window *dataWin;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *numValues;
+#else
     std::vector<std::vector<TSemanticValue> > numValues;
+#endif
 };
 
 
@@ -823,6 +906,7 @@ class StatAvgValueNotZero: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -833,7 +917,11 @@ class StatAvgValueNotZero: public HistogramStatistic
   private:
     static std::string name;
     Window *dataWin;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *numValues;
+#else
     std::vector<std::vector<TSemanticValue> > numValues;
+#endif
 };
 
 
@@ -858,6 +946,7 @@ class StatNumBurstsNotZero: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -892,6 +981,7 @@ class StatSumBursts: public HistogramStatistic
     virtual TSemanticValue execute( CalculateData *data );
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
+                                      TObjectOrder row,
                                       THistogramColumn plane = 0 );
 
     virtual std::string getName() const;
@@ -912,9 +1002,11 @@ class Statistics
     Statistics() {}
     ~Statistics() {}
 
+#ifndef PARALLEL_ENABLED
     static std::vector<TSemanticValue> zeroVector;
     static std::vector<std::vector<TSemanticValue> > zeroMatrix;
     static std::vector<std::vector<TSemanticValue> > zeroCommMatrix;
+#endif
 
     static int getNumCommStats();
 
@@ -924,6 +1016,7 @@ class Statistics
     std::vector<TSemanticValue> executeAllComm( CalculateData *data );
     std::vector<TSemanticValue> finishRowAllComm( std::vector<TSemanticValue>& cellValue,
         THistogramColumn column,
+        TObjectOrder row,
         THistogramColumn plane = 0 );
 
     static int getNumStats();
@@ -933,6 +1026,7 @@ class Statistics
     std::vector<TSemanticValue> executeAll( CalculateData *data );
     std::vector<TSemanticValue> finishRowAll( std::vector<TSemanticValue>& cellValue,
                                          THistogramColumn column,
+                                         TObjectOrder row,
                                          THistogramColumn plane = 0 );
 
   private:
