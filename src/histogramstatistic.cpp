@@ -1944,16 +1944,19 @@ TSemanticValue StatStdevBurstTime::execute( CalculateData *data )
   end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
         data->endTime : dataWin->getEndTime( data->dataRow );
 
+  TRecordTime tmpDuration = end - begin;
+  tmpDuration = myHistogram->getControlWindow()->traceUnitsToWindowUnits( tmpDuration );
+
 #ifndef PARALLEL_ENABLED
   ++( ( numValues[ data->plane ] )[ data->column ] );
   ( ( qValues[ data->plane ] )[ data->column ] ) +=
-    ( end - begin ) * ( end - begin );
+    tmpDuration * tmpDuration;
 #else
   numValues->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, 1.0 ) );
-  qValues->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, ( end - begin ) * ( end - begin ) ) );
+  qValues->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, tmpDuration * tmpDuration ) );
 #endif
 
-  return end - begin;
+  return tmpDuration;
 }
 
 TSemanticValue StatStdevBurstTime::finishRow( TSemanticValue cellValue,
