@@ -230,6 +230,8 @@ class KHistogram : public Histogram
     bool getControlOutOfLimits() const;
     bool getExtraOutOfLimits() const;
 
+    TTimeUnit getTimeUnit() const;
+
     virtual KHistogram *clone();
 
   protected:
@@ -291,6 +293,8 @@ class KHistogram : public Histogram
     KHistogramTotals *rowTotals;
     KHistogramTotals *commTotals;
     KHistogramTotals *rowCommTotals;
+
+    TTimeUnit myTimeUnit;
 
     void orderWindows();
     bool createComms() const;

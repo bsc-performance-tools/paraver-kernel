@@ -30,3 +30,13 @@
 #include "traceeditsequence.h"
 #include "traceeditactions.h"
 #include "traceeditstates.h"
+
+TraceEditSequence::TraceEditSequence()
+{
+
+}
+
+TraceEditSequence::~TraceEditSequence()
+{
+
+}

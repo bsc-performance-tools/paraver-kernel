@@ -749,6 +749,8 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
   Extrae_eventandcounters( 300, 1 );
 #endif
 
+  myTimeUnit = controlWindow->getTimeUnit();
+
   if ( dataWindow == NULL )
     dataWindow = controlWindow;
 
@@ -1648,6 +1650,11 @@ bool KHistogram::getControlOutOfLimits() const
 bool KHistogram::getExtraOutOfLimits() const
 {
   return xtraOutOfLimits;
+}
+
+TTimeUnit KHistogram::getTimeUnit() const
+{
+  return myTimeUnit;
 }
 
 KHistogram *KHistogram::clone()

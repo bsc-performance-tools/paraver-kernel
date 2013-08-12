@@ -1032,6 +1032,11 @@ THistogramColumn HistogramProxy::getPlaneColumns( THistogramColumn iPlane,
   return numColumns;
 }
 
+TTimeUnit HistogramProxy::getTimeUnit() const
+{
+  return myHisto->getTimeUnit();
+}
+
 bool HistogramProxy::isZoomEmpty() const
 {
   return zoomHistory.isEmpty();

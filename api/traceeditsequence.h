@@ -37,8 +37,22 @@ class TraceEditState;
 class TraceEditSequence
 {
   public:
+
+    enum TSequenceActions
+    {
+      testAction = 0,
+      numActions
+    };
+
+    enum TSequenceStates
+    {
+      testState = 0,
+      numStates
+    };
+
     TraceEditSequence();
     ~TraceEditSequence();
+
   protected:
 
   private:

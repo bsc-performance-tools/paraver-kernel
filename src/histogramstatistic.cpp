@@ -1165,7 +1165,7 @@ string StatTime::getName() const
 
 string StatTime::getUnits( const KHistogram *whichHisto ) const
 {
-  TTimeUnit tu =  whichHisto->getControlWindow()->getTimeUnit();
+  TTimeUnit tu =  whichHisto->getTimeUnit();
 
   return LABEL_TIMEUNIT[ tu ];
 }
@@ -1876,7 +1876,7 @@ string StatAvgBurstTime::getName() const
 
 string StatAvgBurstTime::getUnits( const KHistogram *whichHisto ) const
 {
-  TTimeUnit tu =  whichHisto->getControlWindow()->getTimeUnit();
+  TTimeUnit tu =  whichHisto->getTimeUnit();
 
   return LABEL_TIMEUNIT[ tu ];
 }
@@ -1995,7 +1995,7 @@ string StatStdevBurstTime::getName() const
 
 string StatStdevBurstTime::getUnits( const KHistogram *whichHisto ) const
 {
-  TTimeUnit tu =  whichHisto->getControlWindow()->getTimeUnit();
+  TTimeUnit tu =  whichHisto->getTimeUnit();
 
   return LABEL_TIMEUNIT[ tu ];
 }

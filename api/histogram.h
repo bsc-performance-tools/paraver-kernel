@@ -166,6 +166,8 @@ class Histogram
     virtual bool getControlOutOfLimits() const = 0;
     virtual bool getExtraOutOfLimits() const = 0;
 
+    virtual TTimeUnit getTimeUnit() const = 0;
+
     virtual Histogram* clone( ) { return NULL; }
 
     // Specific methods of HistogramProxy
@@ -704,6 +706,8 @@ class HistogramProxy : public Histogram
 
     virtual bool getControlOutOfLimits() const;
     virtual bool getExtraOutOfLimits() const;
+
+    virtual TTimeUnit getTimeUnit() const;
 
     virtual Histogram *clone();
 

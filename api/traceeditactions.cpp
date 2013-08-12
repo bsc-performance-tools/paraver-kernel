@@ -28,4 +28,5 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "traceeditactions.h"
+#include "traceeditsequence.h"
 

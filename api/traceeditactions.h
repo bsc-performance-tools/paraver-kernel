@@ -30,11 +30,66 @@
 #ifndef TRACEEDITACTIONS_H_INCLUDED
 #define TRACEEDITACTIONS_H_INCLUDED
 
+#include <string>
+#include "memorytrace.h"
+
+class TraceEditSequence;
+
 class TraceEditAction
 {
   public:
-    TraceEditAction();
-    ~TraceEditAction();
+    enum TTraceEditActionType
+    {
+      TraceToTrace = 0,
+      TraceToRecord,
+      RecordToTrace,
+      RecordToRecord
+    };
+
+    TraceEditAction( TraceEditSequence *whichSequence ) : mySequence( whichSequence ) {}
+    ~TraceEditAction() {}
+
+    virtual TraceEditAction::TTraceEditActionType getType() const = 0;
+
+  protected:
+    TraceEditSequence *mySequence;
+
+  private:
+
+};
+
+class TraceToTraceAction: public TraceEditAction
+{
+  public:
+    TraceToTraceAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
+    ~TraceToTraceAction() {}
+
+    virtual TraceEditAction::TTraceEditActionType getType() const
+    {
+      return TraceEditAction::TraceToTrace;
+    }
+
+    virtual std::string execute( std::string whichTrace ) = 0;
+
+  protected:
+
+  private:
+
+};
+
+class TraceToRecordAction: public TraceEditAction
+{
+  public:
+    TraceToRecordAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
+    ~TraceToRecordAction() {}
+
+    virtual TraceEditAction::TTraceEditActionType getType() const
+    {
+      return TraceEditAction::TraceToRecord;
+    }
+
+    virtual MemoryTrace::iterator *execute( std::string whichTrace ) = 0;
+
   protected:
 
   private:
@@ -42,6 +97,42 @@ class TraceEditAction
 };
 
 
+class RecordToTraceAction: public TraceEditAction
+{
+  public:
+    RecordToTraceAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
+    ~RecordToTraceAction() {}
 
+    virtual TraceEditAction::TTraceEditActionType getType() const
+    {
+      return TraceEditAction::RecordToTrace;
+    }
+
+    virtual std::string execute( MemoryTrace::iterator *whichRecord ) = 0;
+
+  protected:
+
+  private:
+
+};
+
+class RecordToRecordAction: public TraceEditAction
+{
+  public:
+    RecordToRecordAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
+    ~RecordToRecordAction() {}
+
+    virtual TraceEditAction::TTraceEditActionType getType() const
+    {
+      return TraceEditAction::RecordToRecord;
+    }
+
+    virtual MemoryTrace::iterator *execute( MemoryTrace::iterator *whichRecord ) = 0;
+
+  protected:
+
+  private:
+
+};
 
 #endif // TRACEEDITACTIONS_H_INCLUDED
