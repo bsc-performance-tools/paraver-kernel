@@ -25,7 +25,9 @@ libparaver_api_la_SOURCES = \
                     textoutput.cpp \
                     trace.cpp \
                     tracecutter.cpp \
+                    traceeditactions.cpp \
                     traceeditsequence.cpp \
+                    traceeditstates.cpp \
                     tracefilter.cpp \
                     traceoptions.cpp \
                     tracesoftwarecounters.cpp \
@@ -74,7 +76,9 @@ include_HEADERS = \
                   trace.h\
                   textoutput.h\
                   tracecutter.h \
+                  traceeditactions.h \
                   traceeditsequence.h \
+                  traceeditstates.h \
                   tracefilter.h \
                   traceoptions.h \
                   tracesoftwarecounters.h \
