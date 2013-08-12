@@ -30,15 +30,40 @@
 #ifndef TRACEEDITSTATES_H_INCLUDED
 #define TRACEEDITSTATES_H_INCLUDED
 
+class TraceEditSequence;
+
 class TraceEditState
 {
+public:
+  TraceEditState( TraceEditSequence *whichSequence ) : mySequence( whichSequence )
+  {}
+
+  ~TraceEditState()
+  {}
+
+protected:
+  TraceEditSequence *mySequence;
+
+private:
+
+};
+
+class testState: public TraceEditState
+{
   public:
-    TraceEditState();
-    ~TraceEditState();
+    testState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
+    {}
+
+    ~testState()
+    {}
+
+    int getData() const;
+    void setData( int whichData );
+
   protected:
 
   private:
-
+    int myData;
 };
 
 

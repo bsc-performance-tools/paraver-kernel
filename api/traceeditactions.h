@@ -37,98 +37,113 @@ class TraceEditSequence;
 
 class TraceEditAction
 {
-  public:
-    enum TTraceEditActionType
-    {
-      TraceToTrace = 0,
-      TraceToRecord,
-      RecordToTrace,
-      RecordToRecord
-    };
+public:
+  enum TTraceEditActionType
+  {
+    TraceToTrace = 0,
+    TraceToRecord,
+    RecordToTrace,
+    RecordToRecord
+  };
 
-    TraceEditAction( TraceEditSequence *whichSequence ) : mySequence( whichSequence ) {}
-    ~TraceEditAction() {}
+  TraceEditAction( TraceEditSequence *whichSequence ) : mySequence( whichSequence ) {}
+  ~TraceEditAction() {}
 
-    virtual TraceEditAction::TTraceEditActionType getType() const = 0;
+  virtual TraceEditAction::TTraceEditActionType getType() const = 0;
 
-  protected:
-    TraceEditSequence *mySequence;
+protected:
+  TraceEditSequence *mySequence;
 
-  private:
+private:
 
 };
 
 class TraceToTraceAction: public TraceEditAction
 {
-  public:
-    TraceToTraceAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
-    ~TraceToTraceAction() {}
+public:
+  TraceToTraceAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
+  ~TraceToTraceAction() {}
 
-    virtual TraceEditAction::TTraceEditActionType getType() const
-    {
-      return TraceEditAction::TraceToTrace;
-    }
+  virtual TraceEditAction::TTraceEditActionType getType() const
+  {
+    return TraceEditAction::TraceToTrace;
+  }
 
-    virtual std::string execute( std::string whichTrace ) = 0;
+  virtual std::string execute( std::string whichTrace ) = 0;
 
-  protected:
+protected:
 
-  private:
+private:
 
 };
 
 class TraceToRecordAction: public TraceEditAction
 {
-  public:
-    TraceToRecordAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
-    ~TraceToRecordAction() {}
+public:
+  TraceToRecordAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
+  ~TraceToRecordAction() {}
 
-    virtual TraceEditAction::TTraceEditActionType getType() const
-    {
-      return TraceEditAction::TraceToRecord;
-    }
+  virtual TraceEditAction::TTraceEditActionType getType() const
+  {
+    return TraceEditAction::TraceToRecord;
+  }
 
-    virtual MemoryTrace::iterator *execute( std::string whichTrace ) = 0;
+  virtual MemoryTrace::iterator *execute( std::string whichTrace ) = 0;
 
-  protected:
+protected:
 
-  private:
+private:
 
 };
 
 
 class RecordToTraceAction: public TraceEditAction
 {
-  public:
-    RecordToTraceAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
-    ~RecordToTraceAction() {}
+public:
+  RecordToTraceAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
+  ~RecordToTraceAction() {}
 
-    virtual TraceEditAction::TTraceEditActionType getType() const
-    {
-      return TraceEditAction::RecordToTrace;
-    }
+  virtual TraceEditAction::TTraceEditActionType getType() const
+  {
+    return TraceEditAction::RecordToTrace;
+  }
 
-    virtual std::string execute( MemoryTrace::iterator *whichRecord ) = 0;
+  virtual std::string execute( MemoryTrace::iterator *whichRecord ) = 0;
 
-  protected:
+protected:
 
-  private:
+private:
 
 };
 
 class RecordToRecordAction: public TraceEditAction
 {
+public:
+  RecordToRecordAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
+  ~RecordToRecordAction() {}
+
+  virtual TraceEditAction::TTraceEditActionType getType() const
+  {
+    return TraceEditAction::RecordToRecord;
+  }
+
+  virtual MemoryTrace::iterator *execute( MemoryTrace::iterator *whichRecord ) = 0;
+
+protected:
+
+private:
+
+};
+
+class testAction: public TraceToTraceAction
+{
   public:
-    RecordToRecordAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
-    ~RecordToRecordAction() {}
+    testAction( TraceEditSequence *whichSequence ) : TraceToTraceAction( whichSequence )
+    {}
+    ~testAction()
+    {}
 
-    virtual TraceEditAction::TTraceEditActionType getType() const
-    {
-      return TraceEditAction::RecordToRecord;
-    }
-
-    virtual MemoryTrace::iterator *execute( MemoryTrace::iterator *whichRecord ) = 0;
-
+    virtual std::string execute( std::string whichTrace );
   protected:
 
   private:

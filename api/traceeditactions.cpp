@@ -30,3 +30,7 @@
 #include "traceeditactions.h"
 #include "traceeditsequence.h"
 
+std::string testAction::execute( std::string whichTrace )
+{
+  return whichTrace;
+}

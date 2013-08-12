@@ -29,3 +29,13 @@
 
 #include "traceeditstates.h"
 
+
+int testState::getData() const
+{
+  return myData;
+}
+
+void testState::setData( int whichData )
+{
+  myData = whichData;
+}

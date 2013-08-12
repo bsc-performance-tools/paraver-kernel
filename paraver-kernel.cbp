@@ -511,6 +511,24 @@
 			<Option target="api" />
 			<Option target="otf2prv" />
 		</Unit>
+		<Unit filename="api/traceeditactions.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/traceeditactions.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/traceeditsequence.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/traceeditsequence.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/traceeditstates.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/traceeditstates.h">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="api/tracefilter.cpp">
 			<Option target="api" />
 			<Option target="otf2prv" />
