@@ -38,5 +38,62 @@ TraceEditSequence::TraceEditSequence()
 
 TraceEditSequence::~TraceEditSequence()
 {
+  for( map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator it;
+       it != activeStates.end(); ++it )
+    delete it->second;
 
+  for( vector<TraceEditAction *>::iterator it;
+       it != sequenceActions.end(); ++it )
+    delete *it;
 }
+
+bool TraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState )
+{
+  map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator tmpIt;
+
+  tmpIt = activeStates.find( whichState );
+  if( tmpIt != activeStates.end() )
+    return false;
+
+  activeStates[ whichState ] = newState;
+  return true;
+}
+
+bool TraceEditSequence::pushbackAction( TraceEditAction *newAction )
+{
+  TraceEditAction::TTraceEditActionType tmpType = newAction->getType();
+
+  if( sequenceActions.empty() )
+  {
+    if( tmpType == TraceEditAction::TraceToTrace || tmpType == TraceEditAction::TraceToRecord )
+    {
+      sequenceActions.push_back( newAction );
+      return true;
+    }
+    else
+      return false;
+  }
+
+  switch( sequenceActions[ sequenceActions.size() - 1 ]->getType() )
+  {
+    case TraceEditAction::TraceToTrace:
+    case TraceEditAction::RecordToTrace:
+      if( tmpType != TraceEditAction::TraceToTrace && tmpType != TraceEditAction::TraceToRecord )
+        return false;
+      break;
+
+    case TraceEditAction::TraceToRecord:
+    case TraceEditAction::RecordToRecord:
+      if( tmpType != TraceEditAction::RecordToTrace && tmpType != TraceEditAction::RecordToRecord )
+        return false;
+      break;
+
+    default:
+      return false;
+      break;
+  }
+
+  sequenceActions.push_back( newAction );
+  return true;
+}
+

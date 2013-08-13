@@ -30,6 +30,12 @@
 #ifndef TRACEEDITSEQUENCE_H_INCLUDED
 #define TRACEEDITSEQUENCE_H_INCLUDED
 
+#include <map>
+#include <vector>
+
+using std::map;
+using std::vector;
+
 class TraceEditAction;
 class TraceEditState;
 
@@ -37,12 +43,6 @@ class TraceEditState;
 class TraceEditSequence
 {
   public:
-
-    enum TSequenceActions
-    {
-      testAction = 0,
-      numActions
-    };
 
     enum TSequenceStates
     {
@@ -53,9 +53,17 @@ class TraceEditSequence
     TraceEditSequence();
     ~TraceEditSequence();
 
+    bool addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState );
+    bool pushbackAction( TraceEditAction *newAction );
+
+//una funcion para iniciar
+//despues cada accion llama a otra funcion de la secuencia que se encarga de llamar a la siguiente accion
+//asi una accion puede abrir traza y recorrerla record a record
   protected:
 
   private:
+    map<TraceEditSequence::TSequenceStates, TraceEditState *> activeStates;
+    vector<TraceEditAction *> sequenceActions;
 
 };
 

@@ -31,9 +31,12 @@
 #define TRACEEDITACTIONS_H_INCLUDED
 
 #include <string>
+#include <vector>
 #include "memorytrace.h"
+#include "traceeditsequence.h"
 
-class TraceEditSequence;
+using std::vector;
+
 
 class TraceEditAction
 {
@@ -50,6 +53,7 @@ public:
   ~TraceEditAction() {}
 
   virtual TraceEditAction::TTraceEditActionType getType() const = 0;
+  virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const = 0;
 
 protected:
   TraceEditSequence *mySequence;
@@ -143,7 +147,10 @@ class testAction: public TraceToTraceAction
     ~testAction()
     {}
 
+    virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
+
     virtual std::string execute( std::string whichTrace );
+
   protected:
 
   private:
