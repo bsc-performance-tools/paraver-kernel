@@ -30,13 +30,14 @@
 #include <iostream>
 #include "traceeditactions.h"
 
-std::string testAction::execute( std::string whichTrace )
+void TestAction::execute( std::string whichTrace )
 {
   std::cout << "testAction::execute with parameter: " << whichTrace << std::endl;
-  return whichTrace;
+
+  mySequence->executeNextAction( whichTrace );
 }
 
-vector<TraceEditSequence::TSequenceStates> testAction::getStateDependencies() const
+vector<TraceEditSequence::TSequenceStates> TestAction::getStateDependencies() const
 {
   vector<TraceEditSequence::TSequenceStates> tmpStates;
   tmpStates.push_back( TraceEditSequence::testState );

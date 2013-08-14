@@ -41,6 +41,8 @@ public:
   ~TraceEditState()
   {}
 
+  virtual void init() = 0;
+
 protected:
   TraceEditSequence *mySequence;
 
@@ -48,14 +50,16 @@ private:
 
 };
 
-class testState: public TraceEditState
+class TestState: public TraceEditState
 {
   public:
-    testState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
+    TestState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
     {}
 
-    ~testState()
+    ~TestState()
     {}
+
+    virtual void init();
 
     int getData() const;
     void setData( int whichData );

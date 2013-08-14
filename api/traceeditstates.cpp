@@ -30,12 +30,17 @@
 #include "traceeditstates.h"
 
 
-int testState::getData() const
+void TestState::init()
+{
+  myData = 0;
+}
+
+int TestState::getData() const
 {
   return myData;
 }
 
-void testState::setData( int whichData )
+void TestState::setData( int whichData )
 {
   myData = whichData;
 }

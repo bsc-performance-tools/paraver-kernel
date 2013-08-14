@@ -73,7 +73,7 @@ public:
     return TraceEditAction::TraceToTrace;
   }
 
-  virtual std::string execute( std::string whichTrace ) = 0;
+  virtual void execute( std::string whichTrace ) = 0;
 
 protected:
 
@@ -92,7 +92,7 @@ public:
     return TraceEditAction::TraceToRecord;
   }
 
-  virtual MemoryTrace::iterator *execute( std::string whichTrace ) = 0;
+  virtual void execute( std::string whichTrace ) = 0;
 
 protected:
 
@@ -112,7 +112,7 @@ public:
     return TraceEditAction::RecordToTrace;
   }
 
-  virtual std::string execute( MemoryTrace::iterator *whichRecord ) = 0;
+  virtual void execute( MemoryTrace::iterator *whichRecord ) = 0;
 
 protected:
 
@@ -131,7 +131,7 @@ public:
     return TraceEditAction::RecordToRecord;
   }
 
-  virtual MemoryTrace::iterator *execute( MemoryTrace::iterator *whichRecord ) = 0;
+  virtual void execute( MemoryTrace::iterator *whichRecord ) = 0;
 
 protected:
 
@@ -139,17 +139,17 @@ private:
 
 };
 
-class testAction: public TraceToTraceAction
+class TestAction: public TraceToTraceAction
 {
   public:
-    testAction( TraceEditSequence *whichSequence ) : TraceToTraceAction( whichSequence )
+    TestAction( TraceEditSequence *whichSequence ) : TraceToTraceAction( whichSequence )
     {}
-    ~testAction()
+    ~TestAction()
     {}
 
     virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
 
-    virtual std::string execute( std::string whichTrace );
+    virtual void execute( std::string whichTrace );
 
   protected:
 

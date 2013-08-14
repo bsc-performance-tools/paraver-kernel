@@ -27,25 +27,63 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
+#include <stdexcept>
 #include "traceeditsequence.h"
 #include "traceeditactions.h"
 #include "traceeditstates.h"
+
+using std::invalid_argument;
 
 TraceEditSequence::TraceEditSequence()
 {
 
 }
 
+
 TraceEditSequence::~TraceEditSequence()
 {
-  for( map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator it;
+  for( map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator it = activeStates.begin();
        it != activeStates.end(); ++it )
     delete it->second;
 
-  for( vector<TraceEditAction *>::iterator it;
+  for( vector<TraceEditAction *>::iterator it = sequenceActions.begin();
        it != sequenceActions.end(); ++it )
     delete *it;
 }
+
+
+TraceEditState *TraceEditSequence::createState( TraceEditSequence::TSequenceStates whichState )
+{
+  switch( whichState )
+  {
+    case testState:
+      return new TestState( this );
+      break;
+
+    default:
+      return NULL;
+      break;
+  }
+
+  return NULL;
+}
+
+
+bool TraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState )
+{
+  map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator tmpIt;
+  tmpIt = activeStates.find( whichState );
+  if( tmpIt != activeStates.end() )
+    return false;
+
+  TraceEditState *newState = createState( whichState );
+  if( newState == NULL )
+    throw invalid_argument( "Invalid state for TraceEditSequence" );
+
+  activeStates[ whichState ] = newState;
+  return true;
+}
+
 
 bool TraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState )
 {
@@ -58,6 +96,19 @@ bool TraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState,
   activeStates[ whichState ] = newState;
   return true;
 }
+
+
+TraceEditState *TraceEditSequence::getState( TraceEditSequence::TSequenceStates whichState )
+{
+  map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator tmpIt;
+
+  tmpIt = activeStates.find( whichState );
+  if( tmpIt != activeStates.end() )
+    return tmpIt->second;
+
+  return NULL;
+}
+
 
 bool TraceEditSequence::pushbackAction( TraceEditAction *newAction )
 {
@@ -95,5 +146,40 @@ bool TraceEditSequence::pushbackAction( TraceEditAction *newAction )
 
   sequenceActions.push_back( newAction );
   return true;
+}
+
+
+void TraceEditSequence::execute( vector<std::string> traces )
+{
+  for( vector<TraceEditAction *>::iterator it = sequenceActions.begin();
+       it != sequenceActions.end(); ++it )
+  {
+    vector<TraceEditSequence::TSequenceStates> tmpStates = (*it)->getStateDependencies();
+    for( vector<TraceEditSequence::TSequenceStates>::iterator itState = tmpStates.begin();
+         itState != tmpStates.end(); ++itState )
+      addState( *itState );
+  }
+
+  for( map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator it = activeStates.begin();
+       it != activeStates.end(); ++it )
+    it->second->init();
+
+  currentAction = 0;
+
+  TraceToTraceAction *firstAction = ( TraceToTraceAction * )sequenceActions[ 0 ];
+  for( vector<std::string>::iterator it = traces.begin(); it != traces.end(); ++it )
+    firstAction->execute( *it );
+}
+
+
+void TraceEditSequence::executeNextAction( std::string whichTrace )
+{
+
+}
+
+
+void TraceEditSequence::executeNextAction( MemoryTrace::iterator * )
+{
+
 }
 

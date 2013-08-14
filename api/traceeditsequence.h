@@ -32,6 +32,9 @@
 
 #include <map>
 #include <vector>
+#include <string>
+#include "paraverkerneltypes.h"
+#include "memorytrace.h"
 
 using std::map;
 using std::vector;
@@ -53,17 +56,25 @@ class TraceEditSequence
     TraceEditSequence();
     ~TraceEditSequence();
 
+    TraceEditState *createState( TraceEditSequence::TSequenceStates whichState );
+
+    bool addState( TraceEditSequence::TSequenceStates whichState );
     bool addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState );
+    TraceEditState *getState( TraceEditSequence::TSequenceStates whichState );
     bool pushbackAction( TraceEditAction *newAction );
 
-//una funcion para iniciar
-//despues cada accion llama a otra funcion de la secuencia que se encarga de llamar a la siguiente accion
-//asi una accion puede abrir traza y recorrerla record a record
+    void execute( vector<std::string> traces );
+
+    void executeNextAction( std::string whichTrace );
+    void executeNextAction( MemoryTrace::iterator * );
+
   protected:
 
   private:
     map<TraceEditSequence::TSequenceStates, TraceEditState *> activeStates;
     vector<TraceEditAction *> sequenceActions;
+
+    PRV_UINT16 currentAction;
 
 };
 
