@@ -28,7 +28,12 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "traceeditstates.h"
+#include "traceoptions.h"
 
+
+/****************************************************************************
+ ********                  TestState                                 ********
+ ****************************************************************************/
 
 void TestState::init()
 {
@@ -42,5 +47,32 @@ int TestState::getData() const
 
 void TestState::setData( int whichData )
 {
+  myData = whichData;
+}
+
+
+/****************************************************************************
+ ********                  TraceOptionsState                         ********
+ ****************************************************************************/
+
+TraceOptionsState::~TraceOptionsState()
+{
+  if( myData != NULL )
+    delete myData;
+}
+
+void TraceOptionsState::init()
+{}
+
+TraceOptions *TraceOptionsState::getData() const
+{
+  return myData;
+}
+
+void TraceOptionsState::setData( TraceOptions *whichData )
+{
+  if( myData != NULL )
+    delete myData;
+
   myData = whichData;
 }

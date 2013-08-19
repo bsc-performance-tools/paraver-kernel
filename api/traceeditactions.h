@@ -139,12 +139,37 @@ private:
 
 };
 
+/****************************************************************************
+ ********                  TestAction                                ********
+ ****************************************************************************/
 class TestAction: public TraceToTraceAction
 {
   public:
     TestAction( TraceEditSequence *whichSequence ) : TraceToTraceAction( whichSequence )
     {}
     ~TestAction()
+    {}
+
+    virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
+
+    virtual void execute( std::string whichTrace );
+
+  protected:
+
+  private:
+
+};
+
+
+/****************************************************************************
+ ********                  TraceCutterAction                         ********
+ ****************************************************************************/
+class TraceCutterAction: public TraceToTraceAction
+{
+  public:
+    TraceCutterAction( TraceEditSequence *whichSequence ) : TraceToTraceAction( whichSequence )
+    {}
+    ~TraceCutterAction()
     {}
 
     virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;

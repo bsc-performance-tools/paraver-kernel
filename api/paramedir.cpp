@@ -502,11 +502,34 @@ void loadCFGs( KernelConnection *myKernel )
   }
 }
 
+#include "traceeditsequence.h"
+#include "traceeditactions.h"
+
+void testSequence( KernelConnection *myKernel )
+{
+  vector<std::string> tmpV;
+  tmpV.push_back( "aaa" );
+  tmpV.push_back( "bbb" );
+  TraceEditSequence seq( myKernel );
+  TestAction *act1 = new TestAction( &seq );
+  TestAction *act2 = new TestAction( &seq );
+  seq.pushbackAction( act1 );
+  seq.pushbackAction( act2 );
+  seq.execute( tmpV );
+}
 
 int main( int argc, char *argv[] )
 {
   if ( argc == 1 )
+#if 1
+  {
+    KernelConnection *myKernel = new LocalKernel( NULL );
+    testSequence( myKernel );
+    return 1;
+  }
+#else
     printHelp();
+#endif
   else
   {
     vector< string > filterToolOrder;

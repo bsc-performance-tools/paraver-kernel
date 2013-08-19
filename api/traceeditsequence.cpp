@@ -34,7 +34,8 @@
 
 using std::invalid_argument;
 
-TraceEditSequence::TraceEditSequence()
+TraceEditSequence::TraceEditSequence( KernelConnection *whichKernel )
+  : myKernel( whichKernel )
 {
 
 }
@@ -52,12 +53,22 @@ TraceEditSequence::~TraceEditSequence()
 }
 
 
+KernelConnection *TraceEditSequence::getKernelConnection() const
+{
+  return myKernel;
+}
+
+
 TraceEditState *TraceEditSequence::createState( TraceEditSequence::TSequenceStates whichState )
 {
   switch( whichState )
   {
     case testState:
       return new TestState( this );
+      break;
+
+    case traceOptionsState:
+      return new TraceOptionsState( this );
       break;
 
     default:
@@ -160,26 +171,100 @@ void TraceEditSequence::execute( vector<std::string> traces )
       addState( *itState );
   }
 
-  for( map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator it = activeStates.begin();
-       it != activeStates.end(); ++it )
-    it->second->init();
+  TraceToTraceAction *firstActionToTrace = ( TraceToTraceAction * )sequenceActions[ 0 ];
+  TraceToRecordAction *firstActionToRecord = ( TraceToRecordAction * )sequenceActions[ 0 ];
 
-  currentAction = 0;
-
-  TraceToTraceAction *firstAction = ( TraceToTraceAction * )sequenceActions[ 0 ];
   for( vector<std::string>::iterator it = traces.begin(); it != traces.end(); ++it )
-    firstAction->execute( *it );
+  {
+    currentAction = 0;
+
+    for( map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator itState = activeStates.begin();
+         itState != activeStates.end(); ++itState )
+      itState->second->init();
+
+    switch( sequenceActions[ 0 ]->getType() )
+    {
+      case TraceEditAction::TraceToTrace:
+        firstActionToTrace->execute( *it );
+        break;
+
+      case TraceEditAction::TraceToRecord:
+        firstActionToRecord->execute( *it );
+        break;
+
+      case TraceEditAction::RecordToTrace:
+        break;
+
+      case TraceEditAction::RecordToRecord:
+        break;
+
+      default:
+        break;
+    }
+  }
 }
 
 
 void TraceEditSequence::executeNextAction( std::string whichTrace )
 {
+  ++currentAction;
+  if( currentAction == sequenceActions.size() )
+    return;
 
+  TraceToTraceAction *nextActionToTrace = ( TraceToTraceAction * )sequenceActions[ currentAction ];
+  TraceToRecordAction *nextActionToRecord = ( TraceToRecordAction * )sequenceActions[ currentAction ];
+
+  switch( sequenceActions[ currentAction ]->getType() )
+  {
+    case TraceEditAction::TraceToTrace:
+      nextActionToTrace->execute( whichTrace );
+      break;
+
+    case TraceEditAction::TraceToRecord:
+      nextActionToRecord->execute( whichTrace );
+      break;
+
+    case TraceEditAction::RecordToTrace:
+
+      break;
+
+    case TraceEditAction::RecordToRecord:
+
+      break;
+
+    default:
+      break;
+  }
 }
 
 
-void TraceEditSequence::executeNextAction( MemoryTrace::iterator * )
+void TraceEditSequence::executeNextAction( MemoryTrace::iterator *whichRecord )
 {
+  ++currentAction;
+  if( currentAction == sequenceActions.size() )
+    return;
 
+  RecordToTraceAction *nextActionToTrace = ( RecordToTraceAction * )sequenceActions[ currentAction ];
+  RecordToRecordAction *nextActionToRecord = ( RecordToRecordAction * )sequenceActions[ currentAction ];
+
+  switch( sequenceActions[ currentAction ]->getType() )
+  {
+    case TraceEditAction::TraceToTrace:
+      break;
+
+    case TraceEditAction::TraceToRecord:
+      break;
+
+    case TraceEditAction::RecordToTrace:
+      nextActionToTrace->execute( whichRecord );
+      break;
+
+    case TraceEditAction::RecordToRecord:
+      nextActionToRecord->execute( whichRecord );
+      break;
+
+    default:
+      break;
+  }
 }
 

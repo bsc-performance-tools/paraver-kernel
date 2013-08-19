@@ -29,6 +29,11 @@
 
 #include <iostream>
 #include "traceeditactions.h"
+#include "tracecutter.h"
+
+/****************************************************************************
+ ********                  TestAction                                ********
+ ****************************************************************************/
 
 void TestAction::execute( std::string whichTrace )
 {
@@ -42,5 +47,25 @@ vector<TraceEditSequence::TSequenceStates> TestAction::getStateDependencies() co
   vector<TraceEditSequence::TSequenceStates> tmpStates;
   tmpStates.push_back( TraceEditSequence::testState );
   return tmpStates;
+}
+
+
+/****************************************************************************
+ ********                  TraceCutterAction                         ********
+ ****************************************************************************/
+
+vector<TraceEditSequence::TSequenceStates> TraceCutterAction::getStateDependencies() const
+{
+  vector<TraceEditSequence::TSequenceStates> tmpStates;
+  tmpStates.push_back( TraceEditSequence::traceOptionsState );
+  return tmpStates;
+}
+
+
+void TraceCutterAction::execute( std::string whichTrace )
+{
+  TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(), whichTrace.c_str(), NULL, NULL, NULL );
+
+  mySequence->executeNextAction( whichTrace );
 }
 

@@ -39,6 +39,7 @@
 using std::map;
 using std::vector;
 
+class KernelConnection;
 class TraceEditAction;
 class TraceEditState;
 
@@ -50,11 +51,14 @@ class TraceEditSequence
     enum TSequenceStates
     {
       testState = 0,
+      traceOptionsState,
       numStates
     };
 
-    TraceEditSequence();
+    TraceEditSequence( KernelConnection *whichKernel );
     ~TraceEditSequence();
+
+    KernelConnection *getKernelConnection() const;
 
     TraceEditState *createState( TraceEditSequence::TSequenceStates whichState );
 
@@ -66,11 +70,13 @@ class TraceEditSequence
     void execute( vector<std::string> traces );
 
     void executeNextAction( std::string whichTrace );
-    void executeNextAction( MemoryTrace::iterator * );
+    void executeNextAction( MemoryTrace::iterator *whichRecord );
 
   protected:
 
   private:
+    KernelConnection *myKernel;
+
     map<TraceEditSequence::TSequenceStates, TraceEditState *> activeStates;
     vector<TraceEditAction *> sequenceActions;
 

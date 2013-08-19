@@ -30,7 +30,10 @@
 #ifndef TRACEEDITSTATES_H_INCLUDED
 #define TRACEEDITSTATES_H_INCLUDED
 
+#include "paraverkerneltypes.h"
+
 class TraceEditSequence;
+class TraceOptions;
 
 class TraceEditState
 {
@@ -50,6 +53,9 @@ private:
 
 };
 
+/****************************************************************************
+ ********                  TestState                                 ********
+ ****************************************************************************/
 class TestState: public TraceEditState
 {
   public:
@@ -70,5 +76,29 @@ class TestState: public TraceEditState
     int myData;
 };
 
+
+/****************************************************************************
+ ********                  TraceOptionsState                         ********
+ ****************************************************************************/
+class TraceOptionsState: public TraceEditState
+{
+  public:
+    TraceOptionsState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
+    {
+      myData = NULL;
+    }
+
+    ~TraceOptionsState();
+
+    virtual void init();
+
+    TraceOptions *getData() const;
+    void setData( TraceOptions *whichData );
+
+  protected:
+
+  private:
+    TraceOptions *myData;
+};
 
 #endif // TRACEEDITSTATES_H_INCLUDED
