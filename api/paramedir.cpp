@@ -504,17 +504,21 @@ void loadCFGs( KernelConnection *myKernel )
 
 #include "traceeditsequence.h"
 #include "traceeditactions.h"
+#include "traceeditstates.h"
 
 void testSequence( KernelConnection *myKernel )
 {
   vector<std::string> tmpV;
-  tmpV.push_back( "aaa" );
-  tmpV.push_back( "bbb" );
+  tmpV.push_back( "/home/eloy/traces/mpi_ping0000089274.prv" );
   TraceEditSequence seq( myKernel );
   TestAction *act1 = new TestAction( &seq );
-  TestAction *act2 = new TestAction( &seq );
+  TraceCutterAction *act2 = new TraceCutterAction( &seq );
   seq.pushbackAction( act1 );
   seq.pushbackAction( act2 );
+  TraceOptions *tmpOptions = myKernel->newTraceOptions();
+  TraceOptionsState *tmpOptionsState = new TraceOptionsState( &seq );
+  tmpOptionsState->setData( tmpOptions );
+  seq.addState( TraceEditSequence::traceOptionsState, tmpOptionsState );
   seq.execute( tmpV );
 }
 

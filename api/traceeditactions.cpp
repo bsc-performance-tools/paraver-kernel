@@ -29,7 +29,9 @@
 
 #include <iostream>
 #include "traceeditactions.h"
+#include "traceeditstates.h"
 #include "tracecutter.h"
+#include "kernelconnection.h"
 
 /****************************************************************************
  ********                  TestAction                                ********
@@ -64,8 +66,15 @@ vector<TraceEditSequence::TSequenceStates> TraceCutterAction::getStateDependenci
 
 void TraceCutterAction::execute( std::string whichTrace )
 {
-  TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(), whichTrace.c_str(), NULL, NULL, NULL );
+  TraceOptions *options = ( (TraceOptionsState *)mySequence->getState( TraceEditSequence::traceOptionsState ) )->getData();
+  std::string newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, TraceCutter::getID(), false );
 
-  mySequence->executeNextAction( whichTrace );
+  TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(),
+                                              (char *)whichTrace.c_str(),
+                                              (char *)newName.c_str(),
+                                              options,
+                                              NULL );
+
+  mySequence->executeNextAction( newName );
 }
 

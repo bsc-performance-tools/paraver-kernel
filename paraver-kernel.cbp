@@ -764,6 +764,16 @@
 			<Option target="paramedir" />
 			<Option target="otf2prv" />
 		</Unit>
+		<Unit filename="include/ktraceeditactions.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="paramedir" />
+		</Unit>
+		<Unit filename="include/ktraceeditsequence.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="paramedir" />
+		</Unit>
 		<Unit filename="include/ktracefilter.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -1183,6 +1193,14 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="otf2prv" />
+		</Unit>
+		<Unit filename="src/ktraceeditactions.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/ktraceeditsequence.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/ktracefilter.cpp">
 			<Option target="Debug" />

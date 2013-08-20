@@ -5,7 +5,7 @@ libparaver_kernel_la_SOURCES = \
     bplustree.cpp \
     bplustreeexception.cpp \
     bplustreerecordleaf.cpp \
-		cubebuffer.cpp \
+    cubebuffer.cpp \
     filtermanagement.cpp \
     histogramexception.cpp \
     histogramstatistic.cpp \
@@ -22,6 +22,8 @@ libparaver_kernel_la_SOURCES = \
     krecordlist.cpp \
     ktrace.cpp \
     ktracecutter.cpp \
+    ktraceeditactions.cpp \
+    ktraceeditsequence.cpp \
     ktracefilter.cpp \
     ktraceoptions.cpp \
     ktracesoftwarecounters.cpp \

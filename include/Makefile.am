@@ -7,7 +7,7 @@ noinst_HEADERS = \
                           cell.h\
                           column.h\
                           cube.h\
-													cubebuffer.h\
+                          cubebuffer.h\
                           filtermanagement.h\
                           functionmanagement.h\
                           histogramexception.h\
@@ -28,6 +28,8 @@ noinst_HEADERS = \
                           krecordlist.h\
                           ktrace.h\
                           ktracecutter.h \
+                          ktraceeditactions.h \
+                          ktraceeditsequence.h \
                           ktracefilter.h \
                           ktraceoptions.h \
                           ktracesoftwarecounters.h \
