@@ -58,6 +58,7 @@ class LocalKernel: public KernelConnection
 //    virtual RecordList *newRecordList() const;
     virtual ProgressController *newProgressController() const;
     virtual Filter *newFilter( Filter *concreteFilter ) const;
+    virtual TraceEditSequence *newTraceEditSequence() const;
 
     virtual std::string getToolID( const std::string &toolName ) const;
     virtual std::string getToolName( const std::string &toolID ) const;

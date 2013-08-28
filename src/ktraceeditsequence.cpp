@@ -29,3 +29,52 @@
 
 #include "ktraceeditsequence.h"
 
+KTraceEditSequence::KTraceEditSequence()
+{
+
+}
+
+KTraceEditSequence::~KTraceEditSequence()
+{
+
+}
+
+TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceStates whichState )
+{
+  return NULL;
+}
+
+bool KTraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState )
+{
+  return true;
+}
+
+bool KTraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState )
+{
+  return true;
+}
+
+TraceEditState *KTraceEditSequence::getState( TraceEditSequence::TSequenceStates whichState )
+{
+  return NULL;
+}
+
+bool KTraceEditSequence::pushbackAction( TraceEditAction *newAction )
+{
+  return true;
+}
+
+void KTraceEditSequence::execute( vector<std::string> traces )
+{
+
+}
+
+void KTraceEditSequence::executeNextAction( std::string whichTrace )
+{
+
+}
+
+void KTraceEditSequence::executeNextAction( MemoryTrace::iterator *whichRecord )
+{
+
+}

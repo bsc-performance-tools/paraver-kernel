@@ -27,38 +27,9 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-#ifndef KTRACEEDITSEQUENCE_H_INCLUDED
-#define KTRACEEDITSEQUENCE_H_INCLUDED
-
-#include "traceeditsequence.h"
-
-class KTraceEditSequence:public TraceEditSequence
-{
-  public:
-    KTraceEditSequence();
-    virtual ~KTraceEditSequence();
-
-    TraceEditState *createState( TraceEditSequence::TSequenceStates whichState );
-
-    bool addState( TraceEditSequence::TSequenceStates whichState );
-    bool addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState );
-    TraceEditState *getState( TraceEditSequence::TSequenceStates whichState );
-    bool pushbackAction( TraceEditAction *newAction );
-
-    void execute( vector<std::string> traces );
-
-    void executeNextAction( std::string whichTrace );
-    void executeNextAction( MemoryTrace::iterator *whichRecord );
-
-  protected:
-
-  private:
-    map<TraceEditSequence::TSequenceStates, TraceEditState *> activeStates;
-    vector<TraceEditAction *> sequenceActions;
-
-    PRV_UINT16 currentAction;
-
-};
+#ifndef KTRACEEDITSTATES_H_INCLUDED
+#define KTRACEEDITSTATES_H_INCLUDED
 
 
-#endif // KTRACEEDITSEQUENCE_H_INCLUDED
+
+#endif // KTRACEEDITSTATES_H_INCLUDED

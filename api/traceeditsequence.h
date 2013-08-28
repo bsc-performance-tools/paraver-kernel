@@ -55,10 +55,40 @@ class TraceEditSequence
       numStates
     };
 
+    static TraceEditSequence *create( KernelConnection *whichKernel );
+
+    TraceEditSequence() { }
     TraceEditSequence( KernelConnection *whichKernel );
-    ~TraceEditSequence();
+    virtual ~TraceEditSequence();
 
     KernelConnection *getKernelConnection() const;
+
+    virtual TraceEditState *createState( TraceEditSequence::TSequenceStates whichState ) = 0;
+
+    virtual bool addState( TraceEditSequence::TSequenceStates whichState ) = 0;
+    virtual bool addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState ) = 0;
+    virtual TraceEditState *getState( TraceEditSequence::TSequenceStates whichState ) = 0;
+    virtual bool pushbackAction( TraceEditAction *newAction ) = 0;
+
+    virtual void execute( vector<std::string> traces ) = 0;
+
+/*    void executeNextAction( std::string whichTrace );
+    void executeNextAction( MemoryTrace::iterator *whichRecord );
+*/
+  protected:
+
+  private:
+    KernelConnection *myKernel;
+
+};
+
+
+class TraceEditSequenceProxy:public TraceEditSequence
+{
+  public:
+    TraceEditSequenceProxy() { }
+    TraceEditSequenceProxy( KernelConnection *whichKernel );
+    virtual ~TraceEditSequenceProxy();
 
     TraceEditState *createState( TraceEditSequence::TSequenceStates whichState );
 
@@ -69,13 +99,13 @@ class TraceEditSequence
 
     void execute( vector<std::string> traces );
 
-    void executeNextAction( std::string whichTrace );
+/*    void executeNextAction( std::string whichTrace );
     void executeNextAction( MemoryTrace::iterator *whichRecord );
-
+*/
   protected:
 
   private:
-    KernelConnection *myKernel;
+    TraceEditSequence *mySequence;
 
     map<TraceEditSequence::TSequenceStates, TraceEditState *> activeStates;
     vector<TraceEditAction *> sequenceActions;
@@ -83,6 +113,5 @@ class TraceEditSequence
     PRV_UINT16 currentAction;
 
 };
-
 
 #endif // TRACEEDITSEQUENCE_H_INCLUDED

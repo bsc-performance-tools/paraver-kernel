@@ -42,6 +42,7 @@
 #include "kprogresscontroller.h"
 #include "labelconstructor.h"
 #include "previousfiles.h"
+#include "ktraceeditsequence.h"
 
 
 #include "ktraceoptions.h"
@@ -183,6 +184,11 @@ Filter *LocalKernel::newFilter( Filter *concreteFilter ) const
   FilterProxy *tmpFilter = new FilterProxy( this );
   tmpFilter->myFilter = concreteFilter;
   return ( Filter * ) tmpFilter;
+}
+
+TraceEditSequence *LocalKernel::newTraceEditSequence() const
+{
+  return new KTraceEditSequence();
 }
 
 string LocalKernel::getToolID( const string &toolName ) const

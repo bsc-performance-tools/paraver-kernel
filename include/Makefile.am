@@ -30,6 +30,7 @@ noinst_HEADERS = \
                           ktracecutter.h \
                           ktraceeditactions.h \
                           ktraceeditsequence.h \
+                          ktraceeditstates.h \
                           ktracefilter.h \
                           ktraceoptions.h \
                           ktracesoftwarecounters.h \

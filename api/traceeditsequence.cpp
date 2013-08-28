@@ -34,6 +34,12 @@
 
 using std::invalid_argument;
 
+TraceEditSequence *TraceEditSequence::create( KernelConnection *whichKernel )
+{
+  return new TraceEditSequenceProxy( whichKernel );
+}
+
+
 TraceEditSequence::TraceEditSequence( KernelConnection *whichKernel )
   : myKernel( whichKernel )
 {
@@ -59,7 +65,20 @@ KernelConnection *TraceEditSequence::getKernelConnection() const
 }
 
 
-TraceEditState *TraceEditSequence::createState( TraceEditSequence::TSequenceStates whichState )
+TraceEditSequenceProxy::TraceEditSequenceProxy( KernelConnection *whichKernel )
+ : TraceEditSequence( whichKernel )
+{
+  mySequence = myKernel->newTraceEditSequence();
+}
+
+
+TraceEditSequenceProxy~TraceEditSequenceProxy()
+{
+
+}
+
+
+TraceEditState *TraceEditSequenceProxy::createState( TraceEditSequence::TSequenceStates whichState )
 {
   switch( whichState )
   {
@@ -80,7 +99,7 @@ TraceEditState *TraceEditSequence::createState( TraceEditSequence::TSequenceStat
 }
 
 
-bool TraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState )
+bool TraceEditSequenceProxy::addState( TraceEditSequence::TSequenceStates whichState )
 {
   map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator tmpIt;
   tmpIt = activeStates.find( whichState );
@@ -96,7 +115,7 @@ bool TraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState 
 }
 
 
-bool TraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState )
+bool TraceEditSequenceProxy::addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState )
 {
   map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator tmpIt;
 
@@ -109,7 +128,7 @@ bool TraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState,
 }
 
 
-TraceEditState *TraceEditSequence::getState( TraceEditSequence::TSequenceStates whichState )
+TraceEditState *TraceEditSequenceProxy::getState( TraceEditSequence::TSequenceStates whichState )
 {
   map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator tmpIt;
 
@@ -121,7 +140,7 @@ TraceEditState *TraceEditSequence::getState( TraceEditSequence::TSequenceStates 
 }
 
 
-bool TraceEditSequence::pushbackAction( TraceEditAction *newAction )
+bool TraceEditSequenceProxy::pushbackAction( TraceEditAction *newAction )
 {
   TraceEditAction::TTraceEditActionType tmpType = newAction->getType();
 
@@ -160,7 +179,7 @@ bool TraceEditSequence::pushbackAction( TraceEditAction *newAction )
 }
 
 
-void TraceEditSequence::execute( vector<std::string> traces )
+void TraceEditSequenceProxy::execute( vector<std::string> traces )
 {
   for( vector<TraceEditAction *>::iterator it = sequenceActions.begin();
        it != sequenceActions.end(); ++it )
@@ -205,7 +224,7 @@ void TraceEditSequence::execute( vector<std::string> traces )
 }
 
 
-void TraceEditSequence::executeNextAction( std::string whichTrace )
+void TraceEditSequenceProxy::executeNextAction( std::string whichTrace )
 {
   ++currentAction;
   if( currentAction == sequenceActions.size() )
@@ -238,7 +257,7 @@ void TraceEditSequence::executeNextAction( std::string whichTrace )
 }
 
 
-void TraceEditSequence::executeNextAction( MemoryTrace::iterator *whichRecord )
+void TraceEditSequenceProxy::executeNextAction( MemoryTrace::iterator *whichRecord )
 {
   ++currentAction;
   if( currentAction == sequenceActions.size() )

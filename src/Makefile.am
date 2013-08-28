@@ -24,6 +24,7 @@ libparaver_kernel_la_SOURCES = \
     ktracecutter.cpp \
     ktraceeditactions.cpp \
     ktraceeditsequence.cpp \
+    ktraceeditstates.cpp \
     ktracefilter.cpp \
     ktraceoptions.cpp \
     ktracesoftwarecounters.cpp \
