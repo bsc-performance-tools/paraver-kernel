@@ -774,6 +774,10 @@
 			<Option target="Release" />
 			<Option target="paramedir" />
 		</Unit>
+		<Unit filename="include/ktraceeditstates.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="include/ktracefilter.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -1199,6 +1203,10 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/ktraceeditsequence.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/ktraceeditstates.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
