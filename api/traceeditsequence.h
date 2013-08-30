@@ -86,7 +86,7 @@ class TraceEditSequence
 class TraceEditSequenceProxy:public TraceEditSequence
 {
   public:
-    TraceEditSequenceProxy() { }
+    TraceEditSequenceProxy();
     TraceEditSequenceProxy( KernelConnection *whichKernel );
     virtual ~TraceEditSequenceProxy();
 

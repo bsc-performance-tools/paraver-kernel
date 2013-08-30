@@ -501,7 +501,7 @@ void loadCFGs( KernelConnection *myKernel )
     windows.clear();
   }
 }
-
+/*
 #include "traceeditsequence.h"
 #include "traceeditactions.h"
 #include "traceeditstates.h"
@@ -521,11 +521,11 @@ void testSequence( KernelConnection *myKernel )
   seq.addState( TraceEditSequence::traceOptionsState, tmpOptionsState );
   seq.execute( tmpV );
 }
-
+*/
 int main( int argc, char *argv[] )
 {
   if ( argc == 1 )
-#if 1
+#if 0
   {
     KernelConnection *myKernel = new LocalKernel( NULL );
     testSequence( myKernel );

@@ -49,13 +49,13 @@ TraceEditSequence::TraceEditSequence( KernelConnection *whichKernel )
 
 TraceEditSequence::~TraceEditSequence()
 {
-  for( map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator it = activeStates.begin();
+/*  for( map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator it = activeStates.begin();
        it != activeStates.end(); ++it )
     delete it->second;
 
   for( vector<TraceEditAction *>::iterator it = sequenceActions.begin();
        it != sequenceActions.end(); ++it )
-    delete *it;
+    delete *it;*/
 }
 
 
@@ -65,14 +65,20 @@ KernelConnection *TraceEditSequence::getKernelConnection() const
 }
 
 
-TraceEditSequenceProxy::TraceEditSequenceProxy( KernelConnection *whichKernel )
- : TraceEditSequence( whichKernel )
+TraceEditSequenceProxy::TraceEditSequenceProxy()
 {
-  mySequence = myKernel->newTraceEditSequence();
+
 }
 
 
-TraceEditSequenceProxy~TraceEditSequenceProxy()
+TraceEditSequenceProxy::TraceEditSequenceProxy( KernelConnection *whichKernel )
+ : TraceEditSequence( whichKernel )
+{
+//  mySequence = myKernel->newTraceEditSequence();
+}
+
+
+TraceEditSequenceProxy::~TraceEditSequenceProxy()
 {
 
 }
@@ -224,7 +230,7 @@ void TraceEditSequenceProxy::execute( vector<std::string> traces )
 }
 
 
-void TraceEditSequenceProxy::executeNextAction( std::string whichTrace )
+/*void TraceEditSequenceProxy::executeNextAction( std::string whichTrace )
 {
   ++currentAction;
   if( currentAction == sequenceActions.size() )
@@ -286,4 +292,4 @@ void TraceEditSequenceProxy::executeNextAction( MemoryTrace::iterator *whichReco
       break;
   }
 }
-
+*/

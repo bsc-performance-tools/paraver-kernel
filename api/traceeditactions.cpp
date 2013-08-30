@@ -41,7 +41,7 @@ void TestAction::execute( std::string whichTrace )
 {
   std::cout << "testAction::execute with parameter: " << whichTrace << std::endl;
 
-  mySequence->executeNextAction( whichTrace );
+  //mySequence->executeNextAction( whichTrace );
 }
 
 vector<TraceEditSequence::TSequenceStates> TestAction::getStateDependencies() const
@@ -75,6 +75,6 @@ void TraceCutterAction::execute( std::string whichTrace )
                                               options,
                                               NULL );
 
-  mySequence->executeNextAction( newName );
+  //mySequence->executeNextAction( newName );
 }
 
