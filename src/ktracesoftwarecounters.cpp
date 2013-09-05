@@ -38,6 +38,7 @@
 #ifndef WIN32
 #include <unistd.h>
 #endif
+#include <sstream>
 
 #include "ktracesoftwarecounters.h"
 #include "ktraceoptions.h"
@@ -399,17 +400,21 @@ void KTraceSoftwareCounters::flush_all_events( void )
   bool print_record;
   int i, j, thread_id;
   //char record[256], record_aux[64];
-  char *record, *record_aux;
+  //char *record, *record_aux;
 
-  record = ( char * )malloc( sizeof( char ) * MAX_LINE_SIZE );
-  record_aux = ( char * )malloc( sizeof( char ) * MAX_LINE_SIZE );
+  //record = ( char * )malloc( sizeof( char ) * MAX_LINE_SIZE );
+  //record_aux = ( char * )malloc( sizeof( char ) * MAX_LINE_SIZE );
 
   struct ParaverEvent *p, *q;
 
   p = first_Paraver_event;
   while ( p != NULL )
   {
-    sprintf( record, "2:%d:%d:%d:%d:%lld", p->cpu, threads[p->thread_id].appl, threads[p->thread_id].task, threads[p->thread_id].thread, p->timestamp );
+    //sprintf( record, "2:%d:%d:%d:%d:%lld", p->cpu, threads[p->thread_id].appl, threads[p->thread_id].task, threads[p->thread_id].thread, p->timestamp );
+    std::ostringstream record;
+    record << "2:" << p->cpu;
+    record << ":" << threads[p->thread_id].appl << ":" << threads[p->thread_id].task << ":" << threads[p->thread_id].thread;
+    record << ":" << p->timestamp;
 
     print_record = false;
     for ( i = 0; i < 16; i++ )
@@ -432,8 +437,9 @@ void KTraceSoftwareCounters::flush_all_events( void )
           {
             if ( threads[thread_id].counters[j].num < ( unsigned long long )frequency )
             {
-              sprintf( record_aux, ":%lld:%lld", p->type[i], p->value[i] );
-              strcat( record, record_aux );
+              //sprintf( record_aux, ":%lld:%lld", p->type[i], p->value[i] );
+              //strcat( record, record_aux );
+              record << ":" << p->type[i] << ":" << p->value[i];
               print_record = false;
               threads[thread_id].calls.top++;
               threads[thread_id].calls.type[threads[thread_id].calls.top] = p->type[i];
@@ -453,8 +459,10 @@ void KTraceSoftwareCounters::flush_all_events( void )
         /* this event on the trace */
         if ( j == threads[thread_id].next_free_counter )
         {
-          sprintf( record_aux, ":%lld:%lld", p->type[i], p->value[i] );
-          strcat( record, record_aux );
+          //sprintf( record_aux, ":%lld:%lld", p->type[i], p->value[i] );
+          //strcat( record, record_aux );
+          record << ":" << p->type[i] << ":" << p->value[i];
+
           print_record = true;
 
           threads[thread_id].calls.top++;
@@ -472,8 +480,10 @@ void KTraceSoftwareCounters::flush_all_events( void )
         {
           if ( threads[thread_id].calls.valid[threads[thread_id].calls.top] )
           {
-            sprintf( record_aux, ":%lld:0", p->type[i] );
-            strcat( record, record_aux );
+            //sprintf( record_aux, ":%lld:0", p->type[i] );
+            //strcat( record, record_aux );
+            record << ":" << p->type[i] << ":" << "0";
+
             print_record = true;
           }
           threads[thread_id].calls.top--;
@@ -483,7 +493,10 @@ void KTraceSoftwareCounters::flush_all_events( void )
 
     if ( print_record )
     {
-      fprintf( outfile, "%s\n", record );
+      record << std::endl;
+
+      //fprintf( outfile, "%s\n", record );
+      fprintf( outfile, "%s", record.str().c_str() );
       print_record = false;
     }
 
@@ -495,8 +508,8 @@ void KTraceSoftwareCounters::flush_all_events( void )
   first_Paraver_event = NULL;
   last_Paraver_event = NULL;
 
-  free( record );
-  free( record_aux );
+  //free( record );
+  //free( record_aux );
 }
 
 
@@ -774,12 +787,13 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
   int id, cpu, appl, task, thread, state;
   unsigned long long time_1, time_2, type, value;
   // char *word, buffer[MAX_LINE_SIZE];
-  char *word, *buffer;
+  //char *word, *buffer;
+  char *word;
   bool print_line = false;
   int thread_id, i, j;
   unsigned long num_iters = 0;
 
-  buffer = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
+  //buffer = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
 
   bool end_parsing;
 
@@ -807,6 +821,8 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
     }
     else
       num_iters++;
+
+    std::ostringstream buffer; // only for events
 
     switch ( id )
     {
@@ -881,13 +897,15 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
         /* For keeping some events */
         if ( keep_events )
         {
-          sprintf( buffer, "2:%d:%d:%d:%d:%lld:", cpu, appl, task, thread, time_1 );
+          //sprintf( buffer, "2:%d:%d:%d:%d:%lld:", cpu, appl, task, thread, time_1 );
+          buffer << "2:" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
 
           for ( j = 0; j < types_to_keep.next_free_slot; j++ )
           {
             if ( types_to_keep.type[i] == type )
             {
-              sprintf( buffer, "%s%lld:%lld", buffer, type, value );
+              //sprintf( buffer, "%s%lld:%lld", buffer, type, value );
+              buffer << ":" << type << ":" << value;
               print_line = true;
               break;
             }
@@ -917,7 +935,8 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
             {
               if ( types_to_keep.type[i] == type )
               {
-                sprintf( buffer, "%s%lld:%lld", buffer, type, value );
+                //sprintf( buffer, "%s%lld:%lld", buffer, type, value );
+                buffer << ":" << type << ":" << value;
                 print_line = true;
                 break;
               }
@@ -935,7 +954,9 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
 
         if ( print_line )
         {
-          fprintf( outfile, "%s\n", buffer );
+          buffer << std::endl;
+          //fprintf( outfile, "%s\n", buffer );
+          fprintf( outfile, "%s", buffer.str().c_str() );
           print_line = false;
         }
 
@@ -952,7 +973,7 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
   put_all_counters();
   // ok_sc_wait_window();
 
-  free( buffer );
+  // free( buffer );
 }
 
 
@@ -1247,13 +1268,14 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
   int id, cpu, appl, task, thread, state;
   unsigned long long time_1, time_2, type, value;
   // char *word, buffer[MAX_LINE_SIZE];
-  char *word, *buffer;
+  //char *word, *buffer;
+  char *word;
   bool print_line = false;
   struct state_queue_elem *p, *q;
   int i, j;
   unsigned long num_iters = 0;
 
-  buffer = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
+  //buffer = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
 
   p = NULL;
   q = NULL;
@@ -1330,6 +1352,8 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
 
     if ( id == 2 )
     {
+      std::ostringstream buffer;
+
       /* Incrementing the counters */
       fgets( line, sizeof( line ), infile );
       if ( line[0] == '#' )
@@ -1367,12 +1391,14 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
 
       if ( keep_events )
       {
-        sprintf( buffer, "2:%d:%d:%d:%d:%lld:", cpu, appl, task, thread, time_1 );
+        //sprintf( buffer, "2:%d:%d:%d:%d:%lld:", cpu, appl, task, thread, time_1 );
+        buffer << "2:" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
         for ( j = 0; j < types_to_keep.next_free_slot; j++ )
         {
           if ( types_to_keep.type[j] == type )
           {
-            sprintf( buffer, "%s%lld:%lld", buffer, type, value );
+            //sprintf( buffer, "%s%lld:%lld", buffer, type, value );
+            buffer << ":" << type << ":" << value;
             print_line = true;
             break;
           }
@@ -1395,7 +1421,8 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
           {
             if ( types_to_keep.type[i] == type )
             {
-              sprintf( buffer, "%s%lld:%lld", buffer, type, value );
+              //sprintf( buffer, "%s%lld:%lld", buffer, type, value );
+              buffer << ":" << type << ":" << value;
               print_line = true;
               break;
             }
@@ -1407,7 +1434,9 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
 
       if ( print_line )
       {
-        fprintf( outfile, "%s\n", buffer );
+        buffer << std::endl;
+        //fprintf( outfile, "%s\n", buffer );
+        fprintf( outfile, "%s", buffer.str().c_str() );
         print_line = false;
       }
 
@@ -1427,7 +1456,7 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
 
 //  ok_sc_wait_window();
 
-  free( buffer );
+  //free( buffer );
 }
 
 

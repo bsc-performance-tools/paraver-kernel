@@ -49,6 +49,7 @@
 #endif
 
 #include <iostream>
+#include <sstream>
 
 KTraceFilter::KTraceFilter( char *trace_in,
                             char *trace_out,
@@ -364,11 +365,12 @@ void KTraceFilter::dump_buffer()
 
 void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *progress )
 {
-  bool end_line;
-  int i, j, k, num_char, print_record, state, size, appl, task, thread, cpu;
+  bool end_line, print_record;
+  int i, j, k, num_char, state, size, appl, task, thread, cpu;
   unsigned long long time_1, time_2, type, value;
   // char *word, event_record[MAX_LINE_SIZE], trace_name[2048], *c, *trace_header;
-  char *word, *event_record, *trace_name, *c, *trace_header;
+  //char *word, *event_record, *trace_name, *c, *trace_header;
+  char *word, *trace_name, *c, *trace_header;
   //char pcf_file[2048];
   char *pcf_file;
   unsigned long num_iters = 0;
@@ -376,7 +378,8 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
   bool dump_event_buffer, call_in;
   struct buffer_elem *new_elem, *elem_aux;
 
-  event_record = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
+  //event_record = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
+
   trace_name   = (char *) malloc( sizeof(char) * MAX_FILENAME_SIZE );
   pcf_file     = (char *) malloc( sizeof(char) * MAX_FILENAME_SIZE );
 
@@ -537,6 +540,8 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
     else
       num_iters++;
 
+    std::ostringstream event_record;
+
     /* 1: state; 2: event; 3: comm; 4: global comm */
     switch ( line[0] )
     {
@@ -598,6 +603,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
           fputs( line, outfile );
           break;
         }
+
         sscanf( line, "%*d:%d:%d:%d:%d:%lld:%*s\n", &cpu, &appl, &task, &thread, &time_1 );
 
         i = 0;
@@ -616,14 +622,15 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
           i++;
         }
 
-        sprintf( event_record, "2:%d:%d:%d:%d:%lld", cpu, appl, task, thread, time_1 );
+        //sprintf( event_record, "2:%d:%d:%d:%d:%lld", cpu, appl, task, thread, time_1 );
+        event_record << "2:" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
 
         call_in = false;
         dump_event_buffer = false;
 
         /* Event type and values */
         end_line = false;
-        print_record = 0;
+        print_record = false;
         word = strtok( &line[i+1], ":" );
         type = atoll( word );
         word = strtok( NULL, ":" );
@@ -643,8 +650,9 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
 
         if ( ( i = filter_allowed_type( appl, task, thread, time_1, type, value ) ) > 0 )
         {
-          print_record = 1;
-          sprintf( event_record, "%s:%lld:%lld", event_record, type, value );
+          print_record = true;
+          //sprintf( event_record, "%s:%lld:%lld", event_record, type, value );
+          event_record << ":" << type << ":" << value;
 
           if ( i == 2 )
           {
@@ -675,8 +683,9 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
 
             if ( ( i = filter_allowed_type( appl, task, thread, time_1, type, value ) ) > 0 )
             {
-              print_record = 1;
-              sprintf( event_record, "%s:%lld:%lld", event_record, type, value );
+              print_record = true;
+              //sprintf( event_record, "%s:%lld:%lld", event_record, type, value );
+              event_record << ":" << type << ":" << value;
 
               if ( i == 2 )
               {
@@ -690,7 +699,8 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
           else
           {
             end_line = true;
-            sprintf( event_record, "%s\n", event_record );
+            //sprintf( event_record, "%s\n", event_record );
+            event_record << std::endl;
           }
         }
 
@@ -698,7 +708,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
         {
           if ( !filter_by_call_time )
           {
-            fputs( event_record, outfile );
+            fputs( event_record.str().c_str(), outfile );
           }
           else
           {
@@ -709,7 +719,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
               exit( 1 );
             }
 
-            new_elem->record = strdup( event_record );
+            new_elem->record = strdup( event_record.str().c_str() );
 
             if ( call_in )
               new_elem->dump = false;
@@ -852,7 +862,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
   else
     gzclose( gzInfile );
 
-  free( event_record );
+//  free( event_record );
   free( trace_name );
   free( pcf_file );
 }

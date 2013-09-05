@@ -35,6 +35,7 @@
 #include <algorithm>
 #include <vector>
 #include <string>
+#include <sstream>
 
 #ifndef WIN32
 #include <unistd.h>
@@ -1077,6 +1078,8 @@ void KTraceCutter::execute( char *trace_in,
 
     /* 1: state; 2: event; 3: comm; #: comment in trace */
     /* DEPRECATED 4: global comm */
+    std::ostringstream aux_buffer;
+
     switch ( line[0] )
     {
       case '1':
@@ -1221,14 +1224,20 @@ void KTraceCutter::execute( char *trace_in,
           if ( reset_counters )
           {
             reset_counters = false;
-            sprintf( line, "2:%d:%d:%d:%d:%lld", cpu, appl, task, thread, time_1 );
+            //sprintf( line, "2:%d:%d:%d:%d:%lld", cpu, appl, task, thread, time_1 );
+            aux_buffer << "2:" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
 
             for ( i = 0; i < last_counter; i++ )
-              sprintf( line, "%s:%lld:0", line, counters[i] );
+            {
+              //sprintf( line, "%s:%lld:0", line, counters[i] );
+              aux_buffer << ":" << counters[i] << ":" << "0";
+            }
 
             if ( i > 0 )
             {
-              current_size += fprintf( outfile, "%s\n", line );
+              aux_buffer << std::endl;
+              //current_size += fprintf( outfile, "%s\n", line );
+              current_size += fprintf( outfile, "%s", aux_buffer.str().c_str() );
               if( writeToTmpFile ) ++total_tmp_lines;
             }
           }
