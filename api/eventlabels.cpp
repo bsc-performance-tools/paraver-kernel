@@ -96,12 +96,14 @@ bool EventLabels::getEventValueLabel( TEventType type, TEventValue value, string
   if ( it == eventValueLabel.end() )
   {
     //onStr = unknownLabel;
+    onStr.clear();
     return false;
   }
   map<TEventValue, string>::const_iterator itVal = ( *it ).second.find( value );
   if ( itVal == ( *it ).second.end() )
   {
     //onStr = unknownLabel;
+    onStr.clear();
     return false;
   }
   onStr = ( *itVal ).second;

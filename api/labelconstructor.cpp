@@ -542,7 +542,11 @@ string LabelConstructor::eventLabel( Window *whichWindow,
   else
   {
     if ( !whichWindow->getTrace()->getEventLabels().getEventTypeLabel( whichType, tmpstr ) )
+    {
+      // Shouldn't be like this, instead?
+      //label << " type " << whichType;
       label << tmpstr << " type " << whichType;
+    }
     else
       label << tmpstr;
   }
