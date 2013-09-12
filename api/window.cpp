@@ -1461,9 +1461,18 @@ const vector< Window::TParamAliasKey > WindowProxy::getCFG4DCurrentSelectedFullP
     case APPLICATION:
     case TASK:
     case THREAD:
-      endLevel = THREAD;
-      beginCompose = COMPOSEWORKLOAD;
-      endCompose = COMPOSETHREAD;
+      if ( isDerivedWindow() )
+      {
+        endLevel = TASK;
+        beginCompose = COMPOSEWORKLOAD;
+        endCompose = COMPOSETHREAD;
+      }
+      else
+      {
+        endLevel = THREAD;
+        beginCompose = COMPOSEWORKLOAD;
+        endCompose = COMPOSETHREAD;
+      }
       break;
 
     case SYSTEM:
