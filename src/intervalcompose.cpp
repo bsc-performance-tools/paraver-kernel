@@ -295,6 +295,108 @@ KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc 
 }
 
 
+void IntervalCompose::setChilds()
+{
+  if ( level == TOPCOMPOSE1 )
+  {
+    if ( lastLevel != TOPCOMPOSE2 )
+    {
+      lastLevel = TOPCOMPOSE2;
+      childIntervals.push_back( getWindowInterval( TOPCOMPOSE2, order ) );
+    }
+  }
+  else if ( level == TOPCOMPOSE2 )
+  {
+    if ( lastLevel != getWindowLevel() )
+    {
+      childIntervals.clear();
+      lastLevel = getWindowLevel();
+      childIntervals.push_back( getWindowInterval(
+                                getComposeLevel( getWindowLevel() ), order ) );
+    }
+  }
+  else if ( level == COMPOSEWORKLOAD )
+  {
+    if ( lastLevel != WORKLOAD || window->isDerivedWindow() )
+    {
+      if ( window->isDerivedWindow() )
+        childIntervals.clear();
+
+      lastLevel = WORKLOAD;
+      childIntervals.push_back( getWindowInterval( WORKLOAD, order ) );
+    }
+  }
+  else if ( level == COMPOSEAPPLICATION )
+  {
+    if ( lastLevel != APPLICATION || window->isDerivedWindow() )
+    {
+      if ( window->isDerivedWindow() )
+        childIntervals.clear();
+
+      lastLevel = APPLICATION;
+      childIntervals.push_back( getWindowInterval( APPLICATION, order ) );
+    }
+  }
+  else if ( level == COMPOSETASK )
+  {
+    if ( lastLevel != TASK || window->isDerivedWindow() )
+    {
+      if ( window->isDerivedWindow() )
+        childIntervals.clear();
+
+      lastLevel = TASK;
+      childIntervals.push_back( getWindowInterval( TASK, order ) );
+    }
+  }
+  else if ( level == COMPOSETHREAD )
+  {
+    if ( lastLevel != THREAD || window->isDerivedWindow() )
+    {
+
+      lastLevel = THREAD;
+      if ( window->isDerivedWindow() )
+        childIntervals.clear();
+
+      childIntervals.push_back( getWindowInterval( THREAD, order ) );
+    }
+  }
+  else if ( level == COMPOSESYSTEM )
+  {
+    if ( lastLevel != SYSTEM || window->isDerivedWindow() )
+    {
+      if ( window->isDerivedWindow() )
+        childIntervals.clear();
+
+      lastLevel = SYSTEM;
+      childIntervals.push_back( getWindowInterval( SYSTEM, order ) );
+    }
+  }
+  else if ( level == COMPOSENODE )
+  {
+    if ( lastLevel != NODE || window->isDerivedWindow() )
+    {
+      if ( window->isDerivedWindow() )
+        childIntervals.clear();
+
+      lastLevel = NODE;
+      childIntervals.push_back( getWindowInterval( NODE, order ) );
+    }
+  }
+  else if ( level == COMPOSECPU )
+  {
+    if ( lastLevel != CPU || window->isDerivedWindow() )
+    {
+      if ( window->isDerivedWindow() )
+        childIntervals.clear();
+
+      lastLevel = CPU;
+      childIntervals.push_back( getWindowInterval( CPU, order ) );
+    }
+  }
+}
+
+
+
 TWindowLevel IntervalCompose::getWindowLevel() const
 {
   return window->getLevel();

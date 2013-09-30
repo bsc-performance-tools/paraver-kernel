@@ -1132,9 +1132,13 @@ Interval *KDerivedWindow::getLevelInterval( TWindowLevel whichLevel,
   else if( whichLevel == DERIVED )
   {
     if( ( ( SemanticDerived * )functions[ DERIVED ] )->isControlDerived() )
+    {
       return &intervalControlDerived[ whichOrder ];
+    }
     else
+    {
       return &intervalDerived[ whichOrder ];
+    }
   }
   return NULL;
 }
@@ -1185,7 +1189,9 @@ KWindow *KDerivedWindow::clone()
   for ( PRV_UINT16 i = 0; i <= DERIVED; i++ )
   {
     if( functions[ i ] != NULL )
+    {
       clonedKDerivedWindow->functions[ i ] = functions[ i ]->clone();
+    }
     else
       clonedKDerivedWindow->functions[ i ] = NULL;
   }

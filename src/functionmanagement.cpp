@@ -93,7 +93,9 @@ T *FunctionManagement<T>::getFunction( const std::string& name ) const
 
   typename std::map<std::string, T*>::const_iterator it = hash.find( name );
   if ( it != hash.end() )
+  {
     retval = ( ( *it ).second )->clone();
+  }
 
   return retval;
 }
