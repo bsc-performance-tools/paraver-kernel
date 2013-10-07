@@ -59,6 +59,27 @@ class Output
     virtual bool getMultipleFiles() const = 0;
     virtual void setMultipleFiles( bool newValue ) = 0;
 
+    virtual bool getObjectHierarchy() const
+    {
+      return false;
+    }
+    virtual void setObjectHierarchy( bool newValue )
+    {}
+
+    bool getWindowTimeUnits() const
+    {
+      return true;
+    }
+    void setWindowTimeUnits( bool newValue )
+    {}
+
+    bool getTextualSemantic() const
+    {
+      return false;
+    }
+    void setTextualSemantic( bool newValue )
+    {}
+
   protected:
 
   private:

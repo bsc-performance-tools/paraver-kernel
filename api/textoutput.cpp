@@ -30,11 +30,13 @@
 #include "textoutput.h"
 #include "window.h"
 #include "histogram.h"
+#include "labelconstructor.h"
 
 using namespace std;
 
 TextOutput::TextOutput()
-    : multipleFiles( false )
+    : multipleFiles( false ), objectHierarchy( false ), windowTimeUnits( true ),
+      textualSemantic( false )
 {}
 
 TextOutput::~TextOutput()
@@ -81,22 +83,58 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
     {
       outputFile << setprecision( config->getTimelinePrecision() );
       if ( !multipleFiles )
-        outputFile << i + 1 << "\t";
-      outputFile << whichWindow->traceUnitsToWindowUnits(
-        whichWindow->getBeginTime( i ) ) << "\t";
-      outputFile << whichWindow->traceUnitsToWindowUnits(
-        whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
-      outputFile << whichWindow->getValue( i ) << endl;
+      {
+        if( objectHierarchy )
+          outputFile << LabelConstructor::objectLabel( i, whichWindow->getLevel(), trace, false ) << "\t";
+        else
+          outputFile << i + 1 << "\t";
+      }
+
+      if( windowTimeUnits )
+      {
+        outputFile << whichWindow->traceUnitsToWindowUnits(
+          whichWindow->getBeginTime( i ) ) << "\t";
+        outputFile << whichWindow->traceUnitsToWindowUnits(
+          whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
+      }
+      else
+      {
+        outputFile << whichWindow->getBeginTime( i ) << "\t";
+        outputFile << whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) << "\t";
+      }
+
+      if( textualSemantic )
+        outputFile << LabelConstructor::semanticLabel( whichWindow, whichWindow->getValue( i ), true, config->getTimelinePrecision() ) << endl;
+      else
+        outputFile << whichWindow->getValue( i ) << endl;
+
       whichWindow->calcNext( i );
     }
     outputFile << setprecision( config->getTimelinePrecision() );
     if ( !multipleFiles )
-      outputFile << i + 1 << "\t";
-    outputFile << whichWindow->traceUnitsToWindowUnits(
-      whichWindow->getBeginTime( i ) ) << "\t";
-    outputFile << whichWindow->traceUnitsToWindowUnits(
-      whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
-    outputFile << whichWindow->getValue( i ) << endl;
+    {
+      if( objectHierarchy )
+        outputFile << LabelConstructor::objectLabel( i, whichWindow->getLevel(), trace, false ) << "\t";
+      else
+        outputFile << i + 1 << "\t";
+    }
+    if( windowTimeUnits )
+    {
+      outputFile << whichWindow->traceUnitsToWindowUnits(
+        whichWindow->getBeginTime( i ) ) << "\t";
+      outputFile << whichWindow->traceUnitsToWindowUnits(
+        whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
+    }
+    else
+    {
+      outputFile << whichWindow->getBeginTime( i ) << "\t";
+      outputFile << whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) << "\t";
+    }
+
+    if( textualSemantic )
+      outputFile << LabelConstructor::semanticLabel( whichWindow, whichWindow->getValue( i ), true, config->getTimelinePrecision() ) << endl;
+    else
+      outputFile << whichWindow->getValue( i ) << endl;
 
     if ( multipleFiles )
       outputFile.close();
@@ -495,4 +533,34 @@ bool TextOutput::getMultipleFiles() const
 void TextOutput::setMultipleFiles( bool newValue )
 {
   multipleFiles = newValue;
+}
+
+bool TextOutput::getObjectHierarchy() const
+{
+  return objectHierarchy;
+}
+
+void TextOutput::setObjectHierarchy( bool newValue )
+{
+  objectHierarchy = newValue;
+}
+
+bool TextOutput::getWindowTimeUnits() const
+{
+  return windowTimeUnits;
+}
+
+void TextOutput::setWindowTimeUnits( bool newValue )
+{
+  windowTimeUnits = newValue;
+}
+
+bool TextOutput::getTextualSemantic() const
+{
+  return textualSemantic;
+}
+
+void TextOutput::setTextualSemantic( bool newValue )
+{
+  textualSemantic = newValue;
 }

@@ -55,6 +55,15 @@ class TextOutput:public Output
     bool getMultipleFiles() const;
     void setMultipleFiles( bool newValue );
 
+    bool getObjectHierarchy() const;
+    void setObjectHierarchy( bool newValue );
+
+    bool getWindowTimeUnits() const;
+    void setWindowTimeUnits( bool newValue );
+
+    bool getTextualSemantic() const;
+    void setTextualSemantic( bool newValue );
+
   protected:
 
   private:
@@ -62,6 +71,9 @@ class TextOutput:public Output
                                                        THistogramColumn whichColumn,
                                                        THistogramColumn whichPlane ) const;
     bool multipleFiles;
+    bool objectHierarchy;
+    bool windowTimeUnits;
+    bool textualSemantic;
 
     void dumpMatrixHorizontal( Histogram *whichHisto,
                                TObjectOrder numRows,
