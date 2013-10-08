@@ -72,13 +72,15 @@ class TraceEditSequence
 
     virtual void execute( vector<std::string> traces ) = 0;
 
-/*    void executeNextAction( std::string whichTrace );
-    void executeNextAction( MemoryTrace::iterator *whichRecord );
-*/
+    virtual TraceEditSequence *getConcrete()
+    {
+      return NULL;
+    }
+
   protected:
+    KernelConnection *myKernel;
 
   private:
-    KernelConnection *myKernel;
 
 };
 
@@ -99,18 +101,12 @@ class TraceEditSequenceProxy:public TraceEditSequence
 
     void execute( vector<std::string> traces );
 
-/*    void executeNextAction( std::string whichTrace );
-    void executeNextAction( MemoryTrace::iterator *whichRecord );
-*/
+    TraceEditSequence *getConcrete();
+
   protected:
 
   private:
     TraceEditSequence *mySequence;
-
-    map<TraceEditSequence::TSequenceStates, TraceEditState *> activeStates;
-    vector<TraceEditAction *> sequenceActions;
-
-    PRV_UINT16 currentAction;
 
 };
 
