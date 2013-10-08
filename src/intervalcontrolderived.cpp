@@ -64,8 +64,8 @@ KRecordList *IntervalControlDerived::init( TRecordTime initialTime, TCreateList 
 
   info.callingInterval = this;
 
-  childIntervals[ 0 ]->init( myInitTime, createList, displayList );
   childIntervals[ 1 ]->init( myInitTime, createList, displayList );
+  childIntervals[ 0 ]->init( childIntervals[ 1 ]->getBegin()->getTime(), createList, displayList );
 
   if ( window->getLevel() >= SYSTEM )
   {
@@ -77,6 +77,9 @@ KRecordList *IntervalControlDerived::init( TRecordTime initialTime, TCreateList 
     begin = window->copyThreadIterator( childIntervals[ 1 ]->getBegin() );
     end = window->copyThreadIterator( childIntervals[ 1 ]->getEnd() );
   }
+  while ( childIntervals[ 0 ]->getEnd()->getTime() > begin->getTime() )
+    childIntervals[ 0 ]->calcPrev( displayList );
+
   while ( childIntervals[ 0 ]->getEnd()->getTime() < begin->getTime() )
     childIntervals[ 0 ]->calcNext( displayList );
 
