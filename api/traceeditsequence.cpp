@@ -99,6 +99,12 @@ TraceEditState *TraceEditSequenceProxy::getState( TraceEditSequence::TSequenceSt
 }
 
 
+bool TraceEditSequenceProxy::pushbackAction( TraceEditSequence::TSequenceActions whichAction )
+{
+  return mySequence->pushbackAction( whichAction );
+}
+
+
 bool TraceEditSequenceProxy::pushbackAction( TraceEditAction *newAction )
 {
   return mySequence->pushbackAction( newAction );

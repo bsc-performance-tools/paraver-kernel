@@ -108,6 +108,34 @@ TraceEditState *KTraceEditSequence::getState( TraceEditSequence::TSequenceStates
   return NULL;
 }
 
+bool KTraceEditSequence::pushbackAction( TraceEditSequence::TSequenceActions whichAction )
+{
+  TraceEditAction *newAction;
+
+  switch( whichAction )
+  {
+    case testAction:
+      newAction = new TestAction( this );
+      break;
+
+    case traceCutterAction:
+      newAction = new TraceCutterAction( this );
+      break;
+
+    default:
+      return false;
+      break;
+  }
+
+  if( !pushbackAction( newAction ) )
+  {
+    delete newAction;
+    return false;
+  }
+
+  return true;
+}
+
 bool KTraceEditSequence::pushbackAction( TraceEditAction *newAction )
 {
   TraceEditAction::TTraceEditActionType tmpType = newAction->getType();

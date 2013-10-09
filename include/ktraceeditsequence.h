@@ -43,6 +43,7 @@ class KTraceEditSequence:public TraceEditSequence
     bool addState( TraceEditSequence::TSequenceStates whichState );
     bool addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState );
     TraceEditState *getState( TraceEditSequence::TSequenceStates whichState );
+    bool pushbackAction( TraceEditSequence::TSequenceActions whichAction );
     bool pushbackAction( TraceEditAction *newAction );
 
     void execute( vector<std::string> traces );

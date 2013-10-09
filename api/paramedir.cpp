@@ -501,7 +501,7 @@ void loadCFGs( KernelConnection *myKernel )
     windows.clear();
   }
 }
-/*
+
 #include "traceeditsequence.h"
 #include "traceeditactions.h"
 #include "traceeditstates.h"
@@ -510,18 +510,16 @@ void testSequence( KernelConnection *myKernel )
 {
   vector<std::string> tmpV;
   tmpV.push_back( "/home/eloy/traces/mpi_ping0000089274.prv" );
-  TraceEditSequence seq( myKernel );
-  TestAction *act1 = new TestAction( &seq );
-  TraceCutterAction *act2 = new TraceCutterAction( &seq );
-  seq.pushbackAction( act1 );
-  seq.pushbackAction( act2 );
+  TraceEditSequence *seq = TraceEditSequence::create( myKernel );
+  seq->pushbackAction( TraceEditSequence::testAction );
+  seq->pushbackAction( TraceEditSequence::traceCutterAction );
   TraceOptions *tmpOptions = myKernel->newTraceOptions();
-  TraceOptionsState *tmpOptionsState = new TraceOptionsState( &seq );
+  TraceOptionsState *tmpOptionsState = new TraceOptionsState( seq );
   tmpOptionsState->setData( tmpOptions );
-  seq.addState( TraceEditSequence::traceOptionsState, tmpOptionsState );
-  seq.execute( tmpV );
+  seq->addState( TraceEditSequence::traceOptionsState, tmpOptionsState );
+  seq->execute( tmpV );
 }
-*/
+
 int main( int argc, char *argv[] )
 {
   if ( argc == 1 )

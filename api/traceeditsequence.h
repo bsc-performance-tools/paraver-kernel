@@ -55,6 +55,13 @@ class TraceEditSequence
       numStates
     };
 
+    enum TSequenceActions
+    {
+      testAction = 0,
+      traceCutterAction,
+      numActions
+    };
+
     static TraceEditSequence *create( KernelConnection *whichKernel );
 
     TraceEditSequence() { }
@@ -68,6 +75,7 @@ class TraceEditSequence
     virtual bool addState( TraceEditSequence::TSequenceStates whichState ) = 0;
     virtual bool addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState ) = 0;
     virtual TraceEditState *getState( TraceEditSequence::TSequenceStates whichState ) = 0;
+    virtual bool pushbackAction( TraceEditSequence::TSequenceActions whichAction ) = 0;
     virtual bool pushbackAction( TraceEditAction *newAction ) = 0;
 
     virtual void execute( vector<std::string> traces ) = 0;
@@ -97,6 +105,7 @@ class TraceEditSequenceProxy:public TraceEditSequence
     bool addState( TraceEditSequence::TSequenceStates whichState );
     bool addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState );
     TraceEditState *getState( TraceEditSequence::TSequenceStates whichState );
+    bool pushbackAction( TraceEditSequence::TSequenceActions whichAction );
     bool pushbackAction( TraceEditAction *newAction );
 
     void execute( vector<std::string> traces );
