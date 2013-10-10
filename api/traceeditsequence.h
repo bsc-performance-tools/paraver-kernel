@@ -80,6 +80,8 @@ class TraceEditSequence
 
     virtual void execute( vector<std::string> traces ) = 0;
 
+    virtual void executeNextAction( std::string whichTrace ) = 0;
+
     virtual TraceEditSequence *getConcrete()
     {
       return NULL;
@@ -109,6 +111,8 @@ class TraceEditSequenceProxy:public TraceEditSequence
     bool pushbackAction( TraceEditAction *newAction );
 
     void execute( vector<std::string> traces );
+
+    void executeNextAction( std::string whichTrace );
 
     TraceEditSequence *getConcrete();
 

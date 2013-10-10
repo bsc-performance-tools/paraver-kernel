@@ -120,3 +120,8 @@ TraceEditSequence *TraceEditSequenceProxy::getConcrete()
 {
   return mySequence;
 }
+
+void TraceEditSequenceProxy::executeNextAction( std::string whichTrace )
+{
+  mySequence->executeNextAction( whichTrace );
+}
