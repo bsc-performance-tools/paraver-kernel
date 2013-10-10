@@ -34,7 +34,6 @@
 #include <vector>
 #include <string>
 #include "paraverkerneltypes.h"
-#include "memorytrace.h"
 
 using std::map;
 using std::vector;

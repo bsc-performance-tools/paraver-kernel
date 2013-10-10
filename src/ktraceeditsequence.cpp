@@ -248,6 +248,8 @@ void KTraceEditSequence::executeNextAction( std::string whichTrace )
     default:
       break;
   }
+
+  --currentAction;
 }
 
 
@@ -279,5 +281,7 @@ void KTraceEditSequence::executeNextAction( MemoryTrace::iterator *whichRecord )
     default:
       break;
   }
+
+  --currentAction;
 }
 

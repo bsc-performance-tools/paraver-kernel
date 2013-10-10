@@ -513,7 +513,7 @@ void testSequence( KernelConnection *myKernel )
   TraceEditSequence *seq = TraceEditSequence::create( myKernel );
   seq->pushbackAction( TraceEditSequence::testAction );
   seq->pushbackAction( TraceEditSequence::traceCutterAction );
-  TraceOptions *tmpOptions = myKernel->newTraceOptions();
+  TraceOptions *tmpOptions = TraceOptions::create( myKernel );
   TraceOptionsState *tmpOptionsState = new TraceOptionsState( seq );
   tmpOptionsState->setData( tmpOptions );
   seq->addState( TraceEditSequence::traceOptionsState, tmpOptionsState );

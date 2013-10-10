@@ -31,6 +31,7 @@
 #define KTRACEEDITSEQUENCE_H_INCLUDED
 
 #include "traceeditsequence.h"
+#include "memorytrace.h"
 
 class KTraceEditSequence:public TraceEditSequence
 {
