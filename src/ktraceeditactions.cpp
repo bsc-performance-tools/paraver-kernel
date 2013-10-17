@@ -42,7 +42,7 @@ void TestAction::execute( std::string whichTrace )
 {
   std::cout << "testAction::execute with parameter: " << whichTrace << std::endl;
 
-  ((KTraceEditSequence *)(mySequence->getConcrete()))->executeNextAction( whichTrace );
+  ((KTraceEditSequence *)mySequence)->executeNextAction( whichTrace );
 }
 
 vector<TraceEditSequence::TSequenceStates> TestAction::getStateDependencies() const
@@ -67,7 +67,8 @@ vector<TraceEditSequence::TSequenceStates> TraceCutterAction::getStateDependenci
 
 void TraceCutterAction::execute( std::string whichTrace )
 {
-  TraceOptions *options = ( (TraceOptionsState *)mySequence->getState( TraceEditSequence::traceOptionsState ) )->getData();
+  KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
+  TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TraceEditSequence::traceOptionsState ) )->getData();
   std::string newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, TraceCutter::getID(), false );
 
   TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(),
@@ -76,5 +77,8 @@ void TraceCutterAction::execute( std::string whichTrace )
                                               options,
                                               NULL );
 
-  ((KTraceEditSequence *)(mySequence->getConcrete()))->executeNextAction( newName );
+  mySequence->getKernelConnection()->copyPCF( whichTrace, newName );
+  mySequence->getKernelConnection()->copyROW( whichTrace, newName );
+
+  tmpSequence->executeNextAction( newName );
 }

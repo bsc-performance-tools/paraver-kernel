@@ -68,7 +68,7 @@ class KernelConnection
     virtual Histogram *newHistogram() const = 0;
     virtual ProgressController *newProgressController() const = 0;
     virtual Filter *newFilter( Filter *concreteFilter ) const = 0;
-    virtual TraceEditSequence *newTraceEditSequence() const = 0;
+    virtual TraceEditSequence *newTraceEditSequence() = 0;
 
     virtual std::string getToolID( const std::string &toolName ) const = 0;
     virtual std::string getToolName( const std::string &toolID ) const = 0;

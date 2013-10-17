@@ -34,7 +34,8 @@
 
 using std::invalid_argument;
 
-KTraceEditSequence::KTraceEditSequence()
+KTraceEditSequence::KTraceEditSequence( KernelConnection *whichKernel ) :
+  TraceEditSequence( whichKernel )
 {
 
 }

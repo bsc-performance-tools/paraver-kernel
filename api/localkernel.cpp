@@ -186,9 +186,9 @@ Filter *LocalKernel::newFilter( Filter *concreteFilter ) const
   return ( Filter * ) tmpFilter;
 }
 
-TraceEditSequence *LocalKernel::newTraceEditSequence() const
+TraceEditSequence *LocalKernel::newTraceEditSequence()
 {
-  return new KTraceEditSequence();
+  return new KTraceEditSequence( this );
 }
 
 string LocalKernel::getToolID( const string &toolName ) const

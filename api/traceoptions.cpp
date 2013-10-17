@@ -104,7 +104,7 @@ void TraceOptionsProxy::set_min_cutting_time( unsigned long long minCutTime )
 
 void TraceOptionsProxy::set_max_cutting_time( unsigned long long maxCutTime )
 {
-  myTraceOptions->set_min_cutting_time( maxCutTime );
+  myTraceOptions->set_max_cutting_time( maxCutTime );
 }
 
 void TraceOptionsProxy::set_minimum_time_percentage( unsigned long long whichMinimumTimePercentage )

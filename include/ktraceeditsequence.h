@@ -36,7 +36,8 @@
 class KTraceEditSequence:public TraceEditSequence
 {
   public:
-    KTraceEditSequence();
+    KTraceEditSequence() {}
+    KTraceEditSequence( KernelConnection *whichKernel );
     virtual ~KTraceEditSequence();
 
     TraceEditState *createState( TraceEditSequence::TSequenceStates whichState );

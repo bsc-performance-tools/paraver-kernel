@@ -27,6 +27,7 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
+#include <iostream>
 #include "traceeditsequence.h"
 #include "traceeditactions.h"
 #include "traceeditstates.h"
