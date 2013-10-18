@@ -138,9 +138,14 @@ class KTraceCutter : public TraceCutter
 
     void read_cutter_params();
     void proces_cutter_header( char *header,
-                               char *trace_in_name,
-                               char *trace_out_name,
+                               //char *trace_in_name,
+                               //char *trace_out_name,
                                bool is_zip );
+    void writeOffsetLine( char *trace_in_name,
+                          char *trace_out_name,
+                          unsigned long long timeOffset,
+                          unsigned long long timeCutBegin,
+                          unsigned long long timeCutEnd );
     const std::set< TEventType > mergeDuplicates( const std::multiset< TEventType>& eventTypesWithPCFZeros );
     void dumpEventsSet( const std::set< TEventType >& closingEventTypes,
                         unsigned int cpu,
@@ -158,7 +163,7 @@ class KTraceCutter : public TraceCutter
                        unsigned long long type,
                        unsigned long long value );
     void load_counters_of_pcf( char *trace_name );
-    void shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nameOut, bool is_zip, ProgressController *progress );
+    void shiftLeft_TraceTimes_ToStartFromZero( char *originalTraceName, char *nameIn, char *nameOut, bool is_zip, ProgressController *progress );
     bool is_selected_task( int task_id );
 };
 

@@ -185,10 +185,33 @@ void KTraceCutter::read_cutter_params()
 }
 
 
+void KTraceCutter::writeOffsetLine( char *trace_in_name,
+                                    char *trace_out_name,
+                                    unsigned long long timeOffset,
+                                    unsigned long long timeCutBegin,
+                                    unsigned long long timeCutEnd )
+{
+  if ( originalTime )
+  {
+    timeOffset = 0;
+  }
+
+//  if ( trace_in_name != NULL )
+//  {
+  current_size += fprintf( outfile, "# %s: Offset %lld from %s  -  Cut time range: [ %lld, %lld ]\n",
+                           trace_out_name,
+                           timeOffset,
+                           trace_in_name,
+                           timeCutBegin,
+                           timeCutEnd );
+//  }
+}
+
+
 /* For processing the Paraver header */
 void KTraceCutter::proces_cutter_header( char *header,
-                                         char *trace_in_name,
-                                         char *trace_out_name,
+                                         //char *trace_in_name,
+                                         //char *trace_out_name,
                                          bool is_zip )
 {
   int num_comms;
@@ -312,8 +335,8 @@ void KTraceCutter::proces_cutter_header( char *header,
     gzseek( gzInfile, -( strlen( auxLine ) ), SEEK_CUR );
 
   /* Writing of the current cut offset */
-  if ( trace_in_name != NULL )
-    current_size += fprintf( outfile, "# %s: Offset %lld from %s\n", trace_out_name, time_min, trace_in_name );
+//  if ( trace_in_name != NULL )
+//    current_size += fprintf( outfile, "# %s: Offset %lld from %s\n", trace_out_name, time_min, trace_in_name );
 
   free( auxLine );
 }
@@ -617,7 +640,8 @@ void KTraceCutter::load_counters_of_pcf( char *trace_name )
 
 // Substract to all the times in the trace the first time of the first record
 // Doesn't change header
-void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nameOut, bool is_zip, ProgressController *progress )
+void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *originalTraceName,
+                                                         char *nameIn, char *nameOut, bool is_zip, ProgressController *progress )
 {
   unsigned long long timeOffset = 0, time_1, time_2, time_3, time_4;
   int cpu, appl, task, thread, state, cpu_2, appl_2, task_2, thread_2;
@@ -692,7 +716,8 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nam
   }
 
   // Consume header
-  proces_cutter_header( trace_header, NULL, NULL, is_zip );
+  //proces_cutter_header( trace_header, NULL, NULL, is_zip );
+  proces_cutter_header( trace_header, is_zip );
 
   bool end_read = false;
 
@@ -750,6 +775,8 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *nameIn, char *nam
   // Override it: we have the minimum time of the written records.
   timeOffset = first_record_time;
   current_tmp_lines = 0;
+
+  writeOffsetLine( originalTraceName, nameOut, timeOffset, time_min, time_max );
 
   while ( !end_read )
   {
@@ -1026,7 +1053,13 @@ void KTraceCutter::execute( char *trace_in,
     gzgets( gzInfile, trace_header, MAX_TRACE_HEADER );
   }
 
-  proces_cutter_header( trace_header, trace_in, trace_out, is_zip );
+  // proces_cutter_header( trace_header, trace_in, trace_out, is_zip );
+  proces_cutter_header( trace_header, is_zip );
+  if ( !writeToTmpFile )
+  {
+    writeOffsetLine( trace_in, trace_out, time_min, time_min, time_max );
+  }
+
   free( trace_header );
 
   /* We process the trace like the originalTime version */
@@ -1474,7 +1507,7 @@ void KTraceCutter::execute( char *trace_in,
   if ( writeToTmpFile )   // trace_file_out is a tmpfile!!
   {
     secondPhase = true;
-    shiftLeft_TraceTimes_ToStartFromZero( trace_file_out, trace_out, false, progress );
+    shiftLeft_TraceTimes_ToStartFromZero( trace_in, trace_file_out, trace_out, false, progress );
   }
 
   free( trace_name );
