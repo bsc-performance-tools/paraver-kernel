@@ -51,6 +51,8 @@ class TraceEditSequence
     {
       testState = 0,
       traceOptionsState,
+      csvWindowState,
+      csvFileNameState,
       numStates
     };
 
@@ -58,6 +60,7 @@ class TraceEditSequence
     {
       testAction = 0,
       traceCutterAction,
+      csvOutputAction,
       numActions
     };
 

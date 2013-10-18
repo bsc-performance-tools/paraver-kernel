@@ -63,6 +63,14 @@ TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceSta
       return new TraceOptionsState( this );
       break;
 
+    case csvWindowState:
+      return new CSVWindowState( this );
+      break;
+
+    case csvFileNameState:
+      return new CSVFileNameState( this );
+      break;
+
     default:
       return NULL;
       break;
@@ -121,6 +129,10 @@ bool KTraceEditSequence::pushbackAction( TraceEditSequence::TSequenceActions whi
 
     case traceCutterAction:
       newAction = new TraceCutterAction( this );
+      break;
+
+    case csvOutputAction:
+      newAction = new CSVOutputAction( this );
       break;
 
     default:

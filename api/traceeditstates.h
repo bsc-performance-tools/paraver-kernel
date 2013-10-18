@@ -30,10 +30,12 @@
 #ifndef TRACEEDITSTATES_H_INCLUDED
 #define TRACEEDITSTATES_H_INCLUDED
 
+#include <string>
 #include "paraverkerneltypes.h"
 
 class TraceEditSequence;
 class TraceOptions;
+class Window;
 
 class TraceEditState
 {
@@ -99,6 +101,54 @@ class TraceOptionsState: public TraceEditState
 
   private:
     TraceOptions *myData;
+};
+
+
+/****************************************************************************
+ ********                  CSVWindowState                            ********
+ ****************************************************************************/
+class CSVWindowState: public TraceEditState
+{
+  public:
+    CSVWindowState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
+    {
+      myData = NULL;
+    }
+
+    ~CSVWindowState();
+
+    virtual void init();
+
+    Window *getData() const;
+    void setData( Window *whichData );
+
+  protected:
+
+  private:
+    Window *myData;
+};
+
+
+/****************************************************************************
+ ********                  CSVFileNameState                          ********
+ ****************************************************************************/
+class CSVFileNameState: public TraceEditState
+{
+  public:
+    CSVFileNameState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
+    {}
+
+    ~CSVFileNameState();
+
+    virtual void init();
+
+    std::string getData() const;
+    void setData( std::string whichData );
+
+  protected:
+
+  private:
+    std::string myData;
 };
 
 #endif // TRACEEDITSTATES_H_INCLUDED

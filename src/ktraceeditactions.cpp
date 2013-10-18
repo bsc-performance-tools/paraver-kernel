@@ -33,6 +33,7 @@
 #include "traceeditstates.h"
 #include "tracecutter.h"
 #include "kernelconnection.h"
+#include "textoutput.h"
 
 /****************************************************************************
  ********                  TestAction                                ********
@@ -82,3 +83,29 @@ void TraceCutterAction::execute( std::string whichTrace )
 
   tmpSequence->executeNextAction( newName );
 }
+
+
+/****************************************************************************
+ ********                  CSVOutputAction                           ********
+ ****************************************************************************/
+vector<TraceEditSequence::TSequenceStates> CSVOutputAction::getStateDependencies() const
+{
+  vector<TraceEditSequence::TSequenceStates> tmpStates;
+  tmpStates.push_back(  TraceEditSequence::csvWindowState );
+  tmpStates.push_back(  TraceEditSequence::csvFileNameState );
+  return tmpStates;
+}
+
+
+void CSVOutputAction::execute( std::string whichTrace )
+{
+  KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
+  Window *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TraceEditSequence::csvWindowState ) )->getData();
+  std::string tmpFileName = ( (CSVFileNameState *)tmpSequence->getState( TraceEditSequence::csvFileNameState ) )->getData();
+  TextOutput output;
+
+  output.dumpWindow( tmpWindow, tmpFileName );
+
+  tmpSequence->executeNextAction( whichTrace );
+}
+

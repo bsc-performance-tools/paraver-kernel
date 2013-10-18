@@ -29,6 +29,7 @@
 
 #include "traceeditstates.h"
 #include "traceoptions.h"
+#include "window.h"
 
 
 /****************************************************************************
@@ -74,5 +75,47 @@ void TraceOptionsState::setData( TraceOptions *whichData )
   if( myData != NULL )
     delete myData;
 
+  myData = whichData;
+}
+
+
+/****************************************************************************
+ ********                  CSVWindowState                            ********
+ ****************************************************************************/
+
+CSVWindowState::~CSVWindowState()
+{}
+
+void CSVWindowState::init()
+{}
+
+Window *CSVWindowState::getData() const
+{
+  return myData;
+}
+
+void CSVWindowState::setData( Window *whichData )
+{
+  myData = whichData;
+}
+
+
+/****************************************************************************
+ ********                  CSVFileNameState                          ********
+ ****************************************************************************/
+
+CSVFileNameState::~CSVFileNameState()
+{}
+
+void CSVFileNameState::init()
+{}
+
+std::string CSVFileNameState::getData() const
+{
+  return myData;
+}
+
+void CSVFileNameState::setData( std::string whichData )
+{
   myData = whichData;
 }

@@ -134,4 +134,26 @@ class TraceCutterAction: public TraceToTraceAction
 
 };
 
+
+/****************************************************************************
+ ********                  CSVOutputAction                           ********
+ ****************************************************************************/
+class CSVOutputAction: public TraceToTraceAction
+{
+  public:
+    CSVOutputAction( TraceEditSequence *whichSequence ) : TraceToTraceAction( whichSequence )
+    {}
+    ~CSVOutputAction()
+    {}
+
+    virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
+
+    virtual void execute( std::string whichTrace );
+
+  protected:
+
+  private:
+
+};
+
 #endif // KTRACEEDITACTIONS_H_INCLUDED
