@@ -70,7 +70,7 @@ void LabelConstructor::init()
 string LabelConstructor::objectLabel( TObjectOrder globalOrder,
                                       TWindowLevel level,
                                       Trace *whichTrace,
-                                      bool showLevelTag
+                                      bool showLevelTag,
                                       bool showRowText )
 {
   if( showRowText )
