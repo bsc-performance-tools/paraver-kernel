@@ -70,9 +70,11 @@ void LabelConstructor::init()
 string LabelConstructor::objectLabel( TObjectOrder globalOrder,
                                       TWindowLevel level,
                                       Trace *whichTrace,
-                                      bool showLevelTag )
+                                      bool showLevelTag
+                                      bool showRowText )
 {
-  rowStr = whichTrace->getRowLabel( level, globalOrder );
+  if( showRowText )
+    rowStr = whichTrace->getRowLabel( level, globalOrder );
   sstrObjectLabel.clear();
   sstrObjectLabel.str( "" );
 

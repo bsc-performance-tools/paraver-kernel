@@ -85,7 +85,7 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
       if ( !multipleFiles )
       {
         if( objectHierarchy )
-          outputFile << LabelConstructor::objectLabel( i, whichWindow->getLevel(), trace, false ) << "\t";
+          outputFile << LabelConstructor::objectLabel( i, whichWindow->getLevel(), trace, false, false ) << "\t";
         else
           outputFile << i + 1 << "\t";
       }

@@ -44,7 +44,8 @@ class LabelConstructor
     static std::string objectLabel( TObjectOrder globalOrder,
                                TWindowLevel level,
                                Trace *whichTrace,
-                               bool showLevelTag = true );
+                               bool showLevelTag = true,
+                               bool showRowText = true );
 
     static std::string histoColumnLabel( THistogramColumn whichColumn,
                                     const Window *whichWindow,
