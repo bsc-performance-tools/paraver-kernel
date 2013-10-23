@@ -31,6 +31,7 @@
 #define KTRACEEDITACTIONS_H_INCLUDED
 
 #include "traceeditactions.h"
+#include "memorytrace.h"
 
 class TraceToRecordAction: public TraceEditAction
 {

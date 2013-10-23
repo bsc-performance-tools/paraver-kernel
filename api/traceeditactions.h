@@ -32,7 +32,6 @@
 
 #include <string>
 #include <vector>
-#include "memorytrace.h"
 #include "traceeditsequence.h"
 
 using std::vector;
