@@ -119,3 +119,24 @@ void CSVFileNameState::setData( std::string whichData )
 {
   myData = whichData;
 }
+
+
+/****************************************************************************
+ ********                  CSVOutputState                          ********
+ ****************************************************************************/
+
+CSVOutputState::~CSVOutputState()
+{}
+
+void CSVOutputState::init()
+{}
+
+TextOutput CSVOutputState::getData() const
+{
+  return myData;
+}
+
+void CSVOutputState::setData( TextOutput whichData )
+{
+  myData = whichData;
+}

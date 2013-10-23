@@ -32,6 +32,7 @@
 
 #include <string>
 #include "paraverkerneltypes.h"
+#include "textoutput.h"
 
 class TraceEditSequence;
 class TraceOptions;
@@ -149,6 +150,29 @@ class CSVFileNameState: public TraceEditState
 
   private:
     std::string myData;
+};
+
+
+/****************************************************************************
+ ********                  CSVOutputState                            ********
+ ****************************************************************************/
+class CSVOutputState: public TraceEditState
+{
+  public:
+    CSVOutputState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
+    {}
+
+    ~CSVOutputState();
+
+    virtual void init();
+
+    TextOutput getData() const;
+    void setData( TextOutput whichData );
+
+  protected:
+
+  private:
+    TextOutput myData;
 };
 
 #endif // TRACEEDITSTATES_H_INCLUDED

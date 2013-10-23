@@ -33,6 +33,9 @@
 #include "traceeditstates.h"
 #include "localkernel.h"
 
+std::string TraceEditSequence::dirNameClustering( "clustering" );
+std::string TraceEditSequence::dirNameFolding( "folding" );
+
 TraceEditSequence *TraceEditSequence::create( KernelConnection *whichKernel )
 {
   return new TraceEditSequenceProxy( whichKernel );

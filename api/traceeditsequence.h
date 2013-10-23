@@ -53,6 +53,7 @@ class TraceEditSequence
       traceOptionsState,
       csvWindowState,
       csvFileNameState,
+      csvOutputState,
       numStates
     };
 
@@ -63,6 +64,9 @@ class TraceEditSequence
       csvOutputAction,
       numActions
     };
+
+    static std::string dirNameClustering;
+    static std::string dirNameFolding;
 
     static TraceEditSequence *create( KernelConnection *whichKernel );
 
