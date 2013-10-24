@@ -99,8 +99,8 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
       }
       else
       {
-        outputFile << whichWindow->getBeginTime( i ) << "\t";
-        outputFile << whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) << "\t";
+        outputFile << (int)whichWindow->getBeginTime( i ) << "\t";
+        outputFile << (int)( whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
       }
 
       if( textualSemantic )
@@ -127,8 +127,8 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
     }
     else
     {
-      outputFile << whichWindow->getBeginTime( i ) << "\t";
-      outputFile << whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) << "\t";
+      outputFile << (int)whichWindow->getBeginTime( i ) << "\t";
+      outputFile << (int)( whichWindow->getEndTime( i ) - whichWindow->getBeginTime( i ) ) << "\t";
     }
 
     if( textualSemantic )
