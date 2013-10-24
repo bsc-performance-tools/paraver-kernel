@@ -60,29 +60,39 @@ TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
                                     TraceOptions *options,
                                     ProgressController *progress )
 {
-  char *pcf_name, *c;
-
-  pcf_name = strdup( traceIn );
-  c = strrchr( pcf_name, '.' );
-  sprintf( c, ".pcf" );
-
-  ParaverTraceConfig *config = new ParaverTraceConfig( string( pcf_name ) );
-  EventLabels myEventLabels = EventLabels( *config, set<TEventType>() );
-  vector< TEventType > allTypes;
+//  char *pcf_name, *c;
+  std::string pcf_name;
+  FILE *pcfFile;
   vector< TEventType > typesWithValueZero;
-  EventLabels labels;
-  labels.getTypes( allTypes );
-  map< TEventValue, string > currentEventValues;
-  for( vector< TEventType >::iterator it = allTypes.begin(); it != allTypes.end(); ++it )
+
+/*  pcf_name = strdup( traceIn );
+  c = strrchr( pcf_name, '.' );
+  sprintf( c, ".pcf" );*/
+
+  pcf_name = LocalKernel::composeName( traceIn, string( "pcf" ) );
+  if(( pcfFile = fopen( pcf_name.c_str(), "r" )) != NULL )
   {
-    if ( labels.getValues( *it, currentEventValues ) )
+    fclose( pcfFile );
+
+    ParaverTraceConfig *config = new ParaverTraceConfig( pcf_name );
+    EventLabels myEventLabels = EventLabels( *config, set<TEventType>() );
+    vector< TEventType > allTypes;
+    EventLabels labels;
+    labels.getTypes( allTypes );
+    map< TEventValue, string > currentEventValues;
+    for( vector< TEventType >::iterator it = allTypes.begin(); it != allTypes.end(); ++it )
     {
-      if ( currentEventValues.find( TEventValue( 0 )) != currentEventValues.end() )
+      if ( labels.getValues( *it, currentEventValues ) )
       {
-        typesWithValueZero.push_back( *it );
+        if ( currentEventValues.find( TEventValue( 0 )) != currentEventValues.end() )
+        {
+          typesWithValueZero.push_back( *it );
+        }
+        currentEventValues.clear();
       }
-      currentEventValues.clear();
     }
+
+    delete config;
   }
 
   myTraceCutter = whichKernel->newTraceCutter( traceIn, traceOut, options, typesWithValueZero, progress );
