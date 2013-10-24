@@ -75,6 +75,8 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
 {
   if( showRowText )
     rowStr = whichTrace->getRowLabel( level, globalOrder );
+  else
+    rowStr = "";
   sstrObjectLabel.clear();
   sstrObjectLabel.str( "" );
 
