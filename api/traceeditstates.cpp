@@ -140,3 +140,24 @@ void CSVOutputState::setData( TextOutput whichData )
 {
   myData = whichData;
 }
+
+
+/****************************************************************************
+ ********               OutputDirSuffixState                         ********
+ ****************************************************************************/
+
+OutputDirSuffixState::~OutputDirSuffixState()
+{}
+
+void OutputDirSuffixState::init()
+{}
+
+std::string OutputDirSuffixState::getData() const
+{
+  return myData;
+}
+
+void OutputDirSuffixState::setData( std::string whichData )
+{
+  myData = whichData;
+}

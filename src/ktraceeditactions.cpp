@@ -70,8 +70,9 @@ void TraceCutterAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
   TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TraceEditSequence::traceOptionsState ) )->getData();
+  std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TraceEditSequence::outputDirSuffixState ) )->getData();
   std::string outputPath = whichTrace.substr( 0, whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) ) +
-                           mySequence->getKernelConnection()->getPathSeparator() + TraceEditSequence::dirNameClustering;
+                           mySequence->getKernelConnection()->getPathSeparator() + tmpSuffix;
   vector< std::string > tmpID;
   tmpID.push_back( TraceCutter::getID() );
   std::string newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );

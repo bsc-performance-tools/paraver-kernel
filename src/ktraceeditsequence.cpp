@@ -71,6 +71,14 @@ TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceSta
       return new CSVFileNameState( this );
       break;
 
+    case csvOutputState:
+      return new CSVOutputState( this );
+      break;
+
+    case outputDirSuffixState:
+      return new OutputDirSuffixState( this );
+      break;
+
     default:
       return NULL;
       break;

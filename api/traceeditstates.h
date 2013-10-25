@@ -175,4 +175,27 @@ class CSVOutputState: public TraceEditState
     TextOutput myData;
 };
 
+
+/****************************************************************************
+ ********               OutputDirSuffixState                         ********
+ ****************************************************************************/
+class OutputDirSuffixState: public TraceEditState
+{
+  public:
+    OutputDirSuffixState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
+    {}
+
+    ~OutputDirSuffixState();
+
+    virtual void init();
+
+    std::string getData() const;
+    void setData( std::string whichData );
+
+  protected:
+
+  private:
+    std::string myData;
+};
+
 #endif // TRACEEDITSTATES_H_INCLUDED

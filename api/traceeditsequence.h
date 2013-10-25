@@ -54,6 +54,7 @@ class TraceEditSequence
       csvWindowState,
       csvFileNameState,
       csvOutputState,
+      outputDirSuffixState,
       numStates
     };
 
