@@ -1785,7 +1785,8 @@ void WindowProxy::computeSemanticRowParallel( TObjectOrder firstRow,
   for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
     initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS, rowComputedMaxY, rowComputedMinY );
 
-  for( TTime currentTime = getWindowBeginTime() + timeStep;
+  TTime currentTime;
+  for( currentTime = getWindowBeginTime() + timeStep;
        currentTime <= getWindowEndTime() && currentTime <= getTrace()->getEndTime();
        currentTime += timeStep )
   {
@@ -1819,6 +1820,19 @@ void WindowProxy::computeSemanticRowParallel( TObjectOrder firstRow,
     }
     valuesToDraw.push_back( DrawMode::selectValue( rowValues, getDrawModeObject() ) );
     timePos += (int) magnify ;
+  }
+
+  for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
+  {
+    TSemanticValue dumbMinMax;
+    calcNext( *row, dumbMinMax, dumbMinMax );
+    RecordList *rl = getRecordList( *row );
+    if( rl != NULL )
+      computeEventsCommsParallel( rl,
+                                  currentTime - timeStep, currentTime, timeStep / magnify,
+                                  timePos, objectAxisPos,
+                                  selected, objectPosList,
+                                  eventsToDraw, commsToDraw );
   }
 
   // Erase events and comms remaining in RecordLists
