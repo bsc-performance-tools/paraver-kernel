@@ -79,7 +79,7 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
     outputFile << showpoint;
 
     whichWindow->initRow( i, beginTime, NOCREATE );
-    if( i = 0 || whichWindow->getBeginTime( i ) < minTime )
+    if( i == 0 || whichWindow->getBeginTime( i ) < minTime )
       minTime = whichWindow->getBeginTime( i );
 
     while ( whichWindow->getEndTime( i ) < endTime )
