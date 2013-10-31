@@ -64,6 +64,8 @@ class TextOutput:public Output
     bool getTextualSemantic() const;
     void setTextualSemantic( bool newValue );
 
+    TTime getMinTime() const;
+
   protected:
 
   private:
@@ -74,6 +76,8 @@ class TextOutput:public Output
     bool objectHierarchy;
     bool windowTimeUnits;
     bool textualSemantic;
+
+    TTime minTime;
 
     void dumpMatrixHorizontal( Histogram *whichHisto,
                                TObjectOrder numRows,

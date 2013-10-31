@@ -36,7 +36,7 @@ using namespace std;
 
 TextOutput::TextOutput()
     : multipleFiles( false ), objectHierarchy( false ), windowTimeUnits( true ),
-      textualSemantic( false )
+      textualSemantic( false ), minTime( 0.0 )
 {}
 
 TextOutput::~TextOutput()
@@ -79,6 +79,9 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
     outputFile << showpoint;
 
     whichWindow->initRow( i, beginTime, NOCREATE );
+    if( i = 0 || whichWindow->getBeginTime( i ) < minTime )
+      minTime = whichWindow->getBeginTime( i );
+
     while ( whichWindow->getEndTime( i ) < endTime )
     {
       outputFile << setprecision( config->getTimelinePrecision() );
@@ -563,4 +566,9 @@ bool TextOutput::getTextualSemantic() const
 void TextOutput::setTextualSemantic( bool newValue )
 {
   textualSemantic = newValue;
+}
+
+TTime TextOutput::getMinTime() const
+{
+  return minTime;
 }
