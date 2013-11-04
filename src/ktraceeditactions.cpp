@@ -27,13 +27,15 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
+#include <unistd.h>
+#include <iostream>
 #include "ktraceeditactions.h"
 #include "ktraceeditsequence.h"
-#include <iostream>
 #include "traceeditstates.h"
 #include "tracecutter.h"
 #include "kernelconnection.h"
 #include "textoutput.h"
+#include "traceoptions.h"
 
 /****************************************************************************
  ********                  TestAction                                ********
@@ -69,19 +71,29 @@ vector<TraceEditSequence::TSequenceStates> TraceCutterAction::getStateDependenci
 void TraceCutterAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
+  Window *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TraceEditSequence::csvWindowState ) )->getData();
   TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TraceEditSequence::traceOptionsState ) )->getData();
   std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TraceEditSequence::outputDirSuffixState ) )->getData();
   std::string outputPath = whichTrace.substr( 0, whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) ) +
                            mySequence->getKernelConnection()->getPathSeparator() + tmpSuffix;
+
   vector< std::string > tmpID;
   tmpID.push_back( TraceCutter::getID() );
   std::string newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );
 
-  TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(),
-                                              (char *)whichTrace.c_str(),
-                                              (char *)newName.c_str(),
-                                              options,
-                                              NULL );
+  if( options->get_min_cutting_time() == 0 && options->get_max_cutting_time() >= tmpWindow->getTrace()->getEndTime() )
+  {
+    symlink( whichTrace.c_str(), newName.c_str() );
+  }
+  else
+  {
+
+    TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(),
+                                                (char *)whichTrace.c_str(),
+                                                (char *)newName.c_str(),
+                                                options,
+                                                NULL );
+  }
 
   mySequence->getKernelConnection()->copyPCF( whichTrace, newName );
   mySequence->getKernelConnection()->copyROW( whichTrace, newName );
@@ -110,6 +122,10 @@ void CSVOutputAction::execute( std::string whichTrace )
   TextOutput output = ( (CSVOutputState *)tmpSequence->getState( TraceEditSequence::csvOutputState ) )->getData();
 
   output.dumpWindow( tmpWindow, tmpFileName );
+
+  TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TraceEditSequence::traceOptionsState ) )->getData();
+  if( options != NULL )
+    options->set_min_cutting_time( output.getMinTime() );
 
   tmpSequence->executeNextAction( whichTrace );
 }
