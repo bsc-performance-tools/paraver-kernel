@@ -381,7 +381,7 @@ void NoLoadBlocks::getNextRecord( TThreadOrder whichThread, TRecord **record, PR
     file->seekg( offset );
     lastData = NULL;
     lastPos = offset;
-    body->read( file, *this, notUsedEvents );
+    body->read( file, *this, notUsedEvents, dummyTraceInfo );
   }
 
   fileLineData *currentData = blocks[ offset ];
@@ -426,7 +426,7 @@ void NoLoadBlocks::getPrevRecord( TThreadOrder whichThread, TRecord **record, PR
   {
     lastData = NULL;
     lastPos = offset;
-    body->read( file, *this, notUsedEvents );
+    body->read( file, *this, notUsedEvents, dummyTraceInfo );
   }
 
   fileLineData *currentData = blocks[ offset ];
@@ -451,7 +451,7 @@ void NoLoadBlocks::getThreadRecordByTime( TThreadOrder whichThread, TRecordTime 
     file->seekg( offset );
     lastData = NULL;
     lastPos = offset;
-    body->read( file, *this, notUsedEvents );
+    body->read( file, *this, notUsedEvents, dummyTraceInfo );
   }
 
   fileLineData *currentData = blocks[ offset ];

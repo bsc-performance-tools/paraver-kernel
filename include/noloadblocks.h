@@ -156,6 +156,8 @@ namespace NoLoad
 
       hash_set<TEventType> notUsedEvents;
 
+      TraceInfo dummyTraceInfo;
+
       void goToPrevLine();
   };
 

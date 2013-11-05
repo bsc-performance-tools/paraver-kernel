@@ -46,15 +46,19 @@ bool TraceBodyIO_v1::ordered() const
 }
 
 void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
-                           hash_set<TEventType>& events ) const
+                           hash_set<TEventType>& events, TraceInfo& traceInfo ) const
 {
   file->getline( line );
 
-  if ( line[0] == '#' || line.size() == 0 )
+  if ( line.size() == 0 )
     return;
 
   switch ( line[0] )
   {
+    case CommentRecord:
+      readTraceInfo( line, traceInfo );
+      break;
+
     case StateRecord:
       readState( line, records );
       break;
@@ -139,6 +143,28 @@ void TraceBodyIO_v1::writeCommInfo( fstream& whichStream,
 /**********************
   Read line functions
 ***********************/
+inline void TraceBodyIO_v1::readTraceInfo(  const std::string& line, TraceInfo& traceInfo ) const
+{
+  strLine.clear();
+  strLine.str( line );
+
+//  std::getline( strLine, tmpstring, std::string( ": Offset " ) );
+  std::getline( strLine, tmpstring, ':' );
+  std::getline( strLine, tmpstring, ' ' );
+  std::getline( strLine, tmpstring, ' ' );
+  std::getline( strLine, tmpstring, ' ' );
+
+  fieldStream.clear();
+  fieldStream.str( tmpstring );
+  if ( !( fieldStream >> traceInfo.cutterOffset ) )
+  {
+    cerr << "No logging system yet. TraceBodyIO_v1::readTraceInfo()" << endl;
+    cerr << "Error reading cutter offset." << endl;
+    cerr << line << endl;
+    return;
+  }
+}
+
 inline void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records ) const
 {
   TCPUOrder CPU;

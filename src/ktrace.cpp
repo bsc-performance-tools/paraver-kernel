@@ -585,7 +585,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   unsigned long long count = 0;
   while ( !file->eof() )
   {
-    body->read( file, *blocks, hashevents );
+    body->read( file, *blocks, hashevents, myTraceInfo );
     if( blocks->getCountInserted() > 0 )
       ++count;
 
@@ -740,6 +740,7 @@ bool KTrace::findNextEvent( TThreadOrder whichThread,
   return found;
 }
 
+
 bool KTrace::getFillStateGaps() const
 {
   return fillStateGaps;
@@ -749,3 +750,22 @@ void KTrace::setFillStateGaps( bool fill )
 {
   fillStateGaps = fill;
 }
+
+
+PRV_UINT64 KTrace::getCutterOffset() const
+{
+  return myTraceInfo.cutterOffset;
+}
+
+
+PRV_UINT64 KTrace::getCutterBeginTime() const
+{
+  return myTraceInfo.cutterBeginTime;
+}
+
+
+PRV_UINT64 KTrace::getCutterEndTime() const
+{
+  return myTraceInfo.cutterEndTime;
+}
+

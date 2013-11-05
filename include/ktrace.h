@@ -41,6 +41,17 @@
 
 class TraceBodyIO;
 
+
+class TraceInfo
+{
+  public:
+    PRV_UINT64 cutterOffset;
+    PRV_UINT64 cutterBeginTime;
+    PRV_UINT64 cutterEndTime;
+
+};
+
+
 class KTrace: public Trace
 {
   public:
@@ -167,6 +178,10 @@ class KTrace: public Trace
     virtual bool getFillStateGaps() const;
     virtual void setFillStateGaps( bool fill );
 
+    virtual PRV_UINT64 getCutterOffset() const;
+    virtual PRV_UINT64 getCutterBeginTime() const;
+    virtual PRV_UINT64 getCutterEndTime() const;
+
   protected:
     bool ready;
     ProcessModel traceProcessModel;
@@ -183,6 +198,7 @@ class KTrace: public Trace
     std::vector<std::string> communicators;
     std::set<TEventType> events;
     bool fillStateGaps;
+    TraceInfo myTraceInfo;
 };
 
 #endif // KTRACE_H_INCLUDED

@@ -135,6 +135,11 @@ class Trace
 
     virtual void setFillStateGaps( bool fill ) = 0;
 
+    virtual PRV_UINT64 getCutterOffset() const = 0;
+    virtual PRV_UINT64 getCutterBeginTime() const = 0;
+    virtual PRV_UINT64 getCutterEndTime() const = 0;
+
+
     // Specific methods for TraceProxy only
     virtual bool getUnload() const
     {
@@ -294,6 +299,10 @@ class TraceProxy: public Trace
 
     virtual bool getFillStateGaps() const;
     virtual void setFillStateGaps( bool fill );
+
+    virtual PRV_UINT64 getCutterOffset() const;
+    virtual PRV_UINT64 getCutterBeginTime() const;
+    virtual PRV_UINT64 getCutterEndTime() const;
 
   private:
     Trace *myTrace;

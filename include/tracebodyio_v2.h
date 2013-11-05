@@ -55,7 +55,7 @@ class TraceBodyIO_v2 : public TraceBodyIO
 
     bool ordered() const;
     void read( TraceStream *file, MemoryBlocks& records,
-               hash_set<TEventType>& events ) const;
+               hash_set<TEventType>& events, TraceInfo& traceInfo ) const;
     void write( std::fstream& whichStream,
                 const KTrace& whichTrace,
                 MemoryTrace::iterator *record,

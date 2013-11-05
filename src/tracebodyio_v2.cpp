@@ -40,7 +40,7 @@ bool TraceBodyIO_v2::ordered() const
 }
 
 void TraceBodyIO_v2::read( TraceStream *file, MemoryBlocks& records,
-                           hash_set<TEventType>& events ) const
+                           hash_set<TEventType>& events, TraceInfo& traceInfo ) const
 {
   string line;
 

@@ -578,3 +578,22 @@ void TraceProxy::setFillStateGaps( bool fill )
 {
   myTrace->setFillStateGaps( fill );
 }
+
+
+PRV_UINT64 TraceProxy::getCutterOffset() const
+{
+  return myTrace->getCutterOffset();
+}
+
+
+PRV_UINT64 TraceProxy::getCutterBeginTime() const
+{
+  return myTrace->getCutterBeginTime();
+}
+
+
+PRV_UINT64 TraceProxy::getCutterEndTime() const
+{
+  return myTrace->getCutterEndTime();
+}
+
