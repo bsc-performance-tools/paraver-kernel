@@ -35,6 +35,7 @@
 
 std::string TraceEditSequence::dirNameClustering( "clustering" );
 std::string TraceEditSequence::dirNameFolding( "folding" );
+std::string TraceEditSequence::dirNameDimemas( "dimemas" );
 
 TraceEditSequence *TraceEditSequence::create( KernelConnection *whichKernel )
 {

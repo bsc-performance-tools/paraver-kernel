@@ -68,6 +68,7 @@ vector<TraceEditSequence::TSequenceStates> TraceCutterAction::getStateDependenci
 {
   vector<TraceEditSequence::TSequenceStates> tmpStates;
   tmpStates.push_back( TraceEditSequence::traceOptionsState );
+  tmpStates.push_back( TraceEditSequence::CSVWindowState );
   return tmpStates;
 }
 

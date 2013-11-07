@@ -68,6 +68,7 @@ class TraceEditSequence
 
     static std::string dirNameClustering;
     static std::string dirNameFolding;
+    static std::string dirNameDimemas;
 
     static TraceEditSequence *create( KernelConnection *whichKernel );
 
