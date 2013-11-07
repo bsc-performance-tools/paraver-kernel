@@ -68,7 +68,7 @@ vector<TraceEditSequence::TSequenceStates> TraceCutterAction::getStateDependenci
 {
   vector<TraceEditSequence::TSequenceStates> tmpStates;
   tmpStates.push_back( TraceEditSequence::traceOptionsState );
-  tmpStates.push_back( TraceEditSequence::CSVWindowState );
+  tmpStates.push_back( TraceEditSequence::csvWindowState );
   return tmpStates;
 }
 
@@ -87,7 +87,7 @@ void TraceCutterAction::execute( std::string whichTrace )
   std::string newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );
 
 #ifndef WIN32
-  if( options->get_min_cutting_time() == 0 && options->get_max_cutting_time() >= tmpWindow->getTrace()->getEndTime() )
+  if( tmpWindow != NULL && options->get_min_cutting_time() == 0 && options->get_max_cutting_time() >= tmpWindow->getTrace()->getEndTime() )
   {
     symlink( whichTrace.c_str(), newName.c_str() );
   }
