@@ -309,6 +309,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\traceeditactions.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\traceeditsequence.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\traceeditstates.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\tracefilter.cpp"
 				>
 			</File>
@@ -508,6 +520,18 @@
 			</File>
 			<File
 				RelativePath=".\tracecutter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\traceeditactions.h"
+				>
+			</File>
+			<File
+				RelativePath=".\traceeditsequence.h"
+				>
+			</File>
+			<File
+				RelativePath=".\traceeditstates.h"
 				>
 			</File>
 			<File

@@ -27,7 +27,11 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
+#ifndef WIN32
 #include <unistd.h>
+#else
+#include <io.h>
+#endif
 #include <iostream>
 #include "ktraceeditactions.h"
 #include "ktraceeditsequence.h"
@@ -81,19 +85,22 @@ void TraceCutterAction::execute( std::string whichTrace )
   tmpID.push_back( TraceCutter::getID() );
   std::string newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );
 
+#ifndef WIN32
   if( options->get_min_cutting_time() == 0 && options->get_max_cutting_time() >= tmpWindow->getTrace()->getEndTime() )
   {
     symlink( whichTrace.c_str(), newName.c_str() );
   }
   else
   {
-
+#endif
     TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(),
                                                 (char *)whichTrace.c_str(),
                                                 (char *)newName.c_str(),
                                                 options,
                                                 NULL );
+#ifndef WIN32
   }
+#endif
 
   mySequence->getKernelConnection()->copyPCF( whichTrace, newName );
   mySequence->getKernelConnection()->copyROW( whichTrace, newName );

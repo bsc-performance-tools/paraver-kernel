@@ -444,6 +444,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\ktraceeditactions.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ktraceeditsequence.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ktraceeditstates.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\ktracefilter.cpp"
 				>
 			</File>
@@ -743,6 +755,18 @@
 			</File>
 			<File
 				RelativePath="..\include\ktracecutter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\ktraceeditactions.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\ktraceeditsequence.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\ktraceeditstates.h"
 				>
 			</File>
 			<File
