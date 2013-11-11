@@ -133,7 +133,10 @@ void CSVOutputAction::execute( std::string whichTrace )
 
   TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TraceEditSequence::traceOptionsState ) )->getData();
   if( options != NULL )
+  {
     options->set_min_cutting_time( output.getMinTime() );
+    options->set_max_cutting_time( output.getMaxTime() );
+  }
 
   tmpSequence->executeNextAction( whichTrace );
 }

@@ -66,6 +66,8 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
   if ( !multipleFiles )
     outputFile.open( strOutputFile.c_str() );
 
+  maxTime = 0.0;
+
   for ( TObjectOrder i = 0; i < whichWindow->getWindowLevelObjects(); ++i )
   {
     if ( multipleFiles )
@@ -138,6 +140,9 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
       outputFile << LabelConstructor::semanticLabel( whichWindow, whichWindow->getValue( i ), true, config->getTimelinePrecision() ) << endl;
     else
       outputFile << whichWindow->getValue( i ) << endl;
+
+    if( whichWindow->getEndTime( i ) > maxTime )
+      maxTime = whichWindow->getEndTime( i );
 
     if ( multipleFiles )
       outputFile.close();
@@ -572,3 +577,9 @@ TTime TextOutput::getMinTime() const
 {
   return minTime;
 }
+
+TTime TextOutput::getMaxTime() const
+{
+  return maxTime;
+}
+

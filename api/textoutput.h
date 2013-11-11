@@ -65,6 +65,7 @@ class TextOutput:public Output
     void setTextualSemantic( bool newValue );
 
     TTime getMinTime() const;
+    TTime getMaxTime() const;
 
   protected:
 
@@ -78,6 +79,7 @@ class TextOutput:public Output
     bool textualSemantic;
 
     TTime minTime;
+    TTime maxTime;
 
     void dumpMatrixHorizontal( Histogram *whichHisto,
                                TObjectOrder numRows,
