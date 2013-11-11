@@ -458,6 +458,9 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     : fileName( whichFile )
 {
   string tmpstr;
+  myTraceInfo.cutterOffset = 0;
+  myTraceInfo.cutterBeginTime = 0;
+  myTraceInfo.cutterEndTime = 0;
 
   ready = false;
   TraceStream *file = TraceStream::openFile( fileName );
