@@ -89,6 +89,8 @@ void TraceCutterAction::execute( std::string whichTrace )
 #ifndef WIN32
   if( tmpWindow != NULL && options->get_min_cutting_time() == 0 && options->get_max_cutting_time() >= tmpWindow->getTrace()->getEndTime() )
   {
+    newName = outputPath + mySequence->getKernelConnection()->getPathSeparator() +
+              whichTrace.substr( whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) );
     symlink( whichTrace.c_str(), newName.c_str() );
   }
   else
