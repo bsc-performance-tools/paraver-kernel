@@ -216,6 +216,9 @@ void KTraceCutter::writeOffsetLine( char *trace_in_name,
                           (PRV_UINT64)timeOffset,
                           (PRV_UINT64)timeCutBegin,
                           (PRV_UINT64)timeCutEnd );
+  ostringstream tmpStream;
+  tmpData.Write( tmpStream );
+  current_size += fprintf( outfile, "%s\n", tmpStream.str().c_str() );
 
 //  }
 }

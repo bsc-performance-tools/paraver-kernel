@@ -87,7 +87,7 @@ Date(Date), Action(Action), Application(Application), OriginalTrace(OriginalTrac
 
 void Metadata::Write(ostream& os) const
 {
-  os << Date << ":" << Action << ":" << Application << ":" << OriginalTrace << ":";
+  os << "#" << Date << ":" << Action << ":" << Application << ":" << OriginalTrace << ":";
 
   FlushSpecificFields(os);
 }
@@ -123,21 +123,9 @@ CutterMetadata::CutterMetadata (vector<string>& CutterMetadataFields)
   this->Application   = CutterMetadataFields[2];
   this->OriginalTrace = CutterMetadataFields[3];
 
-  /* Offset */
-  Converter.str(CutterMetadataFields[4]);
-  if (!(Converter >> this->Offset))
-  {
-    ostringstream ErrorMessageSStr;
-    ErrorMessageSStr <<  "wrong offset value in cutter metadata record (";
-    ErrorMessageSStr <<  CutterMetadataFields[4];
-
-    Error = true;
-    ErrorMessage = ErrorMessageSStr.str();
-
-    return;
-  }
 
   /* FIELD 5: Offset */
+  Converter.clear();
   Converter.str(CutterMetadataFields[4]);
   if (!(Converter >> this->Offset))
   {
@@ -151,13 +139,15 @@ CutterMetadata::CutterMetadata (vector<string>& CutterMetadataFields)
     return;
   }
 
+
   /* FIELD 6: BeginTime */
+  Converter.clear();
   Converter.str(CutterMetadataFields[5]);
   if (!(Converter >> this->BeginTime))
   {
     ostringstream ErrorMessageSStr;
     ErrorMessageSStr <<  "wrong cut begin time value in cutter metadata record (";
-    ErrorMessageSStr <<  CutterMetadataFields[4] << ")";
+    ErrorMessageSStr <<  CutterMetadataFields[5] << ")";
 
     Error = true;
     ErrorMessage = ErrorMessageSStr.str();
@@ -166,12 +156,13 @@ CutterMetadata::CutterMetadata (vector<string>& CutterMetadataFields)
   }
 
   /* FIELD 7: EndTime */
+  Converter.clear();
   Converter.str(CutterMetadataFields[6]);
   if (!(Converter >> this->EndTime))
   {
     ostringstream ErrorMessageSStr;
     ErrorMessageSStr <<  "wrong cut end time value in cutter metadata record (";
-    ErrorMessageSStr <<  CutterMetadataFields[4] << ")";
+    ErrorMessageSStr <<  CutterMetadataFields[6] << ")";
 
     Error = true;
     ErrorMessage = ErrorMessageSStr.str();

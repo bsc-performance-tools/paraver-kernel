@@ -145,34 +145,8 @@ void TraceBodyIO_v1::writeCommInfo( fstream& whichStream,
 ***********************/
 inline void TraceBodyIO_v1::readTraceInfo(  const std::string& line, MetadataManager& traceInfo ) const
 {
-  /*
-  strLine.clear();
-  strLine.str( line );
-
-//  std::getline( strLine, tmpstring, std::string( ": Offset " ) );
-  std::getline( strLine, tmpstring, ':' );
-  std::getline( strLine, tmpstring, ' ' );
-  std::getline( strLine, tmpstring, ' ' );
-  std::getline( strLine, tmpstring, ' ' );
-
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if ( !( fieldStream >> traceInfo.cutterOffset ) )
-  {
-    cerr << "No logging system yet. TraceBodyIO_v1::readTraceInfo()" << endl;
-    cerr << "Error reading cutter offset." << endl;
-    cerr << line << endl;
-    return;
-  }
-  */
-
-  if ( !traceInfo.NewMetadata( line ) ) // current implementation = cutter info found!
-  {
-    cerr << "No logging system yet. TraceBodyIO_v1::readTraceInfo()" << endl;
-    cerr << "Error reading cutter offset." << endl;
-    cerr << line << endl;
-    return;
-  }
+  traceInfo.NewMetadata( line );
+  // dummy set also to false if it is a comment
 }
 
 inline void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records ) const
