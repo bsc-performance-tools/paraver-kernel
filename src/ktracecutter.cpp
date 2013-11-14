@@ -212,7 +212,7 @@ void KTraceCutter::writeOffsetLine( char *trace_in_name,
 */
   CutterMetadata tmpData( MetadataManager::GetCurrentDate(),
                           cutterApplicationCaller,
-                          string( trace_in_name ),
+                          string( '"' + string( trace_in_name ) + '"'),
                           (PRV_UINT64)timeOffset,
                           (PRV_UINT64)timeCutBegin,
                           (PRV_UINT64)timeCutEnd );
