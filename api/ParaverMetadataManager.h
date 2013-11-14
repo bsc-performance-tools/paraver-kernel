@@ -129,7 +129,7 @@ class MetadataManager
     vector<CutterMetadata*> CutterMetadataStorage;
 
   public:
-    MetadataManager(void) {};
+    MetadataManager(void) : Error( false ), ErrorMessage( "" ) {};
 
     bool NewMetadata(string MetadataStr);
 
