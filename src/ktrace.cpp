@@ -764,7 +764,8 @@ PRV_UINT64 KTrace::getCutterOffset()
   if ( !myTraceInfo.GetError() )
   {
     vector<CutterMetadata*> cutterData = myTraceInfo.GetCutterMetadata();
-    offset = cutterData[0]->GetOffset();
+    if( !cutterData.empty() )
+      offset = cutterData[0]->GetOffset();
   }
 
   return offset;
@@ -779,7 +780,8 @@ PRV_UINT64 KTrace::getCutterBeginTime()
   if ( !myTraceInfo.GetError() )
   {
     vector<CutterMetadata*> cutterData = myTraceInfo.GetCutterMetadata();
-    beginTime = cutterData[0]->GetBeginTime();
+    if( !cutterData.empty() )
+      beginTime = cutterData[0]->GetBeginTime();
   }
 
   return beginTime;
@@ -794,7 +796,8 @@ PRV_UINT64 KTrace::getCutterEndTime()
   if ( !myTraceInfo.GetError() )
   {
     vector<CutterMetadata*> cutterData = myTraceInfo.GetCutterMetadata();
-    endTime = cutterData[0]->GetEndTime();
+    if( !cutterData.empty() )
+     endTime = cutterData[0]->GetEndTime();
   }
 
   return endTime;
