@@ -764,16 +764,7 @@ PRV_UINT64 KTrace::getCutterOffset()
   if ( !myTraceInfo.GetError() )
   {
     vector<CutterMetadata*> cutterData = myTraceInfo.GetCutterMetadata();
-
-    // last one is what we need
-    for ( vector<CutterMetadata*>::reverse_iterator it = cutterData.rbegin(); it != cutterData.rend(); ++it )
-    {
-      if ( (*it)->GetApplication() == CutterMetadata::RUNAPP_APPLICATION_ID )
-      {
-        offset = (*it)->GetOffset();
-        break;
-      }
-    }
+    offset = cutterData[0]->GetOffset();
   }
 
   return offset;
@@ -788,16 +779,7 @@ PRV_UINT64 KTrace::getCutterBeginTime()
   if ( !myTraceInfo.GetError() )
   {
     vector<CutterMetadata*> cutterData = myTraceInfo.GetCutterMetadata();
-
-    // last one is what we need
-    for ( vector<CutterMetadata*>::reverse_iterator it = cutterData.rbegin(); it != cutterData.rend(); ++it )
-    {
-      if ( (*it)->GetApplication() == CutterMetadata::RUNAPP_APPLICATION_ID )
-      {
-        beginTime = (*it)->GetBeginTime();
-        break;
-      }
-    }
+    beginTime = cutterData[0]->GetBeginTime();
   }
 
   return beginTime;
@@ -812,16 +794,7 @@ PRV_UINT64 KTrace::getCutterEndTime()
   if ( !myTraceInfo.GetError() )
   {
     vector<CutterMetadata*> cutterData = myTraceInfo.GetCutterMetadata();
-
-    // last one is what we need
-    for ( vector<CutterMetadata*>::reverse_iterator it = cutterData.rbegin(); it != cutterData.rend(); ++it )
-    {
-      if ( (*it)->GetApplication() == CutterMetadata::RUNAPP_APPLICATION_ID )
-      {
-        endTime = (*it)->GetEndTime();
-        break;
-      }
-    }
+    endTime = cutterData[0]->GetEndTime();
   }
 
   return endTime;
