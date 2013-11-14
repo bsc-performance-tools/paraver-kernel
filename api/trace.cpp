@@ -580,19 +580,19 @@ void TraceProxy::setFillStateGaps( bool fill )
 }
 
 
-PRV_UINT64 TraceProxy::getCutterOffset() const
+PRV_UINT64 TraceProxy::getCutterOffset()
 {
   return myTrace->getCutterOffset();
 }
 
 
-PRV_UINT64 TraceProxy::getCutterBeginTime() const
+PRV_UINT64 TraceProxy::getCutterBeginTime()
 {
   return myTrace->getCutterBeginTime();
 }
 
 
-PRV_UINT64 TraceProxy::getCutterEndTime() const
+PRV_UINT64 TraceProxy::getCutterEndTime()
 {
   return myTrace->getCutterEndTime();
 }

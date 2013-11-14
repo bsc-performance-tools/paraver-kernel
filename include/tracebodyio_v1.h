@@ -45,7 +45,7 @@ class TraceBodyIO_v1 : public TraceBodyIO
 
     bool ordered() const;
     void read( TraceStream *file, MemoryBlocks& records,
-               hash_set<TEventType>& events, TraceInfo& traceInfo ) const;
+               hash_set<TEventType>& events, MetadataManager& traceInfo ) const;
     void write( std::fstream& whichStream,
                 const KTrace& whichTrace,
                 MemoryTrace::iterator *record,
@@ -59,7 +59,7 @@ class TraceBodyIO_v1 : public TraceBodyIO
   protected:
 
   private:
-    void readTraceInfo( const std::string& line, TraceInfo& traceInfo ) const;
+    void readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const;
 
     void readState( const std::string& line, MemoryBlocks& records ) const;
     void readEvent( const std::string& line, MemoryBlocks& records,

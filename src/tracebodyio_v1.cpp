@@ -46,7 +46,7 @@ bool TraceBodyIO_v1::ordered() const
 }
 
 void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
-                           hash_set<TEventType>& events, TraceInfo& traceInfo ) const
+                           hash_set<TEventType>& events, MetadataManager& traceInfo ) const
 {
   file->getline( line );
 
@@ -143,8 +143,9 @@ void TraceBodyIO_v1::writeCommInfo( fstream& whichStream,
 /**********************
   Read line functions
 ***********************/
-inline void TraceBodyIO_v1::readTraceInfo(  const std::string& line, TraceInfo& traceInfo ) const
+inline void TraceBodyIO_v1::readTraceInfo(  const std::string& line, MetadataManager& traceInfo ) const
 {
+  /*
   strLine.clear();
   strLine.str( line );
 
@@ -157,6 +158,15 @@ inline void TraceBodyIO_v1::readTraceInfo(  const std::string& line, TraceInfo& 
   fieldStream.clear();
   fieldStream.str( tmpstring );
   if ( !( fieldStream >> traceInfo.cutterOffset ) )
+  {
+    cerr << "No logging system yet. TraceBodyIO_v1::readTraceInfo()" << endl;
+    cerr << "Error reading cutter offset." << endl;
+    cerr << line << endl;
+    return;
+  }
+  */
+
+  if ( !traceInfo.NewMetadata( line ) ) // current implementation = cutter info found!
   {
     cerr << "No logging system yet. TraceBodyIO_v1::readTraceInfo()" << endl;
     cerr << "Error reading cutter offset." << endl;

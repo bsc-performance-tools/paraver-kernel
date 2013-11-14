@@ -39,9 +39,11 @@
 #include "processmodel.h"
 #include "resourcemodel.h"
 
+#include "ParaverMetadataManager.h"
+
 class TraceBodyIO;
 
-
+/*
 class TraceInfo
 {
   public:
@@ -50,7 +52,7 @@ class TraceInfo
     PRV_UINT64 cutterEndTime;
 
 };
-
+*/
 
 class KTrace: public Trace
 {
@@ -178,9 +180,9 @@ class KTrace: public Trace
     virtual bool getFillStateGaps() const;
     virtual void setFillStateGaps( bool fill );
 
-    virtual PRV_UINT64 getCutterOffset() const;
-    virtual PRV_UINT64 getCutterBeginTime() const;
-    virtual PRV_UINT64 getCutterEndTime() const;
+    virtual PRV_UINT64 getCutterOffset();
+    virtual PRV_UINT64 getCutterBeginTime();
+    virtual PRV_UINT64 getCutterEndTime();
 
   protected:
     bool ready;
@@ -198,7 +200,8 @@ class KTrace: public Trace
     std::vector<std::string> communicators;
     std::set<TEventType> events;
     bool fillStateGaps;
-    TraceInfo myTraceInfo;
+    // TraceInfo myTraceInfo;
+    MetadataManager myTraceInfo;
 };
 
 #endif // KTRACE_H_INCLUDED

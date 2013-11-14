@@ -75,8 +75,6 @@ std::string& cepba_tools::trim(std::string &s)
 }
 
 
-
-
 Metadata::Metadata(string Date,
                    string Action,
                    string Application,

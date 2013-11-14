@@ -458,10 +458,11 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     : fileName( whichFile )
 {
   string tmpstr;
+  /*
   myTraceInfo.cutterOffset = 0;
   myTraceInfo.cutterBeginTime = 0;
   myTraceInfo.cutterEndTime = 0;
-
+*/
   ready = false;
   TraceStream *file = TraceStream::openFile( fileName );
 
@@ -755,20 +756,48 @@ void KTrace::setFillStateGaps( bool fill )
 }
 
 
-PRV_UINT64 KTrace::getCutterOffset() const
+PRV_UINT64 KTrace::getCutterOffset()
 {
-  return myTraceInfo.cutterOffset;
+  //return myTraceInfo.cutterOffset;
+  PRV_UINT64 offset = 0;
+
+  if ( !myTraceInfo.GetError() )
+  {
+    vector<CutterMetadata*> cutterData = myTraceInfo.GetCutterMetadata();
+    // last one is what we need
+    cutterData.back()->GetOffset();
+  }
+
+  return offset;
 }
 
 
-PRV_UINT64 KTrace::getCutterBeginTime() const
+PRV_UINT64 KTrace::getCutterBeginTime()
 {
-  return myTraceInfo.cutterBeginTime;
+  //return myTraceInfo.cutterBeginTime;
+  PRV_UINT64 beginTime = 0;
+
+  if ( !myTraceInfo.GetError() )
+  {
+    vector<CutterMetadata*> cutterData = myTraceInfo.GetCutterMetadata();
+    cutterData.back()->GetBeginTime();
+  }
+
+  return beginTime;
 }
 
 
-PRV_UINT64 KTrace::getCutterEndTime() const
+PRV_UINT64 KTrace::getCutterEndTime()
 {
-  return myTraceInfo.cutterEndTime;
+  //return myTraceInfo.cutterEndTime;
+  PRV_UINT64 endTime = 0;
+
+  if ( !myTraceInfo.GetError() )
+  {
+    vector<CutterMetadata*> cutterData = myTraceInfo.GetCutterMetadata();
+    cutterData.back()->GetEndTime();
+  }
+
+  return endTime;
 }
 
