@@ -761,12 +761,9 @@ PRV_UINT64 KTrace::getCutterOffset()
   //return myTraceInfo.cutterOffset;
   PRV_UINT64 offset = 0;
 
-  if ( !myTraceInfo.GetError() )
-  {
-    vector<CutterMetadata*> cutterData = myTraceInfo.GetCutterMetadata();
-    if( !cutterData.empty() )
-      offset = cutterData[0]->GetOffset();
-  }
+  vector<CutterMetadata*> cutterData = myTraceInfo.GetCutterMetadata();
+  if( !cutterData.empty() )
+    offset = cutterData[0]->GetOffset();
 
   return offset;
 }
