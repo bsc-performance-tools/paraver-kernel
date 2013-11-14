@@ -245,6 +245,13 @@
 			<Option target="Release" />
 			<Option target="otf2prv" />
 		</Unit>
+		<Unit filename="api/ParaverMetadataManager.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/ParaverMetadataManager.h">
+			<Option target="api" />
+			<Option target="paramedir" />
+		</Unit>
 		<Unit filename="api/cfg.cpp">
 			<Option target="api" />
 			<Option target="otf2prv" />
