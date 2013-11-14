@@ -89,6 +89,8 @@ class CutterMetadata: public Metadata
   public:
     static int    FIELD_COUNT;
     static string ACTION_ID;
+    static string RUNAPP_APPLICATION_ID;
+    static string ORIGINAL_APPLICATION_ID;
 
   private:
     PRV_UINT64 Offset;
@@ -98,14 +100,14 @@ class CutterMetadata: public Metadata
   public:
     CutterMetadata (vector<string>& CutterMetadataFields);
 
-    /*
+
     CutterMetadata (string Date,
                     string Application,
                     string OriginalTrace,
                     PRV_UINT64 Offset,
                     PRV_UINT64 BeginTime,
                     PRV_UINT64 EndTime);
-    */
+
 
     PRV_UINT64 GetOffset(void)    { return Offset; };
     PRV_UINT64 GetBeginTime(void) { return BeginTime; };
@@ -137,6 +139,8 @@ class MetadataManager
 
     bool GetError         (void) { return Error; };
     string GetErrorMessage(void) { return ErrorMessage; };
+
+    static string GetCurrentDate();
 
   private:
 

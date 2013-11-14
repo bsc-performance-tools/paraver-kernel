@@ -48,6 +48,7 @@
 #include "kprogresscontroller.h"
 #include "tracestream.h" // for GZIP_COMPRESSION_RATIO
 #include "paraverconfig.h"
+#include "ParaverMetadataManager.h"
 
 #ifdef WIN32
 #define atoll _atoi64
@@ -56,17 +57,14 @@
 #include <iostream>
 using namespace std;
 
-KTraceCutter::KTraceCutter( char *&trace_in,
-                            char *&trace_out,
-                            TraceOptions *options,
-                            const vector< TEventType > &whichTypesWithValuesZero,
-                            ProgressController *progress )
+KTraceCutter::KTraceCutter( TraceOptions *options,
+                            const vector< TEventType > &whichTypesWithValuesZero )
 {
   line = (char *) malloc( sizeof( char ) * MAX_TRACE_HEADER );
   total_cutter_iters = 0;
   exec_options = new KTraceOptions( (KTraceOptions *) options );
   PCFEventTypesWithValuesZero.insert( whichTypesWithValuesZero.begin(), whichTypesWithValuesZero.end() );
-  execute( trace_in, trace_out, progress );
+  cutterApplicationCaller = CutterMetadata::ORIGINAL_APPLICATION_ID;
 }
 
 
@@ -131,6 +129,11 @@ void KTraceCutter::set_remLastStates( bool remStates )
 
 void KTraceCutter::set_keep_events( bool keepEvents )
 {
+}
+
+void KTraceCutter::setCutterApplicationCaller( std::string caller )
+{
+  cutterApplicationCaller = caller;
 }
 
 
@@ -198,12 +201,22 @@ void KTraceCutter::writeOffsetLine( char *trace_in_name,
 
 //  if ( trace_in_name != NULL )
 //  {
+
+/*
   current_size += fprintf( outfile, "# %s: Offset %lld from %s  -  Cut time range: [ %lld, %lld ]\n",
                            trace_out_name,
                            timeOffset,
                            trace_in_name,
                            timeCutBegin,
                            timeCutEnd );
+*/
+  CutterMetadata tmpData( MetadataManager::GetCurrentDate(),
+                          cutterApplicationCaller,
+                          string( trace_in_name ),
+                          (PRV_UINT64)timeOffset,
+                          (PRV_UINT64)timeCutBegin,
+                          (PRV_UINT64)timeCutEnd );
+
 //  }
 }
 
@@ -925,6 +938,11 @@ void KTraceCutter::execute( char *trace_in,
   unsigned long num_iters = 0;
   thread_info *p;
 
+  KProgressController *tmpKProgressControler = NULL;
+
+  if ( progress != NULL )
+    tmpKProgressControler = (KProgressController *)progress->getConcrete();
+
   trace_name     = (char *) malloc( sizeof(char) * MAX_FILENAME_SIZE );
   trace_file_out = (char *) malloc( sizeof(char) * MAX_FILENAME_SIZE );
   buffer         = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
@@ -1042,7 +1060,7 @@ void KTraceCutter::execute( char *trace_in,
   }
 #endif
 
-  ini_cutter_progress_bar( trace_name, progress );
+  ini_cutter_progress_bar( trace_name, tmpKProgressControler );
 
   /* Process header */
   trace_header = ( char * )malloc( sizeof( char ) * MAX_TRACE_HEADER );
@@ -1069,15 +1087,15 @@ void KTraceCutter::execute( char *trace_in,
   total_tmp_lines = 0;
   secondPhase = false;
 
-  if( progress != NULL )
-    end_parsing = progress->getStop();
+  if( tmpKProgressControler != NULL )
+    end_parsing = tmpKProgressControler->getStop();
 
   /* Processing the trace records */
   while ( !end_parsing && !maxTimeReached )
   {
-    if( progress != NULL )
+    if( tmpKProgressControler != NULL )
     {
-      end_parsing = progress->getStop();
+      end_parsing = tmpKProgressControler->getStop();
       if ( end_parsing )
         continue;
     }
@@ -1103,7 +1121,7 @@ void KTraceCutter::execute( char *trace_in,
 
     if ( num_iters == total_cutter_iters )
     {
-      show_cutter_progress_bar( progress );
+      show_cutter_progress_bar( tmpKProgressControler );
       num_iters = 0;
     }
     else
@@ -1488,8 +1506,8 @@ void KTraceCutter::execute( char *trace_in,
       break;
   }
 
-  if( progress != NULL && progress->getStop() )
-    progress->setMessage( "Finishing cut..." );
+  if( tmpKProgressControler != NULL && tmpKProgressControler->getStop() )
+    tmpKProgressControler->setMessage( "Finishing cut..." );
 
   if ( last_record_time > time_max )
   //if ( !originalTime )
@@ -1507,7 +1525,7 @@ void KTraceCutter::execute( char *trace_in,
   if ( writeToTmpFile )   // trace_file_out is a tmpfile!!
   {
     secondPhase = true;
-    shiftLeft_TraceTimes_ToStartFromZero( trace_in, trace_file_out, trace_out, false, progress );
+    shiftLeft_TraceTimes_ToStartFromZero( trace_in, trace_file_out, trace_out, false, tmpKProgressControler );
   }
 
   free( trace_name );

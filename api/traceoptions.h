@@ -361,11 +361,8 @@ class TraceOptionsProxy :public TraceOptions
 
     // friend TraceOptions *TraceOptions::create( KernelConnection *, char * );
     friend TraceOptions *TraceOptions::create( KernelConnection * );
-    friend TraceCutter *LocalKernel::newTraceCutter( char *trace_in,
-                                         char *trace_out,
-                                         TraceOptions *options,
-                                         const std::vector< TEventType > &whichTypesWithValuesZero,
-                                         ProgressController *progress ) const;
+    friend TraceCutter *LocalKernel::newTraceCutter( TraceOptions *options,
+                                         const std::vector< TEventType > &whichTypesWithValuesZero ) const;
     friend TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
                                           char *trace_out,
                                           TraceOptions *options,

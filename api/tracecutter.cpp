@@ -95,7 +95,8 @@ TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
     delete config;
   }
 
-  myTraceCutter = whichKernel->newTraceCutter( traceIn, traceOut, options, typesWithValueZero, progress );
+  myTraceCutter = whichKernel->newTraceCutter( options, typesWithValueZero );
+  myTraceCutter->execute( traceIn, traceOut, progress );
 }
 
 
@@ -103,6 +104,13 @@ TraceCutterProxy::~TraceCutterProxy()
 {
   delete myTraceCutter;
 }
+
+
+void TraceCutterProxy::execute( char *trace_in, char *trace_out, ProgressController *progress )
+{
+  myTraceCutter->execute( trace_in, trace_out, progress );
+}
+
 
 void TraceCutterProxy::set_by_time( bool whichByTime )
 {
@@ -164,4 +172,10 @@ void TraceCutterProxy::set_keep_events( bool keepEvents )
 {
   myTraceCutter->set_keep_events( keepEvents );
 }
+
+void TraceCutterProxy::setCutterApplicationCaller( std::string caller )
+{
+  myTraceCutter->setCutterApplicationCaller( caller );
+}
+
 

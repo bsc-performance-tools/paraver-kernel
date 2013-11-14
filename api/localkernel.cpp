@@ -230,18 +230,10 @@ TraceOptions *LocalKernel::newTraceOptions() const
   return new KTraceOptions( this );
 }
 
-TraceCutter *LocalKernel::newTraceCutter( char *trace_in,
-                                          char *trace_out,
-                                          TraceOptions *options,
-                                          const vector< TEventType > &whichTypesWithValuesZero,
-                                          ProgressController *progress ) const
+TraceCutter *LocalKernel::newTraceCutter( TraceOptions *options,
+                                          const vector< TEventType > &whichTypesWithValuesZero ) const
 {
-  KProgressController *tmpKProgressControler = NULL;
-
-  if ( progress != NULL )
-    tmpKProgressControler = (KProgressController *)progress->getConcrete();
-
-  return new KTraceCutter( trace_in, trace_out, options,  whichTypesWithValuesZero , tmpKProgressControler);
+  return new KTraceCutter( options,  whichTypesWithValuesZero );
 }
 
 

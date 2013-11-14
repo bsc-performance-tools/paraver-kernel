@@ -38,6 +38,8 @@
 #include <sstream>
 using std::ostringstream;
 using std::istringstream;
+using std::stringstream;
+#include <ctime> // date
 
 int Metadata::FIELD_COUNT = 4;
 
@@ -97,6 +99,9 @@ ostream& operator<< (ostream& os, const Metadata& MetadataRecord)
 
 int    CutterMetadata::FIELD_COUNT = Metadata::FIELD_COUNT + 3;
 string CutterMetadata::ACTION_ID   = "CUTTER";
+string CutterMetadata::RUNAPP_APPLICATION_ID = "RUNAPP";
+string CutterMetadata::ORIGINAL_APPLICATION_ID = "ORIGINAL";
+
 
 CutterMetadata::CutterMetadata (vector<string>& CutterMetadataFields)
 {
@@ -175,20 +180,20 @@ CutterMetadata::CutterMetadata (vector<string>& CutterMetadataFields)
   }
 }
 
-/*
+
 CutterMetadata::CutterMetadata (string Date,
                                 string Application,
                                 string OriginalTrace,
-                                UINT64 Offset,
-                                UINT64 BeginTime,
-                                UINT64 EndTime)
-:Metadata(Date, "CUTTER", Application, OriginalTrace)
+                                PRV_UINT64 Offset,
+                                PRV_UINT64 BeginTime,
+                                PRV_UINT64 EndTime)
+:Metadata(Date, CutterMetadata::ACTION_ID, Application, OriginalTrace)
 {
   this->Offset    = Offset;
   this->BeginTime = BeginTime;
   this->EndTime   = EndTime;
 }
-*/
+
 
 
 
@@ -242,6 +247,26 @@ bool MetadataManager::NewMetadata(string MetadataStr)
 
   return true;
 }
+
+
+string MetadataManager::GetCurrentDate()
+{
+  stringstream currentDate;
+
+  time_t t = time(0);   // get time now
+  struct tm * now = localtime( & t );
+  currentDate << (now->tm_year + 1900)
+              << (now->tm_mon + 1)
+              << now->tm_mday
+              << now->tm_hour
+              << now->tm_min
+              << now->tm_sec;
+
+
+  return currentDate.str();
+}
+
+
 
 void MetadataManager::PopulateRecord(vector<string> &Record,
                                      const string   &Line,

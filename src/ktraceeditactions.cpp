@@ -40,6 +40,8 @@
 #include "kernelconnection.h"
 #include "textoutput.h"
 #include "traceoptions.h"
+#include "ParaverMetadataManager.h"
+
 
 /****************************************************************************
  ********                  TestAction                                ********
@@ -101,6 +103,8 @@ void TraceCutterAction::execute( std::string whichTrace )
                                                 (char *)newName.c_str(),
                                                 options,
                                                 NULL );
+    myCutter->setCutterApplicationCaller( CutterMetadata::RUNAPP_APPLICATION_ID );
+    myCutter->execute( (char *)whichTrace.c_str(), (char *)newName.c_str(), NULL );
 #ifndef WIN32
   }
 #endif

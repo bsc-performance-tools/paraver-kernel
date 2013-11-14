@@ -63,6 +63,11 @@ class TraceCutter
     virtual ~TraceCutter()
     {}
 
+
+    virtual void execute( char *trace_in,
+                          char *trace_out,
+                          ProgressController *progress = NULL ) = 0;
+
     virtual void set_by_time( bool byTime )
     {}
     virtual void set_min_cutting_time( unsigned long long minCutTime )
@@ -87,6 +92,8 @@ class TraceCutter
     {}
     virtual void set_keep_events( bool keepEvents )
     {}
+    virtual void setCutterApplicationCaller( std::string caller ) = 0;
+
 
   private:
     static std::string traceToolID;
@@ -99,6 +106,9 @@ class TraceCutterProxy : public TraceCutter
   public:
     virtual ~TraceCutterProxy();
 
+    virtual void execute( char *trace_in,
+                          char *trace_out,
+                          ProgressController *progress = NULL );
     virtual void set_by_time( bool byTime );
     virtual void set_min_cutting_time( unsigned long long minCutTime );
     virtual void set_max_cutting_time( unsigned long long maxCutTime );
@@ -111,6 +121,7 @@ class TraceCutterProxy : public TraceCutter
     virtual void set_remFirstStates( bool remStates );
     virtual void set_remLastStates( bool remStates );
     virtual void set_keep_events( bool keepEvents );
+    virtual void setCutterApplicationCaller( std::string caller );
 
   private:
     TraceCutter *myTraceCutter;

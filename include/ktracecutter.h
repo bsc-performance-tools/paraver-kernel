@@ -39,11 +39,8 @@
 class KTraceCutter : public TraceCutter
 {
   public:
-    KTraceCutter( char *&trace_in,
-                  char *&trace_out,
-                  TraceOptions *options,
-                  const std::vector< TEventType > &whichTypesWithValuesZero,
-                  ProgressController *progress );
+    KTraceCutter( TraceOptions *options,
+                  const std::vector< TEventType > &whichTypesWithValuesZero );
     virtual ~KTraceCutter();
 
     virtual void set_by_time( bool byTime );
@@ -58,6 +55,7 @@ class KTraceCutter : public TraceCutter
     virtual void set_remFirstStates( bool remStates );
     virtual void set_remLastStates( bool remStates );
     virtual void set_keep_events( bool keepEvents );
+    virtual void setCutterApplicationCaller( std::string caller );
 
     virtual void execute( char *trace_in,
                           char *trace_out,
@@ -135,6 +133,7 @@ class KTraceCutter : public TraceCutter
 
     struct selected_tasks wanted_tasks[MAX_SELECTED_TASKS];
     KTraceOptions *exec_options;
+    std::string cutterApplicationCaller;
 
     void read_cutter_params();
     void proces_cutter_header( char *header,

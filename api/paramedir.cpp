@@ -362,10 +362,8 @@ string applyFilters( KernelConnection *myKernel,
         delete config;
       }
 
-      traceCutter = myKernel->newTraceCutter( (char *)tmpNameIn.c_str(),
-                                              (char *)tmpNameOut.c_str(),
-                                              traceOptions,
-                                              typesWithValueZero );
+      traceCutter = myKernel->newTraceCutter( traceOptions, typesWithValueZero );
+      traceCutter->execute( (char *)tmpNameIn.c_str(), (char *)tmpNameOut.c_str() );
       myKernel->copyPCF( tmpNameIn, tmpNameOut );
     }
     else if ( filterToolOrder[i] == TraceFilter::getID() )

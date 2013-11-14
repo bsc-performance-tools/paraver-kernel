@@ -63,12 +63,8 @@ class LocalKernel: public KernelConnection
     virtual std::string getToolID( const std::string &toolName ) const;
     virtual std::string getToolName( const std::string &toolID ) const;
     virtual TraceOptions *newTraceOptions() const;
-    virtual TraceCutter *newTraceCutter( //TraceCutter *concreteTraceCutter,
-                                         char *trace_in,
-                                         char *trace_out,
-                                         TraceOptions *options,
-                                         const std::vector< TEventType > &whichTypesWithValuesZero,
-                                         ProgressController *progress = NULL) const;
+    virtual TraceCutter *newTraceCutter( TraceOptions *options,
+                                         const std::vector< TEventType > &whichTypesWithValuesZero ) const;
     virtual TraceFilter *newTraceFilter( char *trace_in,
                                          char *trace_out,
                                          TraceOptions *options,
