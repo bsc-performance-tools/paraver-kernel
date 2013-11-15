@@ -233,6 +233,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ParaverMetadataManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common-files\pcfparser\ParaverState.cpp"
 				>
 			</File>
@@ -452,6 +456,10 @@
 			</File>
 			<File
 				RelativePath=".\paraverlabels.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ParaverMetadataManager.h"
 				>
 			</File>
 			<File

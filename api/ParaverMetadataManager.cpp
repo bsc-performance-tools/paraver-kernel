@@ -44,6 +44,12 @@ using std::stringstream;
 int Metadata::FIELD_COUNT = 4;
 
 #include <algorithm>
+#ifdef WIN32
+#include <functional>
+#include <locale>
+#include <cctype>
+#endif
+
 class cepba_tools
 {
   public:
