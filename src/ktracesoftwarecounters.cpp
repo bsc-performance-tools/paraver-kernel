@@ -271,7 +271,7 @@ bool KTraceSoftwareCounters::allowed_type( unsigned long long type, unsigned lon
         return true;
 
 
-// BUG EN POTENCIA: NO RECORRE TODA LA LISTA DE VALORES!!!
+// TODO: POTENTIAL BUG: DOESN'T SEARCH ALL ALONG THE VALUES!!!
       for ( j = 0; j < 16; j++ )
       {
         if ( types.type_values[i].values[j] == 0 )
