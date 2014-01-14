@@ -85,6 +85,10 @@ TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceSta
       return new OutputTraceFileNameState( this );
       break;
 
+    case maxTraceTimeState:
+      return new MaxTraceTimeState( this );
+      break;
+
     default:
       return NULL;
       break;

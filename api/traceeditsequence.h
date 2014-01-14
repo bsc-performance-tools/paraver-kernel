@@ -56,6 +56,7 @@ class TraceEditSequence
       csvOutputState,
       outputDirSuffixState,
       outputTraceFileNameState,
+      maxTraceTimeState,
       numStates
     };
 

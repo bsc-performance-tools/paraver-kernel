@@ -221,4 +221,27 @@ class OutputTraceFileNameState: public TraceEditState
     std::string myData;
 };
 
+
+/****************************************************************************
+ ********               MaxTraceTimeState                            ********
+ ****************************************************************************/
+class MaxTraceTimeState: public TraceEditState
+{
+  public:
+    MaxTraceTimeState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
+    {}
+
+    ~MaxTraceTimeState();
+
+    virtual void init();
+
+    TTime getData() const;
+    void setData( TTime whichData );
+
+  protected:
+
+  private:
+    TTime myData;
+};
+
 #endif // TRACEEDITSTATES_H_INCLUDED

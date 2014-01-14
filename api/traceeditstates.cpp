@@ -182,3 +182,27 @@ void OutputTraceFileNameState::setData( std::string whichData )
 {
   myData = whichData;
 }
+
+
+/****************************************************************************
+ ********               MaxTraceTimeState                            ********
+ ****************************************************************************/
+
+MaxTraceTimeState::~MaxTraceTimeState()
+{}
+
+void MaxTraceTimeState::init()
+{
+  myData = (TTime)0.0;
+}
+
+TTime MaxTraceTimeState::getData() const
+{
+  return myData;
+}
+
+void MaxTraceTimeState::setData( TTime whichData )
+{
+  myData = whichData;
+}
+

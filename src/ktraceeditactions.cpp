@@ -164,6 +164,8 @@ vector<TraceEditSequence::TSequenceStates> TraceParserAction::getStateDependenci
 {
   vector<TraceEditSequence::TSequenceStates> tmpStates;
 
+  tmpStates.push_back( TraceEditSequence::maxTraceTimeState );
+
   return tmpStates;
 }
 
@@ -183,6 +185,8 @@ void TraceParserAction::execute( std::string whichTrace )
 vector<TraceEditSequence::TSequenceStates> RecordTimeShifterAction::getStateDependencies() const
 {
   vector<TraceEditSequence::TSequenceStates> tmpStates;
+
+  tmpStates.push_back( TraceEditSequence::maxTraceTimeState );
 
   return tmpStates;
 }
@@ -204,6 +208,7 @@ vector<TraceEditSequence::TSequenceStates> TraceWriterAction::getStateDependenci
   vector<TraceEditSequence::TSequenceStates> tmpStates;
 
   tmpStates.push_back( TraceEditSequence::outputTraceFileNameState );
+  tmpStates.push_back( TraceEditSequence::maxTraceTimeState );
 
   return tmpStates;
 }
