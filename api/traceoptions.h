@@ -33,7 +33,6 @@
 class KernelConnection;
 #include "localkernel.h"
 
-
 class TraceOptions
 {
   public:
@@ -354,6 +353,7 @@ class TraceOptionsProxy :public TraceOptions
 
   private:
     TraceOptions *myTraceOptions;
+
     static std::vector< std::string > IDsAvailableTraceTools;
 
     // TraceOptionsProxy( const KernelConnection *whichKernel, char *xmldocname );
@@ -369,4 +369,34 @@ class TraceOptionsProxy :public TraceOptions
                                           const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
                                           ProgressController *progress ) const;
 };
+
+
+// TODO: Should this be moved to its own api/traceshifter.cpp?
+// At this moment, only needed for extension recovery.
+class TraceShifter
+{
+  public:
+    static std::string getID()
+    {
+      return TraceShifter::traceToolID;
+    }
+
+    static std::string getName()
+    {
+      return TraceShifter::traceToolName;
+    }
+
+    static std::string getExtension()
+    {
+      return TraceShifter::traceToolExtension;
+    }
+
+  private:
+    static std::string traceToolID;
+    static std::string traceToolName;
+    static std::string traceToolExtension;
+};
+
+
+
 #endif // TRACEOPTIONS_H_INCLUDED

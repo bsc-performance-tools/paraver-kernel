@@ -157,4 +157,99 @@ class CSVOutputAction: public TraceToTraceAction
 
 };
 
+
+/****************************************************************************
+ ********                  TraceParserAction                         ********
+ ****************************************************************************/
+class TraceParserAction: public TraceToTraceAction
+{
+  public:
+    TraceParserAction( TraceEditSequence *whichSequence ) : TraceToTraceAction( whichSequence )
+    {}
+    ~TraceParserAction()
+    {}
+
+    virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
+
+    virtual void execute( std::string whichTrace );
+
+  protected:
+
+  private:
+
+};
+
+
+/****************************************************************************
+ ********                 RecordTimeShifterAction                    ********
+ ****************************************************************************/
+class RecordTimeShifterAction: public RecordToRecordAction
+{
+  public:
+    RecordTimeShifterAction( TraceEditSequence *whichSequence ) : RecordToRecordAction( whichSequence )
+    {}
+    ~RecordTimeShifterAction()
+    {}
+
+    virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
+
+    virtual void execute( MemoryTrace::iterator *whichRecord );
+
+  protected:
+
+  private:
+
+};
+
+
+/****************************************************************************
+ ********                  TraceWriterAction                         ********
+ ****************************************************************************/
+class TraceWriterAction: public RecordToTraceAction
+{
+  public:
+    TraceWriterAction( TraceEditSequence *whichSequence ) : RecordToTraceAction( whichSequence )
+    {}
+    ~TraceWriterAction()
+    {}
+
+    virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
+
+    virtual void execute( MemoryTrace::iterator *whichRecord );
+
+  protected:
+
+  private:
+
+};
+
+
+//
+// Sort could be done in two ways:
+//   - Calling an external program/script to perform trace-to-trace sort
+//   - Internally, receiving every record and sorting in a record-to-trace object
+//
+// This TraceSortAction is the first one.
+/****************************************************************************
+ ********                  TraceSortAction                           ********
+ ****************************************************************************/
+class TraceSortAction: public TraceToTraceAction
+{
+  public:
+    TraceSortAction( TraceEditSequence *whichSequence ) : TraceToTraceAction( whichSequence )
+    {}
+    ~TraceSortAction()
+    {}
+
+    virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
+
+    virtual void execute( std::string whichTrace );
+
+  protected:
+
+  private:
+
+};
+
+
 #endif // KTRACEEDITACTIONS_H_INCLUDED

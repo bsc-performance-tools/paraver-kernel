@@ -55,6 +55,7 @@ class TraceEditSequence
       csvFileNameState,
       csvOutputState,
       outputDirSuffixState,
+      outputTraceFileNameState,
       numStates
     };
 
@@ -63,6 +64,10 @@ class TraceEditSequence
       testAction = 0,
       traceCutterAction,
       csvOutputAction,
+      traceParserAction,
+      recordTimeShifterAction,
+      traceWriterAction,
+      traceSortAction,
       numActions
     };
 

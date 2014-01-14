@@ -38,6 +38,12 @@
 
 using namespace std;
 
+// TODO: Should this be moved to its own api/traceshifter.cpp?
+std::string TraceShifter::traceToolID = "shifter";
+std::string TraceShifter::traceToolName = "trace_shifter";
+std::string TraceShifter::traceToolExtension = "shifted";
+
+
 vector< string > TraceOptionsProxy::IDsAvailableTraceTools;
 
 //TraceOptions *TraceOptions::create( KernelConnection *whichKernel, char *xmldocname )
@@ -518,9 +524,16 @@ string TraceOptionsProxy::getTraceToolExtension( const string& toolID )
   {
     toolStr = TraceFilter::getExtension();
   }
-  else //  ( toolID == TraceSoftwareCounters::getID() )
+  else if ( toolID == TraceSoftwareCounters::getID() )
   {
     toolStr = TraceSoftwareCounters::getExtension();
+  }
+  else if ( toolID == TraceShifter::getID() )
+  {
+    toolStr = TraceShifter::getExtension();
+  }
+  else
+  {
   }
 
   return toolStr;

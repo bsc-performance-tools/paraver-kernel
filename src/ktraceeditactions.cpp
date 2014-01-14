@@ -156,3 +156,85 @@ void CSVOutputAction::execute( std::string whichTrace )
   tmpSequence->executeNextAction( whichTrace );
 }
 
+
+/****************************************************************************
+ ********                  TraceParserAction                         ********
+ ****************************************************************************/
+vector<TraceEditSequence::TSequenceStates> TraceParserAction::getStateDependencies() const
+{
+  vector<TraceEditSequence::TSequenceStates> tmpStates;
+
+  return tmpStates;
+}
+
+
+void TraceParserAction::execute( std::string whichTrace )
+{
+  KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
+  MemoryTrace::iterator *it = NULL;
+
+  tmpSequence->executeNextAction( it );
+}
+
+
+/****************************************************************************
+ ********                 RecordTimeShifterAction                    ********
+ ****************************************************************************/
+vector<TraceEditSequence::TSequenceStates> RecordTimeShifterAction::getStateDependencies() const
+{
+  vector<TraceEditSequence::TSequenceStates> tmpStates;
+
+  return tmpStates;
+}
+
+
+void RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
+{
+  KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
+
+  tmpSequence->executeNextAction( whichRecord );
+}
+
+
+/****************************************************************************
+ ********                  TraceWriterAction                         ********
+ ****************************************************************************/
+vector<TraceEditSequence::TSequenceStates> TraceWriterAction::getStateDependencies() const
+{
+  vector<TraceEditSequence::TSequenceStates> tmpStates;
+
+  tmpStates.push_back( TraceEditSequence::outputTraceFileNameState );
+
+  return tmpStates;
+}
+
+
+void TraceWriterAction::execute( MemoryTrace::iterator *it  )
+{
+  KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
+
+  std::string tmpFileName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
+
+  tmpSequence->executeNextAction( it );
+}
+
+
+/****************************************************************************
+ ********                  TraceSortAction                           ********
+ ****************************************************************************/
+vector<TraceEditSequence::TSequenceStates> TraceSortAction::getStateDependencies() const
+{
+  vector<TraceEditSequence::TSequenceStates> tmpStates;
+
+  return tmpStates;
+}
+
+
+void TraceSortAction::execute( std::string whichTrace )
+{
+  KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
+
+  tmpSequence->executeNextAction( whichTrace );
+}
+
+

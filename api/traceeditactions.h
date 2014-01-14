@@ -61,6 +61,7 @@ private:
 
 };
 
+
 class TraceToTraceAction: public TraceEditAction
 {
 public:
@@ -79,5 +80,6 @@ protected:
 private:
 
 };
+
 
 #endif // TRACEEDITACTIONS_H_INCLUDED

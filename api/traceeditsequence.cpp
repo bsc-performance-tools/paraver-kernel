@@ -46,7 +46,6 @@ TraceEditSequence *TraceEditSequence::create( KernelConnection *whichKernel )
 TraceEditSequence::TraceEditSequence( KernelConnection *whichKernel )
   : myKernel( whichKernel )
 {
-
 }
 
 
@@ -63,7 +62,6 @@ KernelConnection *TraceEditSequence::getKernelConnection() const
 
 TraceEditSequenceProxy::TraceEditSequenceProxy()
 {
-
 }
 
 
@@ -76,7 +74,6 @@ TraceEditSequenceProxy::TraceEditSequenceProxy( KernelConnection *whichKernel )
 
 TraceEditSequenceProxy::~TraceEditSequenceProxy()
 {
-
 }
 
 

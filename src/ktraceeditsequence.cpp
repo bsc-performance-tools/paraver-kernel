@@ -34,11 +34,12 @@
 
 using std::invalid_argument;
 
+
 KTraceEditSequence::KTraceEditSequence( KernelConnection *whichKernel ) :
   TraceEditSequence( whichKernel )
 {
-
 }
+
 
 KTraceEditSequence::~KTraceEditSequence()
 {
@@ -50,6 +51,7 @@ KTraceEditSequence::~KTraceEditSequence()
        it != sequenceActions.end(); ++it )
     delete *it;
 }
+
 
 TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceStates whichState )
 {
@@ -79,6 +81,10 @@ TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceSta
       return new OutputDirSuffixState( this );
       break;
 
+    case outputTraceFileNameState:
+      return new OutputTraceFileNameState( this );
+      break;
+
     default:
       return NULL;
       break;
@@ -86,6 +92,7 @@ TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceSta
 
   return NULL;
 }
+
 
 bool KTraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState )
 {
@@ -102,6 +109,7 @@ bool KTraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState
   return true;
 }
 
+
 bool KTraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState )
 {
   map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator tmpIt;
@@ -113,6 +121,7 @@ bool KTraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState
   activeStates[ whichState ] = newState;
   return true;
 }
+
 
 TraceEditState *KTraceEditSequence::getState( TraceEditSequence::TSequenceStates whichState )
 {
@@ -143,6 +152,22 @@ bool KTraceEditSequence::pushbackAction( TraceEditSequence::TSequenceActions whi
       newAction = new CSVOutputAction( this );
       break;
 
+    case traceParserAction:
+      newAction = new TraceParserAction( this );
+      break;
+
+    case recordTimeShifterAction:
+      newAction = new RecordTimeShifterAction( this );
+      break;
+
+    case traceWriterAction:
+      newAction = new TraceWriterAction( this );
+      break;
+
+    case traceSortAction:
+      newAction = new TraceSortAction( this );
+      break;
+
     default:
       return false;
       break;
@@ -156,6 +181,7 @@ bool KTraceEditSequence::pushbackAction( TraceEditSequence::TSequenceActions whi
 
   return true;
 }
+
 
 bool KTraceEditSequence::pushbackAction( TraceEditAction *newAction )
 {
@@ -195,6 +221,7 @@ bool KTraceEditSequence::pushbackAction( TraceEditAction *newAction )
   return true;
 }
 
+
 void KTraceEditSequence::execute( vector<std::string> traces )
 {
   for( vector<TraceEditAction *>::iterator it = sequenceActions.begin();
@@ -206,8 +233,8 @@ void KTraceEditSequence::execute( vector<std::string> traces )
       addState( *itState );
   }
 
-  TraceToTraceAction *firstActionToTrace = ( TraceToTraceAction * )sequenceActions[ 0 ];
-  TraceToRecordAction *firstActionToRecord = ( TraceToRecordAction * )sequenceActions[ 0 ];
+  TraceToTraceAction *firstActionTraceToTrace = ( TraceToTraceAction * )sequenceActions[ 0 ];
+  TraceToRecordAction *firstActionTraceToRecord = ( TraceToRecordAction * )sequenceActions[ 0 ];
 
   for( vector<std::string>::iterator it = traces.begin(); it != traces.end(); ++it )
   {
@@ -220,17 +247,11 @@ void KTraceEditSequence::execute( vector<std::string> traces )
     switch( sequenceActions[ 0 ]->getType() )
     {
       case TraceEditAction::TraceToTrace:
-        firstActionToTrace->execute( *it );
+        firstActionTraceToTrace->execute( *it );
         break;
 
       case TraceEditAction::TraceToRecord:
-        firstActionToRecord->execute( *it );
-        break;
-
-      case TraceEditAction::RecordToTrace:
-        break;
-
-      case TraceEditAction::RecordToRecord:
+        firstActionTraceToRecord->execute( *it );
         break;
 
       default:

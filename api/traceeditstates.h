@@ -198,4 +198,27 @@ class OutputDirSuffixState: public TraceEditState
     std::string myData;
 };
 
+
+/****************************************************************************
+ ********               OutputTraceFileNameState                     ********
+ ****************************************************************************/
+class OutputTraceFileNameState: public TraceEditState
+{
+  public:
+    OutputTraceFileNameState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
+    {}
+
+    ~OutputTraceFileNameState();
+
+    virtual void init();
+
+    std::string getData() const;
+    void setData( std::string whichData );
+
+  protected:
+
+  private:
+    std::string myData;
+};
+
 #endif // TRACEEDITSTATES_H_INCLUDED

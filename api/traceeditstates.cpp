@@ -161,3 +161,24 @@ void OutputDirSuffixState::setData( std::string whichData )
 {
   myData = whichData;
 }
+
+
+/****************************************************************************
+ ********               OutputTraceFileNameState                     ********
+ ****************************************************************************/
+
+OutputTraceFileNameState::~OutputTraceFileNameState()
+{}
+
+void OutputTraceFileNameState::init()
+{}
+
+std::string OutputTraceFileNameState::getData() const
+{
+  return myData;
+}
+
+void OutputTraceFileNameState::setData( std::string whichData )
+{
+  myData = whichData;
+}
