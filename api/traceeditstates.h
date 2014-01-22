@@ -38,210 +38,103 @@ class TraceEditSequence;
 class TraceOptions;
 class Window;
 
-class TraceEditState
-{
-public:
-  TraceEditState( TraceEditSequence *whichSequence ) : mySequence( whichSequence )
-  {}
+template< bool v > struct BoolToType;
 
-  ~TraceEditState()
-  {}
-
-  virtual void init() = 0;
-
-protected:
-  TraceEditSequence *mySequence;
-
-private:
-
-};
-
-/****************************************************************************
- ********                  TestState                                 ********
- ****************************************************************************/
-class TestState: public TraceEditState
+template< class SeqT >
+class BaseTraceEditState
 {
   public:
-    TestState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
-    {}
+    BaseTraceEditState();
+    BaseTraceEditState( SeqT whichSequence );
+    ~BaseTraceEditState();
+    void init();
 
-    ~TestState()
-    {}
+  protected:
+    SeqT mySequence;
+};
 
-    virtual void init();
+
+template< class SeqT, class DataT >
+class DerivedTraceEditState : public BaseTraceEditState< SeqT >
+{
+  public:
+    DerivedTraceEditState( SeqT whichSequence );
+    ~DerivedTraceEditState();
+    void init();
+
+    DataT getData() const;
+    void setData( DataT whichData );
+
+  private:
+    DataT myData;
+
+    void init( BoolToType< true > );
+    void init( BoolToType< false > );
+};
+
+
+template< class SeqT >
+class DerivedTraceEditStateInt : public BaseTraceEditState< SeqT >
+{
+  public:
+    DerivedTraceEditStateInt( SeqT whichSequence );
+    ~DerivedTraceEditStateInt();
+    void init();
 
     int getData() const;
     void setData( int whichData );
-
-  protected:
 
   private:
     int myData;
 };
 
 
-/****************************************************************************
- ********                  TraceOptionsState                         ********
- ****************************************************************************/
-class TraceOptionsState: public TraceEditState
+template< class SeqT >
+class DerivedTraceEditStateString : public BaseTraceEditState< SeqT >
 {
   public:
-    TraceOptionsState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
-    {
-      myData = NULL;
-    }
-
-    ~TraceOptionsState();
-
-    virtual void init();
-
-    TraceOptions *getData() const;
-    void setData( TraceOptions *whichData );
-
-  protected:
-
-  private:
-    TraceOptions *myData;
-};
-
-
-/****************************************************************************
- ********                  CSVWindowState                            ********
- ****************************************************************************/
-class CSVWindowState: public TraceEditState
-{
-  public:
-    CSVWindowState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
-    {
-      myData = NULL;
-    }
-
-    ~CSVWindowState();
-
-    virtual void init();
-
-    Window *getData() const;
-    void setData( Window *whichData );
-
-  protected:
-
-  private:
-    Window *myData;
-};
-
-
-/****************************************************************************
- ********                  CSVFileNameState                          ********
- ****************************************************************************/
-class CSVFileNameState: public TraceEditState
-{
-  public:
-    CSVFileNameState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
-    {}
-
-    ~CSVFileNameState();
-
-    virtual void init();
+    DerivedTraceEditStateString( SeqT whichSequence );
+    ~DerivedTraceEditStateString();
+    void init();
 
     std::string getData() const;
     void setData( std::string whichData );
-
-  protected:
 
   private:
     std::string myData;
 };
 
 
-/****************************************************************************
- ********                  CSVOutputState                            ********
- ****************************************************************************/
-class CSVOutputState: public TraceEditState
+template< class SeqT >
+class DerivedTraceEditStateTTime : public BaseTraceEditState< SeqT >
 {
   public:
-    CSVOutputState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
-    {}
-
-    ~CSVOutputState();
-
-    virtual void init();
-
-    TextOutput getData() const;
-    void setData( TextOutput whichData );
-
-  protected:
-
-  private:
-    TextOutput myData;
-};
-
-
-/****************************************************************************
- ********               OutputDirSuffixState                         ********
- ****************************************************************************/
-class OutputDirSuffixState: public TraceEditState
-{
-  public:
-    OutputDirSuffixState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
-    {}
-
-    ~OutputDirSuffixState();
-
-    virtual void init();
-
-    std::string getData() const;
-    void setData( std::string whichData );
-
-  protected:
-
-  private:
-    std::string myData;
-};
-
-
-/****************************************************************************
- ********               OutputTraceFileNameState                     ********
- ****************************************************************************/
-class OutputTraceFileNameState: public TraceEditState
-{
-  public:
-    OutputTraceFileNameState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
-    {}
-
-    ~OutputTraceFileNameState();
-
-    virtual void init();
-
-    std::string getData() const;
-    void setData( std::string whichData );
-
-  protected:
-
-  private:
-    std::string myData;
-};
-
-
-/****************************************************************************
- ********               MaxTraceTimeState                            ********
- ****************************************************************************/
-class MaxTraceTimeState: public TraceEditState
-{
-  public:
-    MaxTraceTimeState( TraceEditSequence *whichSequence ) : TraceEditState( whichSequence )
-    {}
-
-    ~MaxTraceTimeState();
-
-    virtual void init();
+    DerivedTraceEditStateTTime( SeqT whichSequence );
+    ~DerivedTraceEditStateTTime();
+    void init();
 
     TTime getData() const;
     void setData( TTime whichData );
 
-  protected:
-
   private:
     TTime myData;
 };
+
+
+#include "traceeditstates.cpp"
+
+typedef BaseTraceEditState< TraceEditSequence * > TraceEditState;
+
+typedef DerivedTraceEditState< TraceEditSequence *, TextOutput > CSVOutputState;
+typedef DerivedTraceEditState< TraceEditSequence *, TraceOptions * > TraceOptionsState;
+typedef DerivedTraceEditState< TraceEditSequence *, Window * > CSVWindowState;
+
+typedef DerivedTraceEditStateInt< TraceEditSequence * > TestState;
+
+typedef DerivedTraceEditStateString< TraceEditSequence * > CSVFileNameState;
+typedef DerivedTraceEditStateString< TraceEditSequence * > OutputDirSuffixState;
+typedef DerivedTraceEditStateString<TraceEditSequence * > OutputTraceFileNameState;
+
+typedef DerivedTraceEditStateTTime< TraceEditSequence * > MaxTraceTimeState;
 
 #endif // TRACEEDITSTATES_H_INCLUDED

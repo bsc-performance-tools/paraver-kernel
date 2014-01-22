@@ -34,13 +34,14 @@
 #include <vector>
 #include <string>
 #include "paraverkerneltypes.h"
+#include "traceeditstates.h"
 
 using std::map;
 using std::vector;
 
 class KernelConnection;
 class TraceEditAction;
-class TraceEditState;
+//class TraceEditState;
 
 
 class TraceEditSequence

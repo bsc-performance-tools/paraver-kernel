@@ -31,178 +31,188 @@
 #include "traceoptions.h"
 #include "window.h"
 
+#include <boost/type_traits.hpp> // is_pointer
+
+template< bool v > struct BoolToType { enum { value = v }; };
 
 /****************************************************************************
- ********                  TestState                                 ********
+ ********                  BaseTraceEditState                        ********
  ****************************************************************************/
 
-void TestState::init()
+template< class SeqT >
+BaseTraceEditState< SeqT >::BaseTraceEditState()
+{
+}
+
+template< class SeqT >
+BaseTraceEditState< SeqT >::BaseTraceEditState( SeqT whichSequence )
+{
+  mySequence = whichSequence;
+}
+
+template< class SeqT >
+BaseTraceEditState< SeqT >::~BaseTraceEditState()
+{}
+
+template< class SeqT >
+void BaseTraceEditState< SeqT >::init()
+{}
+
+
+/****************************************************************************
+ ********                  DerivedTraceEditState                     ********
+ ****************************************************************************/
+
+template< class SeqT, class DataT >
+DerivedTraceEditState< SeqT, DataT >::DerivedTraceEditState( SeqT whichSequence )
+{
+  BaseTraceEditState< SeqT >::mySequence = whichSequence;
+  init();
+}
+
+
+template< class SeqT, class DataT >
+DerivedTraceEditState< SeqT, DataT >::~DerivedTraceEditState()
+{
+}
+
+
+template< class SeqT, class DataT >
+void DerivedTraceEditState< SeqT, DataT >::init()
+{
+  init( BoolToType< boost::is_pointer< DataT >::value >() );
+}
+
+
+template< class SeqT, class DataT >
+void DerivedTraceEditState< SeqT, DataT >::init( BoolToType< true > )
+{
+  myData = NULL;
+}
+
+
+template< class SeqT, class DataT >
+void DerivedTraceEditState< SeqT, DataT >::init( BoolToType< false > )
+{
+}
+
+
+template< class SeqT, class DataT >
+DataT DerivedTraceEditState< SeqT, DataT >::getData() const
+{
+  return myData;
+}
+
+
+template< class SeqT, class DataT >
+void DerivedTraceEditState< SeqT, DataT >::setData( DataT whichData )
+{
+  myData = whichData;
+}
+
+
+/****************************************************************************
+ ********                  DerivedTraceEditStateInt                  ********
+ ****************************************************************************/
+template< class SeqT >
+DerivedTraceEditStateInt< SeqT >::DerivedTraceEditStateInt( SeqT whichSequence )
+{
+  BaseTraceEditState< SeqT >::mySequence = whichSequence;
+  init();
+}
+
+template< class SeqT >
+DerivedTraceEditStateInt< SeqT >::~DerivedTraceEditStateInt()
+{
+  init();
+}
+
+template< class SeqT >
+void DerivedTraceEditStateInt< SeqT >::init()
 {
   myData = 0;
 }
 
-int TestState::getData() const
+template< class SeqT >
+int DerivedTraceEditStateInt< SeqT >::getData() const
 {
   return myData;
 }
 
-void TestState::setData( int whichData )
+template< class SeqT >
+void DerivedTraceEditStateInt< SeqT >::setData( int whichData )
 {
   myData = whichData;
 }
 
 
 /****************************************************************************
- ********                  TraceOptionsState                         ********
+ ********                  DerivedTraceEditStateString               ********
  ****************************************************************************/
-
-TraceOptionsState::~TraceOptionsState()
+template< class SeqT >
+DerivedTraceEditStateString< SeqT >::DerivedTraceEditStateString( SeqT whichSequence )
 {
-  if( myData != NULL )
-    delete myData;
+  BaseTraceEditState< SeqT >::mySequence = whichSequence;
+  init();
 }
 
-void TraceOptionsState::init()
-{}
+template< class SeqT >
+DerivedTraceEditStateString< SeqT >::~DerivedTraceEditStateString()
+{
+  init();
+}
 
-TraceOptions *TraceOptionsState::getData() const
+template< class SeqT >
+void DerivedTraceEditStateString< SeqT >::init()
+{
+  myData.erase();
+}
+
+template< class SeqT >
+std::string DerivedTraceEditStateString< SeqT >::getData() const
 {
   return myData;
 }
 
-void TraceOptionsState::setData( TraceOptions *whichData )
-{
-  if( myData != NULL )
-    delete myData;
-
-  myData = whichData;
-}
-
-
-/****************************************************************************
- ********                  CSVWindowState                            ********
- ****************************************************************************/
-
-CSVWindowState::~CSVWindowState()
-{}
-
-void CSVWindowState::init()
-{}
-
-Window *CSVWindowState::getData() const
-{
-  return myData;
-}
-
-void CSVWindowState::setData( Window *whichData )
+template< class SeqT >
+void DerivedTraceEditStateString< SeqT >::setData( std::string whichData )
 {
   myData = whichData;
 }
 
 
 /****************************************************************************
- ********                  CSVFileNameState                          ********
+ ********                  DerivedTraceEditStateTTime                ********
  ****************************************************************************/
-
-CSVFileNameState::~CSVFileNameState()
-{}
-
-void CSVFileNameState::init()
-{}
-
-std::string CSVFileNameState::getData() const
+template< class SeqT >
+DerivedTraceEditStateTTime< SeqT >::DerivedTraceEditStateTTime( SeqT whichSequence )
 {
-  return myData;
+  BaseTraceEditState< SeqT >::mySequence = whichSequence;
+  init();
 }
 
-void CSVFileNameState::setData( std::string whichData )
+template< class SeqT >
+DerivedTraceEditStateTTime< SeqT >::~DerivedTraceEditStateTTime()
 {
-  myData = whichData;
+  init();
 }
 
-
-/****************************************************************************
- ********                  CSVOutputState                          ********
- ****************************************************************************/
-
-CSVOutputState::~CSVOutputState()
-{}
-
-void CSVOutputState::init()
-{}
-
-TextOutput CSVOutputState::getData() const
-{
-  return myData;
-}
-
-void CSVOutputState::setData( TextOutput whichData )
-{
-  myData = whichData;
-}
-
-
-/****************************************************************************
- ********               OutputDirSuffixState                         ********
- ****************************************************************************/
-
-OutputDirSuffixState::~OutputDirSuffixState()
-{}
-
-void OutputDirSuffixState::init()
-{}
-
-std::string OutputDirSuffixState::getData() const
-{
-  return myData;
-}
-
-void OutputDirSuffixState::setData( std::string whichData )
-{
-  myData = whichData;
-}
-
-
-/****************************************************************************
- ********               OutputTraceFileNameState                     ********
- ****************************************************************************/
-
-OutputTraceFileNameState::~OutputTraceFileNameState()
-{}
-
-void OutputTraceFileNameState::init()
-{}
-
-std::string OutputTraceFileNameState::getData() const
-{
-  return myData;
-}
-
-void OutputTraceFileNameState::setData( std::string whichData )
-{
-  myData = whichData;
-}
-
-
-/****************************************************************************
- ********               MaxTraceTimeState                            ********
- ****************************************************************************/
-
-MaxTraceTimeState::~MaxTraceTimeState()
-{}
-
-void MaxTraceTimeState::init()
+template< class SeqT >
+void DerivedTraceEditStateTTime< SeqT >::init()
 {
   myData = (TTime)0.0;
 }
 
-TTime MaxTraceTimeState::getData() const
+template< class SeqT >
+TTime DerivedTraceEditStateTTime< SeqT >::getData() const
 {
   return myData;
 }
 
-void MaxTraceTimeState::setData( TTime whichData )
+template< class SeqT >
+void DerivedTraceEditStateTTime< SeqT >::setData( TTime whichData )
 {
   myData = whichData;
 }
+
 
