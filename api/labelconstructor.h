@@ -95,7 +95,8 @@ class LabelConstructor
       PIXEL_SIZE,
       IMAGE_FORMAT,
       TEXT_FORMAT,
-      OBJECT_LABELS
+      OBJECT_LABELS,
+      OBJECT_AXIS
     };
 
     static void getGUIGroupLabels( const TGroupID group, std::vector< std::string > &labels );

@@ -664,6 +664,15 @@ void LabelConstructor::getGUIGroupLabels( const TGroupID groupID, vector< string
       labels.push_back( GUI_OBJECT_LABELS_POWER2 );
       break;
 
+    case OBJECT_AXIS:
+      labels.push_back( GUI_OBJECT_AXIS_CURRENT );
+      labels.push_back( GUI_OBJECT_AXIS_ALL );
+      labels.push_back( GUI_OBJECT_AXIS_ZERO );
+      labels.push_back( GUI_OBJECT_AXIS_FIVE );
+      labels.push_back( GUI_OBJECT_AXIS_TEN );
+      labels.push_back( GUI_OBJECT_AXIS_TWENTYFIVE );
+      break;
+
     default:
       break;
   }

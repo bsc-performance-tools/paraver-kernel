@@ -269,6 +269,12 @@ static const std::string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
 #define GUI_OBJECT_LABELS_ALL             "All"
 #define GUI_OBJECT_LABELS_SPACED          "Spaced"
 #define GUI_OBJECT_LABELS_POWER2          "2^n"
+#define GUI_OBJECT_AXIS_CURRENT           "Fit Current Level"
+#define GUI_OBJECT_AXIS_ALL               "Fit All Levels"
+#define GUI_OBJECT_AXIS_ZERO              "0%"
+#define GUI_OBJECT_AXIS_FIVE              "5%"
+#define GUI_OBJECT_AXIS_TEN               "10%"
+#define GUI_OBJECT_AXIS_TWENTYFIVE        "25%"
 
 
 // GUI Semantic Levels - INDEXED WITH TWindowLevel
