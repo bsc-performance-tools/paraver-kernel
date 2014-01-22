@@ -128,6 +128,16 @@ class Window
       POWER2_LABELS
     };
 
+    enum TObjectAxisSize
+    {
+      CURRENT_LEVEL = 0,
+      ALL_LEVELS,
+      ZERO_PERC,
+      FIVE_PERC,
+      TEN_PERC,
+      TWENTYFIVE_PERC
+    };
+
     // Create Single Window
     static Window *create( KernelConnection *whichKernel, Trace *whichTrace );
     //Create Derived Window
@@ -495,6 +505,13 @@ class Window
     virtual Window::TObjectLabels getObjectLabels() const
     {
       return Window::SPACED_LABELS;
+    }
+
+    virtual void setObjectAxisSize( Window::TObjectAxisSize whichSize )
+    {}
+    virtual Window::TObjectAxisSize getObjectAxisSize() const
+    {
+      return Window::CURRENT_LEVEL;
     }
 
     // CFG4D
@@ -876,6 +893,9 @@ class WindowProxy: public Window
     virtual void setObjectLabels( Window::TObjectLabels whichLabels );
     virtual Window::TObjectLabels getObjectLabels() const;
 
+    virtual void setObjectAxisSize( Window::TObjectAxisSize whichSize );
+    virtual Window::TObjectAxisSize getObjectAxisSize() const;
+
     // CFG4D
     virtual void setCFG4DEnabled( bool enabled );
     virtual bool getCFG4DEnabled() const;
@@ -1065,6 +1085,7 @@ class WindowProxy: public Window
     SelectionManagement< TObjectOrder, TWindowLevel > selectedRow;
 
     Window::TObjectLabels objectLabels;
+    Window::TObjectAxisSize objectAxisSize;
 
     // CFG4D
     bool isCFG4DEnabled;

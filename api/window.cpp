@@ -142,6 +142,7 @@ void WindowProxy::init()
   usedByHistogram = false;
 
   objectLabels = ParaverConfig::getInstance()->getTimelineLabels();
+  objectAxisSize = ParaverConfig::getInstance()->getTimelineObjectAxisSize();
 
   if( myTrace != NULL )
   {
@@ -298,6 +299,8 @@ Window *WindowProxy::clone( )
   clonedWindow->width = width;
   clonedWindow->height = height;
 
+  clonedWindow->objectLabels = objectLabels;
+  clonedWindow->objectAxisSize = objectAxisSize;
   /*
     for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); it++ )
       clonedWindow->myLists.push_back( (*it)->create( *it ) );
@@ -1252,6 +1255,16 @@ void WindowProxy::setObjectLabels( Window::TObjectLabels whichLabels )
 Window::TObjectLabels WindowProxy::getObjectLabels() const
 {
   return objectLabels;
+}
+
+void WindowProxy::setObjectAxisSize( Window::TObjectAxisSize whichSize )
+{
+  objectAxisSize = whichSize;
+}
+
+Window::TObjectAxisSize WindowProxy::getObjectAxisSize() const
+{
+  return objectAxisSize;
 }
 
 void WindowProxy::setCFG4DMode( bool mode )

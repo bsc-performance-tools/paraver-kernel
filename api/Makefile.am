@@ -16,7 +16,7 @@ libparaver_api_la_SOURCES = \
                     paraverconfig.cpp \
                     previousfiles.cpp \
                     progresscontroller.cpp \
-										ParaverMetadataManager.cpp \
+                    ParaverMetadataManager.cpp \
                     recordlist.cpp \
                     rowlabels.cpp \
                     selectionrowsutils.cpp \
@@ -28,7 +28,6 @@ libparaver_api_la_SOURCES = \
                     tracecutter.cpp \
                     traceeditactions.cpp \
                     traceeditsequence.cpp \
-                    traceeditstates.cpp \
                     tracefilter.cpp \
                     traceoptions.cpp \
                     tracesoftwarecounters.cpp \
@@ -66,7 +65,7 @@ include_HEADERS = \
                   paravertypes.h\
                   previousfiles.h\
                   progresscontroller.h\
-									ParaverMetadataManager.h\
+                  ParaverMetadataManager.h\
                   ../../common-files/prvtypes.h\
                   recordlist.h\
                   rowlabels.h\
@@ -87,6 +86,7 @@ include_HEADERS = \
                   window.h\
                   zoomhistory.h\
                   selectionmanagement.cpp\
+                  traceeditstates.cpp\
                   zoomhistory.cpp
 
 install-data-hook:

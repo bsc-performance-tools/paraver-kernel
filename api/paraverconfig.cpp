@@ -109,6 +109,7 @@ ParaverConfig::ParaverConfig()
   xmlTimeline.gradientFunction = GradientColor::LINEAR;
   xmlTimeline.pixelSize = 0;
   xmlTimeline.objectLabels = Window::SPACED_LABELS;
+  xmlTimeline.objectAxisSize = Window::CURRENT_LEVEL;
   xmlTimeline.whatWhereSemantic = true;
   xmlTimeline.whatWhereEvents = false;
   xmlTimeline.whatWhereCommunications = false;
@@ -373,6 +374,11 @@ void ParaverConfig::setTimelineLabels( Window::TObjectLabels whichLabels )
   xmlTimeline.objectLabels = whichLabels;
 }
 
+void ParaverConfig::setTimelineObjectAxisSize( Window::TObjectAxisSize whichSize )
+{
+  xmlTimeline.objectAxisSize = whichSize;
+}
+
 void ParaverConfig::setTimelineWhatWhereSemantic( bool whichWhatWhereSemantic )
 {
   xmlTimeline.whatWhereSemantic = whichWhatWhereSemantic;
@@ -478,6 +484,11 @@ PRV_UINT32 ParaverConfig::getTimelinePixelSize() const
 Window::TObjectLabels ParaverConfig::getTimelineLabels() const
 {
   return xmlTimeline.objectLabels;
+}
+
+Window::TObjectAxisSize ParaverConfig::getTimelineObjectAxisSize() const
+{
+  return xmlTimeline.objectAxisSize;
 }
 
 bool ParaverConfig::getTimelineWhatWhereSemantic() const
