@@ -531,6 +531,8 @@
 			<Option target="api" />
 		</Unit>
 		<Unit filename="api/traceeditstates.cpp">
+			<Option compile="0" />
+			<Option link="0" />
 			<Option target="api" />
 		</Unit>
 		<Unit filename="api/traceeditstates.h">
