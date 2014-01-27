@@ -30,6 +30,13 @@
 #ifndef PARAVERLABELS_H_INCLUDED
 #define PARAVERLABELS_H_INCLUDED
 
+#define CFG_CURRENT_VERSION "3.4"
+
+#define OLDCFG_HEADER_VERSION "version"
+#define OLDCFG_HEADER_NUM_WINDOWS "number_of_windows"
+#define OLDCFG_HEADER_BEGIN_DESCRIPTION "begin_description"
+#define OLDCFG_HEADER_END_DESCRIPTION "end_description"
+
 #define OLDCFG_LVL_APPL     "appl"
 #define OLDCFG_LVL_PTASK    "ptask"
 #define OLDCFG_LVL_WORKLOAD "workload"
@@ -238,6 +245,8 @@ static const std::string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
 };
 
 // New cfg label definitions
+#define CFG_HEADER_VERSION "ConfigFile.Version:"
+#define CFG_HEADER_NUM_WINDOWS "ConfigFile.NumWindows:"
 #define CFG_TAG_WNDW_END_TIME_RELATIVE "window_end_time_relative"
 
 // GUI Misc Labels
@@ -499,5 +508,10 @@ static const std::string HistogramPropertyLabels[ TOTAL_HISTOGRAM_PROPERTIES ] =
   "3D.Delta",
   "3D.Plane"
 };
+
+// DIMEMAS
+#define OLD_DIMEMAS_SHEBANG "SDDFA"
+#define DIMEMAS_SHEBANG "#DIMEMAS_CONFIGURATION"
+
 
 #endif // PARAVERLABELS_H_INCLUDED
