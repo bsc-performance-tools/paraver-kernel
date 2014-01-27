@@ -29,6 +29,7 @@
 
 #ifndef WIN32
 #include <unistd.h>
+#include <errno.h>
 #else
 #include <io.h>
 #endif
@@ -95,13 +96,16 @@ void TraceCutterAction::execute( std::string whichTrace )
               whichTrace.substr( whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) );
     if( symlink( whichTrace.c_str(), newName.c_str() ) != 0 )
     {
-      TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(),
-                                                   (char *)whichTrace.c_str(),
-                                                   (char *)newName.c_str(),
-                                                   options,
-                                                   NULL );
-      myCutter->setCutterApplicationCaller( CutterMetadata::RUNAPP_APPLICATION_ID );
-      myCutter->execute( (char *)whichTrace.c_str(), (char *)newName.c_str(), NULL );
+      if( errno != EEXIST )
+      {
+        TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(),
+                                                     (char *)whichTrace.c_str(),
+                                                     (char *)newName.c_str(),
+                                                     options,
+                                                     NULL );
+        myCutter->setCutterApplicationCaller( CutterMetadata::RUNAPP_APPLICATION_ID );
+        myCutter->execute( (char *)whichTrace.c_str(), (char *)newName.c_str(), NULL );
+      }
     }
   }
   else
