@@ -68,6 +68,10 @@ class DerivedTraceEditState : public BaseTraceEditState< SeqT >
   private:
     DataT myData;
 
+    void firstInit();
+    void firstInit( BoolToType< true > );
+    void firstInit( BoolToType< false > );
+
     void init( BoolToType< true > );
     void init( BoolToType< false > );
 };
@@ -128,6 +132,7 @@ typedef BaseTraceEditState< TraceEditSequence * > TraceEditState;
 typedef DerivedTraceEditState< TraceEditSequence *, TextOutput > CSVOutputState;
 typedef DerivedTraceEditState< TraceEditSequence *, TraceOptions * > TraceOptionsState;
 typedef DerivedTraceEditState< TraceEditSequence *, Window * > CSVWindowState;
+typedef DerivedTraceEditState< TraceEditSequence *, vector< TTime > > ShiftTimesState;
 
 typedef DerivedTraceEditStateInt< TraceEditSequence * > TestState;
 

@@ -90,6 +90,10 @@ TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceSta
       return new MaxTraceTimeState( this );
       break;
 
+    case shiftTimesState:
+      return new ShiftTimesState( this );
+      break;
+
     default:
       return NULL;
       break;

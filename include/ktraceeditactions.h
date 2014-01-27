@@ -159,6 +159,28 @@ class CSVOutputAction: public TraceToTraceAction
 
 
 /****************************************************************************
+ ********            TraceShifterTimesLoaderAction                   ********
+ ****************************************************************************/
+class TraceShifterTimesLoaderAction: public TraceToTraceAction
+{
+  public:
+    TraceShifterTimesLoaderAction( TraceEditSequence *whichSequence ) : TraceToTraceAction( whichSequence )
+    {}
+    ~TraceShifterTimesLoaderAction()
+    {}
+
+    virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
+
+    virtual void execute( std::string whichTrace );
+
+  protected:
+
+  private:
+
+};
+
+
+/****************************************************************************
  ********                  TraceParserAction                         ********
  ****************************************************************************/
 class TraceParserAction: public TraceToTraceAction

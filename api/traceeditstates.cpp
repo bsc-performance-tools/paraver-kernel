@@ -29,7 +29,7 @@
 
 #include "traceeditstates.h"
 #include "traceoptions.h"
-#include "window.h"
+//#include "window.h"
 
 #include <boost/type_traits.hpp> // is_pointer
 
@@ -67,12 +67,32 @@ template< class SeqT, class DataT >
 DerivedTraceEditState< SeqT, DataT >::DerivedTraceEditState( SeqT whichSequence )
 {
   BaseTraceEditState< SeqT >::mySequence = whichSequence;
-  init();
+  firstInit();
 }
 
 
 template< class SeqT, class DataT >
 DerivedTraceEditState< SeqT, DataT >::~DerivedTraceEditState()
+{
+}
+
+
+template< class SeqT, class DataT >
+void DerivedTraceEditState< SeqT, DataT >::firstInit()
+{
+  firstInit( BoolToType< boost::is_pointer< DataT >::value >() );
+}
+
+
+template< class SeqT, class DataT >
+void DerivedTraceEditState< SeqT, DataT >::firstInit( BoolToType< true > )
+{
+  myData = NULL;
+}
+
+
+template< class SeqT, class DataT >
+void DerivedTraceEditState< SeqT, DataT >::firstInit( BoolToType< false > )
 {
 }
 
@@ -87,6 +107,8 @@ void DerivedTraceEditState< SeqT, DataT >::init()
 template< class SeqT, class DataT >
 void DerivedTraceEditState< SeqT, DataT >::init( BoolToType< true > )
 {
+  if ( myData != NULL )
+    delete myData;
   myData = NULL;
 }
 
@@ -124,7 +146,6 @@ DerivedTraceEditStateInt< SeqT >::DerivedTraceEditStateInt( SeqT whichSequence )
 template< class SeqT >
 DerivedTraceEditStateInt< SeqT >::~DerivedTraceEditStateInt()
 {
-  init();
 }
 
 template< class SeqT >
@@ -159,7 +180,6 @@ DerivedTraceEditStateString< SeqT >::DerivedTraceEditStateString( SeqT whichSequ
 template< class SeqT >
 DerivedTraceEditStateString< SeqT >::~DerivedTraceEditStateString()
 {
-  init();
 }
 
 template< class SeqT >
@@ -194,7 +214,6 @@ DerivedTraceEditStateTTime< SeqT >::DerivedTraceEditStateTTime( SeqT whichSequen
 template< class SeqT >
 DerivedTraceEditStateTTime< SeqT >::~DerivedTraceEditStateTTime()
 {
-  init();
 }
 
 template< class SeqT >

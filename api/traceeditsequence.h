@@ -58,6 +58,7 @@ class TraceEditSequence
       outputDirSuffixState,
       outputTraceFileNameState,
       maxTraceTimeState,
+      shiftTimesState,
       numStates
     };
 

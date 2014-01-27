@@ -158,6 +158,28 @@ void CSVOutputAction::execute( std::string whichTrace )
 
 
 /****************************************************************************
+ ********               TraceShifterTimesLoaderAction                ********
+ ****************************************************************************/
+vector<TraceEditSequence::TSequenceStates> TraceShifterTimesLoaderAction::getStateDependencies() const
+{
+  vector<TraceEditSequence::TSequenceStates> tmpStates;
+
+  tmpStates.push_back( TraceEditSequence::shiftTimesState );
+
+  return tmpStates;
+}
+
+
+void TraceShifterTimesLoaderAction::execute( std::string whichTrace )
+{
+  KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
+  MemoryTrace::iterator *it = NULL;
+
+  tmpSequence->executeNextAction( it );
+}
+
+
+/****************************************************************************
  ********                  TraceParserAction                         ********
  ****************************************************************************/
 vector<TraceEditSequence::TSequenceStates> TraceParserAction::getStateDependencies() const
