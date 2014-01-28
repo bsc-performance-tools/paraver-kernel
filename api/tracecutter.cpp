@@ -38,6 +38,11 @@ using namespace libparaver;
 #include <string.h>
 #include "eventlabels.h"
 
+#ifdef WIN32
+#include <sys/types.h>
+#include <sys/stat.h>
+#endif
+
 using namespace std;
 
 string TraceCutter::traceToolID = "cutter";
@@ -64,14 +69,22 @@ TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
   std::string pcf_name;
   FILE *pcfFile;
   vector< TEventType > typesWithValueZero;
+#ifdef WIN32
+  struct _stat tmpStatBuffer;
+#else
   struct stat tmpStatBuffer;
+#endif
 
 /*  pcf_name = strdup( traceIn );
   c = strrchr( pcf_name, '.' );
   sprintf( c, ".pcf" );*/
 
   pcf_name = LocalKernel::composeName( traceIn, string( "pcf" ) );
+#ifdef WIN32
+  _stat( pcf_name.c_str(), &tmpStatBuffer );
+#else
   stat( pcf_name.c_str(), &tmpStatBuffer );
+#endif
 
   if( tmpStatBuffer.st_size > 0 )
   {
