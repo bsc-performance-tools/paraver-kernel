@@ -64,16 +64,17 @@ TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
   std::string pcf_name;
   FILE *pcfFile;
   vector< TEventType > typesWithValueZero;
+  struct stat tmpStatBuffer;
 
 /*  pcf_name = strdup( traceIn );
   c = strrchr( pcf_name, '.' );
   sprintf( c, ".pcf" );*/
 
   pcf_name = LocalKernel::composeName( traceIn, string( "pcf" ) );
-  if(( pcfFile = fopen( pcf_name.c_str(), "r" )) != NULL )
-  {
-    fclose( pcfFile );
+  stat( pcf_name.c_str(), &tmpStatBuffer );
 
+  if( tmpStatBuffer.st_size > 0 )
+  {
     ParaverTraceConfig *config = new ParaverTraceConfig( pcf_name );
     EventLabels myEventLabels = EventLabels( *config, set<TEventType>() );
     vector< TEventType > allTypes;
