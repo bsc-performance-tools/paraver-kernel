@@ -49,8 +49,9 @@ AC_PROG_CPP
 AC_PROG_CXXCPP
 AC_PROG_SED
 
-#AX_BOOST_BASE(1.36)
-#AX_BOOST_SERIALIZATION
+AX_BOOST_BASE(1.36)
+AX_BOOST_SERIALIZATION
+
 ######################################################################
 #    Checks for typedefs, structures and compiler characteristics    #
 ######################################################################
