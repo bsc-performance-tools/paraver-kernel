@@ -78,13 +78,13 @@ class TraceEditSequence
     static std::string dirNameFolding;
     static std::string dirNameDimemas;
 
-    static TraceEditSequence *create( KernelConnection *whichKernel );
+    static TraceEditSequence *create( const KernelConnection *whichKernel );
 
     TraceEditSequence() { }
-    TraceEditSequence( KernelConnection *whichKernel );
+    TraceEditSequence( const KernelConnection *whichKernel );
     virtual ~TraceEditSequence();
 
-    KernelConnection *getKernelConnection() const;
+    const KernelConnection *getKernelConnection() const;
 
     virtual TraceEditState *createState( TraceEditSequence::TSequenceStates whichState ) = 0;
 
@@ -104,7 +104,7 @@ class TraceEditSequence
     }
 
   protected:
-    KernelConnection *myKernel;
+    const KernelConnection *myKernel;
 
   private:
 
@@ -115,7 +115,7 @@ class TraceEditSequenceProxy:public TraceEditSequence
 {
   public:
     TraceEditSequenceProxy();
-    TraceEditSequenceProxy( KernelConnection *whichKernel );
+    TraceEditSequenceProxy( const KernelConnection *whichKernel );
     virtual ~TraceEditSequenceProxy();
 
     TraceEditState *createState( TraceEditSequence::TSequenceStates whichState );

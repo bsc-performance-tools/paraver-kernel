@@ -30,6 +30,7 @@ libparaver_api_la_SOURCES = \
                     traceeditsequence.cpp \
                     tracefilter.cpp \
                     traceoptions.cpp \
+                    traceshifter.cpp \
                     tracesoftwarecounters.cpp \
                     window.cpp \
                     ../../common-files/pcfparser/LibException.cpp \
@@ -82,6 +83,7 @@ include_HEADERS = \
                   traceeditstates.h \
                   tracefilter.h \
                   traceoptions.h \
+                  traceshifter.h \
                   tracesoftwarecounters.h \
                   window.h\
                   zoomhistory.h\

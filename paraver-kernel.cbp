@@ -554,6 +554,10 @@
 			<Option target="api" />
 			<Option target="otf2prv" />
 		</Unit>
+		<Unit filename="api/traceshifter.cpp">
+			<Option target="api" />
+			<Option target="otf2prv" />
+		</Unit>
 		<Unit filename="api/tracesoftwarecounters.cpp">
 			<Option target="api" />
 			<Option target="otf2prv" />
@@ -794,6 +798,12 @@
 			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/ktraceoptions.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="paramedir" />
+			<Option target="otf2prv" />
+		</Unit>
+		<Unit filename="include/ktraceshifter.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="paramedir" />
@@ -1057,6 +1067,9 @@
 			<Option target="paramedir" />
 			<Option target="otf2prv" />
 		</Unit>
+		<Unit filename="include/traceshifter.h">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="include/tracestream.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -1225,6 +1238,11 @@
 			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/ktraceoptions.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="otf2prv" />
+		</Unit>
+		<Unit filename="src/ktraceshifter.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="otf2prv" />

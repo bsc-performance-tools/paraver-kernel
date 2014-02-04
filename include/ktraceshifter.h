@@ -1,7 +1,7 @@
 /*****************************************************************************\
  *                        ANALYSIS PERFORMANCE TOOLS                         *
  *                               libparaver-api                              *
- *                       Paraver Main Computing Library                      *
+ *                      API Library for libparaver-kernel                    *
  *****************************************************************************
  *     ___     This library is free software; you can redistribute it and/or *
  *    /  __         modify it under the terms of the GNU LGPL as published   *
@@ -27,41 +27,43 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-#ifndef KTRACEEDITSEQUENCE_H_INCLUDED
-#define KTRACEEDITSEQUENCE_H_INCLUDED
+#ifndef KTRACESHIFTER_H_INCLUDED
+#define KTRACESHIFTER_H_INCLUDED
 
+#include <string>
+#include <vector>
+
+#include "traceshifter.h"
 #include "traceeditsequence.h"
-#include "memorytrace.h"
+#include "paraverkerneltypes.h"
+#include "progresscontroller.h"
 
-class KTraceEditSequence:public TraceEditSequence
+
+class KTraceShifter : public TraceShifter
 {
   public:
-    KTraceEditSequence() {}
-    KTraceEditSequence( const KernelConnection *whichKernel );
-    virtual ~KTraceEditSequence();
+    KTraceShifter( const KernelConnection *myKernel,
+                   std::string traceIn,
+                   std::string traceOut,
+                   std::string whichShiftTimes,
+                   ProgressController *progress = NULL );
+    ~KTraceShifter();
 
-    TraceEditState *createState( TraceEditSequence::TSequenceStates whichState );
+    virtual void execute( std::string traceIn,
+                          std::string traceOut,
+                          ProgressController *progress = NULL );
 
-    bool addState( TraceEditSequence::TSequenceStates whichState );
-    bool addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState );
-    TraceEditState *getState( TraceEditSequence::TSequenceStates whichState );
-    bool pushbackAction( TraceEditSequence::TSequenceActions whichAction );
-    bool pushbackAction( TraceEditAction *newAction );
-
-    void execute( vector<std::string> traces );
-
-    void executeNextAction( std::string whichTrace );
-    void executeNextAction( MemoryTrace::iterator *whichRecord );
-
-  protected:
+    virtual const std::vector< TTime > getShiftTimes() { return shiftTimes; }
 
   private:
-    map<TraceEditSequence::TSequenceStates, TraceEditState *> activeStates;
-    vector<TraceEditAction *> sequenceActions;
+    std::vector< TTime > shiftTimes;
+    TraceEditSequence *mySequence;
 
-    PRV_UINT16 currentAction;
+    std::vector<std::string> traces;
+
+
+    std::vector< TTime > readShiftTimes( std::string shiftTimesFile );
 
 };
 
-
-#endif // KTRACEEDITSEQUENCE_H_INCLUDED
+#endif // KTRACESHIFTER_H_INCLUDED

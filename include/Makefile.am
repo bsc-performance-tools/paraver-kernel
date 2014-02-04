@@ -33,6 +33,7 @@ noinst_HEADERS = \
                           ktraceeditstates.h \
                           ktracefilter.h \
                           ktraceoptions.h \
+                          ktraceshifter.h \
                           ktracesoftwarecounters.h \
                           kwindowexception.h\
                           kwindow.h\

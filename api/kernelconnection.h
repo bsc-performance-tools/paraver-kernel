@@ -47,6 +47,7 @@ class TraceOptions;
 class TraceCutter;
 class TraceFilter;
 class TraceSoftwareCounters;
+class TraceShifter;
 class TraceEditSequence;
 
 typedef std::pair< unsigned long long, unsigned long long > TTypeValuePair;
@@ -68,7 +69,7 @@ class KernelConnection
     virtual Histogram *newHistogram() const = 0;
     virtual ProgressController *newProgressController() const = 0;
     virtual Filter *newFilter( Filter *concreteFilter ) const = 0;
-    virtual TraceEditSequence *newTraceEditSequence() = 0;
+    virtual TraceEditSequence *newTraceEditSequence() const = 0;
 
     virtual std::string getToolID( const std::string &toolName ) const = 0;
     virtual std::string getToolName( const std::string &toolID ) const = 0;
@@ -84,6 +85,11 @@ class KernelConnection
                                                              char *trace_out,
                                                              TraceOptions *options,
                                                              ProgressController *progress = NULL ) const = 0;
+    virtual TraceShifter *newTraceShifter( std::string traceIn,
+                                           std::string traceOut,
+                                           std::string shiftTimesFile,
+                                           ProgressController *progress = NULL ) const = 0;
+
 
     virtual void getAllStatistics( std::vector<std::string>& onVector ) const = 0;
     virtual void getAllFilterFunctions( std::vector<std::string>& onVector ) const = 0;
@@ -92,8 +98,8 @@ class KernelConnection
 
     virtual bool userMessage( const std::string& message ) const = 0;
 
-    virtual void copyPCF( const std::string& name, const std::string& traceToLoad ) = 0;
-    virtual void copyROW( const std::string& name, const std::string&traceToLoad ) = 0;
+    virtual void copyPCF( const std::string& name, const std::string& traceToLoad ) const = 0;
+    virtual void copyROW( const std::string& name, const std::string&traceToLoad ) const = 0;
     virtual void getNewTraceName( char *name,
                                   char *new_trace_name,
                                   std::string action,

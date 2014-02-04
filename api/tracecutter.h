@@ -39,7 +39,7 @@ class ProgressController;
 class TraceCutter
 {
   public:
-    static TraceCutter *create( KernelConnection *whichKernel,
+    static TraceCutter *create( const KernelConnection *whichKernel,
                                 char *traceIn,
                                 char *traceOut,
                                 TraceOptions *options,
@@ -132,7 +132,7 @@ class TraceCutterProxy : public TraceCutter
                       TraceOptions *options,
                       ProgressController *progress );
 
-    friend TraceCutter *TraceCutter::create( KernelConnection *whichKernel,
+    friend TraceCutter *TraceCutter::create( const KernelConnection *whichKernel,
                                              char *traceIn,
                                              char *traceOut,
                                              TraceOptions *options,

@@ -37,13 +37,13 @@ std::string TraceEditSequence::dirNameClustering( "clustering" );
 std::string TraceEditSequence::dirNameFolding( "folding" );
 std::string TraceEditSequence::dirNameDimemas( "dimemas" );
 
-TraceEditSequence *TraceEditSequence::create( KernelConnection *whichKernel )
+TraceEditSequence *TraceEditSequence::create( const KernelConnection *whichKernel )
 {
   return new TraceEditSequenceProxy( whichKernel );
 }
 
 
-TraceEditSequence::TraceEditSequence( KernelConnection *whichKernel )
+TraceEditSequence::TraceEditSequence( const KernelConnection *whichKernel )
   : myKernel( whichKernel )
 {
 }
@@ -54,7 +54,7 @@ TraceEditSequence::~TraceEditSequence()
 }
 
 
-KernelConnection *TraceEditSequence::getKernelConnection() const
+const KernelConnection *TraceEditSequence::getKernelConnection() const
 {
   return myKernel;
 }
@@ -65,7 +65,7 @@ TraceEditSequenceProxy::TraceEditSequenceProxy()
 }
 
 
-TraceEditSequenceProxy::TraceEditSequenceProxy( KernelConnection *whichKernel )
+TraceEditSequenceProxy::TraceEditSequenceProxy( const KernelConnection *whichKernel )
  : TraceEditSequence( whichKernel )
 {
   mySequence = myKernel->newTraceEditSequence();

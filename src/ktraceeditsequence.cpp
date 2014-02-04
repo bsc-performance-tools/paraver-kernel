@@ -36,7 +36,7 @@ using std::invalid_argument;
 
 class TextOutput;
 
-KTraceEditSequence::KTraceEditSequence( KernelConnection *whichKernel ) :
+KTraceEditSequence::KTraceEditSequence( const KernelConnection *whichKernel ) :
   TraceEditSequence( whichKernel )
 {
 }

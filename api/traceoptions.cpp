@@ -34,14 +34,10 @@
 #include "tracefilter.h"
 #include "tracecutter.h"
 #include "tracesoftwarecounters.h"
+#include "traceshifter.h"
 
 
 using namespace std;
-
-// TODO: Should this be moved to its own api/traceshifter.cpp?
-std::string TraceShifter::traceToolID = "shifter";
-std::string TraceShifter::traceToolName = "trace_shifter";
-std::string TraceShifter::traceToolExtension = "shifted";
 
 
 vector< string > TraceOptionsProxy::IDsAvailableTraceTools;
@@ -53,7 +49,7 @@ TraceOptions *TraceOptions::create( KernelConnection *whichKernel )
   return new TraceOptionsProxy( whichKernel );
 }
 
-// Smarter detections welcome!
+// TODO: Smarter detections welcome!
 bool TraceOptions::isTraceToolsOptionsFile( const string& xmlFileName )
 {
   string auxName( xmlFileName );
@@ -75,6 +71,7 @@ TraceOptionsProxy::TraceOptionsProxy( const KernelConnection *whichKernel )
   IDsAvailableTraceTools.push_back( TraceCutter::getID() );
   IDsAvailableTraceTools.push_back( TraceFilter::getID() );
   IDsAvailableTraceTools.push_back( TraceSoftwareCounters::getID() );
+  IDsAvailableTraceTools.push_back( TraceShifter::getID() );
 
   //if ( xmldocname != NULL )
   //  myTraceOptions->parseDoc( xmldocname );
@@ -504,13 +501,18 @@ string TraceOptionsProxy::getTraceToolName( const string& toolID )
   {
     toolStr = TraceFilter::getName();
   }
-  else //  ( toolID == TraceSoftwareCounters::getID() )
+  else if ( toolID == TraceSoftwareCounters::getID() )
   {
     toolStr = TraceSoftwareCounters::getName();
+  }
+  else  // ( toolID == TraceShifter::getID() )
+  {
+    toolStr == TraceShifter::getName();
   }
 
   return toolStr;
 }
+
 
 string TraceOptionsProxy::getTraceToolExtension( const string& toolID )
 {

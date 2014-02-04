@@ -52,6 +52,7 @@
 #include "tracecutter.h"
 #include "tracefilter.h"
 #include "tracesoftwarecounters.h"
+#include "traceshifter.h"
 
 // for strdup
 //#include <string.h>
@@ -65,6 +66,7 @@ bool hideEmptyColumns = false;
 bool multipleFiles = false;
 bool dumpTrace = false;
 bool noLoad = false;
+bool shiftTimes = false;
 
 PRV_INT32 numIter = 1;
 Trace *trace;
@@ -74,10 +76,12 @@ TraceOptions *traceOptions = NULL;
 TraceCutter *traceCutter = NULL;
 TraceFilter *traceFilter = NULL;
 TraceSoftwareCounters *traceSoftwareCounters = NULL;
+TraceShifter *traceShifter = NULL;
 
 string strXMLOptions( "" );
 map< string, string > cfgs;
 string strTrace( "" );
+string strShiftTimesFile( "" );
 
 void printHelp()
 {
@@ -98,6 +102,7 @@ void printHelp()
   cout << "    -c: Apply Cutter." << endl;
   cout << "    -f: Apply Filter." << endl;
   cout << "    -s: Apply Software Counters." << endl;
+  cout << "    -t: Apply Trace Times Shifter." << endl;
 //  cout << "    -j: Apply Communications Fusion. (in progress)" << endl;
   cout << endl;
   cout << "  Parameters:" << endl;
@@ -121,6 +126,9 @@ void printHelp()
   cout << "      pipelined in the given order ( trace -> software counters | cutter | filter -> result trace)" << endl;
   cout << "      to linpack.prv trace, and the filtered trace is loaded and used to compute mpi_stats.cfg." << endl;
   cout << "      The computed mpi results are saved int my_mpi_values.txt." << endl;
+  cout << endl;
+  cout << "    paramedir -t linpack.prv times.txt" << endl;
+  cout << "    paramedir -t linpack.prv times.txt linpack.shifted.prv" << endl;
   cout << endl;
 }
 
@@ -173,6 +181,11 @@ void activateOption( char *argument, vector< string > &filterToolOrder )
   {
     filterToolOrder.push_back( TraceSoftwareCounters::getID() );
   }
+  else if ( argument[ 1 ] == 't' )
+  {
+    filterToolOrder.push_back( TraceShifter::getID() );
+    shiftTimes = true;
+  }
   else
     cout << "Unknown option " << argument << endl;
 }
@@ -209,6 +222,7 @@ void readParameters( int argc,
     if ( isOption( arguments[ currentArg ] ))
     {
       activateOption( arguments[ currentArg ], filterToolOrder );
+      std::cout << "paramedir::readParameters:option "  << arguments[ currentArg ] << std::endl;
 #ifdef BYTHREAD
       getDumpIterations( currentArg, arguments );
 #endif
@@ -227,6 +241,14 @@ void readParameters( int argc,
       strOutputFile = strCfg.substr( 0, strCfg.length() - CFG_SUFFIX.length() );
       cfgs[ arguments[ currentArg ] ] = strOutputFile;
       previousCFGPosition = currentArg;
+    }
+    else if ( shiftTimes )
+    {
+      // First version: paramedir -t trace.prv shifttimes  or
+      //                paramedir -t shifttimes trace.prv
+
+      strShiftTimesFile = string( arguments[ currentArg ] );
+      std::cout << "paramedir::readParameters "  << strShiftTimesFile << std::endl;
     }
     else
     {
@@ -262,7 +284,8 @@ bool anyCFG()
 
 bool anyFilter( const vector< string >& filterToolOrder )
 {
-  return ( ( strXMLOptions != "" ) && ( filterToolOrder.size() > 0 ));
+  //return ( ( strXMLOptions != "" ) && ( filterToolOrder.size() > 0 ));
+  return ( filterToolOrder.size() > 0 );
 }
 
 
@@ -320,6 +343,7 @@ string applyFilters( KernelConnection *myKernel,
   for( PRV_UINT16 i = 0; i < filterToolOrder.size(); ++i )
   {
     tmpNameIn = tmpNameOut;
+    std::cout << "paramedir::applyFilters: id tool "  << filterToolOrder[ i ] << std::endl;
 
     if ( i < filterToolOrder.size() - 1 )
     {
@@ -332,12 +356,12 @@ string applyFilters( KernelConnection *myKernel,
       // Get full name (all tools) and append to file that list recent treated traces
       tmpNameOut = myKernel->getNewTraceName( fullTmpNameIn, filterToolOrder, true );
     }
+    std::cout << "paramedir::applyFilters: name "  << tmpNameOut << std::endl;
     //myKernel->getNewTraceName( tmpNameIn, tmpPathOut, filterToolOrder[ i ] );
     //tmpNameOut = tmpPathOut;
 
     if ( filterToolOrder[i] == TraceCutter::getID() )
     {
-      //pcf_name = myKernel->composeName( (char *)tmpNameIn.c_str(), (char *)"pcf" );
       pcf_name = LocalKernel::composeName( tmpNameIn, string( "pcf" ) );
 
       if(( pcfFile = fopen( pcf_name.c_str(), "r" )) != NULL )
@@ -406,8 +430,12 @@ string applyFilters( KernelConnection *myKernel,
                                                                   (char *)tmpNameOut.c_str(),
                                                                   traceOptions );
     }
-    else
+    else if ( filterToolOrder[i] == TraceShifter::getID() )
     {
+      // TODO: si el kernel no va a hacer nada con las trazas, no tiene sentido pasar nombres
+      std::cout << "paramedir::TraceShifter execution"  << std::endl;
+      traceShifter = myKernel->newTraceShifter( tmpNameIn, tmpNameOut, strShiftTimesFile );
+      traceShifter->execute( tmpNameIn, tmpNameOut );
     }
 
     myKernel->copyROW( tmpNameIn, tmpNameOut );
@@ -418,9 +446,7 @@ string applyFilters( KernelConnection *myKernel,
   string pcfName, rowName;
   for( PRV_UINT16 i = 0; i < tmpFiles.size() - 1; ++i )
   {
-    //pcfName = myKernel->composeName( (char *)tmpFiles[ i ].c_str(), (char *)string("pcf").c_str() );
     pcfName = LocalKernel::composeName( tmpFiles[ i ], string( "pcf" ) );
-    //rowName = myKernel->composeName( (char *)tmpFiles[ i ].c_str(), (char *)string("row").c_str() );
     rowName = LocalKernel::composeName( tmpFiles[ i ], string( "row" ) );
     remove( tmpFiles[ i ].c_str() );
     remove( pcfName.c_str() );

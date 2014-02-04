@@ -371,32 +371,4 @@ class TraceOptionsProxy :public TraceOptions
 };
 
 
-// TODO: Should this be moved to its own api/traceshifter.cpp?
-// At this moment, only needed for extension recovery.
-class TraceShifter
-{
-  public:
-    static std::string getID()
-    {
-      return TraceShifter::traceToolID;
-    }
-
-    static std::string getName()
-    {
-      return TraceShifter::traceToolName;
-    }
-
-    static std::string getExtension()
-    {
-      return TraceShifter::traceToolExtension;
-    }
-
-  private:
-    static std::string traceToolID;
-    static std::string traceToolName;
-    static std::string traceToolExtension;
-};
-
-
-
 #endif // TRACEOPTIONS_H_INCLUDED

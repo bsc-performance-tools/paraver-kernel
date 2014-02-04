@@ -49,7 +49,7 @@ string TraceCutter::traceToolID = "cutter";
 string TraceCutter::traceToolName = "Cutter";
 string TraceCutter::traceToolExtension = "chop";
 
-TraceCutter *TraceCutter::create(  KernelConnection *whichKernel,
+TraceCutter *TraceCutter::create( const KernelConnection *whichKernel,
                                    char *traceIn,
                                    char *traceOut,
                                    TraceOptions *options,

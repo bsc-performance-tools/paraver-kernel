@@ -27,6 +27,7 @@ libparaver_kernel_la_SOURCES = \
     ktraceeditstates.cpp \
     ktracefilter.cpp \
     ktraceoptions.cpp \
+    ktraceshifter.cpp \
     ktracesoftwarecounters.cpp \
     kwindow.cpp \
     kwindowexception.cpp \

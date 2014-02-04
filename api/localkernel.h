@@ -58,7 +58,7 @@ class LocalKernel: public KernelConnection
 //    virtual RecordList *newRecordList() const;
     virtual ProgressController *newProgressController() const;
     virtual Filter *newFilter( Filter *concreteFilter ) const;
-    virtual TraceEditSequence *newTraceEditSequence();
+    virtual TraceEditSequence *newTraceEditSequence() const;
 
     virtual std::string getToolID( const std::string &toolName ) const;
     virtual std::string getToolName( const std::string &toolID ) const;
@@ -74,6 +74,10 @@ class LocalKernel: public KernelConnection
                                                              char *trace_out,
                                                              TraceOptions *options,
                                                              ProgressController *progress = NULL ) const;
+    virtual TraceShifter *newTraceShifter( std::string traceIn,
+                                           std::string traceOut,
+                                           std::string shiftTimesFile,
+                                           ProgressController *progress ) const;
 
     virtual void getAllStatistics( std::vector<std::string>& onVector ) const;
     virtual void getAllFilterFunctions( std::vector<std::string>& onVector ) const;
@@ -82,8 +86,8 @@ class LocalKernel: public KernelConnection
 
     virtual bool userMessage( const std::string& message ) const;
 
-    virtual void copyPCF( const std::string& name, const std::string& traceToLoad );
-    virtual void copyROW( const std::string& name, const std::string& traceToLoad );
+    virtual void copyPCF( const std::string& name, const std::string& traceToLoad ) const;
+    virtual void copyROW( const std::string& name, const std::string& traceToLoad ) const;
 
     // WILL BE SUBSTITUTED
     virtual void getNewTraceName( char *name,
@@ -139,7 +143,7 @@ class LocalKernel: public KernelConnection
     // And written in getNewTraceName when commitName == true
     PreviousFiles *prevTraceNames;
 
-    void copyFile( const std::string& in, const std::string& out );
+    void copyFile( const std::string& in, const std::string& out ) const;
 };
 
 

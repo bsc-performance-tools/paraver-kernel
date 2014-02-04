@@ -49,6 +49,7 @@
 #include "ktracecutter.h"
 #include "ktracefilter.h"
 #include "ktracesoftwarecounters.h"
+#include "ktraceshifter.h"
 #include "tracestream.h"
 #include <string.h>
 
@@ -186,11 +187,12 @@ Filter *LocalKernel::newFilter( Filter *concreteFilter ) const
   return ( Filter * ) tmpFilter;
 }
 
-TraceEditSequence *LocalKernel::newTraceEditSequence()
+TraceEditSequence *LocalKernel::newTraceEditSequence() const
 {
   return new KTraceEditSequence( this );
 }
 
+// TODO: repeated code
 string LocalKernel::getToolID( const string &toolName ) const
 {
   string auxStr;
@@ -207,7 +209,7 @@ string LocalKernel::getToolID( const string &toolName ) const
   return auxStr;
 }
 
-
+// TODO: repeated code
 std::string LocalKernel::getToolName( const string &toolID ) const
 {
   string auxStr;
@@ -265,6 +267,22 @@ TraceSoftwareCounters *LocalKernel::newTraceSoftwareCounters( char *trace_in,
   return new KTraceSoftwareCounters( trace_in, trace_out, options, tmpKProgressControler );
 }
 
+
+TraceShifter *LocalKernel::newTraceShifter( std::string traceIn,
+                                            std::string traceOut,
+                                            std::string shiftTimesFile,
+                                            ProgressController *progress ) const
+{
+  KProgressController *tmpKProgressControler = NULL;
+
+  if ( progress != NULL )
+    tmpKProgressControler = (KProgressController *)progress->getConcrete();
+
+  //return new KTraceShifter( const_cast< LocalKernel * >(this), traceIn, traceOut, shiftTimesFile, tmpKProgressControler );
+  return new KTraceShifter( this, traceIn, traceOut, shiftTimesFile, tmpKProgressControler );
+}
+
+
 void LocalKernel::getAllStatistics( vector<string>& onVector ) const
 {
   FunctionManagement<HistogramStatistic>::getInstance()->getAll( onVector );
@@ -311,7 +329,7 @@ std::string LocalKernel::composeName( const std::string& name,  const std::strin
   return newFileName;
 }
 
-void LocalKernel::copyFile( const std::string& in, const std::string& out )
+void LocalKernel::copyFile( const std::string& in, const std::string& out ) const
 {
   FILE *fileIn, *fileOut;
   char line[2048];
@@ -328,7 +346,7 @@ void LocalKernel::copyFile( const std::string& in, const std::string& out )
   fclose( fileOut );
 }
 
-void LocalKernel::copyPCF( const std::string& name, const std::string& traceToLoad )
+void LocalKernel::copyPCF( const std::string& name, const std::string& traceToLoad ) const
 {
   string pcfIn  = composeName( name, string( "pcf" ) );
   string pcfOut = composeName( traceToLoad, string( "pcf" ) );
@@ -336,7 +354,7 @@ void LocalKernel::copyPCF( const std::string& name, const std::string& traceToLo
   copyFile( pcfIn, pcfOut );
 }
 
-void LocalKernel::copyROW( const std::string& name, const std::string& traceToLoad )
+void LocalKernel::copyROW( const std::string& name, const std::string& traceToLoad ) const
 {
   string pcfIn  = composeName( name, string( "row" ) );
   string pcfOut = composeName( traceToLoad, string( "row" ) );
