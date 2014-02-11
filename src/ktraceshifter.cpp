@@ -41,10 +41,9 @@ KTraceShifter::KTraceShifter( const KernelConnection *myKernel,
                               std::string whichShiftTimes,
                               ProgressController *progress )
 {
-  // Lee el ficheor
   shiftTimes = readShiftTimes( whichShiftTimes );
 
-  // construye la secuencia
+  // Build sequence
   mySequence = TraceEditSequence::create( myKernel );
 
   mySequence->pushbackAction( TraceEditSequence::traceParserAction );
@@ -80,7 +79,6 @@ void KTraceShifter::execute( std::string traceIn,
                              std::string traceOut,
                              ProgressController *progress )
 {
-  std::cout << "KTraceShifter::execute" << std::endl;
   mySequence->execute( traces );
 }
 
