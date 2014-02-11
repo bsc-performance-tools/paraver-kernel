@@ -31,6 +31,8 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
+#include <map>
+#include <set>
 
 //#include <boost/filesystem.hpp>
 //#include <boost/error_code.hpp>
@@ -57,8 +59,6 @@
 // for strdup
 //#include <string.h>
 
-using namespace std;
-
 bool showHelp = false;
 bool showVersion = false;
 bool onlySelectedPlane = false;
@@ -79,71 +79,71 @@ TraceSoftwareCounters *traceSoftwareCounters = NULL;
 TraceShifter *traceShifter = NULL;
 
 string strXMLOptions( "" );
-map< string, string > cfgs;
+std::map< string, string > cfgs;
 string strTrace( "" );
 string strShiftTimesFile( "" );
 
 void printHelp()
 {
-  cout << "USAGE" << endl;
-  cout << "  paramedir [OPTION] trc {xml} cfg {cfgout | cfg}*" << endl;
-  cout << endl;
-  cout << "    -h: Prints this help" << endl;
-  cout << "    -v: Prints version" << endl;
-  cout << endl;
-  cout << "  Histogram options:" << endl;
-  cout << "    -p: Only the selected Plane of a 3D histogram is printed. Default is to print all of them." << endl;
-  cout << "    -e: Hide Empty columns" << endl;
-  cout << endl;
-  cout << "  Output file options:" << endl;
-  cout << "    -m: Prints on Multiple files." << endl;
-  cout << endl;
-  cout << "  Cutter/Filter options ( needed unique xml file with cutter/filter options):" << endl;
-  cout << "    -c: Apply Cutter." << endl;
-  cout << "    -f: Apply Filter." << endl;
-  cout << "    -s: Apply Software Counters." << endl;
-  cout << "    -t: Apply Trace Times Shifter." << endl;
-//  cout << "    -j: Apply Communications Fusion. (in progress)" << endl;
-  cout << endl;
-  cout << "  Parameters:" << endl;
-  cout << "    trc: Paraver trace filename ( with extension .prv or .prv.gz )." << endl;
-  cout << "    xml: Options for cutter/filter/software counters ( with extension .xml )." << endl;
-  cout << "    cfg: Paraver configuration filename ( with extension .cfg ). If present, trace's loaded." << endl;
-  cout << "    out: Filename for cfg output ( default name is cfg filename without, with extension .mcr )." << endl;
-  cout << endl;
-  cout << "  Examples:" << endl;
-  cout << "    paramedir -m linpack.prv.gz mpi_stats.cfg" << endl;
-  cout << "      Computes the mpi_stats.cfg analysis of compressed trace linpack.prv." << endl;
-  cout << endl;
-  cout << "    paramedir -c linpack.prv cutter.xml" << endl;
-  cout << "      Reads parameters of the cutter from the xml and applies them to linpack.prv trace." << endl;
-  cout << endl;
-  cout << "    paramedir -f linpack.prv just_MPI_calls.xml" << endl;
-  cout << "      Filters mpi calls of linpack.prv. Doesn't load it, just writes the file." << endl;
-  cout << endl;
-  cout << "    paramedir -s -c -f linpack.prv cut_filter_options.xml mpi_stats.cfg my_mpi_values.txt" << endl;
-  cout << "      Reads parameters of the software counters, cutter and filter from the xml and applies them" << endl;
-  cout << "      pipelined in the given order ( trace -> software counters | cutter | filter -> result trace)" << endl;
-  cout << "      to linpack.prv trace, and the filtered trace is loaded and used to compute mpi_stats.cfg." << endl;
-  cout << "      The computed mpi results are saved int my_mpi_values.txt." << endl;
-  cout << endl;
-  cout << "    paramedir -t linpack.prv times.txt" << endl;
-  cout << "    paramedir -t linpack.prv times.txt linpack.shifted.prv" << endl;
-  cout << endl;
+  std::cout << "USAGE" << std::endl;
+  std::cout << "  paramedir [OPTION] trc {xml} cfg {cfgout | cfg}*" << std::endl;
+  std::cout << std::endl;
+  std::cout << "    -h: Prints this help" << std::endl;
+  std::cout << "    -v: Prints version" << std::endl;
+  std::cout << std::endl;
+  std::cout << "  Histogram options:" << std::endl;
+  std::cout << "    -p: Only the selected Plane of a 3D histogram is printed. Default is to print all of them." << std::endl;
+  std::cout << "    -e: Hide Empty columns" << std::endl;
+  std::cout << std::endl;
+  std::cout << "  Output file options:" << std::endl;
+  std::cout << "    -m: Prints on Multiple files." << std::endl;
+  std::cout << std::endl;
+  std::cout << "  Cutter/Filter options ( needed unique xml file with cutter/filter options):" << std::endl;
+  std::cout << "    -c: Apply Cutter." << std::endl;
+  std::cout << "    -f: Apply Filter." << std::endl;
+  std::cout << "    -s: Apply Software Counters." << std::endl;
+  std::cout << "    -t: Apply Trace Times Shifter." << std::endl;
+//  std::cout << "    -j: Apply Communications Fusion. (in progress)" << std::endl;
+  std::cout << std::endl;
+  std::cout << "  Parameters:" << std::endl;
+  std::cout << "    trc: Paraver trace filename ( with extension .prv or .prv.gz )." << std::endl;
+  std::cout << "    xml: Options for cutter/filter/software counters ( with extension .xml )." << std::endl;
+  std::cout << "    cfg: Paraver configuration filename ( with extension .cfg ). If present, trace's loaded." << std::endl;
+  std::cout << "    out: Filename for cfg output ( default name is cfg filename without, with extension .mcr )." << std::endl;
+  std::cout << std::endl;
+  std::cout << "  Examples:" << std::endl;
+  std::cout << "    paramedir -m linpack.prv.gz mpi_stats.cfg" << std::endl;
+  std::cout << "      Computes the mpi_stats.cfg analysis of compressed trace linpack.prv." << std::endl;
+  std::cout << std::endl;
+  std::cout << "    paramedir -c linpack.prv cutter.xml" << std::endl;
+  std::cout << "      Reads parameters of the cutter from the xml and applies them to linpack.prv trace." << std::endl;
+  std::cout << std::endl;
+  std::cout << "    paramedir -f linpack.prv just_MPI_calls.xml" << std::endl;
+  std::cout << "      Filters mpi calls of linpack.prv. Doesn't load it, just writes the file." << std::endl;
+  std::cout << std::endl;
+  std::cout << "    paramedir -s -c -f linpack.prv cut_filter_options.xml mpi_stats.cfg my_mpi_values.txt" << std::endl;
+  std::cout << "      Reads parameters of the software counters, cutter and filter from the xml and applies them" << std::endl;
+  std::cout << "      pipelined in the given order ( trace -> software counters | cutter | filter -> result trace)" << std::endl;
+  std::cout << "      to linpack.prv trace, and the filtered trace is loaded and used to compute mpi_stats.cfg." << std::endl;
+  std::cout << "      The computed mpi results are saved int my_mpi_values.txt." << std::endl;
+  std::cout << std::endl;
+  std::cout << "    paramedir -t linpack.prv times.txt" << std::endl;
+  std::cout << "    paramedir -t linpack.prv times.txt linpack.shifted.prv" << std::endl;
+  std::cout << std::endl;
 }
 
 
 void printVersion()
 {
-  cout << PACKAGE_STRING;
+  std::cout << PACKAGE_STRING;
 
   bool reverseOrder = true;
   string auxDate = LabelConstructor::getDate( reverseOrder );
 
   if ( auxDate.compare("") != 0 )
-    cout << " Build ";
+    std::cout << " Build ";
 
-  cout << auxDate << endl;
+  std::cout << auxDate << std::endl;
 }
 
 
@@ -187,7 +187,7 @@ void activateOption( char *argument, vector< string > &filterToolOrder )
     shiftTimes = true;
   }
   else
-    cout << "Unknown option " << argument << endl;
+    std::cout << "Unknown option " << argument << std::endl;
 }
 
 #ifdef BYTHREAD
@@ -197,7 +197,7 @@ void getDumpIterations( int &currentArg, char *argv[] )
   {
     ++currentArg;
     string strNumIter( argv[ currentArg ] );
-    stringstream tmpNumIter( strNumIter );
+    std::stringstream tmpNumIter( strNumIter );
     if( !( tmpNumIter >> numIter ) )
     {
       numIter = 1;
@@ -222,7 +222,6 @@ void readParameters( int argc,
     if ( isOption( arguments[ currentArg ] ))
     {
       activateOption( arguments[ currentArg ], filterToolOrder );
-      std::cout << "paramedir::readParameters:option "  << arguments[ currentArg ] << std::endl;
 #ifdef BYTHREAD
       getDumpIterations( currentArg, arguments );
 #endif
@@ -248,7 +247,6 @@ void readParameters( int argc,
       //                paramedir -t shifttimes trace.prv
 
       strShiftTimesFile = string( arguments[ currentArg ] );
-      std::cout << "paramedir::readParameters "  << strShiftTimesFile << std::endl;
     }
     else
     {
@@ -304,7 +302,7 @@ string applyFilters( KernelConnection *myKernel,
   vector< TEventType > allTypes;
   vector< TEventType > typesWithValueZero;
   EventLabels labels;
-  map< TEventValue, string > currentEventValues;
+  std::map< TEventValue, string > currentEventValues;
   ParaverTraceConfig *config;
   FILE *pcfFile;
 
@@ -343,7 +341,6 @@ string applyFilters( KernelConnection *myKernel,
   for( PRV_UINT16 i = 0; i < filterToolOrder.size(); ++i )
   {
     tmpNameIn = tmpNameOut;
-    std::cout << "paramedir::applyFilters: id tool "  << filterToolOrder[ i ] << std::endl;
 
     if ( i < filterToolOrder.size() - 1 )
     {
@@ -356,7 +353,6 @@ string applyFilters( KernelConnection *myKernel,
       // Get full name (all tools) and append to file that list recent treated traces
       tmpNameOut = myKernel->getNewTraceName( fullTmpNameIn, filterToolOrder, true );
     }
-    std::cout << "paramedir::applyFilters: name "  << tmpNameOut << std::endl;
     //myKernel->getNewTraceName( tmpNameIn, tmpPathOut, filterToolOrder[ i ] );
     //tmpNameOut = tmpPathOut;
 
@@ -369,7 +365,7 @@ string applyFilters( KernelConnection *myKernel,
         fclose( pcfFile );
 
         config = new ParaverTraceConfig( pcf_name );
-        labels = EventLabels( *config, set<TEventType>() );
+        labels = EventLabels( *config, std::set<TEventType>() );
         labels.getTypes( allTypes );
         for( vector< TEventType >::iterator it = allTypes.begin(); it != allTypes.end(); ++it )
         {
@@ -392,7 +388,7 @@ string applyFilters( KernelConnection *myKernel,
     }
     else if ( filterToolOrder[i] == TraceFilter::getID() )
     {
-      map< TTypeValuePair, TTypeValuePair > translation;
+      std::map< TTypeValuePair, TTypeValuePair > translation;
 #if 1
       traceFilter = myKernel->newTraceFilter( (char *)tmpNameIn.c_str(),
                                               (char *)tmpNameOut.c_str(),
@@ -433,7 +429,6 @@ string applyFilters( KernelConnection *myKernel,
     else if ( filterToolOrder[i] == TraceShifter::getID() )
     {
       // TODO: si el kernel no va a hacer nada con las trazas, no tiene sentido pasar nombres
-      std::cout << "paramedir::TraceShifter execution"  << std::endl;
       traceShifter = myKernel->newTraceShifter( tmpNameIn, tmpNameOut, strShiftTimesFile );
       traceShifter->execute( tmpNameIn, tmpNameOut );
     }
@@ -483,7 +478,7 @@ bool loadTrace( KernelConnection *myKernel )
 
 void loadCFGs( KernelConnection *myKernel )
 {
-  for( map< string, string >::iterator it = cfgs.begin(); it != cfgs.end(); ++it )
+  for( std::map< string, string >::iterator it = cfgs.begin(); it != cfgs.end(); ++it )
   {
     vector<Window *> windows;
     vector<Histogram *> histograms;
@@ -505,7 +500,7 @@ void loadCFGs( KernelConnection *myKernel )
         output.dumpWindow( windows[ windows.size() - 1 ], it->second );
     }
     else
-      cout << "Cannot load '" << it->first << "' file." << endl;
+      std::cout << "Cannot load '" << it->first << "' file." << std::endl;
 
     for ( PRV_UINT32 i = 0; i < histograms.size(); ++i )
     {
@@ -585,7 +580,7 @@ int main( int argc, char *argv[] )
       {
         if ( !loadTrace( myKernel ) )
         {
-          cout << "Cannot load " << strTrace << endl;
+          std::cout << "Cannot load " << strTrace << std::endl;
           exit( 0 );
         }
 
