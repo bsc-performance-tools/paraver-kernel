@@ -57,8 +57,6 @@ TraceShifterProxy::TraceShifterProxy( const KernelConnection *whichKernel,
                                       ProgressController *progress )
 {
   myKernel = whichKernel;
-  // TODO: la lectura del fichero de tiempos se puede hacer en la api
-
   myTraceShifter = whichKernel->newTraceShifter( traceIn, traceOut, shiftTimesFile, progress );
 }
 
@@ -73,8 +71,6 @@ void TraceShifterProxy::execute( std::string traceIn,
                                  std::string traceOut,
                                  ProgressController *progress )
 {
-    std::cout << "TraceShifterProxy::execute" << std::endl;
-
   myTraceShifter->execute( traceIn, traceOut, progress );
 }
 

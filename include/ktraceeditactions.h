@@ -198,7 +198,6 @@ class TraceParserAction: public TraceToTraceAction
   protected:
 
   private:
-
 };
 
 
@@ -208,6 +207,14 @@ class TraceParserAction: public TraceToTraceAction
 class RecordTimeShifterAction: public RecordToRecordAction
 {
   public:
+    typedef enum
+    {
+      THREAD,  // as many shift times as threads
+      TASK,    // as many shift times as tasks
+      APP,     // as many shift times as applications
+      WORKLOAD // one time is enough
+    } TShiftLevel;
+
     RecordTimeShifterAction( TraceEditSequence *whichSequence ) : RecordToRecordAction( whichSequence )
     {}
     ~RecordTimeShifterAction()
@@ -217,10 +224,12 @@ class RecordTimeShifterAction: public RecordToRecordAction
 
     virtual void execute( MemoryTrace::iterator *whichRecord );
 
+    void setShiftLevel( TShiftLevel whichLevel );
+
   protected:
 
   private:
-
+    TShiftLevel mode;
 };
 
 
