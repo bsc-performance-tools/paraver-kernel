@@ -33,6 +33,7 @@ libparaver_kernel_la_SOURCES = \
     kwindowexception.cpp \
     memorytrace.cpp \
     noloadblocks.cpp \
+    noloadexception.cpp \
     noloadtrace.cpp \
     paraverkernelexception.cpp \
     plainblocks.cpp \

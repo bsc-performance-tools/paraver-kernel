@@ -28,6 +28,7 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "noloadblocks.h"
+#include "noloadexception.h"
 #include "paraverkernelexception.h"
 
 using namespace NoLoad;
@@ -47,11 +48,14 @@ NoLoadBlocks::NoLoadBlocks( const ResourceModel& resource, const ProcessModel& p
   tmpEndRec.time = endTime;
   tmpEndRec.type = EMPTYREC;
 
-  for ( TThreadOrder i = 0; i < processModel.totalThreads(); ++i )
+  if ( body->ordered() )
   {
-    traceIndex.push_back( Index<PRV_INT64>( 1000 ) );
-    emptyBeginRecords.push_back( tmpBeginRec );
-    emptyEndRecords.push_back( tmpEndRec );
+    for ( TThreadOrder i = 0; i < processModel.totalThreads(); ++i )
+    {
+      traceIndex.push_back( Index<PRV_INT64>( 1000 ) );
+      emptyBeginRecords.push_back( tmpBeginRec );
+      emptyEndRecords.push_back( tmpEndRec );
+    }
   }
 
   PRV_INT64 currentOffset = file->tellg();
@@ -114,10 +118,18 @@ void NoLoadBlocks::setThread( TThreadOrder whichThread )
 {
   if ( !fileLoaded )
   {
-    loadingThread = whichThread;
-    traceIndex[ loadingThread ].indexRecord( loadingRec.time, lastPos );
-    if ( loadingThread == beginThread.size() )
-      beginThread.push_back( lastPos );
+    if ( body->ordered() )
+    {
+      loadingThread = whichThread;
+      traceIndex[ loadingThread ].indexRecord( loadingRec.time, lastPos );
+      if ( loadingThread == beginThread.size() )
+        beginThread.push_back( lastPos );
+    }
+    else
+    {
+#warning NoLoadBlocks::setThread
+    }
+
     lastPos = file->tellg();
   }
   else
@@ -132,14 +144,30 @@ void NoLoadBlocks::setThread( TApplOrder whichAppl,
 {
   if ( !fileLoaded )
   {
-    whichThread = processModel.getGlobalThread( whichAppl,
-                  whichTask,
-                  whichThread );
-    loadingThread = whichThread;
-    traceIndex[ loadingThread ].indexRecord( loadingRec.time, lastPos );
+    if ( body->ordered() )
+    {
+      whichThread = processModel.getGlobalThread( whichAppl,
+                    whichTask,
+                    whichThread );
+      loadingThread = whichThread;
+      traceIndex[ loadingThread ].indexRecord( loadingRec.time, lastPos );
+    }
+    else
+    {
+#warning NoLoadBlocks::setThread
+    }
+
     lastPos = file->tellg();
-    if ( loadingThread == beginThread.size() )
-      beginThread.push_back( lastPos );
+
+    if ( body->ordered() )
+    {
+      if ( loadingThread == beginThread.size() )
+        beginThread.push_back( lastPos );
+    }
+    else
+    {
+#warning NoLoadBlocks::setThread
+    }
   }
   else
   {
@@ -327,6 +355,9 @@ TRecordTime NoLoadBlocks::getLastRecordTime() const
 
 void NoLoadBlocks::getBeginThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
+  if ( !body->ordered() )
+    throw NoLoad::NoLoadException( NoLoad::NoLoadException::wrongTraceBodyVersion, "" , __FILE__, __LINE__ );
+
   *record = &emptyBeginRecords[ whichThread ];
   offset = -1;
   recPos = 0;
@@ -334,6 +365,9 @@ void NoLoadBlocks::getBeginThreadRecord( TThreadOrder whichThread, TRecord **rec
 
 void NoLoadBlocks::getEndThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
+  if ( !body->ordered() )
+    throw NoLoad::NoLoadException( NoLoad::NoLoadException::wrongTraceBodyVersion, "" , __FILE__, __LINE__ );
+
   *record = &emptyEndRecords[ whichThread ];
   if ( whichThread == processModel.totalThreads() - 1 )
     offset = endFileOffset;
@@ -342,6 +376,22 @@ void NoLoadBlocks::getEndThreadRecord( TThreadOrder whichThread, TRecord **recor
   recPos = 0;
 }
 
+
+// Must be used with TraceBodyIO_v1
+void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+{
+
+}
+
+
+// Must be used with TraceBodyIO_v1
+void NoLoadBlocks::getPrevRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+{
+
+}
+
+
+// Must be used with TraceBodyIO_v2
 void NoLoadBlocks::getNextRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
   if( *record == &emptyEndRecords[ whichThread ] )
@@ -390,6 +440,7 @@ void NoLoadBlocks::getNextRecord( TThreadOrder whichThread, TRecord **record, PR
   ++currentData->numUseds;
 }
 
+// Must be used with TraceBodyIO_v2
 void NoLoadBlocks::getPrevRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
   if ( offset == -1 )
@@ -435,9 +486,13 @@ void NoLoadBlocks::getPrevRecord( TThreadOrder whichThread, TRecord **record, PR
   ++currentData->numUseds;
 }
 
+
 void NoLoadBlocks::getThreadRecordByTime( TThreadOrder whichThread, TRecordTime whichTime,
     TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
+  if ( !body->ordered() )
+    throw NoLoad::NoLoadException( NoLoad::NoLoadException::wrongTraceBodyVersion, "" , __FILE__, __LINE__ );
+
   if ( !traceIndex[ whichThread ].findRecord( whichTime, offset ) )
   {
     offset = -1;

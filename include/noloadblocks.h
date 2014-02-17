@@ -108,6 +108,11 @@ namespace NoLoad
       virtual void getBeginThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
       virtual void getEndThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
 
+      // Must be used with TraceBodyIO_v1
+      virtual void getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
+      virtual void getPrevRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
+
+      // Must be used with TraceBodyIO_v2
       virtual void getNextRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
       virtual void getPrevRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
 

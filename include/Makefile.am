@@ -41,6 +41,7 @@ noinst_HEADERS = \
                           memoryblocks.h\
                           memorytrace.h\
                           noloadblocks.h\
+                          noloadexception.h\
                           noloadtrace.h\
                           plainblocks.h\
                           plaintrace.h\
