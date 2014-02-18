@@ -356,6 +356,21 @@ TRecordTime NoLoadBlocks::getLastRecordTime() const
   return 0;
 }
 
+void NoLoadBlocks::getBeginRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+{
+  *record = &globalBeginRec;
+  offset = -1;
+  recPos = 0;
+}
+
+
+void NoLoadBlocks::getEndRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
+{
+  *record = &globalEndRec;
+  offset = endFileOffset;
+  recPos = 0;
+}
+
 void NoLoadBlocks::getBeginThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
   if ( !body->ordered() )

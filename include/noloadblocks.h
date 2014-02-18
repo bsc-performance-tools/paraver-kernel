@@ -105,6 +105,8 @@ namespace NoLoad
 
       virtual TRecordTime getLastRecordTime() const;
 
+      virtual void getBeginRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
+      virtual void getEndRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
       virtual void getBeginThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
       virtual void getEndThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
 

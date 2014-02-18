@@ -56,15 +56,32 @@ TTime NoLoadTrace::finish( TTime headerTime, Trace *whichTrace )
   return headerTime;
 }
 
+
 MemoryTrace::iterator* NoLoadTrace::begin() const
 {
-  return new NoLoadTrace::iterator();
+  TRecord *tmpRec;
+  PRV_INT64 tmpOffset;
+  PRV_UINT16 tmpPos;
+
+  blocks->getBeginRecord( &tmpRec, tmpOffset, tmpPos );
+
+  TThreadOrder dummyThread = 0;
+  return new iterator( blocks, dummyThread, tmpRec, tmpOffset, tmpPos );
 }
+
 
 MemoryTrace::iterator* NoLoadTrace::end() const
 {
-  return new NoLoadTrace::iterator();
+  TRecord *tmpRec;
+  PRV_INT64 tmpOffset;
+  PRV_UINT16 tmpPos;
+
+  blocks->getEndRecord( &tmpRec, tmpOffset, tmpPos );
+
+  TThreadOrder dummyThread = 0;
+  return new iterator( blocks, dummyThread, tmpRec, tmpOffset, tmpPos );
 }
+
 
 MemoryTrace::iterator* NoLoadTrace::threadBegin( TThreadOrder whichThread ) const
 {
