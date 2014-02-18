@@ -44,7 +44,6 @@
 				<Option compiler="gcc" />
 				<Option host_application="paraver-kernel" />
 				<Compiler>
-					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add directory="../include" />
 					<Add directory="../common-files" />
@@ -854,7 +853,11 @@
 			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/noloadexception.h">
-			<Option target="&lt;{~None~}&gt;" />
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Application test" />
+			<Option target="paramedir" />
+			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/noloadtrace.h">
 			<Option target="Debug" />

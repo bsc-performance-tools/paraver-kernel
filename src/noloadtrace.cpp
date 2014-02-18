@@ -236,6 +236,8 @@ void NoLoadTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
 
 MemoryTrace::iterator *NoLoadTrace::copyIterator( MemoryTrace::iterator *it )
 {
+  if ( ( ( NoLoadTrace::iterator * ) it )->offset != -1 )
+    blocks->incNumUseds( ( ( NoLoadTrace::iterator * ) it )->offset );
   return new NoLoadTrace::iterator( *( ( NoLoadTrace::iterator * ) it ) );
 }
 
@@ -255,18 +257,53 @@ MemoryTrace::iterator *NoLoadTrace::copyCPUIterator( MemoryTrace::iterator *it )
   return new NoLoadTrace::CPUIterator( *( ( NoLoadTrace::CPUIterator * ) it ) );
 }
 
+
 NoLoadTrace::iterator::iterator( NoLoadBlocks *whichBlocks )
-    : blocks( whichBlocks )
+    : blocks( whichBlocks ), destroyed( false )
+{}
+
+
+NoLoadTrace::iterator::iterator( NoLoadBlocks *whichBlocks, TThreadOrder whichThread,
+    TRecord *whichRecord, PRV_INT64 whichOffset, PRV_INT16 whichPos )
+    : blocks( whichBlocks ), thread( whichThread ),
+    offset( whichOffset ), recPos( whichPos ), destroyed( false )
 {}
 
 NoLoadTrace::iterator::~iterator()
-{}
+{
+  if ( !destroyed )
+  {
+    if ( !( record == NULL || offset == -1 ) )
+      blocks->decNumUseds( offset );
+
+    destroyed = true;
+  }
+}
 
 inline void NoLoadTrace::iterator::operator++()
-{}
+{
+  blocks->getNextRecord( ( TRecord ** )&record, offset, recPos );
+}
 
 inline void NoLoadTrace::iterator::operator--()
-{}
+{
+  blocks->getPrevRecord( ( TRecord ** )&record, offset, recPos );
+}
+
+inline MemoryTrace::iterator& NoLoadTrace::iterator::operator=( const MemoryTrace::iterator& copy )
+{
+  if ( this != &copy )
+  {
+    NoLoadTrace::iterator *tmpCopy = ( NoLoadTrace::iterator * ) & copy;
+    blocks->decNumUseds( offset );
+    thread = tmpCopy->thread;
+    offset = tmpCopy->offset;
+    recPos = tmpCopy->recPos;
+    record = tmpCopy->getRecord();
+    blocks->incNumUseds( offset );
+  }
+  return *this;
+}
 
 inline TRecordType NoLoadTrace::iterator::getType() const
 {
@@ -280,7 +317,7 @@ inline TRecordTime NoLoadTrace::iterator::getTime() const
 
 inline TThreadOrder NoLoadTrace::iterator::getThread() const
 {
-  return 0;
+  return thread;
 }
 
 inline TCPUOrder NoLoadTrace::iterator::getCPU() const
@@ -290,7 +327,7 @@ inline TCPUOrder NoLoadTrace::iterator::getCPU() const
 
 inline TObjectOrder NoLoadTrace::iterator::getOrder() const
 {
-  return 0;
+  return thread;
 }
 
 inline TEventType NoLoadTrace::iterator::getEventType() const
@@ -320,16 +357,13 @@ inline TCommID NoLoadTrace::iterator::getCommIndex() const
 
 NoLoadTrace::ThreadIterator::ThreadIterator( NoLoadBlocks *whichBlocks, TThreadOrder whichThread,
     TRecord *whichRecord, PRV_INT64 whichOffset, PRV_INT16 whichPos )
-    : NoLoadTrace::iterator( whichBlocks ), thread( whichThread ),
-    offset( whichOffset ), recPos( whichPos )
+    : NoLoadTrace::iterator( whichBlocks, whichThread, whichRecord, whichOffset, whichPos )
 {
   record = whichRecord;
 }
 
 NoLoadTrace::ThreadIterator::~ThreadIterator()
 {
-  if ( !( record == NULL || offset == -1 ) )
-    blocks->decNumUseds( offset );
 }
 
 inline TThreadOrder NoLoadTrace::ThreadIterator::getThread() const
@@ -383,10 +417,14 @@ NoLoadTrace::CPUIterator::CPUIterator( NoLoadBlocks *whichBlocks, TCPUOrder whic
 
 NoLoadTrace::CPUIterator::~CPUIterator()
 {
-  for ( TThreadOrder i = 0; i < threads.size(); ++i )
+  if( !destroyed )
   {
-    if ( !( threadRecords[ i ] == NULL || offset[ i ] == -1 ) )
-      blocks->decNumUseds( offset[ i ] );
+    for ( TThreadOrder i = 0; i < threads.size(); ++i )
+    {
+      if ( !( threadRecords[ i ] == NULL || offset[ i ] == -1 ) )
+        blocks->decNumUseds( offset[ i ] );
+    }
+    destroyed = true;
   }
 }
 

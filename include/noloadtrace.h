@@ -60,19 +60,20 @@ namespace NoLoad
     class iterator: public MemoryTrace::iterator
       {
         public:
-          iterator()
+          iterator() :
+            destroyed( false )
           {}
 
           iterator( NoLoadBlocks *whichBlocks );
+
+          iterator( NoLoadBlocks *whichBlocks, TThreadOrder whichThread,
+                    TRecord *whichRecord, PRV_INT64 whichOffset, PRV_INT16 whichPos );
 
           virtual ~iterator();
 
           virtual void operator++();
           virtual void operator--();
-          virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy )
-          {
-            return *this;
-          }
+          virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy );
 
           virtual TRecordType  getType() const;
           virtual TRecordTime  getTime() const;
@@ -87,6 +88,15 @@ namespace NoLoad
 
         protected:
           NoLoadBlocks *blocks;
+
+          TThreadOrder thread;
+          PRV_INT64 offset;
+          PRV_UINT16 recPos;
+
+          bool destroyed;
+
+        private:
+          friend class NoLoadTrace;
 
       };
 
@@ -109,10 +119,6 @@ namespace NoLoad
           virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy );
 
         private:
-          TThreadOrder thread;
-          PRV_INT64 offset;
-          PRV_UINT16 recPos;
-
           friend class NoLoadTrace;
       };
 

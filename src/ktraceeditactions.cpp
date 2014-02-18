@@ -42,7 +42,7 @@
 #include "textoutput.h"
 #include "traceoptions.h"
 #include "ParaverMetadataManager.h"
-
+#include "ktrace.h"
 
 /****************************************************************************
  ********                  TestAction                                ********
@@ -199,9 +199,15 @@ vector<TraceEditSequence::TSequenceStates> TraceParserAction::getStateDependenci
 void TraceParserAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
-  MemoryTrace::iterator *it = NULL;
+  KTrace myTrace( whichTrace, NULL, true );
 
-  tmpSequence->executeNextAction( it );
+  MemoryTrace::iterator *it = myTrace.begin();
+  while( it != myTrace.end() )
+  {
+    tmpSequence->executeNextAction( it++ );
+  }
+
+  delete it;
 }
 
 

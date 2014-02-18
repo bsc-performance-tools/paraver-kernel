@@ -141,10 +141,15 @@ namespace NoLoad
       TraceBodyIO *body;
       TraceStream *file;
       PRV_INT64 endFileOffset;
+      PRV_INT64 initialOffset;
 
       std::vector<Index<PRV_INT64> > traceIndex;
       std::map<PRV_INT64, fileLineData *> blocks;
       std::vector<PRV_INT64> beginThread;
+
+      TRecord globalBeginRec;
+      TRecord globalEndRec;
+
       std::vector<TRecord> emptyBeginRecords;
       std::vector<TRecord> emptyEndRecords;
 

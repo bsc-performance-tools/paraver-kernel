@@ -565,7 +565,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
 
 // Reading the body
 
-  if ( noLoad && body->ordered() )
+  if ( noLoad )
   {
     blocks = new NoLoadBlocks( traceResourceModel, traceProcessModel, body, file, traceEndTime );
     memTrace = new NoLoadTrace( blocks, traceProcessModel, traceResourceModel );

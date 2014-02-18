@@ -42,19 +42,19 @@ NoLoadBlocks::NoLoadBlocks( const ResourceModel& resource, const ProcessModel& p
     body( whichBody ), file( whichFile )
 {
   fileLoaded = false;
-  TRecord tmpBeginRec, tmpEndRec;
-  tmpBeginRec.time = 0;
-  tmpBeginRec.type = EMPTYREC;
-  tmpEndRec.time = endTime;
-  tmpEndRec.type = EMPTYREC;
+
+  globalBeginRec.time = 0;
+  globalBeginRec.type = EMPTYREC;
+  globalEndRec.time = endTime;
+  globalEndRec.type = EMPTYREC;
 
   if ( body->ordered() )
   {
     for ( TThreadOrder i = 0; i < processModel.totalThreads(); ++i )
     {
       traceIndex.push_back( Index<PRV_INT64>( 1000 ) );
-      emptyBeginRecords.push_back( tmpBeginRec );
-      emptyEndRecords.push_back( tmpEndRec );
+      emptyBeginRecords.push_back( globalBeginRec );
+      emptyEndRecords.push_back( globalEndRec );
     }
   }
 
@@ -62,6 +62,9 @@ NoLoadBlocks::NoLoadBlocks( const ResourceModel& resource, const ProcessModel& p
   file->seekend();
   endFileOffset = file->tellg();
   file->seekg( currentOffset );
+
+#warning Verify if initiaOffset == firstRecordOffset
+  initialOffset = currentOffset;
 }
 
 NoLoadBlocks::~NoLoadBlocks()
@@ -380,14 +383,95 @@ void NoLoadBlocks::getEndThreadRecord( TThreadOrder whichThread, TRecord **recor
 // Must be used with TraceBodyIO_v1
 void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
+  if( *record == &globalEndRec )
+  {
+    *record = NULL;
+    return;
+  }
+  else if ( offset != -1 )
+  {
+    fileLineData *tmpData = blocks[ offset ];
+    if ( recPos < tmpData->records.size() - 1 )
+    {
+      ++recPos;
+      *record = &tmpData->records[ recPos ];
+      return;
+    }
+    else if ( tmpData->endOffset == endFileOffset )
+    {
+      decNumUseds( offset );
+      offset = endFileOffset;
+      *record = NULL;
+      recPos = 0;
+      return;
+    }
 
+    decNumUseds( offset );
+    offset = tmpData->endOffset;
+  }
+  else
+    offset = initialOffset;
+
+  if ( blocks.count( offset ) == 0 )
+  {
+    file->clear();
+    file->seekg( offset );
+    lastData = NULL;
+    lastPos = offset;
+    body->read( file, *this, notUsedEvents, dummyTraceInfo );
+  }
+
+  fileLineData *currentData = blocks[ offset ];
+  *record = &currentData->records[ 0 ];
+  recPos = 0;
+  ++currentData->numUseds;
 }
 
 
 // Must be used with TraceBodyIO_v1
 void NoLoadBlocks::getPrevRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
+  if ( offset == -1 )
+  {
+    *record = NULL;
+    return;
+  }
+  else if( *record != &globalBeginRec )
+  {
+    if ( recPos > 0 )
+    {
+      fileLineData *tmpData = blocks[ offset ];
+      --recPos;
+      *record = &tmpData->records[ recPos ];
+      return;
+    }
+    else if ( offset == initialOffset )
+    {
+      decNumUseds( offset );
+      offset = -1;
+      *record = NULL;
+      return;
+    }
+  }
+  file->clear();
+  file->seekg( offset );
+  goToPrevLine();
 
+  if( *record != &globalBeginRec )
+    decNumUseds( offset );
+
+  offset = file->tellg();
+  if ( blocks.count( offset ) == 0 )
+  {
+    lastData = NULL;
+    lastPos = offset;
+    body->read( file, *this, notUsedEvents, dummyTraceInfo );
+  }
+
+  fileLineData *currentData = blocks[ offset ];
+  *record = &currentData->records[ 0 ];
+  recPos = 0;
+  ++currentData->numUseds;
 }
 
 
@@ -448,7 +532,7 @@ void NoLoadBlocks::getPrevRecord( TThreadOrder whichThread, TRecord **record, PR
     *record = NULL;
     return;
   }
-  else if( *record != &emptyEndRecords[ whichThread ] )
+  else if( *record != &emptyEndRecords[ whichThread ] ) // TODO  maybe begin?
   {
     if ( recPos > 0 )
     {
@@ -469,7 +553,7 @@ void NoLoadBlocks::getPrevRecord( TThreadOrder whichThread, TRecord **record, PR
   file->seekg( offset );
   goToPrevLine();
 
-  if( *record != &emptyEndRecords[ whichThread ] )
+  if( *record != &emptyEndRecords[ whichThread ] )  // TODO  maybe begin?
     decNumUseds( offset );
 
   offset = file->tellg();
