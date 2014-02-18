@@ -587,49 +587,52 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   hash_set<TEventType> hashevents;
 
   unsigned long long count = 0;
-  while ( !file->eof() )
+  if( !( noLoad && !body->ordered() ) )
   {
-    body->read( file, *blocks, hashevents, myTraceInfo );
-    if( blocks->getCountInserted() > 0 )
-      ++count;
+    while ( !file->eof() )
+    {
+      body->read( file, *blocks, hashevents, myTraceInfo );
+      if( blocks->getCountInserted() > 0 )
+        ++count;
 
-    if ( blocks->getCountInserted() >= 10000 )
+      if ( blocks->getCountInserted() >= 10000 )
+      {
+        memTrace->insert( blocks );
+        if ( progress != NULL )
+        {
+          if ( file->canseekend() )
+            progress->setCurrentProgress( file->tellg() );
+          else
+            progress->setCurrentProgress( blocks->getLastRecordTime() );
+        }
+
+        if ( progress != NULL && progress->getStop() )
+          break;
+      }
+    }
+
+    if ( blocks->getCountInserted() > 0 )
     {
       memTrace->insert( blocks );
-      if ( progress != NULL )
-      {
-        if ( file->canseekend() )
-          progress->setCurrentProgress( file->tellg() );
-        else
-          progress->setCurrentProgress( blocks->getLastRecordTime() );
-      }
-
-      if ( progress != NULL && progress->getStop() )
-        break;
+      ++count;
     }
-  }
 
-  if ( blocks->getCountInserted() > 0 )
-  {
-    memTrace->insert( blocks );
-    ++count;
-  }
+    if (count == 0)
+    {
+      throw TraceHeaderException( TraceHeaderException::emptyBody,
+                                  whichFile.c_str() );
+    }
 
-  if (count == 0)
-  {
-    throw TraceHeaderException( TraceHeaderException::emptyBody,
-                                whichFile.c_str() );
+    for ( hash_set<TEventType>::iterator it = hashevents.begin(); it != hashevents.end(); ++it )
+      events.insert( *it );
   }
-
-  for ( hash_set<TEventType>::iterator it = hashevents.begin(); it != hashevents.end(); ++it )
-    events.insert( *it );
 
 // End reading the body
   traceEndTime = memTrace->finish( traceEndTime, this );
 
 //  cout << traceEndTime << endl;
 
-  if ( !( noLoad && body->ordered() ) )
+  if ( !noLoad )
   {
     file->close();
     delete body;

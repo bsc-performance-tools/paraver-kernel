@@ -217,8 +217,8 @@ void NoLoadBlocks::setCommIndex( TCommID whichID )
 
 void NoLoadBlocks::newComm( bool createRecords )
 {
-  if ( createRecords )
-    throw ParaverKernelException();
+  //if ( createRecords )
+  //  throw ParaverKernelException();
 
   lastPos = file->tellg();
 

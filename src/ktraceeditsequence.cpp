@@ -273,7 +273,10 @@ void KTraceEditSequence::executeNextAction( std::string whichTrace )
 {
   ++currentAction;
   if( currentAction == sequenceActions.size() )
+  {
+    --currentAction;
     return;
+  }
 
   TraceToTraceAction *nextActionToTrace = ( TraceToTraceAction * )sequenceActions[ currentAction ];
   TraceToRecordAction *nextActionToRecord = ( TraceToRecordAction * )sequenceActions[ currentAction ];
@@ -308,7 +311,11 @@ void KTraceEditSequence::executeNextAction( MemoryTrace::iterator *whichRecord )
 {
   ++currentAction;
   if( currentAction == sequenceActions.size() )
+  {
+    --currentAction;
     return;
+  }
+
 
   RecordToTraceAction *nextActionToTrace = ( RecordToTraceAction * )sequenceActions[ currentAction ];
   RecordToRecordAction *nextActionToRecord = ( RecordToRecordAction * )sequenceActions[ currentAction ];

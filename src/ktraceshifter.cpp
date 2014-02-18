@@ -48,7 +48,7 @@ KTraceShifter::KTraceShifter( const KernelConnection *myKernel,
 
   mySequence->pushbackAction( TraceEditSequence::traceParserAction );
   mySequence->pushbackAction( TraceEditSequence::recordTimeShifterAction );
-  mySequence->pushbackAction( TraceEditSequence::traceWriterAction );
+  //mySequence->pushbackAction( TraceEditSequence::traceWriterAction );
   //mySequence->pushbackAction( TraceEditSequence::traceSortAction ); //?
 
   // State: max trace time

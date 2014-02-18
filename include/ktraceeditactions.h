@@ -183,10 +183,10 @@ class TraceShifterTimesLoaderAction: public TraceToTraceAction
 /****************************************************************************
  ********                  TraceParserAction                         ********
  ****************************************************************************/
-class TraceParserAction: public TraceToTraceAction
+class TraceParserAction: public TraceToRecordAction
 {
   public:
-    TraceParserAction( TraceEditSequence *whichSequence ) : TraceToTraceAction( whichSequence )
+    TraceParserAction( TraceEditSequence *whichSequence ) : TraceToRecordAction( whichSequence )
     {}
     ~TraceParserAction()
     {}
