@@ -157,6 +157,10 @@ namespace NoLoad
 
       std::vector<TCommInfo *> communications;
       TCommID currentComm;
+      TRecord *logSend;
+      TRecord *logRecv;
+      TRecord *phySend;
+      TRecord *phyRecv;
 
       fileLineData *lastData;
       PRV_INT16 lastRecord;

@@ -334,6 +334,17 @@ inline TRecordTime NoLoadTrace::iterator::getTime() const
 
 inline TThreadOrder NoLoadTrace::iterator::getThread() const
 {
+  if( !( ( ( TRecord * )record )->type & EMPTYREC ) )
+  {
+    if( ( ( TRecord * )record )->type & COMM )
+    {
+      if( ( ( TRecord * )record )->type & SEND )
+        return blocks->getSenderThread( ( ( TRecord * )record )->URecordInfo.commRecord.index );
+      else
+        return blocks->getReceiverThread( ( ( TRecord * )record )->URecordInfo.commRecord.index );
+    }
+  }
+
   return thread;
 }
 
@@ -344,6 +355,14 @@ inline TCPUOrder NoLoadTrace::iterator::getCPU() const
 
 inline TObjectOrder NoLoadTrace::iterator::getOrder() const
 {
+  if( ( ( TRecord * )record )->type & COMM )
+  {
+    if( ( ( TRecord * )record )->type & SEND )
+      return blocks->getSenderThread( ( ( TRecord * )record )->URecordInfo.commRecord.index );
+    else
+      return blocks->getReceiverThread( ( ( TRecord * )record )->URecordInfo.commRecord.index );
+  }
+
   return thread;
 }
 

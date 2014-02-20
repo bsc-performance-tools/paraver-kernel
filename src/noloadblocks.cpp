@@ -217,13 +217,33 @@ void NoLoadBlocks::setCommIndex( TCommID whichID )
 
 void NoLoadBlocks::newComm( bool createRecords )
 {
-  //if ( createRecords )
-  //  throw ParaverKernelException();
+  if ( createRecords )
+  {
+    newRecord();
+    setType( COMM + LOG + SEND );
+    logSend = &lastData->records[ lastRecord ];
+
+    newRecord();
+    setType( COMM + LOG + RECV );
+    logRecv = &lastData->records[ lastRecord ];
+
+    newRecord();
+    setType( COMM + PHY + SEND );
+    phySend = &lastData->records[ lastRecord ];
+
+    newRecord();
+    setType( COMM + PHY + RECV );
+    phyRecv = &lastData->records[ lastRecord ];
+  }
 
   lastPos = file->tellg();
 
   communications.push_back( new TCommInfo() );
   currentComm = communications.size() - 1;
+  logSend->URecordInfo.commRecord.index = currentComm;
+  logRecv->URecordInfo.commRecord.index = currentComm;
+  phySend->URecordInfo.commRecord.index = currentComm;
+  phyRecv->URecordInfo.commRecord.index = currentComm;
 }
 
 void NoLoadBlocks::setSenderThread( TThreadOrder whichThread )
