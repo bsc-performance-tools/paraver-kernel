@@ -204,7 +204,8 @@ void TraceParserAction::execute( std::string whichTrace )
   MemoryTrace::iterator *it = myTrace.begin();
   while( it != myTrace.end() )
   {
-    tmpSequence->executeNextAction( it++ );
+    tmpSequence->executeNextAction( it );
+    ++(*it);
   }
 
   delete it;
