@@ -235,16 +235,16 @@ void RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
   // Shift record times (depends on type)
   if ( whichRecord->getType() & EVENT )
   {
-    std::cout << "EVENT " << whichRecord->getTime() << std::endl;
+    //std::cout << "EVENT " << whichRecord->getTime() << std::endl;
   }
   else if ( whichRecord->getType() & STATE )
   {
-    std::cout << "STATE " << whichRecord->getTime() << std::endl;
+    //std::cout << "STATE " << whichRecord->getTime() << std::endl;
 
   }
   else if ( whichRecord->getType() & COMM )
   {
-    std::cout << "COMM " << whichRecord->getTime() << std::endl;
+    //std::cout << "COMM " << whichRecord->getTime() << std::endl;
   }
 
   tmpSequence->executeNextAction( whichRecord );
