@@ -98,6 +98,7 @@ void NoLoadBlocks::newRecord()
     else
     {
       lastData->records.push_back( TRecord() );
+std::cout << "NoLoad::NoLoadBlocks::newRecord - last record pushed: " << &lastData->records.back() << std::endl;
       ++lastRecord;
     }
   }
@@ -221,19 +222,20 @@ void NoLoadBlocks::newComm( bool createRecords )
   {
     newRecord();
     setType( COMM + LOG + SEND );
-    logSend = &lastData->records[ lastRecord ];
 
     newRecord();
     setType( COMM + LOG + RECV );
-    logRecv = &lastData->records[ lastRecord ];
 
     newRecord();
     setType( COMM + PHY + SEND );
-    phySend = &lastData->records[ lastRecord ];
 
     newRecord();
     setType( COMM + PHY + RECV );
-    phyRecv = &lastData->records[ lastRecord ];
+
+    logSend = &lastData->records[ lastRecord - 4 ];
+    logRecv = &lastData->records[ lastRecord - 3 ];
+    phySend = &lastData->records[ lastRecord - 2 ];
+    phyRecv = &lastData->records[ lastRecord - 1 ];
   }
 
   lastPos = file->tellg();

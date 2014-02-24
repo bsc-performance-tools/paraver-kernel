@@ -68,6 +68,7 @@ void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
       break;
 
     case CommRecord:
+std::cout << "line " << line << std::endl;
       readComm( line, records );
       break;
 
