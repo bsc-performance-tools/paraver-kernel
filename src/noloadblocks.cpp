@@ -461,8 +461,6 @@ void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
 
   while ( blocks.count( offset ) == 0 )
   {
-    body->read( file, *this, notUsedEvents, dummyTraceInfo );
-
     if( file->tellg() == endFileOffset )
     {
       decNumUseds( offset );
@@ -471,6 +469,8 @@ void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
       recPos = 0;
       return;
     }
+
+    body->read( file, *this, notUsedEvents, dummyTraceInfo );
   }
 
   fileLineData *currentData = blocks[ offset ];
