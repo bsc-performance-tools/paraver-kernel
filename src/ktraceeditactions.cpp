@@ -202,7 +202,7 @@ void TraceParserAction::execute( std::string whichTrace )
   KTrace myTrace( whichTrace, NULL, true );
 
   MemoryTrace::iterator *it = myTrace.begin();
-  while( it != myTrace.end() )
+  while( !it->isNull() )
   {
     tmpSequence->executeNextAction( it );
     ++(*it);
@@ -231,8 +231,6 @@ void RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
 
   // Get time data corresponding to that record : this should be done only one time
   std::vector< TTime > shiftTimes = ( (ShiftTimesState *)tmpSequence->getState( TraceEditSequence::shiftTimesState ) )->getData();
-
-std::cout<< "RecordTimeShifterAction::execute : thread: " << whichRecord->getThread()<<std::endl;
 
   if ( whichRecord->getType() == EMPTYREC )
   {

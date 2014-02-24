@@ -98,7 +98,6 @@ void NoLoadBlocks::newRecord()
     else
     {
       lastData->records.push_back( TRecord() );
-std::cout << "NoLoad::NoLoadBlocks::newRecord - last record pushed: " << &lastData->records.back() << std::endl;
       ++lastRecord;
     }
   }
@@ -428,6 +427,9 @@ void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
   else if ( offset != -1 )
   {
     fileLineData *tmpData = blocks[ offset ];
+  std::cout << "tmpData " << tmpData->endOffset << std::endl;
+  std::cout << "endFileOffset " << endFileOffset << std::endl;
+
     if ( recPos < tmpData->records.size() - 1 )
     {
       ++recPos;

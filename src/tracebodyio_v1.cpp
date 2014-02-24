@@ -53,6 +53,7 @@ void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
   if ( line.size() == 0 )
     return;
 
+std::cout << line << std::endl;
   switch ( line[0] )
   {
     case CommentRecord:
@@ -68,7 +69,6 @@ void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
       break;
 
     case CommRecord:
-std::cout << "line " << line << std::endl;
       readComm( line, records );
       break;
 
