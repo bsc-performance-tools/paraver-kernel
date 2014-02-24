@@ -232,30 +232,19 @@ void RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
   // Get time data corresponding to that record : this should be done only one time
   std::vector< TTime > shiftTimes = ( (ShiftTimesState *)tmpSequence->getState( TraceEditSequence::shiftTimesState ) )->getData();
 
-  if ( whichRecord->getType() == EMPTYREC )
-  {
-    std::cout << "EMPTY " << std::endl;
-  }
-
-
   // Shift record times (depends on type)
   if ( whichRecord->getType() & EVENT )
   {
     std::cout << "EVENT " << whichRecord->getTime() << std::endl;
   }
-
-  //else if ( whichRecord->getType() & STATE )
-  if ( whichRecord->getType() & STATE )
+  else if ( whichRecord->getType() & STATE )
   {
     std::cout << "STATE " << whichRecord->getTime() << std::endl;
 
   }
-
-  //else if ( whichRecord->getType() & COMM )
-  if ( whichRecord->getType() & COMM )
+  else if ( whichRecord->getType() & COMM )
   {
     std::cout << "COMM " << whichRecord->getTime() << std::endl;
-
   }
 
   tmpSequence->executeNextAction( whichRecord );

@@ -427,8 +427,6 @@ void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
   else if ( offset != -1 )
   {
     fileLineData *tmpData = blocks[ offset ];
-  std::cout << "tmpData " << tmpData->endOffset << std::endl;
-  std::cout << "endFileOffset " << endFileOffset << std::endl;
 
     if ( recPos < tmpData->records.size() - 1 )
     {
