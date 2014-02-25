@@ -82,6 +82,14 @@ class MemoryBlocks
     virtual void setLogicalReceive( TRecordTime whichTime ) = 0;
     virtual void setPhysicalSend( TRecordTime whichTime ) = 0;
     virtual void setPhysicalReceive( TRecordTime whichTime ) = 0;
+    virtual void setLogicalSend( TCommID whichComm, TRecordTime whichTime )
+    {}
+    virtual void setLogicalReceive( TCommID whichComm, TRecordTime whichTime )
+    {}
+    virtual void setPhysicalSend( TCommID whichComm, TRecordTime whichTime )
+    {}
+    virtual void setPhysicalReceive( TCommID whichComm, TRecordTime whichTime )
+    {}
 
     // Communication info getters
     virtual TCommID getTotalComms() const = 0;

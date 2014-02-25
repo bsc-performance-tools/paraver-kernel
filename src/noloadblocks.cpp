@@ -63,7 +63,6 @@ NoLoadBlocks::NoLoadBlocks( const ResourceModel& resource, const ProcessModel& p
   endFileOffset = file->tellg();
   file->seekg( currentOffset );
 
-#warning Verify if initiaOffset == firstRecordOffset
   initialOffset = currentOffset;
 }
 
@@ -128,10 +127,6 @@ void NoLoadBlocks::setThread( TThreadOrder whichThread )
       if ( loadingThread == beginThread.size() )
         beginThread.push_back( lastPos );
     }
-    else
-    {
-#warning NoLoadBlocks::setThread
-    }
 
     lastPos = file->tellg();
   }
@@ -155,10 +150,6 @@ void NoLoadBlocks::setThread( TApplOrder whichAppl,
       loadingThread = whichThread;
       traceIndex[ loadingThread ].indexRecord( loadingRec.time, lastPos );
     }
-    else
-    {
-#warning NoLoadBlocks::setThread
-    }
 
     lastPos = file->tellg();
 
@@ -166,10 +157,6 @@ void NoLoadBlocks::setThread( TApplOrder whichAppl,
     {
       if ( loadingThread == beginThread.size() )
         beginThread.push_back( lastPos );
-    }
-    else
-    {
-#warning NoLoadBlocks::setThread
     }
   }
   else
@@ -265,6 +252,8 @@ void NoLoadBlocks::setSenderThread( TApplOrder whichAppl,
 void NoLoadBlocks::setSenderCPU( TCPUOrder whichCPU )
 {
   communications[currentComm]->senderCPU = whichCPU;
+  logSend->CPU = whichCPU;
+  phySend->CPU = whichCPU;
 }
 
 void NoLoadBlocks::setReceiverThread( TThreadOrder whichThread )
@@ -285,6 +274,8 @@ void NoLoadBlocks::setReceiverThread( TApplOrder whichAppl,
 void NoLoadBlocks::setReceiverCPU( TCPUOrder whichCPU )
 {
   communications[currentComm]->receiverCPU = whichCPU;
+  logRecv->CPU = whichCPU;
+  phyRecv->CPU = whichCPU;
 }
 
 void NoLoadBlocks::setCommTag( TCommTag whichTag )
@@ -300,21 +291,45 @@ void NoLoadBlocks::setCommSize( TCommSize whichSize )
 void NoLoadBlocks::setLogicalSend( TRecordTime whichTime )
 {
   communications[currentComm]->logicalSendTime = whichTime;
+  logSend->time = whichTime;
 }
 
 void NoLoadBlocks::setLogicalReceive( TRecordTime whichTime )
 {
   communications[currentComm]->logicalReceiveTime = whichTime;
+  logRecv->time = whichTime;
 }
 
 void NoLoadBlocks::setPhysicalSend( TRecordTime whichTime )
 {
   communications[currentComm]->physicalSendTime = whichTime;
+  phySend->time = whichTime;
 }
 
 void NoLoadBlocks::setPhysicalReceive( TRecordTime whichTime )
 {
   communications[currentComm]->physicalReceiveTime = whichTime;
+  phyRecv->time = whichTime;
+}
+
+void NoLoadBlocks::setLogicalSend( TCommID whichComm, TRecordTime whichTime )
+{
+  communications[whichComm]->logicalSendTime = whichTime;
+}
+
+void NoLoadBlocks::setLogicalReceive( TCommID whichComm, TRecordTime whichTime )
+{
+  communications[whichComm]->logicalReceiveTime = whichTime;
+}
+
+void NoLoadBlocks::setPhysicalSend( TCommID whichComm, TRecordTime whichTime )
+{
+  communications[whichComm]->physicalSendTime = whichTime;
+}
+
+void NoLoadBlocks::setPhysicalReceive( TCommID whichComm, TRecordTime whichTime )
+{
+  communications[whichComm]->physicalReceiveTime = whichTime;
 }
 
 TCommID NoLoadBlocks::getTotalComms() const

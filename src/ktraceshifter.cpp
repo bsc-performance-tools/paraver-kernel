@@ -60,7 +60,7 @@ KTraceShifter::KTraceShifter( const KernelConnection *myKernel,
 
   // State: shift times
   ShiftTimesState *tmpShiftTimesState = new ShiftTimesState( mySequence );
-  tmpShiftTimesState->setData( shiftTimes );
+  tmpShiftTimesState->setData( &shiftTimes );
   mySequence->addState( TraceEditSequence::shiftTimesState, tmpShiftTimesState );
 
   OutputTraceFileNameState *tmpOutputTraceFileNameState = new OutputTraceFileNameState( mySequence );

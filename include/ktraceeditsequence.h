@@ -31,7 +31,8 @@
 #define KTRACEEDITSEQUENCE_H_INCLUDED
 
 #include "traceeditsequence.h"
-#include "memorytrace.h"
+
+class KTrace;
 
 class KTraceEditSequence:public TraceEditSequence
 {
@@ -41,6 +42,8 @@ class KTraceEditSequence:public TraceEditSequence
     virtual ~KTraceEditSequence();
 
     TraceEditState *createState( TraceEditSequence::TSequenceStates whichState );
+    void setCurrentTrace( KTrace *whichTrace );
+    KTrace *getCurrentTrace();
 
     bool addState( TraceEditSequence::TSequenceStates whichState );
     bool addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState );
@@ -58,6 +61,7 @@ class KTraceEditSequence:public TraceEditSequence
   private:
     map<TraceEditSequence::TSequenceStates, TraceEditState *> activeStates;
     vector<TraceEditAction *> sequenceActions;
+    KTrace *currentTrace;
 
     PRV_UINT16 currentAction;
 

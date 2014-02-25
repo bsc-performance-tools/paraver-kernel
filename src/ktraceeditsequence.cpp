@@ -28,6 +28,7 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include <stdexcept>
+#include "ktrace.h"
 #include "ktraceeditsequence.h"
 #include "traceeditstates.h"
 #include "ktraceeditactions.h"
@@ -100,6 +101,18 @@ TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceSta
   }
 
   return NULL;
+}
+
+
+void KTraceEditSequence::setCurrentTrace( KTrace *whichTrace )
+{
+  currentTrace = whichTrace;
+}
+
+
+KTrace *KTraceEditSequence::getCurrentTrace()
+{
+  return currentTrace;
 }
 
 

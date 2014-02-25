@@ -50,8 +50,6 @@
 
 void TestAction::execute( std::string whichTrace )
 {
-  std::cout << "testAction::execute with parameter: " << whichTrace << std::endl;
-
   ((KTraceEditSequence *)mySequence)->executeNextAction( whichTrace );
 }
 
@@ -199,7 +197,9 @@ vector<TraceEditSequence::TSequenceStates> TraceParserAction::getStateDependenci
 void TraceParserAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
+
   KTrace myTrace( whichTrace, NULL, true );
+  tmpSequence->setCurrentTrace( &myTrace );
 
   MemoryTrace::iterator *it = myTrace.begin();
   while( !it->isNull() )
@@ -229,22 +229,14 @@ void RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
 
-  // Get time data corresponding to that record : this should be done only one time
-  std::vector< TTime > shiftTimes = ( (ShiftTimesState *)tmpSequence->getState( TraceEditSequence::shiftTimesState ) )->getData();
+  std::vector< TTime > *shiftTimes = ( (ShiftTimesState *)tmpSequence->getState( TraceEditSequence::shiftTimesState ) )->getData();
+  // TODO: Control order <--> shifTimes size
+  TTime shiftedTime = whichRecord->getTime() + (*shiftTimes)[ whichRecord->getOrder() ];
 
-  // Shift record times (depends on type)
-  if ( whichRecord->getType() & EVENT )
+  whichRecord->setTime( shiftedTime );
+  if ( whichRecord->getType() & LOG & SEND )
   {
-    //std::cout << "EVENT " << whichRecord->getTime() << std::endl;
-  }
-  else if ( whichRecord->getType() & STATE )
-  {
-    //std::cout << "STATE " << whichRecord->getTime() << std::endl;
 
-  }
-  else if ( whichRecord->getType() & COMM )
-  {
-    //std::cout << "COMM " << whichRecord->getTime() << std::endl;
   }
 
   tmpSequence->executeNextAction( whichRecord );
@@ -270,6 +262,9 @@ void TraceWriterAction::execute( MemoryTrace::iterator *it  )
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
 
   std::string tmpFileName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
+
+
+
 
   tmpSequence->executeNextAction( it );
 }

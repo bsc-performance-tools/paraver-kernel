@@ -391,6 +391,11 @@ inline TCommID NoLoadTrace::iterator::getCommIndex() const
   return ( ( TRecord * )record )->URecordInfo.commRecord.index;
 }
 
+inline void NoLoadTrace::iterator::setTime( const TRecordTime whichTime )
+{
+  ( ( TRecord * )record )->time = whichTime;
+}
+
 NoLoadTrace::ThreadIterator::ThreadIterator( NoLoadBlocks *whichBlocks, TThreadOrder whichThread,
     TRecord *whichRecord, PRV_INT64 whichOffset, PRV_INT16 whichPos )
     : NoLoadTrace::iterator( whichBlocks, whichThread, whichRecord, whichOffset, whichPos )

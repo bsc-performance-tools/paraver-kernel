@@ -86,6 +86,8 @@ namespace NoLoad
           virtual TRecordTime  getStateEndTime() const;
           virtual TCommID      getCommIndex() const;
 
+          virtual void         setTime( const TRecordTime whichTime );
+
         protected:
           NoLoadBlocks *blocks;
 

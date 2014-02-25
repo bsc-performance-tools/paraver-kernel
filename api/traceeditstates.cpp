@@ -234,4 +234,3 @@ void DerivedTraceEditStateTTime< SeqT >::setData( TTime whichData )
   myData = whichData;
 }
 
-

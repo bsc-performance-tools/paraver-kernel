@@ -1203,6 +1203,10 @@ inline TCommID      BPlusTree::iterator::getCommIndex() const
   return ( ( TRecord * )record )->URecordInfo.commRecord.index;
 }
 
+inline void BPlusTree::iterator::setTime( const TRecordTime whichTime )
+{
+  ( ( TRecord * )record )->time = whichTime;
+}
 
 /**************************************************************************
  * MemoryTrace Inherited ThreadIterator.

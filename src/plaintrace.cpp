@@ -282,6 +282,12 @@ inline TCommID      PlainTrace::iterator::getCommIndex() const
   return ( ( TRecord * )record )->URecordInfo.commRecord.index;
 }
 
+inline void PlainTrace::iterator::setTime( const TRecordTime whichTime )
+{
+  ( ( TRecord * )record )->time = whichTime;
+}
+
+
 
 /**************************************************************************
  * MemoryTrace Inherited ThreadIterator.
