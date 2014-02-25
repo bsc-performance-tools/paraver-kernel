@@ -231,9 +231,9 @@ void RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
 
   std::vector< TTime > *shiftTimes = ( (ShiftTimesState *)tmpSequence->getState( TraceEditSequence::shiftTimesState ) )->getData();
   // TODO: Control order <--> shifTimes size
-  TTime shiftedTime = whichRecord->getTime() + (*shiftTimes)[ whichRecord->getOrder() ];
+  //TTime shiftedTime = whichRecord->getTime() + (*shiftTimes)[ whichRecord->getOrder() ];
 
-  whichRecord->setTime( shiftedTime );
+  //whichRecord->setTime( shiftedTime );
   if ( whichRecord->getType() & LOG & SEND )
   {
 
@@ -261,10 +261,16 @@ void TraceWriterAction::execute( MemoryTrace::iterator *it  )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
 
-  std::string tmpFileName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
+  if( !outputTrace.is_open() )
+  {
+    std::string tmpFileName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
+    outputTrace.open( tmpFileName.c_str(), std::ios::out );
+  }
 
-
-
+  if ( it->getType() == STATE + BEGIN )
+  {
+    body.write( outputTrace, *tmpSequence->getCurrentTrace(), it );
+  }
 
   tmpSequence->executeNextAction( it );
 }

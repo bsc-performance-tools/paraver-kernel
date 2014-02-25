@@ -90,6 +90,7 @@ void TraceBodyIO_v1::write( fstream& whichStream,
 {
   bool writeReady;
   TRecordType type = record->getType();
+  line.clear();
 
   if ( type == EMPTYREC )
     return;

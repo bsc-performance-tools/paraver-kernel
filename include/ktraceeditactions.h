@@ -30,8 +30,11 @@
 #ifndef KTRACEEDITACTIONS_H_INCLUDED
 #define KTRACEEDITACTIONS_H_INCLUDED
 
+#include <fstream>
+
 #include "traceeditactions.h"
 #include "memorytrace.h"
+#include "tracebodyio_v1.h"
 
 class TraceToRecordAction: public TraceEditAction
 {
@@ -251,7 +254,8 @@ class TraceWriterAction: public RecordToTraceAction
   protected:
 
   private:
-
+    std::fstream outputTrace;
+    TraceBodyIO_v1 body;
 };
 
 

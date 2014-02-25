@@ -78,6 +78,7 @@ namespace Plain
   {
     TRecordTime  time;
     TRecordType  type;
+    TThreadOrder thread; // Needed by trace edit sequence
     TCPUOrder    CPU;
     union
     {

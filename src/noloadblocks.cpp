@@ -133,6 +133,7 @@ void NoLoadBlocks::setThread( TThreadOrder whichThread )
   else
   {
     lastData->thread = whichThread;
+    lastData->records[ lastRecord ].thread = whichThread;
   }
 }
 
@@ -145,8 +146,8 @@ void NoLoadBlocks::setThread( TApplOrder whichAppl,
     if ( body->ordered() )
     {
       whichThread = processModel.getGlobalThread( whichAppl,
-                    whichTask,
-                    whichThread );
+                                                  whichTask,
+                                                  whichThread );
       loadingThread = whichThread;
       traceIndex[ loadingThread ].indexRecord( loadingRec.time, lastPos );
     }
@@ -161,7 +162,11 @@ void NoLoadBlocks::setThread( TApplOrder whichAppl,
   }
   else
   {
+    whichThread = processModel.getGlobalThread( whichAppl,
+                                                whichTask,
+                                                whichThread );
     lastData->thread = whichThread;
+    lastData->records[ lastRecord ].thread = whichThread;
   }
 }
 
@@ -237,6 +242,8 @@ void NoLoadBlocks::newComm( bool createRecords )
 void NoLoadBlocks::setSenderThread( TThreadOrder whichThread )
 {
   communications[currentComm]->senderThread = whichThread;
+  logSend->thread = whichThread;
+  phySend->thread = whichThread;
 }
 
 void NoLoadBlocks::setSenderThread( TApplOrder whichAppl,
@@ -247,6 +254,8 @@ void NoLoadBlocks::setSenderThread( TApplOrder whichAppl,
                               whichTask,
                               whichThread );
   communications[currentComm]->senderThread = globalThread;
+  logSend->thread = globalThread;
+  phySend->thread = globalThread;
 }
 
 void NoLoadBlocks::setSenderCPU( TCPUOrder whichCPU )
@@ -259,6 +268,8 @@ void NoLoadBlocks::setSenderCPU( TCPUOrder whichCPU )
 void NoLoadBlocks::setReceiverThread( TThreadOrder whichThread )
 {
   communications[currentComm]->receiverThread = whichThread;
+  logRecv->thread = whichThread;
+  phyRecv->thread = whichThread;
 }
 
 void NoLoadBlocks::setReceiverThread( TApplOrder whichAppl,
@@ -269,6 +280,8 @@ void NoLoadBlocks::setReceiverThread( TApplOrder whichAppl,
                               whichTask,
                               whichThread );
   communications[currentComm]->receiverThread = globalThread;
+  logRecv->thread = globalThread;
+  phyRecv->thread = globalThread;
 }
 
 void NoLoadBlocks::setReceiverCPU( TCPUOrder whichCPU )
