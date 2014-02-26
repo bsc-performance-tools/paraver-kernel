@@ -451,6 +451,9 @@ bool TraceBodyIO_v1::writeState( string& line,
     return false;
 
   ostringstream ostr;
+  ostr << fixed;
+  ostr << dec;
+  ostr.precision( 0 );
 
   ostr << StateRecord << ':';
   writeCommon( ostr, whichTrace, record );
@@ -467,6 +470,9 @@ bool TraceBodyIO_v1::writeEvent( string& line,
                                  bool needCommons ) const
 {
   ostringstream ostr;
+  ostr << fixed;
+  ostr << dec;
+  ostr.precision( 0 );
 
   if ( needCommons )
   {
@@ -489,6 +495,10 @@ bool TraceBodyIO_v1::writeComm( string& line,
   TApplOrder recvAppl;
   TTaskOrder recvTask;
   TThreadOrder recvThread;
+
+  ostr << fixed;
+  ostr << dec;
+  ostr.precision( 0 );
 
   if ( !( record->getType() == ( COMM + LOG + SEND ) ) )
     return false;

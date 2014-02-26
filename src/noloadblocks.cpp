@@ -479,8 +479,11 @@ void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
 
   if ( blocks.count( offset ) == 0 )
   {
-    file->clear();
-    file->seekg( offset );
+    if( body->ordered() )
+    {
+      file->clear();
+      file->seekg( offset );
+    }
     lastData = NULL;
     lastPos = offset;
   }
