@@ -345,7 +345,7 @@ inline TThreadOrder NoLoadTrace::iterator::getThread() const
     }
   }
 
-  return thread;
+  return ( ( TRecord * )record )->thread;
 }
 
 inline TCPUOrder NoLoadTrace::iterator::getCPU() const
