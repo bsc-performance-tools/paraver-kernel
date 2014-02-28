@@ -223,10 +223,10 @@ void NoLoadBlocks::newComm( bool createRecords )
     newRecord();
     setType( COMM + PHY + RECV );
 
-    logSend = &lastData->records[ lastRecord - 4 ];
-    logRecv = &lastData->records[ lastRecord - 3 ];
-    phySend = &lastData->records[ lastRecord - 2 ];
-    phyRecv = &lastData->records[ lastRecord - 1 ];
+    logSend = &lastData->records[ lastRecord - 3 ];
+    logRecv = &lastData->records[ lastRecord - 2 ];
+    phySend = &lastData->records[ lastRecord - 1 ];
+    phyRecv = &lastData->records[ lastRecord ];
   }
 
   lastPos = file->tellg();

@@ -234,11 +234,11 @@ void RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
   //TTime shiftedTime = whichRecord->getTime() + (*shiftTimes)[ whichRecord->getOrder() ];
 
   //whichRecord->setTime( shiftedTime );
-  if ( whichRecord->getType() & LOG & SEND )
+/*  if ( whichRecord->getType() & LOG & SEND )
   {
 
   }
-
+*/
   tmpSequence->executeNextAction( whichRecord );
 }
 
