@@ -82,6 +82,7 @@ class KTrace: public Trace
       return memTrace->copyCPUIterator( it );
     }
 
+    void dumpFileHeader( std::fstream& file, bool newFormat = false, PRV_INT32 numIter = 1 ) const;
     void dumpFile( const std::string& whichFile, PRV_INT32 numIter = 1 ) const;
 
     TApplOrder totalApplications() const;

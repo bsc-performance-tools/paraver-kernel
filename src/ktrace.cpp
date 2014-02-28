@@ -339,8 +339,7 @@ TRecordTime KTrace::getPhysicalReceive( TCommID whichComm ) const
   return blocks->getPhysicalReceive( whichComm );
 }
 
-
-void KTrace::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
+void KTrace::dumpFileHeader( std::fstream& file, bool newFormat , PRV_INT32 numIter) const
 {
   ostringstream ostr;
 
@@ -348,12 +347,13 @@ void KTrace::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
   ostr << dec;
   ostr.precision( 0 );
 
-  std::fstream file( whichFile.c_str(), fstream::out | fstream::trunc );
   file << fixed;
   file << dec;
   file.precision( 0 );
 
-  file << "new format" << endl;
+  if( newFormat )
+    file << "new format" << endl;
+
   file << date << ':';
   ostr << traceEndTime * numIter;
   file << ostr.str();
@@ -362,7 +362,7 @@ void KTrace::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
   file << ':';
   traceResourceModel.dumpToFile( file );
   file << ':';
-  traceProcessModel.dumpToFile( file );
+  traceProcessModel.dumpToFile( file, existResourceInfo() );
   if ( communicators.begin() != communicators.end() )
   {
     file << ',' << communicators.size() << endl;
@@ -372,6 +372,17 @@ void KTrace::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
   }
   else
     file << endl;
+}
+void KTrace::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
+{
+  ostringstream ostr;
+
+  ostr << fixed;
+  ostr << dec;
+  ostr.precision( 0 );
+
+  std::fstream file( whichFile.c_str(), fstream::out | fstream::trunc );
+  dumpFileHeader( file, true, numIter );
 
 #ifdef BYTHREAD
   TraceBodyIO *body = TraceBodyIO::createTraceBody();

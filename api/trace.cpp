@@ -237,6 +237,11 @@ void TraceProxy::setInstanceNumber( PRV_UINT32 whichInstanceNumber )
   instanceNumber = whichInstanceNumber;
 }
 
+void TraceProxy::dumpFileHeader( std::fstream& file, bool newFormat, PRV_INT32 numIter ) const
+{
+  myTrace->dumpFileHeader( file, newFormat, numIter );
+}
+
 void TraceProxy::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
 {
   myTrace->dumpFile( whichFile, numIter );

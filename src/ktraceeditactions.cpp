@@ -265,9 +265,13 @@ void TraceWriterAction::execute( MemoryTrace::iterator *it  )
   {
     std::string tmpFileName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
     outputTrace.open( tmpFileName.c_str(), std::ios::out );
+    tmpSequence->getCurrentTrace()->dumpFileHeader( outputTrace );
   }
 
-  if ( it->getType() == STATE + BEGIN )
+  if ( ( it->getType() == STATE + BEGIN ) ||
+       ( it->getType() == EVENT ) ||
+       ( it->getType() == COMM + LOG + SEND )
+     )
   {
     body.write( outputTrace, *tmpSequence->getCurrentTrace(), it );
   }

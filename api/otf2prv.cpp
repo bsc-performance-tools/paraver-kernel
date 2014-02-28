@@ -255,7 +255,7 @@ void writeHeaderResourceModel( TranslationData *transData )
 
 void writeHeaderProcessModel( TranslationData *transData )
 {
-  transData->processModel->dumpToFile( *transData->PRVFile );
+  transData->processModel->dumpToFile( *transData->PRVFile, transData->resourcesModel->isReady() );
   *transData->PRVFile << ",0" << endl;
 }
 

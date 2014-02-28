@@ -209,7 +209,7 @@ ProcessModel::ProcessModel( istringstream& headerInfo, Trace *whichTrace )
 }
 
 
-void ProcessModel::dumpToFile( fstream& file ) const
+void ProcessModel::dumpToFile( fstream& file, bool existResourceInfo ) const
 {
   ostringstream ostr;
   ostr << fixed;
@@ -223,7 +223,10 @@ void ProcessModel::dumpToFile( fstream& file ) const
     for ( TTaskOrder iTask = 0; iTask < applications[ iAppl ].tasks.size(); ++iTask )
     {
       ostr << applications[ iAppl ].tasks[ iTask ].threads.size() << ':';
-      ostr << applications[ iAppl ].tasks[ iTask ].threads[ 0 ].nodeExecution + 1;
+      if( existResourceInfo )
+        ostr << applications[ iAppl ].tasks[ iTask ].threads[ 0 ].nodeExecution + 1;
+      else
+        ostr << "0";
 
       if ( iTask < applications[ iAppl ].tasks.size() - 1 )
         ostr << ',';

@@ -62,7 +62,7 @@ class ProcessModel
       ready = newValue;
     }
 
-    void dumpToFile( std::fstream& file ) const;
+    void dumpToFile( std::fstream& file, bool existResourceInfo ) const;
 
     TApplOrder totalApplications() const;
 
