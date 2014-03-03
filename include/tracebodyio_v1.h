@@ -94,6 +94,8 @@ class TraceBodyIO_v1 : public TraceBodyIO
     static std::istringstream strLine;
     static std::string tmpstring;
     static std::string line;
+
+    static std::ostringstream ostr;
 };
 
 

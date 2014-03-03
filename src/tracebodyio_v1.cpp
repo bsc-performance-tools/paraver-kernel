@@ -38,6 +38,7 @@ istringstream TraceBodyIO_v1::fieldStream;
 istringstream TraceBodyIO_v1::strLine;
 string TraceBodyIO_v1::tmpstring;
 string TraceBodyIO_v1::line;
+ostringstream TraceBodyIO_v1::ostr;
 
 
 bool TraceBodyIO_v1::ordered() const
@@ -450,7 +451,8 @@ bool TraceBodyIO_v1::writeState( string& line,
   if ( record->getType() & END )
     return false;
 
-  ostringstream ostr;
+  ostr.clear();
+  ostr.str( "" );
   ostr << fixed;
   ostr << dec;
   ostr.precision( 0 );
@@ -469,7 +471,8 @@ bool TraceBodyIO_v1::writeEvent( string& line,
                                  const MemoryTrace::iterator *record,
                                  bool needCommons ) const
 {
-  ostringstream ostr;
+  ostr.clear();
+  ostr.str( "" );
   ostr << fixed;
   ostr << dec;
   ostr.precision( 0 );
@@ -490,12 +493,14 @@ bool TraceBodyIO_v1::writeComm( string& line,
                                 const KTrace& whichTrace,
                                 const MemoryTrace::iterator *record ) const
 {
-  ostringstream ostr;
+
   TCommID commID;
   TApplOrder recvAppl;
   TTaskOrder recvTask;
   TThreadOrder recvThread;
 
+  ostr.clear();
+  ostr.str( "" );
   ostr << fixed;
   ostr << dec;
   ostr.precision( 0 );
