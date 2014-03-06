@@ -1208,6 +1208,11 @@ inline void BPlusTree::iterator::setTime( const TRecordTime whichTime )
   ( ( TRecord * )record )->time = whichTime;
 }
 
+inline void BPlusTree::iterator::setType( const TRecordType whichType )
+{
+  ( ( TRecord * )record )->type = whichType;
+}
+
 /**************************************************************************
  * MemoryTrace Inherited ThreadIterator.
  **************************************************************************/
@@ -1304,6 +1309,14 @@ inline void BPlusTree::CPUIterator::operator--()
 /**************************************************************************
  * MemoryTrace Inherited CPUIterator.
  **************************************************************************/
+MemoryTrace::iterator* BPlusTree::empty() const
+{
+  TRecord *empty = new TRecord();
+  empty->type = EMPTYREC;
+
+  return new BPlusTree::iterator( empty );
+}
+
 MemoryTrace::iterator* BPlusTree::begin() const
 {
   return new BPlusTree::iterator( unloadedTrace->getBegin() );

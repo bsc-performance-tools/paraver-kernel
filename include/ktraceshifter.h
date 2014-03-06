@@ -61,7 +61,6 @@ class KTraceShifter : public TraceShifter
 
     std::vector<std::string> traces;
 
-
     std::vector< TTime > readShiftTimes( std::string shiftTimesFile );
 
 };

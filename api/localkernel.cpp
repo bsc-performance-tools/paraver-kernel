@@ -278,7 +278,6 @@ TraceShifter *LocalKernel::newTraceShifter( std::string traceIn,
   if ( progress != NULL )
     tmpKProgressControler = (KProgressController *)progress->getConcrete();
 
-  //return new KTraceShifter( const_cast< LocalKernel * >(this), traceIn, traceOut, shiftTimesFile, tmpKProgressControler );
   return new KTraceShifter( this, traceIn, traceOut, shiftTimesFile, tmpKProgressControler );
 }
 

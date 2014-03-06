@@ -74,6 +74,7 @@ TraceEditSequenceProxy::TraceEditSequenceProxy( const KernelConnection *whichKer
 
 TraceEditSequenceProxy::~TraceEditSequenceProxy()
 {
+  delete mySequence;
 }
 
 

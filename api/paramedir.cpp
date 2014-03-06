@@ -428,9 +428,10 @@ string applyFilters( KernelConnection *myKernel,
     }
     else if ( filterToolOrder[i] == TraceShifter::getID() )
     {
-      // TODO: si el kernel no va a hacer nada con las trazas, no tiene sentido pasar nombres
+      // TODO: if kernel isn't going to use the traces, it doesn't make sense to pass names
       traceShifter = myKernel->newTraceShifter( tmpNameIn, tmpNameOut, strShiftTimesFile );
       traceShifter->execute( tmpNameIn, tmpNameOut );
+      delete traceShifter;
     }
 
     myKernel->copyROW( tmpNameIn, tmpNameOut );

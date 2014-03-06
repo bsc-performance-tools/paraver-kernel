@@ -42,10 +42,9 @@ TraceShifter *TraceShifter::create( const KernelConnection *whichKernel,
                                     std::string traceIn,
                                     std::string traceOut,
                                     std::string shiftTimesFile,
-                                    //TraceOptions *options,
                                     ProgressController *progress )
 {
-  return new TraceShifterProxy( whichKernel, traceIn, traceOut, shiftTimesFile, /*, options,*/ progress );
+  return new TraceShifterProxy( whichKernel, traceIn, traceOut, shiftTimesFile, progress );
 }
 
 
@@ -53,7 +52,6 @@ TraceShifterProxy::TraceShifterProxy( const KernelConnection *whichKernel,
                                       std::string traceIn,
                                       std::string traceOut,
                                       std::string shiftTimesFile,
-                                      //TraceOptions *options,
                                       ProgressController *progress )
 {
   myKernel = whichKernel;

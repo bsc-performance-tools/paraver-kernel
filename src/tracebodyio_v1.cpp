@@ -34,6 +34,10 @@
 
 using namespace std;
 
+string TraceBodyIO_v1::multiEventLine;
+TraceBodyIO_v1::TMultiEventCommonInfo TraceBodyIO_v1::multiEventCommonInfo =
+        { (TThreadOrder)0, (TCPUOrder)0, (TRecordTime)0 };
+
 istringstream TraceBodyIO_v1::fieldStream;
 istringstream TraceBodyIO_v1::strLine;
 string TraceBodyIO_v1::tmpstring;
@@ -94,48 +98,79 @@ void TraceBodyIO_v1::write( fstream& whichStream,
   line.clear();
 
   if ( type == EMPTYREC )
-    return;
-  else if ( type & STATE )
-    writeReady = writeState( line, whichTrace, record );
-  else if ( type & EVENT )
-    writeReady = writeEvent( line, whichTrace, record );
-  else if ( type & COMM )
-    writeReady = writeComm( line, whichTrace, record );
-  else if ( type & GLOBCOMM )
-    writeReady = writeGlobalComm( line, whichTrace, record );
-  else if ( type & RSEND || type & RRECV )
-    writeReady = false;
+  {
+    writeReady = writePendingMultiEvent( whichTrace );
+    if ( writeReady )
+    {
+      whichStream << line << endl;
+      line.clear();
+    }
+  }
   else
   {
-    writeReady = false;
-    cerr << "No logging system yet. TraceBodyIO_v1::write()" << endl;
-    cerr << "Unkwnown record type in memory." << endl;
-  }
-
-  if ( !writeReady )
-    return;
-
-  whichStream << line << endl;
-}
-
-
-void TraceBodyIO_v1::writeEvents( fstream& whichStream,
-                                  const KTrace& whichTrace,
-                                  vector<MemoryTrace::iterator *>& recordList ) const
-{
-  for ( PRV_UINT16 i = 0; i < recordList.size(); i++ )
-  {
-    if ( i > 0 )
+    if ( type & STATE )
     {
-      line += ':';
-      writeEvent( line, whichTrace, recordList[i], false );
+      writeReady = writePendingMultiEvent( whichTrace );
+      if ( writeReady )
+      {
+        whichStream << line << endl;
+        line.clear();
+      }
+      writeReady = writeState( whichTrace, record );
     }
-    else // i == 0
-      writeEvent( line, whichTrace, recordList[i], true );
-  }
+    else if ( type & EVENT )
+    {
+      if ( !sameMultiEvent( record ) )
+      {
+        writeReady = writePendingMultiEvent( whichTrace );
 
-  whichStream << line << endl;
+        multiEventCommonInfo.cpu = record->getCPU();
+        multiEventCommonInfo.thread = record->getThread();
+        multiEventCommonInfo.time = record->getTime();
+
+        multiEventLine.clear();
+      }
+
+      appendEvent( record );
+    }
+    else if ( type & COMM )
+    {
+      writeReady = writePendingMultiEvent( whichTrace );
+      if ( writeReady )
+      {
+        whichStream << line << endl;
+        line.clear();
+      }
+
+      writeReady = writeComm( whichTrace, record );
+    }
+    else if ( type & GLOBCOMM )
+    {
+      writeReady = writePendingMultiEvent( whichTrace );
+      if ( writeReady )
+      {
+        whichStream << line << endl;
+        line.clear();
+      }
+
+      writeReady = writeGlobalComm( whichTrace, record );
+    }
+    else if ( type & RSEND || type & RRECV )
+      writeReady = false;
+    else
+    {
+      writeReady = false;
+      cerr << "No logging system yet. TraceBodyIO_v1::write()" << endl;
+      cerr << "Unkwnown record type in memory." << endl;
+    }
+
+    if ( writeReady )
+    {
+      whichStream << line << endl;
+    }
+  }
 }
+
 
 void TraceBodyIO_v1::writeCommInfo( fstream& whichStream,
                                     const KTrace& whichTrace,
@@ -444,8 +479,7 @@ inline bool TraceBodyIO_v1::readCommon( istringstream& line,
 /**************************
   Write records functions
 ***************************/
-bool TraceBodyIO_v1::writeState( string& line,
-                                 const KTrace& whichTrace,
+bool TraceBodyIO_v1::writeState( const KTrace& whichTrace,
                                  const MemoryTrace::iterator *record ) const
 {
   if ( record->getType() & END )
@@ -466,10 +500,45 @@ bool TraceBodyIO_v1::writeState( string& line,
 }
 
 
-bool TraceBodyIO_v1::writeEvent( string& line,
-                                 const KTrace& whichTrace,
-                                 const MemoryTrace::iterator *record,
-                                 bool needCommons ) const
+bool TraceBodyIO_v1::writePendingMultiEvent( const KTrace& whichTrace ) const
+{
+  TApplOrder appl;
+  TTaskOrder task;
+  TThreadOrder thread;
+
+  bool writeLine = !multiEventLine.empty();
+
+  if ( writeLine )
+  {
+    ostr.clear();
+    ostr.str( "" );
+    ostr << fixed;
+    ostr << dec;
+    ostr.precision( 0 );
+
+    ostr << EventRecord << ':';
+    ostr << multiEventCommonInfo.cpu << ':';
+
+    whichTrace.getThreadLocation( multiEventCommonInfo.thread, appl, task, thread );
+    ostr << appl + 1 << ':' << task + 1 << ':' << thread + 1 << ':';
+
+    ostr << multiEventCommonInfo.time << ':';
+    ostr << multiEventLine;
+
+    line += ostr.str();
+
+    multiEventCommonInfo.cpu = 0;
+    multiEventCommonInfo.thread = 0;
+    multiEventCommonInfo.time = 0;
+
+    multiEventLine.clear();
+  }
+
+  return writeLine;
+}
+
+
+void TraceBodyIO_v1::appendEvent( const MemoryTrace::iterator *record ) const
 {
   ostr.clear();
   ostr.str( "" );
@@ -477,23 +546,18 @@ bool TraceBodyIO_v1::writeEvent( string& line,
   ostr << dec;
   ostr.precision( 0 );
 
-  if ( needCommons )
-  {
-    ostr << EventRecord << ':';
-    writeCommon( ostr, whichTrace, record );
-  }
+  if ( !multiEventLine.empty() )
+    ostr << ':';
+
   ostr << record->getEventType() << ':' << record->getEventValue();
 
-  line += ostr.str();
-  return true;
+  multiEventLine += ostr.str();
 }
 
 
-bool TraceBodyIO_v1::writeComm( string& line,
-                                const KTrace& whichTrace,
+bool TraceBodyIO_v1::writeComm( const KTrace& whichTrace,
                                 const MemoryTrace::iterator *record ) const
 {
-
   TCommID commID;
   TApplOrder recvAppl;
   TTaskOrder recvTask;
@@ -531,8 +595,7 @@ bool TraceBodyIO_v1::writeComm( string& line,
 }
 
 
-bool TraceBodyIO_v1::writeGlobalComm( string& line,
-                                      const KTrace& whichTrace,
+bool TraceBodyIO_v1::writeGlobalComm( const KTrace& whichTrace,
                                       const MemoryTrace::iterator *record ) const
 {
   return true;
@@ -558,3 +621,9 @@ void TraceBodyIO_v1::writeCommon( ostringstream& line,
 }
 
 
+bool TraceBodyIO_v1::sameMultiEvent( const MemoryTrace::iterator *record ) const
+{
+  return ( multiEventCommonInfo.cpu == record->getCPU() &&
+           multiEventCommonInfo.thread == record->getThread() &&
+           multiEventCommonInfo.time == record->getTime() );
+}

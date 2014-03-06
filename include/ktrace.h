@@ -153,6 +153,7 @@ class KTrace: public Trace
     bool eventLoaded( TEventType whichType ) const;
 
     // Forward MemoryTrace iterator functions
+    MemoryTrace::iterator* empty() const; // Dummy iterator set to EMPTYREC
     MemoryTrace::iterator* begin() const;
     MemoryTrace::iterator* end() const;
     MemoryTrace::iterator* threadBegin( TThreadOrder whichThread ) const;

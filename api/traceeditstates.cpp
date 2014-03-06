@@ -133,6 +133,41 @@ void DerivedTraceEditState< SeqT, DataT >::setData( DataT whichData )
 }
 
 
+
+/****************************************************************************
+ ********                  DerivedTraceEditStateBool                 ********
+ ****************************************************************************/
+template< class SeqT >
+DerivedTraceEditStateBool< SeqT >::DerivedTraceEditStateBool( SeqT whichSequence )
+{
+  BaseTraceEditState< SeqT >::mySequence = whichSequence;
+  init();
+}
+
+template< class SeqT >
+DerivedTraceEditStateBool< SeqT >::~DerivedTraceEditStateBool()
+{
+}
+
+template< class SeqT >
+void DerivedTraceEditStateBool< SeqT >::init()
+{
+  myData = false;
+}
+
+template< class SeqT >
+bool DerivedTraceEditStateBool< SeqT >::getData() const
+{
+  return myData;
+}
+
+template< class SeqT >
+void DerivedTraceEditStateBool< SeqT >::setData( bool whichData )
+{
+  myData = whichData;
+}
+
+
 /****************************************************************************
  ********                  DerivedTraceEditStateInt                  ********
  ****************************************************************************/

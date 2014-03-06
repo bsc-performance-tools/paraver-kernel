@@ -67,6 +67,7 @@ class TraceBodyIO_v2 : public TraceBodyIO
     void writeCommInfo( std::fstream& whichStream,
                         const KTrace& whichTrace,
                         PRV_INT32 numIter = 1 ) const;
+
   protected:
 
   private:

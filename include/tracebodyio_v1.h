@@ -33,6 +33,7 @@
 #include "tracebodyio.h"
 #include "tracestream.h"
 
+
 // Paraver trace old format file
 class TraceBodyIO_v1 : public TraceBodyIO
 {
@@ -56,9 +57,29 @@ class TraceBodyIO_v1 : public TraceBodyIO
     void writeEvents( std::fstream& whichStream,
                       const KTrace& whichTrace,
                       std::vector<MemoryTrace::iterator *>& recordList ) const;
+
   protected:
 
   private:
+    // Multievent lines
+    typedef struct TMultiEventCommonInfo
+    {
+      TThreadOrder thread;
+      TCPUOrder cpu;
+      TRecordTime time;
+    }
+    TMultiEventCommonInfo;
+
+    static TMultiEventCommonInfo multiEventCommonInfo;
+    static std::string multiEventLine;
+
+    static std::istringstream fieldStream;
+    static std::istringstream strLine;
+    static std::string tmpstring;
+    static std::string line;
+
+    static std::ostringstream ostr;
+
     void readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const;
 
     void readState( const std::string& line, MemoryBlocks& records ) const;
@@ -73,29 +94,22 @@ class TraceBodyIO_v1 : public TraceBodyIO
                      TThreadOrder& thread,
                      TRecordTime& time ) const;
 
-    bool writeState( std::string& line,
-                     const KTrace& whichTrace,
+    bool writeState( const KTrace& whichTrace,
                      const MemoryTrace::iterator *record ) const;
-    bool writeEvent( std::string& line,
-                     const KTrace& whichTrace,
+    bool writePendingMultiEvent( const KTrace& whichTrace ) const;
+    void appendEvent( const MemoryTrace::iterator *record ) const;
+    bool writeEvent( const KTrace& whichTrace,
                      const MemoryTrace::iterator *record,
                      bool needCommons = true ) const;
-    bool writeComm( std::string& line,
-                    const KTrace& whichTrace,
+    bool writeComm( const KTrace& whichTrace,
                     const MemoryTrace::iterator *record ) const;
-    bool writeGlobalComm( std::string& line,
-                          const KTrace& whichTrace,
+    bool writeGlobalComm( const KTrace& whichTrace,
                           const MemoryTrace::iterator *record ) const;
     void writeCommon( std::ostringstream& line,
                       const KTrace& whichTrace,
                       const MemoryTrace::iterator *record ) const;
 
-    static std::istringstream fieldStream;
-    static std::istringstream strLine;
-    static std::string tmpstring;
-    static std::string line;
-
-    static std::ostringstream ostr;
+    bool sameMultiEvent( const MemoryTrace::iterator *record ) const;
 };
 
 

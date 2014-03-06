@@ -415,6 +415,8 @@ void KTrace::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
     ++( *it );
   }
 
+  body->close( file ); // needed by possible last multievent
+
   delete it;
 #endif
   file.close();
@@ -422,6 +424,11 @@ void KTrace::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
 
 
 // Forward MemoryTrace iterator functions
+MemoryTrace::iterator* KTrace::empty() const
+{
+  return memTrace->empty();
+}
+
 MemoryTrace::iterator* KTrace::begin() const
 {
   return memTrace->begin();
@@ -469,11 +476,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     : fileName( whichFile )
 {
   string tmpstr;
-  /*
-  myTraceInfo.cutterOffset = 0;
-  myTraceInfo.cutterBeginTime = 0;
-  myTraceInfo.cutterEndTime = 0;
-*/
+
   ready = false;
   TraceStream *file = TraceStream::openFile( fileName );
 

@@ -95,6 +95,10 @@ TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceSta
       return new ShiftTimesState( this );
       break;
 
+    case eofParsedState:
+      return new EOFParsedState( this );
+      break;
+
     default:
       return NULL;
       break;

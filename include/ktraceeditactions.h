@@ -39,8 +39,10 @@
 class TraceToRecordAction: public TraceEditAction
 {
 public:
-  TraceToRecordAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
-  ~TraceToRecordAction() {}
+  TraceToRecordAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence )
+  {}
+  ~TraceToRecordAction()
+  {}
 
   virtual TraceEditAction::TTraceEditActionType getType() const
   {
@@ -59,8 +61,10 @@ private:
 class RecordToTraceAction: public TraceEditAction
 {
 public:
-  RecordToTraceAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
-  ~RecordToTraceAction() {}
+  RecordToTraceAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence )
+  {}
+  ~RecordToTraceAction()
+  {}
 
   virtual TraceEditAction::TTraceEditActionType getType() const
   {
@@ -78,8 +82,10 @@ private:
 class RecordToRecordAction: public TraceEditAction
 {
 public:
-  RecordToRecordAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
-  ~RecordToRecordAction() {}
+  RecordToRecordAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence )
+  {}
+  ~RecordToRecordAction()
+  {}
 
   virtual TraceEditAction::TTraceEditActionType getType() const
   {

@@ -78,6 +78,22 @@ class DerivedTraceEditState : public BaseTraceEditState< SeqT >
 
 
 template< class SeqT >
+class DerivedTraceEditStateBool : public BaseTraceEditState< SeqT >
+{
+  public:
+    DerivedTraceEditStateBool( SeqT whichSequence );
+    ~DerivedTraceEditStateBool();
+    void init();
+
+    bool getData() const;
+    void setData( bool whichData );
+
+  private:
+    bool myData;
+};
+
+
+template< class SeqT >
 class DerivedTraceEditStateInt : public BaseTraceEditState< SeqT >
 {
   public:
@@ -133,6 +149,8 @@ typedef DerivedTraceEditState< TraceEditSequence *, TextOutput > CSVOutputState;
 typedef DerivedTraceEditState< TraceEditSequence *, TraceOptions * > TraceOptionsState;
 typedef DerivedTraceEditState< TraceEditSequence *, Window * > CSVWindowState;
 typedef DerivedTraceEditState< TraceEditSequence *, std::vector< TTime > * > ShiftTimesState;
+
+typedef DerivedTraceEditStateBool< TraceEditSequence * > EOFParsedState;
 
 typedef DerivedTraceEditStateInt< TraceEditSequence * > TestState;
 

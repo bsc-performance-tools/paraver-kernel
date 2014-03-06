@@ -335,6 +335,7 @@ namespace bplustree
           virtual TCommID      getCommIndex() const;
 
           virtual void         setTime( const TRecordTime whichTime );
+          virtual void         setType( const TRecordType whichType );
       };
 
       class ThreadIterator : public BPlusTree::iterator
@@ -377,6 +378,7 @@ namespace bplustree
       };
 
       // MemoryTrace Inherited Methods
+      virtual MemoryTrace::iterator* empty() const; // Dummy iterator set to EMPTYREC
       virtual MemoryTrace::iterator* begin() const;
       virtual MemoryTrace::iterator* end() const;
       virtual MemoryTrace::iterator* threadBegin( TThreadOrder whichThread ) const;

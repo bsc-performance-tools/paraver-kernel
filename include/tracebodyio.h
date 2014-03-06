@@ -65,6 +65,8 @@ class TraceBodyIO
                                 const KTrace& whichTrace,
                                 PRV_INT32 numIter = 1 ) const = 0;
 
+//    virtual void close( std::fstream& whichStream, const KTrace& whichTrace ) = 0;
+
     static TraceBodyIO *createTraceBody( TraceStream *file);
     static TraceBodyIO *createTraceBody();
   protected:

@@ -32,8 +32,8 @@
 #include <sstream>
 #include <fstream>
 
-using namespace std;
-#include <iostream>
+//using namespace std;
+//#include <iostream>
 
 KTraceShifter::KTraceShifter( const KernelConnection *myKernel,
                               std::string traceIn,
@@ -67,6 +67,10 @@ KTraceShifter::KTraceShifter( const KernelConnection *myKernel,
   tmpOutputTraceFileNameState->setData( traceOut );
   mySequence->addState( TraceEditSequence::outputTraceFileNameState, tmpOutputTraceFileNameState );
 
+  EOFParsedState *tmpEOFParseState = new EOFParsedState( mySequence );
+  tmpEOFParseState->setData( false );
+  mySequence->addState( TraceEditSequence::eofParsedState, tmpEOFParseState );
+
   traces.push_back( traceIn );
 }
 
@@ -79,13 +83,9 @@ void KTraceShifter::execute( std::string traceIn,
                              std::string traceOut,
                              ProgressController *progress )
 {
+  mySequence->execute( traces );
   mySequence->getKernelConnection()->copyPCF( traceIn, traceOut );
   mySequence->getKernelConnection()->copyROW( traceIn, traceOut );
-
-  mySequence->execute( traces );
-
-//  mySequence->getKernelConnection()->copyPCF( traceIn, traceOut );
-//  mySequence->getKernelConnection()->copyROW( traceIn, traceOut );
 }
 
 
@@ -110,7 +110,7 @@ std::vector< TTime > KTraceShifter::readShiftTimes( std::string shiftTimesFile )
           continue;
         else
           shiftTimes.push_back( TTime( currentTime ) );
-          cout << currentTime << std::endl;
+std::cout << currentTime << std::endl;
       }
     }
 

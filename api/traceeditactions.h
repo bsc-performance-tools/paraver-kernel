@@ -49,7 +49,7 @@ public:
   };
 
   TraceEditAction( TraceEditSequence *whichSequence ) : mySequence( whichSequence ) {}
-  ~TraceEditAction() {}
+  virtual ~TraceEditAction() {}
 
   virtual TraceEditAction::TTraceEditActionType getType() const = 0;
   virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const = 0;
@@ -66,7 +66,7 @@ class TraceToTraceAction: public TraceEditAction
 {
 public:
   TraceToTraceAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
-  ~TraceToTraceAction() {}
+  virtual ~TraceToTraceAction() {}
 
   virtual TraceEditAction::TTraceEditActionType getType() const
   {

@@ -68,6 +68,7 @@ class MemoryTrace
         virtual TCommID      getCommIndex() const = 0;
 
         virtual void         setTime( const TRecordTime time ) = 0;
+        virtual void         setType( const TRecordType whichType ) = 0;
 
         virtual TData *getRecord() const
         {
@@ -85,6 +86,8 @@ class MemoryTrace
 
     virtual void insert( MemoryBlocks *blocks ) = 0;
     virtual TTime finish( TTime headerTime, Trace *whichTrace ) = 0;
+
+    virtual MemoryTrace::iterator* empty() const = 0;
     virtual MemoryTrace::iterator* begin() const = 0;
     virtual MemoryTrace::iterator* end() const = 0;
 

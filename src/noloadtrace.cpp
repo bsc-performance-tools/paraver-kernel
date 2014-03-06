@@ -57,6 +57,22 @@ TTime NoLoadTrace::finish( TTime headerTime, Trace *whichTrace )
 }
 
 
+MemoryTrace::iterator* NoLoadTrace::empty() const
+{
+  TRecord *tmpRec;
+  PRV_INT64 tmpOffset;
+  PRV_UINT16 tmpPos;
+
+  blocks->getEndRecord( &tmpRec, tmpOffset, tmpPos );
+
+  TThreadOrder dummyThread = 0;
+  MemoryTrace::iterator *it = new NoLoadTrace::iterator( blocks, dummyThread, tmpRec, tmpOffset, tmpPos );
+  //it->setType( EMPTYREC );
+
+  return it;
+}
+
+
 MemoryTrace::iterator* NoLoadTrace::begin() const
 {
   TRecord *tmpRec;
@@ -284,7 +300,9 @@ NoLoadTrace::iterator::iterator( NoLoadBlocks *whichBlocks, TThreadOrder whichTh
     TRecord *whichRecord, PRV_INT64 whichOffset, PRV_INT16 whichPos )
     : blocks( whichBlocks ), thread( whichThread ),
     offset( whichOffset ), recPos( whichPos ), destroyed( false )
-{}
+{
+  record = whichRecord;
+}
 
 NoLoadTrace::iterator::~iterator()
 {
@@ -394,6 +412,11 @@ inline TCommID NoLoadTrace::iterator::getCommIndex() const
 inline void NoLoadTrace::iterator::setTime( const TRecordTime whichTime )
 {
   ( ( TRecord * )record )->time = whichTime;
+}
+
+inline void NoLoadTrace::iterator::setType( const TRecordType whichType )
+{
+  ( ( TRecord * )record )->type = whichType;
 }
 
 NoLoadTrace::ThreadIterator::ThreadIterator( NoLoadBlocks *whichBlocks, TThreadOrder whichThread,

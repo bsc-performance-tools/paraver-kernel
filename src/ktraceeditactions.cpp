@@ -189,6 +189,7 @@ vector<TraceEditSequence::TSequenceStates> TraceParserAction::getStateDependenci
   vector<TraceEditSequence::TSequenceStates> tmpStates;
 
   tmpStates.push_back( TraceEditSequence::maxTraceTimeState );
+  tmpStates.push_back( TraceEditSequence::eofParsedState );
 
   return tmpStates;
 }
@@ -207,6 +208,14 @@ void TraceParserAction::execute( std::string whichTrace )
     tmpSequence->executeNextAction( it );
     ++(*it);
   }
+
+  delete it;
+
+  // Final dummy record
+  it = myTrace.empty();
+  EOFParsedState *tmpEOFParseState = (EOFParsedState *)tmpSequence->getState( TraceEditSequence::eofParsedState );
+  tmpEOFParseState->setData( true );
+  tmpSequence->executeNextAction( it );
 
   delete it;
 }
@@ -268,13 +277,19 @@ void TraceWriterAction::execute( MemoryTrace::iterator *it  )
     tmpSequence->getCurrentTrace()->dumpFileHeader( outputTrace );
   }
 
+  bool eofParsed = ( (EOFParsedState *)tmpSequence->getState( TraceEditSequence::eofParsedState ) )->getData();
+
   if ( ( it->getType() == STATE + BEGIN ) ||
        ( it->getType() == EVENT ) ||
-       ( it->getType() == COMM + LOG + SEND )
+       ( it->getType() == COMM + LOG + SEND ) ||
+       ( eofParsed )
      )
   {
     body.write( outputTrace, *tmpSequence->getCurrentTrace(), it );
   }
+
+  if ( eofParsed && outputTrace.is_open() )
+    outputTrace.close();
 
   tmpSequence->executeNextAction( it );
 }
@@ -297,5 +312,3 @@ void TraceSortAction::execute( std::string whichTrace )
 
   tmpSequence->executeNextAction( whichTrace );
 }
-
-

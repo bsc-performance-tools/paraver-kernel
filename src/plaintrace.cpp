@@ -69,6 +69,15 @@ TTime PlainTrace::finish( TTime headerTime, Trace *whichTrace )
   return headerTime;
 }
 
+MemoryTrace::iterator* PlainTrace::empty() const
+{
+  PlainBlocks *dummyBlocks = new PlainBlocks( *myBlocks ); // TODO CHANGE THIS
+  dummyBlocks->newRecord();
+  dummyBlocks->setType( EMPTYREC );
+
+  return new PlainTrace::iterator( dummyBlocks );
+}
+
 MemoryTrace::iterator* PlainTrace::begin() const
 {
   return new PlainTrace::iterator( );
@@ -287,6 +296,10 @@ inline void PlainTrace::iterator::setTime( const TRecordTime whichTime )
   ( ( TRecord * )record )->time = whichTime;
 }
 
+inline void PlainTrace::iterator::setType( const TRecordType whichType )
+{
+  ( ( TRecord * )record )->type = whichType;
+}
 
 
 /**************************************************************************

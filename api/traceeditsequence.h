@@ -59,6 +59,7 @@ class TraceEditSequence
       outputTraceFileNameState,
       maxTraceTimeState,
       shiftTimesState,
+      eofParsedState,
       numStates
     };
 

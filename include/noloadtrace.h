@@ -87,6 +87,7 @@ namespace NoLoad
           virtual TCommID      getCommIndex() const;
 
           virtual void         setTime( const TRecordTime whichTime );
+          virtual void         setType( const TRecordType whichType );
 
         protected:
           NoLoadBlocks *blocks;
@@ -167,6 +168,7 @@ namespace NoLoad
 
       virtual void insert( MemoryBlocks *blocks );
       virtual TTime finish( TTime headerTime, Trace *whichTrace );
+      virtual MemoryTrace::iterator* empty() const;
       virtual MemoryTrace::iterator* begin() const;
       virtual MemoryTrace::iterator* end() const;
 
