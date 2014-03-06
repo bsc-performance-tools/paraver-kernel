@@ -415,8 +415,6 @@ void KTrace::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
     ++( *it );
   }
 
-  body->close( file ); // needed by possible last multievent
-
   delete it;
 #endif
   file.close();
