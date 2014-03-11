@@ -71,6 +71,7 @@ class TraceEditSequence
       traceParserAction,
       recordTimeShifterAction,
       traceWriterAction,
+      eventDrivenCutterAction,
       traceSortAction,
       numActions
     };

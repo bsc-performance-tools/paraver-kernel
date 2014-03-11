@@ -296,6 +296,86 @@ void TraceWriterAction::execute( MemoryTrace::iterator *it  )
 
 
 /****************************************************************************
+ ********               EventDrivenCutterAction                      ********
+ ****************************************************************************/
+vector<TraceEditSequence::TSequenceStates> EventDrivenCutterAction::getStateDependencies() const
+{
+  vector<TraceEditSequence::TSequenceStates> tmpStates;
+
+  tmpStates.push_back( TraceEditSequence::outputTraceFileNameState );
+
+  return tmpStates;
+}
+
+
+void EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
+{
+  KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
+  PRV_UINT32 currentFile;
+
+  if( outputTraces.empty() )
+  {
+    std::fstream *tmpStream = new std::fstream;
+    outputTraces.push_back( tmpStream );
+    currentThreadFile.insert( currentThreadFile.begin(), ( size_t )tmpSequence->getCurrentTrace()->totalThreads(), 0 );
+    countThreadsPerFile[ 0 ] = tmpSequence->getCurrentTrace()->totalThreads();
+  }
+
+  if( ( it->getType() == EVENT ) &&
+      ( it->getEventType() == 1 /*TODO get event type from state*/ ) )
+  {
+    if( countThreadsPerFile.count( currentThreadFile[ it->getThread() ] ) > 0 )
+      --countThreadsPerFile[ currentThreadFile[ it->getThread() ] ];
+
+    ++currentThreadFile[ it->getThread() ];
+
+    if( countThreadsPerFile.count( currentThreadFile[ it->getThread() ] ) > 0 )
+      ++countThreadsPerFile[ currentThreadFile[ it->getThread() ] ];
+    else
+      countThreadsPerFile[ currentThreadFile[ it->getThread() ] ] = 1;
+  }
+
+  currentFile = currentThreadFile[ it->getThread() ];
+
+  if( !outputTraces[ currentFile ]->is_open() )
+  {
+    std::string tmpFileName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
+// TODO filename suffix
+    //tmpNameOut = myKernel->getNewTraceName( fullTmpNameIn, filterToolOrder, true );
+
+    outputTraces[ currentFile ]->open( tmpFileName.c_str(), std::ios::out );
+    tmpSequence->getCurrentTrace()->dumpFileHeader( *outputTraces[ currentFile ] );
+  }
+
+  bool eofParsed = ( (EOFParsedState *)tmpSequence->getState( TraceEditSequence::eofParsedState ) )->getData();
+
+  if ( ( it->getType() == STATE + BEGIN ) ||
+       ( it->getType() == EVENT ) ||
+       ( it->getType() == COMM + LOG + SEND ) ||
+       ( eofParsed )
+     )
+  {
+    body.write( *outputTraces[ currentFile ], *tmpSequence->getCurrentTrace(), it );
+  }
+
+  if ( eofParsed )
+  {
+    for( vector<std::fstream *>::iterator it; it != outputTraces.end(); ++it )
+    {
+      if( *it != NULL && (*it)->is_open() )
+      {
+        (*it)->close();
+        delete *it;
+        *it = NULL;
+      }
+    }
+  }
+
+  tmpSequence->executeNextAction( it );
+}
+
+
+/****************************************************************************
  ********                  TraceSortAction                           ********
  ****************************************************************************/
 vector<TraceEditSequence::TSequenceStates> TraceSortAction::getStateDependencies() const

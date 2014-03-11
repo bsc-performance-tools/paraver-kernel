@@ -268,6 +268,12 @@
 			<Option target="api" />
 			<Option target="otf2prv" />
 		</Unit>
+		<Unit filename="api/eventdrivencutter.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/eventdrivencutter.h">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="api/eventlabels.cpp">
 			<Option target="api" />
 			<Option target="otf2prv" />
@@ -732,6 +738,10 @@
 			<Option target="paramedir" />
 			<Option target="otf2prv" />
 		</Unit>
+		<Unit filename="include/keventdrivencutter.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="include/kfilter.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -1190,6 +1200,10 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="otf2prv" />
+		</Unit>
+		<Unit filename="src/keventdrivencutter.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
 		</Unit>
 		<Unit filename="src/kfilter.cpp">
 			<Option target="Debug" />

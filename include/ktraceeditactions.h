@@ -265,6 +265,30 @@ class TraceWriterAction: public RecordToTraceAction
 };
 
 
+/****************************************************************************
+ ********               EventDrivenCutterAction                      ********
+ ****************************************************************************/
+class EventDrivenCutterAction: public RecordToTraceAction
+{
+  public:
+    EventDrivenCutterAction( TraceEditSequence *whichSequence ) : RecordToTraceAction( whichSequence )
+    {}
+    ~EventDrivenCutterAction()
+    {}
+
+    virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
+
+    virtual void execute( MemoryTrace::iterator *whichRecord );
+
+  protected:
+
+  private:
+    vector<std::fstream *> outputTraces;
+    vector<PRV_UINT32> currentThreadFile;
+    map<PRV_INT32, TObjectOrder> countThreadsPerFile;
+    TraceBodyIO_v1 body;
+};
+
 //
 // Sort could be done in two ways:
 //   - Calling an external program/script to perform trace-to-trace sort

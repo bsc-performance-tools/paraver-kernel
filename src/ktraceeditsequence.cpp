@@ -190,6 +190,10 @@ bool KTraceEditSequence::pushbackAction( TraceEditSequence::TSequenceActions whi
       newAction = new TraceWriterAction( this );
       break;
 
+    case eventDrivenCutterAction:
+      newAction = new EventDrivenCutterAction( this );
+      break;
+
     case traceSortAction:
       newAction = new TraceSortAction( this );
       break;
