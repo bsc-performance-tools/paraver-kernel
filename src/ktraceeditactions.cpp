@@ -229,6 +229,8 @@ vector<TraceEditSequence::TSequenceStates> RecordTimeShifterAction::getStateDepe
   vector<TraceEditSequence::TSequenceStates> tmpStates;
 
   tmpStates.push_back( TraceEditSequence::maxTraceTimeState );
+  tmpStates.push_back( TraceEditSequence::shiftTimesState );
+  tmpStates.push_back( TraceEditSequence::shiftLevelState );
 
   return tmpStates;
 }
