@@ -429,7 +429,7 @@ string applyFilters( KernelConnection *myKernel,
     else if ( filterToolOrder[i] == TraceShifter::getID() )
     {
       // TODO: if kernel isn't going to use the traces, it doesn't make sense to pass names
-      traceShifter = myKernel->newTraceShifter( tmpNameIn, tmpNameOut, strShiftTimesFile );
+      traceShifter = myKernel->newTraceShifter( tmpNameIn, tmpNameOut, strShiftTimesFile, THREAD );
       traceShifter->execute( tmpNameIn, tmpNameOut );
       delete traceShifter;
     }

@@ -238,16 +238,41 @@ void RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
 
-  std::vector< TTime > *shiftTimes = ( (ShiftTimesState *)tmpSequence->getState( TraceEditSequence::shiftTimesState ) )->getData();
-  // TODO: Control order <--> shifTimes size
-  //TTime shiftedTime = whichRecord->getTime() + (*shiftTimes)[ whichRecord->getOrder() ];
+  std::vector< TTime > *shiftTimes =
+          ( (ShiftTimesState *)tmpSequence->getState( TraceEditSequence::shiftTimesState ) )->getData();
+  TWindowLevel shiftLevel =
+          ( (ShiftLevelState *)tmpSequence->getState( TraceEditSequence::shiftLevelState ) )->getData();
 
-  //whichRecord->setTime( shiftedTime );
-/*  if ( whichRecord->getType() & LOG & SEND )
+  TTime delta = (TTime)0;
+  TObjectOrder objects;
+  switch ( shiftLevel )
   {
 
+    case TASK:
+      objects = tmpSequence->getCurrentTrace()->totalTasks();
+      if ( shiftTimes->size() == objects )
+        delta = (*shiftTimes)[ whichRecord->getOrder() ];
+      break;
+
+    case APPLICATION:
+      objects = tmpSequence->getCurrentTrace()->totalApplications();
+      if ( shiftTimes->size() == objects )
+        delta = (*shiftTimes)[ whichRecord->getOrder() ];
+      break;
+
+//    case WORKLOAD:
+//    case THREAD:
+//      break;
+    default:
+      objects = tmpSequence->getCurrentTrace()->totalThreads();
+      if ( shiftTimes->size() == objects )
+        delta = (*shiftTimes)[ whichRecord->getOrder() ];
+      break;
   }
-*/
+
+  TTime shiftedTime = whichRecord->getTime() + delta;
+  whichRecord->setTime( shiftedTime );
+
   tmpSequence->executeNextAction( whichRecord );
 }
 

@@ -77,6 +77,7 @@ class LocalKernel: public KernelConnection
     virtual TraceShifter *newTraceShifter( std::string traceIn,
                                            std::string traceOut,
                                            std::string shiftTimesFile,
+                                           TWindowLevel shiftLevel,
                                            ProgressController *progress ) const;
 
     virtual void getAllStatistics( std::vector<std::string>& onVector ) const;

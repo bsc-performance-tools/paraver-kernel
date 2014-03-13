@@ -46,6 +46,7 @@ class KTraceShifter : public TraceShifter
                    std::string traceIn,
                    std::string traceOut,
                    std::string whichShiftTimes,
+                   TWindowLevel shiftLevel,
                    ProgressController *progress = NULL );
     ~KTraceShifter();
 

@@ -271,6 +271,7 @@ TraceSoftwareCounters *LocalKernel::newTraceSoftwareCounters( char *trace_in,
 TraceShifter *LocalKernel::newTraceShifter( std::string traceIn,
                                             std::string traceOut,
                                             std::string shiftTimesFile,
+                                            TWindowLevel shiftLevel,
                                             ProgressController *progress ) const
 {
   KProgressController *tmpKProgressControler = NULL;
@@ -278,7 +279,7 @@ TraceShifter *LocalKernel::newTraceShifter( std::string traceIn,
   if ( progress != NULL )
     tmpKProgressControler = (KProgressController *)progress->getConcrete();
 
-  return new KTraceShifter( this, traceIn, traceOut, shiftTimesFile, tmpKProgressControler );
+  return new KTraceShifter( this, traceIn, traceOut, shiftTimesFile, shiftLevel, tmpKProgressControler );
 }
 
 

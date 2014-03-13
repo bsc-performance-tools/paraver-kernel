@@ -45,6 +45,7 @@ class TraceShifter
                                  std::string traceIn,
                                  std::string traceOut,
                                  std::string shiftTimesFile,
+                                 TWindowLevel shiftLevel,
                                  //TraceOptions *options,
                                  ProgressController *progress );
 
@@ -89,6 +90,7 @@ class TraceShifterProxy : public TraceShifter
                        std::string traceIn,
                        std::string traceOut,
                        std::string shiftTimesFile,
+                       TWindowLevel shiftLevel,
                        //TraceOptions *options,
                        ProgressController *progress );
 
@@ -96,6 +98,7 @@ class TraceShifterProxy : public TraceShifter
                                                std::string traceIn,
                                                std::string traceOut,
                                                std::string shiftTimesFile,
+                                               TWindowLevel shiftLevel,
                                                //TraceOptions *options,
                                                ProgressController *progress );
 };

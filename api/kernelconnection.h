@@ -88,6 +88,7 @@ class KernelConnection
     virtual TraceShifter *newTraceShifter( std::string traceIn,
                                            std::string traceOut,
                                            std::string shiftTimesFile,
+                                           TWindowLevel shiftLevel,
                                            ProgressController *progress = NULL ) const = 0;
 
 

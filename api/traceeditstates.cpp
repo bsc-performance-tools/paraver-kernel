@@ -269,3 +269,37 @@ void DerivedTraceEditStateTTime< SeqT >::setData( TTime whichData )
   myData = whichData;
 }
 
+
+/****************************************************************************
+ ********                  DerivedTraceEditStateTWindowLevel         ********
+ ****************************************************************************/
+template< class SeqT >
+DerivedTraceEditStateTWindowLevel< SeqT >::DerivedTraceEditStateTWindowLevel( SeqT whichSequence )
+{
+  BaseTraceEditState< SeqT >::mySequence = whichSequence;
+  init();
+}
+
+template< class SeqT >
+DerivedTraceEditStateTWindowLevel< SeqT >::~DerivedTraceEditStateTWindowLevel()
+{
+}
+
+template< class SeqT >
+void DerivedTraceEditStateTWindowLevel< SeqT >::init()
+{
+  myData = NONE;
+}
+
+template< class SeqT >
+TWindowLevel DerivedTraceEditStateTWindowLevel< SeqT >::getData() const
+{
+  return myData;
+}
+
+template< class SeqT >
+void DerivedTraceEditStateTWindowLevel< SeqT >::setData( TWindowLevel whichData )
+{
+  myData = whichData;
+}
+

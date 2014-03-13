@@ -60,6 +60,7 @@ class TraceEditSequence
       maxTraceTimeState,
       shiftTimesState,
       eofParsedState,
+      shiftLevelState,
       numStates
     };
 

@@ -39,9 +39,14 @@ KTraceShifter::KTraceShifter( const KernelConnection *myKernel,
                               std::string traceIn,
                               std::string traceOut,
                               std::string whichShiftTimes,
+                              TWindowLevel shiftLevel,
                               ProgressController *progress )
 {
   shiftTimes = readShiftTimes( whichShiftTimes );
+
+  // Check level
+  if ( shiftLevel < WORKLOAD || shiftLevel > THREAD )
+    shiftLevel = THREAD;
 
   // Build sequence
   mySequence = TraceEditSequence::create( myKernel );
@@ -62,6 +67,10 @@ KTraceShifter::KTraceShifter( const KernelConnection *myKernel,
   ShiftTimesState *tmpShiftTimesState = new ShiftTimesState( mySequence );
   tmpShiftTimesState->setData( &shiftTimes );
   mySequence->addState( TraceEditSequence::shiftTimesState, tmpShiftTimesState );
+
+  ShiftLevelState *tmpShiftLevelState = new ShiftLevelState( mySequence );
+  tmpShiftLevelState->setData( shiftLevel );
+  mySequence->addState( TraceEditSequence::shiftLevelState, tmpShiftLevelState );
 
   OutputTraceFileNameState *tmpOutputTraceFileNameState = new OutputTraceFileNameState( mySequence );
   tmpOutputTraceFileNameState->setData( traceOut );

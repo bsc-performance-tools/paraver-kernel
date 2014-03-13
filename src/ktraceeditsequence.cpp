@@ -99,6 +99,10 @@ TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceSta
       return new EOFParsedState( this );
       break;
 
+    case shiftLevelState:
+      return new ShiftLevelState( this );
+      break;
+
     default:
       return NULL;
       break;
