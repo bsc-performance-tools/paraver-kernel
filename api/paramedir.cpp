@@ -55,6 +55,7 @@
 #include "tracefilter.h"
 #include "tracesoftwarecounters.h"
 #include "traceshifter.h"
+#include "eventdrivencutter.h"
 
 // for strdup
 //#include <string.h>
@@ -77,6 +78,7 @@ TraceCutter *traceCutter = NULL;
 TraceFilter *traceFilter = NULL;
 TraceSoftwareCounters *traceSoftwareCounters = NULL;
 TraceShifter *traceShifter = NULL;
+EventDrivenCutter *eventDrivenCutter = NULL;
 
 string strXMLOptions( "" );
 std::map< string, string > cfgs;
@@ -103,6 +105,7 @@ void printHelp()
   std::cout << "    -f: Apply Filter." << std::endl;
   std::cout << "    -s: Apply Software Counters." << std::endl;
   std::cout << "    -t: Apply Trace Times Shifter." << std::endl;
+  std::cout << "    -g: Apply Event Driven Cutter." << std::endl;
 //  std::cout << "    -j: Apply Communications Fusion. (in progress)" << std::endl;
   std::cout << std::endl;
   std::cout << "  Parameters:" << std::endl;
@@ -185,6 +188,10 @@ void activateOption( char *argument, vector< string > &filterToolOrder )
   {
     filterToolOrder.push_back( TraceShifter::getID() );
     shiftTimes = true;
+  }
+  else if( argument[ 1 ] == 'g' )
+  {
+    filterToolOrder.push_back( EventDrivenCutter::getID() );
   }
   else
     std::cout << "Unknown option " << argument << std::endl;
@@ -432,6 +439,12 @@ string applyFilters( KernelConnection *myKernel,
       traceShifter = myKernel->newTraceShifter( tmpNameIn, tmpNameOut, strShiftTimesFile, THREAD );
       traceShifter->execute( tmpNameIn, tmpNameOut );
       delete traceShifter;
+    }
+    else if ( filterToolOrder[i] == EventDrivenCutter::getID() )
+    {
+      eventDrivenCutter = myKernel->newEventDrivenCutter( tmpNameIn, tmpNameOut );
+      eventDrivenCutter->execute( tmpNameIn, tmpNameOut );
+      delete eventDrivenCutter;
     }
 
     myKernel->copyROW( tmpNameIn, tmpNameOut );

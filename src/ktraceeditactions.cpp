@@ -34,6 +34,7 @@
 #include <io.h>
 #endif
 #include <iostream>
+#include <sstream>
 #include "ktraceeditactions.h"
 #include "ktraceeditsequence.h"
 #include "traceeditstates.h"
@@ -367,8 +368,12 @@ void EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
   if( !outputTraces[ currentFile ]->is_open() )
   {
     std::string tmpFileName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
-// TODO filename suffix
-    //tmpNameOut = myKernel->getNewTraceName( fullTmpNameIn, filterToolOrder, true );
+    std::stringstream sstrFileName( "" );
+    sstrFileName << tmpFileName << "-part" << currentFile + 1;
+    tmpFileName = sstrFileName.str();
+
+    tmpSequence->getKernelConnection()->copyPCF( tmpSequence->getCurrentTrace()->getFileName(), tmpFileName );
+    tmpSequence->getKernelConnection()->copyROW( tmpSequence->getCurrentTrace()->getFileName(), tmpFileName );
 
     outputTraces[ currentFile ]->open( tmpFileName.c_str(), std::ios::out );
     tmpSequence->getCurrentTrace()->dumpFileHeader( *outputTraces[ currentFile ] );
@@ -387,7 +392,7 @@ void EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
 
   if ( eofParsed )
   {
-    for( vector<std::fstream *>::iterator it; it != outputTraces.end(); ++it )
+    for( vector<std::fstream *>::iterator it = outputTraces.begin(); it != outputTraces.end(); ++it )
     {
       if( *it != NULL && (*it)->is_open() )
       {

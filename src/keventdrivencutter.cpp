@@ -38,6 +38,7 @@ KEventDrivenCutter::KEventDrivenCutter( const KernelConnection *myKernel,
   mySequence = TraceEditSequence::create( myKernel );
 
   mySequence->pushbackAction( TraceEditSequence::traceParserAction );
+  mySequence->pushbackAction( TraceEditSequence::eventDrivenCutterAction );
 
 
   OutputTraceFileNameState *tmpOutputTraceFileNameState = new OutputTraceFileNameState( mySequence );

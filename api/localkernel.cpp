@@ -50,6 +50,7 @@
 #include "ktracefilter.h"
 #include "ktracesoftwarecounters.h"
 #include "ktraceshifter.h"
+#include "keventdrivencutter.h"
 #include "tracestream.h"
 #include <string.h>
 
@@ -282,6 +283,18 @@ TraceShifter *LocalKernel::newTraceShifter( std::string traceIn,
   return new KTraceShifter( this, traceIn, traceOut, shiftTimesFile, shiftLevel, tmpKProgressControler );
 }
 
+
+EventDrivenCutter *LocalKernel::newEventDrivenCutter( std::string traceIn,
+                                                      std::string traceOut,
+                                                      ProgressController *progress ) const
+{
+  KProgressController *tmpKProgressControler = NULL;
+
+  if ( progress != NULL )
+    tmpKProgressControler = (KProgressController *)progress->getConcrete();
+
+  return new KEventDrivenCutter( this, traceIn, traceOut, tmpKProgressControler );
+}
 
 void LocalKernel::getAllStatistics( vector<string>& onVector ) const
 {

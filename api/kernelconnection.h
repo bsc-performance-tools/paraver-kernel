@@ -49,6 +49,7 @@ class TraceFilter;
 class TraceSoftwareCounters;
 class TraceShifter;
 class TraceEditSequence;
+class EventDrivenCutter;
 
 typedef std::pair< unsigned long long, unsigned long long > TTypeValuePair;
 
@@ -90,6 +91,9 @@ class KernelConnection
                                            std::string shiftTimesFile,
                                            TWindowLevel shiftLevel,
                                            ProgressController *progress = NULL ) const = 0;
+    virtual EventDrivenCutter *newEventDrivenCutter( std::string traceIn,
+                                                     std::string traceOut,
+                                                     ProgressController *progress = NULL ) const = 0;
 
 
     virtual void getAllStatistics( std::vector<std::string>& onVector ) const = 0;

@@ -52,7 +52,7 @@ EventDrivenCutterProxy::EventDrivenCutterProxy( const KernelConnection *whichKer
                                                 ProgressController *progress )
 {
   myKernel = whichKernel;
-// TODO  myEventDrivenCutter = whichKernel->newEventDrivenCutter( traceIn, traceOut, progress );
+  myEventDrivenCutter = whichKernel->newEventDrivenCutter( traceIn, traceOut, progress );
 }
 
 

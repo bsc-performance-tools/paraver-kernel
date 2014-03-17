@@ -79,6 +79,9 @@ class LocalKernel: public KernelConnection
                                            std::string shiftTimesFile,
                                            TWindowLevel shiftLevel,
                                            ProgressController *progress ) const;
+    virtual EventDrivenCutter *newEventDrivenCutter( std::string traceIn,
+                                                     std::string traceOut,
+                                                     ProgressController *progress = NULL ) const;
 
     virtual void getAllStatistics( std::vector<std::string>& onVector ) const;
     virtual void getAllFilterFunctions( std::vector<std::string>& onVector ) const;
