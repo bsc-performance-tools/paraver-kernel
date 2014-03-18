@@ -156,6 +156,21 @@ class DerivedTraceEditStateTWindowLevel : public BaseTraceEditState< SeqT >
     TWindowLevel myData;
 };
 
+template< class SeqT >
+class DerivedTraceEditStateTEventType : public BaseTraceEditState< SeqT >
+{
+  public:
+    DerivedTraceEditStateTEventType( SeqT whichSequence );
+    ~DerivedTraceEditStateTEventType();
+    void init();
+
+    TEventType getData() const;
+    void setData( TEventType whichData );
+
+  private:
+    TEventType myData;
+};
+
 #include "traceeditstates.cpp"
 
 typedef BaseTraceEditState< TraceEditSequence * > TraceEditState;
@@ -175,5 +190,6 @@ typedef DerivedTraceEditStateString<TraceEditSequence * > OutputTraceFileNameSta
 
 typedef DerivedTraceEditStateTTime< TraceEditSequence * > MaxTraceTimeState;
 typedef DerivedTraceEditStateTWindowLevel< TraceEditSequence * > ShiftLevelState;
+typedef DerivedTraceEditStateTEventType< TraceEditSequence * > OnEventCutter;
 
 #endif // TRACEEDITSTATES_H_INCLUDED

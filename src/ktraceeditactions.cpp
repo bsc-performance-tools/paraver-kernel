@@ -350,7 +350,7 @@ void EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
   }
 
   if( ( it->getType() == EVENT ) &&
-      ( it->getEventType() == 1 /*TODO get event type from state*/ ) )
+      ( it->getEventType() == 50000003 /*TODO get event type from state*/ ) )
   {
     if( countThreadsPerFile.count( currentThreadFile[ it->getThread() ] ) > 0 )
       --countThreadsPerFile[ currentThreadFile[ it->getThread() ] ];
@@ -360,17 +360,32 @@ void EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
     if( countThreadsPerFile.count( currentThreadFile[ it->getThread() ] ) > 0 )
       ++countThreadsPerFile[ currentThreadFile[ it->getThread() ] ];
     else
+    {
+      std::fstream *tmpStream = new std::fstream;
+      outputTraces.push_back( tmpStream );
       countThreadsPerFile[ currentThreadFile[ it->getThread() ] ] = 1;
+    }
   }
 
-  currentFile = currentThreadFile[ it->getThread() ];
+  if( it->getType() == EMPTYREC )
+    currentFile = outputTraces.size() - 1;
+  else
+    currentFile = currentThreadFile[ it->getThread() ];
 
   if( !outputTraces[ currentFile ]->is_open() )
   {
     std::string tmpFileName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
-    std::stringstream sstrFileName( "" );
-    sstrFileName << tmpFileName << "-part" << currentFile + 1;
-    tmpFileName = sstrFileName.str();
+    if( currentFile > 0 )
+    {
+      std::string::size_type partPos = tmpFileName.rfind( "-part" );
+      std::string::size_type nextDotPos = tmpFileName.find( ".", partPos );
+      std::string currentSuffix = tmpFileName.substr( nextDotPos );
+      tmpFileName = tmpFileName.substr( 0, partPos );
+
+      std::stringstream sstrFileName( "" );
+      sstrFileName << tmpFileName << "-part" << currentFile + 1 << currentSuffix;
+      tmpFileName = sstrFileName.str();
+    }
 
     tmpSequence->getKernelConnection()->copyPCF( tmpSequence->getCurrentTrace()->getFileName(), tmpFileName );
     tmpSequence->getKernelConnection()->copyROW( tmpSequence->getCurrentTrace()->getFileName(), tmpFileName );

@@ -620,6 +620,8 @@ string LocalKernel::getNewTraceName( const string& fullPathTraceName,
                      FILTER_SEP +
                      TraceOptionsProxy::getTraceToolExtension( *id ) +
                      auxStrStrNumber.str();
+      if( *id == EventDrivenCutter::getID() )
+        newTraceName += "-part1";
     }
 
     // Build new names

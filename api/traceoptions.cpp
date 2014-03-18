@@ -35,6 +35,7 @@
 #include "tracecutter.h"
 #include "tracesoftwarecounters.h"
 #include "traceshifter.h"
+#include "eventdrivencutter.h"
 
 
 using namespace std;
@@ -505,9 +506,16 @@ string TraceOptionsProxy::getTraceToolName( const string& toolID )
   {
     toolStr = TraceSoftwareCounters::getName();
   }
-  else  // ( toolID == TraceShifter::getID() )
+  else if ( toolID == TraceShifter::getID() )
   {
     toolStr == TraceShifter::getName();
+  }
+  else if ( toolID == EventDrivenCutter::getID() )
+  {
+    toolStr == EventDrivenCutter::getName();
+  }
+  else
+  {
   }
 
   return toolStr;
@@ -533,6 +541,10 @@ string TraceOptionsProxy::getTraceToolExtension( const string& toolID )
   else if ( toolID == TraceShifter::getID() )
   {
     toolStr = TraceShifter::getExtension();
+  }
+  else if ( toolID == EventDrivenCutter::getID() )
+  {
+    toolStr = EventDrivenCutter::getExtension();
   }
   else
   {
