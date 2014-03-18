@@ -57,17 +57,83 @@
 #include "traceshifter.h"
 #include "eventdrivencutter.h"
 
-// for strdup
-//#include <string.h>
 
-bool showHelp = false;
-bool showVersion = false;
-bool onlySelectedPlane = false;
-bool hideEmptyColumns = false;
-bool multipleFiles = false;
-bool dumpTrace = false;
-bool noLoad = false;
-bool shiftTimes = false;
+// PARAMEDIR OPTIONS
+// All fields are descriptive but 'active' field, used as an execution flag
+typedef struct TOptionParamedir
+{
+  string shortForm;
+  string longForm;
+  bool active;       // Detected parameter in current execution?
+  int numParameters; // 0,1 => no parameterSeparator is needed
+  string parameterSeparators; // p.e. : ",-"
+  string parameterUsage; // Only for message; p.e. : "p1-p3" or "alfa,beta,delta"
+  string helpMessage;
+}
+TOptionParamedir;
+
+
+enum TOptionID
+{
+  // GENERAL
+  SHOW_HELP = 0,
+  SHOW_VERSION,
+
+  // FILES
+  OUTPUT_NAME,
+  MANY_FILES,
+
+  // HISTOGRAMS
+  EMPTY_COLUMNS,
+  PRINT_PLANE,
+
+  // TOOLSET
+  CUTTER,
+  FILTER,
+  EVENT_CUTTER,
+  SOFTWARE_COUNTERS,
+  TRACE_SHIFTER,
+
+  INVALID_OPTION, // sentinel
+
+  NO_LOAD,   // Hidden
+  DUMP_TRACE // Hidden
+};
+
+
+TOptionParamedir definedOption[] =
+  {
+    // GENERAL
+    { "-h", "--help", false, 0, "", "", "Get this help" },
+    { "-v", "--version", false, 0, "", "", "Show version" },
+
+    // FILES
+    { "-o", "--output-name", false, 1, "", "<tracename>",  "Output trace name" },
+    { "-m", "--many-files", false, 0, "", "", "Allows to separate cfg output (default in a unique file)" },
+
+    // HISTOGRAMS
+    { "-e", "--empty-columns", false, 0, "", "", "Hide empty comlumns (only for histograms)" },
+    { "-p", "--print-plane", false, 0, "", "",
+            "Only the selected Plane of a 3D histogram is printed. Default is to print all of them (only for histograms)" },
+
+    // TOOLSET
+    { "-c", "--cutter", false, 0, "", "", "Apply Cutter tool (default extension = 'chop' )" },
+    { "-f", "--filter", false, 0, "", "", "Apply Filter tool (default extension = 'filter' )" },
+    { "-g", "--event-cutter", false, 0, "", "", "Apply Event Driven Cutter (default extension = 'event' )" },
+    { "-s", "--software-counters", false, 0, "", "", "Apply Software counters tool (default extension = 'sc' )" },
+    { "-t", "--trace-shifter", false, 1, "", "<times-file>",
+            "Apply Trace Shifter tool given these shift times (default extension = 'shift' )" },
+
+    // SENTINEL
+    { "", "", false, 0, "", "", "none" },
+
+    // HIDDEN
+    { "-d", "--dump-trace", false, 0, "", "", "" },
+    { "-n", "--no-load", false, 0, "", "", "" },
+  };
+
+// Main Options
+std::map< TOptionID, TOptionParamedir > option;
 
 PRV_INT32 numIter = 1;
 Trace *trace;
@@ -82,31 +148,73 @@ EventDrivenCutter *eventDrivenCutter = NULL;
 
 string strXMLOptions( "" );
 std::map< string, string > cfgs;
-string strTrace( "" );
+string sourceTraceName( "" );
 string strShiftTimesFile( "" );
+string outputTraceName("");
+
+
+void initOptions()
+{
+  for ( int i = SHOW_HELP; i < INVALID_OPTION; ++i )
+  {
+    TOptionID id = TOptionID( i );
+    option[ id ]  = definedOption[ id ];
+  }
+}
+
+
+void printOptionHelp( TOptionID id )
+{
+  std::stringstream helpFormat, helpFormat2;
+
+  helpFormat << option[ id ].shortForm;
+
+  if ( option[ id ].numParameters == 0 )
+  {
+    helpFormat << ", " << option[ id ].longForm;
+  }
+  else
+  {
+    helpFormat << " " << option[ id ].parameterUsage << ",";
+    helpFormat2 << "    " << option[ id ].longForm << " " << option[ id ].parameterUsage;
+  }
+
+  std::cout << "    " << std::setw(35) << std::left << helpFormat.str();
+  if ( option[ id ].numParameters > 0 )
+  {
+    std::cout << std::setw(0) << std::endl;
+    std::cout << "    " << std::setw(35) << std::left << helpFormat2.str();
+  }
+  std::cout << " " << std::setw(45) << option[ id ].helpMessage << std::endl;
+}
 
 void printHelp()
 {
   std::cout << "USAGE" << std::endl;
-  std::cout << "  paramedir [OPTION] trc {xml} cfg {cfgout | cfg}*" << std::endl;
+  std::cout << "  paramedir [OPTION] trc [xml] cfg [cfgout | cfg]*" << std::endl;
   std::cout << std::endl;
-  std::cout << "    -h: Prints this help" << std::endl;
-  std::cout << "    -v: Prints version" << std::endl;
-  std::cout << std::endl;
-  std::cout << "  Histogram options:" << std::endl;
-  std::cout << "    -p: Only the selected Plane of a 3D histogram is printed. Default is to print all of them." << std::endl;
-  std::cout << "    -e: Hide Empty columns" << std::endl;
+
+  for ( int i = SHOW_HELP; i < OUTPUT_NAME; ++i )
+    printOptionHelp( TOptionID( i ) );
+
   std::cout << std::endl;
   std::cout << "  Output file options:" << std::endl;
-  std::cout << "    -m: Prints on Multiple files." << std::endl;
+
+  for ( int i = OUTPUT_NAME; i < EMPTY_COLUMNS; ++i )
+    printOptionHelp( TOptionID( i ) );
+
+  std::cout << std::endl;
+  std::cout << "  Histogram options:" << std::endl;
+
+  for ( int i = EMPTY_COLUMNS; i < CUTTER; ++i )
+    printOptionHelp( TOptionID( i ) );
+
   std::cout << std::endl;
   std::cout << "  Cutter/Filter options ( needed unique xml file with cutter/filter options):" << std::endl;
-  std::cout << "    -c: Apply Cutter." << std::endl;
-  std::cout << "    -f: Apply Filter." << std::endl;
-  std::cout << "    -s: Apply Software Counters." << std::endl;
-  std::cout << "    -t: Apply Trace Times Shifter." << std::endl;
-  std::cout << "    -g: Apply Event Driven Cutter." << std::endl;
-//  std::cout << "    -j: Apply Communications Fusion. (in progress)" << std::endl;
+
+  for ( int i = CUTTER; i < INVALID_OPTION; ++i )
+    printOptionHelp( TOptionID( i ) );
+
   std::cout << std::endl;
   std::cout << "  Parameters:" << std::endl;
   std::cout << "    trc: Paraver trace filename ( with extension .prv or .prv.gz )." << std::endl;
@@ -130,8 +238,8 @@ void printHelp()
   std::cout << "      to linpack.prv trace, and the filtered trace is loaded and used to compute mpi_stats.cfg." << std::endl;
   std::cout << "      The computed mpi results are saved int my_mpi_values.txt." << std::endl;
   std::cout << std::endl;
-  std::cout << "    paramedir -t linpack.prv times.txt" << std::endl;
-  std::cout << "    paramedir -t linpack.prv times.txt linpack.shifted.prv" << std::endl;
+  std::cout << "    paramedir -t times.txt linpack.prv" << std::endl;
+  std::cout << "    paramedir -t times.txt linpack.prv -o mylinpack.shifted.prv" << std::endl;
   std::cout << std::endl;
 }
 
@@ -150,159 +258,182 @@ void printVersion()
 }
 
 
-bool isOption( char *argument )
+TOptionID findOption( string argument )
 {
-  return ( argument[ 0 ] == '-' );
+  TOptionID whichOption = INVALID_OPTION;
+
+  for ( int i = SHOW_HELP; i < INVALID_OPTION; ++i )
+  {
+    TOptionID id = TOptionID( i );
+    if (( argument == option[ id ].shortForm ) ||
+        ( argument == option[ id ].longForm ))
+    {
+      whichOption = id;
+      break;
+    }
+  }
+
+  return whichOption;
 }
 
 
-void activateOption( char *argument, vector< string > &filterToolOrder )
+void registerTool( TOptionID whichOption, vector< string > &registeredTool )
 {
-  if ( argument[ 1 ] == 'h' )
-    showHelp = true;
-  else if ( argument[ 1 ] == 'v' )
-    showVersion = true;
-  else if ( argument[ 1 ] == 'p' )
-    onlySelectedPlane = true;
-  else if ( argument[ 1 ] == 'e' )
-    hideEmptyColumns = true;
-  else if ( argument[ 1 ] == 'm' )
-    multipleFiles = true;
-  else if ( argument[ 1 ] == 'd' )
-    dumpTrace = true;
-  else if ( argument[ 1 ] == 'n' )
-    noLoad = true;
-  else if ( argument[ 1 ] == 'c' )
+  switch ( whichOption )
   {
-    filterToolOrder.push_back( TraceCutter::getID() );
+    case CUTTER:
+      registeredTool.push_back( TraceCutter::getID() );
+      break;
+
+    case FILTER:
+      registeredTool.push_back( TraceFilter::getID() );
+      break;
+
+    case SOFTWARE_COUNTERS:
+      registeredTool.push_back( TraceSoftwareCounters::getID() );
+      break;
+
+    case TRACE_SHIFTER:
+      registeredTool.push_back( TraceShifter::getID() );
+      break;
+
+    case EVENT_CUTTER:
+      registeredTool.push_back( EventDrivenCutter::getID() );
+      break;
+
+    default:
+      break;
   }
-  else if ( argument[ 1 ] == 'f' )
-  {
-    filterToolOrder.push_back( TraceFilter::getID() );
-  }
-  else if ( argument[ 1 ] == 's' )
-  {
-    filterToolOrder.push_back( TraceSoftwareCounters::getID() );
-  }
-  else if ( argument[ 1 ] == 't' )
-  {
-    filterToolOrder.push_back( TraceShifter::getID() );
-    shiftTimes = true;
-  }
-  else if( argument[ 1 ] == 'g' )
-  {
-    filterToolOrder.push_back( EventDrivenCutter::getID() );
-  }
-  else
-    std::cout << "Unknown option " << argument << std::endl;
 }
+
 
 #ifdef BYTHREAD
-void getDumpIterations( int &currentArg, char *argv[] )
+void getDumpIterations( int &numArg, char *argv[] )
 {
-  if ( dumpTrace )
+  if ( option[ DUMP_TRACE ].active )
   {
-    ++currentArg;
-    string strNumIter( argv[ currentArg ] );
+    ++numArg;
+    string strNumIter( argv[ numArg ] );
     std::stringstream tmpNumIter( strNumIter );
     if( !( tmpNumIter >> numIter ) )
     {
       numIter = 1;
-      --currentArg;
+      --numArg;
     }
   }
 }
 #endif
 
 
-void readParameters( int argc,
+void parseArguments( int argc,
                      char *arguments[],
-                     vector< string > &filterToolOrder)
+                     vector< string > &registeredTool)
 {
-  string strOut;
-  string strOutputFile;
+  PRV_INT32 numArg;
+  string currentArgument;
+  TOptionID currentOption = INVALID_OPTION;
+
   PRV_INT32 previousCFGPosition = 0;
-  PRV_INT32 currentArg = 1;
+  bool readParameter = false;
 
-  while ( currentArg < argc )
+  numArg = 1;
+  while ( numArg < argc )
   {
-    if ( isOption( arguments[ currentArg ] ))
+    currentArgument = string( arguments[ numArg ] );
+    currentOption = findOption( currentArgument );
+    if ( currentOption != INVALID_OPTION )
     {
-      activateOption( arguments[ currentArg ], filterToolOrder );
+      if ( readParameter )
+      {
+        std::cout << " Warning: Parameter expected but option " << currentArgument << " was found instead."<< std::endl;
+      }
+      else
+      {
+        option[ currentOption ].active = true;
+        readParameter = ( option[ currentOption ].numParameters > 0 );
+        registerTool( currentOption, registeredTool );
 #ifdef BYTHREAD
-      getDumpIterations( currentArg, arguments );
+        getDumpIterations( numArg, arguments );
 #endif
-    }
-    else if ( Trace::isTraceFile( string( arguments[ currentArg ] )))
-    {
-      strTrace = string( arguments[ currentArg ] );
-    }
-    else if ( TraceOptions::isTraceToolsOptionsFile( string( arguments[ currentArg ] )))
-    {
-      strXMLOptions = string( arguments[ currentArg ] );
-    }
-    else if ( CFGLoader::isCFGFile( string( arguments[ currentArg ] )))
-    {
-      string strCfg( arguments[ currentArg ] );
-      strOutputFile = strCfg.substr( 0, strCfg.length() - CFG_SUFFIX.length() );
-      cfgs[ arguments[ currentArg ] ] = strOutputFile;
-      previousCFGPosition = currentArg;
-    }
-    else if ( shiftTimes )
-    {
-      // First version: paramedir -t trace.prv shifttimes  or
-      //                paramedir -t shifttimes trace.prv
 
-      strShiftTimesFile = string( arguments[ currentArg ] );
+      }
+    }
+    else if ( readParameter )
+    {
+      // TODO: numParameters > 1
+      // previous loop detected an option needing parameters
+      if ( option[ OUTPUT_NAME ].active && outputTraceName.empty() )
+      {
+        outputTraceName = currentArgument;
+      }
+      else if ( option[ TRACE_SHIFTER ].active && strShiftTimesFile.empty() )
+      {
+        strShiftTimesFile = currentArgument;
+      }
+      readParameter = false;
+    }
+    else if ( Trace::isTraceFile( currentArgument ) )
+    {
+      sourceTraceName = currentArgument;
+    }
+    else if ( TraceOptions::isTraceToolsOptionsFile( currentArgument ) )
+    {
+      strXMLOptions = currentArgument;
+    }
+    else if ( CFGLoader::isCFGFile( currentArgument ) )
+    {
+      cfgs[ currentArgument ] = currentArgument.substr( 0, currentArgument.length() - CFG_SUFFIX.length() );;
+      previousCFGPosition = numArg;
     }
     else
     {
       // Unknown parameter; maybe a output file?
       if ( previousCFGPosition > 0 )
       {
-        if ( previousCFGPosition == currentArg - 1 )
+        if ( previousCFGPosition == numArg - 1 )
         {
-          strOutputFile = string( arguments[ currentArg ] );
-          cfgs[ string( arguments[ currentArg - 1 ] ) ] = strOutputFile;
+          cfgs[ string( arguments[ numArg - 1 ] ) ] = currentArgument;
           previousCFGPosition = 0;
         }
       }
     }
 
-    ++currentArg;
+    ++numArg;
   }
 
   // Default filters to apply if no option given: all?
   // IMPROVE: Detect which kind of xml do we have.
 }
 
-bool anyTrace()
-{
-  return ( strTrace != "" );
-}
 
-bool anyCFG()
+std::string appendPathWorkingDirectory(  KernelConnection *myKernel,
+                                         std::string whichPath )
 {
-  return ( cfgs.size() > 0 );
-}
+  string PATHSEP = myKernel->getPathSeparator();
 
+  if ( whichPath.substr( 0, 1 ) != PATHSEP )
+  {
+    char *currentWorkingDir = getenv( "PWD" );
+    if ( currentWorkingDir != NULL )
+    {
+      string auxPWD( currentWorkingDir );
+      if ( auxPWD.substr( auxPWD.length() - 1, 1 ) == PATHSEP )
+        whichPath = currentWorkingDir + whichPath;
+      else
+        whichPath = currentWorkingDir + PATHSEP + whichPath;
+    }
+  }
 
-bool anyFilter( const vector< string >& filterToolOrder )
-{
-  //return ( ( strXMLOptions != "" ) && ( filterToolOrder.size() > 0 ));
-  return ( filterToolOrder.size() > 0 );
+  return whichPath;
 }
 
 
 string applyFilters( KernelConnection *myKernel,
-                     vector< string > &filterToolOrder,
+                     vector< string > &registeredTool,
                      vector< string > &tmpFiles )
 {
- // string tmpTraceIn, tmpTraceOut;
-  string tmpNameIn, tmpNameOut;
-  string fullTmpNameIn;
-//  string tmpNameIn, tmpNameOut, tmpPathOut;
- // string strOutputFile, strPathOut;
+  string intermediateNameIn, intermediateNameOut;
+  string destinyTraceName;
 
   // Only for cutter
   string pcf_name;
@@ -313,59 +444,49 @@ string applyFilters( KernelConnection *myKernel,
   ParaverTraceConfig *config;
   FILE *pcfFile;
 
+  // Name initializations
+  if ( outputTraceName.empty() )
+  {
+    destinyTraceName = appendPathWorkingDirectory( myKernel, sourceTraceName );
+  }
+  else
+  {
+    destinyTraceName = appendPathWorkingDirectory( myKernel, outputTraceName );
+  }
+
+  intermediateNameOut = appendPathWorkingDirectory( myKernel, sourceTraceName );
+
   traceOptions = myKernel->newTraceOptions( );
+
   // The order is given by the command line, not the xml file.
   vector< string > xmlToolOrder = traceOptions->parseDoc( (char *)strXMLOptions.c_str() );
 
   // Concatenate Filter Utilities
-  tmpNameOut = strTrace;
-
-  string PATHSEP = myKernel->getPathSeparator();
-  if ( tmpNameOut.substr( 0, 1 ) != PATHSEP )
+  for( size_t i = 0; i < registeredTool.size(); ++i )
   {
-    char *currentWorkingDir = getenv( "PWD" );
-    if ( currentWorkingDir != NULL)
+    intermediateNameIn = intermediateNameOut;
+
+    bool commitName;
+    if ( i < registeredTool.size() - 1 )
     {
-      string auxPWD( currentWorkingDir );
-      if ( auxPWD.substr( auxPWD.length() - 1, 1 ) == PATHSEP )
-        tmpNameOut = currentWorkingDir + tmpNameOut;
-      else
-        tmpNameOut = currentWorkingDir + PATHSEP + tmpNameOut;
-    }
-  }
-
-  fullTmpNameIn = tmpNameOut;
-/*
-  size_t pos = strTrace.find_last_of( '/' );
-  if ( pos != string::npos )
-    strPathOut = strTrace.substr( 0, pos );
-  else
-    strPathOut = strTrace;
-*/
-
-  //tmpPathOut = strPathOut;
-
-  for( PRV_UINT16 i = 0; i < filterToolOrder.size(); ++i )
-  {
-    tmpNameIn = tmpNameOut;
-
-    if ( i < filterToolOrder.size() - 1 )
-    {
-      // Get partial name (one tool) and don't modify file that list recent treated traces
-      //tmpNameIn += "x";
-      tmpNameOut = myKernel->getNewTraceName( tmpNameIn , filterToolOrder[ i ], false );
+      // Intermediate trace:
+      //   Get partial name (suffix for one tool)
+      //   Don't modify global list of recent treated traces
+      commitName = false;
+      intermediateNameOut = myKernel->getNewTraceName( intermediateNameIn , registeredTool[ i ], commitName );
     }
     else
     {
-      // Get full name (all tools) and append to file that list recent treated traces
-      tmpNameOut = myKernel->getNewTraceName( fullTmpNameIn, filterToolOrder, true );
+      // Final trace:
+      //   Get full name (including all tools)
+      //   Remember name in global list of recent treated traces
+      commitName = true;
+      intermediateNameOut = myKernel->getNewTraceName( destinyTraceName, registeredTool, commitName );
     }
-    //myKernel->getNewTraceName( tmpNameIn, tmpPathOut, filterToolOrder[ i ] );
-    //tmpNameOut = tmpPathOut;
 
-    if ( filterToolOrder[i] == TraceCutter::getID() )
+    if ( registeredTool[ i ] == TraceCutter::getID() )
     {
-      pcf_name = LocalKernel::composeName( tmpNameIn, string( "pcf" ) );
+      pcf_name = LocalKernel::composeName( intermediateNameIn, string( "pcf" ) );
 
       if(( pcfFile = fopen( pcf_name.c_str(), "r" )) != NULL )
       {
@@ -390,15 +511,15 @@ string applyFilters( KernelConnection *myKernel,
       }
 
       traceCutter = myKernel->newTraceCutter( traceOptions, typesWithValueZero );
-      traceCutter->execute( (char *)tmpNameIn.c_str(), (char *)tmpNameOut.c_str() );
-      myKernel->copyPCF( tmpNameIn, tmpNameOut );
+      traceCutter->execute( (char *)intermediateNameIn.c_str(), (char *)intermediateNameOut.c_str() );
+      myKernel->copyPCF( intermediateNameIn, intermediateNameOut );
     }
-    else if ( filterToolOrder[i] == TraceFilter::getID() )
+    else if ( registeredTool[ i ] == TraceFilter::getID() )
     {
       std::map< TTypeValuePair, TTypeValuePair > translation;
 #if 1
-      traceFilter = myKernel->newTraceFilter( (char *)tmpNameIn.c_str(),
-                                              (char *)tmpNameOut.c_str(),
+      traceFilter = myKernel->newTraceFilter( (char *)intermediateNameIn.c_str(),
+                                              (char *)intermediateNameOut.c_str(),
                                               traceOptions,
                                               translation );
 #else
@@ -423,32 +544,32 @@ string applyFilters( KernelConnection *myKernel,
       opts->set_filter_comms( true );
       opts->set_min_comm_size( 1 );
 
-      traceFilter = myKernel->newTraceFilter( (char *)tmpNameIn.c_str(), (char *)tmpNameOut.c_str(), opts, translation );
+      traceFilter = myKernel->newTraceFilter( (char *)intermediateNameIn.c_str(), (char *)intermediateNameOut.c_str(), opts, translation );
 #endif
-      myKernel->copyPCF( tmpNameIn, tmpNameOut );
+      myKernel->copyPCF( intermediateNameIn, intermediateNameOut );
     }
-    else if ( filterToolOrder[i] == TraceSoftwareCounters::getID() )
+    else if ( registeredTool[ i ] == TraceSoftwareCounters::getID() )
     {
-      traceSoftwareCounters = myKernel->newTraceSoftwareCounters( (char *)tmpNameIn.c_str(),
-                                                                  (char *)tmpNameOut.c_str(),
+      traceSoftwareCounters = myKernel->newTraceSoftwareCounters( (char *)intermediateNameIn.c_str(),
+                                                                  (char *)intermediateNameOut.c_str(),
                                                                   traceOptions );
     }
-    else if ( filterToolOrder[i] == TraceShifter::getID() )
+    else if ( registeredTool[ i ] == TraceShifter::getID() )
     {
       // TODO: if kernel isn't going to use the traces, it doesn't make sense to pass names
-      traceShifter = myKernel->newTraceShifter( tmpNameIn, tmpNameOut, strShiftTimesFile, THREAD );
-      traceShifter->execute( tmpNameIn, tmpNameOut );
+      traceShifter = myKernel->newTraceShifter( intermediateNameIn, intermediateNameOut, strShiftTimesFile, THREAD );
+      traceShifter->execute( intermediateNameIn, intermediateNameOut );
       delete traceShifter;
     }
-    else if ( filterToolOrder[i] == EventDrivenCutter::getID() )
+    else if ( registeredTool[ i ] == EventDrivenCutter::getID() )
     {
-      eventDrivenCutter = myKernel->newEventDrivenCutter( tmpNameIn, tmpNameOut );
-      eventDrivenCutter->execute( tmpNameIn, tmpNameOut );
+      eventDrivenCutter = myKernel->newEventDrivenCutter( intermediateNameIn, intermediateNameOut );
+      eventDrivenCutter->execute( intermediateNameIn, intermediateNameOut );
       delete eventDrivenCutter;
     }
 
-    myKernel->copyROW( tmpNameIn, tmpNameOut );
-    tmpFiles.push_back( tmpNameOut );
+    myKernel->copyROW( intermediateNameIn, intermediateNameOut );
+    tmpFiles.push_back( intermediateNameOut );
   }
 
   // Delete intermediate files
@@ -468,7 +589,7 @@ string applyFilters( KernelConnection *myKernel,
   delete traceFilter;
   delete traceSoftwareCounters;
 
-  return tmpNameOut;
+  return intermediateNameOut;
 }
 
 
@@ -478,7 +599,7 @@ bool loadTrace( KernelConnection *myKernel )
 
   try
   {
-    trace = Trace::create( myKernel, strTrace, noLoad, NULL );
+    trace = Trace::create( myKernel, sourceTraceName, option[ NO_LOAD ].active, NULL );
     loaded = true;
   }
   catch ( ParaverKernelException& ex )
@@ -501,14 +622,14 @@ void loadCFGs( KernelConnection *myKernel )
     if ( CFGLoader::loadCFG( myKernel, it->first, trace, windows, histograms, options ) )
     {
       TextOutput output;
-      output.setMultipleFiles( multipleFiles );
+      output.setMultipleFiles( option[ MANY_FILES ].active );
 
       if ( histograms.begin() != histograms.end() &&
            histograms[ histograms.size() - 1 ] != NULL )
         output.dumpHistogram( histograms[ histograms.size() - 1 ],
                               it->second,
-                              onlySelectedPlane,
-                              hideEmptyColumns );
+                              option[ PRINT_PLANE ].active,
+                              option[ EMPTY_COLUMNS ].active );
       else if( windows.begin() != windows.end() &&
                windows[ windows.size() - 1 ] != NULL )
         output.dumpWindow( windows[ windows.size() - 1 ], it->second );
@@ -523,7 +644,6 @@ void loadCFGs( KernelConnection *myKernel )
     }
 
     histograms.clear();
-
 
     for ( PRV_UINT32 i = 0; i < windows.size(); ++i )
     {
@@ -555,6 +675,8 @@ void testSequence( KernelConnection *myKernel )
 
 int main( int argc, char *argv[] )
 {
+  initOptions();
+
   if ( argc == 1 )
 #if 0
   {
@@ -567,7 +689,7 @@ int main( int argc, char *argv[] )
 #endif
   else
   {
-    vector< string > filterToolOrder;
+    vector< string > registeredTool;
     vector< string > tmpFiles;
 
     // Initializations
@@ -576,33 +698,33 @@ int main( int argc, char *argv[] )
     ParaverConfig *config = ParaverConfig::getInstance();
     config->readParaverConfigFile();
 
-    readParameters( argc, argv, filterToolOrder );
+    parseArguments( argc, argv, registeredTool );
 
-    // Execute
-    if ( showHelp )
+    if ( option[ SHOW_HELP ].active )
       printHelp();
-    else if ( showVersion )
+    else if ( option[ SHOW_VERSION ].active )
       printVersion();
-    else if ( anyTrace() )
+    else if ( !sourceTraceName.empty() )
     {
-      if ( anyFilter( filterToolOrder ) )
+      if ( registeredTool.size() > 0 )
       {
-        strTrace = applyFilters( myKernel, filterToolOrder, tmpFiles );
+        // We can pass a filtered trace to compute some further cfgs
+        sourceTraceName = applyFilters( myKernel, registeredTool, tmpFiles );
       }
 
-      if ( anyCFG() || dumpTrace )
+      if ( cfgs.size() > 0 || option[ DUMP_TRACE ].active )
       {
         if ( !loadTrace( myKernel ) )
         {
-          std::cout << "Cannot load " << strTrace << std::endl;
+          std::cout << "Cannot load " << sourceTraceName << std::endl;
           exit( 0 );
         }
 
-        if ( dumpTrace )
+        if ( option[ DUMP_TRACE ].active )
     #ifdef BYTHREAD
-          trace->dumpFile( strTrace + ".new.bythread", numIter );
+          trace->dumpFile( sourceTraceName + ".new.bythread", numIter );
     #else
-          trace->dumpFile( strTrace + ".new.global" );
+          trace->dumpFile( sourceTraceName + ".new.global" );
     #endif
 
         loadCFGs( myKernel );
