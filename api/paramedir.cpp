@@ -231,7 +231,7 @@ void printHelp()
   std::cout << "USAGE" << std::endl;
   std::cout << "  General info:" << std::endl;
   std::cout << "      paramedir [-h] [-v]" << std::endl << std::endl;
-  std::cout << "  Compute numeric data from trace using histogram or timeline CFG's (trace is loaded):" << std::endl;
+  std::cout << "  Compute numeric data from trace using histogram or timeline CFG's (cfgs can be chained, trace is loaded):" << std::endl;
   std::cout << "      paramedir [-e] [-m] [-p] <prv> [ <cfg> | <cfg> <ouput-data-file> ]+" << std::endl << std::endl;
   std::cout << "  Process paraver trace (pipelined as flags are declared, using XML configuration parameters and without trace load):" << std::endl;
   std::cout << "      paramedir [-c] [-f] [-s] [-o <output-file>] <prv> <xml>" << std::endl << std::endl;
