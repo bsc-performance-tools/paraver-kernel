@@ -381,7 +381,7 @@ bool parseArguments( int argc,
       {
         // Wrong! I.e: If -o option needs a parameter, we got:
         //    "paramedir -o -x ..." instead of "paramedir -o PARAM -x ..."
-        std::cout << "  [ERROR]: Parameter expected but option " << currentArgument << " was found instead."<< std::endl;
+        std::cout << "  [ERROR] Parameter expected but option '" << currentArgument << "' was found instead."<< std::endl;
         parseOK = false;
         break;
       }
@@ -754,38 +754,39 @@ int main( int argc, char *argv[] )
     ParaverConfig *config = ParaverConfig::getInstance();
     config->readParaverConfigFile();
 
-    if ( !parseArguments( argc, argv, registeredTool ) )
-      printHelp();
-    else if ( option[ SHOW_HELP ].active )
-      printHelp();
-    else if ( option[ SHOW_VERSION ].active )
-      printVersion();
-    else if ( !sourceTraceName.empty() )
+    if ( parseArguments( argc, argv, registeredTool ) )
     {
-      if ( registeredTool.size() > 0 )
+      if ( option[ SHOW_HELP ].active )
+        printHelp();
+      else if ( option[ SHOW_VERSION ].active )
+        printVersion();
+      else if ( !sourceTraceName.empty() )
       {
-        // We can pass a filtered trace to compute some further cfgs
-        sourceTraceName = applyFilters( myKernel, registeredTool, tmpFiles );
-      }
-
-      if ( cfgs.size() > 0 || option[ DUMP_TRACE ].active )
-      {
-        if ( !loadTrace( myKernel ) )
+        if ( registeredTool.size() > 0 )
         {
-          std::cerr << "  [ERROR] Cannot load " << sourceTraceName << std::endl;
-          exit( 1 );
+          // We can pass a filtered trace to compute some further cfgs
+          sourceTraceName = applyFilters( myKernel, registeredTool, tmpFiles );
         }
 
-        if ( option[ DUMP_TRACE ].active )
-    #ifdef BYTHREAD
-          trace->dumpFile( sourceTraceName + ".new.bythread", numIter );
-    #else
-          trace->dumpFile( sourceTraceName + ".new.global" );
-    #endif
+        if ( cfgs.size() > 0 || option[ DUMP_TRACE ].active )
+        {
+          if ( !loadTrace( myKernel ) )
+          {
+            std::cerr << "  [ERROR] Cannot load " << sourceTraceName << std::endl;
+            exit( 1 );
+          }
 
-        loadCFGs( myKernel );
+          if ( option[ DUMP_TRACE ].active )
+      #ifdef BYTHREAD
+            trace->dumpFile( sourceTraceName + ".new.bythread", numIter );
+      #else
+            trace->dumpFile( sourceTraceName + ".new.global" );
+      #endif
 
-        delete trace;
+          loadCFGs( myKernel );
+
+          delete trace;
+        }
       }
     }
   }
