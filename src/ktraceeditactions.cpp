@@ -167,7 +167,7 @@ vector<TraceEditSequence::TSequenceStates> TraceShifterTimesLoaderAction::getSta
 {
   vector<TraceEditSequence::TSequenceStates> tmpStates;
 
-  tmpStates.push_back( TraceEditSequence::shiftTimesState );
+  //tmpStates.push_back( TraceEditSequence::shiftTimesState );
 
   return tmpStates;
 }
@@ -189,7 +189,7 @@ vector<TraceEditSequence::TSequenceStates> TraceParserAction::getStateDependenci
 {
   vector<TraceEditSequence::TSequenceStates> tmpStates;
 
-  tmpStates.push_back( TraceEditSequence::maxTraceTimeState );
+  //tmpStates.push_back( TraceEditSequence::maxTraceTimeState );
   tmpStates.push_back( TraceEditSequence::eofParsedState );
 
   return tmpStates;
@@ -229,7 +229,7 @@ vector<TraceEditSequence::TSequenceStates> RecordTimeShifterAction::getStateDepe
 {
   vector<TraceEditSequence::TSequenceStates> tmpStates;
 
-  tmpStates.push_back( TraceEditSequence::maxTraceTimeState );
+  //tmpStates.push_back( TraceEditSequence::maxTraceTimeState );
   tmpStates.push_back( TraceEditSequence::shiftTimesState );
   tmpStates.push_back( TraceEditSequence::shiftLevelState );
 
@@ -287,8 +287,8 @@ vector<TraceEditSequence::TSequenceStates> TraceWriterAction::getStateDependenci
 {
   vector<TraceEditSequence::TSequenceStates> tmpStates;
 
+  //tmpStates.push_back( TraceEditSequence::maxTraceTimeState );
   tmpStates.push_back( TraceEditSequence::outputTraceFileNameState );
-  tmpStates.push_back( TraceEditSequence::maxTraceTimeState );
 
   return tmpStates;
 }
@@ -300,7 +300,8 @@ void TraceWriterAction::execute( MemoryTrace::iterator *it  )
 
   if( !outputTrace.is_open() )
   {
-    std::string tmpFileName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
+    std::string tmpFileName =
+            ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
     outputTrace.open( tmpFileName.c_str(), std::ios::out );
     tmpSequence->getCurrentTrace()->dumpFileHeader( outputTrace );
   }
@@ -331,6 +332,7 @@ vector<TraceEditSequence::TSequenceStates> EventDrivenCutterAction::getStateDepe
   vector<TraceEditSequence::TSequenceStates> tmpStates;
 
   tmpStates.push_back( TraceEditSequence::outputTraceFileNameState );
+  tmpStates.push_back( TraceEditSequence::eofParsedState );
 
   return tmpStates;
 }
