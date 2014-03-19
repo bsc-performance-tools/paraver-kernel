@@ -163,7 +163,7 @@ TraceShifter *traceShifter = NULL;
 string strShiftTimesFile( "" );
 
 EventDrivenCutter *eventDrivenCutter = NULL;
-string eventType( "" );
+TEventType eventType = 0;
 
 
 // Loads option map
@@ -419,9 +419,15 @@ void parseArguments( int argc,
       {
         outputTraceName = currentArgument;
       }
-      else if ( option[ EVENT_CUTTER ].active && eventType.empty() )
+      else if ( option[ EVENT_CUTTER ].active && eventType == 0 )
       {
-        eventType = currentArgument;
+        std::stringstream sstr( currentArgument );
+        if( !( sstr >> eventType ) )
+        {
+          std::cerr << "  [WARNING] '" << currentArgument << "' not a valid event type." << std::endl;
+          option[ EVENT_CUTTER ].active = false;
+//          unregisterTool( prevParamPendingOption, registeredTool );
+        }
       }
       else if ( option[ TRACE_SHIFTER ].active && strShiftTimesFile.empty() )
       {
@@ -621,8 +627,7 @@ string applyFilters( KernelConnection *myKernel,
     }
     else if ( registeredTool[ i ] == EventDrivenCutter::getID() )
     {
-      // eventDrivenCutter = myKernel->newEventDrivenCutter( intermediateNameIn, intermediateNameOut, eventType );
-      eventDrivenCutter = myKernel->newEventDrivenCutter( intermediateNameIn, intermediateNameOut );
+      eventDrivenCutter = myKernel->newEventDrivenCutter( intermediateNameIn, intermediateNameOut, eventType );
       eventDrivenCutter->execute( intermediateNameIn, intermediateNameOut );
       delete eventDrivenCutter;
     }

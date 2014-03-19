@@ -31,6 +31,7 @@
 #define EVENTDRIVENCUTTER_H_INCLUDED
 
 #include <string>
+#include "paraverkerneltypes.h"
 
 class KernelConnection;
 class ProgressController;
@@ -41,7 +42,7 @@ class EventDrivenCutter
     static EventDrivenCutter *create( const KernelConnection *whichKernel,
                                       std::string traceIn,
                                       std::string traceOut,
-                                      //TraceOptions *options,
+                                      TEventType whichEvent,
                                       ProgressController *progress );
 
     static std::string getID() { return EventDrivenCutter::traceToolID; }
@@ -78,13 +79,13 @@ class EventDrivenCutterProxy : public EventDrivenCutter
     EventDrivenCutterProxy( const KernelConnection *whichKernel,
                             std::string traceIn,
                             std::string traceOut,
-                            //TraceOptions *options,
+                            TEventType whichEvent,
                             ProgressController *progress );
 
     friend EventDrivenCutter *EventDrivenCutter::create( const KernelConnection *whichKernel,
                                                          std::string traceIn,
                                                          std::string traceOut,
-                                                         //TraceOptions *options,
+                                                         TEventType whichEvent,
                                                          ProgressController *progress );
 };
 

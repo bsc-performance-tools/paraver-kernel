@@ -40,19 +40,21 @@ std::string EventDrivenCutter::traceToolExtension = "event_cutter";
 EventDrivenCutter *EventDrivenCutter::create( const KernelConnection *whichKernel,
                                               std::string traceIn,
                                               std::string traceOut,
+                                              TEventType whichEvent,
                                               ProgressController *progress )
 {
-  return new EventDrivenCutterProxy( whichKernel, traceIn, traceOut, progress );
+  return new EventDrivenCutterProxy( whichKernel, traceIn, traceOut, whichEvent, progress );
 }
 
 
 EventDrivenCutterProxy::EventDrivenCutterProxy( const KernelConnection *whichKernel,
                                                 std::string traceIn,
                                                 std::string traceOut,
+                                                TEventType whichEvent,
                                                 ProgressController *progress )
 {
   myKernel = whichKernel;
-  myEventDrivenCutter = whichKernel->newEventDrivenCutter( traceIn, traceOut, progress );
+  myEventDrivenCutter = whichKernel->newEventDrivenCutter( traceIn, traceOut, whichEvent, progress );
 }
 
 

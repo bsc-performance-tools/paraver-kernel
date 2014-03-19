@@ -93,6 +93,7 @@ class KernelConnection
                                            ProgressController *progress = NULL ) const = 0;
     virtual EventDrivenCutter *newEventDrivenCutter( std::string traceIn,
                                                      std::string traceOut,
+                                                     TEventType whichEvent,
                                                      ProgressController *progress = NULL ) const = 0;
 
 

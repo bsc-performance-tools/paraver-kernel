@@ -32,6 +32,7 @@
 KEventDrivenCutter::KEventDrivenCutter( const KernelConnection *myKernel,
                                         std::string traceIn,
                                         std::string traceOut,
+                                        TEventType whichEvent,
                                         ProgressController *progress )
 {
   // Build sequence
@@ -50,7 +51,7 @@ KEventDrivenCutter::KEventDrivenCutter( const KernelConnection *myKernel,
   mySequence->addState( TraceEditSequence::eofParsedState, tmpEOFParseState );
 
   OnEventCutter *tmpOnEventCutter = new OnEventCutter( mySequence );
-  tmpOnEventCutter->setData( 1 );
+  tmpOnEventCutter->setData( whichEvent );
   mySequence->addState( TraceEditSequence::onEventCutterState, tmpOnEventCutter );
 
   traces.push_back( traceIn );

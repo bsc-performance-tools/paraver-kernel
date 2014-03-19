@@ -45,6 +45,7 @@ class KEventDrivenCutter : public EventDrivenCutter
     KEventDrivenCutter( const KernelConnection *myKernel,
                         std::string traceIn,
                         std::string traceOut,
+                        TEventType whichEvent,
                         ProgressController *progress = NULL );
     ~KEventDrivenCutter();
 

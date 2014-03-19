@@ -286,6 +286,7 @@ TraceShifter *LocalKernel::newTraceShifter( std::string traceIn,
 
 EventDrivenCutter *LocalKernel::newEventDrivenCutter( std::string traceIn,
                                                       std::string traceOut,
+                                                      TEventType whichEvent,
                                                       ProgressController *progress ) const
 {
   KProgressController *tmpKProgressControler = NULL;
@@ -293,7 +294,7 @@ EventDrivenCutter *LocalKernel::newEventDrivenCutter( std::string traceIn,
   if ( progress != NULL )
     tmpKProgressControler = (KProgressController *)progress->getConcrete();
 
-  return new KEventDrivenCutter( this, traceIn, traceOut, tmpKProgressControler );
+  return new KEventDrivenCutter( this, traceIn, traceOut, whichEvent, tmpKProgressControler );
 }
 
 void LocalKernel::getAllStatistics( vector<string>& onVector ) const

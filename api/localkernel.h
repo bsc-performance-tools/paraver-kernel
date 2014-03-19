@@ -81,6 +81,7 @@ class LocalKernel: public KernelConnection
                                            ProgressController *progress ) const;
     virtual EventDrivenCutter *newEventDrivenCutter( std::string traceIn,
                                                      std::string traceOut,
+                                                     TEventType whichEvent,
                                                      ProgressController *progress = NULL ) const;
 
     virtual void getAllStatistics( std::vector<std::string>& onVector ) const;
