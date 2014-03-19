@@ -113,7 +113,7 @@ TOptionParamedir definedOption[] =
 
     // FILES
     { "-m", "--many-files", false, 0, "", "", "Allows to separate cfg output (default in a unique file)" },
-    { "-o", "--output-name", false, 1, "", "<tracename>",  "Output trace name" },
+    { "-o", "--output-name", false, 1, "", "<tracename>",  "Output trace name (only for processing trace)" },
 
     // HISTOGRAMS
     { "-e", "--empty-columns", false, 0, "", "", "Hide empty columns" },
@@ -122,9 +122,9 @@ TOptionParamedir definedOption[] =
     // PRV TOOLSET
     { "-c", "--cutter", false, 0, "", "", "Apply Cutter tool" },
     { "-f", "--filter", false, 0, "", "", "Apply Filter tool" },
-    { "-g", "--event-cutter", false, 1, "", "<event-type>", "Apply Event Driven Cutter" },
+    { "-g", "--event-cutter", false, 1, "", "<event-type>", "Apply Event Driven Cutter using 'event-type' as mark" },
     { "-s", "--software-counters", false, 0, "", "", "Apply Software counters tool" },
-    { "-t", "--trace-shifter", false, 1, "", "<times-file>", "Apply Trace Shifter tool given these shift times" },
+    { "-t", "--trace-shifter", false, 1, "", "<shift-times-file>", "Apply Trace Shifter tool given these shift times" },
 
     // SENTINEL
     { "", "", false, 0, "", "", "none" },
@@ -229,7 +229,18 @@ void printHelp()
 {
   std::cout << std::endl;
   std::cout << "USAGE" << std::endl;
-  std::cout << "  paramedir [OPTION] trc [xml] cfg [cfgout | cfg]*" << std::endl;
+  std::cout << "  General info:" << std::endl;
+  std::cout << "      paramedir [-h] [-v]" << std::endl << std::endl;
+  std::cout << "  Compute numeric data from trace using histogram or timeline CFG's:" << std::endl;
+  std::cout << "      paramedir [-e] [-m] [-p] <trc> [<cfg>|<cfg> <ouput-data-file>]+" << std::endl << std::endl;
+  std::cout << "  Process paraver trace (pipelined as flags are declared, and using XML configuration parameters):" << std::endl;
+  std::cout << "      paramedir [-c] [-f] [-s] [-o <output-file>] <trc> <xml>" << std::endl << std::endl;
+  std::cout << "  Process paraver trace (direct parametrization):" << std::endl;
+  std::cout << "      paramedir [-e <event-type>] [-t <shift-times-file>] [-o <output-file>] <trc> " << std::endl << std::endl;
+  std::cout << "  Process paraver trace (combined):" << std::endl;
+  std::cout << "      paramedir [-c] [-f] [-s] [-o <output-file>] [-e <event-type>] [-t <shift-times-file>] <trc> [<xml>]" << std::endl << std::endl;
+  std::cout << "  Compute numeric data from processed trace using histogram or timeline CFG's:" << std::endl;
+  std::cout << "      paramedir [-e] [-m] [-p] [-c] [-f] [-s] [-o <output-file>] [-e <event-type>] [-t <shift-times-file>] <trc> [<xml>] [<cfg>|<cfg> <ouput-data-file>]+" << std::endl << std::endl;
 
   std::cout << std::endl;
   std::cout << "  General options:" << std::endl;
@@ -249,17 +260,17 @@ void printHelp()
     printOptionHelp( TOptionID( i ) );
 
   std::cout << std::endl;
-  std::cout << "  Cutter/Filter options ( needed unique xml file with cutter/filter options):" << std::endl;
+  std::cout << "  Paraver trace toolset options:" << std::endl;
 
   for ( int i = CUTTER; i < INVALID_OPTION; ++i )
     printOptionHelp( TOptionID( i ) );
 
   std::cout << std::endl;
   std::cout << "  Parameters:" << std::endl;
-  std::cout << "    trc: Paraver trace filename ( with extension .prv or .prv.gz )." << std::endl;
-  std::cout << "    xml: Options for cutter/filter/software counters ( with extension .xml )." << std::endl;
-  std::cout << "    cfg: Paraver configuration filename ( with extension .cfg ). If present, trace's loaded." << std::endl;
-  std::cout << "    out: Filename for cfg output ( default name is cfg filename without, with extension .mcr )." << std::endl;
+  std::cout << "    trc: Paraver trace filename; can be gzipped (extensions allowed: only '.prv' or '.prv.gz' )." << std::endl;
+  std::cout << "    xml: Options for cutter/filter/software counters ( with extension '.xml' )." << std::endl;
+  std::cout << "    cfg: Paraver configuration filename ( with extension '.cfg' ). If present, trace's loaded." << std::endl;
+  std::cout << "    ouput-data-file: Filename for cfg output data ( if missing, cfg name's used, changing '.cfg' extension with '.mcr' )." << std::endl;
   std::cout << std::endl;
   std::cout << "  Examples:" << std::endl;
   std::cout << "    paramedir -m linpack.prv.gz mpi_stats.cfg" << std::endl;
@@ -277,7 +288,6 @@ void printHelp()
   std::cout << "      to linpack.prv trace, and the filtered trace is loaded and used to compute mpi_stats.cfg." << std::endl;
   std::cout << "      The computed mpi results are saved int my_mpi_values.txt." << std::endl;
   std::cout << std::endl;
-  std::cout << "    paramedir -t times.txt linpack.prv" << std::endl;
   std::cout << "    paramedir -t times.txt linpack.prv -o mylinpack.shifted.prv" << std::endl;
   std::cout << std::endl;
 }
@@ -527,7 +537,7 @@ string applyFilters( KernelConnection *myKernel,
       //   Get partial name (suffix for one tool)
       //   Don't modify global list of recent treated traces
       commitName = false;
-      intermediateNameOut = myKernel->getNewTraceName( intermediateNameIn , registeredTool[ i ], commitName );
+      intermediateNameOut = myKernel->getNewTraceName( intermediateNameIn, registeredTool[ i ], commitName );
     }
     else
     {
