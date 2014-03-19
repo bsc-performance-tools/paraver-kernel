@@ -227,6 +227,7 @@ void printOptionHelp( TOptionID id )
 
 void printHelp()
 {
+  std::cout << std::endl;
   std::cout << "USAGE" << std::endl;
   std::cout << "  paramedir [OPTION] trc [xml] cfg [cfgout | cfg]*" << std::endl;
 
@@ -296,7 +297,10 @@ void printVersion()
 }
 
 
-string getToolID( TOptionID whichOption )
+// Register any specified tool; remembers order
+void registerTool( TOptionID whichOption,
+                   vector< string > &registeredTool,
+                   bool &needXMLOptionsFile )
 {
   string toolID("");
 
@@ -304,14 +308,17 @@ string getToolID( TOptionID whichOption )
   {
     case CUTTER:
       toolID = TraceCutter::getID();
+      needXMLOptionsFile = true;
       break;
 
     case FILTER:
       toolID =  TraceFilter::getID();
+      needXMLOptionsFile = true;
       break;
 
     case SOFTWARE_COUNTERS:
       toolID =  TraceSoftwareCounters::getID();
+      needXMLOptionsFile = true;
       break;
 
     case TRACE_SHIFTER:
@@ -326,32 +333,8 @@ string getToolID( TOptionID whichOption )
       break;
   }
 
-  return toolID;
-}
-
-
-// Register any specified tool; remembers order
-void registerTool( TOptionID whichOption, vector< string > &registeredTool )
-{
-  string toolID = getToolID( whichOption );
-
   if ( !toolID.empty() )
     registeredTool.push_back( toolID );
-}
-
-
-void unregisterTool( TOptionID whichOption, vector< string > &registeredTool )
-{
-  string toolID = getToolID( whichOption );
-
-  if ( !toolID.empty() )
-  {
-    vector< string >::iterator it = std::find( registeredTool.begin(), registeredTool.end(), toolID );
-    if ( it != registeredTool.end() )
-    {
-      registeredTool.erase( it );
-    }
-  }
 }
 
 
@@ -373,13 +356,15 @@ void getDumpIterations( int &numArg, char *argv[] )
 #endif
 
 
-void parseArguments( int argc,
+bool parseArguments( int argc,
                      char *arguments[],
                      vector< string > &registeredTool )
 {
+  bool parseOK = true;
+  bool needXMLOptionsFile = false;
+
   PRV_INT32 numArg;
   string currentArgument;
-  TOptionID prevParamPendingOption = INVALID_OPTION;
   TOptionID currentOption = INVALID_OPTION;
 
   PRV_INT32 previousCFGPosition = 0;
@@ -396,17 +381,14 @@ void parseArguments( int argc,
       {
         // Wrong! I.e: If -o option needs a parameter, we got:
         //    "paramedir -o -x ..." instead of "paramedir -o PARAM -x ..."
-        std::cout << "  [Warning]: Parameter expected but option " << currentArgument << " was found instead."<< std::endl;
-
-        // Deactivate previous pending option
-        readParameter = 0;
-        option[ prevParamPendingOption ].active = false;
-        unregisterTool( prevParamPendingOption, registeredTool );
+        std::cout << "  [ERROR]: Parameter expected but option " << currentArgument << " was found instead."<< std::endl;
+        parseOK = false;
+        break;
       }
 
       option[ currentOption ].active = true;
       readParameter = option[ currentOption ].numParameters;
-      registerTool( currentOption, registeredTool );
+      registerTool( currentOption, registeredTool, needXMLOptionsFile );
 #ifdef BYTHREAD
       getDumpIterations( numArg, arguments );
 #endif
@@ -424,9 +406,9 @@ void parseArguments( int argc,
         std::stringstream sstr( currentArgument );
         if( !( sstr >> eventType ) )
         {
-          std::cerr << "  [WARNING] '" << currentArgument << "' not a valid event type." << std::endl;
-          option[ EVENT_CUTTER ].active = false;
-//          unregisterTool( prevParamPendingOption, registeredTool );
+          std::cerr << "  [ERROR] '" << currentArgument << "' not a valid event type." << std::endl;
+          parseOK = false;
+          break;
         }
       }
       else if ( option[ TRACE_SHIFTER ].active && strShiftTimesFile.empty() )
@@ -466,6 +448,14 @@ void parseArguments( int argc,
 
     ++numArg;
   }
+
+  if ( needXMLOptionsFile && strXMLOptions.empty() )
+  {
+    std::cerr << "  [ERROR] Unable to find XML options file." << std::endl;
+    parseOK = false;
+  }
+
+  return parseOK;
 }
 
 
@@ -764,9 +754,9 @@ int main( int argc, char *argv[] )
     ParaverConfig *config = ParaverConfig::getInstance();
     config->readParaverConfigFile();
 
-    parseArguments( argc, argv, registeredTool );
-
-    if ( option[ SHOW_HELP ].active )
+    if ( !parseArguments( argc, argv, registeredTool ) )
+      printHelp();
+    else if ( option[ SHOW_HELP ].active )
       printHelp();
     else if ( option[ SHOW_VERSION ].active )
       printVersion();
@@ -782,7 +772,7 @@ int main( int argc, char *argv[] )
       {
         if ( !loadTrace( myKernel ) )
         {
-          std::cout << "  [Error] Cannot load " << sourceTraceName << std::endl;
+          std::cerr << "  [ERROR] Cannot load " << sourceTraceName << std::endl;
           exit( 1 );
         }
 
