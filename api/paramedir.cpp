@@ -231,16 +231,17 @@ void printHelp()
   std::cout << "USAGE" << std::endl;
   std::cout << "  General info:" << std::endl;
   std::cout << "      paramedir [-h] [-v]" << std::endl << std::endl;
-  std::cout << "  Compute numeric data from trace using histogram or timeline CFG's:" << std::endl;
-  std::cout << "      paramedir [-e] [-m] [-p] <trc> [<cfg>|<cfg> <ouput-data-file>]+" << std::endl << std::endl;
-  std::cout << "  Process paraver trace (pipelined as flags are declared, and using XML configuration parameters):" << std::endl;
-  std::cout << "      paramedir [-c] [-f] [-s] [-o <output-file>] <trc> <xml>" << std::endl << std::endl;
-  std::cout << "  Process paraver trace (direct parametrization):" << std::endl;
-  std::cout << "      paramedir [-e <event-type>] [-t <shift-times-file>] [-o <output-file>] <trc> " << std::endl << std::endl;
-  std::cout << "  Process paraver trace (combined):" << std::endl;
-  std::cout << "      paramedir [-c] [-f] [-s] [-o <output-file>] [-e <event-type>] [-t <shift-times-file>] <trc> [<xml>]" << std::endl << std::endl;
-  std::cout << "  Compute numeric data from processed trace using histogram or timeline CFG's:" << std::endl;
-  std::cout << "      paramedir [-e] [-m] [-p] [-c] [-f] [-s] [-o <output-file>] [-e <event-type>] [-t <shift-times-file>] <trc> [<xml>] [<cfg>|<cfg> <ouput-data-file>]+" << std::endl << std::endl;
+  std::cout << "  Compute numeric data from trace using histogram or timeline CFG's (trace is loaded):" << std::endl;
+  std::cout << "      paramedir [-e] [-m] [-p] <prv> [ <cfg> | <cfg> <ouput-data-file> ]+" << std::endl << std::endl;
+  std::cout << "  Process paraver trace (pipelined as flags are declared, using XML configuration parameters and without trace load):" << std::endl;
+  std::cout << "      paramedir [-c] [-f] [-s] [-o <output-file>] <prv> <xml>" << std::endl << std::endl;
+  std::cout << "  Process paraver trace (direct parametrization, don't load trace):" << std::endl;
+  std::cout << "      paramedir [-g <event-type>] [-t <shift-times-file>] [-o <output-file>] <prv> " << std::endl << std::endl;
+  std::cout << "  Process paraver trace (combined, don't load trace):" << std::endl;
+  std::cout << "      paramedir [-c] [-f] [-s] [-o <output-file>] [-g <event-type>] [-t <shift-times-file>] <prv> [ <xml> ]" << std::endl << std::endl;
+  std::cout << "  Compute numeric data from processed trace using histogram or timeline CFG's (all combined, trace is loaded):" << std::endl;
+  std::cout << "      paramedir [-e] [-m] [-p] [-c] [-f] [-s] [-o <output-file>] [-g <event-type>] \\" << std::endl;
+  std::cout << "                [-t <shift-times-file>] <prv> [ <xml> ] [ <cfg> | <cfg> <ouput-data-file> ]+" << std::endl << std::endl;
 
   std::cout << std::endl;
   std::cout << "  General options:" << std::endl;
@@ -267,28 +268,31 @@ void printHelp()
 
   std::cout << std::endl;
   std::cout << "  Parameters:" << std::endl;
-  std::cout << "    trc: Paraver trace filename; can be gzipped (extensions allowed: only '.prv' or '.prv.gz' )." << std::endl;
+  std::cout << "    prv: Paraver trace filename; can be gzipped (extensions allowed: only '.prv' or '.prv.gz' )." << std::endl;
   std::cout << "    xml: Options for cutter/filter/software counters ( with extension '.xml' )." << std::endl;
   std::cout << "    cfg: Paraver configuration filename ( with extension '.cfg' ). If present, trace's loaded." << std::endl;
   std::cout << "    ouput-data-file: Filename for cfg output data ( if missing, cfg name's used, changing '.cfg' extension with '.mcr' )." << std::endl;
   std::cout << std::endl;
   std::cout << "  Examples:" << std::endl;
-  std::cout << "    paramedir -m linpack.prv.gz mpi_stats.cfg" << std::endl;
+  std::cout << "    paramedir linpack.prv.gz mpi_stats.cfg" << std::endl;
   std::cout << "      Computes the mpi_stats.cfg analysis of compressed trace linpack.prv." << std::endl;
+  std::cout << std::endl;
+  std::cout << "    paramedir linpack.prv mpi_stats.cfg my_data.txt total_MPI_activity.cfg" << std::endl;
+  std::cout << "      Computes the mpi_stats.cfg and total_MPI_activity.cfg analysis of linpack.prv, saving first one in 'my_data.txt' file." << std::endl;
   std::cout << std::endl;
   std::cout << "    paramedir -c linpack.prv cutter.xml" << std::endl;
   std::cout << "      Reads parameters of the cutter from the xml and applies them to linpack.prv trace." << std::endl;
   std::cout << std::endl;
-  std::cout << "    paramedir -f linpack.prv just_MPI_calls.xml" << std::endl;
+  std::cout << "    paramedir --filter linpack.prv just_MPI_calls.xml" << std::endl;
   std::cout << "      Filters mpi calls of linpack.prv. Doesn't load it, just writes the file." << std::endl;
   std::cout << std::endl;
-  std::cout << "    paramedir -s -c -f linpack.prv cut_filter_options.xml mpi_stats.cfg my_mpi_values.txt" << std::endl;
+  std::cout << "    paramedir -s --cutter -f linpack.prv cut_filter_options.xml mpi_stats.cfg my_mpi_values.txt" << std::endl;
   std::cout << "      Reads parameters of the software counters, cutter and filter from the xml and applies them" << std::endl;
   std::cout << "      pipelined in the given order ( trace -> software counters | cutter | filter -> result trace)" << std::endl;
   std::cout << "      to linpack.prv trace, and the filtered trace is loaded and used to compute mpi_stats.cfg." << std::endl;
   std::cout << "      The computed mpi results are saved int my_mpi_values.txt." << std::endl;
   std::cout << std::endl;
-  std::cout << "    paramedir -t times.txt linpack.prv -o mylinpack.shifted.prv" << std::endl;
+  std::cout << "    paramedir --trace-shifter times.txt linpack.prv -o mylinpack.shifted.prv" << std::endl;
   std::cout << std::endl;
 }
 
