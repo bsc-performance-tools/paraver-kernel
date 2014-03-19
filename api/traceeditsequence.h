@@ -61,6 +61,7 @@ class TraceEditSequence
       shiftTimesState,
       eofParsedState,
       shiftLevelState,
+      onEventCutterState,
       numStates
     };
 

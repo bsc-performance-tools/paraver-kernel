@@ -332,6 +332,7 @@ vector<TraceEditSequence::TSequenceStates> EventDrivenCutterAction::getStateDepe
   vector<TraceEditSequence::TSequenceStates> tmpStates;
 
   tmpStates.push_back( TraceEditSequence::outputTraceFileNameState );
+  tmpStates.push_back( TraceEditSequence::onEventCutterState );
   tmpStates.push_back( TraceEditSequence::eofParsedState );
 
   return tmpStates;
@@ -352,7 +353,7 @@ void EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
   }
 
   if( ( it->getType() == EVENT ) &&
-      ( it->getEventType() == 50000003 /*TODO get event type from state*/ ) )
+      ( it->getEventType() == ( (OnEventCutter *)tmpSequence->getState( TraceEditSequence::onEventCutterState ) )->getData() ) )
   {
     if( countThreadsPerFile.count( currentThreadFile[ it->getThread() ] ) > 0 )
       --countThreadsPerFile[ currentThreadFile[ it->getThread() ] ];

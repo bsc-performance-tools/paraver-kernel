@@ -49,6 +49,10 @@ KEventDrivenCutter::KEventDrivenCutter( const KernelConnection *myKernel,
   tmpEOFParseState->setData( false );
   mySequence->addState( TraceEditSequence::eofParsedState, tmpEOFParseState );
 
+  OnEventCutter *tmpOnEventCutter = new OnEventCutter( mySequence );
+  tmpOnEventCutter->setData( 1 );
+  mySequence->addState( TraceEditSequence::onEventCutterState, tmpOnEventCutter );
+
   traces.push_back( traceIn );
 }
 

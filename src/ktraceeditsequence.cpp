@@ -103,6 +103,10 @@ TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceSta
       return new ShiftLevelState( this );
       break;
 
+    case onEventCutterState:
+      return new OnEventCutter( this );
+      break;
+
     default:
       return NULL;
       break;
