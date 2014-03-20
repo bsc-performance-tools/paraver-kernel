@@ -243,38 +243,91 @@ void RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
 
   std::vector< TTime > *shiftTimes =
           ( (ShiftTimesState *)tmpSequence->getState( TraceEditSequence::shiftTimesState ) )->getData();
+
   TWindowLevel shiftLevel =
           ( (ShiftLevelState *)tmpSequence->getState( TraceEditSequence::shiftLevelState ) )->getData();
 
   TTime delta = (TTime)0;
-  TObjectOrder objects;
-  switch ( shiftLevel )
+
+  TApplOrder app;
+  TTaskOrder task;
+  TThreadOrder thread;
+
+  if ( ( whichRecord->getType() == STATE + BEGIN ) ||
+       ( whichRecord->getType() == EVENT ) ||
+       ( whichRecord->getType() == COMM + LOG + SEND )
+     )
   {
+    tmpSequence->getCurrentTrace()->getThreadLocation( whichRecord->getThread(), app, task, thread );
 
-    case TASK:
-      objects = tmpSequence->getCurrentTrace()->totalTasks();
-      if ( shiftTimes->size() == objects )
-        delta = (*shiftTimes)[ whichRecord->getOrder() ];
-      break;
+    switch ( shiftLevel )
+    {
+      case TASK:
+        if ( !checkedEnoughSizeTimes )
+        {
+          checkedEnoughSizeTimes = true;
+          if ( shiftTimes->size() >= tmpSequence->getCurrentTrace()->totalTasks() )
+            enoughSizeTimes = true;
+        }
 
-    case APPLICATION:
-      objects = tmpSequence->getCurrentTrace()->totalApplications();
-      if ( shiftTimes->size() == objects )
-        delta = (*shiftTimes)[ whichRecord->getOrder() ];
-      break;
+        if ( enoughSizeTimes )
+          delta = (*shiftTimes)[ tmpSequence->getCurrentTrace()->getGlobalTask( app, task ) ];
 
-//    case WORKLOAD:
-//    case THREAD:
-//      break;
-    default:
-      objects = tmpSequence->getCurrentTrace()->totalThreads();
-      if ( shiftTimes->size() == objects )
-        delta = (*shiftTimes)[ whichRecord->getOrder() ];
-      break;
+        break;
+
+      case APPLICATION:
+        if ( !checkedEnoughSizeTimes )
+        {
+          checkedEnoughSizeTimes = true;
+          if ( shiftTimes->size() >= tmpSequence->getCurrentTrace()->totalApplications() )
+            enoughSizeTimes = true;
+        }
+
+        if ( enoughSizeTimes )
+          delta = (*shiftTimes)[ app ];
+
+        break;
+
+  //    case WORKLOAD:
+  //    case THREAD:
+  //      break;
+      default:
+        if ( !checkedEnoughSizeTimes )
+        {
+          checkedEnoughSizeTimes = true;
+          if ( shiftTimes->size() >= tmpSequence->getCurrentTrace()->totalThreads() )
+            enoughSizeTimes = true;
+        }
+
+        if ( enoughSizeTimes )
+          delta = (*shiftTimes)[ whichRecord->getThread() ];
+
+        break;
+    }
+
+
+    whichRecord->setTime( whichRecord->getTime() + delta );
+
+    if ( whichRecord->getType() == STATE + BEGIN )
+    {
+      whichRecord->setStateEndTime( whichRecord->getStateEndTime() + delta );
+    }
+    else if ( whichRecord->getType() == COMM + LOG + SEND )
+    {
+      /*
+      TCommID commID = whichRecord->getCommIndex();
+      //tmpSequence->getCurrentTrace()->setLogicalSend(
+      //        tmpSequence->getCurrentTrace()->getLogicalSend( commID ) + delta );
+      tmpSequence->getCurrentTrace()->setLogicalReceive(
+              tmpSequence->getCurrentTrace()->getLogicalReceive( commID ) + delta );
+      tmpSequence->getCurrentTrace()->setPhysicalSend(
+              tmpSequence->getCurrentTrace()->getPhysicalSend( commID ) + delta );
+      tmpSequence->getCurrentTrace()->setPhysicalReceive(
+              tmpSequence->getCurrentTrace()->getPhysicalReceive( commID ) + delta );
+              */
+    }
+
   }
-
-  TTime shiftedTime = whichRecord->getTime() + delta;
-  whichRecord->setTime( shiftedTime );
 
   tmpSequence->executeNextAction( whichRecord );
 }

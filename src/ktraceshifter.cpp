@@ -119,7 +119,6 @@ std::vector< TTime > KTraceShifter::readShiftTimes( std::string shiftTimesFile )
           continue;
         else
           shiftTimes.push_back( TTime( currentTime ) );
-std::cout << currentTime << std::endl;
       }
     }
 

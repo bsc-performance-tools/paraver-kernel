@@ -88,6 +88,7 @@ namespace NoLoad
 
           virtual void         setTime( const TRecordTime whichTime );
           virtual void         setType( const TRecordType whichType );
+          virtual void         setStateEndTime( const TRecordTime whichEndTime );
 
         protected:
           NoLoadBlocks *blocks;

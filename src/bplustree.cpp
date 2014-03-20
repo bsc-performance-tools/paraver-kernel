@@ -1213,6 +1213,11 @@ inline void BPlusTree::iterator::setType( const TRecordType whichType )
   ( ( TRecord * )record )->type = whichType;
 }
 
+inline void BPlusTree::iterator::setStateEndTime( const TRecordTime whichEndTime )
+{
+  ( ( TRecord * )record )->URecordInfo.stateRecord.endTime = whichEndTime;
+}
+
 /**************************************************************************
  * MemoryTrace Inherited ThreadIterator.
  **************************************************************************/

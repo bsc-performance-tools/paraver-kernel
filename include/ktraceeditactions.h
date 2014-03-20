@@ -216,7 +216,9 @@ class TraceParserAction: public TraceToRecordAction
 class RecordTimeShifterAction: public RecordToRecordAction
 {
   public:
-    RecordTimeShifterAction( TraceEditSequence *whichSequence ) : RecordToRecordAction( whichSequence )
+    RecordTimeShifterAction( TraceEditSequence *whichSequence ) :
+      RecordToRecordAction( whichSequence ), enoughSizeTimes( false ), checkedEnoughSizeTimes( false ),
+      objects( TObjectOrder(0) )
     {}
     ~RecordTimeShifterAction()
     {}
@@ -228,6 +230,10 @@ class RecordTimeShifterAction: public RecordToRecordAction
   protected:
 
   private:
+    bool enoughSizeTimes;
+    bool checkedEnoughSizeTimes;
+    TObjectOrder objects;
+
 };
 
 

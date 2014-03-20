@@ -94,7 +94,9 @@ enum TOptionID
   FILTER,
   EVENT_CUTTER,
   SOFTWARE_COUNTERS,
-  TRACE_SHIFTER,
+  TRACE_SHIFTER_THREAD,
+  TRACE_SHIFTER_TASK,
+  TRACE_SHIFTER_APP,
 
   // SENTINEL
   INVALID_OPTION,
@@ -124,7 +126,9 @@ TOptionParamedir definedOption[] =
     { "-f", "--filter", false, 0, "", "", "Apply Filter tool" },
     { "-g", "--event-cutter", false, 1, "", "<event-type>", "Apply Event Driven Cutter using 'event-type' as mark" },
     { "-s", "--software-counters", false, 0, "", "", "Apply Software counters tool" },
-    { "-t", "--trace-shifter", false, 1, "", "<shift-times-file>", "Apply Trace Shifter tool given these shift times" },
+    { "-t", "--thread-shifter", false, 1, "", "<shift-times-file>", "Apply Trace Shifter tool given these shift times" },
+    { "-tt", "--task-shifter", false, 1, "", "<shift-times-file>", "Apply Trace Shifter tool given these shift times" },
+    { "-ta", "--app-shifter", false, 1, "", "<shift-times-file>", "Apply Trace Shifter tool given these shift times" },
 
     // SENTINEL
     { "", "", false, 0, "", "", "none" },
@@ -201,6 +205,7 @@ TOptionID findOption( string argument )
 // Prints help for concrete option
 void printOptionHelp( TOptionID id )
 {
+  std::string INDENT4("    ");
   std::stringstream helpFormat, helpFormat2;
 
   helpFormat << option[ id ].shortForm;
@@ -212,16 +217,17 @@ void printOptionHelp( TOptionID id )
   else
   {
     helpFormat << " " << option[ id ].parameterUsage << ",";
-    helpFormat2 << "    " << option[ id ].longForm << " " << option[ id ].parameterUsage;
+    helpFormat2 << option[ id ].longForm << " " << option[ id ].parameterUsage;
   }
 
-  std::cout << "    " << std::setw(35) << std::left << helpFormat.str();
+  std::cout << INDENT4 << std::setw(35) << std::left << helpFormat.str();
   if ( option[ id ].numParameters > 0 )
   {
     std::cout << std::setw(0) << std::endl;
-    std::cout << "    " << std::setw(35) << std::left << helpFormat2.str();
+    std::cout << INDENT4 << std::setw(35) << std::left << helpFormat2.str();
   }
   std::cout << " " << std::setw(45) << option[ id ].helpMessage << std::endl;
+  std::cout << std::endl;
 }
 
 
@@ -335,7 +341,9 @@ void registerTool( TOptionID whichOption,
       needXMLOptionsFile = true;
       break;
 
-    case TRACE_SHIFTER:
+    case TRACE_SHIFTER_APP:
+    case TRACE_SHIFTER_TASK:
+    case TRACE_SHIFTER_THREAD:
       toolID = TraceShifter::getID();
       break;
 
@@ -425,7 +433,9 @@ bool parseArguments( int argc,
           break;
         }
       }
-      else if ( option[ TRACE_SHIFTER ].active && strShiftTimesFile.empty() )
+      else if ( ( option[ TRACE_SHIFTER_APP].active ||
+                  option[ TRACE_SHIFTER_TASK ].active ||
+                  option[ TRACE_SHIFTER_THREAD ].active ) && strShiftTimesFile.empty() )
       {
         strShiftTimesFile = currentArgument;
       }
@@ -624,7 +634,12 @@ string applyFilters( KernelConnection *myKernel,
     }
     else if ( registeredTool[ i ] == TraceShifter::getID() )
     {
-      // TODO: if kernel isn't going to use the traces, it doesn't make sense to pass names
+      TWindowLevel level = THREAD;
+      if ( option[ TRACE_SHIFTER_APP ].active )
+        level = APPLICATION;
+      if ( option[ TRACE_SHIFTER_TASK ].active )
+        level = TASK;
+
       traceShifter = myKernel->newTraceShifter( intermediateNameIn, intermediateNameOut, strShiftTimesFile, THREAD );
       traceShifter->execute( intermediateNameIn, intermediateNameOut );
       delete traceShifter;

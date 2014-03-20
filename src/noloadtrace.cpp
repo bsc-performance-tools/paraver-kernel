@@ -419,6 +419,12 @@ inline void NoLoadTrace::iterator::setType( const TRecordType whichType )
   ( ( TRecord * )record )->type = whichType;
 }
 
+inline void NoLoadTrace::iterator::setStateEndTime( const TRecordTime whichEndTime )
+{
+  ( ( TRecord * )record )->URecordInfo.stateRecord.endTime = whichEndTime;
+}
+
+
 NoLoadTrace::ThreadIterator::ThreadIterator( NoLoadBlocks *whichBlocks, TThreadOrder whichThread,
     TRecord *whichRecord, PRV_INT64 whichOffset, PRV_INT16 whichPos )
     : NoLoadTrace::iterator( whichBlocks, whichThread, whichRecord, whichOffset, whichPos )

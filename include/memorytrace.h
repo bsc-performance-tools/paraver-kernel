@@ -69,6 +69,7 @@ class MemoryTrace
 
         virtual void         setTime( const TRecordTime time ) = 0;
         virtual void         setType( const TRecordType whichType ) = 0;
+        virtual void         setStateEndTime( const TRecordTime whichEndTime ) = 0;
 
         virtual TData *getRecord() const
         {

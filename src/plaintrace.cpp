@@ -281,7 +281,7 @@ inline TState       PlainTrace::iterator::getState() const
   return ( ( TRecord * )record )->URecordInfo.stateRecord.state;
 }
 
-inline TRecordTime  PlainTrace::iterator::getStateEndTime() const
+inline TRecordTime PlainTrace::iterator::getStateEndTime() const
 {
   return ( ( TRecord * )record )->URecordInfo.stateRecord.endTime;
 }
@@ -299,6 +299,11 @@ inline void PlainTrace::iterator::setTime( const TRecordTime whichTime )
 inline void PlainTrace::iterator::setType( const TRecordType whichType )
 {
   ( ( TRecord * )record )->type = whichType;
+}
+
+inline void  PlainTrace::iterator::setStateEndTime( const TRecordTime whichEndTime )
+{
+  ( ( TRecord * )record )->URecordInfo.stateRecord.endTime = whichEndTime;
 }
 
 
