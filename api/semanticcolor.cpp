@@ -439,7 +439,7 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
     if( ParaverConfig::getInstance()->getColorsTimelineUseZero() )
       return ParaverConfig::getInstance()->getColorsTimelineColorZero();
     else
-      return SemanticColor::BACKGROUND;
+      return ParaverConfig::getInstance()->getColorsTimelineBackground();
   }
 
   if ( whichValue < minimum )
@@ -448,7 +448,7 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
       return belowOutlierColor;
     if ( drawOutOfScale )
       return beginGradientColor;
-    return SemanticColor::BACKGROUND;
+    return ParaverConfig::getInstance()->getColorsTimelineBackground();
   }
 
   if ( whichValue > maximum )
@@ -457,7 +457,7 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
       return aboveOutlierColor;
     if ( drawOutOfScale )
       return endGradientColor;
-    return SemanticColor::BACKGROUND;
+    return ParaverConfig::getInstance()->getColorsTimelineBackground();
   }
 
   TSemanticValue norm = ( whichValue - minimum ) /
