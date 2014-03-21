@@ -416,6 +416,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\keventdrivencutter.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\kfilter.cpp"
 				>
 			</File>
@@ -464,6 +468,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\ktraceshifter.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\ktracesoftwarecounters.cpp"
 				>
 			</File>
@@ -509,6 +517,10 @@
 			</File>
 			<File
 				RelativePath="..\src\noloadblocks.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\noloadexception.cpp"
 				>
 			</File>
 			<File
@@ -730,6 +742,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\keventdrivencutter.h"
+				>
+			</File>
+			<File
 				RelativePath="..\include\kfilter.h"
 				>
 			</File>
@@ -778,6 +794,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\ktraceshifter.h"
+				>
+			</File>
+			<File
 				RelativePath="..\include\ktracesoftwarecounters.h"
 				>
 			</File>
@@ -815,6 +835,10 @@
 			</File>
 			<File
 				RelativePath="..\include\noloadblocks.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\noloadexception.h"
 				>
 			</File>
 			<File

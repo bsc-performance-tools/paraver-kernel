@@ -173,6 +173,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\eventdrivencutter.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\eventlabels.cpp"
 				>
 			</File>
@@ -341,6 +345,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\traceshifter.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\tracesoftwarecounters.cpp"
 				>
 			</File>
@@ -388,6 +396,10 @@
 			</File>
 			<File
 				RelativePath=".\drawmode.h"
+				>
+			</File>
+			<File
+				RelativePath=".\eventdrivencutter.h"
 				>
 			</File>
 			<File
@@ -556,6 +568,10 @@
 			</File>
 			<File
 				RelativePath=".\traceoptions.h"
+				>
+			</File>
+			<File
+				RelativePath=".\traceshifter.h"
 				>
 			</File>
 			<File
