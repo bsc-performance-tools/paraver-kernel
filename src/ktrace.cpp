@@ -815,3 +815,27 @@ PRV_UINT64 KTrace::getCutterEndTime()
   return endTime;
 }
 
+
+void KTrace::setLogicalSend( TCommID whichComm, TRecordTime whichTime )
+{
+  blocks->setLogicalSend( whichComm, whichTime );
+}
+
+
+void KTrace::setLogicalReceive( TCommID whichComm, TRecordTime whichTime )
+{
+  blocks->setLogicalReceive( whichComm, whichTime );
+}
+
+
+void KTrace::setPhysicalSend( TCommID whichComm, TRecordTime whichTime )
+{
+  blocks->setPhysicalSend( whichComm, whichTime );
+}
+
+
+void KTrace::setPhysicalReceive( TCommID whichComm, TRecordTime whichTime )
+{
+  blocks->setPhysicalReceive( whichComm, whichTime );
+}
+

@@ -140,6 +140,11 @@ class Trace
     virtual PRV_UINT64 getCutterBeginTime() = 0;
     virtual PRV_UINT64 getCutterEndTime() = 0;
 
+    virtual void setLogicalSend( TCommID whichComm, TRecordTime whichTime ) = 0;
+    virtual void setLogicalReceive( TCommID whichComm, TRecordTime whichTime ) = 0;
+    virtual void setPhysicalSend( TCommID whichComm, TRecordTime whichTime ) = 0;
+    virtual void setPhysicalReceive( TCommID whichComm, TRecordTime whichTime ) = 0;
+
 
     // Specific methods for TraceProxy only
     virtual bool getUnload() const
@@ -305,6 +310,12 @@ class TraceProxy: public Trace
     virtual PRV_UINT64 getCutterOffset();
     virtual PRV_UINT64 getCutterBeginTime();
     virtual PRV_UINT64 getCutterEndTime();
+
+    virtual void setLogicalSend( TCommID whichComm, TRecordTime whichTime );
+    virtual void setLogicalReceive( TCommID whichComm, TRecordTime whichTime );
+    virtual void setPhysicalSend( TCommID whichComm, TRecordTime whichTime );
+    virtual void setPhysicalReceive( TCommID whichComm, TRecordTime whichTime );
+
 
   private:
     Trace *myTrace;

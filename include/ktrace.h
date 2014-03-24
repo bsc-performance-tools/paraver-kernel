@@ -186,6 +186,12 @@ class KTrace: public Trace
     virtual PRV_UINT64 getCutterBeginTime();
     virtual PRV_UINT64 getCutterEndTime();
 
+    virtual void setLogicalSend( TCommID whichComm, TRecordTime whichTime );
+    virtual void setLogicalReceive( TCommID whichComm, TRecordTime whichTime );
+    virtual void setPhysicalSend( TCommID whichComm, TRecordTime whichTime );
+    virtual void setPhysicalReceive( TCommID whichComm, TRecordTime whichTime );
+
+
   protected:
     bool ready;
     ProcessModel traceProcessModel;

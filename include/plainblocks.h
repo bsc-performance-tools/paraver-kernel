@@ -91,6 +91,10 @@ namespace Plain
       virtual void setLogicalReceive( TRecordTime whichTime );
       virtual void setPhysicalSend( TRecordTime whichTime );
       virtual void setPhysicalReceive( TRecordTime whichTime );
+      virtual void setLogicalSend( TCommID whichComm, TRecordTime whichTime );
+      virtual void setLogicalReceive( TCommID whichComm, TRecordTime whichTime );
+      virtual void setPhysicalSend( TCommID whichComm, TRecordTime whichTime );
+      virtual void setPhysicalReceive( TCommID whichComm, TRecordTime whichTime );
 
       // Communication info getters
       virtual TCommID getTotalComms() const;

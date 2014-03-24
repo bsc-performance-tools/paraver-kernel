@@ -314,6 +314,26 @@ void PlainBlocks::setPhysicalReceive( TRecordTime whichTime )
   communications[currentComm]->physicalReceiveTime = whichTime;
 }
 
+void PlainBlocks::setLogicalSend( TCommID whichComm, TRecordTime whichTime )
+{
+  communications[whichComm]->logicalSendTime = whichTime;
+}
+
+void PlainBlocks::setLogicalReceive( TCommID whichComm, TRecordTime whichTime )
+{
+  communications[whichComm]->logicalReceiveTime = whichTime;
+}
+
+void PlainBlocks::setPhysicalSend( TCommID whichComm, TRecordTime whichTime )
+{
+  communications[whichComm]->physicalSendTime = whichTime;
+}
+
+void PlainBlocks::setPhysicalReceive( TCommID whichComm, TRecordTime whichTime )
+{
+  communications[whichComm]->physicalReceiveTime = whichTime;
+}
+
 TCommID PlainBlocks::getTotalComms() const
 {
   return communications.size();

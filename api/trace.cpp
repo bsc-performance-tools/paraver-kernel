@@ -602,3 +602,27 @@ PRV_UINT64 TraceProxy::getCutterEndTime()
   return myTrace->getCutterEndTime();
 }
 
+
+void TraceProxy::setLogicalSend( TCommID whichComm, TRecordTime whichTime )
+{
+  myTrace->setLogicalSend( whichComm, whichTime );
+}
+
+
+void TraceProxy::setLogicalReceive( TCommID whichComm, TRecordTime whichTime )
+{
+  myTrace->setLogicalReceive( whichComm, whichTime );
+}
+
+
+void TraceProxy::setPhysicalSend( TCommID whichComm, TRecordTime whichTime )
+{
+  myTrace->setPhysicalSend( whichComm, whichTime );
+}
+
+
+void TraceProxy::setPhysicalReceive( TCommID whichComm, TRecordTime whichTime )
+{
+  myTrace->setPhysicalReceive( whichComm, whichTime );
+}
+

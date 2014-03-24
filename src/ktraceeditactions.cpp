@@ -314,19 +314,17 @@ void RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
     }
     else if ( whichRecord->getType() == COMM + LOG + SEND )
     {
-      /*
-      TCommID commID = whichRecord->getCommIndex();
-      //tmpSequence->getCurrentTrace()->setLogicalSend(
-      //        tmpSequence->getCurrentTrace()->getLogicalSend( commID ) + delta );
-      tmpSequence->getCurrentTrace()->setLogicalReceive(
-              tmpSequence->getCurrentTrace()->getLogicalReceive( commID ) + delta );
-      tmpSequence->getCurrentTrace()->setPhysicalSend(
-              tmpSequence->getCurrentTrace()->getPhysicalSend( commID ) + delta );
-      tmpSequence->getCurrentTrace()->setPhysicalReceive(
-              tmpSequence->getCurrentTrace()->getPhysicalReceive( commID ) + delta );
-              */
-    }
 
+      TCommID commID = whichRecord->getCommIndex();
+      tmpSequence->getCurrentTrace()->setLogicalSend( commID,
+              tmpSequence->getCurrentTrace()->getLogicalSend( commID ) + delta );
+      tmpSequence->getCurrentTrace()->setLogicalReceive( commID,
+              tmpSequence->getCurrentTrace()->getLogicalReceive( commID ) + delta );
+      tmpSequence->getCurrentTrace()->setPhysicalSend( commID,
+              tmpSequence->getCurrentTrace()->getPhysicalSend( commID ) + delta );
+      tmpSequence->getCurrentTrace()->setPhysicalReceive( commID,
+              tmpSequence->getCurrentTrace()->getPhysicalReceive( commID ) + delta );
+    }
   }
 
   tmpSequence->executeNextAction( whichRecord );
