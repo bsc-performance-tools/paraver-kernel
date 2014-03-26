@@ -97,6 +97,7 @@ enum TOptionID
   TRACE_SHIFTER_THREAD,
   TRACE_SHIFTER_TASK,
   TRACE_SHIFTER_APP,
+  TRACE_SHIFTER_WORKLOAD,
 
   // SENTINEL
   INVALID_OPTION,
@@ -126,9 +127,10 @@ TOptionParamedir definedOption[] =
     { "-f", "--filter", false, 0, "", "", "Apply Filter tool" },
     { "-g", "--event-cutter", false, 1, "", "<event-type>", "Apply Event Driven Cutter using 'event-type' as mark" },
     { "-s", "--software-counters", false, 0, "", "", "Apply Software counters tool" },
-    { "-t", "--thread-shifter", false, 1, "", "<shift-times-file>", "Apply Trace Shifter tool given these shift times" },
-    { "-tt", "--task-shifter", false, 1, "", "<shift-times-file>", "Apply Trace Shifter tool given these shift times" },
-    { "-ta", "--app-shifter", false, 1, "", "<shift-times-file>", "Apply Trace Shifter tool given these shift times" },
+    { "-t", "--thread-shifter", false, 1, "", "<shift-times-file>", "Apply Trace Shifter per thread (file contains at least as shift times as threads)" },
+    { "-tt", "--task-shifter", false, 1, "", "<shift-times-file>", "Idem per task" },
+    { "-ta", "--app-shifter", false, 1, "", "<shift-times-file>", "Idem per applications" },
+    { "-tw", "--workload-shifter", false, 1, "", "<shift-times-file>", "Whole trace shift (file contains at least one shift time)" },
 
     // SENTINEL
     { "", "", false, 0, "", "", "none" },
@@ -341,6 +343,7 @@ void registerTool( TOptionID whichOption,
       needXMLOptionsFile = true;
       break;
 
+    case TRACE_SHIFTER_WORKLOAD:
     case TRACE_SHIFTER_APP:
     case TRACE_SHIFTER_TASK:
     case TRACE_SHIFTER_THREAD:
@@ -433,7 +436,8 @@ bool parseArguments( int argc,
           break;
         }
       }
-      else if ( ( option[ TRACE_SHIFTER_APP].active ||
+      else if ( ( option[ TRACE_SHIFTER_WORKLOAD ].active ||
+                  option[ TRACE_SHIFTER_APP ].active ||
                   option[ TRACE_SHIFTER_TASK ].active ||
                   option[ TRACE_SHIFTER_THREAD ].active ) && strShiftTimesFile.empty() )
       {
@@ -635,12 +639,14 @@ string applyFilters( KernelConnection *myKernel,
     else if ( registeredTool[ i ] == TraceShifter::getID() )
     {
       TWindowLevel level = THREAD;
+      if ( option[ TRACE_SHIFTER_WORKLOAD ].active )
+        level = WORKLOAD;
       if ( option[ TRACE_SHIFTER_APP ].active )
         level = APPLICATION;
       if ( option[ TRACE_SHIFTER_TASK ].active )
         level = TASK;
 
-      traceShifter = myKernel->newTraceShifter( intermediateNameIn, intermediateNameOut, strShiftTimesFile, THREAD );
+      traceShifter = myKernel->newTraceShifter( intermediateNameIn, intermediateNameOut, strShiftTimesFile, level );
       traceShifter->execute( intermediateNameIn, intermediateNameOut );
       delete traceShifter;
     }

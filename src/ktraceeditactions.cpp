@@ -262,16 +262,16 @@ void RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
 
     switch ( shiftLevel )
     {
-      case TASK:
+      case WORKLOAD:
         if ( !checkedEnoughSizeTimes )
         {
           checkedEnoughSizeTimes = true;
-          if ( shiftTimes->size() >= tmpSequence->getCurrentTrace()->totalTasks() )
+          if ( shiftTimes->size() >= 1 )
             enoughSizeTimes = true;
         }
 
         if ( enoughSizeTimes )
-          delta = (*shiftTimes)[ tmpSequence->getCurrentTrace()->getGlobalTask( app, task ) ];
+          delta = (*shiftTimes)[ 0 ];
 
         break;
 
@@ -288,10 +288,20 @@ void RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
 
         break;
 
-  //    case WORKLOAD:
-  //    case THREAD:
-  //      break;
-      default:
+      case TASK:
+        if ( !checkedEnoughSizeTimes )
+        {
+          checkedEnoughSizeTimes = true;
+          if ( shiftTimes->size() >= tmpSequence->getCurrentTrace()->totalTasks() )
+            enoughSizeTimes = true;
+        }
+
+        if ( enoughSizeTimes )
+          delta = (*shiftTimes)[ tmpSequence->getCurrentTrace()->getGlobalTask( app, task ) ];
+
+        break;
+
+      case THREAD:
         if ( !checkedEnoughSizeTimes )
         {
           checkedEnoughSizeTimes = true;
@@ -302,6 +312,9 @@ void RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
         if ( enoughSizeTimes )
           delta = (*shiftTimes)[ whichRecord->getThread() ];
 
+        break;
+
+      default:
         break;
     }
 
