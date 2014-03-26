@@ -55,15 +55,17 @@ class KTraceShifter : public TraceShifter
                           ProgressController *progress = NULL );
 
     virtual const std::vector< TTime > getShiftTimes() { return shiftTimes; }
+    virtual const TTime getMaxShiftTime() { return maxShiftTime; }
 
   private:
-    std::vector< TTime > shiftTimes;
     TraceEditSequence *mySequence;
 
     std::vector<std::string> traces;
 
+    // Load TTime table from  file and find greatest one (saved in maxShiftTime)
+    std::vector< TTime > shiftTimes;
     std::vector< TTime > readShiftTimes( std::string shiftTimesFile );
-
+    TTime maxShiftTime;
 };
 
 #endif // KTRACESHIFTER_H_INCLUDED

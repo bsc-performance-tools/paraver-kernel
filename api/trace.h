@@ -116,6 +116,8 @@ class Trace
     virtual TRecordTime getPhysicalReceive( TCommID whichComm ) const = 0;
 
     virtual TTime getEndTime() const = 0;
+    virtual void setEndTime( TTime whichTraceEndTime ) = 0;
+
     virtual TTimeUnit getTimeUnit() const = 0;
 
     virtual bool eventLoaded( TEventType whichType ) const = 0;
@@ -277,6 +279,8 @@ class TraceProxy: public Trace
     virtual TRecordTime getPhysicalReceive( TCommID whichComm ) const;
 
     virtual TTime getEndTime() const;
+    virtual void setEndTime( TTime whichTraceEndTime );
+
     virtual TTimeUnit getTimeUnit() const;
 
     virtual bool getUnload() const;

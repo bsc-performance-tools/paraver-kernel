@@ -145,6 +145,11 @@ class KTrace: public Trace
       return traceEndTime;
     }
 
+    inline void setEndTime( TTime whichTraceEndTime )
+    {
+      traceEndTime = whichTraceEndTime;
+    }
+
     inline TTimeUnit getTimeUnit() const
     {
       return traceTimeUnit;

@@ -42,6 +42,7 @@ KTraceShifter::KTraceShifter( const KernelConnection *myKernel,
                               TWindowLevel shiftLevel,
                               ProgressController *progress )
 {
+  maxShiftTime = -std::numeric_limits<TTime>::max();
   shiftTimes = readShiftTimes( whichShiftTimes );
 
   // Check level
@@ -61,6 +62,7 @@ KTraceShifter::KTraceShifter( const KernelConnection *myKernel,
   //   Modified    by RecordTimeShifterAction
   //   Read        by TraceWriterAction
   MaxTraceTimeState *tmpMaxTraceTimeState = new MaxTraceTimeState( mySequence );
+  tmpMaxTraceTimeState->setData( maxShiftTime );
   mySequence->addState( TraceEditSequence::maxTraceTimeState, tmpMaxTraceTimeState );
 
   // State: shift times
@@ -83,10 +85,12 @@ KTraceShifter::KTraceShifter( const KernelConnection *myKernel,
   traces.push_back( traceIn );
 }
 
+
 KTraceShifter::~KTraceShifter()
 {
   delete mySequence;
 }
+
 
 void KTraceShifter::execute( std::string traceIn,
                              std::string traceOut,
@@ -116,9 +120,18 @@ std::vector< TTime > KTraceShifter::readShiftTimes( std::string shiftTimesFile )
       {
         std::stringstream auxVal( currentLine );
         if ( !( auxVal >> currentTime ) )
+        {
+          // TODO: Be gentle and warn about wrong time/conversion
           continue;
+
+        }
         else
+        {
           shiftTimes.push_back( TTime( currentTime ) );
+
+          if ( currentTime > maxShiftTime )
+            maxShiftTime = currentTime;
+        }
       }
     }
 

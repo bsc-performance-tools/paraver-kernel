@@ -427,6 +427,11 @@ TTime TraceProxy::getEndTime() const
   return myTrace->getEndTime();
 }
 
+void TraceProxy::setEndTime( TTime whichTraceEndTime )
+{
+  myTrace->setEndTime( whichTraceEndTime );
+}
+
 TTimeUnit TraceProxy::getTimeUnit() const
 {
   return myTrace->getTimeUnit();

@@ -305,7 +305,7 @@ void RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
         break;
     }
 
-
+    // Common for events time, states begin time, communications logical send time
     whichRecord->setTime( whichRecord->getTime() + delta );
 
     if ( whichRecord->getType() == STATE + BEGIN )
@@ -354,6 +354,10 @@ void TraceWriterAction::execute( MemoryTrace::iterator *it  )
     std::string tmpFileName =
             ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
     outputTrace.open( tmpFileName.c_str(), std::ios::out );
+    TTime tmpMaxDelta =
+            ( (MaxTraceTimeState *)tmpSequence->getState( TraceEditSequence::maxTraceTimeState ) )->getData();
+
+    tmpSequence->getCurrentTrace()->setEndTime( tmpSequence->getCurrentTrace()->getEndTime() + tmpMaxDelta );
     tmpSequence->getCurrentTrace()->dumpFileHeader( outputTrace );
   }
 
