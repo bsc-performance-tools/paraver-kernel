@@ -60,8 +60,6 @@
 
 
 // PARAMEDIR OPTIONS
-
-// All fields are descriptive but 'active' field, used as a flag
 typedef struct TOptionParamedir
 {
   string shortForm;
@@ -74,7 +72,7 @@ typedef struct TOptionParamedir
 }
 TOptionParamedir;
 
-
+// Keep this enum synchronized with
 enum TOptionID
 {
   // GENERAL
@@ -109,36 +107,36 @@ enum TOptionID
 
 
 TOptionParamedir definedOption[] =
-  {
-    // GENERAL
-    { "-h", "--help", false, 0, "", "", "Show help" },
-    { "-v", "--version", false, 0, "", "", "Show version" },
+{
+  // GENERAL
+  { "-h", "--help", false, 0, "", "", "Show help" },
+  { "-v", "--version", false, 0, "", "", "Show version" },
 
-    // FILES
-    { "-m", "--many-files", false, 0, "", "", "Allows to separate cfg output (default in a unique file)" },
-    { "-o", "--output-name", false, 1, "", "<tracename>",  "Output trace name (only for processing trace)" },
+  // FILES
+  { "-m", "--many-files", false, 0, "", "", "Allows to separate cfg output (default in a unique file)" },
+  { "-o", "--output-name", false, 1, "", "<tracename>",  "Output trace name (only for processing trace)" },
 
-    // HISTOGRAMS
-    { "-e", "--empty-columns", false, 0, "", "", "Hide empty columns" },
-    { "-p", "--print-plane", false, 0, "", "", "Only the selected Plane of a 3D histogram is saved (by default saves all planes)" },
+  // HISTOGRAMS
+  { "-e", "--empty-columns", false, 0, "", "", "Hide empty columns" },
+  { "-p", "--print-plane", false, 0, "", "", "Only the selected Plane of a 3D histogram is saved (by default saves all planes)" },
 
-    // PRV TOOLSET
-    { "-c", "--cutter", false, 0, "", "", "Apply Cutter tool" },
-    { "-f", "--filter", false, 0, "", "", "Apply Filter tool" },
-    { "-g", "--event-cutter", false, 1, "", "<event-type>", "Apply Event Driven Cutter using 'event-type' as mark" },
-    { "-s", "--software-counters", false, 0, "", "", "Apply Software counters tool" },
-    { "-t", "--thread-shifter", false, 1, "", "<shift-times-file>", "Apply Trace Shifter per thread (file contains at least as shift times as threads)" },
-    { "-tt", "--task-shifter", false, 1, "", "<shift-times-file>", "Idem per task" },
-    { "-ta", "--app-shifter", false, 1, "", "<shift-times-file>", "Idem per applications" },
-    { "-tw", "--workload-shifter", false, 1, "", "<shift-times-file>", "Whole trace shift (file contains at least one shift time)" },
+  // PRV TOOLSET
+  { "-c", "--cutter", false, 0, "", "", "Apply Cutter tool" },
+  { "-f", "--filter", false, 0, "", "", "Apply Filter tool" },
+  { "-g", "--event-cutter", false, 1, "", "<event-type>", "Apply Event Driven Cutter using 'event-type' as mark" },
+  { "-s", "--software-counters", false, 0, "", "", "Apply Software counters tool" },
+  { "-t", "--thread-shifter", false, 1, "", "<shift-times-file>", "Apply Trace Shifter per thread (file contains at least as shift times as threads)" },
+  { "-tt", "--task-shifter", false, 1, "", "<shift-times-file>", "Idem per task" },
+  { "-ta", "--app-shifter", false, 1, "", "<shift-times-file>", "Idem per applications" },
+  { "-tw", "--workload-shifter", false, 1, "", "<shift-times-file>", "Whole trace shift (file contains at least one shift time)" },
 
-    // SENTINEL
-    { "", "", false, 0, "", "", "none" },
+  // SENTINEL
+  { "", "", false, 0, "", "", "none" },
 
-    // HIDDEN
-    { "-d", "--dump-trace", false, 0, "", "", "" },
-    { "-n", "--no-load", false, 0, "", "", "" }
-  };
+  // HIDDEN
+  { "-d", "--dump-trace", false, 0, "", "", "" },
+  { "-n", "--no-load", false, 0, "", "", "" }
+};
 
 
 // Options
@@ -560,10 +558,20 @@ string applyFilters( KernelConnection *myKernel,
     else
     {
       // Final trace:
-      //   Get full name (including all tools)
-      //   Remember name in global list of recent treated traces
-      commitName = true;
-      intermediateNameOut = myKernel->getNewTraceName( destinyTraceName, registeredTool, commitName );
+      if ( outputTraceName.empty() )
+      {
+        //   Get full name (including all tools)
+        commitName = true;
+        intermediateNameOut = myKernel->getNewTraceName( destinyTraceName, registeredTool, commitName );
+      }
+      else
+      {
+        // Force outputName
+        intermediateNameOut = destinyTraceName;
+
+        //   Remember name in global list of recent treated traces
+        myKernel->commitNewTraceName( destinyTraceName );
+      }
     }
 
     if ( registeredTool[ i ] == TraceCutter::getID() )
