@@ -98,9 +98,9 @@ class TraceEditSequence
     virtual bool pushbackAction( TraceEditSequence::TSequenceActions whichAction ) = 0;
     virtual bool pushbackAction( TraceEditAction *newAction ) = 0;
 
-    virtual void execute( vector<std::string> traces ) = 0;
+    virtual bool execute( vector<std::string> traces ) = 0;
 
-    virtual void executeNextAction( std::string whichTrace ) = 0;
+    virtual bool executeNextAction( std::string whichTrace ) = 0;
 
     virtual TraceEditSequence *getConcrete()
     {
@@ -130,9 +130,9 @@ class TraceEditSequenceProxy:public TraceEditSequence
     bool pushbackAction( TraceEditSequence::TSequenceActions whichAction );
     bool pushbackAction( TraceEditAction *newAction );
 
-    void execute( vector<std::string> traces );
+    bool execute( vector<std::string> traces );
 
-    void executeNextAction( std::string whichTrace );
+    bool executeNextAction( std::string whichTrace );
 
     TraceEditSequence *getConcrete();
 

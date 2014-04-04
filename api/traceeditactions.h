@@ -73,7 +73,7 @@ public:
     return TraceEditAction::TraceToTrace;
   }
 
-  virtual void execute( std::string whichTrace ) = 0;
+  virtual bool execute( std::string whichTrace ) = 0;
 
 protected:
 

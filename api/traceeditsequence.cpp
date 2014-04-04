@@ -114,9 +114,9 @@ bool TraceEditSequenceProxy::pushbackAction( TraceEditAction *newAction )
 }
 
 
-void TraceEditSequenceProxy::execute( vector<std::string> traces )
+bool TraceEditSequenceProxy::execute( vector<std::string> traces )
 {
-  mySequence->execute( traces );
+  return mySequence->execute( traces );
 }
 
 TraceEditSequence *TraceEditSequenceProxy::getConcrete()
@@ -124,7 +124,7 @@ TraceEditSequence *TraceEditSequenceProxy::getConcrete()
   return mySequence;
 }
 
-void TraceEditSequenceProxy::executeNextAction( std::string whichTrace )
+bool TraceEditSequenceProxy::executeNextAction( std::string whichTrace )
 {
-  mySequence->executeNextAction( whichTrace );
+  return mySequence->executeNextAction( whichTrace );
 }

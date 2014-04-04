@@ -260,7 +260,7 @@ bool KTraceEditSequence::pushbackAction( TraceEditAction *newAction )
 }
 
 
-void KTraceEditSequence::execute( vector<std::string> traces )
+bool KTraceEditSequence::execute( vector<std::string> traces )
 {
   for( vector<TraceEditAction *>::iterator it = sequenceActions.begin();
        it != sequenceActions.end(); ++it )
@@ -274,9 +274,12 @@ void KTraceEditSequence::execute( vector<std::string> traces )
   TraceToTraceAction *firstActionTraceToTrace = ( TraceToTraceAction * )sequenceActions[ 0 ];
   TraceToRecordAction *firstActionTraceToRecord = ( TraceToRecordAction * )sequenceActions[ 0 ];
 
+  bool someError = false;
+
   for( vector<std::string>::iterator it = traces.begin(); it != traces.end(); ++it )
   {
     currentAction = 0;
+    currentTraceName = *it;
 
     for( map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator itState = activeStates.begin();
          itState != activeStates.end(); ++itState )
@@ -285,26 +288,35 @@ void KTraceEditSequence::execute( vector<std::string> traces )
     switch( sequenceActions[ 0 ]->getType() )
     {
       case TraceEditAction::TraceToTrace:
-        firstActionTraceToTrace->execute( *it );
+        sequenceExecError[ *it ] = firstActionTraceToTrace->execute( *it );
         break;
 
       case TraceEditAction::TraceToRecord:
-        firstActionTraceToRecord->execute( *it );
+        sequenceExecError[ *it ] = firstActionTraceToRecord->execute( *it );
         break;
 
       default:
+        sequenceExecError[ *it ] = false;
         break;
     }
+
+    someError = someError || sequenceExecError[ *it ];
   }
+
+// TODO : think, some error in some trace?
+  return someError;
 }
 
-void KTraceEditSequence::executeNextAction( std::string whichTrace )
+bool KTraceEditSequence::executeNextAction( std::string whichTrace )
 {
+  if( sequenceExecError[ whichTrace ] )
+    return true; // sequenceExecError[ whichTrace ]
+
   ++currentAction;
   if( currentAction == sequenceActions.size() )
   {
     --currentAction;
-    return;
+    return false;
   }
 
   TraceToTraceAction *nextActionToTrace = ( TraceToTraceAction * )sequenceActions[ currentAction ];
@@ -313,11 +325,11 @@ void KTraceEditSequence::executeNextAction( std::string whichTrace )
   switch( sequenceActions[ currentAction ]->getType() )
   {
     case TraceEditAction::TraceToTrace:
-      nextActionToTrace->execute( whichTrace );
+      sequenceExecError[ whichTrace ] = nextActionToTrace->execute( whichTrace );
       break;
 
     case TraceEditAction::TraceToRecord:
-      nextActionToRecord->execute( whichTrace );
+      sequenceExecError[ whichTrace ] = nextActionToRecord->execute( whichTrace );
       break;
 
     case TraceEditAction::RecordToTrace:
@@ -333,18 +345,22 @@ void KTraceEditSequence::executeNextAction( std::string whichTrace )
   }
 
   --currentAction;
+
+  return sequenceExecError[ whichTrace ];
 }
 
 
-void KTraceEditSequence::executeNextAction( MemoryTrace::iterator *whichRecord )
+bool KTraceEditSequence::executeNextAction( MemoryTrace::iterator *whichRecord )
 {
+  if( sequenceExecError[ currentTraceName ] )
+    return true; // sequenceExecError[ whichTrace ]
+
   ++currentAction;
   if( currentAction == sequenceActions.size() )
   {
     --currentAction;
-    return;
+    return false;
   }
-
 
   RecordToTraceAction *nextActionToTrace = ( RecordToTraceAction * )sequenceActions[ currentAction ];
   RecordToRecordAction *nextActionToRecord = ( RecordToRecordAction * )sequenceActions[ currentAction ];
@@ -358,11 +374,11 @@ void KTraceEditSequence::executeNextAction( MemoryTrace::iterator *whichRecord )
       break;
 
     case TraceEditAction::RecordToTrace:
-      nextActionToTrace->execute( whichRecord );
+      sequenceExecError[ currentTraceName ] = nextActionToTrace->execute( whichRecord );
       break;
 
     case TraceEditAction::RecordToRecord:
-      nextActionToRecord->execute( whichRecord );
+      sequenceExecError[ currentTraceName ] = nextActionToRecord->execute( whichRecord );
       break;
 
     default:
@@ -370,5 +386,7 @@ void KTraceEditSequence::executeNextAction( MemoryTrace::iterator *whichRecord )
   }
 
   --currentAction;
+
+  return sequenceExecError[ currentTraceName ];
 }
 

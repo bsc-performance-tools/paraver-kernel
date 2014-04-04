@@ -49,7 +49,7 @@ public:
     return TraceEditAction::TraceToRecord;
   }
 
-  virtual void execute( std::string whichTrace ) = 0;
+  virtual bool execute( std::string whichTrace ) = 0;
 
 protected:
 
@@ -71,7 +71,7 @@ public:
     return TraceEditAction::RecordToTrace;
   }
 
-  virtual void execute( MemoryTrace::iterator *whichRecord ) = 0;
+  virtual bool execute( MemoryTrace::iterator *whichRecord ) = 0;
 
 protected:
 
@@ -92,7 +92,7 @@ public:
     return TraceEditAction::RecordToRecord;
   }
 
-  virtual void execute( MemoryTrace::iterator *whichRecord ) = 0;
+  virtual bool execute( MemoryTrace::iterator *whichRecord ) = 0;
 
 protected:
 
@@ -114,7 +114,7 @@ class TestAction: public TraceToTraceAction
 
     virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
 
-    virtual void execute( std::string whichTrace );
+    virtual bool execute( std::string whichTrace );
 
   protected:
 
@@ -136,7 +136,7 @@ class TraceCutterAction: public TraceToTraceAction
 
     virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
 
-    virtual void execute( std::string whichTrace );
+    virtual bool execute( std::string whichTrace );
 
   protected:
 
@@ -158,7 +158,7 @@ class CSVOutputAction: public TraceToTraceAction
 
     virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
 
-    virtual void execute( std::string whichTrace );
+    virtual bool execute( std::string whichTrace );
 
   protected:
 
@@ -170,6 +170,7 @@ class CSVOutputAction: public TraceToTraceAction
 /****************************************************************************
  ********            TraceShifterTimesLoaderAction                   ********
  ****************************************************************************/
+/*
 class TraceShifterTimesLoaderAction: public TraceToTraceAction
 {
   public:
@@ -180,14 +181,14 @@ class TraceShifterTimesLoaderAction: public TraceToTraceAction
 
     virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
 
-    virtual void execute( std::string whichTrace );
+    virtual bool execute( std::string whichTrace );
 
   protected:
 
   private:
 
 };
-
+*/
 
 /****************************************************************************
  ********                  TraceParserAction                         ********
@@ -202,7 +203,7 @@ class TraceParserAction: public TraceToRecordAction
 
     virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
 
-    virtual void execute( std::string whichTrace );
+    virtual bool execute( std::string whichTrace );
 
   protected:
 
@@ -217,22 +218,23 @@ class RecordTimeShifterAction: public RecordToRecordAction
 {
   public:
     RecordTimeShifterAction( TraceEditSequence *whichSequence ) :
-      RecordToRecordAction( whichSequence ), enoughSizeTimes( false ), checkedEnoughSizeTimes( false ),
-      objects( TObjectOrder(0) )
+      RecordToRecordAction( whichSequence ), availableShiftTime( false ), checkedAvailableShiftTime( false ),
+      objects( TObjectOrder(0) ), count( 0 )
     {}
     ~RecordTimeShifterAction()
     {}
 
     virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
 
-    virtual void execute( MemoryTrace::iterator *whichRecord );
+    virtual bool execute( MemoryTrace::iterator *whichRecord );
 
   protected:
 
   private:
-    bool enoughSizeTimes;
-    bool checkedEnoughSizeTimes;
+    bool availableShiftTime;
+    bool checkedAvailableShiftTime;
     TObjectOrder objects;
+    int count;
 
 };
 
@@ -250,7 +252,7 @@ class TraceWriterAction: public RecordToTraceAction
 
     virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
 
-    virtual void execute( MemoryTrace::iterator *whichRecord );
+    virtual bool execute( MemoryTrace::iterator *whichRecord );
 
   protected:
 
@@ -273,7 +275,7 @@ class EventDrivenCutterAction: public RecordToTraceAction
 
     virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
 
-    virtual void execute( MemoryTrace::iterator *whichRecord );
+    virtual bool execute( MemoryTrace::iterator *whichRecord );
 
   protected:
 
@@ -303,7 +305,7 @@ class TraceSortAction: public TraceToTraceAction
 
     virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
 
-    virtual void execute( std::string whichTrace );
+    virtual bool execute( std::string whichTrace );
 
   protected:
 

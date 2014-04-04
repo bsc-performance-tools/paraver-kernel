@@ -49,16 +49,19 @@
  ********                  TestAction                                ********
  ****************************************************************************/
 
-void TestAction::execute( std::string whichTrace )
-{
-  ((KTraceEditSequence *)mySequence)->executeNextAction( whichTrace );
-}
-
 vector<TraceEditSequence::TSequenceStates> TestAction::getStateDependencies() const
 {
   vector<TraceEditSequence::TSequenceStates> tmpStates;
   tmpStates.push_back( TraceEditSequence::testState );
   return tmpStates;
+}
+
+
+bool  TestAction::execute( std::string whichTrace )
+{
+  ((KTraceEditSequence *)mySequence)->executeNextAction( whichTrace );
+
+  return true;
 }
 
 
@@ -75,7 +78,7 @@ vector<TraceEditSequence::TSequenceStates> TraceCutterAction::getStateDependenci
 }
 
 
-void TraceCutterAction::execute( std::string whichTrace )
+bool TraceCutterAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
   Window *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TraceEditSequence::csvWindowState ) )->getData();
@@ -125,6 +128,8 @@ void TraceCutterAction::execute( std::string whichTrace )
   mySequence->getKernelConnection()->copyROW( whichTrace, newName );
 
   tmpSequence->executeNextAction( newName );
+
+  return true;
 }
 
 
@@ -140,7 +145,7 @@ vector<TraceEditSequence::TSequenceStates> CSVOutputAction::getStateDependencies
 }
 
 
-void CSVOutputAction::execute( std::string whichTrace )
+bool CSVOutputAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
   Window *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TraceEditSequence::csvWindowState ) )->getData();
@@ -157,13 +162,15 @@ void CSVOutputAction::execute( std::string whichTrace )
   }
 
   tmpSequence->executeNextAction( whichTrace );
+
+  return true;
 }
 
 
 /****************************************************************************
  ********               TraceShifterTimesLoaderAction                ********
  ****************************************************************************/
-vector<TraceEditSequence::TSequenceStates> TraceShifterTimesLoaderAction::getStateDependencies() const
+/*vector<TraceEditSequence::TSequenceStates> TraceShifterTimesLoaderAction::getStateDependencies() const
 {
   vector<TraceEditSequence::TSequenceStates> tmpStates;
 
@@ -173,14 +180,16 @@ vector<TraceEditSequence::TSequenceStates> TraceShifterTimesLoaderAction::getSta
 }
 
 
-void TraceShifterTimesLoaderAction::execute( std::string whichTrace )
+bool TraceShifterTimesLoaderAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
   MemoryTrace::iterator *it = NULL;
 
   tmpSequence->executeNextAction( it );
-}
 
+  return true;
+}
+*/
 
 /****************************************************************************
  ********                  TraceParserAction                         ********
@@ -196,29 +205,35 @@ vector<TraceEditSequence::TSequenceStates> TraceParserAction::getStateDependenci
 }
 
 
-void TraceParserAction::execute( std::string whichTrace )
+bool TraceParserAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
 
   KTrace myTrace( whichTrace, NULL, true );
   tmpSequence->setCurrentTrace( &myTrace );
 
+  bool executionError = false;
   MemoryTrace::iterator *it = myTrace.begin();
-  while( !it->isNull() )
+  while( !it->isNull() && !executionError )
   {
-    tmpSequence->executeNextAction( it );
+    executionError = tmpSequence->executeNextAction( it );
     ++(*it);
   }
 
   delete it;
 
-  // Final dummy record
-  it = myTrace.empty();
-  EOFParsedState *tmpEOFParseState = (EOFParsedState *)tmpSequence->getState( TraceEditSequence::eofParsedState );
-  tmpEOFParseState->setData( true );
-  tmpSequence->executeNextAction( it );
+  if ( !executionError )
+  {
+    // Final dummy record
+    it = myTrace.empty();
+    EOFParsedState *tmpEOFParseState = (EOFParsedState *)tmpSequence->getState( TraceEditSequence::eofParsedState );
+    tmpEOFParseState->setData( true );
+    executionError = tmpSequence->executeNextAction( it );
 
-  delete it;
+    delete it;
+  }
+
+  return executionError;
 }
 
 
@@ -237,8 +252,11 @@ vector<TraceEditSequence::TSequenceStates> RecordTimeShifterAction::getStateDepe
 }
 
 
-void RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
+bool RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
 {
+  //std::cout << ++count << std::endl;
+  bool executionError = false;
+
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
 
   std::vector< TTime > *shiftTimes =
@@ -263,54 +281,59 @@ void RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
     switch ( shiftLevel )
     {
       case WORKLOAD:
-        if ( !checkedEnoughSizeTimes )
+        if ( !checkedAvailableShiftTime )
         {
-          checkedEnoughSizeTimes = true;
+          checkedAvailableShiftTime = true;
           if ( shiftTimes->size() >= 1 )
-            enoughSizeTimes = true;
+            availableShiftTime = true;
         }
 
-        if ( enoughSizeTimes )
+        if ( availableShiftTime )
           delta = (*shiftTimes)[ 0 ];
 
         break;
 
       case APPLICATION:
-        if ( !checkedEnoughSizeTimes )
+        if ( !checkedAvailableShiftTime )
         {
-          checkedEnoughSizeTimes = true;
+          checkedAvailableShiftTime = true;
           if ( shiftTimes->size() >= tmpSequence->getCurrentTrace()->totalApplications() )
-            enoughSizeTimes = true;
+            availableShiftTime = true;
         }
 
-        if ( enoughSizeTimes )
+        if ( availableShiftTime )
           delta = (*shiftTimes)[ app ];
 
         break;
 
       case TASK:
-        if ( !checkedEnoughSizeTimes )
+        if ( !checkedAvailableShiftTime )
         {
-          checkedEnoughSizeTimes = true;
+          checkedAvailableShiftTime = true;
           if ( shiftTimes->size() >= tmpSequence->getCurrentTrace()->totalTasks() )
-            enoughSizeTimes = true;
+            availableShiftTime = true;
         }
 
-        if ( enoughSizeTimes )
+        if ( availableShiftTime )
+        {
           delta = (*shiftTimes)[ tmpSequence->getCurrentTrace()->getGlobalTask( app, task ) ];
+        }
 
         break;
 
       case THREAD:
-        if ( !checkedEnoughSizeTimes )
+        if ( !checkedAvailableShiftTime )
         {
-          checkedEnoughSizeTimes = true;
+          checkedAvailableShiftTime = true;
           if ( shiftTimes->size() >= tmpSequence->getCurrentTrace()->totalThreads() )
-            enoughSizeTimes = true;
+            availableShiftTime = true;
         }
 
-        if ( enoughSizeTimes )
-          delta = (*shiftTimes)[ whichRecord->getThread() ];
+        if ( availableShiftTime )
+        {
+          delta = (*shiftTimes)[ tmpSequence->getCurrentTrace()->getGlobalThread( app, task, thread ) ];
+          //delta = (*shiftTimes)[ whichRecord->getThread() ];
+        }
 
         break;
 
@@ -318,30 +341,36 @@ void RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
         break;
     }
 
-    // Common for events time, states begin time, communications logical send time
-    whichRecord->setTime( whichRecord->getTime() + delta );
-
-    if ( whichRecord->getType() == STATE + BEGIN )
+    executionError = !availableShiftTime;
+    if ( availableShiftTime )
     {
-      whichRecord->setStateEndTime( whichRecord->getStateEndTime() + delta );
-    }
-    else if ( whichRecord->getType() == COMM + LOG + SEND )
-    {
+      // Common for events time, states begin time, communications logical send time
+      whichRecord->setTime( whichRecord->getTime() + delta );
 
-      TCommID commID = whichRecord->getCommIndex();
-      tmpSequence->getCurrentTrace()->setLogicalSend( commID,
-              tmpSequence->getCurrentTrace()->getLogicalSend( commID ) + delta );
-      tmpSequence->getCurrentTrace()->setLogicalReceive( commID,
-              tmpSequence->getCurrentTrace()->getLogicalReceive( commID ) + delta );
-      tmpSequence->getCurrentTrace()->setPhysicalSend( commID,
-              tmpSequence->getCurrentTrace()->getPhysicalSend( commID ) + delta );
-      tmpSequence->getCurrentTrace()->setPhysicalReceive( commID,
-              tmpSequence->getCurrentTrace()->getPhysicalReceive( commID ) + delta );
+      if ( whichRecord->getType() == STATE + BEGIN )
+      {
+        whichRecord->setStateEndTime( whichRecord->getStateEndTime() + delta );
+      }
+      else if ( whichRecord->getType() == COMM + LOG + SEND )
+      {
+        TCommID commID = whichRecord->getCommIndex();
+        tmpSequence->getCurrentTrace()->setLogicalSend( commID,
+                tmpSequence->getCurrentTrace()->getLogicalSend( commID ) + delta );
+        tmpSequence->getCurrentTrace()->setLogicalReceive( commID,
+                tmpSequence->getCurrentTrace()->getLogicalReceive( commID ) + delta );
+        tmpSequence->getCurrentTrace()->setPhysicalSend( commID,
+                tmpSequence->getCurrentTrace()->getPhysicalSend( commID ) + delta );
+        tmpSequence->getCurrentTrace()->setPhysicalReceive( commID,
+                tmpSequence->getCurrentTrace()->getPhysicalReceive( commID ) + delta );
+      }
+
+      executionError = tmpSequence->executeNextAction( whichRecord );
     }
   }
 
-  tmpSequence->executeNextAction( whichRecord );
+  return executionError;
 }
+
 
 
 /****************************************************************************
@@ -358,7 +387,7 @@ vector<TraceEditSequence::TSequenceStates> TraceWriterAction::getStateDependenci
 }
 
 
-void TraceWriterAction::execute( MemoryTrace::iterator *it  )
+bool TraceWriterAction::execute( MemoryTrace::iterator *it  )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
 
@@ -388,7 +417,9 @@ void TraceWriterAction::execute( MemoryTrace::iterator *it  )
   if ( eofParsed && outputTrace.is_open() )
     outputTrace.close();
 
-  tmpSequence->executeNextAction( it );
+  //tmpSequence->executeNextAction( it );
+
+  return tmpSequence->executeNextAction( it );
 }
 
 
@@ -407,7 +438,7 @@ vector<TraceEditSequence::TSequenceStates> EventDrivenCutterAction::getStateDepe
 }
 
 
-void EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
+bool EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
   PRV_UINT32 currentFile;
@@ -489,7 +520,9 @@ void EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
     }
   }
 
-  tmpSequence->executeNextAction( it );
+  //tmpSequence->executeNextAction( it );
+
+  return   tmpSequence->executeNextAction( it );;
 }
 
 
@@ -504,9 +537,11 @@ vector<TraceEditSequence::TSequenceStates> TraceSortAction::getStateDependencies
 }
 
 
-void TraceSortAction::execute( std::string whichTrace )
+bool TraceSortAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
 
-  tmpSequence->executeNextAction( whichTrace );
+  //tmpSequence->executeNextAction( whichTrace );
+
+  return tmpSequence->executeNextAction( whichTrace );
 }

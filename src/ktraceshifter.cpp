@@ -98,9 +98,11 @@ void KTraceShifter::execute( std::string traceIn,
                              std::string traceOut,
                              ProgressController *progress )
 {
-  mySequence->execute( traces );
-  mySequence->getKernelConnection()->copyPCF( traceIn, traceOut );
-  mySequence->getKernelConnection()->copyROW( traceIn, traceOut );
+  if ( !mySequence->execute( traces ) )
+  {
+    mySequence->getKernelConnection()->copyPCF( traceIn, traceOut );
+    mySequence->getKernelConnection()->copyROW( traceIn, traceOut );
+  }
 }
 
 

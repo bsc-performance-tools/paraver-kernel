@@ -51,10 +51,10 @@ class KTraceEditSequence:public TraceEditSequence
     bool pushbackAction( TraceEditSequence::TSequenceActions whichAction );
     bool pushbackAction( TraceEditAction *newAction );
 
-    void execute( vector<std::string> traces );
+    bool execute( vector<std::string> traces );
 
-    void executeNextAction( std::string whichTrace );
-    void executeNextAction( MemoryTrace::iterator *whichRecord );
+    bool executeNextAction( std::string whichTrace );
+    bool executeNextAction( MemoryTrace::iterator *whichRecord );
 
   protected:
 
@@ -62,9 +62,10 @@ class KTraceEditSequence:public TraceEditSequence
     map<TraceEditSequence::TSequenceStates, TraceEditState *> activeStates;
     vector<TraceEditAction *> sequenceActions;
     KTrace *currentTrace;
+    std::string currentTraceName;
+    map< std::string, bool > sequenceExecError;
 
     PRV_UINT16 currentAction;
-
 };
 
 
