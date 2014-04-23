@@ -1489,7 +1489,7 @@ void KTraceCutter::execute( char *trace_in,
       case '#':
         sscanf( line, "%s\n", buffer );
 #ifdef WIN32
-        if( strcmp( buffer, "#Paraver" ) == 0)
+        if( strcmp( buffer, "#Paraver" ) == 0 )
           break;
 #endif
         current_size += fprintf( outfile, "%s\n", buffer );

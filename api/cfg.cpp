@@ -216,46 +216,48 @@ bool CFGLoader::isCFGFile( const string& filename )
       // TODO: Read shebang
       // Currently: detect first two tokens
       map< string, bool > found;
+      found[ CFG_SHEBANG ] = false;
       found[ CFG_HEADER_VERSION ] = false;
       found[ CFG_HEADER_NUM_WINDOWS ] = false;
       found[ OLDCFG_HEADER_VERSION ] = false;
       found[ OLDCFG_HEADER_NUM_WINDOWS ] = false;
 
       ifstream cfgFile( filename.c_str() );
-      if ( !cfgFile )
-        return false;
-
-      // TODO: when shebang present, this loop turns into one line to read
-      while ( !cfgFile.eof() && !isCFG )
+      if ( cfgFile.good() )
       {
-        string strLine;
-        string cfgHeaderTag;
-
-        getline( cfgFile, strLine );
-
-        if ( strLine.length() > 0 && strLine[ strLine.length() - 1 ] == '\r' )
-          strLine = strLine.substr( 0, strLine.length() - 1 );
-
-        if ( strLine.length() == 0 )
-          continue;
-        else if ( strLine[ 0 ] == '#' )
-          continue;
-        else
+        while ( !cfgFile.eof() && !isCFG )
         {
-          istringstream auxStream( strLine );
-          getline( auxStream, cfgHeaderTag, ' ' );
+          string strLine;
+          string cfgHeaderTag;
 
-          if ( cfgHeaderTag.compare( CFG_HEADER_VERSION ) == 0 )
-            found[ CFG_HEADER_VERSION ] = true;
-          if ( cfgHeaderTag.compare( CFG_HEADER_NUM_WINDOWS ) == 0 )
-            found[ CFG_HEADER_NUM_WINDOWS ] = true;
-          if ( cfgHeaderTag.compare( OLDCFG_HEADER_VERSION ) == 0 )
-            found[ OLDCFG_HEADER_VERSION ] = true;
-          if ( cfgHeaderTag.compare( OLDCFG_HEADER_NUM_WINDOWS ) == 0 )
-            found[ OLDCFG_HEADER_NUM_WINDOWS ] = true;
+          getline( cfgFile, strLine );
 
-          isCFG = ( found[ CFG_HEADER_VERSION ] && found[ CFG_HEADER_NUM_WINDOWS ] ) ||
-                  ( found[ OLDCFG_HEADER_VERSION ] && found[ OLDCFG_HEADER_NUM_WINDOWS ] );
+          if ( strLine.length() > 0 && strLine[ strLine.length() - 1 ] == '\r' )
+            strLine = strLine.substr( 0, strLine.length() - 1 );
+
+          if ( strLine.length() > 0 )
+          {
+            istringstream auxStream( strLine );
+            getline( auxStream, cfgHeaderTag, ' ' );
+
+            if ( cfgHeaderTag.compare( CFG_SHEBANG ) == 0 )
+            {
+              found[ CFG_SHEBANG ] = true;
+std::cout << "FOUND" << std::endl;
+            }
+            if ( cfgHeaderTag.compare( CFG_HEADER_VERSION ) == 0 )
+              found[ CFG_HEADER_VERSION ] = true;
+            if ( cfgHeaderTag.compare( CFG_HEADER_NUM_WINDOWS ) == 0 )
+              found[ CFG_HEADER_NUM_WINDOWS ] = true;
+            if ( cfgHeaderTag.compare( OLDCFG_HEADER_VERSION ) == 0 )
+              found[ OLDCFG_HEADER_VERSION ] = true;
+            if ( cfgHeaderTag.compare( OLDCFG_HEADER_NUM_WINDOWS ) == 0 )
+              found[ OLDCFG_HEADER_NUM_WINDOWS ] = true;
+
+            isCFG = found[ CFG_SHEBANG ] ||
+                    ( found[ CFG_HEADER_VERSION ] && found[ CFG_HEADER_NUM_WINDOWS ] ) ||
+                    ( found[ OLDCFG_HEADER_VERSION ] && found[ OLDCFG_HEADER_NUM_WINDOWS ] );
+          }
         }
       }
 
@@ -514,6 +516,7 @@ bool CFGLoader::saveCFG( const string& filename,
   cfgFile << fixed;
   cfgFile.precision( 12 );
 
+  cfgFile << CFG_SHEBANG << endl;
   //cfgFile << "ConfigFile.Version: 3.4" << endl;
   //cfgFile << "ConfigFile.NumWindows: " << allWindows.size() << endl;
   cfgFile << CFG_HEADER_VERSION << " " << CFG_CURRENT_VERSION << endl;

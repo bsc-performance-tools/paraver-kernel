@@ -245,8 +245,10 @@ static const std::string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
 };
 
 // New cfg label definitions
-#define CFG_HEADER_VERSION "ConfigFile.Version:"
-#define CFG_HEADER_NUM_WINDOWS "ConfigFile.NumWindows:"
+#define CFG_SHEBANG                    "#ParaverCFG"
+#define CFG_HEADER_VERSION             "ConfigFile.Version:"
+#define CFG_HEADER_NUM_WINDOWS         "ConfigFile.NumWindows:"
+
 #define CFG_TAG_WNDW_END_TIME_RELATIVE "window_end_time_relative"
 
 // GUI Misc Labels
