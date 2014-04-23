@@ -66,36 +66,42 @@ class Filter
     virtual void getCommFrom( std::vector<TObjectOrder>& onVector ) const = 0;
     virtual void setCommFromFunction( std::string newFunction ) = 0;
     virtual std::string getCommFromFunction() const = 0;
+    virtual TFilterNumParam getCommFromFunctionNumParam() const = 0;
 
     virtual void clearCommTo() = 0;
     virtual void insertCommTo( TObjectOrder value ) = 0;
     virtual void getCommTo( std::vector<TObjectOrder>& onVector ) const = 0;
     virtual void setCommToFunction( std::string newFunction ) = 0;
     virtual std::string getCommToFunction() const = 0;
+    virtual TFilterNumParam getCommToFunctionNumParam() const = 0;
 
     virtual void clearCommTags() = 0;
     virtual void insertCommTag( TCommTag value ) = 0;
     virtual void getCommTag( std::vector<TCommTag>& onVector ) const = 0;
     virtual void setCommTagFunction( std::string newFunction ) = 0;
     virtual std::string getCommTagFunction() const = 0;
+    virtual TFilterNumParam getCommTagFunctionNumParam() const = 0;
 
     virtual void clearCommSizes() = 0;
     virtual void insertCommSize( TCommSize value ) = 0;
     virtual void getCommSize( std::vector<TCommSize>& onVector ) const = 0;
     virtual void setCommSizeFunction( std::string newFunction ) = 0;
     virtual std::string getCommSizeFunction() const = 0;
+    virtual TFilterNumParam getCommSizeFunctionNumParam() const = 0;
 
     virtual void clearBandWidth() = 0;
     virtual void insertBandWidth( TSemanticValue value ) = 0;
     virtual void getBandWidth( std::vector<TSemanticValue>& onVector ) const = 0;
     virtual void setBandWidthFunction( std::string newFunction ) = 0;
     virtual std::string getBandWidthFunction() const = 0;
+    virtual TFilterNumParam getBandWidthFunctionNumParam() const = 0;
 
     virtual void clearEventTypes() = 0;
     virtual void insertEventType( TEventType value ) = 0;
     virtual void getEventType( std::vector<TEventType>& onVector ) const = 0;
     virtual void setEventTypeFunction( std::string newFunction ) = 0;
     virtual std::string getEventTypeFunction() const = 0;
+    virtual TFilterNumParam getEventTypeFunctionNumParam() const = 0;
     virtual void getValidEvents( std::vector<TEventType>& onVector,
                                  const std::set<TEventType>& eventsLoaded ) const = 0;
 
@@ -104,6 +110,7 @@ class Filter
     virtual void getEventValue( std::vector<TEventValue>& onVector ) const = 0;
     virtual void setEventValueFunction( std::string newFunction ) = 0;
     virtual std::string getEventValueFunction() const = 0;
+    virtual TFilterNumParam getEventValueFunctionNumParam() const = 0;
 
 
     virtual void setOpFromToAnd() = 0;
@@ -145,36 +152,42 @@ class FilterProxy : public Filter
     virtual void getCommFrom( std::vector<TObjectOrder>& onVector ) const;
     virtual void setCommFromFunction( std::string newFunction );
     virtual std::string getCommFromFunction() const;
+    virtual TFilterNumParam getCommFromFunctionNumParam() const;
 
     virtual void clearCommTo();
     virtual void insertCommTo( TObjectOrder value );
     virtual void getCommTo( std::vector<TObjectOrder>& onVector ) const;
     virtual void setCommToFunction( std::string newFunction );
     virtual std::string getCommToFunction() const;
+    virtual TFilterNumParam getCommToFunctionNumParam() const;
 
     virtual void clearCommTags();
     virtual void insertCommTag( TCommTag value );
     virtual void getCommTag( std::vector<TCommTag>& onVector ) const;
     virtual void setCommTagFunction( std::string newFunction );
     virtual std::string getCommTagFunction() const;
+    virtual TFilterNumParam getCommTagFunctionNumParam() const;
 
     virtual void clearCommSizes();
     virtual void insertCommSize( TCommSize value );
     virtual void getCommSize( std::vector<TCommSize>& onVector ) const;
     virtual void setCommSizeFunction( std::string newFunction );
     virtual std::string getCommSizeFunction() const;
+    virtual TFilterNumParam getCommSizeFunctionNumParam() const;
 
     virtual void clearBandWidth();
     virtual void insertBandWidth( TSemanticValue value );
     virtual void getBandWidth( std::vector<TSemanticValue>& onVector ) const;
     virtual void setBandWidthFunction( std::string newFunction );
     virtual std::string getBandWidthFunction() const;
+    virtual TFilterNumParam getBandWidthFunctionNumParam() const;
 
     virtual void clearEventTypes();
     virtual void insertEventType( TEventType value );
     virtual void getEventType( std::vector<TEventType>& onVector ) const;
     virtual void setEventTypeFunction( std::string newFunction );
     virtual std::string getEventTypeFunction() const;
+    virtual TFilterNumParam getEventTypeFunctionNumParam() const;
     virtual void getValidEvents( std::vector<TEventType>& onVector,
                                  const std::set<TEventType>& eventsLoaded ) const;
 
@@ -183,6 +196,7 @@ class FilterProxy : public Filter
     virtual void getEventValue( std::vector<TEventValue>& onVector ) const;
     virtual void setEventValueFunction( std::string newFunction );
     virtual std::string getEventValueFunction() const;
+    virtual TFilterNumParam getEventValueFunctionNumParam() const;
 
 
     virtual void setOpFromToAnd();

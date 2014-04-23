@@ -81,6 +81,11 @@ string FilterProxy::getCommFromFunction() const
   return myFilter->getCommFromFunction();
 }
 
+TFilterNumParam FilterProxy::getCommFromFunctionNumParam() const
+{
+  return myFilter->getCommFromFunctionNumParam();
+}
+
 void FilterProxy::clearCommTo()
 {
   myFilter->clearCommTo();
@@ -104,6 +109,11 @@ void FilterProxy::setCommToFunction( string newFunction )
 string FilterProxy::getCommToFunction() const
 {
   return myFilter->getCommToFunction();
+}
+
+TFilterNumParam FilterProxy::getCommToFunctionNumParam() const
+{
+  return myFilter->getCommToFunctionNumParam();
 }
 
 void FilterProxy::clearCommTags()
@@ -131,6 +141,11 @@ string FilterProxy::getCommTagFunction() const
   return myFilter->getCommTagFunction();
 }
 
+TFilterNumParam FilterProxy::getCommTagFunctionNumParam() const
+{
+  return myFilter->getCommTagFunctionNumParam();
+}
+
 void FilterProxy::clearCommSizes()
 {
   myFilter->clearCommSizes();
@@ -154,6 +169,11 @@ void FilterProxy::setCommSizeFunction( string newFunction )
 string FilterProxy::getCommSizeFunction() const
 {
   return myFilter->getCommSizeFunction();
+}
+
+TFilterNumParam FilterProxy::getCommSizeFunctionNumParam() const
+{
+  return myFilter->getCommSizeFunctionNumParam();
 }
 
 void FilterProxy::clearBandWidth()
@@ -181,6 +201,11 @@ string FilterProxy::getBandWidthFunction() const
   return myFilter->getBandWidthFunction();
 }
 
+TFilterNumParam FilterProxy::getBandWidthFunctionNumParam() const
+{
+  return myFilter->getBandWidthFunctionNumParam();
+}
+
 void FilterProxy::clearEventTypes()
 {
   myFilter->clearEventTypes();
@@ -204,6 +229,11 @@ void FilterProxy::setEventTypeFunction( string newFunction )
 string FilterProxy::getEventTypeFunction() const
 {
   return myFilter->getEventTypeFunction();
+}
+
+TFilterNumParam FilterProxy::getEventTypeFunctionNumParam() const
+{
+  return myFilter->getEventTypeFunctionNumParam();
 }
 
 void FilterProxy::getValidEvents( vector<TEventType>& onVector,
@@ -235,6 +265,11 @@ void FilterProxy::setEventValueFunction( string newFunction )
 string FilterProxy::getEventValueFunction() const
 {
   return myFilter->getEventValueFunction();
+}
+
+TFilterNumParam FilterProxy::getEventValueFunctionNumParam() const
+{
+  return myFilter->getEventValueFunctionNumParam();
 }
 
 void FilterProxy::setOpFromToAnd()

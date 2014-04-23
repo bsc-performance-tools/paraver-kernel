@@ -113,6 +113,9 @@ enum TWindowLevel
   DERIVED
 };
 
+// Filter definitions
+typedef PRV_UINT16 TFilterNumParam;
+
 // Semantic function definitions
 typedef PRV_UINT16 TParamIndex;
 typedef std::vector<double> TParamValue;

@@ -30,6 +30,7 @@
 #ifndef _FILTER_H
 #define _FILTER_H
 
+#include <limits>
 #include <iostream>
 #include <set>
 #include "memorytrace.h"
@@ -60,6 +61,8 @@ class FilterFunction
     {
       return result;
     }
+
+    virtual TFilterNumParam getNumParameters() const = 0;
 
   protected:
     bool result;
@@ -97,6 +100,11 @@ class FilterAll: public FilterFunction
       return true;
     }
 
+    virtual TFilterNumParam getNumParameters() const
+    {
+      return 0;
+    }
+
   protected:
 
   private:
@@ -122,6 +130,11 @@ class FilterNotEqual: public FilterFunction
     virtual FilterFunction *clone()
     {
       return new FilterNotEqual( *this );
+    }
+
+    virtual TFilterNumParam getNumParameters() const
+    {
+      return std::numeric_limits<TFilterNumParam>::max();
     }
 
   protected:
@@ -152,6 +165,11 @@ class FilterEqual: public FilterFunction
       return new FilterEqual( *this );
     }
 
+    virtual TFilterNumParam getNumParameters() const
+    {
+      return std::numeric_limits<TFilterNumParam>::max();
+    }
+
   protected:
 
   private:
@@ -180,6 +198,11 @@ class FilterGreater: public FilterFunction
       return new FilterGreater( *this );
     }
 
+    virtual TFilterNumParam getNumParameters() const
+    {
+      return 1;
+    }
+
   protected:
 
   private:
@@ -205,6 +228,11 @@ class FilterFewer: public FilterFunction
     virtual FilterFunction *clone()
     {
       return new FilterFewer( *this );
+    }
+
+    virtual TFilterNumParam getNumParameters() const
+    {
+      return 1;
     }
 
   protected:
@@ -240,6 +268,11 @@ class FilterNone: public FilterFunction
       return false;
     }
 
+    virtual TFilterNumParam getNumParameters() const
+    {
+      return 0;
+    }
+
   protected:
 
   private:
@@ -267,6 +300,11 @@ class FilterRange: public FilterFunction
     virtual FilterFunction *clone()
     {
       return new FilterRange( *this );
+    }
+
+    virtual TFilterNumParam getNumParameters() const
+    {
+      return 2;
     }
 
   protected:
@@ -369,36 +407,42 @@ class KFilter : public Filter
     void getCommFrom( std::vector<TObjectOrder>& onVector ) const;
     void setCommFromFunction( std::string newFunction );
     std::string getCommFromFunction() const;
+    TFilterNumParam getCommFromFunctionNumParam() const;
 
     void clearCommTo();
     void insertCommTo( TObjectOrder value );
     void getCommTo( std::vector<TObjectOrder>& onVector ) const;
     void setCommToFunction( std::string newFunction );
     std::string getCommToFunction() const;
+    TFilterNumParam getCommToFunctionNumParam() const;
 
     void clearCommTags();
     void insertCommTag( TCommTag value );
     void getCommTag( std::vector<TCommTag>& onVector ) const;
     void setCommTagFunction( std::string newFunction );
     std::string getCommTagFunction() const;
+    TFilterNumParam getCommTagFunctionNumParam() const;
 
     void clearCommSizes();
     void insertCommSize( TCommSize value );
     void getCommSize( std::vector<TCommSize>& onVector ) const;
     void setCommSizeFunction( std::string newFunction );
     std::string getCommSizeFunction() const;
+    TFilterNumParam getCommSizeFunctionNumParam() const;
 
     void clearBandWidth();
     void insertBandWidth( TSemanticValue value );
     void getBandWidth( std::vector<TSemanticValue>& onVector ) const;
     void setBandWidthFunction( std::string newFunction );
     std::string getBandWidthFunction() const;
+    TFilterNumParam getBandWidthFunctionNumParam() const;
 
     void clearEventTypes();
     void insertEventType( TEventType value );
     void getEventType( std::vector<TEventType>& onVector ) const;
     void setEventTypeFunction( std::string newFunction );
     std::string getEventTypeFunction() const;
+    TFilterNumParam getEventTypeFunctionNumParam() const;
     void getValidEvents( std::vector<TEventType>& onVector,
                          const std::set<TEventType>& eventsLoaded ) const;
 
@@ -407,6 +451,7 @@ class KFilter : public Filter
     void getEventValue( std::vector<TEventValue>& onVector ) const;
     void setEventValueFunction( std::string newFunction );
     std::string getEventValueFunction() const;
+    TFilterNumParam getEventValueFunctionNumParam() const;
 
 
     void setOpFromToAnd()

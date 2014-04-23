@@ -335,6 +335,11 @@ string KFilter::getCommFromFunction() const
   return functionCommFrom->getName();
 }
 
+TFilterNumParam KFilter::getCommFromFunctionNumParam() const
+{
+  return functionCommFrom->getNumParameters();
+}
+
 void KFilter::clearCommTo()
 {
   commTo.clear();
@@ -362,6 +367,11 @@ void KFilter::setCommToFunction( string newFunction )
 string KFilter::getCommToFunction() const
 {
   return functionCommTo->getName();
+}
+
+TFilterNumParam KFilter::getCommToFunctionNumParam() const
+{
+  return functionCommTo->getNumParameters();
 }
 
 void KFilter::clearCommTags()
@@ -393,6 +403,11 @@ string KFilter::getCommTagFunction() const
   return functionCommTags->getName();
 }
 
+TFilterNumParam KFilter::getCommTagFunctionNumParam() const
+{
+  return functionCommTags->getNumParameters();
+}
+
 void KFilter::clearCommSizes()
 {
   commSizes.clear();
@@ -420,6 +435,11 @@ void KFilter::setCommSizeFunction( string newFunction )
 string KFilter::getCommSizeFunction() const
 {
   return functionCommSizes->getName();
+}
+
+TFilterNumParam KFilter::getCommSizeFunctionNumParam() const
+{
+  return functionCommSizes->getNumParameters();
 }
 
 void KFilter::clearBandWidth()
@@ -451,6 +471,11 @@ string KFilter::getBandWidthFunction() const
   return functionBandWidth->getName();
 }
 
+TFilterNumParam KFilter::getBandWidthFunctionNumParam() const
+{
+  return functionBandWidth->getNumParameters();
+}
+
 void KFilter::clearEventTypes()
 {
   eventTypes.clear();
@@ -478,6 +503,11 @@ void KFilter::setEventTypeFunction( string newFunction )
 string KFilter::getEventTypeFunction() const
 {
   return functionEventTypes->getName();
+}
+
+TFilterNumParam KFilter::getEventTypeFunctionNumParam() const
+{
+  return functionEventTypes->getNumParameters();
 }
 
 void KFilter::getValidEvents( vector<TEventType>& onVector,
@@ -527,6 +557,11 @@ void KFilter::setEventValueFunction( string newFunction )
 string KFilter::getEventValueFunction() const
 {
   return functionEventValues->getName();
+}
+
+TFilterNumParam KFilter::getEventValueFunctionNumParam() const
+{
+  return functionEventValues->getNumParameters();
 }
 
 KFilter *KFilter::clone( KWindow *clonedWindow )
