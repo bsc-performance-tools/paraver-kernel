@@ -81,9 +81,14 @@ string FilterProxy::getCommFromFunction() const
   return myFilter->getCommFromFunction();
 }
 
-TFilterNumParam FilterProxy::getCommFromFunctionNumParam() const
+TFilterNumParam FilterProxy::getCommFromFunctionNumParams() const
 {
-  return myFilter->getCommFromFunctionNumParam();
+  return myFilter->getCommFromFunctionNumParams();
+}
+
+bool FilterProxy::allowedCommFromFunctionNumParams( TFilterNumParam numParams ) const
+{
+  return myFilter->allowedCommFromFunctionNumParams( numParams );
 }
 
 void FilterProxy::clearCommTo()
@@ -111,9 +116,14 @@ string FilterProxy::getCommToFunction() const
   return myFilter->getCommToFunction();
 }
 
-TFilterNumParam FilterProxy::getCommToFunctionNumParam() const
+TFilterNumParam FilterProxy::getCommToFunctionNumParams() const
 {
-  return myFilter->getCommToFunctionNumParam();
+  return myFilter->getCommToFunctionNumParams();
+}
+
+bool FilterProxy::allowedCommToFunctionNumParams( TFilterNumParam numParams ) const
+{
+  return myFilter->allowedCommToFunctionNumParams( numParams );
 }
 
 void FilterProxy::clearCommTags()
@@ -141,9 +151,14 @@ string FilterProxy::getCommTagFunction() const
   return myFilter->getCommTagFunction();
 }
 
-TFilterNumParam FilterProxy::getCommTagFunctionNumParam() const
+TFilterNumParam FilterProxy::getCommTagFunctionNumParams() const
 {
-  return myFilter->getCommTagFunctionNumParam();
+  return myFilter->getCommTagFunctionNumParams();
+}
+
+bool FilterProxy::allowedCommTagFunctionNumParams( TFilterNumParam numParams ) const
+{
+  return myFilter->allowedCommTagFunctionNumParams( numParams );
 }
 
 void FilterProxy::clearCommSizes()
@@ -171,9 +186,14 @@ string FilterProxy::getCommSizeFunction() const
   return myFilter->getCommSizeFunction();
 }
 
-TFilterNumParam FilterProxy::getCommSizeFunctionNumParam() const
+TFilterNumParam FilterProxy::getCommSizeFunctionNumParams() const
 {
-  return myFilter->getCommSizeFunctionNumParam();
+  return myFilter->getCommSizeFunctionNumParams();
+}
+
+bool FilterProxy::allowedCommSizeFunctionNumParams( TFilterNumParam numParams ) const
+{
+  return myFilter->allowedCommSizeFunctionNumParams( numParams );
 }
 
 void FilterProxy::clearBandWidth()
@@ -201,9 +221,14 @@ string FilterProxy::getBandWidthFunction() const
   return myFilter->getBandWidthFunction();
 }
 
-TFilterNumParam FilterProxy::getBandWidthFunctionNumParam() const
+TFilterNumParam FilterProxy::getBandWidthFunctionNumParams() const
 {
-  return myFilter->getBandWidthFunctionNumParam();
+  return myFilter->getBandWidthFunctionNumParams();
+}
+
+bool FilterProxy::allowedBandWidthFunctionNumParams( TFilterNumParam numParams ) const
+{
+  return myFilter->allowedBandWidthFunctionNumParams( numParams );
 }
 
 void FilterProxy::clearEventTypes()
@@ -231,9 +256,14 @@ string FilterProxy::getEventTypeFunction() const
   return myFilter->getEventTypeFunction();
 }
 
-TFilterNumParam FilterProxy::getEventTypeFunctionNumParam() const
+TFilterNumParam FilterProxy::getEventTypeFunctionNumParams() const
 {
-  return myFilter->getEventTypeFunctionNumParam();
+  return myFilter->getEventTypeFunctionNumParams();
+}
+
+bool FilterProxy::allowedEventTypeFunctionNumParams( TFilterNumParam numParams ) const
+{
+  return myFilter->allowedEventTypeFunctionNumParams( numParams );
 }
 
 void FilterProxy::getValidEvents( vector<TEventType>& onVector,
@@ -267,9 +297,14 @@ string FilterProxy::getEventValueFunction() const
   return myFilter->getEventValueFunction();
 }
 
-TFilterNumParam FilterProxy::getEventValueFunctionNumParam() const
+TFilterNumParam FilterProxy::getEventValueFunctionNumParams() const
 {
-  return myFilter->getEventValueFunctionNumParam();
+  return myFilter->getEventValueFunctionNumParams();
+}
+
+bool FilterProxy::allowedEventValueFunctionNumParams( TFilterNumParam numParams ) const
+{
+  return myFilter->allowedEventValueFunctionNumParams( numParams );
 }
 
 void FilterProxy::setOpFromToAnd()

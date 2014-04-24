@@ -63,6 +63,7 @@ class FilterFunction
     }
 
     virtual TFilterNumParam getNumParameters() const = 0;
+    virtual bool allowedNumParameters( TFilterNumParam numParams ) const = 0;
 
   protected:
     bool result;
@@ -105,6 +106,11 @@ class FilterAll: public FilterFunction
       return 0;
     }
 
+    virtual bool allowedNumParameters( TFilterNumParam numParams ) const
+    {
+      return true;
+    }
+
   protected:
 
   private:
@@ -135,6 +141,11 @@ class FilterNotEqual: public FilterFunction
     virtual TFilterNumParam getNumParameters() const
     {
       return std::numeric_limits<TFilterNumParam>::max();
+    }
+
+    virtual bool allowedNumParameters( TFilterNumParam numParams ) const
+    {
+      return numParams <= getNumParameters();
     }
 
   protected:
@@ -170,6 +181,11 @@ class FilterEqual: public FilterFunction
       return std::numeric_limits<TFilterNumParam>::max();
     }
 
+    virtual bool allowedNumParameters( TFilterNumParam numParams ) const
+    {
+      return numParams <= getNumParameters();
+    }
+
   protected:
 
   private:
@@ -203,6 +219,11 @@ class FilterGreater: public FilterFunction
       return 1;
     }
 
+    virtual bool allowedNumParameters( TFilterNumParam numParams ) const
+    {
+      return numParams == getNumParameters();
+    }
+
   protected:
 
   private:
@@ -233,6 +254,11 @@ class FilterFewer: public FilterFunction
     virtual TFilterNumParam getNumParameters() const
     {
       return 1;
+    }
+
+    virtual bool allowedNumParameters( TFilterNumParam numParams ) const
+    {
+      return numParams == getNumParameters();
     }
 
   protected:
@@ -273,6 +299,11 @@ class FilterNone: public FilterFunction
       return 0;
     }
 
+    virtual bool allowedNumParameters( TFilterNumParam numParams ) const
+    {
+      return true;
+    }
+
   protected:
 
   private:
@@ -305,6 +336,11 @@ class FilterRange: public FilterFunction
     virtual TFilterNumParam getNumParameters() const
     {
       return 2;
+    }
+
+    virtual bool allowedNumParameters( TFilterNumParam numParams ) const
+    {
+      return numParams == getNumParameters();
     }
 
   protected:
@@ -407,42 +443,48 @@ class KFilter : public Filter
     void getCommFrom( std::vector<TObjectOrder>& onVector ) const;
     void setCommFromFunction( std::string newFunction );
     std::string getCommFromFunction() const;
-    TFilterNumParam getCommFromFunctionNumParam() const;
+    TFilterNumParam getCommFromFunctionNumParams() const;
+    bool allowedCommFromFunctionNumParams( TFilterNumParam numParams ) const;
 
     void clearCommTo();
     void insertCommTo( TObjectOrder value );
     void getCommTo( std::vector<TObjectOrder>& onVector ) const;
     void setCommToFunction( std::string newFunction );
     std::string getCommToFunction() const;
-    TFilterNumParam getCommToFunctionNumParam() const;
+    TFilterNumParam getCommToFunctionNumParams() const;
+    bool allowedCommToFunctionNumParams( TFilterNumParam numParams ) const;
 
     void clearCommTags();
     void insertCommTag( TCommTag value );
     void getCommTag( std::vector<TCommTag>& onVector ) const;
     void setCommTagFunction( std::string newFunction );
     std::string getCommTagFunction() const;
-    TFilterNumParam getCommTagFunctionNumParam() const;
+    TFilterNumParam getCommTagFunctionNumParams() const;
+    bool allowedCommTagFunctionNumParams( TFilterNumParam numParams ) const;
 
     void clearCommSizes();
     void insertCommSize( TCommSize value );
     void getCommSize( std::vector<TCommSize>& onVector ) const;
     void setCommSizeFunction( std::string newFunction );
     std::string getCommSizeFunction() const;
-    TFilterNumParam getCommSizeFunctionNumParam() const;
+    TFilterNumParam getCommSizeFunctionNumParams() const;
+    bool allowedCommSizeFunctionNumParams( TFilterNumParam numParams ) const;
 
     void clearBandWidth();
     void insertBandWidth( TSemanticValue value );
     void getBandWidth( std::vector<TSemanticValue>& onVector ) const;
     void setBandWidthFunction( std::string newFunction );
     std::string getBandWidthFunction() const;
-    TFilterNumParam getBandWidthFunctionNumParam() const;
+    TFilterNumParam getBandWidthFunctionNumParams() const;
+    bool allowedBandWidthFunctionNumParams( TFilterNumParam numParams ) const;
 
     void clearEventTypes();
     void insertEventType( TEventType value );
     void getEventType( std::vector<TEventType>& onVector ) const;
     void setEventTypeFunction( std::string newFunction );
     std::string getEventTypeFunction() const;
-    TFilterNumParam getEventTypeFunctionNumParam() const;
+    TFilterNumParam getEventTypeFunctionNumParams() const;
+    bool allowedEventTypeFunctionNumParams( TFilterNumParam numParams ) const;
     void getValidEvents( std::vector<TEventType>& onVector,
                          const std::set<TEventType>& eventsLoaded ) const;
 
@@ -451,7 +493,8 @@ class KFilter : public Filter
     void getEventValue( std::vector<TEventValue>& onVector ) const;
     void setEventValueFunction( std::string newFunction );
     std::string getEventValueFunction() const;
-    TFilterNumParam getEventValueFunctionNumParam() const;
+    TFilterNumParam getEventValueFunctionNumParams() const;
+    bool allowedEventValueFunctionNumParams( TFilterNumParam numParams ) const;
 
 
     void setOpFromToAnd()

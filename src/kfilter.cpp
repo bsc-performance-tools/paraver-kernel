@@ -335,9 +335,14 @@ string KFilter::getCommFromFunction() const
   return functionCommFrom->getName();
 }
 
-TFilterNumParam KFilter::getCommFromFunctionNumParam() const
+TFilterNumParam KFilter::getCommFromFunctionNumParams() const
 {
   return functionCommFrom->getNumParameters();
+}
+
+bool KFilter::allowedCommFromFunctionNumParams( TFilterNumParam numParams ) const
+{
+  return functionCommFrom->allowedNumParameters( numParams );
 }
 
 void KFilter::clearCommTo()
@@ -369,9 +374,14 @@ string KFilter::getCommToFunction() const
   return functionCommTo->getName();
 }
 
-TFilterNumParam KFilter::getCommToFunctionNumParam() const
+TFilterNumParam KFilter::getCommToFunctionNumParams() const
 {
   return functionCommTo->getNumParameters();
+}
+
+bool KFilter::allowedCommToFunctionNumParams( TFilterNumParam numParams ) const
+{
+  return functionCommTo->allowedNumParameters( numParams );
 }
 
 void KFilter::clearCommTags()
@@ -403,9 +413,14 @@ string KFilter::getCommTagFunction() const
   return functionCommTags->getName();
 }
 
-TFilterNumParam KFilter::getCommTagFunctionNumParam() const
+TFilterNumParam KFilter::getCommTagFunctionNumParams() const
 {
   return functionCommTags->getNumParameters();
+}
+
+bool KFilter::allowedCommTagFunctionNumParams( TFilterNumParam numParams ) const
+{
+  return functionCommTags->allowedNumParameters( numParams );
 }
 
 void KFilter::clearCommSizes()
@@ -437,9 +452,14 @@ string KFilter::getCommSizeFunction() const
   return functionCommSizes->getName();
 }
 
-TFilterNumParam KFilter::getCommSizeFunctionNumParam() const
+TFilterNumParam KFilter::getCommSizeFunctionNumParams() const
 {
   return functionCommSizes->getNumParameters();
+}
+
+bool KFilter::allowedCommSizeFunctionNumParams( TFilterNumParam numParams ) const
+{
+  return functionCommSizes->allowedNumParameters( numParams );
 }
 
 void KFilter::clearBandWidth()
@@ -471,9 +491,14 @@ string KFilter::getBandWidthFunction() const
   return functionBandWidth->getName();
 }
 
-TFilterNumParam KFilter::getBandWidthFunctionNumParam() const
+TFilterNumParam KFilter::getBandWidthFunctionNumParams() const
 {
   return functionBandWidth->getNumParameters();
+}
+
+bool KFilter::allowedBandWidthFunctionNumParams( TFilterNumParam numParams ) const
+{
+  return functionBandWidth->allowedNumParameters( numParams );
 }
 
 void KFilter::clearEventTypes()
@@ -505,9 +530,14 @@ string KFilter::getEventTypeFunction() const
   return functionEventTypes->getName();
 }
 
-TFilterNumParam KFilter::getEventTypeFunctionNumParam() const
+TFilterNumParam KFilter::getEventTypeFunctionNumParams() const
 {
   return functionEventTypes->getNumParameters();
+}
+
+bool KFilter::allowedEventTypeFunctionNumParams( TFilterNumParam numParams ) const
+{
+  return functionEventTypes->allowedNumParameters( numParams );
 }
 
 void KFilter::getValidEvents( vector<TEventType>& onVector,
@@ -559,9 +589,14 @@ string KFilter::getEventValueFunction() const
   return functionEventValues->getName();
 }
 
-TFilterNumParam KFilter::getEventValueFunctionNumParam() const
+TFilterNumParam KFilter::getEventValueFunctionNumParams() const
 {
   return functionEventValues->getNumParameters();
+}
+
+bool KFilter::allowedEventValueFunctionNumParams( TFilterNumParam numParams ) const
+{
+  return functionEventValues->allowedNumParameters( numParams );
 }
 
 KFilter *KFilter::clone( KWindow *clonedWindow )
