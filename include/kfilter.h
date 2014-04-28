@@ -145,7 +145,7 @@ class FilterNotEqual: public FilterFunction
 
     virtual bool allowedNumParameters( TFilterNumParam numParams ) const
     {
-      return numParams <= getNumParameters();
+      return 0 < numParams && numParams <= getNumParameters();
     }
 
   protected:
@@ -183,7 +183,7 @@ class FilterEqual: public FilterFunction
 
     virtual bool allowedNumParameters( TFilterNumParam numParams ) const
     {
-      return numParams <= getNumParameters();
+      return 0 < numParams && numParams <= getNumParameters();
     }
 
   protected:
