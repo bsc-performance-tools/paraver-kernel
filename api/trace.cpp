@@ -556,6 +556,11 @@ bool TraceProxy::eventLoaded( TEventType whichType ) const
   return myTrace->eventLoaded( whichType );
 }
 
+bool TraceProxy::anyEventLoaded( TEventType firstType, TEventType lastType ) const
+{
+  return myTrace->anyEventLoaded( firstType, lastType );
+}
+
 const set<TEventType>& TraceProxy::getLoadedEvents() const
 {
   return myTrace->getLoadedEvents();

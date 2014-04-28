@@ -241,10 +241,7 @@ bool CFGLoader::isCFGFile( const string& filename )
             getline( auxStream, cfgHeaderTag, ' ' );
 
             if ( cfgHeaderTag.compare( CFG_SHEBANG ) == 0 )
-            {
               found[ CFG_SHEBANG ] = true;
-std::cout << "FOUND" << std::endl;
-            }
             if ( cfgHeaderTag.compare( CFG_HEADER_VERSION ) == 0 )
               found[ CFG_HEADER_VERSION ] = true;
             if ( cfgHeaderTag.compare( CFG_HEADER_NUM_WINDOWS ) == 0 )
@@ -2638,6 +2635,19 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
         return false;
 
       filter->insertEventValue( eventValue );
+    }
+  }
+
+  std::vector<std::string> filterFunctions;
+  filter->getAllFilterFunctions( filterFunctions );
+  if( filter->getEventTypeFunction() == filterFunctions[ 6 ] )
+  {
+    std::vector<TEventType> rankEvents;
+    filter->getEventType( rankEvents );
+    if( whichTrace->anyEventLoaded( rankEvents[ 0 ], rankEvents[ 1 ] ) )
+    {
+      someEventsNotExist = false;
+      someEventsExist = true;
     }
   }
 

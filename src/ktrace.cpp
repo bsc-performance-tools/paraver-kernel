@@ -678,6 +678,16 @@ bool KTrace::eventLoaded( TEventType whichType ) const
   return events.find( whichType ) != events.end();
 }
 
+bool KTrace::anyEventLoaded( TEventType firstType, TEventType lastType ) const
+{
+  set<TEventType>::iterator it;
+  it = events.lower_bound( firstType );
+  if( it != events.end() && *it <= lastType )
+    return true;
+
+  return false;
+}
+
 bool KTrace::findLastEventValue( TThreadOrder whichThread,
                                  TRecordTime whichTime,
                                  const vector<TEventType>& whichEvent,
