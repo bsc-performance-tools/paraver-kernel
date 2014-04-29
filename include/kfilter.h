@@ -36,6 +36,11 @@
 #include "memorytrace.h"
 #include "filter.h"
 
+#ifdef WIN32
+#undef max
+#undef min
+#endif
+
 class KSingleWindow;
 class KWindow;
 

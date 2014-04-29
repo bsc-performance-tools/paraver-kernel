@@ -680,7 +680,7 @@ bool KTrace::eventLoaded( TEventType whichType ) const
 
 bool KTrace::anyEventLoaded( TEventType firstType, TEventType lastType ) const
 {
-  set<TEventType>::iterator it;
+  set<TEventType>::const_iterator it;
   it = events.lower_bound( firstType );
   if( it != events.end() && *it <= lastType )
     return true;
