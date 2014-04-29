@@ -490,7 +490,7 @@ void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
 
   while ( blocks.count( offset ) == 0 )
   {
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
     if( file->tellg() == (std::streampos)endFileOffset )
 #else
     if( file->tellg() == endFileOffset )
