@@ -96,7 +96,8 @@ bool TraceCutterAction::execute( std::string whichTrace )
   {
     newName = outputPath + mySequence->getKernelConnection()->getPathSeparator() +
               whichTrace.substr( whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) );
-    if( symlink( whichTrace.c_str(), newName.c_str() ) != 0 )
+    std::string relativeTrace = "../" + whichTrace.substr( whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) );
+    if( symlink( relativeTrace.c_str(), newName.c_str() ) != 0 )
     {
       if( errno != EEXIST )
       {
