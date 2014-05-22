@@ -1218,12 +1218,12 @@ SemanticInfoType KDerivedWindow::getSemanticInfoType() const
       case SYSTEM:
         if( functions[ COMPOSESYSTEM ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSESYSTEM ]->getSemanticInfoType();
-        if( functions[ SYSTEM ]->getSemanticInfoType() != SAME_TYPE )
+        if( getMinAcceptableLevel() > SYSTEM && functions[ SYSTEM ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ SYSTEM ]->getSemanticInfoType();
       case NODE:
         if( functions[ COMPOSENODE ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSENODE ]->getSemanticInfoType();
-        if( functions[ NODE ]->getSemanticInfoType() != SAME_TYPE )
+        if( getMinAcceptableLevel() > NODE && functions[ NODE ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ NODE ]->getSemanticInfoType();
       case CPU:
         if( functions[ COMPOSECPU ]->getSemanticInfoType() != SAME_TYPE )
@@ -1237,19 +1237,19 @@ SemanticInfoType KDerivedWindow::getSemanticInfoType() const
     switch( level )
     {
       case WORKLOAD:
-        if( functions[ COMPOSEWORKLOAD ]->getSemanticInfoType() != SAME_TYPE )
+        if( getMinAcceptableLevel() > WORKLOAD && functions[ COMPOSEWORKLOAD ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSEWORKLOAD ]->getSemanticInfoType();
         if( functions[ WORKLOAD ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ WORKLOAD ]->getSemanticInfoType();
       case APPLICATION:
         if( functions[ COMPOSEAPPLICATION ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSEAPPLICATION ]->getSemanticInfoType();
-        if( functions[ APPLICATION ]->getSemanticInfoType() != SAME_TYPE )
+        if( getMinAcceptableLevel() > APPLICATION && functions[ APPLICATION ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ APPLICATION ]->getSemanticInfoType();
       case TASK:
         if( functions[ COMPOSETASK ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ COMPOSETASK ]->getSemanticInfoType();
-        if( functions[ TASK ]->getSemanticInfoType() != SAME_TYPE )
+        if( getMinAcceptableLevel() > TASK && functions[ TASK ]->getSemanticInfoType() != SAME_TYPE )
           return functions[ TASK ]->getSemanticInfoType();
       default:
         break;
