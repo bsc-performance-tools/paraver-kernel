@@ -1747,7 +1747,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
     computedMaxY = computedMaxY > tmpComputedMaxY[ pos ] ? computedMaxY : tmpComputedMaxY[ pos ];
     if ( computedMinY == 0.0 )
       computedMinY = tmpComputedMinY[ pos ];
-    else
+    else if( tmpComputedMinY[ pos ] != 0.0 )
       computedMinY = computedMinY < tmpComputedMinY[ pos ] ? computedMinY : tmpComputedMinY[ pos ];
   }
 #ifdef TRACING_ENABLED
