@@ -42,7 +42,9 @@ class SelectionManagement
 {
   public:
     SelectionManagement();
+    SelectionManagement( const SelectionManagement& whichSelection );
     ~SelectionManagement();
+
 
     void init( Trace *trace );
     void init( HistogramTotals *totals,
@@ -51,6 +53,7 @@ class SelectionManagement
                THistogramColumn whichPlane );
 
     void copy( const SelectionManagement &selection );
+    bool operator== ( const SelectionManagement &selection ) const;
 
     void setSelected( std::vector< bool > &selection, LevelType level = (LevelType)0 );
     void setSelected( std::vector< SelType > &selection, SelType maxElems, LevelType level = (LevelType)0 );

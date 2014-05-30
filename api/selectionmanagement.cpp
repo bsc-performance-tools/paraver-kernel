@@ -37,6 +37,19 @@ SelectionManagement< SelType, LevelType >::SelectionManagement()
 {
 }
 
+template < typename SelType, typename LevelType >
+SelectionManagement< SelType, LevelType >::SelectionManagement( const SelectionManagement& whichSelection )
+{
+  for ( size_t i = 0 ; i < whichSelection.selectedSet.size(); ++i )
+  {
+    selectedSet.push_back( whichSelection.selectedSet[ i ] );
+  }
+  for ( size_t i = 0 ; i < whichSelection.selected.size(); ++i )
+  {
+    selected.push_back( whichSelection.selected[ i ] );
+  }
+}
+
 
 template < typename SelType, typename LevelType >
 SelectionManagement< SelType, LevelType >::~SelectionManagement()
@@ -137,6 +150,48 @@ void SelectionManagement<SelType, LevelType>::copy( const SelectionManagement &s
 {
   selected = selection.selected;
   selectedSet = selection.selectedSet;
+}
+
+
+template < typename SelType, typename LevelType >
+bool SelectionManagement<SelType, LevelType>:: operator== ( const SelectionManagement &selection ) const
+{
+  bool equal = false;
+
+  if ( selected.size() == selection.selected().size() && selectedSet.size() == selection.selectedSet().size() )
+  {
+    std::vector< std::vector< bool > >::const_iterator it1 = selection.selected().begin();
+    for ( std::vector< std::vector< bool > >::const_iterator it2 = selected.begin(); it2 != selected.end(); ++it2 )
+    {
+      equal = std::equal( (*it1).begin(), (*it1).end(), (*it2).begin() );
+      if ( !equal )
+        break;
+      else
+        ++it1;
+    }
+
+    if ( equal )
+    {
+      for ( size_t i = 0 ; i < selectedSet.size(); ++i ) // O( selected.size() )
+      {
+        equal = selection.selectedSet[ i ].size() != selectedSet[ i ].size();
+        if ( !equal )
+          break;
+      }
+
+      if ( equal ) // O( selected.size() * num_elems )
+      {
+        for ( size_t i = 0 ; i < selectedSet.size(); ++i )
+        {
+          equal = std::equal( selectedSet[ i ].begin(), selectedSet[ i ].end(), selection.selectedSet[ i ].begin() );
+          if ( !equal )
+            break;
+        }
+      }
+    }
+  }
+
+  return equal;
 }
 
 
