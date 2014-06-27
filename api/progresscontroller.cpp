@@ -70,6 +70,8 @@ double ProgressControllerProxy::getCurrentProgress() const
 void ProgressControllerProxy::setCurrentProgress( double progress )
 {
   currentProgress = progress;
+  myPartner->setCurrentProgress( currentProgress );
+  callHandler( NULL );
 }
 
 void ProgressControllerProxy::setPartner( ProgressController* partner )

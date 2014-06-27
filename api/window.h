@@ -117,6 +117,7 @@ class Trace;
 class RecordList;
 class SemanticFunction;
 class Filter;
+class ProgressController;
 
 class Window
 {
@@ -640,7 +641,8 @@ class Window
                                           bool& drawCaution,                      // I/O
                                           std::vector< std::vector< TSemanticValue > >& valuesToDraw, // I/O
                                           std::vector< hash_set< PRV_INT32 > >& eventsToDraw,    // I/O
-                                          std::vector< hash_set< commCoord > >& commsToDraw )    // I/O
+                                          std::vector< hash_set< commCoord > >& commsToDraw,    // I/O
+                                          ProgressController *progress )
 #else
     virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
                                           std::vector< bool >& selected,
@@ -652,7 +654,8 @@ class Window
                                           bool& drawCaution,                                  // I/O
                                           std::vector< std::vector< TSemanticValue > >& valuesToDraw,             // I/O
                                           std::vector< hash_set< PRV_INT32 > >& eventsToDraw,                // I/O
-                                          std::vector< hash_set< commCoord, hashCommCoord > >& commsToDraw ) // I/O
+                                          std::vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,    // I/O
+                                          ProgressController *progress )
 #endif
     {}
 
@@ -958,7 +961,8 @@ class WindowProxy: public Window
                                           bool& drawCaution,                      // O
                                           std::vector< std::vector< TSemanticValue > >& valuesToDraw, // O
                                           std::vector< hash_set< PRV_INT32 > >& eventsToDraw,    // O
-                                          std::vector< hash_set< commCoord > >& commsToDraw );   // O
+                                          std::vector< hash_set< commCoord > >& commsToDraw,    // O
+                                          ProgressController *progress );
 
     virtual void computeSemanticRowParallel( TObjectOrder firstRow,
                                              TObjectOrder lastRow,
@@ -996,7 +1000,8 @@ class WindowProxy: public Window
                                           bool& drawCaution,                                                  // I/O
                                           std::vector< std::vector< TSemanticValue > >& valuesToDraw,         // I/O
                                           std::vector< hash_set< PRV_INT32 > >& eventsToDraw,                 // I/O
-                                          std::vector< hash_set< commCoord, hashCommCoord > >& commsToDraw ); // I/O
+                                          std::vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,   // I/O
+                                          ProgressController *progress );
 
 #pragma omp task shared( firstRow, lastRow, selectedSet, selected, timeStep, \
                          timePos, objectAxisPos, objectPosList, drawCaution, \

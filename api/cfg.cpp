@@ -2638,16 +2638,19 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
     }
   }
 
-  std::vector<std::string> filterFunctions;
-  filter->getAllFilterFunctions( filterFunctions );
-  if( filter->getEventTypeFunction() == filterFunctions[ 6 ] )
+  if( strTag.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
   {
-    std::vector<TEventType> rankEvents;
-    filter->getEventType( rankEvents );
-    if( whichTrace->anyEventLoaded( rankEvents[ 0 ], rankEvents[ 1 ] ) )
+    std::vector<std::string> filterFunctions;
+    filter->getAllFilterFunctions( filterFunctions );
+    if( filter->getEventTypeFunction() == filterFunctions[ 6 ] )
     {
-      someEventsNotExist = false;
-      someEventsExist = true;
+      std::vector<TEventType> rankEvents;
+      filter->getEventType( rankEvents );
+      if( rankEvents.size() >= 2 && whichTrace->anyEventLoaded( rankEvents[ 0 ], rankEvents[ 1 ] ) )
+      {
+        someEventsNotExist = false;
+        someEventsExist = true;
+      }
     }
   }
 

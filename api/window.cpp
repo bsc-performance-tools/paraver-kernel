@@ -42,6 +42,7 @@
 #include "paraverconfig.h"
 #include "syncwindows.h"
 #include "selectionrowsutils.h"
+#include "progresscontroller.h"
 
 #ifdef TRACING_ENABLED
 #include "extrae_user_events.h"
@@ -1647,7 +1648,8 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
                                            bool& drawCaution,
                                            vector< vector< TSemanticValue > >& valuesToDraw,
                                            vector< hash_set< PRV_INT32 > >& eventsToDraw,
-                                           vector< hash_set< commCoord > >& commsToDraw )
+                                           vector< hash_set< commCoord > >& commsToDraw,
+                                           ProgressController *progress )
 #else
 void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
                                            vector< bool >& selected,
@@ -1659,7 +1661,8 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
                                            bool& drawCaution,
                                            vector< vector< TSemanticValue > >& valuesToDraw,
                                            vector< hash_set< PRV_INT32 > >& eventsToDraw,
-                                           vector< hash_set< commCoord, hashCommCoord > >& commsToDraw )
+                                           vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,
+                                           ProgressController *progress )
 #endif
 {
   vector< int > tmpDrawCaution;
@@ -1690,7 +1693,10 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   tmpComputedMaxY.reserve( numRows );
   tmpComputedMinY.reserve( numRows );
 
+  progress->setEndLimit( numRows );
+
   // Drawmode: Group objects with same wxCoord in objectPosList
+  int currentRow = 0;
   for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
   {
     TObjectOrder firstObj = *obj;
@@ -1725,6 +1731,11 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
             valuesToDraw[ valuesToDraw.size() - 1 ],
             eventsToDraw[ eventsToDraw.size() - 1 ],
             commsToDraw[ commsToDraw.size() - 1 ] );
+
+    if( progress->getStop() )
+      break;
+    progress->setCurrentProgress( currentRow );
+    ++currentRow;
 #ifdef TRACING_ENABLED
   Extrae_eventandcounters( 200, 0 );
 #endif
