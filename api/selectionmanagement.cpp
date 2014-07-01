@@ -146,46 +146,55 @@ void SelectionManagement< SelType, LevelType >::init( HistogramTotals *totals,
 
 
 template < typename SelType, typename LevelType >
-void SelectionManagement<SelType, LevelType>::copy( const SelectionManagement &selection )
+void SelectionManagement<SelType, LevelType>::copy( const SelectionManagement &whichSelection )
 {
-  selected = selection.selected;
-  selectedSet = selection.selectedSet;
+  selected = whichSelection.selected;
+  selectedSet = whichSelection.selectedSet;
 }
 
 
 template < typename SelType, typename LevelType >
-bool SelectionManagement<SelType, LevelType>:: operator== ( const SelectionManagement &selection ) const
+bool SelectionManagement<SelType, LevelType>:: operator== ( const SelectionManagement<SelType, LevelType> &whichSelection ) const
 {
   bool equal = false;
 
-  if ( selected.size() == selection.selected().size() && selectedSet.size() == selection.selectedSet().size() )
+  if ( selected.size()    == whichSelection.selected.size() &&
+       selectedSet.size() == whichSelection.selectedSet.size() )
   {
-    std::vector< std::vector< bool > >::const_iterator it1 = selection.selected().begin();
+    std::vector< std::vector< bool > >::const_iterator it1 = whichSelection.selected.begin();
     for ( std::vector< std::vector< bool > >::const_iterator it2 = selected.begin(); it2 != selected.end(); ++it2 )
     {
       equal = std::equal( (*it1).begin(), (*it1).end(), (*it2).begin() );
       if ( !equal )
+      {
         break;
+      }
       else
+      {
         ++it1;
+      }
     }
 
     if ( equal )
     {
       for ( size_t i = 0 ; i < selectedSet.size(); ++i ) // O( selected.size() )
       {
-        equal = selection.selectedSet[ i ].size() != selectedSet[ i ].size();
+        equal = whichSelection.selectedSet[ i ].size() == selectedSet[ i ].size();
         if ( !equal )
+        {
           break;
+        }
       }
 
       if ( equal ) // O( selected.size() * num_elems )
       {
         for ( size_t i = 0 ; i < selectedSet.size(); ++i )
         {
-          equal = std::equal( selectedSet[ i ].begin(), selectedSet[ i ].end(), selection.selectedSet[ i ].begin() );
+          equal = std::equal( selectedSet[ i ].begin(), selectedSet[ i ].end(), whichSelection.selectedSet[ i ].begin() );
           if ( !equal )
+          {
             break;
+          }
         }
       }
     }
@@ -196,8 +205,7 @@ bool SelectionManagement<SelType, LevelType>:: operator== ( const SelectionManag
 
 
 template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::setSelected( std::vector< bool > &selection,
-    LevelType level )
+void SelectionManagement< SelType, LevelType >::setSelected( std::vector< bool > &selection, LevelType level )
 {
   selectedSet[ level ].clear();
   if ( selected[ level ].size() >= selection.size() )

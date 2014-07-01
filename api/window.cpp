@@ -1268,6 +1268,17 @@ Window::TObjectAxisSize WindowProxy::getObjectAxisSize() const
   return objectAxisSize;
 }
 
+
+bool WindowProxy::hasLevelSomeSelectedObject( TWindowLevel onLevel )
+{
+  std::vector< TObjectOrder > selection;
+
+  selectedRow.getSelected( selection, onLevel );
+
+  return ( selection.size() > 0 );
+}
+
+
 void WindowProxy::setCFG4DMode( bool mode )
 {
   if( isDerivedWindow() )

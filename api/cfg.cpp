@@ -432,6 +432,37 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
     }
   }
 
+  // Check if there are some objects in the selected level
+  bool someWindowWithSelectedLevelEmpty = false;
+  for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
+  {
+    if ( !(*itWin)->hasLevelSomeSelectedObject( (*itWin)->getLevel() ) )
+    {
+      someWindowWithSelectedLevelEmpty = true;
+      break;
+    }
+  }
+
+  if ( someWindowWithSelectedLevelEmpty )
+  {
+    if ( !whichKernel->userMessage( "Some timeline has 0 objects selected at some level Continue loading CFG file?" ) )
+    {
+      for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
+      {
+        delete *itHisto;
+      }
+      histograms.clear();
+
+      for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
+      {
+        delete *itWin;
+      }
+      windows.clear();
+
+      return true;
+    }
+  }
+
   // Init first zoom for all windows
   for ( vector<Window *>::iterator it = windows.begin(); it != windows.end(); ++it )
     ( *it )->addZoom( ( *it )->getWindowBeginTime(), ( *it )->getWindowEndTime() );

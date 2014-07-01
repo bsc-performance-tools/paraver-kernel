@@ -33,7 +33,7 @@
 #include <vector>
 #include "prvtypes.h"
 #include "paraverkerneltypes.h"
-//#include "trace.h"
+
 class Trace;
 class HistogramTotals;
 
@@ -53,7 +53,7 @@ class SelectionManagement
                THistogramColumn whichPlane );
 
     void copy( const SelectionManagement &selection );
-    bool operator== ( const SelectionManagement &selection ) const;
+    bool operator== ( const SelectionManagement<SelType, LevelType> &selection ) const;
 
     void setSelected( std::vector< bool > &selection, LevelType level = (LevelType)0 );
     void setSelected( std::vector< SelType > &selection, SelType maxElems, LevelType level = (LevelType)0 );
@@ -64,6 +64,7 @@ class SelectionManagement
     void getSelected( std::vector< SelType > &selection, SelType first, SelType last, LevelType level = (LevelType)0 );
 
     bool isSelectedPosition( SelType whichSelected, LevelType level = (LevelType)0 ) const;
+
 
   private:
     std::vector< std::vector< bool > > selected;

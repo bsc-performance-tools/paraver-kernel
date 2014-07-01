@@ -494,6 +494,10 @@ class Window
                                   std::vector< TObjectOrder > &selection,
                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels = false )
     {}
+    virtual bool hasLevelSomeSelectedObject( TWindowLevel onLevel )
+    {
+      return true;
+    }
 
     virtual void getGroupLabels( PRV_UINT32 whichGroup, std::vector<std::string>& onVector ) const = 0;
     virtual bool getParametersOfFunction( std::string whichFunction,
@@ -887,6 +891,8 @@ class WindowProxy: public Window
                                   TObjectOrder first, TObjectOrder last, bool lookUpLevels = false );
 //    virtual TObjectOrder getFirstSelectedRow();
 //    virtual TObjectOrder getLastSelectedRow();
+    virtual bool hasLevelSomeSelectedObject( TWindowLevel onLevel );
+
     virtual void getGroupLabels( PRV_UINT32 whichGroup, std::vector<std::string>& onVector ) const;
     virtual bool getParametersOfFunction( std::string whichFunction,
                                           PRV_UINT32 &numParameters,
