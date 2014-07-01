@@ -38,7 +38,7 @@ class KProgressController: public ProgressController
     KProgressController();
     ~KProgressController();
 
-    void setHandler( ProgressHandler whichHandler );
+    void setHandler( ProgressHandler whichHandler, void *callerWindow );
     void callHandler( ProgressController *not_used );
     double getEndLimit() const;
     void setEndLimit( double limit );
@@ -56,6 +56,7 @@ class KProgressController: public ProgressController
     ProgressController *myPartner;
 
     ProgressHandler handler;
+    void *window;
     double endLimit;
     double currentProgress;
     bool stop;

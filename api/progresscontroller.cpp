@@ -47,9 +47,10 @@ ProgressControllerProxy::ProgressControllerProxy( KernelConnection * whichKernel
 ProgressControllerProxy::~ProgressControllerProxy()
 {}
 
-void ProgressControllerProxy::setHandler( ProgressHandler whichHandler )
+void ProgressControllerProxy::setHandler( ProgressHandler whichHandler, void *callerWindow )
 {
   handler = whichHandler;
+  window = callerWindow;
 }
 
 double ProgressControllerProxy::getEndLimit() const
@@ -84,7 +85,7 @@ void ProgressControllerProxy::callHandler( ProgressController *not_used )
 {
   currentProgress = myPartner->getCurrentProgress();
   if( handler != NULL )
-    handler( this );
+    handler( this, window );
 }
 
 void ProgressControllerProxy::setStop( bool value )

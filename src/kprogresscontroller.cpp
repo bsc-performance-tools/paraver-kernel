@@ -39,14 +39,15 @@ KProgressController::KProgressController()
 KProgressController::~KProgressController()
 {}
 
-void KProgressController::setHandler( ProgressHandler whichHandler )
+void KProgressController::setHandler( ProgressHandler whichHandler, void *callerWindow )
 {
   handler = whichHandler;
+  window = callerWindow;
 }
 
 void KProgressController::callHandler( ProgressController *not_used )
 {
-  handler( NULL );
+  handler( NULL, window );
 }
 
 double KProgressController::getEndLimit() const
