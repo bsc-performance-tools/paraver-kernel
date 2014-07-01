@@ -150,7 +150,7 @@ class Histogram
     virtual void pushbackStatistic( const std::string& whichStatistic ) = 0;
 
     virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
-                          std::vector<TObjectOrder>& selectedRows ) = 0;
+                          std::vector<TObjectOrder>& selectedRows, ProgressController *progress ) = 0;
 
     virtual bool itsCommunicationStat( const std::string& whichStat ) const = 0;
 
@@ -614,7 +614,7 @@ class HistogramProxy : public Histogram
     virtual void pushbackStatistic( const std::string& whichStatistic );
 
     virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
-                          std::vector<TObjectOrder>& selectedRows );
+                          std::vector<TObjectOrder>& selectedRows, ProgressController *progress );
 
     virtual void setHorizontal( bool newValue );
     virtual bool getHorizontal() const;

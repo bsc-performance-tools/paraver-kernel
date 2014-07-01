@@ -178,7 +178,7 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
   TObjectOrder endRow =  whichHisto->getControlWindow()->getZoomSecondDimension().second;
   whichHisto->getControlWindow()->getSelectedRows( whichHisto->getControlWindow()->getLevel(),
       selectedRows, beginRow, endRow );
-  whichHisto->execute( whichHisto->getBeginTime(), whichHisto->getEndTime(), selectedRows );
+  whichHisto->execute( whichHisto->getBeginTime(), whichHisto->getEndTime(), selectedRows, NULL );
 
   outputFile.open( strOutputFile.c_str() );
 

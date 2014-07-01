@@ -218,7 +218,7 @@ class KHistogram : public Histogram
     std::string getUnitsLabel( const std::string& whichStat ) const;
 
     void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
-                  std::vector<TObjectOrder>& selectedRows );
+                  std::vector<TObjectOrder>& selectedRows, ProgressController *progress );
 
     void getGroupsLabels( std::vector<std::string>& onVector ) const;
     void getStatisticsLabels( std::vector<std::string>& onVector,
@@ -326,6 +326,7 @@ class KHistogram : public Histogram
                              std::vector<TObjectOrder>& selectedRows,
                              std::vector<bool>& needInit,
                              bool calcSemanticStats,
+                             ProgressController *progress,
                              PRV_UINT16 winIndex = 0, CalculateData *data = NULL );
     void calculate( TObjectOrder iRow,
                     TRecordTime fromTime, TRecordTime toTime,

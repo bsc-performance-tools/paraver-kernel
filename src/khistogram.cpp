@@ -36,6 +36,7 @@
 #include "histogramexception.h"
 #include "khistogramtotals.h"
 #include "functionmanagement.h"
+#include "kprogresscontroller.h"
 #ifdef PARALLEL_ENABLED
 #include "cubebuffer.h"
 #endif
@@ -740,7 +741,7 @@ inline void KHistogram::pushbackStatistic( const string& whichStatistic )
 
 
 void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
-                          vector<TObjectOrder>& selectedRows )
+                          vector<TObjectOrder>& selectedRows, ProgressController *progress )
 {
   if ( controlWindow == NULL )
     throw HistogramException( HistogramException::noControlWindow );
@@ -773,6 +774,9 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
   else
     numPlanes = 1;
 
+  if( progress != NULL )
+    progress->setEndLimit( numRows );
+
   initMatrix( numPlanes, numCols, numRows );
 
   initSemantic( beginTime );
@@ -797,7 +801,7 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
   }
   else
 #endif
-  recursiveExecution( beginTime, endTime, 0, numRows - 1, selectedRows, needInit, true );
+  recursiveExecution( beginTime, endTime, 0, numRows - 1, selectedRows, needInit, true, progress );
 
 #ifdef PARALLEL_ENABLED
   finishAllRows();
@@ -1177,7 +1181,7 @@ void KHistogram::executionTask( TRecordTime fromTime, TRecordTime toTime,
                                 std::vector<TObjectOrder>& selectedRows )
 {
   vector<bool> needInit( 3, true );
-  recursiveExecution( fromTime, toTime, fromRow, toRow, selectedRows, needInit, true );
+  recursiveExecution( fromTime, toTime, fromRow, toRow, selectedRows, needInit, true, NULL );
 }
 #endif
 
@@ -1186,9 +1190,11 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                                      vector<TObjectOrder>& selectedRows,
                                      vector<bool>& needInit,
                                      bool calcSemanticStats,
+                                     ProgressController *progress,
                                      PRV_UINT16 winIndex, CalculateData *data )
 {
   Window *currentWindow = orderedWindows[ winIndex ];
+  int currentRow = 0;
 
   if ( data == NULL )
   {
@@ -1256,6 +1262,10 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     {
       finishRow( data );
     }
+
+    if( progress != NULL )
+      progress->setCurrentProgress( currentRow );
+    ++currentRow;
   }
 
   if ( winIndex == 0 )
@@ -1433,7 +1443,7 @@ void KHistogram::calculate( TObjectOrder iRow,
 
     vector<TObjectOrder> *dummy = NULL;
     recursiveExecution( childFromTime, childToTime, childFromRow, childToRow,
-                        *dummy, needInit, calcSemanticStats, winIndex + 1, data );
+                        *dummy, needInit, calcSemanticStats, NULL, winIndex + 1, data );
   }
 }
 

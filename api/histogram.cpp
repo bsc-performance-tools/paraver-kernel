@@ -542,7 +542,7 @@ void HistogramProxy::pushbackStatistic( const string& whichStatistic )
 }
 
 void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
-                              vector<TObjectOrder>& selectedRows )
+                              vector<TObjectOrder>& selectedRows, ProgressController *progress )
 {
   winBeginTime = whichBeginTime;
   winEndTime = whichEndTime;
@@ -553,7 +553,7 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
   if ( getThreeDimensions() && computeXtraScale )
     compute3DScale();
 
-  myHisto->execute( whichBeginTime, whichEndTime, selectedRows );
+  myHisto->execute( whichBeginTime, whichEndTime, selectedRows, progress );
 
   if ( getThreeDimensions() && futurePlane )
   {
