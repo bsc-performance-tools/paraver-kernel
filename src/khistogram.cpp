@@ -1264,7 +1264,11 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     }
 
     if( progress != NULL )
+    {
+      if( progress->getStop() )
+        break;
       progress->setCurrentProgress( currentRow );
+    }
     ++currentRow;
   }
 
