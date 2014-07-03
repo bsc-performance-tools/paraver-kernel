@@ -39,15 +39,55 @@ ZoomHistory<Dimension1,Dimension2>::~ZoomHistory( )
 }
 
 template <typename Dimension1, typename Dimension2>
-std::pair<Dimension1, Dimension1> ZoomHistory<Dimension1,Dimension2>::getFirstDimension() const
+std::pair<Dimension1, Dimension1> ZoomHistory<Dimension1,Dimension2>::getFirstDimension( TZoomPosition pos ) const
 {
-  return zooms[ currentZoom ].first;
+  int tmpPos;
+
+  switch ( pos )
+  {
+    case PREV_ZOOM:
+      tmpPos = currentZoom - 1;
+      break;
+
+    case CURRENT_ZOOM:
+      tmpPos = currentZoom;
+      break;
+
+    case NEXT_ZOOM:
+      tmpPos = currentZoom + 1;
+      break;
+
+    default:
+      break;
+  }
+
+  return zooms[ tmpPos ].first;
 }
 
 template <typename Dimension1, typename Dimension2>
-std::pair<Dimension2, Dimension2> ZoomHistory<Dimension1,Dimension2>::getSecondDimension() const
+std::pair<Dimension2, Dimension2> ZoomHistory<Dimension1,Dimension2>::getSecondDimension( TZoomPosition pos ) const
 {
-  return zooms[ currentZoom ].second;
+  int tmpPos;
+
+  switch ( pos )
+  {
+    case PREV_ZOOM:
+      tmpPos = currentZoom - 1;
+      break;
+
+    case CURRENT_ZOOM:
+      tmpPos = currentZoom;
+      break;
+
+    case NEXT_ZOOM:
+      tmpPos = currentZoom + 1;
+      break;
+
+    default:
+      break;
+  }
+
+  return zooms[ tmpPos ].second;
 }
 
 template <typename Dimension1, typename Dimension2>
@@ -97,11 +137,32 @@ void ZoomHistory<Dimension1,Dimension2>::addZoom( Dimension2 begin, Dimension2 e
 }
 
 template <typename Dimension1, typename Dimension2>
-bool ZoomHistory<Dimension1,Dimension2>::isEmpty() const
+bool ZoomHistory<Dimension1,Dimension2>::isEmpty( TZoomPosition pos ) const
 {
-  return ( zooms.begin() == zooms.end() );
+  bool empty = true;
+
+  switch ( pos )
+  {
+    case PREV_ZOOM:
+      empty = ( currentZoom <= 0 );
+      break;
+
+    case CURRENT_ZOOM:
+      empty = ( zooms.begin() == zooms.end() );
+      break;
+
+    case NEXT_ZOOM:
+      empty = ( currentZoom == int( zooms.size() - 1 ) );
+      break;
+
+    default:
+      break;
+  }
+
+  return empty;
 }
 
+/*
 template <typename Dimension1, typename Dimension2>
 bool ZoomHistory<Dimension1,Dimension2>::emptyNextZoom() const
 {
@@ -113,6 +174,7 @@ bool ZoomHistory<Dimension1,Dimension2>::emptyPrevZoom() const
 {
   return ( currentZoom <= 0 );
 }
+*/
 
 template <typename Dimension1, typename Dimension2>
 void ZoomHistory<Dimension1,Dimension2>::firstZoom( )

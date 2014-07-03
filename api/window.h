@@ -460,6 +460,14 @@ class Window
     {
       return std::pair<TObjectOrder, TObjectOrder>();
     }
+    virtual std::pair<TObjectOrder, TObjectOrder> getPrevZoomSecondDimension() const
+    {
+      return std::pair<TObjectOrder, TObjectOrder>();
+    }
+    virtual std::pair<TObjectOrder, TObjectOrder> getNextZoomSecondDimension() const
+    {
+      return std::pair<TObjectOrder, TObjectOrder>();
+    }
 
     virtual void addToSyncGroup( unsigned int whichGroup )
     {}
@@ -874,6 +882,8 @@ class WindowProxy: public Window
     virtual void setZoomSecondDimension( std::pair<TObjectOrder, TObjectOrder>  &dim );
     virtual std::pair<TTime, TTime> getZoomFirstDimension() const;
     virtual std::pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const;
+    virtual std::pair<TObjectOrder, TObjectOrder> getPrevZoomSecondDimension() const;
+    virtual std::pair<TObjectOrder, TObjectOrder> getNextZoomSecondDimension() const;
 
     virtual void addToSyncGroup( unsigned int whichGroup );
     virtual void removeFromSync();

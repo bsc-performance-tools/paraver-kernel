@@ -1009,12 +1009,12 @@ void WindowProxy::getAllSemanticFunctions( TSemanticGroup whichGroup,
 
 bool WindowProxy::emptyPrevZoom() const
 {
-  return zoomHistory.emptyPrevZoom();
+  return zoomHistory.isEmpty( PREV_ZOOM );
 }
 
 bool WindowProxy::emptyNextZoom() const
 {
-  return zoomHistory.emptyNextZoom();
+  return zoomHistory.isEmpty( NEXT_ZOOM );
 }
 
 void WindowProxy::nextZoom()
@@ -1072,6 +1072,16 @@ pair<TTime, TTime> WindowProxy::getZoomFirstDimension() const
 pair<TObjectOrder, TObjectOrder> WindowProxy::getZoomSecondDimension() const
 {
   return zoomHistory.getSecondDimension();
+}
+
+pair<TObjectOrder, TObjectOrder> WindowProxy::getPrevZoomSecondDimension() const
+{
+  return zoomHistory.getSecondDimension( PREV_ZOOM );
+}
+
+pair<TObjectOrder, TObjectOrder> WindowProxy::getNextZoomSecondDimension() const
+{
+  return zoomHistory.getSecondDimension( NEXT_ZOOM );
 }
 
 void WindowProxy::addToSyncGroup( unsigned int whichGroup )

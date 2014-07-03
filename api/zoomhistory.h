@@ -33,10 +33,13 @@
 //#include <utility>
 #include <vector>
 
+typedef enum { PREV_ZOOM, CURRENT_ZOOM, NEXT_ZOOM } TZoomPosition;
+
 template <typename Dimension1, typename Dimension2>
 class ZoomHistory
 {
   public:
+
     ZoomHistory();
     ~ZoomHistory();
 
@@ -47,18 +50,20 @@ class ZoomHistory
 
     void setFirstDimension( std::pair<Dimension1, Dimension1> &dim );
     void setSecondDimension( std::pair<Dimension2, Dimension2> &dim );
-    std::pair<Dimension1, Dimension1> getFirstDimension() const;
-    std::pair<Dimension2, Dimension2> getSecondDimension() const;
 
-    bool isEmpty() const;
-    bool emptyNextZoom() const;
-    bool emptyPrevZoom() const;
+    std::pair<Dimension1, Dimension1> getFirstDimension( TZoomPosition pos = CURRENT_ZOOM ) const;
+    std::pair<Dimension2, Dimension2> getSecondDimension( TZoomPosition pos = CURRENT_ZOOM ) const;
+
+    bool isEmpty( TZoomPosition pos = CURRENT_ZOOM ) const;
+    // bool emptyNextZoom() const;
+    // bool emptyPrevZoom() const;
 
     void firstZoom();
     void nextZoom();
     void prevZoom();
 
     void clear();
+
   private:
     int currentZoom;
     std::vector< std::pair< std::pair<Dimension1,Dimension1>, std::pair<Dimension2, Dimension2> > > zooms;
