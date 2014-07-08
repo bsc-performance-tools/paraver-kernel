@@ -993,7 +993,8 @@ class WindowProxy: public Window
                                              TSemanticValue &rowComputedMinY,
                                              std::vector< TSemanticValue >& valuesToDraw, // O
                                              hash_set< PRV_INT32 >& eventsToDraw,    // O
-                                             hash_set< commCoord >& commsToDraw );   // O
+                                             hash_set< commCoord >& commsToDraw,
+                                             ProgressController *progress );   // O
 
     virtual void computeEventsCommsParallel( RecordList *records,
                                              TTime from,
@@ -1022,7 +1023,7 @@ class WindowProxy: public Window
 #pragma omp task shared( firstRow, lastRow, selectedSet, selected, timeStep, \
                          timePos, objectAxisPos, objectPosList, drawCaution, \
                          rowComputedMaxY, rowComputedMinY, valuesToDraw, \
-                         eventsToDraw, commsToDraw )
+                         eventsToDraw, commsToDraw, progress )
     virtual void computeSemanticRowParallel( TObjectOrder firstRow,
                                              TObjectOrder lastRow,
                                              std::vector< TObjectOrder >& selectedSet,
@@ -1036,7 +1037,8 @@ class WindowProxy: public Window
                                              TSemanticValue &rowComputedMinY,
                                              std::vector< TSemanticValue >& valuesToDraw,         // I/O
                                              hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
-                                             hash_set< commCoord, hashCommCoord >& commsToDraw ); // I/O
+                                             hash_set< commCoord, hashCommCoord >& commsToDraw,
+                                             ProgressController *progress ); // I/O
 
     virtual void computeEventsCommsParallel( RecordList *records,
                                              TTime from,

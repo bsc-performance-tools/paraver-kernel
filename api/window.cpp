@@ -1689,6 +1689,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   vector< int > tmpDrawCaution;
   vector< TSemanticValue > tmpComputedMaxY;
   vector< TSemanticValue > tmpComputedMinY;
+  ProgressController *paramProgress = NULL;
 #ifdef TRACING_ENABLED
   Extrae_eventandcounters( 100, 1 );
 #endif
@@ -1714,7 +1715,13 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   tmpComputedMaxY.reserve( numRows );
   tmpComputedMinY.reserve( numRows );
 
-  progress->setEndLimit( numRows );
+  if( numRows > 1 )
+    progress->setEndLimit( numRows );
+  else
+  {
+    progress->setEndLimit( getWindowEndTime() - getWindowBeginTime() );
+    paramProgress = progress;
+  }
 
   // Drawmode: Group objects with same wxCoord in objectPosList
   int currentRow = 0;
@@ -1751,11 +1758,15 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
             tmpComputedMinY[ tmpComputedMinY.size() - 1 ],
             valuesToDraw[ valuesToDraw.size() - 1 ],
             eventsToDraw[ eventsToDraw.size() - 1 ],
-            commsToDraw[ commsToDraw.size() - 1 ] );
+            commsToDraw[ commsToDraw.size() - 1 ],
+            paramProgress );
 
-    if( progress->getStop() )
-      break;
-    progress->setCurrentProgress( currentRow );
+    if( numRows > 1 )
+    {
+      if( progress->getStop() )
+        break;
+      progress->setCurrentProgress( currentRow );
+    }
     ++currentRow;
 #ifdef TRACING_ENABLED
   Extrae_eventandcounters( 200, 0 );
@@ -1801,7 +1812,8 @@ void WindowProxy::computeSemanticRowParallel( TObjectOrder firstRow,
                                               TSemanticValue& rowComputedMinY,
                                               vector< TSemanticValue >& valuesToDraw,
                                               hash_set< PRV_INT32 >& eventsToDraw,
-                                              hash_set< commCoord >& commsToDraw )
+                                              hash_set< commCoord >& commsToDraw,
+                                              ProgressController *progress )
 #else
 void WindowProxy::computeSemanticRowParallel( TObjectOrder firstRow,
                                               TObjectOrder lastRow,
@@ -1816,7 +1828,8 @@ void WindowProxy::computeSemanticRowParallel( TObjectOrder firstRow,
                                               TSemanticValue& rowComputedMinY,
                                               vector< TSemanticValue >& valuesToDraw,
                                               hash_set< PRV_INT32 >& eventsToDraw,
-                                              hash_set< commCoord, hashCommCoord >& commsToDraw )
+                                              hash_set< commCoord, hashCommCoord >& commsToDraw,
+                                              ProgressController *progress )
 #endif
 {
   float magnify = float( getPixelSize() );
@@ -1864,7 +1877,14 @@ void WindowProxy::computeSemanticRowParallel( TObjectOrder firstRow,
                                     eventsToDraw, commsToDraw );
     }
     valuesToDraw.push_back( DrawMode::selectValue( rowValues, getDrawModeObject() ) );
-    timePos += (int) magnify ;
+    timePos += (int) magnify;
+
+    if( progress != NULL )
+    {
+      if( progress->getStop() )
+        break;
+      progress->setCurrentProgress( currentTime - getWindowBeginTime() );
+    }
   }
 
   for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
