@@ -272,6 +272,7 @@ class Window
     virtual TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread ) = 0;
     virtual TObjectOrder getWindowLevelObjects() = 0;
     virtual TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) = 0;
+    virtual TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) = 0;
     virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime ) = 0;
     virtual TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime ) = 0;
     virtual SemanticInfoType getSemanticInfoType() const = 0;
@@ -815,6 +816,7 @@ class WindowProxy: public Window
     virtual TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread );
     virtual TObjectOrder getWindowLevelObjects();
     virtual TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits );
+    virtual TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits );
     virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime );
     virtual TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime );
     virtual SemanticInfoType getSemanticInfoType() const;

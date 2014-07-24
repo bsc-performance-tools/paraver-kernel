@@ -144,6 +144,31 @@ TRecordTime KWindow::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit w
 }
 
 
+TRecordTime KWindow::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits )
+{
+  TRecordTime tmpTime;
+  TRecordTime factor = 1;
+
+  if( myTrace->getTimeUnit() == whichUnits )
+    tmpTime = whichTime;
+  else
+  {
+    PRV_UINT16 from = myTrace->getTimeUnit() > whichUnits ? whichUnits : myTrace->getTimeUnit();
+    PRV_UINT16 to = myTrace->getTimeUnit() > whichUnits ? myTrace->getTimeUnit() : whichUnits;
+
+    for( PRV_UINT16 i = from + 1; i <= to; i++ )
+      factor *= factorTable[ i ];
+
+    if( myTrace->getTimeUnit() > whichUnits )
+      tmpTime = whichTime * factor;
+    else
+      tmpTime = whichTime / factor;
+  }
+
+  return tmpTime;
+}
+
+
 TRecordTime KWindow::traceUnitsToWindowUnits( TRecordTime whichTime )
 {
   TRecordTime tmpTime;

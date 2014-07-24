@@ -749,6 +749,11 @@ TRecordTime WindowProxy::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUn
   return myWindow->customUnitsToTraceUnits( whichTime, whichUnits );
 }
 
+TRecordTime WindowProxy::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits )
+{
+  return myWindow->traceUnitsToCustomUnits( whichTime, whichUnits );
+}
+
 TRecordTime WindowProxy::traceUnitsToWindowUnits( TRecordTime whichTime )
 {
   return myWindow->traceUnitsToWindowUnits( whichTime );
@@ -1021,16 +1026,24 @@ void WindowProxy::nextZoom()
 {
   zoomHistory.nextZoom();
   if( sync )
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, zoomHistory.getFirstDimension().first,
-                                                                zoomHistory.getFirstDimension().second );
+  {
+    TTime nanoBeginTime, nanoEndTime;
+    nanoBeginTime = traceUnitsToCustomUnits( zoomHistory.getFirstDimension().first, NS );
+    nanoEndTime = traceUnitsToCustomUnits( zoomHistory.getFirstDimension().second, NS );
+    SyncWindows::getInstance()->broadcastTime( syncGroup, this, nanoBeginTime, nanoEndTime );
+  }
 }
 
 void WindowProxy::prevZoom()
 {
   zoomHistory.prevZoom();
   if( sync )
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, zoomHistory.getFirstDimension().first,
-                                                                zoomHistory.getFirstDimension().second );
+  {
+    TTime nanoBeginTime, nanoEndTime;
+    nanoBeginTime = traceUnitsToCustomUnits( zoomHistory.getFirstDimension().first, NS );
+    nanoEndTime = traceUnitsToCustomUnits( zoomHistory.getFirstDimension().second, NS );
+    SyncWindows::getInstance()->broadcastTime( syncGroup, this, nanoBeginTime, nanoEndTime );
+  }
 }
 
 void WindowProxy::addZoom( TTime beginTime, TTime endTime,
@@ -1038,14 +1051,24 @@ void WindowProxy::addZoom( TTime beginTime, TTime endTime,
                            bool isBroadCast )
 {
   if( sync && !isBroadCast )
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, beginTime, endTime );
+  {
+    TTime nanoBeginTime, nanoEndTime;
+    nanoBeginTime = traceUnitsToCustomUnits( beginTime, NS );
+    nanoEndTime = traceUnitsToCustomUnits( endTime, NS );
+    SyncWindows::getInstance()->broadcastTime( syncGroup, this, nanoBeginTime, nanoEndTime );
+  }
   zoomHistory.addZoom( beginTime, endTime, beginObject, endObject );
 }
 
 void WindowProxy::addZoom( TTime beginTime, TTime endTime, bool isBroadCast )
 {
   if( sync && !isBroadCast )
-    SyncWindows::getInstance()->broadcastTime( syncGroup, this, beginTime, endTime );
+  {
+    TTime nanoBeginTime, nanoEndTime;
+    nanoBeginTime = traceUnitsToCustomUnits( beginTime, NS );
+    nanoEndTime = traceUnitsToCustomUnits( endTime, NS );
+    SyncWindows::getInstance()->broadcastTime( syncGroup, this, nanoBeginTime, nanoEndTime );
+  }
   zoomHistory.addZoom( beginTime, endTime );
 }
 

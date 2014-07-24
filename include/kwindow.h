@@ -166,6 +166,7 @@ class KWindow: public Window
     TObjectOrder getWindowLevelObjects();
 
     TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits );
+    TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits );
     TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime );
     TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime );
 

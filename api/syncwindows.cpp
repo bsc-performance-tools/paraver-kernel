@@ -62,8 +62,11 @@ bool SyncWindows::addWindow( Window *whichWindow, unsigned int whichGroup )
         whichWindow->getWindowEndTime() != syncGroups[ whichGroup ][ 0 ]->getWindowEndTime() )
     )
   {
-    whichWindow->setWindowBeginTime( syncGroups[ whichGroup ][ 0 ]->getWindowBeginTime(), true );
-    whichWindow->setWindowEndTime( syncGroups[ whichGroup ][ 0 ]->getWindowEndTime(), true );
+    TTime nanoBeginTime, nanoEndTime;
+    nanoBeginTime = syncGroups[ whichGroup ][ 0 ]->traceUnitsToCustomUnits( syncGroups[ whichGroup ][ 0 ]->getWindowBeginTime(), NS );
+    nanoEndTime = syncGroups[ whichGroup ][ 0 ]->traceUnitsToCustomUnits( syncGroups[ whichGroup ][ 0 ]->getWindowEndTime(), NS );
+    whichWindow->setWindowBeginTime( whichWindow->customUnitsToTraceUnits( nanoBeginTime, NS ), true );
+    whichWindow->setWindowEndTime( whichWindow->customUnitsToTraceUnits( nanoEndTime, NS ), true );
     whichWindow->setChanged( true );
     whichWindow->setRedraw( true );
   }
@@ -118,14 +121,17 @@ void SyncWindows::broadcastTime( unsigned int whichGroup, Window *sendWindow, TT
   for( vector<Window *>::iterator it = syncGroups[ whichGroup ].begin();
        it != syncGroups[ whichGroup ].end(); ++it )
   {
+    TTime tmpBeginTime, tmpEndTime;
+    tmpBeginTime = ( *it )->customUnitsToTraceUnits( beginTime, NS );
+    tmpEndTime = ( *it )->customUnitsToTraceUnits( endTime, NS );
     if( ( *it ) != sendWindow  &&
-        ( ( *it )->getWindowBeginTime() != beginTime ||
-          ( *it )->getWindowEndTime() != endTime )
+        ( ( *it )->getWindowBeginTime() != tmpBeginTime ||
+          ( *it )->getWindowEndTime() != tmpEndTime )
       )
     {
-      ( *it )->addZoom( beginTime, endTime, true );
-      ( *it )->setWindowBeginTime( beginTime, true );
-      ( *it )->setWindowEndTime( endTime, true );
+      ( *it )->addZoom( tmpBeginTime, tmpEndTime, true );
+      ( *it )->setWindowBeginTime( tmpBeginTime, true );
+      ( *it )->setWindowEndTime( tmpEndTime, true );
       ( *it )->setChanged( true );
       ( *it )->setRedraw( true );
     }
