@@ -80,13 +80,14 @@ TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
   sprintf( c, ".pcf" );*/
 
   pcf_name = LocalKernel::composeName( traceIn, string( "pcf" ) );
+  int statReturn;
 #ifdef WIN32
-  _stat( pcf_name.c_str(), &tmpStatBuffer );
+  statReturn = _stat( pcf_name.c_str(), &tmpStatBuffer );
 #else
-  stat( pcf_name.c_str(), &tmpStatBuffer );
+  statReturn = stat( pcf_name.c_str(), &tmpStatBuffer );
 #endif
 
-  if( tmpStatBuffer.st_size > 0 )
+  if( statReturn == 0 && tmpStatBuffer.st_size > 0 )
   {
     ParaverTraceConfig *config = new ParaverTraceConfig( pcf_name );
     EventLabels myEventLabels = EventLabels( *config, set<TEventType>() );
