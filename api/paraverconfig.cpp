@@ -119,7 +119,7 @@ ParaverConfig::ParaverConfig()
   xmlTimeline.saveTextFormat = CSV;
   xmlTimeline.saveImageFormat = PNG;
 
-  xmlHistogram.viewZoom = false;
+  xmlHistogram.viewZoom = true;
   xmlHistogram.viewFirstRowColored = false;
   xmlHistogram.viewGradientColors = true;
   xmlHistogram.viewHorizontal = true;
