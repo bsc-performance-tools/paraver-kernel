@@ -153,7 +153,7 @@ vector<TSemanticValue> Statistics::executeAllComm( CalculateData *data )
   return values;
 }
 
-vector<TSemanticValue> Statistics::finishRowAllComm( vector<TSemanticValue>& cellValue,
+vector<TSemanticValue> Statistics::finishRowAllComm( const vector<TSemanticValue>& cellValue,
     THistogramColumn column,
     TObjectOrder row,
     THistogramColumn plane )
@@ -279,7 +279,7 @@ vector<TSemanticValue> Statistics::executeAll( CalculateData *data )
   return values;
 }
 
-vector<TSemanticValue> Statistics::finishRowAll( vector<TSemanticValue>& cellValue,
+vector<TSemanticValue> Statistics::finishRowAll( const vector<TSemanticValue>& cellValue,
     THistogramColumn column,
     TObjectOrder row,
     THistogramColumn plane )

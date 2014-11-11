@@ -1014,7 +1014,7 @@ class Statistics
     void resetAllComm();
     std::vector<bool> filterAllComm( CalculateData *data );
     std::vector<TSemanticValue> executeAllComm( CalculateData *data );
-    std::vector<TSemanticValue> finishRowAllComm( std::vector<TSemanticValue>& cellValue,
+    std::vector<TSemanticValue> finishRowAllComm( const std::vector<TSemanticValue>& cellValue,
         THistogramColumn column,
         TObjectOrder row,
         THistogramColumn plane = 0 );
@@ -1024,7 +1024,7 @@ class Statistics
     void resetAll();
     std::vector<bool> filterAll( CalculateData *data );
     std::vector<TSemanticValue> executeAll( CalculateData *data );
-    std::vector<TSemanticValue> finishRowAll( std::vector<TSemanticValue>& cellValue,
+    std::vector<TSemanticValue> finishRowAll( const std::vector<TSemanticValue>& cellValue,
                                          THistogramColumn column,
                                          TObjectOrder row,
                                          THistogramColumn plane = 0 );
