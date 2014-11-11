@@ -36,7 +36,7 @@
 class KHistogram;
 class Window;
 #ifdef PARALLEL_ENABLED
-class CubeBuffer
+class CubeBuffer;
 #endif
 
 struct CalculateData;
