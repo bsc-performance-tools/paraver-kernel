@@ -1259,7 +1259,7 @@ void ParaverConfig::saveXML( const string &filename )
 {
   std::ofstream ofs( filename.c_str() );
   boost::archive::xml_oarchive oa( ofs );
-  oa << boost::serialization::make_nvp( "paraver_configuration", this );
+  oa << boost::serialization::make_nvp( "paraver_configuration", *this );
 }
 
 void ParaverConfig::loadXML( const string &filename )
