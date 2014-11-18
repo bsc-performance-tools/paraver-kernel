@@ -4,7 +4,7 @@ pkglib_LTLIBRARIES = libparaver-api.la
 libparaver_api_la_SOURCES = \
                     cfg.cpp \
                     drawmode.cpp \
-                    eventdrivencutter.cpp \ 
+                    eventdrivencutter.cpp \
                     eventlabels.cpp \
                     filter.cpp \
                     gnuplotoutput.cpp \
@@ -46,6 +46,7 @@ libparaver_api_la_SOURCES = \
                     
 include_HEADERS = \
                   cfg.h\
+                  ../config_traits.h\
                   ../config_types.h\
                   drawmode.h\
                   eventdrivencutter.h\
