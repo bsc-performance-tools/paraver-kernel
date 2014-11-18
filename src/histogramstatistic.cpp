@@ -1971,6 +1971,7 @@ TSemanticValue StatStdevBurstTime::finishRow( TSemanticValue cellValue,
                               ( numValues[ plane ] )[ column ];
   TSemanticValue avgQ = cellValue / ( numValues[ plane ] )[ column ];
 #else
+  vector< TSemanticValue > tmpNumValues;
   if( !numValues->getCellValue( tmpNumValues, plane, row, column ) )
     return 0.0;
 
