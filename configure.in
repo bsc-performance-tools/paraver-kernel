@@ -29,17 +29,6 @@ AM_PROG_LIBTOOL
 
 AM_PATH_XML2
 
-AX_PROG_ENABLE_TRACING
-AX_PROG_WITH_EXTRAE
-AX_PROG_ENABLE_PARALLEL
-
-AX_PROG_ENABLE_OTF2PRV
-AM_CONDITIONAL(WANT_OTF2PRV, test "${enable_otf2prv}" = "yes" )
-if test "${enable_otf2prv}" = "yes" ; then
-  AX_PROG_WITH_OTF2
-  AC_SUBST(OTF2_DIR)
-fi
-
 AX_PROG_WITH_PTOOLS_COMMON_FILES
 
 # Search for available compilers and preprocessor
@@ -51,6 +40,18 @@ AC_PROG_SED
 
 AX_BOOST_BASE(1.36)
 AX_BOOST_SERIALIZATION
+
+AC_CONFIG_HEADERS(config_traits.h)
+AX_PROG_ENABLE_TRACING
+AX_PROG_WITH_EXTRAE
+AX_PROG_ENABLE_PARALLEL
+
+AX_PROG_ENABLE_OTF2PRV
+AM_CONDITIONAL(WANT_OTF2PRV, test "${enable_otf2prv}" = "yes" )
+if test "${enable_otf2prv}" = "yes" ; then
+  AX_PROG_WITH_OTF2
+  AC_SUBST(OTF2_DIR)
+fi
 
 ######################################################################
 #    Checks for typedefs, structures and compiler characteristics    #
