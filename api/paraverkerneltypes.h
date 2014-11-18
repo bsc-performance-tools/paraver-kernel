@@ -34,6 +34,7 @@
 #include <vector>
 #include <string>
 #include "prvtypes.h"
+#include "config_traits.h"
 
 typedef unsigned long long TTraceSize;
 
