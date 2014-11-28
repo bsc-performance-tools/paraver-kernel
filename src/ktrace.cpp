@@ -45,6 +45,7 @@
 #include "plainblocks.h"
 #include "noloadtrace.h"
 #include "noloadblocks.h"
+#include "traceeditblocks.h"
 
 using namespace std;
 #ifdef WIN32
@@ -577,11 +578,17 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
 
 // Reading the body
 
-  if ( noLoad )
+  if ( noLoad && body->ordered() )
   {
     blocks = new NoLoadBlocks( traceResourceModel, traceProcessModel, body, file, traceEndTime );
     memTrace = new NoLoadTrace( blocks, traceProcessModel, traceResourceModel );
     ( ( NoLoadBlocks * )blocks )->setFirstOffset( file->tellg() );
+  }
+  else if( noLoad && !body->ordered() )
+  {
+    blocks = new TraceEditBlocks( traceResourceModel, traceProcessModel, body, file, traceEndTime );
+    memTrace = new NoLoadTrace( blocks, traceProcessModel, traceResourceModel );
+    ( ( TraceEditBlocks * )blocks )->setFirstOffset( file->tellg() );
   }
   else if ( body->ordered() )
   {

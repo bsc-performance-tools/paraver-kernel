@@ -29,6 +29,7 @@
 
 #include "noloadtrace.h"
 #include "noloadblocks.h"
+#include "traceeditblocks.h"
 #include "processmodel.h"
 #include "resourcemodel.h"
 

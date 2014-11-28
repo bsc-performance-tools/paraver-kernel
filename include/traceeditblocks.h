@@ -27,12 +27,12 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-#ifndef NOLOADBLOCKS_H_INCLUDED
-#define NOLOADBLOCKS_H_INCLUDED
+#ifndef TRACEEDITBLOCKS_H_INCLUDED
+#define TRACEEDITBLOCKS_H_INCLUDED
 
 #include <fstream>
 #include <map>
-#include "memoryblocks.h"
+#include "noloadblocks.h"
 #include "resourcemodel.h"
 #include "processmodel.h"
 #include "index.h"
@@ -45,16 +45,13 @@ using Plain::TCommInfo;
 
 namespace NoLoad
 {
-  class NoLoadBlocks: public MemoryBlocks
+  class TraceEditBlocks: public NoLoadBlocks
   {
     public:
-      NoLoadBlocks( const ResourceModel& resource, const ProcessModel& process )
-        : resourceModel( resource ), processModel( process ) {}
-
-      NoLoadBlocks( const ResourceModel& resource, const ProcessModel& process,
+      TraceEditBlocks( const ResourceModel& resource, const ProcessModel& process,
                     TraceBodyIO *whichBody, TraceStream *whichFile, TRecordTime endTime );
 
-      virtual ~NoLoadBlocks();
+      virtual ~TraceEditBlocks();
 
       virtual TData *getLastRecord( PRV_UINT16 position ) const;
       virtual void newRecord();
@@ -121,15 +118,12 @@ namespace NoLoad
       virtual void getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
       virtual void getPrevRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
 
-      // Must be used with TraceBodyIO_v2
+      // Void with this implementation. DO NOT USE!
       virtual void getNextRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
       virtual void getPrevRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
 
       virtual void getThreadRecordByTime( TThreadOrder whichThread, TRecordTime whichTime,
                                           TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
-
-      virtual void incNumUseds( PRV_INT64 offset );
-      virtual void decNumUseds( PRV_INT64 offset );
 
       virtual void setFileLoaded();
       virtual void setFirstOffset( PRV_INT64 whichOffset );
@@ -139,7 +133,6 @@ namespace NoLoad
     private:
       struct fileLineData
       {
-        PRV_INT16 numUseds;
         PRV_INT64 endOffset;
         TThreadOrder thread;
         std::vector<TRecord> records;
@@ -152,15 +145,8 @@ namespace NoLoad
       PRV_INT64 endFileOffset;
       PRV_INT64 initialOffset;
 
-      std::vector<Index<PRV_INT64> > traceIndex;
-      std::map<PRV_INT64, fileLineData *> blocks;
-      std::vector<PRV_INT64> beginThread;
-
       TRecord globalBeginRec;
       TRecord globalEndRec;
-
-      std::vector<TRecord> emptyBeginRecords;
-      std::vector<TRecord> emptyEndRecords;
 
       std::vector<TCommInfo *> communications;
       TCommID currentComm;
@@ -169,7 +155,7 @@ namespace NoLoad
       TRecord *phySend;
       TRecord *phyRecv;
 
-      fileLineData *lastData;
+      fileLineData lastData;
       PRV_INT16 lastRecord;
       PRV_INT64 lastPos;
 
@@ -186,4 +172,4 @@ namespace NoLoad
 
 }
 
-#endif // NOLOADBLOCKS_H_INCLUDED
+#endif // TRACEEDITBLOCKS_H_INCLUDED
