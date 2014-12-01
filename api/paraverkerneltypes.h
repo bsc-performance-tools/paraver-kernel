@@ -173,6 +173,10 @@ static const std::string               OTF2_SUFFIX = ".otf2";
 
 static const std::string FILTER_SEP = ".";
 
+static const std::string  BMP_SUFFIX = ".bmp";
+static const std::string JPEG_SUFFIX = ".jpg";
+static const std::string  PNG_SUFFIX = ".png";
+static const std::string  XPM_SUFFIX = ".xpm";
 
 /*
  * PARAVER OLD CODE
