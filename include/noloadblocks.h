@@ -49,7 +49,11 @@ namespace NoLoad
   {
     public:
       NoLoadBlocks( const ResourceModel& resource, const ProcessModel& process )
-        : resourceModel( resource ), processModel( process ) {}
+        : resourceModel( resource ), processModel( process )
+      {
+        body = NULL;
+        file = NULL;
+      }
 
       NoLoadBlocks( const ResourceModel& resource, const ProcessModel& process,
                     TraceBodyIO *whichBody, TraceStream *whichFile, TRecordTime endTime );
