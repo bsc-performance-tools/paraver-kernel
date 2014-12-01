@@ -73,7 +73,8 @@ NoLoadBlocks::~NoLoadBlocks()
 
   communications.clear();
 
-  file->close();
+  if( file != NULL )
+    file->close();
 }
 
 TData *NoLoadBlocks::getLastRecord( PRV_UINT16 position ) const

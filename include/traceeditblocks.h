@@ -125,6 +125,9 @@ namespace NoLoad
       virtual void getThreadRecordByTime( TThreadOrder whichThread, TRecordTime whichTime,
                                           TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
 
+    void incNumUseds( PRV_INT64 offset );
+    void decNumUseds( PRV_INT64 offset );
+
       virtual void setFileLoaded();
       virtual void setFirstOffset( PRV_INT64 whichOffset );
 

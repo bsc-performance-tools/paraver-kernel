@@ -426,6 +426,14 @@ void TraceEditBlocks::getThreadRecordByTime( TThreadOrder whichThread, TRecordTi
 {
 }
 
+void TraceEditBlocks::incNumUseds( PRV_INT64 offset )
+{
+}
+
+void TraceEditBlocks::decNumUseds( PRV_INT64 offset )
+{
+}
+
 void TraceEditBlocks::goToPrevLine()
 {
   file->clear();
