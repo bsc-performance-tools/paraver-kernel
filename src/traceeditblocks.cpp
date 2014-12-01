@@ -397,7 +397,17 @@ void TraceEditBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UI
 
   lastData.records.clear();
   lastRecord = -1;
-  body->read( file, *this, notUsedEvents, dummyTraceInfo );
+  while( lastData.records.size() == 0 )
+  {
+    body->read( file, *this, notUsedEvents, dummyTraceInfo );
+    if( lastData.records.size() == 0 && file->tellg() == (std::streampos)endFileOffset )
+    {
+      offset = endFileOffset;
+      *record = NULL;
+      recPos = 0;
+      return;
+    }
+  }
 
   *record = &lastData.records[ 0 ];
   recPos = 0;
