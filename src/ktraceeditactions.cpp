@@ -260,89 +260,91 @@ bool RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
 
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
 
-  std::vector< TTime > *shiftTimes =
-          ( (ShiftTimesState *)tmpSequence->getState( TraceEditSequence::shiftTimesState ) )->getData();
-
-  TWindowLevel shiftLevel =
-          ( (ShiftLevelState *)tmpSequence->getState( TraceEditSequence::shiftLevelState ) )->getData();
-
-  TTime delta = (TTime)0;
-
-  TApplOrder app;
-  TTaskOrder task;
-  TThreadOrder thread;
-
   bool eofParsed = ( (EOFParsedState *)tmpSequence->getState( TraceEditSequence::eofParsedState ) )->getData();
 
   if ( ( whichRecord->getType() == STATE + BEGIN ) ||
        ( whichRecord->getType() == EVENT ) ||
        ( whichRecord->getType() == COMM + LOG + SEND ) ||
-       eofParsed
-     )
+       ( eofParsed ) )
   {
-    tmpSequence->getCurrentTrace()->getThreadLocation( whichRecord->getThread(), app, task, thread );
+    TTime delta = (TTime)0;
 
-    switch ( shiftLevel )
+    TApplOrder app;
+    TTaskOrder task;
+    TThreadOrder thread;
+
+    if ( !eofParsed )
     {
-      case WORKLOAD:
-        if ( !checkedAvailableShiftTime )
-        {
-          checkedAvailableShiftTime = true;
-          if ( shiftTimes->size() >= 1 )
-            availableShiftTime = true;
-        }
+      std::vector< TTime > *shiftTimes =
+              ( (ShiftTimesState *)tmpSequence->getState( TraceEditSequence::shiftTimesState ) )->getData();
 
-        if ( availableShiftTime )
-          delta = (*shiftTimes)[ 0 ];
+      TWindowLevel shiftLevel =
+              ( (ShiftLevelState *)tmpSequence->getState( TraceEditSequence::shiftLevelState ) )->getData();
 
-        break;
+      tmpSequence->getCurrentTrace()->getThreadLocation( whichRecord->getThread(), app, task, thread );
 
-      case APPLICATION:
-        if ( !checkedAvailableShiftTime )
-        {
-          checkedAvailableShiftTime = true;
-          if ( shiftTimes->size() >= tmpSequence->getCurrentTrace()->totalApplications() )
-            availableShiftTime = true;
-        }
+      switch ( shiftLevel )
+      {
+        case WORKLOAD:
+          if ( !checkedAvailableShiftTime )
+          {
+            checkedAvailableShiftTime = true;
+            if ( shiftTimes->size() >= 1 )
+              availableShiftTime = true;
+          }
 
-        if ( availableShiftTime )
-          delta = (*shiftTimes)[ app ];
+          if ( availableShiftTime )
+            delta = (*shiftTimes)[ 0 ];
 
-        break;
+          break;
 
-      case TASK:
-        if ( !checkedAvailableShiftTime )
-        {
-          checkedAvailableShiftTime = true;
-          if ( shiftTimes->size() >= tmpSequence->getCurrentTrace()->totalTasks() )
-            availableShiftTime = true;
-        }
+        case APPLICATION:
+          if ( !checkedAvailableShiftTime )
+          {
+            checkedAvailableShiftTime = true;
+            if ( shiftTimes->size() >= tmpSequence->getCurrentTrace()->totalApplications() )
+              availableShiftTime = true;
+          }
 
-        if ( availableShiftTime )
-        {
-          delta = (*shiftTimes)[ tmpSequence->getCurrentTrace()->getGlobalTask( app, task ) ];
-        }
+          if ( availableShiftTime )
+            delta = (*shiftTimes)[ app ];
 
-        break;
+          break;
 
-      case THREAD:
-        if ( !checkedAvailableShiftTime )
-        {
-          checkedAvailableShiftTime = true;
-          if ( shiftTimes->size() >= tmpSequence->getCurrentTrace()->totalThreads() )
-            availableShiftTime = true;
-        }
+        case TASK:
+          if ( !checkedAvailableShiftTime )
+          {
+            checkedAvailableShiftTime = true;
+            if ( shiftTimes->size() >= tmpSequence->getCurrentTrace()->totalTasks() )
+              availableShiftTime = true;
+          }
 
-        if ( availableShiftTime )
-        {
-          delta = (*shiftTimes)[ tmpSequence->getCurrentTrace()->getGlobalThread( app, task, thread ) ];
-          //delta = (*shiftTimes)[ whichRecord->getThread() ];
-        }
+          if ( availableShiftTime )
+          {
+            delta = (*shiftTimes)[ tmpSequence->getCurrentTrace()->getGlobalTask( app, task ) ];
+          }
 
-        break;
+          break;
 
-      default:
-        break;
+        case THREAD:
+          if ( !checkedAvailableShiftTime )
+          {
+            checkedAvailableShiftTime = true;
+            if ( shiftTimes->size() >= tmpSequence->getCurrentTrace()->totalThreads() )
+              availableShiftTime = true;
+          }
+
+          if ( availableShiftTime )
+          {
+            delta = (*shiftTimes)[ tmpSequence->getCurrentTrace()->getGlobalThread( app, task, thread ) ];
+            //delta = (*shiftTimes)[ whichRecord->getThread() ]; //??
+          }
+
+          break;
+
+        default:
+          break;
+      }
     }
 
     executionError = !availableShiftTime;
@@ -420,8 +422,6 @@ bool TraceWriterAction::execute( MemoryTrace::iterator *it  )
 
   if ( eofParsed && outputTrace.is_open() )
     outputTrace.close();
-
-  //tmpSequence->executeNextAction( it );
 
   return tmpSequence->executeNextAction( it );
 }

@@ -87,6 +87,16 @@ void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
   };
 }
 
+void TraceBodyIO_v1::bufferWrite( fstream& whichStream, bool writeReady, bool lineClear ) const
+{
+  if ( writeReady )
+  {
+    whichStream << line << '\n';
+    if ( lineClear )
+      line.clear();
+  }
+}
+
 
 void TraceBodyIO_v1::write( fstream& whichStream,
                             const KTrace& whichTrace,
@@ -100,22 +110,14 @@ void TraceBodyIO_v1::write( fstream& whichStream,
   if ( type == EMPTYREC )
   {
     writeReady = writePendingMultiEvent( whichTrace );
-    if ( writeReady )
-    {
-      whichStream << line << endl;
-      line.clear();
-    }
+    bufferWrite( whichStream, writeReady );
   }
   else
   {
     if ( type & STATE )
     {
       writeReady = writePendingMultiEvent( whichTrace );
-      if ( writeReady )
-      {
-        whichStream << line << endl;
-        line.clear();
-      }
+      bufferWrite( whichStream, writeReady );
       writeReady = writeState( whichTrace, record );
     }
     else if ( type & EVENT )
@@ -136,22 +138,14 @@ void TraceBodyIO_v1::write( fstream& whichStream,
     else if ( type & COMM )
     {
       writeReady = writePendingMultiEvent( whichTrace );
-      if ( writeReady )
-      {
-        whichStream << line << endl;
-        line.clear();
-      }
+      bufferWrite( whichStream, writeReady );
 
       writeReady = writeComm( whichTrace, record );
     }
     else if ( type & GLOBCOMM )
     {
       writeReady = writePendingMultiEvent( whichTrace );
-      if ( writeReady )
-      {
-        whichStream << line << endl;
-        line.clear();
-      }
+      bufferWrite( whichStream, writeReady );
 
       writeReady = writeGlobalComm( whichTrace, record );
     }
@@ -164,10 +158,7 @@ void TraceBodyIO_v1::write( fstream& whichStream,
       cerr << "Unkwnown record type in memory." << endl;
     }
 
-    if ( writeReady )
-    {
-      whichStream << line << endl;
-    }
+    bufferWrite( whichStream, writeReady, false );
   }
 }
 

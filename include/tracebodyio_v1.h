@@ -77,7 +77,6 @@ class TraceBodyIO_v1 : public TraceBodyIO
     static std::istringstream strLine;
     static std::string tmpstring;
     static std::string line;
-
     static std::ostringstream ostr;
 
     void readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const;
@@ -93,6 +92,8 @@ class TraceBodyIO_v1 : public TraceBodyIO
                      TTaskOrder& task,
                      TThreadOrder& thread,
                      TRecordTime& time ) const;
+
+    void bufferWrite( std::fstream& whichStream, bool writeReady, bool lineClear = true  ) const;
 
     bool writeState( const KTrace& whichTrace,
                      const MemoryTrace::iterator *record ) const;
