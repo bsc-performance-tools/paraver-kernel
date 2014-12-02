@@ -151,7 +151,7 @@ namespace NoLoad
       TRecord globalBeginRec;
       TRecord globalEndRec;
 
-      std::vector<TCommInfo *> communications;
+      std::vector<TCommInfo> communications;
       TCommID currentComm;
       TRecord *logSend;
       TRecord *logRecv;
