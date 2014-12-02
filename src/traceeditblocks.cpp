@@ -58,11 +58,6 @@ TraceEditBlocks::TraceEditBlocks( const ResourceModel& resource, const ProcessMo
 
 TraceEditBlocks::~TraceEditBlocks()
 {
-  for ( PRV_UINT32 i = 0; i < communications.size(); ++i )
-    delete communications[i];
-
-  communications.clear();
-
   file->close();
 }
 
@@ -160,7 +155,7 @@ void TraceEditBlocks::newComm( bool createRecords )
 
   lastPos = file->tellg();
 
-  communications.push_back( new TCommInfo() );
+  communications.push_back( TCommInfo() );
   currentComm = communications.size() - 1;
   logSend->URecordInfo.commRecord.index = currentComm;
   logRecv->URecordInfo.commRecord.index = currentComm;
@@ -170,7 +165,7 @@ void TraceEditBlocks::newComm( bool createRecords )
 
 void TraceEditBlocks::setSenderThread( TThreadOrder whichThread )
 {
-  communications[currentComm]->senderThread = whichThread;
+  communications[currentComm].senderThread = whichThread;
   logSend->thread = whichThread;
   phySend->thread = whichThread;
 }
@@ -182,21 +177,21 @@ void TraceEditBlocks::setSenderThread( TApplOrder whichAppl,
   TThreadOrder globalThread = processModel.getGlobalThread( whichAppl,
                                                             whichTask,
                                                             whichThread );
-  communications[currentComm]->senderThread = globalThread;
+  communications[currentComm].senderThread = globalThread;
   logSend->thread = globalThread;
   phySend->thread = globalThread;
 }
 
 void TraceEditBlocks::setSenderCPU( TCPUOrder whichCPU )
 {
-  communications[currentComm]->senderCPU = whichCPU;
+  communications[currentComm].senderCPU = whichCPU;
   logSend->CPU = whichCPU;
   phySend->CPU = whichCPU;
 }
 
 void TraceEditBlocks::setReceiverThread( TThreadOrder whichThread )
 {
-  communications[currentComm]->receiverThread = whichThread;
+  communications[currentComm].receiverThread = whichThread;
   logRecv->thread = whichThread;
   phyRecv->thread = whichThread;
 }
@@ -208,70 +203,70 @@ void TraceEditBlocks::setReceiverThread( TApplOrder whichAppl,
   TThreadOrder globalThread = processModel.getGlobalThread( whichAppl,
                               whichTask,
                               whichThread );
-  communications[currentComm]->receiverThread = globalThread;
+  communications[currentComm].receiverThread = globalThread;
   logRecv->thread = globalThread;
   phyRecv->thread = globalThread;
 }
 
 void TraceEditBlocks::setReceiverCPU( TCPUOrder whichCPU )
 {
-  communications[currentComm]->receiverCPU = whichCPU;
+  communications[currentComm].receiverCPU = whichCPU;
   logRecv->CPU = whichCPU;
   phyRecv->CPU = whichCPU;
 }
 
 void TraceEditBlocks::setCommTag( TCommTag whichTag )
 {
-  communications[currentComm]->tag = whichTag;
+  communications[currentComm].tag = whichTag;
 }
 
 void TraceEditBlocks::setCommSize( TCommSize whichSize )
 {
-  communications[currentComm]->size = whichSize;
+  communications[currentComm].size = whichSize;
 }
 
 void TraceEditBlocks::setLogicalSend( TRecordTime whichTime )
 {
-  communications[currentComm]->logicalSendTime = whichTime;
+  communications[currentComm].logicalSendTime = whichTime;
   logSend->time = whichTime;
 }
 
 void TraceEditBlocks::setLogicalReceive( TRecordTime whichTime )
 {
-  communications[currentComm]->logicalReceiveTime = whichTime;
+  communications[currentComm].logicalReceiveTime = whichTime;
   logRecv->time = whichTime;
 }
 
 void TraceEditBlocks::setPhysicalSend( TRecordTime whichTime )
 {
-  communications[currentComm]->physicalSendTime = whichTime;
+  communications[currentComm].physicalSendTime = whichTime;
   phySend->time = whichTime;
 }
 
 void TraceEditBlocks::setPhysicalReceive( TRecordTime whichTime )
 {
-  communications[currentComm]->physicalReceiveTime = whichTime;
+  communications[currentComm].physicalReceiveTime = whichTime;
   phyRecv->time = whichTime;
 }
 
 void TraceEditBlocks::setLogicalSend( TCommID whichComm, TRecordTime whichTime )
 {
-  communications[whichComm]->logicalSendTime = whichTime;
+  communications[whichComm].logicalSendTime = whichTime;
 }
 
 void TraceEditBlocks::setLogicalReceive( TCommID whichComm, TRecordTime whichTime )
 {
-  communications[whichComm]->logicalReceiveTime = whichTime;
+  communications[whichComm].logicalReceiveTime = whichTime;
 }
 
 void TraceEditBlocks::setPhysicalSend( TCommID whichComm, TRecordTime whichTime )
 {
-  communications[whichComm]->physicalSendTime = whichTime;
+  communications[whichComm].physicalSendTime = whichTime;
 }
 
 void TraceEditBlocks::setPhysicalReceive( TCommID whichComm, TRecordTime whichTime )
 {
-  communications[whichComm]->physicalReceiveTime = whichTime;
+  communications[whichComm].physicalReceiveTime = whichTime;
 }
 
 TCommID TraceEditBlocks::getTotalComms() const
@@ -281,52 +276,52 @@ TCommID TraceEditBlocks::getTotalComms() const
 
 TThreadOrder TraceEditBlocks::getSenderThread( TCommID whichComm ) const
 {
-  return communications[whichComm]->senderThread;
+  return communications[whichComm].senderThread;
 }
 
 TCPUOrder TraceEditBlocks::getSenderCPU( TCommID whichComm ) const
 {
-  return communications[whichComm]->senderCPU;
+  return communications[whichComm].senderCPU;
 }
 
 TThreadOrder TraceEditBlocks::getReceiverThread( TCommID whichComm ) const
 {
-  return communications[whichComm]->receiverThread;
+  return communications[whichComm].receiverThread;
 }
 
 TCPUOrder TraceEditBlocks::getReceiverCPU( TCommID whichComm ) const
 {
-  return communications[whichComm]->receiverCPU;
+  return communications[whichComm].receiverCPU;
 }
 
 TCommTag TraceEditBlocks::getCommTag( TCommID whichComm ) const
 {
-  return communications[whichComm]->tag;
+  return communications[whichComm].tag;
 }
 
 TCommSize TraceEditBlocks::getCommSize( TCommID whichComm ) const
 {
-  return communications[whichComm]->size;
+  return communications[whichComm].size;
 }
 
 TRecordTime TraceEditBlocks::getLogicalSend( TCommID whichComm ) const
 {
-  return communications[whichComm]->logicalSendTime;
+  return communications[whichComm].logicalSendTime;
 }
 
 TRecordTime TraceEditBlocks::getLogicalReceive( TCommID whichComm ) const
 {
-  return communications[whichComm]->logicalReceiveTime;
+  return communications[whichComm].logicalReceiveTime;
 }
 
 TRecordTime TraceEditBlocks::getPhysicalSend( TCommID whichComm ) const
 {
-  return communications[whichComm]->physicalSendTime;
+  return communications[whichComm].physicalSendTime;
 }
 
 TRecordTime TraceEditBlocks::getPhysicalReceive( TCommID whichComm ) const
 {
-  return communications[whichComm]->physicalReceiveTime;
+  return communications[whichComm].physicalReceiveTime;
 }
 
 TRecordTime TraceEditBlocks::getLastRecordTime() const
@@ -397,6 +392,7 @@ void TraceEditBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UI
 
   lastData.records.clear();
   lastRecord = -1;
+  communications.clear();
   while( lastData.records.size() == 0 )
   {
     body->read( file, *this, notUsedEvents, dummyTraceInfo );

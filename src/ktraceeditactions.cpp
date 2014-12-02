@@ -272,9 +272,12 @@ bool RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
   TTaskOrder task;
   TThreadOrder thread;
 
+  bool eofParsed = ( (EOFParsedState *)tmpSequence->getState( TraceEditSequence::eofParsedState ) )->getData();
+
   if ( ( whichRecord->getType() == STATE + BEGIN ) ||
        ( whichRecord->getType() == EVENT ) ||
-       ( whichRecord->getType() == COMM + LOG + SEND )
+       ( whichRecord->getType() == COMM + LOG + SEND ) ||
+       eofParsed
      )
   {
     tmpSequence->getCurrentTrace()->getThreadLocation( whichRecord->getThread(), app, task, thread );
@@ -343,7 +346,7 @@ bool RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
     }
 
     executionError = !availableShiftTime;
-    if ( availableShiftTime )
+    if ( availableShiftTime || eofParsed )
     {
       // Common for events time, states begin time, communications logical send time
       whichRecord->setTime( whichRecord->getTime() + delta );

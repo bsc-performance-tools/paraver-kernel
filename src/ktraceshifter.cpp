@@ -49,8 +49,6 @@ KTraceShifter::KTraceShifter( const KernelConnection *myKernel,
   if ( shiftLevel < WORKLOAD || shiftLevel > THREAD )
     shiftLevel = THREAD;
 
-std::cout << "LEVEL: " << shiftLevel << std::endl;
-
   // Build sequence
   mySequence = TraceEditSequence::create( myKernel );
 
