@@ -750,6 +750,10 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
   Extrae_eventandcounters( 300, 1 );
 #endif
 
+#ifdef PARALLEL_ENABLED
+  progress = NULL;
+#endif // PARALLEL_ENABLED
+
   myTimeUnit = controlWindow->getTimeUnit();
 
   if ( dataWindow == NULL )
