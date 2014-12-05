@@ -1738,6 +1738,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   tmpComputedMaxY.reserve( numRows );
   tmpComputedMinY.reserve( numRows );
 
+#ifndef PARALLEL_ENABLED
   if( numRows > 1 )
     progress->setEndLimit( numRows );
   else
@@ -1745,6 +1746,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
     progress->setEndLimit( getWindowEndTime() - getWindowBeginTime() );
     paramProgress = progress;
   }
+#endif // PARALLEL_ENABLED
 
   // Drawmode: Group objects with same wxCoord in objectPosList
   int currentRow = 0;
@@ -1784,6 +1786,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
             commsToDraw[ commsToDraw.size() - 1 ],
             paramProgress );
 
+#ifndef PARALLEL_ENALBLED
     if( numRows > 1 )
     {
       if( progress->getStop() )
@@ -1791,6 +1794,8 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
       progress->setCurrentProgress( currentRow );
     }
     ++currentRow;
+#endif // PARALLEL_ENALBLED
+
 #ifdef TRACING_ENABLED
   Extrae_eventandcounters( 200, 0 );
 #endif
