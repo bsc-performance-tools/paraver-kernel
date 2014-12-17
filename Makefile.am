@@ -54,7 +54,6 @@ install-data-hook:
 	$(mkdir_p) $(prefix)/share
 	$(mkdir_p) $(prefix)/share/filters-config
 	$(install_sh_PROGRAM) -m 775 ./docs/filters/*.xml $(prefix)/share/filters-config
-#	$(install_sh_DATA) ./docs/filters/*.xml $(prefix)/share/filters-config
 
 
 dist-hook:
