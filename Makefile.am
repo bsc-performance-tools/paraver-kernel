@@ -53,14 +53,16 @@ install-data-hook:
 
 	$(mkdir_p) $(prefix)/share
 	$(mkdir_p) $(prefix)/share/filters-config
-	$(install_sh_DATA) ./docs/filters/*.xml $(prefix)/share/filters-config
+	$(install_sh_PROGRAM) -m 775 ./docs/filters/*.xml $(prefix)/share/filters-config
+#	$(install_sh_DATA) ./docs/filters/*.xml $(prefix)/share/filters-config
 
 
 dist-hook:
 	$(mkdir_p) $(distdir)/docs
 	cp -f ./docs/paramedir $(distdir)/docs
 	$(mkdir_p) $(distdir)/docs/filters
-	$(install_sh_DATA) ./docs/filters/*.xml $(distdir)/docs/filters
+	$(install_sh_PROGRAM) -m 775 ./docs/filters/*.xml $(distdir)/docs/filters
+#	$(install_sh_DATA) ./docs/filters/*.xml $(distdir)/docs/filters
 
 
 # Erases everything which should not be uploaded to CVS
