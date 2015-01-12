@@ -33,7 +33,6 @@
 #include "labelconstructor.h"
 #include "paraverlabels.h"
 #include "histogram.h"
-#include "paraverconfig.h"
 #include "window.h"
 #include "filter.h"
 #include "kfilter.h"
@@ -712,6 +711,61 @@ string LabelConstructor::getDate( bool reverseOrder )
     }
 
     resultString = reverseDate.str();
+  }
+
+  return resultString;
+}
+
+
+std::string LabelConstructor::getImageFileSuffix( const ParaverConfig::TImageFormat& format )
+{
+  string resultString;
+
+  switch( format )
+  {
+    case ParaverConfig::BMP:
+      resultString = string( "bmp" );
+      break;
+
+    case ParaverConfig::JPG:
+      resultString = string( "jpg" );
+      break;
+
+    case ParaverConfig::PNG:
+      resultString = string( "png" );
+      break;
+
+    case ParaverConfig::XPM:
+      resultString = string( "xpm" );
+      break;
+
+    default:
+      resultString = string( "png" );
+      break;
+  }
+
+  return resultString;
+}
+
+
+std::string LabelConstructor::getDataFileSuffix( const ParaverConfig::TTextFormat& format )
+{
+  string resultString;
+
+  switch( format )
+  {
+    case ParaverConfig::CSV:
+      resultString = string( "csv" );
+      break;
+
+    case ParaverConfig::GNUPLOT:
+      resultString = string( "gnuplot" );
+      break;
+
+    case ParaverConfig::PLAIN:
+    default:
+      resultString = string( "dat" );
+      break;
   }
 
   return resultString;

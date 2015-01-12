@@ -32,6 +32,7 @@
 
 #include <sstream>
 #include "paraverkerneltypes.h"
+#include "paraverconfig.h"
 #include "trace.h"
 
 class Histogram;
@@ -102,6 +103,9 @@ class LabelConstructor
     static void getGUIGroupLabels( const TGroupID group, std::vector< std::string > &labels );
 
     static std::string getDate( bool reverseOrder = false );
+
+    static std::string getImageFileSuffix( const ParaverConfig::TImageFormat& format = ParaverConfig::PNG );
+    static std::string getDataFileSuffix( const ParaverConfig::TTextFormat& format = ParaverConfig::PLAIN );
 
   private:
     static std::stringstream sstrObjectLabel;
