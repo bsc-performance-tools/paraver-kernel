@@ -56,6 +56,7 @@ ParaverConfig::ParaverConfig()
   string homedir;
   string paraverHomeDir;
   string paraverCFGsDir;
+  string paraverXMLDir;
 
 #ifdef WIN32
   homedir = getenv( "HOMEDRIVE" );
@@ -80,15 +81,22 @@ ParaverConfig::ParaverConfig()
   {
     paraverHomeDir = homedir;
     paraverCFGsDir = homedir;
+    paraverXMLDir  = homedir;
   }
   else
   {
 #ifdef WIN32
     paraverCFGsDir = getenv( "HOMEDRIVE" );
     paraverCFGsDir.append( getenv( "PARAVER_HOME" ) );
+
+    paraverXMLDir = paraverCFGsDir;
+
     paraverCFGsDir.append( "cfgs" );
+    paraverXMLDir.append( "share\filters-config" );
+
 #else
     paraverCFGsDir = paraverHomeDir + "/cfgs";
+    paraverXMLDir = paraverHomeDir + "/share/filters-config";
 #endif
   }
 
@@ -161,7 +169,7 @@ ParaverConfig::ParaverConfig()
 
   // Filter Globals
   xmlFilters.filterTraceUpToMB = 500.0;
-  xmlFilters.xmlPath = homedir;
+  xmlFilters.xmlPath = paraverXMLDir;
 
   xmlFilters.xmlCutterInstance.byTime = false;
   xmlFilters.xmlCutterInstance.minimumTime = 0;
