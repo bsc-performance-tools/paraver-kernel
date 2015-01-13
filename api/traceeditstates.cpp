@@ -27,7 +27,7 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-#include "traceeditstates.h"
+//#include "traceeditstates.h"
 #include "traceoptions.h"
 //#include "window.h"
 

@@ -101,6 +101,7 @@ void Metadata::Write(ostream& os) const
 ostream& operator<< (ostream& os, const Metadata& MetadataRecord)
 {
   MetadataRecord.Write(os);
+  return os;
 }
 
 int    CutterMetadata::FIELD_COUNT = Metadata::FIELD_COUNT + 3;

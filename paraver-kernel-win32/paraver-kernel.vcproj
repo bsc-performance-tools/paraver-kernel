@@ -620,6 +620,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\traceeditblocks.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\traceheaderexception.cpp"
 				>
 			</File>
@@ -1011,6 +1015,10 @@
 			</File>
 			<File
 				RelativePath="..\include\tracebodyio_v2.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\traceeditblocks.h"
 				>
 			</File>
 			<File
