@@ -55,6 +55,7 @@ ParaverConfig::ParaverConfig()
 {
   string homedir;
   string paraverHomeDir;
+  string paraverCFGsDir;
 
 #ifdef WIN32
   homedir = getenv( "HOMEDRIVE" );
@@ -78,11 +79,23 @@ ParaverConfig::ParaverConfig()
   if( paraverHomeDir.empty() )
   {
     paraverHomeDir = homedir;
+    paraverCFGsDir = homedir;
+  }
+  else
+  {
+#ifdef WIN32
+    paraverCFGsDir = getenv( "HOMEDRIVE" );
+    paraverCFGsDir.append( getenv( "PARAVER_HOME" ) );
+    paraverCFGsDir.append( "cfgs" );
+#else
+    paraverCFGsDir = paraverHomeDir + "/cfgs";
+#endif
   }
 
+
   xmlGlobal.tracesPath = homedir; // also for paraload.sig!
-  xmlGlobal.cfgsPath = paraverHomeDir;
-  xmlGlobal.tutorialsPath = homedir;
+  xmlGlobal.cfgsPath = paraverCFGsDir;
+  xmlGlobal.tutorialsPath = paraverHomeDir;
   xmlGlobal.tmpPath = homedir; // errors, logs, working dir
   xmlGlobal.applyFollowingCFGsToAllTraces = false;
   xmlGlobal.fillStateGaps = true;
