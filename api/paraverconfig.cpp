@@ -54,13 +54,14 @@ ParaverConfig *ParaverConfig::getInstance()
 ParaverConfig::ParaverConfig()
 {
   string homedir;
+  string paraverHomeDir;
 
 #ifdef WIN32
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
 #else
   homedir = getenv( "HOME" );
-  if( homedir == string( "" ) )
+  if( homedir.empty() )
   {
     struct passwd *pwd = getpwuid( getuid() );
     if( pwd != NULL )
@@ -73,9 +74,14 @@ ParaverConfig::ParaverConfig()
     }
   }
 #endif
+  paraverHomeDir = getenv( "PARAVER_HOME" );
+  if( paraverHomeDir.empty() )
+  {
+    paraverHomeDir = homedir;
+  }
 
   xmlGlobal.tracesPath = homedir; // also for paraload.sig!
-  xmlGlobal.cfgsPath = homedir;
+  xmlGlobal.cfgsPath = paraverHomeDir;
   xmlGlobal.tutorialsPath = homedir;
   xmlGlobal.tmpPath = homedir; // errors, logs, working dir
   xmlGlobal.applyFollowingCFGsToAllTraces = false;
