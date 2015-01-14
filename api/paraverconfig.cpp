@@ -181,7 +181,7 @@ ParaverConfig::ParaverConfig()
   xmlHistogram.drawmodeObjects = DRAW_MAXIMUM;
   xmlHistogram.saveTextAsMatrix = true;
   xmlHistogram.saveTextFormat = CSV;
-  xmlHistogram.saveImageFormat = JPG;
+  xmlHistogram.saveImageFormat = PNG;
   xmlHistogram.pixelSize = 0;
 
   // Filter Globals
