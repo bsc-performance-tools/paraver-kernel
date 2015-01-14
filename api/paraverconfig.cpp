@@ -40,6 +40,8 @@
 #endif
 #include "paraverconfig.h"
 
+#define PATH_MAX_LEN 2048
+
 using namespace std;
 
 ParaverConfig *ParaverConfig::instance = NULL;
@@ -59,9 +61,33 @@ ParaverConfig::ParaverConfig()
   string paraverXMLDir;
 
 #ifdef WIN32
+
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
+
+  char myPath[ MAX_LEN_PATH ];
+  HMODULE hModule = GetModuleHandle( NULL );
+  if ( hModule != NULL )
+  {
+    GetModuleFileName( hModule, myPath, ( sizeof( ownPth ) ));
+
+    paraverHomeDir = myPath;
+
+    paraverCFGsDir = paraverHomeDir;
+    paraverCFGsDir.append( ".\\cfgs" );
+
+    paraverXMLDir = paraverHomeDir;
+    paraverXMLDir.append( ".\\share\\filters-config" );
+  }
+  else
+  {
+    paraverHomeDir = homedir;
+    paraverCFGsDir = homedir;
+    paraverXMLDir  = homedir;
+  }
+
 #else
+
   homedir = getenv( "HOME" );
   if( homedir.empty() )
   {
@@ -75,7 +101,7 @@ ParaverConfig::ParaverConfig()
       homedir = string( "/tmp" );
     }
   }
-#endif
+
   paraverHomeDir = getenv( "PARAVER_HOME" );
   if( paraverHomeDir.empty() )
   {
@@ -85,25 +111,16 @@ ParaverConfig::ParaverConfig()
   }
   else
   {
-#ifdef WIN32
-    paraverCFGsDir = getenv( "HOMEDRIVE" );
-    paraverCFGsDir.append( getenv( "PARAVER_HOME" ) );
-
-    paraverXMLDir = paraverCFGsDir;
-
-    paraverCFGsDir.append( "cfgs" );
-    paraverXMLDir.append( "share\filters-config" );
-
-#else
     paraverCFGsDir = paraverHomeDir + "/cfgs";
-    paraverXMLDir = paraverHomeDir + "/share/filters-config";
-#endif
+    paraverXMLDir  = paraverHomeDir + "/share/filters-config";
   }
+
+#endif
 
 
   xmlGlobal.tracesPath = homedir; // also for paraload.sig!
   xmlGlobal.cfgsPath = paraverCFGsDir;
-  xmlGlobal.tutorialsPath = paraverHomeDir;
+  xmlGlobal.tutorialsPath = paraverHomeDir; // not exactly, but near
   xmlGlobal.tmpPath = homedir; // errors, logs, working dir
   xmlGlobal.applyFollowingCFGsToAllTraces = false;
   xmlGlobal.fillStateGaps = true;
