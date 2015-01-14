@@ -527,7 +527,11 @@ inline bool KHistogram::getInclusive() const
 inline THistogramColumn KHistogram::getNumPlanes() const
 {
   if ( getThreeDimensions() )
+  {
+    if( planeTranslator == NULL )
+      return 0;
     return planeTranslator->totalColumns();
+  }
   return 1;
 }
 
