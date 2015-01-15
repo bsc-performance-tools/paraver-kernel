@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #ifdef WIN32
   #include <shlobj.h>
+  #include <Shlwapi.h>
 #else
   #include <sys/stat.h>
   #include <pwd.h>
@@ -40,7 +41,7 @@
 #endif
 #include "paraverconfig.h"
 
-#define PATH_MAX_LEN 2048
+#define MAX_LEN_PATH 2048
 
 using namespace std;
 
@@ -65,19 +66,22 @@ ParaverConfig::ParaverConfig()
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
 
-  char myPath[ MAX_LEN_PATH ];
+  WCHAR myPath[ MAX_LEN_PATH ];
   HMODULE hModule = GetModuleHandle( NULL );
   if ( hModule != NULL )
   {
-    GetModuleFileName( hModule, myPath, ( sizeof( ownPth ) ));
-
-    paraverHomeDir = myPath;
+    GetModuleFileName( NULL, myPath, ( sizeof( myPath ) ));
+    PathRemoveFileSpec( myPath );
+    char tmpMyPath[ MAX_LEN_PATH ];
+    size_t tmpSize;
+    wcstombs_s( &tmpSize, tmpMyPath, MAX_LEN_PATH, myPath, MAX_LEN_PATH );
+    paraverHomeDir = tmpMyPath;
 
     paraverCFGsDir = paraverHomeDir;
-    paraverCFGsDir.append( ".\\cfgs" );
+    paraverCFGsDir.append( "\\cfgs" );
 
     paraverXMLDir = paraverHomeDir;
-    paraverXMLDir.append( ".\\share\\filters-config" );
+    paraverXMLDir.append( "\\share\\filters-config" );
   }
   else
   {
