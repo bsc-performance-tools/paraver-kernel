@@ -458,18 +458,37 @@ bool EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
   if( ( it->getType() == EVENT ) &&
       ( it->getEventType() == ( (OnEventCutter *)tmpSequence->getState( TraceEditSequence::onEventCutterState ) )->getData() ) )
   {
-    if( countThreadsPerFile.count( currentThreadFile[ it->getThread() ] ) > 0 )
-      --countThreadsPerFile[ currentThreadFile[ it->getThread() ] ];
+    TThreadOrder firstThread, lastThread;
+    TApplOrder applLoc;
+    TTaskOrder taskLoc;
 
-    ++currentThreadFile[ it->getThread() ];
+    tmpSequence->getCurrentTrace()->getThreadLocation( it->getThread(), applLoc, taskLoc, firstThread );
+    firstThread = it->getThread();
+    lastThread = tmpSequence->getCurrentTrace()->getLastThread( applLoc, taskLoc );
 
     if( countThreadsPerFile.count( currentThreadFile[ it->getThread() ] ) > 0 )
-      ++countThreadsPerFile[ currentThreadFile[ it->getThread() ] ];
+    {
+      for( TThreadOrder iThread = firstThread; iThread <= lastThread; ++iThread )
+        --countThreadsPerFile[ currentThreadFile[ iThread ] ];
+
+      // TODO: close file
+    }
+
+    for( TThreadOrder iThread = firstThread; iThread <= lastThread; ++iThread )
+      ++currentThreadFile[ iThread ];
+
+    if( countThreadsPerFile.count( currentThreadFile[ it->getThread() ] ) > 0 )
+    {
+      for( TThreadOrder iThread = firstThread; iThread <= lastThread; ++iThread )
+        ++countThreadsPerFile[ currentThreadFile[ iThread ] ];
+    }
     else
     {
       std::fstream *tmpStream = new std::fstream;
       outputTraces.push_back( tmpStream );
-      countThreadsPerFile[ currentThreadFile[ it->getThread() ] ] = 1;
+      countThreadsPerFile[ currentThreadFile[ it->getThread() ] ] = 0;
+      for( TThreadOrder iThread = firstThread; iThread <= lastThread; ++iThread )
+        ++countThreadsPerFile[ currentThreadFile[ iThread ] ];
     }
   }
 
@@ -526,7 +545,7 @@ bool EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
 
   //tmpSequence->executeNextAction( it );
 
-  return   tmpSequence->executeNextAction( it );;
+  return tmpSequence->executeNextAction( it );;
 }
 
 
