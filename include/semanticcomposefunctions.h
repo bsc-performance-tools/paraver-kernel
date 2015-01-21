@@ -1880,4 +1880,75 @@ class ComposeEndTime: public SemanticCompose
 
 };
 
+
+class ComposeTranslate: public SemanticCompose
+{
+  public:
+    typedef enum
+    {
+      TRANSLATION_LIST = 0,
+      MAXPARAM
+    } TParam;
+
+    ComposeTranslate()
+    {
+      setDefaultParam();
+    }
+
+    ~ComposeTranslate()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+
+    virtual void init( KWindow *whichWindow )
+    {}
+
+    virtual std::string getName()
+    {
+      return ComposeTranslate::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeTranslate( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return SAME_TYPE; // Some doubts
+    }
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      TParamValue tmp;
+
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+
+      return tmp;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Translation List";
+    }
+
+  private:
+    static const bool initFromBegin = false;
+    static std::string name;
+
+};
+
+
 #endif // SEMANTICCOMPOSEFUNCTIONS_H_INCLUDED

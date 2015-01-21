@@ -506,3 +506,21 @@ TSemanticValue ComposeEndTime::execute( const SemanticInfo *info )
   result = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( result );
   return result;
 }
+
+
+string ComposeTranslate::name = "Translate";
+TSemanticValue ComposeTranslate::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+
+  TParamValue &myList = parameters[ TRANSLATION_LIST ];
+  for ( PRV_UINT16 i = 0; i < myList.size(); i = i + 2 )
+  {
+    if ( myList[ i ] == myInfo->values[ 0 ] )
+    {
+      return myList[ i + 1 ];
+    }
+  }
+
+  return myInfo->values[ 0 ];
+}
