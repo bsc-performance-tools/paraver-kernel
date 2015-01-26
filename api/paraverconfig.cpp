@@ -92,6 +92,7 @@ ParaverConfig::ParaverConfig()
 
 #else
 
+
   homedir = getenv( "HOME" );
   if( homedir.empty() )
   {
@@ -106,8 +107,7 @@ ParaverConfig::ParaverConfig()
     }
   }
 
-  paraverHomeDir = getenv( "PARAVER_HOME" );
-  if( paraverHomeDir.empty() )
+  if ( getenv( "PARAVER_HOME" ) == NULL )
   {
     paraverHomeDir = homedir;
     paraverCFGsDir = homedir;
@@ -115,6 +115,7 @@ ParaverConfig::ParaverConfig()
   }
   else
   {
+    paraverHomeDir = getenv( "PARAVER_HOME" );
     paraverCFGsDir = paraverHomeDir + "/cfgs";
     paraverXMLDir  = paraverHomeDir + "/share/filters-config";
   }
