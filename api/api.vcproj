@@ -65,6 +65,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="Shlwapi.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
