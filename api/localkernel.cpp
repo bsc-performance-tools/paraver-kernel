@@ -123,10 +123,15 @@ string LocalKernel::getPCFFileLocation( const string& traceFile ) const
 {
   string pcfFile;
 
-  if ( traceFile.substr( traceFile.length() - 6 ) == "prv.gz" )
-    pcfFile = traceFile.substr( 0, traceFile.length() - 6 );
+  if( traceFile.length() > 3 )
+  {
+    if ( traceFile.substr( traceFile.length() - 3 ) == "prv" )
+      pcfFile = traceFile.substr( 0, traceFile.length() - 3 );
+    else if ( traceFile.substr( traceFile.length() - 6 ) == "prv.gz" )
+      pcfFile = traceFile.substr( 0, traceFile.length() - 6 );
+  }
   else
-    pcfFile = traceFile.substr( 0, traceFile.length() - 3 );
+    pcfFile = traceFile + ".";
   pcfFile.append( "pcf" );
 
   return pcfFile;
@@ -136,10 +141,15 @@ string LocalKernel::getROWFileLocation( const string& traceFile ) const
 {
   string rowFile;
 
-  if ( traceFile.substr( traceFile.length() - 6 ) == "prv.gz" )
-    rowFile = traceFile.substr( 0, traceFile.length() - 6 );
+  if( traceFile.length() > 3 )
+  {
+    if ( traceFile.substr( traceFile.length() - 3 ) == "prv" )
+      rowFile = traceFile.substr( 0, traceFile.length() - 3 );
+    else if ( traceFile.substr( traceFile.length() - 6 ) == "prv.gz" )
+      rowFile = traceFile.substr( 0, traceFile.length() - 6 );
+  }
   else
-    rowFile = traceFile.substr( 0, traceFile.length() - 3 );
+    rowFile = traceFile + ".";
   rowFile.append( "row" );
 
   return rowFile;
