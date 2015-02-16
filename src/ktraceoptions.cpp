@@ -154,7 +154,7 @@ void KTraceOptions::init_filter_types()
 void KTraceOptions::init()
 {
   // Global Default Options
-  set_max_trace_size( ParaverConfig::getInstance()->getFiltersFilterTraceUpToMB() );
+  set_max_trace_size( 0 ); // Not defined on ParaverConfig yet!!!
 
   // Cutter Default Options
   set_by_time( ParaverConfig::getInstance()->getCutterByTime() );
