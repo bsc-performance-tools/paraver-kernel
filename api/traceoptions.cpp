@@ -121,7 +121,7 @@ void TraceOptionsProxy::set_maximum_time_percentage( unsigned long long whichMax
   myTraceOptions->set_maximum_time_percentage( whichMaximumTimePercentage );
 }
 
-void TraceOptionsProxy::set_tasks_list( TTasksList &tasksList )
+void TraceOptionsProxy::set_tasks_list( char *tasksList )
 {
   myTraceOptions->set_tasks_list( tasksList );
 }

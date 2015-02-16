@@ -261,7 +261,7 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_max_cutting_time( unsigned long long maxCutTime );
     virtual void set_minimum_time_percentage( unsigned long long whichMinimumTimePercentage );
     virtual void set_maximum_time_percentage( unsigned long long whichMaximumTimePercentage );
-    virtual void set_tasks_list( TTasksList &tasksList );
+    virtual void set_tasks_list( char *tasksList );
     virtual void set_original_time( bool originalTime );
     virtual void set_break_states( bool breakStates );
     virtual void set_remFirstStates( bool remStates );
