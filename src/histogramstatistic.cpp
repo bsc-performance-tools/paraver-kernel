@@ -610,7 +610,8 @@ TSemanticValue StatAvgBytesSent::finishRow( TSemanticValue cellValue,
   return cellValue / ( numComms[ plane ] )[ column ];
 #else
   vector< TSemanticValue > tmp;
-  numComms->getCellValue( tmp, plane, row, column );
+  if( !numComms->getCellValue( tmp, plane, row, column ) )
+    return 0.0;
 
   return cellValue / tmp[ 0 ];
 #endif
@@ -692,7 +693,8 @@ TSemanticValue StatAvgBytesReceived::finishRow( TSemanticValue cellValue,
   return cellValue / ( numComms[ plane ] )[ column ];
 #else
   vector< TSemanticValue > tmp;
-  numComms->getCellValue( tmp, plane, row, column );
+  if( !numComms->getCellValue( tmp, plane, row, column ) )
+    return 0.0;
 
   return cellValue / tmp[ 0 ];
 #endif
