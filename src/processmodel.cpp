@@ -112,7 +112,7 @@ ProcessModel::ProcessModel( istringstream& headerInfo, Trace *whichTrace )
   ready = false;
 
   string stringNumberApplications;
-  std::getline( headerInfo, stringNumberApplications, ':' );
+  std::getline( (istream&)headerInfo, stringNumberApplications, ':' );
   istringstream sstreamNumberAppl( stringNumberApplications );
 
   if ( !( sstreamNumberAppl >> numberApplications ) ||

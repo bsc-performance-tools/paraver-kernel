@@ -793,7 +793,11 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
 
   initTotals();
 
+#ifdef PARALLEL_ENABLED
+  initTmpBuffers( numPlanes, rowsTranslator->totalRows() );
+#else
   initTmpBuffers( numPlanes, numRows );
+#endif
 
   vector<bool> needInit( 3, true );
 #ifdef PARALLEL_ENABLED
