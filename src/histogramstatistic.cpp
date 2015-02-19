@@ -1226,7 +1226,7 @@ TSemanticValue StatPercTime::execute( CalculateData *data )
   else
     rowTotal[ 0 ] += end - begin;
 #else
-  rowTotal->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, end - begin ) );
+  rowTotal->addValue( data->plane, data->row, 0, vector< TSemanticValue >( 1, end - begin ) );
 #endif
 
   return end - begin;
@@ -1241,7 +1241,7 @@ TSemanticValue StatPercTime::finishRow( TSemanticValue cellValue,
   return ( cellValue * 100.0 ) / rowTotal[ plane ];
 #else
   vector< TSemanticValue > tmp;
-  if( !rowTotal->getCellValue( tmp, plane, row, column ) )
+  if( !rowTotal->getCellValue( tmp, plane, row, 0 ) )
     return 0.0;
 
   return ( cellValue * 100.0 ) / tmp[ 0 ];
@@ -1314,7 +1314,7 @@ TSemanticValue StatPercTimeNotZero::execute( CalculateData *data )
     else
       rowTotal[ 0 ] += end - begin;
 #else
-    rowTotal->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, end - begin ) );
+    rowTotal->addValue( data->plane, data->row, 0, vector< TSemanticValue >( 1, end - begin ) );
 #endif
 
     return end - begin;
@@ -1332,7 +1332,7 @@ TSemanticValue StatPercTimeNotZero::finishRow( TSemanticValue cellValue,
   return ( cellValue * 100.0 ) / rowTotal[ plane ];
 #else
   vector< TSemanticValue > tmp;
-  if( !rowTotal->getCellValue( tmp, plane, row, column ) )
+  if( !rowTotal->getCellValue( tmp, plane, row, 0 ) )
     return 0.0;
 
   return ( cellValue * 100.0 ) / tmp[ 0 ];
@@ -1524,7 +1524,7 @@ TSemanticValue StatPercNumBursts::execute( CalculateData *data )
   else
     rowTotal[ 0 ] += 1.0;
 #else
-  rowTotal->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, 1.0 ) );
+  rowTotal->addValue( data->plane, data->row, 0, vector< TSemanticValue >( 1, 1.0 ) );
 #endif
 
   return 1.0;
@@ -1539,7 +1539,7 @@ TSemanticValue StatPercNumBursts::finishRow( TSemanticValue cellValue,
   return ( cellValue * 100.0 ) / rowTotal[ plane ];
 #else
   vector< TSemanticValue > tmp;
-  if( !rowTotal->getCellValue( tmp, plane, row, column ) )
+  if( !rowTotal->getCellValue( tmp, plane, row, 0 ) )
     return 0.0;
 
   return ( cellValue * 100.0 ) / tmp[ 0 ];
