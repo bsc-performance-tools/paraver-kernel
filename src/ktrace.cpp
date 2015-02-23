@@ -565,7 +565,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   for ( PRV_UINT32 count = 0; count < numberComm; count++ )
   {
     file->getline( tmpstr );
-    if ( tmpstr[0] != 'C' && tmpstr[0] != 'c' )
+    if ( tmpstr[0] != 'C' && tmpstr[0] != 'c' && tmpstr[0] != 'I' && tmpstr[0] != 'i' )
     {
       throw TraceHeaderException( TraceHeaderException::unknownCommLine,
                                   tmpstr.c_str() );
