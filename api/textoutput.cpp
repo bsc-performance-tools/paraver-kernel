@@ -164,7 +164,8 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
                                 string& strOutputFile,
                                 bool onlySelectedPlane,
                                 bool hideEmptyColumns,
-                                bool withLabels )
+                                bool withLabels ,
+                                bool withPreferencesPrecision )
 {
   THistogramColumn numPlanes;
   THistogramColumn numColumns;
@@ -184,7 +185,10 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
 
   outputFile << fixed;
   outputFile << showpoint;
-  outputFile.precision( ParaverConfig::getInstance()->getHistogramPrecision() );
+  if( withPreferencesPrecision )
+    outputFile.precision( ParaverConfig::getInstance()->getHistogramPrecision() );
+  else
+    outputFile.precision( 10 );
 
   numPlanes = whichHisto->getNumPlanes();
   numColumns = whichHisto->getNumColumns();

@@ -54,7 +54,8 @@ class Output
                                 std::string& strOutputFile,
                                 bool onlySelectedPlane = false,
                                 bool hideEmptyColumns = false,
-                                bool withLabels = true ) = 0;
+                                bool withLabels = true,
+                                bool withPreferencesPrecision = true ) = 0;
 
     virtual bool getMultipleFiles() const = 0;
     virtual void setMultipleFiles( bool newValue ) = 0;

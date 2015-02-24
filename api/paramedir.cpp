@@ -86,6 +86,7 @@ enum TOptionID
   // HISTOGRAMS
   EMPTY_COLUMNS,
   PRINT_PLANE,
+  PREFERENCES_PRECISION,
 
   // PRV TOOLSET
   CUTTER,
@@ -119,6 +120,7 @@ TOptionParamedir definedOption[] =
   // HISTOGRAMS
   { "-e", "--empty-columns", false, 0, "", "", "Hide empty columns" },
   { "-p", "--print-plane", false, 0, "", "", "Only the selected Plane of a 3D histogram is saved (by default saves all planes)" },
+  { "-npr", "--no-preferences-precision", false, 0, "", "", "Do not use the preferences precision" },
 
   // PRV TOOLSET
   { "-c", "--cutter", false, 0, "", "", "Apply Cutter tool" },
@@ -238,7 +240,7 @@ void printHelp()
   std::cout << "  General info:" << std::endl;
   std::cout << "      paramedir [-h] [-v]" << std::endl << std::endl;
   std::cout << "  Compute numeric data from trace using histogram or timeline CFG's (cfgs can be chained, trace is loaded):" << std::endl;
-  std::cout << "      paramedir [-e] [-m] [-p] <prv> [ <cfg> | <cfg> <ouput-data-file> ]+" << std::endl << std::endl;
+  std::cout << "      paramedir [-e] [-m] [-p] [-npr] <prv> [ <cfg> | <cfg> <ouput-data-file> ]+" << std::endl << std::endl;
   std::cout << "  Process paraver trace (pipelined as flags are declared, using XML configuration parameters and without trace load):" << std::endl;
   std::cout << "      paramedir [-c] [-f] [-s] [-o <output-file>] <prv> <xml>" << std::endl << std::endl;
   std::cout << "  Process paraver trace (direct parametrization, don't load trace):" << std::endl;
@@ -726,7 +728,9 @@ void loadCFGs( KernelConnection *myKernel )
         output.dumpHistogram( histograms[ histograms.size() - 1 ],
                               it->second,
                               option[ PRINT_PLANE ].active,
-                              option[ EMPTY_COLUMNS ].active );
+                              option[ EMPTY_COLUMNS ].active,
+                              true,
+                              !option[ PREFERENCES_PRECISION ].active );
       else if( windows.begin() != windows.end() &&
                windows[ windows.size() - 1 ] != NULL )
         output.dumpWindow( windows[ windows.size() - 1 ], it->second );
@@ -753,10 +757,10 @@ void loadCFGs( KernelConnection *myKernel )
 }
 
 
+#if 0
 #include "traceeditsequence.h"
 #include "traceeditactions.h"
 #include "traceeditstates.h"
-
 void testSequence( KernelConnection *myKernel )
 {
   vector<std::string> tmpV;
@@ -770,7 +774,41 @@ void testSequence( KernelConnection *myKernel )
   seq->addState( TraceEditSequence::traceOptionsState, tmpOptionsState );
   seq->execute( tmpV );
 }
+#endif
 
+#if 0
+#include "ktrace.h"
+#include "tracebodyio_v1.h"
+void testReadWritePerformance( KernelConnection *myKernel )
+{
+  string traceFileName = "/home/eloy/traces/wxparaver_traza_no_carga/siesta.1.1500mcycles.prv";
+  KTrace myTrace( traceFileName, NULL, true );
+  std::fstream outputTrace;
+  TraceBodyIO_v1 body;
+
+  traceFileName += ".tmp";
+  outputTrace.open( traceFileName.c_str(), std::ios::out );
+  myTrace.dumpFileHeader( outputTrace );
+
+  MemoryTrace::iterator *it = myTrace.begin();
+  while( !it->isNull() )
+  {
+    if ( ( it->getType() == STATE + BEGIN ) ||
+         ( it->getType() == EVENT ) ||
+         ( it->getType() == COMM + LOG + SEND )
+       )
+    {
+      body.write( outputTrace, myTrace, it );
+    }
+
+    ++(*it);
+  }
+
+  delete it;
+
+  outputTrace.close();
+}
+#endif
 
 int main( int argc, char *argv[] )
 {
@@ -781,6 +819,12 @@ int main( int argc, char *argv[] )
   {
     KernelConnection *myKernel = new LocalKernel( NULL );
     testSequence( myKernel );
+    return 1;
+  }
+#elif 0
+  {
+    KernelConnection *myKernel = new LocalKernel( NULL );
+    testReadWritePerformance( myKernel );
     return 1;
   }
 #else

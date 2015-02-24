@@ -69,7 +69,8 @@ void GNUPlotOutput::dumpHistogram( Histogram *whichHisto,
                                    string& strOutputFile,
                                    bool onlySelectedPlane,
                                    bool hideEmptyColumns,
-                                   bool withLabels )
+                                   bool withLabels,
+                                   bool withPreferencesPrecision )
 {
   if( strOutputFile.rfind( string( ".gnuplot" ) ) == string::npos )
     strOutputFile += ".gnuplot";

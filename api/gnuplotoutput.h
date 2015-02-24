@@ -43,7 +43,8 @@ class GNUPlotOutput: public Output
                                 std::string& strOutputFile,
                                 bool onlySelectedPlane = false,
                                 bool hideEmptyColumns = false,
-                                bool withLabels = true );
+                                bool withLabels = true,
+                                bool withPreferencesPrecision = true );
 
     virtual bool getMultipleFiles() const;
     virtual void setMultipleFiles( bool newValue );

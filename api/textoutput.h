@@ -50,7 +50,8 @@ class TextOutput:public Output
                         std::string& strOutputFile,
                         bool onlySelectedPlane = false,
                         bool hideEmptyColumns = false,
-                        bool withLabels = true );
+                        bool withLabels = true,
+                        bool withPreferencesPrecision = true );
 
     bool getMultipleFiles() const;
     void setMultipleFiles( bool newValue );
