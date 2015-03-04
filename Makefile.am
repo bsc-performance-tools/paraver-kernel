@@ -63,6 +63,10 @@ dist-hook:
 	$(install_sh_PROGRAM) -m 775 ./docs/filters/*.xml $(distdir)/docs/filters
 #	$(install_sh_DATA) ./docs/filters/*.xml $(distdir)/docs/filters
 
+installcheck-local:
+	test -f $(bindir)/paramedir && \
+	echo "  [paraver-kernel][lib] Installed " || ( echo "  [paraver-kernel][lib] Check failed!!!" && exit 1 )
+
 
 # Erases everything which should not be uploaded to CVS
 mrproper: distclean
