@@ -98,7 +98,7 @@ rgb SemanticColor::codeColor[ ] =
   { 132,  75,  75 }, // 38 - Not used
   { 255,  75,  75 }, // 39 - Not used
   { 255,  20,   0 }, // 40 - Not used
-  {  52,   0,   0 }, // 41 - Not used
+  {  80,   0,   0 }, // 41 - Not used
   {   0,  66,   0 }, // 42 - Not used
   { 184, 132,   0 }, // 43 - Not used
   { 100,  16,  32 }, // 44 - Not used
