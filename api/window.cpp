@@ -1140,7 +1140,8 @@ SelectionManagement< TObjectOrder, TWindowLevel > *WindowProxy::getSelectedRows(
 
 void WindowProxy::setSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
 {
-  selectedRow.setSelected( selected, onLevel );
+  if( selected.size() == myTrace->getLevelObjects( onLevel ) )
+    selectedRow.setSelected( selected, onLevel );
 }
 
 void WindowProxy::setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected )
