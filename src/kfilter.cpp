@@ -86,11 +86,10 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
     }
     for ( PRV_UINT32 i = 0; i < commFrom.size(); i++ )
     {
-      stop = functionCommFrom->execute( ( TSemanticValue ) commFrom[ i ], info );
+      stop = functionCommFrom->execute( ( TSemanticValue ) commFrom[ i ], i, info, tmpResult );
       if ( stop )
         break;
     }
-    tmpResult = functionCommFrom->getResult();
   }
 
   if ( opFromTo == AND && !tmpResult )
@@ -113,11 +112,10 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
     }
     for ( PRV_UINT32 i = 0; i < commTo.size(); i++ )
     {
-      stop = functionCommTo->execute( ( TSemanticValue ) commTo[ i ], info );
+      stop = functionCommTo->execute( ( TSemanticValue ) commTo[ i ], i, info, tmpResult );
       if ( stop )
         break;
     }
-    tmpResult = functionCommTo->getResult();
   }
 
   if ( !tmpResult )
@@ -129,11 +127,10 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
     info = ( TSemanticValue ) window->getTrace()->getCommTag( it->getCommIndex() );
     for ( PRV_UINT32 i = 0; i < commTags.size(); i++ )
     {
-      stop = functionCommTags->execute( ( TSemanticValue ) commTags[ i ], info );
+      stop = functionCommTags->execute( ( TSemanticValue ) commTags[ i ], i, info, tmpResult );
       if ( stop )
         break;
     }
-    tmpResult = functionCommTags->getResult();
   }
 
   if ( opTagSize == AND && !tmpResult )
@@ -147,11 +144,10 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
     info = ( TSemanticValue ) window->getTrace()->getCommSize( it->getCommIndex() );
     for ( PRV_UINT32 i = 0; i < commSizes.size(); i++ )
     {
-      stop = functionCommSizes->execute( ( TSemanticValue ) commSizes[ i ], info );
+      stop = functionCommSizes->execute( ( TSemanticValue ) commSizes[ i ], i, info, tmpResult );
       if ( stop ) // == false?
         break;
     }
-    tmpResult = functionCommSizes->getResult();
   }
 
   if ( !tmpResult )
@@ -179,11 +175,10 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
 
     for ( PRV_UINT32 i = 0; i < bandWidth.size(); i++ )
     {
-      stop = functionBandWidth->execute( ( TSemanticValue ) bandWidth[ i ], info );
+      stop = functionBandWidth->execute( ( TSemanticValue ) bandWidth[ i ], i, info, tmpResult );
       if ( stop )
         break;
     }
-    tmpResult = functionBandWidth->getResult();
   }
 
   return tmpResult;
@@ -200,11 +195,10 @@ bool KFilter::filterEvents( MemoryTrace::iterator *it )
     info = ( TSemanticValue ) it->getEventType();
     for ( PRV_UINT32 i = 0; i < eventTypes.size(); i++ )
     {
-      stop = functionEventTypes->execute( ( TSemanticValue ) eventTypes[ i ], info );
+      stop = functionEventTypes->execute( ( TSemanticValue ) eventTypes[ i ], i, info, tmpResult );
       if ( stop )
         break;
     }
-    tmpResult = functionEventTypes->getResult();
   }
 
   if ( opTypeValue == AND && !tmpResult )
@@ -219,11 +213,10 @@ bool KFilter::filterEvents( MemoryTrace::iterator *it )
     info = ( TSemanticValue ) it->getEventValue();
     for ( PRV_UINT32 i = 0; i < eventValues.size(); i++ )
     {
-      stop = functionEventValues->execute( ( TSemanticValue ) eventValues[ i ], info );
+      stop = functionEventValues->execute( ( TSemanticValue ) eventValues[ i ], i, info, tmpResult );
       if ( stop )
         break;
     }
-    tmpResult = functionEventValues->getResult();
   }
 
   return tmpResult;
@@ -231,21 +224,21 @@ bool KFilter::filterEvents( MemoryTrace::iterator *it )
 
 
 string FilterAll::name = "All";
-bool FilterAll::execute( TSemanticValue param, TSemanticValue data )
+bool FilterAll::execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result )
 {
   result = true;
   return true;
 }
 
 string FilterNone::name = "None";
-bool FilterNone::execute( TSemanticValue param, TSemanticValue data )
+bool FilterNone::execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result )
 {
   result = false;
   return true;
 }
 
 string FilterEqual::name = "=";
-bool FilterEqual::execute( TSemanticValue param, TSemanticValue data )
+bool FilterEqual::execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result )
 {
   result = data == param;
   if ( result )
@@ -254,7 +247,7 @@ bool FilterEqual::execute( TSemanticValue param, TSemanticValue data )
 }
 
 string FilterNotEqual::name = "!=";
-bool FilterNotEqual::execute( TSemanticValue param, TSemanticValue data )
+bool FilterNotEqual::execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result )
 {
   result = data != param;
   if ( result )
@@ -263,7 +256,7 @@ bool FilterNotEqual::execute( TSemanticValue param, TSemanticValue data )
 }
 
 string FilterGreater::name = ">";
-bool FilterGreater::execute( TSemanticValue param, TSemanticValue data )
+bool FilterGreater::execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result )
 {
   result = data > param;
   if ( result )
@@ -272,7 +265,7 @@ bool FilterGreater::execute( TSemanticValue param, TSemanticValue data )
 }
 
 string FilterFewer::name = "<";
-bool FilterFewer::execute( TSemanticValue param, TSemanticValue data )
+bool FilterFewer::execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result )
 {
   result = data < param;
   if ( result )
@@ -281,25 +274,23 @@ bool FilterFewer::execute( TSemanticValue param, TSemanticValue data )
 }
 
 string FilterRange::name = "[x,y]";
-bool FilterRange::execute( TSemanticValue param, TSemanticValue data )
+bool FilterRange::execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result )
 {
   bool tmp = true;
 
-  if ( position == MINOR )
+  if ( numParam == 0 )
   {
     result = data >= param;
     if ( result )
     {
       tmp = false;
-      position = MAJOR;
     }
     else
       tmp = true;
   }
-  else if ( position == MAJOR )
+  else if ( numParam == 1 )
   {
     result = data <= param;
-    position = MINOR;
     tmp = true;
   }
   return tmp;
@@ -544,17 +535,18 @@ void KFilter::getValidEvents( vector<TEventType>& onVector,
                               const set<TEventType>& eventsLoaded ) const
 {
   bool stop = true;
+  bool tmpResult;
 
   for ( set<TEventType>::const_iterator itEvt = eventsLoaded.begin();
         itEvt != eventsLoaded.end(); ++itEvt )
   {
     for ( PRV_UINT32 i = 0; i < eventTypes.size(); i++ )
     {
-      stop = functionEventTypes->execute( ( TSemanticValue ) eventTypes[ i ], ( *itEvt ) );
+      stop = functionEventTypes->execute( ( TSemanticValue ) eventTypes[ i ], i, ( *itEvt ), tmpResult );
       if ( stop )
         break;
     }
-    if( functionEventTypes->getResult() )
+    if( tmpResult )
       onVector.push_back( ( *itEvt ) );
   }
 

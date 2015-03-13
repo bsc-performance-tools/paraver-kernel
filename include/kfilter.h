@@ -52,7 +52,7 @@ class FilterFunction
     virtual ~FilterFunction()
     {}
 
-    virtual bool execute( TSemanticValue param, TSemanticValue data ) = 0;
+    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result ) = 0;
 
     virtual std::string getName() = 0;
     virtual FilterFunction *clone() = 0;
@@ -62,17 +62,8 @@ class FilterFunction
       return false;
     }
 
-    virtual bool getResult() const
-    {
-      return result;
-    }
-
     virtual TFilterNumParam getNumParameters() const = 0;
     virtual bool allowedNumParameters( TFilterNumParam numParams ) const = 0;
-
-  protected:
-    bool result;
-  private:
 
 };
 
@@ -84,7 +75,7 @@ class FilterAll: public FilterFunction
     virtual ~FilterAll()
     {}
 
-    virtual bool execute( TSemanticValue param, TSemanticValue data );
+    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result );
 
     virtual std::string getName()
     {
@@ -97,11 +88,6 @@ class FilterAll: public FilterFunction
     }
 
     virtual bool getDefaultValue() const
-    {
-      return true;
-    }
-
-    virtual bool getResult() const
     {
       return true;
     }
@@ -131,7 +117,7 @@ class FilterNotEqual: public FilterFunction
     virtual ~FilterNotEqual()
     {}
 
-    virtual bool execute( TSemanticValue param, TSemanticValue data );
+    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result );
 
     virtual std::string getName()
     {
@@ -169,7 +155,7 @@ class FilterEqual: public FilterFunction
     virtual ~FilterEqual()
     {}
 
-    virtual bool execute( TSemanticValue param, TSemanticValue data );
+    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result );
 
     virtual std::string getName()
     {
@@ -207,7 +193,7 @@ class FilterGreater: public FilterFunction
     virtual ~FilterGreater()
     {}
 
-    virtual bool execute( TSemanticValue param, TSemanticValue data );
+    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result );
 
     virtual std::string getName()
     {
@@ -244,7 +230,7 @@ class FilterFewer: public FilterFunction
     virtual ~FilterFewer()
     {}
 
-    virtual bool execute( TSemanticValue param, TSemanticValue data );
+    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result );
 
     virtual std::string getName()
     {
@@ -282,7 +268,7 @@ class FilterNone: public FilterFunction
     virtual ~FilterNone()
     {}
 
-    virtual bool execute( TSemanticValue param, TSemanticValue data );
+    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result );
 
     virtual std::string getName()
     {
@@ -320,13 +306,11 @@ class FilterRange: public FilterFunction
 {
   public:
     FilterRange()
-    {
-      position = MINOR;
-    }
+    {}
     virtual ~FilterRange()
     {}
 
-    virtual bool execute( TSemanticValue param, TSemanticValue data );
+    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result );
 
     virtual std::string getName()
     {
@@ -351,9 +335,6 @@ class FilterRange: public FilterFunction
   protected:
 
   private:
-    static const bool MINOR = true;
-    static const bool MAJOR = false;
-    bool position;
     static std::string name;
 
 };
