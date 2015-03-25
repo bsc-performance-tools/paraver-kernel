@@ -35,7 +35,7 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
                                     KRecordList *displayList )
 {
   TRecordTime myInitTime;
-  info.values.clear();
+  SemanticHighInfo info;
   info.callingInterval = this;
 
   createList = create;
@@ -149,7 +149,8 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
 
 KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc )
 {
-  info.values.clear();
+  SemanticHighInfo info;
+  info.callingInterval = this;
 
   if ( displayList == NULL )
     displayList = &myDisplayList;
@@ -235,7 +236,8 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
 
 KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc )
 {
-  info.values.clear();
+  SemanticHighInfo info;
+  info.callingInterval = this;
 
   if ( displayList == NULL )
     displayList = &myDisplayList;

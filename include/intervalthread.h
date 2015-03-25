@@ -76,6 +76,10 @@ class IntervalThread: public Interval
       function = whichFunction;
     }
 
+    virtual TWindowLevel getLevel() const
+    {
+      return THREAD;
+    }
   protected:
     KSingleWindow *window;
     SemanticThread *function;
@@ -87,7 +91,6 @@ class IntervalThread: public Interval
     virtual MemoryTrace::iterator *getPrevRecord( MemoryTrace::iterator *it,
         KRecordList *displayList );
 
-    SemanticThreadInfo info;
 };
 
 

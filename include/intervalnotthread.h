@@ -68,7 +68,6 @@ class IntervalNotThread: public IntervalHigh
     {
       return ( KWindow * ) window;
     }
-
   protected:
     KWindow *window;
     SemanticNotThread *function;

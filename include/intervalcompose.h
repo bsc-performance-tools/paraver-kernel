@@ -87,9 +87,6 @@ class IntervalCompose: public IntervalHigh
       childIntervals.push_back( whichChild );
     }
 
-    SemanticHighInfo info;
-    unsigned long long counter;
-
   protected:
     KWindow *window;
     SemanticCompose *function;

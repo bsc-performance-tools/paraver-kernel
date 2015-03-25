@@ -80,16 +80,14 @@ class IntervalCPU: public IntervalHigh
   protected:
     KSingleWindow *window;
     SemanticCPU *function;
+    TCreateList createList;
     SemanticThread *functionThread;
     SemanticCompose *functionComposeThread;
-    TCreateList createList;
     std::vector<IntervalCompose *> intervalCompose;
     std::vector<IntervalThread *> intervalThread;
-    std::map<TThreadOrder, TThreadOrder> threadOrderOnCPU;
+    TThreadOrder firstThreadOnCPU;
 
   private:
-    bool emptyCPU;
-
     virtual MemoryTrace::iterator *getNextRecord( MemoryTrace::iterator *it,
         KRecordList *displayList );
     virtual MemoryTrace::iterator *getPrevRecord( MemoryTrace::iterator *it,

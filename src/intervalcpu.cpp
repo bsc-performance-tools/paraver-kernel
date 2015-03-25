@@ -40,33 +40,29 @@ IntervalCPU::IntervalCPU( KSingleWindow *whichWindow, TWindowLevel whichLevel,
   function = NULL;
   functionThread = NULL;
   functionComposeThread = NULL;
-  emptyCPU = false;
 
   TNodeOrder tmpNode;
   TCPUOrder tmpCPU;
   window->getTrace()->getCPULocation( whichOrder, tmpNode, tmpCPU );
   std::vector<TThreadOrder> tmpThreads;
   window->getTrace()->getThreadsPerNode( tmpNode, tmpThreads );
-  if( tmpThreads.empty() )
-  {
-    emptyCPU = true;
-  }
+
+  if( tmpThreads .empty() )
+    firstThreadOnCPU = 0;
   else
+    firstThreadOnCPU = tmpThreads[ 0 ];
+
+  int i = 0;
+  for( std::vector<TThreadOrder>::iterator it = tmpThreads.begin(); it != tmpThreads.end(); ++it )
   {
-    int i = 0;
-    for( std::vector<TThreadOrder>::iterator it = tmpThreads.begin(); it != tmpThreads.end(); ++it )
-    {
-      intervalThread.push_back( new IntervalThread( whichWindow, THREAD, *it ) );
-      intervalThread[ i ]->setNotWindowInits( true );
+    intervalThread.push_back( new IntervalThread( whichWindow, THREAD, *it ) );
+    intervalThread[ i ]->setNotWindowInits( true );
 
-      intervalCompose.push_back( new IntervalCompose( whichWindow, COMPOSETHREAD, *it ) );
-      intervalCompose[ i ]->setNotWindowInits( true );
-      intervalCompose[ i ]->setCustomChild( intervalThread[ i ] );
+    intervalCompose.push_back( new IntervalCompose( whichWindow, COMPOSETHREAD, *it ) );
+    intervalCompose[ i ]->setNotWindowInits( true );
+    intervalCompose[ i ]->setCustomChild( intervalThread[ i ] );
 
-      threadOrderOnCPU[ *it ] = i;
-
-      ++i;
-    }
+    ++i;
   }
 }
 
@@ -101,7 +97,7 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
     return displayList;
   }
 
-  if( emptyCPU )
+  if( intervalCompose.empty() )
   {
     begin = window->copyCPUIterator( window->getCPUBeginRecord( order - 1 ) );
     end = window->copyCPUIterator( window->getCPUEndRecord( order - 1 ) );
@@ -143,10 +139,10 @@ KRecordList *IntervalCPU::calcNext( KRecordList *displayList, bool initCalc )
     *begin = *end;
   }
 
-  if( emptyCPU )
+  if( intervalCompose.empty() )
     return displayList;
 
-  Interval *currentThread = intervalCompose[ threadOrderOnCPU[ begin->getThread()] ];
+  Interval *currentThread = intervalCompose[ begin->getThread() - firstThreadOnCPU ];
   highInfo.callingInterval = this;
   if( begin->getType() == STATE + END )
     highInfo.values.push_back( 0.0 );
@@ -179,12 +175,12 @@ KRecordList *IntervalCPU::calcPrev( KRecordList *displayList, bool initCalc )
     *end = *begin;
   }
 
-  if( emptyCPU )
+  if( intervalCompose.empty() )
     return displayList;
 
   begin = getPrevRecord( begin, displayList );
   highInfo.callingInterval = this;
-  Interval *currentThread = intervalCompose[ threadOrderOnCPU[ begin->getThread()] ];
+  Interval *currentThread = intervalCompose[ begin->getThread() - firstThreadOnCPU ];
   while( currentThread->getBeginTime() >= begin->getTime() &&
          currentThread->getEndTime() > 0.0 )
     currentThread->calcPrev( NULL );

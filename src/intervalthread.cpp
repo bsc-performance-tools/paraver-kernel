@@ -35,7 +35,6 @@ KRecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
 {
   createList = NOCREATE;
   currentValue = 0.0;
-  info.callingInterval = this;
 
   if ( displayList == NULL )
   {
@@ -44,7 +43,7 @@ KRecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
   }
 
   if( !notWindowInits )
-    function = ( SemanticThread * ) window->getSemanticFunction( level );
+    function = ( SemanticThread * ) window->getSemanticFunction( THREAD );
 
   if ( begin != NULL )
     delete begin;
@@ -75,6 +74,9 @@ KRecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
 
 KRecordList *IntervalThread::calcNext( KRecordList *displayList, bool initCalc )
 {
+  SemanticThreadInfo info;
+  info.callingInterval = this;
+
   if ( displayList == NULL )
     displayList = &myDisplayList;
 
@@ -93,6 +95,9 @@ KRecordList *IntervalThread::calcNext( KRecordList *displayList, bool initCalc )
 
 KRecordList *IntervalThread::calcPrev( KRecordList *displayList, bool initCalc )
 {
+  SemanticThreadInfo info;
+  info.callingInterval = this;
+
   if ( displayList == NULL )
     displayList = &myDisplayList;
 

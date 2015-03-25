@@ -48,7 +48,7 @@ class Interval
     }
 
     Interval( TWindowLevel whichLevel, TObjectOrder whichOrder ):
-        level( whichLevel ), order( whichOrder )
+        order( whichOrder )
     {
       begin = NULL;
       end = NULL;
@@ -86,10 +86,7 @@ class Interval
       return end;
     }
 
-    TWindowLevel getLevel()
-    {
-      return level;
-    }
+    virtual TWindowLevel getLevel() const = 0;
 
     TObjectOrder getOrder()
     {
@@ -119,7 +116,6 @@ class Interval
     virtual KWindow *getWindow() = 0;
 
   protected:
-    TWindowLevel level;
     TObjectOrder order;
     MemoryTrace::iterator *begin;
     MemoryTrace::iterator *end;

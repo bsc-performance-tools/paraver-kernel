@@ -40,14 +40,19 @@ class IntervalHigh: public Interval
     {}
 
     IntervalHigh( TWindowLevel whichLevel, TObjectOrder whichOrder ):
-        Interval( whichLevel, whichOrder ), lastLevel( NONE )
+        Interval( whichLevel, whichOrder ), level( whichLevel ), lastLevel( NONE )
     {}
 
     ~IntervalHigh()
     {}
 
+    TWindowLevel getLevel() const
+    {
+      return level;
+    }
   protected:
     std::vector<Interval *> childIntervals;
+    TWindowLevel level;
     TWindowLevel lastLevel;
 
     virtual void setChilds() = 0;
