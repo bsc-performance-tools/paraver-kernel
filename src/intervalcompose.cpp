@@ -66,10 +66,6 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
     joinBursts = true;
     endRecord = ( ( KSingleWindow * ) window )->getEndRecord();
     beginRecord = ( ( KSingleWindow * ) window )->getBeginRecord();
-
-    // lastEnd to control loop!
-    lastEnd = endRecord;
-    firstBegin = beginRecord;
   }
   else
   {
@@ -102,6 +98,7 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
   if ( joinBursts )
   {
     TSemanticValue tmpValue;
+    MemoryTrace::iterator *lastEnd = endRecord;
 
     tmpValue = childIntervals[ 0 ]->getValue();
     childIntervals[ 0 ]->calcNext( displayList );
@@ -130,6 +127,8 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
       childIntervals[ 0 ]->calcNext( displayList );
     }
     currentValue = tmpValue;
+    if( lastEnd != NULL && lastEnd != endRecord )
+      delete lastEnd;
   }
   else
   {
@@ -158,6 +157,7 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
   if ( joinBursts )
   {
     TSemanticValue tmpValue;
+    MemoryTrace::iterator *lastEnd;
 
     // lastEnd to control loop! Initialized with endRecord.
     lastEnd = endRecord;
@@ -209,6 +209,8 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
       childIntervals[ 0 ]->calcNext( displayList );
     }
     currentValue = tmpValue;
+    if( lastEnd != NULL && lastEnd != endRecord )
+      delete lastEnd;
   }
   else
   {
@@ -245,6 +247,7 @@ KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc 
   if ( joinBursts )
   {
     TSemanticValue tmpValue;
+    MemoryTrace::iterator *firstBegin;
 
     // firstBegin to control loop! Initialized with beginRecord.
     firstBegin = beginRecord;
@@ -272,6 +275,8 @@ KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc 
 
       childIntervals[ 0 ]->calcPrev( displayList );
     }
+    if( firstBegin != NULL && firstBegin != beginRecord )
+      delete firstBegin;
   }
   else
   {

@@ -104,8 +104,6 @@ class IntervalCompose: public IntervalHigh
     bool joinBursts;
     MemoryTrace::iterator *endRecord;
     MemoryTrace::iterator *beginRecord;
-    MemoryTrace::iterator *lastEnd;
-    MemoryTrace::iterator *firstBegin;
 
 };
 
