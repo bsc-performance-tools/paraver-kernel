@@ -86,6 +86,7 @@ class IntervalCPU: public IntervalHigh
     std::vector<IntervalCompose *> intervalCompose;
     std::vector<IntervalThread *> intervalThread;
     TThreadOrder firstThreadOnCPU;
+    TRecordTime currentInitialTime;
 
   private:
     virtual MemoryTrace::iterator *getNextRecord( MemoryTrace::iterator *it,
