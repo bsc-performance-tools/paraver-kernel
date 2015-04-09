@@ -982,7 +982,8 @@ class WindowProxy: public Window
                                           std::vector< hash_set< commCoord > >& commsToDraw,    // O
                                           ProgressController *progress );
 
-    virtual void computeSemanticRowParallel( TObjectOrder firstRow,
+    virtual void computeSemanticRowParallel( int numRows,
+                                             TObjectOrder firstRow,
                                              TObjectOrder lastRow,
                                              std::vector< TObjectOrder >& selectedSet,
                                              std::vector< bool >& selected,
@@ -1022,22 +1023,23 @@ class WindowProxy: public Window
                                           std::vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,   // I/O
                                           ProgressController *progress );
 
-#pragma omp task shared( firstRow, lastRow, selectedSet, selected, timeStep, timePos, objectAxisPos, objectPosList, drawCaution, rowComputedMaxY, rowComputedMinY, valuesToDraw, eventsToDraw, commsToDraw, progress )
-    void computeSemanticRowParallel( TObjectOrder firstRow,
-                                             TObjectOrder lastRow,
-                                             std::vector< TObjectOrder >& selectedSet,
-                                             std::vector< bool >& selected,
-                                             TTime timeStep,
-                                             PRV_INT32 timePos,
-                                             PRV_INT32 objectAxisPos,
-                                             std::vector< PRV_INT32 >& objectPosList,
-                                             int& drawCaution,                                    // I/O
-                                             TSemanticValue &rowComputedMaxY,
-                                             TSemanticValue &rowComputedMinY,
-                                             std::vector< TSemanticValue >& valuesToDraw,         // I/O
-                                             hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
-                                             hash_set< commCoord, hashCommCoord >& commsToDraw,
-                                             ProgressController *progress ); // I/O
+#pragma omp task shared( numRows, firstRow, lastRow, selectedSet, selected, timeStep, timePos, objectAxisPos, objectPosList, drawCaution, rowComputedMaxY, rowComputedMinY, valuesToDraw, eventsToDraw, commsToDraw, progress )
+    void computeSemanticRowParallel( int numRows,
+                                     TObjectOrder firstRow,
+                                     TObjectOrder lastRow,
+                                     std::vector< TObjectOrder >& selectedSet,
+                                     std::vector< bool >& selected,
+                                     TTime timeStep,
+                                     PRV_INT32 timePos,
+                                     PRV_INT32 objectAxisPos,
+                                     std::vector< PRV_INT32 >& objectPosList,
+                                     int& drawCaution,                                    // I/O
+                                     TSemanticValue &rowComputedMaxY,
+                                     TSemanticValue &rowComputedMinY,
+                                     std::vector< TSemanticValue >& valuesToDraw,         // I/O
+                                     hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
+                                     hash_set< commCoord, hashCommCoord >& commsToDraw,
+                                     ProgressController *progress ); // I/O
 
     virtual void computeEventsCommsParallel( RecordList *records,
                                              TTime from,

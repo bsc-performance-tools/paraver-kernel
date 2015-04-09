@@ -1740,13 +1740,11 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   tmpComputedMinY.reserve( numRows );
 
 #ifndef PARALLEL_ENABLED
+  paramProgress = progress;
   if( numRows > 1 )
     progress->setEndLimit( numRows );
   else
-  {
     progress->setEndLimit( getWindowEndTime() - getWindowBeginTime() );
-    paramProgress = progress;
-  }
 #endif // PARALLEL_ENABLED
 
   // Drawmode: Group objects with same wxCoord in objectPosList
@@ -1777,7 +1775,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   Extrae_eventandcounters( 200, firstObj + 1 );
 #endif
     computeSemanticRowParallel(
-            firstObj, lastObj, selectedSet, selected, timeStep, timePos,
+            numRows, firstObj, lastObj, selectedSet, selected, timeStep, timePos,
             objectAxisPos, objectPosList,
             tmpDrawCaution[ tmpDrawCaution.size() - 1 ],
             tmpComputedMaxY[ tmpComputedMaxY.size() - 1 ],
@@ -1828,7 +1826,8 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
 }
 
 #ifdef WIN32
-void WindowProxy::computeSemanticRowParallel( TObjectOrder firstRow,
+void WindowProxy::computeSemanticRowParallel( int numRows,
+                                              TObjectOrder firstRow,
                                               TObjectOrder lastRow,
                                               vector< TObjectOrder >& selectedSet,
                                               vector< bool >& selected,
@@ -1844,7 +1843,8 @@ void WindowProxy::computeSemanticRowParallel( TObjectOrder firstRow,
                                               hash_set< commCoord >& commsToDraw,
                                               ProgressController *progress )
 #else
-void WindowProxy::computeSemanticRowParallel( TObjectOrder firstRow,
+void WindowProxy::computeSemanticRowParallel( int numRows,
+                                              TObjectOrder firstRow,
                                               TObjectOrder lastRow,
                                               vector< TObjectOrder >& selectedSet,
                                               vector< bool >& selected,
@@ -1912,7 +1912,8 @@ void WindowProxy::computeSemanticRowParallel( TObjectOrder firstRow,
     {
       if( progress->getStop() )
         break;
-      progress->setCurrentProgress( currentTime - getWindowBeginTime() );
+      if( numRows == 1 )
+        progress->setCurrentProgress( currentTime - getWindowBeginTime() );
     }
   }
 
