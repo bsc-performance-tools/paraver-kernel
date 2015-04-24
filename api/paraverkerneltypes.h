@@ -38,7 +38,7 @@
 
 typedef unsigned long long TTraceSize;
 
-typedef PRV_UINT16        TObjectOrder;
+typedef PRV_UINT32        TObjectOrder;
 
 typedef TObjectOrder  TThreadOrder;
 typedef TObjectOrder  TTaskOrder;
