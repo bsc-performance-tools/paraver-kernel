@@ -1,5 +1,22 @@
 # AX_PROG_ENABLE_TRACING
 # -----------
+AC_DEFUN([AX_PROG_ENABLE_EXTENDED_OBJECTS],
+[
+  AC_ARG_ENABLE(exteded_objects,
+    AC_HELP_STRING(
+      [--enable-extended-objects],
+      [Enable extension in number of objects. (Disabled by default)]
+    ),
+    [enable_extended_objects="${enableval}"],
+    [enable_extended_objects="no"]
+  )
+  if test "${enable_extended_objects}" = "yes" ; then
+    AC_DEFINE([EXTENDED_OBJECTS_ENABLED], 1, [Extended number of objects enabled by user.])
+  fi
+])
+
+# AX_PROG_ENABLE_TRACING
+# -----------
 AC_DEFUN([AX_PROG_ENABLE_TRACING],
 [
   AC_ARG_ENABLE(tracing,
