@@ -32,6 +32,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 #include "processmodelappl.h"
 
 class Trace;
@@ -132,6 +133,7 @@ class ProcessModel
     std::vector<ThreadLocation> threads;
     std::vector<TaskLocation> tasks;
     std::vector<ProcessModelAppl> applications;
+    std::map< TNodeOrder, std::vector<TThreadOrder> > threadsPerNode;
 
     bool ready;
 

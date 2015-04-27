@@ -191,6 +191,12 @@ ProcessModel::ProcessModel( istringstream& headerInfo, Trace *whichTrace )
           threads[ globalThreads ].appl = countAppl;
           threads[ globalThreads ].task = countTask;
           threads[ globalThreads ].thread = countThread;
+
+          map<TNodeOrder, vector<TThreadOrder> >::iterator nodeIt = threadsPerNode.find( numberNode - 1 );
+          if( nodeIt == threadsPerNode.end() )
+            threadsPerNode[ numberNode - 1 ] = vector<TThreadOrder>();
+          threadsPerNode[ numberNode - 1 ].push_back( globalThreads );
+
           ++globalThreads;
         }
       }
@@ -269,7 +275,8 @@ void ProcessModel::getThreadsPerNode( TNodeOrder inNode, vector<TThreadOrder>& o
 {
   onVector.clear();
 
-  for ( vector<ProcessModelAppl>::const_iterator itAppl = applications.begin();
+  onVector = threadsPerNode.find( inNode )->second;
+/*  for ( vector<ProcessModelAppl>::const_iterator itAppl = applications.begin();
         itAppl != applications.end(); ++itAppl )
   {
     for ( vector<ProcessModelTask>::const_iterator itTask = itAppl->tasks.begin();
@@ -283,6 +290,7 @@ void ProcessModel::getThreadsPerNode( TNodeOrder inNode, vector<TThreadOrder>& o
       }
     }
   }
+  */
 }
 
 bool ProcessModel::isValidThread( TThreadOrder whichThread ) const
