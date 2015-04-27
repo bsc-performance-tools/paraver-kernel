@@ -1,8 +1,8 @@
-# AX_PROG_ENABLE_TRACING
+# AX_PROG_ENABLE_EXTENDED_OBJECTS
 # -----------
 AC_DEFUN([AX_PROG_ENABLE_EXTENDED_OBJECTS],
 [
-  AC_ARG_ENABLE(exteded_objects,
+  AC_ARG_ENABLE(extended_objects,
     AC_HELP_STRING(
       [--enable-extended-objects],
       [Enable extension in number of objects. (Disabled by default)]
