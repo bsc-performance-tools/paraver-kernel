@@ -39,20 +39,35 @@
 #include "traceoptions.h"
 
 #define MAX_FILENAME_SIZE 2048
-//#define MAX_TRACE_HEADER 1048576
-//#define MAX_HEADER_SIZE 1048576
-#define MAX_TRACE_HEADER 1572864
-#define MAX_HEADER_SIZE  1572864
+
+#ifdef EXTENDED_OBJECTS_ENABLED
+  #define MAX_TRACE_HEADER 1572864
+  #define MAX_HEADER_SIZE  1572864
+#else
+  #define MAX_TRACE_HEADER 1048576
+  #define MAX_HEADER_SIZE  1048576
+#endif
+
 #define MAX_APPL 32
-//#define MAX_TASK 65536
-#define MAX_TASK 147456
+#ifdef EXTENDED_OBJECTS_ENABLED
+  #define MAX_TASK 147456
+#else
+  #define MAX_TASK  65536
+#endif
 #define MAX_THREAD 16
 #define MAX_SELECTED_TASKS 30
 #define MAX_LINE_SIZE 8192
+
 /* sofware counters */
 /*#define MAX_TYPES 100 */
 #define MAX_VALUES 100
-#define MAX_THREADS 65536
+
+#ifdef EXTENDED_OBJECTS_ENABLED
+  #define MAX_THREADS 147456
+#else
+  #define MAX_THREADS  65536
+#endif
+
 #define MAXSTATES 20
 #define MAX_STATE_NAME_SIZE 256
 

@@ -38,7 +38,11 @@
 
 typedef unsigned long long TTraceSize;
 
+#ifdef EXTENDED_OBJECTS_ENABLED
 typedef PRV_UINT32        TObjectOrder;
+#else
+typedef PRV_UINT16        TObjectOrder;
+#endif
 
 typedef TObjectOrder  TThreadOrder;
 typedef TObjectOrder  TTaskOrder;
