@@ -53,6 +53,8 @@ if test "${enable_otf2prv}" = "yes" ; then
   AC_SUBST(OTF2_DIR)
 fi
 
+AX_PROG_ENABLE_EXTENDED_OBJECTS
+
 ######################################################################
 #    Checks for typedefs, structures and compiler characteristics    #
 ######################################################################
