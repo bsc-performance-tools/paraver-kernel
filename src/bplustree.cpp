@@ -841,6 +841,7 @@ TTime BPlusTree::finish( TTime headerTime, Trace *whichTrace )
   TRecord tmpBegin, tmpEnd;
 
   unload( );
+
   if ( unloadedTrace->getEnd()->time > headerTime )
     headerTime = unloadedTrace->getEnd()->time;
 
@@ -872,6 +873,8 @@ TTime BPlusTree::finish( TTime headerTime, Trace *whichTrace )
   {
     tmpBegin.CPU = i + 1;
     tmpEnd.CPU = i + 1;
+/* Only used by "Thread ID" semantic function whith Resource view.
+   Loading time increased by getThreadsPerNode on very large traces.
     TNodeOrder tmpNode;
     TCPUOrder tmpCPU;
     whichTrace->getCPULocation( i + 1, tmpNode, tmpCPU );
@@ -887,6 +890,10 @@ TTime BPlusTree::finish( TTime headerTime, Trace *whichTrace )
       tmpBegin.thread = tmpThreads[ 0 ];
       tmpEnd.thread = tmpThreads[ 0 ];
     }
+*/
+    tmpBegin.thread = 0;
+    tmpEnd.thread = 0;
+
     tmpBegin.next = unloadedTrace->getCPUBegin( i );
     tmpBegin.prev = NULL;
     tmpEnd.next = NULL;

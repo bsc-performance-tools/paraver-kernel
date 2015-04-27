@@ -44,15 +44,18 @@ RowLabels::RowLabels()
 
 RowLabels::RowLabels( const string& filename )
 {
+  string strLine;
+  string strLevel;
+  string strSize;
+  istringstream auxStream;
+  istringstream sizeStream;
+
   ifstream rowFile( filename.c_str() );
   if ( !rowFile )
     return;
 
   while ( !rowFile.eof() )
   {
-    string strLine;
-    string strLevel;
-    string strSize;
     vector<string> *tmpvector = NULL;
 
     getline( rowFile, strLine );
@@ -61,7 +64,8 @@ RowLabels::RowLabels( const string& filename )
     else if ( strLine[ 0 ] == '#' )
       continue;
 
-    istringstream auxStream( strLine );
+    auxStream.clear();
+    auxStream.str( strLine );
     getline( auxStream, strLevel, ' ' ); // 'LEVEL'
     getline( auxStream, strLevel, ' ' );
 
@@ -86,7 +90,8 @@ RowLabels::RowLabels( const string& filename )
     getline( auxStream, strSize, ' ' ); // 'SIZE'
     getline( auxStream, strSize );
 
-    istringstream sizeStream( strSize );
+    sizeStream.clear();
+    sizeStream.str( strSize );
     int size;
 
     if ( !( sizeStream >> size ) )
@@ -97,7 +102,7 @@ RowLabels::RowLabels( const string& filename )
     {
       getline( rowFile, strLine );
       tmpvector->push_back( strLine );
-      i++;
+      ++i;
     }
 
   }
