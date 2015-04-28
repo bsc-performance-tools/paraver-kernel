@@ -813,6 +813,7 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
   }
   else
 #endif
+
   recursiveExecution( beginTime, endTime, 0, numRows - 1, selectedRows, needInit, true, progress );
 
 #ifdef PARALLEL_ENABLED
@@ -1207,6 +1208,9 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 {
   Window *currentWindow = orderedWindows[ winIndex ];
   int currentRow = 0;
+  int progressDelta;
+  if( progress != NULL )
+    progressDelta = (int)floor( selectedRows.size() * 0.01 );
 
   if ( data == NULL )
   {
@@ -1279,7 +1283,8 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     {
       if( progress->getStop() )
         break;
-      progress->setCurrentProgress( currentRow );
+      if( selectedRows.size() <= 100 || currentRow % progressDelta == 0 )
+        progress->setCurrentProgress( currentRow );
     }
     ++currentRow;
   }

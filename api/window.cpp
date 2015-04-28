@@ -351,8 +351,6 @@ bool WindowProxy::getUsedByHistogram()
 
 void WindowProxy::setWindowBeginTime( TRecordTime whichTime, bool isBroadcast )
 {
-  yScaleComputed = false;
-
   winBeginTime = whichTime;
   if( sync && !isBroadcast )
     SyncWindows::getInstance()->broadcastTime( syncGroup, this, winBeginTime, winEndTime );
@@ -360,8 +358,6 @@ void WindowProxy::setWindowBeginTime( TRecordTime whichTime, bool isBroadcast )
 
 void WindowProxy::setWindowEndTime( TRecordTime whichTime, bool isBroadcast )
 {
-  yScaleComputed = false;
-
   winEndTime = whichTime;
   if( sync && !isBroadcast )
     SyncWindows::getInstance()->broadcastTime( syncGroup, this, winBeginTime, winEndTime );
@@ -539,6 +535,7 @@ bool WindowProxy::setLevelFunction( TWindowLevel whichLevel,
   bool result = myWindow->setLevelFunction( whichLevel, whichFunction );
   if ( result )
     yScaleComputed = false;
+
   return result;
 }
 
@@ -1820,6 +1817,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
     else if( tmpComputedMinY[ pos ] != 0.0 )
       computedMinY = computedMinY < tmpComputedMinY[ pos ] ? computedMinY : tmpComputedMinY[ pos ];
   }
+
 #ifdef TRACING_ENABLED
   Extrae_eventandcounters( 100, 0 );
 #endif
