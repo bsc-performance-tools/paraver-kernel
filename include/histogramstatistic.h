@@ -31,6 +31,7 @@
 #define HISTOGRAMSTATISTIC_H_INCLUDED
 
 #include <string>
+#include <map>
 #include "paraverkerneltypes.h"
 
 class KHistogram;
@@ -231,7 +232,7 @@ class StatAvgBytesSent: public HistogramStatistic
 #ifdef PARALLEL_ENABLED
     CubeBuffer *numComms;
 #else
-    std::vector<std::vector<TSemanticValue> > numComms;
+    std::vector<std::map<TObjectOrder, TSemanticValue> > numComms;
 #endif
 };
 
@@ -268,7 +269,7 @@ class StatAvgBytesReceived: public HistogramStatistic
 #ifdef PARALLEL_ENABLED
     CubeBuffer *numComms;
 #else
-    std::vector<std::vector<TSemanticValue> > numComms;
+    std::vector<std::map<TObjectOrder, TSemanticValue> > numComms;
 #endif
 };
 
@@ -305,7 +306,7 @@ class StatMinBytesSent: public HistogramStatistic
 #ifdef PARALLEL_ENABLED
     CubeBuffer *min;
 #else
-    std::vector<std::vector<TSemanticValue> > min;
+    std::vector<std::map<TObjectOrder, TSemanticValue> > min;
 #endif
 };
 
@@ -342,7 +343,7 @@ class StatMinBytesReceived: public HistogramStatistic
 #ifdef PARALLEL_ENABLED
     CubeBuffer *min;
 #else
-    std::vector<std::vector<TSemanticValue> > min;
+    std::vector<std::map<TObjectOrder, TSemanticValue> > min;
 #endif
 };
 
@@ -379,7 +380,7 @@ class StatMaxBytesSent: public HistogramStatistic
 #ifdef PARALLEL_ENABLED
     CubeBuffer *max;
 #else
-    std::vector<std::vector<TSemanticValue> > max;
+    std::vector<std::map<TObjectOrder, TSemanticValue> > max;
 #endif
 };
 
@@ -416,7 +417,7 @@ class StatMaxBytesReceived: public HistogramStatistic
 #ifdef PARALLEL_ENABLED
     CubeBuffer *max;
 #else
-    std::vector<std::vector<TSemanticValue> > max;
+    std::vector<std::map<TObjectOrder, TSemanticValue> > max;
 #endif
 };
 
@@ -1005,7 +1006,7 @@ class Statistics
 #ifndef PARALLEL_ENABLED
     static std::vector<TSemanticValue> zeroVector;
     static std::vector<std::vector<TSemanticValue> > zeroMatrix;
-    static std::vector<std::vector<TSemanticValue> > zeroCommMatrix;
+    static std::vector<std::map<TObjectOrder, TSemanticValue> > zeroCommMatrix;
 #endif
 
     static int getNumCommStats();

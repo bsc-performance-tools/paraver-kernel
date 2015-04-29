@@ -70,7 +70,7 @@ inline bool filterBurstTime( TRecordTime burstTime, KHistogram *histogram )
 #ifndef PARALLEL_ENABLED
 vector<TSemanticValue> Statistics::zeroVector;
 vector<vector<TSemanticValue> > Statistics::zeroMatrix;
-vector<vector<TSemanticValue> > Statistics::zeroCommMatrix;
+vector<map<TObjectOrder, TSemanticValue> > Statistics::zeroCommMatrix;
 #endif
 
 int Statistics::getNumCommStats()
@@ -88,7 +88,7 @@ void Statistics::initAllComm( KHistogram *whichHistogram )
 #ifndef PARALLEL_ENABLED
   zeroCommMatrix.clear();
   for ( THistogramColumn iPlane = 0; iPlane < whichHistogram->getNumPlanes(); ++iPlane )
-    zeroCommMatrix.push_back( vector<TSemanticValue>( whichHistogram->getControlWindow()->getWindowLevelObjects(), 0.0 ) );
+    zeroCommMatrix.push_back( map<TObjectOrder, TSemanticValue>() );
 #endif
 
   statNumSends.init( whichHistogram );
@@ -592,6 +592,9 @@ TSemanticValue StatAvgBytesSent::execute( CalculateData *data )
   if ( data->comm->getType() & SEND )
   {
 #ifndef PARALLEL_ENABLED
+//    ++( ( numComms[ data->plane ] )[ getPartner( data ) ] );
+    if( numComms[ data->plane ].count( getPartner( data ) ) == 0 )
+      ( numComms[ data->plane ] )[ getPartner( data ) ] = 0.0;
     ++( ( numComms[ data->plane ] )[ getPartner( data ) ] );
 #else
     numComms->addValue( data->plane, data->row, getPartner( data ), vector< TSemanticValue >( 1, 1.0 ) );
@@ -675,6 +678,9 @@ TSemanticValue StatAvgBytesReceived::execute( CalculateData *data )
   if ( data->comm->getType() & RECV )
   {
 #ifndef PARALLEL_ENABLED
+    //++( ( numComms[ data->plane ] )[ getPartner( data ) ] );
+    if( numComms[ data->plane ].count( getPartner( data ) ) == 0 )
+      ( numComms[ data->plane ] )[ getPartner( data ) ] = 0.0;
     ++( ( numComms[ data->plane ] )[ getPartner( data ) ] );
 #else
     numComms->addValue( data->plane, data->row, getPartner( data ), vector< TSemanticValue >( 1, 1.0 ) );

@@ -1210,7 +1210,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
   int currentRow = 0;
   int progressDelta;
   if( progress != NULL )
-    progressDelta = (int)floor( selectedRows.size() * 0.01 );
+    progressDelta = (int)floor( selectedRows.size() * 0.005 );
 
   if ( data == NULL )
   {
@@ -1283,7 +1283,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     {
       if( progress->getStop() )
         break;
-      if( selectedRows.size() <= 100 || currentRow % progressDelta == 0 )
+      if( selectedRows.size() <= 200 || currentRow % progressDelta == 0 )
         progress->setCurrentProgress( currentRow );
     }
     ++currentRow;
