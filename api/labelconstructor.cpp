@@ -73,7 +73,12 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
                                       bool showRowText )
 {
   if( showRowText )
-    rowStr = whichTrace->getRowLabel( level, globalOrder );
+  {
+    if( level >= WORKLOAD && level <= THREAD )
+      rowStr = whichTrace->getRowLabel( level, globalOrder );
+    else if( level >= SYSTEM && level <= CPU && globalOrder > 0 )
+      rowStr = whichTrace->getRowLabel( level, globalOrder - 1 );
+  }
   else
     rowStr = "";
   sstrObjectLabel.clear();

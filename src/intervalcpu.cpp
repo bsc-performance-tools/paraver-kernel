@@ -95,11 +95,22 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
     return displayList;
   }
 
+
+  for( std::vector<IntervalThread *>::iterator it = intervalThread.begin();
+       it != intervalThread.end(); ++it )
+  {
+    if( (*it) != NULL )
+      (*it)->setSemanticFunction( functionThread );
+  }
+
   for( std::vector<IntervalCompose *>::iterator it = intervalCompose.begin();
        it != intervalCompose.end(); ++it )
   {
     if( (*it) != NULL )
+    {
+      (*it)->setSemanticFunction( functionComposeThread );
       (*it)->init( initialTime, NOCREATE, NULL );
+    }
   }
 
   begin = window->copyCPUIterator( window->getCPURecordByTime( order - 1 ) );
