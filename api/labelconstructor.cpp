@@ -433,16 +433,16 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
   else
   {
     if ( infoType == OBJECT_TYPE )
-      sstrSemanticLabel << LabelConstructor::objectLabel( value, whichWindow->getLevel(),
+      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, whichWindow->getLevel(),
                                                           whichWindow->getTrace() );
     else if ( infoType == APPL_TYPE )
-      sstrSemanticLabel << LabelConstructor::objectLabel( value, APPLICATION,
+      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, APPLICATION,
                                                           whichWindow->getTrace() );
     else if ( infoType == TASK_TYPE )
-      sstrSemanticLabel << LabelConstructor::objectLabel( value, TASK,
+      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, TASK,
                                                           whichWindow->getTrace() );
     else if ( infoType == THREAD_TYPE )
-      sstrSemanticLabel << LabelConstructor::objectLabel( value, THREAD,
+      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, THREAD,
                                                           whichWindow->getTrace() );
     else if ( infoType == NODE_TYPE )
       sstrSemanticLabel << LabelConstructor::objectLabel( value, NODE,

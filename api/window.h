@@ -208,7 +208,7 @@ class Window
     }
     virtual void computeYScaleMin() {}
     virtual void computeYScaleMax() {}
-    virtual void computeYScale() {}
+    virtual void computeYScale( ProgressController *progress = NULL ) {}
     virtual void setComputeYMaxOnInit( bool newValue ) {}
     virtual bool getComputeYMaxOnInit() const
     {
@@ -768,7 +768,7 @@ class WindowProxy: public Window
     virtual bool getYScaleComputed() const;
     virtual void computeYScaleMin();
     virtual void computeYScaleMax();
-    virtual void computeYScale();
+    virtual void computeYScale( ProgressController *progress = NULL );
     virtual void setComputeYMaxOnInit( bool newValue );
     virtual bool getComputeYMaxOnInit() const;
     virtual void setMaximumY( TSemanticValue whichMax );

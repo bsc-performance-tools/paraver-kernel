@@ -547,11 +547,15 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
   winBeginTime = whichBeginTime;
   winEndTime = whichEndTime;
 
+#ifdef PARALLEL_ENABLED
+  progress = NULL;
+#endif // PARALLEL_ENABLED
+
   if ( computeControlScale )
-    compute2DScale();
+    compute2DScale( progress );
 
   if ( getThreeDimensions() && computeXtraScale )
-    compute3DScale();
+    compute3DScale( progress );
 
   myHisto->execute( whichBeginTime, whichEndTime, selectedRows, progress );
 
@@ -896,7 +900,7 @@ bool HistogramProxy::itsCommunicationStat( const string& whichStat ) const
   return myHisto->itsCommunicationStat( whichStat );
 }
 
-void HistogramProxy::compute2DScale()
+void HistogramProxy::compute2DScale( ProgressController *progress )
 {
   TSemanticValue tmpMinY = controlWindow->getMinimumY();
   TSemanticValue tmpMaxY = controlWindow->getMaximumY();
@@ -904,7 +908,7 @@ void HistogramProxy::compute2DScale()
   TRecordTime tmpEndTime = controlWindow->getWindowEndTime();
   controlWindow->setWindowBeginTime( getBeginTime(), true );
   controlWindow->setWindowEndTime( getEndTime(), true );
-  controlWindow->computeYScale();
+  controlWindow->computeYScale( progress );
   controlWindow->setWindowBeginTime( tmpBeginTime, true );
   controlWindow->setWindowEndTime( tmpEndTime, true );
   TSemanticValue minY = controlWindow->getMinimumY();
@@ -931,7 +935,7 @@ void HistogramProxy::compute2DScale()
   }
 }
 
-void HistogramProxy::compute3DScale()
+void HistogramProxy::compute3DScale( ProgressController *progress )
 {
   TSemanticValue tmpMinY = extraControlWindow->getMinimumY();
   TSemanticValue tmpMaxY = extraControlWindow->getMaximumY();
@@ -939,7 +943,7 @@ void HistogramProxy::compute3DScale()
   TRecordTime tmpEndTime = extraControlWindow->getWindowEndTime();
   extraControlWindow->setWindowBeginTime( getBeginTime(), true );
   extraControlWindow->setWindowEndTime( getEndTime(), true );
-  extraControlWindow->computeYScale();
+  extraControlWindow->computeYScale( progress );
   extraControlWindow->setWindowBeginTime( tmpBeginTime, true );
   extraControlWindow->setWindowEndTime( tmpEndTime, true );
   TSemanticValue minY = extraControlWindow->getMinimumY();

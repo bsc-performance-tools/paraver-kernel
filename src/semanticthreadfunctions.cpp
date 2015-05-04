@@ -1651,14 +1651,14 @@ TSemanticValue ApplicationID::execute( const SemanticInfo *info )
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
 
-  if ( myInfo->it->getType() == EMPTYREC )
-    return 0;
+  /*if ( myInfo->it->getType() == EMPTYREC )
+    return 0;*/
 
   myInfo->callingInterval->getWindow()->getTrace()->getThreadLocation(
     myInfo->it->getThread(), appl, task, thread );
   tmp = appl;
 
-  return tmp;
+  return tmp + 1;
 }
 
 
@@ -1672,14 +1672,14 @@ TSemanticValue TaskID::execute( const SemanticInfo *info )
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
 
-  if ( myInfo->it->getType() == EMPTYREC )
-    return 0;
+  /*if ( myInfo->it->getType() == EMPTYREC )
+    return 0;*/
 
   myInfo->callingInterval->getWindow()->getTrace()->getThreadLocation(
     myInfo->it->getThread(), appl, task, thread );
   tmp = myInfo->callingInterval->getWindow()->getTrace()->getGlobalTask( appl, task );
 
-  return tmp;
+  return tmp + 1;
 }
 
 
@@ -1690,12 +1690,12 @@ TSemanticValue ThreadID::execute( const SemanticInfo *info )
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
 
-  if ( myInfo->it->getType() == EMPTYREC )
-    return 0;
+  /*if ( myInfo->it->getType() == EMPTYREC )
+    return 0;*/
 
   tmp = myInfo->it->getThread();
 
-  return tmp;
+  return tmp + 1;
 }
 
 
@@ -1750,7 +1750,7 @@ TSemanticValue InApplicationID::execute( const SemanticInfo *info )
 
   myInfo->callingInterval->getWindow()->getTrace()->getThreadLocation(
     myInfo->it->getThread(), appl, task, thread );
-  tmp = appl;
+  tmp = appl + 1;
 
   for ( TObjectOrder i = 0; i < parameters[ OBJECTS ].size(); i++ )
   {
@@ -1777,7 +1777,7 @@ TSemanticValue InTaskID::execute( const SemanticInfo *info )
 
   myInfo->callingInterval->getWindow()->getTrace()->getThreadLocation(
     myInfo->it->getThread(), appl, task, thread );
-  tmp = myInfo->callingInterval->getWindow()->getTrace()->getGlobalTask( appl, task );
+  tmp = myInfo->callingInterval->getWindow()->getTrace()->getGlobalTask( appl, task ) + 1;
 
   for ( TObjectOrder i = 0; i < parameters[ OBJECTS ].size(); i++ )
   {
@@ -1799,7 +1799,7 @@ TSemanticValue InThreadID::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  tmp = myInfo->it->getThread();
+  tmp = myInfo->it->getThread() + 1;
 
   for ( TObjectOrder i = 0; i < parameters[ OBJECTS ].size(); i++ )
   {

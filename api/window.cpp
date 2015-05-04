@@ -422,7 +422,7 @@ void WindowProxy::computeYScaleMax()
   maximumY = computedMaxY;
 }
 
-void WindowProxy::computeYScale()
+void WindowProxy::computeYScale( ProgressController *progress )
 {
   if ( !yScaleComputed )
   {
@@ -432,12 +432,34 @@ void WindowProxy::computeYScale()
 
     init( winBeginTime, NONE );
 
+    std::string previousMessage;
+    int currentObject = 0;
+    if( progress != NULL )
+    {
+      previousMessage = progress->getMessage();
+      progress->setMessage( "Computing semantic scale..." );
+      progress->setEndLimit( selected.size() + 1 );
+      progress->setCurrentProgress( currentObject );
+    }
     for ( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
     {
       initRow( *obj, winBeginTime, NONE );
       while ( getBeginTime( *obj ) < winEndTime &&
               getBeginTime( *obj ) < myTrace->getEndTime() )
         calcNext( *obj );
+
+      ++currentObject;
+      if( progress != NULL )
+      {
+        if( progress->getStop() )
+          break;
+        progress->setCurrentProgress( currentObject );
+      }
+    }
+
+    if( progress != NULL )
+    {
+      progress->setMessage( previousMessage );
     }
   }
 
