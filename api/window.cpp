@@ -2009,7 +2009,7 @@ void WindowProxy::computeEventsCommsParallel( RecordList *records,
         partnerObject = cpuObjectToWindowObject( it->getCommPartnerObject() ) - 1;
 
       if( ( recType & COMM ) &&
-          partnerObject >= beginRow && partnerObject <= endRow && selected[ partnerObject ] &&
+          /*partnerObject >= beginRow && partnerObject <= endRow &&*/ selected[ partnerObject ] &&
           ( ( recType & RECV ) ||
             ( ( recType & SEND ) && it->getCommPartnerTime() > getWindowEndTime() ) )
         )
@@ -2024,7 +2024,19 @@ void WindowProxy::computeEventsCommsParallel( RecordList *records,
         tmpComm.recType = recType;
         tmpComm.fromTime = timePos;
         tmpComm.toTime = posPartner;
-        tmpComm.toRow = objectPosList[ partnerObject ];
+        PRV_INT32 tmpPixelDensity;
+        if( endRow - beginRow > 0 )
+          tmpPixelDensity = objectPosList[ endRow ] - objectPosList[ beginRow ] + 1;
+        else
+          tmpPixelDensity = 100;
+
+        if( partnerObject >= beginRow && partnerObject <= endRow )
+          tmpComm.toRow = objectPosList[ partnerObject ];
+        else if( partnerObject < beginRow )
+          tmpComm.toRow = 0 - ( beginRow - partnerObject ) * tmpPixelDensity;
+        else if( partnerObject > endRow )
+          tmpComm.toRow = objectPosList[ endRow ] + ( partnerObject - endRow ) * tmpPixelDensity;
+
         commsToDraw.insert( tmpComm );
       }
     }
