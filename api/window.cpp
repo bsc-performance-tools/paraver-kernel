@@ -2037,6 +2037,11 @@ void WindowProxy::computeEventsCommsParallel( RecordList *records,
         else if( partnerObject > endRow )
           tmpComm.toRow = objectPosList[ endRow ] + ( partnerObject - endRow ) * tmpPixelDensity;
 
+        if( tmpComm.toRow > 10000 )
+          tmpComm.toRow = 10000;
+        else if( tmpComm.toRow < -10000 )
+          tmpComm.toRow = -10000;
+
         commsToDraw.insert( tmpComm );
       }
     }
