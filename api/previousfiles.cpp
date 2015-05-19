@@ -45,13 +45,19 @@ const string PreviousFiles::previousTreatedTracesFile = "/.paraver/paravertreate
 PreviousFiles::PreviousFiles( const string &filename, bool purge )
 {
   fstream myFile;
-  string homedir("");
+  //string homedir("");
+  string homedir;
 
 #ifdef WIN32
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
 #else
-  homedir = getenv( "HOME" );
+  //homedir = string( getenv( "HOME" ) );
+
+  char *tmpHome = getenv( "HOME" );
+  if ( tmpHome != NULL )
+    homedir = string( getenv( "HOME" ) );
+  else
 #endif
   if ( !homedir.empty() )
     myFileName.append( homedir );
