@@ -45,7 +45,7 @@ const string PreviousFiles::previousTreatedTracesFile = "/.paraver/paravertreate
 PreviousFiles::PreviousFiles( const string &filename, bool purge )
 {
   fstream myFile;
-  string homedir;
+  string homedir("");
 
 #ifdef WIN32
   homedir = getenv( "HOMEDRIVE" );
@@ -53,7 +53,9 @@ PreviousFiles::PreviousFiles( const string &filename, bool purge )
 #else
   homedir = getenv( "HOME" );
 #endif
-  myFileName.append( homedir );
+  if ( !homedir.empty() )
+    myFileName.append( homedir );
+
   myFileName.append( filename );
   myFile.open( myFileName.c_str(), ios::out | ios::app );
   myFile.close();
