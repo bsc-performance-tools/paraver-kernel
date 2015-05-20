@@ -57,7 +57,6 @@ PreviousFiles::PreviousFiles( const string &filename, bool purge )
   char *tmpHome = getenv( "HOME" );
   if ( tmpHome != NULL )
     homedir = string( getenv( "HOME" ) );
-  else
 #endif
   if ( !homedir.empty() )
     myFileName.append( homedir );
