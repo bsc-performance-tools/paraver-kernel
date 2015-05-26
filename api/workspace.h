@@ -33,31 +33,16 @@
 #include <vector>
 #include <string>
 #include <map>
-#include "previousfiles.h"
 
 class Workspace
 {
   public:
-    static Workspace *getWorkspaces();
-
-    const std::vector<std::string>& getWorkspaceNames() const;
-    void addWorkspaceName( std::string& whichName );
-
+    Workspace();
     ~Workspace();
   protected:
 
   private:
-    static Workspace *myWorkspace;
 
-    static std::string generalName;
-    static std::string MPIName;
-    static std::string OpenMPName;
-
-    Workspace();
-
-    std::vector<std::string> workspaceNames;
-    std::map<std::string, PreviousFiles *> workspacePreviousTraces;
-    std::map<std::string, PreviousFiles *> workspacePreviousCFGs;
 };
 
 

@@ -27,16 +27,5 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-#include "workspace.h"
-
-using std::string;
-using std::vector;
-
-
-Workspace::Workspace()
-{
-}
-
-Workspace::~Workspace()
-{}
+#include "workspacemanager.h"
 

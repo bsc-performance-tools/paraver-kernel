@@ -27,16 +27,19 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-#include "workspace.h"
+#ifndef WORKSPACEMANAGER_H_INCLUDED
+#define WORKSPACEMANAGER_H_INCLUDED
 
-using std::string;
-using std::vector;
-
-
-Workspace::Workspace()
+class WorkspaceManager
 {
-}
+  public:
+    WorkspaceManager();
+    ~WorkspaceManager();
+  protected:
 
-Workspace::~Workspace()
-{}
+  private:
 
+};
+
+
+#endif // WORKSPACEMANAGER_H_INCLUDED
