@@ -48,20 +48,9 @@ class TraceFilter
                                 ProgressController *progress,
                                 const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable );
 
-    static std::string getID()
-    {
-      return TraceFilter::traceToolID;
-    }
-
-    static std::string getName()
-    {
-      return TraceFilter::traceToolName;
-    }
-
-    static std::string getExtension()
-    {
-      return TraceFilter::traceToolExtension;
-    }
+    static std::string getID();
+    static std::string getName();
+    static std::string getExtension();
 
     virtual ~TraceFilter()
     {}

@@ -45,20 +45,9 @@ class TraceCutter
                                 TraceOptions *options,
                                 ProgressController *progress );
 
-    static std::string getID()
-    {
-      return TraceCutter::traceToolID;
-    }
-
-    static std::string getName()
-    {
-      return TraceCutter::traceToolName;
-    }
-
-    static std::string getExtension()
-    {
-      return TraceCutter::traceToolExtension;
-    }
+    static std::string getID();
+    static std::string getName();
+    static std::string getExtension();
 
     virtual ~TraceCutter()
     {}

@@ -45,20 +45,9 @@ class TraceSoftwareCounters
                                           TraceOptions *options,
                                           ProgressController *progress );
 
-    static std::string getID()
-    {
-      return TraceSoftwareCounters::traceToolID;
-    }
-
-    static std::string getName()
-    {
-      return TraceSoftwareCounters::traceToolName;
-    }
-
-    static std::string getExtension()
-    {
-      return TraceSoftwareCounters::traceToolExtension;
-    }
+    static std::string getID();
+    static std::string getName();
+    static std::string getExtension();
 
     virtual ~TraceSoftwareCounters()
     {}

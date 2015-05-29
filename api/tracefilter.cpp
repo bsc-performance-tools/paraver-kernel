@@ -46,6 +46,24 @@ TraceFilter *TraceFilter::create( KernelConnection *whichKernel,
 }
 
 
+std::string TraceFilter::getID()
+{
+  return TraceFilter::traceToolID;
+}
+
+
+std::string TraceFilter::getName()
+{
+  return TraceFilter::traceToolName;
+}
+
+
+std::string TraceFilter::getExtension()
+{
+  return TraceFilter::traceToolExtension;
+}
+
+
 TraceFilterProxy::TraceFilterProxy( KernelConnection *whichKernel,
                                   char *traceIn,
                                   char *traceOut,

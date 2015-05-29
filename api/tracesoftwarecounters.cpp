@@ -46,6 +46,24 @@ TraceSoftwareCounters *TraceSoftwareCounters::create( KernelConnection *whichKer
 }
 
 
+std::string TraceSoftwareCounters::getID()
+{
+  return TraceSoftwareCounters::traceToolID;
+}
+
+
+std::string TraceSoftwareCounters::getName()
+{
+  return TraceSoftwareCounters::traceToolName;
+}
+
+
+std::string TraceSoftwareCounters::getExtension()
+{
+  return TraceSoftwareCounters::traceToolExtension;
+}
+
+
 TraceSoftwareCountersProxy::TraceSoftwareCountersProxy( KernelConnection *whichKernel,
                                   char *traceIn,
                                   char *traceOut,

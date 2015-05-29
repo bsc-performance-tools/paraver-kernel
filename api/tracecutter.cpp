@@ -59,6 +59,24 @@ TraceCutter *TraceCutter::create( const KernelConnection *whichKernel,
 }
 
 
+std::string TraceCutter::getID()
+{
+  return TraceCutter::traceToolID;
+}
+
+
+std::string TraceCutter::getName()
+{
+  return TraceCutter::traceToolName;
+}
+
+
+std::string TraceCutter::getExtension()
+{
+  return TraceCutter::traceToolExtension;
+}
+
+
 TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
                                     char *traceIn,
                                     char *traceOut,
