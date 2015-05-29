@@ -42,25 +42,38 @@ const string PreviousFiles::previousCFGsFile = "/.paraver/paravercfgdb";
 const string PreviousFiles::previousTreatedTracesFile = "/.paraver/paravertreatedtracesdb";
 #endif
 
+
+PreviousFiles *PreviousFiles::createPreviousTraces()
+{
+  return new PreviousFiles( previousTracesFile );
+}
+
+
+PreviousFiles *PreviousFiles::createPreviousCFGs()
+{
+  return new PreviousFiles( previousCFGsFile );
+}
+
+
+PreviousFiles *PreviousFiles::createPreviousTreatedTraces()
+{
+  return new PreviousFiles( previousTreatedTracesFile, true );
+}
+
+
 PreviousFiles::PreviousFiles( const string &filename, bool purge )
 {
   fstream myFile;
-  //string homedir("");
   string homedir;
 
 #ifdef WIN32
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
 #else
-  //homedir = string( getenv( "HOME" ) );
-
-  char *tmpHome = getenv( "HOME" );
-  if ( tmpHome != NULL )
-    homedir = string( getenv( "HOME" ) );
+  homedir = string( getenv( "HOME" ) );
 #endif
-  if ( !homedir.empty() )
-    myFileName.append( homedir );
 
+  myFileName.append( homedir );
   myFileName.append( filename );
   myFile.open( myFileName.c_str(), ios::out | ios::app );
   myFile.close();

@@ -39,18 +39,9 @@
 class PreviousFiles
 {
   public:
-    static PreviousFiles *createPreviousTraces()
-    {
-      return new PreviousFiles( previousTracesFile );
-    }
-    static PreviousFiles *createPreviousCFGs()
-    {
-      return new PreviousFiles( previousCFGsFile );
-    }
-    static PreviousFiles *createPreviousTreatedTraces()
-    {
-      return new PreviousFiles( previousTreatedTracesFile, true );
-    }
+    static PreviousFiles *createPreviousTraces();
+    static PreviousFiles *createPreviousCFGs();
+    static PreviousFiles *createPreviousTreatedTraces();
 
     ~PreviousFiles();
 
