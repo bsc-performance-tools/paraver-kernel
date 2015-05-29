@@ -45,9 +45,9 @@ class EventDrivenCutter
                                       TEventType whichEvent,
                                       ProgressController *progress );
 
-    static std::string getID() { return EventDrivenCutter::traceToolID; }
-    static std::string getName() { return EventDrivenCutter::traceToolName; }
-    static std::string getExtension() { return EventDrivenCutter::traceToolExtension; }
+    static std::string getID();
+    static std::string getName();
+    static std::string getExtension();
 
     virtual ~EventDrivenCutter()
     {}

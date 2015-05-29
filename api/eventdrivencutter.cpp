@@ -47,6 +47,24 @@ EventDrivenCutter *EventDrivenCutter::create( const KernelConnection *whichKerne
 }
 
 
+std::string EventDrivenCutter::getID()
+{
+  return EventDrivenCutter::traceToolID;
+}
+
+
+std::string EventDrivenCutter::getName()
+{
+  return EventDrivenCutter::traceToolName;
+}
+
+
+std::string EventDrivenCutter::getExtension()
+{
+  return EventDrivenCutter::traceToolExtension;
+}
+
+
 EventDrivenCutterProxy::EventDrivenCutterProxy( const KernelConnection *whichKernel,
                                                 std::string traceIn,
                                                 std::string traceOut,
