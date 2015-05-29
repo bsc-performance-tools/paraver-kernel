@@ -49,6 +49,24 @@ TraceShifter *TraceShifter::create( const KernelConnection *whichKernel,
 }
 
 
+std::string TraceShifter::getID()
+{
+  return TraceShifter::traceToolID;
+}
+
+
+std::string TraceShifter::getName()
+{
+  return TraceShifter::traceToolName;
+}
+
+
+std::string TraceShifter::getExtension()
+{
+  return TraceShifter::traceToolExtension;
+}
+
+
 TraceShifterProxy::TraceShifterProxy( const KernelConnection *whichKernel,
                                       std::string traceIn,
                                       std::string traceOut,

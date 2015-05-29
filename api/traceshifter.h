@@ -49,9 +49,9 @@ class TraceShifter
                                  //TraceOptions *options,
                                  ProgressController *progress );
 
-    static std::string getID() { return TraceShifter::traceToolID; }
-    static std::string getName() { return TraceShifter::traceToolName; }
-    static std::string getExtension() { return TraceShifter::traceToolExtension; }
+    static std::string getID();
+    static std::string getName();
+    static std::string getExtension();
 
     virtual ~TraceShifter()
     {}
