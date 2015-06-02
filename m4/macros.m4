@@ -78,7 +78,7 @@ AC_DEFUN([AX_PROG_ENABLE_PARALLEL],
     #CC=sscc
     #CXX=sscxx
     CXXFLAGS="$CXXFLAGS --instrument"
-    LDFLAGS="$LDFLAGS --instrument"
+    LDFLAGS="$LDFLAGS --instrument -fPIC"
   else
     PRVCC="gcc xlc cc"
     PRVCXX="g++ xlC CC"
