@@ -50,6 +50,8 @@ install-data-hook:
 	cp -f ./docs/paramedir $(bindir)
 	$(SED) "s|@inst_PARAVER_HOME@|$(prefix)|g" < ./docs/paramedir > $(bindir)/paramedir
 	chmod a+x $(bindir)/paramedir
+	cp -f ./docs/paramedir.mn3-mt $(bindir)
+	chmod a+x $(bindir)/paramedir.mn3-mt
 
 	$(mkdir_p) $(prefix)/share
 	$(mkdir_p) $(prefix)/share/filters-config
@@ -58,7 +60,8 @@ install-data-hook:
 
 dist-hook:
 	$(mkdir_p) $(distdir)/docs
-	cp -f ./docs/paramedir $(distdir)/docs
+	cp -f ./docs/paramedir        $(distdir)/docs
+	cp -f ./docs/paramedir.mn3-mt $(distdir)/docs
 	$(mkdir_p) $(distdir)/docs/filters
 	$(install_sh_PROGRAM) -m 775 ./docs/filters/*.xml $(distdir)/docs/filters
 #	$(install_sh_DATA) ./docs/filters/*.xml $(distdir)/docs/filters
