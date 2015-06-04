@@ -722,7 +722,7 @@ KWindow *KSingleWindow::clone()
   clonedKSWindow->level = level;
   clonedKSWindow->timeUnit = timeUnit;
 
-  for( int i = 0; i < COMPOSECPU + 1; i++ )
+  for( int i = 0; i < COMPOSECPU + 1; ++i )
   {
     if( functions[ i ] != NULL )
       clonedKSWindow->functions[ i ] = functions[ i ]->clone();
@@ -830,7 +830,7 @@ void KDerivedWindow::setup( KTrace* whichTrace )
     intervalTopCompose2.reserve( myTrace->totalThreads() );
     intervalDerived.reserve( myTrace->totalThreads() );
     intervalControlDerived.reserve( myTrace->totalThreads() );
-    for( TThreadOrder i = 0; i < myTrace->totalThreads(); i++ )
+    for( TThreadOrder i = 0; i < myTrace->totalThreads(); ++i )
     {
       intervalTopCompose1.push_back( IntervalCompose( this, TOPCOMPOSE1, i ) );
       intervalTopCompose2.push_back( IntervalCompose( this, TOPCOMPOSE2, i ) );
@@ -844,7 +844,7 @@ void KDerivedWindow::setup( KTrace* whichTrace )
     intervalTopCompose2.reserve( myTrace->totalCPUs() );
     intervalDerived.reserve( myTrace->totalCPUs() );
     intervalControlDerived.reserve( myTrace->totalCPUs() );
-    for( TCPUOrder i = 0; i < myTrace->totalCPUs(); i++ )
+    for( TCPUOrder i = 0; i < myTrace->totalCPUs(); ++i )
     {
       intervalTopCompose1.push_back( IntervalCompose( this, TOPCOMPOSE1, i ) );
       intervalTopCompose2.push_back( IntervalCompose( this, TOPCOMPOSE2, i ) );
@@ -872,7 +872,7 @@ void KDerivedWindow::setup( KTrace* whichTrace )
   intervalComposeTask.clear();
   intervalTask.reserve( myTrace->totalTasks() );
   intervalComposeTask.reserve( myTrace->totalTasks() );
-  for( TTaskOrder i = 0; i < myTrace->totalTasks(); i++ )
+  for( TTaskOrder i = 0; i < myTrace->totalTasks(); ++i )
   {
     intervalTask.push_back( IntervalNotThread( this, TASK, i ) );
     intervalComposeTask.push_back( IntervalCompose( this, COMPOSETASK, i ) );
@@ -880,7 +880,7 @@ void KDerivedWindow::setup( KTrace* whichTrace )
 
   intervalComposeThread.clear();
   intervalComposeThread.reserve( myTrace->totalThreads() );
-  for( TThreadOrder i = 0; i < myTrace->totalThreads(); i++ )
+  for( TThreadOrder i = 0; i < myTrace->totalThreads(); ++i )
     intervalComposeThread.push_back( IntervalCompose( this, COMPOSETHREAD, i ) );
 
   intervalSystem.clear();
@@ -892,7 +892,7 @@ void KDerivedWindow::setup( KTrace* whichTrace )
   intervalComposeNode.clear();
   intervalNode.reserve( myTrace->totalNodes() );
   intervalComposeNode.reserve( myTrace->totalNodes() );
-  for( TNodeOrder i = 0; i < myTrace->totalNodes(); i++ )
+  for( TNodeOrder i = 0; i < myTrace->totalNodes(); ++i )
   {
     intervalNode.push_back( IntervalNotThread( this, NODE, i ) );
     intervalComposeNode.push_back( IntervalCompose( this, COMPOSENODE, i ) );
@@ -900,7 +900,7 @@ void KDerivedWindow::setup( KTrace* whichTrace )
 
   intervalComposeCPU.clear();
   intervalComposeCPU.reserve( myTrace->totalCPUs() );
-  for( TCPUOrder i = 0; i < myTrace->totalCPUs(); i++ )
+  for( TCPUOrder i = 0; i < myTrace->totalCPUs(); ++i )
     intervalComposeCPU.push_back( IntervalCompose( this, COMPOSECPU, i ) );
 }
 
@@ -1211,7 +1211,7 @@ KWindow *KDerivedWindow::clone()
     clonedKDerivedWindow->factor[i] = factor[ i ];
   }
 
-  for ( PRV_UINT16 i = 0; i <= DERIVED; i++ )
+  for ( PRV_UINT16 i = 0; i <= DERIVED; ++i )
   {
     if( functions[ i ] != NULL )
     {

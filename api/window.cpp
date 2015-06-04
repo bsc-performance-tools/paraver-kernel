@@ -263,6 +263,8 @@ Window *WindowProxy::clone( )
     clonedWindow->myWindow->setParent( 0, clonedWindow->parent1->getConcrete() );
     clonedWindow->parent2 = parent2->clone();
     clonedWindow->myWindow->setParent( 1, clonedWindow->parent2->getConcrete() );
+    // setParent changes level to default, so we must reset the current level
+    clonedWindow->myWindow->setLevel( myWindow->getLevel() );
     clonedWindow->parent1->setChild( clonedWindow );
     clonedWindow->parent2->setChild( clonedWindow );
   }
