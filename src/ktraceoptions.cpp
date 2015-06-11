@@ -703,7 +703,7 @@ vector< string > KTraceOptions::parseDoc( char *docname )
 
   filter_by_call_time = false;
 
-  if ( docname == NULL ) return order;
+  if ( docname == NULL || strcmp( docname, "") == 0 ) return order;
 
   doc = xmlParseFile( docname );
 
