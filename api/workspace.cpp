@@ -31,12 +31,37 @@
 
 using std::string;
 using std::vector;
-
+using std::pair;
 
 Workspace::Workspace()
 {
 }
 
 Workspace::~Workspace()
-{}
+{
+}
 
+string Workspace::getName() const
+{
+  return name;
+}
+
+vector<pair<string,string> > Workspace::getHintCFGs() const
+{
+  return hintCFGs;
+}
+
+void Workspace::setName( string& whichName )
+{
+  name = whichName;
+}
+
+void Workspace::addHintCFG( pair<string,string>& whichCFG )
+{
+  hintCFGs.push_back( whichCFG );
+}
+
+void Workspace::clearHintCFGs()
+{
+  hintCFGs.clear();
+}

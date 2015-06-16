@@ -30,16 +30,25 @@
 #ifndef WORKSPACE_H_INCLUDED
 #define WORKSPACE_H_INCLUDED
 
-#include <vector>
 #include <string>
-#include <map>
+#include <vector>
 
 class Workspace
 {
   public:
     Workspace();
     ~Workspace();
+
+    virtual std::string getName() const;
+    virtual std::vector<std::pair<std::string,std::string> > getHintCFGs() const;
+
+    virtual void setName( std::string& whichName );
+    virtual void addHintCFG( std::pair<std::string,std::string>& whichCFG );
+    virtual void clearHintCFGs();
+
   protected:
+    std::string name;
+    std::vector<std::pair<std::string,std::string> > hintCFGs;
 
   private:
 

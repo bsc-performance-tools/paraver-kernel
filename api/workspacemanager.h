@@ -30,14 +30,34 @@
 #ifndef WORKSPACEMANAGER_H_INCLUDED
 #define WORKSPACEMANAGER_H_INCLUDED
 
+#include <string>
+#include <vector>
+#include <map>
+#include "paraverkerneltypes.h"
+#include "workspace.h"
+
 class WorkspaceManager
 {
   public:
-    WorkspaceManager();
+    static WorkspaceManager *getInstance();
+
     ~WorkspaceManager();
+
+    std::vector<std::string> getWorkspaces() const;
+    Workspace& getWorkspace( std::string name );
+    //setWorkspaces( vector<string> )
+    //virtual import( string xmlFile )
+    //virtual export( string xmlFile )
+
   protected:
 
+    WorkspaceManager();
+
   private:
+    static WorkspaceManager *instance;
+
+    std::map<std::string, Workspace> workspaces;
+    std::vector<std::string> workspacesOrder;
 
 };
 

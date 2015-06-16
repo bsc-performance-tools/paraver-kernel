@@ -29,3 +29,32 @@
 
 #include "workspacemanager.h"
 
+using std::string;
+using std::vector;
+
+WorkspaceManager *WorkspaceManager::instance = NULL;
+
+WorkspaceManager *WorkspaceManager::getInstance()
+{
+  if ( WorkspaceManager::instance == NULL )
+    WorkspaceManager::instance = new WorkspaceManager();
+  return WorkspaceManager::instance;
+}
+
+WorkspaceManager::WorkspaceManager()
+{
+}
+
+WorkspaceManager::~WorkspaceManager()
+{
+}
+
+vector<string> WorkspaceManager::getWorkspaces() const
+{
+  return workspacesOrder;
+}
+
+Workspace& WorkspaceManager::getWorkspace( std::string name )
+{
+  return workspaces[ name ];
+}
