@@ -58,3 +58,13 @@ Workspace& WorkspaceManager::getWorkspace( std::string name )
 {
   return workspaces[ name ];
 }
+
+void WorkspaceManager::addWorkspace( std::string whichName )
+{
+  workspaces[ whichName ] = Workspace();
+}
+
+void WorkspaceManager::addWorkspace( Workspace& whichWorkspace )
+{
+  workspaces[ whichWorkspace.getName() ] = whichWorkspace;
+}

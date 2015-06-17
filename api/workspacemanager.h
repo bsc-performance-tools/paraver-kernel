@@ -44,7 +44,9 @@ class WorkspaceManager
     ~WorkspaceManager();
 
     std::vector<std::string> getWorkspaces() const;
-    Workspace& getWorkspace( std::string name );
+    Workspace& getWorkspace( std::string whichName );
+    void addWorkspace( std::string whichName );
+    void addWorkspace( Workspace& whichWorkspace );
     //setWorkspaces( vector<string> )
     //virtual import( string xmlFile )
     //virtual export( string xmlFile )
