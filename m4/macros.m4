@@ -133,7 +133,15 @@ AC_DEFUN([AX_PROG_WITH_PTOOLS_COMMON_FILES],
    CPPFLAGS_PTOOLS="-I$PTOOLS_COMMON_FILES_DIR/include"
    CXXFLAGS_PTOOLS="-I$PTOOLS_COMMON_FILES_DIR/include"
    CFLAGS_PTOOLS="-I$PTOOLS_COMMON_FILES_DIR/include"
-   LIBS_PTOOLS="-L$PTOOLS_COMMON_FILES_DIR/lib/ptools_common_files"
-   LDFLAGS_PTOOLS="-L$PTOOLS_COMMON_FILES_DIR/lib/ptools_common_files -lptools_common_files"
+
+   if test -d "$PTOOLS_COMMON_FILES_DIR/lib"
+   then
+     LIBS_PTOOLS="-L$PTOOLS_COMMON_FILES_DIR/lib/ptools_common_files"
+     LDFLAGS_PTOOLS="-L$PTOOLS_COMMON_FILES_DIR/lib/ptools_common_files -lptools_common_files"
+   elif test -d "$PTOOLS_COMMON_FILES_DIR/lib64"
+   then
+     LIBS_PTOOLS="-L$PTOOLS_COMMON_FILES_DIR/lib64/ptools_common_files"
+     LDFLAGS_PTOOLS="-L$PTOOLS_COMMON_FILES_DIR/lib64/ptools_common_files -lptools_common_files"
+   fi
 ])
 
