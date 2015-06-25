@@ -214,7 +214,7 @@ void WindowProxy::setParent( PRV_UINT16 whichParent, Window *whichWindow )
 
     whichWindow->setChild( this );
 
-    if ( myTrace == NULL )
+    if ( parent1 != NULL && parent2 != NULL && myTrace == NULL )
     {
       myTrace = whichWindow->getTrace();
       init();
