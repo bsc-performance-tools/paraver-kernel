@@ -49,9 +49,15 @@ class WorkspaceManager
     Workspace& getWorkspace( std::string whichName );
     void addWorkspace( std::string whichName );
     void addWorkspace( Workspace& whichWorkspace );
-    //setWorkspaces( vector<string> )
-    //virtual import( string xmlFile )
-    //virtual export( string xmlFile )
+    void loadXML();
+    void saveXML();
+
+    template< class Archive >
+    void serialize( Archive & ar, const unsigned int version )
+    {
+      ar & boost::serialization::make_nvp( "workspaces", workspaces );
+      ar & boost::serialization::make_nvp( "workspacesOrder", workspacesOrder );
+    }
 
   protected:
 
@@ -65,5 +71,6 @@ class WorkspaceManager
 
 };
 
+BOOST_CLASS_VERSION( WorkspaceManager, 0)
 
 #endif // WORKSPACEMANAGER_H_INCLUDED

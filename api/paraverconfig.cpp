@@ -1231,9 +1231,8 @@ void ParaverConfig::readParaverConfigFile()
 
 void ParaverConfig::writeParaverConfigFile()
 {
-  ofstream file;
-  string strFile;
   string homedir;
+  string strFile;
 
 #ifdef WIN32
   homedir = getenv( "HOMEDRIVE" );
