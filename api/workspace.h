@@ -33,6 +33,14 @@
 #include <string>
 #include <vector>
 
+// SERIALIZATION INCLUDES
+#include <fstream>
+#include <iostream>
+#include <boost/serialization/string.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+
+
 class Workspace
 {
   public:
@@ -46,13 +54,23 @@ class Workspace
     virtual void addHintCFG( std::pair<std::string,std::string>& whichCFG );
     virtual void clearHintCFGs();
 
+
   protected:
     std::string name;
     std::vector<std::pair<std::string,std::string> > hintCFGs; // path, description
 
+    template< class Archive >
+    void serialize( Archive & ar, const unsigned int version )
+    {
+      ar & boost::serialization::make_nvp( "name", name );
+      ar & boost::serialization::make_nvp( "hintCFGs", hintCFGs );
+    }
+
   private:
 
 };
+
+BOOST_CLASS_VERSION( Workspace, 0)
 
 
 #endif // WORKSPACE_H_INCLUDED
