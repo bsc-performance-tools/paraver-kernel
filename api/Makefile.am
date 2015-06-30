@@ -35,6 +35,7 @@ libparaver_api_la_SOURCES = \
                     tracesoftwarecounters.cpp \
                     window.cpp \
                     workspace.cpp \
+                    workspacemanager.cpp \
                     ../../common-files/pcfparser/LibException.cpp \
                     ../../common-files/pcfparser/ParaverEventType.cpp \
                     ../../common-files/pcfparser/ParaverEventValue.cpp \
@@ -91,6 +92,7 @@ include_HEADERS = \
                   tracesoftwarecounters.h \
                   window.h\
                   workspace.h\
+                  workspacemanager.h\
                   zoomhistory.h\
                   selectionmanagement.cpp\
                   traceeditstates.cpp\

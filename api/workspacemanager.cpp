@@ -49,6 +49,11 @@ WorkspaceManager::~WorkspaceManager()
 {
 }
 
+void WorkspaceManager::clear()
+{
+  workspaces.clear();
+}
+
 vector<string> WorkspaceManager::getWorkspaces() const
 {
   return workspacesOrder;
