@@ -592,6 +592,14 @@
 		<Unit filename="api/workspace.h">
 			<Option target="api" />
 		</Unit>
+		<Unit filename="api/workspacemanager.cpp">
+			<Option target="api" />
+			<Option target="otf2prv" />
+		</Unit>
+		<Unit filename="api/workspacemanager.h">
+			<Option target="api" />
+			<Option target="otf2prv" />
+		</Unit>
 		<Unit filename="api/zoomhistory.cpp">
 			<Option compile="0" />
 			<Option link="0" />

@@ -48,7 +48,7 @@ class Workspace
 
   protected:
     std::string name;
-    std::vector<std::pair<std::string,std::string> > hintCFGs;
+    std::vector<std::pair<std::string,std::string> > hintCFGs; // path, description
 
   private:
 
