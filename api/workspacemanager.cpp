@@ -76,6 +76,7 @@ WorkspaceManager::~WorkspaceManager()
 void WorkspaceManager::clear()
 {
   workspaces.clear();
+  workspacesOrder.clear();
 }
 
 vector<string> WorkspaceManager::getWorkspaces() const
@@ -91,11 +92,13 @@ Workspace& WorkspaceManager::getWorkspace( std::string name )
 void WorkspaceManager::addWorkspace( std::string whichName )
 {
   workspaces[ whichName ] = Workspace();
+  workspacesOrder.push_back( whichName );
 }
 
 void WorkspaceManager::addWorkspace( Workspace& whichWorkspace )
 {
   workspaces[ whichWorkspace.getName() ] = whichWorkspace;
+  workspacesOrder.push_back( whichWorkspace.getName() );
 }
 
 
