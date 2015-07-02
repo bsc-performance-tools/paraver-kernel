@@ -51,6 +51,11 @@ vector<pair<string,string> > Workspace::getHintCFGs() const
   return hintCFGs;
 }
 
+std::pair<std::string,std::string> Workspace::getHintCFG( size_t whichHint ) const
+{
+  return hintCFGs[ whichHint ];
+}
+
 void Workspace::setName( string& whichName )
 {
   name = whichName;
@@ -59,6 +64,16 @@ void Workspace::setName( string& whichName )
 void Workspace::addHintCFG( pair<string,string>& whichCFG )
 {
   hintCFGs.push_back( whichCFG );
+}
+
+void Workspace::addHintCFG( size_t position, std::pair<std::string,std::string>& whichCFG )
+{
+  hintCFGs.insert( hintCFGs.begin() + position, whichCFG );
+}
+
+void Workspace::removeHintCFG( size_t whichHint )
+{
+  hintCFGs.erase( hintCFGs.begin() + whichHint );
 }
 
 void Workspace::clearHintCFGs()

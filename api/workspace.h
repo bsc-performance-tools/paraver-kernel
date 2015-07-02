@@ -47,13 +47,17 @@ class Workspace
 {
   public:
     Workspace();
+    Workspace( std::string whichName ) : name( whichName ) {}
     ~Workspace();
 
     virtual std::string getName() const;
     virtual std::vector<std::pair<std::string,std::string> > getHintCFGs() const;
+    virtual std::pair<std::string,std::string> getHintCFG( size_t whichHint ) const;
 
     virtual void setName( std::string& whichName );
     virtual void addHintCFG( std::pair<std::string,std::string>& whichCFG );
+    virtual void addHintCFG( size_t position, std::pair<std::string,std::string>& whichCFG );
+    virtual void removeHintCFG( size_t whichHint );
     virtual void clearHintCFGs();
 
     template< class Archive >
