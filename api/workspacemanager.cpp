@@ -61,10 +61,12 @@ WorkspaceManager::WorkspaceManager()
   tmp.addHintCFG( tmpwkr );
   addWorkspace( tmp );
 
-  tmpwkr = std::pair< string, string >( "/home/pgonzalez/install/wxparaver/latest/cfgs/counters_PAPI/performance/IPC.cfg", "IPCIPC!!" );
   tmpStr = string( "PAPY" );
   tmp.clearHintCFGs();
   tmp.setName( tmpStr );
+  tmpwkr = std::pair< string, string >( "/home/pgonzalez/install/wxparaver/latest/cfgs/counters_PAPI/performance/IPC.cfg", "IPCIPC!!" );
+  tmp.addHintCFG( tmpwkr );
+  tmpwkr = std::pair< string, string >( "/home/pgonzalez/install/wxparaver/latest/cfgs/counters_PAPI/performance/MIPS.cfg", "IP2CIPC!!" );
   tmp.addHintCFG( tmpwkr );
   addWorkspace( tmp );
 }
