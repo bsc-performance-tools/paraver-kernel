@@ -58,6 +58,7 @@ class Workspace
     virtual void addHintCFG( std::pair<std::string,std::string>& whichCFG );
     virtual void addHintCFG( size_t position, std::pair<std::string,std::string>& whichCFG );
     virtual void removeHintCFG( size_t whichHint );
+    virtual void modifyHintCFG( size_t position, std::pair<std::string,std::string>& whichCFG );
     virtual void clearHintCFGs();
 
     template< class Archive >

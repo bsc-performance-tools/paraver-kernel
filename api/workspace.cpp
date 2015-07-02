@@ -76,6 +76,11 @@ void Workspace::removeHintCFG( size_t whichHint )
   hintCFGs.erase( hintCFGs.begin() + whichHint );
 }
 
+void Workspace::modifyHintCFG( size_t position, std::pair<std::string,std::string>& whichCFG )
+{
+  hintCFGs[ position ] = whichCFG;
+}
+
 void Workspace::clearHintCFGs()
 {
   hintCFGs.clear();
