@@ -52,6 +52,7 @@ WorkspaceManager *WorkspaceManager::getInstance()
 
 WorkspaceManager::WorkspaceManager()
 {
+/*
   // delete me
   Workspace tmp;
 
@@ -69,6 +70,7 @@ WorkspaceManager::WorkspaceManager()
   tmpwkr = std::pair< string, string >( "/home/pgonzalez/install/wxparaver/latest/cfgs/counters_PAPI/performance/MIPS.cfg", "IP2CIPC!!" );
   tmp.addHintCFG( tmpwkr );
   addWorkspace( tmp );
+*/
 }
 
 WorkspaceManager::~WorkspaceManager()
