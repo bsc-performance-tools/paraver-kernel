@@ -45,6 +45,7 @@ class WorkspaceManager
 
     void clear();
 
+    bool existWorkspace( std::string name ) const;
     std::vector<std::string> getWorkspaces() const;
     Workspace& getWorkspace( std::string whichName );
     void addWorkspace( std::string whichName );

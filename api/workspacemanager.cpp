@@ -81,6 +81,11 @@ void WorkspaceManager::clear()
   workspacesOrder.clear();
 }
 
+bool WorkspaceManager::existWorkspace( std::string name ) const
+{
+  return workspaces.find( name ) != workspaces.end();
+}
+
 vector<string> WorkspaceManager::getWorkspaces() const
 {
   return workspacesOrder;
