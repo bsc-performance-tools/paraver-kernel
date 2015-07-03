@@ -131,6 +131,11 @@ void WorkspaceManager::loadXML()
   strFile.append( ".xml" );
 
   std::ifstream ifs( strFile.c_str() );
+  if( !ifs.good() )
+  {
+    saveXML();
+    ifs.open( strFile.c_str() );
+  }
   boost::archive::xml_iarchive ia( ifs );
   ia >> boost::serialization::make_nvp( "workspace_manager", *this );
 }
