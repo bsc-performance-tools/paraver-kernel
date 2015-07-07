@@ -52,25 +52,6 @@ WorkspaceManager *WorkspaceManager::getInstance()
 
 WorkspaceManager::WorkspaceManager()
 {
-/*
-  // delete me
-  Workspace tmp;
-
-  std::pair< string, string > tmpwkr(  "/home/pgonzalez/install/wxparaver/latest/cfgs/mpi/views/MPI_call.cfg", "mPI CALLS!!" );
-  string tmpStr( "MPI" );
-  tmp.setName( tmpStr );
-  tmp.addHintCFG( tmpwkr );
-  addWorkspace( tmp );
-
-  tmpStr = string( "PAPY" );
-  tmp.clearHintCFGs();
-  tmp.setName( tmpStr );
-  tmpwkr = std::pair< string, string >( "/home/pgonzalez/install/wxparaver/latest/cfgs/counters_PAPI/performance/IPC.cfg", "IPCIPC!!" );
-  tmp.addHintCFG( tmpwkr );
-  tmpwkr = std::pair< string, string >( "/home/pgonzalez/install/wxparaver/latest/cfgs/counters_PAPI/performance/MIPS.cfg", "IP2CIPC!!" );
-  tmp.addHintCFG( tmpwkr );
-  addWorkspace( tmp );
-*/
 }
 
 WorkspaceManager::~WorkspaceManager()

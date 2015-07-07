@@ -375,6 +375,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\workspace.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\workspacemanager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\zoomhistory.cpp"
 				>
 				<FileConfiguration
@@ -590,6 +598,14 @@
 			</File>
 			<File
 				RelativePath=".\window.h"
+				>
+			</File>
+			<File
+				RelativePath=".\workspace.h"
+				>
+			</File>
+			<File
+				RelativePath=".\workspacemanager.h"
 				>
 			</File>
 			<File
