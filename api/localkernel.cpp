@@ -75,7 +75,7 @@ void LocalKernel::init()
 #endif
 }
 
-LocalKernel::LocalKernel( bool ( *messageFunction )( string ) ) :
+LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
     myMessageFunction( messageFunction )
 {
 #ifdef WIN32
@@ -324,12 +324,12 @@ void LocalKernel::getAllSemanticFunctions( TSemanticGroup whichGroup,
       whichGroup );
 }
 
-bool LocalKernel::userMessage( const string& message ) const
+bool LocalKernel::userMessage( UserMessageID messageID ) const
 {
   if( myMessageFunction == NULL )
     return true;
 
-  return myMessageFunction( message );
+  return myMessageFunction( messageID );
 }
 
 std::string LocalKernel::composeName( const std::string& name,  const std::string& newExtension )

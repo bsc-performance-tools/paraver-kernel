@@ -42,7 +42,7 @@ class LocalKernel: public KernelConnection
   public:
     static void init();
 
-    LocalKernel( bool (*messageFunction)(std::string) );
+    LocalKernel( bool (*messageFunction)(UserMessageID) );
     virtual ~LocalKernel();
 
     virtual bool checkTraceSize( const std::string& filename, TTraceSize maxSize ) const;
@@ -89,7 +89,7 @@ class LocalKernel: public KernelConnection
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
                                           std::vector<std::string>& onVector ) const;
 
-    virtual bool userMessage( const std::string& message ) const;
+    virtual bool userMessage( UserMessageID messageID ) const;
 
     virtual void copyPCF( const std::string& name, const std::string& traceToLoad ) const;
     virtual void copyROW( const std::string& name, const std::string& traceToLoad ) const;
@@ -129,7 +129,7 @@ class LocalKernel: public KernelConnection
   private:
     std::string pathSeparator;
 
-    bool (*myMessageFunction)(std::string);
+    bool (*myMessageFunction)(UserMessageID);
 
     // FILTERS
     struct traces_table {

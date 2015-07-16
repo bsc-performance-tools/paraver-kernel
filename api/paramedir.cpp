@@ -171,6 +171,19 @@ string strShiftTimesFile( "" );
 EventDrivenCutter *eventDrivenCutter = NULL;
 TEventType eventType = 0;
 
+static const std::string paramedirMessages[ UserMessageSize ] =
+{
+  "None of the events specified in the filter appear in the trace. File creation aborted.",
+  "Some of the events specified in the filter doesn't appear in the trace. File creation aborted.",
+  "Some timeline has 0 objects selected at some level. File creation aborted."
+};
+
+// Message from CFGLoader. Must be changed to IDs and UI write its own message
+static bool userMessageOutput( UserMessageID messageID )
+{
+  std::cout<<paramedirMessages[ messageID ]<<std::endl;
+  return false;
+}
 
 // Loads option map
 void initOptions()
@@ -837,7 +850,7 @@ int main( int argc, char *argv[] )
 
     // Initializations
     LocalKernel::init();
-    KernelConnection *myKernel = new LocalKernel( NULL );
+    KernelConnection *myKernel = new LocalKernel( userMessageOutput );
     ParaverConfig *config = ParaverConfig::getInstance();
     config->readParaverConfigFile();
 

@@ -53,6 +53,14 @@ class EventDrivenCutter;
 
 typedef std::pair< unsigned long long, unsigned long long > TTypeValuePair;
 
+enum UserMessageID
+{
+  MessageCFGNoneEvents = 0,
+  MessageCFGSomeEvents,
+  MessageCFGZeroObjects,
+  UserMessageSize
+};
+
 class KernelConnection
 {
   public:
@@ -102,7 +110,7 @@ class KernelConnection
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
                                           std::vector<std::string>& onVector ) const = 0;
 
-    virtual bool userMessage( const std::string& message ) const = 0;
+    virtual bool userMessage( UserMessageID messageID ) const = 0;
 
     virtual void copyPCF( const std::string& name, const std::string& traceToLoad ) const = 0;
     virtual void copyROW( const std::string& name, const std::string&traceToLoad ) const = 0;

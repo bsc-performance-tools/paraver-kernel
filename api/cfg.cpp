@@ -397,7 +397,8 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
   if ( !someEventsExist )
   {
-    if ( !whichKernel->userMessage( "None of the events specified in the filter appear in the trace. Continue loading CFG file?" ) )
+    //if ( !whichKernel->userMessage( "None of the events specified in the filter appear in the trace. Continue loading CFG file?" ) )
+    if ( !whichKernel->userMessage( MessageCFGNoneEvents ) )
     {
       for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
         delete *itHisto;
@@ -413,7 +414,8 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   }
   else if ( someEventsNotExist )
   {
-    if ( !whichKernel->userMessage( "Some of the events specified in the filter doesn't appear in the trace. Continue loading CFG file?" ) )
+    //if ( !whichKernel->userMessage( "Some of the events specified in the filter doesn't appear in the trace. Continue loading CFG file?" ) )
+    if ( !whichKernel->userMessage( MessageCFGSomeEvents ) )
     {
       for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
       {
@@ -445,7 +447,8 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
   if ( someWindowWithSelectedLevelEmpty )
   {
-    if ( !whichKernel->userMessage( "Some timeline has 0 objects selected at some level Continue loading CFG file?" ) )
+    //if ( !whichKernel->userMessage( "Some timeline has 0 objects selected at some level Continue loading CFG file?" ) )
+    if ( !whichKernel->userMessage( MessageCFGZeroObjects ) )
     {
       for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
       {
