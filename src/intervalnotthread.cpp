@@ -30,6 +30,8 @@
 #include "kwindow.h"
 #include "intervalnotthread.h"
 
+using std::multimap;
+
 KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList create,
                                       KRecordList *displayList )
 {
@@ -37,6 +39,7 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
   info.values.clear();
   info.callingInterval = this;
   info.lastChanged = 0;
+  orderedChilds.clear();
 
   createList = create;
   currentValue = 0.0;
@@ -65,7 +68,7 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
 
   info.callingInterval = this;
 
-  for ( TObjectOrder i = 0; i < childIntervals.size(); i++ )
+  for ( TObjectOrder i = 0; i < childIntervals.size(); ++i )
   {
     childIntervals[ i ]->init( myInitTime, createList, displayList );
 
@@ -92,6 +95,8 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
     }
 
     info.values.push_back( childIntervals[ i ]->getValue() );
+    pair<TRecordTime,TObjectOrder> tmpChild( childIntervals[ i ]->getEnd()->getTime(), i );
+    orderedChilds.insert( tmpChild );
   }
   currentValue = function->execute( &info );
 
@@ -104,8 +109,6 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
 
 KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCalc )
 {
-  info.values.clear();
-
   if ( displayList == NULL )
     displayList = &myDisplayList;
 
@@ -122,27 +125,32 @@ KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCal
     end = NULL;
   }
 
-  for ( TObjectOrder i = 0; i < childIntervals.size(); i++ )
+  TObjectOrder i = 0;
+  std::multimap<TRecordTime,TObjectOrder>::iterator itChild = orderedChilds.begin();
+  while( itChild->first == begin->getTime() )
   {
-    if ( childIntervals[ i ]->getEnd()->getTime() <= begin->getTime() )
+    if ( childIntervals[ itChild->second ]->getEnd()->getTime() <= begin->getTime() )
     {
-      childIntervals[ i ]->calcNext( displayList );
-      info.lastChanged = i;
+      childIntervals[ itChild->second ]->calcNext( displayList );
+      info.lastChanged = itChild->second;
     }
 
-    if ( end == NULL ||
-         childIntervals[ i ]->getEnd()->getTime() < end->getTime() )
-    {
-      if ( end != NULL )
-        delete end;
-      if ( level >= SYSTEM )
-        end = window->copyCPUIterator( childIntervals[ i ]->getEnd() );
-      else
-        end = window->copyThreadIterator( childIntervals[ i ]->getEnd() );
-    }
+    info.values[ itChild->second ] = childIntervals[ itChild->second ]->getValue();
+    pair<TRecordTime,TObjectOrder> tmpChild( childIntervals[ itChild->second ]->getEnd()->getTime(), itChild->second );
+    orderedChilds.erase( itChild );
+    orderedChilds.insert( tmpChild );
+    itChild = orderedChilds.begin();
 
-    info.values.push_back( childIntervals[ i ]->getValue() );
+    ++i;
+    if( i >= childIntervals.size() ) break;
   }
+  if ( end != NULL )
+    delete end;
+  if ( level >= SYSTEM )
+    end = window->copyCPUIterator( childIntervals[ itChild->second ]->getEnd() );
+  else
+    end = window->copyThreadIterator( childIntervals[ itChild->second ]->getEnd() );
+
   currentValue = function->execute( &info );
 
   return displayList;
@@ -151,8 +159,6 @@ KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCal
 
 KRecordList *IntervalNotThread::calcPrev( KRecordList *displayList, bool initCalc )
 {
-  info.values.clear();
-
   if ( displayList == NULL )
     displayList = &myDisplayList;
 
@@ -169,24 +175,29 @@ KRecordList *IntervalNotThread::calcPrev( KRecordList *displayList, bool initCal
     begin = NULL;
   }
 
-  for ( TObjectOrder i = 0; i < childIntervals.size(); i++ )
+  TObjectOrder i = 0;
+  std::multimap<TRecordTime,TObjectOrder>::iterator itChild = orderedChilds.begin();
+  while( itChild->first == begin->getTime() )
   {
-    if ( childIntervals[ i ]->getBegin()->getTime() >= end->getTime() )
-      childIntervals[ i ]->calcPrev( displayList );
+    if ( childIntervals[ itChild->second ]->getBegin()->getTime() >= end->getTime() )
+      childIntervals[ itChild->second ]->calcPrev( displayList );
 
-    if ( begin == NULL ||
-         childIntervals[ i ]->getBegin()->getTime() > begin->getTime() )
-    {
-      if ( begin != NULL )
-        delete begin;
-      if ( level >= SYSTEM )
-        begin = window->copyCPUIterator( childIntervals[ i ]->getBegin() );
-      else
-        begin = window->copyThreadIterator( childIntervals[ i ]->getBegin() );
-    }
+    info.values[ itChild->second ] = childIntervals[ itChild->second ]->getValue();
+    pair<TRecordTime,TObjectOrder> tmpChild( childIntervals[ itChild->second ]->getEnd()->getTime(), itChild->second );
+    orderedChilds.erase( itChild );
+    orderedChilds.insert( tmpChild );
+    itChild = orderedChilds.begin();
 
-    info.values.push_back( childIntervals[ i ]->getValue() );
+    ++i;
+    if( i >= childIntervals.size() ) break;
   }
+  if ( begin != NULL )
+    delete begin;
+  if ( level >= SYSTEM )
+    begin = window->copyCPUIterator( childIntervals[ itChild->second ]->getBegin() );
+  else
+    begin = window->copyThreadIterator( childIntervals[ itChild->second ]->getBegin() );
+
   currentValue = function->execute( &info );
 
   return displayList;

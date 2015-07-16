@@ -30,6 +30,7 @@
 #ifndef INTERVALNOTTHREAD_H_INCLUDED
 #define INTERVALNOTTHREAD_H_INCLUDED
 
+#include <map>
 #include "intervalhigh.h"
 #include "semanticnotthread.h"
 
@@ -147,6 +148,7 @@ class IntervalNotThread: public IntervalHigh
 
   private:
     SemanticHighInfo info;
+    std::multimap<TRecordTime,TObjectOrder> orderedChilds;
 
 };
 
