@@ -275,22 +275,11 @@ void ProcessModel::getThreadsPerNode( TNodeOrder inNode, vector<TThreadOrder>& o
 {
   onVector.clear();
 
-  onVector = threadsPerNode.find( inNode )->second;
-/*  for ( vector<ProcessModelAppl>::const_iterator itAppl = applications.begin();
-        itAppl != applications.end(); ++itAppl )
-  {
-    for ( vector<ProcessModelTask>::const_iterator itTask = itAppl->tasks.begin();
-          itTask != itAppl->tasks.end(); ++itTask )
-    {
-      for ( vector<ProcessModelThread>::const_iterator itThread = itTask->threads.begin();
-            itThread != itTask->threads.end(); ++itThread )
-      {
-        if ( itThread->nodeExecution == inNode )
-          onVector.push_back( itThread->traceGlobalOrder );
-      }
-    }
-  }
-  */
+  if( inNode == 0 ) return;
+
+  map<TNodeOrder, vector<TThreadOrder> >::const_iterator nodeIt = threadsPerNode.find( inNode - 1 );
+  if( nodeIt != threadsPerNode.end() )
+    onVector = nodeIt->second;
 }
 
 bool ProcessModel::isValidThread( TThreadOrder whichThread ) const
