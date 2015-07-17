@@ -45,9 +45,9 @@ IntervalCPU::IntervalCPU( KSingleWindow *whichWindow, TWindowLevel whichLevel,
   TCPUOrder tmpCPU;
   window->getTrace()->getCPULocation( whichOrder, tmpNode, tmpCPU );
   std::vector<TThreadOrder> tmpThreads;
-  window->getTrace()->getThreadsPerNode( tmpNode, tmpThreads );
+  window->getTrace()->getThreadsPerNode( tmpNode + 1, tmpThreads );
 
-  if( tmpThreads .empty() )
+  if( tmpThreads.empty() )
     firstThreadOnCPU = 0;
   else
     firstThreadOnCPU = tmpThreads[ 0 ];

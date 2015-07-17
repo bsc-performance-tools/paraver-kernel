@@ -110,7 +110,7 @@ MemoryTrace::iterator* PlainTrace::CPUBegin( TCPUOrder whichCPU ) const
   TCPUOrder tmpCPU;
 
   resourceModel.getCPULocation( whichCPU, tmpNode, tmpCPU );
-  processModel.getThreadsPerNode( tmpNode, threads );
+  processModel.getThreadsPerNode( tmpNode + 1, threads );
 
   numThreads = threads.size();
   block.insert( block.begin(), numThreads, 0 );
@@ -129,7 +129,7 @@ MemoryTrace::iterator* PlainTrace::CPUEnd( TCPUOrder whichCPU ) const
   TCPUOrder tmpCPU;
 
   resourceModel.getCPULocation( whichCPU, tmpNode, tmpCPU );
-  processModel.getThreadsPerNode( tmpNode, threads );
+  processModel.getThreadsPerNode( tmpNode + 1, threads );
 
   numThreads = threads.size();
   for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )
@@ -196,7 +196,7 @@ void PlainTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
     TCPUOrder tmpCPU;
 
     resourceModel.getCPULocation( ii, tmpNode, tmpCPU );
-    processModel.getThreadsPerNode( tmpNode, threads );
+    processModel.getThreadsPerNode( tmpNode + 1, threads );
 
     numThreads = threads.size();
     for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )

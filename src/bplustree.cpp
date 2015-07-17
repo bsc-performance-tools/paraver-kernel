@@ -877,7 +877,7 @@ TTime BPlusTree::finish( TTime headerTime, Trace *whichTrace )
     TCPUOrder tmpCPU;
     whichTrace->getCPULocation( i + 1, tmpNode, tmpCPU );
     std::vector<TThreadOrder> tmpThreads;
-    whichTrace->getThreadsPerNode( tmpNode, tmpThreads );
+    whichTrace->getThreadsPerNode( tmpNode + 1, tmpThreads );
     if( tmpThreads.empty() )
     {
       tmpBegin.thread = 0;
@@ -1098,7 +1098,7 @@ void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
   // Backward search filling vector of iterators.
   while ( ( current != NULL ) && ( filled < numCPUs ) )
   {
-    if ( listIter[ current->CPU - 1 ] == NULL )
+    if ( current->CPU > 0 && listIter[ current->CPU - 1 ] == NULL )
     {
       listIter[ current->CPU - 1 ] = new BPlusTree::CPUIterator( current );
       ++filled;

@@ -302,7 +302,7 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 
   intervalApplication.reserve( myTrace->totalApplications() );
   intervalComposeApplication.reserve( myTrace->totalApplications() );
-  for( TApplOrder i = 0; i < myTrace->totalApplications(); i++ )
+  for( TApplOrder i = 0; i < myTrace->totalApplications(); ++i )
   {
     intervalApplication.push_back( IntervalNotThread( this, APPLICATION, i ) );
     intervalComposeApplication.push_back( IntervalCompose( this, COMPOSEAPPLICATION, i ) );
@@ -310,7 +310,7 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 
   intervalTask.reserve( myTrace->totalTasks() );
   intervalComposeTask.reserve( myTrace->totalTasks() );
-  for( TTaskOrder i = 0; i < myTrace->totalTasks(); i++ )
+  for( TTaskOrder i = 0; i < myTrace->totalTasks(); ++i )
   {
     intervalTask.push_back( IntervalNotThread( this, TASK, i ) );
     intervalComposeTask.push_back( IntervalCompose( this, COMPOSETASK, i ) );
@@ -318,7 +318,7 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 
   intervalThread.reserve( myTrace->totalThreads() );
   intervalComposeThread.reserve( myTrace->totalThreads() );
-  for( TThreadOrder i = 0; i < myTrace->totalThreads(); i++ )
+  for( TThreadOrder i = 0; i < myTrace->totalThreads(); ++i )
   {
     intervalThread.push_back( IntervalThread( this, THREAD, i ) );
     intervalComposeThread.push_back( IntervalCompose( this, COMPOSETHREAD, i ) );
@@ -329,7 +329,7 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 
   intervalNode.reserve( myTrace->totalNodes() );
   intervalComposeNode.reserve( myTrace->totalNodes() );
-  for( TNodeOrder i = 0; i < myTrace->totalNodes(); i++ )
+  for( TNodeOrder i = 0; i < myTrace->totalNodes(); ++i )
   {
     intervalNode.push_back( IntervalNotThread( this, NODE, i ) );
     intervalComposeNode.push_back( IntervalCompose( this, COMPOSENODE, i ) );
@@ -337,7 +337,7 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 
   intervalCPU.reserve( myTrace->totalCPUs() );
   intervalComposeCPU.reserve( myTrace->totalCPUs() );
-  for( TCPUOrder i = 0; i < myTrace->totalCPUs(); i++ )
+  for( TCPUOrder i = 0; i < myTrace->totalCPUs(); ++i )
   {
     intervalCPU.push_back( IntervalCPU( this, CPU, i + 1 ) );
     intervalComposeCPU.push_back( IntervalCompose( this, COMPOSECPU, i ) );

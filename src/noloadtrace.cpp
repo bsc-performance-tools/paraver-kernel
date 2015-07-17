@@ -132,7 +132,7 @@ MemoryTrace::iterator* NoLoadTrace::CPUBegin( TCPUOrder whichCPU ) const
   TCPUOrder tmpCPU;
 
   resourceModel.getCPULocation( whichCPU, tmpNode, tmpCPU );
-  processModel.getThreadsPerNode( tmpNode, threads );
+  processModel.getThreadsPerNode( tmpNode + 1, threads );
 
   for ( TThreadOrder i = 0; i < threads.size(); ++i )
   {
@@ -159,7 +159,7 @@ MemoryTrace::iterator* NoLoadTrace::CPUEnd( TCPUOrder whichCPU ) const
   TCPUOrder tmpCPU;
 
   resourceModel.getCPULocation( whichCPU, tmpNode, tmpCPU );
-  processModel.getThreadsPerNode( tmpNode, threads );
+  processModel.getThreadsPerNode( tmpNode + 1, threads );
 
   for ( TThreadOrder i = 0; i < threads.size(); ++i )
   {
@@ -233,7 +233,7 @@ void NoLoadTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
     TCPUOrder tmpCPU;
 
     resourceModel.getCPULocation( ii, tmpNode, tmpCPU );
-    processModel.getThreadsPerNode( tmpNode, threads );
+    processModel.getThreadsPerNode( tmpNode + 1, threads );
 
     for ( TThreadOrder iThread = 0; iThread < threads.size(); ++iThread )
     {

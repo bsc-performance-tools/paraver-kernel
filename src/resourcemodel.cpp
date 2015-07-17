@@ -149,7 +149,7 @@ ResourceModel::ResourceModel( istringstream& headerInfo )
   }
 
   // Insert nodes
-  for ( TNodeOrder countNode = 0; countNode < numberNodes; countNode++ )
+  for ( TNodeOrder countNode = 0; countNode < numberNodes; ++countNode )
   {
     TCPUOrder numberCPUs;
 
@@ -175,7 +175,7 @@ ResourceModel::ResourceModel( istringstream& headerInfo )
       numberCPUs = 1;
 
     // Insert CPUs
-    for ( TCPUOrder countCPU = 0; countCPU < numberCPUs; countCPU++ )
+    for ( TCPUOrder countCPU = 0; countCPU < numberCPUs; ++countCPU )
     {
       if( globalCPUs < std::numeric_limits<TCPUOrder>::max() )
       {
