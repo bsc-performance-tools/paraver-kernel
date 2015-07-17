@@ -155,7 +155,7 @@ Trace *trace;
 
 // CFGs
 std::map< string, string > cfgs;
-
+std::map< string, string >::iterator currentCFG;
 // PRV Toolset
 string strXMLOptions( "" );
 
@@ -181,7 +181,7 @@ static const std::string paramedirMessages[ UserMessageSize ] =
 // Message from CFGLoader. Must be changed to IDs and UI write its own message
 static bool userMessageOutput( UserMessageID messageID )
 {
-  std::cout<<paramedirMessages[ messageID ]<<std::endl;
+  std::cout<<currentCFG->first<<": "<<paramedirMessages[ messageID ]<<std::endl;
   return false;
 }
 
@@ -731,6 +731,7 @@ void loadCFGs( KernelConnection *myKernel )
     vector<Histogram *> histograms;
     SaveOptions options; // P4D: Should options.enabledP4DMode be taken in this context?
 
+    currentCFG = it;
     if ( CFGLoader::loadCFG( myKernel, it->first, trace, windows, histograms, options ) )
     {
       TextOutput output;
