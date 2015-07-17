@@ -163,13 +163,13 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
   else if ( level == NODE )
   {
     if( globalOrder >= whichTrace->totalNodes() )
-      sstrObjectLabel << "Not valid node: " << globalOrder + 1;
+      sstrObjectLabel << "Not valid node: " << globalOrder;
     else
     {
       if ( showLevelTag )
-        sstrObjectLabel << LEVEL_NODE << ' ' << globalOrder + 1;
+        sstrObjectLabel << LEVEL_NODE << ' ' << globalOrder;
       else
-        sstrObjectLabel << globalOrder + 1;
+        sstrObjectLabel << globalOrder;
     }
   }
   else if ( level == SYSTEM )
