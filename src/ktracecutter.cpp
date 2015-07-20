@@ -1512,7 +1512,7 @@ void KTraceCutter::execute( char *trace_in,
   if( tmpKProgressControler != NULL && tmpKProgressControler->getStop() )
     tmpKProgressControler->setMessage( "Finishing cut..." );
 
-  if ( last_record_time > time_max )
+  if ( last_record_time > time_max || remLastStates )
   //if ( !originalTime )
     appendLastZerosToUnclosedEvents( last_record_time );
   else
