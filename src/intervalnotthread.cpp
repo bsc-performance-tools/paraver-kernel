@@ -31,6 +31,7 @@
 #include "intervalnotthread.h"
 
 using std::multimap;
+using std::pair;
 
 KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList create,
                                       KRecordList *displayList )
