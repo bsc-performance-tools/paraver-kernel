@@ -350,7 +350,7 @@ string LabelConstructor::numberWithSeparators( TSemanticValue value, PRV_UINT32 
     tmp << fixed;
     tmp.precision( precision );
     value -= PRV_INT64( origValue );
-    if ( unit != NS && value > 0 )
+    if ( ( unit != NS && value > 0 ) || ( origValue < 1.0 && value > 0 ) )
     {
       tmp << value;
       strNum = tmp.str();
