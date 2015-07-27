@@ -293,7 +293,7 @@ class TraceProxy: public Trace
     virtual const StateLabels& getStateLabels() const;
     virtual std::string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const;
 
-    virtual std::string getDefaultSemanticFunc( TWindowLevel whichLevel ) const;
+//    virtual std::string getDefaultSemanticFunc( TWindowLevel whichLevel ) const;
 
     virtual bool eventLoaded( TEventType whichType ) const;
     virtual bool anyEventLoaded( TEventType firstType, TEventType lastType ) const;
@@ -336,8 +336,8 @@ class TraceProxy: public Trace
     StateLabels myStateLabels;
     RowLabels myRowLabels;
 
-    std::string myDefaultTaskSemanticFunc;
-    std::string myDefaultThreadSemanticFunc;
+//    std::string myDefaultTaskSemanticFunc;
+//    std::string myDefaultThreadSemanticFunc;
 
     TraceProxy( KernelConnection *whichKernel, const std::string& whichFile,
                 bool noLoad, ProgressController *progress );

@@ -153,15 +153,7 @@
 			<Option target="Release" />
 			<Option target="otf2prv" />
 		</Unit>
-		<Unit filename="../common-files/pcfparser/LibException.cpp">
-			<Option target="api" />
-			<Option target="otf2prv" />
-		</Unit>
 		<Unit filename="../common-files/pcfparser/LibException.h">
-			<Option target="api" />
-			<Option target="otf2prv" />
-		</Unit>
-		<Unit filename="../common-files/pcfparser/ParaverEventType.cpp">
 			<Option target="api" />
 			<Option target="otf2prv" />
 		</Unit>
@@ -169,15 +161,7 @@
 			<Option target="api" />
 			<Option target="otf2prv" />
 		</Unit>
-		<Unit filename="../common-files/pcfparser/ParaverEventValue.cpp">
-			<Option target="api" />
-			<Option target="otf2prv" />
-		</Unit>
 		<Unit filename="../common-files/pcfparser/ParaverEventValue.h">
-			<Option target="api" />
-			<Option target="otf2prv" />
-		</Unit>
-		<Unit filename="../common-files/pcfparser/ParaverGradientColor.cpp">
 			<Option target="api" />
 			<Option target="otf2prv" />
 		</Unit>
@@ -185,23 +169,11 @@
 			<Option target="api" />
 			<Option target="otf2prv" />
 		</Unit>
-		<Unit filename="../common-files/pcfparser/ParaverGradientNames.cpp">
-			<Option target="api" />
-			<Option target="otf2prv" />
-		</Unit>
 		<Unit filename="../common-files/pcfparser/ParaverGradientNames.h">
 			<Option target="api" />
 			<Option target="otf2prv" />
 		</Unit>
-		<Unit filename="../common-files/pcfparser/ParaverState.cpp">
-			<Option target="api" />
-			<Option target="otf2prv" />
-		</Unit>
 		<Unit filename="../common-files/pcfparser/ParaverState.h">
-			<Option target="api" />
-			<Option target="otf2prv" />
-		</Unit>
-		<Unit filename="../common-files/pcfparser/ParaverStatesColor.cpp">
 			<Option target="api" />
 			<Option target="otf2prv" />
 		</Unit>
@@ -214,10 +186,6 @@
 			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="../common-files/pcfparser/ParaverTraceConfig.h">
-			<Option target="api" />
-			<Option target="otf2prv" />
-		</Unit>
-		<Unit filename="../common-files/pcfparser/ParaverTraceConfigGrammar.cpp">
 			<Option target="api" />
 			<Option target="otf2prv" />
 		</Unit>

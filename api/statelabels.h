@@ -32,7 +32,7 @@
 
 #include <map>
 #include "paraverkerneltypes.h"
-#include "pcfparser/ParaverTraceConfig.h"
+#include "pcfparser/libtools/ParaverTraceConfig.h"
 
 using namespace libparaver;
 

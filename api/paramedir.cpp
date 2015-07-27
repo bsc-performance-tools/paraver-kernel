@@ -58,6 +58,7 @@
 #include "traceshifter.h"
 #include "eventdrivencutter.h"
 
+#include "../../common-files/pcfparser/libtools/ParaverTraceConfig.h"
 
 // PARAMEDIR OPTIONS
 typedef struct TOptionParamedir
@@ -597,7 +598,8 @@ string applyFilters( KernelConnection *myKernel,
       {
         fclose( pcfFile );
 
-        config = new ParaverTraceConfig( pcf_name );
+        config = new ParaverTraceConfig();
+        config->parse( pcf_name );
         labels = EventLabels( *config, std::set<TEventType>() );
         labels.getTypes( allTypes );
         for( vector< TEventType >::iterator it = allTypes.begin(); it != allTypes.end(); ++it )

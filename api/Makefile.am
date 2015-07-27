@@ -36,15 +36,8 @@ libparaver_api_la_SOURCES = \
                     window.cpp \
                     workspace.cpp \
                     workspacemanager.cpp \
-                    ../../common-files/pcfparser/LibException.cpp \
-                    ../../common-files/pcfparser/ParaverEventType.cpp \
-                    ../../common-files/pcfparser/ParaverEventValue.cpp \
-                    ../../common-files/pcfparser/ParaverGradientColor.cpp \
-                    ../../common-files/pcfparser/ParaverGradientNames.cpp \
-                    ../../common-files/pcfparser/ParaverState.cpp \
-                    ../../common-files/pcfparser/ParaverStatesColor.cpp \
-                    ../../common-files/pcfparser/ParaverTraceConfig.cpp \
-                    ../../common-files/pcfparser/ParaverTraceConfigGrammar.cpp
+                    ../../common-files/pcfparser/libtools/ParaverTraceConfig.cpp \
+										../../common-files/pcfparser/libtools/UIParaverTraceConfig.cpp 
                     
 include_HEADERS = \
                   cfg.h\
@@ -100,7 +93,7 @@ include_HEADERS = \
 
 install-data-hook:
 	$(mkdir_p) $(includedir)/pcfparser
-	cp -f ../../common-files/pcfparser/ParaverTraceConfig.h $(includedir)/pcfparser
+	cp -f ../../common-files/pcfparser/libtools/ParaverTraceConfig.h $(includedir)/pcfparser
 
 
 # Erases everything which should not be uploaded to CVS

@@ -28,7 +28,8 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "statelabels.h"
-#include "../common-files/pcfparser/ParaverState.h"
+//#include "../common-files/pcfparser/ParaverState.h"
+#include "../common-files/pcfparser/libtools/ParaverTraceConfig.h"
 
 using namespace std;
 
@@ -39,10 +40,9 @@ StateLabels::StateLabels()
 
 StateLabels::StateLabels( const ParaverTraceConfig& config )
 {
-  const vector<ParaverState *>& states = config.get_states();
-  for ( vector<ParaverState *>::const_iterator it = states.begin();
-        it != states.end(); ++it )
-    stateLabel[ ( *it )->get_key() ] = ( *it )->get_value();
+  const vector<int>& states = config.getStates();
+  for ( vector<int>::const_iterator it = states.begin(); it != states.end(); ++it )
+    stateLabel[ *it ] = config.getState( *it );
 }
 
 StateLabels::~StateLabels()

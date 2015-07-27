@@ -28,8 +28,9 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "eventlabels.h"
-#include "pcfparser/ParaverEventType.h"
-#include "pcfparser/ParaverEventValue.h"
+//#include "pcfparser/ParaverEventType.h"
+//#include "pcfparser/ParaverEventValue.h"
+#include "pcfparser/libtools/ParaverTraceConfig.h"
 
 using namespace std;
 
@@ -52,19 +53,28 @@ EventLabels::EventLabels( const libparaver::ParaverTraceConfig& config,
         it != eventsLoaded.end(); ++it )
     eventTypeLabel[ *it ] = unknownLabel + " type ";*/
 
-  const vector<ParaverEventType *>& types = config.get_eventTypes();
-  for ( vector<ParaverEventType *>::const_iterator it = types.begin();
-        it != types.end(); ++it )
+  try
   {
-    eventTypeLabel[ ( *it )->get_key() ] = ( *it )->get_description();
-    eventValueLabel[ ( *it )->get_key() ] = map<TEventValue, string>();
-    const vector<ParaverEventValue *>& values = ( *it )->get_eventValues();
-    for ( vector<ParaverEventValue *>::const_iterator itVal = values.begin();
-          itVal != values.end(); ++itVal )
+    const vector<unsigned int>& types = config.getEventTypes();
+    for ( vector<unsigned int>::const_iterator it = types.begin(); it != types.end(); ++it )
     {
-      ( eventValueLabel[ ( *it )->get_key() ] )[ ( *itVal )->get_key() ] =
-        ( *itVal )->get_value();
+      eventTypeLabel[ *it ] = config.getEventType( *it );
+      eventValueLabel[ *it ] = map<TEventValue, string>();
+      try
+      {
+        vector<unsigned int> values = config.getEventValues( *it );
+        for ( vector<unsigned int>::const_iterator itVal = values.begin(); itVal != values.end(); ++itVal )
+        {
+          ( eventValueLabel[ *it ] )[ *itVal ] = config.getEventValue( *it, *itVal );
+        }
+      }
+      catch( libparaver::UIParaverTraceConfig::value_not_found )
+      {
+      }
     }
+  }
+  catch( libparaver::UIParaverTraceConfig::value_not_found )
+  {
   }
 }
 

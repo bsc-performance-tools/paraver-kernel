@@ -29,9 +29,9 @@
 
 #include "kernelconnection.h"
 #include "trace.h"
-#include "pcfparser/ParaverTraceConfig.h"
-#include "pcfparser/ParaverStatesColor.h"
-#include "pcfparser/ParaverGradientColor.h"
+#include "pcfparser/libtools/ParaverTraceConfig.h"
+//#include "pcfparser/ParaverStatesColor.h"
+//#include "pcfparser/ParaverGradientColor.h"
 #include "progresscontroller.h"
 #include <sstream>
 #include "paraverconfig.h"
@@ -458,7 +458,8 @@ void TraceProxy::parsePCF( const string& whichFile )
 
   try
   {
-    config = new ParaverTraceConfig( whichFile );
+    config = new ParaverTraceConfig();
+    config->parse( whichFile /* true */ );
   }
   catch ( ... )
   {
@@ -468,37 +469,36 @@ void TraceProxy::parsePCF( const string& whichFile )
 
   rgb tmpColor;
 
-  if ( config->get_statesColor().begin() != config->get_statesColor().end() )
+  const vector< int >& stateColors = config->getStateColors();
+  for ( vector< int >::const_iterator it = stateColors.begin(); it != stateColors.end(); ++it )
   {
-    for ( vector<ParaverStatesColor *>::const_iterator it = config->get_statesColor().begin();
-          it != config->get_statesColor().end(); ++it )
-    {
-      tmpColor.red = ( *it )->get_color1();
-      tmpColor.green = ( *it )->get_color2();
-      tmpColor.blue = ( *it )->get_color3();
-      myCodeColor.setColor( ( PRV_UINT32 )( *it )->get_key(), tmpColor );
-    }
+    tmpColor.red = config->getStateColor( *it ).getRed();
+    tmpColor.green = config->getStateColor( *it ).getGreen();
+    tmpColor.blue = config->getStateColor( *it ).getBlue();
+    myCodeColor.setColor( ( PRV_UINT32 )( *it ), tmpColor );
   }
 
-  if ( config->get_gradientColors().begin() != config->get_gradientColors().end() )
+
+
+  const vector< int >& gradientColors = config->getGradientColors();
+  if ( gradientColors.begin() != gradientColors.end() )
   {
-    ParaverGradientColor *grad = ( config->get_gradientColors() )[ 0 ];
-    tmpColor.red = grad->get_color1();
-    tmpColor.green = grad->get_color2();
-    tmpColor.blue = grad->get_color3();
+    tmpColor.red = config->getGradientColor( gradientColors[0] ).getRed();
+    tmpColor.green = config->getGradientColor( gradientColors[0] ).getGreen();
+    tmpColor.blue = config->getGradientColor( gradientColors[0] ).getBlue();
     myGradientColor.setBeginGradientColor( tmpColor );
 
-    grad = ( config->get_gradientColors() )[ config->get_gradientColors().size() - 1 ];
-    tmpColor.red = grad->get_color1();
-    tmpColor.green = grad->get_color2();
-    tmpColor.blue = grad->get_color3();
+    size_t last = gradientColors.size() - 1;
+    tmpColor.red = config->getGradientColor( gradientColors[ last ] ).getRed();
+    tmpColor.green = config->getGradientColor( gradientColors[ last ] ).getGreen();
+    tmpColor.blue = config->getGradientColor( gradientColors[ last ] ).getBlue();
     myGradientColor.setEndGradientColor( tmpColor );
   }
   myEventLabels = EventLabels( *config, myTrace->getLoadedEvents() );
   myStateLabels = StateLabels( *config );
 
-  myDefaultTaskSemanticFunc = config->get_default_task_semantic_func();
-  myDefaultThreadSemanticFunc = config->get_default_thread_semantic_func();
+  // myDefaultTaskSemanticFunc = config->get_default_task_semantic_func();
+  // myDefaultThreadSemanticFunc = config->get_default_thread_semantic_func();
 
   delete config;
 }
@@ -534,7 +534,8 @@ string TraceProxy::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow )
 }
 
 
-string TraceProxy::getDefaultSemanticFunc( TWindowLevel whichLevel ) const
+/*
+ string TraceProxy::getDefaultSemanticFunc( TWindowLevel whichLevel ) const
 {
   switch ( whichLevel )
   {
@@ -550,6 +551,8 @@ string TraceProxy::getDefaultSemanticFunc( TWindowLevel whichLevel ) const
 
   return myDefaultThreadSemanticFunc;
 }
+
+*/
 
 bool TraceProxy::eventLoaded( TEventType whichType ) const
 {
