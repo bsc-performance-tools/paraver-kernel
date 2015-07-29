@@ -134,7 +134,7 @@ TOptionParamedir definedOption[] =
   { "-tw", "--workload-shifter", false, 1, "", "<shift-times-file>", "Whole trace shift (file contains at least one shift time)" },
 
   // SENTINEL
-  { "", "", false, 0, "", "", "none" },
+  { "", "", false, 0, "", "", "" },
 
   // HIDDEN
   { "-d", "--dump-trace", false, 0, "", "", "" },
@@ -189,7 +189,7 @@ static bool userMessageOutput( UserMessageID messageID )
 // Loads option map
 void initOptions()
 {
-  for ( int i = SHOW_HELP; i < INVALID_OPTION; ++i )
+  for ( int i = SHOW_HELP; i <= NO_LOAD; ++i )
   {
     TOptionID id = TOptionID( i );
     option[ id ]  = definedOption[ id ];
@@ -203,7 +203,7 @@ TOptionID findOption( string argument )
 {
   TOptionID whichOption = INVALID_OPTION;
 
-  for ( int i = SHOW_HELP; i < INVALID_OPTION; ++i )
+  for ( int i = SHOW_HELP; i <= NO_LOAD; ++i )
   {
     TOptionID id = TOptionID( i );
     if (( argument == option[ id ].shortForm ) ||
@@ -223,6 +223,9 @@ void printOptionHelp( TOptionID id )
 {
   std::string INDENT4("    ");
   std::stringstream helpFormat, helpFormat2;
+
+  if( option[ id ].helpMessage == "" )
+    return;
 
   helpFormat << option[ id ].shortForm;
 
