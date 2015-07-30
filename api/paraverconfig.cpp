@@ -129,6 +129,7 @@ ParaverConfig::ParaverConfig()
   xmlGlobal.tmpPath = homedir; // errors, logs, working dir
   xmlGlobal.applyFollowingCFGsToAllTraces = false;
   xmlGlobal.fillStateGaps = true;
+  xmlGlobal.fullTracePath = false;
   xmlGlobal.singleInstance = true;
   xmlGlobal.mainWindowWidth = 300;
   xmlGlobal.mainWindowHeight = 600;
@@ -276,6 +277,11 @@ void ParaverConfig::setGlobalFillStateGaps( bool fill )
   xmlGlobal.fillStateGaps = fill;
 }
 
+void ParaverConfig::setGlobalFullTracePath( bool fullPath )
+{
+  xmlGlobal.fullTracePath = fullPath;
+}
+
 void ParaverConfig::setGlobalSingleInstance( bool whichSingleInstance )
 {
   xmlGlobal.singleInstance = whichSingleInstance;
@@ -329,6 +335,11 @@ bool ParaverConfig::getGlobalApplyFollowingCFGsToAllTraces() const
 bool ParaverConfig::getGlobalFillStateGaps() const
 {
   return xmlGlobal.fillStateGaps;
+}
+
+bool ParaverConfig::getGlobalFullTracePath() const
+{
+  return xmlGlobal.fullTracePath;
 }
 
 bool ParaverConfig::getGlobalSingleInstance() const

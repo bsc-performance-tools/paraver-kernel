@@ -97,6 +97,7 @@ class ParaverConfig
     void setGlobalTmpPath( std::string whichTmpPath );
     void setGlobalApplyFollowingCFGsToAllTraces( bool whichApplyFollowingCFGsToAllTraces );
     void setGlobalFillStateGaps( bool whichFillStateGaps );
+    void setGlobalFullTracePath( bool whichFullTracePath );
     void setGlobalSingleInstance( bool whichSingleInstance );
     void setMainWindowWidth( unsigned int whichWidth );
     void setMainWindowHeight( unsigned int whichHeight );
@@ -110,6 +111,7 @@ class ParaverConfig
     std::string getGlobalTmpPath() const;
     bool getGlobalApplyFollowingCFGsToAllTraces() const;
     bool getGlobalFillStateGaps() const;
+    bool getGlobalFullTracePath() const;
     bool getGlobalSingleInstance() const;
     unsigned int getMainWindowWidth() const;
     unsigned int getMainWindowHeight() const;
@@ -324,6 +326,8 @@ class ParaverConfig
         }
         // ar & boost::serialization::make_nvp( "apply_following_cfgs_to_all_traces", applyFollowingCFGsToAllTraces );
         ar & boost::serialization::make_nvp( "fill_state_gaps", fillStateGaps );
+        if( version >= 5 )
+          ar & boost::serialization::make_nvp( "full_trace_path", fullTracePath );
         if( version >= 1 )
           ar & boost::serialization::make_nvp( "single_instance", singleInstance );
         if( version >= 2 )
@@ -344,6 +348,7 @@ class ParaverConfig
       std::string tmpPath;    // errors, logs, working dir
       bool applyFollowingCFGsToAllTraces;
       bool fillStateGaps;
+      bool fullTracePath;
       bool singleInstance;
       unsigned int mainWindowWidth;
       unsigned int mainWindowHeight;
@@ -678,7 +683,7 @@ class ParaverConfig
 
 // Second version: introducing some structure
 BOOST_CLASS_VERSION( ParaverConfig, 1)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 4)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 5)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 3)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 3)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 1)
