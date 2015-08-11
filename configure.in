@@ -12,7 +12,7 @@ AC_INIT(paraver-kernel, 1.0, tools@bsc.es)
 AC_CONFIG_SRCDIR(src/)
 
 # Initialize automake
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([subdir-objects])
 
 # Specify the output configuration header file
 AC_CONFIG_HEADERS(config.h)
