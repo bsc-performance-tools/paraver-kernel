@@ -78,10 +78,7 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
     {
       if ( begin != NULL )
         delete begin;
-      if ( level >= SYSTEM )
-        begin = window->copyCPUIterator( childIntervals[ i ]->getBegin() );
-      else
-        begin = window->copyThreadIterator( childIntervals[ i ]->getBegin() );
+      begin = childIntervals[ i ]->getBegin()->clone();
     }
 
     if ( end == NULL ||
@@ -89,10 +86,7 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
     {
       if ( end != NULL )
         delete end;
-      if ( level >= SYSTEM )
-        end = window->copyCPUIterator( childIntervals[ i ]->getEnd() );
-      else
-        end = window->copyThreadIterator( childIntervals[ i ]->getEnd() );
+      end = childIntervals[ i ]->getEnd()->clone();
     }
 
     info.values.push_back( childIntervals[ i ]->getValue() );
@@ -115,10 +109,7 @@ KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCal
 
   if ( begin != NULL )
     delete begin;
-  if ( level >= SYSTEM )
-    begin = window->copyCPUIterator( end );
-  else
-    begin = window->copyThreadIterator( end );
+  begin = end->clone();
 
   if( end != NULL )
   {
@@ -147,10 +138,7 @@ KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCal
   }
   if ( end != NULL )
     delete end;
-  if ( level >= SYSTEM )
-    end = window->copyCPUIterator( childIntervals[ itChild->second ]->getEnd() );
-  else
-    end = window->copyThreadIterator( childIntervals[ itChild->second ]->getEnd() );
+  end = childIntervals[ itChild->second ]->getEnd()->clone();
 
   currentValue = function->execute( &info );
 
@@ -165,10 +153,7 @@ KRecordList *IntervalNotThread::calcPrev( KRecordList *displayList, bool initCal
 
   if ( end != NULL )
     delete end;
-  if ( level >= SYSTEM )
-    end = window->copyCPUIterator( begin );
-  else
-    end = window->copyThreadIterator( begin );
+  end = begin->clone();
 
   if( begin != NULL )
   {
@@ -194,10 +179,7 @@ KRecordList *IntervalNotThread::calcPrev( KRecordList *displayList, bool initCal
   }
   if ( begin != NULL )
     delete begin;
-  if ( level >= SYSTEM )
-    begin = window->copyCPUIterator( childIntervals[ itChild->second ]->getBegin() );
-  else
-    begin = window->copyThreadIterator( childIntervals[ itChild->second ]->getBegin() );
+  begin = childIntervals[ itChild->second ]->getBegin()->clone();
 
   currentValue = function->execute( &info );
 

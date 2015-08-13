@@ -67,16 +67,9 @@ KRecordList *IntervalControlDerived::init( TRecordTime initialTime, TCreateList 
   childIntervals[ 1 ]->init( myInitTime, createList, displayList );
   childIntervals[ 0 ]->init( childIntervals[ 1 ]->getBegin()->getTime(), createList, displayList );
 
-  if ( window->getLevel() >= SYSTEM )
-  {
-    begin = window->copyCPUIterator( childIntervals[ 1 ]->getBegin() );
-    end = window->copyCPUIterator( childIntervals[ 1 ]->getEnd() );
-  }
-  else
-  {
-    begin = window->copyThreadIterator( childIntervals[ 1 ]->getBegin() );
-    end = window->copyThreadIterator( childIntervals[ 1 ]->getEnd() );
-  }
+  begin = childIntervals[ 1 ]->getBegin()->clone();
+  end = childIntervals[ 1 ]->getEnd()->clone();
+
   while ( childIntervals[ 0 ]->getEnd()->getTime() > begin->getTime() )
     childIntervals[ 0 ]->calcPrev( displayList );
 
@@ -133,16 +126,8 @@ KRecordList *IntervalControlDerived::calcNext( KRecordList *displayList, bool in
 
   childIntervals[ 1 ]->calcNext( displayList );
 
-  if ( window->getLevel() >= SYSTEM )
-  {
-    begin = window->copyCPUIterator( childIntervals[ 1 ]->getBegin() );
-    end = window->copyCPUIterator( childIntervals[ 1 ]->getEnd() );
-  }
-  else
-  {
-    begin = window->copyThreadIterator( childIntervals[ 1 ]->getBegin() );
-    end = window->copyThreadIterator( childIntervals[ 1 ]->getEnd() );
-  }
+  begin = childIntervals[ 1 ]->getBegin()->clone();
+  end = childIntervals[ 1 ]->getEnd()->clone();
 
   if( begin->getTime() == window->getTrace()->getEndTime() )
     return displayList;
@@ -197,16 +182,8 @@ KRecordList *IntervalControlDerived::calcPrev( KRecordList *displayList, bool in
 
   childIntervals[ 1 ]->calcPrev( displayList );
 
-  if ( window->getLevel() >= SYSTEM )
-  {
-    begin = window->copyCPUIterator( childIntervals[ 1 ]->getBegin() );
-    end = window->copyCPUIterator( childIntervals[ 1 ]->getEnd() );
-  }
-  else
-  {
-    begin = window->copyThreadIterator( childIntervals[ 1 ]->getBegin() );
-    end = window->copyThreadIterator( childIntervals[ 1 ]->getEnd() );
-  }
+  begin = childIntervals[ 1 ]->getBegin()->clone();
+  end = childIntervals[ 1 ]->getEnd()->clone();
 
   while ( childIntervals[ 0 ]->getEnd()->getTime() <= begin->getTime() )
     childIntervals[ 0 ]->calcPrev( displayList );

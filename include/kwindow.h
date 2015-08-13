@@ -119,19 +119,6 @@ class KWindow: public Window
       return NONE;
     }
 
-    MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it )
-    {
-      return myTrace->copyIterator( it );
-    }
-    MemoryTrace::iterator *copyThreadIterator( MemoryTrace::iterator *it )
-    {
-      return myTrace->copyThreadIterator( it );
-    }
-    MemoryTrace::iterator *copyCPUIterator( MemoryTrace::iterator *it )
-    {
-      return myTrace->copyCPUIterator( it );
-    }
-
     virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    const std::string& whichFunction ) = 0;
     virtual std::string getLevelFunction( TWindowLevel whichLevel ) = 0;

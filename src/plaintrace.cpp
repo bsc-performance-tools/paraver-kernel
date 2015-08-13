@@ -240,6 +240,10 @@ inline void PlainTrace::iterator::operator--()
 {
 }
 
+inline PlainTrace::iterator *PlainTrace::iterator::clone() const
+{
+  return new PlainTrace::iterator( *this );
+}
 
 inline TRecordType  PlainTrace::iterator::getType() const
 {
@@ -384,6 +388,12 @@ MemoryTrace::iterator& PlainTrace::ThreadIterator::operator=( const MemoryTrace:
   }
   return *this;
 }
+
+inline PlainTrace::ThreadIterator *PlainTrace::ThreadIterator::clone() const
+{
+  return new PlainTrace::ThreadIterator( *this );
+}
+
 /**************************************************************************
  * MemoryTrace Inherited CPUIterator.
  **************************************************************************/
@@ -490,6 +500,11 @@ MemoryTrace::iterator& PlainTrace::CPUIterator::operator=( const MemoryTrace::it
   return *this;
 }
 
+inline PlainTrace::CPUIterator *PlainTrace::CPUIterator::clone() const
+{
+  return new PlainTrace::CPUIterator( *this );
+}
+
 inline TThreadOrder PlainTrace::CPUIterator::minThread()
 {
   map<TRecord *, TThreadOrder, Plain::ltrecord> sortedRecords;
@@ -578,20 +593,4 @@ inline void PlainTrace::CPUIterator::setToMyCPUBackward()
       }
     }
   }
-}
-
-
-MemoryTrace::iterator *PlainTrace::copyIterator( MemoryTrace::iterator *it )
-{
-  return new PlainTrace::iterator( *( ( PlainTrace::iterator * ) it ) );
-}
-
-MemoryTrace::iterator *PlainTrace::copyThreadIterator( MemoryTrace::iterator *it )
-{
-  return new PlainTrace::ThreadIterator( *( ( PlainTrace::ThreadIterator * ) it ) );
-}
-
-MemoryTrace::iterator *PlainTrace::copyCPUIterator( MemoryTrace::iterator *it )
-{
-  return new PlainTrace::CPUIterator( *( ( PlainTrace::CPUIterator * ) it ) );
 }

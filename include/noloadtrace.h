@@ -75,6 +75,8 @@ namespace NoLoad
           virtual void operator--();
           virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy );
 
+          virtual iterator *clone() const;
+
           virtual TRecordType  getType() const;
           virtual TRecordTime  getTime() const;
           virtual TThreadOrder getThread() const;
@@ -122,6 +124,7 @@ namespace NoLoad
           virtual void operator--();
           virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy );
 
+          virtual ThreadIterator *clone() const;
         private:
           friend class NoLoadTrace;
       };
@@ -145,6 +148,7 @@ namespace NoLoad
           virtual void operator--();
           virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy );
 
+          virtual CPUIterator *clone() const;
         private:
           TCPUOrder cpu;
           std::vector<TThreadOrder> threads;
@@ -183,10 +187,6 @@ namespace NoLoad
                                           TRecordTime whichTime ) const;
       virtual void getRecordByTimeCPU( std::vector<MemoryTrace::iterator *>& listIter,
                                        TRecordTime whichTime ) const;
-
-      virtual MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it );
-      virtual MemoryTrace::iterator *copyThreadIterator( MemoryTrace::iterator *it );
-      virtual MemoryTrace::iterator *copyCPUIterator( MemoryTrace::iterator *it );
 
     protected:
 

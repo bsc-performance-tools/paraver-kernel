@@ -1155,6 +1155,12 @@ inline void BPlusTree::iterator::operator--()
 }
 
 
+inline BPlusTree::iterator *BPlusTree::iterator::clone() const
+{
+  return new BPlusTree::iterator( ( TRecord * )record );
+}
+
+
 inline TRecordType  BPlusTree::iterator::getType() const
 {
   return ( ( TRecord * )record )->type;
@@ -1259,6 +1265,11 @@ inline void BPlusTree::ThreadIterator::operator--()
 #endif
 }
 
+inline BPlusTree::ThreadIterator *BPlusTree::ThreadIterator::clone() const
+{
+  return new BPlusTree::ThreadIterator( ( TRecord * )record );
+}
+
 /**************************************************************************
  * MemoryTrace Inherited CPUIterator.
  **************************************************************************/
@@ -1313,8 +1324,13 @@ inline void BPlusTree::CPUIterator::operator--()
                               __LINE__ );
 }
 
+inline BPlusTree::CPUIterator *BPlusTree::CPUIterator::clone() const
+{
+  return new BPlusTree::CPUIterator( ( TRecord * )record );
+}
+
 /**************************************************************************
- * MemoryTrace Inherited CPUIterator.
+ * MemoryTrace Inherited
  **************************************************************************/
 MemoryTrace::iterator* BPlusTree::empty() const
 {
@@ -1352,17 +1368,4 @@ MemoryTrace::iterator* BPlusTree::CPUBegin( TCPUOrder whichCPU ) const
 MemoryTrace::iterator* BPlusTree::CPUEnd( TCPUOrder whichCPU ) const
 {
   return new BPlusTree::CPUIterator( ( TRecord * )&emptyCPUEnd[ whichCPU ] );
-}
-
-MemoryTrace::iterator *BPlusTree::copyIterator( MemoryTrace::iterator *it )
-{
-  return new BPlusTree::iterator( *( ( BPlusTree::iterator * ) it ) );
-}
-MemoryTrace::iterator *BPlusTree::copyThreadIterator( MemoryTrace::iterator *it )
-{
-  return new BPlusTree::ThreadIterator( *( ( BPlusTree::ThreadIterator * ) it ) );
-}
-MemoryTrace::iterator *BPlusTree::copyCPUIterator( MemoryTrace::iterator *it )
-{
-  return new BPlusTree::CPUIterator( *( ( BPlusTree::CPUIterator * ) it ) );
 }

@@ -297,10 +297,6 @@ namespace bplustree
       void partialDelete();
       void unload( PRV_INT32 numrecords = -1 );
 
-      MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it );
-      MemoryTrace::iterator *copyThreadIterator( MemoryTrace::iterator *it );
-      MemoryTrace::iterator *copyCPUIterator( MemoryTrace::iterator *it );
-
     protected:
 
     public:
@@ -322,6 +318,7 @@ namespace bplustree
           virtual void operator++();
           virtual void operator--();
 
+          virtual iterator *clone() const;
 
           virtual TRecordType  getType() const;
           virtual TRecordTime  getTime() const;
@@ -357,6 +354,7 @@ namespace bplustree
           virtual void operator++();
           virtual void operator--();
 
+          virtual ThreadIterator *clone() const;
       };
 
       class CPUIterator : public BPlusTree::iterator
@@ -376,6 +374,8 @@ namespace bplustree
 
           virtual void operator++();
           virtual void operator--();
+
+          virtual CPUIterator *clone() const;
       };
 
       // MemoryTrace Inherited Methods

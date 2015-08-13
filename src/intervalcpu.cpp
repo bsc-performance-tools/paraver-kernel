@@ -84,14 +84,14 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
   if( initialTime >= window->getTrace()->getEndTime() )
   {
     begin = window->getCPUEndRecord( order - 1 );
-    end = window->copyCPUIterator( begin );
+    end = begin->clone();
     return displayList;
   }
 
   if( intervalCompose.empty() )
   {
-    begin = window->copyCPUIterator( window->getCPUBeginRecord( order - 1 ) );
-    end = window->copyCPUIterator( window->getCPUEndRecord( order - 1 ) );
+    begin = window->getCPUBeginRecord( order - 1 )->clone();
+    end = window->getCPUEndRecord( order - 1 )->clone();
     return displayList;
   }
 
@@ -113,8 +113,8 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
     }
   }
 
-  begin = window->copyCPUIterator( window->getCPURecordByTime( order - 1 ) );
-  end = window->copyCPUIterator( begin );
+  begin = window->getCPURecordByTime( order - 1 )->clone();
+  end = begin->clone();
 
   if(( !function->getInitFromBegin() ) && ( !functionThread->getInitFromBegin() ) &&
       ( !functionComposeThread->getInitFromBegin() ) && ( initialTime > 0.0 ) )

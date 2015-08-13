@@ -38,10 +38,7 @@ bool stateOnSameTime( MemoryTrace::iterator *it, KSingleWindow *window )
   TRecordTime time = it->getTime();
   MemoryTrace::iterator *nextState = NULL;
 
-  if ( window->getLevel() >= WORKLOAD && window->getLevel() <= THREAD )
-    nextState = window->copyThreadIterator( it );
-  else
-    nextState = window->copyCPUIterator( it );
+  nextState = it->clone();
 
   ++( *nextState );
   while ( !finish && !nextState->isNull() && nextState->getTime() == time )
@@ -63,10 +60,7 @@ TRecordTime timeToNextState( MemoryTrace::iterator *it, KSingleWindow *window )
   TRecordTime time = it->getTime();
   MemoryTrace::iterator *nextState = NULL;
 
-  if ( window->getLevel() >= WORKLOAD && window->getLevel() <= THREAD )
-    nextState = window->copyThreadIterator( it );
-  else
-    nextState = window->copyCPUIterator( it );
+  nextState = it->clone();
 
   ++( *nextState );
   while ( !finish && !nextState->isNull() )
@@ -108,12 +102,9 @@ TSemanticValue getTotalCommSize( MemoryTrace::iterator *itBegin,
                                  KSingleWindow *window )
 {
   TSemanticValue bytes = 0;
-  MemoryTrace::iterator *nextComm;
+  MemoryTrace::iterator *nextComm = NULL;
 
-  if ( window->getLevel() >= SYSTEM )
-    nextComm = window->copyCPUIterator( itBegin );
-  else
-    nextComm = window->copyThreadIterator( itBegin );
+  nextComm = itBegin->clone();
 
   /* First we watched if there are previous records of communications
      in the same time of the "record", but only sends */
@@ -212,12 +203,9 @@ TSemanticValue getTotalSentCommSize( MemoryTrace::iterator *itBegin,
                                      KSingleWindow *window )
 {
   TSemanticValue bytes = 0;
-  MemoryTrace::iterator *nextComm;
+  MemoryTrace::iterator *nextComm = NULL;
 
-  if ( window->getLevel() >= SYSTEM )
-    nextComm = window->copyCPUIterator( itBegin );
-  else
-    nextComm = window->copyThreadIterator( itBegin );
+  nextComm = itBegin->clone();
 
   /* First we watched if there are previous records of communications
      in the same time of the "record", but only sends */
@@ -601,10 +589,7 @@ TSemanticValue NextEventType::execute( const SemanticInfo *info )
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
   MemoryTrace::iterator *nextEvent = NULL;
 
-  if ( myInfo->callingInterval->getLevel() == THREAD )
-    nextEvent = myInfo->callingInterval->getWindow()->copyThreadIterator( myInfo->it );
-  if ( myInfo->callingInterval->getLevel() == CPU )
-    nextEvent = myInfo->callingInterval->getWindow()->copyCPUIterator( myInfo->it );
+  nextEvent = myInfo->it->clone();
 
   getNextEvent( nextEvent, ( KSingleWindow * )
                 myInfo->callingInterval->getWindow() );
@@ -627,10 +612,7 @@ TSemanticValue NextEventValue::execute( const SemanticInfo *info )
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
   MemoryTrace::iterator *nextEvent = NULL;
 
-  if ( myInfo->callingInterval->getLevel() == THREAD )
-    nextEvent = myInfo->callingInterval->getWindow()->copyThreadIterator( myInfo->it );
-  if ( myInfo->callingInterval->getLevel() == CPU )
-    nextEvent = myInfo->callingInterval->getWindow()->copyCPUIterator( myInfo->it );
+  nextEvent = myInfo->it->clone();
 
   getNextEvent( nextEvent, ( KSingleWindow * )
                 myInfo->callingInterval->getWindow() );
@@ -654,10 +636,7 @@ TSemanticValue AverageNextEventValue::execute( const SemanticInfo *info )
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
   MemoryTrace::iterator *nextEvent = NULL;
 
-  if ( myInfo->callingInterval->getLevel() == THREAD )
-    nextEvent = myInfo->callingInterval->getWindow()->copyThreadIterator( myInfo->it );
-  if ( myInfo->callingInterval->getLevel() == CPU )
-    nextEvent = myInfo->callingInterval->getWindow()->copyCPUIterator( myInfo->it );
+  nextEvent = myInfo->it->clone();
 
   getNextEvent( nextEvent, ( KSingleWindow * )
                 myInfo->callingInterval->getWindow() );
@@ -690,10 +669,7 @@ TSemanticValue AverageLastEventValue::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  if ( myInfo->callingInterval->getLevel() == THREAD )
-    nextEvent = myInfo->callingInterval->getWindow()->copyThreadIterator( myInfo->it );
-  if ( myInfo->callingInterval->getLevel() == CPU )
-    nextEvent = myInfo->callingInterval->getWindow()->copyCPUIterator( myInfo->it );
+  nextEvent = myInfo->it->clone();
 
   getNextEvent( nextEvent, ( KSingleWindow * )
                 myInfo->callingInterval->getWindow() );
@@ -771,10 +747,7 @@ TSemanticValue IntervalBetweenEvents::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  if ( myInfo->callingInterval->getLevel() == THREAD )
-    nextEvent = myInfo->callingInterval->getWindow()->copyThreadIterator( myInfo->it );
-  if ( myInfo->callingInterval->getLevel() == CPU )
-    nextEvent = myInfo->callingInterval->getWindow()->copyCPUIterator( myInfo->it );
+  nextEvent = myInfo->it->clone();
 
   getNextEvent( nextEvent, ( KSingleWindow * )
                 myInfo->callingInterval->getWindow() );
@@ -844,10 +817,7 @@ TSemanticValue EventBytes::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  if ( myInfo->callingInterval->getLevel() == THREAD )
-    nextEvent = myInfo->callingInterval->getWindow()->copyThreadIterator( myInfo->it );
-  if ( myInfo->callingInterval->getLevel() == CPU )
-    nextEvent = myInfo->callingInterval->getWindow()->copyCPUIterator( myInfo->it );
+  nextEvent = myInfo->it->clone();
 
   getNextEvent( nextEvent, ( KSingleWindow * )
                 myInfo->callingInterval->getWindow() );
@@ -875,10 +845,7 @@ TSemanticValue EventSentBytes::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  if ( myInfo->callingInterval->getLevel() == THREAD )
-    nextEvent = myInfo->callingInterval->getWindow()->copyThreadIterator( myInfo->it );
-  if ( myInfo->callingInterval->getLevel() == CPU )
-    nextEvent = myInfo->callingInterval->getWindow()->copyCPUIterator( myInfo->it );
+  nextEvent = myInfo->it->clone();
 
   getNextEvent( nextEvent, ( KSingleWindow * )
                 myInfo->callingInterval->getWindow() );
@@ -1012,10 +979,7 @@ TSemanticValue NextRecvDuration::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  if ( myInfo->callingInterval->getLevel() == THREAD )
-    nextComm = myInfo->callingInterval->getWindow()->copyThreadIterator( myInfo->it );
-  if ( myInfo->callingInterval->getLevel() == CPU )
-    nextComm = myInfo->callingInterval->getWindow()->copyCPUIterator( myInfo->it );
+  nextComm = myInfo->it->clone();
 
   ++( *nextComm );
   while ( !nextComm->isNull() && ( nextComm->getType() & COMM && nextComm->getType() & RECV ) )

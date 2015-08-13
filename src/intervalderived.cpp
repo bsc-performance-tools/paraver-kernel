@@ -77,10 +77,7 @@ KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
     {
       if ( begin != NULL )
         delete begin;
-      if ( window->getLevel() >= SYSTEM )
-        begin = window->copyCPUIterator( childIntervals[ i ]->getBegin() );
-      else
-        begin = window->copyThreadIterator( childIntervals[ i ]->getBegin() );
+      begin = childIntervals[ i ]->getBegin()->clone();
     }
 
     if ( end == NULL ||
@@ -88,10 +85,7 @@ KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
     {
       if ( end != NULL )
         delete end;
-      if ( window->getLevel() >= SYSTEM )
-        end = window->copyCPUIterator( childIntervals[ i ]->getEnd() );
-      else
-        end = window->copyThreadIterator( childIntervals[ i ]->getEnd() );
+      end = childIntervals[ i ]->getEnd()->clone();
     }
 
     info.values.push_back( childIntervals[ i ]->getValue() *
@@ -115,10 +109,7 @@ KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc 
 
   if ( begin != NULL )
     delete begin;
-  if ( window->getLevel() >= SYSTEM )
-    begin = window->copyCPUIterator( end );
-  else
-    begin = window->copyThreadIterator( end );
+  begin = end->clone();
 
   if ( end != NULL )
   {
@@ -137,10 +128,7 @@ KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc 
     {
       if ( end != NULL )
         delete end;
-      if ( window->getLevel() >= SYSTEM )
-        end = window->copyCPUIterator( childIntervals[ i ]->getEnd() );
-      else
-        end = window->copyThreadIterator( childIntervals[ i ]->getEnd() );
+      end = childIntervals[ i ]->getEnd()->clone();
     }
 
     info.values.push_back( childIntervals[ i ]->getValue() *
@@ -161,10 +149,7 @@ KRecordList *IntervalDerived::calcPrev( KRecordList *displayList, bool initCalc 
 
   if ( end != NULL )
     delete end;
-  if ( window->getLevel() >= SYSTEM )
-    end = window->copyCPUIterator( begin );
-  else
-    end = window->copyThreadIterator( begin );
+  end = begin->clone();
 
   if ( begin != NULL )
   {
@@ -182,10 +167,7 @@ KRecordList *IntervalDerived::calcPrev( KRecordList *displayList, bool initCalc 
     {
       if ( begin != NULL )
         delete begin;
-      if ( window->getLevel() >= SYSTEM )
-        begin = window->copyCPUIterator( childIntervals[ i ]->getBegin() );
-      else
-        begin = window->copyThreadIterator( childIntervals[ i ]->getBegin() );
+      begin = childIntervals[ i ]->getBegin()->clone();
     }
 
     info.values.push_back( childIntervals[ i ]->getValue() *

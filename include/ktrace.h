@@ -69,19 +69,6 @@ class KTrace: public Trace
     std::string getFileName() const;
     std::string getTraceName() const;
 
-    MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it )
-    {
-      return memTrace->copyIterator( it );
-    }
-    MemoryTrace::iterator *copyThreadIterator( MemoryTrace::iterator *it )
-    {
-      return memTrace->copyThreadIterator( it );
-    }
-    MemoryTrace::iterator *copyCPUIterator( MemoryTrace::iterator *it )
-    {
-      return memTrace->copyCPUIterator( it );
-    }
-
     void dumpFileHeader( std::fstream& file, bool newFormat = false, PRV_INT32 numIter = 1 ) const;
     void dumpFile( const std::string& whichFile, PRV_INT32 numIter = 1 ) const;
 

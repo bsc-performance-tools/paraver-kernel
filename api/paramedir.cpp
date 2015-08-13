@@ -829,6 +829,45 @@ void testReadWritePerformance( KernelConnection *myKernel )
 }
 #endif
 
+#if 0
+#include "ktrace.h"
+#include "tracebodyio_v1.h"
+void testNewIteratorCloneMethod( KernelConnection *myKernel )
+{
+  string traceFileName = "/home/eloy/traces/wxparaver_traza_no_carga/siesta.1.1500mcycles.prv";
+  KTrace myTrace( traceFileName, NULL, false );
+  std::fstream outputTrace;
+  TraceBodyIO_v1 body;
+
+  traceFileName += ".tmp";
+  outputTrace.open( traceFileName.c_str(), std::ios::out );
+  myTrace.dumpFileHeader( outputTrace );
+
+  MemoryTrace::iterator *it = myTrace.begin();
+  //MemoryTrace::iterator *it = myTrace.threadBegin( 0 );
+  while( !it->isNull() )
+  {
+    if ( ( it->getType() == STATE + BEGIN ) ||
+         ( it->getType() == EVENT ) ||
+         ( it->getType() == COMM + LOG + SEND )
+       )
+    {
+      //MemoryTrace::iterator *itClone = myTrace.copyIterator( it );
+      //MemoryTrace::iterator *itClone = myTrace.copyThreadIterator( it );
+      MemoryTrace::iterator *itClone = it->clone();
+      body.write( outputTrace, myTrace, itClone );
+      delete itClone;
+    }
+
+    ++(*it);
+  }
+
+  delete it;
+
+  outputTrace.close();
+}
+#endif // 1
+
 int main( int argc, char *argv[] )
 {
   initOptions();
@@ -844,6 +883,12 @@ int main( int argc, char *argv[] )
   {
     KernelConnection *myKernel = new LocalKernel( NULL );
     testReadWritePerformance( myKernel );
+    return 1;
+  }
+#elif 0
+  {
+    KernelConnection *myKernel = new LocalKernel( NULL );
+    testNewIteratorCloneMethod( myKernel );
     return 1;
   }
 #else

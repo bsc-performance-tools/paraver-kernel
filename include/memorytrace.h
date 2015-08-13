@@ -56,6 +56,8 @@ class MemoryTrace
         virtual bool operator!=( const iterator &it ) const;
         virtual bool isNull() const;
 
+        virtual iterator *clone() const = 0;
+
         virtual TRecordType  getType() const = 0;
         virtual TRecordTime  getTime() const = 0;
         virtual TThreadOrder getThread() const = 0;
@@ -102,10 +104,6 @@ class MemoryTrace
                                         TRecordTime whichTime ) const = 0;
     virtual void getRecordByTimeCPU( std::vector<MemoryTrace::iterator *>& listIter,
                                      TRecordTime whichTime ) const = 0;
-
-    virtual MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it ) = 0;
-    virtual MemoryTrace::iterator *copyThreadIterator( MemoryTrace::iterator *it ) = 0;
-    virtual MemoryTrace::iterator *copyCPUIterator( MemoryTrace::iterator *it ) = 0;
 
   protected:
 

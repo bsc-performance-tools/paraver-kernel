@@ -74,6 +74,8 @@ namespace Plain
             return *this;
           }
 
+          virtual iterator *clone() const;
+
           virtual TRecordType  getType() const;
           virtual TRecordTime  getTime() const;
           virtual TThreadOrder getThread() const;
@@ -112,6 +114,7 @@ namespace Plain
           virtual void operator--();
           virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy );
 
+          virtual ThreadIterator *clone() const;
         private:
           TThreadOrder thread;
           PRV_UINT32 block;
@@ -139,6 +142,7 @@ namespace Plain
           virtual void operator--();
           virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy );
 
+          virtual CPUIterator *clone() const;
         private:
           TCPUOrder cpu;
           TThreadOrder numThreads;
@@ -176,10 +180,6 @@ namespace Plain
                                           TRecordTime whichTime ) const;
       virtual void getRecordByTimeCPU( std::vector<MemoryTrace::iterator *>& listIter,
                                        TRecordTime whichTime ) const;
-
-      MemoryTrace::iterator *copyIterator( MemoryTrace::iterator *it );
-      MemoryTrace::iterator *copyThreadIterator( MemoryTrace::iterator *it );
-      MemoryTrace::iterator *copyCPUIterator( MemoryTrace::iterator *it );
 
     protected:
 
