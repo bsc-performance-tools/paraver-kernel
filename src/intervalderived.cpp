@@ -117,14 +117,19 @@ KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc 
     end = NULL;
   }
 
-  for ( TObjectOrder i = 0; i < childIntervals.size(); i++ )
+  for ( TObjectOrder i = 0; i < childIntervals.size(); ++i )
   {
     if ( childIntervals[ i ]->getEnd()->getTime() <= begin->getTime() )
 //    if ( *childIntervals[ i ]->getEnd() == *begin )
       childIntervals[ i ]->calcNext( displayList );
 
-    if ( end == NULL ||
-         childIntervals[ i ]->getEnd()->getTime() < end->getTime() )
+    if ( ( end == NULL
+           && childIntervals[ i ]->getEnd()->getTime() < childIntervals[ i ]->getWindow()->getTrace()->getEndTime() )
+         ||
+         ( end != NULL
+           && childIntervals[ i ]->getEnd()->getTime() < end->getTime()
+           && childIntervals[ i ]->getEnd()->getTime() < childIntervals[ i ]->getWindow()->getTrace()->getEndTime() )
+        )
     {
       if ( end != NULL )
         delete end;
@@ -134,6 +139,9 @@ KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc 
     info.values.push_back( childIntervals[ i ]->getValue() *
                            window->getFactor( i ) );
   }
+  if( end == NULL )
+    end = ( (KTrace *)window->getTrace() )->end();
+
   currentValue = function->execute( &info );
 
   return displayList;

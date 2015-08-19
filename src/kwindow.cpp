@@ -814,7 +814,12 @@ KDerivedWindow::~KDerivedWindow()
 void KDerivedWindow::setup( KTrace* whichTrace )
 {
   if( whichTrace == NULL )
-    myTrace = ( KTrace* )parents[ 0 ]->getTrace();
+  {
+    if( ( ( KTrace* )parents[ 0 ]->getTrace() )->getEndTime() >= ( ( KTrace* )parents[ 1 ]->getTrace() )->getEndTime() )
+      myTrace = ( KTrace* )parents[ 0 ]->getTrace();
+    else
+      myTrace = ( KTrace* )parents[ 1 ]->getTrace();
+  }
   else
     myTrace = whichTrace;
 

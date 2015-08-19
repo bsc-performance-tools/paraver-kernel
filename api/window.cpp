@@ -90,12 +90,18 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
                           Window *whichParent2 ):
-  Window( whichKernel ), myTrace( whichParent1->getTrace() ), myCodeColor( this )
+  Window( whichKernel ), myCodeColor( this )
 {
   parent1 = whichParent1;
   parent1->setChild( this );
   parent2 = whichParent2;
   parent2->setChild( this );
+
+  if( whichParent1->getTrace()->getEndTime() >= whichParent2->getTrace()->getEndTime() )
+    myTrace = whichParent1->getTrace();
+  else
+    myTrace = whichParent2->getTrace();
+
   myWindow = myKernel->newDerivedWindow( parent1, parent2 );
   myFilter = NULL;
   init();
@@ -216,7 +222,10 @@ void WindowProxy::setParent( PRV_UINT16 whichParent, Window *whichWindow )
 
     if ( parent1 != NULL && parent2 != NULL && myTrace == NULL )
     {
-      myTrace = whichWindow->getTrace();
+      if( parent1->getTrace()->getEndTime() >= parent2->getTrace()->getEndTime() )
+        myTrace = parent1->getTrace();
+      else
+        myTrace = parent2->getTrace();
       init();
     }
   }
