@@ -62,6 +62,7 @@ class LoadedWindows
 
     void getAll( std::vector<Histogram *>& onVector ) const;
     void getAll( Trace *whichTrace, std::vector< Window *>& onVector ) const;
+    void getDerivedCompatible( Trace *whichTrace, std::vector< Window *>& onVector ) const;
     void getAll( Trace *whichTrace, std::vector< Histogram *>& onVector ) const;
 
     // Histogram windows selection related methods

@@ -147,6 +147,15 @@ void LoadedWindows::getAll( Trace *whichTrace, vector< Window *>& onVector ) con
 }
 
 
+void LoadedWindows::getDerivedCompatible( Trace *whichTrace, vector< Window *>& onVector ) const
+{
+  for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
+        it != windows.end(); ++it )
+    //if ( ( *it ).second->getTrace() == whichTrace )
+      onVector.push_back( ( *it ).second );
+}
+
+
 void LoadedWindows::getAll( Trace *whichTrace, vector< Histogram *>& onVector ) const
 {
   for ( map<TWindowID, Histogram *>::const_iterator it = histograms.begin();
@@ -204,6 +213,11 @@ bool LoadedWindows::validDataWindow( Window *dataWindow, Window *controlWindow )
   {
     // The traces have the same resource and application structure???
     // not yet done
+    if ( validLevelDataWindow( dataWindow, controlWindow ) )
+    {
+      return notInParents( dataWindow, controlWindow )
+             && notInParents( controlWindow, dataWindow );
+    }
   }
 
   return false;
