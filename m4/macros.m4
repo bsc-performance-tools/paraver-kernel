@@ -52,7 +52,7 @@ AC_DEFUN([AX_PROG_WITH_EXTRAE],
   if test "${enable_tracing}" = "yes" ; then
     CPPFLAGS_EXTRAE="-I$EXTRAE_DIR/include"
     CXXFLAGS_EXTRAE="-I$EXTRAE_DIR/include"
-    CFLAGS_EXTRE="-I$EXTRAE_DIR/include"
+    CFLAGS_EXTRAE="-I$EXTRAE_DIR/include"
     LIBS_EXTRAE="-L$EXTRAE_DIR/lib"
     LDFLAGS_EXTRAE="-L$EXTRAE_DIR/lib -lseqtrace"
   fi
