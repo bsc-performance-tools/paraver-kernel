@@ -37,7 +37,7 @@ libparaver_api_la_SOURCES = \
                     workspace.cpp \
                     workspacemanager.cpp \
                     ../../common-files/pcfparser/libtools/ParaverTraceConfig.cpp \
-										../../common-files/pcfparser/libtools/UIParaverTraceConfig.cpp 
+                    ../../common-files/pcfparser/libtools/UIParaverTraceConfig.cpp 
                     
 include_HEADERS = \
                   cfg.h\
