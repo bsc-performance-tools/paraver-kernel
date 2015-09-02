@@ -181,10 +181,6 @@
 			<Option target="api" />
 			<Option target="otf2prv" />
 		</Unit>
-		<Unit filename="../common-files/pcfparser/ParaverTraceConfig.cpp">
-			<Option target="api" />
-			<Option target="otf2prv" />
-		</Unit>
 		<Unit filename="../common-files/pcfparser/ParaverTraceConfig.h">
 			<Option target="api" />
 			<Option target="otf2prv" />
@@ -193,14 +189,12 @@
 			<Option target="api" />
 			<Option target="otf2prv" />
 		</Unit>
-		<Unit filename="../common-files/pcfparser/UIParaverTraceConfig.cpp">
-			<Option target="api" />
-			<Option target="otf2prv" />
-		</Unit>
 		<Unit filename="../common-files/pcfparser/UIParaverTraceConfig.h">
 			<Option target="api" />
 			<Option target="otf2prv" />
 		</Unit>
+		<Unit filename="../common-files/pcfparser/libtools/ParaverTraceConfig.cpp" />
+		<Unit filename="../common-files/pcfparser/libtools/UIParaverTraceConfig.cpp" />
 		<Unit filename="../common-files/prvtypes.h">
 			<Option target="Debug" />
 			<Option target="Release" />
