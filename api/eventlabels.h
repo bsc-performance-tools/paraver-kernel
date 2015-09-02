@@ -34,7 +34,7 @@
 #include <map>
 #include "paraverkerneltypes.h"
 //#include "pcfparser/ParaverTraceConfig.h"
-#include "pcfparser/libtools/ParaverTraceConfig.h"
+#include "pcfparser/libtools/UIParaverTraceConfig.h"
 
 using namespace libparaver;
 
@@ -45,7 +45,7 @@ class EventLabels
 
     EventLabels();
     EventLabels( const std::set<TEventType>& eventsLoaded );
-    EventLabels( const ParaverTraceConfig& config,
+    EventLabels( const UIParaverTraceConfig& config,
                  const std::set<TEventType>& eventsLoaded );
     ~EventLabels();
 

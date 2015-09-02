@@ -29,7 +29,7 @@
 
 #include "statelabels.h"
 //#include "../common-files/pcfparser/ParaverState.h"
-#include "../common-files/pcfparser/libtools/ParaverTraceConfig.h"
+#include "pcfparser/libtools/UIParaverTraceConfig.h"
 
 using namespace std;
 
@@ -38,7 +38,7 @@ const string StateLabels::unknownLabel = "Unknown";
 StateLabels::StateLabels()
 {}
 
-StateLabels::StateLabels( const ParaverTraceConfig& config )
+StateLabels::StateLabels( const UIParaverTraceConfig& config )
 {
   const vector<int>& states = config.getStates();
   for ( vector<int>::const_iterator it = states.begin(); it != states.end(); ++it )

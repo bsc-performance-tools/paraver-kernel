@@ -29,9 +29,7 @@
 
 #include "kernelconnection.h"
 #include "trace.h"
-#include "pcfparser/libtools/ParaverTraceConfig.h"
-//#include "pcfparser/ParaverStatesColor.h"
-//#include "pcfparser/ParaverGradientColor.h"
+#include "pcfparser/libtools/UIParaverTraceConfig.h"
 #include "progresscontroller.h"
 #include <sstream>
 #include "paraverconfig.h"
@@ -454,11 +452,11 @@ Trace *TraceProxy::getConcrete() const
 
 void TraceProxy::parsePCF( const string& whichFile )
 {
-  ParaverTraceConfig *config;
+  UIParaverTraceConfig *config;
 
   try
   {
-    config = new ParaverTraceConfig();
+    config = new UIParaverTraceConfig();
     config->parse( whichFile /* true */ );
   }
   catch ( ... )

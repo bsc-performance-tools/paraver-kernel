@@ -94,7 +94,8 @@ include_HEADERS = \
 install-data-hook:
 	$(mkdir_p) $(includedir)/pcfparser
 	$(mkdir_p) $(includedir)/pcfparser/libtools
-	cp -f ../../common-files/pcfparser/libtools/ParaverTraceConfig.h $(includedir)/pcfparser/libtools
+	cp -f ../../common-files/pcfparser/libtools/UIParaverTraceConfig.h $(includedir)/pcfparser/libtools
+	cp -f ../../common-files/pcfparser/libtools/UIParaverTraceConfig.ipp $(includedir)/pcfparser/libtools
 
 
 # Erases everything which should not be uploaded to CVS

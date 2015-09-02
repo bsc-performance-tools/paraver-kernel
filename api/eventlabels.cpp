@@ -28,9 +28,6 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "eventlabels.h"
-//#include "pcfparser/ParaverEventType.h"
-//#include "pcfparser/ParaverEventValue.h"
-#include "pcfparser/libtools/ParaverTraceConfig.h"
 
 using namespace std;
 
@@ -46,7 +43,7 @@ EventLabels::EventLabels( const set<TEventType>& eventsLoaded )
     eventTypeLabel[ *it ] = unknownLabel + " type ";*/
 }
 
-EventLabels::EventLabels( const libparaver::ParaverTraceConfig& config,
+EventLabels::EventLabels( const libparaver::UIParaverTraceConfig& config,
                           const set<TEventType>& eventsLoaded )
 {
 /*  for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
