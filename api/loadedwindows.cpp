@@ -151,7 +151,7 @@ void LoadedWindows::getDerivedCompatible( Trace *whichTrace, vector< Window *>& 
 {
   for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
-    //if ( ( *it ).second->getTrace() == whichTrace )
+    if ( ( *it ).second->getTrace()->isSameObjectStruct( whichTrace ) )
       onVector.push_back( ( *it ).second );
 }
 
@@ -211,13 +211,12 @@ bool LoadedWindows::validDataWindow( Window *dataWindow, Window *controlWindow )
   }
   else
   {
-    // The traces have the same resource and application structure???
-    // not yet done
-    if ( validLevelDataWindow( dataWindow, controlWindow ) )
-    {
-      return notInParents( dataWindow, controlWindow )
-             && notInParents( controlWindow, dataWindow );
-    }
+    if( dataWindow->getTrace()->isSameObjectStruct( controlWindow->getTrace() ) )
+      if ( validLevelDataWindow( dataWindow, controlWindow ) )
+      {
+        return notInParents( dataWindow, controlWindow )
+               && notInParents( controlWindow, dataWindow );
+      }
   }
 
   return false;
