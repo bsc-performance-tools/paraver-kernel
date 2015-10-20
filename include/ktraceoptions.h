@@ -56,7 +56,7 @@
 #endif
 #define MAX_THREAD 16
 #define MAX_SELECTED_TASKS 30
-#define MAX_LINE_SIZE 8192
+#define MAX_LINE_SIZE 16384
 
 /* sofware counters */
 /*#define MAX_TYPES 100 */

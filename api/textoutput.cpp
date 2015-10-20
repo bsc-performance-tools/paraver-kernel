@@ -149,11 +149,11 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
   }
 
   if ( multipleFiles )
-    cout << strOutputFile << "_* files wrote." << endl;
+    cout << strOutputFile << "_* files written." << endl;
   else
   {
     outputFile.close();
-    cout << strOutputFile << " file wrote." << endl;
+    cout << strOutputFile << " file written." << endl;
   }
 
   if ( !multipleFiles )
@@ -179,8 +179,9 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
   TObjectOrder endRow =  whichHisto->getControlWindow()->getZoomSecondDimension().second;
   whichHisto->getControlWindow()->getSelectedRows( whichHisto->getControlWindow()->getLevel(),
       selectedRows, beginRow, endRow );
+//std::cout << "START RECALC" << std::endl;
   whichHisto->execute( whichHisto->getBeginTime(), whichHisto->getEndTime(), selectedRows, NULL );
-
+//std::cout << "END RECALC" << std::endl;
   outputFile.open( strOutputFile.c_str() );
 
   outputFile << fixed;
