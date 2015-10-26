@@ -42,6 +42,7 @@
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
 
+#include "paraverkerneltypes.h"
 
 class Workspace
 {
@@ -51,10 +52,12 @@ class Workspace
     ~Workspace();
 
     virtual std::string getName() const;
+    virtual std::vector<TEventType> getAutoTypes() const;
     virtual std::vector<std::pair<std::string,std::string> > getHintCFGs() const;
     virtual std::pair<std::string,std::string> getHintCFG( size_t whichHint ) const;
 
     virtual void setName( std::string& whichName );
+    virtual void setAutoTypes( std::vector<TEventType>& whichAutoTypes );
     virtual void addHintCFG( std::pair<std::string,std::string>& whichCFG );
     virtual void addHintCFG( size_t position, std::pair<std::string,std::string>& whichCFG );
     virtual void removeHintCFG( size_t whichHint );
@@ -65,18 +68,21 @@ class Workspace
     void serialize( Archive & ar, const unsigned int version )
     {
       ar & boost::serialization::make_nvp( "name", name );
+      if( version >= 1 )
+        ar & boost::serialization::make_nvp( "autoTypes", autoTypes );
       ar & boost::serialization::make_nvp( "hintCFGs", hintCFGs );
     }
 
   protected:
     std::string name;
+    std::vector<TEventType> autoTypes;
     std::vector<std::pair<std::string,std::string> > hintCFGs; // path, description
 
   private:
 
 };
 
-BOOST_CLASS_VERSION( Workspace, 0)
+BOOST_CLASS_VERSION( Workspace, 1)
 
 
 #endif // WORKSPACE_H_INCLUDED

@@ -46,6 +46,11 @@ string Workspace::getName() const
   return name;
 }
 
+std::vector<TEventType> Workspace::getAutoTypes() const
+{
+  return autoTypes;
+}
+
 vector<pair<string,string> > Workspace::getHintCFGs() const
 {
   return hintCFGs;
@@ -59,6 +64,11 @@ std::pair<std::string,std::string> Workspace::getHintCFG( size_t whichHint ) con
 void Workspace::setName( string& whichName )
 {
   name = whichName;
+}
+
+void Workspace::setAutoTypes( std::vector<TEventType>& whichAutoTypes )
+{
+  autoTypes = whichAutoTypes;
 }
 
 void Workspace::addHintCFG( pair<string,string>& whichCFG )
