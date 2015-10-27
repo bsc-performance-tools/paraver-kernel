@@ -316,8 +316,8 @@ class Histogram
     {
       return 0;
     }
-    virtual void compute2DScale( ProgressController *progress ) {}
-    virtual void compute3DScale( ProgressController *progress ) {}
+    virtual void compute2DScale( ProgressController *progress = NULL ) {}
+    virtual void compute3DScale( ProgressController *progress = NULL ) {}
     virtual std::string getRowLabel( TObjectOrder whichRow ) const
     {
       return "Unnamed row";
@@ -659,8 +659,8 @@ class HistogramProxy : public Histogram
     virtual PRV_INT32 getSelectedPlane() const;
     virtual PRV_INT32 getCommSelectedPlane() const;
 
-    virtual void compute2DScale( ProgressController *progress );
-    virtual void compute3DScale( ProgressController *progress );
+    virtual void compute2DScale( ProgressController *progress = NULL );
+    virtual void compute3DScale( ProgressController *progress = NULL );
 
     virtual std::string getRowLabel( TObjectOrder whichRow ) const;
     virtual std::string getColumnLabel( THistogramColumn whichColumn ) const;
