@@ -914,7 +914,7 @@ TSemanticValue CommRecvPartner::execute( const SemanticInfo *info )
     tmp = myInfo->callingInterval->getWindow()->getTrace()->getSenderCPU(
             myInfo->it->getCommIndex() );
 
-  return tmp;
+  return tmp + 1;
 }
 
 
@@ -935,7 +935,7 @@ TSemanticValue CommPartner::execute( const SemanticInfo *info )
     tmp = myInfo->callingInterval->getWindow()->getTrace()->getReceiverCPU(
             myInfo->it->getCommIndex() );
 
-  return tmp;
+  return tmp + 1;
 }
 
 
