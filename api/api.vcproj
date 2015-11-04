@@ -203,10 +203,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\common-files\pcfparser\LibException.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\loadedwindows.cpp"
 				>
 			</File>
@@ -223,35 +219,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\common-files\pcfparser\ParaverEventType.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common-files\pcfparser\ParaverEventValue.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common-files\pcfparser\ParaverGradientColor.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common-files\pcfparser\ParaverGradientNames.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\ParaverMetadataManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common-files\pcfparser\ParaverState.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common-files\pcfparser\ParaverStatesColor.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common-files\pcfparser\ParaverTraceConfig.cpp"
+				RelativePath="..\..\common-files\pcfparser\libtools\ParaverTraceConfig.cpp"
 				>
 			</File>
 			<File
@@ -363,11 +335,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\common-files\pcfparser\UIParaverTraceConfig.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common-files\pcfparser\UIParaverTraceConfig.h"
+				RelativePath="..\..\common-files\pcfparser\libtools\UIParaverTraceConfig.cpp"
 				>
 			</File>
 			<File
@@ -449,10 +417,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\common-files\pcfparser\LibException.h"
-				>
-			</File>
-			<File
 				RelativePath=".\loadedwindows.h"
 				>
 			</File>
@@ -466,22 +430,6 @@
 			</File>
 			<File
 				RelativePath=".\paraverconfig.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common-files\pcfparser\ParaverEventType.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common-files\pcfparser\ParaverEventValue.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common-files\pcfparser\ParaverGradientColor.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common-files\pcfparser\ParaverGradientNames.h"
 				>
 			</File>
 			<File
@@ -501,19 +449,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\common-files\pcfparser\ParaverState.h"
+				RelativePath="..\..\common-files\pcfparser\libtools\ParaverTraceConfig.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common-files\pcfparser\ParaverStatesColor.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common-files\pcfparser\ParaverTraceConfig.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common-files\pcfparser\ParaverTraceConfigGrammar.h"
+				RelativePath="..\..\common-files\pcfparser\libtools\ParaverTraceConfigGrammar.h"
 				>
 			</File>
 			<File
@@ -594,6 +534,10 @@
 			</File>
 			<File
 				RelativePath=".\tracesoftwarecounters.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common-files\pcfparser\libtools\UIParaverTraceConfig.h"
 				>
 			</File>
 			<File
