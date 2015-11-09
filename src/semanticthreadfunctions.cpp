@@ -911,16 +911,16 @@ TSemanticValue CommRecvPartner::execute( const SemanticInfo *info )
   nextComm = myInfo->it->clone();
 
   ++( *nextComm );
-  while ( !nextComm->isNull() && !( nextComm->getType() & COMM && nextComm->getType() & RECV ) )
+  while( !nextComm->isNull() )
   {
-    if( ( nextComm->getType() & LOG &&
+    if( ( nextComm->getType() & RECV && nextComm->getType() & LOG &&
           myInfo->callingInterval->getWindow()->getTrace()->getLogicalReceive(
             nextComm->getCommIndex() )
           >=
           myInfo->callingInterval->getWindow()->getTrace()->getPhysicalReceive(
             nextComm->getCommIndex() ) )
         ||
-        ( nextComm->getType() & PHY &&
+        ( nextComm->getType() & RECV && nextComm->getType() & PHY &&
           myInfo->callingInterval->getWindow()->getTrace()->getPhysicalReceive(
             nextComm->getCommIndex() )
           >
@@ -932,17 +932,17 @@ TSemanticValue CommRecvPartner::execute( const SemanticInfo *info )
     ++( *nextComm );
   }
 
-  if ( nextComm->isNull() )
+  if( nextComm->isNull() )
   {
     delete nextComm;
     return 0;
   }
 
   if ( myInfo->callingInterval->getLevel() == THREAD )
-    tmp = myInfo->callingInterval->getWindow()->getTrace()->getReceiverThread(
+    tmp = myInfo->callingInterval->getWindow()->getTrace()->getSenderThread(
             nextComm->getCommIndex() );
   else if ( myInfo->callingInterval->getLevel() == CPU )
-    tmp = myInfo->callingInterval->getWindow()->getTrace()->getReceiverCPU(
+    tmp = myInfo->callingInterval->getWindow()->getTrace()->getSenderCPU(
             nextComm->getCommIndex() );
 
   delete nextComm;
