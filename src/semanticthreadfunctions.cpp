@@ -901,19 +901,51 @@ string CommRecvPartner::name = "Comm Recv. Partner";
 TSemanticValue CommRecvPartner::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
+  MemoryTrace::iterator *nextComm = NULL;
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
 
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
-  if ( myInfo->callingInterval->getLevel() == THREAD )
-    tmp = myInfo->callingInterval->getWindow()->getTrace()->getSenderThread(
-            myInfo->it->getCommIndex() );
-  else if ( myInfo->callingInterval->getLevel() == CPU )
-    tmp = myInfo->callingInterval->getWindow()->getTrace()->getSenderCPU(
-            myInfo->it->getCommIndex() );
+  nextComm = myInfo->it->clone();
 
+  ++( *nextComm );
+  while ( !nextComm->isNull() && !( nextComm->getType() & COMM && nextComm->getType() & RECV ) )
+  {
+    if( ( nextComm->getType() & LOG &&
+          myInfo->callingInterval->getWindow()->getTrace()->getLogicalReceive(
+            nextComm->getCommIndex() )
+          >=
+          myInfo->callingInterval->getWindow()->getTrace()->getPhysicalReceive(
+            nextComm->getCommIndex() ) )
+        ||
+        ( nextComm->getType() & PHY &&
+          myInfo->callingInterval->getWindow()->getTrace()->getPhysicalReceive(
+            nextComm->getCommIndex() )
+          >
+          myInfo->callingInterval->getWindow()->getTrace()->getLogicalReceive(
+            nextComm->getCommIndex() ) )
+      )
+        break;
+
+    ++( *nextComm );
+  }
+
+  if ( nextComm->isNull() )
+  {
+    delete nextComm;
+    return 0;
+  }
+
+  if ( myInfo->callingInterval->getLevel() == THREAD )
+    tmp = myInfo->callingInterval->getWindow()->getTrace()->getReceiverThread(
+            nextComm->getCommIndex() );
+  else if ( myInfo->callingInterval->getLevel() == CPU )
+    tmp = myInfo->callingInterval->getWindow()->getTrace()->getReceiverCPU(
+            nextComm->getCommIndex() );
+
+  delete nextComm;
   return tmp + 1;
 }
 
@@ -982,11 +1014,14 @@ TSemanticValue NextRecvDuration::execute( const SemanticInfo *info )
   nextComm = myInfo->it->clone();
 
   ++( *nextComm );
-  while ( !nextComm->isNull() && ( nextComm->getType() & COMM && nextComm->getType() & RECV ) )
+  while ( !nextComm->isNull() && !( nextComm->getType() & COMM && nextComm->getType() & RECV ) )
     ++( *nextComm );
 
   if ( nextComm->isNull() )
+  {
+    delete nextComm;
     return 0;
+  }
 
   tmp = myInfo->callingInterval->getWindow()->getTrace()->getLogicalReceive(
           nextComm->getCommIndex() )

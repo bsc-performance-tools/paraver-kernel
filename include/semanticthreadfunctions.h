@@ -1688,7 +1688,7 @@ class CommRecvPartner: public SemanticThread
       return "";
     }
   private:
-    static const TRecordType  validateMask = COMM + LOG + RECV;
+    static const TRecordType  validateMask = COMM + RECV;
     static const bool         initFromBegin = false;
     static std::string name;
 
