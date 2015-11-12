@@ -223,7 +223,7 @@ ParaverConfig::ParaverConfig()
 
   xmlColor.timelineBackground = SemanticColor::BACKGROUND;
   xmlColor.timelineAxis = SemanticColor::FOREGROUND;
-  xmlColor.useColorZero = false;
+  xmlColor.useColorZero = true;
   xmlColor.timelineColorZero = SemanticColor::BACKGROUND;
   xmlColor.timelineLogicalCommunications = SemanticColor::DEFAULT_LOGICAL_COMMUNICATIONS;
   xmlColor.timelinePhysicalCommunications = SemanticColor::DEFAULT_PHYSICAL_COMMUNICATIONS;
