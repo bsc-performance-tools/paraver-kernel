@@ -157,4 +157,11 @@ void WorkspaceManager::saveXML()
   oa << boost::serialization::make_nvp( "workspace_manager", *this );
 }
 
+// TODO
+ void WorkspaceManager::merge( const std::string &whichFile )
+ {
+
+
+ }
+
 

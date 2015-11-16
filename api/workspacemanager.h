@@ -52,6 +52,7 @@ class WorkspaceManager
     void addWorkspace( Workspace& whichWorkspace );
     void loadXML();
     void saveXML();
+    void merge( const std::string &whichFile );
 
     template< class Archive >
     void serialize( Archive & ar, const unsigned int version )
