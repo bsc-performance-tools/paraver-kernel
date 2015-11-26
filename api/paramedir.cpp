@@ -125,6 +125,8 @@ TOptionParamedir definedOption[] =
 
   // PRV TOOLSET
   { "-c", "--cutter", false, 0, "", "", "Apply Cutter tool" },
+  { "-et", "--event-translator", false, 3, "", "<reference_trace> <source_trace> <output_trace>",
+          "Merge events using reference trace for translations when conflicts found" },
   { "-f", "--filter", false, 0, "", "", "Apply Filter tool" },
   { "-g", "--event-cutter", false, 1, "", "<event-type>", "Apply Event Driven Cutter using 'event-type' as mark" },
   { "-s", "--software-counters", false, 0, "", "", "Apply Software counters tool" },
@@ -262,8 +264,10 @@ void printHelp()
   std::cout << "      paramedir [-c] [-f] [-s] [-o <output-file>] <prv> <xml>" << std::endl << std::endl;
   std::cout << "  Process paraver trace (direct parametrization, don't load trace):" << std::endl;
   std::cout << "      paramedir [-g <event-type>] [-t <shift-times-file>] [-o <output-file>] <prv> " << std::endl << std::endl;
-  std::cout << "  Process paraver trace (combined, don't load trace):" << std::endl;
-  std::cout << "      paramedir [-c] [-f] [-s] [-o <output-file>] [-g <event-type>] [-t <shift-times-file>] <prv> [ <xml> ]" << std::endl << std::endl;
+  std::cout << "  Process paraver trace (pipelined as flags are declared, using XML configuration parameters and without trace load):" << std::endl;
+  std::cout << "      paramedir [-c] [-f] [-s] [-o <output-file>] <prv> <xml>" << std::endl << std::endl;
+  std::cout << "  Process paraver trace (event_translator):" << std::endl;
+  std::cout << "      paramedir [-et <reference_prv> <source_prv> <output_trace> ]" << std::endl << std::endl;
   std::cout << "  Compute numeric data from processed trace using histogram or timeline CFG's (all combined, trace is loaded):" << std::endl;
   std::cout << "      paramedir [-e] [-m] [-p] [-c] [-f] [-s] [-o <output-file>] [-g <event-type>] \\" << std::endl;
   std::cout << "                [-t <shift-times-file>] <prv> [ <xml> ] [ <cfg> | <cfg> <ouput-data-file> ]+" << std::endl << std::endl;
