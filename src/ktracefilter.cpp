@@ -505,6 +505,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
 
 
   /* Processing the trace records */
+  //int tmpline =0;
   while ( !end_parsing )
   {
     if ( progress != NULL )
@@ -541,6 +542,8 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
       num_iters++;
 
     std::ostringstream event_record;
+
+    // std::cout << tmpline++ << std::endl;
 
     /* 1: state; 2: event; 3: comm; 4: global comm */
     switch ( line[0] )
