@@ -2600,7 +2600,7 @@ class ApplicationID: public SemanticThread
       return "";
     }
   private:
-    static const TRecordType  validateMask = STATE;
+    static const TRecordType  validateMask = STATE + EVENT;
     static const bool         initFromBegin = false;
     static std::string name;
 
@@ -2665,7 +2665,7 @@ class TaskID: public SemanticThread
       return "";
     }
   private:
-    static const TRecordType  validateMask = STATE;
+    static const TRecordType  validateMask = STATE + EVENT;
     static const bool         initFromBegin = false;
     static std::string name;
 
@@ -2730,7 +2730,7 @@ class ThreadID: public SemanticThread
       return "";
     }
   private:
-    static const TRecordType  validateMask = STATE;
+    static const TRecordType  validateMask = STATE + EVENT;
     static const bool         initFromBegin = false;
     static std::string name;
 
@@ -2795,7 +2795,7 @@ class NodeID: public SemanticThread
       return "";
     }
   private:
-    static const TRecordType  validateMask = STATE;
+    static const TRecordType  validateMask = STATE + EVENT;
     static const bool         initFromBegin = false;
     static std::string name;
 
@@ -2860,7 +2860,7 @@ class CPUID: public SemanticThread
       return "";
     }
   private:
-    static const TRecordType  validateMask = STATE;
+    static const TRecordType  validateMask = STATE + EVENT;
     static const bool         initFromBegin = false;
     static std::string name;
 
@@ -2927,7 +2927,7 @@ class InApplicationID: public SemanticThread
       return "Appl ID";
     }
   private:
-    static const TRecordType  validateMask = STATE;
+    static const TRecordType  validateMask = STATE + EVENT;
     static const bool         initFromBegin = false;
     static std::string name;
 
@@ -2994,7 +2994,7 @@ class InTaskID: public SemanticThread
       return "Task ID";
     }
   private:
-    static const TRecordType  validateMask = STATE;
+    static const TRecordType  validateMask = STATE + EVENT;
     static const bool         initFromBegin = false;
     static std::string name;
 
@@ -3061,7 +3061,7 @@ class InThreadID: public SemanticThread
       return "Thread ID";
     }
   private:
-    static const TRecordType  validateMask = STATE;
+    static const TRecordType  validateMask = STATE + EVENT;
     static const bool         initFromBegin = false;
     static std::string name;
 
@@ -3128,7 +3128,7 @@ class InNodeID: public SemanticThread
       return "Node ID";
     }
   private:
-    static const TRecordType  validateMask = STATE;
+    static const TRecordType  validateMask = STATE + EVENT;
     static const bool         initFromBegin = false;
     static std::string name;
 
@@ -3195,7 +3195,7 @@ class InCPUID: public SemanticThread
       return "CPU ID";
     }
   private:
-    static const TRecordType  validateMask = STATE;
+    static const TRecordType  validateMask = STATE + EVENT;
     static const bool         initFromBegin = false;
     static std::string name;
 
