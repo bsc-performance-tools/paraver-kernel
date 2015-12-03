@@ -27,63 +27,63 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-#include "eventdrivencutter.h"
+#include "eventtranslator.h"
 #include "kernelconnection.h"
 
 using namespace std;
 
-std::string EventDrivenCutter::traceToolID = "event_cutter";
-std::string EventDrivenCutter::traceToolName = "event_cutter";
-std::string EventDrivenCutter::traceToolExtension = "event_cutter";
+std::string EventTranslator::traceToolID = "event_translator";
+std::string EventTranslator::traceToolName = "event_translator";
+std::string EventTranslator::traceToolExtension = "translated";
 
-EventDrivenCutter *EventDrivenCutter::create( const KernelConnection *whichKernel,
-                                              std::string traceIn,
-                                              std::string traceOut,
-                                              TEventType whichEvent,
-                                              ProgressController *progress )
+EventTranslator *EventTranslator::create( const KernelConnection *whichKernel,
+                                          std::string traceIn,
+                                          std::string traceOut,
+                                          std::string traceReference,
+                                          ProgressController *progress )
 {
-  return new EventDrivenCutterProxy( whichKernel, traceIn, traceOut, whichEvent, progress );
+  return new EventTranslatorProxy( whichKernel, traceIn, traceOut, traceReference, progress );
 }
 
 
-std::string EventDrivenCutter::getID()
+std::string EventTranslator::getID()
 {
-  return EventDrivenCutter::traceToolID;
+  return EventTranslator::traceToolID;
 }
 
 
-std::string EventDrivenCutter::getName()
+std::string EventTranslator::getName()
 {
-  return EventDrivenCutter::traceToolName;
+  return EventTranslator::traceToolName;
 }
 
 
-std::string EventDrivenCutter::getExtension()
+std::string EventTranslator::getExtension()
 {
-  return EventDrivenCutter::traceToolExtension;
+  return EventTranslator::traceToolExtension;
 }
 
 
-EventDrivenCutterProxy::EventDrivenCutterProxy( const KernelConnection *whichKernel,
-                                                std::string traceIn,
-                                                std::string traceOut,
-                                                TEventType whichEvent,
-                                                ProgressController *progress )
+EventTranslatorProxy::EventTranslatorProxy( const KernelConnection *whichKernel,
+                                            std::string traceIn,
+                                            std::string traceOut,
+                                            std::string traceReference,
+                                            ProgressController *progress )
 {
   myKernel = whichKernel;
-  myEventDrivenCutter = whichKernel->newEventDrivenCutter( traceIn, traceOut, whichEvent, progress );
+  myEventTranslator = whichKernel->newEventTranslator( traceIn, traceOut, traceReference, progress );
 }
 
 
-EventDrivenCutterProxy::~EventDrivenCutterProxy()
+EventTranslatorProxy::~EventTranslatorProxy()
 {
-  delete myEventDrivenCutter;
+  delete myEventTranslator;
 }
 
 
-void EventDrivenCutterProxy::execute( std::string traceIn,
-                                      std::string traceOut,
-                                      ProgressController *progress )
+void EventTranslatorProxy::execute( std::string traceIn,
+                                    std::string traceOut,
+                                    ProgressController *progress )
 {
-  myEventDrivenCutter->execute( traceIn, traceOut, progress );
+  myEventTranslator->execute( traceIn, traceOut, progress );
 }
