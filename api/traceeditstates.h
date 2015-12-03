@@ -187,6 +187,7 @@ typedef DerivedTraceEditStateInt< TraceEditSequence * > TestState;
 typedef DerivedTraceEditStateString< TraceEditSequence * > CSVFileNameState;
 typedef DerivedTraceEditStateString< TraceEditSequence * > OutputDirSuffixState;
 typedef DerivedTraceEditStateString<TraceEditSequence * > OutputTraceFileNameState;
+typedef DerivedTraceEditStateString<TraceEditSequence * > PCFMergerReferenceState;
 
 typedef DerivedTraceEditStateTTime< TraceEditSequence * > MaxTraceTimeState;
 typedef DerivedTraceEditStateTWindowLevel< TraceEditSequence * > ShiftLevelState;

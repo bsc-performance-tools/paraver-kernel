@@ -107,6 +107,10 @@ TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceSta
       return new OnEventCutter( this );
       break;
 
+    case pcfMergerReferenceState:
+      return new PCFMergerReferenceState( this );
+      break;
+
     default:
       return NULL;
       break;
@@ -182,6 +186,10 @@ bool KTraceEditSequence::pushbackAction( TraceEditSequence::TSequenceActions whi
       newAction = new TraceCutterAction( this );
       break;
 
+    case traceFilterAction:
+      newAction = new TraceFilterAction( this );
+      break;
+
     case csvOutputAction:
       newAction = new CSVOutputAction( this );
       break;
@@ -204,6 +212,10 @@ bool KTraceEditSequence::pushbackAction( TraceEditSequence::TSequenceActions whi
 
     case traceSortAction:
       newAction = new TraceSortAction( this );
+      break;
+
+    case pcfEventMergerAction:
+      newAction = new PCFEventMergerAction( this );
       break;
 
     default:

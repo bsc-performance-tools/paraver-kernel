@@ -38,21 +38,16 @@ KEventTranslator::KEventTranslator( const KernelConnection *myKernel,
   // Build sequence
   mySequence = TraceEditSequence::create( myKernel );
 
-  mySequence->pushbackAction( TraceEditSequence::traceParserAction );
-  mySequence->pushbackAction( TraceEditSequence::eventDrivenCutterAction );
-
+  mySequence->pushbackAction( TraceEditSequence::pcfEventMergerAction );
+  mySequence->pushbackAction( TraceEditSequence::traceFilterAction );
 
   OutputTraceFileNameState *tmpOutputTraceFileNameState = new OutputTraceFileNameState( mySequence );
   tmpOutputTraceFileNameState->setData( traceOut );
   mySequence->addState( TraceEditSequence::outputTraceFileNameState, tmpOutputTraceFileNameState );
 
-  EOFParsedState *tmpEOFParseState = new EOFParsedState( mySequence );
-  tmpEOFParseState->setData( false );
-  mySequence->addState( TraceEditSequence::eofParsedState, tmpEOFParseState );
-
-  OnEventCutter *tmpOnEventCutter = new OnEventCutter( mySequence );
-  tmpOnEventCutter->setData( whichEvent );
-  mySequence->addState( TraceEditSequence::onEventCutterState, tmpOnEventCutter );
+  PCFMergerReferenceState *tmpPCFMergerReference = new PCFMergerReferenceState( mySequence );
+  tmpPCFMergerReference->setData( traceReference );
+  mySequence->addState( TraceEditSequence::pcfMergerReferenceState, tmpPCFMergerReference );
 
   traces.push_back( traceIn );
 }

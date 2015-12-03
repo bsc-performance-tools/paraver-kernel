@@ -62,6 +62,7 @@ class TraceEditSequence
       eofParsedState,
       shiftLevelState,
       onEventCutterState,
+      pcfMergerReferenceState,
       numStates
     };
 
@@ -69,12 +70,14 @@ class TraceEditSequence
     {
       testAction = 0,
       traceCutterAction,
+      traceFilterAction,
       csvOutputAction,
       traceParserAction,
       recordTimeShifterAction,
       traceWriterAction,
       eventDrivenCutterAction,
       traceSortAction,
+      pcfEventMergerAction,
       numActions
     };
 
