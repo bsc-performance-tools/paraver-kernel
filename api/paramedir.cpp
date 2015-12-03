@@ -91,6 +91,7 @@ enum TOptionID
 
   // PRV TOOLSET
   CUTTER,
+  EVENT_TRANSLATOR,
   FILTER,
   EVENT_CUTTER,
   SOFTWARE_COUNTERS,
@@ -125,8 +126,8 @@ TOptionParamedir definedOption[] =
 
   // PRV TOOLSET
   { "-c", "--cutter", false, 0, "", "", "Apply Cutter tool" },
-  { "-et", "--event-translator", false, 3, "", "<reference_trace> <source_trace> <output_trace>",
-          "Merge events using reference trace for translations when conflicts found" },
+  { "-et", "--event-translator", false, 1, "", "<reference_trace>",
+          "Merge events using this reference trace for translations when conflicts found" },
   { "-f", "--filter", false, 0, "", "", "Apply Filter tool" },
   { "-g", "--event-cutter", false, 1, "", "<event-type>", "Apply Event Driven Cutter using 'event-type' as mark" },
   { "-s", "--software-counters", false, 0, "", "", "Apply Software counters tool" },
@@ -173,6 +174,9 @@ string strShiftTimesFile( "" );
 
 EventDrivenCutter *eventDrivenCutter = NULL;
 TEventType eventType = 0;
+
+EventTranslator *eventTranslator = NULL;
+string eventTranslatorReferenceName("");
 
 static const std::string paramedirMessages[ UserMessageSize ] =
 {
@@ -375,6 +379,10 @@ void registerTool( TOptionID whichOption,
       toolID = EventDrivenCutter::getID();
       break;
 
+    case EVENT_TRANSLATOR:
+      toolID = EventTranslator::getID();
+      break;
+
     default:
       break;
   }
@@ -464,9 +472,9 @@ bool parseArguments( int argc,
       {
         strShiftTimesFile = currentArgument;
       }
-      else
+      else if ( option[ EVENT_TRANSLATOR ].active && eventTranslatorReferenceName.empty() )
       {
-
+        eventTranslatorReferenceName = currentArgument;
       }
 
       --readParameter;
@@ -687,6 +695,12 @@ string applyFilters( KernelConnection *myKernel,
       eventDrivenCutter = myKernel->newEventDrivenCutter( intermediateNameIn, intermediateNameOut, eventType );
       eventDrivenCutter->execute( intermediateNameIn, intermediateNameOut );
       delete eventDrivenCutter;
+    }
+    else if ( registeredTool[ i ] == EventTranslator::getID() )
+    {
+      eventTranlator = myKernel->newEventTranslator( intermediateNameIn, intermediateNameOut, eventTranslatorReferenceName );
+      eventTranlator->execute( intermediateNameIn, intermediateNameOut ); // TODO why passed again?
+      delete eventTranlator;
     }
 
     myKernel->copyROW( intermediateNameIn, intermediateNameOut );

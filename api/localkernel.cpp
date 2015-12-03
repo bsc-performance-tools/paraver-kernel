@@ -60,6 +60,7 @@
 
 using namespace std;
 
+
 void LocalKernel::init()
 {
   srand( time( NULL ) );
@@ -75,6 +76,7 @@ void LocalKernel::init()
 #endif
 }
 
+
 LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
     myMessageFunction( messageFunction )
 {
@@ -88,6 +90,7 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
   trace_names_table_last = 0;
 }
 
+
 LocalKernel::~LocalKernel()
 {
 //  deleted prevTracesNames;
@@ -95,6 +98,7 @@ LocalKernel::~LocalKernel()
   Extrae_fini();
 #endif
 }
+
 
 bool LocalKernel::checkTraceSize( const string& filename, TTraceSize maxSize ) const
 {
@@ -106,10 +110,12 @@ bool LocalKernel::checkTraceSize( const string& filename, TTraceSize maxSize ) c
   return false;
 }
 
+
 TTraceSize LocalKernel::getTraceSize( const string& filename ) const
 {
   return TraceStream::getTraceFileSize( filename );
 }
+
 
 Trace *LocalKernel::newTrace( const string& whichFile, bool noLoad, ProgressController *progress ) const
 {
@@ -118,6 +124,7 @@ Trace *LocalKernel::newTrace( const string& whichFile, bool noLoad, ProgressCont
 
   return new KTrace( whichFile, ( KProgressController * ) progress->getConcrete(), noLoad );
 }
+
 
 string LocalKernel::getPCFFileLocation( const string& traceFile ) const
 {
@@ -137,6 +144,7 @@ string LocalKernel::getPCFFileLocation( const string& traceFile ) const
   return pcfFile;
 }
 
+
 string LocalKernel::getROWFileLocation( const string& traceFile ) const
 {
   string rowFile;
@@ -155,15 +163,18 @@ string LocalKernel::getROWFileLocation( const string& traceFile ) const
   return rowFile;
 }
 
+
 Window *LocalKernel::newSingleWindow() const
 {
   return new KSingleWindow();
 }
 
+
 Window *LocalKernel::newSingleWindow( Trace *whichTrace ) const
 {
   return new KSingleWindow( ( KTrace * ) whichTrace->getConcrete() );
 }
+
 
 Window *LocalKernel::newDerivedWindow( Window *window1, Window * window2 ) const
 {
@@ -171,25 +182,30 @@ Window *LocalKernel::newDerivedWindow( Window *window1, Window * window2 ) const
                              ( KWindow * ) window2->getConcrete() );
 }
 
+
 Window *LocalKernel::newDerivedWindow() const
 {
   return new KDerivedWindow();
 }
+
 
 Histogram *LocalKernel::newHistogram() const
 {
   return new KHistogram();
 }
 
+
 /*RecordList *LocalKernel::newRecordList() const
 {
   return new KRecordList();
 }*/
 
+
 ProgressController *LocalKernel::newProgressController() const
 {
   return new KProgressController();
 }
+
 
 Filter *LocalKernel::newFilter( Filter *concreteFilter ) const
 {
@@ -198,10 +214,12 @@ Filter *LocalKernel::newFilter( Filter *concreteFilter ) const
   return ( Filter * ) tmpFilter;
 }
 
+
 TraceEditSequence *LocalKernel::newTraceEditSequence() const
 {
   return new KTraceEditSequence( this );
 }
+
 
 // TODO: repeated code
 string LocalKernel::getToolID( const string &toolName ) const
@@ -219,6 +237,7 @@ string LocalKernel::getToolID( const string &toolName ) const
 
   return auxStr;
 }
+
 
 // TODO: repeated code
 std::string LocalKernel::getToolName( const string &toolID ) const
@@ -242,6 +261,7 @@ TraceOptions *LocalKernel::newTraceOptions() const
 {
   return new KTraceOptions( this );
 }
+
 
 TraceCutter *LocalKernel::newTraceCutter( TraceOptions *options,
                                           const vector< TEventType > &whichTypesWithValuesZero ) const
@@ -307,15 +327,33 @@ EventDrivenCutter *LocalKernel::newEventDrivenCutter( std::string traceIn,
   return new KEventDrivenCutter( this, traceIn, traceOut, whichEvent, tmpKProgressControler );
 }
 
+
+EventTranslator *LocalKernel::newEventTranslator( std::string traceIn,
+                                                  std::string traceOut,
+                                                  std::string traceReference,
+                                                  ProgressController *progress ) const
+{
+  KProgressController *tmpKProgressControler = NULL;
+
+  if ( progress != NULL )
+    tmpKProgressControler = (KProgressController *)progress->getConcrete();
+
+  return new KEventTranslator( this, traceIn, traceOut, traceReference, tmpKProgressControler );
+}
+
+
 void LocalKernel::getAllStatistics( vector<string>& onVector ) const
 {
   FunctionManagement<HistogramStatistic>::getInstance()->getAll( onVector );
 }
 
+
+
 void LocalKernel::getAllFilterFunctions( vector<string>& onVector ) const
 {
   FunctionManagement<FilterFunction>::getInstance()->getAll( onVector );
 }
+
 
 void LocalKernel::getAllSemanticFunctions( TSemanticGroup whichGroup,
     vector<string>& onVector ) const
@@ -324,6 +362,7 @@ void LocalKernel::getAllSemanticFunctions( TSemanticGroup whichGroup,
       whichGroup );
 }
 
+
 bool LocalKernel::userMessage( UserMessageID messageID ) const
 {
   if( myMessageFunction == NULL )
@@ -331,6 +370,7 @@ bool LocalKernel::userMessage( UserMessageID messageID ) const
 
   return myMessageFunction( messageID );
 }
+
 
 std::string LocalKernel::composeName( const std::string& name,  const std::string& newExtension )
 {
@@ -353,6 +393,7 @@ std::string LocalKernel::composeName( const std::string& name,  const std::strin
   return newFileName;
 }
 
+
 void LocalKernel::copyFile( const std::string& in, const std::string& out ) const
 {
   FILE *fileIn, *fileOut;
@@ -370,6 +411,7 @@ void LocalKernel::copyFile( const std::string& in, const std::string& out ) cons
   fclose( fileOut );
 }
 
+
 void LocalKernel::copyPCF( const std::string& name, const std::string& traceToLoad ) const
 {
   string pcfIn  = composeName( name, string( "pcf" ) );
@@ -378,6 +420,7 @@ void LocalKernel::copyPCF( const std::string& name, const std::string& traceToLo
   copyFile( pcfIn, pcfOut );
 }
 
+
 void LocalKernel::copyROW( const std::string& name, const std::string& traceToLoad ) const
 {
   string pcfIn  = composeName( name, string( "row" ) );
@@ -385,6 +428,7 @@ void LocalKernel::copyROW( const std::string& name, const std::string& traceToLo
 
   copyFile( pcfIn, pcfOut );
 }
+
 
 void LocalKernel::getNewTraceName( char *name,
                                    char *new_trace_name,
