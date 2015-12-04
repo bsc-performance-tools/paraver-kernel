@@ -146,6 +146,28 @@ class TraceCutterAction: public TraceToTraceAction
 
 
 /****************************************************************************
+ ********                  TraceFilterAction                         ********
+ ****************************************************************************/
+class TraceFilterAction: public TraceToTraceAction
+{
+  public:
+    TraceFilterAction( TraceEditSequence *whichSequence ) : TraceToTraceAction( whichSequence )
+    {}
+    ~TraceFilterAction()
+    {}
+
+    virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
+
+    virtual bool execute( std::string whichTrace );
+
+  protected:
+
+  private:
+
+};
+
+
+/****************************************************************************
  ********                  CSVOutputAction                           ********
  ****************************************************************************/
 class CSVOutputAction: public TraceToTraceAction
@@ -312,6 +334,7 @@ class TraceSortAction: public TraceToTraceAction
   private:
 
 };
+
 
 
 #endif // KTRACEEDITACTIONS_H_INCLUDED

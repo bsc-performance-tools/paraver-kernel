@@ -27,4 +27,24 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
+#include "traceeditactions.h"
 
+
+/****************************************************************************
+ ********                  PCFEventMergerAction                      ********
+ ****************************************************************************/
+
+vector<TraceEditSequence::TSequenceStates> PCFEventMergerAction::getStateDependencies() const
+{
+  vector<TraceEditSequence::TSequenceStates> tmpStates;
+  return tmpStates;
+}
+
+
+bool PCFEventMergerAction::execute( std::string whichTrace )
+{
+  TraceEditSequence *tmpSequence = mySequence;
+  tmpSequence->executeNextAction( whichTrace );
+
+  return true;
+}

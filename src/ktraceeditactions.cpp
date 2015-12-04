@@ -135,6 +135,75 @@ bool TraceCutterAction::execute( std::string whichTrace )
 
 
 /****************************************************************************
+ ********                  TraceFilterAction                         ********
+ ****************************************************************************/
+
+vector<TraceEditSequence::TSequenceStates> TraceFilterAction::getStateDependencies() const
+{
+  vector<TraceEditSequence::TSequenceStates> tmpStates;
+  tmpStates.push_back( TraceEditSequence::traceOptionsState );
+  tmpStates.push_back( TraceEditSequence::csvWindowState );
+  return tmpStates;
+}
+
+
+bool TraceFilterAction::execute( std::string whichTrace )
+{
+  KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
+  Window *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TraceEditSequence::csvWindowState ) )->getData();
+  TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TraceEditSequence::traceOptionsState ) )->getData();
+  std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TraceEditSequence::outputDirSuffixState ) )->getData();
+  std::string outputPath = whichTrace.substr( 0, whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) ) +
+                           mySequence->getKernelConnection()->getPathSeparator() + tmpSuffix;
+
+  vector< std::string > tmpID;
+  tmpID.push_back( TraceCutter::getID() );
+  std::string newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );
+
+#ifndef WIN32
+  if( tmpWindow != NULL && options->get_min_cutting_time() == 0 && options->get_max_cutting_time() >= tmpWindow->getTrace()->getEndTime() )
+  {
+    newName = outputPath + mySequence->getKernelConnection()->getPathSeparator() +
+              whichTrace.substr( whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) );
+    std::string relativeTrace = "../" + whichTrace.substr( whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) );
+    if( symlink( relativeTrace.c_str(), newName.c_str() ) != 0 )
+    {
+      if( errno != EEXIST )
+      {
+        TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(),
+                                                     (char *)whichTrace.c_str(),
+                                                     (char *)newName.c_str(),
+                                                     options,
+                                                     NULL );
+        myCutter->setCutterApplicationCaller( CutterMetadata::RUNAPP_APPLICATION_ID );
+        myCutter->execute( (char *)whichTrace.c_str(), (char *)newName.c_str(), NULL );
+      }
+    }
+  }
+  else
+  {
+#endif
+    TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(),
+                                                (char *)whichTrace.c_str(),
+                                                (char *)newName.c_str(),
+                                                options,
+                                                NULL );
+    myCutter->setCutterApplicationCaller( CutterMetadata::RUNAPP_APPLICATION_ID );
+    myCutter->execute( (char *)whichTrace.c_str(), (char *)newName.c_str(), NULL );
+#ifndef WIN32
+  }
+#endif
+
+  mySequence->getKernelConnection()->copyPCF( whichTrace, newName );
+  mySequence->getKernelConnection()->copyROW( whichTrace, newName );
+
+  tmpSequence->executeNextAction( newName );
+
+  return true;
+}
+
+
+/****************************************************************************
  ********                  CSVOutputAction                           ********
  ****************************************************************************/
 vector<TraceEditSequence::TSequenceStates> CSVOutputAction::getStateDependencies() const

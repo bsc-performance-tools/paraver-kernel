@@ -244,6 +244,12 @@
 			<Option target="paramedir" />
 			<Option target="otf2prv" />
 		</Unit>
+		<Unit filename="api/eventtranslator.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/eventtranslator.h">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="api/filter.cpp">
 			<Option target="api" />
 			<Option target="otf2prv" />
@@ -717,6 +723,10 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="include/keventtranslator.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="include/kfilter.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -1184,6 +1194,10 @@
 			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/keventdrivencutter.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="src/keventtranslator.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>

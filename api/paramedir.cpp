@@ -57,6 +57,7 @@
 #include "tracesoftwarecounters.h"
 #include "traceshifter.h"
 #include "eventdrivencutter.h"
+#include "eventtranslator.h"
 
 #include "pcfparser/libtools/UIParaverTraceConfig.h"
 
@@ -698,9 +699,9 @@ string applyFilters( KernelConnection *myKernel,
     }
     else if ( registeredTool[ i ] == EventTranslator::getID() )
     {
-      eventTranlator = myKernel->newEventTranslator( intermediateNameIn, intermediateNameOut, eventTranslatorReferenceName );
-      eventTranlator->execute( intermediateNameIn, intermediateNameOut ); // TODO why passed again?
-      delete eventTranlator;
+      eventTranslator = myKernel->newEventTranslator( intermediateNameIn, intermediateNameOut, eventTranslatorReferenceName );
+      eventTranslator->execute( intermediateNameIn, intermediateNameOut ); // TODO why passed again?
+      delete eventTranslator;
     }
 
     myKernel->copyROW( intermediateNameIn, intermediateNameOut );

@@ -82,4 +82,26 @@ private:
 };
 
 
+/****************************************************************************
+ ********                  PCFEventMergerAction                      ********
+ ****************************************************************************/
+class PCFEventMergerAction: public TraceToTraceAction
+{
+  public:
+    PCFEventMergerAction( TraceEditSequence *whichSequence ) : TraceToTraceAction( whichSequence )
+    {}
+    ~PCFEventMergerAction()
+    {}
+
+    virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
+
+    virtual bool execute( std::string whichTrace );
+
+  protected:
+
+  private:
+
+};
+
+
 #endif // TRACEEDITACTIONS_H_INCLUDED

@@ -51,6 +51,7 @@
 #include "ktracesoftwarecounters.h"
 #include "ktraceshifter.h"
 #include "keventdrivencutter.h"
+#include "keventtranslator.h"
 #include "tracestream.h"
 #include <string.h>
 

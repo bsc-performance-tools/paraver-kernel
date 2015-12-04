@@ -50,6 +50,7 @@ class TraceSoftwareCounters;
 class TraceShifter;
 class TraceEditSequence;
 class EventDrivenCutter;
+class EventTranslator;
 
 typedef std::pair< unsigned long long, unsigned long long > TTypeValuePair;
 
@@ -103,7 +104,10 @@ class KernelConnection
                                                      std::string traceOut,
                                                      TEventType whichEvent,
                                                      ProgressController *progress = NULL ) const = 0;
-
+    virtual EventTranslator *newEventTranslator( std::string traceIn,
+                                                 std::string traceOut,
+                                                 std::string traceReference,
+                                                 ProgressController *progress = NULL ) const = 0;
 
     virtual void getAllStatistics( std::vector<std::string>& onVector ) const = 0;
     virtual void getAllFilterFunctions( std::vector<std::string>& onVector ) const = 0;
