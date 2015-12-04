@@ -62,7 +62,7 @@ KEventTranslator::KEventTranslator( const KernelConnection *myKernel,
   tmpOptions->set_all_states( true );
 
   // Put all events
-  // Negative filter! Discard everything but 6666666666 type
+  // Negative filter! Discard type 6666666666  and put the rest...
   TraceOptions::TFilterTypes eventTypes;
   TraceOptions::allowed_types impossibleType;
   impossibleType.type = 6666666666;
