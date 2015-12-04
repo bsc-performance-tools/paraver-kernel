@@ -29,6 +29,7 @@
 
 #include "keventtranslator.h"
 #include "traceeditactions.h"
+#include "traceoptions.h"
 
 KEventTranslator::KEventTranslator( const KernelConnection *myKernel,
                                     std::string traceIn,
@@ -51,9 +52,22 @@ KEventTranslator::KEventTranslator( const KernelConnection *myKernel,
   mySequence->addState( TraceEditSequence::pcfMergerReferenceState, tmpPCFMergerReference );
 
   TraceOptions *tmpOptions = TraceOptions::create( myKernel );
+
   tmpOptions->set_filter_states( true );
   tmpOptions->set_all_states( true );
+
+  TraceOptions::TFilterTypes eventTypes;
+  TraceOptions::allowed_types impossibleType;
+  impossibleType.type = 6666666666;
+  impossibleType.min_call_time = 0;
+  impossibleType.max_type = 0;
+  impossibleType.last_value = 0;
+  eventTypes[ 0 ] = impossibleType;
+  tmpOptions->set_discard_given_types( true );
+  tmpOptions->set_filter_types( eventTypes );
+  tmpOptions->set_filter_last_type( 1 );
   tmpOptions->set_filter_events( true );
+
   tmpOptions->set_filter_comms( true );
   tmpOptions->set_min_comm_size( 0 );
   TraceOptionsState *tmpOptionsState = new TraceOptionsState( mySequence );
