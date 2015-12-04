@@ -42,20 +42,27 @@ KEventTranslator::KEventTranslator( const KernelConnection *myKernel,
   mySequence->pushbackAction( new PCFEventMergerAction( mySequence ) );
   mySequence->pushbackAction( TraceEditSequence::traceFilterAction );
 
-  // Add states
+  // Add sequence states
+
+  // Sequence state 1: OutputTraceFileNameState
   OutputTraceFileNameState *tmpOutputTraceFileNameState = new OutputTraceFileNameState( mySequence );
   tmpOutputTraceFileNameState->setData( traceOut );
   mySequence->addState( TraceEditSequence::outputTraceFileNameState, tmpOutputTraceFileNameState );
 
+  // Sequence state 2: PCFMergerReferenceState
   PCFMergerReferenceState *tmpPCFMergerReference = new PCFMergerReferenceState( mySequence );
   tmpPCFMergerReference->setData( traceReference );
   mySequence->addState( TraceEditSequence::pcfMergerReferenceState, tmpPCFMergerReference );
 
+  // Sequence state 3: TraceOptions
   TraceOptions *tmpOptions = TraceOptions::create( myKernel );
 
+  // Put all the states
   tmpOptions->set_filter_states( true );
   tmpOptions->set_all_states( true );
 
+  // Put all events
+  // Negative filter! Discard everything but 6666666666 type
   TraceOptions::TFilterTypes eventTypes;
   TraceOptions::allowed_types impossibleType;
   impossibleType.type = 6666666666;
@@ -63,13 +70,15 @@ KEventTranslator::KEventTranslator( const KernelConnection *myKernel,
   impossibleType.max_type = 0;
   impossibleType.last_value = 0;
   eventTypes[ 0 ] = impossibleType;
-  tmpOptions->set_discard_given_types( true );
   tmpOptions->set_filter_types( eventTypes );
+  tmpOptions->set_discard_given_types( true );
   tmpOptions->set_filter_last_type( 1 );
   tmpOptions->set_filter_events( true );
 
+  // Put all comms
   tmpOptions->set_filter_comms( true );
   tmpOptions->set_min_comm_size( 0 );
+
   TraceOptionsState *tmpOptionsState = new TraceOptionsState( mySequence );
   tmpOptionsState->setData( tmpOptions );
   mySequence->addState( TraceEditSequence::traceOptionsState, tmpOptionsState );
