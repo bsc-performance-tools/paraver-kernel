@@ -50,6 +50,7 @@ class ParaverKernelException : public std::exception
       memoryError,
       gzipNotSupported,
       undefinedToolID,
+      undefinedToolName,
       LAST
     } TErrorCode;
 

@@ -38,10 +38,10 @@ KEventTranslator::KEventTranslator( const KernelConnection *myKernel,
 {
   // Build sequence
   mySequence = TraceEditSequence::create( myKernel );
-
   mySequence->pushbackAction( new PCFEventMergerAction( mySequence ) );
   mySequence->pushbackAction( TraceEditSequence::traceFilterAction );
 
+  // Add states
   OutputTraceFileNameState *tmpOutputTraceFileNameState = new OutputTraceFileNameState( mySequence );
   tmpOutputTraceFileNameState->setData( traceOut );
   mySequence->addState( TraceEditSequence::outputTraceFileNameState, tmpOutputTraceFileNameState );
@@ -51,11 +51,14 @@ KEventTranslator::KEventTranslator( const KernelConnection *myKernel,
   mySequence->addState( TraceEditSequence::pcfMergerReferenceState, tmpPCFMergerReference );
 
   TraceOptions *tmpOptions = TraceOptions::create( myKernel );
-
+  tmpOptions->set_filter_states( true );
+  tmpOptions->set_all_states( true );
+  tmpOptions->set_filter_events( true );
+  tmpOptions->set_filter_comms( true );
+  tmpOptions->set_min_comm_size( 0 );
   TraceOptionsState *tmpOptionsState = new TraceOptionsState( mySequence );
   tmpOptionsState->setData( tmpOptions );
   mySequence->addState( TraceEditSequence::traceOptionsState, tmpOptionsState );
-
 
   traces.push_back( traceIn );
 }

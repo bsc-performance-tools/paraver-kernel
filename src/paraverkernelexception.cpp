@@ -47,6 +47,7 @@ const char *ParaverKernelException::errorMessage[] =
     "Memory error: ",
     "Gzipped files not supported on Windows: ",
     "Requested Tool ID not defined: ",
+    "Requested Tool Name not defined: ",
     NULL
   };
 

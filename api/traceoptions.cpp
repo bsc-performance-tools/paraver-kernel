@@ -515,8 +515,13 @@ string TraceOptionsProxy::getTraceToolName( const string& toolID )
   {
     toolStr == EventDrivenCutter::getName();
   }
+  else if ( toolID == EventTranslator::getID() )
+  {
+    toolStr == EventTranslator::getName();
+  }
   else
   {
+    throw ParaverKernelException( ParaverKernelException::undefinedToolName );
   }
 
   return toolStr;
@@ -549,7 +554,7 @@ string TraceOptionsProxy::getTraceToolExtension( const string& toolID )
   }
   else if ( toolID == EventTranslator::getID() )
   {
-    toolStr = EventDrivenCutter::getExtension();
+    toolStr = EventTranslator::getExtension();
   }
   else
   {
