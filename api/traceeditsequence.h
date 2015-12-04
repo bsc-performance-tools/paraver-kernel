@@ -63,6 +63,8 @@ class TraceEditSequence
       shiftLevelState,
       onEventCutterState,
       pcfMergerReferenceState,
+      eventTranslationTableState,
+      copyAdditionalFilesState,
       numStates
     };
 

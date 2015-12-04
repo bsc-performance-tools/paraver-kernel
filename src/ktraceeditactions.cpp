@@ -142,7 +142,8 @@ vector<TraceEditSequence::TSequenceStates> TraceFilterAction::getStateDependenci
 {
   vector<TraceEditSequence::TSequenceStates> tmpStates;
   tmpStates.push_back( TraceEditSequence::traceOptionsState );
-  tmpStates.push_back( TraceEditSequence::csvWindowState );
+  tmpStates.push_back( TraceEditSequence::eventTranslationTableState );
+  tmpStates.push_back( TraceEditSequence::copyAdditionalFilesState );
   return tmpStates;
 }
 
@@ -150,6 +151,7 @@ vector<TraceEditSequence::TSequenceStates> TraceFilterAction::getStateDependenci
 bool TraceFilterAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
+
   Window *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TraceEditSequence::csvWindowState ) )->getData();
   TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TraceEditSequence::traceOptionsState ) )->getData();
   std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TraceEditSequence::outputDirSuffixState ) )->getData();
@@ -157,45 +159,27 @@ bool TraceFilterAction::execute( std::string whichTrace )
                            mySequence->getKernelConnection()->getPathSeparator() + tmpSuffix;
 
   vector< std::string > tmpID;
-  tmpID.push_back( TraceCutter::getID() );
+  tmpID.push_back( TraceFilter::getID() );
   std::string newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );
 
-#ifndef WIN32
-  if( tmpWindow != NULL && options->get_min_cutting_time() == 0 && options->get_max_cutting_time() >= tmpWindow->getTrace()->getEndTime() )
-  {
-    newName = outputPath + mySequence->getKernelConnection()->getPathSeparator() +
-              whichTrace.substr( whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) );
-    std::string relativeTrace = "../" + whichTrace.substr( whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) );
-    if( symlink( relativeTrace.c_str(), newName.c_str() ) != 0 )
-    {
-      if( errno != EEXIST )
-      {
-        TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(),
-                                                     (char *)whichTrace.c_str(),
-                                                     (char *)newName.c_str(),
-                                                     options,
-                                                     NULL );
-        myCutter->setCutterApplicationCaller( CutterMetadata::RUNAPP_APPLICATION_ID );
-        myCutter->execute( (char *)whichTrace.c_str(), (char *)newName.c_str(), NULL );
-      }
-    }
-  }
-  else
-  {
-#endif
-    TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(),
-                                                (char *)whichTrace.c_str(),
-                                                (char *)newName.c_str(),
-                                                options,
-                                                NULL );
-    myCutter->setCutterApplicationCaller( CutterMetadata::RUNAPP_APPLICATION_ID );
-    myCutter->execute( (char *)whichTrace.c_str(), (char *)newName.c_str(), NULL );
-#ifndef WIN32
-  }
-#endif
+  std::map< TTypeValuePair, TTypeValuePair > translationTable =
+          ( (EventTranslationTableState *)tmpSequence->getState( TraceEditSequence::eventTranslationTableState ) )->getData();
 
-  mySequence->getKernelConnection()->copyPCF( whichTrace, newName );
-  mySequence->getKernelConnection()->copyROW( whichTrace, newName );
+  TraceFilter *myFilter = TraceFilter::create( mySequence->getKernelConnection(),
+                                               (char *)whichTrace.c_str(),
+                                               (char *)newName.c_str(),
+                                               options,
+                                               NULL,
+                                               translationTable );
+  //myFilter->setCutterApplicationCaller( CutterMetadata::RUNAPP_APPLICATION_ID );
+  myFilter->execute( (char *)whichTrace.c_str(), (char *)newName.c_str(), NULL );
+
+  bool copyFiles = ( (CopyAdditionalFilesState *)tmpSequence->getState( TraceEditSequence::copyAdditionalFilesState ) )->getData();
+  if ( copyFiles )
+  {
+    mySequence->getKernelConnection()->copyPCF( whichTrace, newName );
+    mySequence->getKernelConnection()->copyROW( whichTrace, newName );
+  }
 
   tmpSequence->executeNextAction( newName );
 

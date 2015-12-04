@@ -111,6 +111,14 @@ TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceSta
       return new PCFMergerReferenceState( this );
       break;
 
+    case copyAdditionalFilesState:
+      return new CopyAdditionalFilesState( this );
+      break;
+
+    case eventTranslationTableState:
+      return new EventTranslationTableState( this );
+      break;
+
     default:
       return NULL;
       break;
