@@ -159,7 +159,6 @@ bool TraceFilterAction::execute( std::string whichTrace )
   std::map< TTypeValuePair, TTypeValuePair > translationTable =
           ( (EventTranslationTableState *)tmpSequence->getState( TraceEditSequence::eventTranslationTableState ) )->getData();
 
-
   std::string newName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
   if ( !tmpSequence->isEndOfSequence() || newName.empty() )
   {

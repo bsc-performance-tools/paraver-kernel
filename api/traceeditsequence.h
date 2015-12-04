@@ -79,7 +79,6 @@ class TraceEditSequence
       traceWriterAction,
       eventDrivenCutterAction,
       traceSortAction,
-      pcfEventMergerAction,
       numActions
     };
 

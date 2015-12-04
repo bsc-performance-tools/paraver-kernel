@@ -49,7 +49,7 @@ class TraceOptions
     typedef char *TStateNames[20];
     typedef struct allowed_types TFilterTypes[20];
 
-    static TraceOptions *create( KernelConnection *whichKernel );
+    static TraceOptions *create( const KernelConnection *whichKernel );
 
     static bool isTraceToolsOptionsFile( const std::string& xmlFileName );
 
@@ -360,7 +360,7 @@ class TraceOptionsProxy :public TraceOptions
     TraceOptionsProxy( const KernelConnection *whichKernel );
 
     // friend TraceOptions *TraceOptions::create( KernelConnection *, char * );
-    friend TraceOptions *TraceOptions::create( KernelConnection * );
+    friend TraceOptions *TraceOptions::create( const KernelConnection * );
     friend TraceCutter *LocalKernel::newTraceCutter( TraceOptions *options,
                                          const std::vector< TEventType > &whichTypesWithValuesZero ) const;
     friend TraceFilter *LocalKernel::newTraceFilter( char *trace_in,

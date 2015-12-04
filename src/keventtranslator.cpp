@@ -28,6 +28,7 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "keventtranslator.h"
+#include "traceeditactions.h"
 
 KEventTranslator::KEventTranslator( const KernelConnection *myKernel,
                                     std::string traceIn,
@@ -38,7 +39,7 @@ KEventTranslator::KEventTranslator( const KernelConnection *myKernel,
   // Build sequence
   mySequence = TraceEditSequence::create( myKernel );
 
-  mySequence->pushbackAction( TraceEditSequence::pcfEventMergerAction );
+  mySequence->pushbackAction( new PCFEventMergerAction( mySequence ) );
   mySequence->pushbackAction( TraceEditSequence::traceFilterAction );
 
   OutputTraceFileNameState *tmpOutputTraceFileNameState = new OutputTraceFileNameState( mySequence );
@@ -48,6 +49,13 @@ KEventTranslator::KEventTranslator( const KernelConnection *myKernel,
   PCFMergerReferenceState *tmpPCFMergerReference = new PCFMergerReferenceState( mySequence );
   tmpPCFMergerReference->setData( traceReference );
   mySequence->addState( TraceEditSequence::pcfMergerReferenceState, tmpPCFMergerReference );
+
+  TraceOptions *tmpOptions = TraceOptions::create( myKernel );
+
+  TraceOptionsState *tmpOptionsState = new TraceOptionsState( mySequence );
+  tmpOptionsState->setData( tmpOptions );
+  mySequence->addState( TraceEditSequence::traceOptionsState, tmpOptionsState );
+
 
   traces.push_back( traceIn );
 }

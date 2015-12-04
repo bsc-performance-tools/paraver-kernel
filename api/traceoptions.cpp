@@ -45,7 +45,7 @@ using namespace std;
 vector< string > TraceOptionsProxy::IDsAvailableTraceTools;
 
 //TraceOptions *TraceOptions::create( KernelConnection *whichKernel, char *xmldocname )
-TraceOptions *TraceOptions::create( KernelConnection *whichKernel )
+TraceOptions *TraceOptions::create( const KernelConnection *whichKernel )
 {
 //  return new TraceOptionsProxy( whichKernel, xmldocname );
   return new TraceOptionsProxy( whichKernel );

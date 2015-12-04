@@ -222,10 +222,6 @@ bool KTraceEditSequence::pushbackAction( TraceEditSequence::TSequenceActions whi
       newAction = new TraceSortAction( this );
       break;
 
-    case pcfEventMergerAction:
-      newAction = new PCFEventMergerAction( this );
-      break;
-
     default:
       return false;
       break;
