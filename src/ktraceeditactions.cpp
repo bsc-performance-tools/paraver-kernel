@@ -39,6 +39,8 @@
 #include "ktraceeditsequence.h"
 #include "traceeditstates.h"
 #include "tracecutter.h"
+#include "tracefilter.h"
+#include "eventtranslator.h"
 #include "kernelconnection.h"
 #include "textoutput.h"
 #include "traceoptions.h"
@@ -83,10 +85,10 @@ bool TraceCutterAction::execute( std::string whichTrace )
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
   Window *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TraceEditSequence::csvWindowState ) )->getData();
   TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TraceEditSequence::traceOptionsState ) )->getData();
+
   std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TraceEditSequence::outputDirSuffixState ) )->getData();
   std::string outputPath = whichTrace.substr( 0, whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) ) +
                            mySequence->getKernelConnection()->getPathSeparator() + tmpSuffix;
-
   vector< std::string > tmpID;
   tmpID.push_back( TraceCutter::getID() );
   std::string newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );
@@ -152,18 +154,21 @@ bool TraceFilterAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
 
-  Window *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TraceEditSequence::csvWindowState ) )->getData();
   TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TraceEditSequence::traceOptionsState ) )->getData();
+
+  std::map< TTypeValuePair, TTypeValuePair > translationTable =
+          ( (EventTranslationTableState *)tmpSequence->getState( TraceEditSequence::eventTranslationTableState ) )->getData();
+
   std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TraceEditSequence::outputDirSuffixState ) )->getData();
   std::string outputPath = whichTrace.substr( 0, whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) ) +
                            mySequence->getKernelConnection()->getPathSeparator() + tmpSuffix;
 
   vector< std::string > tmpID;
-  tmpID.push_back( TraceFilter::getID() );
+  if( translationTable.empty() )
+    tmpID.push_back( TraceFilter::getID() );
+  else
+    tmpID.push_back( EventTranslator::getID() );
   std::string newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );
-
-  std::map< TTypeValuePair, TTypeValuePair > translationTable =
-          ( (EventTranslationTableState *)tmpSequence->getState( TraceEditSequence::eventTranslationTableState ) )->getData();
 
   TraceFilter *myFilter = TraceFilter::create( mySequence->getKernelConnection(),
                                                (char *)whichTrace.c_str(),
@@ -171,8 +176,6 @@ bool TraceFilterAction::execute( std::string whichTrace )
                                                options,
                                                NULL,
                                                translationTable );
-  //myFilter->setCutterApplicationCaller( CutterMetadata::RUNAPP_APPLICATION_ID );
-  myFilter->execute( (char *)whichTrace.c_str(), (char *)newName.c_str(), NULL );
 
   bool copyFiles = ( (CopyAdditionalFilesState *)tmpSequence->getState( TraceEditSequence::copyAdditionalFilesState ) )->getData();
   if ( copyFiles )

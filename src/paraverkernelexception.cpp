@@ -46,6 +46,7 @@ const char *ParaverKernelException::errorMessage[] =
     "Null pointer in operand: ",
     "Memory error: ",
     "Gzipped files not supported on Windows: ",
+    "Requested Tool ID not defined: ",
     NULL
   };
 

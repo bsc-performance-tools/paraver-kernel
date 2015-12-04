@@ -31,7 +31,7 @@
 #define TRACEEDITSTATES_H_INCLUDED
 
 #include <string>
-#include "paraverkerneltypes.h"
+#include "kernelconnection.h"
 #include "textoutput.h"
 
 class TraceEditSequence;
@@ -179,7 +179,7 @@ typedef DerivedTraceEditState< TraceEditSequence *, TextOutput > CSVOutputState;
 typedef DerivedTraceEditState< TraceEditSequence *, TraceOptions * > TraceOptionsState;
 typedef DerivedTraceEditState< TraceEditSequence *, Window * > CSVWindowState;
 typedef DerivedTraceEditState< TraceEditSequence *, std::vector< TTime > * > ShiftTimesState;
-typedef DerivedTraceEditState< TraceEditSequence *, std::map< TTypeValuePair, TTypeValuePair > EventTranslationTableState;
+typedef DerivedTraceEditState< TraceEditSequence *, std::map< TTypeValuePair, TTypeValuePair > > EventTranslationTableState;
 
 typedef DerivedTraceEditStateBool< TraceEditSequence * > EOFParsedState;
 typedef DerivedTraceEditStateBool< TraceEditSequence * > CopyAdditionalFilesState;

@@ -35,7 +35,7 @@ std::string TraceFilter::traceToolID = "filter";
 std::string TraceFilter::traceToolName = "Filter";
 std::string TraceFilter::traceToolExtension = "filter";
 
-TraceFilter *TraceFilter::create( KernelConnection *whichKernel,
+TraceFilter *TraceFilter::create( const KernelConnection *whichKernel,
                                   char *traceIn,
                                   char *traceOut,
                                   TraceOptions *options,
@@ -64,12 +64,12 @@ std::string TraceFilter::getExtension()
 }
 
 
-TraceFilterProxy::TraceFilterProxy( KernelConnection *whichKernel,
-                                  char *traceIn,
-                                  char *traceOut,
-                                  TraceOptions *options,
-                                  const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
-                                  ProgressController *progress )
+TraceFilterProxy::TraceFilterProxy( const KernelConnection *whichKernel,
+                                    char *traceIn,
+                                    char *traceOut,
+                                    TraceOptions *options,
+                                    const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
+                                    ProgressController *progress )
 {
   myTraceFilter = whichKernel->newTraceFilter( traceIn, traceOut, options, whichTranslationTable, progress );
 }

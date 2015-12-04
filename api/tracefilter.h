@@ -41,12 +41,12 @@ class ProgressController;
 class TraceFilter
 {
   public:
-   static TraceFilter *create( KernelConnection *whichKernel,
-                                char *traceIn,
-                                char *traceOut,
-                                TraceOptions *options,
-                                ProgressController *progress,
-                                const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable );
+   static TraceFilter *create( const KernelConnection *whichKernel,
+                               char *traceIn,
+                               char *traceOut,
+                               TraceOptions *options,
+                               ProgressController *progress,
+                               const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable );
 
     static std::string getID();
     static std::string getName();
@@ -69,14 +69,14 @@ class TraceFilterProxy : public TraceFilter
   private:
     TraceFilter *myTraceFilter;
 
-    TraceFilterProxy( KernelConnection *whichKernel,
+    TraceFilterProxy( const KernelConnection *whichKernel,
                       char *traceIn,
                       char *traceOut,
                       TraceOptions *options,
                       const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
                       ProgressController *progress );
 
-    friend TraceFilter *TraceFilter::create( KernelConnection *kernelConnection,
+    friend TraceFilter *TraceFilter::create( const KernelConnection *kernelConnection,
                                              char *traceIn,
                                              char *traceOut,
                                              TraceOptions *options,

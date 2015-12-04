@@ -28,6 +28,7 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "kernelconnection.h"
+#include "paraverkernelexception.h"
 #include "traceoptions.h"
 
 // Only for getIDsAvailableTraceTools
@@ -36,7 +37,7 @@
 #include "tracesoftwarecounters.h"
 #include "traceshifter.h"
 #include "eventdrivencutter.h"
-
+#include "eventtranslator.h"
 
 using namespace std;
 
@@ -546,8 +547,13 @@ string TraceOptionsProxy::getTraceToolExtension( const string& toolID )
   {
     toolStr = EventDrivenCutter::getExtension();
   }
+  else if ( toolID == EventTranslator::getID() )
+  {
+    toolStr = EventDrivenCutter::getExtension();
+  }
   else
   {
+    throw ParaverKernelException( ParaverKernelException::undefinedToolID );
   }
 
   return toolStr;

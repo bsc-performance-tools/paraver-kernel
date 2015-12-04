@@ -37,6 +37,8 @@
 vector<TraceEditSequence::TSequenceStates> PCFEventMergerAction::getStateDependencies() const
 {
   vector<TraceEditSequence::TSequenceStates> tmpStates;
+  tmpStates.push_back( TraceEditSequence::eventTranslationTableState );
+
   return tmpStates;
 }
 
@@ -44,6 +46,11 @@ vector<TraceEditSequence::TSequenceStates> PCFEventMergerAction::getStateDepende
 bool PCFEventMergerAction::execute( std::string whichTrace )
 {
   TraceEditSequence *tmpSequence = mySequence;
+
+  std::map< TTypeValuePair, TTypeValuePair > tmpTrans;
+  tmpTrans[ TTypeValuePair( 50000003, 31 ) ] = TTypeValuePair( 50000003, 51 );
+  ( (EventTranslationTableState *)tmpSequence->getState( TraceEditSequence::eventTranslationTableState ) )->setData( tmpTrans );
+
   tmpSequence->executeNextAction( whichTrace );
 
   return true;

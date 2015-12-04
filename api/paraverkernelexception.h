@@ -49,6 +49,7 @@ class ParaverKernelException : public std::exception
       nullOperand,
       memoryError,
       gzipNotSupported,
+      undefinedToolID,
       LAST
     } TErrorCode;
 
