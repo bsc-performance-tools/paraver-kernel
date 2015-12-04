@@ -410,3 +410,7 @@ bool KTraceEditSequence::executeNextAction( MemoryTrace::iterator *whichRecord )
   return sequenceExecError[ currentTraceName ];
 }
 
+bool KTraceEditSequence::isEndOfSequence() const
+{
+  return ( currentAction == sequenceActions.size() - 1 );
+}

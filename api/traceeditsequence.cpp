@@ -128,3 +128,8 @@ bool TraceEditSequenceProxy::executeNextAction( std::string whichTrace )
 {
   return mySequence->executeNextAction( whichTrace );
 }
+
+bool TraceEditSequenceProxy::isEndOfSequence() const
+{
+  return mySequence->isEndOfSequence();
+}

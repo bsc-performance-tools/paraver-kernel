@@ -56,6 +56,8 @@ class KTraceEditSequence:public TraceEditSequence
     bool executeNextAction( std::string whichTrace );
     bool executeNextAction( MemoryTrace::iterator *whichRecord );
 
+    bool isEndOfSequence() const;
+
   protected:
 
   private:

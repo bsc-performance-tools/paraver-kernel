@@ -107,6 +107,8 @@ class TraceEditSequence
 
     virtual bool executeNextAction( std::string whichTrace ) = 0;
 
+    virtual bool isEndOfSequence() const = 0;
+
     virtual TraceEditSequence *getConcrete()
     {
       return NULL;
@@ -138,6 +140,8 @@ class TraceEditSequenceProxy:public TraceEditSequence
     bool execute( vector<std::string> traces );
 
     bool executeNextAction( std::string whichTrace );
+
+    bool isEndOfSequence() const;
 
     TraceEditSequence *getConcrete();
 

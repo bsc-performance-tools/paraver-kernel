@@ -159,16 +159,22 @@ bool TraceFilterAction::execute( std::string whichTrace )
   std::map< TTypeValuePair, TTypeValuePair > translationTable =
           ( (EventTranslationTableState *)tmpSequence->getState( TraceEditSequence::eventTranslationTableState ) )->getData();
 
-  std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TraceEditSequence::outputDirSuffixState ) )->getData();
-  std::string outputPath = whichTrace.substr( 0, whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) ) +
+
+  std::string newName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
+  if ( !tmpSequence->isEndOfSequence() || newName.empty() )
+  {
+    std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TraceEditSequence::outputDirSuffixState ) )->getData();
+    std::string outputPath = whichTrace.substr( 0, whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) ) +
                            mySequence->getKernelConnection()->getPathSeparator() + tmpSuffix;
 
-  vector< std::string > tmpID;
-  if( translationTable.empty() )
-    tmpID.push_back( TraceFilter::getID() );
-  else
-    tmpID.push_back( EventTranslator::getID() );
-  std::string newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );
+    vector< std::string > tmpID;
+    if( translationTable.empty() )
+      tmpID.push_back( TraceFilter::getID() );
+    else
+      tmpID.push_back( EventTranslator::getID() );
+
+    newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );
+  }
 
   TraceFilter *myFilter = TraceFilter::create( mySequence->getKernelConnection(),
                                                (char *)whichTrace.c_str(),
