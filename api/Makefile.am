@@ -6,6 +6,7 @@ libparaver_api_la_SOURCES = \
                     drawmode.cpp \
                     eventdrivencutter.cpp \
                     eventlabels.cpp \
+                    eventtranslator.cpp \
                     filter.cpp \
                     gnuplotoutput.cpp \
                     histogram.cpp \
@@ -46,6 +47,7 @@ include_HEADERS = \
                   drawmode.h\
                   eventdrivencutter.h\
                   eventlabels.h\
+                  eventtranslator.h\
                   filter.h\
                   gnuplotoutput.h\
                   histogram.h\

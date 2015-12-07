@@ -22,6 +22,7 @@ noinst_HEADERS = \
                           intervalnotthread.h\
                           intervalthread.h\
                           keventdrivencutter.h\
+                          keventtranslator.h\
                           kfilter.h\
                           khistogram.h\
                           khistogramtotals.h\

@@ -16,6 +16,7 @@ libparaver_kernel_la_SOURCES = \
     intervalnotthread.cpp \
     intervalthread.cpp \
     keventdrivencutter.cpp \
+    keventtranslator.cpp \
     kfilter.cpp \
     khistogram.cpp \
     khistogramtotals.cpp \
