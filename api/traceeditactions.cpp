@@ -52,6 +52,7 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
 {
   TraceEditSequence *tmpSequence = mySequence;
 
+  // Get new tracename
   std::string newName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
   if ( !tmpSequence->isEndOfSequence() || newName.empty() )
   {
@@ -65,32 +66,38 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
     newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );
   }
 
-
-  std::map< TTypeValuePair, TTypeValuePair > tmpTrans;
+  // Read reference pcf
   std::string referenceTrace = ( (PCFMergerReferenceState *)tmpSequence->getState( TraceEditSequence::pcfMergerReferenceState ) )->getData();
-  referenceTrace = LocalKernel::composeName( referenceTrace, "pcf" );
+  std::string referencePCFFile = LocalKernel::composeName( referenceTrace, "pcf" );
+  UIParaverTraceConfig *referenceTraceConfig = new UIParaverTraceConfig();
+  referenceTraceConfig->parse( referencePCFFile );
+
+  // Read source pcf
   std::string sourceTrace = LocalKernel::composeName( whichTrace, "pcf" );
-  UIParaverTraceConfig *tmpReferenceConfig = new UIParaverTraceConfig();
-  UIParaverTraceConfig *tmpSourceConfig = new UIParaverTraceConfig();
+  UIParaverTraceConfig *sourceTraceConfig = new UIParaverTraceConfig();
+  sourceTraceConfig->parse( sourceTrace );
 
-  tmpReferenceConfig->parse( referenceTrace );
-  tmpSourceConfig->parse( sourceTrace );
-
-
-
+  // Translation algorithm
+  std::map< TTypeValuePair, TTypeValuePair > translation;
 /*
-  tmpTrans[ TTypeValuePair( 50000003, 31 ) ] = TTypeValuePair( 50000003, 51 );
+  translation[ TTypeValuePair( 50000003, 31 ) ] = TTypeValuePair( 50000003, 51 );
 */
 
-  ( (EventTranslationTableState *)tmpSequence->getState( TraceEditSequence::eventTranslationTableState ) )->setData( tmpTrans );
+  // Write files
+  ( (EventTranslationTableState *)tmpSequence->getState( TraceEditSequence::eventTranslationTableState ) )->setData( translation );
 
-  delete tmpReferenceConfig;
-  delete tmpSourceConfig;
-
-  if ( !tmpTrans.empty() )
+  if ( !translation.empty() ) //?
   {
     mySequence->getKernelConnection()->copyROW( whichTrace, newName );
+
+    std::fstream tmpFileDestiny;
+    tmpFileDestiny.open( newName.c_str(), std::ios::out );
+    tmpFileDestiny << sourceTraceConfig->toString();
+    tmpFileDestiny.close();
   }
+
+  delete sourceTraceConfig;
+  delete referenceTraceConfig;
 
   tmpSequence->executeNextAction( whichTrace );
 
