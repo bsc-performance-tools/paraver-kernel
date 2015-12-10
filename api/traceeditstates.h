@@ -183,6 +183,7 @@ typedef DerivedTraceEditState< TraceEditSequence *, std::map< TTypeValuePair, TT
 
 typedef DerivedTraceEditStateBool< TraceEditSequence * > EOFParsedState;
 typedef DerivedTraceEditStateBool< TraceEditSequence * > CopyAdditionalFilesState;
+typedef DerivedTraceEditStateBool< TraceEditSequence * > OnlyFilterState;
 
 typedef DerivedTraceEditStateInt< TraceEditSequence * > TestState;
 

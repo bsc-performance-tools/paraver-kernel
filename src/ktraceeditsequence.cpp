@@ -119,6 +119,10 @@ TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceSta
       return new EventTranslationTableState( this );
       break;
 
+    case onlyFilterState:
+      return new OnlyFilterState( this );
+      break;
+
     default:
       return NULL;
       break;

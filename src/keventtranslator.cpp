@@ -83,6 +83,16 @@ KEventTranslator::KEventTranslator( const KernelConnection *myKernel,
   tmpOptionsState->setData( tmpOptions );
   mySequence->addState( TraceEditSequence::traceOptionsState, tmpOptionsState );
 
+  // Sequence state 4: copyAdditionalFilesState
+  CopyAdditionalFilesState *tmpCopyAdditionalFilesState = new CopyAdditionalFilesState( mySequence );
+  tmpCopyAdditionalFilesState->setData( false );
+  mySequence->addState( TraceEditSequence::copyAdditionalFilesState );
+
+  // Sequence state 5: OnlyFilterState
+  OnlyFilterState *tmpOnlyFilterState = new OnlyFilterState( mySequence );
+  tmpOnlyFilterState->setData( false );
+  mySequence->addState( TraceEditSequence::onlyFilterState );
+
   traces.push_back( traceIn );
 }
 

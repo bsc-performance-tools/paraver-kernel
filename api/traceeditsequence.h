@@ -65,6 +65,7 @@ class TraceEditSequence
       pcfMergerReferenceState,
       eventTranslationTableState,
       copyAdditionalFilesState,
+      onlyFilterState,
       numStates
     };
 

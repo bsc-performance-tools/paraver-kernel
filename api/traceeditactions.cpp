@@ -28,6 +28,8 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "traceeditactions.h"
+#include "eventtranslator.h"
+#include "pcfparser/libtools/UIParaverTraceConfig.h"
 
 
 /****************************************************************************
@@ -38,6 +40,9 @@ vector<TraceEditSequence::TSequenceStates> PCFEventMergerAction::getStateDepende
 {
   vector<TraceEditSequence::TSequenceStates> tmpStates;
   tmpStates.push_back( TraceEditSequence::eventTranslationTableState );
+  tmpStates.push_back( TraceEditSequence::outputTraceFileNameState );
+  tmpStates.push_back( TraceEditSequence::outputDirSuffixState );
+  tmpStates.push_back( TraceEditSequence::pcfMergerReferenceState );
 
   return tmpStates;
 }
@@ -47,9 +52,45 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
 {
   TraceEditSequence *tmpSequence = mySequence;
 
+  std::string newName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
+  if ( !tmpSequence->isEndOfSequence() || newName.empty() )
+  {
+    std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TraceEditSequence::outputDirSuffixState ) )->getData();
+    std::string outputPath = whichTrace.substr( 0, whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) ) +
+                           mySequence->getKernelConnection()->getPathSeparator() + tmpSuffix;
+
+    vector< std::string > tmpID;
+    tmpID.push_back( EventTranslator::getID() );
+
+    newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );
+  }
+
+
   std::map< TTypeValuePair, TTypeValuePair > tmpTrans;
+  std::string referenceTrace = ( (PCFMergerReferenceState *)tmpSequence->getState( TraceEditSequence::pcfMergerReferenceState ) )->getData();
+  referenceTrace = LocalKernel::composeName( referenceTrace, "pcf" );
+  std::string sourceTrace = LocalKernel::composeName( whichTrace, "pcf" );
+  UIParaverTraceConfig *tmpReferenceConfig = new UIParaverTraceConfig();
+  UIParaverTraceConfig *tmpSourceConfig = new UIParaverTraceConfig();
+
+  tmpReferenceConfig->parse( referenceTrace );
+  tmpSourceConfig->parse( sourceTrace );
+
+
+
+/*
   tmpTrans[ TTypeValuePair( 50000003, 31 ) ] = TTypeValuePair( 50000003, 51 );
+*/
+
   ( (EventTranslationTableState *)tmpSequence->getState( TraceEditSequence::eventTranslationTableState ) )->setData( tmpTrans );
+
+  delete tmpReferenceConfig;
+  delete tmpSourceConfig;
+
+  if ( !tmpTrans.empty() )
+  {
+    mySequence->getKernelConnection()->copyROW( whichTrace, newName );
+  }
 
   tmpSequence->executeNextAction( whichTrace );
 

@@ -143,6 +143,7 @@ bool TraceCutterAction::execute( std::string whichTrace )
 vector<TraceEditSequence::TSequenceStates> TraceFilterAction::getStateDependencies() const
 {
   vector<TraceEditSequence::TSequenceStates> tmpStates;
+  tmpStates.push_back( TraceEditSequence::onlyFilterState );
   tmpStates.push_back( TraceEditSequence::traceOptionsState );
   tmpStates.push_back( TraceEditSequence::eventTranslationTableState );
   tmpStates.push_back( TraceEditSequence::copyAdditionalFilesState );
@@ -154,39 +155,49 @@ bool TraceFilterAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
 
-  TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TraceEditSequence::traceOptionsState ) )->getData();
-
   std::map< TTypeValuePair, TTypeValuePair > translationTable =
           ( (EventTranslationTableState *)tmpSequence->getState( TraceEditSequence::eventTranslationTableState ) )->getData();
 
-  std::string newName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
-  if ( !tmpSequence->isEndOfSequence() || newName.empty() )
+  bool onlyFilter = ( (OnlyFilterState *)tmpSequence->getState( TraceEditSequence::onlyFilterState ) )->getData();
+  std::string newName;
+
+  if ( onlyFilter || !translationTable.empty() )
   {
-    std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TraceEditSequence::outputDirSuffixState ) )->getData();
-    std::string outputPath = whichTrace.substr( 0, whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) ) +
-                           mySequence->getKernelConnection()->getPathSeparator() + tmpSuffix;
+    TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TraceEditSequence::traceOptionsState ) )->getData();
 
-    vector< std::string > tmpID;
-    if( translationTable.empty() )
-      tmpID.push_back( TraceFilter::getID() );
-    else
-      tmpID.push_back( EventTranslator::getID() );
+    newName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
+    if ( !tmpSequence->isEndOfSequence() || newName.empty() )
+    {
+      std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TraceEditSequence::outputDirSuffixState ) )->getData();
+      std::string outputPath = whichTrace.substr( 0, whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) ) +
+                             mySequence->getKernelConnection()->getPathSeparator() + tmpSuffix;
 
-    newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );
+      vector< std::string > tmpID;
+      if( onlyFilter )
+        tmpID.push_back( TraceFilter::getID() );
+      else
+        tmpID.push_back( EventTranslator::getID() );
+
+      newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );
+    }
+
+    TraceFilter *myFilter = TraceFilter::create( mySequence->getKernelConnection(),
+                                                 (char *)whichTrace.c_str(),
+                                                 (char *)newName.c_str(),
+                                                 options,
+                                                 NULL,
+                                                 translationTable );
+
+    bool copyFiles = ( (CopyAdditionalFilesState *)tmpSequence->getState( TraceEditSequence::copyAdditionalFilesState ) )->getData();
+    if ( copyFiles )
+    {
+      mySequence->getKernelConnection()->copyPCF( whichTrace, newName );
+      mySequence->getKernelConnection()->copyROW( whichTrace, newName );
+    }
   }
-
-  TraceFilter *myFilter = TraceFilter::create( mySequence->getKernelConnection(),
-                                               (char *)whichTrace.c_str(),
-                                               (char *)newName.c_str(),
-                                               options,
-                                               NULL,
-                                               translationTable );
-
-  bool copyFiles = ( (CopyAdditionalFilesState *)tmpSequence->getState( TraceEditSequence::copyAdditionalFilesState ) )->getData();
-  if ( copyFiles )
+  else
   {
-    mySequence->getKernelConnection()->copyPCF( whichTrace, newName );
-    mySequence->getKernelConnection()->copyROW( whichTrace, newName );
+    newName = whichTrace;
   }
 
   tmpSequence->executeNextAction( newName );
