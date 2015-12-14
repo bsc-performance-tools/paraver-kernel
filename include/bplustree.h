@@ -244,6 +244,8 @@ namespace bplustree
       PRV_UINT32 unloadThreshold;
       PRV_UINT32 unloadPercent;
       Index<TRecord *> *traceIndex;
+      TRecord emptyRec;
+      TRecord endRec;
       std::vector< TRecord > emptyThreadBegin;
       std::vector< TRecord > emptyThreadEnd;
       std::vector< TRecord > emptyCPUBegin;

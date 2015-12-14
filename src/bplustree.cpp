@@ -852,6 +852,7 @@ TTime BPlusTree::finish( TTime headerTime, Trace *whichTrace )
   tmpEnd.time = headerTime;
   tmpBegin.type = EMPTYREC;
   tmpEnd.type = EMPTYREC;
+  emptyRec = tmpBegin;
   for ( TThreadOrder i = 0; i < numThreads; ++i )
   {
     tmpBegin.thread = i;
@@ -863,6 +864,7 @@ TTime BPlusTree::finish( TTime headerTime, Trace *whichTrace )
     emptyThreadBegin.push_back( tmpBegin );
     emptyThreadEnd.push_back( tmpEnd );
   }
+  endRec = tmpEnd;
 
   emptyCPUBegin.reserve( numCPUs );
   emptyCPUEnd.reserve( numCPUs );
@@ -1334,10 +1336,7 @@ inline BPlusTree::CPUIterator *BPlusTree::CPUIterator::clone() const
  **************************************************************************/
 MemoryTrace::iterator* BPlusTree::empty() const
 {
-  TRecord *empty = new TRecord();
-  empty->type = EMPTYREC;
-
-  return new BPlusTree::iterator( empty );
+  return new BPlusTree::iterator( ( TRecord * )&emptyRec );
 }
 
 MemoryTrace::iterator* BPlusTree::begin() const
@@ -1347,7 +1346,7 @@ MemoryTrace::iterator* BPlusTree::begin() const
 
 MemoryTrace::iterator* BPlusTree::end() const
 {
-  return new BPlusTree::iterator( unloadedTrace->getEnd() );
+  return new BPlusTree::iterator( ( TRecord * )&endRec );
 }
 
 MemoryTrace::iterator* BPlusTree::threadBegin( TThreadOrder whichThread ) const
