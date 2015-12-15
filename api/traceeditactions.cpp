@@ -27,6 +27,8 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
+#include <set>
+
 #include "traceeditactions.h"
 #include "eventtranslator.h"
 #include "pcfparser/libtools/UIParaverTraceConfig.h"
@@ -78,10 +80,93 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
   sourceTraceConfig->parse( sourceTrace );
 
   // Translation algorithm
-  std::map< TTypeValuePair, TTypeValuePair > translation;
-/*
+  map< TTypeValuePair, TTypeValuePair > translation;
+
+  vector< unsigned int > sourceTypes = sourceTraceConfig->getEventTypes();
+
+  std::vector< unsigned int > tmpCodes = referenceTraceConfig->getEventTypes();
+  std::set< unsigned int > referenceTypes;
+  referenceTypes.insert( tmpCodes.begin(), tmpCodes.end() );
+
+  for ( vector< unsigned int >::iterator itSourceType = sourceTypes.begin(); itSourceType != sourceTypes.end(); ++itSourceType )
+  {
+    if ( referenceTypes.find( *itSourceType ) != referenceTypes.end() )
+    {
+      vector< unsigned int > sourceValues;
+      try
+      {
+        sourceValues = sourceTraceConfig->getEventValues( *itSourceType );
+ std::cout << *itSourceType << std::endl;
+      }
+      catch( libparaver::UIParaverTraceConfig::value_not_found )
+      {
+        //continue;
+      }
+      if ( sourceValues.empty() )
+        continue;
+
+      map< std::string, unsigned int > referenceValues;
+      try
+      {
+        tmpCodes = referenceTraceConfig->getEventValues( *itSourceType );
+      }
+      catch( libparaver::UIParaverTraceConfig::value_not_found )
+      {
+        continue;
+      }
+      if ( tmpCodes.empty() )
+        continue;
+ std::cout << ": " << tmpCodes.size() << std::endl;
+
+      for ( vector< unsigned int >::iterator itReferenceValue = tmpCodes.begin(); itReferenceValue != tmpCodes.end(); ++itReferenceValue )
+      {
+        referenceValues[ referenceTraceConfig->getEventValue( *itSourceType, *itReferenceValue ) ] = *itReferenceValue;
+      }
+
+      map< unsigned int, std::string > valuesColliding;
+      map< unsigned int, std::string > valuesFinal;
+
+      for ( vector< unsigned int >::iterator itSourceValue = sourceValues.begin(); itSourceValue != sourceValues.end(); ++itSourceValue )
+      {
+        std::string sourceTag = sourceTraceConfig->getEventValue( *itSourceType, *itSourceValue );
+        map< std::string, unsigned int >::iterator itRefValue = referenceValues.find( sourceTag );
+        if ( itRefValue != referenceValues.end() )
+        {
+          if ( valuesFinal.find( (*itRefValue).second ) != valuesFinal.end() )
+          {
+            valuesColliding[ (*itRefValue).second ] = valuesFinal[ (*itRefValue).second ];
+          }
+
+          valuesFinal[ (*itRefValue).second ] = sourceTag;
+        }
+        else
+        {
+          if ( valuesFinal.find( *itSourceValue ) != valuesFinal.end() )
+          {
+            valuesColliding[ *itSourceValue ] = sourceTag;
+          }
+          else
+          {
+            valuesFinal[ *itSourceValue ] = sourceTag;
+          }
+        }
+      }
+
+      unsigned int maxValue = (--valuesFinal.end())->first;
+      for ( map< unsigned int, std::string >::iterator itCollision = valuesColliding.begin(); itCollision != valuesColliding.end(); ++itCollision )
+      {
+        valuesFinal[ ++maxValue ] = (*itCollision).second;
+      }
+
+      sourceTraceConfig->setEventValues( *itSourceType, valuesFinal );
+       std::cout << "****" << std::endl;
+
+    }
+  }
+
+
+
   translation[ TTypeValuePair( 50000003, 31 ) ] = TTypeValuePair( 50000003, 51 );
-*/
 
   // Write files
   ( (EventTranslationTableState *)tmpSequence->getState( TraceEditSequence::eventTranslationTableState ) )->setData( translation );
