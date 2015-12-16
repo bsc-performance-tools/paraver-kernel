@@ -96,11 +96,9 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
       try
       {
         sourceValues = sourceTraceConfig->getEventValues( *itSourceType );
- std::cout << *itSourceType << std::endl;
       }
       catch( libparaver::UIParaverTraceConfig::value_not_found )
       {
-        //continue;
       }
       if ( sourceValues.empty() )
         continue;
@@ -112,11 +110,9 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
       }
       catch( libparaver::UIParaverTraceConfig::value_not_found )
       {
-        continue;
       }
       if ( tmpCodes.empty() )
         continue;
- std::cout << ": " << tmpCodes.size() << std::endl;
 
       for ( vector< unsigned int >::iterator itReferenceValue = tmpCodes.begin(); itReferenceValue != tmpCodes.end(); ++itReferenceValue )
       {
@@ -159,12 +155,8 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
       }
 
       sourceTraceConfig->setEventValues( *itSourceType, valuesFinal );
-       std::cout << "****" << std::endl;
-
     }
   }
-
-
 
   translation[ TTypeValuePair( 50000003, 31 ) ] = TTypeValuePair( 50000003, 51 );
 
@@ -174,9 +166,8 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
   if ( !translation.empty() ) //?
   {
     mySequence->getKernelConnection()->copyROW( whichTrace, newName );
-
     std::fstream tmpFileDestiny;
-    tmpFileDestiny.open( newName.c_str(), std::ios::out );
+    tmpFileDestiny.open( LocalKernel::composeName( newName, std::string( "pcf" ) ).c_str(), std::ios::out );
     tmpFileDestiny << sourceTraceConfig->toString();
     tmpFileDestiny.close();
   }
