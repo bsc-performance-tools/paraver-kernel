@@ -193,6 +193,11 @@ class Trace
       return "";
     }
 
+    virtual size_t getMaxLengthRow( TWindowLevel whichLevel = NONE ) const
+    {
+      return 0;
+    }
+
     virtual std::string getDefaultSemanticFunc( TWindowLevel whichLevel ) const
     {
       return "";
@@ -292,6 +297,7 @@ class TraceProxy: public Trace
     virtual const EventLabels& getEventLabels() const;
     virtual const StateLabels& getStateLabels() const;
     virtual std::string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const;
+    virtual size_t getMaxLengthRow( TWindowLevel whichLevel ) const;
 
 //    virtual std::string getDefaultSemanticFunc( TWindowLevel whichLevel ) const;
 

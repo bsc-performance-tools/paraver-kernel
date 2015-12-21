@@ -54,6 +54,11 @@ RowLabels::RowLabels( const string& filename )
   if ( !rowFile )
     return;
 
+  for ( int l = (int)NONE; l <= (int)CPU; ++l )
+  {
+    maxLength[ (TWindowLevel)l ] = 0;
+  }
+
   while ( !rowFile.eof() )
   {
     vector<string> *tmpvector = NULL;
@@ -69,20 +74,42 @@ RowLabels::RowLabels( const string& filename )
     getline( auxStream, strLevel, ' ' ); // 'LEVEL'
     getline( auxStream, strLevel, ' ' );
 
-    if( strLevel == LEVEL_WORKLOAD )
+    TWindowLevel level;
+    if ( strLevel == LEVEL_WORKLOAD )
+    {
       tmpvector = &workload;
-    else if( strLevel == LEVEL_APPLICATION )
+      level = WORKLOAD;
+    }
+    else if ( strLevel == LEVEL_APPLICATION )
+    {
       tmpvector = &appl;
-    else if( strLevel == LEVEL_TASK )
+      level = APPLICATION;
+    }
+    else if ( strLevel == LEVEL_TASK )
+    {
       tmpvector = &task;
-    else if( strLevel == LEVEL_THREAD )
+      level = TASK;
+    }
+    else if ( strLevel == LEVEL_THREAD )
+    {
       tmpvector = &thread;
-    else if( strLevel == LEVEL_SYSTEM )
+      level = THREAD;
+    }
+    else if ( strLevel == LEVEL_SYSTEM )
+    {
       tmpvector = &system;
-    else if( strLevel == LEVEL_NODE )
+      level = SYSTEM;
+    }
+    else if ( strLevel == LEVEL_NODE )
+    {
       tmpvector = &node;
-    else if( strLevel == LEVEL_CPU )
+      level = NODE;
+    }
+    else if ( strLevel == LEVEL_CPU )
+    {
       tmpvector = &cpu;
+      level = CPU;
+    }
     else
       continue;
 
@@ -97,11 +124,23 @@ RowLabels::RowLabels( const string& filename )
     if ( !( sizeStream >> size ) )
       continue;
 
+    size_t currentLength;
     int i = 0;
     while ( !rowFile.eof() && i < size )
     {
       getline( rowFile, strLine );
       tmpvector->push_back( strLine );
+
+      currentLength = strLine.length();
+
+      // By level
+      if ( maxLength[ level ] < currentLength )
+        maxLength[ level ] = currentLength;
+
+      // Global
+      if ( maxLength[ NONE ] < currentLength )
+        maxLength[ NONE ] = currentLength;
+
       ++i;
     }
 
@@ -193,4 +232,10 @@ void RowLabels::pushBack( TWindowLevel whichLevel, const string& rowLabel )
   {
     tmpvector->push_back( rowLabel );
   }
+}
+
+
+size_t RowLabels::getMaxLength( TWindowLevel whichLevel ) const
+{
+  return ( maxLength.at( whichLevel ) );
 }

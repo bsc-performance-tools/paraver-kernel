@@ -32,6 +32,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include "paraverkerneltypes.h"
 
 class RowLabels
@@ -44,6 +45,9 @@ class RowLabels
     std::string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const;
     void pushBack( TWindowLevel whichLevel, const std::string& rowLabel );
 
+    // whichLevel == NONE (by default) ==> all levels MaxLength
+    size_t getMaxLength( TWindowLevel whichLevel = NONE ) const;
+
   protected:
 
   private:
@@ -55,6 +59,8 @@ class RowLabels
     std::vector<std::string> system;
     std::vector<std::string> node;
     std::vector<std::string> cpu;
+
+    std::map< TWindowLevel, size_t > maxLength;
 };
 
 

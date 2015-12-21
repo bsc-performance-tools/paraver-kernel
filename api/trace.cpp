@@ -531,6 +531,11 @@ string TraceProxy::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow )
   return myRowLabels.getRowLabel( whichLevel, whichRow );
 }
 
+// NONE ==> globalMaxLevel
+size_t TraceProxy::getMaxLengthRow( TWindowLevel whichLevel = NONE ) const
+{
+  return myRowLabels.getMaxLength( whichLevel );
+}
 
 /*
  string TraceProxy::getDefaultSemanticFunc( TWindowLevel whichLevel ) const
