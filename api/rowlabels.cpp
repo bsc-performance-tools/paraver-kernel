@@ -50,14 +50,14 @@ RowLabels::RowLabels( const string& filename )
   istringstream auxStream;
   istringstream sizeStream;
 
-  ifstream rowFile( filename.c_str() );
-  if ( !rowFile )
-    return;
-
   for ( int l = (int)NONE; l <= (int)CPU; ++l )
   {
     maxLength[ (TWindowLevel)l ] = 0;
   }
+
+  ifstream rowFile( filename.c_str() );
+  if ( !rowFile )
+    return;
 
   while ( !rowFile.eof() )
   {
@@ -233,7 +233,6 @@ void RowLabels::pushBack( TWindowLevel whichLevel, const string& rowLabel )
     tmpvector->push_back( rowLabel );
   }
 }
-
 
 size_t RowLabels::getMaxLength( TWindowLevel whichLevel ) const
 {
