@@ -28,20 +28,27 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "workspacemanager.h"
+#include "paraverkernelexception.h"
 
 #ifdef WIN32
   #include <shlobj.h>
   #include <Shlwapi.h>
+
+  #define MAX_LEN_PATH 2048
 #else
   #include <sys/stat.h>
   #include <pwd.h>
   #include <sys/types.h>
 #endif
 
+
+
 using std::string;
 using std::vector;
 
+
 WorkspaceManager *WorkspaceManager::instance = NULL;
+
 
 WorkspaceManager *WorkspaceManager::getInstance()
 {
@@ -50,75 +57,195 @@ WorkspaceManager *WorkspaceManager::getInstance()
   return WorkspaceManager::instance;
 }
 
+
 WorkspaceManager::WorkspaceManager()
 {
 }
+
 
 WorkspaceManager::~WorkspaceManager()
 {
 }
 
+
 void WorkspaceManager::clear()
 {
-  workspaces.clear();
-  workspacesOrder.clear();
+  userWorkspaces.clear();
+  userWorkspacesOrder.clear();
 }
 
-bool WorkspaceManager::existWorkspace( std::string name ) const
+
+bool WorkspaceManager::existWorkspace( std::string name, TWorkspaceSet whichSet ) const
 {
-  return workspaces.find( name ) != workspaces.end();
+  switch ( whichSet )
+  {
+    case ALL:
+      return ( distWorkspaces.find( name ) != distWorkspaces.end() ) ||
+             ( userWorkspaces.find( name ) != userWorkspaces.end() );
+      break;
+
+    case DISTRIBUTED:
+      return distWorkspaces.find( name ) != distWorkspaces.end();
+      break;
+
+    case USER_DEFINED:
+      return userWorkspaces.find( name ) != userWorkspaces.end();
+      break;
+
+    default:
+      throw ParaverKernelException();
+      break;
+  }
+
+  return false;
 }
 
-vector<string> WorkspaceManager::getWorkspaces() const
+
+vector<string> WorkspaceManager::getWorkspaces( TWorkspaceSet whichSet ) const
 {
-  return workspacesOrder;
+  vector< string > tmpWorkspacesOrder;
+
+  switch ( whichSet )
+  {
+    case ALL:
+      tmpWorkspacesOrder = distWorkspacesOrder;
+      tmpWorkspacesOrder.insert( tmpWorkspacesOrder.end(), userWorkspacesOrder.begin(), userWorkspacesOrder.end() );
+      return tmpWorkspacesOrder;
+      break;
+
+    case DISTRIBUTED:
+      return distWorkspacesOrder;
+      break;
+
+    case USER_DEFINED:
+      return userWorkspacesOrder;
+      break;
+
+    default:
+      throw ParaverKernelException();
+      break;
+  }
+
+  return vector< string >();
 }
 
-Workspace& WorkspaceManager::getWorkspace( std::string name )
+
+Workspace& WorkspaceManager::getWorkspace( std::string name, TWorkspaceSet whichSet )
 {
-  return workspaces[ name ];
+  switch ( whichSet )
+  {
+    case ALL:
+      if ( existWorkspace( name, DISTRIBUTED ) )
+        return distWorkspaces[ name ];
+      else
+        return userWorkspaces[ name ];
+      break;
+
+    case DISTRIBUTED:
+      return distWorkspaces[ name ];
+      break;
+
+    case USER_DEFINED:
+      return userWorkspaces[ name ];
+      break;
+
+    default:
+      throw ParaverKernelException();
+      break;
+  }
+
+  return distWorkspaces["0"];
 }
+
 
 void WorkspaceManager::addWorkspace( std::string whichName )
 {
-  workspaces[ whichName ] = Workspace();
-  workspacesOrder.push_back( whichName );
+  userWorkspaces[ whichName ] = Workspace();
+  userWorkspacesOrder.push_back( whichName );
 }
+
 
 void WorkspaceManager::addWorkspace( Workspace& whichWorkspace )
 {
-  workspaces[ whichWorkspace.getName() ] = whichWorkspace;
-  workspacesOrder.push_back( whichWorkspace.getName() );
+  userWorkspaces[ whichWorkspace.getName() ] = whichWorkspace;
+  userWorkspacesOrder.push_back( whichWorkspace.getName() );
 }
 
 
 void WorkspaceManager::loadXML()
 {
-  string homedir;
-  string strFile;
+  string baseDir;
+  string fullPath;
+
+  // Read distributed
+#ifdef WIN32
+  baseDir = getenv( "HOMEDRIVE" );
+  baseDir.append( getenv( "HOMEPATH" ) );
+
+  WCHAR myPath[ MAX_LEN_PATH ];
+  HMODULE hModule = GetModuleHandle( NULL );
+  if ( hModule != NULL )
+  {
+    GetModuleFileName( NULL, myPath, ( sizeof( myPath ) ));
+    PathRemoveFileSpec( myPath );
+    char tmpMyPath[ MAX_LEN_PATH ];
+    size_t tmpSize;
+    wcstombs_s( &tmpSize, tmpMyPath, MAX_LEN_PATH, myPath, MAX_LEN_PATH );
+    baseDir = tmpMyPath;
+  }
+#else
+  baseDir = getenv( "PARAVER_HOME" );
+#endif
+
+  fullPath.append( baseDir );
 
 #ifdef WIN32
-  homedir = getenv( "HOMEDRIVE" );
-  homedir.append( getenv( "HOMEPATH" ) );
+  fullPath.append( "\\share\\workspaces" );
 #else
-  homedir = getenv( "HOME" );
+  fullPath.append( "/share/workspaces" );
 #endif
-  strFile.append( homedir );
-#ifdef WIN32
-  strFile.append( "\\paraver\\workspaces" );
-#else
-  strFile.append( "/.paraver/workspaces" );
-#endif
-  strFile.append( ".xml" );
 
-  std::ifstream ifs( strFile.c_str() );
+  fullPath.append( ".xml" );
+
+  std::ifstream ifs( fullPath.c_str() );
+  if( ifs.good() )
+  {
+    boost::archive::xml_iarchive ia( ifs );
+    serializeBufferWorkspaces = &distWorkspaces;
+    serializeBufferWorkspacesOrder = &distWorkspacesOrder;
+    ia >> boost::serialization::make_nvp( "workspace_manager", *this );
+    ifs.close();
+  }
+
+  // Read user defined
+  baseDir.clear();
+  fullPath.clear();
+
+#ifdef WIN32
+  baseDir = getenv( "HOMEDRIVE" );
+  baseDir.append( getenv( "HOMEPATH" ) );
+#else
+  baseDir = getenv( "HOME" );
+#endif
+  fullPath.append( baseDir );
+#ifdef WIN32
+  fullPath.append( "\\paraver\\workspaces" );
+#else
+  fullPath.append( "/.paraver/workspaces" );
+#endif
+  fullPath.append( ".xml" );
+
+  ifs.open( fullPath.c_str() );
   if( !ifs.good() )
   {
     saveXML();
-    ifs.open( strFile.c_str() );
+    ifs.open( fullPath.c_str() );
   }
   boost::archive::xml_iarchive ia( ifs );
+  serializeBufferWorkspaces = &userWorkspaces;
+  serializeBufferWorkspacesOrder = &userWorkspacesOrder;
   ia >> boost::serialization::make_nvp( "workspace_manager", *this );
+  ifs.close();
 }
 
 
@@ -154,6 +281,8 @@ void WorkspaceManager::saveXML()
 
   std::ofstream ofs( strFile.c_str() );
   boost::archive::xml_oarchive oa( ofs );
+  serializeBufferWorkspaces = &userWorkspaces;
+  serializeBufferWorkspacesOrder = &userWorkspacesOrder;
   oa << boost::serialization::make_nvp( "workspace_manager", *this );
 }
 

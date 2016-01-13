@@ -39,15 +39,17 @@
 class WorkspaceManager
 {
   public:
+    enum TWorkspaceSet { ALL = 0, DISTRIBUTED, USER_DEFINED };
+
     static WorkspaceManager *getInstance();
 
     ~WorkspaceManager();
 
     void clear();
 
-    bool existWorkspace( std::string name ) const;
-    std::vector<std::string> getWorkspaces() const;
-    Workspace& getWorkspace( std::string whichName );
+    bool existWorkspace( std::string name, TWorkspaceSet whichSet ) const;
+    std::vector<std::string> getWorkspaces( TWorkspaceSet whichSet ) const;
+    Workspace& getWorkspace( std::string whichName, TWorkspaceSet whichSet  );
     void addWorkspace( std::string whichName );
     void addWorkspace( Workspace& whichWorkspace );
     void loadXML();
@@ -57,9 +59,10 @@ class WorkspaceManager
     template< class Archive >
     void serialize( Archive & ar, const unsigned int version )
     {
-      ar & boost::serialization::make_nvp( "workspaces", workspaces );
-      ar & boost::serialization::make_nvp( "workspacesOrder", workspacesOrder );
+      ar & boost::serialization::make_nvp( "workspaces", *serializeBufferWorkspaces );
+      ar & boost::serialization::make_nvp( "workspacesOrder", *serializeBufferWorkspacesOrder );
     }
+
 
   protected:
 
@@ -68,9 +71,13 @@ class WorkspaceManager
   private:
     static WorkspaceManager *instance;
 
-    std::map<std::string, Workspace> workspaces;
-    std::vector<std::string> workspacesOrder;
+    std::map<std::string, Workspace> distWorkspaces;
+    std::vector<std::string> distWorkspacesOrder;
+    std::map<std::string, Workspace> userWorkspaces;
+    std::vector<std::string> userWorkspacesOrder;
 
+    std::map<std::string, Workspace> *serializeBufferWorkspaces;
+    std::vector<std::string> *serializeBufferWorkspacesOrder;
 };
 
 BOOST_CLASS_VERSION( WorkspaceManager, 0)
