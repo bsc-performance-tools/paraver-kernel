@@ -420,6 +420,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\keventtranslator.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\kfilter.cpp"
 				>
 			</File>
@@ -747,6 +751,10 @@
 			</File>
 			<File
 				RelativePath="..\include\keventdrivencutter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\keventtranslator.h"
 				>
 			</File>
 			<File

@@ -236,5 +236,9 @@ void RowLabels::pushBack( TWindowLevel whichLevel, const string& rowLabel )
 
 size_t RowLabels::getMaxLength( TWindowLevel whichLevel ) const
 {
+#ifdef WIN32
+  return maxLength.find( whichLevel )->second;
+#else
   return ( maxLength.at( whichLevel ) );
+#endif
 }

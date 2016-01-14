@@ -218,6 +218,7 @@ void WorkspaceManager::loadXML()
   }
 
   // Read user defined
+  ifs.clear();
   baseDir.clear();
   fullPath.clear();
 
@@ -284,6 +285,7 @@ void WorkspaceManager::saveXML()
   serializeBufferWorkspaces = &userWorkspaces;
   serializeBufferWorkspacesOrder = &userWorkspacesOrder;
   oa << boost::serialization::make_nvp( "workspace_manager", *this );
+  ofs.close();
 }
 
 // TODO
