@@ -49,12 +49,14 @@ class WorkspaceManager
 
     bool existWorkspace( std::string name, TWorkspaceSet whichSet ) const;
     std::vector<std::string> getWorkspaces( TWorkspaceSet whichSet ) const;
+    void getMergedWorkspaces( const std::set<TEventType>& loadedTypes,
+                              std::vector<std::string>& onWorkspaceVector,
+                              size_t& userDefined );
     Workspace& getWorkspace( std::string whichName, TWorkspaceSet whichSet  );
     void addWorkspace( std::string whichName );
     void addWorkspace( Workspace& whichWorkspace );
     void loadXML();
     void saveXML();
-    void merge( const std::string &whichFile );
 
     template< class Archive >
     void serialize( Archive & ar, const unsigned int version )

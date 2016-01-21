@@ -130,6 +130,44 @@ vector<string> WorkspaceManager::getWorkspaces( TWorkspaceSet whichSet ) const
 }
 
 
+void WorkspaceManager::getMergedWorkspaces( const std::set<TEventType>& loadedTypes,
+                                            std::vector<std::string>& onWorkspaceVector,
+                                            size_t& userDefined )
+{
+  for ( vector< string >::iterator it = distWorkspacesOrder.begin(); it != distWorkspacesOrder.end(); ++it )
+  {
+    vector< TEventType > tmpAutoTypes = distWorkspaces[ *it ].getAutoTypes();
+    if ( find_first_of( loadedTypes.begin(), loadedTypes.end(),
+                        tmpAutoTypes.begin(), tmpAutoTypes.end() ) !=  loadedTypes.end() )
+      onWorkspaceVector.push_back( *it );
+  }
+  userDefined = onWorkspaceVector.size();
+
+  vector<string> tmpUserDefined;
+  for ( vector< string >::iterator it = userWorkspacesOrder.begin(); it != userWorkspacesOrder.end(); ++it )
+  {
+    vector< TEventType > tmpAutoTypes = userWorkspaces[ *it ].getAutoTypes();
+    if ( find_first_of( loadedTypes.begin(), loadedTypes.end(),
+                        tmpAutoTypes.begin(), tmpAutoTypes.end() ) !=  loadedTypes.end() )
+    {
+      if( find( onWorkspaceVector.begin(), onWorkspaceVector.end(), *it ) != onWorkspaceVector.end() )
+      {
+        vector< TEventType > tmpDistAutoTypes = distWorkspaces[ *it ].getAutoTypes();
+        sort( tmpDistAutoTypes.begin(), tmpDistAutoTypes.end() );
+        vector< TEventType > tmpUserAutoTypes = userWorkspaces[ *it ].getAutoTypes();
+        sort( tmpUserAutoTypes.begin(), tmpUserAutoTypes.end() );
+        if( includes( tmpDistAutoTypes.begin(), tmpDistAutoTypes.end(),
+                      tmpUserAutoTypes.begin(), tmpUserAutoTypes.end() ) )
+          continue;
+      }
+
+      tmpUserDefined.push_back( *it );
+    }
+  }
+
+  onWorkspaceVector.insert( onWorkspaceVector.end(), tmpUserDefined.begin(), tmpUserDefined.end() );
+}
+
 Workspace& WorkspaceManager::getWorkspace( std::string name, TWorkspaceSet whichSet )
 {
   switch ( whichSet )
@@ -288,11 +326,5 @@ void WorkspaceManager::saveXML()
   ofs.close();
 }
 
-// TODO
- void WorkspaceManager::merge( const std::string &whichFile )
- {
-
-
- }
 
 
