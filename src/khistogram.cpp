@@ -41,10 +41,6 @@
 #include "cubebuffer.h"
 #endif
 
-#ifdef TRACING_ENABLED
-#include "extrae_user_events.h"
-#endif
-
 #ifdef WIN32
 #undef max
 #undef min
@@ -750,10 +746,6 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
   if ( controlWindow == NULL )
     throw HistogramException( HistogramException::noControlWindow );
 
-#ifdef TRACING_ENABLED
-  Extrae_eventandcounters( 300, 1 );
-#endif
-
 #ifdef PARALLEL_ENABLED
   progress = NULL;
 #endif // PARALLEL_ENABLED
@@ -844,11 +836,6 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
   if ( rowCommTotals != NULL )
     rowCommTotals->finish();
   // - Columns will be ordered if necesary
-
-
-#ifdef TRACING_ENABLED
-  Extrae_eventandcounters( 300, 0 );
-#endif
 }
 
 
@@ -1226,9 +1213,6 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 
     if ( winIndex == 0 )
     {
-#ifdef TRACING_ENABLED
-    Extrae_eventandcounters( 400, i + 1 );
-#endif
       iRow = selectedRows[ i ];
       data->row = i;
 
@@ -1294,10 +1278,6 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 
   if ( winIndex == 0 )
   {
-#ifdef TRACING_ENABLED
-      Extrae_eventandcounters( 400, 0 );
-#endif
-
     delete data;
     data = NULL;
   }
