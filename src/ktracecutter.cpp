@@ -199,28 +199,15 @@ void KTraceCutter::writeOffsetLine( char *trace_in_name,
     timeOffset = 0;
   }
 
-//  if ( trace_in_name != NULL )
-//  {
-
-/*
-  current_size += fprintf( outfile, "# %s: Offset %lld from %s  -  Cut time range: [ %lld, %lld ]\n",
-                           trace_out_name,
-                           timeOffset,
-                           trace_in_name,
-                           timeCutBegin,
-                           timeCutEnd );
-*/
   CutterMetadata tmpData( MetadataManager::GetCurrentDate(),
                           cutterApplicationCaller,
                           string( '"' + string( trace_in_name ) + '"'),
-                          (PRV_UINT64)timeOffset,
-                          (PRV_UINT64)timeCutBegin,
-                          (PRV_UINT64)timeCutEnd );
+                          (PRV_UINT64)timeOffset,   // first record of the trace
+                          (PRV_UINT64)timeCutBegin, // first time of the cut
+                          (PRV_UINT64)timeCutEnd ); // last time of the cut
   ostringstream tmpStream;
   tmpData.Write( tmpStream );
   current_size += fprintf( outfile, "%s\n", tmpStream.str().c_str() );
-
-//  }
 }
 
 
