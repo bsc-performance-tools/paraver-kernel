@@ -34,6 +34,7 @@
 #ifdef WIN32
   #include <shlobj.h>
   #include <Shlwapi.h>
+  #define MAX_LEN_PATH 2048
 #else
   #include <sys/stat.h>
   #include <pwd.h>
@@ -46,7 +47,6 @@
 #include "paraverconfig.h"
 #include "paraverkernelexception.h"
 
-#define MAX_LEN_PATH 2048
 
 using namespace std;
 

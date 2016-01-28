@@ -32,6 +32,7 @@
 #ifdef WIN32
   #include <shlobj.h>
   #include <Shlwapi.h>
+  #define MAX_LEN_PATH 2048
 #else
   #include <pwd.h>
   #include <sys/types.h>
@@ -102,7 +103,6 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
   string paraverCFGsDir;
 
 #ifdef WIN32
-
   WCHAR myPath[ MAX_LEN_PATH ];
   HMODULE hModule = GetModuleHandle( NULL );
   if ( hModule != NULL )
