@@ -143,6 +143,7 @@ class KernelConnection
 
     virtual std::string getPathSeparator() const = 0;
     virtual void setPathSeparator( const std::string& whichPath ) = 0;
+    virtual std::string getDistributedCFGsPath() const = 0;
 
   protected:
 
