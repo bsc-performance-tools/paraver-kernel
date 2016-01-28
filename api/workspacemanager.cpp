@@ -151,8 +151,10 @@ void WorkspaceManager::getMergedWorkspaces( const std::set<TEventType>& loadedTy
   for ( vector< string >::iterator it = userWorkspacesOrder.begin(); it != userWorkspacesOrder.end(); ++it )
   {
     vector< TEventType > tmpAutoTypes = userWorkspaces[ *it ].getAutoTypes();
-    if ( find_first_of( loadedTypes.begin(), loadedTypes.end(),
-                        tmpAutoTypes.begin(), tmpAutoTypes.end() ) !=  loadedTypes.end() )
+    if( tmpAutoTypes.empty() )
+      tmpUserDefined.push_back( *it );
+    else if( find_first_of( loadedTypes.begin(), loadedTypes.end(),
+                            tmpAutoTypes.begin(), tmpAutoTypes.end() ) !=  loadedTypes.end() )
     {
       if( find( onWorkspaceVector.begin(), onWorkspaceVector.end(), *it ) != onWorkspaceVector.end() )
       {
