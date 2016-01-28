@@ -128,10 +128,13 @@ class LocalKernel: public KernelConnection
     virtual std::string getPathSeparator() const { return pathSeparator; }
     virtual void setPathSeparator( const std::string& whichPath ) { pathSeparator = whichPath; }
 
+    virtual std::string getDistributedCFGsPath() const { return distributedCFGsPath; }
+
   protected:
 
   private:
     std::string pathSeparator;
+    std::string distributedCFGsPath;
 
     bool (*myMessageFunction)(UserMessageID);
 

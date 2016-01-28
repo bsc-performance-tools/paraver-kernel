@@ -29,6 +29,17 @@
 
 #include <time.h>
 #include <sys/stat.h>
+#ifdef WIN32
+  #include <shlobj.h>
+  #include <Shlwapi.h>
+#else
+  #include <pwd.h>
+  #include <sys/types.h>
+#endif
+#ifdef __APPLE__
+  #include "CoreFoundation/CoreFoundation.h"
+#endif
+
 #include "config.h"
 #include "localkernel.h"
 #include "kwindow.h"
@@ -43,8 +54,6 @@
 #include "labelconstructor.h"
 #include "previousfiles.h"
 #include "ktraceeditsequence.h"
-
-
 #include "ktraceoptions.h"
 #include "ktracecutter.h"
 #include "ktracefilter.h"
@@ -86,6 +95,77 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
 #else
   setPathSeparator( string( "/" ) );
 #endif
+
+  //
+  string homedir;
+  string paraverHomeDir;
+  string paraverCFGsDir;
+
+#ifdef WIN32
+
+  WCHAR myPath[ MAX_LEN_PATH ];
+  HMODULE hModule = GetModuleHandle( NULL );
+  if ( hModule != NULL )
+  {
+    GetModuleFileName( NULL, myPath, ( sizeof( myPath ) ));
+    PathRemoveFileSpec( myPath );
+    char tmpMyPath[ MAX_LEN_PATH ];
+    size_t tmpSize;
+    wcstombs_s( &tmpSize, tmpMyPath, MAX_LEN_PATH, myPath, MAX_LEN_PATH );
+
+    paraverCFGsDir = tmpMyPath;
+    paraverCFGsDir.append( "\\cfgs" );
+  }
+  else
+  {
+    homedir = getenv( "HOMEDRIVE" );
+    homedir.append( getenv( "HOMEPATH" ) );
+    paraverCFGsDir = homedir;
+  }
+
+#else
+#ifdef __APPLE__
+
+  CFBundleRef mainBundle = CFBundleGetMainBundle();
+  CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+  char tmpPath[PATH_MAX];
+  if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)tmpPath, PATH_MAX))
+  {
+      throw ParaverKernelException();
+  }
+  CFRelease(resourcesURL);
+
+  paraverCFGsDir = std::string( tmpPath ) + std::string( "/cfgs" );
+
+#else // __APPLE__
+
+  if ( getenv( "PARAVER_HOME" ) == NULL )
+  {
+    homedir = getenv( "HOME" );
+    if( homedir.empty() )
+    {
+      struct passwd *pwd = getpwuid( getuid() );
+      if( pwd != NULL )
+      {
+        homedir = string( pwd->pw_dir );
+      }
+      else
+      {
+        homedir = string( "/tmp" );
+      }
+    }
+    paraverCFGsDir = homedir;
+  }
+  else
+  {
+    paraverHomeDir = getenv( "PARAVER_HOME" );
+    paraverCFGsDir = paraverHomeDir + "/cfgs";
+  }
+
+#endif // __APPLE__
+#endif
+
+  distributedCFGsPath = paraverCFGsDir;
 
   // FILTERS
   trace_names_table_last = 0;

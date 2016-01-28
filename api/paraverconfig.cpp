@@ -111,18 +111,18 @@ ParaverConfig::ParaverConfig()
   }
 
 #ifdef __APPLE__
-    CFBundleRef mainBundle = CFBundleGetMainBundle();
-    CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
-    char tmpPath[PATH_MAX];
-    if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)tmpPath, PATH_MAX))
-    {
-        throw ParaverKernelException();
-    }
-    CFRelease(resourcesURL);
+  CFBundleRef mainBundle = CFBundleGetMainBundle();
+  CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+  char tmpPath[PATH_MAX];
+  if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)tmpPath, PATH_MAX))
+  {
+      throw ParaverKernelException();
+  }
+  CFRelease(resourcesURL);
 
-    paraverHomeDir = homedir;
-    paraverCFGsDir = std::string( tmpPath ) + std::string( "/cfgs" );
-    paraverXMLDir  = homedir;
+  paraverHomeDir = homedir;
+  paraverCFGsDir = std::string( tmpPath ) + std::string( "/cfgs" );
+  paraverXMLDir  = homedir;
 #else // __APPLE__
   if ( getenv( "PARAVER_HOME" ) == NULL )
   {
