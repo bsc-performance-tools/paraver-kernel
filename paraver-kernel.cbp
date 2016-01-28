@@ -14,6 +14,7 @@
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option host_application="/home/eloy/tools/wxparaver/GCCDebug/wxparaver" />
+				<Option run_host_application_in_terminal="0" />
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-Wall" />
@@ -46,6 +47,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option host_application="paraver-kernel" />
+				<Option run_host_application_in_terminal="0" />
 				<Compiler>
 					<Add option="-g" />
 					<Add directory="../include" />
@@ -79,7 +81,8 @@
 				<Option external_deps="libparaver-kernel.a;libcfg.a;libapi.a;" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option host_application="wxparaver/GCCDebug/wxparaver" />
+				<Option host_application="wxparaver.app" />
+				<Option run_host_application_in_terminal="0" />
 				<Compiler>
 					<Add option="-g" />
 					<Add directory="include" />
@@ -204,6 +207,36 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="otf2prv" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/include/MPI_EventEncoding.h">
+			<Option target="ptools_common_files" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/include/event_description.h">
+			<Option target="ptools_common_files" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/include/event_encoding.h">
+			<Option target="ptools_common_files" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/include/event_list.h">
+			<Option target="ptools_common_files" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/include/events.h">
+			<Option target="ptools_common_files" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/include/papi_events.h">
+			<Option target="ptools_common_files" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/include/ptools_prv_types.h">
+			<Option target="ptools_common_files" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/include/ptools_types.h">
+			<Option target="ptools_common_files" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/src/event_description.cpp">
+			<Option target="ptools_common_files" />
+		</Unit>
+		<Unit filename="../ptools_common_files/trunk/src/event_list.cpp">
+			<Option target="ptools_common_files" />
 		</Unit>
 		<Unit filename="api/ParaverMetadataManager.cpp">
 			<Option target="api" />
@@ -1421,36 +1454,6 @@
 		<Unit filename="testspeed/testspeed.h">
 			<Option target="testspeed" />
 			<Option target="otf2prv" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/include/MPI_EventEncoding.h">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/include/event_description.h">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/include/event_encoding.h">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/include/event_list.h">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/include/events.h">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/include/papi_events.h">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/include/ptools_prv_types.h">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/include/ptools_types.h">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/src/event_description.cpp">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/src/event_list.cpp">
-			<Option target="ptools_common_files" />
 		</Unit>
 		<Extensions>
 			<code_completion>

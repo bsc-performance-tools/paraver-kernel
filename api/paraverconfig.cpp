@@ -39,7 +39,12 @@
   #include <pwd.h>
   #include <sys/types.h>
 #endif
+#ifdef __APPLE__
+  #include "CoreFoundation/CoreFoundation.h"
+#endif
+
 #include "paraverconfig.h"
+#include "paraverkernelexception.h"
 
 #define MAX_LEN_PATH 2048
 
@@ -91,8 +96,6 @@ ParaverConfig::ParaverConfig()
   }
 
 #else
-
-
   homedir = getenv( "HOME" );
   if( homedir.empty() )
   {
@@ -107,6 +110,20 @@ ParaverConfig::ParaverConfig()
     }
   }
 
+#ifdef __APPLE__
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+    CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+    char tmpPath[PATH_MAX];
+    if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)tmpPath, PATH_MAX))
+    {
+        throw ParaverKernelException();
+    }
+    CFRelease(resourcesURL);
+
+    paraverHomeDir = homedir;
+    paraverCFGsDir = std::string( tmpPath ) + std::string( "/cfgs" );
+    paraverXMLDir  = homedir;
+#else // __APPLE__
   if ( getenv( "PARAVER_HOME" ) == NULL )
   {
     paraverHomeDir = homedir;
@@ -119,7 +136,7 @@ ParaverConfig::ParaverConfig()
     paraverCFGsDir = paraverHomeDir + "/cfgs";
     paraverXMLDir  = paraverHomeDir + "/share/filters-config";
   }
-
+#endif
 #endif
 
 

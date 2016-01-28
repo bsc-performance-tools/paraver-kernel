@@ -41,6 +41,10 @@
   #include <sys/types.h>
 #endif
 
+#ifdef __APPLE__
+  #include "CoreFoundation/CoreFoundation.h"
+#endif
+
 
 
 using std::string;
@@ -231,18 +235,27 @@ void WorkspaceManager::loadXML()
     wcstombs_s( &tmpSize, tmpMyPath, MAX_LEN_PATH, myPath, MAX_LEN_PATH );
     baseDir = tmpMyPath;
   }
+#elif defined( __APPLE__ )
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+    CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+    char tmpPath[PATH_MAX];
+    if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)tmpPath, PATH_MAX))
+    {
+        throw ParaverKernelException();
+    }
+    CFRelease(resourcesURL);
+
+    baseDir = tmpPath;
 #else
   baseDir = getenv( "PARAVER_HOME" );
 #endif
 
-  fullPath.append( baseDir );
-
+  fullPath = baseDir;
 #ifdef WIN32
   fullPath.append( "\\share\\workspaces" );
 #else
   fullPath.append( "/share/workspaces" );
 #endif
-
   fullPath.append( ".xml" );
 
   std::ifstream ifs( fullPath.c_str() );
