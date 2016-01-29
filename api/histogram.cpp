@@ -971,6 +971,9 @@ void HistogramProxy::compute3DScale( ProgressController *progress )
 
 string HistogramProxy::getRowLabel( TObjectOrder whichRow ) const
 {
+  if( controlWindow == NULL )
+    return "";
+
   if( controlWindow->getLevel() == CPU || controlWindow->getLevel() == NODE )
     ++whichRow;
 
@@ -980,6 +983,9 @@ string HistogramProxy::getRowLabel( TObjectOrder whichRow ) const
 
 string HistogramProxy::getColumnLabel( THistogramColumn whichColumn ) const
 {
+  if( controlWindow == NULL )
+    return "";
+
   if( itsCommunicationStat( getCurrentStat() ) )
     return getRowLabel( ( TObjectOrder ) whichColumn );
 
@@ -992,6 +998,9 @@ string HistogramProxy::getColumnLabel( THistogramColumn whichColumn ) const
 string HistogramProxy::getPlaneLabel( THistogramColumn whichPlane ) const
 {
   Window *win = ( extraControlWindow != NULL ) ? extraControlWindow : controlWindow;
+  if( win == NULL )
+    return "";
+
   return LabelConstructor::histoColumnLabel( whichPlane, win,
          getExtraControlMin(),
          getExtraControlMax(),

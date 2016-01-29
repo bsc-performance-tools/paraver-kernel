@@ -8,6 +8,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "api", "..\api\api.vcproj", 
 		{D75642E1-24D5-418D-983C-BF7AF752C372} = {D75642E1-24D5-418D-983C-BF7AF752C372}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB9-8B4A-11D0-8D11-00A0C91BC942}") = "wxparaver.exe", "..\..\wxparaver\VCDebug\wxparaver.exe", "{FC3A7E0D-9774-4F0A-9E34-E9ED04727EF7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		api debug|Win32 = api debug|Win32
@@ -27,6 +29,9 @@ Global
 		{ECBC5CAC-98BB-42DD-8D6D-B72F94E8BBC9}.Debug|Win32.Build.0 = Debug|Win32
 		{ECBC5CAC-98BB-42DD-8D6D-B72F94E8BBC9}.Release|Win32.ActiveCfg = Release|Win32
 		{ECBC5CAC-98BB-42DD-8D6D-B72F94E8BBC9}.Release|Win32.Build.0 = Release|Win32
+		{FC3A7E0D-9774-4F0A-9E34-E9ED04727EF7}.api debug|Win32.ActiveCfg = Debug
+		{FC3A7E0D-9774-4F0A-9E34-E9ED04727EF7}.Debug|Win32.ActiveCfg = Debug
+		{FC3A7E0D-9774-4F0A-9E34-E9ED04727EF7}.Release|Win32.ActiveCfg = Debug
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
