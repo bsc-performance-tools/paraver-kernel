@@ -162,7 +162,7 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
   }
   else if ( level == NODE )
   {
-    if( globalOrder >= whichTrace->totalNodes() )
+    if( globalOrder > whichTrace->totalNodes() )
       sstrObjectLabel << "Not valid node: " << globalOrder;
     else
     {

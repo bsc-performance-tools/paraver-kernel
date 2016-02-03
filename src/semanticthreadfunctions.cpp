@@ -1710,9 +1710,12 @@ TSemanticValue NodeID::execute( const SemanticInfo *info )
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
 
+  if( myInfo->it->getCPU() == 0 )
+    return 0;
+
   myInfo->callingInterval->getWindow()->getTrace()->getCPULocation(
     myInfo->it->getCPU(), node, CPU );
-  tmp = node;
+  tmp = node + 1;
 
   return tmp;
 }
