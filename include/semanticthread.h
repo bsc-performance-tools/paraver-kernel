@@ -47,6 +47,11 @@ class SemanticThread : public SemanticFunction
 
       if ( type == EMPTYREC )
         return true;
+
+      // Object thread functions
+      if( mask == STATE + EVENT && ( type & STATE || type & EVENT ) )
+        return true;
+
       if ( mask & RSEND )
       {
         if ( type & RSEND )
