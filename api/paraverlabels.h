@@ -161,6 +161,7 @@
 #define OLDCFG_VAL_DRAW_MODE_RANDOMNOT0  "4"
 #define OLDCFG_VAL_DRAW_MODE_AVERAGE     "5"
 #define OLDCFG_VAL_DRAW_MODE_AVERAGENOT0 "6"
+#define OLDCFG_VAL_DRAW_MODE_MODE        "7"
 
 #define OLDCFG_VAL_COLOR_MODE_GRADIENT  "window_in_gradient_mode"
 #define OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT  "window_in_null_gradient_mode"
@@ -266,6 +267,8 @@ static const std::string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
 #define GUI_DRAWMODE_RANDOM               "Random"
 #define GUI_DRAWMODE_RANDOM_NOT_ZERO      "Random not zero"
 #define GUI_DRAWMODE_AVERAGE              "Average"
+#define GUI_DRAWMODE_AVERAGE_NOT_ZERO     "Average not zero"
+#define GUI_DRAWMODE_MODE                 "Mode"
 #define GUI_PIXEL_SIZE_X1                 "x1"
 #define GUI_PIXEL_SIZE_X2                 "x2"
 #define GUI_PIXEL_SIZE_X4                 "x4"

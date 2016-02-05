@@ -30,9 +30,11 @@
 #include <limits>
 #include <time.h>
 #include <stdlib.h>
+#include <map>
 #include "drawmode.h"
 
 using std::vector;
+using std::map;
 
 // LAST is the default method
 template <int method>
@@ -136,6 +138,23 @@ inline TSemanticValue selectMethod<DRAW_AVERAGENOTZERO>( vector<TSemanticValue>&
   return avg / times;
 }
 
+template<>
+inline TSemanticValue selectMethod<DRAW_MODE>( vector<TSemanticValue>& v )
+{
+  map<TSemanticValue, int> modes;
+  TSemanticValue currentMode = 0;
+  int currentModeCount = 0;
+
+  for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); ++it )
+  {
+    modes[ *it ]++;
+    if( modes[ *it ] > currentModeCount )
+      currentMode = *it;
+  }
+
+  return currentMode;
+}
+
 TSemanticValue DrawMode::selectValue( vector<TSemanticValue>& v,
                                       DrawModeMethod method )
 {
@@ -163,6 +182,10 @@ TSemanticValue DrawMode::selectValue( vector<TSemanticValue>& v,
 
     case DRAW_AVERAGENOTZERO:
       return selectMethod<DRAW_AVERAGENOTZERO>( v );
+      break;
+
+    case DRAW_MODE:
+      return selectMethod<DRAW_MODE>( v );
       break;
 
     default:

@@ -1222,6 +1222,8 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->changed = changed;
   clonedHistogramProxy->redraw = redraw;
   clonedHistogramProxy->recalc = recalc;
+  clonedHistogramProxy->drawModeColumns = drawModeColumns;
+  clonedHistogramProxy->drawModeObjects = drawModeObjects;
 
   clonedHistogramProxy->winBeginTime = winBeginTime;
   clonedHistogramProxy->winEndTime = winEndTime;

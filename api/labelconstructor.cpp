@@ -641,6 +641,8 @@ void LabelConstructor::getGUIGroupLabels( const TGroupID groupID, vector< string
       labels.push_back( GUI_DRAWMODE_RANDOM );
       labels.push_back( GUI_DRAWMODE_RANDOM_NOT_ZERO );
       labels.push_back( GUI_DRAWMODE_AVERAGE );
+      labels.push_back( GUI_DRAWMODE_AVERAGE_NOT_ZERO );
+      labels.push_back( GUI_DRAWMODE_MODE );
       break;
 
     case PIXEL_SIZE:
