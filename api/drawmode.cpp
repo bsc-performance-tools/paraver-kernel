@@ -149,7 +149,10 @@ inline TSemanticValue selectMethod<DRAW_MODE>( vector<TSemanticValue>& v )
   {
     modes[ *it ]++;
     if( modes[ *it ] > currentModeCount )
+    {
       currentMode = *it;
+      currentModeCount = modes[ *it ];
+    }
   }
 
   return currentMode;
