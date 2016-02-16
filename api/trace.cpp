@@ -29,7 +29,15 @@
 
 #include "kernelconnection.h"
 #include "trace.h"
+
+#ifdef OLD_PCFPARSER
+#include "pcfparser/ParaverTraceConfig.h"
+#include "pcfparser/ParaverStatesColor.h"
+#include "pcfparser/ParaverGradientColor.h"
+#else
 #include "pcfparser/libtools/UIParaverTraceConfig.h"
+#endif
+
 #include "progresscontroller.h"
 #include <sstream>
 #include "paraverconfig.h"
@@ -450,6 +458,60 @@ Trace *TraceProxy::getConcrete() const
   return myTrace;
 }
 
+#ifdef OLD_PCFPARSER
+void TraceProxy::parsePCF( const string& whichFile )
+{
+  ParaverTraceConfig *config;
+
+  try
+  {
+    config = new ParaverTraceConfig( whichFile );
+  }
+  catch ( ... )
+  {
+    myEventLabels = EventLabels( myTrace->getLoadedEvents() );
+    return;
+  }
+
+  rgb tmpColor;
+
+  if ( config->get_statesColor().begin() != config->get_statesColor().end() )
+  {
+    for ( vector<ParaverStatesColor *>::const_iterator it = config->get_statesColor().begin();
+          it != config->get_statesColor().end(); ++it )
+    {
+      tmpColor.red = ( *it )->get_color1();
+      tmpColor.green = ( *it )->get_color2();
+      tmpColor.blue = ( *it )->get_color3();
+      myCodeColor.setColor( ( PRV_UINT32 )( *it )->get_key(), tmpColor );
+    }
+  }
+
+  if ( config->get_gradientColors().begin() != config->get_gradientColors().end() )
+  {
+    ParaverGradientColor *grad = ( config->get_gradientColors() )[ 0 ];
+    tmpColor.red = grad->get_color1();
+    tmpColor.green = grad->get_color2();
+    tmpColor.blue = grad->get_color3();
+    myGradientColor.setBeginGradientColor( tmpColor );
+
+    grad = ( config->get_gradientColors() )[ config->get_gradientColors().size() - 1 ];
+    tmpColor.red = grad->get_color1();
+    tmpColor.green = grad->get_color2();
+    tmpColor.blue = grad->get_color3();
+    myGradientColor.setEndGradientColor( tmpColor );
+  }
+  myEventLabels = EventLabels( *config, myTrace->getLoadedEvents() );
+  myStateLabels = StateLabels( *config );
+
+  //myDefaultTaskSemanticFunc = config->get_default_task_semantic_func();
+  //myDefaultThreadSemanticFunc = config->get_default_thread_semantic_func();
+
+  delete config;
+}
+
+#else
+
 void TraceProxy::parsePCF( const string& whichFile )
 {
   UIParaverTraceConfig *config;
@@ -500,6 +562,8 @@ void TraceProxy::parsePCF( const string& whichFile )
 
   delete config;
 }
+
+#endif
 
 void TraceProxy::parseROW( const string& whichFile )
 {
