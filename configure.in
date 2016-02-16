@@ -59,7 +59,7 @@ fi
 AX_PROG_ENABLE_EXTENDED_OBJECTS
 
 AX_PROG_ENABLE_OLD_PCFPARSER
-AM_CONDITIONAL(MAKE_OLD_PCFPARSER, test "${enable_old_pcfparser}" = "yes" )
+AM_CONDITIONAL(MAKE_OLD_PCFPARSER, ${SET_OLD_PCFPARSER} -eq 1 )
 
 
 ######################################################################
