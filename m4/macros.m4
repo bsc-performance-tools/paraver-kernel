@@ -42,7 +42,7 @@ AC_DEFUN([AX_PROG_ENABLE_TRACING],
 # ----------------------------
 AC_DEFUN([AX_PROG_ENABLE_OLD_PCFPARSER],
 [
-  AC_ARG_ENABLE(oldpcfparser,
+  AC_ARG_ENABLE(old_pcfparser,
     AC_HELP_STRING(
       [--enable-old-pcfparser],
       [Enable compilation with old pcfparser. (Disabled by default)]
