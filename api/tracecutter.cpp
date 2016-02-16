@@ -32,7 +32,11 @@
 #include "traceoptions.h"
 //#include "ktracecutter.h"
 #include "kernelconnection.h"
+#ifdef OLD_PCFPARSER
+#include "pcfparser/ParaverTraceConfig.h"
+#else
 #include "pcfparser/libtools/UIParaverTraceConfig.h"
+#endif
 using namespace libparaver;
 #include <map>
 #include <string.h>
@@ -107,8 +111,12 @@ TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
 
   if( statReturn == 0 && tmpStatBuffer.st_size > 0 )
   {
+#ifdef OLD_PCFPARSER
+    ParaverTraceConfig *config = new ParaverTraceConfig( pcf_name );
+#else
     UIParaverTraceConfig *config = new UIParaverTraceConfig();
     config->parse( pcf_name );
+#endif
 
     EventLabels myEventLabels = EventLabels( *config, set<TEventType>() );
     vector< TEventType > allTypes;
