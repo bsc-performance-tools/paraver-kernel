@@ -32,7 +32,11 @@
 
 #include <map>
 #include "paraverkerneltypes.h"
+#ifdef OLD_PCFPARSER
+#include "pcfparser/ParaverTraceConfig.h"
+#else
 #include "pcfparser/libtools/UIParaverTraceConfig.h"
+#endif
 
 using namespace libparaver;
 
@@ -42,7 +46,11 @@ class StateLabels
     static const std::string unknownLabel;
 
     StateLabels();
+#ifdef OLD_PCFPARSER
+    StateLabels( const ParaverTraceConfig& config );
+#else
     StateLabels( const UIParaverTraceConfig& config );
+#endif
     ~StateLabels();
 
     void getStates( std::vector<TState>& onVector ) const;

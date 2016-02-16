@@ -33,8 +33,12 @@
 #include <set>
 #include <map>
 #include "paraverkerneltypes.h"
-//#include "pcfparser/ParaverTraceConfig.h"
+
+#ifdef OLD_PCFPARSER
+#include "pcfparser/ParaverTraceConfig.h"
+#else
 #include "pcfparser/libtools/UIParaverTraceConfig.h"
+#endif
 
 using namespace libparaver;
 
@@ -45,8 +49,13 @@ class EventLabels
 
     EventLabels();
     EventLabels( const std::set<TEventType>& eventsLoaded );
+#ifdef OLD_PCFPARSER
+    EventLabels( const ParaverTraceConfig& config,
+                 const std::set<TEventType>& eventsLoaded );
+#else
     EventLabels( const UIParaverTraceConfig& config,
                  const std::set<TEventType>& eventsLoaded );
+#endif
     ~EventLabels();
 
     void getTypes( std::vector<TEventType>& onVector ) const;

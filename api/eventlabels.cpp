@@ -28,6 +28,10 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "eventlabels.h"
+#ifdef OLD_PCFPARSER
+#include "pcfparser/ParaverEventType.h"
+#include "pcfparser/ParaverEventValue.h"
+#endif
 
 using namespace std;
 
@@ -35,6 +39,40 @@ const string EventLabels::unknownLabel = "Unknown";
 
 EventLabels::EventLabels()
 {}
+
+#ifdef OLD_PCFPARSER
+
+EventLabels::EventLabels( const set<TEventType>& eventsLoaded )
+{
+/*  for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
+        it != eventsLoaded.end(); ++it )
+    eventTypeLabel[ *it ] = unknownLabel + " type ";*/
+}
+
+EventLabels::EventLabels( const libparaver::ParaverTraceConfig& config,
+                          const set<TEventType>& eventsLoaded )
+{
+/*  for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
+        it != eventsLoaded.end(); ++it )
+    eventTypeLabel[ *it ] = unknownLabel + " type ";*/
+
+  const vector<ParaverEventType *>& types = config.get_eventTypes();
+  for ( vector<ParaverEventType *>::const_iterator it = types.begin();
+        it != types.end(); ++it )
+  {
+    eventTypeLabel[ ( *it )->get_key() ] = ( *it )->get_description();
+    eventValueLabel[ ( *it )->get_key() ] = map<TEventValue, string>();
+    const vector<ParaverEventValue *>& values = ( *it )->get_eventValues();
+    for ( vector<ParaverEventValue *>::const_iterator itVal = values.begin();
+          itVal != values.end(); ++itVal )
+    {
+      ( eventValueLabel[ ( *it )->get_key() ] )[ ( *itVal )->get_key() ] =
+        ( *itVal )->get_value();
+    }
+  }
+}
+
+#else
 
 EventLabels::EventLabels( const set<TEventType>& eventsLoaded )
 {
@@ -74,6 +112,8 @@ EventLabels::EventLabels( const libparaver::UIParaverTraceConfig& config,
   {
   }
 }
+
+#endif
 
 EventLabels::~EventLabels()
 {}
