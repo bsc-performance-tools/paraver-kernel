@@ -70,6 +70,7 @@ vector<TraceEditSequence::TSequenceStates> PCFEventMergerAction::getStateDepende
 
 bool PCFEventMergerAction::execute( std::string whichTrace )
 {
+#ifndef OLD_PCFPARSER
   TraceEditSequence *tmpSequence = mySequence;
 
   // Get new tracename
@@ -90,20 +91,22 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
   std::string referenceTrace = ( (PCFMergerReferenceState *)tmpSequence->getState( TraceEditSequence::pcfMergerReferenceState ) )->getData();
   std::string referencePCFFile = LocalKernel::composeName( referenceTrace, "pcf" );
 #ifdef OLD_PCFPARSER
-  ParaverTraceConfig *referenceTraceConfig = new ParaverTraceConfig();
+  ParaverTraceConfig *referenceTraceConfig = new ParaverTraceConfig( referencePCFFile );
+  referenceTraceConfig->parse();
 #else
   UIParaverTraceConfig *referenceTraceConfig = new UIParaverTraceConfig();
-#endif
   referenceTraceConfig->parse( referencePCFFile );
+#endif
 
   // Read source pcf
   std::string sourceTrace = LocalKernel::composeName( whichTrace, "pcf" );
 #ifdef OLD_PCFPARSER
-  ParaverTraceConfig *sourceTraceConfig = new ParaverTraceConfig();
+  ParaverTraceConfig *sourceTraceConfig = new ParaverTraceConfig( sourceTrace );
+  sourceTraceConfig->parse();
 #else
   UIParaverTraceConfig *sourceTraceConfig = new UIParaverTraceConfig();
-#endif
   sourceTraceConfig->parse( sourceTrace );
+#endif
 
   // Translation algorithm
   map< TTypeValuePair, TTypeValuePair > translation;
@@ -228,7 +231,7 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
 
   delete sourceTraceConfig;
   delete referenceTraceConfig;
-
+#endif
   tmpSequence->executeNextAction( whichTrace );
 
   return true;

@@ -113,6 +113,7 @@ TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
   {
 #ifdef OLD_PCFPARSER
     ParaverTraceConfig *config = new ParaverTraceConfig( pcf_name );
+    config->parse();
 #else
     UIParaverTraceConfig *config = new UIParaverTraceConfig();
     config->parse( pcf_name );
