@@ -2,12 +2,12 @@
 pkglib_LTLIBRARIES = libparaver-api.la
 
 
-if OLD_PCFPARSER
+if MAKE_OLD_PCFPARSER
   PCFPARSER_FILES=../../common-files/pcfparser/ParaverTraceConfig.cpp \
-								  ../../common-files/pcfparser/UIParaverTraceConfig.cpp
+                  ../../common-files/pcfparser/UIParaverTraceConfig.cpp
 else
   PCFPARSER_FILES=../../common-files/pcfparser/libtools/ParaverTraceConfig.cpp \
-								  ../../common-files/pcfparser/libtools/UIParaverTraceConfig.cpp
+                  ../../common-files/pcfparser/libtools/UIParaverTraceConfig.cpp
 endif
 
 
