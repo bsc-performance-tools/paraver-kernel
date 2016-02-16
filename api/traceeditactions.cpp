@@ -31,7 +31,11 @@
 
 #include "traceeditactions.h"
 #include "eventtranslator.h"
+#ifdef OLD_PCFPARSER
+#include "../../common-files/pcfparser/ParaverTraceConfig.h"
+#else
 #include "pcfparser/libtools/UIParaverTraceConfig.h"
+#endif
 
 
 
@@ -85,12 +89,20 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
   // Read reference pcf
   std::string referenceTrace = ( (PCFMergerReferenceState *)tmpSequence->getState( TraceEditSequence::pcfMergerReferenceState ) )->getData();
   std::string referencePCFFile = LocalKernel::composeName( referenceTrace, "pcf" );
+#ifdef OLD_PCFPARSER
+  ParaverTraceConfig *referenceTraceConfig = new ParaverTraceConfig();
+#else
   UIParaverTraceConfig *referenceTraceConfig = new UIParaverTraceConfig();
+#endif
   referenceTraceConfig->parse( referencePCFFile );
 
   // Read source pcf
   std::string sourceTrace = LocalKernel::composeName( whichTrace, "pcf" );
+#ifdef OLD_PCFPARSER
+  ParaverTraceConfig *sourceTraceConfig = new ParaverTraceConfig();
+#else
   UIParaverTraceConfig *sourceTraceConfig = new UIParaverTraceConfig();
+#endif
   sourceTraceConfig->parse( sourceTrace );
 
   // Translation algorithm
@@ -113,7 +125,11 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
       {
         sourceValues = sourceTraceConfig->getEventValues( *itSourceType );
       }
+#ifdef OLD_PCFPARSER
+      catch( libparaver::ParaverTraceConfig::value_not_found )
+#else
       catch( libparaver::UIParaverTraceConfig::value_not_found )
+#endif
       {}
 
       if ( sourceValues.empty() )
@@ -124,7 +140,11 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
       {
         tmpCodes = referenceTraceConfig->getEventValues( *itSourceType );
       }
+#ifdef OLD_PCFPARSER
+      catch( libparaver::ParaverTraceConfig::value_not_found )
+#else
       catch( libparaver::UIParaverTraceConfig::value_not_found )
+#endif
       {}
 
       if ( tmpCodes.empty() )
