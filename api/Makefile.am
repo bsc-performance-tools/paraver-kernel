@@ -1,6 +1,16 @@
 
 pkglib_LTLIBRARIES = libparaver-api.la
 
+
+if OLD_PCFPARSER
+  PCFPARSER_FILES=../../common-files/pcfparser/ParaverTraceConfig.cpp \
+								  ../../common-files/pcfparser/UIParaverTraceConfig.cpp
+else
+  PCFPARSER_FILES=../../common-files/pcfparser/libtools/ParaverTraceConfig.cpp \
+								  ../../common-files/pcfparser/libtools/UIParaverTraceConfig.cpp
+endif
+
+
 libparaver_api_la_SOURCES = \
                     cfg.cpp \
                     drawmode.cpp \
@@ -37,9 +47,8 @@ libparaver_api_la_SOURCES = \
                     window.cpp \
                     workspace.cpp \
                     workspacemanager.cpp \
-                    ../../common-files/pcfparser/libtools/ParaverTraceConfig.cpp \
-                    ../../common-files/pcfparser/libtools/UIParaverTraceConfig.cpp 
-                    
+                    $(PCFPARSER_FILES)
+
 include_HEADERS = \
                   cfg.h\
                   ../config_traits.h\
