@@ -3,8 +3,15 @@ pkglib_LTLIBRARIES = libparaver-api.la
 
 
 if MAKE_OLD_PCFPARSER
-  PCFPARSER_FILES=../../common-files/pcfparser/ParaverTraceConfig.cpp \
-                  ../../common-files/pcfparser/UIParaverTraceConfig.cpp
+  PCFPARSER_FILES=../../common-files/pcfparser/LibException.cpp \
+                    ../../common-files/pcfparser/ParaverEventType.cpp \
+                    ../../common-files/pcfparser/ParaverEventValue.cpp \
+                    ../../common-files/pcfparser/ParaverGradientColor.cpp \
+                    ../../common-files/pcfparser/ParaverGradientNames.cpp \
+                    ../../common-files/pcfparser/ParaverState.cpp \
+                    ../../common-files/pcfparser/ParaverStatesColor.cpp \
+                    ../../common-files/pcfparser/ParaverTraceConfig.cpp \
+                    ../../common-files/pcfparser/ParaverTraceConfigGrammar.cpp
 else
   PCFPARSER_FILES=../../common-files/pcfparser/libtools/ParaverTraceConfig.cpp \
                   ../../common-files/pcfparser/libtools/UIParaverTraceConfig.cpp
@@ -104,6 +111,8 @@ include_HEADERS = \
 
 install-data-hook:
 	$(mkdir_p) $(includedir)/pcfparser
+	cp -f ../../common-files/pcfparser/ParaverTraceConfig.h $(includedir)/pcfparser
+
 	$(mkdir_p) $(includedir)/pcfparser/libtools
 	cp -f ../../common-files/pcfparser/libtools/UIParaverTraceConfig.h $(includedir)/pcfparser/libtools
 	cp -f ../../common-files/pcfparser/libtools/UIParaverTraceConfig.ipp $(includedir)/pcfparser/libtools
