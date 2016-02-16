@@ -70,9 +70,9 @@ vector<TraceEditSequence::TSequenceStates> PCFEventMergerAction::getStateDepende
 
 bool PCFEventMergerAction::execute( std::string whichTrace )
 {
-#ifndef OLD_PCFPARSER
   TraceEditSequence *tmpSequence = mySequence;
 
+#ifndef OLD_PCFPARSER
   // Get new tracename
   std::string newName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
   if ( !tmpSequence->isEndOfSequence() || newName.empty() )
