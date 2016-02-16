@@ -37,6 +37,29 @@ AC_DEFUN([AX_PROG_ENABLE_TRACING],
 ])
 
 
+
+# AX_PROG_ENABLE_OLD_PCFPARSER
+# ----------------------------
+AC_DEFUN([AX_PROG_ENABLE_OLD_PCFPARSER],
+[
+  AC_ARG_ENABLE(oldpcfparser,
+    AC_HELP_STRING(
+      [--enable-old-pcfparser],
+      [Enable compilation with old pcfparser. (Disabled by default)]
+    ),
+    [enable_oldpcfparser="${enableval}"],
+    [enable_oldpcfparser="no"]
+  )
+  if test "${enable_oldpcfparser}" = "yes" ; then
+    AC_DEFINE([SET_OLD_PCFPARSER], 1, [Old pcfparser enabled by user.])
+    PCFPARSER_CFLAGS="-DOLD_PCFPARSER -I../../common-files/pcfparser"
+  else
+    AC_DEFINE([SET_OLD_PCFPARSER], 0, [Old pcfparser enabled by user.])
+    PCFPARSER_CFLAGS="-I../../common-files/pcfparser/libtools"
+  fi
+])
+
+
 # AX_PROG_WITH_EXTRAE
 # -----------
 AC_DEFUN([AX_PROG_WITH_EXTRAE],

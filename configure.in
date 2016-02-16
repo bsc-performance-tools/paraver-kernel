@@ -58,7 +58,7 @@ fi
 
 AX_PROG_ENABLE_EXTENDED_OBJECTS
 
-SET_OLD_PCFPARSER=0
+AX_PROG_ENABLE_OLD_PCFPARSER
 AM_CONDITIONAL(MAKE_OLD_PCFPARSER,test "${SET_OLD_PCFPARSER}" = "1")
 
 
@@ -80,12 +80,6 @@ AC_CHECK_TYPES([int64_t, uint64_t, int8_t, uint8_t, int32_t, uint32_t, int16_t, 
 #########################################
 
 BOOST_RPATH="-R ${BOOST_LDFLAGS#-L}"
-
-if test "${SET_OLD_PCFPARSER}" = "1"; then
-  PCFPARSER_CFLAGS="-DOLD_PCFPARSER -I../../common-files/pcfparser"
-else
-  PCFPARSER_CFLAGS="-I../../common-files/pcfparser/libtools"
-fi
 
 CFLAGS="-Iinclude/ -Iapi/ -I../include/ -I../api/ -I../common-files/ -I../../common-files/ $PCFPARSER_CFLAGS $CFLAGS $CFLAGS_PTOOLS $CFLAGS_EXTRAE $XML_CPPFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
 CXXFLAGS="-Iinclude/ -Iapi/ -I../include/ -I../api/ -I../common-files/ -I../../common-files/ $PCFPARSER_CFLAGS $CXXFLAGS $BOOST_CPPFLAGS $CXXFLAGS_PTOOLS $CXXFLAGS_EXTRAE $XML_CPPFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
