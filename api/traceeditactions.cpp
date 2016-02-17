@@ -232,6 +232,7 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
   delete sourceTraceConfig;
   delete referenceTraceConfig;
 #endif
+
   tmpSequence->executeNextAction( whichTrace );
 
   return true;

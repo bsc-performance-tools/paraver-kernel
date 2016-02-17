@@ -32,6 +32,7 @@
 
 #include <map>
 #include "paraverkerneltypes.h"
+
 #ifdef OLD_PCFPARSER
 #include "pcfparser/ParaverTraceConfig.h"
 #else
@@ -61,7 +62,6 @@ class StateLabels
   private:
     std::map<TState, std::string> stateLabel;
 };
-
 
 
 #endif // STATELABELS_H_INCLUDED

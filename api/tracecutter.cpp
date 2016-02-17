@@ -32,12 +32,15 @@
 #include "traceoptions.h"
 //#include "ktracecutter.h"
 #include "kernelconnection.h"
+
 #ifdef OLD_PCFPARSER
 #include "pcfparser/ParaverTraceConfig.h"
 #else
 #include "pcfparser/libtools/UIParaverTraceConfig.h"
 #endif
+
 using namespace libparaver;
+
 #include <map>
 #include <string.h>
 #include "eventlabels.h"
