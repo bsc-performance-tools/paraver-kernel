@@ -466,6 +466,7 @@ void TraceProxy::parsePCF( const string& whichFile )
   try
   {
     config = new ParaverTraceConfig( whichFile );
+    config->parse();
   }
   catch ( ... )
   {
