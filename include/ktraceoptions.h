@@ -49,10 +49,10 @@
 #endif
 
 #ifdef EXTENDED_OBJECTS_ENABLED
-  #define MAX_APPL   1280
+  #define MAX_APPL     32
   #define MAX_TASK 147456
 #else
-  #define MAX_APPL     32
+  #define MAX_APPL   1280
   #define MAX_TASK  65536
 #endif
 
