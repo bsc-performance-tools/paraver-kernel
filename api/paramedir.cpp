@@ -60,7 +60,7 @@
 #include "eventtranslator.h"
 
 #ifdef OLD_PCFPARSER
-#include "../../common-files/pcfparser/libtools/ParaverTraceConfig.h"
+#include "../../common-files/pcfparser/ParaverTraceConfig.h"
 #else
 #include "pcfparser/libtools/UIParaverTraceConfig.h"
 #endif
@@ -622,11 +622,12 @@ string applyFilters( KernelConnection *myKernel,
       {
         fclose( pcfFile );
 #ifdef OLD_PCFPARSER
-        config = new ParaverTraceConfig();
+        config = new ParaverTraceConfig( pcf_name );
+        config->parse();
 #else
         config = new UIParaverTraceConfig();
-#fi
         config->parse( pcf_name );
+#endif
         labels = EventLabels( *config, std::set<TEventType>() );
         labels.getTypes( allTypes );
         for( vector< TEventType >::iterator it = allTypes.begin(); it != allTypes.end(); ++it )
