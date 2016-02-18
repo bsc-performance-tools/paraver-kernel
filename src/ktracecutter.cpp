@@ -272,32 +272,43 @@ void KTraceCutter::proces_cutter_header( char *header,
       current_size += fprintf( outfile, "%s:", word );
   }
 
-  word = strtok( NULL, "\n" );
+  /* Obtaining the number of communicators */
+   word = strtok( NULL, "\n" ); // put in word the rest of the line
   current_size += fprintf( outfile, "%s\n", word );
 
+  // Do I have some "," looking back?
   word = strrchr( word, ',' );
-
-  /* Obtaining the number of communicators */
-  strcpy( header, word + 1 );
-  if ( strchr( header, ')' ) != NULL )
-    return;
-
-  // NOW READ FROM GLOBAL VARIABLE infile
-  num_comms = atoi( header );
-  while ( num_comms > 0 )
+  if ( word != NULL )
   {
-    if ( !is_zip )
+    // Is it because some "1:1,1:1)\n" or the expected "1:1,1:1),16\n" ?
+    //                       -^-                               -^-
+    strcpy( header, word + 1 ); // Copy "1:1)" or "16" in header
+    if ( strchr( header, ')' ) != NULL ) // Do I have some ")" ?
     {
-      fgets( auxLine, MAX_TRACE_HEADER, infile );
+      // Yes, it's "1:1)\n" ==> No comunicators
+      // return; // !!!! Why?
     }
     else
     {
-      gzgets( gzInfile, auxLine, MAX_TRACE_HEADER );
-    }
+      // Hope it's a number and it fits the number of communicator lines...
+      num_comms = atoi( header );
+      while ( num_comms > 0 )
+      {
+        if ( !is_zip )
+        {
+          fgets( auxLine, MAX_TRACE_HEADER, infile );
+        }
+        else
+        {
+          gzgets( gzInfile, auxLine, MAX_TRACE_HEADER );
+        }
 
-    current_size += fprintf( outfile, "%s", auxLine );
-    num_comms--;
+        current_size += fprintf( outfile, "%s", auxLine );
+        num_comms--;
+      }
+    }
   }
+
 
   /* Writing in the header the offset of the cut regard original trace */
 
