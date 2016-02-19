@@ -60,7 +60,7 @@
 #include "eventtranslator.h"
 
 #ifdef OLD_PCFPARSER
-#include "../../common-files/pcfparser/ParaverTraceConfig.h"
+#include "pcfparser/ParaverTraceConfig.h"
 #else
 #include "pcfparser/libtools/UIParaverTraceConfig.h"
 #endif
@@ -623,7 +623,6 @@ string applyFilters( KernelConnection *myKernel,
         fclose( pcfFile );
 #ifdef OLD_PCFPARSER
         config = new ParaverTraceConfig( pcf_name );
-        config->parse();
 #else
         config = new UIParaverTraceConfig();
         config->parse( pcf_name );
