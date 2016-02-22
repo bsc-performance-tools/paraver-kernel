@@ -44,6 +44,8 @@ string TraceBodyIO_v1::tmpstring;
 string TraceBodyIO_v1::line;
 ostringstream TraceBodyIO_v1::ostr;
 
+// Optimization on parsing trace, but with no error control
+//#define USE_ATOLL
 
 bool TraceBodyIO_v1::ordered() const
 {
@@ -203,6 +205,7 @@ inline void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records
   }
 
   std::getline( strLine, tmpstring, ':' );
+#ifndef USE_ATOLL
   fieldStream.clear();
   fieldStream.str( tmpstring );
   if ( !( fieldStream >> endtime ) )
@@ -212,8 +215,12 @@ inline void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records
     cerr << line << endl;
     return;
   }
+#else
+  endtime = atoll( tmpstring.c_str() );
+#endif
 
   std::getline( strLine, tmpstring );
+#ifndef USE_ATOLL
   fieldStream.clear();
   fieldStream.str( tmpstring );
   if ( !( fieldStream >> state ) )
@@ -223,6 +230,9 @@ inline void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records
     cerr << line << endl;
     return;
   }
+#else
+  state = atoll( tmpstring.c_str() );
+#endif
 
   //if ( time == endtime ) return;
 
@@ -276,6 +286,7 @@ inline void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records
   while ( !strLine.eof() )
   {
     std::getline( strLine, tmpstring, ':' );
+#ifndef USE_ATOLL
     fieldStream.clear();
     fieldStream.str( tmpstring );
     if ( !( fieldStream >> eventtype ) )
@@ -285,8 +296,12 @@ inline void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records
       cerr << line << endl;
       return;
     }
+#else
+    eventtype = atoll( tmpstring.c_str() );
+#endif
 
     std::getline( strLine, tmpstring, ':' );
+#ifndef USE_ATOLL
     fieldStream.clear();
     fieldStream.str( tmpstring );
     if ( !( fieldStream >> eventvalue ) )
@@ -296,6 +311,9 @@ inline void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records
       cerr << line << endl;
       return;
     }
+#else
+    eventvalue = atoll( tmpstring.c_str() );
+#endif
 
     records.newRecord();
     records.setType( EVENT );
@@ -343,6 +361,7 @@ inline void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records 
   }
 
   std::getline( strLine, tmpstring, ':' );
+#ifndef USE_ATOLL
   fieldStream.clear();
   fieldStream.str( tmpstring );
   if ( !( fieldStream >> phySend ) )
@@ -352,6 +371,9 @@ inline void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records 
     cerr << line << endl;
     return;
   }
+#else
+  phySend = atoll( tmpstring.c_str() );
+#endif
 
   if ( !readCommon( strLine, remoteCPU, remoteAppl, remoteTask, remoteThread,
                     logReceive ) )
@@ -363,6 +385,7 @@ inline void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records 
   }
 
   std::getline( strLine, tmpstring, ':' );
+#ifndef USE_ATOLL
   fieldStream.clear();
   fieldStream.str( tmpstring );
   if ( !( fieldStream >> phyReceive ) )
@@ -372,8 +395,12 @@ inline void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records 
     cerr << line << endl;
     return;
   }
+#else
+  phyReceive = atoll( tmpstring.c_str() );
+#endif
 
   std::getline( strLine, tmpstring, ':' );
+#ifndef USE_ATOLL
   fieldStream.clear();
   fieldStream.str( tmpstring );
   if ( !( fieldStream >> size ) )
@@ -383,8 +410,12 @@ inline void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records 
     cerr << line << endl;
     return;
   }
+#else
+  size = atoll( tmpstring.c_str() );
+#endif
 
   std::getline( strLine, tmpstring, ':' );
+#ifndef USE_ATOLL
   fieldStream.clear();
   fieldStream.str( tmpstring );
   if ( !( fieldStream >> tag ) )
@@ -394,6 +425,9 @@ inline void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records 
     cerr << line << endl;
     return;
   }
+#else
+  tag = atoll( tmpstring.c_str() );
+#endif
 
   records.newComm();
   records.setSenderCPU( CPU );
@@ -421,47 +455,68 @@ inline bool TraceBodyIO_v1::readCommon( istringstream& line,
                                         TRecordTime& time ) const
 {
   std::getline( line, tmpstring, ':' );
+#ifndef USE_ATOLL
   fieldStream.clear();
   fieldStream.str( tmpstring );
   if ( !( fieldStream >> CPU ) )
   {
     return false;
   }
+#else
+  CPU = atoll( tmpstring.c_str() );
+#endif
 
   std::getline( line, tmpstring, ':' );
+#ifndef USE_ATOLL
   fieldStream.clear();
   fieldStream.str( tmpstring );
   if ( !( fieldStream >> appl ) )
   {
     return false;
   }
+#else
+  appl = atoll( tmpstring.c_str() );
+#endif
+
 
   std::getline( line, tmpstring, ':' );
+#ifndef USE_ATOLL
   fieldStream.clear();
   fieldStream.str( tmpstring );
   if ( !( fieldStream >> task ) )
   {
     return false;
   }
+#else
+  task = atoll( tmpstring.c_str() );
+#endif
 
   std::getline( line, tmpstring, ':' );
+#ifndef USE_ATOLL
   fieldStream.clear();
   fieldStream.str( tmpstring );
   if ( !( fieldStream >> thread ) )
   {
     return false;
   }
+#else
+  thread = atoll( tmpstring.c_str() );
+#endif
 
   if ( !processModel->isValidThread( appl - 1, task - 1, thread - 1 ) )
     return false;
 
   std::getline( line, tmpstring, ':' );
+#ifndef USE_ATOLL
   fieldStream.clear();
   fieldStream.str( tmpstring );
   if ( !( fieldStream >> time ) )
   {
     return false;
   }
+#else
+  time = atoll( tmpstring.c_str() );
+#endif
 
   return true;
 }
