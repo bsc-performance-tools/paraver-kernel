@@ -47,6 +47,25 @@ ostringstream TraceBodyIO_v1::ostr;
 // Optimization on parsing trace, but with no error control
 //#define USE_ATOLL
 
+// Even more optimization using naive function instead of atoll
+int naive(const char *p) {
+    register int x = 0;
+    bool neg = false;
+    if (*p == '-') {
+        neg = true;
+        ++p;
+    }
+    while (*p >= '0' && *p <= '9') {
+        x = (x*10) + (*p - '0');
+        ++p;
+    }
+    if (neg) {
+        x = -x;
+    }
+    return x;
+}
+//#define atoll naive
+
 bool TraceBodyIO_v1::ordered() const
 {
   return false;
