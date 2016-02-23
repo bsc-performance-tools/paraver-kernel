@@ -186,22 +186,29 @@ void KTraceSoftwareCounters::proces_header( char *header, FILE *in, FILE *out )
   trace_time = atoll( word );
 
   /* Obtaining the number of communicators */
-  word = strtok( NULL, "\n" );
+  word = strtok( NULL, "\n" ); // put in word the rest of the line
+
+  // Do I have some "," looking back?
   word = strrchr( word, ',' );
-
-  strcpy( header, word + 1 );
-
-  /* No communicators */
-  if ( strchr( header, ')' ) != NULL )
-    return;
-
-  num_comms = atoi( header );
-
-  while ( num_comms > 0 )
+  if ( word != NULL )
   {
-    fgets( header, MAX_HEADER_SIZE, in );
-    fprintf( out, "%s", header );
-    num_comms--;
+    // Is it because some "1:1,1:1)\n" or the expected "1:1,1:1),16\n" ?
+    //                       -^-                               -^-
+    strcpy( header, word + 1 ); // Copy "1:1)" or "16" in header
+
+    if ( strchr( header, ')' ) != NULL ) // Do I have some ")" ?
+      // Yes, it's "1:1)\n" ==> No comunicators
+      return;
+
+    // Hope it's a number and it fits the number of communicator lines...
+    num_comms = atoi( header );
+
+    while ( num_comms > 0 )
+    {
+      fgets( header, MAX_HEADER_SIZE, in );
+      fprintf( out, "%s", header );
+      num_comms--;
+    }
   }
 }
 

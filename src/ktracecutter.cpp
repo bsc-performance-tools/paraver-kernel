@@ -283,13 +283,9 @@ void KTraceCutter::proces_cutter_header( char *header,
     // Is it because some "1:1,1:1)\n" or the expected "1:1,1:1),16\n" ?
     //                       -^-                               -^-
     strcpy( header, word + 1 ); // Copy "1:1)" or "16" in header
-    if ( strchr( header, ')' ) != NULL ) // Do I have some ")" ?
+    if ( strchr( header, ')' ) == NULL ) // Do I have some ")"?
     {
-      // Yes, it's "1:1)\n" ==> No comunicators
-      // return; // !!!! Why?
-    }
-    else
-    {
+      // No ==> No comunicators
       // Hope it's a number and it fits the number of communicator lines...
       num_comms = atoi( header );
       while ( num_comms > 0 )
