@@ -898,6 +898,30 @@ void testNewIteratorCloneMethod( KernelConnection *myKernel )
 }
 #endif // 1
 
+#if 0
+#include "cubecontainer.h"
+void testCubeContainer()
+{
+  typedef CubeContainer<TApplOrder, TTaskOrder, TThreadOrder, int> CutterThreadInfo;
+  CutterThreadInfo tasks_test;
+
+  tasks_test( 3, 1 ,1 ) = 8;
+  tasks_test( 1, 1 ,1 ) = 1;
+  tasks_test( 2, 1, 1 ) = 5;
+  tasks_test( 2, 1, 2 ) = 6;
+  tasks_test( 2, 2, 1 ) = 7;
+  tasks_test( 1, 2, 1 ) = 3;
+  tasks_test( 1, 2, 2 ) = 4;
+  tasks_test( 1, 1, 2 ) = 2;
+
+  for( CutterThreadInfo::iterator it = tasks_test.begin(); it != tasks_test.end(); ++it )
+  {
+    std::cout<<(*it).second<<std::endl;
+  }
+}
+
+#endif // 1
+
 int main( int argc, char *argv[] )
 {
   initOptions();
@@ -919,6 +943,11 @@ int main( int argc, char *argv[] )
   {
     KernelConnection *myKernel = new LocalKernel( NULL );
     testNewIteratorCloneMethod( myKernel );
+    return 1;
+  }
+#elif 0
+  {
+    testCubeContainer();
     return 1;
   }
 #else

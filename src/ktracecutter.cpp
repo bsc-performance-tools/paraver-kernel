@@ -428,44 +428,40 @@ void KTraceCutter::appendLastZerosToUnclosedEvents( const unsigned long long fin
   bool writtenComment = false;
   set< TEventType > currentEventTypesWithPCFZeros;
 
-  for( unsigned int appl = 0; appl < MAX_APPL; ++appl )
+  for( CutterThreadInfo::iterator it = tasks.begin(); it != tasks.end(); ++it )
   {
-    for( unsigned int task = 0; task < MAX_TASK; ++task )
+    thread_info tmpInfo = (*it).second;
+    unsigned int appl = (*it).first.dim1;
+    unsigned int task = (*it).first.dim2;
+    unsigned int thread = (*it).first.dim3;
+
+    cpu = tmpInfo.lastCPU;
+
+    numWrittenChars = 0;
+    needEOL = false;
+
+    if( tmpInfo.eventTypesWithoutPCFZeros.size() > 0 )
     {
-      for( unsigned int thread = 0; thread < MAX_THREAD; ++thread )
-      {
-        if ( tasks[appl][task][thread] != NULL )
-        {
-          cpu = tasks[appl][task][thread]->lastCPU;
+      dumpEventsSet( tmpInfo.eventTypesWithoutPCFZeros,
+                     cpu, appl, task, thread,
+                     final_time,
+                     numWrittenChars,
+                     needEOL,
+                     writtenComment );
+    }
 
-          numWrittenChars = 0;
-          needEOL = false;
+    if( tmpInfo.eventTypesWithPCFZeros.size() > 0 )
+    {
 
-          if( tasks[appl][task][thread]->eventTypesWithoutPCFZeros.size() > 0 )
-          {
-            dumpEventsSet( tasks[appl][task][thread]->eventTypesWithoutPCFZeros,
-                           cpu, appl, task, thread,
-                           final_time,
-                           numWrittenChars,
-                           needEOL,
-                           writtenComment );
-          }
+      // Avoid long queues of zeros with same event type
+      currentEventTypesWithPCFZeros = mergeDuplicates( tmpInfo.eventTypesWithPCFZeros );
 
-          if( tasks[appl][task][thread]->eventTypesWithPCFZeros.size() > 0 )
-          {
-
-            // Avoid long queues of zeros with same event type
-            currentEventTypesWithPCFZeros = mergeDuplicates( tasks[appl][task][thread]->eventTypesWithPCFZeros );
-
-            dumpEventsSet( currentEventTypesWithPCFZeros,
-                           cpu, appl, task, thread,
-                           final_time,
-                           numWrittenChars,
-                           needEOL,
-                           writtenComment );
-          }
-        }
-      }
+      dumpEventsSet( currentEventTypesWithPCFZeros,
+                     cpu, appl, task, thread,
+                     final_time,
+                     numWrittenChars,
+                     needEOL,
+                     writtenComment );
     }
   }
 }
@@ -568,53 +564,36 @@ void KTraceCutter::show_cutter_progress_bar( ProgressController *progress )
 }
 
 
-void KTraceCutter::update_queue( int appl, int task, int thread,
+void KTraceCutter::update_queue( unsigned int appl, unsigned int task, unsigned int thread,
                                  unsigned long long type,
                                  unsigned long long value )
 {
-  thread_info *p;
-
-
-  if ( tasks[appl][task][thread] == NULL )
+  if ( tasks.find( appl, task, thread ) == tasks.end() )
   {
-    if (( p = new thread_info() ) == NULL )
-    {
-      perror( "No more memory!!!\n" );
-      exit( 1 );
-    }
-
-    tasks[appl][task][thread] = p;
-    tasks[appl][task][thread]->last_time = 0;
-    tasks[appl][task][thread]->lastCPU = 0;
-    tasks[appl][task][thread]->finished = false;
-
-    tasks[appl][task][thread]->eventTypesWithoutPCFZeros.clear();
-    tasks[appl][task][thread]->eventTypesWithPCFZeros.clear();
-
-    num_tasks++;
-    useful_tasks++;
     init_task_counter = 1;
+    ++useful_tasks;
   }
 
+  thread_info& tmpInfo = tasks( appl, task, thread );
   if ( value > 0 )
   {
     if ( PCFEventTypesWithValuesZero.find( type ) != PCFEventTypesWithValuesZero.end() )
     {
-      tasks[appl][task][thread]->eventTypesWithPCFZeros.insert( (TEventType)type );
+      tmpInfo.eventTypesWithPCFZeros.insert( (TEventType)type );
     }
     else
     {
-      tasks[appl][task][thread]->eventTypesWithoutPCFZeros.insert( (TEventType)type );
+      tmpInfo.eventTypesWithoutPCFZeros.insert( (TEventType)type );
     }
   }
   else
   {
-    if( tasks[appl][task][thread]->eventTypesWithPCFZeros.size() > 0)
+    if( tmpInfo.eventTypesWithPCFZeros.size() > 0)
     {
-      multiset< TEventType >::const_iterator it = tasks[appl][task][thread]->eventTypesWithPCFZeros.find( (TEventType)type );
-      if ( it != tasks[appl][task][thread]->eventTypesWithPCFZeros.end() )
+      multiset< TEventType >::const_iterator it = tmpInfo.eventTypesWithPCFZeros.find( (TEventType)type );
+      if ( it != tmpInfo.eventTypesWithPCFZeros.end() )
       {
-        tasks[appl][task][thread]->eventTypesWithPCFZeros.erase( it );
+        tmpInfo.eventTypesWithPCFZeros.erase( it );
       }
     }
   }
@@ -944,12 +923,6 @@ void KTraceCutter::execute( char *trace_in,
   trace_file_out = (char *) malloc( sizeof(char) * MAX_FILENAME_SIZE );
   buffer         = (char *) malloc( sizeof(char) * MAX_LINE_SIZE );
 
-  /* Ini Data */
-  for ( i = 0;i < MAX_APPL;i++ )
-    for ( j = 0;j < MAX_TASK;j++ )
-      for ( k = 0;k < MAX_THREAD;k++ )
-        tasks[i][j][k] = NULL;
-
   by_time = false;
   originalTime = false;
   max_size = 0;
@@ -959,7 +932,6 @@ void KTraceCutter::execute( char *trace_in,
   init_task_counter = 0;
   useful_tasks = 0;
   first_time_caught = false;
-  num_tasks = 0;
   current_size = 0;
 
   for ( i = 0; i < MAX_SELECTED_TASKS; i++ )
@@ -1152,11 +1124,11 @@ void KTraceCutter::execute( char *trace_in,
 
         if ( originalTime && time_1 > time_max )
         {
-          if ( tasks[appl-1][task-1][thread-1] != NULL &&
-               tasks[appl-1][task-1][thread-1]->finished )
+          if ( tasks.find( appl - 1, task - 1, thread - 1 ) != tasks.end() &&
+               tasks( appl - 1, task - 1, thread - 1 ).finished )
           {
-            useful_tasks--;
-            tasks[appl-1][task-1][thread-1]->finished = false;
+            --useful_tasks;
+            tasks( appl - 1, task - 1, thread - 1 ).finished = false;
           }
 
           break;
@@ -1168,24 +1140,14 @@ void KTraceCutter::execute( char *trace_in,
         }
         else // originalTime || time_1 <= time_max
         {
-          if ( tasks[appl-1][task-1][thread-1] == NULL )
+          if ( tasks.find( appl - 1, task - 1, thread - 1 ) == tasks.end() )
           {
-            if (( p = new thread_info() ) == NULL )
-            {
-              perror( "No more memory!!!\n" );
-              exit( 1 );
-            }
-
-            tasks[appl-1][task-1][thread-1] = p;
-            num_tasks++;
-            useful_tasks++;
+            ++useful_tasks;
             init_task_counter = 1;
-            p->finished = true;
-            p->lastCPU = cpu;
-            p->last_time = 0;
-
-            p->eventTypesWithoutPCFZeros.clear();
-            p->eventTypesWithPCFZeros.clear();
+            thread_info& tmpInfo = tasks( appl - 1, task - 1, thread - 1 );
+            tmpInfo.finished = true;
+            tmpInfo.lastCPU = cpu;
+            tmpInfo.last_time = 0;
 
             /* Have to reset HC and the begining of cut */
             reset_counters = true;
@@ -1249,7 +1211,7 @@ void KTraceCutter::execute( char *trace_in,
           }
 */
           //if ( tasks[appl-1][task-1][thread-1]->last_time < time_2 )
-          tasks[appl-1][task-1][thread-1]->last_time = time_2;
+          tasks( appl - 1, task - 1, thread - 1 ).last_time = time_2;
 
           if ( !first_time_caught )
           {
@@ -1301,16 +1263,16 @@ void KTraceCutter::execute( char *trace_in,
         if( cut_tasks && !is_selected_task( task ) )
           break;
 
-        if ( ( tasks[appl-1][task-1][thread-1] != NULL ) &&
-             ( time_1 > tasks[appl-1][task-1][thread-1]->last_time ) &&
+        if ( ( tasks.find( appl - 1, task - 1, thread - 1 ) != tasks.end() ) &&
+             ( time_1 > tasks( appl - 1, task - 1, thread - 1 ).last_time ) &&
              ( time_1 > time_max ) &&
              !keep_events )
           break;
 
-        if ( tasks[appl-1][task-1][thread-1] == NULL && time_1 > time_max )
+        if ( tasks.find( appl - 1, task - 1, thread - 1 ) == tasks.end() && time_1 > time_max )
           break;
 
-        if ( tasks[appl-1][task-1][thread-1] == NULL && remFirstStates )
+        if ( tasks.find( appl - 1, task - 1, thread - 1 ) == tasks.end() && remFirstStates )
           break; // ?
 
         if ( time_1 > time_max )
@@ -1319,8 +1281,8 @@ void KTraceCutter::execute( char *trace_in,
         /* If time inside cut, adjust time */
         if ( time_1 >= time_min ||
              ( time_1 < time_min &&
-               tasks[appl-1][task-1][thread-1] != NULL &&
-               tasks[appl-1][task-1][thread-1]->last_time >= time_min &&
+               tasks.find( appl - 1, task - 1, thread - 1 ) != tasks.end() &&
+               tasks( appl - 1, task - 1, thread - 1 ).last_time >= time_min &&
                keep_events )
            )
         {
@@ -1356,8 +1318,8 @@ void KTraceCutter::execute( char *trace_in,
 
           update_queue( appl - 1, task - 1, thread - 1, type, value );
 
-          tasks[appl - 1 ][task - 1 ][thread - 1 ]->last_time = time_1;
-          tasks[appl - 1 ][task - 1 ][thread - 1 ]->lastCPU = cpu;
+          tasks( appl - 1, task - 1, thread - 1 ).last_time = time_1;
+          tasks( appl - 1, task - 1, thread - 1 ).lastCPU = cpu;
 
           while ( !end_line )
           {

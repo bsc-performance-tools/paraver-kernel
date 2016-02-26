@@ -254,6 +254,14 @@
 			<Option target="api" />
 			<Option target="otf2prv" />
 		</Unit>
+		<Unit filename="api/cubecontainer.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/cubecontainer.h">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="api/drawmode.cpp">
 			<Option target="api" />
 			<Option target="otf2prv" />

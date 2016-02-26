@@ -36,6 +36,8 @@
 #include "tracecutter.h"
 #include <set>
 
+#include "cubecontainer.h"
+
 class KTraceCutter : public TraceCutter
 {
   public:
@@ -86,7 +88,6 @@ class KTraceCutter : public TraceCutter
     unsigned long long current_size;
     unsigned long long total_size;
     unsigned long long trace_time;
-    int num_tasks;
     int useful_tasks;
     int init_task_counter;
     bool remFirstStates;
@@ -114,6 +115,9 @@ class KTraceCutter : public TraceCutter
     class thread_info
     {
       public:
+        thread_info() : last_time( 0 ), lastCPU( 0 ), finished( false )
+        {};
+
         unsigned long long last_time;
         bool finished;
         TCPUOrder lastCPU; // last CPU to be able to write trailing records.
@@ -122,7 +126,8 @@ class KTraceCutter : public TraceCutter
     };
 
     /* struct for cutting only selected tasks */
-    thread_info *tasks[MAX_APPL][MAX_TASK][MAX_THREAD];
+    typedef CubeContainer<TApplOrder, TTaskOrder, TThreadOrder, thread_info> CutterThreadInfo;
+    CutterThreadInfo tasks;
 
     struct selected_tasks
     {
@@ -158,7 +163,7 @@ class KTraceCutter : public TraceCutter
     void appendLastZerosToUnclosedEvents( const unsigned long long final_time );
     void ini_cutter_progress_bar( char *file_name, ProgressController *progress );
     void show_cutter_progress_bar( ProgressController *progress );
-    void update_queue( int appl, int task, int thread,
+    void update_queue( unsigned int appl, unsigned int task, unsigned int thread,
                        unsigned long long type,
                        unsigned long long value );
     void load_counters_of_pcf( char *trace_name );
