@@ -1928,7 +1928,15 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
       if( progress->getStop() )
         break;
       if( numRows == 1 )
-        progress->setCurrentProgress( currentTime - getWindowBeginTime() );
+      {
+        static unsigned short tmpCount = 0;
+        ++tmpCount;
+        if( tmpCount == 10000 )
+        {
+          progress->setCurrentProgress( currentTime - getWindowBeginTime() );
+          tmpCount = 0;
+        }
+      }
     }
   }
 
