@@ -28,7 +28,6 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include <math.h>
-#include <locale>
 #include <boost/lexical_cast.hpp>
 #include "labelconstructor.h"
 #include "paraverlabels.h"
@@ -48,16 +47,29 @@ stringstream LabelConstructor::sstrSemanticLabel;
 string       LabelConstructor::rowStr;
 char         LabelConstructor::separator;
 char         LabelConstructor::point;
+locale       LabelConstructor::myLocaleWithoutThousands;
+locale       LabelConstructor::myLocaleWithThousands;
+
+// custom numpunct with grouping:
+struct numpunct_group : std::numpunct<char> {
+  std::string do_grouping() const {return "\03";}
+};
+
+// custom numpunct with grouping:
+struct numpunct_nogroup : std::numpunct<char> {
+  std::string do_grouping() const {return "\0";}
+};
 
 void LabelConstructor::init()
 {
-  locale myLocale( "" );
-  point = use_facet<numpunct<char> >(myLocale).decimal_point();
-  label.imbue( myLocale );
-  columnLabel.imbue( myLocale );
-  tmp.imbue( myLocale );
-  sstrTimeLabel.imbue( myLocale );
-  sstrSemanticLabel.imbue( myLocale );
+  myLocaleWithoutThousands = locale( locale( "" ), new numpunct_nogroup );
+  myLocaleWithThousands = locale( locale( "" ), new numpunct_group );
+  point = use_facet<numpunct<char> >(myLocaleWithThousands).decimal_point();
+  label.imbue( myLocaleWithThousands );
+  columnLabel.imbue( myLocaleWithThousands );
+  tmp.imbue( myLocaleWithThousands );
+  sstrTimeLabel.imbue( myLocaleWithThousands );
+  sstrSemanticLabel.imbue( myLocaleWithThousands );
 
   if ( point == ',' )
     separator = '.';
@@ -192,8 +204,14 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
   columnLabel.str( "" );
   double tmp;
 
+  if ( ParaverConfig::getInstance()->getHistogramScientificNotation() )
+    columnLabel << scientific;
+  else
+    columnLabel << fixed;
+
   if ( modf( min, &tmp ) != 0.0 || delta != 1.0 )
   {
+    columnLabel.precision( ParaverConfig::getInstance()->getHistogramPrecision() );
     // Column range values
     columnLabel << '[' << ( whichColumn * delta ) + min << "..";
     if ( ( ( whichColumn * delta ) + min + delta ) >= max )
@@ -209,6 +227,7 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
   }
   else
   {
+    columnLabel.precision( 0 );
     // Discrete integer value
     columnLabel << LabelConstructor::semanticLabel( whichWindow,
         ( whichColumn * delta ) + min, true, ParaverConfig::getInstance()->getHistogramPrecision() );
@@ -217,24 +236,6 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
   return columnLabel.str();
 }
 
-inline string chomp( TSemanticValue& number )
-{
-  TSemanticValue origValue = number;
-  number /= 1000.0;
-  number = floor( number );
-  TSemanticValue remainder = origValue - number * 1000.0;
-  PRV_INT32 intRemainder = PRV_INT32( remainder );
-
-  if ( number == 0 )
-    return boost::lexical_cast<std::string>( intRemainder );
-  else if ( remainder > 99 )
-    return boost::lexical_cast<std::string>( intRemainder );
-  else if ( remainder > 9 )
-    return "0" + boost::lexical_cast<std::string>( intRemainder );
-  else if ( remainder > 0 )
-    return "00" + boost::lexical_cast<std::string>( intRemainder );
-  return "000";
-}
 
 string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
     TSemanticValue value, bool showUnits )
@@ -250,49 +251,19 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
   else
     label << fixed;
 
-  label.precision( ParaverConfig::getInstance()->getHistogramPrecision() );
-
-  if ( value == 0 )
-    label << "0";
-  else if ( ParaverConfig::getInstance()->getHistogramThousandSep() &&
-            !ParaverConfig::getInstance()->getHistogramScientificNotation() )
-  {
-    if( value < 0.0 )
-    {
-      value = -value;
-      label << "-";
-    }
-    string strNum;
-    TSemanticValue origValue = value;
-    TSemanticValue intValue = floor( value );
-    if ( origValue >= 1.0 )
-    {
-      while ( intValue > 0.0 )
-        strNum = chomp( intValue ) + separator + strNum;
-      strNum.erase( strNum.size() - 1, 1 );
-      label << strNum;
-    }
-
-    tmp.clear();
-    tmp.str( "" );
-    if ( ParaverConfig::getInstance()->getHistogramScientificNotation() )
-      tmp << scientific;
-    else
-      tmp << fixed;
-    tmp.precision( ParaverConfig::getInstance()->getHistogramPrecision() );
-    value -= PRV_INT64( origValue );
-    if ( value > 0 )
-    {
-      tmp << value;
-      strNum = tmp.str();
-      if ( origValue >= 1.0 )
-        strNum.erase( strNum.begin() );
-
-      label << strNum;
-    }
-  }
+  double dummyInt;
+  if( modf( value, &dummyInt ) != 0.0 )
+    label.precision( ParaverConfig::getInstance()->getHistogramPrecision() );
   else
-    label << value;
+    label.precision( 0 );
+
+  if ( ParaverConfig::getInstance()->getHistogramThousandSep() &&
+       !ParaverConfig::getInstance()->getHistogramScientificNotation() )
+    label.imbue( myLocaleWithThousands );
+  else
+    label.imbue( myLocaleWithoutThousands );
+
+  label << value;
 
   if ( showUnits && ParaverConfig::getInstance()->getHistogramShowUnits() &&
        !whichHisto->itsCommunicationStat( whichHisto->getCurrentStat() ) )
@@ -324,44 +295,6 @@ string LabelConstructor::histoTotalLabel( THistoTotals whichTotal )
   return "";
 }
 
-string LabelConstructor::numberWithSeparators( TSemanticValue value, PRV_UINT32 precision, TTimeUnit unit )
-{
-  label.clear();
-  label.str( "" );
-
-  string strNum;
-  TSemanticValue origValue = value;
-  TSemanticValue intValue = floor( value );
-
-  if ( value == 0 )
-    label << "0";
-  else
-  {
-    if ( origValue >= 1.0 )
-    {
-      while ( intValue > 0.0 )
-        strNum = chomp( intValue ) + separator + strNum;
-      strNum.erase( strNum.size() - 1, 1 );
-      label << strNum;
-    }
-
-    tmp.clear();
-    tmp.str( "" );
-    tmp << fixed;
-    tmp.precision( precision );
-    value -= PRV_INT64( origValue );
-    if ( ( unit != NS && value > 0 ) || ( origValue < 1.0 && value > 0 ) )
-    {
-      tmp << value;
-      strNum = tmp.str();
-      if ( origValue >= 1.0 )
-        strNum.erase( strNum.begin() );
-
-      label << strNum;
-    }
-  }
-  return label.str();
-}
 
 string LabelConstructor::timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 precision )
 {
@@ -369,12 +302,14 @@ string LabelConstructor::timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 prec
   sstrTimeLabel.str( "" );
 
   sstrTimeLabel << fixed;
-  sstrTimeLabel.precision( precision );
-
-  if( value < 0.0 )
-    sstrTimeLabel << "-" << numberWithSeparators( -value, precision, unit );
+  if( unit == NS )
+    sstrTimeLabel.precision( 0 );
   else
-    sstrTimeLabel << numberWithSeparators( value, precision, unit );
+    sstrTimeLabel.precision( precision );
+
+  sstrTimeLabel.imbue( myLocaleWithThousands );
+
+  sstrTimeLabel << value;
 
   sstrTimeLabel << " " << LABEL_TIMEUNIT[ unit ];
 
@@ -423,17 +358,17 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
   SemanticInfoType infoType = whichWindow->getSemanticInfoType();
 
   sstrSemanticLabel << fixed;
-  if ( ( value - PRV_INT64( value ) ) > 0.0 )
+  double dummyInt;
+  if ( modf( value, &dummyInt ) != 0.0 )
     sstrSemanticLabel.precision( precision );
   else
     sstrSemanticLabel.precision( 0 );
 
+  sstrSemanticLabel.imbue( myLocaleWithThousands );
+
   if ( infoType == NO_TYPE || !text )
   {
-    if( value < 0.0 )
-      sstrSemanticLabel << "-" << numberWithSeparators( -value, precision );
-    else
-      sstrSemanticLabel << numberWithSeparators( value, precision );
+    sstrSemanticLabel << value;
   }
   else
   {
@@ -545,6 +480,10 @@ string LabelConstructor::eventLabel( Window *whichWindow,
   label.str( "" );
   string tmpstr;
 
+  label << fixed;
+  label.precision( 0 );
+  label.imbue( myLocaleWithThousands );
+
   if ( !text )
     label << "Type is " << whichType;
   else
@@ -582,6 +521,10 @@ string LabelConstructor::eventTypeLabel( Window *whichWindow,
   label.str( "" );
   string tmpstr;
 
+  label << fixed;
+  label.precision( 0 );
+  label.imbue( myLocaleWithThousands );
+
   if ( !text )
     label << "Type is " << whichType;
   else
@@ -601,18 +544,22 @@ string LabelConstructor::eventValueLabel( Window *whichWindow,
                                           TEventValue whichValue,
                                           bool writeValueAsPrefix )
 {
+  label.clear();
+  label.str( "" );
   string tmpstr;
-  stringstream retstr;
+
+  label << fixed;
+  label.precision( 0 );
+  label.imbue( myLocaleWithThousands );
 
   if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( whichType, whichValue, tmpstr ) )
-    retstr << "";
+    label << "";
   else if ( writeValueAsPrefix )
-//    retstr << whichType << "::" << whichValue << " " << tmpstr;
-    retstr << whichValue << " " << tmpstr;
+    label << whichValue << " " << tmpstr;
   else
-    retstr << tmpstr;
+    label << tmpstr;
 
-  return retstr.str();
+  return label.str();
 }
 
 

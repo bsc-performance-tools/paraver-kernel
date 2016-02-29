@@ -30,6 +30,7 @@
 #ifndef LABELCONSTRUCTOR_H_INCLUDED
 #define LABELCONSTRUCTOR_H_INCLUDED
 
+#include <locale>
 #include <sstream>
 #include "paraverkerneltypes.h"
 #include "paraverconfig.h"
@@ -79,10 +80,6 @@ class LabelConstructor
                                    TEventValue whichValue,
                                    bool writeValueAsPrefix = false );
 
-    static std::string numberWithSeparators( TSemanticValue value,
-                                        PRV_UINT32 precision,
-                                        TTimeUnit unit = MS );
-
     static bool getTimeValue( const std::string& timeLabel,
                               TTimeUnit unit,
                               PRV_UINT32 precision,
@@ -118,6 +115,9 @@ class LabelConstructor
     static std::string rowStr;
     static char separator;
     static char point;
+
+    static std::locale myLocaleWithoutThousands;
+    static std::locale myLocaleWithThousands;
 };
 
 #endif // LABELCONSTRUCTOR_H_INCLUDED
