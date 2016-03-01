@@ -20,6 +20,7 @@ endif
 
 libparaver_api_la_SOURCES = \
                     cfg.cpp \
+										cubecontainer.cpp \
                     drawmode.cpp \
                     eventdrivencutter.cpp \
                     eventlabels.cpp \
@@ -58,6 +59,7 @@ libparaver_api_la_SOURCES = \
 
 include_HEADERS = \
                   cfg.h\
+									cubecontainer.h \
                   ../config_traits.h\
                   ../config_types.h\
                   drawmode.h\
