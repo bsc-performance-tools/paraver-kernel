@@ -20,7 +20,6 @@ endif
 
 libparaver_api_la_SOURCES = \
                     cfg.cpp \
-										cubecontainer.cpp \
                     drawmode.cpp \
                     eventdrivencutter.cpp \
                     eventlabels.cpp \
@@ -59,7 +58,7 @@ libparaver_api_la_SOURCES = \
 
 include_HEADERS = \
                   cfg.h\
-									cubecontainer.h \
+                  cubecontainer.h \
                   ../config_traits.h\
                   ../config_types.h\
                   drawmode.h\
@@ -107,6 +106,7 @@ include_HEADERS = \
                   workspace.h\
                   workspacemanager.h\
                   zoomhistory.h\
+                  cubecontainer.cpp\
                   selectionmanagement.cpp\
                   traceeditstates.cpp\
                   zoomhistory.cpp
