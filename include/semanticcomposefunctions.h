@@ -1536,6 +1536,71 @@ class ComposeNestingLevel: public SemanticCompose
 };
 
 
+class ComposeEnumerate: public SemanticCompose
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    ComposeEnumerate()
+    {
+      setDefaultParam();
+    }
+
+    ~ComposeEnumerate()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+
+    virtual void init( KWindow *whichWindow );
+
+    virtual std::string getName()
+    {
+      return ComposeEnumerate::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeEnumerate( *this );
+    }
+
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      TParamValue tmp;
+
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+
+      return tmp;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
+
+  private:
+    static const bool initFromBegin = true;
+    static std::string name;
+
+    std::vector<TSemanticValue> myEnumerate;
+};
+
+
 class ComposeDelta: public SemanticCompose
 {
   public:

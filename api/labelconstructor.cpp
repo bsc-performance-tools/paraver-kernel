@@ -55,7 +55,7 @@ struct numpunct_group : std::numpunct<char> {
   std::string do_grouping() const {return "\03";}
 };
 
-// custom numpunct with grouping:
+// custom numpunct without grouping:
 struct numpunct_nogroup : std::numpunct<char> {
   std::string do_grouping() const {return "\0";}
 };

@@ -419,6 +419,40 @@ TSemanticValue ComposeNestingLevel::execute( const SemanticInfo *info )
 }
 
 
+void ComposeEnumerate::init( KWindow *whichWindow )
+{
+  myEnumerate.clear();
+
+  if ( whichWindow->getTrace()->totalThreads() >
+       whichWindow->getTrace()->totalCPUs() )
+  {
+    myEnumerate.reserve( whichWindow->getTrace()->totalThreads() );
+    for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalThreads(); ++i )
+      myEnumerate.push_back( 0 );
+  }
+  else
+  {
+    myEnumerate.reserve( whichWindow->getTrace()->totalCPUs() );
+    for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalCPUs(); ++i )
+      myEnumerate.push_back( 0 );
+  }
+}
+
+
+string ComposeEnumerate::name = "Enumerate";
+TSemanticValue ComposeEnumerate::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+
+  TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
+
+  if ( myInfo->values[ 0 ] != 0 )
+    ++myEnumerate[ tmpOrder ];
+
+  return myEnumerate[ tmpOrder ];
+}
+
+
 void ComposeDelta::init( KWindow *whichWindow )
 {
   prevValue.clear();
