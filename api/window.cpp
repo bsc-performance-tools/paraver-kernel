@@ -1741,6 +1741,9 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   vector< TSemanticValue > tmpComputedMinY;
   ProgressController *paramProgress = NULL;
 
+  if( getWindowBeginTime() == getWindowEndTime() )
+    return;
+
   int numRows = 0;
   for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
   {
