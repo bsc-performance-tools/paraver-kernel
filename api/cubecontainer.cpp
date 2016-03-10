@@ -59,13 +59,13 @@ bool CubeContainer<Dimension1, Dimension2, Dimension3, T>::Index::operator<( con
 template<typename Dimension1, typename Dimension2, typename Dimension3, typename T>
 T& CubeContainer<Dimension1, Dimension2, Dimension3, T>::operator()( const Dimension1& dim1, const Dimension2& dim2, const Dimension3& dim3 )
 {
-  return cube[ CubeContainer::Index( dim1, dim2, dim3 ) ];
+  return cube[ typename CubeContainer::Index( dim1, dim2, dim3 ) ];
 }
 
 template<typename Dimension1, typename Dimension2, typename Dimension3, typename T>
 const T& CubeContainer<Dimension1, Dimension2, Dimension3, T>::operator()( const Dimension1& dim1, const Dimension2& dim2, const Dimension3& dim3 ) const
 {
-  return cube[ CubeContainer::Index( dim1, dim2, dim3 ) ];
+  return cube[ typename CubeContainer::Index( dim1, dim2, dim3 ) ];
 }
 
 template<typename Dimension1, typename Dimension2, typename Dimension3, typename T>
@@ -77,13 +77,13 @@ size_t CubeContainer<Dimension1, Dimension2, Dimension3, T>::size() const
 template<typename Dimension1, typename Dimension2, typename Dimension3, typename T>
 typename CubeContainer<Dimension1, Dimension2, Dimension3, T>::const_iterator CubeContainer<Dimension1, Dimension2, Dimension3, T>::find( const Dimension1& dim1, const Dimension2& dim2, const Dimension3& dim3 ) const
 {
-  return cube.find( CubeContainer::Index( dim1, dim2, dim3 ) );
+  return cube.find( typename CubeContainer::Index( dim1, dim2, dim3 ) );
 }
 
 template<typename Dimension1, typename Dimension2, typename Dimension3, typename T>
 typename CubeContainer<Dimension1, Dimension2, Dimension3, T>::iterator CubeContainer<Dimension1, Dimension2, Dimension3, T>::find( const Dimension1& dim1, const Dimension2& dim2, const Dimension3& dim3 )
 {
-  return cube.find( CubeContainer::Index( dim1, dim2, dim3 ) );
+  return cube.find( typename CubeContainer::Index( dim1, dim2, dim3 ) );
 }
 
 template<typename Dimension1, typename Dimension2, typename Dimension3, typename T>
