@@ -42,7 +42,7 @@ TextOutput::TextOutput()
 TextOutput::~TextOutput()
 {}
 
-void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
+void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile, ProgressController *progress )
 {
   if( strOutputFile.rfind( string( ".csv" ) ) == string::npos )
     strOutputFile += ".csv";
@@ -68,8 +68,27 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
 
   maxTime = 0.0;
 
+  // Progress controller
+  std::string previousMessage;
+  if( progress != NULL )
+  {
+    //previousMessage = progress->getMessage();
+    //progress->setMessage( strOutputFile );
+    if ( whichWindow->getWindowLevelObjects() > 1 )
+      progress->setEndLimit( whichWindow->getWindowLevelObjects() - 1 );
+    else
+      progress->setEndLimit( endTime - beginTime );
+    progress->setCurrentProgress( 0 );
+  }
+
   for ( TObjectOrder i = 0; i < whichWindow->getWindowLevelObjects(); ++i )
   {
+    if( progress != NULL )
+    {
+      if ( whichWindow->getWindowLevelObjects() > 1 )
+        progress->setCurrentProgress( (int)i );
+    }
+
     if ( multipleFiles )
     {
       ostringstream tmpName;
@@ -86,6 +105,12 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
 
     while ( whichWindow->getEndTime( i ) < endTime )
     {
+      if( progress != NULL )
+      {
+        if ( whichWindow->getWindowLevelObjects() == 1 )
+          progress->setCurrentProgress( int( endTime - whichWindow->getEndTime( i ) ) );
+      }
+
       outputFile << setprecision( config->getTimelinePrecision() );
       if ( !multipleFiles )
       {
@@ -158,14 +183,21 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
 
   if ( !multipleFiles )
     outputFile.close();
+
+  //if( progress != NULL )
+  //{
+  //  progress->setMessage( previousMessage );
+  //}
 }
+
 
 void TextOutput::dumpHistogram( Histogram *whichHisto,
                                 string& strOutputFile,
                                 bool onlySelectedPlane,
                                 bool hideEmptyColumns,
-                                bool withLabels ,
-                                bool withPreferencesPrecision )
+                                bool withLabels,
+                                bool withPreferencesPrecision,
+                                ProgressController *progress )
 {
   THistogramColumn numPlanes;
   THistogramColumn numColumns;
@@ -180,7 +212,7 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
   whichHisto->getControlWindow()->getSelectedRows( whichHisto->getControlWindow()->getLevel(),
       selectedRows, beginRow, endRow );
 //std::cout << "START RECALC" << std::endl;
-  whichHisto->execute( whichHisto->getBeginTime(), whichHisto->getEndTime(), selectedRows, NULL );
+  whichHisto->execute( whichHisto->getBeginTime(), whichHisto->getEndTime(), selectedRows, progress );
 //std::cout << "END RECALC" << std::endl;
   outputFile.open( strOutputFile.c_str() );
 
@@ -363,7 +395,8 @@ void TextOutput::dumpMatrixHorizontal( Histogram *whichHisto,
                                        vector<THistogramColumn> printedColumns,
                                        THistogramColumn iPlane,
                                        ofstream &outputFile,
-                                       bool withLabels )
+                                       bool withLabels,
+                                       ProgressController *progress )
 {
   outputFile << endl;
 
@@ -371,6 +404,14 @@ void TextOutput::dumpMatrixHorizontal( Histogram *whichHisto,
   {
     if( withLabels )
       outputFile << whichHisto->getRowLabel( iRow ) << "\t";
+
+    // progress advanced by rows (external loop)
+    if( progress != NULL )
+    {
+      if ( numRows > 1 )
+        progress->setCurrentProgress( (int)iRow );
+    }
+
     for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
     {
       if ( !whichHisto->endCell( printedColumns[ iColumn ], iPlane ) )
@@ -390,7 +431,7 @@ void TextOutput::dumpMatrixHorizontal( Histogram *whichHisto,
   }
 }
 
-
+// progress( columns )
 void TextOutput::dumpMatrixVertical( Histogram *whichHisto,
                                      TObjectOrder numRows,
                                      THistogramColumn numColumns,
@@ -398,7 +439,8 @@ void TextOutput::dumpMatrixVertical( Histogram *whichHisto,
                                      vector<THistogramColumn> printedColumns,
                                      THistogramColumn iPlane,
                                      ofstream &outputFile,
-                                     bool withLabels )
+                                     bool withLabels,
+                                     ProgressController *progress )
 {
   if( withLabels )
   {
@@ -411,6 +453,14 @@ void TextOutput::dumpMatrixVertical( Histogram *whichHisto,
   {
     if( withLabels )
       outputFile << whichHisto->getColumnLabel( printedColumns[ iColumn ] ) << "\t";
+
+    // progress advanced by columns (external loop)
+    if( progress != NULL )
+    {
+      if ( numColumns > 1 )
+        progress->setCurrentProgress( (int)iColumn );
+    }
+
     for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
     {
       if ( !whichHisto->endCell( printedColumns[ iColumn ], iPlane ) )
@@ -438,7 +488,8 @@ void TextOutput::dumpMatrixCommHorizontal( Histogram *whichHisto,
                                            vector<THistogramColumn> printedColumns,
                                            THistogramColumn iPlane,
                                            ofstream &outputFile,
-                                           bool withLabels )
+                                           bool withLabels,
+                                           ProgressController *progress )
 {
   outputFile << endl;
 
@@ -446,6 +497,14 @@ void TextOutput::dumpMatrixCommHorizontal( Histogram *whichHisto,
   {
     if( withLabels )
       outputFile << whichHisto->getRowLabel( iRow ) << "\t";
+
+    // progress advanced by rows (external loop)
+    if( progress != NULL )
+    {
+      if ( numRows > 1 )
+        progress->setCurrentProgress( (int)iRow );
+    }
+
     for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
     {
       if ( !whichHisto->endCommCell( printedColumns[ iColumn ], iPlane ) )
@@ -473,7 +532,8 @@ void TextOutput::dumpMatrixCommVertical( Histogram *whichHisto,
                                          vector<THistogramColumn> printedColumns,
                                          THistogramColumn iPlane,
                                          ofstream &outputFile,
-                                         bool withLabels )
+                                         bool withLabels,
+                                         ProgressController *progress )
 {
   if( withLabels )
   {
@@ -486,6 +546,14 @@ void TextOutput::dumpMatrixCommVertical( Histogram *whichHisto,
   {
     if( withLabels )
       outputFile << whichHisto->getColumnLabel( printedColumns[ iColumn ] ) << "\t";
+
+    // progress advanced by columns (external loop)
+    if( progress != NULL )
+    {
+      if ( numColumns > 1 )
+        progress->setCurrentProgress( (int)iColumn );
+    }
+
     for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
     {
       if ( !whichHisto->endCommCell( printedColumns[ iColumn ], iPlane ) )
@@ -512,13 +580,24 @@ void TextOutput::dumpTotalColumns( HistogramTotals *totals,
                                    PRV_UINT16 currentStat,
                                    vector<THistogramColumn> printedColumns,
                                    THistogramColumn iPlane,
-                                   ofstream &outputFile )
+                                   ofstream &outputFile,
+                                   ProgressController *progress )
 {
   THistogramColumn numColumns = (THistogramColumn)printedColumns.size();
 
   outputFile << totalName << "\t";
   for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
+  {
+    // progress advanced by columns (external loop)
+    if( progress != NULL )
+    {
+      if ( numColumns > 1 )
+        progress->setCurrentProgress( (int)iColumn );
+    }
+
     outputFile << (totals->*totalFunction)( currentStat, printedColumns[ iColumn ], iPlane ) << "\t";
+  }
+
   outputFile << endl;
 }
 
@@ -529,11 +608,22 @@ void TextOutput::dumpTotalRows( HistogramTotals *totals,
                                 PRV_UINT16 currentStat,
                                 TObjectOrder numRows,
                                 THistogramColumn iPlane,
-                                ofstream &outputFile )
+                                ofstream &outputFile,
+                                ProgressController *progress )
 {
   outputFile << totalName << "\t";
   for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
+  {
+    // progress advanced by rows (external loop)
+    if( progress != NULL )
+    {
+      if ( numRows > 1 )
+        progress->setCurrentProgress( (int)iRow );
+    }
+
     outputFile << (totals->*totalFunction)( currentStat, iRow, iPlane ) << "\t";
+  }
+
   outputFile << endl;
 }
 
