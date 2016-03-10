@@ -53,11 +53,11 @@ class CubeContainer
     const T& operator()( const Dimension1& dim1, const Dimension2& dim2, const Dimension3& dim3 ) const;
 
     size_t size() const;
-    CubeContainer::const_iterator find( const Dimension1& dim1, const Dimension2& dim2, const Dimension3& dim3 ) const;
-    CubeContainer::iterator find( const Dimension1& dim1, const Dimension2& dim2, const Dimension3& dim3 );
+    typename CubeContainer::const_iterator find( const Dimension1& dim1, const Dimension2& dim2, const Dimension3& dim3 ) const;
+    typename CubeContainer::iterator find( const Dimension1& dim1, const Dimension2& dim2, const Dimension3& dim3 );
 
-    CubeContainer::iterator begin();
-    CubeContainer::iterator end();
+    typename CubeContainer::iterator begin();
+    typename CubeContainer::iterator end();
 
   private:
     std::map<Index, T> cube;
