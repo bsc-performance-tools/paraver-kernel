@@ -34,7 +34,7 @@ CubeContainer<Dimension1, Dimension2, Dimension3, T>::Index::Index( Dimension1 w
 }
 
 template<typename Dimension1, typename Dimension2, typename Dimension3, typename T>
-bool CubeContainer<Dimension1, Dimension2, Dimension3, T>::Index::operator<( const CubeContainer<Dimension1, Dimension2, Dimension3, T>::Index& whichIndex ) const
+bool typename CubeContainer<Dimension1, Dimension2, Dimension3, T>::Index::operator<( const typename CubeContainer<Dimension1, Dimension2, Dimension3, T>::Index& whichIndex ) const
 {
   if( dim1 > whichIndex.dim1 )
     return false;

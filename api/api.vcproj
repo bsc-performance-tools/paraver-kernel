@@ -171,6 +171,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\cubecontainer.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\drawmode.cpp"
 				>
 			</File>
@@ -382,6 +394,10 @@
 			>
 			<File
 				RelativePath=".\cfg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\cubecontainer.h"
 				>
 			</File>
 			<File
