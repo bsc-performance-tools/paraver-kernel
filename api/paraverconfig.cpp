@@ -65,6 +65,7 @@ ParaverConfig::ParaverConfig()
   string paraverHomeDir;
   string paraverCFGsDir;
   string paraverXMLDir;
+  string paraverTutorialsDir;
 
 #ifdef WIN32
 
@@ -87,12 +88,16 @@ ParaverConfig::ParaverConfig()
 
     paraverXMLDir = paraverHomeDir;
     paraverXMLDir.append( "\\share\\filters-config" );
+
+    paraverTutorialsDir = paraverHomeDir;
+    paraverTutorialsDir.append( "\\tutorials" );
   }
   else
   {
-    paraverHomeDir = homedir;
-    paraverCFGsDir = homedir;
-    paraverXMLDir  = homedir;
+    paraverHomeDir      = homedir;
+    paraverCFGsDir      = homedir;
+    paraverXMLDir       = homedir;
+    paraverTutorialsDir = homedir;
   }
 
 #else
@@ -120,21 +125,24 @@ ParaverConfig::ParaverConfig()
   }
   CFRelease(resourcesURL);
 
-  paraverHomeDir = homedir;
-  paraverCFGsDir = std::string( tmpPath ) + std::string( "/cfgs" );
-  paraverXMLDir  = homedir;
+  paraverHomeDir      = homedir;
+  paraverCFGsDir      = std::string( tmpPath ) + std::string( "/cfgs" );
+  paraverXMLDir       = homedir;
+  paraverTutorialsDir = homedir + std::string( "/paraver-tutorials" );
 #else // __APPLE__
   if ( getenv( "PARAVER_HOME" ) == NULL )
   {
-    paraverHomeDir = homedir;
-    paraverCFGsDir = homedir;
-    paraverXMLDir  = homedir;
+    paraverHomeDir       = homedir;
+    paraverCFGsDir       = homedir;
+    paraverXMLDir        = homedir;
+    paraverTutorialsDir  = homedir;
   }
   else
   {
-    paraverHomeDir = getenv( "PARAVER_HOME" );
-    paraverCFGsDir = paraverHomeDir + "/cfgs";
-    paraverXMLDir  = paraverHomeDir + "/share/filters-config";
+    paraverHomeDir      = getenv( "PARAVER_HOME" );
+    paraverCFGsDir      = paraverHomeDir + "/cfgs";
+    paraverXMLDir       = paraverHomeDir + "/share/filters-config";
+    paraverTutorialsDir = paraverHomeDir + "/tutorials";
   }
 #endif
 #endif
@@ -142,7 +150,7 @@ ParaverConfig::ParaverConfig()
 
   xmlGlobal.tracesPath = homedir; // also for paraload.sig!
   xmlGlobal.cfgsPath = paraverCFGsDir;
-  xmlGlobal.tutorialsPath = paraverHomeDir; // not exactly, but near
+  xmlGlobal.tutorialsPath = paraverTutorialsDir; // not exactly, but near
   xmlGlobal.tmpPath = homedir; // errors, logs, working dir
   xmlGlobal.applyFollowingCFGsToAllTraces = false;
   xmlGlobal.fillStateGaps = true;
