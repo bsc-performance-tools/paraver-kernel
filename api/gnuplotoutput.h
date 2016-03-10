@@ -38,13 +38,16 @@ class GNUPlotOutput: public Output
     GNUPlotOutput() {}
     ~GNUPlotOutput() {}
 
-    virtual void dumpWindow( Window *whichWindow, std::string& strOutputFile );
+    virtual void dumpWindow( Window *whichWindow,
+                             std::string& strOutputFile,
+                             ProgressController *progress = NULL );
     virtual void dumpHistogram( Histogram *whichHisto,
                                 std::string& strOutputFile,
                                 bool onlySelectedPlane = false,
                                 bool hideEmptyColumns = false,
                                 bool withLabels = true,
-                                bool withPreferencesPrecision = true );
+                                bool withPreferencesPrecision = true,
+                                ProgressController *progress = NULL );
 
     virtual bool getMultipleFiles() const;
     virtual void setMultipleFiles( bool newValue );

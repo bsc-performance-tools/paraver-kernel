@@ -34,7 +34,7 @@
 
 using namespace std;
 
-void GNUPlotOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
+void GNUPlotOutput::dumpWindow( Window *whichWindow, string& strOutputFile, ProgressController *progress )
 {
   if( strOutputFile.rfind( string( ".gnuplot" ) ) == string::npos )
     strOutputFile += ".gnuplot";
@@ -43,7 +43,7 @@ void GNUPlotOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
   string strTextOutputFilename = strOutputFile + string( ".csv" );
 
   textOutput->setMultipleFiles( false );
-  textOutput->dumpWindow( whichWindow, strTextOutputFilename );
+  textOutput->dumpWindow( whichWindow, strTextOutputFilename, progress );
 
   delete textOutput;
 
@@ -65,12 +65,14 @@ void GNUPlotOutput::dumpWindow( Window *whichWindow, string& strOutputFile )
   outputFile.close();
 }
 
+
 void GNUPlotOutput::dumpHistogram( Histogram *whichHisto,
                                    string& strOutputFile,
                                    bool onlySelectedPlane,
                                    bool hideEmptyColumns,
                                    bool withLabels,
-                                   bool withPreferencesPrecision )
+                                   bool withPreferencesPrecision,
+                                   ProgressController *progress )
 {
   if( strOutputFile.rfind( string( ".gnuplot" ) ) == string::npos )
     strOutputFile += ".gnuplot";
@@ -79,7 +81,7 @@ void GNUPlotOutput::dumpHistogram( Histogram *whichHisto,
   string strTextOutputFilename = strOutputFile + string( ".csv" );
 
   textOutput->setMultipleFiles( false );
-  textOutput->dumpHistogram( whichHisto, strTextOutputFilename, onlySelectedPlane, hideEmptyColumns, false );
+  textOutput->dumpHistogram( whichHisto, strTextOutputFilename, onlySelectedPlane, hideEmptyColumns, false, progress );
 
   delete textOutput;
 

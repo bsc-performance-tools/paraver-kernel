@@ -1072,6 +1072,7 @@ void BPlusTree::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter
   }
 }
 
+
 void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
                                     TRecordTime whichTime ) const
 {

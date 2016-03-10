@@ -31,6 +31,7 @@
 #define OUTPUT_H_INCLUDED
 
 #include <string>
+#include "progresscontroller.h"
 
 class Window;
 class Histogram;
@@ -49,13 +50,17 @@ class Output
     Output() {}
     ~Output() {}
 
-    virtual void dumpWindow( Window *whichWindow, std::string& strOutputFile ) = 0;
+    virtual void dumpWindow( Window *whichWindow,
+                             std::string& strOutputFile,
+                             ProgressController *progress = NULL ) = 0;
+
     virtual void dumpHistogram( Histogram *whichHisto,
                                 std::string& strOutputFile,
                                 bool onlySelectedPlane = false,
                                 bool hideEmptyColumns = false,
                                 bool withLabels = true,
-                                bool withPreferencesPrecision = true ) = 0;
+                                bool withPreferencesPrecision = true,
+                                ProgressController *progress = NULL ) = 0;
 
     virtual bool getMultipleFiles() const = 0;
     virtual void setMultipleFiles( bool newValue ) = 0;

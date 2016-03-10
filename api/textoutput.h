@@ -35,6 +35,7 @@
 #include "selectionmanagement.h"
 #include "prvtypes.h"
 #include "histogram.h"
+#include "progresscontroller.h"
 
 class Window;
 class Histogram;
@@ -45,13 +46,16 @@ class TextOutput:public Output
     TextOutput();
     ~TextOutput();
 
-    void dumpWindow( Window *whichWindow, std::string& strOutputFile );
+    void dumpWindow( Window *whichWindow,
+                     std::string& strOutputFile,
+                     ProgressController *progress = NULL );
     void dumpHistogram( Histogram *whichHisto,
                         std::string& strOutputFile,
                         bool onlySelectedPlane = false,
                         bool hideEmptyColumns = false,
                         bool withLabels = true,
-                        bool withPreferencesPrecision = true );
+                        bool withPreferencesPrecision = true,
+                        ProgressController *progress = NULL );
 
     bool getMultipleFiles() const;
     void setMultipleFiles( bool newValue );
@@ -89,7 +93,8 @@ class TextOutput:public Output
                                std::vector<THistogramColumn> printedColumns,
                                THistogramColumn iPlane,
                                std::ofstream &outputfile,
-                               bool withLabels );
+                               bool withLabels,
+                               ProgressController *progress = NULL );
 
     void dumpMatrixVertical( Histogram *whichHisto,
                              TObjectOrder numRows,
@@ -98,7 +103,8 @@ class TextOutput:public Output
                              std::vector<THistogramColumn> printedColumns,
                              THistogramColumn iPlane,
                              std::ofstream &outputfile,
-                             bool withLabels );
+                             bool withLabels,
+                             ProgressController *progress = NULL );
 
     void dumpTotalColumns( HistogramTotals *totals,
                            std::string totalName,
@@ -106,7 +112,8 @@ class TextOutput:public Output
                            PRV_UINT16 currentStat,
                            std::vector<THistogramColumn> printedColumns,
                            THistogramColumn iPlane,
-                           std::ofstream &outputFile );
+                           std::ofstream &outputFile,
+                           ProgressController *progress = NULL );
 
     void dumpTotalRows( HistogramTotals *totals,
                         std::string totalName,
@@ -114,7 +121,8 @@ class TextOutput:public Output
                         PRV_UINT16 currentStat,
                         TObjectOrder numRows,
                         THistogramColumn iPlane,
-                        std::ofstream &outputFile );
+                        std::ofstream &outputFile,
+                        ProgressController *progress = NULL );
 
     void dumpMatrixCommHorizontal( Histogram *whichHisto,
                                    TObjectOrder numRows,
@@ -123,7 +131,8 @@ class TextOutput:public Output
                                    std::vector<THistogramColumn> printedColumns,
                                    THistogramColumn iPlane,
                                    std::ofstream &outputfile,
-                                   bool withLabels );
+                                   bool withLabels,
+                                   ProgressController *progress = NULL );
 
     void dumpMatrixCommVertical( Histogram *whichHisto,
                                  TObjectOrder numRows,
@@ -132,7 +141,8 @@ class TextOutput:public Output
                                  std::vector<THistogramColumn> printedColumns,
                                  THistogramColumn iPlane,
                                  std::ofstream &outputfile,
-                                 bool withLabels );
+                                 bool withLabels,
+                                 ProgressController *progress = NULL );
 
 };
 
