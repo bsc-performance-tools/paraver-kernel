@@ -2101,6 +2101,92 @@ HistogramStatistic *StatAvgPerBurst::clone()
 
 
 //-------------------------------------------------------------------------
+// Histogram Statistic: Average per Burst != 0
+//-------------------------------------------------------------------------
+string StatAvgPerBurstNotZero::name = "Average per Burst != 0";
+
+void StatAvgPerBurstNotZero::init( KHistogram *whichHistogram )
+{
+  myHistogram = whichHistogram;
+  dataWin = myHistogram->getDataWindow();
+#ifndef PARALLEL_ENABLED
+  numValues = Statistics::zeroMatrix;
+#else
+  numValues = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+#endif
+}
+
+void StatAvgPerBurstNotZero::reset()
+{
+#ifndef PARALLEL_ENABLED
+  numValues = Statistics::zeroMatrix;
+#else
+  delete numValues;
+#endif
+}
+
+bool StatAvgPerBurstNotZero::filter( CalculateData *data ) const
+{
+  TRecordTime begin;
+  TRecordTime end;
+
+  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
+          data->beginTime : dataWin->getBeginTime( data->dataRow );
+
+  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
+        data->endTime : dataWin->getEndTime( data->dataRow );
+
+  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+                              myHistogram )
+         &&
+         filterBurstTime( end - begin, myHistogram );
+}
+
+TSemanticValue StatAvgPerBurstNotZero::execute( CalculateData *data )
+{
+  if ( dataWin->getValue( data->dataRow ) != 0.0 )
+#ifndef PARALLEL_ENABLED
+    ++( ( numValues[ data->plane ] )[ data->column ] );
+#else
+    numValues->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, 1.0 ) );
+#endif
+
+  return dataWin->getValue( data->dataRow );
+}
+
+TSemanticValue StatAvgPerBurstNotZero::finishRow( TSemanticValue cellValue,
+    THistogramColumn column,
+    TObjectOrder row,
+    THistogramColumn plane )
+{
+#ifndef PARALLEL_ENABLED
+  return cellValue / ( numValues[ plane ] )[ column ];
+#else
+  vector< TSemanticValue > tmp;
+  if( !numValues->getCellValue( tmp, plane, row, column ) )
+    return 0.0;
+
+  return cellValue / tmp[ 0 ];
+#endif
+}
+
+string StatAvgPerBurstNotZero::getName() const
+{
+  return StatAvgPerBurstNotZero::name;
+}
+
+string StatAvgPerBurstNotZero::getUnits( const KHistogram *whichHisto ) const
+{
+  return "";
+}
+
+HistogramStatistic *StatAvgPerBurstNotZero::clone()
+{
+  return new StatAvgPerBurstNotZero( *this );
+}
+
+
+//-------------------------------------------------------------------------
 // Histogram Statistic: Average value != 0
 //-------------------------------------------------------------------------
 string StatAvgValueNotZero::name = "Average value != 0";

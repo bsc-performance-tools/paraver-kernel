@@ -961,6 +961,46 @@ class StatNumBurstsNotZero: public HistogramStatistic
 };
 
 
+class StatAvgPerBurstNotZero: public HistogramStatistic
+{
+  public:
+    StatAvgPerBurstNotZero() {};
+    ~StatAvgPerBurstNotZero() {};
+
+    virtual bool createComms() const
+    {
+      return false;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data )
+    {
+      return 0;
+    }
+
+    virtual void init( KHistogram *whichHistogram );
+    virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
+                                      TObjectOrder row,
+                                      THistogramColumn plane = 0 );
+
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static std::string name;
+    Window *dataWin;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *numValues;
+#else
+    std::vector<std::vector<TSemanticValue> > numValues;
+#endif
+};
+
+
 class StatSumBursts: public HistogramStatistic
 {
   public:
@@ -995,6 +1035,9 @@ class StatSumBursts: public HistogramStatistic
     static std::string name;
     Window *dataWin;
 };
+
+
+
 
 
 class Statistics
@@ -1056,6 +1099,7 @@ class Statistics
     StatAvgPerBurst statAvgPerBurst;
     StatAvgValueNotZero statAvgValueNotZero;
     StatNumBurstsNotZero statNumBurstsNotZero;
+    StatAvgPerBurstNotZero statAvgPerBurstNotZero;
     StatSumBursts statSumBursts;
 
     static int numCommStats;
