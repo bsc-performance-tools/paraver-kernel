@@ -214,6 +214,7 @@ ParaverConfig::ParaverConfig()
   xmlHistogram.saveTextFormat = CSV;
   xmlHistogram.saveImageFormat = PNG;
   xmlHistogram.pixelSize = 0;
+  xmlHistogram.skipCreateDialog = false;
 
   // Filter Globals
   xmlFilters.filterTraceUpToMB = 500.0;
@@ -718,6 +719,11 @@ void ParaverConfig::setHistogramPixelSize( PRV_UINT16 whichPixelSize )
   xmlHistogram.pixelSize = whichPixelSize;
 }
 
+void ParaverConfig::setHistogramSkipCreateDialog( bool whichSkipCreateDialog )
+{
+  xmlHistogram.skipCreateDialog = whichSkipCreateDialog;
+}
+
 bool ParaverConfig::getHistogramViewZoom() const
 {
   return xmlHistogram.viewZoom;
@@ -817,6 +823,12 @@ PRV_UINT16 ParaverConfig::getHistogramPixelSize() const
 {
   return xmlHistogram.pixelSize;
 }
+
+bool ParaverConfig::getHistogramSkipCreateDialog() const
+{
+  return xmlHistogram.skipCreateDialog;
+}
+
 
 // FILTERS XML SECTION : GLOBAL
 void ParaverConfig::setFiltersFilterTraceUpToMB( float whichFilterTraceUpToMB )

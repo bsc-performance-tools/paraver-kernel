@@ -186,6 +186,7 @@ class ParaverConfig
     void setHistogramSaveTextFormat( TTextFormat whichSaveTextFormat );
     void setHistogramSaveImageFormat( TImageFormat whichSaveImageFormat );
     void setHistogramPixelSize( PRV_UINT16 whichPixelSize );
+    void setHistogramSkipCreateDialog( bool whichSkipCreateDialog );
 
     bool getHistogramViewZoom() const;
     bool getHistogramViewFirstRowColored() const;
@@ -207,6 +208,8 @@ class ParaverConfig
     TTextFormat getHistogramSaveTextFormat() const;
     TImageFormat getHistogramSaveImageFormat() const;
     PRV_UINT16 getHistogramPixelSize() const;
+    bool getHistogramSkipCreateDialog() const;
+
 
     // FILTERS XML SECTION : GLOBAL
     void setFiltersFilterTraceUpToMB( float whichFilterTraceUpToMB );
@@ -444,6 +447,8 @@ class ParaverConfig
           ar & boost::serialization::make_nvp( "view_first_row_colored", viewFirstRowColored );
         if( version >= 3 )
           ar & boost::serialization::make_nvp( "pixel_size_histogram", pixelSize );
+        if( version >= 4 )
+          ar & boost::serialization::make_nvp( "skip_create_dialog", skipCreateDialog );
       }
 
       bool viewZoom;
@@ -466,6 +471,7 @@ class ParaverConfig
       TTextFormat saveTextFormat;
       TImageFormat saveImageFormat;
       PRV_UINT16 pixelSize;
+      bool skipCreateDialog;
 
     } xmlHistogram;
 
@@ -685,7 +691,7 @@ class ParaverConfig
 BOOST_CLASS_VERSION( ParaverConfig, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 5)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 3)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 3)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 4)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilter, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersRange, 0)
