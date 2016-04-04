@@ -179,6 +179,7 @@ void createSemantic()
   functions[6].push_back( new CommPartner() );
   functions[6].push_back( new LastSendDuration() );
   functions[6].push_back( new NextRecvDuration() );
+  functions[6].push_back( new LastSendSize() );
   functions[6].push_back( new SendBytesInTransit() );
   functions[6].push_back( new SendMessagesInTransit() );
   functions[6].push_back( new SendBandWidth() );

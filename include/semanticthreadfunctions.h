@@ -1890,6 +1890,70 @@ class NextRecvDuration: public SemanticThread
 };
 
 
+class LastSendSize: public SemanticThread
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    LastSendSize()
+    {
+      setDefaultParam();
+    }
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual void init( KWindow *whichWindow )
+    {}
+
+    virtual std::string getName()
+    {
+      return LastSendSize::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new LastSendSize( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return COMMSIZE_TYPE;
+    }
+
+  protected:
+    virtual const TRecordType getValidateMask()
+    {
+      return validateMask;
+    }
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return ( TParamValue ) 0;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
+  private:
+    static const TRecordType  validateMask = COMM + LOG + SEND;
+    static const bool         initFromBegin = false;
+    static std::string name;
+};
+
+
 class SendBytesInTransit: public SemanticThread
 {
   public:

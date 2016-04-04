@@ -1045,6 +1045,23 @@ TSemanticValue NextRecvDuration::execute( const SemanticInfo *info )
 }
 
 
+string LastSendSize::name = "Last Send Size";
+TSemanticValue LastSendSize::execute( const SemanticInfo *info )
+{
+  TSemanticValue tmp = 0;
+
+  const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
+
+  if ( myInfo->it->getType() == EMPTYREC )
+    return 0;
+
+  tmp =  myInfo->callingInterval->getWindow()->getTrace()->getCommSize(
+          myInfo->it->getCommIndex() );
+
+  return tmp;
+}
+
+
 string SendBytesInTransit::name = "Send Bytes in Transit";
 TSemanticValue SendBytesInTransit::execute( const SemanticInfo *info )
 {
