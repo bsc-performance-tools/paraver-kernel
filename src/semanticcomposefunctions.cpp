@@ -27,7 +27,7 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-#include <math.h>
+#include <cmath>
 #include "semanticcomposefunctions.h"
 #include "kwindow.h"
 

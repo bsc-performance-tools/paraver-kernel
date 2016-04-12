@@ -28,6 +28,7 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include <string>
+#include <cmath>
 #include "kernelconnection.h"
 #include "histogram.h"
 #include "window.h"

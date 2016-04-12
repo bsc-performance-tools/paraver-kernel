@@ -33,6 +33,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 #include "paraverkerneltypes.h"
 #include "workspace.h"
 

@@ -194,6 +194,7 @@
 			<Option target="otf2prv" />
 			<Option target="ptools_common_files" />
 		</Unit>
+		<Unit filename="../common-files/pcfparser/libtools/debug.h" />
 		<Unit filename="../common-files/prvtypes.h">
 			<Option target="Debug" />
 			<Option target="Release" />

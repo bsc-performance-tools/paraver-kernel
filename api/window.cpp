@@ -30,6 +30,7 @@
 #include <iostream>
 #include <sstream>
 
+#include <cmath>
 #include <algorithm> // CFG4D
 
 #include "config.h"
