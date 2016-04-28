@@ -548,9 +548,9 @@ bool GradientColor::calcValue( rgb whichColor,
 
 void GradientColor::recalcSteps()
 {
-  redStep = ( endGradientColor.red - beginGradientColor.red );
-  greenStep = ( endGradientColor.green - beginGradientColor.green );
-  blueStep = ( endGradientColor.blue - beginGradientColor.blue );
+  redStep = ( (double)endGradientColor.red - (double)beginGradientColor.red );
+  greenStep = ( (double)endGradientColor.green - (double)beginGradientColor.green );
+  blueStep = ( (double)endGradientColor.blue - (double)beginGradientColor.blue );
 }
 
 void GradientColor::copy( GradientColor &destiny )
@@ -574,9 +574,9 @@ rgb GradientColor::functionLinear( TSemanticValue whichValue,
 {
   rgb tmpColor = beginGradientColor;
 
-  tmpColor.red += ( ParaverColor ) floor( redStep * whichValue );
-  tmpColor.green += ( ParaverColor ) floor( greenStep * whichValue );
-  tmpColor.blue += ( ParaverColor ) floor( blueStep * whichValue );
+  tmpColor.red += floor( redStep * whichValue );
+  tmpColor.green += floor( greenStep * whichValue );
+  tmpColor.blue += floor( blueStep * whichValue );
 
   return tmpColor;
 }
@@ -588,9 +588,9 @@ rgb GradientColor::functionSteps( TSemanticValue whichValue,
   rgb tmpColor = beginGradientColor;
 
   double stepNorm = floor( numSteps * whichValue ) / numSteps;
-  tmpColor.red += ( ParaverColor ) floor( redStep * stepNorm );
-  tmpColor.green += ( ParaverColor ) floor( greenStep * stepNorm );
-  tmpColor.blue += ( ParaverColor ) floor( blueStep * stepNorm );
+  tmpColor.red += floor( redStep * stepNorm );
+  tmpColor.green += floor( greenStep * stepNorm );
+  tmpColor.blue += floor( blueStep * stepNorm );
 
   return tmpColor;
 }
@@ -602,9 +602,9 @@ rgb GradientColor::functionLog( TSemanticValue whichValue,
   rgb tmpColor = beginGradientColor;
 
   double stepNorm = log( ( double )( whichValue * 100 + 1 ) ) / log( ( double )101 );
-  tmpColor.red += ( ParaverColor ) floor( redStep * stepNorm );
-  tmpColor.green += ( ParaverColor ) floor( greenStep * stepNorm );
-  tmpColor.blue += ( ParaverColor ) floor( blueStep * stepNorm );
+  tmpColor.red += floor( redStep * stepNorm );
+  tmpColor.green += floor( greenStep * stepNorm );
+  tmpColor.blue += floor( blueStep * stepNorm );
 
   return tmpColor;
 }
@@ -616,9 +616,9 @@ rgb GradientColor::functionExp( TSemanticValue whichValue,
   rgb tmpColor = beginGradientColor;
 
   double stepNorm = exp( ( double )( whichValue * 10 ) ) / exp( ( double )10 );
-  tmpColor.red += ( ParaverColor ) floor( redStep * stepNorm );
-  tmpColor.green += ( ParaverColor ) floor( greenStep * stepNorm );
-  tmpColor.blue += ( ParaverColor ) floor( blueStep * stepNorm );
+  tmpColor.red += floor( redStep * stepNorm );
+  tmpColor.green += floor( greenStep * stepNorm );
+  tmpColor.blue += floor( blueStep * stepNorm );
 
   return tmpColor;
 }
