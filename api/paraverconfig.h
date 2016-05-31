@@ -283,6 +283,7 @@ class ParaverConfig
     void setColorsTimelineAxis( rgb whichTimelineAxis );
     void setColorsTimelineUseZero( bool useZero );
     void setColorsTimelineColorZero( rgb whichTimelineZero );
+    void setColorsTimelinePunctual( rgb whichPunctual );
     void setColorsTimelineLogicalCommunications( rgb whichTimelineLogicalCommunications );
     void setColorsTimelinePhysicalCommunications( rgb whichTimelinePhysicalCommunications );
     void setColorsTopGradient( rgb whichTopGradient );
@@ -294,6 +295,7 @@ class ParaverConfig
     rgb getColorsTimelineAxis() const;
     bool getColorsTimelineUseZero() const;
     rgb getColorsTimelineColorZero() const;
+    rgb getColorsTimelinePunctual() const;
     rgb getColorsTimelineLogicalCommunications() const;
     rgb getColorsTimelinePhysicalCommunications() const;
     rgb getColorsTopGradient() const;
@@ -635,6 +637,10 @@ class ParaverConfig
         {
           ar & boost::serialization::make_nvp( "timeline_use_color_zero", useColorZero );
           ar & boost::serialization::make_nvp( "timeline_semantic_zero", timelineColorZero );
+          if( version >= 2 )
+          {
+            ar & boost::serialization::make_nvp( "timeline_color_punctual", timelineColorPunctual );
+          }
         }
         ar & boost::serialization::make_nvp( "timeline_logical_communications", timelineLogicalCommunications );
         ar & boost::serialization::make_nvp( "timeline_physical_communications", timelinePhysicalCommunications );
@@ -648,6 +654,7 @@ class ParaverConfig
       rgb timelineAxis;
       bool useColorZero;
       rgb timelineColorZero;
+      rgb timelineColorPunctual;
       rgb timelineLogicalCommunications;
       rgb timelinePhysicalCommunications;
       rgb topGradient;
@@ -698,7 +705,7 @@ BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersRange, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersAlgorithm, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCounters, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilters, 3)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesColor, 1)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesColor, 2)
 
 // WhatWhere.num_decimals
 class WWNumDecimals: public PropertyFunction

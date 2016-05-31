@@ -49,6 +49,7 @@ class SemanticColor
 
     static rgb BACKGROUND;
     static rgb FOREGROUND;
+    static rgb DEFAULT_PUNCTUAL;
     static rgb DEFAULT_LOGICAL_COMMUNICATIONS;
     static rgb DEFAULT_PHYSICAL_COMMUNICATIONS;
     static rgb DEFAULT_BEGIN_GRADIENT_COLOR;

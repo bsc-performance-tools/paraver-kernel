@@ -257,6 +257,7 @@ static const std::string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
 #define GUI_COLORS_GRADIENT_COLOR         "Gradient Color"
 #define GUI_COLORS_NOT_NULL_GRADIENT      "Not Null Gradient"
 #define GUI_COLORS_FUNCTION_LINE          "Function Line"
+#define GUI_COLORS_PUNCTUAL               "Punctual"
 #define GUI_GRADIENT_FUNCTION_LINEAR      "Linear"
 #define GUI_GRADIENT_FUNCTION_STEPS       "Steps"
 #define GUI_GRADIENT_FUNCTION_LOGARITHMIC "Logarithmic"
