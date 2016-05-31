@@ -2060,3 +2060,259 @@ void WindowProxy::computeEventsCommsParallel( RecordList *records,
 
   records->erase( records->begin(), it );
 }
+
+#ifdef WIN32
+void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selectedSet,
+                                                   vector< bool >& selected,
+                                                   TTime timeStep,
+                                                   PRV_INT32 timePos,
+                                                   PRV_INT32 objectAxisPos,
+                                                   vector< PRV_INT32 >& objectPosList,
+                                                   TObjectOrder maxObj,
+                                                   bool& drawCaution,
+                                                   vector< vector< vector< TSemanticValue > > >& valuesToDraw,
+                                                   vector< hash_set< PRV_INT32 > >& eventsToDraw,
+                                                   vector< hash_set< commCoord > >& commsToDraw,
+                                                   ProgressController *progress )
+#else
+void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selectedSet,
+                                                   vector< bool >& selected,
+                                                   TTime timeStep,
+                                                   PRV_INT32 timePos,
+                                                   PRV_INT32 objectAxisPos,
+                                                   vector< PRV_INT32 >& objectPosList,
+                                                   TObjectOrder maxObj,
+                                                   bool& drawCaution,
+                                                   vector< vector< vector< TSemanticValue > > >& valuesToDraw,
+                                                   vector< hash_set< PRV_INT32 > >& eventsToDraw,
+                                                   vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,
+                                                   ProgressController *progress )
+#endif
+{
+  vector< int > tmpDrawCaution;
+  vector< TSemanticValue > tmpComputedMaxY;
+  vector< TSemanticValue > tmpComputedMinY;
+  ProgressController *paramProgress = NULL;
+
+  if( getWindowBeginTime() == getWindowEndTime() )
+    return;
+
+  int numRows = 0;
+  for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
+  {
+    TObjectOrder firstObj = *obj;
+    TObjectOrder lastObj = firstObj;
+    while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
+    {
+      ++obj;
+      lastObj = *obj;
+    }
+
+    ++numRows;
+  }
+
+  valuesToDraw.reserve( numRows );
+  eventsToDraw.reserve( numRows );
+  commsToDraw.reserve( numRows );
+  tmpDrawCaution.reserve( numRows );
+  tmpComputedMaxY.reserve( numRows );
+  tmpComputedMinY.reserve( numRows );
+
+#ifndef PARALLEL_ENABLED
+  paramProgress = progress;
+  if( numRows > 1 )
+    progress->setEndLimit( numRows );
+  else
+    progress->setEndLimit( getWindowEndTime() - getWindowBeginTime() );
+#endif // PARALLEL_ENABLED
+
+  // Drawmode: Group objects with same wxCoord in objectPosList
+  int currentRow = 0;
+  for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
+  {
+    TObjectOrder firstObj = *obj;
+    TObjectOrder lastObj = firstObj;
+    while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
+    {
+      ++obj;
+      lastObj = *obj;
+    }
+    valuesToDraw.push_back( vector< vector< TSemanticValue > >() );
+
+    eventsToDraw.push_back( hash_set< PRV_INT32 >() );
+#ifdef WIN32
+    commsToDraw.push_back( hash_set< commCoord >() );
+#else
+    commsToDraw.push_back( hash_set< commCoord, hashCommCoord >() );
+#endif
+
+    tmpDrawCaution.push_back( drawCaution );
+    tmpComputedMaxY.push_back( 0.0 );
+    tmpComputedMinY.push_back( 0.0 );
+
+    computeSemanticRowPunctualParallel(
+            numRows, firstObj, lastObj, selectedSet, selected, timeStep, timePos,
+            objectAxisPos, objectPosList,
+            tmpDrawCaution[ tmpDrawCaution.size() - 1 ],
+            tmpComputedMaxY[ tmpComputedMaxY.size() - 1 ],
+            tmpComputedMinY[ tmpComputedMinY.size() - 1 ],
+            valuesToDraw[ valuesToDraw.size() - 1 ],
+            eventsToDraw[ eventsToDraw.size() - 1 ],
+            commsToDraw[ commsToDraw.size() - 1 ],
+            paramProgress );
+
+#ifndef PARALLEL_ENALBLED
+    if( numRows > 1 )
+    {
+      if( progress->getStop() )
+        break;
+      progress->setCurrentProgress( currentRow );
+    }
+    ++currentRow;
+#endif // PARALLEL_ENALBLED
+
+  }
+//#pragma css barrier
+#pragma omp taskwait
+
+  for( vector< int >::iterator it = tmpDrawCaution.begin(); it != tmpDrawCaution.end(); ++it )
+  {
+    if ( *it )
+    {
+      drawCaution = true;
+      break;
+    }
+  }
+
+  for( size_t pos = 0; pos < tmpComputedMaxY.size(); ++pos )
+  {
+    drawCaution = drawCaution || tmpDrawCaution[ pos ];
+    computedMaxY = computedMaxY > tmpComputedMaxY[ pos ] ? computedMaxY : tmpComputedMaxY[ pos ];
+    if ( computedMinY == 0.0 )
+      computedMinY = tmpComputedMinY[ pos ];
+    else if( tmpComputedMinY[ pos ] != 0.0 )
+      computedMinY = computedMinY < tmpComputedMinY[ pos ] ? computedMinY : tmpComputedMinY[ pos ];
+  }
+}
+
+#ifdef WIN32
+void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
+                                                      TObjectOrder firstRow,
+                                                      TObjectOrder lastRow,
+                                                      vector< TObjectOrder >& selectedSet,
+                                                      vector< bool >& selected,
+                                                      TTime timeStep,
+                                                      PRV_INT32 timePos,
+                                                      PRV_INT32 objectAxisPos,
+                                                      vector< PRV_INT32 >& objectPosList,
+                                                      int& drawCaution,
+                                                      TSemanticValue& rowComputedMaxY,
+                                                      TSemanticValue& rowComputedMinY,
+                                                      vector< vector< TSemanticValue > >& valuesToDraw,
+                                                      hash_set< PRV_INT32 >& eventsToDraw,
+                                                      hash_set< commCoord >& commsToDraw,
+                                                      ProgressController *progress )
+#else
+void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
+                                                      TObjectOrder firstRow,
+                                                      TObjectOrder lastRow,
+                                                      vector< TObjectOrder >& selectedSet,
+                                                      vector< bool >& selected,
+                                                      TTime timeStep,
+                                                      PRV_INT32 timePos,
+                                                      PRV_INT32 objectAxisPos,
+                                                      vector< PRV_INT32 >& objectPosList,
+                                                      int& drawCaution,
+                                                      TSemanticValue& rowComputedMaxY,
+                                                      TSemanticValue& rowComputedMinY,
+                                                      vector< vector< TSemanticValue > >& valuesToDraw,
+                                                      hash_set< PRV_INT32 >& eventsToDraw,
+                                                      hash_set< commCoord, hashCommCoord >& commsToDraw,
+                                                      ProgressController *progress )
+#endif
+{
+  float magnify = float( getPixelSize() );
+
+  vector<TSemanticValue> values;
+
+  vector<TObjectOrder>::iterator first = find( selectedSet.begin(), selectedSet.end(), firstRow );
+  vector<TObjectOrder>::iterator last  = find( selectedSet.begin(), selectedSet.end(), lastRow );
+
+  for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
+    initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS, rowComputedMaxY, rowComputedMinY );
+
+  TTime currentTime;
+  for( currentTime = getWindowBeginTime() + timeStep;
+       currentTime <= getWindowEndTime() && currentTime <= getTrace()->getEndTime();
+       currentTime += timeStep )
+  {
+    values.clear();
+    for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
+    {
+      while( getEndTime( *row ) <= currentTime - timeStep )
+        calcNext( *row, rowComputedMaxY, rowComputedMinY  );
+
+      if( getBeginTime( *row ) >= currentTime - timeStep && getBeginTime( *row ) < currentTime )
+        values.push_back( getValue( *row ) );
+
+      while( getEndTime( *row ) < currentTime )
+      {
+        calcNext( *row, rowComputedMaxY, rowComputedMinY  );
+        TSemanticValue currentValue = getValue( *row );
+
+        if( getBeginTime( *row ) >= currentTime - timeStep && getBeginTime( *row ) < currentTime )
+          values.push_back( currentValue );
+
+        if( currentValue != 0 && ( currentValue < getMinimumY()
+                                   || currentValue > getMaximumY() ) )
+          drawCaution = true;
+      }
+
+      RecordList *rl = getRecordList( *row );
+      if( rl != NULL )
+        computeEventsCommsParallel( rl,
+                                    currentTime - timeStep, currentTime, timeStep / magnify,
+                                    timePos, objectAxisPos,
+                                    selected, objectPosList,
+                                    eventsToDraw, commsToDraw );
+    }
+    valuesToDraw.push_back( values );
+    timePos += (int) magnify;
+
+    if( progress != NULL )
+    {
+      if( progress->getStop() )
+        break;
+      if( numRows == 1 )
+      {
+        static unsigned short tmpCount = 0;
+        ++tmpCount;
+        if( tmpCount == 10000 )
+        {
+          progress->setCurrentProgress( currentTime - getWindowBeginTime() );
+          tmpCount = 0;
+        }
+      }
+    }
+  }
+
+  for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
+  {
+    TSemanticValue dumbMinMax;
+    calcNext( *row, dumbMinMax, dumbMinMax );
+    RecordList *rl = getRecordList( *row );
+    if( rl != NULL )
+      computeEventsCommsParallel( rl,
+                                  currentTime - timeStep, currentTime, timeStep / magnify,
+                                  timePos, objectAxisPos,
+                                  selected, objectPosList,
+                                  eventsToDraw, commsToDraw );
+  }
+
+  // Erase events and comms remaining in RecordLists
+  for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
+  {
+    RecordList *rl = getRecordList( *row );
+    rl->erase( rl->begin(), rl->end() );
+  }
+}

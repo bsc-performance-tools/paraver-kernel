@@ -638,7 +638,7 @@ class Window
     }
 
     virtual std::vector<Window::TParamAliasKey > getCFG4DParamKeysBySemanticLevel( std::string whichSemanticLevel,
-				                                                                   const std::vector< Window::TParamAliasKey > &whichParamAlias = std::vector<Window::TParamAliasKey >() ) const
+                                                                                   const std::vector< Window::TParamAliasKey > &whichParamAlias = std::vector<Window::TParamAliasKey >() ) const
     {
       return std::vector<Window::TParamAliasKey >();
     }
@@ -729,6 +729,72 @@ class Window
                                              hash_set< commCoord, hashCommCoord >& commsToDraw ) // I/O
 #endif
   {}
+
+/*******************************************************************************
+ EXPERIMENTAL FEATURE FOR PUNCTUAL INFORMATION
+*******************************************************************************/
+
+#ifdef WIN32
+    virtual void computeSemanticPunctualParallel( std::vector< TObjectOrder >& selectedSet,
+                                                  std::vector< bool >& selected,
+                                                  TTime timeStep,
+                                                  PRV_INT32 timePos,
+                                                  PRV_INT32 objectAxisPos,
+                                                  std::vector< PRV_INT32 >& objectPosList,
+                                                  TObjectOrder maxObj,
+                                                  bool& drawCaution,                      // I/O
+                                                  std::vector< std::vector< std::vector< TSemanticValue > > >& valuesToDraw, // I/O
+                                                  std::vector< hash_set< PRV_INT32 > >& eventsToDraw,    // I/O
+                                                  std::vector< hash_set< commCoord > >& commsToDraw,    // I/O
+                                                  ProgressController *progress )
+#else
+    virtual void computeSemanticPunctualParallel( std::vector< TObjectOrder >& selectedSet,
+                                                  std::vector< bool >& selected,
+                                                  TTime timeStep,
+                                                  PRV_INT32 timePos,
+                                                  PRV_INT32 objectAxisPos,
+                                                  std::vector< PRV_INT32 >& objectPosList,
+                                                  TObjectOrder maxObj,
+                                                  bool& drawCaution,                                  // I/O
+                                                  std::vector< std::vector< std::vector< TSemanticValue > > >& valuesToDraw,             // I/O
+                                                  std::vector< hash_set< PRV_INT32 > >& eventsToDraw,                // I/O
+                                                  std::vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,    // I/O
+                                                  ProgressController *progress )
+#endif
+    {}
+
+#ifdef WIN32
+    virtual void computeSemanticRowPunctualParallel( TObjectOrder firstRow,
+                                                     TObjectOrder lastRow,
+                                                     std::vector< TObjectOrder >& selectedSet,
+                                                     std::vector< bool >& selected,
+                                                     TTime timeStep,
+                                                     PRV_INT32 timePos,
+                                                     PRV_INT32 objectAxisPos,
+                                                     std::vector< PRV_INT32 >& objectPosList,
+                                                     int& drawCaution,                      // I/O
+                                                     TSemanticValue &rowComputedMaxY,
+                                                     TSemanticValue &rowComputedMinY,
+                                                     std::vector< std::vector< TSemanticValue > >& valuesToDraw, // I/O
+                                                     hash_set< PRV_INT32 >& eventsToDraw,    // I/O
+                                                     hash_set< commCoord >& commsToDraw )    // I/O
+#else
+    virtual void computeSemanticRowPunctualParallel( TObjectOrder firstRow,
+                                                     TObjectOrder lastRow,
+                                                     std::vector< TObjectOrder >& selectedSet,
+                                                     std::vector< bool >& selected,
+                                                     TTime timeStep,
+                                                     PRV_INT32 timePos,
+                                                     PRV_INT32 objectAxisPos,
+                                                     std::vector< PRV_INT32 >& objectPosList,
+                                                     int& drawCaution,                                  // I/O
+                                                     TSemanticValue &rowComputedMaxY,
+                                                     TSemanticValue &rowComputedMinY,
+                                                     std::vector< std::vector< TSemanticValue > >& valuesToDraw,             // I/O
+                                                     hash_set< PRV_INT32 >& eventsToDraw,                // I/O
+                                                     hash_set< commCoord, hashCommCoord >& commsToDraw ) // I/O
+#endif
+    {}
 
   protected:
     KernelConnection *myKernel;
@@ -1052,6 +1118,71 @@ class WindowProxy: public Window
                                              hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
                                              hash_set< commCoord, hashCommCoord >& commsToDraw ); // I/O
 #endif // WIN32
+
+#ifdef WIN32
+    virtual void computeSemanticPunctualParallel( std::vector< TObjectOrder >& selectedSet,
+                                                  std::vector< bool >& selected,
+                                                  TTime timeStep,
+                                                  PRV_INT32 timePos,
+                                                  PRV_INT32 objectAxisPos,
+                                                  std::vector< PRV_INT32 >& objectPosList,
+                                                  TObjectOrder maxObj,
+                                                  bool& drawCaution,                      // I/O
+                                                  std::vector< std::vector< std::vector< TSemanticValue > > >& valuesToDraw, // I/O
+                                                  std::vector< hash_set< PRV_INT32 > >& eventsToDraw,    // I/O
+                                                  std::vector< hash_set< commCoord > >& commsToDraw,    // I/O
+                                                  ProgressController *progress );
+#else
+    virtual void computeSemanticPunctualParallel( std::vector< TObjectOrder >& selectedSet,
+                                                  std::vector< bool >& selected,
+                                                  TTime timeStep,
+                                                  PRV_INT32 timePos,
+                                                  PRV_INT32 objectAxisPos,
+                                                  std::vector< PRV_INT32 >& objectPosList,
+                                                  TObjectOrder maxObj,
+                                                  bool& drawCaution,                                  // I/O
+                                                  std::vector< std::vector< std::vector< TSemanticValue > > >& valuesToDraw,             // I/O
+                                                  std::vector< hash_set< PRV_INT32 > >& eventsToDraw,                // I/O
+                                                  std::vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,    // I/O
+                                                  ProgressController *progress );
+#endif
+
+#ifdef WIN32
+    virtual void computeSemanticRowPunctualParallel( int numRows,
+                                                     TObjectOrder firstRow,
+                                                     TObjectOrder lastRow,
+                                                     std::vector< TObjectOrder >& selectedSet,
+                                                     std::vector< bool >& selected,
+                                                     TTime timeStep,
+                                                     PRV_INT32 timePos,
+                                                     PRV_INT32 objectAxisPos,
+                                                     std::vector< PRV_INT32 >& objectPosList,
+                                                     int& drawCaution,  // O
+                                                     TSemanticValue &rowComputedMaxY,
+                                                     TSemanticValue &rowComputedMinY,
+                                                     std::vector< std::vector< TSemanticValue > >& valuesToDraw, // O
+                                                     hash_set< PRV_INT32 >& eventsToDraw,    // O
+                                                     hash_set< commCoord >& commsToDraw,
+                                                     ProgressController *progress );   // O
+#else
+#pragma omp task shared( numRows, firstRow, lastRow, selectedSet, selected, timeStep, timePos, objectAxisPos, objectPosList, drawCaution, rowComputedMaxY, rowComputedMinY, valuesToDraw, eventsToDraw, commsToDraw, progress )
+    void computeSemanticRowPunctualParallel( int numRows,
+                                             TObjectOrder firstRow,
+                                             TObjectOrder lastRow,
+                                             std::vector< TObjectOrder >& selectedSet,
+                                             std::vector< bool >& selected,
+                                             TTime timeStep,
+                                             PRV_INT32 timePos,
+                                             PRV_INT32 objectAxisPos,
+                                             std::vector< PRV_INT32 >& objectPosList,
+                                             int& drawCaution,                                    // I/O
+                                             TSemanticValue &rowComputedMaxY,
+                                             TSemanticValue &rowComputedMinY,
+                                             std::vector< std::vector< TSemanticValue > >& valuesToDraw,         // I/O
+                                             hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
+                                             hash_set< commCoord, hashCommCoord >& commsToDraw,
+                                             ProgressController *progress ); // I/O
+#endif
 
   private:
     Window *myWindow;
