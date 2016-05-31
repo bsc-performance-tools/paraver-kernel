@@ -43,7 +43,8 @@ class SemanticColor
       COLOR = 0,
       GRADIENT,
       NOT_NULL_GRADIENT,
-      FUNCTION_LINE
+      FUNCTION_LINE,
+      PUNCTUAL
     };
 
     static rgb BACKGROUND;

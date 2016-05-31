@@ -930,6 +930,11 @@ void WindowProxy::setFunctionLineColorMode()
   colorMode = SemanticColor::FUNCTION_LINE;
 }
 
+void WindowProxy::setPunctualColorMode()
+{
+  colorMode = SemanticColor::PUNCTUAL;
+}
+
 bool WindowProxy::isCodeColorSet() const
 {
   return colorMode == SemanticColor::COLOR;
@@ -948,6 +953,11 @@ bool WindowProxy::isNotNullGradientColorSet() const
 bool WindowProxy::isFunctionLineColorSet() const
 {
   return colorMode == SemanticColor::FUNCTION_LINE;
+}
+
+bool WindowProxy::isPunctualColorSet() const
+{
+  return colorMode == SemanticColor::PUNCTUAL;
 }
 
 PRV_UINT16 WindowProxy::getPixelSize() const
