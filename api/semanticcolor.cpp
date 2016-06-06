@@ -461,6 +461,9 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
     return ParaverConfig::getInstance()->getColorsTimelineBackground();
   }
 
+  if( maximum == minimum )
+    return beginGradientColor;
+
   TSemanticValue norm = ( whichValue - minimum ) /
                         ( maximum - minimum );
 
