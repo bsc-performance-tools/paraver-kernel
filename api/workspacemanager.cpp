@@ -249,7 +249,10 @@ void WorkspaceManager::loadXML()
 
     baseDir = tmpPath;
 #else
-  baseDir = getenv( "PARAVER_HOME" );
+  if( getenv( "PARAVER_HOME" ) == NULL )
+    baseDir = "";
+  else
+    baseDir = getenv( "PARAVER_HOME" );
 #endif
 
   fullPath = baseDir;
