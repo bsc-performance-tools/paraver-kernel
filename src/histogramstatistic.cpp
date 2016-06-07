@@ -40,7 +40,7 @@
 using namespace std;
 
 int Statistics::numCommStats = 10;
-int Statistics::numStats = 15;
+int Statistics::numStats = 16;
 
 //-------------------------------------------------------------------------
 // Statistics filtering functions
@@ -210,6 +210,7 @@ void Statistics::initAll( KHistogram *whichHistogram )
   statStdevBurstTime.init( whichHistogram );
   statAvgPerBurst.init( whichHistogram );
   statAvgValueNotZero.init( whichHistogram );
+  statAvgPerBurstNotZero.init( whichHistogram );
   statNumBurstsNotZero.init( whichHistogram );
   statSumBursts.init( whichHistogram );
 }
@@ -229,6 +230,7 @@ void Statistics::resetAll()
   statStdevBurstTime.reset();
   statAvgPerBurst.reset();
   statAvgValueNotZero.reset();
+  statAvgPerBurstNotZero.reset();
   statNumBurstsNotZero.reset();
   statSumBursts.reset();
 }
@@ -250,6 +252,7 @@ vector<bool> Statistics::filterAll( CalculateData *data )
   values.push_back( statStdevBurstTime.filter( data ) );
   values.push_back( statAvgPerBurst.filter( data ) );
   values.push_back( statAvgValueNotZero.filter( data ) );
+  values.push_back( statAvgPerBurstNotZero.filter( data ) );
   values.push_back( statNumBurstsNotZero.filter( data ) );
   values.push_back( statSumBursts.filter( data ) );
 
@@ -273,6 +276,7 @@ vector<TSemanticValue> Statistics::executeAll( CalculateData *data )
   values.push_back( statStdevBurstTime.execute( data ) );
   values.push_back( statAvgPerBurst.execute( data ) );
   values.push_back( statAvgValueNotZero.execute( data ) );
+  values.push_back( statAvgPerBurstNotZero.execute( data ) );
   values.push_back( statNumBurstsNotZero.execute( data ) );
   values.push_back( statSumBursts.execute( data ) );
 
@@ -312,6 +316,8 @@ vector<TSemanticValue> Statistics::finishRowAll( const vector<TSemanticValue>& c
   values.push_back( statAvgPerBurst.finishRow( cellValue[ i ], column, row, plane ) );
   ++i;
   values.push_back( statAvgValueNotZero.finishRow( cellValue[ i ], column, row, plane ) );
+  ++i;
+  values.push_back( statAvgPerBurstNotZero.finishRow( cellValue[ i ], column, row, plane ) );
   ++i;
   values.push_back( statNumBurstsNotZero.finishRow( cellValue[ i ], column, row, plane ) );
   ++i;

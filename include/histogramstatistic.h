@@ -926,41 +926,6 @@ class StatAvgValueNotZero: public HistogramStatistic
 };
 
 
-class StatNumBurstsNotZero: public HistogramStatistic
-{
-  public:
-    StatNumBurstsNotZero() {};
-    ~StatNumBurstsNotZero() {};
-
-    virtual bool createComms() const
-    {
-      return false;
-    }
-    virtual TObjectOrder getPartner( CalculateData *data )
-    {
-      return 0;
-    }
-
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
-    virtual TSemanticValue finishRow( TSemanticValue cellValue,
-                                      THistogramColumn column,
-                                      TObjectOrder row,
-                                      THistogramColumn plane = 0 );
-
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
-  protected:
-
-  private:
-    static std::string name;
-    Window *dataWin;
-};
-
-
 class StatAvgPerBurstNotZero: public HistogramStatistic
 {
   public:
@@ -998,6 +963,42 @@ class StatAvgPerBurstNotZero: public HistogramStatistic
 #else
     std::vector<std::vector<TSemanticValue> > numValues;
 #endif
+};
+
+
+
+class StatNumBurstsNotZero: public HistogramStatistic
+{
+  public:
+    StatNumBurstsNotZero() {};
+    ~StatNumBurstsNotZero() {};
+
+    virtual bool createComms() const
+    {
+      return false;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data )
+    {
+      return 0;
+    }
+
+    virtual void init( KHistogram *whichHistogram );
+    virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
+                                      TObjectOrder row,
+                                      THistogramColumn plane = 0 );
+
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static std::string name;
+    Window *dataWin;
 };
 
 
@@ -1098,8 +1099,8 @@ class Statistics
     StatStdevBurstTime statStdevBurstTime;
     StatAvgPerBurst statAvgPerBurst;
     StatAvgValueNotZero statAvgValueNotZero;
-    StatNumBurstsNotZero statNumBurstsNotZero;
     StatAvgPerBurstNotZero statAvgPerBurstNotZero;
+    StatNumBurstsNotZero statNumBurstsNotZero;
     StatSumBursts statSumBursts;
 
     static int numCommStats;
