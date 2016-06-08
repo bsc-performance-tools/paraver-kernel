@@ -1194,7 +1194,8 @@ bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& l
     windows[ windows.size() - 1 ]->setGradientColorMode();
   else if ( strMode.compare( OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) == 0 )
     windows[ windows.size() - 1 ]->setNotNullGradientColorMode();
-
+  else if( strMode.compare( CFG_VAL_COLOR_MODE_PUNCTUAL ) == 0 )
+    windows[ windows.size() - 1 ]->setPunctualColorMode();
   return true;
 }
 
@@ -1207,6 +1208,8 @@ void WindowColorMode::printLine( ofstream& cfgFile,
     ( ( *it )->isGradientColorSet() ?
       OLDCFG_VAL_COLOR_MODE_GRADIENT : OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) << endl;
   }
+  else if ( ( *it )->isPunctualColorSet() )
+    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_PUNCTUAL <<endl;
 }
 
 
