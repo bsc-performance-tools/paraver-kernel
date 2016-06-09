@@ -1819,7 +1819,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
             commsToDraw[ commsToDraw.size() - 1 ],
             paramProgress );
 
-#ifndef PARALLEL_ENALBLED
+#ifndef PARALLEL_ENABLED
     if( numRows > 1 )
     {
       if( progress->getStop() )
@@ -1827,7 +1827,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
       progress->setCurrentProgress( currentRow );
     }
     ++currentRow;
-#endif // PARALLEL_ENALBLED
+#endif // PARALLEL_ENABLED
 
   }
 //#pragma css barrier
@@ -2171,7 +2171,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
             commsToDraw[ commsToDraw.size() - 1 ],
             paramProgress );
 
-#ifndef PARALLEL_ENALBLED
+#ifndef PARALLEL_ENABLED
     if( numRows > 1 )
     {
       if( progress->getStop() )
@@ -2179,7 +2179,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
       progress->setCurrentProgress( currentRow );
     }
     ++currentRow;
-#endif // PARALLEL_ENALBLED
+#endif // PARALLEL_ENABLED
 
   }
 //#pragma css barrier
