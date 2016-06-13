@@ -41,19 +41,11 @@ IntervalCPU::IntervalCPU( KSingleWindow *whichWindow, TWindowLevel whichLevel,
   functionThread = NULL;
   functionComposeThread = NULL;
 
-  TNodeOrder tmpNode;
+/*  TNodeOrder tmpNode;
   TCPUOrder tmpCPU;
   window->getTrace()->getCPULocation( whichOrder, tmpNode, tmpCPU );
   std::vector<TThreadOrder> tmpThreads;
-  window->getTrace()->getThreadsPerNode( tmpNode + 1, tmpThreads );
-
-  if( tmpThreads.empty() )
-    firstThreadOnCPU = 0;
-  else
-    firstThreadOnCPU = tmpThreads[ 0 ];
-
-  intervalThread = std::vector<IntervalThread *>( tmpThreads.size(), NULL );
-  intervalCompose = std::vector<IntervalCompose *>( tmpThreads.size(), NULL );
+  window->getTrace()->getThreadsPerNode( tmpNode + 1, tmpThreads );*/
 }
 
 
@@ -88,29 +80,23 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
     return displayList;
   }
 
-  if( intervalCompose.empty() )
+  /*if( intervalCompose.empty() )
   {
     begin = window->getCPUBeginRecord( order - 1 )->clone();
     end = window->getCPUEndRecord( order - 1 )->clone();
     return displayList;
-  }
+  }*/
 
 
-  for( std::vector<IntervalThread *>::iterator it = intervalThread.begin();
+  for( std::map<TThreadOrder, IntervalThread *>::iterator it = intervalThread.begin();
        it != intervalThread.end(); ++it )
-  {
-    if( (*it) != NULL )
-      (*it)->setSemanticFunction( functionThread );
-  }
+    (*it).second->setSemanticFunction( functionThread );
 
-  for( std::vector<IntervalCompose *>::iterator it = intervalCompose.begin();
+  for( std::map<TThreadOrder, IntervalCompose *>::iterator it = intervalCompose.begin();
        it != intervalCompose.end(); ++it )
   {
-    if( (*it) != NULL )
-    {
-      (*it)->setSemanticFunction( functionComposeThread );
-      (*it)->init( initialTime, NOCREATE, NULL );
-    }
+    (*it).second->setSemanticFunction( functionComposeThread );
+    (*it).second->init( initialTime, NOCREATE, NULL );
   }
 
   begin = window->getCPURecordByTime( order - 1 )->clone();
@@ -140,26 +126,26 @@ KRecordList *IntervalCPU::calcNext( KRecordList *displayList, bool initCalc )
     *begin = *end;
   }
 
-  if( intervalCompose.empty() )
-    return displayList;
+/*  if( intervalCompose.empty() )
+    return displayList;*/
 
-  if( intervalCompose[ begin->getThread() - firstThreadOnCPU ] == NULL )
+  if( intervalCompose.find( begin->getThread() ) == intervalCompose.end() )
   {
-    int i = begin->getThread() - firstThreadOnCPU;
-    intervalThread[ i ] = new IntervalThread( window, THREAD, begin->getThread() );
-    intervalThread[ i ]->setNotWindowInits( true );
-    intervalThread[ i ]->setSemanticFunction( functionThread );
+    intervalThread[ begin->getThread() ] = new IntervalThread( window, THREAD, begin->getThread() );
+    intervalThread[ begin->getThread() ]->setNotWindowInits( true );
+    intervalThread[ begin->getThread() ]->setSemanticFunction( functionThread );
 
-    intervalCompose[ i ] = new IntervalCompose( window, COMPOSETHREAD, begin->getThread() );
-    intervalCompose[ i ]->setNotWindowInits( true );
-    intervalCompose[ i ]->setCustomChild( intervalThread[ i ] );
-    intervalCompose[ i ]->setSemanticFunction( functionComposeThread );
+    intervalCompose[ begin->getThread() ] = new IntervalCompose( window, COMPOSETHREAD, begin->getThread() );
+    intervalCompose[ begin->getThread() ]->setNotWindowInits( true );
+    intervalCompose[ begin->getThread() ]->setCustomChild( intervalThread[ begin->getThread() ] );
+    intervalCompose[ begin->getThread() ]->setSemanticFunction( functionComposeThread );
 
-    intervalCompose[ i ]->init( currentInitialTime, NOCREATE, NULL );
+    intervalCompose[ begin->getThread() ]->init( currentInitialTime, NOCREATE, NULL );
   }
 
-  Interval *currentThread = intervalCompose[ begin->getThread() - firstThreadOnCPU ];
+  Interval *currentThread = intervalCompose[ begin->getThread() ];
   highInfo.callingInterval = this;
+
   if( begin->getType() == STATE + END )
     highInfo.values.push_back( 0.0 );
   else
@@ -191,28 +177,27 @@ KRecordList *IntervalCPU::calcPrev( KRecordList *displayList, bool initCalc )
     *end = *begin;
   }
 
-  if( intervalCompose.empty() )
-    return displayList;
+/*  if( intervalCompose.empty() )
+    return displayList;*/
 
   begin = getPrevRecord( begin, displayList );
   highInfo.callingInterval = this;
 
-  if( intervalCompose[ begin->getThread() - firstThreadOnCPU ] == NULL )
+  if( intervalCompose.find( begin->getThread() ) == intervalCompose.end() )
   {
-    int i = begin->getThread() - firstThreadOnCPU;
-    intervalThread[ i ] = new IntervalThread( window, THREAD, begin->getThread() );
-    intervalThread[ i ]->setNotWindowInits( true );
-    intervalThread[ i ]->setSemanticFunction( functionThread );
+    intervalThread[ begin->getThread() ] = new IntervalThread( window, THREAD, begin->getThread() );
+    intervalThread[ begin->getThread() ]->setNotWindowInits( true );
+    intervalThread[ begin->getThread() ]->setSemanticFunction( functionThread );
 
-    intervalCompose[ i ] = new IntervalCompose( window, COMPOSETHREAD, begin->getThread() );
-    intervalCompose[ i ]->setNotWindowInits( true );
-    intervalCompose[ i ]->setCustomChild( intervalThread[ i ] );
-    intervalCompose[ i ]->setSemanticFunction( functionComposeThread );
+    intervalCompose[ begin->getThread() ] = new IntervalCompose( window, COMPOSETHREAD, begin->getThread() );
+    intervalCompose[ begin->getThread() ]->setNotWindowInits( true );
+    intervalCompose[ begin->getThread() ]->setCustomChild( intervalThread[ begin->getThread() ] );
+    intervalCompose[ begin->getThread() ]->setSemanticFunction( functionComposeThread );
 
-    intervalCompose[ i ]->init( currentInitialTime, NOCREATE, NULL );
+    intervalCompose[ begin->getThread() ]->init( currentInitialTime, NOCREATE, NULL );
   }
 
-  Interval *currentThread = intervalCompose[ begin->getThread() - firstThreadOnCPU ];
+  Interval *currentThread = intervalCompose[ begin->getThread() ];
   while( currentThread->getBeginTime() >= begin->getTime() &&
          currentThread->getEndTime() > 0.0 )
     currentThread->calcPrev( NULL );

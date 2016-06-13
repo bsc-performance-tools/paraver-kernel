@@ -83,9 +83,10 @@ class IntervalCPU: public IntervalHigh
     TCreateList createList;
     SemanticThread *functionThread;
     SemanticCompose *functionComposeThread;
-    std::vector<IntervalCompose *> intervalCompose;
-    std::vector<IntervalThread *> intervalThread;
-    TThreadOrder firstThreadOnCPU;
+//    std::vector<IntervalCompose *> intervalCompose;
+//    std::vector<IntervalThread *> intervalThread;
+    std::map<TThreadOrder, IntervalCompose *> intervalCompose;
+    std::map<TThreadOrder, IntervalThread *> intervalThread;
     TRecordTime currentInitialTime;
 
   private:
