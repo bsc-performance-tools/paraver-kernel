@@ -98,6 +98,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
     pixelSize = (PRV_UINT16)pow( float(2), (int)ParaverConfig::getInstance()->getHistogramPixelSize() );
   else
     pixelSize = ParaverConfig::getInstance()->getHistogramPixelSize();
+  onlyTotals = Histogram::getOnlyTotals();
 
   setCalculateAll( Histogram::getCalculateAll() );
   currentStat = Histogram::getCurrentStat();
@@ -1215,6 +1216,7 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->firstRowColored = firstRowColored;
   clonedHistogramProxy->codeColor = codeColor;
   clonedHistogramProxy->pixelSize = pixelSize;
+  clonedHistogramProxy->onlyTotals = onlyTotals;
   clonedHistogramProxy->futurePlane = futurePlane;
   clonedHistogramProxy->planeMinValue = planeMinValue;
   clonedHistogramProxy->selectedPlane = selectedPlane;
@@ -1448,6 +1450,16 @@ PRV_UINT16 HistogramProxy::getPixelSize() const
 void HistogramProxy::setPixelSize( PRV_UINT16 whichSize )
 {
   pixelSize = whichSize;
+}
+
+bool HistogramProxy::getOnlyTotals() const
+{
+  return onlyTotals;
+}
+
+void HistogramProxy::setOnlyTotals( bool newValue )
+{
+  onlyTotals = newValue;
 }
 
 void HistogramProxy::setCFG4DMode( bool mode )

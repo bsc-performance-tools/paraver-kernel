@@ -215,6 +215,11 @@ class Histogram
     {
       return !ParaverConfig::getInstance()->getHistogramViewEmptyColumns();
     }
+    virtual void setOnlyTotals( bool newValue ) {}
+    virtual bool getOnlyTotals() const
+    {
+      return ParaverConfig::getInstance()->getHistogramOnlyTotals();
+    }
     virtual void setScientificNotation( bool newValue ) {}
     virtual bool getScientificNotation() const
     {
@@ -737,6 +742,8 @@ class HistogramProxy : public Histogram
     virtual void setCodeColor( bool newValue );
     virtual PRV_UINT16 getPixelSize() const;
     virtual void setPixelSize( PRV_UINT16 whichSize );
+    virtual void setOnlyTotals( bool newValue );
+    virtual bool getOnlyTotals() const;
 
     // CFG4D
     // Enabled => mode = false
@@ -803,6 +810,7 @@ class HistogramProxy : public Histogram
     bool recalc;
     bool codeColor;
     PRV_UINT16 pixelSize;
+    bool onlyTotals;
 
     TRecordTime winBeginTime;
     TRecordTime winEndTime;

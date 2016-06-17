@@ -661,6 +661,7 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DMaximumGradient::printLine( cfgFile, it );
     Analyzer2DPixelSize::printLine( cfgFile, it );
     Analyzer2DCodeColor::printLine( cfgFile, it );
+    Analyzer2DOnlyTotals::printLine( cfgFile, it );
     if ( ( *it )->getThreeDimensions() )
     {
       Analyzer3DControlWindow::printLine( cfgFile, allWindows, it );
@@ -795,6 +796,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN2D_MAXIMUMGRADIENT]      = new Analyzer2DMaximumGradient();
   cfgTagFunctions[OLDCFG_TAG_AN2D_PIXEL_SIZE]           = new Analyzer2DPixelSize();
   cfgTagFunctions[OLDCFG_TAG_AN2D_CODE_COLOR]           = new Analyzer2DCodeColor();
+  cfgTagFunctions[OLDCFG_TAG_AN2D_ONLY_TOTALS]          = new Analyzer2DOnlyTotals();
 
   // 3D Histogram
   cfgTagFunctions[OLDCFG_TAG_AN3D_CONTROLWINDOW]        = new Analyzer3DControlWindow();
@@ -4399,12 +4401,50 @@ bool Analyzer2DCodeColor::parseLine( KernelConnection *whichKernel, istringstrea
   return true;
 }
 
-
 void Analyzer2DCodeColor::printLine( ofstream& cfgFile,
                                      const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_CODE_COLOR << " ";
   if ( ( *it )->getCodeColor() )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
+
+}
+
+
+string Analyzer2DOnlyTotals::tagCFG = OLDCFG_TAG_AN2D_ONLY_TOTALS;
+
+bool Analyzer2DOnlyTotals::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                      Trace *whichTrace,
+                                      vector<Window *>& windows,
+                                      vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setOnlyTotals( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setOnlyTotals( true );
+  else
+    return false;
+
+  return true;
+}
+
+void Analyzer2DOnlyTotals::printLine( ofstream& cfgFile,
+                                      const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_ONLY_TOTALS << " ";
+  if ( ( *it )->getOnlyTotals() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;

@@ -147,6 +147,7 @@
 #define OLDCFG_TAG_AN2D_MAXIMUMGRADIENT "Analyzer2D.MaximumGradient:"
 #define OLDCFG_TAG_AN2D_PIXEL_SIZE "Analyzer2D.PixelSize:"
 #define OLDCFG_TAG_AN2D_CODE_COLOR "Analyzer2D.CodeColor:"
+#define OLDCFG_TAG_AN2D_ONLY_TOTALS "Analyzer2D.ShowOnlyTotals:"
 #define OLDCFG_TAG_AN3D_CONTROLWINDOW "Analyzer2D.3D_ControlWindow:"
 #define OLDCFG_TAG_AN3D_COMPUTEYSCALE "Analyzer3D.ComputeYScale:"
 #define OLDCFG_TAG_AN3D_MINIMUM "Analyzer2D.3D_Minimum:"
