@@ -151,7 +151,7 @@ AC_DEFUN([AX_PROG_WITH_PTOOLS_COMMON_FILES],
          [specify ptools_common_files library base install directory. Default: /usr/local]
       ),
       [PTOOLS_COMMON_FILES_DIR=${withval}],
-      [PTOOLS_COMMON_FILES_DIR=/usr/local]
+      [PTOOLS_COMMON_FILES_DIR=${prefix}]
    )
    CPPFLAGS_PTOOLS="-I$PTOOLS_COMMON_FILES_DIR/include"
    CXXFLAGS_PTOOLS="-I$PTOOLS_COMMON_FILES_DIR/include"
