@@ -26,6 +26,8 @@ AC_CONFIG_MACRO_DIR([m4])
 #    Checks for programs    #
 #############################
 
+test "x$prefix" = xNONE && prefix=$ac_default_prefix
+
 # Search for libtool support
 AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
