@@ -1753,7 +1753,8 @@ class CommPartner: public SemanticThread
       return "";
     }
   private:
-    static const TRecordType  validateMask = COMM + LOG + SEND;
+    //static const TRecordType  validateMask = COMM + LOG + SEND;
+    static const TRecordType  validateMask = COMM + SEND; // JESUS 6/Jul/2016
     static const bool         initFromBegin = false;
     static std::string name;
 
