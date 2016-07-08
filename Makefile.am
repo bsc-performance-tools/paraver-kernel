@@ -57,6 +57,13 @@ install-data-hook:
 	$(mkdir_p) $(prefix)/share/filters-config
 	$(install_sh_PROGRAM) -m 775 ./docs/filters/*.xml $(prefix)/share/filters-config
 
+uninstall-hook:
+	test -f $(bindir)/paramedir            && rm  -fv $(bindir)/paramedir
+	test -f $(bindir)/old.paramedir        && rm  -fv $(bindir)/old.paramedir
+	test -f $(bindir)/paramedir.mn3-mt     && rm  -fv $(bindir)/paramedir.mn3-mt
+	
+	test -d $(prefix)/share/filters-config && rm -rfv $(prefix)/share/filters-config
+
 
 dist-hook:
 	$(mkdir_p) $(distdir)/docs
