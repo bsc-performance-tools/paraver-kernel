@@ -119,6 +119,9 @@ install-data-hook:
 	cp -f ../../common-files/pcfparser/libtools/UIParaverTraceConfig.h $(includedir)/pcfparser/libtools
 	cp -f ../../common-files/pcfparser/libtools/UIParaverTraceConfig.ipp $(includedir)/pcfparser/libtools
 
+uninstall-hook:
+	test -d $(includedir)/pcfparser && rm -rf $(includedir)/pcfparser
+
 
 # Erases everything which should not be uploaded to CVS
 mrproper: distclean
