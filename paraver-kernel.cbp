@@ -151,94 +151,6 @@
 		<Linker>
 			<Add library="xml2" />
 		</Linker>
-		<Unit filename="../common-files/paraverstatisticfunctions.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-			<Option target="otf2prv" />
-		</Unit>
-		<Unit filename="../common-files/pcfparser/libtools/ParaverTraceConfig.cpp" />
-		<Unit filename="../common-files/pcfparser/libtools/ParaverTraceConfig.h">
-			<Option target="api" />
-			<Option target="testspeed" />
-			<Option target="otf2prv" />
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../common-files/pcfparser/libtools/ParaverTraceConfig.ipp">
-			<Option target="api" />
-			<Option target="testspeed" />
-			<Option target="otf2prv" />
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../common-files/pcfparser/libtools/ParaverTraceConfigGrammar.h">
-			<Option target="api" />
-			<Option target="testspeed" />
-			<Option target="otf2prv" />
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../common-files/pcfparser/libtools/ParaverTraceConfigGrammar.ipp">
-			<Option target="api" />
-			<Option target="testspeed" />
-			<Option target="otf2prv" />
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../common-files/pcfparser/libtools/UIParaverTraceConfig.cpp" />
-		<Unit filename="../common-files/pcfparser/libtools/UIParaverTraceConfig.h">
-			<Option target="api" />
-			<Option target="testspeed" />
-			<Option target="otf2prv" />
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../common-files/pcfparser/libtools/UIParaverTraceConfig.ipp">
-			<Option target="api" />
-			<Option target="testspeed" />
-			<Option target="otf2prv" />
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../common-files/pcfparser/libtools/debug.h" />
-		<Unit filename="../common-files/prvtypes.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-			<Option target="Application test" />
-			<Option target="api" />
-			<Option target="paramedir" />
-			<Option target="testspeed" />
-			<Option target="otf2prv" />
-		</Unit>
-		<Unit filename="../common-files/vectorutils.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-			<Option target="otf2prv" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/include/MPI_EventEncoding.h">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/include/event_description.h">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/include/event_encoding.h">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/include/event_list.h">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/include/events.h">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/include/papi_events.h">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/include/ptools_prv_types.h">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/include/ptools_types.h">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/src/event_description.cpp">
-			<Option target="ptools_common_files" />
-		</Unit>
-		<Unit filename="../ptools_common_files/trunk/src/event_list.cpp">
-			<Option target="ptools_common_files" />
-		</Unit>
 		<Unit filename="api/ParaverMetadataManager.cpp">
 			<Option target="api" />
 		</Unit>
@@ -441,6 +353,9 @@
 			<Option target="api" />
 			<Option target="paramedir" />
 			<Option target="otf2prv" />
+		</Unit>
+		<Unit filename="api/prvtypes.h">
+			<Option target="api" />
 		</Unit>
 		<Unit filename="api/recordlist.cpp">
 			<Option target="api" />
@@ -1463,6 +1378,120 @@
 		<Unit filename="testspeed/testspeed.h">
 			<Option target="testspeed" />
 			<Option target="otf2prv" />
+		</Unit>
+		<Unit filename="utils/include/MPI_EventEncoding.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/include/event_description.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/include/event_encoding.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/include/events.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/include/papi_events.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/include/paraverstatisticfunctions.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/include/ptools_prv_types.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/include/vectorutils.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/ParaverTraceConfig.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/ParaverTraceConfig.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/ParaverTraceConfigGrammar.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/UIParaverTraceConfig.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/UIParaverTraceConfig.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/UIParaverTraceConfig_python.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/UIParaverTraceConfig_python.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/debug.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/LibException.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/LibException.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/ParaverEventType.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/ParaverEventType.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/ParaverEventValue.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/ParaverEventValue.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/ParaverGradientColor.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/ParaverGradientColor.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/ParaverGradientNames.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/ParaverGradientNames.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/ParaverState.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/ParaverState.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/ParaverStatesColor.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/ParaverStatesColor.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/ParaverTraceConfig.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/ParaverTraceConfig.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/ParaverTraceConfigGrammar.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/ParaverTraceConfigGrammar.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/UIParaverTraceConfig.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/old/UIParaverTraceConfig.h">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/src/event_description.cpp">
+			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/src/event_list.cpp">
+			<Option target="api" />
 		</Unit>
 		<Extensions>
 			<code_completion>
