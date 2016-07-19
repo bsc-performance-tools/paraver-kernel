@@ -52,10 +52,10 @@ AC_DEFUN([AX_PROG_ENABLE_OLD_PCFPARSER],
   )
   if test "${enable_old_pcfparser}" = "yes" ; then
     AC_DEFINE([SET_OLD_PCFPARSER], 1, [Old pcfparser enabled by user.])
-    PCFPARSER_CFLAGS="-DOLD_PCFPARSER -I../../common-files/pcfparser"
+    PCFPARSER_CFLAGS="-DOLD_PCFPARSER"
   else
     AC_DEFINE([SET_OLD_PCFPARSER], 0, [Old pcfparser enabled by user.])
-    PCFPARSER_CFLAGS="-I../../common-files/pcfparser/libtools"
+    PCFPARSER_CFLAGS=""
   fi
 ])
 
@@ -140,31 +140,4 @@ AC_DEFUN([AX_PROG_WITH_OTF2],
   LDFLAGS_OTF2="-L$OTF2_DIR/lib -lotf2"
 ])
 
-
-# AX_PROG_WITH_PTOOLS_COMMON_FILES
-# -----------
-AC_DEFUN([AX_PROG_WITH_PTOOLS_COMMON_FILES],
-[
-   AC_ARG_WITH(ptools_common_files,
-      AC_HELP_STRING(
-         [--with-ptools-common-files@<:@=DIR@:>@],
-         [specify ptools_common_files library base install directory. Default: /usr/local]
-      ),
-      [PTOOLS_COMMON_FILES_DIR=${withval}],
-      [PTOOLS_COMMON_FILES_DIR=${prefix}]
-   )
-   CPPFLAGS_PTOOLS="-I$PTOOLS_COMMON_FILES_DIR/include"
-   CXXFLAGS_PTOOLS="-I$PTOOLS_COMMON_FILES_DIR/include"
-   CFLAGS_PTOOLS="-I$PTOOLS_COMMON_FILES_DIR/include"
-
-   if test -d "$PTOOLS_COMMON_FILES_DIR/lib"
-   then
-     LIBS_PTOOLS="-L$PTOOLS_COMMON_FILES_DIR/lib/ptools_common_files"
-     LDFLAGS_PTOOLS="-L$PTOOLS_COMMON_FILES_DIR/lib/ptools_common_files -lptools_common_files"
-   elif test -d "$PTOOLS_COMMON_FILES_DIR/lib64"
-   then
-     LIBS_PTOOLS="-L$PTOOLS_COMMON_FILES_DIR/lib64/ptools_common_files"
-     LDFLAGS_PTOOLS="-L$PTOOLS_COMMON_FILES_DIR/lib64/ptools_common_files -lptools_common_files"
-   fi
-])
 

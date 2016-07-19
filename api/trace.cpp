@@ -31,11 +31,11 @@
 #include "trace.h"
 
 #ifdef OLD_PCFPARSER
-#include "pcfparser/ParaverTraceConfig.h"
-#include "pcfparser/ParaverStatesColor.h"
-#include "pcfparser/ParaverGradientColor.h"
+#include "utils/pcfparser/old/ParaverTraceConfig.h"
+#include "utils/pcfparser/old/ParaverStatesColor.h"
+#include "utils/pcfparser/old/ParaverGradientColor.h"
 #else
-#include "pcfparser/libtools/UIParaverTraceConfig.h"
+#include "utils/pcfparser/UIParaverTraceConfig.h"
 #endif
 
 #include "progresscontroller.h"

@@ -2,7 +2,7 @@
 SUBDIRS = \
           include \
           src \
-          api
+          api 
 
 
 bin_PROGRAMS = paramedir.bin
@@ -14,7 +14,7 @@ endif
 
 
 paramedir_bin_SOURCES = \
-                    api/paramedir.cpp
+                  api/paramedir.cpp
 
 paramedir_bin_LDADD = \
                   -lz \
@@ -24,7 +24,7 @@ paramedir_bin_LDADD = \
 
 if WANT_OTF2PRV
   otf2prv_bin_SOURCES = \
-											api/otf2prv.cpp
+                  api/otf2prv.cpp
 
   otf2prv_bin_LDADD = \
                   api/libparaver-api.la \

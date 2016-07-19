@@ -30,9 +30,7 @@
 #include "statelabels.h"
 
 #ifdef OLD_PCFPARSER
-#include "pcfparser/ParaverState.h"
-#else
-#include "pcfparser/libtools/UIParaverTraceConfig.h"
+#include "ParaverState.h"
 #endif
 
 using namespace std;

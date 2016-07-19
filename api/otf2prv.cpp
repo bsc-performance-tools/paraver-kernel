@@ -34,7 +34,7 @@
 #include <stack>
 #include <map>
 #include <wordexp.h>
-#include "event_encoding.h"
+#include "utils/include/event_encoding.h"
 
 using namespace std;
 
@@ -44,7 +44,7 @@ const string OTF2_VERSION_STRING = "0.31";
 #include <otf2/otf2.h>
 #include "otf2prv.h"
 
-#include "prvtypes.h"
+#include "utils/include/prvtypes.h"
 #include "localkernel.h"
 #include "paraverconfig.h"
 #include "trace.h"
@@ -53,9 +53,9 @@ const string OTF2_VERSION_STRING = "0.31";
 #include "resourcemodel.h"
 #include "processmodel.h"
 
-#include "event_list.h"
-#include "event_description.h"
-#include "events.h"
+#include "utils/include/event_list.h"
+#include "utils/include/event_description.h"
+#include "utils/include/events.h"
 
 class State
 {

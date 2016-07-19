@@ -1,7 +1,7 @@
 /*****************************************************************************\
  *                        ANALYSIS PERFORMANCE TOOLS                         *
- *                               libparaver-api                              *
- *                      API Library for libparaver-kernel                    *
+ *                            ptools_common_files                            *
+ *                   Performance tools common files library                  *
  *****************************************************************************
  *     ___     This library is free software; you can redistribute it and/or *
  *    /  __         modify it under the terms of the GNU LGPL as published   *
@@ -27,41 +27,49 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-#ifndef STATELABELS_H_INCLUDED
-#define STATELABELS_H_INCLUDED
+#ifndef _PTOOLS_PRV_TYPES_H_INCLUDED
+#define _PTOOLS_PRV_TYPES_H_INCLUDED
 
-#include <map>
-#include "paraverkerneltypes.h"
+#include "ptools_types.h"
 
-#ifdef OLD_PCFPARSER
-#include "utils/pcfparser/old/ParaverTraceConfig.h"
-#else
-#include "utils/pcfparser/UIParaverTraceConfig.h"
-#endif
+typedef char          prvMagic_t[8];
+typedef char          prvDate_t[23];
+typedef PTOOLS_UINT64 prvTime_t;
+typedef char          prvTimeUnit_t[2];
 
-using namespace libparaver;
+typedef PTOOLS_UINT32 prvObjectID_t;
 
-class StateLabels
-{
-  public:
-    static const std::string unknownLabel;
+// Resources
+typedef prvObjectID_t prvNodeID_t;
+typedef prvObjectID_t prvCPUID_t;
 
-    StateLabels();
-#ifdef OLD_PCFPARSER
-    StateLabels( const ParaverTraceConfig& config );
-#else
-    StateLabels( const UIParaverTraceConfig& config );
-#endif
-    ~StateLabels();
+typedef prvObjectID_t prvNumNodes_t;
+typedef prvObjectID_t prvNumCPUs_t;
 
-    void getStates( std::vector<TState>& onVector ) const;
-    bool getStateLabel( TState state, std::string& onStr ) const;
+// Applications
+typedef prvObjectID_t prvApplicationID_t;
+typedef prvObjectID_t prvTaskID_t;
+typedef prvObjectID_t prvThreadID_t;
 
-  protected:
+typedef prvObjectID_t prvNumApplications_t;
+typedef prvObjectID_t prvNumTasks_t;
+typedef prvObjectID_t prvNumThreads_t;
 
-  private:
-    std::map<TState, std::string> stateLabel;
-};
+// Communicators
+typedef PTOOLS_UINT32 prvCommunicatorID_t;
 
+typedef PTOOLS_UINT32 prvNumCommunicators_t;
 
-#endif // STATELABELS_H_INCLUDED
+// Records
+typedef char          prvRecordType_t;
+
+typedef PTOOLS_UINT16 prvState_t;
+
+typedef PTOOLS_UINT32 prvEventType_t;
+typedef PTOOLS_INT64  prvEventValue_t;
+
+typedef PTOOLS_UINT32 prvCommSize_t;
+typedef PTOOLS_UINT32 prvCommTag_t;
+
+#endif // _PTOOLS_PRV_TYPES_H_INCLUDED
+

@@ -31,7 +31,6 @@
 #define _SELECTION_MANAGEMENT_H
 
 #include <vector>
-#include "prvtypes.h"
 #include "paraverkerneltypes.h"
 
 class Trace;

@@ -28,7 +28,7 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "semanticnotthreadfunctions.h"
-#include "paraverstatisticfunctions.h"
+#include "utils/include/paraverstatisticfunctions.h"
 #include "kwindow.h"
 
 using namespace std;

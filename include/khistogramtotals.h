@@ -32,7 +32,7 @@
 
 #include <vector>
 #include "paraverkerneltypes.h"
-#include "vectorutils.h"
+#include "utils/include/vectorutils.h"
 #include "histogramtotals.h"
 
 class KHistogramTotals: public HistogramTotals

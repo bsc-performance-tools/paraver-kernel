@@ -1,7 +1,7 @@
 /*****************************************************************************\
  *                        ANALYSIS PERFORMANCE TOOLS                         *
- *                               libparaver-api                              *
- *                      API Library for libparaver-kernel                    *
+ *                            ptools_common_files                            *
+ *                   Performance tools common files library                  *
  *****************************************************************************
  *     ___     This library is free software; you can redistribute it and/or *
  *    /  __         modify it under the terms of the GNU LGPL as published   *
@@ -27,41 +27,62 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-#ifndef STATELABELS_H_INCLUDED
-#define STATELABELS_H_INCLUDED
+#ifndef EVENT_LIST_H_INCLUDED
+#define EVENT_LIST_H_INCLUDED
 
+#include <string>
+#include <vector>
 #include <map>
-#include "paraverkerneltypes.h"
+#include "ptools_prv_types.h"
 
-#ifdef OLD_PCFPARSER
-#include "utils/pcfparser/old/ParaverTraceConfig.h"
-#else
-#include "utils/pcfparser/UIParaverTraceConfig.h"
-#endif
+using std::string;
+using std::vector;
+using std::map;
 
-using namespace libparaver;
+class EventDescription;
 
-class StateLabels
+class EventList
 {
   public:
-    static const std::string unknownLabel;
+    static EventList *getInstance();
 
-    StateLabels();
-#ifdef OLD_PCFPARSER
-    StateLabels( const ParaverTraceConfig& config );
-#else
-    StateLabels( const UIParaverTraceConfig& config );
-#endif
-    ~StateLabels();
+    ~EventList();
 
-    void getStates( std::vector<TState>& onVector ) const;
-    bool getStateLabel( TState state, std::string& onStr ) const;
+    void init();
+
+    bool insert( string          stringID,
+                 bool            usedInExtrae,
+                 prvEventType_t  mpitID,
+                 prvEventType_t  whichType,
+                 prvEventValue_t whichValue,
+                 string          whichStrType,
+                 string          whichStrValue,
+                 bool            isChangingState,
+                 prvState_t      whichStateTransition );
+
+    bool insert( string            stringID,
+                 prvEventType_t    mpitID,
+                 EventDescription *whichEvent );
+
+    EventDescription *getByStringID( string whichStringID ) const;
+    EventDescription *getByMpitID( prvEventType_t whichMpitID ) const;
+    EventDescription *getByTypeValue( prvEventType_t  whichType,
+                                      prvEventValue_t whichValue ) const;
+
+    void getUsed( vector<EventDescription *>& onVector ) const;
 
   protected:
 
   private:
-    std::map<TState, std::string> stateLabel;
+    EventList();
+
+    static EventList *instance;
+
+    vector<EventDescription *> events;
+    map<string, EventDescription *> stringMap;
+    map<prvEventType_t, EventDescription *> mpitMap;
+    map<prvEventType_t, map<prvEventValue_t, EventDescription *> > typeValueMap;
 };
 
 
-#endif // STATELABELS_H_INCLUDED
+#endif // EVENT_LIST_H_INCLUDED

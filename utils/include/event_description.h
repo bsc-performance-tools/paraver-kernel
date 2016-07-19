@@ -1,7 +1,7 @@
 /*****************************************************************************\
  *                        ANALYSIS PERFORMANCE TOOLS                         *
- *                               libparaver-api                              *
- *                      API Library for libparaver-kernel                    *
+ *                            ptools_common_files                            *
+ *                   Performance tools common files library                  *
  *****************************************************************************
  *     ___     This library is free software; you can redistribute it and/or *
  *    /  __         modify it under the terms of the GNU LGPL as published   *
@@ -27,41 +27,53 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-#ifndef STATELABELS_H_INCLUDED
-#define STATELABELS_H_INCLUDED
+#ifndef EVENT_DESCRIPTION_H_INCLUDED
+#define EVENT_DESCRIPTION_H_INCLUDED
 
-#include <map>
-#include "paraverkerneltypes.h"
+#include <string>
+#include "ptools_prv_types.h"
 
-#ifdef OLD_PCFPARSER
-#include "utils/pcfparser/old/ParaverTraceConfig.h"
-#else
-#include "utils/pcfparser/UIParaverTraceConfig.h"
-#endif
+using std::string;
 
-using namespace libparaver;
-
-class StateLabels
+class EventDescription
 {
   public:
-    static const std::string unknownLabel;
+    EventDescription();
 
-    StateLabels();
-#ifdef OLD_PCFPARSER
-    StateLabels( const ParaverTraceConfig& config );
-#else
-    StateLabels( const UIParaverTraceConfig& config );
-#endif
-    ~StateLabels();
+    EventDescription( bool            usedInExtrae,
+                      prvEventType_t  whichType,
+                      prvEventValue_t whichValue,
+                      string          whichStrType,
+                      string          whichStrValue,
+                      bool            isChangingState,
+                      prvState_t      whichStateTransition
+                    );
 
-    void getStates( std::vector<TState>& onVector ) const;
-    bool getStateLabel( TState state, std::string& onStr ) const;
+    ~EventDescription();
+
+    bool            getUsedInExtrae() const;
+    prvEventType_t  getType() const;
+    prvEventValue_t getValue() const;
+    string          getStrType() const;
+    string          getStrValue() const;
+    bool            getChangeState() const;
+    prvState_t      getStateTransition() const;
+    bool            getUsed() const;
+    void            setUsed( bool newValue );
 
   protected:
+    bool            inExtrae;
+    prvEventType_t  type;
+    prvEventValue_t value;
+    string          strType;
+    string          strValue;
+    bool            changeState;
+    prvState_t      stateTransition;
+    bool            used;
 
   private:
-    std::map<TState, std::string> stateLabel;
+
 };
 
 
-#endif // STATELABELS_H_INCLUDED
+#endif // EVENT_DESCRIPTION_H_INCLUDED

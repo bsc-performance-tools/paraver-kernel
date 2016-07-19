@@ -33,7 +33,6 @@
 #include <string>
 #include "output.h"
 #include "selectionmanagement.h"
-#include "prvtypes.h"
 #include "histogram.h"
 #include "progresscontroller.h"
 

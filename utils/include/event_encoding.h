@@ -1,7 +1,7 @@
 /*****************************************************************************\
  *                        ANALYSIS PERFORMANCE TOOLS                         *
- *                               libparaver-api                              *
- *                      API Library for libparaver-kernel                    *
+ *                            ptools_common_files                            *
+ *                   Performance tools common files library                  *
  *****************************************************************************
  *     ___     This library is free software; you can redistribute it and/or *
  *    /  __         modify it under the terms of the GNU LGPL as published   *
@@ -27,41 +27,14 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-#ifndef STATELABELS_H_INCLUDED
-#define STATELABELS_H_INCLUDED
+#ifndef EVENT_DEFINES_H_INCLUDED
+#define EVENT_DEFINES_H_INCLUDED
 
-#include <map>
-#include "paraverkerneltypes.h"
+#include "MPI_EventEncoding.h"
 
-#ifdef OLD_PCFPARSER
-#include "utils/pcfparser/old/ParaverTraceConfig.h"
-#else
-#include "utils/pcfparser/UIParaverTraceConfig.h"
-#endif
+#define USER_FUNCTION                 60000019
 
-using namespace libparaver;
-
-class StateLabels
-{
-  public:
-    static const std::string unknownLabel;
-
-    StateLabels();
-#ifdef OLD_PCFPARSER
-    StateLabels( const ParaverTraceConfig& config );
-#else
-    StateLabels( const UIParaverTraceConfig& config );
-#endif
-    ~StateLabels();
-
-    void getStates( std::vector<TState>& onVector ) const;
-    bool getStateLabel( TState state, std::string& onStr ) const;
-
-  protected:
-
-  private:
-    std::map<TState, std::string> stateLabel;
-};
+#define USER_FUNCTION_LABEL           "User functions"
 
 
-#endif // STATELABELS_H_INCLUDED
+#endif // EVENT_DEFINES_H_INCLUDED

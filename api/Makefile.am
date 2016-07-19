@@ -3,18 +3,18 @@ pkglib_LTLIBRARIES = libparaver-api.la
 
 
 if MAKE_OLD_PCFPARSER
-  PCFPARSER_FILES=../../common-files/pcfparser/LibException.cpp \
-                    ../../common-files/pcfparser/ParaverEventType.cpp \
-                    ../../common-files/pcfparser/ParaverEventValue.cpp \
-                    ../../common-files/pcfparser/ParaverGradientColor.cpp \
-                    ../../common-files/pcfparser/ParaverGradientNames.cpp \
-                    ../../common-files/pcfparser/ParaverState.cpp \
-                    ../../common-files/pcfparser/ParaverStatesColor.cpp \
-                    ../../common-files/pcfparser/ParaverTraceConfig.cpp \
-                    ../../common-files/pcfparser/ParaverTraceConfigGrammar.cpp
+  PCFPARSER_FILES=  ../utils/pcfparser/old/LibException.cpp \
+                    ../utils/pcfparser/old/ParaverEventType.cpp \
+                    ../utils/pcfparser/old/ParaverEventValue.cpp \
+                    ../utils/pcfparser/old/ParaverGradientColor.cpp \
+                    ../utils/pcfparser/old/ParaverGradientNames.cpp \
+                    ../utils/pcfparser/old/ParaverState.cpp \
+                    ../utils/pcfparser/old/ParaverStatesColor.cpp \
+                    ../utils/pcfparser/old/ParaverTraceConfig.cpp \
+                    ../utils/pcfparser/old/ParaverTraceConfigGrammar.cpp
 else
-  PCFPARSER_FILES=../../common-files/pcfparser/libtools/ParaverTraceConfig.cpp \
-                  ../../common-files/pcfparser/libtools/UIParaverTraceConfig.cpp
+  PCFPARSER_FILES=../utils/pcfparser/ParaverTraceConfig.cpp \
+                  ../utils/pcfparser/UIParaverTraceConfig.cpp
 endif
 
 
@@ -84,7 +84,7 @@ include_HEADERS = \
                   previousfiles.h\
                   progresscontroller.h\
                   ParaverMetadataManager.h\
-                  ../../common-files/prvtypes.h\
+                  prvtypes.h\
                   recordlist.h\
                   rowlabels.h\
                   selectionmanagement.h\
@@ -112,15 +112,15 @@ include_HEADERS = \
                   zoomhistory.cpp
 
 install-data-hook:
-	$(mkdir_p) $(includedir)/pcfparser
-	cp -f ../../common-files/pcfparser/ParaverTraceConfig.h $(includedir)/pcfparser
+	$(mkdir_p) $(includedir)/utils/pcfparser
+	cp -f ../utils/pcfparser/UIParaverTraceConfig.h $(includedir)/utils/pcfparser
+	cp -f ../utils/pcfparser/UIParaverTraceConfig.ipp $(includedir)/utils/pcfparser
 
-	$(mkdir_p) $(includedir)/pcfparser/libtools
-	cp -f ../../common-files/pcfparser/libtools/UIParaverTraceConfig.h $(includedir)/pcfparser/libtools
-	cp -f ../../common-files/pcfparser/libtools/UIParaverTraceConfig.ipp $(includedir)/pcfparser/libtools
+	$(mkdir_p) $(includedir)/utils/pcfparser/old
+	cp -f ../utils/pcfparser/old/ParaverTraceConfig.h $(includedir)/utils/pcfparser/old
 
 uninstall-hook:
-	test -d $(includedir)/pcfparser && rm -rf $(includedir)/pcfparser
+	test -d $(includedir)/utils/pcfparser && rm -rf $(includedir)/utils/pcfparser
 
 
 # Erases everything which should not be uploaded to CVS

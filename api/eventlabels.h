@@ -35,9 +35,9 @@
 #include "paraverkerneltypes.h"
 
 #ifdef OLD_PCFPARSER
-#include "pcfparser/ParaverTraceConfig.h"
+#include "utils/pcfparser/old/ParaverTraceConfig.h"
 #else
-#include "pcfparser/libtools/UIParaverTraceConfig.h"
+#include "utils/pcfparser/UIParaverTraceConfig.h"
 #endif
 
 using namespace libparaver;
