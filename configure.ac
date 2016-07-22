@@ -85,4 +85,4 @@ CFLAGS="-I../include/ -I../api/ -I../ -I../../ $PCFPARSER_CFLAGS $CFLAGS $CFLAGS
 CXXFLAGS="-I../include/ -I../api/ -I../ -I../../ $PCFPARSER_CFLAGS $CXXFLAGS $BOOST_CPPFLAGS $CXXFLAGS_EXTRAE $XML_CPPFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
 LDFLAGS="$LDFLAGS $BOOST_LDFLAGS $BOOST_SERIALIZATION_LIB $BOOST_RPATH $LDFLAGS_EXTRAE $XML_LIBS"
 
-AC_OUTPUT([Makefile src/Makefile api/Makefile include/Makefile])
+AC_OUTPUT([Makefile src/Makefile api/Makefile include/Makefile utils/Makefile utils/include/Makefile utils/src/Makefile utils/pcfparser/Makefile utils/pcfparser/old/Makefile])
