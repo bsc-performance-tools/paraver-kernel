@@ -52,4 +52,4 @@ utils/pcfparser/*.o
 utils/pcfparser/old/.deps/
 utils/pcfparser/old/*.lo
 utils/pcfparser/old/*.o
-
+/paraver-kernel.layout
