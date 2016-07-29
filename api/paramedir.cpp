@@ -330,7 +330,7 @@ void printHelp()
   std::cout << "      to linpack.prv trace, and the filtered trace is loaded and used to compute mpi_stats.cfg." << std::endl;
   std::cout << "      The computed mpi results are saved int my_mpi_values.txt." << std::endl;
   std::cout << std::endl;
-  std::cout << "    paramedir --trace-shifter times.txt linpack.prv -o mylinpack.shifted.prv" << std::endl;
+  std::cout << "    paramedir --task-shifter times.txt linpack.prv -o mylinpack.shifted.prv" << std::endl;
   std::cout << std::endl;
 }
 
