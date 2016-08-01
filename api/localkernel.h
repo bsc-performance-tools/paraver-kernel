@@ -104,17 +104,17 @@ class LocalKernel: public KernelConnection
                                   std::string action,
                                   bool saveNewNameInfo = true );
 
-    // Returns modified fullPathTracName, with appended or modified filter suffix.
+    // Returns modified fullPathTraceName, with appended or modified filter suffix.
     virtual std::string getNewTraceName( const std::string& fullPathTraceName,
                                          const std::string& traceFilterID,
                                          const bool commitName = false ) const;
 
-    // Returns modified fullPathTracName, with appended or modified filter suffixes.
+    // Returns modified fullPathTraceName, with appended or modified filter suffixes.
     virtual std::string getNewTraceName( const std::string& fullPathTraceName,
                                          const std::vector< std::string >& traceFilterID,
                                          const bool commitName = false ) const;
 
-    // Returns modified fullPathTracName, with appended or modified filter suffixes.
+    // Returns modified fullPathTraceName, with appended or modified filter suffixes.
     // Takes path as root for the trace
     virtual std::string getNewTraceName( const std::string& fullPathTraceName,
                                          const std::string& outputPath,

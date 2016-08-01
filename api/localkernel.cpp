@@ -532,7 +532,7 @@ void LocalKernel::getNewTraceName( char *name,
   struct traces_table currentName;
 
   traceToLoad[0] = '\0';
-  /* De forma provisional agafem var entorn */
+  /* Temporarily get environment variable */
  // if (( traces_home = getenv( "TRACES_HOME" )) != NULL)
   if (( traces_home = getenv( "PWD" )) != NULL)
     sprintf(traceToLoad,"%s",traces_home);
