@@ -155,7 +155,7 @@ class Window
       return myKernel;
     }
 
-    // Specefic for WindowProxy because Single and Derived window
+    // Specific for WindowProxy because Single and Derived window
     // SingleWindow
     virtual Filter *getFilter() const
     {
