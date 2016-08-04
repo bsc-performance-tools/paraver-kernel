@@ -44,11 +44,9 @@ string TraceBodyIO_v1::tmpstring;
 string TraceBodyIO_v1::line;
 ostringstream TraceBodyIO_v1::ostr;
 
-// Optimization on parsing trace, but with no error control
+// Optimization on conversion string to numbers, but with no error control
 //#define USE_ATOLL
-
-
-// Even more optimization using naive function instead of atoll with error checking
+// Even more optimization using custom function instead of atoll with error checking
 #define USE_PRV_ATOLL
 template <typename T>
 bool prv_atoll( const char *p, T *result )
@@ -75,8 +73,6 @@ bool prv_atoll( const char *p, T *result )
   *result = tmp;
   return true;
 }
-
-
 
 bool TraceBodyIO_v1::ordered() const
 {
@@ -225,7 +221,6 @@ inline void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records
 
   // Discarding record type
   std::getline( strLine, tmpstring, ':' );
-
   // Read the common info
   if ( !readCommon( strLine, CPU, appl, task, thread, time ) )
   {
