@@ -1366,14 +1366,6 @@
 			<Option target="Application test" />
 			<Option target="otf2prv" />
 		</Unit>
-		<Unit filename="testspeed/testspeed.cpp">
-			<Option target="testspeed" />
-			<Option target="otf2prv" />
-		</Unit>
-		<Unit filename="testspeed/testspeed.h">
-			<Option target="testspeed" />
-			<Option target="otf2prv" />
-		</Unit>
 		<Unit filename="utils/include/MPI_EventEncoding.h">
 			<Option target="api" />
 		</Unit>
