@@ -707,6 +707,30 @@ int CFGLoader::findWindow( const Window *whichWindow,
   return i;
 }
 
+
+int CFGLoader::findWindowBackwards( const Window *whichWindow,
+                                    const vector<Window *>& allWindows,
+                                    const vector<Window *>::const_iterator it )
+{
+  int i = std::distance( allWindows.begin(), it );
+
+/*  for( vector<Window *>::iterator tmpIt = it; it != allWindows.begin(); --it )
+    ++i;*/
+  if ( allWindows.begin() == allWindows.end() )
+    return -1;
+
+  --i;
+  while ( i >= 0 )
+  {
+    if ( whichWindow == allWindows[ i ] )
+      break;
+    --i;
+  }
+
+  return i;
+}
+
+
 void CFGLoader::loadMap()
 {
   cfgTagFunctions[OLDCFG_TAG_WNDW_NAME]                = new WindowName();
@@ -1472,8 +1496,8 @@ void WindowIdentifiers::printLine( ofstream& cfgFile,
                                    const vector<Window *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_IDENTIFIERS << " ";
-  cfgFile << CFGLoader::findWindow( ( *it )->getParent( 0 ), allWindows ) + 1 << " ";
-  cfgFile << CFGLoader::findWindow( ( *it )->getParent( 1 ), allWindows ) + 1;
+  cfgFile << CFGLoader::findWindowBackwards( ( *it )->getParent( 0 ), allWindows, it ) + 1 << " ";
+  cfgFile << CFGLoader::findWindowBackwards( ( *it )->getParent( 1 ), allWindows, it ) + 1;
   cfgFile << endl;
 }
 

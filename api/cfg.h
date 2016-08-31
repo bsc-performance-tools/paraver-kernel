@@ -121,6 +121,9 @@ class CFGLoader
                          const std::vector<Histogram *>& histograms );
     static int findWindow( const Window *whichWindow,
                            const std::vector<Window *>& allWindows );
+    static int findWindowBackwards( const Window *whichWindow,
+                                    const std::vector<Window *>& allWindows,
+                                    const std::vector<Window *>::const_iterator it );
     // CFG4D
     static const std::vector< std::string > getTagCFGFullList( Window *whichWindow );
     static const std::vector< std::string > getTagCFGFullList( Histogram *whichHistogram );
