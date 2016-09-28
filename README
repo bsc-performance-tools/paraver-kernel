@@ -3,7 +3,6 @@ Library dependencies:
 	- Boost Serialization (www.boost.org)
 	- Zlib (zlib.net)
         - libxml2 (xmlsoft.org)
-        - ptools_common_files (www.bsc.es/paraver)
 
 If you have installed these packages from a package manager, remember to install devel packages too.
 
