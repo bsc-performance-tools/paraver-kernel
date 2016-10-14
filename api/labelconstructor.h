@@ -53,7 +53,8 @@ class LabelConstructor
                                     const Window *whichWindow,
                                     THistogramLimit min,
                                     THistogramLimit max,
-                                    THistogramLimit delta );
+                                    THistogramLimit delta,
+                                    bool shortLabels );
 
     static std::string histoCellLabel( const Histogram *whichHisto,
                                   TSemanticValue value,
@@ -115,6 +116,7 @@ class LabelConstructor
     static std::stringstream sstrSemanticLabel;
 
     static std::string rowStr;
+    static std::string tmpStr;
     static char separator;
     static char point;
 
