@@ -563,6 +563,12 @@ string LabelConstructor::eventValueLabel( Window *whichWindow,
 }
 
 
+void LabelConstructor::transformToShort( std::string& onLabel, char delimiter )
+{
+  onLabel.erase( onLabel.find_first_of( delimiter ), onLabel.find_last_of( delimiter ) );
+}
+
+
 void LabelConstructor::getGUIGroupLabels( const TGroupID groupID, vector< string > &labels )
 {
   switch ( groupID )
