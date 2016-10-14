@@ -563,9 +563,9 @@ string LabelConstructor::eventValueLabel( Window *whichWindow,
 }
 
 
-void LabelConstructor::transformToShort( std::string& onLabel, char delimiter )
+void LabelConstructor::transformToShort( std::string& onLabel, char beginDelimiter, char endDelimiter )
 {
-  onLabel.erase( onLabel.find_first_of( delimiter ), onLabel.find_last_of( delimiter ) );
+  onLabel.erase( onLabel.find_first_of( beginDelimiter ), onLabel.find_last_of( endDelimiter ) );
 }
 
 

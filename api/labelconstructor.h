@@ -85,7 +85,7 @@ class LabelConstructor
                               PRV_UINT32 precision,
                               TTime& value );
 
-    static void transformToShort( std::string& onLabel, char delimiter );
+    static void transformToShort( std::string& onLabel, char beginDelimiter = '[', char endDelimiter = ']' );
 
     enum TGroupID
     {
