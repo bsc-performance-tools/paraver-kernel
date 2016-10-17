@@ -30,8 +30,8 @@
 #include "eventlabels.h"
 
 #ifdef OLD_PCFPARSER
-#include "pcfparser/ParaverEventType.h"
-#include "pcfparser/ParaverEventValue.h"
+#include "utils/pcfparser/old/ParaverEventType.h"
+#include "utils/pcfparser/old/ParaverEventValue.h"
 #endif
 
 using namespace std;
