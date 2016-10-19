@@ -220,6 +220,11 @@ class Histogram
     {
       return ParaverConfig::getInstance()->getHistogramOnlyTotals();
     }
+    virtual void setShortLabels( bool newValue ) {}
+    virtual bool getShortLabels() const
+    {
+      return ParaverConfig::getInstance()->getHistogramShortLabels();
+    }
     virtual void setScientificNotation( bool newValue ) {}
     virtual bool getScientificNotation() const
     {
@@ -670,6 +675,9 @@ class HistogramProxy : public Histogram
     virtual std::string getRowLabel( TObjectOrder whichRow ) const;
     virtual std::string getColumnLabel( THistogramColumn whichColumn ) const;
     virtual std::string getPlaneLabel( THistogramColumn whichPlane ) const;
+    virtual bool getShortLabels() const;
+    virtual void setShortLabels( bool newValue );
+
     virtual THistogramColumn getPlaneColumns( THistogramColumn iPlane,
                                               bool hideEmptyColumns,
                                               std::vector<THistogramColumn> &noVoidColumns ) const;
@@ -811,6 +819,7 @@ class HistogramProxy : public Histogram
     bool codeColor;
     PRV_UINT16 pixelSize;
     bool onlyTotals;
+    bool shortLabels;
 
     TRecordTime winBeginTime;
     TRecordTime winEndTime;

@@ -53,7 +53,8 @@ class LabelConstructor
                                     const Window *whichWindow,
                                     THistogramLimit min,
                                     THistogramLimit max,
-                                    THistogramLimit delta );
+                                    THistogramLimit delta,
+                                    bool shortLabels );
 
     static std::string histoCellLabel( const Histogram *whichHisto,
                                   TSemanticValue value,
@@ -85,6 +86,8 @@ class LabelConstructor
                               PRV_UINT32 precision,
                               TTime& value );
 
+    static void transformToShort( std::string& onLabel, char beginDelimiter = '[', char endDelimiter = ']' );
+
     enum TGroupID
     {
       COLOR = 0,
@@ -113,6 +116,7 @@ class LabelConstructor
     static std::stringstream sstrSemanticLabel;
 
     static std::string rowStr;
+    static std::string tmpStr;
     static char separator;
     static char point;
 

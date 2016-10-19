@@ -45,6 +45,7 @@ stringstream LabelConstructor::tmp;
 stringstream LabelConstructor::sstrTimeLabel;
 stringstream LabelConstructor::sstrSemanticLabel;
 string       LabelConstructor::rowStr;
+string       LabelConstructor::tmpStr;
 char         LabelConstructor::separator;
 char         LabelConstructor::point;
 locale       LabelConstructor::myLocaleWithoutThousands;
@@ -198,7 +199,8 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
     const Window *whichWindow,
     THistogramLimit min,
     THistogramLimit max,
-    THistogramLimit delta )
+    THistogramLimit delta,
+    bool shortLabels )
 {
   columnLabel.clear();
   columnLabel.str( "" );
@@ -229,8 +231,11 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
   {
     columnLabel.precision( 0 );
     // Discrete integer value
-    columnLabel << LabelConstructor::semanticLabel( whichWindow,
+    tmpStr = LabelConstructor::semanticLabel( whichWindow,
         ( whichColumn * delta ) + min, true, ParaverConfig::getInstance()->getHistogramPrecision() );
+    if( whichWindow->getSemanticInfoType() == EVENTVALUE_TYPE && shortLabels )
+      LabelConstructor::transformToShort( tmpStr );
+    columnLabel << tmpStr;
   }
 
   return columnLabel.str();
@@ -560,6 +565,15 @@ string LabelConstructor::eventValueLabel( Window *whichWindow,
     label << tmpstr;
 
   return label.str();
+}
+
+
+void LabelConstructor::transformToShort( std::string& onLabel, char beginDelimiter, char endDelimiter )
+{
+  string::size_type beginPos = onLabel.find_first_of( beginDelimiter );
+  string::size_type endPos = onLabel.find_last_of( endDelimiter );
+  if( beginPos != string::npos && endPos != string::npos )
+    onLabel.erase( beginPos, endPos );
 }
 
 

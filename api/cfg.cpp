@@ -662,6 +662,7 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DPixelSize::printLine( cfgFile, it );
     Analyzer2DCodeColor::printLine( cfgFile, it );
     Analyzer2DOnlyTotals::printLine( cfgFile, it );
+    Analyzer2DShortLabels::printLine( cfgFile, it );
     if ( ( *it )->getThreeDimensions() )
     {
       Analyzer3DControlWindow::printLine( cfgFile, allWindows, it );
@@ -821,6 +822,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN2D_PIXEL_SIZE]           = new Analyzer2DPixelSize();
   cfgTagFunctions[OLDCFG_TAG_AN2D_CODE_COLOR]           = new Analyzer2DCodeColor();
   cfgTagFunctions[OLDCFG_TAG_AN2D_ONLY_TOTALS]          = new Analyzer2DOnlyTotals();
+  cfgTagFunctions[OLDCFG_TAG_AN2D_SHORT_LABELS]         = new Analyzer2DShortLabels();
 
   // 3D Histogram
   cfgTagFunctions[OLDCFG_TAG_AN3D_CONTROLWINDOW]        = new Analyzer3DControlWindow();
@@ -4469,6 +4471,45 @@ void Analyzer2DOnlyTotals::printLine( ofstream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_AN2D_ONLY_TOTALS << " ";
   if ( ( *it )->getOnlyTotals() )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
+
+}
+
+
+string Analyzer2DShortLabels::tagCFG = OLDCFG_TAG_AN2D_SHORT_LABELS;
+
+bool Analyzer2DShortLabels::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                      Trace *whichTrace,
+                                      vector<Window *>& windows,
+                                      vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setShortLabels( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setShortLabels( true );
+  else
+    return false;
+
+  return true;
+}
+
+void Analyzer2DShortLabels::printLine( ofstream& cfgFile,
+                                      const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_SHORT_LABELS << " ";
+  if ( ( *it )->getShortLabels() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;

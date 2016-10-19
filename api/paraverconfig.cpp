@@ -216,6 +216,7 @@ ParaverConfig::ParaverConfig()
   xmlHistogram.pixelSize = 0;
   xmlHistogram.skipCreateDialog = false;
   xmlHistogram.onlyTotals = false;
+  xmlHistogram.shortLabels = true;
 
   // Filter Globals
   xmlFilters.filterTraceUpToMB = 500.0;
@@ -731,6 +732,11 @@ void ParaverConfig::setHistogramOnlyTotals( bool whichOnlyTotals )
   xmlHistogram.onlyTotals = whichOnlyTotals;
 }
 
+void ParaverConfig::setHistogramShortLabels( bool whichShortLabels )
+{
+  xmlHistogram.shortLabels = whichShortLabels;
+}
+
 bool ParaverConfig::getHistogramViewZoom() const
 {
   return xmlHistogram.viewZoom;
@@ -841,6 +847,10 @@ bool ParaverConfig::getHistogramOnlyTotals() const
   return xmlHistogram.onlyTotals;
 }
 
+bool ParaverConfig::getHistogramShortLabels() const
+{
+  return xmlHistogram.shortLabels;
+}
 
 // FILTERS XML SECTION : GLOBAL
 void ParaverConfig::setFiltersFilterTraceUpToMB( float whichFilterTraceUpToMB )

@@ -99,6 +99,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   else
     pixelSize = ParaverConfig::getInstance()->getHistogramPixelSize();
   onlyTotals = Histogram::getOnlyTotals();
+  shortLabels = Histogram::getShortLabels();
 
   setCalculateAll( Histogram::getCalculateAll() );
   currentStat = Histogram::getCurrentStat();
@@ -994,7 +995,8 @@ string HistogramProxy::getColumnLabel( THistogramColumn whichColumn ) const
   return LabelConstructor::histoColumnLabel( whichColumn, controlWindow,
          getControlMin(),
          getControlMax(),
-         getControlDelta() );
+         getControlDelta(),
+         getShortLabels() );
 }
 
 string HistogramProxy::getPlaneLabel( THistogramColumn whichPlane ) const
@@ -1006,7 +1008,8 @@ string HistogramProxy::getPlaneLabel( THistogramColumn whichPlane ) const
   return LabelConstructor::histoColumnLabel( whichPlane, win,
          getExtraControlMin(),
          getExtraControlMax(),
-         getExtraControlDelta() );
+         getExtraControlDelta(),
+         getShortLabels() );
 }
 
 THistogramColumn HistogramProxy::getPlaneColumns( THistogramColumn iPlane,
@@ -1217,6 +1220,7 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->codeColor = codeColor;
   clonedHistogramProxy->pixelSize = pixelSize;
   clonedHistogramProxy->onlyTotals = onlyTotals;
+  clonedHistogramProxy->shortLabels = shortLabels;
   clonedHistogramProxy->futurePlane = futurePlane;
   clonedHistogramProxy->planeMinValue = planeMinValue;
   clonedHistogramProxy->selectedPlane = selectedPlane;
@@ -1460,6 +1464,16 @@ bool HistogramProxy::getOnlyTotals() const
 void HistogramProxy::setOnlyTotals( bool newValue )
 {
   onlyTotals = newValue;
+}
+
+bool HistogramProxy::getShortLabels() const
+{
+  return shortLabels;
+}
+
+void HistogramProxy::setShortLabels( bool newValue )
+{
+  shortLabels = newValue;
 }
 
 void HistogramProxy::setCFG4DMode( bool mode )

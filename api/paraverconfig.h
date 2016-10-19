@@ -188,6 +188,7 @@ class ParaverConfig
     void setHistogramPixelSize( PRV_UINT16 whichPixelSize );
     void setHistogramSkipCreateDialog( bool whichSkipCreateDialog );
     void setHistogramOnlyTotals( bool whichOnlyTotals );
+    void setHistogramShortLabels( bool whichShortLabels );
 
     bool getHistogramViewZoom() const;
     bool getHistogramViewFirstRowColored() const;
@@ -211,6 +212,7 @@ class ParaverConfig
     PRV_UINT16 getHistogramPixelSize() const;
     bool getHistogramSkipCreateDialog() const;
     bool getHistogramOnlyTotals() const;
+    bool getHistogramShortLabels() const;
 
 
     // FILTERS XML SECTION : GLOBAL
@@ -455,6 +457,8 @@ class ParaverConfig
           ar & boost::serialization::make_nvp( "skip_create_dialog", skipCreateDialog );
         if( version >= 5 )
           ar & boost::serialization::make_nvp( "show_only_totals", onlyTotals );
+        if( version >= 6 )
+          ar & boost::serialization::make_nvp( "column_short_labels", shortLabels );
       }
 
       bool viewZoom;
@@ -479,6 +483,7 @@ class ParaverConfig
       PRV_UINT16 pixelSize;
       bool skipCreateDialog;
       bool onlyTotals;
+      bool shortLabels;
 
     } xmlHistogram;
 
@@ -703,7 +708,7 @@ class ParaverConfig
 BOOST_CLASS_VERSION( ParaverConfig, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 5)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 3)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 5)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 6)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilter, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersRange, 0)
