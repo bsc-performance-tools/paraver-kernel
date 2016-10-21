@@ -2302,7 +2302,9 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
           tmpPairSemantic.first = currentValue;
           if( punctualColorWindow != NULL )
           {
-            // calc value for color
+            while( getBeginTime( *row ) >= punctualColorWindow->getEndTime( *row ) )
+              punctualColorWindow->calcNext( *row, dummyMaxY, dummyMinY );
+            tmpPairSemantic.second = punctualColorWindow->getValue( *row );
           }
           values.push_back( tmpPairSemantic );
         }
