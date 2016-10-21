@@ -145,6 +145,8 @@ void WindowProxy::init()
   child = NULL;
   usedByHistogram = false;
 
+  punctualColorWindow = NULL;
+
   objectLabels = ParaverConfig::getInstance()->getTimelineLabels();
   objectAxisSize = ParaverConfig::getInstance()->getTimelineObjectAxisSize();
 
@@ -968,6 +970,16 @@ PRV_UINT16 WindowProxy::getPixelSize() const
 void WindowProxy::setPixelSize( PRV_UINT16 whichSize )
 {
   pixelSize = whichSize;
+}
+
+Window *WindowProxy::getPunctualColorWindow() const
+{
+  return punctualColorWindow;
+}
+
+void WindowProxy::setPunctualColorWindow( Window *whichWindow )
+{
+  punctualColorWindow = whichWindow;
 }
 
 void WindowProxy::allowOutOfScale( bool activate )
@@ -2080,7 +2092,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
                                                    vector< PRV_INT32 >& objectPosList,
                                                    TObjectOrder maxObj,
                                                    bool& drawCaution,
-                                                   vector< vector< vector< TSemanticValue > > >& valuesToDraw,
+                                                   vector< vector< vector< pair<TSemanticValue,TSemanticValue> > > >& valuesToDraw,
                                                    vector< hash_set< PRV_INT32 > >& eventsToDraw,
                                                    vector< hash_set< commCoord > >& commsToDraw,
                                                    ProgressController *progress )
@@ -2093,7 +2105,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
                                                    vector< PRV_INT32 >& objectPosList,
                                                    TObjectOrder maxObj,
                                                    bool& drawCaution,
-                                                   vector< vector< vector< TSemanticValue > > >& valuesToDraw,
+                                                   vector< vector< vector< pair<TSemanticValue,TSemanticValue> > > >& valuesToDraw,
                                                    vector< hash_set< PRV_INT32 > >& eventsToDraw,
                                                    vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,
                                                    ProgressController *progress )
@@ -2147,7 +2159,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
       ++obj;
       lastObj = *obj;
     }
-    valuesToDraw.push_back( vector< vector< TSemanticValue > >() );
+    valuesToDraw.push_back( vector< vector< pair<TSemanticValue,TSemanticValue> > >() );
 
     eventsToDraw.push_back( hash_set< PRV_INT32 >() );
 #ifdef WIN32
@@ -2218,7 +2230,7 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
                                                       int& drawCaution,
                                                       TSemanticValue& rowComputedMaxY,
                                                       TSemanticValue& rowComputedMinY,
-                                                      vector< vector< TSemanticValue > >& valuesToDraw,
+                                                      vector< vector< pair<TSemanticValue,TSemanticValue> > >& valuesToDraw,
                                                       hash_set< PRV_INT32 >& eventsToDraw,
                                                       hash_set< commCoord >& commsToDraw,
                                                       ProgressController *progress )
@@ -2235,7 +2247,7 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
                                                       int& drawCaution,
                                                       TSemanticValue& rowComputedMaxY,
                                                       TSemanticValue& rowComputedMinY,
-                                                      vector< vector< TSemanticValue > >& valuesToDraw,
+                                                      vector< vector< pair<TSemanticValue,TSemanticValue> > >& valuesToDraw,
                                                       hash_set< PRV_INT32 >& eventsToDraw,
                                                       hash_set< commCoord, hashCommCoord >& commsToDraw,
                                                       ProgressController *progress )
@@ -2243,7 +2255,8 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
 {
   float magnify = float( getPixelSize() );
 
-  vector<TSemanticValue> values;
+  vector<pair<TSemanticValue,TSemanticValue> > values;
+  pair<TSemanticValue,TSemanticValue> tmpPairSemantic;
 
   vector<TObjectOrder>::iterator first = find( selectedSet.begin(), selectedSet.end(), firstRow );
   vector<TObjectOrder>::iterator last  = find( selectedSet.begin(), selectedSet.end(), lastRow );
@@ -2263,7 +2276,14 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
         calcNext( *row, rowComputedMaxY, rowComputedMinY  );
 
       if( getBeginTime( *row ) >= currentTime - timeStep && getBeginTime( *row ) < currentTime )
-        values.push_back( getValue( *row ) );
+      {
+        tmpPairSemantic.first = getValue( *row );
+        if( punctualColorWindow != NULL )
+        {
+          // calc value for color
+        }
+        values.push_back( tmpPairSemantic );
+      }
 
       while( getEndTime( *row ) < currentTime )
       {
@@ -2271,7 +2291,14 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
         TSemanticValue currentValue = getValue( *row );
 
         if( getBeginTime( *row ) >= currentTime - timeStep && getBeginTime( *row ) < currentTime )
-          values.push_back( currentValue );
+        {
+          tmpPairSemantic.first = currentValue;
+          if( punctualColorWindow != NULL )
+          {
+            // calc value for color
+          }
+          values.push_back( tmpPairSemantic );
+        }
 
         if( currentValue != 0 && ( currentValue < getMinimumY()
                                    || currentValue > getMaximumY() ) )

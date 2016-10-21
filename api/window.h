@@ -390,6 +390,12 @@ class Window
     }
     virtual void setPixelSize( PRV_UINT16 whichSize )
     {}
+    virtual Window *getPunctualColorWindow() const
+    {
+      return NULL;
+    }
+    virtual void setPunctualColorWindow( Window *whichWindow )
+    {}
     virtual void allowOutOfScale( bool activate )
     {}
     virtual void allowOutliers( bool activate )
@@ -749,7 +755,7 @@ class Window
                                                   std::vector< PRV_INT32 >& objectPosList,
                                                   TObjectOrder maxObj,
                                                   bool& drawCaution,                      // I/O
-                                                  std::vector< std::vector< std::vector< TSemanticValue > > >& valuesToDraw, // I/O
+                                                  std::vector< std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > > >& valuesToDraw, // I/O
                                                   std::vector< hash_set< PRV_INT32 > >& eventsToDraw,    // I/O
                                                   std::vector< hash_set< commCoord > >& commsToDraw,    // I/O
                                                   ProgressController *progress )
@@ -762,7 +768,7 @@ class Window
                                                   std::vector< PRV_INT32 >& objectPosList,
                                                   TObjectOrder maxObj,
                                                   bool& drawCaution,                                  // I/O
-                                                  std::vector< std::vector< std::vector< TSemanticValue > > >& valuesToDraw,             // I/O
+                                                  std::vector< std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > > >& valuesToDraw,             // I/O
                                                   std::vector< hash_set< PRV_INT32 > >& eventsToDraw,                // I/O
                                                   std::vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,    // I/O
                                                   ProgressController *progress )
@@ -781,7 +787,7 @@ class Window
                                                      int& drawCaution,                      // I/O
                                                      TSemanticValue &rowComputedMaxY,
                                                      TSemanticValue &rowComputedMinY,
-                                                     std::vector< std::vector< TSemanticValue > >& valuesToDraw, // I/O
+                                                     std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > >& valuesToDraw, // I/O
                                                      hash_set< PRV_INT32 >& eventsToDraw,    // I/O
                                                      hash_set< commCoord >& commsToDraw )    // I/O
 #else
@@ -796,7 +802,7 @@ class Window
                                                      int& drawCaution,                                  // I/O
                                                      TSemanticValue &rowComputedMaxY,
                                                      TSemanticValue &rowComputedMinY,
-                                                     std::vector< std::vector< TSemanticValue > >& valuesToDraw,             // I/O
+                                                     std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > >& valuesToDraw,             // I/O
                                                      hash_set< PRV_INT32 >& eventsToDraw,                // I/O
                                                      hash_set< commCoord, hashCommCoord >& commsToDraw ) // I/O
 #endif
@@ -929,6 +935,8 @@ class WindowProxy: public Window
     virtual bool isPunctualColorSet() const;
     virtual PRV_UINT16 getPixelSize() const;
     virtual void setPixelSize( PRV_UINT16 whichSize );
+    virtual Window *getPunctualColorWindow() const;
+    virtual void setPunctualColorWindow( Window *whichWindow );
 
     virtual void allowOutOfScale( bool activate );
     virtual void allowOutliers( bool activate );
@@ -1136,7 +1144,7 @@ class WindowProxy: public Window
                                                   std::vector< PRV_INT32 >& objectPosList,
                                                   TObjectOrder maxObj,
                                                   bool& drawCaution,                      // I/O
-                                                  std::vector< std::vector< std::vector< TSemanticValue > > >& valuesToDraw, // I/O
+                                                  std::vector< std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > > >& valuesToDraw, // I/O
                                                   std::vector< hash_set< PRV_INT32 > >& eventsToDraw,    // I/O
                                                   std::vector< hash_set< commCoord > >& commsToDraw,    // I/O
                                                   ProgressController *progress );
@@ -1149,7 +1157,7 @@ class WindowProxy: public Window
                                                   std::vector< PRV_INT32 >& objectPosList,
                                                   TObjectOrder maxObj,
                                                   bool& drawCaution,                                  // I/O
-                                                  std::vector< std::vector< std::vector< TSemanticValue > > >& valuesToDraw,             // I/O
+                                                  std::vector< std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > > >& valuesToDraw,             // I/O
                                                   std::vector< hash_set< PRV_INT32 > >& eventsToDraw,                // I/O
                                                   std::vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,    // I/O
                                                   ProgressController *progress );
@@ -1168,7 +1176,7 @@ class WindowProxy: public Window
                                                      int& drawCaution,  // O
                                                      TSemanticValue &rowComputedMaxY,
                                                      TSemanticValue &rowComputedMinY,
-                                                     std::vector< std::vector< TSemanticValue > >& valuesToDraw, // O
+                                                     std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > >& valuesToDraw, // O
                                                      hash_set< PRV_INT32 >& eventsToDraw,    // O
                                                      hash_set< commCoord >& commsToDraw,
                                                      ProgressController *progress );   // O
@@ -1186,7 +1194,7 @@ class WindowProxy: public Window
                                              int& drawCaution,                                    // I/O
                                              TSemanticValue &rowComputedMaxY,
                                              TSemanticValue &rowComputedMinY,
-                                             std::vector< std::vector< TSemanticValue > >& valuesToDraw,         // I/O
+                                             std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > >& valuesToDraw,         // I/O
                                              hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
                                              hash_set< commCoord, hashCommCoord >& commsToDraw,
                                              ProgressController *progress ); // I/O
@@ -1238,6 +1246,7 @@ class WindowProxy: public Window
     bool flags;
     PRV_UINT16 pixelSize;
 
+    Window *punctualColorWindow;
     // Zoom history
     ZoomHistory<TTime, TObjectOrder> zoomHistory;
 
