@@ -2261,8 +2261,13 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
   vector<TObjectOrder>::iterator first = find( selectedSet.begin(), selectedSet.end(), firstRow );
   vector<TObjectOrder>::iterator last  = find( selectedSet.begin(), selectedSet.end(), lastRow );
 
+  TSemanticValue dummyMaxY, dummyMinY;
   for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
+  {
     initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS, rowComputedMaxY, rowComputedMinY );
+    if( punctualColorWindow != NULL )
+      punctualColorWindow->initRow( *row, getWindowBeginTime(), NOCREATE, dummyMaxY, dummyMinY, false );
+  }
 
   TTime currentTime;
   for( currentTime = getWindowBeginTime() + timeStep;
@@ -2280,7 +2285,9 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
         tmpPairSemantic.first = getValue( *row );
         if( punctualColorWindow != NULL )
         {
-          // calc value for color
+          while( getBeginTime( *row ) >= punctualColorWindow->getEndTime( *row ) )
+            punctualColorWindow->calcNext( *row, dummyMaxY, dummyMinY );
+          tmpPairSemantic.second = punctualColorWindow->getValue( *row );
         }
         values.push_back( tmpPairSemantic );
       }
