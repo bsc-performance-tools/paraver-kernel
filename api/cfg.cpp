@@ -502,6 +502,13 @@ void CFGLoader::pushbackWindow( Window *whichWindow,
     pushbackWindow( whichWindow->getParent( 0 ), allWindows );
     pushbackWindow( whichWindow->getParent( 1 ), allWindows );
   }
+
+  if( whichWindow->isPunctualColorSet() && whichWindow->getPunctualColorWindow() != NULL )
+  {
+    if( std::find( allWindows.begin(), allWindows.end(), whichWindow->getPunctualColorWindow() ) == allWindows.end() )
+      pushbackWindow( whichWindow->getPunctualColorWindow(), allWindows );
+  }
+
   allWindows.push_back( whichWindow );
 }
 
@@ -584,6 +591,7 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowFlagsEnabled::printLine( cfgFile, it );
     WindowNonColorMode::printLine( cfgFile, it );
     WindowColorMode::printLine( cfgFile, it );
+    WindowPunctualColorWindow::printLine( cfgFile, allWindows, it );
     if ( !( *it )->isDerivedWindow() )
     {
       WindowFilterLogical::printLine( cfgFile, it );
@@ -780,6 +788,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_DRAW_MODE_ROWS]      = new WindowDrawModeRows();
   cfgTagFunctions[OLDCFG_TAG_WNDW_PIXEL_SIZE]          = new WindowPixelSize();
   cfgTagFunctions[OLDCFG_TAG_WNDW_LABELS_TO_DRAW]      = new WindowLabelsToDraw();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_PUNCTUAL_COLOR_WIN]  = new WindowPunctualColorWindow();
 
   // Histogram options
 
@@ -3280,6 +3289,44 @@ void WindowLabelsToDraw::printLine( ofstream& cfgFile,
                                  const vector<Window *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_LABELS_TO_DRAW << " " << (*it)->getObjectLabels() << endl;
+}
+
+
+string WindowPunctualColorWindow::tagCFG = OLDCFG_TAG_WNDW_PUNCTUAL_COLOR_WIN;
+
+bool WindowPunctualColorWindow::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                           Trace *whichTrace,
+                                           vector<Window *>& windows,
+                                           vector<Histogram *>& histograms )
+{
+  string strID;
+  PRV_UINT16 id;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strID );
+  istringstream tmpStream( strID );
+  if ( !( tmpStream >> id ) )
+    return false;
+
+  if ( windows[ id - 1 ] == NULL )
+    return false;
+
+  windows[ windows.size() - 1 ]->setPunctualColorWindow( windows[ id - 1 ] );
+
+  return true;
+}
+
+void WindowPunctualColorWindow::printLine( ofstream& cfgFile,
+                                           const vector<Window *>& allWindows,
+                                           const vector<Window *>::const_iterator it )
+{
+  if( (*it)->isPunctualColorSet() )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_PUNCTUAL_COLOR_WIN << " " \
+            << CFGLoader::findWindowBackwards( (*it)->getPunctualColorWindow(), allWindows, it ) + 1 << endl;
+  }
 }
 
 

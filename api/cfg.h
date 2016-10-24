@@ -1120,6 +1120,31 @@ class WindowLabelsToDraw: public TagFunction
 
 };
 
+class WindowPunctualColorWindow: public TagFunction
+{
+  public:
+    WindowPunctualColorWindow()
+    {}
+
+    virtual ~WindowPunctualColorWindow()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>& allWindows,
+                           const std::vector<Window *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
+
 
 class Analyzer2DCreate: public TagFunction
 {

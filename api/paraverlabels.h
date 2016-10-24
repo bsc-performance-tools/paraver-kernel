@@ -109,6 +109,7 @@
 #define OLDCFG_TAG_WNDW_DRAW_MODE_ROWS "window_drawmode_rows"
 #define OLDCFG_TAG_WNDW_PIXEL_SIZE "window_pixel_size"
 #define OLDCFG_TAG_WNDW_LABELS_TO_DRAW "window_labels_to_draw"
+#define OLDCFG_TAG_WNDW_PUNCTUAL_COLOR_WIN "window_punctual_color_window"
 
 // HISTOGRAM CFGs TAGS
 #define OLDCFG_TAG_AN2D_NEW "< NEW ANALYZER2D >"
