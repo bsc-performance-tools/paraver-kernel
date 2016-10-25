@@ -54,6 +54,7 @@ class TextOutput:public Output
                         bool hideEmptyColumns = false,
                         bool withLabels = true,
                         bool withPreferencesPrecision = true,
+                        bool recalcHisto = true,
                         ProgressController *progress = NULL );
 
     bool getMultipleFiles() const;

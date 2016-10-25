@@ -60,6 +60,7 @@ class Output
                                 bool hideEmptyColumns = false,
                                 bool withLabels = true,
                                 bool withPreferencesPrecision = true,
+                                bool recalcHisto = true,
                                 ProgressController *progress = NULL ) = 0;
 
     virtual bool getMultipleFiles() const = 0;

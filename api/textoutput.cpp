@@ -197,6 +197,7 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
                                 bool hideEmptyColumns,
                                 bool withLabels,
                                 bool withPreferencesPrecision,
+                                bool recalcHisto,
                                 ProgressController *progress )
 {
   THistogramColumn numPlanes;
@@ -211,9 +212,10 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
   TObjectOrder endRow =  whichHisto->getControlWindow()->getZoomSecondDimension().second;
   whichHisto->getControlWindow()->getSelectedRows( whichHisto->getControlWindow()->getLevel(),
       selectedRows, beginRow, endRow );
-//std::cout << "START RECALC" << std::endl;
-  whichHisto->execute( whichHisto->getBeginTime(), whichHisto->getEndTime(), selectedRows, progress );
-//std::cout << "END RECALC" << std::endl;
+
+  if( recalcHisto )
+    whichHisto->execute( whichHisto->getBeginTime(), whichHisto->getEndTime(), selectedRows, progress );
+
   outputFile.open( strOutputFile.c_str() );
 
   outputFile << fixed;

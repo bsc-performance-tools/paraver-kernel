@@ -47,6 +47,7 @@ class GNUPlotOutput: public Output
                                 bool hideEmptyColumns = false,
                                 bool withLabels = true,
                                 bool withPreferencesPrecision = true,
+                                bool recalcHisto = true,
                                 ProgressController *progress = NULL );
 
     virtual bool getMultipleFiles() const;

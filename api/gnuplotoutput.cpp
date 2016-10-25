@@ -72,6 +72,7 @@ void GNUPlotOutput::dumpHistogram( Histogram *whichHisto,
                                    bool hideEmptyColumns,
                                    bool withLabels,
                                    bool withPreferencesPrecision,
+                                   bool recalcHisto,
                                    ProgressController *progress )
 {
   if( strOutputFile.rfind( string( ".gnuplot" ) ) == string::npos )
@@ -81,7 +82,7 @@ void GNUPlotOutput::dumpHistogram( Histogram *whichHisto,
   string strTextOutputFilename = strOutputFile + string( ".csv" );
 
   textOutput->setMultipleFiles( false );
-  textOutput->dumpHistogram( whichHisto, strTextOutputFilename, onlySelectedPlane, hideEmptyColumns, false, progress );
+  textOutput->dumpHistogram( whichHisto, strTextOutputFilename, onlySelectedPlane, hideEmptyColumns, false, withPreferencesPrecision, recalcHisto, progress );
 
   delete textOutput;
 
