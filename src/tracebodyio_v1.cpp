@@ -64,7 +64,7 @@ bool prv_atoll( const char *p, T *result )
     tmp = ( tmp * 10 ) + ( *p - '0' );
     ++p;
   }
-  if( *p != '\0' )
+  if( *p != '\r' && *p != '\0' )
     return false;
   if( neg )
   {
