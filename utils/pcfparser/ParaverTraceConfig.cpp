@@ -400,9 +400,23 @@ std::string ParaverTraceConfig::toString() const {
       for ( std::vector< unsigned int >::const_iterator itType = (*itGroup).begin(); itType != (*itGroup).end(); ++itType )
       {
         if ( itType == --(*itGroup).end() )
+#ifdef WIN32
+        {
+          EventType *tmp = event_types.find( (int)(*itType) )->second;
+          str += tmp->toString() + "\n";
+        }
+#else
           str += event_types.at( (int)(*itType) )->toString() + "\n";
+#endif
         else
+#ifdef WIN32
+        {
+          EventType *tmp = event_types.find( (int)(*itType) )->second;
+          str += tmp->toStringWithoutValues() + "\n";
+        }
+#else
           str += event_types.at( (int)(*itType) )->toStringWithoutValues() + "\n";
+#endif
       }
 
       str += "\n\n";

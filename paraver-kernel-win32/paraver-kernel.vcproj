@@ -117,7 +117,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;C:\Archivos de programa\iconv\include&quot;;&quot;C:\Archivos de programa\libxml2\include&quot;;&quot;C:\Archivos de programa\zlib\include&quot;;&quot;..\..\common-files\win32&quot;;..\api;..\include;..\;&quot;..\..\common-files&quot;;e:\boost"
+				AdditionalIncludeDirectories="&quot;..\paraver-kernel-win32&quot;;&quot;C:\Archivos de programa\iconv\include&quot;;&quot;C:\Archivos de programa\libxml2\include&quot;;&quot;C:\Archivos de programa\zlib\include&quot;;..\api;..\include;..\;e:\boost"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;PARAVERKERNEL_EXPORTS"
 				StringPooling="true"
 				RuntimeLibrary="0"
