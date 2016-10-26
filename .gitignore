@@ -53,3 +53,9 @@ utils/pcfparser/old/.deps/
 utils/pcfparser/old/*.lo
 utils/pcfparser/old/*.o
 /paraver-kernel.layout
+api/Release/
+api/api.vcproj.BSC-VM.bscuser.user
+paraver-kernel-win32/Release/
+paraver-kernel-win32/paraver-kernel.ncb
+paraver-kernel-win32/paraver-kernel.suo
+paraver-kernel-win32/paraver-kernel.vcproj.BSC-VM.bscuser.user
