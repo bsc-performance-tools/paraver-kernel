@@ -493,9 +493,9 @@ bool parseArguments( int argc,
       // TODO: Detect which kind of xml do we have. See implementation.
       strXMLOptions = currentArgument;
     }
-    else if ( CFGLoader::isCFGFile( currentArgument ) )
+    else if ( CFGLoader::hasCFGExtension( currentArgument ) )
     {
-      cfgs[ currentArgument ] = currentArgument.substr( 0, currentArgument.length() - CFG_SUFFIX.length() );;
+      cfgs[ currentArgument ] = currentArgument.substr( 0, currentArgument.length() - CFG_SUFFIX.length() );
       previousCFGPosition = numArg;
     }
     else
@@ -514,6 +514,17 @@ bool parseArguments( int argc,
   if ( needXMLOptionsFile && strXMLOptions.empty() )
   {
     std::cerr << "  [ERROR] Unable to find XML options file." << std::endl;
+    parseOK = false;
+  }
+
+  if( sourceTraceName.empty() )
+  {
+    std::cerr << "  [ERROR] Missing tracefile." << std::endl;
+    parseOK = false;
+  }
+  else if( registeredTool.size() == 0 && cfgs.size() == 0 )
+  {
+    std::cerr << "  [ERROR] Missing arguments." << std::endl;
     parseOK = false;
   }
 
@@ -579,7 +590,7 @@ string applyFilters( KernelConnection *myKernel,
   traceOptions = myKernel->newTraceOptions( );
 
   // The order is given by the command line, not the xml file.
-  vector< string > xmlToolOrder = traceOptions->parseDoc( (char *)strXMLOptions.c_str() );
+  vector< string > dummyToolOrder = traceOptions->parseDoc( (char *)strXMLOptions.c_str() );
 
   // Concatenate Filter Utilities
   for( size_t i = 0; i < registeredTool.size(); ++i )
@@ -785,7 +796,7 @@ void loadCFGs( KernelConnection *myKernel )
         output.dumpWindow( windows[ windows.size() - 1 ], it->second );
     }
     else
-      std::cout << "  [Warning] Cannot load '" << it->first << "' file." << std::endl;
+      std::cerr << "  [Warning] Cannot load '" << it->first << "' file." << std::endl;
 
     for ( PRV_UINT32 i = 0; i < histograms.size(); ++i )
     {
@@ -974,12 +985,38 @@ int main( int argc, char *argv[] )
       {
         if ( registeredTool.size() > 0 )
         {
-          // We can pass a filtered trace to compute some further cfgs
-          sourceTraceName = applyFilters( myKernel, registeredTool, tmpFiles );
+          if( !TraceOptions::validTraceToolsOptionsFile( strXMLOptions ) )
+          {
+            std::cerr << "  [ERROR] Cannot load '" << strXMLOptions << "' file." << std::endl;
+            exit( 1 );
+          }
+          else
+          {
+            // We can pass a filtered trace to compute some further cfgs
+            sourceTraceName = applyFilters( myKernel, registeredTool, tmpFiles );
+          }
         }
 
         if ( cfgs.size() > 0 || option[ DUMP_TRACE ].active )
         {
+          std::map<string,string> validCfgs;
+          for( std::map<string, string>::iterator itCfg = cfgs.begin(); itCfg != cfgs.end(); ++itCfg )
+          {
+            if( !CFGLoader::isCFGFile( itCfg->first ) )
+              std::cerr << "  [Warning] Cannot load '" << itCfg->first << "' file." << std::endl;
+            else
+            {
+              validCfgs[ itCfg->first ] = itCfg->second;
+            }
+          }
+
+          if( validCfgs.size() == 0 && !option[ DUMP_TRACE ].active )
+          {
+            std::cerr << "  [ERROR] No valid cfgs found." << std::endl;
+            exit( 1 );
+          }
+
+          cfgs = validCfgs;
           if ( !loadTrace( myKernel ) )
           {
             std::cerr << "  [ERROR] Cannot load " << sourceTraceName << std::endl;

@@ -106,6 +106,7 @@ class CFGLoader
                                     std::vector<Window *>& allWindows );
 
   public:
+    static bool hasCFGExtension( const std::string& filename );
     static bool isCFGFile( const std::string& filename );
     static bool isDimemasCFGFile( const std::string& filename ); // TODO: here?
 

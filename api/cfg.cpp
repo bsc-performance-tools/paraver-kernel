@@ -201,10 +201,8 @@ string levelToStringHisto( TWindowLevel whichLevel )
   return "";
 }
 
-// Smarter detections welcome!
-bool CFGLoader::isCFGFile( const string& filename )
+bool CFGLoader::hasCFGExtension( const string& filename )
 {
-  bool isCFG = false;
   string cfgExt;
 
   if ( filename.length() > CFG_SUFFIX.length() )
@@ -212,54 +210,65 @@ bool CFGLoader::isCFGFile( const string& filename )
     // Does it end with ".cfg"?
     cfgExt = filename.substr( filename.length() - CFG_SUFFIX.length() );
     if( cfgExt.compare( CFG_SUFFIX ) == 0 )
+      return true;
+  }
+
+  return false;
+}
+
+// Smarter detections welcome!
+bool CFGLoader::isCFGFile( const string& filename )
+{
+  bool isCFG = false;
+
+  if ( hasCFGExtension( filename ) )
+  {
+    // TODO: Read shebang
+    // Currently: detect first two tokens
+    map< string, bool > found;
+    found[ CFG_SHEBANG ] = false;
+    found[ CFG_HEADER_VERSION ] = false;
+    found[ CFG_HEADER_NUM_WINDOWS ] = false;
+    found[ OLDCFG_HEADER_VERSION ] = false;
+    found[ OLDCFG_HEADER_NUM_WINDOWS ] = false;
+
+    ifstream cfgFile( filename.c_str() );
+    if ( cfgFile.good() )
     {
-      // TODO: Read shebang
-      // Currently: detect first two tokens
-      map< string, bool > found;
-      found[ CFG_SHEBANG ] = false;
-      found[ CFG_HEADER_VERSION ] = false;
-      found[ CFG_HEADER_NUM_WINDOWS ] = false;
-      found[ OLDCFG_HEADER_VERSION ] = false;
-      found[ OLDCFG_HEADER_NUM_WINDOWS ] = false;
-
-      ifstream cfgFile( filename.c_str() );
-      if ( cfgFile.good() )
+      while ( !cfgFile.eof() && !isCFG )
       {
-        while ( !cfgFile.eof() && !isCFG )
+        string strLine;
+        string cfgHeaderTag;
+
+        getline( cfgFile, strLine );
+
+        if ( strLine.length() > 0 && strLine[ strLine.length() - 1 ] == '\r' )
+          strLine = strLine.substr( 0, strLine.length() - 1 );
+
+        if ( strLine.length() > 0 )
         {
-          string strLine;
-          string cfgHeaderTag;
+          istringstream auxStream( strLine );
+          getline( auxStream, cfgHeaderTag, ' ' );
 
-          getline( cfgFile, strLine );
+          if ( cfgHeaderTag.compare( CFG_SHEBANG ) == 0 )
+            found[ CFG_SHEBANG ] = true;
+          if ( cfgHeaderTag.compare( CFG_HEADER_VERSION ) == 0 )
+            found[ CFG_HEADER_VERSION ] = true;
+          if ( cfgHeaderTag.compare( CFG_HEADER_NUM_WINDOWS ) == 0 )
+            found[ CFG_HEADER_NUM_WINDOWS ] = true;
+          if ( cfgHeaderTag.compare( OLDCFG_HEADER_VERSION ) == 0 )
+            found[ OLDCFG_HEADER_VERSION ] = true;
+          if ( cfgHeaderTag.compare( OLDCFG_HEADER_NUM_WINDOWS ) == 0 )
+            found[ OLDCFG_HEADER_NUM_WINDOWS ] = true;
 
-          if ( strLine.length() > 0 && strLine[ strLine.length() - 1 ] == '\r' )
-            strLine = strLine.substr( 0, strLine.length() - 1 );
-
-          if ( strLine.length() > 0 )
-          {
-            istringstream auxStream( strLine );
-            getline( auxStream, cfgHeaderTag, ' ' );
-
-            if ( cfgHeaderTag.compare( CFG_SHEBANG ) == 0 )
-              found[ CFG_SHEBANG ] = true;
-            if ( cfgHeaderTag.compare( CFG_HEADER_VERSION ) == 0 )
-              found[ CFG_HEADER_VERSION ] = true;
-            if ( cfgHeaderTag.compare( CFG_HEADER_NUM_WINDOWS ) == 0 )
-              found[ CFG_HEADER_NUM_WINDOWS ] = true;
-            if ( cfgHeaderTag.compare( OLDCFG_HEADER_VERSION ) == 0 )
-              found[ OLDCFG_HEADER_VERSION ] = true;
-            if ( cfgHeaderTag.compare( OLDCFG_HEADER_NUM_WINDOWS ) == 0 )
-              found[ OLDCFG_HEADER_NUM_WINDOWS ] = true;
-
-            isCFG = found[ CFG_SHEBANG ] ||
-                    ( found[ CFG_HEADER_VERSION ] && found[ CFG_HEADER_NUM_WINDOWS ] ) ||
-                    ( found[ OLDCFG_HEADER_VERSION ] && found[ OLDCFG_HEADER_NUM_WINDOWS ] );
-          }
+          isCFG = found[ CFG_SHEBANG ] ||
+                  ( found[ CFG_HEADER_VERSION ] && found[ CFG_HEADER_NUM_WINDOWS ] ) ||
+                  ( found[ OLDCFG_HEADER_VERSION ] && found[ OLDCFG_HEADER_NUM_WINDOWS ] );
         }
       }
-
-      cfgFile.close();
     }
+
+    cfgFile.close();
   }
 
   return isCFG;

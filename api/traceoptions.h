@@ -52,6 +52,7 @@ class TraceOptions
     static TraceOptions *create( const KernelConnection *whichKernel );
 
     static bool isTraceToolsOptionsFile( const std::string& xmlFileName );
+    static bool validTraceToolsOptionsFile( const std::string& xmlFileName );
 
     TraceOptions() {}
     TraceOptions( const KernelConnection *whichKernel ) {}

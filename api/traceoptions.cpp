@@ -27,6 +27,8 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
+#include <fstream>
+
 #include "kernelconnection.h"
 #include "paraverkernelexception.h"
 #include "traceoptions.h"
@@ -63,6 +65,14 @@ bool TraceOptions::isTraceToolsOptionsFile( const string& xmlFileName )
   return ( suffix.compare( TRACE_TOOL_OPTIONS_SUFFIX ) == 0 );
 }
 
+bool TraceOptions::validTraceToolsOptionsFile( const string& xmlFileName )
+{
+  ifstream xmlFile( xmlFileName.c_str() );
+  bool result = xmlFile.good();
+  xmlFile.close();
+
+  return result;
+}
 
 // TraceOptionsProxy::TraceOptionsProxy( const KernelConnection *whichKernel, char *xmldocname )
 TraceOptionsProxy::TraceOptionsProxy( const KernelConnection *whichKernel )
