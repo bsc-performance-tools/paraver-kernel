@@ -28,6 +28,7 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include <math.h>
+#include <limits>
 #include "histogramstatistic.h"
 #include "khistogram.h"
 #include "kwindow.h"
@@ -40,7 +41,7 @@
 using namespace std;
 
 int Statistics::numCommStats = 10;
-int Statistics::numStats = 16;
+int Statistics::numStats = 17;
 
 //-------------------------------------------------------------------------
 // Statistics filtering functions
@@ -206,6 +207,7 @@ void Statistics::initAll( KHistogram *whichHistogram )
   statIntegral.init( whichHistogram );
   statAvgValue.init( whichHistogram );
   statMaximum.init( whichHistogram );
+  statMinimum.init ( whichHistogram );
   statAvgBurstTime.init( whichHistogram );
   statStdevBurstTime.init( whichHistogram );
   statAvgPerBurst.init( whichHistogram );
@@ -226,6 +228,7 @@ void Statistics::resetAll()
   statIntegral.reset();
   statAvgValue.reset();
   statMaximum.reset();
+  statMinimum.reset();
   statAvgBurstTime.reset();
   statStdevBurstTime.reset();
   statAvgPerBurst.reset();
@@ -248,6 +251,7 @@ vector<bool> Statistics::filterAll( CalculateData *data )
   values.push_back( statIntegral.filter( data ) );
   values.push_back( statAvgValue.filter( data ) );
   values.push_back( statMaximum.filter( data ) );
+  values.push_back( statMinimum.filter( data ) );
   values.push_back( statAvgBurstTime.filter( data ) );
   values.push_back( statStdevBurstTime.filter( data ) );
   values.push_back( statAvgPerBurst.filter( data ) );
@@ -272,6 +276,7 @@ vector<TSemanticValue> Statistics::executeAll( CalculateData *data )
   values.push_back( statIntegral.execute( data ) );
   values.push_back( statAvgValue.execute( data ) );
   values.push_back( statMaximum.execute( data ) );
+  values.push_back( statMinimum.execute( data ) );
   values.push_back( statAvgBurstTime.execute( data ) );
   values.push_back( statStdevBurstTime.execute( data ) );
   values.push_back( statAvgPerBurst.execute( data ) );
@@ -308,6 +313,8 @@ vector<TSemanticValue> Statistics::finishRowAll( const vector<TSemanticValue>& c
   values.push_back( statAvgValue.finishRow( cellValue[ i ], column, row, plane ) );
   ++i;
   values.push_back( statMaximum.finishRow( cellValue[ i ], column, row, plane ) );
+  ++i;
+  values.push_back( statMinimum.finishRow( cellValue[ i ], column, row, plane ) );
   ++i;
   values.push_back( statAvgBurstTime.finishRow( cellValue[ i ], column, row, plane ) );
   ++i;
@@ -1719,7 +1726,6 @@ HistogramStatistic *StatAvgValue::clone()
   return new StatAvgValue( *this );
 }
 
-
 //-------------------------------------------------------------------------
 // Histogram Statistic: Maximum
 //-------------------------------------------------------------------------
@@ -1803,6 +1809,95 @@ HistogramStatistic *StatMaximum::clone()
   return new StatMaximum( *this );
 }
 
+//-------------------------------------------------------------------------
+// Histogram Statistic: Minimum
+//-------------------------------------------------------------------------
+string StatMinimum::name = "Minimum";
+
+void StatMinimum::init( KHistogram *whichHistogram )
+{
+  myHistogram = whichHistogram;
+  dataWin = myHistogram->getDataWindow();
+#ifndef PARALLEL_ENABLED
+  min = Statistics::zeroMatrix;
+#else
+  min = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+#endif
+}
+
+void StatMinimum::reset()
+{
+#ifndef PARALLEL_ENABLED
+  min = Statistics::zeroMatrix;
+#else
+  delete min;
+#endif
+}
+
+bool StatMinimum::filter( CalculateData *data ) const
+{
+  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+                              myHistogram );
+}
+
+TSemanticValue StatMinimum::execute( CalculateData *data )
+{
+#ifndef PARALLEL_ENABLED
+  if ( ( ( min[ data->plane ] )[ data->column ] ) == 0.0 )
+  {
+    ( ( min[ data->plane ] )[ data->column ] ) = dataWin->getValue( data->dataRow );
+  }
+  else if ( dataWin->getValue( data->dataRow ) != 0.0 &&
+            dataWin->getValue( data->dataRow ) <
+            ( ( min[ data->plane ] )[ data->column ] ) )
+  {
+     ( ( min[ data->plane ] )[ data->column ] ) = dataWin->getValue( data->dataRow );
+  }
+#else
+  vector< TSemanticValue > tmp;
+  bool res = min->getCellValue( tmp, data->plane, data->row, data->column );
+  if( !res )
+  {
+    min->setValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, dataWin->getValue( data->dataRow ) ) );
+  }
+  else if ( dataWin->getValue( data->dataRow ) < tmp[ 0 ] )
+  {
+    min->setValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, dataWin->getValue( data->dataRow ) ) );
+  }
+#endif
+  return 1;
+}
+
+TSemanticValue StatMinimum::finishRow( TSemanticValue cellValue,
+                                       THistogramColumn column,
+                                       TObjectOrder row,
+                                       THistogramColumn plane )
+{
+#ifndef PARALLEL_ENABLED
+  return ( min[ plane ] )[ column ];
+#else
+  vector< TSemanticValue > tmp;
+  if( !min->getCellValue( tmp, plane, row, column ) )
+    return 0.0;
+
+  return tmp[ 0 ];
+#endif
+}
+
+string StatMinimum::getName() const
+{
+  return StatMinimum::name;
+}
+
+string StatMinimum::getUnits( const KHistogram *whichHisto ) const
+{
+  return "";
+}
+
+HistogramStatistic *StatMinimum::clone()
+{
+  return new StatMinimum( *this );
+}
 
 //-------------------------------------------------------------------------
 // Histogram Statistic: Average Burst Time
@@ -2389,4 +2484,3 @@ HistogramStatistic *StatSumBursts::clone()
 {
   return new StatSumBursts( *this );
 }
-

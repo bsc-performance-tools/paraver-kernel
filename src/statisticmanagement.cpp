@@ -67,6 +67,7 @@ void createStatistic()
   functions[1].push_back( new StatIntegral() );
   functions[1].push_back( new StatAvgValue() );
   functions[1].push_back( new StatMaximum() );
+  functions[1].push_back( new StatMinimum() );
   functions[1].push_back( new StatAvgBurstTime() );
   functions[1].push_back( new StatStdevBurstTime() );
   functions[1].push_back( new StatAvgPerBurst() );

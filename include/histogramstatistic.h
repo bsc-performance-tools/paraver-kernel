@@ -762,6 +762,45 @@ class StatMaximum: public HistogramStatistic
 #endif
 };
 
+class StatMinimum: public HistogramStatistic
+{
+  public:
+    StatMinimum() {};
+    ~StatMinimum() {};
+
+    virtual bool createComms() const
+    {
+      return false;
+    }
+    virtual TObjectOrder getPartner( CalculateData *data )
+    {
+      return 0;
+    }
+
+    virtual void init( KHistogram *whichHistogram );
+    virtual void reset();
+    virtual bool filter( CalculateData *data ) const;
+    virtual TSemanticValue execute( CalculateData *data );
+    virtual TSemanticValue finishRow( TSemanticValue cellValue,
+                                      THistogramColumn column,
+                                      TObjectOrder row,
+                                      THistogramColumn plane = 0 );
+
+    virtual std::string getName() const;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const;
+    virtual HistogramStatistic *clone();
+  protected:
+
+  private:
+    static std::string name;
+    Window *dataWin;
+#ifdef PARALLEL_ENABLED
+    CubeBuffer *min;
+#else
+    std::vector<std::vector<TSemanticValue> > min;
+#endif
+};
+
 
 class StatAvgBurstTime: public HistogramStatistic
 {
@@ -1095,6 +1134,7 @@ class Statistics
     StatIntegral statIntegral;
     StatAvgValue statAvgValue;
     StatMaximum statMaximum;
+    StatMinimum statMinimum;
     StatAvgBurstTime statAvgBurstTime;
     StatStdevBurstTime statStdevBurstTime;
     StatAvgPerBurst statAvgPerBurst;
