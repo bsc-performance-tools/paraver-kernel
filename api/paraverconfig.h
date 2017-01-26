@@ -319,7 +319,7 @@ class ParaverConfig
     std::string paraverConfigDir;
 
     void loadMap();
-    void unLoadMap();
+    void unloadMap();
 
     struct XMLPreferencesGlobal
     {

@@ -266,7 +266,7 @@ ParaverConfig::ParaverConfig()
 
 ParaverConfig::~ParaverConfig()
 {
-  unLoadMap();
+  unloadMap();
 }
 
 std::string ParaverConfig::getParaverConfigDir()
@@ -1405,7 +1405,7 @@ void ParaverConfig::loadMap()
   propertyFunctions[ "Analyzer2D.thousandsep:" ] = new HistoThousanSep();
 }
 
-void ParaverConfig::unLoadMap()
+void ParaverConfig::unloadMap()
 {
   for ( map<string, PropertyFunction*>::iterator it = propertyFunctions.begin();
         it != propertyFunctions.end();

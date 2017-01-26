@@ -70,6 +70,8 @@ KTraceCutter::KTraceCutter( TraceOptions *options,
 
 KTraceCutter::~KTraceCutter()
 {
+  free( line );
+  delete( exec_options );
 }
 
 
@@ -1276,7 +1278,11 @@ void KTraceCutter::execute( char *trace_in,
           break; // ?
 
         if ( time_1 > time_max )
+        {
+          std::cout << appl << ":" << task << ":" << thread << ":" << time_1 << ">" << time_max <<  std::endl;
           break;
+
+        }
 
         /* If time inside cut, adjust time */
         if ( time_1 >= time_min ||
