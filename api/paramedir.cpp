@@ -110,7 +110,10 @@ enum TOptionID
 
   // HIDDEN
   DUMP_TRACE,
-  NO_LOAD
+  NO_LOAD,
+
+  // To differenciate bad options from parameters
+  PARAMETER
 };
 
 
@@ -214,14 +217,21 @@ TOptionID findOption( string argument )
 {
   TOptionID whichOption = INVALID_OPTION;
 
-  for ( int i = SHOW_HELP; i <= NO_LOAD; ++i )
+  if ( argument[0] != '-' )
   {
-    TOptionID id = TOptionID( i );
-    if (( argument == option[ id ].shortForm ) ||
-        ( argument == option[ id ].longForm ))
+    whichOption = PARAMETER;
+  }
+  else
+  {
+    for ( int i = SHOW_HELP; i <= NO_LOAD; ++i )
     {
-      whichOption = id;
-      break;
+      TOptionID id = TOptionID( i );
+      if (( argument == option[ id ].shortForm ) ||
+          ( argument == option[ id ].longForm ))
+      {
+        whichOption = id;
+        break;
+      }
     }
   }
 
@@ -434,7 +444,14 @@ bool parseArguments( int argc,
   {
     currentArgument = string( arguments[ numArg ] );
     currentOption = findOption( currentArgument );
-    if ( currentOption != INVALID_OPTION )
+
+
+    if ( currentOption == INVALID_OPTION )
+    {
+      std::cout << "  [ERROR] Invalid option '" << currentArgument << "'" << std::endl;
+      return false;
+    }
+    else if ( currentOption != PARAMETER )
     {
       if ( readParameter > 0 )
       {
@@ -446,6 +463,10 @@ bool parseArguments( int argc,
       }
 
       option[ currentOption ].active = true;
+
+      if ( currentOption == SHOW_HELP || currentOption == SHOW_VERSION )
+        return true;
+
       readParameter = option[ currentOption ].numParameters;
       registerTool( currentOption, registeredTool, needXMLOptionsFile );
 #ifdef BYTHREAD
