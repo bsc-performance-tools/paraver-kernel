@@ -448,7 +448,7 @@ bool parseArguments( int argc,
 
     if ( currentOption == INVALID_OPTION )
     {
-      std::cout << "  [ERROR] Invalid option '" << currentArgument << "'" << std::endl;
+      std::cerr << "  [ERROR] Invalid option '" << currentArgument << "'" << std::endl;
       return false;
     }
     else if ( currentOption != PARAMETER )
@@ -457,7 +457,7 @@ bool parseArguments( int argc,
       {
         // Wrong! I.e: If -o option needs a parameter, we got:
         //    "paramedir -o -x ..." instead of "paramedir -o PARAM -x ..."
-        std::cout << "  [ERROR] Parameter expected but option '" << currentArgument << "' was found instead."<< std::endl;
+        std::cerr << "  [ERROR] Parameter expected but option '" << currentArgument << "' was found instead."<< std::endl;
         parseOK = false;
         break;
       }
@@ -613,160 +613,169 @@ string applyFilters( KernelConnection *myKernel,
   // The order is given by the command line, not the xml file.
   vector< string > dummyToolOrder = traceOptions->parseDoc( (char *)strXMLOptions.c_str() );
 
-  // Concatenate Filter Utilities
-  for( size_t i = 0; i < registeredTool.size(); ++i )
+  if ( dummyToolOrder.size() == 0 )
   {
-    intermediateNameIn = intermediateNameOut;
+    std::cerr << "  [ERROR] Parsing xml file '" << strXMLOptions << "' failed." << std::endl;
+    exit(1);
+  }
+  else
+  {
+    // Concatenate Filter Utilities
+    for( size_t i = 0; i < registeredTool.size(); ++i )
+    {
+      intermediateNameIn = intermediateNameOut;
 
-    bool commitName;
-    if ( i < registeredTool.size() - 1 )
-    {
-      // Intermediate trace:
-      //   Get partial name (suffix for one tool)
-      //   Don't modify global list of recent treated traces
-      commitName = false;
-      intermediateNameOut = myKernel->getNewTraceName( intermediateNameIn, registeredTool[ i ], commitName );
-    }
-    else
-    {
-      // Final trace:
-      if ( outputTraceName.empty() )
+      bool commitName;
+      if ( i < registeredTool.size() - 1 )
       {
-        //   Get full name (including all tools)
-        commitName = true;
-        intermediateNameOut = myKernel->getNewTraceName( destinyTraceName, registeredTool, commitName );
+        // Intermediate trace:
+        //   Get partial name (suffix for one tool)
+        //   Don't modify global list of recent treated traces
+        commitName = false;
+        intermediateNameOut = myKernel->getNewTraceName( intermediateNameIn, registeredTool[ i ], commitName );
       }
       else
       {
-        // Force outputName
-        intermediateNameOut = destinyTraceName;
-
-        //   Remember name in global list of recent treated traces
-        myKernel->commitNewTraceName( destinyTraceName );
-      }
-    }
-
-    if ( registeredTool[ i ] == TraceCutter::getID() )
-    {
-      pcf_name = LocalKernel::composeName( intermediateNameIn, string( "pcf" ) );
-
-      if(( pcfFile = fopen( pcf_name.c_str(), "r" )) != NULL )
-      {
-        fclose( pcfFile );
-#ifdef OLD_PCFPARSER
-        config = new ParaverTraceConfig( pcf_name );
-#else
-        config = new UIParaverTraceConfig();
-        config->parse( pcf_name );
-#endif
-        labels = EventLabels( *config, std::set<TEventType>() );
-        labels.getTypes( allTypes );
-        for( vector< TEventType >::iterator it = allTypes.begin(); it != allTypes.end(); ++it )
+        // Final trace:
+        if ( outputTraceName.empty() )
         {
-          if ( labels.getValues( *it, currentEventValues ) )
+          //   Get full name (including all tools)
+          commitName = true;
+          intermediateNameOut = myKernel->getNewTraceName( destinyTraceName, registeredTool, commitName );
+        }
+        else
+        {
+          // Force outputName
+          intermediateNameOut = destinyTraceName;
+
+          //   Remember name in global list of recent treated traces
+          myKernel->commitNewTraceName( destinyTraceName );
+        }
+      }
+
+      if ( registeredTool[ i ] == TraceCutter::getID() )
+      {
+        pcf_name = LocalKernel::composeName( intermediateNameIn, string( "pcf" ) );
+
+        if(( pcfFile = fopen( pcf_name.c_str(), "r" )) != NULL )
+        {
+          fclose( pcfFile );
+
+#ifdef OLD_PCFPARSER
+          config = new ParaverTraceConfig( pcf_name );
+#else
+          config = new UIParaverTraceConfig();
+          config->parse( pcf_name );
+#endif
+          labels = EventLabels( *config, std::set<TEventType>() );
+          labels.getTypes( allTypes );
+          for( vector< TEventType >::iterator it = allTypes.begin(); it != allTypes.end(); ++it )
           {
-            if ( currentEventValues.find( TEventValue( 0 )) != currentEventValues.end() )
+            if ( labels.getValues( *it, currentEventValues ) )
             {
-              typesWithValueZero.push_back( *it );
+              if ( currentEventValues.find( TEventValue( 0 )) != currentEventValues.end() )
+              {
+                typesWithValueZero.push_back( *it );
+              }
+              currentEventValues.clear();
             }
-            currentEventValues.clear();
           }
+
+          delete config;
         }
 
-        delete config;
+        traceCutter = myKernel->newTraceCutter( traceOptions, typesWithValueZero );
+        traceCutter->execute( (char *)intermediateNameIn.c_str(), (char *)intermediateNameOut.c_str() );
+        myKernel->copyPCF( intermediateNameIn, intermediateNameOut );
+      }
+      else if ( registeredTool[ i ] == TraceFilter::getID() )
+      {
+        std::map< TTypeValuePair, TTypeValuePair > translation;
+#if 1
+        traceFilter = myKernel->newTraceFilter( (char *)intermediateNameIn.c_str(),
+                                                (char *)intermediateNameOut.c_str(),
+                                                traceOptions,
+                                                translation );
+#else
+        //translation[ make_pair( 30000000, 2 ) ] = make_pair( 666, 999 );
+        translation[ make_pair( 50000001, 1 ) ] = make_pair( 666666, 999999 );
+        translation[ make_pair( 50000002, 9 ) ] = make_pair( 666666666, 999999999 );
+        translation[ make_pair( 50000003, 31 ) ] = make_pair( 666666666666, 999999999999 );
+
+        TraceOptions *opts = myKernel->newTraceOptions( );
+
+        opts->set_filter_by_call_time( false );
+
+        opts->set_filter_states( true );
+        opts->set_all_states( true );
+
+        opts->set_filter_events( true );
+        opts->set_discard_given_types( true );
+        TraceOptions::TFilterTypes dummyTypes;
+        dummyTypes[0].type = 1234567890;
+        opts->set_filter_last_type( 1 );
+
+        opts->set_filter_comms( true );
+        opts->set_min_comm_size( 1 );
+
+        traceFilter = myKernel->newTraceFilter( (char *)intermediateNameIn.c_str(), (char *)intermediateNameOut.c_str(), opts, translation );
+#endif
+        myKernel->copyPCF( intermediateNameIn, intermediateNameOut );
+      }
+      else if ( registeredTool[ i ] == TraceSoftwareCounters::getID() )
+      {
+        traceSoftwareCounters = myKernel->newTraceSoftwareCounters( (char *)intermediateNameIn.c_str(),
+                                                                    (char *)intermediateNameOut.c_str(),
+                                                                    traceOptions );
+      }
+      else if ( registeredTool[ i ] == TraceShifter::getID() )
+      {
+        TWindowLevel level = THREAD;
+        if ( option[ TRACE_SHIFTER_WORKLOAD ].active )
+          level = WORKLOAD;
+        if ( option[ TRACE_SHIFTER_APP ].active )
+          level = APPLICATION;
+        if ( option[ TRACE_SHIFTER_TASK ].active )
+          level = TASK;
+
+        traceShifter = myKernel->newTraceShifter( intermediateNameIn, intermediateNameOut, strShiftTimesFile, level );
+        traceShifter->execute( intermediateNameIn, intermediateNameOut );
+        delete traceShifter;
+      }
+      else if ( registeredTool[ i ] == EventDrivenCutter::getID() )
+      {
+        eventDrivenCutter = myKernel->newEventDrivenCutter( intermediateNameIn, intermediateNameOut, eventType );
+        eventDrivenCutter->execute( intermediateNameIn, intermediateNameOut );
+        delete eventDrivenCutter;
+      }
+      else if ( registeredTool[ i ] == EventTranslator::getID() )
+      {
+        eventTranslator = myKernel->newEventTranslator( intermediateNameIn, intermediateNameOut, eventTranslatorReferenceName );
+        eventTranslator->execute( intermediateNameIn, intermediateNameOut ); // TODO why passed again?
+        delete eventTranslator;
       }
 
-      traceCutter = myKernel->newTraceCutter( traceOptions, typesWithValueZero );
-      traceCutter->execute( (char *)intermediateNameIn.c_str(), (char *)intermediateNameOut.c_str() );
-      myKernel->copyPCF( intermediateNameIn, intermediateNameOut );
+      myKernel->copyROW( intermediateNameIn, intermediateNameOut );
+      tmpFiles.push_back( intermediateNameOut );
     }
-    else if ( registeredTool[ i ] == TraceFilter::getID() )
+
+    // Delete intermediate files
+    string pcfName, rowName;
+    for( PRV_UINT16 i = 0; i < tmpFiles.size() - 1; ++i )
     {
-      std::map< TTypeValuePair, TTypeValuePair > translation;
-#if 1
-      traceFilter = myKernel->newTraceFilter( (char *)intermediateNameIn.c_str(),
-                                              (char *)intermediateNameOut.c_str(),
-                                              traceOptions,
-                                              translation );
-#else
-      //translation[ make_pair( 30000000, 2 ) ] = make_pair( 666, 999 );
-      translation[ make_pair( 50000001, 1 ) ] = make_pair( 666666, 999999 );
-      translation[ make_pair( 50000002, 9 ) ] = make_pair( 666666666, 999999999 );
-      translation[ make_pair( 50000003, 31 ) ] = make_pair( 666666666666, 999999999999 );
-
-      TraceOptions *opts = myKernel->newTraceOptions( );
-
-      opts->set_filter_by_call_time( false );
-
-      opts->set_filter_states( true );
-      opts->set_all_states( true );
-
-      opts->set_filter_events( true );
-      opts->set_discard_given_types( true );
-      TraceOptions::TFilterTypes dummyTypes;
-      dummyTypes[0].type = 1234567890;
-      opts->set_filter_last_type( 1 );
-
-      opts->set_filter_comms( true );
-      opts->set_min_comm_size( 1 );
-
-      traceFilter = myKernel->newTraceFilter( (char *)intermediateNameIn.c_str(), (char *)intermediateNameOut.c_str(), opts, translation );
-#endif
-      myKernel->copyPCF( intermediateNameIn, intermediateNameOut );
-    }
-    else if ( registeredTool[ i ] == TraceSoftwareCounters::getID() )
-    {
-      traceSoftwareCounters = myKernel->newTraceSoftwareCounters( (char *)intermediateNameIn.c_str(),
-                                                                  (char *)intermediateNameOut.c_str(),
-                                                                  traceOptions );
-    }
-    else if ( registeredTool[ i ] == TraceShifter::getID() )
-    {
-      TWindowLevel level = THREAD;
-      if ( option[ TRACE_SHIFTER_WORKLOAD ].active )
-        level = WORKLOAD;
-      if ( option[ TRACE_SHIFTER_APP ].active )
-        level = APPLICATION;
-      if ( option[ TRACE_SHIFTER_TASK ].active )
-        level = TASK;
-
-      traceShifter = myKernel->newTraceShifter( intermediateNameIn, intermediateNameOut, strShiftTimesFile, level );
-      traceShifter->execute( intermediateNameIn, intermediateNameOut );
-      delete traceShifter;
-    }
-    else if ( registeredTool[ i ] == EventDrivenCutter::getID() )
-    {
-      eventDrivenCutter = myKernel->newEventDrivenCutter( intermediateNameIn, intermediateNameOut, eventType );
-      eventDrivenCutter->execute( intermediateNameIn, intermediateNameOut );
-      delete eventDrivenCutter;
-    }
-    else if ( registeredTool[ i ] == EventTranslator::getID() )
-    {
-      eventTranslator = myKernel->newEventTranslator( intermediateNameIn, intermediateNameOut, eventTranslatorReferenceName );
-      eventTranslator->execute( intermediateNameIn, intermediateNameOut ); // TODO why passed again?
-      delete eventTranslator;
+      pcfName = LocalKernel::composeName( tmpFiles[ i ], string( "pcf" ) );
+      rowName = LocalKernel::composeName( tmpFiles[ i ], string( "row" ) );
+      remove( tmpFiles[ i ].c_str() );
+      remove( pcfName.c_str() );
+      remove( rowName.c_str() );
     }
 
-    myKernel->copyROW( intermediateNameIn, intermediateNameOut );
-    tmpFiles.push_back( intermediateNameOut );
+    // Delete utilities
+    delete traceOptions;
+    delete traceCutter;
+    delete traceFilter;
+    delete traceSoftwareCounters;
   }
-
-  // Delete intermediate files
-  string pcfName, rowName;
-  for( PRV_UINT16 i = 0; i < tmpFiles.size() - 1; ++i )
-  {
-    pcfName = LocalKernel::composeName( tmpFiles[ i ], string( "pcf" ) );
-    rowName = LocalKernel::composeName( tmpFiles[ i ], string( "row" ) );
-    remove( tmpFiles[ i ].c_str() );
-    remove( pcfName.c_str() );
-    remove( rowName.c_str() );
-  }
-
-  // Delete utilities
-  delete traceOptions;
-  delete traceCutter;
-  delete traceFilter;
-  delete traceSoftwareCounters;
 
   return intermediateNameOut;
 }
