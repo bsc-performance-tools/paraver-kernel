@@ -98,6 +98,7 @@ AC_DEFUN([AX_PROG_ENABLE_PARALLEL],
     AC_DEFINE([PARALLEL_ENABLED], 1, [Parallel version enabled by user.])
     #CXXFLAGS="$CXXFLAGS --instrument"
     #LDFLAGS="$LDFLAGS --instrument -fPIC"
+    LDFLAGS="$LDFLAGS -fPIC"
   fi
 ])
 
