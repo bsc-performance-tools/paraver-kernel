@@ -96,15 +96,8 @@ AC_DEFUN([AX_PROG_ENABLE_PARALLEL],
   )
   if test "${enable_parallel}" = "yes" ; then
     AC_DEFINE([PARALLEL_ENABLED], 1, [Parallel version enabled by user.])
-    PRVCC=sscc
-    PRVCXX=sscxx
-    #CC=sscc
-    #CXX=sscxx
-    CXXFLAGS="$CXXFLAGS --instrument"
-    LDFLAGS="$LDFLAGS --instrument -fPIC"
-  else
-    PRVCC="gcc xlc cc"
-    PRVCXX="g++ xlC CC"
+    #CXXFLAGS="$CXXFLAGS --instrument"
+    #LDFLAGS="$LDFLAGS --instrument -fPIC"
   fi
 ])
 
