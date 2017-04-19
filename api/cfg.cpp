@@ -2637,6 +2637,8 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
   getline( line, strNumberParams, ' ' ); // Number of following parameters.
   istringstream tmpNumberParams( strNumberParams );
 
+  bool paramsWithQuotes = line
+
   if ( !( tmpNumberParams >> numParams ) )
     return false;
 
@@ -2718,6 +2720,22 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
         return false;
 
       filter->insertEventValue( eventValue );
+    }
+    else if ( strTag.compare( CFG_VAL_FILTER_EVT_TYPE_LABEL ) == 0 )
+    {
+      getline( line, strValue, '"' ); // Consume the starting '"'
+      getline( line, strValue, '"' );
+
+      std::cout << strValue << std::endl;
+
+    }
+    else if ( strTag.compare( CFG_VAL_FILTER_EVT_VALUE_LABEL ) == 0 )
+    {
+      getline( line, strValue, '"' ); // Consume the starting '"'
+      getline( line, strValue, '"' );
+
+      std::cout << strValue << std::endl;
+
     }
   }
 
