@@ -62,7 +62,7 @@ EventLabels::EventLabels( const libparaver::ParaverTraceConfig& config,
         it != types.end(); ++it )
   {
     eventType2Label[ ( *it )->get_key() ] = ( *it )->get_description();
-    label2eventType[ ( *it )->get_description() ] = ( *it )->get_key();
+    label2eventType[ ( *it )->get_description().c_str() ] = ( *it )->get_key();
     eventValue2Label[ ( *it )->get_key() ] = map<TEventValue, string>();
     const vector<ParaverEventValue *>& values = ( *it )->get_eventValues();
     for ( vector<ParaverEventValue *>::const_iterator itVal = values.begin();
@@ -216,12 +216,24 @@ bool EventLabels::getValues( TEventType type, map<TEventValue, string> &values )
 }
 
 
-bool EventLabels::getEventType( const string& whichType, TEventType& onType ) const
+bool EventLabels::getEventType( const string& whichTypeLabel, TEventType& onType ) const
 {
-  hash_map<const char *, TEventType, hash<const char *> >::const_iterator it = label2eventType.find( whichType.c_str() );
+  hash_map<const char *, TEventType, hash<const char *> >::const_iterator it = label2eventType.find( whichTypeLabel.c_str() );
   if( it == label2eventType.end() )
     return false;
 
   onType = (*it).second;
+  return true;
+}
+
+
+bool EventLabels::getEventValue( const string& whichValueLabel, multimap< TEventType, TEventValue >& onMap ) const
+{
+  hash_map<const char *, multimap< TEventType, TEventValue >, hash<const char *> >::const_iterator it = label2eventValue.find( whichValueLabel.c_str() );
+
+  if( it == label2eventValue.end() )
+    return false;
+
+  onMap = (*it).second;
   return true;
 }
