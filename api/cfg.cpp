@@ -2637,7 +2637,7 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
   getline( line, strNumberParams, ' ' ); // Number of following parameters.
   istringstream tmpNumberParams( strNumberParams );
 
-  bool paramsWithQuotes = line
+  bool paramsWithQuotes = line;
 
   if ( !( tmpNumberParams >> numParams ) )
     return false;
