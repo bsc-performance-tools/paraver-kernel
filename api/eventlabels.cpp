@@ -70,6 +70,9 @@ EventLabels::EventLabels( const libparaver::ParaverTraceConfig& config,
     {
       ( eventValue2Label[ ( *it )->get_key() ] )[ ( *itVal )->get_key() ] =
         ( *itVal )->get_value();
+
+      multimap< TEventType, TEventValue >& tmpEventMap = label2eventValue[ ( *itVal )->get_value().c_str() ];
+      tmpEventMap.insert( make_pair( ( *it )->get_key(), ( *itVal )->get_key() ) );
     }
   }
 }
@@ -104,6 +107,9 @@ EventLabels::EventLabels( const libparaver::UIParaverTraceConfig& config,
         for ( vector<unsigned int>::const_iterator itVal = values.begin(); itVal != values.end(); ++itVal )
         {
           ( eventValue2Label[ *it ] )[ *itVal ] = config.getEventValue( *it, *itVal );
+
+          multimap< TEventType, TEventValue >& tmpEventMap = label2eventValue[ config.getEventValue( *it, *itVal ).c_str() ];
+          tmpEventMap.insert( make_pair( *it, *itVal ) );
         }
       }
       catch( libparaver::UIParaverTraceConfig::value_not_found )
