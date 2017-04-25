@@ -2762,6 +2762,7 @@ void WindowFilterModule::printLine( ofstream& cfgFile,
                                     const vector<Window *>::const_iterator it )
 {
   Filter *filter = ( *it )->getFilter();
+  const EventLabels& labels = ( *it )->getTrace()->getEventLabels();
   vector<TObjectOrder> objVec;
   vector<TCommTag> tagVec;
   vector<TCommSize> sizeVec;
@@ -2846,6 +2847,18 @@ void WindowFilterModule::printLine( ofstream& cfgFile,
       cfgFile << " " << ( *itType );
     }
     cfgFile << endl;
+
+    cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << CFG_VAL_FILTER_EVT_TYPE_LABEL << " ";
+    cfgFile << typeVec.size();
+    for ( vector<TEventType>::iterator itType = typeVec.begin();
+          itType != typeVec.end(); ++itType )
+    {
+      string tmpTypeLabel;
+      labels.getEventTypeLabel( ( *itType ), tmpTypeLabel );
+      cfgFile << " \"" << tmpTypeLabel << "\"";
+    }
+    cfgFile << endl;
+
   }
 
   filter->getEventValue( valueVec );
@@ -2859,6 +2872,30 @@ void WindowFilterModule::printLine( ofstream& cfgFile,
       cfgFile << " " << ( *itValue );
     }
     cfgFile << endl;
+
+    cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << CFG_VAL_FILTER_EVT_VALUE_LABEL << " ";
+    cfgFile << valueVec.size();
+    for ( vector<TEventValue>::iterator itValue = valueVec.begin();
+          itValue != valueVec.end(); ++itValue )
+    {
+      string tmpValueLabel;
+      if ( typeVec.begin() != typeVec.end() )
+      {
+        for ( vector<TEventType>::iterator itType = typeVec.begin();
+              itType != typeVec.end(); ++itType )
+        {
+          if( labels.getEventValueLabel( ( *itType ), ( *itValue ), tmpValueLabel ) )
+            break;
+        }
+      }
+      else
+      {
+        labels.getEventValueLabel( ( *itValue ), tmpValueLabel );
+      }
+      cfgFile << " \"" << tmpValueLabel << "\"";
+    }
+    cfgFile << endl;
+
   }
 }
 
