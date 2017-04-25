@@ -151,15 +151,13 @@ bool EventLabels::getEventValueLabel( TEventType type, TEventValue value, string
   map<TEventType, map<TEventValue, string> >::const_iterator it = eventValue2Label.find( type );
   if ( it == eventValue2Label.end() )
   {
-    //onStr = unknownLabel;
-    onStr.clear();
+    onStr = unknownLabel;
     return false;
   }
   map<TEventValue, string>::const_iterator itVal = ( *it ).second.find( value );
   if ( itVal == ( *it ).second.end() )
   {
-    //onStr = unknownLabel;
-    onStr.clear();
+    onStr = unknownLabel;
     return false;
   }
   onStr = ( *itVal ).second;
@@ -191,7 +189,6 @@ bool EventLabels::getValues( TEventType type, vector<string> &values ) const
   map< TEventType, map< TEventValue, string > >::const_iterator it = eventValue2Label.find( type );
   if ( it == eventValue2Label.end() )
   {
-    //onStr = unknownLabel;
     return false;
   }
   else
@@ -209,7 +206,6 @@ bool EventLabels::getValues( TEventType type, map<TEventValue, string> &values )
   map< TEventType, map< TEventValue, string > >::const_iterator it = eventValue2Label.find( type );
   if ( it == eventValue2Label.end() )
   {
-    //onStr = unknownLabel;
     return false;
   }
   else
