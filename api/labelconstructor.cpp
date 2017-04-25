@@ -409,7 +409,7 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
     {
       string tmpstr;
       if ( !whichWindow->getTrace()->getEventLabels().getEventTypeLabel( value, tmpstr ) )
-        sstrSemanticLabel << tmpstr << " type " << value;
+        sstrSemanticLabel << "type " << value;
       else
         sstrSemanticLabel << tmpstr;
     }
@@ -436,14 +436,13 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
         if ( types.begin() == types.end() )
         {
           if ( !whichWindow->getTrace()->getEventLabels().getEventValueLabel( value, tmpstr ) )
-            sstrSemanticLabel << tmpstr << " value " << value;
+            sstrSemanticLabel << "value " << value;
           else
             sstrSemanticLabel << tmpstr;
         }
         else
         {
-          whichWindow->getTrace()->getEventLabels().getEventTypeLabel( *( types.begin() ), tmpstr );
-          sstrSemanticLabel << tmpstr << " value " << value;
+          sstrSemanticLabel << "value " << value;
         }
       }
     }
