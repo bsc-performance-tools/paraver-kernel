@@ -25,6 +25,26 @@
 #ifndef SYMBOLPICKER_H_INCLUDED
 #define SYMBOLPICKER_H_INCLUDED
 
+#include <vector>
+#include "paraverkerneltypes.h"
+#include "eventlabels.h"
 
+class EventTypeSymbolPicker
+{
+  public:
+    EventTypeSymbolPicker();
+    ~EventTypeSymbolPicker();
+
+    void insert( TEventType whichType );
+    void insert( std::string whichLabel );
+
+    bool pick( const EventLabels& eventLabels, std::vector<TEventType>& onVector ) const;
+
+  private:
+    std::vector<TEventType> eventTypes;
+    std::vector<std::string> eventTypeLabels;
+
+    bool makepick( const EventLabels& eventLabels, TEventType eventType, const std::string& eventLabel, TEventType& onEvent ) const;
+};
 
 #endif // SYMBOLPICKER_H_INCLUDED

@@ -23,3 +23,55 @@
 
 #include "symbolpicker.h"
 
+using std::vector;
+using std::string;
+
+EventTypeSymbolPicker::EventTypeSymbolPicker()
+{}
+
+EventTypeSymbolPicker::~EventTypeSymbolPicker()
+{}
+
+void EventTypeSymbolPicker::insert( TEventType whichType )
+{
+  eventTypes.push_back( whichType );
+}
+
+void EventTypeSymbolPicker::insert( string whichLabel )
+{
+  eventTypeLabels.push_back( whichLabel );
+}
+
+bool EventTypeSymbolPicker::pick( const EventLabels& eventLabels, vector<TEventType>& onVector ) const
+{
+  if( eventTypeLabels.size() == 0 )
+  {
+    onVector = eventTypes;
+    return true;
+  }
+
+  if( eventTypes.size() != eventTypeLabels.size() )
+    return false;
+
+  vector<string>::const_iterator itLabel = eventTypeLabels.begin();
+  for( vector<TEventType>::const_iterator itType = eventTypes.begin();
+       itType != eventTypes.end(); ++itType, ++itLabel )
+  {
+    TEventType tmpType;
+    if( makepick( eventLabels, *itType, *itLabel, tmpType ) )
+      onVector.push_back( tmpType );
+    else
+      return false;
+  }
+
+  return true;
+}
+
+
+bool EventTypeSymbolPicker::makepick( const EventLabels& eventLabels, TEventType eventType, const string& eventLabel, TEventType& onEvent ) const
+{
+
+
+
+  return true;
+}
