@@ -167,6 +167,7 @@ bool EventLabels::getEventValueLabel( TEventType type, TEventValue value, string
 bool EventLabels::getEventValueLabel( TEventValue value, string& onStr ) const
 {
   bool found = false;
+  onStr = unknownLabel;
 
   map<TEventType, map<TEventValue, string> >::const_iterator it = eventValue2Label.begin();
   while ( !found && it != eventValue2Label.end() )
