@@ -43,6 +43,7 @@
 #include "filter.h"
 #include "paraverlabels.h"
 #include "drawmode.h"
+#include "symbolpicker.h"
 
 
 using namespace std;
@@ -58,6 +59,7 @@ string currentWindowName;
 string CFGLoader::errorLine = "";
 bool someEventsExist = false;
 bool someEventsNotExist = false;
+EventTypeSymbolPicker eventTypeSymbolPicker;
 
 
 TWindowLevel stringToLevel( const std::string& strLevel )
@@ -199,6 +201,33 @@ string levelToStringHisto( TWindowLevel whichLevel )
       break;
   }
   return "";
+}
+
+void clearSymbolPickers()
+{
+  eventTypeSymbolPicker.clear();
+}
+
+bool pickSymbols( Trace *whichTrace, Window *whichWindow )
+{
+  vector<TEventType> tmpTypes;
+
+  if( !eventTypeSymbolPicker.pick( whichTrace->getEventLabels(), tmpTypes ) )
+    return false;
+  else
+  {
+    for( vector<TEventType>::iterator it = tmpTypes.begin(); it != tmpTypes.end(); ++it )
+    {
+      if ( !whichTrace->eventLoaded( *it ) )
+        someEventsNotExist = true;
+      else
+        someEventsExist = true;
+
+      whichWindow->getFilter()->insertEventType( *it );
+    }
+  }
+
+  return true;
 }
 
 bool CFGLoader::hasCFGExtension( const string& filename )
@@ -371,7 +400,19 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
     if ( it != cfgTagFunctions.end() )
     {
-      if ( !it->second->parseLine( whichKernel, auxStream, whichTrace, windows,
+      bool tmpError = false;
+
+      if( windows[ windows.size() - 1 ] != NULL &&
+          !windows[ windows.size() - 1 ]->isDerivedWindow() &&
+          typeid( *( it->second ) ) == typeid( WindowName ) ||
+          typeid( *( it->second ) ) == typeid( Analyzer2DCreate ) )
+      {
+        tmpError = !pickSymbols( whichTrace, windows[ windows.size() - 1 ] );
+        clearSymbolPickers();
+      }
+
+      if ( tmpError ||
+           !it->second->parseLine( whichKernel, auxStream, whichTrace, windows,
                                    histograms ) )
       {
         if ( histograms.begin() != histograms.end() &&
@@ -403,6 +444,20 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
+
+  if( histograms.size() == 0 &&
+      !windows[ windows.size() - 1 ]->isDerivedWindow() )
+  {
+    bool tmpError = !pickSymbols( whichTrace, windows[ windows.size() - 1 ] );
+    clearSymbolPickers();
+    if( tmpError )
+    {
+      delete windows[ windows.size() - 1 ];
+      //CFGLoader::errorLine = strLine;
+      windows[ windows.size() - 1 ] = NULL;
+      return false;
+    }
+  }
 
   if ( !someEventsExist )
   {
@@ -2704,12 +2759,7 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
       if ( !( tmpValue >> eventType ) )
         return false;
 
-      if ( !whichTrace->eventLoaded( eventType ) )
-        someEventsNotExist = true;
-      else
-        someEventsExist = true;
-
-      filter->insertEventType( eventType );
+      eventTypeSymbolPicker.insert( eventType );
     }
     else if ( strTag.compare( OLDCFG_VAL_FILTER_EVT_VALUE ) == 0 )
     {
@@ -2726,8 +2776,7 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
       getline( line, strValue, '"' ); // Consume the starting '"'
       getline( line, strValue, '"' );
 
-      std::cout << strValue << std::endl;
-
+      eventTypeSymbolPicker.insert( strValue );
     }
     else if ( strTag.compare( CFG_VAL_FILTER_EVT_VALUE_LABEL ) == 0 )
     {

@@ -32,7 +32,6 @@
 
 #include <set>
 #include <map>
-#include <ext/hash_map>
 #include "paraverkerneltypes.h"
 
 #ifdef OLD_PCFPARSER
@@ -42,7 +41,6 @@
 #endif
 
 using namespace libparaver;
-using namespace __gnu_cxx;
 
 class EventLabels
 {
@@ -76,8 +74,8 @@ class EventLabels
     std::map<TEventType, std::string> eventType2Label;
     std::map<TEventType, std::map<TEventValue, std::string> > eventValue2Label;
 
-    hash_map<const char *, TEventType, hash<const char *> > label2eventType;
-    hash_map<const char *, std::multimap< TEventType, TEventValue >, hash<const char *> > label2eventValue;
+    std::map<std::string, TEventType> label2eventType;
+    std::map<std::string, std::multimap< TEventType, TEventValue > > label2eventValue;
 };
 
 

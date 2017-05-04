@@ -27,13 +27,16 @@
 
 #include <vector>
 #include "paraverkerneltypes.h"
-#include "eventlabels.h"
+
+class EventLabels;
 
 class EventTypeSymbolPicker
 {
   public:
     EventTypeSymbolPicker();
     ~EventTypeSymbolPicker();
+
+    void clear();
 
     void insert( TEventType whichType );
     void insert( std::string whichLabel );

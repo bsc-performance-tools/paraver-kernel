@@ -62,7 +62,7 @@ EventLabels::EventLabels( const libparaver::ParaverTraceConfig& config,
         it != types.end(); ++it )
   {
     eventType2Label[ ( *it )->get_key() ] = ( *it )->get_description();
-    label2eventType[ ( *it )->get_description().c_str() ] = ( *it )->get_key();
+    label2eventType[ ( *it )->get_description() ] = ( *it )->get_key();
     eventValue2Label[ ( *it )->get_key() ] = map<TEventValue, string>();
     const vector<ParaverEventValue *>& values = ( *it )->get_eventValues();
     for ( vector<ParaverEventValue *>::const_iterator itVal = values.begin();
@@ -71,7 +71,7 @@ EventLabels::EventLabels( const libparaver::ParaverTraceConfig& config,
       ( eventValue2Label[ ( *it )->get_key() ] )[ ( *itVal )->get_key() ] =
         ( *itVal )->get_value();
 
-      multimap< TEventType, TEventValue >& tmpEventMap = label2eventValue[ ( *itVal )->get_value().c_str() ];
+      multimap< TEventType, TEventValue >& tmpEventMap = label2eventValue[ ( *itVal )->get_value() ];
       tmpEventMap.insert( make_pair( ( *it )->get_key(), ( *itVal )->get_key() ) );
     }
   }
@@ -79,13 +79,14 @@ EventLabels::EventLabels( const libparaver::ParaverTraceConfig& config,
 
 #else
 
+
 EventLabels::EventLabels( const set<TEventType>& eventsLoaded )
 {
 /*  for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
         it != eventsLoaded.end(); ++it )
     eventType2Label[ *it ] = unknownLabel + " type ";*/
 }
-
+#include <iostream>
 EventLabels::EventLabels( const libparaver::UIParaverTraceConfig& config,
                           const set<TEventType>& eventsLoaded )
 {
@@ -99,7 +100,7 @@ EventLabels::EventLabels( const libparaver::UIParaverTraceConfig& config,
     for ( vector<unsigned int>::const_iterator it = types.begin(); it != types.end(); ++it )
     {
       eventType2Label[ *it ] = config.getEventType( *it );
-      label2eventType[ config.getEventType( *it ).c_str() ] = *it;
+      label2eventType[ config.getEventType( *it ) ] = *it;
       eventValue2Label[ *it ] = map<TEventValue, string>();
       try
       {
@@ -108,7 +109,7 @@ EventLabels::EventLabels( const libparaver::UIParaverTraceConfig& config,
         {
           ( eventValue2Label[ *it ] )[ *itVal ] = config.getEventValue( *it, *itVal );
 
-          multimap< TEventType, TEventValue >& tmpEventMap = label2eventValue[ config.getEventValue( *it, *itVal ).c_str() ];
+          multimap< TEventType, TEventValue >& tmpEventMap = label2eventValue[ config.getEventValue( *it, *itVal ) ];
           tmpEventMap.insert( make_pair( *it, *itVal ) );
         }
       }
@@ -120,6 +121,7 @@ EventLabels::EventLabels( const libparaver::UIParaverTraceConfig& config,
   catch( libparaver::UIParaverTraceConfig::value_not_found )
   {
   }
+
 }
 
 #endif
@@ -221,7 +223,7 @@ bool EventLabels::getValues( TEventType type, map<TEventValue, string> &values )
 
 bool EventLabels::getEventType( const string& whichTypeLabel, TEventType& onType ) const
 {
-  hash_map<const char *, TEventType, hash<const char *> >::const_iterator it = label2eventType.find( whichTypeLabel.c_str() );
+  map<string, TEventType>::const_iterator it = label2eventType.find( whichTypeLabel );
   if( it == label2eventType.end() )
     return false;
 
@@ -232,7 +234,7 @@ bool EventLabels::getEventType( const string& whichTypeLabel, TEventType& onType
 
 bool EventLabels::getEventValue( const string& whichValueLabel, multimap< TEventType, TEventValue >& onMap ) const
 {
-  hash_map<const char *, multimap< TEventType, TEventValue >, hash<const char *> >::const_iterator it = label2eventValue.find( whichValueLabel.c_str() );
+  map<string, multimap< TEventType, TEventValue > >::const_iterator it = label2eventValue.find( whichValueLabel );
 
   if( it == label2eventValue.end() )
     return false;

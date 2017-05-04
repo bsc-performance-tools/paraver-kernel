@@ -22,6 +22,8 @@
 \*****************************************************************************/
 
 #include "symbolpicker.h"
+#include "eventlabels.h"
+
 
 using std::vector;
 using std::string;
@@ -31,6 +33,12 @@ EventTypeSymbolPicker::EventTypeSymbolPicker()
 
 EventTypeSymbolPicker::~EventTypeSymbolPicker()
 {}
+
+void EventTypeSymbolPicker::clear()
+{
+  eventTypes.clear();
+  eventTypeLabels.clear();
+}
 
 void EventTypeSymbolPicker::insert( TEventType whichType )
 {
@@ -70,8 +78,8 @@ bool EventTypeSymbolPicker::pick( const EventLabels& eventLabels, vector<TEventT
 
 bool EventTypeSymbolPicker::makepick( const EventLabels& eventLabels, TEventType eventType, const string& eventLabel, TEventType& onEvent ) const
 {
-
-
+  if( eventLabel == "" || eventLabel == EventLabels::unknownLabel || !eventLabels.getEventType( eventLabel, onEvent ) )
+    onEvent = eventType;
 
   return true;
 }
