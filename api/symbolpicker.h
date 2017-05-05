@@ -30,6 +30,11 @@
 
 class EventLabels;
 
+/*****************************************************************************
+ *                                                                           *
+ *                       EventTypeSymbolPicker                               *
+ *                                                                           *
+ *****************************************************************************/
 class EventTypeSymbolPicker
 {
   public:
@@ -48,6 +53,32 @@ class EventTypeSymbolPicker
     std::vector<std::string> eventTypeLabels;
 
     bool makepick( const EventLabels& eventLabels, TEventType eventType, const std::string& eventLabel, TEventType& onEvent ) const;
+};
+
+
+/*****************************************************************************
+ *                                                                           *
+ *                       EventValueSymbolPicker                              *
+ *                                                                           *
+ *****************************************************************************/
+class EventValueSymbolPicker
+{
+  public:
+    EventValueSymbolPicker();
+    ~EventValueSymbolPicker();
+
+    void clear();
+
+    void insert( TEventValue whichValue );
+    void insert( std::string whichLabel );
+
+    bool pick( const EventLabels& eventLabels, std::vector<TEventValue>& onVector ) const;
+
+  private:
+    std::vector<TEventValue> eventValues;
+    std::vector<std::string> eventValueLabels;
+
+    bool makepick( const EventLabels& eventLabels, TEventValue eventValue, const std::string& eventLabel, TEventValue& onEvent ) const;
 };
 
 #endif // SYMBOLPICKER_H_INCLUDED

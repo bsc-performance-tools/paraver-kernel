@@ -28,6 +28,12 @@
 using std::vector;
 using std::string;
 
+
+/*****************************************************************************
+ *                                                                           *
+ *                       EventTypeSymbolPicker                               *
+ *                                                                           *
+ *****************************************************************************/
 EventTypeSymbolPicker::EventTypeSymbolPicker()
 {}
 
@@ -80,6 +86,67 @@ bool EventTypeSymbolPicker::makepick( const EventLabels& eventLabels, TEventType
 {
   if( eventLabel == "" || eventLabel == EventLabels::unknownLabel || !eventLabels.getEventType( eventLabel, onEvent ) )
     onEvent = eventType;
+
+  return true;
+}
+
+
+/*****************************************************************************
+ *                                                                           *
+ *                       EventValueSymbolPicker                              *
+ *                                                                           *
+ *****************************************************************************/
+EventValueSymbolPicker::EventValueSymbolPicker()
+{}
+
+
+EventValueSymbolPicker::~EventValueSymbolPicker()
+{}
+
+
+void EventValueSymbolPicker::clear()
+{
+  eventValues.clear();
+  eventValueLabels.clear();
+}
+
+
+void EventValueSymbolPicker::insert( TEventValue whichValue )
+{
+  eventValues.push_back( whichValue );
+}
+
+
+void EventValueSymbolPicker::insert( std::string whichLabel )
+{
+  eventValueLabels.push_back( whichLabel );
+}
+
+
+bool EventValueSymbolPicker::pick( const EventLabels& eventLabels, std::vector<TEventValue>& onVector ) const
+{
+  if( eventValueLabels.size() == 0 )
+  {
+    onVector = eventValues;
+    return true;
+  }
+
+  if( eventValues.size() != eventValueLabels.size() )
+    return false;
+
+  vector<string>::const_iterator itLabel = eventValueLabels.begin();
+  for( vector<TEventValue>::const_iterator itValue = eventValues.begin();
+       itValue != eventValues.end(); ++itValue, ++itLabel )
+  {
+
+  }
+
+  return true;
+}
+
+
+bool EventValueSymbolPicker::makepick( const EventLabels& eventLabels, TEventValue eventValue, const std::string& eventLabel, TEventValue& onEvent ) const
+{
 
   return true;
 }
