@@ -3331,7 +3331,7 @@ void WindowPunctualColorWindow::printLine( ofstream& cfgFile,
                                            const vector<Window *>& allWindows,
                                            const vector<Window *>::const_iterator it )
 {
-  if( (*it)->isPunctualColorSet() )
+  if( (*it)->isPunctualColorSet() && (*it)->getPunctualColorWindow() != NULL )
   {
     cfgFile << OLDCFG_TAG_WNDW_PUNCTUAL_COLOR_WIN << " " \
             << CFGLoader::findWindowBackwards( (*it)->getPunctualColorWindow(), allWindows, it ) + 1 << endl;
