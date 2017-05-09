@@ -1105,7 +1105,7 @@ class WindowProxy: public Window
                                           std::vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,   // I/O
                                           ProgressController *progress );
 
-#pragma omp task shared( numRows, firstRow, lastRow, selectedSet, selected, timeStep, timePos, objectAxisPos, objectPosList, drawCaution, rowComputedMaxY, rowComputedMinY, valuesToDraw, eventsToDraw, commsToDraw, progress )
+    #pragma omp task
     void computeSemanticRowParallel( int numRows,
                                      TObjectOrder firstRow,
                                      TObjectOrder lastRow,
@@ -1181,7 +1181,7 @@ class WindowProxy: public Window
                                                      hash_set< commCoord >& commsToDraw,
                                                      ProgressController *progress );   // O
 #else
-#pragma omp task shared( numRows, firstRow, lastRow, selectedSet, selected, timeStep, timePos, objectAxisPos, objectPosList, drawCaution, rowComputedMaxY, rowComputedMinY, valuesToDraw, eventsToDraw, commsToDraw, progress )
+    #pragma omp task
     void computeSemanticRowPunctualParallel( int numRows,
                                              TObjectOrder firstRow,
                                              TObjectOrder lastRow,
