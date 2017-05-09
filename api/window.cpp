@@ -2165,7 +2165,6 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
 #endif // PARALLEL_ENABLED
 
   // Drawmode: Group objects with same wxCoord in objectPosList
-  std::cerr << "computeSemanticRowPunctualParallel" << std::endl;
   #pragma omp parallel
   {
     #pragma omp single
