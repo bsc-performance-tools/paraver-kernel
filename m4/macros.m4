@@ -81,6 +81,24 @@ AC_DEFUN([AX_PROG_WITH_EXTRAE],
   fi
 ])
 
+# AX_PROG_ENABLE_OPENMP
+# -----------------------
+AC_DEFUN([AX_PROG_ENABLE_OPENMP_PARALLEL],
+[
+  AC_ARG_ENABLE(openmp,
+    AC_HELP_STRING(
+      [--enable-openmp],
+      [Enable OpenMP parallel version. (Disabled by default)]
+    ),
+    [enable_openmp_parallel="${enableval}"],
+    [enable_openmp_parallel="no"]
+  )
+  if test "${enable_openmp_parallel}" = "yes" ; then
+    AC_DEFINE([PARALLEL_ENABLED], 1, [Parallel version enabled by user.])
+    CXXFLAGS="$CXXFLAGS -fopenmp"
+    LDFLAGS="$LDFLAGS -fopenmp"
+  fi
+])
 
 # AX_PROG_ENABLE_PARALLEL
 # -----------------------

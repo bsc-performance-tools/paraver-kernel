@@ -1167,12 +1167,17 @@ void KHistogram::parallelExecution( TRecordTime fromTime, TRecordTime toTime,
                                     TObjectOrder fromRow, TObjectOrder toRow,
                                     std::vector<TObjectOrder>& selectedRows  )
 {
-  for ( TObjectOrder i = fromRow; i <= toRow; ++i )
+  #pragma omp parallel
   {
-    executionTask( fromTime, toTime, i, i, selectedRows );
+    #pragma omp single
+    {
+      for ( TObjectOrder i = fromRow; i <= toRow; ++i )
+      {
+        #pragma omp task firstprivate(fromTime, toTime, i) shared(selectedRows)
+        executionTask( fromTime, toTime, i, i, selectedRows );
+      }
+    }
   }
-  #pragma omp taskwait
-
 }
 
 
