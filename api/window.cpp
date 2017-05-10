@@ -1797,53 +1797,69 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
 #endif // PARALLEL_ENABLED
 
   // Drawmode: Group objects with same wxCoord in objectPosList
-  int currentRow = 0;
-  for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
+  #pragma omp parallel
   {
-    TObjectOrder firstObj = *obj;
-    TObjectOrder lastObj = firstObj;
-    while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
+    #pragma omp single
     {
-      ++obj;
-      lastObj = *obj;
-    }
-    valuesToDraw.push_back( vector< TSemanticValue >() );
+      int currentRow = 0;
+      for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
+      {
+        TObjectOrder firstObj = *obj;
+        TObjectOrder lastObj = firstObj;
+        while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
+        {
+          ++obj;
+          lastObj = *obj;
+        }
+        valuesToDraw.push_back( vector< TSemanticValue >() );
 
-    eventsToDraw.push_back( hash_set< PRV_INT32 >() );
+        eventsToDraw.push_back( hash_set< PRV_INT32 >() );
 #ifdef WIN32
-    commsToDraw.push_back( hash_set< commCoord >() );
+        commsToDraw.push_back( hash_set< commCoord >() );
 #else
-    commsToDraw.push_back( hash_set< commCoord, hashCommCoord >() );
+        commsToDraw.push_back( hash_set< commCoord, hashCommCoord >() );
 #endif
 
-    tmpDrawCaution.push_back( drawCaution );
-    tmpComputedMaxY.push_back( 0.0 );
-    tmpComputedMinY.push_back( 0.0 );
+        tmpDrawCaution.push_back( drawCaution );
+        tmpComputedMaxY.push_back( 0.0 );
+        tmpComputedMinY.push_back( 0.0 );
 
-    computeSemanticRowParallel(
-            numRows, firstObj, lastObj, selectedSet, selected, timeStep, timePos,
-            objectAxisPos, objectPosList,
-            tmpDrawCaution[ tmpDrawCaution.size() - 1 ],
-            tmpComputedMaxY[ tmpComputedMaxY.size() - 1 ],
-            tmpComputedMinY[ tmpComputedMinY.size() - 1 ],
-            valuesToDraw[ valuesToDraw.size() - 1 ],
-            eventsToDraw[ eventsToDraw.size() - 1 ],
-            commsToDraw[ commsToDraw.size() - 1 ],
-            paramProgress );
+        int tmpDrawCautionSize = tmpDrawCaution.size();
+        int tmpComputedMaxYSize = tmpComputedMaxY.size();
+        int tmpComputedMinYSize = tmpComputedMinY.size();
+        int valuesToDrawSize = valuesToDraw.size();
+        int eventsToDrawSize = eventsToDraw.size();
+        int commsToDrawSize = eventsToDraw.size();
+
+        #pragma omp task firstprivate(numRows, firstObj, lastObj, timeStep, timePos, objectAxisPos, paramProgress) \
+                        shared(selectedSet, selected, objectPosList, tmpDrawCaution, tmpComputedMaxY, tmpComputedMinY, valuesToDraw, eventsToDraw, commsToDraw) \
+                        firstprivate(tmpDrawCautionSize, tmpComputedMaxYSize, tmpComputedMinYSize, valuesToDrawSize, eventsToDrawSize, commsToDrawSize) \
+                        default(none)
+        {
+            computeSemanticRowParallel(
+                    numRows, firstObj, lastObj, selectedSet, selected, timeStep, timePos,
+                    objectAxisPos, objectPosList,
+                    tmpDrawCaution[ tmpDrawCautionSize - 1 ],
+                    tmpComputedMaxY[ tmpComputedMaxYSize - 1 ],
+                    tmpComputedMinY[ tmpComputedMinYSize - 1 ],
+                    valuesToDraw[ valuesToDrawSize - 1 ],
+                    eventsToDraw[ eventsToDrawSize - 1 ],
+                    commsToDraw[ commsToDrawSize - 1 ],
+                    paramProgress );
+        }
 
 #ifndef PARALLEL_ENABLED
-    if( numRows > 1 )
-    {
-      if( progress->getStop() )
-        break;
-      progress->setCurrentProgress( currentRow );
-    }
-    ++currentRow;
+        if( numRows > 1 )
+        {
+          if( progress->getStop() )
+            break;
+          progress->setCurrentProgress( currentRow );
+        }
+        ++currentRow;
 #endif // PARALLEL_ENABLED
-
+      }
+    }
   }
-//#pragma css barrier
-#pragma omp taskwait
 
   for( vector< int >::iterator it = tmpDrawCaution.begin(); it != tmpDrawCaution.end(); ++it )
   {
@@ -2149,53 +2165,68 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
 #endif // PARALLEL_ENABLED
 
   // Drawmode: Group objects with same wxCoord in objectPosList
-  int currentRow = 0;
-  for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
+  #pragma omp parallel
   {
-    TObjectOrder firstObj = *obj;
-    TObjectOrder lastObj = firstObj;
-    while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
+    #pragma omp single
     {
-      ++obj;
-      lastObj = *obj;
-    }
-    valuesToDraw.push_back( vector< vector< pair<TSemanticValue,TSemanticValue> > >() );
+      int currentRow = 0;
+      for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
+      {
+        TObjectOrder firstObj = *obj;
+        TObjectOrder lastObj = firstObj;
+        while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
+        {
+          ++obj;
+          lastObj = *obj;
+        }
+        valuesToDraw.push_back( vector< vector< pair<TSemanticValue,TSemanticValue> > >() );
 
-    eventsToDraw.push_back( hash_set< PRV_INT32 >() );
+        eventsToDraw.push_back( hash_set< PRV_INT32 >() );
 #ifdef WIN32
-    commsToDraw.push_back( hash_set< commCoord >() );
+        commsToDraw.push_back( hash_set< commCoord >() );
 #else
-    commsToDraw.push_back( hash_set< commCoord, hashCommCoord >() );
+        commsToDraw.push_back( hash_set< commCoord, hashCommCoord >() );
 #endif
 
-    tmpDrawCaution.push_back( drawCaution );
-    tmpComputedMaxY.push_back( 0.0 );
-    tmpComputedMinY.push_back( 0.0 );
+        tmpDrawCaution.push_back( drawCaution );
+        tmpComputedMaxY.push_back( 0.0 );
+        tmpComputedMinY.push_back( 0.0 );
 
-    computeSemanticRowPunctualParallel(
-            numRows, firstObj, lastObj, selectedSet, selected, timeStep, timePos,
-            objectAxisPos, objectPosList,
-            tmpDrawCaution[ tmpDrawCaution.size() - 1 ],
-            tmpComputedMaxY[ tmpComputedMaxY.size() - 1 ],
-            tmpComputedMinY[ tmpComputedMinY.size() - 1 ],
-            valuesToDraw[ valuesToDraw.size() - 1 ],
-            eventsToDraw[ eventsToDraw.size() - 1 ],
-            commsToDraw[ commsToDraw.size() - 1 ],
-            paramProgress );
+        int tmpDrawCautionSize = tmpDrawCaution.size();
+        int tmpComputedMaxYSize = tmpComputedMaxY.size();
+        int tmpComputedMinYSize = tmpComputedMinY.size();
+        int valuesToDrawSize = valuesToDraw.size();
+        int eventsToDrawSize = eventsToDraw.size();
+        int commsToDrawSize = eventsToDraw.size();
+        #pragma omp task firstprivate(numRows, firstObj, lastObj, timeStep, timePos, objectAxisPos, paramProgress) \
+                        shared(selectedSet, selected, objectPosList, tmpDrawCaution, tmpComputedMaxY, tmpComputedMinY, valuesToDraw, eventsToDraw, commsToDraw) \
+                        firstprivate(tmpDrawCautionSize, tmpComputedMaxYSize, tmpComputedMinYSize, valuesToDrawSize, eventsToDrawSize, commsToDrawSize) \
+                        default(none)
+        {
+            computeSemanticRowPunctualParallel(
+                    numRows, firstObj, lastObj, selectedSet, selected, timeStep, timePos,
+                    objectAxisPos, objectPosList,
+                    tmpDrawCaution[ tmpDrawCautionSize - 1 ],
+                    tmpComputedMaxY[ tmpComputedMaxYSize - 1 ],
+                    tmpComputedMinY[ tmpComputedMinYSize - 1 ],
+                    valuesToDraw[ valuesToDrawSize - 1 ],
+                    eventsToDraw[ eventsToDrawSize - 1 ],
+                    commsToDraw[ commsToDrawSize - 1 ],
+                    paramProgress );
+        }
 
 #ifndef PARALLEL_ENABLED
-    if( numRows > 1 )
-    {
-      if( progress->getStop() )
-        break;
-      progress->setCurrentProgress( currentRow );
-    }
-    ++currentRow;
+        if( numRows > 1 )
+        {
+          if( progress->getStop() )
+            break;
+          progress->setCurrentProgress( currentRow );
+        }
+        ++currentRow;
 #endif // PARALLEL_ENABLED
-
+      }
+    }
   }
-//#pragma css barrier
-#pragma omp taskwait
 
   for( vector< int >::iterator it = tmpDrawCaution.begin(); it != tmpDrawCaution.end(); ++it )
   {

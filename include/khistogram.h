@@ -315,7 +315,6 @@ class KHistogram : public Histogram
                             TObjectOrder fromRow, TObjectOrder toRow,
                             std::vector<TObjectOrder>& selectedRows  );
 
-#pragma omp task shared( fromTime, toTime, fromRow, toRow, selectedRows )
     void executionTask( TRecordTime fromTime, TRecordTime toTime,
                         TObjectOrder fromRow, TObjectOrder toRow,
                         std::vector<TObjectOrder>& selectedRows );
