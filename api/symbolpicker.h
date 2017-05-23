@@ -26,6 +26,7 @@
 #define SYMBOLPICKER_H_INCLUDED
 
 #include <vector>
+#include <set>
 #include "paraverkerneltypes.h"
 
 class EventLabels;
@@ -74,11 +75,16 @@ class EventValueSymbolPicker
 
     bool pick( const EventLabels& eventLabels, std::vector<TEventValue>& onVector ) const;
 
+    bool getMultipleValuesFound() const;
+
   private:
     std::vector<TEventValue> eventValues;
     std::vector<std::string> eventValueLabels;
+    bool multipleValuesFound;
 
-    bool makepick( const EventLabels& eventLabels, TEventValue eventValue, const std::string& eventLabel, TEventValue& onEvent ) const;
+    bool makepick( const EventLabels& eventLabels, TEventValue eventValue,
+                   const std::string& eventLabel,
+                   std::set<TEventValue>& onValues ) const;
 };
 
 #endif // SYMBOLPICKER_H_INCLUDED

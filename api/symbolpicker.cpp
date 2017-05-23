@@ -21,11 +21,14 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
+#include <map>
 #include "symbolpicker.h"
 #include "eventlabels.h"
 
 
 using std::vector;
+using std::multimap;
+using std::set;
 using std::string;
 
 
@@ -97,7 +100,9 @@ bool EventTypeSymbolPicker::makepick( const EventLabels& eventLabels, TEventType
  *                                                                           *
  *****************************************************************************/
 EventValueSymbolPicker::EventValueSymbolPicker()
-{}
+{
+  multipleValuesFound = false;
+}
 
 
 EventValueSymbolPicker::~EventValueSymbolPicker()
@@ -108,6 +113,7 @@ void EventValueSymbolPicker::clear()
 {
   eventValues.clear();
   eventValueLabels.clear();
+  multipleValuesFound = false;
 }
 
 
@@ -117,13 +123,13 @@ void EventValueSymbolPicker::insert( TEventValue whichValue )
 }
 
 
-void EventValueSymbolPicker::insert( std::string whichLabel )
+void EventValueSymbolPicker::insert( string whichLabel )
 {
   eventValueLabels.push_back( whichLabel );
 }
 
 
-bool EventValueSymbolPicker::pick( const EventLabels& eventLabels, std::vector<TEventValue>& onVector ) const
+bool EventValueSymbolPicker::pick( const EventLabels& eventLabels, vector<TEventValue>& onVector ) const
 {
   if( eventValueLabels.size() == 0 )
   {
@@ -134,19 +140,42 @@ bool EventValueSymbolPicker::pick( const EventLabels& eventLabels, std::vector<T
   if( eventValues.size() != eventValueLabels.size() )
     return false;
 
+  set<TEventValue> tmpValues;
   vector<string>::const_iterator itLabel = eventValueLabels.begin();
   for( vector<TEventValue>::const_iterator itValue = eventValues.begin();
        itValue != eventValues.end(); ++itValue, ++itLabel )
   {
-
+    tmpValues.clear();
+    makepick( eventLabels, *itValue, *itLabel, tmpValues );
+    for( set<TEventValue>::const_iterator it = tmpValues.begin(); it != tmpValues.end(); ++it )
+      onVector.push_back( *it );
   }
 
   return true;
 }
 
 
-bool EventValueSymbolPicker::makepick( const EventLabels& eventLabels, TEventValue eventValue, const std::string& eventLabel, TEventValue& onEvent ) const
+bool EventValueSymbolPicker::makepick( const EventLabels& eventLabels, TEventValue eventValue, const string& eventLabel, set<TEventValue>& onValues ) const
 {
+  multimap<TEventType, TEventValue> tmpValues;
+
+  if( eventLabel == "" || eventLabel == EventLabels::unknownLabel || !eventLabels.getEventValue( eventLabel, tmpValues ) )
+  {
+    onValues.insert( eventValue );
+  }
+  else
+  {
+    if( tmpValues.size() > 1 )
+      const_cast<EventValueSymbolPicker*>( this )->multipleValuesFound = true;
+
+    for( multimap<TEventType, TEventValue>::const_iterator it = tmpValues.begin(); it != tmpValues.end(); ++it )
+      onValues.insert( (*it).second );
+  }
 
   return true;
+}
+
+bool EventValueSymbolPicker::getMultipleValuesFound() const
+{
+  return multipleValuesFound;
 }
