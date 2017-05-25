@@ -484,44 +484,11 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
     }
   }
 
+  bool continueLoading = true;
   if ( !someEventsExist )
-  {
-    //if ( !whichKernel->userMessage( "None of the events specified in the filter appear in the trace. Continue loading CFG file?" ) )
-    if ( !whichKernel->userMessage( MessageCFGNoneEvents ) )
-    {
-      for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
-        delete *itHisto;
-      histograms.clear();
-
-      for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
-        delete *itWin;
-      windows.clear();
-
-
-      return true;
-    }
-  }
+    continueLoading = whichKernel->userMessage( MessageCFGNoneEvents );
   else if ( someEventsNotExist )
-  {
-    //if ( !whichKernel->userMessage( "Some of the events specified in the filter doesn't appear in the trace. Continue loading CFG file?" ) )
-    if ( !whichKernel->userMessage( MessageCFGSomeEvents ) )
-    {
-      for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
-      {
-        delete *itHisto;
-      }
-      histograms.clear();
-
-      for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
-      {
-        delete *itWin;
-      }
-      windows.clear();
-
-
-      return true;
-    }
-  }
+    continueLoading = whichKernel->userMessage( MessageCFGSomeEvents );
 
   // Check if there are some objects in the selected level
   bool someWindowWithSelectedLevelEmpty = false;
@@ -533,26 +500,20 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
       break;
     }
   }
-
   if ( someWindowWithSelectedLevelEmpty )
+    continueLoading = whichKernel->userMessage( MessageCFGZeroObjects );
+
+  if( !continueLoading )
   {
-    //if ( !whichKernel->userMessage( "Some timeline has 0 objects selected at some level Continue loading CFG file?" ) )
-    if ( !whichKernel->userMessage( MessageCFGZeroObjects ) )
-    {
-      for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
-      {
-        delete *itHisto;
-      }
-      histograms.clear();
+    for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
+      delete *itHisto;
+    histograms.clear();
 
-      for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
-      {
-        delete *itWin;
-      }
-      windows.clear();
+    for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
+      delete *itWin;
+    windows.clear();
 
-      return true;
-    }
+    return true;
   }
 
   // Init first zoom for all windows
@@ -578,7 +539,6 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
       (*it)->setCFG4DMode( true );
     }
   }
-
 
   return true;
 }
