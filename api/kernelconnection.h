@@ -59,6 +59,7 @@ enum UserMessageID
   MessageCFGNoneEvents = 0,
   MessageCFGSomeEvents,
   MessageCFGZeroObjects,
+  MessageCFGMultipleValues,
   UserMessageSize
 };
 

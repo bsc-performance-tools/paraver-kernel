@@ -59,6 +59,7 @@ string currentWindowName;
 string CFGLoader::errorLine = "";
 bool someEventsExist = false;
 bool someEventsNotExist = false;
+bool multipleLabelValues = false;
 EventTypeSymbolPicker eventTypeSymbolPicker;
 EventValueSymbolPicker eventValueSymbolPicker;
 
@@ -252,6 +253,8 @@ bool pickSymbols( Trace *whichTrace, Window *whichWindow )
       whichWindow->getFilter()->insertEventValue( *it );
   }
 
+  multipleLabelValues = eventValueSymbolPicker.getMultipleValuesFound();
+
   return true;
 }
 
@@ -380,6 +383,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 {
   someEventsExist = false;
   someEventsNotExist = false;
+  multipleLabelValues = false;
 
   ifstream cfgFile( filename.c_str() );
   if ( !cfgFile )
@@ -489,6 +493,8 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
     continueLoading = whichKernel->userMessage( MessageCFGNoneEvents );
   else if ( someEventsNotExist )
     continueLoading = whichKernel->userMessage( MessageCFGSomeEvents );
+  else if ( multipleLabelValues )
+    continueLoading = whichKernel->userMessage( MessageCFGMultipleValues );
 
   // Check if there are some objects in the selected level
   bool someWindowWithSelectedLevelEmpty = false;
