@@ -60,6 +60,7 @@ string CFGLoader::errorLine = "";
 bool someEventsExist = false;
 bool someEventsNotExist = false;
 EventTypeSymbolPicker eventTypeSymbolPicker;
+EventValueSymbolPicker eventValueSymbolPicker;
 
 
 TWindowLevel stringToLevel( const std::string& strLevel )
@@ -206,11 +207,13 @@ string levelToStringHisto( TWindowLevel whichLevel )
 void clearSymbolPickers()
 {
   eventTypeSymbolPicker.clear();
+  eventValueSymbolPicker.clear();
 }
 
 bool pickSymbols( Trace *whichTrace, Window *whichWindow )
 {
   vector<TEventType> tmpTypes;
+  vector<TEventValue> tmpValues;
 
   if( !eventTypeSymbolPicker.pick( whichTrace->getEventLabels(), tmpTypes ) )
     return false;
@@ -225,6 +228,28 @@ bool pickSymbols( Trace *whichTrace, Window *whichWindow )
 
       whichWindow->getFilter()->insertEventType( *it );
     }
+  }
+
+  std::vector<std::string> filterFunctions;
+  whichWindow->getFilter()->getAllFilterFunctions( filterFunctions );
+  if( whichWindow->getFilter()->getEventTypeFunction() == filterFunctions[ 6 ] )
+  {
+    std::vector<TEventType> rankEvents;
+    whichWindow->getFilter()->getEventType( rankEvents );
+    if( rankEvents.size() >= 2 && whichTrace->anyEventLoaded( rankEvents[ 0 ], rankEvents[ 1 ] ) )
+    {
+      someEventsNotExist = false;
+      someEventsExist = true;
+    }
+  }
+
+
+  if( !eventValueSymbolPicker.pick( whichTrace->getEventLabels(), tmpValues ) )
+    return false;
+  else
+  {
+    for( vector<TEventValue>::iterator it = tmpValues.begin(); it != tmpValues.end(); ++it )
+      whichWindow->getFilter()->insertEventValue( *it );
   }
 
   return true;
@@ -2769,7 +2794,7 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
       if ( !( tmpValue >> eventValue ) )
         return false;
 
-      filter->insertEventValue( eventValue );
+      eventValueSymbolPicker.insert( eventValue );
     }
     else if ( strTag.compare( CFG_VAL_FILTER_EVT_TYPE_LABEL ) == 0 )
     {
@@ -2783,24 +2808,7 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
       getline( line, strValue, '"' ); // Consume the starting '"'
       getline( line, strValue, '"' );
 
-      std::cout << strValue << std::endl;
-
-    }
-  }
-
-  if( strTag.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
-  {
-    std::vector<std::string> filterFunctions;
-    filter->getAllFilterFunctions( filterFunctions );
-    if( filter->getEventTypeFunction() == filterFunctions[ 6 ] )
-    {
-      std::vector<TEventType> rankEvents;
-      filter->getEventType( rankEvents );
-      if( rankEvents.size() >= 2 && whichTrace->anyEventLoaded( rankEvents[ 0 ], rankEvents[ 1 ] ) )
-      {
-        someEventsNotExist = false;
-        someEventsExist = true;
-      }
+      eventValueSymbolPicker.insert( strValue );
     }
   }
 
