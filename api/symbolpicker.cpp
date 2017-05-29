@@ -165,11 +165,11 @@ bool EventValueSymbolPicker::makepick( const EventLabels& eventLabels, TEventVal
   }
   else
   {
-    if( tmpValues.size() > 1 )
-      const_cast<EventValueSymbolPicker*>( this )->multipleValuesFound = true;
-
     for( multimap<TEventType, TEventValue>::const_iterator it = tmpValues.begin(); it != tmpValues.end(); ++it )
       onValues.insert( (*it).second );
+
+    if( onValues.size() > 1 )
+      const_cast<EventValueSymbolPicker*>( this )->multipleValuesFound = true;
   }
 
   return true;
