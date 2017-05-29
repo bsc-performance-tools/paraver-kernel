@@ -45,8 +45,6 @@ AX_BOOST_BASE(1.36)
 AX_BOOST_SERIALIZATION
 
 AC_CONFIG_HEADERS(config_traits.h)
-AX_PROG_ENABLE_TRACING
-AX_PROG_WITH_EXTRAE
 AX_PROG_ENABLE_OMPSS_PARALLEL
 AX_PROG_ENABLE_OPENMP_PARALLEL
 
@@ -62,6 +60,7 @@ AX_PROG_ENABLE_EXTENDED_OBJECTS
 AX_PROG_ENABLE_OLD_PCFPARSER
 AM_CONDITIONAL(MAKE_OLD_PCFPARSER, test "${enable_old_pcfparser}" = "yes" )
 
+AX_PROG_WITH_EXTRAE
 
 ######################################################################
 #    Checks for typedefs, structures and compiler characteristics    #
@@ -84,6 +83,6 @@ BOOST_RPATH="-R ${BOOST_LDFLAGS#-L}"
 
 CFLAGS="-I../include/ -I../api/ -I../ -I../../ $PCFPARSER_CFLAGS $CFLAGS $CFLAGS_EXTRAE $XML_CPPFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
 CXXFLAGS="-I../include/ -I../api/ -I../ -I../../ $PCFPARSER_CFLAGS $CXXFLAGS $BOOST_CPPFLAGS $CXXFLAGS_EXTRAE $XML_CPPFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
-LDFLAGS="$LDFLAGS $BOOST_LDFLAGS $BOOST_SERIALIZATION_LIB $BOOST_RPATH $LDFLAGS_EXTRAE $XML_LIBS"
+LDFLAGS="$LDFLAGS $BOOST_LDFLAGS $BOOST_SERIALIZATION_LIB $LDFLAGS_EXTRAE $BOOST_RPATH $XML_LIBS"
 
 AC_OUTPUT([Makefile src/Makefile api/Makefile include/Makefile utils/Makefile utils/include/Makefile utils/src/Makefile utils/pcfparser/Makefile utils/pcfparser/old/Makefile])
