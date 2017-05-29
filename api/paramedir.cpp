@@ -186,17 +186,16 @@ TEventType eventType = 0;
 EventTranslator *eventTranslator = NULL;
 string eventTranslatorReferenceName("");
 
-static const std::string paramedirMessages[ UserMessageSize ] =
-{
-  "None of the events specified in the filter appear in the trace. File creation aborted.",
-  "Some of the events specified in the filter doesn't appear in the trace. File creation aborted.",
-  "Some timeline has 0 objects selected at some level. File creation aborted."
-};
-
 // Message from CFGLoader. Must be changed to IDs and UI write its own message
 static bool userMessageOutput( UserMessageID messageID )
 {
-  std::cout<<currentCFG->first<<": "<<paramedirMessages[ messageID ]<<std::endl;
+  std::cout<<currentCFG->first<<": "<<userMessages[ messageID ];
+  if( messageID >= MessageCFGMultipleValues )
+  {
+    std::cout<<std::endl;
+    return true;
+  }
+  std::cout<<" File creation aborted."<<std::endl;
   return false;
 }
 

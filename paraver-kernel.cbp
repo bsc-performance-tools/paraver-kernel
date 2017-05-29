@@ -406,6 +406,14 @@
 			<Option target="api" />
 			<Option target="otf2prv" />
 		</Unit>
+		<Unit filename="api/symbolpicker.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="api" />
+		</Unit>
+		<Unit filename="api/symbolpicker.h">
+			<Option target="api" />
+		</Unit>
 		<Unit filename="api/syncwindows.cpp">
 			<Option target="api" />
 			<Option target="otf2prv" />

@@ -783,7 +783,7 @@ string LocalKernel::getNewTraceName( const string& fullPathTraceName,
         // Does path + trace match with current history line?
         if ( *it == newTraceNamePrv || *it == newTraceNamePrvGz )
         {
-          // Found! => Not a new name; break loop through history
+          // Found! => Not a new name; break 'for'
           newName = false;
           break;
         }
@@ -818,7 +818,7 @@ string LocalKernel::getNewTraceName( const string& fullPathTraceName,
           // and check them
           if( auxHistName == auxNewName || auxHistName == auxNewGzName )
           {
-            // Found! => Not a new name; break loop through history
+            // Found! => Not a new name; break 'for'
             newName = false;
             break;
           }
@@ -828,7 +828,7 @@ string LocalKernel::getNewTraceName( const string& fullPathTraceName,
 
     if ( !newName )
     {
-      // Found! => Increment version
+      // Found! => Increment version of the last filter
       toolNumberedSuffix[ traceFilterID[ traceFilterID.size() - 1 ] ]++;
     }
   }

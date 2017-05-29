@@ -43,6 +43,7 @@
 #include "filter.h"
 #include "paraverlabels.h"
 #include "drawmode.h"
+#include "symbolpicker.h"
 
 
 using namespace std;
@@ -58,6 +59,9 @@ string currentWindowName;
 string CFGLoader::errorLine = "";
 bool someEventsExist = false;
 bool someEventsNotExist = false;
+bool multipleLabelValues = false;
+EventTypeSymbolPicker eventTypeSymbolPicker;
+EventValueSymbolPicker eventValueSymbolPicker;
 
 
 TWindowLevel stringToLevel( const std::string& strLevel )
@@ -201,6 +205,59 @@ string levelToStringHisto( TWindowLevel whichLevel )
   return "";
 }
 
+void clearSymbolPickers()
+{
+  eventTypeSymbolPicker.clear();
+  eventValueSymbolPicker.clear();
+}
+
+bool pickSymbols( Trace *whichTrace, Window *whichWindow )
+{
+  vector<TEventType> tmpTypes;
+  vector<TEventValue> tmpValues;
+
+  if( !eventTypeSymbolPicker.pick( whichTrace->getEventLabels(), tmpTypes ) )
+    return false;
+  else
+  {
+    for( vector<TEventType>::iterator it = tmpTypes.begin(); it != tmpTypes.end(); ++it )
+    {
+      if ( !whichTrace->eventLoaded( *it ) )
+        someEventsNotExist = true;
+      else
+        someEventsExist = true;
+
+      whichWindow->getFilter()->insertEventType( *it );
+    }
+  }
+
+  std::vector<std::string> filterFunctions;
+  whichWindow->getFilter()->getAllFilterFunctions( filterFunctions );
+  if( whichWindow->getFilter()->getEventTypeFunction() == filterFunctions[ 6 ] )
+  {
+    std::vector<TEventType> rankEvents;
+    whichWindow->getFilter()->getEventType( rankEvents );
+    if( rankEvents.size() >= 2 && whichTrace->anyEventLoaded( rankEvents[ 0 ], rankEvents[ 1 ] ) )
+    {
+      someEventsNotExist = false;
+      someEventsExist = true;
+    }
+  }
+
+
+  if( !eventValueSymbolPicker.pick( whichTrace->getEventLabels(), tmpValues ) )
+    return false;
+  else
+  {
+    for( vector<TEventValue>::iterator it = tmpValues.begin(); it != tmpValues.end(); ++it )
+      whichWindow->getFilter()->insertEventValue( *it );
+  }
+
+  multipleLabelValues = eventValueSymbolPicker.getMultipleValuesFound();
+
+  return true;
+}
+
 bool CFGLoader::hasCFGExtension( const string& filename )
 {
   string cfgExt;
@@ -326,6 +383,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 {
   someEventsExist = false;
   someEventsNotExist = false;
+  multipleLabelValues = false;
 
   ifstream cfgFile( filename.c_str() );
   if ( !cfgFile )
@@ -371,7 +429,19 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
     if ( it != cfgTagFunctions.end() )
     {
-      if ( !it->second->parseLine( whichKernel, auxStream, whichTrace, windows,
+      bool tmpError = false;
+
+      if( windows[ windows.size() - 1 ] != NULL &&
+          !windows[ windows.size() - 1 ]->isDerivedWindow() &&
+          typeid( *( it->second ) ) == typeid( WindowName ) ||
+          typeid( *( it->second ) ) == typeid( Analyzer2DCreate ) )
+      {
+        tmpError = !pickSymbols( whichTrace, windows[ windows.size() - 1 ] );
+        clearSymbolPickers();
+      }
+
+      if ( tmpError ||
+           !it->second->parseLine( whichKernel, auxStream, whichTrace, windows,
                                    histograms ) )
       {
         if ( histograms.begin() != histograms.end() &&
@@ -404,44 +474,27 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
 
+  if( histograms.size() == 0 &&
+      !windows[ windows.size() - 1 ]->isDerivedWindow() )
+  {
+    bool tmpError = !pickSymbols( whichTrace, windows[ windows.size() - 1 ] );
+    clearSymbolPickers();
+    if( tmpError )
+    {
+      delete windows[ windows.size() - 1 ];
+      //CFGLoader::errorLine = strLine;
+      windows[ windows.size() - 1 ] = NULL;
+      return false;
+    }
+  }
+
+  bool continueLoading = true;
   if ( !someEventsExist )
-  {
-    //if ( !whichKernel->userMessage( "None of the events specified in the filter appear in the trace. Continue loading CFG file?" ) )
-    if ( !whichKernel->userMessage( MessageCFGNoneEvents ) )
-    {
-      for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
-        delete *itHisto;
-      histograms.clear();
-
-      for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
-        delete *itWin;
-      windows.clear();
-
-
-      return true;
-    }
-  }
+    continueLoading = whichKernel->userMessage( MessageCFGNoneEvents );
   else if ( someEventsNotExist )
-  {
-    //if ( !whichKernel->userMessage( "Some of the events specified in the filter doesn't appear in the trace. Continue loading CFG file?" ) )
-    if ( !whichKernel->userMessage( MessageCFGSomeEvents ) )
-    {
-      for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
-      {
-        delete *itHisto;
-      }
-      histograms.clear();
-
-      for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
-      {
-        delete *itWin;
-      }
-      windows.clear();
-
-
-      return true;
-    }
-  }
+    continueLoading = whichKernel->userMessage( MessageCFGSomeEvents );
+  else if ( multipleLabelValues )
+    continueLoading = whichKernel->userMessage( MessageCFGMultipleValues );
 
   // Check if there are some objects in the selected level
   bool someWindowWithSelectedLevelEmpty = false;
@@ -453,26 +506,20 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
       break;
     }
   }
-
   if ( someWindowWithSelectedLevelEmpty )
+    continueLoading = whichKernel->userMessage( MessageCFGZeroObjects );
+
+  if( !continueLoading )
   {
-    //if ( !whichKernel->userMessage( "Some timeline has 0 objects selected at some level Continue loading CFG file?" ) )
-    if ( !whichKernel->userMessage( MessageCFGZeroObjects ) )
-    {
-      for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
-      {
-        delete *itHisto;
-      }
-      histograms.clear();
+    for ( vector<Histogram *>::iterator itHisto = histograms.begin(); itHisto != histograms.end(); ++itHisto )
+      delete *itHisto;
+    histograms.clear();
 
-      for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
-      {
-        delete *itWin;
-      }
-      windows.clear();
+    for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
+      delete *itWin;
+    windows.clear();
 
-      return true;
-    }
+    return true;
   }
 
   // Init first zoom for all windows
@@ -498,7 +545,6 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
       (*it)->setCFG4DMode( true );
     }
   }
-
 
   return true;
 }
@@ -2637,6 +2683,8 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
   getline( line, strNumberParams, ' ' ); // Number of following parameters.
   istringstream tmpNumberParams( strNumberParams );
 
+  bool paramsWithQuotes = line;
+
   if ( !( tmpNumberParams >> numParams ) )
     return false;
 
@@ -2702,12 +2750,7 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
       if ( !( tmpValue >> eventType ) )
         return false;
 
-      if ( !whichTrace->eventLoaded( eventType ) )
-        someEventsNotExist = true;
-      else
-        someEventsExist = true;
-
-      filter->insertEventType( eventType );
+      eventTypeSymbolPicker.insert( eventType );
     }
     else if ( strTag.compare( OLDCFG_VAL_FILTER_EVT_VALUE ) == 0 )
     {
@@ -2717,23 +2760,21 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
       if ( !( tmpValue >> eventValue ) )
         return false;
 
-      filter->insertEventValue( eventValue );
+      eventValueSymbolPicker.insert( eventValue );
     }
-  }
-
-  if( strTag.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
-  {
-    std::vector<std::string> filterFunctions;
-    filter->getAllFilterFunctions( filterFunctions );
-    if( filter->getEventTypeFunction() == filterFunctions[ 6 ] )
+    else if ( strTag.compare( CFG_VAL_FILTER_EVT_TYPE_LABEL ) == 0 )
     {
-      std::vector<TEventType> rankEvents;
-      filter->getEventType( rankEvents );
-      if( rankEvents.size() >= 2 && whichTrace->anyEventLoaded( rankEvents[ 0 ], rankEvents[ 1 ] ) )
-      {
-        someEventsNotExist = false;
-        someEventsExist = true;
-      }
+      getline( line, strValue, '"' ); // Consume the starting '"'
+      getline( line, strValue, '"' );
+
+      eventTypeSymbolPicker.insert( strValue );
+    }
+    else if ( strTag.compare( CFG_VAL_FILTER_EVT_VALUE_LABEL ) == 0 )
+    {
+      getline( line, strValue, '"' ); // Consume the starting '"'
+      getline( line, strValue, '"' );
+
+      eventValueSymbolPicker.insert( strValue );
     }
   }
 
@@ -2744,6 +2785,7 @@ void WindowFilterModule::printLine( ofstream& cfgFile,
                                     const vector<Window *>::const_iterator it )
 {
   Filter *filter = ( *it )->getFilter();
+  const EventLabels& labels = ( *it )->getTrace()->getEventLabels();
   vector<TObjectOrder> objVec;
   vector<TCommTag> tagVec;
   vector<TCommSize> sizeVec;
@@ -2828,6 +2870,18 @@ void WindowFilterModule::printLine( ofstream& cfgFile,
       cfgFile << " " << ( *itType );
     }
     cfgFile << endl;
+
+    cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << CFG_VAL_FILTER_EVT_TYPE_LABEL << " ";
+    cfgFile << typeVec.size();
+    for ( vector<TEventType>::iterator itType = typeVec.begin();
+          itType != typeVec.end(); ++itType )
+    {
+      string tmpTypeLabel;
+      labels.getEventTypeLabel( ( *itType ), tmpTypeLabel );
+      cfgFile << " \"" << tmpTypeLabel << "\"";
+    }
+    cfgFile << endl;
+
   }
 
   filter->getEventValue( valueVec );
@@ -2841,6 +2895,30 @@ void WindowFilterModule::printLine( ofstream& cfgFile,
       cfgFile << " " << ( *itValue );
     }
     cfgFile << endl;
+
+    cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << CFG_VAL_FILTER_EVT_VALUE_LABEL << " ";
+    cfgFile << valueVec.size();
+    for ( vector<TEventValue>::iterator itValue = valueVec.begin();
+          itValue != valueVec.end(); ++itValue )
+    {
+      string tmpValueLabel;
+      if ( typeVec.begin() != typeVec.end() )
+      {
+        for ( vector<TEventType>::iterator itType = typeVec.begin();
+              itType != typeVec.end(); ++itType )
+        {
+          if( labels.getEventValueLabel( ( *itType ), ( *itValue ), tmpValueLabel ) )
+            break;
+        }
+      }
+      else
+      {
+        labels.getEventValueLabel( ( *itValue ), tmpValueLabel );
+      }
+      cfgFile << " \"" << tmpValueLabel << "\"";
+    }
+    cfgFile << endl;
+
   }
 }
 

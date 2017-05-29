@@ -47,7 +47,7 @@ EventLabels::EventLabels( const set<TEventType>& eventsLoaded )
 {
 /*  for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
         it != eventsLoaded.end(); ++it )
-    eventTypeLabel[ *it ] = unknownLabel + " type ";*/
+    eventType2Label[ *it ] = unknownLabel + " type ";*/
 }
 
 EventLabels::EventLabels( const libparaver::ParaverTraceConfig& config,
@@ -55,53 +55,62 @@ EventLabels::EventLabels( const libparaver::ParaverTraceConfig& config,
 {
 /*  for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
         it != eventsLoaded.end(); ++it )
-    eventTypeLabel[ *it ] = unknownLabel + " type ";*/
+    eventType2Label[ *it ] = unknownLabel + " type ";*/
 
   const vector<ParaverEventType *>& types = config.get_eventTypes();
   for ( vector<ParaverEventType *>::const_iterator it = types.begin();
         it != types.end(); ++it )
   {
-    eventTypeLabel[ ( *it )->get_key() ] = ( *it )->get_description();
-    eventValueLabel[ ( *it )->get_key() ] = map<TEventValue, string>();
+    eventType2Label[ ( *it )->get_key() ] = ( *it )->get_description();
+    label2eventType[ ( *it )->get_description() ] = ( *it )->get_key();
+    eventValue2Label[ ( *it )->get_key() ] = map<TEventValue, string>();
     const vector<ParaverEventValue *>& values = ( *it )->get_eventValues();
     for ( vector<ParaverEventValue *>::const_iterator itVal = values.begin();
           itVal != values.end(); ++itVal )
     {
-      ( eventValueLabel[ ( *it )->get_key() ] )[ ( *itVal )->get_key() ] =
+      ( eventValue2Label[ ( *it )->get_key() ] )[ ( *itVal )->get_key() ] =
         ( *itVal )->get_value();
+
+      multimap< TEventType, TEventValue >& tmpEventMap = label2eventValue[ ( *itVal )->get_value() ];
+      tmpEventMap.insert( make_pair( ( *it )->get_key(), ( *itVal )->get_key() ) );
     }
   }
 }
 
 #else
 
+
 EventLabels::EventLabels( const set<TEventType>& eventsLoaded )
 {
 /*  for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
         it != eventsLoaded.end(); ++it )
-    eventTypeLabel[ *it ] = unknownLabel + " type ";*/
+    eventType2Label[ *it ] = unknownLabel + " type ";*/
 }
-
+#include <iostream>
 EventLabels::EventLabels( const libparaver::UIParaverTraceConfig& config,
                           const set<TEventType>& eventsLoaded )
 {
 /*  for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
         it != eventsLoaded.end(); ++it )
-    eventTypeLabel[ *it ] = unknownLabel + " type ";*/
+    eventType2Label[ *it ] = unknownLabel + " type ";*/
 
   try
   {
     const vector<unsigned int>& types = config.getEventTypes();
     for ( vector<unsigned int>::const_iterator it = types.begin(); it != types.end(); ++it )
     {
-      eventTypeLabel[ *it ] = config.getEventType( *it );
-      eventValueLabel[ *it ] = map<TEventValue, string>();
+      eventType2Label[ *it ] = config.getEventType( *it );
+      label2eventType[ config.getEventType( *it ) ] = *it;
+      eventValue2Label[ *it ] = map<TEventValue, string>();
       try
       {
         vector<unsigned int> values = config.getEventValues( *it );
         for ( vector<unsigned int>::const_iterator itVal = values.begin(); itVal != values.end(); ++itVal )
         {
-          ( eventValueLabel[ *it ] )[ *itVal ] = config.getEventValue( *it, *itVal );
+          ( eventValue2Label[ *it ] )[ *itVal ] = config.getEventValue( *it, *itVal );
+
+          multimap< TEventType, TEventValue >& tmpEventMap = label2eventValue[ config.getEventValue( *it, *itVal ) ];
+          tmpEventMap.insert( make_pair( *it, *itVal ) );
         }
       }
       catch( libparaver::UIParaverTraceConfig::value_not_found )
@@ -112,6 +121,7 @@ EventLabels::EventLabels( const libparaver::UIParaverTraceConfig& config,
   catch( libparaver::UIParaverTraceConfig::value_not_found )
   {
   }
+
 }
 
 #endif
@@ -121,15 +131,15 @@ EventLabels::~EventLabels()
 
 void EventLabels::getTypes( vector<TEventType>& onVector ) const
 {
-  for ( map<TEventType, string>::const_iterator it = eventTypeLabel.begin();
-        it != eventTypeLabel.end(); ++it )
+  for ( map<TEventType, string>::const_iterator it = eventType2Label.begin();
+        it != eventType2Label.end(); ++it )
     onVector.push_back( ( *it ).first );
 }
 
 bool EventLabels::getEventTypeLabel( TEventType type, string& onStr ) const
 {
-  map<TEventType, string>::const_iterator it = eventTypeLabel.find( type );
-  if ( it == eventTypeLabel.end() )
+  map<TEventType, string>::const_iterator it = eventType2Label.find( type );
+  if ( it == eventType2Label.end() )
   {
     onStr = unknownLabel;
     return false;
@@ -140,18 +150,16 @@ bool EventLabels::getEventTypeLabel( TEventType type, string& onStr ) const
 
 bool EventLabels::getEventValueLabel( TEventType type, TEventValue value, string& onStr ) const
 {
-  map<TEventType, map<TEventValue, string> >::const_iterator it = eventValueLabel.find( type );
-  if ( it == eventValueLabel.end() )
+  map<TEventType, map<TEventValue, string> >::const_iterator it = eventValue2Label.find( type );
+  if ( it == eventValue2Label.end() )
   {
-    //onStr = unknownLabel;
-    onStr.clear();
+    onStr = unknownLabel;
     return false;
   }
   map<TEventValue, string>::const_iterator itVal = ( *it ).second.find( value );
   if ( itVal == ( *it ).second.end() )
   {
-    //onStr = unknownLabel;
-    onStr.clear();
+    onStr = unknownLabel;
     return false;
   }
   onStr = ( *itVal ).second;
@@ -161,9 +169,10 @@ bool EventLabels::getEventValueLabel( TEventType type, TEventValue value, string
 bool EventLabels::getEventValueLabel( TEventValue value, string& onStr ) const
 {
   bool found = false;
+  onStr = unknownLabel;
 
-  map<TEventType, map<TEventValue, string> >::const_iterator it = eventValueLabel.begin();
-  while ( !found && it != eventValueLabel.end() )
+  map<TEventType, map<TEventValue, string> >::const_iterator it = eventValue2Label.begin();
+  while ( !found && it != eventValue2Label.end() )
   {
     map<TEventValue, string>::const_iterator itVal = ( *it ).second.find( value );
     if ( itVal != ( *it ).second.end() )
@@ -180,10 +189,9 @@ bool EventLabels::getEventValueLabel( TEventValue value, string& onStr ) const
 
 bool EventLabels::getValues( TEventType type, vector<string> &values ) const
 {
-  map< TEventType, map< TEventValue, string > >::const_iterator it = eventValueLabel.find( type );
-  if ( it == eventValueLabel.end() )
+  map< TEventType, map< TEventValue, string > >::const_iterator it = eventValue2Label.find( type );
+  if ( it == eventValue2Label.end() )
   {
-    //onStr = unknownLabel;
     return false;
   }
   else
@@ -198,10 +206,9 @@ bool EventLabels::getValues( TEventType type, vector<string> &values ) const
 
 bool EventLabels::getValues( TEventType type, map<TEventValue, string> &values ) const
 {
-  map< TEventType, map< TEventValue, string > >::const_iterator it = eventValueLabel.find( type );
-  if ( it == eventValueLabel.end() )
+  map< TEventType, map< TEventValue, string > >::const_iterator it = eventValue2Label.find( type );
+  if ( it == eventValue2Label.end() )
   {
-    //onStr = unknownLabel;
     return false;
   }
   else
@@ -210,5 +217,28 @@ bool EventLabels::getValues( TEventType type, map<TEventValue, string> &values )
       values[ (*it2).first ] = (*it2).second;
   }
 
+  return true;
+}
+
+
+bool EventLabels::getEventType( const string& whichTypeLabel, TEventType& onType ) const
+{
+  map<string, TEventType>::const_iterator it = label2eventType.find( whichTypeLabel );
+  if( it == label2eventType.end() )
+    return false;
+
+  onType = (*it).second;
+  return true;
+}
+
+
+bool EventLabels::getEventValue( const string& whichValueLabel, multimap< TEventType, TEventValue >& onMap ) const
+{
+  map<string, multimap< TEventType, TEventValue > >::const_iterator it = label2eventValue.find( whichValueLabel );
+
+  if( it == label2eventValue.end() )
+    return false;
+
+  onMap = (*it).second;
   return true;
 }
