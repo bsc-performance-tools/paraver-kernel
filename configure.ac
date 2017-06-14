@@ -45,22 +45,13 @@ AX_BOOST_BASE(1.36)
 AX_BOOST_SERIALIZATION
 
 AC_CONFIG_HEADERS(config_traits.h)
-AX_PROG_ENABLE_OMPSS_PARALLEL
-AX_PROG_ENABLE_OPENMP
-
-AX_PROG_ENABLE_OTF2PRV
-AM_CONDITIONAL(WANT_OTF2PRV, test "${enable_otf2prv}" = "yes" )
-if test "${enable_otf2prv}" = "yes" ; then
-  AX_PROG_WITH_OTF2
-  AC_SUBST(OTF2_DIR)
-fi
 
 AX_PROG_ENABLE_EXTENDED_OBJECTS
-
 AX_PROG_ENABLE_OLD_PCFPARSER
-AM_CONDITIONAL(MAKE_OLD_PCFPARSER, test "${enable_old_pcfparser}" = "yes" )
-
+AX_PROG_ENABLE_OMPSS
+AX_PROG_ENABLE_OPENMP
 AX_PROG_WITH_EXTRAE
+AX_PROG_WITH_OTF2
 
 ######################################################################
 #    Checks for typedefs, structures and compiler characteristics    #
@@ -81,8 +72,8 @@ AC_CHECK_TYPES([int64_t, uint64_t, int8_t, uint8_t, int32_t, uint32_t, int16_t, 
 
 BOOST_RPATH="-R ${BOOST_LDFLAGS#-L}"
 
-CFLAGS="-I../include/ -I../api/ -I../ -I../../ $PCFPARSER_CFLAGS $CFLAGS $CFLAGS_EXTRAE $XML_CPPFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
-CXXFLAGS="-I../include/ -I../api/ -I../ -I../../ $PCFPARSER_CFLAGS $CXXFLAGS $BOOST_CPPFLAGS $CXXFLAGS_EXTRAE $XML_CPPFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
+CFLAGS="-I../include/ -I../api/ -I../ -I../../ $CFLAGS $CFLAGS_EXTRAE $XML_CPPFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
+CXXFLAGS="-I../include/ -I../api/ -I../ -I../../ $CXXFLAGS $BOOST_CPPFLAGS $CXXFLAGS_EXTRAE $XML_CPPFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
 LDFLAGS="$LDFLAGS $BOOST_LDFLAGS $BOOST_SERIALIZATION_LIB $LDFLAGS_EXTRAE $BOOST_RPATH $XML_LIBS"
 
 AC_OUTPUT([Makefile src/Makefile api/Makefile include/Makefile utils/Makefile utils/include/Makefile utils/src/Makefile utils/pcfparser/Makefile utils/pcfparser/old/Makefile])
