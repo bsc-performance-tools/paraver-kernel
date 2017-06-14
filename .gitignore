@@ -1,5 +1,6 @@
 *~
 .libs/
+.objs/
 Makefile
 Makefile.in
 aclocal.m4
@@ -11,6 +12,8 @@ api/Makefile.in
 api/*.lo
 api/*.o
 api/libparaver-api.la
+api/api.vcproj.BSC-VM.bscuser.user
+api/Release/
 autom4te.cache/
 compile
 config.guess
@@ -27,6 +30,8 @@ include/Makefile
 include/Makefile.in
 install-sh
 libtool
+libparaver-api.so
+libparaver-kernel.so
 ltmain.sh
 m4/libtool.m4
 m4/ltoptions.m4
@@ -34,7 +39,16 @@ m4/ltsugar.m4
 m4/ltversion.m4
 m4/lt~obsolete.m4
 missing
+obj/
+paramedir
 paramedir.bin
+paraver-kernel.depend
+paraver-kernel-*.tar.gz
+paraver-kernel-win32/Release/
+paraver-kernel-win32/paraver-kernel.ncb
+paraver-kernel-win32/paraver-kernel.suo
+paraver-kernel-win32/paraver-kernel.vcproj.BSC-VM.bscuser.user
+paraver-kernel.layout
 src/.deps/
 src/.libs/
 src/Makefile
@@ -53,10 +67,4 @@ utils/pcfparser/*.o
 utils/pcfparser/old/.deps/
 utils/pcfparser/old/*.lo
 utils/pcfparser/old/*.o
-/paraver-kernel.layout
-api/Release/
-api/api.vcproj.BSC-VM.bscuser.user
-paraver-kernel-win32/Release/
-paraver-kernel-win32/paraver-kernel.ncb
-paraver-kernel-win32/paraver-kernel.suo
-paraver-kernel-win32/paraver-kernel.vcproj.BSC-VM.bscuser.user
+
