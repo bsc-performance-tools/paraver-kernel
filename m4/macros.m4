@@ -1,17 +1,17 @@
 # AX_PROG_ENABLE_BOOST_AWARE_INSTALL
 # ----------------------------------
-AC_DEFUN([AX_PROG_ENABLE_BOOST_AWARE_INSTALL],
+AC_DEFUN([AX_PROG_ENABLE_DEPENDENCIES_AWARE_INSTALL],
 [
-   AC_ARG_ENABLE(boost_aware_install,
+   AC_ARG_ENABLE(dependencies_aware_install,
       AC_HELP_STRING(
-         [--enable-boost-aware-install],
-         [In the install phase, some execution scripts extend LD_LIBRARY_PATH to include the boost libs before calling binaries (default: disabled)]
+         [--enable-dependencies-aware-install],
+         [In the install phase, some execution scripts extend LD_LIBRARY_PATH to include path to dependent libs before calling binaries (default: disabled)]
       ),
-      [enable_boost_aware_install="${enableval}"],
-      [enable_boost_aware_install="no"]
+      [enable_dependencies_aware_install="${enableval}"],
+      [enable_dependencies_aware_install="no"]
    )
   
-   AM_CONDITIONAL([ENABLE_BOOST_AWARE_INSTALL], [test "${enable_boost_aware_install}" = "yes"] )
+   AM_CONDITIONAL([ENABLE_DEPENDENCIES_AWARE_INSTALL], [test "${enable_dependencies_aware_install}" = "yes"] )
 ])
 
 

@@ -50,7 +50,7 @@ install-data-hook:
 		cp -f $(bindir)/paramedir $(bindir)/old.paramedir ; \
 	fi
 	
-if ENABLE_BOOST_AWARE_INSTALL
+if ENABLE_DEPENDENCIES_AWARE_INSTALL
 	$(SED) "s|@inst_BOOST_LIBDIR@|${BOOST_LDFLAGS}|g ; s|-L||g" < ./docs/paramedir > $(bindir)/paramedir
 else
 	$(SED) "s|@inst_BOOST_LIBDIR@:||g" < ./docs/paramedir > $(bindir)/paramedir

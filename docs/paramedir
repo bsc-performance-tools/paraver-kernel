@@ -18,4 +18,4 @@ if ! [ -e ${PARAVER_HOME}/bin/paramedir.bin ] ; then
   exit 1
 fi
 
-LD_LIBRARY_PATH=$PARAVER_HOME/${LIB_DIR}/paraver-kernel:@inst_BOOST_LIBDIR@:$LD_LIBRARY_PATH $PARAVER_HOME/bin/paramedir.bin "$@"	
+LD_LIBRARY_PATH="@inst_BOOST_LIBDIR@:$PARAVER_HOME/${LIB_DIR}/paraver-kernel:$LD_LIBRARY_PATH" "$PARAVER_HOME/bin/paramedir.bin" "$@"	
