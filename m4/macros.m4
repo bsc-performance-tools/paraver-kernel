@@ -1,3 +1,21 @@
+# AX_PROG_ENABLE_BOOST_AWARE_INSTALL
+# ----------------------------------
+AC_DEFUN([AX_PROG_ENABLE_BOOST_AWARE_INSTALL],
+[
+   AC_ARG_ENABLE(boost_aware_install,
+      AC_HELP_STRING(
+         [--enable-boost-aware-install],
+         [In the install phase, some execution scripts extend LD_LIBRARY_PATH to include the boost libs before calling binaries (default: disabled)]
+      ),
+      [enable_boost_aware_install="${enableval}"],
+      [enable_boost_aware_install="no"]
+   )
+  
+   AM_CONDITIONAL([ENABLE_BOOST_AWARE_INSTALL], [test "${enable_boost_aware_install}" = "yes"] )
+])
+
+
+
 # AX_PROG_ENABLE_EXTENDED_OBJECTS
 # -------------------------------
 AC_DEFUN([AX_PROG_ENABLE_EXTENDED_OBJECTS],

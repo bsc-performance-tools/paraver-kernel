@@ -49,28 +49,31 @@ install-data-hook:
 	if test -f $(bindir)/paramedir ; then \
 		cp -f $(bindir)/paramedir $(bindir)/old.paramedir ; \
 	fi
-	cp -f ./docs/paramedir $(bindir)
-	$(SED) "s|@inst_PARAVER_HOME@|$(prefix)|g" < ./docs/paramedir > $(bindir)/paramedir
+	
+if ENABLE_BOOST_AWARE_INSTALL
+	$(SED) "s|@inst_BOOST_LIBDIR@|${BOOST_LDFLAGS}|g ; s|-L||g" < ./docs/paramedir > $(bindir)/paramedir
+else
+	$(SED) "s|@inst_BOOST_LIBDIR@:||g" < ./docs/paramedir > $(bindir)/paramedir
+endif
+
 	chmod a+x $(bindir)/paramedir
-	cp -f ./docs/paramedir.mn3-mt $(bindir)
-	chmod a+x $(bindir)/paramedir.mn3-mt
 
 	$(mkdir_p) $(prefix)/share
 	$(mkdir_p) $(prefix)/share/filters-config
 	$(install_sh_PROGRAM) -m 775 ./docs/filters/*.xml $(prefix)/share/filters-config
 
+
 uninstall-hook:
 	test -f $(bindir)/paramedir            && rm  -fv $(bindir)/paramedir
 	test -f $(bindir)/old.paramedir        && rm  -fv $(bindir)/old.paramedir
-	test -f $(bindir)/paramedir.mn3-mt     && rm  -fv $(bindir)/paramedir.mn3-mt
-	
+
 	test -d $(prefix)/share/filters-config && rm -rfv $(prefix)/share/filters-config
 
 
 dist-hook:
 	$(mkdir_p) $(distdir)/docs
 	cp -f ./docs/paramedir        $(distdir)/docs
-	cp -f ./docs/paramedir.mn3-mt $(distdir)/docs
+#	cp -f ./docs/paramedir.mn3-mt $(distdir)/docs
 	$(mkdir_p) $(distdir)/docs/filters
 	$(install_sh_PROGRAM) -m 775 ./docs/filters/*.xml $(distdir)/docs/filters
 #	$(install_sh_DATA) ./docs/filters/*.xml $(distdir)/docs/filters
@@ -80,7 +83,7 @@ installcheck-local:
 	echo "  [paraver-kernel][lib] Installed " || ( echo "  [paraver-kernel][lib] Check failed!!!" && exit 1 )
 
 
-# Erases everything which should not be uploaded to CVS
+# Erases everything which should not be uploaded to the repository
 mrproper: distclean
 	rm -fr configure.scan  autom4te.cache config.h.in config.h.in~ configure Makefile.in config.guess autoscan.log config.log config.status aclocal.m4 config.sub install-sh ltmain.sh missing
 
