@@ -1,5 +1,5 @@
-# AX_PROG_ENABLE_BOOST_AWARE_INSTALL
-# ----------------------------------
+# AX_PROG_ENABLE_DEPENDENCIES_AWARE_INSTALL
+# -----------------------------------------
 AC_DEFUN([AX_PROG_ENABLE_DEPENDENCIES_AWARE_INSTALL],
 [
    AC_ARG_ENABLE(dependencies_aware_install,
