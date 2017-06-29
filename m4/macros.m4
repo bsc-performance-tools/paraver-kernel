@@ -10,7 +10,7 @@ AC_DEFUN([AX_PROG_ENABLE_DEPENDENCIES_AWARE_INSTALL],
       [enable_dependencies_aware_install="${enableval}"],
       [enable_dependencies_aware_install="no"]
    )
-  
+
    AM_CONDITIONAL([ENABLE_DEPENDENCIES_AWARE_INSTALL], [test "${enable_dependencies_aware_install}" = "yes"] )
 ])
 
