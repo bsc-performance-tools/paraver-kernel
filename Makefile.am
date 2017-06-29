@@ -73,7 +73,6 @@ uninstall-hook:
 dist-hook:
 	$(mkdir_p) $(distdir)/docs
 	cp -f ./docs/paramedir        $(distdir)/docs
-#	cp -f ./docs/paramedir.mn3-mt $(distdir)/docs
 	$(mkdir_p) $(distdir)/docs/filters
 	$(install_sh_PROGRAM) -m 775 ./docs/filters/*.xml $(distdir)/docs/filters
 #	$(install_sh_DATA) ./docs/filters/*.xml $(distdir)/docs/filters
