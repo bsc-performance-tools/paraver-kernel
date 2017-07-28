@@ -7,7 +7,7 @@ EXTRA_DIST = \
 	ParaverState.h \
 	ParaverStatesColor.h \
 	ParaverTraceConfigGrammar.h \
-	ParaverTraceConfig.h
+	ParaverTraceConfig.h \
 	UIParaverTraceConfig.h \
 	LibException.cpp \
 	ParaverEventType.cpp \
