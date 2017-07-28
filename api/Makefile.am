@@ -11,7 +11,8 @@ if MAKE_OLD_PCFPARSER
                     ../utils/pcfparser/old/ParaverState.cpp \
                     ../utils/pcfparser/old/ParaverStatesColor.cpp \
                     ../utils/pcfparser/old/ParaverTraceConfig.cpp \
-                    ../utils/pcfparser/old/ParaverTraceConfigGrammar.cpp
+                    ../utils/pcfparser/old/ParaverTraceConfigGrammar.cpp \
+		    ../utils/pcfparser/old/UIParaverTraceConfig.cpp
 else
   PCFPARSER_FILES=../utils/pcfparser/ParaverTraceConfig.cpp \
                   ../utils/pcfparser/UIParaverTraceConfig.cpp
