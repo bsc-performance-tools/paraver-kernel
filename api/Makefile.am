@@ -121,6 +121,7 @@ install-data-hook:
 
 	$(mkdir_p) $(includedir)/utils/pcfparser/old
 	cp -f ../utils/pcfparser/old/ParaverTraceConfig.h $(includedir)/utils/pcfparser/old
+	cp -f ../utils/pcfparser/old/UIParaverTraceConfig.h $(includedir)/utils/pcfparser/old
 
 uninstall-hook:
 	test -d $(includedir)/utils/pcfparser && rm -rf $(includedir)/utils/pcfparser
