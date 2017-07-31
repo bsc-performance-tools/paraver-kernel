@@ -8,7 +8,6 @@ EXTRA_DIST = \
 	ParaverStatesColor.h \
 	ParaverTraceConfigGrammar.h \
 	ParaverTraceConfig.h \
-	UIParaverTraceConfig.h \
 	LibException.cpp \
 	ParaverEventType.cpp \
 	ParaverEventValue.cpp \
@@ -17,8 +16,7 @@ EXTRA_DIST = \
 	ParaverState.cpp \
 	ParaverStatesColor.cpp \
 	ParaverTraceConfig.cpp \
-	ParaverTraceConfigGrammar.cpp \
-	UIParaverTraceConfig.cpp
+	ParaverTraceConfigGrammar.cpp
 
 # Erases everything which should not be uploaded to CVS
 mrproper: distclean

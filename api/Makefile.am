@@ -11,8 +11,7 @@ if MAKE_OLD_PCFPARSER
                     ../utils/pcfparser/old/ParaverState.cpp \
                     ../utils/pcfparser/old/ParaverStatesColor.cpp \
                     ../utils/pcfparser/old/ParaverTraceConfig.cpp \
-                    ../utils/pcfparser/old/ParaverTraceConfigGrammar.cpp \
-		    ../utils/pcfparser/old/UIParaverTraceConfig.cpp
+                    ../utils/pcfparser/old/ParaverTraceConfigGrammar.cpp 
 else
   PCFPARSER_FILES=../utils/pcfparser/ParaverTraceConfig.cpp \
                   ../utils/pcfparser/UIParaverTraceConfig.cpp
@@ -121,7 +120,6 @@ install-data-hook:
 
 	$(mkdir_p) $(includedir)/utils/pcfparser/old
 	cp -f ../utils/pcfparser/old/ParaverTraceConfig.h $(includedir)/utils/pcfparser/old
-	cp -f ../utils/pcfparser/old/UIParaverTraceConfig.h $(includedir)/utils/pcfparser/old
 
 uninstall-hook:
 	test -d $(includedir)/utils/pcfparser && rm -rf $(includedir)/utils/pcfparser
