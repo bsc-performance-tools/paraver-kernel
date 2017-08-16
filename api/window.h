@@ -362,6 +362,8 @@ class Window
     {}
     virtual void setFunctionLineColorMode()
     {}
+    virtual void setMultiFunctionLineColorMode()
+    {}
     virtual void setPunctualColorMode()
     {}
     virtual bool isCodeColorSet() const
@@ -377,6 +379,10 @@ class Window
       return false;
     }
     virtual bool isFunctionLineColorSet() const
+    {
+      return false;
+    }
+    virtual bool isMultiFunctionLineColorSet() const
     {
       return false;
     }
@@ -927,11 +933,13 @@ class WindowProxy: public Window
     virtual void setGradientColorMode();
     virtual void setNotNullGradientColorMode();
     virtual void setFunctionLineColorMode();
+    virtual void setMultiFunctionLineColorMode();
     virtual void setPunctualColorMode();
     virtual bool isCodeColorSet() const;
     virtual bool isGradientColorSet() const;
     virtual bool isNotNullGradientColorSet() const;
     virtual bool isFunctionLineColorSet() const;
+    virtual bool isMultiFunctionLineColorSet() const;
     virtual bool isPunctualColorSet() const;
     virtual PRV_UINT16 getPixelSize() const;
     virtual void setPixelSize( PRV_UINT16 whichSize );
