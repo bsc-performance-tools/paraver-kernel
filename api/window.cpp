@@ -962,7 +962,7 @@ bool WindowProxy::isFunctionLineColorSet() const
   return colorMode == SemanticColor::FUNCTION_LINE;
 }
 
-bool WindowProxy::isFunctionLineColorSet() const
+bool WindowProxy::isMultiFunctionLineColorSet() const
 {
   return colorMode == SemanticColor::MULTIFUNCTION_LINE;
 }
@@ -1778,17 +1778,24 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
     return;
 
   int numRows = 0;
-  for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
+  if( isMultiFunctionLineColorSet() )
   {
-    TObjectOrder firstObj = *obj;
-    TObjectOrder lastObj = firstObj;
-    while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
+    numRows = selectedSet.size();
+  }
+  else
+  {
+    for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
     {
-      ++obj;
-      lastObj = *obj;
-    }
+      TObjectOrder firstObj = *obj;
+      TObjectOrder lastObj = firstObj;
+      while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
+      {
+        ++obj;
+        lastObj = *obj;
+      }
 
-    ++numRows;
+      ++numRows;
+    }
   }
 
   valuesToDraw.reserve( numRows );
@@ -1816,10 +1823,13 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
       {
         TObjectOrder firstObj = *obj;
         TObjectOrder lastObj = firstObj;
-        while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
+        if( !isMultiFunctionLineColorSet() )
         {
-          ++obj;
-          lastObj = *obj;
+          while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
+          {
+            ++obj;
+            lastObj = *obj;
+          }
         }
         valuesToDraw.push_back( vector< TSemanticValue >() );
 
