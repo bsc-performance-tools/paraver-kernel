@@ -31,6 +31,7 @@
 #include <functional>
 #include "trace.h"
 #include "histogramtotals.h"
+#include "paraverkernelexception.h"
 
 template < typename SelType, typename LevelType >
 SelectionManagement< SelType, LevelType >::SelectionManagement()
@@ -320,4 +321,75 @@ void SelectionManagement< SelType, LevelType >::getSelected( std::vector< SelTyp
     if ( *it == last )
       break;
   }
+}
+
+
+template < typename SelType, typename LevelType >
+SelType SelectionManagement< SelType, LevelType >::shiftFirst( SelType whichFirst, PRV_INT64 shiftAmount, LevelType level ) const
+{
+  const typename std::vector<SelType>& tmpSelectedSet = selectedSet[ level ];
+  const std::vector<bool>& tmpSelected = selected[ level ];
+
+  if( whichFirst >= tmpSelected.size() )
+    throw ParaverKernelException( ParaverKernelException::indexOutOfRange );
+
+  SelType iFirst = 0;
+  if( tmpSelected.size() == tmpSelectedSet.size() )
+  {
+    iFirst = whichFirst;
+  }
+  else
+  {
+    while( whichFirst < tmpSelectedSet[ iFirst ] )
+    {
+      ++iFirst;
+      if( iFirst >= tmpSelectedSet.size() )
+      {
+        iFirst = tmpSelectedSet.size() - 1;
+        break;
+      }
+    }
+  }
+
+  if( (PRV_INT64)iFirst + shiftAmount < 0 )
+    return tmpSelectedSet[ 0 ];
+  else if( (PRV_INT64)iFirst + shiftAmount >= tmpSelected.size() )
+    return tmpSelectedSet[ tmpSelectedSet.size() - 1 ];
+
+  return tmpSelectedSet[ iFirst + shiftAmount ];
+}
+
+
+template < typename SelType, typename LevelType >
+SelType SelectionManagement< SelType, LevelType >::shiftLast( SelType whichLast, PRV_INT64 shiftAmount, LevelType level ) const
+{
+  const typename std::vector<SelType>& tmpSelectedSet = selectedSet[ level ];
+  const std::vector<bool>& tmpSelected = selected[ level ];
+
+  if( whichLast >= tmpSelected.size() )
+    throw ParaverKernelException( ParaverKernelException::indexOutOfRange );
+
+  SelType iLast = tmpSelectedSet.size() - 1;
+  if( tmpSelected.size() == tmpSelectedSet.size() )
+  {
+    iLast = whichLast;
+  }
+  else
+  {
+    while( whichLast > tmpSelectedSet[ iLast ] )
+    {
+      --iLast;
+      if( iLast == 0 )
+      {
+        break;
+      }
+    }
+  }
+
+  if( (PRV_INT64)iLast + shiftAmount < 0 )
+    return tmpSelectedSet[ 0 ];
+  else if( (PRV_INT64)iLast + shiftAmount >= tmpSelectedSet.size() )
+    return tmpSelectedSet[ tmpSelectedSet.size() - 1 ];
+
+  return tmpSelectedSet[ iLast + shiftAmount ];
 }

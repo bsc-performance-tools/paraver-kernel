@@ -51,6 +51,7 @@ class ParaverKernelException : public std::exception
       gzipNotSupported,
       undefinedToolID,
       undefinedToolName,
+      indexOutOfRange,
       LAST
     } TErrorCode;
 

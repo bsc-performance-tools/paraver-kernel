@@ -64,6 +64,8 @@ class SelectionManagement
 
     bool isSelectedPosition( SelType whichSelected, LevelType level = (LevelType)0 ) const;
 
+    SelType shiftFirst( SelType whichFirst, PRV_INT64 shiftAmount, LevelType level = (LevelType)0 ) const;
+    SelType shiftLast( SelType whichLast, PRV_INT64 shiftAmount, LevelType level = (LevelType)0 ) const;
 
   private:
     std::vector< std::vector< bool > > selected;
