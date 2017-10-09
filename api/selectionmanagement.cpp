@@ -340,7 +340,7 @@ SelType SelectionManagement< SelType, LevelType >::shiftFirst( SelType whichFirs
   }
   else
   {
-    while( whichFirst < tmpSelectedSet[ iFirst ] )
+    while( whichFirst > tmpSelectedSet[ iFirst ] )
     {
       ++iFirst;
       if( iFirst >= tmpSelectedSet.size() )
@@ -376,7 +376,7 @@ SelType SelectionManagement< SelType, LevelType >::shiftLast( SelType whichLast,
   }
   else
   {
-    while( whichLast > tmpSelectedSet[ iLast ] )
+    while( whichLast < tmpSelectedSet[ iLast ] )
     {
       --iLast;
       if( iLast == 0 )
