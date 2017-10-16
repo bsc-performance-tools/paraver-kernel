@@ -291,6 +291,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\symbolpicker.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\syncwindows.cpp"
 				>
 			</File>
@@ -518,6 +522,10 @@
 			</File>
 			<File
 				RelativePath=".\statelabels.h"
+				>
+			</File>
+			<File
+				RelativePath=".\symbolpicker.h"
 				>
 			</File>
 			<File
