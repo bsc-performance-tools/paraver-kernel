@@ -1315,14 +1315,14 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel,
   }
 }
 
-TObjectOrder WindowProxy::shiftFirst( TObjectOrder whichFirst, PRV_INT64 shiftAmount, TWindowLevel level ) const
+TObjectOrder WindowProxy::shiftFirst( TObjectOrder whichFirst, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TWindowLevel level ) const
 {
-  return selectedRow.shiftFirst( whichFirst, shiftAmount, level );
+  return selectedRow.shiftFirst( whichFirst, shiftAmount, appliedAmount, level );
 }
 
-TObjectOrder WindowProxy::shiftLast( TObjectOrder whichLast, PRV_INT64 shiftAmount, TWindowLevel level ) const
+TObjectOrder WindowProxy::shiftLast( TObjectOrder whichLast, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TWindowLevel level ) const
 {
-  return selectedRow.shiftLast( whichLast, shiftAmount, level );
+  return selectedRow.shiftLast( whichLast, shiftAmount, appliedAmount, level );
 }
 
 void WindowProxy::getGroupLabels( PRV_UINT32 whichGroup, vector<string>& onVector ) const

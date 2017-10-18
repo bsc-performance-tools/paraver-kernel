@@ -325,7 +325,7 @@ void SelectionManagement< SelType, LevelType >::getSelected( std::vector< SelTyp
 
 
 template < typename SelType, typename LevelType >
-SelType SelectionManagement< SelType, LevelType >::shiftFirst( SelType whichFirst, PRV_INT64 shiftAmount, LevelType level ) const
+SelType SelectionManagement< SelType, LevelType >::shiftFirst( SelType whichFirst, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, LevelType level ) const
 {
   const typename std::vector<SelType>& tmpSelectedSet = selectedSet[ level ];
   const std::vector<bool>& tmpSelected = selected[ level ];
@@ -352,16 +352,23 @@ SelType SelectionManagement< SelType, LevelType >::shiftFirst( SelType whichFirs
   }
 
   if( (PRV_INT64)iFirst + shiftAmount < 0 )
+  {
+    appliedAmount = iFirst;
     return tmpSelectedSet[ 0 ];
+  }
   else if( (PRV_INT64)iFirst + shiftAmount >= tmpSelected.size() )
+  {
+    appliedAmount = (PRV_INT64)tmpSelected.size() - (PRV_INT64)iFirst;
     return tmpSelectedSet[ tmpSelectedSet.size() - 1 ];
+  }
 
+  appliedAmount = shiftAmount;
   return tmpSelectedSet[ iFirst + shiftAmount ];
 }
 
 
 template < typename SelType, typename LevelType >
-SelType SelectionManagement< SelType, LevelType >::shiftLast( SelType whichLast, PRV_INT64 shiftAmount, LevelType level ) const
+SelType SelectionManagement< SelType, LevelType >::shiftLast( SelType whichLast, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, LevelType level ) const
 {
   const typename std::vector<SelType>& tmpSelectedSet = selectedSet[ level ];
   const std::vector<bool>& tmpSelected = selected[ level ];
@@ -387,9 +394,16 @@ SelType SelectionManagement< SelType, LevelType >::shiftLast( SelType whichLast,
   }
 
   if( (PRV_INT64)iLast + shiftAmount < 0 )
+  {
+    appliedAmount = (PRV_INT64)iLast;
     return tmpSelectedSet[ 0 ];
+  }
   else if( (PRV_INT64)iLast + shiftAmount >= tmpSelectedSet.size() )
+  {
+    appliedAmount = (PRV_INT64)tmpSelected.size() - (PRV_INT64)iLast;
     return tmpSelectedSet[ tmpSelectedSet.size() - 1 ];
+  }
 
+  appliedAmount = shiftAmount;
   return tmpSelectedSet[ iLast + shiftAmount ];
 }
