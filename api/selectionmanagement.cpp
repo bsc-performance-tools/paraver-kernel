@@ -353,12 +353,12 @@ SelType SelectionManagement< SelType, LevelType >::shiftFirst( SelType whichFirs
 
   if( (PRV_INT64)iFirst + shiftAmount < 0 )
   {
-    appliedAmount = iFirst;
+    appliedAmount = -(PRV_INT64)iFirst;
     return tmpSelectedSet[ 0 ];
   }
   else if( (PRV_INT64)iFirst + shiftAmount >= tmpSelected.size() )
   {
-    appliedAmount = (PRV_INT64)tmpSelected.size() - (PRV_INT64)iFirst;
+    appliedAmount = (PRV_INT64)tmpSelected.size() - 1 - (PRV_INT64)iFirst;
     return tmpSelectedSet[ tmpSelectedSet.size() - 1 ];
   }
 
@@ -395,12 +395,12 @@ SelType SelectionManagement< SelType, LevelType >::shiftLast( SelType whichLast,
 
   if( (PRV_INT64)iLast + shiftAmount < 0 )
   {
-    appliedAmount = (PRV_INT64)iLast;
+    appliedAmount = -(PRV_INT64)iLast;
     return tmpSelectedSet[ 0 ];
   }
   else if( (PRV_INT64)iLast + shiftAmount >= tmpSelectedSet.size() )
   {
-    appliedAmount = (PRV_INT64)tmpSelected.size() - (PRV_INT64)iLast;
+    appliedAmount = (PRV_INT64)tmpSelected.size() - 1 - (PRV_INT64)iLast;
     return tmpSelectedSet[ tmpSelectedSet.size() - 1 ];
   }
 
