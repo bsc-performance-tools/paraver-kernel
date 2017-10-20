@@ -185,7 +185,8 @@ TSemanticValue ObjectI::execute( const SemanticInfo *info )
 
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
-  tmp = myInfo->values[ ( TObjectOrder ) parameters[ OBJECT ][ 0 ] ];
+  if( parameters[ OBJECT ][ 0 ] != 0 && parameters[ OBJECT ][ 0 ] <= myInfo->values.size() )
+    tmp = myInfo->values[ ( TObjectOrder ) parameters[ OBJECT ][ 0 ] - 1 ];
 
   return tmp;
 }

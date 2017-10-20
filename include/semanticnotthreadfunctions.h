@@ -596,7 +596,7 @@ class ObjectI: public SemanticNotThread
       if ( whichParam >= getMaxParam() )
         throw SemanticException( SemanticException::maxParamExceeded );
       else if ( whichParam == OBJECT )
-        tmp.push_back( 0 );
+        tmp.push_back( 1 );
 
       return tmp;
     }
