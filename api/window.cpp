@@ -932,9 +932,9 @@ void WindowProxy::setFunctionLineColorMode()
   colorMode = SemanticColor::FUNCTION_LINE;
 }
 
-void WindowProxy::setMultiFunctionLineColorMode()
+void WindowProxy::setFusedLinesColorMode()
 {
-  colorMode = SemanticColor::MULTIFUNCTION_LINE;
+  colorMode = SemanticColor::FUSED_LINES;
 }
 
 void WindowProxy::setPunctualColorMode()
@@ -962,9 +962,9 @@ bool WindowProxy::isFunctionLineColorSet() const
   return colorMode == SemanticColor::FUNCTION_LINE;
 }
 
-bool WindowProxy::isMultiFunctionLineColorSet() const
+bool WindowProxy::isFusedLinesColorSet() const
 {
-  return colorMode == SemanticColor::MULTIFUNCTION_LINE;
+  return colorMode == SemanticColor::FUSED_LINES;
 }
 
 bool WindowProxy::isPunctualColorSet() const
@@ -1778,7 +1778,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
     return;
 
   int numRows = 0;
-  if( isMultiFunctionLineColorSet() )
+  if( isFusedLinesColorSet() )
   {
     numRows = selectedSet.size();
   }
@@ -1823,7 +1823,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
       {
         TObjectOrder firstObj = *obj;
         TObjectOrder lastObj = firstObj;
-        if( !isMultiFunctionLineColorSet() )
+        if( !isFusedLinesColorSet() )
         {
           while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
           {
