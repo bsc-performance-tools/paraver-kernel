@@ -1947,7 +1947,12 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
   vector<TObjectOrder>::iterator last  = find( selectedSet.begin(), selectedSet.end(), lastRow );
 
   for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
-    initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS, rowComputedMaxY, rowComputedMinY );
+  {
+    if( isFusedLinesColorSet() )
+      initRow( *row, getWindowBeginTime(), NOCREATE, rowComputedMaxY, rowComputedMinY );
+    else
+      initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS, rowComputedMaxY, rowComputedMinY );
+  }
 
   TTime currentTime;
   for( currentTime = getWindowBeginTime() + timeStep;
@@ -1975,7 +1980,7 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
       rowValues.push_back( DrawMode::selectValue( timeValues, getDrawModeTime() ) );
 
       RecordList *rl = getRecordList( *row );
-      if( rl != NULL )
+      if( rl != NULL && !isFusedLinesColorSet() )
         computeEventsCommsParallel( rl,
                                     currentTime - timeStep, currentTime, timeStep / magnify,
                                     timePos, objectAxisPos,
@@ -2007,7 +2012,7 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
     TSemanticValue dumbMinMax;
     calcNext( *row, dumbMinMax, dumbMinMax );
     RecordList *rl = getRecordList( *row );
-    if( rl != NULL )
+    if( rl != NULL && !isFusedLinesColorSet() )
       computeEventsCommsParallel( rl,
                                   currentTime - timeStep, currentTime, timeStep / magnify,
                                   timePos, objectAxisPos,
