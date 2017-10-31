@@ -1014,7 +1014,7 @@ bool WindowProxy::calcValueFromColor( rgb whichColor,
                                       TSemanticValue& firstValue,
                                       TSemanticValue& secondValue ) const
 {
-  if ( colorMode == SemanticColor::COLOR )
+  if ( colorMode == SemanticColor::COLOR || colorMode == SemanticColor::FUSED_LINES )
     return myCodeColor.calcValue( whichColor, firstValue );
 
   return myGradientColor.calcValue( whichColor, minimumY, maximumY, firstValue, secondValue );
