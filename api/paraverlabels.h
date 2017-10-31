@@ -166,9 +166,10 @@
 #define OLDCFG_VAL_DRAW_MODE_AVERAGENOT0 "6"
 #define OLDCFG_VAL_DRAW_MODE_MODE        "7"
 
-#define OLDCFG_VAL_COLOR_MODE_GRADIENT  "window_in_gradient_mode"
+#define OLDCFG_VAL_COLOR_MODE_GRADIENT       "window_in_gradient_mode"
 #define OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT  "window_in_null_gradient_mode"
-#define CFG_VAL_COLOR_MODE_PUNCTUAL  "window_in_punctual_mode"
+#define CFG_VAL_COLOR_MODE_PUNCTUAL          "window_in_punctual_mode"
+#define CFG_VAL_COLOR_MODE_FUSED_LINES       "window_in_fused_lines_mode"
 
 #define OLDCFG_VAL_TIMEUNIT_NS "Nanoseconds"
 #define OLDCFG_VAL_TIMEUNIT_US "Microseconds"
