@@ -932,6 +932,11 @@ void WindowProxy::setFunctionLineColorMode()
   colorMode = SemanticColor::FUNCTION_LINE;
 }
 
+void WindowProxy::setFusedLinesColorMode()
+{
+  colorMode = SemanticColor::FUSED_LINES;
+}
+
 void WindowProxy::setPunctualColorMode()
 {
   colorMode = SemanticColor::PUNCTUAL;
@@ -955,6 +960,11 @@ bool WindowProxy::isNotNullGradientColorSet() const
 bool WindowProxy::isFunctionLineColorSet() const
 {
   return colorMode == SemanticColor::FUNCTION_LINE;
+}
+
+bool WindowProxy::isFusedLinesColorSet() const
+{
+  return colorMode == SemanticColor::FUSED_LINES;
 }
 
 bool WindowProxy::isPunctualColorSet() const
@@ -1004,7 +1014,7 @@ bool WindowProxy::calcValueFromColor( rgb whichColor,
                                       TSemanticValue& firstValue,
                                       TSemanticValue& secondValue ) const
 {
-  if ( colorMode == SemanticColor::COLOR )
+  if ( colorMode == SemanticColor::COLOR || colorMode == SemanticColor::FUSED_LINES )
     return myCodeColor.calcValue( whichColor, firstValue );
 
   return myGradientColor.calcValue( whichColor, minimumY, maximumY, firstValue, secondValue );
@@ -1778,17 +1788,24 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
     return;
 
   int numRows = 0;
-  for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
+  if( isFusedLinesColorSet() )
   {
-    TObjectOrder firstObj = *obj;
-    TObjectOrder lastObj = firstObj;
-    while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
+    numRows = selectedSet.size();
+  }
+  else
+  {
+    for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
     {
-      ++obj;
-      lastObj = *obj;
-    }
+      TObjectOrder firstObj = *obj;
+      TObjectOrder lastObj = firstObj;
+      while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
+      {
+        ++obj;
+        lastObj = *obj;
+      }
 
-    ++numRows;
+      ++numRows;
+    }
   }
 
   valuesToDraw.reserve( numRows );
@@ -1816,10 +1833,13 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
       {
         TObjectOrder firstObj = *obj;
         TObjectOrder lastObj = firstObj;
-        while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
+        if( !isFusedLinesColorSet() )
         {
-          ++obj;
-          lastObj = *obj;
+          while( ( lastObj + 1 ) <= maxObj && objectPosList[ lastObj + 1 ] == objectPosList[ firstObj ] )
+          {
+            ++obj;
+            lastObj = *obj;
+          }
         }
         valuesToDraw.push_back( vector< TSemanticValue >() );
 
@@ -1937,7 +1957,12 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
   vector<TObjectOrder>::iterator last  = find( selectedSet.begin(), selectedSet.end(), lastRow );
 
   for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
-    initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS, rowComputedMaxY, rowComputedMinY );
+  {
+    if( isFusedLinesColorSet() )
+      initRow( *row, getWindowBeginTime(), NOCREATE, rowComputedMaxY, rowComputedMinY );
+    else
+      initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS, rowComputedMaxY, rowComputedMinY );
+  }
 
   TTime currentTime;
   for( currentTime = getWindowBeginTime() + timeStep;
@@ -1965,7 +1990,7 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
       rowValues.push_back( DrawMode::selectValue( timeValues, getDrawModeTime() ) );
 
       RecordList *rl = getRecordList( *row );
-      if( rl != NULL )
+      if( rl != NULL && !isFusedLinesColorSet() )
         computeEventsCommsParallel( rl,
                                     currentTime - timeStep, currentTime, timeStep / magnify,
                                     timePos, objectAxisPos,
@@ -1997,7 +2022,7 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
     TSemanticValue dumbMinMax;
     calcNext( *row, dumbMinMax, dumbMinMax );
     RecordList *rl = getRecordList( *row );
-    if( rl != NULL )
+    if( rl != NULL && !isFusedLinesColorSet() )
       computeEventsCommsParallel( rl,
                                   currentTime - timeStep, currentTime, timeStep / magnify,
                                   timePos, objectAxisPos,

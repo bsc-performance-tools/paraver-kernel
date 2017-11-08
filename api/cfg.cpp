@@ -1288,6 +1288,9 @@ bool WindowColorMode::parseLine( KernelConnection *whichKernel, istringstream& l
     windows[ windows.size() - 1 ]->setNotNullGradientColorMode();
   else if( strMode.compare( CFG_VAL_COLOR_MODE_PUNCTUAL ) == 0 )
     windows[ windows.size() - 1 ]->setPunctualColorMode();
+  else if( strMode.compare( CFG_VAL_COLOR_MODE_FUSED_LINES ) == 0 )
+    windows[ windows.size() - 1 ]->setFusedLinesColorMode();
+
   return true;
 }
 
@@ -1302,6 +1305,8 @@ void WindowColorMode::printLine( ofstream& cfgFile,
   }
   else if ( ( *it )->isPunctualColorSet() )
     cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_PUNCTUAL <<endl;
+  else if ( ( *it )->isFusedLinesColorSet() )
+    cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_FUSED_LINES <<endl;
 }
 
 

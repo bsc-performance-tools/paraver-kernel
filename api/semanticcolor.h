@@ -44,7 +44,8 @@ class SemanticColor
       GRADIENT,
       NOT_NULL_GRADIENT,
       FUNCTION_LINE,
-      PUNCTUAL
+      PUNCTUAL,
+      FUSED_LINES
     };
 
     static rgb BACKGROUND;
