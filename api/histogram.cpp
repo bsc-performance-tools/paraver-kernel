@@ -550,10 +550,6 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
   winBeginTime = whichBeginTime;
   winEndTime = whichEndTime;
 
-#ifdef PARALLEL_ENABLED
-  progress = NULL;
-#endif // PARALLEL_ENABLED
-
   if ( computeControlScale )
     compute2DScale( progress );
 

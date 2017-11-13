@@ -1815,13 +1815,11 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   tmpComputedMaxY.reserve( numRows );
   tmpComputedMinY.reserve( numRows );
 
-#ifndef PARALLEL_ENABLED
   paramProgress = progress;
   if( numRows > 1 )
     progress->setEndLimit( numRows );
-  else
+  else if( numRows == 1 )
     progress->setEndLimit( getWindowEndTime() - getWindowBeginTime() );
-#endif // PARALLEL_ENABLED
 
   // Drawmode: Group objects with same wxCoord in objectPosList
   #pragma omp parallel
@@ -1861,11 +1859,26 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
         int eventsToDrawSize = eventsToDraw.size();
         int commsToDrawSize = eventsToDraw.size();
 
-        #pragma omp task firstprivate(numRows, firstObj, lastObj, timeStep, timePos, objectAxisPos, paramProgress) \
-                        shared(selectedSet, selected, objectPosList, tmpDrawCaution, tmpComputedMaxY, tmpComputedMinY, valuesToDraw, eventsToDraw, commsToDraw) \
-                        firstprivate(tmpDrawCautionSize, tmpComputedMaxYSize, tmpComputedMinYSize, valuesToDrawSize, eventsToDrawSize, commsToDrawSize) \
-                        default(none)
+        if( numRows == 1 )
         {
+          computeSemanticRowParallel(
+                  numRows, firstObj, lastObj, selectedSet, selected, timeStep, timePos,
+                  objectAxisPos, objectPosList,
+                  tmpDrawCaution[ tmpDrawCautionSize - 1 ],
+                  tmpComputedMaxY[ tmpComputedMaxYSize - 1 ],
+                  tmpComputedMinY[ tmpComputedMinYSize - 1 ],
+                  valuesToDraw[ valuesToDrawSize - 1 ],
+                  eventsToDraw[ eventsToDrawSize - 1 ],
+                  commsToDraw[ commsToDrawSize - 1 ],
+                  paramProgress );
+        }
+        else if( numRows > 1 )
+        {
+          #pragma omp task firstprivate(numRows, firstObj, lastObj, timeStep, timePos, objectAxisPos) \
+                          shared(currentRow, paramProgress, selectedSet, selected, objectPosList, tmpDrawCaution, tmpComputedMaxY, tmpComputedMinY, valuesToDraw, eventsToDraw, commsToDraw) \
+                          firstprivate(tmpDrawCautionSize, tmpComputedMaxYSize, tmpComputedMinYSize, valuesToDrawSize, eventsToDrawSize, commsToDrawSize) \
+                          default(none)
+          {
             computeSemanticRowParallel(
                     numRows, firstObj, lastObj, selectedSet, selected, timeStep, timePos,
                     objectAxisPos, objectPosList,
@@ -1876,20 +1889,20 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
                     eventsToDraw[ eventsToDrawSize - 1 ],
                     commsToDraw[ commsToDrawSize - 1 ],
                     paramProgress );
-        }
 
-#ifndef PARALLEL_ENABLED
-        if( numRows > 1 )
-        {
-          if( progress->getStop() )
-            break;
-          progress->setCurrentProgress( currentRow );
-        }
-        ++currentRow;
-#endif // PARALLEL_ENABLED
-      }
-    }
-  }
+            #pragma omp atomic
+            ++currentRow;
+            #pragma omp critical
+            paramProgress->setCurrentProgress( currentRow );
+
+          } // end omp task
+
+        } // end if numRows
+
+      } // end for selectedSet
+
+    } // end omp single
+  } // end omp parallel
 
   for( vector< int >::iterator it = tmpDrawCaution.begin(); it != tmpDrawCaution.end(); ++it )
   {
@@ -1956,6 +1969,8 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
   vector<TObjectOrder>::iterator first = find( selectedSet.begin(), selectedSet.end(), firstRow );
   vector<TObjectOrder>::iterator last  = find( selectedSet.begin(), selectedSet.end(), lastRow );
 
+  TRecordTime tmpLastTime = getWindowBeginTime();
+
   for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
   {
     if( isFusedLinesColorSet() )
@@ -2006,12 +2021,10 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
         break;
       if( numRows == 1 )
       {
-        static unsigned short tmpCount = 0;
-        ++tmpCount;
-        if( tmpCount == 10000 )
+        if( currentTime - tmpLastTime > ( getWindowEndTime() - getWindowBeginTime() ) / 1000 )
         {
           progress->setCurrentProgress( currentTime - getWindowBeginTime() );
-          tmpCount = 0;
+          tmpLastTime = currentTime;
         }
       }
     }

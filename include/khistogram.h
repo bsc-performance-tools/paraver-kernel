@@ -313,11 +313,13 @@ class KHistogram : public Histogram
 #ifdef PARALLEL_ENABLED
     void parallelExecution( TRecordTime fromTime, TRecordTime toTime,
                             TObjectOrder fromRow, TObjectOrder toRow,
-                            std::vector<TObjectOrder>& selectedRows  );
+                            std::vector<TObjectOrder>& selectedRows,
+                            ProgressController *progress );
 
     void executionTask( TRecordTime fromTime, TRecordTime toTime,
                         TObjectOrder fromRow, TObjectOrder toRow,
-                        std::vector<TObjectOrder>& selectedRows );
+                        std::vector<TObjectOrder>& selectedRows,
+                        ProgressController *progress );
 #endif
 
     void recursiveExecution( TRecordTime fromTime, TRecordTime toTime,

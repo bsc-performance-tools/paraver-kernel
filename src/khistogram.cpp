@@ -746,10 +746,6 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
   if ( controlWindow == NULL )
     throw HistogramException( HistogramException::noControlWindow );
 
-#ifdef PARALLEL_ENABLED
-  progress = NULL;
-#endif // PARALLEL_ENABLED
-
   myTimeUnit = controlWindow->getTimeUnit();
 
   if ( dataWindow == NULL )
@@ -801,7 +797,7 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
         )
      )
   {
-    parallelExecution( beginTime, endTime, 0, numRows - 1, selectedRows );
+    parallelExecution( beginTime, endTime, 0, numRows - 1, selectedRows, progress );
   }
   else
 #endif
@@ -1165,16 +1161,36 @@ void KHistogram::finishOutLimits()
 #ifdef PARALLEL_ENABLED
 void KHistogram::parallelExecution( TRecordTime fromTime, TRecordTime toTime,
                                     TObjectOrder fromRow, TObjectOrder toRow,
-                                    std::vector<TObjectOrder>& selectedRows  )
+                                    std::vector<TObjectOrder>& selectedRows,
+                                    ProgressController *progress )
 {
+  int currentRow = 0;
+  int progressDelta;
+  if( progress != NULL )
+    progressDelta = (int)floor( selectedRows.size() * 0.005 );
+
   #pragma omp parallel
   {
     #pragma omp single
     {
       for ( TObjectOrder i = fromRow; i <= toRow; ++i )
       {
-        #pragma omp task firstprivate(fromTime, toTime, i) shared(selectedRows)
-        executionTask( fromTime, toTime, i, i, selectedRows );
+        if( progress != NULL )
+        {
+          if( progress->getStop() )
+            break;
+          if( selectedRows.size() <= 200 || currentRow % progressDelta == 0 )
+          {
+            #pragma omp critical
+            progress->setCurrentProgress( currentRow );
+          }
+        }
+
+        #pragma omp task firstprivate(fromTime, toTime, i) shared(selectedRows, progress)
+        executionTask( fromTime, toTime, i, i, selectedRows, progress );
+
+        #pragma omp atomic
+        ++currentRow;
       }
     }
   }
@@ -1183,7 +1199,8 @@ void KHistogram::parallelExecution( TRecordTime fromTime, TRecordTime toTime,
 
 void KHistogram::executionTask( TRecordTime fromTime, TRecordTime toTime,
                                 TObjectOrder fromRow, TObjectOrder toRow,
-                                std::vector<TObjectOrder>& selectedRows )
+                                std::vector<TObjectOrder>& selectedRows,
+                                ProgressController *progress )
 {
   vector<bool> needInit( 3, true );
   recursiveExecution( fromTime, toTime, fromRow, toRow, selectedRows, needInit, true, NULL );
@@ -1276,7 +1293,9 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
       if( progress->getStop() )
         break;
       if( selectedRows.size() <= 200 || currentRow % progressDelta == 0 )
+      {
         progress->setCurrentProgress( currentRow );
+      }
     }
     ++currentRow;
   }
