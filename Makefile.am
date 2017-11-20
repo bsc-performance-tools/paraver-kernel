@@ -46,28 +46,28 @@ endif
 
 
 install-data-hook:
-	if test -f $(bindir)/paramedir ; then \
-		cp -f $(bindir)/paramedir $(bindir)/old.paramedir ; \
+	if test -f $(DESTDIR)$(bindir)/paramedir ; then \
+		cp -f $(DESTDIR)$(bindir)/paramedir $(DESTDIR)$(bindir)/old.paramedir ; \
 	fi
 	
 if ENABLE_DEPENDENCIES_AWARE_INSTALL
-	$(SED) "s|@inst_BOOST_LIBDIR@|${BOOST_LDFLAGS}|g ; s|-L||g" < ./docs/paramedir > $(bindir)/paramedir
+	$(SED) "s|@inst_BOOST_LIBDIR@|${BOOST_LDFLAGS}|g ; s|-L||g" < ./docs/paramedir > $(DESTDIR)$(bindir)/paramedir
 else
-	$(SED) "s|@inst_BOOST_LIBDIR@:||g" < ./docs/paramedir > $(bindir)/paramedir
+	$(SED) "s|@inst_BOOST_LIBDIR@:||g" < ./docs/paramedir > $(DESTDIR)$(bindir)/paramedir
 endif
 
-	chmod a+x $(bindir)/paramedir
+	chmod a+x $(DESTDIR)$(bindir)/paramedir
 
-	$(mkdir_p) $(prefix)/share
-	$(mkdir_p) $(prefix)/share/filters-config
-	$(install_sh_PROGRAM) -m 775 ./docs/filters/*.xml $(prefix)/share/filters-config
+	$(mkdir_p) $(DESTDIR)$(prefix)/share
+	$(mkdir_p) $(DESTDIR)$(prefix)/share/filters-config
+	$(install_sh_PROGRAM) -m 775 ./docs/filters/*.xml $(DESTDIR)$(prefix)/share/filters-config
 
 
 uninstall-hook:
-	test -f $(bindir)/paramedir            && rm  -fv $(bindir)/paramedir
-	test -f $(bindir)/old.paramedir        && rm  -fv $(bindir)/old.paramedir
+	test -f $(DESTDIR)$(bindir)/paramedir            && rm  -fv $(DESTDIR)$(bindir)/paramedir
+	test -f $(DESTDIR)$(bindir)/old.paramedir        && rm  -fv $(DESTDIR)$(bindir)/old.paramedir
 
-	test -d $(prefix)/share/filters-config && rm -rfv $(prefix)/share/filters-config
+	test -d $(DESTDIR)$(prefix)/share/filters-config && rm -rfv $(DESTDIR)$(prefix)/share/filters-config
 
 
 dist-hook:
@@ -78,7 +78,7 @@ dist-hook:
 #	$(install_sh_DATA) ./docs/filters/*.xml $(distdir)/docs/filters
 
 installcheck-local:
-	test -f $(bindir)/paramedir && \
+	test -f $(DESTDIR)$(bindir)/paramedir && \
 	echo "  [paraver-kernel][lib] Installed " || ( echo "  [paraver-kernel][lib] Check failed!!!" && exit 1 )
 
 

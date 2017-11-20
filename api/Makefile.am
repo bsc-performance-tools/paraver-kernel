@@ -114,15 +114,15 @@ include_HEADERS = \
                   zoomhistory.cpp
 
 install-data-hook:
-	$(mkdir_p) $(includedir)/utils/pcfparser
-	cp -f ../utils/pcfparser/UIParaverTraceConfig.h $(includedir)/utils/pcfparser
-	cp -f ../utils/pcfparser/UIParaverTraceConfig.ipp $(includedir)/utils/pcfparser
+	$(mkdir_p) $(DESTDIR)$(includedir)/utils/pcfparser
+	cp -f ../utils/pcfparser/UIParaverTraceConfig.h $(DESTDIR)$(includedir)/utils/pcfparser
+	cp -f ../utils/pcfparser/UIParaverTraceConfig.ipp $(DESTDIR)$(includedir)/utils/pcfparser
 
-	$(mkdir_p) $(includedir)/utils/pcfparser/old
-	cp -f ../utils/pcfparser/old/ParaverTraceConfig.h $(includedir)/utils/pcfparser/old
+	$(mkdir_p) $(DESTDIR)$(includedir)/utils/pcfparser/old
+	cp -f ../utils/pcfparser/old/ParaverTraceConfig.h $(DESTDIR)$(includedir)/utils/pcfparser/old
 
 uninstall-hook:
-	test -d $(includedir)/utils/pcfparser && rm -rf $(includedir)/utils/pcfparser
+	test -d $(DESTDIR)$(includedir)/utils/pcfparser && rm -rf $(DESTDIR)$(includedir)/utils/pcfparser
 
 
 # Erases everything which should not be uploaded to CVS
