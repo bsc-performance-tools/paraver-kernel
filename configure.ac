@@ -19,9 +19,6 @@ AC_CONFIG_HEADERS(config.h)
 
 AC_CONFIG_MACRO_DIR([m4])
 
-: ${CFLAGS="-O2 -g"}
-: ${CXXFLAGS="-O2 -g"}
-
 #############################
 #    Checks for programs    #
 #############################
@@ -72,8 +69,8 @@ AC_CHECK_TYPES([int64_t, uint64_t, int8_t, uint8_t, int32_t, uint32_t, int16_t, 
 
 BOOST_RPATH="-R ${BOOST_LDFLAGS#-L}"
 
-CFLAGS="-I../include/ -I../api/ -I../ -I../../ $CFLAGS $CFLAGS_EXTRAE $XML_CPPFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
-CXXFLAGS="-I../include/ -I../api/ -I../ -I../../ $CXXFLAGS $BOOST_CPPFLAGS $CXXFLAGS_EXTRAE $XML_CPPFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE"
+CFLAGS="-I../include/ -I../api/ -I../ -I../../ $CFLAGS $CFLAGS_EXTRAE $XML_CPPFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -O2 -g"
+CXXFLAGS="-I../include/ -I../api/ -I../ -I../../ $CXXFLAGS $BOOST_CPPFLAGS $CXXFLAGS_EXTRAE $XML_CPPFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -O2 -g"
 LDFLAGS="$LDFLAGS $BOOST_LDFLAGS $BOOST_SERIALIZATION_LIB $LDFLAGS_EXTRAE $BOOST_RPATH $XML_LIBS"
 
 AC_OUTPUT([Makefile src/Makefile api/Makefile include/Makefile utils/Makefile utils/include/Makefile utils/src/Makefile utils/pcfparser/Makefile utils/pcfparser/old/Makefile])
