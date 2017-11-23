@@ -439,6 +439,9 @@ void WindowProxy::computeYScale( ProgressController *progress )
     vector< TObjectOrder > selected;
     getSelectedRows( getLevel(), selected,
                      getZoomSecondDimension().first, getZoomSecondDimension().second, true );
+    int progressDelta;
+    if( progress != NULL )
+      progressDelta = (int)floor( selected.size() * 0.005 );
 
     init( winBeginTime, NONE );
 
@@ -451,20 +454,29 @@ void WindowProxy::computeYScale( ProgressController *progress )
       progress->setEndLimit( selected.size() + 1 );
       progress->setCurrentProgress( currentObject );
     }
-    for ( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
+    #pragma omp parallel for shared ( currentObject, progress )
+    for ( int i = 0; i < selected.size(); ++i )
     {
-      initRow( *obj, winBeginTime, NONE );
-      while ( getBeginTime( *obj ) < winEndTime &&
-              getBeginTime( *obj ) < myTrace->getEndTime() )
-        calcNext( *obj );
-
-      ++currentObject;
-      if( progress != NULL )
+      TObjectOrder obj = selected[ i ];
+      initRow( obj, winBeginTime, NONE );
+      if( progress == NULL || ( progress != NULL && !progress->getStop() ) )
       {
-        if( progress->getStop() )
-          break;
-        progress->setCurrentProgress( currentObject );
+        while ( getBeginTime( obj ) < winEndTime &&
+                getBeginTime( obj ) < myTrace->getEndTime() )
+          calcNext( obj );
+
+        #pragma omp atomic
+        ++currentObject;
+        if( progress != NULL )
+        {
+          if( selected.size() <= 200 || currentObject % progressDelta == 0 )
+          {
+            #pragma omp critical
+            progress->setCurrentProgress( currentObject );
+          }
+        }
       }
+
     }
 
     if( progress != NULL )
