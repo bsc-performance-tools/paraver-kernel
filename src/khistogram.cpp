@@ -1031,10 +1031,10 @@ void KHistogram::finishAllRows()
 
   if ( getThreeDimensions() )
   {
-    for ( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns();
-          iPlane++ )
+    for ( TObjectOrder iRow = 0; iRow < rowsTranslator->totalRows(); ++iRow )
     {
-      for ( TObjectOrder iRow = 0; iRow < rowsTranslator->totalRows(); ++iRow )
+      for ( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns();
+            ++iPlane )
       {
         const map< THistogramColumn, vector< TSemanticValue > >& rowValues =
             commBuffer->getRowValues( iPlane, iRow );
@@ -1078,10 +1078,10 @@ void KHistogram::finishAllRows()
 
   if ( getThreeDimensions() )
   {
-    for ( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns();
-          ++iPlane )
+    for ( TObjectOrder iRow = 0; iRow < rowsTranslator->totalRows(); ++iRow )
     {
-      for ( TObjectOrder iRow = 0; iRow < rowsTranslator->totalRows(); ++iRow )
+      for ( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns();
+            ++iPlane )
       {
         const map< THistogramColumn, vector< TSemanticValue > >& rowValues =
             semanticBuffer->getRowValues( iPlane, iRow );
@@ -1096,9 +1096,8 @@ void KHistogram::finishAllRows()
             rowTotals->newValue( values[ iStat ], iStat, iRow, iPlane );
           }
         }
-
-        cube->newRow();
       }
+      cube->newRow();
     }
   }
   else
