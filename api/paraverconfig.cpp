@@ -142,7 +142,7 @@ ParaverConfig::ParaverConfig()
     paraverHomeDir      = getenv( "PARAVER_HOME" );
     paraverCFGsDir      = paraverHomeDir + "/cfgs";
     paraverXMLDir       = paraverHomeDir + "/share/filters-config";
-    paraverTutorialsDir = paraverHomeDir + "/../tutorials";
+    paraverTutorialsDir = paraverHomeDir + "/tutorials";
   }
 #endif
 #endif
