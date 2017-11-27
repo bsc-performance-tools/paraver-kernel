@@ -142,7 +142,7 @@ ParaverConfig::ParaverConfig()
     paraverHomeDir      = getenv( "PARAVER_HOME" );
     paraverCFGsDir      = paraverHomeDir + "/cfgs";
     paraverXMLDir       = paraverHomeDir + "/share/filters-config";
-    paraverTutorialsDir = paraverHomeDir + "/tutorials";
+    paraverTutorialsDir = paraverHomeDir + "/../tutorials";
   }
 #endif
 #endif
@@ -150,7 +150,7 @@ ParaverConfig::ParaverConfig()
 
   xmlGlobal.tracesPath = homedir; // also for paraload.sig!
   xmlGlobal.cfgsPath = paraverCFGsDir;
-  xmlGlobal.tutorialsPath = paraverTutorialsDir; // not exactly, but near
+  xmlGlobal.tutorialsPath = paraverTutorialsDir;
   xmlGlobal.tmpPath = homedir; // errors, logs, working dir
   xmlGlobal.applyFollowingCFGsToAllTraces = false;
   xmlGlobal.fillStateGaps = true;
