@@ -85,8 +85,7 @@ inline void Cell<ValueType>::setValue( PRV_UINT16 idStat, ValueType semVal )
 template <typename ValueType>
 inline void Cell<ValueType>::setValue( ValueType semVal )
 {
-  for ( PRV_UINT16 ii = 0; ii < nStats; ++ii )
-    values[ ii ] = semVal;
+  values = semVal;
 }
 
 

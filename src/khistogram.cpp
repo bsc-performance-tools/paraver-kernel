@@ -1049,9 +1049,9 @@ void KHistogram::finishAllRows()
             rowCommTotals->newValue( values[ iStat ], iStat, iRow, iPlane );
           }
         }
-
-        commCube->newRow();
       }
+
+      commCube->newRow();
     }
   }
   else
@@ -1482,7 +1482,7 @@ void KHistogram::finishRow( CalculateData *data )
   if ( getThreeDimensions() )
   {
     for ( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns();
-          iPlane++ )
+          ++iPlane )
     {
 #ifdef PARALLEL_ENABLED
       const map< THistogramColumn, vector< TSemanticValue > >& rowValues =
