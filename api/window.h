@@ -1245,7 +1245,7 @@ class WindowProxy: public Window
     Window *parent2;
     Window *child;
 
-    bool usedByHistogram;
+    PRV_UINT16 usedByHistogram;
 
     // GUI related attributes
     std::string name;

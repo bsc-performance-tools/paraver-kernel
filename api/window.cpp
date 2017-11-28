@@ -349,13 +349,16 @@ bool WindowProxy::getDestroy() const
 
 void WindowProxy::setUsedByHistogram( bool newValue )
 {
-  usedByHistogram = newValue;
+  if( newValue )
+    ++usedByHistogram;
+  else if( usedByHistogram > 0 )
+    --usedByHistogram;
 }
 
 
 bool WindowProxy::getUsedByHistogram()
 {
-  return usedByHistogram;
+  return usedByHistogram != 0;
 }
 
 
