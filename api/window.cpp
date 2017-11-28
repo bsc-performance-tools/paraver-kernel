@@ -1902,10 +1902,13 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
                     commsToDraw[ commsToDrawSize - 1 ],
                     paramProgress );
 
-            #pragma omp atomic
-            ++currentRow;
-            #pragma omp critical
-            paramProgress->setCurrentProgress( currentRow );
+            if( !paramProgress->getStop() )
+            {
+              #pragma omp atomic
+              ++currentRow;
+              #pragma omp critical
+              paramProgress->setCurrentProgress( currentRow );
+            }
 
           } // end omp task
 

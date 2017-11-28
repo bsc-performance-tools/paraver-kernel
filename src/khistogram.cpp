@@ -1202,7 +1202,7 @@ void KHistogram::executionTask( TRecordTime fromTime, TRecordTime toTime,
                                 ProgressController *progress )
 {
   vector<bool> needInit( 3, true );
-  recursiveExecution( fromTime, toTime, fromRow, toRow, selectedRows, needInit, true, NULL );
+  recursiveExecution( fromTime, toTime, fromRow, toRow, selectedRows, needInit, true, progress );
 }
 #endif
 
@@ -1216,9 +1216,11 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
 {
   Window *currentWindow = orderedWindows[ winIndex ];
   int currentRow = 0;
+#ifndef PARALLEL_ENABLED
   int progressDelta;
   if( progress != NULL )
     progressDelta = (int)floor( selectedRows.size() * 0.005 );
+#endif // PARALLEL_ENABLED
 
   if ( data == NULL )
   {
@@ -1263,12 +1265,26 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
       currentWindow->calcNext( iRow );
     }
 
+    int progressSteps = 0;
     while ( currentWindow->getEndTime( iRow ) < toTime
             && currentWindow->getBeginTime( iRow ) < currentWindow->getTrace()->getEndTime() )
     {
       if( currentWindow->getBeginTime( iRow ) != currentWindow->getEndTime( iRow ) )
         calculate( iRow, fromTime, toTime, winIndex, data, needInit, calcSemanticStats );
       currentWindow->calcNext( iRow );
+      if( progress != NULL )
+      {
+        if( progress->getStop() )
+          break;
+        ++progressSteps;
+        if( progressSteps == 1000 )
+        {
+          #pragma omp critical
+          {
+            progress->setCurrentProgress( progress->getCurrentProgress() );
+          }
+        }
+      }
     }
 
     if ( currentWindow->getBeginTime( iRow ) < toTime )
@@ -1287,6 +1303,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
       finishRow( data );
     }
 
+#ifndef PARALLEL_ENABLED
     if( progress != NULL )
     {
       if( progress->getStop() )
@@ -1297,6 +1314,8 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
       }
     }
     ++currentRow;
+#endif // PARALLEL_ENABLED
+
   }
 
   if ( winIndex == 0 )
