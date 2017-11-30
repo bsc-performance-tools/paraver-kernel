@@ -1997,10 +1997,8 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
       initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS, rowComputedMaxY, rowComputedMinY );
   }
 
-  TTime currentTime;
-  for( currentTime = getWindowBeginTime() + timeStep;
-       currentTime <= getWindowEndTime() && currentTime <= getTrace()->getEndTime();
-       currentTime += timeStep )
+  TTime currentTime = getWindowBeginTime() + timeStep;
+  while( currentTime <= getWindowEndTime() && currentTime <= getTrace()->getEndTime() )
   {
     rowValues.clear();
     for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
@@ -2045,6 +2043,15 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
           tmpLastTime = currentTime;
         }
       }
+    }
+
+    if( currentTime == myTrace->getEndTime() )
+      currentTime += timeStep;
+    else
+    {
+      currentTime += timeStep;
+      if( currentTime > myTrace->getEndTime() )
+        currentTime = myTrace->getEndTime();
     }
   }
 
