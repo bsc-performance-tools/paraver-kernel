@@ -381,6 +381,8 @@ class Histogram
     {}
     virtual void addZoom( TZoomInfo columnInfo, TZoomInfo dummy )
     {}
+    virtual void addZoom( TObjectOrder beginObject, TObjectOrder endObject )
+    {}
     virtual void setZoomFirstDimension( std::pair<TZoomInfo, TZoomInfo> &zinfo )
     {}
     virtual void setZoomSecondDimension( std::pair<TObjectOrder, TObjectOrder> &objects )
@@ -696,6 +698,7 @@ class HistogramProxy : public Histogram
     virtual void addZoom( TZoomInfo columnInfo, TZoomInfo dummy,
                           TObjectOrder beginObject, TObjectOrder endObject );
     virtual void addZoom( TZoomInfo columnInfo, TZoomInfo dummy );
+    virtual void addZoom( TObjectOrder beginObject, TObjectOrder endObject );
     virtual void setZoomFirstDimension( std::pair<TZoomInfo, TZoomInfo> &zinfo );
     virtual void setZoomSecondDimension( std::pair<TObjectOrder, TObjectOrder> &objects );
     virtual std::pair<TZoomInfo, TZoomInfo> getZoomFirstDimension() const;

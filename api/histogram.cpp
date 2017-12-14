@@ -551,7 +551,21 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
   winEndTime = whichEndTime;
 
   if ( computeControlScale )
+  {
     compute2DScale( progress );
+    TZoomInfo tmpZoomControl1, tmpZoomControl2;
+    tmpZoomControl1.begin = getControlMin();
+    tmpZoomControl1.end = getControlMax();
+    tmpZoomControl2.begin = getControlDelta();
+    if( zoomHistory.isEmpty() )
+    {
+      TObjectOrder beginRow = getControlWindow()->getZoomSecondDimension().first;
+      TObjectOrder endRow   = getControlWindow()->getZoomSecondDimension().second;
+      addZoom( tmpZoomControl1, tmpZoomControl2, beginRow, endRow );
+    }
+    else
+      addZoom( tmpZoomControl1, tmpZoomControl2 );
+  }
 
   if ( getThreeDimensions() && computeXtraScale )
     compute3DScale( progress );
@@ -1085,6 +1099,11 @@ void HistogramProxy::addZoom( TZoomInfo columnsInfo, TZoomInfo dummy,
 void HistogramProxy::addZoom( TZoomInfo columnsInfo, TZoomInfo dummy )
 {
   zoomHistory.addZoom( columnsInfo, dummy );
+}
+
+void HistogramProxy::addZoom( TObjectOrder beginObject, TObjectOrder endObject )
+{
+  zoomHistory.addZoom( beginObject, endObject );
 }
 
 void HistogramProxy::setZoomFirstDimension( pair<TZoomInfo, TZoomInfo> &zinfo )
