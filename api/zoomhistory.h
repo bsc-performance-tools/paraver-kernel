@@ -67,6 +67,11 @@ class ZoomHistory
   private:
     int currentZoom;
     std::vector< std::pair< std::pair<Dimension1,Dimension1>, std::pair<Dimension2, Dimension2> > > zooms;
+
+    bool sameZoomAsCurrent( Dimension1 begin1, Dimension1 end1,
+                            Dimension2 begin2, Dimension2 end2 ) const;
+    bool sameZoomAsCurrent( Dimension1 begin, Dimension1 end ) const;
+    bool sameZoomAsCurrent( Dimension2 begin, Dimension2 end ) const;
 };
 
 #include "zoomhistory.cpp"

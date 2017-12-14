@@ -353,6 +353,11 @@ class Histogram
     {
       THistogramLimit begin;
       THistogramLimit end;
+
+      bool operator==( const TZoomInfo& obj )
+      {
+        return begin == obj.begin && end == obj.end;
+      }
     } TZoomInfo;
 
     virtual bool isZoomEmpty() const

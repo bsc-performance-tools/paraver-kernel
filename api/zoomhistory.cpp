@@ -107,6 +107,9 @@ template <typename Dimension1, typename Dimension2>
 void ZoomHistory<Dimension1,Dimension2>::addZoom( Dimension1 begin1, Dimension1 end1,
                                                   Dimension2 begin2, Dimension2 end2 )
 {
+  if( sameZoomAsCurrent( begin1, end1, begin2, end2 ) )
+    return;
+
   if ( currentZoom < (int)zooms.size() - 1 )
     zooms.resize( currentZoom + 1 );
 
@@ -117,6 +120,9 @@ void ZoomHistory<Dimension1,Dimension2>::addZoom( Dimension1 begin1, Dimension1 
 template <typename Dimension1, typename Dimension2>
 void ZoomHistory<Dimension1,Dimension2>::addZoom( Dimension1 begin, Dimension1 end )
 {
+  if( sameZoomAsCurrent( begin, end ) )
+    return;
+
   if ( currentZoom < (int)zooms.size() - 1 )
     zooms.resize( currentZoom + 1 );
 
@@ -128,6 +134,9 @@ void ZoomHistory<Dimension1,Dimension2>::addZoom( Dimension1 begin, Dimension1 e
 template <typename Dimension1, typename Dimension2>
 void ZoomHistory<Dimension1,Dimension2>::addZoom( Dimension2 begin, Dimension2 end )
 {
+  if( sameZoomAsCurrent( begin, end ) )
+    return;
+
   if ( currentZoom < (int)zooms.size() - 1 )
     zooms.resize( currentZoom + 1 );
 
@@ -200,4 +209,33 @@ template <typename Dimension1, typename Dimension2>
 void ZoomHistory<Dimension1,Dimension2>::clear()
 {
   zooms.clear();
+}
+
+template <typename Dimension1, typename Dimension2>
+bool ZoomHistory<Dimension1,Dimension2>::sameZoomAsCurrent( Dimension1 begin1, Dimension1 end1,
+                                                            Dimension2 begin2, Dimension2 end2 ) const
+{
+  if( zooms.empty() )
+    return false;
+
+  return begin1 == getFirstDimension().first && end1 == getFirstDimension().second &&
+         begin2 == getSecondDimension().first && end2 == getSecondDimension().second;
+}
+
+template <typename Dimension1, typename Dimension2>
+bool ZoomHistory<Dimension1,Dimension2>::sameZoomAsCurrent( Dimension1 begin, Dimension1 end ) const
+{
+  if( zooms.empty() )
+    return false;
+
+  return begin == getFirstDimension().first && end == getFirstDimension().second;
+}
+
+template <typename Dimension1, typename Dimension2>
+bool ZoomHistory<Dimension1,Dimension2>::sameZoomAsCurrent( Dimension2 begin, Dimension2 end ) const
+{
+  if( zooms.empty() )
+    return false;
+
+  return begin == getSecondDimension().first && end == getSecondDimension().second;
 }
