@@ -424,7 +424,8 @@ void getDumpIterations( int &numArg, char *argv[] )
 #endif
 
 
-bool parseArguments( int argc,
+bool parseArguments( KernelConnection *myKernel,
+                     int argc,
                      char *arguments[],
                      vector< string > &registeredTool )
 {
@@ -515,7 +516,8 @@ bool parseArguments( int argc,
     }
     else if ( CFGLoader::hasCFGExtension( currentArgument ) )
     {
-      cfgs[ currentArgument ] = currentArgument.substr( 0, currentArgument.length() - CFG_SUFFIX.length() );
+      cfgs[ currentArgument ] = currentArgument.substr( currentArgument.rfind( myKernel->getPathSeparator() ) + 1,
+                                                        currentArgument.length() - ( currentArgument.rfind( myKernel->getPathSeparator() ) + 1 ) - CFG_SUFFIX.length() );
       previousCFGPosition = numArg;
     }
     else
@@ -1004,7 +1006,7 @@ int main( int argc, char *argv[] )
     ParaverConfig *config = ParaverConfig::getInstance();
     config->readParaverConfigFile();
 
-    if ( parseArguments( argc, argv, registeredTool ) )
+    if ( parseArguments( myKernel, argc, argv, registeredTool ) )
     {
       if ( option[ SHOW_HELP ].active )
         printHelp();
