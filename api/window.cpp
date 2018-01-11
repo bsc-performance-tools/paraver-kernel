@@ -62,6 +62,15 @@ Window *Window::create( KernelConnection *whichKernel, Window *parent1, Window *
   return new WindowProxy( whichKernel, parent1, parent2 );
 }
 
+bool Window::compatibleLevels( Window *window1, Window *window2 )
+{
+  return ( window1->getLevel() >= WORKLOAD && window1->getLevel() <= THREAD &&
+           window2->getLevel() >= WORKLOAD && window2->getLevel() <= THREAD )
+         ||
+         ( window1->getLevel() >= SYSTEM && window1->getLevel() <= CPU &&
+           window2->getLevel() >= SYSTEM && window2->getLevel() <= CPU );
+}
+
 Window::Window( KernelConnection *whichKernel ) : myKernel( whichKernel )
 {}
 
