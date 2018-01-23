@@ -146,6 +146,8 @@ class Window
     static Window *create( KernelConnection *whichKernel, Window *whichParent1,
                            Window *whichParent2 );
 
+    static bool compatibleLevels( Window *window1, Window *window2 );
+
     Window() {}
     Window( KernelConnection *whichKernel );
     virtual ~Window() {}
