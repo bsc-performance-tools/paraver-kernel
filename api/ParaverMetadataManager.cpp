@@ -23,15 +23,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
-
-  $Id$:  Id
-  $Rev:: 23                                       $:  Revision of last commit
-  $Author$:  Author of last commit
-  $Date$:  Date of last commit
-
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #include "ParaverMetadataManager.h"
 //#include "Utilities.h"
 
@@ -39,6 +30,7 @@
 using std::ostringstream;
 using std::istringstream;
 using std::stringstream;
+#include <iomanip>
 #include <ctime> // date
 
 int Metadata::FIELD_COUNT = 4;
@@ -253,12 +245,18 @@ string MetadataManager::GetCurrentDate()
 
   time_t t = time(0);   // get time now
   struct tm * now = localtime( & t );
-  currentDate << (now->tm_year + 1900)
-              << (now->tm_mon + 1)
-              << now->tm_mday
-              << now->tm_hour
-              << now->tm_min
-              << now->tm_sec;
+
+  currentDate << (now->tm_year + 1900);
+  currentDate << std::setw(2) << std::setfill('0');
+  currentDate << (now->tm_mon + 1);
+  currentDate << std::setw(2) << std::setfill('0');
+  currentDate << now->tm_mday;
+  currentDate << std::setw(2) << std::setfill('0');
+  currentDate << now->tm_hour;
+  currentDate << std::setw(2) << std::setfill('0');
+  currentDate << now->tm_min;
+  currentDate << std::setw(2) << std::setfill('0');
+  currentDate << now->tm_sec;
 
 
   return currentDate.str();
