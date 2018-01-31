@@ -51,9 +51,13 @@ install-data-hook:
 	fi
 	
 if ENABLE_DEPENDENCIES_AWARE_INSTALL
-	$(SED) "s|@inst_BOOST_LIBDIR@|${BOOST_LDFLAGS}|g ; s|-L||g" < ./docs/paramedir > $(DESTDIR)$(bindir)/paramedir
+
+
+	$(SED) "s|@inst_BOOST_LIBDIR@|${BOOST_LDFLAGS}|g ; s|-L||g ; \
+					s|@inst_JOBID_QUEUE_DETECTION@|if [ -z \"$$\{SLURM_JOBID+x\}\" ] \&\& [ -z \"$$\{LSB_JOBID+x\}\" ]; then\n  # login ==> limit to 4\n  OMP_NUM_THREADS=4\nfi|g" < ./docs/paramedir > $(DESTDIR)$(bindir)/paramedir
 else
-	$(SED) "s|@inst_BOOST_LIBDIR@:||g" < ./docs/paramedir > $(DESTDIR)$(bindir)/paramedir
+	$(SED) "s|@inst_BOOST_LIBDIR@:||g ; \
+					s|@inst_JOBID_QUEUE_DETECTION@||g" < ./docs/paramedir > $(DESTDIR)$(bindir)/paramedir
 endif
 
 	chmod a+x $(DESTDIR)$(bindir)/paramedir
