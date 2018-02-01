@@ -150,12 +150,12 @@ class KWindow: public Window
     TObjectOrder cpuObjectToWindowObject( TCPUOrder whichCPU );
     TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread );
 
-    TObjectOrder getWindowLevelObjects();
+    TObjectOrder getWindowLevelObjects() const;
 
-    TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits );
-    TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits );
-    TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime );
-    TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime );
+    TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const;
+    TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const;
+    TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime ) const;
+    TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime ) const;
 
     virtual KWindow *clone();
     void getGroupLabels(  PRV_UINT32 whichGroup, std::vector<std::string>& onVector ) const;

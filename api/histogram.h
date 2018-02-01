@@ -57,8 +57,8 @@ class Histogram
     Histogram( KernelConnection *whichKernel );
     virtual ~Histogram() {}
 
-    virtual void setWindowBeginTime( TRecordTime whichTime ) {};
-    virtual void setWindowEndTime( TRecordTime whichTime ) {};
+    virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false ) {};
+    virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false ) {};
 
     virtual bool getThreeDimensions() const = 0;
 
@@ -396,6 +396,20 @@ class Histogram
       return std::pair<TObjectOrder, TObjectOrder>();
     }
 
+    // Synchronize
+    virtual void addToSyncGroup( unsigned int whichGroup )
+    {}
+    virtual void removeFromSync()
+    {}
+    virtual bool isSync() const
+    {
+      return false;
+    }
+    virtual unsigned int getSyncGroup() const
+    {
+      return 0;
+    }
+
     virtual void setName( const std::string& whichName ) {}
     virtual std::string getName() const
     {
@@ -540,8 +554,8 @@ class HistogramProxy : public Histogram
   public:
     virtual ~HistogramProxy();
 
-    virtual void setWindowBeginTime( TRecordTime whichTime );
-    virtual void setWindowEndTime( TRecordTime whichTime );
+    virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false );
+    virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false );
 
     virtual bool getThreeDimensions() const;
     virtual TRecordTime getBeginTime() const;
@@ -704,6 +718,11 @@ class HistogramProxy : public Histogram
     virtual std::pair<TZoomInfo, TZoomInfo> getZoomFirstDimension() const;
     virtual std::pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const;
 
+    virtual void addToSyncGroup( unsigned int whichGroup );
+    virtual void removeFromSync();
+    virtual bool isSync() const;
+    virtual unsigned int getSyncGroup() const;
+
     virtual void setName( const std::string& whichName );
     virtual std::string getName() const;
 
@@ -834,6 +853,10 @@ class HistogramProxy : public Histogram
 
     // Zoom history
     ZoomHistory< TZoomInfo, TObjectOrder > zoomHistory;
+
+    // Synchronize
+    bool sync;
+    unsigned int syncGroup;
 
     // Must store the associated proxies
     Window *controlWindow;

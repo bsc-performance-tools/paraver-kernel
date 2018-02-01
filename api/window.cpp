@@ -792,27 +792,27 @@ TObjectOrder WindowProxy::threadObjectToWindowObject( TThreadOrder whichThread )
   return myWindow->threadObjectToWindowObject( whichThread );
 }
 
-TObjectOrder WindowProxy::getWindowLevelObjects()
+TObjectOrder WindowProxy::getWindowLevelObjects() const
 {
   return myWindow->getWindowLevelObjects();
 }
 
-TRecordTime WindowProxy::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits )
+TRecordTime WindowProxy::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
 {
   return myWindow->customUnitsToTraceUnits( whichTime, whichUnits );
 }
 
-TRecordTime WindowProxy::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits )
+TRecordTime WindowProxy::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
 {
   return myWindow->traceUnitsToCustomUnits( whichTime, whichUnits );
 }
 
-TRecordTime WindowProxy::traceUnitsToWindowUnits( TRecordTime whichTime )
+TRecordTime WindowProxy::traceUnitsToWindowUnits( TRecordTime whichTime ) const
 {
   return myWindow->traceUnitsToWindowUnits( whichTime );
 }
 
-TRecordTime WindowProxy::windowUnitsToTraceUnits( TRecordTime whichTime )
+TRecordTime WindowProxy::windowUnitsToTraceUnits( TRecordTime whichTime ) const
 {
   return myWindow->windowUnitsToTraceUnits( whichTime );
 }

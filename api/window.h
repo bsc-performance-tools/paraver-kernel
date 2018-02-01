@@ -272,11 +272,11 @@ class Window
     virtual bool isDerivedWindow() const = 0;
     virtual TObjectOrder cpuObjectToWindowObject( TCPUOrder whichCPU ) = 0;
     virtual TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread ) = 0;
-    virtual TObjectOrder getWindowLevelObjects() = 0;
-    virtual TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) = 0;
-    virtual TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) = 0;
-    virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime ) = 0;
-    virtual TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime ) = 0;
+    virtual TObjectOrder getWindowLevelObjects() const = 0;
+    virtual TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const = 0;
+    virtual TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const = 0;
+    virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime ) const = 0;
+    virtual TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime ) const = 0;
     virtual SemanticInfoType getSemanticInfoType() const = 0;
 
     // Specific functions for WindowProxy
@@ -909,11 +909,11 @@ class WindowProxy: public Window
     virtual bool isDerivedWindow() const;
     virtual TObjectOrder cpuObjectToWindowObject( TCPUOrder whichCPU );
     virtual TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread );
-    virtual TObjectOrder getWindowLevelObjects();
-    virtual TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits );
-    virtual TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits );
-    virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime );
-    virtual TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime );
+    virtual TObjectOrder getWindowLevelObjects() const;
+    virtual TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const;
+    virtual TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const;
+    virtual TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime ) const;
+    virtual TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime ) const;
     virtual SemanticInfoType getSemanticInfoType() const;
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
                                           std::vector<std::string>& onVector ) const;
@@ -1268,6 +1268,7 @@ class WindowProxy: public Window
     // Zoom history
     ZoomHistory<TTime, TObjectOrder> zoomHistory;
 
+    // Synchronize
     bool sync;
     unsigned int syncGroup;
 

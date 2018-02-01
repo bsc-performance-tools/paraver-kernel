@@ -95,7 +95,7 @@ TObjectOrder KWindow::threadObjectToWindowObject( TThreadOrder whichThread )
 }
 
 
-TObjectOrder KWindow::getWindowLevelObjects()
+TObjectOrder KWindow::getWindowLevelObjects() const
 {
   TObjectOrder objectSize = 0;
   TWindowLevel whichLevel = getLevel();
@@ -119,7 +119,7 @@ TObjectOrder KWindow::getWindowLevelObjects()
 }
 
 
-TRecordTime KWindow::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits )
+TRecordTime KWindow::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
 {
   TRecordTime tmpTime;
   TRecordTime factor = 1;
@@ -144,7 +144,7 @@ TRecordTime KWindow::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit w
 }
 
 
-TRecordTime KWindow::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits )
+TRecordTime KWindow::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
 {
   TRecordTime tmpTime;
   TRecordTime factor = 1;
@@ -169,7 +169,7 @@ TRecordTime KWindow::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit w
 }
 
 
-TRecordTime KWindow::traceUnitsToWindowUnits( TRecordTime whichTime )
+TRecordTime KWindow::traceUnitsToWindowUnits( TRecordTime whichTime ) const
 {
   TRecordTime tmpTime;
   TRecordTime factor = 1;
@@ -193,7 +193,7 @@ TRecordTime KWindow::traceUnitsToWindowUnits( TRecordTime whichTime )
   return tmpTime;
 }
 
-TRecordTime KWindow::windowUnitsToTraceUnits( TRecordTime whichTime )
+TRecordTime KWindow::windowUnitsToTraceUnits( TRecordTime whichTime ) const
 {
   TRecordTime tmpTime;
   TRecordTime factor = 1;

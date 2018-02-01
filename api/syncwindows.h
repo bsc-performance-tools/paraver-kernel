@@ -30,9 +30,11 @@
 #ifndef SYNCWINDOWS_H_INCLUDED
 #define SYNCWINDOWS_H_INCLUDED
 
+#include <map>
 #include "paraverkerneltypes.h"
 
 class Window;
+class Histogram;
 
 class SyncWindows
 {
@@ -41,19 +43,28 @@ class SyncWindows
     ~SyncWindows();
 
     bool addWindow( Window *whichWindow, unsigned int whichGroup = 0 );
+    bool addWindow( Histogram *whichWindow, unsigned int whichGroup = 0 );
     void removeWindow( Window *whichWindow, unsigned int whichGroup = 0 );
+    void removeWindow( Histogram *whichWindow, unsigned int whichGroup = 0 );
     void removeAll( unsigned int whichGroup = 0 );
 
-    int newGroup();
-    int getNumGroups() const;
+    unsigned int newGroup();
+    unsigned int getNumGroups() const;
     void broadcastTime( unsigned int whichGroup, Window *sendWindow, TTime beginTime, TTime endTime );
+    void broadcastTime( unsigned int whichGroup, Histogram *sendWindow, TTime beginTime, TTime endTime );
+    void getGroupTimes( unsigned int whichGroup, TTime& beginTime, TTime& endTime ) const;
 
   private:
     SyncWindows();
 
     static SyncWindows *instance;
-    std::vector<std::vector<Window *> > syncGroups;
+    std::map<unsigned int, std::vector<Window *> > syncGroupsTimeline;
+    std::map<unsigned int, std::vector<Histogram *> > syncGroupsHistogram;
+    unsigned int lastNewGroup;
     bool removingAll;
+
+    void broadcastTimeTimelines( unsigned int whichGroup, Window *sendWindow, TTime beginTime, TTime endTime );
+    void broadcastTimeHistograms( unsigned int whichGroup, Histogram *sendWindow, TTime beginTime, TTime endTime );
 };
 
 #endif // SYNCWINDOWS_H_INCLUDED

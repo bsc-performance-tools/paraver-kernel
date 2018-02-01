@@ -36,6 +36,7 @@
 #include "paraverconfig.h"
 #include "labelconstructor.h"
 #include "loadedwindows.h"
+#include "syncwindows.h"
 #include <iostream>
 
 #ifdef WIN32
@@ -130,14 +131,18 @@ HistogramProxy::~HistogramProxy()
   delete myHisto;
 }
 
-void HistogramProxy::setWindowBeginTime( TRecordTime whichTime )
+void HistogramProxy::setWindowBeginTime( TRecordTime whichTime, bool isBroadcast )
 {
   winBeginTime = whichTime;
+  if( sync && !isBroadcast )
+    SyncWindows::getInstance()->broadcastTime( syncGroup, this, winBeginTime, winEndTime );
 }
 
-void HistogramProxy::setWindowEndTime( TRecordTime whichTime )
+void HistogramProxy::setWindowEndTime( TRecordTime whichTime, bool isBroadcast )
 {
   winEndTime = whichTime;
+  if( sync && !isBroadcast )
+    SyncWindows::getInstance()->broadcastTime( syncGroup, this, winBeginTime, winEndTime );
 }
 
 bool HistogramProxy::getThreeDimensions() const
@@ -1124,6 +1129,31 @@ pair<HistogramProxy::TZoomInfo, HistogramProxy::TZoomInfo> HistogramProxy::getZo
 pair <TObjectOrder, TObjectOrder> HistogramProxy::getZoomSecondDimension() const
 {
   return zoomHistory.getSecondDimension();
+}
+
+void HistogramProxy::addToSyncGroup( unsigned int whichGroup )
+{
+  SyncWindows::getInstance()->removeWindow( this, syncGroup );
+  syncGroup = whichGroup;
+  sync = SyncWindows::getInstance()->addWindow( this, whichGroup );
+}
+
+void HistogramProxy::removeFromSync()
+{
+  if( !sync )
+    return;
+  SyncWindows::getInstance()->removeWindow( this, syncGroup );
+  sync = false;
+}
+
+bool HistogramProxy::isSync() const
+{
+  return sync;
+}
+
+unsigned int HistogramProxy::getSyncGroup() const
+{
+  return syncGroup;
 }
 
 void HistogramProxy::setName( const string& whichName )
