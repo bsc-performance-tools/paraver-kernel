@@ -52,7 +52,8 @@ class TraceBodyIO
     TraceBodyIO();
     virtual ~TraceBodyIO();
 
-    virtual void setProcessModel(  const ProcessModel* whichProcessModel );
+    virtual void setProcessModel( const ProcessModel* whichProcessModel );
+    virtual void setResourceModel( const ResourceModel* whichResourceModel );
 
     virtual bool ordered() const = 0;
     virtual void read( TraceStream *file, MemoryBlocks& records,
@@ -71,6 +72,7 @@ class TraceBodyIO
     static TraceBodyIO *createTraceBody();
   protected:
     const ProcessModel* processModel;
+    const ResourceModel* resourceModel;
 
   private:
 

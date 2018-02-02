@@ -526,6 +526,10 @@ inline bool TraceBodyIO_v1::readCommon( istringstream& line,
   }
 #endif
 
+  if ( !resourceModel->isValidCPU( CPU ) )
+    return false;
+
+
   std::getline( line, tmpstring, ':' );
 #ifdef USE_ATOLL
   appl = atoll( tmpstring.c_str() );

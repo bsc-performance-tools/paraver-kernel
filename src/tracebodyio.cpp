@@ -66,7 +66,12 @@ TraceBodyIO *TraceBodyIO::createTraceBody()
   return new TraceBodyIO_v2();
 }
 
-void TraceBodyIO::setProcessModel(  const ProcessModel* whichProcessModel )
+void TraceBodyIO::setProcessModel( const ProcessModel* whichProcessModel )
 {
   processModel = whichProcessModel;
+}
+
+void TraceBodyIO::setResourceModel( const ResourceModel* whichResourceModel )
+{
+  resourceModel = whichResourceModel;
 }

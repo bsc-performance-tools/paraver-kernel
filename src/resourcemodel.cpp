@@ -114,6 +114,13 @@ void ResourceModel::addCPU( TNodeOrder whichNode )
   nodes[ whichNode ].CPUs.push_back( ResourceModelCPU( CPUs.size() - 1 ) );
 }
 
+
+bool ResourceModel::isValidCPU( TCPUOrder whichCPU ) const
+{
+  return whichCPU == 0 || whichCPU < CPUs.size();
+}
+
+
 ResourceModel::ResourceModel( istringstream& headerInfo )
 {
   string stringNumberNodes;

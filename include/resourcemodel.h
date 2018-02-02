@@ -75,6 +75,8 @@ class ResourceModel
     void addNode();
     void addCPU( TNodeOrder whichNode );
 
+    bool isValidCPU( TCPUOrder whichCPU ) const;
+
   protected:
     struct CPULocation
     {
