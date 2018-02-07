@@ -117,7 +117,7 @@ void ResourceModel::addCPU( TNodeOrder whichNode )
 
 bool ResourceModel::isValidCPU( TCPUOrder whichCPU ) const
 {
-  return whichCPU == 0 || whichCPU < CPUs.size();
+  return whichCPU <= CPUs.size();
 }
 
 
