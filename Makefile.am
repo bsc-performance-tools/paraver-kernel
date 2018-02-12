@@ -49,15 +49,13 @@ install-data-hook:
 	if test -f $(DESTDIR)$(bindir)/paramedir ; then \
 		cp -f $(DESTDIR)$(bindir)/paramedir $(DESTDIR)$(bindir)/old.paramedir ; \
 	fi
-	
+
 if ENABLE_DEPENDENCIES_AWARE_INSTALL
-
-
 	$(SED) "s|@inst_BOOST_LIBDIR@|${BOOST_LDFLAGS}|g ; s|-L||g ; \
-					s|@inst_JOBID_QUEUE_DETECTION@|if [ -z \"$$\{SLURM_JOBID+x\}\" ] \&\& [ -z \"$$\{LSB_JOBID+x\}\" ]; then\n  # login ==> limit to 4\n  export OMP_NUM_THREADS=4\nfi|g" < ./docs/paramedir > $(DESTDIR)$(bindir)/paramedir
+					s|@inst_LOGIN_NODE_DETECTION@|if [ ! \"$$\(hostname \| grep login\)x\" = \"x\" ]; then\n  # login ==> limit to 4\n  OMP_NUM_THREADS=4\nfi|g" < ./docs/paramedir > $(DESTDIR)$(bindir)/paramedir
 else
 	$(SED) "s|@inst_BOOST_LIBDIR@:||g ; \
-					s|@inst_JOBID_QUEUE_DETECTION@||g" < ./docs/paramedir > $(DESTDIR)$(bindir)/paramedir
+					s|@inst_LOGIN_NODE_DETECTION@||g" < ./docs/paramedir > $(DESTDIR)$(bindir)/paramedir
 endif
 
 	chmod a+x $(DESTDIR)$(bindir)/paramedir
@@ -89,5 +87,6 @@ installcheck-local:
 # Erases everything which should not be uploaded to the repository
 mrproper: distclean
 	rm -fr configure.scan  autom4te.cache config.h.in config.h.in~ configure Makefile.in config.guess autoscan.log config.log config.status aclocal.m4 config.sub install-sh ltmain.sh missing
+
 
         
