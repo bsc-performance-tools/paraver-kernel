@@ -1916,10 +1916,8 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
 
             if( !paramProgress->getStop() )
             {
-              #pragma omp atomic
-              ++currentRow;
               #pragma omp critical
-              paramProgress->setCurrentProgress( currentRow );
+              paramProgress->setCurrentProgress( ++currentRow );
             }
 
           } // end omp task
@@ -2020,6 +2018,10 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
       timeValues.push_back( getValue( *row ) );
       while( getEndTime( *row ) < currentTime )
       {
+        // Making cancel button more responsive for 1 row drawing
+        if( numRows == 1 && progress != NULL && progress->getStop() )
+          break;
+
         calcNext( *row, rowComputedMaxY, rowComputedMinY  );
         TSemanticValue currentValue = getValue( *row );
         timeValues.push_back( currentValue );
