@@ -147,14 +147,16 @@ void SyncWindows::removeAll( unsigned int whichGroup )
     (*it)->removeFromSync();
 
   syncGroupsTimeline[ whichGroup ].clear();
-  syncGroupsTimeline.erase( whichGroup );
+  if( whichGroup != 0 )
+    syncGroupsTimeline.erase( whichGroup );
 
   for( vector<Histogram *>::iterator it = syncGroupsHistogram[ whichGroup ].begin();
        it != syncGroupsHistogram[ whichGroup ].end(); ++it )
     (*it)->removeFromSync();
 
   syncGroupsHistogram[ whichGroup ].clear();
-  syncGroupsHistogram.erase( whichGroup );
+  if( whichGroup != 0 )
+    syncGroupsHistogram.erase( whichGroup );
 
   removingAll = false;
 }
@@ -170,6 +172,13 @@ unsigned int SyncWindows::newGroup()
 unsigned int SyncWindows::getNumGroups() const
 {
   return syncGroupsTimeline.size();
+}
+
+void SyncWindows::getGroups( vector<unsigned int>& groups ) const
+{
+  for( std::map<unsigned int, std::vector<Window *> >::const_iterator it = syncGroupsTimeline.begin();
+       it != syncGroupsTimeline.end(); ++it )
+    groups.push_back( it->first );
 }
 
 void SyncWindows::broadcastTime( unsigned int whichGroup, Window *sendWindow, TTime beginTime, TTime endTime )

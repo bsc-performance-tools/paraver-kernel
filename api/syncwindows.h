@@ -50,6 +50,8 @@ class SyncWindows
 
     unsigned int newGroup();
     unsigned int getNumGroups() const;
+    void getGroups( std::vector<unsigned int>& groups ) const;
+
     void broadcastTime( unsigned int whichGroup, Window *sendWindow, TTime beginTime, TTime endTime );
     void broadcastTime( unsigned int whichGroup, Histogram *sendWindow, TTime beginTime, TTime endTime );
     void getGroupTimes( unsigned int whichGroup, TTime& beginTime, TTime& endTime ) const;
