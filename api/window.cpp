@@ -1192,8 +1192,7 @@ pair<TObjectOrder, TObjectOrder> WindowProxy::getNextZoomSecondDimension() const
 
 void WindowProxy::addToSyncGroup( unsigned int whichGroup )
 {
-  if( sync )
-    return;
+  SyncWindows::getInstance()->removeWindow( this, syncGroup );
   syncGroup = whichGroup;
   sync = SyncWindows::getInstance()->addWindow( this, whichGroup );
 }
