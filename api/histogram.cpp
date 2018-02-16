@@ -1521,6 +1521,13 @@ void HistogramProxy::setShortLabels( bool newValue )
   shortLabels = newValue;
 }
 
+bool HistogramProxy::getShowProgressBar() const
+{
+  return controlWindow->getShowProgressBar() ||
+         dataWindow->getShowProgressBar() ||
+         ( extraControlWindow != NULL && extraControlWindow->getShowProgressBar() );
+}
+
 void HistogramProxy::setCFG4DMode( bool mode )
 {
   if ( controlWindow != NULL )

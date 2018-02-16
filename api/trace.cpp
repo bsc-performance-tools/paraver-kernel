@@ -122,6 +122,7 @@ TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile,
 {
   unload = false;
   instanceNumber = 0;
+  showProgressBar = Trace::getShowProgressBar();
 
   myTrace = myKernel->newTrace( whichFile, noLoad, progress );
   string pcfFile = myKernel->getPCFFileLocation( whichFile );
@@ -600,6 +601,17 @@ string TraceProxy::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow )
 size_t TraceProxy::getMaxLengthRow( TWindowLevel whichLevel = NONE ) const
 {
   return myRowLabels.getMaxLength( whichLevel );
+}
+
+
+void TraceProxy::setShowProgressBar( bool whichShow )
+{
+  showProgressBar = whichShow;
+}
+
+bool TraceProxy::getShowProgressBar() const
+{
+  return showProgressBar;
 }
 
 /*

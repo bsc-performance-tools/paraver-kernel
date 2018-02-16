@@ -232,6 +232,11 @@ class Window
       return NULL;
     }
 
+    virtual bool getShowProgressBar() const
+    {
+      return true;
+    }
+
     //------------------------------------------------------------
     virtual Trace *getTrace() const = 0;
     virtual TWindowLevel getLevel() const = 0;
@@ -870,6 +875,7 @@ class WindowProxy: public Window
     virtual void setMinimumY( TSemanticValue whichMin );
     virtual TSemanticValue getMaximumY();
     virtual TSemanticValue getMinimumY();
+    virtual bool getShowProgressBar() const;
 
     //------------------------------------------------------------
     virtual Trace *getTrace() const;

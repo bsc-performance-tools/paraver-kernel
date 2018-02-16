@@ -344,6 +344,15 @@ Window *WindowProxy::clone( )
 }
 
 
+bool WindowProxy::getShowProgressBar() const
+{
+  if ( !myWindow->isDerivedWindow() )
+    return myTrace->getShowProgressBar();
+
+  return parent1->getShowProgressBar() || parent2->getShowProgressBar();
+}
+
+
 void WindowProxy::setDestroy( bool newValue )
 {
   destroy = newValue;
@@ -1839,10 +1848,14 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   tmpComputedMinY.reserve( numRows );
 
   paramProgress = progress;
-  if( numRows > 1 )
-    progress->setEndLimit( numRows );
-  else if( numRows == 1 )
-    progress->setEndLimit( getWindowEndTime() - getWindowBeginTime() );
+
+  if ( progress != NULL )
+  {
+    if( numRows > 1 )
+      progress->setEndLimit( numRows );
+    else if( numRows == 1 )
+      progress->setEndLimit( getWindowEndTime() - getWindowBeginTime() );
+  }
 
   // Drawmode: Group objects with same wxCoord in objectPosList
   #pragma omp parallel
@@ -1913,7 +1926,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
                     commsToDraw[ commsToDrawSize - 1 ],
                     paramProgress );
 
-            if( !paramProgress->getStop() )
+            if( paramProgress != NULL && !paramProgress->getStop() )
             {
               #pragma omp critical
               paramProgress->setCurrentProgress( ++currentRow );

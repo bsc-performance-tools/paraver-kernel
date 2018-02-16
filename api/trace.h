@@ -202,6 +202,15 @@ class Trace
     {
       return "";
     }
+
+    virtual void setShowProgressBar( bool whichShow )
+    {}
+
+    virtual bool getShowProgressBar() const
+    {
+      return true;
+    }
+
     /*
         virtual bool getFillStateGaps() const
         {
@@ -300,6 +309,8 @@ class TraceProxy: public Trace
     virtual size_t getMaxLengthRow( TWindowLevel whichLevel ) const;
 
 //    virtual std::string getDefaultSemanticFunc( TWindowLevel whichLevel ) const;
+    virtual void setShowProgressBar( bool whichShow );
+    virtual bool getShowProgressBar() const;
 
     virtual bool eventLoaded( TEventType whichType ) const;
     virtual bool anyEventLoaded( TEventType firstType, TEventType lastType ) const;
@@ -341,6 +352,8 @@ class TraceProxy: public Trace
     EventLabels myEventLabels;
     StateLabels myStateLabels;
     RowLabels myRowLabels;
+
+    bool showProgressBar;
 
 //    std::string myDefaultTaskSemanticFunc;
 //    std::string myDefaultThreadSemanticFunc;

@@ -481,6 +481,10 @@ class Histogram
     }
     virtual void setPixelSize( PRV_UINT16 whichSize )
     {}
+    virtual bool getShowProgressBar() const
+    {
+      return true;
+    }
 
     // CFG4D
     virtual void setCFG4DEnabled( bool enabled )
@@ -779,6 +783,7 @@ class HistogramProxy : public Histogram
     virtual void setPixelSize( PRV_UINT16 whichSize );
     virtual void setOnlyTotals( bool newValue );
     virtual bool getOnlyTotals() const;
+    virtual bool getShowProgressBar() const;
 
     // CFG4D
     // Enabled => mode = false
