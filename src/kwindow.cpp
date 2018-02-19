@@ -733,6 +733,26 @@ KWindow *KSingleWindow::clone()
   delete clonedKSWindow->myFilter;
   clonedKSWindow->myFilter = myFilter->clone( clonedKSWindow );
 
+  clonedKSWindow->recordsByTimeCPU.clear();
+  for( vector<MemoryTrace::iterator *>::const_iterator it = recordsByTimeCPU.begin();
+       it != recordsByTimeCPU.end(); ++it )
+  {
+    if( *it != NULL )
+      clonedKSWindow->recordsByTimeCPU.push_back( (*it)->clone() );
+    else
+      clonedKSWindow->recordsByTimeCPU.push_back( NULL );
+  }
+
+  clonedKSWindow->recordsByTimeThread.clear();
+  for( vector<MemoryTrace::iterator *>::const_iterator it = recordsByTimeThread.begin();
+       it != recordsByTimeThread.end(); ++it )
+  {
+    if( *it != NULL )
+      clonedKSWindow->recordsByTimeThread.push_back( (*it)->clone() );
+    else
+      clonedKSWindow->recordsByTimeThread.push_back( NULL );
+  }
+
   return clonedKSWindow;
 }
 

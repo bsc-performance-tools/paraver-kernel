@@ -45,6 +45,10 @@
 #include "selectionrowsutils.h"
 #include "progresscontroller.h"
 
+#ifdef PARALLEL_ENABLED
+#include "omp.h"
+#endif
+
 using namespace std;
 
 Window *Window::create( KernelConnection *whichKernel, Trace *whichTrace )
@@ -658,11 +662,11 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create, bool update
   {
     for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); ++it )
       delete *it;
-    if ( myLists.begin() != myLists.end() ) // solo sintoma de que algo no va bien
+    if ( myLists.begin() != myLists.end() )
       myLists.clear();
   }
 
-  for ( int i = 0; i < myWindow->getWindowLevelObjects(); i++ )
+  for ( int i = 0; i < myWindow->getWindowLevelObjects(); ++i )
     myLists.push_back( NULL );
 
   if ( getComputeYMaxOnInit() )
@@ -680,13 +684,19 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create, bool update
 
 void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
-  myWindow->initRow( whichRow, initialTime, create );
+  Window *tmpMyWindow = myWindow;
+#ifdef PARALLEL_ENABLED
+  if( parallelClone.size() > 0 )
+    tmpMyWindow = parallelClone[ omp_get_thread_num() ];
+#endif // PARALLEL_ENABLED
+
+  tmpMyWindow->initRow( whichRow, initialTime, create );
   if ( myLists[ whichRow ] == NULL )
-    myLists[ whichRow ] = RecordList::create( myWindow->getRecordList( whichRow ) );
+    myLists[ whichRow ] = RecordList::create( tmpMyWindow->getRecordList( whichRow ) );
 
   if ( updateLimits )
   {
-    TSemanticValue objValue = myWindow->getValue( whichRow );
+    TSemanticValue objValue = tmpMyWindow->getValue( whichRow );
     if ( computedMaxY < objValue )
       computedMaxY = objValue;
     if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
@@ -698,13 +708,19 @@ void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCrea
                            TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
                            bool updateLimits )
 {
-  myWindow->initRow( whichRow, initialTime, create );
+  Window *tmpMyWindow = myWindow;
+#ifdef PARALLEL_ENABLED
+  if( parallelClone.size() > 0 )
+    tmpMyWindow = parallelClone[ omp_get_thread_num() ];
+#endif // PARALLEL_ENABLED
+
+  tmpMyWindow->initRow( whichRow, initialTime, create );
   if ( myLists[ whichRow ] == NULL )
-    myLists[ whichRow ] = RecordList::create( myWindow->getRecordList( whichRow ) );
+    myLists[ whichRow ] = RecordList::create( tmpMyWindow->getRecordList( whichRow ) );
 
   if ( updateLimits )
   {
-    TSemanticValue objValue = myWindow->getValue( whichRow );
+    TSemanticValue objValue = tmpMyWindow->getValue( whichRow );
     if ( rowComputedMaxY < objValue )
       rowComputedMaxY = objValue;
     if ( rowComputedMinY == 0 || ( rowComputedMinY > objValue && objValue != 0 ) )
@@ -714,14 +730,20 @@ void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCrea
 
 RecordList *WindowProxy::calcNext( TObjectOrder whichObject, bool updateLimits )
 {
+  Window *tmpMyWindow = myWindow;
+#ifdef PARALLEL_ENABLED
+  if( parallelClone.size() > 0 )
+    tmpMyWindow = parallelClone[ omp_get_thread_num() ];
+#endif // PARALLEL_ENABLED
+
   if ( myLists[ whichObject ] == NULL )
-    myLists[ whichObject ] = RecordList::create( myWindow->calcNext( whichObject ) );
+    myLists[ whichObject ] = RecordList::create( tmpMyWindow->calcNext( whichObject ) );
   else
-    myWindow->calcNext( whichObject );
+    tmpMyWindow->calcNext( whichObject );
 
   if ( updateLimits )
   {
-    TSemanticValue objValue = myWindow->getValue( whichObject );
+    TSemanticValue objValue = tmpMyWindow->getValue( whichObject );
     if ( computedMaxY < objValue )
       computedMaxY = objValue;
     if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
@@ -735,14 +757,20 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject,
                                    TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
                                    bool updateLimits )
 {
+  Window *tmpMyWindow = myWindow;
+#ifdef PARALLEL_ENABLED
+  if( parallelClone.size() > 0 )
+    tmpMyWindow = parallelClone[ omp_get_thread_num() ];
+#endif // PARALLEL_ENABLED
+
   if ( myLists[ whichObject ] == NULL )
-    myLists[ whichObject ] = RecordList::create( myWindow->calcNext( whichObject ) );
+    myLists[ whichObject ] = RecordList::create( tmpMyWindow->calcNext( whichObject ) );
   else
-    myWindow->calcNext( whichObject );
+    tmpMyWindow->calcNext( whichObject );
 
   if ( updateLimits )
   {
-    TSemanticValue objValue = myWindow->getValue( whichObject );
+    TSemanticValue objValue = tmpMyWindow->getValue( whichObject );
     if ( rowComputedMaxY < objValue )
       rowComputedMaxY = objValue;
     if ( rowComputedMinY == 0 || ( rowComputedMinY > objValue && objValue != 0 ) )
@@ -754,10 +782,16 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject,
 
 RecordList *WindowProxy::calcPrev( TObjectOrder whichObject, bool updateLimits )
 {
+  Window *tmpMyWindow = myWindow;
+#ifdef PARALLEL_ENABLED
+  if( parallelClone.size() > 0 )
+    tmpMyWindow = parallelClone[ omp_get_thread_num() ];
+#endif // PARALLEL_ENABLED
+
   if ( myLists[ whichObject ] == NULL )
-    myLists[ whichObject ] = RecordList::create( myWindow->calcPrev( whichObject ) );
+    myLists[ whichObject ] = RecordList::create( tmpMyWindow->calcPrev( whichObject ) );
   else
-    myWindow->calcPrev( whichObject );
+    tmpMyWindow->calcPrev( whichObject );
 
   if ( updateLimits )
   {
@@ -773,17 +807,35 @@ RecordList *WindowProxy::calcPrev( TObjectOrder whichObject, bool updateLimits )
 
 TRecordTime WindowProxy::getBeginTime( TObjectOrder whichObject ) const
 {
-  return myWindow->getBeginTime( whichObject );
+  Window *tmpMyWindow = myWindow;
+#ifdef PARALLEL_ENABLED
+  if( parallelClone.size() > 0 )
+    tmpMyWindow = parallelClone[ omp_get_thread_num() ];
+#endif // PARALLEL_ENABLED
+
+  return tmpMyWindow->getBeginTime( whichObject );
 }
 
 TRecordTime WindowProxy::getEndTime( TObjectOrder whichObject ) const
 {
-  return myWindow->getEndTime( whichObject );
+  Window *tmpMyWindow = myWindow;
+#ifdef PARALLEL_ENABLED
+  if( parallelClone.size() > 0 )
+    tmpMyWindow = parallelClone[ omp_get_thread_num() ];
+#endif // PARALLEL_ENABLED
+
+  return tmpMyWindow->getEndTime( whichObject );
 }
 
 TSemanticValue WindowProxy::getValue( TObjectOrder whichObject ) const
 {
-  return myWindow->getValue( whichObject );
+  Window *tmpMyWindow = myWindow;
+#ifdef PARALLEL_ENABLED
+  if( parallelClone.size() > 0 )
+    tmpMyWindow = parallelClone[ omp_get_thread_num() ];
+#endif // PARALLEL_ENABLED
+
+  return tmpMyWindow->getValue( whichObject );
 }
 
 bool WindowProxy::isDerivedWindow() const
@@ -1910,6 +1962,10 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
         }
         else if( numRows > 1 )
         {
+#ifdef PARALLEL_ENABLED
+          for( int i = 0; i != omp_get_num_threads(); ++i )
+            parallelClone.push_back( myWindow->clone() );
+#endif // PARALLEL_ENABLED
           #pragma omp task firstprivate(numRows, firstObj, lastObj, timeStep, timePos, objectAxisPos) \
                           shared(currentRow, paramProgress, selectedSet, selected, objectPosList, tmpDrawCaution, tmpComputedMaxY, tmpComputedMinY, valuesToDraw, eventsToDraw, commsToDraw) \
                           firstprivate(tmpDrawCautionSize, tmpComputedMaxYSize, tmpComputedMinYSize, valuesToDrawSize, eventsToDrawSize, commsToDrawSize) \
@@ -1960,6 +2016,11 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
       computedMinY = computedMinY < tmpComputedMinY[ pos ] ? computedMinY : tmpComputedMinY[ pos ];
   }
 
+#ifdef PARALLEL_ENABLED
+  for( vector<Window *>::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
+    delete *it;
+  parallelClone.clear();
+#endif // PARALLEL_ENABLED
 }
 
 #ifdef WIN32
@@ -2294,6 +2355,11 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
         int valuesToDrawSize = valuesToDraw.size();
         int eventsToDrawSize = eventsToDraw.size();
         int commsToDrawSize = eventsToDraw.size();
+
+#ifdef PARALLEL_ENABLED
+        for( int i = 0; i != omp_get_num_threads(); ++i )
+          parallelClone.push_back( myWindow->clone() );
+#endif // PARALLEL_ENABLED
         #pragma omp task firstprivate(numRows, firstObj, lastObj, timeStep, timePos, objectAxisPos, paramProgress) \
                         shared(selectedSet, selected, objectPosList, tmpDrawCaution, tmpComputedMaxY, tmpComputedMinY, valuesToDraw, eventsToDraw, commsToDraw) \
                         firstprivate(tmpDrawCautionSize, tmpComputedMaxYSize, tmpComputedMinYSize, valuesToDrawSize, eventsToDrawSize, commsToDrawSize) \
@@ -2342,6 +2408,12 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
     else if( tmpComputedMinY[ pos ] != 0.0 )
       computedMinY = computedMinY < tmpComputedMinY[ pos ] ? computedMinY : tmpComputedMinY[ pos ];
   }
+
+#ifdef PARALLEL_ENABLED
+  for( vector<Window *>::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
+    delete *it;
+  parallelClone.clear();
+#endif // PARALLEL_ENABLED
 }
 
 #ifdef WIN32
