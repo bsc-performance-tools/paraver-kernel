@@ -227,7 +227,7 @@ class Window
       return 0.0;
     }
 
-    virtual Window* clone( )
+    virtual Window* clone( bool recursiveClone = false )
     {
       return NULL;
     }
@@ -853,7 +853,7 @@ class WindowProxy: public Window
     virtual Window *getChild();
     virtual Window *getParent( PRV_UINT16 whichParent );
 
-    virtual Window *clone( );
+    virtual Window *clone( bool recursiveClone = false );
 
     // Other
     virtual void setDestroy( bool newValue );

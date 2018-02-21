@@ -222,7 +222,7 @@ RecordList *KWindow::getRecordList( TObjectOrder whichObject )
   return intervalTopCompose1[ whichObject ].getRecordList();
 }
 
-KWindow *KWindow::clone()
+KWindow *KWindow::clone( bool recursiveClone )
 {
   return NULL;
 }
@@ -715,7 +715,7 @@ SemanticInfoType KSingleWindow::getSemanticInfoType() const
 }
 
 
-KWindow *KSingleWindow::clone()
+KWindow *KSingleWindow::clone( bool recursiveClone )
 {
   KSingleWindow *clonedKSWindow = new KSingleWindow( myTrace );
 
@@ -1226,14 +1226,17 @@ TWindowLevel KDerivedWindow::getMinAcceptableLevel() const
   return tmp;
 }
 
-KWindow *KDerivedWindow::clone()
+KWindow *KDerivedWindow::clone( bool recursiveClone )
 {
   KDerivedWindow *clonedKDerivedWindow = new KDerivedWindow();
 
   for( size_t i = 0; i < parents.size(); ++i )
   {
-    clonedKDerivedWindow->parents[i] = NULL;
-    clonedKDerivedWindow->factor[i] = factor[ i ];
+    if( recursiveClone )
+      clonedKDerivedWindow->parents[ i ] = parents[ i ]->clone( recursiveClone );
+    else
+      clonedKDerivedWindow->parents[ i ] = NULL;
+    clonedKDerivedWindow->factor[ i ] = factor[ i ];
   }
 
   for ( PRV_UINT16 i = 0; i <= DERIVED; ++i )

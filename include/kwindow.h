@@ -157,7 +157,7 @@ class KWindow: public Window
     TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime ) const;
     TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime ) const;
 
-    virtual KWindow *clone();
+    virtual KWindow *clone( bool recursiveClone = false );
     void getGroupLabels(  PRV_UINT32 whichGroup, std::vector<std::string>& onVector ) const;
     bool getParametersOfFunction( std::string whichFunction,
                                    PRV_UINT32 &numParameters,
@@ -278,7 +278,7 @@ class KSingleWindow: public KWindow
 
     SemanticInfoType getSemanticInfoType() const;
 
-    virtual KWindow *clone();
+    virtual KWindow *clone( bool recursiveClone = false );
 
   protected:
     std::vector<MemoryTrace::iterator *> recordsByTimeThread;
@@ -396,7 +396,7 @@ class KDerivedWindow: public KWindow
 
     SemanticInfoType getSemanticInfoType() const;
 
-    virtual KWindow *clone();
+    virtual KWindow *clone( bool recursiveClone = false );
 
   protected:
     std::vector<KWindow *> parents;

@@ -271,12 +271,12 @@ Window *WindowProxy::getParent( PRV_UINT16 whichParent )
 }
 
 
-Window *WindowProxy::clone( )
+Window *WindowProxy::clone( bool recursiveClone )
 {
   WindowProxy *clonedWindow = new WindowProxy();
   clonedWindow->myKernel = myKernel;
   clonedWindow->myTrace  = myTrace;
-  clonedWindow->myWindow = myWindow->clone( );
+  clonedWindow->myWindow = myWindow->clone();
 
   if ( clonedWindow->isDerivedWindow() )
   {
@@ -479,30 +479,53 @@ void WindowProxy::computeYScale( ProgressController *progress )
       progress->setEndLimit( selected.size() + 1 );
       progress->setCurrentProgress( currentObject );
     }
-    #pragma omp parallel for shared ( currentObject, progress )
-    for ( int i = 0; i < selected.size(); ++i )
-    {
-      TObjectOrder obj = selected[ i ];
-      initRow( obj, winBeginTime, NONE );
-      if( progress == NULL || ( progress != NULL && !progress->getStop() ) )
-      {
-        while ( getBeginTime( obj ) < winEndTime &&
-                getBeginTime( obj ) < myTrace->getEndTime() )
-          calcNext( obj );
 
-        #pragma omp atomic
-        ++currentObject;
-        if( progress != NULL )
+    #pragma omp parallel
+    {
+      #pragma omp single
+      {
+
+#ifdef PARALLEL_ENABLED
+        if( selected.size() > 1 )
         {
-          if( selected.size() <= 200 || currentObject % progressDelta == 0 )
+          for( int i = 0; i != omp_get_num_threads(); ++i )
+            parallelClone.push_back( myWindow->clone( true ) );
+        }
+#endif // PARALLEL_ENABLED
+        #pragma omp task shared ( currentObject, progress )
+        {
+          for ( int i = 0; i < selected.size(); ++i )
           {
-            #pragma omp critical
-            progress->setCurrentProgress( currentObject );
+            TObjectOrder obj = selected[ i ];
+            initRow( obj, winBeginTime, NONE );
+            if( progress == NULL || ( progress != NULL && !progress->getStop() ) )
+            {
+              while ( getBeginTime( obj ) < winEndTime &&
+                      getBeginTime( obj ) < myTrace->getEndTime() )
+                calcNext( obj );
+
+              #pragma omp atomic
+              ++currentObject;
+              if( progress != NULL )
+              {
+                if( selected.size() <= 200 || currentObject % progressDelta == 0 )
+                {
+                  #pragma omp critical
+                  progress->setCurrentProgress( currentObject );
+                }
+              }
+            }
           }
         }
-      }
 
-    }
+      } // omp single
+    } // omp parallel
+
+#ifdef PARALLEL_ENABLED
+    for( vector<Window *>::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
+      delete *it;
+    parallelClone.clear();
+#endif // PARALLEL_ENABLED
 
     if( progress != NULL )
     {
@@ -1914,6 +1937,14 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   {
     #pragma omp single
     {
+#ifdef PARALLEL_ENABLED
+      if( numRows > 1 )
+      {
+        for( int i = 0; i != omp_get_num_threads(); ++i )
+          parallelClone.push_back( myWindow->clone( true ) );
+      }
+#endif // PARALLEL_ENABLED
+
       int currentRow = 0;
       for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
       {
@@ -1962,10 +1993,6 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
         }
         else if( numRows > 1 )
         {
-#ifdef PARALLEL_ENABLED
-          for( int i = 0; i != omp_get_num_threads(); ++i )
-            parallelClone.push_back( myWindow->clone() );
-#endif // PARALLEL_ENABLED
           #pragma omp task firstprivate(numRows, firstObj, lastObj, timeStep, timePos, objectAxisPos) \
                           shared(currentRow, paramProgress, selectedSet, selected, objectPosList, tmpDrawCaution, tmpComputedMaxY, tmpComputedMinY, valuesToDraw, eventsToDraw, commsToDraw) \
                           firstprivate(tmpDrawCautionSize, tmpComputedMaxYSize, tmpComputedMinYSize, valuesToDrawSize, eventsToDrawSize, commsToDrawSize) \
@@ -2326,6 +2353,13 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
   {
     #pragma omp single
     {
+#ifdef PARALLEL_ENABLED
+      if( numRows > 1 )
+      {
+        for( int i = 0; i != omp_get_num_threads(); ++i )
+          parallelClone.push_back( myWindow->clone( true ) );
+      }
+#endif // PARALLEL_ENABLED
       int currentRow = 0;
       for( vector< TObjectOrder >::iterator obj = selectedSet.begin(); obj != selectedSet.end(); ++obj )
       {
@@ -2356,10 +2390,6 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
         int eventsToDrawSize = eventsToDraw.size();
         int commsToDrawSize = eventsToDraw.size();
 
-#ifdef PARALLEL_ENABLED
-        for( int i = 0; i != omp_get_num_threads(); ++i )
-          parallelClone.push_back( myWindow->clone() );
-#endif // PARALLEL_ENABLED
         #pragma omp task firstprivate(numRows, firstObj, lastObj, timeStep, timePos, objectAxisPos, paramProgress) \
                         shared(selectedSet, selected, objectPosList, tmpDrawCaution, tmpComputedMaxY, tmpComputedMinY, valuesToDraw, eventsToDraw, commsToDraw) \
                         firstprivate(tmpDrawCautionSize, tmpComputedMaxYSize, tmpComputedMinYSize, valuesToDrawSize, eventsToDrawSize, commsToDrawSize) \
