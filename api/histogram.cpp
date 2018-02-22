@@ -114,6 +114,9 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
 
   zoomHistory.clear();
 
+  sync = false;
+  syncGroup = 0;
+
   isCFG4DEnabled = false;
   CFG4DMode = false;
 }
