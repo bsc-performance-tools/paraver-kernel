@@ -238,7 +238,6 @@ void SyncWindows::broadcastTimeHistograms( unsigned int whichGroup, Histogram *s
       ( *it )->setWindowEndTime( tmpEndTime, true );
       ( *it )->setChanged( true );
       ( *it )->setRecalc( true );
-      ( *it )->setRedraw( true );
     }
   }
 }
