@@ -130,6 +130,9 @@ HistogramProxy::~HistogramProxy()
   if( extraControlWindow != NULL )
     extraControlWindow->setUsedByHistogram( false );
 
+  if( sync )
+    SyncWindows::getInstance()->removeWindow( this, syncGroup );
+
   LoadedWindows::getInstance()->eraseHisto( this );
   delete myHisto;
 }
