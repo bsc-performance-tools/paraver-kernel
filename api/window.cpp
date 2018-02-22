@@ -369,6 +369,18 @@ bool WindowProxy::getDestroy() const
 }
 
 
+void WindowProxy::setReady( bool newValue )
+{
+  ready = newValue;
+}
+
+
+bool WindowProxy::getReady() const
+{
+  return ready;
+}
+
+
 void WindowProxy::setUsedByHistogram( bool newValue )
 {
   if( newValue )

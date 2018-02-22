@@ -188,6 +188,11 @@ class Window
     {
       return false;
     }
+    virtual void setReady( bool newValue ) {}
+    virtual bool getReady() const
+    {
+      return false;
+    }
     virtual void setUsedByHistogram( bool newValue ) {}
     virtual bool getUsedByHistogram()
     {
@@ -858,6 +863,8 @@ class WindowProxy: public Window
     // Other
     virtual void setDestroy( bool newValue );
     virtual bool getDestroy() const;
+    virtual void setReady( bool newValue );
+    virtual bool getReady() const;
     virtual void setUsedByHistogram( bool newValue );
     virtual bool getUsedByHistogram();
     virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false );
@@ -1234,6 +1241,7 @@ class WindowProxy: public Window
     Filter *myFilter;
 
     bool destroy;
+    bool ready;
 
     PRV_UINT16 posX;
     PRV_UINT16 posY;
