@@ -499,7 +499,11 @@ void WindowProxy::computeYScale( ProgressController *progress )
       {
 
 #ifdef PARALLEL_ENABLED
-        if( selected.size() > 1 )
+        if( selected.size() > 1 ||
+            ( myWindow->isDerivedWindow() && myWindow->getTrace()->getLevelObjects( myWindow->getParent( 0 )->getLevel() ) !=
+                                             myWindow->getTrace()->getLevelObjects( myWindow->getParent( 1 )->getLevel() )
+            )
+          )
         {
           for( int i = 0; i != omp_get_num_threads(); ++i )
             parallelClone.push_back( myWindow->clone( true ) );
@@ -1952,7 +1956,11 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
     #pragma omp single
     {
 #ifdef PARALLEL_ENABLED
-      if( numRows > 1 )
+      if( selected.size() > 1 ||
+          ( myWindow->isDerivedWindow() && myWindow->getTrace()->getLevelObjects( myWindow->getParent( 0 )->getLevel() ) !=
+                                           myWindow->getTrace()->getLevelObjects( myWindow->getParent( 1 )->getLevel() )
+          )
+        )
       {
         for( int i = 0; i != omp_get_num_threads(); ++i )
           parallelClone.push_back( myWindow->clone( true ) );
@@ -2368,7 +2376,11 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
     #pragma omp single
     {
 #ifdef PARALLEL_ENABLED
-      if( numRows > 1 )
+      if( selected.size() > 1 ||
+          ( myWindow->isDerivedWindow() && myWindow->getTrace()->getLevelObjects( myWindow->getParent( 0 )->getLevel() ) !=
+                                           myWindow->getTrace()->getLevelObjects( myWindow->getParent( 1 )->getLevel() )
+          )
+        )
       {
         for( int i = 0; i != omp_get_num_threads(); ++i )
           parallelClone.push_back( myWindow->clone( true ) );
