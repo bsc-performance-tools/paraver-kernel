@@ -129,6 +129,7 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel ):
 
 void WindowProxy::init()
 {
+  ready = false;
   destroy = false;
   number_of_clones = 0;
   winBeginTime = 0.0;
@@ -433,11 +434,11 @@ void WindowProxy::computeYScaleMin()
     getSelectedRows( getLevel(), selected,
                      getZoomSecondDimension().first, getZoomSecondDimension().second, true );
 
-    init( winBeginTime, NONE );
+    init( winBeginTime, NOCREATE );
 
     for ( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
     {
-      initRow( *obj, winBeginTime, NONE );
+      initRow( *obj, winBeginTime, NOCREATE );
       while ( getBeginTime( *obj ) < getTrace()->getEndTime() &&
               getBeginTime( *obj ) < myTrace->getEndTime() )
         calcNext( *obj );
@@ -455,11 +456,11 @@ void WindowProxy::computeYScaleMax()
     getSelectedRows( getLevel(), selected,
                      getZoomSecondDimension().first, getZoomSecondDimension().second, true );
 
-    init( winBeginTime, NONE );
+    init( winBeginTime, NOCREATE );
 
     for ( vector< TObjectOrder >::iterator obj = selected.begin(); obj != selected.end(); ++obj )
     {
-      initRow( *obj, winBeginTime, NONE );
+      initRow( *obj, winBeginTime, NOCREATE );
       while ( getBeginTime( *obj ) < getTrace()->getEndTime() &&
               getBeginTime( *obj ) < myTrace->getEndTime() )
         calcNext( *obj );
@@ -480,7 +481,7 @@ void WindowProxy::computeYScale( ProgressController *progress )
     if( progress != NULL )
       progressDelta = (int)floor( selected.size() * 0.005 );
 
-    init( winBeginTime, NONE );
+    init( winBeginTime, NOCREATE );
 
     std::string previousMessage;
     int currentObject = 0;
@@ -509,7 +510,7 @@ void WindowProxy::computeYScale( ProgressController *progress )
           for ( int i = 0; i < selected.size(); ++i )
           {
             TObjectOrder obj = selected[ i ];
-            initRow( obj, winBeginTime, NONE );
+            initRow( obj, winBeginTime, NOCREATE );
             if( progress == NULL || ( progress != NULL && !progress->getStop() ) )
             {
               while ( getBeginTime( obj ) < winEndTime &&
@@ -693,6 +694,12 @@ RecordList *WindowProxy::getRecordList( TObjectOrder whichObject )
 
 void WindowProxy::init( TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
+  if ( getComputeYMaxOnInit() )
+  {
+    setComputeYMaxOnInit( false );
+    computeYScale();
+  }
+
   if ( myLists.begin() != myLists.end() )
   {
     for ( vector<RecordList *>::iterator it = myLists.begin(); it != myLists.end(); ++it )
@@ -704,11 +711,6 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create, bool update
   for ( int i = 0; i < myWindow->getWindowLevelObjects(); ++i )
     myLists.push_back( NULL );
 
-  if ( getComputeYMaxOnInit() )
-  {
-    setComputeYMaxOnInit( false );
-    computeYScale();
-  }
   myWindow->init( initialTime, create );
   if ( updateLimits )
   {
@@ -726,7 +728,7 @@ void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCrea
 #endif // PARALLEL_ENABLED
 
   tmpMyWindow->initRow( whichRow, initialTime, create );
-  if ( myLists[ whichRow ] == NULL )
+  if ( create != NOCREATE && myLists[ whichRow ] == NULL )
     myLists[ whichRow ] = RecordList::create( tmpMyWindow->getRecordList( whichRow ) );
 
   if ( updateLimits )
@@ -750,7 +752,7 @@ void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCrea
 #endif // PARALLEL_ENABLED
 
   tmpMyWindow->initRow( whichRow, initialTime, create );
-  if ( myLists[ whichRow ] == NULL )
+  if ( create != NOCREATE && myLists[ whichRow ] == NULL )
     myLists[ whichRow ] = RecordList::create( tmpMyWindow->getRecordList( whichRow ) );
 
   if ( updateLimits )
