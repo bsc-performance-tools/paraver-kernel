@@ -48,6 +48,23 @@
 
 using namespace std;
 
+
+WindowCloneManager::WindowCloneManager( std::vector<KWindow *>& windows )
+{
+
+}
+
+
+WindowCloneManager::~WindowCloneManager()
+{}
+
+
+KWindow *WindowCloneManager::getClonedWindow( const KWindow *originalWindow ) const
+{
+  return NULL;
+}
+
+
 RowsTranslator::RowsTranslator( const RowsTranslator& source )
 {
   for ( size_t ii = 0; ii < source.childInfo.size() - 1; ii++ )

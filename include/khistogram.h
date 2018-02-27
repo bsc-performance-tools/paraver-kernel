@@ -42,6 +42,20 @@ class KWindow;
 class CubeBuffer;
 #endif
 
+
+class WindowCloneManager
+{
+  public:
+    WindowCloneManager( std::vector<KWindow *>& windows );
+    ~WindowCloneManager();
+
+    KWindow *getClonedWindow( const KWindow *originalWindow ) const;
+
+  private:
+    std::map< KWindow *, std::vector< KWindow * > > clonedWindows;
+};
+
+
 class RowsTranslator
 {
   public:
