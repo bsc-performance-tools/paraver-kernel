@@ -1266,6 +1266,8 @@ void KHistogram::parallelExecution( TRecordTime fromTime, TRecordTime toTime,
   {
     #pragma omp single
     {
+      windowCloneManager.update( this );
+
       for ( TObjectOrder i = fromRow; i <= toRow; ++i )
       {
         if( progress != NULL )
@@ -1278,7 +1280,6 @@ void KHistogram::parallelExecution( TRecordTime fromTime, TRecordTime toTime,
             progress->setCurrentProgress( currentRow );
           }
         }
-        windowCloneManager.update( this );
 
         #pragma omp task firstprivate(fromTime, toTime, i) shared(selectedRows, progress)
         executionTask( fromTime, toTime, i, i, selectedRows, progress );
