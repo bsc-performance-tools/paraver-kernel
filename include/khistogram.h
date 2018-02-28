@@ -46,13 +46,20 @@ class CubeBuffer;
 class WindowCloneManager
 {
   public:
-    WindowCloneManager( std::vector<KWindow *>& windows );
+    WindowCloneManager();
     ~WindowCloneManager();
 
-    KWindow *getClonedWindow( const KWindow *originalWindow ) const;
+    Window *operator()( Window *originalWindow ) const;
+#ifdef PARALLEL_ENABLED
+    void update( const KHistogram *whichHistogram );
+    void clear();
 
   private:
-    std::map< KWindow *, std::vector< KWindow * > > clonedWindows;
+    std::map< Window *, std::vector< Window * > > clonedWindows;
+
+    void clone( Window *whichWindow );
+    bool isClonable( Window *whichWindow );
+#endif
 };
 
 
@@ -309,6 +316,8 @@ class KHistogram : public Histogram
     KHistogramTotals *rowCommTotals;
 
     TTimeUnit myTimeUnit;
+
+    WindowCloneManager windowCloneManager;
 
     void orderWindows();
     bool createComms() const;

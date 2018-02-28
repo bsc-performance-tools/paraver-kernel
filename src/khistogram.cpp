@@ -37,8 +37,10 @@
 #include "khistogramtotals.h"
 #include "functionmanagement.h"
 #include "kprogresscontroller.h"
+
 #ifdef PARALLEL_ENABLED
 #include "cubebuffer.h"
+#include "omp.h"
 #endif
 
 #ifdef WIN32
@@ -49,20 +51,95 @@
 using namespace std;
 
 
-WindowCloneManager::WindowCloneManager( std::vector<KWindow *>& windows )
-{
-
-}
-
-
-WindowCloneManager::~WindowCloneManager()
+WindowCloneManager::WindowCloneManager()
 {}
 
 
-KWindow *WindowCloneManager::getClonedWindow( const KWindow *originalWindow ) const
+WindowCloneManager::~WindowCloneManager()
 {
-  return NULL;
+#ifdef PARALLEL_ENABLED
+  for( map< Window *, vector< Window * > >::iterator it = clonedWindows.begin(); it != clonedWindows.end(); ++it )
+  {
+    for( vector< Window * >::iterator itWin = it->second.begin(); itWin != it->second.end(); ++itWin )
+      delete *itWin;
+  }
+#endif
 }
+
+
+Window *WindowCloneManager::operator()( Window *originalWindow ) const
+{
+#ifdef PARALLEL_ENABLED
+  map< Window *, vector< Window * > >::const_iterator it = clonedWindows.find( originalWindow );
+  if ( it != clonedWindows.end() )
+    return it->second[ omp_get_thread_num() ];
+#endif
+
+  return originalWindow;
+}
+
+
+#ifdef PARALLEL_ENABLED
+void WindowCloneManager::update( const KHistogram *whichHistogram )
+{
+  Window *tmpWindow = whichHistogram->getControlWindow();
+  if ( isClonable( tmpWindow ) )
+  {
+    clone( tmpWindow );
+  }
+
+  if ( tmpWindow != whichHistogram->getDataWindow() )
+  {
+    tmpWindow = whichHistogram->getDataWindow();
+    if ( isClonable( tmpWindow ) )
+    {
+      clone( tmpWindow );
+    }
+  }
+
+  if ( whichHistogram->getExtraControlWindow() != NULL &&
+       whichHistogram->getExtraControlWindow() != whichHistogram->getControlWindow() &&
+       whichHistogram->getExtraControlWindow() != tmpWindow )
+  {
+    tmpWindow = whichHistogram->getExtraControlWindow();
+    if ( isClonable( tmpWindow ) )
+    {
+      clone( tmpWindow );
+    }
+  }
+}
+
+
+void WindowCloneManager::clear()
+{
+  for( map< Window *, vector< Window * > >::iterator it = clonedWindows.begin(); it != clonedWindows.end(); ++it )
+  {
+    for( vector< Window * >::iterator itWin = it->second.begin(); itWin != it->second.end(); ++itWin )
+      delete *itWin;
+  }
+
+  clonedWindows.clear();
+}
+
+
+bool WindowCloneManager::isClonable( Window *whichWindow )
+{
+  return whichWindow->isDerivedWindow() &&
+         whichWindow->getTrace()->getLevelObjects( whichWindow->getParent( 0 )->getLevel() ) !=
+         whichWindow->getTrace()->getLevelObjects( whichWindow->getParent( 1 )->getLevel() );
+}
+
+
+void WindowCloneManager::clone( Window *whichWindow )
+{
+  vector< Window * > tmpClones;
+
+  for( int i = 0; i != omp_get_num_threads(); ++i )
+    tmpClones.push_back( whichWindow->clone( true ) );
+
+  clonedWindows[ whichWindow ] = tmpClones;
+}
+#endif // PARALLEL_ENABLED
 
 
 RowsTranslator::RowsTranslator( const RowsTranslator& source )
@@ -1201,6 +1278,7 @@ void KHistogram::parallelExecution( TRecordTime fromTime, TRecordTime toTime,
             progress->setCurrentProgress( currentRow );
           }
         }
+        windowCloneManager.update( this );
 
         #pragma omp task firstprivate(fromTime, toTime, i) shared(selectedRows, progress)
         executionTask( fromTime, toTime, i, i, selectedRows, progress );
@@ -1210,6 +1288,8 @@ void KHistogram::parallelExecution( TRecordTime fromTime, TRecordTime toTime,
       }
     }
   }
+
+  windowCloneManager.clear();
 }
 
 
@@ -1269,26 +1349,26 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     if( needInit[ winIndex ] && ( winIndex == 0 || ( winIndex > 0 && orderedWindows[ winIndex ] != orderedWindows[ winIndex - 1 ] ) ) )
     {
       if( orderedWindows[ winIndex ] == orderedWindows[ 0 ] )
-        currentWindow->initRow( iRow, fromTime, CREATECOMMS );
+        windowCloneManager( currentWindow )->initRow( iRow, fromTime, CREATECOMMS );
       else
-        currentWindow->initRow( iRow, fromTime, NOCREATE );
+        windowCloneManager( currentWindow )->initRow( iRow, fromTime, NOCREATE );
 
       needInit[ winIndex ] = false;
     }
 
-    while ( currentWindow->getEndTime( iRow ) <= fromTime
-            && currentWindow->getBeginTime( iRow ) < currentWindow->getTrace()->getEndTime() )
+    while ( windowCloneManager( currentWindow )->getEndTime( iRow ) <= fromTime
+            && windowCloneManager( currentWindow )->getBeginTime( iRow ) < currentWindow->getTrace()->getEndTime() )
     {
-      currentWindow->calcNext( iRow );
+      windowCloneManager( currentWindow )->calcNext( iRow );
     }
 
     int progressSteps = 0;
-    while ( currentWindow->getEndTime( iRow ) < toTime
-            && currentWindow->getBeginTime( iRow ) < currentWindow->getTrace()->getEndTime() )
+    while ( windowCloneManager( currentWindow )->getEndTime( iRow ) < toTime
+            && windowCloneManager( currentWindow )->getBeginTime( iRow ) < currentWindow->getTrace()->getEndTime() )
     {
-      if( currentWindow->getBeginTime( iRow ) != currentWindow->getEndTime( iRow ) )
+      if( windowCloneManager( currentWindow )->getBeginTime( iRow ) != windowCloneManager( currentWindow )->getEndTime( iRow ) )
         calculate( iRow, fromTime, toTime, winIndex, data, needInit, calcSemanticStats );
-      currentWindow->calcNext( iRow );
+      windowCloneManager( currentWindow )->calcNext( iRow );
       if( progress != NULL )
       {
         if( progress->getStop() )
@@ -1304,15 +1384,15 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
       }
     }
 
-    if ( currentWindow->getBeginTime( iRow ) < toTime )
+    if ( windowCloneManager( currentWindow )->getBeginTime( iRow ) < toTime )
       calculate( iRow, fromTime, toTime, winIndex, data, needInit, calcSemanticStats );
 
-    while ( currentWindow->getBeginTime( iRow ) == currentWindow->getEndTime( iRow ) &&
-            currentWindow->getEndTime( iRow ) <= toTime &&
-            currentWindow->getEndTime( iRow ) < getEndTime() &&
-            currentWindow->getBeginTime( iRow ) < currentWindow->getTrace()->getEndTime() )
+    while ( windowCloneManager( currentWindow )->getBeginTime( iRow ) == windowCloneManager( currentWindow )->getEndTime( iRow ) &&
+            windowCloneManager( currentWindow )->getEndTime( iRow ) <= toTime &&
+            windowCloneManager( currentWindow )->getEndTime( iRow ) < getEndTime() &&
+            windowCloneManager( currentWindow )->getBeginTime( iRow ) < currentWindow->getTrace()->getEndTime() )
     {
-      currentWindow->calcNext( iRow );
+      windowCloneManager( currentWindow )->calcNext( iRow );
     }
 
     if ( winIndex == 0 )
@@ -1357,23 +1437,23 @@ void KHistogram::calculate( TObjectOrder iRow,
 
   if ( currentWindow == controlWindow )
   {
-    if ( !columnTranslator->getColumn( controlWindow->getValue( iRow ),
+    if ( !columnTranslator->getColumn( windowCloneManager( currentWindow )->getValue( iRow ),
                                        data->column ) )
     {
-      if ( controlWindow->getValue( iRow ) != 0 )
+      if ( windowCloneManager( currentWindow )->getValue( iRow ) != 0 )
         tmpControlOutOfLimits[ iRow ] = true;
       calcSemanticStats = false;
     }
     else
       calcSemanticStats = true;
-    data->rList = controlWindow->getRecordList( iRow );
+    data->rList = windowCloneManager( currentWindow )->getRecordList( iRow );
   }
   if ( getThreeDimensions() && currentWindow == xtraControlWindow )
   {
-    if ( !planeTranslator->getColumn( xtraControlWindow->getValue( iRow ),
+    if ( !planeTranslator->getColumn( windowCloneManager( currentWindow )->getValue( iRow ),
                                       data->plane ) )
     {
-      if ( xtraControlWindow->getValue( iRow ) != 0 )
+      if ( windowCloneManager( currentWindow )->getValue( iRow ) != 0 )
         tmpXtraOutOfLimits[ iRow ] = true;
       return;
     }
@@ -1381,11 +1461,11 @@ void KHistogram::calculate( TObjectOrder iRow,
 
   if ( winIndex == orderedWindows.size() - 1 )
   {
-    data->beginTime = ( fromTime < currentWindow->getBeginTime( iRow ) ) ?
-                      currentWindow->getBeginTime( iRow ) :
+    data->beginTime = ( fromTime < windowCloneManager( currentWindow )->getBeginTime( iRow ) ) ?
+                      windowCloneManager( currentWindow )->getBeginTime( iRow ) :
                       fromTime;
-    data->endTime = ( toTime > currentWindow->getEndTime( iRow ) ) ?
-                    currentWindow->getEndTime( iRow ) :
+    data->endTime = ( toTime > windowCloneManager( currentWindow )->getEndTime( iRow ) ) ?
+                    windowCloneManager( currentWindow )->getEndTime( iRow ) :
                     toTime;
 
     // Communication statistics
@@ -1496,11 +1576,11 @@ void KHistogram::calculate( TObjectOrder iRow,
   }
   else
   {
-    childFromTime = ( fromTime < currentWindow->getBeginTime( iRow ) ) ?
-                    currentWindow->getBeginTime( iRow ) :
+    childFromTime = ( fromTime < windowCloneManager( currentWindow )->getBeginTime( iRow ) ) ?
+                    windowCloneManager( currentWindow )->getBeginTime( iRow ) :
                     fromTime;
-    childToTime = ( toTime > currentWindow->getEndTime( iRow ) ) ?
-                  currentWindow->getEndTime( iRow ) :
+    childToTime = ( toTime > windowCloneManager( currentWindow )->getEndTime( iRow ) ) ?
+                  windowCloneManager( currentWindow )->getEndTime( iRow ) :
                   toTime;
     rowsTranslator->getRowChilds( winIndex, iRow, childFromRow, childToRow );
 
