@@ -1145,6 +1145,28 @@ class WindowPunctualColorWindow: public TagFunction
 
 };
 
+class WindowSynchronize: public TagFunction
+{
+  public:
+    WindowSynchronize()
+    {}
+
+    virtual ~WindowSynchronize()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
 
 
 class Analyzer2DCreate: public TagFunction
@@ -1926,6 +1948,29 @@ class Analyzer2DShortLabels: public TagFunction
     {}
 
     virtual ~Analyzer2DShortLabels()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
+class Analyzer2DSynchronize: public TagFunction
+{
+  public:
+    Analyzer2DSynchronize()
+    {}
+
+    virtual ~Analyzer2DSynchronize()
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
