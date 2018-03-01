@@ -110,6 +110,7 @@
 #define OLDCFG_TAG_WNDW_PIXEL_SIZE "window_pixel_size"
 #define OLDCFG_TAG_WNDW_LABELS_TO_DRAW "window_labels_to_draw"
 #define OLDCFG_TAG_WNDW_PUNCTUAL_COLOR_WIN "window_punctual_color_window"
+#define OLDCFG_TAG_WNDW_SYNCHRONIZE "window_synchronize"
 
 // HISTOGRAM CFGs TAGS
 #define OLDCFG_TAG_AN2D_NEW "< NEW ANALYZER2D >"
@@ -150,6 +151,7 @@
 #define OLDCFG_TAG_AN2D_CODE_COLOR "Analyzer2D.CodeColor:"
 #define OLDCFG_TAG_AN2D_ONLY_TOTALS "Analyzer2D.ShowOnlyTotals:"
 #define OLDCFG_TAG_AN2D_SHORT_LABELS "Analyzer2D.ShortHeaderLabels:"
+#define OLDCFG_TAG_AN2D_SYNCHRONIZE "Analyzer2D.Synchronize:"
 #define OLDCFG_TAG_AN3D_CONTROLWINDOW "Analyzer2D.3D_ControlWindow:"
 #define OLDCFG_TAG_AN3D_COMPUTEYSCALE "Analyzer3D.ComputeYScale:"
 #define OLDCFG_TAG_AN3D_MINIMUM "Analyzer2D.3D_Minimum:"

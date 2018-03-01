@@ -44,6 +44,7 @@
 #include "paraverlabels.h"
 #include "drawmode.h"
 #include "symbolpicker.h"
+#include "syncwindows.h"
 
 
 using namespace std;
@@ -63,6 +64,8 @@ bool multipleLabelValues = false;
 EventTypeSymbolPicker eventTypeSymbolPicker;
 EventValueSymbolPicker eventValueSymbolPicker;
 
+map<unsigned int, unsigned int> syncRealGroup;
+unsigned int lastSyncGroupUsed;
 
 TWindowLevel stringToLevel( const std::string& strLevel )
 {
@@ -394,6 +397,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   windows.push_back( NULL );
   histograms.push_back( NULL );
   options.enabledCFG4DMode = false;
+  syncRealGroup.clear();
 
   while ( !cfgFile.eof() )
   {
@@ -604,6 +608,9 @@ bool CFGLoader::saveCFG( const string& filename,
   if ( !cfgFile )
     return false;
 
+  syncRealGroup.clear();
+  lastSyncGroupUsed = 0;
+
   pushbackAllWindows( windows, histograms, allWindows );
 
   cfgFile << fixed;
@@ -678,6 +685,8 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowSemanticModule::printLine( cfgFile, it );
     if ( !( *it )->isDerivedWindow() )
       WindowFilterModule::printLine( cfgFile, it );
+    if( ( *it )->isSync() )
+      WindowSynchronize::printLine( cfgFile, it );
 
     if ( options.enabledCFG4DMode )
     {
@@ -726,6 +735,9 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DCodeColor::printLine( cfgFile, it );
     Analyzer2DOnlyTotals::printLine( cfgFile, it );
     Analyzer2DShortLabels::printLine( cfgFile, it );
+    if( ( *it )->isSync() )
+      Analyzer2DSynchronize::printLine( cfgFile, it );
+
     if ( ( *it )->getThreeDimensions() )
     {
       Analyzer3DControlWindow::printLine( cfgFile, allWindows, it );
@@ -844,6 +856,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_PIXEL_SIZE]          = new WindowPixelSize();
   cfgTagFunctions[OLDCFG_TAG_WNDW_LABELS_TO_DRAW]      = new WindowLabelsToDraw();
   cfgTagFunctions[OLDCFG_TAG_WNDW_PUNCTUAL_COLOR_WIN]  = new WindowPunctualColorWindow();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_SYNCHRONIZE]         = new WindowSynchronize();
 
   // Histogram options
 
@@ -887,6 +900,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN2D_CODE_COLOR]           = new Analyzer2DCodeColor();
   cfgTagFunctions[OLDCFG_TAG_AN2D_ONLY_TOTALS]          = new Analyzer2DOnlyTotals();
   cfgTagFunctions[OLDCFG_TAG_AN2D_SHORT_LABELS]         = new Analyzer2DShortLabels();
+  cfgTagFunctions[OLDCFG_TAG_AN2D_SYNCHRONIZE]          = new Analyzer2DSynchronize();
 
   // 3D Histogram
   cfgTagFunctions[OLDCFG_TAG_AN3D_CONTROLWINDOW]        = new Analyzer3DControlWindow();
@@ -3422,6 +3436,57 @@ void WindowPunctualColorWindow::printLine( ofstream& cfgFile,
 }
 
 
+string WindowSynchronize::tagCFG = OLDCFG_TAG_WNDW_SYNCHRONIZE;
+
+bool WindowSynchronize::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                   Trace *whichTrace,
+                                   vector<Window *>& windows,
+                                   vector<Histogram *>& histograms )
+{
+  string strGroupID;
+  unsigned int groupID;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strGroupID );
+  istringstream tmpStream( strGroupID );
+  if ( !( tmpStream >> groupID ) )
+    return false;
+
+  unsigned int realGroupID;
+  if( syncRealGroup.find( groupID ) == syncRealGroup.end() )
+  {
+    realGroupID = SyncWindows::getInstance()->newGroup();
+    syncRealGroup[ groupID ] = realGroupID;
+  }
+  else
+    realGroupID = syncRealGroup[ groupID ];
+
+  windows[ windows.size() - 1 ]->addToSyncGroup( realGroupID );
+
+  return true;
+}
+
+void WindowSynchronize::printLine( ofstream& cfgFile,
+                                   const vector<Window *>::const_iterator it )
+{
+  if( (*it)->isSync() )
+  {
+    unsigned int realGroupID;
+    if( syncRealGroup.find( (*it)->getSyncGroup() ) == syncRealGroup.end() )
+    {
+      realGroupID = ++lastSyncGroupUsed;
+      syncRealGroup[ (*it)->getSyncGroup() ] = realGroupID;
+    }
+    else
+      realGroupID = syncRealGroup[ (*it)->getSyncGroup() ];
+
+    cfgFile << OLDCFG_TAG_WNDW_SYNCHRONIZE << " " << realGroupID << endl;
+  }
+}
+
+
 string Analyzer2DCreate::tagCFG = OLDCFG_TAG_AN2D_NEW;
 
 bool Analyzer2DCreate::parseLine( KernelConnection *whichKernel, istringstream& line,
@@ -4614,7 +4679,6 @@ void Analyzer2DOnlyTotals::printLine( ofstream& cfgFile,
   else
     cfgFile << OLDCFG_VAL_FALSE2;
   cfgFile << endl;
-
 }
 
 
@@ -4653,9 +4717,60 @@ void Analyzer2DShortLabels::printLine( ofstream& cfgFile,
   else
     cfgFile << OLDCFG_VAL_FALSE2;
   cfgFile << endl;
-
 }
 
+
+string Analyzer2DSynchronize::tagCFG = OLDCFG_TAG_AN2D_SYNCHRONIZE;
+
+bool Analyzer2DSynchronize::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                       Trace *whichTrace,
+                                       vector<Window *>& windows,
+                                       vector<Histogram *>& histograms )
+{
+  string strGroupID;
+  unsigned int groupID;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strGroupID );
+  istringstream tmpStream( strGroupID );
+  if ( !( tmpStream >> groupID ) )
+    return false;
+
+  unsigned int realGroupID;
+  if( syncRealGroup.find( groupID ) == syncRealGroup.end() )
+  {
+    realGroupID = SyncWindows::getInstance()->newGroup();
+    syncRealGroup[ groupID ] = realGroupID;
+  }
+  else
+    realGroupID = syncRealGroup[ groupID ];
+
+  histograms[ histograms.size() - 1 ]->addToSyncGroup( realGroupID );
+
+  return true;
+}
+
+void Analyzer2DSynchronize::printLine( ofstream& cfgFile,
+                                       const vector<Histogram *>::const_iterator it )
+{
+  if( (*it)->isSync() )
+  {
+    unsigned int realGroupID;
+    if( syncRealGroup.find( (*it)->getSyncGroup() ) == syncRealGroup.end() )
+    {
+      realGroupID = ++lastSyncGroupUsed;
+      syncRealGroup[ (*it)->getSyncGroup() ] = realGroupID;
+    }
+    else
+      realGroupID = syncRealGroup[ (*it)->getSyncGroup() ];
+
+    cfgFile << OLDCFG_TAG_AN2D_SYNCHRONIZE << " " << realGroupID << endl;
+  }
+}
 
 string Analyzer3DControlWindow::tagCFG = OLDCFG_TAG_AN3D_CONTROLWINDOW;
 
