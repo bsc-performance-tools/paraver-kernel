@@ -255,7 +255,7 @@ Window *WindowProxy::getChild()
 }
 
 
-Window *WindowProxy::getParent( PRV_UINT16 whichParent )
+Window *WindowProxy::getParent( PRV_UINT16 whichParent ) const
 {
   switch ( whichParent )
   {
