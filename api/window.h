@@ -176,7 +176,7 @@ class Window
     {
       return NULL;
     }
-    virtual Window *getParent( PRV_UINT16 whichParent )
+    virtual Window *getParent( PRV_UINT16 whichParent ) const
     {
       return NULL;
     }
@@ -856,7 +856,7 @@ class WindowProxy: public Window
     virtual void setParent( PRV_UINT16 whichParent, Window *whichWindow );
     virtual void setChild( Window *whichWindow );
     virtual Window *getChild();
-    virtual Window *getParent( PRV_UINT16 whichParent );
+    virtual Window *getParent( PRV_UINT16 whichParent ) const;
 
     virtual Window *clone( bool recursiveClone = false );
 
