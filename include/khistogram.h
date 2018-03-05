@@ -253,6 +253,7 @@ class KHistogram : public Histogram
 
     TTimeUnit getTimeUnit() const;
 
+    Window *getClonedWindow( Window *whichWindow ) const;
     virtual KHistogram *clone();
 
   protected:

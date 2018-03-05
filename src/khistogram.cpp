@@ -1811,6 +1811,13 @@ TTimeUnit KHistogram::getTimeUnit() const
   return myTimeUnit;
 }
 
+
+Window *KHistogram::getClonedWindow( Window *whichWindow ) const
+{
+  return windowCloneManager( whichWindow );
+}
+
+
 KHistogram *KHistogram::clone()
 {
   KHistogram *clonedKHistogram = new KHistogram();

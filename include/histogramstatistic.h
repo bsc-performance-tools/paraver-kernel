@@ -606,6 +606,7 @@ class StatNumBursts: public HistogramStatistic
 
   private:
     static std::string name;
+    Window *dataWin;
 };
 
 
@@ -640,6 +641,7 @@ class StatPercNumBursts: public HistogramStatistic
 
   private:
     static std::string name;
+    Window *dataWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer *rowTotal;
 #else

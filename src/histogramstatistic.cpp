@@ -1224,7 +1224,7 @@ void StatPercTime::reset()
 
 bool StatPercTime::filter( CalculateData *data ) const
 {
-  return filterSemanticValue( controlWin->getValue( data->controlRow ),
+  return filterSemanticValue( myHistogram->getClonedWindow( controlWin )->getValue( data->controlRow ),
                               myHistogram );
 }
 
@@ -1233,11 +1233,11 @@ TSemanticValue StatPercTime::execute( CalculateData *data )
   TRecordTime begin;
   TRecordTime end;
 
-  begin = data->beginTime > controlWin->getBeginTime( data->controlRow ) ?
-          data->beginTime : controlWin->getBeginTime( data->controlRow );
+  begin = data->beginTime > myHistogram->getClonedWindow( controlWin )->getBeginTime( data->controlRow ) ?
+          data->beginTime : myHistogram->getClonedWindow( controlWin )->getBeginTime( data->controlRow );
 
-  end = data->endTime < controlWin->getEndTime( data->controlRow ) ?
-        data->endTime : controlWin->getEndTime( data->controlRow );
+  end = data->endTime < myHistogram->getClonedWindow( controlWin )->getEndTime( data->controlRow ) ?
+        data->endTime : myHistogram->getClonedWindow( controlWin )->getEndTime( data->controlRow );
 
 #ifndef PARALLEL_ENABLED
   if ( myHistogram->getThreeDimensions() )
@@ -1310,22 +1310,22 @@ void StatPercTimeNotZero::reset()
 
 bool StatPercTimeNotZero::filter( CalculateData *data ) const
 {
-  return filterSemanticValue( controlWin->getValue( data->controlRow ),
+  return filterSemanticValue( myHistogram->getClonedWindow( controlWin )->getValue( data->controlRow ),
                               myHistogram );
 }
 
 TSemanticValue StatPercTimeNotZero::execute( CalculateData *data )
 {
-  if ( controlWin->getValue( data->controlRow ) != 0.0 )
+  if ( myHistogram->getClonedWindow( controlWin )->getValue( data->controlRow ) != 0.0 )
   {
     TRecordTime begin;
     TRecordTime end;
 
-    begin = data->beginTime > controlWin->getBeginTime( data->controlRow ) ?
-            data->beginTime : controlWin->getBeginTime( data->controlRow );
+    begin = data->beginTime > myHistogram->getClonedWindow( controlWin )->getBeginTime( data->controlRow ) ?
+            data->beginTime : myHistogram->getClonedWindow( controlWin )->getBeginTime( data->controlRow );
 
-    end = data->endTime < controlWin->getEndTime( data->controlRow ) ?
-          data->endTime : controlWin->getEndTime( data->controlRow );
+    end = data->endTime < myHistogram->getClonedWindow( controlWin )->getEndTime( data->controlRow ) ?
+          data->endTime : myHistogram->getClonedWindow( controlWin )->getEndTime( data->controlRow );
 
 #ifndef PARALLEL_ENABLED
     if ( myHistogram->getThreeDimensions() )
@@ -1391,7 +1391,7 @@ void StatPercTimeWindow::reset()
 
 bool StatPercTimeWindow::filter( CalculateData *data ) const
 {
-  return filterSemanticValue( controlWin->getValue( data->controlRow ),
+  return filterSemanticValue( myHistogram->getClonedWindow( controlWin )->getValue( data->controlRow ),
                               myHistogram );
 }
 
@@ -1400,11 +1400,11 @@ TSemanticValue StatPercTimeWindow::execute( CalculateData *data )
   TRecordTime begin;
   TRecordTime end;
 
-  begin = data->beginTime > controlWin->getBeginTime( data->controlRow ) ?
-          data->beginTime : controlWin->getBeginTime( data->controlRow );
+  begin = data->beginTime > myHistogram->getClonedWindow( controlWin )->getBeginTime( data->controlRow ) ?
+          data->beginTime : myHistogram->getClonedWindow( controlWin )->getBeginTime( data->controlRow );
 
-  end = data->endTime < controlWin->getEndTime( data->controlRow ) ?
-        data->endTime : controlWin->getEndTime( data->controlRow );
+  end = data->endTime < myHistogram->getClonedWindow( controlWin )->getEndTime( data->controlRow ) ?
+        data->endTime : myHistogram->getClonedWindow( controlWin )->getEndTime( data->controlRow );
 
   return end - begin;
 }
@@ -1442,6 +1442,7 @@ string StatNumBursts::name = "# Bursts";
 void StatNumBursts::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
+  dataWin = myHistogram->getDataWindow();
 }
 
 void StatNumBursts::reset()
@@ -1453,13 +1454,13 @@ bool StatNumBursts::filter( CalculateData *data ) const
   TRecordTime begin;
   TRecordTime end;
 
-  begin = data->beginTime > myHistogram->getDataWindow()->getBeginTime( data->dataRow ) ?
-          data->beginTime : myHistogram->getDataWindow()->getBeginTime( data->dataRow );
+  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
+          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
 
-  end = data->endTime < myHistogram->getDataWindow()->getEndTime( data->dataRow ) ?
-        data->endTime : myHistogram->getDataWindow()->getEndTime( data->dataRow );
+  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
+        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
 
-  return filterSemanticValue( myHistogram->getDataWindow()->getValue( data->dataRow ),
+  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
                               myHistogram )
          &&
          filterBurstTime( end - begin, myHistogram );
@@ -1502,6 +1503,8 @@ string StatPercNumBursts::name = "% # Bursts";
 void StatPercNumBursts::init( KHistogram *whichHistogram )
 {
   myHistogram = whichHistogram;
+  dataWin = myHistogram->getDataWindow();
+
 #ifndef PARALLEL_ENABLED
   rowTotal = Statistics::zeroVector;
 #else
@@ -1523,13 +1526,13 @@ bool StatPercNumBursts::filter( CalculateData *data ) const
   TRecordTime begin;
   TRecordTime end;
 
-  begin = data->beginTime > myHistogram->getDataWindow()->getBeginTime( data->dataRow ) ?
-          data->beginTime : myHistogram->getDataWindow()->getBeginTime( data->dataRow );
+  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
+          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
 
-  end = data->endTime < myHistogram->getDataWindow()->getEndTime( data->dataRow ) ?
-        data->endTime : myHistogram->getDataWindow()->getEndTime( data->dataRow );
+  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
+        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
 
-  return filterSemanticValue( myHistogram->getDataWindow()->getValue( data->dataRow ),
+  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
                               myHistogram )
          &&
          filterBurstTime( end - begin, myHistogram );
@@ -1598,7 +1601,7 @@ void StatIntegral::reset()
 
 bool StatIntegral::filter( CalculateData *data ) const
 {
-  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
                               myHistogram );
 }
 
@@ -1607,13 +1610,13 @@ TSemanticValue StatIntegral::execute( CalculateData *data )
   TRecordTime begin;
   TRecordTime end;
 
-  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
-          data->beginTime : dataWin->getBeginTime( data->dataRow );
+  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
+          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
 
-  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
-        data->endTime : dataWin->getEndTime( data->dataRow );
+  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
+        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
 
-  return dataWin->traceUnitsToWindowUnits( end - begin ) * dataWin->getValue( data->dataRow );
+  return dataWin->traceUnitsToWindowUnits( end - begin ) * myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
 }
 
 TSemanticValue StatIntegral::finishRow( TSemanticValue cellValue,
@@ -1667,7 +1670,7 @@ void StatAvgValue::reset()
 
 bool StatAvgValue::filter( CalculateData *data ) const
 {
-  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
                               myHistogram );
 }
 
@@ -1677,11 +1680,11 @@ TSemanticValue StatAvgValue::execute( CalculateData *data )
   TRecordTime begin;
   TRecordTime end;
 
-  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
-          data->beginTime : dataWin->getBeginTime( data->dataRow );
+  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
+          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
 
-  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
-        data->endTime : dataWin->getEndTime( data->dataRow );
+  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
+        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
 
 #ifndef PARALLEL_ENABLED
   ( numValues[ data->plane ] )[ data->column ] += ( end - begin );
@@ -1689,7 +1692,7 @@ TSemanticValue StatAvgValue::execute( CalculateData *data )
   numValues->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, end - begin ) );
 #endif
 
-  return dataWin->getValue( data->dataRow ) * ( end -begin );
+  return myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) * ( end -begin );
 }
 
 
@@ -1753,26 +1756,26 @@ void StatMaximum::reset()
 
 bool StatMaximum::filter( CalculateData *data ) const
 {
-  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
                               myHistogram );
 }
 
 TSemanticValue StatMaximum::execute( CalculateData *data )
 {
 #ifndef PARALLEL_ENABLED
-  if ( dataWin->getValue( data->dataRow ) >
+  if ( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) >
        ( ( max[ data->plane ] )[ data->column ] ) )
-    ( ( max[ data->plane ] )[ data->column ] ) = dataWin->getValue( data->dataRow );
+    ( ( max[ data->plane ] )[ data->column ] ) = myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
 #else
   vector< TSemanticValue > tmp;
   bool res = max->getCellValue( tmp, data->plane, data->row, data->column );
   if( !res )
   {
-    max->setValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, dataWin->getValue( data->dataRow ) ) );
+    max->setValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) ) );
   }
-  else if ( dataWin->getValue( data->dataRow ) > tmp[ 0 ] )
+  else if ( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) > tmp[ 0 ] )
   {
-    max->setValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, dataWin->getValue( data->dataRow ) ) );
+    max->setValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) ) );
   }
 #endif
   return 1;
@@ -1836,7 +1839,7 @@ void StatMinimum::reset()
 
 bool StatMinimum::filter( CalculateData *data ) const
 {
-  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
                               myHistogram );
 }
 
@@ -1845,24 +1848,24 @@ TSemanticValue StatMinimum::execute( CalculateData *data )
 #ifndef PARALLEL_ENABLED
   if ( ( ( min[ data->plane ] )[ data->column ] ) == 0.0 )
   {
-    ( ( min[ data->plane ] )[ data->column ] ) = dataWin->getValue( data->dataRow );
+    ( ( min[ data->plane ] )[ data->column ] ) = myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
   }
-  else if ( dataWin->getValue( data->dataRow ) != 0.0 &&
-            dataWin->getValue( data->dataRow ) <
+  else if ( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) != 0.0 &&
+            myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) <
             ( ( min[ data->plane ] )[ data->column ] ) )
   {
-     ( ( min[ data->plane ] )[ data->column ] ) = dataWin->getValue( data->dataRow );
+     ( ( min[ data->plane ] )[ data->column ] ) = myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
   }
 #else
   vector< TSemanticValue > tmp;
   bool res = min->getCellValue( tmp, data->plane, data->row, data->column );
   if( !res )
   {
-    min->setValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, dataWin->getValue( data->dataRow ) ) );
+    min->setValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) ) );
   }
-  else if ( dataWin->getValue( data->dataRow ) < tmp[ 0 ] )
+  else if ( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) < tmp[ 0 ] )
   {
-    min->setValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, dataWin->getValue( data->dataRow ) ) );
+    min->setValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) ) );
   }
 #endif
   return 1;
@@ -1930,13 +1933,13 @@ bool StatAvgBurstTime::filter( CalculateData *data ) const
   TRecordTime begin;
   TRecordTime end;
 
-  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
-          data->beginTime : dataWin->getBeginTime( data->dataRow );
+  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
+          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
 
-  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
-        data->endTime : dataWin->getEndTime( data->dataRow );
+  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
+        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
 
-  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
                               myHistogram )
          &&
          filterBurstTime( end - begin, myHistogram );
@@ -1947,11 +1950,11 @@ TSemanticValue StatAvgBurstTime::execute( CalculateData *data )
   TRecordTime begin;
   TRecordTime end;
 
-  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
-          data->beginTime : dataWin->getBeginTime( data->dataRow );
+  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
+          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
 
-  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
-        data->endTime : dataWin->getEndTime( data->dataRow );
+  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
+        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
 
 #ifndef PARALLEL_ENABLED
   ++( ( numValues[ data->plane ] )[ data->column ] );
@@ -2030,13 +2033,13 @@ bool StatStdevBurstTime::filter( CalculateData *data ) const
   TRecordTime begin;
   TRecordTime end;
 
-  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
-          data->beginTime : dataWin->getBeginTime( data->dataRow );
+  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
+          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
 
-  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
-        data->endTime : dataWin->getEndTime( data->dataRow );
+  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
+        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
 
-  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
                               myHistogram )
          &&
          filterBurstTime( end - begin, myHistogram );
@@ -2047,11 +2050,11 @@ TSemanticValue StatStdevBurstTime::execute( CalculateData *data )
   TRecordTime begin;
   TRecordTime end;
 
-  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
-          data->beginTime : dataWin->getBeginTime( data->dataRow );
+  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
+          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
 
-  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
-        data->endTime : dataWin->getEndTime( data->dataRow );
+  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
+        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
 
   TRecordTime tmpDuration = end - begin;
   tmpDuration = myHistogram->getControlWindow()->traceUnitsToWindowUnits( tmpDuration );
@@ -2146,13 +2149,13 @@ bool StatAvgPerBurst::filter( CalculateData *data ) const
   TRecordTime begin;
   TRecordTime end;
 
-  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
-          data->beginTime : dataWin->getBeginTime( data->dataRow );
+  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
+          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
 
-  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
-        data->endTime : dataWin->getEndTime( data->dataRow );
+  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
+        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
 
-  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
                               myHistogram )
          &&
          filterBurstTime( end - begin, myHistogram );
@@ -2166,7 +2169,7 @@ TSemanticValue StatAvgPerBurst::execute( CalculateData *data )
   numValues->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, 1.0 ) );
 #endif
 
-  return dataWin->getValue( data->dataRow );
+  return myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
 }
 
 TSemanticValue StatAvgPerBurst::finishRow( TSemanticValue cellValue,
@@ -2231,13 +2234,13 @@ bool StatAvgPerBurstNotZero::filter( CalculateData *data ) const
   TRecordTime begin;
   TRecordTime end;
 
-  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
-          data->beginTime : dataWin->getBeginTime( data->dataRow );
+  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
+          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
 
-  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
-        data->endTime : dataWin->getEndTime( data->dataRow );
+  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
+        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
 
-  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
                               myHistogram )
          &&
          filterBurstTime( end - begin, myHistogram );
@@ -2245,14 +2248,14 @@ bool StatAvgPerBurstNotZero::filter( CalculateData *data ) const
 
 TSemanticValue StatAvgPerBurstNotZero::execute( CalculateData *data )
 {
-  if ( dataWin->getValue( data->dataRow ) != 0.0 )
+  if ( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) != 0.0 )
 #ifndef PARALLEL_ENABLED
     ++( ( numValues[ data->plane ] )[ data->column ] );
 #else
     numValues->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, 1.0 ) );
 #endif
 
-  return dataWin->getValue( data->dataRow );
+  return myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
 }
 
 TSemanticValue StatAvgPerBurstNotZero::finishRow( TSemanticValue cellValue,
@@ -2314,7 +2317,7 @@ void StatAvgValueNotZero::reset()
 
 bool StatAvgValueNotZero::filter( CalculateData *data ) const
 {
-  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
                               myHistogram );
 }
 
@@ -2323,20 +2326,20 @@ TSemanticValue StatAvgValueNotZero::execute( CalculateData *data )
   TRecordTime begin;
   TRecordTime end;
 
-  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
-          data->beginTime : dataWin->getBeginTime( data->dataRow );
+  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
+          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
 
-  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
-        data->endTime : dataWin->getEndTime( data->dataRow );
+  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
+        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
 
-  if ( dataWin->getValue( data->dataRow ) != 0.0 )
+  if ( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) != 0.0 )
 #ifndef PARALLEL_ENABLED
     ( numValues[ data->plane ] )[ data->column ] += ( end - begin );
 #else
     numValues->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, end - begin ) );
 #endif
 
-  return dataWin->getValue( data->dataRow ) * ( end -begin );
+  return myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) * ( end -begin );
 }
 
 TSemanticValue StatAvgValueNotZero::finishRow( TSemanticValue cellValue,
@@ -2393,13 +2396,13 @@ bool StatNumBurstsNotZero::filter( CalculateData *data ) const
   TRecordTime begin;
   TRecordTime end;
 
-  begin = data->beginTime > dataWin->getBeginTime( data->dataRow ) ?
-          data->beginTime : dataWin->getBeginTime( data->dataRow );
+  begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
+          data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
 
-  end = data->endTime < dataWin->getEndTime( data->dataRow ) ?
-        data->endTime : dataWin->getEndTime( data->dataRow );
+  end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
+        data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
 
-  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
                               myHistogram )
          &&
          filterBurstTime( end - begin, myHistogram );
@@ -2407,7 +2410,7 @@ bool StatNumBurstsNotZero::filter( CalculateData *data ) const
 
 TSemanticValue StatNumBurstsNotZero::execute( CalculateData *data )
 {
-  if ( dataWin->getValue( data->dataRow ) != 0.0 )
+  if ( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) != 0.0 )
     return 1.0;
   return 0.0;
 }
@@ -2453,13 +2456,13 @@ void StatSumBursts::reset()
 
 bool StatSumBursts::filter( CalculateData *data ) const
 {
-  return filterSemanticValue( dataWin->getValue( data->dataRow ),
+  return filterSemanticValue( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ),
                               myHistogram );
 }
 
 TSemanticValue StatSumBursts::execute( CalculateData *data )
 {
-  return dataWin->getValue( data->dataRow );
+  return myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
 }
 
 TSemanticValue StatSumBursts::finishRow( TSemanticValue cellValue,
