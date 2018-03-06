@@ -1270,22 +1270,23 @@ void KHistogram::parallelExecution( TRecordTime fromTime, TRecordTime toTime,
 
       for ( TObjectOrder i = fromRow; i <= toRow; ++i )
       {
-        if( progress != NULL )
+        #pragma omp task firstprivate(fromTime, toTime, i) shared(selectedRows, progress, progressDelta)
         {
-          if( progress->getStop() )
-            break;
-          if( selectedRows.size() <= 200 || currentRow % progressDelta == 0 )
+          if( progress == NULL ||
+              ( progress != NULL && !progress->getStop() ) )
+            executionTask( fromTime, toTime, i, i, selectedRows, progress );
+
+          if( progress != NULL && !progress->getStop() )
           {
-            #pragma omp critical
-            progress->setCurrentProgress( currentRow );
+            #pragma omp atomic
+            ++currentRow;
+            if( selectedRows.size() <= 200 || currentRow % progressDelta == 0 )
+            {
+              #pragma omp critical
+              progress->setCurrentProgress( currentRow );
+            }
           }
         }
-
-        #pragma omp task firstprivate(fromTime, toTime, i) shared(selectedRows, progress)
-        executionTask( fromTime, toTime, i, i, selectedRows, progress );
-
-        #pragma omp atomic
-        ++currentRow;
       }
     }
   }

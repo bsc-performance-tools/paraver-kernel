@@ -2020,16 +2020,20 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
                           firstprivate(tmpDrawCautionSize, tmpComputedMaxYSize, tmpComputedMinYSize, valuesToDrawSize, eventsToDrawSize, commsToDrawSize) \
                           default(none)
           {
-            computeSemanticRowParallel(
-                    numRows, firstObj, lastObj, selectedSet, selected, timeStep, timePos,
-                    objectAxisPos, objectPosList,
-                    tmpDrawCaution[ tmpDrawCautionSize - 1 ],
-                    tmpComputedMaxY[ tmpComputedMaxYSize - 1 ],
-                    tmpComputedMinY[ tmpComputedMinYSize - 1 ],
-                    valuesToDraw[ valuesToDrawSize - 1 ],
-                    eventsToDraw[ eventsToDrawSize - 1 ],
-                    commsToDraw[ commsToDrawSize - 1 ],
-                    paramProgress );
+            if( paramProgress == NULL ||
+                ( paramProgress != NULL && !paramProgress->getStop() ) )
+            {
+              computeSemanticRowParallel(
+                      numRows, firstObj, lastObj, selectedSet, selected, timeStep, timePos,
+                      objectAxisPos, objectPosList,
+                      tmpDrawCaution[ tmpDrawCautionSize - 1 ],
+                      tmpComputedMaxY[ tmpComputedMaxYSize - 1 ],
+                      tmpComputedMinY[ tmpComputedMinYSize - 1 ],
+                      valuesToDraw[ valuesToDrawSize - 1 ],
+                      eventsToDraw[ eventsToDrawSize - 1 ],
+                      commsToDraw[ commsToDrawSize - 1 ],
+                      paramProgress );
+            }
 
             if( paramProgress != NULL && !paramProgress->getStop() )
             {
