@@ -1609,6 +1609,7 @@ TSemanticValue StatIntegral::execute( CalculateData *data )
 {
   TRecordTime begin;
   TRecordTime end;
+  TSemanticValue value;
 
   begin = data->beginTime > myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow ) ?
           data->beginTime : myHistogram->getClonedWindow( dataWin )->getBeginTime( data->dataRow );
@@ -1616,7 +1617,10 @@ TSemanticValue StatIntegral::execute( CalculateData *data )
   end = data->endTime < myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow ) ?
         data->endTime : myHistogram->getClonedWindow( dataWin )->getEndTime( data->dataRow );
 
-  return dataWin->traceUnitsToWindowUnits( end - begin ) * myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
+  value = myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
+  value = value >= (TSemanticValue)0.0 ? value : -value;
+
+  return dataWin->traceUnitsToWindowUnits( end - begin ) * value;
 }
 
 TSemanticValue StatIntegral::finishRow( TSemanticValue cellValue,
