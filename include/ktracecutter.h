@@ -152,10 +152,10 @@ class KTraceCutter : public TraceCutter
                           unsigned long long timeCutEnd );
     const std::set< TEventType > mergeDuplicates( const std::multiset< TEventType>& eventTypesWithPCFZeros );
     void dumpEventsSet( const std::set< TEventType >& closingEventTypes,
-                        unsigned int cpu,
-                        unsigned int appl,
-                        unsigned int task,
-                        unsigned int thread,
+                        TThreadOrder cpu,
+                        TApplOrder appl,
+                        TTaskOrder task,
+                        TThreadOrder thread,
                         const unsigned long long final_time,
                         int &numWrittenChars,
                         bool &needEOL,
