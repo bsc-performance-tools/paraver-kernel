@@ -145,10 +145,12 @@ void KTraceFilter::filter_process_header( char *header )
 /* 0:  Type not allowed */
 /* 1:  Type allowed, whitout min_time */
 /* 2:  Type allowed, with min_time */
-int KTraceFilter::filter_allowed_type(  int appl, int task, int thread,
-                                        unsigned long long time,
-                                        unsigned long long type,
-                                        unsigned long long value )
+int KTraceFilter::filter_allowed_type(  TApplOrder appl,
+                                        TTaskOrder task,
+                                        TThreadOrder thread,
+                                        TRecordTime time,
+                                        TEventType type,
+                                        TEventValue value )
 {
   int i, j, type_allowed;
 
@@ -366,12 +368,21 @@ void KTraceFilter::dump_buffer()
 void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *progress )
 {
   bool end_line, print_record;
-  int i, j, k, num_char, state, size, appl, task, thread, cpu;
-  unsigned long long time_1, time_2, type, value;
-  // char *word, event_record[MAX_LINE_SIZE], trace_name[2048], *c, *trace_header;
-  //char *word, *event_record, *trace_name, *c, *trace_header;
+  int i, j, k, num_char;
+
+  TRecordType id;
+  TCPUOrder cpu;
+  TApplOrder appl;
+  TTaskOrder task;
+  TThreadOrder thread;
+  unsigned long long time_1, time_2;
+  TState state;
+  TEventType type;
+  TEventValue value;
+  TCommSize size;
+  TCommTag tag;
+
   char *word, *trace_name, *c, *trace_header;
-  //char pcf_file[2048];
   char *pcf_file;
   unsigned long num_iters = 0;
   bool end_parsing = false;
@@ -768,7 +779,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
 
         if ( exec_options->min_comm_size > 0 )
         {
-          sscanf( line, "%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%d:%*d\n", &size );
+          sscanf( line, "%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%*d:%lu:%*d\n", &size );
 
           if ( size < exec_options->min_comm_size )
             break;

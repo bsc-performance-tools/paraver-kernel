@@ -47,15 +47,15 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
 
     struct counter
     {
-      unsigned long long type;
-      unsigned long long value;
-      unsigned long long num;
+      TEventType type;
+      TEventValue value;
+      TEventValue num;
       bool last_is_zero;
     };
 
     struct stack
     {
-      unsigned long long type[5];
+      TEventType type[5];
       bool valid[5];
       int top;
     };
@@ -63,28 +63,28 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     struct ParaverEvent
     {
       int thread_id;
-      int cpu;
+      TCPUOrder cpu;
       unsigned long long timestamp;
-      unsigned long long type[16];
-      unsigned long long value[16];
+      TEventType type[16];
+      TEventValue value[16];
       struct ParaverEvent *next_event;
       struct ParaverEvent *previous_event;
     };
 
     struct counter_event
     {
-      int cpu;
+      TCPUOrder cpu;
       unsigned long long time;
-      unsigned long long type;
-      unsigned long long value;
+      TEventType type;
+      TEventValue value;
       struct counter_event *next;
     };
 
     struct thread_info
     {
-      int appl;
-      int task;
-      int thread;
+      TApplOrder appl;
+      TTaskOrder task;
+      TThreadOrder thread;
       struct counter counters[150];
       int next_free_counter;
       struct stack calls;
@@ -98,9 +98,9 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
 
     struct type_values
     {
-      unsigned long long type;
+      TEventType type;
       bool all_values;
-      unsigned long long values[16];
+      TEventValue values[16];
     };
 
     struct sc_allowed_types
@@ -134,7 +134,7 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     unsigned long long interval;
     unsigned long long last_time;
     unsigned long long trace_time;
-    unsigned long long type_marks[10];
+    TEventType type_marks[10];
     unsigned long long min_state_time;
     struct sc_allowed_types types;
     int last_type_mark;
@@ -171,17 +171,17 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
     void read_sc_args();
     void proces_header( char *header, FILE *in, FILE *out );
     void write_pcf( char *file_out );
-    bool allowed_type( unsigned long long type, unsigned long long value );
-    bool allowed_type_mark( unsigned long long type );
-    int inc_counter( int appl, int task, int thread,
-                     unsigned long long type, unsigned long long value );
+    bool allowed_type( TEventType type, TEventValue value );
+    bool allowed_type_mark( TEventType type );
+    int inc_counter( TApplOrder appl, TTaskOrder task, TThreadOrder thread,
+                     TEventType type, TEventValue value );
     void put_zeros( void );
     void flush_all_events( void );
     void put_all_counters( void );
-    void put_counters_by_thread( int appl, int task, int thread, int cpu );
+    void put_counters_by_thread( TApplOrder appl, TTaskOrder task, TThreadOrder thread, TCPUOrder cpu );
     void ini_progress_bar( char *file_name, ProgressController *progress );
     void show_progress_bar( ProgressController *progress );
-    void put_counters_on_state_by_thread( int appl, int task, int thread );
+    void put_counters_on_state_by_thread( TApplOrder appl, TTaskOrder task, TThreadOrder thread );
     void sc_by_time( ProgressController *progress );
     void flush_counter_buffers( void );
     void sc_by_event( ProgressController *progress );

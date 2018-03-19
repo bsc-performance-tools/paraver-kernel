@@ -38,10 +38,10 @@ class TraceOptions
   public:
     struct allowed_types
     {
-      unsigned long long type;
-      unsigned long long max_type;  /* For range of types */
+      TEventType type;
+      TEventType max_type;  /* For range of types */
       unsigned long long min_call_time; /* For filtering calls by time */
-      unsigned long long value[20];
+      TEventValue value[20];
       int last_value;
     };
 
