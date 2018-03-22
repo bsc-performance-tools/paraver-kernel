@@ -154,6 +154,7 @@ void WindowProxy::init()
   raise = false;
   changed = false;
   redraw = false;
+  forceRedraw = false;
   commLines = ParaverConfig::getInstance()->getTimelineViewCommunicationsLines();
   flags = ParaverConfig::getInstance()->getTimelineViewEventsLines();
   child = NULL;
@@ -1164,6 +1165,16 @@ bool WindowProxy::getRedraw() const
 void WindowProxy::setRedraw( bool newValue )
 {
   redraw = newValue;
+}
+
+bool WindowProxy::getForceRedraw() const
+{
+  return forceRedraw;
+}
+
+void WindowProxy::setForceRedraw( bool newValue )
+{
+  forceRedraw = newValue;
 }
 
 bool WindowProxy::getDrawCommLines() const

@@ -109,6 +109,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   changed = false;
   redraw = false;
   recalc = false;
+  forceRecalc = false;
 
   codeColor = Histogram::getCodeColor();
 
@@ -1485,6 +1486,16 @@ bool HistogramProxy::getRecalc() const
 void HistogramProxy::setRecalc( bool newValue )
 {
   recalc = newValue;
+}
+
+bool HistogramProxy::getForceRecalc() const
+{
+  return forceRecalc;
+}
+
+void HistogramProxy::setForceRecalc( bool newValue )
+{
+  forceRecalc = newValue;
 }
 
 bool HistogramProxy::getCodeColor() const

@@ -469,6 +469,12 @@ class Histogram
     }
     virtual void setRecalc( bool newValue )
     {}
+    virtual bool getForceRecalc() const
+    {
+      return false;
+    }
+    virtual void setForceRecalc( bool newValue )
+    {}
     virtual bool getCodeColor() const
     {
       return false;
@@ -777,6 +783,8 @@ class HistogramProxy : public Histogram
     virtual void setRedraw( bool newValue );
     virtual bool getRecalc() const;
     virtual void setRecalc( bool newValue );
+    virtual bool getForceRecalc() const;
+    virtual void setForceRecalc( bool newValue );
     virtual bool getCodeColor() const;
     virtual void setCodeColor( bool newValue );
     virtual PRV_UINT16 getPixelSize() const;
@@ -848,6 +856,7 @@ class HistogramProxy : public Histogram
     bool changed;
     bool redraw;
     bool recalc;
+    bool forceRecalc;
     bool codeColor;
     PRV_UINT16 pixelSize;
     bool onlyTotals;

@@ -441,6 +441,12 @@ class Window
     }
     virtual void setRedraw( bool newValue )
     {}
+    virtual bool getForceRedraw() const
+    {
+      return false;
+    }
+    virtual void setForceRedraw( bool newValue )
+    {}
     virtual bool getDrawCommLines() const
     {
       return true;
@@ -980,6 +986,8 @@ class WindowProxy: public Window
     virtual void setChanged( bool newValue );
     virtual bool getRedraw() const;
     virtual void setRedraw( bool newValue );
+    virtual bool getForceRedraw() const;
+    virtual void setForceRedraw( bool newValue );
     virtual bool getDrawCommLines() const;
     virtual void setDrawCommLines( bool newValue );
     virtual bool getDrawFlags() const;
@@ -1278,6 +1286,7 @@ class WindowProxy: public Window
     bool raise;
     bool changed;
     bool redraw;
+    bool forceRedraw;
     bool commLines;
     bool flags;
     PRV_UINT16 pixelSize;
