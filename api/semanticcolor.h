@@ -55,6 +55,8 @@ class SemanticColor
     static rgb DEFAULT_PHYSICAL_COMMUNICATIONS;
     static rgb DEFAULT_BEGIN_GRADIENT_COLOR;
     static rgb DEFAULT_END_GRADIENT_COLOR;
+    static rgb DEFAULT_NEGATIVE_BEGIN_GRADIENT_COLOR;
+    static rgb DEFAULT_NEGATIVE_END_GRADIENT_COLOR;
     static rgb DEFAULT_ABOVE_OUTLIER_COLOR;
     static rgb DEFAULT_BELOW_OUTLIER_COLOR;
 
@@ -63,6 +65,8 @@ class SemanticColor
 
     static rgb getBeginGradientColor();
     static rgb getEndGradientColor();
+    static rgb getNegativeBeginGradientColor();
+    static rgb getNegativeEndGradientColor();
     static rgb getAboveOutlierColor();
     static rgb getBelowOutlierColor();
 
@@ -79,6 +83,8 @@ class SemanticColor
 
     static rgb beginGradientColor;
     static rgb endGradientColor;
+    static rgb negativeBeginGradientColor;
+    static rgb negativeEndGradientColor;
     static rgb aboveOutlierColor;
     static rgb belowOutlierColor;
 };
@@ -128,6 +134,12 @@ class GradientColor: public SemanticColor
     void setEndGradientColor( rgb color );
     rgb getEndGradientColor() const;
 
+    void setNegativeBeginGradientColor( rgb color );
+    rgb getNegativeBeginGradientColor() const;
+
+    void setNegativeEndGradientColor( rgb color );
+    rgb getNegativeEndGradientColor() const;
+
     void setAboveOutlierColor( rgb color );
     rgb getAboveOutlierColor() const;
 
@@ -161,12 +173,18 @@ class GradientColor: public SemanticColor
 
     rgb beginGradientColor;
     rgb endGradientColor;
+    rgb negativeBeginGradientColor;
+    rgb negativeEndGradientColor;
     rgb aboveOutlierColor;
     rgb belowOutlierColor;
 
     double redStep;
     double greenStep;
     double blueStep;
+
+    double negativeRedStep;
+    double negativeGreenStep;
+    double negativeBlueStep;
 
     TGradientFunction function;
     PRV_INT16 numSteps;
