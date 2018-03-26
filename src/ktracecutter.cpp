@@ -640,14 +640,11 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *originalTraceName
                                                          ProgressController *progress )
 {
   unsigned long long timeOffset = 0, time_1, time_2, time_3, time_4;
-  //int cpu, appl, task, thread, state, cpu_2, appl_2, task_2, thread_2;
   TCPUOrder cpu, cpu_2;
   TApplOrder appl, appl_2;
   TTaskOrder task, task_2;
   TThreadOrder thread, thread_2;
   TState state;
-  //TRecordTime time_1, time_2, time_3, time_4;
-//  unsigned long long time_1, time_2, time_3, time_4;
   char *trace_header;
 
   if ( !is_zip )
@@ -912,16 +909,12 @@ void KTraceCutter::execute( char *trace_in,
 {
   char *c, *word, *trace_header;
   string tmp_dir;
-  //char trace_name[1024], buffer[MAX_LINE_SIZE];
   char *trace_name;
+  char *trace_file_out;
   char *buffer;
   bool end_parsing = false;
   bool reset_counters;
-  //char trace_file_out[2048];
-  char *trace_file_out;
 
-  //unsigned int id, cpu, appl, task, thread, state, cpu_2, appl_2, task_2, thread_2, size, tag;
-  //unsigned long long type, value, time_1, time_2, time_3, time_4;
   TRecordType id;
   TCPUOrder cpu, cpu_2;
   TApplOrder appl, appl_2;
