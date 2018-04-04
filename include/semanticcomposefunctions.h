@@ -1636,12 +1636,6 @@ class ComposeDelta: public SemanticCompose
       return new ComposeDelta( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
-    {
-      return SAME_TYPE;
-    }
-
-
   protected:
     virtual const bool getMyInitFromBegin()
     {

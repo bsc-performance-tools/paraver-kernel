@@ -488,12 +488,12 @@ TSemanticValue ComposeDelta::execute( const SemanticInfo *info )
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
-  TSemanticValue result = 0;
+  TSemanticValue result = 0.0;
 
-  if ( myInfo->values[ 0 ] > semPrevValue[ tmpOrder ] )
-    result = myInfo->values[ 0 ] - semPrevValue[ tmpOrder ];
-  else if ( myInfo->values[ 0 ] == semPrevValue[ tmpOrder ] )
+  if ( myInfo->values[ 0 ] == semPrevValue[ tmpOrder ] )
     result = prevValue[ tmpOrder ];
+  else
+    result = myInfo->values[ 0 ] - semPrevValue[ tmpOrder ];
 
   semPrevValue[ tmpOrder ] = myInfo->values[ 0 ];
   prevValue[ tmpOrder ] = result;
