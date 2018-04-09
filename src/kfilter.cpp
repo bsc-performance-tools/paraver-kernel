@@ -241,36 +241,28 @@ string FilterEqual::name = "=";
 bool FilterEqual::execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result )
 {
   result = data == param;
-  if ( result )
-    return true;
-  return false;
+  return result;
 }
 
 string FilterNotEqual::name = "!=";
 bool FilterNotEqual::execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result )
 {
   result = data != param;
-  if ( result )
-    return false;
-  return true;
+  return !result;
 }
 
 string FilterGreater::name = ">";
 bool FilterGreater::execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result )
 {
   result = data > param;
-  if ( result )
-    return false;
-  return true;
+  return !result;
 }
 
 string FilterFewer::name = "<";
 bool FilterFewer::execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result )
 {
   result = data < param;
-  if ( result )
-    return false;
-  return true;
+  return !result;
 }
 
 string FilterRange::name = "[x,y]";
@@ -535,12 +527,12 @@ void KFilter::getValidEvents( vector<TEventType>& onVector,
                               const set<TEventType>& eventsLoaded ) const
 {
   bool stop = true;
-  bool tmpResult;
+  bool tmpResult = false;
 
   for ( set<TEventType>::const_iterator itEvt = eventsLoaded.begin();
         itEvt != eventsLoaded.end(); ++itEvt )
   {
-    for ( PRV_UINT32 i = 0; i < eventTypes.size(); i++ )
+    for ( PRV_UINT32 i = 0; i < eventTypes.size(); ++i )
     {
       stop = functionEventTypes->execute( ( TSemanticValue ) eventTypes[ i ], i, ( *itEvt ), tmpResult );
       if ( stop )
