@@ -366,12 +366,12 @@ void GradientColor::setEndGradientColor( rgb color )
   recalcSteps();
 }
 
-inline rgb GradientColor::getEndGradientColor() const
+rgb GradientColor::getEndGradientColor() const
 {
   return endGradientColor;
 }
 
-inline void GradientColor::setAboveOutlierColor( rgb color )
+void GradientColor::setAboveOutlierColor( rgb color )
 {
   aboveOutlierColor = color;
 }
@@ -381,7 +381,7 @@ rgb GradientColor::getAboveOutlierColor() const
   return aboveOutlierColor;
 }
 
-inline void GradientColor::setBelowOutlierColor( rgb color )
+void GradientColor::setBelowOutlierColor( rgb color )
 {
   belowOutlierColor = color;
 }
