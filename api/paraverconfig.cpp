@@ -260,6 +260,8 @@ ParaverConfig::ParaverConfig()
   xmlColor.lowGradient = SemanticColor::DEFAULT_BELOW_OUTLIER_COLOR;
   xmlColor.beginGradient = SemanticColor::DEFAULT_BEGIN_GRADIENT_COLOR;
   xmlColor.endGradient = SemanticColor::DEFAULT_END_GRADIENT_COLOR;
+  xmlColor.beginNegativeGradient = SemanticColor::DEFAULT_NEGATIVE_BEGIN_GRADIENT_COLOR;
+  xmlColor.endNegativeGradient = SemanticColor::DEFAULT_NEGATIVE_END_GRADIENT_COLOR;
 
   loadMap();
 }
@@ -1179,6 +1181,16 @@ void ParaverConfig::setColorsEndGradient( rgb whichEndGradient )
   xmlColor.endGradient = whichEndGradient;
 }
 
+void ParaverConfig::setColorsBeginNegativeGradient( rgb whichBeginGradient )
+{
+  xmlColor.beginNegativeGradient = whichBeginGradient;
+}
+
+void ParaverConfig::setColorsEndNegativeGradient( rgb whichEndGradient )
+{
+  xmlColor.endNegativeGradient = whichEndGradient;
+}
+
 rgb ParaverConfig::getColorsTimelineBackground() const
 {
   return xmlColor.timelineBackground;
@@ -1232,6 +1244,16 @@ rgb ParaverConfig::getColorsBeginGradient() const
 rgb ParaverConfig::getColorsEndGradient() const
 {
   return xmlColor.endGradient;
+}
+
+rgb ParaverConfig::getColorsBeginNegativeGradient() const
+{
+  return xmlColor.beginNegativeGradient;
+}
+
+rgb ParaverConfig::getColorsEndNegativeGradient() const
+{
+  return xmlColor.endNegativeGradient;
 }
 
 void ParaverConfig::readParaverConfigFile()

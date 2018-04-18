@@ -147,14 +147,12 @@ rgb SemanticColor::getEndGradientColor()
 
 rgb SemanticColor::getNegativeBeginGradientColor()
 {
-  //return ParaverConfig::getInstance()->getColorsBeginGradient();
-  return SemanticColor::negativeBeginGradientColor;
+  return ParaverConfig::getInstance()->getColorsBeginNegativeGradient();
 }
 
 rgb SemanticColor::getNegativeEndGradientColor()
 {
-  //return ParaverConfig::getInstance()->getColorsEndGradient();
-  return SemanticColor::negativeEndGradientColor;
+  return ParaverConfig::getInstance()->getColorsEndNegativeGradient();
 }
 
 rgb SemanticColor::getAboveOutlierColor()
