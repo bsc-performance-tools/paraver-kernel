@@ -128,7 +128,7 @@ ParaverConfig::ParaverConfig()
   paraverHomeDir      = homedir;
   paraverCFGsDir      = std::string( tmpPath ) + std::string( "/cfgs" );
   paraverXMLDir       = homedir;
-  paraverTutorialsDir = homedir + std::string( "/paraver-tutorials" );
+  paraverTutorialsDir = homedir + std::string( "/tutorials" );
 #else // __APPLE__
   if ( getenv( "PARAVER_HOME" ) == NULL )
   {
