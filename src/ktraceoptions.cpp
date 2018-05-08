@@ -231,6 +231,7 @@ void KTraceOptions::parse_type( xmlDocPtr doc,
   word = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
 
 
+  // range 'type1-type2' containing dash?
   if ( ( c = strchr( ( char * )word, '-' ) ) != NULL )
   {
     *c = '\0';
@@ -240,7 +241,7 @@ void KTraceOptions::parse_type( xmlDocPtr doc,
 
     return;
   }
-  else
+  else // single type
   {
     types[last_type].type = atoll( ( char * )word );
     types[last_type].max_type = 0;
@@ -901,7 +902,7 @@ void KTraceOptions::saveXMLFilter( xmlTextWriterPtr &writer )
         rc = xmlTextWriterWriteFormatRaw( writer, "%s",BAD_CAST auxStrTypes.c_str() );
         for( int ivalue = 0; ivalue < auxTypes[ itype ].last_value; ++ivalue )
         {
-          rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "value", "%lld", auxTypes[ itype ].value[ ivalue ] );
+          rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "value", "%ld", auxTypes[ itype ].value[ ivalue ] );
         }
 
         rc = xmlTextWriterEndElement( writer ); // type

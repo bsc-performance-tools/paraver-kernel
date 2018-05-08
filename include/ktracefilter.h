@@ -91,10 +91,10 @@ class KTraceFilter: public TraceFilter
     {
       char *record;
       bool dump;
-      int appl;
-      int task;
-      int thread;
-      unsigned long long event_time;
+      TApplOrder appl;
+      TTaskOrder task;
+      TThreadOrder thread;
+      TRecordTime event_time;
       struct buffer_elem *next;
     };
 
@@ -107,10 +107,12 @@ class KTraceFilter: public TraceFilter
 
     void read_params();
     void filter_process_header( char *header );
-    int filter_allowed_type(  int appl, int task, int thread,
-                              unsigned long long time,
-                              unsigned long long type,
-                              unsigned long long value );
+    int filter_allowed_type(  TApplOrder appl,
+                              TTaskOrder task,
+                              TThreadOrder thread,
+                              TRecordTime time,
+                              TEventType type,
+                              TEventValue value );
     void ini_progress_bar( char *file_name, ProgressController *progress );
     void show_progress_bar( ProgressController *progress );
     void load_pcf( char *pcf_name );

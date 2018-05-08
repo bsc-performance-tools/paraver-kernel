@@ -152,10 +152,10 @@ class KTraceCutter : public TraceCutter
                           unsigned long long timeCutEnd );
     const std::set< TEventType > mergeDuplicates( const std::multiset< TEventType>& eventTypesWithPCFZeros );
     void dumpEventsSet( const std::set< TEventType >& closingEventTypes,
-                        unsigned int cpu,
-                        unsigned int appl,
-                        unsigned int task,
-                        unsigned int thread,
+                        TThreadOrder cpu,
+                        TApplOrder appl,
+                        TTaskOrder task,
+                        TThreadOrder thread,
                         const unsigned long long final_time,
                         int &numWrittenChars,
                         bool &needEOL,
@@ -163,9 +163,11 @@ class KTraceCutter : public TraceCutter
     void appendLastZerosToUnclosedEvents( const unsigned long long final_time );
     void ini_cutter_progress_bar( char *file_name, ProgressController *progress );
     void show_cutter_progress_bar( ProgressController *progress );
-    void update_queue( unsigned int appl, unsigned int task, unsigned int thread,
-                       unsigned long long type,
-                       unsigned long long value );
+    void update_queue( TApplOrder appl,
+                       TTaskOrder task,
+                       TThreadOrder thread,
+                       TEventType type,
+                       TEventValue value );
     void load_counters_of_pcf( char *trace_name );
     void shiftLeft_TraceTimes_ToStartFromZero( char *originalTraceName, char *nameIn, char *nameOut, bool is_zip, ProgressController *progress );
     bool is_selected_task( int task_id );

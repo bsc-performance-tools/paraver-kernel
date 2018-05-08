@@ -294,6 +294,8 @@ class ParaverConfig
     void setColorsLowGradient( rgb whichLowGradient );
     void setColorsBeginGradient( rgb whichBeginGradient );
     void setColorsEndGradient( rgb whichEndGradient );
+    void setColorsBeginNegativeGradient( rgb whichBeginGradient );
+    void setColorsEndNegativeGradient( rgb whichEndGradient );
 
     rgb getColorsTimelineBackground() const;
     rgb getColorsTimelineAxis() const;
@@ -306,6 +308,8 @@ class ParaverConfig
     rgb getColorsLowGradient() const;
     rgb getColorsBeginGradient() const;
     rgb getColorsEndGradient() const;
+    rgb getColorsBeginNegativeGradient() const;
+    rgb getColorsEndNegativeGradient() const;
 
     void saveXML( const std::string &filename );
     void loadXML( const std::string &filename );
@@ -658,6 +662,11 @@ class ParaverConfig
         ar & boost::serialization::make_nvp( "low_gradient", lowGradient );
         ar & boost::serialization::make_nvp( "begin_gradient", beginGradient );
         ar & boost::serialization::make_nvp( "end_gradient", endGradient );
+        if( version >= 3 )
+        {
+          ar & boost::serialization::make_nvp( "begin_negative_gradient", beginNegativeGradient );
+          ar & boost::serialization::make_nvp( "end_negative_gradient", endNegativeGradient );
+        }
       }
 
       rgb timelineBackground;
@@ -671,6 +680,8 @@ class ParaverConfig
       rgb lowGradient;
       rgb beginGradient;
       rgb endGradient;
+      rgb beginNegativeGradient;
+      rgb endNegativeGradient;
 
     } xmlColor;
 
@@ -715,7 +726,7 @@ BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersRange, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersAlgorithm, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCounters, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilters, 3)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesColor, 2)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesColor, 3)
 
 // WhatWhere.num_decimals
 class WWNumDecimals: public PropertyFunction

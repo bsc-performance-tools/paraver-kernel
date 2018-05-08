@@ -101,7 +101,7 @@ typedef PRV_UINT64        TCommID;
 typedef PRV_INT64         TCommSize;
 typedef PRV_INT64         TCommTag;
 typedef PRV_UINT32        TEventType;
-typedef PRV_UINT64        TEventValue;
+typedef PRV_INT64         TEventValue;
 typedef PRV_UINT32        TState;
 
 typedef double        TSemanticValue;

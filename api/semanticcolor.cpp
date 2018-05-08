@@ -110,16 +110,20 @@ rgb SemanticColor::codeColor[ ] =
 };
 
 // Program defaults
-rgb SemanticColor::DEFAULT_BEGIN_GRADIENT_COLOR = {   0, 255,   0 };
-rgb SemanticColor::DEFAULT_END_GRADIENT_COLOR   = {   0,   0, 255 };
-rgb SemanticColor::DEFAULT_ABOVE_OUTLIER_COLOR  = { 255, 146,  24 };
-rgb SemanticColor::DEFAULT_BELOW_OUTLIER_COLOR  = { 207, 207,  68 };
+rgb SemanticColor::DEFAULT_BEGIN_GRADIENT_COLOR          = {   0, 255,   0 };
+rgb SemanticColor::DEFAULT_END_GRADIENT_COLOR            = {   0,   0, 255 };
+rgb SemanticColor::DEFAULT_NEGATIVE_BEGIN_GRADIENT_COLOR = { 255, 255,   0 };
+rgb SemanticColor::DEFAULT_NEGATIVE_END_GRADIENT_COLOR   = { 255,   0,   0 };
+rgb SemanticColor::DEFAULT_ABOVE_OUTLIER_COLOR           = { 255, 146,  24 };
+rgb SemanticColor::DEFAULT_BELOW_OUTLIER_COLOR           = { 207, 207,  68 };
 
 // Preferences may change these
-rgb SemanticColor::beginGradientColor = SemanticColor::DEFAULT_BEGIN_GRADIENT_COLOR;
-rgb SemanticColor::endGradientColor   = SemanticColor::DEFAULT_END_GRADIENT_COLOR;
-rgb SemanticColor::aboveOutlierColor  = SemanticColor::DEFAULT_ABOVE_OUTLIER_COLOR;
-rgb SemanticColor::belowOutlierColor  = SemanticColor::DEFAULT_BELOW_OUTLIER_COLOR;
+rgb SemanticColor::beginGradientColor         = SemanticColor::DEFAULT_BEGIN_GRADIENT_COLOR;
+rgb SemanticColor::endGradientColor           = SemanticColor::DEFAULT_END_GRADIENT_COLOR;
+rgb SemanticColor::negativeBeginGradientColor = SemanticColor::DEFAULT_NEGATIVE_BEGIN_GRADIENT_COLOR;
+rgb SemanticColor::negativeEndGradientColor   = SemanticColor::DEFAULT_NEGATIVE_END_GRADIENT_COLOR;
+rgb SemanticColor::aboveOutlierColor          = SemanticColor::DEFAULT_ABOVE_OUTLIER_COLOR;
+rgb SemanticColor::belowOutlierColor          = SemanticColor::DEFAULT_BELOW_OUTLIER_COLOR;
 
 PRV_UINT32 SemanticColor::getNumColors()
 {
@@ -139,6 +143,16 @@ rgb SemanticColor::getBeginGradientColor()
 rgb SemanticColor::getEndGradientColor()
 {
   return ParaverConfig::getInstance()->getColorsEndGradient();
+}
+
+rgb SemanticColor::getNegativeBeginGradientColor()
+{
+  return ParaverConfig::getInstance()->getColorsBeginNegativeGradient();
+}
+
+rgb SemanticColor::getNegativeEndGradientColor()
+{
+  return ParaverConfig::getInstance()->getColorsEndNegativeGradient();
 }
 
 rgb SemanticColor::getAboveOutlierColor()
@@ -302,7 +316,8 @@ rgb CodeColor::calcColor( TSemanticValue whichValue,
                           TSemanticValue minimum,
                           TSemanticValue maximum ) const
 {
-  if ( whichValue < minimum ||
+  if ( whichValue < 0.0 ||
+       whichValue < minimum ||
        whichValue > maximum )
     return getColor( 0 ); // IDLE!
 
@@ -335,10 +350,12 @@ GradientColor::GradientColor( )
   drawOutlier = true;
   drawOutOfScale = blackNotNull;
 
-  beginGradientColor = SemanticColor::getBeginGradientColor();
-  endGradientColor   = SemanticColor::getEndGradientColor();
-  aboveOutlierColor  = SemanticColor::getAboveOutlierColor();
-  belowOutlierColor  = SemanticColor::getBelowOutlierColor();
+  beginGradientColor         = SemanticColor::getBeginGradientColor();
+  endGradientColor           = SemanticColor::getEndGradientColor();
+  negativeBeginGradientColor = SemanticColor::getNegativeBeginGradientColor();
+  negativeEndGradientColor   = SemanticColor::getNegativeEndGradientColor();
+  aboveOutlierColor          = SemanticColor::getAboveOutlierColor();
+  belowOutlierColor          = SemanticColor::getBelowOutlierColor();
 
   function = GradientColor::STEPS;
   numSteps = 10;
@@ -369,6 +386,28 @@ void GradientColor::setEndGradientColor( rgb color )
 rgb GradientColor::getEndGradientColor() const
 {
   return endGradientColor;
+}
+
+void GradientColor::setNegativeBeginGradientColor( rgb color )
+{
+  negativeBeginGradientColor = color;
+  recalcSteps();
+}
+
+rgb GradientColor::getNegativeBeginGradientColor() const
+{
+  return negativeBeginGradientColor;
+}
+
+void GradientColor::setNegativeEndGradientColor( rgb color )
+{
+  negativeEndGradientColor = color;
+  recalcSteps();
+}
+
+inline rgb GradientColor::getNegativeEndGradientColor() const
+{
+  return negativeEndGradientColor;
 }
 
 void GradientColor::setAboveOutlierColor( rgb color )
@@ -464,8 +503,17 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
   if( maximum == minimum )
     return beginGradientColor;
 
-  TSemanticValue norm = ( whichValue - minimum ) /
-                        ( maximum - minimum );
+  TSemanticValue norm;
+
+  if( minimum >= 0.0 )
+    norm = ( whichValue - minimum ) / ( maximum - minimum );
+  else
+  {
+    if( whichValue >= 0.0 )
+      norm = whichValue / maximum;
+    else
+      norm = - ( whichValue / minimum );
+  }
 
   rgb returnColor;
 
@@ -555,6 +603,10 @@ void GradientColor::recalcSteps()
   redStep = ( (double)endGradientColor.red - (double)beginGradientColor.red );
   greenStep = ( (double)endGradientColor.green - (double)beginGradientColor.green );
   blueStep = ( (double)endGradientColor.blue - (double)beginGradientColor.blue );
+
+  negativeRedStep = ( (double)negativeEndGradientColor.red - (double)negativeBeginGradientColor.red );
+  negativeGreenStep = ( (double)negativeEndGradientColor.green - (double)negativeBeginGradientColor.green );
+  negativeBlueStep = ( (double)negativeEndGradientColor.blue - (double)negativeBeginGradientColor.blue );
 }
 
 void GradientColor::copy( GradientColor &destiny )
@@ -563,24 +615,43 @@ void GradientColor::copy( GradientColor &destiny )
   destiny.drawOutOfScale = drawOutOfScale;
 
   destiny.beginGradientColor = beginGradientColor;
-  destiny.endGradientColor = endGradientColor;
+  destiny.endGradientColor   = endGradientColor;
+  destiny.negativeBeginGradientColor = negativeBeginGradientColor;
+  destiny.negativeEndGradientColor   = negativeEndGradientColor;
   destiny.aboveOutlierColor = aboveOutlierColor;
   destiny.belowOutlierColor = belowOutlierColor;
 
-  destiny.redStep = redStep;
+  destiny.redStep   = redStep;
   destiny.greenStep = greenStep;
-  destiny.blueStep = blueStep;
+  destiny.blueStep  = blueStep;
+  destiny.negativeRedStep   = negativeRedStep;
+  destiny.negativeGreenStep = negativeGreenStep;
+  destiny.negativeBlueStep   = negativeBlueStep;
 }
 
 rgb GradientColor::functionLinear( TSemanticValue whichValue,
                                    TSemanticValue minimum,
                                    TSemanticValue maximum ) const
 {
-  rgb tmpColor = beginGradientColor;
+  rgb tmpColor;
 
-  tmpColor.red += floor( redStep * whichValue );
-  tmpColor.green += floor( greenStep * whichValue );
-  tmpColor.blue += floor( blueStep * whichValue );
+  if( whichValue >= 0.0 )
+  {
+    tmpColor = beginGradientColor;
+
+    tmpColor.red += floor( redStep * whichValue );
+    tmpColor.green += floor( greenStep * whichValue );
+    tmpColor.blue += floor( blueStep * whichValue );
+  }
+  else
+  {
+    tmpColor = negativeBeginGradientColor;
+    whichValue = -whichValue;
+
+    tmpColor.red += floor( negativeRedStep * whichValue );
+    tmpColor.green += floor( negativeGreenStep * whichValue );
+    tmpColor.blue += floor( negativeBlueStep * whichValue );
+  }
 
   return tmpColor;
 }
@@ -589,12 +660,27 @@ rgb GradientColor::functionSteps( TSemanticValue whichValue,
                                   TSemanticValue minimum,
                                   TSemanticValue maximum ) const
 {
-  rgb tmpColor = beginGradientColor;
+  rgb tmpColor;
 
-  double stepNorm = floor( numSteps * whichValue ) / numSteps;
-  tmpColor.red += floor( redStep * stepNorm );
-  tmpColor.green += floor( greenStep * stepNorm );
-  tmpColor.blue += floor( blueStep * stepNorm );
+  if( whichValue >= 0.0 )
+  {
+    tmpColor = beginGradientColor;
+
+    double stepNorm = floor( numSteps * whichValue ) / numSteps;
+    tmpColor.red += floor( redStep * stepNorm );
+    tmpColor.green += floor( greenStep * stepNorm );
+    tmpColor.blue += floor( blueStep * stepNorm );
+  }
+  else
+  {
+    tmpColor = negativeBeginGradientColor;
+    whichValue = -whichValue;
+
+    double stepNorm = floor( numSteps * whichValue ) / numSteps;
+    tmpColor.red += floor( negativeRedStep * stepNorm );
+    tmpColor.green += floor( negativeGreenStep * stepNorm );
+    tmpColor.blue += floor( negativeBlueStep * stepNorm );
+  }
 
   return tmpColor;
 }
@@ -603,12 +689,27 @@ rgb GradientColor::functionLog( TSemanticValue whichValue,
                                 TSemanticValue minimum,
                                 TSemanticValue maximum ) const
 {
-  rgb tmpColor = beginGradientColor;
+  rgb tmpColor;
 
-  double stepNorm = log( ( double )( whichValue * 100 + 1 ) ) / log( ( double )101 );
-  tmpColor.red += floor( redStep * stepNorm );
-  tmpColor.green += floor( greenStep * stepNorm );
-  tmpColor.blue += floor( blueStep * stepNorm );
+  if( whichValue >= 0.0 )
+  {
+    tmpColor = beginGradientColor;
+
+    double stepNorm = log( ( double )( whichValue * 100 + 1 ) ) / log( ( double )101 );
+    tmpColor.red += floor( redStep * stepNorm );
+    tmpColor.green += floor( greenStep * stepNorm );
+    tmpColor.blue += floor( blueStep * stepNorm );
+  }
+  else
+  {
+    tmpColor = negativeBeginGradientColor;
+    whichValue = -whichValue;
+
+    double stepNorm = log( ( double )( whichValue * 100 + 1 ) ) / log( ( double )101 );
+    tmpColor.red += floor( negativeRedStep * stepNorm );
+    tmpColor.green += floor( negativeGreenStep * stepNorm );
+    tmpColor.blue += floor( negativeBlueStep * stepNorm );
+  }
 
   return tmpColor;
 }
@@ -617,12 +718,27 @@ rgb GradientColor::functionExp( TSemanticValue whichValue,
                                 TSemanticValue minimum,
                                 TSemanticValue maximum ) const
 {
-  rgb tmpColor = beginGradientColor;
+  rgb tmpColor;
 
-  double stepNorm = exp( ( double )( whichValue * 10 ) ) / exp( ( double )10 );
-  tmpColor.red += floor( redStep * stepNorm );
-  tmpColor.green += floor( greenStep * stepNorm );
-  tmpColor.blue += floor( blueStep * stepNorm );
+  if( whichValue >= 0.0 )
+  {
+    tmpColor = beginGradientColor;
+
+    double stepNorm = exp( ( double )( whichValue * 10 ) ) / exp( ( double )10 );
+    tmpColor.red += floor( redStep * stepNorm );
+    tmpColor.green += floor( greenStep * stepNorm );
+    tmpColor.blue += floor( blueStep * stepNorm );
+  }
+  else
+  {
+    tmpColor = negativeBeginGradientColor;
+    whichValue = -whichValue;
+
+    double stepNorm = exp( ( double )( whichValue * 10 ) ) / exp( ( double )10 );
+    tmpColor.red += floor( negativeRedStep * stepNorm );
+    tmpColor.green += floor( negativeGreenStep * stepNorm );
+    tmpColor.blue += floor( negativeBlueStep * stepNorm );
+  }
 
   return tmpColor;
 }

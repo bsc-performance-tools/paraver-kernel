@@ -46,7 +46,7 @@ inline TSemanticValue selectMethod( vector<TSemanticValue>& v )
 template <>
 inline TSemanticValue selectMethod<DRAW_MAXIMUM>( vector<TSemanticValue>& v )
 {
-  TSemanticValue max = 0.0;
+  TSemanticValue max = std::numeric_limits<TSemanticValue>::lowest();
 
   for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); ++it )
   {

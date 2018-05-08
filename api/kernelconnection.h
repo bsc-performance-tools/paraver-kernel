@@ -52,7 +52,7 @@ class TraceEditSequence;
 class EventDrivenCutter;
 class EventTranslator;
 
-typedef std::pair< unsigned long long, unsigned long long > TTypeValuePair;
+typedef std::pair< TEventType, TEventValue > TTypeValuePair;
 
 enum UserMessageID
 {

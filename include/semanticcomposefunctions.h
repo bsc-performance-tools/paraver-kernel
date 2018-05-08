@@ -1636,12 +1636,6 @@ class ComposeDelta: public SemanticCompose
       return new ComposeDelta( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
-    {
-      return SAME_TYPE;
-    }
-
-
   protected:
     virtual const bool getMyInitFromBegin()
     {
@@ -2014,6 +2008,73 @@ class ComposeTranslate: public SemanticCompose
     static std::string name;
 
 };
+
+
+class ComposeCosine: public SemanticCompose
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    ComposeCosine()
+    {
+      setDefaultParam();
+    }
+
+    ~ComposeCosine()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+
+    virtual void init( KWindow *whichWindow )
+    {}
+
+
+    virtual std::string getName()
+    {
+      return ComposeCosine::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeCosine( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return SAME_TYPE;
+    }
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return ( TParamValue ) 0;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
+  private:
+    static const bool initFromBegin = false;
+    static std::string name;
+};
+
+
 
 
 #endif // SEMANTICCOMPOSEFUNCTIONS_H_INCLUDED
