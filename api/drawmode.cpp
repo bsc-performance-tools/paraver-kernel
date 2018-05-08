@@ -46,7 +46,11 @@ inline TSemanticValue selectMethod( vector<TSemanticValue>& v )
 template <>
 inline TSemanticValue selectMethod<DRAW_MAXIMUM>( vector<TSemanticValue>& v )
 {
+#if __cplusplus >= 201103L
   TSemanticValue max = std::numeric_limits<TSemanticValue>::lowest();
+#else
+  TSemanticValue max = -std::numeric_limits<TSemanticValue>::min();
+#endif
 
   for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); ++it )
   {
