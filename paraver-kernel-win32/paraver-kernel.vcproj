@@ -44,7 +44,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Archivos de programa\iconv\include&quot;;&quot;C:\Archivos de programa\libxml2\include&quot;;&quot;C:\Archivos de programa\zlib\include&quot;;&quot;..\..\common-files\win32&quot;;..\api;..\include;..\;&quot;..\..\common-files&quot;;e:\boost"
+				AdditionalIncludeDirectories="&quot;C:\Archivos de programa\iconv\include&quot;;&quot;C:\Archivos de programa\libxml2\include&quot;;&quot;C:\Archivos de programa\zlib\include&quot;;&quot;..\paraver-kernel-win32&quot;;..\api;..\include;..\;&quot;..\..\common-files&quot;;e:\boost"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;PARAVERKERNEL_EXPORTS"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
