@@ -2379,10 +2379,13 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
 
 #ifndef PARALLEL_ENABLED
   paramProgress = progress;
-  if( numRows > 1 )
-    progress->setEndLimit( numRows );
-  else
-    progress->setEndLimit( getWindowEndTime() - getWindowBeginTime() );
+  if( progress != NULL )
+  {
+    if( numRows > 1 )
+      progress->setEndLimit( numRows );
+    else
+      progress->setEndLimit( getWindowEndTime() - getWindowBeginTime() );
+  }
 #endif // PARALLEL_ENABLED
 
   // Drawmode: Group objects with same wxCoord in objectPosList
@@ -2449,7 +2452,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
         }
 
 #ifndef PARALLEL_ENABLED
-        if( numRows > 1 )
+        if( numRows > 1 && progress != NULL )
         {
           if( progress->getStop() )
             break;
