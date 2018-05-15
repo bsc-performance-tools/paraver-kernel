@@ -49,7 +49,7 @@ inline TSemanticValue selectMethod<DRAW_MAXIMUM>( vector<TSemanticValue>& v )
 #if __cplusplus >= 201103L
   TSemanticValue max = std::numeric_limits<TSemanticValue>::lowest();
 #else
-  TSemanticValue max = -std::numeric_limits<TSemanticValue>::min();
+  TSemanticValue max = -std::numeric_limits<TSemanticValue>::max();
 #endif
 
   for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); ++it )
@@ -67,7 +67,7 @@ inline TSemanticValue selectMethod<DRAW_MINNOTZERO>( vector<TSemanticValue>& v )
 
   for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); ++it )
   {
-    if( *it > 0 && *it < min ) min = *it;
+    if( *it < min ) min = *it;
   }
 
   if( min == std::numeric_limits<TSemanticValue>::max() )
