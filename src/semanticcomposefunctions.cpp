@@ -560,6 +560,13 @@ TSemanticValue ComposeTranslate::execute( const SemanticInfo *info )
 }
 
 
+string ComposeSine::name = "sin";
+TSemanticValue ComposeSine::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  return sin( myInfo->values[ 0 ] );
+}
+
 
 string ComposeCosine::name = "cos";
 TSemanticValue ComposeCosine::execute( const SemanticInfo *info )
