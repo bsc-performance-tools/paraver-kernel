@@ -112,8 +112,8 @@ rgb SemanticColor::codeColor[ ] =
 // Program defaults
 rgb SemanticColor::DEFAULT_BEGIN_GRADIENT_COLOR          = {   0, 255,   0 };
 rgb SemanticColor::DEFAULT_END_GRADIENT_COLOR            = {   0,   0, 255 };
-rgb SemanticColor::DEFAULT_NEGATIVE_BEGIN_GRADIENT_COLOR = { 255, 255,   0 };
-rgb SemanticColor::DEFAULT_NEGATIVE_END_GRADIENT_COLOR   = { 255,   0,   0 };
+rgb SemanticColor::DEFAULT_NEGATIVE_BEGIN_GRADIENT_COLOR = { 160, 255, 160 };
+rgb SemanticColor::DEFAULT_NEGATIVE_END_GRADIENT_COLOR   = { 160, 160, 255 };
 rgb SemanticColor::DEFAULT_ABOVE_OUTLIER_COLOR           = { 255, 146,  24 };
 rgb SemanticColor::DEFAULT_BELOW_OUTLIER_COLOR           = { 207, 207,  68 };
 
