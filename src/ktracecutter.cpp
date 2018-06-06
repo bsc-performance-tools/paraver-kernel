@@ -369,10 +369,10 @@ const set< TEventType > KTraceCutter::mergeDuplicates( const multiset< TEventTyp
 
 
 void KTraceCutter::dumpEventsSet( const set< TEventType >& closingEventTypes,
-                                  TCPUOrder cpu,
-                                  TApplOrder appl,
-                                  TTaskOrder task,
-                                  TThreadOrder thread,
+                                  unsigned int cpu,
+                                  unsigned int appl,
+                                  unsigned int task,
+                                  unsigned int thread,
                                   const unsigned long long final_time,
                                   int &numWrittenChars,
                                   bool &needEOL,
@@ -433,9 +433,9 @@ void KTraceCutter::appendLastZerosToUnclosedEvents( const unsigned long long fin
   for( CutterThreadInfo::iterator it = tasks.begin(); it != tasks.end(); ++it )
   {
     thread_info tmpInfo = (*it).second;
-    TApplOrder appl = (*it).first.dim1;
-    TTaskOrder task = (*it).first.dim2;
-    TThreadOrder thread = (*it).first.dim3;
+    unsigned int appl = (*it).first.dim1;
+    unsigned int task = (*it).first.dim2;
+    unsigned int thread = (*it).first.dim3;
 
     cpu = tmpInfo.lastCPU;
 
@@ -566,11 +566,9 @@ void KTraceCutter::show_cutter_progress_bar( ProgressController *progress )
 }
 
 
-void KTraceCutter::update_queue( TApplOrder appl,
-                                 TTaskOrder task,
-                                 TThreadOrder thread,
-                                 TEventType type,
-                                 TEventValue value )
+void KTraceCutter::update_queue( unsigned int appl, unsigned int task, unsigned int thread,
+                                 unsigned long long type,
+                                 unsigned long long value )
 {
   if ( tasks.find( appl, task, thread ) == tasks.end() )
   {
@@ -634,17 +632,10 @@ void KTraceCutter::load_counters_of_pcf( char *trace_name )
 // Substract to all the times in the trace the first time of the first record
 // Doesn't change header
 void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( char *originalTraceName,
-                                                         char *nameIn,
-                                                         char *nameOut,
-                                                         bool is_zip,
-                                                         ProgressController *progress )
+                                                         char *nameIn, char *nameOut, bool is_zip, ProgressController *progress )
 {
   unsigned long long timeOffset = 0, time_1, time_2, time_3, time_4;
-  TCPUOrder cpu, cpu_2;
-  TApplOrder appl, appl_2;
-  TTaskOrder task, task_2;
-  TThreadOrder thread, thread_2;
-  TState state;
+  int cpu, appl, task, thread, state, cpu_2, appl_2, task_2, thread_2;
   char *trace_header;
 
   if ( !is_zip )
@@ -915,19 +906,8 @@ void KTraceCutter::execute( char *trace_in,
   bool end_parsing = false;
   bool reset_counters;
 
-  TRecordType id;
-  TCPUOrder cpu, cpu_2;
-  TApplOrder appl, appl_2;
-  TTaskOrder task, task_2;
-  TThreadOrder thread, thread_2;
-  //TRecordTime time_1, time_2, time_3, time_4;
-  unsigned long long time_1, time_2, time_3, time_4;
-  TState state;
-  TEventType type;
-  TEventValue value;
-  TCommSize size;
-  TCommTag tag;
-
+  unsigned int id, cpu, appl, task, thread, state, cpu_2, appl_2, task_2, thread_2, size, tag;
+  unsigned long long type, value, time_1, time_2, time_3, time_4;
   int i, j, k;
   bool end_line;
 
@@ -1123,7 +1103,7 @@ void KTraceCutter::execute( char *trace_in,
     switch ( line[0] )
     {
       case '1':
-        sscanf( line, "%hu:%d:%d:%d:%d:%lld:%lld:%d\n",
+        sscanf( line, "%d:%d:%d:%d:%d:%lld:%lld:%d\n",
                 &id, &cpu, &appl, &task, &thread, &time_1, &time_2, &state );
 
         /* If is a not traceable thread, get next record */
@@ -1276,7 +1256,7 @@ void KTraceCutter::execute( char *trace_in,
         break;
 
       case '2':
-        sscanf( line, "%hu:%d:%d:%d:%d:%lld:%s\n", &id, &cpu, &appl, &task, &thread, &time_1, buffer );
+        sscanf( line, "%d:%d:%d:%d:%d:%lld:%s\n", &id, &cpu, &appl, &task, &thread, &time_1, buffer );
         strcpy( line, buffer );
 
         /* If isn't a traceable thread, get next record */
@@ -1357,7 +1337,7 @@ void KTraceCutter::execute( char *trace_in,
         break;
 
       case '3':
-        sscanf( line, "%hu:%d:%d:%d:%d:%lld:%lld:%d:%d:%d:%d:%lld:%lld:%ld:%ld\n",
+        sscanf( line, "%d:%d:%d:%d:%d:%lld:%lld:%d:%d:%d:%d:%lld:%lld:%d:%d\n",
                 &id,
                 &cpu,   &appl,   &task,   &thread,   &time_1, &time_2,
                 &cpu_2, &appl_2, &task_2, &thread_2, &time_3, &time_4, &size, &tag );
@@ -1406,7 +1386,7 @@ void KTraceCutter::execute( char *trace_in,
             if ( times[3] > last_record_time )
               last_record_time = times[3];
 
-            current_size += fprintf( outfile, "%d:%d:%d:%d:%d:%lld:%lld:%d:%d:%d:%d:%lld:%lld:%ld:%ld\n",
+            current_size += fprintf( outfile, "%d:%d:%d:%d:%d:%lld:%lld:%d:%d:%d:%d:%lld:%lld:%d:%d\n",
                                      id,
                                      cpu,   appl,   task,   thread,   time_1, time_2,
                                      cpu_2, appl_2, task_2, thread_2, time_3, time_4, size, tag );
@@ -1417,7 +1397,7 @@ void KTraceCutter::execute( char *trace_in,
         break;
 
       case '4': // DEPRECATED
-        sscanf( line, "%hu:%d:%d:%d:%d:%lld:%s\n", &id, &cpu, &appl, &task, &thread, &time_1, buffer );
+        sscanf( line, "%d:%d:%d:%d:%d:%lld:%s\n", &id, &cpu, &appl, &task, &thread, &time_1, buffer );
         strcpy( line, buffer );
 
         /* If time out of the cut, exit */

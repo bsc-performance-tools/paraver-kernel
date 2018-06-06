@@ -262,11 +262,11 @@ void KTraceSoftwareCounters::write_pcf( char *file_out )
 
 
 /* Return 0: not allowd call type; Return 1: allowed call type */
-bool KTraceSoftwareCounters::allowed_type( TEventType type, TEventValue value )
+bool KTraceSoftwareCounters::allowed_type( unsigned long long type, unsigned long long value )
 {
   int i, j;
 
-  if ( value == (TEventValue)0 )
+  if ( value == 0 )
     return false;
 
   /* Searching for that type and value */
@@ -281,7 +281,7 @@ bool KTraceSoftwareCounters::allowed_type( TEventType type, TEventValue value )
 // TODO: POTENTIAL BUG: DOESN'T SEARCH ALL ALONG THE VALUES!!!
       for ( j = 0; j < 16; j++ )
       {
-        if ( types.type_values[i].values[j] == (TEventValue)0 )
+        if ( types.type_values[i].values[j] == 0 )
           return false;
 
         if ( types.type_values[i].values[j] == value )
@@ -293,7 +293,7 @@ bool KTraceSoftwareCounters::allowed_type( TEventType type, TEventValue value )
   return false;
 }
 
-bool KTraceSoftwareCounters::allowed_type_mark( TEventType type )
+bool KTraceSoftwareCounters::allowed_type_mark( unsigned long long type )
 {
   int i;
 
@@ -309,11 +309,7 @@ bool KTraceSoftwareCounters::allowed_type_mark( TEventType type )
 
 
 /* Increment of a counter for a given type and value */
-int KTraceSoftwareCounters::inc_counter( TApplOrder appl,
-                                         TTaskOrder task,
-                                         TThreadOrder thread,
-                                         TEventType type,
-                                         TEventValue value )
+int KTraceSoftwareCounters::inc_counter( int appl, int task, int thread, unsigned long long type, unsigned long long value )
 {
   int i, j;
 
@@ -332,7 +328,7 @@ int KTraceSoftwareCounters::inc_counter( TApplOrder appl,
     thread_pointer[appl][task][thread] = i;
   }
 
-  if ( ( all_types && value > (TEventValue)0 ) || allowed_type( type, value ) )
+  if ( ( all_types && value > 0 ) || allowed_type( type, value ) )
   {
     /* Searching of the specified counter for the given thread */
     for ( j = 0; j < threads[i].next_free_counter; j++ )
@@ -358,7 +354,7 @@ int KTraceSoftwareCounters::inc_counter( TApplOrder appl,
       threads[i].counters[j].last_is_zero = false;
 
       if ( !acumm_values )
-        threads[i].counters[j].num = (TEventValue)1;
+        threads[i].counters[j].num = 1;
       else
         threads[i].counters[j].num = value;
 
@@ -388,7 +384,7 @@ void KTraceSoftwareCounters::put_zeros( void )
       /* If we have to put a counter and in the last interval we haven't */
       /* put any counter of the same type and value, it's time to put */
       /* a counter with 0 value on the last sampling period */
-      if ( threads[i].counters[j].num >= ( TEventValue )frequency && threads[i].counters[j].last_is_zero && last_time - interval > 0 )
+      if ( threads[i].counters[j].num >= ( unsigned long long )frequency && threads[i].counters[j].last_is_zero && last_time - interval > 0 )
       {
         if ( !global_counters )
         {
@@ -446,7 +442,7 @@ void KTraceSoftwareCounters::flush_all_events( void )
         {
           if ( threads[thread_id].counters[j].type == p->type[i] && ( threads[thread_id].counters[j].value == p->value[i] || global_counters ) )
           {
-            if ( threads[thread_id].counters[j].num < ( TEventValue )frequency )
+            if ( threads[thread_id].counters[j].num < ( unsigned long long )frequency )
             {
               //sprintf( record_aux, ":%lld:%lld", p->type[i], p->value[i] );
               //strcat( record, record_aux );
@@ -549,7 +545,7 @@ void KTraceSoftwareCounters::put_all_counters( void )
           type_mask = threads[i].counters[j].type / 10000 + 20000 + threads[i].counters[j].type % 10000;
       }
 
-      fprintf( outfile, "2:0:%d:%d:%d:%lld:%lld:%ld\n", threads[i].appl, threads[i].task, threads[i].thread, last_time, type_mask, threads[i].counters[j].num );
+      fprintf( outfile, "2:0:%d:%d:%d:%lld:%lld:%lld\n", threads[i].appl, threads[i].task, threads[i].thread, last_time, type_mask, threads[i].counters[j].num );
 
       /* If the counters is 0, we mark that in order to put a 0 counter */
       /* in the period before of a non-zero counter of the same type */
@@ -564,10 +560,10 @@ void KTraceSoftwareCounters::put_all_counters( void )
 }
 
 
-void KTraceSoftwareCounters::put_counters_by_thread( TApplOrder appl, TTaskOrder task, TThreadOrder thread, TCPUOrder cpu )
+void KTraceSoftwareCounters::put_counters_by_thread( int appl, int task, int thread, int cpu )
 {
   int i, j;
-  TEventType type_mask;
+  unsigned long long type_mask;
   struct counter_event *event;
 
   /* We search the thread on the struct */
@@ -594,7 +590,7 @@ void KTraceSoftwareCounters::put_counters_by_thread( TApplOrder appl, TTaskOrder
     else
       type_mask = threads[i].counters[j].type / 10000 + 20000 + threads[i].counters[j].type % 10000;
 
-    if ( threads[i].counters[j].num >= ( TEventValue )frequency && !threads[i].counters[j].last_is_zero )
+    if ( threads[i].counters[j].num >= ( unsigned long long )frequency && !threads[i].counters[j].last_is_zero )
     {
       if ( ( event = ( struct counter_event * )malloc( sizeof( struct counter_event ) ) ) == NULL )
       {
@@ -634,7 +630,7 @@ void KTraceSoftwareCounters::put_counters_by_thread( TApplOrder appl, TTaskOrder
     else
       type_mask = threads[i].counters[j].type / 10000 + 20000 + threads[i].counters[j].type % 10000;
 
-    if ( threads[i].counters[j].num >= ( TEventValue )frequency )
+    if ( threads[i].counters[j].num >= ( unsigned long long )frequency )
     {
       if ( ( event = ( struct counter_event * )malloc( sizeof( struct counter_event ) ) ) == NULL )
       {
@@ -697,7 +693,7 @@ void KTraceSoftwareCounters::ini_progress_bar( char *file_name, ProgressControll
 #endif
   total_trace_size = file_info.st_size;
 
-  /* Depen mida traça mostrem percentatge amb un interval diferent de temps */
+  /* Depen mida tra\E7a mostrem percentatge amb un interval diferent de temps */
   if ( total_trace_size < 500000000 )
     total_iters = 10000;
   else
@@ -736,10 +732,10 @@ void KTraceSoftwareCounters::show_progress_bar( ProgressController *progress )
 }
 
 
-void KTraceSoftwareCounters::put_counters_on_state_by_thread( TApplOrder appl, TTaskOrder task, TThreadOrder thread )
+void KTraceSoftwareCounters::put_counters_on_state_by_thread( int appl, int task, int thread )
 {
   int i, j;
-  TEventType type_mask;
+  unsigned long long type_mask;
 
   /* We search the thread on the struct */
   for ( i = 0; i < next_thread_slot; i++ )
@@ -769,7 +765,7 @@ void KTraceSoftwareCounters::put_counters_on_state_by_thread( TApplOrder appl, T
 
     /*
              if(threads[i].counters[j].num > 0 || !threads[i].counters[j].last_is_zero)*/
-    fprintf( outfile, "2:0:%d:%d:%d:%lld:%u:%ld\n", threads[i].appl, threads[i].task, threads[i].thread, last_time, type_mask, threads[i].counters[j].num );
+    fprintf( outfile, "2:0:%d:%d:%d:%lld:%lld:%lld\n", threads[i].appl, threads[i].task, threads[i].thread, last_time, type_mask, threads[i].counters[j].num );
 
     threads[i].counters[j].num = 0;
     /*
@@ -795,16 +791,8 @@ void KTraceSoftwareCounters::put_counters_on_state_by_thread( TApplOrder appl, T
 
 void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
 {
-  TRecordType id;
-  TCPUOrder cpu;
-  TApplOrder appl;
-  TTaskOrder task;
-  TThreadOrder thread;
-  unsigned long long time_1, time_2;
-  TState state;
-  TEventType type;
-  TEventValue value;
-
+  int id, cpu, appl, task, thread, state;
+  unsigned long long time_1, time_2, type, value;
   // char *word, buffer[MAX_LINE_SIZE];
   //char *word, *buffer;
   char *word;
@@ -822,7 +810,7 @@ void KTraceSoftwareCounters::sc_by_time( ProgressController *progress )
     end_parsing = false;
 
   /* Trace processing */
-  while ( fscanf( infile, "%hu:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF &&
+  while ( fscanf( infile, "%d:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF &&
           !end_parsing )
   {
     if ( progress != NULL )
@@ -1034,15 +1022,7 @@ void KTraceSoftwareCounters::flush_counter_buffers( void )
     }
 
     /* Put the event on the trace */
-    fprintf( outfile,
-             "2:%d:%d:%d:%d:%lld:%u:%ld\n",
-             threads[current_thread].first_event_counter->cpu,
-             threads[current_thread].appl,
-             threads[current_thread].task,
-             threads[current_thread].thread,
-             current_time,
-             threads[current_thread].first_event_counter->type,
-             threads[current_thread].first_event_counter->value );
+    fprintf( outfile, "2:%d:%d:%d:%d:%lld:%lld:%lld\n", threads[current_thread].first_event_counter->cpu, threads[current_thread].appl, threads[current_thread].task, threads[current_thread].thread, current_time, threads[current_thread].first_event_counter->type, threads[current_thread].first_event_counter->value );
 
     printed_event = threads[current_thread].first_event_counter;
     threads[current_thread].first_event_counter = threads[current_thread].first_event_counter->next;
@@ -1053,16 +1033,8 @@ void KTraceSoftwareCounters::flush_counter_buffers( void )
 
 void KTraceSoftwareCounters::sc_by_event( ProgressController *progress )
 {
-  TRecordType id;
-  TCPUOrder cpu;
-  TApplOrder appl;
-  TTaskOrder task;
-  TThreadOrder thread;
-  unsigned long long time_1;
-  TEventType type;
-  TEventValue value;
-
-  int i;
+  int id, cpu, appl, task, thread, i;
+  unsigned long long time_1, type, value;
   char *word;
   struct counter_event *event;
   int thread_id, find_mark = 0;
@@ -1076,7 +1048,7 @@ void KTraceSoftwareCounters::sc_by_event( ProgressController *progress )
     end_parsing = false;
 
   /* Trace processing */
-  while ( fscanf( infile, "%hu:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF &&
+  while ( fscanf( infile, "%d:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF &&
           !end_parsing )
   {
     if ( progress != NULL )
@@ -1277,14 +1249,7 @@ void KTraceSoftwareCounters::put_counters_on_state( struct KTraceSoftwareCounter
     /*
       if(threads[i].counters[j].num > 0 || !threads[i].counters[j].last_is_zero)
     */
-    fprintf( outfile,
-             "2:0:%d:%d:%d:%lld:%lld:%ld\n",
-             threads[i].appl,
-             threads[i].task,
-             threads[i].thread,
-             p->last_state_end_time,
-             type_mask,
-             threads[i].counters[j].num );
+    fprintf( outfile, "2:0:%d:%d:%d:%lld:%lld:%lld\n", threads[i].appl, threads[i].task, threads[i].thread, p->last_state_end_time, type_mask, threads[i].counters[j].num );
 
     threads[i].counters[j].num = 0;
     /*
@@ -1307,16 +1272,8 @@ void KTraceSoftwareCounters::put_counters_on_state( struct KTraceSoftwareCounter
 
 void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
 {
-  TRecordType id;
-  TCPUOrder cpu;
-  TApplOrder appl;
-  TTaskOrder task;
-  TThreadOrder thread;
-  unsigned long long time_1, time_2;
-  TState state;
-  TEventType type;
-  TEventValue value;
-
+  int id, cpu, appl, task, thread, state;
+  unsigned long long time_1, time_2, type, value;
   // char *word, buffer[MAX_LINE_SIZE];
   //char *word, *buffer;
   char *word;
@@ -1338,7 +1295,7 @@ void KTraceSoftwareCounters::sc_by_states( ProgressController *progress )
     end_parsing = false;
 
   /* Trace processing */
-  while ( fscanf( infile, "%hu:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF &&
+  while ( fscanf( infile, "%d:%d:%d:%d:%d:%lld:", &id, &cpu, &appl, &task, &thread, &time_1 ) != EOF &&
           !end_parsing )
   {
     if ( progress != NULL )
@@ -1619,3 +1576,4 @@ void KTraceSoftwareCounters::execute( char *trace_in, char *trace_out, ProgressC
 
   free( trace_name );
 }
+
