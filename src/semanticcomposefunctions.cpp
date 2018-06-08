@@ -574,3 +574,19 @@ TSemanticValue ComposeCosine::execute( const SemanticInfo *info )
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
   return cos( myInfo->values[ 0 ] );
 }
+
+
+string ComposeSqrtAbs::name = "sqrt (abs)";
+TSemanticValue ComposeSqrtAbs::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  return sqrt( fabs( myInfo->values[ 0 ] ) );
+}
+
+
+string ComposeArcTan::name = "arc tan";
+TSemanticValue ComposeArcTan::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  return atan( myInfo->values[ 0 ] );
+}
