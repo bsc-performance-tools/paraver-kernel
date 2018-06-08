@@ -75,7 +75,7 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
 #ifndef OLD_PCFPARSER
   // Get new tracename
   std::string newName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
-  if ( !tmpSequence->isEndOfSequence() || newName.empty() )
+  if ( newName.empty() )
   {
     std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TraceEditSequence::outputDirSuffixState ) )->getData();
     std::string outputPath = whichTrace.substr( 0, whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) ) +
@@ -203,19 +203,6 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
       sourceTraceConfig->setEventValues( *itSourceType, valuesFinal );
     }
   }
-
-/*
-  for ( map< TTypeValuePair, TTypeValuePair>::iterator it = translation.begin(); it !=  translation.end();++it)
-  {
-
-
-    std::cout << (*it).first.first << " " ;
-    std::cout << (*it).first.second << " " ;
-    std::cout << (*it).second.first << " " ;
-    std::cout << (*it).second.second << " " ;
-    std::cout << std::endl;
-  }
-*/
 
   // Write files
   ( (EventTranslationTableState *)tmpSequence->getState( TraceEditSequence::eventTranslationTableState ) )->setData( translation );
