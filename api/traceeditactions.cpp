@@ -37,7 +37,7 @@
 #include "utils/pcfparser/UIParaverTraceConfig.h"
 #endif
 
-
+using std::set;
 
 /****************************************************************************
  ********                  PCFEventMergerAction                      ********
@@ -112,8 +112,8 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
   map< TTypeValuePair, TTypeValuePair > translation;
 
   vector< vector< unsigned int > > sourceGroupedTypes = sourceTraceConfig->getGroupedEventTypes();
-  std::vector< unsigned int > tmpCodes = referenceTraceConfig->getEventTypes();
-  std::set< unsigned int > referenceTypes;
+  vector< unsigned int > tmpCodes = referenceTraceConfig->getEventTypes();
+  set< unsigned int > referenceTypes;
   referenceTypes.insert( tmpCodes.begin(), tmpCodes.end() );
 
   for ( vector< vector< unsigned int > >::iterator itGroupType = sourceGroupedTypes.begin(); itGroupType != sourceGroupedTypes.end(); ++itGroupType )

@@ -535,6 +535,8 @@ std::vector< std::vector< unsigned int > > ParaverTraceConfig::getGroupedEventTy
     currentGroup.push_back( (unsigned int)(*currentType).first );
   }
 
+  groupedEventTypes.push_back( currentGroup );
+
   return groupedEventTypes;
 }
 
