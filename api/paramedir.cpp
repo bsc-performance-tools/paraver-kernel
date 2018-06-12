@@ -293,7 +293,7 @@ void printHelp()
   std::cout << "  Process paraver trace (pipelined as flags are declared, using XML configuration parameters and without trace load):" << std::endl;
   std::cout << "      paramedir [-c] [-f] [-s] [-o <output-file>] <prv> <xml>" << std::endl << std::endl;
   std::cout << "  Process paraver trace (event_translator):" << std::endl;
-  std::cout << "      paramedir -et <reference_prv> <source_prv>" << std::endl << std::endl;
+  std::cout << "      paramedir -et <reference_prv> <source_prv> [-o <translated_prv> ]" << std::endl << std::endl;
   std::cout << "  Compute numeric data from processed trace using histogram or timeline CFG's (all combined, trace is loaded):" << std::endl;
   std::cout << "      paramedir [-e] [-m] [-p] [-c] [-f] [-s] [-o <output-file>] [-g <event-type>] \\" << std::endl;
   std::cout << "                [-t <shift-times-file>] <prv> [ <xml> ] [ <cfg> | <cfg> <ouput-data-file> ]+" << std::endl << std::endl;
