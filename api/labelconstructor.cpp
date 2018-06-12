@@ -597,6 +597,8 @@ void LabelConstructor::getGUIGroupLabels( const TGroupID groupID, vector< string
       labels.push_back( GUI_DRAWMODE_LAST );
       labels.push_back( GUI_DRAWMODE_MAXIMUM );
       labels.push_back( GUI_DRAWMODE_MINIMUM_NOT_ZERO );
+      labels.push_back( GUI_DRAWMODE_ABSOLUTE_MAXIMUM );
+      labels.push_back( GUI_DRAWMODE_ABSOLUTE_MINIMUM_NOT_ZERO );
       labels.push_back( GUI_DRAWMODE_RANDOM );
       labels.push_back( GUI_DRAWMODE_RANDOM_NOT_ZERO );
       labels.push_back( GUI_DRAWMODE_AVERAGE );

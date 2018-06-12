@@ -31,6 +31,8 @@
 #include <time.h>
 #include <stdlib.h>
 #include <map>
+#include <math.h>
+
 #include "drawmode.h"
 
 using std::vector;
@@ -67,7 +69,7 @@ inline TSemanticValue selectMethod<DRAW_MINNOTZERO>( vector<TSemanticValue>& v )
 
   for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); ++it )
   {
-    if( *it < min ) min = *it;
+    if( *it != 0.0 && *it < min ) min = *it;
   }
 
   if( min == std::numeric_limits<TSemanticValue>::max() )
@@ -75,6 +77,43 @@ inline TSemanticValue selectMethod<DRAW_MINNOTZERO>( vector<TSemanticValue>& v )
 
   return min;
 }
+
+
+template <>
+inline TSemanticValue selectMethod<DRAW_ABSOLUTE_MINNOTZERO>( vector<TSemanticValue>& v )
+{
+   TSemanticValue min = std::numeric_limits<TSemanticValue>::max();
+
+  for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); ++it )
+  {
+    if( *it != 0.0 && fabs(*it) < min ) min = *it;
+  }
+
+  if( min == std::numeric_limits<TSemanticValue>::max() )
+    return 0;
+
+  return min;
+}
+
+
+
+template <>
+inline TSemanticValue selectMethod<DRAW_ABSOLUTE_MAXIMUM>( vector<TSemanticValue>& v )
+{
+#if __cplusplus >= 201103L
+  TSemanticValue max = std::numeric_limits<TSemanticValue>::lowest();
+#else
+  TSemanticValue max = -std::numeric_limits<TSemanticValue>::max();
+#endif
+
+  for( vector<TSemanticValue>::iterator it = v.begin(); it != v.end(); ++it )
+  {
+    if( fabs(*it) > max ) max = *it;
+  }
+
+  return max;
+}
+
 
 template <>
 inline TSemanticValue selectMethod<DRAW_RANDOM>( vector<TSemanticValue>& v )
@@ -173,6 +212,14 @@ TSemanticValue DrawMode::selectValue( vector<TSemanticValue>& v,
 
     case DRAW_MINNOTZERO:
       return selectMethod<DRAW_MINNOTZERO>( v );
+      break;
+
+    case DRAW_ABSOLUTE_MINNOTZERO:
+      return selectMethod<DRAW_ABSOLUTE_MINNOTZERO>( v );
+      break;
+
+    case DRAW_ABSOLUTE_MAXIMUM:
+      return selectMethod<DRAW_ABSOLUTE_MAXIMUM>( v );
       break;
 
     case DRAW_RANDOM:
