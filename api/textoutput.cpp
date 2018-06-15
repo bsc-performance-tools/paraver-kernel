@@ -44,6 +44,8 @@ TextOutput::~TextOutput()
 
 void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile, ProgressController *progress )
 {
+  static short int progressSteps = 0;
+
   if( strOutputFile.rfind( string( ".csv" ) ) == string::npos )
     strOutputFile += ".csv";
 
@@ -86,7 +88,7 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile, Progres
     if( progress != NULL )
     {
       if ( whichWindow->getWindowLevelObjects() > 1 )
-        progress->setCurrentProgress( (int)i );
+        progress->setCurrentProgress( i );
     }
 
     if ( multipleFiles )
@@ -108,7 +110,13 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile, Progres
       if( progress != NULL )
       {
         if ( whichWindow->getWindowLevelObjects() == 1 )
-          progress->setCurrentProgress( int( endTime - whichWindow->getEndTime( i ) ) );
+        {
+          if( ++progressSteps >= 100 )
+          {
+            progressSteps = 0;
+            progress->setCurrentProgress( whichWindow->getEndTime( i ) - beginTime );
+          }
+        }
       }
 
       outputFile << setprecision( config->getTimelinePrecision() );
