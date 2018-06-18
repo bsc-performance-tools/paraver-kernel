@@ -834,6 +834,10 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
         }
         break;
 
+      case '#':
+        fputs( line, outfile );
+        break;
+
       default:
         break;
     }
