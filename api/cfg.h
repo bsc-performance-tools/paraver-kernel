@@ -1892,7 +1892,7 @@ class Analyzer2DPixelSize: public TagFunction
 
 };
 
-
+// DEPRECATED
 class Analyzer2DCodeColor: public TagFunction
 {
   public:
@@ -1900,6 +1900,30 @@ class Analyzer2DCodeColor: public TagFunction
     {}
 
     virtual ~Analyzer2DCodeColor()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
+
+class Analyzer2DColorMode: public TagFunction
+{
+  public:
+    Analyzer2DColorMode()
+    {}
+
+    virtual ~Analyzer2DColorMode()
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,

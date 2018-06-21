@@ -149,6 +149,7 @@
 #define OLDCFG_TAG_AN2D_MAXIMUMGRADIENT "Analyzer2D.MaximumGradient:"
 #define OLDCFG_TAG_AN2D_PIXEL_SIZE "Analyzer2D.PixelSize:"
 #define OLDCFG_TAG_AN2D_CODE_COLOR "Analyzer2D.CodeColor:"
+#define OLDCFG_TAG_AN2D_COLOR_MODE "Analyzer2D.ColorMode:"
 #define OLDCFG_TAG_AN2D_ONLY_TOTALS "Analyzer2D.ShowOnlyTotals:"
 #define OLDCFG_TAG_AN2D_SHORT_LABELS "Analyzer2D.ShortHeaderLabels:"
 #define OLDCFG_TAG_AN2D_SYNCHRONIZE "Analyzer2D.Synchronize:"
@@ -168,6 +169,7 @@
 #define OLDCFG_VAL_DRAW_MODE_AVERAGENOT0 "6"
 #define OLDCFG_VAL_DRAW_MODE_MODE        "7"
 
+#define OLDCFG_VAL_COLOR_MODE_CODE           "window_in_code_mode"
 #define OLDCFG_VAL_COLOR_MODE_GRADIENT       "window_in_gradient_mode"
 #define OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT  "window_in_null_gradient_mode"
 #define CFG_VAL_COLOR_MODE_PUNCTUAL          "window_in_punctual_mode"

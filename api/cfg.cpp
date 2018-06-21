@@ -732,7 +732,7 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DMinimumGradient::printLine( cfgFile, it );
     Analyzer2DMaximumGradient::printLine( cfgFile, it );
     Analyzer2DPixelSize::printLine( cfgFile, it );
-    Analyzer2DCodeColor::printLine( cfgFile, it );
+    Analyzer2DColorMode::printLine( cfgFile, it );
     Analyzer2DOnlyTotals::printLine( cfgFile, it );
     Analyzer2DShortLabels::printLine( cfgFile, it );
     if( ( *it )->isSync() )
@@ -898,6 +898,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN2D_MAXIMUMGRADIENT]      = new Analyzer2DMaximumGradient();
   cfgTagFunctions[OLDCFG_TAG_AN2D_PIXEL_SIZE]           = new Analyzer2DPixelSize();
   cfgTagFunctions[OLDCFG_TAG_AN2D_CODE_COLOR]           = new Analyzer2DCodeColor();
+  cfgTagFunctions[OLDCFG_TAG_AN2D_COLOR_MODE]           = new Analyzer2DColorMode();
   cfgTagFunctions[OLDCFG_TAG_AN2D_ONLY_TOTALS]          = new Analyzer2DOnlyTotals();
   cfgTagFunctions[OLDCFG_TAG_AN2D_SHORT_LABELS]         = new Analyzer2DShortLabels();
   cfgTagFunctions[OLDCFG_TAG_AN2D_SYNCHRONIZE]          = new Analyzer2DSynchronize();
@@ -4606,7 +4607,7 @@ void Analyzer2DPixelSize::printLine( ofstream& cfgFile,
 
 
 string Analyzer2DCodeColor::tagCFG = OLDCFG_TAG_AN2D_CODE_COLOR;
-
+// DEPRECATED
 bool Analyzer2DCodeColor::parseLine( KernelConnection *whichKernel, istringstream& line,
                                      Trace *whichTrace,
                                      vector<Window *>& windows,
@@ -4630,7 +4631,7 @@ bool Analyzer2DCodeColor::parseLine( KernelConnection *whichKernel, istringstrea
 
   return true;
 }
-
+// DEPRECATED
 void Analyzer2DCodeColor::printLine( ofstream& cfgFile,
                                      const vector<Histogram *>::const_iterator it )
 {
@@ -4639,6 +4640,49 @@ void Analyzer2DCodeColor::printLine( ofstream& cfgFile,
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
+
+}
+
+
+string Analyzer2DColorMode::tagCFG = OLDCFG_TAG_AN2D_COLOR_MODE;
+
+bool Analyzer2DColorMode::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                     Trace *whichTrace,
+                                     vector<Window *>& windows,
+                                     vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_COLOR_MODE_CODE ) == 0 )
+    histograms[ histograms.size() - 1 ]->setColorMode( SemanticColor::COLOR );
+  else if ( strBool.compare( OLDCFG_VAL_COLOR_MODE_GRADIENT ) == 0 )
+    histograms[ histograms.size() - 1 ]->setColorMode( SemanticColor::GRADIENT );
+  else if ( strBool.compare( OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) == 0 )
+    histograms[ histograms.size() - 1 ]->setColorMode( SemanticColor::NOT_NULL_GRADIENT );
+  else
+    return false;
+
+  return true;
+}
+
+void Analyzer2DColorMode::printLine( ofstream& cfgFile,
+                                     const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_COLOR_MODE << " ";
+  if ( ( *it )->getColorMode() == SemanticColor::COLOR )
+    cfgFile << OLDCFG_VAL_COLOR_MODE_CODE;
+  else if( ( *it )->getColorMode() == SemanticColor::GRADIENT )
+    cfgFile << OLDCFG_VAL_COLOR_MODE_GRADIENT;
+  else if( ( *it )->getColorMode() == SemanticColor::NOT_NULL_GRADIENT )
+    cfgFile << OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT;
   cfgFile << endl;
 
 }

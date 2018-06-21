@@ -111,7 +111,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   recalc = false;
   forceRecalc = false;
 
-  codeColor = Histogram::getCodeColor();
+  colorMode = Histogram::getColorMode();
 
   zoomHistory.clear();
 
@@ -1269,7 +1269,7 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->showColor = showColor;
   clonedHistogramProxy->zoom = zoom;
   clonedHistogramProxy->firstRowColored = firstRowColored;
-  clonedHistogramProxy->codeColor = codeColor;
+  clonedHistogramProxy->colorMode = colorMode;
   clonedHistogramProxy->pixelSize = pixelSize;
   clonedHistogramProxy->onlyTotals = onlyTotals;
   clonedHistogramProxy->shortLabels = shortLabels;
@@ -1498,14 +1498,30 @@ void HistogramProxy::setForceRecalc( bool newValue )
   forceRecalc = newValue;
 }
 
+// DEPRECATED
 bool HistogramProxy::getCodeColor() const
 {
-  return codeColor;
+  return colorMode == SemanticColor::COLOR;
 }
 
+// DEPRECATED
 void HistogramProxy::setCodeColor( bool newValue )
 {
-  codeColor = newValue;
+  if( newValue )
+    colorMode = SemanticColor::COLOR;
+  else
+    colorMode = SemanticColor::GRADIENT;
+}
+
+SemanticColor::TColorFunction HistogramProxy::getColorMode() const
+{
+  return colorMode;
+}
+
+void HistogramProxy::setColorMode( SemanticColor::TColorFunction whichMode )
+{
+  if( colorMode <= SemanticColor::NOT_NULL_GRADIENT )
+    colorMode = whichMode;
 }
 
 PRV_UINT16 HistogramProxy::getPixelSize() const
