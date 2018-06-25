@@ -71,6 +71,7 @@ vector<TraceEditSequence::TSequenceStates> PCFEventMergerAction::getStateDepende
 bool PCFEventMergerAction::execute( std::string whichTrace )
 {
   TraceEditSequence *tmpSequence = mySequence;
+  bool translationOk = false;
 
 #ifndef OLD_PCFPARSER
   // Get new tracename

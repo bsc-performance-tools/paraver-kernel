@@ -56,6 +56,8 @@ class EventTranslator
                           std::string traceOut,
                           ProgressController *progress = NULL ) = 0;
 
+    virtual bool translationEmpty() = 0;
+
   private:
     static std::string traceToolID;
     static std::string traceToolName;
@@ -71,6 +73,8 @@ class EventTranslatorProxy : public EventTranslator
     virtual void execute( std::string traceIn,
                           std::string traceOut,
                           ProgressController *progress = NULL );
+
+    virtual bool translationEmpty();
 
   private:
     EventTranslator *myEventTranslator;

@@ -65,7 +65,7 @@ KEventTranslator::KEventTranslator( const KernelConnection *myKernel,
   // Negative filter! Discard type 6666666666  and put the rest...
   TraceOptions::TFilterTypes eventTypes;
   TraceOptions::allowed_types impossibleType;
-  impossibleType.type = 6666666666;
+  impossibleType.type = 666666666;
   impossibleType.min_call_time = 0;
   impossibleType.max_type = 0;
   impossibleType.last_value = 0;
@@ -109,3 +109,9 @@ void KEventTranslator::execute( std::string traceIn,
 {
   mySequence->execute( traces );
 }
+
+bool KEventTranslator::translationEmpty()
+{
+  return !((CopyAdditionalFilesState *)mySequence->getState( TraceEditSequence::copyAdditionalFilesState ))->getData();
+}
+

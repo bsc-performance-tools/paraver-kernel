@@ -671,6 +671,8 @@ string applyFilters( KernelConnection *myKernel,
       }
     }
 
+    bool copyRow = true;
+
     if ( registeredTool[ i ] == TraceCutter::getID() )
     {
       pcf_name = LocalKernel::composeName( intermediateNameIn, string( "pcf" ) );
@@ -770,10 +772,13 @@ string applyFilters( KernelConnection *myKernel,
     {
       eventTranslator = myKernel->newEventTranslator( intermediateNameIn, intermediateNameOut, eventTranslatorReferenceName );
       eventTranslator->execute( intermediateNameIn, intermediateNameOut ); // TODO why passed again?
+      copyRow = !eventTranslator->translationEmpty();
       delete eventTranslator;
     }
 
-    myKernel->copyROW( intermediateNameIn, intermediateNameOut );
+    if ( copyRow )
+      myKernel->copyROW( intermediateNameIn, intermediateNameOut );
+
     tmpFiles.push_back( intermediateNameOut );
   }
 

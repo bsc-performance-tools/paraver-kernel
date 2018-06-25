@@ -54,8 +54,11 @@ class KEventTranslator : public EventTranslator
                           std::string traceOut,
                           ProgressController *progress = NULL );
 
+    virtual bool translationEmpty();
+
   private:
     TraceEditSequence *mySequence;
+    bool tranlationEmpty;
 
     std::vector<std::string> traces;
 

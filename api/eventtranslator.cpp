@@ -71,6 +71,7 @@ EventTranslatorProxy::EventTranslatorProxy( const KernelConnection *whichKernel,
                                             ProgressController *progress )
 {
   myKernel = whichKernel;
+
   myEventTranslator = whichKernel->newEventTranslator( traceIn, traceOut, traceReference, progress );
 }
 
@@ -87,3 +88,10 @@ void EventTranslatorProxy::execute( std::string traceIn,
 {
   myEventTranslator->execute( traceIn, traceOut, progress );
 }
+
+
+bool EventTranslatorProxy::translationEmpty()
+{
+  return ( myEventTranslator->translationEmpty() );
+}
+
