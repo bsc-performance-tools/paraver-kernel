@@ -27,6 +27,9 @@
  | @version:     $Revision$
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include <time.h>
 #include <sys/stat.h>
 #ifdef WIN32
@@ -40,6 +43,9 @@
 #ifdef __APPLE__
   #include "CoreFoundation/CoreFoundation.h"
 #endif
+
+#include <istream>
+#include <zlib.h>
 
 #include "config.h"
 #include "localkernel.h"
@@ -472,6 +478,73 @@ std::string LocalKernel::composeName( const std::string& name,  const std::strin
   newFileName.append( newExtension );
 
   return newFileName;
+}
+
+
+// Shows error message and exits
+void LocalKernel::fileUnreadableError( const std::string& filename,
+                                       const std::string& message,
+                                       const bool verbose,
+                                       const bool exitProgram ) const
+{
+  if ( verbose )
+  {
+    perror( "ERROR" );
+    if ( message.size() > 0 )
+    {
+      std::cerr << message << std::endl;
+    }
+    std::cerr << "Error opening file " << filename << std::endl;
+  }
+
+  if ( exitProgram )
+    exit( 1 );
+}
+
+
+// Returns true if filename can be opened
+bool LocalKernel::isFileReadable( const std::string& filename,
+                                  const std::string& message,
+                                  const bool verbose,
+                                  const bool keepOpen,
+                                  const bool exitProgram ) const
+{
+  bool readable = true;
+  FILE *tmpfile;
+  gzFile gzTmpFile;
+
+  if ( filename.size() > 3 && filename.substr(filename.size() - 3 ) == ".gz" )
+  {
+    if ( ( gzTmpFile = gzopen( filename.c_str(), "rb" ) ) == NULL )
+    {
+      readable = false;
+      fileUnreadableError( filename, message, verbose, exitProgram );
+    }
+    else if ( !keepOpen )
+    {
+      gzclose( gzTmpFile );
+    }
+  }
+  else
+  {
+#if defined(__FreeBSD__) || defined(__APPLE__)
+    if ( ( tmpfile = fopen( filename.c_str(), "r" ) ) == NULL )
+#elif defined(WIN32)
+    if ( fopen_s( &tmpfile, filename.c_str(), "r" ) != 0 )
+#else
+    if ( ( tmpfile = fopen64( filename.c_str(), "r" ) ) == NULL )
+#endif
+    {
+      readable = false;
+      fileUnreadableError( filename, message, verbose, exitProgram );
+    }
+    else if ( !keepOpen )
+    {
+      fclose( tmpfile );
+    }
+  }
+
+  return readable;
 }
 
 

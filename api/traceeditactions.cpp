@@ -88,9 +88,23 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
     newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );
   }
 
-  // Read reference pcf
   std::string referenceTrace = ( (PCFMergerReferenceState *)tmpSequence->getState( TraceEditSequence::pcfMergerReferenceState ) )->getData();
   std::string referencePCFFile = LocalKernel::composeName( referenceTrace, "pcf" );
+  std::string sourceTrace = LocalKernel::composeName( whichTrace, "pcf" );
+
+  // Do pcf file exist? If not, exit sequence
+  bool verbose = true;
+  bool keepOpen = false;
+  bool exitProgram = false;
+  if ( !mySequence->getKernelConnection()->isFileReadable( referencePCFFile,
+                                                           "PCFEventMergerAction::execute",
+                                                           verbose, keepOpen, exitProgram ) ||
+       !mySequence->getKernelConnection()->isFileReadable( sourceTrace,
+                                                           "PCFEventMergerAction::execute",
+                                                           verbose, keepOpen, exitProgram ) )
+    return false;
+
+  // Read reference pcf
 #ifdef OLD_PCFPARSER
   ParaverTraceConfig *referenceTraceConfig = new ParaverTraceConfig( referencePCFFile );
   referenceTraceConfig->parse();
@@ -100,7 +114,6 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
 #endif
 
   // Read source pcf
-  std::string sourceTrace = LocalKernel::composeName( whichTrace, "pcf" );
 #ifdef OLD_PCFPARSER
   ParaverTraceConfig *sourceTraceConfig = new ParaverTraceConfig( sourceTrace );
   sourceTraceConfig->parse();

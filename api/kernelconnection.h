@@ -147,6 +147,12 @@ class KernelConnection
                                          const bool commitName = false ) const = 0;
 
     //virtual char *composeName( char *name, char *newExtension ) = 0;
+    virtual bool isFileReadable( const std::string& filename,
+                                 const std::string& message,
+                                 const bool verbose = true,
+                                 const bool keepOpen = true,
+                                 const bool exitProgram = true ) const = 0;
+
     virtual void commitNewTraceName( const std::string& newTraceName ) const = 0;
 
 

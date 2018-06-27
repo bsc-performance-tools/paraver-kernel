@@ -123,6 +123,12 @@ class LocalKernel: public KernelConnection
 
     //virtual char *composeName( char *name, char *newExtension );
     static std::string composeName( const std::string& name,  const std::string& newExtension );
+    bool isFileReadable( const std::string& filename,
+                         const std::string& message,
+                         const bool verbose = true,
+                         const bool keepOpen = true,
+                         const bool exitProgram = true ) const;
+
     virtual void commitNewTraceName( const std::string& newTraceName ) const;
 
     virtual std::string getPathSeparator() const { return pathSeparator; }
@@ -156,6 +162,10 @@ class LocalKernel: public KernelConnection
     PreviousFiles *prevTraceNames;
 
     void copyFile( const std::string& in, const std::string& out ) const;
+    void fileUnreadableError( const std::string& filename,
+                              const std::string& message,
+                              const bool verbose,
+                              const bool exitProgram ) const;
 };
 
 
