@@ -1404,14 +1404,41 @@
 		<Unit filename="utils/pcfparser/ParaverTraceConfig.h">
 			<Option target="api" />
 		</Unit>
+		<Unit filename="utils/pcfparser/ParaverTraceConfig.ipp">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Application test" />
+			<Option target="api" />
+			<Option target="paramedir" />
+			<Option target="testspeed" />
+			<Option target="otf2prv" />
+		</Unit>
 		<Unit filename="utils/pcfparser/ParaverTraceConfigGrammar.h">
 			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/ParaverTraceConfigGrammar.ipp">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Application test" />
+			<Option target="api" />
+			<Option target="paramedir" />
+			<Option target="testspeed" />
+			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="utils/pcfparser/UIParaverTraceConfig.cpp">
 			<Option target="api" />
 		</Unit>
 		<Unit filename="utils/pcfparser/UIParaverTraceConfig.h">
 			<Option target="api" />
+		</Unit>
+		<Unit filename="utils/pcfparser/UIParaverTraceConfig.ipp">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="Application test" />
+			<Option target="api" />
+			<Option target="paramedir" />
+			<Option target="testspeed" />
+			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="utils/pcfparser/UIParaverTraceConfig_python.cpp">
 			<Option compile="0" />

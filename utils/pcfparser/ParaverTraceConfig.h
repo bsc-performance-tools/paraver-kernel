@@ -85,11 +85,15 @@ public:
 
         void setEventValues( std::map< unsigned int, std::string > &values );
 
+        int getPrecision() const;
+        void setPrecision( int whichPrecision );
+
         virtual std::string toString() const;
         virtual std::string toStringWithoutValues() const;
 
     protected:
         EventValuesPtr eventValues;
+        int precision;
 
     };
 

@@ -598,6 +598,14 @@ void ParaverTraceConfig::EventType::setEventValues( std::map< unsigned int, std:
   eventValues->setEventValues( values );
 }
 
+int ParaverTraceConfig::EventType::getPrecision() const
+{
+  return precision;
+}
+void ParaverTraceConfig::EventType::setPrecision( int whichPrecision )
+{
+  precision = whichPrecision;
+}
 
 std::string ParaverTraceConfig::EventType::toString() const {
     std::string str = "";
@@ -608,6 +616,8 @@ std::string ParaverTraceConfig::EventType::toString() const {
         str += "\nVALUES\n";
         str += eventValues->toString();
     }
+    if( precision > 0 )
+      str += "\nPRECISION\t" + boost::lexical_cast<std::string>(precision) + "\n";
     return str;
 }
 
