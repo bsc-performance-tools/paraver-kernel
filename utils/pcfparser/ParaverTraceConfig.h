@@ -205,6 +205,8 @@ public:
 
     void addEventTypes(std::vector<EventType *> & eventTypes_);
 
+    void setPrecisionToEventTypes(std::vector<EventType *> & whichEventTypes, int precision);
+
     bool parse(string_iterator_type begin, string_iterator_type end, bool resend = false);
 
     bool parse(std::istream & input, const std::string filename, bool resend = false);

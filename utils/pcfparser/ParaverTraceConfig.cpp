@@ -185,6 +185,16 @@ void ParaverTraceConfig::addEventTypes(std::vector<EventType *> & eventTypes_) {
     }
 }
 
+void ParaverTraceConfig::setPrecisionToEventTypes(std::vector<EventType *> & whichEventTypes, int precision)
+{
+  for( std::vector<EventType *>::iterator it = whichEventTypes.begin(); it != whichEventTypes.end(); ++it )
+  {
+    (*it)->setPrecision( precision );
+  }
+}
+
+
+
 bool ParaverTraceConfig::parse(string_iterator_type begin,string_iterator_type end, bool resend) {
     if(begin == end) {
         BOOST_THROW_EXCEPTION(std::runtime_error("There is nothing to parse!"));
@@ -598,14 +608,18 @@ void ParaverTraceConfig::EventType::setEventValues( std::map< unsigned int, std:
   eventValues->setEventValues( values );
 }
 
+
 int ParaverTraceConfig::EventType::getPrecision() const
 {
   return precision;
 }
+
+
 void ParaverTraceConfig::EventType::setPrecision( int whichPrecision )
 {
   precision = whichPrecision;
 }
+
 
 std::string ParaverTraceConfig::EventType::toString() const {
     std::string str = "";

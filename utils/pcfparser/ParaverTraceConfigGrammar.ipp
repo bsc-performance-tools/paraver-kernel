@@ -151,6 +151,8 @@ ParaverTraceConfigGrammar<Iterator, ActionHandler>::ParaverTraceConfigGrammar(Ac
             //qi::_b -> typename ActionHandler::EventValues *
             phoenix::setEventValues(qi::_a, qi::_b) // Lazy function defined in ParaverTraceConfigGrammar.h
         ] >
+        -(qi::lit("PRECISION") > numeric_index)[phoenix::bind(&ActionHandler::setPrecisionToEventTypes, phoenix::ref(handler), qi::_a, qi::_1)]
+        >
         qi::eps[
             phoenix::bind(&ActionHandler::addEventTypes, phoenix::ref(handler), qi::_a)
         ]
