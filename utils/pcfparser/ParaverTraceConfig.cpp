@@ -513,6 +513,7 @@ std::vector< std::vector< unsigned int > > ParaverTraceConfig::getGroupedEventTy
   event_types_type::const_iterator firstType = event_types.begin();
   event_types_type::const_iterator currentType = firstType;
 
+  int firstTypePrecision = (*firstType).second->getPrecision();
   EventType::EventValuesPtr firstTypeValues;
 
   currentGroup.push_back( (unsigned int)(*currentType).first );
@@ -534,11 +535,15 @@ std::vector< std::vector< unsigned int > > ParaverTraceConfig::getGroupedEventTy
     catch ( UIParaverTraceConfig::value_not_found )
     {}
 
-    if ( currentTypeValues != firstTypeValues )
+    int currentTypePrecision = (*currentType).second->getPrecision();
+
+    if ( currentTypeValues != firstTypeValues ||
+         currentTypePrecision != firstTypePrecision )
     {
       groupedEventTypes.push_back( currentGroup );
-      firstType = currentType;
+
       firstTypeValues = currentTypeValues;
+      firstTypePrecision = currentTypePrecision;
       currentGroup.clear();
     }
 
