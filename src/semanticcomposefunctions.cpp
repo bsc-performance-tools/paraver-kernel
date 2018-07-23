@@ -455,27 +455,22 @@ TSemanticValue ComposeEnumerate::execute( const SemanticInfo *info )
 
 void ComposeDelta::init( KWindow *whichWindow )
 {
-  prevValue.clear();
   semPrevValue.clear();
 
   if ( whichWindow->getTrace()->totalThreads() >
        whichWindow->getTrace()->totalCPUs() )
   {
-    prevValue.reserve( whichWindow->getTrace()->totalThreads() );
     semPrevValue.reserve( whichWindow->getTrace()->totalThreads() );
     for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalThreads(); ++i )
     {
-      prevValue.push_back( 0 );
       semPrevValue.push_back( 0 );
     }
   }
   else
   {
-    prevValue.reserve( whichWindow->getTrace()->totalCPUs() );
     semPrevValue.reserve( whichWindow->getTrace()->totalCPUs() );
     for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalCPUs(); ++i )
     {
-      prevValue.push_back( 0 );
       semPrevValue.push_back( 0 );
     }
   }
@@ -490,13 +485,10 @@ TSemanticValue ComposeDelta::execute( const SemanticInfo *info )
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
   TSemanticValue result = 0.0;
 
-  if ( myInfo->values[ 0 ] == semPrevValue[ tmpOrder ] )
-    result = prevValue[ tmpOrder ];
-  else
+  if ( myInfo->values[ 0 ] != semPrevValue[ tmpOrder ] )
     result = myInfo->values[ 0 ] - semPrevValue[ tmpOrder ];
 
   semPrevValue[ tmpOrder ] = myInfo->values[ 0 ];
-  prevValue[ tmpOrder ] = result;
 
   return result;
 }

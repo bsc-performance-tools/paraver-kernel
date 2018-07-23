@@ -1661,7 +1661,6 @@ class ComposeDelta: public SemanticCompose
     static const bool initFromBegin = true;
     static std::string name;
 
-    std::vector<TSemanticValue> prevValue;
     std::vector<TSemanticValue> semPrevValue;
 };
 
