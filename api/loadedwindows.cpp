@@ -156,6 +156,15 @@ void LoadedWindows::getDerivedCompatible( Trace *whichTrace, vector< Window *>& 
 }
 
 
+void LoadedWindows::getDerivedCompatible( Trace *whichTrace, vector<TWindowID>& onVector ) const
+{
+  for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
+        it != windows.end(); ++it )
+    if ( ( *it ).second->getTrace()->isSameObjectStruct( whichTrace ) )
+      onVector.push_back( ( *it ).first );
+}
+
+
 void LoadedWindows::getAll( Trace *whichTrace, vector< Histogram *>& onVector ) const
 {
   for ( map<TWindowID, Histogram *>::const_iterator it = histograms.begin();
