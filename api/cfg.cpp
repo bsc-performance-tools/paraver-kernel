@@ -67,6 +67,66 @@ EventValueSymbolPicker eventValueSymbolPicker;
 map<unsigned int, unsigned int> syncRealGroup;
 unsigned int lastSyncGroupUsed;
 
+// Drawmodes codification
+map<string, DrawModeMethod> drawModeCodes;
+map<DrawModeMethod, string> drawModeTags;
+
+// Tags for DrawModeMethod enumeration
+// Keep aligned
+static const char * drawModeCfgTags[] =
+{ "draw_last",
+  "draw_maximum",
+  "draw_minnotzero",
+  "draw_random",
+  "draw_randnotzero",
+  "draw_average",
+  "draw_averagenotzero",
+  "draw_mode",
+  "draw_absolute_maximum",
+  "draw_absolute_minimum",
+};
+
+// Before reading cfg
+void initDrawModeCodes()
+{
+  if ( drawModeCodes.size() == 0 )
+  {
+    // Old codification: "0" --> 0
+    // This allows to read old cfgs
+    // At the transition moment, DRAW_MODE was the last one
+    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_LAST ]        = DRAW_LAST;
+    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_MAXIMUM ]     = DRAW_MAXIMUM;
+    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_MINNOT0 ]     = DRAW_MINNOTZERO;
+    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_RANDOM ]      = DRAW_RANDOM;
+    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_RANDOMNOT0 ]  = DRAW_RANDNOTZERO;
+    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_AVERAGE ]     = DRAW_AVERAGE;
+    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_AVERAGENOT0 ] = DRAW_AVERAGENOTZERO;
+    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_MODE ]        = DRAW_MODE;
+    // New codification: "draw_last" --> 0
+    for (unsigned int current = DRAW_LAST; current < DRAW_NUMMETHODS; ++current )
+    {
+      DrawModeMethod code = DrawModeMethod( current );
+      drawModeCodes[ string( drawModeCfgTags[ code ] ) ] = code;
+    }
+  }
+}
+
+
+// Before writing cfg
+void initDrawModeTags()
+{
+  if ( drawModeTags.size() == 0 )
+  {
+    // New codification: 0 --> "draw_last"
+    for ( unsigned int current = DRAW_LAST; current < DRAW_NUMMETHODS; ++current )
+    {
+      DrawModeMethod code = DrawModeMethod( current );
+      drawModeTags[ code ] = string( drawModeCfgTags[ code ] );
+    }
+  }
+}
+
+
 TWindowLevel stringToLevel( const std::string& strLevel )
 {
   TWindowLevel level = NONE;
@@ -393,6 +453,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
     return false;
 
   loadMap();
+  initDrawModeCodes();
 
   windows.push_back( NULL );
   histograms.push_back( NULL );
@@ -611,6 +672,8 @@ bool CFGLoader::saveCFG( const string& filename,
   syncRealGroup.clear();
   lastSyncGroupUsed = 0;
 
+  initDrawModeTags();
+
   pushbackAllWindows( windows, histograms, allWindows );
 
   cfgFile << fixed;
@@ -731,6 +794,8 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DComputeGradient::printLine( cfgFile, options, it );
     Analyzer2DMinimumGradient::printLine( cfgFile, it );
     Analyzer2DMaximumGradient::printLine( cfgFile, it );
+    Analyzer2DDrawModeObjects::printLine( cfgFile, it );
+    Analyzer2DDrawModeColumns::printLine( cfgFile, it );
     Analyzer2DPixelSize::printLine( cfgFile, it );
     Analyzer2DColorMode::printLine( cfgFile, it );
     Analyzer2DOnlyTotals::printLine( cfgFile, it );
@@ -896,6 +961,8 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN2D_COMPUTEGRADIENT]      = new Analyzer2DComputeGradient();
   cfgTagFunctions[OLDCFG_TAG_AN2D_MINIMUMGRADIENT]      = new Analyzer2DMinimumGradient();
   cfgTagFunctions[OLDCFG_TAG_AN2D_MAXIMUMGRADIENT]      = new Analyzer2DMaximumGradient();
+  cfgTagFunctions[ CFG_TAG_DRAWMODE_OBJECTS ]           = new Analyzer2DDrawModeObjects();
+  cfgTagFunctions[ CFG_TAG_DRAWMODE_COLUMNS ]           = new Analyzer2DDrawModeColumns();
   cfgTagFunctions[OLDCFG_TAG_AN2D_PIXEL_SIZE]           = new Analyzer2DPixelSize();
   cfgTagFunctions[OLDCFG_TAG_AN2D_CODE_COLOR]           = new Analyzer2DCodeColor();
   cfgTagFunctions[OLDCFG_TAG_AN2D_COLOR_MODE]           = new Analyzer2DColorMode();
@@ -3209,59 +3276,21 @@ bool WindowDrawMode::parseLine( KernelConnection *whichKernel,
 
   getline( line, strMode, ' ' );
 
-  if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_LAST ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawModeTime( DRAW_LAST );
-  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_MAXIMUM ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawModeTime( DRAW_MAXIMUM );
-  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_MINNOT0 ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawModeTime( DRAW_MINNOTZERO );
-  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_RANDOM ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawModeTime( DRAW_RANDOM );
-  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_RANDOMNOT0 ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawModeTime( DRAW_RANDNOTZERO );
-  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_AVERAGE ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawModeTime( DRAW_AVERAGE );
-  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_AVERAGENOT0 ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawModeTime( DRAW_AVERAGENOTZERO );
-  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_MODE ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawModeTime( DRAW_MODE );
+  if ( drawModeCodes.find( strMode ) != drawModeCodes.end() )
+    windows[ windows.size() - 1 ]->setDrawModeTime( drawModeCodes[ strMode ] );
 
   return true;
 }
+
 
 void WindowDrawMode::printLine( ofstream& cfgFile,
                                 const vector<Window *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_DRAW_MODE << " ";
-  switch ( ( *it )->getDrawModeTime() )
-  {
-    case DRAW_LAST:
-      cfgFile << OLDCFG_VAL_DRAW_MODE_LAST;
-      break;
-    case DRAW_MAXIMUM:
-      cfgFile << OLDCFG_VAL_DRAW_MODE_MAXIMUM;
-      break;
-    case DRAW_MINNOTZERO:
-      cfgFile << OLDCFG_VAL_DRAW_MODE_MINNOT0;
-      break;
-    case DRAW_RANDOM:
-      cfgFile << OLDCFG_VAL_DRAW_MODE_RANDOM;
-      break;
-    case DRAW_RANDNOTZERO:
-      cfgFile << OLDCFG_VAL_DRAW_MODE_RANDOMNOT0;
-      break;
-    case DRAW_AVERAGE:
-      cfgFile << OLDCFG_VAL_DRAW_MODE_AVERAGE;
-      break;
-    case DRAW_AVERAGENOTZERO:
-      cfgFile << OLDCFG_VAL_DRAW_MODE_AVERAGENOT0;
-      break;
-    case DRAW_MODE:
-      cfgFile << OLDCFG_VAL_DRAW_MODE_MODE;
-      break;
-    default:
-      break;
-  }
+
+  if ( drawModeTags.find( ( *it )->getDrawModeTime() ) != drawModeTags.end() )
+    cfgFile << drawModeTags[ ( *it )->getDrawModeTime() ];
+
   cfgFile << endl;
 }
 
@@ -3280,22 +3309,8 @@ bool WindowDrawModeRows::parseLine( KernelConnection *whichKernel, istringstream
 
   getline( line, strMode, ' ' );
 
-  if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_LAST ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawModeObject( DRAW_LAST );
-  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_MAXIMUM ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawModeObject( DRAW_MAXIMUM );
-  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_MINNOT0 ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawModeObject( DRAW_MINNOTZERO );
-  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_RANDOM ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawModeObject( DRAW_RANDOM );
-  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_RANDOMNOT0 ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawModeObject( DRAW_RANDNOTZERO );
-  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_AVERAGE ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawModeObject( DRAW_AVERAGE );
-  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_AVERAGENOT0 ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawModeObject( DRAW_AVERAGENOTZERO );
-  else if ( strMode.compare( OLDCFG_VAL_DRAW_MODE_MODE ) == 0 )
-    windows[ windows.size() - 1 ]->setDrawModeObject( DRAW_MODE );
+  if ( drawModeCodes.find( strMode ) != drawModeCodes.end() )
+    windows[ windows.size() - 1 ]->setDrawModeObject( drawModeCodes[ strMode ] );
 
   return true;
 }
@@ -3304,35 +3319,10 @@ void WindowDrawModeRows::printLine( ofstream& cfgFile,
                                     const vector<Window *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_WNDW_DRAW_MODE_ROWS << " ";
-  switch ( ( *it )->getDrawModeObject() )
-  {
-    case DRAW_LAST:
-      cfgFile << OLDCFG_VAL_DRAW_MODE_LAST;
-      break;
-    case DRAW_MAXIMUM:
-      cfgFile << OLDCFG_VAL_DRAW_MODE_MAXIMUM;
-      break;
-    case DRAW_MINNOTZERO:
-      cfgFile << OLDCFG_VAL_DRAW_MODE_MINNOT0;
-      break;
-    case DRAW_RANDOM:
-      cfgFile << OLDCFG_VAL_DRAW_MODE_RANDOM;
-      break;
-    case DRAW_RANDNOTZERO:
-      cfgFile << OLDCFG_VAL_DRAW_MODE_RANDOMNOT0;
-      break;
-    case DRAW_AVERAGE:
-      cfgFile << OLDCFG_VAL_DRAW_MODE_AVERAGE;
-      break;
-    case DRAW_AVERAGENOTZERO:
-      cfgFile << OLDCFG_VAL_DRAW_MODE_AVERAGENOT0;
-      break;
-    case DRAW_MODE:
-      cfgFile << OLDCFG_VAL_DRAW_MODE_MODE;
-      break;
-    default:
-      break;
-  }
+
+  if ( drawModeTags.find( ( *it )->getDrawModeObject() ) != drawModeTags.end() )
+    cfgFile << drawModeTags[ ( *it )->getDrawModeObject() ];
+
   cfgFile << endl;
 }
 
@@ -4572,9 +4562,72 @@ void Analyzer2DMaximumGradient::printLine( ofstream& cfgFile,
 }
 
 
+string Analyzer2DDrawModeObjects::tagCFG = CFG_TAG_DRAWMODE_OBJECTS;
+
+bool Analyzer2DDrawModeObjects::parseLine( KernelConnection *whichKernel,
+                                           istringstream& line,
+                                           Trace *whichTrace,
+                                           vector<Window *>& windows,
+                                           vector<Histogram *>& histograms )
+{
+  string strDrawMode;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strDrawMode );
+
+  if ( drawModeCodes.find( strDrawMode ) != drawModeCodes.end() )
+    histograms[ histograms.size() - 1 ]->setDrawModeObjects( drawModeCodes[ strDrawMode ] );
+
+  return true;
+}
+
+
+void Analyzer2DDrawModeObjects::printLine( ofstream& cfgFile,
+                                           const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << CFG_TAG_DRAWMODE_OBJECTS << " " << drawModeTags[ (*it)->getDrawModeObjects() ] << endl;
+}
+
+
+string Analyzer2DDrawModeColumns::tagCFG = CFG_TAG_DRAWMODE_COLUMNS;
+
+bool Analyzer2DDrawModeColumns::parseLine( KernelConnection *whichKernel,
+                                           istringstream& line,
+                                           Trace *whichTrace,
+                                           vector<Window *>& windows,
+                                           vector<Histogram *>& histograms )
+{
+  string strDrawMode;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strDrawMode );
+
+  if ( drawModeCodes.find( strDrawMode ) != drawModeCodes.end() )
+    histograms[ histograms.size() - 1 ]->setDrawModeColumns( drawModeCodes[ strDrawMode ] );
+
+  return true;
+}
+
+
+void Analyzer2DDrawModeColumns::printLine( ofstream& cfgFile,
+                                           const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << CFG_TAG_DRAWMODE_COLUMNS << " " << drawModeTags[ (*it)->getDrawModeColumns() ] << endl;
+}
+
+
 string Analyzer2DPixelSize::tagCFG = OLDCFG_TAG_AN2D_PIXEL_SIZE;
 
-bool Analyzer2DPixelSize::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DPixelSize::parseLine( KernelConnection *whichKernel,
+                                     istringstream& line,
                                      Trace *whichTrace,
                                      vector<Window *>& windows,
                                      vector<Histogram *>& histograms )
