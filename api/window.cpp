@@ -690,6 +690,39 @@ string WindowProxy::getFunctionParamName( TWindowLevel whichLevel,
   return myWindow->getFunctionParamName( whichLevel, whichParam );
 }
 
+// Extra composes
+void WindowProxy::addExtraCompose( TWindowLevel whichLevel )
+{
+  myWindow->addExtraCompose( whichLevel );
+}
+
+void WindowProxy::removeExtraCompose( TWindowLevel whichLevel )
+{
+  myWindow->removeExtraCompose( whichLevel );
+}
+
+bool WindowProxy::setExtraLevelFunction( TWindowLevel whichLevel,
+                                         size_t whichPosition,
+                                         const string& whichFunction )
+{
+  return myWindow->setExtraLevelFunction( whichLevel, whichPosition, whichFunction );
+}
+
+string WindowProxy::getExtraLevelFunction( TWindowLevel whichLevel,
+                                           size_t whichPosition )
+{
+  return myWindow->getExtraLevelFunction( whichLevel, whichPosition );
+}
+
+void WindowProxy::setExtraFunctionParam( TWindowLevel whichLevel,
+                                         size_t whichPosition,
+                                         TParamIndex whichParam,
+                                         const TParamValue& newValue )
+{
+  myWindow->setExtraFunctionParam( whichLevel, whichPosition, whichParam, newValue );
+}
+
+
 RecordList *WindowProxy::getRecordList( TObjectOrder whichObject )
 {
   if ( myLists.begin() == myLists.end() )

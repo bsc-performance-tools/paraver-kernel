@@ -258,6 +258,20 @@ class Window
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
                                    const TParamValue& newValue ) = 0;
+
+    // Extra composes
+    virtual void addExtraCompose( TWindowLevel whichLevel ) = 0;
+    virtual void removeExtraCompose( TWindowLevel whichLevel ) = 0;
+    virtual bool setExtraLevelFunction( TWindowLevel whichLevel,
+                                        size_t whichPosition,
+                                        const std::string& whichFunction ) = 0;
+    virtual std::string getExtraLevelFunction( TWindowLevel whichLevel,
+                                               size_t whichPosition ) = 0;
+    virtual void setExtraFunctionParam( TWindowLevel whichLevel,
+                                        size_t whichPosition,
+                                        TParamIndex whichParam,
+                                        const TParamValue& newValue ) = 0;
+
     virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const = 0;
     virtual TParamValue getFunctionParam( TWindowLevel whichLevel,
                                           TParamIndex whichParam ) const = 0;
@@ -911,6 +925,20 @@ class WindowProxy: public Window
                                           TParamIndex whichParam ) const;
     virtual std::string getFunctionParamName( TWindowLevel whichLevel,
                                          TParamIndex whichParam ) const;
+
+    // Extra composes
+    virtual void addExtraCompose( TWindowLevel whichLevel );
+    virtual void removeExtraCompose( TWindowLevel whichLevel );
+    virtual bool setExtraLevelFunction( TWindowLevel whichLevel,
+                                        size_t whichPosition,
+                                        const std::string& whichFunction );
+    virtual std::string getExtraLevelFunction( TWindowLevel whichLevel,
+                                               size_t whichPosition );
+    virtual void setExtraFunctionParam( TWindowLevel whichLevel,
+                                        size_t whichPosition,
+                                        TParamIndex whichParam,
+                                        const TParamValue& newValue );
+
     virtual RecordList *getRecordList( TObjectOrder whichObject );
     virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true );
     virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits = true );
