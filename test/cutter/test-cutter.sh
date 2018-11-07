@@ -1,4 +1,4 @@
-#/bin/bash
+#/usr/bin/env sh
 
 
 # *****************************************************************************
@@ -17,7 +17,7 @@ ask()
 existsDir()
 {
   firstDir=$1
-  if [[ -d $firstDir && -w $firstDir ]]; then
+  if [ -d $firstDir && -w $firstDir ]; then
     return 1
   elif [[ -d $PWD/$firstDir && -w $PWD/$firstDir ]]; then
     return 1

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 # Environment
 export INSTR_PKG=extrae
@@ -89,7 +89,7 @@ cat ./${EXTRAE_CONFIG_FILE} | sed "s|mpi_ping.prv|${APPL_NAME}.prv|g;s|mpi_ping|
 
 
 # Run application and merge trace
-pushd . &> /dev/null
+PWD=`pwd`
 cd ${TMP_DIR}
 
 if [ "${IS_OPENMP}" = "openmp" ]; then
@@ -111,5 +111,5 @@ else
   echo "[x] ${APPL_NAME}.prv succesfully generated"
 fi
 
-popd &> /dev/null
+cd ${PWD}
 

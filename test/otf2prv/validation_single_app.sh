@@ -1,4 +1,4 @@
-#!/bin/bash  
+#!/usr/bin/env/sh
 
 echo
 echo "    VALIDATION ${1} ${2}"

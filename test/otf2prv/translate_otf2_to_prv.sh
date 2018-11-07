@@ -1,4 +1,4 @@
-#!/bin/bash  
+#!/usr/bin/env sh
 
 # Test number of parameters
 if [ $# -lt 1 -o $# -gt 2 ]; then

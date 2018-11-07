@@ -1,4 +1,4 @@
-#!/bin/bash  
+#!/usr/bin/env sh
 
 APPS="hello mdlbrot pi ring"
 

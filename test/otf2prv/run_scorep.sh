@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 # Environment
 export INSTR_PKG=scorep
@@ -76,7 +76,7 @@ mv ./${APPL_BIN} ${TMP_DIR}
 
 
 # Run application and merge trace
-pushd . &> /dev/null
+PWD=`pwd`
 cd ${TMP_DIR}
 
 if [ "${IS_OPENMP}" = "openmp" ]; then
@@ -95,7 +95,5 @@ else
   echo "[x] ${OTF2_TRACE} succesfully generated"
 fi
 
-popd &> /dev/null
-
-
+cd ${PWD}
 
