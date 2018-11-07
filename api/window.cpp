@@ -158,7 +158,6 @@ void WindowProxy::init()
   commLines = ParaverConfig::getInstance()->getTimelineViewCommunicationsLines();
   flags = ParaverConfig::getInstance()->getTimelineViewEventsLines();
   child = NULL;
-  usedByHistogram = false;
 
   punctualColorWindow = NULL;
 
@@ -294,7 +293,6 @@ Window *WindowProxy::clone( bool recursiveClone )
   else
     clonedWindow->myFilter = myKernel->newFilter( clonedWindow->myWindow->getFilter() );
 
-  clonedWindow->usedByHistogram = false;
   clonedWindow->winBeginTime = winBeginTime;
   clonedWindow->winEndTime = winEndTime;
   clonedWindow->computeYMaxOnInit = computeYMaxOnInit;
@@ -383,18 +381,27 @@ bool WindowProxy::getReady() const
 }
 
 
-void WindowProxy::setUsedByHistogram( bool newValue )
+void WindowProxy::setUsedByHistogram( Histogram *whichHisto )
 {
-  if( newValue )
-    ++usedByHistogram;
-  else if( usedByHistogram > 0 )
-    --usedByHistogram;
+  usedByHistogram.insert( whichHisto );
 }
 
 
-bool WindowProxy::getUsedByHistogram()
+void WindowProxy::unsetUsedByHistogram( Histogram *whichHisto )
 {
-  return usedByHistogram != 0;
+  usedByHistogram.erase( whichHisto );
+}
+
+
+bool WindowProxy::getUsedByHistogram() const
+{
+  return usedByHistogram.size() > 0;
+}
+
+
+set<Histogram *> WindowProxy::getHistograms() const
+{
+  return usedByHistogram;
 }
 
 

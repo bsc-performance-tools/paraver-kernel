@@ -1865,7 +1865,52 @@ class Analyzer2DMaximumGradient: public TagFunction
 
   protected:
     static std::string tagCFG;
+};
 
+
+class Analyzer2DDrawModeObjects: public TagFunction
+{
+  public:
+    Analyzer2DDrawModeObjects()
+    {}
+
+    virtual ~Analyzer2DDrawModeObjects()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+};
+
+
+class Analyzer2DDrawModeColumns: public TagFunction
+{
+  public:
+    Analyzer2DDrawModeColumns()
+    {}
+
+    virtual ~Analyzer2DDrawModeColumns()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
 };
 
 
@@ -1889,7 +1934,6 @@ class Analyzer2DPixelSize: public TagFunction
 
   protected:
     static std::string tagCFG;
-
 };
 
 // DEPRECATED

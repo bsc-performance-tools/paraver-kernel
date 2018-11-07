@@ -45,6 +45,7 @@ enum DrawModeMethod
   DRAW_NUMMETHODS
 };
 
+
 class DrawMode
 {
   public:

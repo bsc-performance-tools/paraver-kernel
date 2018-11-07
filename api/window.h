@@ -118,6 +118,7 @@ class RecordList;
 class SemanticFunction;
 class Filter;
 class ProgressController;
+class Histogram;
 
 class Window
 {
@@ -193,11 +194,18 @@ class Window
     {
       return false;
     }
-    virtual void setUsedByHistogram( bool newValue ) {}
-    virtual bool getUsedByHistogram()
+
+    virtual void setUsedByHistogram( Histogram *whichHisto ) {}
+    virtual void unsetUsedByHistogram( Histogram *whichHisto ) {}
+    virtual bool getUsedByHistogram() const
     {
       return false;
     }
+    virtual std::set<Histogram *> getHistograms() const
+    {
+      return std::set<Histogram *>();
+    }
+
     virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false ) {}
     virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false ) {}
     virtual TRecordTime getWindowBeginTime() const
@@ -885,8 +893,12 @@ class WindowProxy: public Window
     virtual bool getDestroy() const;
     virtual void setReady( bool newValue );
     virtual bool getReady() const;
-    virtual void setUsedByHistogram( bool newValue );
-    virtual bool getUsedByHistogram();
+
+    virtual void setUsedByHistogram( Histogram *whichHisto );
+    virtual void unsetUsedByHistogram( Histogram *whichHisto );
+    virtual bool getUsedByHistogram() const;
+    virtual std::set<Histogram *> getHistograms() const;
+
     virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false );
     virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false );
     virtual TRecordTime getWindowBeginTime() const;
@@ -1301,7 +1313,7 @@ class WindowProxy: public Window
     Window *parent2;
     Window *child;
 
-    PRV_UINT16 usedByHistogram;
+    std::set<Histogram *> usedByHistogram;
 
     // GUI related attributes
     std::string name;
