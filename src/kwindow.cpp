@@ -985,6 +985,23 @@ KWindow *KSingleWindow::clone( bool recursiveClone )
   clonedKSWindow->level = level;
   clonedKSWindow->timeUnit = timeUnit;
 
+  for( map< TWindowLevel, vector< vector< IntervalCompose * > > >::iterator itMap = extraCompose.begin();
+       itMap != extraCompose.end(); ++itMap )
+  {
+    for( size_t i = 0; i < itMap->second.size(); ++i )
+      clonedKSWindow->addExtraCompose( itMap->first );
+  }
+
+  for( map< TWindowLevel, vector< SemanticFunction * > >::iterator itMap = extraComposeFunctions.begin();
+       itMap != extraComposeFunctions.end(); ++itMap )
+  {
+    for( size_t i = 0; i < itMap->second.size(); ++i )
+    {
+      delete ( clonedKSWindow->extraComposeFunctions[ itMap->first ] )[ i ];
+      ( clonedKSWindow->extraComposeFunctions[ itMap->first ] )[ i ] = ( extraComposeFunctions[ itMap->first ] )[ i ]->clone();
+    }
+  }
+
   for( int i = 0; i < COMPOSECPU + 1; ++i )
   {
     if( functions[ i ] != NULL )
