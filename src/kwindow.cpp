@@ -262,6 +262,18 @@ bool KWindow::getParametersOfFunction( string whichFunction,
   return done;
 }
 
+// Extra composes
+size_t KWindow::getExtraNumPositions( TWindowLevel whichLevel ) const
+{
+  map< TWindowLevel, vector< IntervalCompose * > >::const_iterator it = extraCompose.find( whichLevel );
+
+  if( it == extraCompose.end() )
+    return 0;
+
+  return it->second.size();
+}
+
+
 /**********************************************************************
  *  KSingleWindow implementation
  **********************************************************************/
@@ -537,7 +549,11 @@ void KSingleWindow::addExtraCompose( TWindowLevel whichLevel )
   if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= COMPOSECPU ) )
     return; // Should throw an Exception
 
+  vector< IntervalCompose * > vCompose = extraCompose[ whichLevel ];
+  vCompose.push_back( new IntervalCompose() );
 
+  vector< SemanticFunction * > vComposeFunction = extraComposeFunctions[ whichLevel ];
+  vComposeFunction.push_back( new ComposeAsIs() );
 }
 
 void KSingleWindow::removeExtraCompose( TWindowLevel whichLevel )
@@ -545,6 +561,11 @@ void KSingleWindow::removeExtraCompose( TWindowLevel whichLevel )
   if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= COMPOSECPU ) )
     return; // Should throw an Exception
 
+  delete extraCompose[ whichLevel ].back();
+  extraCompose[ whichLevel ].pop_back();
+
+  delete extraComposeFunctions[ whichLevel ].back();
+  extraComposeFunctions[ whichLevel ].pop_back();
 }
 
 bool KSingleWindow::setExtraLevelFunction( TWindowLevel whichLevel,
@@ -553,6 +574,20 @@ bool KSingleWindow::setExtraLevelFunction( TWindowLevel whichLevel,
 {
   if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= COMPOSECPU ) )
     return false; // Should throw an Exception
+
+  map< TWindowLevel, vector< SemanticFunction * > >::iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return false;
+
+  if( it->second.size() <= whichPosition )
+    return false;
+
+  delete it->second[ whichPosition ];
+
+  it->second[ whichPosition ] = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( whichFunction );
+
+  if( it->second[ whichPosition ] == NULL )
+    return false;
 
   return true;
 }
@@ -563,7 +598,14 @@ string KSingleWindow::getExtraLevelFunction( TWindowLevel whichLevel,
   if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= COMPOSECPU ) )
     return ""; // Should throw an Exception
 
-  return string();
+  map< TWindowLevel, vector< SemanticFunction * > >::iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return "";
+
+  if( it->second.size() <= whichPosition )
+    return "";
+
+  return it->second[ whichPosition ]->getName();
 }
 
 void KSingleWindow::setExtraFunctionParam( TWindowLevel whichLevel,
@@ -571,7 +613,17 @@ void KSingleWindow::setExtraFunctionParam( TWindowLevel whichLevel,
                                            TParamIndex whichParam,
                                            const TParamValue& newValue )
 {
+  if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= COMPOSECPU ) )
+    return; // Should throw an Exception
 
+  map< TWindowLevel, vector< SemanticFunction * > >::iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return;
+
+  if( it->second.size() <= whichPosition )
+    return;
+
+  it->second[ whichPosition ]->setParam( whichParam, newValue );
 }
 
 bool KSingleWindow::initFromBegin() const
@@ -1095,6 +1147,20 @@ bool KDerivedWindow::setExtraLevelFunction( TWindowLevel whichLevel,
   if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= DERIVED ) )
     return false; // Should throw an Exception
 
+  map< TWindowLevel, vector< SemanticFunction * > >::iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return false;
+
+  if( it->second.size() <= whichPosition )
+    return false;
+
+  delete it->second[ whichPosition ];
+
+  it->second[ whichPosition ] = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( whichFunction );
+
+  if( it->second[ whichPosition ] == NULL )
+    return false;
+
   return true;
 }
 
@@ -1104,7 +1170,14 @@ string KDerivedWindow::getExtraLevelFunction( TWindowLevel whichLevel,
   if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= DERIVED ) )
     return ""; // Should throw an Exception
 
-  return string();
+  map< TWindowLevel, vector< SemanticFunction * > >::iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return "";
+
+  if( it->second.size() <= whichPosition )
+    return "";
+
+  return it->second[ whichPosition ]->getName();
 }
 
 void KDerivedWindow::setExtraFunctionParam( TWindowLevel whichLevel,
@@ -1115,6 +1188,14 @@ void KDerivedWindow::setExtraFunctionParam( TWindowLevel whichLevel,
   if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= DERIVED ) )
     return; // Should throw an Exception
 
+  map< TWindowLevel, vector< SemanticFunction * > >::iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return;
+
+  if( it->second.size() <= whichPosition )
+    return;
+
+  it->second[ whichPosition ]->setParam( whichParam, newValue );
 }
 
 bool KDerivedWindow::initFromBegin() const

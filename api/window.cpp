@@ -708,6 +708,11 @@ void WindowProxy::removeExtraCompose( TWindowLevel whichLevel )
   myWindow->removeExtraCompose( whichLevel );
 }
 
+size_t WindowProxy::getExtraNumPositions( TWindowLevel whichLevel ) const
+{
+  return myWindow->getExtraNumPositions( whichLevel );
+}
+
 bool WindowProxy::setExtraLevelFunction( TWindowLevel whichLevel,
                                          size_t whichPosition,
                                          const string& whichFunction )

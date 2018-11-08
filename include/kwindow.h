@@ -133,6 +133,7 @@ class KWindow: public Window
     // Extra composes
     virtual void addExtraCompose( TWindowLevel whichLevel ) = 0;
     virtual void removeExtraCompose( TWindowLevel whichLevel ) = 0;
+    virtual size_t getExtraNumPositions( TWindowLevel whichLevel ) const;
     virtual bool setExtraLevelFunction( TWindowLevel whichLevel,
                                         size_t whichPosition,
                                         const std::string& whichFunction ) = 0;
