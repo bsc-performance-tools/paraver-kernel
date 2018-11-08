@@ -143,6 +143,13 @@ class KWindow: public Window
                                         size_t whichPosition,
                                         TParamIndex whichParam,
                                         const TParamValue& newValue ) = 0;
+    virtual TParamIndex getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const = 0;
+    virtual TParamValue getExtraFunctionParam( TWindowLevel whichLevel,
+                                               size_t whichPosition,
+                                               TParamIndex whichParam ) const = 0;
+    virtual std::string getExtraFunctionParamName( TWindowLevel whichLevel,
+                                                   size_t whichPosition,
+                                                   TParamIndex whichParam ) const = 0;
 
     virtual bool initFromBegin() const = 0;
 
@@ -187,7 +194,8 @@ class KWindow: public Window
     std::vector<IntervalCompose> intervalTopCompose2;
 
     std::map< TWindowLevel, std::vector< IntervalCompose * > >  extraCompose;
-    std::map< TWindowLevel, std::vector< SemanticFunction * > > extraComposeFunctions;
+    //std::map< TWindowLevel, std::vector< std::vector< IntervalCompose * > > >  extraCompose;
+    std::map< TWindowLevel, std::vector< SemanticFunction * > >                extraComposeFunctions;
 
     SemanticInfoType getTopComposeSemanticInfoType() const;
     virtual void initSemanticFunctions() = 0;
@@ -281,6 +289,13 @@ class KSingleWindow: public KWindow
                                         size_t whichPosition,
                                         TParamIndex whichParam,
                                         const TParamValue& newValue );
+    virtual TParamIndex getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const;
+    virtual TParamValue getExtraFunctionParam( TWindowLevel whichLevel,
+                                               size_t whichPosition,
+                                               TParamIndex whichParam ) const;
+    virtual std::string getExtraFunctionParamName( TWindowLevel whichLevel,
+                                                   size_t whichPosition,
+                                                   TParamIndex whichParam ) const;
 
     virtual bool initFromBegin() const;
 
@@ -412,6 +427,13 @@ class KDerivedWindow: public KWindow
                                         size_t whichPosition,
                                         TParamIndex whichParam,
                                         const TParamValue& newValue );
+    virtual TParamIndex getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const;
+    virtual TParamValue getExtraFunctionParam( TWindowLevel whichLevel,
+                                               size_t whichPosition,
+                                               TParamIndex whichParam ) const;
+    virtual std::string getExtraFunctionParamName( TWindowLevel whichLevel,
+                                                   size_t whichPosition,
+                                                   TParamIndex whichParam ) const;
 
     virtual bool initFromBegin() const;
 

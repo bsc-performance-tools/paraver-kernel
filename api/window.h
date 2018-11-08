@@ -280,6 +280,13 @@ class Window
                                         size_t whichPosition,
                                         TParamIndex whichParam,
                                         const TParamValue& newValue ) = 0;
+    virtual TParamIndex getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const = 0;
+    virtual TParamValue getExtraFunctionParam( TWindowLevel whichLevel,
+                                               size_t whichPosition,
+                                               TParamIndex whichParam ) const = 0;
+    virtual std::string getExtraFunctionParamName( TWindowLevel whichLevel,
+                                                   size_t whichPosition,
+                                                   TParamIndex whichParam ) const = 0;
 
     virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const = 0;
     virtual TParamValue getFunctionParam( TWindowLevel whichLevel,
@@ -952,6 +959,13 @@ class WindowProxy: public Window
                                         size_t whichPosition,
                                         TParamIndex whichParam,
                                         const TParamValue& newValue );
+    virtual TParamIndex getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const;
+    virtual TParamValue getExtraFunctionParam( TWindowLevel whichLevel,
+                                               size_t whichPosition,
+                                               TParamIndex whichParam ) const;
+    virtual std::string getExtraFunctionParamName( TWindowLevel whichLevel,
+                                                   size_t whichPosition,
+                                                   TParamIndex whichParam ) const;
 
     virtual RecordList *getRecordList( TObjectOrder whichObject );
     virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true );

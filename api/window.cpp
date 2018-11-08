@@ -734,6 +734,25 @@ void WindowProxy::setExtraFunctionParam( TWindowLevel whichLevel,
   myWindow->setExtraFunctionParam( whichLevel, whichPosition, whichParam, newValue );
 }
 
+TParamIndex WindowProxy::getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const
+{
+  return myWindow->getExtraFunctionNumParam( whichLevel, whichPosition );
+}
+
+TParamValue WindowProxy::getExtraFunctionParam( TWindowLevel whichLevel,
+                                                size_t whichPosition,
+                                                TParamIndex whichParam ) const
+{
+  return myWindow->getExtraFunctionParam( whichLevel, whichPosition, whichParam );
+}
+
+string WindowProxy::getExtraFunctionParamName( TWindowLevel whichLevel,
+                                               size_t whichPosition,
+                                               TParamIndex whichParam ) const
+{
+  return myWindow->getExtraFunctionParamName( whichLevel, whichPosition, whichParam );
+}
+
 
 RecordList *WindowProxy::getRecordList( TObjectOrder whichObject )
 {
