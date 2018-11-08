@@ -39,6 +39,28 @@
 
 using namespace std;
 
+KWindow::~KWindow()
+{
+  for( map< TWindowLevel, vector< vector< IntervalCompose * > > >::iterator itMap = extraCompose.begin();
+       itMap != extraCompose.end(); ++itMap )
+  {
+    for( vector< vector< IntervalCompose * > >::iterator itVec = itMap->second.begin();
+         itVec != itMap->second.end(); ++itVec )
+    {
+      for( vector<IntervalCompose *>::iterator it = itVec->begin(); it != itVec->end(); ++it )
+        delete *it;
+    }
+  }
+
+  for( map< TWindowLevel, vector< SemanticFunction * > >::iterator itMap = extraComposeFunctions.begin();
+       itMap != extraComposeFunctions.end(); ++itMap )
+  {
+    for( vector< SemanticFunction * >::iterator itVec = itMap->second.begin();
+         itVec != itMap->second.end(); ++itVec )
+      delete *itVec;
+  }
+}
+
 TObjectOrder KWindow::cpuObjectToWindowObject( TCPUOrder whichCPU )
 {
   TObjectOrder tmpObject = 0;
@@ -265,7 +287,7 @@ bool KWindow::getParametersOfFunction( string whichFunction,
 // Extra composes
 size_t KWindow::getExtraNumPositions( TWindowLevel whichLevel ) const
 {
-  map< TWindowLevel, vector< IntervalCompose * > >::const_iterator it = extraCompose.find( whichLevel );
+  map< TWindowLevel, vector< vector< IntervalCompose * > > >::const_iterator it = extraCompose.find( whichLevel );
 
   if( it == extraCompose.end() )
     return 0;
@@ -421,6 +443,14 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
       functions[ i ]->init( this );
   }
 
+  for( map< TWindowLevel, vector< SemanticFunction * > >::iterator itMap = extraComposeFunctions.begin();
+       itMap != extraComposeFunctions.end(); ++itMap )
+  {
+    for( vector<SemanticFunction *>::iterator it = itMap->second.begin();
+         it != itMap->second.end(); ++it )
+      (*it)->init( this );
+  }
+
   if( level >= SYSTEM )
   {
     if( initialTime > 0 && !initFromBegin() )
@@ -450,7 +480,15 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
 
 void KSingleWindow::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
-  intervalTopCompose1[ whichRow ].init( initialTime, create );
+  if( extraCompose[ TOPCOMPOSE1 ].size() > 0 )
+  {
+    for( size_t i = 0; i < extraCompose[ TOPCOMPOSE1 ].size(); ++i )
+      ( ( extraCompose[ TOPCOMPOSE1 ] )[ i ] )[ whichRow ]->setSemanticFunction( (SemanticCompose *)( extraComposeFunctions[ TOPCOMPOSE1 ] )[ i ] );
+
+    ( extraCompose[ TOPCOMPOSE1 ].back() )[ whichRow ]->init( initialTime, create );
+  }
+  else
+    intervalTopCompose1[ whichRow ].init( initialTime, create );
 }
 
 bool KSingleWindow::setLevelFunction( TWindowLevel whichLevel,
@@ -549,8 +587,37 @@ void KSingleWindow::addExtraCompose( TWindowLevel whichLevel )
   if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= COMPOSECPU ) )
     return; // Should throw an Exception
 
-  vector< IntervalCompose * >& vCompose = extraCompose[ whichLevel ];
-  vCompose.push_back( new IntervalCompose() );
+  vector< vector< IntervalCompose * > >& vCompose = extraCompose[ whichLevel ];
+  vector<IntervalCompose *> tmpV;
+  if( myTrace->totalThreads() > myTrace->totalCPUs() )
+  {
+    tmpV.reserve( myTrace->totalThreads() );
+    for( TThreadOrder i = 0; i < myTrace->totalThreads(); ++i )
+    {
+      IntervalCompose *tmpInterval = new IntervalCompose( this, TOPCOMPOSE1, i );
+      tmpV.push_back( tmpInterval );
+      tmpInterval->setNotWindowInits( true );
+      if( extraCompose[ whichLevel ].size() > 0 )
+        tmpInterval->setCustomChild( ( extraCompose[ whichLevel ].back() )[ i ] );
+      else
+        tmpInterval->setCustomChild( getLevelInterval( TOPCOMPOSE1, i ) );
+    }
+  }
+  else
+  {
+    tmpV.reserve( myTrace->totalCPUs() );
+    for( TCPUOrder i = 0; i < myTrace->totalCPUs(); ++i )
+    {
+      IntervalCompose *tmpInterval = new IntervalCompose( this, TOPCOMPOSE1, i );
+      tmpV.push_back( tmpInterval );
+      tmpInterval->setNotWindowInits( true );
+      if( extraCompose[ whichLevel ].size() > 0 )
+        tmpInterval->setCustomChild( ( extraCompose[ whichLevel ].back() )[ i ] );
+      else
+        tmpInterval->setCustomChild( getLevelInterval( TOPCOMPOSE1, i ) );
+    }
+  }
+  vCompose.push_back( tmpV );
 
   vector< SemanticFunction * >& vComposeFunction = extraComposeFunctions[ whichLevel ];
   vComposeFunction.push_back( new ComposeAsIs() );
@@ -563,7 +630,9 @@ void KSingleWindow::removeExtraCompose( TWindowLevel whichLevel )
 
   if( extraCompose[ whichLevel ].size() > 0 )
   {
-    delete extraCompose[ whichLevel ].back();
+    for( vector< IntervalCompose * >::iterator it = extraCompose[ whichLevel ].back().begin();
+         it != extraCompose[ whichLevel ].back().end(); ++it )
+      delete *it;
     extraCompose[ whichLevel ].pop_back();
   }
 
@@ -686,6 +755,14 @@ bool KSingleWindow::initFromBegin() const
 {
   bool tmp = false;
 
+  map< TWindowLevel, vector<SemanticFunction *> >::const_iterator itExtra = extraComposeFunctions.find( TOPCOMPOSE1 );
+  if( itExtra != extraComposeFunctions.end() )
+  {
+    for( vector<SemanticFunction *>::const_iterator it = itExtra->second.begin();
+         it != itExtra->second.end(); ++it )
+      tmp = tmp || (*it)->getInitFromBegin();
+  }
+
   tmp = tmp || functions[ TOPCOMPOSE1 ]->getInitFromBegin();
   tmp = tmp || functions[ TOPCOMPOSE2 ]->getInitFromBegin();
 
@@ -741,30 +818,65 @@ bool KSingleWindow::initFromBegin() const
 
 RecordList *KSingleWindow::calcNext( TObjectOrder whichObject, bool updateLimits )
 {
+  map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
+  if( itExtra != extraCompose.end() )
+  {
+    if( itExtra->second.size() > 0 )
+      return ( itExtra->second.back() )[ whichObject ]->calcNext();
+  }
+
   return intervalTopCompose1[ whichObject ].calcNext();
 }
 
 
 RecordList *KSingleWindow::calcPrev( TObjectOrder whichObject, bool updateLimits )
 {
+  map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
+  if( itExtra != extraCompose.end() )
+  {
+    if( itExtra->second.size() > 0 )
+      return ( itExtra->second.back() )[ whichObject ]->calcPrev();
+  }
+
   return intervalTopCompose1[ whichObject ].calcPrev();
 }
 
 
 TRecordTime KSingleWindow::getBeginTime( TObjectOrder whichObject ) const
 {
+  map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
+  if( itExtra != extraCompose.end() )
+  {
+    if( itExtra->second.size() > 0 )
+      return ( itExtra->second.back() )[ whichObject ]->getBeginTime();
+  }
+
   return intervalTopCompose1[ whichObject ].getBeginTime();
 }
 
 
 TRecordTime KSingleWindow::getEndTime( TObjectOrder whichObject ) const
 {
+  map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
+  if( itExtra != extraCompose.end() )
+  {
+    if( itExtra->second.size() > 0 )
+      return ( itExtra->second.back() )[ whichObject ]->getEndTime();
+  }
+
   return intervalTopCompose1[ whichObject ].getEndTime();
 }
 
 
 TSemanticValue KSingleWindow::getValue( TObjectOrder whichObject ) const
 {
+  map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
+  if( itExtra != extraCompose.end() )
+  {
+    if( itExtra->second.size() > 0 )
+      return ( itExtra->second.back() )[ whichObject ]->getValue();
+  }
+
   return intervalTopCompose1[ whichObject ].getValue();
 }
 
@@ -1177,8 +1289,21 @@ void KDerivedWindow::addExtraCompose( TWindowLevel whichLevel )
   if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= DERIVED ) )
     return; // Should throw an Exception
 
-  vector< IntervalCompose * >& vCompose = extraCompose[ whichLevel ];
-  vCompose.push_back( new IntervalCompose() );
+  vector< vector< IntervalCompose * > >& vCompose = extraCompose[ whichLevel ];
+  vector<IntervalCompose *> tmpV;
+  if( myTrace->totalThreads() > myTrace->totalCPUs() )
+  {
+    tmpV.reserve( myTrace->totalThreads() );
+    for( TThreadOrder i = 0; i < myTrace->totalThreads(); ++i )
+      tmpV.push_back( new IntervalCompose( this, TOPCOMPOSE1, i ) );
+  }
+  else
+  {
+    tmpV.reserve( myTrace->totalCPUs() );
+    for( TCPUOrder i = 0; i < myTrace->totalCPUs(); ++i )
+      tmpV.push_back( new IntervalCompose( this, TOPCOMPOSE1, i ) );
+  }
+  vCompose.push_back( tmpV );
 
   vector< SemanticFunction * >& vComposeFunction = extraComposeFunctions[ whichLevel ];
   vComposeFunction.push_back( new ComposeAsIs() );
@@ -1191,7 +1316,9 @@ void KDerivedWindow::removeExtraCompose( TWindowLevel whichLevel )
 
   if( extraCompose[ whichLevel ].size() > 0 )
   {
-    delete extraCompose[ whichLevel ].back();
+    for( vector< IntervalCompose * >::iterator it = extraCompose[ whichLevel ].back().begin();
+         it != extraCompose[ whichLevel ].back().end(); ++it )
+      delete *it;
     extraCompose[ whichLevel ].pop_back();
   }
 

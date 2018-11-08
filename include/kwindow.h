@@ -54,8 +54,7 @@ class KWindow: public Window
       timeUnit = NS;
       level = THREAD;
     }
-    virtual ~KWindow()
-    {}
+    virtual ~KWindow();
 
     virtual Filter *getFilter() const
     {
@@ -193,8 +192,7 @@ class KWindow: public Window
     std::vector<IntervalCompose> intervalTopCompose1;
     std::vector<IntervalCompose> intervalTopCompose2;
 
-    std::map< TWindowLevel, std::vector< IntervalCompose * > >  extraCompose;
-    //std::map< TWindowLevel, std::vector< std::vector< IntervalCompose * > > >  extraCompose;
+    std::map< TWindowLevel, std::vector< std::vector< IntervalCompose * > > >  extraCompose;
     std::map< TWindowLevel, std::vector< SemanticFunction * > >                extraComposeFunctions;
 
     SemanticInfoType getTopComposeSemanticInfoType() const;
