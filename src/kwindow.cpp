@@ -241,6 +241,13 @@ TRecordTime KWindow::windowUnitsToTraceUnits( TRecordTime whichTime ) const
 
 RecordList *KWindow::getRecordList( TObjectOrder whichObject )
 {
+  map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
+  if( itExtra != extraCompose.end() )
+  {
+    if( itExtra->second.size() > 0 )
+      return ( itExtra->second.back() )[ whichObject ]->getRecordList();
+  }
+
   return intervalTopCompose1[ whichObject ].getRecordList();
 }
 
