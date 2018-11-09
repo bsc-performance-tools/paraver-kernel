@@ -68,9 +68,7 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
     beginRecord = ( ( KSingleWindow * ) window )->getBeginRecord();
   }
   else
-  {
     joinBursts = false;
-  }
 
   if( !notWindowInits )
     setChilds();

@@ -163,7 +163,8 @@ class KWindow: public Window
     virtual TSemanticValue getValue( TObjectOrder whichObject ) const = 0;
 
     virtual Interval *getLevelInterval( TWindowLevel whichLevel,
-                                        TObjectOrder whichOrder ) = 0;
+                                        TObjectOrder whichOrder,
+                                        bool includeExtraCompose = false ) = 0;
 
     virtual bool isDerivedWindow() const = 0;
 
@@ -307,7 +308,8 @@ class KSingleWindow: public KWindow
     virtual TSemanticValue getValue( TObjectOrder whichObject ) const;
 
     virtual Interval *getLevelInterval( TWindowLevel whichLevel,
-                                        TObjectOrder whichOrder );
+                                        TObjectOrder whichOrder,
+                                        bool includeExtraCompose = false );
 
     virtual bool isDerivedWindow() const
     {
@@ -445,7 +447,8 @@ class KDerivedWindow: public KWindow
     virtual TSemanticValue getValue( TObjectOrder whichObject ) const;
 
     virtual Interval *getLevelInterval( TWindowLevel whichLevel,
-                                        TObjectOrder whichOrder );
+                                        TObjectOrder whichOrder,
+                                        bool includeExtraCompose = false );
 
     virtual bool isDerivedWindow() const
     {
