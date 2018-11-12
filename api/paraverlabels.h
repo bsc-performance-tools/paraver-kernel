@@ -56,6 +56,7 @@
 
 #define OLDCFG_LVL_TOPCOMPOSE       "topcompose"
 #define OLDCFG_LVL_TOPCOMPOSE1      "topcompose1"
+#define CFG_LVL_EXTRATOPCOMPOSE1    "extratopcompose1"
 #define OLDCFG_LVL_TOPCOMPOSE2      "topcompose2"
 #define OLDCFG_LVL_COMPOSE_WORKLOAD "compose_workload"
 #define OLDCFG_LVL_COMPOSE_APPL     "compose_appl"
