@@ -2634,7 +2634,7 @@ bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstre
   if ( ( level != EXTRATOPCOMPOSE1 && windows[ windows.size() - 1 ]->getLevelFunction( level ) == strFunction )
       ||
        ( level == EXTRATOPCOMPOSE1 &&
-         windows[ windows.size() - 1 ]->getExtraLevelFunction( level, numSemanticParamExtraComposesInWindow ) == strFunction ) )
+         windows[ windows.size() - 1 ]->getExtraLevelFunction( TOPCOMPOSE1, numSemanticParamExtraComposesInWindow ) == strFunction ) )
   {
     string tmpString;
     string strNumParam;
@@ -2683,7 +2683,7 @@ bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstre
 
       if ( level == EXTRATOPCOMPOSE1 )
       {
-        windows[ windows.size() - 1 ]->setExtraFunctionParam( level, numSemanticParamExtraComposesInWindow, i, values );
+        windows[ windows.size() - 1 ]->setExtraFunctionParam( TOPCOMPOSE1, numSemanticParamExtraComposesInWindow, i, values );
         numSemanticParamExtraComposesInWindow++;
       }
       else
