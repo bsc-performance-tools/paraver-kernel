@@ -497,7 +497,14 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
 void KSingleWindow::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
   if( extraCompose[ TOPCOMPOSE1 ].size() > 0 )
+  {
+    for( size_t iPos = 0; iPos < extraCompose[ TOPCOMPOSE1 ].size(); ++iPos )
+    {
+      ( ( extraCompose[ TOPCOMPOSE1 ] )[ iPos ] )[ whichRow ]->setSemanticFunction( (SemanticCompose *)( extraComposeFunctions[ TOPCOMPOSE1 ] )[ iPos ] );
+    }
+
     ( extraCompose[ TOPCOMPOSE1 ].back() )[ whichRow ]->init( initialTime, create );
+  }
   else
     intervalTopCompose1[ whichRow ].init( initialTime, create );
 }
@@ -1027,6 +1034,12 @@ KWindow *KSingleWindow::clone( bool recursiveClone )
       delete ( clonedKSWindow->extraComposeFunctions[ itMap->first ] )[ i ];
       ( clonedKSWindow->extraComposeFunctions[ itMap->first ] )[ i ] = ( extraComposeFunctions[ itMap->first ] )[ i ]->clone();
     }
+  }
+
+  for( size_t iPos = 0; iPos < clonedKSWindow->extraCompose[ TOPCOMPOSE1 ].size(); ++iPos )
+  {
+    for( size_t iRow = 0; iRow < ( clonedKSWindow->extraCompose[ TOPCOMPOSE1 ] )[ iPos ].size(); ++iRow )
+      ( ( clonedKSWindow->extraCompose[ TOPCOMPOSE1 ] )[ iPos ] )[ iRow ]->setSemanticFunction( (SemanticCompose *)( clonedKSWindow->extraComposeFunctions[ TOPCOMPOSE1 ] )[ iPos ] );
   }
 
   for( int i = 0; i < COMPOSECPU + 1; ++i )
@@ -1615,7 +1628,14 @@ void KDerivedWindow::init( TRecordTime initialTime, TCreateList create, bool upd
 void KDerivedWindow::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
   if( extraCompose[ TOPCOMPOSE1 ].size() > 0 )
+  {
+    for( size_t iPos = 0; iPos < extraCompose[ TOPCOMPOSE1 ].size(); ++iPos )
+    {
+      ( ( extraCompose[ TOPCOMPOSE1 ] )[ iPos ] )[ whichRow ]->setSemanticFunction( (SemanticCompose *)( extraComposeFunctions[ TOPCOMPOSE1 ] )[ iPos ] );
+    }
+
     ( extraCompose[ TOPCOMPOSE1 ].back() )[ whichRow ]->init( initialTime, create );
+  }
   else
     intervalTopCompose1[ whichRow ].init( initialTime, create );
 }
@@ -1813,6 +1833,12 @@ KWindow *KDerivedWindow::clone( bool recursiveClone )
       delete ( clonedKDerivedWindow->extraComposeFunctions[ itMap->first ] )[ i ];
       ( clonedKDerivedWindow->extraComposeFunctions[ itMap->first ] )[ i ] = ( extraComposeFunctions[ itMap->first ] )[ i ]->clone();
     }
+  }
+
+  for( size_t iPos = 0; iPos < clonedKDerivedWindow->extraCompose[ TOPCOMPOSE1 ].size(); ++iPos )
+  {
+    for( size_t iRow = 0; iRow < ( clonedKDerivedWindow->extraCompose[ TOPCOMPOSE1 ] )[ iPos ].size(); ++iRow )
+      ( ( clonedKDerivedWindow->extraCompose[ TOPCOMPOSE1 ] )[ iPos ] )[ iRow ]->setSemanticFunction( (SemanticCompose *)( clonedKDerivedWindow->extraComposeFunctions[ TOPCOMPOSE1 ] )[ iPos ] );
   }
 
   return clonedKDerivedWindow;
