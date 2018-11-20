@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 # Test number of parameters
 if [ $# -ne 2 ]; then
@@ -12,7 +12,7 @@ fi
 APPL_NAME=${1}
 ANALYSIS_DIR=${2}
 
-pushd .
+PWD=`pwd`
 
 cd ${ANALYSIS_DIR}
 TRACE_EXTRAE=${APPL_NAME}.prv
@@ -26,4 +26,4 @@ echo "wxparaver ${TRACE_EXTRAE} &"
 echo "wxparaver ${TRACE_OTF2PRV} &"
 #      wxparaver ${TRACE_OTF2PRV} &
 
-popd 
+cd ${PWD}
