@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # Test number of parameters
-if [ $# -lt 1 -o $# -gt 2 ]; then
+if [ $# -lt 1 ] || [ $# -gt 2 ]; then
   echo "Usage: ${0} otf2_trace_dir [ 'mpi'|'openmp' ]"
   echo
   echo "  otf_trace_dir   : Directory where is located the file traces.oft2"
