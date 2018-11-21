@@ -270,8 +270,8 @@ void WorkspaceManager::loadXML()
     serializeBufferWorkspaces = &distWorkspaces;
     serializeBufferWorkspacesOrder = &distWorkspacesOrder;
     ia >> boost::serialization::make_nvp( "workspace_manager", *this );
-    ifs.close();
   }
+  ifs.close();
 
   // Read user defined
   ifs.clear();
@@ -298,10 +298,14 @@ void WorkspaceManager::loadXML()
     saveXML();
     ifs.open( fullPath.c_str() );
   }
-  boost::archive::xml_iarchive ia( ifs );
-  serializeBufferWorkspaces = &userWorkspaces;
-  serializeBufferWorkspacesOrder = &userWorkspacesOrder;
-  ia >> boost::serialization::make_nvp( "workspace_manager", *this );
+
+  if( ifs.good() ) // due to xml_iarchive needs to be destroyed before fstream is closed
+  {
+    boost::archive::xml_iarchive ia( ifs );
+    serializeBufferWorkspaces = &userWorkspaces;
+    serializeBufferWorkspacesOrder = &userWorkspacesOrder;
+    ia >> boost::serialization::make_nvp( "workspace_manager", *this );
+  }
   ifs.close();
 }
 
@@ -337,10 +341,13 @@ void WorkspaceManager::saveXML()
   strFile.append( ".xml" );
 
   std::ofstream ofs( strFile.c_str() );
-  boost::archive::xml_oarchive oa( ofs );
-  serializeBufferWorkspaces = &userWorkspaces;
-  serializeBufferWorkspacesOrder = &userWorkspacesOrder;
-  oa << boost::serialization::make_nvp( "workspace_manager", *this );
+  if( ofs.good() ) // due to xml_oarchive needs to be destroyed before fstream is closed
+  {
+    boost::archive::xml_oarchive oa( ofs );
+    serializeBufferWorkspaces = &userWorkspaces;
+    serializeBufferWorkspacesOrder = &userWorkspacesOrder;
+    oa << boost::serialization::make_nvp( "workspace_manager", *this );
+  }
   ofs.close();
 }
 
