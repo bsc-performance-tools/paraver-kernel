@@ -125,11 +125,11 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
 HistogramProxy::~HistogramProxy()
 {
   if( controlWindow != NULL )
-    controlWindow->setUsedByHistogram( false );
+    controlWindow->unsetUsedByHistogram( this );
   if( dataWindow != NULL )
-    dataWindow->setUsedByHistogram( false );
+    dataWindow->unsetUsedByHistogram( this );
   if( extraControlWindow != NULL )
-    extraControlWindow->setUsedByHistogram( false );
+    extraControlWindow->unsetUsedByHistogram( this );
 
   if( sync )
     SyncWindows::getInstance()->removeWindow( this, syncGroup );
@@ -190,9 +190,9 @@ Window *HistogramProxy::getExtraControlWindow() const
 void HistogramProxy::setControlWindow( Window *whichWindow )
 {
   if( controlWindow != NULL )
-    controlWindow->setUsedByHistogram( false );
+    controlWindow->unsetUsedByHistogram( this );
   controlWindow = whichWindow;
-  controlWindow->setUsedByHistogram( true );
+  controlWindow->setUsedByHistogram( this );
   myHisto->setControlWindow( whichWindow->getConcrete() );
   myTrace = controlWindow->getTrace();
 }
@@ -200,25 +200,25 @@ void HistogramProxy::setControlWindow( Window *whichWindow )
 void HistogramProxy::setDataWindow( Window *whichWindow )
 {
   if( dataWindow != NULL )
-    dataWindow->setUsedByHistogram( false );
+    dataWindow->unsetUsedByHistogram( this );
   dataWindow = whichWindow;
-  dataWindow->setUsedByHistogram( true );
+  dataWindow->setUsedByHistogram( this );
   myHisto->setDataWindow( whichWindow->getConcrete() );
 }
 
 void HistogramProxy::setExtraControlWindow( Window *whichWindow )
 {
   if( extraControlWindow != NULL )
-    extraControlWindow->setUsedByHistogram( false );
+    extraControlWindow->unsetUsedByHistogram( this );
   extraControlWindow = whichWindow;
-  extraControlWindow->setUsedByHistogram( true );
+  extraControlWindow->setUsedByHistogram( this );
   myHisto->setExtraControlWindow( whichWindow->getConcrete() );
 }
 
 void HistogramProxy::clearControlWindow()
 {
   if( controlWindow != NULL )
-    controlWindow->setUsedByHistogram( false );
+    controlWindow->unsetUsedByHistogram( this );
   controlWindow = NULL;
   myHisto->clearControlWindow();
 }
@@ -226,7 +226,7 @@ void HistogramProxy::clearControlWindow()
 void HistogramProxy::clearDataWindow()
 {
   if( dataWindow != NULL )
-    dataWindow->setUsedByHistogram( false );
+    dataWindow->unsetUsedByHistogram( this );
   dataWindow = NULL;
   myHisto->clearDataWindow();
 }
@@ -234,7 +234,7 @@ void HistogramProxy::clearDataWindow()
 void HistogramProxy::clearExtraControlWindow()
 {
   if( extraControlWindow != NULL )
-    extraControlWindow->setUsedByHistogram( false );
+    extraControlWindow->unsetUsedByHistogram( this );
   extraControlWindow = NULL;
   selectedPlane = 0;
   commSelectedPlane = 0;
@@ -1289,13 +1289,13 @@ Histogram *HistogramProxy::clone()
 
   // Must store the associated proxies
   clonedHistogramProxy->setControlWindow( controlWindow->clone() );
-  clonedHistogramProxy->getControlWindow()->setUsedByHistogram( true );
+  clonedHistogramProxy->getControlWindow()->setUsedByHistogram( clonedHistogramProxy );
   if( controlWindow == dataWindow )
     clonedHistogramProxy->setDataWindow( clonedHistogramProxy->getControlWindow() );
   else
   {
     clonedHistogramProxy->setDataWindow( dataWindow->clone() );
-    clonedHistogramProxy->getDataWindow()->setUsedByHistogram( true );
+    clonedHistogramProxy->getDataWindow()->setUsedByHistogram( clonedHistogramProxy );
   }
   if ( extraControlWindow != NULL )
   {
@@ -1306,7 +1306,7 @@ Histogram *HistogramProxy::clone()
     else
     {
       clonedHistogramProxy->setExtraControlWindow( extraControlWindow->clone() );
-      clonedHistogramProxy->getExtraControlWindow()->setUsedByHistogram( true );
+      clonedHistogramProxy->getExtraControlWindow()->setUsedByHistogram( clonedHistogramProxy );
     }
   }
 

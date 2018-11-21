@@ -56,6 +56,7 @@
 
 #define OLDCFG_LVL_TOPCOMPOSE       "topcompose"
 #define OLDCFG_LVL_TOPCOMPOSE1      "topcompose1"
+#define CFG_LVL_EXTRATOPCOMPOSE1    "extratopcompose1"
 #define OLDCFG_LVL_TOPCOMPOSE2      "topcompose2"
 #define OLDCFG_LVL_COMPOSE_WORKLOAD "compose_workload"
 #define OLDCFG_LVL_COMPOSE_APPL     "compose_appl"
@@ -376,10 +377,11 @@ enum TSingleTimelineProperties
   SINGLE_COMPOSENODE,
   SINGLE_NODE,
   SINGLE_COMPOSECPU,
-  SINGLE_CPU
-};
+  SINGLE_CPU,
+  SINGLE_EXTRATOPCOMPOSE1,
 
-static const int TOTAL_SINGLE_PROPERTIES = SINGLE_CPU + 1;
+  TOTAL_SINGLE_PROPERTIES
+};
 
 static const std::string SingleTimelinePropertyLabels[ TOTAL_SINGLE_PROPERTIES ] =
 {
@@ -425,6 +427,7 @@ static const std::string SingleTimelinePropertyLabels[ TOTAL_SINGLE_PROPERTIES ]
   "Node",
   "Compose CPU",
   "CPU",
+  "Extra Top Compose 1"
 };
 
 // GUI Derived Timeline property labels
@@ -453,10 +456,11 @@ enum TDerivedTimelineProperties
   DERIVED_COMPOSECPU,
   DERIVED_FACTOR1,
   DERIVED_DERIVED,
-  DERIVED_FACTOR2
-};
+  DERIVED_FACTOR2,
+  DERIVED_EXTRATOPCOMPOSE1,
 
-static const int TOTAL_DERIVED_PROPERTIES = DERIVED_FACTOR2 + 1;
+  TOTAL_DERIVED_PROPERTIES
+};
 
 static const std::string DerivedTimelinePropertyLabels[ TOTAL_DERIVED_PROPERTIES ] =
 {
@@ -483,7 +487,8 @@ static const std::string DerivedTimelinePropertyLabels[ TOTAL_DERIVED_PROPERTIES
   "Compose CPU",
   "Factor #1",
   "Derived",
-  "Factor #2"
+  "Factor #2",
+  "Extra Top Compose 1"
 };
 
 // GUI Histogram property labels
@@ -505,10 +510,10 @@ enum THistogramProperties
   HISTOGRAM_3DMINIMUM,
   HISTOGRAM_3DMAXIMUM,
   HISTOGRAM_3DDELTA,
-  HISTOGRAM_3DPLANE
-};
+  HISTOGRAM_3DPLANE,
 
-static const int TOTAL_HISTOGRAM_PROPERTIES = HISTOGRAM_3DPLANE + 1;
+  TOTAL_HISTOGRAM_PROPERTIES
+};
 
 static const std::string HistogramPropertyLabels[ TOTAL_HISTOGRAM_PROPERTIES ] =
 {

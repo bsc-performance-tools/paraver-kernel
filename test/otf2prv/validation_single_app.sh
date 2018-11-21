@@ -6,7 +6,7 @@ echo
 
 
 # Test number of parameters
-if [ $# -lt 1 -o $# -gt 2 ]; then
+if [ $# -lt 1 ] || [ $# -gt 2 ]; then
   echo "Usage: ${0} application_name ['mpi'|'openmp']"
   echo
   echo "  application_name: Main source name, without .c extension"

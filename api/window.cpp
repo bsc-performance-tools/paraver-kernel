@@ -158,7 +158,6 @@ void WindowProxy::init()
   commLines = ParaverConfig::getInstance()->getTimelineViewCommunicationsLines();
   flags = ParaverConfig::getInstance()->getTimelineViewEventsLines();
   child = NULL;
-  usedByHistogram = false;
 
   punctualColorWindow = NULL;
 
@@ -294,7 +293,6 @@ Window *WindowProxy::clone( bool recursiveClone )
   else
     clonedWindow->myFilter = myKernel->newFilter( clonedWindow->myWindow->getFilter() );
 
-  clonedWindow->usedByHistogram = false;
   clonedWindow->winBeginTime = winBeginTime;
   clonedWindow->winEndTime = winEndTime;
   clonedWindow->computeYMaxOnInit = computeYMaxOnInit;
@@ -383,18 +381,27 @@ bool WindowProxy::getReady() const
 }
 
 
-void WindowProxy::setUsedByHistogram( bool newValue )
+void WindowProxy::setUsedByHistogram( Histogram *whichHisto )
 {
-  if( newValue )
-    ++usedByHistogram;
-  else if( usedByHistogram > 0 )
-    --usedByHistogram;
+  usedByHistogram.insert( whichHisto );
 }
 
 
-bool WindowProxy::getUsedByHistogram()
+void WindowProxy::unsetUsedByHistogram( Histogram *whichHisto )
 {
-  return usedByHistogram != 0;
+  usedByHistogram.erase( whichHisto );
+}
+
+
+bool WindowProxy::getUsedByHistogram() const
+{
+  return usedByHistogram.size() > 0;
+}
+
+
+set<Histogram *> WindowProxy::getHistograms() const
+{
+  return usedByHistogram;
 }
 
 
@@ -689,6 +696,63 @@ string WindowProxy::getFunctionParamName( TWindowLevel whichLevel,
 {
   return myWindow->getFunctionParamName( whichLevel, whichParam );
 }
+
+// Extra composes
+void WindowProxy::addExtraCompose( TWindowLevel whichLevel )
+{
+  myWindow->addExtraCompose( whichLevel );
+}
+
+void WindowProxy::removeExtraCompose( TWindowLevel whichLevel )
+{
+  myWindow->removeExtraCompose( whichLevel );
+}
+
+size_t WindowProxy::getExtraNumPositions( TWindowLevel whichLevel ) const
+{
+  return myWindow->getExtraNumPositions( whichLevel );
+}
+
+bool WindowProxy::setExtraLevelFunction( TWindowLevel whichLevel,
+                                         size_t whichPosition,
+                                         const string& whichFunction )
+{
+  return myWindow->setExtraLevelFunction( whichLevel, whichPosition, whichFunction );
+}
+
+string WindowProxy::getExtraLevelFunction( TWindowLevel whichLevel,
+                                           size_t whichPosition )
+{
+  return myWindow->getExtraLevelFunction( whichLevel, whichPosition );
+}
+
+void WindowProxy::setExtraFunctionParam( TWindowLevel whichLevel,
+                                         size_t whichPosition,
+                                         TParamIndex whichParam,
+                                         const TParamValue& newValue )
+{
+  myWindow->setExtraFunctionParam( whichLevel, whichPosition, whichParam, newValue );
+}
+
+TParamIndex WindowProxy::getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const
+{
+  return myWindow->getExtraFunctionNumParam( whichLevel, whichPosition );
+}
+
+TParamValue WindowProxy::getExtraFunctionParam( TWindowLevel whichLevel,
+                                                size_t whichPosition,
+                                                TParamIndex whichParam ) const
+{
+  return myWindow->getExtraFunctionParam( whichLevel, whichPosition, whichParam );
+}
+
+string WindowProxy::getExtraFunctionParamName( TWindowLevel whichLevel,
+                                               size_t whichPosition,
+                                               TParamIndex whichParam ) const
+{
+  return myWindow->getExtraFunctionParamName( whichLevel, whichPosition, whichParam );
+}
+
 
 RecordList *WindowProxy::getRecordList( TObjectOrder whichObject )
 {

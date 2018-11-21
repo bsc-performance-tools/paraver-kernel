@@ -118,6 +118,7 @@ class RecordList;
 class SemanticFunction;
 class Filter;
 class ProgressController;
+class Histogram;
 
 class Window
 {
@@ -193,11 +194,18 @@ class Window
     {
       return false;
     }
-    virtual void setUsedByHistogram( bool newValue ) {}
-    virtual bool getUsedByHistogram()
+
+    virtual void setUsedByHistogram( Histogram *whichHisto ) {}
+    virtual void unsetUsedByHistogram( Histogram *whichHisto ) {}
+    virtual bool getUsedByHistogram() const
     {
       return false;
     }
+    virtual std::set<Histogram *> getHistograms() const
+    {
+      return std::set<Histogram *>();
+    }
+
     virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false ) {}
     virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false ) {}
     virtual TRecordTime getWindowBeginTime() const
@@ -258,6 +266,28 @@ class Window
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
                                    const TParamValue& newValue ) = 0;
+
+    // Extra composes
+    virtual void addExtraCompose( TWindowLevel whichLevel ) = 0;
+    virtual void removeExtraCompose( TWindowLevel whichLevel ) = 0;
+    virtual size_t getExtraNumPositions( TWindowLevel whichLevel ) const = 0;
+    virtual bool setExtraLevelFunction( TWindowLevel whichLevel,
+                                        size_t whichPosition,
+                                        const std::string& whichFunction ) = 0;
+    virtual std::string getExtraLevelFunction( TWindowLevel whichLevel,
+                                               size_t whichPosition ) = 0;
+    virtual void setExtraFunctionParam( TWindowLevel whichLevel,
+                                        size_t whichPosition,
+                                        TParamIndex whichParam,
+                                        const TParamValue& newValue ) = 0;
+    virtual TParamIndex getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const = 0;
+    virtual TParamValue getExtraFunctionParam( TWindowLevel whichLevel,
+                                               size_t whichPosition,
+                                               TParamIndex whichParam ) const = 0;
+    virtual std::string getExtraFunctionParamName( TWindowLevel whichLevel,
+                                                   size_t whichPosition,
+                                                   TParamIndex whichParam ) const = 0;
+
     virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const = 0;
     virtual TParamValue getFunctionParam( TWindowLevel whichLevel,
                                           TParamIndex whichParam ) const = 0;
@@ -871,8 +901,12 @@ class WindowProxy: public Window
     virtual bool getDestroy() const;
     virtual void setReady( bool newValue );
     virtual bool getReady() const;
-    virtual void setUsedByHistogram( bool newValue );
-    virtual bool getUsedByHistogram();
+
+    virtual void setUsedByHistogram( Histogram *whichHisto );
+    virtual void unsetUsedByHistogram( Histogram *whichHisto );
+    virtual bool getUsedByHistogram() const;
+    virtual std::set<Histogram *> getHistograms() const;
+
     virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false );
     virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false );
     virtual TRecordTime getWindowBeginTime() const;
@@ -911,6 +945,28 @@ class WindowProxy: public Window
                                           TParamIndex whichParam ) const;
     virtual std::string getFunctionParamName( TWindowLevel whichLevel,
                                          TParamIndex whichParam ) const;
+
+    // Extra composes
+    virtual void addExtraCompose( TWindowLevel whichLevel );
+    virtual void removeExtraCompose( TWindowLevel whichLevel );
+    virtual size_t getExtraNumPositions( TWindowLevel whichLevel ) const;
+    virtual bool setExtraLevelFunction( TWindowLevel whichLevel,
+                                        size_t whichPosition,
+                                        const std::string& whichFunction );
+    virtual std::string getExtraLevelFunction( TWindowLevel whichLevel,
+                                               size_t whichPosition );
+    virtual void setExtraFunctionParam( TWindowLevel whichLevel,
+                                        size_t whichPosition,
+                                        TParamIndex whichParam,
+                                        const TParamValue& newValue );
+    virtual TParamIndex getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const;
+    virtual TParamValue getExtraFunctionParam( TWindowLevel whichLevel,
+                                               size_t whichPosition,
+                                               TParamIndex whichParam ) const;
+    virtual std::string getExtraFunctionParamName( TWindowLevel whichLevel,
+                                                   size_t whichPosition,
+                                                   TParamIndex whichParam ) const;
+
     virtual RecordList *getRecordList( TObjectOrder whichObject );
     virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true );
     virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits = true );
@@ -1273,7 +1329,7 @@ class WindowProxy: public Window
     Window *parent2;
     Window *child;
 
-    PRV_UINT16 usedByHistogram;
+    std::set<Histogram *> usedByHistogram;
 
     // GUI related attributes
     std::string name;

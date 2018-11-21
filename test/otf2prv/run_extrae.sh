@@ -9,7 +9,7 @@ export EXTRAE_CONFIG_FILE=./extrae.xml
 
 
 # Test number of parameters
-if [ $# -lt 1 -o $# -gt 3 ]; then
+if [ $# -lt 1 ] || [ $# -gt 3 ]; then
   echo "Usage: ${0} application_name [ 'mpi'|'openmp' [tmp_working_dir]]"
   echo
   echo "  application_name: Main source name, without .c extension"

@@ -54,6 +54,9 @@ using namespace std;
 bool TagFunction::isWindowTag = true;
 string TagFunction::currentNameTag = "";
 
+PRV_UINT16 numComposesExtraComposesInWindow = 0;
+PRV_UINT16 numSemanticParamExtraComposesInWindow = 0;
+
 map<string, TagFunction *> CFGLoader::cfgTagFunctions;
 
 string currentWindowName;
@@ -172,6 +175,8 @@ TWindowLevel stringToLevel( const std::string& strLevel )
     level = TOPCOMPOSE1;
   else if ( strLevel.compare( OLDCFG_LVL_COMPOSE2 ) == 0 )
     level = TOPCOMPOSE2;
+  else if ( strLevel.compare( CFG_LVL_EXTRATOPCOMPOSE1 ) == 0 )
+    level = EXTRATOPCOMPOSE1;
 
   return level;
 }
@@ -1006,6 +1011,9 @@ bool WindowName::parseLine( KernelConnection *whichKernel, istringstream& line,
   currentWindowName = name;
 
   isWindowTag = true; // CFG4D
+
+  numComposesExtraComposesInWindow = 0;
+  numSemanticParamExtraComposesInWindow = 0;
 
   return true;
 }
@@ -2463,7 +2471,8 @@ void WindowSelectedFunctions::printLine( ofstream& cfgFile,
 
 string WindowComposeFunctions::tagCFG = OLDCFG_TAG_WNDW_COMPOSE_FUNCTIONS;
 
-bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel,
+                                        istringstream& line,
                                         Trace *whichTrace,
                                         vector<Window *>& windows,
                                         vector<Histogram *>& histograms )
@@ -2494,8 +2503,17 @@ bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel, istringst
     getline( line, strFunction, '}' );
     level = stringToLevel( strLevel );
 
-    // It's a semantic function
-    if ( level != NONE )
+    if ( level == EXTRATOPCOMPOSE1 )
+    {
+      windows[ windows.size() - 1 ]->addExtraCompose( TOPCOMPOSE1 );
+      bool result = windows[ windows.size() - 1 ]->setExtraLevelFunction( TOPCOMPOSE1, numComposesExtraComposesInWindow, strFunction );
+      numComposesExtraComposesInWindow++; // after return?
+      if ( !result )
+      {
+        return false;
+      }
+    }
+    else if ( level != NONE ) // It's a semantic function
     {
       // Compatibility code with old CFG versions
       switch ( level )
@@ -2527,10 +2545,14 @@ bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel, istringst
 
       bool result = windows[ windows.size() - 1 ]->setLevelFunction( level, strFunction );
       if ( !result )
+      {
         return false;
+      }
     }
     else
+    {
       return false;
+    }
   }
 
   return true;
@@ -2539,7 +2561,10 @@ bool WindowComposeFunctions::parseLine( KernelConnection *whichKernel, istringst
 void WindowComposeFunctions::printLine( ofstream& cfgFile,
                                         const vector<Window *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_COMPOSE_FUNCTIONS << " { 9, { ";
+  PRV_UINT16 numComposes = 9 + ( *it )->getExtraNumPositions( TOPCOMPOSE1 );
+
+  cfgFile << OLDCFG_TAG_WNDW_COMPOSE_FUNCTIONS << " { " << numComposes << ", { ";
+
   cfgFile << "{" << OLDCFG_LVL_COMPOSE_CPU << ", ";
   cfgFile << ( *it )->getLevelFunction( COMPOSECPU ) << "}, ";
 
@@ -2562,10 +2587,27 @@ void WindowComposeFunctions::printLine( ofstream& cfgFile,
   cfgFile << ( *it )->getLevelFunction( COMPOSEWORKLOAD ) << "}, ";
 
   cfgFile << "{" << OLDCFG_LVL_TOPCOMPOSE1 << ", " << ( *it )->getLevelFunction( TOPCOMPOSE1 ) << "}, ";
-  cfgFile << "{" << OLDCFG_LVL_TOPCOMPOSE2 << ", " << ( *it )->getLevelFunction( TOPCOMPOSE2 ) << "} ";
+  cfgFile << "{" << OLDCFG_LVL_TOPCOMPOSE2 << ", " << ( *it )->getLevelFunction( TOPCOMPOSE2 ) << "}";
+
+  if ( ( *it )->getExtraNumPositions( TOPCOMPOSE1 ) == 0 )
+  {
+    cfgFile << " ";
+  }
+  else
+  {
+    cfgFile << ", ";
+    for( size_t pos = 0; pos < ( *it )->getExtraNumPositions( TOPCOMPOSE1 ); ++pos )
+    {
+      cfgFile << "{" << CFG_LVL_EXTRATOPCOMPOSE1 << ", " << ( *it )->getExtraLevelFunction( TOPCOMPOSE1, pos ) << "}";
+      if ( pos == ( *it )->getExtraNumPositions( TOPCOMPOSE1 ) - 1 )
+        cfgFile << " ";
+      else
+        cfgFile << ", ";
+    }
+  }
+
   cfgFile << "} }" << endl;
 }
-
 
 string WindowSemanticModule::tagCFG = OLDCFG_TAG_WNDW_SEMANTIC_MODULE;
 
@@ -2589,7 +2631,10 @@ bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstre
   getline( line, strFunction, '{' );
   strFunction.erase( strFunction.length() - 1 ); // Final space.
 
-  if ( windows[ windows.size() - 1 ]->getLevelFunction( level ) == strFunction )
+  if ( ( level != EXTRATOPCOMPOSE1 && windows[ windows.size() - 1 ]->getLevelFunction( level ) == strFunction )
+      ||
+       ( level == EXTRATOPCOMPOSE1 &&
+         windows[ windows.size() - 1 ]->getExtraLevelFunction( TOPCOMPOSE1, numSemanticParamExtraComposesInWindow ) == strFunction ) )
   {
     string tmpString;
     string strNumParam;
@@ -2636,7 +2681,13 @@ bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstre
         values.push_back( paramValue );
       }
 
-      windows[ windows.size() - 1 ]->setFunctionParam( level, i, values );
+      if ( level == EXTRATOPCOMPOSE1 )
+      {
+        windows[ windows.size() - 1 ]->setExtraFunctionParam( TOPCOMPOSE1, numSemanticParamExtraComposesInWindow, i, values );
+        numSemanticParamExtraComposesInWindow++;
+      }
+      else
+        windows[ windows.size() - 1 ]->setFunctionParam( level, i, values );
     }
 
   }
@@ -2647,6 +2698,29 @@ bool WindowSemanticModule::parseLine( KernelConnection *whichKernel, istringstre
 void WindowSemanticModule::printLine( ofstream& cfgFile,
                                       const vector<Window *>::const_iterator it )
 {
+  for ( size_t position = 0; position < ( *it )->getExtraNumPositions( TOPCOMPOSE1 ); ++position )
+  {
+    TWindowLevel topLevel = TOPCOMPOSE1;
+    for ( TParamIndex parIdx = 0; parIdx < ( *it )->getExtraFunctionNumParam( topLevel, position ); ++parIdx )
+    {
+      if ( parIdx == 0 )
+      {
+        cfgFile << OLDCFG_TAG_WNDW_SEMANTIC_MODULE << " " << CFG_LVL_EXTRATOPCOMPOSE1;
+        cfgFile << " " << ( *it )->getExtraLevelFunction( topLevel, position ) << " { ";
+        cfgFile << ( *it )->getExtraFunctionNumParam( topLevel, position ) << ", ";
+        cfgFile << "{ ";
+      }
+      vector<double> v = ( *it )->getExtraFunctionParam( topLevel, position, parIdx );
+      cfgFile << v.size();
+      for ( vector<double>::iterator itVec = v.begin(); itVec != v.end(); ++itVec )
+        cfgFile << " " << ( *itVec );
+      if ( parIdx < ( *it )->getExtraFunctionNumParam( topLevel, position ) - 1 )
+        cfgFile << ", ";
+      else
+        cfgFile << " } }" << endl;
+    }
+  }
+
   for ( int levelIdx = TOPCOMPOSE1; levelIdx <= TOPCOMPOSE2; ++levelIdx )
   {
     TWindowLevel topLevel = ( TWindowLevel ) levelIdx;

@@ -39,6 +39,28 @@
 
 using namespace std;
 
+KWindow::~KWindow()
+{
+  for( map< TWindowLevel, vector< vector< IntervalCompose * > > >::iterator itMap = extraCompose.begin();
+       itMap != extraCompose.end(); ++itMap )
+  {
+    for( vector< vector< IntervalCompose * > >::iterator itVec = itMap->second.begin();
+         itVec != itMap->second.end(); ++itVec )
+    {
+      for( vector<IntervalCompose *>::iterator it = itVec->begin(); it != itVec->end(); ++it )
+        delete *it;
+    }
+  }
+
+  for( map< TWindowLevel, vector< SemanticFunction * > >::iterator itMap = extraComposeFunctions.begin();
+       itMap != extraComposeFunctions.end(); ++itMap )
+  {
+    for( vector< SemanticFunction * >::iterator itVec = itMap->second.begin();
+         itVec != itMap->second.end(); ++itVec )
+      delete *itVec;
+  }
+}
+
 TObjectOrder KWindow::cpuObjectToWindowObject( TCPUOrder whichCPU )
 {
   TObjectOrder tmpObject = 0;
@@ -219,6 +241,13 @@ TRecordTime KWindow::windowUnitsToTraceUnits( TRecordTime whichTime ) const
 
 RecordList *KWindow::getRecordList( TObjectOrder whichObject )
 {
+  map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
+  if( itExtra != extraCompose.end() )
+  {
+    if( itExtra->second.size() > 0 )
+      return ( itExtra->second.back() )[ whichObject ]->getRecordList();
+  }
+
   return intervalTopCompose1[ whichObject ].getRecordList();
 }
 
@@ -261,6 +290,18 @@ bool KWindow::getParametersOfFunction( string whichFunction,
 
   return done;
 }
+
+// Extra composes
+size_t KWindow::getExtraNumPositions( TWindowLevel whichLevel ) const
+{
+  map< TWindowLevel, vector< vector< IntervalCompose * > > >::const_iterator it = extraCompose.find( whichLevel );
+
+  if( it == extraCompose.end() )
+    return 0;
+
+  return it->second.size();
+}
+
 
 /**********************************************************************
  *  KSingleWindow implementation
@@ -409,6 +450,23 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
       functions[ i ]->init( this );
   }
 
+  for( map< TWindowLevel, vector< SemanticFunction * > >::iterator itMap = extraComposeFunctions.begin();
+       itMap != extraComposeFunctions.end(); ++itMap )
+  {
+    for( vector<SemanticFunction *>::iterator it = itMap->second.begin();
+         it != itMap->second.end(); ++it )
+      (*it)->init( this );
+  }
+
+  if( extraCompose[ TOPCOMPOSE1 ].size() > 0 )
+  {
+    for( size_t iPos = 0; iPos < extraCompose[ TOPCOMPOSE1 ].size(); ++iPos )
+    {
+      for( size_t iRow = 0; iRow < ( extraCompose[ TOPCOMPOSE1 ] )[ iPos ].size(); ++iRow )
+        ( ( extraCompose[ TOPCOMPOSE1 ] )[ iPos ] )[ iRow ]->setSemanticFunction( (SemanticCompose *)( extraComposeFunctions[ TOPCOMPOSE1 ] )[ iPos ] );
+    }
+  }
+
   if( level >= SYSTEM )
   {
     if( initialTime > 0 && !initFromBegin() )
@@ -438,7 +496,17 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
 
 void KSingleWindow::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
-  intervalTopCompose1[ whichRow ].init( initialTime, create );
+  if( extraCompose[ TOPCOMPOSE1 ].size() > 0 )
+  {
+    for( size_t iPos = 0; iPos < extraCompose[ TOPCOMPOSE1 ].size(); ++iPos )
+    {
+      ( ( extraCompose[ TOPCOMPOSE1 ] )[ iPos ] )[ whichRow ]->setSemanticFunction( (SemanticCompose *)( extraComposeFunctions[ TOPCOMPOSE1 ] )[ iPos ] );
+    }
+
+    ( extraCompose[ TOPCOMPOSE1 ].back() )[ whichRow ]->init( initialTime, create );
+  }
+  else
+    intervalTopCompose1[ whichRow ].init( initialTime, create );
 }
 
 bool KSingleWindow::setLevelFunction( TWindowLevel whichLevel,
@@ -531,9 +599,187 @@ string KSingleWindow::getFunctionParamName( TWindowLevel whichLevel,
   return functions[ whichLevel ]->getParamName( whichParam );
 }
 
+// Extra composes
+void KSingleWindow::addExtraCompose( TWindowLevel whichLevel )
+{
+  if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= COMPOSECPU ) )
+    return; // Should throw an Exception
+
+  vector< vector< IntervalCompose * > >& vCompose = extraCompose[ whichLevel ];
+  vector<IntervalCompose *> tmpV;
+  if( myTrace->totalThreads() > myTrace->totalCPUs() )
+  {
+    tmpV.reserve( myTrace->totalThreads() );
+    for( TThreadOrder i = 0; i < myTrace->totalThreads(); ++i )
+    {
+      IntervalCompose *tmpInterval = new IntervalCompose( this, TOPCOMPOSE1, i );
+      tmpV.push_back( tmpInterval );
+      tmpInterval->setNotWindowInits( true );
+      if( extraCompose[ whichLevel ].size() > 0 )
+        tmpInterval->setCustomChild( ( extraCompose[ whichLevel ].back() )[ i ] );
+      else
+        tmpInterval->setCustomChild( getLevelInterval( TOPCOMPOSE1, i ) );
+    }
+  }
+  else
+  {
+    tmpV.reserve( myTrace->totalCPUs() );
+    for( TCPUOrder i = 0; i < myTrace->totalCPUs(); ++i )
+    {
+      IntervalCompose *tmpInterval = new IntervalCompose( this, TOPCOMPOSE1, i );
+      tmpV.push_back( tmpInterval );
+      tmpInterval->setNotWindowInits( true );
+      if( extraCompose[ whichLevel ].size() > 0 )
+        tmpInterval->setCustomChild( ( extraCompose[ whichLevel ].back() )[ i ] );
+      else
+        tmpInterval->setCustomChild( getLevelInterval( TOPCOMPOSE1, i ) );
+    }
+  }
+  vCompose.push_back( tmpV );
+
+  vector< SemanticFunction * >& vComposeFunction = extraComposeFunctions[ whichLevel ];
+  vComposeFunction.push_back( new ComposeAsIs() );
+}
+
+void KSingleWindow::removeExtraCompose( TWindowLevel whichLevel )
+{
+  if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= COMPOSECPU ) )
+    return; // Should throw an Exception
+
+  if( extraCompose[ whichLevel ].size() > 0 )
+  {
+    for( vector< IntervalCompose * >::iterator it = extraCompose[ whichLevel ].back().begin();
+         it != extraCompose[ whichLevel ].back().end(); ++it )
+      delete *it;
+    extraCompose[ whichLevel ].pop_back();
+  }
+
+  if( extraComposeFunctions[ whichLevel ].size() > 0 )
+  {
+    delete extraComposeFunctions[ whichLevel ].back();
+    extraComposeFunctions[ whichLevel ].pop_back();
+  }
+}
+
+bool KSingleWindow::setExtraLevelFunction( TWindowLevel whichLevel,
+                                           size_t whichPosition,
+                                           const string& whichFunction )
+{
+  if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= COMPOSECPU ) )
+    return false; // Should throw an Exception
+
+  map< TWindowLevel, vector< SemanticFunction * > >::iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return false;
+
+  if( it->second.size() <= whichPosition )
+    return false;
+
+  delete it->second[ whichPosition ];
+
+  it->second[ whichPosition ] = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( whichFunction );
+
+  if( it->second[ whichPosition ] == NULL )
+    return false;
+
+  return true;
+}
+
+string KSingleWindow::getExtraLevelFunction( TWindowLevel whichLevel,
+                                             size_t whichPosition )
+{
+  if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= COMPOSECPU ) )
+    return ""; // Should throw an Exception
+
+  map< TWindowLevel, vector< SemanticFunction * > >::iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return "";
+
+  if( it->second.size() <= whichPosition )
+    return "";
+
+  return it->second[ whichPosition ]->getName();
+}
+
+void KSingleWindow::setExtraFunctionParam( TWindowLevel whichLevel,
+                                           size_t whichPosition,
+                                           TParamIndex whichParam,
+                                           const TParamValue& newValue )
+{
+  if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= COMPOSECPU ) )
+    return; // Should throw an Exception
+
+  map< TWindowLevel, vector< SemanticFunction * > >::iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return;
+
+  if( it->second.size() <= whichPosition )
+    return;
+
+  it->second[ whichPosition ]->setParam( whichParam, newValue );
+}
+
+TParamIndex KSingleWindow::getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const
+{
+  if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= COMPOSECPU ) )
+    return 0; // Should throw an Exception
+
+  map< TWindowLevel, vector< SemanticFunction * > >::const_iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return 0;
+
+  if( it->second.size() <= whichPosition )
+    return 0;
+
+  return it->second[ whichPosition ]->getMaxParam();
+}
+
+TParamValue KSingleWindow::getExtraFunctionParam( TWindowLevel whichLevel,
+                                                  size_t whichPosition,
+                                                  TParamIndex whichParam ) const
+{
+  if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= COMPOSECPU ) )
+    return std::vector<double>(); // Should throw an Exception
+
+  map< TWindowLevel, vector< SemanticFunction * > >::const_iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return std::vector<double>();
+
+  if( it->second.size() <= whichPosition )
+    return std::vector<double>();
+
+  return it->second[ whichPosition ]->getParam( whichParam );
+}
+
+string KSingleWindow::getExtraFunctionParamName( TWindowLevel whichLevel,
+                                                 size_t whichPosition,
+                                                 TParamIndex whichParam ) const
+{
+  if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= COMPOSECPU ) )
+    return ""; // Should throw an Exception
+
+  map< TWindowLevel, vector< SemanticFunction * > >::const_iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return "";
+
+  if( it->second.size() <= whichPosition )
+    return "";
+
+  return it->second[ whichPosition ]->getParamName( whichParam );
+}
+
+
 bool KSingleWindow::initFromBegin() const
 {
   bool tmp = false;
+
+  map< TWindowLevel, vector<SemanticFunction *> >::const_iterator itExtra = extraComposeFunctions.find( TOPCOMPOSE1 );
+  if( itExtra != extraComposeFunctions.end() )
+  {
+    for( vector<SemanticFunction *>::const_iterator it = itExtra->second.begin();
+         it != itExtra->second.end(); ++it )
+      tmp = tmp || (*it)->getInitFromBegin();
+  }
 
   tmp = tmp || functions[ TOPCOMPOSE1 ]->getInitFromBegin();
   tmp = tmp || functions[ TOPCOMPOSE2 ]->getInitFromBegin();
@@ -590,39 +836,79 @@ bool KSingleWindow::initFromBegin() const
 
 RecordList *KSingleWindow::calcNext( TObjectOrder whichObject, bool updateLimits )
 {
+  map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
+  if( itExtra != extraCompose.end() )
+  {
+    if( itExtra->second.size() > 0 )
+      return ( itExtra->second.back() )[ whichObject ]->calcNext();
+  }
+
   return intervalTopCompose1[ whichObject ].calcNext();
 }
 
 
 RecordList *KSingleWindow::calcPrev( TObjectOrder whichObject, bool updateLimits )
 {
+  map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
+  if( itExtra != extraCompose.end() )
+  {
+    if( itExtra->second.size() > 0 )
+      return ( itExtra->second.back() )[ whichObject ]->calcPrev();
+  }
+
   return intervalTopCompose1[ whichObject ].calcPrev();
 }
 
 
 TRecordTime KSingleWindow::getBeginTime( TObjectOrder whichObject ) const
 {
+  map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
+  if( itExtra != extraCompose.end() )
+  {
+    if( itExtra->second.size() > 0 )
+      return ( itExtra->second.back() )[ whichObject ]->getBeginTime();
+  }
+
   return intervalTopCompose1[ whichObject ].getBeginTime();
 }
 
 
 TRecordTime KSingleWindow::getEndTime( TObjectOrder whichObject ) const
 {
+  map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
+  if( itExtra != extraCompose.end() )
+  {
+    if( itExtra->second.size() > 0 )
+      return ( itExtra->second.back() )[ whichObject ]->getEndTime();
+  }
+
   return intervalTopCompose1[ whichObject ].getEndTime();
 }
 
 
 TSemanticValue KSingleWindow::getValue( TObjectOrder whichObject ) const
 {
+  map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
+  if( itExtra != extraCompose.end() )
+  {
+    if( itExtra->second.size() > 0 )
+      return ( itExtra->second.back() )[ whichObject ]->getValue();
+  }
+
   return intervalTopCompose1[ whichObject ].getValue();
 }
 
 
 Interval *KSingleWindow::getLevelInterval( TWindowLevel whichLevel,
-    TObjectOrder whichOrder )
+                                           TObjectOrder whichOrder,
+                                           bool includeExtraCompose )
 {
   if( whichLevel == TOPCOMPOSE1 )
+  {
+    if( includeExtraCompose && extraCompose[ whichLevel ].size() > 0 )
+      return ( extraCompose[ whichLevel ].back() )[ whichOrder ];
     return &intervalTopCompose1[ whichOrder ];
+  }
   else if( whichLevel == TOPCOMPOSE2 )
     return &intervalTopCompose2[ whichOrder ];
   else if( whichLevel == COMPOSEWORKLOAD )
@@ -658,6 +944,17 @@ Interval *KSingleWindow::getLevelInterval( TWindowLevel whichLevel,
 
 SemanticInfoType KSingleWindow::getSemanticInfoType() const
 {
+  map< TWindowLevel, vector<SemanticFunction *> >::const_iterator itMap = extraComposeFunctions.find( TOPCOMPOSE1 );
+  if( itMap != extraComposeFunctions.end() )
+  {
+    for( vector<SemanticFunction *>::const_reverse_iterator it = itMap->second.rbegin();
+         it != itMap->second.rend(); ++it )
+    {
+      if( (*it)->getSemanticInfoType() != SAME_TYPE )
+        return (*it)->getSemanticInfoType();
+    }
+  }
+
   if( functions[ TOPCOMPOSE1 ]->getSemanticInfoType() != SAME_TYPE )
     return functions[ TOPCOMPOSE1 ]->getSemanticInfoType();
   if( functions[ TOPCOMPOSE2 ]->getSemanticInfoType() != SAME_TYPE )
@@ -721,6 +1018,29 @@ KWindow *KSingleWindow::clone( bool recursiveClone )
 
   clonedKSWindow->level = level;
   clonedKSWindow->timeUnit = timeUnit;
+
+  for( map< TWindowLevel, vector< vector< IntervalCompose * > > >::iterator itMap = extraCompose.begin();
+       itMap != extraCompose.end(); ++itMap )
+  {
+    for( size_t i = 0; i < itMap->second.size(); ++i )
+      clonedKSWindow->addExtraCompose( itMap->first );
+  }
+
+  for( map< TWindowLevel, vector< SemanticFunction * > >::iterator itMap = extraComposeFunctions.begin();
+       itMap != extraComposeFunctions.end(); ++itMap )
+  {
+    for( size_t i = 0; i < itMap->second.size(); ++i )
+    {
+      delete ( clonedKSWindow->extraComposeFunctions[ itMap->first ] )[ i ];
+      ( clonedKSWindow->extraComposeFunctions[ itMap->first ] )[ i ] = ( extraComposeFunctions[ itMap->first ] )[ i ]->clone();
+    }
+  }
+
+  for( size_t iPos = 0; iPos < clonedKSWindow->extraCompose[ TOPCOMPOSE1 ].size(); ++iPos )
+  {
+    for( size_t iRow = 0; iRow < ( clonedKSWindow->extraCompose[ TOPCOMPOSE1 ] )[ iPos ].size(); ++iRow )
+      ( ( clonedKSWindow->extraCompose[ TOPCOMPOSE1 ] )[ iPos ] )[ iRow ]->setSemanticFunction( (SemanticCompose *)( clonedKSWindow->extraComposeFunctions[ TOPCOMPOSE1 ] )[ iPos ] );
+  }
 
   for( int i = 0; i < COMPOSECPU + 1; ++i )
   {
@@ -1020,9 +1340,187 @@ string KDerivedWindow::getFunctionParamName( TWindowLevel whichLevel,
   return functions[ whichLevel ]->getParamName( whichParam );
 }
 
+// Extra composes
+void KDerivedWindow::addExtraCompose( TWindowLevel whichLevel )
+{
+  if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= DERIVED ) )
+    return; // Should throw an Exception
+
+  vector< vector< IntervalCompose * > >& vCompose = extraCompose[ whichLevel ];
+  vector<IntervalCompose *> tmpV;
+  if( myTrace->totalThreads() > myTrace->totalCPUs() )
+  {
+    tmpV.reserve( myTrace->totalThreads() );
+    for( TThreadOrder i = 0; i < myTrace->totalThreads(); ++i )
+    {
+      IntervalCompose *tmpInterval = new IntervalCompose( this, TOPCOMPOSE1, i );
+      tmpV.push_back( tmpInterval );
+      tmpInterval->setNotWindowInits( true );
+      if( extraCompose[ whichLevel ].size() > 0 )
+        tmpInterval->setCustomChild( ( extraCompose[ whichLevel ].back() )[ i ] );
+      else
+        tmpInterval->setCustomChild( getLevelInterval( TOPCOMPOSE1, i ) );
+    }
+  }
+  else
+  {
+    tmpV.reserve( myTrace->totalCPUs() );
+    for( TCPUOrder i = 0; i < myTrace->totalCPUs(); ++i )
+    {
+      IntervalCompose *tmpInterval = new IntervalCompose( this, TOPCOMPOSE1, i );
+      tmpV.push_back( tmpInterval );
+      tmpInterval->setNotWindowInits( true );
+      if( extraCompose[ whichLevel ].size() > 0 )
+        tmpInterval->setCustomChild( ( extraCompose[ whichLevel ].back() )[ i ] );
+      else
+        tmpInterval->setCustomChild( getLevelInterval( TOPCOMPOSE1, i ) );
+    }
+  }
+  vCompose.push_back( tmpV );
+
+  vector< SemanticFunction * >& vComposeFunction = extraComposeFunctions[ whichLevel ];
+  vComposeFunction.push_back( new ComposeAsIs() );
+}
+
+void KDerivedWindow::removeExtraCompose( TWindowLevel whichLevel )
+{
+  if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= DERIVED ) )
+    return; // Should throw an Exception
+
+  if( extraCompose[ whichLevel ].size() > 0 )
+  {
+    for( vector< IntervalCompose * >::iterator it = extraCompose[ whichLevel ].back().begin();
+         it != extraCompose[ whichLevel ].back().end(); ++it )
+      delete *it;
+    extraCompose[ whichLevel ].pop_back();
+  }
+
+  if( extraComposeFunctions[ whichLevel ].size() > 0 )
+  {
+    delete extraComposeFunctions[ whichLevel ].back();
+    extraComposeFunctions[ whichLevel ].pop_back();
+  }
+}
+
+bool KDerivedWindow::setExtraLevelFunction( TWindowLevel whichLevel,
+                                            size_t whichPosition,
+                                            const string& whichFunction )
+{
+  if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= DERIVED ) )
+    return false; // Should throw an Exception
+
+  map< TWindowLevel, vector< SemanticFunction * > >::iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return false;
+
+  if( it->second.size() <= whichPosition )
+    return false;
+
+  delete it->second[ whichPosition ];
+
+  it->second[ whichPosition ] = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( whichFunction );
+
+  if( it->second[ whichPosition ] == NULL )
+    return false;
+
+  return true;
+}
+
+string KDerivedWindow::getExtraLevelFunction( TWindowLevel whichLevel,
+                                              size_t whichPosition )
+{
+  if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= DERIVED ) )
+    return ""; // Should throw an Exception
+
+  map< TWindowLevel, vector< SemanticFunction * > >::iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return "";
+
+  if( it->second.size() <= whichPosition )
+    return "";
+
+  return it->second[ whichPosition ]->getName();
+}
+
+void KDerivedWindow::setExtraFunctionParam( TWindowLevel whichLevel,
+                                            size_t whichPosition,
+                                            TParamIndex whichParam,
+                                            const TParamValue& newValue )
+{
+  if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= DERIVED ) )
+    return; // Should throw an Exception
+
+  map< TWindowLevel, vector< SemanticFunction * > >::iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return;
+
+  if( it->second.size() <= whichPosition )
+    return;
+
+  it->second[ whichPosition ]->setParam( whichParam, newValue );
+}
+
+TParamIndex KDerivedWindow::getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const
+{
+  if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= DERIVED ) )
+    return 0; // Should throw an Exception
+
+  map< TWindowLevel, vector< SemanticFunction * > >::const_iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return 0;
+
+  if( it->second.size() <= whichPosition )
+    return 0;
+
+  return it->second[ whichPosition ]->getMaxParam();
+}
+
+TParamValue KDerivedWindow::getExtraFunctionParam( TWindowLevel whichLevel,
+                                                  size_t whichPosition,
+                                                  TParamIndex whichParam ) const
+{
+  if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= DERIVED ) )
+    return std::vector<double>(); // Should throw an Exception
+
+  map< TWindowLevel, vector< SemanticFunction * > >::const_iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return std::vector<double>();
+
+  if( it->second.size() <= whichPosition )
+    return std::vector<double>();
+
+  return it->second[ whichPosition ]->getParam( whichParam );
+}
+
+string KDerivedWindow::getExtraFunctionParamName( TWindowLevel whichLevel,
+                                                 size_t whichPosition,
+                                                 TParamIndex whichParam ) const
+{
+  if( !( whichLevel >= TOPCOMPOSE1 && whichLevel <= DERIVED ) )
+    return ""; // Should throw an Exception
+
+  map< TWindowLevel, vector< SemanticFunction * > >::const_iterator it = extraComposeFunctions.find( whichLevel );
+  if( it == extraComposeFunctions.end() )
+    return "";
+
+  if( it->second.size() <= whichPosition )
+    return "";
+
+  return it->second[ whichPosition ]->getParamName( whichParam );
+}
+
+
 bool KDerivedWindow::initFromBegin() const
 {
   bool tmp = false;
+
+  map< TWindowLevel, vector<SemanticFunction *> >::const_iterator itExtra = extraComposeFunctions.find( TOPCOMPOSE1 );
+  if( itExtra != extraComposeFunctions.end() )
+  {
+    for( vector<SemanticFunction *>::const_iterator it = itExtra->second.begin();
+         it != itExtra->second.end(); ++it )
+      tmp = tmp || (*it)->getInitFromBegin();
+  }
 
   tmp = tmp || functions[ TOPCOMPOSE1 ]->getInitFromBegin();
   tmp = tmp || functions[ TOPCOMPOSE2 ]->getInitFromBegin();
@@ -1088,6 +1586,23 @@ void KDerivedWindow::init( TRecordTime initialTime, TCreateList create, bool upd
       functions[ i ]->init( this );
   }
 
+  for( map< TWindowLevel, vector< SemanticFunction * > >::iterator itMap = extraComposeFunctions.begin();
+       itMap != extraComposeFunctions.end(); ++itMap )
+  {
+    for( vector<SemanticFunction *>::iterator it = itMap->second.begin();
+         it != itMap->second.end(); ++it )
+      (*it)->init( this );
+  }
+
+  if( extraCompose[ TOPCOMPOSE1 ].size() > 0 )
+  {
+    for( size_t iPos = 0; iPos < extraCompose[ TOPCOMPOSE1 ].size(); ++iPos )
+    {
+      for( size_t iRow = 0; iRow < ( extraCompose[ TOPCOMPOSE1 ] )[ iPos ].size(); ++iRow )
+        ( ( extraCompose[ TOPCOMPOSE1 ] )[ iPos ] )[ iRow ]->setSemanticFunction( (SemanticCompose *)( extraComposeFunctions[ TOPCOMPOSE1 ] )[ iPos ] );
+    }
+  }
+
 /*  if( tmpLevel == WORKLOAD )
     objectSize = 1;
   else if( tmpLevel == APPLICATION )
@@ -1112,47 +1627,97 @@ void KDerivedWindow::init( TRecordTime initialTime, TCreateList create, bool upd
 
 void KDerivedWindow::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
-  intervalTopCompose1[ whichRow ].init( initialTime, create );
+  if( extraCompose[ TOPCOMPOSE1 ].size() > 0 )
+  {
+    for( size_t iPos = 0; iPos < extraCompose[ TOPCOMPOSE1 ].size(); ++iPos )
+    {
+      ( ( extraCompose[ TOPCOMPOSE1 ] )[ iPos ] )[ whichRow ]->setSemanticFunction( (SemanticCompose *)( extraComposeFunctions[ TOPCOMPOSE1 ] )[ iPos ] );
+    }
+
+    ( extraCompose[ TOPCOMPOSE1 ].back() )[ whichRow ]->init( initialTime, create );
+  }
+  else
+    intervalTopCompose1[ whichRow ].init( initialTime, create );
 }
 
 RecordList *KDerivedWindow::calcNext( TObjectOrder whichObject, bool updateLimits )
 {
+  map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
+  if( itExtra != extraCompose.end() )
+  {
+    if( itExtra->second.size() > 0 )
+      return ( itExtra->second.back() )[ whichObject ]->calcNext();
+  }
+
   return intervalTopCompose1[ whichObject ].calcNext();
 }
 
 
 RecordList *KDerivedWindow::calcPrev( TObjectOrder whichObject, bool updateLimits )
 {
+  map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
+  if( itExtra != extraCompose.end() )
+  {
+    if( itExtra->second.size() > 0 )
+      return ( itExtra->second.back() )[ whichObject ]->calcPrev();
+  }
+
   return intervalTopCompose1[ whichObject ].calcPrev();
 }
 
 
 TRecordTime KDerivedWindow::getBeginTime( TObjectOrder whichObject ) const
 {
+  map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
+  if( itExtra != extraCompose.end() )
+  {
+    if( itExtra->second.size() > 0 )
+      return ( itExtra->second.back() )[ whichObject ]->getBeginTime();
+  }
+
   return intervalTopCompose1[ whichObject ].getBeginTime();
 }
 
 
 TRecordTime KDerivedWindow::getEndTime( TObjectOrder whichObject ) const
 {
+  map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
+  if( itExtra != extraCompose.end() )
+  {
+    if( itExtra->second.size() > 0 )
+      return ( itExtra->second.back() )[ whichObject ]->getEndTime();
+  }
+
   return intervalTopCompose1[ whichObject ].getEndTime();
 }
 
 
 TSemanticValue KDerivedWindow::getValue( TObjectOrder whichObject ) const
 {
+  map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
+  if( itExtra != extraCompose.end() )
+  {
+    if( itExtra->second.size() > 0 )
+      return ( itExtra->second.back() )[ whichObject ]->getValue();
+  }
+
   return intervalTopCompose1[ whichObject ].getValue();
 }
 
 
 Interval *KDerivedWindow::getLevelInterval( TWindowLevel whichLevel,
-    TObjectOrder whichOrder )
+                                            TObjectOrder whichOrder,
+                                            bool includeExtraCompose )
 {
   if( whichLevel == getMinAcceptableLevel() )
     whichLevel = DERIVED;
 
   if( whichLevel == TOPCOMPOSE1 )
+  {
+    if( includeExtraCompose && extraCompose[ whichLevel ].size() > 0 )
+      return ( extraCompose[ whichLevel ].back() )[ whichOrder ];
     return &intervalTopCompose1[ whichOrder ];
+  }
   else if( whichLevel == TOPCOMPOSE2 )
     return &intervalTopCompose2[ whichOrder ];
   else if( whichLevel == COMPOSEWORKLOAD )
@@ -1253,12 +1818,46 @@ KWindow *KDerivedWindow::clone( bool recursiveClone )
   clonedKDerivedWindow->level = getLevel();
   clonedKDerivedWindow->timeUnit = timeUnit;
 
+  for( map< TWindowLevel, vector< vector< IntervalCompose * > > >::iterator itMap = extraCompose.begin();
+       itMap != extraCompose.end(); ++itMap )
+  {
+    for( size_t i = 0; i < itMap->second.size(); ++i )
+      clonedKDerivedWindow->addExtraCompose( itMap->first );
+  }
+
+  for( map< TWindowLevel, vector< SemanticFunction * > >::iterator itMap = extraComposeFunctions.begin();
+       itMap != extraComposeFunctions.end(); ++itMap )
+  {
+    for( size_t i = 0; i < itMap->second.size(); ++i )
+    {
+      delete ( clonedKDerivedWindow->extraComposeFunctions[ itMap->first ] )[ i ];
+      ( clonedKDerivedWindow->extraComposeFunctions[ itMap->first ] )[ i ] = ( extraComposeFunctions[ itMap->first ] )[ i ]->clone();
+    }
+  }
+
+  for( size_t iPos = 0; iPos < clonedKDerivedWindow->extraCompose[ TOPCOMPOSE1 ].size(); ++iPos )
+  {
+    for( size_t iRow = 0; iRow < ( clonedKDerivedWindow->extraCompose[ TOPCOMPOSE1 ] )[ iPos ].size(); ++iRow )
+      ( ( clonedKDerivedWindow->extraCompose[ TOPCOMPOSE1 ] )[ iPos ] )[ iRow ]->setSemanticFunction( (SemanticCompose *)( clonedKDerivedWindow->extraComposeFunctions[ TOPCOMPOSE1 ] )[ iPos ] );
+  }
+
   return clonedKDerivedWindow;
 }
 
 
 SemanticInfoType KDerivedWindow::getSemanticInfoType() const
 {
+  map< TWindowLevel, vector<SemanticFunction *> >::const_iterator itMap = extraComposeFunctions.find( TOPCOMPOSE1 );
+  if( itMap != extraComposeFunctions.end() )
+  {
+    for( vector<SemanticFunction *>::const_reverse_iterator it = itMap->second.rbegin();
+         it != itMap->second.rend(); ++it )
+    {
+      if( (*it)->getSemanticInfoType() != SAME_TYPE )
+        return (*it)->getSemanticInfoType();
+    }
+  }
+
   if( functions[ TOPCOMPOSE1 ]->getSemanticInfoType() != SAME_TYPE )
     return functions[ TOPCOMPOSE1 ]->getSemanticInfoType();
   if( functions[ TOPCOMPOSE2 ]->getSemanticInfoType() != SAME_TYPE )
