@@ -374,7 +374,7 @@ inline TEventType NoLoadTrace::iterator::getEventType() const
   return ( ( TRecord * )record )->URecordInfo.eventRecord.type;
 }
 
-inline TEventValue NoLoadTrace::iterator::getEventValue() const
+inline TSemanticValue NoLoadTrace::iterator::getEventValue() const
 {
   return ( ( TRecord * )record )->URecordInfo.eventRecord.value;
 }

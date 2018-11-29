@@ -77,20 +77,20 @@ namespace NoLoad
 
           virtual iterator *clone() const;
 
-          virtual TRecordType  getType() const;
-          virtual TRecordTime  getTime() const;
-          virtual TThreadOrder getThread() const;
-          virtual TCPUOrder    getCPU() const;
-          virtual TObjectOrder getOrder() const;
-          virtual TEventType   getEventType() const;
-          virtual TEventValue  getEventValue() const;
-          virtual TState       getState() const;
-          virtual TRecordTime  getStateEndTime() const;
-          virtual TCommID      getCommIndex() const;
+          virtual TRecordType    getType() const;
+          virtual TRecordTime    getTime() const;
+          virtual TThreadOrder   getThread() const;
+          virtual TCPUOrder      getCPU() const;
+          virtual TObjectOrder   getOrder() const;
+          virtual TEventType     getEventType() const;
+          virtual TSemanticValue getEventValue() const;
+          virtual TState         getState() const;
+          virtual TRecordTime    getStateEndTime() const;
+          virtual TCommID        getCommIndex() const;
 
-          virtual void         setTime( const TRecordTime whichTime );
-          virtual void         setType( const TRecordType whichType );
-          virtual void         setStateEndTime( const TRecordTime whichEndTime );
+          virtual void           setTime( const TRecordTime whichTime );
+          virtual void           setType( const TRecordType whichType );
+          virtual void           setStateEndTime( const TRecordTime whichEndTime );
 
         protected:
           NoLoadBlocks *blocks;

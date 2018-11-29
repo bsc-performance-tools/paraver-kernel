@@ -275,7 +275,7 @@ inline TEventType   PlainTrace::iterator::getEventType() const
   return ( ( TRecord * )record )->URecordInfo.eventRecord.type;
 }
 
-inline TEventValue  PlainTrace::iterator::getEventValue() const
+inline TSemanticValue PlainTrace::iterator::getEventValue() const
 {
   return ( ( TRecord * )record )->URecordInfo.eventRecord.value;
 }

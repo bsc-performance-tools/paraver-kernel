@@ -58,16 +58,16 @@ class MemoryTrace
 
         virtual iterator *clone() const = 0;
 
-        virtual TRecordType  getType() const = 0;
-        virtual TRecordTime  getTime() const = 0;
-        virtual TThreadOrder getThread() const = 0;
-        virtual TCPUOrder    getCPU() const = 0;
-        virtual TObjectOrder getOrder() const = 0;
-        virtual TEventType   getEventType() const = 0;
-        virtual TEventValue  getEventValue() const = 0;
-        virtual TState       getState() const = 0;
-        virtual TRecordTime  getStateEndTime() const = 0;
-        virtual TCommID      getCommIndex() const = 0;
+        virtual TRecordType    getType() const = 0;
+        virtual TRecordTime    getTime() const = 0;
+        virtual TThreadOrder   getThread() const = 0;
+        virtual TCPUOrder      getCPU() const = 0;
+        virtual TObjectOrder   getOrder() const = 0;
+        virtual TEventType     getEventType() const = 0;
+        virtual TSemanticValue getEventValue() const = 0;
+        virtual TState         getState() const = 0;
+        virtual TRecordTime    getStateEndTime() const = 0;
+        virtual TCommID        getCommIndex() const = 0;
 
         virtual void         setTime( const TRecordTime time ) = 0;
         virtual void         setType( const TRecordType whichType ) = 0;

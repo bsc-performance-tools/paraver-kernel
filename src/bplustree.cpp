@@ -1194,7 +1194,7 @@ inline TEventType   BPlusTree::iterator::getEventType() const
   return ( ( TRecord * )record )->URecordInfo.eventRecord.type;
 }
 
-inline TEventValue  BPlusTree::iterator::getEventValue() const
+inline TSemanticValue BPlusTree::iterator::getEventValue() const
 {
   return ( ( TRecord * )record )->URecordInfo.eventRecord.value;
 }

@@ -38,7 +38,7 @@ class KernelConnection;
 struct RLEvent
 {
   TEventType type;
-  TEventValue value;
+  TSemanticValue value;
 };
 
 struct RLComm
@@ -69,7 +69,7 @@ public:
   {
     return UInfo.event.type;
   }
-  TEventValue getEventValue() const
+  TSemanticValue getEventValue() const
   {
     return UInfo.event.value;
   }
@@ -109,7 +109,7 @@ public:
   {
     UInfo.event.type = whichType;
   }
-  void setEventValue( TEventValue whichValue )
+  void setEventValue( TSemanticValue whichValue )
   {
     UInfo.event.value = whichValue;
   }
