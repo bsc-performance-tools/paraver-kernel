@@ -136,6 +136,11 @@ class KTrace: public Trace
       return traceTimeUnit;
     }
 
+    inline const ptime& getTraceTime() const
+    {
+      return myTraceTime;
+    }
+
     bool eventLoaded( TEventType whichType ) const;
     bool anyEventLoaded( TEventType firstType, TEventType lastType ) const;
 

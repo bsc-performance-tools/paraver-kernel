@@ -463,33 +463,31 @@ void KTrace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
   memTrace->getRecordByTimeThread( listIter, whichTime );
 }
 
+
 void KTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
                                  TRecordTime whichTime ) const
 {
   memTrace->getRecordByTimeCPU( listIter, whichTime );
 }
 
+
 void KTrace::parseDateTime( string &whichDateTime )
 {
+  vector<string> formatDate;
+  formatDate.push_back("%d/%m/%Y at %H:%M:%S%F");
+  formatDate.push_back("%d/%m/%Y at %H:%M:%S");
+  formatDate.push_back("%d/%m/%Y at %H:%M");
+  formatDate.push_back("%d/%m/%y at %H:%M");
 
   std::stringstream tmpSSDate( whichDateTime );
-  time_input_facet *tmpFacet = new time_input_facet( "%d/%m/%Y at %H:%M:%S%F" );
-  tmpSSDate.imbue( std::locale( tmpSSDate.getloc(), tmpFacet ) );
-  tmpSSDate >> myTraceTime;
-  std::cout << myTraceTime << std::endl;
-  if ( myTraceTime.is_not_a_date_time() )
+  time_input_facet *tmpFacet;
+  for( vector<string>::iterator it = formatDate.begin(); it != formatDate.end(); ++it )
   {
-    tmpFacet = new time_input_facet( "%d/%m/%Y at %H:%M:%S" );
+    tmpFacet = new time_input_facet( *it );
     tmpSSDate.imbue( std::locale( tmpSSDate.getloc(), tmpFacet ) );
     tmpSSDate >> myTraceTime;
-    std::cout << myTraceTime << std::endl;
-    if ( myTraceTime.is_not_a_date_time() )
-    {
-      tmpFacet = new time_input_facet( "%d/%m/%Y at %H:%M" );
-      tmpSSDate.imbue( std::locale( tmpSSDate.getloc(), tmpFacet ) );
-      tmpSSDate >> myTraceTime;
-      std::cout << myTraceTime << std::endl;
-    }
+    if ( !myTraceTime.is_not_a_date_time() )
+      break;
   }
 }
 

@@ -444,6 +444,11 @@ TTimeUnit TraceProxy::getTimeUnit() const
   return myTrace->getTimeUnit();
 }
 
+const ptime& TraceProxy::getTraceTime() const
+{
+  return myTrace->getTraceTime();
+}
+
 bool TraceProxy::getUnload() const
 {
   return unload;
