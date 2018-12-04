@@ -36,6 +36,8 @@
 #include "paraverconfig.h"
 #include "trace.h"
 
+using boost::posix_time::ptime;
+
 class Histogram;
 
 class LabelConstructor
@@ -63,6 +65,8 @@ class LabelConstructor
     static std::string histoTotalLabel( THistoTotals whichTotal );
 
     static std::string timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 precision );
+
+    static std::string timeLabel( ptime value, PRV_UINT32 precision );
 
     static std::string semanticLabel( const Window * whichWindow, TSemanticValue value,
                                  bool text, PRV_UINT32 precision );

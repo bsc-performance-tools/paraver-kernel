@@ -36,7 +36,9 @@
 #include "filter.h"
 #include "kfilter.h"
 
+
 using namespace std;
+using boost::posix_time::time_input_facet;
 
 stringstream LabelConstructor::sstrObjectLabel;
 stringstream LabelConstructor::label;
@@ -298,6 +300,19 @@ string LabelConstructor::histoTotalLabel( THistoTotals whichTotal )
   }
 
   return "";
+}
+
+// TODO: precision not used!
+string LabelConstructor::timeLabel( ptime value, PRV_UINT32 precision )
+{
+  sstrTimeLabel.clear();
+  sstrTimeLabel.str( "" );
+
+  time_input_facet *tmpFacet = new time_input_facet( "%d/%m/%Y at %H:%M:%S%F" );
+  sstrTimeLabel.imbue( std::locale( locale( "" ), tmpFacet ) );
+  sstrTimeLabel << value;
+
+  return sstrTimeLabel.str();
 }
 
 
