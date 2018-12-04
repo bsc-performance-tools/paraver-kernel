@@ -21,21 +21,20 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #ifndef TRACE_H_INCLUDED
 #define TRACE_H_INCLUDED
 
 #include <set>
+#include "boost/date_time/posix_time/posix_time.hpp"
+
 #include "paraverkerneltypes.h"
 #include "semanticcolor.h"
 #include "eventlabels.h"
 #include "statelabels.h"
 #include "rowlabels.h"
+
+using boost::posix_time::ptime;
+using boost::gregorian::date;
 
 class KernelConnection;
 class ProgressController;

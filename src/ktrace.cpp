@@ -21,12 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #include <fstream>
 #include <sstream>
 #ifdef WIN32
@@ -34,6 +28,7 @@
 #else
 #include <ext/hash_set>
 #endif
+
 #include "ktrace.h"
 #include "traceheaderexception.h"
 #include "tracebodyio.h"
@@ -53,6 +48,7 @@ using namespace stdext;
 #else
 using namespace __gnu_cxx;
 #endif
+using boost::posix_time::time_input_facet;
 
 using namespace bplustree;
 using namespace Plain;
@@ -355,7 +351,8 @@ void KTrace::dumpFileHeader( std::fstream& file, bool newFormat , PRV_INT32 numI
   if( newFormat )
     file << "new format" << endl;
 
-  file << date << ':';
+  file << "#Paraver (";
+  file << myTraceTime << "):";
   ostr << traceEndTime * numIter;
   file << ostr.str();
   if ( traceTimeUnit != US )
@@ -374,6 +371,8 @@ void KTrace::dumpFileHeader( std::fstream& file, bool newFormat , PRV_INT32 numI
   else
     file << endl;
 }
+
+
 void KTrace::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
 {
   ostringstream ostr;
@@ -470,6 +469,30 @@ void KTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
   memTrace->getRecordByTimeCPU( listIter, whichTime );
 }
 
+void KTrace::parseDateTime( string &whichDateTime )
+{
+
+  std::stringstream tmpSSDate( whichDateTime );
+  time_input_facet *tmpFacet = new time_input_facet( "%d/%m/%Y at %H:%M:%S%F" );
+  tmpSSDate.imbue( std::locale( tmpSSDate.getloc(), tmpFacet ) );
+  tmpSSDate >> myTraceTime;
+  std::cout << myTraceTime << std::endl;
+  if ( myTraceTime.is_not_a_date_time() )
+  {
+    tmpFacet = new time_input_facet( "%d/%m/%Y at %H:%M:%S" );
+    tmpSSDate.imbue( std::locale( tmpSSDate.getloc(), tmpFacet ) );
+    tmpSSDate >> myTraceTime;
+    std::cout << myTraceTime << std::endl;
+    if ( myTraceTime.is_not_a_date_time() )
+    {
+      tmpFacet = new time_input_facet( "%d/%m/%Y at %H:%M" );
+      tmpSSDate.imbue( std::locale( tmpSSDate.getloc(), tmpFacet ) );
+      tmpSSDate >> myTraceTime;
+      std::cout << myTraceTime << std::endl;
+    }
+  }
+}
+
 
 KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLoad )
     : fileName( whichFile )
@@ -496,8 +519,11 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   file->getline( tmpstr );
   istringstream header( tmpstr );
 
-  std::getline( header, date, ')' );
-  date += ')';
+  string tmpDate;
+  std::getline( header, tmpDate, ')' );
+  tmpDate = tmpDate.substr( tmpDate.find_first_of( '(' ) + 1 );
+  parseDateTime( tmpDate );
+
   header.get();
 
   std::getline( header, tmpstr, ':' );

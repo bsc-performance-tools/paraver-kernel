@@ -21,12 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #ifndef KTRACE_H_INCLUDED
 #define KTRACE_H_INCLUDED
 
@@ -194,15 +188,17 @@ class KTrace: public Trace
     MemoryBlocks *blocks;
     MemoryTrace *memTrace;
     TraceBodyIO *body;
+    ptime myTraceTime;
 
   private:
     std::string fileName;
-    std::string date;
     std::vector<std::string> communicators;
     std::set<TEventType> events;
     bool fillStateGaps;
-    // TraceInfo myTraceInfo;
     MetadataManager myTraceInfo;
+
+    void parseDateTime( string &whichDateTime );
+
 };
 
 #endif // KTRACE_H_INCLUDED
