@@ -626,7 +626,8 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   else
   {
     blocks = new BPlusTreeBlocks( traceProcessModel );
-    memTrace  = new BPlusTree( traceProcessModel.totalThreads(),
+    memTrace  = new BPlusTree( this,
+                               traceProcessModel.totalThreads(),
                                traceResourceModel.totalCPUs() );
   }
 

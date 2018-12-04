@@ -803,10 +803,12 @@ bool BPlusInternal::partialDelete( RecordLeaf *limitKey,
     #     # #       #       #     # #     #    #    #    #  #       #
     ######  #       #######  #####   #####     #    #     # ####### #######
  ****************************************************************************/
-BPlusTree::BPlusTree( const TThreadOrder totalThreads,
+BPlusTree::BPlusTree( const Trace *whichTrace,
+                      const TThreadOrder totalThreads,
                       const TCPUOrder totalCPUs,
                       const PRV_UINT32 uthreshold,
                       const PRV_UINT32 upercent )
+  : myTrace( whichTrace )
 {
   root = NULL;
   ini = NULL;
@@ -1057,7 +1059,7 @@ void BPlusTree::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter
   {
     if ( listIter[ current->thread ] == NULL )
     {
-      listIter[ current->thread ] = new BPlusTree::ThreadIterator( current );
+      listIter[ current->thread ] = new BPlusTree::ThreadIterator( current, myTrace );
       ++filled;
     }
     current = current->prev;
@@ -1103,7 +1105,7 @@ void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
   {
     if ( current->CPU > 0 && listIter[ current->CPU - 1 ] == NULL )
     {
-      listIter[ current->CPU - 1 ] = new BPlusTree::CPUIterator( current );
+      listIter[ current->CPU - 1 ] = new BPlusTree::CPUIterator( current, myTrace );
       ++filled;
     }
     current = current->prev;
@@ -1122,7 +1124,8 @@ void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
  * MemoryTrace Inherited Iterator.
  ******************************************************************************/
 
-inline BPlusTree::iterator::iterator( TRecord *whichRecord )
+inline BPlusTree::iterator::iterator( TRecord *whichRecord, const Trace *whichTrace )
+  : MemoryTrace::iterator( whichTrace )
 {
   record = whichRecord;
 }
@@ -1160,7 +1163,7 @@ inline void BPlusTree::iterator::operator--()
 
 inline BPlusTree::iterator *BPlusTree::iterator::clone() const
 {
-  return new BPlusTree::iterator( ( TRecord * )record );
+  return new BPlusTree::iterator( ( TRecord * )record, myTrace );
 }
 
 
@@ -1270,7 +1273,7 @@ inline void BPlusTree::ThreadIterator::operator--()
 
 inline BPlusTree::ThreadIterator *BPlusTree::ThreadIterator::clone() const
 {
-  return new BPlusTree::ThreadIterator( ( TRecord * )record );
+  return new BPlusTree::ThreadIterator( ( TRecord * )record, myTrace );
 }
 
 /**************************************************************************
@@ -1329,7 +1332,7 @@ inline void BPlusTree::CPUIterator::operator--()
 
 inline BPlusTree::CPUIterator *BPlusTree::CPUIterator::clone() const
 {
-  return new BPlusTree::CPUIterator( ( TRecord * )record );
+  return new BPlusTree::CPUIterator( ( TRecord * )record, myTrace );
 }
 
 /**************************************************************************
@@ -1337,35 +1340,35 @@ inline BPlusTree::CPUIterator *BPlusTree::CPUIterator::clone() const
  **************************************************************************/
 MemoryTrace::iterator* BPlusTree::empty() const
 {
-  return new BPlusTree::iterator( ( TRecord * )&emptyRec );
+  return new BPlusTree::iterator( ( TRecord * )&emptyRec, myTrace );
 }
 
 MemoryTrace::iterator* BPlusTree::begin() const
 {
-  return new BPlusTree::iterator( unloadedTrace->getBegin() );
+  return new BPlusTree::iterator( unloadedTrace->getBegin(), myTrace );
 }
 
 MemoryTrace::iterator* BPlusTree::end() const
 {
-  return new BPlusTree::iterator( ( TRecord * )&endRec );
+  return new BPlusTree::iterator( ( TRecord * )&endRec, myTrace );
 }
 
 MemoryTrace::iterator* BPlusTree::threadBegin( TThreadOrder whichThread ) const
 {
-  return new BPlusTree::ThreadIterator( ( TRecord * )&emptyThreadBegin[ whichThread ] );
+  return new BPlusTree::ThreadIterator( ( TRecord * )&emptyThreadBegin[ whichThread ], myTrace );
 }
 
 MemoryTrace::iterator* BPlusTree::threadEnd( TThreadOrder whichThread ) const
 {
-  return new BPlusTree::ThreadIterator( ( TRecord * )&emptyThreadEnd[ whichThread ] );
+  return new BPlusTree::ThreadIterator( ( TRecord * )&emptyThreadEnd[ whichThread ], myTrace );
 }
 
 MemoryTrace::iterator* BPlusTree::CPUBegin( TCPUOrder whichCPU ) const
 {
-  return new BPlusTree::CPUIterator( ( TRecord * )&emptyCPUBegin[ whichCPU ] );
+  return new BPlusTree::CPUIterator( ( TRecord * )&emptyCPUBegin[ whichCPU ], myTrace );
 }
 
 MemoryTrace::iterator* BPlusTree::CPUEnd( TCPUOrder whichCPU ) const
 {
-  return new BPlusTree::CPUIterator( ( TRecord * )&emptyCPUEnd[ whichCPU ] );
+  return new BPlusTree::CPUIterator( ( TRecord * )&emptyCPUEnd[ whichCPU ], myTrace );
 }

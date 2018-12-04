@@ -34,6 +34,9 @@ using namespace std;
 MemoryTrace::iterator::iterator()
 {}
 
+MemoryTrace::iterator::iterator( const Trace *whichTrace ) : myTrace( whichTrace )
+{}
+
 MemoryTrace::iterator::~iterator()
 {}
 
@@ -50,7 +53,10 @@ bool MemoryTrace::iterator::operator!=( const MemoryTrace::iterator &it ) const
 MemoryTrace::iterator& MemoryTrace::iterator::operator=( const MemoryTrace::iterator& copy )
 {
   if( this != &copy )
+  {
     record = copy.record;
+    myTrace = copy.myTrace;
+  }
   return *this;
 }
 

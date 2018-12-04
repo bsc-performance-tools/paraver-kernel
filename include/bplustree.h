@@ -239,6 +239,7 @@ namespace bplustree
   class BPlusTree : public MemoryTrace
   {
     private:
+      const Trace *myTrace;
       TThreadOrder numThreads;
       TCPUOrder numCPUs;
       PRV_UINT32 unloadThreshold;
@@ -266,7 +267,8 @@ namespace bplustree
 
       // Methods
       BPlusTree();
-      BPlusTree( const TThreadOrder totalThreads,
+      BPlusTree( const Trace *whichTrace,
+                 const TThreadOrder totalThreads,
                  const TCPUOrder totalCPUs,
                  const PRV_UINT32 uthresh  = UNLOAD_RECORDS_THRESHOLD,
                  const PRV_UINT32 upercent = UNLOAD_PERCENT );
@@ -312,7 +314,7 @@ namespace bplustree
           iterator()
           {}
 
-          iterator( TRecord *whichRecord );
+          iterator( TRecord *whichRecord, const Trace *whichTrace );
 
           virtual ~iterator()
           {}
@@ -345,7 +347,8 @@ namespace bplustree
           {}
 
           // Constructor declaration needed for iterators.
-          ThreadIterator( TRecord *whichRecord ) : BPlusTree::iterator( whichRecord )
+          ThreadIterator( TRecord *whichRecord, const Trace *whichTrace )
+            : BPlusTree::iterator( whichRecord, whichTrace )
           {}
 
           virtual ~ThreadIterator()
@@ -366,7 +369,8 @@ namespace bplustree
           {}
 
           // Constructor declaration needed for iterators.
-          CPUIterator( TRecord *whichRecord ): BPlusTree::iterator( whichRecord )
+          CPUIterator( TRecord *whichRecord, const Trace *whichTrace )
+            : BPlusTree::iterator( whichRecord, whichTrace )
           {}
 
           virtual ~CPUIterator()

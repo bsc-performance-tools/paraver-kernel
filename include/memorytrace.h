@@ -45,6 +45,7 @@ class MemoryTrace
     {
       public:
         iterator();
+        iterator( const Trace *whichTrace );
 
         virtual ~iterator();
 
@@ -80,6 +81,7 @@ class MemoryTrace
 
       protected :
         TData *record;
+        const Trace *myTrace;
     };
 
     MemoryTrace()
