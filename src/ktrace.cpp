@@ -882,3 +882,16 @@ void KTrace::setPhysicalReceive( TCommID whichComm, TRecordTime whichTime )
   blocks->setPhysicalReceive( whichComm, whichTime );
 }
 
+void KTrace::setEventTypePrecision( TEventType whichType, double whichPrecision )
+{
+  eventsPrecision[ whichType ] = whichPrecision;
+}
+
+double KTrace::getEventTypePrecision( TEventType whichType ) const
+{
+  map<TEventType, double>::const_iterator it = eventsPrecision.find( whichType );
+  if( it != eventsPrecision.end() )
+    return it->second;
+
+  return 0.0;
+}

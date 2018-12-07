@@ -219,6 +219,8 @@ public:
 
     std::string getEventType(const int eventTypeKey) const;
 
+    int getEventTypePrecision( const int eventTypeKey ) const;
+
     std::vector<unsigned int> getValues() const;
 
     int getEventValue(const int eventTypeKey, const std::string eventValue) const;

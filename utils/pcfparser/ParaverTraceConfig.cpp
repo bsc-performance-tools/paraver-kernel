@@ -466,6 +466,15 @@ std::string ParaverTraceConfig::getEventType(const int eventTypeKey) const {
     return event_types.find(eventTypeKey)->second->getDescription();
 }
 
+ int ParaverTraceConfig::getEventTypePrecision( const int eventTypeKey ) const
+ {
+  if( event_types.find( eventTypeKey ) == event_types.end() )
+  {
+    BOOST_THROW_EXCEPTION( UIParaverTraceConfig::value_not_found() );
+  }
+  return event_types.find( eventTypeKey )->second->getPrecision();
+}
+
 int ParaverTraceConfig::getEventValue(const int eventTypeKey, const std::string eventValue) const {
     if (event_types.find(eventTypeKey) == event_types.end()) {
         BOOST_THROW_EXCEPTION(UIParaverTraceConfig::value_not_found());
@@ -598,8 +607,8 @@ std::string ParaverTraceConfig::GradientColor::toString() const {
 /* EventType class */
 
 ParaverTraceConfig::EventType::EventType(int color_, int key_, std::string descr_):
-        UIParaverTraceConfig::EventType(color_, key_, descr_) {
-}
+        UIParaverTraceConfig::EventType(color_, key_, descr_), precision( 0 )
+{}
 
 
 void ParaverTraceConfig::EventType::setEventValues(EventValues * eventValues_) {

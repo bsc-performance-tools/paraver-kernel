@@ -270,6 +270,16 @@ std::string UIParaverTraceConfig::getEventType(const int eventTypeKey) const {
 }
 
 /**
+ * \brief This method returns the precision for event type key.
+ * \param eventTypeKey This is the numerical key of the event type.
+ * \return The precision expressed in number of decimals
+ */
+int UIParaverTraceConfig::getEventTypePrecision( const int eventTypeKey ) const
+{
+  return traceConfig->getEventTypePrecision( eventTypeKey );
+}
+
+/**
  * \brief This method returns the numeric key for an event value that belongs to an event type key.
  * \param eventTypeKey This is the numerical key of the event type.
  * \param eventValue This is the textual description of the event value.

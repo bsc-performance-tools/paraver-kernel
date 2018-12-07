@@ -146,6 +146,8 @@ class Trace
     virtual void setPhysicalSend( TCommID whichComm, TRecordTime whichTime ) = 0;
     virtual void setPhysicalReceive( TCommID whichComm, TRecordTime whichTime ) = 0;
 
+    virtual void   setEventTypePrecision( TEventType whichType, double whichPrecision ) = 0;
+    virtual double getEventTypePrecision( TEventType whichType ) const = 0;
 
     // Specific methods for TraceProxy only
     virtual bool getUnload() const
@@ -337,6 +339,8 @@ class TraceProxy: public Trace
     virtual void setPhysicalSend( TCommID whichComm, TRecordTime whichTime );
     virtual void setPhysicalReceive( TCommID whichComm, TRecordTime whichTime );
 
+    virtual void   setEventTypePrecision( TEventType whichType, double whichPrecision );
+    virtual double getEventTypePrecision( TEventType whichType ) const;
 
   private:
     Trace *myTrace;

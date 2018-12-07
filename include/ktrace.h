@@ -183,6 +183,8 @@ class KTrace: public Trace
     virtual void setPhysicalSend( TCommID whichComm, TRecordTime whichTime );
     virtual void setPhysicalReceive( TCommID whichComm, TRecordTime whichTime );
 
+    virtual void   setEventTypePrecision( TEventType whichType, double whichPrecision );
+    virtual double getEventTypePrecision( TEventType whichType ) const;
 
   protected:
     bool ready;
@@ -199,6 +201,7 @@ class KTrace: public Trace
     std::string fileName;
     std::vector<std::string> communicators;
     std::set<TEventType> events;
+    std::map<TEventType, double> eventsPrecision;
     bool fillStateGaps;
     MetadataManager myTraceInfo;
 

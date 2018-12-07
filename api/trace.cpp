@@ -564,6 +564,18 @@ void TraceProxy::parsePCF( const string& whichFile )
   myEventLabels = EventLabels( *config, myTrace->getLoadedEvents() );
   myStateLabels = StateLabels( *config );
 
+  try
+  {
+    const vector<unsigned int>& types = config->getEventTypes();
+    for( vector<unsigned int>::const_iterator it = types.begin(); it != types.end(); ++it )
+    {
+      setEventTypePrecision( *it, pow( (double)10, (double)-config->getEventTypePrecision( *it ) ) );
+    }
+  }
+  catch( libparaver::UIParaverTraceConfig::value_not_found )
+  {
+  }
+
   // myDefaultTaskSemanticFunc = config->get_default_task_semantic_func();
   // myDefaultThreadSemanticFunc = config->get_default_thread_semantic_func();
 
@@ -722,5 +734,15 @@ void TraceProxy::setPhysicalSend( TCommID whichComm, TRecordTime whichTime )
 void TraceProxy::setPhysicalReceive( TCommID whichComm, TRecordTime whichTime )
 {
   myTrace->setPhysicalReceive( whichComm, whichTime );
+}
+
+void TraceProxy::setEventTypePrecision( TEventType whichType, double whichPrecision )
+{
+  myTrace->setEventTypePrecision( whichType, whichPrecision );
+}
+
+double TraceProxy::getEventTypePrecision( TEventType whichType ) const
+{
+  return myTrace->getEventTypePrecision( whichType );
 }
 

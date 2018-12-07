@@ -1199,6 +1199,9 @@ inline TEventType   BPlusTree::iterator::getEventType() const
 
 inline TSemanticValue BPlusTree::iterator::getEventValue() const
 {
+  double tmpPrecision = myTrace->getEventTypePrecision( ( ( TRecord * )record )->URecordInfo.eventRecord.type );
+  if( tmpPrecision != 0.0 )
+    return ( ( TRecord * )record )->URecordInfo.eventRecord.value * tmpPrecision;
   return ( ( TRecord * )record )->URecordInfo.eventRecord.value;
 }
 
