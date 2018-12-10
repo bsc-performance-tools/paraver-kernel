@@ -21,12 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #ifndef FILTER_H_INCLUDED
 #define FILTER_H_INCLUDED
 
@@ -112,8 +106,8 @@ class Filter
                                  const std::set<TEventType>& eventsLoaded ) const = 0;
 
     virtual void clearEventValues() = 0;
-    virtual void insertEventValue( TEventValue value ) = 0;
-    virtual void getEventValue( std::vector<TEventValue>& onVector ) const = 0;
+    virtual void insertEventValue( TSemanticValue value ) = 0;
+    virtual void getEventValue( std::vector<TSemanticValue>& onVector ) const = 0;
     virtual void setEventValueFunction( std::string newFunction ) = 0;
     virtual std::string getEventValueFunction() const = 0;
     virtual TFilterNumParam getEventValueFunctionNumParams() const = 0;
@@ -205,8 +199,8 @@ class FilterProxy : public Filter
                                  const std::set<TEventType>& eventsLoaded ) const;
 
     virtual void clearEventValues();
-    virtual void insertEventValue( TEventValue value );
-    virtual void getEventValue( std::vector<TEventValue>& onVector ) const;
+    virtual void insertEventValue( TSemanticValue value );
+    virtual void getEventValue( std::vector<TSemanticValue>& onVector ) const;
     virtual void setEventValueFunction( std::string newFunction );
     virtual std::string getEventValueFunction() const;
     virtual TFilterNumParam getEventValueFunctionNumParams() const;

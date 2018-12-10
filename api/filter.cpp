@@ -21,12 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #include "filter.h"
 
 using namespace std;
@@ -277,12 +271,12 @@ void FilterProxy::clearEventValues()
   myFilter->clearEventValues();
 }
 
-void FilterProxy::insertEventValue( TEventValue value )
+void FilterProxy::insertEventValue( TSemanticValue value )
 {
   myFilter->insertEventValue( value );
 }
 
-void FilterProxy::getEventValue( vector<TEventValue>& onVector ) const
+void FilterProxy::getEventValue( vector<TSemanticValue>& onVector ) const
 {
   myFilter->getEventValue( onVector );
 }
@@ -364,10 +358,10 @@ void FilterProxy::copyEventsSection( Filter *whichFilter )
 
     setEventTypeFunction( whichFilter->getEventTypeFunction() );
 
-    vector< TEventValue > evalue;
+    vector< TSemanticValue > evalue;
     whichFilter->getEventValue( evalue );
     clearEventValues();
-    for ( vector< TEventValue >::iterator it = evalue.begin(); it < evalue.end(); it++ )
+    for ( vector< TSemanticValue >::iterator it = evalue.begin(); it < evalue.end(); it++ )
       insertEventValue( *it );
 
     setEventValueFunction( whichFilter->getEventValueFunction() );

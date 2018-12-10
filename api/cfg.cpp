@@ -21,12 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -2952,7 +2946,7 @@ void WindowFilterModule::printLine( ofstream& cfgFile,
   vector<TCommSize> sizeVec;
   vector<TSemanticValue> bwVec;
   vector<TEventType> typeVec;
-  vector<TEventValue> valueVec;
+  vector<TSemanticValue> valueVec;
 
   filter->getCommFrom( objVec );
   if ( objVec.begin() != objVec.end() )
@@ -3050,7 +3044,7 @@ void WindowFilterModule::printLine( ofstream& cfgFile,
   {
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << OLDCFG_VAL_FILTER_EVT_VALUE << " ";
     cfgFile << valueVec.size();
-    for ( vector<TEventValue>::iterator itValue = valueVec.begin();
+    for ( vector<TSemanticValue>::iterator itValue = valueVec.begin();
           itValue != valueVec.end(); ++itValue )
     {
       cfgFile << " " << ( *itValue );
@@ -3059,7 +3053,7 @@ void WindowFilterModule::printLine( ofstream& cfgFile,
 
     cfgFile << OLDCFG_TAG_WNDW_FILTER_MODULE << " " << CFG_VAL_FILTER_EVT_VALUE_LABEL << " ";
     cfgFile << valueVec.size();
-    for ( vector<TEventValue>::iterator itValue = valueVec.begin();
+    for ( vector<TSemanticValue>::iterator itValue = valueVec.begin();
           itValue != valueVec.end(); ++itValue )
     {
       string tmpValueLabel;

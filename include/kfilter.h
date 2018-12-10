@@ -21,12 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #ifndef _FILTER_H
 #define _FILTER_H
 
@@ -475,8 +469,8 @@ class KFilter : public Filter
                          const std::set<TEventType>& eventsLoaded ) const;
 
     void clearEventValues();
-    void insertEventValue( TEventValue value );
-    void getEventValue( std::vector<TEventValue>& onVector ) const;
+    void insertEventValue( TSemanticValue value );
+    void getEventValue( std::vector<TSemanticValue>& onVector ) const;
     void setEventValueFunction( std::string newFunction );
     std::string getEventValueFunction() const;
     TFilterNumParam getEventValueFunctionNumParams() const;
@@ -560,7 +554,7 @@ class KFilter : public Filter
     bool opTypeValue;
 
     bool existEventValues;
-    std::vector<TEventValue> eventValues;
+    std::vector<TSemanticValue> eventValues;
     FilterFunction *functionEventValues;
 
     bool filterComms( MemoryTrace::iterator *it );

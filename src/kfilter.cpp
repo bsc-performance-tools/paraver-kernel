@@ -21,12 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #include "kfilter.h"
 #include "kwindow.h"
 #include "functionmanagement.h"
@@ -550,13 +544,13 @@ void KFilter::clearEventValues()
   existEventValues = false;
 }
 
-void KFilter::insertEventValue( TEventValue value )
+void KFilter::insertEventValue( TSemanticValue value )
 {
   eventValues.push_back( value );
   existEventValues = true;
 }
 
-void KFilter::getEventValue( vector<TEventValue>& onVector ) const
+void KFilter::getEventValue( vector<TSemanticValue>& onVector ) const
 {
   onVector = eventValues;
 }
@@ -631,7 +625,7 @@ KFilter *KFilter::clone( KWindow *clonedWindow )
   clonedKFilter->opTypeValue = opTypeValue;
 
   clonedKFilter->existEventValues = existEventValues;
-  clonedKFilter->eventValues = vector<TEventValue>( eventValues );
+  clonedKFilter->eventValues = vector<TSemanticValue>( eventValues );
   clonedKFilter->functionEventValues = functionEventValues->clone();
 
   return clonedKFilter;
