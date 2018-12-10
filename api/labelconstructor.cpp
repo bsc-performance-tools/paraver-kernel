@@ -492,7 +492,7 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
 
 string LabelConstructor::eventLabel( Window *whichWindow,
                                      TEventType whichType,
-                                     TEventValue whichValue,
+                                     TSemanticValue whichValue,
                                      bool text )
 {
   label.clear();
@@ -515,6 +515,7 @@ string LabelConstructor::eventLabel( Window *whichWindow,
       label << tmpstr;
   }
 
+  label.precision( ParaverConfig::getInstance()->getTimelinePrecision() );
   if ( !text )
     label << " Value is " << whichValue;
   else
@@ -558,7 +559,7 @@ string LabelConstructor::eventTypeLabel( Window *whichWindow,
 
 string LabelConstructor::eventValueLabel( Window *whichWindow,
                                           TEventType whichType,
-                                          TEventValue whichValue,
+                                          TSemanticValue whichValue,
                                           bool writeValueAsPrefix )
 {
   label.clear();

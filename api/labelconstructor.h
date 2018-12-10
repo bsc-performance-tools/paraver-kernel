@@ -73,7 +73,7 @@ class LabelConstructor
 
     static std::string eventLabel( Window *whichWindow,
                               TEventType whichType,
-                              TEventValue whichValue,
+                              TSemanticValue whichValue,
                               bool text );
 
     static std::string eventTypeLabel( Window *whichWindow,
@@ -82,7 +82,7 @@ class LabelConstructor
 
     static std::string eventValueLabel( Window *whichWindow,
                                    TEventType whichType,
-                                   TEventValue whichValue,
+                                   TSemanticValue whichValue,
                                    bool writeValueAsPrefix = false );
 
     static bool getTimeValue( const std::string& timeLabel,
