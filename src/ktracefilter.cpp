@@ -112,22 +112,15 @@ void KTraceFilter::filter_process_header( char *header )
   int num_comms;
   char *word;
 
-  /* Obtaining the total trace time */
-  word = strtok( header, ":" );
-  word = strtok( NULL,   ":" );
-  word = strtok( NULL,   ":" );
-
-  word = strtok( NULL,   "\n" );
-  word = strrchr( word,  ','  );
-
+  /* Obtaining the number of communicators */
+  word = strrchr( header, ',' );
   if ( word != NULL )
   {
-    /* Obtaining th number of communicators */
     strcpy( line, word + 1 );
     if ( strchr( line, ')' ) != NULL )
       return;
-    num_comms = atoi( line );
 
+    num_comms = atoi( line );
     while ( num_comms > 0 )
     {
       if ( !is_zip_filter )

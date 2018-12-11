@@ -213,7 +213,7 @@ void KTraceCutter::writeOffsetLine( char *trace_in_name,
 }
 
 
-/* For processing the Paraver header */
+// #Paraver (12/03/2018 at 16:11:35.687574899):100:1:1:1(1:1)
 void KTraceCutter::proces_cutter_header( char *header,
                                          //char *trace_in_name,
                                          //char *trace_out_name,
@@ -225,15 +225,12 @@ void KTraceCutter::proces_cutter_header( char *header,
   char *auxLine = (char *) malloc( sizeof( char ) * MAX_TRACE_HEADER );
 
   // PARSE variable header
-  word = strtok( header, ":" );
-  current_size += fprintf( outfile, "%s:", word );
-
-  word = strtok( NULL, ":" );
-  current_size += fprintf( outfile, "%s:", word );
+  // #Paraver (12/03/2018 at 16:11:35.687574899):
+  word = strtok( header, ")" );
+  current_size += fprintf( outfile, "%s):", word );
 
   /* Obtaining the trace total time */
   word = strtok( NULL, ":" );
-
   if ( strstr( word, "_ns" ) )
   {
     word[ strlen( word ) - 3 ] = '\0';
