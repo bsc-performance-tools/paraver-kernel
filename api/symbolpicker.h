@@ -70,21 +70,21 @@ class EventValueSymbolPicker
 
     void clear();
 
-    void insert( TEventValue whichValue );
+    void insert( TSemanticValue whichValue );
     void insert( std::string whichLabel );
 
-    bool pick( const EventLabels& eventLabels, std::vector<TEventValue>& onVector ) const;
+    bool pick( const EventLabels& eventLabels, std::vector<TSemanticValue>& onVector ) const;
 
     bool getMultipleValuesFound() const;
 
   private:
-    std::vector<TEventValue> eventValues;
+    std::vector<TSemanticValue> eventValues;
     std::vector<std::string> eventValueLabels;
     bool multipleValuesFound;
 
-    bool makepick( const EventLabels& eventLabels, TEventValue eventValue,
+    bool makepick( const EventLabels& eventLabels, TSemanticValue eventValue,
                    const std::string& eventLabel,
-                   std::set<TEventValue>& onValues ) const;
+                   std::set<TSemanticValue>& onValues ) const;
 };
 
 #endif // SYMBOLPICKER_H_INCLUDED

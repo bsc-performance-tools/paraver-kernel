@@ -24,6 +24,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <math.h>
 
 #include "kernelconnection.h"
 #include "cfg.h"
@@ -276,7 +277,7 @@ void clearSymbolPickers()
 bool pickSymbols( Trace *whichTrace, Window *whichWindow )
 {
   vector<TEventType> tmpTypes;
-  vector<TEventValue> tmpValues;
+  vector<TSemanticValue> tmpValues;
 
   if( !eventTypeSymbolPicker.pick( whichTrace->getEventLabels(), tmpTypes ) )
     return false;
@@ -311,7 +312,7 @@ bool pickSymbols( Trace *whichTrace, Window *whichWindow )
     return false;
   else
   {
-    for( vector<TEventValue>::iterator it = tmpValues.begin(); it != tmpValues.end(); ++it )
+    for( vector<TSemanticValue>::iterator it = tmpValues.begin(); it != tmpValues.end(); ++it )
       whichWindow->getFilter()->insertEventValue( *it );
   }
 
@@ -2826,7 +2827,7 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
   TCommSize commSize;
   TSemanticValue bandWidth;
   TEventType eventType;
-  TEventValue eventValue;
+  TSemanticValue eventValue;
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
@@ -3057,19 +3058,26 @@ void WindowFilterModule::printLine( ofstream& cfgFile,
           itValue != valueVec.end(); ++itValue )
     {
       string tmpValueLabel;
-      if ( typeVec.begin() != typeVec.end() )
+      double tmpIntpart;
+      if( std::modf( *itValue, &tmpIntpart) == 0.0 )
       {
-        for ( vector<TEventType>::iterator itType = typeVec.begin();
-              itType != typeVec.end(); ++itType )
+        if ( typeVec.begin() != typeVec.end() )
         {
-          if( labels.getEventValueLabel( ( *itType ), ( *itValue ), tmpValueLabel ) )
-            break;
+          for ( vector<TEventType>::iterator itType = typeVec.begin();
+                itType != typeVec.end(); ++itType )
+          {
+            if( labels.getEventValueLabel( ( *itType ), ( *itValue ), tmpValueLabel ) )
+              break;
+          }
+        }
+        else
+        {
+          labels.getEventValueLabel( ( *itValue ), tmpValueLabel );
         }
       }
       else
-      {
-        labels.getEventValueLabel( ( *itValue ), tmpValueLabel );
-      }
+        tmpValueLabel = EventLabels::unknownLabel;
+
       cfgFile << " \"" << tmpValueLabel << "\"";
     }
     cfgFile << endl;

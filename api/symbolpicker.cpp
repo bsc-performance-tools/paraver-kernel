@@ -117,7 +117,7 @@ void EventValueSymbolPicker::clear()
 }
 
 
-void EventValueSymbolPicker::insert( TEventValue whichValue )
+void EventValueSymbolPicker::insert( TSemanticValue whichValue )
 {
   eventValues.push_back( whichValue );
 }
@@ -129,7 +129,7 @@ void EventValueSymbolPicker::insert( string whichLabel )
 }
 
 
-bool EventValueSymbolPicker::pick( const EventLabels& eventLabels, vector<TEventValue>& onVector ) const
+bool EventValueSymbolPicker::pick( const EventLabels& eventLabels, vector<TSemanticValue>& onVector ) const
 {
   if( eventValueLabels.size() == 0 )
   {
@@ -140,14 +140,14 @@ bool EventValueSymbolPicker::pick( const EventLabels& eventLabels, vector<TEvent
   if( eventValues.size() != eventValueLabels.size() )
     return false;
 
-  set<TEventValue> tmpValues;
+  set<TSemanticValue> tmpValues;
   vector<string>::const_iterator itLabel = eventValueLabels.begin();
-  for( vector<TEventValue>::const_iterator itValue = eventValues.begin();
+  for( vector<TSemanticValue>::const_iterator itValue = eventValues.begin();
        itValue != eventValues.end(); ++itValue, ++itLabel )
   {
     tmpValues.clear();
     makepick( eventLabels, *itValue, *itLabel, tmpValues );
-    for( set<TEventValue>::const_iterator it = tmpValues.begin(); it != tmpValues.end(); ++it )
+    for( set<TSemanticValue>::const_iterator it = tmpValues.begin(); it != tmpValues.end(); ++it )
       onVector.push_back( *it );
   }
 
@@ -155,7 +155,7 @@ bool EventValueSymbolPicker::pick( const EventLabels& eventLabels, vector<TEvent
 }
 
 
-bool EventValueSymbolPicker::makepick( const EventLabels& eventLabels, TEventValue eventValue, const string& eventLabel, set<TEventValue>& onValues ) const
+bool EventValueSymbolPicker::makepick( const EventLabels& eventLabels, TSemanticValue eventValue, const string& eventLabel, set<TSemanticValue>& onValues ) const
 {
   multimap<TEventType, TEventValue> tmpValues;
 
