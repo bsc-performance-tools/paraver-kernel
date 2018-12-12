@@ -336,6 +336,57 @@ TRecordTime KTrace::getPhysicalReceive( TCommID whichComm ) const
   return blocks->getPhysicalReceive( whichComm );
 }
 
+
+TRecordTime KTrace::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
+{
+  TRecordTime tmpTime;
+  TRecordTime factor = 1;
+
+  if( getTimeUnit() == whichUnits )
+    tmpTime = whichTime;
+  else
+  {
+    PRV_UINT16 from = getTimeUnit() > whichUnits ? whichUnits : getTimeUnit();
+    PRV_UINT16 to = getTimeUnit() > whichUnits ? getTimeUnit() : whichUnits;
+
+    for( PRV_UINT16 i = from + 1; i <= to; i++ )
+      factor *= factorTable[ i ];
+
+    if( getTimeUnit() > whichUnits )
+      tmpTime = whichTime / factor;
+    else
+      tmpTime = whichTime * factor;
+  }
+
+  return tmpTime;
+}
+
+
+TRecordTime KTrace::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
+{
+  TRecordTime tmpTime;
+  TRecordTime factor = 1;
+
+  if( getTimeUnit() == whichUnits )
+    tmpTime = whichTime;
+  else
+  {
+    PRV_UINT16 from = getTimeUnit() > whichUnits ? whichUnits : getTimeUnit();
+    PRV_UINT16 to = getTimeUnit() > whichUnits ? getTimeUnit() : whichUnits;
+
+    for( PRV_UINT16 i = from + 1; i <= to; i++ )
+      factor *= factorTable[ i ];
+
+    if( getTimeUnit() > whichUnits )
+      tmpTime = whichTime * factor;
+    else
+      tmpTime = whichTime / factor;
+  }
+
+  return tmpTime;
+}
+
+
 void KTrace::dumpFileHeader( std::fstream& file, bool newFormat , PRV_INT32 numIter) const
 {
   ostringstream ostr;

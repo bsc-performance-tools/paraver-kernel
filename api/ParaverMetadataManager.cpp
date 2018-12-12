@@ -185,12 +185,11 @@ CutterMetadata::CutterMetadata (string Date,
 }
 
 
-
-
 void CutterMetadata::FlushSpecificFields(ostream& os) const
 {
   os << Offset << ":" << BeginTime << ":" << EndTime;
 }
+
 
 bool MetadataManager::NewMetadata(string MetadataStr)
 {
@@ -233,6 +232,8 @@ bool MetadataManager::NewMetadata(string MetadataStr)
 
     TraceMetadataStorage.push_back(NewCutterMetadata);
     CutterMetadataStorage.push_back(NewCutterMetadata);
+
+    totalOffset += NewCutterMetadata->GetOffset();
   }
 
   return true;
@@ -261,7 +262,6 @@ string MetadataManager::GetCurrentDate()
 
   return currentDate.str();
 }
-
 
 
 void MetadataManager::PopulateRecord(vector<string> &Record,

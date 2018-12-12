@@ -136,10 +136,16 @@ class KTrace: public Trace
       return traceTimeUnit;
     }
 
-    inline const ptime& getTraceTime() const
+    inline ptime getTraceTime() const
     {
-      return myTraceTime;
+      return myTraceTime +
+             boost::posix_time::nanoseconds(
+               (long)traceUnitsToCustomUnits( myTraceInfo.GetCutterTotalOffset(), NS ) );
     }
+
+    TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const;
+    TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const;
+
 
     bool eventLoaded( TEventType whichType ) const;
     bool anyEventLoaded( TEventType firstType, TEventType lastType ) const;

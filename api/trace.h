@@ -116,7 +116,10 @@ class Trace
     virtual TTime getEndTime() const = 0;
     virtual void setEndTime( TTime whichTraceEndTime ) = 0;
     virtual TTimeUnit getTimeUnit() const = 0;
-    virtual const ptime& getTraceTime() const = 0;
+    virtual ptime getTraceTime() const = 0;
+
+    virtual TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const = 0;
+    virtual TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const = 0;
 
     virtual bool eventLoaded( TEventType whichType ) const = 0;
     virtual bool anyEventLoaded( TEventType firstType, TEventType lastType ) const = 0;
@@ -296,7 +299,10 @@ class TraceProxy: public Trace
     virtual TTime getEndTime() const;
     virtual void setEndTime( TTime whichTraceEndTime );
     virtual TTimeUnit getTimeUnit() const;
-    virtual const ptime& getTraceTime() const;
+    virtual ptime getTraceTime() const;
+
+    virtual TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const;
+    virtual TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const;
 
     virtual bool getUnload() const;
     virtual void setUnload( bool newValue );

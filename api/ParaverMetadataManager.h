@@ -127,15 +127,17 @@ class MetadataManager
 
     vector<Metadata*>       TraceMetadataStorage;
     vector<CutterMetadata*> CutterMetadataStorage;
+    PRV_UINT64 totalOffset;
 
   public:
-    MetadataManager(void) : Error( false ), ErrorMessage( "" ) {};
+    MetadataManager(void) : Error( false ), ErrorMessage( "" ), totalOffset(0) {};
 
     bool NewMetadata(string MetadataStr);
 
     vector<Metadata*>& GetMetadata(void) { return TraceMetadataStorage; };
 
     vector<CutterMetadata*>& GetCutterMetadata(void) { return CutterMetadataStorage; };
+    PRV_UINT64 GetCutterTotalOffset(void) const { return totalOffset; };
 
     bool GetError         (void) { return Error; };
     string GetErrorMessage(void) { return ErrorMessage; };

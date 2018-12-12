@@ -444,9 +444,19 @@ TTimeUnit TraceProxy::getTimeUnit() const
   return myTrace->getTimeUnit();
 }
 
-const ptime& TraceProxy::getTraceTime() const
+ptime TraceProxy::getTraceTime() const
 {
   return myTrace->getTraceTime();
+}
+
+TRecordTime TraceProxy::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
+{
+  return myTrace->customUnitsToTraceUnits( whichTime, whichUnits );
+}
+
+TRecordTime TraceProxy::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
+{
+  return myTrace->traceUnitsToCustomUnits( whichTime, whichUnits );
 }
 
 bool TraceProxy::getUnload() const
