@@ -173,42 +173,37 @@ void KTraceSoftwareCounters::read_sc_args()
 /* For processing the Paraver header */
 void KTraceSoftwareCounters::proces_header( char *header, FILE *in, FILE *out )
 {
-  int num_comms;
+  int num_comms = 0;
   char *word;
 
   fprintf( out, "%s", header );
 
-  /* Obtaining the total trace time */
-  word = strtok( header, ":" );
-  word = strtok( NULL, ":" );
-  word = strtok( NULL, ":" );
-  word[strlen( word )-3] = '\0';
-  trace_time = atoll( word );
-
-  /* Obtaining the number of communicators */
-  word = strtok( NULL, "\n" ); // put in word the rest of the line
-
-  // Do I have some "," looking back?
-  word = strrchr( word, ',' );
+  /* Get the number of communicators*/
+  word = strrchr( header, ',' );
   if ( word != NULL )
   {
-    // Is it because some "1:1,1:1)\n" or the expected "1:1,1:1),16\n" ?
-    //                       -^-                               -^-
-    strcpy( header, word + 1 ); // Copy "1:1)" or "16" in header
+    strcpy( line, word + 1 );
+    if ( strchr( line, ')' ) == NULL )
+      num_comms = atoi( line );
+  }
 
-    if ( strchr( header, ')' ) != NULL ) // Do I have some ")" ?
-      // Yes, it's "1:1)\n" ==> No comunicators
-      return;
+  /* Obtaining the trace total time */
+  // #Paraver (12/03/2018 at 16:11:35.687574899):123_ns:
+  word = strtok( header, ")" );
+  word = strtok( NULL, ":" );
+  char *tmpTimeUnitSuffix = strstr( word, "_" );
+  if ( tmpTimeUnitSuffix )
+  {
+    word[ strlen( word ) - strlen( tmpTimeUnitSuffix ) ] = '\0';
+  }
+  trace_time = atoll( word );
 
-    // Hope it's a number and it fits the number of communicator lines...
-    num_comms = atoi( header );
-
-    while ( num_comms > 0 )
-    {
-      fgets( header, MAX_HEADER_SIZE, in );
-      fprintf( out, "%s", header );
-      num_comms--;
-    }
+  /* Copy communicators */
+  while ( num_comms > 0 )
+  {
+    fgets( header, MAX_HEADER_SIZE, in );
+    fprintf( out, "%s", header );
+    num_comms--;
   }
 }
 

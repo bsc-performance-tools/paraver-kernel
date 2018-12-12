@@ -221,7 +221,6 @@ void KTraceCutter::proces_cutter_header( char *header,
 {
   int num_comms;
   char *word;
-  // char auxLine[ MAX_TRACE_HEADER + 1 ];
   char *auxLine = (char *) malloc( sizeof( char ) * MAX_TRACE_HEADER );
 
   // PARSE variable header
