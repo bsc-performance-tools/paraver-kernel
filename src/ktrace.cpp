@@ -524,19 +524,57 @@ void KTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
 
 void KTrace::parseDateTime( string &whichDateTime )
 {
-  vector<string> formatDate;
-  formatDate.push_back("%d/%m/%Y at %H:%M:%S%F");
-  formatDate.push_back("%d/%m/%Y at %H:%M:%S");
-  formatDate.push_back("%d/%m/%Y at %H:%M");
-  formatDate.push_back("%d/%m/%y at %H:%M");
+  // Create locales for every time format that whichDateTime may take
+  vector<string> strFormatDate;
+  strFormatDate.push_back("%d/%m/%Y at %H:%M:%S%F");
+  strFormatDate.push_back("%d/%m/%Y at %H:%M:%S");
+  strFormatDate.push_back("%d/%m/%Y at %H:%M");
+  strFormatDate.push_back("%d/%m/%Y");
+  /*
+  // ptime will ignore these ones. ¿?
+  strFormatDate.push_back("%d/%m/%y at %H:%M:%S%F");
+  strFormatDate.push_back("%d/%m/%y at %H:%M:%S");
+  strFormatDate.push_back("%d/%m/%y at %H:%M");
+  strFormatDate.push_back("%d/%m/%y");
+  */
 
-  std::stringstream tmpSSDate( whichDateTime );
-  time_input_facet *tmpFacet;
-  for( vector<string>::iterator it = formatDate.begin(); it != formatDate.end(); ++it )
+  vector<std::locale> formatDate;
+  for( vector<string>::const_iterator it = strFormatDate.begin(); it != strFormatDate.end(); ++it )
   {
-    tmpFacet = new time_input_facet( *it );
-    tmpSSDate.imbue( std::locale( tmpSSDate.getloc(), tmpFacet ) );
+    formatDate.push_back(std::locale( std::locale::classic(), new time_input_facet(*it)));
+  }
+
+  // Guarantee whichDateTime year has 4 digits (years with 2 digits not covered by ptime)
+  string tmpDate;
+  string tmpYear = whichDateTime.substr( 0, whichDateTime.find_first_of(' ') );
+  tmpYear = tmpYear.substr( tmpYear.find_last_of('/') + 1, tmpYear.find_first_of(' '));
+  if ( tmpYear.length() == 4 )
+  {
+    tmpDate = whichDateTime;
+  }
+  else
+  {
+    int newYear;
+    std::istringstream ss( tmpYear );
+    ss >> newYear;
+
+    if ( newYear < 80 )
+      newYear += 2000;
+    else
+      newYear += 1900;
+
+    string tmpTail = whichDateTime.substr( whichDateTime.find_first_of(' ') ); // " at hh:mm:ss" or empty
+
+    tmpDate = whichDateTime.substr( 0, whichDateTime.find_last_of( '/' ) ) + "/" + std::to_string( newYear ) + tmpTail;
+  }
+
+  // Now, try to match one ptime from {date * format}
+  std::stringstream tmpSSDate( tmpDate );
+  for( vector<std::locale>::const_iterator it = formatDate.begin(); it != formatDate.end(); ++it )
+  {
+    tmpSSDate.imbue( *it );
     tmpSSDate >> myTraceTime;
+
     if ( !myTraceTime.is_not_a_date_time() )
       break;
   }
