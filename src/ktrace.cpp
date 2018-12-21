@@ -544,7 +544,7 @@ void KTrace::parseDateTime( string &whichDateTime )
     formatDate.push_back(std::locale( std::locale::classic(), new time_input_facet(*it)));
   }
 
-  // Guarantee whichDateTime year has 4 digits (years with 2 digits not covered by ptime)
+  // Guarantee year field in whichDateTime has 4 digits (years with 2 digits not covered by ptime)
   string tmpDate;
   string tmpYear = whichDateTime.substr( 0, whichDateTime.find_first_of(' ') );
   tmpYear = tmpYear.substr( tmpYear.find_last_of('/') + 1, tmpYear.find_first_of(' '));
