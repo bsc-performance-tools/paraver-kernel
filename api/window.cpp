@@ -2249,7 +2249,7 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
         break;
       if( numRows == 1 )
       {
-        if( currentTime - tmpLastTime > ( getWindowEndTime() - getWindowBeginTime() ) / 1000 )
+        if( currentTime - tmpLastTime > ( getWindowEndTime() - getWindowBeginTime() ) / 50 )
         {
           progress->setCurrentProgress( currentTime - getWindowBeginTime() );
           tmpLastTime = currentTime;

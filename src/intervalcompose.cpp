@@ -143,7 +143,6 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
 
   if ( joinBursts )
   {
-std::cout<<"IntervalCompose calcNext enter joinbursts"<<std::endl;
     TSemanticValue tmpValue;
     MemoryTrace::iterator *lastEnd;
 
@@ -162,7 +161,6 @@ std::cout<<"IntervalCompose calcNext enter joinbursts"<<std::endl;
     if ( *end == *endRecord )
     {
       currentValue = tmpValue;
-std::cout<<"IntervalCompose calcNext exit joinbursts"<<std::endl;
       return displayList;
     }
 
@@ -189,9 +187,6 @@ std::cout<<"IntervalCompose calcNext exit joinbursts"<<std::endl;
     currentValue = tmpValue;
     if( lastEnd != NULL && lastEnd != endRecord )
       delete lastEnd;
-std::cout<<"IntervalCompose calcNext exit joinbursts"<<std::endl;
-std::cout<<std::fixed;
-std::cout<<"begin time: "<<begin->getTime()<<" end time: "<<end->getTime()<<std::endl;
   }
   else
   {
