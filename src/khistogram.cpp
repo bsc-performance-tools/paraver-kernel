@@ -865,7 +865,14 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
     numPlanes = 1;
 
   if( progress != NULL )
-    progress->setEndLimit( numRows );
+  {
+    if( numRows > 1 )
+      progress->setEndLimit( numRows );
+    else
+      progress->setEndLimit( endTime - beginTime );
+
+    progress->setCurrentProgress( 0 );
+  }
 
   initMatrix( numPlanes, numCols, numRows );
 
@@ -1276,7 +1283,7 @@ void KHistogram::parallelExecution( TRecordTime fromTime, TRecordTime toTime,
               ( progress != NULL && !progress->getStop() ) )
             executionTask( fromTime, toTime, i, i, selectedRows, progress );
 
-          if( progress != NULL && !progress->getStop() )
+          if( progress != NULL && numRows > 1 && !progress->getStop() )
           {
             #pragma omp atomic
             ++currentRow;
@@ -1365,22 +1372,40 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     }
 
     int progressSteps = 0;
+    TRecordTime tmpLastTime = windowCloneManager( currentWindow )->getBeginTime( iRow );
     while ( windowCloneManager( currentWindow )->getEndTime( iRow ) < toTime
             && windowCloneManager( currentWindow )->getBeginTime( iRow ) < currentWindow->getTrace()->getEndTime() )
     {
       if( windowCloneManager( currentWindow )->getBeginTime( iRow ) != windowCloneManager( currentWindow )->getEndTime( iRow ) )
         calculate( iRow, fromTime, toTime, winIndex, data, needInit, calcSemanticStats );
+
       windowCloneManager( currentWindow )->calcNext( iRow );
       if( progress != NULL )
       {
         if( progress->getStop() )
           break;
-        ++progressSteps;
-        if( progressSteps == 1000 )
+        if( numRows > 1 )
         {
-          #pragma omp critical
+          ++progressSteps;
+          if( progressSteps == 1000 )
           {
-            progress->setCurrentProgress( progress->getCurrentProgress() );
+            progressSteps = 0;
+            #pragma omp critical
+            {
+              progress->setCurrentProgress( progress->getCurrentProgress() );
+            }
+          }
+        }
+        else
+        {
+          if( windowCloneManager( currentWindow )->getEndTime( iRow ) - tmpLastTime >
+              ( toTime - fromTime ) / 50 )
+          {
+            #pragma omp critical
+            {
+              progress->setCurrentProgress( windowCloneManager( currentWindow )->getEndTime( iRow ) - beginTime );
+            }
+            tmpLastTime = windowCloneManager( currentWindow )->getEndTime( iRow );
           }
         }
       }
@@ -1403,7 +1428,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
     }
 
 #ifndef PARALLEL_ENABLED
-    if( progress != NULL )
+    if( progress != NULL && numRows > 1 )
     {
       if( progress->getStop() )
         break;

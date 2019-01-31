@@ -2023,6 +2023,8 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
       progress->setEndLimit( numRows );
     else if( numRows == 1 )
       progress->setEndLimit( getWindowEndTime() - getWindowBeginTime() );
+
+    progress->setCurrentProgress( 0 );
   }
 
   // Drawmode: Group objects with same wxCoord in objectPosList
@@ -2251,7 +2253,10 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
       {
         if( currentTime - tmpLastTime > ( getWindowEndTime() - getWindowBeginTime() ) / 50 )
         {
-          progress->setCurrentProgress( currentTime - getWindowBeginTime() );
+          #pragma omp critical
+          {
+            progress->setCurrentProgress( currentTime - getWindowBeginTime() );
+          }
           tmpLastTime = currentTime;
         }
       }
