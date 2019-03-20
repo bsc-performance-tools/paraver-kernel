@@ -629,7 +629,8 @@ void CFGLoader::pushbackWindow( Window *whichWindow,
       pushbackWindow( whichWindow->getPunctualColorWindow(), allWindows );
   }
 
-  allWindows.push_back( whichWindow );
+  if( find( allWindows.begin(), allWindows.end(), whichWindow ) == allWindows.end() )
+    allWindows.push_back( whichWindow );
 }
 
 void CFGLoader::pushbackAllWindows( const vector<Window *>& selectedWindows,
@@ -645,6 +646,7 @@ void CFGLoader::pushbackAllWindows( const vector<Window *>& selectedWindows,
   for ( vector<Histogram *>::const_iterator it = selectedHistos.begin();
         it != selectedHistos.end(); ++it )
   {
+    // TODO: Consider substitute this section with direct insertions
     if( find( selectedWindows.begin(), selectedWindows.end(), ( *it )->getControlWindow() ) == selectedWindows.end() )
       pushbackWindow( ( *it )->getControlWindow(), allWindows );
     if ( ( *it )->getControlWindow() != ( *it )->getDataWindow() &&
