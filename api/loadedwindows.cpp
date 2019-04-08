@@ -182,8 +182,8 @@ void LoadedWindows::getValidControlWindow( Window *dataWindow,
   for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
   {
-    if ( validDataWindow( dataWindow, ( *it ).second )
-         && validDataWindow( controlWindow, ( *it ).second ) )
+    if ( LoadedWindows::validDataWindow( dataWindow, ( *it ).second )
+         && LoadedWindows::validDataWindow( controlWindow, ( *it ).second ) )
       onVector.push_back( ( *it ).first );
   }
 }
@@ -195,13 +195,13 @@ void LoadedWindows::getValidDataWindow( Window *controlWindow,
   for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
   {
-    if ( validDataWindow( ( *it ).second, controlWindow )
-         && validDataWindow( ( *it ).second, extraWindow ) )
+    if ( LoadedWindows::validDataWindow( ( *it ).second, controlWindow )
+         && LoadedWindows::validDataWindow( ( *it ).second, extraWindow ) )
       onVector.push_back( ( *it ).first );
   }
 }
 
-bool LoadedWindows::validDataWindow( Window *dataWindow, Window *controlWindow ) const
+bool LoadedWindows::validDataWindow( Window *dataWindow, Window *controlWindow )
 {
   if ( dataWindow == controlWindow )
     return true;
@@ -212,26 +212,26 @@ bool LoadedWindows::validDataWindow( Window *dataWindow, Window *controlWindow )
 
   else if ( dataWindow->getTrace() == controlWindow->getTrace() )
   {
-    if ( validLevelDataWindow( dataWindow, controlWindow ) )
+    if ( LoadedWindows::validLevelDataWindow( dataWindow, controlWindow ) )
     {
-      return notInParents( dataWindow, controlWindow )
-             && notInParents( controlWindow, dataWindow );
+      return LoadedWindows::notInParents( dataWindow, controlWindow )
+             && LoadedWindows::notInParents( controlWindow, dataWindow );
     }
   }
   else
   {
     if( dataWindow->getTrace()->isSameObjectStruct( controlWindow->getTrace() ) )
-      if ( validLevelDataWindow( dataWindow, controlWindow ) )
+      if ( LoadedWindows::validLevelDataWindow( dataWindow, controlWindow ) )
       {
-        return notInParents( dataWindow, controlWindow )
-               && notInParents( controlWindow, dataWindow );
+        return LoadedWindows::notInParents( dataWindow, controlWindow )
+               && LoadedWindows::notInParents( controlWindow, dataWindow );
       }
   }
 
   return false;
 }
 
-bool LoadedWindows::validLevelDataWindow( Window *dataWindow, Window *controlWindow ) const
+bool LoadedWindows::validLevelDataWindow( Window *dataWindow, Window *controlWindow )
 {
   if ( dataWindow->getLevel() == controlWindow->getLevel() )
     return true;
@@ -255,7 +255,7 @@ bool LoadedWindows::validLevelDataWindow( Window *dataWindow, Window *controlWin
   return false;
 }
 
-bool LoadedWindows::notInParents( Window *whichWindow, Window *inParents ) const
+bool LoadedWindows::notInParents( Window *whichWindow, Window *inParents )
 {
   bool result = true;
 
@@ -263,9 +263,9 @@ bool LoadedWindows::notInParents( Window *whichWindow, Window *inParents ) const
     result = false;
   else if ( inParents->isDerivedWindow() )
   {
-    result = notInParents( whichWindow, inParents->getParent( 0 ) );
+    result = LoadedWindows::notInParents( whichWindow, inParents->getParent( 0 ) );
     if ( result )
-      result = notInParents( whichWindow, inParents->getParent( 1 ) );
+      result = LoadedWindows::notInParents( whichWindow, inParents->getParent( 1 ) );
   }
 
   return result;

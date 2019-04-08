@@ -40,6 +40,7 @@
 #include "drawmode.h"
 #include "symbolpicker.h"
 #include "syncwindows.h"
+#include "loadedwindows.h"
 
 
 using namespace std;
@@ -459,6 +460,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   histograms.push_back( NULL );
   options.enabledCFG4DMode = false;
   syncRealGroup.clear();
+  CFGLoader::errorLine.clear();
 
   while ( !cfgFile.eof() )
   {
@@ -515,15 +517,17 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
           delete histograms[ histograms.size() - 1 ];
           histograms[ histograms.size() - 1 ] = NULL;
           CFGLoader::errorLine = strLine;
+          break;
         }
         else
         {
           if ( windows[ windows.size() - 1 ] != NULL )
           {
             delete windows[ windows.size() - 1 ];
+            windows[ windows.size() - 1 ] = NULL;
             CFGLoader::errorLine = strLine;
+            break;
           }
-          windows[ windows.size() - 1 ] = NULL;
         }
       }
     }
@@ -3771,6 +3775,16 @@ bool Analyzer2DControlWindow::parseLine( KernelConnection *whichKernel,
        windows[ indexControlWindow - 1 ] == NULL )
     return false;
 
+  if( histograms[ histograms.size() - 1 ]->getDataWindow() != NULL &&
+      !LoadedWindows::validDataWindow( histograms[ histograms.size() - 1 ]->getDataWindow(),
+                                       windows[ indexControlWindow - 1 ] ) )
+    return false;
+
+  if( histograms[ histograms.size() - 1 ]->getExtraControlWindow() != NULL &&
+      !LoadedWindows::validDataWindow( windows[ indexControlWindow - 1 ],
+                                       histograms[ histograms.size() - 1 ]->getExtraControlWindow() ) )
+    return false;
+
   histograms[ histograms.size() - 1 ]->setControlWindow( windows[ indexControlWindow - 1 ] );
 
   return true;
@@ -3808,6 +3822,16 @@ bool Analyzer2DDataWindow::parseLine( KernelConnection *whichKernel, istringstre
 
   if ( indexDataWindow > windows.size() ||
        windows[ indexDataWindow - 1 ] == NULL )
+    return false;
+
+  if( histograms[ histograms.size() - 1 ]->getControlWindow() != NULL &&
+      !LoadedWindows::validDataWindow( windows[ indexDataWindow - 1 ],
+                                       histograms[ histograms.size() - 1 ]->getControlWindow() ) )
+    return false;
+
+  if( histograms[ histograms.size() - 1 ]->getExtraControlWindow() != NULL &&
+      !LoadedWindows::validDataWindow( windows[ indexDataWindow - 1 ],
+                                       histograms[ histograms.size() - 1 ]->getExtraControlWindow() ) )
     return false;
 
   histograms[ histograms.size() - 1 ]->setDataWindow( windows[ indexDataWindow - 1 ] );
@@ -4969,6 +4993,16 @@ bool Analyzer3DControlWindow::parseLine( KernelConnection *whichKernel, istrings
 
   if ( controlWindow > windows.size() ||
        windows[ controlWindow - 1 ] == NULL )
+    return false;
+
+  if( histograms[ histograms.size() - 1 ]->getControlWindow() != NULL &&
+      !LoadedWindows::validDataWindow( histograms[ histograms.size() - 1 ]->getControlWindow(),
+                                       windows[ controlWindow - 1 ] ) )
+    return false;
+
+  if( histograms[ histograms.size() - 1 ]->getDataWindow() != NULL &&
+      !LoadedWindows::validDataWindow( histograms[ histograms.size() - 1 ]->getDataWindow(),
+                                       windows[ controlWindow - 1 ] ) )
     return false;
 
   histograms[ histograms.size() - 1 ]->setExtraControlWindow( windows[ controlWindow - 1 ] );

@@ -46,6 +46,9 @@ class LoadedWindows
     ~LoadedWindows();
 
     static LoadedWindows *getInstance();
+    static bool validDataWindow( Window *dataWindow, Window *controlWindow );
+    static bool validLevelDataWindow( Window *dataWindow, Window *controlWindow );
+    static bool notInParents( Window *whichWindow, Window *inParents );
 
     TWindowID add( Window *whichWindow );
     TWindowID add( Histogram *whichHisto );
@@ -82,9 +85,6 @@ class LoadedWindows
     TWindowID currentID;
     TWindowID currentHistoID;
 
-    bool validDataWindow( Window *dataWindow, Window *controlWindow ) const;
-    bool validLevelDataWindow( Window *dataWindow, Window *controlWindow ) const;
-    bool notInParents( Window *whichWindow, Window *inParents ) const;
 };
 
 
