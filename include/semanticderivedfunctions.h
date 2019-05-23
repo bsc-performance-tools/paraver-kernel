@@ -745,6 +745,10 @@ class ControlDerivedEnumerate: public SemanticDerived
       return new ControlDerivedEnumerate( *this );
     }
 
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return NO_TYPE;
+    }
 
   protected:
     virtual const bool getMyInitFromBegin()
@@ -770,7 +774,7 @@ class ControlDerivedEnumerate: public SemanticDerived
     static std::string name;
 
     std::vector<TSemanticValue> prevControlValue;
-    std::vector<TSemanticValue> prevDataValue;
+    std::vector<TRecordTime> prevDataTime;
     std::vector<TSemanticValue> myEnumerate;
 
 };

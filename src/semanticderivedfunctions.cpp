@@ -209,11 +209,11 @@ TSemanticValue ControlDerivedEnumerate::execute( const SemanticInfo *info )
 
   if( myInfo->values[ 1 ] < prevControlValue[ tmpOrder ] )
     myEnumerate[ tmpOrder ] = 0;
-  else if( myInfo->values[ 0 ] != prevDataValue[ tmpOrder ] )
+  else if( prevDataTime[ tmpOrder ] == 0 || myInfo->dataBeginTime != prevDataTime[ tmpOrder ] )
     ++myEnumerate[ tmpOrder ];
 
   prevControlValue[ tmpOrder ] = myInfo->values[ 1 ];
-  prevDataValue[ tmpOrder ] = myInfo->values[ 0 ];
+  prevDataTime[ tmpOrder ] = myInfo->dataBeginTime;
 
   return myEnumerate[ tmpOrder ];
 }
@@ -224,7 +224,7 @@ void ControlDerivedEnumerate::init( KWindow *whichWindow )
 
   myEnumerate.clear();
   prevControlValue.clear();
-  prevDataValue.clear();
+  prevDataTime.clear();
 
   if( whichWindow->getLevel() >= SYSTEM )
     size = whichWindow->getTrace()->totalCPUs();
@@ -233,12 +233,12 @@ void ControlDerivedEnumerate::init( KWindow *whichWindow )
 
   myEnumerate.reserve( size );
   prevControlValue.reserve( size );
-  prevDataValue.reserve( size );
+  prevDataTime.reserve( size );
 
   for( TObjectOrder i = 0; i < size; i++ )
   {
     myEnumerate.push_back( 0 );
     prevControlValue.push_back( 0 );
-    prevDataValue.push_back( 0 );
+    prevDataTime.push_back( 0 );
   }
 }

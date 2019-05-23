@@ -51,6 +51,7 @@ struct SemanticHighInfo: public SemanticInfo
 {
   std::vector<TSemanticValue> values;
   TObjectOrder lastChanged;
+  TRecordTime dataBeginTime;
 };
 
 #endif // SEMANTICINFO_H_INCLUDED
