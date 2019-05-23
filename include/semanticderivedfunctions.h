@@ -705,4 +705,74 @@ class ControlDerivedAdd: public SemanticDerived
 
 };
 
+
+class ControlDerivedEnumerate: public SemanticDerived
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    ControlDerivedEnumerate()
+    {
+      setDefaultParam();
+    }
+
+    ~ControlDerivedEnumerate()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+
+    virtual bool isControlDerived()
+    {
+      return controlDerived;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual void init( KWindow *whichWindow );
+
+    virtual std::string getName()
+    {
+      return ControlDerivedEnumerate::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ControlDerivedEnumerate( *this );
+    }
+
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return ( TParamValue ) 0;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
+
+  private:
+    static const bool initFromBegin = true;
+    static const bool controlDerived = false;
+    static std::string name;
+
+    std::vector<TSemanticValue> prevControlValue;
+    std::vector<TSemanticValue> prevDataValue;
+    std::vector<TSemanticValue> myEnumerate;
+
+};
+
 #endif // SEMANTICDERIVEDFUNCTIONS_H_INCLUDED

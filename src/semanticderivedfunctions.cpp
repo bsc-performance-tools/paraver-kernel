@@ -199,3 +199,46 @@ TSemanticValue ControlDerivedAdd::execute( const SemanticInfo *info )
 
   return tmp;
 }
+
+
+string ControlDerivedEnumerate::name = "controlled: enumerate";
+TSemanticValue ControlDerivedEnumerate::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
+
+  if( myInfo->values[ 1 ] < prevControlValue[ tmpOrder ] )
+    myEnumerate[ tmpOrder ] = 0;
+  else if( myInfo->values[ 0 ] != prevDataValue[ tmpOrder ] )
+    ++myEnumerate[ tmpOrder ];
+
+  prevControlValue[ tmpOrder ] = myInfo->values[ 1 ];
+  prevDataValue[ tmpOrder ] = myInfo->values[ 0 ];
+
+  return myEnumerate[ tmpOrder ];
+}
+
+void ControlDerivedEnumerate::init( KWindow *whichWindow )
+{
+  TObjectOrder size = 0;
+
+  myEnumerate.clear();
+  prevControlValue.clear();
+  prevDataValue.clear();
+
+  if( whichWindow->getLevel() >= SYSTEM )
+    size = whichWindow->getTrace()->totalCPUs();
+  else
+    size = whichWindow->getTrace()->totalThreads();
+
+  myEnumerate.reserve( size );
+  prevControlValue.reserve( size );
+  prevDataValue.reserve( size );
+
+  for( TObjectOrder i = 0; i < size; i++ )
+  {
+    myEnumerate.push_back( 0 );
+    prevControlValue.push_back( 0 );
+    prevDataValue.push_back( 0 );
+  }
+}
