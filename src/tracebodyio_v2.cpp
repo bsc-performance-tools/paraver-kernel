@@ -39,6 +39,13 @@ bool TraceBodyIO_v2::ordered() const
   return true;
 }
 
+bool TraceBodyIO_v2::bufferRead( std::istream& buffer, MemoryBlocks& records,
+                                 hash_set<TEventType>& events, MetadataManager& traceInfo ) const
+{
+  // std::cout<< "TraceBodyIO_v2::bufferRead() has not been implemented."<< std::endl;
+  return false;
+}
+
 void TraceBodyIO_v2::read( TraceStream *file, MemoryBlocks& records,
                            hash_set<TEventType>& events, MetadataManager& traceInfo ) const
 {

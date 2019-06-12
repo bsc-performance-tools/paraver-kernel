@@ -78,6 +78,12 @@ void NotCompressed::getline( string& strLine )
   std::getline( file, strLine );
 }
 
+bool NotCompressed::read(char *const buffer, const std::streamsize size)
+{
+  file.read(buffer, size);
+  return true;
+}
+
 bool NotCompressed::eof()
 {
   return file.eof();
@@ -203,6 +209,12 @@ void Compressed::getline( string& strLine )
   tmpLine[ i ] = '\0';
 #endif
   strLine = tmpLine;
+}
+
+bool Compressed::read(char *const buffer, const std::streamsize size)
+{
+  // std::cout<< "Compressed::read() is not implemented."<< std::endl;
+  return false;
 }
 
 bool Compressed::eof()

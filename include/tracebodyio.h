@@ -56,6 +56,8 @@ class TraceBodyIO
     virtual void setResourceModel( const ResourceModel* whichResourceModel );
 
     virtual bool ordered() const = 0;
+    virtual bool bufferRead( std::istream& buffer, MemoryBlocks& records,
+                             hash_set<TEventType>& events, MetadataManager& traceInfo ) const = 0;
     virtual void read( TraceStream *file, MemoryBlocks& records,
                        hash_set<TEventType>& events, MetadataManager& traceInfo ) const = 0;
     virtual void write( std::fstream& whichStream,

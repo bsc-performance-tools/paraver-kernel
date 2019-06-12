@@ -50,6 +50,7 @@ class TraceStream
     virtual void open( const std::string& filename ) = 0;
     virtual void close() = 0;
     virtual void getline( std::string& strLine ) = 0;
+    virtual bool read( char *const buffer, const std::streamsize size ) = 0;
     virtual bool eof() = 0;
     virtual void seekbegin() = 0;
     virtual void seekend() = 0;
@@ -82,6 +83,7 @@ class NotCompressed: public TraceStream
     virtual void open( const std::string& filename );
     virtual void close();
     virtual void getline( std::string& strLine );
+    virtual bool read( char *const buffer, const std::streamsize size );
     virtual bool eof();
     virtual void seekbegin();
     virtual void seekend();
@@ -114,6 +116,7 @@ class Compressed: public TraceStream
     virtual void open( const std::string& filename );
     virtual void close();
     virtual void getline( std::string& strLine );
+    virtual bool read( char *const buffer, const std::streamsize size );
     virtual bool eof();
     virtual void seekbegin();
     virtual void seekend();

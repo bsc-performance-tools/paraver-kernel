@@ -685,25 +685,52 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   unsigned long long count = 0;
   if( !( noLoad && !body->ordered() ) )
   {
-    while ( !file->eof() )
+    string buffer; buffer.resize( static_cast<size_t>(TraceStream::getTraceFileSize(whichFile))-
+                                  static_cast<size_t>(file->tellg()) );
+    if ( file->read( const_cast<char *>(buffer.data()), buffer.size() ) )
     {
-      body->read( file, *blocks, hashevents, myTraceInfo );
-      if( blocks->getCountInserted() > 0 )
-        ++count;
-
-      if ( blocks->getCountInserted() >= 10000 )
+      std::istringstream iss( buffer );
+      while ( !iss.eof() )
       {
-        memTrace->insert( blocks );
-        if ( progress != NULL )
-        {
-          if ( file->canseekend() )
-            progress->setCurrentProgress( file->tellg() );
-          else
-            progress->setCurrentProgress( blocks->getLastRecordTime() );
-        }
+        body->bufferRead( iss, *blocks, hashevents, myTraceInfo );
+        if( blocks->getCountInserted() > 0 )
+          ++count;
 
-        if ( progress != NULL && progress->getStop() )
-          break;
+        if ( blocks->getCountInserted() >= 10000 )
+        {
+          memTrace->insert( blocks );
+          if ( progress != NULL )
+            progress->setCurrentProgress( iss.tellg() );
+
+          if ( progress != NULL && progress->getStop() )
+            break;
+        }
+      }
+      buffer.clear();
+    }
+    else
+    {
+      buffer.clear();
+      while ( !file->eof() )
+      {
+        body->read( file, *blocks, hashevents, myTraceInfo );
+        if( blocks->getCountInserted() > 0 )
+          ++count;
+
+        if ( blocks->getCountInserted() >= 10000 )
+        {
+          memTrace->insert( blocks );
+          if ( progress != NULL )
+          {
+            if ( file->canseekend() )
+              progress->setCurrentProgress( file->tellg() );
+            else
+              progress->setCurrentProgress( blocks->getLastRecordTime() );
+          }
+
+          if ( progress != NULL && progress->getStop() )
+            break;
+        }
       }
     }
 

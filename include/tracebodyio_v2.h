@@ -54,6 +54,8 @@ class TraceBodyIO_v2 : public TraceBodyIO
 #endif
 
     bool ordered() const;
+    bool bufferRead( std::istream& buffer, MemoryBlocks& records,
+                     hash_set<TEventType>& events, MetadataManager& traceInfo ) const;
     void read( TraceStream *file, MemoryBlocks& records,
                hash_set<TEventType>& events, MetadataManager& traceInfo ) const;
     void write( std::fstream& whichStream,

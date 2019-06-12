@@ -45,6 +45,8 @@ class TraceBodyIO_v1 : public TraceBodyIO
     static const PRV_UINT8 GlobalCommRecord = '4';
 
     bool ordered() const;
+    bool bufferRead( std::istream& buffer, MemoryBlocks& records,
+                     hash_set<TEventType>& events, MetadataManager& traceInfo) const;
     void read( TraceStream *file, MemoryBlocks& records,
                hash_set<TEventType>& events, MetadataManager& traceInfo ) const;
     void write( std::fstream& whichStream,

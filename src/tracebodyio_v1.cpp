@@ -81,6 +81,43 @@ bool TraceBodyIO_v1::ordered() const
   return false;
 }
 
+bool TraceBodyIO_v1::bufferRead( std::istream& buffer, MemoryBlocks& records,
+                                 hash_set<TEventType>& events, MetadataManager& traceInfo ) const
+{
+  std::getline(buffer, line);
+  if(line.empty())
+    return;
+
+  switch ( line[0] )
+  {
+    case CommentRecord:
+      readTraceInfo( line, traceInfo );
+      break;
+
+    case StateRecord:
+      readState( line, records );
+      break;
+
+    case EventRecord:
+      readEvent( line, records, events );
+      break;
+
+    case CommRecord:
+      readComm( line, records );
+      break;
+
+    case GlobalCommRecord:
+      //readGlobalComm( line, records );
+      break;
+
+    default:
+      cerr << "No logging system yet. TraceBodyIO_v1::bufferRead()" << endl;
+      cerr << "Unkwnown record type." << endl;
+      break;
+  }
+  return true;
+}
+
 void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
                            hash_set<TEventType>& events, MetadataManager& traceInfo ) const
 {
