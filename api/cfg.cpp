@@ -5274,6 +5274,9 @@ bool TagAliasStatisticCFG4D::parseLine( KernelConnection *whichKernel,
     // It has been created
     histograms[ histograms.size() - 1 ]->setCFG4DStatisticAlias(
             currentStatisticCFG4DTag, currentStatisticCFG4DAlias );
+
+    if( histograms[ histograms.size() - 1 ]->getCFG4DStatisticsAliasList().size() == 1 )
+      histograms[ histograms.size() - 1 ]->setCurrentStat( currentStatisticCFG4DTag );
   }
 
   return true;

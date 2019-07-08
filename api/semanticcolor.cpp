@@ -257,7 +257,7 @@ void CodeColor::expandColors()
 #endif
   insertedColors.insert( colors.begin(), colors.end() );
 
-  unsigned int baseColor = 0;
+  unsigned int baseColor = 1;
   for( unsigned int i = 0; i < iterations; ++i )
   {
     while( baseColor > colors.size() - 1 )
