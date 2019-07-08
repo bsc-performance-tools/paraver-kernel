@@ -580,7 +580,7 @@ void LabelConstructor::transformToShort( std::string& onLabel, char beginDelimit
   string::size_type beginPos = onLabel.find_first_of( beginDelimiter );
   string::size_type endPos = onLabel.find_last_of( endDelimiter );
   if( beginPos != string::npos && endPos != string::npos )
-    onLabel.erase( beginPos, endPos );
+    onLabel.erase( beginPos, endPos - beginPos + 1 );
 }
 
 
