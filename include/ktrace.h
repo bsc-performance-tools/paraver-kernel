@@ -181,6 +181,9 @@ class KTrace: public Trace
     virtual void setFillStateGaps( bool fill );
 
     virtual PRV_UINT64 getCutterOffset();
+    virtual PRV_UINT64 getCutterLastOffset();
+    virtual PRV_UINT64 getCutterLastBeginTime();
+    virtual PRV_UINT64 getCutterLastEndTime();
     virtual PRV_UINT64 getCutterBeginTime();
     virtual PRV_UINT64 getCutterEndTime();
 

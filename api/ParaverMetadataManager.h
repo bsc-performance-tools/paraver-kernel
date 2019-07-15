@@ -127,6 +127,9 @@ class MetadataManager
 
     vector<Metadata*>       TraceMetadataStorage;
     vector<CutterMetadata*> CutterMetadataStorage;
+    PRV_UINT64 lastOffset;
+    PRV_UINT64 lastBeginTime;
+    PRV_UINT64 lastEndTime;
     PRV_UINT64 totalOffset;
 
   public:
@@ -137,6 +140,9 @@ class MetadataManager
     vector<Metadata*>& GetMetadata(void) { return TraceMetadataStorage; };
 
     vector<CutterMetadata*>& GetCutterMetadata(void) { return CutterMetadataStorage; };
+    PRV_UINT64 GetCutterLastOffset(void) const { return lastOffset; };
+    PRV_UINT64 GetCutterLastBeginTime(void) const { return lastBeginTime; };
+    PRV_UINT64 GetCutterLastEndTime(void) const { return lastEndTime; };
     PRV_UINT64 GetCutterTotalOffset(void) const { return totalOffset; };
 
     bool GetError         (void) { return Error; };

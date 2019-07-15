@@ -903,6 +903,24 @@ void KTrace::setFillStateGaps( bool fill )
 }
 
 
+PRV_UINT64 KTrace::getCutterLastOffset()
+{
+  return myTraceInfo.GetCutterLastOffset();
+}
+
+
+PRV_UINT64 KTrace::getCutterLastBeginTime()
+{
+  return myTraceInfo.GetCutterLastBeginTime();
+}
+
+
+PRV_UINT64 KTrace::getCutterLastEndTime()
+{
+  return myTraceInfo.GetCutterLastEndTime();
+}
+
+
 PRV_UINT64 KTrace::getCutterOffset()
 {
   //return myTraceInfo.cutterOffset;

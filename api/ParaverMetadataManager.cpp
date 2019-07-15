@@ -234,6 +234,10 @@ bool MetadataManager::NewMetadata(string MetadataStr)
     CutterMetadataStorage.push_back(NewCutterMetadata);
 
     totalOffset += NewCutterMetadata->GetOffset();
+
+    lastOffset = NewCutterMetadata->GetOffset();
+    lastBeginTime = NewCutterMetadata->GetBeginTime();
+    lastEndTime = NewCutterMetadata->GetEndTime();
   }
 
   return true;

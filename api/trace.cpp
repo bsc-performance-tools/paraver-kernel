@@ -705,11 +705,28 @@ void TraceProxy::setFillStateGaps( bool fill )
 }
 
 
+PRV_UINT64 TraceProxy::getCutterLastOffset()
+{
+  return myTrace->getCutterLastOffset();
+}
+
+
+PRV_UINT64 TraceProxy::getCutterLastBeginTime()
+{
+  return myTrace->getCutterLastBeginTime();
+}
+
+
+PRV_UINT64 TraceProxy::getCutterLastEndTime()
+{
+  return myTrace->getCutterLastEndTime();
+}
+
+
 PRV_UINT64 TraceProxy::getCutterOffset()
 {
   return myTrace->getCutterOffset();
 }
-
 
 PRV_UINT64 TraceProxy::getCutterBeginTime()
 {
