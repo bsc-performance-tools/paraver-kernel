@@ -675,36 +675,7 @@ string applyFilters( KernelConnection *myKernel,
 
     if ( registeredTool[ i ] == TraceCutter::getID() )
     {
-      pcf_name = LocalKernel::composeName( intermediateNameIn, string( "pcf" ) );
-
-      if(( pcfFile = fopen( pcf_name.c_str(), "r" )) != NULL )
-      {
-        fclose( pcfFile );
-
-#ifdef OLD_PCFPARSER
-        config = new ParaverTraceConfig( pcf_name );
-#else
-        config = new UIParaverTraceConfig();
-        config->parse( pcf_name );
-#endif
-        labels = EventLabels( *config, std::set<TEventType>() );
-        labels.getTypes( allTypes );
-        for( vector< TEventType >::iterator it = allTypes.begin(); it != allTypes.end(); ++it )
-        {
-          if ( labels.getValues( *it, currentEventValues ) )
-          {
-            if ( currentEventValues.find( TEventValue( 0 )) != currentEventValues.end() )
-            {
-              typesWithValueZero.push_back( *it );
-            }
-            currentEventValues.clear();
-          }
-        }
-
-        delete config;
-      }
-
-      traceCutter = myKernel->newTraceCutter( traceOptions, typesWithValueZero );
+      traceCutter = TraceCutter::create( myKernel, intermediateNameIn, intermediateNameOut, traceOptions, NULL );
       traceCutter->execute( (char *)intermediateNameIn.c_str(), (char *)intermediateNameOut.c_str() );
       myKernel->copyPCF( intermediateNameIn, intermediateNameOut );
     }

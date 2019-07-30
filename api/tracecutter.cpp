@@ -57,52 +57,46 @@ string TraceCutter::traceToolName = "Cutter";
 string TraceCutter::traceToolExtension = "chop";
 
 TraceCutter *TraceCutter::create( const KernelConnection *whichKernel,
-                                   char *traceIn,
-                                   char *traceOut,
-                                   TraceOptions *options,
-                                   ProgressController *progress )
+                                  string traceIn,
+                                  string traceOut,
+                                  TraceOptions *options,
+                                  ProgressController *progress )
 {
   return new TraceCutterProxy( whichKernel, traceIn, traceOut, options, progress );
 }
 
 
-std::string TraceCutter::getID()
+string TraceCutter::getID()
 {
   return TraceCutter::traceToolID;
 }
 
 
-std::string TraceCutter::getName()
+string TraceCutter::getName()
 {
   return TraceCutter::traceToolName;
 }
 
 
-std::string TraceCutter::getExtension()
+string TraceCutter::getExtension()
 {
   return TraceCutter::traceToolExtension;
 }
 
-
 TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
-                                    char *traceIn,
-                                    char *traceOut,
+                                    string traceIn,
+                                    string traceOut,
                                     TraceOptions *options,
                                     ProgressController *progress )
 {
-//  char *pcf_name, *c;
-  std::string pcf_name;
+  string pcf_name;
   FILE *pcfFile;
-  vector< TEventType > typesWithValueZero;
+  vector< TEventType > HWCTypes;
 #ifdef WIN32
   struct _stat tmpStatBuffer;
 #else
   struct stat tmpStatBuffer;
 #endif
-
-/*  pcf_name = strdup( traceIn );
-  c = strrchr( pcf_name, '.' );
-  sprintf( c, ".pcf" );*/
 
   pcf_name = LocalKernel::composeName( traceIn, string( "pcf" ) );
   int statReturn;
@@ -124,26 +118,17 @@ TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
 
     EventLabels myEventLabels = EventLabels( *config, set<TEventType>() );
     vector< TEventType > allTypes;
-    EventLabels labels;
-    labels.getTypes( allTypes );
-    map< TEventValue, string > currentEventValues;
+    myEventLabels.getTypes( allTypes );
     for( vector< TEventType >::iterator it = allTypes.begin(); it != allTypes.end(); ++it )
     {
-      if ( labels.getValues( *it, currentEventValues ) )
-      {
-        if ( currentEventValues.find( TEventValue( 0 )) != currentEventValues.end() )
-        {
-          typesWithValueZero.push_back( *it );
-        }
-        currentEventValues.clear();
-      }
+      if( *it >= 42000000 && *it < 43000000 )
+        HWCTypes.push_back( *it );
     }
 
     delete config;
   }
 
-  myTraceCutter = whichKernel->newTraceCutter( options, typesWithValueZero );
-  myTraceCutter->execute( traceIn, traceOut, progress );
+  myTraceCutter = whichKernel->newTraceCutter( options, HWCTypes );
 }
 
 
@@ -153,7 +138,7 @@ TraceCutterProxy::~TraceCutterProxy()
 }
 
 
-void TraceCutterProxy::execute( char *trace_in, char *trace_out, ProgressController *progress )
+void TraceCutterProxy::execute( string trace_in, string trace_out, ProgressController *progress )
 {
   myTraceCutter->execute( trace_in, trace_out, progress );
 }
@@ -220,7 +205,7 @@ void TraceCutterProxy::set_keep_events( bool keepEvents )
   myTraceCutter->set_keep_events( keepEvents );
 }
 
-void TraceCutterProxy::setCutterApplicationCaller( std::string caller )
+void TraceCutterProxy::setCutterApplicationCaller( string caller )
 {
   myTraceCutter->setCutterApplicationCaller( caller );
 }

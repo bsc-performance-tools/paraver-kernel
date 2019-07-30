@@ -122,7 +122,7 @@ class LocalKernel: public KernelConnection
                                          const bool commitName = false ) const;
 
     //virtual char *composeName( char *name, char *newExtension );
-    static std::string composeName( const std::string& name,  const std::string& newExtension );
+    static std::string composeName( const std::string& name, const std::string& newExtension );
     bool isFileReadable( const std::string& filename,
                          const std::string& message,
                          const bool verbose = true,

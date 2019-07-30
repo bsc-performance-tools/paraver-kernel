@@ -40,8 +40,8 @@ class TraceCutter
 {
   public:
     static TraceCutter *create( const KernelConnection *whichKernel,
-                                char *traceIn,
-                                char *traceOut,
+                                std::string traceIn,
+                                std::string traceOut,
                                 TraceOptions *options,
                                 ProgressController *progress );
 
@@ -53,8 +53,8 @@ class TraceCutter
     {}
 
 
-    virtual void execute( char *trace_in,
-                          char *trace_out,
+    virtual void execute( std::string trace_in,
+                          std::string trace_out,
                           ProgressController *progress = NULL ) = 0;
 
     virtual void set_by_time( bool byTime )
@@ -95,8 +95,8 @@ class TraceCutterProxy : public TraceCutter
   public:
     virtual ~TraceCutterProxy();
 
-    virtual void execute( char *trace_in,
-                          char *trace_out,
+    virtual void execute( std::string trace_in,
+                          std::string trace_out,
                           ProgressController *progress = NULL );
     virtual void set_by_time( bool byTime );
     virtual void set_min_cutting_time( unsigned long long minCutTime );
@@ -116,14 +116,14 @@ class TraceCutterProxy : public TraceCutter
     TraceCutter *myTraceCutter;
 
     TraceCutterProxy( const KernelConnection *whichKernel,
-                      char *traceIn,
-                      char *traceOut,
+                      std::string traceIn,
+                      std::string traceOut,
                       TraceOptions *options,
                       ProgressController *progress );
 
     friend TraceCutter *TraceCutter::create( const KernelConnection *whichKernel,
-                                             char *traceIn,
-                                             char *traceOut,
+                                             std::string traceIn,
+                                             std::string traceOut,
                                              TraceOptions *options,
                                              ProgressController *progress );
 };

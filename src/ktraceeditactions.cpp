@@ -104,12 +104,12 @@ bool TraceCutterAction::execute( std::string whichTrace )
       if( errno != EEXIST )
       {
         TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(),
-                                                     (char *)whichTrace.c_str(),
-                                                     (char *)newName.c_str(),
+                                                     whichTrace,
+                                                     newName,
                                                      options,
                                                      NULL );
         myCutter->setCutterApplicationCaller( CutterMetadata::RUNAPP_APPLICATION_ID );
-        myCutter->execute( (char *)whichTrace.c_str(), (char *)newName.c_str(), NULL );
+        myCutter->execute( whichTrace, newName, NULL );
       }
     }
   }
@@ -117,12 +117,12 @@ bool TraceCutterAction::execute( std::string whichTrace )
   {
 #endif
     TraceCutter *myCutter = TraceCutter::create( mySequence->getKernelConnection(),
-                                                (char *)whichTrace.c_str(),
-                                                (char *)newName.c_str(),
+                                                whichTrace,
+                                                newName,
                                                 options,
                                                 NULL );
     myCutter->setCutterApplicationCaller( CutterMetadata::RUNAPP_APPLICATION_ID );
-    myCutter->execute( (char *)whichTrace.c_str(), (char *)newName.c_str(), NULL );
+    myCutter->execute( whichTrace, newName, NULL );
 #ifndef WIN32
   }
 #endif

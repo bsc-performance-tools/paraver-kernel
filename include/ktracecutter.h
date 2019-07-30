@@ -59,8 +59,8 @@ class KTraceCutter : public TraceCutter
     virtual void set_keep_events( bool keepEvents );
     virtual void setCutterApplicationCaller( std::string caller );
 
-    virtual void execute( char *trace_in,
-                          char *trace_out,
+    virtual void execute( std::string trace_in,
+                          std::string trace_out,
                           ProgressController *progress );
 
   private:
@@ -145,8 +145,8 @@ class KTraceCutter : public TraceCutter
                                //char *trace_in_name,
                                //char *trace_out_name,
                                bool is_zip );
-    void writeOffsetLine( char *trace_in_name,
-                          char *trace_out_name,
+    void writeOffsetLine( const char *trace_in_name,
+                          const char *trace_out_name,
                           unsigned long long timeOffset,
                           unsigned long long timeCutBegin,
                           unsigned long long timeCutEnd );
@@ -167,7 +167,7 @@ class KTraceCutter : public TraceCutter
                        unsigned long long type,
                        unsigned long long value );
     void load_counters_of_pcf( char *trace_name );
-    void shiftLeft_TraceTimes_ToStartFromZero( char *originalTraceName, char *nameIn, char *nameOut, bool is_zip, ProgressController *progress );
+    void shiftLeft_TraceTimes_ToStartFromZero( const char *originalTraceName, const char *nameIn, const char *nameOut, bool is_zip, ProgressController *progress );
     bool is_selected_task( int task_id );
 };
 
