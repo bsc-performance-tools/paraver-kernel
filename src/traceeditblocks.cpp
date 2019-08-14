@@ -21,12 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #include "traceeditblocks.h"
 #include "paraverkernelexception.h"
 
@@ -399,7 +393,7 @@ void TraceEditBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UI
   {
     PRV_UINT16 previousSize = lastData.records.size();
 
-    body->read( file, *this, notUsedEvents, dummyTraceInfo );
+    body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo );
 
     if ( previousSize < lastData.records.size() )
       ++numLines;

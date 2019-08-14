@@ -21,12 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #include "workspacemanager.h"
 #include "paraverkernelexception.h"
 
@@ -134,15 +128,33 @@ vector<string> WorkspaceManager::getWorkspaces( TWorkspaceSet whichSet ) const
 }
 
 
-void WorkspaceManager::getMergedWorkspaces( const std::set<TEventType>& loadedTypes,
+void WorkspaceManager::getMergedWorkspaces( const std::set<TState>& loadedStates,
+                                            const std::set<TEventType>& loadedTypes,
                                             std::vector<std::string>& onWorkspaceVector,
                                             size_t& userDefined )
 {
+  vector<WorkspaceValue> tmpLoadedValues;
+  for( std::set<TState>::iterator it = loadedStates.begin(); it != loadedStates.end(); ++it )
+  {
+    WorkspaceValue tmpWorkspaceValue;
+    tmpWorkspaceValue.myType = WorkspaceValue::STATE;
+    tmpWorkspaceValue.UInfo.state = *it;
+    tmpLoadedValues.push_back( tmpWorkspaceValue );
+  }
+
+  for( std::set<TEventType>::iterator it = loadedTypes.begin(); it != loadedTypes.end(); ++it )
+  {
+    WorkspaceValue tmpWorkspaceValue;
+    tmpWorkspaceValue.myType = WorkspaceValue::EVENT;
+    tmpWorkspaceValue.UInfo.eventType = *it;
+    tmpLoadedValues.push_back( tmpWorkspaceValue );
+  }
+
   for ( vector< string >::iterator it = distWorkspacesOrder.begin(); it != distWorkspacesOrder.end(); ++it )
   {
-    vector< TEventType > tmpAutoTypes = distWorkspaces[ *it ].getAutoTypes();
-    if ( find_first_of( loadedTypes.begin(), loadedTypes.end(),
-                        tmpAutoTypes.begin(), tmpAutoTypes.end() ) !=  loadedTypes.end() )
+    vector< WorkspaceValue > tmpAutoTypes = distWorkspaces[ *it ].getAutoTypes();
+    if ( find_first_of( tmpLoadedValues.begin(), tmpLoadedValues.end(),
+                        tmpAutoTypes.begin(), tmpAutoTypes.end() ) !=  tmpLoadedValues.end() )
       onWorkspaceVector.push_back( *it );
   }
   userDefined = onWorkspaceVector.size();
@@ -150,17 +162,17 @@ void WorkspaceManager::getMergedWorkspaces( const std::set<TEventType>& loadedTy
   vector<string> tmpUserDefined;
   for ( vector< string >::iterator it = userWorkspacesOrder.begin(); it != userWorkspacesOrder.end(); ++it )
   {
-    vector< TEventType > tmpAutoTypes = userWorkspaces[ *it ].getAutoTypes();
+    vector< WorkspaceValue > tmpAutoTypes = userWorkspaces[ *it ].getAutoTypes();
     if( tmpAutoTypes.empty() )
       tmpUserDefined.push_back( *it );
-    else if( find_first_of( loadedTypes.begin(), loadedTypes.end(),
-                            tmpAutoTypes.begin(), tmpAutoTypes.end() ) !=  loadedTypes.end() )
+    else if( find_first_of( tmpLoadedValues.begin(), tmpLoadedValues.end(),
+                            tmpAutoTypes.begin(), tmpAutoTypes.end() ) !=  tmpLoadedValues.end() )
     {
       if( find( onWorkspaceVector.begin(), onWorkspaceVector.end(), *it ) != onWorkspaceVector.end() )
       {
-        vector< TEventType > tmpDistAutoTypes = distWorkspaces[ *it ].getAutoTypes();
+        vector< WorkspaceValue > tmpDistAutoTypes = distWorkspaces[ *it ].getAutoTypes();
         sort( tmpDistAutoTypes.begin(), tmpDistAutoTypes.end() );
-        vector< TEventType > tmpUserAutoTypes = userWorkspaces[ *it ].getAutoTypes();
+        vector< WorkspaceValue > tmpUserAutoTypes = userWorkspaces[ *it ].getAutoTypes();
         sort( tmpUserAutoTypes.begin(), tmpUserAutoTypes.end() );
         if( includes( tmpDistAutoTypes.begin(), tmpDistAutoTypes.end(),
                       tmpUserAutoTypes.begin(), tmpUserAutoTypes.end() ) )

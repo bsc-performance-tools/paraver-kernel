@@ -21,12 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #ifndef NOLOADBLOCKS_H_INCLUDED
 #define NOLOADBLOCKS_H_INCLUDED
 
@@ -181,6 +175,7 @@ namespace NoLoad
       TRecord loadingRec;
       TThreadOrder loadingThread;
 
+      hash_set<TState> notUsedStates;
       hash_set<TEventType> notUsedEvents;
 
       MetadataManager dummyTraceInfo;

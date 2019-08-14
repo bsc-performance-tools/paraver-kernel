@@ -21,12 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #ifndef TRACEBODYIO_H_INCLUDED
 #define TRACEBODYIO_H_INCLUDED
 
@@ -57,7 +51,8 @@ class TraceBodyIO
 
     virtual bool ordered() const = 0;
     virtual void read( TraceStream *file, MemoryBlocks& records,
-                       hash_set<TEventType>& events, MetadataManager& traceInfo ) const = 0;
+                       hash_set<TState>& states, hash_set<TEventType>& events,
+                       MetadataManager& traceInfo ) const = 0;
     virtual void write( std::fstream& whichStream,
                         const KTrace& whichTrace,
                         MemoryTrace::iterator *record,

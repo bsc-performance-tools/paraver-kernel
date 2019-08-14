@@ -21,12 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #include "kernelconnection.h"
 #include "trace.h"
 
@@ -669,6 +663,11 @@ bool TraceProxy::eventLoaded( TEventType whichType ) const
 bool TraceProxy::anyEventLoaded( TEventType firstType, TEventType lastType ) const
 {
   return myTrace->anyEventLoaded( firstType, lastType );
+}
+
+const set<TState>& TraceProxy::getLoadedStates() const
+{
+  return myTrace->getLoadedStates();
 }
 
 const set<TEventType>& TraceProxy::getLoadedEvents() const

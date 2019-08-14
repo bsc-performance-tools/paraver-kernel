@@ -21,12 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #include "noloadblocks.h"
 #include "noloadexception.h"
 #include "paraverkernelexception.h"
@@ -500,7 +494,7 @@ void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
       return;
     }
 
-    body->read( file, *this, notUsedEvents, dummyTraceInfo );
+    body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo );
   }
 
   fileLineData *currentData = blocks[ offset ];
@@ -547,7 +541,7 @@ void NoLoadBlocks::getPrevRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
   {
     lastData = NULL;
     lastPos = offset;
-    body->read( file, *this, notUsedEvents, dummyTraceInfo );
+    body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo );
   }
 
   fileLineData *currentData = blocks[ offset ];
@@ -597,7 +591,7 @@ void NoLoadBlocks::getNextRecord( TThreadOrder whichThread, TRecord **record, PR
     file->seekg( offset );
     lastData = NULL;
     lastPos = offset;
-    body->read( file, *this, notUsedEvents, dummyTraceInfo );
+    body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo );
   }
 
   fileLineData *currentData = blocks[ offset ];
@@ -643,7 +637,7 @@ void NoLoadBlocks::getPrevRecord( TThreadOrder whichThread, TRecord **record, PR
   {
     lastData = NULL;
     lastPos = offset;
-    body->read( file, *this, notUsedEvents, dummyTraceInfo );
+    body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo );
   }
 
   fileLineData *currentData = blocks[ offset ];
@@ -672,7 +666,7 @@ void NoLoadBlocks::getThreadRecordByTime( TThreadOrder whichThread, TRecordTime 
     file->seekg( offset );
     lastData = NULL;
     lastPos = offset;
-    body->read( file, *this, notUsedEvents, dummyTraceInfo );
+    body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo );
   }
 
   fileLineData *currentData = blocks[ offset ];

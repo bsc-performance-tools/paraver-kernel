@@ -21,12 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -40,7 +34,8 @@ bool TraceBodyIO_v2::ordered() const
 }
 
 void TraceBodyIO_v2::read( TraceStream *file, MemoryBlocks& records,
-                           hash_set<TEventType>& events, MetadataManager& traceInfo ) const
+                           hash_set<TState>& states,hash_set<TEventType>& events,
+                           MetadataManager& traceInfo ) const
 {
   string line;
 
@@ -53,7 +48,7 @@ void TraceBodyIO_v2::read( TraceStream *file, MemoryBlocks& records,
   {
     case StateBeginRecord:
     case StateEndRecord:
-      readState( line, records );
+      readState( line, records, states );
       break;
 
     case EventRecord:
@@ -192,7 +187,7 @@ void TraceBodyIO_v2::writeCommInfo( fstream& whichStream,
 /**********************
   Read line functions
 ***********************/
-void TraceBodyIO_v2::readState( const string& line, MemoryBlocks& records ) const
+void TraceBodyIO_v2::readState( const string& line, MemoryBlocks& records, hash_set<TState>& states ) const
 {
   string tmpstring;
   TCPUOrder CPU;
@@ -247,6 +242,8 @@ void TraceBodyIO_v2::readState( const string& line, MemoryBlocks& records ) cons
   records.setThread( thread - 1 );
   records.setState( state );
   records.setStateEndTime( endtime );
+
+  states.insert( state );
 }
 
 

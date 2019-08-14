@@ -21,12 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #include "workspace.h"
 
 using std::string;
@@ -46,7 +40,12 @@ string Workspace::getName() const
   return name;
 }
 
-std::vector<TEventType> Workspace::getAutoTypes() const
+WorkspaceValue::WorkspaceType Workspace::getType() const
+{
+  return myType;
+}
+
+vector<WorkspaceValue> Workspace::getAutoTypes() const
 {
   return autoTypes;
 }
@@ -56,7 +55,7 @@ vector<pair<string,string> > Workspace::getHintCFGs() const
   return hintCFGs;
 }
 
-std::pair<std::string,std::string> Workspace::getHintCFG( size_t whichHint ) const
+pair<string,string> Workspace::getHintCFG( size_t whichHint ) const
 {
   return hintCFGs[ whichHint ];
 }
@@ -66,7 +65,14 @@ void Workspace::setName( string& whichName )
   name = whichName;
 }
 
-void Workspace::setAutoTypes( std::vector<TEventType>& whichAutoTypes )
+void Workspace::setType( WorkspaceValue::WorkspaceType whichType )
+{
+  myType = whichType;
+  for( vector<WorkspaceValue>::iterator it = autoTypes.begin(); it != autoTypes.end(); ++it )
+    it->myType = whichType;
+}
+
+void Workspace::setAutoTypes( vector<WorkspaceValue>& whichAutoTypes )
 {
   autoTypes = whichAutoTypes;
 }
@@ -76,7 +82,7 @@ void Workspace::addHintCFG( pair<string,string>& whichCFG )
   hintCFGs.push_back( whichCFG );
 }
 
-void Workspace::addHintCFG( size_t position, std::pair<std::string,std::string>& whichCFG )
+void Workspace::addHintCFG( size_t position, pair<string,string>& whichCFG )
 {
   hintCFGs.insert( hintCFGs.begin() + position, whichCFG );
 }
@@ -86,7 +92,7 @@ void Workspace::removeHintCFG( size_t whichHint )
   hintCFGs.erase( hintCFGs.begin() + whichHint );
 }
 
-void Workspace::modifyHintCFG( size_t position, std::pair<std::string,std::string>& whichCFG )
+void Workspace::modifyHintCFG( size_t position, pair<string,string>& whichCFG )
 {
   hintCFGs[ position ] = whichCFG;
 }

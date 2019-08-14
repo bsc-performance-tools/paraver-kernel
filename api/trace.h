@@ -123,6 +123,7 @@ class Trace
 
     virtual bool eventLoaded( TEventType whichType ) const = 0;
     virtual bool anyEventLoaded( TEventType firstType, TEventType lastType ) const = 0;
+    virtual const std::set<TState>& getLoadedStates() const = 0;
     virtual const std::set<TEventType>& getLoadedEvents() const = 0;
 
     virtual bool findLastEventValue( TThreadOrder whichThread,
@@ -323,6 +324,7 @@ class TraceProxy: public Trace
 
     virtual bool eventLoaded( TEventType whichType ) const;
     virtual bool anyEventLoaded( TEventType firstType, TEventType lastType ) const;
+    virtual const std::set<TState>& getLoadedStates() const;
     virtual const std::set<TEventType>& getLoadedEvents() const;
 
     virtual bool findLastEventValue( TThreadOrder whichThread,

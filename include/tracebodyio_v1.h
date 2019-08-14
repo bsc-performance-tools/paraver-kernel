@@ -21,12 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #ifndef TRACEBODYIO_V1_H_INCLUDED
 #define TRACEBODYIO_V1_H_INCLUDED
 
@@ -46,7 +40,8 @@ class TraceBodyIO_v1 : public TraceBodyIO
 
     bool ordered() const;
     void read( TraceStream *file, MemoryBlocks& records,
-               hash_set<TEventType>& events, MetadataManager& traceInfo ) const;
+               hash_set<TState>& states, hash_set<TEventType>& events,
+               MetadataManager& traceInfo ) const;
     void write( std::fstream& whichStream,
                 const KTrace& whichTrace,
                 MemoryTrace::iterator *record,
@@ -81,7 +76,8 @@ class TraceBodyIO_v1 : public TraceBodyIO
 
     void readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const;
 
-    void readState( const std::string& line, MemoryBlocks& records ) const;
+    void readState( const std::string& line, MemoryBlocks& records,
+                    hash_set<TState>& states ) const;
     void readEvent( const std::string& line, MemoryBlocks& records,
                     hash_set<TEventType>& events ) const;
     void readComm( const std::string& line, MemoryBlocks& records ) const;

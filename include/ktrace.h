@@ -164,6 +164,7 @@ class KTrace: public Trace
     void getRecordByTimeCPU( std::vector<MemoryTrace::iterator *>& listIter,
                              TRecordTime whichTime ) const;
 
+    const std::set<TState>& getLoadedStates() const;
     const std::set<TEventType>& getLoadedEvents() const;
 
     bool findLastEventValue( TThreadOrder whichThread,
@@ -210,6 +211,7 @@ class KTrace: public Trace
     std::string fileName;
     std::vector<std::string> communicators;
     std::set<TEventType> events;
+    std::set<TState> states;
     std::map<TEventType, double> eventsPrecision;
     bool fillStateGaps;
     MetadataManager myTraceInfo;

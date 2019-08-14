@@ -21,12 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
 #ifndef WORKSPACEMANAGER_H_INCLUDED
 #define WORKSPACEMANAGER_H_INCLUDED
 
@@ -50,7 +44,8 @@ class WorkspaceManager
 
     bool existWorkspace( std::string name, TWorkspaceSet whichSet ) const;
     std::vector<std::string> getWorkspaces( TWorkspaceSet whichSet ) const;
-    void getMergedWorkspaces( const std::set<TEventType>& loadedTypes,
+    void getMergedWorkspaces( const std::set<TState>& loadedStates,
+                              const std::set<TEventType>& loadedTypes,
                               std::vector<std::string>& onWorkspaceVector,
                               size_t& userDefined );
     Workspace& getWorkspace( std::string whichName, TWorkspaceSet whichSet  );

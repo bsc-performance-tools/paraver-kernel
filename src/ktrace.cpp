@@ -719,13 +719,14 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   }
 
   hash_set<TEventType> hashevents;
+  hash_set<TState> hashstates;
 
   unsigned long long count = 0;
   if( !( noLoad && !body->ordered() ) )
   {
     while ( !file->eof() )
     {
-      body->read( file, *blocks, hashevents, myTraceInfo );
+      body->read( file, *blocks, hashstates, hashevents, myTraceInfo );
       if( blocks->getCountInserted() > 0 )
         ++count;
 
@@ -759,6 +760,9 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
 
     for ( hash_set<TEventType>::iterator it = hashevents.begin(); it != hashevents.end(); ++it )
       events.insert( *it );
+
+    for ( hash_set<TState>::iterator it = hashstates.begin(); it != hashstates.end(); ++it )
+      states.insert( *it );
   }
 
 // End reading the body
@@ -788,6 +792,11 @@ KTrace::~KTrace()
   delete memTrace;
   if ( body != NULL )
     delete body;
+}
+
+const set<TState>& KTrace::getLoadedStates() const
+{
+  return states;
 }
 
 const set<TEventType>& KTrace::getLoadedEvents() const
