@@ -565,7 +565,11 @@ void KTrace::parseDateTime( string &whichDateTime )
 
     string tmpTail = whichDateTime.substr( whichDateTime.find_first_of(' ') ); // " at hh:mm:ss" or empty
 
-    tmpDate = whichDateTime.substr( 0, whichDateTime.find_last_of( '/' ) ) + "/" + std::to_string( newYear ) + tmpTail;
+    // c++ 11
+    // tmpDate = whichDateTime.substr( 0, whichDateTime.find_last_of( '/' ) ) + "/" + std::to_string( newYear ) + tmpTail;
+    stringstream tmpSSYear;
+    tmpSSYear << newYear;
+    tmpDate = whichDateTime.substr( 0, whichDateTime.find_last_of( '/' ) ) + "/" + tmpSSYear.str() + tmpTail;
   }
 
   // Now, try to match one ptime from {date * format}
