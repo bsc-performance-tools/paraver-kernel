@@ -557,6 +557,16 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
     }
   }
 
+  for( vector<Histogram *>::iterator it = histograms.begin(); it != histograms.end(); ++it )
+  {
+    if( (*it)->getCFG4DEnabled() )
+    {
+      map<string, string> tmpAlias( (*it)->getCFG4DStatisticsAliasList() );
+      if( tmpAlias.find( (*it)->getCurrentStat() ) == tmpAlias.end() )
+        (*it)->setCurrentStat( tmpAlias.begin()->first );
+    }
+  }
+
   bool continueLoading = true;
   if ( !someEventsExist )
     continueLoading = whichKernel->userMessage( MessageCFGNoneEvents );
@@ -5274,9 +5284,6 @@ bool TagAliasStatisticCFG4D::parseLine( KernelConnection *whichKernel,
     // It has been created
     histograms[ histograms.size() - 1 ]->setCFG4DStatisticAlias(
             currentStatisticCFG4DTag, currentStatisticCFG4DAlias );
-
-    if( histograms[ histograms.size() - 1 ]->getCFG4DStatisticsAliasList().size() == 1 )
-      histograms[ histograms.size() - 1 ]->setCurrentStat( currentStatisticCFG4DTag );
   }
 
   return true;
