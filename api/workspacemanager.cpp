@@ -134,7 +134,7 @@ void WorkspaceManager::getMergedWorkspaces( const std::set<TState>& loadedStates
                                             size_t& userDefined )
 {
   vector<WorkspaceValue> tmpLoadedValues;
-  for( std::set<TState>::iterator it = loadedStates.begin(); it != loadedStates.end(); ++it )
+  for( std::set<TState>::const_iterator it = loadedStates.begin(); it != loadedStates.end(); ++it )
   {
     WorkspaceValue tmpWorkspaceValue;
     tmpWorkspaceValue.myType = WorkspaceValue::STATE;
@@ -142,7 +142,7 @@ void WorkspaceManager::getMergedWorkspaces( const std::set<TState>& loadedStates
     tmpLoadedValues.push_back( tmpWorkspaceValue );
   }
 
-  for( std::set<TEventType>::iterator it = loadedTypes.begin(); it != loadedTypes.end(); ++it )
+  for( std::set<TEventType>::const_iterator it = loadedTypes.begin(); it != loadedTypes.end(); ++it )
   {
     WorkspaceValue tmpWorkspaceValue;
     tmpWorkspaceValue.myType = WorkspaceValue::EVENT;
@@ -150,7 +150,7 @@ void WorkspaceManager::getMergedWorkspaces( const std::set<TState>& loadedStates
     tmpLoadedValues.push_back( tmpWorkspaceValue );
   }
 
-  for ( vector< string >::iterator it = distWorkspacesOrder.begin(); it != distWorkspacesOrder.end(); ++it )
+  for( vector< string >::iterator it = distWorkspacesOrder.begin(); it != distWorkspacesOrder.end(); ++it )
   {
     vector< WorkspaceValue > tmpAutoTypes = distWorkspaces[ *it ].getAutoTypes();
     if ( find_first_of( tmpLoadedValues.begin(), tmpLoadedValues.end(),
@@ -160,7 +160,7 @@ void WorkspaceManager::getMergedWorkspaces( const std::set<TState>& loadedStates
   userDefined = onWorkspaceVector.size();
 
   vector<string> tmpUserDefined;
-  for ( vector< string >::iterator it = userWorkspacesOrder.begin(); it != userWorkspacesOrder.end(); ++it )
+  for( vector< string >::iterator it = userWorkspacesOrder.begin(); it != userWorkspacesOrder.end(); ++it )
   {
     vector< WorkspaceValue > tmpAutoTypes = userWorkspaces[ *it ].getAutoTypes();
     if( tmpAutoTypes.empty() )
