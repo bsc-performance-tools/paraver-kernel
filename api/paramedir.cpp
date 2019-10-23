@@ -193,7 +193,7 @@ string eventTranslatorReferenceName("");
 static bool userMessageOutput( UserMessageID messageID )
 {
   std::cout<<currentCFG->first<<": "<<userMessages[ messageID ];
-  if( messageID >= MessageCFGMultipleValues )
+  if( messageID == MessageCFGSomeEvents || messageID >= MessageCFGMultipleValues )
   {
     std::cout<<std::endl;
     return true;
