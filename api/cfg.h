@@ -104,6 +104,7 @@ class CFGLoader
     static bool hasCFGExtension( const std::string& filename );
     static bool isCFGFile( const std::string& filename );
     static bool isDimemasCFGFile( const std::string& filename ); // TODO: here?
+    static bool loadDescription( const std::string& filename, std::string& description );
 
     static bool loadCFG( KernelConnection *whichKernel,
                          const std::string& filename,

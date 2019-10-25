@@ -259,6 +259,8 @@ static const std::string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
 #define CFG_SHEBANG                    "#ParaverCFG"
 #define CFG_HEADER_VERSION             "ConfigFile.Version:"
 #define CFG_HEADER_NUM_WINDOWS         "ConfigFile.NumWindows:"
+#define CFG_HEADER_BEGIN_DESCRIPTION   "ConfigFile.BeginDescription"
+#define CFG_HEADER_END_DESCRIPTION     "ConfigFile.EndDescription"
 
 #define CFG_TAG_WNDW_END_TIME_RELATIVE "window_end_time_relative"
 

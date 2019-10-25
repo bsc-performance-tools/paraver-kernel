@@ -352,7 +352,6 @@ bool CFGLoader::isCFGFile( const string& filename )
     found[ CFG_HEADER_NUM_WINDOWS ] = false;
     found[ OLDCFG_HEADER_VERSION ] = false;
     found[ OLDCFG_HEADER_NUM_WINDOWS ] = false;
-
     ifstream cfgFile( filename.c_str() );
     if ( cfgFile.good() )
     {
@@ -371,17 +370,12 @@ bool CFGLoader::isCFGFile( const string& filename )
           istringstream auxStream( strLine );
           getline( auxStream, cfgHeaderTag, ' ' );
 
-          if ( cfgHeaderTag.compare( CFG_SHEBANG ) == 0 )
-            found[ CFG_SHEBANG ] = true;
-          if ( cfgHeaderTag.compare( CFG_HEADER_VERSION ) == 0 )
-            found[ CFG_HEADER_VERSION ] = true;
-          if ( cfgHeaderTag.compare( CFG_HEADER_NUM_WINDOWS ) == 0 )
-            found[ CFG_HEADER_NUM_WINDOWS ] = true;
-          if ( cfgHeaderTag.compare( OLDCFG_HEADER_VERSION ) == 0 )
-            found[ OLDCFG_HEADER_VERSION ] = true;
-          if ( cfgHeaderTag.compare( OLDCFG_HEADER_NUM_WINDOWS ) == 0 )
-            found[ OLDCFG_HEADER_NUM_WINDOWS ] = true;
-
+          found[ CFG_SHEBANG ] |= ( cfgHeaderTag.compare( CFG_SHEBANG ) == 0 );
+          found[ CFG_HEADER_VERSION ] |= ( cfgHeaderTag.compare( CFG_HEADER_VERSION ) == 0 );
+          found[ CFG_HEADER_NUM_WINDOWS ] |= ( cfgHeaderTag.compare( CFG_HEADER_NUM_WINDOWS ) == 0 );
+          found[ OLDCFG_HEADER_VERSION ] |= ( cfgHeaderTag.compare( OLDCFG_HEADER_VERSION ) == 0 );
+          found[ OLDCFG_HEADER_NUM_WINDOWS ] |= ( cfgHeaderTag.compare( OLDCFG_HEADER_NUM_WINDOWS ) == 0 );
+            
           isCFG = found[ CFG_SHEBANG ] ||
                   ( found[ CFG_HEADER_VERSION ] && found[ CFG_HEADER_NUM_WINDOWS ] ) ||
                   ( found[ OLDCFG_HEADER_VERSION ] && found[ OLDCFG_HEADER_NUM_WINDOWS ] );
@@ -437,6 +431,40 @@ bool CFGLoader::isDimemasCFGFile( const std::string& filename )
   return isDimemasCFG;
 }
 
+bool CFGLoader::loadDescription( const std::string& filename, std::string& description )
+{
+  description = "";
+  ifstream cfgFile( filename.c_str() );
+  if ( !cfgFile )
+    return false;
+
+  bool keepReading = false;
+  while ( !cfgFile.eof() )
+  {
+    std::string strLine;
+    std::string cfgTag;
+
+    getline( cfgFile, strLine );
+    if ( strLine.length() > 0 && strLine[ strLine.length() - 1 ] == '\r' )
+      strLine = strLine.substr( 0, strLine.length() - 1 );
+
+    if ( strLine.length() == 0 )
+      continue;
+
+    if ( strLine == CFG_HEADER_END_DESCRIPTION or strLine == OLDCFG_HEADER_END_DESCRIPTION )
+    {
+      keepReading = false;
+      cfgFile.close();
+      return true;
+    }
+    if ( keepReading )
+      description += strLine + "\n";
+
+    if ( strLine == CFG_HEADER_BEGIN_DESCRIPTION or strLine == OLDCFG_HEADER_BEGIN_DESCRIPTION )
+      keepReading = true;
+  }
+  return false;
+}
 
 bool CFGLoader::loadCFG( KernelConnection *whichKernel,
                          const string& filename,
