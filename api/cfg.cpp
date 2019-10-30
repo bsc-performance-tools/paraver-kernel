@@ -375,7 +375,7 @@ bool CFGLoader::isCFGFile( const string& filename )
           found[ CFG_HEADER_NUM_WINDOWS ] |= ( cfgHeaderTag.compare( CFG_HEADER_NUM_WINDOWS ) == 0 );
           found[ OLDCFG_HEADER_VERSION ] |= ( cfgHeaderTag.compare( OLDCFG_HEADER_VERSION ) == 0 );
           found[ OLDCFG_HEADER_NUM_WINDOWS ] |= ( cfgHeaderTag.compare( OLDCFG_HEADER_NUM_WINDOWS ) == 0 );
-            
+
           isCFG = found[ CFG_SHEBANG ] ||
                   ( found[ CFG_HEADER_VERSION ] && found[ CFG_HEADER_NUM_WINDOWS ] ) ||
                   ( found[ OLDCFG_HEADER_VERSION ] && found[ OLDCFG_HEADER_NUM_WINDOWS ] );
@@ -728,7 +728,9 @@ bool CFGLoader::saveCFG( const string& filename,
   //cfgFile << "ConfigFile.NumWindows: " << allWindows.size() << endl;
   cfgFile << CFG_HEADER_VERSION << " " << CFG_CURRENT_VERSION << endl;
   cfgFile << CFG_HEADER_NUM_WINDOWS << " " << allWindows.size() << endl;
+  cfgFile << CFG_HEADER_BEGIN_DESCRIPTION << endl;
   cfgFile << options.description << endl;
+  cfgFile << CFG_HEADER_END_DESCRIPTION << endl;
 
   if ( options.enabledCFG4DMode )
     cfgFile << CFG_TAG_CFG4D_ENABLED << endl;
