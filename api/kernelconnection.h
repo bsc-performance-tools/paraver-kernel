@@ -52,18 +52,18 @@ typedef std::pair< TEventType, TEventValue > TTypeValuePair;
 enum UserMessageID
 {
   MessageCFGNoneEvents = 0,
-  MessageCFGSomeEvents,
   MessageCFGZeroObjects,
   MessageCFGMultipleValues,
+  MessageCFGSomeEvents,
   UserMessageSize
 };
 
 static const std::string userMessages[ UserMessageSize ] =
 {
   "None of the events specified in the filter appear in the trace.",
-  "Some of the events specified in the filter doesn't appear in the trace.",
   "Some timeline has 0 objects selected at some level.",
-  "Some of the events specified in the filter have multiple instances. All of them will be included."
+  "Some of the events specified in the filter have multiple instances. All of them will be included.",
+  "Some of the events specified in the filter doesn't appear in the trace."
 };
 
 class KernelConnection
