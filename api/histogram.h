@@ -556,6 +556,20 @@ class Histogram
       return std::vector< std::string >();
     }
 
+    virtual SelectionManagement< TObjectOrder, TWindowLevel > * getSelectedRows()
+    {
+      return ( SelectionManagement< TObjectOrder, TWindowLevel > * ) NULL;
+    }
+
+    virtual void setRowSelection( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel )
+    {}
+
+    virtual void setSelectedRows( std::vector< bool > &selected )
+    {}
+
+    virtual void setSelectedRows( std::vector< TObjectOrder > &selected )
+    {}
+
   protected:
     KernelConnection *myKernel;
 
@@ -827,6 +841,11 @@ class HistogramProxy : public Histogram
 
     virtual const std::vector< std::string > getCFG4DFullTagList();
 
+    virtual SelectionManagement< TObjectOrder, TWindowLevel > * getSelectedRows();
+    virtual void setRowSelection( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel );
+    virtual void setSelectedRows( std::vector< bool > &selected );
+    virtual void setSelectedRows( std::vector< TObjectOrder > &selected );
+
   private:
     std::string name;
 
@@ -884,7 +903,7 @@ class HistogramProxy : public Histogram
     Window *dataWindow;
     Window *extraControlWindow;
     Trace *myTrace;
-
+    
     bool calculateAll;
     std::string currentStat;
     std::vector<std::string> calcStat;
@@ -901,6 +920,9 @@ class HistogramProxy : public Histogram
     bool CFG4DMode;
     std::map< std::string, std::string > propertiesAliasCFG4D;
     std::map< std::string, std::string > statisticsAliasCFG4D;
+
+    //Selection of rows
+    SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;
 
     HistogramProxy( KernelConnection *whichKernel );
 

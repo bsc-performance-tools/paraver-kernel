@@ -739,6 +739,7 @@ bool CFGLoader::saveCFG( const string& filename,
   cfgFile << endl;
 
   int id = 1;
+
   for ( vector<Window *>::const_iterator it = allWindows.begin();
         it != allWindows.end(); ++it )
   {
@@ -840,6 +841,7 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DComputeGradient::printLine( cfgFile, options, it );
     Analyzer2DMinimumGradient::printLine( cfgFile, it );
     Analyzer2DMaximumGradient::printLine( cfgFile, it );
+    Analyzer2DObjects::printLine( cfgFile, it ); //NEW 
     Analyzer2DDrawModeObjects::printLine( cfgFile, it );
     Analyzer2DDrawModeColumns::printLine( cfgFile, it );
     Analyzer2DPixelSize::printLine( cfgFile, it );
@@ -1007,6 +1009,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN2D_COMPUTEGRADIENT]      = new Analyzer2DComputeGradient();
   cfgTagFunctions[OLDCFG_TAG_AN2D_MINIMUMGRADIENT]      = new Analyzer2DMinimumGradient();
   cfgTagFunctions[OLDCFG_TAG_AN2D_MAXIMUMGRADIENT]      = new Analyzer2DMaximumGradient();
+  cfgTagFunctions[ CFG_TAG_OBJECTS ]                    = new Analyzer2DObjects();
   cfgTagFunctions[ CFG_TAG_DRAWMODE_OBJECTS ]           = new Analyzer2DDrawModeObjects();
   cfgTagFunctions[ CFG_TAG_DRAWMODE_COLUMNS ]           = new Analyzer2DDrawModeColumns();
   cfgTagFunctions[OLDCFG_TAG_AN2D_PIXEL_SIZE]           = new Analyzer2DPixelSize();
@@ -4146,7 +4149,7 @@ void Analyzer2DZoom::printLine( ofstream& cfgFile,
 
 string Analyzer2DAccumulator::tagCFG = OLDCFG_TAG_AN2D_ACCUMULATOR;
 
-bool Analyzer2DAccumulator:: parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DAccumulator::parseLine( KernelConnection *whichKernel, istringstream& line,
                                         Trace *whichTrace,
                                         vector<Window *>& windows,
                                         vector<Histogram *>& histograms )
@@ -4702,6 +4705,56 @@ void Analyzer2DMaximumGradient::printLine( ofstream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_AN2D_MAXIMUMGRADIENT << " " << ( *it )->getMaxGradient() << endl;
 }
+
+
+
+string Analyzer2DObjects::tagCFG = CFG_TAG_OBJECTS;
+
+bool Analyzer2DObjects::parseLine( KernelConnection *whichKernel,
+                                           istringstream& line,
+                                           Trace *whichTrace,
+                                           vector<Window *>& windows,
+                                           vector<Histogram *>& histograms )
+{
+  string strObject;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strObject );
+  /*vector< TObjectOrder > myRows;
+
+  stringstream ss(strObject);
+  string token;
+  char separator = ',';
+  while ( getline( ss, token, separator ) ) 
+  {
+    myRows.push_back( stoi( token ) );
+  }
+  */
+  //histograms[ histograms.size() - 1 ]->setSelectedRowBuffer( myRows );
+  return true;
+}
+
+void Analyzer2DObjects::printLine( ofstream& cfgFile,
+                                  const vector<Histogram *>::const_iterator it )
+{
+  vector< TObjectOrder > myRows;
+  ( *it )->getSelectedRows()->getSelected( myRows, ( *it )->getControlWindow()->getLevel() ); //peta aqui
+
+  int i;
+  cfgFile << CFG_TAG_OBJECTS ;
+  for ( i = 0; i < myRows.size() - 1; ++i )
+    cfgFile << myRows[ i ] << ",";
+  
+  if ( i == myRows.size() - 1 )   
+    cfgFile << myRows[ i ];
+
+  cfgFile << endl;
+}
+
 
 
 string Analyzer2DDrawModeObjects::tagCFG = CFG_TAG_DRAWMODE_OBJECTS;

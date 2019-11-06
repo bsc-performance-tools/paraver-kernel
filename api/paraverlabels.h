@@ -221,6 +221,7 @@
 #define CFG_TAG_PARAM_ALIAS_CFG4D "cfg4dparam"
 #define CFG_TAG_CFG4D_ENABLED "CFG4D_ENABLED"
 
+#define CFG_TAG_OBJECTS          "Analyzer2D.Objects:"
 #define CFG_TAG_DRAWMODE_OBJECTS "Analyzer2D.DrawModeObjects:"
 #define CFG_TAG_DRAWMODE_COLUMNS "Analyzer2D.DrawModeColumns:"
 

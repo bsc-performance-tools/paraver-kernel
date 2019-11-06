@@ -1864,6 +1864,29 @@ class Analyzer2DMaximumGradient: public TagFunction
 };
 
 
+class Analyzer2DObjects: public TagFunction
+{
+  public:
+    Analyzer2DObjects()
+    {}
+
+    virtual ~Analyzer2DObjects()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+};
+
+
 class Analyzer2DDrawModeObjects: public TagFunction
 {
   public:

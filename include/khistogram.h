@@ -251,6 +251,10 @@ class KHistogram : public Histogram
     Window *getClonedWindow( Window *whichWindow ) const;
     virtual KHistogram *clone();
 
+    virtual SelectionManagement< TObjectOrder, TWindowLevel > * getSelectedRows();
+    virtual void setSelectedRows( std::vector< bool > &selected );
+    virtual void setSelectedRows( std::vector< TObjectOrder > &selected );
+
   protected:
 
   private:
@@ -314,6 +318,9 @@ class KHistogram : public Histogram
     TTimeUnit myTimeUnit;
 
     WindowCloneManager windowCloneManager;
+    
+    //Selection of rows
+    SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;
 
     void orderWindows();
     bool createComms() const;

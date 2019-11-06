@@ -115,6 +115,8 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
 
   isCFG4DEnabled = false;
   CFG4DMode = false;
+
+  //rowSelection = ( *Histogram::getSelectedRows() );
 }
 
 HistogramProxy::~HistogramProxy()
@@ -578,6 +580,7 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
     compute3DScale( progress );
 
   myHisto->execute( whichBeginTime, whichEndTime, selectedRows, progress );
+  //rowSelection = ( *myHisto->getSelectedRows() );
 
   if ( getThreeDimensions() && futurePlane )
   {
@@ -1710,4 +1713,24 @@ const vector< string > HistogramProxy::getCFG4DFullTagList()
   }
 
   return tags;
+}
+
+SelectionManagement< TObjectOrder, TWindowLevel > * HistogramProxy::getSelectedRows()
+{
+  return &rowSelection;
+}
+
+void HistogramProxy::setRowSelection( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel )
+{
+  rowSelection = rowSel;
+}
+
+void HistogramProxy::setSelectedRows( vector< bool > &selected )
+{
+  rowSelection.setSelected( selected, myHisto->getControlWindow()->getLevel() );
+}
+
+void HistogramProxy::setSelectedRows( vector< TObjectOrder > &selected )
+{
+  rowSelection.setSelected( selected, myHisto->getControlWindow()->getLevel() );
 }
