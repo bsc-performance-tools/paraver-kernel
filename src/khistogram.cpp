@@ -1905,19 +1905,3 @@ KHistogram *KHistogram::clone()
 
   return clonedKHistogram;
 }
-
-
-SelectionManagement< TObjectOrder, TWindowLevel > * KHistogram::getSelectedRows()
-{
-  return &rowSelection;
-}
-
-void KHistogram::setSelectedRows( vector< bool > &selected )
-{
-  rowSelection.setSelected( selected, getControlWindow()->getLevel() );
-}
-
-void KHistogram::setSelectedRows( vector< TObjectOrder > &selected )
-{
-  rowSelection.setSelected( selected, getControlWindow()->getLevel() );
-}

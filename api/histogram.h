@@ -556,18 +556,35 @@ class Histogram
       return std::vector< std::string >();
     }
 
-    virtual SelectionManagement< TObjectOrder, TWindowLevel > * getSelectedRows()
+    virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement()
     {
       return ( SelectionManagement< TObjectOrder, TWindowLevel > * ) NULL;
     }
 
-    virtual void setRowSelection( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel )
+    virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel )
     {}
+
+
+    virtual vector< TObjectOrder > getSelectedRows() 
+    {
+      return vector< TObjectOrder > ();
+    }
+
+    virtual vector< bool > getSelectedBooleanRows() 
+    {
+      return vector< bool > ();
+    }
 
     virtual void setSelectedRows( std::vector< bool > &selected )
     {}
 
     virtual void setSelectedRows( std::vector< TObjectOrder > &selected )
+    {}
+    
+    virtual void setSelectedRowBuffer( std::vector< TObjectOrder > &selected ) 
+    {}
+    
+    virtual void applyBufferSelection( std::vector< TObjectOrder > &whichSelected, bool &redoDraw )
     {}
 
   protected:
@@ -841,10 +858,16 @@ class HistogramProxy : public Histogram
 
     virtual const std::vector< std::string > getCFG4DFullTagList();
 
-    virtual SelectionManagement< TObjectOrder, TWindowLevel > * getSelectedRows();
-    virtual void setRowSelection( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel );
+    virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement();
+    virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel );
+
+    virtual vector< TObjectOrder > getSelectedRows();
+    virtual vector< bool > getSelectedBooleanRows();
     virtual void setSelectedRows( std::vector< bool > &selected );
     virtual void setSelectedRows( std::vector< TObjectOrder > &selected );
+    virtual void setSelectedRowBuffer( std::vector< TObjectOrder > &selected );
+    virtual void applyBufferSelection( std::vector< TObjectOrder > &whichSelected, bool &redoDraw )  ;
+    
 
   private:
     std::string name;
@@ -923,6 +946,7 @@ class HistogramProxy : public Histogram
 
     //Selection of rows
     SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;
+    vector< TObjectOrder > rowSelectionBuffer;
 
     HistogramProxy( KernelConnection *whichKernel );
 

@@ -116,7 +116,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   isCFG4DEnabled = false;
   CFG4DMode = false;
 
-  //rowSelection = ( *Histogram::getSelectedRows() );
+  //rowSelection = ( *Histogram::getRowSelectionManagement() );
 }
 
 HistogramProxy::~HistogramProxy()
@@ -187,11 +187,16 @@ Window *HistogramProxy::getExtraControlWindow() const
 void HistogramProxy::setControlWindow( Window *whichWindow )
 {
   if( controlWindow != NULL )
-    controlWindow->unsetUsedByHistogram( this );
+    controlWindow->unsetUsedByHistogram( this ); 
+  else
+    rowSelection.copy( *whichWindow->getSelectedRows() );
+
   controlWindow = whichWindow;
   controlWindow->setUsedByHistogram( this );
   myHisto->setControlWindow( whichWindow->getConcrete() );
   myTrace = controlWindow->getTrace();
+
+  //duda: al cambiar ventana, mantener selección o usar la de la nueva ventana de ctrl? 
 }
 
 void HistogramProxy::setDataWindow( Window *whichWindow )
@@ -559,6 +564,8 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
   winBeginTime = whichBeginTime;
   winEndTime = whichEndTime;
 
+  rowSelection.setSelected( selectedRows, controlWindow->getLevel() ) ;
+
   if ( computeControlScale )
   {
     compute2DScale( progress );
@@ -580,7 +587,6 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
     compute3DScale( progress );
 
   myHisto->execute( whichBeginTime, whichEndTime, selectedRows, progress );
-  //rowSelection = ( *myHisto->getSelectedRows() );
 
   if ( getThreeDimensions() && futurePlane )
   {
@@ -1715,14 +1721,29 @@ const vector< string > HistogramProxy::getCFG4DFullTagList()
   return tags;
 }
 
-SelectionManagement< TObjectOrder, TWindowLevel > * HistogramProxy::getSelectedRows()
+SelectionManagement< TObjectOrder, TWindowLevel > * HistogramProxy::getRowSelectionManagement()
 {
   return &rowSelection;
 }
 
-void HistogramProxy::setRowSelection( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel )
+void HistogramProxy::setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel )
 {
   rowSelection = rowSel;
+}
+
+
+vector< TObjectOrder > HistogramProxy::getSelectedRows()
+{
+  vector< TObjectOrder > vecRows;
+  rowSelection.getSelected( vecRows, myHisto->getControlWindow()->getLevel() );
+  return vecRows;
+}
+
+vector< bool > HistogramProxy::getSelectedBooleanRows()
+{
+  vector< bool > vecRows;
+  rowSelection.getSelected( vecRows, myHisto->getControlWindow()->getLevel() );
+  return vecRows;
 }
 
 void HistogramProxy::setSelectedRows( vector< bool > &selected )
@@ -1733,4 +1754,22 @@ void HistogramProxy::setSelectedRows( vector< bool > &selected )
 void HistogramProxy::setSelectedRows( vector< TObjectOrder > &selected )
 {
   rowSelection.setSelected( selected, myHisto->getControlWindow()->getLevel() );
+}
+
+void HistogramProxy::setSelectedRowBuffer( std::vector< TObjectOrder > &selected ) 
+{
+  rowSelectionBuffer = selected;
+}
+
+
+void HistogramProxy::applyBufferSelection( std::vector< TObjectOrder > &whichSelected, bool &redoDraw ) 
+{
+  redoDraw = false;
+  if ( rowSelectionBuffer.size() != 0 )
+  {
+    whichSelected = rowSelectionBuffer;
+    setSelectedRows( rowSelectionBuffer );
+    rowSelectionBuffer.clear();
+    redoDraw = true;
+  }
 }

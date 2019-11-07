@@ -4724,7 +4724,7 @@ bool Analyzer2DObjects::parseLine( KernelConnection *whichKernel,
     return false;
 
   getline( line, strObject );
-  /*vector< TObjectOrder > myRows;
+  vector< TObjectOrder > myRows;
 
   stringstream ss(strObject);
   string token;
@@ -4733,19 +4733,18 @@ bool Analyzer2DObjects::parseLine( KernelConnection *whichKernel,
   {
     myRows.push_back( stoi( token ) );
   }
-  */
-  //histograms[ histograms.size() - 1 ]->setSelectedRowBuffer( myRows );
+  
+  histograms[ histograms.size() - 1 ]->setSelectedRowBuffer( myRows );
   return true;
 }
 
 void Analyzer2DObjects::printLine( ofstream& cfgFile,
                                   const vector<Histogram *>::const_iterator it )
 {
-  vector< TObjectOrder > myRows;
-  ( *it )->getSelectedRows()->getSelected( myRows, ( *it )->getControlWindow()->getLevel() ); //peta aqui
+  vector< TObjectOrder > myRows = ( *it )->getSelectedRows();
 
   int i;
-  cfgFile << CFG_TAG_OBJECTS ;
+  cfgFile << CFG_TAG_OBJECTS << " ";
   for ( i = 0; i < myRows.size() - 1; ++i )
     cfgFile << myRows[ i ] << ",";
   
