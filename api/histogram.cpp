@@ -1755,21 +1755,3 @@ void HistogramProxy::setSelectedRows( vector< TObjectOrder > &selected )
 {
   rowSelection.setSelected( selected, myHisto->getNumRows(), myHisto->getControlWindow()->getLevel() );
 }
-
-void HistogramProxy::setSelectedRowBuffer( std::vector< TObjectOrder > &selected ) 
-{
-  rowSelectionBuffer = selected;
-}
-
-
-void HistogramProxy::applyBufferSelection( std::vector< TObjectOrder > &whichSelected, bool &redoDraw ) 
-{
-  redoDraw = false;
-  if ( rowSelectionBuffer.size() != 0 )
-  {
-    whichSelected = rowSelectionBuffer;
-    setSelectedRows( rowSelectionBuffer );
-    rowSelectionBuffer.clear();
-    redoDraw = true;
-  }
-}

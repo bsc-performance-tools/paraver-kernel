@@ -203,7 +203,6 @@ bool SelectionManagement<SelType, LevelType>:: operator== ( const SelectionManag
 template < typename SelType, typename LevelType >
 void SelectionManagement< SelType, LevelType >::setSelected( std::vector< bool > &selection, LevelType level )
 {
-  std::cout << "Enter bool\n";
   selectedSet[ level ].clear();
   if ( selected[ level ].size() >= selection.size() )
   {

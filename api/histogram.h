@@ -580,12 +580,6 @@ class Histogram
 
     virtual void setSelectedRows( std::vector< TObjectOrder > &selected )
     {}
-    
-    virtual void setSelectedRowBuffer( std::vector< TObjectOrder > &selected ) 
-    {}
-    
-    virtual void applyBufferSelection( std::vector< TObjectOrder > &whichSelected, bool &redoDraw )
-    {}
 
   protected:
     KernelConnection *myKernel;
@@ -865,8 +859,6 @@ class HistogramProxy : public Histogram
     virtual vector< bool > getSelectedBooleanRows();
     virtual void setSelectedRows( std::vector< bool > &selected );
     virtual void setSelectedRows( std::vector< TObjectOrder > &selected );
-    virtual void setSelectedRowBuffer( std::vector< TObjectOrder > &selected );
-    virtual void applyBufferSelection( std::vector< TObjectOrder > &whichSelected, bool &redoDraw )  ;
     
 
   private:
@@ -946,7 +938,6 @@ class HistogramProxy : public Histogram
 
     //Selection of rows
     SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;
-    vector< TObjectOrder > rowSelectionBuffer;
 
     HistogramProxy( KernelConnection *whichKernel );
 
