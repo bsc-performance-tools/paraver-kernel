@@ -564,8 +564,8 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
   winBeginTime = whichBeginTime;
   winEndTime = whichEndTime;
 
-  rowSelection.setSelected( selectedRows, controlWindow->getLevel() ) ;
-
+  TObjectOrder beginRow;
+  TObjectOrder endRow;
   if ( computeControlScale )
   {
     compute2DScale( progress );
@@ -575,13 +575,19 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
     tmpZoomControl2.begin = getControlDelta();
     if( zoomHistory.isEmpty() )
     {
-      TObjectOrder beginRow = getControlWindow()->getZoomSecondDimension().first;
-      TObjectOrder endRow   = getControlWindow()->getZoomSecondDimension().second;
+      beginRow = controlWindow->getZoomSecondDimension().first;
+      endRow   = controlWindow->getZoomSecondDimension().second;
       addZoom( tmpZoomControl1, tmpZoomControl2, beginRow, endRow );
     }
     else
       addZoom( tmpZoomControl1, tmpZoomControl2 );
   }
+
+  beginRow = getZoomSecondDimension().first;
+  endRow = getZoomSecondDimension().second;
+
+  rowSelection.getSelected( selectedRows, beginRow, endRow, controlWindow->getLevel() ) ;
+
 
   if ( getThreeDimensions() && computeXtraScale )
     compute3DScale( progress );
