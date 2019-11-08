@@ -1753,7 +1753,7 @@ void HistogramProxy::setSelectedRows( vector< bool > &selected )
 
 void HistogramProxy::setSelectedRows( vector< TObjectOrder > &selected )
 {
-  rowSelection.setSelected( selected, myHisto->getControlWindow()->getLevel() );
+  rowSelection.setSelected( selected, myHisto->getNumRows(), myHisto->getControlWindow()->getLevel() );
 }
 
 void HistogramProxy::setSelectedRowBuffer( std::vector< TObjectOrder > &selected ) 

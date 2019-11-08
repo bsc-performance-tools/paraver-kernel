@@ -4729,12 +4729,10 @@ bool Analyzer2DObjects::parseLine( KernelConnection *whichKernel,
   stringstream ss(strObject);
   string token;
   char separator = ',';
-  while ( getline( ss, token, separator ) ) 
-  {
+  while ( getline( ss, token, separator ) )
     myRows.push_back( stoi( token ) );
-  }
   
-  histograms[ histograms.size() - 1 ]->setSelectedRowBuffer( myRows );
+  histograms[ histograms.size() - 1 ]->setSelectedRows( myRows );
   return true;
 }
 
