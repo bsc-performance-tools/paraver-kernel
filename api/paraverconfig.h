@@ -98,6 +98,7 @@ class ParaverConfig
     void setMainWindowHeight( unsigned int whichHeight );
     void setGlobalSessionPath( std::string whichSessionPath );
     void setGlobalSessionSaveTime( PRV_UINT16 whichSessionSaveTime );
+    void setGlobalPrevSessionLoad( bool isPrevSessionLoaded );
 
     std::string getGlobalTracesPath() const;
     std::string getGlobalCFGsPath() const;
@@ -112,6 +113,7 @@ class ParaverConfig
     unsigned int getMainWindowHeight() const;
     std::string getGlobalSessionPath() const;
     PRV_UINT16 getGlobalSessionSaveTime() const;
+    bool getGlobalPrevSessionLoad() const;
 
     // TIMELINES XML SECTION
     void setTimelineDefaultName( std::string whichDefaultName );
@@ -347,6 +349,7 @@ class ParaverConfig
         {
           ar & boost::serialization::make_nvp( "session_path", sessionPath );
           ar & boost::serialization::make_nvp( "session_save_time", sessionSaveTime );
+          ar & boost::serialization::make_nvp( "prev_session_load", prevSessionLoad );
         }
       }
 
@@ -362,6 +365,7 @@ class ParaverConfig
       unsigned int mainWindowHeight;
       std::string sessionPath;
       PRV_UINT16 sessionSaveTime;
+      bool prevSessionLoad;
 
     } xmlGlobal;
 

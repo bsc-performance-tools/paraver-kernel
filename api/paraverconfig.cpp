@@ -164,6 +164,7 @@ ParaverConfig::ParaverConfig()
 
   xmlGlobal.sessionPath = strFile;
   xmlGlobal.sessionSaveTime = 0;
+  xmlGlobal.prevSessionLoad = false;
 
   xmlTimeline.defaultName = "New window # %N";
   xmlTimeline.nameFormat = "%W @ %T";
@@ -333,6 +334,11 @@ void ParaverConfig::setGlobalSessionSaveTime( PRV_UINT16 whichSessionSaveTime )
   xmlGlobal.sessionSaveTime = whichSessionSaveTime;
 }
 
+void ParaverConfig::setGlobalPrevSessionLoad( bool isPrevSessionLoaded )
+{
+  xmlGlobal.prevSessionLoad = isPrevSessionLoaded;
+}
+
 string ParaverConfig::getGlobalTracesPath() const
 {
   return xmlGlobal.tracesPath;
@@ -391,6 +397,11 @@ string ParaverConfig::getGlobalSessionPath() const
 PRV_UINT16 ParaverConfig::getGlobalSessionSaveTime() const
 {
   return xmlGlobal.sessionSaveTime;
+}
+
+bool ParaverConfig::getGlobalPrevSessionLoad() const
+{
+  return xmlGlobal.prevSessionLoad;
 }
 
 // TIMELINES XML SECTION

@@ -445,22 +445,20 @@ bool CFGLoader::loadDescription( const std::string& filename, std::string& descr
     std::string cfgTag;
 
     getline( cfgFile, strLine );
-    if ( strLine.length() > 0 && strLine[ strLine.length() - 1 ] == '\r' )
-      strLine = strLine.substr( 0, strLine.length() - 1 );
 
     if ( strLine.length() == 0 )
       continue;
 
-    if ( strLine == CFG_HEADER_END_DESCRIPTION or strLine == OLDCFG_HEADER_END_DESCRIPTION )
+    if ( strLine == CFG_HEADER_END_DESCRIPTION || strLine == OLDCFG_HEADER_END_DESCRIPTION )
     {
       keepReading = false;
       cfgFile.close();
-      return true;
+      return ( description != "" );
     }
     if ( keepReading )
       description += strLine + "\n";
 
-    if ( strLine == CFG_HEADER_BEGIN_DESCRIPTION or strLine == OLDCFG_HEADER_BEGIN_DESCRIPTION )
+    if ( strLine == CFG_HEADER_BEGIN_DESCRIPTION || strLine == OLDCFG_HEADER_BEGIN_DESCRIPTION )
       keepReading = true;
   }
   return false;
