@@ -445,8 +445,6 @@ bool CFGLoader::loadDescription( const std::string& filename, std::string& descr
     std::string cfgTag;
 
     getline( cfgFile, strLine );
-    if ( strLine.length() > 0 && strLine[ strLine.length() - 1 ] == '\r' )
-      strLine = strLine.substr( 0, strLine.length() - 1 );
 
     if ( strLine.length() == 0 )
       continue;
@@ -455,7 +453,7 @@ bool CFGLoader::loadDescription( const std::string& filename, std::string& descr
     {
       keepReading = false;
       cfgFile.close();
-      return true;
+      return description != "";
     }
     if ( keepReading )
       description += strLine + "\n";
@@ -841,7 +839,7 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DComputeGradient::printLine( cfgFile, options, it );
     Analyzer2DMinimumGradient::printLine( cfgFile, it );
     Analyzer2DMaximumGradient::printLine( cfgFile, it );
-    Analyzer2DObjects::printLine( cfgFile, it ); //NEW 
+    Analyzer2DObjects::printLine( cfgFile, it );
     Analyzer2DDrawModeObjects::printLine( cfgFile, it );
     Analyzer2DDrawModeColumns::printLine( cfgFile, it );
     Analyzer2DPixelSize::printLine( cfgFile, it );
@@ -4731,7 +4729,7 @@ bool Analyzer2DObjects::parseLine( KernelConnection *whichKernel,
   char separator = ',';
   while ( getline( ss, token, separator ) )
     myRows.push_back( stoi( token ) );
-  
+
   histograms[ histograms.size() - 1 ]->setSelectedRows( myRows );
   return true;
 }
@@ -4745,8 +4743,8 @@ void Analyzer2DObjects::printLine( ofstream& cfgFile,
   cfgFile << CFG_TAG_OBJECTS << " ";
   for ( i = 0; i < myRows.size() - 1; ++i )
     cfgFile << myRows[ i ] << ",";
-  
-  if ( i == myRows.size() - 1 )   
+
+  if ( i == myRows.size() - 1 )
     cfgFile << myRows[ i ];
 
   cfgFile << endl;
