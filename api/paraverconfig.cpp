@@ -1262,6 +1262,69 @@ rgb ParaverConfig::getColorsEndNegativeGradient() const
   return xmlColor.endNegativeGradient;
 }
 
+bool ParaverConfig::initCompleteSessionFile()
+{
+  fstream file;
+  string strFile;
+  string strLine;
+  bool status = false;
+
+#ifdef WIN32
+  strFile = getenv( "HOMEDRIVE" );
+  strFile.append( getenv( "HOMEPATH" ) );
+  strFile.append( "\\paraver\\CompleteSession" );
+#else
+  strFile = getenv( "HOME" );
+  strFile.append( "/.paraver/CompleteSession" );
+#endif
+
+  file.open( strFile.c_str(), ios::in);
+  if ( !file.fail() )
+  {
+    string line;
+    getline( file, line );
+    status = ( line == "Previous session executed successfully" );
+    file.close();
+    file.open( strFile.c_str(), ios::out | ios::trunc);
+    file.close();
+  }
+  else
+  {
+    file.close();
+    file.open( strFile.c_str(), ios::out );
+    file.close();
+  }
+  return status;
+}
+
+
+bool ParaverConfig::closeCompleteSessionFile()
+{
+  ofstream file;
+  string strFile;
+  string strLine;
+  bool status = false;
+
+#ifdef WIN32
+  strFile = getenv( "HOMEDRIVE" );
+  strFile.append( getenv( "HOMEPATH" ) );
+  strFile.append( "\\paraver\\CompleteSession" );
+#else
+  strFile = getenv( "HOME" );
+  strFile.append( "/.paraver/CompleteSession" );
+#endif
+
+  file.open( strFile.c_str(), ios::in | ios::out);
+  if ( !file.fail() )
+  {
+    file << "Previous session executed successfully" << endl;
+    status = true;
+    file.close();
+  }
+  return status;
+}
+
+
 void ParaverConfig::readParaverConfigFile()
 {
   ifstream file;

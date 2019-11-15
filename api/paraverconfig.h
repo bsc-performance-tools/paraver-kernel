@@ -84,6 +84,10 @@ class ParaverConfig
 
     std::string getParaverConfigDir();
 
+
+    bool initCompleteSessionFile();
+    bool closeCompleteSessionFile();
+
     // GLOBAL XML SECTION
     void setGlobalTracesPath( std::string whichTracesPath );
     void setGlobalCFGsPath( std::string whichCfgsPath );
