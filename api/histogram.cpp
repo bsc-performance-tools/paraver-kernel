@@ -115,8 +115,6 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
 
   isCFG4DEnabled = false;
   CFG4DMode = false;
-
-  //rowSelection = ( *Histogram::getRowSelectionManagement() );
 }
 
 HistogramProxy::~HistogramProxy()
