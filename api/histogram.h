@@ -250,6 +250,15 @@ class Histogram
     {
       return AVERAGE;
     }
+    virtual void setSortReverse( bool newValue ) {}
+    virtual bool getSortReverse() const
+    {
+      return false;
+    }
+    virtual PRV_UINT32 getSortedColumn( PRV_UINT32 col ) const
+    {
+      return 0;
+    }
     virtual void setMinGradient( double whichMin ) {}
     virtual double getMinGradient() const
     {
@@ -565,12 +574,12 @@ class Histogram
     {}
 
 
-    virtual vector< TObjectOrder > getSelectedRows() 
+    virtual vector< TObjectOrder > getSelectedRows()
     {
       return vector< TObjectOrder > ();
     }
 
-    virtual vector< bool > getSelectedBooleanRows() 
+    virtual vector< bool > getSelectedBooleanRows()
     {
       return vector< bool > ();
     }
@@ -645,6 +654,7 @@ class HistogramProxy : public Histogram
     virtual THistogramColumn getNumPlanes() const;
     virtual THistogramColumn getNumColumns( const std::string& whichStat ) const;
     virtual TObjectOrder getNumRows() const;
+
     virtual TSemanticValue getCurrentValue( PRV_UINT32 col,
                                             PRV_UINT16 idStat,
                                             PRV_UINT32 plane = 0 ) const;
@@ -701,6 +711,9 @@ class HistogramProxy : public Histogram
     virtual bool getSortColumns() const;
     virtual void setSortCriteria( THistoTotals whichCriteria );
     virtual THistoTotals getSortCriteria() const;
+    virtual void setSortReverse( bool newValue );
+    virtual bool getSortReverse() const;
+    virtual PRV_UINT32 getSortedColumn( PRV_UINT32 col ) const;
     virtual void setMinGradient( double whichMin );
     virtual double getMinGradient() const;
     virtual void setMaxGradient( double whichMax );
@@ -859,7 +872,7 @@ class HistogramProxy : public Histogram
     virtual vector< bool > getSelectedBooleanRows();
     virtual void setSelectedRows( std::vector< bool > &selected );
     virtual void setSelectedRows( std::vector< TObjectOrder > &selected );
-    
+
 
   private:
     std::string name;
@@ -877,8 +890,12 @@ class HistogramProxy : public Histogram
     PRV_UINT16 numDecimals;
     bool thousandSep;
     bool showUnits;
+
     bool sortColumns;
     THistoTotals sortCriteria;
+    bool sortReverse;
+    std::vector<int> currentSort;
+
     double minGradient;
     double maxGradient;
     bool computeControlScale;
@@ -918,7 +935,7 @@ class HistogramProxy : public Histogram
     Window *dataWindow;
     Window *extraControlWindow;
     Trace *myTrace;
-    
+
     bool calculateAll;
     std::string currentStat;
     std::vector<std::string> calcStat;
@@ -942,6 +959,8 @@ class HistogramProxy : public Histogram
     HistogramProxy( KernelConnection *whichKernel );
 
     THistogramColumn getNumColumns() const;
+
+    void fillCurrentSort();
 
     friend Histogram *Histogram::create( KernelConnection * );
 };

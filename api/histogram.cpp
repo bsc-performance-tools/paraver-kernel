@@ -73,6 +73,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   thousandSep = Histogram::getThousandSeparator();
   showUnits = ParaverConfig::getInstance()->getHistogramShowUnits();
   sortColumns = Histogram::getSortColumns();
+  sortReverse = Histogram::getSortReverse();
   sortCriteria = Histogram::getSortCriteria();
   minGradient = Histogram::getMinGradient();
   maxGradient = Histogram::getMaxGradient();
@@ -185,7 +186,7 @@ Window *HistogramProxy::getExtraControlWindow() const
 void HistogramProxy::setControlWindow( Window *whichWindow )
 {
   if( controlWindow != NULL )
-    controlWindow->unsetUsedByHistogram( this ); 
+    controlWindow->unsetUsedByHistogram( this );
   else
     rowSelection.copy( *whichWindow->getSelectedRows() );
 
@@ -194,7 +195,7 @@ void HistogramProxy::setControlWindow( Window *whichWindow )
   myHisto->setControlWindow( whichWindow->getConcrete() );
   myTrace = controlWindow->getTrace();
 
-  //duda: al cambiar ventana, mantener selección o usar la de la nueva ventana de ctrl? 
+  //duda: al cambiar ventana, mantener selección o usar la de la nueva ventana de ctrl?
 }
 
 void HistogramProxy::setDataWindow( Window *whichWindow )
@@ -419,32 +420,46 @@ TObjectOrder HistogramProxy::getNumRows() const
   return myHisto->getNumRows();
 }
 
+PRV_UINT32 HistogramProxy::getSortedColumn( PRV_UINT32 col ) const
+{
+  if( sortColumns )
+  {
+    if( sortReverse )
+      return currentSort[ col ];
+    else
+      return currentSort[ currentSort.size() - col - 1 ];
+  }
+  else if( !sortColumns && sortReverse )
+    return getNumColumns() - col - 1;
+
+  return col;
+}
 
 TSemanticValue HistogramProxy::getCurrentValue( PRV_UINT32 col,
     PRV_UINT16 idStat,
     PRV_UINT32 plane ) const
 {
-  return myHisto->getCurrentValue( col, idStat, plane );
+  return myHisto->getCurrentValue( getSortedColumn( col ), idStat, plane );
 }
 
 PRV_UINT32 HistogramProxy::getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
 {
-  return myHisto->getCurrentRow( col, plane );
+  return myHisto->getCurrentRow( getSortedColumn( col ), plane );
 }
 
 void HistogramProxy::setNextCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  myHisto->setNextCell( col, plane );
+  myHisto->setNextCell( getSortedColumn( col ), plane );
 }
 
 void HistogramProxy::setFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  myHisto->setFirstCell( col, plane );
+  myHisto->setFirstCell( getSortedColumn( col ), plane );
 }
 
 bool HistogramProxy::endCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  return myHisto->endCell( col, plane );
+  return myHisto->endCell( getSortedColumn( col ), plane );
 }
 
 bool HistogramProxy::planeWithValues( PRV_UINT32 plane ) const
@@ -458,34 +473,34 @@ bool HistogramProxy::getCellValue( TSemanticValue& semVal,
                                    PRV_UINT16 idStat,
                                    PRV_UINT32 whichPlane ) const
 {
-  return myHisto->getCellValue( semVal, whichRow, whichCol, idStat, whichPlane );
+  return myHisto->getCellValue( semVal, whichRow, getSortedColumn( whichCol ), idStat, whichPlane );
 }
 
 TSemanticValue HistogramProxy::getCommCurrentValue( PRV_UINT32 col,
     PRV_UINT16 idStat,
     PRV_UINT32 plane ) const
 {
-  return myHisto->getCommCurrentValue( col, idStat, plane );
+  return myHisto->getCommCurrentValue( getSortedColumn( col ), idStat, plane );
 }
 
 PRV_UINT32 HistogramProxy::getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
 {
-  return myHisto->getCommCurrentRow( col, plane );
+  return myHisto->getCommCurrentRow( getSortedColumn( col ), plane );
 }
 
 void HistogramProxy::setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  myHisto->setCommNextCell( col, plane );
+  myHisto->setCommNextCell( getSortedColumn( col ), plane );
 }
 
 void HistogramProxy::setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  myHisto->setCommFirstCell( col, plane );
+  myHisto->setCommFirstCell( getSortedColumn( col ), plane );
 }
 
 bool HistogramProxy::endCommCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  return myHisto->endCommCell( col, plane );
+  return myHisto->endCommCell( getSortedColumn( col ), plane );
 }
 
 bool HistogramProxy::planeCommWithValues( PRV_UINT32 plane ) const
@@ -499,7 +514,7 @@ bool HistogramProxy::getCommCellValue( TSemanticValue& semVal,
                                        PRV_UINT16 idStat,
                                        PRV_UINT32 whichPlane ) const
 {
-  return myHisto->getCommCellValue( semVal, whichRow, whichCol, idStat, whichPlane );
+  return myHisto->getCommCellValue( semVal, whichRow, getSortedColumn( whichCol ), idStat, whichPlane );
 }
 
 HistogramTotals *HistogramProxy::getTotals( const string& whichStat ) const
@@ -580,9 +595,9 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
     else
       addZoom( tmpZoomControl1, tmpZoomControl2 );
 
-    beginRow = getZoomSecondDimension().first; 
-    endRow = getZoomSecondDimension().second; 
-    rowSelection.getSelected( selectedRows, beginRow, endRow, controlWindow->getLevel() ); 
+    beginRow = getZoomSecondDimension().first;
+    endRow = getZoomSecondDimension().second;
+    rowSelection.getSelected( selectedRows, beginRow, endRow, controlWindow->getLevel() );
   }
 
 
@@ -667,6 +682,8 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
       }
     }
   }
+
+  fillCurrentSort();
 }
 
 void HistogramProxy::setHorizontal( bool newValue )
@@ -742,11 +759,22 @@ bool HistogramProxy::getSortColumns() const
 void HistogramProxy::setSortCriteria( THistoTotals whichCriteria )
 {
   sortCriteria = whichCriteria;
+  fillCurrentSort();
 }
 
 THistoTotals HistogramProxy::getSortCriteria() const
 {
   return sortCriteria;
+}
+
+void HistogramProxy::setSortReverse( bool newValue )
+{
+  sortReverse = newValue;
+}
+
+bool HistogramProxy::getSortReverse() const
+{
+  return sortReverse;
 }
 
 void HistogramProxy::setMinGradient( double whichMin )
@@ -915,6 +943,7 @@ double HistogramProxy::getPlaneMinValue() const
 void HistogramProxy::setSelectedPlane( PRV_INT32 plane )
 {
   selectedPlane = plane;
+  fillCurrentSort();
 }
 
 PRV_INT32 HistogramProxy::getSelectedPlane() const
@@ -1018,10 +1047,12 @@ string HistogramProxy::getColumnLabel( THistogramColumn whichColumn ) const
   if( controlWindow == NULL )
     return "";
 
-  if( itsCommunicationStat( getCurrentStat() ) )
-    return getRowLabel( ( TObjectOrder ) whichColumn );
+  THistogramColumn tmpCol = getSortedColumn( whichColumn );
 
-  return LabelConstructor::histoColumnLabel( whichColumn, controlWindow,
+  if( itsCommunicationStat( getCurrentStat() ) )
+    return getRowLabel( ( TObjectOrder ) tmpCol );
+
+  return LabelConstructor::histoColumnLabel( tmpCol, controlWindow,
          getControlMin(),
          getControlMax(),
          getControlDelta(),
@@ -1232,6 +1263,8 @@ void HistogramProxy::setCurrentStat( const string& whichStat )
     clearStatistics();
     pushbackStatistic( whichStat );
   }
+
+  fillCurrentSort();
 }
 
 string HistogramProxy::getCurrentStat() const
@@ -1757,4 +1790,47 @@ void HistogramProxy::setSelectedRows( vector< bool > &selected )
 void HistogramProxy::setSelectedRows( vector< TObjectOrder > &selected )
 {
   rowSelection.setSelected( selected, myHisto->getNumRows(), myHisto->getControlWindow()->getLevel() );
+}
+
+void HistogramProxy::fillCurrentSort()
+{
+  PRV_INT32 tmpCurrentPlane = 0;
+  PRV_UINT16 tmpStat;
+
+  if( sortColumns )
+  {
+    getIdStat( currentStat, tmpStat );
+
+    if( getThreeDimensions() )
+    {
+      if( itsCommunicationStat( currentStat ) )
+        tmpCurrentPlane = commSelectedPlane;
+      else
+        tmpCurrentPlane = selectedPlane;
+    }
+
+    switch( sortCriteria )
+    {
+      case TOTAL:
+        currentSort = getTotals( currentStat )->sortByTotal( tmpStat, tmpCurrentPlane );
+        break;
+      case AVERAGE:
+        currentSort = getTotals( currentStat )->sortByAverage( tmpStat, tmpCurrentPlane );
+        break;
+      case MAXIMUM:
+        currentSort = getTotals( currentStat )->sortByMaximum( tmpStat, tmpCurrentPlane );
+        break;
+      case MINIMUM:
+        currentSort = getTotals( currentStat )->sortByMinimum( tmpStat, tmpCurrentPlane );
+        break;
+      case STDEV:
+        currentSort = getTotals( currentStat )->sortByStdev( tmpStat, tmpCurrentPlane );
+        break;
+      case AVGDIVMAX:
+        currentSort = getTotals( currentStat )->sortByAvgDivMax( tmpStat, tmpCurrentPlane );
+        break;
+      default:
+        break;
+    }
+  }
 }
