@@ -429,7 +429,7 @@ PRV_UINT32 HistogramProxy::getSortedColumn( PRV_UINT32 col ) const
     else
       return currentSort[ currentSort.size() - col - 1 ];
   }
-  else if( !sortColumns && sortReverse )
+  else if( !sortColumns && sortReverse && !hideColumns )
     return getNumColumns() - col - 1;
 
   return col;
