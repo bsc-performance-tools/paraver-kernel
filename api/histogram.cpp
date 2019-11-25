@@ -115,8 +115,6 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
 
   isCFG4DEnabled = false;
   CFG4DMode = false;
-
-  //rowSelection = ( *Histogram::getRowSelectionManagement() );
 }
 
 HistogramProxy::~HistogramProxy()
@@ -581,12 +579,11 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
     }
     else
       addZoom( tmpZoomControl1, tmpZoomControl2 );
+
+    beginRow = getZoomSecondDimension().first; 
+    endRow = getZoomSecondDimension().second; 
+    rowSelection.getSelected( selectedRows, beginRow, endRow, controlWindow->getLevel() ); 
   }
-
-  beginRow = getZoomSecondDimension().first;
-  endRow = getZoomSecondDimension().second;
-
-  rowSelection.getSelected( selectedRows, beginRow, endRow, controlWindow->getLevel() ) ;
 
 
   if ( getThreeDimensions() && computeXtraScale )
