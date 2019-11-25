@@ -30,10 +30,12 @@ using namespace std;
 #ifdef WIN32
 const string PreviousFiles::previousTracesFile = "\\paraver\\paraverdb";
 const string PreviousFiles::previousCFGsFile = "\\paraver\\paravercfgdb";
+const string PreviousFiles::previousSessionsFile = "\\paraver\\paraversessionsdb";
 const string PreviousFiles::previousTreatedTracesFile = "\\paraver\\paravertreatedtracesdb";
 #else
 const string PreviousFiles::previousTracesFile = "/.paraver/paraverdb";
 const string PreviousFiles::previousCFGsFile = "/.paraver/paravercfgdb";
+const string PreviousFiles::previousSessionsFile = "/.paraver/paraversessionsdb";
 const string PreviousFiles::previousTreatedTracesFile = "/.paraver/paravertreatedtracesdb";
 #endif
 
@@ -47,6 +49,11 @@ PreviousFiles *PreviousFiles::createPreviousTraces()
 PreviousFiles *PreviousFiles::createPreviousCFGs()
 {
   return new PreviousFiles( previousCFGsFile );
+}
+
+PreviousFiles *PreviousFiles::createPreviousSessions()
+{
+  return new PreviousFiles( previousSessionsFile );
 }
 
 
