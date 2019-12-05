@@ -1789,7 +1789,7 @@ void HistogramProxy::setSelectedRows( vector< bool > &selected )
 
 void HistogramProxy::setSelectedRows( vector< TObjectOrder > &selected )
 {
-  rowSelection.setSelected( selected, myHisto->getNumRows(), myHisto->getControlWindow()->getLevel() );
+  rowSelection.setSelected( selected, myTrace->getLevelObjects( myHisto->getControlWindow()->getLevel() ), myHisto->getControlWindow()->getLevel() );
 }
 
 void HistogramProxy::fillCurrentSort()
