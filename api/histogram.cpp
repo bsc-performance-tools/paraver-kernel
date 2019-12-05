@@ -1809,25 +1809,29 @@ void HistogramProxy::fillCurrentSort()
         tmpCurrentPlane = selectedPlane;
     }
 
+    HistogramTotals *tmpTotals = getTotals( currentStat );
+    if( tmpTotals == NULL )
+      return;
+
     switch( sortCriteria )
     {
       case TOTAL:
-        currentSort = getTotals( currentStat )->sortByTotal( tmpStat, tmpCurrentPlane );
+        currentSort = tmpTotals->sortByTotal( tmpStat, tmpCurrentPlane );
         break;
       case AVERAGE:
-        currentSort = getTotals( currentStat )->sortByAverage( tmpStat, tmpCurrentPlane );
+        currentSort = tmpTotals->sortByAverage( tmpStat, tmpCurrentPlane );
         break;
       case MAXIMUM:
-        currentSort = getTotals( currentStat )->sortByMaximum( tmpStat, tmpCurrentPlane );
+        currentSort = tmpTotals->sortByMaximum( tmpStat, tmpCurrentPlane );
         break;
       case MINIMUM:
-        currentSort = getTotals( currentStat )->sortByMinimum( tmpStat, tmpCurrentPlane );
+        currentSort = tmpTotals->sortByMinimum( tmpStat, tmpCurrentPlane );
         break;
       case STDEV:
-        currentSort = getTotals( currentStat )->sortByStdev( tmpStat, tmpCurrentPlane );
+        currentSort = tmpTotals->sortByStdev( tmpStat, tmpCurrentPlane );
         break;
       case AVGDIVMAX:
-        currentSort = getTotals( currentStat )->sortByAvgDivMax( tmpStat, tmpCurrentPlane );
+        currentSort = tmpTotals->sortByAvgDivMax( tmpStat, tmpCurrentPlane );
         break;
       default:
         break;
