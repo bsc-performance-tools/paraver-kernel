@@ -1623,6 +1623,30 @@ class Analyzer2DSortCriteria: public TagFunction
 };
 
 
+class Analyzer2DSortReverse: public TagFunction
+{
+  public:
+    Analyzer2DSortReverse()
+    {}
+
+    virtual ~Analyzer2DSortReverse()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
+
 class Analyzer2DParameters: public TagFunction
 {
   public:

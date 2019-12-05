@@ -829,6 +829,7 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DAccumulateByControlWindow::printLine( cfgFile, it );
     Analyzer2DSortCols::printLine( cfgFile, it );
     Analyzer2DSortCriteria::printLine( cfgFile, it );
+    Analyzer2DSortReverse::printLine( cfgFile, it );
     Analyzer2DParameters::printLine( cfgFile, it );
     Analyzer2DAnalysisLimits::printLine( cfgFile, options, it );
     Analyzer2DRelativeTime::printLine( cfgFile, it );
@@ -994,6 +995,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN2D_ACCUM_BY_CTRL_WINDOW] = new Analyzer2DAccumulateByControlWindow();
   cfgTagFunctions[OLDCFG_TAG_AN2D_SORTCOLS]             = new Analyzer2DSortCols();
   cfgTagFunctions[OLDCFG_TAG_AN2D_SORTCRITERIA]         = new Analyzer2DSortCriteria();
+  cfgTagFunctions[OLDCFG_TAG_AN2D_SORTREVERSE]         = new Analyzer2DSortReverse();
 
   cfgTagFunctions[OLDCFG_TAG_AN2D_PARAMETERS]           = new Analyzer2DParameters();
   cfgTagFunctions[OLDCFG_TAG_AN2D_ANALYSISLIMITS]       = new Analyzer2DAnalysisLimits();
@@ -4312,6 +4314,49 @@ void Analyzer2DSortCriteria::printLine( ofstream& cfgFile,
   }
   cfgFile << endl;
 }
+
+
+string Analyzer2DSortReverse::tagCFG = OLDCFG_TAG_AN2D_SORTREVERSE;
+
+bool Analyzer2DSortReverse::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                       Trace *whichTrace,
+                                       vector<Window *>& windows,
+                                       vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  {
+    histograms[ histograms.size() - 1 ]->setSortReverse( true );
+  }
+  else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  {
+    histograms[ histograms.size() - 1 ]->setSortReverse( false );
+  }
+  else
+    return false;
+
+  return true;
+}
+
+void Analyzer2DSortReverse::printLine( ofstream& cfgFile,
+                                       const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_SORTREVERSE << " ";
+  if ( ( *it )->getSortReverse() )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
+}
+
 
 /*
  Number_of_parameters Parameter1 ... ParameterN

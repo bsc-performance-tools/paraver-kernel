@@ -133,6 +133,7 @@
 #define OLDCFG_TAG_AN2D_ACCUM_BY_CTRL_WINDOW "Analyzer2D.AccumulateByControlWindow:"
 #define OLDCFG_TAG_AN2D_SORTCOLS "Analyzer2D.SortCols:"
 #define OLDCFG_TAG_AN2D_SORTCRITERIA "Analyzer2D.SortCriteria:"
+#define OLDCFG_TAG_AN2D_SORTREVERSE "Analyzer2D.SortReverse:"
 #define OLDCFG_TAG_AN2D_PARAMETERS "Analyzer2D.Parameters:"
 #define OLDCFG_TAG_AN2D_ANALYSISLIMITS "Analyzer2D.AnalysisLimits:"
 #define OLDCFG_TAG_AN2D_RELATIVETIME "Analyzer2D.RelativeTime:"
