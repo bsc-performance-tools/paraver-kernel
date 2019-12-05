@@ -185,7 +185,7 @@ Window *HistogramProxy::getExtraControlWindow() const
 void HistogramProxy::setControlWindow( Window *whichWindow )
 {
   if( controlWindow != NULL )
-    controlWindow->unsetUsedByHistogram( this ); 
+    controlWindow->unsetUsedByHistogram( this );
   else
     rowSelection.copy( *whichWindow->getSelectedRows() );
 
@@ -194,7 +194,7 @@ void HistogramProxy::setControlWindow( Window *whichWindow )
   myHisto->setControlWindow( whichWindow->getConcrete() );
   myTrace = controlWindow->getTrace();
 
-  //duda: al cambiar ventana, mantener selección o usar la de la nueva ventana de ctrl? 
+  //duda: al cambiar ventana, mantener selección o usar la de la nueva ventana de ctrl?
 }
 
 void HistogramProxy::setDataWindow( Window *whichWindow )
@@ -580,9 +580,9 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
     else
       addZoom( tmpZoomControl1, tmpZoomControl2 );
 
-    beginRow = getZoomSecondDimension().first; 
-    endRow = getZoomSecondDimension().second; 
-    rowSelection.getSelected( selectedRows, beginRow, endRow, controlWindow->getLevel() ); 
+    beginRow = getZoomSecondDimension().first;
+    endRow = getZoomSecondDimension().second;
+    rowSelection.getSelected( selectedRows, beginRow, endRow, controlWindow->getLevel() );
   }
 
 
@@ -1756,5 +1756,5 @@ void HistogramProxy::setSelectedRows( vector< bool > &selected )
 
 void HistogramProxy::setSelectedRows( vector< TObjectOrder > &selected )
 {
-  rowSelection.setSelected( selected, myHisto->getNumRows(), myHisto->getControlWindow()->getLevel() );
+  rowSelection.setSelected( selected, myTrace->getLevelObjects( myHisto->getControlWindow()->getLevel() ), myHisto->getControlWindow()->getLevel() );
 }
