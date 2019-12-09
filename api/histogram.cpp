@@ -521,17 +521,21 @@ HistogramTotals *HistogramProxy::getTotals( const string& whichStat ) const
 {
   if ( itsCommunicationStat( whichStat ) )
   {
-    if ( horizontal )
+    return getCommColumnTotals();
+// TODO: Draw sorted vertical totals
+/*    if ( horizontal )
       return getCommColumnTotals();
     else
-      return getCommRowTotals();
+      return getCommRowTotals();*/
   }
   else
   {
-    if ( horizontal )
+    return getColumnTotals();
+// TODO: Draw sorted vertical totals
+/*    if ( horizontal )
       return getColumnTotals();
     else
-      return getRowTotals();
+      return getRowTotals();*/
   }
 }
 
