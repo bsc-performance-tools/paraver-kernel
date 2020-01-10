@@ -164,7 +164,7 @@ ParaverConfig::ParaverConfig()
 
   xmlGlobal.sessionPath = strFile;
   xmlGlobal.sessionSaveTime = 0;
-  xmlGlobal.prevSessionLoad = false;
+  xmlGlobal.prevSessionLoad = true;
 
   xmlTimeline.defaultName = "New window # %N";
   xmlTimeline.nameFormat = "%W @ %T";
