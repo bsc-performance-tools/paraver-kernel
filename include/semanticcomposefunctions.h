@@ -1591,8 +1591,70 @@ class ComposeEnumerate: public SemanticCompose
   private:
     static const bool initFromBegin = true;
     static std::string name;
+};
 
-    std::vector<TSemanticValue> myEnumerate;
+
+
+class ComposeAccumulate: public SemanticCompose
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    ComposeAccumulate()
+    {
+      setDefaultParam();
+    }
+
+    ~ComposeAccumulate()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+
+    virtual void init( KWindow *whichWindow );
+
+    virtual std::string getName()
+    {
+      return ComposeAccumulate::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeAccumulate( *this );
+    }
+
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      TParamValue tmp;
+
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+
+      return tmp;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
+
+  private:
+    static const bool initFromBegin = true;
+    static std::string name;
 };
 
 

@@ -67,6 +67,9 @@ void createSemantic()
   functions[0].push_back( new ComposeInStackedValue() );
   functions[0].push_back( new ComposeNestingLevel() );
   functions[0].push_back( new ComposeEnumerate() );
+
+  functions[0].push_back( new ComposeAccumulate() );
+  
   functions[0].push_back( new ComposeDelta() );
   functions[0].push_back( new ComposeBurstTime() );
   functions[0].push_back( new ComposeBeginTime() );
