@@ -104,7 +104,7 @@ std::vector< TTime > KTraceShifter::readShiftTimes( std::string shiftTimesFile )
   std::vector< TTime > shiftTimes;
 
   std::ifstream timesFile( shiftTimesFile.c_str() );
-  if ( !timesFile )
+  if ( timesFile.good() )
   {
     std::string currentLine;
     TTime currentTime;

@@ -129,7 +129,7 @@ void TraceBodyIO_v1::write( fstream& whichStream,
                             MemoryTrace::iterator *record,
                             PRV_INT32 numIter ) const
 {
-  bool writeReady;
+  bool writeReady = false;
   TRecordType type = record->getType();
   line.clear();
 
