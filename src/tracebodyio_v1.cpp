@@ -673,7 +673,7 @@ void TraceBodyIO_v1::appendEvent( const MemoryTrace::iterator *record ) const
   if ( !multiEventLine.empty() )
     ostr << ':';
 
-  ostr << record->getEventType() << ':' << record->getEventValue();
+  ostr << record->getEventType() << ':' << record->getEventValueAsIs();
 
   multiEventLine += ostr.str();
 }

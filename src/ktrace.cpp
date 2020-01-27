@@ -711,7 +711,8 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   else if ( body->ordered() )
   {
     blocks = new PlainBlocks( traceResourceModel, traceProcessModel, traceEndTime );
-    memTrace  = new PlainTrace( traceProcessModel,
+    memTrace  = new PlainTrace( this,
+                                traceProcessModel,
                                 traceResourceModel );
   }
   else
