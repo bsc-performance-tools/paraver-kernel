@@ -449,7 +449,7 @@ bool CFGLoader::loadDescription( const std::string& filename, std::string& descr
     if ( strLine.length() == 0 )
       continue;
 
-    if ( strLine == CFG_HEADER_END_DESCRIPTION or strLine == OLDCFG_HEADER_END_DESCRIPTION )
+    if ( strLine == CFG_HEADER_END_DESCRIPTION || strLine == OLDCFG_HEADER_END_DESCRIPTION )
     {
       keepReading = false;
       cfgFile.close();
@@ -458,7 +458,7 @@ bool CFGLoader::loadDescription( const std::string& filename, std::string& descr
     if ( keepReading )
       description += strLine + "\n";
 
-    if ( strLine == CFG_HEADER_BEGIN_DESCRIPTION or strLine == OLDCFG_HEADER_BEGIN_DESCRIPTION )
+    if ( strLine == CFG_HEADER_BEGIN_DESCRIPTION || strLine == OLDCFG_HEADER_BEGIN_DESCRIPTION )
       keepReading = true;
   }
   return false;
