@@ -81,6 +81,9 @@ void createSemantic()
   functions[0].push_back( new ComposeSqrtAbs() );
   functions[0].push_back( new ComposeArcTan() );
 
+  functions[0].push_back( new ComposeLogN() );
+  functions[0].push_back( new ComposeExponential() );
+
 
   /**************************
   ** Derived functions

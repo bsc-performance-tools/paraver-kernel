@@ -22,7 +22,6 @@
 \*****************************************************************************/
 
 
-#include <cmath>
 #include "semanticcomposefunctions.h"
 #include "kwindow.h"
 
@@ -576,4 +575,20 @@ TSemanticValue ComposeArcTan::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
   return atan( myInfo->values[ 0 ] );
+}
+
+
+string ComposeLogN::name = "log N";
+TSemanticValue ComposeLogN::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  return log( myInfo->values[ 0 ] ) / log( parameters[ BASE ][ 0 ] );
+}
+
+
+string ComposeExponential::name = "exp";
+TSemanticValue ComposeExponential::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  return exp( myInfo->values[ 0 ] );
 }
