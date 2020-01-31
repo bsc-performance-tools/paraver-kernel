@@ -1200,6 +1200,11 @@ inline TSemanticValue BPlusTree::iterator::getEventValue() const
   return ( ( TRecord * )record )->URecordInfo.eventRecord.value;
 }
 
+inline TEventValue    BPlusTree::iterator::getEventValueAsIs() const
+{
+  return ( ( TRecord * )record )->URecordInfo.eventRecord.value;
+}
+
 inline TState       BPlusTree::iterator::getState() const
 {
   return ( ( TRecord * )record )->URecordInfo.stateRecord.state;

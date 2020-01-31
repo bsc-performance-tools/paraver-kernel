@@ -4728,7 +4728,13 @@ bool Analyzer2DObjects::parseLine( KernelConnection *whichKernel,
   string token;
   char separator = ',';
   while ( getline( ss, token, separator ) )
-    myRows.push_back( stoi( token ) );
+  {
+    TObjectOrder tmpOrder;
+    istringstream tmpToken( token );
+    if( !( tmpToken >> tmpOrder ) )
+      return false;
+    myRows.push_back( tmpOrder );
+  }
 
   histograms[ histograms.size() - 1 ]->setSelectedRows( myRows );
   return true;

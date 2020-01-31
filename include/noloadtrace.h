@@ -79,6 +79,7 @@ namespace NoLoad
           virtual TObjectOrder   getOrder() const;
           virtual TEventType     getEventType() const;
           virtual TSemanticValue getEventValue() const;
+          virtual TEventValue    getEventValueAsIs() const;
           virtual TState         getState() const;
           virtual TRecordTime    getStateEndTime() const;
           virtual TCommID        getCommIndex() const;
