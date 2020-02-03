@@ -86,6 +86,7 @@ class ParaverConfig
 
 
     bool initCompleteSessionFile();
+    void cleanCompleteSessionFile();
     bool closeCompleteSessionFile();
 
     // GLOBAL XML SECTION

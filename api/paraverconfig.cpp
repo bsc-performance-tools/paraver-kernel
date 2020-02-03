@@ -163,7 +163,7 @@ ParaverConfig::ParaverConfig()
   paraverConfigDir = strFile;
 
   xmlGlobal.sessionPath = strFile;
-  xmlGlobal.sessionSaveTime = 0;
+  xmlGlobal.sessionSaveTime = 1;
   xmlGlobal.prevSessionLoad = true;
 
   xmlTimeline.defaultName = "New window # %N";
@@ -1284,17 +1284,45 @@ bool ParaverConfig::initCompleteSessionFile()
     string line;
     getline( file, line );
     status = ( line == "Previous session executed successfully" );
-    file.close();
-    file.open( strFile.c_str(), ios::out | ios::trunc);
-    file.close();
+    //file.close();
+    //file.open( strFile.c_str(), ios::out | ios::trunc);
   }
+  else
+  {
+    //file.open( strFile.c_str(), ios::out );
+    status = true;
+  }
+  file.close();
+  return status;
+}
+
+void ParaverConfig::cleanCompleteSessionFile()
+{
+  fstream file;
+  string strFile;
+  string strLine;
+
+#ifdef WIN32
+  strFile = getenv( "HOMEDRIVE" );
+  strFile.append( getenv( "HOMEPATH" ) );
+  strFile.append( "\\paraver\\CompleteSession" );
+#else
+  strFile = getenv( "HOME" );
+  strFile.append( "/.paraver/CompleteSession" );
+#endif
+
+  file.open( strFile.c_str(), ios::in);
+  //if ( !file.fail() )
+  //{
+  file.close();
+  file.open( strFile.c_str(), ios::out | ios::trunc);
+  /*}
   else
   {
     file.close();
     file.open( strFile.c_str(), ios::out );
-    file.close();
-  }
-  return status;
+  }*/
+  file.close();
 }
 
 
