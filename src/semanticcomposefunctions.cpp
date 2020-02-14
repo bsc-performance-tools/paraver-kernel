@@ -22,7 +22,6 @@
 \*****************************************************************************/
 
 
-#include <cmath>
 #include "semanticcomposefunctions.h"
 #include "kwindow.h"
 
@@ -416,21 +415,7 @@ TSemanticValue ComposeNestingLevel::execute( const SemanticInfo *info )
 
 void ComposeEnumerate::init( KWindow *whichWindow )
 {
-  myEnumerate.clear();
 
-  if ( whichWindow->getTrace()->totalThreads() >
-       whichWindow->getTrace()->totalCPUs() )
-  {
-    myEnumerate.reserve( whichWindow->getTrace()->totalThreads() );
-    for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalThreads(); ++i )
-      myEnumerate.push_back( 0 );
-  }
-  else
-  {
-    myEnumerate.reserve( whichWindow->getTrace()->totalCPUs() );
-    for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalCPUs(); ++i )
-      myEnumerate.push_back( 0 );
-  }
 }
 
 
@@ -439,13 +424,27 @@ TSemanticValue ComposeEnumerate::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
-  TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
-
+  TObjectOrder newInfoVal = myInfo->callingInterval->getValue();
   if ( myInfo->values[ 0 ] != 0 )
-    ++myEnumerate[ tmpOrder ];
+    return ++newInfoVal;
 
-  return myEnumerate[ tmpOrder ];
+  return newInfoVal;
 }
+
+void ComposeAccumulate::init( KWindow *whichWindow )
+{
+}
+
+
+string ComposeAccumulate::name = "Accumulate";
+TSemanticValue ComposeAccumulate::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+
+  return myInfo->callingInterval->getValue() + myInfo->values[ 0 ];
+}
+
+
 
 
 void ComposeDelta::init( KWindow *whichWindow )
@@ -576,4 +575,25 @@ TSemanticValue ComposeArcTan::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
   return atan( myInfo->values[ 0 ] );
+}
+
+
+string ComposeLogN::name = "log N";
+TSemanticValue ComposeLogN::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  TSemanticValue logVal = log( myInfo->values[ 0 ] ) / log( parameters[ BASE ][ 0 ] );
+  if ( myInfo->values[ 0 ] <= 0 || logVal < 0.0 )
+  {
+    return 0;
+  }
+  return logVal;
+}
+
+
+string ComposeExponential::name = "exp";
+TSemanticValue ComposeExponential::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  return exp( myInfo->values[ 0 ] );
 }

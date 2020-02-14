@@ -371,7 +371,15 @@ inline TEventType NoLoadTrace::iterator::getEventType() const
 
 inline TSemanticValue NoLoadTrace::iterator::getEventValue() const
 {
+  double tmpPrecision = myTrace->getEventTypePrecision( ( ( TRecord * )record )->URecordInfo.eventRecord.type );
+  if( tmpPrecision != 0.0 )
+    return ( ( TRecord * )record )->URecordInfo.eventRecord.value * tmpPrecision;
   return ( ( TRecord * )record )->URecordInfo.eventRecord.value;
+}
+
+inline TEventValue    NoLoadTrace::iterator::getEventValueAsIs() const
+{
+    return ( ( TRecord * )record )->URecordInfo.eventRecord.value;
 }
 
 inline TState NoLoadTrace::iterator::getState() const

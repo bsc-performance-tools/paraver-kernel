@@ -78,6 +78,7 @@ namespace Plain
           virtual TObjectOrder   getOrder() const;
           virtual TEventType     getEventType() const;
           virtual TSemanticValue getEventValue() const;
+          virtual TEventValue    getEventValueAsIs() const;
           virtual TState         getState() const;
           virtual TRecordTime    getStateEndTime() const;
           virtual TCommID        getCommIndex() const;
@@ -154,7 +155,8 @@ namespace Plain
           void setToMyCPUBackward();
       };
 
-      PlainTrace( const ProcessModel& whichProcessModel,
+      PlainTrace( const Trace *whichTrace,
+                  const ProcessModel& whichProcessModel,
                   const ResourceModel& whichResourceModel );
       virtual ~PlainTrace()
       {}
@@ -179,6 +181,7 @@ namespace Plain
     protected:
 
     private:
+      const Trace *myTrace;
       const ProcessModel& processModel;
       const ResourceModel& resourceModel;
       TThreadOrder numThreads;

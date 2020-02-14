@@ -22,6 +22,7 @@
 \*****************************************************************************/
 
 
+#include "trace.h"
 #include "plaintrace.h"
 #include "plainblocks.h"
 #include "processmodel.h"
@@ -31,9 +32,10 @@
 using namespace Plain;
 using namespace std;
 
-PlainTrace::PlainTrace( const ProcessModel& whichProcessModel,
+PlainTrace::PlainTrace( const Trace *whichTrace,
+                        const ProcessModel& whichProcessModel,
                         const ResourceModel& whichResourceModel ):
-    processModel( whichProcessModel ), resourceModel( whichResourceModel )
+    myTrace( whichTrace ), processModel( whichProcessModel ), resourceModel( whichResourceModel )
 
 {
   numThreads = processModel.totalThreads();
@@ -271,6 +273,14 @@ inline TEventType   PlainTrace::iterator::getEventType() const
 }
 
 inline TSemanticValue PlainTrace::iterator::getEventValue() const
+{
+  double tmpPrecision = myTrace->getEventTypePrecision( ( ( TRecord * )record )->URecordInfo.eventRecord.type );
+  if( tmpPrecision != 0.0 )
+    return ( ( TRecord * )record )->URecordInfo.eventRecord.value * tmpPrecision;
+  return ( ( TRecord * )record )->URecordInfo.eventRecord.value;
+}
+
+inline TEventValue    PlainTrace::iterator::getEventValueAsIs() const
 {
   return ( ( TRecord * )record )->URecordInfo.eventRecord.value;
 }

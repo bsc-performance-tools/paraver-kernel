@@ -84,6 +84,11 @@ class ParaverConfig
 
     std::string getParaverConfigDir();
 
+
+    bool initCompleteSessionFile();
+    void cleanCompleteSessionFile();
+    bool closeCompleteSessionFile();
+
     // GLOBAL XML SECTION
     void setGlobalTracesPath( std::string whichTracesPath );
     void setGlobalCFGsPath( std::string whichCfgsPath );
@@ -98,6 +103,7 @@ class ParaverConfig
     void setMainWindowHeight( unsigned int whichHeight );
     void setGlobalSessionPath( std::string whichSessionPath );
     void setGlobalSessionSaveTime( PRV_UINT16 whichSessionSaveTime );
+    void setGlobalPrevSessionLoad( bool isPrevSessionLoaded );
 
     std::string getGlobalTracesPath() const;
     std::string getGlobalCFGsPath() const;
@@ -112,6 +118,7 @@ class ParaverConfig
     unsigned int getMainWindowHeight() const;
     std::string getGlobalSessionPath() const;
     PRV_UINT16 getGlobalSessionSaveTime() const;
+    bool getGlobalPrevSessionLoad() const;
 
     // TIMELINES XML SECTION
     void setTimelineDefaultName( std::string whichDefaultName );
@@ -348,6 +355,8 @@ class ParaverConfig
           ar & boost::serialization::make_nvp( "session_path", sessionPath );
           ar & boost::serialization::make_nvp( "session_save_time", sessionSaveTime );
         }
+        if( version >= 6 )
+          ar & boost::serialization::make_nvp( "prev_session_load", prevSessionLoad );
       }
 
       std::string tracesPath; // also for paraload.sig!
@@ -362,6 +371,7 @@ class ParaverConfig
       unsigned int mainWindowHeight;
       std::string sessionPath;
       PRV_UINT16 sessionSaveTime;
+      bool prevSessionLoad;
 
     } xmlGlobal;
 
@@ -712,7 +722,7 @@ class ParaverConfig
 
 // Second version: introducing some structure
 BOOST_CLASS_VERSION( ParaverConfig, 1)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 5)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 6)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 3)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 6)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 1)
