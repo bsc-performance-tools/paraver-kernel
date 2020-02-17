@@ -278,12 +278,12 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
           if( withLabels )
           {
             totals = whichHisto->getColumnTotals();
-            dumpTotalColumns( totals, LabelConstructor::histoTotalLabel( TOTAL ),     &HistogramTotals::getTotal,     currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( totals, LabelConstructor::histoTotalLabel( AVERAGE ),   &HistogramTotals::getAverage,   currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( totals, LabelConstructor::histoTotalLabel( MAXIMUM ),   &HistogramTotals::getMaximum,   currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( totals, LabelConstructor::histoTotalLabel( MINIMUM ),   &HistogramTotals::getMinimum,   currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( totals, LabelConstructor::histoTotalLabel( STDEV ),     &HistogramTotals::getStdev,     currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( totals, LabelConstructor::histoTotalLabel( AVGDIVMAX ), &HistogramTotals::getAvgDivMax, currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( TOTAL ),     &HistogramTotals::getTotal,     currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( AVERAGE ),   &HistogramTotals::getAverage,   currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( MAXIMUM ),   &HistogramTotals::getMaximum,   currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( MINIMUM ),   &HistogramTotals::getMinimum,   currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( STDEV ),     &HistogramTotals::getStdev,     currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( AVGDIVMAX ), &HistogramTotals::getAvgDivMax, currentStat, printedColumns, iPlane, outputFile );
           }
         }
         else
@@ -351,12 +351,12 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
           if( withLabels )
           {
             totals = whichHisto->getCommColumnTotals();
-            dumpTotalColumns( totals, LabelConstructor::histoTotalLabel( TOTAL ),     &HistogramTotals::getTotal,     currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( totals, LabelConstructor::histoTotalLabel( AVERAGE ),   &HistogramTotals::getAverage,   currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( totals, LabelConstructor::histoTotalLabel( MAXIMUM ),   &HistogramTotals::getMaximum,   currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( totals, LabelConstructor::histoTotalLabel( MINIMUM ),   &HistogramTotals::getMinimum,   currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( totals, LabelConstructor::histoTotalLabel( STDEV ),     &HistogramTotals::getStdev,     currentStat, printedColumns, iPlane, outputFile );
-            dumpTotalColumns( totals, LabelConstructor::histoTotalLabel( AVGDIVMAX ), &HistogramTotals::getAvgDivMax, currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( TOTAL ),     &HistogramTotals::getTotal,     currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( AVERAGE ),   &HistogramTotals::getAverage,   currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( MAXIMUM ),   &HistogramTotals::getMaximum,   currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( MINIMUM ),   &HistogramTotals::getMinimum,   currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( STDEV ),     &HistogramTotals::getStdev,     currentStat, printedColumns, iPlane, outputFile );
+            dumpTotalColumns( whichHisto, totals, LabelConstructor::histoTotalLabel( AVGDIVMAX ), &HistogramTotals::getAvgDivMax, currentStat, printedColumns, iPlane, outputFile );
           }
         }
         else
@@ -579,7 +579,8 @@ void TextOutput::dumpMatrixCommVertical( Histogram *whichHisto,
 }
 
 
-void TextOutput::dumpTotalColumns( HistogramTotals *totals,
+void TextOutput::dumpTotalColumns( Histogram *whichHisto,
+                                   HistogramTotals *totals,
                                    string totalName,
                                    THistogramTotalsMethod totalFunction,
                                    PRV_UINT16 currentStat,
@@ -600,7 +601,7 @@ void TextOutput::dumpTotalColumns( HistogramTotals *totals,
         progress->setCurrentProgress( (int)iColumn );
     }
 
-    outputFile << (totals->*totalFunction)( currentStat, printedColumns[ iColumn ], iPlane ) << "\t";
+    outputFile << (totals->*totalFunction)( currentStat, printedColumns[ whichHisto->getSortedColumn( iColumn ) ], iPlane ) << "\t";
   }
 
   outputFile << endl;

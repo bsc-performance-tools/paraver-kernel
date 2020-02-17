@@ -101,7 +101,8 @@ class TextOutput:public Output
                              bool withLabels,
                              ProgressController *progress = NULL );
 
-    void dumpTotalColumns( HistogramTotals *totals,
+    void dumpTotalColumns( Histogram *whichHisto,
+                           HistogramTotals *totals,
                            std::string totalName,
                            THistogramTotalsMethod totalFunction,
                            PRV_UINT16 currentStat,
