@@ -94,6 +94,7 @@ class CFGLoader
     static std::map<std::string, TagFunction *> cfgTagFunctions;
     static void loadMap();
     static void unLoadMap();
+    static bool firstMapLoaded;
     static void pushbackWindow( Window *whichWindow,
                                 std::vector<Window *>& allWindows );
     static void pushbackAllWindows( const std::vector<Window *>& selected,
