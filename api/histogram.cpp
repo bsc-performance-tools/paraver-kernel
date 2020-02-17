@@ -194,7 +194,7 @@ void HistogramProxy::setControlWindow( Window *whichWindow )
   myHisto->setControlWindow( whichWindow->getConcrete() );
   myTrace = controlWindow->getTrace();
 
-  //duda: al cambiar ventana, mantener selección o usar la de la nueva ventana de ctrl?
+  //doubt: when I change between windows, should paraver keep my selection or use the new ctrl window ?
 }
 
 void HistogramProxy::setDataWindow( Window *whichWindow )
