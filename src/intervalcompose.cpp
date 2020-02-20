@@ -218,13 +218,19 @@ KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc 
     // firstBegin to control loop! Initialized with beginRecord.
     firstBegin = beginRecord;
 
-    begin = childIntervals[ 0 ]->getBegin();
-    end = childIntervals[ 0 ]->getEnd();
+    if( begin != NULL && begin != beginRecord )
+      delete begin;
+    begin = childIntervals[ 0 ]->getBegin()->clone();
+    if( end != NULL )
+      delete end;
+    end = childIntervals[ 0 ]->getEnd()->clone();
     tmpValue = childIntervals[ 0 ]->getValue();
     childIntervals[ 0 ]->calcPrev( displayList );
     while ( tmpValue == childIntervals[ 0 ]->getValue() )
     {
-      begin = childIntervals[ 0 ]->getBegin();
+      if( begin != NULL && begin != beginRecord )
+        delete begin;
+      begin = childIntervals[ 0 ]->getBegin()->clone();
 
       // somehow, this break never is executed
       // if ( *begin == *beginRecord )
