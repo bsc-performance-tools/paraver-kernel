@@ -23,6 +23,7 @@
 
 #include "tracebodyio_v1.h"
 #include "tracebodyio_v2.h"
+#include "tracebodyio_csv.h"
 
 using namespace std;
 
@@ -37,21 +38,32 @@ TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file )
   TraceBodyIO *ret;
   string firstLine;
 
-#ifndef WIN32
-  file->getline( firstLine );
-  if ( firstLine.compare( "new format" ) == 0 )
+  std::size_t lastDot = file->getFilename().find_last_of( '.' );
+  std::string fileType = file->getFilename().substr( lastDot + 1 );
+  if ( fileType == "csv" )
   {
-    ret = new TraceBodyIO_v2();
+    std::cout << "Creating CSV Trace Body...";
+    ret = new TraceBodyIO_csv();
+    std::cout << " CREATED\n";
   }
+
   else
   {
-    ret = new TraceBodyIO_v1();
-    file->seekbegin();
-  }
+#ifndef WIN32
+    file->getline( firstLine );
+    if ( firstLine.compare( "new format" ) == 0 )
+    {
+      ret = new TraceBodyIO_v2();
+    }
+    else
+    {
+      ret = new TraceBodyIO_v1();
+      file->seekbegin();
+    }
 #else
-  ret = new TraceBodyIO_v1();
+    ret = new TraceBodyIO_v1();
 #endif
-
+  }
   return ret;
 }
 

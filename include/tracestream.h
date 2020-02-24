@@ -37,7 +37,9 @@ class TraceStream
     {}
 
     TraceStream( const std::string& filename )
-    {}
+    {
+        this->filename = filename;
+    }
 
     virtual ~TraceStream()
     {}
@@ -60,6 +62,11 @@ class TraceStream
     static TTraceSize getTraceFileSize( const std::string& filename );
 
     static const double GZIP_COMPRESSION_RATIO;
+
+    virtual std::string getFilename() const;
+    virtual void setFilename( const std::string &newFile );
+  protected:
+    std::string filename;
 };
 
 

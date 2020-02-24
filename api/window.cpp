@@ -1427,6 +1427,7 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selecte
         for ( TThreadOrder iThread = 0; iThread < getTrace()->totalThreads(); ++iThread )
         {
           getTrace()->getThreadLocation( iThread, iAppl, jTask, aux );
+          std::cout << "Thread " << iThread << ": [" << iAppl << "][" << jTask << "]\n";
           globalTask = getTrace()->getGlobalTask( iAppl, jTask );
           selected[ iThread ] = selectedRow.isSelectedPosition( iAppl, APPLICATION ) &&
                                 selectedRow.isSelectedPosition( globalTask, TASK ) &&

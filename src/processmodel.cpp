@@ -70,6 +70,8 @@ void ProcessModel::getTaskLocation( TTaskOrder globalTask,
 TTaskOrder ProcessModel::getGlobalTask( const TApplOrder& inAppl,
                                         const TTaskOrder& inTask ) const
 {
+  std::cout << "LEN: " << applications.size() << " -> " << inAppl << ", " << inTask << std::endl ;
+  std::cout << "LEN: " << applications[ inAppl ].tasks.size() << std::endl ;
   return applications[ inAppl ].tasks[ inTask ].traceGlobalOrder;
 }
 
@@ -93,6 +95,7 @@ void ProcessModel::getThreadLocation( TThreadOrder globalThread,
                                       TTaskOrder& inTask,
                                       TThreadOrder& inThread ) const
 {
+  //////////////////////////////////////
   inAppl = threads[ globalThread ].appl;
   inTask = threads[ globalThread ].task;
   inThread = threads[ globalThread ].thread;
@@ -181,7 +184,8 @@ ProcessModel::ProcessModel( istringstream& headerInfo, Trace *whichTrace )
       {
         if( globalThreads < std::numeric_limits<TThreadOrder>::max() )
         {
-          applications[ countAppl ].tasks[ countTask ].threads.push_back( ProcessModelThread( globalThreads, numberNode - 1 ) );
+          applications[ countAppl ].tasks[ countTask ].threads.push_back( 
+              ProcessModelThread( globalThreads, numberNode - 1 ) );
           threads.push_back( ThreadLocation() );
           threads[ globalThreads ].appl = countAppl;
           threads[ globalThreads ].task = countTask;
@@ -196,7 +200,6 @@ ProcessModel::ProcessModel( istringstream& headerInfo, Trace *whichTrace )
         }
       }
       // End inserting threads
-
     }
     // End inserting tasks
 
@@ -209,6 +212,97 @@ ProcessModel::ProcessModel( istringstream& headerInfo, Trace *whichTrace )
   ready = true;
 }
 
+ProcessModel::ProcessModel( Trace *whichTrace, const std::string& fileName)
+{                                                              // headerInfo
+  fstream file( fileName, ios::in );
+  TApplOrder numberApplications = 0;
+  TTaskOrder numberTasks = 0;
+  TThreadOrder numberThreads = 0;
+
+  TTaskOrder globalTasks = 0;
+  TThreadOrder globalThreads = 0;
+  ready = false;
+
+  string attTuple, stringNumberApplications;
+  while ( std::getline( file, attTuple, '\t' ) )
+  {
+    std::vector< std::string > ATT; // { App, Task, Thread }
+    boost::split( ATT, attTuple, boost::is_any_of("."), boost::token_compress_on );
+
+    // Insert application
+    string stringNumberAppl = ATT[ 0 ];
+    TApplOrder countAppl;
+    istringstream sstreamNumberAppl( ATT[ 0 ] );
+    if ( !( sstreamNumberAppl >> countAppl ) || countAppl == 0 )
+    {
+      throw TraceHeaderException( TraceHeaderException::invalidApplNumber,
+                                  ATT[ 0 ].c_str() );
+    }
+
+    if ( countAppl > numberApplications )
+    {       
+      applications.push_back( ProcessModelAppl( countAppl ) );
+      numberApplications = countAppl;
+      numberTasks = 0;
+      numberThreads = 0;
+    }
+
+
+    // Insert task
+    string stringNumberTasks = ATT[ 1 ];
+    TTaskOrder countTask;
+    istringstream sstreamNumberTasks( stringNumberTasks );
+
+    if ( !( sstreamNumberTasks >> countTask ) || countTask == 0 )
+    {
+      throw TraceHeaderException( TraceHeaderException::invalidTaskNumber,
+                                  stringNumberTasks.c_str() );
+    }
+
+    if ( countTask > numberTasks && globalTasks < std::numeric_limits<TThreadOrder>::max() )
+    {      
+      applications[ countAppl - 1 ].tasks.push_back( ProcessModelTask( globalTasks ) );
+      numberTasks = countTask;
+      numberThreads = 0;
+
+      tasks.push_back( TaskLocation() );
+      tasks[ globalTasks ].appl = countAppl;
+      tasks[ globalTasks ].task = countTask;
+      ++globalTasks;
+    }
+
+
+    // Insert thread
+    string stringNumberThreads = ATT[ 2 ];
+    TThreadOrder countThread;
+    istringstream sstreamNumberThreads( stringNumberThreads );
+    if ( !( sstreamNumberThreads >> countThread ) || countThread == 0 )
+    {
+      throw TraceHeaderException( TraceHeaderException::invalidThreadNumber,
+                                  stringNumberThreads.c_str() );
+    }
+
+    if ( countThread > numberThreads && globalThreads < std::numeric_limits<TThreadOrder>::max() )
+    {        
+      applications[ countAppl - 1 ].tasks[ countTask - 1 ].threads.push_back( 
+          ProcessModelThread( globalThreads, 0 ) );
+      threads.push_back( ThreadLocation() );
+      threads[ globalThreads ].appl = countAppl;
+      threads[ globalThreads ].task = countTask;
+      threads[ globalThreads ].thread = countThread;
+      numberThreads = countThread;
+
+      map<TNodeOrder, vector<TThreadOrder> >::iterator nodeIt = threadsPerNode.find( 0 );
+      if( nodeIt == threadsPerNode.end() )
+        threadsPerNode[ 0 ] = vector<TThreadOrder>();
+      threadsPerNode[ 0 ].push_back( globalThreads );
+
+      ++globalThreads;
+    }    
+    std::getline( file, attTuple, '\n' ); //get next line
+  }
+  ready = true;
+}
 
 void ProcessModel::dumpToFile( fstream& file, bool existResourceInfo ) const
 {
@@ -314,12 +408,12 @@ bool ProcessModel::isValidAppl( TApplOrder whichAppl ) const
   return whichAppl < applications.size();
 }
 
-void ProcessModel::addApplication()
+void ProcessModel::addApplication(  )
 {
   applications.push_back( ProcessModelAppl( applications.size() ) );
 }
 
-void ProcessModel::addTask( TApplOrder whichAppl )
+void ProcessModel::addTask(  TApplOrder whichAppl )
 {
   if( whichAppl > applications.size() )
   {
@@ -336,7 +430,7 @@ void ProcessModel::addTask( TApplOrder whichAppl )
 
 }
 
-void ProcessModel::addThread( TApplOrder whichAppl, TTaskOrder whichTask,
+void ProcessModel::addThread(  TApplOrder whichAppl, TTaskOrder whichTask,
                               TNodeOrder execNode )
 {
   if( whichAppl > applications.size() )
