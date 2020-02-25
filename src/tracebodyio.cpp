@@ -42,9 +42,7 @@ TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file )
   std::string fileType = file->getFilename().substr( lastDot + 1 );
   if ( fileType == "csv" )
   {
-    std::cout << "Creating CSV Trace Body...";
     ret = new TraceBodyIO_csv();
-    std::cout << " CREATED\n";
   }
 
   else

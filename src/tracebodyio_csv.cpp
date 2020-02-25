@@ -183,19 +183,17 @@ inline void TraceBodyIO_csv::readState( const string& line, MemoryBlocks& record
   TTaskOrder task;
   TThreadOrder thread;
   TRecordTime time;
-  TRecordTime begintime; //To Do
+  TRecordTime begintime;
   TRecordTime endtime;
   TState state;
 
   strLine.clear();
   strLine.str( line );
 
-  // NOT Discarding record type
-  //std::getline( strLine, tmpstring, '\t' );
   // Read the common info
   if ( !readCommon( strLine, CPU, appl, task, thread, begintime, time, state ) )
   {
-    cerr << "Error reading state record." << endl;
+    cerr << "Error reading state record (error in Common)." << endl;
     cerr << line << endl;
     return;
   }
