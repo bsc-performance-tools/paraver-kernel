@@ -79,6 +79,7 @@ class TraceBodyIO_csv : public TraceBodyIO
     void readState( const std::string& line, MemoryBlocks& records,
                     hash_set<TState>& states ) const;
     void readEvent( const std::string& line, MemoryBlocks& records,
+                    hash_set<TState>& states, 
                     hash_set<TEventType>& events ) const;
     void readComm( const std::string& line, MemoryBlocks& records ) const;
     void readGlobalComm( const std::string& line, MemoryBlocks& records ) const;

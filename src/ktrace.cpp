@@ -610,13 +610,19 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   string fileType = whichFile.substr( whichFile.find_last_of( '.' ) + 1 );
   if ( fileType == "csv" )
   {
-    traceTimeUnit = NS;     
-
-    traceProcessModel = ProcessModel( this, whichFile );
+    // Saved CSV traces are in nanoseconds.
+    traceTimeUnit = NS;
+    traceEndTime = 0;
+    traceProcessModel = ProcessModel( this, whichFile, traceEndTime );
     traceResourceModel = ResourceModel( );
 
     body->setProcessModel( &traceProcessModel );
     body->setResourceModel( &traceResourceModel );
+
+    if ( !file->canseekend() && progress != NULL )
+    {
+      progress->setEndLimit( traceEndTime );
+    }
   }
   else
   {
@@ -652,8 +658,6 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
         traceTimeUnit = MS;
       else //if ( strTimeUnit == "_us" )
         traceTimeUnit = US;
-      //else
-      //  traceTimeUnit = US;
 
       istringstream stringEndTime( tmpstr.substr( 0, pos ) );
       if ( !( stringEndTime >> traceEndTime ) )
@@ -664,10 +668,9 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
    //   else cout << traceEndTime << endl;
     }
 
-    if ( !file->canseekend() )
+    if ( !file->canseekend() && progress != NULL )
     {
-      if ( progress != NULL )
-        progress->setEndLimit( traceEndTime );
+      progress->setEndLimit( traceEndTime );
     }
 
     traceResourceModel = ResourceModel( header );

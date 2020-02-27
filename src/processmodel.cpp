@@ -210,8 +210,9 @@ ProcessModel::ProcessModel( istringstream& headerInfo, Trace *whichTrace )
   ready = true;
 }
 
-ProcessModel::ProcessModel( Trace *whichTrace, const std::string& fileName)
-{                                                              // headerInfo
+ProcessModel::ProcessModel( Trace *whichTrace, const std::string& fileName, 
+                            TTime &traceEndTime)               // headerInfo
+{
   fstream file( fileName, ios::in );
   TApplOrder numberApplications = 0;
   TTaskOrder numberTasks = 0;
@@ -298,6 +299,29 @@ ProcessModel::ProcessModel( Trace *whichTrace, const std::string& fileName)
     //std::cout << " -> " << applications.size() << "/" 
     //                   << applications[ numberApplications ].tasks.size() << "/" 
     //                   << applications[ numberApplications ].tasks[ numberTasks ].threads.size() << "\n";
+
+    std::getline( file, attText, '.' ); //get begintime
+    TTime beginTime;
+    istringstream sstreamBeginTime( attText );
+    if ( !( sstreamBeginTime >> beginTime ) )
+    {
+      throw TraceHeaderException( TraceHeaderException::invalidTime,
+                                  attText.c_str() );
+    }
+
+    std::getline( file, attText, '\t' );
+    std::getline( file, attText, '.' ); //get duration
+    TTime duration;
+    istringstream sstreamDuration( attText );
+    if ( !( sstreamDuration >> duration ) )
+    {
+      throw TraceHeaderException( TraceHeaderException::invalidTime,
+                                  attText.c_str() );
+    }
+    if ( beginTime + duration > traceEndTime ) 
+    {
+      traceEndTime = beginTime + duration;
+    }
 
     std::getline( file, attText, '\n' ); //get next line
   }

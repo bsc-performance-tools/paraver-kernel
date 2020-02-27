@@ -82,7 +82,8 @@ void TraceBodyIO_csv::read( TraceStream *file, MemoryBlocks& records,
   file->getline( line );
   if ( line.size() == 0 )
     return;
-  readState( line, records, states );
+
+  readEvent( line, records, states, events );  
 }
 
 void TraceBodyIO_csv::bufferWrite( fstream& whichStream, bool writeReady, bool lineClear ) const
@@ -178,6 +179,14 @@ inline void TraceBodyIO_csv::readTraceInfo(  const std::string& line, MetadataMa
 inline void TraceBodyIO_csv::readState( const string& line, MemoryBlocks& records,
                                        hash_set<TState>& states ) const
 {
+  std::cout << "*** Entering non-implemented read: State ***\n" ;
+}
+
+
+inline void TraceBodyIO_csv::readEvent( const string& line, MemoryBlocks& records,
+                                       hash_set<TEventType>& events,
+                                       hash_set<TState>& states ) const
+{ 
   TCPUOrder CPU = 0;
   TApplOrder appl;
   TTaskOrder task;
@@ -199,31 +208,46 @@ inline void TraceBodyIO_csv::readState( const string& line, MemoryBlocks& record
   }
   endtime = begintime + time;
 
+  TEventType eventtype = state != 0;
+  TEventValue eventvalue = state;
 
-  //if ( time == endtime ) return;
   records.newRecord();
-  //records.setType( STATE + BEGIN );
-  records.setTime( time );
+  records.setType( EVENT );
+  records.setTime( begintime );
   records.setCPU( CPU );
+  //records.setState( state );
   records.setThread( appl - 1, task - 1, thread - 1 );
-  records.setState( state );
-  records.setStateEndTime( endtime );
+  records.setEventType( eventtype );
+  records.setEventValue( eventvalue );
 
-  states.insert( state );
+  if ( begintime < endtime )
+  {
+    records.newRecord();
+    records.setType( EVENT + END );
+    records.setTime( endtime );
+    records.setCPU( CPU );
+    records.setThread( appl - 1, task - 1, thread - 1 );
+    records.setEventType( eventtype );
+    state = 0;
+    eventvalue = 0;
+    records.setState( state );
+    records.setEventValue( eventvalue );
+  }
+  events.insert( eventtype );
+  //states.insert( state );
 }
 
 
-inline void TraceBodyIO_csv::readEvent( const string& line, MemoryBlocks& records,
-                                       hash_set<TEventType>& events ) const
-{ }
-
-
 inline void TraceBodyIO_csv::readComm( const string& line, MemoryBlocks& records ) const
-{ }
+{ 
+  std::cout << "*** Entering non-implemented read: Comms ***\n" ;
+}
 
 
 inline void TraceBodyIO_csv::readGlobalComm( const string& line, MemoryBlocks& records ) const
-{ }
+{ 
+  std::cout << "*** Entering non-implemented read: Global Comms ***\n" ;
+}
 
 
 inline bool TraceBodyIO_csv::readCommon( istringstream& line,

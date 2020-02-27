@@ -45,6 +45,7 @@ PlainTrace::PlainTrace( const Trace *whichTrace,
     traceIndex.push_back( Index<pair<PRV_UINT32, PRV_UINT32> >( 1000 ) );
 }
 
+
 void PlainTrace::insert( MemoryBlocks *blocks )
 {
   myBlocks = dynamic_cast<PlainBlocks *>( blocks );
@@ -61,6 +62,7 @@ void PlainTrace::insert( MemoryBlocks *blocks )
   blocks->resetCountInserted();
 }
 
+
 TTime PlainTrace::finish( TTime headerTime, Trace *whichTrace )
 {
   return headerTime;
@@ -72,7 +74,7 @@ MemoryTrace::iterator* PlainTrace::empty() const
   dummyBlocks->newRecord();
   dummyBlocks->setType( EMPTYREC );
 
-  return new PlainTrace::iterator( dummyBlocks );
+  return new PlainTrace::iterator( dummyBlocks, myTrace );
 }
 
 MemoryTrace::iterator* PlainTrace::begin() const
@@ -87,14 +89,14 @@ MemoryTrace::iterator* PlainTrace::end() const
 
 MemoryTrace::iterator* PlainTrace::threadBegin( TThreadOrder whichThread ) const
 {
-  return new PlainTrace::ThreadIterator( myBlocks, 0, 0, whichThread );
+  return new PlainTrace::ThreadIterator( myBlocks, myTrace, 0, 0, whichThread );
 }
 
 MemoryTrace::iterator* PlainTrace::threadEnd( TThreadOrder whichThread ) const
 {
   PRV_UINT32 block = myBlocks->blocks[ whichThread ].size() - 1;
   PRV_UINT32 pos = myBlocks->currentRecord[ whichThread ];
-  return new PlainTrace::ThreadIterator( myBlocks, block, pos, whichThread );
+  return new PlainTrace::ThreadIterator( myBlocks, myTrace, block, pos, whichThread );
 }
 
 MemoryTrace::iterator* PlainTrace::CPUBegin( TCPUOrder whichCPU ) const
@@ -113,7 +115,7 @@ MemoryTrace::iterator* PlainTrace::CPUBegin( TCPUOrder whichCPU ) const
   block.insert( block.begin(), numThreads, 0 );
   pos.insert( pos.begin(), numThreads, 0 );
 
-  return new PlainTrace::CPUIterator( myBlocks, block, pos, numThreads, threads, whichCPU );
+  return new PlainTrace::CPUIterator( myBlocks, myTrace, block, pos, numThreads, threads, whichCPU );
 }
 
 MemoryTrace::iterator* PlainTrace::CPUEnd( TCPUOrder whichCPU ) const
@@ -135,7 +137,7 @@ MemoryTrace::iterator* PlainTrace::CPUEnd( TCPUOrder whichCPU ) const
     pos.push_back( myBlocks->currentRecord[ iThread ] );
   }
 
-  return new PlainTrace::CPUIterator( myBlocks, block, pos, numThreads, threads, whichCPU );
+  return new PlainTrace::CPUIterator( myBlocks, myTrace, block, pos, numThreads, threads, whichCPU );
 }
 
 void PlainTrace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
@@ -156,7 +158,7 @@ void PlainTrace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIte
     ThreadIterator *tmpIt;
     if ( traceIndex[ ii ].findRecord( whichTime, blockPos ) )
     {
-      tmpIt = new ThreadIterator( myBlocks, blockPos.first, blockPos.second, ii );
+      tmpIt = new ThreadIterator( myBlocks, myTrace, blockPos.first, blockPos.second, ii );
       while ( !tmpIt->isNull() && tmpIt->getTime() > whichTime )
         --( *tmpIt );
       if ( tmpIt->isNull() )
@@ -211,7 +213,7 @@ void PlainTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
       }
     }
 
-    CPUIterator *tmpIt = new PlainTrace::CPUIterator( myBlocks, block, pos, numThreads, threads, ii );
+    CPUIterator *tmpIt = new PlainTrace::CPUIterator( myBlocks, myTrace, block, pos, numThreads, threads, ii );
 
     while ( !tmpIt->isNull() && tmpIt->getTime() > whichTime )
       --( *tmpIt );
@@ -224,8 +226,8 @@ void PlainTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
   }
 }
 
-PlainTrace::iterator::iterator( PlainBlocks *whichBlocks )
-    : blocks( whichBlocks )
+PlainTrace::iterator::iterator( PlainBlocks *whichBlocks, const Trace *whichTrace )
+    : blocks( whichBlocks ), MemoryTrace::iterator( whichTrace )
 {
 }
 
@@ -274,7 +276,10 @@ inline TEventType   PlainTrace::iterator::getEventType() const
 
 inline TSemanticValue PlainTrace::iterator::getEventValue() const
 {
-  double tmpPrecision = myTrace->getEventTypePrecision( ( ( TRecord * )record )->URecordInfo.eventRecord.type );
+  TEventType myType = ( ( TRecord * )record )->URecordInfo.eventRecord.type;
+  //if ( myType == 1 || myType == 0 ) return ( ( TRecord * )record )->URecordInfo.eventRecord.value;
+
+  double tmpPrecision = myTrace->getEventTypePrecision( myType );
   if( tmpPrecision != 0.0 )
     return ( ( TRecord * )record )->URecordInfo.eventRecord.value * tmpPrecision;
   return ( ( TRecord * )record )->URecordInfo.eventRecord.value;
@@ -320,9 +325,9 @@ inline void  PlainTrace::iterator::setStateEndTime( const TRecordTime whichEndTi
  * MemoryTrace Inherited ThreadIterator.
  **************************************************************************/
 
-PlainTrace::ThreadIterator::ThreadIterator( PlainBlocks *whichBlocks, PRV_UINT32 whichBlock, PRV_UINT32 whichPos,
+PlainTrace::ThreadIterator::ThreadIterator( PlainBlocks *whichBlocks, const Trace *whichTrace, PRV_UINT32 whichBlock, PRV_UINT32 whichPos,
     TThreadOrder whichThread )
-    : PlainTrace::iterator( whichBlocks ), thread( whichThread ), block( whichBlock ), pos( whichPos )
+    : PlainTrace::iterator(  whichBlocks, whichTrace  ), thread( whichThread ), block( whichBlock ), pos( whichPos )
 {
   record = &blocks->blocks[ thread ][ block ][ pos ];
   lastBlock = blocks->blocks[ thread ].size() - 1;
@@ -403,9 +408,9 @@ inline PlainTrace::ThreadIterator *PlainTrace::ThreadIterator::clone() const
  * MemoryTrace Inherited CPUIterator.
  **************************************************************************/
 
-PlainTrace::CPUIterator::CPUIterator( PlainBlocks *whichBlocks, vector<PRV_UINT32>& whichBlock, vector<PRV_UINT32>& whichPos,
+PlainTrace::CPUIterator::CPUIterator( PlainBlocks *whichBlocks, const Trace *whichTrace, vector<PRV_UINT32>& whichBlock, vector<PRV_UINT32>& whichPos,
                                       TThreadOrder whichNumThreads, vector<TThreadOrder>& whichThreads, TCPUOrder whichCPU )
-    : PlainTrace::iterator( whichBlocks ), cpu( whichCPU ), numThreads( whichNumThreads ),
+    : PlainTrace::iterator( whichBlocks, whichTrace ), cpu( whichCPU ), numThreads( whichNumThreads ),
     threads( whichThreads ), block( whichBlock ), pos( whichPos )
 {
   for ( TThreadOrder iThread = 0; iThread < numThreads; ++iThread )

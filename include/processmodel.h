@@ -44,7 +44,8 @@ class ProcessModel
     }
 
     ProcessModel( std::istringstream& headerInfo, Trace *whichTrace );
-    ProcessModel( Trace *whichTrace, const std::string& fileName ); // Used for CSVs
+    ProcessModel( Trace *whichTrace, const std::string& fileName, 
+                  TTime &traceEndTime ); // Used for CSVs
 
     ~ProcessModel()
     {}
