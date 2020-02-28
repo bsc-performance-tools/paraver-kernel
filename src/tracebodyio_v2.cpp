@@ -28,6 +28,12 @@
 
 using namespace std;
 
+
+
+TraceBodyIO_v2::TraceBodyIO_v2( const Trace* trace )
+: whichTrace( trace )
+{}
+
 bool TraceBodyIO_v2::ordered() const
 {
   return true;

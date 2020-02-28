@@ -604,7 +604,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
       progress->setEndLimit( file->tellg() );
     file->seekbegin();
   }
-  body = TraceBodyIO::createTraceBody( file );
+  body = TraceBodyIO::createTraceBody( file, this );
 
 // Reading the header
   string fileType = whichFile.substr( whichFile.find_last_of( '.' ) + 1 );
@@ -623,6 +623,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     {
       progress->setEndLimit( traceEndTime );
     }
+    //setEventTypePrecision( _, 2 );  //algo asi
   }
   else
   {

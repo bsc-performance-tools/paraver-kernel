@@ -277,7 +277,6 @@ inline TEventType   PlainTrace::iterator::getEventType() const
 inline TSemanticValue PlainTrace::iterator::getEventValue() const
 {
   TEventType myType = ( ( TRecord * )record )->URecordInfo.eventRecord.type;
-  //if ( myType == 1 || myType == 0 ) return ( ( TRecord * )record )->URecordInfo.eventRecord.value;
 
   double tmpPrecision = myTrace->getEventTypePrecision( myType );
   if( tmpPrecision != 0.0 )

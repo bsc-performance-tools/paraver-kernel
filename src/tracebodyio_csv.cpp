@@ -70,6 +70,11 @@ bool prv_atoll( const char *p, T *result )
   return true;
 }
 
+TraceBodyIO_csv::TraceBodyIO_csv( const Trace* trace )
+: whichTrace( trace )
+{}
+
+
 bool TraceBodyIO_csv::ordered() const
 {
   return true;
@@ -83,7 +88,7 @@ void TraceBodyIO_csv::read( TraceStream *file, MemoryBlocks& records,
   if ( line.size() == 0 )
     return;
 
-  readEvent( line, records, states, events );  
+  readEvents( line, records, states );  
 }
 
 void TraceBodyIO_csv::bufferWrite( fstream& whichStream, bool writeReady, bool lineClear ) const
@@ -176,16 +181,9 @@ inline void TraceBodyIO_csv::readTraceInfo(  const std::string& line, MetadataMa
   // dummy set also to false if it is a comment
 }
 
-inline void TraceBodyIO_csv::readState( const string& line, MemoryBlocks& records,
-                                       hash_set<TState>& states ) const
-{
-  std::cout << "*** Entering non-implemented read: State ***\n" ;
-}
 
-
-inline void TraceBodyIO_csv::readEvent( const string& line, MemoryBlocks& records,
-                                       hash_set<TEventType>& events,
-                                       hash_set<TState>& states ) const
+inline void TraceBodyIO_csv::readEvents( const string& line, MemoryBlocks& records,
+                                       hash_set<TEventType>& events ) const
 { 
   TCPUOrder CPU = 0;
   TApplOrder appl;
@@ -194,13 +192,13 @@ inline void TraceBodyIO_csv::readEvent( const string& line, MemoryBlocks& record
   TRecordTime time;
   TRecordTime begintime;
   TRecordTime endtime;
-  TState state;
+  TEventValue eventvalue;
 
   strLine.clear();
   strLine.str( line );
 
   // Read the common info
-  if ( !readCommon( strLine, CPU, appl, task, thread, begintime, time, state ) )
+  if ( !readCommon( strLine, CPU, appl, task, thread, begintime, time, eventvalue ) )
   {
     cerr << "Error reading state record (error in Common)." << endl;
     cerr << line << endl;
@@ -208,45 +206,39 @@ inline void TraceBodyIO_csv::readEvent( const string& line, MemoryBlocks& record
   }
   endtime = begintime + time;
 
-  TEventType eventtype = state != 0;
-  TEventValue eventvalue = state;
+  TEventType eventtype = 1;
 
+
+
+  //Event
   records.newRecord();
   records.setType( EVENT );
   records.setTime( begintime );
   records.setCPU( CPU );
-  //records.setState( state );
   records.setThread( appl - 1, task - 1, thread - 1 );
   records.setEventType( eventtype );
   records.setEventValue( eventvalue );
+  events.insert( eventtype );
 
-  if ( begintime < endtime )
+  /*State
+  records.newRecord();
+  records.setType( STATE + BEGIN );
+  records.setTime( begintime );
+  records.setCPU( CPU );
+  records.setThread( appl - 1, task - 1, thread - 1 );
+  records.setState( state );
+  records.setStateEndTime( endtime );
+  if ( endtime != -1 )
   {
     records.newRecord();
-    records.setType( EVENT + END );
+    records.setType( STATE + END );
     records.setTime( endtime );
     records.setCPU( CPU );
     records.setThread( appl - 1, task - 1, thread - 1 );
-    records.setEventType( eventtype );
-    state = 0;
-    eventvalue = 0;
     records.setState( state );
-    records.setEventValue( eventvalue );
+    records.setStateEndTime( begintime );
   }
-  events.insert( eventtype );
-  //states.insert( state );
-}
-
-
-inline void TraceBodyIO_csv::readComm( const string& line, MemoryBlocks& records ) const
-{ 
-  std::cout << "*** Entering non-implemented read: Comms ***\n" ;
-}
-
-
-inline void TraceBodyIO_csv::readGlobalComm( const string& line, MemoryBlocks& records ) const
-{ 
-  std::cout << "*** Entering non-implemented read: Global Comms ***\n" ;
+  states.insert( state );*/
 }
 
 
@@ -257,7 +249,7 @@ inline bool TraceBodyIO_csv::readCommon( istringstream& line,
                                         TThreadOrder& thread,
                                         TRecordTime& begintime,
                                         TRecordTime& time,
-                                        TState& state ) const
+                                        TEventValue& eventvalue ) const
 { 
   std::getline( line, tmpstring, '.' ); 
 #ifdef USE_ATOLL
@@ -346,14 +338,14 @@ inline bool TraceBodyIO_csv::readCommon( istringstream& line,
   std::getline( line, tmpstring, '\t' );
   std::getline( line, tmpstring, '.' );
 #ifdef USE_ATOLL
-  state = atoll( tmpstring.c_str() );
+  eventvalue = atoll( tmpstring.c_str() );
 #else
   #ifdef USE_PRV_ATOLL
-  if( !prv_atoll<TState>( tmpstring.c_str(), &state ) )
+  if( !prv_atoll<TEventValue>( tmpstring.c_str(), &eventvalue ) )
   #else
   fieldStream.clear();
   fieldStream.str( tmpstring );
-  if ( !( fieldStream >> state ) )
+  if ( !( fieldStream >> eventvalue ) )
   #endif
   {
     return false;

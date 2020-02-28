@@ -33,7 +33,8 @@ TraceBodyIO::TraceBodyIO()
 TraceBodyIO::~TraceBodyIO()
 {}
 
-TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file )
+TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file, const Trace *myTrace  )
+//: whichTrace( trace )
 {
   TraceBodyIO *ret;
   string firstLine;
@@ -42,7 +43,7 @@ TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file )
   std::string fileType = file->getFilename().substr( lastDot + 1 );
   if ( fileType == "csv" )
   {
-    ret = new TraceBodyIO_csv();
+    ret = new TraceBodyIO_csv( myTrace );
   }
 
   else
@@ -51,15 +52,15 @@ TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file )
     file->getline( firstLine );
     if ( firstLine.compare( "new format" ) == 0 )
     {
-      ret = new TraceBodyIO_v2();
+      ret = new TraceBodyIO_v2( myTrace );
     }
     else
     {
-      ret = new TraceBodyIO_v1();
+      ret = new TraceBodyIO_v1( myTrace );
       file->seekbegin();
     }
 #else
-    ret = new TraceBodyIO_v1();
+    ret = new TraceBodyIO_v1( myTrace );
 #endif
   }
   return ret;
