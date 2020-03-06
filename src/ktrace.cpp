@@ -1022,7 +1022,13 @@ void KTrace::setPhysicalReceive( TCommID whichComm, TRecordTime whichTime )
 
 void KTrace::setEventTypePrecision( TEventType whichType, double whichPrecision )
 {
-  eventsPrecision[ whichType ] = whichPrecision;
+  /*
+  if ( eventsPrecision.find( whichType ) == eventsPrecision.end() ||
+     ( eventsPrecision.find( whichType ) == eventsPrecision.end() &&
+       whichPrecision > eventsPrecision[ whichType ] ) )
+    //eventsPrecision[ whichType ] = whichPrecision;
+  */
+    eventsPrecision.insert( { whichType, whichPrecision } ) ;
 }
 
 double KTrace::getEventTypePrecision( TEventType whichType ) const

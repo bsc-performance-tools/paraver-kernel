@@ -46,11 +46,11 @@ template <typename T>
 bool prv_atoll( const char *p, T *result )
 {
   register long long int tmp = 0;
-  bool neg = false;
+  long long int sign = 1;
 
   if( *p == '-' )
   {
-    neg = true;
+    sign = -1;
     ++p;
   }
   while( *p >= '0' && *p <= '9' )
@@ -62,15 +62,52 @@ bool prv_atoll( const char *p, T *result )
   if( *p != '\n' && *p != '\r' && *p != '\0' )
     return false;
 
-  if( neg )
-  {
-    tmp = -tmp;
-  }
-  *result = tmp;
+  *result = tmp * sign;
   return true;
 }
 
-TraceBodyIO_csv::TraceBodyIO_csv( const Trace* trace )
+template <typename T>
+bool prv_atoll( const char *p, T *result, double *decimals )
+{
+  register long long int tmp = 0;
+  double decs = 1.0;
+  long long int sign = 1;
+
+  if( *p == '-' )
+  {
+    sign = -1;
+    ++p;
+  }
+  bool dotFound = false;
+  while( ( '0' <= *p && *p <= '9' ) || *p == '.' )
+  {
+    if ( *p == '.' )
+    {
+      ++p;
+      break;
+    }
+    else
+    {
+      tmp = ( tmp * 10 ) + ( *p - '0' );
+      ++p;
+    }
+  }
+  while( '0' <= *p && *p <= '9' )
+  {
+    tmp = ( tmp * 10 ) + ( *p - '0' );
+    decs = decs / 10.0f;
+    ++p;
+  }
+
+  if( *p != '\n' && *p != '\r' && *p != '\0' )
+    return false;
+
+  *result = tmp * sign;
+  *decimals = decs;
+  return true;
+}
+
+TraceBodyIO_csv::TraceBodyIO_csv( Trace* trace )
 : whichTrace( trace )
 {}
 
@@ -193,22 +230,20 @@ inline void TraceBodyIO_csv::readEvents( const string& line, MemoryBlocks& recor
   TRecordTime begintime;
   TRecordTime endtime;
   TEventValue eventvalue;
+  double decimals = 1.05;
 
   strLine.clear();
   strLine.str( line );
-
   // Read the common info
-  if ( !readCommon( strLine, CPU, appl, task, thread, begintime, time, eventvalue ) )
+  if ( !readCommon( strLine, CPU, appl, task, thread, 
+                    begintime, time, eventvalue, decimals ) )
   {
     cerr << "Error reading state record (error in Common)." << endl;
     cerr << line << endl;
     return;
   }
   endtime = begintime + time;
-
   TEventType eventtype = 1;
-
-
 
   //Event
   records.newRecord();
@@ -220,25 +255,7 @@ inline void TraceBodyIO_csv::readEvents( const string& line, MemoryBlocks& recor
   records.setEventValue( eventvalue );
   events.insert( eventtype );
 
-  /*State
-  records.newRecord();
-  records.setType( STATE + BEGIN );
-  records.setTime( begintime );
-  records.setCPU( CPU );
-  records.setThread( appl - 1, task - 1, thread - 1 );
-  records.setState( state );
-  records.setStateEndTime( endtime );
-  if ( endtime != -1 )
-  {
-    records.newRecord();
-    records.setType( STATE + END );
-    records.setTime( endtime );
-    records.setCPU( CPU );
-    records.setThread( appl - 1, task - 1, thread - 1 );
-    records.setState( state );
-    records.setStateEndTime( begintime );
-  }
-  states.insert( state );*/
+  whichTrace->setEventTypePrecision( eventtype, decimals );
 }
 
 
@@ -249,7 +266,8 @@ inline bool TraceBodyIO_csv::readCommon( istringstream& line,
                                         TThreadOrder& thread,
                                         TRecordTime& begintime,
                                         TRecordTime& time,
-                                        TEventValue& eventvalue ) const
+                                        TEventValue& eventvalue,
+                                        double& decimals ) const
 { 
   std::getline( line, tmpstring, '.' ); 
 #ifdef USE_ATOLL
@@ -336,12 +354,12 @@ inline bool TraceBodyIO_csv::readCommon( istringstream& line,
 #endif
 
   std::getline( line, tmpstring, '\t' );
-  std::getline( line, tmpstring, '.' );
+  std::getline( line, tmpstring, '\n' );
 #ifdef USE_ATOLL
   eventvalue = atoll( tmpstring.c_str() );
 #else
   #ifdef USE_PRV_ATOLL
-  if( !prv_atoll<TEventValue>( tmpstring.c_str(), &eventvalue ) )
+  if( !prv_atoll<TEventValue>( tmpstring.c_str(), &eventvalue, &decimals ) )
   #else
   fieldStream.clear();
   fieldStream.str( tmpstring );
@@ -351,7 +369,6 @@ inline bool TraceBodyIO_csv::readCommon( istringstream& line,
     return false;
   }
 #endif
-
   return true;
 }
 

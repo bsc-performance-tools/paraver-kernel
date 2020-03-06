@@ -48,7 +48,7 @@ class TraceBodyIO_v2 : public TraceBodyIO
 #endif
 
     TraceBodyIO_v2() {}
-    TraceBodyIO_v2( const Trace* trace );
+    TraceBodyIO_v2( Trace* trace );
 
     bool ordered() const;
     void read( TraceStream *file, MemoryBlocks& records,
@@ -102,7 +102,7 @@ class TraceBodyIO_v2 : public TraceBodyIO
                       MemoryTrace::iterator *record,
                       PRV_INT32 numIter = 0 ) const;
 
-    const Trace* whichTrace;
+    Trace* whichTrace;
 
 };
 

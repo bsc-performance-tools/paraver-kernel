@@ -30,7 +30,7 @@ using namespace std;
 
 
 
-TraceBodyIO_v2::TraceBodyIO_v2( const Trace* trace )
+TraceBodyIO_v2::TraceBodyIO_v2( Trace* trace )
 : whichTrace( trace )
 {}
 

@@ -33,7 +33,7 @@ class TraceBodyIO_csv : public TraceBodyIO
 {
   public:
     TraceBodyIO_csv( ) {}
-    TraceBodyIO_csv( const Trace* trace );
+    TraceBodyIO_csv( Trace* trace );
 
     static const PRV_UINT8 CommentRecord = '#';
     static const PRV_UINT8 StateRecord = '1';
@@ -76,7 +76,7 @@ class TraceBodyIO_csv : public TraceBodyIO
     static std::string tmpstring;
     static std::string line;
     static std::ostringstream ostr;
-    const Trace* whichTrace;
+    Trace* whichTrace;
 
     void readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const;
 
@@ -89,7 +89,8 @@ class TraceBodyIO_csv : public TraceBodyIO
                      TThreadOrder& thread,
                      TRecordTime& begintime,
                      TRecordTime& time,
-                     TEventValue& eventtype ) const;
+                     TEventValue& eventtype,
+                     double& decimals ) const;
 
     void bufferWrite( std::fstream& whichStream, bool writeReady, bool lineClear = true  ) const;
 

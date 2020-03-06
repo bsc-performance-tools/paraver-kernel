@@ -213,11 +213,16 @@ string LocalKernel::getPCFFileLocation( const string& traceFile ) const
   string pcfFile;
 
   if( traceFile.length() > 3 )
-  {
+  { 
     if ( traceFile.substr( traceFile.length() - 3 ) == "prv" )
       pcfFile = traceFile.substr( 0, traceFile.length() - 3 );
     else if ( traceFile.substr( traceFile.length() - 6 ) == "prv.gz" )
       pcfFile = traceFile.substr( 0, traceFile.length() - 6 );
+    else if ( traceFile.substr( traceFile.length() - 3 ) == "csv" )
+    { //custom PCF
+      pcfFile = ParaverConfig::getInstance()->getGlobalSessionPath().append( "config_csv_trace." );
+    //#endif
+    }
   }
   else
     pcfFile = traceFile + ".";

@@ -33,7 +33,7 @@ class TraceBodyIO_v1 : public TraceBodyIO
 {
   public:
     TraceBodyIO_v1() {}
-    TraceBodyIO_v1( const Trace* trace );
+    TraceBodyIO_v1( Trace* trace );
 
     static const PRV_UINT8 CommentRecord = '#';
     static const PRV_UINT8 StateRecord = '1';
@@ -76,7 +76,7 @@ class TraceBodyIO_v1 : public TraceBodyIO
     static std::string tmpstring;
     static std::string line;
     static std::ostringstream ostr;
-    const Trace* whichTrace;
+    Trace* whichTrace;
 
     void readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const;
 

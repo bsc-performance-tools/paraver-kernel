@@ -70,7 +70,7 @@ bool prv_atoll( const char *p, T *result )
   return true;
 }
 
-TraceBodyIO_v1::TraceBodyIO_v1( const Trace* trace )
+TraceBodyIO_v1::TraceBodyIO_v1( Trace* trace )
 : whichTrace( trace )
 {}
 
