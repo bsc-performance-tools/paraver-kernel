@@ -16,14 +16,10 @@ PWD=`pwd`
 
 cd ${ANALYSIS_DIR}
 TRACE_EXTRAE=${APPL_NAME}.prv
-TRACE_OTF2PRV=`find . -name traces.msg_match.otf2.prv -exec ls -1 {} \;`
-echo "${TRACE_OTF2PRV}"
 
 echo
 echo "wxparaver ${TRACE_EXTRAE} &"
 #      wxparaver ${TRACE_EXTRAE} &
 
-echo "wxparaver ${TRACE_OTF2PRV} &"
-#      wxparaver ${TRACE_OTF2PRV} &
 
 cd ${PWD}
