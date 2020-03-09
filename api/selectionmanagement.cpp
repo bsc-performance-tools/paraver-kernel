@@ -235,7 +235,6 @@ void SelectionManagement< SelType, LevelType >::setSelected( std::vector< SelTyp
   // Prepare vectors for update
   selected[ level ].clear();
   selectedSet[ level ] = selection;
-  //std::cout << "SIZE mid =" << selectedSet[ level ].size() << "==" << selection.size() << std::endl;
 
   typename std::vector<SelType>::iterator it;
 

@@ -227,8 +227,6 @@ ProcessModel::ProcessModel( Trace *whichTrace, const std::string& fileName,
   {
     std::vector< std::string > ATT; // { App, Task, Thread }
     boost::split( ATT, attText, boost::is_any_of("."), boost::token_compress_on );
-
-    //std::cout << "\t[" << attText << "]\t";
     
     // Insert application
     string stringNumberAppl = ATT[ 0 ];
@@ -295,11 +293,6 @@ ProcessModel::ProcessModel( Trace *whichTrace, const std::string& fileName,
       threadsPerNode[ 0 ].push_back( globalThreads );
       ++globalThreads;
     }
-    //std::cout << "-> " << numberApplications << "/" << numberTasks << "/" << numberThreads << "\n";
-    //std::cout << " -> " << applications.size() << "/" 
-    //                   << applications[ numberApplications ].tasks.size() << "/" 
-    //                   << applications[ numberApplications ].tasks[ numberTasks ].threads.size() << "\n";
-
     std::getline( file, attText, '.' ); //get begintime
     TTime beginTime;
     istringstream sstreamBeginTime( attText );
