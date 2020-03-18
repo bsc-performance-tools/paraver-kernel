@@ -104,6 +104,8 @@ class ParaverConfig
     void setGlobalSessionPath( std::string whichSessionPath );
     void setGlobalSessionSaveTime( PRV_UINT16 whichSessionSaveTime );
     void setGlobalPrevSessionLoad( bool isPrevSessionLoaded );
+    void setGlobalHelpContentsUsesBrowser( bool isHelpContentsUsesBrowser );
+    void setGlobalHelpContentsQuestionAnswered( bool isHelpContentsQuestionAnswered );
 
     std::string getGlobalTracesPath() const;
     std::string getGlobalCFGsPath() const;
@@ -119,6 +121,8 @@ class ParaverConfig
     std::string getGlobalSessionPath() const;
     PRV_UINT16 getGlobalSessionSaveTime() const;
     bool getGlobalPrevSessionLoad() const;
+    bool getGlobalHelpContentsUsesBrowser() const;
+    bool getGlobalHelpContentsQuestionAnswered() const;
 
     // TIMELINES XML SECTION
     void setTimelineDefaultName( std::string whichDefaultName );
@@ -357,6 +361,9 @@ class ParaverConfig
         }
         if( version >= 6 )
           ar & boost::serialization::make_nvp( "prev_session_load", prevSessionLoad );
+        //if( version >= 7 )
+          ar & boost::serialization::make_nvp( "help_contents_browser", helpContentsUsesBrowser );
+          ar & boost::serialization::make_nvp( "help_contents_question", helpContentsQuestionAnswered );
       }
 
       std::string tracesPath; // also for paraload.sig!
@@ -372,6 +379,8 @@ class ParaverConfig
       std::string sessionPath;
       PRV_UINT16 sessionSaveTime;
       bool prevSessionLoad;
+      bool helpContentsUsesBrowser;
+      bool helpContentsQuestionAnswered;
 
     } xmlGlobal;
 
