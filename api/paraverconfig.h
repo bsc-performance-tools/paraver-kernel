@@ -361,7 +361,7 @@ class ParaverConfig
         }
         if( version >= 6 )
           ar & boost::serialization::make_nvp( "prev_session_load", prevSessionLoad );
-        //if( version >= 7 )
+        if( version >= 7 )
           ar & boost::serialization::make_nvp( "help_contents_browser", helpContentsUsesBrowser );
           ar & boost::serialization::make_nvp( "help_contents_question", helpContentsQuestionAnswered );
       }
@@ -731,7 +731,7 @@ class ParaverConfig
 
 // Second version: introducing some structure
 BOOST_CLASS_VERSION( ParaverConfig, 1)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 6)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 7)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 3)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 6)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 1)
