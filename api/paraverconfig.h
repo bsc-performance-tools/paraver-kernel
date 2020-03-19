@@ -362,8 +362,10 @@ class ParaverConfig
         if( version >= 6 )
           ar & boost::serialization::make_nvp( "prev_session_load", prevSessionLoad );
         if( version >= 7 )
+        {
           ar & boost::serialization::make_nvp( "help_contents_browser", helpContentsUsesBrowser );
           ar & boost::serialization::make_nvp( "help_contents_question", helpContentsQuestionAnswered );
+        }
       }
 
       std::string tracesPath; // also for paraload.sig!
