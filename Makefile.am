@@ -9,9 +9,6 @@ SUBDIRS = \
 bin_PROGRAMS = paramedir.bin
 
 
-if WANT_OTF2PRV
-  bin_PROGRAMS += otf2prv.bin
-endif
 
 
 paramedir_bin_SOURCES = \
@@ -21,28 +18,6 @@ paramedir_bin_LDADD = \
 	-lz \
 	api/libparaver-api.la \
 	src/libparaver-kernel.la 
-
-
-if WANT_OTF2PRV
-
-otf2prv_bin_SOURCES = \
-	api/otf2prv.cpp
-
-otf2prv_bin_LDADD = \
-	api/libparaver-api.la \
-	src/libparaver-kernel.la
-
-	otf2prv_bin_CXXFLAGS = -I@OTF2_DIR@/include 
-otf2prv_bin_LDFLAGS = -L@OTF2_DIR@/lib -lotf2 -lscorep_utilities
-
-otf2prv.o: $(otf2prv_bin_SOURCES)
-	$(CXXCOMPILE) $(otf2prv_bin_CXXFLAGS) -c -o $@
-
-otf2prv.bin$(EXEEXT): $(otf2prv_bin_OBJECTS) $(otf2prv_bin_DEPENDENCIES) $(EXTRA_otf2prv_bin_DEPENDENCIES)
-	@rm -f otf2prv.bin$(EXEEXT)
-	$(CXXLINK) $(otf2prv_bin_OBJECTS)	$(otf2prv_bin_LDFLAGS) $(otf2prv_bin_LDADD) $(LIBS)
-
-endif
 
 
 install-data-hook:
