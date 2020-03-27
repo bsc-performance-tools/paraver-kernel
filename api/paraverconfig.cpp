@@ -165,6 +165,8 @@ ParaverConfig::ParaverConfig()
   xmlGlobal.sessionPath = strFile;
   xmlGlobal.sessionSaveTime = 1;
   xmlGlobal.prevSessionLoad = true;
+  xmlGlobal.helpContentsUsesBrowser = false;
+  xmlGlobal.helpContentsQuestionAnswered = false;
 
   xmlTimeline.defaultName = "New window # %N";
   xmlTimeline.nameFormat = "%W @ %T";
@@ -339,6 +341,16 @@ void ParaverConfig::setGlobalPrevSessionLoad( bool isPrevSessionLoaded )
   xmlGlobal.prevSessionLoad = isPrevSessionLoaded;
 }
 
+void ParaverConfig::setGlobalHelpContentsUsesBrowser( bool isHelpContentsUsesBrowser )
+{
+  xmlGlobal.helpContentsUsesBrowser = isHelpContentsUsesBrowser;
+}
+
+void ParaverConfig::setGlobalHelpContentsQuestionAnswered( bool isHelpContentsQuestionAnswered )
+{
+  xmlGlobal.helpContentsQuestionAnswered = isHelpContentsQuestionAnswered;
+}
+
 string ParaverConfig::getGlobalTracesPath() const
 {
   return xmlGlobal.tracesPath;
@@ -402,6 +414,16 @@ PRV_UINT16 ParaverConfig::getGlobalSessionSaveTime() const
 bool ParaverConfig::getGlobalPrevSessionLoad() const
 {
   return xmlGlobal.prevSessionLoad;
+}
+
+bool ParaverConfig::getGlobalHelpContentsUsesBrowser() const
+{
+  return xmlGlobal.helpContentsUsesBrowser;
+}
+
+bool ParaverConfig::getGlobalHelpContentsQuestionAnswered() const
+{
+  return xmlGlobal.helpContentsQuestionAnswered;
 }
 
 // TIMELINES XML SECTION

@@ -105,23 +105,6 @@
 					<Add directory="./" />
 				</Linker>
 			</Target>
-			<Target title="otf2prv">
-				<Option output="bin/otf2prv/paraver-kernel" prefix_auto="1" extension_auto="1" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-g" />
-					<Add directory="include" />
-					<Add directory="../common-files" />
-					<Add directory="../otf2/include" />
-				</Compiler>
-				<Linker>
-					<Add library="libotf2" />
-					<Add library="libscorep_utilities" />
-					<Add directory="../otf2/lib" />
-					<Add directory="./" />
-				</Linker>
-			</Target>
 			<Target title="ptools_common_files">
 				<Option output="ptools" prefix_auto="1" extension_auto="1" />
 				<Option type="3" />
@@ -155,12 +138,10 @@
 		</Unit>
 		<Unit filename="api/cfg.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/cfg.h">
 			<Option target="paramedir" />
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/cubecontainer.cpp">
 			<Option compile="0" />
@@ -172,11 +153,9 @@
 		</Unit>
 		<Unit filename="api/drawmode.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/drawmode.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/eventdrivencutter.cpp">
 			<Option target="api" />
@@ -186,12 +165,10 @@
 		</Unit>
 		<Unit filename="api/eventlabels.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/eventlabels.h">
 			<Option target="api" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/eventtranslator.cpp">
 			<Option target="api" />
@@ -201,25 +178,20 @@
 		</Unit>
 		<Unit filename="api/filter.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/filter.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/gnuplotoutput.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/gnuplotoutput.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/histogram.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/histogram.h">
 			<Option target="Debug" />
@@ -227,11 +199,9 @@
 			<Option target="Application test" />
 			<Option target="api" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/histogramtotals.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/histogramtotals.h">
 			<Option target="Debug" />
@@ -239,7 +209,6 @@
 			<Option target="Application test" />
 			<Option target="api" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/kernelconnection.h">
 			<Option target="Debug" />
@@ -247,46 +216,30 @@
 			<Option target="Application test" />
 			<Option target="api" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/labelconstructor.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/labelconstructor.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/loadedwindows.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/loadedwindows.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/localkernel.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/localkernel.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
-		</Unit>
-		<Unit filename="api/otf2prv.cpp">
-			<Option weight="90" />
-			<Option target="otf2prv" />
-		</Unit>
-		<Unit filename="api/otf2prv.h">
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/output.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/output.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/paramedir.cpp">
 			<Option weight="90" />
@@ -297,11 +250,9 @@
 		</Unit>
 		<Unit filename="api/paraverconfig.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/paraverconfig.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/paraverkernelexception.h">
 			<Option target="Debug" />
@@ -309,7 +260,6 @@
 			<Option target="Application test" />
 			<Option target="api" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/paraverkerneltypes.h">
 			<Option target="Debug" />
@@ -317,7 +267,6 @@
 			<Option target="Application test" />
 			<Option target="api" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/paraverlabels.h">
 			<Option target="Debug" />
@@ -325,36 +274,29 @@
 			<Option target="Application test" />
 			<Option target="api" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/paravertypes.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/previousfiles.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/previousfiles.h">
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/progresscontroller.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/progresscontroller.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="api" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/prvtypes.h">
 			<Option target="api" />
 		</Unit>
 		<Unit filename="api/recordlist.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/recordlist.h">
 			<Option target="Debug" />
@@ -362,49 +304,38 @@
 			<Option target="Application test" />
 			<Option target="api" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/rowlabels.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/rowlabels.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/selectionmanagement.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/selectionmanagement.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/selectionrowsutils.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/selectionrowsutils.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/semanticcolor.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/semanticcolor.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/statelabels.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/statelabels.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/symbolpicker.cpp">
 			<Option target="Debug" />
@@ -416,23 +347,18 @@
 		</Unit>
 		<Unit filename="api/syncwindows.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/syncwindows.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/textoutput.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/textoutput.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/trace.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/trace.h">
 			<Option target="Debug" />
@@ -440,15 +366,12 @@
 			<Option target="Application test" />
 			<Option target="api" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/tracecutter.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/tracecutter.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/traceeditactions.cpp">
 			<Option target="api" />
@@ -472,35 +395,27 @@
 		</Unit>
 		<Unit filename="api/tracefilter.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/tracefilter.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/traceoptions.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/traceoptions.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/traceshifter.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/tracesoftwarecounters.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/tracesoftwarecounters.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/window.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/window.h">
 			<Option target="Debug" />
@@ -508,7 +423,6 @@
 			<Option target="Application test" />
 			<Option target="api" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/workspace.cpp">
 			<Option target="api" />
@@ -518,71 +432,59 @@
 		</Unit>
 		<Unit filename="api/workspacemanager.cpp">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/workspacemanager.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/zoomhistory.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="api/zoomhistory.h">
 			<Option target="api" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/bplustree.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/bplustreeblocks.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/bplustreeexception.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/bplustreerecordleaf.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/bplustreetypes.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/cell.h">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/column.h">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/cube.h">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/cubebuffer.h">
 			<Option target="Debug" />
@@ -593,91 +495,78 @@
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/functionmanagement.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/histogramexception.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/histogramstatistic.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/index.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/interval.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/intervalcompose.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/intervalcontrolderived.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/intervalcpu.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/intervalderived.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/intervalhigh.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/intervalnotthread.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/intervalthread.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/keventdrivencutter.h">
 			<Option target="Debug" />
@@ -690,46 +579,39 @@
 		<Unit filename="include/kfilter.h">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/khistogram.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/khistogramtotals.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/kprogresscontroller.h">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/krecordlist.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/ktrace.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/ktracecutter.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/ktraceeditactions.h">
 			<Option target="Debug" />
@@ -749,283 +631,240 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/ktraceoptions.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/ktraceshifter.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/ktracesoftwarecounters.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/kwindow.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/kwindowexception.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/matrix.h">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/memoryblocks.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/memorytrace.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/noloadblocks.h">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/noloadexception.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/noloadtrace.h">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/plainblocks.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/plaintrace.h">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/plaintypes.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/processmodel.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/processmodelappl.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/processmodeltask.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/processmodelthread.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/resourcemodel.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/resourcemodelcpu.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/resourcemodelnode.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/semanticcompose.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/semanticcomposefunctions.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/semanticcpu.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/semanticcpufunctions.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/semanticderived.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/semanticderivedfunctions.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/semanticexception.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/semanticfunction.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/semantichigh.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/semanticinfo.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/semanticmanagement.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/semanticnotthread.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/semanticnotthreadfunctions.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/semanticthread.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/semanticthreadfunctions.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/statistic_2d.h">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/statisticmanagement.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/tracebodyio.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/tracebodyio_v1.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/tracebodyio_v2.h">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/traceeditblocks.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="testspeed" />
-			<Option target="otf2prv" />
 			<Option target="ptools_common_files" />
 		</Unit>
 		<Unit filename="include/traceheaderexception.h">
@@ -1033,7 +872,6 @@
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="include/traceshifter.h">
 			<Option target="api" />
@@ -1043,27 +881,22 @@
 			<Option target="Release" />
 			<Option target="Application test" />
 			<Option target="paramedir" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/bplustree.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/bplustreeblocks.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/bplustreeexception.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/bplustreerecordleaf.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/cell.cpp">
 			<Option compile="0" />
@@ -1071,7 +904,6 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/column.cpp">
 			<Option compile="0" />
@@ -1079,7 +911,6 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/cube.cpp">
 			<Option compile="0" />
@@ -1087,7 +918,6 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/cubebuffer.cpp">
 			<Option target="Debug" />
@@ -1096,7 +926,6 @@
 		<Unit filename="src/filtermanagement.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/functionmanagement.cpp">
 			<Option compile="0" />
@@ -1104,54 +933,44 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/histogramexception.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/histogramstatistic.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/index.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/intervalcompose.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/intervalcontrolderived.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/intervalcpu.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/intervalderived.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/intervalnotthread.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/intervalthread.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/keventdrivencutter.cpp">
 			<Option target="Debug" />
@@ -1164,37 +983,30 @@
 		<Unit filename="src/kfilter.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/khistogram.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/khistogramtotals.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/kprogresscontroller.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/krecordlist.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/ktrace.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/ktracecutter.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/ktraceeditactions.cpp">
 			<Option target="Debug" />
@@ -1211,32 +1023,26 @@
 		<Unit filename="src/ktracefilter.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/ktraceoptions.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/ktraceshifter.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/ktracesoftwarecounters.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/kwindow.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/kwindowexception.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/matrix.cpp">
 			<Option compile="0" />
@@ -1244,17 +1050,14 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/memorytrace.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/noloadblocks.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/noloadexception.cpp">
 			<Option target="Debug" />
@@ -1263,67 +1066,54 @@
 		<Unit filename="src/noloadtrace.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/paraverkernelexception.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/plainblocks.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/plaintrace.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/processmodel.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/resourcemodel.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/semanticcomposefunctions.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/semanticcpufunctions.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/semanticderivedfunctions.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/semanticexception.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/semanticmanagement.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/semanticnotthreadfunctions.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/semanticthreadfunctions.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/statistic_2d.cpp">
 			<Option compile="0" />
@@ -1331,48 +1121,39 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="Application test" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/statisticmanagement.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/tracebodyio.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/tracebodyio_v1.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/tracebodyio_v2.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/traceeditblocks.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="testspeed" />
-			<Option target="otf2prv" />
 			<Option target="ptools_common_files" />
 		</Unit>
 		<Unit filename="src/traceheaderexception.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="src/tracestream.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="test/testmain.cpp">
 			<Option target="Application test" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="utils/include/MPI_EventEncoding.h">
 			<Option target="api" />
@@ -1411,7 +1192,6 @@
 			<Option target="api" />
 			<Option target="paramedir" />
 			<Option target="testspeed" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="utils/pcfparser/ParaverTraceConfigGrammar.h">
 			<Option target="api" />
@@ -1423,7 +1203,6 @@
 			<Option target="api" />
 			<Option target="paramedir" />
 			<Option target="testspeed" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="utils/pcfparser/UIParaverTraceConfig.cpp">
 			<Option target="api" />
@@ -1438,7 +1217,6 @@
 			<Option target="api" />
 			<Option target="paramedir" />
 			<Option target="testspeed" />
-			<Option target="otf2prv" />
 		</Unit>
 		<Unit filename="utils/pcfparser/UIParaverTraceConfig_python.cpp">
 			<Option compile="0" />

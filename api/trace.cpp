@@ -136,7 +136,7 @@ TObjectOrder getNumLevelObjects( TWindowLevel whichLevel, Trace *myTrace )
 {
   TObjectOrder objectSize = 0;
 
-  if( whichLevel == WORKLOAD )
+  if( whichLevel == WORKLOAD || whichLevel == SYSTEM )
     objectSize = 1;
   else if( whichLevel == APPLICATION )
     objectSize = myTrace->totalApplications();
@@ -144,8 +144,6 @@ TObjectOrder getNumLevelObjects( TWindowLevel whichLevel, Trace *myTrace )
     objectSize = myTrace->totalTasks();
   else if( whichLevel == THREAD )
     objectSize = myTrace->totalThreads();
-  else if( whichLevel == SYSTEM )
-    objectSize = 1;
   else if( whichLevel == NODE )
     objectSize = myTrace->totalNodes();
   else if( whichLevel == CPU )

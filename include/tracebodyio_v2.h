@@ -47,6 +47,9 @@ class TraceBodyIO_v2 : public TraceBodyIO
     static const PRV_UINT8 RemotePhysicalRecvRecord = 'Z';
 #endif
 
+    TraceBodyIO_v2() {}
+    TraceBodyIO_v2( Trace* trace );
+
     bool ordered() const;
     void read( TraceStream *file, MemoryBlocks& records,
                hash_set<TState>& states, hash_set<TEventType>& events,
@@ -98,6 +101,8 @@ class TraceBodyIO_v2 : public TraceBodyIO
                       const KTrace& whichTrace,
                       MemoryTrace::iterator *record,
                       PRV_INT32 numIter = 0 ) const;
+
+    Trace* whichTrace;
 
 };
 

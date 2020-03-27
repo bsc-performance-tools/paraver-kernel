@@ -63,13 +63,14 @@ class TraceBodyIO
 
 //    virtual void close( std::fstream& whichStream, const KTrace& whichTrace ) = 0;
 
-    static TraceBodyIO *createTraceBody( TraceStream *file);
+    static TraceBodyIO *createTraceBody( TraceStream *file, Trace *trace );
     static TraceBodyIO *createTraceBody();
   protected:
     const ProcessModel* processModel;
     const ResourceModel* resourceModel;
 
   private:
+    Trace* whichTrace;
 
 };
 

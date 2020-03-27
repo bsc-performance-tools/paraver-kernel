@@ -137,7 +137,7 @@ KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc 
   if( end == NULL )
     end = ( (KTrace *)window->getTrace() )->end();
 
-  info.dataBeginTime = childIntervals[ 1 ]->getBegin()->getTime();
+  info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
   currentValue = function->execute( &info );
 
   return displayList;
@@ -178,7 +178,7 @@ KRecordList *IntervalDerived::calcPrev( KRecordList *displayList, bool initCalc 
                            window->getFactor( i ) );
   }
 
-  info.dataBeginTime = childIntervals[ 1 ]->getBegin()->getTime();
+  info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
   currentValue = function->execute( &info );
 
   return displayList;

@@ -54,6 +54,7 @@ PRV_UINT16 numComposesExtraComposesInWindow = 0;
 PRV_UINT16 numSemanticParamExtraComposesInWindow = 0;
 
 map<string, TagFunction *> CFGLoader::cfgTagFunctions;
+bool CFGLoader::firstMapLoaded = false;
 
 string currentWindowName;
 string CFGLoader::errorLine = "";
@@ -479,7 +480,11 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   if ( !cfgFile )
     return false;
 
-  loadMap();
+  if ( !firstMapLoaded ) 
+  {
+    loadMap();
+    firstMapLoaded = true;
+  }
   initDrawModeCodes();
 
   windows.push_back( NULL );
@@ -561,7 +566,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
   cfgFile.close();
 
-  unLoadMap();
+  //unLoadMap();
 
   if ( histograms[ histograms.size() -1 ] == NULL )
     histograms.pop_back();
@@ -605,7 +610,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   bool someWindowWithSelectedLevelEmpty = false;
   for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
   {
-    if ( !(*itWin)->hasLevelSomeSelectedObject( (*itWin)->getLevel() ) )
+    if ( !( *itWin )->hasLevelSomeSelectedObject( ( *itWin )->getLevel() ) )
     {
       someWindowWithSelectedLevelEmpty = true;
       break;
@@ -640,14 +645,14 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   {
     for ( vector<Window *>::iterator it = windows.begin(); it != windows.end(); ++it )
     {
-      (*it)->setCFG4DEnabled( true );
-      (*it)->setCFG4DMode( true );
+      ( *it )->setCFG4DEnabled( true );
+      ( *it )->setCFG4DMode( true );
     }
 
     for ( vector<Histogram *>::iterator it = histograms.begin(); it != histograms.end(); ++it )
     {
-      (*it)->setCFG4DEnabled( true );
-      (*it)->setCFG4DMode( true );
+      ( *it )->setCFG4DEnabled( true );
+      ( *it )->setCFG4DMode( true );
     }
   }
 

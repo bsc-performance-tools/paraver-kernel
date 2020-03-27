@@ -53,6 +53,7 @@ libparaver_kernel_la_SOURCES = \
     tracebodyio.cpp \
     tracebodyio_v1.cpp \
     tracebodyio_v2.cpp \
+    tracebodyio_csv.cpp \
     traceeditblocks.cpp \
     traceheaderexception.cpp\
     tracestream.cpp

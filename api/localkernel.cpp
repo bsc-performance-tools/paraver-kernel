@@ -213,7 +213,7 @@ string LocalKernel::getPCFFileLocation( const string& traceFile ) const
   string pcfFile;
 
   if( traceFile.length() > 3 )
-  {
+  { 
     if ( traceFile.substr( traceFile.length() - 3 ) == "prv" )
       pcfFile = traceFile.substr( 0, traceFile.length() - 3 );
     else if ( traceFile.substr( traceFile.length() - 6 ) == "prv.gz" )

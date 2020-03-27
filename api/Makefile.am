@@ -41,7 +41,7 @@ libparaver_api_la_SOURCES = \
                     selectionrowsutils.cpp \
                     semanticcolor.cpp \
                     statelabels.cpp \
-		    symbolpicker.cpp \
+                    symbolpicker.cpp \
                     syncwindows.cpp \
                     textoutput.cpp \
                     trace.cpp \
@@ -74,7 +74,6 @@ include_HEADERS = \
                   labelconstructor.h\
                   loadedwindows.h\
                   localkernel.h\
-                  otf2prv.h\
                   output.h\
                   paramedir.h\
                   paraverconfig.h\
@@ -92,7 +91,7 @@ include_HEADERS = \
                   selectionrowsutils.h \
                   semanticcolor.h\
                   statelabels.h\
-		  symbolpicker.h \
+                  symbolpicker.h \
                   syncwindows.h\
                   trace.h\
                   textoutput.h\
