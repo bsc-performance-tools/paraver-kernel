@@ -102,6 +102,7 @@ class ParaverConfig
     void setMainWindowWidth( unsigned int whichWidth );
     void setMainWindowHeight( unsigned int whichHeight );
     void setGlobalSessionPath( std::string whichSessionPath );
+    void setGlobalExternalTextEditor( std::string whichExternalTextEditor );
     void setGlobalSessionSaveTime( PRV_UINT16 whichSessionSaveTime );
     void setGlobalPrevSessionLoad( bool isPrevSessionLoaded );
     void setGlobalHelpContentsUsesBrowser( bool isHelpContentsUsesBrowser );
@@ -119,6 +120,7 @@ class ParaverConfig
     unsigned int getMainWindowWidth() const;
     unsigned int getMainWindowHeight() const;
     std::string getGlobalSessionPath() const;
+    std::string getGlobalExternalTextEditor() const;
     PRV_UINT16 getGlobalSessionSaveTime() const;
     bool getGlobalPrevSessionLoad() const;
     bool getGlobalHelpContentsUsesBrowser() const;
@@ -366,6 +368,11 @@ class ParaverConfig
           ar & boost::serialization::make_nvp( "help_contents_browser", helpContentsUsesBrowser );
           ar & boost::serialization::make_nvp( "help_contents_question", helpContentsQuestionAnswered );
         }
+        if( version >= 8 )
+        {
+          ar & boost::serialization::make_nvp( "text_editor_app", helpContentsUsesBrowser );
+          ar & boost::serialization::make_nvp( "help_contents_question", helpContentsQuestionAnswered );
+        }
       }
 
       std::string tracesPath; // also for paraload.sig!
@@ -379,6 +386,7 @@ class ParaverConfig
       unsigned int mainWindowWidth;
       unsigned int mainWindowHeight;
       std::string sessionPath;
+      std::string externalTextEditor;
       PRV_UINT16 sessionSaveTime;
       bool prevSessionLoad;
       bool helpContentsUsesBrowser;
