@@ -163,6 +163,7 @@ ParaverConfig::ParaverConfig()
   paraverConfigDir = strFile;
 
   xmlGlobal.sessionPath = strFile;
+  xmlGlobal.externalTextEditor = strFile;
   xmlGlobal.sessionSaveTime = 1;
   xmlGlobal.prevSessionLoad = true;
   xmlGlobal.helpContentsUsesBrowser = false;
@@ -351,6 +352,11 @@ void ParaverConfig::setGlobalHelpContentsQuestionAnswered( bool isHelpContentsQu
   xmlGlobal.helpContentsQuestionAnswered = isHelpContentsQuestionAnswered;
 }
 
+void ParaverConfig::setGlobalExternalTextEditor( std::string whichExternalTextEditor )
+{
+  xmlGlobal.externalTextEditor = whichExternalTextEditor;
+}
+
 string ParaverConfig::getGlobalTracesPath() const
 {
   return xmlGlobal.tracesPath;
@@ -404,6 +410,11 @@ unsigned int ParaverConfig::getMainWindowHeight() const
 string ParaverConfig::getGlobalSessionPath() const
 {
   return xmlGlobal.sessionPath;
+}
+
+string ParaverConfig::getGlobalExternalTextEditor() const
+{
+  return xmlGlobal.externalTextEditor;
 }
 
 PRV_UINT16 ParaverConfig::getGlobalSessionSaveTime() const
