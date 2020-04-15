@@ -213,7 +213,7 @@ ProcessModel::ProcessModel( istringstream& headerInfo, Trace *whichTrace )
 ProcessModel::ProcessModel( Trace *whichTrace, const std::string& fileName,
                             TTime &traceEndTime)               // headerInfo
 {
-  fstream file( fileName, fstream::in );
+  fstream file( fileName.c_str(), fstream::in );
   TApplOrder numberApplications = 0;
   TTaskOrder numberTasks = 0;
   TThreadOrder numberThreads = 0;
