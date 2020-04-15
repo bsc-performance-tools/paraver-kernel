@@ -137,7 +137,7 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile, Progres
       }
 
       if( textualSemantic )
-        outputFile << LabelConstructor::semanticLabel( whichWindow, whichWindow->getValue( i ), true, config->getTimelinePrecision() ) << endl;
+        outputFile << LabelConstructor::semanticLabel( whichWindow, whichWindow->getValue( i ), true, config->getTimelinePrecision(), false ) << endl;
       else
         outputFile << whichWindow->getValue( i ) << endl;
 
@@ -165,7 +165,7 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile, Progres
     }
 
     if( textualSemantic )
-      outputFile << LabelConstructor::semanticLabel( whichWindow, whichWindow->getValue( i ), true, config->getTimelinePrecision() ) << endl;
+      outputFile << LabelConstructor::semanticLabel( whichWindow, whichWindow->getValue( i ), true, config->getTimelinePrecision(), false ) << endl;
     else
       outputFile << whichWindow->getValue( i ) << endl;
 

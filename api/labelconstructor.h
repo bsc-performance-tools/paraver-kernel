@@ -64,7 +64,7 @@ class LabelConstructor
     static std::string timeLabel( ptime value, PRV_UINT32 precision );
 
     static std::string semanticLabel( const Window * whichWindow, TSemanticValue value,
-                                 bool text, PRV_UINT32 precision );
+                                 bool text, PRV_UINT32 precision, bool hexMode );
 
     static std::string eventLabel( Window *whichWindow,
                               TEventType whichType,
