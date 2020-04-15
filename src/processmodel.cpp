@@ -182,7 +182,7 @@ ProcessModel::ProcessModel( istringstream& headerInfo, Trace *whichTrace )
       {
         if( globalThreads < std::numeric_limits<TThreadOrder>::max() )
         {
-          applications[ countAppl ].tasks[ countTask ].threads.push_back( 
+          applications[ countAppl ].tasks[ countTask ].threads.push_back(
               ProcessModelThread( globalThreads, numberNode - 1 ) );
           threads.push_back( ThreadLocation() );
           threads[ globalThreads ].appl = countAppl;
@@ -210,10 +210,10 @@ ProcessModel::ProcessModel( istringstream& headerInfo, Trace *whichTrace )
   ready = true;
 }
 
-ProcessModel::ProcessModel( Trace *whichTrace, const std::string& fileName, 
+ProcessModel::ProcessModel( Trace *whichTrace, const std::string& fileName,
                             TTime &traceEndTime)               // headerInfo
 {
-  fstream file( fileName, ios::in );
+  fstream file( fileName, fstream::in );
   TApplOrder numberApplications = 0;
   TTaskOrder numberTasks = 0;
   TThreadOrder numberThreads = 0;
@@ -227,7 +227,7 @@ ProcessModel::ProcessModel( Trace *whichTrace, const std::string& fileName,
   {
     std::vector< std::string > ATT; // { App, Task, Thread }
     boost::split( ATT, attText, boost::is_any_of("."), boost::token_compress_on );
-    
+
     // Insert application
     string stringNumberAppl = ATT[ 0 ];
     TApplOrder countAppl;
@@ -311,7 +311,7 @@ ProcessModel::ProcessModel( Trace *whichTrace, const std::string& fileName,
       throw TraceHeaderException( TraceHeaderException::invalidTime,
                                   attText.c_str() );
     }
-    if ( beginTime + duration > traceEndTime ) 
+    if ( beginTime + duration > traceEndTime )
     {
       traceEndTime = beginTime + duration;
     }
