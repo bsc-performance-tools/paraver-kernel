@@ -163,7 +163,7 @@ ParaverConfig::ParaverConfig()
   paraverConfigDir = strFile;
 
   xmlGlobal.sessionPath = strFile;
-  xmlGlobal.externalTextEditor = strFile;
+  xmlGlobal.externalTextEditor = "gvim, nedit, gedit, xed, kate, nano, xdg-open, Notepad++.exe, wordpad.exe";
   xmlGlobal.sessionSaveTime = 1;
   xmlGlobal.prevSessionLoad = true;
   xmlGlobal.helpContentsUsesBrowser = false;
