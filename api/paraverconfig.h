@@ -370,8 +370,7 @@ class ParaverConfig
         }
         if( version >= 8 )
         {
-          ar & boost::serialization::make_nvp( "text_editor_app", helpContentsUsesBrowser );
-          ar & boost::serialization::make_nvp( "help_contents_question", helpContentsQuestionAnswered );
+          ar & boost::serialization::make_nvp( "text_editor_app", externalTextEditor );
         }
       }
 
@@ -741,7 +740,7 @@ class ParaverConfig
 
 // Second version: introducing some structure
 BOOST_CLASS_VERSION( ParaverConfig, 1)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 7)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 8)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 3)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 6)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 1)
