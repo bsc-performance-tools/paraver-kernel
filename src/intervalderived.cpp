@@ -83,9 +83,19 @@ KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
       end = childIntervals[ i ]->getEnd()->clone();
     }
 
-    info.values.push_back( childIntervals[ i ]->getValue() *
-                           window->getFactor( i ) );
+    // Apply factor
+    double tmpAbsFactor = fabs( window->getFactor( i ) );
+    if ( tmpAbsFactor < 1.0 )
+    {
+      if ( window->getFactor( i ) < 0.0 )
+        info.values.push_back( -childIntervals[ i ]->getValue() / ( 1.0 / tmpAbsFactor ) );
+      else
+        info.values.push_back( childIntervals[ i ]->getValue() / ( 1.0 / tmpAbsFactor ) );
+    }
+    else
+      info.values.push_back( childIntervals[ i ]->getValue() * window->getFactor( i ) );
   }
+
   info.dataBeginTime = childIntervals[ 1 ]->getBegin()->getTime();
   currentValue = function->execute( &info );
 
@@ -131,8 +141,17 @@ KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc 
       end = childIntervals[ i ]->getEnd()->clone();
     }
 
-    info.values.push_back( childIntervals[ i ]->getValue() *
-                           window->getFactor( i ) );
+    // Apply factor
+    double tmpAbsFactor = fabs( window->getFactor( i ) );
+    if ( tmpAbsFactor < 1.0 )
+    {
+      if ( window->getFactor( i ) < 0.0 )
+        info.values.push_back( -childIntervals[ i ]->getValue() / ( 1.0 / tmpAbsFactor ) );
+      else
+        info.values.push_back( childIntervals[ i ]->getValue() / ( 1.0 / tmpAbsFactor ) );
+    }
+    else
+      info.values.push_back( childIntervals[ i ]->getValue() * window->getFactor( i ) );
   }
   if( end == NULL )
     end = ( (KTrace *)window->getTrace() )->end();
@@ -174,8 +193,17 @@ KRecordList *IntervalDerived::calcPrev( KRecordList *displayList, bool initCalc 
       begin = childIntervals[ i ]->getBegin()->clone();
     }
 
-    info.values.push_back( childIntervals[ i ]->getValue() *
-                           window->getFactor( i ) );
+    // Apply factor
+    double tmpAbsFactor = fabs( window->getFactor( i ) );
+    if ( tmpAbsFactor < 1.0 )
+    {
+      if ( window->getFactor( i ) < 0.0 )
+        info.values.push_back( -childIntervals[ i ]->getValue() / ( 1.0 / tmpAbsFactor ) );
+      else
+        info.values.push_back( childIntervals[ i ]->getValue() / ( 1.0 / tmpAbsFactor ) );
+    }
+    else
+      info.values.push_back( childIntervals[ i ]->getValue() * window->getFactor( i ) );
   }
 
   info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
