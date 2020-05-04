@@ -448,7 +448,6 @@ inline void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records 
     return;
   }
 #endif
-
   std::getline( strLine, tmpstring, ':' );
 
 #ifdef USE_ATOLL
