@@ -163,7 +163,8 @@ ParaverConfig::ParaverConfig()
   paraverConfigDir = strFile;
 
   xmlGlobal.sessionPath = strFile;
-  xmlGlobal.externalTextEditor = "gvim, nedit, gedit, xed, kate, nano, xdg-open, Notepad++.exe, wordpad.exe";
+  xmlGlobal.externalTextEditors = "gvim, nedit, gedit, xed, kate, nano, xdg-open, Notepad++.exe, wordpad.exe";
+  xmlGlobal.externalPDFReaders = "evince, okular, xreader, Acrobat.exe";
   xmlGlobal.sessionSaveTime = 1;
   xmlGlobal.prevSessionLoad = true;
   xmlGlobal.helpContentsUsesBrowser = false;
@@ -352,9 +353,14 @@ void ParaverConfig::setGlobalHelpContentsQuestionAnswered( bool isHelpContentsQu
   xmlGlobal.helpContentsQuestionAnswered = isHelpContentsQuestionAnswered;
 }
 
-void ParaverConfig::setGlobalExternalTextEditor( std::string whichExternalTextEditor )
+void ParaverConfig::setGlobalExternalTextEditors( std::string whichExternalTextEditors )
 {
-  xmlGlobal.externalTextEditor = whichExternalTextEditor;
+  xmlGlobal.externalTextEditors = whichExternalTextEditors;
+}
+
+void ParaverConfig::setGlobalExternalPDFReaders( std::string whichExternalPDFReaders )
+{
+  xmlGlobal.externalPDFReaders = whichExternalPDFReaders;
 }
 
 string ParaverConfig::getGlobalTracesPath() const
@@ -412,9 +418,14 @@ string ParaverConfig::getGlobalSessionPath() const
   return xmlGlobal.sessionPath;
 }
 
-string ParaverConfig::getGlobalExternalTextEditor() const
+string ParaverConfig::getGlobalExternalTextEditors() const
 {
-  return xmlGlobal.externalTextEditor;
+  return xmlGlobal.externalTextEditors;
+}
+
+string ParaverConfig::getGlobalExternalPDFReaders() const
+{
+  return xmlGlobal.externalPDFReaders;
 }
 
 PRV_UINT16 ParaverConfig::getGlobalSessionSaveTime() const

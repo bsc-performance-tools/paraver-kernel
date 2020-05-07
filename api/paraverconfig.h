@@ -102,11 +102,14 @@ class ParaverConfig
     void setMainWindowWidth( unsigned int whichWidth );
     void setMainWindowHeight( unsigned int whichHeight );
     void setGlobalSessionPath( std::string whichSessionPath );
-    void setGlobalExternalTextEditor( std::string whichExternalTextEditor );
+    void sgetGlobalexternalPDFReadersEditors( std::string whichExternalTextEditor );
     void setGlobalSessionSaveTime( PRV_UINT16 whichSessionSaveTime );
     void setGlobalPrevSessionLoad( bool isPrevSessionLoaded );
     void setGlobalHelpContentsUsesBrowser( bool isHelpContentsUsesBrowser );
     void setGlobalHelpContentsQuestionAnswered( bool isHelpContentsQuestionAnswered );
+
+    void setGlobalExternalTextEditors( std::string whichExternalTextEditors );
+    void setGlobalExternalPDFReaders( std::string whichExternalPDFReaders );
 
     std::string getGlobalTracesPath() const;
     std::string getGlobalCFGsPath() const;
@@ -120,7 +123,8 @@ class ParaverConfig
     unsigned int getMainWindowWidth() const;
     unsigned int getMainWindowHeight() const;
     std::string getGlobalSessionPath() const;
-    std::string getGlobalExternalTextEditor() const;
+    std::string getGlobalExternalTextEditors() const;
+    std::string getGlobalExternalPDFReaders() const;
     PRV_UINT16 getGlobalSessionSaveTime() const;
     bool getGlobalPrevSessionLoad() const;
     bool getGlobalHelpContentsUsesBrowser() const;
@@ -370,7 +374,8 @@ class ParaverConfig
         }
         if( version >= 8 )
         {
-          ar & boost::serialization::make_nvp( "text_editor_app", externalTextEditor );
+          ar & boost::serialization::make_nvp( "text_editor_app", externalTextEditors );
+          ar & boost::serialization::make_nvp( "pdf_reader_app", externalPDFReaders );
         }
       }
 
@@ -385,11 +390,12 @@ class ParaverConfig
       unsigned int mainWindowWidth;
       unsigned int mainWindowHeight;
       std::string sessionPath;
-      std::string externalTextEditor;
       PRV_UINT16 sessionSaveTime;
       bool prevSessionLoad;
       bool helpContentsUsesBrowser;
       bool helpContentsQuestionAnswered;
+      std::string externalTextEditors;
+      std::string externalPDFReaders;
 
     } xmlGlobal;
 
