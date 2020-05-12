@@ -102,14 +102,11 @@ class ParaverConfig
     void setMainWindowWidth( unsigned int whichWidth );
     void setMainWindowHeight( unsigned int whichHeight );
     void setGlobalSessionPath( std::string whichSessionPath );
-    void sgetGlobalexternalPDFReadersEditors( std::string whichExternalTextEditor );
     void setGlobalSessionSaveTime( PRV_UINT16 whichSessionSaveTime );
     void setGlobalPrevSessionLoad( bool isPrevSessionLoaded );
     void setGlobalHelpContentsUsesBrowser( bool isHelpContentsUsesBrowser );
     void setGlobalHelpContentsQuestionAnswered( bool isHelpContentsQuestionAnswered );
 
-    void setGlobalExternalTextEditors( std::string whichExternalTextEditors );
-    void setGlobalExternalPDFReaders( std::string whichExternalPDFReaders );
 
     std::string getGlobalTracesPath() const;
     std::string getGlobalCFGsPath() const;
@@ -123,8 +120,6 @@ class ParaverConfig
     unsigned int getMainWindowWidth() const;
     unsigned int getMainWindowHeight() const;
     std::string getGlobalSessionPath() const;
-    std::string getGlobalExternalTextEditors() const;
-    std::string getGlobalExternalPDFReaders() const;
     PRV_UINT16 getGlobalSessionSaveTime() const;
     bool getGlobalPrevSessionLoad() const;
     bool getGlobalHelpContentsUsesBrowser() const;
@@ -323,6 +318,14 @@ class ParaverConfig
     rgb getColorsBeginNegativeGradient() const;
     rgb getColorsEndNegativeGradient() const;
 
+    // EXTERNAL APPLICATIONS
+    void setGlobalExternalTextEditors( std::vector< std::string> whichTextEditors );
+    void setGlobalExternalPDFReaders( std::vector< std::string> whichPDFReaders );
+
+    std::vector< std::string> getGlobalExternalTextEditors() const;
+    std::vector< std::string> getGlobalExternalPDFReaders() const;
+
+
     void saveXML( const std::string &filename );
     void loadXML( const std::string &filename );
 
@@ -372,11 +375,6 @@ class ParaverConfig
           ar & boost::serialization::make_nvp( "help_contents_browser", helpContentsUsesBrowser );
           ar & boost::serialization::make_nvp( "help_contents_question", helpContentsQuestionAnswered );
         }
-        if( version >= 8 )
-        {
-          ar & boost::serialization::make_nvp( "text_editor_app", externalTextEditors );
-          ar & boost::serialization::make_nvp( "pdf_reader_app", externalPDFReaders );
-        }
       }
 
       std::string tracesPath; // also for paraload.sig!
@@ -394,8 +392,6 @@ class ParaverConfig
       bool prevSessionLoad;
       bool helpContentsUsesBrowser;
       bool helpContentsQuestionAnswered;
-      std::string externalTextEditors;
-      std::string externalPDFReaders;
 
     } xmlGlobal;
 
@@ -669,6 +665,21 @@ class ParaverConfig
     } xmlFilters;
 
 
+    struct XMLPreferencesExternalApplications
+    {
+      template< class Archive >
+      void serialize( Archive & ar, const unsigned int version )
+      {
+        ar & boost::serialization::make_nvp( "text_editors", myTextEditors );
+        ar & boost::serialization::make_nvp( "pdf_readers", myPDFReaders );
+      }
+
+      std::vector< std::string > myTextEditors;
+      std::vector< std::string > myPDFReaders;
+
+    } xmlExternalApplications;
+
+
     struct XMLPreferencesColor
     {
       template< class Archive >
@@ -746,7 +757,7 @@ class ParaverConfig
 
 // Second version: introducing some structure
 BOOST_CLASS_VERSION( ParaverConfig, 1)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 8)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 7)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 3)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 6)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 1)
@@ -755,6 +766,7 @@ BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersRange, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersAlgorithm, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCounters, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilters, 3)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesExternalApplications, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesColor, 3)
 
 // WhatWhere.num_decimals

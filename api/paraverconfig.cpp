@@ -163,8 +163,6 @@ ParaverConfig::ParaverConfig()
   paraverConfigDir = strFile;
 
   xmlGlobal.sessionPath = strFile;
-  xmlGlobal.externalTextEditors = "gvim, nedit, gedit, xed, kate, nano, xdg-open, Notepad++.exe, wordpad.exe";
-  xmlGlobal.externalPDFReaders = "evince, okular, xreader, Acrobat.exe";
   xmlGlobal.sessionSaveTime = 1;
   xmlGlobal.prevSessionLoad = true;
   xmlGlobal.helpContentsUsesBrowser = false;
@@ -263,6 +261,13 @@ ParaverConfig::ParaverConfig()
   xmlColor.beginNegativeGradient = SemanticColor::DEFAULT_NEGATIVE_BEGIN_GRADIENT_COLOR;
   xmlColor.endNegativeGradient = SemanticColor::DEFAULT_NEGATIVE_END_GRADIENT_COLOR;
 
+
+  //xmlGlobal.externalTextEditors = "gvim, nedit, gedit, xed, kate, nano, xdg-open, Notepad++.exe, wordpad.exe";
+  //xmlGlobal.externalPDFReaders = "evince, okular, xreader, Acrobat.exe";
+
+  xmlExternalApplications.myTextEditors = {"gvim", "nedit", "gedit", "xed", "kate", "nano", "xdg-open", "Notepad++.exe", "wordpad.exe"};
+  xmlExternalApplications.myPDFReaders = {"evince", "okular", "xreader", "Acrobat.exe"};
+
   loadMap();
 }
 
@@ -353,16 +358,6 @@ void ParaverConfig::setGlobalHelpContentsQuestionAnswered( bool isHelpContentsQu
   xmlGlobal.helpContentsQuestionAnswered = isHelpContentsQuestionAnswered;
 }
 
-void ParaverConfig::setGlobalExternalTextEditors( std::string whichExternalTextEditors )
-{
-  xmlGlobal.externalTextEditors = whichExternalTextEditors;
-}
-
-void ParaverConfig::setGlobalExternalPDFReaders( std::string whichExternalPDFReaders )
-{
-  xmlGlobal.externalPDFReaders = whichExternalPDFReaders;
-}
-
 string ParaverConfig::getGlobalTracesPath() const
 {
   return xmlGlobal.tracesPath;
@@ -418,15 +413,6 @@ string ParaverConfig::getGlobalSessionPath() const
   return xmlGlobal.sessionPath;
 }
 
-string ParaverConfig::getGlobalExternalTextEditors() const
-{
-  return xmlGlobal.externalTextEditors;
-}
-
-string ParaverConfig::getGlobalExternalPDFReaders() const
-{
-  return xmlGlobal.externalPDFReaders;
-}
 
 PRV_UINT16 ParaverConfig::getGlobalSessionSaveTime() const
 {
@@ -1305,6 +1291,28 @@ rgb ParaverConfig::getColorsEndNegativeGradient() const
 {
   return xmlColor.endNegativeGradient;
 }
+
+
+void ParaverConfig::setGlobalExternalTextEditors( std::vector< std::string> whichTextEditors )
+{
+  xmlExternalApplications.myTextEditors = whichTextEditors;
+}
+
+void ParaverConfig::setGlobalExternalPDFReaders( std::vector< std::string> whichPDFReaders )
+{
+  xmlExternalApplications.myPDFReaders = whichPDFReaders;
+}
+
+std::vector< std::string> ParaverConfig::getGlobalExternalTextEditors() const
+{
+  return xmlExternalApplications.myTextEditors;
+}
+
+std::vector< std::string> ParaverConfig::getGlobalExternalPDFReaders() const
+{
+  return xmlExternalApplications.myPDFReaders;
+}
+
 
 bool ParaverConfig::initCompleteSessionFile()
 {
