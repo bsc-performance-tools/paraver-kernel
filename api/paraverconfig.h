@@ -40,6 +40,7 @@
 #include <boost/serialization/string.hpp>
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
+#include <boost/serialization/vector.hpp>
 
 
 class ParaverConfig;
@@ -749,6 +750,10 @@ class ParaverConfig
       ar & boost::serialization::make_nvp( "histogram", xmlHistogram );
       ar & boost::serialization::make_nvp( "filters", xmlFilters );
       ar & boost::serialization::make_nvp( "color", xmlColor );
+      if (version >= 2)
+      {
+        ar & boost::serialization::make_nvp( "applications", xmlExternalApplications );
+      }
     }
 };
 
@@ -756,7 +761,7 @@ class ParaverConfig
 // BOOST_CLASS_VERSION( ParaverConfig, 0)
 
 // Second version: introducing some structure
-BOOST_CLASS_VERSION( ParaverConfig, 1)
+BOOST_CLASS_VERSION( ParaverConfig, 2)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 7)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 3)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 6)
