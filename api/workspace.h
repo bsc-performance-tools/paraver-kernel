@@ -103,6 +103,9 @@ class Workspace
     virtual void modifyHintCFG( size_t position, std::pair<std::string,std::string>& whichCFG );
     virtual void clearHintCFGs();
 
+    virtual void loadXML( std::string &wsDir );
+    virtual void saveXML( std::string &wsDir );
+
     template< class Archive >
     void serialize( Archive & ar, const unsigned int version )
     {

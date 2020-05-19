@@ -101,3 +101,31 @@ void Workspace::clearHintCFGs()
 {
   hintCFGs.clear();
 }
+
+
+// load/save XML for import/export certain workspaces
+
+void Workspace::loadXML( std::string &wsDir )
+{
+  // Read user defined
+  std::ifstream ifs( wsDir );
+  //ifs.open( wsDir );
+  if( ifs.good() ) // due to xml_iarchive needs to be destroyed before fstream is closed
+  {
+    boost::archive::xml_iarchive ia( ifs );
+    ia >> boost::serialization::make_nvp( "workspace", *this );
+  }
+  ifs.close();
+}
+
+
+void Workspace::saveXML( std::string &wsDir )
+{
+  std::ofstream ofs( wsDir );
+  if( ofs.good() ) // due to xml_oarchive needs to be destroyed before fstream is closed
+  {
+    boost::archive::xml_oarchive oa( ofs );
+    oa << boost::serialization::make_nvp( "workspace_manager", *this );
+  }
+  ofs.close();
+}
