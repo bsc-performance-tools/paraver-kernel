@@ -57,7 +57,7 @@ class WorkspaceManager
     template< class Archive >
     void serialize( Archive & ar, const unsigned int version )
     {
-      ar & boost::serialization::make_nvp( "workspaces", *serializeBufferWorkspaces );
+      ar & boost::serialization::make_nvp( "workspaces", *serializeBufferWorkspaces  );
       ar & boost::serialization::make_nvp( "workspacesOrder", *serializeBufferWorkspacesOrder );
     }
 
