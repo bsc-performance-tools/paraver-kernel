@@ -167,6 +167,7 @@ ParaverConfig::ParaverConfig()
   xmlGlobal.prevSessionLoad = true;
   xmlGlobal.helpContentsUsesBrowser = false;
   xmlGlobal.helpContentsQuestionAnswered = false;
+  xmlGlobal.firstExecution = true;
 
   xmlTimeline.defaultName = "New window # %N";
   xmlTimeline.nameFormat = "%W @ %T";
@@ -262,11 +263,16 @@ ParaverConfig::ParaverConfig()
   xmlColor.endNegativeGradient = SemanticColor::DEFAULT_NEGATIVE_END_GRADIENT_COLOR;
 
 
-  //xmlGlobal.externalTextEditors = "gvim, nedit, gedit, xed, kate, nano, xdg-open, Notepad++.exe, wordpad.exe";
-  //xmlGlobal.externalPDFReaders = "evince, okular, xreader, Acrobat.exe";
-
-  xmlExternalApplications.myTextEditors = {"gvim", "nedit", "gedit", "xed", "kate", "nano", "xdg-open", "Notepad++.exe", "wordpad.exe"};
-  xmlExternalApplications.myPDFReaders = {"evince", "okular", "xreader", "Acrobat.exe"};
+  xmlExternalApplications.myTextEditors = 
+  {
+    "gvim", "nedit", "gedit", "xed", "kate", "textedit",
+    "nano", "xdg-open", "Notepad++.exe", "wordpad.exe" 
+  };
+  xmlExternalApplications.myPDFReaders = 
+  {
+    "evince", "okular", "xreader", "firefox", "brave-browser-stable",
+    "mupdf", "atril", "xdg-open", "Acrobat.exe", "MicrosoftEdge.exe" 
+  };
 
   loadMap();
 }
@@ -356,6 +362,12 @@ void ParaverConfig::setGlobalHelpContentsUsesBrowser( bool isHelpContentsUsesBro
 void ParaverConfig::setGlobalHelpContentsQuestionAnswered( bool isHelpContentsQuestionAnswered )
 {
   xmlGlobal.helpContentsQuestionAnswered = isHelpContentsQuestionAnswered;
+}
+
+
+void ParaverConfig::setFirstExecutionFinished()
+{
+  xmlGlobal.firstExecution = false;
 }
 
 string ParaverConfig::getGlobalTracesPath() const
@@ -1330,7 +1342,7 @@ bool ParaverConfig::initCompleteSessionFile()
   strFile.append( "/.paraver/CompleteSession" );
 #endif
 
-  file.open( strFile.c_str(), ios::in);
+  file.open( strFile.c_str(), ios::in );
   if ( !file.fail() )
   {
     string line;
@@ -1377,6 +1389,11 @@ void ParaverConfig::cleanCompleteSessionFile()
   file.close();
 }
 
+
+bool ParaverConfig::isFirstExecution()
+{
+  return xmlGlobal.firstExecution;
+}
 
 bool ParaverConfig::closeCompleteSessionFile()
 {
