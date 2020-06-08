@@ -107,8 +107,7 @@ class ParaverConfig
     void setGlobalPrevSessionLoad( bool isPrevSessionLoaded );
     void setGlobalHelpContentsUsesBrowser( bool isHelpContentsUsesBrowser );
     void setGlobalHelpContentsQuestionAnswered( bool isHelpContentsQuestionAnswered );
-    bool isFirstExecution();
-    void setFirstExecutionFinished();
+    void setAppsChecked(); // will always set to True
 
 
     std::string getGlobalTracesPath() const;
@@ -127,6 +126,7 @@ class ParaverConfig
     bool getGlobalPrevSessionLoad() const;
     bool getGlobalHelpContentsUsesBrowser() const;
     bool getGlobalHelpContentsQuestionAnswered() const;
+    bool getAppsChecked() const;
 
     // TIMELINES XML SECTION
     void setTimelineDefaultName( std::string whichDefaultName );
@@ -382,7 +382,7 @@ class ParaverConfig
         }
         if (version >= 8) 
         {
-          ar & boost::serialization::make_nvp( "first_execution", firstExecution );
+          ar & boost::serialization::make_nvp( "apps_checked", appsChecked );
         }
       }
 
@@ -401,7 +401,7 @@ class ParaverConfig
       bool prevSessionLoad;
       bool helpContentsUsesBrowser;
       bool helpContentsQuestionAnswered;
-      bool firstExecution;
+      bool appsChecked;
 
     } xmlGlobal;
 

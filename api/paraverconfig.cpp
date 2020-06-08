@@ -167,7 +167,7 @@ ParaverConfig::ParaverConfig()
   xmlGlobal.prevSessionLoad = true;
   xmlGlobal.helpContentsUsesBrowser = false;
   xmlGlobal.helpContentsQuestionAnswered = false;
-  xmlGlobal.firstExecution = true;
+  xmlGlobal.appsChecked = false;
 
   xmlTimeline.defaultName = "New window # %N";
   xmlTimeline.nameFormat = "%W @ %T";
@@ -265,13 +265,27 @@ ParaverConfig::ParaverConfig()
 
   xmlExternalApplications.myTextEditors = 
   {
-    "gvim", "nedit", "gedit", "xed", "kate", "textedit",
-    "nano", "xdg-open", "Notepad++.exe", "wordpad.exe" 
+  #ifdef WIN32
+    "start", 
+  #elif __APPLE__
+    "open", 
+  #else
+    "xdg-open", 
+  #endif
+    "gvim", "nedit", "gedit", "xed", "kate",
+    "textedit", "Notepad++.exe", "wordpad.exe" 
   };
   xmlExternalApplications.myPDFReaders = 
   {
+  #ifdef WIN32
+    "start", 
+  #elif __APPLE__
+    "open", 
+  #else
+    "xdg-open", 
+  #endif
     "evince", "okular", "xreader", "firefox", "brave-browser-stable",
-    "mupdf", "atril", "xdg-open", "Acrobat.exe", "MicrosoftEdge.exe" 
+    "mupdf", "atril", "Acrobat.exe", "MicrosoftEdge.exe" 
   };
 
   loadMap();
@@ -365,9 +379,9 @@ void ParaverConfig::setGlobalHelpContentsQuestionAnswered( bool isHelpContentsQu
 }
 
 
-void ParaverConfig::setFirstExecutionFinished()
+void ParaverConfig::setAppsChecked() // will always set to True
 {
-  xmlGlobal.firstExecution = false;
+  xmlGlobal.appsChecked = true;
 }
 
 string ParaverConfig::getGlobalTracesPath() const
@@ -1390,9 +1404,9 @@ void ParaverConfig::cleanCompleteSessionFile()
 }
 
 
-bool ParaverConfig::isFirstExecution()
+bool ParaverConfig::getAppsChecked() const
 {
-  return xmlGlobal.firstExecution;
+  return xmlGlobal.appsChecked;
 }
 
 bool ParaverConfig::closeCompleteSessionFile()
