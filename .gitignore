@@ -68,3 +68,6 @@ utils/pcfparser/old/.deps/
 utils/pcfparser/old/*.lo
 utils/pcfparser/old/*.o
 
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/tasks.json
