@@ -44,6 +44,7 @@ const char *ParaverKernelException::errorMessage[] =
     "Requested Tool ID not defined: ",
     "Requested Tool Name not defined: ",
     "Index out of range: ",
+    "Download failed: "
     NULL
   };
 

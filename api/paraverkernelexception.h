@@ -47,6 +47,7 @@ class ParaverKernelException : public std::exception
       undefinedToolID,
       undefinedToolName,
       indexOutOfRange,
+      downloadFailed,
       LAST
     } TErrorCode;
 
