@@ -527,7 +527,7 @@ inline bool TraceBodyIO_v1::readCommon( istringstream& line,
   }
 #endif
 
-  if ( !resourceModel->isValidCPU( CPU ) )
+  if ( !resourceModel->isValidGlobalCPU( CPU ) )
     return false;
 
 

@@ -371,6 +371,11 @@ bool TraceProxy::isSameObjectStruct( Trace *compareTo ) const
   return myTrace->isSameObjectStruct( compareTo->getConcrete() );
 }
 
+bool TraceProxy::isSubsetObjectStruct( Trace *compareTo ) const
+{
+  return myTrace->isSubsetObjectStruct( compareTo->getConcrete() );
+}
+
 TThreadOrder TraceProxy::getSenderThread( TCommID whichComm ) const
 {
   return myTrace->getSenderThread( whichComm );

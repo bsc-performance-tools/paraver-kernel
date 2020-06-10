@@ -44,12 +44,13 @@ class ProcessModel
     }
 
     ProcessModel( std::istringstream& headerInfo, Trace *whichTrace );
-    ProcessModel( Trace *whichTrace, const std::string& fileName, 
+    ProcessModel( Trace *whichTrace, const std::string& fileName,
                   TTime &traceEndTime ); // Used for CSVs
 
     ~ProcessModel()
     {}
 
+    bool operator<( const ProcessModel& other ) const;
     bool operator==( const ProcessModel& other ) const;
 
     bool isReady() const

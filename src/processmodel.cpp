@@ -39,12 +39,43 @@ using namespace std;
 #undef min
 #endif
 
+// subset
+bool ProcessModel::operator<( const ProcessModel& other ) const
+{
+  bool isSubset = true;
+
+  TApplOrder iAppl;
+  TTaskOrder iTask;
+  TThreadOrder iThread;
+  for ( TThreadOrder iGlobalThread = 0; iGlobalThread < totalThreads(); ++iGlobalThread )
+  {
+    getThreadLocation( iGlobalThread, iAppl, iTask, iThread );
+    if ( !other.isValidThread( iAppl, iTask, iThread ) )
+    {
+      isSubset = false;
+      break;
+    }
+  }
+
+  return isSubset;
+}
+
+
 bool ProcessModel::operator==( const ProcessModel& other ) const
 {
-  return applications == other.applications &&
+  // ORIGINAL: QUICK BAD
+/*  return applications == other.applications &&
          tasks        == other.tasks        &&
-         threads      == other.threads;
+         threads      == other.threads;*/
+
+
+  // ELEGANT SLOW
+  // return ( ( this < other ) && ( other < this ) );
+
+  return ( ( totalThreads() == other.totalThreads() ) && ( *this < other ) );
 }
+
+
 
 TApplOrder ProcessModel::totalApplications() const
 {

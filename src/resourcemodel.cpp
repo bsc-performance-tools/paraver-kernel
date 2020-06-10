@@ -31,10 +31,33 @@
 
 using namespace std;
 
+// subset
+bool ResourceModel::operator<( const ResourceModel& other ) const
+{
+  bool isSubset = true;
+
+  TNodeOrder iNode;
+  TCPUOrder iCPU;
+  for ( TCPUOrder iGlobalCPU = 0; iGlobalCPU < totalCPUs(); ++iGlobalCPU )
+  {
+    getCPULocation( iGlobalCPU, iNode, iCPU );
+    if ( !other.isValidCPU( iNode, iCPU ) )
+    {
+      isSubset = false;
+      break;
+    }
+  }
+
+  return isSubset;
+}
+
 bool ResourceModel::operator==( const ResourceModel& other ) const
 {
+  /*
   return nodes == other.nodes &&
          CPUs  == other.CPUs;
+         */
+ return ( ( totalCPUs() == other.totalCPUs() ) && ( *this < other ) );
 }
 
 TNodeOrder ResourceModel::totalNodes() const
@@ -110,7 +133,22 @@ void ResourceModel::addCPU( TNodeOrder whichNode )
 }
 
 
-bool ResourceModel::isValidCPU( TCPUOrder whichCPU ) const
+bool ResourceModel::isValidNode( TNodeOrder whichNode ) const
+{
+  return whichNode < nodes.size();
+}
+
+
+bool ResourceModel::isValidCPU( TNodeOrder whichNode, TCPUOrder whichCPU ) const
+{
+  if ( !isValidNode( whichNode ) )
+    return false;
+  
+  return whichCPU < nodes[ whichNode ].CPUs.size();
+}
+
+
+bool ResourceModel::isValidGlobalCPU( TCPUOrder whichCPU ) const
 {
   return whichCPU <= CPUs.size();
 }

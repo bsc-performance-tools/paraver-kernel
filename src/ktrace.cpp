@@ -273,11 +273,22 @@ TObjectOrder KTrace::getLast( TObjectOrder globalOrder,
   return 0;
 }
 
-bool KTrace::isSameObjectStruct( Trace *compareTo ) const
+bool KTrace::isSameObjectStruct( Trace *compareTo, bool compareProcessModel ) const
 {
   KTrace *tmpTrace = (KTrace *)compareTo;
-  return traceProcessModel == tmpTrace->traceProcessModel &&
-         traceResourceModel == tmpTrace->traceResourceModel;
+  if ( compareProcessModel )
+    return traceProcessModel == tmpTrace->traceProcessModel;
+  
+  return traceResourceModel == tmpTrace->traceResourceModel;
+}
+
+bool KTrace::isSubsetObjectStruct( Trace *compareTo, bool compareProcessModel ) const
+{
+  KTrace *tmpTrace = (KTrace *)compareTo;
+  if( compareProcessModel )
+    return traceProcessModel < tmpTrace->traceProcessModel;
+
+  return traceResourceModel < tmpTrace->traceResourceModel;
 }
 
 
