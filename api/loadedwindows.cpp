@@ -215,6 +215,7 @@ bool LoadedWindows::validDataWindow( Window *dataWindow, Window *controlWindow )
   }
   else
   {
+    // TODO -->
     if( dataWindow->getTrace()->isSameObjectStruct( controlWindow->getTrace() ) )
       if ( LoadedWindows::validLevelDataWindow( dataWindow, controlWindow ) )
       {

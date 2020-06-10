@@ -99,8 +99,8 @@ class Trace
                                   TWindowLevel fromLevel,
                                   TWindowLevel toLevel ) const = 0;
 
-    virtual bool isSameObjectStruct( Trace *compareTo ) const = 0;
-    virtual bool isSubsetObjectStruct( Trace *compareTo ) const = 0;
+    virtual bool isSameObjectStruct( Trace *compareTo, bool compareProcessModel ) const = 0;
+    virtual bool isSubsetObjectStruct( Trace *compareTo, bool compareProcessModel ) const = 0;
 
     // Communication info getters
     virtual TThreadOrder getSenderThread( TCommID whichComm ) const = 0;
@@ -287,8 +287,8 @@ class TraceProxy: public Trace
                                   TWindowLevel fromLevel,
                                   TWindowLevel toLevel ) const;
 
-    virtual bool isSameObjectStruct( Trace *compareTo ) const;
-    virtual bool isSubsetObjectStruct( Trace *compareTo ) const;
+    virtual bool isSameObjectStruct( Trace *compareTo, bool compareProcessModel ) const;
+    virtual bool isSubsetObjectStruct( Trace *compareTo, bool compareProcessModel ) const;
 
     // Communication info getters
     virtual TThreadOrder getSenderThread( TCommID whichComm ) const;

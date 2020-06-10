@@ -366,14 +366,14 @@ TObjectOrder TraceProxy::getLast( TObjectOrder globalOrder,
   return myTrace->getLast( globalOrder, fromLevel, toLevel );
 }
 
-bool TraceProxy::isSameObjectStruct( Trace *compareTo ) const
+bool TraceProxy::isSameObjectStruct( Trace *compareTo, bool compareProcessModel ) const
 {
-  return myTrace->isSameObjectStruct( compareTo->getConcrete() );
+  return myTrace->isSameObjectStruct( compareTo->getConcrete(), compareProcessModel );
 }
 
-bool TraceProxy::isSubsetObjectStruct( Trace *compareTo ) const
+bool TraceProxy::isSubsetObjectStruct( Trace *compareTo, bool compareProcessModel ) const
 {
-  return myTrace->isSubsetObjectStruct( compareTo->getConcrete() );
+  return myTrace->isSubsetObjectStruct( compareTo->getConcrete(), compareProcessModel );
 }
 
 TThreadOrder TraceProxy::getSenderThread( TCommID whichComm ) const
