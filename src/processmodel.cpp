@@ -70,7 +70,7 @@ bool ProcessModel::operator==( const ProcessModel& other ) const
 
 
   // ELEGANT SLOW
-  // return ( ( this < other ) && ( other < this ) );
+  // return ( ( *this < other ) && ( other < *this ) );
 
   return ( ( totalThreads() == other.totalThreads() ) && ( *this < other ) );
 }

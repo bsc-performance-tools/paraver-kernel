@@ -146,8 +146,11 @@ void LoadedWindows::getDerivedCompatible( Trace *whichTrace, vector< Window *>& 
 {
   for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
-    if ( ( *it ).second->getTrace()->isSameObjectStruct( whichTrace ) )
+  {  
+    bool isProcessModel = ( *it ).second->isLevelProcessModel();
+    if ( ( *it ).second->getTrace()->isSameObjectStruct( whichTrace, isProcessModel ) )
       onVector.push_back( ( *it ).second );
+  }
 }
 
 
@@ -155,8 +158,11 @@ void LoadedWindows::getDerivedCompatible( Trace *whichTrace, vector<TWindowID>& 
 {
   for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
-    if ( ( *it ).second->getTrace()->isSameObjectStruct( whichTrace ) )
+  {
+    bool isProcessModel = ( *it ).second->isLevelProcessModel();
+    if ( ( *it ).second->getTrace()->isSameObjectStruct( whichTrace, isProcessModel ) )
       onVector.push_back( ( *it ).first );
+  }
 }
 
 
@@ -215,8 +221,7 @@ bool LoadedWindows::validDataWindow( Window *dataWindow, Window *controlWindow )
   }
   else
   {
-    // TODO -->
-    if( dataWindow->getTrace()->isSameObjectStruct( controlWindow->getTrace() ) )
+    if( dataWindow->getTrace()->isSameObjectStruct( controlWindow->getTrace(), controlWindow->isLevelProcessModel() ) )
       if ( LoadedWindows::validLevelDataWindow( dataWindow, controlWindow ) )
       {
         return LoadedWindows::notInParents( dataWindow, controlWindow )
@@ -229,26 +234,10 @@ bool LoadedWindows::validDataWindow( Window *dataWindow, Window *controlWindow )
 
 bool LoadedWindows::validLevelDataWindow( Window *dataWindow, Window *controlWindow )
 {
-  if ( dataWindow->getLevel() == controlWindow->getLevel() )
-    return true;
-  else
-  {
-    if ( dataWindow->getLevel() >= WORKLOAD && dataWindow->getLevel() <= THREAD
-         &&
-         controlWindow->getLevel() >= WORKLOAD && controlWindow->getLevel() <= THREAD )
-    {
-      if ( dataWindow->getLevel() < controlWindow->getLevel() )
-        return true;
-    }
-    else if ( dataWindow->getLevel() >= SYSTEM && dataWindow->getLevel() <= CPU
-              &&
-              controlWindow->getLevel() >= SYSTEM && controlWindow->getLevel() <= CPU )
-    {
-      if ( dataWindow->getLevel() < controlWindow->getLevel() )
-        return true;
-    }
-  }
-  return false;
+  return ( dataWindow->getLevel() == controlWindow->getLevel() )
+         ||
+         ( Window::compatibleLevels( dataWindow, controlWindow ) &&
+           dataWindow->getLevel() < controlWindow->getLevel() );
 }
 
 bool LoadedWindows::notInParents( Window *whichWindow, Window *inParents )

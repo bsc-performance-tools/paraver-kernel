@@ -619,6 +619,11 @@ void WindowProxy::setLevel( TWindowLevel whichLevel )
   zoomHistory.addZoom( winBeginTime, winEndTime, 0, getWindowLevelObjects() - 1 );
 }
 
+bool WindowProxy::isLevelProcessModel() const
+{
+  return getLevel() >= WORKLOAD && getLevel() <= THREAD;
+}
+
 TWindowLevel WindowProxy::getMinAcceptableLevel() const
 {
   return myWindow->getMinAcceptableLevel();

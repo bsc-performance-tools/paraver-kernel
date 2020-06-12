@@ -328,6 +328,11 @@ class Window
       return "";
     }
 
+    virtual bool isLevelProcessModel() const
+    {
+      return true;
+    }
+
     virtual PRV_UINT16 getPosX() const
     {
       return 0;
@@ -923,6 +928,7 @@ class WindowProxy: public Window
     virtual Trace *getTrace() const;
     virtual TWindowLevel getLevel() const;
     virtual void setLevel( TWindowLevel whichLevel );
+    virtual bool isLevelProcessModel() const;
     virtual TWindowLevel getMinAcceptableLevel() const;
     virtual void setTimeUnit( TTimeUnit whichUnit );
     virtual TTimeUnit getTimeUnit() const;
