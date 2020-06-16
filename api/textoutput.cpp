@@ -404,11 +404,12 @@ void TextOutput::dumpMatrixHorizontal( Histogram *whichHisto,
                                        ProgressController *progress )
 {
   outputFile << endl;
+  vector< TObjectOrder > objSelection = whichHisto->getSelectedRows();
 
   for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
   {
     if( withLabels )
-      outputFile << whichHisto->getRowLabel( iRow ) << "\t";
+      outputFile << whichHisto->getRowLabel( objSelection[ iRow ] ) << "\t";
 
     // progress advanced by rows (external loop)
     if( progress != NULL )
@@ -447,10 +448,12 @@ void TextOutput::dumpMatrixVertical( Histogram *whichHisto,
                                      bool withLabels,
                                      ProgressController *progress )
 {
+  vector< TObjectOrder > objSelection = whichHisto->getSelectedRows();
+
   if( withLabels )
   {
     for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
-      outputFile << whichHisto->getRowLabel( iRow ) << "\t";
+      outputFile << whichHisto->getRowLabel( objSelection[ iRow ] ) << "\t";
   }
 
   outputFile << endl;
@@ -497,11 +500,12 @@ void TextOutput::dumpMatrixCommHorizontal( Histogram *whichHisto,
                                            ProgressController *progress )
 {
   outputFile << endl;
+  vector< TObjectOrder > objSelection = whichHisto->getSelectedRows();
 
   for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
   {
     if( withLabels )
-      outputFile << whichHisto->getRowLabel( iRow ) << "\t";
+      outputFile << whichHisto->getRowLabel( objSelection[ iRow ] ) << "\t";
 
     // progress advanced by rows (external loop)
     if( progress != NULL )
@@ -540,10 +544,12 @@ void TextOutput::dumpMatrixCommVertical( Histogram *whichHisto,
                                          bool withLabels,
                                          ProgressController *progress )
 {
+  vector< TObjectOrder > objSelection = whichHisto->getSelectedRows();
+
   if( withLabels )
   {
     for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
-      outputFile << whichHisto->getRowLabel( iRow ) << "\t";
+      outputFile << whichHisto->getRowLabel( objSelection[ iRow ] ) << "\t";
   }
 
   outputFile << endl;
