@@ -1735,14 +1735,23 @@ void HistogramProxy::setRowSelectionManager( SelectionManagement< TObjectOrder, 
 }
 
 
-vector< TObjectOrder > HistogramProxy::getSelectedRows()
+vector< TObjectOrder > HistogramProxy::getSelectedRows() const
 {
   vector< TObjectOrder > vecRows;
   rowSelection.getSelected( vecRows, myHisto->getControlWindow()->getLevel() );
   return vecRows;
 }
 
-vector< bool > HistogramProxy::getSelectedBooleanRows()
+
+vector< TObjectOrder > HistogramProxy::getSelectedRows( TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const
+{
+  vector< TObjectOrder > vecRows;
+  rowSelection.getSelected( vecRows, whichBeginRow, whichEndRow, myHisto->getControlWindow()->getLevel() );
+  return vecRows;
+}
+
+
+vector< bool > HistogramProxy::getSelectedBooleanRows() const
 {
   vector< bool > vecRows;
   rowSelection.getSelected( vecRows, myHisto->getControlWindow()->getLevel() );

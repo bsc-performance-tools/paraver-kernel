@@ -275,7 +275,7 @@ bool SelectionManagement< SelType, LevelType >::isSelectedPosition( SelType whic
 
 template < typename SelType, typename LevelType >
 void SelectionManagement< SelType, LevelType >::getSelected( std::vector< bool > &whichSelected,
-    LevelType level )
+    LevelType level ) const
 {
   whichSelected = selected[ level ];
 }
@@ -285,7 +285,7 @@ template < typename SelType, typename LevelType >
 void SelectionManagement< SelType, LevelType >::getSelected( std::vector< bool > &whichSelected,
     SelType first,
     SelType last,
-    LevelType level )
+    LevelType level ) const
 {
   whichSelected.clear();
 
@@ -295,7 +295,7 @@ void SelectionManagement< SelType, LevelType >::getSelected( std::vector< bool >
 
 template < typename SelType, typename LevelType >
 void SelectionManagement< SelType, LevelType >::getSelected( std::vector< SelType > &whichSelected,
-    LevelType level )
+    LevelType level ) const
 {
   whichSelected = selectedSet[ level ];
 }
@@ -305,10 +305,10 @@ template < typename SelType, typename LevelType >
 void SelectionManagement< SelType, LevelType >::getSelected( std::vector< SelType > &whichSelected,
     SelType first,
     SelType last,
-    LevelType level )
+    LevelType level ) const
 {
   whichSelected.clear();
-  typename std::vector< SelType >::iterator it;
+  typename std::vector< SelType >::const_iterator it;
   for ( it = selectedSet[ level ].begin(); it != selectedSet[ level ].end(); ++it )
   {
     if ( ( *it >= first ) && ( *it <= last ) )

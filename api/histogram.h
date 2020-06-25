@@ -565,12 +565,17 @@ class Histogram
     {}
 
 
-    virtual vector< TObjectOrder > getSelectedRows() 
+    virtual vector< TObjectOrder > getSelectedRows() const
     {
       return vector< TObjectOrder > ();
     }
 
-    virtual vector< bool > getSelectedBooleanRows() 
+    virtual vector< TObjectOrder > getSelectedRows( TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const
+    {
+      return vector< TObjectOrder > ();
+    }
+
+    virtual vector< bool > getSelectedBooleanRows() const
     {
       return vector< bool > ();
     }
@@ -855,8 +860,9 @@ class HistogramProxy : public Histogram
     virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement();
     virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel );
 
-    virtual vector< TObjectOrder > getSelectedRows();
-    virtual vector< bool > getSelectedBooleanRows();
+    virtual vector< TObjectOrder > getSelectedRows() const;
+    virtual vector< TObjectOrder > getSelectedRows( TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const;
+    virtual vector< bool > getSelectedBooleanRows() const;
     virtual void setSelectedRows( std::vector< bool > &selected );
     virtual void setSelectedRows( std::vector< TObjectOrder > &selected );
     
