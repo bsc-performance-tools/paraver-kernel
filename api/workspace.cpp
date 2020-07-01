@@ -125,7 +125,7 @@ void Workspace::saveXML( std::string &wsDir )
   if( ofs.good() ) // due to xml_oarchive needs to be destroyed before fstream is closed
   {
     boost::archive::xml_oarchive oa( ofs );
-    oa << boost::serialization::make_nvp( "workspace_manager", *this );
+    oa << boost::serialization::make_nvp( "workspace", *this );
   }
   ofs.close();
 }
