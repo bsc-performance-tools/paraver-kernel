@@ -267,7 +267,7 @@ ParaverConfig::ParaverConfig()
   {
   #ifdef WIN32
     "start", 
-  #elif __APPLE__
+  #elif defined(__APPLE__)
     "open", 
   #else
     "xdg-open", 
@@ -279,7 +279,7 @@ ParaverConfig::ParaverConfig()
   {
   #ifdef WIN32
     "start", 
-  #elif __APPLE__
+  #elif defined(__APPLE__)
     "open", 
   #else
     "xdg-open", 

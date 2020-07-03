@@ -145,7 +145,7 @@ TTraceSize NotCompressed::getTraceFileSize( const string& filename )
 		return 0;
 	}
 
-#elif WIN32
+#elif defined(WIN32)
   if ( fopen_s( &traceFile, filename.c_str(), "r" ) != 0 )
   {
     printf( "Error Opening File %s\n", filename.c_str() );
