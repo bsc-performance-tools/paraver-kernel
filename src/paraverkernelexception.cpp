@@ -31,8 +31,6 @@ ostream& ParaverKernelException::defaultPrintStream( cerr );
 
 string ParaverKernelException::kernelMessage( "Paraver kernel exception: " );
 
-string ParaverKernelException::moduleMessage( "" );
-
 const char *ParaverKernelException::errorMessage[] =
   {
     "Undefined error: ",
@@ -44,20 +42,20 @@ const char *ParaverKernelException::errorMessage[] =
     "Requested Tool ID not defined: ",
     "Requested Tool Name not defined: ",
     "Index out of range: ",
+    "Download failed: ",
     NULL
   };
 
 const char *ParaverKernelException::what() throw()
 {
-  ostringstream tempStream( "" );
+  ostringstream tmpStream( "" );
 
-  tempStream << kernelMessage << specificModuleMessage() << endl;
-  tempStream << specificErrorMessage() << auxMessage << endl;
+  tmpStream << specificErrorMessage() << auxMessage << endl;
 
   if ( file != NULL )
-    tempStream << file << " " << line << endl;
+    tmpStream << file << " " << line << endl;
 
-  message = string( tempStream.str() );
+  message = string( tmpStream.str() );
 
   return message.c_str();
 }

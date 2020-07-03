@@ -123,22 +123,22 @@ ParaverConfig::ParaverConfig()
   paraverHomeDir      = homedir;
   paraverCFGsDir      = std::string( tmpPath ) + std::string( "/cfgs" );
   paraverXMLDir       = homedir;
-  paraverTutorialsDir = homedir + std::string( "/tutorials" );
-#else // __APPLE__
+  paraverTutorialsDir = homedir + std::string( "/paraver-tutorials" );
+#else // not __APPLE__
   if ( getenv( "PARAVER_HOME" ) == NULL )
   {
     paraverHomeDir       = homedir;
     paraverCFGsDir       = homedir;
     paraverXMLDir        = homedir;
-    paraverTutorialsDir  = homedir;
   }
   else
   {
     paraverHomeDir      = getenv( "PARAVER_HOME" );
     paraverCFGsDir      = paraverHomeDir + "/cfgs";
     paraverXMLDir       = paraverHomeDir + "/share/filters-config";
-    paraverTutorialsDir = paraverHomeDir + "/tutorials";
   }
+  paraverTutorialsDir = homedir + "/paraver-tutorials";
+
 #endif
 #endif
 

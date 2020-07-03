@@ -47,6 +47,7 @@ class ParaverKernelException : public std::exception
       undefinedToolID,
       undefinedToolName,
       indexOutOfRange,
+      downloadFailed,
       LAST
     } TErrorCode;
 
@@ -75,8 +76,6 @@ class ParaverKernelException : public std::exception
 
     static std::string kernelMessage;
 
-    static std::string moduleMessage;
-
     TErrorCode code;
 
     std::string auxMessage;
@@ -93,13 +92,6 @@ class ParaverKernelException : public std::exception
     {
       return errorMessage[ code ];
     }
-
-    virtual std::string& specificModuleMessage() const
-
-    {
-      return moduleMessage;
-    }
-
 };
 
 #endif // PARAVERKERNELEXCEPTION_H_INCLUDED
