@@ -263,30 +263,38 @@ ParaverConfig::ParaverConfig()
   xmlColor.endNegativeGradient = SemanticColor::DEFAULT_NEGATIVE_END_GRADIENT_COLOR;
 
 
-  xmlExternalApplications.myTextEditors = 
-  {
-  #ifdef WIN32
-    "start", 
-  #elif defined(__APPLE__)
-    "open", 
-  #else
-    "xdg-open", 
-  #endif
-    "gvim", "nedit", "gedit", "xed", "kate",
-    "textedit", "Notepad++.exe", "wordpad.exe" 
-  };
-  xmlExternalApplications.myPDFReaders = 
-  {
-  #ifdef WIN32
-    "start", 
-  #elif defined(__APPLE__)
-    "open", 
-  #else
-    "xdg-open", 
-  #endif
-    "evince", "okular", "xreader", "firefox", "brave-browser-stable",
-    "mupdf", "atril", "Acrobat.exe", "MicrosoftEdge.exe" 
-  };
+#ifdef WIN32
+  xmlExternalApplications.myTextEditors.push_back( "start" );
+#elif defined(__APPLE__)
+  xmlExternalApplications.myTextEditors.push_back( "open" );
+#else
+  xmlExternalApplications.myTextEditors.push_back( "xdg-open" );
+#endif
+  xmlExternalApplications.myTextEditors.push_back( "gvim" );
+  xmlExternalApplications.myTextEditors.push_back( "nedit" );
+  xmlExternalApplications.myTextEditors.push_back( "gedit" );
+  xmlExternalApplications.myTextEditors.push_back( "xed" );
+  xmlExternalApplications.myTextEditors.push_back( "kate" );
+  xmlExternalApplications.myTextEditors.push_back( "textedit" );
+  xmlExternalApplications.myTextEditors.push_back( "Notepad++.exe" );
+  xmlExternalApplications.myTextEditors.push_back( "wordpad.exe" );
+
+#ifdef WIN32
+  xmlExternalApplications.myPDFReaders.push_back( "start" );
+#elif defined(__APPLE__)
+  xmlExternalApplications.myPDFReaders.push_back( "open" );
+#else
+  xmlExternalApplications.myPDFReaders.push_back( "xdg-open" );
+#endif
+  xmlExternalApplications.myPDFReaders.push_back( "evince" );
+  xmlExternalApplications.myPDFReaders.push_back( "okular" );
+  xmlExternalApplications.myPDFReaders.push_back( "xreader" );
+  xmlExternalApplications.myPDFReaders.push_back( "firefox" );
+  xmlExternalApplications.myPDFReaders.push_back( "brave-browser-stable" );
+  xmlExternalApplications.myPDFReaders.push_back( "mupdf" ); 
+  xmlExternalApplications.myPDFReaders.push_back( "atril" ); 
+  xmlExternalApplications.myPDFReaders.push_back( "Acrobat.exe" ); 
+  xmlExternalApplications.myPDFReaders.push_back( "MicrosoftEdge.exe" );
 
   loadMap();
 }
