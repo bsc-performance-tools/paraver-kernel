@@ -1033,7 +1033,7 @@ void KTrace::setPhysicalReceive( TCommID whichComm, TRecordTime whichTime )
 
 void KTrace::setEventTypePrecision( TEventType whichType, double whichPrecision )
 {
-  eventsPrecision.insert( { whichType, whichPrecision } ) ;
+  eventsPrecision.insert( std::pair<TEventType, double>( whichType, whichPrecision ) ) ;
 }
 
 double KTrace::getEventTypePrecision( TEventType whichType ) const
