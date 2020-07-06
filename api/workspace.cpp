@@ -108,7 +108,7 @@ void Workspace::clearHintCFGs()
 void Workspace::loadXML( std::string &wsDir )
 {
   // Read user defined
-  std::ifstream ifs( wsDir );
+  std::ifstream ifs( wsDir.c_str() );
   //ifs.open( wsDir );
   if( ifs.good() ) // due to xml_iarchive needs to be destroyed before fstream is closed
   {
@@ -121,7 +121,7 @@ void Workspace::loadXML( std::string &wsDir )
 
 void Workspace::saveXML( std::string &wsDir )
 {
-  std::ofstream ofs( wsDir );
+  std::ofstream ofs( wsDir.c_str() );
   if( ofs.good() ) // due to xml_oarchive needs to be destroyed before fstream is closed
   {
     boost::archive::xml_oarchive oa( ofs );
