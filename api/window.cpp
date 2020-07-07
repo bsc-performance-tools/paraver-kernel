@@ -305,6 +305,7 @@ Window *WindowProxy::clone( bool recursiveClone )
   clonedWindow->myCodeColor = myCodeColor;
   clonedWindow->myGradientColor = myGradientColor;
   clonedWindow->colorMode = colorMode;
+  clonedWindow->punctualColorWindow = punctualColorWindow;
   clonedWindow->drawModeObject = drawModeObject;
   clonedWindow->drawModeTime = drawModeTime;
   clonedWindow->showWindow = showWindow;
