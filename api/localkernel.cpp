@@ -605,7 +605,9 @@ bool LocalKernel::isTraceFile( const std::string &filename ) const
     isParaverTrace = isParaverTrace && tmpResource.isReady() && tmpProcess.isReady();
   }
   catch( ... )
-  {}
+  {
+    isParaverTrace = false;
+  }
 
   return isParaverTrace;
 }
