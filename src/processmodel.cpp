@@ -131,7 +131,7 @@ void ProcessModel::getThreadLocation( TThreadOrder globalThread,
 }
 
 
-ProcessModel::ProcessModel( istringstream& headerInfo, Trace *whichTrace )
+ProcessModel::ProcessModel( istringstream& headerInfo, bool existResourceInfo )
 {
   TApplOrder numberApplications;
   TTaskOrder globalTasks = 0;
@@ -202,7 +202,7 @@ ProcessModel::ProcessModel( istringstream& headerInfo, Trace *whichTrace )
       istringstream sstreamNumberNode( stringNumberNode );
 
       if ( !( sstreamNumberNode >> numberNode ) ||
-           ( numberNode == 0 && whichTrace->existResourceInfo() ) )
+           ( numberNode == 0 && existResourceInfo ) )
       {
         throw TraceHeaderException( TraceHeaderException::invalidNodeNumber,
                                     stringNumberNode.c_str() );

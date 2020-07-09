@@ -686,7 +686,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     }
 
     traceResourceModel = ResourceModel( header );
-    traceProcessModel = ProcessModel( header, this );
+    traceProcessModel = ProcessModel( header, existResourceInfo() );
 
     body->setProcessModel( &traceProcessModel );
     body->setResourceModel( &traceResourceModel );

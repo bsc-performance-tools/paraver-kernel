@@ -90,6 +90,7 @@ class LocalKernel: public KernelConnection
 
     virtual bool userMessage( UserMessageID messageID ) const;
 
+    virtual bool isTraceFile( const std::string &filename ) const;
     virtual void copyPCF( const std::string& name, const std::string& traceToLoad ) const;
     virtual void copyROW( const std::string& name, const std::string& traceToLoad ) const;
 

@@ -560,8 +560,57 @@ void LocalKernel::copyFile( const std::string& in, const std::string& out ) cons
   fclose( fileOut );
 }
 
+bool LocalKernel::isTraceFile( const std::string &filename ) const
+{
+  TraceStream *file = TraceStream::openFile( filename );
+  if ( !file->good() ) 
+  {
+    return false;
+  }
+  string auxName( filename );
+  string suffixCompressed( "" );
+  string suffixNotCompressed( "" );
 
-void LocalKernel::copyPCF( const std::string& name, const std::string& traceToLoad ) const
+  if (auxName.length() > GZIPPED_PRV_SUFFIX.length())
+    suffixCompressed = auxName.substr(auxName.length() - GZIPPED_PRV_SUFFIX.length());
+
+  if (auxName.length() > PRV_SUFFIX.length())
+    suffixNotCompressed = auxName.substr(auxName.length() - PRV_SUFFIX.length());
+
+  if( ! ( suffixCompressed.compare( GZIPPED_PRV_SUFFIX ) == 0 ) ||
+      ! ( suffixNotCompressed.compare( PRV_SUFFIX ) == 0 ) )
+    return false;
+
+  bool isParaverTrace = true;
+
+  //Step 1: paraver + datetime 
+  string tmpFirstLine;
+  file->getline( tmpFirstLine );
+  istringstream firstLine( tmpFirstLine );
+
+  string item;
+  getline( firstLine, item, ' ' );
+  isParaverTrace = isParaverTrace && ( item == "#Paraver" );
+  getline( firstLine, item, ':' );
+
+  //Step 2: trace end time
+  getline( firstLine, item, ':' );
+
+  //Step 3: trace models
+  
+  try
+  {
+    ResourceModel tmpResource( firstLine );
+    ProcessModel tmpProcess( firstLine, tmpResource.isReady() );
+    isParaverTrace = isParaverTrace && tmpResource.isReady() && tmpProcess.isReady();
+  }
+  catch( ... )
+  {}
+
+  return isParaverTrace;
+}
+
+void LocalKernel::copyPCF( const std::string &name, const std::string &traceToLoad ) const
 {
   string pcfIn  = composeName( name, string( "pcf" ) );
   string pcfOut = composeName( traceToLoad, string( "pcf" ) );

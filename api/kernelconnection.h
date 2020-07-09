@@ -120,8 +120,9 @@ class KernelConnection
 
     virtual bool userMessage( UserMessageID messageID ) const = 0;
 
+    virtual bool isTraceFile( const std::string &filename ) const = 0;
     virtual void copyPCF( const std::string& name, const std::string& traceToLoad ) const = 0;
-    virtual void copyROW( const std::string& name, const std::string&traceToLoad ) const = 0;
+    virtual void copyROW( const std::string& name, const std::string& traceToLoad ) const = 0;
     virtual void getNewTraceName( char *name,
                                   char *new_trace_name,
                                   std::string action,

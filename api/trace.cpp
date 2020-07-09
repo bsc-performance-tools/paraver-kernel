@@ -47,24 +47,6 @@ Trace *Trace::create( KernelConnection *whichKernel, const string& whichFile,
 }
 
 
-// Smarter detections welcome!
-bool Trace::isTraceFile( const string& filename )
-{
-  string auxName( filename );
-  string suffixCompressed( "" );
-  string suffixNotCompressed( "" );
-
-  if ( auxName.length() > GZIPPED_PRV_SUFFIX.length() )
-    suffixCompressed = auxName.substr( auxName.length() - GZIPPED_PRV_SUFFIX.length() );
-
-  if ( auxName.length() > PRV_SUFFIX.length() )
-    suffixNotCompressed = auxName.substr( auxName.length() - PRV_SUFFIX.length() );
-
-  return (( suffixCompressed.compare( GZIPPED_PRV_SUFFIX ) == 0 ) ||
-          ( suffixNotCompressed.compare( PRV_SUFFIX ) == 0 ));
-}
-
-
 bool Trace::isOTF2TraceFile( const string& filename )
 {
   string auxName( filename );

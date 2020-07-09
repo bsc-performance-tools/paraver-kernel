@@ -515,7 +515,7 @@ bool parseArguments( KernelConnection *myKernel,
 
       --readParameter;
     }
-    else if ( Trace::isTraceFile( currentArgument ) )
+    else if ( myKernel->isTraceFile( currentArgument ) )
     {
       sourceTraceName = currentArgument;
     }
