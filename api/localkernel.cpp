@@ -577,7 +577,7 @@ bool LocalKernel::isTraceFile( const std::string &filename ) const
   if (auxName.length() > PRV_SUFFIX.length())
     suffixNotCompressed = auxName.substr(auxName.length() - PRV_SUFFIX.length());
 
-  if( ! ( suffixCompressed.compare( GZIPPED_PRV_SUFFIX ) == 0 ) ||
+  if( ! ( suffixCompressed.compare( GZIPPED_PRV_SUFFIX ) == 0 ) &&
       ! ( suffixNotCompressed.compare( PRV_SUFFIX ) == 0 ) )
     return false;
 
@@ -591,6 +591,7 @@ bool LocalKernel::isTraceFile( const std::string &filename ) const
   string item;
   getline( firstLine, item, ' ' );
   isParaverTrace = isParaverTrace && ( item == "#Paraver" );
+  getline( firstLine, item, ')' );
   getline( firstLine, item, ':' );
 
   //Step 2: trace end time
@@ -602,13 +603,15 @@ bool LocalKernel::isTraceFile( const std::string &filename ) const
   {
     ResourceModel tmpResource( firstLine );
     ProcessModel tmpProcess( firstLine, tmpResource.isReady() );
-    isParaverTrace = isParaverTrace && tmpResource.isReady() && tmpProcess.isReady();
+    isParaverTrace = isParaverTrace && tmpProcess.isReady();
   }
   catch( ... )
   {
     isParaverTrace = false;
   }
 
+  file->close();
+  delete file;
   return isParaverTrace;
 }
 
