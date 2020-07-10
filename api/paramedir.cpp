@@ -551,7 +551,7 @@ bool parseArguments( KernelConnection *myKernel,
 
   if( sourceTraceName.empty() )
   {
-    std::cerr << "  [ERROR] Missing tracefile." << std::endl;
+    std::cerr << "  [ERROR] Missing tracefile or unrecognized tracefile format." << std::endl;
     parseOK = false;
   }
   else if( registeredTool.size() == 0 && cfgs.size() == 0 )
