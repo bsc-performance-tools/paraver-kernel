@@ -413,6 +413,59 @@ TSemanticValue ComposeNestingLevel::execute( const SemanticInfo *info )
 }
 
 
+void ComposeLRUDepth::init( KWindow *whichWindow )
+{
+  LRUStack.clear();
+
+  if ( whichWindow->getTrace()->totalThreads() >
+       whichWindow->getTrace()->totalCPUs() )
+  {
+    LRUStack.reserve( whichWindow->getTrace()->totalThreads() );
+    for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalThreads(); ++i )
+      LRUStack.push_back( list< TSemanticValue >() );
+  }
+  else
+  {
+    LRUStack.reserve( whichWindow->getTrace()->totalCPUs() );
+    for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalCPUs(); ++i )
+      LRUStack.push_back( list< TSemanticValue >() );
+  }
+}
+
+
+string ComposeLRUDepth::name = "LRU Depth";
+TSemanticValue ComposeLRUDepth::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+
+  TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
+  size_t stackSize = parameters[ STACK_SIZE ][ 0 ];
+
+  unsigned int depth = 0;
+  list<TSemanticValue>::iterator it;
+  for( it = LRUStack[ tmpOrder ].begin(); it != LRUStack[ tmpOrder ].end(); ++it )
+  {
+    if( *it == myInfo->values[ 0 ] )
+      break;
+      
+    ++depth;
+  }
+
+  LRUStack[ tmpOrder ].push_front( myInfo->values[ 0 ] );
+  if( it != LRUStack[ tmpOrder ].end() )
+  {
+    LRUStack[ tmpOrder ].erase( it );
+  }
+  else
+  {
+    if( LRUStack[ tmpOrder ].size() > stackSize )
+      LRUStack[ tmpOrder ].pop_back();
+  }
+
+  return depth;
+}
+
+
 void ComposeEnumerate::init( KWindow *whichWindow )
 {
 

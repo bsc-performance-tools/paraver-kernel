@@ -26,6 +26,7 @@
 #define SEMANTICCOMPOSEFUNCTIONS_H_INCLUDED
 
 #include <stack>
+#include <list>
 #include <cmath>
 #include "semanticcompose.h"
 
@@ -1035,6 +1036,7 @@ class ComposeIsEqualSign: public SemanticCompose
     {
       return initFromBegin;
     }
+
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       TParamValue tmp;
@@ -1046,6 +1048,7 @@ class ComposeIsEqualSign: public SemanticCompose
 
       return tmp;
     }
+
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
@@ -1529,6 +1532,75 @@ class ComposeNestingLevel: public SemanticCompose
     static std::string name;
 
     std::vector<TSemanticValue> myStack;
+};
+
+class ComposeLRUDepth: public SemanticCompose
+{
+  public:
+    typedef enum
+    {
+      STACK_SIZE = 0,
+      MAXPARAM
+    } TParam;
+
+    ComposeLRUDepth()
+    {
+      setDefaultParam();
+    }
+
+    ~ComposeLRUDepth()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+
+    virtual void init( KWindow *whichWindow );
+
+    virtual std::string getName()
+    {
+      return ComposeLRUDepth::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeLRUDepth( *this );
+    }
+
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      TParamValue tmp;
+
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      else if ( whichParam == STACK_SIZE )
+        tmp.push_back( 256 );
+
+      return tmp;
+    }
+
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Stack size";
+    }
+
+  private:
+    static const bool initFromBegin = true;
+    static std::string name;
+
+    std::vector< std::list< TSemanticValue > > LRUStack;
 };
 
 
