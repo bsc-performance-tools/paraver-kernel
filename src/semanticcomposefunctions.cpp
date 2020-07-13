@@ -438,10 +438,13 @@ TSemanticValue ComposeLRUDepth::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
+  if( myInfo->values[ 0 ] == 0.0 )
+    return 0.0;
+
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
   size_t stackSize = parameters[ STACK_SIZE ][ 0 ];
 
-  unsigned int depth = 0;
+  unsigned int depth = 1;
   list<TSemanticValue>::iterator it;
   for( it = LRUStack[ tmpOrder ].begin(); it != LRUStack[ tmpOrder ].end(); ++it )
   {
@@ -459,7 +462,10 @@ TSemanticValue ComposeLRUDepth::execute( const SemanticInfo *info )
   else
   {
     if( LRUStack[ tmpOrder ].size() > stackSize )
+    {
       LRUStack[ tmpOrder ].pop_back();
+      depth = stackSize + 1;
+    }
   }
 
   return depth;
