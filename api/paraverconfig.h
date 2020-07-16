@@ -339,6 +339,7 @@ class ParaverConfig
     std::map<std::string, PropertyFunction *> propertyFunctions;
 
     std::string paraverConfigDir;
+    bool isModified;
 
     void loadMap();
     void unloadMap();
