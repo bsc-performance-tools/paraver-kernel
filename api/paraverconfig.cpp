@@ -1641,7 +1641,6 @@ void ParaverConfig::readParaverConfigFile()
 
 void ParaverConfig::writeParaverConfigFile()
 {
-  std::cout << "Is cfg modded? " << instance->isModified << std::endl;
   string homedir;
   string strFile, strBackupFile;
 
