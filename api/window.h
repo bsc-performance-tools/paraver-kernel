@@ -235,6 +235,11 @@ class Window
       return 0.0;
     }
 
+    virtual bool getExistSemanticZero() const
+    {
+      return false;
+    }
+
     virtual Window* clone( bool recursiveClone = false )
     {
       return NULL;
@@ -293,11 +298,13 @@ class Window
     virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits = true ) = 0;
     virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create,
                           TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
+                          int& rowComputedZeros,
                           bool updateLimits = true )
     {}
     virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true ) = 0;
     virtual RecordList *calcNext( TObjectOrder whichObject,
-                                  TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
+                                  TSemanticValue& rowComputedMaxY, TSemanticValue& rowComputedMinY,
+                                  int& rowComputedZeros,
                                   bool updateLimits = true )
     { return NULL; }
     virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true ) = 0;
@@ -759,6 +766,7 @@ class Window
                                              int& drawCaution,                      // I/O
                                              TSemanticValue &rowComputedMaxY,
                                              TSemanticValue &rowComputedMinY,
+                                             int& rowComputedZeros,
                                              std::vector< TSemanticValue >& valuesToDraw, // I/O
                                              hash_set< PRV_INT32 >& eventsToDraw,    // I/O
                                              hash_set< commCoord >& commsToDraw )    // I/O
@@ -774,6 +782,7 @@ class Window
                                              int& drawCaution,                                  // I/O
                                              TSemanticValue &rowComputedMaxY,
                                              TSemanticValue &rowComputedMinY,
+                                             int& rowComputedZeros,
                                              std::vector< TSemanticValue >& valuesToDraw,             // I/O
                                              hash_set< PRV_INT32 >& eventsToDraw,                // I/O
                                              hash_set< commCoord, hashCommCoord >& commsToDraw ) // I/O
@@ -850,6 +859,7 @@ class Window
                                                      int& drawCaution,                      // I/O
                                                      TSemanticValue &rowComputedMaxY,
                                                      TSemanticValue &rowComputedMinY,
+                                                     int& rowComputedZeros,
                                                      std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > >& valuesToDraw, // I/O
                                                      hash_set< PRV_INT32 >& eventsToDraw,    // I/O
                                                      hash_set< commCoord >& commsToDraw )    // I/O
@@ -865,6 +875,7 @@ class Window
                                                      int& drawCaution,                                  // I/O
                                                      TSemanticValue &rowComputedMaxY,
                                                      TSemanticValue &rowComputedMinY,
+                                                     int& rowComputedZeros,
                                                      std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > >& valuesToDraw,             // I/O
                                                      hash_set< PRV_INT32 >& eventsToDraw,                // I/O
                                                      hash_set< commCoord, hashCommCoord >& commsToDraw ) // I/O
@@ -922,6 +933,7 @@ class WindowProxy: public Window
     virtual void setMinimumY( TSemanticValue whichMin );
     virtual TSemanticValue getMaximumY();
     virtual TSemanticValue getMinimumY();
+    virtual bool getExistSemanticZero() const;
     virtual bool getShowProgressBar() const;
 
     //------------------------------------------------------------
@@ -973,10 +985,12 @@ class WindowProxy: public Window
     virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits = true );
     virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create,
                           TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
+                          int& rowComputedZeros,
                           bool updateLimits = true );
     virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true );
     virtual RecordList *calcNext( TObjectOrder whichObject,
                                   TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
+                                  int& rowComputedZeros,
                                   bool updateLimits = true );
     virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true );
     virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const;
@@ -1162,7 +1176,6 @@ class WindowProxy: public Window
                                           ProgressController *progress );
 
     virtual void computeSemanticRowParallel( int numRows,
-
                                              TObjectOrder firstRow,
                                              TObjectOrder lastRow,
                                              std::vector< TObjectOrder >& selectedSet,
@@ -1174,6 +1187,7 @@ class WindowProxy: public Window
                                              int& drawCaution,  // O
                                              TSemanticValue &rowComputedMaxY,
                                              TSemanticValue &rowComputedMinY,
+                                             int& rowComputedZeros,
                                              std::vector< TSemanticValue >& valuesToDraw, // O
                                              hash_set< PRV_INT32 >& eventsToDraw,    // O
                                              hash_set< commCoord >& commsToDraw,
@@ -1213,8 +1227,9 @@ class WindowProxy: public Window
                                      PRV_INT32 objectAxisPos,
                                      std::vector< PRV_INT32 >& objectPosList,
                                      int& drawCaution,                                    // I/O
-                                     TSemanticValue &rowComputedMaxY,
-                                     TSemanticValue &rowComputedMinY,
+                                     TSemanticValue& rowComputedMaxY,
+                                     TSemanticValue& rowComputedMinY,
+                                     int& rowComputedZeros,
                                      std::vector< TSemanticValue >& valuesToDraw,         // I/O
                                      hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
                                      hash_set< commCoord, hashCommCoord >& commsToDraw,
@@ -1271,8 +1286,9 @@ class WindowProxy: public Window
                                                      PRV_INT32 objectAxisPos,
                                                      std::vector< PRV_INT32 >& objectPosList,
                                                      int& drawCaution,  // O
-                                                     TSemanticValue &rowComputedMaxY,
-                                                     TSemanticValue &rowComputedMinY,
+                                                     TSemanticValue& rowComputedMaxY,
+                                                     TSemanticValue& rowComputedMinY,
+                                                     int& rowComputedZeros,
                                                      std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > >& valuesToDraw, // O
                                                      hash_set< PRV_INT32 >& eventsToDraw,    // O
                                                      hash_set< commCoord >& commsToDraw,
@@ -1288,8 +1304,9 @@ class WindowProxy: public Window
                                              PRV_INT32 objectAxisPos,
                                              std::vector< PRV_INT32 >& objectPosList,
                                              int& drawCaution,                                    // I/O
-                                             TSemanticValue &rowComputedMaxY,
-                                             TSemanticValue &rowComputedMinY,
+                                             TSemanticValue& rowComputedMaxY,
+                                             TSemanticValue& rowComputedMinY,
+                                             int& rowComputedZeros,
                                              std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > >& valuesToDraw,         // I/O
                                              hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
                                              hash_set< commCoord, hashCommCoord >& commsToDraw,
@@ -1320,8 +1337,10 @@ class WindowProxy: public Window
     bool yScaleComputed;
     TSemanticValue maximumY;
     TSemanticValue minimumY;
+    bool existSemanticZero;
     TSemanticValue computedMaxY;
     TSemanticValue computedMinY;
+    bool computedZeros;
 
     std::vector<RecordList *> myLists;
 
