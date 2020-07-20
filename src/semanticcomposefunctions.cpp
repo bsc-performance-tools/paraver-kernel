@@ -464,8 +464,8 @@ TSemanticValue ComposeLRUDepth::execute( const SemanticInfo *info )
     if( LRUStack[ tmpOrder ].size() > stackSize )
     {
       LRUStack[ tmpOrder ].pop_back();
-      depth = stackSize + 1;
     }
+    depth = stackSize + 1;
   }
 
   return depth;
