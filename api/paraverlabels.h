@@ -224,6 +224,8 @@
 #define CFG_TAG_OBJECTS          "Analyzer2D.Objects:"
 #define CFG_TAG_DRAWMODE_OBJECTS "Analyzer2D.DrawModeObjects:"
 #define CFG_TAG_DRAWMODE_COLUMNS "Analyzer2D.DrawModeColumns:"
+#define CFG_TAG_AN2D_COMPUTEYSCALE_ZERO "Analyzer2D.ComputeYScaleZero:"
+
 
 // STRING CONSTRUCTION LABELS FOR THE GUI
 #define LEVEL_WORKLOAD     "WORKLOAD"

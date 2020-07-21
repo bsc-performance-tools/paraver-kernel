@@ -187,6 +187,7 @@ class ParaverConfig
     void setHistogramShowUnits( bool whichShowUnits );
     void setHistogramNumColumns( TObjectOrder whichNumColumns );
     void setHistogramAutofitControlScale( bool whichAutofitControlScale );
+    void setHistogramAutofitControlScaleZero( bool whichAutofitControlScaleZero );
     void setHistogramAutofitDataGradient( bool whichAutofitDataGradient );
     void setHistogramAutofitThirdDimensionScale( bool whichAutofitThirdDimensionScale );
     void setHistogramGradientFunction( GradientColor::TGradientFunction whichGradientFunction );
@@ -211,6 +212,7 @@ class ParaverConfig
     bool getHistogramShowUnits() const;
     TObjectOrder getHistogramNumColumns() const;
     bool getHistogramAutofitControlScale() const;
+    bool getHistogramAutofitControlScaleZero() const;
     bool getHistogramAutofitDataGradient() const;
     bool getHistogramAutofitThirdDimensionScale() const;
     GradientColor::TGradientFunction getHistogramGradientFunction() const;
@@ -499,6 +501,8 @@ class ParaverConfig
           ar & boost::serialization::make_nvp( "show_only_totals", onlyTotals );
         if( version >= 6 )
           ar & boost::serialization::make_nvp( "column_short_labels", shortLabels );
+        if( version >= 7 )
+          ar & boost::serialization::make_nvp( "autofit_control_scale_zero", autofitControlScaleZero );
       }
 
       bool viewZoom;
@@ -512,6 +516,7 @@ class ParaverConfig
       bool showUnits;
       TObjectOrder histoNumColumns;
       bool autofitControlScale;
+      bool autofitControlScaleZero;
       bool autofitDataGradient;
       bool autofitThirdDimensionScale;
       GradientColor::TGradientFunction gradientFunction;
@@ -774,7 +779,7 @@ class ParaverConfig
 BOOST_CLASS_VERSION( ParaverConfig, 2)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 8)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 3)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 6)
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 7)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 1)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilter, 0)
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersRange, 0)

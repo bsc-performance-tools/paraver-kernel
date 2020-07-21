@@ -1721,6 +1721,29 @@ class Analyzer2DComputeYScale: public TagFunction
 
 };
 
+class Analyzer2DComputeYScaleZero: public TagFunction
+{
+  public:
+    Analyzer2DComputeYScaleZero()
+    {}
+
+    virtual ~Analyzer2DComputeYScaleZero()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const SaveOptions& options,
+                           const std::vector<Histogram *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
 
 class Analyzer2DMinimum: public TagFunction
 {

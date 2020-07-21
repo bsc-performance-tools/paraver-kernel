@@ -838,6 +838,7 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DAnalysisLimits::printLine( cfgFile, options, it );
     Analyzer2DRelativeTime::printLine( cfgFile, it );
     Analyzer2DComputeYScale::printLine( cfgFile, options, it );
+    Analyzer2DComputeYScaleZero::printLine( cfgFile, options, it );
     Analyzer2DMinimum::printLine( cfgFile, it );
     Analyzer2DMaximum::printLine( cfgFile, it );
     Analyzer2DDelta::printLine( cfgFile, it );
@@ -1006,6 +1007,7 @@ void CFGLoader::loadMap()
   // --> cfgTagFunctions["Analyzer2D.RelativeXScale:"] = new Analyzer2DRelativeXScale();
   // --> Analyzer2D.ShowWindows:
   cfgTagFunctions[OLDCFG_TAG_AN2D_COMPUTEYSCALE]        = new Analyzer2DComputeYScale();
+  cfgTagFunctions[CFG_TAG_AN2D_COMPUTEYSCALE_ZERO]      = new Analyzer2DComputeYScaleZero();
   cfgTagFunctions[OLDCFG_TAG_AN2D_MINIMUM]              = new Analyzer2DMinimum();
   cfgTagFunctions[OLDCFG_TAG_AN2D_MAXIMUM]              = new Analyzer2DMaximum();
   cfgTagFunctions[OLDCFG_TAG_AN2D_DELTA]                = new Analyzer2DDelta();
@@ -4506,6 +4508,46 @@ void Analyzer2DComputeYScale::printLine( ofstream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_AN2D_COMPUTEYSCALE << " ";
   if ( ( *it )->getCompute2DScale() )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
+}
+
+
+string Analyzer2DComputeYScaleZero::tagCFG = CFG_TAG_AN2D_COMPUTEYSCALE_ZERO;
+
+bool Analyzer2DComputeYScaleZero::parseLine( KernelConnection *whichKernel,
+                                             istringstream& line,
+                                             Trace *whichTrace,
+                                             vector<Window *>& windows,
+                                             vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setCompute2DScaleZero( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setCompute2DScaleZero( true );
+  else
+    return false;
+
+  return true;
+}
+
+void Analyzer2DComputeYScaleZero::printLine( ofstream& cfgFile,
+                                             const SaveOptions& options,
+                                             const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << CFG_TAG_AN2D_COMPUTEYSCALE_ZERO << " ";
+  if ( ( *it )->getCompute2DScaleZero() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;

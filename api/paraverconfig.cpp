@@ -204,6 +204,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlHistogram.showUnits = true;
   xmlHistogram.histoNumColumns = 200;
   xmlHistogram.autofitControlScale = true;
+  xmlHistogram.autofitControlScaleZero = false;
   xmlHistogram.autofitDataGradient = true;
   xmlHistogram.autofitThirdDimensionScale = true;
   xmlHistogram.gradientFunction = GradientColor::LINEAR;
@@ -797,6 +798,12 @@ void ParaverConfig::setHistogramAutofitControlScale( bool whichAutofitControlSca
   xmlHistogram.autofitControlScale = whichAutofitControlScale;
 }
 
+void ParaverConfig::setHistogramAutofitControlScaleZero( bool whichAutofitControlScaleZero )
+{
+  isModified = isModified || ( xmlHistogram.autofitControlScaleZero != whichAutofitControlScaleZero );
+  xmlHistogram.autofitControlScaleZero = whichAutofitControlScaleZero;
+}
+
 void ParaverConfig::setHistogramAutofitDataGradient( bool whichAutofitDataGradient )
 {
   isModified = isModified || ( xmlHistogram.autofitDataGradient != whichAutofitDataGradient );
@@ -922,6 +929,11 @@ TObjectOrder ParaverConfig::getHistogramNumColumns() const
 bool ParaverConfig::getHistogramAutofitControlScale() const
 {
   return xmlHistogram.autofitControlScale;
+}
+
+bool ParaverConfig::getHistogramAutofitControlScaleZero() const
+{
+  return xmlHistogram.autofitControlScaleZero;
 }
 
 bool ParaverConfig::getHistogramAutofitDataGradient() const

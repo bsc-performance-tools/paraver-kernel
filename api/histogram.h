@@ -270,6 +270,11 @@ class Histogram
     {
       return ParaverConfig::getInstance()->getHistogramAutofitControlScale();
     }
+    virtual void setCompute2DScaleZero( bool newValue ) {}
+    virtual bool getCompute2DScaleZero() const
+    {
+      return ParaverConfig::getInstance()->getHistogramAutofitControlScaleZero();
+    }
     virtual void setCompute3DScale( bool newValue ) {}
     virtual bool getCompute3DScale() const
     {
@@ -714,6 +719,8 @@ class HistogramProxy : public Histogram
     virtual bool getComputeScale() const;
     virtual void setCompute2DScale( bool newValue );
     virtual bool getCompute2DScale() const;
+    virtual void setCompute2DScaleZero( bool newValue );
+    virtual bool getCompute2DScaleZero() const;
     virtual void setCompute3DScale( bool newValue );
     virtual bool getCompute3DScale() const;
     virtual void setComputeGradient( bool newValue );
@@ -888,6 +895,7 @@ class HistogramProxy : public Histogram
     double minGradient;
     double maxGradient;
     bool computeControlScale;
+    bool computeControlScaleZero;
     bool computeXtraScale;
     bool computeGradient;
     bool showColor;

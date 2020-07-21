@@ -77,6 +77,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   minGradient = Histogram::getMinGradient();
   maxGradient = Histogram::getMaxGradient();
   computeControlScale = Histogram::getCompute2DScale();
+  computeControlScaleZero = Histogram::getCompute2DScaleZero();
   computeXtraScale = Histogram::getCompute3DScale();
   computeGradient = Histogram::getComputeGradient();
   showColor = Histogram::getShowColor();
@@ -790,6 +791,16 @@ bool HistogramProxy::getCompute2DScale() const
   return computeControlScale;
 }
 
+void HistogramProxy::setCompute2DScaleZero( bool newValue )
+{
+  computeControlScaleZero = newValue;
+}
+
+bool HistogramProxy::getCompute2DScaleZero() const
+{
+  return computeControlScaleZero;
+}
+
 void HistogramProxy::setCompute3DScale( bool newValue )
 {
   computeXtraScale = newValue;
@@ -944,6 +955,8 @@ void HistogramProxy::compute2DScale( ProgressController *progress )
   controlWindow->setWindowBeginTime( tmpBeginTime, true );
   controlWindow->setWindowEndTime( tmpEndTime, true );
   TSemanticValue minY = controlWindow->getMinimumY();
+  if( getCompute2DScaleZero() && controlWindow->getExistSemanticZero() && minY > 0.0 )
+    minY = 0.0;
   TSemanticValue maxY = controlWindow->getMaximumY();
   controlWindow->setMinimumY( tmpMinY );
   controlWindow->setMaximumY( tmpMaxY );
