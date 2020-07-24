@@ -80,7 +80,7 @@ class ParaverConfig
     static ParaverConfig *getInstance();
 
     void readParaverConfigFile();
-    static void writeParaverConfigFile();
+    static void writeParaverConfigFile( bool writeBackup = true );
     static bool writeDefaultConfig();
 
     std::string getParaverConfigDir();

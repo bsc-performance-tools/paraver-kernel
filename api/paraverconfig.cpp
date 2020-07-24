@@ -1651,7 +1651,7 @@ void ParaverConfig::readParaverConfigFile()
 }
 
 
-void ParaverConfig::writeParaverConfigFile()
+void ParaverConfig::writeParaverConfigFile( bool writeBackup )
 {
   string homedir;
   string strFile, strBackupFile;
@@ -1684,7 +1684,7 @@ void ParaverConfig::writeParaverConfigFile()
   strBackupFile = strFile;
   strFile.append( ".xml" );
 
-  if( instance->isModified )
+  if( writeBackup && instance->isModified )
   {
     strBackupFile.append( "_backup.xml" );
     std::ifstream src( strFile );
