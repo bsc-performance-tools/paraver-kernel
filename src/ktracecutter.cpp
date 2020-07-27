@@ -182,6 +182,9 @@ void KTraceCutter::read_cutter_params()
 
   if ( originalTime )
     break_states = false; // Assigned ONLY if originalTime == true, else KEEP value.
+
+  if( break_states )
+    keep_events = false;
 }
 
 
