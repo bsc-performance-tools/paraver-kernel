@@ -1687,13 +1687,13 @@ void ParaverConfig::writeParaverConfigFile( bool writeBackup )
   if( writeBackup && instance->isModified )
   {
     strBackupFile.append( "_backup.xml" );
-    std::ifstream src( strFile );
-    std::ofstream dst( strBackupFile );
+    std::ifstream src( strFile.c_str() );
+    std::ofstream dst( strBackupFile.c_str() );
     dst << src.rdbuf();
     src.close();
     dst.close();
   }  
-  instance->saveXML( strFile.c_str() );
+  instance->saveXML( strFile );
   
   instance->isModified = false;
 }
