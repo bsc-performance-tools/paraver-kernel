@@ -522,21 +522,19 @@ HistogramTotals *HistogramProxy::getTotals( const string& whichStat ) const
 {
   if ( itsCommunicationStat( whichStat ) )
   {
-    return getCommColumnTotals();
 // TODO: Draw sorted vertical totals
-/*    if ( horizontal )
+    if ( horizontal )
       return getCommColumnTotals();
     else
-      return getCommRowTotals();*/
+      return getCommRowTotals();
   }
   else
   {
-    return getColumnTotals();
 // TODO: Draw sorted vertical totals
-/*    if ( horizontal )
+    if ( horizontal )
       return getColumnTotals();
     else
-      return getRowTotals();*/
+      return getRowTotals();
   }
 }
 
@@ -1815,6 +1813,11 @@ void HistogramProxy::fillCurrentSort()
     }
 
     HistogramTotals *tmpTotals = getTotals( currentStat );
+/*    if ( itsCommunicationStat( currentStat ) )
+      tmpTotals = getCommColumnTotals();
+    else
+      tmpTotals = getColumnTotals();*/
+
     if( tmpTotals == NULL )
       return;
 
@@ -1841,5 +1844,7 @@ void HistogramProxy::fillCurrentSort()
       default:
         break;
     }
+
+    delete tmpTotals;
   }
 }
