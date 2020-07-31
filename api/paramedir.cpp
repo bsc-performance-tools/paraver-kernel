@@ -559,6 +559,11 @@ bool parseArguments( KernelConnection *myKernel,
     std::cerr << "  [ERROR] Missing arguments." << std::endl;
     parseOK = false;
   }
+  else if ( sourceTraceName == outputTraceName )
+  {
+    std::cerr << "  [ERROR] Source trace and output trace are the same." << std::endl;
+    parseOK = false;
+  }
 
   return parseOK;
 }
