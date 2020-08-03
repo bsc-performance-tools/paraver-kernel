@@ -479,6 +479,10 @@ void WindowProxy::computeYScaleMax()
 
 void WindowProxy::computeYScale( ProgressController *progress )
 {
+  vector< TSemanticValue > tmpComputedMaxY;
+  vector< TSemanticValue > tmpComputedMinY;
+  vector< int > tmpComputedZeros;
+
   if ( !yScaleComputed )
   {
     vector< TObjectOrder > selected;
@@ -500,6 +504,10 @@ void WindowProxy::computeYScale( ProgressController *progress )
       progress->setCurrentProgress( currentObject );
     }
 
+    tmpComputedMaxY.reserve( selected.size() );
+    tmpComputedMinY.reserve( selected.size() );
+    tmpComputedZeros.reserve( selected.size() );
+
     #pragma omp parallel
     {
       #pragma omp single
@@ -516,17 +524,26 @@ void WindowProxy::computeYScale( ProgressController *progress )
             parallelClone.push_back( myWindow->clone( true ) );
         }
 #endif // PARALLEL_ENABLED
-        #pragma omp task shared ( currentObject, progress )
+        for ( int i = 0; i < selected.size(); ++i )
         {
-          for ( int i = 0; i < selected.size(); ++i )
+          tmpComputedMaxY.push_back( 0.0 );
+          tmpComputedMinY.push_back( 0.0 );
+          tmpComputedZeros.push_back( false );
+          
+          int tmpComputedMaxYSize = tmpComputedMaxY.size();
+          int tmpComputedMinYSize = tmpComputedMinY.size();
+          int tmpComputedZerosSize = tmpComputedZeros.size();
+
+          #pragma omp task shared ( currentObject, progress, tmpComputedMaxY, tmpComputedMinY, tmpComputedZeros ) \
+                           firstprivate( tmpComputedMaxYSize, tmpComputedMinYSize, tmpComputedZerosSize )
           {
             TObjectOrder obj = selected[ i ];
-            initRow( obj, winBeginTime, NOCREATE );
+            initRow( obj, winBeginTime, NOCREATE, tmpComputedMaxY[ tmpComputedMaxYSize - 1 ], tmpComputedMinY[ tmpComputedMinYSize - 1 ], tmpComputedZeros[ tmpComputedZerosSize - 1 ]  );
             if( progress == NULL || ( progress != NULL && !progress->getStop() ) )
             {
               while ( getBeginTime( obj ) < winEndTime &&
                       getBeginTime( obj ) < myTrace->getEndTime() )
-                calcNext( obj );
+                calcNext( obj, tmpComputedMaxY[ tmpComputedMaxYSize - 1 ], tmpComputedMinY[ tmpComputedMinYSize - 1 ], tmpComputedZeros[ tmpComputedZerosSize - 1 ] );
 
               #pragma omp atomic
               ++currentObject;
@@ -544,6 +561,17 @@ void WindowProxy::computeYScale( ProgressController *progress )
 
       } // omp single
     } // omp parallel
+
+    for ( int pos = 0; pos < selected.size(); ++pos )
+    {
+      computedZeros = computedZeros || tmpComputedZeros[ pos ];
+      computedMaxY = computedMaxY > tmpComputedMaxY[ pos ] ? computedMaxY : tmpComputedMaxY[ pos ];
+      if ( computedMinY == 0.0 )
+        computedMinY = tmpComputedMinY[ pos ];
+      else if( tmpComputedMinY[ pos ] != 0.0 )
+        computedMinY = computedMinY < tmpComputedMinY[ pos ] ? computedMinY : tmpComputedMinY[ pos ];
+    }
+
 
 #ifdef PARALLEL_ENABLED
     for( vector<Window *>::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
@@ -2150,15 +2178,6 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
 
     } // end omp single
   } // end omp parallel
-
-  for( vector< int >::iterator it = tmpDrawCaution.begin(); it != tmpDrawCaution.end(); ++it )
-  {
-    if ( *it )
-    {
-      drawCaution = true;
-      break;
-    }
-  }
 
   for( size_t pos = 0; pos < tmpComputedMaxY.size(); ++pos )
   {
