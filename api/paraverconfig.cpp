@@ -167,6 +167,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlGlobal.prevSessionLoad = true;
   xmlGlobal.helpContentsUsesBrowser = false;
   xmlGlobal.helpContentsQuestionAnswered = false;
+  xmlGlobal.disableTimelineZoomMouseWheel = false;
   xmlGlobal.appsChecked = false;
 
   xmlTimeline.defaultName = "New window # %N";
@@ -402,6 +403,12 @@ void ParaverConfig::setGlobalHelpContentsQuestionAnswered( bool isHelpContentsQu
   xmlGlobal.helpContentsQuestionAnswered = isHelpContentsQuestionAnswered;
 }
 
+void ParaverConfig::setDisableTimelineZoomMouseWheel( bool disable )
+{
+  isModified = isModified || ( xmlGlobal.disableTimelineZoomMouseWheel != disable );
+  xmlGlobal.disableTimelineZoomMouseWheel = disable;
+}
+
 
 void ParaverConfig::setAppsChecked() // will always set to True
 {
@@ -483,6 +490,12 @@ bool ParaverConfig::getGlobalHelpContentsQuestionAnswered() const
 {
   return xmlGlobal.helpContentsQuestionAnswered;
 }
+
+bool ParaverConfig::getDisableTimelineZoomMouseWheel() const
+{
+  return xmlGlobal.disableTimelineZoomMouseWheel;
+}
+
 
 // TIMELINES XML SECTION
 void ParaverConfig::setTimelineDefaultName( string whichDefaultName )

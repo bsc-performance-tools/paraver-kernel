@@ -108,6 +108,7 @@ class ParaverConfig
     void setGlobalHelpContentsUsesBrowser( bool isHelpContentsUsesBrowser );
     void setGlobalHelpContentsQuestionAnswered( bool isHelpContentsQuestionAnswered );
     void setAppsChecked(); // will always set to True
+    void setDisableTimelineZoomMouseWheel( bool disable );
 
 
     std::string getGlobalTracesPath() const;
@@ -126,6 +127,8 @@ class ParaverConfig
     bool getGlobalPrevSessionLoad() const;
     bool getGlobalHelpContentsUsesBrowser() const;
     bool getGlobalHelpContentsQuestionAnswered() const;
+    bool getDisableTimelineZoomMouseWheel() const;
+
     bool getAppsChecked() const;
 
     // TIMELINES XML SECTION
@@ -383,9 +386,13 @@ class ParaverConfig
           ar & boost::serialization::make_nvp( "help_contents_browser", helpContentsUsesBrowser );
           ar & boost::serialization::make_nvp( "help_contents_question", helpContentsQuestionAnswered );
         }
-        if (version >= 8) 
+        if ( version >= 8 )
         {
           ar & boost::serialization::make_nvp( "apps_checked", appsChecked );
+        }
+        if ( version >= 9 )
+        {
+          ar & boost::serialization::make_nvp( "disable_timeline_zoom_mouse_wheel", disableTimelineZoomMouseWheel );
         }
       }
 
@@ -404,6 +411,7 @@ class ParaverConfig
       bool prevSessionLoad;
       bool helpContentsUsesBrowser;
       bool helpContentsQuestionAnswered;
+      bool disableTimelineZoomMouseWheel;
       bool appsChecked;
 
     } xmlGlobal;
@@ -776,41 +784,41 @@ class ParaverConfig
 // BOOST_CLASS_VERSION( ParaverConfig, 0)
 
 // Second version: introducing some structure
-BOOST_CLASS_VERSION( ParaverConfig, 2)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 8)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 3)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 7)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 1)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilter, 0)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersRange, 0)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersAlgorithm, 0)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCounters, 0)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilters, 3)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesExternalApplications, 0)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesColor, 3)
+BOOST_CLASS_VERSION( ParaverConfig, 2 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 9 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 3 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 7 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 1 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilter, 0 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersRange, 0 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersAlgorithm, 0 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCounters, 0 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilters, 3 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesExternalApplications, 0 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesColor, 3 )
 
 // WhatWhere.num_decimals
 class WWNumDecimals: public PropertyFunction
 {
-    void parseLine( std::istringstream& line, ParaverConfig& config );
+  void parseLine( std::istringstream& line, ParaverConfig& config );
 };
 
 // Analyzer2D.num_columns
 class HistoNumColumns: public PropertyFunction
 {
-    void parseLine( std::istringstream& line, ParaverConfig& config );
+  void parseLine( std::istringstream& line, ParaverConfig& config );
 };
 
 // Analyzer2D.units
 class HistoUnits: public PropertyFunction
 {
-    void parseLine( std::istringstream& line, ParaverConfig& config );
+  void parseLine( std::istringstream& line, ParaverConfig& config );
 };
 
 // Analyzer2D.thousandsep
 class HistoThousanSep: public PropertyFunction
 {
-    void parseLine( std::istringstream& line, ParaverConfig& config );
+  void parseLine( std::istringstream& line, ParaverConfig& config );
 };
 
 #endif // PARAVERCONFIG_H_INCLUDED
