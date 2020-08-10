@@ -76,6 +76,7 @@
 #define OLDCFG_TAG_WNDW_FLAGS_ENABLED  "window_flags_enabled"
 #define OLDCFG_TAG_WNDW_NON_COLOR_MODE  "window_noncolor_mode"
 #define OLDCFG_TAG_WNDW_COLOR_MODE  "window_color_mode"
+#define OLDCFG_TAG_WNDW_SEMANTIC_SCALE_MIN_AT_ZERO  "window_semantic_scale_min_at_zero"
 #define OLDCFG_TAG_WNDW_UNITS     "window_units"
 #define OLDCFG_TAG_WNDW_OPERATION "window_operation"
 #define OLDCFG_TAG_WNDW_MAXIMUM_Y "window_maximum_y"

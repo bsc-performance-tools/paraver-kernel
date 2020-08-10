@@ -389,6 +389,10 @@ class Window
       GradientColor *tmp = NULL;
       return *tmp;
     }
+    virtual bool getSemanticScaleMinAtZero()
+    {
+      return false;
+    }
     virtual bool getShowWindow() const
     {
       return true;
@@ -415,6 +419,9 @@ class Window
     {}
     virtual void setPunctualColorMode()
     {}
+    virtual void setSemanticScaleMinAtZero( bool newValue )
+    {}
+
     virtual bool isCodeColorSet() const
     {
       return true;
@@ -1025,6 +1032,7 @@ class WindowProxy: public Window
     virtual DrawModeMethod getDrawModeTime() const;
     virtual CodeColor& getCodeColor();
     virtual GradientColor& getGradientColor();
+    virtual bool getSemanticScaleMinAtZero();
     virtual bool getShowWindow() const;
     virtual void setShowWindow( bool newValue );
     virtual void setShowChildrenWindow( bool newValue ); // recursively sets children
@@ -1046,6 +1054,7 @@ class WindowProxy: public Window
     virtual void setPixelSize( PRV_UINT16 whichSize );
     virtual Window *getPunctualColorWindow() const;
     virtual void setPunctualColorWindow( Window *whichWindow );
+    virtual void setSemanticScaleMinAtZero( bool newValue );
 
     virtual void allowOutOfScale( bool activate );
     virtual void allowOutliers( bool activate );
@@ -1358,6 +1367,7 @@ class WindowProxy: public Window
     DrawModeMethod drawModeObject;
     DrawModeMethod drawModeTime;
     SemanticColor::TColorFunction colorMode;
+    bool semanticScaleMinAtZero;
     bool showWindow;
     bool raise;
     bool changed;

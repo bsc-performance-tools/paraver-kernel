@@ -766,6 +766,7 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowFlagsEnabled::printLine( cfgFile, it );
     WindowNonColorMode::printLine( cfgFile, it );
     WindowColorMode::printLine( cfgFile, it );
+    WindowSemanticScaleMinAtZero::printLine( cfgFile, it );
     WindowPunctualColorWindow::printLine( cfgFile, allWindows, it );
     if ( !( *it )->isDerivedWindow() )
     {
@@ -938,6 +939,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_NON_COLOR_MODE]      = new WindowNonColorMode();
   cfgTagFunctions[OLDCFG_TAG_WNDW_UNITS]               = new WindowUnits();
   cfgTagFunctions[OLDCFG_TAG_WNDW_COLOR_MODE]          = new WindowColorMode();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_SEMANTIC_SCALE_MIN_AT_ZERO] = new WindowSemanticScaleMinAtZero();
   cfgTagFunctions[OLDCFG_TAG_WNDW_OPERATION]           = new WindowOperation();
   cfgTagFunctions[OLDCFG_TAG_WNDW_MAXIMUM_Y]           = new WindowMaximumY();
   cfgTagFunctions[OLDCFG_TAG_WNDW_MINIMUM_Y]           = new WindowMinimumY();
@@ -1446,6 +1448,38 @@ void WindowColorMode::printLine( ofstream& cfgFile,
     cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_PUNCTUAL <<endl;
   else if ( ( *it )->isFusedLinesColorSet() )
     cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_FUSED_LINES <<endl;
+}
+
+
+string WindowSemanticScaleMinAtZero::tagCFG = OLDCFG_TAG_WNDW_SEMANTIC_SCALE_MIN_AT_ZERO;
+
+bool WindowSemanticScaleMinAtZero::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                              Trace *whichTrace,
+                                              vector<Window *>& windows,
+                                              vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+    windows[ windows.size() - 1 ]->setSemanticScaleMinAtZero( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+    windows[ windows.size() - 1 ]->setSemanticScaleMinAtZero( true );
+  else
+    return false;
+
+  return true;
+}
+
+void WindowSemanticScaleMinAtZero::printLine( ofstream& cfgFile,
+                                              const vector<Window *>::const_iterator it )
+{
+  cfgFile << WindowSemanticScaleMinAtZero::tagCFG << " " << ( ( *it )->getSemanticScaleMinAtZero() ?
+      OLDCFG_VAL_FALSE : OLDCFG_VAL_TRUE ) << endl;
 }
 
 

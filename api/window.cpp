@@ -133,6 +133,7 @@ void WindowProxy::init()
   maximumY = Window::getMaximumY();
   minimumY = Window::getMinimumY();
   existSemanticZero = Window::getExistSemanticZero();
+  semanticScaleMinAtZero = ParaverConfig::getInstance()->getTimelineSemanticScaleMinAtZero();
   colorMode = ParaverConfig::getInstance()->getTimelineColor();
   if( colorMode == SemanticColor::GRADIENT )
     myGradientColor.allowOutOfScale( true );
@@ -1115,6 +1116,11 @@ GradientColor& WindowProxy::getGradientColor()
   return myGradientColor;
 }
 
+bool WindowProxy::getSemanticScaleMinAtZero()
+{
+  return semanticScaleMinAtZero;
+}
+
 bool WindowProxy::getShowWindow() const
 {
   return showWindow;
@@ -1227,6 +1233,11 @@ Window *WindowProxy::getPunctualColorWindow() const
 void WindowProxy::setPunctualColorWindow( Window *whichWindow )
 {
   punctualColorWindow = whichWindow;
+}
+
+void  WindowProxy::setSemanticScaleMinAtZero( bool newValue )
+{
+  semanticScaleMinAtZero = newValue;
 }
 
 void WindowProxy::allowOutOfScale( bool activate )

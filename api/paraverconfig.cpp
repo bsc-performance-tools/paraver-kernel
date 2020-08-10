@@ -182,6 +182,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlTimeline.drawmodeTime = DRAW_MAXIMUM;
   xmlTimeline.drawmodeObjects = DRAW_MAXIMUM;
   xmlTimeline.gradientFunction = GradientColor::LINEAR;
+  xmlTimeline.semanticScaleMinAtZero = false;
   xmlTimeline.pixelSize = 0;
   xmlTimeline.objectLabels = Window::SPACED_LABELS;
   xmlTimeline.objectAxisSize = Window::CURRENT_LEVEL;
@@ -565,6 +566,12 @@ void ParaverConfig::setTimelineGradientFunction( GradientColor::TGradientFunctio
   xmlTimeline.gradientFunction = whichGradientFunction;
 }
 
+void ParaverConfig::setTimelineSemanticScaleMinAtZero( bool whichSemanticScaleMinAtZero )
+{
+  isModified = isModified || ( xmlTimeline.semanticScaleMinAtZero != whichSemanticScaleMinAtZero );
+  xmlTimeline.semanticScaleMinAtZero = whichSemanticScaleMinAtZero;
+}
+
 void ParaverConfig::setTimelinePixelSize( PRV_UINT32 whichPixelSize )
 {
   isModified = isModified || ( xmlTimeline.pixelSize != whichPixelSize );
@@ -686,6 +693,11 @@ DrawModeMethod ParaverConfig::getTimelineDrawmodeObjects() const
 GradientColor::TGradientFunction ParaverConfig::getTimelineGradientFunction() const
 {
   return xmlTimeline.gradientFunction;
+}
+
+bool ParaverConfig::getTimelineSemanticScaleMinAtZero() const
+{
+  return xmlTimeline.semanticScaleMinAtZero;
 }
 
 PRV_UINT32 ParaverConfig::getTimelinePixelSize() const

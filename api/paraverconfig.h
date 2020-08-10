@@ -143,6 +143,7 @@ class ParaverConfig
     void setTimelineDrawmodeTime( DrawModeMethod whichDrawmodeTime );
     void setTimelineDrawmodeObjects( DrawModeMethod whichDrawmodeObjects );
     void setTimelineGradientFunction( GradientColor::TGradientFunction whichGradientFunction );
+    void setTimelineSemanticScaleMinAtZero( bool whichMinAtZero );
     void setTimelinePixelSize( PRV_UINT32 whichPixelSize );
     void setTimelineLabels( Window::TObjectLabels whichLabels );
     void setTimelineObjectAxisSize( Window::TObjectAxisSize whichSize );
@@ -166,6 +167,7 @@ class ParaverConfig
     DrawModeMethod getTimelineDrawmodeTime() const;
     DrawModeMethod getTimelineDrawmodeObjects() const;
     GradientColor::TGradientFunction getTimelineGradientFunction() const;
+    bool getTimelineSemanticScaleMinAtZero() const;
     PRV_UINT32 getTimelinePixelSize() const;
     Window::TObjectLabels getTimelineLabels() const;
     Window::TObjectAxisSize getTimelineObjectAxisSize() const;
@@ -448,6 +450,8 @@ class ParaverConfig
           ar & boost::serialization::make_nvp( "object_labels", objectLabels );
         if( version >= 3 )
           ar & boost::serialization::make_nvp( "object_axis_size", objectAxisSize );
+        if ( version >= 4 )
+          ar & boost::serialization::make_nvp( "semantic_scale_min_at_zero", semanticScaleMinAtZero );
       }
 
       std::string defaultName;
@@ -462,6 +466,7 @@ class ParaverConfig
       DrawModeMethod drawmodeTime;
       DrawModeMethod drawmodeObjects;
       GradientColor::TGradientFunction gradientFunction;
+      bool semanticScaleMinAtZero;
       PRV_UINT32 pixelSize;
       Window::TObjectLabels objectLabels;
       Window::TObjectAxisSize objectAxisSize;
@@ -786,7 +791,7 @@ class ParaverConfig
 // Second version: introducing some structure
 BOOST_CLASS_VERSION( ParaverConfig, 2 )
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 9 )
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 3 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 4 )
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 7 )
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 1 )
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilter, 0 )
