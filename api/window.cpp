@@ -310,6 +310,7 @@ Window *WindowProxy::clone( bool recursiveClone )
   clonedWindow->myGradientColor = myGradientColor;
   clonedWindow->colorMode = colorMode;
   clonedWindow->punctualColorWindow = punctualColorWindow;
+  clonedWindow->semanticScaleMinAtZero = semanticScaleMinAtZero;
   clonedWindow->drawModeObject = drawModeObject;
   clonedWindow->drawModeTime = drawModeTime;
   clonedWindow->showWindow = showWindow;
@@ -2696,7 +2697,18 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
         {
           while( getBeginTime( *row ) >= punctualColorWindow->getEndTime( *row ) )
             punctualColorWindow->calcNext( *row, dummyMaxY, dummyMinY, dummyZeros );
-          tmpPairSemantic.second = punctualColorWindow->getValue( *row );
+
+          vector<TSemanticValue> tmpValues;
+          while( getEndTime( *row ) >= punctualColorWindow->getEndTime( *row ) )
+          {
+            tmpValues.push_back( punctualColorWindow->getValue( *row ) );
+            punctualColorWindow->calcNext( *row, dummyMaxY, dummyMinY, dummyZeros );
+          }
+
+          if( tmpValues.empty() )
+            tmpValues.push_back( punctualColorWindow->getValue( *row ) );
+
+          tmpPairSemantic.second = DrawMode::selectValue( tmpValues, getDrawModeTime() );
         }
         values.push_back( tmpPairSemantic );
       }
