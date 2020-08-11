@@ -27,7 +27,7 @@ install-data-hook:
 
 if ENABLE_DEPENDENCIES_AWARE_INSTALL
 	$(SED) "s|@inst_BOOST_LIBDIR@|${BOOST_LDFLAGS}|g ; s|-L||g ; \
-					s|@inst_LOGIN_NODE_DETECTION@|if [ ! \"$$\(hostname \| grep login\)x\" = \"x\" ]; then export OMP_NUM_THREADS=4 ; fi|g" < ./docs/paramedir > $(DESTDIR)$(bindir)/paramedir
+					s|@inst_LOGIN_NODE_DETECTION@|if [ ! \"$$\(hostname \| grep login\)x\" = \"x\" ]; then export OMP_NUM_THREADS=4 ; ulimit -Ss 128000 ; fi|g" < ./docs/paramedir > $(DESTDIR)$(bindir)/paramedir
 else
 	$(SED) "s|@inst_BOOST_LIBDIR@:||g ; \
 					s|@inst_LOGIN_NODE_DETECTION@||g" < ./docs/paramedir > $(DESTDIR)$(bindir)/paramedir
