@@ -601,7 +601,7 @@ void TextOutput::dumpTotalColumns( Histogram *whichHisto,
         progress->setCurrentProgress( (int)iColumn );
     }
 
-    outputFile << (totals->*totalFunction)( currentStat, printedColumns[ whichHisto->getSortedColumn( iColumn ) ], iPlane ) << "\t";
+    outputFile << (totals->*totalFunction)( currentStat, printedColumns[ whichHisto->getSemanticSortedColumn( iColumn ) ], iPlane ) << "\t";
   }
 
   outputFile << endl;

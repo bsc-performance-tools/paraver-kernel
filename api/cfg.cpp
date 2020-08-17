@@ -4232,11 +4232,11 @@ bool Analyzer2DSortCols::parseLine( KernelConnection *whichKernel, istringstream
 
   if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
   {
-    histograms[ histograms.size() - 1 ]->setSortColumns( true );
+    histograms[ histograms.size() - 1 ]->setSemanticSortColumns( true );
   }
   else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
   {
-    histograms[ histograms.size() - 1 ]->setSortColumns( false );
+    histograms[ histograms.size() - 1 ]->setSemanticSortColumns( false );
   }
   else
     return false;
@@ -4248,7 +4248,7 @@ void Analyzer2DSortCols::printLine( ofstream& cfgFile,
                                     const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SORTCOLS << " ";
-  if ( ( *it )->getSortColumns() )
+  if ( ( *it )->getSemanticSortColumns() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -4273,17 +4273,17 @@ bool Analyzer2DSortCriteria::parseLine( KernelConnection *whichKernel, istringst
   getline( line, strSortCriteria );
 
   if ( strSortCriteria.compare( OLDCFG_VAL_SORT_AVERAGE ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( AVERAGE );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( AVERAGE );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_TOTAL ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( TOTAL );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( TOTAL );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_MAXIMUM ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( MAXIMUM );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( MAXIMUM );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_MINIMUM ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( MINIMUM );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( MINIMUM );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_STDEV ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( STDEV );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( STDEV );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_AVGDIVMAX ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( AVGDIVMAX );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( AVGDIVMAX );
   else
     return false;
 
@@ -4294,7 +4294,7 @@ void Analyzer2DSortCriteria::printLine( ofstream& cfgFile,
                                         const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SORTCRITERIA << " ";
-  switch ( ( *it )->getSortCriteria() )
+  switch ( ( *it )->getSemanticSortCriteria() )
   {
     case AVERAGE:
       cfgFile << OLDCFG_VAL_SORT_AVERAGE;
@@ -4339,11 +4339,11 @@ bool Analyzer2DSortReverse::parseLine( KernelConnection *whichKernel, istringstr
 
   if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
   {
-    histograms[ histograms.size() - 1 ]->setSortReverse( true );
+    histograms[ histograms.size() - 1 ]->setSemanticSortReverse( true );
   }
   else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
   {
-    histograms[ histograms.size() - 1 ]->setSortReverse( false );
+    histograms[ histograms.size() - 1 ]->setSemanticSortReverse( false );
   }
   else
     return false;
@@ -4355,7 +4355,7 @@ void Analyzer2DSortReverse::printLine( ofstream& cfgFile,
                                        const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SORTREVERSE << " ";
-  if ( ( *it )->getSortReverse() )
+  if ( ( *it )->getSemanticSortReverse() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;

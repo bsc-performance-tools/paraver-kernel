@@ -240,22 +240,22 @@ class Histogram
     {
       return ParaverConfig::getInstance()->getHistogramShowUnits();
     }
-    virtual void setSortColumns( bool newValue ) {}
-    virtual bool getSortColumns() const
+    virtual void setSemanticSortColumns( bool newValue ) {}
+    virtual bool getSemanticSortColumns() const
     {
       return false;
     }
-    virtual void setSortCriteria( THistoTotals whichCriteria ) {}
-    virtual THistoTotals getSortCriteria() const
+    virtual void setSemanticSortCriteria( THistoTotals whichCriteria ) {}
+    virtual THistoTotals getSemanticSortCriteria() const
     {
       return AVERAGE;
     }
-    virtual void setSortReverse( bool newValue ) {}
-    virtual bool getSortReverse() const
+    virtual void setSemanticSortReverse( bool newValue ) {}
+    virtual bool getSemanticSortReverse() const
     {
       return false;
     }
-    virtual PRV_UINT32 getSortedColumn( PRV_UINT32 col ) const
+    virtual PRV_UINT32 getSemanticSortedColumn( PRV_UINT32 col ) const
     {
       return 0;
     }
@@ -347,7 +347,7 @@ class Histogram
 
     virtual THistogramColumn getPlaneColumns( THistogramColumn iPlane,
                                               bool hideEmptyColumns,
-                                              std::vector<THistogramColumn> &noVoidColumns ) const
+                                              std::vector<THistogramColumn> &noVoidSemRanges ) const
     {
       return 0;
     }
@@ -707,13 +707,13 @@ class HistogramProxy : public Histogram
     virtual bool getThousandSeparator() const;
     virtual void setShowUnits( bool newValue );
     virtual bool getShowUnits() const;
-    virtual void setSortColumns( bool newValue );
-    virtual bool getSortColumns() const;
-    virtual void setSortCriteria( THistoTotals whichCriteria );
-    virtual THistoTotals getSortCriteria() const;
-    virtual void setSortReverse( bool newValue );
-    virtual bool getSortReverse() const;
-    virtual PRV_UINT32 getSortedColumn( PRV_UINT32 col ) const;
+    virtual void setSemanticSortColumns( bool newValue );
+    virtual bool getSemanticSortColumns() const;
+    virtual void setSemanticSortCriteria( THistoTotals whichCriteria );
+    virtual THistoTotals getSemanticSortCriteria() const;
+    virtual void setSemanticSortReverse( bool newValue );
+    virtual bool getSemanticSortReverse() const;
+    virtual PRV_UINT32 getSemanticSortedColumn( PRV_UINT32 col ) const;
     virtual void setMinGradient( double whichMin );
     virtual double getMinGradient() const;
     virtual void setMaxGradient( double whichMax );
@@ -752,7 +752,7 @@ class HistogramProxy : public Histogram
 
     virtual THistogramColumn getPlaneColumns( THistogramColumn iPlane,
                                               bool hideEmptyColumns,
-                                              std::vector<THistogramColumn> &noVoidColumns ) const;
+                                              std::vector<THistogramColumn> &noVoidSemRanges ) const;
 
     // Zoom history
     virtual bool isZoomEmpty() const;
@@ -891,10 +891,10 @@ class HistogramProxy : public Histogram
     bool thousandSep;
     bool showUnits;
 
-    bool sortColumns;
-    THistoTotals sortCriteria;
-    bool sortReverse;
-    std::vector<int> currentSort;
+    bool sortSemanticColumns;
+    THistoTotals semanticSortCriteria;
+    bool sortSemanticReverse;
+    std::vector<int> currentSemanticSort;
 
     double minGradient;
     double maxGradient;
@@ -960,7 +960,7 @@ class HistogramProxy : public Histogram
 
     THistogramColumn getNumColumns() const;
 
-    void fillCurrentSort();
+    void fillSemanticSort();
 
     friend Histogram *Histogram::create( KernelConnection * );
 };
