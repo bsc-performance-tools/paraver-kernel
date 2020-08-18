@@ -964,6 +964,20 @@ bool HistogramProxy::itsCommunicationStat( const string& whichStat ) const
   return myHisto->itsCommunicationStat( whichStat );
 }
 
+THistogramColumn HistogramProxy::getSemanticRealColumn( THistogramColumn whichCol, const vector<THistogramColumn>& noVoidSemRanges ) const
+{
+  THistogramColumn realCol = whichCol;
+
+  if( getHideColumns() && getSemanticSortColumns() && getSemanticSortReverse() )
+    realCol = getNumColumns() - noVoidSemRanges.size() + whichCol;
+  else if( getHideColumns() && !getSemanticSortColumns() && !getSemanticSortReverse() )
+    realCol = noVoidSemRanges[ whichCol ];
+  else if( getHideColumns() && !getSemanticSortColumns() && getSemanticSortReverse() )
+    realCol = noVoidSemRanges[ noVoidSemRanges.size() - whichCol - 1 ];
+    
+  return realCol;
+}
+
 void HistogramProxy::compute2DScale( ProgressController *progress )
 {
   TSemanticValue tmpMinY = controlWindow->getMinimumY();

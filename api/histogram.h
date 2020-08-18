@@ -352,6 +352,12 @@ class Histogram
       return 0;
     }
 
+    virtual THistogramColumn getSemanticRealColumn( THistogramColumn whichCol, 
+                                                    const vector<THistogramColumn>& noVoidSemRanges ) const 
+    { 
+      return 0;
+    }
+
     // Zoom history
     typedef struct TZoomInfo
     {
@@ -786,6 +792,8 @@ class HistogramProxy : public Histogram
     virtual std::string getCurrentStat() const;
 
     bool itsCommunicationStat( const std::string& whichStat ) const;
+
+    THistogramColumn getSemanticRealColumn( THistogramColumn whichCol, const vector<THistogramColumn>& noVoidSemRanges ) const;
 
     std::string getUnitsLabel( const std::string& whichStat ) const;
     virtual void getGroupsLabels( std::vector<std::string>& onVector ) const;

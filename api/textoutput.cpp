@@ -262,9 +262,9 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
 
         for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
         {
-          whichHisto->setFirstCell( printedColumns[ iColumn ], iPlane );
+          whichHisto->setFirstCell( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane );
           if ( whichHisto->getHorizontal() && withLabels )
-            outputFile << whichHisto->getColumnLabel( printedColumns[ iColumn ] ) << "\t";
+            outputFile << whichHisto->getColumnLabel( whichHisto->getSemanticRealColumn( iColumn, printedColumns ) ) << "\t";
         }
 
         // Dump data
@@ -419,12 +419,12 @@ void TextOutput::dumpMatrixHorizontal( Histogram *whichHisto,
 
     for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
     {
-      if ( !whichHisto->endCell( printedColumns[ iColumn ], iPlane ) )
+      if ( !whichHisto->endCell( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane ) )
       {
-        if ( whichHisto->getCurrentRow( printedColumns[ iColumn ], iPlane ) == iRow )
+        if ( whichHisto->getCurrentRow( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane ) == iRow )
         {
-          outputFile << whichHisto->getCurrentValue( printedColumns[ iColumn ], currentStat, iPlane ) << "\t";
-          whichHisto->setNextCell( printedColumns[ iColumn ], iPlane );
+          outputFile << whichHisto->getCurrentValue( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), currentStat, iPlane ) << "\t";
+          whichHisto->setNextCell( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane );
         }
         else
           outputFile << 0.0 << "\t";
@@ -457,7 +457,7 @@ void TextOutput::dumpMatrixVertical( Histogram *whichHisto,
   for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
   {
     if( withLabels )
-      outputFile << whichHisto->getColumnLabel( printedColumns[ iColumn ] ) << "\t";
+      outputFile << whichHisto->getColumnLabel( whichHisto->getSemanticRealColumn( iColumn, printedColumns ) ) << "\t";
 
     // progress advanced by columns (external loop)
     if( progress != NULL )
@@ -468,12 +468,12 @@ void TextOutput::dumpMatrixVertical( Histogram *whichHisto,
 
     for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
     {
-      if ( !whichHisto->endCell( printedColumns[ iColumn ], iPlane ) )
+      if ( !whichHisto->endCell( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane ) )
       {
-        if ( whichHisto->getCurrentRow( printedColumns[ iColumn ], iPlane ) == iRow )
+        if ( whichHisto->getCurrentRow( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane ) == iRow )
         {
-          outputFile << whichHisto->getCurrentValue( printedColumns[ iColumn ], currentStat, iPlane ) << "\t";
-          whichHisto->setNextCell( printedColumns[ iColumn ], iPlane );
+          outputFile << whichHisto->getCurrentValue( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), currentStat, iPlane ) << "\t";
+          whichHisto->setNextCell( whichHisto->getSemanticRealColumn( iColumn, printedColumns ), iPlane );
         }
         else
           outputFile << 0.0 << "\t";
@@ -601,7 +601,7 @@ void TextOutput::dumpTotalColumns( Histogram *whichHisto,
         progress->setCurrentProgress( (int)iColumn );
     }
 
-    outputFile << (totals->*totalFunction)( currentStat, printedColumns[ whichHisto->getSemanticSortedColumn( iColumn ) ], iPlane ) << "\t";
+    outputFile << (totals->*totalFunction)( currentStat, whichHisto->getSemanticSortedColumn( whichHisto->getSemanticRealColumn( iColumn, printedColumns ) ), iPlane ) << "\t";
   }
 
   outputFile << endl;
