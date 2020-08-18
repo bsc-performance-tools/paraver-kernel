@@ -835,6 +835,7 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DAccumulateByControlWindow::printLine( cfgFile, it );
     Analyzer2DSortCols::printLine( cfgFile, it );
     Analyzer2DSortCriteria::printLine( cfgFile, it );
+    Analyzer2DSortReverse::printLine( cfgFile, it );
     Analyzer2DParameters::printLine( cfgFile, it );
     Analyzer2DAnalysisLimits::printLine( cfgFile, options, it );
     Analyzer2DRelativeTime::printLine( cfgFile, it );
@@ -1002,6 +1003,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN2D_ACCUM_BY_CTRL_WINDOW] = new Analyzer2DAccumulateByControlWindow();
   cfgTagFunctions[OLDCFG_TAG_AN2D_SORTCOLS]             = new Analyzer2DSortCols();
   cfgTagFunctions[OLDCFG_TAG_AN2D_SORTCRITERIA]         = new Analyzer2DSortCriteria();
+  cfgTagFunctions[OLDCFG_TAG_AN2D_SORTREVERSE]         = new Analyzer2DSortReverse();
 
   cfgTagFunctions[OLDCFG_TAG_AN2D_PARAMETERS]           = new Analyzer2DParameters();
   cfgTagFunctions[OLDCFG_TAG_AN2D_ANALYSISLIMITS]       = new Analyzer2DAnalysisLimits();
@@ -4266,11 +4268,11 @@ bool Analyzer2DSortCols::parseLine( KernelConnection *whichKernel, istringstream
 
   if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
   {
-    histograms[ histograms.size() - 1 ]->setSortColumns( true );
+    histograms[ histograms.size() - 1 ]->setSemanticSortColumns( true );
   }
   else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
   {
-    histograms[ histograms.size() - 1 ]->setSortColumns( false );
+    histograms[ histograms.size() - 1 ]->setSemanticSortColumns( false );
   }
   else
     return false;
@@ -4282,7 +4284,7 @@ void Analyzer2DSortCols::printLine( ofstream& cfgFile,
                                     const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SORTCOLS << " ";
-  if ( ( *it )->getSortColumns() )
+  if ( ( *it )->getSemanticSortColumns() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -4307,17 +4309,17 @@ bool Analyzer2DSortCriteria::parseLine( KernelConnection *whichKernel, istringst
   getline( line, strSortCriteria );
 
   if ( strSortCriteria.compare( OLDCFG_VAL_SORT_AVERAGE ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( AVERAGE );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( AVERAGE );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_TOTAL ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( TOTAL );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( TOTAL );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_MAXIMUM ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( MAXIMUM );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( MAXIMUM );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_MINIMUM ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( MINIMUM );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( MINIMUM );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_STDEV ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( STDEV );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( STDEV );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_AVGDIVMAX ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( AVGDIVMAX );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( AVGDIVMAX );
   else
     return false;
 
@@ -4328,7 +4330,7 @@ void Analyzer2DSortCriteria::printLine( ofstream& cfgFile,
                                         const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SORTCRITERIA << " ";
-  switch ( ( *it )->getSortCriteria() )
+  switch ( ( *it )->getSemanticSortCriteria() )
   {
     case AVERAGE:
       cfgFile << OLDCFG_VAL_SORT_AVERAGE;
@@ -4353,6 +4355,49 @@ void Analyzer2DSortCriteria::printLine( ofstream& cfgFile,
   }
   cfgFile << endl;
 }
+
+
+string Analyzer2DSortReverse::tagCFG = OLDCFG_TAG_AN2D_SORTREVERSE;
+
+bool Analyzer2DSortReverse::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                       Trace *whichTrace,
+                                       vector<Window *>& windows,
+                                       vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  {
+    histograms[ histograms.size() - 1 ]->setSemanticSortReverse( true );
+  }
+  else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  {
+    histograms[ histograms.size() - 1 ]->setSemanticSortReverse( false );
+  }
+  else
+    return false;
+
+  return true;
+}
+
+void Analyzer2DSortReverse::printLine( ofstream& cfgFile,
+                                       const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_SORTREVERSE << " ";
+  if ( ( *it )->getSemanticSortReverse() )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
+}
+
 
 /*
  Number_of_parameters Parameter1 ... ParameterN

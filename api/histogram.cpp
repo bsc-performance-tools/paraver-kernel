@@ -72,8 +72,9 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   numDecimals = Histogram::getNumDecimals();
   thousandSep = Histogram::getThousandSeparator();
   showUnits = ParaverConfig::getInstance()->getHistogramShowUnits();
-  sortColumns = Histogram::getSortColumns();
-  sortCriteria = Histogram::getSortCriteria();
+  sortSemanticColumns = Histogram::getSemanticSortColumns();
+  sortSemanticReverse = Histogram::getSemanticSortReverse();
+  semanticSortCriteria = Histogram::getSemanticSortCriteria();
   minGradient = Histogram::getMinGradient();
   maxGradient = Histogram::getMaxGradient();
   computeControlScale = Histogram::getCompute2DScale();
@@ -420,32 +421,47 @@ TObjectOrder HistogramProxy::getNumRows() const
   return myHisto->getNumRows();
 }
 
+PRV_UINT32 HistogramProxy::getSemanticSortedColumn( PRV_UINT32 col ) const
+{
+  if( sortSemanticColumns )
+  {
+    if( sortSemanticReverse )
+      return currentSemanticSort[ col ];
+    else
+      return currentSemanticSort[ currentSemanticSort.size() - col - 1 ];
+  }
+  else if( ( !sortSemanticColumns && sortSemanticReverse && !zoom ) ||
+           ( !sortSemanticColumns && sortSemanticReverse && !hideColumns ) )
+    return getNumColumns() - col - 1;
+
+  return col;
+}
 
 TSemanticValue HistogramProxy::getCurrentValue( PRV_UINT32 col,
     PRV_UINT16 idStat,
     PRV_UINT32 plane ) const
 {
-  return myHisto->getCurrentValue( col, idStat, plane );
+  return myHisto->getCurrentValue( getSemanticSortedColumn( col ), idStat, plane );
 }
 
 PRV_UINT32 HistogramProxy::getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
 {
-  return myHisto->getCurrentRow( col, plane );
+  return myHisto->getCurrentRow( getSemanticSortedColumn( col ), plane );
 }
 
 void HistogramProxy::setNextCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  myHisto->setNextCell( col, plane );
+  myHisto->setNextCell( getSemanticSortedColumn( col ), plane );
 }
 
 void HistogramProxy::setFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  myHisto->setFirstCell( col, plane );
+  myHisto->setFirstCell( getSemanticSortedColumn( col ), plane );
 }
 
 bool HistogramProxy::endCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  return myHisto->endCell( col, plane );
+  return myHisto->endCell( getSemanticSortedColumn( col ), plane );
 }
 
 bool HistogramProxy::planeWithValues( PRV_UINT32 plane ) const
@@ -459,34 +475,34 @@ bool HistogramProxy::getCellValue( TSemanticValue& semVal,
                                    PRV_UINT16 idStat,
                                    PRV_UINT32 whichPlane ) const
 {
-  return myHisto->getCellValue( semVal, whichRow, whichCol, idStat, whichPlane );
+  return myHisto->getCellValue( semVal, whichRow, getSemanticSortedColumn( whichCol ), idStat, whichPlane );
 }
 
 TSemanticValue HistogramProxy::getCommCurrentValue( PRV_UINT32 col,
     PRV_UINT16 idStat,
     PRV_UINT32 plane ) const
 {
-  return myHisto->getCommCurrentValue( col, idStat, plane );
+  return myHisto->getCommCurrentValue( getSemanticSortedColumn( col ), idStat, plane );
 }
 
 PRV_UINT32 HistogramProxy::getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
 {
-  return myHisto->getCommCurrentRow( col, plane );
+  return myHisto->getCommCurrentRow( getSemanticSortedColumn( col ), plane );
 }
 
 void HistogramProxy::setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  myHisto->setCommNextCell( col, plane );
+  myHisto->setCommNextCell( getSemanticSortedColumn( col ), plane );
 }
 
 void HistogramProxy::setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  myHisto->setCommFirstCell( col, plane );
+  myHisto->setCommFirstCell( getSemanticSortedColumn( col ), plane );
 }
 
 bool HistogramProxy::endCommCell( PRV_UINT32 col, PRV_UINT32 plane )
 {
-  return myHisto->endCommCell( col, plane );
+  return myHisto->endCommCell( getSemanticSortedColumn( col ), plane );
 }
 
 bool HistogramProxy::planeCommWithValues( PRV_UINT32 plane ) const
@@ -500,13 +516,14 @@ bool HistogramProxy::getCommCellValue( TSemanticValue& semVal,
                                        PRV_UINT16 idStat,
                                        PRV_UINT32 whichPlane ) const
 {
-  return myHisto->getCommCellValue( semVal, whichRow, whichCol, idStat, whichPlane );
+  return myHisto->getCommCellValue( semVal, whichRow, getSemanticSortedColumn( whichCol ), idStat, whichPlane );
 }
 
 HistogramTotals *HistogramProxy::getTotals( const string& whichStat ) const
 {
   if ( itsCommunicationStat( whichStat ) )
   {
+// TODO: Draw sorted vertical totals
     if ( horizontal )
       return getCommColumnTotals();
     else
@@ -514,6 +531,7 @@ HistogramTotals *HistogramProxy::getTotals( const string& whichStat ) const
   }
   else
   {
+// TODO: Draw sorted vertical totals
     if ( horizontal )
       return getColumnTotals();
     else
@@ -668,6 +686,8 @@ void HistogramProxy::execute( TRecordTime whichBeginTime, TRecordTime whichEndTi
       }
     }
   }
+
+  fillSemanticSort();
 }
 
 void HistogramProxy::setHorizontal( bool newValue )
@@ -730,24 +750,35 @@ bool HistogramProxy::getShowUnits() const
   return showUnits;
 }
 
-void HistogramProxy::setSortColumns( bool newValue )
+void HistogramProxy::setSemanticSortColumns( bool newValue )
 {
-  sortColumns = newValue;
+  sortSemanticColumns = newValue;
 }
 
-bool HistogramProxy::getSortColumns() const
+bool HistogramProxy::getSemanticSortColumns() const
 {
-  return sortColumns;
+  return sortSemanticColumns;
 }
 
-void HistogramProxy::setSortCriteria( THistoTotals whichCriteria )
+void HistogramProxy::setSemanticSortCriteria( THistoTotals whichCriteria )
 {
-  sortCriteria = whichCriteria;
+  semanticSortCriteria = whichCriteria;
+  fillSemanticSort();
 }
 
-THistoTotals HistogramProxy::getSortCriteria() const
+THistoTotals HistogramProxy::getSemanticSortCriteria() const
 {
-  return sortCriteria;
+  return semanticSortCriteria;
+}
+
+void HistogramProxy::setSemanticSortReverse( bool newValue )
+{
+  sortSemanticReverse = newValue;
+}
+
+bool HistogramProxy::getSemanticSortReverse() const
+{
+  return sortSemanticReverse;
 }
 
 void HistogramProxy::setMinGradient( double whichMin )
@@ -926,6 +957,7 @@ double HistogramProxy::getPlaneMinValue() const
 void HistogramProxy::setSelectedPlane( PRV_INT32 plane )
 {
   selectedPlane = plane;
+  fillSemanticSort();
 }
 
 PRV_INT32 HistogramProxy::getSelectedPlane() const
@@ -941,6 +973,20 @@ PRV_INT32 HistogramProxy::getCommSelectedPlane() const
 bool HistogramProxy::itsCommunicationStat( const string& whichStat ) const
 {
   return myHisto->itsCommunicationStat( whichStat );
+}
+
+THistogramColumn HistogramProxy::getSemanticRealColumn( THistogramColumn whichCol, const vector<THistogramColumn>& noVoidSemRanges ) const
+{
+  THistogramColumn realCol = whichCol;
+
+  if( getHideColumns() && getSemanticSortColumns() && getSemanticSortReverse() )
+    realCol = getNumColumns() - noVoidSemRanges.size() + whichCol;
+  else if( getHideColumns() && !getSemanticSortColumns() && !getSemanticSortReverse() )
+    realCol = noVoidSemRanges[ whichCol ];
+  else if( getHideColumns() && !getSemanticSortColumns() && getSemanticSortReverse() )
+    realCol = noVoidSemRanges[ noVoidSemRanges.size() - whichCol - 1 ];
+    
+  return realCol;
 }
 
 void HistogramProxy::compute2DScale( ProgressController *progress )
@@ -1031,10 +1077,12 @@ string HistogramProxy::getColumnLabel( THistogramColumn whichColumn ) const
   if( controlWindow == NULL )
     return "";
 
-  if( itsCommunicationStat( getCurrentStat() ) )
-    return getRowLabel( ( TObjectOrder ) whichColumn );
+  THistogramColumn tmpCol = getSemanticSortedColumn( whichColumn );
 
-  return LabelConstructor::histoColumnLabel( whichColumn, controlWindow,
+  if( itsCommunicationStat( getCurrentStat() ) )
+    return getRowLabel( ( TObjectOrder ) tmpCol );
+
+  return LabelConstructor::histoColumnLabel( tmpCol, controlWindow,
          getControlMin(),
          getControlMax(),
          getControlDelta(),
@@ -1056,7 +1104,7 @@ string HistogramProxy::getPlaneLabel( THistogramColumn whichPlane ) const
 
 THistogramColumn HistogramProxy::getPlaneColumns( THistogramColumn iPlane,
     bool hideEmptyColumns, // need to override cfg value
-    vector<THistogramColumn> &columns ) const
+    vector<THistogramColumn> &noVoidSemRanges ) const
 {
   THistogramColumn numColumns = 0;
 
@@ -1077,15 +1125,15 @@ THistogramColumn HistogramProxy::getPlaneColumns( THistogramColumn iPlane,
       else
         columnSelection.init( getColumnTotals(), idStat, numColumns, iPlane );
 
-      columnSelection.getSelected( columns );
+      columnSelection.getSelected( noVoidSemRanges );
 
-      numColumns = columns.size();
+      numColumns = noVoidSemRanges.size();
     }
     else
     {
       // return all the columns ??
       for( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
-        columns.push_back( iColumn );
+        noVoidSemRanges.push_back( iColumn );
     }
   }
 
@@ -1245,6 +1293,8 @@ void HistogramProxy::setCurrentStat( const string& whichStat )
     clearStatistics();
     pushbackStatistic( whichStat );
   }
+
+  fillSemanticSort();
 }
 
 string HistogramProxy::getCurrentStat() const
@@ -1279,8 +1329,8 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->numDecimals = numDecimals;
   clonedHistogramProxy->thousandSep = thousandSep;
   clonedHistogramProxy->showUnits = showUnits;
-  clonedHistogramProxy->sortColumns = sortColumns;
-  clonedHistogramProxy->sortCriteria = sortCriteria;
+  clonedHistogramProxy->sortSemanticColumns = sortSemanticColumns;
+  clonedHistogramProxy->semanticSortCriteria = semanticSortCriteria;
   clonedHistogramProxy->minGradient = minGradient;
   clonedHistogramProxy->maxGradient = maxGradient;
   clonedHistogramProxy->computeControlScale = computeControlScale;
@@ -1781,4 +1831,58 @@ void HistogramProxy::setSelectedRows( vector< TObjectOrder > &selected )
   rowSelection.setSelected( selected,
                             myTrace->getLevelObjects( myHisto->getControlWindow()->getLevel() ),
                             myHisto->getControlWindow()->getLevel() );
+}
+
+void HistogramProxy::fillSemanticSort()
+{
+  PRV_INT32 tmpCurrentPlane = 0;
+  PRV_UINT16 tmpStat;
+
+  if( sortSemanticColumns )
+  {
+    getIdStat( currentStat, tmpStat );
+
+    if( getThreeDimensions() )
+    {
+      if( itsCommunicationStat( currentStat ) )
+        tmpCurrentPlane = commSelectedPlane;
+      else
+        tmpCurrentPlane = selectedPlane;
+    }
+
+    HistogramTotals *tmpTotals = NULL;
+    if ( itsCommunicationStat( currentStat ) )
+      tmpTotals = getCommColumnTotals();
+    else
+      tmpTotals = getColumnTotals();
+
+    if( tmpTotals == NULL )
+      return;
+
+    switch( semanticSortCriteria )
+    {
+      case TOTAL:
+        currentSemanticSort = tmpTotals->sortByTotal( tmpStat, tmpCurrentPlane );
+        break;
+      case AVERAGE:
+        currentSemanticSort = tmpTotals->sortByAverage( tmpStat, tmpCurrentPlane );
+        break;
+      case MAXIMUM:
+        currentSemanticSort = tmpTotals->sortByMaximum( tmpStat, tmpCurrentPlane );
+        break;
+      case MINIMUM:
+        currentSemanticSort = tmpTotals->sortByMinimum( tmpStat, tmpCurrentPlane );
+        break;
+      case STDEV:
+        currentSemanticSort = tmpTotals->sortByStdev( tmpStat, tmpCurrentPlane );
+        break;
+      case AVGDIVMAX:
+        currentSemanticSort = tmpTotals->sortByAvgDivMax( tmpStat, tmpCurrentPlane );
+        break;
+      default:
+        break;
+    }
+
+    delete tmpTotals;
+  }
 }

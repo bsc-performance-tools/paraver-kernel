@@ -149,12 +149,21 @@ TSemanticValue ComposeSelectRange::execute( const SemanticInfo *info )
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
   TSemanticValue tmp = 0;
-
-  if ( myInfo->values[ 0 ] <= parameters[ MAXVALUE ][ 0 ] &&
-       myInfo->values[ 0 ] >= parameters[ MINVALUE ][ 0 ] )
-    tmp = myInfo->values[ 0 ];
+  TParamIndex paramSize;
+  if( parameters[ MAXVALUE ].size() <= parameters[ MINVALUE ].size() )
+    paramSize = parameters[ MAXVALUE ].size();
   else
-    tmp = 0;
+    paramSize = parameters[ MINVALUE ].size();
+
+  for( TParamIndex i = 0; i < paramSize; ++i )
+  {
+    if ( myInfo->values[ 0 ] <= parameters[ MAXVALUE ][ i ] &&
+         myInfo->values[ 0 ] >= parameters[ MINVALUE ][ i ] )
+    {
+      tmp = myInfo->values[ 0 ];
+      break;
+    }
+  }
 
   return tmp;
 }
@@ -166,12 +175,21 @@ TSemanticValue ComposeSelectRangeOpen::execute( const SemanticInfo *info )
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
   TSemanticValue tmp = 0;
-
-  if ( myInfo->values[ 0 ] < parameters[ MAXVALUE ][ 0 ] &&
-       myInfo->values[ 0 ] >= parameters[ MINVALUE ][ 0 ] )
-    tmp = myInfo->values[ 0 ];
+  TParamIndex paramSize;
+  if( parameters[ MAXVALUE ].size() <= parameters[ MINVALUE ].size() )
+    paramSize = parameters[ MAXVALUE ].size();
   else
-    tmp = 0;
+    paramSize = parameters[ MINVALUE ].size();
+
+  for( TParamIndex i = 0; i < paramSize; ++i )
+  {
+    if ( myInfo->values[ 0 ] < parameters[ MAXVALUE ][ i ] &&
+         myInfo->values[ 0 ] >= parameters[ MINVALUE ][ i ] )
+    {
+      tmp = myInfo->values[ 0 ];
+      break;
+    }
+  }
 
   return tmp;
 }
@@ -184,11 +202,21 @@ TSemanticValue ComposeIsInRange::execute( const SemanticInfo *info )
 
   TSemanticValue tmp = 0;
 
-  if ( myInfo->values[ 0 ] <= parameters[ MAXVALUE ][ 0 ] &&
-       myInfo->values[ 0 ] >= parameters[ MINVALUE ][ 0 ] )
-    tmp = 1;
+  TParamIndex paramSize;
+  if( parameters[ MAXVALUE ].size() <= parameters[ MINVALUE ].size() )
+    paramSize = parameters[ MAXVALUE ].size();
   else
-    tmp = 0;
+    paramSize = parameters[ MINVALUE ].size();
+
+  for( TParamIndex i = 0; i < paramSize; ++i )
+  {
+    if ( myInfo->values[ 0 ] <= parameters[ MAXVALUE ][ i ] &&
+         myInfo->values[ 0 ] >= parameters[ MINVALUE ][ i ] )
+    {
+      tmp = 1;
+      break;
+    }
+  }
 
   return tmp;
 }
@@ -200,12 +228,21 @@ TSemanticValue ComposeIsInRangeOpen::execute( const SemanticInfo *info )
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
   TSemanticValue tmp = 0;
-
-  if ( myInfo->values[ 0 ] < parameters[ MAXVALUE ][ 0 ] &&
-       myInfo->values[ 0 ] >= parameters[ MINVALUE ][ 0 ] )
-    tmp = 1;
+  TParamIndex paramSize;
+  if( parameters[ MAXVALUE ].size() <= parameters[ MINVALUE ].size() )
+    paramSize = parameters[ MAXVALUE ].size();
   else
-    tmp = 0;
+    paramSize = parameters[ MINVALUE ].size();
+
+  for( TParamIndex i = 0; i < paramSize; ++i )
+  {
+    if ( myInfo->values[ 0 ] < parameters[ MAXVALUE ][ i ] &&
+         myInfo->values[ 0 ] >= parameters[ MINVALUE ][ i ] )
+    {
+      tmp = 1;
+      break;
+    }
+  }
 
   return tmp;
 }
