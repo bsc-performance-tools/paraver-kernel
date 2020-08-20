@@ -201,6 +201,12 @@ void CodeColor::setColor( PRV_UINT32 pos, rgb color )
   colors[ pos ] = color;
 }
 
+void CodeColor::setCustomColor( TSemanticValue whichValue, rgb color ) 
+{
+  customPalette[ whichValue ] = color;
+}
+
+
 #ifdef WIN32
 namespace stdext
 {
@@ -316,6 +322,9 @@ rgb CodeColor::calcColor( TSemanticValue whichValue,
        whichValue > maximum )
     return getColor( 0 ); // IDLE!
 
+  map<TSemanticValue, rgb>::const_iterator itCustom = customPalette.find( whichValue );
+  if( itCustom != customPalette.end() )
+    return itCustom->second;
   return getColor( static_cast< PRV_UINT32 >( whichValue ) );
 }
 

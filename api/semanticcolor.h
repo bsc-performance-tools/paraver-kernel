@@ -25,6 +25,7 @@
 #ifndef SEMANTICCOLOR_H_INCLUDED
 #define SEMANTICCOLOR_H_INCLUDED
 
+#include <map>
 #include "paravertypes.h"
 #include "paraverkerneltypes.h"
 
@@ -94,6 +95,7 @@ class CodeColor: public SemanticColor
 
     PRV_UINT32 getNumColors() const;
     void setColor( PRV_UINT32 pos, rgb color );
+    void setCustomColor( TSemanticValue whichValue, rgb color );
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
                    TSemanticValue maximum ) const;
@@ -101,6 +103,7 @@ class CodeColor: public SemanticColor
 
   private:
     std::vector<rgb> colors;
+    std::map<TSemanticValue, rgb> customPalette;
 
     inline rgb getColor( PRV_UINT32 pos ) const;
     void expandColors();
