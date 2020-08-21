@@ -315,16 +315,21 @@ void CodeColor::expandColors()
 
 rgb CodeColor::calcColor( TSemanticValue whichValue,
                           TSemanticValue minimum,
-                          TSemanticValue maximum ) const
+                          TSemanticValue maximum,
+                          bool useCustomPalette ) const
 {
   if ( whichValue < 0.0 ||
        whichValue < minimum ||
        whichValue > maximum )
     return getColor( 0 ); // IDLE!
 
-  map<TSemanticValue, rgb>::const_iterator itCustom = customPalette.find( whichValue );
-  if( itCustom != customPalette.end() )
-    return itCustom->second;
+  if( useCustomPalette )
+  {
+    map<TSemanticValue, rgb>::const_iterator itCustom = customPalette.find( whichValue );
+    if( itCustom != customPalette.end() )
+      return itCustom->second;
+  }
+
   return getColor( static_cast< PRV_UINT32 >( whichValue ) );
 }
 
@@ -476,7 +481,8 @@ void GradientColor::setNumSteps( PRV_INT16 steps )
 
 rgb GradientColor::calcColor( TSemanticValue whichValue,
                               TSemanticValue minimum,
-                              TSemanticValue maximum ) const
+                              TSemanticValue maximum,
+                              bool useCustomPalette ) const
 {
   if ( whichValue == 0 && !drawOutOfScale )
   {

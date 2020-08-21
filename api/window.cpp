@@ -1254,7 +1254,7 @@ void WindowProxy::allowOutliers( bool activate )
 rgb WindowProxy::calcColor( TSemanticValue whichValue, Window& whichWindow )
 {
   if ( colorMode == SemanticColor::COLOR )
-    return myCodeColor.calcColor( whichValue, minimumY, maximumY );
+    return myCodeColor.calcColor( whichValue, minimumY, maximumY, useCustomPalette );
 
   return myGradientColor.calcColor( whichValue, minimumY, maximumY );
 }
@@ -1267,6 +1267,16 @@ bool WindowProxy::calcValueFromColor( rgb whichColor,
     return myCodeColor.calcValue( whichColor, firstValue );
 
   return myGradientColor.calcValue( whichColor, minimumY, maximumY, firstValue, secondValue );
+}
+
+bool WindowProxy::getUseCustomPalette() const
+{
+  return useCustomPalette;
+}
+
+void WindowProxy::setUseCustomPalette( bool newValue ) 
+{
+  useCustomPalette = newValue;
 }
 
 bool WindowProxy::getChanged() const

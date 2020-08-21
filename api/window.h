@@ -473,6 +473,12 @@ class Window
     {
       return true;
     }
+    virtual bool getUseCustomPalette() const
+    {
+      return false;
+    }
+    virtual void setUseCustomPalette( bool newValue ) 
+    {}
     virtual bool getChanged() const
     {
       return false;
@@ -1062,6 +1068,8 @@ class WindowProxy: public Window
     virtual bool calcValueFromColor( rgb whichColor,
                                      TSemanticValue& firstValue,
                                      TSemanticValue& secondValue ) const;
+    virtual bool getUseCustomPalette() const;
+    virtual void setUseCustomPalette( bool newValue );
     virtual bool getChanged() const;
     virtual void setChanged( bool newValue );
     virtual bool getRedraw() const;
@@ -1364,6 +1372,7 @@ class WindowProxy: public Window
     std::string name;
     CodeColor myCodeColor;
     GradientColor myGradientColor;
+    bool useCustomPalette;
     DrawModeMethod drawModeObject;
     DrawModeMethod drawModeTime;
     SemanticColor::TColorFunction colorMode;

@@ -71,7 +71,8 @@ class SemanticColor
 
     virtual rgb calcColor( TSemanticValue whichValue,
                            TSemanticValue minimum,
-                           TSemanticValue maximum ) const = 0;
+                           TSemanticValue maximum,
+                           bool useCustomPalette ) const = 0;
 
   private:
     static PRV_UINT32 numColors;
@@ -98,7 +99,8 @@ class CodeColor: public SemanticColor
     void setCustomColor( TSemanticValue whichValue, rgb color );
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
-                   TSemanticValue maximum ) const;
+                   TSemanticValue maximum,
+                   bool useCustomPalette ) const;
     bool calcValue( rgb whichColor, TSemanticValue& returnValue ) const;
 
   private:
@@ -156,7 +158,8 @@ class GradientColor: public SemanticColor
 
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
-                   TSemanticValue maximum ) const;
+                   TSemanticValue maximum,
+                   bool useCustomPalette = false ) const;
     bool calcValue( rgb whichColor,
                     TSemanticValue minimum,
                     TSemanticValue maximum,
