@@ -97,6 +97,7 @@ class CodeColor: public SemanticColor
     PRV_UINT32 getNumColors() const;
     void setColor( PRV_UINT32 pos, rgb color );
     void setCustomColor( TSemanticValue whichValue, rgb color );
+    bool existCustomColors() const;
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
                    TSemanticValue maximum,

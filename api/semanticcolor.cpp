@@ -206,6 +206,10 @@ void CodeColor::setCustomColor( TSemanticValue whichValue, rgb color )
   customPalette[ whichValue ] = color;
 }
 
+bool CodeColor::existCustomColors() const
+{
+  return !customPalette.empty();
+}
 
 #ifdef WIN32
 namespace stdext
