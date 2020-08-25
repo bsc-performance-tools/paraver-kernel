@@ -98,6 +98,7 @@ class CodeColor: public SemanticColor
     void setColor( PRV_UINT32 pos, rgb color );
     void setCustomColor( TSemanticValue whichValue, rgb color );
     bool existCustomColors() const;
+    const std::map<TSemanticValue, rgb>& getCustomPalette() const;
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
                    TSemanticValue maximum,

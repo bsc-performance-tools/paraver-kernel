@@ -211,6 +211,11 @@ bool CodeColor::existCustomColors() const
   return !customPalette.empty();
 }
 
+const std::map<TSemanticValue, rgb>& CodeColor::getCustomPalette() const
+{
+  return customPalette;
+}
+
 #ifdef WIN32
 namespace stdext
 {

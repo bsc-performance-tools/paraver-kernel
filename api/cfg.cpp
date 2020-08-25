@@ -766,6 +766,8 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowFlagsEnabled::printLine( cfgFile, it );
     WindowNonColorMode::printLine( cfgFile, it );
     WindowColorMode::printLine( cfgFile, it );
+    WindowCustomColorEnabled::printLine( cfgFile, it );
+    WindowCustomColorPalette::printLine( cfgFile, it );
     WindowSemanticScaleMinAtZero::printLine( cfgFile, it );
     WindowPunctualColorWindow::printLine( cfgFile, allWindows, it );
     if ( !( *it )->isDerivedWindow() )
@@ -940,6 +942,9 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_NON_COLOR_MODE]      = new WindowNonColorMode();
   cfgTagFunctions[OLDCFG_TAG_WNDW_UNITS]               = new WindowUnits();
   cfgTagFunctions[OLDCFG_TAG_WNDW_COLOR_MODE]          = new WindowColorMode();
+  // Color palette
+  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED] = new WindowCustomColorEnabled();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE] = new WindowCustomColorPalette();
   cfgTagFunctions[OLDCFG_TAG_WNDW_SEMANTIC_SCALE_MIN_AT_ZERO] = new WindowSemanticScaleMinAtZero();
   cfgTagFunctions[OLDCFG_TAG_WNDW_OPERATION]           = new WindowOperation();
   cfgTagFunctions[OLDCFG_TAG_WNDW_MAXIMUM_Y]           = new WindowMaximumY();
@@ -1450,6 +1455,119 @@ void WindowColorMode::printLine( ofstream& cfgFile,
     cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_PUNCTUAL <<endl;
   else if ( ( *it )->isFusedLinesColorSet() )
     cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_FUSED_LINES <<endl;
+}
+
+string WindowCustomColorEnabled::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED;
+
+bool WindowCustomColorEnabled::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                 Trace *whichTrace,
+                                 vector<Window *>& windows,
+                                 vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+    windows[ windows.size() - 1 ]->setUseCustomPalette( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+    windows[ windows.size() - 1 ]->setUseCustomPalette( true );
+  else
+    return false;
+
+  return true;
+}
+
+void WindowCustomColorEnabled::printLine( ofstream& cfgFile,
+                                 const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED << " " << ( ( *it )->getUseCustomPalette() ?
+      OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
+}
+
+
+string WindowCustomColorPalette::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE;
+
+bool WindowCustomColorPalette::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                 Trace *whichTrace,
+                                 vector<Window *>& windows,
+                                 vector<Histogram *>& histograms )
+{
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+ 
+  istringstream sstrColorItem;
+  string strColorItem;
+  istringstream sstrTmp;
+  string strTmp;
+  while ( !line.eof() ) 
+  {
+    TSemanticValue tmpValue;
+    rgb tmpRGB;
+    int tmpComponent;
+
+    sstrColorItem.clear();
+    getline( line, strColorItem, '}' ); // { value : r, g, b }
+    if( line.eof() )
+      break;
+    sstrColorItem.str( strColorItem );
+    
+    sstrTmp.clear();
+    getline( sstrColorItem, strTmp, '{' ); // get '{'
+    getline( sstrColorItem, strTmp, ':' ); // value
+    sstrTmp.str( strTmp );
+    if ( !( sstrTmp >> tmpValue ) ) 
+      return false;
+  
+    sstrTmp.clear();
+    getline( sstrColorItem, strTmp, ',' ); // color red
+    sstrTmp.str( strTmp );
+    if ( !( sstrTmp >> tmpComponent ) ) 
+      return false;
+    tmpRGB.red = tmpComponent;
+
+    sstrTmp.clear();
+    getline( sstrColorItem, strTmp, ',' ); // color green
+    sstrTmp.str( strTmp );
+    if ( !( sstrTmp >> tmpComponent ) ) 
+      return false;
+    tmpRGB.green = tmpComponent;
+
+    sstrTmp.clear();
+    getline( sstrColorItem, strTmp, '}' ); // color blue
+    sstrTmp.str( strTmp );
+    if ( !( sstrTmp >> tmpComponent ) ) 
+      return false;
+    tmpRGB.blue = tmpComponent;
+
+    windows[ windows.size() - 1 ]->getCodeColor().setCustomColor( tmpValue, tmpRGB );
+  }
+
+  return true;
+}
+
+void WindowCustomColorPalette::printLine( ofstream& cfgFile,
+                                 const vector<Window *>::const_iterator it )
+{
+  const CodeColor& tmpCodeColor = ( *it )->getCodeColor();
+
+  if( tmpCodeColor.existCustomColors() )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE << " ";
+
+    const std::map<TSemanticValue, rgb>& tmpPalette = tmpCodeColor.getCustomPalette();
+    for( std::map<TSemanticValue, rgb>::const_iterator itMap = tmpPalette.begin(); itMap != tmpPalette.end(); ++itMap )
+    {
+      cfgFile << "{" << itMap->first << ":" << (int) itMap->second.red << "," << (int) itMap->second.green << "," << (int) itMap->second.blue << "}";
+      if ( itMap != --tmpPalette.end() )
+        cfgFile << ",";
+    }
+    
+    cfgFile << endl;
+  }
 }
 
 

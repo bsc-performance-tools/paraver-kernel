@@ -393,6 +393,52 @@ class WindowColorMode: public TagFunction
 };
 
 
+class WindowCustomColorEnabled: public TagFunction
+{
+  public:
+    WindowCustomColorEnabled()
+    {}
+
+    virtual ~WindowCustomColorEnabled()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
+class WindowCustomColorPalette: public TagFunction
+{
+  public:
+    WindowCustomColorPalette()
+    {}
+
+    virtual ~WindowCustomColorPalette()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
 class WindowSemanticScaleMinAtZero: public TagFunction
 {
   public:
