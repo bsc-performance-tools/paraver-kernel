@@ -135,6 +135,7 @@ void WindowProxy::init()
   existSemanticZero = Window::getExistSemanticZero();
   semanticScaleMinAtZero = ParaverConfig::getInstance()->getTimelineSemanticScaleMinAtZero();
   colorMode = ParaverConfig::getInstance()->getTimelineColor();
+  useCustomPalette = Window::getUseCustomPalette();
   if( colorMode == SemanticColor::GRADIENT )
     myGradientColor.allowOutOfScale( true );
   else if( colorMode == SemanticColor::NOT_NULL_GRADIENT )
