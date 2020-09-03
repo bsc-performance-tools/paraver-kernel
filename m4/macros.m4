@@ -115,7 +115,7 @@ AC_DEFUN([AX_PROG_WITH_EXTRAE],
          [specify extrae library base install directory. (default: none; if no parameter DIR given: /usr/local) ]
       ),
       [if test "${withval}" = "yes" ; then 
-          EXTRAE_DIR="/usr/local"
+          EXTRAE_DIR="/usr/local"m
        else
           EXTRAE_DIR=${withval}
        fi],
@@ -181,5 +181,44 @@ AC_DEFUN([AX_PROG_WITH_OTF2],
     
    AM_CONDITIONAL([WANT_OTF2PRV], [test "x${OTF2_DIR}" != "x"] )
    AC_SUBST(OTF2_DIR)
+])
+
+
+# AX_PROG_WITH_DEBUG_LEVEL
+# ------------------------
+AC_DEFUN([AX_PROG_WITH_DEBUG_LEVEL],
+[
+   AC_ARG_WITH(debug-level,
+      AC_HELP_STRING(
+         [--with-debug-level@<:@=DIR@:>@],
+         [select debug level between "release", "debug" or "none"]
+      ),
+      [
+       if test "${withval}" = "yes" ; then #with
+            DEBUG_LEVEL="debug"
+       elif test "${withval}" = "no" ; then #without
+            DEBUG_LEVEL="release"
+       else
+            DEBUG_LEVEL=${withval}
+       fi],
+      [DEBUG_LEVEL="release"]
+   )
+   
+   CPPFLAGS_DEBUG_LEVEL=""
+   if test "${DEBUG_LEVEL}" = "default" ; then
+      CPPFLAGS_DEBUG_LEVEL="-O0"
+      AC_MSG_NOTICE([Debug mode set to ${DEBUG_LEVEL} (${CPPFLAGS_DEBUG_LEVEL})])
+   elif test "${DEBUG_LEVEL}" = "release" ; then
+      CPPFLAGS_DEBUG_LEVEL="-O2"
+      AC_MSG_NOTICE([Debug mode set to ${DEBUG_LEVEL} (${CPPFLAGS_DEBUG_LEVEL})])
+   elif test "${DEBUG_LEVEL}" = "debug" ; then
+      CPPFLAGS_DEBUG_LEVEL="-Og -g"
+      AC_MSG_NOTICE([Debug mode set to ${DEBUG_LEVEL} (${CPPFLAGS_DEBUG_LEVEL})])
+   elif test "${DEBUG_LEVEL}" != "none" ; then
+      AC_MSG_NOTICE([Incorrect debug mode found in ${DEBUG_LEVEL}])
+   else #none
+      CPPFLAGS_DEBUG_LEVEL="-O0"
+      AC_MSG_NOTICE([Debug mode set to ${DEBUG_LEVEL} (${CPPFLAGS_DEBUG_LEVEL})])
+   fi
 ])
 
