@@ -46,6 +46,8 @@ using namespace __gnu_cxx;
 
 rgb SemanticColor::BACKGROUND = { 0, 0, 0 };
 rgb SemanticColor::FOREGROUND = { 255, 255, 255 };
+rgb SemanticColor::ZERO_AXIS  = { 127, 127, 127 };
+
 rgb SemanticColor::DEFAULT_PUNCTUAL = { 255, 128, 128 };
 rgb SemanticColor::DEFAULT_LOGICAL_COMMUNICATIONS = { 255, 255, 0 };
 rgb SemanticColor::DEFAULT_PHYSICAL_COMMUNICATIONS = { 255, 0, 0 };

@@ -253,6 +253,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
 
   xmlColor.timelineBackground = SemanticColor::BACKGROUND;
   xmlColor.timelineAxis = SemanticColor::FOREGROUND;
+  xmlColor.timelineZeroDashLine = SemanticColor::ZERO_AXIS;
   xmlColor.useColorZero = true;
   xmlColor.timelineColorZero = SemanticColor::BACKGROUND;
   xmlColor.timelineColorPunctual = SemanticColor::DEFAULT_PUNCTUAL;
@@ -1331,6 +1332,12 @@ void ParaverConfig::setColorsTimelineAxis( rgb whichTimelineAxis )
   xmlColor.timelineAxis = whichTimelineAxis;
 }
 
+void ParaverConfig::setColorsTimelineZeroDashLine( rgb whichTimelineZeroDashLine )
+{
+  isModified = isModified || ( xmlColor.timelineZeroDashLine != whichTimelineZeroDashLine );
+  xmlColor.timelineZeroDashLine = whichTimelineZeroDashLine;
+}
+
 void ParaverConfig::setColorsTimelineUseZero( bool useZero )
 {
   isModified = isModified || ( xmlColor.useColorZero != useZero );
@@ -1405,6 +1412,11 @@ rgb ParaverConfig::getColorsTimelineBackground() const
 rgb ParaverConfig::getColorsTimelineAxis() const
 {
   return xmlColor.timelineAxis;
+}
+
+rgb ParaverConfig::getColorsTimelineZeroDashLine() const
+{
+  return xmlColor.timelineZeroDashLine;
 }
 
 bool ParaverConfig::getColorsTimelineUseZero() const
