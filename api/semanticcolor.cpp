@@ -44,6 +44,57 @@ using namespace stdext;
 using namespace __gnu_cxx;
 #endif
 
+
+double Normalizer::calculate( TSemanticValue whichValue,
+                              TSemanticValue whichMinimum,
+                              TSemanticValue whichMaximum,
+                              bool minimumAsBase )
+{
+  TSemanticValue norm;
+
+  
+
+  if( whichMinimum >= 0.0 || minimumAsBase ) 
+    norm = ( whichValue - whichMinimum ) / ( whichMaximum - whichMinimum );
+  else
+  {
+    if ( whichMaximum < 0.0 )
+    {
+      norm = - ( whichValue - whichMinimum ) / ( whichMaximum - whichMinimum );
+    }
+    else
+    {
+      if( whichValue >= 0.0 )
+        norm = whichValue / whichMaximum; // Normalize only with positive
+      else
+        norm = - ( whichValue / whichMinimum );
+    }    
+  }
+
+  rgb returnColor;
+
+  switch ( function )
+  {
+    case LINEAR:
+      returnColor = functionLinear( norm, whichMinimum, maximum );
+      break;
+
+    case STEPS:
+      returnColor = functionSteps( norm, whichMinimum, maximum );
+      break;
+
+    case LOGARITHMIC:
+      returnColor = functionLog( norm, whichMinimum, maximum );
+      break;
+
+    case EXPONENTIAL:
+      returnColor = functionExp( norm, whichMinimum, maximum );
+      break;
+  }
+
+  return norm;
+}
+
 rgb SemanticColor::BACKGROUND = { 0, 0, 0 };
 rgb SemanticColor::FOREGROUND = { 255, 255, 255 };
 rgb SemanticColor::ZERO_AXIS  = { 127, 127, 127 };
@@ -650,6 +701,7 @@ void GradientColor::copy( GradientColor &destiny )
   destiny.negativeBlueStep   = negativeBlueStep;
 }
 
+
 rgb GradientColor::functionLinear( TSemanticValue whichValue,
                                    TSemanticValue minimum,
                                    TSemanticValue maximum ) const
@@ -688,6 +740,7 @@ rgb GradientColor::functionSteps( TSemanticValue whichValue,
     tmpColor = beginGradientColor;
 
     double stepNorm = floor( numSteps * whichValue ) / numSteps;
+
     tmpColor.red += floor( redStep * stepNorm );
     tmpColor.green += floor( greenStep * stepNorm );
     tmpColor.blue += floor( blueStep * stepNorm );
@@ -698,6 +751,7 @@ rgb GradientColor::functionSteps( TSemanticValue whichValue,
     whichValue = -whichValue;
 
     double stepNorm = floor( numSteps * whichValue ) / numSteps;
+
     tmpColor.red += floor( negativeRedStep * stepNorm );
     tmpColor.green += floor( negativeGreenStep * stepNorm );
     tmpColor.blue += floor( negativeBlueStep * stepNorm );
@@ -717,6 +771,7 @@ rgb GradientColor::functionLog( TSemanticValue whichValue,
     tmpColor = beginGradientColor;
 
     double stepNorm = log( ( double )( whichValue * 100 + 1 ) ) / log( ( double )101 );
+
     tmpColor.red += floor( redStep * stepNorm );
     tmpColor.green += floor( greenStep * stepNorm );
     tmpColor.blue += floor( blueStep * stepNorm );
@@ -756,6 +811,7 @@ rgb GradientColor::functionExp( TSemanticValue whichValue,
     whichValue = -whichValue;
 
     double stepNorm = exp( ( double )( whichValue * 10 ) ) / exp( ( double )10 );
+
     tmpColor.red += floor( negativeRedStep * stepNorm );
     tmpColor.green += floor( negativeGreenStep * stepNorm );
     tmpColor.blue += floor( negativeBlueStep * stepNorm );

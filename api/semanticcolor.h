@@ -31,6 +31,14 @@
 
 class Window;
 
+class Normalizer
+{
+  public:
+    static double calculate( TSemanticValue whichValue,
+                             TSemanticValue whichMinimum,
+                             TSemanticValue whichMaximum );
+};
+
 class SemanticColor
 {
   public:
