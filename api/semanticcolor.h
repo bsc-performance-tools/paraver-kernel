@@ -31,13 +31,6 @@
 
 class Window;
 
-class Normalizer
-{
-  public:
-    static double calculate( TSemanticValue whichValue,
-                             TSemanticValue whichMinimum,
-                             TSemanticValue whichMaximum );
-};
 
 class SemanticColor
 {
@@ -113,7 +106,6 @@ class CodeColor: public SemanticColor
                    TSemanticValue minimum,
                    TSemanticValue maximum,
                    bool useCustomPalette ) const;
-    bool calcValue( rgb whichColor, TSemanticValue& returnValue ) const;
 
   private:
     std::vector<rgb> colors;
@@ -165,18 +157,12 @@ class GradientColor: public SemanticColor
 
     TGradientFunction getGradientFunction() const;
     void setGradientFunction( TGradientFunction whichFunction );
-    PRV_INT16 getNumSteps() const;
-    void setNumSteps( PRV_INT16 steps );
 
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
                    TSemanticValue maximum,
                    bool useCustomPalette = false ) const;
-    bool calcValue( rgb whichColor,
-                    TSemanticValue minimum,
-                    TSemanticValue maximum,
-                    TSemanticValue& beginRange,
-                    TSemanticValue& endRange ) const;
+    bool isColorOutlier( rgb whichColor ) const;
 
     void copy( GradientColor &destiny );
 
@@ -200,36 +186,23 @@ class GradientColor: public SemanticColor
     double negativeBlueStep;
 
     TGradientFunction function;
-    PRV_INT16 numSteps;
 
     void recalcSteps();
+};
 
-    inline rgb functionLinear( TSemanticValue whichValue,
-                               TSemanticValue minimum,
-                               TSemanticValue maximum ) const;
-    inline rgb functionSteps( TSemanticValue whichValue,
-                              TSemanticValue minimum,
-                              TSemanticValue maximum ) const;
-    inline rgb functionLog( TSemanticValue whichValue,
-                            TSemanticValue minimum,
-                            TSemanticValue maximum ) const;
-    inline rgb functionExp( TSemanticValue whichValue,
-                            TSemanticValue minimum,
-                            TSemanticValue maximum ) const;
 
-    inline bool calcValueLinear( double colorValue, double begin, double end,
-                                 TSemanticValue& beginRange,
-                                 TSemanticValue& endRange ) const;
-    inline bool calcValueSteps( double colorValue, double begin, double end,
-                                TSemanticValue& beginRange,
-                                TSemanticValue& endRange ) const;
-    inline bool calcValueLog( double colorValue, double begin, double end,
-                              TSemanticValue& beginRange,
-                              TSemanticValue& endRange ) const;
-    inline bool calcValueExp( double colorValue, double begin, double end,
-                              TSemanticValue& beginRange,
-                              TSemanticValue& endRange ) const;
+class Normalizer
+{
+  public:
+    static double calculate( TSemanticValue whichValue,
+                             TSemanticValue whichMinimum,
+                             TSemanticValue whichMaximum,
+                             GradientColor::TGradientFunction whichFunction,
+                             bool minimumAsBase );
+  private:
+    static PRV_INT16 numSteps;
 
 };
+
 
 #endif // SEMANTICCOLOR_H_INCLUDED

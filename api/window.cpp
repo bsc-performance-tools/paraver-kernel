@@ -1260,14 +1260,11 @@ rgb WindowProxy::calcColor( TSemanticValue whichValue, Window& whichWindow )
   return myGradientColor.calcColor( whichValue, minimumY, maximumY );
 }
 
-bool WindowProxy::calcValueFromColor( rgb whichColor,
-                                      TSemanticValue& firstValue,
-                                      TSemanticValue& secondValue ) const
+bool WindowProxy::isColorOutlier( rgb whichColor ) const
 {
-  if ( colorMode == SemanticColor::COLOR || colorMode == SemanticColor::FUSED_LINES )
-    return myCodeColor.calcValue( whichColor, firstValue );
-
-  return myGradientColor.calcValue( whichColor, minimumY, maximumY, firstValue, secondValue );
+  if( colorMode != SemanticColor::GRADIENT )
+    return false;
+  return myGradientColor.isColorOutlier( whichColor );
 }
 
 bool WindowProxy::getUseCustomPalette() const

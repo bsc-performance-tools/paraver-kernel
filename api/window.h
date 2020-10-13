@@ -467,9 +467,7 @@ class Window
       rgb tmp = { 0, 0, 0 };
       return tmp;
     }
-    virtual bool calcValueFromColor( rgb whichColor,
-                                     TSemanticValue& firstValue,
-                                     TSemanticValue& secondValue ) const
+    virtual bool isColorOutlier( rgb whichColor ) const
     {
       return true;
     }
@@ -1065,9 +1063,7 @@ class WindowProxy: public Window
     virtual void allowOutOfScale( bool activate );
     virtual void allowOutliers( bool activate );
     virtual rgb calcColor( TSemanticValue whichValue, Window& whichWindow );
-    virtual bool calcValueFromColor( rgb whichColor,
-                                     TSemanticValue& firstValue,
-                                     TSemanticValue& secondValue ) const;
+    virtual bool isColorOutlier( rgb whichColor ) const;
     virtual bool getUseCustomPalette() const;
     virtual void setUseCustomPalette( bool newValue );
     virtual bool getChanged() const;
