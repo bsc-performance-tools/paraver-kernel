@@ -547,16 +547,26 @@ rgb GradientColor::calcColor( TSemanticValue whichValue,
 
   rgb returnColor;
 
+  double tmpRedStep = redStep;
+  double tmpGreenStep = greenStep;
+  double tmpBlueStep = blueStep;
+
   if( whichValue >= 0.0 )
     returnColor = beginGradientColor;
   else
+  {
+    tmpRedStep = negativeRedStep;
+    tmpGreenStep = negativeGreenStep;
+    tmpBlueStep = negativeBlueStep;
+
     returnColor = negativeBeginGradientColor;
+  }
 
   whichValue = Normalizer::calculate( whichValue, minimum, maximum, function, false );
 
-  returnColor.red += floor( redStep * whichValue );
-  returnColor.green += floor( greenStep * whichValue );
-  returnColor.blue += floor( blueStep * whichValue );
+  returnColor.red += floor( tmpRedStep * whichValue );
+  returnColor.green += floor( tmpGreenStep * whichValue );
+  returnColor.blue += floor( tmpBlueStep * whichValue );
 
   return returnColor;
 }
