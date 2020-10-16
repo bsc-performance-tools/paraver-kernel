@@ -1599,7 +1599,7 @@ void WindowSemanticScaleMinAtZero::printLine( ofstream& cfgFile,
                                               const vector<Window *>::const_iterator it )
 {
   cfgFile << WindowSemanticScaleMinAtZero::tagCFG << " " << ( ( *it )->getSemanticScaleMinAtZero() ?
-      OLDCFG_VAL_FALSE : OLDCFG_VAL_TRUE ) << endl;
+      OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
 
 
