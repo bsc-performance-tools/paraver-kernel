@@ -49,6 +49,12 @@ KTraceEditSequence::~KTraceEditSequence()
 }
 
 
+const KernelConnection *KTraceEditSequence::getKernelConnection() const
+{
+  return myKernel;
+}
+
+
 TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceStates whichState )
 {
   switch( whichState )

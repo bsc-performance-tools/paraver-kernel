@@ -37,6 +37,8 @@ class KTraceEditSequence:public TraceEditSequence
     KTraceEditSequence( const KernelConnection *whichKernel );
     virtual ~KTraceEditSequence();
 
+    const KernelConnection *getKernelConnection() const;
+    
     TraceEditState *createState( TraceEditSequence::TSequenceStates whichState );
     void setCurrentTrace( KTrace *whichTrace );
     KTrace *getCurrentTrace();
@@ -64,6 +66,9 @@ class KTraceEditSequence:public TraceEditSequence
     map< std::string, bool > sequenceExecError;
 
     PRV_UINT16 currentAction;
+
+    const KernelConnection *myKernel;
+
 };
 
 

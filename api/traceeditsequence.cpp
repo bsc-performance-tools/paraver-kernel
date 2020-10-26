@@ -50,12 +50,6 @@ TraceEditSequence::~TraceEditSequence()
 }
 
 
-const KernelConnection *TraceEditSequence::getKernelConnection() const
-{
-  return myKernel;
-}
-
-
 TraceEditSequenceProxy::TraceEditSequenceProxy()
 {
 }
@@ -71,6 +65,12 @@ TraceEditSequenceProxy::TraceEditSequenceProxy( const KernelConnection *whichKer
 TraceEditSequenceProxy::~TraceEditSequenceProxy()
 {
   delete mySequence;
+}
+
+
+const KernelConnection *TraceEditSequenceProxy::getKernelConnection() const
+{
+  return mySequence->getKernelConnection();
 }
 
 
