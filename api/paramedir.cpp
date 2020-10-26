@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include <iostream>
 #include <string>
@@ -520,7 +515,7 @@ bool parseArguments( KernelConnection *myKernel,
 
       --readParameter;
     }
-    else if ( Trace::isTraceFile( currentArgument ) )
+    else if ( myKernel->isTraceFile( currentArgument ) )
     {
       sourceTraceName = currentArgument;
     }
@@ -556,12 +551,17 @@ bool parseArguments( KernelConnection *myKernel,
 
   if( sourceTraceName.empty() )
   {
-    std::cerr << "  [ERROR] Missing tracefile." << std::endl;
+    std::cerr << "  [ERROR] Missing tracefile or unrecognized tracefile format." << std::endl;
     parseOK = false;
   }
   else if( registeredTool.size() == 0 && cfgs.size() == 0 )
   {
     std::cerr << "  [ERROR] Missing arguments." << std::endl;
+    parseOK = false;
+  }
+  else if ( sourceTraceName == outputTraceName )
+  {
+    std::cerr << "  [ERROR] Source trace and output trace are the same." << std::endl;
     parseOK = false;
   }
 

@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef MEMORYTRACE_H_INCLUDED
 #define MEMORYTRACE_H_INCLUDED
@@ -66,6 +61,7 @@ class MemoryTrace
         virtual TObjectOrder   getOrder() const = 0;
         virtual TEventType     getEventType() const = 0;
         virtual TSemanticValue getEventValue() const = 0;
+        virtual TEventValue    getEventValueAsIs() const = 0;
         virtual TState         getState() const = 0;
         virtual TRecordTime    getStateEndTime() const = 0;
         virtual TCommID        getCommIndex() const = 0;

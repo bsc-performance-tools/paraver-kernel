@@ -21,16 +21,13 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef SEMANTICCOMPOSEFUNCTIONS_H_INCLUDED
 #define SEMANTICCOMPOSEFUNCTIONS_H_INCLUDED
 
 #include <stack>
+#include <list>
+#include <cmath>
 #include "semanticcompose.h"
 
 class ComposeAsIs: public SemanticCompose
@@ -1039,6 +1036,7 @@ class ComposeIsEqualSign: public SemanticCompose
     {
       return initFromBegin;
     }
+
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       TParamValue tmp;
@@ -1050,6 +1048,7 @@ class ComposeIsEqualSign: public SemanticCompose
 
       return tmp;
     }
+
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
@@ -1535,6 +1534,75 @@ class ComposeNestingLevel: public SemanticCompose
     std::vector<TSemanticValue> myStack;
 };
 
+class ComposeLRUDepth: public SemanticCompose
+{
+  public:
+    typedef enum
+    {
+      STACK_SIZE = 0,
+      MAXPARAM
+    } TParam;
+
+    ComposeLRUDepth()
+    {
+      setDefaultParam();
+    }
+
+    ~ComposeLRUDepth()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+
+    virtual void init( KWindow *whichWindow );
+
+    virtual std::string getName()
+    {
+      return ComposeLRUDepth::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeLRUDepth( *this );
+    }
+
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      TParamValue tmp;
+
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      else if ( whichParam == STACK_SIZE )
+        tmp.push_back( 256 );
+
+      return tmp;
+    }
+
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Stack size";
+    }
+
+  private:
+    static const bool initFromBegin = true;
+    static std::string name;
+
+    std::vector< std::list< TSemanticValue > > LRUStack;
+};
+
 
 class ComposeEnumerate: public SemanticCompose
 {
@@ -1596,8 +1664,70 @@ class ComposeEnumerate: public SemanticCompose
   private:
     static const bool initFromBegin = true;
     static std::string name;
+};
 
-    std::vector<TSemanticValue> myEnumerate;
+
+
+class ComposeAccumulate: public SemanticCompose
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    ComposeAccumulate()
+    {
+      setDefaultParam();
+    }
+
+    ~ComposeAccumulate()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+
+    virtual void init( KWindow *whichWindow );
+
+    virtual std::string getName()
+    {
+      return ComposeAccumulate::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeAccumulate( *this );
+    }
+
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      TParamValue tmp;
+
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+
+      return tmp;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
+
+  private:
+    static const bool initFromBegin = true;
+    static std::string name;
 };
 
 
@@ -2239,6 +2369,141 @@ class ComposeArcTan: public SemanticCompose
     virtual SemanticFunction *clone()
     {
       return new ComposeArcTan( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const
+    {
+      return NO_TYPE;
+    }
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return ( TParamValue ) 0;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "";
+    }
+  private:
+    static const bool initFromBegin = false;
+    static std::string name;
+};
+
+
+
+
+class ComposeLogN: public SemanticCompose
+{
+  public:
+    typedef enum
+    {
+      BASE = 0,
+      MAXVALUE
+    } TParam;
+
+    ComposeLogN()
+    {
+      setDefaultParam();
+    }
+
+    ~ComposeLogN()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXVALUE;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+
+    virtual void init( KWindow *whichWindow )
+    {}
+
+    virtual std::string getName()
+    {
+      return ComposeLogN::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeLogN( *this );
+    }
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      TParamValue tmp;
+
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      else if ( whichParam == BASE )
+        tmp.push_back( exp( 1 ) );
+      return tmp;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Base";
+    }
+
+  private:
+    static const bool initFromBegin = false;
+    static std::string name;
+
+};
+
+
+
+
+class ComposeExponential: public SemanticCompose
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    ComposeExponential()
+    {
+      setDefaultParam();
+    }
+
+    ~ComposeExponential()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+
+    virtual void init( KWindow *whichWindow )
+    {}
+
+
+    virtual std::string getName()
+    {
+      return ComposeExponential::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeExponential( *this );
     }
 
     virtual SemanticInfoType getSemanticInfoType() const

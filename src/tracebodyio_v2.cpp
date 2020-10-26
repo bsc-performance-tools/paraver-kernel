@@ -28,6 +28,12 @@
 
 using namespace std;
 
+
+
+TraceBodyIO_v2::TraceBodyIO_v2( Trace* trace )
+: whichTrace( trace )
+{}
+
 bool TraceBodyIO_v2::ordered() const
 {
   return true;
@@ -557,7 +563,7 @@ bool TraceBodyIO_v2::writeEvent( string& line,
     ostr << EventRecord << ':';
     writeCommon( ostr, whichTrace, record, numIter );
   }
-  ostr << record->getEventType() << ':' << record->getEventValue();
+  ostr << record->getEventType() << ':' << record->getEventValueAsIs();
   firstType = record->getType();
   firstTime = record->getTime();
   firstThread = record->getThread();
@@ -565,7 +571,7 @@ bool TraceBodyIO_v2::writeEvent( string& line,
   while ( !record->isNull() && record->getType() == firstType &&
           record->getTime() == firstTime && record->getThread() == firstThread )
   {
-    ostr << ':' << record->getEventType() << ':' << record->getEventValue();
+    ostr << ':' << record->getEventType() << ':' << record->getEventValueAsIs();
     ++( *record );
   }
   if ( !record->isNull() )

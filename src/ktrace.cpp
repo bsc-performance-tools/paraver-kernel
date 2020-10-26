@@ -273,11 +273,22 @@ TObjectOrder KTrace::getLast( TObjectOrder globalOrder,
   return 0;
 }
 
-bool KTrace::isSameObjectStruct( Trace *compareTo ) const
+bool KTrace::isSameObjectStruct( Trace *compareTo, bool compareProcessModel ) const
 {
   KTrace *tmpTrace = (KTrace *)compareTo;
-  return traceProcessModel == tmpTrace->traceProcessModel &&
-         traceResourceModel == tmpTrace->traceResourceModel;
+  if ( compareProcessModel )
+    return traceProcessModel == tmpTrace->traceProcessModel;
+  
+  return traceResourceModel == tmpTrace->traceResourceModel;
+}
+
+bool KTrace::isSubsetObjectStruct( Trace *compareTo, bool compareProcessModel ) const
+{
+  KTrace *tmpTrace = (KTrace *)compareTo;
+  if( compareProcessModel )
+    return traceProcessModel < tmpTrace->traceProcessModel;
+
+  return traceResourceModel < tmpTrace->traceResourceModel;
 }
 
 
@@ -604,94 +615,111 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
       progress->setEndLimit( file->tellg() );
     file->seekbegin();
   }
-  body = TraceBodyIO::createTraceBody( file );
+  body = TraceBodyIO::createTraceBody( file, this );
 
 // Reading the header
-  file->getline( tmpstr );
-  istringstream header( tmpstr );
-
-  string tmpDate;
-  std::getline( header, tmpDate, ')' );
-  tmpDate = tmpDate.substr( tmpDate.find_first_of( '(' ) + 1 );
-  parseDateTime( tmpDate );
-
-  header.get();
-
-  std::getline( header, tmpstr, ':' );
-  size_t pos = tmpstr.find( '_' );
-  if ( pos == string::npos )
+  string fileType = whichFile.substr( whichFile.find_last_of( '.' ) + 1 );
+  if ( fileType == "csv" )
   {
-    // No '_' char found. The trace is in us.
-    traceTimeUnit = US;
-    istringstream stringEndTime( tmpstr );
-    if ( !( stringEndTime >> traceEndTime ) )
+    // Saved CSV traces are in nanoseconds.
+    traceTimeUnit = NS;
+    traceEndTime = 0;
+    traceProcessModel = ProcessModel( this, whichFile, traceEndTime );
+    traceResourceModel = ResourceModel( );
+
+    body->setProcessModel( &traceProcessModel );
+    body->setResourceModel( &traceResourceModel );
+
+    if ( !file->canseekend() && progress != NULL )
     {
-      throw TraceHeaderException( TraceHeaderException::invalidTime,
-                                  tmpstr.c_str() );
+      progress->setEndLimit( traceEndTime );
     }
+    //setEventTypePrecision( _, 2 );  //algo asi
   }
   else
   {
-    string strTimeUnit( tmpstr.substr( pos, tmpstr.length() ) );
-    if ( strTimeUnit == "_ns" )
-      traceTimeUnit = NS;
-    else if ( strTimeUnit == "_us" )
-      traceTimeUnit = US;
-    else if ( strTimeUnit == "_ms" )
-      traceTimeUnit = MS;
-    else
-      traceTimeUnit = US;
+    file->getline( tmpstr );
+    istringstream header( tmpstr );
 
-    istringstream stringEndTime( tmpstr.substr( 0, pos ) );
-    if ( !( stringEndTime >> traceEndTime ) )
+    string tmpDate;
+    std::getline( header, tmpDate, ')' );
+    tmpDate = tmpDate.substr( tmpDate.find_first_of( '(' ) + 1 );
+    parseDateTime( tmpDate );
+
+    header.get();
+
+    std::getline( header, tmpstr, ':' );
+    size_t pos = tmpstr.find( '_' );
+    if ( pos == string::npos )
     {
-      throw TraceHeaderException( TraceHeaderException::invalidTime,
-                                  tmpstr.c_str() );
-    }
- //   else cout << traceEndTime << endl;
-  }
-
-  if ( !file->canseekend() )
-  {
-    if ( progress != NULL )
-      progress->setEndLimit( traceEndTime );
-  }
-
-  traceResourceModel = ResourceModel( header );
-  traceProcessModel = ProcessModel( header, this );
-
-  body->setProcessModel( &traceProcessModel );
-  body->setResourceModel( &traceResourceModel );
-
-  // Communicators
-  PRV_UINT32 numberComm = 0;
-  if ( !header.eof() )
-  {
-    std::getline( header, tmpstr );
-    if ( tmpstr != "" )
-    {
-      istringstream streamComm( tmpstr );
-
-      if ( !( streamComm >> numberComm ) )
+      // No '_' char found. The trace is in us.
+      traceTimeUnit = US;
+      istringstream stringEndTime( tmpstr );
+      if ( !( stringEndTime >> traceEndTime ) )
       {
-        throw TraceHeaderException( TraceHeaderException::invalidCommNumber,
+        throw TraceHeaderException( TraceHeaderException::invalidTime,
                                     tmpstr.c_str() );
       }
     }
-  }
-
-  for ( PRV_UINT32 count = 0; count < numberComm; count++ )
-  {
-    file->getline( tmpstr );
-    if ( tmpstr[0] != 'C' && tmpstr[0] != 'c' && tmpstr[0] != 'I' && tmpstr[0] != 'i' )
+    else
     {
-      throw TraceHeaderException( TraceHeaderException::unknownCommLine,
-                                  tmpstr.c_str() );
-    }
-    communicators.push_back( tmpstr );
-  }
-  // End communicators
+      string strTimeUnit( tmpstr.substr( pos, tmpstr.length() ) );
+      if ( strTimeUnit == "_ns" )
+        traceTimeUnit = NS;
+      else if ( strTimeUnit == "_ms" )
+        traceTimeUnit = MS;
+      else //if ( strTimeUnit == "_us" )
+        traceTimeUnit = US;
 
+      istringstream stringEndTime( tmpstr.substr( 0, pos ) );
+      if ( !( stringEndTime >> traceEndTime ) )
+      {
+        throw TraceHeaderException( TraceHeaderException::invalidTime,
+                                    tmpstr.c_str() );
+      }
+   //   else cout << traceEndTime << endl;
+    }
+
+    if ( !file->canseekend() && progress != NULL )
+    {
+      progress->setEndLimit( traceEndTime );
+    }
+
+    traceResourceModel = ResourceModel( header );
+    traceProcessModel = ProcessModel( header, existResourceInfo() );
+
+    body->setProcessModel( &traceProcessModel );
+    body->setResourceModel( &traceResourceModel );
+
+    // Communicators
+    PRV_UINT32 numberComm = 0;
+    if ( !header.eof() )
+    {
+      std::getline( header, tmpstr );
+      if ( tmpstr != "" )
+      {
+        istringstream streamComm( tmpstr );
+
+        if ( !( streamComm >> numberComm ) )
+        {
+          throw TraceHeaderException( TraceHeaderException::invalidCommNumber,
+                                      tmpstr.c_str() );
+        }
+      }
+    }
+
+    for ( PRV_UINT32 count = 0; count < numberComm; count++ )
+    {
+      file->getline( tmpstr );
+      if ( tmpstr[0] != 'C' && tmpstr[0] != 'c' && tmpstr[0] != 'I' && tmpstr[0] != 'i' )
+      {
+        throw TraceHeaderException( TraceHeaderException::unknownCommLine,
+                                    tmpstr.c_str() );
+      }
+      communicators.push_back( tmpstr );
+    }
+    // End communicators
+  }
 // End reading the header
 
 // Reading the body
@@ -711,7 +739,8 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   else if ( body->ordered() )
   {
     blocks = new PlainBlocks( traceResourceModel, traceProcessModel, traceEndTime );
-    memTrace  = new PlainTrace( traceProcessModel,
+    memTrace  = new PlainTrace( this,
+                                traceProcessModel,
                                 traceResourceModel );
   }
   else
@@ -1004,7 +1033,7 @@ void KTrace::setPhysicalReceive( TCommID whichComm, TRecordTime whichTime )
 
 void KTrace::setEventTypePrecision( TEventType whichType, double whichPrecision )
 {
-  eventsPrecision[ whichType ] = whichPrecision;
+  eventsPrecision.insert( std::pair<TEventType, double>( whichType, whichPrecision ) ) ;
 }
 
 double KTrace::getEventTypePrecision( TEventType whichType ) const

@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -187,6 +182,9 @@ void KTraceCutter::read_cutter_params()
 
   if ( originalTime )
     break_states = false; // Assigned ONLY if originalTime == true, else KEEP value.
+
+  if( break_states )
+    keep_events = false;
 }
 
 
@@ -1148,25 +1146,37 @@ void KTraceCutter::execute( std::string trace_in,
             reset_counters = true;
           }
 
-          if ( !originalTime )
+
+          /*std::cout << "    Status !OgTime + BreakSt: " << !originalTime  << " " << break_states << std::endl;
+          if ( !originalTime && break_states )
+          {
+            if ( time_1 < time_min  && time_2 <= time_max )
+            {
+              time_1 = time_min;
+              std::cout << "Time 1 changed from " << time_1 << " to " << time_min << "\n";
+            }
+            
+            if ( time_max < time_2   && time_1 >= time_min )
+            {
+              std::cout << "Time 2 changed from " << time_2 << " to " << time_max << "\n";
+              time_2 = time_max;
+            }
+          }*/
+
+          
+          if ( !originalTime && break_states )
           {
             if ( time_1 < time_min )
             {
-              if ( break_states )
-              {
-                time_1 = time_min;
-              }
+              time_1 = time_min;
             }
-
-            if ( time_2 > time_max )
+            
+            if ( time_2 > time_max)
             {
-              if ( break_states )
-              {
-                time_2 = time_max;
-              }
+              time_2 = time_max;
             }
           }
-/*
+          /*
           if ( !originalTime )
           {
             if ( time_1 < time_min )
@@ -1204,7 +1214,7 @@ void KTraceCutter::execute( std::string trace_in,
               time_2 = time_2 - time_min;
             }
           }
-*/
+          */
           //if ( tasks[appl-1][task-1][thread-1]->last_time < time_2 )
           tasks( appl - 1, task - 1, thread - 1 ).last_time = time_2;
 

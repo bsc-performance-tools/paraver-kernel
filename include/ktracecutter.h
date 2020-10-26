@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef _KTRACECUTTER_H_
 #define _KTRACECUTTER_H_
@@ -80,6 +75,7 @@ class KTraceCutter : public TraceCutter
     bool is_zip;
     unsigned int cut_tasks;
     bool break_states;
+    bool strict_cut;
     unsigned long long time_min;
     unsigned long long time_max;
     unsigned long long total_time;

@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 //#include <stdlib.h>
 #include <math.h>
@@ -1202,6 +1197,11 @@ inline TSemanticValue BPlusTree::iterator::getEventValue() const
   double tmpPrecision = myTrace->getEventTypePrecision( ( ( TRecord * )record )->URecordInfo.eventRecord.type );
   if( tmpPrecision != 0.0 )
     return ( ( TRecord * )record )->URecordInfo.eventRecord.value * tmpPrecision;
+  return ( ( TRecord * )record )->URecordInfo.eventRecord.value;
+}
+
+inline TEventValue    BPlusTree::iterator::getEventValueAsIs() const
+{
   return ( ( TRecord * )record )->URecordInfo.eventRecord.value;
 }
 

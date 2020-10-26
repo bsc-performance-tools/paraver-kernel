@@ -54,6 +54,7 @@ PRV_UINT16 numComposesExtraComposesInWindow = 0;
 PRV_UINT16 numSemanticParamExtraComposesInWindow = 0;
 
 map<string, TagFunction *> CFGLoader::cfgTagFunctions;
+bool CFGLoader::firstMapLoaded = false;
 
 string currentWindowName;
 string CFGLoader::errorLine = "";
@@ -352,7 +353,6 @@ bool CFGLoader::isCFGFile( const string& filename )
     found[ CFG_HEADER_NUM_WINDOWS ] = false;
     found[ OLDCFG_HEADER_VERSION ] = false;
     found[ OLDCFG_HEADER_NUM_WINDOWS ] = false;
-
     ifstream cfgFile( filename.c_str() );
     if ( cfgFile.good() )
     {
@@ -371,16 +371,11 @@ bool CFGLoader::isCFGFile( const string& filename )
           istringstream auxStream( strLine );
           getline( auxStream, cfgHeaderTag, ' ' );
 
-          if ( cfgHeaderTag.compare( CFG_SHEBANG ) == 0 )
-            found[ CFG_SHEBANG ] = true;
-          if ( cfgHeaderTag.compare( CFG_HEADER_VERSION ) == 0 )
-            found[ CFG_HEADER_VERSION ] = true;
-          if ( cfgHeaderTag.compare( CFG_HEADER_NUM_WINDOWS ) == 0 )
-            found[ CFG_HEADER_NUM_WINDOWS ] = true;
-          if ( cfgHeaderTag.compare( OLDCFG_HEADER_VERSION ) == 0 )
-            found[ OLDCFG_HEADER_VERSION ] = true;
-          if ( cfgHeaderTag.compare( OLDCFG_HEADER_NUM_WINDOWS ) == 0 )
-            found[ OLDCFG_HEADER_NUM_WINDOWS ] = true;
+          found[ CFG_SHEBANG ] |= ( cfgHeaderTag.compare( CFG_SHEBANG ) == 0 );
+          found[ CFG_HEADER_VERSION ] |= ( cfgHeaderTag.compare( CFG_HEADER_VERSION ) == 0 );
+          found[ CFG_HEADER_NUM_WINDOWS ] |= ( cfgHeaderTag.compare( CFG_HEADER_NUM_WINDOWS ) == 0 );
+          found[ OLDCFG_HEADER_VERSION ] |= ( cfgHeaderTag.compare( OLDCFG_HEADER_VERSION ) == 0 );
+          found[ OLDCFG_HEADER_NUM_WINDOWS ] |= ( cfgHeaderTag.compare( OLDCFG_HEADER_NUM_WINDOWS ) == 0 );
 
           isCFG = found[ CFG_SHEBANG ] ||
                   ( found[ CFG_HEADER_VERSION ] && found[ CFG_HEADER_NUM_WINDOWS ] ) ||
@@ -437,6 +432,38 @@ bool CFGLoader::isDimemasCFGFile( const std::string& filename )
   return isDimemasCFG;
 }
 
+bool CFGLoader::loadDescription( const std::string& filename, std::string& description )
+{
+  description = "";
+  ifstream cfgFile( filename.c_str() );
+  if ( !cfgFile )
+    return false;
+
+  bool keepReading = false;
+  while ( !cfgFile.eof() )
+  {
+    std::string strLine;
+    std::string cfgTag;
+
+    getline( cfgFile, strLine );
+
+    if ( strLine.length() == 0 )
+      continue;
+
+    if ( strLine == CFG_HEADER_END_DESCRIPTION || strLine == OLDCFG_HEADER_END_DESCRIPTION )
+    {
+      keepReading = false;
+      cfgFile.close();
+      return description != "";
+    }
+    if ( keepReading )
+      description += strLine + "\n";
+
+    if ( strLine == CFG_HEADER_BEGIN_DESCRIPTION || strLine == OLDCFG_HEADER_BEGIN_DESCRIPTION )
+      keepReading = true;
+  }
+  return false;
+}
 
 bool CFGLoader::loadCFG( KernelConnection *whichKernel,
                          const string& filename,
@@ -453,7 +480,11 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   if ( !cfgFile )
     return false;
 
-  loadMap();
+  if ( !firstMapLoaded ) 
+  {
+    loadMap();
+    firstMapLoaded = true;
+  }
   initDrawModeCodes();
 
   windows.push_back( NULL );
@@ -535,7 +566,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
   cfgFile.close();
 
-  unLoadMap();
+  //unLoadMap();
 
   if ( histograms[ histograms.size() -1 ] == NULL )
     histograms.pop_back();
@@ -579,7 +610,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   bool someWindowWithSelectedLevelEmpty = false;
   for ( vector<Window *>::iterator itWin = windows.begin(); itWin != windows.end(); ++itWin )
   {
-    if ( !(*itWin)->hasLevelSomeSelectedObject( (*itWin)->getLevel() ) )
+    if ( !( *itWin )->hasLevelSomeSelectedObject( ( *itWin )->getLevel() ) )
     {
       someWindowWithSelectedLevelEmpty = true;
       break;
@@ -614,14 +645,14 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   {
     for ( vector<Window *>::iterator it = windows.begin(); it != windows.end(); ++it )
     {
-      (*it)->setCFG4DEnabled( true );
-      (*it)->setCFG4DMode( true );
+      ( *it )->setCFG4DEnabled( true );
+      ( *it )->setCFG4DMode( true );
     }
 
     for ( vector<Histogram *>::iterator it = histograms.begin(); it != histograms.end(); ++it )
     {
-      (*it)->setCFG4DEnabled( true );
-      (*it)->setCFG4DMode( true );
+      ( *it )->setCFG4DEnabled( true );
+      ( *it )->setCFG4DMode( true );
     }
   }
 
@@ -700,7 +731,9 @@ bool CFGLoader::saveCFG( const string& filename,
   //cfgFile << "ConfigFile.NumWindows: " << allWindows.size() << endl;
   cfgFile << CFG_HEADER_VERSION << " " << CFG_CURRENT_VERSION << endl;
   cfgFile << CFG_HEADER_NUM_WINDOWS << " " << allWindows.size() << endl;
+  cfgFile << CFG_HEADER_BEGIN_DESCRIPTION << endl;
   cfgFile << options.description << endl;
+  cfgFile << CFG_HEADER_END_DESCRIPTION << endl;
 
   if ( options.enabledCFG4DMode )
     cfgFile << CFG_TAG_CFG4D_ENABLED << endl;
@@ -709,6 +742,7 @@ bool CFGLoader::saveCFG( const string& filename,
   cfgFile << endl;
 
   int id = 1;
+
   for ( vector<Window *>::const_iterator it = allWindows.begin();
         it != allWindows.end(); ++it )
   {
@@ -732,6 +766,9 @@ bool CFGLoader::saveCFG( const string& filename,
     WindowFlagsEnabled::printLine( cfgFile, it );
     WindowNonColorMode::printLine( cfgFile, it );
     WindowColorMode::printLine( cfgFile, it );
+    WindowCustomColorEnabled::printLine( cfgFile, it );
+    WindowCustomColorPalette::printLine( cfgFile, it );
+    WindowSemanticScaleMinAtZero::printLine( cfgFile, it );
     WindowPunctualColorWindow::printLine( cfgFile, allWindows, it );
     if ( !( *it )->isDerivedWindow() )
     {
@@ -800,16 +837,19 @@ bool CFGLoader::saveCFG( const string& filename,
     Analyzer2DAccumulateByControlWindow::printLine( cfgFile, it );
     Analyzer2DSortCols::printLine( cfgFile, it );
     Analyzer2DSortCriteria::printLine( cfgFile, it );
+    Analyzer2DSortReverse::printLine( cfgFile, it );
     Analyzer2DParameters::printLine( cfgFile, it );
     Analyzer2DAnalysisLimits::printLine( cfgFile, options, it );
     Analyzer2DRelativeTime::printLine( cfgFile, it );
     Analyzer2DComputeYScale::printLine( cfgFile, options, it );
+    Analyzer2DComputeYScaleZero::printLine( cfgFile, options, it );
     Analyzer2DMinimum::printLine( cfgFile, it );
     Analyzer2DMaximum::printLine( cfgFile, it );
     Analyzer2DDelta::printLine( cfgFile, it );
     Analyzer2DComputeGradient::printLine( cfgFile, options, it );
     Analyzer2DMinimumGradient::printLine( cfgFile, it );
     Analyzer2DMaximumGradient::printLine( cfgFile, it );
+    Analyzer2DObjects::printLine( cfgFile, it );
     Analyzer2DDrawModeObjects::printLine( cfgFile, it );
     Analyzer2DDrawModeColumns::printLine( cfgFile, it );
     Analyzer2DPixelSize::printLine( cfgFile, it );
@@ -902,6 +942,10 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_NON_COLOR_MODE]      = new WindowNonColorMode();
   cfgTagFunctions[OLDCFG_TAG_WNDW_UNITS]               = new WindowUnits();
   cfgTagFunctions[OLDCFG_TAG_WNDW_COLOR_MODE]          = new WindowColorMode();
+  // Color palette
+  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED] = new WindowCustomColorEnabled();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE] = new WindowCustomColorPalette();
+  cfgTagFunctions[OLDCFG_TAG_WNDW_SEMANTIC_SCALE_MIN_AT_ZERO] = new WindowSemanticScaleMinAtZero();
   cfgTagFunctions[OLDCFG_TAG_WNDW_OPERATION]           = new WindowOperation();
   cfgTagFunctions[OLDCFG_TAG_WNDW_MAXIMUM_Y]           = new WindowMaximumY();
   cfgTagFunctions[OLDCFG_TAG_WNDW_MINIMUM_Y]           = new WindowMinimumY();
@@ -964,6 +1008,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN2D_ACCUM_BY_CTRL_WINDOW] = new Analyzer2DAccumulateByControlWindow();
   cfgTagFunctions[OLDCFG_TAG_AN2D_SORTCOLS]             = new Analyzer2DSortCols();
   cfgTagFunctions[OLDCFG_TAG_AN2D_SORTCRITERIA]         = new Analyzer2DSortCriteria();
+  cfgTagFunctions[OLDCFG_TAG_AN2D_SORTREVERSE]         = new Analyzer2DSortReverse();
 
   cfgTagFunctions[OLDCFG_TAG_AN2D_PARAMETERS]           = new Analyzer2DParameters();
   cfgTagFunctions[OLDCFG_TAG_AN2D_ANALYSISLIMITS]       = new Analyzer2DAnalysisLimits();
@@ -971,12 +1016,14 @@ void CFGLoader::loadMap()
   // --> cfgTagFunctions["Analyzer2D.RelativeXScale:"] = new Analyzer2DRelativeXScale();
   // --> Analyzer2D.ShowWindows:
   cfgTagFunctions[OLDCFG_TAG_AN2D_COMPUTEYSCALE]        = new Analyzer2DComputeYScale();
+  cfgTagFunctions[CFG_TAG_AN2D_COMPUTEYSCALE_ZERO]      = new Analyzer2DComputeYScaleZero();
   cfgTagFunctions[OLDCFG_TAG_AN2D_MINIMUM]              = new Analyzer2DMinimum();
   cfgTagFunctions[OLDCFG_TAG_AN2D_MAXIMUM]              = new Analyzer2DMaximum();
   cfgTagFunctions[OLDCFG_TAG_AN2D_DELTA]                = new Analyzer2DDelta();
   cfgTagFunctions[OLDCFG_TAG_AN2D_COMPUTEGRADIENT]      = new Analyzer2DComputeGradient();
   cfgTagFunctions[OLDCFG_TAG_AN2D_MINIMUMGRADIENT]      = new Analyzer2DMinimumGradient();
   cfgTagFunctions[OLDCFG_TAG_AN2D_MAXIMUMGRADIENT]      = new Analyzer2DMaximumGradient();
+  cfgTagFunctions[ CFG_TAG_OBJECTS ]                    = new Analyzer2DObjects();
   cfgTagFunctions[ CFG_TAG_DRAWMODE_OBJECTS ]           = new Analyzer2DDrawModeObjects();
   cfgTagFunctions[ CFG_TAG_DRAWMODE_COLUMNS ]           = new Analyzer2DDrawModeColumns();
   cfgTagFunctions[OLDCFG_TAG_AN2D_PIXEL_SIZE]           = new Analyzer2DPixelSize();
@@ -1408,6 +1455,151 @@ void WindowColorMode::printLine( ofstream& cfgFile,
     cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_PUNCTUAL <<endl;
   else if ( ( *it )->isFusedLinesColorSet() )
     cfgFile << OLDCFG_TAG_WNDW_COLOR_MODE << " " << CFG_VAL_COLOR_MODE_FUSED_LINES <<endl;
+}
+
+string WindowCustomColorEnabled::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED;
+
+bool WindowCustomColorEnabled::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                 Trace *whichTrace,
+                                 vector<Window *>& windows,
+                                 vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+    windows[ windows.size() - 1 ]->setUseCustomPalette( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+    windows[ windows.size() - 1 ]->setUseCustomPalette( true );
+  else
+    return false;
+
+  return true;
+}
+
+void WindowCustomColorEnabled::printLine( ofstream& cfgFile,
+                                 const vector<Window *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED << " " << ( ( *it )->getUseCustomPalette() ?
+      OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
+}
+
+
+string WindowCustomColorPalette::tagCFG = OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE;
+
+bool WindowCustomColorPalette::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                 Trace *whichTrace,
+                                 vector<Window *>& windows,
+                                 vector<Histogram *>& histograms )
+{
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+ 
+  istringstream sstrColorItem;
+  string strColorItem;
+  istringstream sstrTmp;
+  string strTmp;
+  while ( !line.eof() ) 
+  {
+    TSemanticValue tmpValue;
+    rgb tmpRGB;
+    int tmpComponent;
+
+    sstrColorItem.clear();
+    getline( line, strColorItem, '}' ); // { value : r, g, b }
+    if( line.eof() )
+      break;
+    sstrColorItem.str( strColorItem );
+    
+    sstrTmp.clear();
+    getline( sstrColorItem, strTmp, '{' ); // get '{'
+    getline( sstrColorItem, strTmp, ':' ); // value
+    sstrTmp.str( strTmp );
+    if ( !( sstrTmp >> tmpValue ) ) 
+      return false;
+  
+    sstrTmp.clear();
+    getline( sstrColorItem, strTmp, ',' ); // color red
+    sstrTmp.str( strTmp );
+    if ( !( sstrTmp >> tmpComponent ) ) 
+      return false;
+    tmpRGB.red = tmpComponent;
+
+    sstrTmp.clear();
+    getline( sstrColorItem, strTmp, ',' ); // color green
+    sstrTmp.str( strTmp );
+    if ( !( sstrTmp >> tmpComponent ) ) 
+      return false;
+    tmpRGB.green = tmpComponent;
+
+    sstrTmp.clear();
+    getline( sstrColorItem, strTmp, '}' ); // color blue
+    sstrTmp.str( strTmp );
+    if ( !( sstrTmp >> tmpComponent ) ) 
+      return false;
+    tmpRGB.blue = tmpComponent;
+
+    windows[ windows.size() - 1 ]->getCodeColor().setCustomColor( tmpValue, tmpRGB );
+  }
+
+  return true;
+}
+
+void WindowCustomColorPalette::printLine( ofstream& cfgFile,
+                                 const vector<Window *>::const_iterator it )
+{
+  const CodeColor& tmpCodeColor = ( *it )->getCodeColor();
+
+  if( tmpCodeColor.existCustomColors() )
+  {
+    cfgFile << OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE << " ";
+
+    const std::map<TSemanticValue, rgb>& tmpPalette = tmpCodeColor.getCustomPalette();
+    for( std::map<TSemanticValue, rgb>::const_iterator itMap = tmpPalette.begin(); itMap != tmpPalette.end(); ++itMap )
+    {
+      cfgFile << "{" << itMap->first << ":" << (int) itMap->second.red << "," << (int) itMap->second.green << "," << (int) itMap->second.blue << "}";
+      if ( itMap != --tmpPalette.end() )
+        cfgFile << ",";
+    }
+    
+    cfgFile << endl;
+  }
+}
+
+
+string WindowSemanticScaleMinAtZero::tagCFG = OLDCFG_TAG_WNDW_SEMANTIC_SCALE_MIN_AT_ZERO;
+
+bool WindowSemanticScaleMinAtZero::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                              Trace *whichTrace,
+                                              vector<Window *>& windows,
+                                              vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE ) == 0 )
+    windows[ windows.size() - 1 ]->setSemanticScaleMinAtZero( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE ) == 0 )
+    windows[ windows.size() - 1 ]->setSemanticScaleMinAtZero( true );
+  else
+    return false;
+
+  return true;
+}
+
+void WindowSemanticScaleMinAtZero::printLine( ofstream& cfgFile,
+                                              const vector<Window *>::const_iterator it )
+{
+  cfgFile << WindowSemanticScaleMinAtZero::tagCFG << " " << ( ( *it )->getSemanticScaleMinAtZero() ?
+      OLDCFG_VAL_TRUE : OLDCFG_VAL_FALSE ) << endl;
 }
 
 
@@ -4116,7 +4308,7 @@ void Analyzer2DZoom::printLine( ofstream& cfgFile,
 
 string Analyzer2DAccumulator::tagCFG = OLDCFG_TAG_AN2D_ACCUMULATOR;
 
-bool Analyzer2DAccumulator:: parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DAccumulator::parseLine( KernelConnection *whichKernel, istringstream& line,
                                         Trace *whichTrace,
                                         vector<Window *>& windows,
                                         vector<Histogram *>& histograms )
@@ -4194,11 +4386,11 @@ bool Analyzer2DSortCols::parseLine( KernelConnection *whichKernel, istringstream
 
   if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
   {
-    histograms[ histograms.size() - 1 ]->setSortColumns( true );
+    histograms[ histograms.size() - 1 ]->setSemanticSortColumns( true );
   }
   else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
   {
-    histograms[ histograms.size() - 1 ]->setSortColumns( false );
+    histograms[ histograms.size() - 1 ]->setSemanticSortColumns( false );
   }
   else
     return false;
@@ -4210,7 +4402,7 @@ void Analyzer2DSortCols::printLine( ofstream& cfgFile,
                                     const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SORTCOLS << " ";
-  if ( ( *it )->getSortColumns() )
+  if ( ( *it )->getSemanticSortColumns() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -4235,17 +4427,17 @@ bool Analyzer2DSortCriteria::parseLine( KernelConnection *whichKernel, istringst
   getline( line, strSortCriteria );
 
   if ( strSortCriteria.compare( OLDCFG_VAL_SORT_AVERAGE ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( AVERAGE );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( AVERAGE );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_TOTAL ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( TOTAL );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( TOTAL );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_MAXIMUM ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( MAXIMUM );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( MAXIMUM );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_MINIMUM ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( MINIMUM );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( MINIMUM );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_STDEV ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( STDEV );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( STDEV );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_AVGDIVMAX ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSortCriteria( AVGDIVMAX );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( AVGDIVMAX );
   else
     return false;
 
@@ -4256,7 +4448,7 @@ void Analyzer2DSortCriteria::printLine( ofstream& cfgFile,
                                         const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_SORTCRITERIA << " ";
-  switch ( ( *it )->getSortCriteria() )
+  switch ( ( *it )->getSemanticSortCriteria() )
   {
     case AVERAGE:
       cfgFile << OLDCFG_VAL_SORT_AVERAGE;
@@ -4281,6 +4473,49 @@ void Analyzer2DSortCriteria::printLine( ofstream& cfgFile,
   }
   cfgFile << endl;
 }
+
+
+string Analyzer2DSortReverse::tagCFG = OLDCFG_TAG_AN2D_SORTREVERSE;
+
+bool Analyzer2DSortReverse::parseLine( KernelConnection *whichKernel, istringstream& line,
+                                       Trace *whichTrace,
+                                       vector<Window *>& windows,
+                                       vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+  {
+    histograms[ histograms.size() - 1 ]->setSemanticSortReverse( true );
+  }
+  else if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+  {
+    histograms[ histograms.size() - 1 ]->setSemanticSortReverse( false );
+  }
+  else
+    return false;
+
+  return true;
+}
+
+void Analyzer2DSortReverse::printLine( ofstream& cfgFile,
+                                       const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << OLDCFG_TAG_AN2D_SORTREVERSE << " ";
+  if ( ( *it )->getSemanticSortReverse() )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
+}
+
 
 /*
  Number_of_parameters Parameter1 ... ParameterN
@@ -4470,6 +4705,46 @@ void Analyzer2DComputeYScale::printLine( ofstream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_AN2D_COMPUTEYSCALE << " ";
   if ( ( *it )->getCompute2DScale() )
+    cfgFile << OLDCFG_VAL_TRUE2;
+  else
+    cfgFile << OLDCFG_VAL_FALSE2;
+  cfgFile << endl;
+}
+
+
+string Analyzer2DComputeYScaleZero::tagCFG = CFG_TAG_AN2D_COMPUTEYSCALE_ZERO;
+
+bool Analyzer2DComputeYScaleZero::parseLine( KernelConnection *whichKernel,
+                                             istringstream& line,
+                                             Trace *whichTrace,
+                                             vector<Window *>& windows,
+                                             vector<Histogram *>& histograms )
+{
+  string strBool;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strBool, ' ' );
+
+  if ( strBool.compare( OLDCFG_VAL_FALSE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setCompute2DScaleZero( false );
+  else if ( strBool.compare( OLDCFG_VAL_TRUE2 ) == 0 )
+    histograms[ histograms.size() - 1 ]->setCompute2DScaleZero( true );
+  else
+    return false;
+
+  return true;
+}
+
+void Analyzer2DComputeYScaleZero::printLine( ofstream& cfgFile,
+                                             const SaveOptions& options,
+                                             const vector<Histogram *>::const_iterator it )
+{
+  cfgFile << CFG_TAG_AN2D_COMPUTEYSCALE_ZERO << " ";
+  if ( ( *it )->getCompute2DScaleZero() )
     cfgFile << OLDCFG_VAL_TRUE2;
   else
     cfgFile << OLDCFG_VAL_FALSE2;
@@ -4672,6 +4947,59 @@ void Analyzer2DMaximumGradient::printLine( ofstream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_AN2D_MAXIMUMGRADIENT << " " << ( *it )->getMaxGradient() << endl;
 }
+
+
+
+string Analyzer2DObjects::tagCFG = CFG_TAG_OBJECTS;
+
+bool Analyzer2DObjects::parseLine( KernelConnection *whichKernel,
+                                           istringstream& line,
+                                           Trace *whichTrace,
+                                           vector<Window *>& windows,
+                                           vector<Histogram *>& histograms )
+{
+  string strObject;
+
+  if ( windows[ windows.size() - 1 ] == NULL )
+    return false;
+  if ( histograms[ histograms.size() - 1 ] == NULL )
+    return false;
+
+  getline( line, strObject );
+  vector< TObjectOrder > myRows;
+
+  stringstream ss(strObject);
+  string token;
+  char separator = ',';
+  while ( getline( ss, token, separator ) )
+  {
+    TObjectOrder tmpOrder;
+    istringstream tmpToken( token );
+    if( !( tmpToken >> tmpOrder ) )
+      return false;
+    myRows.push_back( tmpOrder );
+  }
+
+  histograms[ histograms.size() - 1 ]->setSelectedRows( myRows );
+  return true;
+}
+
+void Analyzer2DObjects::printLine( ofstream& cfgFile,
+                                  const vector<Histogram *>::const_iterator it )
+{
+  vector< TObjectOrder > myRows = ( *it )->getSelectedRows();
+
+  int i;
+  cfgFile << CFG_TAG_OBJECTS << " ";
+  for ( i = 0; i < myRows.size() - 1; ++i )
+    cfgFile << myRows[ i ] << ",";
+
+  if ( i == myRows.size() - 1 )
+    cfgFile << myRows[ i ];
+
+  cfgFile << endl;
+}
+
 
 
 string Analyzer2DDrawModeObjects::tagCFG = CFG_TAG_DRAWMODE_OBJECTS;

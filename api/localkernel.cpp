@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -214,7 +209,7 @@ string LocalKernel::getPCFFileLocation( const string& traceFile ) const
   string pcfFile;
 
   if( traceFile.length() > 3 )
-  {
+  { 
     if ( traceFile.substr( traceFile.length() - 3 ) == "prv" )
       pcfFile = traceFile.substr( 0, traceFile.length() - 3 );
     else if ( traceFile.substr( traceFile.length() - 6 ) == "prv.gz" )
@@ -561,8 +556,62 @@ void LocalKernel::copyFile( const std::string& in, const std::string& out ) cons
   fclose( fileOut );
 }
 
+bool LocalKernel::isTraceFile( const std::string &filename ) const
+{
+  TraceStream *file = TraceStream::openFile( filename );
+  if ( !file->good() ) 
+  {
+    return false;
+  }
+  string auxName( filename );
+  string suffixCompressed( "" );
+  string suffixNotCompressed( "" );
 
-void LocalKernel::copyPCF( const std::string& name, const std::string& traceToLoad ) const
+  if (auxName.length() > GZIPPED_PRV_SUFFIX.length())
+    suffixCompressed = auxName.substr(auxName.length() - GZIPPED_PRV_SUFFIX.length());
+
+  if (auxName.length() > PRV_SUFFIX.length())
+    suffixNotCompressed = auxName.substr(auxName.length() - PRV_SUFFIX.length());
+
+  if( ! ( suffixCompressed.compare( GZIPPED_PRV_SUFFIX ) == 0 ) &&
+      ! ( suffixNotCompressed.compare( PRV_SUFFIX ) == 0 ) )
+    return false;
+
+  bool isParaverTrace = true;
+
+  //Step 1: paraver + datetime 
+  string tmpFirstLine;
+  file->getline( tmpFirstLine );
+  istringstream firstLine( tmpFirstLine );
+
+  string item;
+  getline( firstLine, item, ' ' );
+  isParaverTrace = isParaverTrace && ( item == "#Paraver" );
+  getline( firstLine, item, ')' );
+  getline( firstLine, item, ':' );
+
+  //Step 2: trace end time
+  getline( firstLine, item, ':' );
+
+  //Step 3: trace models
+  
+  try
+  {
+    ResourceModel tmpResource( firstLine );
+    ProcessModel tmpProcess( firstLine, tmpResource.isReady() );
+    isParaverTrace = isParaverTrace && tmpProcess.isReady();
+  }
+  catch( ... )
+  {
+    isParaverTrace = false;
+  }
+
+  file->close();
+  delete file;
+  return isParaverTrace;
+}
+
+void LocalKernel::copyPCF( const std::string &name, const std::string &traceToLoad ) const
 {
   string pcfIn  = composeName( name, string( "pcf" ) );
   string pcfOut = composeName( traceToLoad, string( "pcf" ) );

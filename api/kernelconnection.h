@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef KERNELCONNECTION_H_INCLUDED
 #define KERNELCONNECTION_H_INCLUDED
@@ -57,18 +52,18 @@ typedef std::pair< TEventType, TEventValue > TTypeValuePair;
 enum UserMessageID
 {
   MessageCFGNoneEvents = 0,
-  MessageCFGSomeEvents,
   MessageCFGZeroObjects,
   MessageCFGMultipleValues,
+  MessageCFGSomeEvents,
   UserMessageSize
 };
 
 static const std::string userMessages[ UserMessageSize ] =
 {
   "None of the events specified in the filter appear in the trace.",
-  "Some of the events specified in the filter doesn't appear in the trace.",
   "Some timeline has 0 objects selected at some level.",
-  "Some of the events specified in the filter have multiple instances. All of them will be included."
+  "Some of the events specified in the filter have multiple instances. All of them will be included.",
+  "Some of the events specified in the filter doesn't appear in the trace."
 };
 
 class KernelConnection
@@ -125,8 +120,9 @@ class KernelConnection
 
     virtual bool userMessage( UserMessageID messageID ) const = 0;
 
+    virtual bool isTraceFile( const std::string &filename ) const = 0;
     virtual void copyPCF( const std::string& name, const std::string& traceToLoad ) const = 0;
-    virtual void copyROW( const std::string& name, const std::string&traceToLoad ) const = 0;
+    virtual void copyROW( const std::string& name, const std::string& traceToLoad ) const = 0;
     virtual void getNewTraceName( char *name,
                                   char *new_trace_name,
                                   std::string action,

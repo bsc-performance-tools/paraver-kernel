@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef KHISTOGRAM_H_INCLUDED
 #define KHISTOGRAM_H_INCLUDED
@@ -319,6 +314,9 @@ class KHistogram : public Histogram
     TTimeUnit myTimeUnit;
 
     WindowCloneManager windowCloneManager;
+    
+    //Selection of rows
+    SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;
 
     void orderWindows();
     bool createComms() const;

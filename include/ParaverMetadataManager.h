@@ -23,14 +23,8 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
 
-  $Id$:  Id
-  $Rev:: 23                                       $:  Revision of last commit
-  $Author$:  Author of last commit
-  $Date$:  Date of last commit
 
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef PARAVERMETADATAMANAGER_H_INCLUDED
 #define PARAVERMETADATAMANAGER_H_INCLUDED

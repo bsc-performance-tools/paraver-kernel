@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef RESOURCEMODEL_H_INCLUDED
 #define RESOURCEMODEL_H_INCLUDED
@@ -47,6 +42,7 @@ class ResourceModel
     ~ResourceModel()
     {}
 
+    bool operator<( const ResourceModel& other ) const;
     bool operator==( const ResourceModel& other ) const;
 
     bool isReady() const
@@ -75,7 +71,9 @@ class ResourceModel
     void addNode();
     void addCPU( TNodeOrder whichNode );
 
-    bool isValidCPU( TCPUOrder whichCPU ) const;
+    bool isValidNode( TNodeOrder whichNode ) const;
+    bool isValidCPU( TNodeOrder whichNode, TCPUOrder whichCPU ) const;
+    bool isValidGlobalCPU( TCPUOrder whichCPU ) const;
 
   protected:
     struct CPULocation

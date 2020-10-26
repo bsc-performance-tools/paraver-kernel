@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "tracestream.h"
 #include "paraverkernelexception.h"
@@ -58,8 +53,23 @@ TTraceSize TraceStream::getTraceFileSize( const string& filename )
     return NotCompressed::getTraceFileSize( filename );
 }
 
+std::string TraceStream::getFilename() const
+{
+  return filename;
+}
+
+
+void TraceStream::setFilename( const std::string &newFile )
+{
+  filename = newFile;
+}
+
+
+
+
 NotCompressed::NotCompressed( const string& filename )
 {
+  setFilename( filename );
   file.open( filename.c_str() );
 }
 
@@ -135,7 +145,7 @@ TTraceSize NotCompressed::getTraceFileSize( const string& filename )
 		return 0;
 	}
 
-#elif WIN32
+#elif defined(WIN32)
   if ( fopen_s( &traceFile, filename.c_str(), "r" ) != 0 )
   {
     printf( "Error Opening File %s\n", filename.c_str() );
@@ -166,8 +176,11 @@ TTraceSize NotCompressed::getTraceFileSize( const string& filename )
 }
 
 
+
+
 Compressed::Compressed( const string& filename )
 {
+  setFilename( filename );
   file = gzopen( filename.c_str(), "r" );
 }
 

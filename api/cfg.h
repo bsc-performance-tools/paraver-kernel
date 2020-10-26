@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef CFG_H_INCLUDED
 #define CFG_H_INCLUDED
@@ -99,6 +94,7 @@ class CFGLoader
     static std::map<std::string, TagFunction *> cfgTagFunctions;
     static void loadMap();
     static void unLoadMap();
+    static bool firstMapLoaded;
     static void pushbackWindow( Window *whichWindow,
                                 std::vector<Window *>& allWindows );
     static void pushbackAllWindows( const std::vector<Window *>& selected,
@@ -109,6 +105,7 @@ class CFGLoader
     static bool hasCFGExtension( const std::string& filename );
     static bool isCFGFile( const std::string& filename );
     static bool isDimemasCFGFile( const std::string& filename ); // TODO: here?
+    static bool loadDescription( const std::string& filename, std::string& description );
 
     static bool loadCFG( KernelConnection *whichKernel,
                          const std::string& filename,
@@ -395,6 +392,75 @@ class WindowColorMode: public TagFunction
 
 };
 
+
+class WindowCustomColorEnabled: public TagFunction
+{
+  public:
+    WindowCustomColorEnabled()
+    {}
+
+    virtual ~WindowCustomColorEnabled()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
+class WindowCustomColorPalette: public TagFunction
+{
+  public:
+    WindowCustomColorPalette()
+    {}
+
+    virtual ~WindowCustomColorPalette()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
+class WindowSemanticScaleMinAtZero: public TagFunction
+{
+  public:
+    WindowSemanticScaleMinAtZero()
+    {}
+
+    virtual ~WindowSemanticScaleMinAtZero()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
 
 class WindowUnits: public TagFunction
 {
@@ -1627,6 +1693,30 @@ class Analyzer2DSortCriteria: public TagFunction
 };
 
 
+class Analyzer2DSortReverse: public TagFunction
+{
+  public:
+    Analyzer2DSortReverse()
+    {}
+
+    virtual ~Analyzer2DSortReverse()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
+
 class Analyzer2DParameters: public TagFunction
 {
   public:
@@ -1724,6 +1814,29 @@ class Analyzer2DComputeYScale: public TagFunction
 
 };
 
+class Analyzer2DComputeYScaleZero: public TagFunction
+{
+  public:
+    Analyzer2DComputeYScaleZero()
+    {}
+
+    virtual ~Analyzer2DComputeYScaleZero()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const SaveOptions& options,
+                           const std::vector<Histogram *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
 
 class Analyzer2DMinimum: public TagFunction
 {
@@ -1852,6 +1965,29 @@ class Analyzer2DMaximumGradient: public TagFunction
     {}
 
     virtual ~Analyzer2DMaximumGradient()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Histogram *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+};
+
+
+class Analyzer2DObjects: public TagFunction
+{
+  public:
+    Analyzer2DObjects()
+    {}
+
+    virtual ~Analyzer2DObjects()
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,

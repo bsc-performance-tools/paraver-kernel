@@ -70,6 +70,10 @@ bool prv_atoll( const char *p, T *result )
   return true;
 }
 
+TraceBodyIO_v1::TraceBodyIO_v1( Trace* trace )
+: whichTrace( trace )
+{}
+
 bool TraceBodyIO_v1::ordered() const
 {
   return false;
@@ -129,7 +133,7 @@ void TraceBodyIO_v1::write( fstream& whichStream,
                             MemoryTrace::iterator *record,
                             PRV_INT32 numIter ) const
 {
-  bool writeReady;
+  bool writeReady = false;
   TRecordType type = record->getType();
   line.clear();
 
@@ -444,7 +448,6 @@ inline void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records 
     return;
   }
 #endif
-
   std::getline( strLine, tmpstring, ':' );
 
 #ifdef USE_ATOLL
@@ -524,7 +527,7 @@ inline bool TraceBodyIO_v1::readCommon( istringstream& line,
   }
 #endif
 
-  if ( !resourceModel->isValidCPU( CPU ) )
+  if ( !resourceModel->isValidGlobalCPU( CPU ) )
     return false;
 
 
@@ -673,7 +676,7 @@ void TraceBodyIO_v1::appendEvent( const MemoryTrace::iterator *record ) const
   if ( !multiEventLine.empty() )
     ostr << ':';
 
-  ostr << record->getEventType() << ':' << record->getEventValue();
+  ostr << record->getEventType() << ':' << record->getEventValueAsIs();
 
   multiEventLine += ostr.str();
 }

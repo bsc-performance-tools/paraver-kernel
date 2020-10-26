@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef PLAINTRACE_H_INCLUDED
 #define PLAINTRACE_H_INCLUDED
@@ -62,7 +57,7 @@ namespace Plain
           iterator()
           {}
 
-          iterator( PlainBlocks *whichBlocks );
+          iterator( PlainBlocks *whichBlocks, const Trace *whichTrace );
 
           virtual ~iterator()
           {}
@@ -83,6 +78,7 @@ namespace Plain
           virtual TObjectOrder   getOrder() const;
           virtual TEventType     getEventType() const;
           virtual TSemanticValue getEventValue() const;
+          virtual TEventValue    getEventValueAsIs() const;
           virtual TState         getState() const;
           virtual TRecordTime    getStateEndTime() const;
           virtual TCommID        getCommIndex() const;
@@ -101,7 +97,7 @@ namespace Plain
           ThreadIterator()
           {}
 
-          ThreadIterator( PlainBlocks *whichBlocks, PRV_UINT32 whichBlock, PRV_UINT32 whichPos,
+          ThreadIterator( PlainBlocks *whichBlocks, const Trace *whichTrace, PRV_UINT32 whichBlock, PRV_UINT32 whichPos,
                           TThreadOrder whichThread );
 
           virtual ~ThreadIterator()
@@ -130,7 +126,7 @@ namespace Plain
           CPUIterator()
           {}
 
-          CPUIterator( PlainBlocks *whichBlocks, std::vector<PRV_UINT32>& whichBlock, std::vector<PRV_UINT32>& whichPos,
+          CPUIterator( PlainBlocks *whichBlocks, const Trace *whichTrace , std::vector<PRV_UINT32>& whichBlock, std::vector<PRV_UINT32>& whichPos,
                        TThreadOrder whichNumThreads, std::vector<TThreadOrder>& whichThreads, TCPUOrder whichCPU );
 
           virtual ~CPUIterator();
@@ -159,7 +155,8 @@ namespace Plain
           void setToMyCPUBackward();
       };
 
-      PlainTrace( const ProcessModel& whichProcessModel,
+      PlainTrace( const Trace *whichTrace,
+                  const ProcessModel& whichProcessModel,
                   const ResourceModel& whichResourceModel );
       virtual ~PlainTrace()
       {}
@@ -184,6 +181,7 @@ namespace Plain
     protected:
 
     private:
+      const Trace *myTrace;
       const ProcessModel& processModel;
       const ResourceModel& resourceModel;
       TThreadOrder numThreads;

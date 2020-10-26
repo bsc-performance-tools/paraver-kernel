@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include <limits>
 #include <math.h>
@@ -271,10 +266,13 @@ vector<int>& KHistogramTotals::sortByAvgDivMax( PRV_UINT16 idStat,
 
   for ( THistogramColumn iColumn = 0;
         iColumn < columns;
-        iColumn++ )
+        ++iColumn )
   {
-    tmpV.push_back( ( ( average[ whichPlane ] )[ idStat ] ) [ iColumn ] /
-                    ( ( maximum[ whichPlane ] )[ idStat ] ) [ iColumn ] );
+    if( ( ( maximum[ whichPlane ] )[ idStat ] ) [ iColumn ] != 0.0 )
+      tmpV.push_back( ( ( average[ whichPlane ] )[ idStat ] ) [ iColumn ] /
+                      ( ( maximum[ whichPlane ] )[ idStat ] ) [ iColumn ] );
+    else
+      tmpV.push_back( 0.0 );
   }
 
   sort = new SortIndex<TSemanticValue>( tmpV );

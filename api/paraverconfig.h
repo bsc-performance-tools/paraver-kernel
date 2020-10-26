@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef PARAVERCONFIG_H_INCLUDED
 #define PARAVERCONFIG_H_INCLUDED
@@ -45,6 +40,7 @@
 #include <boost/serialization/string.hpp>
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
+#include <boost/serialization/vector.hpp>
 
 
 class ParaverConfig;
@@ -84,10 +80,15 @@ class ParaverConfig
     static ParaverConfig *getInstance();
 
     void readParaverConfigFile();
-    static void writeParaverConfigFile();
+    static void writeParaverConfigFile( bool writeBackup = true );
     static bool writeDefaultConfig();
 
     std::string getParaverConfigDir();
+
+
+    bool initCompleteSessionFile();
+    void cleanCompleteSessionFile();
+    bool closeCompleteSessionFile();
 
     // GLOBAL XML SECTION
     void setGlobalTracesPath( std::string whichTracesPath );
@@ -103,6 +104,12 @@ class ParaverConfig
     void setMainWindowHeight( unsigned int whichHeight );
     void setGlobalSessionPath( std::string whichSessionPath );
     void setGlobalSessionSaveTime( PRV_UINT16 whichSessionSaveTime );
+    void setGlobalPrevSessionLoad( bool isPrevSessionLoaded );
+    void setGlobalHelpContentsUsesBrowser( bool isHelpContentsUsesBrowser );
+    void setGlobalHelpContentsQuestionAnswered( bool isHelpContentsQuestionAnswered );
+    void setAppsChecked(); // will always set to True
+    void setDisableTimelineZoomMouseWheel( bool disable );
+
 
     std::string getGlobalTracesPath() const;
     std::string getGlobalCFGsPath() const;
@@ -117,6 +124,12 @@ class ParaverConfig
     unsigned int getMainWindowHeight() const;
     std::string getGlobalSessionPath() const;
     PRV_UINT16 getGlobalSessionSaveTime() const;
+    bool getGlobalPrevSessionLoad() const;
+    bool getGlobalHelpContentsUsesBrowser() const;
+    bool getGlobalHelpContentsQuestionAnswered() const;
+    bool getDisableTimelineZoomMouseWheel() const;
+
+    bool getAppsChecked() const;
 
     // TIMELINES XML SECTION
     void setTimelineDefaultName( std::string whichDefaultName );
@@ -130,6 +143,7 @@ class ParaverConfig
     void setTimelineDrawmodeTime( DrawModeMethod whichDrawmodeTime );
     void setTimelineDrawmodeObjects( DrawModeMethod whichDrawmodeObjects );
     void setTimelineGradientFunction( GradientColor::TGradientFunction whichGradientFunction );
+    void setTimelineSemanticScaleMinAtZero( bool whichMinAtZero );
     void setTimelinePixelSize( PRV_UINT32 whichPixelSize );
     void setTimelineLabels( Window::TObjectLabels whichLabels );
     void setTimelineObjectAxisSize( Window::TObjectAxisSize whichSize );
@@ -153,6 +167,7 @@ class ParaverConfig
     DrawModeMethod getTimelineDrawmodeTime() const;
     DrawModeMethod getTimelineDrawmodeObjects() const;
     GradientColor::TGradientFunction getTimelineGradientFunction() const;
+    bool getTimelineSemanticScaleMinAtZero() const;
     PRV_UINT32 getTimelinePixelSize() const;
     Window::TObjectLabels getTimelineLabels() const;
     Window::TObjectAxisSize getTimelineObjectAxisSize() const;
@@ -177,6 +192,7 @@ class ParaverConfig
     void setHistogramShowUnits( bool whichShowUnits );
     void setHistogramNumColumns( TObjectOrder whichNumColumns );
     void setHistogramAutofitControlScale( bool whichAutofitControlScale );
+    void setHistogramAutofitControlScaleZero( bool whichAutofitControlScaleZero );
     void setHistogramAutofitDataGradient( bool whichAutofitDataGradient );
     void setHistogramAutofitThirdDimensionScale( bool whichAutofitThirdDimensionScale );
     void setHistogramGradientFunction( GradientColor::TGradientFunction whichGradientFunction );
@@ -201,6 +217,7 @@ class ParaverConfig
     bool getHistogramShowUnits() const;
     TObjectOrder getHistogramNumColumns() const;
     bool getHistogramAutofitControlScale() const;
+    bool getHistogramAutofitControlScaleZero() const;
     bool getHistogramAutofitDataGradient() const;
     bool getHistogramAutofitThirdDimensionScale() const;
     GradientColor::TGradientFunction getHistogramGradientFunction() const;
@@ -285,6 +302,7 @@ class ParaverConfig
 
     void setColorsTimelineBackground( rgb whichTimelineBackground );
     void setColorsTimelineAxis( rgb whichTimelineAxis );
+    void setColorsTimelineZeroDashLine( rgb whichTimelineZeroDashLine );
     void setColorsTimelineUseZero( bool useZero );
     void setColorsTimelineColorZero( rgb whichTimelineZero );
     void setColorsTimelinePunctual( rgb whichPunctual );
@@ -299,6 +317,7 @@ class ParaverConfig
 
     rgb getColorsTimelineBackground() const;
     rgb getColorsTimelineAxis() const;
+    rgb getColorsTimelineZeroDashLine() const;
     bool getColorsTimelineUseZero() const;
     rgb getColorsTimelineColorZero() const;
     rgb getColorsTimelinePunctual() const;
@@ -311,6 +330,14 @@ class ParaverConfig
     rgb getColorsBeginNegativeGradient() const;
     rgb getColorsEndNegativeGradient() const;
 
+    // EXTERNAL APPLICATIONS
+    void setGlobalExternalTextEditors( std::vector< std::string> whichTextEditors );
+    void setGlobalExternalPDFReaders( std::vector< std::string> whichPDFReaders );
+
+    std::vector< std::string> getGlobalExternalTextEditors() const;
+    std::vector< std::string> getGlobalExternalPDFReaders() const;
+
+
     void saveXML( const std::string &filename );
     void loadXML( const std::string &filename );
 
@@ -321,6 +348,7 @@ class ParaverConfig
     std::map<std::string, PropertyFunction *> propertyFunctions;
 
     std::string paraverConfigDir;
+    bool isModified;
 
     void loadMap();
     void unloadMap();
@@ -353,6 +381,23 @@ class ParaverConfig
           ar & boost::serialization::make_nvp( "session_path", sessionPath );
           ar & boost::serialization::make_nvp( "session_save_time", sessionSaveTime );
         }
+        if( version >= 6 )
+        {
+          ar & boost::serialization::make_nvp( "prev_session_load", prevSessionLoad );
+        }
+        if( version >= 7 )
+        {
+          ar & boost::serialization::make_nvp( "help_contents_browser", helpContentsUsesBrowser );
+          ar & boost::serialization::make_nvp( "help_contents_question", helpContentsQuestionAnswered );
+        }
+        if ( version >= 8 )
+        {
+          ar & boost::serialization::make_nvp( "apps_checked", appsChecked );
+        }
+        if ( version >= 9 )
+        {
+          ar & boost::serialization::make_nvp( "disable_timeline_zoom_mouse_wheel", disableTimelineZoomMouseWheel );
+        }
       }
 
       std::string tracesPath; // also for paraload.sig!
@@ -367,6 +412,11 @@ class ParaverConfig
       unsigned int mainWindowHeight;
       std::string sessionPath;
       PRV_UINT16 sessionSaveTime;
+      bool prevSessionLoad;
+      bool helpContentsUsesBrowser;
+      bool helpContentsQuestionAnswered;
+      bool disableTimelineZoomMouseWheel;
+      bool appsChecked;
 
     } xmlGlobal;
 
@@ -402,6 +452,8 @@ class ParaverConfig
           ar & boost::serialization::make_nvp( "object_labels", objectLabels );
         if( version >= 3 )
           ar & boost::serialization::make_nvp( "object_axis_size", objectAxisSize );
+        if ( version >= 4 )
+          ar & boost::serialization::make_nvp( "semantic_scale_min_at_zero", semanticScaleMinAtZero );
       }
 
       std::string defaultName;
@@ -416,6 +468,7 @@ class ParaverConfig
       DrawModeMethod drawmodeTime;
       DrawModeMethod drawmodeObjects;
       GradientColor::TGradientFunction gradientFunction;
+      bool semanticScaleMinAtZero;
       PRV_UINT32 pixelSize;
       Window::TObjectLabels objectLabels;
       Window::TObjectAxisSize objectAxisSize;
@@ -463,6 +516,8 @@ class ParaverConfig
           ar & boost::serialization::make_nvp( "show_only_totals", onlyTotals );
         if( version >= 6 )
           ar & boost::serialization::make_nvp( "column_short_labels", shortLabels );
+        if( version >= 7 )
+          ar & boost::serialization::make_nvp( "autofit_control_scale_zero", autofitControlScaleZero );
       }
 
       bool viewZoom;
@@ -476,6 +531,7 @@ class ParaverConfig
       bool showUnits;
       TObjectOrder histoNumColumns;
       bool autofitControlScale;
+      bool autofitControlScaleZero;
       bool autofitDataGradient;
       bool autofitThirdDimensionScale;
       GradientColor::TGradientFunction gradientFunction;
@@ -640,6 +696,21 @@ class ParaverConfig
     } xmlFilters;
 
 
+    struct XMLPreferencesExternalApplications
+    {
+      template< class Archive >
+      void serialize( Archive & ar, const unsigned int version )
+      {
+        ar & boost::serialization::make_nvp( "text_editors", myTextEditors );
+        ar & boost::serialization::make_nvp( "pdf_readers", myPDFReaders );
+      }
+
+      std::vector< std::string > myTextEditors;
+      std::vector< std::string > myPDFReaders;
+
+    } xmlExternalApplications;
+
+
     struct XMLPreferencesColor
     {
       template< class Archive >
@@ -654,6 +725,10 @@ class ParaverConfig
           if( version >= 2 )
           {
             ar & boost::serialization::make_nvp( "timeline_color_punctual", timelineColorPunctual );
+            if( version >= 4 )
+            {
+              ar & boost::serialization::make_nvp( "timeline_zero_dash_line", timelineZeroDashLine );
+            }
           }
         }
         ar & boost::serialization::make_nvp( "timeline_logical_communications", timelineLogicalCommunications );
@@ -671,6 +746,7 @@ class ParaverConfig
 
       rgb timelineBackground;
       rgb timelineAxis;
+      rgb timelineZeroDashLine;
       bool useColorZero;
       rgb timelineColorZero;
       rgb timelineColorPunctual;
@@ -689,7 +765,7 @@ class ParaverConfig
     template< class Archive >
     void serialize( Archive & ar, const unsigned int version )
     {
-      if ( version == 0)
+      if ( version == 0 )
       {
         PRV_UINT32 prec;
         TObjectOrder columns;
@@ -709,6 +785,10 @@ class ParaverConfig
       ar & boost::serialization::make_nvp( "histogram", xmlHistogram );
       ar & boost::serialization::make_nvp( "filters", xmlFilters );
       ar & boost::serialization::make_nvp( "color", xmlColor );
+      if (version >= 2)
+      {
+        ar & boost::serialization::make_nvp( "applications", xmlExternalApplications );
+      }
     }
 };
 
@@ -716,40 +796,41 @@ class ParaverConfig
 // BOOST_CLASS_VERSION( ParaverConfig, 0)
 
 // Second version: introducing some structure
-BOOST_CLASS_VERSION( ParaverConfig, 1)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 5)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 3)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 6)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 1)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilter, 0)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersRange, 0)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersAlgorithm, 0)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCounters, 0)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilters, 3)
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesColor, 3)
+BOOST_CLASS_VERSION( ParaverConfig, 2 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 9 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 4 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 7 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 1 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilter, 0 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersRange, 0 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersAlgorithm, 0 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCounters, 0 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilters, 3 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesExternalApplications, 0 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesColor, 4 )
 
 // WhatWhere.num_decimals
 class WWNumDecimals: public PropertyFunction
 {
-    void parseLine( std::istringstream& line, ParaverConfig& config );
+  void parseLine( std::istringstream& line, ParaverConfig& config );
 };
 
 // Analyzer2D.num_columns
 class HistoNumColumns: public PropertyFunction
 {
-    void parseLine( std::istringstream& line, ParaverConfig& config );
+  void parseLine( std::istringstream& line, ParaverConfig& config );
 };
 
 // Analyzer2D.units
 class HistoUnits: public PropertyFunction
 {
-    void parseLine( std::istringstream& line, ParaverConfig& config );
+  void parseLine( std::istringstream& line, ParaverConfig& config );
 };
 
 // Analyzer2D.thousandsep
 class HistoThousanSep: public PropertyFunction
 {
-    void parseLine( std::istringstream& line, ParaverConfig& config );
+  void parseLine( std::istringstream& line, ParaverConfig& config );
 };
 
 #endif // PARAVERCONFIG_H_INCLUDED

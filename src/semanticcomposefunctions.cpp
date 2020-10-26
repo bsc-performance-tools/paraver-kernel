@@ -21,13 +21,7 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-#include <cmath>
 #include "semanticcomposefunctions.h"
 #include "kwindow.h"
 
@@ -155,12 +149,21 @@ TSemanticValue ComposeSelectRange::execute( const SemanticInfo *info )
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
   TSemanticValue tmp = 0;
-
-  if ( myInfo->values[ 0 ] <= parameters[ MAXVALUE ][ 0 ] &&
-       myInfo->values[ 0 ] >= parameters[ MINVALUE ][ 0 ] )
-    tmp = myInfo->values[ 0 ];
+  TParamIndex paramSize;
+  if( parameters[ MAXVALUE ].size() <= parameters[ MINVALUE ].size() )
+    paramSize = parameters[ MAXVALUE ].size();
   else
-    tmp = 0;
+    paramSize = parameters[ MINVALUE ].size();
+
+  for( TParamIndex i = 0; i < paramSize; ++i )
+  {
+    if ( myInfo->values[ 0 ] <= parameters[ MAXVALUE ][ i ] &&
+         myInfo->values[ 0 ] >= parameters[ MINVALUE ][ i ] )
+    {
+      tmp = myInfo->values[ 0 ];
+      break;
+    }
+  }
 
   return tmp;
 }
@@ -172,12 +175,21 @@ TSemanticValue ComposeSelectRangeOpen::execute( const SemanticInfo *info )
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
   TSemanticValue tmp = 0;
-
-  if ( myInfo->values[ 0 ] < parameters[ MAXVALUE ][ 0 ] &&
-       myInfo->values[ 0 ] >= parameters[ MINVALUE ][ 0 ] )
-    tmp = myInfo->values[ 0 ];
+  TParamIndex paramSize;
+  if( parameters[ MAXVALUE ].size() <= parameters[ MINVALUE ].size() )
+    paramSize = parameters[ MAXVALUE ].size();
   else
-    tmp = 0;
+    paramSize = parameters[ MINVALUE ].size();
+
+  for( TParamIndex i = 0; i < paramSize; ++i )
+  {
+    if ( myInfo->values[ 0 ] < parameters[ MAXVALUE ][ i ] &&
+         myInfo->values[ 0 ] >= parameters[ MINVALUE ][ i ] )
+    {
+      tmp = myInfo->values[ 0 ];
+      break;
+    }
+  }
 
   return tmp;
 }
@@ -190,11 +202,21 @@ TSemanticValue ComposeIsInRange::execute( const SemanticInfo *info )
 
   TSemanticValue tmp = 0;
 
-  if ( myInfo->values[ 0 ] <= parameters[ MAXVALUE ][ 0 ] &&
-       myInfo->values[ 0 ] >= parameters[ MINVALUE ][ 0 ] )
-    tmp = 1;
+  TParamIndex paramSize;
+  if( parameters[ MAXVALUE ].size() <= parameters[ MINVALUE ].size() )
+    paramSize = parameters[ MAXVALUE ].size();
   else
-    tmp = 0;
+    paramSize = parameters[ MINVALUE ].size();
+
+  for( TParamIndex i = 0; i < paramSize; ++i )
+  {
+    if ( myInfo->values[ 0 ] <= parameters[ MAXVALUE ][ i ] &&
+         myInfo->values[ 0 ] >= parameters[ MINVALUE ][ i ] )
+    {
+      tmp = 1;
+      break;
+    }
+  }
 
   return tmp;
 }
@@ -206,12 +228,21 @@ TSemanticValue ComposeIsInRangeOpen::execute( const SemanticInfo *info )
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
   TSemanticValue tmp = 0;
-
-  if ( myInfo->values[ 0 ] < parameters[ MAXVALUE ][ 0 ] &&
-       myInfo->values[ 0 ] >= parameters[ MINVALUE ][ 0 ] )
-    tmp = 1;
+  TParamIndex paramSize;
+  if( parameters[ MAXVALUE ].size() <= parameters[ MINVALUE ].size() )
+    paramSize = parameters[ MAXVALUE ].size();
   else
-    tmp = 0;
+    paramSize = parameters[ MINVALUE ].size();
+
+  for( TParamIndex i = 0; i < paramSize; ++i )
+  {
+    if ( myInfo->values[ 0 ] < parameters[ MAXVALUE ][ i ] &&
+         myInfo->values[ 0 ] >= parameters[ MINVALUE ][ i ] )
+    {
+      tmp = 1;
+      break;
+    }
+  }
 
   return tmp;
 }
@@ -419,23 +450,68 @@ TSemanticValue ComposeNestingLevel::execute( const SemanticInfo *info )
 }
 
 
-void ComposeEnumerate::init( KWindow *whichWindow )
+void ComposeLRUDepth::init( KWindow *whichWindow )
 {
-  myEnumerate.clear();
+  LRUStack.clear();
 
   if ( whichWindow->getTrace()->totalThreads() >
        whichWindow->getTrace()->totalCPUs() )
   {
-    myEnumerate.reserve( whichWindow->getTrace()->totalThreads() );
+    LRUStack.reserve( whichWindow->getTrace()->totalThreads() );
     for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalThreads(); ++i )
-      myEnumerate.push_back( 0 );
+      LRUStack.push_back( list< TSemanticValue >() );
   }
   else
   {
-    myEnumerate.reserve( whichWindow->getTrace()->totalCPUs() );
+    LRUStack.reserve( whichWindow->getTrace()->totalCPUs() );
     for ( TThreadOrder i = 0; i < whichWindow->getTrace()->totalCPUs(); ++i )
-      myEnumerate.push_back( 0 );
+      LRUStack.push_back( list< TSemanticValue >() );
   }
+}
+
+
+string ComposeLRUDepth::name = "LRU Depth";
+TSemanticValue ComposeLRUDepth::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+
+  if( myInfo->values[ 0 ] == 0.0 )
+    return 0.0;
+
+  TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
+  size_t stackSize = parameters[ STACK_SIZE ][ 0 ];
+
+  unsigned int depth = 1;
+  list<TSemanticValue>::iterator it;
+  for( it = LRUStack[ tmpOrder ].begin(); it != LRUStack[ tmpOrder ].end(); ++it )
+  {
+    if( *it == myInfo->values[ 0 ] )
+      break;
+      
+    ++depth;
+  }
+
+  LRUStack[ tmpOrder ].push_front( myInfo->values[ 0 ] );
+  if( it != LRUStack[ tmpOrder ].end() )
+  {
+    LRUStack[ tmpOrder ].erase( it );
+  }
+  else
+  {
+    if( LRUStack[ tmpOrder ].size() > stackSize )
+    {
+      LRUStack[ tmpOrder ].pop_back();
+    }
+    depth = stackSize + 1;
+  }
+
+  return depth;
+}
+
+
+void ComposeEnumerate::init( KWindow *whichWindow )
+{
+
 }
 
 
@@ -444,13 +520,27 @@ TSemanticValue ComposeEnumerate::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
-  TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
-
+  TObjectOrder newInfoVal = myInfo->callingInterval->getValue();
   if ( myInfo->values[ 0 ] != 0 )
-    ++myEnumerate[ tmpOrder ];
+    return ++newInfoVal;
 
-  return myEnumerate[ tmpOrder ];
+  return newInfoVal;
 }
+
+void ComposeAccumulate::init( KWindow *whichWindow )
+{
+}
+
+
+string ComposeAccumulate::name = "Accumulate";
+TSemanticValue ComposeAccumulate::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+
+  return myInfo->callingInterval->getValue() + myInfo->values[ 0 ];
+}
+
+
 
 
 void ComposeDelta::init( KWindow *whichWindow )
@@ -581,4 +671,25 @@ TSemanticValue ComposeArcTan::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
   return atan( myInfo->values[ 0 ] );
+}
+
+
+string ComposeLogN::name = "log N";
+TSemanticValue ComposeLogN::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  TSemanticValue logVal = log( myInfo->values[ 0 ] ) / log( parameters[ BASE ][ 0 ] );
+  if ( myInfo->values[ 0 ] <= 0 || logVal < 0.0 )
+  {
+    return 0;
+  }
+  return logVal;
+}
+
+
+string ComposeExponential::name = "exp";
+TSemanticValue ComposeExponential::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  return exp( myInfo->values[ 0 ] );
 }

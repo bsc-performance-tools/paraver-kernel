@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef PARAVERLABELS_H_INCLUDED
 #define PARAVERLABELS_H_INCLUDED
@@ -81,6 +76,9 @@
 #define OLDCFG_TAG_WNDW_FLAGS_ENABLED  "window_flags_enabled"
 #define OLDCFG_TAG_WNDW_NON_COLOR_MODE  "window_noncolor_mode"
 #define OLDCFG_TAG_WNDW_COLOR_MODE  "window_color_mode"
+#define OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED  "window_custom_color_enabled"
+#define OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE  "window_custom_color_palette"
+#define OLDCFG_TAG_WNDW_SEMANTIC_SCALE_MIN_AT_ZERO  "window_semantic_scale_min_at_zero"
 #define OLDCFG_TAG_WNDW_UNITS     "window_units"
 #define OLDCFG_TAG_WNDW_OPERATION "window_operation"
 #define OLDCFG_TAG_WNDW_MAXIMUM_Y "window_maximum_y"
@@ -138,6 +136,7 @@
 #define OLDCFG_TAG_AN2D_ACCUM_BY_CTRL_WINDOW "Analyzer2D.AccumulateByControlWindow:"
 #define OLDCFG_TAG_AN2D_SORTCOLS "Analyzer2D.SortCols:"
 #define OLDCFG_TAG_AN2D_SORTCRITERIA "Analyzer2D.SortCriteria:"
+#define OLDCFG_TAG_AN2D_SORTREVERSE "Analyzer2D.SortReverse:"
 #define OLDCFG_TAG_AN2D_PARAMETERS "Analyzer2D.Parameters:"
 #define OLDCFG_TAG_AN2D_ANALYSISLIMITS "Analyzer2D.AnalysisLimits:"
 #define OLDCFG_TAG_AN2D_RELATIVETIME "Analyzer2D.RelativeTime:"
@@ -226,8 +225,11 @@
 #define CFG_TAG_PARAM_ALIAS_CFG4D "cfg4dparam"
 #define CFG_TAG_CFG4D_ENABLED "CFG4D_ENABLED"
 
+#define CFG_TAG_OBJECTS          "Analyzer2D.Objects:"
 #define CFG_TAG_DRAWMODE_OBJECTS "Analyzer2D.DrawModeObjects:"
 #define CFG_TAG_DRAWMODE_COLUMNS "Analyzer2D.DrawModeColumns:"
+#define CFG_TAG_AN2D_COMPUTEYSCALE_ZERO "Analyzer2D.ComputeYScaleZero:"
+
 
 // STRING CONSTRUCTION LABELS FOR THE GUI
 #define LEVEL_WORKLOAD     "WORKLOAD"
@@ -264,6 +266,8 @@ static const std::string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
 #define CFG_SHEBANG                    "#ParaverCFG"
 #define CFG_HEADER_VERSION             "ConfigFile.Version:"
 #define CFG_HEADER_NUM_WINDOWS         "ConfigFile.NumWindows:"
+#define CFG_HEADER_BEGIN_DESCRIPTION   "ConfigFile.BeginDescription"
+#define CFG_HEADER_END_DESCRIPTION     "ConfigFile.EndDescription"
 
 #define CFG_TAG_WNDW_END_TIME_RELATIVE "window_end_time_relative"
 

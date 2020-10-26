@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef _SELECTION_MANAGEMENT_H
 #define _SELECTION_MANAGEMENT_H
@@ -57,10 +52,10 @@ class SelectionManagement
     void setSelected( std::vector< bool > &selection, LevelType level = (LevelType)0 );
     void setSelected( std::vector< SelType > &selection, SelType maxElems, LevelType level = (LevelType)0 );
 
-    void getSelected( std::vector< bool > &selection, LevelType level = (LevelType)0 );
-    void getSelected( std::vector< bool > &selection, SelType first, SelType last, LevelType level = (LevelType)0 );
-    void getSelected( std::vector< SelType > &selection, LevelType level = (LevelType)0 );
-    void getSelected( std::vector< SelType > &selection, SelType first, SelType last, LevelType level = (LevelType)0 );
+    void getSelected( std::vector< bool > &selection, LevelType level = (LevelType)0 ) const;
+    void getSelected( std::vector< bool > &selection, SelType first, SelType last, LevelType level = (LevelType)0 ) const;
+    void getSelected( std::vector< SelType > &selection, LevelType level = (LevelType)0 ) const;
+    void getSelected( std::vector< SelType > &selection, SelType first, SelType last, LevelType level = (LevelType)0 ) const;
 
     bool isSelectedPosition( SelType whichSelected, LevelType level = (LevelType)0 ) const;
 

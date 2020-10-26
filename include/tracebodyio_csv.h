@@ -21,19 +21,19 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#ifndef TRACEBODYIO_V1_H_INCLUDED
-#define TRACEBODYIO_V1_H_INCLUDED
+#ifndef TRACEBODYIO_CSV_H_INCLUDED
+#define TRACEBODYIO_CSV_H_INCLUDED
 
 #include "tracebodyio.h"
 #include "tracestream.h"
 
 
 // Paraver trace old format file
-class TraceBodyIO_v1 : public TraceBodyIO
+class TraceBodyIO_csv : public TraceBodyIO
 {
   public:
-    TraceBodyIO_v1() {}
-    TraceBodyIO_v1( Trace* trace );
+    TraceBodyIO_csv( ) {}
+    TraceBodyIO_csv( Trace* trace );
 
     static const PRV_UINT8 CommentRecord = '#';
     static const PRV_UINT8 StateRecord = '1';
@@ -80,18 +80,17 @@ class TraceBodyIO_v1 : public TraceBodyIO
 
     void readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const;
 
-    void readState( const std::string& line, MemoryBlocks& records,
+    void readEvents( const std::string& line, MemoryBlocks& records,
                     hash_set<TState>& states ) const;
-    void readEvent( const std::string& line, MemoryBlocks& records,
-                    hash_set<TEventType>& events ) const;
-    void readComm( const std::string& line, MemoryBlocks& records ) const;
-    void readGlobalComm( const std::string& line, MemoryBlocks& records ) const;
     bool readCommon( std::istringstream& line,
                      TCPUOrder& CPU,
                      TApplOrder& appl,
                      TTaskOrder& task,
                      TThreadOrder& thread,
-                     TRecordTime& time ) const;
+                     TRecordTime& begintime,
+                     TRecordTime& time,
+                     TEventValue& eventtype,
+                     double& decimals ) const;
 
     void bufferWrite( std::fstream& whichStream, bool writeReady, bool lineClear = true  ) const;
 
@@ -114,4 +113,4 @@ class TraceBodyIO_v1 : public TraceBodyIO
 };
 
 
-#endif // TRACEBODYIO_V1_H_INCLUDED
+#endif // TRACEBODYIO_csv_H_INCLUDED

@@ -228,7 +228,7 @@ string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
     columnLabel.precision( 0 );
     // Discrete integer value
     tmpStr = LabelConstructor::semanticLabel( whichWindow,
-        ( whichColumn * delta ) + min, true, ParaverConfig::getInstance()->getHistogramPrecision() );
+        ( whichColumn * delta ) + min, true, ParaverConfig::getInstance()->getHistogramPrecision(), false );
     if( whichWindow->getSemanticInfoType() == EVENTVALUE_TYPE && shortLabels )
       LabelConstructor::transformToShort( tmpStr );
     columnLabel << tmpStr;
@@ -365,7 +365,7 @@ bool LabelConstructor::getTimeValue( const string& timeLabel,
 
 string LabelConstructor::semanticLabel( const Window * whichWindow,
                                         TSemanticValue value,
-                                        bool text, PRV_UINT32 precision )
+                                        bool text, PRV_UINT32 precision, bool hexMode )
 {
   sstrSemanticLabel.clear();
   sstrSemanticLabel.str( "" );
@@ -380,9 +380,12 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
 
   sstrSemanticLabel.imbue( myLocaleWithThousands );
 
-  if ( infoType == NO_TYPE || !text )
+  if ( infoType == NO_TYPE || !text || hexMode )
   {
-    sstrSemanticLabel << value;
+    if ( hexMode )
+      sstrSemanticLabel << "0x" << std::hex << (PRV_INT64)value;
+    else
+      sstrSemanticLabel << value;
   }
   else
   {

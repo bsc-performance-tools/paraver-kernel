@@ -47,24 +47,6 @@ Trace *Trace::create( KernelConnection *whichKernel, const string& whichFile,
 }
 
 
-// Smarter detections welcome!
-bool Trace::isTraceFile( const string& filename )
-{
-  string auxName( filename );
-  string suffixCompressed( "" );
-  string suffixNotCompressed( "" );
-
-  if ( auxName.length() > GZIPPED_PRV_SUFFIX.length() )
-    suffixCompressed = auxName.substr( auxName.length() - GZIPPED_PRV_SUFFIX.length() );
-
-  if ( auxName.length() > PRV_SUFFIX.length() )
-    suffixNotCompressed = auxName.substr( auxName.length() - PRV_SUFFIX.length() );
-
-  return (( suffixCompressed.compare( GZIPPED_PRV_SUFFIX ) == 0 ) ||
-          ( suffixNotCompressed.compare( PRV_SUFFIX ) == 0 ));
-}
-
-
 bool Trace::isOTF2TraceFile( const string& filename )
 {
   string auxName( filename );
@@ -136,7 +118,7 @@ TObjectOrder getNumLevelObjects( TWindowLevel whichLevel, Trace *myTrace )
 {
   TObjectOrder objectSize = 0;
 
-  if( whichLevel == WORKLOAD )
+  if( whichLevel == WORKLOAD || whichLevel == SYSTEM )
     objectSize = 1;
   else if( whichLevel == APPLICATION )
     objectSize = myTrace->totalApplications();
@@ -144,8 +126,6 @@ TObjectOrder getNumLevelObjects( TWindowLevel whichLevel, Trace *myTrace )
     objectSize = myTrace->totalTasks();
   else if( whichLevel == THREAD )
     objectSize = myTrace->totalThreads();
-  else if( whichLevel == SYSTEM )
-    objectSize = 1;
   else if( whichLevel == NODE )
     objectSize = myTrace->totalNodes();
   else if( whichLevel == CPU )
@@ -368,9 +348,14 @@ TObjectOrder TraceProxy::getLast( TObjectOrder globalOrder,
   return myTrace->getLast( globalOrder, fromLevel, toLevel );
 }
 
-bool TraceProxy::isSameObjectStruct( Trace *compareTo ) const
+bool TraceProxy::isSameObjectStruct( Trace *compareTo, bool compareProcessModel ) const
 {
-  return myTrace->isSameObjectStruct( compareTo->getConcrete() );
+  return myTrace->isSameObjectStruct( compareTo->getConcrete(), compareProcessModel );
+}
+
+bool TraceProxy::isSubsetObjectStruct( Trace *compareTo, bool compareProcessModel ) const
+{
+  return myTrace->isSubsetObjectStruct( compareTo->getConcrete(), compareProcessModel );
 }
 
 TThreadOrder TraceProxy::getSenderThread( TCommID whichComm ) const

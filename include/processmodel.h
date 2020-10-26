@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef PROCESSMODEL_H_INCLUDED
 #define PROCESSMODEL_H_INCLUDED
@@ -33,7 +28,10 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <sstream>
 #include "processmodelappl.h"
+#include <boost/algorithm/string/classification.hpp> // Include boost::for is_any_of
+#include <boost/algorithm/string/split.hpp> // Include for boost::split
 
 class Trace;
 
@@ -46,11 +44,14 @@ class ProcessModel
       ready = false;
     }
 
-    ProcessModel( std::istringstream& headerInfo, Trace *whichTrace );
+    ProcessModel( std::istringstream& headerInfo, bool existResourceInfo );
+    ProcessModel( Trace *whichTrace, const std::string &fileName,
+                  TTime &traceEndTime ); // Used for CSVs
 
     ~ProcessModel()
     {}
 
+    bool operator<( const ProcessModel& other ) const;
     bool operator==( const ProcessModel& other ) const;
 
     bool isReady() const

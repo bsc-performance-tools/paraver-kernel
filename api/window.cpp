@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include <iostream>
 #include <sstream>
@@ -137,7 +132,10 @@ void WindowProxy::init()
   yScaleComputed = false;
   maximumY = Window::getMaximumY();
   minimumY = Window::getMinimumY();
+  existSemanticZero = Window::getExistSemanticZero();
+  semanticScaleMinAtZero = ParaverConfig::getInstance()->getTimelineSemanticScaleMinAtZero();
   colorMode = ParaverConfig::getInstance()->getTimelineColor();
+  useCustomPalette = Window::getUseCustomPalette();
   if( colorMode == SemanticColor::GRADIENT )
     myGradientColor.allowOutOfScale( true );
   else if( colorMode == SemanticColor::NOT_NULL_GRADIENT )
@@ -300,8 +298,10 @@ Window *WindowProxy::clone( bool recursiveClone )
   clonedWindow->computeYMaxOnInit = computeYMaxOnInit;
   clonedWindow->computedMaxY = computedMaxY;
   clonedWindow->computedMinY = computedMinY;
+  clonedWindow->computedZeros = computedZeros;
   clonedWindow->maximumY = maximumY;
   clonedWindow->minimumY = minimumY;
+  clonedWindow->existSemanticZero = existSemanticZero;
 
   std::ostringstream tmp;
   tmp << ++number_of_clones;
@@ -310,6 +310,8 @@ Window *WindowProxy::clone( bool recursiveClone )
   clonedWindow->myCodeColor = myCodeColor;
   clonedWindow->myGradientColor = myGradientColor;
   clonedWindow->colorMode = colorMode;
+  clonedWindow->punctualColorWindow = punctualColorWindow;
+  clonedWindow->semanticScaleMinAtZero = semanticScaleMinAtZero;
   clonedWindow->drawModeObject = drawModeObject;
   clonedWindow->drawModeTime = drawModeTime;
   clonedWindow->showWindow = showWindow;
@@ -480,6 +482,10 @@ void WindowProxy::computeYScaleMax()
 
 void WindowProxy::computeYScale( ProgressController *progress )
 {
+  vector< TSemanticValue > tmpComputedMaxY;
+  vector< TSemanticValue > tmpComputedMinY;
+  vector< int > tmpComputedZeros;
+
   if ( !yScaleComputed )
   {
     vector< TObjectOrder > selected;
@@ -501,6 +507,10 @@ void WindowProxy::computeYScale( ProgressController *progress )
       progress->setCurrentProgress( currentObject );
     }
 
+    tmpComputedMaxY.reserve( selected.size() );
+    tmpComputedMinY.reserve( selected.size() );
+    tmpComputedZeros.reserve( selected.size() );
+
     #pragma omp parallel
     {
       #pragma omp single
@@ -517,17 +527,26 @@ void WindowProxy::computeYScale( ProgressController *progress )
             parallelClone.push_back( myWindow->clone( true ) );
         }
 #endif // PARALLEL_ENABLED
-        #pragma omp task shared ( currentObject, progress )
+        for ( int i = 0; i < selected.size(); ++i )
         {
-          for ( int i = 0; i < selected.size(); ++i )
+          tmpComputedMaxY.push_back( 0.0 );
+          tmpComputedMinY.push_back( 0.0 );
+          tmpComputedZeros.push_back( false );
+          
+          int tmpComputedMaxYSize = tmpComputedMaxY.size();
+          int tmpComputedMinYSize = tmpComputedMinY.size();
+          int tmpComputedZerosSize = tmpComputedZeros.size();
+
+          #pragma omp task shared ( currentObject, progress, tmpComputedMaxY, tmpComputedMinY, tmpComputedZeros ) \
+                           firstprivate( tmpComputedMaxYSize, tmpComputedMinYSize, tmpComputedZerosSize )
           {
             TObjectOrder obj = selected[ i ];
-            initRow( obj, winBeginTime, NOCREATE );
+            initRow( obj, winBeginTime, NOCREATE, tmpComputedMaxY[ tmpComputedMaxYSize - 1 ], tmpComputedMinY[ tmpComputedMinYSize - 1 ], tmpComputedZeros[ tmpComputedZerosSize - 1 ]  );
             if( progress == NULL || ( progress != NULL && !progress->getStop() ) )
             {
               while ( getBeginTime( obj ) < winEndTime &&
                       getBeginTime( obj ) < myTrace->getEndTime() )
-                calcNext( obj );
+                calcNext( obj, tmpComputedMaxY[ tmpComputedMaxYSize - 1 ], tmpComputedMinY[ tmpComputedMinYSize - 1 ], tmpComputedZeros[ tmpComputedZerosSize - 1 ] );
 
               #pragma omp atomic
               ++currentObject;
@@ -546,6 +565,17 @@ void WindowProxy::computeYScale( ProgressController *progress )
       } // omp single
     } // omp parallel
 
+    for ( int pos = 0; pos < selected.size(); ++pos )
+    {
+      computedZeros = computedZeros || tmpComputedZeros[ pos ];
+      computedMaxY = computedMaxY > tmpComputedMaxY[ pos ] ? computedMaxY : tmpComputedMaxY[ pos ];
+      if ( computedMinY == 0.0 )
+        computedMinY = tmpComputedMinY[ pos ];
+      else if( tmpComputedMinY[ pos ] != 0.0 )
+        computedMinY = computedMinY < tmpComputedMinY[ pos ] ? computedMinY : tmpComputedMinY[ pos ];
+    }
+
+
 #ifdef PARALLEL_ENABLED
     for( vector<Window *>::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
       delete *it;
@@ -560,6 +590,7 @@ void WindowProxy::computeYScale( ProgressController *progress )
 
   maximumY = computedMaxY;
   minimumY = computedMinY;
+  existSemanticZero = computedZeros;
 }
 
 void WindowProxy::setComputeYMaxOnInit( bool newValue )
@@ -602,6 +633,11 @@ TSemanticValue WindowProxy::getMinimumY()
   return minimumY;
 }
 
+bool WindowProxy::getExistSemanticZero() const
+{
+  return existSemanticZero;
+}
+
 Trace *WindowProxy::getTrace() const
 {
   return myTrace;
@@ -622,6 +658,11 @@ void WindowProxy::setLevel( TWindowLevel whichLevel )
   myWindow->setLevel( whichLevel );
   zoomHistory.clear();
   zoomHistory.addZoom( winBeginTime, winEndTime, 0, getWindowLevelObjects() - 1 );
+}
+
+bool WindowProxy::isLevelProcessModel() const
+{
+  return getLevel() >= WORKLOAD && getLevel() <= THREAD;
 }
 
 TWindowLevel WindowProxy::getMinAcceptableLevel() const
@@ -785,6 +826,7 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create, bool update
   {
     yScaleComputed = true;
     computedMaxY = computedMinY = 0.0;
+    computedZeros = false;
   }
 }
 
@@ -803,6 +845,7 @@ void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCrea
   if ( updateLimits )
   {
     TSemanticValue objValue = tmpMyWindow->getValue( whichRow );
+    computedZeros = computedZeros || objValue == 0.0;
     if ( computedMaxY < objValue )
       computedMaxY = objValue;
     if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
@@ -811,7 +854,8 @@ void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCrea
 }
 
 void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create,
-                           TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
+                           TSemanticValue& rowComputedMaxY, TSemanticValue& rowComputedMinY,
+                           int& rowComputedZeros,
                            bool updateLimits )
 {
   Window *tmpMyWindow = myWindow;
@@ -827,6 +871,7 @@ void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCrea
   if ( updateLimits )
   {
     TSemanticValue objValue = tmpMyWindow->getValue( whichRow );
+    rowComputedZeros = rowComputedZeros || objValue == 0.0;
     if ( rowComputedMaxY < objValue )
       rowComputedMaxY = objValue;
     if ( rowComputedMinY == 0 || ( rowComputedMinY > objValue && objValue != 0 ) )
@@ -850,6 +895,7 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject, bool updateLimits )
   if ( updateLimits )
   {
     TSemanticValue objValue = tmpMyWindow->getValue( whichObject );
+    computedZeros = computedZeros || objValue == 0.0;
     if ( computedMaxY < objValue )
       computedMaxY = objValue;
     if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
@@ -860,7 +906,8 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject, bool updateLimits )
 }
 
 RecordList *WindowProxy::calcNext( TObjectOrder whichObject,
-                                   TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
+                                   TSemanticValue& rowComputedMaxY, TSemanticValue& rowComputedMinY,
+                                   int& rowComputedZeros,
                                    bool updateLimits )
 {
   Window *tmpMyWindow = myWindow;
@@ -877,6 +924,7 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject,
   if ( updateLimits )
   {
     TSemanticValue objValue = tmpMyWindow->getValue( whichObject );
+    rowComputedZeros = rowComputedZeros || objValue == 0.0;
     if ( rowComputedMaxY < objValue )
       rowComputedMaxY = objValue;
     if ( rowComputedMinY == 0 || ( rowComputedMinY > objValue && objValue != 0 ) )
@@ -902,6 +950,7 @@ RecordList *WindowProxy::calcPrev( TObjectOrder whichObject, bool updateLimits )
   if ( updateLimits )
   {
     TSemanticValue objValue = getValue( whichObject );
+    computedZeros = computedZeros || objValue == 0.0;
     if ( computedMaxY < objValue )
       computedMaxY = objValue;
     if ( computedMinY == 0 || ( computedMinY > objValue && objValue != 0 ) )
@@ -1069,6 +1118,11 @@ GradientColor& WindowProxy::getGradientColor()
   return myGradientColor;
 }
 
+bool WindowProxy::getSemanticScaleMinAtZero()
+{
+  return semanticScaleMinAtZero;
+}
+
 bool WindowProxy::getShowWindow() const
 {
   return showWindow;
@@ -1183,6 +1237,11 @@ void WindowProxy::setPunctualColorWindow( Window *whichWindow )
   punctualColorWindow = whichWindow;
 }
 
+void  WindowProxy::setSemanticScaleMinAtZero( bool newValue )
+{
+  semanticScaleMinAtZero = newValue;
+}
+
 void WindowProxy::allowOutOfScale( bool activate )
 {
   myGradientColor.allowOutOfScale( activate );
@@ -1196,19 +1255,26 @@ void WindowProxy::allowOutliers( bool activate )
 rgb WindowProxy::calcColor( TSemanticValue whichValue, Window& whichWindow )
 {
   if ( colorMode == SemanticColor::COLOR )
-    return myCodeColor.calcColor( whichValue, minimumY, maximumY );
+    return myCodeColor.calcColor( whichValue, minimumY, maximumY, useCustomPalette );
 
   return myGradientColor.calcColor( whichValue, minimumY, maximumY );
 }
 
-bool WindowProxy::calcValueFromColor( rgb whichColor,
-                                      TSemanticValue& firstValue,
-                                      TSemanticValue& secondValue ) const
+bool WindowProxy::isColorOutlier( rgb whichColor ) const
 {
-  if ( colorMode == SemanticColor::COLOR || colorMode == SemanticColor::FUSED_LINES )
-    return myCodeColor.calcValue( whichColor, firstValue );
+  if( colorMode != SemanticColor::GRADIENT )
+    return false;
+  return myGradientColor.isColorOutlier( whichColor );
+}
 
-  return myGradientColor.calcValue( whichColor, minimumY, maximumY, firstValue, secondValue );
+bool WindowProxy::getUseCustomPalette() const
+{
+  return useCustomPalette;
+}
+
+void WindowProxy::setUseCustomPalette( bool newValue ) 
+{
+  useCustomPalette = newValue;
 }
 
 bool WindowProxy::getChanged() const
@@ -1982,6 +2048,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   vector< int > tmpDrawCaution;
   vector< TSemanticValue > tmpComputedMaxY;
   vector< TSemanticValue > tmpComputedMinY;
+  vector< int > tmpComputedZeros;
   ProgressController *paramProgress = NULL;
 
   if( getWindowBeginTime() == getWindowEndTime() )
@@ -2014,6 +2081,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   tmpDrawCaution.reserve( numRows );
   tmpComputedMaxY.reserve( numRows );
   tmpComputedMinY.reserve( numRows );
+  tmpComputedZeros.reserve( numRows );
 
   paramProgress = progress;
 
@@ -2069,10 +2137,12 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
         tmpDrawCaution.push_back( drawCaution );
         tmpComputedMaxY.push_back( 0.0 );
         tmpComputedMinY.push_back( 0.0 );
+        tmpComputedZeros.push_back( false );
 
         int tmpDrawCautionSize = tmpDrawCaution.size();
         int tmpComputedMaxYSize = tmpComputedMaxY.size();
         int tmpComputedMinYSize = tmpComputedMinY.size();
+        int tmpComputedZerosSize = tmpComputedZeros.size();
         int valuesToDrawSize = valuesToDraw.size();
         int eventsToDrawSize = eventsToDraw.size();
         int commsToDrawSize = eventsToDraw.size();
@@ -2085,6 +2155,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
                   tmpDrawCaution[ tmpDrawCautionSize - 1 ],
                   tmpComputedMaxY[ tmpComputedMaxYSize - 1 ],
                   tmpComputedMinY[ tmpComputedMinYSize - 1 ],
+                  tmpComputedZeros[ tmpComputedZerosSize - 1 ],
                   valuesToDraw[ valuesToDrawSize - 1 ],
                   eventsToDraw[ eventsToDrawSize - 1 ],
                   commsToDraw[ commsToDrawSize - 1 ],
@@ -2093,8 +2164,8 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
         else if( numRows > 1 )
         {
           #pragma omp task firstprivate(numRows, firstObj, lastObj, timeStep, timePos, objectAxisPos) \
-                          shared(currentRow, paramProgress, selectedSet, selected, objectPosList, tmpDrawCaution, tmpComputedMaxY, tmpComputedMinY, valuesToDraw, eventsToDraw, commsToDraw) \
-                          firstprivate(tmpDrawCautionSize, tmpComputedMaxYSize, tmpComputedMinYSize, valuesToDrawSize, eventsToDrawSize, commsToDrawSize) \
+                          shared(currentRow, paramProgress, selectedSet, selected, objectPosList, tmpDrawCaution, tmpComputedMaxY, tmpComputedMinY, tmpComputedZeros, valuesToDraw, eventsToDraw, commsToDraw) \
+                          firstprivate(tmpDrawCautionSize, tmpComputedMaxYSize, tmpComputedMinYSize, tmpComputedZerosSize, valuesToDrawSize, eventsToDrawSize, commsToDrawSize) \
                           default(none)
           {
             if( paramProgress == NULL ||
@@ -2106,6 +2177,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
                       tmpDrawCaution[ tmpDrawCautionSize - 1 ],
                       tmpComputedMaxY[ tmpComputedMaxYSize - 1 ],
                       tmpComputedMinY[ tmpComputedMinYSize - 1 ],
+                      tmpComputedZeros[ tmpComputedZerosSize - 1 ],
                       valuesToDraw[ valuesToDrawSize - 1 ],
                       eventsToDraw[ eventsToDrawSize - 1 ],
                       commsToDraw[ commsToDrawSize - 1 ],
@@ -2127,18 +2199,10 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
     } // end omp single
   } // end omp parallel
 
-  for( vector< int >::iterator it = tmpDrawCaution.begin(); it != tmpDrawCaution.end(); ++it )
-  {
-    if ( *it )
-    {
-      drawCaution = true;
-      break;
-    }
-  }
-
   for( size_t pos = 0; pos < tmpComputedMaxY.size(); ++pos )
   {
     drawCaution = drawCaution || tmpDrawCaution[ pos ];
+    computedZeros = computedZeros || tmpComputedZeros[ pos ];
     computedMaxY = computedMaxY > tmpComputedMaxY[ pos ] ? computedMaxY : tmpComputedMaxY[ pos ];
     if ( computedMinY == 0.0 )
       computedMinY = tmpComputedMinY[ pos ];
@@ -2166,6 +2230,7 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
                                               int& drawCaution,
                                               TSemanticValue& rowComputedMaxY,
                                               TSemanticValue& rowComputedMinY,
+                                              int& rowComputedZeros,
                                               vector< TSemanticValue >& valuesToDraw,
                                               hash_set< PRV_INT32 >& eventsToDraw,
                                               hash_set< commCoord >& commsToDraw,
@@ -2183,6 +2248,7 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
                                               int& drawCaution,
                                               TSemanticValue& rowComputedMaxY,
                                               TSemanticValue& rowComputedMinY,
+                                              int& rowComputedZeros,
                                               vector< TSemanticValue >& valuesToDraw,
                                               hash_set< PRV_INT32 >& eventsToDraw,
                                               hash_set< commCoord, hashCommCoord >& commsToDraw,
@@ -2202,9 +2268,9 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
   for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
   {
     if( isFusedLinesColorSet() )
-      initRow( *row, getWindowBeginTime(), NOCREATE, rowComputedMaxY, rowComputedMinY );
+      initRow( *row, getWindowBeginTime(), NOCREATE, rowComputedMaxY, rowComputedMinY, rowComputedZeros );
     else
-      initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS, rowComputedMaxY, rowComputedMinY );
+      initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS, rowComputedMaxY, rowComputedMinY, rowComputedZeros );
   }
 
   TTime currentTime = getWindowBeginTime() + timeStep;
@@ -2216,7 +2282,7 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
       timeValues.clear();
 
       while( getEndTime( *row ) <= currentTime - timeStep )
-        calcNext( *row, rowComputedMaxY, rowComputedMinY  );
+        calcNext( *row, rowComputedMaxY, rowComputedMinY, rowComputedZeros );
 
       timeValues.push_back( getValue( *row ) );
       while( getEndTime( *row ) < currentTime )
@@ -2225,7 +2291,7 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
         if( numRows == 1 && progress != NULL && progress->getStop() )
           break;
 
-        calcNext( *row, rowComputedMaxY, rowComputedMinY  );
+        calcNext( *row, rowComputedMaxY, rowComputedMinY, rowComputedZeros );
         TSemanticValue currentValue = getValue( *row );
         timeValues.push_back( currentValue );
         if( currentValue != 0 && ( currentValue < getMinimumY()
@@ -2275,7 +2341,8 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
   for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
   {
     TSemanticValue dumbMinMax;
-    calcNext( *row, dumbMinMax, dumbMinMax );
+    int dumbZeros;
+    calcNext( *row, dumbMinMax, dumbMinMax, dumbZeros );
     RecordList *rl = getRecordList( *row );
     if( rl != NULL && !isFusedLinesColorSet() )
       computeEventsCommsParallel( rl,
@@ -2420,6 +2487,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
   vector< int > tmpDrawCaution;
   vector< TSemanticValue > tmpComputedMaxY;
   vector< TSemanticValue > tmpComputedMinY;
+  vector< int > tmpComputedZeros;
   ProgressController *paramProgress = NULL;
 
   if( getWindowBeginTime() == getWindowEndTime() )
@@ -2445,6 +2513,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
   tmpDrawCaution.reserve( numRows );
   tmpComputedMaxY.reserve( numRows );
   tmpComputedMinY.reserve( numRows );
+  tmpComputedZeros.reserve( numRows );
 
 #ifndef PARALLEL_ENABLED
   paramProgress = progress;
@@ -2495,17 +2564,19 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
         tmpDrawCaution.push_back( drawCaution );
         tmpComputedMaxY.push_back( 0.0 );
         tmpComputedMinY.push_back( 0.0 );
+        tmpComputedZeros.push_back( false );
 
         int tmpDrawCautionSize = tmpDrawCaution.size();
         int tmpComputedMaxYSize = tmpComputedMaxY.size();
         int tmpComputedMinYSize = tmpComputedMinY.size();
+        int tmpComputedZerosSize = tmpComputedZeros.size();
         int valuesToDrawSize = valuesToDraw.size();
         int eventsToDrawSize = eventsToDraw.size();
         int commsToDrawSize = eventsToDraw.size();
 
         #pragma omp task firstprivate(numRows, firstObj, lastObj, timeStep, timePos, objectAxisPos, paramProgress) \
-                        shared(selectedSet, selected, objectPosList, tmpDrawCaution, tmpComputedMaxY, tmpComputedMinY, valuesToDraw, eventsToDraw, commsToDraw) \
-                        firstprivate(tmpDrawCautionSize, tmpComputedMaxYSize, tmpComputedMinYSize, valuesToDrawSize, eventsToDrawSize, commsToDrawSize) \
+                        shared(selectedSet, selected, objectPosList, tmpDrawCaution, tmpComputedMaxY, tmpComputedMinY, tmpComputedZeros, valuesToDraw, eventsToDraw, commsToDraw) \
+                        firstprivate(tmpDrawCautionSize, tmpComputedMaxYSize, tmpComputedMinYSize, tmpComputedZerosSize, valuesToDrawSize, eventsToDrawSize, commsToDrawSize) \
                         default(none)
         {
             computeSemanticRowPunctualParallel(
@@ -2514,6 +2585,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
                     tmpDrawCaution[ tmpDrawCautionSize - 1 ],
                     tmpComputedMaxY[ tmpComputedMaxYSize - 1 ],
                     tmpComputedMinY[ tmpComputedMinYSize - 1 ],
+                    tmpComputedZeros[ tmpComputedZerosSize - 1 ],
                     valuesToDraw[ valuesToDrawSize - 1 ],
                     eventsToDraw[ eventsToDrawSize - 1 ],
                     commsToDraw[ commsToDrawSize - 1 ],
@@ -2545,6 +2617,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
   for( size_t pos = 0; pos < tmpComputedMaxY.size(); ++pos )
   {
     drawCaution = drawCaution || tmpDrawCaution[ pos ];
+    computedZeros = computedZeros || tmpComputedZeros[ pos ];
     computedMaxY = computedMaxY > tmpComputedMaxY[ pos ] ? computedMaxY : tmpComputedMaxY[ pos ];
     if ( computedMinY == 0.0 )
       computedMinY = tmpComputedMinY[ pos ];
@@ -2572,6 +2645,7 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
                                                       int& drawCaution,
                                                       TSemanticValue& rowComputedMaxY,
                                                       TSemanticValue& rowComputedMinY,
+                                                      int& rowComputedZeros,
                                                       vector< vector< pair<TSemanticValue,TSemanticValue> > >& valuesToDraw,
                                                       hash_set< PRV_INT32 >& eventsToDraw,
                                                       hash_set< commCoord >& commsToDraw,
@@ -2589,6 +2663,7 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
                                                       int& drawCaution,
                                                       TSemanticValue& rowComputedMaxY,
                                                       TSemanticValue& rowComputedMinY,
+                                                      int& rowComputedZeros,
                                                       vector< vector< pair<TSemanticValue,TSemanticValue> > >& valuesToDraw,
                                                       hash_set< PRV_INT32 >& eventsToDraw,
                                                       hash_set< commCoord, hashCommCoord >& commsToDraw,
@@ -2604,11 +2679,12 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
   vector<TObjectOrder>::iterator last  = find( selectedSet.begin(), selectedSet.end(), lastRow );
 
   TSemanticValue dummyMaxY, dummyMinY;
+  int dummyZeros;
   for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
   {
-    initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS, rowComputedMaxY, rowComputedMinY );
+    initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS, rowComputedMaxY, rowComputedMinY, rowComputedZeros );
     if( punctualColorWindow != NULL )
-      punctualColorWindow->initRow( *row, getWindowBeginTime(), NOCREATE, dummyMaxY, dummyMinY, false );
+      punctualColorWindow->initRow( *row, getWindowBeginTime(), NOCREATE, dummyMaxY, dummyMinY, dummyZeros, false );
   }
 
   TTime currentTime;
@@ -2620,7 +2696,7 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
     for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
     {
       while( getEndTime( *row ) <= currentTime - timeStep )
-        calcNext( *row, rowComputedMaxY, rowComputedMinY  );
+        calcNext( *row, rowComputedMaxY, rowComputedMinY, rowComputedZeros );
 
       if( getBeginTime( *row ) >= currentTime - timeStep && getBeginTime( *row ) < currentTime )
       {
@@ -2628,15 +2704,26 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
         if( punctualColorWindow != NULL )
         {
           while( getBeginTime( *row ) >= punctualColorWindow->getEndTime( *row ) )
-            punctualColorWindow->calcNext( *row, dummyMaxY, dummyMinY );
-          tmpPairSemantic.second = punctualColorWindow->getValue( *row );
+            punctualColorWindow->calcNext( *row, dummyMaxY, dummyMinY, dummyZeros );
+
+          vector<TSemanticValue> tmpValues;
+          while( getEndTime( *row ) >= punctualColorWindow->getEndTime( *row ) )
+          {
+            tmpValues.push_back( punctualColorWindow->getValue( *row ) );
+            punctualColorWindow->calcNext( *row, dummyMaxY, dummyMinY, dummyZeros );
+          }
+
+          if( tmpValues.empty() )
+            tmpValues.push_back( punctualColorWindow->getValue( *row ) );
+
+          tmpPairSemantic.second = DrawMode::selectValue( tmpValues, getDrawModeTime() );
         }
         values.push_back( tmpPairSemantic );
       }
 
       while( getEndTime( *row ) < currentTime )
       {
-        calcNext( *row, rowComputedMaxY, rowComputedMinY  );
+        calcNext( *row, rowComputedMaxY, rowComputedMinY, rowComputedZeros );
         TSemanticValue currentValue = getValue( *row );
 
         if( getBeginTime( *row ) >= currentTime - timeStep && getBeginTime( *row ) < currentTime )
@@ -2645,7 +2732,7 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
           if( punctualColorWindow != NULL )
           {
             while( getBeginTime( *row ) >= punctualColorWindow->getEndTime( *row ) )
-              punctualColorWindow->calcNext( *row, dummyMaxY, dummyMinY );
+              punctualColorWindow->calcNext( *row, dummyMaxY, dummyMinY, dummyZeros );
             tmpPairSemantic.second = punctualColorWindow->getValue( *row );
           }
           values.push_back( tmpPairSemantic );
@@ -2687,7 +2774,8 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
   for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
   {
     TSemanticValue dumbMinMax;
-    calcNext( *row, dumbMinMax, dumbMinMax );
+    int dumbZeros;
+    calcNext( *row, dumbMinMax, dumbMinMax, dumbZeros );
     RecordList *rl = getRecordList( *row );
     if( rl != NULL )
       computeEventsCommsParallel( rl,

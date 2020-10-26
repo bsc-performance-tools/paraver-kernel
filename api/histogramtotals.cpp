@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "histogramtotals.h"
 
@@ -33,6 +28,9 @@ using std::vector;
 
 HistogramTotals *HistogramTotals::create( HistogramTotals *whichTotals )
 {
+  if( whichTotals == NULL )
+    return NULL;
+
   return new HistogramTotalsProxy( whichTotals );
 }
 

@@ -21,19 +21,16 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef SEMANTICCOLOR_H_INCLUDED
 #define SEMANTICCOLOR_H_INCLUDED
 
+#include <map>
 #include "paravertypes.h"
 #include "paraverkerneltypes.h"
 
 class Window;
+
 
 class SemanticColor
 {
@@ -50,6 +47,8 @@ class SemanticColor
 
     static rgb BACKGROUND;
     static rgb FOREGROUND;
+    static rgb ZERO_AXIS;
+
     static rgb DEFAULT_PUNCTUAL;
     static rgb DEFAULT_LOGICAL_COMMUNICATIONS;
     static rgb DEFAULT_PHYSICAL_COMMUNICATIONS;
@@ -75,7 +74,8 @@ class SemanticColor
 
     virtual rgb calcColor( TSemanticValue whichValue,
                            TSemanticValue minimum,
-                           TSemanticValue maximum ) const = 0;
+                           TSemanticValue maximum,
+                           bool useCustomPalette ) const = 0;
 
   private:
     static PRV_UINT32 numColors;
@@ -99,13 +99,17 @@ class CodeColor: public SemanticColor
 
     PRV_UINT32 getNumColors() const;
     void setColor( PRV_UINT32 pos, rgb color );
+    void setCustomColor( TSemanticValue whichValue, rgb color );
+    bool existCustomColors() const;
+    const std::map<TSemanticValue, rgb>& getCustomPalette() const;
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
-                   TSemanticValue maximum ) const;
-    bool calcValue( rgb whichColor, TSemanticValue& returnValue ) const;
+                   TSemanticValue maximum,
+                   bool useCustomPalette ) const;
 
   private:
     std::vector<rgb> colors;
+    std::map<TSemanticValue, rgb> customPalette;
 
     inline rgb getColor( PRV_UINT32 pos ) const;
     void expandColors();
@@ -153,17 +157,12 @@ class GradientColor: public SemanticColor
 
     TGradientFunction getGradientFunction() const;
     void setGradientFunction( TGradientFunction whichFunction );
-    PRV_INT16 getNumSteps() const;
-    void setNumSteps( PRV_INT16 steps );
 
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
-                   TSemanticValue maximum ) const;
-    bool calcValue( rgb whichColor,
-                    TSemanticValue minimum,
-                    TSemanticValue maximum,
-                    TSemanticValue& beginRange,
-                    TSemanticValue& endRange ) const;
+                   TSemanticValue maximum,
+                   bool useCustomPalette = false ) const;
+    bool isColorOutlier( rgb whichColor ) const;
 
     void copy( GradientColor &destiny );
 
@@ -187,36 +186,23 @@ class GradientColor: public SemanticColor
     double negativeBlueStep;
 
     TGradientFunction function;
-    PRV_INT16 numSteps;
 
     void recalcSteps();
+};
 
-    inline rgb functionLinear( TSemanticValue whichValue,
-                               TSemanticValue minimum,
-                               TSemanticValue maximum ) const;
-    inline rgb functionSteps( TSemanticValue whichValue,
-                              TSemanticValue minimum,
-                              TSemanticValue maximum ) const;
-    inline rgb functionLog( TSemanticValue whichValue,
-                            TSemanticValue minimum,
-                            TSemanticValue maximum ) const;
-    inline rgb functionExp( TSemanticValue whichValue,
-                            TSemanticValue minimum,
-                            TSemanticValue maximum ) const;
 
-    inline bool calcValueLinear( double colorValue, double begin, double end,
-                                 TSemanticValue& beginRange,
-                                 TSemanticValue& endRange ) const;
-    inline bool calcValueSteps( double colorValue, double begin, double end,
-                                TSemanticValue& beginRange,
-                                TSemanticValue& endRange ) const;
-    inline bool calcValueLog( double colorValue, double begin, double end,
-                              TSemanticValue& beginRange,
-                              TSemanticValue& endRange ) const;
-    inline bool calcValueExp( double colorValue, double begin, double end,
-                              TSemanticValue& beginRange,
-                              TSemanticValue& endRange ) const;
+class Normalizer
+{
+  public:
+    static double calculate( TSemanticValue whichValue,
+                             TSemanticValue whichMinimum,
+                             TSemanticValue whichMaximum,
+                             GradientColor::TGradientFunction whichFunction,
+                             bool minimumAsBase );
+  private:
+    static PRV_INT16 numSteps;
 
 };
+
 
 #endif // SEMANTICCOLOR_H_INCLUDED

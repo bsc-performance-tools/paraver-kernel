@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef LABELCONSTRUCTOR_H_INCLUDED
 #define LABELCONSTRUCTOR_H_INCLUDED
@@ -69,7 +64,7 @@ class LabelConstructor
     static std::string timeLabel( ptime value, PRV_UINT32 precision );
 
     static std::string semanticLabel( const Window * whichWindow, TSemanticValue value,
-                                 bool text, PRV_UINT32 precision );
+                                 bool text, PRV_UINT32 precision, bool hexMode );
 
     static std::string eventLabel( Window *whichWindow,
                               TEventType whichType,

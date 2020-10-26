@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef HISTOGRAM_H_INCLUDED
 #define HISTOGRAM_H_INCLUDED
@@ -245,15 +240,24 @@ class Histogram
     {
       return ParaverConfig::getInstance()->getHistogramShowUnits();
     }
-    virtual void setSortColumns( bool newValue ) {}
-    virtual bool getSortColumns() const
+    virtual void setSemanticSortColumns( bool newValue ) {}
+    virtual bool getSemanticSortColumns() const
     {
       return false;
     }
-    virtual void setSortCriteria( THistoTotals whichCriteria ) {}
-    virtual THistoTotals getSortCriteria() const
+    virtual void setSemanticSortCriteria( THistoTotals whichCriteria ) {}
+    virtual THistoTotals getSemanticSortCriteria() const
     {
       return AVERAGE;
+    }
+    virtual void setSemanticSortReverse( bool newValue ) {}
+    virtual bool getSemanticSortReverse() const
+    {
+      return false;
+    }
+    virtual PRV_UINT32 getSemanticSortedColumn( PRV_UINT32 col ) const
+    {
+      return 0;
     }
     virtual void setMinGradient( double whichMin ) {}
     virtual double getMinGradient() const
@@ -274,6 +278,11 @@ class Histogram
     virtual bool getCompute2DScale() const
     {
       return ParaverConfig::getInstance()->getHistogramAutofitControlScale();
+    }
+    virtual void setCompute2DScaleZero( bool newValue ) {}
+    virtual bool getCompute2DScaleZero() const
+    {
+      return ParaverConfig::getInstance()->getHistogramAutofitControlScaleZero();
     }
     virtual void setCompute3DScale( bool newValue ) {}
     virtual bool getCompute3DScale() const
@@ -343,8 +352,14 @@ class Histogram
 
     virtual THistogramColumn getPlaneColumns( THistogramColumn iPlane,
                                               bool hideEmptyColumns,
-                                              std::vector<THistogramColumn> &noVoidColumns ) const
+                                              std::vector<THistogramColumn> &noVoidSemRanges ) const
     {
+      return 0;
+    }
+
+    virtual THistogramColumn getSemanticRealColumn( THistogramColumn whichCol, 
+                                                    const vector<THistogramColumn>& noVoidSemRanges ) const 
+    { 
       return 0;
     }
 
@@ -561,6 +576,35 @@ class Histogram
       return std::vector< std::string >();
     }
 
+    virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement()
+    {
+      return ( SelectionManagement< TObjectOrder, TWindowLevel > * ) NULL;
+    }
+
+    virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel )
+    {}
+
+    virtual vector< TObjectOrder > getSelectedRows() const
+    {
+      return vector< TObjectOrder > ();
+    }
+
+    virtual vector< TObjectOrder > getSelectedRows( TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const
+    {
+      return vector< TObjectOrder > ();
+    }
+ 
+    virtual vector< bool > getSelectedBooleanRows() const 
+    {
+      return vector< bool > ();
+    }
+
+    virtual void setSelectedRows( std::vector< bool > &selected )
+    {}
+
+    virtual void setSelectedRows( std::vector< TObjectOrder > &selected )
+    {}
+
   protected:
     KernelConnection *myKernel;
 
@@ -625,6 +669,7 @@ class HistogramProxy : public Histogram
     virtual THistogramColumn getNumPlanes() const;
     virtual THistogramColumn getNumColumns( const std::string& whichStat ) const;
     virtual TObjectOrder getNumRows() const;
+
     virtual TSemanticValue getCurrentValue( PRV_UINT32 col,
                                             PRV_UINT16 idStat,
                                             PRV_UINT32 plane = 0 ) const;
@@ -677,10 +722,13 @@ class HistogramProxy : public Histogram
     virtual bool getThousandSeparator() const;
     virtual void setShowUnits( bool newValue );
     virtual bool getShowUnits() const;
-    virtual void setSortColumns( bool newValue );
-    virtual bool getSortColumns() const;
-    virtual void setSortCriteria( THistoTotals whichCriteria );
-    virtual THistoTotals getSortCriteria() const;
+    virtual void setSemanticSortColumns( bool newValue );
+    virtual bool getSemanticSortColumns() const;
+    virtual void setSemanticSortCriteria( THistoTotals whichCriteria );
+    virtual THistoTotals getSemanticSortCriteria() const;
+    virtual void setSemanticSortReverse( bool newValue );
+    virtual bool getSemanticSortReverse() const;
+    virtual PRV_UINT32 getSemanticSortedColumn( PRV_UINT32 col ) const;
     virtual void setMinGradient( double whichMin );
     virtual double getMinGradient() const;
     virtual void setMaxGradient( double whichMax );
@@ -689,6 +737,8 @@ class HistogramProxy : public Histogram
     virtual bool getComputeScale() const;
     virtual void setCompute2DScale( bool newValue );
     virtual bool getCompute2DScale() const;
+    virtual void setCompute2DScaleZero( bool newValue );
+    virtual bool getCompute2DScaleZero() const;
     virtual void setCompute3DScale( bool newValue );
     virtual bool getCompute3DScale() const;
     virtual void setComputeGradient( bool newValue );
@@ -719,7 +769,7 @@ class HistogramProxy : public Histogram
 
     virtual THistogramColumn getPlaneColumns( THistogramColumn iPlane,
                                               bool hideEmptyColumns,
-                                              std::vector<THistogramColumn> &noVoidColumns ) const;
+                                              std::vector<THistogramColumn> &noVoidSemRanges ) const;
 
     // Zoom history
     virtual bool isZoomEmpty() const;
@@ -753,6 +803,8 @@ class HistogramProxy : public Histogram
     virtual std::string getCurrentStat() const;
 
     bool itsCommunicationStat( const std::string& whichStat ) const;
+
+    THistogramColumn getSemanticRealColumn( THistogramColumn whichCol, const vector<THistogramColumn>& noVoidSemRanges ) const;
 
     std::string getUnitsLabel( const std::string& whichStat ) const;
     virtual void getGroupsLabels( std::vector<std::string>& onVector ) const;
@@ -832,6 +884,16 @@ class HistogramProxy : public Histogram
 
     virtual const std::vector< std::string > getCFG4DFullTagList();
 
+    virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement();
+    virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel );
+
+    virtual vector< TObjectOrder > getSelectedRows() const;
+    virtual vector< TObjectOrder > getSelectedRows( TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const;
+    virtual vector< bool > getSelectedBooleanRows() const;
+    virtual void setSelectedRows( std::vector< bool > &selected );
+    virtual void setSelectedRows( std::vector< TObjectOrder > &selected );
+
+
   private:
     std::string name;
 
@@ -848,11 +910,16 @@ class HistogramProxy : public Histogram
     PRV_UINT16 numDecimals;
     bool thousandSep;
     bool showUnits;
-    bool sortColumns;
-    THistoTotals sortCriteria;
+
+    bool sortSemanticColumns;
+    THistoTotals semanticSortCriteria;
+    bool sortSemanticReverse;
+    std::vector<int> currentSemanticSort;
+
     double minGradient;
     double maxGradient;
     bool computeControlScale;
+    bool computeControlScaleZero;
     bool computeXtraScale;
     bool computeGradient;
     bool showColor;
@@ -907,9 +974,14 @@ class HistogramProxy : public Histogram
     std::map< std::string, std::string > propertiesAliasCFG4D;
     std::map< std::string, std::string > statisticsAliasCFG4D;
 
+    //Selection of rows
+    SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;
+
     HistogramProxy( KernelConnection *whichKernel );
 
     THistogramColumn getNumColumns() const;
+
+    void fillSemanticSort();
 
     friend Histogram *Histogram::create( KernelConnection * );
 };

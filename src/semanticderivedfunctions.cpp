@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include "semanticderivedfunctions.h"
 #include "kwindow.h"
@@ -209,7 +204,7 @@ TSemanticValue ControlDerivedEnumerate::execute( const SemanticInfo *info )
 
   if( myInfo->values[ 1 ] < prevControlValue[ tmpOrder ] )
     myEnumerate[ tmpOrder ] = 0;
-  else if( prevDataTime[ tmpOrder ] == 0 || myInfo->dataBeginTime != prevDataTime[ tmpOrder ] )
+  else if( prevDataTime[ tmpOrder ] == 0 || myInfo->dataBeginTime != prevDataTime[ tmpOrder ] && myInfo->values[ 0 ] != 0.0 )
     ++myEnumerate[ tmpOrder ];
 
   prevControlValue[ tmpOrder ] = myInfo->values[ 1 ];

@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef LOCALKERNEL_H_INCLUDED
 #define LOCALKERNEL_H_INCLUDED
@@ -95,6 +90,7 @@ class LocalKernel: public KernelConnection
 
     virtual bool userMessage( UserMessageID messageID ) const;
 
+    virtual bool isTraceFile( const std::string &filename ) const;
     virtual void copyPCF( const std::string& name, const std::string& traceToLoad ) const;
     virtual void copyROW( const std::string& name, const std::string& traceToLoad ) const;
 

@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef WINDOW_H_INCLUDED
 #define WINDOW_H_INCLUDED
@@ -240,6 +235,11 @@ class Window
       return 0.0;
     }
 
+    virtual bool getExistSemanticZero() const
+    {
+      return false;
+    }
+
     virtual Window* clone( bool recursiveClone = false )
     {
       return NULL;
@@ -298,11 +298,13 @@ class Window
     virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits = true ) = 0;
     virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create,
                           TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
+                          int& rowComputedZeros,
                           bool updateLimits = true )
     {}
     virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true ) = 0;
     virtual RecordList *calcNext( TObjectOrder whichObject,
-                                  TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
+                                  TSemanticValue& rowComputedMaxY, TSemanticValue& rowComputedMinY,
+                                  int& rowComputedZeros,
                                   bool updateLimits = true )
     { return NULL; }
     virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true ) = 0;
@@ -331,6 +333,11 @@ class Window
     virtual std::string getName() const
     {
       return "";
+    }
+
+    virtual bool isLevelProcessModel() const
+    {
+      return true;
     }
 
     virtual PRV_UINT16 getPosX() const
@@ -382,6 +389,10 @@ class Window
       GradientColor *tmp = NULL;
       return *tmp;
     }
+    virtual bool getSemanticScaleMinAtZero()
+    {
+      return false;
+    }
     virtual bool getShowWindow() const
     {
       return true;
@@ -408,6 +419,9 @@ class Window
     {}
     virtual void setPunctualColorMode()
     {}
+    virtual void setSemanticScaleMinAtZero( bool newValue )
+    {}
+
     virtual bool isCodeColorSet() const
     {
       return true;
@@ -453,12 +467,16 @@ class Window
       rgb tmp = { 0, 0, 0 };
       return tmp;
     }
-    virtual bool calcValueFromColor( rgb whichColor,
-                                     TSemanticValue& firstValue,
-                                     TSemanticValue& secondValue ) const
+    virtual bool isColorOutlier( rgb whichColor ) const
     {
       return true;
     }
+    virtual bool getUseCustomPalette() const
+    {
+      return false;
+    }
+    virtual void setUseCustomPalette( bool newValue ) 
+    {}
     virtual bool getChanged() const
     {
       return false;
@@ -759,6 +777,7 @@ class Window
                                              int& drawCaution,                      // I/O
                                              TSemanticValue &rowComputedMaxY,
                                              TSemanticValue &rowComputedMinY,
+                                             int& rowComputedZeros,
                                              std::vector< TSemanticValue >& valuesToDraw, // I/O
                                              hash_set< PRV_INT32 >& eventsToDraw,    // I/O
                                              hash_set< commCoord >& commsToDraw )    // I/O
@@ -774,6 +793,7 @@ class Window
                                              int& drawCaution,                                  // I/O
                                              TSemanticValue &rowComputedMaxY,
                                              TSemanticValue &rowComputedMinY,
+                                             int& rowComputedZeros,
                                              std::vector< TSemanticValue >& valuesToDraw,             // I/O
                                              hash_set< PRV_INT32 >& eventsToDraw,                // I/O
                                              hash_set< commCoord, hashCommCoord >& commsToDraw ) // I/O
@@ -850,6 +870,7 @@ class Window
                                                      int& drawCaution,                      // I/O
                                                      TSemanticValue &rowComputedMaxY,
                                                      TSemanticValue &rowComputedMinY,
+                                                     int& rowComputedZeros,
                                                      std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > >& valuesToDraw, // I/O
                                                      hash_set< PRV_INT32 >& eventsToDraw,    // I/O
                                                      hash_set< commCoord >& commsToDraw )    // I/O
@@ -865,6 +886,7 @@ class Window
                                                      int& drawCaution,                                  // I/O
                                                      TSemanticValue &rowComputedMaxY,
                                                      TSemanticValue &rowComputedMinY,
+                                                     int& rowComputedZeros,
                                                      std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > >& valuesToDraw,             // I/O
                                                      hash_set< PRV_INT32 >& eventsToDraw,                // I/O
                                                      hash_set< commCoord, hashCommCoord >& commsToDraw ) // I/O
@@ -922,12 +944,14 @@ class WindowProxy: public Window
     virtual void setMinimumY( TSemanticValue whichMin );
     virtual TSemanticValue getMaximumY();
     virtual TSemanticValue getMinimumY();
+    virtual bool getExistSemanticZero() const;
     virtual bool getShowProgressBar() const;
 
     //------------------------------------------------------------
     virtual Trace *getTrace() const;
     virtual TWindowLevel getLevel() const;
     virtual void setLevel( TWindowLevel whichLevel );
+    virtual bool isLevelProcessModel() const;
     virtual TWindowLevel getMinAcceptableLevel() const;
     virtual void setTimeUnit( TTimeUnit whichUnit );
     virtual TTimeUnit getTimeUnit() const;
@@ -972,10 +996,12 @@ class WindowProxy: public Window
     virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits = true );
     virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create,
                           TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
+                          int& rowComputedZeros,
                           bool updateLimits = true );
     virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true );
     virtual RecordList *calcNext( TObjectOrder whichObject,
                                   TSemanticValue &rowComputedMaxY, TSemanticValue &rowComputedMinY,
+                                  int& rowComputedZeros,
                                   bool updateLimits = true );
     virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true );
     virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const;
@@ -1010,6 +1036,7 @@ class WindowProxy: public Window
     virtual DrawModeMethod getDrawModeTime() const;
     virtual CodeColor& getCodeColor();
     virtual GradientColor& getGradientColor();
+    virtual bool getSemanticScaleMinAtZero();
     virtual bool getShowWindow() const;
     virtual void setShowWindow( bool newValue );
     virtual void setShowChildrenWindow( bool newValue ); // recursively sets children
@@ -1031,13 +1058,14 @@ class WindowProxy: public Window
     virtual void setPixelSize( PRV_UINT16 whichSize );
     virtual Window *getPunctualColorWindow() const;
     virtual void setPunctualColorWindow( Window *whichWindow );
+    virtual void setSemanticScaleMinAtZero( bool newValue );
 
     virtual void allowOutOfScale( bool activate );
     virtual void allowOutliers( bool activate );
     virtual rgb calcColor( TSemanticValue whichValue, Window& whichWindow );
-    virtual bool calcValueFromColor( rgb whichColor,
-                                     TSemanticValue& firstValue,
-                                     TSemanticValue& secondValue ) const;
+    virtual bool isColorOutlier( rgb whichColor ) const;
+    virtual bool getUseCustomPalette() const;
+    virtual void setUseCustomPalette( bool newValue );
     virtual bool getChanged() const;
     virtual void setChanged( bool newValue );
     virtual bool getRedraw() const;
@@ -1161,7 +1189,6 @@ class WindowProxy: public Window
                                           ProgressController *progress );
 
     virtual void computeSemanticRowParallel( int numRows,
-
                                              TObjectOrder firstRow,
                                              TObjectOrder lastRow,
                                              std::vector< TObjectOrder >& selectedSet,
@@ -1173,6 +1200,7 @@ class WindowProxy: public Window
                                              int& drawCaution,  // O
                                              TSemanticValue &rowComputedMaxY,
                                              TSemanticValue &rowComputedMinY,
+                                             int& rowComputedZeros,
                                              std::vector< TSemanticValue >& valuesToDraw, // O
                                              hash_set< PRV_INT32 >& eventsToDraw,    // O
                                              hash_set< commCoord >& commsToDraw,
@@ -1212,8 +1240,9 @@ class WindowProxy: public Window
                                      PRV_INT32 objectAxisPos,
                                      std::vector< PRV_INT32 >& objectPosList,
                                      int& drawCaution,                                    // I/O
-                                     TSemanticValue &rowComputedMaxY,
-                                     TSemanticValue &rowComputedMinY,
+                                     TSemanticValue& rowComputedMaxY,
+                                     TSemanticValue& rowComputedMinY,
+                                     int& rowComputedZeros,
                                      std::vector< TSemanticValue >& valuesToDraw,         // I/O
                                      hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
                                      hash_set< commCoord, hashCommCoord >& commsToDraw,
@@ -1270,8 +1299,9 @@ class WindowProxy: public Window
                                                      PRV_INT32 objectAxisPos,
                                                      std::vector< PRV_INT32 >& objectPosList,
                                                      int& drawCaution,  // O
-                                                     TSemanticValue &rowComputedMaxY,
-                                                     TSemanticValue &rowComputedMinY,
+                                                     TSemanticValue& rowComputedMaxY,
+                                                     TSemanticValue& rowComputedMinY,
+                                                     int& rowComputedZeros,
                                                      std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > >& valuesToDraw, // O
                                                      hash_set< PRV_INT32 >& eventsToDraw,    // O
                                                      hash_set< commCoord >& commsToDraw,
@@ -1287,8 +1317,9 @@ class WindowProxy: public Window
                                              PRV_INT32 objectAxisPos,
                                              std::vector< PRV_INT32 >& objectPosList,
                                              int& drawCaution,                                    // I/O
-                                             TSemanticValue &rowComputedMaxY,
-                                             TSemanticValue &rowComputedMinY,
+                                             TSemanticValue& rowComputedMaxY,
+                                             TSemanticValue& rowComputedMinY,
+                                             int& rowComputedZeros,
                                              std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > >& valuesToDraw,         // I/O
                                              hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
                                              hash_set< commCoord, hashCommCoord >& commsToDraw,
@@ -1319,8 +1350,10 @@ class WindowProxy: public Window
     bool yScaleComputed;
     TSemanticValue maximumY;
     TSemanticValue minimumY;
+    bool existSemanticZero;
     TSemanticValue computedMaxY;
     TSemanticValue computedMinY;
+    bool computedZeros;
 
     std::vector<RecordList *> myLists;
 
@@ -1335,9 +1368,11 @@ class WindowProxy: public Window
     std::string name;
     CodeColor myCodeColor;
     GradientColor myGradientColor;
+    bool useCustomPalette;
     DrawModeMethod drawModeObject;
     DrawModeMethod drawModeTime;
     SemanticColor::TColorFunction colorMode;
+    bool semanticScaleMinAtZero;
     bool showWindow;
     bool raise;
     bool changed;

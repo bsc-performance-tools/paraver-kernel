@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef NOLOADTRACE_H_INCLUDED
 #define NOLOADTRACE_H_INCLUDED
@@ -84,6 +79,7 @@ namespace NoLoad
           virtual TObjectOrder   getOrder() const;
           virtual TEventType     getEventType() const;
           virtual TSemanticValue getEventValue() const;
+          virtual TEventValue    getEventValueAsIs() const;
           virtual TState         getState() const;
           virtual TRecordTime    getStateEndTime() const;
           virtual TCommID        getCommIndex() const;

@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef _BPLUSTREE_H
 #define _BPLUSTREE_H
@@ -331,6 +326,7 @@ namespace bplustree
           virtual TObjectOrder   getOrder() const;
           virtual TEventType     getEventType() const;
           virtual TSemanticValue getEventValue() const;
+          virtual TEventValue    getEventValueAsIs() const;
           virtual TState         getState() const;
           virtual TRecordTime    getStateEndTime() const;
           virtual TCommID        getCommIndex() const;

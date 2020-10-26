@@ -21,11 +21,6 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- *\
- | @file: $HeadURL$
- | @last_commit: $Date$
- | @version:     $Revision$
-\* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #ifndef PREVIOUSFILES_H_INCLUDED
 #define PREVIOUSFILES_H_INCLUDED
@@ -41,6 +36,7 @@ class PreviousFiles
   public:
     static PreviousFiles *createPreviousTraces();
     static PreviousFiles *createPreviousCFGs();
+    static PreviousFiles *createPreviousSessions();
     static PreviousFiles *createPreviousTreatedTraces();
 
     ~PreviousFiles();
@@ -50,6 +46,7 @@ class PreviousFiles
 
     static const std::string previousTracesFile;
     static const std::string previousCFGsFile;
+    static const std::string previousSessionsFile;
     static const std::string previousTreatedTracesFile;
 
     static const PRV_UINT16 SIZE = 20;
