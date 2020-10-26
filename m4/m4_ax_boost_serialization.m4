@@ -110,7 +110,4 @@ AC_DEFUN([AX_BOOST_SERIALIZATION],
 
 	fi
 
-	echo $BOOST_SERIALIZATION_LIB
-	echo "-----" 
-	echo $BOOST_LDFLAGS
 ])
