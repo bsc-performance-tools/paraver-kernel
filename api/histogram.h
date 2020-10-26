@@ -358,7 +358,7 @@ class Histogram
     }
 
     virtual THistogramColumn getSemanticRealColumn( THistogramColumn whichCol, 
-                                                    const vector<THistogramColumn>& noVoidSemRanges ) const 
+                                                    const std::vector<THistogramColumn>& noVoidSemRanges ) const 
     { 
       return 0;
     }
@@ -584,19 +584,19 @@ class Histogram
     virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel )
     {}
 
-    virtual vector< TObjectOrder > getSelectedRows() const
+    virtual std::vector< TObjectOrder > getSelectedRows() const
     {
-      return vector< TObjectOrder > ();
+      return std::vector< TObjectOrder > ();
     }
 
-    virtual vector< TObjectOrder > getSelectedRows( TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const
+    virtual std::vector< TObjectOrder > getSelectedRows( TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const
     {
-      return vector< TObjectOrder > ();
+      return std::vector< TObjectOrder > ();
     }
  
-    virtual vector< bool > getSelectedBooleanRows() const 
+    virtual std::vector< bool > getSelectedBooleanRows() const 
     {
-      return vector< bool > ();
+      return std::vector< bool > ();
     }
 
     virtual void setSelectedRows( std::vector< bool > &selected )
@@ -804,7 +804,7 @@ class HistogramProxy : public Histogram
 
     bool itsCommunicationStat( const std::string& whichStat ) const;
 
-    THistogramColumn getSemanticRealColumn( THistogramColumn whichCol, const vector<THistogramColumn>& noVoidSemRanges ) const;
+    THistogramColumn getSemanticRealColumn( THistogramColumn whichCol, const std::vector<THistogramColumn>& noVoidSemRanges ) const;
 
     std::string getUnitsLabel( const std::string& whichStat ) const;
     virtual void getGroupsLabels( std::vector<std::string>& onVector ) const;
@@ -887,9 +887,9 @@ class HistogramProxy : public Histogram
     virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement();
     virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel );
 
-    virtual vector< TObjectOrder > getSelectedRows() const;
-    virtual vector< TObjectOrder > getSelectedRows( TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const;
-    virtual vector< bool > getSelectedBooleanRows() const;
+    virtual std::vector< TObjectOrder > getSelectedRows() const;
+    virtual std::vector< TObjectOrder > getSelectedRows( TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const;
+    virtual std::vector< bool > getSelectedBooleanRows() const;
     virtual void setSelectedRows( std::vector< bool > &selected );
     virtual void setSelectedRows( std::vector< TObjectOrder > &selected );
 
