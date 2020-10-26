@@ -39,21 +39,6 @@ TraceEditSequence *TraceEditSequence::create( const KernelConnection *whichKerne
 }
 
 
-TraceEditSequence::TraceEditSequence( const KernelConnection *whichKernel )
-{
-}
-
-
-TraceEditSequence::~TraceEditSequence()
-{
-}
-
-
-TraceEditSequenceProxy::TraceEditSequenceProxy()
-{
-}
-
-
 TraceEditSequenceProxy::TraceEditSequenceProxy( const KernelConnection *whichKernel )
 {
   mySequence = whichKernel->newTraceEditSequence();

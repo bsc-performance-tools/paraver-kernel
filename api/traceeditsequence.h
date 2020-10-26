@@ -85,9 +85,9 @@ class TraceEditSequence
 
     static TraceEditSequence *create( const KernelConnection *whichKernel );
 
-    TraceEditSequence() { }
-    TraceEditSequence( const KernelConnection *whichKernel );
-    virtual ~TraceEditSequence();
+    TraceEditSequence() {}
+    TraceEditSequence( const KernelConnection *whichKernel ) {}
+    virtual ~TraceEditSequence() {}
 
     virtual const KernelConnection *getKernelConnection() const = 0;
 
@@ -120,7 +120,7 @@ class TraceEditSequence
 class TraceEditSequenceProxy:public TraceEditSequence
 {
   public:
-    TraceEditSequenceProxy();
+    TraceEditSequenceProxy() {}
     TraceEditSequenceProxy( const KernelConnection *whichKernel );
     virtual ~TraceEditSequenceProxy();
 
