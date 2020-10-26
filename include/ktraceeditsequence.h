@@ -31,6 +31,7 @@
 #define KTRACEEDITSEQUENCE_H_INCLUDED
 
 #include "traceeditsequence.h"
+#include "ktrace.h"
 
 class KTrace;
 

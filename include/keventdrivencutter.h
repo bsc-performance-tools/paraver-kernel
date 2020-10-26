@@ -34,7 +34,7 @@
 #include <vector>
 
 #include "eventdrivencutter.h"
-#include "traceeditsequence.h"
+#include "ktraceeditsequence.h"
 
 class ProgressController;
 class KernelConnection;

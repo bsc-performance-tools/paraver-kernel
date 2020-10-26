@@ -34,7 +34,7 @@ CubeContainer<Dimension1, Dimension2, Dimension3, T>::Index::Index( Dimension1 w
 }
 
 template<typename Dimension1, typename Dimension2, typename Dimension3, typename T>
-#ifdef WIN32
+#ifdef _MSC_VER
 bool typename CubeContainer<Dimension1, Dimension2, Dimension3, T>::Index::operator<( const typename CubeContainer<Dimension1, Dimension2, Dimension3, T>::Index& whichIndex ) const
 #else
 bool CubeContainer<Dimension1, Dimension2, Dimension3, T>::Index::operator<( const CubeContainer<Dimension1, Dimension2, Dimension3, T>::Index& whichIndex ) const

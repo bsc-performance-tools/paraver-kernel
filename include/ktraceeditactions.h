@@ -335,6 +335,27 @@ class TraceSortAction: public TraceToTraceAction
 
 };
 
+/****************************************************************************
+ ********                  PCFEventMergerAction                      ********
+ ****************************************************************************/
+class PCFEventMergerAction: public TraceToTraceAction
+{
+  public:
+    PCFEventMergerAction( TraceEditSequence *whichSequence ) : TraceToTraceAction( whichSequence )
+    {}
+    ~PCFEventMergerAction()
+    {}
+
+    virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const;
+
+    virtual bool execute( std::string whichTrace );
+
+  protected:
+
+  private:
+
+};
+
 
 
 #endif // KTRACEEDITACTIONS_H_INCLUDED

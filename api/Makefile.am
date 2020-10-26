@@ -35,7 +35,6 @@ libparaver_api_la_SOURCES = \
                     paraverconfig.cpp \
                     previousfiles.cpp \
                     progresscontroller.cpp \
-                    ParaverMetadataManager.cpp \
                     recordlist.cpp \
                     rowlabels.cpp \
                     selectionrowsutils.cpp \
@@ -84,7 +83,6 @@ include_HEADERS = \
                   paravertypes.h\
                   previousfiles.h\
                   progresscontroller.h\
-                  ParaverMetadataManager.h\
                   prvtypes.h\
                   recordlist.h\
                   rowlabels.h\

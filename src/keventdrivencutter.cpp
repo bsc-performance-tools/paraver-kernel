@@ -36,7 +36,7 @@ KEventDrivenCutter::KEventDrivenCutter( const KernelConnection *myKernel,
                                         ProgressController *progress )
 {
   // Build sequence
-  mySequence = TraceEditSequence::create( myKernel );
+  mySequence = new KTraceEditSequence( myKernel );
 
   mySequence->pushbackAction( TraceEditSequence::traceParserAction );
   mySequence->pushbackAction( TraceEditSequence::eventDrivenCutterAction );

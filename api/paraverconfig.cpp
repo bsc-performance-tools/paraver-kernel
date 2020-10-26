@@ -72,16 +72,13 @@ ParaverConfig::ParaverConfig()
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
 
-  WCHAR myPath[ MAX_LEN_PATH ];
+  char myPath[ MAX_LEN_PATH ];
   HMODULE hModule = GetModuleHandle( NULL );
   if ( hModule != NULL )
   {
     GetModuleFileName( NULL, myPath, ( sizeof( myPath ) ));
     PathRemoveFileSpec( myPath );
-    char tmpMyPath[ MAX_LEN_PATH ];
-    size_t tmpSize;
-    wcstombs_s( &tmpSize, tmpMyPath, MAX_LEN_PATH, myPath, MAX_LEN_PATH );
-    paraverHomeDir = tmpMyPath;
+    paraverHomeDir = myPath;
 
     paraverCFGsDir = paraverHomeDir;
     paraverCFGsDir.append( "\\cfgs" );
@@ -1348,13 +1345,13 @@ void ParaverConfig::writeParaverConfigFile()
   strFile.append( "\\paraver\\paraver" );
   string tmpPath( homedir + "\\paraver" );
 
-  int len = tmpPath.length() + 1;
-  wchar_t *wText = new wchar_t[len];
-  memset(wText,0,len);
-  ::MultiByteToWideChar( CP_ACP, NULL, tmpPath.c_str(), -1, wText, len );
+  //int len = tmpPath.length() + 1;
+  //wchar_t *wText = new wchar_t[len];
+  //memset(wText,0,len);
+  //::MultiByteToWideChar( CP_ACP, NULL, tmpPath.c_str(), -1, wText, len );
 
-  SHCreateDirectoryEx( NULL, wText, NULL );
-  delete []wText;
+  SHCreateDirectoryEx( NULL, tmpPath.c_str(), NULL );
+  //delete []wText;
 #else
   strFile.append( "/.paraver/paraver" );
   mkdir( ( homedir + "/.paraver" ).c_str(), (mode_t)0700 );
@@ -1383,13 +1380,13 @@ bool ParaverConfig::writeDefaultConfig()
   strFile.append( "\\paraver\\paraver.xml" );
   string tmpPath( homedir + "\\paraver" );
 
-  int len = tmpPath.length() + 1;
-  wchar_t *wText = new wchar_t[len];
-  memset(wText,0,len);
-  ::MultiByteToWideChar( CP_ACP, NULL, tmpPath.c_str(), -1, wText, len );
+  //int len = tmpPath.length() + 1;
+  //wchar_t *wText = new wchar_t[len];
+  //memset(wText,0,len);
+  //::MultiByteToWideChar( CP_ACP, NULL, tmpPath.c_str(), -1, wText, len );
 
-  SHCreateDirectoryEx( NULL, wText, NULL );
-  delete []wText;
+  SHCreateDirectoryEx( NULL, tmpPath.c_str(), NULL );
+  //delete []wText;
 #else
   strFile.append( "/.paraver/paraver.xml" );
   mkdir( ( homedir + "/.paraver" ).c_str(), (mode_t)0700 );

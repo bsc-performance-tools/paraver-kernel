@@ -215,5 +215,7 @@ if test "x$want_boost" = "xyes"; then
         CPPFLAGS="$CPPFLAGS_SAVED"
        	LDFLAGS="$LDFLAGS_SAVED"
 fi
-
+	echo $BOOST_CPPFLAGS
+	echo "-----" 
+	echo $BOOST_LDFLAGS
 ])

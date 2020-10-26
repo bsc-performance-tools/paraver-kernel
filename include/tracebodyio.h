@@ -24,7 +24,7 @@
 #ifndef TRACEBODYIO_H_INCLUDED
 #define TRACEBODYIO_H_INCLUDED
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <hash_set>
 #else
 #include <ext/hash_set>
@@ -34,7 +34,7 @@
 #include "ktrace.h"
 #include "tracestream.h"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 using namespace stdext;
 #else
 using namespace __gnu_cxx;

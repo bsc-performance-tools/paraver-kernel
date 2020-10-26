@@ -20,7 +20,7 @@ paramedir_bin_SOURCES = \
 paramedir_bin_LDADD = \
 	-lz \
 	api/libparaver-api.la \
-	src/libparaver-kernel.la 
+	src/libparaver-kernel.la
 
 
 if WANT_OTF2PRV

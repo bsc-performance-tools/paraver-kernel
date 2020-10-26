@@ -23,7 +23,7 @@
 
 #include <fstream>
 #include <sstream>
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <hash_set>
 #else
 #include <ext/hash_set>
@@ -43,7 +43,7 @@
 #include "traceeditblocks.h"
 
 using namespace std;
-#ifdef WIN32
+#ifdef _MSC_VER
 using namespace stdext;
 #else
 using namespace __gnu_cxx;

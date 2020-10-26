@@ -40,13 +40,13 @@
 #include "selectionmanagement.h"
 #include "paraverlabels.h"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <hash_set>
 #else
 #include <ext/hash_set>
 #endif
 
-#ifdef WIN32
+#ifdef _MSC_VER
 using namespace stdext;
 #else
 using namespace __gnu_cxx;
@@ -67,7 +67,7 @@ struct commCoord
            recType  == b.recType;
   }
 
-#ifdef WIN32
+#ifdef _MSC_VER
   bool operator<( const commCoord& b ) const
   {
     return true;
@@ -79,7 +79,7 @@ struct commCoord
 #endif
 };
 
-#ifdef WIN32
+#ifdef _MSC_VER
   namespace stdext
   {
     template<> class hash_compare<commCoord>
@@ -102,7 +102,7 @@ struct commCoord
   }
 #endif
 
-#ifndef WIN32
+#ifndef _MSC_VER
 struct hashCommCoord
 {
   size_t operator()( const commCoord& x ) const
@@ -718,7 +718,7 @@ class Window
       return std::vector<Window::TParamAliasKey >();
     }
 
-#ifdef WIN32
+#ifdef _MSC_VER
     virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
                                           std::vector< bool >& selected,
                                           TTime timeStep,
@@ -747,7 +747,7 @@ class Window
 #endif
     {}
 
-#ifdef WIN32
+#ifdef _MSC_VER
     virtual void computeSemanticRowParallel( TObjectOrder firstRow,
                                              TObjectOrder lastRow,
                                              std::vector< TObjectOrder >& selectedSet,
@@ -780,7 +780,7 @@ class Window
 #endif
     {}
 
-#ifdef WIN32
+#ifdef _MSC_VER
     virtual void computeEventsCommsParallel( RecordList *records,
                                              TTime from,
                                              TTime to,
@@ -809,7 +809,7 @@ class Window
  EXPERIMENTAL FEATURE FOR PUNCTUAL INFORMATION
 *******************************************************************************/
 
-#ifdef WIN32
+#ifdef _MSC_VER
     virtual void computeSemanticPunctualParallel( std::vector< TObjectOrder >& selectedSet,
                                                   std::vector< bool >& selected,
                                                   TTime timeStep,
@@ -838,7 +838,7 @@ class Window
 #endif
     {}
 
-#ifdef WIN32
+#ifdef _MSC_VER
     virtual void computeSemanticRowPunctualParallel( TObjectOrder firstRow,
                                                      TObjectOrder lastRow,
                                                      std::vector< TObjectOrder >& selectedSet,
@@ -1146,7 +1146,7 @@ class WindowProxy: public Window
                                                 const PRV_UINT32 &numParameter ) const;
 
 
-#ifdef WIN32
+#ifdef _MSC_VER
     virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
                                           std::vector< bool >& selected,
                                           TTime timeStep,
@@ -1231,7 +1231,7 @@ class WindowProxy: public Window
                                              hash_set< commCoord, hashCommCoord >& commsToDraw ); // I/O
 #endif // WIN32
 
-#ifdef WIN32
+#ifdef _MSC_VER
     virtual void computeSemanticPunctualParallel( std::vector< TObjectOrder >& selectedSet,
                                                   std::vector< bool >& selected,
                                                   TTime timeStep,
@@ -1259,7 +1259,7 @@ class WindowProxy: public Window
                                                   ProgressController *progress );
 #endif
 
-#ifdef WIN32
+#ifdef _MSC_VER
     virtual void computeSemanticRowPunctualParallel( int numRows,
                                                      TObjectOrder firstRow,
                                                      TObjectOrder lastRow,

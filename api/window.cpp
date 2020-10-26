@@ -1951,7 +1951,7 @@ vector< Window::TParamAliasKey > WindowProxy::getCFG4DParamKeysBySemanticLevel( 
   return retKeys;
 }
 
-#ifdef WIN32
+#ifdef _MSC_VER
 void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
                                            vector< bool >& selected,
                                            TTime timeStep,
@@ -2060,7 +2060,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
         valuesToDraw.push_back( vector< TSemanticValue >() );
 
         eventsToDraw.push_back( hash_set< PRV_INT32 >() );
-#ifdef WIN32
+#ifdef _MSC_VER
         commsToDraw.push_back( hash_set< commCoord >() );
 #else
         commsToDraw.push_back( hash_set< commCoord, hashCommCoord >() );
@@ -2153,7 +2153,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
 #endif // PARALLEL_ENABLED
 }
 
-#ifdef WIN32
+#ifdef _MSC_VER
 void WindowProxy::computeSemanticRowParallel( int numRows,
                                               TObjectOrder firstRow,
                                               TObjectOrder lastRow,
@@ -2293,7 +2293,7 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
   }
 }
 
-#ifdef WIN32
+#ifdef _MSC_VER
 void WindowProxy::computeEventsCommsParallel( RecordList *records,
                                               TTime from,
                                               TTime to,
@@ -2389,7 +2389,7 @@ void WindowProxy::computeEventsCommsParallel( RecordList *records,
   records->erase( records->begin(), it );
 }
 
-#ifdef WIN32
+#ifdef _MSC_VER
 void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selectedSet,
                                                    vector< bool >& selected,
                                                    TTime timeStep,
@@ -2486,7 +2486,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
         valuesToDraw.push_back( vector< vector< pair<TSemanticValue,TSemanticValue> > >() );
 
         eventsToDraw.push_back( hash_set< PRV_INT32 >() );
-#ifdef WIN32
+#ifdef _MSC_VER
         commsToDraw.push_back( hash_set< commCoord >() );
 #else
         commsToDraw.push_back( hash_set< commCoord, hashCommCoord >() );
@@ -2559,7 +2559,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
 #endif // PARALLEL_ENABLED
 }
 
-#ifdef WIN32
+#ifdef _MSC_VER
 void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
                                                       TObjectOrder firstRow,
                                                       TObjectOrder lastRow,

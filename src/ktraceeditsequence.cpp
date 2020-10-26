@@ -28,7 +28,6 @@
 \* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 #include <stdexcept>
-#include "ktrace.h"
 #include "ktraceeditsequence.h"
 #include "traceeditstates.h"
 #include "ktraceeditactions.h"

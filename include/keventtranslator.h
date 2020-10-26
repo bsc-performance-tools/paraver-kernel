@@ -35,7 +35,7 @@
 #include <vector>
 
 #include "eventtranslator.h"
-#include "traceeditsequence.h"
+#include "ktraceeditsequence.h"
 
 class ProgressController;
 class KernelConnection;
