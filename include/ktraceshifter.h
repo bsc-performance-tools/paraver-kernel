@@ -29,7 +29,7 @@
 #include <vector>
 
 #include "traceshifter.h"
-#include "traceeditsequence.h"
+#include "ktraceeditsequence.h"
 #include "paraverkerneltypes.h"
 #include "progresscontroller.h"
 
