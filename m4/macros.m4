@@ -237,7 +237,7 @@ AC_DEFUN([AX_PROG_ENABLE_MINGW],
    MINGW_LIBS=""
 
    if test "${enable_mingw}" = "yes" ; then
-      MINGW_CPPFLAGS="-Wa,-mbig-obj"
+      MINGW_CPPFLAGS="-Wa,-mbig-obj -I/usr/include/libxml2"
       MINGW_LIBS="-L/usr/lib -lxml2 -lz -llzma -lshlwapi"
    fi
 ])
