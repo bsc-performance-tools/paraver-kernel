@@ -1329,7 +1329,7 @@ class WindowProxy: public Window
   private:
     Window *myWindow;
 #ifdef PARALLEL_ENABLED
-    vector<Window *> parallelClone;
+    std::vector<Window *> parallelClone;
 #endif // PARALLEL_ENABLED
 
     Trace *myTrace;
