@@ -1145,24 +1145,6 @@ void KTraceCutter::execute( std::string trace_in,
             /* Have to reset HC and the begining of cut */
             reset_counters = true;
           }
-
-
-          /*std::cout << "    Status !OgTime + BreakSt: " << !originalTime  << " " << break_states << std::endl;
-          if ( !originalTime && break_states )
-          {
-            if ( time_1 < time_min  && time_2 <= time_max )
-            {
-              time_1 = time_min;
-              std::cout << "Time 1 changed from " << time_1 << " to " << time_min << "\n";
-            }
-            
-            if ( time_max < time_2   && time_1 >= time_min )
-            {
-              std::cout << "Time 2 changed from " << time_2 << " to " << time_max << "\n";
-              time_2 = time_max;
-            }
-          }*/
-
           
           if ( !originalTime && break_states )
           {
@@ -1176,45 +1158,7 @@ void KTraceCutter::execute( std::string trace_in,
               time_2 = time_max;
             }
           }
-          /*
-          if ( !originalTime )
-          {
-            if ( time_1 < time_min )
-            {
-              if ( break_states )
-              {
-                time_1 = 0;
-              }
-              else
-              {
-                // NEW MIN TIME!
-                time_min = time_1;
-                total_time = time_max - time_min;
-                time_1 = 0;
-              }
-            }
-            else
-            {
-              time_1 = time_1 - time_min;
-            }
 
-            if ( time_2 >= time_max )
-            {
-              if ( break_states )
-              {
-                time_2 = total_time;
-              }
-              else
-              {
-                time_2 = time_2 - time_min;
-              }
-            }
-            else
-            {
-              time_2 = time_2 - time_min;
-            }
-          }
-          */
           //if ( tasks[appl-1][task-1][thread-1]->last_time < time_2 )
           tasks( appl - 1, task - 1, thread - 1 ).last_time = time_2;
 
@@ -1291,11 +1235,6 @@ void KTraceCutter::execute( std::string trace_in,
                keep_events )
            )
         {
-      //    if ( !originalTime )
-      //      time_1 = time_1 - time_min;
-
-          //last_record_time = time_1;
-
           if ( !first_time_caught )
           {
             first_record_time = time_1;
@@ -1351,24 +1290,15 @@ void KTraceCutter::execute( std::string trace_in,
         if ( cut_tasks && !is_selected_task( task ) && !is_selected_task( task_2 ) )
           break;
 
-        if ( time_1 >= time_min )
+        if ( time_1 >= time_min && time_3 >= time_min )
         {
           /* if time outside the cut, finish */
           if ( time_1 > time_max && !originalTime ) // PROBLEM: DISORDERED TRACES
           {
             maxTimeReached = true;
           }
-          else if ( time_4 <= time_max && time_2 <= time_max )
+          else if ( time_2 <= time_max && time_4 <= time_max )
           {
-        /*    if ( !originalTime )
-            {
-              time_1 = time_1 - time_min;
-              time_2 = time_2 - time_min;
-              time_3 = time_3 - time_min;
-              time_4 = time_4 - time_min;
-            }
-*/
-            // last_record_time = time_3;
             vector< unsigned long long > times;
 
             times.push_back( time_1 );
