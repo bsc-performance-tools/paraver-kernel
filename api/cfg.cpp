@@ -4969,15 +4969,28 @@ bool Analyzer2DObjects::parseLine( KernelConnection *whichKernel,
   vector< TObjectOrder > myRows;
 
   stringstream ss(strObject);
-  string token;
-  char separator = ',';
-  while ( getline( ss, token, separator ) )
+
+  if ( strObject == "All" )
   {
-    TObjectOrder tmpOrder;
-    istringstream tmpToken( token );
-    if( !( tmpToken >> tmpOrder ) )
-      return false;
-    myRows.push_back( tmpOrder );
+     Histogram *tmpHisto = histograms[ histograms.size() - 1 ];     
+     TObjectOrder totalRows = tmpHisto->getTrace()->getLevelObjects( tmpHisto->getControlWindow()->getLevel() );
+     for( TObjectOrder i = 0; i < totalRows; ++i )
+     {
+       myRows.push_back( i );
+     }
+  }
+  else
+  {
+    string token;
+    char separator = ',';
+    while ( getline( ss, token, separator ) )
+    {
+      TObjectOrder tmpOrder;
+      istringstream tmpToken( token );
+      if( !( tmpToken >> tmpOrder ) )
+        return false;
+      myRows.push_back( tmpOrder );
+    }
   }
 
   histograms[ histograms.size() - 1 ]->setSelectedRows( myRows );
@@ -4991,11 +5004,20 @@ void Analyzer2DObjects::printLine( ofstream& cfgFile,
 
   int i;
   cfgFile << CFG_TAG_OBJECTS << " ";
-  for ( i = 0; i < myRows.size() - 1; ++i )
-    cfgFile << myRows[ i ] << ",";
 
-  if ( i == myRows.size() - 1 )
-    cfgFile << myRows[ i ];
+  TObjectOrder totalRows = ( *it )->getTrace()->getLevelObjects( ( *it )->getControlWindow()->getLevel() );
+  if ( myRows.size() == (size_t)totalRows )
+  {
+    cfgFile << "All";
+  }
+  else
+  {
+    for ( i = 0; i < myRows.size() - 1; ++i )
+      cfgFile << myRows[ i ] << ",";
+
+    if ( i == myRows.size() - 1 )
+      cfgFile << myRows[ i ];
+  }
 
   cfgFile << endl;
 }
