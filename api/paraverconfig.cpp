@@ -63,7 +63,6 @@ ParaverConfig::ParaverConfig() : isModified( false )
   string paraverTutorialsDir;
 
 #ifdef WIN32
-
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
 
@@ -73,7 +72,8 @@ ParaverConfig::ParaverConfig() : isModified( false )
   {
     GetModuleFileName( NULL, myPath, ( sizeof( myPath ) ));
     PathRemoveFileSpec( myPath );
-    paraverHomeDir = myPath;
+    string tmpParaverPath( myPath );
+    paraverHomeDir = tmpParaverPath.substr( 0, tmpParaverPath.size() - 4 );
 
     paraverCFGsDir = paraverHomeDir;
     paraverCFGsDir.append( "\\cfgs" );
@@ -91,7 +91,6 @@ ParaverConfig::ParaverConfig() : isModified( false )
     paraverXMLDir       = homedir;
     paraverTutorialsDir = homedir;
   }
-
 #else
   homedir = getenv( "HOME" );
   if( homedir.empty() )
