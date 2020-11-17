@@ -238,18 +238,18 @@ rgb CodeColor::getColor( PRV_UINT32 pos ) const
   return colors[ pos ];
 }
 
-void CodeColor::setColor( PRV_UINT32 pos, rgb color )
+void CodeColor::setColor( PRV_UINT32 whichPos, rgb whichColor )
 {
-  if ( pos >= colors.size() )
+  if ( whichPos >= colors.size() )
   {
-    while( pos >= colors.size() )
+    while( whichPos >= colors.size() )
     {
-      vector<rgb>::iterator pos = colors.end();
-      --pos;
-      colors.insert( pos, colors.begin(), colors.end() );
+      vector<rgb>::iterator lastColorPos = colors.end();
+      --lastColorPos;
+      colors.insert( lastColorPos, colors.begin(), colors.end() );
     }
   }
-  colors[ pos ] = color;
+  colors[ whichPos ] = whichColor;
 }
 
 void CodeColor::setCustomColor( TSemanticValue whichValue, rgb color ) 
