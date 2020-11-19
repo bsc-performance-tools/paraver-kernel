@@ -244,7 +244,8 @@ void WorkspaceManager::loadXML()
   {
     GetModuleFileName( NULL, myPath, ( sizeof( myPath ) ));
     PathRemoveFileSpec( myPath );
-    baseDir = myPath;
+    string tmpParaverPath( myPath );
+    baseDir = tmpParaverPath.substr( 0, tmpParaverPath.size() - 4 );
   }
 #elif defined( __APPLE__ )
     CFBundleRef mainBundle = CFBundleGetMainBundle();
@@ -266,11 +267,10 @@ void WorkspaceManager::loadXML()
 
   fullPath = baseDir;
 #ifdef WIN32
-  fullPath.append( "\\share\\workspaces" );
+  fullPath.append( "\\share\\workspaces.xml" );
 #else
-  fullPath.append( "/share/workspaces" );
+  fullPath.append( "/share/workspaces.xml" );
 #endif
-  fullPath.append( ".xml" );
 
   std::ifstream ifs( fullPath.c_str() );
   if( ifs.good() )
