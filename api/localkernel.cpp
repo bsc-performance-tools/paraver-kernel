@@ -110,7 +110,8 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
   {
     GetModuleFileName( NULL, myPath, ( sizeof( myPath ) ));
     PathRemoveFileSpec( myPath );
-    paraverCFGsDir = myPath;
+    string tmpParaverPath( myPath );
+    paraverCFGsDir = tmpParaverPath.substr( 0, tmpParaverPath.size() - 4 );
     paraverCFGsDir.append( "\\cfgs" );
   }
   else
