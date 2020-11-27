@@ -263,13 +263,10 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlColor.endNegativeGradient = SemanticColor::DEFAULT_NEGATIVE_END_GRADIENT_COLOR;
 
 
-#ifdef WIN32
-  xmlExternalApplications.myTextEditors.push_back( "start" );
-#elif defined(__APPLE__)
+#ifdef __APPLE__
   xmlExternalApplications.myTextEditors.push_back( "open" );
-#else
+#elif !defined( WIN32 )
   xmlExternalApplications.myTextEditors.push_back( "xdg-open" );
-#endif
   xmlExternalApplications.myTextEditors.push_back( "gvim" );
   xmlExternalApplications.myTextEditors.push_back( "nedit" );
   xmlExternalApplications.myTextEditors.push_back( "gedit" );
@@ -278,14 +275,12 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlExternalApplications.myTextEditors.push_back( "textedit" );
   xmlExternalApplications.myTextEditors.push_back( "Notepad++.exe" );
   xmlExternalApplications.myTextEditors.push_back( "wordpad.exe" );
-
-#ifdef WIN32
-  xmlExternalApplications.myPDFReaders.push_back( "start" );
-#elif defined(__APPLE__)
-  xmlExternalApplications.myPDFReaders.push_back( "open" );
-#else
-  xmlExternalApplications.myPDFReaders.push_back( "xdg-open" );
 #endif
+
+#ifdef __APPLE__
+  xmlExternalApplications.myPDFReaders.push_back( "open" );
+#elif !defined( WIN32 )
+  xmlExternalApplications.myPDFReaders.push_back( "xdg-open" );
   xmlExternalApplications.myPDFReaders.push_back( "evince" );
   xmlExternalApplications.myPDFReaders.push_back( "okular" );
   xmlExternalApplications.myPDFReaders.push_back( "xreader" );
@@ -295,6 +290,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlExternalApplications.myPDFReaders.push_back( "atril" ); 
   xmlExternalApplications.myPDFReaders.push_back( "Acrobat.exe" ); 
   xmlExternalApplications.myPDFReaders.push_back( "MicrosoftEdge.exe" );
+#endif
 
   loadMap();
 }
