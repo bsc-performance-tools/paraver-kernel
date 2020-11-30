@@ -196,7 +196,7 @@ void Compressed::close()
 
 void Compressed::getline( string& strLine )
 {
-#ifndef WIN32
+#ifndef _MSC_VER
   gzgets( file, tmpLine, LINESIZE );
 #else
   throw ParaverKernelException( ParaverKernelException::gzipNotSupported );

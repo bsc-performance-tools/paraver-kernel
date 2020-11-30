@@ -23,7 +23,7 @@
 
 
 #include "keventtranslator.h"
-#include "traceeditactions.h"
+#include "ktraceeditactions.h"
 #include "traceoptions.h"
 
 KEventTranslator::KEventTranslator( const KernelConnection *myKernel,
@@ -33,7 +33,7 @@ KEventTranslator::KEventTranslator( const KernelConnection *myKernel,
                                     ProgressController *progress )
 {
   // Build sequence
-  mySequence = TraceEditSequence::create( myKernel );
+  mySequence = new KTraceEditSequence( myKernel );
   mySequence->pushbackAction( new PCFEventMergerAction( mySequence ) );
   mySequence->pushbackAction( TraceEditSequence::traceFilterAction );
 

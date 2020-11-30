@@ -85,11 +85,11 @@ class TraceEditSequence
 
     static TraceEditSequence *create( const KernelConnection *whichKernel );
 
-    TraceEditSequence() { }
-    TraceEditSequence( const KernelConnection *whichKernel );
-    virtual ~TraceEditSequence();
+    TraceEditSequence() {}
+    TraceEditSequence( const KernelConnection *whichKernel ) {}
+    virtual ~TraceEditSequence() {}
 
-    const KernelConnection *getKernelConnection() const;
+    virtual const KernelConnection *getKernelConnection() const = 0;
 
     virtual TraceEditState *createState( TraceEditSequence::TSequenceStates whichState ) = 0;
 
@@ -111,7 +111,6 @@ class TraceEditSequence
     }
 
   protected:
-    const KernelConnection *myKernel;
 
   private:
 
@@ -121,9 +120,11 @@ class TraceEditSequence
 class TraceEditSequenceProxy:public TraceEditSequence
 {
   public:
-    TraceEditSequenceProxy();
+    TraceEditSequenceProxy() {}
     TraceEditSequenceProxy( const KernelConnection *whichKernel );
     virtual ~TraceEditSequenceProxy();
+
+    const KernelConnection *getKernelConnection() const;
 
     TraceEditState *createState( TraceEditSequence::TSequenceStates whichState );
 

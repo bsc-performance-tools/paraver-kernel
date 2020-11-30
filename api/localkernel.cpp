@@ -104,17 +104,14 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
   string paraverCFGsDir;
 
 #ifdef WIN32
-  WCHAR myPath[ MAX_LEN_PATH ];
+  char myPath[ MAX_LEN_PATH ];
   HMODULE hModule = GetModuleHandle( NULL );
   if ( hModule != NULL )
   {
     GetModuleFileName( NULL, myPath, ( sizeof( myPath ) ));
     PathRemoveFileSpec( myPath );
-    char tmpMyPath[ MAX_LEN_PATH ];
-    size_t tmpSize;
-    wcstombs_s( &tmpSize, tmpMyPath, MAX_LEN_PATH, myPath, MAX_LEN_PATH );
-
-    paraverCFGsDir = tmpMyPath;
+    string tmpParaverPath( myPath );
+    paraverCFGsDir = tmpParaverPath.substr( 0, tmpParaverPath.size() - 4 );
     paraverCFGsDir.append( "\\cfgs" );
   }
   else

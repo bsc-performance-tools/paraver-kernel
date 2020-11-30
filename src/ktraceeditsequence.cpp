@@ -23,7 +23,6 @@
 
 
 #include <stdexcept>
-#include "ktrace.h"
 #include "ktraceeditsequence.h"
 #include "traceeditstates.h"
 #include "ktraceeditactions.h"
@@ -32,8 +31,7 @@ using std::invalid_argument;
 
 class TextOutput;
 
-KTraceEditSequence::KTraceEditSequence( const KernelConnection *whichKernel ) :
-  TraceEditSequence( whichKernel )
+KTraceEditSequence::KTraceEditSequence( const KernelConnection *whichKernel )
 {
 }
 
@@ -47,6 +45,12 @@ KTraceEditSequence::~KTraceEditSequence()
   for( vector<TraceEditAction *>::iterator it = sequenceActions.begin();
        it != sequenceActions.end(); ++it )
     delete *it;
+}
+
+
+const KernelConnection *KTraceEditSequence::getKernelConnection() const
+{
+  return myKernel;
 }
 
 

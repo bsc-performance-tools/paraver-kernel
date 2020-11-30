@@ -63,20 +63,17 @@ ParaverConfig::ParaverConfig() : isModified( false )
   string paraverTutorialsDir;
 
 #ifdef WIN32
-
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
 
-  WCHAR myPath[ MAX_LEN_PATH ];
+  char myPath[ MAX_LEN_PATH ];
   HMODULE hModule = GetModuleHandle( NULL );
   if ( hModule != NULL )
   {
     GetModuleFileName( NULL, myPath, ( sizeof( myPath ) ));
     PathRemoveFileSpec( myPath );
-    char tmpMyPath[ MAX_LEN_PATH ];
-    size_t tmpSize;
-    wcstombs_s( &tmpSize, tmpMyPath, MAX_LEN_PATH, myPath, MAX_LEN_PATH );
-    paraverHomeDir = tmpMyPath;
+    string tmpParaverPath( myPath );
+    paraverHomeDir = tmpParaverPath.substr( 0, tmpParaverPath.size() - 4 );
 
     paraverCFGsDir = paraverHomeDir;
     paraverCFGsDir.append( "\\cfgs" );
@@ -94,7 +91,6 @@ ParaverConfig::ParaverConfig() : isModified( false )
     paraverXMLDir       = homedir;
     paraverTutorialsDir = homedir;
   }
-
 #else
   homedir = getenv( "HOME" );
   if( homedir.empty() )
@@ -267,13 +263,10 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlColor.endNegativeGradient = SemanticColor::DEFAULT_NEGATIVE_END_GRADIENT_COLOR;
 
 
-#ifdef WIN32
-  xmlExternalApplications.myTextEditors.push_back( "start" );
-#elif defined(__APPLE__)
+#ifdef __APPLE__
   xmlExternalApplications.myTextEditors.push_back( "open" );
-#else
+#elif !defined( WIN32 )
   xmlExternalApplications.myTextEditors.push_back( "xdg-open" );
-#endif
   xmlExternalApplications.myTextEditors.push_back( "gvim" );
   xmlExternalApplications.myTextEditors.push_back( "nedit" );
   xmlExternalApplications.myTextEditors.push_back( "gedit" );
@@ -282,14 +275,12 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlExternalApplications.myTextEditors.push_back( "textedit" );
   xmlExternalApplications.myTextEditors.push_back( "Notepad++.exe" );
   xmlExternalApplications.myTextEditors.push_back( "wordpad.exe" );
-
-#ifdef WIN32
-  xmlExternalApplications.myPDFReaders.push_back( "start" );
-#elif defined(__APPLE__)
-  xmlExternalApplications.myPDFReaders.push_back( "open" );
-#else
-  xmlExternalApplications.myPDFReaders.push_back( "xdg-open" );
 #endif
+
+#ifdef __APPLE__
+  xmlExternalApplications.myPDFReaders.push_back( "open" );
+#elif !defined( WIN32 )
+  xmlExternalApplications.myPDFReaders.push_back( "xdg-open" );
   xmlExternalApplications.myPDFReaders.push_back( "evince" );
   xmlExternalApplications.myPDFReaders.push_back( "okular" );
   xmlExternalApplications.myPDFReaders.push_back( "xreader" );
@@ -299,6 +290,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlExternalApplications.myPDFReaders.push_back( "atril" ); 
   xmlExternalApplications.myPDFReaders.push_back( "Acrobat.exe" ); 
   xmlExternalApplications.myPDFReaders.push_back( "MicrosoftEdge.exe" );
+#endif
 
   loadMap();
 }
@@ -1705,13 +1697,13 @@ void ParaverConfig::writeParaverConfigFile( bool writeBackup )
   strFile.append( "\\paraver\\paraver" );
   string tmpPath( homedir + "\\paraver" );
 
-  int len = tmpPath.length() + 1;
-  wchar_t *wText = new wchar_t[len];
-  memset(wText,0,len);
-  ::MultiByteToWideChar( CP_ACP, NULL, tmpPath.c_str(), -1, wText, len );
+  //int len = tmpPath.length() + 1;
+  //wchar_t *wText = new wchar_t[len];
+  //memset(wText,0,len);
+  //::MultiByteToWideChar( CP_ACP, NULL, tmpPath.c_str(), -1, wText, len );
 
-  SHCreateDirectoryEx( NULL, wText, NULL );
-  delete []wText;
+  SHCreateDirectoryEx( NULL, tmpPath.c_str(), NULL );
+  //delete []wText;
 #else
   strFile.append( "/.paraver/paraver" );
   mkdir( ( homedir + "/.paraver" ).c_str(), (mode_t)0700 );
@@ -1754,13 +1746,13 @@ bool ParaverConfig::writeDefaultConfig()
   strFile.append( "\\paraver\\paraver.xml" );
   string tmpPath( homedir + "\\paraver" );
 
-  int len = tmpPath.length() + 1;
-  wchar_t *wText = new wchar_t[len];
-  memset(wText,0,len);
-  ::MultiByteToWideChar( CP_ACP, NULL, tmpPath.c_str(), -1, wText, len );
+  //int len = tmpPath.length() + 1;
+  //wchar_t *wText = new wchar_t[len];
+  //memset(wText,0,len);
+  //::MultiByteToWideChar( CP_ACP, NULL, tmpPath.c_str(), -1, wText, len );
 
-  SHCreateDirectoryEx( NULL, wText, NULL );
-  delete []wText;
+  SHCreateDirectoryEx( NULL, tmpPath.c_str(), NULL );
+  //delete []wText;
 #else
   strFile.append( "/.paraver/paraver.xml" );
   mkdir( ( homedir + "/.paraver" ).c_str(), (mode_t)0700 );

@@ -2,11 +2,11 @@
 
 set -x
 
+case `uname` in Darwin*) glibtoolize --automake -c ;;
+  *) libtoolize --automake -c ;; esac
 aclocal -I m4
 autoheader
 autoconf
-case `uname` in Darwin*) glibtoolize --automake -c ;;
-  *) libtoolize --automake -c ;; esac
 automake -a -c
 
 if test `basename ${0}` = "bootstrap-and-dist" ; then

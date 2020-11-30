@@ -24,7 +24,7 @@
 
 #include <math.h>
 #include <iostream>
-#ifdef WIN32
+#ifdef _MSC_VER
 #include <hash_set>
 #else
 #include <ext/hash_set>
@@ -33,12 +33,12 @@
 #include "window.h"
 #include "paraverconfig.h"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #define lround floor
 #endif
 
 using namespace std;
-#ifdef WIN32
+#ifdef _MSC_VER
 using namespace stdext;
 #else
 using namespace __gnu_cxx;
@@ -267,7 +267,7 @@ const std::map<TSemanticValue, rgb>& CodeColor::getCustomPalette() const
   return customPalette;
 }
 
-#ifdef WIN32
+#ifdef _MSC_VER
 namespace stdext
 {
   template<> class hash_compare<rgb>
@@ -311,7 +311,7 @@ void CodeColor::expandColors()
 {
   unsigned int iterations = MAX_COLORS / colors.size() / 3;
   unsigned int numBaseColors = colors.size();
-#ifdef WIN32
+#ifdef _MSC_VER
   hash_set<rgb> insertedColors;
 #else
   hash_set<rgb, hashrgb, eqrgb> insertedColors;
@@ -330,7 +330,7 @@ void CodeColor::expandColors()
         break;
       rgb tmp = colors[ redBaseColor ];
       ++tmp.red;
-#ifdef WIN32
+#ifdef _MSC_VER
       pair<hash_set<rgb>::iterator, bool > result = insertedColors.insert( tmp );
 #else
       pair<hash_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
@@ -345,7 +345,7 @@ void CodeColor::expandColors()
         break;
       rgb tmp = colors[ greenBaseColor ];
       ++tmp.green;
-#ifdef WIN32
+#ifdef _MSC_VER
       pair<hash_set<rgb>::iterator, bool > result = insertedColors.insert( tmp );
 #else
       pair<hash_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
@@ -360,7 +360,7 @@ void CodeColor::expandColors()
         break;
       rgb tmp = colors[ blueBaseColor ];
       ++tmp.blue;
-#ifdef WIN32
+#ifdef _MSC_VER
       pair<hash_set<rgb>::iterator, bool > result = insertedColors.insert( tmp );
 #else
       pair<hash_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
