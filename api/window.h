@@ -34,6 +34,7 @@
 #include "zoomhistory.h"
 #include "selectionmanagement.h"
 #include "paraverlabels.h"
+#include "syncwindows.h"
 
 #ifdef _MSC_VER
 #include <hash_set>
@@ -554,7 +555,7 @@ class Window
       return std::pair<TObjectOrder, TObjectOrder>();
     }
 
-    virtual void addToSyncGroup( unsigned int whichGroup )
+    virtual void addToSyncGroup( TGroupId whichGroup )
     {}
     virtual void removeFromSync()
     {}
@@ -562,7 +563,7 @@ class Window
     {
       return false;
     }
-    virtual unsigned int getSyncGroup() const
+    virtual TGroupId getSyncGroup() const
     {
       return 0;
     }
@@ -1093,10 +1094,10 @@ class WindowProxy: public Window
     virtual std::pair<TObjectOrder, TObjectOrder> getPrevZoomSecondDimension() const;
     virtual std::pair<TObjectOrder, TObjectOrder> getNextZoomSecondDimension() const;
 
-    virtual void addToSyncGroup( unsigned int whichGroup );
+    virtual void addToSyncGroup( TGroupId whichGroup );
     virtual void removeFromSync();
     virtual bool isSync() const;
-    virtual unsigned int getSyncGroup() const;
+    virtual TGroupId getSyncGroup() const;
 
     virtual SelectionManagement< TObjectOrder, TWindowLevel > *getSelectedRows();
     virtual void setSelectedRows( TWindowLevel onLevel, std::vector< bool > &selected );
@@ -1388,7 +1389,7 @@ class WindowProxy: public Window
 
     // Synchronize
     bool sync;
-    unsigned int syncGroup;
+    TGroupId syncGroup;
 
     // Row selection
     SelectionManagement< TObjectOrder, TWindowLevel > selectedRow;

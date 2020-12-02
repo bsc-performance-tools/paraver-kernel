@@ -1206,7 +1206,7 @@ pair <TObjectOrder, TObjectOrder> HistogramProxy::getZoomSecondDimension() const
   return zoomHistory.getSecondDimension();
 }
 
-void HistogramProxy::addToSyncGroup( unsigned int whichGroup )
+void HistogramProxy::addToSyncGroup( TGroupId whichGroup )
 {
   SyncWindows::getInstance()->removeWindow( this, syncGroup );
   syncGroup = whichGroup;
@@ -1226,7 +1226,7 @@ bool HistogramProxy::isSync() const
   return sync;
 }
 
-unsigned int HistogramProxy::getSyncGroup() const
+TGroupId HistogramProxy::getSyncGroup() const
 {
   return syncGroup;
 }

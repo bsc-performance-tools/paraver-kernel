@@ -36,7 +36,6 @@
 #include "recordlist.h"
 #include "loadedwindows.h"
 #include "paraverconfig.h"
-#include "syncwindows.h"
 #include "selectionrowsutils.h"
 #include "progresscontroller.h"
 
@@ -1433,7 +1432,7 @@ pair<TObjectOrder, TObjectOrder> WindowProxy::getNextZoomSecondDimension() const
   return zoomHistory.getSecondDimension( NEXT_ZOOM );
 }
 
-void WindowProxy::addToSyncGroup( unsigned int whichGroup )
+void WindowProxy::addToSyncGroup( TGroupId whichGroup )
 {
   SyncWindows::getInstance()->removeWindow( this, syncGroup );
   syncGroup = whichGroup;
@@ -1453,7 +1452,7 @@ bool WindowProxy::isSync() const
   return sync;
 }
 
-unsigned int WindowProxy::getSyncGroup() const
+TGroupId WindowProxy::getSyncGroup() const
 {
   return syncGroup;
 }
