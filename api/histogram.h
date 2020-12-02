@@ -412,7 +412,7 @@ class Histogram
     }
 
     // Synchronize
-    virtual void addToSyncGroup( unsigned int whichGroup )
+    virtual void addToSyncGroup( TGroupId whichGroup )
     {}
     virtual void removeFromSync()
     {}
@@ -420,7 +420,7 @@ class Histogram
     {
       return false;
     }
-    virtual unsigned int getSyncGroup() const
+    virtual TGroupId getSyncGroup() const
     {
       return 0;
     }
@@ -786,10 +786,10 @@ class HistogramProxy : public Histogram
     virtual std::pair<TZoomInfo, TZoomInfo> getZoomFirstDimension() const;
     virtual std::pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const;
 
-    virtual void addToSyncGroup( unsigned int whichGroup );
+    virtual void addToSyncGroup( TGroupId whichGroup );
     virtual void removeFromSync();
     virtual bool isSync() const;
-    virtual unsigned int getSyncGroup() const;
+    virtual TGroupId getSyncGroup() const;
 
     virtual void setName( const std::string& whichName );
     virtual std::string getName() const;
@@ -949,7 +949,7 @@ class HistogramProxy : public Histogram
 
     // Synchronize
     bool sync;
-    unsigned int syncGroup;
+    TGroupId syncGroup;
 
     // Must store the associated proxies
     Window *controlWindow;

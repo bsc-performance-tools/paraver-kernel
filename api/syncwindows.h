@@ -28,6 +28,8 @@
 #include <map>
 #include "paraverkerneltypes.h"
 
+typedef unsigned int TGroupId;
+
 class Window;
 class Histogram;
 
@@ -37,31 +39,32 @@ class SyncWindows
     static SyncWindows *getInstance();
     ~SyncWindows();
 
-    bool addWindow( Window *whichWindow, unsigned int whichGroup = 0 );
-    bool addWindow( Histogram *whichWindow, unsigned int whichGroup = 0 );
-    void removeWindow( Window *whichWindow, unsigned int whichGroup = 0 );
-    void removeWindow( Histogram *whichWindow, unsigned int whichGroup = 0 );
-    void removeAll( unsigned int whichGroup = 0 );
+    bool addWindow( Window *whichWindow, TGroupId whichGroup = 0 );
+    bool addWindow( Histogram *whichWindow, TGroupId whichGroup = 0 );
+    void removeWindow( Window *whichWindow, TGroupId whichGroup = 0 );
+    void removeWindow( Histogram *whichWindow, TGroupId whichGroup = 0 );
+    void removeAll( TGroupId whichGroup = 0 );
 
-    unsigned int newGroup();
-    unsigned int getNumGroups() const;
-    void getGroups( std::vector<unsigned int>& groups ) const;
+    TGroupId newGroup();
+    TGroupId getNumGroups() const;
+    TGroupId getAvailableGroup();
+    void getGroups( std::vector< TGroupId >& groups ) const;
 
-    void broadcastTime( unsigned int whichGroup, Window *sendWindow, TTime beginTime, TTime endTime );
-    void broadcastTime( unsigned int whichGroup, Histogram *sendWindow, TTime beginTime, TTime endTime );
-    void getGroupTimes( unsigned int whichGroup, TTime& beginTime, TTime& endTime ) const;
+    void broadcastTime( TGroupId whichGroup, Window *sendWindow, TTime beginTime, TTime endTime );
+    void broadcastTime( TGroupId whichGroup, Histogram *sendWindow, TTime beginTime, TTime endTime );
+    void getGroupTimes( TGroupId whichGroup, TTime& beginTime, TTime& endTime ) const;
 
   private:
     SyncWindows();
 
     static SyncWindows *instance;
-    std::map<unsigned int, std::vector<Window *> > syncGroupsTimeline;
-    std::map<unsigned int, std::vector<Histogram *> > syncGroupsHistogram;
-    unsigned int lastNewGroup;
+    std::map<TGroupId, std::vector<Window *> > syncGroupsTimeline;
+    std::map<TGroupId, std::vector<Histogram *> > syncGroupsHistogram;
+    TGroupId lastNewGroup;
     bool removingAll;
 
-    void broadcastTimeTimelines( unsigned int whichGroup, Window *sendWindow, TTime beginTime, TTime endTime );
-    void broadcastTimeHistograms( unsigned int whichGroup, Histogram *sendWindow, TTime beginTime, TTime endTime );
+    void broadcastTimeTimelines( TGroupId whichGroup, Window *sendWindow, TTime beginTime, TTime endTime );
+    void broadcastTimeHistograms( TGroupId whichGroup, Histogram *sendWindow, TTime beginTime, TTime endTime );
 };
 
 #endif // SYNCWINDOWS_H_INCLUDED

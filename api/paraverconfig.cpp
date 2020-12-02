@@ -282,6 +282,8 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlExternalApplications.myTextEditors.push_back( "textedit" );
   xmlExternalApplications.myTextEditors.push_back( "Notepad++.exe" );
   xmlExternalApplications.myTextEditors.push_back( "wordpad.exe" );
+  xmlExternalApplications.myTextEditors.push_back( "notepad.exe" );
+  xmlExternalApplications.myTextEditors.push_back( "textedit" );
 
 #ifdef WIN32
   xmlExternalApplications.myPDFReaders.push_back( "start" );
@@ -299,6 +301,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlExternalApplications.myPDFReaders.push_back( "atril" ); 
   xmlExternalApplications.myPDFReaders.push_back( "Acrobat.exe" ); 
   xmlExternalApplications.myPDFReaders.push_back( "MicrosoftEdge.exe" );
+  xmlExternalApplications.myTextEditors.push_back( "safari" );
 
   loadMap();
 }

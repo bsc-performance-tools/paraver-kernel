@@ -64,8 +64,8 @@ bool multipleLabelValues = false;
 EventTypeSymbolPicker eventTypeSymbolPicker;
 EventValueSymbolPicker eventValueSymbolPicker;
 
-map<unsigned int, unsigned int> syncRealGroup;
-unsigned int lastSyncGroupUsed;
+map< TGroupId, TGroupId > syncRealGroup; // Group from CFG -> Group to app
+TGroupId lastSyncGroupUsed;
 
 // Drawmodes codification
 map<string, DrawModeMethod> drawModeCodes;
@@ -3719,7 +3719,7 @@ bool WindowSynchronize::parseLine( KernelConnection *whichKernel, istringstream&
                                    vector<Histogram *>& histograms )
 {
   string strGroupID;
-  unsigned int groupID;
+  TGroupId groupID;
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
@@ -3729,10 +3729,10 @@ bool WindowSynchronize::parseLine( KernelConnection *whichKernel, istringstream&
   if ( !( tmpStream >> groupID ) )
     return false;
 
-  unsigned int realGroupID;
+  TGroupId realGroupID;
   if( syncRealGroup.find( groupID ) == syncRealGroup.end() )
   {
-    realGroupID = SyncWindows::getInstance()->newGroup();
+    realGroupID = SyncWindows::getInstance()->getAvailableGroup();
     syncRealGroup[ groupID ] = realGroupID;
   }
   else
@@ -3748,7 +3748,7 @@ void WindowSynchronize::printLine( ofstream& cfgFile,
 {
   if( (*it)->isSync() )
   {
-    unsigned int realGroupID;
+    TGroupId realGroupID;
     if( syncRealGroup.find( (*it)->getSyncGroup() ) == syncRealGroup.end() )
     {
       realGroupID = ++lastSyncGroupUsed;
@@ -5287,7 +5287,7 @@ bool Analyzer2DSynchronize::parseLine( KernelConnection *whichKernel, istringstr
                                        vector<Histogram *>& histograms )
 {
   string strGroupID;
-  unsigned int groupID;
+  TGroupId groupID;
 
   if ( windows[ windows.size() - 1 ] == NULL )
     return false;
@@ -5299,10 +5299,10 @@ bool Analyzer2DSynchronize::parseLine( KernelConnection *whichKernel, istringstr
   if ( !( tmpStream >> groupID ) )
     return false;
 
-  unsigned int realGroupID;
+  TGroupId realGroupID;
   if( syncRealGroup.find( groupID ) == syncRealGroup.end() )
   {
-    realGroupID = SyncWindows::getInstance()->newGroup();
+    realGroupID = SyncWindows::getInstance()->getAvailableGroup();
     syncRealGroup[ groupID ] = realGroupID;
   }
   else
@@ -5318,7 +5318,7 @@ void Analyzer2DSynchronize::printLine( ofstream& cfgFile,
 {
   if( (*it)->isSync() )
   {
-    unsigned int realGroupID;
+    TGroupId realGroupID;
     if( syncRealGroup.find( (*it)->getSyncGroup() ) == syncRealGroup.end() )
     {
       realGroupID = ++lastSyncGroupUsed;
