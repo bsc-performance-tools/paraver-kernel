@@ -3732,7 +3732,7 @@ bool WindowSynchronize::parseLine( KernelConnection *whichKernel, istringstream&
   TGroupId realGroupID;
   if( syncRealGroup.find( groupID ) == syncRealGroup.end() )
   {
-    realGroupID = SyncWindows::getInstance()->getAvailableGroup();
+    realGroupID = SyncWindows::getInstance()->newGroup();
     syncRealGroup[ groupID ] = realGroupID;
   }
   else
@@ -5302,7 +5302,7 @@ bool Analyzer2DSynchronize::parseLine( KernelConnection *whichKernel, istringstr
   TGroupId realGroupID;
   if( syncRealGroup.find( groupID ) == syncRealGroup.end() )
   {
-    realGroupID = SyncWindows::getInstance()->getAvailableGroup();
+    realGroupID = SyncWindows::getInstance()->newGroup();
     syncRealGroup[ groupID ] = realGroupID;
   }
   else

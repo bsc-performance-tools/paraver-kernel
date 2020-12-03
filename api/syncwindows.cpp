@@ -158,43 +158,29 @@ void SyncWindows::removeAll( TGroupId whichGroup )
 
 TGroupId SyncWindows::newGroup()
 {
-  int groupID = 0;
-  map< TGroupId, std::vector< Window *> >::iterator it;
-  for ( it = syncGroupsTimeline.begin() ; it != syncGroupsTimeline.end() ; ++it )
+  for( size_t i = 0; i <= lastNewGroup; ++i )
   {
-    if ( groupID < ( *it ).first )
+    map< TGroupId, std::vector< Window *> >::iterator it = syncGroupsTimeline.find( i );
+    if( it == syncGroupsTimeline.end() )
     {
-      it = --it;
-      lastNewGroup = ( *it ).first + 1;
-      syncGroupsTimeline[ lastNewGroup ]  = vector<Window *>();
-      syncGroupsHistogram[ lastNewGroup ] = vector<Histogram *>();
-      return lastNewGroup;
+      syncGroupsTimeline[ i ]  = vector<Window *>();
+      syncGroupsHistogram[ i ] = vector<Histogram *>();
+      return i;
     }
-    ++groupID;
+    else if ( it->second.size() == 0 && syncGroupsHistogram[ it->first ].size() == 0 )
+      return i;
   }
-  if ( groupID == getNumGroups() )
-  {
-    ++lastNewGroup;
-    syncGroupsTimeline[ lastNewGroup ]  = vector<Window *>();
-    syncGroupsHistogram[ lastNewGroup ] = vector<Histogram *>();
-    return lastNewGroup;
-  } 
-  return getNumGroups() + 1;
+
+  ++lastNewGroup;
+  syncGroupsTimeline[ lastNewGroup ]  = vector<Window *>();
+  syncGroupsHistogram[ lastNewGroup ] = vector<Histogram *>();
+
+  return lastNewGroup;
 }
 
 TGroupId SyncWindows::getNumGroups() const
 {
   return syncGroupsTimeline.size();
-}
-
-TGroupId SyncWindows::getAvailableGroup()
-{ 
-  for( size_t i = 0; i < syncGroupsTimeline.size(); ++i )
-  {
-    if ( syncGroupsTimeline[ i ].size() == 0 && syncGroupsHistogram[ i ].size() == 0 )
-      return i;
-  }
-  return newGroup();
 }
 
 void SyncWindows::getGroups( vector< TGroupId >& groups ) const

@@ -47,7 +47,6 @@ class SyncWindows
 
     TGroupId newGroup();
     TGroupId getNumGroups() const;
-    TGroupId getAvailableGroup();
     void getGroups( std::vector< TGroupId >& groups ) const;
 
     void broadcastTime( TGroupId whichGroup, Window *sendWindow, TTime beginTime, TTime endTime );
