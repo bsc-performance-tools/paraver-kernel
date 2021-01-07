@@ -43,7 +43,8 @@ class SyncWindows
     bool addWindow( Histogram *whichWindow, TGroupId whichGroup = 0 );
     void removeWindow( Window *whichWindow, TGroupId whichGroup = 0 );
     void removeWindow( Histogram *whichWindow, TGroupId whichGroup = 0 );
-    void removeAll( TGroupId whichGroup = 0 );
+    void removeAllWindows( TGroupId whichGroup = 0 );
+    void removeAllGroups();
 
     TGroupId newGroup();
     TGroupId getNumGroups() const;

@@ -130,7 +130,7 @@ void SyncWindows::removeWindow( Histogram *whichWindow, TGroupId whichGroup )
   }
 }
 
-void SyncWindows::removeAll( TGroupId whichGroup )
+void SyncWindows::removeAllWindows( TGroupId whichGroup )
 {
   if( syncGroupsTimeline.find( whichGroup ) == syncGroupsTimeline.end() )
     return;
@@ -154,6 +154,13 @@ void SyncWindows::removeAll( TGroupId whichGroup )
     syncGroupsHistogram.erase( whichGroup );
 
   removingAll = false;
+}
+
+void SyncWindows::removeAllGroups()
+{
+  for( std::map<TGroupId, std::vector<Window *> >::iterator it = syncGroupsTimeline.begin(); 
+       it != syncGroupsTimeline.end(); ++it )
+    removeAllWindows( it->first );
 }
 
 TGroupId SyncWindows::newGroup()
