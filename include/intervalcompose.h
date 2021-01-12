@@ -87,7 +87,7 @@ class IntervalCompose: public IntervalHigh
     SemanticCompose *function;
     TCreateList createList;
 
-    virtual void setChilds();
+    virtual void setChildren();
     virtual TWindowLevel getWindowLevel() const;
     virtual Interval *getWindowInterval( TWindowLevel whichLevel,
                                          TObjectOrder whichOrder );

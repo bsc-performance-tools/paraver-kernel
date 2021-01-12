@@ -69,7 +69,7 @@ class IntervalNotThread: public IntervalHigh
     SemanticNotThread *function;
     TCreateList createList;
 
-    virtual void setChilds()
+    virtual void setChildren()
     {
       if ( level == WORKLOAD )
       {
@@ -143,7 +143,7 @@ class IntervalNotThread: public IntervalHigh
 
   private:
     SemanticHighInfo info;
-    std::multimap<TRecordTime,TObjectOrder> orderedChilds;
+    std::multimap<TRecordTime,TObjectOrder> orderedChildren;
 
 };
 

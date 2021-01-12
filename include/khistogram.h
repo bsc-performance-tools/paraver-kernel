@@ -72,7 +72,7 @@ class RowsTranslator
 
     TObjectOrder globalTranslate( PRV_UINT16 winIndex,
                                   TObjectOrder rowIndex ) const;
-    void getRowChilds( PRV_UINT16 winIndex,
+    void getRowChildren( PRV_UINT16 winIndex,
                        TObjectOrder rowIndex,
                        TObjectOrder& iniRow,
                        TObjectOrder& endRow ) const;
@@ -86,7 +86,7 @@ class RowsTranslator
     struct RowChildInfo
     {
       bool oneToOne;
-      std::vector< std::pair< TObjectOrder, TObjectOrder > > rowChilds;
+      std::vector< std::pair< TObjectOrder, TObjectOrder > > rowChildren;
       TObjectOrder numRows;
     };
 

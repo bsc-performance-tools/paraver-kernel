@@ -66,7 +66,7 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
     joinBursts = false;
 
   if( !notWindowInits )
-    setChilds();
+    setChildren();
 
   if ( function->getInitFromBegin() )
     myInitTime = 0.0;
@@ -266,7 +266,7 @@ KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc 
 }
 
 
-void IntervalCompose::setChilds()
+void IntervalCompose::setChildren()
 {
   if ( level == TOPCOMPOSE1 )
   {

@@ -39,7 +39,7 @@ KRecordList *IntervalControlDerived::init( TRecordTime initialTime, TCreateList 
 
   function = ( SemanticDerived * ) window->getSemanticFunction( level );
 
-  setChilds();
+  setChildren();
 
   if ( begin != NULL )
   {
@@ -236,7 +236,7 @@ KTrace *IntervalControlDerived::getWindowTrace() const
   return (KTrace*)window->getTrace();
 }
 
-void IntervalControlDerived::setChilds()
+void IntervalControlDerived::setChildren()
 {
   KWindow *window1;
   KWindow *window2;

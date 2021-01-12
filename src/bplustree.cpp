@@ -740,7 +740,7 @@ bool BPlusInternal::partialDelete( RecordLeaf *limitKey,
     if ( deletedAll )
       ++removed; // Count the last child.
 
-    // Rearrange keys and childs, copying at the beginning of the node.
+    // Rearrange keys and children, copying at the beginning of the node.
     // It could be improved implementing circular vector.
     for ( ii = removed; ii < used - 1; ++ii )
     {
@@ -776,7 +776,7 @@ bool BPlusInternal::partialDelete( RecordLeaf *limitKey,
           child[ 0 ] = NULL;
           delete this;
         }
-        deletedAll = false; // because we still have to check the childs
+        deletedAll = false; // because we still have to check the children
         break;
       default:  // In fact, we should maintain the conditions about node filling
         // percent. Still not implemented.

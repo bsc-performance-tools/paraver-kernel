@@ -35,7 +35,7 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
   info.values.clear();
   info.callingInterval = this;
   info.lastChanged = 0;
-  orderedChilds.clear();
+  orderedChildren.clear();
 
   createList = create;
   currentValue = 0.0;
@@ -45,7 +45,7 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
 
   function = ( SemanticNotThread * ) window->getSemanticFunction( level );
 
-  setChilds();
+  setChildren();
   if ( begin != NULL )
   {
     delete begin;
@@ -86,7 +86,7 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
 
     info.values.push_back( childIntervals[ i ]->getValue() );
     pair<TRecordTime,TObjectOrder> tmpChild( childIntervals[ i ]->getEnd()->getTime(), i );
-    orderedChilds.insert( tmpChild );
+    orderedChildren.insert( tmpChild );
   }
   currentValue = function->execute( &info );
 
@@ -113,7 +113,7 @@ KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCal
   }
 
   TObjectOrder i = 0;
-  std::multimap<TRecordTime,TObjectOrder>::iterator itChild = orderedChilds.begin();
+  std::multimap<TRecordTime,TObjectOrder>::iterator itChild = orderedChildren.begin();
   while( itChild->first == begin->getTime() )
   {
     if ( childIntervals[ itChild->second ]->getEnd()->getTime() <= begin->getTime() )
@@ -124,9 +124,9 @@ KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCal
 
     info.values[ itChild->second ] = childIntervals[ itChild->second ]->getValue();
     pair<TRecordTime,TObjectOrder> tmpChild( childIntervals[ itChild->second ]->getEnd()->getTime(), itChild->second );
-    orderedChilds.erase( itChild );
-    orderedChilds.insert( tmpChild );
-    itChild = orderedChilds.begin();
+    orderedChildren.erase( itChild );
+    orderedChildren.insert( tmpChild );
+    itChild = orderedChildren.begin();
 
     ++i;
     if( i >= childIntervals.size() ) break;
@@ -157,7 +157,7 @@ KRecordList *IntervalNotThread::calcPrev( KRecordList *displayList, bool initCal
   }
 
   TObjectOrder i = 0;
-  std::multimap<TRecordTime,TObjectOrder>::iterator itChild = orderedChilds.begin();
+  std::multimap<TRecordTime,TObjectOrder>::iterator itChild = orderedChildren.begin();
   while( itChild->first == begin->getTime() )
   {
     if ( childIntervals[ itChild->second ]->getBegin()->getTime() >= end->getTime() )
@@ -165,9 +165,9 @@ KRecordList *IntervalNotThread::calcPrev( KRecordList *displayList, bool initCal
 
     info.values[ itChild->second ] = childIntervals[ itChild->second ]->getValue();
     pair<TRecordTime,TObjectOrder> tmpChild( childIntervals[ itChild->second ]->getEnd()->getTime(), itChild->second );
-    orderedChilds.erase( itChild );
-    orderedChilds.insert( tmpChild );
-    itChild = orderedChilds.begin();
+    orderedChildren.erase( itChild );
+    orderedChildren.insert( tmpChild );
+    itChild = orderedChildren.begin();
 
     ++i;
     if( i >= childIntervals.size() ) break;

@@ -90,7 +90,7 @@ class IntervalCPU: public IntervalHigh
     virtual MemoryTrace::iterator *getPrevRecord( MemoryTrace::iterator *it,
         KRecordList *displayList );
 
-    virtual void setChilds() {}
+    virtual void setChildren() {}
     virtual KTrace *getWindowTrace() const;
     virtual TWindowLevel getWindowLevel() const;
     virtual Interval *getWindowInterval( TWindowLevel whichLevel,

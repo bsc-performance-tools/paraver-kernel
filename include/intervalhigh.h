@@ -50,7 +50,7 @@ class IntervalHigh: public Interval
     TWindowLevel level;
     TWindowLevel lastLevel;
 
-    virtual void setChilds() = 0;
+    virtual void setChildren() = 0;
 
     virtual TWindowLevel getWindowLevel() const = 0;
     virtual Interval *getWindowInterval( TWindowLevel whichLevel,

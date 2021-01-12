@@ -143,7 +143,7 @@ RowsTranslator::RowsTranslator( const RowsTranslator& source )
   {
     childInfo.push_back( RowChildInfo() );
     childInfo[ii].oneToOne = source.childInfo[ii].oneToOne;
-    childInfo[ii].rowChilds = vector< pair< TObjectOrder, TObjectOrder > > ( source.childInfo[ii].rowChilds );
+    childInfo[ii].rowChildren = vector< pair< TObjectOrder, TObjectOrder > > ( source.childInfo[ii].rowChildren );
     childInfo[ii].numRows = source.childInfo[ii].numRows;
   }
 }
@@ -170,7 +170,7 @@ RowsTranslator::RowsTranslator( vector<KWindow *>& kwindows )
         range.second =  auxTrace->getLast( iRow,
                                            kwindows[ii]->getLevel(),
                                            kwindows[ii+1]->getLevel() );
-        childInfo[ii].rowChilds.push_back( range );
+        childInfo[ii].rowChildren.push_back( range );
       }
     }
   }
@@ -189,7 +189,7 @@ inline TObjectOrder RowsTranslator::globalTranslate( PRV_UINT16 winIndex,
 }
 
 
-inline void RowsTranslator::getRowChilds( PRV_UINT16 winIndex,
+inline void RowsTranslator::getRowChildren( PRV_UINT16 winIndex,
     TObjectOrder rowIndex,
     TObjectOrder& iniRow,
     TObjectOrder& endRow ) const
@@ -201,8 +201,8 @@ inline void RowsTranslator::getRowChilds( PRV_UINT16 winIndex,
   }
   else
   {
-    iniRow = childInfo[ winIndex ].rowChilds[ rowIndex ].first;
-    endRow = childInfo[ winIndex ].rowChilds[ rowIndex ].second;
+    iniRow = childInfo[ winIndex ].rowChildren[ rowIndex ].first;
+    endRow = childInfo[ winIndex ].rowChildren[ rowIndex ].second;
   }
 }
 
@@ -1606,7 +1606,7 @@ void KHistogram::calculate( TObjectOrder iRow,
     childToTime = ( toTime > windowCloneManager( currentWindow )->getEndTime( iRow ) ) ?
                   windowCloneManager( currentWindow )->getEndTime( iRow ) :
                   toTime;
-    rowsTranslator->getRowChilds( winIndex, iRow, childFromRow, childToRow );
+    rowsTranslator->getRowChildren( winIndex, iRow, childFromRow, childToRow );
 
     vector<TObjectOrder> *dummy = NULL;
     recursiveExecution( childFromTime, childToTime, childFromRow, childToRow,

@@ -70,7 +70,7 @@ class IntervalDerived: public IntervalHigh
     SemanticDerived *function;
     TCreateList createList;
 
-    virtual void setChilds();
+    virtual void setChildren();
 
     virtual KTrace *getWindowTrace() const;
     virtual TWindowLevel getWindowLevel() const;
