@@ -124,6 +124,8 @@ RowLabels::RowLabels( const string& filename )
     while ( !rowFile.eof() && i < size )
     {
       getline( rowFile, strLine );
+      if( strLine[ strLine.length() - 1 ] == '\r' )
+        strLine.resize( strLine.length() - 1 );
       tmpvector->push_back( strLine );
 
       currentLength = strLine.length();
