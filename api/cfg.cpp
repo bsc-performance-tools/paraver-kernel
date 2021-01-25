@@ -708,7 +708,8 @@ void CFGLoader::pushbackAllWindows( const vector<Window *>& selectedWindows,
 bool CFGLoader::saveCFG( const string& filename,
                          const SaveOptions& options,
                          const vector<Window *>& windows,
-                         const vector<Histogram *>& histograms )
+                         const vector<Histogram *>& histograms,
+                         const vector<CFGS4DLinkedPropertiesManager>& linkedProperties )
 {
   vector<Window *> allWindows;
 

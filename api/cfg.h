@@ -30,6 +30,7 @@
 #include <sstream>
 #include <string>
 #include "paraverkerneltypes.h"
+#include "cfgs4d.h"
 
 class KernelConnection;
 class Window;
@@ -116,7 +117,8 @@ class CFGLoader
     static bool saveCFG( const std::string& filename,
                          const SaveOptions& options,
                          const std::vector<Window *>& windows,
-                         const std::vector<Histogram *>& histograms );
+                         const std::vector<Histogram *>& histograms,
+                         const std::vector<CFGS4DLinkedPropertiesManager>& linkedProperties );
     static int findWindow( const Window *whichWindow,
                            const std::vector<Window *>& allWindows );
     static int findWindowBackwards( const Window *whichWindow,
