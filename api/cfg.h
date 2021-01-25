@@ -2392,7 +2392,7 @@ class TagLinkCFG4D: public TagFunction
 
   private:
     template<typename T>
-    static PRV_UINT32 getWindowIndex( const T *whichWindow, const vector<T *>& findOnVector );
+    static PRV_UINT32 getWindowIndex( const T *whichWindow, const std::vector<T *>& findOnVector );
 };
 
 

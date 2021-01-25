@@ -5680,7 +5680,7 @@ void TagLinkCFG4D::printLinkList( ofstream& cfgFile,
       {
         if ( itWindow != tmpWindows.begin() )
           cfgFile << ",";
-        cfgFile << (int)getWindowIndex( *itWindow, windows ) + 1;
+        cfgFile << TagLinkCFG4D::getWindowIndex( *itWindow, windows ) + 1;
       }
       cfgFile << "|";
 
@@ -5690,7 +5690,7 @@ void TagLinkCFG4D::printLinkList( ofstream& cfgFile,
       {
         if ( itHisto != tmpHistograms.begin() )
           cfgFile << ",";
-        cfgFile << (int)getWindowIndex( *itHisto, histograms ) + 1;
+        cfgFile << TagLinkCFG4D::getWindowIndex( *itHisto, histograms ) + 1;
       }
 
       cfgFile << endl;
