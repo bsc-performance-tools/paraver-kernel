@@ -221,6 +221,7 @@
 #define OLDCFG_VAL_AN2D_ACCUM_SEMANTIC "Semantic"
 
 #define CFG_TAG_ALIAS_CFG4D "cfg4d"
+#define CFG_TAG_LINK_CFG4D "cfg4dlink"
 #define CFG_TAG_STATISTIC_ALIAS_CFG4D "cfg4dstatistic"
 #define CFG_TAG_PARAM_ALIAS_CFG4D "cfg4dparam"
 #define CFG_TAG_CFG4D_ENABLED "CFG4D_ENABLED"

@@ -879,6 +879,8 @@ bool CFGLoader::saveCFG( const string& filename,
     cfgFile << endl;
   }
 
+  TagLinkCFG4D::printLinkList( cfgFile, allWindows, histograms, linkedProperties );
+
   cfgFile.close();
 
   return true;
@@ -5609,6 +5611,91 @@ void TagAliasCFG4D::printAliasList( ofstream& cfgFile,
     cfgFile << CFG_TAG_ALIAS_CFG4D << " ";
     cfgFile << item->first << "|" << item->second << endl;
   }
+}
+
+
+
+string TagLinkCFG4D::tagCFG = CFG_TAG_LINK_CFG4D;
+
+bool TagLinkCFG4D::parseLine( KernelConnection *whichKernel,
+                              istringstream& line,
+                              Trace *whichTrace,
+                              vector<Window *>& windows,
+                              vector<Histogram *>& histograms )
+{
+  string currentCFG4DTag;
+  string currentCFG4DAlias;
+/*
+  // TODO read window/histo list
+  getline( line, currentCFG4DTag, '|' );
+  getline( line, currentCFG4DAlias );
+
+
+  for( vector<Window *>::iterator it = windows.begin(); it != windows.end(); ++it )
+  {
+    (*it)->setCFG4DAlias( currentCFG4DTag, currentCFG4DAlias );
+  }
+  for( vector<Histogram *>::iterator it = histograms.begin(); it != histograms.end(); ++it )
+  {
+    (*it)->setCFG4DAlias( currentCFG4DTag, currentCFG4DAlias );
+  }
+  
+*/
+  return true;
+}
+
+template<typename T>
+PRV_UINT32 TagLinkCFG4D::getWindowIndex( const T *whichWindow, const vector<T *>& findOnVector )
+{
+  PRV_UINT32 index = 0;
+  for( typename vector<T *>::const_iterator it = findOnVector.begin(); it != findOnVector.end(); ++it )
+  {
+    if( *it == whichWindow )
+      break;
+    ++index;
+  }
+
+  return index;
+}
+
+void TagLinkCFG4D::printLinkList( ofstream& cfgFile, 
+                                  const vector<Window *>& windows,
+                                  const vector<Histogram *>& histograms,
+                                  const vector<CFGS4DLinkedPropertiesManager>& linkedProperties )
+{
+  PRV_UINT32 indexLink = 0;
+  for( vector<CFGS4DLinkedPropertiesManager>::const_iterator itLinks = linkedProperties.begin();
+       itLinks != linkedProperties.end(); ++itLinks )
+  {
+    ++indexLink;
+    set< std::string > linksNames;
+    itLinks->getLinksName( linksNames );
+    for( set< std::string >::iterator itNames = linksNames.begin(); itNames != linksNames.end(); ++itNames )
+    {
+      cfgFile << CFG_TAG_LINK_CFG4D << " " << indexLink << "|" << *itNames << "|" << itLinks->getCustomName( *itNames ) << "|";
+      
+      TWindowsSet tmpWindows;
+      itLinks->getLinks( *itNames, tmpWindows );
+      for( TWindowsSet::iterator itWindow = tmpWindows.begin(); itWindow != tmpWindows.end(); ++itWindow )
+      {
+        if ( itWindow != tmpWindows.begin() )
+          cfgFile << ",";
+        cfgFile << (int)getWindowIndex( *itWindow, windows ) + 1;
+      }
+      cfgFile << "|";
+
+      THistogramsSet tmpHistograms;
+      itLinks->getLinks( *itNames, tmpHistograms );
+      for( THistogramsSet::iterator itHisto = tmpHistograms.begin(); itHisto != tmpHistograms.end(); ++itHisto )
+      {
+        if ( itHisto != tmpHistograms.begin() )
+          cfgFile << ",";
+        cfgFile << (int)getWindowIndex( *itHisto, histograms ) + 1;
+      }
+
+      cfgFile << endl;
+    }
+  }  
 }
 
 
