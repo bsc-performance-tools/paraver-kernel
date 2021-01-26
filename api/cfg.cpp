@@ -1045,6 +1045,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN3D_FIXEDVALUE]           = new Analyzer3DFixedValue();
 
   cfgTagFunctions[ CFG_TAG_ALIAS_CFG4D ]                = new TagAliasCFG4D();
+  cfgTagFunctions[ CFG_TAG_LINK_CFG4D ]                 = new TagLinkCFG4D();
   cfgTagFunctions[ CFG_TAG_STATISTIC_ALIAS_CFG4D ]      = new TagAliasStatisticCFG4D();
   cfgTagFunctions[ CFG_TAG_PARAM_ALIAS_CFG4D ]          = new TagAliasParamCFG4D();
 }
@@ -5572,7 +5573,7 @@ bool TagAliasCFG4D::parseLine( KernelConnection *whichKernel,
       return false;
 
     // It has been created
-    windows[ windows.size() -1 ]->setCFG4DAlias( currentCFG4DTag, currentCFG4DAlias );
+    windows[ windows.size() - 1 ]->setCFG4DAlias( currentCFG4DTag, currentCFG4DAlias );
   }
   else
   {
@@ -5623,24 +5624,52 @@ bool TagLinkCFG4D::parseLine( KernelConnection *whichKernel,
                               vector<Window *>& windows,
                               vector<Histogram *>& histograms )
 {
-  string currentCFG4DTag;
-  string currentCFG4DAlias;
-/*
-  // TODO read window/histo list
-  getline( line, currentCFG4DTag, '|' );
-  getline( line, currentCFG4DAlias );
+  PRV_UINT32 indexLink;
+  string originalName;
+  string customName;
+  string tmpString;
+  stringstream tmpStream;
+  vector<PRV_UINT32> timelinesIndex;
+  vector<PRV_UINT32> histogramsIndex;
 
+  getline( line, tmpString, '|' );
+  tmpStream.str( tmpString );
+  if( !( tmpStream >> indexLink ) )
+    return false;
 
-  for( vector<Window *>::iterator it = windows.begin(); it != windows.end(); ++it )
+  getline( line, originalName, '|' );
+  getline( line, customName, '|' );
+
+  // Timelines index parsing
+  getline( line, tmpString, '|' );
+  tmpStream.str( tmpString );
+  PRV_UINT32 indexWindow;
+  string tmpStringWindow;
+  stringstream tmpStreamWindow;
+  while ( !tmpStream.eof() )
   {
-    (*it)->setCFG4DAlias( currentCFG4DTag, currentCFG4DAlias );
+    getline( tmpStream, tmpStringWindow, ',' );
+    tmpStreamWindow.str( tmpStringWindow );
+    if( !( tmpStreamWindow >> indexWindow ) )
+      return false;
+    timelinesIndex.push_back( indexWindow );
   }
-  for( vector<Histogram *>::iterator it = histograms.begin(); it != histograms.end(); ++it )
+
+  // Histograms index parsing
+  getline( line, tmpString );
+  tmpStream.str( tmpString );
+  while ( !tmpStream.eof() )
   {
-    (*it)->setCFG4DAlias( currentCFG4DTag, currentCFG4DAlias );
+    getline( tmpStream, tmpStringWindow, ',' );
+    tmpStreamWindow.str( tmpStringWindow );
+    if( !( tmpStreamWindow >> indexWindow ) )
+      return false;
+    histogramsIndex.push_back( indexWindow );
   }
+
+  // Insert link information into CFG4dGlobalManager
   
-*/
+
   return true;
 }
 
