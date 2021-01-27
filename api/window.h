@@ -35,6 +35,7 @@
 #include "selectionmanagement.h"
 #include "paraverlabels.h"
 #include "syncwindows.h"
+#include "cfgs4d.h"
 
 #ifdef _MSC_VER
 #include <hash_set>
@@ -737,6 +738,9 @@ class Window
       return std::vector<Window::TParamAliasKey >();
     }
 
+    virtual void setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichIndex )
+    {}
+
 #ifdef _MSC_VER
     virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
                                           std::vector< bool >& selected,
@@ -1173,6 +1177,8 @@ class WindowProxy: public Window
                                                 const std::string &semanticLevel,
                                                 const std::string &function,
                                                 const PRV_UINT32 &numParameter ) const;
+    virtual void setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichIndex );
+    //virtual void getInsertLink( std::string whichName, TCFGS4DIndexLink whichIndex );
 
 
 #ifdef _MSC_VER
@@ -1402,6 +1408,7 @@ class WindowProxy: public Window
     bool CFG4DMode;
     std::map< std::string, std::string > propertiesAliasCFG4D;
     TParamAlias paramAliasCFG4D;
+    std::map< std::string, TCFGS4DIndexLink > indexLinkFromPropName;
 
     // For Clone
     WindowProxy();

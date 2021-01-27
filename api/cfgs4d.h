@@ -27,9 +27,13 @@
 #include <string>
 #include <map>
 #include <set>
-#include "window.h"
-#include "histogram.h"
+//#include "window.h"
+//#include "histogram.h"
 
+typedef PRV_UINT32 TCFGS4DIndexLink;
+
+class Window;
+class Histogram;
 
 struct lessWinCompare
 {
@@ -118,18 +122,24 @@ class CFGS4DLinkedPropertiesManager
 class CFGS4DGlobalManager
 {
   public:
-    CFGS4DGlobalManager *getInstance();
+    static CFGS4DGlobalManager *getInstance();
 
     ~CFGS4DGlobalManager()
     {}
 
+    TCFGS4DIndexLink newLinkManager(); 
+    void setCustomName( TCFGS4DIndexLink index, std::string originalName, std::string customName );
+    void insertLink( TCFGS4DIndexLink index, std::string originalName, Window *whichWindow );
+    void insertLink( TCFGS4DIndexLink index, std::string originalName, Histogram *whichHistogram );
+
   private:
     static CFGS4DGlobalManager *instance;
     
-    std::map< PRV_UINT32, CFGS4DLinkedPropertiesManager > cfgsLinkedProperties;
+    std::map< TCFGS4DIndexLink, CFGS4DLinkedPropertiesManager > cfgsLinkedProperties;
     
-    CFGS4DGlobalManager()
-    {}
+    TCFGS4DIndexLink linkCounter;
+
+    CFGS4DGlobalManager();
 };
 
 #endif // CFGS4D_H_INCLUDED

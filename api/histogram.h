@@ -32,6 +32,7 @@
 #include "drawmode.h"
 #include "zoomhistory.h"
 #include "paraverlabels.h"
+#include "cfgs4d.h"
 
 #ifdef WIN32
 #undef max
@@ -575,6 +576,9 @@ class Histogram
     {
       return std::vector< std::string >();
     }
+    
+    virtual void setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichLink )
+    {}
 
     virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement()
     {
@@ -883,6 +887,7 @@ class HistogramProxy : public Histogram
     virtual const std::map< std::string, std::string > getCFG4DStatisticsAliasList() const;
 
     virtual const std::vector< std::string > getCFG4DFullTagList();
+    virtual void setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichLink );
 
     virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement();
     virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel );
@@ -973,6 +978,7 @@ class HistogramProxy : public Histogram
     bool CFG4DMode;
     std::map< std::string, std::string > propertiesAliasCFG4D;
     std::map< std::string, std::string > statisticsAliasCFG4D;
+    std::map< std::string, TCFGS4DIndexLink > indexLinkFromPropName;
 
     //Selection of rows
     SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;

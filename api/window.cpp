@@ -2012,9 +2012,15 @@ vector< Window::TParamAliasKey > WindowProxy::getCFG4DParamKeysBySemanticLevel( 
     }
   }
 
-
   return retKeys;
 }
+
+
+void WindowProxy::setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichIndex )
+{
+  indexLinkFromPropName[ whichName ] = whichIndex;
+}
+
 
 #ifdef _MSC_VER
 void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,

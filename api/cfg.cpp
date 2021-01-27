@@ -64,6 +64,11 @@ bool multipleLabelValues = false;
 EventTypeSymbolPicker eventTypeSymbolPicker;
 EventValueSymbolPicker eventValueSymbolPicker;
 
+
+// CFGS4D Link data
+PRV_UINT32 lastCFGLinkIndex;
+TCFGS4DIndexLink lastGlobalLinkIndex;
+
 map< TGroupId, TGroupId > syncRealGroup; // Group from CFG -> Group to app
 TGroupId lastSyncGroupUsed;
 
@@ -475,6 +480,9 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   someEventsExist = false;
   someEventsNotExist = false;
   multipleLabelValues = false;
+
+  lastCFGLinkIndex = 0;
+  lastGlobalLinkIndex = 0;
 
   ifstream cfgFile( filename.c_str() );
   if ( !cfgFile )
@@ -5668,7 +5676,24 @@ bool TagLinkCFG4D::parseLine( KernelConnection *whichKernel,
   }
 
   // Insert link information into CFG4dGlobalManager
+  if ( lastCFGLinkIndex != indexLink )
+  {
+    lastCFGLinkIndex = indexLink;
+    lastGlobalLinkIndex = CFGS4DGlobalManager::getInstance()->newLinkManager();
+  }
+  CFGS4DGlobalManager::getInstance()->setCustomName( lastGlobalLinkIndex, originalName, customName );
   
+  for ( vector< PRV_UINT32 >::iterator it = timelinesIndex.begin(); it != timelinesIndex.end() ; ++it )
+  {
+    CFGS4DGlobalManager::getInstance()->insertLink( lastGlobalLinkIndex, originalName, windows[ *it ] );
+    windows[ *it ]->setCFGS4DIndexLink( originalName, lastGlobalLinkIndex );
+  }
+  
+  for ( vector< PRV_UINT32 >::iterator it = histogramsIndex.begin(); it != histogramsIndex.end() ; ++it )
+  {
+    CFGS4DGlobalManager::getInstance()->insertLink( lastGlobalLinkIndex, originalName, histograms[ *it ] );
+    histograms[ *it ]->setCFGS4DIndexLink( originalName, lastGlobalLinkIndex );
+  }
 
   return true;
 }
