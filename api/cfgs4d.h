@@ -27,8 +27,7 @@
 #include <string>
 #include <map>
 #include <set>
-//#include "window.h"
-//#include "histogram.h"
+#include "paraverkerneltypes.h"
 
 typedef PRV_UINT32 TCFGS4DIndexLink;
 
@@ -37,18 +36,12 @@ class Histogram;
 
 struct lessWinCompare
 {
-  bool operator()( Window *win1, Window *win2 ) const
-  {
-    return win1->getName() < win2->getName();
-  }
+  bool operator()( Window *win1, Window *win2 ) const;
 };
 
 struct lessHistoCompare
 {
-  bool operator()( Histogram *histo1, Histogram *histo2 ) const
-  {
-    return histo1->getName() < histo2->getName();
-  }
+  bool operator()( Histogram *histo1, Histogram *histo2 ) const;
 };
 
 typedef std::set<Window *, lessWinCompare> TWindowsSet;

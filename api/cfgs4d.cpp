@@ -22,10 +22,22 @@
 \*****************************************************************************/
 
 #include "cfgs4d.h"
+#include "window.h"
+#include "histogram.h"
 
 using std::string;
 using std::map;
 using std::set;
+
+bool lessWinCompare::operator()( Window *win1, Window *win2 ) const
+{
+  return win1->getName() < win2->getName();
+}
+
+bool lessHistoCompare::operator()( Histogram *histo1, Histogram *histo2 ) const
+{
+  return histo1->getName() < histo2->getName();
+}
 
 /*!
  * CFGS4DPropertyWindowsList Methods
@@ -184,7 +196,39 @@ CFGS4DGlobalManager *CFGS4DGlobalManager::instance = NULL;
 
 CFGS4DGlobalManager *CFGS4DGlobalManager::getInstance()
 {
-  if( instance == NULL )
-    instance = new CFGS4DGlobalManager();
-  return instance;
+  if( CFGS4DGlobalManager::instance == NULL )
+    CFGS4DGlobalManager::instance = new CFGS4DGlobalManager();
+  return CFGS4DGlobalManager::instance;
+}
+
+
+CFGS4DGlobalManager::CFGS4DGlobalManager()
+{
+  linkCounter = 0;
+}
+
+
+TCFGS4DIndexLink CFGS4DGlobalManager::newLinkManager()
+{
+  ++linkCounter;
+  cfgsLinkedProperties[ linkCounter ] = CFGS4DLinkedPropertiesManager();
+  return linkCounter;
+}
+
+
+void CFGS4DGlobalManager::setCustomName( TCFGS4DIndexLink index, std::string originalName, std::string customName )
+{
+  cfgsLinkedProperties[ index ].setCustomName( originalName, customName );
+}
+
+
+void CFGS4DGlobalManager::insertLink( TCFGS4DIndexLink index, std::string originalName, Window *whichWindow )
+{ 
+  cfgsLinkedProperties[ index ].insertLink( originalName, whichWindow );
+}
+
+
+void CFGS4DGlobalManager::insertLink( TCFGS4DIndexLink index, std::string originalName, Histogram *whichHistogram )
+{
+  cfgsLinkedProperties[ index ].insertLink( originalName, whichHistogram );
 }
