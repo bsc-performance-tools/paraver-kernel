@@ -2021,6 +2021,14 @@ void WindowProxy::setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink wh
   indexLinkFromPropName[ whichName ] = whichIndex;
 }
 
+TCFGS4DIndexLink WindowProxy::getCFGS4DIndexLink( std::string whichName ) const
+{
+  map< string, TCFGS4DIndexLink >::const_iterator it = indexLinkFromPropName.find( whichName );
+  if( it != indexLinkFromPropName.end() )
+    return it->second;
+
+  return 0;
+}
 
 #ifdef _MSC_VER
 void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,

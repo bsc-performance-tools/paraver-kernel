@@ -1792,6 +1792,15 @@ void HistogramProxy::setCFGS4DIndexLink( string whichName, TCFGS4DIndexLink whic
   indexLinkFromPropName[ whichName ] = whichLink;
 }
 
+TCFGS4DIndexLink HistogramProxy::getCFGS4DIndexLink( std::string whichName ) const
+{
+  map< string, TCFGS4DIndexLink >::const_iterator it = indexLinkFromPropName.find( whichName );
+  if( it != indexLinkFromPropName.end() )
+    return it->second;
+
+  return 0;
+}
+
 SelectionManagement< TObjectOrder, TWindowLevel > * HistogramProxy::getRowSelectionManagement()
 {
   return &rowSelection;

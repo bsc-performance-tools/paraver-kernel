@@ -580,6 +580,11 @@ class Histogram
     virtual void setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichLink )
     {}
 
+    virtual TCFGS4DIndexLink getCFGS4DIndexLink( std::string whichName ) const
+    {
+      return 0;
+    }
+
     virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement()
     {
       return ( SelectionManagement< TObjectOrder, TWindowLevel > * ) NULL;
@@ -888,7 +893,8 @@ class HistogramProxy : public Histogram
 
     virtual const std::vector< std::string > getCFG4DFullTagList();
     virtual void setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichLink );
-
+    virtual TCFGS4DIndexLink getCFGS4DIndexLink( std::string whichName ) const;
+    
     virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement();
     virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel );
 

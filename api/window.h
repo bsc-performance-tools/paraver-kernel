@@ -741,6 +741,11 @@ class Window
     virtual void setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichIndex )
     {}
 
+    TCFGS4DIndexLink getCFGS4DIndexLink( std::string whichName ) const
+    {
+      return 0;
+    }
+
 #ifdef _MSC_VER
     virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
                                           std::vector< bool >& selected,
@@ -1178,8 +1183,7 @@ class WindowProxy: public Window
                                                 const std::string &function,
                                                 const PRV_UINT32 &numParameter ) const;
     virtual void setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichIndex );
-    //virtual void getInsertLink( std::string whichName, TCFGS4DIndexLink whichIndex );
-
+    virtual TCFGS4DIndexLink getCFGS4DIndexLink( std::string whichName ) const;
 
 #ifdef _MSC_VER
     virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
