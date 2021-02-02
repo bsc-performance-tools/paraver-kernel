@@ -117,60 +117,6 @@ std::string CFGS4DLinkedPropertiesManager::getCustomName( std::string originalNa
   return "";
 }
 
-void CFGS4DLinkedPropertiesManager::insertLink( std::string originalName, Window *whichWindow )
-{
-  enabledProperties[ originalName ].insertWindow( whichWindow );
-}
-
-void CFGS4DLinkedPropertiesManager::insertLink( std::string originalName, Histogram *whichHistogram )
-{
-  enabledProperties[ originalName ].insertWindow( whichHistogram );
-}
-
-void CFGS4DLinkedPropertiesManager::removeLink( std::string originalName, Window *whichWindow )
-{
-  enabledProperties[ originalName ].removeWindow( whichWindow );
-  if( enabledProperties[ originalName ].getListSize() == 0 )
-    enabledProperties.erase( originalName );
-}
-
-void CFGS4DLinkedPropertiesManager::removeLink( std::string originalName, Histogram *whichHistogram )
-{
-  enabledProperties[ originalName ].removeWindow( whichHistogram );
-  if( enabledProperties[ originalName ].getListSize() == 0 )
-    enabledProperties.erase( originalName );
-}
-
-void CFGS4DLinkedPropertiesManager::getLinks( std::string whichName, TWindowsSet& onSet ) const
-{
-  map<string, CFGS4DPropertyWindowsList>::const_iterator it = enabledProperties.find( whichName );
-  if ( it != enabledProperties.end() )
-    it->second.getWindowList( onSet );  
-}
-
-void CFGS4DLinkedPropertiesManager::getLinks( std::string whichName, THistogramsSet& onSet ) const
-{
-  map<string, CFGS4DPropertyWindowsList>::const_iterator it = enabledProperties.find( whichName );
-  if ( it != enabledProperties.end() )
-    it->second.getWindowList( onSet );  
-}
-
-bool CFGS4DLinkedPropertiesManager::existsWindow( std::string whichName, Window *whichWindow ) const
-{
-  map<string, CFGS4DPropertyWindowsList>::const_iterator it = enabledProperties.find( whichName );
-  if ( it != enabledProperties.end() )
-    return it->second.existsWindow( whichWindow );
-  return false;
-}
-
-bool CFGS4DLinkedPropertiesManager::existsWindow( std::string whichName, Histogram *whichHistogram ) const
-{
-  map<string, CFGS4DPropertyWindowsList>::const_iterator it = enabledProperties.find( whichName );
-  if ( it != enabledProperties.end() )
-    return it->second.existsWindow( whichHistogram ); 
-  return false;
-}
-
 void CFGS4DLinkedPropertiesManager::getLinksName( std::set<std::string>& onSet ) const
 {
   for( std::map< std::string, CFGS4DPropertyWindowsList >::const_iterator it = enabledProperties.begin();
@@ -219,16 +165,4 @@ TCFGS4DIndexLink CFGS4DGlobalManager::newLinkManager()
 void CFGS4DGlobalManager::setCustomName( TCFGS4DIndexLink index, std::string originalName, std::string customName )
 {
   cfgsLinkedProperties[ index ].setCustomName( originalName, customName );
-}
-
-
-void CFGS4DGlobalManager::insertLink( TCFGS4DIndexLink index, std::string originalName, Window *whichWindow )
-{ 
-  cfgsLinkedProperties[ index ].insertLink( originalName, whichWindow );
-}
-
-
-void CFGS4DGlobalManager::insertLink( TCFGS4DIndexLink index, std::string originalName, Histogram *whichHistogram )
-{
-  cfgsLinkedProperties[ index ].insertLink( originalName, whichHistogram );
 }

@@ -93,16 +93,36 @@ class CFGS4DLinkedPropertiesManager
     void setCustomName( std::string originalName, std::string customName );
     std::string getCustomName( std::string originalName ) const;
 
-    void insertLink( std::string originalName, Window *whichWindow );
-    void insertLink( std::string originalName, Histogram *whichHistogram );
-    void removeLink( std::string originalName, Window *whichWindow );
-    void removeLink( std::string originalName, Histogram *whichHistogram );
+    template< typename T >
+    void insertLink( std::string originalName, T *whichWindow )
+    {
+      enabledProperties[ originalName ].insertWindow( whichWindow );
+    }
 
-    void getLinks( std::string whichName, TWindowsSet& onSet ) const;
-    void getLinks( std::string whichName, THistogramsSet& onSet ) const;
+    template< typename T >
+    void removeLink( std::string originalName, T *whichWindow )
+    {
+      enabledProperties[ originalName ].removeWindow( whichWindow );
+      if( enabledProperties[ originalName ].getListSize() == 0 )
+        enabledProperties.erase( originalName );
+    }
 
-    bool existsWindow( std::string whichName, Window *whichWindow ) const;
-    bool existsWindow( std::string whichName, Histogram *whichHistogram ) const;
+    template< typename T >
+    void getLinks( std::string whichName, T& onSet ) const
+    {
+      std::map<std::string, CFGS4DPropertyWindowsList>::const_iterator it = enabledProperties.find( whichName );
+      if ( it != enabledProperties.end() )
+        it->second.getWindowList( onSet );  
+    }
+
+    template< typename T >
+    bool existsWindow( std::string whichName, T *whichWindow ) const
+    {
+      std::map<std::string, CFGS4DPropertyWindowsList>::const_iterator it = enabledProperties.find( whichName );
+      if ( it != enabledProperties.end() )
+        return it->second.existsWindow( whichWindow );
+      return false;
+    }
 
     void getLinksName( std::set<std::string>& onSet ) const;
     
@@ -123,8 +143,21 @@ class CFGS4DGlobalManager
 
     TCFGS4DIndexLink newLinkManager(); 
     void setCustomName( TCFGS4DIndexLink index, std::string originalName, std::string customName );
-    void insertLink( TCFGS4DIndexLink index, std::string originalName, Window *whichWindow );
-    void insertLink( TCFGS4DIndexLink index, std::string originalName, Histogram *whichHistogram );
+    
+    template< typename T >
+    void insertLink( TCFGS4DIndexLink index, std::string originalName, T *whichWindow )
+    { 
+      cfgsLinkedProperties[ index ].insertLink( originalName, whichWindow );
+    }
+
+
+    template< typename T >
+    void getLinks( TCFGS4DIndexLink index, std::string whichName, T& onSet ) const
+    {
+      std::map< TCFGS4DIndexLink, CFGS4DLinkedPropertiesManager >::const_iterator it = cfgsLinkedProperties.find( index );
+      if( it != cfgsLinkedProperties.end() )
+        it->second.getLinks( whichName, onSet );
+    }
 
   private:
     static CFGS4DGlobalManager *instance;
