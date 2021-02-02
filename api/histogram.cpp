@@ -1798,7 +1798,7 @@ TCFGS4DIndexLink HistogramProxy::getCFGS4DIndexLink( std::string whichName ) con
   if( it != indexLinkFromPropName.end() )
     return it->second;
 
-  return 0;
+  return NO_INDEX_LINK;
 }
 
 SelectionManagement< TObjectOrder, TWindowLevel > * HistogramProxy::getRowSelectionManagement()

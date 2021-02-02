@@ -2027,7 +2027,7 @@ TCFGS4DIndexLink WindowProxy::getCFGS4DIndexLink( std::string whichName ) const
   if( it != indexLinkFromPropName.end() )
     return it->second;
 
-  return 0;
+  return NO_INDEX_LINK;
 }
 
 #ifdef _MSC_VER

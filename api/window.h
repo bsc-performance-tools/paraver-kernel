@@ -743,7 +743,7 @@ class Window
 
     virtual TCFGS4DIndexLink getCFGS4DIndexLink( std::string whichName ) const
     {
-      return 0;
+      return NO_INDEX_LINK;
     }
 
 #ifdef _MSC_VER

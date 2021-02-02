@@ -30,6 +30,7 @@
 #include "paraverkerneltypes.h"
 
 typedef PRV_UINT32 TCFGS4DIndexLink;
+static const TCFGS4DIndexLink NO_INDEX_LINK = 0;
 
 class Window;
 class Histogram;
