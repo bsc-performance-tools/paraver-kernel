@@ -5650,29 +5650,33 @@ bool TagLinkCFG4D::parseLine( KernelConnection *whichKernel,
 
   // Timelines index parsing
   getline( line, tmpString, '|' );
+  tmpStream.clear();
   tmpStream.str( tmpString );
   PRV_UINT32 indexWindow;
   string tmpStringWindow;
   stringstream tmpStreamWindow;
-  while ( !tmpStream.eof() )
+  while ( tmpString.size() > 0 && !tmpStream.eof() )
   {
     getline( tmpStream, tmpStringWindow, ',' );
+    tmpStreamWindow.clear();
     tmpStreamWindow.str( tmpStringWindow );
     if( !( tmpStreamWindow >> indexWindow ) )
       return false;
-    timelinesIndex.push_back( indexWindow );
+    timelinesIndex.push_back( indexWindow - 1 );
   }
 
   // Histograms index parsing
   getline( line, tmpString );
+  tmpStream.clear();
   tmpStream.str( tmpString );
-  while ( !tmpStream.eof() )
+  while ( tmpString.size() > 0 && !tmpStream.eof() )
   {
     getline( tmpStream, tmpStringWindow, ',' );
+    tmpStreamWindow.clear();
     tmpStreamWindow.str( tmpStringWindow );
     if( !( tmpStreamWindow >> indexWindow ) )
       return false;
-    histogramsIndex.push_back( indexWindow );
+    histogramsIndex.push_back( indexWindow - 1 );
   }
 
   // Insert link information into CFG4dGlobalManager
@@ -5682,7 +5686,7 @@ bool TagLinkCFG4D::parseLine( KernelConnection *whichKernel,
     lastGlobalLinkIndex = CFGS4DGlobalManager::getInstance()->newLinkManager();
   }
   CFGS4DGlobalManager::getInstance()->setCustomName( lastGlobalLinkIndex, originalName, customName );
-  
+
   for ( vector< PRV_UINT32 >::iterator it = timelinesIndex.begin(); it != timelinesIndex.end() ; ++it )
   {
     CFGS4DGlobalManager::getInstance()->insertLink( lastGlobalLinkIndex, originalName, windows[ *it ] );

@@ -741,7 +741,7 @@ class Window
     virtual void setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichIndex )
     {}
 
-    TCFGS4DIndexLink getCFGS4DIndexLink( std::string whichName ) const
+    virtual TCFGS4DIndexLink getCFGS4DIndexLink( std::string whichName ) const
     {
       return 0;
     }
