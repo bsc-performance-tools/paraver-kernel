@@ -184,6 +184,12 @@ WindowProxy::~WindowProxy()
   if( sync )
     SyncWindows::getInstance()->removeWindow( this, syncGroup );
   delete myWindow;
+
+  for ( vector< RecordList *>::iterator it = myLists.begin(); it != myLists.end(); ++it )
+  {
+    if( *it != NULL )
+      delete *it;
+  }
 }
 
 Filter *WindowProxy::getFilter() const

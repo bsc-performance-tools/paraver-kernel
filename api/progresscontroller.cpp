@@ -40,7 +40,9 @@ ProgressControllerProxy::ProgressControllerProxy( KernelConnection * whichKernel
 }
 
 ProgressControllerProxy::~ProgressControllerProxy()
-{}
+{
+  delete myPartner;
+}
 
 void ProgressControllerProxy::setHandler( ProgressHandler whichHandler, void *callerWindow )
 {
