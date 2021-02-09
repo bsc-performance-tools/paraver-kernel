@@ -384,8 +384,10 @@ enum TSingleTimelineProperties
   SINGLE_COMPOSECPU,
   SINGLE_CPU,
   SINGLE_EXTRATOPCOMPOSE1,
+  SINGLE_FUNCTIONPARAMETERS,
 
-  TOTAL_SINGLE_PROPERTIES
+  TOTAL_SINGLE_PROPERTIES,
+  SINGLE_NULL
 };
 
 static const std::string SingleTimelinePropertyLabels[ TOTAL_SINGLE_PROPERTIES ] =
@@ -432,7 +434,8 @@ static const std::string SingleTimelinePropertyLabels[ TOTAL_SINGLE_PROPERTIES ]
   "Node",
   "Compose CPU",
   "CPU",
-  "Extra Top Compose 1"
+  "Extra Top Compose 1",
+  "Parameters"
 };
 
 // GUI Derived Timeline property labels
@@ -463,8 +466,10 @@ enum TDerivedTimelineProperties
   DERIVED_DERIVED,
   DERIVED_FACTOR2,
   DERIVED_EXTRATOPCOMPOSE1,
+  DERIVED_FUNCTIONPARAMETERS,
 
-  TOTAL_DERIVED_PROPERTIES
+  TOTAL_DERIVED_PROPERTIES,
+  DERIVED_NULL
 };
 
 static const std::string DerivedTimelinePropertyLabels[ TOTAL_DERIVED_PROPERTIES ] =
@@ -493,7 +498,8 @@ static const std::string DerivedTimelinePropertyLabels[ TOTAL_DERIVED_PROPERTIES
   "Factor #1",
   "Derived",
   "Factor #2",
-  "Extra Top Compose 1"
+  "Extra Top Compose 1",
+  "Parameters"
 };
 
 // GUI Histogram property labels
@@ -517,7 +523,8 @@ enum THistogramProperties
   HISTOGRAM_3DDELTA,
   HISTOGRAM_3DPLANE,
 
-  TOTAL_HISTOGRAM_PROPERTIES
+  TOTAL_HISTOGRAM_PROPERTIES,
+  HISTOGRAM_NULL
 };
 
 static const std::string HistogramPropertyLabels[ TOTAL_HISTOGRAM_PROPERTIES ] =

@@ -5844,7 +5844,7 @@ void TagAliasParamCFG4D::printAliasList( ofstream& cfgFile,
   Window::TParamAliasKey aliasKey;
   string level;
   string function;
-  PRV_UINT32 param;
+  TParamIndex param;
   string aliasName;
 
   Window::TParamAlias tmpAlias( (*it)->getCFG4DParamAliasList() ); // funcion + num param
