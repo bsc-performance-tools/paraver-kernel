@@ -5645,7 +5645,12 @@ bool TagLinkCFG4D::parseLine( KernelConnection *whichKernel,
   if( !( tmpStream >> indexLink ) )
     return false;
 
-  getline( line, originalName, '|' );
+  // Expected original name format: [...]|"Top Compose 1|0|Prod.Factor"|[...]
+  char dummyChar;
+  line.get( dummyChar ); // Consume "
+  getline( line, originalName, '"' );
+  line.get( dummyChar ); // Consume |
+
   getline( line, customName, '|' );
 
   // Timelines index parsing
@@ -5730,7 +5735,7 @@ void TagLinkCFG4D::printLinkList( ofstream& cfgFile,
     itLinks->getLinksName( linksNames );
     for( set< std::string >::iterator itNames = linksNames.begin(); itNames != linksNames.end(); ++itNames )
     {
-      cfgFile << CFG_TAG_LINK_CFG4D << " " << indexLink << "|" << *itNames << "|" << itLinks->getCustomName( *itNames ) << "|";
+      cfgFile << CFG_TAG_LINK_CFG4D << " " << indexLink << "|\"" << *itNames << "\"|" << itLinks->getCustomName( *itNames ) << "|";
       
       TWindowsSet tmpWindows;
       itLinks->getLinks( *itNames, tmpWindows );
