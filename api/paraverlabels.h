@@ -383,14 +383,17 @@ enum TSingleTimelineProperties
   SINGLE_NODE,
   SINGLE_COMPOSECPU,
   SINGLE_CPU,
+
+  TOTAL_SINGLE_PROPERTIES,
+
+// Dynamic properties
   SINGLE_EXTRATOPCOMPOSE1,
   SINGLE_FUNCTIONPARAMETERS,
 
-  TOTAL_SINGLE_PROPERTIES,
   SINGLE_NULL
 };
 
-static const std::string SingleTimelinePropertyLabels[ TOTAL_SINGLE_PROPERTIES ] =
+static const std::string SingleTimelinePropertyLabels[ SINGLE_NULL ] =
 {
   "Name",
   "Begin time",
@@ -434,6 +437,7 @@ static const std::string SingleTimelinePropertyLabels[ TOTAL_SINGLE_PROPERTIES ]
   "Node",
   "Compose CPU",
   "CPU",
+  "-----------TOTAL_SINGLE_PROPERTIES-----------",
   "Extra Top Compose 1",
   "Parameters"
 };
@@ -465,14 +469,17 @@ enum TDerivedTimelineProperties
   DERIVED_FACTOR1,
   DERIVED_DERIVED,
   DERIVED_FACTOR2,
+
+  TOTAL_DERIVED_PROPERTIES,
+
+// Dynamic properties
   DERIVED_EXTRATOPCOMPOSE1,
   DERIVED_FUNCTIONPARAMETERS,
 
-  TOTAL_DERIVED_PROPERTIES,
   DERIVED_NULL
 };
 
-static const std::string DerivedTimelinePropertyLabels[ TOTAL_DERIVED_PROPERTIES ] =
+static const std::string DerivedTimelinePropertyLabels[ DERIVED_NULL ] =
 {
   "Name",
   "Begin time",
@@ -498,6 +505,7 @@ static const std::string DerivedTimelinePropertyLabels[ TOTAL_DERIVED_PROPERTIES
   "Factor #1",
   "Derived",
   "Factor #2",
+  "-----------TOTAL_DERIVED_PROPERTIES-----------",
   "Extra Top Compose 1",
   "Parameters"
 };
