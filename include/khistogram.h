@@ -229,7 +229,7 @@ class KHistogram : public Histogram
     void clearStatistics();
     void pushbackStatistic( const std::string& whichStatistic );
 
-    bool itsCommunicationStat( const std::string& whichStat ) const;
+    bool isCommunicationStat( const std::string& whichStat ) const;
 
     std::string getUnitsLabel( const std::string& whichStat ) const;
 

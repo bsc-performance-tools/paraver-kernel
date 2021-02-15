@@ -1781,7 +1781,7 @@ void KHistogram::finishRow( CalculateData *data )
 #endif
 }
 
-bool KHistogram::itsCommunicationStat( const string& whichStat ) const
+bool KHistogram::isCommunicationStat( const string& whichStat ) const
 {
   return FunctionManagement<HistogramStatistic>::getInstance()
          ->getFunction( whichStat )->createComms();

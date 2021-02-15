@@ -405,7 +405,7 @@ THistogramColumn HistogramProxy::getNumPlanes() const
 
 THistogramColumn HistogramProxy::getNumColumns( const string& whichStat ) const
 {
-  if ( itsCommunicationStat( whichStat ) )
+  if ( isCommunicationStat( whichStat ) )
     return ( THistogramColumn ) getNumRows();
 
   return getNumColumns();
@@ -521,7 +521,7 @@ bool HistogramProxy::getCommCellValue( TSemanticValue& semVal,
 
 HistogramTotals *HistogramProxy::getTotals( const string& whichStat ) const
 {
-  if ( itsCommunicationStat( whichStat ) )
+  if ( isCommunicationStat( whichStat ) )
   {
 // TODO: Draw sorted vertical totals
     if ( horizontal )
@@ -569,7 +569,7 @@ void HistogramProxy::clearStatistics()
 void HistogramProxy::pushbackStatistic( const string& whichStatistic )
 {
   myHisto->pushbackStatistic( whichStatistic );
-  if ( itsCommunicationStat( whichStatistic ) )
+  if ( isCommunicationStat( whichStatistic ) )
     commCalcStat.push_back( whichStatistic );
   else
     calcStat.push_back( whichStatistic );
@@ -883,7 +883,7 @@ void HistogramProxy::recalcGradientLimits()
 
   getIdStat( getCurrentStat(), idStat );
 
-  if ( itsCommunicationStat( getCurrentStat() ) )
+  if ( isCommunicationStat( getCurrentStat() ) )
   {
     totals = getCommColumnTotals();
     plane = getCommSelectedPlane();
@@ -970,9 +970,9 @@ PRV_INT32 HistogramProxy::getCommSelectedPlane() const
   return commSelectedPlane;
 }
 
-bool HistogramProxy::itsCommunicationStat( const string& whichStat ) const
+bool HistogramProxy::isCommunicationStat( const string& whichStat ) const
 {
-  return myHisto->itsCommunicationStat( whichStat );
+  return myHisto->isCommunicationStat( whichStat );
 }
 
 THistogramColumn HistogramProxy::getSemanticRealColumn( THistogramColumn whichCol, const vector<THistogramColumn>& noVoidSemRanges ) const
@@ -1079,7 +1079,7 @@ string HistogramProxy::getColumnLabel( THistogramColumn whichColumn ) const
 
   THistogramColumn tmpCol = getSemanticSortedColumn( whichColumn );
 
-  if( itsCommunicationStat( getCurrentStat() ) )
+  if( isCommunicationStat( getCurrentStat() ) )
     return getRowLabel( ( TObjectOrder ) tmpCol );
 
   return LabelConstructor::histoColumnLabel( tmpCol, controlWindow,
@@ -1112,7 +1112,7 @@ THistogramColumn HistogramProxy::getPlaneColumns( THistogramColumn iPlane,
 
   if( getIdStat( getCurrentStat(), idStat ) )
   {
-    bool commStat = itsCommunicationStat( getCurrentStat() );
+    bool commStat = isCommunicationStat( getCurrentStat() );
     numColumns = getNumColumns( getCurrentStat() );
 
     if ( hideEmptyColumns )
@@ -1266,7 +1266,7 @@ bool HistogramProxy::getIdStat( const string& whichStat, PRV_UINT16& idStat ) co
   idStat = 0;
   const vector<string> *vStat;
 
-  if ( itsCommunicationStat( whichStat ) )
+  if ( isCommunicationStat( whichStat ) )
     vStat = &commCalcStat;
   else
     vStat = &calcStat;
@@ -1844,14 +1844,14 @@ void HistogramProxy::fillSemanticSort()
 
     if( getThreeDimensions() )
     {
-      if( itsCommunicationStat( currentStat ) )
+      if( isCommunicationStat( currentStat ) )
         tmpCurrentPlane = commSelectedPlane;
       else
         tmpCurrentPlane = selectedPlane;
     }
 
     HistogramTotals *tmpTotals = NULL;
-    if ( itsCommunicationStat( currentStat ) )
+    if ( isCommunicationStat( currentStat ) )
       tmpTotals = getCommColumnTotals();
     else
       tmpTotals = getColumnTotals();

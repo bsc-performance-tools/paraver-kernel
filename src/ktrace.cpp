@@ -605,8 +605,10 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   TraceStream *file = TraceStream::openFile( fileName );
 
   if ( !file->good() )
-    throw ParaverKernelException( ParaverKernelException::cannotOpenTrace,
-                                  fileName.c_str() );
+  {
+    delete file;
+    throw ParaverKernelException( ParaverKernelException::cannotOpenTrace, fileName.c_str() );
+  }
 
   if ( file->canseekend() )
   {
@@ -657,6 +659,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
       istringstream stringEndTime( tmpstr );
       if ( !( stringEndTime >> traceEndTime ) )
       {
+        delete file;
         throw TraceHeaderException( TraceHeaderException::invalidTime,
                                     tmpstr.c_str() );
       }
@@ -674,6 +677,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
       istringstream stringEndTime( tmpstr.substr( 0, pos ) );
       if ( !( stringEndTime >> traceEndTime ) )
       {
+        delete file;
         throw TraceHeaderException( TraceHeaderException::invalidTime,
                                     tmpstr.c_str() );
       }
@@ -702,6 +706,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
 
         if ( !( streamComm >> numberComm ) )
         {
+          delete file;
           throw TraceHeaderException( TraceHeaderException::invalidCommNumber,
                                       tmpstr.c_str() );
         }
@@ -713,6 +718,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
       file->getline( tmpstr );
       if ( tmpstr[0] != 'C' && tmpstr[0] != 'c' && tmpstr[0] != 'I' && tmpstr[0] != 'i' )
       {
+        delete file;
         throw TraceHeaderException( TraceHeaderException::unknownCommLine,
                                     tmpstr.c_str() );
       }
@@ -787,6 +793,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
 
     if (count == 0)
     {
+      delete file;
       throw TraceHeaderException( TraceHeaderException::emptyBody,
                                   whichFile.c_str() );
     }
@@ -815,6 +822,8 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   }
 
   blocks->setFileLoaded();
+
+  delete file;
 
   ready = true;
 }

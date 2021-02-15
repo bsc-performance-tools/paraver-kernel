@@ -147,7 +147,7 @@ class Histogram
     virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
                           std::vector<TObjectOrder>& selectedRows, ProgressController *progress ) = 0;
 
-    virtual bool itsCommunicationStat( const std::string& whichStat ) const = 0;
+    virtual bool isCommunicationStat( const std::string& whichStat ) const = 0;
 
     virtual std::string getUnitsLabel( const std::string& whichStat ) const = 0;
 
@@ -802,7 +802,7 @@ class HistogramProxy : public Histogram
     virtual void setCurrentStat( const std::string& whichStat );
     virtual std::string getCurrentStat() const;
 
-    bool itsCommunicationStat( const std::string& whichStat ) const;
+    bool isCommunicationStat( const std::string& whichStat ) const;
 
     THistogramColumn getSemanticRealColumn( THistogramColumn whichCol, const std::vector<THistogramColumn>& noVoidSemRanges ) const;
 

@@ -1001,7 +1001,10 @@ KWindow *KSingleWindow::clone( bool recursiveClone )
   for( int i = 0; i < COMPOSECPU + 1; ++i )
   {
     if( functions[ i ] != NULL )
+    { 
+      delete clonedKSWindow->functions[ i ];
       clonedKSWindow->functions[ i ] = functions[ i ]->clone();
+    }
     else
       clonedKSWindow->functions[ i ] = NULL;
   }

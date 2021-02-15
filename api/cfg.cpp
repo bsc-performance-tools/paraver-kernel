@@ -4327,7 +4327,7 @@ void Analyzer2DAccumulator::printLine( ofstream& cfgFile,
                                        const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_ACCUMULATOR << " ";
-  if ( ( *it )->itsCommunicationStat( ( *it )->getCurrentStat() ) )
+  if ( ( *it )->isCommunicationStat( ( *it )->getCurrentStat() ) )
     cfgFile << levelToStringHisto( ( *it )->getControlWindow()->getLevel() );
   else
     cfgFile << OLDCFG_VAL_AN2D_ACCUM_SEMANTIC;

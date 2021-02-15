@@ -267,7 +267,7 @@ string LabelConstructor::histoCellLabel( const Histogram *whichHisto,
   label << value;
 
   if ( showUnits && ParaverConfig::getInstance()->getHistogramShowUnits() &&
-       !whichHisto->itsCommunicationStat( whichHisto->getCurrentStat() ) )
+       !whichHisto->isCommunicationStat( whichHisto->getCurrentStat() ) )
     label << " " << whichHisto->getUnitsLabel( whichHisto->getCurrentStat() );
 
   return label.str();

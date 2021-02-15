@@ -239,7 +239,7 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
 
   whichHisto->getIdStat( whichHisto->getCurrentStat(), currentStat );
 
-  bool isCommStatistic = whichHisto->itsCommunicationStat( whichHisto->getCurrentStat() );
+  bool isCommStatistic = whichHisto->isCommunicationStat( whichHisto->getCurrentStat() );
   if ( !isCommStatistic )
   {
     if ( onlySelectedPlane )
