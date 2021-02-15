@@ -827,7 +827,10 @@ inline void KHistogram::pushbackStatistic( const string& whichStatistic )
     if ( stat->createComms() )
       commStatisticFunctions.push_back( stat );
     else
-      statisticFunctions.push_back( stat );*/
+      statisticFunctions.push_back( stat );
+    
+    delete stat;
+  */
 }
 
 
@@ -1783,14 +1786,22 @@ void KHistogram::finishRow( CalculateData *data )
 
 bool KHistogram::isCommunicationStat( const string& whichStat ) const
 {
-  return FunctionManagement<HistogramStatistic>::getInstance()
-         ->getFunction( whichStat )->createComms();
+  HistogramStatistic *tmpFunction = FunctionManagement<HistogramStatistic>::getInstance()->getFunction( whichStat );
+
+  bool retval = tmpFunction->createComms();
+  delete tmpFunction;
+
+  return retval;
 }
 
 string KHistogram::getUnitsLabel( const string& whichStat ) const
 {
-  return FunctionManagement<HistogramStatistic>::getInstance()
-         ->getFunction( whichStat )->getUnits( this );
+  HistogramStatistic *tmpFunction = FunctionManagement<HistogramStatistic>::getInstance()->getFunction( whichStat );
+
+  string retval = tmpFunction->getUnits( this );
+  delete tmpFunction;
+
+  return retval;
 }
 
 void KHistogram::getGroupsLabels( vector<string>& onVector ) const
@@ -1808,7 +1819,7 @@ void KHistogram::getStatisticsLabels( vector<string>& onVector,
 string KHistogram::getFirstStatistic() const
 {
   vector<string> v;
-  FunctionManagement<HistogramStatistic>::getInstance()->getAll( v, 1 );
+  FunctionManagement<HistogramStatistic>::getInstance()->getAll( v, 1 ); 
   return v[ 0 ];
 }
 
@@ -1816,7 +1827,7 @@ string KHistogram::getFirstCommStatistic() const
 {
   vector<string> v;
   FunctionManagement<HistogramStatistic>::getInstance()->getAll( v, 0 );
-  return v[ 0 ];
+  return v[ 0 ]; 
 }
 
 bool KHistogram::getControlOutOfLimits() const
