@@ -346,41 +346,12 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 
 KSingleWindow::~KSingleWindow()
 {
-  if( functions[ TOPCOMPOSE1 ] != NULL )
-    delete functions[ TOPCOMPOSE1 ];
-  if( functions[ TOPCOMPOSE2 ] != NULL )
-    delete functions[ TOPCOMPOSE2 ];
-
-  if( functions[ COMPOSEWORKLOAD ] != NULL )
-    delete functions[ COMPOSEWORKLOAD ];
-  if( functions[ WORKLOAD ] != NULL )
-    delete functions[ WORKLOAD ];
-  if( functions[ COMPOSEAPPLICATION ] != NULL )
-    delete functions[ COMPOSEAPPLICATION ];
-  if( functions[ APPLICATION ] != NULL )
-    delete functions[ APPLICATION ];
-  if( functions[ COMPOSETASK ] != NULL )
-    delete functions[ COMPOSETASK ];
-  if( functions[ TASK ] != NULL )
-    delete functions[ TASK ];
-  if( functions[ COMPOSETHREAD ] != NULL )
-    delete functions[ COMPOSETHREAD ];
-  if( functions[ THREAD ] != NULL )
-    delete functions[ THREAD ];
-
-  if( functions[ COMPOSESYSTEM ] != NULL )
-    delete functions[ COMPOSESYSTEM ];
-  if( functions[ SYSTEM ] != NULL )
-    delete functions[ SYSTEM ];
-  if( functions[ COMPOSENODE ] != NULL )
-    delete functions[ COMPOSENODE ];
-  if( functions[ NODE ] != NULL )
-    delete functions[ NODE ];
-  if( functions[ COMPOSECPU ] != NULL )
-    delete functions[ COMPOSECPU ];
-  if( functions[ CPU ] != NULL )
-    delete functions[ CPU ];
-
+  for( PRV_UINT32 twlIdx = ( PRV_UINT32 ) WORKLOAD; twlIdx <= ( PRV_UINT32 ) COMPOSECPU; ++twlIdx )
+  {
+    if( functions[ ( TWindowLevel ) twlIdx ] != NULL )
+      delete functions[ ( TWindowLevel ) twlIdx ];
+  }
+  
   for( TObjectOrder i = 0; i < recordsByTimeThread.size(); ++i )
   {
     if( recordsByTimeThread[ i ] != NULL )
@@ -396,7 +367,16 @@ KSingleWindow::~KSingleWindow()
   recordsByTimeCPU.clear();
 
   delete myFilter;
+
+  for( map< TWindowLevel, vector< SemanticFunction * > >::iterator itMap = extraComposeFunctions.begin();
+       itMap != extraComposeFunctions.end(); ++itMap )
+  {
+    for( vector<SemanticFunction *>::iterator it = itMap->second.begin();
+         it != itMap->second.end(); ++it )
+      delete *it;
+  }
 }
+
 
 void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
@@ -409,8 +389,8 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
   for( map< TWindowLevel, vector< SemanticFunction * > >::iterator itMap = extraComposeFunctions.begin();
        itMap != extraComposeFunctions.end(); ++itMap )
   {
-    for( vector<SemanticFunction *>::iterator it = itMap->second.begin();
-         it != itMap->second.end(); ++it )
+    for (vector<SemanticFunction *>::iterator it = itMap->second.begin();
+         it != itMap->second.end(); ++it)
       (*it)->init( this );
   }
 
@@ -1071,43 +1051,11 @@ void KSingleWindow::initSemanticFunctions()
 
 KDerivedWindow::~KDerivedWindow()
 {
-  if( functions[ TOPCOMPOSE1 ] != NULL )
-    delete functions[ TOPCOMPOSE1 ];
-  if( functions[ TOPCOMPOSE2 ] != NULL )
-    delete functions[ TOPCOMPOSE2 ];
-
-  if( functions[ COMPOSEWORKLOAD ] != NULL )
-    delete functions[ COMPOSEWORKLOAD ];
-  if( functions[ WORKLOAD ] != NULL )
-    delete functions[ WORKLOAD ];
-  if( functions[ COMPOSEAPPLICATION ] != NULL )
-    delete functions[ COMPOSEAPPLICATION ];
-  if( functions[ APPLICATION ] != NULL )
-    delete functions[ APPLICATION ];
-  if( functions[ COMPOSETASK ] != NULL )
-    delete functions[ COMPOSETASK ];
-  if( functions[ TASK ] != NULL )
-    delete functions[ TASK ];
-  if( functions[ COMPOSETHREAD ] != NULL )
-    delete functions[ COMPOSETHREAD ];
-  if( functions[ THREAD ] != NULL )
-    delete functions[ THREAD ];
-
-  if( functions[ COMPOSESYSTEM ] != NULL )
-    delete functions[ COMPOSESYSTEM ];
-  if( functions[ SYSTEM ] != NULL )
-    delete functions[ SYSTEM ];
-  if( functions[ COMPOSENODE ] != NULL )
-    delete functions[ COMPOSENODE ];
-  if( functions[ NODE ] != NULL )
-    delete functions[ NODE ];
-  if( functions[ COMPOSECPU ] != NULL )
-    delete functions[ COMPOSECPU ];
-  if( functions[ CPU ] != NULL )
-    delete functions[ CPU ];
-
-  if( functions[ DERIVED ] != NULL )
-    delete functions[ DERIVED ];
+  for( PRV_UINT32 twlIdx = (PRV_UINT32)WORKLOAD; twlIdx <= (PRV_UINT32)DERIVED; ++twlIdx )
+  {
+    if( functions[ (TWindowLevel)twlIdx ] != NULL )
+      delete functions[ (TWindowLevel)twlIdx ];
+  }
 }
 
 void KDerivedWindow::setup( KTrace* whichTrace )
