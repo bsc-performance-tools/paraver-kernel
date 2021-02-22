@@ -123,49 +123,46 @@ TSemanticValue DerivedDifferent::execute( const SemanticInfo *info )
 string ControlDerivedClearBy::name = "controlled: clear by";
 TSemanticValue ControlDerivedClearBy::execute( const SemanticInfo *info )
 {
-  TSemanticValue tmp = 0;
+  static const int controlWindow = 1;
+  static const int dataWindow = 0;
+  TSemanticValue result = 0;
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
   TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
 
-  if( myInfo->values[ 1 ] < prevValue[ tmpOrder ] )
+  if( myInfo->values[ controlWindow ] < lastControlValue[ tmpOrder ] )
   {
-    tmp = 0;
-    state[ tmpOrder ] = myInfo->values[ 0 ];
-    prevValue[ tmpOrder ] = myInfo->values[ 1 ];
-    prevResult[ tmpOrder ] = tmp;
+    result = 0;
+    lastDataBeginTime[ tmpOrder ] = myInfo->dataBeginTime;
   }
   else
   {
-    tmp = myInfo->values[ 0 ];
-    state[ tmpOrder ] = myInfo->values[ 0 ];
-    prevValue[ tmpOrder ] = myInfo->values[ 1 ];
-    prevResult[ tmpOrder ] = tmp;
+    if( lastDataBeginTime[ tmpOrder ] != myInfo->dataBeginTime || myInfo->dataBeginTime == 0.0 )
+      result = myInfo->values[ dataWindow ];
   }
 
-  return tmp;
+  lastControlValue[ tmpOrder ] = myInfo->values[ controlWindow ];
+
+  return result;
 }
 
 void ControlDerivedClearBy::init( KWindow *whichWindow )
 {
   TObjectOrder size = 0;
 
-  prevValue.clear();
-  state.clear();
-  prevResult.clear();
+  lastControlValue.clear();
+  lastDataBeginTime.clear();
 
   if( whichWindow->getLevel() >= SYSTEM )
     size = whichWindow->getTrace()->totalCPUs();
   else
     size = whichWindow->getTrace()->totalThreads();
 
-  prevValue.reserve( size );
-  state.reserve( size );
-  prevResult.reserve( size );
+  lastControlValue.reserve( size );
+  lastDataBeginTime.reserve( size );
   for( TObjectOrder i = 0; i < size; i++ )
   {
-    prevValue.push_back( 0 );
-    state.push_back( 0 );
-    prevResult.push_back( 0 );
+    lastControlValue.push_back( 0 );
+    lastDataBeginTime.push_back( 0.0 );
   }
 }
 

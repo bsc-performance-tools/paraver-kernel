@@ -96,7 +96,7 @@ KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
       info.values.push_back( childIntervals[ i ]->getValue() * window->getFactor( i ) );
   }
 
-  info.dataBeginTime = childIntervals[ 1 ]->getBegin()->getTime();
+  info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
   currentValue = function->execute( &info );
 
   while ( end->getTime() < initialTime )

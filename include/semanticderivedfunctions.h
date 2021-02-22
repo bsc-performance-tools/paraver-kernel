@@ -560,9 +560,8 @@ class ControlDerivedClearBy: public SemanticDerived
     static const bool controlDerived = false;
     static std::string name;
 
-    std::vector<TSemanticValue> prevValue;
-    std::vector<TSemanticValue> state;
-    std::vector<TSemanticValue> prevResult;
+    std::vector<TSemanticValue> lastControlValue;
+    std::vector<TRecordTime> lastDataBeginTime;
 
 };
 
