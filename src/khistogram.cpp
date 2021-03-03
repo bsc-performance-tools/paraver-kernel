@@ -340,6 +340,11 @@ KHistogram::~KHistogram()
     delete commTotals;
   if ( rowCommTotals != NULL )
     delete rowCommTotals;
+ 
+  if ( semanticBuffer != NULL )
+    delete semanticBuffer;
+  if ( commBuffer != NULL )
+    delete commBuffer;
 
   clearStatistics();
 }
