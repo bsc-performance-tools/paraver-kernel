@@ -143,6 +143,29 @@ TSemanticValue ComposeSubstract::execute( const SemanticInfo *info )
 }
 
 
+string ComposeComplement::name = "Complement";
+TSemanticValue ComposeComplement::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+
+  return parameters[ MINUEND ][ 0 ] - myInfo->values[ 0 ];
+}
+
+
+string ComposeInverseDiv::name = "Inverse Div";
+TSemanticValue ComposeInverseDiv::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+
+  TSemanticValue quotient = 0;
+  if ( myInfo->values[ 0 ] != 0 )
+    quotient = parameters[ FACTOR ][ 0 ] / myInfo->values[ 0 ];
+  
+  return quotient;
+}
+
+
+
 string ComposeSelectRange::name = "Select Range";
 TSemanticValue ComposeSelectRange::execute( const SemanticInfo *info )
 {

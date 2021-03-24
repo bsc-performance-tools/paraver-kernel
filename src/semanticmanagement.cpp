@@ -53,6 +53,8 @@ void createSemantic()
   functions[0].push_back( new ComposeProduct() );
   functions[0].push_back( new ComposeAdding() );
   functions[0].push_back( new ComposeSubstract() );
+  functions[0].push_back( new ComposeComplement() );
+  functions[0].push_back( new ComposeInverseDiv() );
   functions[0].push_back( new ComposeSelectRange() );
   functions[0].push_back( new ComposeSelectRangeOpen() );
   functions[0].push_back( new ComposeIsInRange() );

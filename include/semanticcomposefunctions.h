@@ -616,6 +616,141 @@ class ComposeSubstract: public SemanticCompose
 };
 
 
+class ComposeComplement: public SemanticCompose
+{
+  public:
+    typedef enum
+    {
+      MINUEND = 0,
+      MAXPARAM
+    } TParam;
+
+    ComposeComplement()
+    {
+      setDefaultParam();
+    }
+
+    ~ComposeComplement()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+
+    virtual void init( KWindow *whichWindow )
+    {}
+
+    virtual std::string getName()
+    {
+      return ComposeComplement::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeComplement( *this );
+    }
+
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      TParamValue tmp;
+
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      else if ( whichParam == MINUEND )
+        tmp.push_back( 0 );
+      return tmp;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Minuend";
+    }
+
+  private:
+    static const bool initFromBegin = false;
+    static std::string name;
+
+};
+
+
+
+class ComposeInverseDiv: public SemanticCompose
+{
+  public:
+    typedef enum
+    {
+      FACTOR = 0,
+      MAXPARAM
+    } TParam;
+
+    ComposeInverseDiv()
+    {
+      setDefaultParam();
+    }
+
+    ~ComposeInverseDiv()
+    {}
+
+    virtual TParamIndex getMaxParam() const
+    {
+      return MAXPARAM;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info );
+
+    virtual void init( KWindow *whichWindow )
+    {}
+
+    virtual std::string getName()
+    {
+      return ComposeInverseDiv::name;
+    }
+
+    virtual SemanticFunction *clone()
+    {
+      return new ComposeInverseDiv( *this );
+    }
+
+
+  protected:
+    virtual const bool getMyInitFromBegin()
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    {
+      TParamValue tmp;
+
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      else if ( whichParam == FACTOR )
+        tmp.push_back( 1 );
+      return tmp;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( SemanticException::maxParamExceeded );
+      return "Factor";
+    }
+
+  private:
+    static const bool initFromBegin = false;
+    static std::string name;
+
+};
+
+
 class ComposeSelectRange: public SemanticCompose
 {
   public:
