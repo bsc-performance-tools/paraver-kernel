@@ -460,6 +460,16 @@ class KDerivedWindow: public KWindow
       return factor[ whichFactor ];
     }
 
+    void setShift( PRV_UINT16 whichShift, TSemanticValue newValue )
+    {
+      shift[ whichShift ] = newValue;
+    }
+
+    PRV_INT16 getShift( PRV_UINT16 whichShift ) const
+    {
+      return shift[ whichShift ];
+    }
+
     SemanticInfoType getSemanticInfoType() const;
 
     virtual KWindow *clone( bool recursiveClone = false );
@@ -467,6 +477,7 @@ class KDerivedWindow: public KWindow
   protected:
     std::vector<KWindow *> parents;
     std::vector<TSemanticValue> factor;
+    std::vector<PRV_INT16> shift;
 
     // Semantic interval structure
     std::vector<IntervalCompose>        intervalComposeWorkload;

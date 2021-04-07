@@ -168,6 +168,11 @@ class Window
     {
       return 1.0;
     }
+    virtual void setShift( PRV_UINT16 whichShift, TSemanticValue newValue ) {}
+    virtual PRV_INT16 getShift( PRV_UINT16 whichShift ) const
+    {
+      return 0;
+    }
     virtual void setParent( PRV_UINT16 whichParent, Window *whichWindow ) {}
     virtual void setChild( Window *whichWindow ) {}
     virtual Window *getChild()
@@ -921,6 +926,8 @@ class WindowProxy: public Window
     //DerivedWindow
     virtual void setFactor( PRV_UINT16 whichFactor, TSemanticValue newValue );
     virtual TSemanticValue getFactor( PRV_UINT16 whichFactor ) const;
+    virtual void setShift( PRV_UINT16 whichShift, TSemanticValue newValue );
+    virtual PRV_INT16 getShift( PRV_UINT16 whichShift ) const;
     virtual void setParent( PRV_UINT16 whichParent, Window *whichWindow );
     virtual void setChild( Window *whichWindow );
     virtual Window *getChild();

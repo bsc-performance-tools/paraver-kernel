@@ -214,6 +214,21 @@ TSemanticValue WindowProxy::getFactor( PRV_UINT16 whichFactor ) const
   return myWindow->getFactor( whichFactor );
 }
 
+void WindowProxy::setShift( PRV_UINT16 whichShift, TSemanticValue newValue )
+{
+  if ( myWindow->isDerivedWindow() )
+  {
+    yScaleComputed = false;
+
+    myWindow->setShift( whichShift, newValue );
+  }
+}
+
+PRV_INT16 WindowProxy::getShift( PRV_UINT16 whichShift ) const
+{
+  return myWindow->getShift( whichShift );
+}
+
 void WindowProxy::setParent( PRV_UINT16 whichParent, Window *whichWindow )
 {
   if ( myWindow->isDerivedWindow() )
