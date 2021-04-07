@@ -20,6 +20,7 @@ endif
 
 libparaver_api_la_SOURCES = \
                     cfg.cpp \
+                    cfgs4d.cpp \
                     drawmode.cpp \
                     eventdrivencutter.cpp \
                     eventlabels.cpp \
@@ -57,42 +58,43 @@ libparaver_api_la_SOURCES = \
                     $(PCFPARSER_FILES)
 
 include_HEADERS = \
-                  cfg.h\
+                  cfg.h \
+                  cfgs4d.h \
                   cubecontainer.h \
-                  ../config_traits.h\
-                  ../config_types.h\
-                  drawmode.h\
-                  eventdrivencutter.h\
-                  eventlabels.h\
-                  eventtranslator.h\
-                  filter.h\
-                  gnuplotoutput.h\
-                  histogram.h\
-                  histogramtotals.h\
-                  kernelconnection.h\
-                  labelconstructor.h\
-                  loadedwindows.h\
-                  localkernel.h\
-                  output.h\
-                  paramedir.h\
-                  paraverconfig.h\
-                  paraverkernelexception.h\
-                  paraverkerneltypes.h\
-                  paraverlabels.h\
-                  paravertypes.h\
-                  previousfiles.h\
-                  progresscontroller.h\
-                  prvtypes.h\
-                  recordlist.h\
-                  rowlabels.h\
-                  selectionmanagement.h\
+                  ../config_traits.h \
+                  ../config_types.h \
+                  drawmode.h \
+                  eventdrivencutter.h \
+                  eventlabels.h \
+                  eventtranslator.h \
+                  filter.h \
+                  gnuplotoutput.h \
+                  histogram.h \
+                  histogramtotals.h \
+                  kernelconnection.h \
+                  labelconstructor.h \
+                  loadedwindows.h \
+                  localkernel.h \
+                  output.h \
+                  paramedir.h \
+                  paraverconfig.h \
+                  paraverkernelexception.h \
+                  paraverkerneltypes.h \
+                  paraverlabels.h \
+                  paravertypes.h \
+                  previousfiles.h \
+                  progresscontroller.h \
+                  prvtypes.h \
+                  recordlist.h \
+                  rowlabels.h \
+                  selectionmanagement.h \
                   selectionrowsutils.h \
-                  semanticcolor.h\
-                  statelabels.h\
+                  semanticcolor.h \
+                  statelabels.h \
                   symbolpicker.h \
-                  syncwindows.h\
-                  trace.h\
-                  textoutput.h\
+                  syncwindows.h \
+                  trace.h \
+                  textoutput.h \
                   tracecutter.h \
                   traceeditactions.h \
                   traceeditsequence.h \
@@ -101,13 +103,13 @@ include_HEADERS = \
                   traceoptions.h \
                   traceshifter.h \
                   tracesoftwarecounters.h \
-                  window.h\
-                  workspace.h\
-                  workspacemanager.h\
-                  zoomhistory.h\
-                  cubecontainer.cpp\
-                  selectionmanagement.cpp\
-                  traceeditstates.cpp\
+                  window.h \
+                  workspace.h \
+                  workspacemanager.h \
+                  zoomhistory.h \
+                  cubecontainer.cpp \
+                  selectionmanagement.cpp \
+                  traceeditstates.cpp \
                   zoomhistory.cpp
 
 install-data-hook:

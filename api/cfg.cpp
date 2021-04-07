@@ -64,6 +64,11 @@ bool multipleLabelValues = false;
 EventTypeSymbolPicker eventTypeSymbolPicker;
 EventValueSymbolPicker eventValueSymbolPicker;
 
+
+// CFGS4D Link data
+PRV_UINT32 lastCFGLinkIndex;
+TCFGS4DIndexLink lastGlobalLinkIndex;
+
 map< TGroupId, TGroupId > syncRealGroup; // Group from CFG -> Group to app
 TGroupId lastSyncGroupUsed;
 
@@ -476,6 +481,9 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   someEventsNotExist = false;
   multipleLabelValues = false;
 
+  lastCFGLinkIndex = 0;
+  lastGlobalLinkIndex = 0;
+
   ifstream cfgFile( filename.c_str() );
   if ( !cfgFile )
     return false;
@@ -708,7 +716,8 @@ void CFGLoader::pushbackAllWindows( const vector<Window *>& selectedWindows,
 bool CFGLoader::saveCFG( const string& filename,
                          const SaveOptions& options,
                          const vector<Window *>& windows,
-                         const vector<Histogram *>& histograms )
+                         const vector<Histogram *>& histograms,
+                         const vector<CFGS4DLinkedPropertiesManager>& linkedProperties )
 {
   vector<Window *> allWindows;
 
@@ -878,6 +887,8 @@ bool CFGLoader::saveCFG( const string& filename,
     cfgFile << endl;
   }
 
+  TagLinkCFG4D::printLinkList( cfgFile, allWindows, histograms, linkedProperties );
+
   cfgFile.close();
 
   return true;
@@ -1042,6 +1053,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_AN3D_FIXEDVALUE]           = new Analyzer3DFixedValue();
 
   cfgTagFunctions[ CFG_TAG_ALIAS_CFG4D ]                = new TagAliasCFG4D();
+  cfgTagFunctions[ CFG_TAG_LINK_CFG4D ]                 = new TagLinkCFG4D();
   cfgTagFunctions[ CFG_TAG_STATISTIC_ALIAS_CFG4D ]      = new TagAliasStatisticCFG4D();
   cfgTagFunctions[ CFG_TAG_PARAM_ALIAS_CFG4D ]          = new TagAliasParamCFG4D();
 }
@@ -5569,7 +5581,7 @@ bool TagAliasCFG4D::parseLine( KernelConnection *whichKernel,
       return false;
 
     // It has been created
-    windows[ windows.size() -1 ]->setCFG4DAlias( currentCFG4DTag, currentCFG4DAlias );
+    windows[ windows.size() - 1 ]->setCFG4DAlias( currentCFG4DTag, currentCFG4DAlias );
   }
   else
   {
@@ -5608,6 +5620,145 @@ void TagAliasCFG4D::printAliasList( ofstream& cfgFile,
     cfgFile << CFG_TAG_ALIAS_CFG4D << " ";
     cfgFile << item->first << "|" << item->second << endl;
   }
+}
+
+
+
+string TagLinkCFG4D::tagCFG = CFG_TAG_LINK_CFG4D;
+
+bool TagLinkCFG4D::parseLine( KernelConnection *whichKernel,
+                              istringstream& line,
+                              Trace *whichTrace,
+                              vector<Window *>& windows,
+                              vector<Histogram *>& histograms )
+{
+  PRV_UINT32 indexLink;
+  string originalName;
+  string customName;
+  string tmpString;
+  stringstream tmpStream;
+  vector<PRV_UINT32> timelinesIndex;
+  vector<PRV_UINT32> histogramsIndex;
+
+  getline( line, tmpString, '|' );
+  tmpStream.str( tmpString );
+  if( !( tmpStream >> indexLink ) )
+    return false;
+
+  // Expected original name format: [...]|"Top Compose 1|0|Prod.Factor"|[...]
+  char dummyChar;
+  line.get( dummyChar ); // Consume "
+  getline( line, originalName, '"' );
+  line.get( dummyChar ); // Consume |
+
+  getline( line, customName, '|' );
+
+  // Timelines index parsing
+  getline( line, tmpString, '|' );
+  tmpStream.clear();
+  tmpStream.str( tmpString );
+  PRV_UINT32 indexWindow;
+  string tmpStringWindow;
+  stringstream tmpStreamWindow;
+  while ( tmpString.size() > 0 && !tmpStream.eof() )
+  {
+    getline( tmpStream, tmpStringWindow, ',' );
+    tmpStreamWindow.clear();
+    tmpStreamWindow.str( tmpStringWindow );
+    if( !( tmpStreamWindow >> indexWindow ) )
+      return false;
+    timelinesIndex.push_back( indexWindow - 1 );
+  }
+
+  // Histograms index parsing
+  getline( line, tmpString );
+  tmpStream.clear();
+  tmpStream.str( tmpString );
+  while ( tmpString.size() > 0 && !tmpStream.eof() )
+  {
+    getline( tmpStream, tmpStringWindow, ',' );
+    tmpStreamWindow.clear();
+    tmpStreamWindow.str( tmpStringWindow );
+    if( !( tmpStreamWindow >> indexWindow ) )
+      return false;
+    histogramsIndex.push_back( indexWindow - 1 );
+  }
+
+  // Insert link information into CFG4dGlobalManager
+  if ( lastCFGLinkIndex != indexLink )
+  {
+    lastCFGLinkIndex = indexLink;
+    lastGlobalLinkIndex = CFGS4DGlobalManager::getInstance()->newLinkManager();
+  }
+  CFGS4DGlobalManager::getInstance()->setCustomName( lastGlobalLinkIndex, originalName, customName );
+
+  for ( vector< PRV_UINT32 >::iterator it = timelinesIndex.begin(); it != timelinesIndex.end() ; ++it )
+  {
+    CFGS4DGlobalManager::getInstance()->insertLink( lastGlobalLinkIndex, originalName, windows[ *it ] );
+    windows[ *it ]->setCFGS4DIndexLink( originalName, lastGlobalLinkIndex );
+  }
+  
+  for ( vector< PRV_UINT32 >::iterator it = histogramsIndex.begin(); it != histogramsIndex.end() ; ++it )
+  {
+    CFGS4DGlobalManager::getInstance()->insertLink( lastGlobalLinkIndex, originalName, histograms[ *it ] );
+    histograms[ *it ]->setCFGS4DIndexLink( originalName, lastGlobalLinkIndex );
+  }
+
+  return true;
+}
+
+template<typename T>
+PRV_UINT32 TagLinkCFG4D::getWindowIndex( const T *whichWindow, const vector<T *>& findOnVector )
+{
+  PRV_UINT32 index = 0;
+  for( typename vector<T *>::const_iterator it = findOnVector.begin(); it != findOnVector.end(); ++it )
+  {
+    if( *it == whichWindow )
+      break;
+    ++index;
+  }
+
+  return index;
+}
+
+void TagLinkCFG4D::printLinkList( ofstream& cfgFile, 
+                                  const vector<Window *>& windows,
+                                  const vector<Histogram *>& histograms,
+                                  const vector<CFGS4DLinkedPropertiesManager>& linkedProperties )
+{
+  PRV_UINT32 indexLink = 0;
+  for( vector<CFGS4DLinkedPropertiesManager>::const_iterator itLinks = linkedProperties.begin();
+       itLinks != linkedProperties.end(); ++itLinks )
+  {
+    ++indexLink;
+    set< std::string > linksNames;
+    itLinks->getLinksName( linksNames );
+    for( set< std::string >::iterator itNames = linksNames.begin(); itNames != linksNames.end(); ++itNames )
+    {
+      cfgFile << CFG_TAG_LINK_CFG4D << " " << indexLink << "|\"" << *itNames << "\"|" << itLinks->getCustomName( *itNames ) << "|";
+      
+      TWindowsSet tmpWindows;
+      itLinks->getLinks( *itNames, tmpWindows );
+      for( TWindowsSet::iterator itWindow = tmpWindows.begin(); itWindow != tmpWindows.end(); ++itWindow )
+      {
+        if ( itWindow != tmpWindows.begin() )
+          cfgFile << ",";
+        cfgFile << TagLinkCFG4D::getWindowIndex( *itWindow, windows ) + 1;
+      }
+      cfgFile << "|";
+
+      THistogramsSet tmpHistograms;
+      itLinks->getLinks( *itNames, tmpHistograms );
+      for( THistogramsSet::iterator itHisto = tmpHistograms.begin(); itHisto != tmpHistograms.end(); ++itHisto )
+      {
+        if ( itHisto != tmpHistograms.begin() )
+          cfgFile << ",";
+        cfgFile << TagLinkCFG4D::getWindowIndex( *itHisto, histograms ) + 1;
+      }
+
+      cfgFile << endl;
+    }
+  }  
 }
 
 
@@ -5698,7 +5849,7 @@ void TagAliasParamCFG4D::printAliasList( ofstream& cfgFile,
   Window::TParamAliasKey aliasKey;
   string level;
   string function;
-  PRV_UINT32 param;
+  TParamIndex param;
   string aliasName;
 
   Window::TParamAlias tmpAlias( (*it)->getCFG4DParamAliasList() ); // funcion + num param

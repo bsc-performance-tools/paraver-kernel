@@ -221,6 +221,7 @@
 #define OLDCFG_VAL_AN2D_ACCUM_SEMANTIC "Semantic"
 
 #define CFG_TAG_ALIAS_CFG4D "cfg4d"
+#define CFG_TAG_LINK_CFG4D "cfg4dlink"
 #define CFG_TAG_STATISTIC_ALIAS_CFG4D "cfg4dstatistic"
 #define CFG_TAG_PARAM_ALIAS_CFG4D "cfg4dparam"
 #define CFG_TAG_CFG4D_ENABLED "CFG4D_ENABLED"
@@ -382,12 +383,17 @@ enum TSingleTimelineProperties
   SINGLE_NODE,
   SINGLE_COMPOSECPU,
   SINGLE_CPU,
-  SINGLE_EXTRATOPCOMPOSE1,
 
-  TOTAL_SINGLE_PROPERTIES
+  TOTAL_SINGLE_PROPERTIES,
+
+// Dynamic properties
+  SINGLE_EXTRATOPCOMPOSE1,
+  SINGLE_FUNCTIONPARAMETERS,
+
+  SINGLE_NULL
 };
 
-static const std::string SingleTimelinePropertyLabels[ TOTAL_SINGLE_PROPERTIES ] =
+static const std::string SingleTimelinePropertyLabels[ SINGLE_NULL ] =
 {
   "Name",
   "Begin time",
@@ -431,7 +437,9 @@ static const std::string SingleTimelinePropertyLabels[ TOTAL_SINGLE_PROPERTIES ]
   "Node",
   "Compose CPU",
   "CPU",
-  "Extra Top Compose 1"
+  "-----------TOTAL_SINGLE_PROPERTIES-----------",
+  "Extra Top Compose 1",
+  "Parameters"
 };
 
 // GUI Derived Timeline property labels
@@ -461,12 +469,17 @@ enum TDerivedTimelineProperties
   DERIVED_FACTOR1,
   DERIVED_DERIVED,
   DERIVED_FACTOR2,
-  DERIVED_EXTRATOPCOMPOSE1,
 
-  TOTAL_DERIVED_PROPERTIES
+  TOTAL_DERIVED_PROPERTIES,
+
+// Dynamic properties
+  DERIVED_EXTRATOPCOMPOSE1,
+  DERIVED_FUNCTIONPARAMETERS,
+
+  DERIVED_NULL
 };
 
-static const std::string DerivedTimelinePropertyLabels[ TOTAL_DERIVED_PROPERTIES ] =
+static const std::string DerivedTimelinePropertyLabels[ DERIVED_NULL ] =
 {
   "Name",
   "Begin time",
@@ -492,7 +505,9 @@ static const std::string DerivedTimelinePropertyLabels[ TOTAL_DERIVED_PROPERTIES
   "Factor #1",
   "Derived",
   "Factor #2",
-  "Extra Top Compose 1"
+  "-----------TOTAL_DERIVED_PROPERTIES-----------",
+  "Extra Top Compose 1",
+  "Parameters"
 };
 
 // GUI Histogram property labels
@@ -516,7 +531,8 @@ enum THistogramProperties
   HISTOGRAM_3DDELTA,
   HISTOGRAM_3DPLANE,
 
-  TOTAL_HISTOGRAM_PROPERTIES
+  TOTAL_HISTOGRAM_PROPERTIES,
+  HISTOGRAM_NULL
 };
 
 static const std::string HistogramPropertyLabels[ TOTAL_HISTOGRAM_PROPERTIES ] =

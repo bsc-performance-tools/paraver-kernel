@@ -1952,7 +1952,7 @@ const Window::TParamAlias WindowProxy::getCFG4DParamAliasList() const
 void WindowProxy::splitCFG4DParamAliasKey( const TParamAliasKey &pk,
                                            string &semanticLevel,
                                            string &function,
-                                           PRV_UINT32 &numParameter ) const
+                                           TParamIndex &numParameter ) const
 {
   semanticLevel = pk.first.first;
   function = pk.first.second;
@@ -1962,7 +1962,7 @@ void WindowProxy::splitCFG4DParamAliasKey( const TParamAliasKey &pk,
 
 const Window::TParamAliasKey WindowProxy::buildCFG4DParamAliasKey( const string &semanticLevel,
                                                                    const string &function,
-                                                                   const PRV_UINT32 &numParameter ) const
+                                                                   const TParamIndex &numParameter ) const
 {
   TParamAliasKey key( make_pair( make_pair( semanticLevel, function ), numParameter ) );
   return key;
@@ -1992,7 +1992,7 @@ vector< Window::TParamAliasKey > WindowProxy::getCFG4DParamKeysBySemanticLevel( 
 {
   vector< TParamAliasKey > retKeys;
   string semanticLevel, function;
-  PRV_UINT32 numParameter;
+  TParamIndex numParameter;
 
   // change to a single class, inside Window
   if ( whichParamAliasKey.size() > 0 )
@@ -2018,8 +2018,22 @@ vector< Window::TParamAliasKey > WindowProxy::getCFG4DParamKeysBySemanticLevel( 
     }
   }
 
-
   return retKeys;
+}
+
+
+void WindowProxy::setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichIndex )
+{
+  indexLinkFromPropName[ whichName ] = whichIndex;
+}
+
+TCFGS4DIndexLink WindowProxy::getCFGS4DIndexLink( std::string whichName ) const
+{
+  map< string, TCFGS4DIndexLink >::const_iterator it = indexLinkFromPropName.find( whichName );
+  if( it != indexLinkFromPropName.end() )
+    return it->second;
+
+  return NO_INDEX_LINK;
 }
 
 #ifdef _MSC_VER

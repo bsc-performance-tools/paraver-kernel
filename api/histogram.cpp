@@ -1787,6 +1787,20 @@ const vector< string > HistogramProxy::getCFG4DFullTagList()
   return tags;
 }
 
+void HistogramProxy::setCFGS4DIndexLink( string whichName, TCFGS4DIndexLink whichLink )
+{
+  indexLinkFromPropName[ whichName ] = whichLink;
+}
+
+TCFGS4DIndexLink HistogramProxy::getCFGS4DIndexLink( std::string whichName ) const
+{
+  map< string, TCFGS4DIndexLink >::const_iterator it = indexLinkFromPropName.find( whichName );
+  if( it != indexLinkFromPropName.end() )
+    return it->second;
+
+  return NO_INDEX_LINK;
+}
+
 SelectionManagement< TObjectOrder, TWindowLevel > * HistogramProxy::getRowSelectionManagement()
 {
   return &rowSelection;

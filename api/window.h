@@ -35,6 +35,7 @@
 #include "selectionmanagement.h"
 #include "paraverlabels.h"
 #include "syncwindows.h"
+#include "cfgs4d.h"
 
 #ifdef _MSC_VER
 #include <hash_set>
@@ -680,7 +681,7 @@ class Window
       return std::vector< std::string >();
     }
 
-    typedef std::pair< std::pair< std::string, std::string >, PRV_UINT32 > TParamAliasKey;
+    typedef std::pair< std::pair< std::string, std::string >, TParamIndex > TParamAliasKey;
     typedef std::map< TParamAliasKey, std::string > TParamAlias;
 
     virtual void setCFG4DParamAlias( const TParamAlias &whichParamAlias )
@@ -705,13 +706,13 @@ class Window
     virtual void splitCFG4DParamAliasKey( const TParamAliasKey &pk,
                                           std::string &semanticLevel,
                                           std::string &function,
-                                          PRV_UINT32 &numParameter ) const
+                                          TParamIndex &numParameter ) const
     {
     }
 
     virtual const TParamAliasKey buildCFG4DParamAliasKey( const std::string &semanticLevel,
                                                           const std::string &function,
-                                                          const PRV_UINT32 &numParameter ) const
+                                                          const TParamIndex &numParameter ) const
     {
       return TParamAliasKey();
     }
@@ -735,6 +736,14 @@ class Window
                                                                                    const std::vector< Window::TParamAliasKey > &whichParamAlias = std::vector<Window::TParamAliasKey >() ) const
     {
       return std::vector<Window::TParamAliasKey >();
+    }
+
+    virtual void setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichIndex )
+    {}
+
+    virtual TCFGS4DIndexLink getCFGS4DIndexLink( std::string whichName ) const
+    {
+      return NO_INDEX_LINK;
     }
 
 #ifdef _MSC_VER
@@ -1161,7 +1170,7 @@ class WindowProxy: public Window
     virtual void splitCFG4DParamAliasKey( const TParamAliasKey &pk,
                                           std::string &semanticLevel,
                                           std::string &function,
-                                          PRV_UINT32 &numParameter ) const;
+                                          TParamIndex &numParameter ) const;
 
     virtual Window::TParamAliasKey getCFG4DParamAliasKey( const TParamAlias::iterator it ) const;
     virtual const std::string getCFG4DParamAlias( const TParamAlias::iterator &it ) const;
@@ -1172,8 +1181,9 @@ class WindowProxy: public Window
     virtual const Window::TParamAliasKey buildCFG4DParamAliasKey(
                                                 const std::string &semanticLevel,
                                                 const std::string &function,
-                                                const PRV_UINT32 &numParameter ) const;
-
+                                                const TParamIndex &numParameter ) const;
+    virtual void setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichIndex );
+    virtual TCFGS4DIndexLink getCFGS4DIndexLink( std::string whichName ) const;
 
 #ifdef _MSC_VER
     virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
@@ -1402,6 +1412,7 @@ class WindowProxy: public Window
     bool CFG4DMode;
     std::map< std::string, std::string > propertiesAliasCFG4D;
     TParamAlias paramAliasCFG4D;
+    std::map< std::string, TCFGS4DIndexLink > indexLinkFromPropName;
 
     // For Clone
     WindowProxy();

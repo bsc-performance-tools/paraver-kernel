@@ -30,6 +30,7 @@
 #include <sstream>
 #include <string>
 #include "paraverkerneltypes.h"
+#include "cfgs4d.h"
 
 class KernelConnection;
 class Window;
@@ -47,7 +48,8 @@ class TagFunction
     virtual ~TagFunction()
     {}
 
-    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+    virtual bool parseLine( KernelConnection *whichKernel,
+                            std::istringstream& line,
                             Trace *whichTrace,
                             std::vector<Window *>& windows,
                             std::vector<Histogram *>& histograms )
@@ -116,7 +118,8 @@ class CFGLoader
     static bool saveCFG( const std::string& filename,
                          const SaveOptions& options,
                          const std::vector<Window *>& windows,
-                         const std::vector<Histogram *>& histograms );
+                         const std::vector<Histogram *>& histograms,
+                         const std::vector<CFGS4DLinkedPropertiesManager>& linkedProperties );
     static int findWindow( const Window *whichWindow,
                            const std::vector<Window *>& allWindows );
     static int findWindowBackwards( const Window *whichWindow,
@@ -2363,6 +2366,35 @@ class TagAliasCFG4D: public TagFunction
 };
 
 
+class TagLinkCFG4D: public TagFunction
+{
+  public:
+    TagLinkCFG4D()
+    {}
+
+    virtual ~TagLinkCFG4D()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel,
+                            std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+    static void printLinkList( std::ofstream& cfgFile, 
+                               const std::vector<Window *>& windows,
+                               const std::vector<Histogram *>& histograms,
+                               const std::vector<CFGS4DLinkedPropertiesManager>& linkedProperties );
+
+  protected:
+    static std::string tagCFG;
+
+  private:
+    template<typename T>
+    static PRV_UINT32 getWindowIndex( const T *whichWindow, const std::vector<T *>& findOnVector );
+};
+
 
 class TagAliasStatisticCFG4D: public TagFunction
 {
@@ -2408,5 +2440,6 @@ class TagAliasParamCFG4D: public TagFunction
   protected:
     static std::string tagCFG;
 };
+
 
 #endif // CFG_H_INCLUDED
