@@ -1709,6 +1709,7 @@ KWindow *KDerivedWindow::clone( bool recursiveClone )
     else
       clonedKDerivedWindow->parents[ i ] = NULL;
     clonedKDerivedWindow->factor[ i ] = factor[ i ];
+    clonedKDerivedWindow->shift[ i ] = shift[ i ];
   }
 
   for ( PRV_UINT16 i = 0; i <= DERIVED; ++i )

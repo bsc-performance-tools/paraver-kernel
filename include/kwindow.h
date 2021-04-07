@@ -365,6 +365,10 @@ class KDerivedWindow: public KWindow
       factor.push_back( 1.0 );
       factor.push_back( 1.0 );
 
+      shift.clear();
+      shift.push_back( 0 );
+      shift.push_back( 0 );
+
       initSemanticFunctions();
 
       parents.push_back( NULL );
@@ -378,6 +382,10 @@ class KDerivedWindow: public KWindow
       factor.clear();
       factor.push_back( 1.0 );
       factor.push_back( 1.0 );
+
+      shift.clear();
+      shift.push_back( 0 );
+      shift.push_back( 0 );
 
       initSemanticFunctions();
 
