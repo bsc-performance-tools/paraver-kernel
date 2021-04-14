@@ -77,16 +77,16 @@ bool WorkspaceManager::existWorkspace( std::string name, TWorkspaceSet whichSet 
 {
   switch ( whichSet )
   {
-    case ALL:
+    case TWorkspaceSet::ALL:
       return ( distWorkspaces.find( name ) != distWorkspaces.end() ) ||
              ( userWorkspaces.find( name ) != userWorkspaces.end() );
       break;
 
-    case DISTRIBUTED:
+    case TWorkspaceSet::DISTRIBUTED:
       return distWorkspaces.find( name ) != distWorkspaces.end();
       break;
 
-    case USER_DEFINED:
+    case TWorkspaceSet::USER_DEFINED:
       return userWorkspaces.find( name ) != userWorkspaces.end();
       break;
 
@@ -105,17 +105,17 @@ vector<string> WorkspaceManager::getWorkspaces( TWorkspaceSet whichSet ) const
 
   switch ( whichSet )
   {
-    case ALL:
+    case TWorkspaceSet::ALL:
       tmpWorkspacesOrder = distWorkspacesOrder;
       tmpWorkspacesOrder.insert( tmpWorkspacesOrder.end(), userWorkspacesOrder.begin(), userWorkspacesOrder.end() );
       return tmpWorkspacesOrder;
       break;
 
-    case DISTRIBUTED:
+    case TWorkspaceSet::DISTRIBUTED:
       return distWorkspacesOrder;
       break;
 
-    case USER_DEFINED:
+    case TWorkspaceSet::USER_DEFINED:
       return userWorkspacesOrder;
       break;
 
@@ -137,7 +137,7 @@ void WorkspaceManager::getMergedWorkspaces( const std::set<TState>& loadedStates
   for( std::set<TState>::const_iterator it = loadedStates.begin(); it != loadedStates.end(); ++it )
   {
     WorkspaceValue tmpWorkspaceValue;
-    tmpWorkspaceValue.myType = WorkspaceValue::STATE;
+    tmpWorkspaceValue.myType = WorkspaceType::STATE;
     tmpWorkspaceValue.UInfo.state = *it;
     tmpLoadedValues.push_back( tmpWorkspaceValue );
   }
@@ -145,7 +145,7 @@ void WorkspaceManager::getMergedWorkspaces( const std::set<TState>& loadedStates
   for( std::set<TEventType>::const_iterator it = loadedTypes.begin(); it != loadedTypes.end(); ++it )
   {
     WorkspaceValue tmpWorkspaceValue;
-    tmpWorkspaceValue.myType = WorkspaceValue::EVENT;
+    tmpWorkspaceValue.myType = WorkspaceType::EVENT;
     tmpWorkspaceValue.UInfo.eventType = *it;
     tmpLoadedValues.push_back( tmpWorkspaceValue );
   }
@@ -190,18 +190,18 @@ Workspace& WorkspaceManager::getWorkspace( std::string name, TWorkspaceSet which
 {
   switch ( whichSet )
   {
-    case ALL:
-      if ( existWorkspace( name, DISTRIBUTED ) )
+    case TWorkspaceSet::ALL:
+      if ( existWorkspace( name, TWorkspaceSet::DISTRIBUTED ) )
         return distWorkspaces[ name ];
       else
         return userWorkspaces[ name ];
       break;
 
-    case DISTRIBUTED:
+    case TWorkspaceSet::DISTRIBUTED:
       return distWorkspaces[ name ];
       break;
 
-    case USER_DEFINED:
+    case TWorkspaceSet::USER_DEFINED:
       return userWorkspaces[ name ];
       break;
 

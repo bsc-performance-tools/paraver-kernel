@@ -117,25 +117,27 @@ class Filter;
 class ProgressController;
 class Histogram;
 
+enum class TObjectLabels
+{
+  ALL_LABELS = 0,
+  SPACED_LABELS,
+  POWER2_LABELS
+};
+
+enum class TObjectAxisSize
+{
+  CURRENT_LEVEL = 0,
+  ALL_LEVELS,
+  ZERO_PERC,
+  FIVE_PERC,
+  TEN_PERC,
+  TWENTYFIVE_PERC
+};
+
 class Window
 {
   public:
-    enum TObjectLabels
-    {
-      ALL_LABELS = 0,
-      SPACED_LABELS,
-      POWER2_LABELS
-    };
-
-    enum TObjectAxisSize
-    {
-      CURRENT_LEVEL = 0,
-      ALL_LEVELS,
-      ZERO_PERC,
-      FIVE_PERC,
-      TEN_PERC,
-      TWENTYFIVE_PERC
-    };
+    
 
     // Create Single Window
     static Window *create( KernelConnection *whichKernel, Trace *whichTrace );
@@ -609,18 +611,18 @@ class Window
                                           std::vector<std::string> &nameParameters,
                                           std::vector< std::vector< double > >&defaultParameters ) const = 0;
 
-    virtual void setObjectLabels( Window::TObjectLabels whichLabels )
+    virtual void setObjectLabels( TObjectLabels whichLabels )
     {}
-    virtual Window::TObjectLabels getObjectLabels() const
+    virtual TObjectLabels getObjectLabels() const
     {
-      return Window::SPACED_LABELS;
+      return TObjectLabels::SPACED_LABELS;
     }
 
-    virtual void setObjectAxisSize( Window::TObjectAxisSize whichSize )
+    virtual void setObjectAxisSize( TObjectAxisSize whichSize )
     {}
-    virtual Window::TObjectAxisSize getObjectAxisSize() const
+    virtual TObjectAxisSize getObjectAxisSize() const
     {
-      return Window::CURRENT_LEVEL;
+      return TObjectAxisSize::CURRENT_LEVEL;
     }
 
     // CFG4D
@@ -1127,11 +1129,11 @@ class WindowProxy: public Window
                                           std::vector<std::string> &nameParameters,
                                           std::vector< std::vector< double > >&defaultParameters ) const;
 
-    virtual void setObjectLabels( Window::TObjectLabels whichLabels );
-    virtual Window::TObjectLabels getObjectLabels() const;
+    virtual void setObjectLabels( TObjectLabels whichLabels );
+    virtual TObjectLabels getObjectLabels() const;
 
-    virtual void setObjectAxisSize( Window::TObjectAxisSize whichSize );
-    virtual Window::TObjectAxisSize getObjectAxisSize() const;
+    virtual void setObjectAxisSize( TObjectAxisSize whichSize );
+    virtual TObjectAxisSize getObjectAxisSize() const;
 
     // CFG4D
     virtual void setCFG4DEnabled( bool enabled );
@@ -1382,7 +1384,7 @@ class WindowProxy: public Window
     bool useCustomPalette;
     DrawModeMethod drawModeObject;
     DrawModeMethod drawModeTime;
-    SemanticColor::TColorFunction colorMode;
+    TColorFunction colorMode;
     bool semanticScaleMinAtZero;
     bool showWindow;
     bool raise;
@@ -1404,8 +1406,8 @@ class WindowProxy: public Window
     // Row selection
     SelectionManagement< TObjectOrder, TWindowLevel > selectedRow;
 
-    Window::TObjectLabels objectLabels;
-    Window::TObjectAxisSize objectAxisSize;
+    TObjectLabels objectLabels;
+    TObjectAxisSize objectAxisSize;
 
     // CFG4D
     bool isCFG4DEnabled;

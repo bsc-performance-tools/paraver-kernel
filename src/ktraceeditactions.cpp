@@ -54,10 +54,10 @@ using std::set;
  ********                  TestAction                                ********
  ****************************************************************************/
 
-vector<TraceEditSequence::TSequenceStates> TestAction::getStateDependencies() const
+vector<TSequenceStates> TestAction::getStateDependencies() const
 {
-  vector<TraceEditSequence::TSequenceStates> tmpStates;
-  tmpStates.push_back( TraceEditSequence::testState );
+  vector<TSequenceStates> tmpStates;
+  tmpStates.push_back( TSequenceStates::testState );
   return tmpStates;
 }
 
@@ -74,11 +74,11 @@ bool  TestAction::execute( std::string whichTrace )
  ********                  TraceCutterAction                         ********
  ****************************************************************************/
 
-vector<TraceEditSequence::TSequenceStates> TraceCutterAction::getStateDependencies() const
+vector<TSequenceStates> TraceCutterAction::getStateDependencies() const
 {
-  vector<TraceEditSequence::TSequenceStates> tmpStates;
-  tmpStates.push_back( TraceEditSequence::traceOptionsState );
-  tmpStates.push_back( TraceEditSequence::csvWindowState );
+  vector<TSequenceStates> tmpStates;
+  tmpStates.push_back( TSequenceStates::traceOptionsState );
+  tmpStates.push_back( TSequenceStates::csvWindowState );
   return tmpStates;
 }
 
@@ -86,10 +86,10 @@ vector<TraceEditSequence::TSequenceStates> TraceCutterAction::getStateDependenci
 bool TraceCutterAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
-  Window *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TraceEditSequence::csvWindowState ) )->getData();
-  TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TraceEditSequence::traceOptionsState ) )->getData();
+  Window *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TSequenceStates::csvWindowState ) )->getData();
+  TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TSequenceStates::traceOptionsState ) )->getData();
 
-  std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TraceEditSequence::outputDirSuffixState ) )->getData();
+  std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TSequenceStates::outputDirSuffixState ) )->getData();
   std::string outputPath = whichTrace.substr( 0, whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) ) +
                            mySequence->getKernelConnection()->getPathSeparator() + tmpSuffix;
   vector< std::string > tmpID;
@@ -143,13 +143,13 @@ bool TraceCutterAction::execute( std::string whichTrace )
  ********                  TraceFilterAction                         ********
  ****************************************************************************/
 
-vector<TraceEditSequence::TSequenceStates> TraceFilterAction::getStateDependencies() const
+vector<TSequenceStates> TraceFilterAction::getStateDependencies() const
 {
-  vector<TraceEditSequence::TSequenceStates> tmpStates;
-  tmpStates.push_back( TraceEditSequence::onlyFilterState );
-  tmpStates.push_back( TraceEditSequence::traceOptionsState );
-  tmpStates.push_back( TraceEditSequence::eventTranslationTableState );
-  tmpStates.push_back( TraceEditSequence::copyAdditionalFilesState );
+  vector<TSequenceStates> tmpStates;
+  tmpStates.push_back( TSequenceStates::onlyFilterState );
+  tmpStates.push_back( TSequenceStates::traceOptionsState );
+  tmpStates.push_back( TSequenceStates::eventTranslationTableState );
+  tmpStates.push_back( TSequenceStates::copyAdditionalFilesState );
   return tmpStates;
 }
 
@@ -159,19 +159,19 @@ bool TraceFilterAction::execute( std::string whichTrace )
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
 
   std::map< TTypeValuePair, TTypeValuePair > translationTable =
-          ( (EventTranslationTableState *)tmpSequence->getState( TraceEditSequence::eventTranslationTableState ) )->getData();
+          ( (EventTranslationTableState *)tmpSequence->getState( TSequenceStates::eventTranslationTableState ) )->getData();
 
-  bool onlyFilter = ( (OnlyFilterState *)tmpSequence->getState( TraceEditSequence::onlyFilterState ) )->getData();
+  bool onlyFilter = ( (OnlyFilterState *)tmpSequence->getState( TSequenceStates::onlyFilterState ) )->getData();
   std::string newName;
 
   if ( onlyFilter || !translationTable.empty() )
   {
-    TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TraceEditSequence::traceOptionsState ) )->getData();
+    TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TSequenceStates::traceOptionsState ) )->getData();
 
-    newName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
+    newName = ( (OutputTraceFileNameState *)tmpSequence->getState( TSequenceStates::outputTraceFileNameState ) )->getData();
     if ( !tmpSequence->isEndOfSequence() || newName.empty() )
     {
-      std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TraceEditSequence::outputDirSuffixState ) )->getData();
+      std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TSequenceStates::outputDirSuffixState ) )->getData();
       std::string outputPath = whichTrace.substr( 0, whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) ) +
                              mySequence->getKernelConnection()->getPathSeparator() + tmpSuffix;
 
@@ -191,7 +191,7 @@ bool TraceFilterAction::execute( std::string whichTrace )
                                                  nullptr,
                                                  translationTable );
 
-    bool copyFiles = ( (CopyAdditionalFilesState *)tmpSequence->getState( TraceEditSequence::copyAdditionalFilesState ) )->getData();
+    bool copyFiles = ( (CopyAdditionalFilesState *)tmpSequence->getState( TSequenceStates::copyAdditionalFilesState ) )->getData();
     if ( copyFiles )
     {
       mySequence->getKernelConnection()->copyPCF( whichTrace, newName );
@@ -212,11 +212,11 @@ bool TraceFilterAction::execute( std::string whichTrace )
 /****************************************************************************
  ********                  CSVOutputAction                           ********
  ****************************************************************************/
-vector<TraceEditSequence::TSequenceStates> CSVOutputAction::getStateDependencies() const
+vector<TSequenceStates> CSVOutputAction::getStateDependencies() const
 {
-  vector<TraceEditSequence::TSequenceStates> tmpStates;
-  tmpStates.push_back(  TraceEditSequence::csvWindowState );
-  tmpStates.push_back(  TraceEditSequence::csvFileNameState );
+  vector<TSequenceStates> tmpStates;
+  tmpStates.push_back(  TSequenceStates::csvWindowState );
+  tmpStates.push_back(  TSequenceStates::csvFileNameState );
   return tmpStates;
 }
 
@@ -224,13 +224,13 @@ vector<TraceEditSequence::TSequenceStates> CSVOutputAction::getStateDependencies
 bool CSVOutputAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
-  Window *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TraceEditSequence::csvWindowState ) )->getData();
-  std::string tmpFileName = ( (CSVFileNameState *)tmpSequence->getState( TraceEditSequence::csvFileNameState ) )->getData();
-  TextOutput output = ( (CSVOutputState *)tmpSequence->getState( TraceEditSequence::csvOutputState ) )->getData();
+  Window *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TSequenceStates::csvWindowState ) )->getData();
+  std::string tmpFileName = ( (CSVFileNameState *)tmpSequence->getState( TSequenceStates::csvFileNameState ) )->getData();
+  TextOutput output = ( (CSVOutputState *)tmpSequence->getState( TSequenceStates::csvOutputState ) )->getData();
 
   output.dumpWindow( tmpWindow, tmpFileName );
 
-  TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TraceEditSequence::traceOptionsState ) )->getData();
+  TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TSequenceStates::traceOptionsState ) )->getData();
   if( options != nullptr )
   {
     options->set_min_cutting_time( output.getMinTime() );
@@ -245,11 +245,11 @@ bool CSVOutputAction::execute( std::string whichTrace )
 /****************************************************************************
  ********               TraceShifterTimesLoaderAction                ********
  ****************************************************************************/
-/*vector<TraceEditSequence::TSequenceStates> TraceShifterTimesLoaderAction::getStateDependencies() const
+/*vector<TSequenceStates> TraceShifterTimesLoaderAction::getStateDependencies() const
 {
-  vector<TraceEditSequence::TSequenceStates> tmpStates;
+  vector<TSequenceStates> tmpStates;
 
-  //tmpStates.push_back( TraceEditSequence::shiftTimesState );
+  //tmpStates.push_back( TSequenceStates::shiftTimesState );
 
   return tmpStates;
 }
@@ -269,12 +269,12 @@ bool TraceShifterTimesLoaderAction::execute( std::string whichTrace )
 /****************************************************************************
  ********                  TraceParserAction                         ********
  ****************************************************************************/
-vector<TraceEditSequence::TSequenceStates> TraceParserAction::getStateDependencies() const
+vector<TSequenceStates> TraceParserAction::getStateDependencies() const
 {
-  vector<TraceEditSequence::TSequenceStates> tmpStates;
+  vector<TSequenceStates> tmpStates;
 
-  //tmpStates.push_back( TraceEditSequence::maxTraceTimeState );
-  tmpStates.push_back( TraceEditSequence::eofParsedState );
+  //tmpStates.push_back( TSequenceStates::maxTraceTimeState );
+  tmpStates.push_back( TSequenceStates::eofParsedState );
 
   return tmpStates;
 }
@@ -301,7 +301,7 @@ bool TraceParserAction::execute( std::string whichTrace )
   {
     // Final dummy record
     it = myTrace.empty();
-    EOFParsedState *tmpEOFParseState = (EOFParsedState *)tmpSequence->getState( TraceEditSequence::eofParsedState );
+    EOFParsedState *tmpEOFParseState = (EOFParsedState *)tmpSequence->getState( TSequenceStates::eofParsedState );
     tmpEOFParseState->setData( true );
     executionError = tmpSequence->executeNextAction( it );
 
@@ -315,13 +315,13 @@ bool TraceParserAction::execute( std::string whichTrace )
 /****************************************************************************
  ********                 RecordTimeShifterAction                    ********
  ****************************************************************************/
-vector<TraceEditSequence::TSequenceStates> RecordTimeShifterAction::getStateDependencies() const
+vector<TSequenceStates> RecordTimeShifterAction::getStateDependencies() const
 {
-  vector<TraceEditSequence::TSequenceStates> tmpStates;
+  vector<TSequenceStates> tmpStates;
 
-  //tmpStates.push_back( TraceEditSequence::maxTraceTimeState );
-  tmpStates.push_back( TraceEditSequence::shiftTimesState );
-  tmpStates.push_back( TraceEditSequence::shiftLevelState );
+  //tmpStates.push_back( TSequenceStates::maxTraceTimeState );
+  tmpStates.push_back( TSequenceStates::shiftTimesState );
+  tmpStates.push_back( TSequenceStates::shiftLevelState );
 
   return tmpStates;
 }
@@ -334,7 +334,7 @@ bool RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
 
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
 
-  bool eofParsed = ( (EOFParsedState *)tmpSequence->getState( TraceEditSequence::eofParsedState ) )->getData();
+  bool eofParsed = ( (EOFParsedState *)tmpSequence->getState( TSequenceStates::eofParsedState ) )->getData();
 
   if ( ( whichRecord->getType() == STATE + BEGIN ) ||
        ( whichRecord->getType() == EVENT ) ||
@@ -350,10 +350,10 @@ bool RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
     if ( !eofParsed )
     {
       std::vector< TTime > *shiftTimes =
-              ( (ShiftTimesState *)tmpSequence->getState( TraceEditSequence::shiftTimesState ) )->getData();
+              ( (ShiftTimesState *)tmpSequence->getState( TSequenceStates::shiftTimesState ) )->getData();
 
       TWindowLevel shiftLevel =
-              ( (ShiftLevelState *)tmpSequence->getState( TraceEditSequence::shiftLevelState ) )->getData();
+              ( (ShiftLevelState *)tmpSequence->getState( TSequenceStates::shiftLevelState ) )->getData();
 
       tmpSequence->getCurrentTrace()->getThreadLocation( whichRecord->getThread(), app, task, thread );
 
@@ -456,12 +456,12 @@ bool RecordTimeShifterAction::execute( MemoryTrace::iterator *whichRecord )
 /****************************************************************************
  ********                  TraceWriterAction                         ********
  ****************************************************************************/
-vector<TraceEditSequence::TSequenceStates> TraceWriterAction::getStateDependencies() const
+vector<TSequenceStates> TraceWriterAction::getStateDependencies() const
 {
-  vector<TraceEditSequence::TSequenceStates> tmpStates;
+  vector<TSequenceStates> tmpStates;
 
-  //tmpStates.push_back( TraceEditSequence::maxTraceTimeState );
-  tmpStates.push_back( TraceEditSequence::outputTraceFileNameState );
+  //tmpStates.push_back( TSequenceStates::maxTraceTimeState );
+  tmpStates.push_back( TSequenceStates::outputTraceFileNameState );
 
   return tmpStates;
 }
@@ -474,16 +474,16 @@ bool TraceWriterAction::execute( MemoryTrace::iterator *it  )
   if( !outputTrace.is_open() )
   {
     std::string tmpFileName =
-            ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
+            ( (OutputTraceFileNameState *)tmpSequence->getState( TSequenceStates::outputTraceFileNameState ) )->getData();
     outputTrace.open( tmpFileName.c_str(), std::ios::out );
     TTime tmpMaxDelta =
-            ( (MaxTraceTimeState *)tmpSequence->getState( TraceEditSequence::maxTraceTimeState ) )->getData();
+            ( (MaxTraceTimeState *)tmpSequence->getState( TSequenceStates::maxTraceTimeState ) )->getData();
 
     tmpSequence->getCurrentTrace()->setEndTime( tmpSequence->getCurrentTrace()->getEndTime() + tmpMaxDelta );
     tmpSequence->getCurrentTrace()->dumpFileHeader( outputTrace );
   }
 
-  bool eofParsed = ( (EOFParsedState *)tmpSequence->getState( TraceEditSequence::eofParsedState ) )->getData();
+  bool eofParsed = ( (EOFParsedState *)tmpSequence->getState( TSequenceStates::eofParsedState ) )->getData();
 
   if ( ( it->getType() == STATE + BEGIN ) ||
        ( it->getType() == EVENT ) ||
@@ -504,13 +504,13 @@ bool TraceWriterAction::execute( MemoryTrace::iterator *it  )
 /****************************************************************************
  ********               EventDrivenCutterAction                      ********
  ****************************************************************************/
-vector<TraceEditSequence::TSequenceStates> EventDrivenCutterAction::getStateDependencies() const
+vector<TSequenceStates> EventDrivenCutterAction::getStateDependencies() const
 {
-  vector<TraceEditSequence::TSequenceStates> tmpStates;
+  vector<TSequenceStates> tmpStates;
 
-  tmpStates.push_back( TraceEditSequence::outputTraceFileNameState );
-  tmpStates.push_back( TraceEditSequence::onEventCutterState );
-  tmpStates.push_back( TraceEditSequence::eofParsedState );
+  tmpStates.push_back( TSequenceStates::outputTraceFileNameState );
+  tmpStates.push_back( TSequenceStates::onEventCutterState );
+  tmpStates.push_back( TSequenceStates::eofParsedState );
 
   return tmpStates;
 }
@@ -530,7 +530,7 @@ bool EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
   }
 
   if( ( it->getType() == EVENT ) &&
-      ( it->getEventType() == ( (OnEventCutter *)tmpSequence->getState( TraceEditSequence::onEventCutterState ) )->getData() ) )
+      ( it->getEventType() == ( (OnEventCutter *)tmpSequence->getState( TSequenceStates::onEventCutterState ) )->getData() ) )
   {
     TThreadOrder firstThread, lastThread;
     TApplOrder applLoc;
@@ -573,7 +573,7 @@ bool EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
 
   if( !outputTraces[ currentFile ]->is_open() )
   {
-    std::string tmpFileName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
+    std::string tmpFileName = ( (OutputTraceFileNameState *)tmpSequence->getState( TSequenceStates::outputTraceFileNameState ) )->getData();
     if( currentFile > 0 )
     {
       std::string::size_type partPos = tmpFileName.rfind( "-part" );
@@ -593,7 +593,7 @@ bool EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
     tmpSequence->getCurrentTrace()->dumpFileHeader( *outputTraces[ currentFile ] );
   }
 
-  bool eofParsed = ( (EOFParsedState *)tmpSequence->getState( TraceEditSequence::eofParsedState ) )->getData();
+  bool eofParsed = ( (EOFParsedState *)tmpSequence->getState( TSequenceStates::eofParsedState ) )->getData();
 
   if ( ( it->getType() == STATE + BEGIN ) ||
        ( it->getType() == EVENT ) ||
@@ -626,9 +626,9 @@ bool EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
 /****************************************************************************
  ********                  TraceSortAction                           ********
  ****************************************************************************/
-vector<TraceEditSequence::TSequenceStates> TraceSortAction::getStateDependencies() const
+vector<TSequenceStates> TraceSortAction::getStateDependencies() const
 {
-  vector<TraceEditSequence::TSequenceStates> tmpStates;
+  vector<TSequenceStates> tmpStates;
 
   return tmpStates;
 }
@@ -660,13 +660,13 @@ void cloneValuesIntoGroup( vector< unsigned int >::iterator begin,
 }
 
 
-vector<TraceEditSequence::TSequenceStates> PCFEventMergerAction::getStateDependencies() const
+vector<TSequenceStates> PCFEventMergerAction::getStateDependencies() const
 {
-  vector<TraceEditSequence::TSequenceStates> tmpStates;
-  tmpStates.push_back( TraceEditSequence::eventTranslationTableState );
-  tmpStates.push_back( TraceEditSequence::outputTraceFileNameState );
-  tmpStates.push_back( TraceEditSequence::outputDirSuffixState );
-  tmpStates.push_back( TraceEditSequence::pcfMergerReferenceState );
+  vector<TSequenceStates> tmpStates;
+  tmpStates.push_back( TSequenceStates::eventTranslationTableState );
+  tmpStates.push_back( TSequenceStates::outputTraceFileNameState );
+  tmpStates.push_back( TSequenceStates::outputDirSuffixState );
+  tmpStates.push_back( TSequenceStates::pcfMergerReferenceState );
 
   return tmpStates;
 }
@@ -679,10 +679,10 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
 
 #ifndef OLD_PCFPARSER
   // Get new tracename
-  std::string newName = ( (OutputTraceFileNameState *)tmpSequence->getState( TraceEditSequence::outputTraceFileNameState ) )->getData();
+  std::string newName = ( (OutputTraceFileNameState *)tmpSequence->getState( TSequenceStates::outputTraceFileNameState ) )->getData();
   if ( newName.empty() )
   {
-    std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TraceEditSequence::outputDirSuffixState ) )->getData();
+    std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TSequenceStates::outputDirSuffixState ) )->getData();
     std::string outputPath = whichTrace.substr( 0, whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) ) +
                            mySequence->getKernelConnection()->getPathSeparator() + tmpSuffix;
 
@@ -692,7 +692,7 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
     newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );
   }
 
-  std::string referenceTrace = ( (PCFMergerReferenceState *)tmpSequence->getState( TraceEditSequence::pcfMergerReferenceState ) )->getData();
+  std::string referenceTrace = ( (PCFMergerReferenceState *)tmpSequence->getState( TSequenceStates::pcfMergerReferenceState ) )->getData();
   std::string referencePCFFile = LocalKernel::composeName( referenceTrace, "pcf" );
   std::string sourceTrace = LocalKernel::composeName( whichTrace, "pcf" );
 
@@ -823,7 +823,7 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
   }
 
   // Write files
-  ( (EventTranslationTableState *)tmpSequence->getState( TraceEditSequence::eventTranslationTableState ) )->setData( translation );
+  ( (EventTranslationTableState *)tmpSequence->getState( TSequenceStates::eventTranslationTableState ) )->setData( translation );
 
   if ( !translation.empty() )
   {

@@ -49,7 +49,7 @@ PRV_INT16 Normalizer::numSteps = 10;
 double Normalizer::calculate( TSemanticValue whichValue,
                               TSemanticValue whichMinimum,
                               TSemanticValue whichMaximum,
-                              GradientColor::TGradientFunction whichFunction,
+                              TGradientFunction whichFunction,
                               bool minimumAsBase )
 {
   TSemanticValue norm;  
@@ -74,18 +74,18 @@ double Normalizer::calculate( TSemanticValue whichValue,
 
   switch ( whichFunction )
   {
-    case GradientColor::LINEAR:
+    case TGradientFunction::LINEAR:
       break;
 
-    case GradientColor::STEPS:
+    case TGradientFunction::STEPS:
       norm = floor( Normalizer::numSteps * norm ) / Normalizer::numSteps;
       break;
 
-    case GradientColor::LOGARITHMIC:
+    case TGradientFunction::LOGARITHMIC:
       norm = log( ( double )( norm * 100 + 1 ) ) / log( ( double )101 );
       break;
 
-    case GradientColor::EXPONENTIAL:
+    case TGradientFunction::EXPONENTIAL:
       norm = exp( ( double )( norm * 10 ) ) / exp( ( double )10 );
       break;
   }
@@ -397,7 +397,7 @@ rgb CodeColor::calcColor( TSemanticValue whichValue,
 // GRADIENTCOLOR METHODS
 GradientColor::GradientColor( )
 {
-  bool blackNotNull = ParaverConfig::getInstance()->getTimelineColor() != SemanticColor::NOT_NULL_GRADIENT;
+  bool blackNotNull = ParaverConfig::getInstance()->getTimelineColor() != TColorFunction::NOT_NULL_GRADIENT;
 
   drawOutlier = true;
   drawOutOfScale = blackNotNull;
@@ -409,7 +409,7 @@ GradientColor::GradientColor( )
   aboveOutlierColor          = SemanticColor::getAboveOutlierColor();
   belowOutlierColor          = SemanticColor::getBelowOutlierColor();
 
-  function = GradientColor::STEPS;
+  function = TGradientFunction::STEPS;
 
   recalcSteps();
 }
@@ -501,7 +501,7 @@ bool GradientColor::getAllowOutOfScale() const
   return drawOutOfScale;
 }
 
-GradientColor::TGradientFunction GradientColor::getGradientFunction() const
+TGradientFunction GradientColor::getGradientFunction() const
 {
   return function;
 }

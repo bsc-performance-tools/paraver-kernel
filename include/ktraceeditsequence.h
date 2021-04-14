@@ -39,14 +39,14 @@ class KTraceEditSequence:public TraceEditSequence
 
     const KernelConnection *getKernelConnection() const;
     
-    TraceEditState *createState( TraceEditSequence::TSequenceStates whichState );
+    TraceEditState *createState( TSequenceStates whichState );
     void setCurrentTrace( KTrace *whichTrace );
     KTrace *getCurrentTrace();
 
-    bool addState( TraceEditSequence::TSequenceStates whichState );
-    bool addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState );
-    TraceEditState *getState( TraceEditSequence::TSequenceStates whichState );
-    bool pushbackAction( TraceEditSequence::TSequenceActions whichAction );
+    bool addState( TSequenceStates whichState );
+    bool addState( TSequenceStates whichState, TraceEditState *newState );
+    TraceEditState *getState( TSequenceStates whichState );
+    bool pushbackAction( TSequenceActions whichAction );
     bool pushbackAction( TraceEditAction *newAction );
 
     bool execute( vector<std::string> traces );
@@ -59,7 +59,7 @@ class KTraceEditSequence:public TraceEditSequence
   protected:
 
   private:
-    map<TraceEditSequence::TSequenceStates, TraceEditState *> activeStates;
+    map<TSequenceStates, TraceEditState *> activeStates;
     vector<TraceEditAction *> sequenceActions;
     KTrace *currentTrace;
     std::string currentTraceName;

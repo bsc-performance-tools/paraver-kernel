@@ -38,7 +38,7 @@ KTraceEditSequence::KTraceEditSequence( const KernelConnection *whichKernel ) : 
 
 KTraceEditSequence::~KTraceEditSequence()
 {
-  for( map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator it = activeStates.begin();
+  for( map<TSequenceStates, TraceEditState *>::iterator it = activeStates.begin();
        it != activeStates.end(); ++it )
     delete it->second;
 
@@ -54,71 +54,71 @@ const KernelConnection *KTraceEditSequence::getKernelConnection() const
 }
 
 
-TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceStates whichState )
+TraceEditState *KTraceEditSequence::createState( TSequenceStates whichState )
 {
   switch( whichState )
   {
-    case testState:
+    case TSequenceStates::testState:
       return new TestState( this );
       break;
 
-    case traceOptionsState:
+    case TSequenceStates::traceOptionsState:
       return new TraceOptionsState( this );
       break;
 
-    case csvWindowState:
+    case TSequenceStates::csvWindowState:
       return new CSVWindowState( this );
       break;
 
-    case csvFileNameState:
+    case TSequenceStates::csvFileNameState:
       return new CSVFileNameState( this );
       break;
 
-    case csvOutputState:
+    case TSequenceStates::csvOutputState:
       return new CSVOutputState( this );
       break;
 
-    case outputDirSuffixState:
+    case TSequenceStates::outputDirSuffixState:
       return new OutputDirSuffixState( this );
       break;
 
-    case outputTraceFileNameState:
+    case TSequenceStates::outputTraceFileNameState:
       return new OutputTraceFileNameState( this );
       break;
 
-    case maxTraceTimeState:
+    case TSequenceStates::maxTraceTimeState:
       return new MaxTraceTimeState( this );
       break;
 
-    case shiftTimesState:
+    case TSequenceStates::shiftTimesState:
       return new ShiftTimesState( this );
       break;
 
-    case eofParsedState:
+    case TSequenceStates::eofParsedState:
       return new EOFParsedState( this );
       break;
 
-    case shiftLevelState:
+    case TSequenceStates::shiftLevelState:
       return new ShiftLevelState( this );
       break;
 
-    case onEventCutterState:
+    case TSequenceStates::onEventCutterState:
       return new OnEventCutter( this );
       break;
 
-    case pcfMergerReferenceState:
+    case TSequenceStates::pcfMergerReferenceState:
       return new PCFMergerReferenceState( this );
       break;
 
-    case copyAdditionalFilesState:
+    case TSequenceStates::copyAdditionalFilesState:
       return new CopyAdditionalFilesState( this );
       break;
 
-    case eventTranslationTableState:
+    case TSequenceStates::eventTranslationTableState:
       return new EventTranslationTableState( this );
       break;
 
-    case onlyFilterState:
+    case TSequenceStates::onlyFilterState:
       return new OnlyFilterState( this );
       break;
 
@@ -143,9 +143,9 @@ KTrace *KTraceEditSequence::getCurrentTrace()
 }
 
 
-bool KTraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState )
+bool KTraceEditSequence::addState( TSequenceStates whichState )
 {
-  map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator tmpIt;
+  map<TSequenceStates, TraceEditState *>::iterator tmpIt;
   tmpIt = activeStates.find( whichState );
   if( tmpIt != activeStates.end() )
     return false;
@@ -159,9 +159,9 @@ bool KTraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState
 }
 
 
-bool KTraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState )
+bool KTraceEditSequence::addState( TSequenceStates whichState, TraceEditState *newState )
 {
-  map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator tmpIt;
+  map<TSequenceStates, TraceEditState *>::iterator tmpIt;
 
   tmpIt = activeStates.find( whichState );
   if( tmpIt != activeStates.end() )
@@ -172,9 +172,9 @@ bool KTraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState
 }
 
 
-TraceEditState *KTraceEditSequence::getState( TraceEditSequence::TSequenceStates whichState )
+TraceEditState *KTraceEditSequence::getState( TSequenceStates whichState )
 {
-  map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator tmpIt;
+  map<TSequenceStates, TraceEditState *>::iterator tmpIt;
 
   tmpIt = activeStates.find( whichState );
   if( tmpIt != activeStates.end() )
@@ -183,45 +183,45 @@ TraceEditState *KTraceEditSequence::getState( TraceEditSequence::TSequenceStates
   return nullptr;
 }
 
-bool KTraceEditSequence::pushbackAction( TraceEditSequence::TSequenceActions whichAction )
+bool KTraceEditSequence::pushbackAction( TSequenceActions whichAction )
 {
   TraceEditAction *newAction;
 
   switch( whichAction )
   {
-    case testAction:
+    case TSequenceActions::testAction:
       newAction = new TestAction( this );
       break;
 
-    case traceCutterAction:
+    case TSequenceActions::traceCutterAction:
       newAction = new TraceCutterAction( this );
       break;
 
-    case traceFilterAction:
+    case TSequenceActions::traceFilterAction:
       newAction = new TraceFilterAction( this );
       break;
 
-    case csvOutputAction:
+    case TSequenceActions::csvOutputAction:
       newAction = new CSVOutputAction( this );
       break;
 
-    case traceParserAction:
+    case TSequenceActions::traceParserAction:
       newAction = new TraceParserAction( this );
       break;
 
-    case recordTimeShifterAction:
+    case TSequenceActions::recordTimeShifterAction:
       newAction = new RecordTimeShifterAction( this );
       break;
 
-    case traceWriterAction:
+    case TSequenceActions::traceWriterAction:
       newAction = new TraceWriterAction( this );
       break;
 
-    case eventDrivenCutterAction:
+    case TSequenceActions::eventDrivenCutterAction:
       newAction = new EventDrivenCutterAction( this );
       break;
 
-    case traceSortAction:
+    case TSequenceActions::traceSortAction:
       newAction = new TraceSortAction( this );
       break;
 
@@ -242,11 +242,11 @@ bool KTraceEditSequence::pushbackAction( TraceEditSequence::TSequenceActions whi
 
 bool KTraceEditSequence::pushbackAction( TraceEditAction *newAction )
 {
-  TraceEditAction::TTraceEditActionType tmpType = newAction->getType();
+  TTraceEditActionType tmpType = newAction->getType();
 
   if( sequenceActions.empty() )
   {
-    if( tmpType == TraceEditAction::TraceToTrace || tmpType == TraceEditAction::TraceToRecord )
+    if( tmpType == TTraceEditActionType::TraceToTrace || tmpType == TTraceEditActionType::TraceToRecord )
     {
       sequenceActions.push_back( newAction );
       return true;
@@ -257,15 +257,15 @@ bool KTraceEditSequence::pushbackAction( TraceEditAction *newAction )
 
   switch( sequenceActions[ sequenceActions.size() - 1 ]->getType() )
   {
-    case TraceEditAction::TraceToTrace:
-    case TraceEditAction::RecordToTrace:
-      if( tmpType != TraceEditAction::TraceToTrace && tmpType != TraceEditAction::TraceToRecord )
+    case TTraceEditActionType::TraceToTrace:
+    case TTraceEditActionType::RecordToTrace:
+      if( tmpType != TTraceEditActionType::TraceToTrace && tmpType != TTraceEditActionType::TraceToRecord )
         return false;
       break;
 
-    case TraceEditAction::TraceToRecord:
-    case TraceEditAction::RecordToRecord:
-      if( tmpType != TraceEditAction::RecordToTrace && tmpType != TraceEditAction::RecordToRecord )
+    case TTraceEditActionType::TraceToRecord:
+    case TTraceEditActionType::RecordToRecord:
+      if( tmpType != TTraceEditActionType::RecordToTrace && tmpType != TTraceEditActionType::RecordToRecord )
         return false;
       break;
 
@@ -284,8 +284,8 @@ bool KTraceEditSequence::execute( vector<std::string> traces )
   for( vector<TraceEditAction *>::iterator it = sequenceActions.begin();
        it != sequenceActions.end(); ++it )
   {
-    vector<TraceEditSequence::TSequenceStates> tmpStates = (*it)->getStateDependencies();
-    for( vector<TraceEditSequence::TSequenceStates>::iterator itState = tmpStates.begin();
+    vector<TSequenceStates> tmpStates = (*it)->getStateDependencies();
+    for( vector<TSequenceStates>::iterator itState = tmpStates.begin();
          itState != tmpStates.end(); ++itState )
       addState( *itState );
   }
@@ -300,17 +300,17 @@ bool KTraceEditSequence::execute( vector<std::string> traces )
     currentAction = 0;
     currentTraceName = *it;
 
-    for( map<TraceEditSequence::TSequenceStates, TraceEditState *>::iterator itState = activeStates.begin();
+    for( map<TSequenceStates, TraceEditState *>::iterator itState = activeStates.begin();
          itState != activeStates.end(); ++itState )
       itState->second->init();
 
     switch( sequenceActions[ 0 ]->getType() )
     {
-      case TraceEditAction::TraceToTrace:
+      case TTraceEditActionType::TraceToTrace:
         sequenceExecError[ *it ] = firstActionTraceToTrace->execute( *it );
         break;
 
-      case TraceEditAction::TraceToRecord:
+      case TTraceEditActionType::TraceToRecord:
         sequenceExecError[ *it ] = firstActionTraceToRecord->execute( *it );
         break;
 
@@ -343,19 +343,19 @@ bool KTraceEditSequence::executeNextAction( std::string whichTrace )
 
   switch( sequenceActions[ currentAction ]->getType() )
   {
-    case TraceEditAction::TraceToTrace:
+    case TTraceEditActionType::TraceToTrace:
       sequenceExecError[ whichTrace ] = nextActionToTrace->execute( whichTrace );
       break;
 
-    case TraceEditAction::TraceToRecord:
+    case TTraceEditActionType::TraceToRecord:
       sequenceExecError[ whichTrace ] = nextActionToRecord->execute( whichTrace );
       break;
 
-    case TraceEditAction::RecordToTrace:
+    case TTraceEditActionType::RecordToTrace:
 
       break;
 
-    case TraceEditAction::RecordToRecord:
+    case TTraceEditActionType::RecordToRecord:
 
       break;
 
@@ -386,17 +386,17 @@ bool KTraceEditSequence::executeNextAction( MemoryTrace::iterator *whichRecord )
 
   switch( sequenceActions[ currentAction ]->getType() )
   {
-    case TraceEditAction::TraceToTrace:
+    case TTraceEditActionType::TraceToTrace:
       break;
 
-    case TraceEditAction::TraceToRecord:
+    case TTraceEditActionType::TraceToRecord:
       break;
 
-    case TraceEditAction::RecordToTrace:
+    case TTraceEditActionType::RecordToTrace:
       sequenceExecError[ currentTraceName ] = nextActionToTrace->execute( whichRecord );
       break;
 
-    case TraceEditAction::RecordToRecord:
+    case TTraceEditActionType::RecordToRecord:
       sequenceExecError[ currentTraceName ] = nextActionToRecord->execute( whichRecord );
       break;
 

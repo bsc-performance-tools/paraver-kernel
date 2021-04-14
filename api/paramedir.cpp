@@ -852,12 +852,12 @@ void testSequence( KernelConnection *myKernel )
   vector<std::string> tmpV;
   tmpV.push_back( "/home/eloy/traces/mpi_ping0000089274.prv" );
   TraceEditSequence *seq = TraceEditSequence::create( myKernel );
-  seq->pushbackAction( TraceEditSequence::testAction );
-  seq->pushbackAction( TraceEditSequence::traceCutterAction );
+  seq->pushbackAction( TSequenceActions::testAction );
+  seq->pushbackAction( TSequenceActions::traceCutterAction );
   TraceOptions *tmpOptions = TraceOptions::create( myKernel );
   TraceOptionsState *tmpOptionsState = new TraceOptionsState( seq );
   tmpOptionsState->setData( tmpOptions );
-  seq->addState( TraceEditSequence::traceOptionsState, tmpOptionsState );
+  seq->addState( TSequenceStates::traceOptionsState, tmpOptionsState );
   seq->execute( tmpV );
 }
 #endif

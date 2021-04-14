@@ -31,20 +31,19 @@
 
 class Window;
 
+enum class TColorFunction
+{
+  COLOR = 0,
+  GRADIENT,
+  NOT_NULL_GRADIENT,
+  FUNCTION_LINE,
+  PUNCTUAL,
+  FUSED_LINES
+};
 
 class SemanticColor
 {
   public:
-    enum TColorFunction
-    {
-      COLOR = 0,
-      GRADIENT,
-      NOT_NULL_GRADIENT,
-      FUNCTION_LINE,
-      PUNCTUAL,
-      FUSED_LINES
-    };
-
     static rgb BACKGROUND;
     static rgb FOREGROUND;
     static rgb ZERO_AXIS;
@@ -118,17 +117,17 @@ class CodeColor: public SemanticColor
 };
 
 
+enum class TGradientFunction
+{
+  LINEAR = 0,
+  STEPS,
+  LOGARITHMIC,
+  EXPONENTIAL
+};
+
 class GradientColor: public SemanticColor
 {
   public:
-    enum TGradientFunction
-    {
-      LINEAR = 0,
-      STEPS,
-      LOGARITHMIC,
-      EXPONENTIAL
-    };
-
     GradientColor();
     ~GradientColor();
 
@@ -197,7 +196,7 @@ class Normalizer
     static double calculate( TSemanticValue whichValue,
                              TSemanticValue whichMinimum,
                              TSemanticValue whichMaximum,
-                             GradientColor::TGradientFunction whichFunction,
+                             TGradientFunction whichFunction,
                              bool minimumAsBase );
   private:
     static PRV_INT16 numSteps;

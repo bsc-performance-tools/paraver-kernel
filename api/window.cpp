@@ -135,9 +135,9 @@ void WindowProxy::init()
   semanticScaleMinAtZero = ParaverConfig::getInstance()->getTimelineSemanticScaleMinAtZero();
   colorMode = ParaverConfig::getInstance()->getTimelineColor();
   useCustomPalette = Window::getUseCustomPalette();
-  if( colorMode == SemanticColor::GRADIENT )
+  if( colorMode == TColorFunction::GRADIENT )
     myGradientColor.allowOutOfScale( true );
-  else if( colorMode == SemanticColor::NOT_NULL_GRADIENT )
+  else if( colorMode == TColorFunction::NOT_NULL_GRADIENT )
     myGradientColor.allowOutOfScale( false );
   myGradientColor.setGradientFunction( ParaverConfig::getInstance()->getTimelineGradientFunction() );
   drawModeObject = ParaverConfig::getInstance()->getTimelineDrawmodeObjects();
@@ -1162,64 +1162,64 @@ void WindowProxy::setRaiseWindow( bool newValue )
 
 void WindowProxy::setCodeColorMode()
 {
-  colorMode = SemanticColor::COLOR;
+  colorMode = TColorFunction::COLOR;
 }
 
 void WindowProxy::setGradientColorMode()
 {
-  colorMode = SemanticColor::GRADIENT;
+  colorMode = TColorFunction::GRADIENT;
   myGradientColor.allowOutOfScale( true );
 }
 
 void WindowProxy::setNotNullGradientColorMode()
 {
-  colorMode = SemanticColor::NOT_NULL_GRADIENT;
+  colorMode = TColorFunction::NOT_NULL_GRADIENT;
   myGradientColor.allowOutOfScale( false );
 }
 
 void WindowProxy::setFunctionLineColorMode()
 {
-  colorMode = SemanticColor::FUNCTION_LINE;
+  colorMode = TColorFunction::FUNCTION_LINE;
 }
 
 void WindowProxy::setFusedLinesColorMode()
 {
-  colorMode = SemanticColor::FUSED_LINES;
+  colorMode = TColorFunction::FUSED_LINES;
 }
 
 void WindowProxy::setPunctualColorMode()
 {
-  colorMode = SemanticColor::PUNCTUAL;
+  colorMode = TColorFunction::PUNCTUAL;
 }
 
 bool WindowProxy::isCodeColorSet() const
 {
-  return colorMode == SemanticColor::COLOR;
+  return colorMode == TColorFunction::COLOR;
 }
 
 bool WindowProxy::isGradientColorSet() const
 {
-  return colorMode == SemanticColor::GRADIENT;
+  return colorMode == TColorFunction::GRADIENT;
 }
 
 bool WindowProxy::isNotNullGradientColorSet() const
 {
-  return colorMode == SemanticColor::NOT_NULL_GRADIENT;
+  return colorMode == TColorFunction::NOT_NULL_GRADIENT;
 }
 
 bool WindowProxy::isFunctionLineColorSet() const
 {
-  return colorMode == SemanticColor::FUNCTION_LINE;
+  return colorMode == TColorFunction::FUNCTION_LINE;
 }
 
 bool WindowProxy::isFusedLinesColorSet() const
 {
-  return colorMode == SemanticColor::FUSED_LINES;
+  return colorMode == TColorFunction::FUSED_LINES;
 }
 
 bool WindowProxy::isPunctualColorSet() const
 {
-  return colorMode == SemanticColor::PUNCTUAL;
+  return colorMode == TColorFunction::PUNCTUAL;
 }
 
 PRV_UINT16 WindowProxy::getPixelSize() const
@@ -1259,7 +1259,7 @@ void WindowProxy::allowOutliers( bool activate )
 
 rgb WindowProxy::calcColor( TSemanticValue whichValue, Window& whichWindow )
 {
-  if ( colorMode == SemanticColor::COLOR )
+  if ( colorMode == TColorFunction::COLOR )
     return myCodeColor.calcColor( whichValue, minimumY, maximumY, useCustomPalette );
 
   return myGradientColor.calcColor( whichValue, minimumY, maximumY );
@@ -1267,7 +1267,7 @@ rgb WindowProxy::calcColor( TSemanticValue whichValue, Window& whichWindow )
 
 bool WindowProxy::isColorOutlier( rgb whichColor ) const
 {
-  if( colorMode != SemanticColor::GRADIENT )
+  if( colorMode != TColorFunction::GRADIENT )
     return false;
   return myGradientColor.isColorOutlier( whichColor );
 }
@@ -1622,22 +1622,22 @@ bool WindowProxy::getParametersOfFunction( string whichFunction,
          defaultParameters );
 }
 
-void WindowProxy::setObjectLabels( Window::TObjectLabels whichLabels )
+void WindowProxy::setObjectLabels( TObjectLabels whichLabels )
 {
   objectLabels = whichLabels;
 }
 
-Window::TObjectLabels WindowProxy::getObjectLabels() const
+TObjectLabels WindowProxy::getObjectLabels() const
 {
   return objectLabels;
 }
 
-void WindowProxy::setObjectAxisSize( Window::TObjectAxisSize whichSize )
+void WindowProxy::setObjectAxisSize( TObjectAxisSize whichSize )
 {
   objectAxisSize = whichSize;
 }
 
-Window::TObjectAxisSize WindowProxy::getObjectAxisSize() const
+TObjectAxisSize WindowProxy::getObjectAxisSize() const
 {
   return objectAxisSize;
 }

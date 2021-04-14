@@ -499,11 +499,11 @@ class Histogram
     // DEPRECATED
     virtual void setCodeColor( bool newValue )
     {}
-    virtual SemanticColor::TColorFunction getColorMode() const
+    virtual TColorFunction getColorMode() const
     {
-      return SemanticColor::GRADIENT;
+      return TColorFunction::GRADIENT;
     }
-    virtual void setColorMode( SemanticColor::TColorFunction whichMode )
+    virtual void setColorMode( TColorFunction whichMode )
     {}
     virtual PRV_UINT16 getPixelSize() const
     {
@@ -857,8 +857,8 @@ class HistogramProxy : public Histogram
     // DEPRECATED
     virtual bool getCodeColor() const;
     // DEPRECATED
-    virtual SemanticColor::TColorFunction getColorMode() const;
-    virtual void setColorMode( SemanticColor::TColorFunction whichMode );
+    virtual TColorFunction getColorMode() const;
+    virtual void setColorMode( TColorFunction whichMode );
     virtual void setCodeColor( bool newValue );
     virtual PRV_UINT16 getPixelSize() const;
     virtual void setPixelSize( PRV_UINT16 whichSize );
@@ -947,7 +947,7 @@ class HistogramProxy : public Histogram
     bool redraw;
     bool recalc;
     bool forceRecalc;
-    SemanticColor::TColorFunction colorMode;
+    TColorFunction colorMode;
     PRV_UINT16 pixelSize;
     bool onlyTotals;
     bool shortLabels;

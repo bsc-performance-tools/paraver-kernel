@@ -32,22 +32,22 @@
 using std::vector;
 
 
+enum class TTraceEditActionType
+{
+  TraceToTrace = 0,
+  TraceToRecord,
+  RecordToTrace,
+  RecordToRecord
+};
+
 class TraceEditAction
 {
 public:
-  enum TTraceEditActionType
-  {
-    TraceToTrace = 0,
-    TraceToRecord,
-    RecordToTrace,
-    RecordToRecord
-  };
-
   TraceEditAction( TraceEditSequence *whichSequence ) : mySequence( whichSequence ) {}
   virtual ~TraceEditAction() {}
 
-  virtual TraceEditAction::TTraceEditActionType getType() const = 0;
-  virtual vector<TraceEditSequence::TSequenceStates> getStateDependencies() const = 0;
+  virtual TTraceEditActionType getType() const = 0;
+  virtual vector<TSequenceStates> getStateDependencies() const = 0;
 
 protected:
   TraceEditSequence *mySequence;
@@ -63,9 +63,9 @@ public:
   TraceToTraceAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
   virtual ~TraceToTraceAction() {}
 
-  virtual TraceEditAction::TTraceEditActionType getType() const
+  virtual TTraceEditActionType getType() const
   {
-    return TraceEditAction::TraceToTrace;
+    return TTraceEditActionType::TraceToTrace;
   }
 
   virtual bool execute( std::string whichTrace ) = 0;

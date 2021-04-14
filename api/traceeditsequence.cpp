@@ -57,31 +57,31 @@ const KernelConnection *TraceEditSequenceProxy::getKernelConnection() const
 }
 
 
-TraceEditState *TraceEditSequenceProxy::createState( TraceEditSequence::TSequenceStates whichState )
+TraceEditState *TraceEditSequenceProxy::createState( TSequenceStates whichState )
 {
   return mySequence->createState( whichState );
 }
 
 
-bool TraceEditSequenceProxy::addState( TraceEditSequence::TSequenceStates whichState )
+bool TraceEditSequenceProxy::addState( TSequenceStates whichState )
 {
   return mySequence->addState( whichState );
 }
 
 
-bool TraceEditSequenceProxy::addState( TraceEditSequence::TSequenceStates whichState, TraceEditState *newState )
+bool TraceEditSequenceProxy::addState( TSequenceStates whichState, TraceEditState *newState )
 {
   return mySequence->addState( whichState, newState );
 }
 
 
-TraceEditState *TraceEditSequenceProxy::getState( TraceEditSequence::TSequenceStates whichState )
+TraceEditState *TraceEditSequenceProxy::getState( TSequenceStates whichState )
 {
   return mySequence->getState( whichState );
 }
 
 
-bool TraceEditSequenceProxy::pushbackAction( TraceEditSequence::TSequenceActions whichAction )
+bool TraceEditSequenceProxy::pushbackAction( TSequenceActions whichAction )
 {
   return mySequence->pushbackAction( whichAction );
 }

@@ -3673,7 +3673,7 @@ bool WindowLabelsToDraw::parseLine( KernelConnection *whichKernel, istringstream
   if ( !( tmpStream >> labels ) )
     return false;
 
-  windows[ windows.size() - 1 ]->setObjectLabels( ( Window::TObjectLabels )labels );
+  windows[ windows.size() - 1 ]->setObjectLabels( ( TObjectLabels )labels );
 
   return true;
 }
@@ -3681,7 +3681,7 @@ bool WindowLabelsToDraw::parseLine( KernelConnection *whichKernel, istringstream
 void WindowLabelsToDraw::printLine( ofstream& cfgFile,
                                  const vector<Window *>::const_iterator it )
 {
-  cfgFile << OLDCFG_TAG_WNDW_LABELS_TO_DRAW << " " << (*it)->getObjectLabels() << endl;
+  cfgFile << OLDCFG_TAG_WNDW_LABELS_TO_DRAW << " " << static_cast< int > ( (*it)->getObjectLabels() ) << endl;
 }
 
 
@@ -5189,11 +5189,11 @@ bool Analyzer2DColorMode::parseLine( KernelConnection *whichKernel, istringstrea
   getline( line, strBool, ' ' );
 
   if ( strBool.compare( OLDCFG_VAL_COLOR_MODE_CODE ) == 0 )
-    histograms[ histograms.size() - 1 ]->setColorMode( SemanticColor::COLOR );
+    histograms[ histograms.size() - 1 ]->setColorMode( TColorFunction::COLOR );
   else if ( strBool.compare( OLDCFG_VAL_COLOR_MODE_GRADIENT ) == 0 )
-    histograms[ histograms.size() - 1 ]->setColorMode( SemanticColor::GRADIENT );
+    histograms[ histograms.size() - 1 ]->setColorMode( TColorFunction::GRADIENT );
   else if ( strBool.compare( OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT ) == 0 )
-    histograms[ histograms.size() - 1 ]->setColorMode( SemanticColor::NOT_NULL_GRADIENT );
+    histograms[ histograms.size() - 1 ]->setColorMode( TColorFunction::NOT_NULL_GRADIENT );
   else
     return false;
 
@@ -5204,11 +5204,11 @@ void Analyzer2DColorMode::printLine( ofstream& cfgFile,
                                      const vector<Histogram *>::const_iterator it )
 {
   cfgFile << OLDCFG_TAG_AN2D_COLOR_MODE << " ";
-  if ( ( *it )->getColorMode() == SemanticColor::COLOR )
+  if ( ( *it )->getColorMode() == TColorFunction::COLOR )
     cfgFile << OLDCFG_VAL_COLOR_MODE_CODE;
-  else if( ( *it )->getColorMode() == SemanticColor::GRADIENT )
+  else if( ( *it )->getColorMode() == TColorFunction::GRADIENT )
     cfgFile << OLDCFG_VAL_COLOR_MODE_GRADIENT;
-  else if( ( *it )->getColorMode() == SemanticColor::NOT_NULL_GRADIENT )
+  else if( ( *it )->getColorMode() == TColorFunction::NOT_NULL_GRADIENT )
     cfgFile << OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT;
   cfgFile << endl;
 

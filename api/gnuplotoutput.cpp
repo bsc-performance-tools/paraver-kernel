@@ -34,7 +34,7 @@ void GNUPlotOutput::dumpWindow( Window *whichWindow, string& strOutputFile, Prog
   if( strOutputFile.rfind( string( ".gnuplot" ) ) == string::npos )
     strOutputFile += ".gnuplot";
 
-  Output *textOutput = Output::createOutput( Output::TEXT );
+  Output *textOutput = Output::createOutput( TOutput::TEXT );
   string strTextOutputFilename = strOutputFile + string( ".csv" );
 
   textOutput->setMultipleFiles( false );
@@ -73,7 +73,7 @@ void GNUPlotOutput::dumpHistogram( Histogram *whichHisto,
   if( strOutputFile.rfind( string( ".gnuplot" ) ) == string::npos )
     strOutputFile += ".gnuplot";
 
-  Output *textOutput = Output::createOutput( Output::TEXT );
+  Output *textOutput = Output::createOutput( TOutput::TEXT );
   string strTextOutputFilename = strOutputFile + string( ".csv" );
 
   textOutput->setMultipleFiles( false );

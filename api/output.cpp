@@ -30,11 +30,11 @@ Output *Output::createOutput( TOutput whichOutput )
 {
   switch( whichOutput )
   {
-    case TEXT:
+    case TOutput::TEXT:
       return new TextOutput();
       break;
 
-    case GNUPLOT:
+    case TOutput::GNUPLOT:
       return new GNUPlotOutput();
       break;
 

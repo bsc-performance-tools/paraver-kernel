@@ -31,15 +31,15 @@
 class Window;
 class Histogram;
 
+enum class TOutput
+{
+  TEXT = 0,
+  GNUPLOT
+};
+
 class Output
 {
-  public:
-    enum TOutput
-    {
-      TEXT = 0,
-      GNUPLOT
-    };
-
+  public: 
     static Output *createOutput( TOutput whichOutput );
 
     Output() {}

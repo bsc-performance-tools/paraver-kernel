@@ -1571,26 +1571,26 @@ void HistogramProxy::setForceRecalc( bool newValue )
 // DEPRECATED
 bool HistogramProxy::getCodeColor() const
 {
-  return colorMode == SemanticColor::COLOR;
+  return colorMode == TColorFunction::COLOR;
 }
 
 // DEPRECATED
 void HistogramProxy::setCodeColor( bool newValue )
 {
   if( newValue )
-    colorMode = SemanticColor::COLOR;
+    colorMode = TColorFunction::COLOR;
   else
-    colorMode = SemanticColor::GRADIENT;
+    colorMode = TColorFunction::GRADIENT;
 }
 
-SemanticColor::TColorFunction HistogramProxy::getColorMode() const
+TColorFunction HistogramProxy::getColorMode() const
 {
   return colorMode;
 }
 
-void HistogramProxy::setColorMode( SemanticColor::TColorFunction whichMode )
+void HistogramProxy::setColorMode( TColorFunction whichMode )
 {
-  if( colorMode <= SemanticColor::NOT_NULL_GRADIENT )
+  if( colorMode <= TColorFunction::NOT_NULL_GRADIENT )
     colorMode = whichMode;
 }
 
