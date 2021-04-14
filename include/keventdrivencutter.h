@@ -41,12 +41,12 @@ class KEventDrivenCutter : public EventDrivenCutter
                         std::string traceIn,
                         std::string traceOut,
                         TEventType whichEvent,
-                        ProgressController *progress = NULL );
+                        ProgressController *progress = nullptr );
     ~KEventDrivenCutter();
 
     virtual void execute( std::string traceIn,
                           std::string traceOut,
-                          ProgressController *progress = NULL );
+                          ProgressController *progress = nullptr );
 
   private:
     TraceEditSequence *mySequence;

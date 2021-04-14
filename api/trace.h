@@ -164,7 +164,7 @@ class Trace
     virtual void setUnload( bool newValue ) {}
     virtual Trace *getConcrete() const
     {
-      return NULL;
+      return nullptr;
     }
     virtual std::string getFileNameNumbered() const
     {
@@ -177,22 +177,22 @@ class Trace
     virtual void setInstanceNumber( PRV_UINT32 whichInstanceNumber ) {}
     virtual const CodeColor& getCodeColor() const
     {
-      CodeColor *tmp = NULL;
+      CodeColor *tmp = nullptr;
       return *tmp;
     }
     virtual const GradientColor& getGradientColor() const
     {
-      GradientColor *tmp = NULL;
+      GradientColor *tmp = nullptr;
       return *tmp;
     }
     virtual const EventLabels& getEventLabels() const
     {
-      EventLabels *tmp = NULL;
+      EventLabels *tmp = nullptr;
       return *tmp;
     }
     virtual const StateLabels& getStateLabels() const
     {
-      StateLabels *tmp = NULL;
+      StateLabels *tmp = nullptr;
       return *tmp;
     }
     virtual std::string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const

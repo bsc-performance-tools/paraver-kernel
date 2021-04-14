@@ -55,7 +55,7 @@ class ProgressController
 
     virtual ProgressController *getConcrete() const
     {
-      return NULL;
+      return nullptr;
     }
 };
 

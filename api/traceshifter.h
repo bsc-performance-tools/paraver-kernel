@@ -53,7 +53,7 @@ class TraceShifter
 
     virtual void execute( std::string traceIn,
                           std::string traceOut,
-                          ProgressController *progress = NULL ) = 0;
+                          ProgressController *progress = nullptr ) = 0;
 
     virtual const std::vector< TTime > getShiftTimes() = 0;
 
@@ -71,7 +71,7 @@ class TraceShifterProxy : public TraceShifter
 
     virtual void execute( std::string traceIn,
                           std::string traceOut,
-                          ProgressController *progress = NULL );
+                          ProgressController *progress = nullptr );
 
     virtual const std::vector< TTime > getShiftTimes(); // maybe not needed
     // TODO: think about how to decide which level is going to be shifted

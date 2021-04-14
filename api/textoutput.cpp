@@ -67,7 +67,7 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile, Progres
 
   // Progress controller
   std::string previousMessage;
-  if( progress != NULL )
+  if( progress != nullptr )
   {
     //previousMessage = progress->getMessage();
     //progress->setMessage( strOutputFile );
@@ -80,7 +80,7 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile, Progres
 
   for ( TObjectOrder i = 0; i < whichWindow->getWindowLevelObjects(); ++i )
   {
-    if( progress != NULL )
+    if( progress != nullptr )
     {
       if ( whichWindow->getWindowLevelObjects() > 1 )
         progress->setCurrentProgress( i );
@@ -102,7 +102,7 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile, Progres
 
     while ( whichWindow->getEndTime( i ) < endTime )
     {
-      if( progress != NULL )
+      if( progress != nullptr )
       {
         if ( whichWindow->getWindowLevelObjects() == 1 )
         {
@@ -187,7 +187,7 @@ void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile, Progres
   if ( !multipleFiles )
     outputFile.close();
 
-  //if( progress != NULL )
+  //if( progress != nullptr )
   //{
   //  progress->setMessage( previousMessage );
   //}
@@ -268,7 +268,7 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
         }
 
         // Dump data
-        HistogramTotals *totals = NULL;
+        HistogramTotals *totals = nullptr;
         if ( whichHisto->getHorizontal() )
         {
           dumpMatrixHorizontal( whichHisto, numRows, numColumns, currentStat, printedColumns, iPlane, outputFile, withLabels );
@@ -304,7 +304,7 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
           }
         }
 
-        if( totals != NULL )
+        if( totals != nullptr )
           delete totals;
         outputFile << endl;
       } // plane whith values
@@ -341,7 +341,7 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
             outputFile << whichHisto->getColumnLabel( printedColumns[ iColumn ] ) << "\t";
         }
 
-        HistogramTotals *totals = NULL;
+        HistogramTotals *totals = nullptr;
         if ( whichHisto->getHorizontal() )
         {
           dumpMatrixCommHorizontal( whichHisto, numRows, numColumns, currentStat, printedColumns, iPlane, outputFile, withLabels );
@@ -377,7 +377,7 @@ void TextOutput::dumpHistogram( Histogram *whichHisto,
           }
         }
 
-        if( totals != NULL )
+        if( totals != nullptr )
           delete totals;
         outputFile << endl;
       } // plane whith values
@@ -412,7 +412,7 @@ void TextOutput::dumpMatrixHorizontal( Histogram *whichHisto,
       outputFile << whichHisto->getRowLabel( objSelection[ iRow ] ) << "\t";
 
     // progress advanced by rows (external loop)
-    if( progress != NULL )
+    if( progress != nullptr )
     {
       if ( numRows > 1 )
         progress->setCurrentProgress( (int)iRow );
@@ -463,7 +463,7 @@ void TextOutput::dumpMatrixVertical( Histogram *whichHisto,
       outputFile << whichHisto->getColumnLabel( whichHisto->getSemanticRealColumn( iColumn, printedColumns ) ) << "\t";
 
     // progress advanced by columns (external loop)
-    if( progress != NULL )
+    if( progress != nullptr )
     {
       if ( numColumns > 1 )
         progress->setCurrentProgress( (int)iColumn );
@@ -508,7 +508,7 @@ void TextOutput::dumpMatrixCommHorizontal( Histogram *whichHisto,
       outputFile << whichHisto->getRowLabel( objSelection[ iRow ] ) << "\t";
 
     // progress advanced by rows (external loop)
-    if( progress != NULL )
+    if( progress != nullptr )
     {
       if ( numRows > 1 )
         progress->setCurrentProgress( (int)iRow );
@@ -559,7 +559,7 @@ void TextOutput::dumpMatrixCommVertical( Histogram *whichHisto,
       outputFile << whichHisto->getColumnLabel( printedColumns[ iColumn ] ) << "\t";
 
     // progress advanced by columns (external loop)
-    if( progress != NULL )
+    if( progress != nullptr )
     {
       if ( numColumns > 1 )
         progress->setCurrentProgress( (int)iColumn );
@@ -601,7 +601,7 @@ void TextOutput::dumpTotalColumns( Histogram *whichHisto,
   for ( THistogramColumn iColumn = 0; iColumn < numColumns; ++iColumn )
   {
     // progress advanced by columns (external loop)
-    if( progress != NULL )
+    if( progress != nullptr )
     {
       if ( numColumns > 1 )
         progress->setCurrentProgress( (int)iColumn );
@@ -627,7 +627,7 @@ void TextOutput::dumpTotalRows( HistogramTotals *totals,
   for ( TObjectOrder iRow = 0; iRow < numRows; ++iRow )
   {
     // progress advanced by rows (external loop)
-    if( progress != NULL )
+    if( progress != nullptr )
     {
       if ( numRows > 1 )
         progress->setCurrentProgress( (int)iRow );

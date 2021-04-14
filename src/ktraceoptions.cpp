@@ -212,7 +212,7 @@ void KTraceOptions::parse_type( xmlDocPtr doc,
 
   /* Get properties */
   word = xmlGetProp( cur, ( const xmlChar * )"min_time" );
-  if ( word != NULL )
+  if ( word != nullptr )
   {
     filter_by_call_time = true;
     types[last_type].min_call_time = atoll( ( char * )word );
@@ -227,7 +227,7 @@ void KTraceOptions::parse_type( xmlDocPtr doc,
 
 
   // range 'type1-type2' containing dash?
-  if ( ( c = strchr( ( char * )word, '-' ) ) != NULL )
+  if ( ( c = strchr( ( char * )word, '-' ) ) != nullptr )
   {
     *c = '\0';
     types[last_type].type = atoll( ( char * )word );
@@ -244,7 +244,7 @@ void KTraceOptions::parse_type( xmlDocPtr doc,
   index = 0;
 
   cur = cur->xmlChildrenNode;
-  while ( cur != NULL )
+  while ( cur != nullptr )
   {
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"value" ) )
     {
@@ -277,7 +277,7 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
   bool foundDiscardEventsTag = false;
   bool foundDiscardCommunicationsTag = false;
 
-  while ( cur != NULL )
+  while ( cur != nullptr )
   {
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"types" ) )
     {
@@ -287,7 +287,7 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
 
       /* Get properties */
       word = xmlGetProp( cur, ( const xmlChar * )"use" );
-      if ( word != NULL )
+      if ( word != nullptr )
       {
         if ( !xmlStrcmp( word, ( const xmlChar * )"discard" ) )
           discard_given_types = 1;
@@ -299,12 +299,12 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
       child = cur->xmlChildrenNode;
       child = child->next;
 
-      while ( child != NULL )
+      while ( child != nullptr )
       {
         if ( !xmlStrcmp( child->name, ( const xmlChar * )"type" ) )
           parse_type( doc, child, filter_types, filter_last_type );
 
-        if( child != NULL )    // BAD FORMED XMLs
+        if( child != nullptr )    // BAD FORMED XMLs
           child = child->next;
       }
     }
@@ -314,7 +314,7 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
       filter_comms = true;
       child = cur->xmlChildrenNode;
       //child = child->next;  ??
-      if ( child != NULL )
+      if ( child != nullptr )
       {
         //word = xmlNodeListGetString( doc, child->xmlChildrenNode, 1 ); ??
         word = xmlNodeListGetString( doc, child, 1 );
@@ -331,15 +331,15 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
 
       /* searching which states wants to keep */
       for ( i = 0; i < MAXSTATES; i++ )
-        state_names[i] = NULL;
+        state_names[i] = nullptr;
 
       word = xmlNodeListGetString( doc, child, 1 );
 
-      bool onlyOneState = ( strstr( (char *)word, "," ) == NULL );
+      bool onlyOneState = ( strstr( (char *)word, "," ) == nullptr );
 
       word_aux = strtok( ( char * )word, "," );
 
-      if ( strstr( word_aux, "All" ) != NULL )
+      if ( strstr( word_aux, "All" ) != nullptr )
         all_states = true;
       else
       {
@@ -361,7 +361,7 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
           {
             for ( i = 1; i < MAXSTATES; i++ )
             {
-              if ( ( word_aux = strtok( NULL, "," ) ) == NULL )
+              if ( ( word_aux = strtok( nullptr, "," ) ) == nullptr )
                 break;
 
               if ( !strcmp( word_aux, "All" ) )
@@ -378,7 +378,7 @@ void KTraceOptions::parse_filter_params( xmlDocPtr doc, xmlNodePtr cur )
       /* searching if a min time is required */
       child = child->next;
 
-      if ( child != NULL )
+      if ( child != nullptr )
       {
         if ( !xmlStrcmp( child->name, ( const xmlChar * )"min_state_time" ) )
         {
@@ -435,7 +435,7 @@ void KTraceOptions::parse_cutter_params( xmlDocPtr doc, xmlNodePtr cur )
   xmlChar *word;
 //  stringstream auxStr;
 
-  while ( cur != NULL )
+  while ( cur != nullptr )
   {
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"tasks" ) )
     {
@@ -541,7 +541,7 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
     unsigned long long sc_interval;
     int sc_frequency;
 */
-  while ( cur != NULL )
+  while ( cur != nullptr )
   {
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"range" ) )
     {
@@ -549,7 +549,7 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
       child = cur->xmlChildrenNode;
       child = child->next;
 
-      while ( child != NULL )
+      while ( child != nullptr )
       {
         if ( !xmlStrcmp( child->name, ( const xmlChar * )"by_intervals_vs_by_states" ) )
         {
@@ -590,7 +590,7 @@ void KTraceOptions::parse_software_counters_params( xmlDocPtr doc, xmlNodePtr cu
       child = cur->xmlChildrenNode;
       child = child->next;
 
-      while ( child != NULL )
+      while ( child != nullptr )
       {
         if ( !xmlStrcmp( child->name, ( const xmlChar * )"count_events_vs_acummulate_values" ) )
         {
@@ -649,7 +649,7 @@ void KTraceOptions::parse_comm_fusion_params( xmlDocPtr doc, xmlNodePtr cur )
 
   reduce_comms = 1;
 
-  while ( cur != NULL )
+  while ( cur != nullptr )
   {
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )"sample_interval" ) )
     {
@@ -699,15 +699,15 @@ vector< string > KTraceOptions::parseDoc( char *docname )
 
   filter_by_call_time = false;
 
-  if ( docname == NULL || strcmp( docname, "") == 0 ) return order;
+  if ( docname == nullptr || strcmp( docname, "") == 0 ) return order;
 
   doc = xmlParseFile( docname );
 
-  if ( doc == NULL ) return order;
+  if ( doc == nullptr ) return order;
 
   cur = xmlDocGetRootElement( doc );
 
-  if ( cur == NULL )
+  if ( cur == nullptr )
   {
     fprintf( stderr, "empty document\n" );
     xmlFreeDoc( doc );
@@ -722,7 +722,7 @@ vector< string > KTraceOptions::parseDoc( char *docname )
   }
 
   cur = cur->xmlChildrenNode;
-  while ( cur != NULL )
+  while ( cur != nullptr )
   {
     if ( !xmlStrcmp( cur->name, ( const xmlChar * )TraceCutter::getID().c_str() ) )
     {
@@ -767,7 +767,7 @@ bool KTraceOptions::saveXML( vector< string > &filterOrder, string fileName )
   rc = xmlTextWriterSetIndent( writer, 1 ); // 0 => no indent, > 1 => indent
   rc = xmlTextWriterSetIndentString( writer, BAD_CAST "  " );
 
-  rc = xmlTextWriterStartDocument( writer, NULL, FILTER_XML_ENCODING, NULL );
+  rc = xmlTextWriterStartDocument( writer, nullptr, FILTER_XML_ENCODING, nullptr );
 
   rc = xmlTextWriterStartElement( writer, BAD_CAST "config");
 

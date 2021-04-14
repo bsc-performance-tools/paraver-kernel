@@ -80,7 +80,7 @@ TraceOptionsProxy::TraceOptionsProxy( const KernelConnection *whichKernel )
   IDsAvailableTraceTools.push_back( TraceSoftwareCounters::getID() );
   IDsAvailableTraceTools.push_back( TraceShifter::getID() );
 
-  //if ( xmldocname != NULL )
+  //if ( xmldocname != nullptr )
   //  myTraceOptions->parseDoc( xmldocname );
 }
 

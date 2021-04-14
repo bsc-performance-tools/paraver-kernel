@@ -97,7 +97,7 @@ bool TraceCutterAction::execute( std::string whichTrace )
   std::string newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );
 
 #ifndef WIN32
-  if( tmpWindow != NULL && options->get_min_cutting_time() == 0 && options->get_max_cutting_time() >= tmpWindow->getTrace()->getEndTime() )
+  if( tmpWindow != nullptr && options->get_min_cutting_time() == 0 && options->get_max_cutting_time() >= tmpWindow->getTrace()->getEndTime() )
   {
     newName = outputPath + mySequence->getKernelConnection()->getPathSeparator() +
               whichTrace.substr( whichTrace.find_last_of( mySequence->getKernelConnection()->getPathSeparator() ) );
@@ -110,9 +110,9 @@ bool TraceCutterAction::execute( std::string whichTrace )
                                                      whichTrace,
                                                      newName,
                                                      options,
-                                                     NULL );
+                                                     nullptr );
         myCutter->setCutterApplicationCaller( CutterMetadata::RUNAPP_APPLICATION_ID );
-        myCutter->execute( whichTrace, newName, NULL );
+        myCutter->execute( whichTrace, newName, nullptr );
       }
     }
   }
@@ -123,9 +123,9 @@ bool TraceCutterAction::execute( std::string whichTrace )
                                                 whichTrace,
                                                 newName,
                                                 options,
-                                                NULL );
+                                                nullptr );
     myCutter->setCutterApplicationCaller( CutterMetadata::RUNAPP_APPLICATION_ID );
-    myCutter->execute( whichTrace, newName, NULL );
+    myCutter->execute( whichTrace, newName, nullptr );
 #ifndef WIN32
   }
 #endif
@@ -188,7 +188,7 @@ bool TraceFilterAction::execute( std::string whichTrace )
                                                  (char *)whichTrace.c_str(),
                                                  (char *)newName.c_str(),
                                                  options,
-                                                 NULL,
+                                                 nullptr,
                                                  translationTable );
 
     bool copyFiles = ( (CopyAdditionalFilesState *)tmpSequence->getState( TraceEditSequence::copyAdditionalFilesState ) )->getData();
@@ -231,7 +231,7 @@ bool CSVOutputAction::execute( std::string whichTrace )
   output.dumpWindow( tmpWindow, tmpFileName );
 
   TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TraceEditSequence::traceOptionsState ) )->getData();
-  if( options != NULL )
+  if( options != nullptr )
   {
     options->set_min_cutting_time( output.getMinTime() );
     options->set_max_cutting_time( output.getMaxTime() );
@@ -258,7 +258,7 @@ bool CSVOutputAction::execute( std::string whichTrace )
 bool TraceShifterTimesLoaderAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
-  MemoryTrace::iterator *it = NULL;
+  MemoryTrace::iterator *it = nullptr;
 
   tmpSequence->executeNextAction( it );
 
@@ -284,7 +284,7 @@ bool TraceParserAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
 
-  KTrace myTrace( whichTrace, NULL, true );
+  KTrace myTrace( whichTrace, nullptr, true );
   tmpSequence->setCurrentTrace( &myTrace );
 
   bool executionError = false;
@@ -608,11 +608,11 @@ bool EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
   {
     for( vector<std::fstream *>::iterator it = outputTraces.begin(); it != outputTraces.end(); ++it )
     {
-      if( *it != NULL && (*it)->is_open() )
+      if( *it != nullptr && (*it)->is_open() )
       {
         (*it)->close();
         delete *it;
-        *it = NULL;
+        *it = nullptr;
       }
     }
   }

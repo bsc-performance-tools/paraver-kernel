@@ -87,7 +87,7 @@ class SemanticFunction
 
     virtual std::vector<std::vector<TSemanticValue> > *getStack()
     {
-      return NULL;
+      return nullptr;
     }
 
     virtual SemanticInfoType getSemanticInfoType() const

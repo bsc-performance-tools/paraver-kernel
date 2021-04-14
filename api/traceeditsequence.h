@@ -107,7 +107,7 @@ class TraceEditSequence
 
     virtual TraceEditSequence *getConcrete()
     {
-      return NULL;
+      return nullptr;
     }
 
   protected:

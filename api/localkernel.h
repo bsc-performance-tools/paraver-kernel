@@ -42,7 +42,7 @@ class LocalKernel: public KernelConnection
 
     virtual bool checkTraceSize( const std::string& filename, TTraceSize maxSize ) const;
     virtual TTraceSize getTraceSize( const std::string& filename ) const;
-    virtual Trace *newTrace( const std::string& whichFile, bool noLoad, ProgressController *progress = NULL ) const;
+    virtual Trace *newTrace( const std::string& whichFile, bool noLoad, ProgressController *progress = nullptr ) const;
     virtual std::string getPCFFileLocation( const std::string& traceFile ) const;
     virtual std::string getROWFileLocation( const std::string& traceFile ) const;
     virtual Window *newSingleWindow() const;
@@ -64,11 +64,11 @@ class LocalKernel: public KernelConnection
                                          char *trace_out,
                                          TraceOptions *options,
                                          const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
-                                         ProgressController *progress = NULL ) const;
+                                         ProgressController *progress = nullptr ) const;
     virtual TraceSoftwareCounters *newTraceSoftwareCounters( char *trace_in,
                                                              char *trace_out,
                                                              TraceOptions *options,
-                                                             ProgressController *progress = NULL ) const;
+                                                             ProgressController *progress = nullptr ) const;
     virtual TraceShifter *newTraceShifter( std::string traceIn,
                                            std::string traceOut,
                                            std::string shiftTimesFile,
@@ -77,11 +77,11 @@ class LocalKernel: public KernelConnection
     virtual EventDrivenCutter *newEventDrivenCutter( std::string traceIn,
                                                      std::string traceOut,
                                                      TEventType whichEvent,
-                                                     ProgressController *progress = NULL ) const;
+                                                     ProgressController *progress = nullptr ) const;
     virtual EventTranslator *newEventTranslator( std::string traceIn,
                                                  std::string traceOut,
                                                  std::string traceReference,
-                                                 ProgressController *progress = NULL ) const;
+                                                 ProgressController *progress = nullptr ) const;
 
     virtual void getAllStatistics( std::vector<std::string>& onVector ) const;
     virtual void getAllFilterFunctions( std::vector<std::string>& onVector ) const;

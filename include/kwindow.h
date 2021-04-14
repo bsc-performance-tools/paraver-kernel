@@ -53,7 +53,7 @@ class KWindow: public Window
 
     virtual Filter *getFilter() const
     {
-      return NULL;
+      return nullptr;
     }
 
     Trace *getTrace() const
@@ -367,8 +367,8 @@ class KDerivedWindow: public KWindow
 
       initSemanticFunctions();
 
-      parents.push_back( NULL );
-      parents.push_back( NULL );
+      parents.push_back( nullptr );
+      parents.push_back( nullptr );
     }
 
     KDerivedWindow( Window *window1, Window *window2 )
@@ -383,7 +383,7 @@ class KDerivedWindow: public KWindow
 
       parents.push_back( (KWindow*)window1 );
       parents.push_back( (KWindow*)window2 );
-      setup( NULL );
+      setup( nullptr );
     }
 
     virtual ~KDerivedWindow();

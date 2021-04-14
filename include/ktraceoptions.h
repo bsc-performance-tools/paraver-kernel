@@ -310,7 +310,7 @@ class KTraceOptions: public TraceOptions
     {
       for ( unsigned int i = 0; i < MAXSTATES; ++i )
       {
-        state_names[ i ] = NULL;
+        state_names[ i ] = nullptr;
       }
     }
 
@@ -318,10 +318,10 @@ class KTraceOptions: public TraceOptions
     {
       for ( unsigned int i = 0; i < MAXSTATES; ++i )
       {
-        if ( whichStateNames[ i ] != NULL )
+        if ( whichStateNames[ i ] != nullptr )
           state_names[ i ] = strdup( whichStateNames[ i ] );
         else
-          state_names[ i ] = NULL;
+          state_names[ i ] = nullptr;
       }
     }
 
@@ -382,10 +382,10 @@ class KTraceOptions: public TraceOptions
     {
       for( unsigned int i = 0; i < MAXSTATES; ++i )
       {
-        if ( state_names[ i ] != NULL )
+        if ( state_names[ i ] != nullptr )
           whichStateNames[ i ] = strdup( state_names[ i ] );
         else
-          whichStateNames[ i ] = NULL;
+          whichStateNames[ i ] = nullptr;
       }
     }
 
@@ -393,7 +393,7 @@ class KTraceOptions: public TraceOptions
     {
       for( unsigned int i = 0; i < MAXSTATES; ++i )
       {
-        if ( state_names[ i ] != NULL )
+        if ( state_names[ i ] != nullptr )
         {
           if ( i > 0 )
           {

@@ -35,36 +35,36 @@ class IntervalCompose: public IntervalHigh
   public:
     IntervalCompose()
     {
-      function = NULL;
-      endRecord = NULL;
-      beginRecord = NULL;
+      function = nullptr;
+      endRecord = nullptr;
+      beginRecord = nullptr;
     }
 
     IntervalCompose( KWindow *whichWindow, TWindowLevel whichLevel,
                      TObjectOrder whichOrder ):
         IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
     {
-      function = NULL;
-      endRecord = NULL;
-      beginRecord = NULL;
+      function = nullptr;
+      endRecord = nullptr;
+      beginRecord = nullptr;
     }
 
     virtual ~IntervalCompose()
     {
-      if( endRecord != NULL )
+      if( endRecord != nullptr )
         delete endRecord;
-      if( beginRecord != NULL )
+      if( beginRecord != nullptr )
         delete beginRecord;
-      if( begin != NULL )
+      if( begin != nullptr )
         delete begin;
-      if( end != NULL )
+      if( end != nullptr )
         delete end;
     }
 
     virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
-                              KRecordList *displayList = NULL );
-    virtual KRecordList *calcNext( KRecordList *displayList = NULL, bool initCalc = false );
-    virtual KRecordList *calcPrev( KRecordList *displayList = NULL, bool initCalc = false );
+                              KRecordList *displayList = nullptr );
+    virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false );
+    virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false );
 
     virtual KWindow *getWindow()
     {

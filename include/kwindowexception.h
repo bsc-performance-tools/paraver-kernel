@@ -39,7 +39,7 @@ class KWindowException: public ParaverKernelException
 
     KWindowException( TErrorCode whichCode = undefined,
                       const char *whichAuxMessage = "",
-                      const char *whichFile = NULL,
+                      const char *whichFile = nullptr,
                       TExceptionLine whichLine = 0 ) throw()
     {
       code = whichCode;

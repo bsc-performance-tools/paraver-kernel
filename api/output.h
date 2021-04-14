@@ -47,7 +47,7 @@ class Output
 
     virtual void dumpWindow( Window *whichWindow,
                              std::string& strOutputFile,
-                             ProgressController *progress = NULL ) = 0;
+                             ProgressController *progress = nullptr ) = 0;
 
     virtual void dumpHistogram( Histogram *whichHisto,
                                 std::string& strOutputFile,
@@ -56,7 +56,7 @@ class Output
                                 bool withLabels = true,
                                 bool withPreferencesPrecision = true,
                                 bool recalcHisto = true,
-                                ProgressController *progress = NULL ) = 0;
+                                ProgressController *progress = nullptr ) = 0;
 
     virtual bool getMultipleFiles() const = 0;
     virtual void setMultipleFiles( bool newValue ) = 0;

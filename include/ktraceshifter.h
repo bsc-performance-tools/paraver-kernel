@@ -42,12 +42,12 @@ class KTraceShifter : public TraceShifter
                    std::string traceOut,
                    std::string whichShiftTimes,
                    TWindowLevel shiftLevel,
-                   ProgressController *progress = NULL );
+                   ProgressController *progress = nullptr );
     ~KTraceShifter();
 
     virtual void execute( std::string traceIn,
                           std::string traceOut,
-                          ProgressController *progress = NULL );
+                          ProgressController *progress = nullptr );
 
     virtual const std::vector< TTime > getShiftTimes() { return shiftTimes; }
     virtual const TTime getMaxShiftTime() { return maxShiftTime; }

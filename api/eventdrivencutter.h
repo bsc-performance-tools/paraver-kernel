@@ -49,7 +49,7 @@ class EventDrivenCutter
 
     virtual void execute( std::string traceIn,
                           std::string traceOut,
-                          ProgressController *progress = NULL ) = 0;
+                          ProgressController *progress = nullptr ) = 0;
 
   private:
     static std::string traceToolID;
@@ -65,7 +65,7 @@ class EventDrivenCutterProxy : public EventDrivenCutter
 
     virtual void execute( std::string traceIn,
                           std::string traceOut,
-                          ProgressController *progress = NULL );
+                          ProgressController *progress = nullptr );
 
   private:
     EventDrivenCutter *myEventDrivenCutter;

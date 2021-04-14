@@ -40,11 +40,11 @@ class IntervalCPU: public IntervalHigh
   public:
     IntervalCPU()
     {
-      begin = NULL;
-      end = NULL;
-      function = NULL;
-      functionThread = NULL;
-      functionComposeThread = NULL;
+      begin = nullptr;
+      end = nullptr;
+      function = nullptr;
+      functionThread = nullptr;
+      functionComposeThread = nullptr;
     }
 
     IntervalCPU( KSingleWindow *whichWindow, TWindowLevel whichLevel,
@@ -52,20 +52,20 @@ class IntervalCPU: public IntervalHigh
 
     virtual ~IntervalCPU()
     {
-      if ( begin != NULL )
+      if ( begin != nullptr )
         delete begin;
-      if ( end != NULL )
+      if ( end != nullptr )
         delete end;
-      if( functionThread != NULL )
+      if( functionThread != nullptr )
         delete functionThread;
-      if( functionComposeThread != NULL )
+      if( functionComposeThread != nullptr )
         delete functionComposeThread;
     }
 
     virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
-                              KRecordList *displayList = NULL );
-    virtual KRecordList *calcNext( KRecordList *displayList = NULL, bool initCalc = false );
-    virtual KRecordList *calcPrev( KRecordList *displayList = NULL, bool initCalc = false );
+                              KRecordList *displayList = nullptr );
+    virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false );
+    virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false );
 
     virtual KWindow *getWindow()
     {

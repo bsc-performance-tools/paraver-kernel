@@ -36,30 +36,30 @@ class IntervalThread: public Interval
   public:
     IntervalThread()
     {
-      begin = NULL;
-      end = NULL;
-      function = NULL;
+      begin = nullptr;
+      end = nullptr;
+      function = nullptr;
     }
 
     IntervalThread( KSingleWindow *whichWindow, TWindowLevel whichLevel,
                     TObjectOrder whichOrder ):
         Interval( whichLevel, whichOrder ), window( whichWindow )
     {
-      function = NULL;
+      function = nullptr;
     }
 
     virtual ~IntervalThread()
     {
-      if ( begin != NULL )
+      if ( begin != nullptr )
         delete begin;
-      if ( end != NULL )
+      if ( end != nullptr )
         delete end;
     }
 
     virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
-                              KRecordList *displayList = NULL );
-    virtual KRecordList *calcNext( KRecordList *displayList = NULL, bool initCalc = false );
-    virtual KRecordList *calcPrev( KRecordList *displayList = NULL, bool initCalc = false );
+                              KRecordList *displayList = nullptr );
+    virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false );
+    virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false );
 
     virtual KWindow *getWindow()
     {

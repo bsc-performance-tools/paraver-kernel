@@ -35,7 +35,7 @@ class GNUPlotOutput: public Output
 
     virtual void dumpWindow( Window *whichWindow,
                              std::string& strOutputFile,
-                             ProgressController *progress = NULL );
+                             ProgressController *progress = nullptr );
     virtual void dumpHistogram( Histogram *whichHisto,
                                 std::string& strOutputFile,
                                 bool onlySelectedPlane = false,
@@ -43,7 +43,7 @@ class GNUPlotOutput: public Output
                                 bool withLabels = true,
                                 bool withPreferencesPrecision = true,
                                 bool recalcHisto = true,
-                                ProgressController *progress = NULL );
+                                ProgressController *progress = nullptr );
 
     virtual bool getMultipleFiles() const;
     virtual void setMultipleFiles( bool newValue );

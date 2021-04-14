@@ -39,6 +39,6 @@ Output *Output::createOutput( TOutput whichOutput )
       break;
 
     default:
-      return NULL;
+      return nullptr;
   }
 }

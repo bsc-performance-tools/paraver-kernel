@@ -37,14 +37,14 @@ namespace bplustree
     public:
       BPlusTreeBlocks( ProcessModel& whichModel ) : traceModel( whichModel )
       {
-        blocks.push_back( NULL );
-        currentBlock = NULL;
+        blocks.push_back( nullptr );
+        currentBlock = nullptr;
         currentRecord = 0;
       }
 
       virtual ~BPlusTreeBlocks()
       {
-        if ( blocks[ 0 ] != NULL )
+        if ( blocks[ 0 ] != nullptr )
         {
           for ( PRV_UINT32 i = 0; i < blocks.size(); i++ )
             delete[] blocks[i];

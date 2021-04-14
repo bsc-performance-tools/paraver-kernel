@@ -145,10 +145,10 @@ void PlainTrace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIte
 {
   for ( TThreadOrder ii = 0; ii < numThreads; ++ii )
   {
-    if ( listIter[ ii ] != NULL )
+    if ( listIter[ ii ] != nullptr )
     {
       delete listIter[ ii ];
-      listIter[ ii ] = NULL;
+      listIter[ ii ] = nullptr;
     }
   }
 
@@ -178,10 +178,10 @@ void PlainTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
 {
   for ( TCPUOrder ii = 0; ii < numCPUs; ++ii )
   {
-    if ( listIter[ ii ] != NULL )
+    if ( listIter[ ii ] != nullptr )
     {
       delete listIter[ ii ];
-      listIter[ ii ] = NULL;
+      listIter[ ii ] = nullptr;
     }
   }
 
@@ -347,7 +347,7 @@ inline void PlainTrace::ThreadIterator::operator++()
 {
   if ( pos == lastPos && block == lastBlock )
   {
-    record = NULL;
+    record = nullptr;
     return;
   }
 
@@ -367,7 +367,7 @@ inline void PlainTrace::ThreadIterator::operator--()
 {
   if ( pos == 0 && block == 0  )
   {
-    record = NULL;
+    record = nullptr;
     return;
   }
 
@@ -455,7 +455,7 @@ inline void PlainTrace::CPUIterator::operator++()
   }
   if ( inLastPos == numThreads )
   {
-    record = NULL;
+    record = nullptr;
     return;
   }
 
@@ -483,7 +483,7 @@ inline void PlainTrace::CPUIterator::operator--()
   }
   if ( inFirstPos == numThreads )
   {
-    record = NULL;
+    record = nullptr;
     return;
   }
 

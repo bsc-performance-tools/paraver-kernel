@@ -350,7 +350,7 @@ class KHistogram : public Histogram
                              std::vector<bool>& needInit,
                              bool calcSemanticStats,
                              ProgressController *progress,
-                             PRV_UINT16 winIndex = 0, CalculateData *data = NULL );
+                             PRV_UINT16 winIndex = 0, CalculateData *data = nullptr );
     void calculate( TObjectOrder iRow,
                     TRecordTime fromTime, TRecordTime toTime,
                     PRV_UINT16 winIndex, CalculateData *data,

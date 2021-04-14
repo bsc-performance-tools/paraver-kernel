@@ -45,11 +45,11 @@
 
 using namespace std;
 
-ParaverConfig *ParaverConfig::instance = NULL;
+ParaverConfig *ParaverConfig::instance = nullptr;
 
 ParaverConfig *ParaverConfig::getInstance()
 {
-  if ( ParaverConfig::instance == NULL )
+  if ( ParaverConfig::instance == nullptr )
     ParaverConfig::instance = new ParaverConfig();
   return ParaverConfig::instance;
 }
@@ -67,10 +67,10 @@ ParaverConfig::ParaverConfig() : isModified( false )
   homedir.append( getenv( "HOMEPATH" ) );
 
   char myPath[ MAX_LEN_PATH ];
-  HMODULE hModule = GetModuleHandle( NULL );
-  if ( hModule != NULL )
+  HMODULE hModule = GetModuleHandle( nullptr );
+  if ( hModule != nullptr )
   {
-    GetModuleFileName( NULL, myPath, ( sizeof( myPath ) ));
+    GetModuleFileName( nullptr, myPath, ( sizeof( myPath ) ));
     PathRemoveFileSpec( myPath );
     string tmpParaverPath( myPath );
     paraverHomeDir = tmpParaverPath.substr( 0, tmpParaverPath.size() - 4 );
@@ -96,7 +96,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   if( homedir.empty() )
   {
     struct passwd *pwd = getpwuid( getuid() );
-    if( pwd != NULL )
+    if( pwd != nullptr )
     {
       homedir = string( pwd->pw_dir );
     }
@@ -121,7 +121,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   paraverXMLDir       = homedir;
   paraverTutorialsDir = homedir + std::string( "/paraver-tutorials" );
 #else // not __APPLE__
-  if ( getenv( "PARAVER_HOME" ) == NULL )
+  if ( getenv( "PARAVER_HOME" ) == nullptr )
   {
     paraverHomeDir       = homedir;
     paraverCFGsDir       = homedir;
@@ -1700,9 +1700,9 @@ void ParaverConfig::writeParaverConfigFile( bool writeBackup )
   //int len = tmpPath.length() + 1;
   //wchar_t *wText = new wchar_t[len];
   //memset(wText,0,len);
-  //::MultiByteToWideChar( CP_ACP, NULL, tmpPath.c_str(), -1, wText, len );
+  //::MultiByteToWideChar( CP_ACP, nullptr, tmpPath.c_str(), -1, wText, len );
 
-  SHCreateDirectoryEx( NULL, tmpPath.c_str(), NULL );
+  SHCreateDirectoryEx( nullptr, tmpPath.c_str(), nullptr );
   //delete []wText;
 #else
   strFile.append( "/.paraver/paraver" );
@@ -1749,9 +1749,9 @@ bool ParaverConfig::writeDefaultConfig()
   //int len = tmpPath.length() + 1;
   //wchar_t *wText = new wchar_t[len];
   //memset(wText,0,len);
-  //::MultiByteToWideChar( CP_ACP, NULL, tmpPath.c_str(), -1, wText, len );
+  //::MultiByteToWideChar( CP_ACP, nullptr, tmpPath.c_str(), -1, wText, len );
 
-  SHCreateDirectoryEx( NULL, tmpPath.c_str(), NULL );
+  SHCreateDirectoryEx( nullptr, tmpPath.c_str(), nullptr );
   //delete []wText;
 #else
   strFile.append( "/.paraver/paraver.xml" );

@@ -34,7 +34,7 @@ ProgressControllerProxy::ProgressControllerProxy( KernelConnection * whichKernel
 : myKernel( whichKernel )
 {
   setPartner( myKernel->newProgressController() );
-  handler = NULL;
+  handler = nullptr;
   message = "";
   messageChanged = false;
 }
@@ -69,7 +69,7 @@ void ProgressControllerProxy::setCurrentProgress( double progress )
 {
   currentProgress = progress;
   myPartner->setCurrentProgress( currentProgress );
-  callHandler( NULL );
+  callHandler( nullptr );
 }
 
 void ProgressControllerProxy::setPartner( ProgressController* partner )
@@ -81,7 +81,7 @@ void ProgressControllerProxy::setPartner( ProgressController* partner )
 void ProgressControllerProxy::callHandler( ProgressController *not_used )
 {
   currentProgress = myPartner->getCurrentProgress();
-  if( handler != NULL )
+  if( handler != nullptr )
     handler( this, window );
 }
 

@@ -49,7 +49,7 @@ RecordLeaf::RecordLeaf( TRecord *r, TRecordOrder order )
 
 RecordLeaf::RecordLeaf()
 {
-  rec = NULL;
+  rec = nullptr;
   ord = 0;
 }
 
@@ -62,7 +62,7 @@ RecordLeaf::~RecordLeaf()
  ******************************************************************************/
 RecordLeaf& RecordLeaf::operator=( const RecordLeaf &rl )
 {
-  if ( rl.rec == NULL )
+  if ( rl.rec == nullptr )
   {
     throw ParaverKernelException( ParaverKernelException::nullOperand,
                                   "BPlusTree: RecordLeaf: Op: '='" ,
@@ -83,7 +83,7 @@ bool RecordLeaf::operator<( const RecordLeaf &rl )
   TRecordTime time1, time2;
   TRecordType type1, type2;
 
-  if ( rl.rec == NULL )
+  if ( rl.rec == nullptr )
   {
     throw ParaverKernelException( ParaverKernelException::nullOperand,
                                   "BPlusTree: RecordLeaf: Op: '<'",
@@ -113,7 +113,7 @@ bool RecordLeaf::operator>( const RecordLeaf &rl )
   TRecordTime time1, time2;
   TRecordType type1, type2;
 
-  if ( rl.rec == NULL )
+  if ( rl.rec == nullptr )
   {
     throw ParaverKernelException( ParaverKernelException::nullOperand,
                                   "BPlusTree: RecordLeaf: Op: '>'",
@@ -143,7 +143,7 @@ bool RecordLeaf::operator==( const RecordLeaf &rl )
   TRecordTime time1, time2;
   TRecordType type1, type2;
 
-  if ( rl.rec == NULL )
+  if ( rl.rec == nullptr )
   {
     throw ParaverKernelException( ParaverKernelException::nullOperand,
                                   "BPlusTree: RecordLeaf: Op: '=='",
@@ -165,7 +165,7 @@ bool RecordLeaf::operator!=( const RecordLeaf &rl )
   TRecordTime time1, time2;
   TRecordType type1, type2;
 
-  if ( rl.rec == NULL )
+  if ( rl.rec == nullptr )
   {
     throw ParaverKernelException( ParaverKernelException::nullOperand,
                                   "BPlusTree: RecordLeaf: Op: '!='",
@@ -187,7 +187,7 @@ bool RecordLeaf::operator>=( const RecordLeaf &rl )
   TRecordTime time1, time2;
   TRecordType type1, type2;
 
-  if ( rl.rec == NULL )
+  if ( rl.rec == nullptr )
   {
     throw ParaverKernelException( ParaverKernelException::nullOperand,
                                   "BPlusTree: RecordLeaf: Op: '>='",
@@ -213,7 +213,7 @@ bool RecordLeaf::operator<=( const RecordLeaf &rl )
   TRecordTime time1, time2;
   TRecordType type1, type2;
 
-  if ( rl.rec == NULL )
+  if ( rl.rec == nullptr )
   {
     throw ParaverKernelException( ParaverKernelException::nullOperand,
                                   "BPlusTree: RecordLeaf: Op: '<='",

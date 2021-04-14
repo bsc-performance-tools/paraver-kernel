@@ -42,7 +42,7 @@ namespace NoLoad
 
       NoLoadException( TErrorCode whichCode = undefined,
                           const char *whichAuxMessage = "",
-                          const char *whichFile = NULL,
+                          const char *whichFile = nullptr,
                           TExceptionLine whichLine = 0 )
       {
         code = whichCode;

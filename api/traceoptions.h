@@ -200,9 +200,9 @@ class TraceOptions
     //virtual unsigned long long get_sc_interval()
     //{ return 0; }
     virtual char *get_sc_types() const
-    { return (char *)NULL; }
+    { return (char *)nullptr; }
     virtual char *get_sc_types_kept() const
-    { return (char *)NULL; }
+    { return (char *)nullptr; }
 
     /* Sets for comm_fusion */
     virtual void set_reduce_comms( char reduceComms )
@@ -234,7 +234,7 @@ class TraceOptions
 
     virtual TraceOptions *getConcrete()
     {
-      return NULL;
+      return nullptr;
     }
 
   protected:

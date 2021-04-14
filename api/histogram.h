@@ -164,10 +164,10 @@ class Histogram
 
     virtual TTimeUnit getTimeUnit() const = 0;
 
-    virtual Histogram* clone( ) { return NULL; }
+    virtual Histogram* clone( ) { return nullptr; }
 
     // Specific methods of HistogramProxy
-    virtual Trace *getTrace() const { return NULL; }
+    virtual Trace *getTrace() const { return nullptr; }
     virtual bool getDestroy() const { return false; }
     virtual void setDestroy( bool newValue ) {}
     virtual PRV_UINT16 getPosX() const
@@ -199,7 +199,7 @@ class Histogram
     {}
     virtual HistogramTotals *getTotals( const std::string& whichStat ) const
     {
-      return NULL;
+      return nullptr;
     }
     virtual void setHorizontal( bool newValue ) {}
     virtual bool getHorizontal() const
@@ -307,7 +307,7 @@ class Histogram
     }
     virtual GradientColor& getGradientColor()
     {
-      GradientColor *tmp = NULL;
+      GradientColor *tmp = nullptr;
       return *tmp;
     }
     virtual void recalcGradientLimits() {}
@@ -336,8 +336,8 @@ class Histogram
     {
       return 0;
     }
-    virtual void compute2DScale( ProgressController *progress = NULL ) {}
-    virtual void compute3DScale( ProgressController *progress = NULL ) {}
+    virtual void compute2DScale( ProgressController *progress = nullptr ) {}
+    virtual void compute3DScale( ProgressController *progress = nullptr ) {}
     virtual std::string getRowLabel( TObjectOrder whichRow ) const
     {
       return "Unnamed row";
@@ -587,7 +587,7 @@ class Histogram
 
     virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement()
     {
-      return ( SelectionManagement< TObjectOrder, TWindowLevel > * ) NULL;
+      return ( SelectionManagement< TObjectOrder, TWindowLevel > * ) nullptr;
     }
 
     virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel )
@@ -767,8 +767,8 @@ class HistogramProxy : public Histogram
     virtual PRV_INT32 getSelectedPlane() const;
     virtual PRV_INT32 getCommSelectedPlane() const;
 
-    virtual void compute2DScale( ProgressController *progress = NULL );
-    virtual void compute3DScale( ProgressController *progress = NULL );
+    virtual void compute2DScale( ProgressController *progress = nullptr );
+    virtual void compute3DScale( ProgressController *progress = nullptr );
 
     virtual std::string getRowLabel( TObjectOrder whichRow ) const;
     virtual std::string getColumnLabel( THistogramColumn whichColumn ) const;

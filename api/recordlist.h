@@ -189,7 +189,7 @@ class RecordList
     virtual bool newRecords() const = 0;
     virtual RecordList *clone()
     {
-      return NULL;
+      return nullptr;
     };
 };
 

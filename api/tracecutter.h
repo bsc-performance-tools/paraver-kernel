@@ -50,7 +50,7 @@ class TraceCutter
 
     virtual void execute( std::string trace_in,
                           std::string trace_out,
-                          ProgressController *progress = NULL ) = 0;
+                          ProgressController *progress = nullptr ) = 0;
 
     virtual void set_by_time( bool byTime )
     {}
@@ -92,7 +92,7 @@ class TraceCutterProxy : public TraceCutter
 
     virtual void execute( std::string trace_in,
                           std::string trace_out,
-                          ProgressController *progress = NULL );
+                          ProgressController *progress = nullptr );
     virtual void set_by_time( bool byTime );
     virtual void set_min_cutting_time( unsigned long long minCutTime );
     virtual void set_max_cutting_time( unsigned long long maxCutTime );

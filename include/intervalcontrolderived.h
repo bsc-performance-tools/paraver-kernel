@@ -37,28 +37,28 @@ class IntervalControlDerived: public IntervalHigh
   public:
     IntervalControlDerived()
     {
-      function = NULL;
+      function = nullptr;
     }
 
     IntervalControlDerived( KDerivedWindow *whichWindow, TWindowLevel whichLevel,
                      TObjectOrder whichOrder ):
         IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
     {
-      function = NULL;
+      function = nullptr;
     }
 
     virtual ~IntervalControlDerived()
     {
-      if ( begin != NULL )
+      if ( begin != nullptr )
         delete begin;
-      if ( end != NULL )
+      if ( end != nullptr )
         delete end;
     }
 
     virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
-                              KRecordList *displayList = NULL );
-    virtual KRecordList *calcNext( KRecordList *displayList = NULL, bool initCalc = false );
-    virtual KRecordList *calcPrev( KRecordList *displayList = NULL, bool initCalc = false );
+                              KRecordList *displayList = nullptr );
+    virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false );
+    virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false );
 
     virtual KWindow *getWindow()
     {

@@ -35,7 +35,7 @@ KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
   createList = create;
   currentValue = 0.0;
 
-  if ( displayList == NULL )
+  if ( displayList == nullptr )
   {
     displayList = &myDisplayList;
     displayList->clear();
@@ -45,15 +45,15 @@ KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
 
   setChildren();
 
-  if ( begin != NULL )
+  if ( begin != nullptr )
   {
     delete begin;
-    begin = NULL;
+    begin = nullptr;
   }
-  if ( end != NULL )
+  if ( end != nullptr )
   {
     delete end;
-    end = NULL;
+    end = nullptr;
   }
 
   if ( function->getInitFromBegin() )
@@ -67,18 +67,18 @@ KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
   {
     childIntervals[ i ]->init( myInitTime, createList, displayList );
 
-    if ( begin == NULL ||
+    if ( begin == nullptr ||
          childIntervals[ i ]->getBegin()->getTime() > begin->getTime() )
     {
-      if ( begin != NULL )
+      if ( begin != nullptr )
         delete begin;
       begin = childIntervals[ i ]->getBegin()->clone();
     }
 
-    if ( end == NULL ||
+    if ( end == nullptr ||
          childIntervals[ i ]->getEnd()->getTime() < end->getTime() )
     {
-      if ( end != NULL )
+      if ( end != nullptr )
         delete end;
       end = childIntervals[ i ]->getEnd()->clone();
     }
@@ -110,17 +110,17 @@ KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc 
 {
   info.values.clear();
 
-  if ( displayList == NULL )
+  if ( displayList == nullptr )
     displayList = &myDisplayList;
 
-  if ( begin != NULL )
+  if ( begin != nullptr )
     delete begin;
   begin = end->clone();
 
-  if ( end != NULL )
+  if ( end != nullptr )
   {
     delete end;
-    end = NULL;
+    end = nullptr;
   }
 
   for ( TObjectOrder i = 0; i < childIntervals.size(); ++i )
@@ -128,15 +128,15 @@ KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc 
     if ( childIntervals[ i ]->getEnd()->getTime() <= begin->getTime() )
       childIntervals[ i ]->calcNext( displayList );
 
-    if ( ( end == NULL
+    if ( ( end == nullptr
            && childIntervals[ i ]->getEnd()->getTime() < childIntervals[ i ]->getWindow()->getTrace()->getEndTime() )
          ||
-         ( end != NULL
+         ( end != nullptr
            && childIntervals[ i ]->getEnd()->getTime() < end->getTime()
            && childIntervals[ i ]->getEnd()->getTime() < childIntervals[ i ]->getWindow()->getTrace()->getEndTime() )
         )
     {
-      if ( end != NULL )
+      if ( end != nullptr )
         delete end;
       end = childIntervals[ i ]->getEnd()->clone();
     }
@@ -153,7 +153,7 @@ KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc 
     else
       info.values.push_back( childIntervals[ i ]->getValue() * window->getFactor( i ) );
   }
-  if( end == NULL )
+  if( end == nullptr )
     end = ( (KTrace *)window->getTrace() )->end();
 
   info.dataBeginTime = childIntervals[ 0 ]->getBegin()->getTime();
@@ -167,17 +167,17 @@ KRecordList *IntervalDerived::calcPrev( KRecordList *displayList, bool initCalc 
 {
   info.values.clear();
 
-  if ( displayList == NULL )
+  if ( displayList == nullptr )
     displayList = &myDisplayList;
 
-  if ( end != NULL )
+  if ( end != nullptr )
     delete end;
   end = begin->clone();
 
-  if ( begin != NULL )
+  if ( begin != nullptr )
   {
     delete begin;
-    begin = NULL;
+    begin = nullptr;
   }
 
   for ( TObjectOrder i = 0; i < childIntervals.size(); i++ )
@@ -185,10 +185,10 @@ KRecordList *IntervalDerived::calcPrev( KRecordList *displayList, bool initCalc 
     if ( childIntervals[ i ]->getBegin()->getTime() >= end->getTime() )
       childIntervals[ i ]->calcPrev( displayList );
 
-    if ( begin == NULL ||
+    if ( begin == nullptr ||
          childIntervals[ i ]->getBegin()->getTime() > begin->getTime() )
     {
-      if ( begin != NULL )
+      if ( begin != nullptr )
         delete begin;
       begin = childIntervals[ i ]->getBegin()->clone();
     }

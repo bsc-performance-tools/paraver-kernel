@@ -45,8 +45,8 @@ namespace NoLoad
       NoLoadBlocks( const ResourceModel& resource, const ProcessModel& process )
         : resourceModel( resource ), processModel( process )
       {
-        body = NULL;
-        file = NULL;
+        body = nullptr;
+        file = nullptr;
       }
 
       NoLoadBlocks( const ResourceModel& resource, const ProcessModel& process,

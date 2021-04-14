@@ -67,20 +67,20 @@ NoLoadBlocks::~NoLoadBlocks()
 
   communications.clear();
 
-  if( file != NULL )
+  if( file != nullptr )
     file->close();
 }
 
 TData *NoLoadBlocks::getLastRecord( PRV_UINT16 position ) const
 {
-  return NULL;
+  return nullptr;
 }
 
 void NoLoadBlocks::newRecord()
 {
   if ( fileLoaded )
   {
-    if ( lastData == NULL )
+    if ( lastData == nullptr )
     {
       lastData = new fileLineData();
       lastData->numUseds = 0;
@@ -444,7 +444,7 @@ void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
 {
   if( *record == &globalEndRec )
   {
-    *record = NULL;
+    *record = nullptr;
     return;
   }
   else if ( offset != -1 )
@@ -461,7 +461,7 @@ void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
     {
       decNumUseds( offset );
       offset = endFileOffset;
-      *record = NULL;
+      *record = nullptr;
       recPos = 0;
       return;
     }
@@ -479,7 +479,7 @@ void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
       file->clear();
       file->seekg( offset );
     }
-    lastData = NULL;
+    lastData = nullptr;
     lastPos = offset;
   }
 
@@ -489,7 +489,7 @@ void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
     {
       decNumUseds( offset );
       offset = endFileOffset;
-      *record = NULL;
+      *record = nullptr;
       recPos = 0;
       return;
     }
@@ -509,7 +509,7 @@ void NoLoadBlocks::getPrevRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
 {
   if ( offset == -1 )
   {
-    *record = NULL;
+    *record = nullptr;
     return;
   }
   else if( *record != &globalBeginRec )
@@ -525,7 +525,7 @@ void NoLoadBlocks::getPrevRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
     {
       decNumUseds( offset );
       offset = -1;
-      *record = NULL;
+      *record = nullptr;
       return;
     }
   }
@@ -539,7 +539,7 @@ void NoLoadBlocks::getPrevRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
   offset = file->tellg();
   if ( blocks.count( offset ) == 0 )
   {
-    lastData = NULL;
+    lastData = nullptr;
     lastPos = offset;
     body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo );
   }
@@ -556,7 +556,7 @@ void NoLoadBlocks::getNextRecord( TThreadOrder whichThread, TRecord **record, PR
 {
   if( *record == &emptyEndRecords[ whichThread ] )
   {
-    *record = NULL;
+    *record = nullptr;
     return;
   }
   else if ( offset != -1 )
@@ -574,7 +574,7 @@ void NoLoadBlocks::getNextRecord( TThreadOrder whichThread, TRecord **record, PR
     {
       decNumUseds( offset );
       offset = endFileOffset;
-      *record = NULL;
+      *record = nullptr;
       recPos = 0;
       return;
     }
@@ -589,7 +589,7 @@ void NoLoadBlocks::getNextRecord( TThreadOrder whichThread, TRecord **record, PR
   {
     file->clear();
     file->seekg( offset );
-    lastData = NULL;
+    lastData = nullptr;
     lastPos = offset;
     body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo );
   }
@@ -605,7 +605,7 @@ void NoLoadBlocks::getPrevRecord( TThreadOrder whichThread, TRecord **record, PR
 {
   if ( offset == -1 )
   {
-    *record = NULL;
+    *record = nullptr;
     return;
   }
   else if( *record != &emptyEndRecords[ whichThread ] ) // TODO  maybe begin?
@@ -621,7 +621,7 @@ void NoLoadBlocks::getPrevRecord( TThreadOrder whichThread, TRecord **record, PR
     {
       decNumUseds( offset );
       offset = -1;
-      *record = NULL;
+      *record = nullptr;
       return;
     }
   }
@@ -635,7 +635,7 @@ void NoLoadBlocks::getPrevRecord( TThreadOrder whichThread, TRecord **record, PR
   offset = file->tellg();
   if ( blocks.count( offset ) == 0 )
   {
-    lastData = NULL;
+    lastData = nullptr;
     lastPos = offset;
     body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo );
   }
@@ -656,7 +656,7 @@ void NoLoadBlocks::getThreadRecordByTime( TThreadOrder whichThread, TRecordTime 
   if ( !traceIndex[ whichThread ].findRecord( whichTime, offset ) )
   {
     offset = -1;
-    record = NULL;
+    record = nullptr;
     return;
   }
 
@@ -664,7 +664,7 @@ void NoLoadBlocks::getThreadRecordByTime( TThreadOrder whichThread, TRecordTime 
   {
     file->clear();
     file->seekg( offset );
-    lastData = NULL;
+    lastData = nullptr;
     lastPos = offset;
     body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo );
   }
@@ -680,7 +680,7 @@ void NoLoadBlocks::incNumUseds( PRV_INT64 offset )
   if( blocks.count( offset ) == 0 )
     return;
   fileLineData *tmpData = blocks[ offset ];
-  if( tmpData != NULL )
+  if( tmpData != nullptr )
     ++tmpData->numUseds;
 }
 

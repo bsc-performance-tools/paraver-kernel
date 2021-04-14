@@ -123,11 +123,11 @@ TraceEditState *KTraceEditSequence::createState( TraceEditSequence::TSequenceSta
       break;
 
     default:
-      return NULL;
+      return nullptr;
       break;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 
@@ -151,7 +151,7 @@ bool KTraceEditSequence::addState( TraceEditSequence::TSequenceStates whichState
     return false;
 
   TraceEditState *newState = createState( whichState );
-  if( newState == NULL )
+  if( newState == nullptr )
     throw invalid_argument( "Invalid state for TraceEditSequence" );
 
   activeStates[ whichState ] = newState;
@@ -180,7 +180,7 @@ TraceEditState *KTraceEditSequence::getState( TraceEditSequence::TSequenceStates
   if( tmpIt != activeStates.end() )
     return tmpIt->second;
 
-  return NULL;
+  return nullptr;
 }
 
 bool KTraceEditSequence::pushbackAction( TraceEditSequence::TSequenceActions whichAction )

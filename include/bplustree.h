@@ -108,7 +108,7 @@ namespace bplustree
 
       /************************************************************************
        * Inserts rl in the tree.
-       * If a leaf split is done, newChild returns its address instead of NULL.
+       * If a leaf split is done, newChild returns its address instead of nullptr.
        * Returns a pointer to the RecordLeaf with the smallest key.
        ************************************************************************/
       virtual RecordLeaf *insert( RecordLeaf *rl, BPlusNode *&newChild ) = 0;

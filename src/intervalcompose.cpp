@@ -36,7 +36,7 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
   createList = create;
   currentValue = 0.0;
 
-  if ( displayList == NULL )
+  if ( displayList == nullptr )
   {
     displayList = &myDisplayList;
     displayList->clear();
@@ -45,15 +45,15 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
   if( !notWindowInits )
     function = ( SemanticCompose * ) window->getSemanticFunction( level );
 
-  if ( endRecord != NULL )
+  if ( endRecord != nullptr )
   {
     delete endRecord;
-    endRecord = NULL;
+    endRecord = nullptr;
   }
-  if ( beginRecord != NULL )
+  if ( beginRecord != nullptr )
   {
     delete beginRecord;
-    beginRecord = NULL;
+    beginRecord = nullptr;
   }
 
   if ( typeid( *function ) == typeid( ComposeJoinBursts ) )
@@ -75,11 +75,11 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
 
   childIntervals[ 0 ]->init( myInitTime, create, displayList );
 
-  if( begin != NULL && begin != beginRecord )
+  if( begin != nullptr && begin != beginRecord )
     delete begin;
   begin = childIntervals[ 0 ]->getBegin()->clone();
 
-  if( end != NULL )
+  if( end != nullptr )
     delete end;
   end = childIntervals[ 0 ]->getEnd()->clone();
 
@@ -92,7 +92,7 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
     childIntervals[ 0 ]->calcNext( displayList );
     while ( tmpValue == childIntervals[ 0 ]->getValue() )
     {
-      if( end != NULL )
+      if( end != nullptr )
         delete end;
       end = childIntervals[ 0 ]->getEnd()->clone();
 
@@ -102,14 +102,14 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
         break;
 
       // lastEnd to control loop!
-      if( lastEnd != NULL && lastEnd != endRecord )
+      if( lastEnd != nullptr && lastEnd != endRecord )
         delete lastEnd;
       lastEnd = end->clone();
 
       childIntervals[ 0 ]->calcNext( displayList );
     }
     currentValue = tmpValue;
-    if( lastEnd != NULL && lastEnd != endRecord )
+    if( lastEnd != nullptr && lastEnd != endRecord )
       delete lastEnd;
   }
   else
@@ -133,7 +133,7 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
   SemanticHighInfo info;
   info.callingInterval = this;
 
-  if ( displayList == NULL )
+  if ( displayList == nullptr )
     displayList = &myDisplayList;
 
   if ( joinBursts )
@@ -144,11 +144,11 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
     // lastEnd to control loop! Initialized with endRecord.
     lastEnd = endRecord;
 
-    if( begin != NULL && begin != beginRecord )
+    if( begin != nullptr && begin != beginRecord )
       delete begin;
     begin = childIntervals[ 0 ]->getBegin()->clone();
 
-    if( end != NULL )
+    if( end != nullptr )
       delete end;
     end = childIntervals[ 0 ]->getEnd()->clone();
 
@@ -163,7 +163,7 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
 
     while ( tmpValue == childIntervals[ 0 ]->getValue() )
     {
-      if( end != NULL )
+      if( end != nullptr )
         delete end;
       end = childIntervals[ 0 ]->getEnd()->clone();
 
@@ -173,24 +173,24 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
         break;
 
       // lastEnd to control loop!
-      if( lastEnd != NULL && lastEnd != endRecord )
+      if( lastEnd != nullptr && lastEnd != endRecord )
         delete lastEnd;
       lastEnd = end->clone();
 
       childIntervals[ 0 ]->calcNext( displayList );
     }
     currentValue = tmpValue;
-    if( lastEnd != NULL && lastEnd != endRecord )
+    if( lastEnd != nullptr && lastEnd != endRecord )
       delete lastEnd;
   }
   else
   {
     childIntervals[ 0 ]->calcNext( displayList );
-    if( begin != NULL && begin != beginRecord )
+    if( begin != nullptr && begin != beginRecord )
       delete begin;
     begin = childIntervals[ 0 ]->getBegin()->clone();
 
-    if( end != NULL )
+    if( end != nullptr )
       delete end;
     end = childIntervals[ 0 ]->getEnd()->clone();
 
@@ -207,7 +207,7 @@ KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc 
   SemanticHighInfo info;
   info.callingInterval = this;
 
-  if ( displayList == NULL )
+  if ( displayList == nullptr )
     displayList = &myDisplayList;
 
   if ( joinBursts )
@@ -218,17 +218,17 @@ KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc 
     // firstBegin to control loop! Initialized with beginRecord.
     firstBegin = beginRecord;
 
-    if( begin != NULL && begin != beginRecord )
+    if( begin != nullptr && begin != beginRecord )
       delete begin;
     begin = childIntervals[ 0 ]->getBegin()->clone();
-    if( end != NULL )
+    if( end != nullptr )
       delete end;
     end = childIntervals[ 0 ]->getEnd()->clone();
     tmpValue = childIntervals[ 0 ]->getValue();
     childIntervals[ 0 ]->calcPrev( displayList );
     while ( tmpValue == childIntervals[ 0 ]->getValue() )
     {
-      if( begin != NULL && begin != beginRecord )
+      if( begin != nullptr && begin != beginRecord )
         delete begin;
       begin = childIntervals[ 0 ]->getBegin()->clone();
 
@@ -238,23 +238,23 @@ KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc 
         break;
 
       // firstBegin to control loop!
-      if( firstBegin != NULL && firstBegin != beginRecord )
+      if( firstBegin != nullptr && firstBegin != beginRecord )
         delete firstBegin;
       firstBegin = begin->clone();
 
       childIntervals[ 0 ]->calcPrev( displayList );
     }
-    if( firstBegin != NULL && firstBegin != beginRecord )
+    if( firstBegin != nullptr && firstBegin != beginRecord )
       delete firstBegin;
   }
   else
   {
     childIntervals[ 0 ]->calcPrev( displayList );
-    if( begin != NULL && begin != beginRecord )
+    if( begin != nullptr && begin != beginRecord )
       delete begin;
     begin = childIntervals[ 0 ]->getBegin()->clone();
 
-    if( end != NULL )
+    if( end != nullptr )
       delete end;
     end = childIntervals[ 0 ]->getEnd()->clone();
 

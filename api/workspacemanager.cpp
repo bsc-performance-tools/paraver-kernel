@@ -45,12 +45,12 @@ using std::string;
 using std::vector;
 
 
-WorkspaceManager *WorkspaceManager::instance = NULL;
+WorkspaceManager *WorkspaceManager::instance = nullptr;
 
 
 WorkspaceManager *WorkspaceManager::getInstance()
 {
-  if ( WorkspaceManager::instance == NULL )
+  if ( WorkspaceManager::instance == nullptr )
     WorkspaceManager::instance = new WorkspaceManager();
   return WorkspaceManager::instance;
 }
@@ -239,10 +239,10 @@ void WorkspaceManager::loadXML()
   baseDir.append( getenv( "HOMEPATH" ) );
 
   char myPath[ MAX_LEN_PATH ];
-  HMODULE hModule = GetModuleHandle( NULL );
-  if ( hModule != NULL )
+  HMODULE hModule = GetModuleHandle( nullptr );
+  if ( hModule != nullptr )
   {
-    GetModuleFileName( NULL, myPath, ( sizeof( myPath ) ));
+    GetModuleFileName( nullptr, myPath, ( sizeof( myPath ) ));
     PathRemoveFileSpec( myPath );
     string tmpParaverPath( myPath );
     baseDir = tmpParaverPath.substr( 0, tmpParaverPath.size() - 4 );
@@ -259,7 +259,7 @@ void WorkspaceManager::loadXML()
 
     baseDir = tmpPath;
 #else
-  if( getenv( "PARAVER_HOME" ) == NULL )
+  if( getenv( "PARAVER_HOME" ) == nullptr )
     baseDir = "";
   else
     baseDir = getenv( "PARAVER_HOME" );
@@ -339,9 +339,9 @@ void WorkspaceManager::saveXML()
   int len = tmpPath.length() + 1;
   wchar_t *wText = new wchar_t[len];
   memset(wText,0,len);
-  ::MultiByteToWideChar( CP_ACP, NULL, tmpPath.c_str(), -1, wText, len );
+  ::MultiByteToWideChar( CP_ACP, nullptr, tmpPath.c_str(), -1, wText, len );
 */
-  SHCreateDirectoryEx( NULL, tmpPath.c_str(), NULL );
+  SHCreateDirectoryEx( nullptr, tmpPath.c_str(), nullptr );
   //delete []wText;
 #else
   strFile.append( "/.paraver/workspaces" );

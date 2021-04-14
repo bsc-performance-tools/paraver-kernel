@@ -55,7 +55,7 @@ class ParaverKernelException : public std::exception
 
     ParaverKernelException( TErrorCode whichCode = undefined,
                             const char *whichAuxMessage = "",
-                            const char *whichFile = NULL,
+                            const char *whichFile = nullptr,
                             TExceptionLine whichLine = 0 ) throw():
         code( whichCode ),
         auxMessage( whichAuxMessage ),

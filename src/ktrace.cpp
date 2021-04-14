@@ -613,7 +613,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   if ( file->canseekend() )
   {
     file->seekend();
-    if ( progress != NULL )
+    if ( progress != nullptr )
       progress->setEndLimit( file->tellg() );
     file->seekbegin();
   }
@@ -632,7 +632,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     body->setProcessModel( &traceProcessModel );
     body->setResourceModel( &traceResourceModel );
 
-    if ( !file->canseekend() && progress != NULL )
+    if ( !file->canseekend() && progress != nullptr )
     {
       progress->setEndLimit( traceEndTime );
     }
@@ -684,7 +684,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
    //   else cout << traceEndTime << endl;
     }
 
-    if ( !file->canseekend() && progress != NULL )
+    if ( !file->canseekend() && progress != nullptr )
     {
       progress->setEndLimit( traceEndTime );
     }
@@ -772,7 +772,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
       if ( blocks->getCountInserted() >= 10000 )
       {
         memTrace->insert( blocks );
-        if ( progress != NULL )
+        if ( progress != nullptr )
         {
           if ( file->canseekend() )
             progress->setCurrentProgress( file->tellg() );
@@ -780,7 +780,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
             progress->setCurrentProgress( blocks->getLastRecordTime() );
         }
 
-        if ( progress != NULL && progress->getStop() )
+        if ( progress != nullptr && progress->getStop() )
           break;
       }
     }
@@ -814,7 +814,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   {
     file->close();
     delete body;
-    body = NULL;
+    body = nullptr;
   }
   else
   {
@@ -832,7 +832,7 @@ KTrace::~KTrace()
 {
   delete blocks;
   delete memTrace;
-  if ( body != NULL )
+  if ( body != nullptr )
     delete body;
 }
 
@@ -878,7 +878,7 @@ bool KTrace::findLastEventValue( TThreadOrder whichThread,
       return false;
   }
 
-  listIter.insert( listIter.begin(), totalThreads(), NULL );
+  listIter.insert( listIter.begin(), totalThreads(), nullptr );
   getRecordByTimeThread( listIter, whichTime );
   it = listIter[ whichThread ];
 
@@ -918,7 +918,7 @@ bool KTrace::findNextEvent( TThreadOrder whichThread,
   vector<MemoryTrace::iterator *> listIter;
   MemoryTrace::iterator *it;
 
-  listIter.insert( listIter.begin(), totalThreads(), NULL );
+  listIter.insert( listIter.begin(), totalThreads(), nullptr );
   getRecordByTimeThread( listIter, whichTime );
   it = listIter[ whichThread ];
   while( it->getTime() < whichTime )

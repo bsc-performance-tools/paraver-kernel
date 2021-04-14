@@ -159,7 +159,7 @@ class Window
     // SingleWindow
     virtual Filter *getFilter() const
     {
-      return NULL;
+      return nullptr;
     }
 
     //DerivedWindow
@@ -172,11 +172,11 @@ class Window
     virtual void setChild( Window *whichWindow ) {}
     virtual Window *getChild()
     {
-      return NULL;
+      return nullptr;
     }
     virtual Window *getParent( PRV_UINT16 whichParent ) const
     {
-      return NULL;
+      return nullptr;
     }
 
 
@@ -220,7 +220,7 @@ class Window
     }
     virtual void computeYScaleMin() {}
     virtual void computeYScaleMax() {}
-    virtual void computeYScale( ProgressController *progress = NULL ) {}
+    virtual void computeYScale( ProgressController *progress = nullptr ) {}
     virtual void setComputeYMaxOnInit( bool newValue ) {}
     virtual bool getComputeYMaxOnInit() const
     {
@@ -244,7 +244,7 @@ class Window
 
     virtual Window* clone( bool recursiveClone = false )
     {
-      return NULL;
+      return nullptr;
     }
 
     virtual bool getShowProgressBar() const
@@ -308,7 +308,7 @@ class Window
                                   TSemanticValue& rowComputedMaxY, TSemanticValue& rowComputedMinY,
                                   int& rowComputedZeros,
                                   bool updateLimits = true )
-    { return NULL; }
+    { return nullptr; }
     virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true ) = 0;
     virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const = 0;
     virtual TRecordTime getEndTime( TObjectOrder whichObject ) const = 0;
@@ -326,7 +326,7 @@ class Window
     // Specific functions for WindowProxy
     virtual Window *getConcrete() const
     {
-      return NULL;
+      return nullptr;
     }
 
     virtual void setName( const std::string& whichName )
@@ -383,12 +383,12 @@ class Window
     }
     virtual CodeColor& getCodeColor()
     {
-      CodeColor *tmp = NULL;
+      CodeColor *tmp = nullptr;
       return *tmp;
     }
     virtual GradientColor& getGradientColor()
     {
-      GradientColor *tmp = NULL;
+      GradientColor *tmp = nullptr;
       return *tmp;
     }
     virtual bool getSemanticScaleMinAtZero()
@@ -456,7 +456,7 @@ class Window
     {}
     virtual Window *getPunctualColorWindow() const
     {
-      return NULL;
+      return nullptr;
     }
     virtual void setPunctualColorWindow( Window *whichWindow )
     {}
@@ -572,7 +572,7 @@ class Window
 
     virtual SelectionManagement< TObjectOrder, TWindowLevel > *getSelectedRows()
     {
-      return NULL;
+      return nullptr;
     }
     virtual void setSelectedRows( TWindowLevel onLevel, std::vector< bool > &selected )
     {}
@@ -947,7 +947,7 @@ class WindowProxy: public Window
     virtual bool getYScaleComputed() const;
     virtual void computeYScaleMin();
     virtual void computeYScaleMax();
-    virtual void computeYScale( ProgressController *progress = NULL );
+    virtual void computeYScale( ProgressController *progress = nullptr );
     virtual void setComputeYMaxOnInit( bool newValue );
     virtual bool getComputeYMaxOnInit() const;
     virtual void setMaximumY( TSemanticValue whichMax );

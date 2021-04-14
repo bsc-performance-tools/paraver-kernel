@@ -51,8 +51,8 @@ PlainBlocks::PlainBlocks( const ResourceModel& resource, const ProcessModel& pro
   for ( TThreadOrder iThread = 0; iThread < processModel.totalThreads(); ++iThread )
   {
     blocks.push_back( vector<TRecord *>() );
-    blocks[ iThread ].push_back( NULL );
-    currentBlock.push_back( NULL );
+    blocks[ iThread ].push_back( nullptr );
+    currentBlock.push_back( nullptr );
     currentRecord.push_back( 0 );
   }
 }
@@ -61,7 +61,7 @@ PlainBlocks::~PlainBlocks()
 {
   for ( TThreadOrder iThread = 0; iThread < processModel.totalThreads(); ++iThread )
   {
-    if ( ( blocks[ iThread ] )[ 0 ] != NULL )
+    if ( ( blocks[ iThread ] )[ 0 ] != nullptr )
     {
       for ( PRV_UINT32 i = 0; i < blocks[ iThread ].size(); i++ )
         delete[] ( blocks[ iThread ] )[ i ];
@@ -110,7 +110,7 @@ void PlainBlocks::setTime( TRecordTime whichTime )
 
 void PlainBlocks::setThread( TThreadOrder whichThread )
 {
-  if ( currentBlock[ whichThread ] == NULL )
+  if ( currentBlock[ whichThread ] == nullptr )
   {
     blocks[ whichThread ][ 0 ] = new TRecord[ blockSize ];
     currentBlock[ whichThread ] = blocks[ whichThread ][ 0 ];
@@ -152,7 +152,7 @@ void PlainBlocks::setThread( TApplOrder whichAppl,
                 whichTask,
                 whichThread );
 
-  if ( currentBlock[ whichThread ] == NULL )
+  if ( currentBlock[ whichThread ] == nullptr )
   {
     blocks[ whichThread ][ 0 ] = new TRecord[ blockSize ];
     memset( blocks[ whichThread ][ 0 ], 0, blockSize * sizeof( TRecord ) );
@@ -402,7 +402,7 @@ void PlainBlocks::setFileLoaded()
 
   for ( TThreadOrder i = 0; i < processModel.totalThreads(); ++i )
   {
-    if ( currentBlock[ i ] == NULL )
+    if ( currentBlock[ i ] == nullptr )
     {
       blocks[ i ][ 0 ] = new TRecord[ blockSize ];
       currentBlock[ i ] = blocks[ i ][ 0 ];
