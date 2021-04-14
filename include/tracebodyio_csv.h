@@ -43,7 +43,7 @@ class TraceBodyIO_csv : public TraceBodyIO
 
     bool ordered() const;
     void read( TraceStream *file, MemoryBlocks& records,
-               hash_set<TState>& states, hash_set<TEventType>& events,
+               std::unordered_set<TState>& states, std::unordered_set<TEventType>& events,
                MetadataManager& traceInfo ) const;
     void write( std::fstream& whichStream,
                 const KTrace& whichTrace,
@@ -81,7 +81,7 @@ class TraceBodyIO_csv : public TraceBodyIO
     void readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const;
 
     void readEvents( const std::string& line, MemoryBlocks& records,
-                    hash_set<TState>& states ) const;
+                    std::unordered_set<TState>& states ) const;
     bool readCommon( std::istringstream& line,
                      TCPUOrder& CPU,
                      TApplOrder& appl,

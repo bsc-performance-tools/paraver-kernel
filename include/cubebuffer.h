@@ -28,11 +28,9 @@
 
 #include <vector>
 #include <map>
-#include <ext/hash_map>
+#include <unordered_map>
 
-#include "paraverkerneltypes.h"
-
-using namespace __gnu_cxx;
+#include "paraverkerneltypes.h" 
 
 class CubeBuffer
 {
@@ -46,14 +44,14 @@ class CubeBuffer
 #ifdef PARALLEL_ENABLED
     const std::map< THistogramColumn, std::vector< TSemanticValue > >& getRowValues( PRV_UINT32 plane, PRV_UINT32 row ) const;
 #else
-    const hash_map< THistogramColumn, std::vector< TSemanticValue > >& getRowValues( PRV_UINT32 plane, PRV_UINT32 row ) const;
+    const std::unordered_map< THistogramColumn, std::vector< TSemanticValue > >& getRowValues( PRV_UINT32 plane, PRV_UINT32 row ) const;
 #endif
 
   private:
 #ifdef PARALLEL_ENABLED
     std::vector< std::vector< std::map< THistogramColumn, std::vector< TSemanticValue > > > > buffer;
 #else
-    std::vector< std::vector< hash_map< THistogramColumn, std::vector< TSemanticValue > > > > buffer;
+    std::vector< std::vector< std::unordered_map< THistogramColumn, std::vector< TSemanticValue > > > > buffer;
 #endif
 };
 

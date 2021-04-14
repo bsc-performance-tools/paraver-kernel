@@ -160,8 +160,8 @@ namespace NoLoad
       TRecord loadingRec;
       TThreadOrder loadingThread;
 
-      hash_set<TState> notUsedStates;
-      hash_set<TEventType> notUsedEvents;
+      std::unordered_set<TState> notUsedStates;
+      std::unordered_set<TEventType> notUsedEvents;
 
       MetadataManager dummyTraceInfo;
 

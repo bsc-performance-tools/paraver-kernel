@@ -26,7 +26,7 @@
 #ifdef _MSC_VER
 #include <hash_set>
 #else
-#include <ext/hash_set>
+#include  <unordered_set>
 #endif
 
 #include "ktrace.h"
@@ -757,8 +757,8 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
                                traceResourceModel.totalCPUs() );
   }
 
-  hash_set<TEventType> hashevents;
-  hash_set<TState> hashstates;
+  unordered_set<TEventType> hashevents;
+  unordered_set<TState> hashstates;
 
   unsigned long long count = 0;
   if( !( noLoad && !body->ordered() ) )
@@ -798,10 +798,10 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
                                   whichFile.c_str() );
     }
 
-    for ( hash_set<TEventType>::iterator it = hashevents.begin(); it != hashevents.end(); ++it )
+    for ( unordered_set<TEventType>::iterator it = hashevents.begin(); it != hashevents.end(); ++it )
       events.insert( *it );
 
-    for ( hash_set<TState>::iterator it = hashstates.begin(); it != hashstates.end(); ++it )
+    for ( unordered_set<TState>::iterator it = hashstates.begin(); it != hashstates.end(); ++it )
       states.insert( *it );
   }
 

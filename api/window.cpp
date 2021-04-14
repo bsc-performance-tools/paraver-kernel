@@ -2059,8 +2059,8 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
                                            TObjectOrder maxObj,
                                            bool& drawCaution,
                                            vector< vector< TSemanticValue > >& valuesToDraw,
-                                           vector< hash_set< PRV_INT32 > >& eventsToDraw,
-                                           vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,
+                                           vector< unordered_set< PRV_INT32 > >& eventsToDraw,
+                                           vector< unordered_set< commCoord, hashCommCoord > >& commsToDraw,
                                            ProgressController *progress )
 #endif
 {
@@ -2146,11 +2146,11 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
         }
         valuesToDraw.push_back( vector< TSemanticValue >() );
 
-        eventsToDraw.push_back( hash_set< PRV_INT32 >() );
+        eventsToDraw.push_back( unordered_set< PRV_INT32 >() );
 #ifdef _MSC_VER
         commsToDraw.push_back( hash_set< commCoord >() );
 #else
-        commsToDraw.push_back( hash_set< commCoord, hashCommCoord >() );
+        commsToDraw.push_back( unordered_set< commCoord, hashCommCoord >() );
 #endif
 
         tmpDrawCaution.push_back( drawCaution );
@@ -2269,8 +2269,8 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
                                               TSemanticValue& rowComputedMinY,
                                               int& rowComputedZeros,
                                               vector< TSemanticValue >& valuesToDraw,
-                                              hash_set< PRV_INT32 >& eventsToDraw,
-                                              hash_set< commCoord, hashCommCoord >& commsToDraw,
+                                              unordered_set< PRV_INT32 >& eventsToDraw,
+                                              unordered_set< commCoord, hashCommCoord >& commsToDraw,
                                               ProgressController *progress )
 #endif
 {
@@ -2399,8 +2399,8 @@ void WindowProxy::computeEventsCommsParallel( RecordList *records,
                                               PRV_INT32 objectAxisPos,
                                               vector< bool >& selected,
                                               vector< PRV_INT32 >& objectPosList,
-                                              hash_set< PRV_INT32 >& eventsToDraw,
-                                              hash_set< commCoord, hashCommCoord >& commsToDraw )
+                                              unordered_set< PRV_INT32 >& eventsToDraw,
+                                              unordered_set< commCoord, hashCommCoord >& commsToDraw )
 #endif
 {
   bool existEvents = false;
@@ -2498,8 +2498,8 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
                                                    TObjectOrder maxObj,
                                                    bool& drawCaution,
                                                    vector< vector< vector< pair<TSemanticValue,TSemanticValue> > > >& valuesToDraw,
-                                                   vector< hash_set< PRV_INT32 > >& eventsToDraw,
-                                                   vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,
+                                                   vector< unordered_set< PRV_INT32 > >& eventsToDraw,
+                                                   vector< unordered_set< commCoord, hashCommCoord > >& commsToDraw,
                                                    ProgressController *progress )
 #endif
 {
@@ -2573,11 +2573,11 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
         }
         valuesToDraw.push_back( vector< vector< pair<TSemanticValue,TSemanticValue> > >() );
 
-        eventsToDraw.push_back( hash_set< PRV_INT32 >() );
+        eventsToDraw.push_back( unordered_set< PRV_INT32 >() );
 #ifdef _MSC_VER
         commsToDraw.push_back( hash_set< commCoord >() );
 #else
-        commsToDraw.push_back( hash_set< commCoord, hashCommCoord >() );
+        commsToDraw.push_back( unordered_set< commCoord, hashCommCoord >() );
 #endif
 
         tmpDrawCaution.push_back( drawCaution );
@@ -2684,8 +2684,8 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
                                                       TSemanticValue& rowComputedMinY,
                                                       int& rowComputedZeros,
                                                       vector< vector< pair<TSemanticValue,TSemanticValue> > >& valuesToDraw,
-                                                      hash_set< PRV_INT32 >& eventsToDraw,
-                                                      hash_set< commCoord, hashCommCoord >& commsToDraw,
+                                                      unordered_set< PRV_INT32 >& eventsToDraw,
+                                                      unordered_set< commCoord, hashCommCoord >& commsToDraw,
                                                       ProgressController *progress )
 #endif
 {

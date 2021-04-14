@@ -80,7 +80,7 @@ bool TraceBodyIO_v1::ordered() const
 }
 
 void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
-                           hash_set<TState>& states, hash_set<TEventType>& events,
+                           unordered_set<TState>& states, unordered_set<TEventType>& events,
                            MetadataManager& traceInfo ) const
 {
   file->getline( line );
@@ -208,7 +208,7 @@ inline void TraceBodyIO_v1::readTraceInfo(  const std::string& line, MetadataMan
 }
 
 inline void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records,
-                                       hash_set<TState>& states ) const
+                                       unordered_set<TState>& states ) const
 {
   TCPUOrder CPU;
   TApplOrder appl;
@@ -295,7 +295,7 @@ inline void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records
 
 
 inline void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records,
-                                       hash_set<TEventType>& events ) const
+                                       unordered_set<TEventType>& events ) const
 {
   TCPUOrder CPU;
   TApplOrder appl;

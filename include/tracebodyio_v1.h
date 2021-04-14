@@ -43,7 +43,7 @@ class TraceBodyIO_v1 : public TraceBodyIO
 
     bool ordered() const;
     void read( TraceStream *file, MemoryBlocks& records,
-               hash_set<TState>& states, hash_set<TEventType>& events,
+               std::unordered_set<TState>& states, std::unordered_set<TEventType>& events,
                MetadataManager& traceInfo ) const;
     void write( std::fstream& whichStream,
                 const KTrace& whichTrace,
@@ -81,9 +81,9 @@ class TraceBodyIO_v1 : public TraceBodyIO
     void readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const;
 
     void readState( const std::string& line, MemoryBlocks& records,
-                    hash_set<TState>& states ) const;
+                    std::unordered_set<TState>& states ) const;
     void readEvent( const std::string& line, MemoryBlocks& records,
-                    hash_set<TEventType>& events ) const;
+                    std::unordered_set<TEventType>& events ) const;
     void readComm( const std::string& line, MemoryBlocks& records ) const;
     void readGlobalComm( const std::string& line, MemoryBlocks& records ) const;
     bool readCommon( std::istringstream& line,

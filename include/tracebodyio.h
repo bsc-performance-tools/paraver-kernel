@@ -27,7 +27,7 @@
 #ifdef _MSC_VER
 #include <hash_set>
 #else
-#include <ext/hash_set>
+#include  <unordered_set>
 #endif
 #include <fstream>
 #include "memoryblocks.h"
@@ -51,7 +51,7 @@ class TraceBodyIO
 
     virtual bool ordered() const = 0;
     virtual void read( TraceStream *file, MemoryBlocks& records,
-                       hash_set<TState>& states, hash_set<TEventType>& events,
+                       std::unordered_set<TState>& states, std::unordered_set<TEventType>& events,
                        MetadataManager& traceInfo ) const = 0;
     virtual void write( std::fstream& whichStream,
                         const KTrace& whichTrace,

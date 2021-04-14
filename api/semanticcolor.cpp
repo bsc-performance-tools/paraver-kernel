@@ -27,7 +27,7 @@
 #ifdef _MSC_VER
 #include <hash_set>
 #else
-#include <ext/hash_set>
+#include  <unordered_set>
 #endif
 #include "semanticcolor.h"
 #include "window.h"
@@ -312,9 +312,9 @@ void CodeColor::expandColors()
   unsigned int iterations = MAX_COLORS / colors.size() / 3;
   unsigned int numBaseColors = colors.size();
 #ifdef _MSC_VER
-  hash_set<rgb> insertedColors;
+  unordered_set<rgb> insertedColors;
 #else
-  hash_set<rgb, hashrgb, eqrgb> insertedColors;
+  unordered_set<rgb, hashrgb, eqrgb> insertedColors;
 #endif
   insertedColors.insert( colors.begin(), colors.end() );
 
@@ -331,9 +331,9 @@ void CodeColor::expandColors()
       rgb tmp = colors[ redBaseColor ];
       ++tmp.red;
 #ifdef _MSC_VER
-      pair<hash_set<rgb>::iterator, bool > result = insertedColors.insert( tmp );
+      pair<unordered_set<rgb>::iterator, bool > result = insertedColors.insert( tmp );
 #else
-      pair<hash_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
+      pair<unordered_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
 #endif
       if( result.second )
         colors.push_back( tmp );
@@ -346,9 +346,9 @@ void CodeColor::expandColors()
       rgb tmp = colors[ greenBaseColor ];
       ++tmp.green;
 #ifdef _MSC_VER
-      pair<hash_set<rgb>::iterator, bool > result = insertedColors.insert( tmp );
+      pair<unordered_set<rgb>::iterator, bool > result = insertedColors.insert( tmp );
 #else
-      pair<hash_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
+      pair<unordered_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
 #endif
       if( result.second )
         colors.push_back( tmp );
@@ -361,9 +361,9 @@ void CodeColor::expandColors()
       rgb tmp = colors[ blueBaseColor ];
       ++tmp.blue;
 #ifdef _MSC_VER
-      pair<hash_set<rgb>::iterator, bool > result = insertedColors.insert( tmp );
+      pair<unordered_set<rgb>::iterator, bool > result = insertedColors.insert( tmp );
 #else
-      pair<hash_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
+      pair<unordered_set<rgb, hashrgb, eqrgb>::iterator, bool > result = insertedColors.insert( tmp );
 #endif
       if( result.second )
         colors.push_back( tmp );

@@ -40,7 +40,7 @@
 #ifdef _MSC_VER
 #include <hash_set>
 #else
-#include <ext/hash_set>
+#include  <unordered_set>
 #endif
 
 #ifdef _MSC_VER
@@ -769,8 +769,8 @@ class Window
                                           TObjectOrder maxObj,
                                           bool& drawCaution,                                  // I/O
                                           std::vector< std::vector< TSemanticValue > >& valuesToDraw,             // I/O
-                                          std::vector< hash_set< PRV_INT32 > >& eventsToDraw,                // I/O
-                                          std::vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,    // I/O
+                                          std::vector< std::unordered_set< PRV_INT32 > >& eventsToDraw,                // I/O
+                                          std::vector< std::unordered_set< commCoord, hashCommCoord > >& commsToDraw,    // I/O
                                           ProgressController *progress )
 #endif
     {}
@@ -805,8 +805,8 @@ class Window
                                              TSemanticValue &rowComputedMinY,
                                              int& rowComputedZeros,
                                              std::vector< TSemanticValue >& valuesToDraw,             // I/O
-                                             hash_set< PRV_INT32 >& eventsToDraw,                // I/O
-                                             hash_set< commCoord, hashCommCoord >& commsToDraw ) // I/O
+                                             std::unordered_set< PRV_INT32 >& eventsToDraw,                // I/O
+                                             std::unordered_set< commCoord, hashCommCoord >& commsToDraw ) // I/O
 #endif
     {}
 
@@ -830,8 +830,8 @@ class Window
                                              PRV_INT32 objectAxisPos,
                                              std::vector< bool >& selected,
                                              std::vector< PRV_INT32 >& objectPosList,
-                                             hash_set< PRV_INT32 >& eventsToDraw,                // I/O
-                                             hash_set< commCoord, hashCommCoord >& commsToDraw ) // I/O
+                                             std::unordered_set< PRV_INT32 >& eventsToDraw,                // I/O
+                                             std::unordered_set< commCoord, hashCommCoord >& commsToDraw ) // I/O
 #endif
   {}
 
@@ -862,8 +862,8 @@ class Window
                                                   TObjectOrder maxObj,
                                                   bool& drawCaution,                                  // I/O
                                                   std::vector< std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > > >& valuesToDraw,             // I/O
-                                                  std::vector< hash_set< PRV_INT32 > >& eventsToDraw,                // I/O
-                                                  std::vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,    // I/O
+                                                  std::vector< std::unordered_set< PRV_INT32 > >& eventsToDraw,                // I/O
+                                                  std::vector< std::unordered_set< commCoord, hashCommCoord > >& commsToDraw,    // I/O
                                                   ProgressController *progress )
 #endif
     {}
@@ -898,8 +898,8 @@ class Window
                                                      TSemanticValue &rowComputedMinY,
                                                      int& rowComputedZeros,
                                                      std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > >& valuesToDraw,             // I/O
-                                                     hash_set< PRV_INT32 >& eventsToDraw,                // I/O
-                                                     hash_set< commCoord, hashCommCoord >& commsToDraw ) // I/O
+                                                     std::unordered_set< PRV_INT32 >& eventsToDraw,                // I/O
+                                                     std::unordered_set< commCoord, hashCommCoord >& commsToDraw ) // I/O
 #endif
     {}
 
@@ -1237,8 +1237,8 @@ class WindowProxy: public Window
                                           TObjectOrder maxObj,
                                           bool& drawCaution,                                                  // I/O
                                           std::vector< std::vector< TSemanticValue > >& valuesToDraw,         // I/O
-                                          std::vector< hash_set< PRV_INT32 > >& eventsToDraw,                 // I/O
-                                          std::vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,   // I/O
+                                          std::vector< std::unordered_set< PRV_INT32 > >& eventsToDraw,                 // I/O
+                                          std::vector< std::unordered_set< commCoord, hashCommCoord > >& commsToDraw,   // I/O
                                           ProgressController *progress );
 
     void computeSemanticRowParallel( int numRows,
@@ -1255,8 +1255,8 @@ class WindowProxy: public Window
                                      TSemanticValue& rowComputedMinY,
                                      int& rowComputedZeros,
                                      std::vector< TSemanticValue >& valuesToDraw,         // I/O
-                                     hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
-                                     hash_set< commCoord, hashCommCoord >& commsToDraw,
+                                     std::unordered_set< PRV_INT32 >& eventsToDraw,                 // I/O
+                                     std::unordered_set< commCoord, hashCommCoord >& commsToDraw,
                                      ProgressController *progress ); // I/O
 
     virtual void computeEventsCommsParallel( RecordList *records,
@@ -1267,8 +1267,8 @@ class WindowProxy: public Window
                                              PRV_INT32 objectAxisPos,
                                              std::vector< bool >& selected,
                                              std::vector< PRV_INT32 >& objectPosList,
-                                             hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
-                                             hash_set< commCoord, hashCommCoord >& commsToDraw ); // I/O
+                                             std::unordered_set< PRV_INT32 >& eventsToDraw,                 // I/O
+                                             std::unordered_set< commCoord, hashCommCoord >& commsToDraw ); // I/O
 #endif // WIN32
 
 #ifdef _MSC_VER
@@ -1294,8 +1294,8 @@ class WindowProxy: public Window
                                                   TObjectOrder maxObj,
                                                   bool& drawCaution,                                  // I/O
                                                   std::vector< std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > > >& valuesToDraw,             // I/O
-                                                  std::vector< hash_set< PRV_INT32 > >& eventsToDraw,                // I/O
-                                                  std::vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,    // I/O
+                                                  std::vector< std::unordered_set< PRV_INT32 > >& eventsToDraw,                // I/O
+                                                  std::vector< std::unordered_set< commCoord, hashCommCoord > >& commsToDraw,    // I/O
                                                   ProgressController *progress );
 #endif
 
@@ -1332,8 +1332,8 @@ class WindowProxy: public Window
                                              TSemanticValue& rowComputedMinY,
                                              int& rowComputedZeros,
                                              std::vector< std::vector< std::pair<TSemanticValue,TSemanticValue> > >& valuesToDraw,         // I/O
-                                             hash_set< PRV_INT32 >& eventsToDraw,                 // I/O
-                                             hash_set< commCoord, hashCommCoord >& commsToDraw,
+                                             std::unordered_set< PRV_INT32 >& eventsToDraw,                 // I/O
+                                             std::unordered_set< commCoord, hashCommCoord >& commsToDraw,
                                              ProgressController *progress ); // I/O
 #endif
 
