@@ -98,7 +98,7 @@ TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile,
 {
   unload = false;
   instanceNumber = 0;
-  showProgressBar = Trace::getShowProgressBar();
+  showProgressBar = myKernel->getTraceSize( whichFile ) / 1E6 > 10.0;
 
   myTrace = myKernel->newTrace( whichFile, noLoad, progress );
   string pcfFile = myKernel->getPCFFileLocation( whichFile );
