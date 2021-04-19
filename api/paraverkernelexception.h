@@ -31,29 +31,29 @@
 
 typedef int TExceptionLine;
 
+enum class TErrorCode
+{
+  undefined = 0,
+  emptytrace,
+  cannotOpenTrace,
+  nullOperand,
+  memoryError,
+  gzipNotSupported,
+  undefinedToolID,
+  undefinedToolName,
+  indexOutOfRange,
+  downloadFailed,
+  LAST
+};
+
 class ParaverKernelException : public std::exception
 {
 
   public:
 
-    typedef enum
-    {
-      undefined = 0,
-      emptytrace,
-      cannotOpenTrace,
-      nullOperand,
-      memoryError,
-      gzipNotSupported,
-      undefinedToolID,
-      undefinedToolName,
-      indexOutOfRange,
-      downloadFailed,
-      LAST
-    } TErrorCode;
-
     static std::ostream& defaultPrintStream;
 
-    ParaverKernelException( TErrorCode whichCode = undefined,
+    ParaverKernelException( TErrorCode whichCode = TErrorCode::undefined,
                             const char *whichAuxMessage = "",
                             const char *whichFile = nullptr,
                             TExceptionLine whichLine = 0 ) throw():
@@ -90,7 +90,7 @@ class ParaverKernelException : public std::exception
 
     virtual const char *specificErrorMessage() const
     {
-      return errorMessage[ code ];
+      return errorMessage[ static_cast<int>( code ) ];
     }
 };
 

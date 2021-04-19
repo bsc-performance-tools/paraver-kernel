@@ -80,13 +80,13 @@ class ComposeAsIs: public SemanticCompose
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -139,13 +139,13 @@ class ComposeSign: public SemanticCompose
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -200,13 +200,13 @@ class ComposeUnsign: public SemanticCompose
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -264,7 +264,7 @@ class ComposeMod: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == DIVIDER )
         tmp.push_back( 1 );
       return tmp;
@@ -272,7 +272,7 @@ class ComposeMod: public SemanticCompose
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Divider";
     }
 
@@ -331,7 +331,7 @@ class ComposeModPlus1: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == DIVIDER )
         tmp.push_back( 1 );
       return tmp;
@@ -339,7 +339,7 @@ class ComposeModPlus1: public SemanticCompose
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Divider";
     }
 
@@ -397,7 +397,7 @@ class ComposeDivide: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == DIVIDER )
         tmp.push_back( 1 );
       return tmp;
@@ -405,7 +405,7 @@ class ComposeDivide: public SemanticCompose
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Divider";
     }
 
@@ -464,7 +464,7 @@ class ComposeProduct: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == FACTOR )
         tmp.push_back( 0 );
       return tmp;
@@ -472,7 +472,7 @@ class ComposeProduct: public SemanticCompose
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Factor";
     }
 
@@ -530,7 +530,7 @@ class ComposeAdding: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == FACTOR )
         tmp.push_back( 0 );
       return tmp;
@@ -538,7 +538,7 @@ class ComposeAdding: public SemanticCompose
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Value";
     }
 
@@ -597,7 +597,7 @@ class ComposeSubstract: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == FACTOR )
         tmp.push_back( 0 );
       return tmp;
@@ -605,7 +605,7 @@ class ComposeSubstract: public SemanticCompose
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Value";
     }
 
@@ -664,7 +664,7 @@ class ComposeComplement: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == MINUEND )
         tmp.push_back( 0 );
       return tmp;
@@ -672,7 +672,7 @@ class ComposeComplement: public SemanticCompose
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Minuend";
     }
 
@@ -732,7 +732,7 @@ class ComposeInverseDiv: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == FACTOR )
         tmp.push_back( 1 );
       return tmp;
@@ -740,7 +740,7 @@ class ComposeInverseDiv: public SemanticCompose
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Factor";
     }
 
@@ -804,7 +804,7 @@ class ComposeSelectRange: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == MAXVALUE )
         tmp.push_back( 1 );
       else if ( whichParam == MINVALUE )
@@ -815,7 +815,7 @@ class ComposeSelectRange: public SemanticCompose
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       if( whichParam == MAXVALUE )
         return "Max value";
       else if( whichParam == MINVALUE )
@@ -882,7 +882,7 @@ class ComposeSelectRangeOpen: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == MAXVALUE )
         tmp.push_back( 1 );
       else if ( whichParam == MINVALUE )
@@ -893,7 +893,7 @@ class ComposeSelectRangeOpen: public SemanticCompose
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       if( whichParam == MAXVALUE )
         return "Max value";
       else if( whichParam == MINVALUE )
@@ -956,7 +956,7 @@ class ComposeIsInRange: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == MAXVALUE )
         tmp.push_back( 1 );
       else if ( whichParam == MINVALUE )
@@ -967,7 +967,7 @@ class ComposeIsInRange: public SemanticCompose
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       if( whichParam == MAXVALUE )
         return "Max value";
       else if( whichParam == MINVALUE )
@@ -1031,7 +1031,7 @@ class ComposeIsInRangeOpen: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == MAXVALUE )
         tmp.push_back( 1 );
       else if ( whichParam == MINVALUE )
@@ -1042,7 +1042,7 @@ class ComposeIsInRangeOpen: public SemanticCompose
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       if( whichParam == MAXVALUE )
         return "Max value";
       else if( whichParam == MINVALUE )
@@ -1108,7 +1108,7 @@ class ComposeIsEqual: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == VALUES )
         tmp.push_back( 1 );
 
@@ -1117,7 +1117,7 @@ class ComposeIsEqual: public SemanticCompose
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Values";
     }
 
@@ -1177,7 +1177,7 @@ class ComposeIsEqualSign: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == VALUES )
         tmp.push_back( 1 );
 
@@ -1187,7 +1187,7 @@ class ComposeIsEqualSign: public SemanticCompose
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Values";
     }
 
@@ -1248,13 +1248,13 @@ class ComposeFloor: public SemanticCompose
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -1313,13 +1313,13 @@ class ComposeCeil: public SemanticCompose
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -1378,13 +1378,13 @@ class ComposeRound: public SemanticCompose
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -1443,13 +1443,13 @@ class ComposeAbs: public SemanticCompose
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -1508,14 +1508,14 @@ class ComposeStackedValue: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -1579,7 +1579,7 @@ class ComposeInStackedValue: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == VALUE )
         tmp.push_back( 1 );
 
@@ -1588,7 +1588,7 @@ class ComposeInStackedValue: public SemanticCompose
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Value";
     }
 
@@ -1651,14 +1651,14 @@ class ComposeNestingLevel: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -1717,7 +1717,7 @@ class ComposeLRUDepth: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == STACK_SIZE )
         tmp.push_back( 256 );
 
@@ -1727,7 +1727,7 @@ class ComposeLRUDepth: public SemanticCompose
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Stack size";
     }
 
@@ -1785,14 +1785,14 @@ class ComposeEnumerate: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -1849,14 +1849,14 @@ class ComposeAccumulate: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -1911,14 +1911,14 @@ class ComposeDelta: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -1981,14 +1981,14 @@ class ComposeBurstTime: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -2050,14 +2050,14 @@ class ComposeJoinBursts: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -2118,14 +2118,14 @@ class ComposeBeginTime: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -2186,14 +2186,14 @@ class ComposeEndTime: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -2256,14 +2256,14 @@ class ComposeTranslate: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
 
       return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Translation List";
     }
 
@@ -2324,13 +2324,13 @@ class ComposeSine: public SemanticCompose
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -2389,13 +2389,13 @@ class ComposeCosine: public SemanticCompose
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -2454,13 +2454,13 @@ class ComposeSqrtAbs: public SemanticCompose
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -2519,13 +2519,13 @@ class ComposeArcTan: public SemanticCompose
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -2583,7 +2583,7 @@ class ComposeLogN: public SemanticCompose
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == BASE )
         tmp.push_back( exp( 1 ) );
       return tmp;
@@ -2591,7 +2591,7 @@ class ComposeLogN: public SemanticCompose
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Base";
     }
 
@@ -2654,13 +2654,13 @@ class ComposeExponential: public SemanticCompose
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:

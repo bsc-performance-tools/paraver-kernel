@@ -283,7 +283,7 @@ void BPlusLeaf::appendRecord( RecordLeaf newRecord )
     setUsed( ++used );
   }
   else
-    throw BPlusTreeException( BPlusTreeException::invalidAppend,
+    throw BPlusTreeException( TBPlusTreeErrorCode::invalidAppend,
                               "Leaf is full.",
                               __FILE__,
                               __LINE__ );
@@ -1131,7 +1131,7 @@ inline void BPlusTree::iterator::operator++()
   if ( record !=  nullptr )
     record = ( ( TRecord * )record )->next;
   else
-    throw BPlusTreeException( BPlusTreeException::wrongIterator,
+    throw BPlusTreeException( TBPlusTreeErrorCode::wrongIterator,
                               "next unreachable, record nullptr.",
                               __FILE__,
                               __LINE__ );
@@ -1146,7 +1146,7 @@ inline void BPlusTree::iterator::operator--()
   if ( record !=  nullptr )
     record = ( ( TRecord * )record )->prev;
   else
-    throw BPlusTreeException( BPlusTreeException::wrongIterator,
+    throw BPlusTreeException( TBPlusTreeErrorCode::wrongIterator,
                               "prev unreachable, record nullptr.",
                               __FILE__,
                               __LINE__ );
@@ -1250,7 +1250,7 @@ inline void BPlusTree::ThreadIterator::operator++()
   if ( record !=  nullptr )
     record = ( ( TRecord * )record )->threadNext;
   else
-    throw BPlusTreeException( BPlusTreeException::wrongIterator,
+    throw BPlusTreeException( TBPlusTreeErrorCode::wrongIterator,
                               "threadNext unreachable, record nullptr.",
                               __FILE__,
                               __LINE__ );
@@ -1265,7 +1265,7 @@ inline void BPlusTree::ThreadIterator::operator--()
   if ( record !=  nullptr )
     record = ( ( TRecord * )record )->threadPrev;
   else
-    throw BPlusTreeException( BPlusTreeException::wrongIterator,
+    throw BPlusTreeException( TBPlusTreeErrorCode::wrongIterator,
                               "threadPrev unreachable, record nullptr.",
                               __FILE__,
                               __LINE__ );
@@ -1304,7 +1304,7 @@ inline void BPlusTree::CPUIterator::operator++()
     }
   }
   else
-    throw BPlusTreeException( BPlusTreeException::wrongIterator,
+    throw BPlusTreeException( TBPlusTreeErrorCode::wrongIterator,
                               "CPUNext unreachable, record nullptr.",
                               __FILE__,
                               __LINE__ );
@@ -1327,7 +1327,7 @@ inline void BPlusTree::CPUIterator::operator--()
     }
   }
   else
-    throw BPlusTreeException( BPlusTreeException::wrongIterator,
+    throw BPlusTreeException( TBPlusTreeErrorCode::wrongIterator,
                               "CPUPrev unreachable, record nullptr.",
                               __FILE__,
                               __LINE__ );

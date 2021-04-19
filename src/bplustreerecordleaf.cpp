@@ -64,7 +64,7 @@ RecordLeaf& RecordLeaf::operator=( const RecordLeaf &rl )
 {
   if ( rl.rec == nullptr )
   {
-    throw ParaverKernelException( ParaverKernelException::nullOperand,
+    throw ParaverKernelException( TErrorCode::nullOperand,
                                   "BPlusTree: RecordLeaf: Op: '='" ,
                                   __FILE__,
                                   __LINE__ );
@@ -85,7 +85,7 @@ bool RecordLeaf::operator<( const RecordLeaf &rl )
 
   if ( rl.rec == nullptr )
   {
-    throw ParaverKernelException( ParaverKernelException::nullOperand,
+    throw ParaverKernelException( TErrorCode::nullOperand,
                                   "BPlusTree: RecordLeaf: Op: '<'",
                                   __FILE__,
                                   __LINE__ );
@@ -115,7 +115,7 @@ bool RecordLeaf::operator>( const RecordLeaf &rl )
 
   if ( rl.rec == nullptr )
   {
-    throw ParaverKernelException( ParaverKernelException::nullOperand,
+    throw ParaverKernelException( TErrorCode::nullOperand,
                                   "BPlusTree: RecordLeaf: Op: '>'",
                                   __FILE__,
                                   __LINE__ );
@@ -145,7 +145,7 @@ bool RecordLeaf::operator==( const RecordLeaf &rl )
 
   if ( rl.rec == nullptr )
   {
-    throw ParaverKernelException( ParaverKernelException::nullOperand,
+    throw ParaverKernelException( TErrorCode::nullOperand,
                                   "BPlusTree: RecordLeaf: Op: '=='",
                                   __FILE__,
                                   __LINE__ );
@@ -167,7 +167,7 @@ bool RecordLeaf::operator!=( const RecordLeaf &rl )
 
   if ( rl.rec == nullptr )
   {
-    throw ParaverKernelException( ParaverKernelException::nullOperand,
+    throw ParaverKernelException( TErrorCode::nullOperand,
                                   "BPlusTree: RecordLeaf: Op: '!='",
                                   __FILE__,
                                   __LINE__ );
@@ -189,7 +189,7 @@ bool RecordLeaf::operator>=( const RecordLeaf &rl )
 
   if ( rl.rec == nullptr )
   {
-    throw ParaverKernelException( ParaverKernelException::nullOperand,
+    throw ParaverKernelException( TErrorCode::nullOperand,
                                   "BPlusTree: RecordLeaf: Op: '>='",
                                   __FILE__,
                                   __LINE__ );
@@ -215,7 +215,7 @@ bool RecordLeaf::operator<=( const RecordLeaf &rl )
 
   if ( rl.rec == nullptr )
   {
-    throw ParaverKernelException( ParaverKernelException::nullOperand,
+    throw ParaverKernelException( TErrorCode::nullOperand,
                                   "BPlusTree: RecordLeaf: Op: '<='",
                                   __FILE__,
                                   __LINE__ );

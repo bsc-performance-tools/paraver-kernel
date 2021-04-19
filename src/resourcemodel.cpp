@@ -122,7 +122,7 @@ void ResourceModel::addCPU( TNodeOrder whichNode )
   {
     stringstream tmpstr;
     tmpstr << whichNode;
-    throw TraceHeaderException( TraceHeaderException::invalidNodeNumber,
+    throw TraceHeaderException( TTraceHeaderErrorCode::invalidNodeNumber,
                                 tmpstr.str().c_str() );
   }
 
@@ -184,7 +184,7 @@ ResourceModel::ResourceModel( istringstream& headerInfo )
 
   if ( !( sstreamNumberNodes >> numberNodes ) )
   {
-    throw TraceHeaderException( TraceHeaderException::invalidNodeNumber,
+    throw TraceHeaderException( TTraceHeaderErrorCode::invalidNodeNumber,
                                 stringNumberNodes.c_str() );
   }
 
@@ -207,7 +207,7 @@ ResourceModel::ResourceModel( istringstream& headerInfo )
 
       if ( !( sstreamNumberCPUs >> numberCPUs ) )
       {
-        throw TraceHeaderException( TraceHeaderException::invalidCPUNumber,
+        throw TraceHeaderException( TTraceHeaderErrorCode::invalidCPUNumber,
                                     stringNumberCPUs.c_str() );
       }
     }

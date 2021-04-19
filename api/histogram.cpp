@@ -1152,12 +1152,12 @@ bool HistogramProxy::isZoomEmpty() const
 
 bool HistogramProxy::emptyPrevZoom() const
 {
-  return zoomHistory.isEmpty( PREV_ZOOM );
+  return zoomHistory.isEmpty( TZoomPosition::PREV_ZOOM );
 }
 
 bool HistogramProxy::emptyNextZoom() const
 {
-  return zoomHistory.isEmpty( NEXT_ZOOM );
+  return zoomHistory.isEmpty( TZoomPosition::NEXT_ZOOM );
 }
 
 void HistogramProxy::nextZoom()

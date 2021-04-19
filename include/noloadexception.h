@@ -29,21 +29,21 @@
 namespace NoLoad
 {
 
+  enum class TNoLoadErrorCode
+  {
+    undefined = 0,
+    wrongTraceBodyVersion,
+    LAST
+  };
+
   class NoLoadException: public ParaverKernelException
   {
 
     public:
-      typedef enum
-      {
-        undefined = 0,
-        wrongTraceBodyVersion,
-        LAST
-      } TErrorCode;
-
-      NoLoadException( TErrorCode whichCode = undefined,
-                          const char *whichAuxMessage = "",
-                          const char *whichFile = nullptr,
-                          TExceptionLine whichLine = 0 )
+      NoLoadException( TNoLoadErrorCode whichCode = TNoLoadErrorCode::undefined,
+                       const char *whichAuxMessage = "",
+                       const char *whichFile = nullptr,
+                       TExceptionLine whichLine = 0 )
       {
         code = whichCode;
         auxMessage = whichAuxMessage;
@@ -55,14 +55,14 @@ namespace NoLoad
 
       static std::string moduleMessage;
 
-      TErrorCode code;
+      TNoLoadErrorCode code;
 
     private:
       static const char *errorMessage[];
 
       virtual const char *specificErrorMessage() const
       {
-        return errorMessage[ code ];
+        return errorMessage[ static_cast< int >( code ) ];
       }
 
       virtual std::string& specificModuleMessage() const

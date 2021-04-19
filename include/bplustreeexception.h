@@ -30,20 +30,20 @@
 namespace bplustree
 {
 
+  enum class TBPlusTreeErrorCode
+  {
+    undefined = 0,
+    invalidAppend,
+    wrongIterator,
+    invalidCast,
+    LAST
+  };
+
   class BPlusTreeException: public ParaverKernelException
   {
 
     public:
-      typedef enum
-      {
-        undefined = 0,
-        invalidAppend,
-        wrongIterator,
-        invalidCast,
-        LAST
-      } TErrorCode;
-
-      BPlusTreeException( TErrorCode whichCode = undefined,
+      BPlusTreeException( TBPlusTreeErrorCode whichCode = TBPlusTreeErrorCode::undefined,
                           const char *whichAuxMessage = "",
                           const char *whichFile = nullptr,
                           TExceptionLine whichLine = 0 )
@@ -58,14 +58,14 @@ namespace bplustree
 
       static std::string moduleMessage;
 
-      TErrorCode code;
+      TBPlusTreeErrorCode code;
 
     private:
       static const char *errorMessage[];
 
       virtual const char *specificErrorMessage() const
       {
-        return errorMessage[ code ];
+        return errorMessage[ static_cast< int >( code ) ];
       }
 
       virtual std::string& specificModuleMessage() const

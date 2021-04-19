@@ -96,13 +96,13 @@ class StateAsIs: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -168,13 +168,13 @@ class Useful: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -235,13 +235,13 @@ class StateSign: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -310,7 +310,7 @@ class GivenState: public SemanticThread
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == VALUES )
         tmp.push_back( 1 );
 
@@ -319,7 +319,7 @@ class GivenState: public SemanticThread
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "State values";
     }
   private:
@@ -383,7 +383,7 @@ class InState: public SemanticThread
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == VALUES )
         tmp.push_back( 1 );
 
@@ -392,7 +392,7 @@ class InState: public SemanticThread
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "State values";
     }
   private:
@@ -456,7 +456,7 @@ class NotInState: public SemanticThread
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == VALUES )
         tmp.push_back( 1 );
 
@@ -465,7 +465,7 @@ class NotInState: public SemanticThread
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "State values";
     }
   private:
@@ -534,7 +534,7 @@ class StateRecordDuration: public SemanticThread
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == VALUES )
         tmp.push_back( 1 );
 
@@ -543,7 +543,7 @@ class StateRecordDuration: public SemanticThread
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "State values";
     }
   private:
@@ -608,13 +608,13 @@ class LastEventType: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -673,13 +673,13 @@ class LastEventValue: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -738,13 +738,13 @@ class LastEventValueWOBursts: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -803,13 +803,13 @@ class NextEventType: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -868,13 +868,13 @@ class NextEventValue: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -932,7 +932,7 @@ class AverageNextEventValue: public SemanticThread
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == FACTOR )
         tmp.push_back( 1 );
 
@@ -941,7 +941,7 @@ class AverageNextEventValue: public SemanticThread
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Factor";
     }
   private:
@@ -999,7 +999,7 @@ class AverageLastEventValue: public SemanticThread
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == FACTOR )
         tmp.push_back( 1 );
 
@@ -1008,7 +1008,7 @@ class AverageLastEventValue: public SemanticThread
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Factor";
     }
   private:
@@ -1070,7 +1070,7 @@ class GivenEventValue: public SemanticThread
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == VALUES )
         tmp.push_back( 1 );
 
@@ -1079,7 +1079,7 @@ class GivenEventValue: public SemanticThread
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Event values";
     }
   private:
@@ -1137,7 +1137,7 @@ class InEventValue: public SemanticThread
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == VALUES )
         tmp.push_back( 1 );
 
@@ -1146,7 +1146,7 @@ class InEventValue: public SemanticThread
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Event values";
     }
   private:
@@ -1205,13 +1205,13 @@ class IntervalBetweenEvents: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -1269,7 +1269,7 @@ class NotInEventValue: public SemanticThread
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == VALUES )
         tmp.push_back( 1 );
 
@@ -1278,7 +1278,7 @@ class NotInEventValue: public SemanticThread
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Event values";
     }
   private:
@@ -1337,7 +1337,7 @@ class InEventRange: public SemanticThread
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == MINVALUE )
         tmp.push_back( 0 );
       else if ( whichParam == MAXVALUE )
@@ -1348,7 +1348,7 @@ class InEventRange: public SemanticThread
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       if ( whichParam == MINVALUE )
         return "Min value";
       else if ( whichParam == MAXVALUE )
@@ -1411,13 +1411,13 @@ class EventBytes: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -1476,13 +1476,13 @@ class EventSentBytes: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -1543,13 +1543,13 @@ class LastTag: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -1608,13 +1608,13 @@ class CommSize: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -1673,13 +1673,13 @@ class CommRecvPartner: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -1738,13 +1738,13 @@ class CommPartner: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -1804,13 +1804,13 @@ class LastSendDuration: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -1869,13 +1869,13 @@ class NextRecvDuration: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -1934,13 +1934,13 @@ class LastSendSize: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -1998,13 +1998,13 @@ class SendBytesInTransit: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -2059,13 +2059,13 @@ class SendMessagesInTransit: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -2126,7 +2126,7 @@ class SendBandWidth: public SemanticThread
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == FACTOR )
         tmp.push_back( 1 );
 
@@ -2135,7 +2135,7 @@ class SendBandWidth: public SemanticThread
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Byte Factor";
     }
   private:
@@ -2196,13 +2196,13 @@ class RecvBytesInTransit: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -2257,13 +2257,13 @@ class RecvMessagesInTransit: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -2324,7 +2324,7 @@ class RecvBandWidth: public SemanticThread
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == FACTOR )
         tmp.push_back( 1 );
 
@@ -2333,7 +2333,7 @@ class RecvBandWidth: public SemanticThread
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Byte factor";
     }
   private:
@@ -2390,13 +2390,13 @@ class RecvNegativeMessages: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -2455,13 +2455,13 @@ class RecvNegativeBytes: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -2516,13 +2516,13 @@ class NumberReceives: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -2581,13 +2581,13 @@ class NumberReceiveBytes: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -2650,13 +2650,13 @@ class ApplicationID: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -2715,13 +2715,13 @@ class TaskID: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -2780,13 +2780,13 @@ class ThreadID: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -2845,13 +2845,13 @@ class NodeID: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -2910,13 +2910,13 @@ class CPUID: public SemanticThread
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
   private:
@@ -2974,7 +2974,7 @@ class InApplicationID: public SemanticThread
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == OBJECTS )
         tmp.push_back( 1 );
 
@@ -2983,7 +2983,7 @@ class InApplicationID: public SemanticThread
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Appl ID";
     }
   private:
@@ -3041,7 +3041,7 @@ class InTaskID: public SemanticThread
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == OBJECTS )
         tmp.push_back( 1 );
 
@@ -3050,7 +3050,7 @@ class InTaskID: public SemanticThread
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Task ID";
     }
   private:
@@ -3108,7 +3108,7 @@ class InThreadID: public SemanticThread
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == OBJECTS )
         tmp.push_back( 1 );
 
@@ -3117,7 +3117,7 @@ class InThreadID: public SemanticThread
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Thread ID";
     }
   private:
@@ -3175,7 +3175,7 @@ class InNodeID: public SemanticThread
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == OBJECTS )
         tmp.push_back( 1 );
 
@@ -3184,7 +3184,7 @@ class InNodeID: public SemanticThread
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Node ID";
     }
   private:
@@ -3242,7 +3242,7 @@ class InCPUID: public SemanticThread
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       else if ( whichParam == OBJECTS )
         tmp.push_back( 1 );
 
@@ -3251,7 +3251,7 @@ class InCPUID: public SemanticThread
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "CPU ID";
     }
   private:

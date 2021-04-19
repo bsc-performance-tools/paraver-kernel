@@ -76,13 +76,13 @@ class DerivedAdd: public SemanticDerived
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -143,13 +143,13 @@ class DerivedProduct: public SemanticDerived
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -211,13 +211,13 @@ class DerivedSubstract: public SemanticDerived
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -278,13 +278,13 @@ class DerivedDivide: public SemanticDerived
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -345,13 +345,13 @@ class DerivedMaximum: public SemanticDerived
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -412,13 +412,13 @@ class DerivedMinimum: public SemanticDerived
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -479,13 +479,13 @@ class DerivedDifferent: public SemanticDerived
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -545,13 +545,13 @@ class ControlDerivedClearBy: public SemanticDerived
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -615,13 +615,13 @@ class ControlDerivedMaximum: public SemanticDerived
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -682,13 +682,13 @@ class ControlDerivedAdd: public SemanticDerived
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -752,13 +752,13 @@ class ControlDerivedEnumerate: public SemanticDerived
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 

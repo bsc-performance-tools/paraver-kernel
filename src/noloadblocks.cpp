@@ -418,7 +418,7 @@ void NoLoadBlocks::getEndRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16
 void NoLoadBlocks::getBeginThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
   if ( !body->ordered() )
-    throw NoLoad::NoLoadException( NoLoad::NoLoadException::wrongTraceBodyVersion, "" , __FILE__, __LINE__ );
+    throw NoLoad::NoLoadException( NoLoad::TNoLoadErrorCode::wrongTraceBodyVersion, "" , __FILE__, __LINE__ );
 
   *record = &emptyBeginRecords[ whichThread ];
   offset = -1;
@@ -428,7 +428,7 @@ void NoLoadBlocks::getBeginThreadRecord( TThreadOrder whichThread, TRecord **rec
 void NoLoadBlocks::getEndThreadRecord( TThreadOrder whichThread, TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
   if ( !body->ordered() )
-    throw NoLoad::NoLoadException( NoLoad::NoLoadException::wrongTraceBodyVersion, "" , __FILE__, __LINE__ );
+    throw NoLoad::NoLoadException( NoLoad::TNoLoadErrorCode::wrongTraceBodyVersion, "" , __FILE__, __LINE__ );
 
   *record = &emptyEndRecords[ whichThread ];
   if ( whichThread == processModel.totalThreads() - 1 )
@@ -651,7 +651,7 @@ void NoLoadBlocks::getThreadRecordByTime( TThreadOrder whichThread, TRecordTime 
     TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos )
 {
   if ( !body->ordered() )
-    throw NoLoad::NoLoadException( NoLoad::NoLoadException::wrongTraceBodyVersion, "" , __FILE__, __LINE__ );
+    throw NoLoad::NoLoadException( NoLoad::TNoLoadErrorCode::wrongTraceBodyVersion, "" , __FILE__, __LINE__ );
 
   if ( !traceIndex[ whichThread ].findRecord( whichTime, offset ) )
   {

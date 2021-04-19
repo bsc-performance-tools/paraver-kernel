@@ -75,13 +75,13 @@ class ActiveThread: public SemanticCPU
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -135,13 +135,13 @@ class ActiveThreadSign: public SemanticCPU
     virtual TParamValue getDefaultParam( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "";
     }
 
@@ -203,7 +203,7 @@ class ActiveThreadValues: public SemanticCPU
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       if ( whichParam == VALUES )
       {
         tmp.push_back( 1 );
@@ -213,7 +213,7 @@ class ActiveThreadValues: public SemanticCPU
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Values";
     }
 
@@ -272,7 +272,7 @@ class ActiveThreadValuesSign: public SemanticCPU
       TParamValue tmp;
 
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       if ( whichParam == VALUES )
       {
         tmp.push_back( 1 );
@@ -282,7 +282,7 @@ class ActiveThreadValuesSign: public SemanticCPU
     virtual std::string getDefaultParamName( TParamIndex whichParam )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return "Values";
     }
 

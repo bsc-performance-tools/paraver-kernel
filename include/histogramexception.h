@@ -27,17 +27,17 @@
 
 #include "paraverkernelexception.h"
 
+enum class THistogramErrorCode
+{
+  undefined = 0,
+  noControlWindow,
+  LAST
+};
+
 class HistogramException: public ParaverKernelException
 {
   public:
-    typedef enum
-    {
-      undefined = 0,
-      noControlWindow,
-      LAST
-    } TErrorCode;
-
-    HistogramException( TErrorCode whichCode = undefined,
+    HistogramException( THistogramErrorCode whichCode = THistogramErrorCode::undefined,
                       const char *whichAuxMessage = "",
                       const char *whichFile = nullptr,
                       TExceptionLine whichLine = 0 ) throw()
@@ -50,13 +50,13 @@ class HistogramException: public ParaverKernelException
 
   protected:
     static std::string moduleMessage;
-    TErrorCode code;
+    THistogramErrorCode code;
 
   private:
     static const char *errorMessage[];
     virtual const char *specificErrorMessage() const
     {
-      return errorMessage[ code ];
+      return errorMessage[ static_cast< int >( code ) ];
     }
     virtual std::string& specificModuleMessage() const
     {

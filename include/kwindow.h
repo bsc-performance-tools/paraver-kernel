@@ -69,7 +69,7 @@ class KWindow: public Window
     virtual void setLevel( TWindowLevel whichLevel )
     {
       if ( whichLevel >= TOPCOMPOSE1 )
-        throw KWindowException( KWindowException::invalidLevel );
+        throw KWindowException( TKWindowErrorCode::invalidLevel );
       level = whichLevel;
     }
 

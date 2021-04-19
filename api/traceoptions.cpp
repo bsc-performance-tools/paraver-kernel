@@ -526,7 +526,7 @@ string TraceOptionsProxy::getTraceToolName( const string& toolID )
   }
   else
   {
-    throw ParaverKernelException( ParaverKernelException::undefinedToolName );
+    throw ParaverKernelException( TErrorCode::undefinedToolName );
   }
 
   return toolStr;
@@ -563,7 +563,7 @@ string TraceOptionsProxy::getTraceToolExtension( const string& toolID )
   }
   else
   {
-    throw ParaverKernelException( ParaverKernelException::undefinedToolID );
+    throw ParaverKernelException( TErrorCode::undefinedToolID );
   }
 
   return toolStr;

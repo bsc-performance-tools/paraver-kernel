@@ -843,7 +843,7 @@ void KHistogram::execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
                           vector<TObjectOrder>& selectedRows, ProgressController *progress )
 {
   if ( controlWindow == nullptr )
-    throw HistogramException( HistogramException::noControlWindow );
+    throw HistogramException( THistogramErrorCode::noControlWindow );
 
   myTimeUnit = controlWindow->getTimeUnit();
 
