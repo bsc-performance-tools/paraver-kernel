@@ -71,11 +71,11 @@ class TraceShifterProxy : public TraceShifter
 
     virtual void execute( std::string traceIn,
                           std::string traceOut,
-                          ProgressController *progress = nullptr );
+                          ProgressController *progress = nullptr ) override;
 
-    virtual const std::vector< TTime > getShiftTimes(); // maybe not needed
+    virtual const std::vector< TTime > getShiftTimes() override; // maybe not needed
     // TODO: think about how to decide which level is going to be shifted
-    //virtual size_t getShiftTimesSize(); // Thread, Task, App, All?
+    //virtual size_t getShiftTimesSize() override; // Thread, Task, App, All?
 
   private:
     TraceShifter *myTraceShifter;

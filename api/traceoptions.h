@@ -248,98 +248,98 @@ class TraceOptionsProxy :public TraceOptions
     virtual ~TraceOptionsProxy();
 
     /* Global Settings */
-    virtual void set_max_trace_size( int traceSize );
-    virtual int get_max_trace_size() const;
+    virtual void set_max_trace_size( int traceSize ) override;
+    virtual int get_max_trace_size() const override;
 
     /* Sets for Cutter */
-    virtual void set_by_time( bool whichByTime );
-    virtual void set_min_cutting_time( unsigned long long minCutTime );
-    virtual void set_max_cutting_time( unsigned long long maxCutTime );
-    virtual void set_minimum_time_percentage( unsigned long long whichMinimumTimePercentage );
-    virtual void set_maximum_time_percentage( unsigned long long whichMaximumTimePercentage );
-    virtual void set_tasks_list( char *tasksList );
-    virtual void set_original_time( bool originalTime );
-    virtual void set_break_states( bool breakStates );
-    virtual void set_remFirstStates( bool remStates );
-    virtual void set_remLastStates( bool remStates );
-    virtual void set_keep_events( bool keepEvents );
+    virtual void set_by_time( bool whichByTime ) override;
+    virtual void set_min_cutting_time( unsigned long long minCutTime ) override;
+    virtual void set_max_cutting_time( unsigned long long maxCutTime ) override;
+    virtual void set_minimum_time_percentage( unsigned long long whichMinimumTimePercentage ) override;
+    virtual void set_maximum_time_percentage( unsigned long long whichMaximumTimePercentage ) override;
+    virtual void set_tasks_list( char *tasksList ) override;
+    virtual void set_original_time( bool originalTime ) override;
+    virtual void set_break_states( bool breakStates ) override;
+    virtual void set_remFirstStates( bool remStates ) override;
+    virtual void set_remLastStates( bool remStates ) override;
+    virtual void set_keep_events( bool keepEvents ) override;
 
-    virtual bool get_by_time() const;
-    virtual unsigned long long get_min_cutting_time() const;
-    virtual unsigned long long get_max_cutting_time() const;
-    virtual unsigned long long get_minimum_time_percentage() const;
-    virtual unsigned long long get_maximum_time_percentage() const;
-    virtual void get_tasks_list( TTasksList &whichTasksList ) const;
-    virtual bool get_original_time() const;
-    virtual bool get_break_states() const;
-    virtual bool get_remFirstStates() const;
-    virtual bool get_remLastStates() const;
-    virtual bool get_keep_events() const;
+    virtual bool get_by_time() const override;
+    virtual unsigned long long get_min_cutting_time() const override;
+    virtual unsigned long long get_max_cutting_time() const override;
+    virtual unsigned long long get_minimum_time_percentage() const override;
+    virtual unsigned long long get_maximum_time_percentage() const override;
+    virtual void get_tasks_list( TTasksList &whichTasksList ) const override;
+    virtual bool get_original_time() const override;
+    virtual bool get_break_states() const override;
+    virtual bool get_remFirstStates() const override;
+    virtual bool get_remLastStates() const override;
+    virtual bool get_keep_events() const override;
 
     /* Sets for filtering */
-    virtual void set_filter_events( bool filterEvents );
-    virtual void set_filter_states( bool filterStates );
-    virtual void set_filter_comms( bool filterComms );
-    virtual void set_discard_given_types( bool discardGivenTypes );
-    virtual void set_filter_by_call_time( bool filterByCallTime );
-    virtual void set_state_names( TStateNames stateNames );
-    virtual void set_all_states( bool allStates );
-    virtual void set_min_state_time( unsigned long long minStateTime );
-    virtual void set_min_comm_size( int minCommSize );
-    virtual void set_filter_types( TFilterTypes filterTypes );
-    virtual void set_filter_last_type( int filterLastType );
+    virtual void set_filter_events( bool filterEvents ) override;
+    virtual void set_filter_states( bool filterStates ) override;
+    virtual void set_filter_comms( bool filterComms ) override;
+    virtual void set_discard_given_types( bool discardGivenTypes ) override;
+    virtual void set_filter_by_call_time( bool filterByCallTime ) override;
+    virtual void set_state_names( TStateNames stateNames ) override;
+    virtual void set_all_states( bool allStates ) override;
+    virtual void set_min_state_time( unsigned long long minStateTime ) override;
+    virtual void set_min_comm_size( int minCommSize ) override;
+    virtual void set_filter_types( TFilterTypes filterTypes ) override;
+    virtual void set_filter_last_type( int filterLastType ) override;
 
-    virtual bool get_filter_events() const;
-    virtual bool get_filter_states() const;
-    virtual bool get_filter_comms() const;
-    virtual bool get_discard_given_types() const;
-    virtual bool get_filter_by_call_time() const;
-    virtual void get_state_names( TStateNames &stateNames ) const;
-    virtual void get_state_names( std::string &stateList ) const;
-    virtual bool get_all_states() const;
-    virtual unsigned long long get_min_state_time() const;
-    virtual int get_min_comm_size() const;
-    virtual void get_filter_types( TFilterTypes &filterTypes ) const;
-    virtual int get_filter_last_type() const;
+    virtual bool get_filter_events() const override;
+    virtual bool get_filter_states() const override;
+    virtual bool get_filter_comms() const override;
+    virtual bool get_discard_given_types() const override;
+    virtual bool get_filter_by_call_time() const override;
+    virtual void get_state_names( TStateNames &stateNames ) const override;
+    virtual void get_state_names( std::string &stateList ) const override;
+    virtual bool get_all_states() const override;
+    virtual unsigned long long get_min_state_time() const override;
+    virtual int get_min_comm_size() const override;
+    virtual void get_filter_types( TFilterTypes &filterTypes ) const override;
+    virtual int get_filter_last_type() const override;
 
     /* Sets for Software Counters */
-    virtual void set_sc_onInterval( bool scOnInterval );
-    virtual void set_sc_sampling_interval( unsigned long long scInterval );
-    virtual void set_sc_minimum_burst_time( unsigned long long scInterval );
-    virtual void set_sc_global_counters( bool scGlobalCounters );
-    virtual void set_sc_acumm_counters( bool scAcummCounters );
-    virtual void set_sc_summarize_states( bool scSummarizeStates );
-    virtual void set_sc_only_in_bursts( bool scOnlyInBursts );
-    virtual void set_sc_remove_states( bool scRemoveStates );
-    virtual void set_sc_frequency( int scFrequency );
-    virtual void set_sc_types( char *whichTypes );
-    virtual void set_sc_types_kept( char *typesKept );
+    virtual void set_sc_onInterval( bool scOnInterval ) override;
+    virtual void set_sc_sampling_interval( unsigned long long scInterval ) override;
+    virtual void set_sc_minimum_burst_time( unsigned long long scInterval ) override;
+    virtual void set_sc_global_counters( bool scGlobalCounters ) override;
+    virtual void set_sc_acumm_counters( bool scAcummCounters ) override;
+    virtual void set_sc_summarize_states( bool scSummarizeStates ) override;
+    virtual void set_sc_only_in_bursts( bool scOnlyInBursts ) override;
+    virtual void set_sc_remove_states( bool scRemoveStates ) override;
+    virtual void set_sc_frequency( int scFrequency ) override;
+    virtual void set_sc_types( char *whichTypes ) override;
+    virtual void set_sc_types_kept( char *typesKept ) override;
 
-    virtual bool get_sc_onInterval() const;
-    virtual unsigned long long get_sc_sampling_interval() const;
-    virtual unsigned long long get_sc_minimum_burst_time() const;
-    virtual bool get_sc_global_counters() const;
-    virtual bool get_sc_acumm_counters() const;
-    virtual bool get_sc_summarize_states() const;
-    virtual bool get_sc_only_in_bursts() const;
-    virtual bool get_sc_remove_states() const;
-    virtual char *get_sc_types() const;
-    virtual char *get_sc_types_kept() const;
+    virtual bool get_sc_onInterval() const override;
+    virtual unsigned long long get_sc_sampling_interval() const override;
+    virtual unsigned long long get_sc_minimum_burst_time() const override;
+    virtual bool get_sc_global_counters() const override;
+    virtual bool get_sc_acumm_counters() const override;
+    virtual bool get_sc_summarize_states() const override;
+    virtual bool get_sc_only_in_bursts() const override;
+    virtual bool get_sc_remove_states() const override;
+    virtual char *get_sc_types() const override;
+    virtual char *get_sc_types_kept() const override;
 
     /* Sets for comm_fusion */
-    virtual void set_reduce_comms( char reduceComms );
-    virtual void set_comm_fusion_big_interval( unsigned long long bigInterval );
-    virtual void set_comm_fusion_small_interval( unsigned long long smallInterval );
+    virtual void set_reduce_comms( char reduceComms ) override;
+    virtual void set_comm_fusion_big_interval( unsigned long long bigInterval ) override;
+    virtual void set_comm_fusion_small_interval( unsigned long long smallInterval ) override;
 
     /* Parameters for Stats */
-    virtual void set_bursts_plot( int burstsPlot );
-    virtual void set_comms_plot( int commsPlot );
-    virtual void set_events_plot( int eventsPlot );
+    virtual void set_bursts_plot( int burstsPlot ) override;
+    virtual void set_comms_plot( int commsPlot ) override;
+    virtual void set_events_plot( int eventsPlot ) override;
 
-    virtual std::vector< std::string > parseDoc( char *docname );
-    bool saveXML( std::vector< std::string > &filterOrder, std::string fileName );
+    virtual std::vector< std::string > parseDoc( char *docname ) override;
+    bool saveXML( std::vector< std::string > &filterOrder, std::string fileName ) override;
 
-    virtual TraceOptions *getConcrete();
+    virtual TraceOptions *getConcrete() override;
 
     static std::vector< std::string > getIDsAvailableTraceTools();
     static std::string getTraceToolName( const std::string& toolID );

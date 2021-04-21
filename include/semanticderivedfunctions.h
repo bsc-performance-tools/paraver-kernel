@@ -43,43 +43,43 @@ class DerivedAdd: public SemanticDerived
     ~DerivedAdd()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual bool isControlDerived()
+    virtual bool isControlDerived() override
     {
       return controlDerived;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return DerivedAdd::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new DerivedAdd( *this );
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -109,44 +109,44 @@ class DerivedProduct: public SemanticDerived
     ~DerivedProduct()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual bool isControlDerived()
+    virtual bool isControlDerived() override
     {
       return controlDerived;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return DerivedProduct::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new DerivedProduct( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -177,44 +177,44 @@ class DerivedSubstract: public SemanticDerived
     ~DerivedSubstract()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual bool isControlDerived()
+    virtual bool isControlDerived() override
     {
       return controlDerived;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return DerivedSubstract::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new DerivedSubstract( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -245,43 +245,43 @@ class DerivedDivide: public SemanticDerived
     ~DerivedDivide()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual bool isControlDerived()
+    virtual bool isControlDerived() override
     {
       return controlDerived;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return DerivedDivide::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new DerivedDivide( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -312,43 +312,43 @@ class DerivedMaximum: public SemanticDerived
     ~DerivedMaximum()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual bool isControlDerived()
+    virtual bool isControlDerived() override
     {
       return controlDerived;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return DerivedMaximum::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new DerivedMaximum( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -379,43 +379,43 @@ class DerivedMinimum: public SemanticDerived
     ~DerivedMinimum()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual bool isControlDerived()
+    virtual bool isControlDerived() override
     {
       return controlDerived;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return DerivedMinimum::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new DerivedMinimum( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -446,43 +446,43 @@ class DerivedDifferent: public SemanticDerived
     ~DerivedDifferent()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual bool isControlDerived()
+    virtual bool isControlDerived() override
     {
       return controlDerived;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return DerivedDifferent::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new DerivedDifferent( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -513,42 +513,42 @@ class ControlDerivedClearBy: public SemanticDerived
     ~ControlDerivedClearBy()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual bool isControlDerived()
+    virtual bool isControlDerived() override
     {
       return controlDerived;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override;
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ControlDerivedClearBy::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ControlDerivedClearBy( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -582,43 +582,43 @@ class ControlDerivedMaximum: public SemanticDerived
     ~ControlDerivedMaximum()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual bool isControlDerived()
+    virtual bool isControlDerived() override
     {
       return controlDerived;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ControlDerivedMaximum::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ControlDerivedMaximum( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -649,43 +649,43 @@ class ControlDerivedAdd: public SemanticDerived
     ~ControlDerivedAdd()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual bool isControlDerived()
+    virtual bool isControlDerived() override
     {
       return controlDerived;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ControlDerivedAdd::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ControlDerivedAdd( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -716,46 +716,46 @@ class ControlDerivedEnumerate: public SemanticDerived
     ~ControlDerivedEnumerate()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual bool isControlDerived()
+    virtual bool isControlDerived() override
     {
       return controlDerived;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override;
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ControlDerivedEnumerate::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ControlDerivedEnumerate( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return NO_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );

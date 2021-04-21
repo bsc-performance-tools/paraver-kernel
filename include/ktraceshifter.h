@@ -47,9 +47,10 @@ class KTraceShifter : public TraceShifter
 
     virtual void execute( std::string traceIn,
                           std::string traceOut,
-                          ProgressController *progress = nullptr );
+                          ProgressController *progress = nullptr ) override;
 
-    virtual const std::vector< TTime > getShiftTimes() { return shiftTimes; }
+    virtual const std::vector< TTime > getShiftTimes() override { return shiftTimes; }
+
     virtual const TTime getMaxShiftTime() { return maxShiftTime; }
 
   private:

@@ -63,11 +63,11 @@ class IntervalCPU: public IntervalHigh
     }
 
     virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
-                              KRecordList *displayList = nullptr );
-    virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false );
-    virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false );
+                              KRecordList *displayList = nullptr ) override;
+    virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) override;
+    virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) override;
 
-    virtual KWindow *getWindow()
+    virtual KWindow *getWindow() override
     {
       return ( KWindow * ) window;
     }
@@ -85,10 +85,10 @@ class IntervalCPU: public IntervalHigh
     TRecordTime currentInitialTime;
 
   private:
-    virtual MemoryTrace::iterator *getNextRecord( MemoryTrace::iterator *it,
-        KRecordList *displayList );
     virtual MemoryTrace::iterator *getPrevRecord( MemoryTrace::iterator *it,
-        KRecordList *displayList );
+                                                  KRecordList *displayList );
+    virtual MemoryTrace::iterator *getNextRecord( MemoryTrace::iterator *it,
+                                                  KRecordList *displayList );
 
     virtual void setChildren() {}
     virtual KTrace *getWindowTrace() const;

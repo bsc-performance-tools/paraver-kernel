@@ -56,50 +56,50 @@ class StateAsIs: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow );
 //    {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return StateAsIs::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new StateAsIs( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return STATE_TYPE;
     }
 
-    virtual bool validRecord( MemoryTrace::iterator *record );
+    virtual bool validRecord( MemoryTrace::iterator *record ) override;
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
 //      if ( ParaverConfig::getInstance()->getFillStateGaps() )
       if ( fillStateGaps )
         return validateMaskFillGaps;
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -128,50 +128,50 @@ class Useful: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override;
 //    {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return Useful::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new Useful( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return STATE_TYPE;
     }
 
-    virtual bool validRecord( MemoryTrace::iterator *record );
+    virtual bool validRecord( MemoryTrace::iterator *record ) override;
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
 //      if ( ParaverConfig::getInstance()->getFillStateGaps() )
       if ( fillStateGaps )
         return validateMaskFillGaps;
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -200,45 +200,45 @@ class StateSign: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow );
 //    {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return StateSign::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new StateSign( *this );
     }
 
-    virtual bool validRecord( MemoryTrace::iterator *record );
+    virtual bool validRecord( MemoryTrace::iterator *record ) override;
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
 //      if ( ParaverConfig::getInstance()->getFillStateGaps() )
       if ( fillStateGaps )
         return validateMaskFillGaps;
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -268,44 +268,44 @@ class GivenState: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override;
 //    {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return GivenState::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new GivenState( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return STATE_TYPE;
     }
 
-    virtual bool validRecord( MemoryTrace::iterator *record );
+    virtual bool validRecord( MemoryTrace::iterator *record ) override;
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
 //      if ( ParaverConfig::getInstance()->getFillStateGaps() )
       if ( fillStateGaps )
         return validateMaskFillGaps;
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -316,7 +316,7 @@ class GivenState: public SemanticThread
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -346,39 +346,39 @@ class InState: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow );
 //    {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return InState::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new InState( *this );
     }
 
-    virtual bool validRecord( MemoryTrace::iterator *record );
+    virtual bool validRecord( MemoryTrace::iterator *record ) override;
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
 //      if ( ParaverConfig::getInstance()->getFillStateGaps() )
       if ( fillStateGaps )
         return validateMaskFillGaps;
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -389,7 +389,7 @@ class InState: public SemanticThread
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -419,39 +419,39 @@ class NotInState: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override;
 //    {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return NotInState::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new NotInState( *this );
     }
 
-    virtual bool validRecord( MemoryTrace::iterator *record );
+    virtual bool validRecord( MemoryTrace::iterator *record ) override;
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
 //      if ( ParaverConfig::getInstance()->getFillStateGaps() )
       if ( fillStateGaps )
         return validateMaskFillGaps;
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -462,7 +462,7 @@ class NotInState: public SemanticThread
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -492,44 +492,44 @@ class StateRecordDuration: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow );
 //    {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return StateRecordDuration::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new StateRecordDuration( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return TIME_TYPE;
     }
 
-    virtual bool validRecord( MemoryTrace::iterator *record );
+    virtual bool validRecord( MemoryTrace::iterator *record ) override;
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       if ( fillStateGaps )
 //      if ( ParaverConfig::getInstance()->getFillStateGaps() )
         return validateMaskFillGaps;
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -540,7 +540,7 @@ class StateRecordDuration: public SemanticThread
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -573,45 +573,45 @@ class LastEventType: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return LastEventType::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new LastEventType( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return EVENTTYPE_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -638,45 +638,45 @@ class LastEventValue: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return LastEventValue::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new LastEventValue( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return EVENTVALUE_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -703,45 +703,45 @@ class LastEventValueWOBursts: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return LastEventValueWOBursts::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new LastEventValueWOBursts( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return EVENTVALUE_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -768,45 +768,45 @@ class NextEventType: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return NextEventType::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new NextEventType( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return EVENTTYPE_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -833,45 +833,45 @@ class NextEventValue: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return NextEventValue::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new NextEventValue( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return EVENTVALUE_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -899,35 +899,35 @@ class AverageNextEventValue: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return AverageNextEventValue::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new AverageNextEventValue( *this );
     }
 
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -938,7 +938,7 @@ class AverageNextEventValue: public SemanticThread
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -966,35 +966,35 @@ class AverageLastEventValue: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return AverageLastEventValue::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new AverageLastEventValue( *this );
     }
 
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -1005,7 +1005,7 @@ class AverageLastEventValue: public SemanticThread
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1033,39 +1033,39 @@ class GivenEventValue: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return GivenEventValue::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new GivenEventValue( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return EVENTVALUE_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -1076,7 +1076,7 @@ class GivenEventValue: public SemanticThread
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1104,35 +1104,35 @@ class InEventValue: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return InEventValue::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new InEventValue( *this );
     }
 
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -1143,7 +1143,7 @@ class InEventValue: public SemanticThread
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1170,45 +1170,45 @@ class IntervalBetweenEvents: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return IntervalBetweenEvents::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new IntervalBetweenEvents( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return TIME_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1236,35 +1236,35 @@ class NotInEventValue: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return NotInEventValue::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new NotInEventValue( *this );
     }
 
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -1275,7 +1275,7 @@ class NotInEventValue: public SemanticThread
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1304,35 +1304,35 @@ class InEventRange: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return InEventRange::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new InEventRange( *this );
     }
 
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -1345,7 +1345,7 @@ class InEventRange: public SemanticThread
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1376,45 +1376,45 @@ class EventBytes: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return EventBytes::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new EventBytes( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return COMMSIZE_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1441,45 +1441,45 @@ class EventSentBytes: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return EventSentBytes::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new EventSentBytes( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return COMMSIZE_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1508,45 +1508,45 @@ class LastTag: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return LastTag::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new LastTag( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return COMMTAG_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1573,45 +1573,45 @@ class CommSize: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return CommSize::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new CommSize( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return COMMSIZE_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1638,45 +1638,45 @@ class CommRecvPartner: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return CommRecvPartner::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new CommRecvPartner( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return OBJECT_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1703,45 +1703,45 @@ class CommPartner: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return CommPartner::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new CommPartner( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return OBJECT_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1769,45 +1769,45 @@ class LastSendDuration: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return LastSendDuration::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new LastSendDuration( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return TIME_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1834,45 +1834,45 @@ class NextRecvDuration: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return NextRecvDuration::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new NextRecvDuration( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return TIME_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1899,31 +1899,31 @@ class LastSendSize: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return LastSendSize::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new LastSendSize( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return COMMSIZE_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
@@ -1931,13 +1931,13 @@ class LastSendSize: public SemanticThread
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1963,45 +1963,45 @@ class SendBytesInTransit: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return SendBytesInTransit::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new SendBytesInTransit( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return COMMSIZE_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2028,41 +2028,41 @@ class SendMessagesInTransit: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return SendMessagesInTransit::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new SendMessagesInTransit( *this );
     }
 
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2090,38 +2090,38 @@ class SendBandWidth: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow );
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return SendBandWidth::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new SendBandWidth( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return BANDWIDTH_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -2132,7 +2132,7 @@ class SendBandWidth: public SemanticThread
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2161,45 +2161,45 @@ class RecvBytesInTransit: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return RecvBytesInTransit::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new RecvBytesInTransit( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return COMMSIZE_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2226,41 +2226,41 @@ class RecvMessagesInTransit: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return RecvMessagesInTransit::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new RecvMessagesInTransit( *this );
     }
 
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2288,38 +2288,38 @@ class RecvBandWidth: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow );
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return RecvBandWidth::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new RecvBandWidth( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return BANDWIDTH_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -2330,7 +2330,7 @@ class RecvBandWidth: public SemanticThread
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2359,41 +2359,41 @@ class RecvNegativeMessages: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return RecvNegativeMessages::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new RecvNegativeMessages( *this );
     }
 
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2420,45 +2420,45 @@ class RecvNegativeBytes: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return RecvNegativeBytes::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new RecvNegativeBytes( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return COMMSIZE_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2485,41 +2485,41 @@ class NumberReceives: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return NumberReceives::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new NumberReceives( *this );
     }
 
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2546,45 +2546,45 @@ class NumberReceiveBytes: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return NumberReceiveBytes::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new NumberReceiveBytes( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return COMMSIZE_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2615,45 +2615,45 @@ class ApplicationID: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ApplicationID::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ApplicationID( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return APPL_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2680,45 +2680,45 @@ class TaskID: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return TaskID::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new TaskID( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return TASK_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2745,45 +2745,45 @@ class ThreadID: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ThreadID::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ThreadID( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return THREAD_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2810,45 +2810,45 @@ class NodeID: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return NodeID::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new NodeID( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return NODE_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2875,31 +2875,31 @@ class CPUID: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return CPUID::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new CPUID( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return CPU_TYPE;
     }
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
@@ -2907,13 +2907,13 @@ class CPUID: public SemanticThread
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2941,35 +2941,35 @@ class InApplicationID: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return InApplicationID::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new InApplicationID( *this );
     }
 
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -2980,7 +2980,7 @@ class InApplicationID: public SemanticThread
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -3008,35 +3008,35 @@ class InTaskID: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return InTaskID::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new InTaskID( *this );
     }
 
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -3047,7 +3047,7 @@ class InTaskID: public SemanticThread
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -3075,35 +3075,35 @@ class InThreadID: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return InThreadID::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new InThreadID( *this );
     }
 
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -3114,7 +3114,7 @@ class InThreadID: public SemanticThread
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -3142,35 +3142,35 @@ class InNodeID: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return InNodeID::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new InNodeID( *this );
     }
 
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -3181,7 +3181,7 @@ class InNodeID: public SemanticThread
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -3209,35 +3209,35 @@ class InCPUID: public SemanticThread
       setDefaultParam();
     }
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
-    virtual TSemanticValue execute( const SemanticInfo *info );
-    virtual void init( KWindow *whichWindow )
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return InCPUID::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new InCPUID( *this );
     }
 
 
   protected:
-    virtual const TRecordType getValidateMask()
+    virtual const TRecordType getValidateMask() override
     {
       return validateMask;
     }
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -3248,7 +3248,7 @@ class InCPUID: public SemanticThread
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );

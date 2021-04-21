@@ -57,65 +57,65 @@ namespace bplustree
         communications.clear();
       }
 
-      virtual TData *getLastRecord( PRV_UINT16 position ) const
+      virtual TData *getLastRecord( PRV_UINT16 position) const override
       {
         return lastRecords[ position ];
       }
 
-      virtual void resetCountInserted()
+      virtual void resetCountInserted() override
       {
         MemoryBlocks::resetCountInserted();
         lastRecords.clear();
       }
 
       virtual void newRecord();
-      virtual void setType( TRecordType whichType );
-      virtual void setTime( TRecordTime whichTime );
-      virtual void setThread( TThreadOrder whichThread );
+      virtual void setType( TRecordType whichType ) override;
+      virtual void setTime( TRecordTime whichTime ) override;
+      virtual void setThread( TThreadOrder whichThread ) override;
       virtual void setThread( TApplOrder whichAppl,
                               TTaskOrder whichTask,
-                              TThreadOrder whichThread );
-      virtual void setCPU( TCPUOrder whichCPU );
-      virtual void setEventType( TEventType whichType );
-      virtual void setEventValue( TEventValue whichValue );
-      virtual void setState( TState whichState );
-      virtual void setStateEndTime( TRecordTime whichTime );
-      virtual void setCommIndex( TCommID whichID );
+                              TThreadOrder whichThread ) override;
+      virtual void setCPU( TCPUOrder whichCPU ) override;
+      virtual void setEventType( TEventType whichType ) override;
+      virtual void setEventValue( TEventValue whichValue ) override;
+      virtual void setState( TState whichState ) override;
+      virtual void setStateEndTime( TRecordTime whichTime ) override;
+      virtual void setCommIndex( TCommID whichID ) override;
 
       // If you have a block defining communications, probably you want
       // to create records separately by your own.
       // Then you must call newComm( false )
       // If not, the function creates all necessary records by default.
-      virtual void newComm( bool createRecords = true );
-      virtual void setSenderThread( TThreadOrder whichThread );
+      virtual void newComm( bool createRecords = true ) override;
+      virtual void setSenderThread( TThreadOrder whichThread ) override;
       virtual void setSenderThread( TApplOrder whichAppl,
                                     TTaskOrder whichTask,
-                                    TThreadOrder whichThread );
-      virtual void setSenderCPU( TCPUOrder whichCPU );
-      virtual void setReceiverThread( TThreadOrder whichThread );
+                                    TThreadOrder whichThread ) override;
+      virtual void setSenderCPU( TCPUOrder whichCPU ) override;
+      virtual void setReceiverThread( TThreadOrder whichThread ) override;
       virtual void setReceiverThread( TApplOrder whichAppl,
                                       TTaskOrder whichTask,
-                                      TThreadOrder whichThread );
-      virtual void setReceiverCPU( TCPUOrder whichCPU );
-      virtual void setCommTag( TCommTag whichTag );
-      virtual void setCommSize( TCommSize whichSize );
-      virtual void setLogicalSend( TRecordTime whichTime );
-      virtual void setLogicalReceive( TRecordTime whichTime );
-      virtual void setPhysicalSend( TRecordTime whichTime );
-      virtual void setPhysicalReceive( TRecordTime whichTime );
+                                      TThreadOrder whichThread ) override;
+      virtual void setReceiverCPU( TCPUOrder whichCPU ) override;
+      virtual void setCommTag( TCommTag whichTag ) override;
+      virtual void setCommSize( TCommSize whichSize ) override;
+      virtual void setLogicalSend( TRecordTime whichTime ) override;
+      virtual void setLogicalReceive( TRecordTime whichTime ) override;
+      virtual void setPhysicalSend( TRecordTime whichTime ) override;
+      virtual void setPhysicalReceive( TRecordTime whichTime ) override;
 
       // Communication info getters
       virtual TCommID getTotalComms() const;
-      virtual TThreadOrder getSenderThread( TCommID whichComm ) const;
-      virtual TCPUOrder getSenderCPU( TCommID whichComm ) const;
-      virtual TThreadOrder getReceiverThread( TCommID whichComm ) const;
-      virtual TCPUOrder getReceiverCPU( TCommID whichComm ) const;
-      virtual TCommTag getCommTag( TCommID whichComm ) const;
-      virtual TCommSize getCommSize( TCommID whichComm ) const;
-      virtual TRecordTime getLogicalSend( TCommID whichComm ) const;
-      virtual TRecordTime getLogicalReceive( TCommID whichComm ) const;
-      virtual TRecordTime getPhysicalSend( TCommID whichComm ) const;
-      virtual TRecordTime getPhysicalReceive( TCommID whichComm ) const;
+      virtual TThreadOrder getSenderThread( TCommID whichComm) const override;
+      virtual TCPUOrder getSenderCPU( TCommID whichComm) const override;
+      virtual TThreadOrder getReceiverThread( TCommID whichComm) const override;
+      virtual TCPUOrder getReceiverCPU( TCommID whichComm) const override;
+      virtual TCommTag getCommTag( TCommID whichComm) const override;
+      virtual TCommSize getCommSize( TCommID whichComm) const override;
+      virtual TRecordTime getLogicalSend( TCommID whichComm) const override;
+      virtual TRecordTime getLogicalReceive( TCommID whichComm) const override;
+      virtual TRecordTime getPhysicalSend( TCommID whichComm) const override;
+      virtual TRecordTime getPhysicalReceive( TCommID whichComm) const override;
 
       virtual TRecordTime getLastRecordTime() const;
 
@@ -134,6 +134,7 @@ namespace bplustree
         remotePhysicalReceive,
         commTypeSize
       } TCommType;
+
       static const TRecordType commTypes[commTypeSize];
       static const PRV_UINT32 blockSize = 100000;
       PRV_UINT32 currentRecord;

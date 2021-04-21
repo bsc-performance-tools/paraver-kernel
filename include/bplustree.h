@@ -1,4 +1,4 @@
-/*****************************************************************************\
+ /*****************************************************************************\
  *                        ANALYSIS PERFORMANCE TOOLS                         *
  *                               libparaver-api                              *
  *                       Paraver Main Computing Library                      *
@@ -36,7 +36,7 @@
 
 namespace bplustree
 {
-// Tuning this parameters changes tree performance.
+  // Parameters to tune tree performance
   static const PRV_UINT16 NODE_SIZE = 64;
   static const PRV_UINT16 LEAF_SIZE = 64;
   static const PRV_UINT32 UNLOAD_RECORDS_THRESHOLD = 100000000;
@@ -98,7 +98,6 @@ namespace bplustree
   };
 
 
-
   class BPlusNode
   {
     public:
@@ -113,15 +112,8 @@ namespace bplustree
        ************************************************************************/
       virtual RecordLeaf *insert( RecordLeaf *rl, BPlusNode *&newChild ) = 0;
 
-      /************************************************************************
-       * Returns a pointer to the RecordLeaf with the smallest key of this node.
-       ************************************************************************/
-      virtual RecordLeaf *minKey() = 0;
-
-      /************************************************************************
-       * Same as MinKey, but all the subtree is searched.
-       ************************************************************************/
-      virtual RecordLeaf *minKeyTotal() = 0;
+      virtual RecordLeaf *minNodeKey() = 0;
+      virtual RecordLeaf *minSubtreeKey() = 0;
 
       /************************************************************************
        * Returns a pointer to the TRecord stored in the i cell of the tree.
@@ -132,6 +124,7 @@ namespace bplustree
        * Returns a pointer to the i cell of the leaf.
        ************************************************************************/
       virtual bool getLeafKey( PRV_UINT16 ii, RecordLeaf *&key ) = 0;
+
       virtual PRV_UINT32 linkRecords( TRecord **ini,
                                       TRecord **fin,
                                       int &recs2link,
@@ -139,9 +132,10 @@ namespace bplustree
                                       Index<TRecord *> *traceIndex ) = 0;
 
       virtual BPlusNode *split( BPlusNode *dest, RecordLeaf *&retdat ) = 0;
+
       virtual bool partialDelete( RecordLeaf *limit_key,
                                   BPlusNode **valid_predecessor ) = 0;
-      //virtual PRV_UINT16 countElems() = 0;
+
       virtual void print( std::string indent ) = 0;
   };
 
@@ -154,9 +148,26 @@ namespace bplustree
     public:
       BPlusLeaf();
       ~BPlusLeaf();
-      virtual RecordLeaf *insert( RecordLeaf *rl, BPlusNode *&newChild );
-      virtual RecordLeaf *minKey();
-      virtual RecordLeaf *minKeyTotal();
+
+      virtual RecordLeaf *insert( RecordLeaf *rl, BPlusNode *&newChild ) override;
+
+      virtual RecordLeaf *minNodeKey() override;
+      virtual RecordLeaf *minSubtreeKey() override;
+
+      virtual bool getLeafData( PRV_UINT16 ii, TRecord *&data ) override;
+      virtual bool getLeafKey( PRV_UINT16 ii,  RecordLeaf *&key ) override;
+
+      virtual PRV_UINT32 linkRecords( TRecord **ini, TRecord **fin,
+                                      PRV_INT32 &recs2link,
+                                      RecordLeaf *&last_leaf,
+                                      Index<TRecord *> *traceIndex ) override;
+
+      virtual BPlusLeaf *split( BPlusNode *dest, RecordLeaf *&retdat ) override;
+
+      virtual bool partialDelete( RecordLeaf *limit_key,
+                                  BPlusNode **valid_predecessor ) override;
+
+      virtual void print( std::string indent ) override;
 
       /************************************************************************
        * Inserts a RecordLeaf in the first free position.
@@ -168,20 +179,6 @@ namespace bplustree
        * the new leaf and the smallest key (retKey).
        ************************************************************************/
       BPlusLeaf *splitAndInsert( RecordLeaf *rec, RecordLeaf *&retKey );
-
-      virtual BPlusLeaf *split( BPlusNode *dest, RecordLeaf *&retdat );
-
-      virtual bool getLeafData( PRV_UINT16 ii, TRecord *&data );
-      virtual bool getLeafKey( PRV_UINT16 ii,  RecordLeaf *&key );
-
-      virtual PRV_UINT32 linkRecords( TRecord **ini, TRecord **fin,
-                                      PRV_INT32 &recs2link,
-                                      RecordLeaf *&last_leaf,
-                                      Index<TRecord *> *traceIndex );
-
-      virtual void print( std::string indent );
-      virtual bool partialDelete( RecordLeaf *limit_key,
-                                  BPlusNode **valid_predecessor );
 
     private:
       /************************************************************************
@@ -195,7 +192,6 @@ namespace bplustree
       {
         return ( getUsed() == ( PRV_UINT16 )0 );
       }
-      // PRV_UINT16 countElems();
   };
 
 
@@ -208,49 +204,37 @@ namespace bplustree
 
       BPlusInternal();
       ~BPlusInternal();
-      virtual RecordLeaf *insert( RecordLeaf *rl, BPlusNode *&newChild );
-      virtual RecordLeaf *minKey();
-      virtual RecordLeaf *minKeyTotal();
-      void insertInOrder( BPlusNode *c );
-      void append( BPlusNode *newNode );
-      BPlusInternal *splitAndInsert( BPlusNode *c, RecordLeaf *&retdat );
-      virtual BPlusInternal *split( BPlusNode *dest, RecordLeaf *&retdat );
 
-      virtual bool getLeafData( PRV_UINT16 ii, TRecord *&data );
-      virtual bool getLeafKey( PRV_UINT16 ii,  RecordLeaf *&key );
+      virtual RecordLeaf *insert( RecordLeaf *rl, BPlusNode *&newChild ) override;
 
-      virtual void print( std::string indent );
+      virtual RecordLeaf *minNodeKey() override;
+      virtual RecordLeaf *minSubtreeKey() override;
+
+      virtual bool getLeafData( PRV_UINT16 ii, TRecord *&data ) override;
+      virtual bool getLeafKey( PRV_UINT16 ii,  RecordLeaf *&key ) override;
+
       virtual PRV_UINT32 linkRecords( TRecord **ini,
                                       TRecord **fin,
                                       PRV_INT32 &recs2link,
                                       RecordLeaf *&last_leaf,
-                                      Index<TRecord *> *traceIndex );
+                                      Index<TRecord *> *traceIndex ) override;
+
+      virtual BPlusInternal *split( BPlusNode *dest, RecordLeaf *&retdat ) override;
+
       virtual bool partialDelete( RecordLeaf *limit_key,
-                                  BPlusNode **valid_predecessor );
-      //PRV_UINT16 countElems();
+                                  BPlusNode **valid_predecessor ) override;
+
+      virtual void print( std::string indent ) override;
+
+      void insertInOrder( BPlusNode *c );
+      void append( BPlusNode *newNode );
+      BPlusInternal *splitAndInsert( BPlusNode *c, RecordLeaf *&retdat );
   };
 
 
   class BPlusTree : public MemoryTrace
   {
-    private:
-      const Trace *myTrace;
-      TThreadOrder numThreads;
-      TCPUOrder numCPUs;
-      PRV_UINT32 unloadThreshold;
-      PRV_UINT32 unloadPercent;
-      Index<TRecord *> *traceIndex;
-      TRecord emptyRec;
-      TRecord endRec;
-      std::vector< TRecord > emptyThreadBegin;
-      std::vector< TRecord > emptyThreadEnd;
-      std::vector< TRecord > emptyCPUBegin;
-      std::vector< TRecord > emptyCPUEnd;
-
-      void insert( TRecord *r );
-
     public:
-
       BPlusNode *root;
       BPlusNode *ini;
       BPlusNode *fin;
@@ -260,7 +244,6 @@ namespace bplustree
       PRV_UINT32 recordsLinkedLastTime;
       UnloadedTrace *unloadedTrace;
 
-      // Methods
       BPlusTree();
       BPlusTree( const Trace *whichTrace,
                  const TThreadOrder totalThreads,
@@ -268,8 +251,9 @@ namespace bplustree
                  const PRV_UINT32 uthresh  = UNLOAD_RECORDS_THRESHOLD,
                  const PRV_UINT32 upercent = UNLOAD_PERCENT );
       ~BPlusTree();
-      virtual TTime finish( TTime headerTime, Trace *whichTrace );
-      void insert( MemoryBlocks *blocks );
+      
+      virtual void insert( MemoryBlocks *blocks ) override;
+      virtual TTime finish( TTime headerTime, Trace *whichTrace ) override;
 
       inline  BPlusNode *getIni()
       {
@@ -314,26 +298,26 @@ namespace bplustree
           virtual ~iterator()
           {}
 
-          virtual void operator++();
-          virtual void operator--();
+          virtual void operator++() override;
+          virtual void operator--() override;
 
-          virtual iterator *clone() const;
+          virtual iterator *clone() const override;
 
-          virtual TRecordType    getType() const;
-          virtual TRecordTime    getTime() const;
-          virtual TThreadOrder   getThread() const;
-          virtual TCPUOrder      getCPU() const;
-          virtual TObjectOrder   getOrder() const;
-          virtual TEventType     getEventType() const;
-          virtual TSemanticValue getEventValue() const;
-          virtual TEventValue    getEventValueAsIs() const;
-          virtual TState         getState() const;
-          virtual TRecordTime    getStateEndTime() const;
-          virtual TCommID        getCommIndex() const;
+          virtual TRecordType    getType() const override;
+          virtual TRecordTime    getTime() const override;
+          virtual TThreadOrder   getThread() const override;
+          virtual TCPUOrder      getCPU() const override;
+          virtual TObjectOrder   getOrder() const override;
+          virtual TEventType     getEventType() const override;
+          virtual TSemanticValue getEventValue() const override;
+          virtual TEventValue    getEventValueAsIs() const override;
+          virtual TState         getState() const override;
+          virtual TRecordTime    getStateEndTime() const override;
+          virtual TCommID        getCommIndex() const override;
 
-          virtual void           setTime( const TRecordTime whichTime );
-          virtual void           setType( const TRecordType whichType );
-          virtual void           setStateEndTime( const TRecordTime whichEndTime );
+          virtual void           setTime( const TRecordTime whichTime ) override;
+          virtual void           setType( const TRecordType whichType ) override;
+          virtual void           setStateEndTime( const TRecordTime whichEndTime ) override;
       };
 
       class ThreadIterator : public BPlusTree::iterator
@@ -350,12 +334,12 @@ namespace bplustree
           virtual ~ThreadIterator()
           {}
 
-          virtual TObjectOrder getOrder() const;
+          virtual TObjectOrder getOrder() const override;
 
-          virtual void operator++();
-          virtual void operator--();
+          virtual void operator++() override;
+          virtual void operator--() override;
 
-          virtual ThreadIterator *clone() const;
+          virtual ThreadIterator *clone() const override;
       };
 
       class CPUIterator : public BPlusTree::iterator
@@ -372,28 +356,43 @@ namespace bplustree
           virtual ~CPUIterator()
           {}
 
-          virtual TObjectOrder getOrder() const;
+          virtual TObjectOrder getOrder() const override;
 
-          virtual void operator++();
-          virtual void operator--();
+          virtual void operator++() override;
+          virtual void operator--() override;
 
-          virtual CPUIterator *clone() const;
+          virtual CPUIterator *clone() const override;
       };
 
-      // MemoryTrace Inherited Methods
-      virtual MemoryTrace::iterator* empty() const; // Dummy iterator set to EMPTYREC
-      virtual MemoryTrace::iterator* begin() const;
-      virtual MemoryTrace::iterator* end() const;
-      virtual MemoryTrace::iterator* threadBegin( TThreadOrder whichThread ) const;
-      virtual MemoryTrace::iterator* threadEnd( TThreadOrder whichThread ) const;
-      virtual MemoryTrace::iterator* CPUBegin( TCPUOrder whichCPU ) const;
-      virtual MemoryTrace::iterator* CPUEnd( TCPUOrder whichCPU ) const;
+      // MemoryTrace inherited methods
+      virtual MemoryTrace::iterator* empty() const override; // Dummy iterator set to EMPTYREC
+      virtual MemoryTrace::iterator* begin() const override;
+      virtual MemoryTrace::iterator* end() const override;
+      virtual MemoryTrace::iterator* threadBegin( TThreadOrder whichThread ) const override;
+      virtual MemoryTrace::iterator* threadEnd( TThreadOrder whichThread ) const override;
+      virtual MemoryTrace::iterator* CPUBegin( TCPUOrder whichCPU ) const override;
+      virtual MemoryTrace::iterator* CPUEnd( TCPUOrder whichCPU ) const override;
 
       virtual void getRecordByTimeThread( std::vector<MemoryTrace::iterator *>& listIter,
-                                          TRecordTime whichTime ) const;
+                                          TRecordTime whichTime ) const override;
       virtual void getRecordByTimeCPU( std::vector<MemoryTrace::iterator *>& listIter,
-                                       TRecordTime whichTime ) const;
+                                       TRecordTime whichTime ) const override;
 
+    private:
+      const Trace *myTrace;
+      TThreadOrder numThreads;
+      TCPUOrder numCPUs;
+      PRV_UINT32 unloadThreshold;
+      PRV_UINT32 unloadPercent;
+      Index<TRecord *> *traceIndex;
+      TRecord emptyRec;
+      TRecord endRec;
+      std::vector< TRecord > emptyThreadBegin;
+      std::vector< TRecord > emptyThreadEnd;
+      std::vector< TRecord > emptyCPUBegin;
+      std::vector< TRecord > emptyCPUEnd;
+
+      void insert( TRecord *r );
   };
 }
 

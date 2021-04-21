@@ -152,13 +152,13 @@ BPlusLeaf::~BPlusLeaf()
 {}
 
 
-RecordLeaf *BPlusLeaf::minKey()
+RecordLeaf *BPlusLeaf::minNodeKey()
 {
   return &records[ 0 ];
 }
 
 
-RecordLeaf *BPlusLeaf::minKeyTotal()
+RecordLeaf *BPlusLeaf::minSubtreeKey()
 {
   return &records[ 0 ];
 }
@@ -241,7 +241,7 @@ BPlusLeaf *BPlusLeaf::split( BPlusNode *dest, RecordLeaf *&retdat )
   setUsed( endPos + 1 );
 
   dest = newLeaf;
-  retdat = newLeaf->minKey();
+  retdat = newLeaf->minNodeKey();
 
   return newLeaf;
 }
@@ -262,12 +262,12 @@ BPlusLeaf *BPlusLeaf::splitAndInsert( RecordLeaf *rec, RecordLeaf *&retKey )
 
   setUsed( endPos + 1 );
 
-  if ( *rec < *newLeaf->minKey() )
+  if ( *rec < *newLeaf->minNodeKey() )
     insert( rec, newNode );
   else
     newLeaf->insert( rec, newNode );
 
-  retKey = newLeaf->minKey();
+  retKey = newLeaf->minNodeKey();
 
   return newLeaf;
 }
@@ -458,15 +458,15 @@ BPlusInternal::~BPlusInternal()
 }
 
 
-RecordLeaf *BPlusInternal::minKey()
+RecordLeaf *BPlusInternal::minNodeKey()
 {
   return key[ 0 ];
 }
 
 
-RecordLeaf *BPlusInternal::minKeyTotal()
+RecordLeaf *BPlusInternal::minSubtreeKey()
 {
-  return child[ 0 ]->minKeyTotal();
+  return child[ 0 ]->minSubtreeKey();
 }
 
 
@@ -476,7 +476,7 @@ void BPlusInternal::insertInOrder( BPlusNode *newNode )
 
   for ( int ii = ( int )used - 2; ii >= 0; --ii )
   {
-    if ( *newNode->minKeyTotal() > *key[ ii ] )
+    if ( *newNode->minSubtreeKey() > *key[ ii ] )
     {
       for ( PRV_UINT16 jj = used - 2; jj >= ii + 1; --jj )
       {
@@ -484,7 +484,7 @@ void BPlusInternal::insertInOrder( BPlusNode *newNode )
         child[ jj + 2 ] = child[ jj + 1 ];
       }
       child[ ii + 2 ] = newNode;
-      key[ ii + 1 ] = newNode->minKeyTotal();
+      key[ ii + 1 ] = newNode->minSubtreeKey();
       inserted = true;
       break;
     }
@@ -500,13 +500,13 @@ void BPlusInternal::insertInOrder( BPlusNode *newNode )
     child[ 1 ] = child[ 0 ];
     child[ 0 ] = newNode;
 
-    if ( *child[ 0 ]->minKey() > *child[ 1 ]->minKey() )
+    if ( *child[ 0 ]->minNodeKey() > *child[ 1 ]->minNodeKey() )
     {
       BPlusNode *tmp = child[ 0 ];
       child[ 0 ] = child[ 1 ];
       child[ 1 ] = tmp;
     }
-    key[ 0 ] = child[ 1 ]->minKeyTotal();
+    key[ 0 ] = child[ 1 ]->minSubtreeKey();
   }
 
   ++used;
@@ -524,7 +524,7 @@ void BPlusInternal::append( BPlusNode *newNode )
   child[ used ] = newNode;
 
   if ( used >= 1 )
-    key[ used - 1 ] = newNode->minKeyTotal();
+    key[ used - 1 ] = newNode->minSubtreeKey();
 
   ++used;
 }
@@ -537,7 +537,7 @@ BPlusInternal *BPlusInternal::splitAndInsert( BPlusNode *newNode,
   PRV_UINT16 middle = ( ( PRV_UINT16 ) ceil( used / 2.0 ) ) - 1;
   bool intoThis = false;
 
-  if ( *newNode->minKey() < *child[ middle ]->minKey() )
+  if ( *newNode->minNodeKey() < *child[ middle ]->minNodeKey() )
   {
     --middle;
     intoThis = true;
@@ -553,7 +553,7 @@ BPlusInternal *BPlusInternal::splitAndInsert( BPlusNode *newNode,
   else
     newInternal->insertInOrder( newNode );
 
-  retdat = newInternal->minKeyTotal();
+  retdat = newInternal->minSubtreeKey();
 
   return newInternal;
 }
@@ -697,7 +697,7 @@ BPlusInternal *BPlusInternal::split( BPlusNode *dest,
   used = middle + 1;
 
   dest = newInternal;
-  retdat = newInternal->minKeyTotal();
+  retdat = newInternal->minSubtreeKey();
 
   return newInternal;
 }

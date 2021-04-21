@@ -46,7 +46,7 @@ class KEventDrivenCutter : public EventDrivenCutter
 
     virtual void execute( std::string traceIn,
                           std::string traceOut,
-                          ProgressController *progress = nullptr );
+                          ProgressController *progress = nullptr ) override;
 
   private:
     TraceEditSequence *mySequence;

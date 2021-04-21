@@ -84,14 +84,15 @@ class ParaverKernelException : public std::exception
 
     TExceptionLine line;
 
-  private:
-    static const char *errorMessage[];
-    std::string message;
-
     virtual const char *specificErrorMessage() const
     {
       return errorMessage[ static_cast<int>( code ) ];
     }
+
+  private:
+    static const char *errorMessage[];
+    std::string message;
+
 };
 
 #endif // PARAVERKERNELEXCEPTION_H_INCLUDED

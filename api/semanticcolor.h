@@ -104,7 +104,7 @@ class CodeColor: public SemanticColor
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
                    TSemanticValue maximum,
-                   bool useCustomPalette ) const;
+                   bool useCustomPalette ) const override;
 
   private:
     std::vector<rgb> colors;
@@ -160,7 +160,7 @@ class GradientColor: public SemanticColor
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
                    TSemanticValue maximum,
-                   bool useCustomPalette = false ) const;
+                   bool useCustomPalette = false ) const override;
     bool isColorOutlier( rgb whichColor ) const;
 
     void copy( GradientColor &destiny );

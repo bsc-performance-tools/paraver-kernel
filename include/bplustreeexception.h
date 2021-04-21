@@ -63,7 +63,7 @@ namespace bplustree
     private:
       static const char *errorMessage[];
 
-      virtual const char *specificErrorMessage() const
+      virtual const char *specificErrorMessage() const override
       {
         return errorMessage[ static_cast< int >( code ) ];
       }

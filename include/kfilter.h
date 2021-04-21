@@ -69,29 +69,29 @@ class FilterAll: public FilterFunction
     virtual ~FilterAll()
     {}
 
-    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result );
+    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result ) override;
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return FilterAll::name;
     }
 
-    virtual FilterFunction *clone()
+    virtual FilterFunction *clone() override
     {
       return new FilterAll( *this );
     }
 
-    virtual bool getDefaultValue() const
+    virtual bool getDefaultValue() const override
     {
       return true;
     }
 
-    virtual TFilterNumParam getNumParameters() const
+    virtual TFilterNumParam getNumParameters() const override
     {
       return 0;
     }
 
-    virtual bool allowedNumParameters( TFilterNumParam numParams ) const
+    virtual bool allowedNumParameters( TFilterNumParam numParams ) const override
     {
       return true;
     }
@@ -111,24 +111,24 @@ class FilterNotEqual: public FilterFunction
     virtual ~FilterNotEqual()
     {}
 
-    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result );
+    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result ) override;
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return FilterNotEqual::name;
     }
 
-    virtual FilterFunction *clone()
+    virtual FilterFunction *clone() override
     {
       return new FilterNotEqual( *this );
     }
 
-    virtual TFilterNumParam getNumParameters() const
+    virtual TFilterNumParam getNumParameters() const override
     {
       return std::numeric_limits<TFilterNumParam>::max();
     }
 
-    virtual bool allowedNumParameters( TFilterNumParam numParams ) const
+    virtual bool allowedNumParameters( TFilterNumParam numParams ) const override
     {
       return 0 < numParams && numParams <= getNumParameters();
     }
@@ -137,7 +137,6 @@ class FilterNotEqual: public FilterFunction
 
   private:
     static std::string name;
-
 
 };
 
@@ -149,24 +148,24 @@ class FilterEqual: public FilterFunction
     virtual ~FilterEqual()
     {}
 
-    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result );
+    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result ) override;
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return FilterEqual::name;
     }
 
-    virtual FilterFunction *clone()
+    virtual FilterFunction *clone() override
     {
       return new FilterEqual( *this );
     }
 
-    virtual TFilterNumParam getNumParameters() const
+    virtual TFilterNumParam getNumParameters() const override
     {
       return std::numeric_limits<TFilterNumParam>::max();
     }
 
-    virtual bool allowedNumParameters( TFilterNumParam numParams ) const
+    virtual bool allowedNumParameters( TFilterNumParam numParams ) const override
     {
       return 0 < numParams && numParams <= getNumParameters();
     }
@@ -175,7 +174,6 @@ class FilterEqual: public FilterFunction
 
   private:
     static std::string name;
-
 
 };
 
@@ -187,24 +185,24 @@ class FilterGreater: public FilterFunction
     virtual ~FilterGreater()
     {}
 
-    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result );
+    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result ) override;
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return FilterGreater::name;
     }
 
-    virtual FilterFunction *clone()
+    virtual FilterFunction *clone() override
     {
       return new FilterGreater( *this );
     }
 
-    virtual TFilterNumParam getNumParameters() const
+    virtual TFilterNumParam getNumParameters() const override
     {
       return 1;
     }
 
-    virtual bool allowedNumParameters( TFilterNumParam numParams ) const
+    virtual bool allowedNumParameters( TFilterNumParam numParams ) const override
     {
       return numParams == getNumParameters();
     }
@@ -224,24 +222,24 @@ class FilterFewer: public FilterFunction
     virtual ~FilterFewer()
     {}
 
-    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result );
+    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result ) override;
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return FilterFewer::name;
     }
 
-    virtual FilterFunction *clone()
+    virtual FilterFunction *clone() override
     {
       return new FilterFewer( *this );
     }
 
-    virtual TFilterNumParam getNumParameters() const
+    virtual TFilterNumParam getNumParameters() const override
     {
       return 1;
     }
 
-    virtual bool allowedNumParameters( TFilterNumParam numParams ) const
+    virtual bool allowedNumParameters( TFilterNumParam numParams ) const override
     {
       return numParams == getNumParameters();
     }
@@ -262,14 +260,14 @@ class FilterNone: public FilterFunction
     virtual ~FilterNone()
     {}
 
-    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result );
+    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result ) override;
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return FilterNone::name;
     }
 
-    virtual FilterFunction *clone()
+    virtual FilterFunction *clone() override
     {
       return new FilterNone( *this );
     }
@@ -279,12 +277,12 @@ class FilterNone: public FilterFunction
       return false;
     }
 
-    virtual TFilterNumParam getNumParameters() const
+    virtual TFilterNumParam getNumParameters() const override
     {
       return 0;
     }
 
-    virtual bool allowedNumParameters( TFilterNumParam numParams ) const
+    virtual bool allowedNumParameters( TFilterNumParam numParams ) const override
     {
       return true;
     }
@@ -304,24 +302,24 @@ class FilterRange: public FilterFunction
     virtual ~FilterRange()
     {}
 
-    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result );
+    virtual bool execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result ) override;
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return FilterRange::name;
     }
 
-    virtual FilterFunction *clone()
+    virtual FilterFunction *clone() override
     {
       return new FilterRange( *this );
     }
 
-    virtual TFilterNumParam getNumParameters() const
+    virtual TFilterNumParam getNumParameters() const override
     {
       return 2;
     }
 
-    virtual bool allowedNumParameters( TFilterNumParam numParams ) const
+    virtual bool allowedNumParameters( TFilterNumParam numParams ) const override
     {
       return numParams == getNumParameters();
     }
@@ -398,119 +396,119 @@ class KFilter : public Filter
 
     bool passFilter( MemoryTrace::iterator *it );
 
-    void setLogical( bool newValue )
+    void setLogical( bool newValue ) override
     {
       logical = newValue;
     }
 
-    void setPhysical( bool newValue )
+    void setPhysical( bool newValue ) override
     {
       physical = newValue;
     }
 
-    bool getLogical()
+    bool getLogical() override
     {
       return logical;
     }
 
-    bool getPhysical()
+    bool getPhysical() override
     {
       return physical;
     }
 
-    void clearCommFrom();
-    void insertCommFrom( TObjectOrder value );
-    void getCommFrom( std::vector<TObjectOrder>& onVector ) const;
-    void setCommFromFunction( std::string newFunction );
-    std::string getCommFromFunction() const;
-    TFilterNumParam getCommFromFunctionNumParams() const;
-    bool allowedCommFromFunctionNumParams( TFilterNumParam numParams ) const;
+    void clearCommFrom() override;
+    void insertCommFrom( TObjectOrder value ) override;
+    void getCommFrom( std::vector<TObjectOrder>& onVector ) const override;
+    void setCommFromFunction( std::string newFunction ) override;
+    std::string getCommFromFunction() const override;
+    TFilterNumParam getCommFromFunctionNumParams() const override;
+    bool allowedCommFromFunctionNumParams( TFilterNumParam numParams ) const override;
 
-    void clearCommTo();
-    void insertCommTo( TObjectOrder value );
-    void getCommTo( std::vector<TObjectOrder>& onVector ) const;
-    void setCommToFunction( std::string newFunction );
-    std::string getCommToFunction() const;
-    TFilterNumParam getCommToFunctionNumParams() const;
-    bool allowedCommToFunctionNumParams( TFilterNumParam numParams ) const;
+    void clearCommTo() override;
+    void insertCommTo( TObjectOrder value ) override;
+    void getCommTo( std::vector<TObjectOrder>& onVector ) const override;
+    void setCommToFunction( std::string newFunction ) override;
+    std::string getCommToFunction() const override;
+    TFilterNumParam getCommToFunctionNumParams() const override;
+    bool allowedCommToFunctionNumParams( TFilterNumParam numParams ) const override;
 
-    void clearCommTags();
-    void insertCommTag( TCommTag value );
-    void getCommTag( std::vector<TCommTag>& onVector ) const;
-    void setCommTagFunction( std::string newFunction );
-    std::string getCommTagFunction() const;
-    TFilterNumParam getCommTagFunctionNumParams() const;
-    bool allowedCommTagFunctionNumParams( TFilterNumParam numParams ) const;
+    void clearCommTags() override;
+    void insertCommTag( TCommTag value ) override;
+    void getCommTag( std::vector<TCommTag>& onVector ) const override;
+    void setCommTagFunction( std::string newFunction ) override;
+    std::string getCommTagFunction() const override;
+    TFilterNumParam getCommTagFunctionNumParams() const override;
+    bool allowedCommTagFunctionNumParams( TFilterNumParam numParams ) const override;
 
-    void clearCommSizes();
-    void insertCommSize( TCommSize value );
-    void getCommSize( std::vector<TCommSize>& onVector ) const;
-    void setCommSizeFunction( std::string newFunction );
-    std::string getCommSizeFunction() const;
-    TFilterNumParam getCommSizeFunctionNumParams() const;
-    bool allowedCommSizeFunctionNumParams( TFilterNumParam numParams ) const;
+    void clearCommSizes() override;
+    void insertCommSize( TCommSize value ) override;
+    void getCommSize( std::vector<TCommSize>& onVector ) const override;
+    void setCommSizeFunction( std::string newFunction ) override;
+    std::string getCommSizeFunction() const override;
+    TFilterNumParam getCommSizeFunctionNumParams() const override;
+    bool allowedCommSizeFunctionNumParams( TFilterNumParam numParams ) const override;
 
-    void clearBandWidth();
-    void insertBandWidth( TSemanticValue value );
-    void getBandWidth( std::vector<TSemanticValue>& onVector ) const;
-    void setBandWidthFunction( std::string newFunction );
-    std::string getBandWidthFunction() const;
-    TFilterNumParam getBandWidthFunctionNumParams() const;
-    bool allowedBandWidthFunctionNumParams( TFilterNumParam numParams ) const;
+    void clearBandWidth() override;
+    void insertBandWidth( TSemanticValue value ) override;
+    void getBandWidth( std::vector<TSemanticValue>& onVector ) const override;
+    void setBandWidthFunction( std::string newFunction ) override;
+    std::string getBandWidthFunction() const override;
+    TFilterNumParam getBandWidthFunctionNumParams() const override;
+    bool allowedBandWidthFunctionNumParams( TFilterNumParam numParams ) const override;
 
-    void clearEventTypes();
-    void insertEventType( TEventType value );
-    void getEventType( std::vector<TEventType>& onVector ) const;
-    void setEventTypeFunction( std::string newFunction );
-    std::string getEventTypeFunction() const;
-    TFilterNumParam getEventTypeFunctionNumParams() const;
-    bool allowedEventTypeFunctionNumParams( TFilterNumParam numParams ) const;
+    void clearEventTypes() override;
+    void insertEventType( TEventType value ) override;
+    void getEventType( std::vector<TEventType>& onVector ) const override;
+    void setEventTypeFunction( std::string newFunction ) override;
+    std::string getEventTypeFunction() const override;
+    TFilterNumParam getEventTypeFunctionNumParams() const override;
+    bool allowedEventTypeFunctionNumParams( TFilterNumParam numParams ) const override;
     void getValidEvents( std::vector<TEventType>& onVector,
-                         const std::set<TEventType>& eventsLoaded ) const;
+                         const std::set<TEventType>& eventsLoaded ) const override;
 
-    void clearEventValues();
-    void insertEventValue( TSemanticValue value );
-    void getEventValue( std::vector<TSemanticValue>& onVector ) const;
-    void setEventValueFunction( std::string newFunction );
-    std::string getEventValueFunction() const;
-    TFilterNumParam getEventValueFunctionNumParams() const;
-    bool allowedEventValueFunctionNumParams( TFilterNumParam numParams ) const;
+    void clearEventValues() override;
+    void insertEventValue( TSemanticValue value ) override;
+    void getEventValue( std::vector<TSemanticValue>& onVector ) const override;
+    void setEventValueFunction( std::string newFunction ) override;
+    std::string getEventValueFunction() const override;
+    TFilterNumParam getEventValueFunctionNumParams() const override;
+    bool allowedEventValueFunctionNumParams( TFilterNumParam numParams ) const override;
 
 
-    void setOpFromToAnd()
+    void setOpFromToAnd() override
     {
       opFromTo = AND;
     }
-    void setOpFromToOr()
+    void setOpFromToOr() override
     {
       opFromTo = OR;
     }
-    void setOpTagSizeAnd()
+    void setOpTagSizeAnd() override
     {
       opTagSize = AND;
     }
-    void setOpTagSizeOr()
+    void setOpTagSizeOr() override
     {
       opTagSize = OR;
     }
-    void setOpTypeValueAnd()
+    void setOpTypeValueAnd() override
     {
       opTypeValue = AND;
     }
-    void setOpTypeValueOr()
+    void setOpTypeValueOr() override
     {
       opTypeValue = OR;
     }
 
-    bool getOpFromTo() const
+    bool getOpFromTo() const override
     {
       return opFromTo;
     }
-    bool getOpTagSize() const
+    bool getOpTagSize() const override
     {
       return opTagSize;
     }
-    bool getOpTypeValue() const
+    bool getOpTypeValue() const override
     {
       return opTypeValue;
     }

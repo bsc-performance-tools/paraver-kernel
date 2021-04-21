@@ -56,20 +56,21 @@ class IntervalNotThread: public IntervalHigh
     }
 
     virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
-                              KRecordList *displayList = nullptr );
-    virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false );
-    virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false );
+                              KRecordList *displayList = nullptr ) override;
+    virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) override;
+    virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) override;
 
-    virtual KWindow *getWindow()
+    virtual KWindow *getWindow() override
     {
       return ( KWindow * ) window;
     }
+
   protected:
     KWindow *window;
     SemanticNotThread *function;
     TCreateList createList;
 
-    virtual void setChildren()
+    virtual void setChildren() override
     {
       if ( level == WORKLOAD )
       {
@@ -134,17 +135,15 @@ class IntervalNotThread: public IntervalHigh
       }
     }
 
-    virtual KTrace *getWindowTrace() const;
-    virtual TWindowLevel getWindowLevel() const;
-    virtual Interval *getWindowInterval( TWindowLevel whichLevel,
-                                         TObjectOrder whichOrder );
-    virtual bool IsDerivedWindow() const;
-    virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const;
+    virtual KTrace *getWindowTrace() const override;
+    virtual TWindowLevel getWindowLevel() const override;
+    virtual Interval *getWindowInterval( TWindowLevel whichLevel, TObjectOrder whichOrder ) override;
+    virtual bool IsDerivedWindow() const override;
+    virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const override;
 
   private:
     SemanticHighInfo info;
     std::multimap<TRecordTime,TObjectOrder> orderedChildren;
-
 };
 
 

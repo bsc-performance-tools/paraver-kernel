@@ -198,12 +198,12 @@ class RecordListProxy: public RecordList
   public:
     virtual ~RecordListProxy() {};
 
-    virtual void clear();
-    virtual void erase( iterator first, iterator last );
-    virtual RecordList::iterator begin();
-    virtual RecordList::iterator end();
-    virtual bool newRecords() const;
-    virtual RecordList *clone();
+    virtual void clear() override;
+    virtual void erase( iterator first, iterator last ) override;
+    virtual RecordList::iterator begin() override;
+    virtual RecordList::iterator end() override;
+    virtual bool newRecords() const override;
+    virtual RecordList *clone() override;
 
   private:
     RecordListProxy( RecordList *whichList );

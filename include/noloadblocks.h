@@ -54,46 +54,46 @@ namespace NoLoad
 
       virtual ~NoLoadBlocks();
 
-      virtual TData *getLastRecord( PRV_UINT16 position ) const;
-      virtual void newRecord();
-      virtual void setType( TRecordType whichType );
-      virtual void setTime( TRecordTime whichTime );
-      virtual void setThread( TThreadOrder whichThread );
+      virtual TData *getLastRecord( PRV_UINT16 position ) const override;
+      virtual void newRecord() override;
+      virtual void setType( TRecordType whichType ) override;
+      virtual void setTime( TRecordTime whichTime ) override;
+      virtual void setThread( TThreadOrder whichThread ) override;
       virtual void setThread( TApplOrder whichAppl,
                               TTaskOrder whichTask,
-                              TThreadOrder whichThread );
-      virtual void setCPU( TCPUOrder whichCPU );
-      virtual void setEventType( TEventType whichType );
-      virtual void setEventValue( TEventValue whichValue );
-      virtual void setState( TState whichState );
-      virtual void setStateEndTime( TRecordTime whichTime );
-      virtual void setCommIndex( TCommID whichID );
+                              TThreadOrder whichThread ) override;
+      virtual void setCPU( TCPUOrder whichCPU ) override;
+      virtual void setEventType( TEventType whichType ) override;
+      virtual void setEventValue( TEventValue whichValue ) override;
+      virtual void setState( TState whichState ) override;
+      virtual void setStateEndTime( TRecordTime whichTime ) override;
+      virtual void setCommIndex( TCommID whichID ) override;
 
       // If you have a block defining communications, probably you want
       // to create records separately by your own.
       // Then you must call newComm( false )
       // If not, the function creates all necessary records by default.
-      virtual void newComm( bool createRecords = true );
-      virtual void setSenderThread( TThreadOrder whichThread );
+      virtual void newComm( bool createRecords = true ) override;
+      virtual void setSenderThread( TThreadOrder whichThread ) override;
       virtual void setSenderThread( TApplOrder whichAppl,
                                     TTaskOrder whichTask,
-                                    TThreadOrder whichThread );
-      virtual void setSenderCPU( TCPUOrder whichCPU );
-      virtual void setReceiverThread( TThreadOrder whichThread );
+                                    TThreadOrder whichThread ) override;
+      virtual void setSenderCPU( TCPUOrder whichCPU ) override;
+      virtual void setReceiverThread( TThreadOrder whichThread ) override;
       virtual void setReceiverThread( TApplOrder whichAppl,
                                       TTaskOrder whichTask,
-                                      TThreadOrder whichThread );
-      virtual void setReceiverCPU( TCPUOrder whichCPU );
-      virtual void setCommTag( TCommTag whichTag );
-      virtual void setCommSize( TCommSize whichSize );
-      virtual void setLogicalSend( TRecordTime whichTime );
-      virtual void setLogicalReceive( TRecordTime whichTime );
-      virtual void setPhysicalSend( TRecordTime whichTime );
-      virtual void setPhysicalReceive( TRecordTime whichTime );
-      virtual void setLogicalSend( TCommID whichComm, TRecordTime whichTime );
-      virtual void setLogicalReceive( TCommID whichComm, TRecordTime whichTime );
-      virtual void setPhysicalSend( TCommID whichComm, TRecordTime whichTime );
-      virtual void setPhysicalReceive( TCommID whichComm, TRecordTime whichTime );
+                                      TThreadOrder whichThread ) override;
+      virtual void setReceiverCPU( TCPUOrder whichCPU ) override;
+      virtual void setCommTag( TCommTag whichTag ) override;
+      virtual void setCommSize( TCommSize whichSize ) override;
+      virtual void setLogicalSend( TRecordTime whichTime ) override;
+      virtual void setLogicalReceive( TRecordTime whichTime ) override;
+      virtual void setPhysicalSend( TRecordTime whichTime ) override;
+      virtual void setPhysicalReceive( TRecordTime whichTime ) override;
+      virtual void setLogicalSend( TCommID whichComm, TRecordTime whichTime ) override;
+      virtual void setLogicalReceive( TCommID whichComm, TRecordTime whichTime ) override;
+      virtual void setPhysicalSend( TCommID whichComm, TRecordTime whichTime ) override;
+      virtual void setPhysicalReceive( TCommID whichComm, TRecordTime whichTime ) override;
 
       // Communication info getters
       virtual TCommID getTotalComms() const;
@@ -129,7 +129,7 @@ namespace NoLoad
       virtual void incNumUseds( PRV_INT64 offset );
       virtual void decNumUseds( PRV_INT64 offset );
 
-      virtual void setFileLoaded();
+      virtual void setFileLoaded() override;
       virtual void setFirstOffset( PRV_INT64 whichOffset );
 
     protected:
@@ -182,7 +182,6 @@ namespace NoLoad
 
       void goToPrevLine();
   };
-
 }
 
 #endif // NOLOADBLOCKS_H_INCLUDED

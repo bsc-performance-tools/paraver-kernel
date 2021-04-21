@@ -46,44 +46,44 @@ class ComposeAsIs: public SemanticCompose
     ~ComposeAsIs()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeAsIs::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeAsIs( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return SAME_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -111,38 +111,38 @@ class ComposeSign: public SemanticCompose
     ~ComposeSign()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeSign::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeSign( *this );
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -172,38 +172,38 @@ class ComposeUnsign: public SemanticCompose
     ~ComposeUnsign()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeUnsign::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeUnsign( *this );
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -234,32 +234,32 @@ class ComposeMod: public SemanticCompose
     ~ComposeMod()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeMod::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeMod( *this );
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -269,7 +269,7 @@ class ComposeMod: public SemanticCompose
         tmp.push_back( 1 );
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -300,33 +300,33 @@ class ComposeModPlus1: public SemanticCompose
     ~ComposeModPlus1()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeModPlus1::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeModPlus1( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -336,7 +336,7 @@ class ComposeModPlus1: public SemanticCompose
         tmp.push_back( 1 );
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -367,32 +367,32 @@ class ComposeDivide: public SemanticCompose
     ~ComposeDivide()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeDivide::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeDivide( *this );
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -402,7 +402,7 @@ class ComposeDivide: public SemanticCompose
         tmp.push_back( 1 );
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -433,33 +433,33 @@ class ComposeProduct: public SemanticCompose
     ~ComposeProduct()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeProduct::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeProduct( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -469,7 +469,7 @@ class ComposeProduct: public SemanticCompose
         tmp.push_back( 0 );
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -500,32 +500,32 @@ class ComposeAdding: public SemanticCompose
     ~ComposeAdding()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeAdding::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeAdding( *this );
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -535,7 +535,7 @@ class ComposeAdding: public SemanticCompose
         tmp.push_back( 0 );
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -566,33 +566,33 @@ class ComposeSubstract: public SemanticCompose
     ~ComposeSubstract()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeSubstract::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeSubstract( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -602,7 +602,7 @@ class ComposeSubstract: public SemanticCompose
         tmp.push_back( 0 );
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -633,33 +633,33 @@ class ComposeComplement: public SemanticCompose
     ~ComposeComplement()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeComplement::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeComplement( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -669,7 +669,7 @@ class ComposeComplement: public SemanticCompose
         tmp.push_back( 0 );
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -701,33 +701,33 @@ class ComposeInverseDiv: public SemanticCompose
     ~ComposeInverseDiv()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeInverseDiv::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeInverseDiv( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -737,7 +737,7 @@ class ComposeInverseDiv: public SemanticCompose
         tmp.push_back( 1 );
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -769,37 +769,37 @@ class ComposeSelectRange: public SemanticCompose
     ~ComposeSelectRange()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeSelectRange::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeSelectRange( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return SAME_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -812,7 +812,7 @@ class ComposeSelectRange: public SemanticCompose
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -847,37 +847,37 @@ class ComposeSelectRangeOpen: public SemanticCompose
     ~ComposeSelectRangeOpen()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeSelectRangeOpen::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeSelectRangeOpen( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return SAME_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -890,7 +890,7 @@ class ComposeSelectRangeOpen: public SemanticCompose
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -925,33 +925,33 @@ class ComposeIsInRange: public SemanticCompose
     ~ComposeIsInRange()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeIsInRange::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeIsInRange( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -964,7 +964,7 @@ class ComposeIsInRange: public SemanticCompose
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1000,33 +1000,33 @@ class ComposeIsInRangeOpen: public SemanticCompose
     ~ComposeIsInRangeOpen()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeIsInRangeOpen::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeIsInRangeOpen( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -1039,7 +1039,7 @@ class ComposeIsInRangeOpen: public SemanticCompose
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1073,37 +1073,37 @@ class ComposeIsEqual: public SemanticCompose
     ~ComposeIsEqual()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeIsEqual::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeIsEqual( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return SAME_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -1114,7 +1114,7 @@ class ComposeIsEqual: public SemanticCompose
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1145,34 +1145,34 @@ class ComposeIsEqualSign: public SemanticCompose
     ~ComposeIsEqualSign()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeIsEqualSign::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeIsEqualSign( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
 
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -1184,7 +1184,7 @@ class ComposeIsEqualSign: public SemanticCompose
       return tmp;
     }
 
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1214,44 +1214,44 @@ class ComposeFloor: public SemanticCompose
     ~ComposeFloor()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeFloor::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeFloor( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return SAME_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1279,44 +1279,44 @@ class ComposeCeil: public SemanticCompose
     ~ComposeCeil()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeCeil::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeCeil( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return SAME_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1344,44 +1344,44 @@ class ComposeRound: public SemanticCompose
     ~ComposeRound()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeRound::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeRound( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return SAME_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1409,44 +1409,44 @@ class ComposeAbs: public SemanticCompose
     ~ComposeAbs()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeAbs::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeAbs( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return SAME_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1474,36 +1474,36 @@ class ComposeStackedValue: public SemanticCompose
     ~ComposeStackedValue()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow );
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeStackedValue::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeStackedValue( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return SAME_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -1512,7 +1512,7 @@ class ComposeStackedValue: public SemanticCompose
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1549,32 +1549,32 @@ class ComposeInStackedValue: public SemanticCompose
     ~ComposeInStackedValue()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow );
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeInStackedValue::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeInStackedValue( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -1585,7 +1585,7 @@ class ComposeInStackedValue: public SemanticCompose
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1621,32 +1621,32 @@ class ComposeNestingLevel: public SemanticCompose
     ~ComposeNestingLevel()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow );
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeNestingLevel::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeNestingLevel( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -1655,7 +1655,7 @@ class ComposeNestingLevel: public SemanticCompose
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1686,33 +1686,33 @@ class ComposeLRUDepth: public SemanticCompose
     ~ComposeLRUDepth()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow );
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeLRUDepth::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeLRUDepth( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
 
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -1724,7 +1724,7 @@ class ComposeLRUDepth: public SemanticCompose
       return tmp;
     }
 
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1755,32 +1755,32 @@ class ComposeEnumerate: public SemanticCompose
     ~ComposeEnumerate()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow );
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeEnumerate::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeEnumerate( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -1789,7 +1789,7 @@ class ComposeEnumerate: public SemanticCompose
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1819,32 +1819,32 @@ class ComposeAccumulate: public SemanticCompose
     ~ComposeAccumulate()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow );
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeAccumulate::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeAccumulate( *this );
     }
 
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -1853,7 +1853,7 @@ class ComposeAccumulate: public SemanticCompose
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1882,31 +1882,31 @@ class ComposeDelta: public SemanticCompose
     ~ComposeDelta()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow );
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeDelta::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeDelta( *this );
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -1915,7 +1915,7 @@ class ComposeDelta: public SemanticCompose
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -1946,37 +1946,37 @@ class ComposeBurstTime: public SemanticCompose
     ~ComposeBurstTime()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeBurstTime::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeBurstTime( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return TIME_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -1985,7 +1985,7 @@ class ComposeBurstTime: public SemanticCompose
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2015,37 +2015,37 @@ class ComposeJoinBursts: public SemanticCompose
     ~ComposeJoinBursts()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeJoinBursts::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeJoinBursts( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return SAME_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -2054,7 +2054,7 @@ class ComposeJoinBursts: public SemanticCompose
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2083,37 +2083,37 @@ class ComposeBeginTime: public SemanticCompose
     ~ComposeBeginTime()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeBeginTime::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeBeginTime( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return TIME_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -2122,7 +2122,7 @@ class ComposeBeginTime: public SemanticCompose
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2151,37 +2151,37 @@ class ComposeEndTime: public SemanticCompose
     ~ComposeEndTime()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeEndTime::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeEndTime( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return TIME_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -2190,7 +2190,7 @@ class ComposeEndTime: public SemanticCompose
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2221,37 +2221,37 @@ class ComposeTranslate: public SemanticCompose
     ~ComposeTranslate()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeTranslate::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeTranslate( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return SAME_TYPE; // Some doubts
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -2260,7 +2260,7 @@ class ComposeTranslate: public SemanticCompose
 
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2290,44 +2290,44 @@ class ComposeSine: public SemanticCompose
     ~ComposeSine()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeSine::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeSine( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return NO_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2355,44 +2355,44 @@ class ComposeCosine: public SemanticCompose
     ~ComposeCosine()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeCosine::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeCosine( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return NO_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2420,44 +2420,44 @@ class ComposeSqrtAbs: public SemanticCompose
     ~ComposeSqrtAbs()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeSqrtAbs::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeSqrtAbs( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return NO_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2485,44 +2485,44 @@ class ComposeArcTan: public SemanticCompose
     ~ComposeArcTan()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeArcTan::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeArcTan( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return NO_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2553,32 +2553,32 @@ class ComposeLogN: public SemanticCompose
     ~ComposeLogN()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXVALUE;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeLogN::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeLogN( *this );
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       TParamValue tmp;
 
@@ -2588,7 +2588,7 @@ class ComposeLogN: public SemanticCompose
         tmp.push_back( exp( 1 ) );
       return tmp;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
@@ -2620,44 +2620,44 @@ class ComposeExponential: public SemanticCompose
     ~ComposeExponential()
     {}
 
-    virtual TParamIndex getMaxParam() const
+    virtual TParamIndex getMaxParam() const override
     {
       return MAXPARAM;
     }
 
-    virtual TSemanticValue execute( const SemanticInfo *info );
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
     virtual void init( KWindow *whichWindow )
     {}
 
 
-    virtual std::string getName()
+    virtual std::string getName() override
     {
       return ComposeExponential::name;
     }
 
-    virtual SemanticFunction *clone()
+    virtual SemanticFunction *clone() override
     {
       return new ComposeExponential( *this );
     }
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return NO_TYPE;
     }
 
   protected:
-    virtual const bool getMyInitFromBegin()
+    virtual const bool getMyInitFromBegin() override
     {
       return initFromBegin;
     }
-    virtual TParamValue getDefaultParam( TParamIndex whichParam )
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return ( TParamValue ) 0;
     }
-    virtual std::string getDefaultParamName( TParamIndex whichParam )
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );

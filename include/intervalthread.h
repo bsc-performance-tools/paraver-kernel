@@ -56,12 +56,13 @@ class IntervalThread: public Interval
         delete end;
     }
 
-    virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
-                              KRecordList *displayList = nullptr );
-    virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false );
-    virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false );
+    virtual KRecordList *init( TRecordTime initialTime,
+                               TCreateList create,
+                               KRecordList *displayList = nullptr ) override;
+    virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) override;
+    virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) override;
 
-    virtual KWindow *getWindow()
+    virtual KWindow *getWindow() override
     {
       return ( KWindow * ) window;
     }
@@ -71,10 +72,11 @@ class IntervalThread: public Interval
       function = whichFunction;
     }
 
-    virtual TWindowLevel getLevel() const
+    virtual TWindowLevel getLevel() const override
     {
       return THREAD;
     }
+
   protected:
     KSingleWindow *window;
     SemanticThread *function;
@@ -82,9 +84,9 @@ class IntervalThread: public Interval
 
   private:
     virtual MemoryTrace::iterator *getNextRecord( MemoryTrace::iterator *it,
-        KRecordList *displayList );
+                                                  KRecordList *displayList );
     virtual MemoryTrace::iterator *getPrevRecord( MemoryTrace::iterator *it,
-        KRecordList *displayList );
+                                                  KRecordList *displayList );
 
 };
 

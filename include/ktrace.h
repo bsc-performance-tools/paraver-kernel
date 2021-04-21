@@ -60,96 +60,96 @@ class KTrace: public Trace
 
     ~KTrace();
 
-    std::string getFileName() const;
-    std::string getTraceName() const;
+    std::string getFileName() const override;
+    std::string getTraceName() const override;
 
-    void dumpFileHeader( std::fstream& file, bool newFormat = false, PRV_INT32 numIter = 1 ) const;
-    void dumpFile( const std::string& whichFile, PRV_INT32 numIter = 1 ) const;
+    void dumpFileHeader( std::fstream& file, bool newFormat = false, PRV_INT32 numIter = 1 ) const override;
+    void dumpFile( const std::string& whichFile, PRV_INT32 numIter = 1 ) const override;
 
-    TApplOrder totalApplications() const;
-    TTaskOrder totalTasks() const;
+    TApplOrder totalApplications() const override;
+    TTaskOrder totalTasks() const override;
     TTaskOrder getGlobalTask( const TApplOrder& inAppl,
-                              const TTaskOrder& inTask ) const;
+                              const TTaskOrder& inTask ) const override;
     void getTaskLocation( TTaskOrder globalTask,
                           TApplOrder& inAppl,
-                          TTaskOrder& inTask ) const;
-    TTaskOrder getFirstTask( TApplOrder inAppl ) const;
-    TTaskOrder getLastTask( TApplOrder inAppl ) const;
+                          TTaskOrder& inTask ) const override;
+    TTaskOrder getFirstTask( TApplOrder inAppl ) const override;
+    TTaskOrder getLastTask( TApplOrder inAppl ) const override;
 
-    TThreadOrder totalThreads() const;
+    TThreadOrder totalThreads() const override;
     TThreadOrder getGlobalThread( const TApplOrder& inAppl,
                                   const TTaskOrder& inTask,
-                                  const TThreadOrder& inThread ) const;
+                                  const TThreadOrder& inThread ) const override;
     void getThreadLocation( TThreadOrder globalThread,
                             TApplOrder& inAppl,
                             TTaskOrder& inTask,
-                            TThreadOrder& inThread ) const;
-    TThreadOrder getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const;
-    TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask ) const;
-    void getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& onVector ) const;
+                            TThreadOrder& inThread ) const override;
+    TThreadOrder getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const override;
+    TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask ) const override;
+    void getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& onVector ) const override;
 
-    bool existResourceInfo() const;
-    TNodeOrder totalNodes() const;
-    TCPUOrder totalCPUs() const;
+    bool existResourceInfo() const override;
+    TNodeOrder totalNodes() const override;
+    TCPUOrder totalCPUs() const override;
     TCPUOrder getGlobalCPU( const TNodeOrder& inNode,
-                            const TCPUOrder& inCPU ) const;
+                            const TCPUOrder& inCPU ) const override;
     void getCPULocation( TCPUOrder globalCPU,
                          TNodeOrder& inNode,
-                         TCPUOrder& inCPU ) const;
-    TCPUOrder getFirstCPU( TNodeOrder inNode ) const;
-    TCPUOrder getLastCPU( TNodeOrder inNode ) const;
+                         TCPUOrder& inCPU ) const override;
+    TCPUOrder getFirstCPU( TNodeOrder inNode ) const override;
+    TCPUOrder getLastCPU( TNodeOrder inNode ) const override;
 
     TObjectOrder getFirst( TObjectOrder globalOrder,
                            TWindowLevel fromLevel,
-                           TWindowLevel toLevel ) const;
+                           TWindowLevel toLevel ) const override;
     TObjectOrder getLast( TObjectOrder globalOrder,
                           TWindowLevel fromLevel,
-                          TWindowLevel toLevel ) const;
+                          TWindowLevel toLevel ) const override;
 
-    bool isSameObjectStruct( Trace *compareTo, bool compareProcessModel  ) const;
-    bool isSubsetObjectStruct( Trace *compareTo, bool compareProcessModel  ) const;
+    bool isSameObjectStruct( Trace *compareTo, bool compareProcessModel ) const override;
+    bool isSubsetObjectStruct( Trace *compareTo, bool compareProcessModel ) const override;
 
     // Communication info getters
     TCommID getTotalComms() const;
-    TThreadOrder getSenderThread( TCommID whichComm ) const;
-    TCPUOrder getSenderCPU( TCommID whichComm ) const;
-    TThreadOrder getReceiverThread( TCommID whichComm ) const;
-    TCPUOrder getReceiverCPU( TCommID whichComm ) const;
-    TCommTag getCommTag( TCommID whichComm ) const;
-    TCommSize getCommSize( TCommID whichComm ) const;
-    TRecordTime getLogicalSend( TCommID whichComm ) const;
-    TRecordTime getLogicalReceive( TCommID whichComm ) const;
-    TRecordTime getPhysicalSend( TCommID whichComm ) const;
-    TRecordTime getPhysicalReceive( TCommID whichComm ) const;
+    TThreadOrder getSenderThread( TCommID whichComm ) const override;
+    TCPUOrder getSenderCPU( TCommID whichComm ) const override;
+    TThreadOrder getReceiverThread( TCommID whichComm ) const override;
+    TCPUOrder getReceiverCPU( TCommID whichComm ) const override;
+    TCommTag getCommTag( TCommID whichComm ) const override;
+    TCommSize getCommSize( TCommID whichComm ) const override;
+    TRecordTime getLogicalSend( TCommID whichComm ) const override;
+    TRecordTime getLogicalReceive( TCommID whichComm ) const override;
+    TRecordTime getPhysicalSend( TCommID whichComm ) const override;
+    TRecordTime getPhysicalReceive( TCommID whichComm ) const override;
 
-    inline TTime getEndTime() const
+    inline TTime getEndTime() const override
     {
       return traceEndTime;
     }
 
-    inline void setEndTime( TTime whichTraceEndTime )
+    inline void setEndTime( TTime whichTraceEndTime ) override
     {
       traceEndTime = whichTraceEndTime;
     }
 
-    inline TTimeUnit getTimeUnit() const
+    inline TTimeUnit getTimeUnit() const override
     {
       return traceTimeUnit;
     }
 
-    inline ptime getTraceTime() const
+    inline ptime getTraceTime() const override
     {
       return myTraceTime +
              boost::posix_time::nanoseconds(
                (long)traceUnitsToCustomUnits( myTraceInfo.GetCutterTotalOffset(), NS ) );
     }
 
-    TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const;
-    TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const;
+    TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const override;
+    TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const override;
 
 
-    bool eventLoaded( TEventType whichType ) const;
-    bool anyEventLoaded( TEventType firstType, TEventType lastType ) const;
+    bool eventLoaded( TEventType whichType ) const override;
+    bool anyEventLoaded( TEventType firstType, TEventType lastType ) const override;
 
     // Forward MemoryTrace iterator functions
     MemoryTrace::iterator* empty() const; // Dummy iterator set to EMPTYREC
@@ -165,37 +165,37 @@ class KTrace: public Trace
     void getRecordByTimeCPU( std::vector<MemoryTrace::iterator *>& listIter,
                              TRecordTime whichTime ) const;
 
-    const std::set<TState>& getLoadedStates() const;
-    const std::set<TEventType>& getLoadedEvents() const;
+    const std::set<TState>& getLoadedStates() const override;
+    const std::set<TEventType>& getLoadedEvents() const override;
 
     bool findLastEventValue( TThreadOrder whichThread,
                              TRecordTime whichTime,
                              const std::vector<TEventType>& whichEvent,
                              TEventType& returnType,
-                             TEventValue& returnValue ) const;
+                             TEventValue& returnValue ) const override;
 
     bool findNextEvent( TThreadOrder whichThread,
                         TRecordTime whichTime,
                         TEventType whichEvent,
-                        TRecordTime& foundTime ) const;
+                        TRecordTime& foundTime ) const override;
 
-    virtual bool getFillStateGaps() const;
-    virtual void setFillStateGaps( bool fill );
+    virtual bool getFillStateGaps() const override;
+    virtual void setFillStateGaps( bool fill ) override;
 
-    virtual PRV_UINT64 getCutterOffset();
-    virtual PRV_UINT64 getCutterLastOffset();
-    virtual PRV_UINT64 getCutterLastBeginTime();
-    virtual PRV_UINT64 getCutterLastEndTime();
-    virtual PRV_UINT64 getCutterBeginTime();
-    virtual PRV_UINT64 getCutterEndTime();
+    virtual PRV_UINT64 getCutterOffset() override;
+    virtual PRV_UINT64 getCutterLastOffset() override;
+    virtual PRV_UINT64 getCutterLastBeginTime() override;
+    virtual PRV_UINT64 getCutterLastEndTime() override;
+    virtual PRV_UINT64 getCutterBeginTime() override;
+    virtual PRV_UINT64 getCutterEndTime() override;
 
-    virtual void setLogicalSend( TCommID whichComm, TRecordTime whichTime );
-    virtual void setLogicalReceive( TCommID whichComm, TRecordTime whichTime );
-    virtual void setPhysicalSend( TCommID whichComm, TRecordTime whichTime );
-    virtual void setPhysicalReceive( TCommID whichComm, TRecordTime whichTime );
+    virtual void setLogicalSend( TCommID whichComm, TRecordTime whichTime ) override;
+    virtual void setLogicalReceive( TCommID whichComm, TRecordTime whichTime ) override;
+    virtual void setPhysicalSend( TCommID whichComm, TRecordTime whichTime ) override;
+    virtual void setPhysicalReceive( TCommID whichComm, TRecordTime whichTime ) override;
 
-    virtual void   setEventTypePrecision( TEventType whichType, double whichPrecision );
-    virtual double getEventTypePrecision( TEventType whichType ) const;
+    virtual void   setEventTypePrecision( TEventType whichType, double whichPrecision ) override;
+    virtual double getEventTypePrecision( TEventType whichType ) const override;
 
   protected:
     bool ready;

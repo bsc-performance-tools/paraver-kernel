@@ -63,7 +63,7 @@ public:
   TraceToTraceAction( TraceEditSequence *whichSequence ) : TraceEditAction( whichSequence ) {}
   virtual ~TraceToTraceAction() {}
 
-  virtual TTraceEditActionType getType() const
+  virtual TTraceEditActionType getType() const override
   {
     return TTraceEditActionType::TraceToTrace;
   }

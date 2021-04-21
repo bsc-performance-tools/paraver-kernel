@@ -67,7 +67,7 @@ class EventTranslatorProxy : public EventTranslator
 
     virtual void execute( std::string traceIn,
                           std::string traceOut,
-                          ProgressController *progress = nullptr );
+                          ProgressController *progress = nullptr ) override;
 
     virtual bool translationEmpty();
 

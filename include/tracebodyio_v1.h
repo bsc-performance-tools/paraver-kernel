@@ -41,17 +41,17 @@ class TraceBodyIO_v1 : public TraceBodyIO
     static const PRV_UINT8 CommRecord = '3';
     static const PRV_UINT8 GlobalCommRecord = '4';
 
-    bool ordered() const;
+    bool ordered() const override;
     void read( TraceStream *file, MemoryBlocks& records,
                std::unordered_set<TState>& states, std::unordered_set<TEventType>& events,
-               MetadataManager& traceInfo ) const;
+               MetadataManager& traceInfo ) const override;
     void write( std::fstream& whichStream,
                 const KTrace& whichTrace,
                 MemoryTrace::iterator *record,
-                PRV_INT32 numIter = 0 ) const;
+                PRV_INT32 numIter = 0 ) const override;
     void writeCommInfo( std::fstream& whichStream,
                         const KTrace& whichTrace,
-                        PRV_INT32 numIter = 1 ) const;
+                        PRV_INT32 numIter = 1 ) const override;
     void writeEvents( std::fstream& whichStream,
                       const KTrace& whichTrace,
                       std::vector<MemoryTrace::iterator *>& recordList ) const;

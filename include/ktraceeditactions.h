@@ -39,7 +39,7 @@ public:
   ~TraceToRecordAction()
   {}
 
-  virtual TTraceEditActionType getType() const
+  virtual TTraceEditActionType getType() const override
   {
     return TTraceEditActionType::TraceToRecord;
   }
@@ -61,7 +61,7 @@ public:
   ~RecordToTraceAction()
   {}
 
-  virtual TTraceEditActionType getType() const
+  virtual TTraceEditActionType getType() const override
   {
     return TTraceEditActionType::RecordToTrace;
   }
@@ -82,7 +82,7 @@ public:
   ~RecordToRecordAction()
   {}
 
-  virtual TTraceEditActionType getType() const
+  virtual TTraceEditActionType getType() const override
   {
     return TTraceEditActionType::RecordToRecord;
   }
@@ -107,9 +107,9 @@ class TestAction: public TraceToTraceAction
     ~TestAction()
     {}
 
-    virtual vector<TSequenceStates> getStateDependencies() const;
+    virtual vector<TSequenceStates> getStateDependencies() const override;
 
-    virtual bool execute( std::string whichTrace );
+    virtual bool execute( std::string whichTrace ) override;
 
   protected:
 
@@ -129,9 +129,9 @@ class TraceCutterAction: public TraceToTraceAction
     ~TraceCutterAction()
     {}
 
-    virtual vector<TSequenceStates> getStateDependencies() const;
+    virtual vector<TSequenceStates> getStateDependencies() const override;
 
-    virtual bool execute( std::string whichTrace );
+    virtual bool execute( std::string whichTrace ) override;
 
   protected:
 
@@ -151,9 +151,9 @@ class TraceFilterAction: public TraceToTraceAction
     ~TraceFilterAction()
     {}
 
-    virtual vector<TSequenceStates> getStateDependencies() const;
+    virtual vector<TSequenceStates> getStateDependencies() const override;
 
-    virtual bool execute( std::string whichTrace );
+    virtual bool execute( std::string whichTrace ) override;
 
   protected:
 
@@ -173,9 +173,9 @@ class CSVOutputAction: public TraceToTraceAction
     ~CSVOutputAction()
     {}
 
-    virtual vector<TSequenceStates> getStateDependencies() const;
+    virtual vector<TSequenceStates> getStateDependencies() const override;
 
-    virtual bool execute( std::string whichTrace );
+    virtual bool execute( std::string whichTrace ) override;
 
   protected:
 
@@ -196,9 +196,9 @@ class TraceShifterTimesLoaderAction: public TraceToTraceAction
     ~TraceShifterTimesLoaderAction()
     {}
 
-    virtual vector<TSequenceStates> getStateDependencies() const;
+    virtual vector<TSequenceStates> getStateDependencies() const override;
 
-    virtual bool execute( std::string whichTrace );
+    virtual bool execute( std::string whichTrace ) override;
 
   protected:
 
@@ -218,9 +218,9 @@ class TraceParserAction: public TraceToRecordAction
     ~TraceParserAction()
     {}
 
-    virtual vector<TSequenceStates> getStateDependencies() const;
+    virtual vector<TSequenceStates> getStateDependencies() const override;
 
-    virtual bool execute( std::string whichTrace );
+    virtual bool execute( std::string whichTrace ) override;
 
   protected:
 
@@ -241,9 +241,9 @@ class RecordTimeShifterAction: public RecordToRecordAction
     ~RecordTimeShifterAction()
     {}
 
-    virtual vector<TSequenceStates> getStateDependencies() const;
+    virtual vector<TSequenceStates> getStateDependencies() const override;
 
-    virtual bool execute( MemoryTrace::iterator *whichRecord );
+    virtual bool execute( MemoryTrace::iterator *whichRecord ) override;
 
   protected:
 
@@ -267,9 +267,9 @@ class TraceWriterAction: public RecordToTraceAction
     ~TraceWriterAction()
     {}
 
-    virtual vector<TSequenceStates> getStateDependencies() const;
+    virtual vector<TSequenceStates> getStateDependencies() const override;
 
-    virtual bool execute( MemoryTrace::iterator *whichRecord );
+    virtual bool execute( MemoryTrace::iterator *whichRecord ) override;
 
   protected:
 
@@ -290,9 +290,9 @@ class EventDrivenCutterAction: public RecordToTraceAction
     ~EventDrivenCutterAction()
     {}
 
-    virtual vector<TSequenceStates> getStateDependencies() const;
+    virtual vector<TSequenceStates> getStateDependencies() const override;
 
-    virtual bool execute( MemoryTrace::iterator *whichRecord );
+    virtual bool execute( MemoryTrace::iterator *whichRecord ) override;
 
   protected:
 
@@ -320,9 +320,9 @@ class TraceSortAction: public TraceToTraceAction
     ~TraceSortAction()
     {}
 
-    virtual vector<TSequenceStates> getStateDependencies() const;
+    virtual vector<TSequenceStates> getStateDependencies() const override;
 
-    virtual bool execute( std::string whichTrace );
+    virtual bool execute( std::string whichTrace ) override;
 
   protected:
 
@@ -341,9 +341,9 @@ class PCFEventMergerAction: public TraceToTraceAction
     ~PCFEventMergerAction()
     {}
 
-    virtual vector<TSequenceStates> getStateDependencies() const;
+    virtual vector<TSequenceStates> getStateDependencies() const override;
 
-    virtual bool execute( std::string whichTrace );
+    virtual bool execute( std::string whichTrace ) override;
 
   protected:
 
