@@ -326,7 +326,7 @@ SelType SelectionManagement< SelType, LevelType >::shiftFirst( SelType whichFirs
   const std::vector<bool>& tmpSelected = selected[ level ];
 
   if( whichFirst >= tmpSelected.size() )
-    throw ParaverKernelException( ParaverKernelException::indexOutOfRange );
+    throw ParaverKernelException( TErrorCode::indexOutOfRange );
 
   SelType iFirst = 0;
   if( tmpSelected.size() == tmpSelectedSet.size() )
@@ -369,7 +369,7 @@ SelType SelectionManagement< SelType, LevelType >::shiftLast( SelType whichLast,
   const std::vector<bool>& tmpSelected = selected[ level ];
 
   if( whichLast >= tmpSelected.size() )
-    throw ParaverKernelException( ParaverKernelException::indexOutOfRange );
+    throw ParaverKernelException( TErrorCode::indexOutOfRange );
 
   SelType iLast = tmpSelectedSet.size() - 1;
   if( tmpSelected.size() == tmpSelectedSet.size() )

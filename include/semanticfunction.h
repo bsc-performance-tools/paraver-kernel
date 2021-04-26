@@ -59,21 +59,21 @@ class SemanticFunction
     virtual const TParamValue& getParam( TParamIndex whichParam ) const
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return parameters[whichParam];
     }
 
     virtual void setParam( TParamIndex whichParam, const TParamValue& newValue )
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       parameters[whichParam] = newValue;
     }
 
     virtual std::string getParamName( TParamIndex whichParam ) const
     {
       if ( whichParam >= getMaxParam() )
-        throw SemanticException( SemanticException::maxParamExceeded );
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
       return parametersName[whichParam];
     }
 
@@ -87,7 +87,7 @@ class SemanticFunction
 
     virtual std::vector<std::vector<TSemanticValue> > *getStack()
     {
-      return NULL;
+      return nullptr;
     }
 
     virtual SemanticInfoType getSemanticInfoType() const

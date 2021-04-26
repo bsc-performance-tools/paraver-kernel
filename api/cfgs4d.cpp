@@ -138,11 +138,11 @@ size_t CFGS4DLinkedPropertiesManager::getLinksSize( const std::string whichName 
 /*
  * CFGS4DGlobalManager Methods
  */
-CFGS4DGlobalManager *CFGS4DGlobalManager::instance = NULL;
+CFGS4DGlobalManager *CFGS4DGlobalManager::instance = nullptr;
 
 CFGS4DGlobalManager *CFGS4DGlobalManager::getInstance()
 {
-  if( CFGS4DGlobalManager::instance == NULL )
+  if( CFGS4DGlobalManager::instance == nullptr )
     CFGS4DGlobalManager::instance = new CFGS4DGlobalManager();
   return CFGS4DGlobalManager::instance;
 }

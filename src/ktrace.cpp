@@ -26,7 +26,7 @@
 #ifdef _MSC_VER
 #include <hash_set>
 #else
-#include <ext/hash_set>
+#include  <unordered_set>
 #endif
 
 #include "ktrace.h"
@@ -607,13 +607,13 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   if ( !file->good() )
   {
     delete file;
-    throw ParaverKernelException( ParaverKernelException::cannotOpenTrace, fileName.c_str() );
+    throw ParaverKernelException( TErrorCode::cannotOpenTrace, fileName.c_str() );
   }
 
   if ( file->canseekend() )
   {
     file->seekend();
-    if ( progress != NULL )
+    if ( progress != nullptr )
       progress->setEndLimit( file->tellg() );
     file->seekbegin();
   }
@@ -632,7 +632,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     body->setProcessModel( &traceProcessModel );
     body->setResourceModel( &traceResourceModel );
 
-    if ( !file->canseekend() && progress != NULL )
+    if ( !file->canseekend() && progress != nullptr )
     {
       progress->setEndLimit( traceEndTime );
     }
@@ -660,7 +660,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
       if ( !( stringEndTime >> traceEndTime ) )
       {
         delete file;
-        throw TraceHeaderException( TraceHeaderException::invalidTime,
+        throw TraceHeaderException( TTraceHeaderErrorCode::invalidTime,
                                     tmpstr.c_str() );
       }
     }
@@ -678,13 +678,13 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
       if ( !( stringEndTime >> traceEndTime ) )
       {
         delete file;
-        throw TraceHeaderException( TraceHeaderException::invalidTime,
+        throw TraceHeaderException( TTraceHeaderErrorCode::invalidTime,
                                     tmpstr.c_str() );
       }
    //   else cout << traceEndTime << endl;
     }
 
-    if ( !file->canseekend() && progress != NULL )
+    if ( !file->canseekend() && progress != nullptr )
     {
       progress->setEndLimit( traceEndTime );
     }
@@ -707,7 +707,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
         if ( !( streamComm >> numberComm ) )
         {
           delete file;
-          throw TraceHeaderException( TraceHeaderException::invalidCommNumber,
+          throw TraceHeaderException( TTraceHeaderErrorCode::invalidCommNumber,
                                       tmpstr.c_str() );
         }
       }
@@ -719,7 +719,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
       if ( tmpstr[0] != 'C' && tmpstr[0] != 'c' && tmpstr[0] != 'I' && tmpstr[0] != 'i' )
       {
         delete file;
-        throw TraceHeaderException( TraceHeaderException::unknownCommLine,
+        throw TraceHeaderException( TTraceHeaderErrorCode::unknownCommLine,
                                     tmpstr.c_str() );
       }
       communicators.push_back( tmpstr );
@@ -757,8 +757,8 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
                                traceResourceModel.totalCPUs() );
   }
 
-  hash_set<TEventType> hashevents;
-  hash_set<TState> hashstates;
+  unordered_set<TEventType> hashevents;
+  unordered_set<TState> hashstates;
 
   unsigned long long count = 0;
   if( !( noLoad && !body->ordered() ) )
@@ -772,7 +772,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
       if ( blocks->getCountInserted() >= 10000 )
       {
         memTrace->insert( blocks );
-        if ( progress != NULL )
+        if ( progress != nullptr )
         {
           if ( file->canseekend() )
             progress->setCurrentProgress( file->tellg() );
@@ -780,7 +780,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
             progress->setCurrentProgress( blocks->getLastRecordTime() );
         }
 
-        if ( progress != NULL && progress->getStop() )
+        if ( progress != nullptr && progress->getStop() )
           break;
       }
     }
@@ -794,14 +794,14 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     if (count == 0)
     {
       delete file;
-      throw TraceHeaderException( TraceHeaderException::emptyBody,
+      throw TraceHeaderException( TTraceHeaderErrorCode::emptyBody,
                                   whichFile.c_str() );
     }
 
-    for ( hash_set<TEventType>::iterator it = hashevents.begin(); it != hashevents.end(); ++it )
+    for ( unordered_set<TEventType>::iterator it = hashevents.begin(); it != hashevents.end(); ++it )
       events.insert( *it );
 
-    for ( hash_set<TState>::iterator it = hashstates.begin(); it != hashstates.end(); ++it )
+    for ( unordered_set<TState>::iterator it = hashstates.begin(); it != hashstates.end(); ++it )
       states.insert( *it );
   }
 
@@ -814,7 +814,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   {
     file->close();
     delete body;
-    body = NULL;
+    body = nullptr;
   }
   else
   {
@@ -832,7 +832,7 @@ KTrace::~KTrace()
 {
   delete blocks;
   delete memTrace;
-  if ( body != NULL )
+  if ( body != nullptr )
     delete body;
 }
 
@@ -878,7 +878,7 @@ bool KTrace::findLastEventValue( TThreadOrder whichThread,
       return false;
   }
 
-  listIter.insert( listIter.begin(), totalThreads(), NULL );
+  listIter.insert( listIter.begin(), totalThreads(), nullptr );
   getRecordByTimeThread( listIter, whichTime );
   it = listIter[ whichThread ];
 
@@ -918,7 +918,7 @@ bool KTrace::findNextEvent( TThreadOrder whichThread,
   vector<MemoryTrace::iterator *> listIter;
   MemoryTrace::iterator *it;
 
-  listIter.insert( listIter.begin(), totalThreads(), NULL );
+  listIter.insert( listIter.begin(), totalThreads(), nullptr );
   getRecordByTimeThread( listIter, whichTime );
   it = listIter[ whichThread ];
   while( it->getTime() < whichTime )

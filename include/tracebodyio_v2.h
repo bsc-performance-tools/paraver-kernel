@@ -50,29 +50,29 @@ class TraceBodyIO_v2 : public TraceBodyIO
     TraceBodyIO_v2() {}
     TraceBodyIO_v2( Trace* trace );
 
-    bool ordered() const;
+    bool ordered() const override;
     void read( TraceStream *file, MemoryBlocks& records,
-               hash_set<TState>& states, hash_set<TEventType>& events,
-               MetadataManager& traceInfo ) const;
+               std::unordered_set<TState>& states, std::unordered_set<TEventType>& events,
+               MetadataManager& traceInfo ) const override;
     void write( std::fstream& whichStream,
                 const KTrace& whichTrace,
                 MemoryTrace::iterator *record,
-                PRV_INT32 numIter = 0 ) const;
+                PRV_INT32 numIter = 0 ) const override;
+    void writeCommInfo( std::fstream& whichStream,
+                        const KTrace& whichTrace,
+                        PRV_INT32 numIter = 1 ) const override;
     void writeEvents( std::fstream& whichStream,
                       const KTrace& whichTrace,
                       std::vector<MemoryTrace::iterator *>& recordList,
                       PRV_INT32 numIter = 0 ) const;
-    void writeCommInfo( std::fstream& whichStream,
-                        const KTrace& whichTrace,
-                        PRV_INT32 numIter = 1 ) const;
 
   protected:
 
   private:
     void readState( const std::string& line, MemoryBlocks& records,
-                    hash_set<TState>& states ) const;
+                    std::unordered_set<TState>& states ) const;
     void readEvent( const std::string& line, MemoryBlocks& records,
-                    hash_set<TEventType>& events ) const;
+                    std::unordered_set<TEventType>& events ) const;
     void readComm( const std::string& line, MemoryBlocks& records ) const;
     void readGlobalComm( const std::string& line, MemoryBlocks& records ) const;
     bool readCommon( std::istringstream& line,

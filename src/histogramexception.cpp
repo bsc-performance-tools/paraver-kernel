@@ -33,5 +33,5 @@ const char *HistogramException::errorMessage[] =
   {
     "Undefined error: ",
     "No control window selected: ",
-    NULL
+    nullptr
   };

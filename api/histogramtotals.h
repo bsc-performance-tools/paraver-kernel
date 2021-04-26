@@ -77,33 +77,33 @@ class HistogramTotalsProxy: public HistogramTotals
 
     virtual TSemanticValue getTotal( PRV_UINT16 idStat,
                                      THistogramColumn whichColumn,
-                                     THistogramColumn whichPlane = 0 ) const;
+                                     THistogramColumn whichPlane = 0 ) const override;
     virtual TSemanticValue getAverage( PRV_UINT16 idStat,
                                        THistogramColumn whichColumn,
-                                       THistogramColumn whichPlane = 0 ) const;
+                                       THistogramColumn whichPlane = 0 ) const override;
     virtual TSemanticValue getMaximum( PRV_UINT16 idStat,
                                        THistogramColumn whichColumn,
-                                       THistogramColumn whichPlane = 0 ) const;
+                                       THistogramColumn whichPlane = 0 ) const override;
     virtual TSemanticValue getMinimum( PRV_UINT16 idStat,
                                        THistogramColumn whichColumn,
-                                       THistogramColumn whichPlane = 0 ) const;
+                                       THistogramColumn whichPlane = 0 ) const override;
     virtual TSemanticValue getStdev( PRV_UINT16 idStat,
                                      THistogramColumn whichColumn,
-                                     THistogramColumn whichPlane = 0 ) const;
+                                     THistogramColumn whichPlane = 0 ) const override;
     virtual TSemanticValue getAvgDivMax( PRV_UINT16 idStat,
                                          THistogramColumn whichColumn,
-                                         THistogramColumn whichPlane = 0 ) const;
+                                         THistogramColumn whichPlane = 0 ) const override;
     virtual void getAll( std::vector<TSemanticValue>& where,
                          PRV_UINT16 idStat,
                          THistogramColumn whichColumn,
-                         THistogramColumn whichPlane = 0 ) const;
+                         THistogramColumn whichPlane = 0 ) const override;
 
-    virtual std::vector<int>& sortByTotal( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
-    virtual std::vector<int>& sortByAverage( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
-    virtual std::vector<int>& sortByMaximum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
-    virtual std::vector<int>& sortByMinimum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
-    virtual std::vector<int>& sortByStdev( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
-    virtual std::vector<int>& sortByAvgDivMax( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 );
+    virtual std::vector<int>& sortByTotal( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) override;
+    virtual std::vector<int>& sortByAverage( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) override;
+    virtual std::vector<int>& sortByMaximum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) override;
+    virtual std::vector<int>& sortByMinimum( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) override;
+    virtual std::vector<int>& sortByStdev( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) override;
+    virtual std::vector<int>& sortByAvgDivMax( PRV_UINT16 idStat, THistogramColumn whichPlane = 0 ) override;
 
   protected:
 

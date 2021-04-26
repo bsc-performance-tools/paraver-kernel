@@ -47,10 +47,10 @@ KTraceShifter::KTraceShifter( const KernelConnection *myKernel,
   // Build sequence
   mySequence = new KTraceEditSequence( myKernel );
 
-  mySequence->pushbackAction( TraceEditSequence::traceParserAction );
-  mySequence->pushbackAction( TraceEditSequence::recordTimeShifterAction );
-  mySequence->pushbackAction( TraceEditSequence::traceWriterAction );
-  //mySequence->pushbackAction( TraceEditSequence::traceSortAction ); //?
+  mySequence->pushbackAction( TSequenceActions::traceParserAction );
+  mySequence->pushbackAction( TSequenceActions::recordTimeShifterAction );
+  mySequence->pushbackAction( TSequenceActions::traceWriterAction );
+  //mySequence->pushbackAction( TSequenceActions::traceSortAction ); //?
 
   // State: max trace time
   //   Initialized by TraceParserAction
@@ -58,24 +58,24 @@ KTraceShifter::KTraceShifter( const KernelConnection *myKernel,
   //   Read        by TraceWriterAction
   MaxTraceTimeState *tmpMaxTraceTimeState = new MaxTraceTimeState( mySequence );
   tmpMaxTraceTimeState->setData( maxShiftTime );
-  mySequence->addState( TraceEditSequence::maxTraceTimeState, tmpMaxTraceTimeState );
+  mySequence->addState( TSequenceStates::maxTraceTimeState, tmpMaxTraceTimeState );
 
   // State: shift times
   ShiftTimesState *tmpShiftTimesState = new ShiftTimesState( mySequence );
   tmpShiftTimesState->setData( &shiftTimes );
-  mySequence->addState( TraceEditSequence::shiftTimesState, tmpShiftTimesState );
+  mySequence->addState( TSequenceStates::shiftTimesState, tmpShiftTimesState );
 
   ShiftLevelState *tmpShiftLevelState = new ShiftLevelState( mySequence );
   tmpShiftLevelState->setData( shiftLevel );
-  mySequence->addState( TraceEditSequence::shiftLevelState, tmpShiftLevelState );
+  mySequence->addState( TSequenceStates::shiftLevelState, tmpShiftLevelState );
 
   OutputTraceFileNameState *tmpOutputTraceFileNameState = new OutputTraceFileNameState( mySequence );
   tmpOutputTraceFileNameState->setData( traceOut );
-  mySequence->addState( TraceEditSequence::outputTraceFileNameState, tmpOutputTraceFileNameState );
+  mySequence->addState( TSequenceStates::outputTraceFileNameState, tmpOutputTraceFileNameState );
 
   EOFParsedState *tmpEOFParseState = new EOFParsedState( mySequence );
   tmpEOFParseState->setData( false );
-  mySequence->addState( TraceEditSequence::eofParsedState, tmpEOFParseState );
+  mySequence->addState( TSequenceStates::eofParsedState, tmpEOFParseState );
 
   traces.push_back( traceIn );
 }

@@ -348,7 +348,7 @@ bool FilterProxy::getOpTypeValue() const
 
 void FilterProxy::copyEventsSection( Filter *whichFilter )
 {
-  if ( whichFilter != NULL )
+  if ( whichFilter != nullptr )
   {
     vector< TEventType > etype;
     whichFilter->getEventType( etype );
@@ -375,7 +375,7 @@ void FilterProxy::copyEventsSection( Filter *whichFilter )
 
 void FilterProxy::copyCommunicationsSection( Filter *whichFilter )
 {
-  if ( whichFilter != NULL )
+  if ( whichFilter != nullptr )
   {
     setLogical( whichFilter->getLogical() );
     setPhysical( whichFilter->getPhysical() );

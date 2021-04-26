@@ -29,11 +29,11 @@
 using std::vector;
 using std::map;
 
-SyncWindows *SyncWindows::instance = NULL;
+SyncWindows *SyncWindows::instance = nullptr;
 
 SyncWindows *SyncWindows::getInstance()
 {
-  if( SyncWindows::instance == NULL )
+  if( SyncWindows::instance == nullptr )
     SyncWindows::instance = new SyncWindows();
   return SyncWindows::instance;
 }
@@ -203,7 +203,7 @@ void SyncWindows::broadcastTime( TGroupId whichGroup, Window *sendWindow, TTime 
     return;
 
   broadcastTimeTimelines( whichGroup, sendWindow, beginTime, endTime );
-  broadcastTimeHistograms( whichGroup, NULL, beginTime, endTime );
+  broadcastTimeHistograms( whichGroup, nullptr, beginTime, endTime );
 }
 
 void SyncWindows::broadcastTime( TGroupId whichGroup, Histogram *sendWindow, TTime beginTime, TTime endTime )
@@ -211,7 +211,7 @@ void SyncWindows::broadcastTime( TGroupId whichGroup, Histogram *sendWindow, TTi
   if( syncGroupsHistogram.find( whichGroup ) == syncGroupsHistogram.end() )
     return;
 
-  broadcastTimeTimelines( whichGroup, NULL, beginTime, endTime );
+  broadcastTimeTimelines( whichGroup, nullptr, beginTime, endTime );
   broadcastTimeHistograms( whichGroup, sendWindow, beginTime, endTime );
 }
 

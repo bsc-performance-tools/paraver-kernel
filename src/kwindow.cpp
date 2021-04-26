@@ -209,7 +209,7 @@ RecordList *KWindow::getRecordList( TObjectOrder whichObject )
 
 KWindow *KWindow::clone( bool recursiveClone )
 {
-  return NULL;
+  return nullptr;
 }
 
 void KWindow::getGroupLabels( PRV_UINT32 whichGroup, vector<string>& onVector ) const
@@ -227,7 +227,7 @@ bool KWindow::getParametersOfFunction( string whichFunction,
 
   SemanticFunction *tmp = FunctionManagement<SemanticFunction>::getInstance()->getFunction( whichFunction );
 
-  if( tmp != NULL )
+  if( tmp != nullptr )
   {
     numParameters = tmp->getMaxParam();
 
@@ -269,10 +269,10 @@ KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
 
   recordsByTimeThread.reserve( myTrace->totalThreads() );
   for( TThreadOrder i = 0; i < myTrace->totalThreads(); ++i )
-    recordsByTimeThread.push_back( NULL );
+    recordsByTimeThread.push_back( nullptr );
   recordsByTimeCPU.reserve( myTrace->totalCPUs() );
   for( TCPUOrder i = 0; i < myTrace->totalCPUs(); ++i )
-    recordsByTimeCPU.push_back( NULL );
+    recordsByTimeCPU.push_back( nullptr );
   if( myTrace->totalThreads() > myTrace->totalCPUs() )
   {
     intervalTopCompose1.reserve( myTrace->totalThreads() );
@@ -348,20 +348,20 @@ KSingleWindow::~KSingleWindow()
 {
   for( PRV_UINT32 twlIdx = ( PRV_UINT32 ) WORKLOAD; twlIdx <= ( PRV_UINT32 ) COMPOSECPU; ++twlIdx )
   {
-    if( functions[ ( TWindowLevel ) twlIdx ] != NULL )
+    if( functions[ ( TWindowLevel ) twlIdx ] != nullptr )
       delete functions[ ( TWindowLevel ) twlIdx ];
   }
   
   for( TObjectOrder i = 0; i < recordsByTimeThread.size(); ++i )
   {
-    if( recordsByTimeThread[ i ] != NULL )
+    if( recordsByTimeThread[ i ] != nullptr )
       delete recordsByTimeThread[ i ];
   }
   recordsByTimeThread.clear();
 
   for( TObjectOrder i = 0; i < recordsByTimeCPU.size(); ++i )
   {
-    if( recordsByTimeCPU[ i ] != NULL )
+    if( recordsByTimeCPU[ i ] != nullptr )
       delete recordsByTimeCPU[ i ];
   }
   recordsByTimeCPU.clear();
@@ -382,7 +382,7 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
 {
   for( PRV_UINT8 i = WORKLOAD; i <= COMPOSECPU; i++ )
   {
-    if( functions[ i ] != NULL )
+    if( functions[ i ] != nullptr )
       functions[ i ]->init( this );
   }
 
@@ -411,7 +411,7 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
     {
       for( TCPUOrder i = 0; i < myTrace->totalCPUs(); ++i )
       {
-        if( recordsByTimeCPU[ i ] != NULL )
+        if( recordsByTimeCPU[ i ] != nullptr )
           delete recordsByTimeCPU[ i ];
         recordsByTimeCPU[ i ] = myTrace->CPUBegin( i );
       }
@@ -423,7 +423,7 @@ void KSingleWindow::init( TRecordTime initialTime, TCreateList create, bool upda
   {
     for( TThreadOrder i = 0; i < myTrace->totalThreads(); ++i )
     {
-      if( recordsByTimeThread[ i ] != NULL )
+      if( recordsByTimeThread[ i ] != nullptr )
         delete recordsByTimeThread[ i ];
       recordsByTimeThread[ i ] = myTrace->threadBegin( i );
     }
@@ -451,14 +451,14 @@ bool KSingleWindow::setLevelFunction( TWindowLevel whichLevel,
   if( whichLevel == DERIVED )
     return false;
 
-  if( functions[ whichLevel ] != NULL )
+  if( functions[ whichLevel ] != nullptr )
     delete functions[ whichLevel ];
 
   functions[ whichLevel ] =
     ( FunctionManagement<SemanticFunction>::getInstance() )->
     getFunction( whichFunction );
 
-  if( functions[ whichLevel ] == NULL )
+  if( functions[ whichLevel ] == nullptr )
     return false;
 
   return true;
@@ -615,7 +615,7 @@ bool KSingleWindow::setExtraLevelFunction( TWindowLevel whichLevel,
 
   it->second[ whichPosition ] = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( whichFunction );
 
-  if( it->second[ whichPosition ] == NULL )
+  if( it->second[ whichPosition ] == nullptr )
     return false;
 
   return true;
@@ -875,7 +875,7 @@ Interval *KSingleWindow::getLevelInterval( TWindowLevel whichLevel,
     return &intervalComposeCPU[ whichOrder ];
   else if( whichLevel == CPU )
     return &intervalCPU[ whichOrder ];
-  return NULL;
+  return nullptr;
 }
 
 SemanticInfoType KSingleWindow::getSemanticInfoType() const
@@ -980,13 +980,13 @@ KWindow *KSingleWindow::clone( bool recursiveClone )
 
   for( int i = 0; i < COMPOSECPU + 1; ++i )
   {
-    if( functions[ i ] != NULL )
+    if( functions[ i ] != nullptr )
     { 
       delete clonedKSWindow->functions[ i ];
       clonedKSWindow->functions[ i ] = functions[ i ]->clone();
     }
     else
-      clonedKSWindow->functions[ i ] = NULL;
+      clonedKSWindow->functions[ i ] = nullptr;
   }
 
   delete clonedKSWindow->myFilter;
@@ -996,20 +996,20 @@ KWindow *KSingleWindow::clone( bool recursiveClone )
   for( vector<MemoryTrace::iterator *>::const_iterator it = recordsByTimeCPU.begin();
        it != recordsByTimeCPU.end(); ++it )
   {
-    if( *it != NULL )
+    if( *it != nullptr )
       clonedKSWindow->recordsByTimeCPU.push_back( (*it)->clone() );
     else
-      clonedKSWindow->recordsByTimeCPU.push_back( NULL );
+      clonedKSWindow->recordsByTimeCPU.push_back( nullptr );
   }
 
   clonedKSWindow->recordsByTimeThread.clear();
   for( vector<MemoryTrace::iterator *>::const_iterator it = recordsByTimeThread.begin();
        it != recordsByTimeThread.end(); ++it )
   {
-    if( *it != NULL )
+    if( *it != nullptr )
       clonedKSWindow->recordsByTimeThread.push_back( (*it)->clone() );
     else
-      clonedKSWindow->recordsByTimeThread.push_back( NULL );
+      clonedKSWindow->recordsByTimeThread.push_back( nullptr );
   }
 
   return clonedKSWindow;
@@ -1018,7 +1018,7 @@ KWindow *KSingleWindow::clone( bool recursiveClone )
 
 void KSingleWindow::initSemanticFunctions()
 {
-  functions[ 0 ] = NULL;
+  functions[ 0 ] = nullptr;
 
   functions[ TOPCOMPOSE1 ] = new ComposeAsIs();
   functions[ TOPCOMPOSE2 ] = new ComposeAsIs();
@@ -1053,14 +1053,14 @@ KDerivedWindow::~KDerivedWindow()
 {
   for( PRV_UINT32 twlIdx = (PRV_UINT32)WORKLOAD; twlIdx <= (PRV_UINT32)DERIVED; ++twlIdx )
   {
-    if( functions[ (TWindowLevel)twlIdx ] != NULL )
+    if( functions[ (TWindowLevel)twlIdx ] != nullptr )
       delete functions[ (TWindowLevel)twlIdx ];
   }
 }
 
 void KDerivedWindow::setup( KTrace* whichTrace )
 {
-  if( whichTrace == NULL )
+  if( whichTrace == nullptr )
   {
     if( ( ( KTrace* )parents[ 0 ]->getTrace() )->getEndTime() >= ( ( KTrace* )parents[ 1 ]->getTrace() )->getEndTime() )
       myTrace = ( KTrace* )parents[ 0 ]->getTrace();
@@ -1160,14 +1160,14 @@ void KDerivedWindow::setup( KTrace* whichTrace )
 bool KDerivedWindow::setLevelFunction( TWindowLevel whichLevel,
                                        const string& whichFunction )
 {
-  if( functions[ whichLevel ] != NULL )
+  if( functions[ whichLevel ] != nullptr )
     delete functions[ whichLevel ];
 
   functions[ whichLevel ] =
     ( FunctionManagement<SemanticFunction>::getInstance() )->
     getFunction( whichFunction );
 
-  if( functions[ whichLevel ] == NULL )
+  if( functions[ whichLevel ] == nullptr )
     return false;
 
   return true;
@@ -1327,7 +1327,7 @@ bool KDerivedWindow::setExtraLevelFunction( TWindowLevel whichLevel,
 
   it->second[ whichPosition ] = ( FunctionManagement<SemanticFunction>::getInstance() )->getFunction( whichFunction );
 
-  if( it->second[ whichPosition ] == NULL )
+  if( it->second[ whichPosition ] == nullptr )
     return false;
 
   return true;
@@ -1489,7 +1489,7 @@ void KDerivedWindow::init( TRecordTime initialTime, TCreateList create, bool upd
 */
   for( PRV_UINT8 i = WORKLOAD; i <= DERIVED; ++i )
   {
-    if( functions[ i ] != NULL )
+    if( functions[ i ] != nullptr )
       functions[ i ]->init( this );
   }
 
@@ -1662,14 +1662,14 @@ Interval *KDerivedWindow::getLevelInterval( TWindowLevel whichLevel,
       return &intervalDerived[ whichOrder ];
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 void KDerivedWindow::setParent( PRV_UINT16 whichParent, Window *whichWindow )
 {
   parents[ whichParent ] = ( KWindow* )whichWindow;
-  if( parents[ 0 ] != NULL && parents[ 1 ] != NULL )
-    setup( NULL );
+  if( parents[ 0 ] != nullptr && parents[ 1 ] != nullptr )
+    setup( nullptr );
 }
 
 Window *KDerivedWindow::getParent( PRV_UINT16 whichParent ) const
@@ -1689,7 +1689,7 @@ TWindowLevel KDerivedWindow::getMinAcceptableLevel() const
 
   for( PRV_UINT16 i = 0; i < parents.size(); i++ )
   {
-    if( parents[ i ] != NULL && parents[ i ]->getLevel() > tmp )
+    if( parents[ i ] != nullptr && parents[ i ]->getLevel() > tmp )
       tmp = parents[ i ]->getLevel();
   }
 
@@ -1707,18 +1707,18 @@ KWindow *KDerivedWindow::clone( bool recursiveClone )
     if( recursiveClone )
       clonedKDerivedWindow->parents[ i ] = parents[ i ]->clone( recursiveClone );
     else
-      clonedKDerivedWindow->parents[ i ] = NULL;
+      clonedKDerivedWindow->parents[ i ] = nullptr;
     clonedKDerivedWindow->factor[ i ] = factor[ i ];
   }
 
   for ( PRV_UINT16 i = 0; i <= DERIVED; ++i )
   {
-    if( functions[ i ] != NULL )
+    if( functions[ i ] != nullptr )
     {
       clonedKDerivedWindow->functions[ i ] = functions[ i ]->clone();
     }
     else
-      clonedKDerivedWindow->functions[ i ] = NULL;
+      clonedKDerivedWindow->functions[ i ] = nullptr;
   }
 
   clonedKDerivedWindow->setup( myTrace );
@@ -1826,7 +1826,7 @@ SemanticInfoType KDerivedWindow::getSemanticInfoType() const
 
 void KDerivedWindow::initSemanticFunctions()
 {
-  functions[ 0 ] = NULL;
+  functions[ 0 ] = nullptr;
 
   functions[ TOPCOMPOSE1 ] = new ComposeAsIs();
   functions[ TOPCOMPOSE2 ] = new ComposeAsIs();
@@ -1841,7 +1841,7 @@ void KDerivedWindow::initSemanticFunctions()
   functions[ TASK ] = new Adding();
 
   functions[ COMPOSETHREAD ] = new ComposeAsIs();
-  functions[ THREAD ] = NULL;
+  functions[ THREAD ] = nullptr;
 
   functions[ COMPOSESYSTEM ] = new ComposeAsIs();
   functions[ SYSTEM ] = new Adding();
@@ -1852,7 +1852,7 @@ void KDerivedWindow::initSemanticFunctions()
   functions[ COMPOSECPU ] = new ComposeAsIs();
   functions[ CPU ] = new ActiveThread();
 
-  functions[ DERIVED ] = NULL;//new DerivedProduct();
+  functions[ DERIVED ] = nullptr;//new DerivedProduct();
 }
 
 

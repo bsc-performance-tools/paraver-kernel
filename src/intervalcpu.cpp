@@ -30,11 +30,11 @@ IntervalCPU::IntervalCPU( KSingleWindow *whichWindow, TWindowLevel whichLevel,
                           TObjectOrder whichOrder ):
   IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
 {
-  begin = NULL;
-  end = NULL;
-  function = NULL;
-  functionThread = NULL;
-  functionComposeThread = NULL;
+  begin = nullptr;
+  end = nullptr;
+  function = nullptr;
+  functionThread = nullptr;
+  functionComposeThread = nullptr;
 
 /*  TNodeOrder tmpNode;
   TCPUOrder tmpCPU;
@@ -51,21 +51,21 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
   currentValue = 0.0;
   currentInitialTime = initialTime;
 
-  if( displayList == NULL )
+  if( displayList == nullptr )
   {
     displayList = &myDisplayList;
     displayList->clear();
   }
 
   function = ( SemanticCPU * ) window->getSemanticFunction( level );
-  if( functionThread != NULL ) delete functionThread;
+  if( functionThread != nullptr ) delete functionThread;
   functionThread = ( SemanticThread * ) window->getSemanticFunction( THREAD )->clone();
-  if( functionComposeThread != NULL ) delete functionComposeThread;
+  if( functionComposeThread != nullptr ) delete functionComposeThread;
   functionComposeThread = ( SemanticCompose * ) window->getSemanticFunction( COMPOSETHREAD )->clone();
 
-  if( begin != NULL )
+  if( begin != nullptr )
     delete begin;
-  if( end != NULL )
+  if( end != nullptr )
     delete end;
 
   if( initialTime >= window->getTrace()->getEndTime() )
@@ -91,7 +91,7 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
        it != intervalCompose.end(); ++it )
   {
     (*it).second->setSemanticFunction( functionComposeThread );
-    (*it).second->init( initialTime, NOCREATE, NULL );
+    (*it).second->init( initialTime, NOCREATE, nullptr );
   }
 
   begin = window->getCPURecordByTime( order - 1 )->clone();
@@ -113,7 +113,7 @@ KRecordList *IntervalCPU::calcNext( KRecordList *displayList, bool initCalc )
 {
   SemanticHighInfo highInfo;
 
-  if( displayList == NULL )
+  if( displayList == nullptr )
     displayList = &myDisplayList;
 
   if( !initCalc )
@@ -135,7 +135,7 @@ KRecordList *IntervalCPU::calcNext( KRecordList *displayList, bool initCalc )
     intervalCompose[ begin->getThread() ]->setCustomChild( intervalThread[ begin->getThread() ] );
     intervalCompose[ begin->getThread() ]->setSemanticFunction( functionComposeThread );
 
-    intervalCompose[ begin->getThread() ]->init( currentInitialTime, NOCREATE, NULL );
+    intervalCompose[ begin->getThread() ]->init( currentInitialTime, NOCREATE, nullptr );
   }
 
   Interval *currentThread = intervalCompose[ begin->getThread() ];
@@ -147,7 +147,7 @@ KRecordList *IntervalCPU::calcNext( KRecordList *displayList, bool initCalc )
   {
     while( currentThread->getEndTime() <= begin->getTime() &&
            currentThread->getBeginTime() < window->getTrace()->getEndTime() )
-      currentThread->calcNext( NULL );
+      currentThread->calcNext( nullptr );
     if( currentThread->getBegin()->getCPU() != order )
       highInfo.values.push_back( 0.0 );
     else
@@ -164,7 +164,7 @@ KRecordList *IntervalCPU::calcPrev( KRecordList *displayList, bool initCalc )
 {
   SemanticHighInfo highInfo;
 
-  if( displayList == NULL )
+  if( displayList == nullptr )
     displayList = &myDisplayList;
 
   if( !initCalc )
@@ -189,13 +189,13 @@ KRecordList *IntervalCPU::calcPrev( KRecordList *displayList, bool initCalc )
     intervalCompose[ begin->getThread() ]->setCustomChild( intervalThread[ begin->getThread() ] );
     intervalCompose[ begin->getThread() ]->setSemanticFunction( functionComposeThread );
 
-    intervalCompose[ begin->getThread() ]->init( currentInitialTime, NOCREATE, NULL );
+    intervalCompose[ begin->getThread() ]->init( currentInitialTime, NOCREATE, nullptr );
   }
 
   Interval *currentThread = intervalCompose[ begin->getThread() ];
   while( currentThread->getBeginTime() >= begin->getTime() &&
          currentThread->getEndTime() > 0.0 )
-    currentThread->calcPrev( NULL );
+    currentThread->calcPrev( nullptr );
   highInfo.values.push_back( currentThread->getValue() );
   currentValue = function->execute( &highInfo );
 

@@ -33,21 +33,21 @@ KEventDrivenCutter::KEventDrivenCutter( const KernelConnection *myKernel,
   // Build sequence
   mySequence = new KTraceEditSequence( myKernel );
 
-  mySequence->pushbackAction( TraceEditSequence::traceParserAction );
-  mySequence->pushbackAction( TraceEditSequence::eventDrivenCutterAction );
+  mySequence->pushbackAction( TSequenceActions::traceParserAction );
+  mySequence->pushbackAction( TSequenceActions::eventDrivenCutterAction );
 
 
   OutputTraceFileNameState *tmpOutputTraceFileNameState = new OutputTraceFileNameState( mySequence );
   tmpOutputTraceFileNameState->setData( traceOut );
-  mySequence->addState( TraceEditSequence::outputTraceFileNameState, tmpOutputTraceFileNameState );
+  mySequence->addState( TSequenceStates::outputTraceFileNameState, tmpOutputTraceFileNameState );
 
   EOFParsedState *tmpEOFParseState = new EOFParsedState( mySequence );
   tmpEOFParseState->setData( false );
-  mySequence->addState( TraceEditSequence::eofParsedState, tmpEOFParseState );
+  mySequence->addState( TSequenceStates::eofParsedState, tmpEOFParseState );
 
   OnEventCutter *tmpOnEventCutter = new OnEventCutter( mySequence );
   tmpOnEventCutter->setData( whichEvent );
-  mySequence->addState( TraceEditSequence::onEventCutterState, tmpOnEventCutter );
+  mySequence->addState( TSequenceStates::onEventCutterState, tmpOnEventCutter );
 
   traces.push_back( traceIn );
 }

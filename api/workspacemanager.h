@@ -31,10 +31,11 @@
 #include "paraverkerneltypes.h"
 #include "workspace.h"
 
+enum class TWorkspaceSet { ALL = 0, DISTRIBUTED, USER_DEFINED };
+
 class WorkspaceManager
 {
   public:
-    enum TWorkspaceSet { ALL = 0, DISTRIBUTED, USER_DEFINED };
 
     static WorkspaceManager *getInstance();
 

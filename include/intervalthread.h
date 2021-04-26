@@ -36,32 +36,33 @@ class IntervalThread: public Interval
   public:
     IntervalThread()
     {
-      begin = NULL;
-      end = NULL;
-      function = NULL;
+      begin = nullptr;
+      end = nullptr;
+      function = nullptr;
     }
 
     IntervalThread( KSingleWindow *whichWindow, TWindowLevel whichLevel,
                     TObjectOrder whichOrder ):
         Interval( whichLevel, whichOrder ), window( whichWindow )
     {
-      function = NULL;
+      function = nullptr;
     }
 
     virtual ~IntervalThread()
     {
-      if ( begin != NULL )
+      if ( begin != nullptr )
         delete begin;
-      if ( end != NULL )
+      if ( end != nullptr )
         delete end;
     }
 
-    virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
-                              KRecordList *displayList = NULL );
-    virtual KRecordList *calcNext( KRecordList *displayList = NULL, bool initCalc = false );
-    virtual KRecordList *calcPrev( KRecordList *displayList = NULL, bool initCalc = false );
+    virtual KRecordList *init( TRecordTime initialTime,
+                               TCreateList create,
+                               KRecordList *displayList = nullptr ) override;
+    virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) override;
+    virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) override;
 
-    virtual KWindow *getWindow()
+    virtual KWindow *getWindow() override
     {
       return ( KWindow * ) window;
     }
@@ -71,10 +72,11 @@ class IntervalThread: public Interval
       function = whichFunction;
     }
 
-    virtual TWindowLevel getLevel() const
+    virtual TWindowLevel getLevel() const override
     {
       return THREAD;
     }
+
   protected:
     KSingleWindow *window;
     SemanticThread *function;
@@ -82,9 +84,9 @@ class IntervalThread: public Interval
 
   private:
     virtual MemoryTrace::iterator *getNextRecord( MemoryTrace::iterator *it,
-        KRecordList *displayList );
+                                                  KRecordList *displayList );
     virtual MemoryTrace::iterator *getPrevRecord( MemoryTrace::iterator *it,
-        KRecordList *displayList );
+                                                  KRecordList *displayList );
 
 };
 

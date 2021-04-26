@@ -31,7 +31,7 @@ bool stateOnSameTime( MemoryTrace::iterator *it, KSingleWindow *window )
 {
   bool finish = false;
   TRecordTime time = it->getTime();
-  MemoryTrace::iterator *nextState = NULL;
+  MemoryTrace::iterator *nextState = nullptr;
 
   nextState = it->clone();
 
@@ -53,7 +53,7 @@ TRecordTime timeToNextState( MemoryTrace::iterator *it, KSingleWindow *window )
 {
   bool finish = false;
   TRecordTime time = it->getTime();
-  MemoryTrace::iterator *nextState = NULL;
+  MemoryTrace::iterator *nextState = nullptr;
 
   nextState = it->clone();
 
@@ -97,7 +97,7 @@ TSemanticValue getTotalCommSize( MemoryTrace::iterator *itBegin,
                                  KSingleWindow *window )
 {
   TSemanticValue bytes = 0;
-  MemoryTrace::iterator *nextComm = NULL;
+  MemoryTrace::iterator *nextComm = nullptr;
 
   nextComm = itBegin->clone();
 
@@ -198,7 +198,7 @@ TSemanticValue getTotalSentCommSize( MemoryTrace::iterator *itBegin,
                                      KSingleWindow *window )
 {
   TSemanticValue bytes = 0;
-  MemoryTrace::iterator *nextComm = NULL;
+  MemoryTrace::iterator *nextComm = nullptr;
 
   nextComm = itBegin->clone();
 
@@ -582,7 +582,7 @@ TSemanticValue NextEventType::execute( const SemanticInfo *info )
   TSemanticValue tmp = 0;
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  MemoryTrace::iterator *nextEvent = NULL;
+  MemoryTrace::iterator *nextEvent = nullptr;
 
   nextEvent = myInfo->it->clone();
 
@@ -605,7 +605,7 @@ TSemanticValue NextEventValue::execute( const SemanticInfo *info )
   TSemanticValue tmp = 0;
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  MemoryTrace::iterator *nextEvent = NULL;
+  MemoryTrace::iterator *nextEvent = nullptr;
 
   nextEvent = myInfo->it->clone();
 
@@ -629,7 +629,7 @@ TSemanticValue AverageNextEventValue::execute( const SemanticInfo *info )
   TSemanticValue tmpTime = 0;
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  MemoryTrace::iterator *nextEvent = NULL;
+  MemoryTrace::iterator *nextEvent = nullptr;
 
   nextEvent = myInfo->it->clone();
 
@@ -659,7 +659,7 @@ TSemanticValue AverageLastEventValue::execute( const SemanticInfo *info )
   TSemanticValue tmpTime = 0;
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  MemoryTrace::iterator *nextEvent = NULL;
+  MemoryTrace::iterator *nextEvent = nullptr;
 
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
@@ -737,7 +737,7 @@ TSemanticValue IntervalBetweenEvents::execute( const SemanticInfo *info )
   TSemanticValue tmp = 0;
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  MemoryTrace::iterator *nextEvent = NULL;
+  MemoryTrace::iterator *nextEvent = nullptr;
 
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
@@ -807,7 +807,7 @@ TSemanticValue EventBytes::execute( const SemanticInfo *info )
   TSemanticValue tmp = 0;
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  MemoryTrace::iterator *nextEvent = NULL;
+  MemoryTrace::iterator *nextEvent = nullptr;
 
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
@@ -835,7 +835,7 @@ TSemanticValue EventSentBytes::execute( const SemanticInfo *info )
   TSemanticValue tmp = 0;
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
-  MemoryTrace::iterator *nextEvent = NULL;
+  MemoryTrace::iterator *nextEvent = nullptr;
 
   if ( myInfo->it->getType() == EMPTYREC )
     return 0;
@@ -896,7 +896,7 @@ string CommRecvPartner::name = "Comm Recv. Partner";
 TSemanticValue CommRecvPartner::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
-  MemoryTrace::iterator *nextComm = NULL;
+  MemoryTrace::iterator *nextComm = nullptr;
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
 
@@ -999,7 +999,7 @@ string NextRecvDuration::name = "Next Recv Dur.";
 TSemanticValue NextRecvDuration::execute( const SemanticInfo *info )
 {
   TSemanticValue tmp = 0;
-  MemoryTrace::iterator *nextComm = NULL;
+  MemoryTrace::iterator *nextComm = nullptr;
 
   const SemanticThreadInfo *myInfo = ( const SemanticThreadInfo * ) info;
 

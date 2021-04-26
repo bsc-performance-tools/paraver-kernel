@@ -40,7 +40,7 @@ string Workspace::getName() const
   return name;
 }
 
-WorkspaceValue::WorkspaceType Workspace::getType() const
+WorkspaceType Workspace::getType() const
 {
   return myType;
 }
@@ -65,7 +65,7 @@ void Workspace::setName( string& whichName )
   name = whichName;
 }
 
-void Workspace::setType( WorkspaceValue::WorkspaceType whichType )
+void Workspace::setType( WorkspaceType whichType )
 {
   myType = whichType;
   for( vector<WorkspaceValue>::iterator it = autoTypes.begin(); it != autoTypes.end(); ++it )

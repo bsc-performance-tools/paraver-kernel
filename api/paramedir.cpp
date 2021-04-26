@@ -174,19 +174,19 @@ std::map< string, string >::iterator currentCFG;
 // PRV Toolset
 string strXMLOptions( "" );
 bool needXMLOptionsFile = false;
-TraceOptions *traceOptions = NULL;
+TraceOptions *traceOptions = nullptr;
 
-TraceCutter *traceCutter = NULL;
-TraceFilter *traceFilter = NULL;
-TraceSoftwareCounters *traceSoftwareCounters = NULL;
+TraceCutter *traceCutter = nullptr;
+TraceFilter *traceFilter = nullptr;
+TraceSoftwareCounters *traceSoftwareCounters = nullptr;
 
-TraceShifter *traceShifter = NULL;
+TraceShifter *traceShifter = nullptr;
 string strShiftTimesFile( "" );
 
-EventDrivenCutter *eventDrivenCutter = NULL;
+EventDrivenCutter *eventDrivenCutter = nullptr;
 TEventType eventType = 0;
 
-EventTranslator *eventTranslator = NULL;
+EventTranslator *eventTranslator = nullptr;
 string eventTranslatorReferenceName("");
 
 // Message from CFGLoader. Must be changed to IDs and UI write its own message
@@ -578,7 +578,7 @@ std::string appendPathWorkingDirectory( KernelConnection *myKernel,
   if ( whichPath.substr( 0, 1 ) != PATHSEP )
   {
     char *currentWorkingDir = getenv( "PWD" );
-    if ( currentWorkingDir != NULL )
+    if ( currentWorkingDir != nullptr )
     {
       string auxPWD( currentWorkingDir );
       if ( auxPWD.substr( auxPWD.length() - 1, 1 ) == PATHSEP )
@@ -675,7 +675,7 @@ string applyFilters( KernelConnection *myKernel,
 
     if ( registeredTool[ i ] == TraceCutter::getID() )
     {
-      traceCutter = TraceCutter::create( myKernel, intermediateNameIn, intermediateNameOut, traceOptions, NULL );
+      traceCutter = TraceCutter::create( myKernel, intermediateNameIn, intermediateNameOut, traceOptions, nullptr );
       traceCutter->execute( (char *)intermediateNameIn.c_str(), (char *)intermediateNameOut.c_str() );
       myKernel->copyPCF( intermediateNameIn, intermediateNameOut );
     }
@@ -781,7 +781,7 @@ bool loadTrace( KernelConnection *myKernel )
 
   try
   {
-    trace = Trace::create( myKernel, sourceTraceName, option[ NO_LOAD ].active, NULL );
+    trace = Trace::create( myKernel, sourceTraceName, option[ NO_LOAD ].active, nullptr );
     loaded = true;
   }
   catch ( ParaverKernelException& ex )
@@ -810,7 +810,7 @@ void loadCFGs( KernelConnection *myKernel )
       output.setWindowTimeUnits( !option[ TIMELINE_TRACE_UNITS ].active );
 
       if ( histograms.begin() != histograms.end() &&
-           histograms[ histograms.size() - 1 ] != NULL )
+           histograms[ histograms.size() - 1 ] != nullptr )
         output.dumpHistogram( histograms[ histograms.size() - 1 ],
                               it->second,
                               option[ PRINT_PLANE ].active,
@@ -818,7 +818,7 @@ void loadCFGs( KernelConnection *myKernel )
                               true,
                               !option[ PREFERENCES_PRECISION ].active );
       else if( windows.begin() != windows.end() &&
-               windows[ windows.size() - 1 ] != NULL )
+               windows[ windows.size() - 1 ] != nullptr )
         output.dumpWindow( windows[ windows.size() - 1 ], it->second );
     }
     else
@@ -826,7 +826,7 @@ void loadCFGs( KernelConnection *myKernel )
 
     for ( PRV_UINT32 i = 0; i < histograms.size(); ++i )
     {
-      if ( histograms[ i ] != NULL )
+      if ( histograms[ i ] != nullptr )
         delete histograms[ i ];
     }
 
@@ -834,7 +834,7 @@ void loadCFGs( KernelConnection *myKernel )
 
     for ( PRV_UINT32 i = 0; i < windows.size(); ++i )
     {
-      if ( windows[ i ] != NULL )
+      if ( windows[ i ] != nullptr )
         delete windows[ i ];
     }
 
@@ -852,12 +852,12 @@ void testSequence( KernelConnection *myKernel )
   vector<std::string> tmpV;
   tmpV.push_back( "/home/eloy/traces/mpi_ping0000089274.prv" );
   TraceEditSequence *seq = TraceEditSequence::create( myKernel );
-  seq->pushbackAction( TraceEditSequence::testAction );
-  seq->pushbackAction( TraceEditSequence::traceCutterAction );
+  seq->pushbackAction( TSequenceActions::testAction );
+  seq->pushbackAction( TSequenceActions::traceCutterAction );
   TraceOptions *tmpOptions = TraceOptions::create( myKernel );
   TraceOptionsState *tmpOptionsState = new TraceOptionsState( seq );
   tmpOptionsState->setData( tmpOptions );
-  seq->addState( TraceEditSequence::traceOptionsState, tmpOptionsState );
+  seq->addState( TSequenceStates::traceOptionsState, tmpOptionsState );
   seq->execute( tmpV );
 }
 #endif
@@ -868,7 +868,7 @@ void testSequence( KernelConnection *myKernel )
 void testReadWritePerformance( KernelConnection *myKernel )
 {
   string traceFileName = "/home/eloy/traces/wxparaver_traza_no_carga/siesta.1.1500mcycles.prv";
-  KTrace myTrace( traceFileName, NULL, true );
+  KTrace myTrace( traceFileName, nullptr, true );
   std::fstream outputTrace;
   TraceBodyIO_v1 body;
 
@@ -902,7 +902,7 @@ void testReadWritePerformance( KernelConnection *myKernel )
 void testNewIteratorCloneMethod( KernelConnection *myKernel )
 {
   string traceFileName = "/home/eloy/traces/wxparaver_traza_no_carga/siesta.1.1500mcycles.prv";
-  KTrace myTrace( traceFileName, NULL, false );
+  KTrace myTrace( traceFileName, nullptr, false );
   std::fstream outputTrace;
   TraceBodyIO_v1 body;
 
@@ -966,19 +966,19 @@ int main( int argc, char *argv[] )
   if ( argc == 1 )
 #if 0
   {
-    KernelConnection *myKernel = new LocalKernel( NULL );
+    KernelConnection *myKernel = new LocalKernel( nullptr );
     testSequence( myKernel );
     return 1;
   }
 #elif 0
   {
-    KernelConnection *myKernel = new LocalKernel( NULL );
+    KernelConnection *myKernel = new LocalKernel( nullptr );
     testReadWritePerformance( myKernel );
     return 1;
   }
 #elif 0
   {
-    KernelConnection *myKernel = new LocalKernel( NULL );
+    KernelConnection *myKernel = new LocalKernel( nullptr );
     testNewIteratorCloneMethod( myKernel );
     return 1;
   }

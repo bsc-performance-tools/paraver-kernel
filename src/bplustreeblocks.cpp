@@ -44,7 +44,7 @@ const TRecordType BPlusTreeBlocks::commTypes[] =
  ****************************************/
 void BPlusTreeBlocks::newRecord()
 {
-  if ( currentBlock == NULL )
+  if ( currentBlock == nullptr )
   {
     blocks[0] = new TRecord[blockSize];
     memset( blocks[0], 0, blockSize * sizeof( TRecord ) );
@@ -62,10 +62,10 @@ void BPlusTreeBlocks::newRecord()
       currentRecord = 0;
     }
   }
-  currentBlock[currentRecord].next = NULL;
-  currentBlock[currentRecord].prev = NULL;
-  currentBlock[currentRecord].threadNext = NULL;
-  currentBlock[currentRecord].threadPrev = NULL;
+  currentBlock[currentRecord].next = nullptr;
+  currentBlock[currentRecord].prev = nullptr;
+  currentBlock[currentRecord].threadNext = nullptr;
+  currentBlock[currentRecord].threadPrev = nullptr;
   lastRecords.push_back( &currentBlock[currentRecord] );
   ++countInserted;
 }
@@ -135,7 +135,7 @@ void BPlusTreeBlocks::newComm( bool createRecords )
   if ( !createRecords )
   {
     for ( PRV_UINT8 i = 0; i < commTypeSize; ++i )
-      commRecords[ i ] = NULL;
+      commRecords[ i ] = nullptr;
   }
   else
   {
@@ -152,7 +152,7 @@ void BPlusTreeBlocks::newComm( bool createRecords )
 void BPlusTreeBlocks::setSenderThread( TThreadOrder whichThread )
 {
   communications[currentComm]->senderThread = whichThread;
-  if ( commRecords[logicalSend] != NULL )
+  if ( commRecords[logicalSend] != nullptr )
   {
     commRecords[logicalSend]->thread = whichThread;
     commRecords[physicalSend]->thread = whichThread;
@@ -169,7 +169,7 @@ void BPlusTreeBlocks::setSenderThread( TApplOrder whichAppl,
                               whichTask,
                               whichThread );
   communications[currentComm]->senderThread = globalThread;
-  if ( commRecords[logicalSend] != NULL )
+  if ( commRecords[logicalSend] != nullptr )
   {
     commRecords[logicalSend]->thread = globalThread;
     commRecords[physicalSend]->thread = globalThread;
@@ -181,7 +181,7 @@ void BPlusTreeBlocks::setSenderThread( TApplOrder whichAppl,
 void BPlusTreeBlocks::setSenderCPU( TCPUOrder whichCPU )
 {
   communications[currentComm]->senderCPU = whichCPU;
-  if ( commRecords[logicalSend] != NULL )
+  if ( commRecords[logicalSend] != nullptr )
   {
     commRecords[logicalSend]->CPU = whichCPU;
     commRecords[physicalSend]->CPU = whichCPU;
@@ -193,7 +193,7 @@ void BPlusTreeBlocks::setSenderCPU( TCPUOrder whichCPU )
 void BPlusTreeBlocks::setReceiverThread( TThreadOrder whichThread )
 {
   communications[currentComm]->receiverThread = whichThread;
-  if ( commRecords[logicalReceive] != NULL )
+  if ( commRecords[logicalReceive] != nullptr )
   {
     commRecords[logicalReceive]->thread = whichThread;
     commRecords[physicalReceive]->thread = whichThread;
@@ -210,7 +210,7 @@ void BPlusTreeBlocks::setReceiverThread( TApplOrder whichAppl,
                               whichTask,
                               whichThread );
   communications[currentComm]->receiverThread = globalThread;
-  if ( commRecords[logicalReceive] != NULL )
+  if ( commRecords[logicalReceive] != nullptr )
   {
     commRecords[logicalReceive]->thread = globalThread;
     commRecords[physicalReceive]->thread = globalThread;
@@ -222,7 +222,7 @@ void BPlusTreeBlocks::setReceiverThread( TApplOrder whichAppl,
 void BPlusTreeBlocks::setReceiverCPU( TCPUOrder whichCPU )
 {
   communications[currentComm]->receiverCPU = whichCPU;
-  if ( commRecords[logicalReceive] != NULL )
+  if ( commRecords[logicalReceive] != nullptr )
   {
     commRecords[logicalReceive]->CPU = whichCPU;
     commRecords[physicalReceive]->CPU = whichCPU;
@@ -244,7 +244,7 @@ void BPlusTreeBlocks::setCommSize( TCommSize whichSize )
 void BPlusTreeBlocks::setLogicalSend( TRecordTime whichTime )
 {
   communications[currentComm]->logicalSendTime = whichTime;
-  if ( commRecords[logicalSend] != NULL )
+  if ( commRecords[logicalSend] != nullptr )
   {
     commRecords[logicalSend]->time = whichTime;
     commRecords[remoteLogicalSend]->time = whichTime;
@@ -254,7 +254,7 @@ void BPlusTreeBlocks::setLogicalSend( TRecordTime whichTime )
 void BPlusTreeBlocks::setLogicalReceive( TRecordTime whichTime )
 {
   communications[currentComm]->logicalReceiveTime = whichTime;
-  if ( commRecords[logicalReceive] != NULL )
+  if ( commRecords[logicalReceive] != nullptr )
   {
     commRecords[logicalReceive]->time = whichTime;
     commRecords[remoteLogicalReceive]->time = whichTime;
@@ -264,7 +264,7 @@ void BPlusTreeBlocks::setLogicalReceive( TRecordTime whichTime )
 void BPlusTreeBlocks::setPhysicalSend( TRecordTime whichTime )
 {
   communications[currentComm]->physicalSendTime = whichTime;
-  if ( commRecords[physicalSend] != NULL )
+  if ( commRecords[physicalSend] != nullptr )
   {
     commRecords[physicalSend]->time = whichTime;
     commRecords[remotePhysicalSend]->time = whichTime;
@@ -274,7 +274,7 @@ void BPlusTreeBlocks::setPhysicalSend( TRecordTime whichTime )
 void BPlusTreeBlocks::setPhysicalReceive( TRecordTime whichTime )
 {
   communications[currentComm]->physicalReceiveTime = whichTime;
-  if ( commRecords[physicalReceive] != NULL )
+  if ( commRecords[physicalReceive] != nullptr )
   {
     commRecords[physicalReceive]->time = whichTime;
     commRecords[remotePhysicalReceive]->time = whichTime;

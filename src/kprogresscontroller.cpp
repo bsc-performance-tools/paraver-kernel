@@ -42,7 +42,7 @@ void KProgressController::setHandler( ProgressHandler whichHandler, void *caller
 
 void KProgressController::callHandler( ProgressController *not_used )
 {
-  handler( NULL, window );
+  handler( nullptr, window );
 }
 
 double KProgressController::getEndLimit() const
@@ -64,7 +64,7 @@ double KProgressController::getCurrentProgress() const
 void KProgressController::setCurrentProgress( double progress )
 {
   currentProgress = progress;
-  myPartner->callHandler( NULL );
+  myPartner->callHandler( nullptr );
 }
 
 void KProgressController::setPartner( ProgressController* partner )

@@ -140,86 +140,86 @@ class FilterProxy : public Filter
     virtual ~FilterProxy()
     {}
 
-    virtual void setLogical( bool newValue );
+    virtual void setLogical( bool newValue ) override;
 
-    virtual void setPhysical( bool newValue );
+    virtual void setPhysical( bool newValue ) override;
 
-    virtual bool getLogical();
+    virtual bool getLogical() override;
 
-    virtual bool getPhysical();
+    virtual bool getPhysical() override;
 
-    virtual void clearCommFrom();
-    virtual void insertCommFrom( TObjectOrder value );
-    virtual void getCommFrom( std::vector<TObjectOrder>& onVector ) const;
-    virtual void setCommFromFunction( std::string newFunction );
-    virtual std::string getCommFromFunction() const;
-    virtual TFilterNumParam getCommFromFunctionNumParams() const;
-    virtual bool allowedCommFromFunctionNumParams( TFilterNumParam numParams ) const;
+    virtual void clearCommFrom() override;
+    virtual void insertCommFrom( TObjectOrder value ) override;
+    virtual void getCommFrom( std::vector<TObjectOrder>& onVector ) const override;
+    virtual void setCommFromFunction( std::string newFunction ) override;
+    virtual std::string getCommFromFunction() const override;
+    virtual TFilterNumParam getCommFromFunctionNumParams() const override;
+    virtual bool allowedCommFromFunctionNumParams( TFilterNumParam numParams ) const override;
 
-    virtual void clearCommTo();
-    virtual void insertCommTo( TObjectOrder value );
-    virtual void getCommTo( std::vector<TObjectOrder>& onVector ) const;
-    virtual void setCommToFunction( std::string newFunction );
-    virtual std::string getCommToFunction() const;
-    virtual TFilterNumParam getCommToFunctionNumParams() const;
-    virtual bool allowedCommToFunctionNumParams( TFilterNumParam numParams ) const;
+    virtual void clearCommTo() override;
+    virtual void insertCommTo( TObjectOrder value ) override;
+    virtual void getCommTo( std::vector<TObjectOrder>& onVector ) const override;
+    virtual void setCommToFunction( std::string newFunction ) override;
+    virtual std::string getCommToFunction() const override;
+    virtual TFilterNumParam getCommToFunctionNumParams() const override;
+    virtual bool allowedCommToFunctionNumParams( TFilterNumParam numParams ) const override;
 
-    virtual void clearCommTags();
-    virtual void insertCommTag( TCommTag value );
-    virtual void getCommTag( std::vector<TCommTag>& onVector ) const;
-    virtual void setCommTagFunction( std::string newFunction );
-    virtual std::string getCommTagFunction() const;
-    virtual TFilterNumParam getCommTagFunctionNumParams() const;
-    virtual bool allowedCommTagFunctionNumParams( TFilterNumParam numParams ) const;
+    virtual void clearCommTags() override;
+    virtual void insertCommTag( TCommTag value ) override;
+    virtual void getCommTag( std::vector<TCommTag>& onVector ) const override;
+    virtual void setCommTagFunction( std::string newFunction ) override;
+    virtual std::string getCommTagFunction() const override;
+    virtual TFilterNumParam getCommTagFunctionNumParams() const override;
+    virtual bool allowedCommTagFunctionNumParams( TFilterNumParam numParams ) const override;
 
-    virtual void clearCommSizes();
-    virtual void insertCommSize( TCommSize value );
-    virtual void getCommSize( std::vector<TCommSize>& onVector ) const;
-    virtual void setCommSizeFunction( std::string newFunction );
-    virtual std::string getCommSizeFunction() const;
-    virtual TFilterNumParam getCommSizeFunctionNumParams() const;
-    virtual bool allowedCommSizeFunctionNumParams( TFilterNumParam numParams ) const;
+    virtual void clearCommSizes() override;
+    virtual void insertCommSize( TCommSize value ) override;
+    virtual void getCommSize( std::vector<TCommSize>& onVector ) const override;
+    virtual void setCommSizeFunction( std::string newFunction ) override;
+    virtual std::string getCommSizeFunction() const override;
+    virtual TFilterNumParam getCommSizeFunctionNumParams() const override;
+    virtual bool allowedCommSizeFunctionNumParams( TFilterNumParam numParams ) const override;
 
-    virtual void clearBandWidth();
-    virtual void insertBandWidth( TSemanticValue value );
-    virtual void getBandWidth( std::vector<TSemanticValue>& onVector ) const;
-    virtual void setBandWidthFunction( std::string newFunction );
-    virtual std::string getBandWidthFunction() const;
-    virtual TFilterNumParam getBandWidthFunctionNumParams() const;
-    virtual bool allowedBandWidthFunctionNumParams( TFilterNumParam numParams ) const;
+    virtual void clearBandWidth() override;
+    virtual void insertBandWidth( TSemanticValue value ) override;
+    virtual void getBandWidth( std::vector<TSemanticValue>& onVector ) const override;
+    virtual void setBandWidthFunction( std::string newFunction ) override;
+    virtual std::string getBandWidthFunction() const override;
+    virtual TFilterNumParam getBandWidthFunctionNumParams() const override;
+    virtual bool allowedBandWidthFunctionNumParams( TFilterNumParam numParams ) const override;
 
-    virtual void clearEventTypes();
-    virtual void insertEventType( TEventType value );
-    virtual void getEventType( std::vector<TEventType>& onVector ) const;
-    virtual void setEventTypeFunction( std::string newFunction );
-    virtual std::string getEventTypeFunction() const;
-    virtual TFilterNumParam getEventTypeFunctionNumParams() const;
-    virtual bool allowedEventTypeFunctionNumParams( TFilterNumParam numParams ) const;
+    virtual void clearEventTypes() override;
+    virtual void insertEventType( TEventType value ) override;
+    virtual void getEventType( std::vector<TEventType>& onVector ) const override;
+    virtual void setEventTypeFunction( std::string newFunction ) override;
+    virtual std::string getEventTypeFunction() const override;
+    virtual TFilterNumParam getEventTypeFunctionNumParams() const override;
+    virtual bool allowedEventTypeFunctionNumParams( TFilterNumParam numParams ) const override;
     virtual void getValidEvents( std::vector<TEventType>& onVector,
-                                 const std::set<TEventType>& eventsLoaded ) const;
+                                 const std::set<TEventType>& eventsLoaded ) const override;
 
-    virtual void clearEventValues();
-    virtual void insertEventValue( TSemanticValue value );
-    virtual void getEventValue( std::vector<TSemanticValue>& onVector ) const;
-    virtual void setEventValueFunction( std::string newFunction );
-    virtual std::string getEventValueFunction() const;
-    virtual TFilterNumParam getEventValueFunctionNumParams() const;
-    virtual bool allowedEventValueFunctionNumParams( TFilterNumParam numParams ) const;
+    virtual void clearEventValues() override;
+    virtual void insertEventValue( TSemanticValue value ) override;
+    virtual void getEventValue( std::vector<TSemanticValue>& onVector ) const override;
+    virtual void setEventValueFunction( std::string newFunction ) override;
+    virtual std::string getEventValueFunction() const override;
+    virtual TFilterNumParam getEventValueFunctionNumParams() const override;
+    virtual bool allowedEventValueFunctionNumParams( TFilterNumParam numParams ) const override;
 
 
-    virtual void setOpFromToAnd();
-    virtual void setOpFromToOr();
-    virtual void setOpTagSizeAnd();
-    virtual void setOpTagSizeOr();
-    virtual void setOpTypeValueAnd();
-    virtual void setOpTypeValueOr();
+    virtual void setOpFromToAnd() override;
+    virtual void setOpFromToOr() override;
+    virtual void setOpTagSizeAnd() override;
+    virtual void setOpTagSizeOr() override;
+    virtual void setOpTypeValueAnd() override;
+    virtual void setOpTypeValueOr() override;
 
-    virtual bool getOpFromTo() const;
-    virtual bool getOpTagSize() const;
-    virtual bool getOpTypeValue() const;
+    virtual bool getOpFromTo() const override;
+    virtual bool getOpTagSize() const override;
+    virtual bool getOpTypeValue() const override;
 
-    virtual void copyEventsSection( Filter *filter );
-    virtual void copyCommunicationsSection( Filter *filter );
+    virtual void copyEventsSection( Filter *filter ) override;
+    virtual void copyCommunicationsSection( Filter *filter ) override;
 
   private:
     Filter *myFilter;

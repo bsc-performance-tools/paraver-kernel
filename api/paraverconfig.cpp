@@ -45,11 +45,11 @@
 
 using namespace std;
 
-ParaverConfig *ParaverConfig::instance = NULL;
+ParaverConfig *ParaverConfig::instance = nullptr;
 
 ParaverConfig *ParaverConfig::getInstance()
 {
-  if ( ParaverConfig::instance == NULL )
+  if ( ParaverConfig::instance == nullptr )
     ParaverConfig::instance = new ParaverConfig();
   return ParaverConfig::instance;
 }
@@ -67,10 +67,10 @@ ParaverConfig::ParaverConfig() : isModified( false )
   homedir.append( getenv( "HOMEPATH" ) );
 
   char myPath[ MAX_LEN_PATH ];
-  HMODULE hModule = GetModuleHandle( NULL );
-  if ( hModule != NULL )
+  HMODULE hModule = GetModuleHandle( nullptr );
+  if ( hModule != nullptr )
   {
-    GetModuleFileName( NULL, myPath, ( sizeof( myPath ) ));
+    GetModuleFileName( nullptr, myPath, ( sizeof( myPath ) ));
     PathRemoveFileSpec( myPath );
     string tmpParaverPath( myPath );
     paraverHomeDir = tmpParaverPath.substr( 0, tmpParaverPath.size() - 4 );
@@ -96,7 +96,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   if( homedir.empty() )
   {
     struct passwd *pwd = getpwuid( getuid() );
-    if( pwd != NULL )
+    if( pwd != nullptr )
     {
       homedir = string( pwd->pw_dir );
     }
@@ -121,7 +121,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   paraverXMLDir       = homedir;
   paraverTutorialsDir = homedir + std::string( "/paraver-tutorials" );
 #else // not __APPLE__
-  if ( getenv( "PARAVER_HOME" ) == NULL )
+  if ( getenv( "PARAVER_HOME" ) == nullptr )
   {
     paraverHomeDir       = homedir;
     paraverCFGsDir       = homedir;
@@ -174,22 +174,22 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlTimeline.viewCommunicationsLines = true;
   //DEPRECATED
   xmlTimeline.viewFunctionAsColor = true;
-  xmlTimeline.color = SemanticColor::COLOR;
+  xmlTimeline.color = TColorFunction::COLOR;
   xmlTimeline.drawmodeTime = DRAW_MAXIMUM;
   xmlTimeline.drawmodeObjects = DRAW_MAXIMUM;
-  xmlTimeline.gradientFunction = GradientColor::LINEAR;
+  xmlTimeline.gradientFunction = TGradientFunction::LINEAR;
   xmlTimeline.semanticScaleMinAtZero = false;
   xmlTimeline.pixelSize = 0;
-  xmlTimeline.objectLabels = Window::SPACED_LABELS;
-  xmlTimeline.objectAxisSize = Window::CURRENT_LEVEL;
+  xmlTimeline.objectLabels =  TObjectLabels::SPACED_LABELS;
+  xmlTimeline.objectAxisSize = TObjectAxisSize::CURRENT_LEVEL;
   xmlTimeline.whatWhereSemantic = true;
   xmlTimeline.whatWhereEvents = false;
   xmlTimeline.whatWhereCommunications = false;
   xmlTimeline.whatWherePreviousNext = false;
   xmlTimeline.whatWhereText = true;
   xmlTimeline.whatWhereEventPixels = 5;
-  xmlTimeline.saveTextFormat = CSV;
-  xmlTimeline.saveImageFormat = PNG;
+  xmlTimeline.saveTextFormat = TTextFormat::CSV;
+  xmlTimeline.saveImageFormat = TImageFormat::PNG;
 
   xmlHistogram.viewZoom = true;
   xmlHistogram.viewFirstRowColored = false;
@@ -205,12 +205,12 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlHistogram.autofitControlScaleZero = false;
   xmlHistogram.autofitDataGradient = true;
   xmlHistogram.autofitThirdDimensionScale = true;
-  xmlHistogram.gradientFunction = GradientColor::LINEAR;
+  xmlHistogram.gradientFunction = TGradientFunction::LINEAR;
   xmlHistogram.drawmodeSemantic = DRAW_MAXIMUM;
   xmlHistogram.drawmodeObjects = DRAW_MAXIMUM;
   xmlHistogram.saveTextAsMatrix = true;
-  xmlHistogram.saveTextFormat = CSV;
-  xmlHistogram.saveImageFormat = PNG;
+  xmlHistogram.saveTextFormat = TTextFormat::CSV;
+  xmlHistogram.saveImageFormat = TImageFormat::PNG;
   xmlHistogram.pixelSize = 0;
   xmlHistogram.skipCreateDialog = false;
   xmlHistogram.onlyTotals = false;
@@ -535,7 +535,7 @@ void ParaverConfig::setTimelineViewFunctionAsColor( bool whichViewFunctionAsColo
   xmlTimeline.viewFunctionAsColor = whichViewFunctionAsColor;
 }
 
-void ParaverConfig::setTimelineColor( SemanticColor::TColorFunction whichColor )
+void ParaverConfig::setTimelineColor( TColorFunction whichColor )
 {
   isModified = isModified || ( xmlTimeline.color != whichColor );
   xmlTimeline.color = whichColor;
@@ -553,7 +553,7 @@ void ParaverConfig::setTimelineDrawmodeObjects( DrawModeMethod whichDrawmodeObje
   xmlTimeline.drawmodeObjects = whichDrawmodeObjects;
 }
 
-void ParaverConfig::setTimelineGradientFunction( GradientColor::TGradientFunction whichGradientFunction )
+void ParaverConfig::setTimelineGradientFunction( TGradientFunction whichGradientFunction )
 {
   isModified = isModified || ( xmlTimeline.gradientFunction != whichGradientFunction );
   xmlTimeline.gradientFunction = whichGradientFunction;
@@ -571,13 +571,13 @@ void ParaverConfig::setTimelinePixelSize( PRV_UINT32 whichPixelSize )
   xmlTimeline.pixelSize = whichPixelSize;
 }
 
-void ParaverConfig::setTimelineLabels( Window::TObjectLabels whichLabels )
+void ParaverConfig::setTimelineLabels( TObjectLabels whichLabels )
 {
   isModified = isModified || ( xmlTimeline.objectLabels != whichLabels );
   xmlTimeline.objectLabels = whichLabels;
 }
 
-void ParaverConfig::setTimelineObjectAxisSize( Window::TObjectAxisSize whichSize )
+void ParaverConfig::setTimelineObjectAxisSize( TObjectAxisSize whichSize )
 {
   isModified = isModified || ( xmlTimeline.objectAxisSize != whichSize );
   xmlTimeline.objectAxisSize = whichSize;
@@ -668,7 +668,7 @@ bool ParaverConfig::getTimelineViewFunctionAsColor() const
   return xmlTimeline.viewFunctionAsColor;
 }
 
-SemanticColor::TColorFunction ParaverConfig::getTimelineColor() const
+TColorFunction ParaverConfig::getTimelineColor() const
 {
   return xmlTimeline.color;
 }
@@ -683,7 +683,7 @@ DrawModeMethod ParaverConfig::getTimelineDrawmodeObjects() const
   return xmlTimeline.drawmodeObjects;
 }
 
-GradientColor::TGradientFunction ParaverConfig::getTimelineGradientFunction() const
+TGradientFunction ParaverConfig::getTimelineGradientFunction() const
 {
   return xmlTimeline.gradientFunction;
 }
@@ -698,12 +698,12 @@ PRV_UINT32 ParaverConfig::getTimelinePixelSize() const
   return xmlTimeline.pixelSize;
 }
 
-Window::TObjectLabels ParaverConfig::getTimelineLabels() const
+TObjectLabels ParaverConfig::getTimelineLabels() const
 {
   return xmlTimeline.objectLabels;
 }
 
-Window::TObjectAxisSize ParaverConfig::getTimelineObjectAxisSize() const
+TObjectAxisSize ParaverConfig::getTimelineObjectAxisSize() const
 {
   return xmlTimeline.objectAxisSize;
 }
@@ -738,12 +738,12 @@ PRV_INT16 ParaverConfig::getTimelineWhatWhereEventPixels() const
   return xmlTimeline.whatWhereEventPixels;
 }
 
-ParaverConfig::TTextFormat ParaverConfig::getTimelineSaveTextFormat() const
+TTextFormat ParaverConfig::getTimelineSaveTextFormat() const
 {
   return xmlTimeline.saveTextFormat;
 }
 
-ParaverConfig::TImageFormat ParaverConfig::getTimelineSaveImageFormat() const
+TImageFormat ParaverConfig::getTimelineSaveImageFormat() const
 {
   return xmlTimeline.saveImageFormat;
 }
@@ -834,7 +834,7 @@ void ParaverConfig::setHistogramAutofitThirdDimensionScale( bool whichAutofitThi
   xmlHistogram.autofitThirdDimensionScale = whichAutofitThirdDimensionScale;
 }
 
-void ParaverConfig::setHistogramGradientFunction( GradientColor::TGradientFunction whichGradientFunction )
+void ParaverConfig::setHistogramGradientFunction( TGradientFunction whichGradientFunction )
 {
   isModified = isModified || ( xmlHistogram.gradientFunction != whichGradientFunction );
   xmlHistogram.gradientFunction = whichGradientFunction;
@@ -964,7 +964,7 @@ bool ParaverConfig::getHistogramAutofitThirdDimensionScale() const
   return xmlHistogram.autofitThirdDimensionScale;
 }
 
-GradientColor::TGradientFunction ParaverConfig::getHistogramGradientFunction() const
+TGradientFunction ParaverConfig::getHistogramGradientFunction() const
 {
   return xmlHistogram.gradientFunction;
 }
@@ -984,12 +984,12 @@ bool ParaverConfig::getHistogramSaveTextAsMatrix() const
   return xmlHistogram.saveTextAsMatrix;
 }
 
-ParaverConfig::TTextFormat ParaverConfig::getHistogramSaveTextFormat() const
+TTextFormat ParaverConfig::getHistogramSaveTextFormat() const
 {
   return xmlHistogram.saveTextFormat;
 }
 
-ParaverConfig::TImageFormat ParaverConfig::getHistogramSaveImageFormat() const
+TImageFormat ParaverConfig::getHistogramSaveImageFormat() const
 {
   return xmlHistogram.saveImageFormat;
 }
@@ -1700,9 +1700,9 @@ void ParaverConfig::writeParaverConfigFile( bool writeBackup )
   //int len = tmpPath.length() + 1;
   //wchar_t *wText = new wchar_t[len];
   //memset(wText,0,len);
-  //::MultiByteToWideChar( CP_ACP, NULL, tmpPath.c_str(), -1, wText, len );
+  //::MultiByteToWideChar( CP_ACP, nullptr, tmpPath.c_str(), -1, wText, len );
 
-  SHCreateDirectoryEx( NULL, tmpPath.c_str(), NULL );
+  SHCreateDirectoryEx( nullptr, tmpPath.c_str(), nullptr );
   //delete []wText;
 #else
   strFile.append( "/.paraver/paraver" );
@@ -1749,9 +1749,9 @@ bool ParaverConfig::writeDefaultConfig()
   //int len = tmpPath.length() + 1;
   //wchar_t *wText = new wchar_t[len];
   //memset(wText,0,len);
-  //::MultiByteToWideChar( CP_ACP, NULL, tmpPath.c_str(), -1, wText, len );
+  //::MultiByteToWideChar( CP_ACP, nullptr, tmpPath.c_str(), -1, wText, len );
 
-  SHCreateDirectoryEx( NULL, tmpPath.c_str(), NULL );
+  SHCreateDirectoryEx( nullptr, tmpPath.c_str(), nullptr );
   //delete []wText;
 #else
   strFile.append( "/.paraver/paraver.xml" );

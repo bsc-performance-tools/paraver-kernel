@@ -35,6 +35,18 @@ using boost::posix_time::ptime;
 
 class Histogram;
 
+enum class TGroupID
+{
+  COLOR = 0,
+  GRADIENT_FUNCTION,
+  DRAWMODE,
+  PIXEL_SIZE,
+  IMAGE_FORMAT,
+  TEXT_FORMAT,
+  OBJECT_LABELS,
+  OBJECT_AXIS
+};
+
 class LabelConstructor
 {
   public:
@@ -87,24 +99,12 @@ class LabelConstructor
 
     static void transformToShort( std::string& onLabel, char beginDelimiter = '[', char endDelimiter = ']' );
 
-    enum TGroupID
-    {
-      COLOR = 0,
-      GRADIENT_FUNCTION,
-      DRAWMODE,
-      PIXEL_SIZE,
-      IMAGE_FORMAT,
-      TEXT_FORMAT,
-      OBJECT_LABELS,
-      OBJECT_AXIS
-    };
-
     static void getGUIGroupLabels( const TGroupID group, std::vector< std::string > &labels );
 
     static std::string getDate( bool reverseOrder = false );
 
-    static std::string getImageFileSuffix( const ParaverConfig::TImageFormat& format = ParaverConfig::PNG );
-    static std::string getDataFileSuffix( const ParaverConfig::TTextFormat& format = ParaverConfig::PLAIN );
+    static std::string getImageFileSuffix( const TImageFormat& format =  TImageFormat::PNG );
+    static std::string getDataFileSuffix( const TTextFormat& format = TTextFormat::PLAIN );
 
   private:
     static std::stringstream sstrObjectLabel;

@@ -43,7 +43,7 @@ const char *ParaverKernelException::errorMessage[] =
     "Requested Tool Name not defined: ",
     "Index out of range: ",
     "Download failed: ",
-    NULL
+    nullptr
   };
 
 const char *ParaverKernelException::what() throw()
@@ -52,7 +52,7 @@ const char *ParaverKernelException::what() throw()
 
   tmpStream << specificErrorMessage() << auxMessage << endl;
 
-  if ( file != NULL )
+  if ( file != nullptr )
     tmpStream << file << " " << line << endl;
 
   message = string( tmpStream.str() );

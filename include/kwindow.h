@@ -51,29 +51,29 @@ class KWindow: public Window
     }
     virtual ~KWindow();
 
-    virtual Filter *getFilter() const
+    virtual Filter *getFilter() const override
     {
-      return NULL;
+      return nullptr;
     }
 
-    Trace *getTrace() const
+    Trace *getTrace() const override
     {
       return myTrace;
     }
 
-    virtual TWindowLevel getLevel() const
+    virtual TWindowLevel getLevel() const override
     {
       return level;
     }
 
-    virtual void setLevel( TWindowLevel whichLevel )
+    virtual void setLevel( TWindowLevel whichLevel ) override
     {
       if ( whichLevel >= TOPCOMPOSE1 )
-        throw KWindowException( KWindowException::invalidLevel );
+        throw KWindowException( TKWindowErrorCode::invalidLevel );
       level = whichLevel;
     }
 
-    virtual TWindowLevel getMinAcceptableLevel() const
+    virtual TWindowLevel getMinAcceptableLevel() const override
     {
       TWindowLevel minAcceptableLevel = THREAD;
 
@@ -83,17 +83,17 @@ class KWindow: public Window
       return minAcceptableLevel;
     }
 
-    void setTimeUnit( TTimeUnit whichUnit )
+    void setTimeUnit( TTimeUnit whichUnit ) override
     {
       timeUnit = whichUnit;
     }
 
-    TTimeUnit getTimeUnit() const
+    TTimeUnit getTimeUnit() const override
     {
       return timeUnit;
     }
 
-    TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const
+    TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const override
     {
       if ( whichLevel == WORKLOAD )
         return COMPOSEWORKLOAD;
@@ -163,22 +163,22 @@ class KWindow: public Window
 
     virtual bool isDerivedWindow() const = 0;
 
-    TObjectOrder cpuObjectToWindowObject( TCPUOrder whichCPU );
-    TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread );
+    TObjectOrder cpuObjectToWindowObject( TCPUOrder whichCPU ) override;
+    TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread )override;
 
-    TObjectOrder getWindowLevelObjects() const;
+    TObjectOrder getWindowLevelObjects() const override;
 
-    TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const;
-    TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const;
-    TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime ) const;
-    TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime ) const;
+    TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const override;
+    TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const override;
+    TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime ) const override;
+    TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime ) const override;
 
-    virtual KWindow *clone( bool recursiveClone = false );
-    void getGroupLabels(  PRV_UINT32 whichGroup, std::vector<std::string>& onVector ) const;
+    virtual KWindow *clone( bool recursiveClone = false ) override;
+    void getGroupLabels(  PRV_UINT32 whichGroup, std::vector<std::string>& onVector ) const override;
     bool getParametersOfFunction( std::string whichFunction,
                                    PRV_UINT32 &numParameters,
                                    std::vector<std::string> &nameParameters,
-                                   std::vector< std::vector < double > > &defaultValues  ) const;
+                                   std::vector< std::vector < double > > &defaultValues  ) const override;
 
   protected:
     KTrace *myTrace;
@@ -256,69 +256,69 @@ class KSingleWindow: public KWindow
     }
 
     virtual bool setLevelFunction( TWindowLevel whichLevel,
-                                   const std::string& whichFunction );
-    virtual std::string getLevelFunction( TWindowLevel whichLevel );
-    virtual SemanticFunction *getSemanticFunction( TWindowLevel whichLevel );
-    virtual std::string getFirstUsefulFunction( );
-    virtual TWindowLevel getFirstFreeCompose() const;
-    virtual SemanticFunction *getFirstSemUsefulFunction();
+                                   const std::string& whichFunction ) override;
+    virtual std::string getLevelFunction( TWindowLevel whichLevel ) override;
+    virtual SemanticFunction *getSemanticFunction( TWindowLevel whichLevel ) override;
+    virtual std::string getFirstUsefulFunction( ) override;
+    virtual TWindowLevel getFirstFreeCompose() const override;
+    virtual SemanticFunction *getFirstSemUsefulFunction() override;
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
-                                   const TParamValue& newValue );
-    virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const;
+                                   const TParamValue& newValue ) override;
+    virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const override;
     virtual TParamValue getFunctionParam( TWindowLevel whichLevel,
-                                          TParamIndex whichParam ) const;
+                                          TParamIndex whichParam ) const override;
     virtual std::string getFunctionParamName( TWindowLevel whichLevel,
-                                         TParamIndex whichParam ) const;
+                                         TParamIndex whichParam ) const override;
 
     // Extra composes
-    virtual void addExtraCompose( TWindowLevel whichLevel );
-    virtual void removeExtraCompose( TWindowLevel whichLevel );
+    virtual void addExtraCompose( TWindowLevel whichLevel ) override;
+    virtual void removeExtraCompose( TWindowLevel whichLevel ) override;
     virtual bool setExtraLevelFunction( TWindowLevel whichLevel,
                                         size_t whichPosition,
-                                        const std::string& whichFunction );
+                                        const std::string& whichFunction ) override;
     virtual std::string getExtraLevelFunction( TWindowLevel whichLevel,
-                                               size_t whichPosition );
+                                               size_t whichPosition ) override;
     virtual void setExtraFunctionParam( TWindowLevel whichLevel,
                                         size_t whichPosition,
                                         TParamIndex whichParam,
-                                        const TParamValue& newValue );
-    virtual TParamIndex getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const;
+                                        const TParamValue& newValue ) override;
+    virtual TParamIndex getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const override;
     virtual TParamValue getExtraFunctionParam( TWindowLevel whichLevel,
                                                size_t whichPosition,
-                                               TParamIndex whichParam ) const;
+                                               TParamIndex whichParam ) const override;
     virtual std::string getExtraFunctionParamName( TWindowLevel whichLevel,
                                                    size_t whichPosition,
-                                                   TParamIndex whichParam ) const;
+                                                   TParamIndex whichParam ) const override;
 
-    virtual bool initFromBegin() const;
+    virtual bool initFromBegin() const override;
 
-    virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true );
-    virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits = true );
-    virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true );
-    virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true );
+    virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true ) override;
+    virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits = true ) override;
+    virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true ) override;
+    virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true ) override;
 
-    virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const;
-    virtual TRecordTime getEndTime( TObjectOrder whichObject ) const;
-    virtual TSemanticValue getValue( TObjectOrder whichObject ) const;
+    virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const override;
+    virtual TRecordTime getEndTime( TObjectOrder whichObject ) const override;
+    virtual TSemanticValue getValue( TObjectOrder whichObject ) const override;
 
     virtual Interval *getLevelInterval( TWindowLevel whichLevel,
                                         TObjectOrder whichOrder,
-                                        bool includeExtraCompose = false );
+                                        bool includeExtraCompose = false ) override;
 
-    virtual bool isDerivedWindow() const
+    virtual bool isDerivedWindow() const override
     {
       return false;
     }
 
-    virtual Filter *getFilter() const
+    virtual Filter *getFilter() const override
     {
       return (Filter *)myFilter;
     }
 
-    SemanticInfoType getSemanticInfoType() const;
+    SemanticInfoType getSemanticInfoType() const override;
 
-    virtual KWindow *clone( bool recursiveClone = false );
+    virtual KWindow *clone( bool recursiveClone = false ) override;
 
   protected:
     std::vector<MemoryTrace::iterator *> recordsByTimeThread;
@@ -367,8 +367,8 @@ class KDerivedWindow: public KWindow
 
       initSemanticFunctions();
 
-      parents.push_back( NULL );
-      parents.push_back( NULL );
+      parents.push_back( nullptr );
+      parents.push_back( nullptr );
     }
 
     KDerivedWindow( Window *window1, Window *window2 )
@@ -383,86 +383,86 @@ class KDerivedWindow: public KWindow
 
       parents.push_back( (KWindow*)window1 );
       parents.push_back( (KWindow*)window2 );
-      setup( NULL );
+      setup( nullptr );
     }
 
     virtual ~KDerivedWindow();
 
-    virtual void setParent( PRV_UINT16 whichParent, Window *whichWindow );
-    virtual Window *getParent( PRV_UINT16 whichParent ) const;
+    virtual void setParent( PRV_UINT16 whichParent, Window *whichWindow ) override;
+    virtual Window *getParent( PRV_UINT16 whichParent ) const override;
 
-    virtual void setLevel( TWindowLevel whichLevel );
-    virtual TWindowLevel getMinAcceptableLevel() const;
+    virtual void setLevel( TWindowLevel whichLevel ) override;
+    virtual TWindowLevel getMinAcceptableLevel() const override;
 
     virtual bool setLevelFunction( TWindowLevel whichLevel,
-                                   const std::string& whichFunction );
-    virtual std::string getLevelFunction( TWindowLevel whichLevel );
-    virtual SemanticFunction *getSemanticFunction( TWindowLevel whichLevel );
-    virtual std::string getFirstUsefulFunction( );
-    virtual TWindowLevel getFirstFreeCompose() const;
-    virtual SemanticFunction *getFirstSemUsefulFunction();
+                                   const std::string& whichFunction ) override;
+    virtual std::string getLevelFunction( TWindowLevel whichLevel ) override;
+    virtual SemanticFunction *getSemanticFunction( TWindowLevel whichLevel ) override;
+    virtual std::string getFirstUsefulFunction( ) override;
+    virtual TWindowLevel getFirstFreeCompose() const override;
+    virtual SemanticFunction *getFirstSemUsefulFunction() override;
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
-                                   const TParamValue& newValue );
-    virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const;
+                                   const TParamValue& newValue ) override;
+    virtual TParamIndex getFunctionNumParam( TWindowLevel whichLevel ) const override;
     virtual TParamValue getFunctionParam( TWindowLevel whichLevel,
-                                          TParamIndex whichParam ) const;
+                                          TParamIndex whichParam ) const override;
     virtual std::string getFunctionParamName( TWindowLevel whichLevel,
-                                              TParamIndex whichParam ) const;
+                                              TParamIndex whichParam ) const override;
 
     // Extra composes
-    virtual void addExtraCompose( TWindowLevel whichLevel );
-    virtual void removeExtraCompose( TWindowLevel whichLevel );
+    virtual void addExtraCompose( TWindowLevel whichLevel ) override;
+    virtual void removeExtraCompose( TWindowLevel whichLevel ) override;
     virtual bool setExtraLevelFunction( TWindowLevel whichLevel,
                                         size_t whichPosition,
-                                        const std::string& whichFunction );
+                                        const std::string& whichFunction ) override;
     virtual std::string getExtraLevelFunction( TWindowLevel whichLevel,
                                                size_t whichPosition );
     virtual void setExtraFunctionParam( TWindowLevel whichLevel,
                                         size_t whichPosition,
                                         TParamIndex whichParam,
-                                        const TParamValue& newValue );
-    virtual TParamIndex getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const;
+                                        const TParamValue& newValue ) override;
+    virtual TParamIndex getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const override;
     virtual TParamValue getExtraFunctionParam( TWindowLevel whichLevel,
                                                size_t whichPosition,
-                                               TParamIndex whichParam ) const;
+                                               TParamIndex whichParam ) const override;
     virtual std::string getExtraFunctionParamName( TWindowLevel whichLevel,
                                                    size_t whichPosition,
-                                                   TParamIndex whichParam ) const;
+                                                   TParamIndex whichParam ) const override;
 
-    virtual bool initFromBegin() const;
+    virtual bool initFromBegin() const override;
 
-    virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true );
-    virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits = true );
-    virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true );
-    virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true );
+    virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true ) override;
+    virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits = true ) override;
+    virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true ) override;
+    virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true ) override;
 
-    virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const;
-    virtual TRecordTime getEndTime( TObjectOrder whichObject ) const;
-    virtual TSemanticValue getValue( TObjectOrder whichObject ) const;
+    virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const override;
+    virtual TRecordTime getEndTime( TObjectOrder whichObject ) const override;
+    virtual TSemanticValue getValue( TObjectOrder whichObject ) const override;
 
     virtual Interval *getLevelInterval( TWindowLevel whichLevel,
                                         TObjectOrder whichOrder,
-                                        bool includeExtraCompose = false );
+                                        bool includeExtraCompose = false ) override;
 
-    virtual bool isDerivedWindow() const
+    virtual bool isDerivedWindow() const override
     {
       return true;
     }
 
-    void setFactor( PRV_UINT16 whichFactor, TSemanticValue newValue )
+    void setFactor( PRV_UINT16 whichFactor, TSemanticValue newValue ) override
     {
       factor[ whichFactor ] = newValue;
     }
 
-    TSemanticValue getFactor( PRV_UINT16 whichFactor ) const
+    TSemanticValue getFactor( PRV_UINT16 whichFactor ) const override
     {
       return factor[ whichFactor ];
     }
 
-    SemanticInfoType getSemanticInfoType() const;
+    SemanticInfoType getSemanticInfoType() const override;
 
-    virtual KWindow *clone( bool recursiveClone = false );
+    virtual KWindow *clone( bool recursiveClone = false ) override;
 
   protected:
     std::vector<KWindow *> parents;

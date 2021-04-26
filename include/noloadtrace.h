@@ -66,27 +66,27 @@ namespace NoLoad
 
           virtual ~iterator();
 
-          virtual void operator++();
-          virtual void operator--();
-          virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy );
+          virtual void operator++() override;
+          virtual void operator--() override;
+          virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy ) override;
 
-          virtual iterator *clone() const;
+          virtual iterator *clone() const override;
 
-          virtual TRecordType    getType() const;
-          virtual TRecordTime    getTime() const;
-          virtual TThreadOrder   getThread() const;
-          virtual TCPUOrder      getCPU() const;
-          virtual TObjectOrder   getOrder() const;
-          virtual TEventType     getEventType() const;
-          virtual TSemanticValue getEventValue() const;
-          virtual TEventValue    getEventValueAsIs() const;
-          virtual TState         getState() const;
-          virtual TRecordTime    getStateEndTime() const;
-          virtual TCommID        getCommIndex() const;
+          virtual TRecordType    getType() const override;
+          virtual TRecordTime    getTime() const override;
+          virtual TThreadOrder   getThread() const override;
+          virtual TCPUOrder      getCPU() const override;
+          virtual TObjectOrder   getOrder() const override;
+          virtual TEventType     getEventType() const override;
+          virtual TSemanticValue getEventValue() const override;
+          virtual TEventValue    getEventValueAsIs() const override;
+          virtual TState         getState() const override;
+          virtual TRecordTime    getStateEndTime() const override;
+          virtual TCommID        getCommIndex() const override;
 
-          virtual void           setTime( const TRecordTime whichTime );
-          virtual void           setType( const TRecordType whichType );
-          virtual void           setStateEndTime( const TRecordTime whichEndTime );
+          virtual void           setTime( const TRecordTime whichTime ) override;
+          virtual void           setType( const TRecordType whichType ) override;
+          virtual void           setStateEndTime( const TRecordTime whichEndTime ) override;
 
         protected:
           NoLoadBlocks *blocks;
@@ -113,14 +113,15 @@ namespace NoLoad
 
           virtual ~ThreadIterator();
 
-          virtual TThreadOrder getThread() const;
-          virtual TObjectOrder getOrder() const;
+          virtual TThreadOrder getThread() const override;
+          virtual TObjectOrder getOrder() const override;
 
-          virtual void operator++();
-          virtual void operator--();
-          virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy );
+          virtual void operator++() override;
+          virtual void operator--() override;
+          virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy ) override;
 
-          virtual ThreadIterator *clone() const;
+          virtual ThreadIterator *clone() const override;
+
         private:
           friend class NoLoadTrace;
       };
@@ -137,14 +138,15 @@ namespace NoLoad
 
           virtual ~CPUIterator();
 
-          virtual TThreadOrder getThread() const;
-          virtual TObjectOrder getOrder() const;
+          virtual TThreadOrder getThread() const override;
+          virtual TObjectOrder getOrder() const override;
 
-          virtual void operator++();
-          virtual void operator--();
-          virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy );
+          virtual void operator++() override;
+          virtual void operator--() override;
+          virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy ) override;
 
-          virtual CPUIterator *clone() const;
+          virtual CPUIterator *clone() const override;
+
         private:
           TCPUOrder cpu;
           std::vector<TThreadOrder> threads;
@@ -167,22 +169,22 @@ namespace NoLoad
 
       virtual ~NoLoadTrace();
 
-      virtual void insert( MemoryBlocks *blocks );
-      virtual TTime finish( TTime headerTime, Trace *whichTrace );
-      virtual MemoryTrace::iterator* empty() const;
-      virtual MemoryTrace::iterator* begin() const;
-      virtual MemoryTrace::iterator* end() const;
+      virtual void insert( MemoryBlocks *blocks ) override;
+      virtual TTime finish( TTime headerTime, Trace *whichTrace ) override;
+      virtual MemoryTrace::iterator* empty() const override;
+      virtual MemoryTrace::iterator* begin() const override;
+      virtual MemoryTrace::iterator* end() const override;
 
-      virtual MemoryTrace::iterator* threadBegin( TThreadOrder whichThread ) const;
-      virtual MemoryTrace::iterator* threadEnd( TThreadOrder whichThread ) const;
-      virtual MemoryTrace::iterator* CPUBegin( TCPUOrder whichCPU ) const;
-      virtual MemoryTrace::iterator* CPUEnd( TCPUOrder whichCPU ) const;
+      virtual MemoryTrace::iterator* threadBegin( TThreadOrder whichThread ) const override;
+      virtual MemoryTrace::iterator* threadEnd( TThreadOrder whichThread ) const override;
+      virtual MemoryTrace::iterator* CPUBegin( TCPUOrder whichCPU ) const override;
+      virtual MemoryTrace::iterator* CPUEnd( TCPUOrder whichCPU ) const override;
 
 
       virtual void getRecordByTimeThread( std::vector<MemoryTrace::iterator *>& listIter,
-                                          TRecordTime whichTime ) const;
+                                          TRecordTime whichTime ) const override;
       virtual void getRecordByTimeCPU( std::vector<MemoryTrace::iterator *>& listIter,
-                                       TRecordTime whichTime ) const;
+                                       TRecordTime whichTime ) const override;
 
     protected:
 
