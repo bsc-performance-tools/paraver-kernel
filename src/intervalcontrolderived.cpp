@@ -34,22 +34,22 @@ KRecordList *IntervalControlDerived::init( TRecordTime initialTime, TCreateList 
   createList = create;
   currentValue = 0.0;
 
-  if ( displayList == NULL )
+  if ( displayList == nullptr )
     displayList = &myDisplayList;
 
   function = ( SemanticDerived * ) window->getSemanticFunction( level );
 
   setChildren();
 
-  if ( begin != NULL )
+  if ( begin != nullptr )
   {
     delete begin;
-    begin = NULL;
+    begin = nullptr;
   }
-  if ( end != NULL )
+  if ( end != nullptr )
   {
     delete end;
-    end = NULL;
+    end = nullptr;
   }
 
   if ( function->getInitFromBegin() )
@@ -103,18 +103,18 @@ KRecordList *IntervalControlDerived::calcNext( KRecordList *displayList, bool in
 
   currentValue = 0;
 
-  if ( displayList == NULL )
+  if ( displayList == nullptr )
     displayList = &myDisplayList;
 
-  if ( begin != NULL )
+  if ( begin != nullptr )
   {
     delete begin;
-    begin = NULL;
+    begin = nullptr;
   }
-  if ( end != NULL )
+  if ( end != nullptr )
   {
     delete end;
-    end = NULL;
+    end = nullptr;
   }
 
   info.callingInterval = this;
@@ -159,18 +159,18 @@ KRecordList *IntervalControlDerived::calcPrev( KRecordList *displayList, bool in
 
   currentValue = 0;
 
-  if ( displayList == NULL )
+  if ( displayList == nullptr )
     displayList = &myDisplayList;
 
-  if ( begin != NULL )
+  if ( begin != nullptr )
   {
     delete begin;
-    begin = NULL;
+    begin = nullptr;
   }
-  if ( end != NULL )
+  if ( end != nullptr )
   {
     delete end;
-    end = NULL;
+    end = nullptr;
   }
 
   info.callingInterval = this;

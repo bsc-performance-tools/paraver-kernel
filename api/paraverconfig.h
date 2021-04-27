@@ -55,24 +55,24 @@ class PropertyFunction
     virtual void parseLine( std::istringstream& line, ParaverConfig& config ) = 0;
 };
 
+enum class TImageFormat
+{
+  BMP = 0,
+  JPG,
+  PNG,
+  XPM
+};
+
+enum class TTextFormat // << also matrix-row format
+{
+  CSV = 0,
+  GNUPLOT,
+  PLAIN
+};
+
 class ParaverConfig
 {
-  public:
-
-    enum TImageFormat
-    {
-      BMP = 0,
-      JPG,
-      PNG,
-      XPM
-    };
-
-    enum TTextFormat // << also matrix-row format
-    {
-      CSV = 0,
-      GNUPLOT,
-      PLAIN
-    };
+  public: 
 
     ParaverConfig();
     ~ParaverConfig();
@@ -139,14 +139,14 @@ class ParaverConfig
     void setTimelineViewEventsLines( bool whichViewEventLines );
     void setTimelineViewCommunicationsLines( bool whichViewCommunicationsLines );
     void setTimelineViewFunctionAsColor( bool whichViewFunctionAsColor );
-    void setTimelineColor( SemanticColor::TColorFunction whichColor );
+    void setTimelineColor( TColorFunction whichColor );
     void setTimelineDrawmodeTime( DrawModeMethod whichDrawmodeTime );
     void setTimelineDrawmodeObjects( DrawModeMethod whichDrawmodeObjects );
-    void setTimelineGradientFunction( GradientColor::TGradientFunction whichGradientFunction );
+    void setTimelineGradientFunction( TGradientFunction whichGradientFunction );
     void setTimelineSemanticScaleMinAtZero( bool whichMinAtZero );
     void setTimelinePixelSize( PRV_UINT32 whichPixelSize );
-    void setTimelineLabels( Window::TObjectLabels whichLabels );
-    void setTimelineObjectAxisSize( Window::TObjectAxisSize whichSize );
+    void setTimelineLabels( TObjectLabels whichLabels );
+    void setTimelineObjectAxisSize( TObjectAxisSize whichSize );
     void setTimelineWhatWhereSemantic( bool whichWhatWhereSemantic );
     void setTimelineWhatWhereEvents( bool whichWhatWhereEvents );
     void setTimelineWhatWhereCommunications( bool whichWhatWhereCommunications );
@@ -163,14 +163,14 @@ class ParaverConfig
     bool getTimelineViewEventsLines() const;
     bool getTimelineViewCommunicationsLines() const;
     bool getTimelineViewFunctionAsColor() const;
-    SemanticColor::TColorFunction getTimelineColor() const;
+    TColorFunction getTimelineColor() const;
     DrawModeMethod getTimelineDrawmodeTime() const;
     DrawModeMethod getTimelineDrawmodeObjects() const;
-    GradientColor::TGradientFunction getTimelineGradientFunction() const;
+    TGradientFunction getTimelineGradientFunction() const;
     bool getTimelineSemanticScaleMinAtZero() const;
     PRV_UINT32 getTimelinePixelSize() const;
-    Window::TObjectLabels getTimelineLabels() const;
-    Window::TObjectAxisSize getTimelineObjectAxisSize() const;
+    TObjectLabels getTimelineLabels() const;
+    TObjectAxisSize getTimelineObjectAxisSize() const;
     bool getTimelineWhatWhereSemantic() const;
     bool getTimelineWhatWhereEvents() const;
     bool getTimelineWhatWhereCommunications() const;
@@ -195,7 +195,7 @@ class ParaverConfig
     void setHistogramAutofitControlScaleZero( bool whichAutofitControlScaleZero );
     void setHistogramAutofitDataGradient( bool whichAutofitDataGradient );
     void setHistogramAutofitThirdDimensionScale( bool whichAutofitThirdDimensionScale );
-    void setHistogramGradientFunction( GradientColor::TGradientFunction whichGradientFunction );
+    void setHistogramGradientFunction( TGradientFunction whichGradientFunction );
     void setHistogramDrawmodeSemantic( DrawModeMethod whichDrawmodeSemantic );
     void setHistogramDrawmodeObjects( DrawModeMethod whichDrawmodeObjects );
     void setHistogramSaveTextAsMatrix( bool whichSaveTextAsMatrix );
@@ -220,7 +220,7 @@ class ParaverConfig
     bool getHistogramAutofitControlScaleZero() const;
     bool getHistogramAutofitDataGradient() const;
     bool getHistogramAutofitThirdDimensionScale() const;
-    GradientColor::TGradientFunction getHistogramGradientFunction() const;
+    TGradientFunction getHistogramGradientFunction() const;
     DrawModeMethod getHistogramDrawmodeSemantic() const;
     DrawModeMethod getHistogramDrawmodeObjects() const;
     bool getHistogramSaveTextAsMatrix() const;
@@ -464,14 +464,14 @@ class ParaverConfig
       bool viewCommunicationsLines;
       //DEPRECATED
       bool viewFunctionAsColor;
-      SemanticColor::TColorFunction color;
+      TColorFunction color;
       DrawModeMethod drawmodeTime;
       DrawModeMethod drawmodeObjects;
-      GradientColor::TGradientFunction gradientFunction;
+      TGradientFunction gradientFunction;
       bool semanticScaleMinAtZero;
       PRV_UINT32 pixelSize;
-      Window::TObjectLabels objectLabels;
-      Window::TObjectAxisSize objectAxisSize;
+      TObjectLabels objectLabels;
+      TObjectAxisSize objectAxisSize;
       bool whatWhereSemantic;
       bool whatWhereEvents;
       bool whatWhereCommunications;
@@ -534,7 +534,7 @@ class ParaverConfig
       bool autofitControlScaleZero;
       bool autofitDataGradient;
       bool autofitThirdDimensionScale;
-      GradientColor::TGradientFunction gradientFunction;
+      TGradientFunction gradientFunction;
       DrawModeMethod drawmodeSemantic;
       DrawModeMethod drawmodeObjects;
       bool saveTextAsMatrix;

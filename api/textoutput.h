@@ -42,7 +42,7 @@ class TextOutput:public Output
 
     void dumpWindow( Window *whichWindow,
                      std::string& strOutputFile,
-                     ProgressController *progress = NULL );
+                     ProgressController *progress = nullptr );
     void dumpHistogram( Histogram *whichHisto,
                         std::string& strOutputFile,
                         bool onlySelectedPlane = false,
@@ -50,7 +50,7 @@ class TextOutput:public Output
                         bool withLabels = true,
                         bool withPreferencesPrecision = true,
                         bool recalcHisto = true,
-                        ProgressController *progress = NULL );
+                        ProgressController *progress = nullptr );
 
     bool getMultipleFiles() const;
     void setMultipleFiles( bool newValue );
@@ -89,7 +89,7 @@ class TextOutput:public Output
                                THistogramColumn iPlane,
                                std::ofstream &outputfile,
                                bool withLabels,
-                               ProgressController *progress = NULL );
+                               ProgressController *progress = nullptr );
 
     void dumpMatrixVertical( Histogram *whichHisto,
                              TObjectOrder numRows,
@@ -99,7 +99,7 @@ class TextOutput:public Output
                              THistogramColumn iPlane,
                              std::ofstream &outputfile,
                              bool withLabels,
-                             ProgressController *progress = NULL );
+                             ProgressController *progress = nullptr );
 
     void dumpTotalColumns( Histogram *whichHisto,
                            HistogramTotals *totals,
@@ -109,7 +109,7 @@ class TextOutput:public Output
                            std::vector<THistogramColumn> printedColumns,
                            THistogramColumn iPlane,
                            std::ofstream &outputFile,
-                           ProgressController *progress = NULL );
+                           ProgressController *progress = nullptr );
 
     void dumpTotalRows( HistogramTotals *totals,
                         std::string totalName,
@@ -118,7 +118,7 @@ class TextOutput:public Output
                         TObjectOrder numRows,
                         THistogramColumn iPlane,
                         std::ofstream &outputFile,
-                        ProgressController *progress = NULL );
+                        ProgressController *progress = nullptr );
 
     void dumpMatrixCommHorizontal( Histogram *whichHisto,
                                    TObjectOrder numRows,
@@ -128,7 +128,7 @@ class TextOutput:public Output
                                    THistogramColumn iPlane,
                                    std::ofstream &outputfile,
                                    bool withLabels,
-                                   ProgressController *progress = NULL );
+                                   ProgressController *progress = nullptr );
 
     void dumpMatrixCommVertical( Histogram *whichHisto,
                                  TObjectOrder numRows,
@@ -138,7 +138,7 @@ class TextOutput:public Output
                                  THistogramColumn iPlane,
                                  std::ofstream &outputfile,
                                  bool withLabels,
-                                 ProgressController *progress = NULL );
+                                 ProgressController *progress = nullptr );
 
 };
 

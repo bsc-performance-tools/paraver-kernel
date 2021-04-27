@@ -34,7 +34,7 @@ KHistogramTotals::KHistogramTotals( KHistogramTotals *& source )
   columns = source->columns;
   stats = source->stats;
 
-  sort = NULL;
+  sort = nullptr;
   nullSort = source->nullSort;
 }
 
@@ -59,13 +59,13 @@ KHistogramTotals::KHistogramTotals( PRV_UINT16 numStat,
   for ( THistogramColumn iColumn = 0; iColumn < numColumns; iColumn++ )
     nullSort.push_back( iColumn );
 
-  sort = NULL;
+  sort = nullptr;
 }
 
 
 KHistogramTotals::~KHistogramTotals()
 {
-  if ( sort != NULL )
+  if ( sort != nullptr )
     delete sort;
 }
 
@@ -204,7 +204,7 @@ void KHistogramTotals::getAll( vector<TSemanticValue>& where,
 vector<int>& KHistogramTotals::sortByTotal( PRV_UINT16 idStat,
     THistogramColumn whichPlane )
 {
-  if ( sort != NULL )
+  if ( sort != nullptr )
     delete sort;
 
   sort = new SortIndex<TSemanticValue>( ( total[ whichPlane ] )[ idStat ] );
@@ -215,7 +215,7 @@ vector<int>& KHistogramTotals::sortByTotal( PRV_UINT16 idStat,
 vector<int>& KHistogramTotals::sortByAverage( PRV_UINT16 idStat,
     THistogramColumn whichPlane )
 {
-  if ( sort != NULL )
+  if ( sort != nullptr )
     delete sort;
 
   sort = new SortIndex<TSemanticValue>( ( average[ whichPlane ] )[ idStat ] );
@@ -226,7 +226,7 @@ vector<int>& KHistogramTotals::sortByAverage( PRV_UINT16 idStat,
 vector<int>& KHistogramTotals::sortByMaximum( PRV_UINT16 idStat,
     THistogramColumn whichPlane )
 {
-  if ( sort != NULL )
+  if ( sort != nullptr )
     delete sort;
 
   sort = new SortIndex<TSemanticValue>( ( maximum[ whichPlane ] )[ idStat ] );
@@ -237,7 +237,7 @@ vector<int>& KHistogramTotals::sortByMaximum( PRV_UINT16 idStat,
 vector<int>& KHistogramTotals::sortByMinimum( PRV_UINT16 idStat,
     THistogramColumn whichPlane )
 {
-  if ( sort != NULL )
+  if ( sort != nullptr )
     delete sort;
 
   sort = new SortIndex<TSemanticValue>( ( minimum[ whichPlane ] )[ idStat ] );
@@ -248,7 +248,7 @@ vector<int>& KHistogramTotals::sortByMinimum( PRV_UINT16 idStat,
 vector<int>& KHistogramTotals::sortByStdev( PRV_UINT16 idStat,
     THistogramColumn whichPlane )
 {
-  if ( sort != NULL )
+  if ( sort != nullptr )
     delete sort;
 
   sort = new SortIndex<TSemanticValue>( ( stdev[ whichPlane ] )[ idStat ] );
@@ -259,7 +259,7 @@ vector<int>& KHistogramTotals::sortByStdev( PRV_UINT16 idStat,
 vector<int>& KHistogramTotals::sortByAvgDivMax( PRV_UINT16 idStat,
     THistogramColumn whichPlane )
 {
-  if ( sort != NULL )
+  if ( sort != nullptr )
     delete sort;
 
   vector<TSemanticValue> tmpV;

@@ -27,28 +27,27 @@
 
 #include "paraverkernelexception.h"
 
+enum class TTraceHeaderErrorCode
+{
+  undefined = 0,
+  invalidApplNumber,
+  invalidTaskNumber,
+  invalidThreadNumber,
+  invalidNodeNumber,
+  invalidCPUNumber,
+  invalidTime,
+  invalidCommNumber,
+  unknownCommLine,
+  emptyBody,
+  LAST
+};
+
 class TraceHeaderException: public ParaverKernelException
 {
-
   public:
-    typedef enum
-    {
-      undefined = 0,
-      invalidApplNumber,
-      invalidTaskNumber,
-      invalidThreadNumber,
-      invalidNodeNumber,
-      invalidCPUNumber,
-      invalidTime,
-      invalidCommNumber,
-      unknownCommLine,
-      emptyBody,
-      LAST
-    } TErrorCode;
-
-    TraceHeaderException( TErrorCode whichCode = undefined,
+    TraceHeaderException( TTraceHeaderErrorCode whichCode = TTraceHeaderErrorCode::undefined,
                           const char *whichAuxMessage = "",
-                          const char *whichFile = NULL,
+                          const char *whichFile = nullptr,
                           TExceptionLine whichLine = 0 ) throw()
     {
       code = whichCode;
@@ -61,21 +60,20 @@ class TraceHeaderException: public ParaverKernelException
 
     static std::string moduleMessage;
 
-    TErrorCode code;
+    TTraceHeaderErrorCode code;
 
   private:
     static const char *errorMessage[];
 
-    virtual const char *specificErrorMessage() const
+    virtual const char *specificErrorMessage() const override
     {
-      return errorMessage[ code ];
+      return errorMessage[ static_cast< int >( code ) ];
     }
 
     virtual std::string& specificModuleMessage() const
     {
       return moduleMessage;
     }
-
 };
 
 #endif // TRACEHEADEREXCEPTION_H_INCLUDED

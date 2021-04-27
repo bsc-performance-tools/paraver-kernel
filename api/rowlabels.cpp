@@ -56,7 +56,7 @@ RowLabels::RowLabels( const string& filename )
 
   while ( !rowFile.eof() )
   {
-    vector<string> *tmpvector = NULL;
+    vector<string> *tmpvector = nullptr;
 
     getline( rowFile, strLine );
     if ( strLine.length() == 0 )
@@ -151,7 +151,7 @@ RowLabels::~RowLabels()
 
 string RowLabels::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const
 {
-  const vector<string> *tmpvector = NULL;
+  const vector<string> *tmpvector = nullptr;
   switch( whichLevel )
   {
     case THREAD:
@@ -176,10 +176,10 @@ string RowLabels::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) 
       tmpvector = &system;
       break;
     default:
-      tmpvector = NULL;
+      tmpvector = nullptr;
   }
 
-  if( tmpvector == NULL )
+  if( tmpvector == nullptr )
     return "";
   else
   {
@@ -197,7 +197,7 @@ string RowLabels::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) 
 
 void RowLabels::pushBack( TWindowLevel whichLevel, const string& rowLabel )
 {
-  vector<string> *tmpvector = NULL;
+  vector<string> *tmpvector = nullptr;
   switch( whichLevel )
   {
     case THREAD:
@@ -222,10 +222,10 @@ void RowLabels::pushBack( TWindowLevel whichLevel, const string& rowLabel )
       tmpvector = &system;
       break;
     default:
-      tmpvector = NULL;
+      tmpvector = nullptr;
   }
 
-  if( tmpvector != NULL )
+  if( tmpvector != nullptr )
   {
     tmpvector->push_back( rowLabel );
   }

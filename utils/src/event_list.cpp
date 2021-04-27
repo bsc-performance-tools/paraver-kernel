@@ -28,11 +28,11 @@
 #include "events.h"
 #include "papi_events.h"
 
-EventList *EventList::instance = NULL;
+EventList *EventList::instance = nullptr;
 
 EventList *EventList::getInstance()
 {
-  if( instance == NULL )
+  if( instance == nullptr )
     instance = new EventList();
   return instance;
 }
@@ -113,7 +113,7 @@ EventDescription *EventList::getByStringID( string whichStringID ) const
 {
   map<string, EventDescription *>::const_iterator it;
   if( ( it = stringMap.find( whichStringID ) ) == stringMap.end() )
-    return NULL;
+    return nullptr;
   return ( *it ).second;
 }
 
@@ -121,7 +121,7 @@ EventDescription *EventList::getByMpitID( prvEventType_t whichMpitID ) const
 {
   map<prvEventType_t, EventDescription *>::const_iterator it;
   if( ( it = mpitMap.find( whichMpitID ) ) == mpitMap.end() )
-    return NULL;
+    return nullptr;
   return ( *it ).second;
 }
 
@@ -131,9 +131,9 @@ EventDescription *EventList::getByTypeValue( prvEventType_t  whichType,
   map<prvEventType_t, map<prvEventValue_t, EventDescription *> >::const_iterator itType;
   map<prvEventValue_t, EventDescription *>::const_iterator itValue;
   if( ( itType = typeValueMap.find( whichType ) ) == typeValueMap.end() )
-    return NULL;
+    return nullptr;
   else if( ( itValue = ( *itType ).second.find( whichValue ) ) == ( *itType ).second.end() )
-    return NULL;
+    return nullptr;
 
   return ( *itValue ).second;
 }

@@ -39,9 +39,10 @@
 
 #include "paraverkerneltypes.h"
 
+enum class WorkspaceType { STATE = 1, EVENT };
+
 struct WorkspaceValue
 {
-  enum WorkspaceType { STATE = 1, EVENT };
   WorkspaceType myType;
 
   union
@@ -52,7 +53,7 @@ struct WorkspaceValue
 
   bool operator<( const WorkspaceValue& anotherValue ) const
   {
-    if( myType == STATE )
+    if( myType == WorkspaceType::STATE )
       return UInfo.state < anotherValue.UInfo.state;
     else
       return UInfo.eventType < anotherValue.UInfo.eventType;
@@ -63,7 +64,7 @@ struct WorkspaceValue
     if( myType != anotherValue.myType )
       return false;
 
-    if( myType == STATE )
+    if( myType == WorkspaceType::STATE )
       return UInfo.state == anotherValue.UInfo.state;
     else
       return UInfo.eventType == anotherValue.UInfo.eventType;
@@ -83,19 +84,19 @@ class Workspace
 {
   public:
     Workspace();
-    Workspace( std::string whichName, WorkspaceValue::WorkspaceType whichType ) : name( whichName ),
+    Workspace( std::string whichName, WorkspaceType whichType ) : name( whichName ),
                                                                                   myType( whichType )
     {}
     ~Workspace();
 
     virtual std::string getName() const;
-    virtual WorkspaceValue::WorkspaceType getType() const;
+    virtual WorkspaceType getType() const;
     virtual std::vector<WorkspaceValue> getAutoTypes() const;
     virtual std::vector<std::pair<std::string,std::string> > getHintCFGs() const;
     virtual std::pair<std::string,std::string> getHintCFG( size_t whichHint ) const;
 
     virtual void setName( std::string& whichName );
-    virtual void setType( WorkspaceValue::WorkspaceType whichType );
+    virtual void setType( WorkspaceType whichType );
     virtual void setAutoTypes( std::vector<WorkspaceValue>& whichAutoTypes );
     virtual void addHintCFG( std::pair<std::string,std::string>& whichCFG );
     virtual void addHintCFG( size_t position, std::pair<std::string,std::string>& whichCFG );
@@ -111,7 +112,7 @@ class Workspace
     {
       ar & boost::serialization::make_nvp( "name", name );
       if( version == 1 )
-        myType = WorkspaceValue::EVENT;
+        myType = WorkspaceType::EVENT;
       else if( version >= 2 )
         ar & boost::serialization::make_nvp( "type", myType );
 
@@ -122,7 +123,7 @@ class Workspace
         for( std::vector<TEventType>::iterator it = tmpEventTypes.begin(); it != tmpEventTypes.end(); ++it )
         {
           WorkspaceValue tmpWorkspaceValue;
-          tmpWorkspaceValue.myType = WorkspaceValue::EVENT;
+          tmpWorkspaceValue.myType = WorkspaceType::EVENT;
           tmpWorkspaceValue.UInfo.eventType = *it;
           autoTypes.push_back( tmpWorkspaceValue );
         }
@@ -135,7 +136,7 @@ class Workspace
 
   protected:
     std::string name;
-    WorkspaceValue::WorkspaceType myType;
+    WorkspaceType myType;
     std::vector<WorkspaceValue> autoTypes;
     std::vector<std::pair<std::string,std::string> > hintCFGs; // path, description
 

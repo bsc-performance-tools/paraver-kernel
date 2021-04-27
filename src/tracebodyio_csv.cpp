@@ -118,7 +118,7 @@ bool TraceBodyIO_csv::ordered() const
 }
 
 void TraceBodyIO_csv::read( TraceStream *file, MemoryBlocks& records,
-                           hash_set<TState>& states, hash_set<TEventType>& events,
+                           unordered_set<TState>& states, unordered_set<TEventType>& events,
                            MetadataManager& traceInfo ) const
 {
   file->getline( line );
@@ -220,7 +220,7 @@ inline void TraceBodyIO_csv::readTraceInfo(  const std::string& line, MetadataMa
 
 
 inline void TraceBodyIO_csv::readEvents( const string& line, MemoryBlocks& records,
-                                       hash_set<TEventType>& events ) const
+                                       unordered_set<TEventType>& events ) const
 { 
   TCPUOrder CPU = 0;
   TApplOrder appl;

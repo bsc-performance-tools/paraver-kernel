@@ -40,21 +40,21 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
   createList = create;
   currentValue = 0.0;
 
-  if ( displayList == NULL )
+  if ( displayList == nullptr )
     displayList = &myDisplayList;
 
   function = ( SemanticNotThread * ) window->getSemanticFunction( level );
 
   setChildren();
-  if ( begin != NULL )
+  if ( begin != nullptr )
   {
     delete begin;
-    begin = NULL;
+    begin = nullptr;
   }
-  if ( end != NULL )
+  if ( end != nullptr )
   {
     delete end;
-    end = NULL;
+    end = nullptr;
   }
 
   if ( function->getInitFromBegin() )
@@ -68,18 +68,18 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
   {
     childIntervals[ i ]->init( myInitTime, createList, displayList );
 
-    if ( begin == NULL ||
+    if ( begin == nullptr ||
          childIntervals[ i ]->getBegin()->getTime() > begin->getTime() )
     {
-      if ( begin != NULL )
+      if ( begin != nullptr )
         delete begin;
       begin = childIntervals[ i ]->getBegin()->clone();
     }
 
-    if ( end == NULL ||
+    if ( end == nullptr ||
          childIntervals[ i ]->getEnd()->getTime() < end->getTime() )
     {
-      if ( end != NULL )
+      if ( end != nullptr )
         delete end;
       end = childIntervals[ i ]->getEnd()->clone();
     }
@@ -99,17 +99,17 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
 
 KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCalc )
 {
-  if ( displayList == NULL )
+  if ( displayList == nullptr )
     displayList = &myDisplayList;
 
-  if ( begin != NULL )
+  if ( begin != nullptr )
     delete begin;
   begin = end->clone();
 
-  if( end != NULL )
+  if( end != nullptr )
   {
     delete end;
-    end = NULL;
+    end = nullptr;
   }
 
   TObjectOrder i = 0;
@@ -131,7 +131,7 @@ KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCal
     ++i;
     if( i >= childIntervals.size() ) break;
   }
-  if ( end != NULL )
+  if ( end != nullptr )
     delete end;
   end = childIntervals[ itChild->second ]->getEnd()->clone();
 
@@ -143,17 +143,17 @@ KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCal
 
 KRecordList *IntervalNotThread::calcPrev( KRecordList *displayList, bool initCalc )
 {
-  if ( displayList == NULL )
+  if ( displayList == nullptr )
     displayList = &myDisplayList;
 
-  if ( end != NULL )
+  if ( end != nullptr )
     delete end;
   end = begin->clone();
 
-  if( begin != NULL )
+  if( begin != nullptr )
   {
     delete begin;
-    begin = NULL;
+    begin = nullptr;
   }
 
   TObjectOrder i = 0;
@@ -172,7 +172,7 @@ KRecordList *IntervalNotThread::calcPrev( KRecordList *displayList, bool initCal
     ++i;
     if( i >= childIntervals.size() ) break;
   }
-  if ( begin != NULL )
+  if ( begin != nullptr )
     delete begin;
   begin = childIntervals[ itChild->second ]->getBegin()->clone();
 

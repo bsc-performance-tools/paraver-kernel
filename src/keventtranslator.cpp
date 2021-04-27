@@ -35,19 +35,19 @@ KEventTranslator::KEventTranslator( const KernelConnection *myKernel,
   // Build sequence
   mySequence = new KTraceEditSequence( myKernel );
   mySequence->pushbackAction( new PCFEventMergerAction( mySequence ) );
-  mySequence->pushbackAction( TraceEditSequence::traceFilterAction );
+  mySequence->pushbackAction( TSequenceActions::traceFilterAction );
 
   // Add sequence states
 
   // Sequence state 1: OutputTraceFileNameState
   OutputTraceFileNameState *tmpOutputTraceFileNameState = new OutputTraceFileNameState( mySequence );
   tmpOutputTraceFileNameState->setData( traceOut );
-  mySequence->addState( TraceEditSequence::outputTraceFileNameState, tmpOutputTraceFileNameState );
+  mySequence->addState( TSequenceStates::outputTraceFileNameState, tmpOutputTraceFileNameState );
 
   // Sequence state 2: PCFMergerReferenceState
   PCFMergerReferenceState *tmpPCFMergerReference = new PCFMergerReferenceState( mySequence );
   tmpPCFMergerReference->setData( traceReference );
-  mySequence->addState( TraceEditSequence::pcfMergerReferenceState, tmpPCFMergerReference );
+  mySequence->addState( TSequenceStates::pcfMergerReferenceState, tmpPCFMergerReference );
 
   // Sequence state 3: TraceOptions
   TraceOptions *tmpOptions = TraceOptions::create( myKernel );
@@ -76,17 +76,17 @@ KEventTranslator::KEventTranslator( const KernelConnection *myKernel,
 
   TraceOptionsState *tmpOptionsState = new TraceOptionsState( mySequence );
   tmpOptionsState->setData( tmpOptions );
-  mySequence->addState( TraceEditSequence::traceOptionsState, tmpOptionsState );
+  mySequence->addState( TSequenceStates::traceOptionsState, tmpOptionsState );
 
   // Sequence state 4: copyAdditionalFilesState
   CopyAdditionalFilesState *tmpCopyAdditionalFilesState = new CopyAdditionalFilesState( mySequence );
   tmpCopyAdditionalFilesState->setData( false );
-  mySequence->addState( TraceEditSequence::copyAdditionalFilesState, tmpCopyAdditionalFilesState );
+  mySequence->addState( TSequenceStates::copyAdditionalFilesState, tmpCopyAdditionalFilesState );
 
   // Sequence state 5: OnlyFilterState
   OnlyFilterState *tmpOnlyFilterState = new OnlyFilterState( mySequence );
   tmpOnlyFilterState->setData( false );
-  mySequence->addState( TraceEditSequence::onlyFilterState, tmpOnlyFilterState );
+  mySequence->addState( TSequenceStates::onlyFilterState, tmpOnlyFilterState );
 
   traces.push_back( traceIn );
 }
@@ -107,6 +107,6 @@ void KEventTranslator::execute( std::string traceIn,
 
 bool KEventTranslator::translationEmpty()
 {
-  return !((CopyAdditionalFilesState *)mySequence->getState( TraceEditSequence::copyAdditionalFilesState ))->getData();
+  return !((CopyAdditionalFilesState *)mySequence->getState( TSequenceStates::copyAdditionalFilesState ))->getData();
 }
 

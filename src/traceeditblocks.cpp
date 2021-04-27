@@ -57,7 +57,7 @@ TraceEditBlocks::~TraceEditBlocks()
 
 TData *TraceEditBlocks::getLastRecord( PRV_UINT16 position ) const
 {
-  return NULL;
+  return nullptr;
 }
 
 void TraceEditBlocks::newRecord()
@@ -352,7 +352,7 @@ void TraceEditBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UI
 {
   if( *record == &globalEndRec )
   {
-    *record = NULL;
+    *record = nullptr;
     return;
   }
   else if ( offset != -1 )
@@ -366,7 +366,7 @@ void TraceEditBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UI
     else if ( lastData.endOffset == endFileOffset )
     {
       offset = endFileOffset;
-      *record = NULL;
+      *record = nullptr;
       recPos = 0;
       return;
     }
@@ -379,7 +379,7 @@ void TraceEditBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UI
   if( file->tellg() == (std::streampos)endFileOffset )
   {
     offset = endFileOffset;
-    *record = NULL;
+    *record = nullptr;
     recPos = 0;
     return;
   }
@@ -401,7 +401,7 @@ void TraceEditBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UI
     if( lastData.records.size() == 0 && file->tellg() == (std::streampos)endFileOffset )
     {
       offset = endFileOffset;
-      *record = NULL;
+      *record = nullptr;
       recPos = 0;
       return;
     }

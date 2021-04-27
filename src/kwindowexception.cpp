@@ -33,6 +33,6 @@ const char *KWindowException::errorMessage[] =
   {
     "Undefined error: ",
     "Invalid level for kernel window: ",
-    NULL
+    nullptr
   };
 

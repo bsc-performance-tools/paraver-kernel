@@ -109,10 +109,10 @@ void KTraceFilter::filter_process_header( char *header )
 
   /* Obtaining the number of communicators */
   word = strrchr( header, ',' );
-  if ( word != NULL )
+  if ( word != nullptr )
   {
     strcpy( line, word + 1 );
-    if ( strchr( line, ')' ) != NULL )
+    if ( strchr( line, ')' ) != nullptr )
       return;
 
     num_comms = atoi( line );
@@ -204,7 +204,7 @@ int KTraceFilter::filter_allowed_type(  int appl, int task, int thread,
     else
     {
       /* Event de sortida, cal mirar si supera el temps minim */
-      if ( thread_call_info[appl][task][thread] == NULL )
+      if ( thread_call_info[appl][task][thread] == nullptr )
         type_allowed = 0;
       else
       {
@@ -213,7 +213,7 @@ int KTraceFilter::filter_allowed_type(  int appl, int task, int thread,
         else
         {
           type_allowed = 0;
-          thread_call_info[appl][task][thread] = NULL;
+          thread_call_info[appl][task][thread] = nullptr;
         }
       }
     }
@@ -243,7 +243,7 @@ void KTraceFilter::ini_progress_bar( char *file_name, ProgressController *progre
 
   current_read_size = 0;
 
-  if( progress != NULL)
+  if( progress != nullptr)
     progress->setEndLimit( total_trace_size );
 }
 
@@ -276,7 +276,7 @@ void KTraceFilter::show_progress_bar( ProgressController *progress )
   if ( is_zip_filter )
     current_read_size = current_read_size / TraceStream::GZIP_COMPRESSION_RATIO;
 
-  if( progress != NULL)
+  if( progress != nullptr)
     progress->setCurrentProgress( current_read_size );
 }
 
@@ -290,8 +290,8 @@ void KTraceFilter::load_pcf( char *pcf_name )
 
   state_name = (char *) malloc( sizeof(char) * MAX_STATE_NAME_SIZE );
 
-  /* Open the files.  If NULL is returned there was an error */
-  if ( ( infile = fopen( pcf_name, "r" ) ) == NULL )
+  /* Open the files.  If nullptr is returned there was an error */
+  if ( ( infile = fopen( pcf_name, "r" ) ) == nullptr )
   {
     printf( "Can't open file %s. Keeping all the states of the trace\n", pcf_name );
     all_states = 1;
@@ -299,21 +299,21 @@ void KTraceFilter::load_pcf( char *pcf_name )
   }
 
   /* Loading of state ids */
-  while ( fgets( line, sizeof( line ), infile ) != NULL )
+  while ( fgets( line, sizeof( line ), infile ) != nullptr )
   {
     if ( !strcmp( line, "STATES\n" ) )
     {
       int i;
-      while ( fgets( line, sizeof( line ), infile ) != NULL )
+      while ( fgets( line, sizeof( line ), infile ) != nullptr )
       {
         if ( !strcmp( line, "\n" ) ) return;
 
         sscanf( line, "%d %[^\n]", &state_id, state_name );
 
         i = 0;
-        while ( i < 20 && exec_options->state_names[i] != NULL )
+        while ( i < 20 && exec_options->state_names[i] != nullptr )
         {
-          if ( strstr( exec_options->state_names[i], state_name ) != NULL )
+          if ( strstr( exec_options->state_names[i], state_name ) != nullptr )
           {
             states_info.ids[states_info.last_id] = state_id;
             states_info.last_id++;
@@ -334,7 +334,7 @@ void KTraceFilter::dump_buffer()
   struct buffer_elem *elem, *elem_aux;
 
   elem = buffer_first;
-  while ( elem != NULL && elem->dump )
+  while ( elem != nullptr && elem->dump )
   {
     if ( elem->dump )
       fputs( elem->record, outfile );
@@ -346,8 +346,8 @@ void KTraceFilter::dump_buffer()
   }
 
   buffer_first = elem;
-  if ( buffer_first == NULL )
-    buffer_last = NULL;
+  if ( buffer_first == nullptr )
+    buffer_last = nullptr;
 }
 
 
@@ -378,13 +378,13 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
   min_state_time = 0;
   min_comm_size = 0;
   states_info.last_id = 0;
-  buffer_first = NULL;
-  buffer_last = NULL;
+  buffer_first = nullptr;
+  buffer_last = nullptr;
 
   for ( i = 0; i < MAX_APPL; i++ )
     for ( j = 0; j < MAX_TASK; j++ )
       for ( k = 0; k < MAX_THREAD; k++ )
-        thread_call_info[i][j][k] = NULL;
+        thread_call_info[i][j][k] = nullptr;
 
   /* Reading of the program arguments */
 
@@ -392,7 +392,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
   strcpy( trace_name, trace_in );
 
   /* Is the trace zipped ? */
-  if ( ( c = strrchr( trace_in, '.' ) ) != NULL )
+  if ( ( c = strrchr( trace_in, '.' ) ) != nullptr )
   {
     /* The names finishes with .gz */
     if ( !strcmp( c, ".gz" ) )
@@ -401,11 +401,11 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
       is_zip_filter = false;
   }
 
-  /* Open the files.  If NULL is returned there was an error */
+  /* Open the files.  If nullptr is returned there was an error */
   if ( !is_zip_filter )
   {
 #if defined(__FreeBSD__) || defined(__APPLE__)
-    if ( ( infile = fopen( trace_name, "r" ) ) == NULL )
+    if ( ( infile = fopen( trace_name, "r" ) ) == nullptr )
     {
       perror( "ERROR" );
       printf( "Error Opening File %s\n", trace_in );
@@ -419,7 +419,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
       exit( 1 );
     }
 #else
-    if ( ( infile = fopen64( trace_name, "r" ) ) == NULL )
+    if ( ( infile = fopen64( trace_name, "r" ) ) == nullptr )
     {
       perror( "ERROR" );
       printf( "Error Opening File %s\n", trace_in );
@@ -429,7 +429,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
   }
   else
   {
-    if ( ( gzInfile = gzopen( trace_name, "rb" ) ) == NULL )
+    if ( ( gzInfile = gzopen( trace_name, "rb" ) ) == nullptr )
     {
       printf( "Filter: Error opening compressed trace\n" );
       exit( 1 );
@@ -437,7 +437,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
   }
 
 #if defined(__FreeBSD__) || defined(__APPLE__)
-  if ( ( outfile = fopen( trace_out, "w" ) ) == NULL )
+  if ( ( outfile = fopen( trace_out, "w" ) ) == nullptr )
   {
     printf( "Error Opening File %s\n", trace_out );
     exit( 1 );
@@ -449,7 +449,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
     exit( 1 );
   }
 #else
-  if ( ( outfile = fopen64( trace_out, "w" ) ) == NULL )
+  if ( ( outfile = fopen64( trace_out, "w" ) ) == nullptr )
   {
     printf( "Error Opening File %s\n", trace_out );
     exit( 1 );
@@ -487,7 +487,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
   filter_process_header( trace_header );
   free( trace_header );
 
-  if ( progress != NULL )
+  if ( progress != nullptr )
     end_parsing = progress->getStop();
 
 
@@ -495,7 +495,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
   //int tmpline =0;
   while ( !end_parsing )
   {
-    if ( progress != NULL )
+    if ( progress != nullptr )
     {
       end_parsing = progress->getStop();
       if ( end_parsing )
@@ -505,7 +505,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
     /* Read one more record is possible */
     if ( !is_zip_filter )
     {
-      if ( fgets( line, sizeof( line ), infile ) == NULL )
+      if ( fgets( line, sizeof( line ), infile ) == nullptr )
       {
         end_parsing = true;
         continue;
@@ -513,7 +513,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
     }
     else
     {
-      if ( gzgets( gzInfile, line, sizeof( line ) ) == NULL )
+      if ( gzgets( gzInfile, line, sizeof( line ) ) == nullptr )
       {
         end_parsing = true;
         continue;
@@ -558,7 +558,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
           else
           {
             /* Insert on event buffer */
-            if ( ( new_elem = ( struct buffer_elem * )malloc( sizeof( struct buffer_elem ) ) ) == NULL )
+            if ( ( new_elem = ( struct buffer_elem * )malloc( sizeof( struct buffer_elem ) ) ) == nullptr )
             {
               printf( "NO MORE MEMORY!\n" );
               exit( 1 );
@@ -569,9 +569,9 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
             new_elem->appl = appl;
             new_elem->task = task;
             new_elem->thread = thread;
-            new_elem->next = NULL;
+            new_elem->next = nullptr;
 
-            if ( buffer_first == NULL )
+            if ( buffer_first == nullptr )
             {
               buffer_first = new_elem;
               buffer_last = new_elem;
@@ -623,7 +623,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
         print_record = false;
         word = strtok( &line[i+1], ":" );
         type = atoll( word );
-        word = strtok( NULL, ":" );
+        word = strtok( nullptr, ":" );
         value = atoll( word );
 
         if ( translationTable.size() > 0 )
@@ -653,10 +653,10 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
 
         while ( !end_line )
         {
-          if ( ( word = strtok( NULL, ":" ) ) != NULL )
+          if ( ( word = strtok( nullptr, ":" ) ) != nullptr )
           {
             type = atoll( word );
-            word = strtok( NULL, ":" );
+            word = strtok( nullptr, ":" );
             value = atoll( word );
 
             if ( translationTable.size() > 0 )
@@ -703,7 +703,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
           else
           {
             /* Insert on buffer */
-            if ( ( new_elem = ( struct buffer_elem * )malloc( sizeof( struct buffer_elem ) ) ) == NULL )
+            if ( ( new_elem = ( struct buffer_elem * )malloc( sizeof( struct buffer_elem ) ) ) == nullptr )
             {
               printf( "NO MORE MEMORY!!\n" );
               exit( 1 );
@@ -720,12 +720,12 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
             new_elem->task = task;
             new_elem->thread = thread;
             new_elem->event_time = time_1;
-            new_elem->next = NULL;
+            new_elem->next = nullptr;
 
-            if ( buffer_first == NULL )
+            if ( buffer_first == nullptr )
               buffer_first = new_elem;
 
-            if ( buffer_last == NULL )
+            if ( buffer_last == nullptr )
               buffer_last = new_elem;
             else
             {
@@ -738,11 +738,11 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
 
             if ( dump_event_buffer )
             {
-              if ( thread_call_info[appl][task][thread] != NULL )
+              if ( thread_call_info[appl][task][thread] != nullptr )
                 thread_call_info[appl][task][thread]->dump = true;
 
               dump_buffer();
-              thread_call_info[appl][task][thread] = NULL;
+              thread_call_info[appl][task][thread] = nullptr;
             }
           }
         }
@@ -767,7 +767,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
         else
         {
           /* Insert on event buffer */
-          if ( ( new_elem = ( struct buffer_elem * )malloc( sizeof( struct buffer_elem ) ) ) == NULL )
+          if ( ( new_elem = ( struct buffer_elem * )malloc( sizeof( struct buffer_elem ) ) ) == nullptr )
           {
             printf( "NO MORE MEMORY!!!\n" );
             exit( 1 );
@@ -778,9 +778,9 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
           new_elem->appl = appl;
           new_elem->task = task;
           new_elem->thread = thread;
-          new_elem->next = NULL;
+          new_elem->next = nullptr;
 
-          if ( buffer_first == NULL )
+          if ( buffer_first == nullptr )
           {
             buffer_first = new_elem;
             buffer_last = new_elem;
@@ -798,7 +798,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
         else
         {
           /* Insert on event buffer */
-          if ( ( new_elem = ( struct buffer_elem * )malloc( sizeof( struct buffer_elem ) ) ) == NULL )
+          if ( ( new_elem = ( struct buffer_elem * )malloc( sizeof( struct buffer_elem ) ) ) == nullptr )
           {
             printf( "NO MORE MEMORY!!!!\n" );
             exit( 1 );
@@ -809,9 +809,9 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
           new_elem->appl = appl;
           new_elem->task = task;
           new_elem->thread = thread;
-          new_elem->next = NULL;
+          new_elem->next = nullptr;
 
-          if ( buffer_first == NULL )
+          if ( buffer_first == nullptr )
           {
             buffer_first = new_elem;
             buffer_last = new_elem;
@@ -835,7 +835,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
   if ( filter_by_call_time )
   {
     new_elem = buffer_first;
-    while ( new_elem != NULL )
+    while ( new_elem != nullptr )
     {
       if ( new_elem->dump )
         fputs( new_elem->record, outfile );

@@ -139,7 +139,7 @@ TTraceSize NotCompressed::getTraceFileSize( const string& filename )
   TTraceSize tmpSize;
 
 #if defined (__FreeBSD__) || defined(__APPLE__)
-	if ( (traceFile = fopen (filename.c_str(), "r" ) ) == NULL )
+	if ( (traceFile = fopen (filename.c_str(), "r" ) ) == nullptr )
 	{
 		printf ( "Error Opening File %s\n", filename.c_str() );
 		return 0;
@@ -152,7 +152,7 @@ TTraceSize NotCompressed::getTraceFileSize( const string& filename )
     return 0;
   }
 #else
-  if ( ( traceFile = fopen64( filename.c_str(), "r" ) ) == NULL )
+  if ( ( traceFile = fopen64( filename.c_str(), "r" ) ) == nullptr )
   {
     printf( "Error Opening File %s\n", filename.c_str() );
     return 0;
@@ -250,7 +250,7 @@ bool Compressed::canseekend()
 
 bool Compressed::good() const
 {
-  return file != NULL;
+  return file != nullptr;
 }
 
 void Compressed::clear()

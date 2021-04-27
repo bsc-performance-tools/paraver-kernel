@@ -42,14 +42,14 @@ class KEventTranslator : public EventTranslator
                       std::string traceIn,
                       std::string traceOut,
                       std::string traceReference,
-                      ProgressController *progress = NULL );
+                      ProgressController *progress = nullptr );
     ~KEventTranslator();
 
     virtual void execute( std::string traceIn,
                           std::string traceOut,
-                          ProgressController *progress = NULL );
+                          ProgressController *progress = nullptr ) override;
 
-    virtual bool translationEmpty();
+    virtual bool translationEmpty() override;
 
   private:
     TraceEditSequence *mySequence;

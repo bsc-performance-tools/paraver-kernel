@@ -82,6 +82,7 @@ class MemoryTrace
 
     MemoryTrace()
     {}
+
     virtual ~MemoryTrace()
     {}
 

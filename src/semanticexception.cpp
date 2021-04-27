@@ -32,5 +32,5 @@ const char *SemanticException::errorMessage[] =
   {
     "Undefined error: ",
     "Maximum parameter exceeded: ",
-    NULL
+    nullptr
   };

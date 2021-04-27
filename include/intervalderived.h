@@ -37,30 +37,30 @@ class IntervalDerived: public IntervalHigh
   public:
     IntervalDerived()
     {
-      function = NULL;
-   }
+      function = nullptr;
+    }
 
     IntervalDerived( KDerivedWindow *whichWindow, TWindowLevel whichLevel,
                      TObjectOrder whichOrder ):
         IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
     {
-      function = NULL;
+      function = nullptr;
     }
 
     virtual ~IntervalDerived()
     {
-      if ( begin != NULL )
+      if ( begin != nullptr )
         delete begin;
-      if ( end != NULL )
+      if ( end != nullptr )
         delete end;
     }
 
     virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
-                              KRecordList *displayList = NULL );
-    virtual KRecordList *calcNext( KRecordList *displayList = NULL, bool initCalc = false );
-    virtual KRecordList *calcPrev( KRecordList *displayList = NULL, bool initCalc = false );
+                              KRecordList *displayList = nullptr ) override;
+    virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) override;
+    virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) override;
 
-    virtual KWindow *getWindow()
+    virtual KWindow *getWindow() override
     {
       return ( KWindow * ) window;
     }
@@ -70,18 +70,16 @@ class IntervalDerived: public IntervalHigh
     SemanticDerived *function;
     TCreateList createList;
 
-    virtual void setChildren();
+    virtual void setChildren() override;
 
-    virtual KTrace *getWindowTrace() const;
-    virtual TWindowLevel getWindowLevel() const;
-    virtual Interval *getWindowInterval( TWindowLevel whichLevel,
-                                         TObjectOrder whichOrder );
-    virtual bool IsDerivedWindow() const;
-    virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const;
+    virtual KTrace *getWindowTrace() const override;
+    virtual TWindowLevel getWindowLevel() const override;
+    virtual Interval *getWindowInterval( TWindowLevel whichLevel, TObjectOrder whichOrder ) override;
+    virtual bool IsDerivedWindow() const override;
+    virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const override;
 
   private:
     SemanticHighInfo info;
-
 };
 
 #endif // INTERVALDERIVED_H_INCLUDED

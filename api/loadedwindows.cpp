@@ -28,7 +28,7 @@
 
 using namespace std;
 
-LoadedWindows *LoadedWindows::instance = NULL;
+LoadedWindows *LoadedWindows::instance = nullptr;
 
 LoadedWindows::LoadedWindows()
 {
@@ -38,7 +38,7 @@ LoadedWindows::LoadedWindows()
 
 LoadedWindows *LoadedWindows::getInstance()
 {
-  if ( LoadedWindows::instance == NULL )
+  if ( LoadedWindows::instance == nullptr )
     LoadedWindows::instance = new LoadedWindows();
   return LoadedWindows::instance;
 }
@@ -206,9 +206,9 @@ bool LoadedWindows::validDataWindow( Window *dataWindow, Window *controlWindow )
 {
   if ( dataWindow == controlWindow )
     return true;
-  if ( controlWindow == NULL )
+  if ( controlWindow == nullptr )
     return true;
-  if ( dataWindow == NULL )
+  if ( dataWindow == nullptr )
     return true;
 
   else if ( dataWindow->getTrace() == controlWindow->getTrace() )
