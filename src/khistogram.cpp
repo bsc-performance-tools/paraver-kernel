@@ -341,10 +341,12 @@ KHistogram::~KHistogram()
   if ( rowCommTotals != NULL )
     delete rowCommTotals;
  
+#ifdef PARALLEL_ENABLED
   if ( semanticBuffer != NULL )
     delete semanticBuffer;
   if ( commBuffer != NULL )
     delete commBuffer;
+#endif
 
   clearStatistics();
 }
