@@ -91,7 +91,9 @@ class CFGS4DLinkedPropertiesManager
 {
   public:
     CFGS4DLinkedPropertiesManager()
-    {}
+    {
+      groupCounter = 0;
+    }
 
     ~CFGS4DLinkedPropertiesManager()
     {}
@@ -109,7 +111,10 @@ class CFGS4DLinkedPropertiesManager
         for( auto it : itGroup->second )
         {
           if( enabledProperties[ it ].isOriginalNameGroup() )
+          {
             tmpGroup = it;
+            break;
+          }
         }
       }
       else
@@ -130,8 +135,12 @@ class CFGS4DLinkedPropertiesManager
       {
         enabledProperties[ itGroup->second ].removeWindow( whichWindow );
         if( enabledProperties[ itGroup->second ].getListSize() == 0 )
+        {
           enabledProperties.erase( itGroup->second );
-        propertyNameToGroup[ originalName ].erase( itGroup->second );
+          propertyNameToGroup[ originalName ].erase( itGroup->second );
+          if( propertyNameToGroup[ originalName ].empty() )
+            propertyNameToGroup.erase( originalName );
+        }
         removeWindowPropertyToGroup( itGroup );
       }
     }
@@ -166,9 +175,16 @@ class CFGS4DLinkedPropertiesManager
     size_t getLinksSize( const std::string originalName ) const;
 
   private:
+    // Map with the list of windows sharing a linked property (numeric key)
     std::map< TCFGS4DGroup, CFGS4DPropertyWindowsList > enabledProperties;
+    
+    // Map with the list of groups for each property (original name string is the key)
     std::map< std::string, std::set< TCFGS4DGroup > > propertyNameToGroup;
+
+    // Map containing the numeric key for every combination of Timeline+property (original name string)
     std::map< std::pair< Window *, std::string >, TCFGS4DGroup > windowPropertyToGroup;
+    
+    // Map containing the numeric key for every combination of Histogram+property (original name string)
     std::map< std::pair< Histogram *, std::string >, TCFGS4DGroup > histogramPropertyToGroup;
 
     TCFGS4DGroup groupCounter;
