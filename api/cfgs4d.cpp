@@ -43,6 +43,16 @@ bool lessHistoCompare::operator()( Histogram *histo1, Histogram *histo2 ) const
  * CFGS4DPropertyWindowsList Methods
  */
 
+void CFGS4DPropertyWindowsList::setOriginalNameGroup( bool isOriginal )
+{
+  originalNameGroup = isOriginal;
+}
+
+bool CFGS4DPropertyWindowsList::isOriginalNameGroup() const
+{
+  return originalNameGroup;
+}
+
 void CFGS4DPropertyWindowsList::setCustomName( string whichName )
 {
   customName = whichName;
@@ -102,35 +112,58 @@ size_t CFGS4DPropertyWindowsList::getListSize() const
  * CFGS4DLinkedPropertiesManager Methods
  */
 
+// TODO: setCustomName using TCFGS4DGroup and maybe originalName+Window* also
 void CFGS4DLinkedPropertiesManager::setCustomName( std::string originalName, std::string customName )
 {
-  if( enabledProperties.find( originalName ) != enabledProperties.end() )
-    enabledProperties[ originalName ].setCustomName( customName );
+  auto itGroup = propertyNameToGroup.find( originalName );
+  if ( itGroup != propertyNameToGroup.end() )
+  {
+    for ( auto it : itGroup->second )
+    {
+      if ( enabledProperties[ it ].isOriginalNameGroup() )
+      {
+        enabledProperties[ it ].setCustomName( customName );
+        break;
+      }
+    }
+  }
 }
 
+// TODO: getCustomName using TCFGS4DGroup and maybe originalName+Window* also
 std::string CFGS4DLinkedPropertiesManager::getCustomName( std::string originalName ) const
 {
-  map<string, CFGS4DPropertyWindowsList>::const_iterator it = enabledProperties.find( originalName );
-  if ( it != enabledProperties.end() )
-    return it->second.getCustomName();
+  auto itGroup = propertyNameToGroup.find( originalName );
+  if ( itGroup != propertyNameToGroup.end() )
+  {
+    for ( auto it : itGroup->second )
+    {
+      auto itProperty = enabledProperties.find( it );
+      if ( itProperty != enabledProperties.end() && itProperty->second.isOriginalNameGroup() )
+        return itProperty->second.getCustomName();
+    }
+  }
 
   return "";
 }
 
 void CFGS4DLinkedPropertiesManager::getLinksName( std::set<std::string>& onSet ) const
 {
-  for( std::map< std::string, CFGS4DPropertyWindowsList >::const_iterator it = enabledProperties.begin();
-       it != enabledProperties.end(); ++it )
-  {
-    onSet.insert( it->first );
-  }
+  for( auto it : propertyNameToGroup )
+    onSet.insert( it.first );
 }
 
-size_t CFGS4DLinkedPropertiesManager::getLinksSize( const std::string whichName ) const
+size_t CFGS4DLinkedPropertiesManager::getLinksSize( const std::string originalName ) const
 {
-  map<string, CFGS4DPropertyWindowsList>::const_iterator it = enabledProperties.find( whichName );
-  if ( it != enabledProperties.end() )
-    return  it->second.getListSize();
+  auto itGroup = propertyNameToGroup.find( originalName );
+  if ( itGroup != propertyNameToGroup.end() )
+  {
+    for ( auto it : itGroup->second )
+    {
+      auto itProperty = enabledProperties.find( it );
+      if ( itProperty != enabledProperties.end() && itProperty->second.isOriginalNameGroup() )
+        return itProperty->second.getListSize();
+    }
+  }
 
   return 0;
 }
