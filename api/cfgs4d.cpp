@@ -111,8 +111,6 @@ size_t CFGS4DPropertyWindowsList::getListSize() const
 /*
  * CFGS4DLinkedPropertiesManager Methods
  */
-
-// TODO: setCustomName using TCFGS4DGroup and maybe originalName+Window* also
 void CFGS4DLinkedPropertiesManager::setCustomName( std::string originalName, std::string customName )
 {
   auto itGroup = propertyNameToGroup.find( originalName );
@@ -128,6 +126,13 @@ void CFGS4DLinkedPropertiesManager::setCustomName( std::string originalName, std
     }
   }
 }
+
+
+void CFGS4DLinkedPropertiesManager::setCustomName( TCFGS4DGroup whichGroup, std::string customName )
+{
+  enabledProperties[ whichGroup ].setCustomName( customName );
+}
+
 
 // TODO: getCustomName using TCFGS4DGroup and maybe originalName+Window* also
 std::string CFGS4DLinkedPropertiesManager::getCustomName( std::string originalName ) const
@@ -198,4 +203,10 @@ TCFGS4DIndexLink CFGS4DGlobalManager::newLinkManager()
 void CFGS4DGlobalManager::setCustomName( TCFGS4DIndexLink index, std::string originalName, std::string customName )
 {
   cfgsLinkedProperties[ index ].setCustomName( originalName, customName );
+}
+
+
+void CFGS4DGlobalManager::setCustomName( TCFGS4DIndexLink index, TCFGS4DGroup whichGroup, std::string customName )
+{
+  cfgsLinkedProperties[ index ].setCustomName( whichGroup, customName );
 }

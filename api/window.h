@@ -739,10 +739,18 @@ class Window
       return std::vector<Window::TParamAliasKey >();
     }
 
-    virtual void setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichIndex )
+    virtual void setCFGS4DGroupLink( std::string originalName, TCFGS4DGroup whichGroup )
     {}
 
-    virtual TCFGS4DIndexLink getCFGS4DIndexLink( std::string whichName ) const
+    virtual TCFGS4DGroup getCFGS4DGroupLink( std::string originalName ) const
+    {
+      return NO_GROUP_LINK;
+    }
+
+    virtual void setCFGS4DIndexLink( TCFGS4DIndexLink whichIndex )
+    {}
+
+    virtual TCFGS4DIndexLink getCFGS4DIndexLink() const
     {
       return NO_INDEX_LINK;
     }
@@ -1088,8 +1096,12 @@ class WindowProxy: public Window
                                                 const std::string &semanticLevel,
                                                 const std::string &function,
                                                 const TParamIndex &numParameter ) const override;
-    virtual void setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichIndex ) override;
-    virtual TCFGS4DIndexLink getCFGS4DIndexLink( std::string whichName ) const override;
+
+    virtual void setCFGS4DGroupLink( std::string originalName, TCFGS4DGroup whichGroup ) override;
+    virtual TCFGS4DGroup getCFGS4DGroupLink( std::string originalName ) const override;
+
+    virtual void setCFGS4DIndexLink( TCFGS4DIndexLink whichIndex ) override;
+    virtual TCFGS4DIndexLink getCFGS4DIndexLink() const override;
 
 #ifdef _MSC_VER
     virtual void computeSemanticParallel( std::vector< TObjectOrder >& selectedSet,
@@ -1223,7 +1235,8 @@ class WindowProxy: public Window
     bool CFG4DMode;
     std::map< std::string, std::string > propertiesAliasCFG4D;
     TParamAlias paramAliasCFG4D;
-    std::map< std::string, TCFGS4DIndexLink > indexLinkFromPropName;
+    std::map< std::string, TCFGS4DGroup > groupLinkFromPropName;
+    TCFGS4DIndexLink globalIndexLink;
 
     // For Clone
     WindowProxy();

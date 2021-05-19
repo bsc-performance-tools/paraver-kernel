@@ -31,6 +31,8 @@
 #include "paraverconfig.h"
 #include "trace.h"
 
+#define PARAM_SEPARATOR "|"
+
 using boost::posix_time::ptime;
 
 class Histogram;
@@ -106,6 +108,8 @@ class LabelConstructor
     static std::string getImageFileSuffix( const TImageFormat& format =  TImageFormat::PNG );
     static std::string getDataFileSuffix( const TTextFormat& format = TTextFormat::PLAIN );
 
+    static std::string getCFG4DParameterOriginalName( Window *whichWindow, TWindowLevel whichLevel, TParamIndex whichParam );
+
   private:
     static std::stringstream sstrObjectLabel;
     static std::stringstream label;
@@ -113,6 +117,7 @@ class LabelConstructor
     static std::stringstream tmp;
     static std::stringstream sstrTimeLabel;
     static std::stringstream sstrSemanticLabel;
+    static std::stringstream sstrCFGS4DOriginalName;
 
     static std::string rowStr;
     static std::string tmpStr;

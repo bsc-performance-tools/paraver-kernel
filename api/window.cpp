@@ -174,6 +174,7 @@ void WindowProxy::init()
 
   isCFG4DEnabled = false;
   CFG4DMode = false;
+  globalIndexLink = 0;
 }
 
 WindowProxy::~WindowProxy()
@@ -2022,18 +2023,28 @@ vector< Window::TParamAliasKey > WindowProxy::getCFG4DParamKeysBySemanticLevel( 
 }
 
 
-void WindowProxy::setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichIndex )
+void WindowProxy::setCFGS4DIndexLink( TCFGS4DIndexLink whichIndex )
 {
-  indexLinkFromPropName[ whichName ] = whichIndex;
+  globalIndexLink = whichIndex;
 }
 
-TCFGS4DIndexLink WindowProxy::getCFGS4DIndexLink( std::string whichName ) const
+TCFGS4DIndexLink WindowProxy::getCFGS4DIndexLink() const
 {
-  map< string, TCFGS4DIndexLink >::const_iterator it = indexLinkFromPropName.find( whichName );
-  if( it != indexLinkFromPropName.end() )
+  return globalIndexLink;
+}
+
+void WindowProxy::setCFGS4DGroupLink( std::string originalName, TCFGS4DGroup whichGroup )
+{
+  groupLinkFromPropName[ originalName ] = whichGroup;
+}
+
+TCFGS4DGroup WindowProxy::getCFGS4DGroupLink( std::string originalName ) const
+{
+  map< string, TCFGS4DGroup >::const_iterator it = groupLinkFromPropName.find( originalName );
+  if( it != groupLinkFromPropName.end() )
     return it->second;
 
-  return NO_INDEX_LINK;
+  return NO_GROUP_LINK;
 }
 
 #ifdef _MSC_VER

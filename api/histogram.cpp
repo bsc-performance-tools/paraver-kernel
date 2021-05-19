@@ -117,6 +117,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
 
   isCFG4DEnabled = false;
   CFG4DMode = false;
+  globalIndexLink = 0;
 }
 
 HistogramProxy::~HistogramProxy()
@@ -1787,18 +1788,28 @@ const vector< string > HistogramProxy::getCFG4DFullTagList()
   return tags;
 }
 
-void HistogramProxy::setCFGS4DIndexLink( string whichName, TCFGS4DIndexLink whichLink )
+void HistogramProxy::setCFGS4DGroupLink( std::string originalName, TCFGS4DGroup whichGroup )
 {
-  indexLinkFromPropName[ whichName ] = whichLink;
+  groupLinkFromPropName[ originalName ] = whichGroup;
 }
 
-TCFGS4DIndexLink HistogramProxy::getCFGS4DIndexLink( std::string whichName ) const
+TCFGS4DGroup HistogramProxy::getCFGS4DGroupLink( std::string originalName ) const
 {
-  map< string, TCFGS4DIndexLink >::const_iterator it = indexLinkFromPropName.find( whichName );
-  if( it != indexLinkFromPropName.end() )
+  map< string, TCFGS4DGroup >::const_iterator it = groupLinkFromPropName.find( originalName );
+  if( it != groupLinkFromPropName.end() )
     return it->second;
 
-  return NO_INDEX_LINK;
+  return NO_GROUP_LINK;
+}
+
+void HistogramProxy::setCFGS4DIndexLink( TCFGS4DIndexLink whichIndex )
+{
+  globalIndexLink = whichIndex;
+}
+
+TCFGS4DIndexLink HistogramProxy::getCFGS4DIndexLink() const
+{
+  return globalIndexLink;
 }
 
 SelectionManagement< TObjectOrder, TWindowLevel > * HistogramProxy::getRowSelectionManagement()

@@ -30,6 +30,7 @@
 #include "paraverkerneltypes.h"
 
 typedef PRV_UINT32 TCFGS4DGroup;
+static const TCFGS4DGroup NO_GROUP_LINK = 0;
 typedef PRV_UINT32 TCFGS4DIndexLink;
 static const TCFGS4DIndexLink NO_INDEX_LINK = 0;
 
@@ -99,6 +100,7 @@ class CFGS4DLinkedPropertiesManager
     {}
     
     void setCustomName( std::string originalName, std::string customName );
+    void setCustomName( TCFGS4DGroup whichGroup, std::string customName );
     std::string getCustomName( std::string originalName ) const;
 
     template< typename T >
@@ -128,9 +130,17 @@ class CFGS4DLinkedPropertiesManager
     }
 
     template< typename T >
+    void insertLink( TCFGS4DGroup whichGroup, std::string originalName, T *whichWindow )
+    {
+      enabledProperties[ whichGroup ].insertWindow( whichWindow );
+      propertyNameToGroup[ originalName ].insert( whichGroup );
+      insertWindowPropertyToGroup( whichWindow, originalName, whichGroup );
+    }
+    
+    template< typename T >
     void removeLink( std::string originalName, T *whichWindow )
     {
-      typename std::map< std::pair< T *, std::string >, TCFGS4DGroup >::iterator itGroup;
+      std::map< std::string, TCFGS4DGroup >::iterator itGroup;
       if( findWindowPropertyToGroup( whichWindow, originalName, itGroup ) )
       {
         enabledProperties[ itGroup->second ].removeWindow( whichWindow );
@@ -141,11 +151,10 @@ class CFGS4DLinkedPropertiesManager
           if( propertyNameToGroup[ originalName ].empty() )
             propertyNameToGroup.erase( originalName );
         }
-        removeWindowPropertyToGroup( itGroup );
+        removeWindowPropertyToGroup( whichWindow, itGroup );
       }
     }
 
-    // TODO: getLinks using TCFGS4DGroup and maybe originalName+Window* also
     template< typename T >
     void getLinks( std::string originalName, T& onSet ) const
     {
@@ -165,12 +174,32 @@ class CFGS4DLinkedPropertiesManager
     }
 
     template< typename T >
+    void getLinks( TCFGS4DGroup whichGroup, T& onSet ) const
+    {
+      auto itGroup = enabledProperties.find( whichGroup );
+      if ( itGroup != enabledProperties.end() )
+        itGroup->second.getWindowList( onSet );
+    }
+
+    template< typename T >
     bool existsWindow( std::string originalName, T *whichWindow ) const
     {
       return propertyNameToGroup.find( originalName ) != propertyNameToGroup.end();
     }
 
     void getLinksName( std::set<std::string>& onSet ) const;
+    
+    template< typename T >
+    void getLinksName( const T *window, std::set<std::string>& onSet ) const
+    {
+      getWindowLinkNames( window, onSet );
+    }
+    
+    template< typename T >
+    TCFGS4DGroup getGroup( const T *window, const std::string originalName ) const
+    {
+      return getPropertyGroup( window, originalName );
+    }
 
     size_t getLinksSize( const std::string originalName ) const;
 
@@ -182,47 +211,123 @@ class CFGS4DLinkedPropertiesManager
     std::map< std::string, std::set< TCFGS4DGroup > > propertyNameToGroup;
 
     // Map containing the numeric key for every combination of Timeline+property (original name string)
-    std::map< std::pair< Window *, std::string >, TCFGS4DGroup > windowPropertyToGroup;
+    std::map< Window *, std::map< std::string, TCFGS4DGroup > > windowPropertyToGroup;
     
     // Map containing the numeric key for every combination of Histogram+property (original name string)
-    std::map< std::pair< Histogram *, std::string >, TCFGS4DGroup > histogramPropertyToGroup;
+    std::map< Histogram *, std::map< std::string, TCFGS4DGroup > > histogramPropertyToGroup;
 
     TCFGS4DGroup groupCounter;
 
+
     void insertWindowPropertyToGroup( Window *whichWindow, std::string originalName, TCFGS4DGroup whichGroup )
     {
-      windowPropertyToGroup[ make_pair( whichWindow, originalName ) ] = whichGroup;
+      windowPropertyToGroup[ whichWindow ][ originalName ] = whichGroup;
     }
+
 
     void insertWindowPropertyToGroup( Histogram *whichWindow, std::string originalName, TCFGS4DGroup whichGroup )
     {
-      histogramPropertyToGroup[ make_pair( whichWindow, originalName ) ] = whichGroup;
+      histogramPropertyToGroup[ whichWindow ][ originalName ] = whichGroup;
     }
+
+
+    void getWindowLinkNames( const Window *window, std::set<std::string>& onSet ) const
+    {
+      auto itWindow = windowPropertyToGroup.find( const_cast<Window *>( window ) );
+      if ( itWindow != windowPropertyToGroup.end() )
+      {
+        for ( auto it: itWindow->second )
+        {
+          onSet.insert( it.first );
+        }
+      }
+    }
+
+
+    void getWindowLinkNames( const Histogram *window, std::set<std::string>& onSet ) const
+    {
+      auto itHistogram = histogramPropertyToGroup.find( const_cast<Histogram *>( window ) );
+      if ( itHistogram != histogramPropertyToGroup.end() )
+      {
+        for ( auto it: itHistogram->second )
+        {
+          onSet.insert( it.first );
+        }
+      }
+    }
+
+
+    TCFGS4DGroup getPropertyGroup( const Window *window, const std::string originalName ) const
+    {
+      auto itWindow = windowPropertyToGroup.find( const_cast<Window *>( window ) );
+      if ( itWindow != windowPropertyToGroup.end() )
+      {
+        auto itProperty = itWindow->second.find( originalName );
+        if( itProperty != itWindow->second.end() )
+          return itProperty->second;
+      }
+
+      return 0;
+    }
+
+
+    TCFGS4DGroup getPropertyGroup( const Histogram *window, const std::string originalName ) const
+    {
+      auto itWindow = histogramPropertyToGroup.find( const_cast<Histogram *>( window ) );
+      if ( itWindow != histogramPropertyToGroup.end() )
+      {
+        auto itProperty = itWindow->second.find( originalName );
+        if( itProperty != itWindow->second.end() )
+          return itProperty->second;
+      }
+
+      return 0;
+    }
+
 
     bool findWindowPropertyToGroup( Window *whichWindow,
                                     std::string originalName,
-                                    std::map< std::pair< Window *, std::string >, TCFGS4DGroup >::iterator& onIterator )
+                                    std::map< std::string, TCFGS4DGroup >::iterator& onGroup )
     {
-      onIterator = windowPropertyToGroup.find( make_pair( whichWindow, originalName ) );
-      return onIterator != windowPropertyToGroup.end();
+      std::map< Window *, std::map< std::string, TCFGS4DGroup > >::iterator it;
+      
+      it = windowPropertyToGroup.find( whichWindow );
+      if ( it != windowPropertyToGroup.end() )
+      {
+        onGroup = it->second.find( originalName );
+        return onGroup != it->second.end();
+      } 
+
+      return false;
     }
+
 
     bool findWindowPropertyToGroup( Histogram *whichWindow,
                                     std::string originalName,
-                                    std::map< std::pair< Histogram *, std::string >, TCFGS4DGroup >::iterator& onIterator )
+                                    std::map< std::string, TCFGS4DGroup >::iterator& onGroup )
     {
-      onIterator = histogramPropertyToGroup.find( make_pair( whichWindow, originalName ) );
-      return onIterator != histogramPropertyToGroup.end();
+      std::map< Histogram *, std::map< std::string, TCFGS4DGroup > >::iterator it;
+
+      it = histogramPropertyToGroup.find( whichWindow );
+      if ( it != histogramPropertyToGroup.end() ) 
+      { 
+        onGroup = it->second.find( originalName );
+        return onGroup != it->second.end();
+      }
+
+      return false;
     }
 
-    void removeWindowPropertyToGroup( std::map< std::pair< Window *, std::string >, TCFGS4DGroup >::iterator  whichGroup )
+
+    void removeWindowPropertyToGroup( Window *whichWindow, std::map< std::string, TCFGS4DGroup >::iterator& whichGroup )
     {
-      windowPropertyToGroup.erase( whichGroup );
+      windowPropertyToGroup[ whichWindow ].erase( whichGroup );
     }
-    
-    void removeWindowPropertyToGroup( std::map< std::pair< Histogram *, std::string >, TCFGS4DGroup >::iterator  whichGroup )
+
+
+    void removeWindowPropertyToGroup( Histogram *whichWindow, std::map< std::string, TCFGS4DGroup >::iterator& whichGroup )
     {
-      histogramPropertyToGroup.erase( whichGroup );
+      histogramPropertyToGroup[ whichWindow ].erase( whichGroup );
     }
 
 };
@@ -238,13 +343,19 @@ class CFGS4DGlobalManager
 
     TCFGS4DIndexLink newLinkManager(); 
     void setCustomName( TCFGS4DIndexLink index, std::string originalName, std::string customName );
-    
+    void setCustomName( TCFGS4DIndexLink index, TCFGS4DGroup whichGroup, std::string customName );
+
     template< typename T >
     void insertLink( TCFGS4DIndexLink index, std::string originalName, T *whichWindow )
     { 
       cfgsLinkedProperties[ index ].insertLink( originalName, whichWindow );
     }
 
+    template< typename T >
+    void insertLink( TCFGS4DIndexLink index, TCFGS4DGroup whichGroup, std::string originalName, T *whichWindow )
+    { 
+      cfgsLinkedProperties[ index ].insertLink( whichGroup, originalName, whichWindow );
+    }
 
     template< typename T >
     void getLinks( TCFGS4DIndexLink index, std::string originalName, T& onSet ) const
@@ -252,6 +363,14 @@ class CFGS4DGlobalManager
       std::map< TCFGS4DIndexLink, CFGS4DLinkedPropertiesManager >::const_iterator it = cfgsLinkedProperties.find( index );
       if( it != cfgsLinkedProperties.end() )
         it->second.getLinks( originalName, onSet );
+    }
+
+    template< typename T >
+    void getLinks( TCFGS4DIndexLink index, TCFGS4DGroup whichGroup, T& onSet ) const
+    {
+      std::map< TCFGS4DIndexLink, CFGS4DLinkedPropertiesManager >::const_iterator it = cfgsLinkedProperties.find( index );
+      if( it != cfgsLinkedProperties.end() )
+        it->second.getLinks( whichGroup, onSet );
     }
 
   private:

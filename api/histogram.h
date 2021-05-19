@@ -576,13 +576,21 @@ class Histogram
     {
       return std::vector< std::string >();
     }
-    
-    virtual void setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichLink )
+
+    virtual void setCFGS4DGroupLink( std::string originalName, TCFGS4DGroup whichGroup )
     {}
 
-    virtual TCFGS4DIndexLink getCFGS4DIndexLink( std::string whichName ) const
+    virtual TCFGS4DGroup getCFGS4DGroupLink( std::string originalName ) const
     {
-      return 0;
+      return NO_GROUP_LINK;
+    }
+
+    virtual void setCFGS4DIndexLink( TCFGS4DIndexLink whichLink )
+    {}
+
+    virtual TCFGS4DIndexLink getCFGS4DIndexLink() const
+    {
+      return NO_INDEX_LINK;
     }
 
     virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement()
@@ -892,8 +900,12 @@ class HistogramProxy : public Histogram
     virtual const std::map< std::string, std::string > getCFG4DStatisticsAliasList() const override;
 
     virtual const std::vector< std::string > getCFG4DFullTagList() override;
-    virtual void setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichLink ) override;
-    virtual TCFGS4DIndexLink getCFGS4DIndexLink( std::string whichName ) const override;
+
+    virtual void setCFGS4DGroupLink( std::string originalName, TCFGS4DGroup whichGroup ) override;
+    virtual TCFGS4DGroup getCFGS4DGroupLink( std::string originalName ) const override;
+
+    virtual void setCFGS4DIndexLink( TCFGS4DIndexLink whichLink ) override;
+    virtual TCFGS4DIndexLink getCFGS4DIndexLink() const override;
     
     virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement() override;
     virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel ) override;
@@ -984,7 +996,8 @@ class HistogramProxy : public Histogram
     bool CFG4DMode;
     std::map< std::string, std::string > propertiesAliasCFG4D;
     std::map< std::string, std::string > statisticsAliasCFG4D;
-    std::map< std::string, TCFGS4DIndexLink > indexLinkFromPropName;
+    std::map< std::string, TCFGS4DGroup > groupLinkFromPropName;
+    TCFGS4DIndexLink globalIndexLink;
 
     //Selection of rows
     SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;

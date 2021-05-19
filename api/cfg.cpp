@@ -22,7 +22,6 @@
 \*****************************************************************************/
 
 #include <string>
-#include <fstream>
 #include <sstream>
 #include <math.h>
 
@@ -36,7 +35,6 @@
 #include "functionmanagement.h"
 #include "semanticfunction.h"
 #include "filter.h"
-#include "paraverlabels.h"
 #include "drawmode.h"
 #include "symbolpicker.h"
 #include "syncwindows.h"
@@ -66,7 +64,6 @@ EventValueSymbolPicker eventValueSymbolPicker;
 
 
 // CFGS4D Link data
-PRV_UINT32 lastCFGLinkIndex;
 TCFGS4DIndexLink lastGlobalLinkIndex;
 
 map< TGroupId, TGroupId > syncRealGroup; // Group from CFG -> Group to app
@@ -481,7 +478,6 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   someEventsNotExist = false;
   multipleLabelValues = false;
 
-  lastCFGLinkIndex = 0;
   lastGlobalLinkIndex = 0;
 
   ifstream cfgFile( filename.c_str() );
@@ -517,6 +513,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
       continue;
     else if ( strLine.compare( CFG_TAG_CFG4D_ENABLED ) == 0 )
     {
+      lastGlobalLinkIndex = CFGS4DGlobalManager::getInstance()->newLinkManager();
       options.enabledCFG4DMode = true;
       continue;
     }
@@ -655,12 +652,14 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
     {
       ( *it )->setCFG4DEnabled( true );
       ( *it )->setCFG4DMode( true );
+      ( *it )->setCFGS4DIndexLink( lastGlobalLinkIndex );
     }
 
     for ( vector<Histogram *>::iterator it = histograms.begin(); it != histograms.end(); ++it )
     {
       ( *it )->setCFG4DEnabled( true );
       ( *it )->setCFG4DMode( true );
+      ( *it )->setCFGS4DIndexLink( lastGlobalLinkIndex );
     }
   }
 
@@ -818,6 +817,7 @@ bool CFGLoader::saveCFG( const string& filename,
       cfgFile << endl;
       TagAliasCFG4D::printAliasList( cfgFile, it );
       TagAliasParamCFG4D::printAliasList( cfgFile, it );
+      TagLinkCFG4D::printLinkList( cfgFile, linkedProperties[ 0 ], *it );
     }
 
     cfgFile << endl;
@@ -883,11 +883,10 @@ bool CFGLoader::saveCFG( const string& filename,
       cfgFile << endl;
       TagAliasCFG4D::printAliasList( cfgFile, it );
       TagAliasStatisticCFG4D::printAliasList( cfgFile, it );
+      TagLinkCFG4D::printLinkList( cfgFile, linkedProperties[ 0 ], *it );
     }
     cfgFile << endl;
   }
-
-  TagLinkCFG4D::printLinkList( cfgFile, allWindows, histograms, linkedProperties );
 
   cfgFile.close();
 
@@ -3776,7 +3775,8 @@ void WindowSynchronize::printLine( ofstream& cfgFile,
 
 string Analyzer2DCreate::tagCFG = OLDCFG_TAG_AN2D_NEW;
 
-bool Analyzer2DCreate::parseLine( KernelConnection *whichKernel, istringstream& line,
+bool Analyzer2DCreate::parseLine( KernelConnection *whichKernel,
+                                  istringstream& line,
                                   Trace *whichTrace,
                                   vector<Window *>& windows,
                                   vector<Histogram *>& histograms )
@@ -5632,133 +5632,54 @@ bool TagLinkCFG4D::parseLine( KernelConnection *whichKernel,
                               vector<Window *>& windows,
                               vector<Histogram *>& histograms )
 {
-  PRV_UINT32 indexLink;
+  TCFGS4DGroup indexGroup;
   string originalName;
   string customName;
   string tmpString;
   stringstream tmpStream;
-  vector<PRV_UINT32> timelinesIndex;
-  vector<PRV_UINT32> histogramsIndex;
+  Window *currentWindow = nullptr;
+  Histogram *currentHisto = nullptr;
+
+  if( isWindowTag )
+  {
+    currentWindow = windows[ windows.size() - 1 ];
+    if( currentWindow == nullptr ) return false;
+  }
+  else
+  {
+    currentHisto = histograms[ histograms.size() - 1 ];
+    if( currentHisto == nullptr ) return false;
+  }
 
   getline( line, tmpString, '|' );
   tmpStream.str( tmpString );
-  if( !( tmpStream >> indexLink ) )
+  if( !( tmpStream >> indexGroup ) )
     return false;
 
-  // Expected original name format: [...]|"Top Compose 1|0|Prod.Factor"|[...]
+  // Expected format: [...]|"Top Compose 1|0|Prod.Factor"
   char dummyChar;
   line.get( dummyChar ); // Consume "
   getline( line, originalName, '"' );
-  line.get( dummyChar ); // Consume |
 
-  getline( line, customName, '|' );
+  if( currentWindow != nullptr )
+    customName = currentWindow->getCFG4DAlias( originalName );
+  else
+    customName = currentHisto->getCFG4DAlias( originalName );
 
-  // Timelines index parsing
-  getline( line, tmpString, '|' );
-  tmpStream.clear();
-  tmpStream.str( tmpString );
-  PRV_UINT32 indexWindow;
-  string tmpStringWindow;
-  stringstream tmpStreamWindow;
-  while ( tmpString.size() > 0 && !tmpStream.eof() )
+  CFGS4DGlobalManager::getInstance()->setCustomName( lastGlobalLinkIndex, indexGroup, customName );
+
+  if( currentWindow != nullptr )
   {
-    getline( tmpStream, tmpStringWindow, ',' );
-    tmpStreamWindow.clear();
-    tmpStreamWindow.str( tmpStringWindow );
-    if( !( tmpStreamWindow >> indexWindow ) )
-      return false;
-    timelinesIndex.push_back( indexWindow - 1 );
+    CFGS4DGlobalManager::getInstance()->insertLink( lastGlobalLinkIndex, indexGroup, originalName, currentWindow );
+    currentWindow->setCFGS4DGroupLink( originalName, indexGroup );
   }
-
-  // Histograms index parsing
-  getline( line, tmpString );
-  tmpStream.clear();
-  tmpStream.str( tmpString );
-  while ( tmpString.size() > 0 && !tmpStream.eof() )
+  else
   {
-    getline( tmpStream, tmpStringWindow, ',' );
-    tmpStreamWindow.clear();
-    tmpStreamWindow.str( tmpStringWindow );
-    if( !( tmpStreamWindow >> indexWindow ) )
-      return false;
-    histogramsIndex.push_back( indexWindow - 1 );
-  }
-
-  // Insert link information into CFG4dGlobalManager
-  if ( lastCFGLinkIndex != indexLink )
-  {
-    lastCFGLinkIndex = indexLink;
-    lastGlobalLinkIndex = CFGS4DGlobalManager::getInstance()->newLinkManager();
-  }
-  CFGS4DGlobalManager::getInstance()->setCustomName( lastGlobalLinkIndex, originalName, customName );
-
-  for ( vector< PRV_UINT32 >::iterator it = timelinesIndex.begin(); it != timelinesIndex.end() ; ++it )
-  {
-    CFGS4DGlobalManager::getInstance()->insertLink( lastGlobalLinkIndex, originalName, windows[ *it ] );
-    windows[ *it ]->setCFGS4DIndexLink( originalName, lastGlobalLinkIndex );
+    CFGS4DGlobalManager::getInstance()->insertLink( lastGlobalLinkIndex, indexGroup, originalName, currentHisto );
+    currentHisto->setCFGS4DGroupLink( originalName, indexGroup );
   }
   
-  for ( vector< PRV_UINT32 >::iterator it = histogramsIndex.begin(); it != histogramsIndex.end() ; ++it )
-  {
-    CFGS4DGlobalManager::getInstance()->insertLink( lastGlobalLinkIndex, originalName, histograms[ *it ] );
-    histograms[ *it ]->setCFGS4DIndexLink( originalName, lastGlobalLinkIndex );
-  }
-
   return true;
-}
-
-template<typename T>
-PRV_UINT32 TagLinkCFG4D::getWindowIndex( const T *whichWindow, const vector<T *>& findOnVector )
-{
-  PRV_UINT32 index = 0;
-  for( typename vector<T *>::const_iterator it = findOnVector.begin(); it != findOnVector.end(); ++it )
-  {
-    if( *it == whichWindow )
-      break;
-    ++index;
-  }
-
-  return index;
-}
-
-void TagLinkCFG4D::printLinkList( ofstream& cfgFile, 
-                                  const vector<Window *>& windows,
-                                  const vector<Histogram *>& histograms,
-                                  const vector<CFGS4DLinkedPropertiesManager>& linkedProperties )
-{
-  PRV_UINT32 indexLink = 0;
-  for( vector<CFGS4DLinkedPropertiesManager>::const_iterator itLinks = linkedProperties.begin();
-       itLinks != linkedProperties.end(); ++itLinks )
-  {
-    ++indexLink;
-    set< std::string > linksNames;
-    itLinks->getLinksName( linksNames );
-    for( set< std::string >::iterator itNames = linksNames.begin(); itNames != linksNames.end(); ++itNames )
-    {
-      cfgFile << CFG_TAG_LINK_CFG4D << " " << indexLink << "|\"" << *itNames << "\"|" << itLinks->getCustomName( *itNames ) << "|";
-      
-      TWindowsSet tmpWindows;
-      itLinks->getLinks( *itNames, tmpWindows );
-      for( TWindowsSet::iterator itWindow = tmpWindows.begin(); itWindow != tmpWindows.end(); ++itWindow )
-      {
-        if ( itWindow != tmpWindows.begin() )
-          cfgFile << ",";
-        cfgFile << TagLinkCFG4D::getWindowIndex( *itWindow, windows ) + 1;
-      }
-      cfgFile << "|";
-
-      THistogramsSet tmpHistograms;
-      itLinks->getLinks( *itNames, tmpHistograms );
-      for( THistogramsSet::iterator itHisto = tmpHistograms.begin(); itHisto != tmpHistograms.end(); ++itHisto )
-      {
-        if ( itHisto != tmpHistograms.begin() )
-          cfgFile << ",";
-        cfgFile << TagLinkCFG4D::getWindowIndex( *itHisto, histograms ) + 1;
-      }
-
-      cfgFile << endl;
-    }
-  }  
 }
 
 

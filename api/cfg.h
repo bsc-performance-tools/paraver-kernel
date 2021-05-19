@@ -28,8 +28,10 @@
 #include <map>
 #include <vector>
 #include <sstream>
+#include <fstream>
 #include <string>
 #include "paraverkerneltypes.h"
+#include "paraverlabels.h"
 #include "cfgs4d.h"
 
 class KernelConnection;
@@ -2337,7 +2339,6 @@ class Analyzer3DFixedValue: public TagFunction
 
   protected:
     static std::string tagCFG;
-
 };
 
 
@@ -2382,17 +2383,22 @@ class TagLinkCFG4D: public TagFunction
 
     static const std::string &getTagCFG() { return tagCFG; }
 
-    static void printLinkList( std::ofstream& cfgFile, 
-                               const std::vector<Window *>& windows,
-                               const std::vector<Histogram *>& histograms,
-                               const std::vector<CFGS4DLinkedPropertiesManager>& linkedProperties );
+    template< typename T >
+    static void printLinkList( std::ofstream& cfgFile,
+                               const CFGS4DLinkedPropertiesManager& linkedProperties,
+                               const T *window )
+    {
+      std::set< std::string > linksNames;
+      linkedProperties.getLinksName( window, linksNames );
+      for( auto it : linksNames )
+      {
+        cfgFile << CFG_TAG_LINK_CFG4D << " " << linkedProperties.getGroup( window, it )  << "|\"" << it << "\"";
+        cfgFile << std::endl;
+      }
+    }
 
   protected:
     static std::string tagCFG;
-
-  private:
-    template<typename T>
-    static PRV_UINT32 getWindowIndex( const T *whichWindow, const std::vector<T *>& findOnVector );
 };
 
 
