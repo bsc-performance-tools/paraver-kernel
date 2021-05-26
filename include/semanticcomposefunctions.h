@@ -1998,6 +1998,72 @@ class ComposeBurstTime: public SemanticCompose
 
 };
 
+class ComposeDivideByBurstTime: public SemanticCompose
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    ComposeDivideByBurstTime()
+    {
+      setDefaultParam();
+    }
+
+    ~ComposeDivideByBurstTime()
+    {}
+
+    virtual TParamIndex getMaxParam() const override
+    {
+      return MAXPARAM;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+
+    virtual void init( KWindow *whichWindow )
+    {}
+
+    virtual std::string getName() override
+    {
+      return ComposeDivideByBurstTime::name;
+    }
+
+    virtual SemanticFunction *clone() override
+    {
+      return new ComposeDivideByBurstTime( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const override
+    {
+      return NO_TYPE;
+    }
+
+  protected:
+    virtual const bool getMyInitFromBegin() override
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
+    {
+      TParamValue tmp;
+
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+
+      return tmp;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      return "";
+    }
+
+  private:
+    static const bool initFromBegin = false;
+    static std::string name;
+};
 
 class ComposeJoinBursts: public SemanticCompose
 {

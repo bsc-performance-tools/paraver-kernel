@@ -618,6 +618,21 @@ TSemanticValue ComposeBurstTime::execute( const SemanticInfo *info )
 }
 
 
+string ComposeDivideByBurstTime::name = "Divide by Burst Time";
+TSemanticValue ComposeDivideByBurstTime::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+
+  TSemanticValue duration = myInfo->callingInterval->getEnd()->getTime() -
+                            myInfo->callingInterval->getBegin()->getTime();
+  if ( duration == 0.0 )
+    return 0.0;
+
+  duration = myInfo->callingInterval->getWindow()->traceUnitsToWindowUnits( duration );
+  return myInfo->values[0] / duration;
+}
+
+
 string ComposeJoinBursts::name = "Join Bursts";
 TSemanticValue ComposeJoinBursts::execute( const SemanticInfo *info )
 {
