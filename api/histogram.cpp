@@ -966,6 +966,12 @@ PRV_INT32 HistogramProxy::getSelectedPlane() const
   return selectedPlane;
 }
 
+void HistogramProxy::setCommSelectedPlane( PRV_INT32 plane )
+{
+  commSelectedPlane = plane;
+  fillSemanticSort();
+}
+
 PRV_INT32 HistogramProxy::getCommSelectedPlane() const
 {
   return commSelectedPlane;

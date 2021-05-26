@@ -332,6 +332,7 @@ class Histogram
     {
       return 0;
     }
+    virtual void setCommSelectedPlane( PRV_INT32 plane ) {}
     virtual PRV_INT32 getCommSelectedPlane() const
     {
       return 0;
@@ -773,6 +774,7 @@ class HistogramProxy : public Histogram
     virtual double getPlaneMinValue() const override;
     virtual void setSelectedPlane( PRV_INT32 plane ) override;
     virtual PRV_INT32 getSelectedPlane() const override;
+    virtual void setCommSelectedPlane( PRV_INT32 plane ) override;
     virtual PRV_INT32 getCommSelectedPlane() const override;
 
     virtual void compute2DScale( ProgressController *progress = nullptr ) override;
