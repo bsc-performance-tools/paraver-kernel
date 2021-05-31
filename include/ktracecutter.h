@@ -40,23 +40,23 @@ class KTraceCutter : public TraceCutter
                   const std::vector< TEventType > &whichTypesWithValuesZero );
     virtual ~KTraceCutter();
 
-    virtual void set_by_time( bool byTime );
-    virtual void set_min_cutting_time( unsigned long long minCutTime );
-    virtual void set_max_cutting_time( unsigned long long maxCutTime );
-    virtual void set_minimum_time_percentage( unsigned long long minimumPercentage );
-    virtual void set_maximum_time_percentage( unsigned long long maximumPercentage );
-    virtual void set_tasks_list( char *tasksList );
-    virtual void set_original_time( bool originalTime );
-    virtual void set_max_trace_size( int traceSize );
-    virtual void set_break_states( bool breakStates );
-    virtual void set_remFirstStates( bool remStates );
-    virtual void set_remLastStates( bool remStates );
-    virtual void set_keep_events( bool keepEvents );
-    virtual void setCutterApplicationCaller( std::string caller );
+    virtual void set_by_time( bool byTime ) override;
+    virtual void set_min_cutting_time( unsigned long long minCutTime ) override;
+    virtual void set_max_cutting_time( unsigned long long maxCutTime ) override;
+    virtual void set_minimum_time_percentage( unsigned long long minimumPercentage ) override;
+    virtual void set_maximum_time_percentage( unsigned long long maximumPercentage ) override;
+    virtual void set_tasks_list( char *tasksList ) override;
+    virtual void set_original_time( bool originalTime ) override;
+    virtual void set_max_trace_size( int traceSize ) override;
+    virtual void set_break_states( bool breakStates ) override;
+    virtual void set_remFirstStates( bool remStates ) override;
+    virtual void set_remLastStates( bool remStates ) override;
+    virtual void set_keep_events( bool keepEvents ) override;
+    virtual void setCutterApplicationCaller( std::string caller ) override;
 
     virtual void execute( std::string trace_in,
                           std::string trace_out,
-                          ProgressController *progress );
+                          ProgressController *progress ) override;
 
   private:
     /* Buffer for reading trace records */

@@ -175,10 +175,10 @@ void NoLoadTrace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIt
 {
   for ( TThreadOrder ii = 0; ii < processModel.totalThreads(); ++ii )
   {
-    if ( listIter[ ii ] != NULL )
+    if ( listIter[ ii ] != nullptr )
     {
       delete listIter[ ii ];
-      listIter[ ii ] = NULL;
+      listIter[ ii ] = nullptr;
     }
   }
 
@@ -190,7 +190,7 @@ void NoLoadTrace::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIt
     PRV_UINT16 tmpPos;
 
     blocks->getThreadRecordByTime( iThread, whichTime, &tmpRec, tmpOffset, tmpPos );
-    if( tmpRec == NULL )
+    if( tmpRec == nullptr )
       it = ( NoLoadTrace::ThreadIterator * )threadEnd( iThread );
     else
       it = new ThreadIterator( blocks, iThread, tmpRec, tmpOffset, tmpPos );
@@ -211,10 +211,10 @@ void NoLoadTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
 {
   for ( TCPUOrder ii = 0; ii < resourceModel.totalCPUs(); ++ii )
   {
-    if ( listIter[ ii ] != NULL )
+    if ( listIter[ ii ] != nullptr )
     {
       delete listIter[ ii ];
-      listIter[ ii ] = NULL;
+      listIter[ ii ] = nullptr;
     }
   }
 
@@ -237,7 +237,7 @@ void NoLoadTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
       PRV_UINT16 tmpPos;
 
       blocks->getThreadRecordByTime( threads[ iThread ], whichTime, &tmpRec, tmpOffset, tmpPos );
-      if ( tmpRec == NULL )
+      if ( tmpRec == nullptr )
       {
         blocks->getEndThreadRecord( threads[ iThread ], &tmpRec, tmpOffset, tmpPos );
         while( tmpRec->time > whichTime )
@@ -280,7 +280,7 @@ NoLoadTrace::iterator::~iterator()
 {
   if ( !destroyed )
   {
-    if ( !( record == NULL || offset == -1 ) )
+    if ( !( record == nullptr || offset == -1 ) )
       blocks->decNumUseds( offset );
 
     destroyed = true;
@@ -487,7 +487,7 @@ NoLoadTrace::CPUIterator::~CPUIterator()
   {
     for ( TThreadOrder i = 0; i < threads.size(); ++i )
     {
-      if ( !( threadRecords[ i ] == NULL || offset[ i ] == -1 ) )
+      if ( !( threadRecords[ i ] == nullptr || offset[ i ] == -1 ) )
         blocks->decNumUseds( offset[ i ] );
     }
     destroyed = true;
@@ -511,12 +511,12 @@ inline void NoLoadTrace::CPUIterator::operator++()
                          offset[ lastThread ], recPos[ lastThread ] );
   for ( TThreadOrder iThread = 0; iThread < threads.size(); ++iThread )
   {
-    if ( threadRecords[ iThread ] == NULL )
+    if ( threadRecords[ iThread ] == nullptr )
       ++inLastPos;
   }
   if ( inLastPos == threads.size() )
   {
-    record = NULL;
+    record = nullptr;
     return;
   }
 
@@ -531,12 +531,12 @@ inline void NoLoadTrace::CPUIterator::operator--()
                          offset[ lastThread ], recPos[ lastThread ] );
   for ( TThreadOrder iThread = 0; iThread < threads.size(); ++iThread )
   {
-    if ( threadRecords[ iThread ] == NULL  )
+    if ( threadRecords[ iThread ] == nullptr  )
       ++inFirstPos;
   }
   if ( inFirstPos == threads.size() )
   {
-    record = NULL;
+    record = nullptr;
     return;
   }
 
@@ -565,7 +565,7 @@ inline MemoryTrace::iterator& NoLoadTrace::CPUIterator::operator=( const MemoryT
 inline NoLoadTrace::CPUIterator *NoLoadTrace::CPUIterator::clone() const
 {
   for ( TThreadOrder i = 0; i < threads.size(); ++i )
-    if ( offset[ i ] != -1 && threadRecords[ i ] != NULL )
+    if ( offset[ i ] != -1 && threadRecords[ i ] != nullptr )
       blocks->incNumUseds( offset[ i ] );
 
   return new NoLoadTrace::CPUIterator( *this );
@@ -578,7 +578,7 @@ inline TThreadOrder NoLoadTrace::CPUIterator::minThread()
   setToMyCPUForward();
   for ( TThreadOrder iThread = 0; iThread < threads.size(); ++iThread )
   {
-    if ( !( threadRecords[ iThread ] == NULL )/*|| offset[ iThread ] == -1 )*/ )
+    if ( !( threadRecords[ iThread ] == nullptr )/*|| offset[ iThread ] == -1 )*/ )
       sortedRecords[ threadRecords[ iThread ] ] = iThread;
   }
 
@@ -595,7 +595,7 @@ inline TThreadOrder NoLoadTrace::CPUIterator::maxThread()
   setToMyCPUBackward();
   for ( TThreadOrder iThread = 0; iThread < threads.size(); ++iThread )
   {
-    if ( !( threadRecords[ iThread ] == NULL )/*|| offset[ iThread ] == -1 )*/ )
+    if ( !( threadRecords[ iThread ] == nullptr )/*|| offset[ iThread ] == -1 )*/ )
       sortedRecords[ threadRecords[ iThread ] ] = iThread;
   }
 
@@ -611,7 +611,7 @@ inline void NoLoadTrace::CPUIterator::setToMyCPUForward()
 {
   for ( TThreadOrder iThread = 0; iThread < threads.size(); ++iThread )
   {
-    while ( !( threadRecords[ iThread ] == NULL )/*|| offset[ iThread ] == -1 )*/ && threadRecords[ iThread ]->CPU != cpu )
+    while ( !( threadRecords[ iThread ] == nullptr )/*|| offset[ iThread ] == -1 )*/ && threadRecords[ iThread ]->CPU != cpu )
     {
       blocks->getNextRecord( threads[ iThread ], &threadRecords[ iThread ],
                              offset[ iThread ], recPos[ iThread ] );
@@ -623,7 +623,7 @@ inline void NoLoadTrace::CPUIterator::setToMyCPUBackward()
 {
   for ( TThreadOrder iThread = 0; iThread < threads.size(); ++iThread )
   {
-    while ( !( threadRecords[ iThread ] == NULL )/*|| offset[ iThread ] == -1 )*/ &&  threadRecords[ iThread ]->CPU != cpu )
+    while ( !( threadRecords[ iThread ] == nullptr )/*|| offset[ iThread ] == -1 )*/ &&  threadRecords[ iThread ]->CPU != cpu )
     {
       blocks->getPrevRecord( threads[ iThread ], &threadRecords[ iThread ],
                              offset[ iThread ], recPos[ iThread ] );

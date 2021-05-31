@@ -75,18 +75,18 @@ Window::Window( KernelConnection *whichKernel ) : myKernel( whichKernel )
 WindowProxy::WindowProxy():
   myCodeColor( this )
 {
-  parent1 = NULL;
-  parent2 = NULL;
-  myTrace = NULL;
-  myFilter = NULL;
+  parent1 = nullptr;
+  parent2 = nullptr;
+  myTrace = nullptr;
+  myFilter = nullptr;
   init();
 }
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
   Window( whichKernel ), myTrace( whichTrace ), myCodeColor( this )
 {
-  parent1 = NULL;
-  parent2 = NULL;
+  parent1 = nullptr;
+  parent2 = nullptr;
   myWindow = myKernel->newSingleWindow( whichTrace );
   myFilter = myKernel->newFilter( myWindow->getFilter() );
   init();
@@ -107,17 +107,17 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
     myTrace = whichParent2->getTrace();
 
   myWindow = myKernel->newDerivedWindow( parent1, parent2 );
-  myFilter = NULL;
+  myFilter = nullptr;
   init();
 }
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel ):
-  Window( whichKernel ), myTrace( NULL ), myCodeColor( this )
+  Window( whichKernel ), myTrace( nullptr ), myCodeColor( this )
 {
-  parent1 = NULL;
-  parent2 = NULL;
+  parent1 = nullptr;
+  parent2 = nullptr;
   myWindow = myKernel->newDerivedWindow();
-  myFilter = NULL;
+  myFilter = nullptr;
   init();
 }
 
@@ -135,9 +135,9 @@ void WindowProxy::init()
   semanticScaleMinAtZero = ParaverConfig::getInstance()->getTimelineSemanticScaleMinAtZero();
   colorMode = ParaverConfig::getInstance()->getTimelineColor();
   useCustomPalette = Window::getUseCustomPalette();
-  if( colorMode == SemanticColor::GRADIENT )
+  if( colorMode == TColorFunction::GRADIENT )
     myGradientColor.allowOutOfScale( true );
-  else if( colorMode == SemanticColor::NOT_NULL_GRADIENT )
+  else if( colorMode == TColorFunction::NOT_NULL_GRADIENT )
     myGradientColor.allowOutOfScale( false );
   myGradientColor.setGradientFunction( ParaverConfig::getInstance()->getTimelineGradientFunction() );
   drawModeObject = ParaverConfig::getInstance()->getTimelineDrawmodeObjects();
@@ -154,14 +154,14 @@ void WindowProxy::init()
   forceRedraw = false;
   commLines = ParaverConfig::getInstance()->getTimelineViewCommunicationsLines();
   flags = ParaverConfig::getInstance()->getTimelineViewEventsLines();
-  child = NULL;
+  child = nullptr;
 
-  punctualColorWindow = NULL;
+  punctualColorWindow = nullptr;
 
   objectLabels = ParaverConfig::getInstance()->getTimelineLabels();
   objectAxisSize = ParaverConfig::getInstance()->getTimelineObjectAxisSize();
 
-  if( myTrace != NULL )
+  if( myTrace != nullptr )
   {
     winEndTime = myTrace->getEndTime();
     myCodeColor = myTrace->getCodeColor();
@@ -174,11 +174,12 @@ void WindowProxy::init()
 
   isCFG4DEnabled = false;
   CFG4DMode = false;
+  globalIndexLink = 0;
 }
 
 WindowProxy::~WindowProxy()
 {
-  if ( !myWindow->isDerivedWindow() && myFilter != NULL )
+  if ( !myWindow->isDerivedWindow() && myFilter != nullptr )
     delete myFilter;
   LoadedWindows::getInstance()->eraseWindow( this );
   if( sync )
@@ -187,7 +188,7 @@ WindowProxy::~WindowProxy()
 
   for ( vector< RecordList *>::iterator it = myLists.begin(); it != myLists.end(); ++it )
   {
-    if( *it != NULL )
+    if( *it != nullptr )
       delete *it;
   }
 }
@@ -237,21 +238,21 @@ void WindowProxy::setParent( PRV_UINT16 whichParent, Window *whichWindow )
 
     if ( whichParent == 0 )
     {
-      if ( parent1 != NULL )
-        parent1->setChild( NULL );
+      if ( parent1 != nullptr )
+        parent1->setChild( nullptr );
       parent1 = whichWindow;
     }
     else if ( whichParent == 1 )
     {
-      if ( parent2 != NULL )
-        parent2->setChild( NULL );
+      if ( parent2 != nullptr )
+        parent2->setChild( nullptr );
       parent2 = whichWindow;
     }
     myWindow->setParent( whichParent, whichWindow->getConcrete() );
 
     whichWindow->setChild( this );
 
-    if ( parent1 != NULL && parent2 != NULL && myTrace == NULL )
+    if ( parent1 != nullptr && parent2 != nullptr && myTrace == nullptr )
     {
       if( parent1->getTrace()->getEndTime() >= parent2->getTrace()->getEndTime() )
         myTrace = parent1->getTrace();
@@ -284,7 +285,7 @@ Window *WindowProxy::getParent( PRV_UINT16 whichParent ) const
       return parent2;
       break;
     default:
-      return NULL;
+      return nullptr;
       break;
   }
 }
@@ -339,7 +340,7 @@ Window *WindowProxy::clone( bool recursiveClone )
   clonedWindow->redraw = redraw;
   clonedWindow->commLines = commLines;
   clonedWindow->flags = flags;
-  clonedWindow->child = NULL;
+  clonedWindow->child = nullptr;
   clonedWindow->posX = posX;
   clonedWindow->posY = posY;
   clonedWindow->width = width;
@@ -512,14 +513,14 @@ void WindowProxy::computeYScale( ProgressController *progress )
     getSelectedRows( getLevel(), selected,
                      getZoomSecondDimension().first, getZoomSecondDimension().second, true );
     int progressDelta;
-    if( progress != NULL )
+    if( progress != nullptr )
       progressDelta = (int)floor( selected.size() * 0.005 );
 
     init( winBeginTime, NOCREATE );
 
     std::string previousMessage;
     int currentObject = 0;
-    if( progress != NULL )
+    if( progress != nullptr )
     {
       previousMessage = progress->getMessage();
       progress->setMessage( "Computing semantic scale..." );
@@ -562,7 +563,7 @@ void WindowProxy::computeYScale( ProgressController *progress )
           {
             TObjectOrder obj = selected[ i ];
             initRow( obj, winBeginTime, NOCREATE, tmpComputedMaxY[ tmpComputedMaxYSize - 1 ], tmpComputedMinY[ tmpComputedMinYSize - 1 ], tmpComputedZeros[ tmpComputedZerosSize - 1 ]  );
-            if( progress == NULL || ( progress != NULL && !progress->getStop() ) )
+            if( progress == nullptr || ( progress != nullptr && !progress->getStop() ) )
             {
               while ( getBeginTime( obj ) < winEndTime &&
                       getBeginTime( obj ) < myTrace->getEndTime() )
@@ -570,7 +571,7 @@ void WindowProxy::computeYScale( ProgressController *progress )
 
               #pragma omp atomic
               ++currentObject;
-              if( progress != NULL )
+              if( progress != nullptr )
               {
                 if( selected.size() <= 200 || currentObject % progressDelta == 0 )
                 {
@@ -602,7 +603,7 @@ void WindowProxy::computeYScale( ProgressController *progress )
     parallelClone.clear();
 #endif // PARALLEL_ENABLED
 
-    if( progress != NULL )
+    if( progress != nullptr )
     {
       progress->setMessage( previousMessage );
     }
@@ -818,7 +819,7 @@ string WindowProxy::getExtraFunctionParamName( TWindowLevel whichLevel,
 RecordList *WindowProxy::getRecordList( TObjectOrder whichObject )
 {
   if ( myLists.begin() == myLists.end() )
-    return NULL;
+    return nullptr;
   return myLists[ whichObject ];
 }
 
@@ -839,7 +840,7 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create, bool update
   }
 
   for ( int i = 0; i < myWindow->getWindowLevelObjects(); ++i )
-    myLists.push_back( NULL );
+    myLists.push_back( nullptr );
 
   myWindow->init( initialTime, create );
   if ( updateLimits )
@@ -859,7 +860,7 @@ void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCrea
 #endif // PARALLEL_ENABLED
 
   tmpMyWindow->initRow( whichRow, initialTime, create );
-  if ( create != NOCREATE && myLists[ whichRow ] == NULL )
+  if ( create != NOCREATE && myLists[ whichRow ] == nullptr )
     myLists[ whichRow ] = RecordList::create( tmpMyWindow->getRecordList( whichRow ) );
 
   if ( updateLimits )
@@ -885,7 +886,7 @@ void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCrea
 #endif // PARALLEL_ENABLED
 
   tmpMyWindow->initRow( whichRow, initialTime, create );
-  if ( create != NOCREATE && myLists[ whichRow ] == NULL )
+  if ( create != NOCREATE && myLists[ whichRow ] == nullptr )
     myLists[ whichRow ] = RecordList::create( tmpMyWindow->getRecordList( whichRow ) );
 
   if ( updateLimits )
@@ -907,7 +908,7 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject, bool updateLimits )
     tmpMyWindow = parallelClone[ omp_get_thread_num() ];
 #endif // PARALLEL_ENABLED
 
-  if ( myLists[ whichObject ] == NULL )
+  if ( myLists[ whichObject ] == nullptr )
     myLists[ whichObject ] = RecordList::create( tmpMyWindow->calcNext( whichObject ) );
   else
     tmpMyWindow->calcNext( whichObject );
@@ -936,7 +937,7 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject,
     tmpMyWindow = parallelClone[ omp_get_thread_num() ];
 #endif // PARALLEL_ENABLED
 
-  if ( myLists[ whichObject ] == NULL )
+  if ( myLists[ whichObject ] == nullptr )
     myLists[ whichObject ] = RecordList::create( tmpMyWindow->calcNext( whichObject ) );
   else
     tmpMyWindow->calcNext( whichObject );
@@ -962,7 +963,7 @@ RecordList *WindowProxy::calcPrev( TObjectOrder whichObject, bool updateLimits )
     tmpMyWindow = parallelClone[ omp_get_thread_num() ];
 #endif // PARALLEL_ENABLED
 
-  if ( myLists[ whichObject ] == NULL )
+  if ( myLists[ whichObject ] == nullptr )
     myLists[ whichObject ] = RecordList::create( tmpMyWindow->calcPrev( whichObject ) );
   else
     tmpMyWindow->calcPrev( whichObject );
@@ -1155,7 +1156,7 @@ void WindowProxy::setShowWindow( bool newValue )
 
 void WindowProxy::setShowChildrenWindow( bool newValue )
 {
-  if ( getParent( 0 ) != NULL )
+  if ( getParent( 0 ) != nullptr )
   {
     for ( PRV_UINT16 i = 0; i < 2; ++i )
     {
@@ -1177,64 +1178,64 @@ void WindowProxy::setRaiseWindow( bool newValue )
 
 void WindowProxy::setCodeColorMode()
 {
-  colorMode = SemanticColor::COLOR;
+  colorMode = TColorFunction::COLOR;
 }
 
 void WindowProxy::setGradientColorMode()
 {
-  colorMode = SemanticColor::GRADIENT;
+  colorMode = TColorFunction::GRADIENT;
   myGradientColor.allowOutOfScale( true );
 }
 
 void WindowProxy::setNotNullGradientColorMode()
 {
-  colorMode = SemanticColor::NOT_NULL_GRADIENT;
+  colorMode = TColorFunction::NOT_NULL_GRADIENT;
   myGradientColor.allowOutOfScale( false );
 }
 
 void WindowProxy::setFunctionLineColorMode()
 {
-  colorMode = SemanticColor::FUNCTION_LINE;
+  colorMode = TColorFunction::FUNCTION_LINE;
 }
 
 void WindowProxy::setFusedLinesColorMode()
 {
-  colorMode = SemanticColor::FUSED_LINES;
+  colorMode = TColorFunction::FUSED_LINES;
 }
 
 void WindowProxy::setPunctualColorMode()
 {
-  colorMode = SemanticColor::PUNCTUAL;
+  colorMode = TColorFunction::PUNCTUAL;
 }
 
 bool WindowProxy::isCodeColorSet() const
 {
-  return colorMode == SemanticColor::COLOR;
+  return colorMode == TColorFunction::COLOR;
 }
 
 bool WindowProxy::isGradientColorSet() const
 {
-  return colorMode == SemanticColor::GRADIENT;
+  return colorMode == TColorFunction::GRADIENT;
 }
 
 bool WindowProxy::isNotNullGradientColorSet() const
 {
-  return colorMode == SemanticColor::NOT_NULL_GRADIENT;
+  return colorMode == TColorFunction::NOT_NULL_GRADIENT;
 }
 
 bool WindowProxy::isFunctionLineColorSet() const
 {
-  return colorMode == SemanticColor::FUNCTION_LINE;
+  return colorMode == TColorFunction::FUNCTION_LINE;
 }
 
 bool WindowProxy::isFusedLinesColorSet() const
 {
-  return colorMode == SemanticColor::FUSED_LINES;
+  return colorMode == TColorFunction::FUSED_LINES;
 }
 
 bool WindowProxy::isPunctualColorSet() const
 {
-  return colorMode == SemanticColor::PUNCTUAL;
+  return colorMode == TColorFunction::PUNCTUAL;
 }
 
 PRV_UINT16 WindowProxy::getPixelSize() const
@@ -1274,7 +1275,7 @@ void WindowProxy::allowOutliers( bool activate )
 
 rgb WindowProxy::calcColor( TSemanticValue whichValue, Window& whichWindow )
 {
-  if ( colorMode == SemanticColor::COLOR )
+  if ( colorMode == TColorFunction::COLOR )
     return myCodeColor.calcColor( whichValue, minimumY, maximumY, useCustomPalette );
 
   return myGradientColor.calcColor( whichValue, minimumY, maximumY );
@@ -1282,7 +1283,7 @@ rgb WindowProxy::calcColor( TSemanticValue whichValue, Window& whichWindow )
 
 bool WindowProxy::isColorOutlier( rgb whichColor ) const
 {
-  if( colorMode != SemanticColor::GRADIENT )
+  if( colorMode != TColorFunction::GRADIENT )
     return false;
   return myGradientColor.isColorOutlier( whichColor );
 }
@@ -1360,12 +1361,12 @@ void WindowProxy::getAllSemanticFunctions( TSemanticGroup whichGroup,
 
 bool WindowProxy::emptyPrevZoom() const
 {
-  return zoomHistory.isEmpty( PREV_ZOOM );
+  return zoomHistory.isEmpty( TZoomPosition::PREV_ZOOM );
 }
 
 bool WindowProxy::emptyNextZoom() const
 {
-  return zoomHistory.isEmpty( NEXT_ZOOM );
+  return zoomHistory.isEmpty( TZoomPosition::NEXT_ZOOM );
 }
 
 void WindowProxy::nextZoom()
@@ -1445,12 +1446,12 @@ pair<TObjectOrder, TObjectOrder> WindowProxy::getZoomSecondDimension() const
 
 pair<TObjectOrder, TObjectOrder> WindowProxy::getPrevZoomSecondDimension() const
 {
-  return zoomHistory.getSecondDimension( PREV_ZOOM );
+  return zoomHistory.getSecondDimension( TZoomPosition::PREV_ZOOM );
 }
 
 pair<TObjectOrder, TObjectOrder> WindowProxy::getNextZoomSecondDimension() const
 {
-  return zoomHistory.getSecondDimension( NEXT_ZOOM );
+  return zoomHistory.getSecondDimension( TZoomPosition::NEXT_ZOOM );
 }
 
 void WindowProxy::addToSyncGroup( TGroupId whichGroup )
@@ -1637,22 +1638,22 @@ bool WindowProxy::getParametersOfFunction( string whichFunction,
          defaultParameters );
 }
 
-void WindowProxy::setObjectLabels( Window::TObjectLabels whichLabels )
+void WindowProxy::setObjectLabels( TObjectLabels whichLabels )
 {
   objectLabels = whichLabels;
 }
 
-Window::TObjectLabels WindowProxy::getObjectLabels() const
+TObjectLabels WindowProxy::getObjectLabels() const
 {
   return objectLabels;
 }
 
-void WindowProxy::setObjectAxisSize( Window::TObjectAxisSize whichSize )
+void WindowProxy::setObjectAxisSize( TObjectAxisSize whichSize )
 {
   objectAxisSize = whichSize;
 }
 
-Window::TObjectAxisSize WindowProxy::getObjectAxisSize() const
+TObjectAxisSize WindowProxy::getObjectAxisSize() const
 {
   return objectAxisSize;
 }
@@ -1672,10 +1673,10 @@ void WindowProxy::setCFG4DMode( bool mode )
 {
   if( isDerivedWindow() )
   {
-    if ( parent1 != NULL)
+    if ( parent1 != nullptr)
       parent1->setCFG4DMode( mode );
 
-    if ( parent2 != NULL)
+    if ( parent2 != nullptr)
       parent2->setCFG4DMode( mode );
   }
 
@@ -1696,10 +1697,10 @@ void WindowProxy::setCFG4DEnabled( bool enabled )
 {
   if( isDerivedWindow() )
   {
-    if ( parent1 != NULL)
+    if ( parent1 != nullptr)
       parent1->setCFG4DEnabled( enabled );
 
-    if ( parent2 != NULL)
+    if ( parent2 != nullptr)
       parent2->setCFG4DEnabled( enabled );
   }
 
@@ -2037,18 +2038,28 @@ vector< Window::TParamAliasKey > WindowProxy::getCFG4DParamKeysBySemanticLevel( 
 }
 
 
-void WindowProxy::setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichIndex )
+void WindowProxy::setCFGS4DIndexLink( TCFGS4DIndexLink whichIndex )
 {
-  indexLinkFromPropName[ whichName ] = whichIndex;
+  globalIndexLink = whichIndex;
 }
 
-TCFGS4DIndexLink WindowProxy::getCFGS4DIndexLink( std::string whichName ) const
+TCFGS4DIndexLink WindowProxy::getCFGS4DIndexLink() const
 {
-  map< string, TCFGS4DIndexLink >::const_iterator it = indexLinkFromPropName.find( whichName );
-  if( it != indexLinkFromPropName.end() )
+  return globalIndexLink;
+}
+
+void WindowProxy::setCFGS4DGroupLink( std::string originalName, TCFGS4DGroup whichGroup )
+{
+  groupLinkFromPropName[ originalName ] = whichGroup;
+}
+
+TCFGS4DGroup WindowProxy::getCFGS4DGroupLink( std::string originalName ) const
+{
+  map< string, TCFGS4DGroup >::const_iterator it = groupLinkFromPropName.find( originalName );
+  if( it != groupLinkFromPropName.end() )
     return it->second;
 
-  return NO_INDEX_LINK;
+  return NO_GROUP_LINK;
 }
 
 #ifdef _MSC_VER
@@ -2074,8 +2085,8 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
                                            TObjectOrder maxObj,
                                            bool& drawCaution,
                                            vector< vector< TSemanticValue > >& valuesToDraw,
-                                           vector< hash_set< PRV_INT32 > >& eventsToDraw,
-                                           vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,
+                                           vector< unordered_set< PRV_INT32 > >& eventsToDraw,
+                                           vector< unordered_set< commCoord, hashCommCoord > >& commsToDraw,
                                            ProgressController *progress )
 #endif
 {
@@ -2083,7 +2094,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   vector< TSemanticValue > tmpComputedMaxY;
   vector< TSemanticValue > tmpComputedMinY;
   vector< int > tmpComputedZeros;
-  ProgressController *paramProgress = NULL;
+  ProgressController *paramProgress = nullptr;
 
   if( getWindowBeginTime() == getWindowEndTime() )
     return;
@@ -2119,7 +2130,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
 
   paramProgress = progress;
 
-  if ( progress != NULL )
+  if ( progress != nullptr )
   {
     if( numRows > 1 )
       progress->setEndLimit( numRows );
@@ -2161,11 +2172,11 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
         }
         valuesToDraw.push_back( vector< TSemanticValue >() );
 
-        eventsToDraw.push_back( hash_set< PRV_INT32 >() );
+        eventsToDraw.push_back( unordered_set< PRV_INT32 >() );
 #ifdef _MSC_VER
         commsToDraw.push_back( hash_set< commCoord >() );
 #else
-        commsToDraw.push_back( hash_set< commCoord, hashCommCoord >() );
+        commsToDraw.push_back( unordered_set< commCoord, hashCommCoord >() );
 #endif
 
         tmpDrawCaution.push_back( drawCaution );
@@ -2202,8 +2213,8 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
                           firstprivate(tmpDrawCautionSize, tmpComputedMaxYSize, tmpComputedMinYSize, tmpComputedZerosSize, valuesToDrawSize, eventsToDrawSize, commsToDrawSize) \
                           default(none)
           {
-            if( paramProgress == NULL ||
-                ( paramProgress != NULL && !paramProgress->getStop() ) )
+            if( paramProgress == nullptr ||
+                ( paramProgress != nullptr && !paramProgress->getStop() ) )
             {
               computeSemanticRowParallel(
                       numRows, firstObj, lastObj, selectedSet, selected, timeStep, timePos,
@@ -2218,7 +2229,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
                       paramProgress );
             }
 
-            if( paramProgress != NULL && !paramProgress->getStop() )
+            if( paramProgress != nullptr && !paramProgress->getStop() )
             {
               #pragma omp critical
               paramProgress->setCurrentProgress( ++currentRow );
@@ -2284,8 +2295,8 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
                                               TSemanticValue& rowComputedMinY,
                                               int& rowComputedZeros,
                                               vector< TSemanticValue >& valuesToDraw,
-                                              hash_set< PRV_INT32 >& eventsToDraw,
-                                              hash_set< commCoord, hashCommCoord >& commsToDraw,
+                                              unordered_set< PRV_INT32 >& eventsToDraw,
+                                              unordered_set< commCoord, hashCommCoord >& commsToDraw,
                                               ProgressController *progress )
 #endif
 {
@@ -2322,7 +2333,7 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
       while( getEndTime( *row ) < currentTime )
       {
         // Making cancel button more responsive for 1 row drawing
-        if( numRows == 1 && progress != NULL && progress->getStop() )
+        if( numRows == 1 && progress != nullptr && progress->getStop() )
           break;
 
         calcNext( *row, rowComputedMaxY, rowComputedMinY, rowComputedZeros );
@@ -2335,7 +2346,7 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
       rowValues.push_back( DrawMode::selectValue( timeValues, getDrawModeTime() ) );
 
       RecordList *rl = getRecordList( *row );
-      if( rl != NULL && !isFusedLinesColorSet() )
+      if( rl != nullptr && !isFusedLinesColorSet() )
         computeEventsCommsParallel( rl,
                                     currentTime - timeStep, currentTime, timeStep / magnify,
                                     timePos, objectAxisPos,
@@ -2345,7 +2356,7 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
     valuesToDraw.push_back( DrawMode::selectValue( rowValues, getDrawModeObject() ) );
     timePos += (int) magnify;
 
-    if( progress != NULL )
+    if( progress != nullptr )
     {
       if( progress->getStop() )
         break;
@@ -2378,7 +2389,7 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
     int dumbZeros;
     calcNext( *row, dumbMinMax, dumbMinMax, dumbZeros );
     RecordList *rl = getRecordList( *row );
-    if( rl != NULL && !isFusedLinesColorSet() )
+    if( rl != nullptr && !isFusedLinesColorSet() )
       computeEventsCommsParallel( rl,
                                   currentTime - timeStep, currentTime, timeStep / magnify,
                                   timePos, objectAxisPos,
@@ -2414,8 +2425,8 @@ void WindowProxy::computeEventsCommsParallel( RecordList *records,
                                               PRV_INT32 objectAxisPos,
                                               vector< bool >& selected,
                                               vector< PRV_INT32 >& objectPosList,
-                                              hash_set< PRV_INT32 >& eventsToDraw,
-                                              hash_set< commCoord, hashCommCoord >& commsToDraw )
+                                              unordered_set< PRV_INT32 >& eventsToDraw,
+                                              unordered_set< commCoord, hashCommCoord >& commsToDraw )
 #endif
 {
   bool existEvents = false;
@@ -2513,8 +2524,8 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
                                                    TObjectOrder maxObj,
                                                    bool& drawCaution,
                                                    vector< vector< vector< pair<TSemanticValue,TSemanticValue> > > >& valuesToDraw,
-                                                   vector< hash_set< PRV_INT32 > >& eventsToDraw,
-                                                   vector< hash_set< commCoord, hashCommCoord > >& commsToDraw,
+                                                   vector< unordered_set< PRV_INT32 > >& eventsToDraw,
+                                                   vector< unordered_set< commCoord, hashCommCoord > >& commsToDraw,
                                                    ProgressController *progress )
 #endif
 {
@@ -2522,7 +2533,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
   vector< TSemanticValue > tmpComputedMaxY;
   vector< TSemanticValue > tmpComputedMinY;
   vector< int > tmpComputedZeros;
-  ProgressController *paramProgress = NULL;
+  ProgressController *paramProgress = nullptr;
 
   if( getWindowBeginTime() == getWindowEndTime() )
     return;
@@ -2551,7 +2562,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
 
 #ifndef PARALLEL_ENABLED
   paramProgress = progress;
-  if( progress != NULL )
+  if( progress != nullptr )
   {
     if( numRows > 1 )
       progress->setEndLimit( numRows );
@@ -2588,11 +2599,11 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
         }
         valuesToDraw.push_back( vector< vector< pair<TSemanticValue,TSemanticValue> > >() );
 
-        eventsToDraw.push_back( hash_set< PRV_INT32 >() );
+        eventsToDraw.push_back( unordered_set< PRV_INT32 >() );
 #ifdef _MSC_VER
         commsToDraw.push_back( hash_set< commCoord >() );
 #else
-        commsToDraw.push_back( hash_set< commCoord, hashCommCoord >() );
+        commsToDraw.push_back( unordered_set< commCoord, hashCommCoord >() );
 #endif
 
         tmpDrawCaution.push_back( drawCaution );
@@ -2627,7 +2638,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
         }
 
 #ifndef PARALLEL_ENABLED
-        if( numRows > 1 && progress != NULL )
+        if( numRows > 1 && progress != nullptr )
         {
           if( progress->getStop() )
             break;
@@ -2699,8 +2710,8 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
                                                       TSemanticValue& rowComputedMinY,
                                                       int& rowComputedZeros,
                                                       vector< vector< pair<TSemanticValue,TSemanticValue> > >& valuesToDraw,
-                                                      hash_set< PRV_INT32 >& eventsToDraw,
-                                                      hash_set< commCoord, hashCommCoord >& commsToDraw,
+                                                      unordered_set< PRV_INT32 >& eventsToDraw,
+                                                      unordered_set< commCoord, hashCommCoord >& commsToDraw,
                                                       ProgressController *progress )
 #endif
 {
@@ -2717,7 +2728,7 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
   for( vector<TObjectOrder>::iterator row = first; row <= last; ++row )
   {
     initRow( *row, getWindowBeginTime(), CREATECOMMS + CREATEEVENTS, rowComputedMaxY, rowComputedMinY, rowComputedZeros );
-    if( punctualColorWindow != NULL )
+    if( punctualColorWindow != nullptr )
       punctualColorWindow->initRow( *row, getWindowBeginTime(), NOCREATE, dummyMaxY, dummyMinY, dummyZeros, false );
   }
 
@@ -2735,7 +2746,7 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
       if( getBeginTime( *row ) >= currentTime - timeStep && getBeginTime( *row ) < currentTime )
       {
         tmpPairSemantic.first = getValue( *row );
-        if( punctualColorWindow != NULL )
+        if( punctualColorWindow != nullptr )
         {
           while( getBeginTime( *row ) >= punctualColorWindow->getEndTime( *row ) )
             punctualColorWindow->calcNext( *row, dummyMaxY, dummyMinY, dummyZeros );
@@ -2763,7 +2774,7 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
         if( getBeginTime( *row ) >= currentTime - timeStep && getBeginTime( *row ) < currentTime )
         {
           tmpPairSemantic.first = currentValue;
-          if( punctualColorWindow != NULL )
+          if( punctualColorWindow != nullptr )
           {
             while( getBeginTime( *row ) >= punctualColorWindow->getEndTime( *row ) )
               punctualColorWindow->calcNext( *row, dummyMaxY, dummyMinY, dummyZeros );
@@ -2778,7 +2789,7 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
       }
 
       RecordList *rl = getRecordList( *row );
-      if( rl != NULL )
+      if( rl != nullptr )
         computeEventsCommsParallel( rl,
                                     currentTime - timeStep, currentTime, timeStep / magnify,
                                     timePos, objectAxisPos,
@@ -2788,7 +2799,7 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
     valuesToDraw.push_back( values );
     timePos += (int) magnify;
 
-    if( progress != NULL )
+    if( progress != nullptr )
     {
       if( progress->getStop() )
         break;
@@ -2811,7 +2822,7 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
     int dumbZeros;
     calcNext( *row, dumbMinMax, dumbMinMax, dumbZeros );
     RecordList *rl = getRecordList( *row );
-    if( rl != NULL )
+    if( rl != nullptr )
       computeEventsCommsParallel( rl,
                                   currentTime - timeStep, currentTime, timeStep / magnify,
                                   timePos, objectAxisPos,

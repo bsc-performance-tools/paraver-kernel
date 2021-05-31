@@ -28,8 +28,8 @@ using std::vector;
 
 HistogramTotals *HistogramTotals::create( HistogramTotals *whichTotals )
 {
-  if( whichTotals == NULL )
-    return NULL;
+  if( whichTotals == nullptr )
+    return nullptr;
 
   return new HistogramTotalsProxy( whichTotals );
 }

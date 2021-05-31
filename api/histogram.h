@@ -164,10 +164,10 @@ class Histogram
 
     virtual TTimeUnit getTimeUnit() const = 0;
 
-    virtual Histogram* clone( ) { return NULL; }
+    virtual Histogram* clone( ) { return nullptr; }
 
     // Specific methods of HistogramProxy
-    virtual Trace *getTrace() const { return NULL; }
+    virtual Trace *getTrace() const { return nullptr; }
     virtual bool getDestroy() const { return false; }
     virtual void setDestroy( bool newValue ) {}
     virtual PRV_UINT16 getPosX() const
@@ -199,7 +199,7 @@ class Histogram
     {}
     virtual HistogramTotals *getTotals( const std::string& whichStat ) const
     {
-      return NULL;
+      return nullptr;
     }
     virtual void setHorizontal( bool newValue ) {}
     virtual bool getHorizontal() const
@@ -307,7 +307,7 @@ class Histogram
     }
     virtual GradientColor& getGradientColor()
     {
-      GradientColor *tmp = NULL;
+      GradientColor *tmp = nullptr;
       return *tmp;
     }
     virtual void recalcGradientLimits() {}
@@ -332,12 +332,13 @@ class Histogram
     {
       return 0;
     }
+    virtual void setCommSelectedPlane( PRV_INT32 plane ) {}
     virtual PRV_INT32 getCommSelectedPlane() const
     {
       return 0;
     }
-    virtual void compute2DScale( ProgressController *progress = NULL ) {}
-    virtual void compute3DScale( ProgressController *progress = NULL ) {}
+    virtual void compute2DScale( ProgressController *progress = nullptr ) {}
+    virtual void compute3DScale( ProgressController *progress = nullptr ) {}
     virtual std::string getRowLabel( TObjectOrder whichRow ) const
     {
       return "Unnamed row";
@@ -499,11 +500,11 @@ class Histogram
     // DEPRECATED
     virtual void setCodeColor( bool newValue )
     {}
-    virtual SemanticColor::TColorFunction getColorMode() const
+    virtual TColorFunction getColorMode() const
     {
-      return SemanticColor::GRADIENT;
+      return TColorFunction::GRADIENT;
     }
-    virtual void setColorMode( SemanticColor::TColorFunction whichMode )
+    virtual void setColorMode( TColorFunction whichMode )
     {}
     virtual PRV_UINT16 getPixelSize() const
     {
@@ -576,18 +577,26 @@ class Histogram
     {
       return std::vector< std::string >();
     }
-    
-    virtual void setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichLink )
+
+    virtual void setCFGS4DGroupLink( std::string originalName, TCFGS4DGroup whichGroup )
     {}
 
-    virtual TCFGS4DIndexLink getCFGS4DIndexLink( std::string whichName ) const
+    virtual TCFGS4DGroup getCFGS4DGroupLink( std::string originalName ) const
     {
-      return 0;
+      return NO_GROUP_LINK;
+    }
+
+    virtual void setCFGS4DIndexLink( TCFGS4DIndexLink whichLink )
+    {}
+
+    virtual TCFGS4DIndexLink getCFGS4DIndexLink() const
+    {
+      return NO_INDEX_LINK;
     }
 
     virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement()
     {
-      return ( SelectionManagement< TObjectOrder, TWindowLevel > * ) NULL;
+      return ( SelectionManagement< TObjectOrder, TWindowLevel > * ) nullptr;
     }
 
     virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel )
@@ -625,284 +634,289 @@ class HistogramProxy : public Histogram
   public:
     virtual ~HistogramProxy();
 
-    virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false );
-    virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false );
+    virtual void setWindowBeginTime( TRecordTime whichTime, bool isBroadcast = false ) override;
+    virtual void setWindowEndTime( TRecordTime whichTime, bool isBroadcast = false ) override;
 
-    virtual bool getThreeDimensions() const;
-    virtual TRecordTime getBeginTime() const;
-    virtual TRecordTime getEndTime() const;
-    virtual Trace *getTrace() const;
-    virtual Window *getControlWindow() const;
-    virtual Window *getDataWindow() const;
-    virtual Window *getExtraControlWindow() const;
-    virtual void setControlWindow( Window *whichWindow );
-    virtual void setDataWindow( Window *whichWindow );
-    virtual void setExtraControlWindow( Window *whichWindow );
-    virtual void clearControlWindow();
-    virtual void clearDataWindow();
-    virtual void clearExtraControlWindow();
-    virtual void setControlMin( THistogramLimit whichMin );
-    virtual void setControlMax( THistogramLimit whichMax );
-    virtual void setControlDelta( THistogramLimit whichDelta );
-    virtual void setExtraControlMin( THistogramLimit whichMin );
-    virtual void setExtraControlMax( THistogramLimit whichMax );
-    virtual void setExtraControlDelta( THistogramLimit whichDelta );
-    virtual void setDataMin( THistogramLimit whichMin );
-    virtual void setDataMax( THistogramLimit whichMax );
-    virtual void setBurstMin( TRecordTime whichTime );
-    virtual void setBurstMax( TRecordTime whichTime );
-    virtual void setCommSizeMin( TCommSize whichSize );
-    virtual void setCommSizeMax( TCommSize whichSize );
-    virtual void setCommTagMin( TCommTag whichTag );
-    virtual void setCommTagMax( TCommTag whichTag );
+    virtual bool getThreeDimensions() const override;
+    virtual TRecordTime getBeginTime() const override;
+    virtual TRecordTime getEndTime() const override;
+    virtual Trace *getTrace() const override;
+    virtual Window *getControlWindow() const override;
+    virtual Window *getDataWindow() const override;
+    virtual Window *getExtraControlWindow() const override;
+    virtual void setControlWindow( Window *whichWindow ) override;
+    virtual void setDataWindow( Window *whichWindow ) override;
+    virtual void setExtraControlWindow( Window *whichWindow ) override;
+    virtual void clearControlWindow() override;
+    virtual void clearDataWindow() override;
+    virtual void clearExtraControlWindow() override;
+    virtual void setControlMin( THistogramLimit whichMin ) override;
+    virtual void setControlMax( THistogramLimit whichMax ) override;
+    virtual void setControlDelta( THistogramLimit whichDelta ) override;
+    virtual void setExtraControlMin( THistogramLimit whichMin ) override;
+    virtual void setExtraControlMax( THistogramLimit whichMax ) override;
+    virtual void setExtraControlDelta( THistogramLimit whichDelta ) override;
+    virtual void setDataMin( THistogramLimit whichMin ) override;
+    virtual void setDataMax( THistogramLimit whichMax ) override;
+    virtual void setBurstMin( TRecordTime whichTime ) override;
+    virtual void setBurstMax( TRecordTime whichTime ) override;
+    virtual void setCommSizeMin( TCommSize whichSize ) override;
+    virtual void setCommSizeMax( TCommSize whichSize ) override;
+    virtual void setCommTagMin( TCommTag whichTag ) override;
+    virtual void setCommTagMax( TCommTag whichTag ) override;
 
-    virtual THistogramLimit getControlMin() const;
-    virtual THistogramLimit getControlMax() const;
-    virtual THistogramLimit getControlDelta() const;
-    virtual THistogramLimit getExtraControlMin() const;
-    virtual THistogramLimit getExtraControlMax() const;
-    virtual THistogramLimit getExtraControlDelta() const;
-    virtual THistogramLimit getDataMin() const;
-    virtual THistogramLimit getDataMax() const;
-    virtual TRecordTime getBurstMin() const;
-    virtual TRecordTime getBurstMax() const;
-    virtual TCommSize getCommSizeMin() const;
-    virtual TCommSize getCommSizeMax() const;
-    virtual TCommTag getCommTagMin() const;
-    virtual TCommTag getCommTagMax() const;
+    virtual THistogramLimit getControlMin() const override;
+    virtual THistogramLimit getControlMax() const override;
+    virtual THistogramLimit getControlDelta() const override;
+    virtual THistogramLimit getExtraControlMin() const override;
+    virtual THistogramLimit getExtraControlMax() const override;
+    virtual THistogramLimit getExtraControlDelta() const override;
+    virtual THistogramLimit getDataMin() const override;
+    virtual THistogramLimit getDataMax() const override;
+    virtual TRecordTime getBurstMin() const override;
+    virtual TRecordTime getBurstMax() const override;
+    virtual TCommSize getCommSizeMin() const override;
+    virtual TCommSize getCommSizeMax() const override;
+    virtual TCommTag getCommTagMin() const override;
+    virtual TCommTag getCommTagMax() const override;
 
-    virtual bool getInclusiveEnabled() const;
-    virtual void setInclusive( bool newValue );
-    virtual bool getInclusive() const;
+    virtual bool getInclusiveEnabled() const override;
+    virtual void setInclusive( bool newValue ) override;
+    virtual bool getInclusive() const override;
 
-    virtual THistogramColumn getNumPlanes() const;
-    virtual THistogramColumn getNumColumns( const std::string& whichStat ) const;
-    virtual TObjectOrder getNumRows() const;
+    virtual THistogramColumn getNumPlanes() const override;
+    virtual THistogramColumn getNumColumns( const std::string& whichStat ) const override;
+    virtual TObjectOrder getNumRows() const override;
 
     virtual TSemanticValue getCurrentValue( PRV_UINT32 col,
                                             PRV_UINT16 idStat,
-                                            PRV_UINT32 plane = 0 ) const;
-    virtual PRV_UINT32 getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const;
-    virtual void setNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
-    virtual void setFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
-    virtual bool endCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
-    virtual bool planeWithValues( PRV_UINT32 plane = 0 ) const;
+                                            PRV_UINT32 plane = 0 ) const override;
+    virtual PRV_UINT32 getCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const override;
+    virtual void setNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    virtual void setFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    virtual bool endCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    virtual bool planeWithValues( PRV_UINT32 plane = 0 ) const override;
     virtual bool getCellValue( TSemanticValue& semVal,
                                PRV_UINT32 whichRow,
                                PRV_UINT32 whichCol,
                                PRV_UINT16 idStat,
-                               PRV_UINT32 whichPlane = 0 ) const;
+                               PRV_UINT32 whichPlane = 0 ) const override;
 
     virtual TSemanticValue getCommCurrentValue( PRV_UINT32 col,
         PRV_UINT16 idStat,
-        PRV_UINT32 plane = 0 ) const;
-    virtual PRV_UINT32 getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const;
-    virtual void setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
-    virtual void setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
-    virtual bool endCommCell( PRV_UINT32 col, PRV_UINT32 plane = 0 );
-    virtual bool planeCommWithValues( PRV_UINT32 plane = 0 ) const;
+        PRV_UINT32 plane = 0 ) const override;
+    virtual PRV_UINT32 getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane = 0 ) const override;
+    virtual void setCommNextCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    virtual void setCommFirstCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    virtual bool endCommCell( PRV_UINT32 col, PRV_UINT32 plane = 0 ) override;
+    virtual bool planeCommWithValues( PRV_UINT32 plane = 0 ) const override;
     virtual bool getCommCellValue( TSemanticValue& semVal,
                                    PRV_UINT32 whichRow,
                                    PRV_UINT32 whichCol,
                                    PRV_UINT16 idStat,
-                                   PRV_UINT32 whichPlane = 0 ) const;
+                                   PRV_UINT32 whichPlane = 0 ) const override;
 
-    virtual HistogramTotals *getTotals( const std::string& whichStat ) const;
-    virtual HistogramTotals *getColumnTotals() const;
-    virtual HistogramTotals *getCommColumnTotals() const;
-    virtual HistogramTotals *getRowTotals() const;
-    virtual HistogramTotals *getCommRowTotals() const;
+    virtual HistogramTotals *getTotals( const std::string& whichStat ) const override;
+    virtual HistogramTotals *getColumnTotals() const override;
+    virtual HistogramTotals *getCommColumnTotals() const override;
+    virtual HistogramTotals *getRowTotals() const override;
+    virtual HistogramTotals *getCommRowTotals() const override;
 
-    virtual void clearStatistics();
-    virtual void pushbackStatistic( const std::string& whichStatistic );
+    virtual void clearStatistics() override;
+    virtual void pushbackStatistic( const std::string& whichStatistic ) override;
 
     virtual void execute( TRecordTime whichBeginTime, TRecordTime whichEndTime,
-                          std::vector<TObjectOrder>& selectedRows, ProgressController *progress );
+                          std::vector<TObjectOrder>& selectedRows, ProgressController *progress ) override;
 
-    virtual void setHorizontal( bool newValue );
-    virtual bool getHorizontal() const;
-    virtual void setHideColumns( bool newValue );
-    virtual bool getHideColumns() const;
-    virtual void setScientificNotation( bool newValue );
-    virtual bool getScientificNotation() const;
-    virtual void setNumDecimals( PRV_UINT16 newValue );
-    virtual PRV_UINT16 getNumDecimals() const;
-    virtual void setThousandSeparator( bool newValue );
-    virtual bool getThousandSeparator() const;
-    virtual void setShowUnits( bool newValue );
-    virtual bool getShowUnits() const;
-    virtual void setSemanticSortColumns( bool newValue );
-    virtual bool getSemanticSortColumns() const;
-    virtual void setSemanticSortCriteria( THistoTotals whichCriteria );
-    virtual THistoTotals getSemanticSortCriteria() const;
-    virtual void setSemanticSortReverse( bool newValue );
-    virtual bool getSemanticSortReverse() const;
-    virtual PRV_UINT32 getSemanticSortedColumn( PRV_UINT32 col ) const;
-    virtual void setMinGradient( double whichMin );
-    virtual double getMinGradient() const;
-    virtual void setMaxGradient( double whichMax );
-    virtual double getMaxGradient() const;
-    virtual void setComputeScale( bool newValue );
-    virtual bool getComputeScale() const;
-    virtual void setCompute2DScale( bool newValue );
-    virtual bool getCompute2DScale() const;
-    virtual void setCompute2DScaleZero( bool newValue );
-    virtual bool getCompute2DScaleZero() const;
-    virtual void setCompute3DScale( bool newValue );
-    virtual bool getCompute3DScale() const;
-    virtual void setComputeGradient( bool newValue );
-    virtual bool getComputeGradient() const;
-    virtual void setShowColor( bool newValue );
-    virtual bool getShowColor() const;
-    virtual rgb calcGradientColor( TSemanticValue whichValue ) const;
-    virtual GradientColor& getGradientColor();
-    virtual void recalcGradientLimits();
-    virtual void setZoom( bool newValue );
-    virtual bool getZoom() const;
-    virtual void setFirstRowColored( bool newValue );
-    virtual bool getFirstRowColored() const;
-    virtual void setPlaneMinValue( double whichMin );
-    virtual double getPlaneMinValue() const;
-    virtual void setSelectedPlane( PRV_INT32 plane );
-    virtual PRV_INT32 getSelectedPlane() const;
-    virtual PRV_INT32 getCommSelectedPlane() const;
+    virtual void setHorizontal( bool newValue ) override;
+    virtual bool getHorizontal() const override;
+    virtual void setHideColumns( bool newValue ) override;
+    virtual bool getHideColumns() const override;
+    virtual void setScientificNotation( bool newValue ) override;
+    virtual bool getScientificNotation() const override;
+    virtual void setNumDecimals( PRV_UINT16 newValue ) override;
+    virtual PRV_UINT16 getNumDecimals() const override;
+    virtual void setThousandSeparator( bool newValue ) override;
+    virtual bool getThousandSeparator() const override;
+    virtual void setShowUnits( bool newValue ) override;
+    virtual bool getShowUnits() const override;
+    virtual void setSemanticSortColumns( bool newValue ) override;
+    virtual bool getSemanticSortColumns() const override;
+    virtual void setSemanticSortCriteria( THistoTotals whichCriteria ) override;
+    virtual THistoTotals getSemanticSortCriteria() const override;
+    virtual void setSemanticSortReverse( bool newValue ) override;
+    virtual bool getSemanticSortReverse() const override;
+    virtual PRV_UINT32 getSemanticSortedColumn( PRV_UINT32 col ) const override;
+    virtual void setMinGradient( double whichMin ) override;
+    virtual double getMinGradient() const override;
+    virtual void setMaxGradient( double whichMax ) override;
+    virtual double getMaxGradient() const override;
+    virtual void setComputeScale( bool newValue ) override;
+    virtual bool getComputeScale() const override;
+    virtual void setCompute2DScale( bool newValue ) override;
+    virtual bool getCompute2DScale() const override;
+    virtual void setCompute2DScaleZero( bool newValue ) override;
+    virtual bool getCompute2DScaleZero() const override;
+    virtual void setCompute3DScale( bool newValue ) override;
+    virtual bool getCompute3DScale() const override;
+    virtual void setComputeGradient( bool newValue ) override;
+    virtual bool getComputeGradient() const override;
+    virtual void setShowColor( bool newValue ) override;
+    virtual bool getShowColor() const override;
+    virtual rgb calcGradientColor( TSemanticValue whichValue ) const override;
+    virtual GradientColor& getGradientColor() override;
+    virtual void recalcGradientLimits() override;
+    virtual void setZoom( bool newValue ) override;
+    virtual bool getZoom() const override;
+    virtual void setFirstRowColored( bool newValue ) override;
+    virtual bool getFirstRowColored() const override;
+    virtual void setPlaneMinValue( double whichMin ) override;
+    virtual double getPlaneMinValue() const override;
+    virtual void setSelectedPlane( PRV_INT32 plane ) override;
+    virtual PRV_INT32 getSelectedPlane() const override;
+    virtual void setCommSelectedPlane( PRV_INT32 plane ) override;
+    virtual PRV_INT32 getCommSelectedPlane() const override;
 
-    virtual void compute2DScale( ProgressController *progress = NULL );
-    virtual void compute3DScale( ProgressController *progress = NULL );
+    virtual void compute2DScale( ProgressController *progress = nullptr ) override;
+    virtual void compute3DScale( ProgressController *progress = nullptr ) override;
 
-    virtual std::string getRowLabel( TObjectOrder whichRow ) const;
-    virtual std::string getColumnLabel( THistogramColumn whichColumn ) const;
-    virtual std::string getPlaneLabel( THistogramColumn whichPlane ) const;
-    virtual bool getShortLabels() const;
-    virtual void setShortLabels( bool newValue );
+    virtual std::string getRowLabel( TObjectOrder whichRow ) const override;
+    virtual std::string getColumnLabel( THistogramColumn whichColumn ) const override;
+    virtual std::string getPlaneLabel( THistogramColumn whichPlane ) const override;
+    virtual bool getShortLabels() const override;
+    virtual void setShortLabels( bool newValue ) override;
 
     virtual THistogramColumn getPlaneColumns( THistogramColumn iPlane,
                                               bool hideEmptyColumns,
-                                              std::vector<THistogramColumn> &noVoidSemRanges ) const;
+                                              std::vector<THistogramColumn> &noVoidSemRanges ) const override;
 
     // Zoom history
-    virtual bool isZoomEmpty() const;
-    virtual bool emptyPrevZoom() const;
-    virtual bool emptyNextZoom() const;
-    virtual void nextZoom();
-    virtual void prevZoom();
+    virtual bool isZoomEmpty() const override;
+    virtual bool emptyPrevZoom() const override;
+    virtual bool emptyNextZoom() const override;
+    virtual void nextZoom() override;
+    virtual void prevZoom() override;
     virtual void addZoom( TZoomInfo columnInfo, TZoomInfo dummy,
-                          TObjectOrder beginObject, TObjectOrder endObject );
-    virtual void addZoom( TZoomInfo columnInfo, TZoomInfo dummy );
-    virtual void addZoom( TObjectOrder beginObject, TObjectOrder endObject );
-    virtual void setZoomFirstDimension( std::pair<TZoomInfo, TZoomInfo> &zinfo );
-    virtual void setZoomSecondDimension( std::pair<TObjectOrder, TObjectOrder> &objects );
-    virtual std::pair<TZoomInfo, TZoomInfo> getZoomFirstDimension() const;
-    virtual std::pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const;
+                          TObjectOrder beginObject, TObjectOrder endObject ) override;
+    virtual void addZoom( TZoomInfo columnInfo, TZoomInfo dummy ) override;
+    virtual void addZoom( TObjectOrder beginObject, TObjectOrder endObject ) override;
+    virtual void setZoomFirstDimension( std::pair<TZoomInfo, TZoomInfo> &zinfo ) override;
+    virtual void setZoomSecondDimension( std::pair<TObjectOrder, TObjectOrder> &objects ) override;
+    virtual std::pair<TZoomInfo, TZoomInfo> getZoomFirstDimension() const override;
+    virtual std::pair<TObjectOrder, TObjectOrder> getZoomSecondDimension() const override;
 
-    virtual void addToSyncGroup( TGroupId whichGroup );
-    virtual void removeFromSync();
-    virtual bool isSync() const;
-    virtual TGroupId getSyncGroup() const;
+    virtual void addToSyncGroup( TGroupId whichGroup ) override;
+    virtual void removeFromSync() override;
+    virtual bool isSync() const override;
+    virtual TGroupId getSyncGroup() const override;
 
-    virtual void setName( const std::string& whichName );
-    virtual std::string getName() const;
+    virtual void setName( const std::string& whichName ) override;
+    virtual std::string getName() const override;
 
-    virtual void setCalculateAll( bool status );
-    virtual bool getCalculateAll() const;
+    virtual void setCalculateAll( bool status ) override;
+    virtual bool getCalculateAll() const override;
 
-    virtual bool getIdStat( const std::string& whichStat, PRV_UINT16& idStat ) const;
+    virtual bool getIdStat( const std::string& whichStat, PRV_UINT16& idStat ) const override;
 
-    virtual void setCurrentStat( const std::string& whichStat );
-    virtual std::string getCurrentStat() const;
+    virtual void setCurrentStat( const std::string& whichStat ) override;
+    virtual std::string getCurrentStat() const override;
 
-    bool isCommunicationStat( const std::string& whichStat ) const;
+    bool isCommunicationStat( const std::string& whichStat ) const override;
 
-    THistogramColumn getSemanticRealColumn( THistogramColumn whichCol, const std::vector<THistogramColumn>& noVoidSemRanges ) const;
+    THistogramColumn getSemanticRealColumn( THistogramColumn whichCol, const std::vector<THistogramColumn>& noVoidSemRanges ) const override;
 
-    std::string getUnitsLabel( const std::string& whichStat ) const;
-    virtual void getGroupsLabels( std::vector<std::string>& onVector ) const;
+    std::string getUnitsLabel( const std::string& whichStat ) const override;
+    virtual void getGroupsLabels( std::vector<std::string>& onVector ) const override;
     virtual void getStatisticsLabels( std::vector<std::string>& onVector,
                                       PRV_UINT32 whichGroup,
-                                      bool getOriginalList = true ) const;
-    virtual std::string getFirstStatistic() const;
-    virtual std::string getFirstCommStatistic() const;
+                                      bool getOriginalList = true ) const override;
+    virtual std::string getFirstStatistic() const override;
+    virtual std::string getFirstCommStatistic() const override;
 
-    virtual bool getControlOutOfLimits() const;
-    virtual bool getExtraOutOfLimits() const;
+    virtual bool getControlOutOfLimits() const override;
+    virtual bool getExtraOutOfLimits() const override;
 
-    virtual TTimeUnit getTimeUnit() const;
+    virtual TTimeUnit getTimeUnit() const override;
 
-    virtual Histogram *clone();
+    virtual Histogram *clone() override;
 
-    virtual bool getDestroy() const;
-    virtual void setDestroy( bool newValue );
-    virtual PRV_UINT16 getPosX() const;
-    virtual void setPosX( PRV_UINT16 whichPos );
-    virtual PRV_UINT16 getPosY() const;
-    virtual void setPosY( PRV_UINT16 whichPos );
-    virtual PRV_UINT16 getWidth() const;
-    virtual void setWidth( PRV_UINT16 whichPos );
-    virtual PRV_UINT16 getHeight() const;
-    virtual void setHeight( PRV_UINT16 whichPos );
-    virtual bool getShowWindow() const;
-    virtual void setShowWindow( bool newValue );
-    virtual DrawModeMethod getDrawModeObjects() const;
-    virtual void setDrawModeObjects( DrawModeMethod whichMethod );
-    virtual DrawModeMethod getDrawModeColumns() const;
-    virtual void setDrawModeColumns( DrawModeMethod whichMethod );
-    virtual bool getChanged() const;
-    virtual void setChanged( bool newValue );
-    virtual bool getRedraw() const;
-    virtual void setRedraw( bool newValue );
-    virtual bool getRecalc() const;
-    virtual void setRecalc( bool newValue );
-    virtual bool getForceRecalc() const;
-    virtual void setForceRecalc( bool newValue );
+    virtual bool getDestroy() const override;
+    virtual void setDestroy( bool newValue ) override;
+    virtual PRV_UINT16 getPosX() const override;
+    virtual void setPosX( PRV_UINT16 whichPos ) override;
+    virtual PRV_UINT16 getPosY() const override;
+    virtual void setPosY( PRV_UINT16 whichPos ) override;
+    virtual PRV_UINT16 getWidth() const override;
+    virtual void setWidth( PRV_UINT16 whichPos ) override;
+    virtual PRV_UINT16 getHeight() const override;
+    virtual void setHeight( PRV_UINT16 whichPos ) override;
+    virtual bool getShowWindow() const override;
+    virtual void setShowWindow( bool newValue ) override;
+    virtual DrawModeMethod getDrawModeObjects() const override;
+    virtual void setDrawModeObjects( DrawModeMethod whichMethod ) override;
+    virtual DrawModeMethod getDrawModeColumns() const override;
+    virtual void setDrawModeColumns( DrawModeMethod whichMethod ) override;
+    virtual bool getChanged() const override;
+    virtual void setChanged( bool newValue ) override;
+    virtual bool getRedraw() const override;
+    virtual void setRedraw( bool newValue ) override;
+    virtual bool getRecalc() const override;
+    virtual void setRecalc( bool newValue ) override;
+    virtual bool getForceRecalc() const override;
+    virtual void setForceRecalc( bool newValue ) override;
     // DEPRECATED
-    virtual bool getCodeColor() const;
+    virtual bool getCodeColor() const override;
     // DEPRECATED
-    virtual SemanticColor::TColorFunction getColorMode() const;
-    virtual void setColorMode( SemanticColor::TColorFunction whichMode );
-    virtual void setCodeColor( bool newValue );
-    virtual PRV_UINT16 getPixelSize() const;
-    virtual void setPixelSize( PRV_UINT16 whichSize );
-    virtual void setOnlyTotals( bool newValue );
-    virtual bool getOnlyTotals() const;
-    virtual bool getShowProgressBar() const;
+    virtual TColorFunction getColorMode() const override;
+    virtual void setColorMode( TColorFunction whichMode ) override;
+    virtual void setCodeColor( bool newValue ) override;
+    virtual PRV_UINT16 getPixelSize() const override;
+    virtual void setPixelSize( PRV_UINT16 whichSize ) override;
+    virtual void setOnlyTotals( bool newValue ) override;
+    virtual bool getOnlyTotals() const override;
+    virtual bool getShowProgressBar() const override;
 
     // CFG4D
     // Enabled => mode = false
-    virtual void setCFG4DEnabled( bool enabled );
-    virtual bool getCFG4DEnabled() const;
+    virtual void setCFG4DEnabled( bool enabled ) override;
+    virtual bool getCFG4DEnabled() const override;
 
     // If CFG4D is enabled, mode can be changed:
     //   false => no CFG4D replacement
     //   true  => CFG4D replacement
-    virtual void setCFG4DMode( bool mode );
-    virtual bool getCFG4DMode() const;
+    virtual void setCFG4DMode( bool mode ) override;
+    virtual bool getCFG4DMode() const override;
 
-    virtual bool existsCFG4DAlias( const std::string &property ) const; // DEPRECATED
-    virtual bool existsCFG4DAlias( const THistogramProperties &propertyIndex ) const;
+    virtual bool existsCFG4DAlias( const std::string &property ) const override; // DEPRECATED
+    virtual bool existsCFG4DAlias( const THistogramProperties &propertyIndex ) const override;
 
-    virtual void setCFG4DAlias( const std::string &property, const std::string &alias );
-    virtual void setCFG4DStatisticAlias( const std::string &statistic, const std::string &alias );
+    virtual void setCFG4DAlias( const std::string &property, const std::string &alias ) override;
+    virtual void setCFG4DStatisticAlias( const std::string &statistic, const std::string &alias ) override;
 
-    virtual std::string getCFG4DAlias( const std::string &property ) const; // DEPRECATED
-    virtual std::string getCFG4DAlias( const THistogramProperties &propertyIndex ) const;
+    virtual std::string getCFG4DAlias( const std::string &property ) const override; // DEPRECATED
+    virtual std::string getCFG4DAlias( const THistogramProperties &propertyIndex ) const override;
 
-    virtual void setCFG4DAliasList( const std::map< std::string, std::string >& aliasList );
-    virtual void setCFG4DStatisticsAliasList( const std::map< std::string, std::string >& aliasList );
-    virtual const std::map< std::string, std::string > getCFG4DAliasList() const;
-    virtual const std::map< std::string, std::string > getCFG4DStatisticsAliasList() const;
+    virtual void setCFG4DAliasList( const std::map< std::string, std::string >& aliasList ) override;
+    virtual void setCFG4DStatisticsAliasList( const std::map< std::string, std::string >& aliasList ) override;
+    virtual const std::map< std::string, std::string > getCFG4DAliasList() const override;
+    virtual const std::map< std::string, std::string > getCFG4DStatisticsAliasList() const override;
 
-    virtual const std::vector< std::string > getCFG4DFullTagList();
-    virtual void setCFGS4DIndexLink( std::string whichName, TCFGS4DIndexLink whichLink );
-    virtual TCFGS4DIndexLink getCFGS4DIndexLink( std::string whichName ) const;
+    virtual const std::vector< std::string > getCFG4DFullTagList() override;
+
+    virtual void setCFGS4DGroupLink( std::string originalName, TCFGS4DGroup whichGroup ) override;
+    virtual TCFGS4DGroup getCFGS4DGroupLink( std::string originalName ) const override;
+
+    virtual void setCFGS4DIndexLink( TCFGS4DIndexLink whichLink ) override;
+    virtual TCFGS4DIndexLink getCFGS4DIndexLink() const override;
     
-    virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement();
-    virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel );
+    virtual SelectionManagement< TObjectOrder, TWindowLevel > * getRowSelectionManagement() override;
+    virtual void setRowSelectionManager( SelectionManagement< TObjectOrder, TWindowLevel > &rowSel ) override;
 
-    virtual std::vector< TObjectOrder > getSelectedRows() const;
-    virtual std::vector< TObjectOrder > getSelectedRows( TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const;
-    virtual std::vector< bool > getSelectedBooleanRows() const;
-    virtual void setSelectedRows( std::vector< bool > &selected );
-    virtual void setSelectedRows( std::vector< TObjectOrder > &selected );
+    virtual std::vector< TObjectOrder > getSelectedRows() const override;
+    virtual std::vector< TObjectOrder > getSelectedRows( TObjectOrder whichBeginRow, TObjectOrder whichEndRow ) const override;
+    virtual std::vector< bool > getSelectedBooleanRows() const override;
+    virtual void setSelectedRows( std::vector< bool > &selected ) override;
+    virtual void setSelectedRows( std::vector< TObjectOrder > &selected ) override;
 
 
   private:
@@ -947,7 +961,7 @@ class HistogramProxy : public Histogram
     bool redraw;
     bool recalc;
     bool forceRecalc;
-    SemanticColor::TColorFunction colorMode;
+    TColorFunction colorMode;
     PRV_UINT16 pixelSize;
     bool onlyTotals;
     bool shortLabels;
@@ -984,7 +998,8 @@ class HistogramProxy : public Histogram
     bool CFG4DMode;
     std::map< std::string, std::string > propertiesAliasCFG4D;
     std::map< std::string, std::string > statisticsAliasCFG4D;
-    std::map< std::string, TCFGS4DIndexLink > indexLinkFromPropName;
+    std::map< std::string, TCFGS4DGroup > groupLinkFromPropName;
+    TCFGS4DIndexLink globalIndexLink;
 
     //Selection of rows
     SelectionManagement< TObjectOrder, TWindowLevel > rowSelection;

@@ -45,12 +45,12 @@ using std::string;
 using std::vector;
 
 
-WorkspaceManager *WorkspaceManager::instance = NULL;
+WorkspaceManager *WorkspaceManager::instance = nullptr;
 
 
 WorkspaceManager *WorkspaceManager::getInstance()
 {
-  if ( WorkspaceManager::instance == NULL )
+  if ( WorkspaceManager::instance == nullptr )
     WorkspaceManager::instance = new WorkspaceManager();
   return WorkspaceManager::instance;
 }
@@ -77,16 +77,16 @@ bool WorkspaceManager::existWorkspace( std::string name, TWorkspaceSet whichSet 
 {
   switch ( whichSet )
   {
-    case ALL:
+    case TWorkspaceSet::ALL:
       return ( distWorkspaces.find( name ) != distWorkspaces.end() ) ||
              ( userWorkspaces.find( name ) != userWorkspaces.end() );
       break;
 
-    case DISTRIBUTED:
+    case TWorkspaceSet::DISTRIBUTED:
       return distWorkspaces.find( name ) != distWorkspaces.end();
       break;
 
-    case USER_DEFINED:
+    case TWorkspaceSet::USER_DEFINED:
       return userWorkspaces.find( name ) != userWorkspaces.end();
       break;
 
@@ -105,17 +105,17 @@ vector<string> WorkspaceManager::getWorkspaces( TWorkspaceSet whichSet ) const
 
   switch ( whichSet )
   {
-    case ALL:
+    case TWorkspaceSet::ALL:
       tmpWorkspacesOrder = distWorkspacesOrder;
       tmpWorkspacesOrder.insert( tmpWorkspacesOrder.end(), userWorkspacesOrder.begin(), userWorkspacesOrder.end() );
       return tmpWorkspacesOrder;
       break;
 
-    case DISTRIBUTED:
+    case TWorkspaceSet::DISTRIBUTED:
       return distWorkspacesOrder;
       break;
 
-    case USER_DEFINED:
+    case TWorkspaceSet::USER_DEFINED:
       return userWorkspacesOrder;
       break;
 
@@ -137,7 +137,7 @@ void WorkspaceManager::getMergedWorkspaces( const std::set<TState>& loadedStates
   for( std::set<TState>::const_iterator it = loadedStates.begin(); it != loadedStates.end(); ++it )
   {
     WorkspaceValue tmpWorkspaceValue;
-    tmpWorkspaceValue.myType = WorkspaceValue::STATE;
+    tmpWorkspaceValue.myType = WorkspaceType::STATE;
     tmpWorkspaceValue.UInfo.state = *it;
     tmpLoadedValues.push_back( tmpWorkspaceValue );
   }
@@ -145,7 +145,7 @@ void WorkspaceManager::getMergedWorkspaces( const std::set<TState>& loadedStates
   for( std::set<TEventType>::const_iterator it = loadedTypes.begin(); it != loadedTypes.end(); ++it )
   {
     WorkspaceValue tmpWorkspaceValue;
-    tmpWorkspaceValue.myType = WorkspaceValue::EVENT;
+    tmpWorkspaceValue.myType = WorkspaceType::EVENT;
     tmpWorkspaceValue.UInfo.eventType = *it;
     tmpLoadedValues.push_back( tmpWorkspaceValue );
   }
@@ -190,18 +190,18 @@ Workspace& WorkspaceManager::getWorkspace( std::string name, TWorkspaceSet which
 {
   switch ( whichSet )
   {
-    case ALL:
-      if ( existWorkspace( name, DISTRIBUTED ) )
+    case TWorkspaceSet::ALL:
+      if ( existWorkspace( name, TWorkspaceSet::DISTRIBUTED ) )
         return distWorkspaces[ name ];
       else
         return userWorkspaces[ name ];
       break;
 
-    case DISTRIBUTED:
+    case TWorkspaceSet::DISTRIBUTED:
       return distWorkspaces[ name ];
       break;
 
-    case USER_DEFINED:
+    case TWorkspaceSet::USER_DEFINED:
       return userWorkspaces[ name ];
       break;
 
@@ -239,10 +239,10 @@ void WorkspaceManager::loadXML()
   baseDir.append( getenv( "HOMEPATH" ) );
 
   char myPath[ MAX_LEN_PATH ];
-  HMODULE hModule = GetModuleHandle( NULL );
-  if ( hModule != NULL )
+  HMODULE hModule = GetModuleHandle( nullptr );
+  if ( hModule != nullptr )
   {
-    GetModuleFileName( NULL, myPath, ( sizeof( myPath ) ));
+    GetModuleFileName( nullptr, myPath, ( sizeof( myPath ) ));
     PathRemoveFileSpec( myPath );
     string tmpParaverPath( myPath );
     baseDir = tmpParaverPath.substr( 0, tmpParaverPath.size() - 4 );
@@ -259,7 +259,7 @@ void WorkspaceManager::loadXML()
 
     baseDir = tmpPath;
 #else
-  if( getenv( "PARAVER_HOME" ) == NULL )
+  if( getenv( "PARAVER_HOME" ) == nullptr )
     baseDir = "";
   else
     baseDir = getenv( "PARAVER_HOME" );
@@ -339,9 +339,9 @@ void WorkspaceManager::saveXML()
   int len = tmpPath.length() + 1;
   wchar_t *wText = new wchar_t[len];
   memset(wText,0,len);
-  ::MultiByteToWideChar( CP_ACP, NULL, tmpPath.c_str(), -1, wText, len );
+  ::MultiByteToWideChar( CP_ACP, nullptr, tmpPath.c_str(), -1, wText, len );
 */
-  SHCreateDirectoryEx( NULL, tmpPath.c_str(), NULL );
+  SHCreateDirectoryEx( nullptr, tmpPath.c_str(), nullptr );
   //delete []wText;
 #else
   strFile.append( "/.paraver/workspaces" );

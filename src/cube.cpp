@@ -29,7 +29,7 @@ template <typename ValueType>
 Cube<ValueType>::Cube( PRV_UINT32 numPlanes, PRV_UINT32 numCols, PRV_UINT16 numStats ):
   nplanes( 0 ), ncols( numCols ), nstat( numStats ), crow( 0 )
 {
-  Matrix<ValueType> *tmp_mat = NULL;
+  Matrix<ValueType> *tmp_mat = nullptr;
 
   for ( PRV_UINT32 ii = 0; ii < numPlanes; ii++ )
   {
@@ -45,10 +45,10 @@ Cube<ValueType>::Cube( Cube<ValueType>& source ):
   typename std::vector< Matrix<ValueType> *>::iterator it_mat;
 
   for ( it_mat = source.planes.begin(); it_mat != source.planes.end(); ++it_mat )
-    if ( *it_mat != NULL )
+    if ( *it_mat != nullptr )
       planes.push_back( new Matrix<ValueType>( **it_mat ) );
     else
-      planes.push_back( NULL );
+      planes.push_back( nullptr );
 }
 
 
@@ -59,7 +59,7 @@ Cube<ValueType>::~Cube()
   {
     for ( PRV_UINT32 ii = 0; ii < planes.size(); ++ii )
     {
-      if ( planes[ ii ] != NULL )
+      if ( planes[ ii ] != nullptr )
         delete planes[ ii ];
     }
   }
@@ -74,7 +74,7 @@ inline void Cube<ValueType>::init( PRV_UINT16 idStat )
   {
     for ( PRV_UINT32 ii = 0; ii < planes.size(); ++ii )
     {
-      if ( planes[ ii ] != NULL )
+      if ( planes[ ii ] != nullptr )
         planes[ ii ]->init( idStat );
     }
   }
@@ -88,7 +88,7 @@ inline void Cube<ValueType>::init( )
   {
     for ( PRV_UINT32 ii = 0; ii < planes.size(); ++ii )
     {
-      if ( planes[ ii ] != NULL )
+      if ( planes[ ii ] != nullptr )
         planes[ ii ]->init( );
     }
   }
@@ -98,7 +98,7 @@ inline void Cube<ValueType>::init( )
 template <typename ValueType>
 inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal )
 {
-  if ( planes[ plane ] == NULL )
+  if ( planes[ plane ] == nullptr )
   {
     planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
     ++nplanes;
@@ -111,7 +111,7 @@ inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UIN
 template <typename ValueType>
 inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, ValueType semVal )
 {
-  if ( planes[ plane ] == NULL )
+  if ( planes[ plane ] == nullptr )
   {
     planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
     ++nplanes;
@@ -124,7 +124,7 @@ inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, ValueTy
 template <typename ValueType>
 inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, const std::vector<ValueType>& semVal )
 {
-  if ( planes[ plane ] == NULL )
+  if ( planes[ plane ] == nullptr )
   {
     planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
     ++nplanes;
@@ -137,7 +137,7 @@ inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, const s
 template <typename ValueType>
 inline void Cube<ValueType>::addValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal )
 {
-  if ( planes[ plane ] == NULL )
+  if ( planes[ plane ] == nullptr )
   {
     planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
     ++nplanes;
@@ -150,7 +150,7 @@ inline void Cube<ValueType>::addValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UIN
 template <typename ValueType>
 inline void Cube<ValueType>::addValue( PRV_UINT32 plane, PRV_UINT32 col, ValueType semVal )
 {
-  if ( planes[ plane ] == NULL )
+  if ( planes[ plane ] == nullptr )
   {
     planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
     ++nplanes;
@@ -163,7 +163,7 @@ inline void Cube<ValueType>::addValue( PRV_UINT32 plane, PRV_UINT32 col, ValueTy
 template <typename ValueType>
 inline void Cube<ValueType>::addValue( PRV_UINT32 plane, PRV_UINT32 col, const std::vector<ValueType>& semVal )
 {
-  if ( planes[ plane ] == NULL )
+  if ( planes[ plane ] == nullptr )
   {
     planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
     ++nplanes;
@@ -176,7 +176,7 @@ inline void Cube<ValueType>::addValue( PRV_UINT32 plane, PRV_UINT32 col, const s
 template <typename ValueType>
 inline ValueType Cube<ValueType>::getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat ) const
 {
-  if ( planes[ plane ] != NULL )
+  if ( planes[ plane ] != nullptr )
     return planes[ plane ]->getCurrentValue( col, idStat );
 
   ValueType tmp;
@@ -189,7 +189,7 @@ inline ValueType Cube<ValueType>::getCurrentValue( PRV_UINT32 plane, PRV_UINT32 
 template <typename ValueType>
 inline std::vector<ValueType> Cube<ValueType>::getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col ) const
 {
-  if ( planes[ plane ] != NULL )
+  if ( planes[ plane ] != nullptr )
     return planes[ plane ]->getCurrentValue( col );
 
   std::vector<ValueType> tmp;
@@ -201,7 +201,7 @@ inline std::vector<ValueType> Cube<ValueType>::getCurrentValue( PRV_UINT32 plane
 template <typename ValueType>
 inline PRV_UINT32 Cube<ValueType>::getCurrentRow( PRV_UINT32 plane, PRV_UINT32 col ) const
 {
-  if ( planes[ plane ] != NULL )
+  if ( planes[ plane ] != nullptr )
     return planes[ plane ]->getCurrentRow( col );
   return -1;
 }
@@ -216,7 +216,7 @@ inline PRV_UINT32 Cube<ValueType>::getCurrentRow( ) const
 template <typename ValueType>
 inline bool Cube<ValueType>::currentCellModified( PRV_UINT32 plane, PRV_UINT32 col ) const
 {
-  if ( planes[ plane ] != NULL )
+  if ( planes[ plane ] != nullptr )
     return planes[ plane ]->currentCellModified( col );
   return false;
 }
@@ -229,7 +229,7 @@ inline void Cube<ValueType>::newRow( )
   {
     for ( PRV_UINT32 ii = 0; ii < planes.size(); ++ii )
     {
-      if ( planes[ ii ] != NULL )
+      if ( planes[ ii ] != nullptr )
         planes[ ii ]->newRow( );
     }
   }
@@ -242,7 +242,7 @@ inline void Cube<ValueType>::newRow( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT3
 {
   if ( nplanes > 0 )
   {
-    if ( planes[ plane ] != NULL )
+    if ( planes[ plane ] != nullptr )
       planes[ plane ]->newRow( col, row );
   }
 
@@ -257,7 +257,7 @@ inline void Cube<ValueType>::finish( )
   {
     for ( PRV_UINT32 ii = 0; ii < planes.size(); ++ii )
     {
-      if ( planes[ ii ] != NULL )
+      if ( planes[ ii ] != nullptr )
         planes[ ii ]->finish();
     }
   }
@@ -270,7 +270,7 @@ inline void Cube<ValueType>::setNextCell( PRV_UINT32 plane, PRV_UINT32 col )
   if ( nplanes == 0 )
     return;
 
-  if ( planes[ plane ] != NULL )
+  if ( planes[ plane ] != nullptr )
     planes[ plane ]->setNextCell( col );
 }
 
@@ -281,7 +281,7 @@ inline void Cube<ValueType>::setFirstCell( PRV_UINT32 plane, PRV_UINT32 col )
   if ( nplanes == 0 )
     return;
 
-  if ( planes[ plane ] != NULL )
+  if ( planes[ plane ] != nullptr )
     planes[ plane ]->setFirstCell( col );
 }
 
@@ -292,7 +292,7 @@ inline bool Cube<ValueType>::endCell( PRV_UINT32 plane, PRV_UINT32 col )
   if ( nplanes == 0 )
     return true;
 
-  if ( planes[ plane ] != NULL )
+  if ( planes[ plane ] != nullptr )
     return planes[ plane ]->endCell( col );
   return true;
 }
@@ -304,7 +304,7 @@ inline bool Cube<ValueType>::planeWithValues( PRV_UINT32 plane ) const
   if ( nplanes == 0 )
     return false;
 
-  return ( planes[ plane ] != NULL );
+  return ( planes[ plane ] != nullptr );
 }
 
 
@@ -332,7 +332,7 @@ inline void Cube<ValueType>::eraseColumns( PRV_UINT32 ini_col, PRV_UINT32 fin_co
 
   for ( PRV_UINT32 ii = 0; ii < planes.size(); ++ii )
   {
-    if ( planes[ ii ] != NULL )
+    if ( planes[ ii ] != nullptr )
       planes[ ii ]->eraseColumns( ini_col, fin_col );
   }
 
@@ -360,7 +360,7 @@ inline void Cube<ValueType>::erasePlanes( PRV_UINT32 ini_plane, PRV_UINT32 fin_p
 
   for ( it_fin = it_ini; i < fin_plane; ++i, ++it_fin )
   {
-    if ( planes[ i ] != NULL )
+    if ( planes[ i ] != nullptr )
     {
       delete planes[ i ];
       nplanes--;
@@ -408,7 +408,7 @@ inline void Cube<ValueType>::print() const
       std::cout << std::endl;
       std::cout << "******************************************************" << std::endl;
       std::cout << "----------Plane " << ii << "----------" << std::endl;
-      if ( planes[ ii ] != NULL )
+      if ( planes[ ii ] != nullptr )
         planes[ ii ]->print();
     }
   }

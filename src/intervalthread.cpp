@@ -31,7 +31,7 @@ KRecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
   createList = NOCREATE;
   currentValue = 0.0;
 
-  if ( displayList == NULL )
+  if ( displayList == nullptr )
   {
     displayList = &myDisplayList;
     displayList->clear();
@@ -40,9 +40,9 @@ KRecordList *IntervalThread::init( TRecordTime initialTime, TCreateList create,
   if( !notWindowInits )
     function = ( SemanticThread * ) window->getSemanticFunction( THREAD );
 
-  if ( begin != NULL )
+  if ( begin != nullptr )
     delete begin;
-  if ( end != NULL )
+  if ( end != nullptr )
     delete end;
 
   if( initialTime >= window->getTrace()->getEndTime() )
@@ -72,7 +72,7 @@ KRecordList *IntervalThread::calcNext( KRecordList *displayList, bool initCalc )
   SemanticThreadInfo info;
   info.callingInterval = this;
 
-  if ( displayList == NULL )
+  if ( displayList == nullptr )
     displayList = &myDisplayList;
 
   if ( !initCalc )
@@ -93,7 +93,7 @@ KRecordList *IntervalThread::calcPrev( KRecordList *displayList, bool initCalc )
   SemanticThreadInfo info;
   info.callingInterval = this;
 
-  if ( displayList == NULL )
+  if ( displayList == nullptr )
     displayList = &myDisplayList;
 
   if ( !initCalc )

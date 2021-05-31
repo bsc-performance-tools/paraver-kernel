@@ -75,7 +75,7 @@ using namespace std;
 
 void LocalKernel::init()
 {
-  srand( time( NULL ) );
+  srand( time( nullptr ) );
 
   createFilter();
   createSemantic();
@@ -105,10 +105,10 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
 
 #ifdef WIN32
   char myPath[ MAX_LEN_PATH ];
-  HMODULE hModule = GetModuleHandle( NULL );
-  if ( hModule != NULL )
+  HMODULE hModule = GetModuleHandle( nullptr );
+  if ( hModule != nullptr )
   {
-    GetModuleFileName( NULL, myPath, ( sizeof( myPath ) ));
+    GetModuleFileName( nullptr, myPath, ( sizeof( myPath ) ));
     PathRemoveFileSpec( myPath );
     string tmpParaverPath( myPath );
     paraverCFGsDir = tmpParaverPath.substr( 0, tmpParaverPath.size() - 4 );
@@ -137,13 +137,13 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
 
 #else // __APPLE__
 
-  if ( getenv( "PARAVER_HOME" ) == NULL )
+  if ( getenv( "PARAVER_HOME" ) == nullptr )
   {
     homedir = getenv( "HOME" );
     if( homedir.empty() )
     {
       struct passwd *pwd = getpwuid( getuid() );
-      if( pwd != NULL )
+      if( pwd != nullptr )
       {
         homedir = string( pwd->pw_dir );
       }
@@ -198,8 +198,8 @@ TTraceSize LocalKernel::getTraceSize( const string& filename ) const
 
 Trace *LocalKernel::newTrace( const string& whichFile, bool noLoad, ProgressController *progress ) const
 {
-  if ( progress == NULL )
-    return new KTrace( whichFile, NULL, noLoad );
+  if ( progress == nullptr )
+    return new KTrace( whichFile, nullptr, noLoad );
 
   return new KTrace( whichFile, ( KProgressController * ) progress->getConcrete(), noLoad );
 }
@@ -355,9 +355,9 @@ TraceFilter *LocalKernel::newTraceFilter( char *trace_in,
                                           const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
                                           ProgressController *progress ) const
 {
-  KProgressController *tmpKProgressControler = NULL;
+  KProgressController *tmpKProgressControler = nullptr;
 
-  if ( progress != NULL )
+  if ( progress != nullptr )
     tmpKProgressControler = (KProgressController *)progress->getConcrete();
 
   return new KTraceFilter( trace_in, trace_out, options, whichTranslationTable, tmpKProgressControler );
@@ -369,9 +369,9 @@ TraceSoftwareCounters *LocalKernel::newTraceSoftwareCounters( char *trace_in,
                                                               TraceOptions *options,
                                                               ProgressController *progress ) const
 {
-  KProgressController *tmpKProgressControler = NULL;
+  KProgressController *tmpKProgressControler = nullptr;
 
-  if ( progress != NULL )
+  if ( progress != nullptr )
     tmpKProgressControler = (KProgressController *)progress->getConcrete();
 
   return new KTraceSoftwareCounters( trace_in, trace_out, options, tmpKProgressControler );
@@ -384,9 +384,9 @@ TraceShifter *LocalKernel::newTraceShifter( std::string traceIn,
                                             TWindowLevel shiftLevel,
                                             ProgressController *progress ) const
 {
-  KProgressController *tmpKProgressControler = NULL;
+  KProgressController *tmpKProgressControler = nullptr;
 
-  if ( progress != NULL )
+  if ( progress != nullptr )
     tmpKProgressControler = (KProgressController *)progress->getConcrete();
 
   return new KTraceShifter( this, traceIn, traceOut, shiftTimesFile, shiftLevel, tmpKProgressControler );
@@ -398,9 +398,9 @@ EventDrivenCutter *LocalKernel::newEventDrivenCutter( std::string traceIn,
                                                       TEventType whichEvent,
                                                       ProgressController *progress ) const
 {
-  KProgressController *tmpKProgressControler = NULL;
+  KProgressController *tmpKProgressControler = nullptr;
 
-  if ( progress != NULL )
+  if ( progress != nullptr )
     tmpKProgressControler = (KProgressController *)progress->getConcrete();
 
   return new KEventDrivenCutter( this, traceIn, traceOut, whichEvent, tmpKProgressControler );
@@ -412,9 +412,9 @@ EventTranslator *LocalKernel::newEventTranslator( std::string traceIn,
                                                   std::string traceReference,
                                                   ProgressController *progress ) const
 {
-  KProgressController *tmpKProgressControler = NULL;
+  KProgressController *tmpKProgressControler = nullptr;
 
-  if ( progress != NULL )
+  if ( progress != nullptr )
     tmpKProgressControler = (KProgressController *)progress->getConcrete();
 
   return new KEventTranslator( this, traceIn, traceOut, traceReference, tmpKProgressControler );
@@ -444,7 +444,7 @@ void LocalKernel::getAllSemanticFunctions( TSemanticGroup whichGroup,
 
 bool LocalKernel::userMessage( UserMessageID messageID ) const
 {
-  if( myMessageFunction == NULL )
+  if( myMessageFunction == nullptr )
     return true;
 
   return myMessageFunction( messageID );
@@ -507,7 +507,7 @@ bool LocalKernel::isFileReadable( const std::string& filename,
 
   if ( filename.size() > 3 && filename.substr(filename.size() - 3 ) == ".gz" )
   {
-    if ( ( gzTmpFile = gzopen( filename.c_str(), "rb" ) ) == NULL )
+    if ( ( gzTmpFile = gzopen( filename.c_str(), "rb" ) ) == nullptr )
     {
       readable = false;
       fileUnreadableError( filename, message, verbose, exitProgram );
@@ -520,11 +520,11 @@ bool LocalKernel::isFileReadable( const std::string& filename,
   else
   {
 #if defined(__FreeBSD__) || defined(__APPLE__)
-    if ( ( tmpfile = fopen( filename.c_str(), "r" ) ) == NULL )
+    if ( ( tmpfile = fopen( filename.c_str(), "r" ) ) == nullptr )
 #elif defined(WIN32)
     if ( fopen_s( &tmpfile, filename.c_str(), "r" ) != 0 )
 #else
-    if ( ( tmpfile = fopen64( filename.c_str(), "r" ) ) == NULL )
+    if ( ( tmpfile = fopen64( filename.c_str(), "r" ) ) == nullptr )
 #endif
     {
       readable = false;
@@ -545,12 +545,12 @@ void LocalKernel::copyFile( const std::string& in, const std::string& out ) cons
   FILE *fileIn, *fileOut;
   char line[2048];
 
-  if ( ( fileIn = fopen( in.c_str(), "r" ) ) == NULL )
+  if ( ( fileIn = fopen( in.c_str(), "r" ) ) == nullptr )
     return;
 
   fileOut = fopen( out.c_str(), "w" );
 
-  while ( fgets( line, sizeof( line ), fileIn ) != NULL )
+  while ( fgets( line, sizeof( line ), fileIn ) != nullptr )
     fputs( line, fileOut );
 
   fclose( fileIn );
@@ -652,8 +652,8 @@ void LocalKernel::getNewTraceName( char *name,
 
   traceToLoad[0] = '\0';
   /* Temporarily get environment variable */
- // if (( traces_home = getenv( "TRACES_HOME" )) != NULL)
-  if (( traces_home = getenv( "PWD" )) != NULL)
+ // if (( traces_home = getenv( "TRACES_HOME" )) != nullptr)
+  if (( traces_home = getenv( "PWD" )) != nullptr)
     sprintf(traceToLoad,"%s",traces_home);
 
   strcpy( path_name_backup, new_trace_name );
@@ -725,7 +725,7 @@ void LocalKernel::getNewTraceName( char *name,
     {
       c = strrchr( name, '/' );
 
-      if ( c != NULL )
+      if ( c != nullptr )
       {
         c++;
         if ( new_trace_name[strlen( new_trace_name )-1] == '/' )
@@ -755,7 +755,7 @@ void LocalKernel::getNewTraceName( char *name,
     {
       dotExtension += TraceCutter::getExtension();
 
-      if ( strstr( new_trace_name, dotExtension.c_str() ) == NULL )
+      if ( strstr( new_trace_name, dotExtension.c_str() ) == nullptr )
         toolInfix = TraceCutter::getExtension();
 
       numInfix = currentName.num_chop;
@@ -764,7 +764,7 @@ void LocalKernel::getNewTraceName( char *name,
     {
       dotExtension += TraceFilter::getExtension();
 
-      if ( strstr( new_trace_name, dotExtension.c_str() ) == NULL )
+      if ( strstr( new_trace_name, dotExtension.c_str() ) == nullptr )
         toolInfix = TraceFilter::getExtension();
 
       numInfix = currentName.num_filter;
@@ -773,7 +773,7 @@ void LocalKernel::getNewTraceName( char *name,
     {
       dotExtension += TraceSoftwareCounters::getExtension();
 
-      if ( strstr( new_trace_name, dotExtension.c_str() ) == NULL )
+      if ( strstr( new_trace_name, dotExtension.c_str() ) == nullptr )
         toolInfix = TraceSoftwareCounters::getExtension();
 
       numInfix = currentName.num_sc;
@@ -827,7 +827,7 @@ string LocalKernel::getNewTraceName( const string& fullPathTraceName,
   // Get current directory
   // Today, getenv( "TRACES_HOME" )) ) is almost deprecated
 /*
-  if (( tracesHome = getenv( "PWD" )) != NULL)
+  if (( tracesHome = getenv( "PWD" )) != nullptr)
   {
     fullPath = string ( tracesHome );
   }

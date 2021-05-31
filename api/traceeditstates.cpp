@@ -82,7 +82,7 @@ void DerivedTraceEditState< SeqT, DataT >::firstInit()
 template< class SeqT, class DataT >
 void DerivedTraceEditState< SeqT, DataT >::firstInit( BoolToType< true > )
 {
-  myData = NULL;
+  myData = nullptr;
 }
 
 
@@ -102,9 +102,9 @@ void DerivedTraceEditState< SeqT, DataT >::init()
 template< class SeqT, class DataT >
 void DerivedTraceEditState< SeqT, DataT >::init( BoolToType< true > )
 {
-  if ( myData != NULL )
+  if ( myData != nullptr )
     delete myData;
-  myData = NULL;
+  myData = nullptr;
 }
 
 

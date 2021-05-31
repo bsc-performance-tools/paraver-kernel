@@ -24,7 +24,7 @@
 
 
 template <class T>
-FunctionManagement<T> *FunctionManagement<T>::inst = NULL;
+FunctionManagement<T> *FunctionManagement<T>::inst = nullptr;
 
 
 template <class T>
@@ -37,7 +37,7 @@ FunctionManagement<T>::~FunctionManagement()
     ++it;
   }
 
-  inst = NULL;
+  inst = nullptr;
 }
 
 
@@ -75,7 +75,7 @@ FunctionManagement<T> *FunctionManagement<T>::getInstance( std::vector<std::stri
     std::vector<std::string>& whichFunctions,
     std::vector<std::vector<T *> >& objects )
 {
-  if ( inst == NULL )
+  if ( inst == nullptr )
     inst = new FunctionManagement( whichGroups, whichFunctions, objects );
   return inst;
 }
@@ -84,7 +84,7 @@ FunctionManagement<T> *FunctionManagement<T>::getInstance( std::vector<std::stri
 template <class T>
 T *FunctionManagement<T>::getFunction( const std::string& name ) const
 {
-  T *retval = NULL;
+  T *retval = nullptr;
 
   typename std::map<std::string, T*>::const_iterator it = hash.find( name );
   if ( it != hash.end() )

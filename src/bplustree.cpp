@@ -50,16 +50,16 @@ UnloadedTrace::UnloadedTrace( const TThreadOrder totalThreads,
   numCPUs    = totalCPUs;
 
   // Time list.
-  first = NULL;
-  last = NULL;
+  first = nullptr;
+  last = nullptr;
 
   // Threads list.
   threadFirst.reserve( numThreads );
   threadLast.reserve( numThreads );
   for ( TObjectOrder ii = 0; ii < numThreads; ++ii )
   {
-    threadFirst.push_back( NULL );
-    threadLast.push_back( NULL );
+    threadFirst.push_back( nullptr );
+    threadLast.push_back( nullptr );
   }
 
   // CPUs list.
@@ -67,8 +67,8 @@ UnloadedTrace::UnloadedTrace( const TThreadOrder totalThreads,
   CPULast.reserve( numCPUs );
   for ( TCPUOrder ii = 0; ii < numCPUs; ++ii )
   {
-    CPUFirst.push_back( NULL );
-    CPULast.push_back( NULL );
+    CPUFirst.push_back( nullptr );
+    CPULast.push_back( nullptr );
   }
 }
 
@@ -85,27 +85,27 @@ void UnloadedTrace::append( TRecord *rini, TRecord *rfin )
   TCPUOrder    cpu;
 
   current = rini;
-  while ( current != NULL )
+  while ( current != nullptr )
   {
-    if ( first == NULL )
+    if ( first == nullptr )
     {
       first = current;
-      current->prev = NULL;
+      current->prev = nullptr;
     }
     last = current;
 
     thread = current->thread;
-    if ( threadFirst[ thread ] == NULL )
+    if ( threadFirst[ thread ] == nullptr )
     {
       threadFirst[ thread ] = current;
       threadLast[ thread ] = current;
-      current->threadNext = NULL;
-      current->threadPrev = NULL;
+      current->threadNext = nullptr;
+      current->threadPrev = nullptr;
     }
     else
     {
       current->threadPrev = threadLast[ thread ];
-      current->threadNext = NULL;
+      current->threadNext = nullptr;
       threadLast[ thread ]->threadNext = current;
       threadLast[ thread ] = current;
     }
@@ -118,7 +118,7 @@ void UnloadedTrace::append( TRecord *rini, TRecord *rfin )
         --cpu;
         if( cpu < numCPUs )
         {
-          if ( CPUFirst[ cpu ] == NULL )
+          if ( CPUFirst[ cpu ] == nullptr )
           {
             CPUFirst[ cpu ] = current;
           }
@@ -152,13 +152,13 @@ BPlusLeaf::~BPlusLeaf()
 {}
 
 
-RecordLeaf *BPlusLeaf::minKey()
+RecordLeaf *BPlusLeaf::minNodeKey()
 {
   return &records[ 0 ];
 }
 
 
-RecordLeaf *BPlusLeaf::minKeyTotal()
+RecordLeaf *BPlusLeaf::minSubtreeKey()
 {
   return &records[ 0 ];
 }
@@ -169,7 +169,7 @@ void BPlusLeaf::setUsed( PRV_UINT16 used )
   if ( used < LEAF_SIZE )
   {
     records[ LEAF_SIZE - 1 ].setOrder( ( RecordLeaf::TRecordOrder )used );
-    records[ LEAF_SIZE - 1 ].setRecordDirect( NULL );
+    records[ LEAF_SIZE - 1 ].setRecordDirect( nullptr );
   }
 }
 
@@ -178,7 +178,7 @@ PRV_UINT16 BPlusLeaf::getUsed()
 {
   PRV_UINT16 used;
 
-  if ( records[ LEAF_SIZE - 1 ].getRecord() == NULL )
+  if ( records[ LEAF_SIZE - 1 ].getRecord() == nullptr )
     used = ( PRV_UINT16 )records[ LEAF_SIZE - 1 ].getOrder();
   else
     used = LEAF_SIZE;
@@ -214,13 +214,13 @@ void BPlusLeaf::insertRecordInOrder( RecordLeaf *rl )
 
 RecordLeaf *BPlusLeaf::insert( RecordLeaf *rl, BPlusNode *&newChild )
 {
-  RecordLeaf *retKey = NULL;
+  RecordLeaf *retKey = nullptr;
   PRV_UINT16 used = getUsed();
 
   if ( used < LEAF_SIZE )
   {
     insertRecordInOrder( rl );
-    newChild = NULL;
+    newChild = nullptr;
   }
   else
     newChild = splitAndInsert( rl , retKey );
@@ -241,7 +241,7 @@ BPlusLeaf *BPlusLeaf::split( BPlusNode *dest, RecordLeaf *&retdat )
   setUsed( endPos + 1 );
 
   dest = newLeaf;
-  retdat = newLeaf->minKey();
+  retdat = newLeaf->minNodeKey();
 
   return newLeaf;
 }
@@ -252,7 +252,7 @@ BPlusLeaf *BPlusLeaf::splitAndInsert( RecordLeaf *rec, RecordLeaf *&retKey )
   BPlusLeaf *newLeaf = new BPlusLeaf;
   PRV_UINT16 used = getUsed();
   PRV_UINT16 endPos = ( used - 2 ) / 2;
-  BPlusNode *newNode( NULL );
+  BPlusNode *newNode( nullptr );
 
   if ( ( endPos * 2 < used ) && ( *rec >= records[ endPos + 1 ] ) )
     endPos++;
@@ -262,12 +262,12 @@ BPlusLeaf *BPlusLeaf::splitAndInsert( RecordLeaf *rec, RecordLeaf *&retKey )
 
   setUsed( endPos + 1 );
 
-  if ( *rec < *newLeaf->minKey() )
+  if ( *rec < *newLeaf->minNodeKey() )
     insert( rec, newNode );
   else
     newLeaf->insert( rec, newNode );
 
-  retKey = newLeaf->minKey();
+  retKey = newLeaf->minNodeKey();
 
   return newLeaf;
 }
@@ -283,7 +283,7 @@ void BPlusLeaf::appendRecord( RecordLeaf newRecord )
     setUsed( ++used );
   }
   else
-    throw BPlusTreeException( BPlusTreeException::invalidAppend,
+    throw BPlusTreeException( TBPlusTreeErrorCode::invalidAppend,
                               "Leaf is full.",
                               __FILE__,
                               __LINE__ );
@@ -297,7 +297,7 @@ bool BPlusLeaf::getLeafData( PRV_UINT16 ii, TRecord *&data )
   if ( ii < used )
     data = records[ ii ].getRecord();
   else
-    data = NULL;
+    data = nullptr;
 
   return ( ii < used );
 }
@@ -310,7 +310,7 @@ bool BPlusLeaf::getLeafKey( PRV_UINT16 ii, RecordLeaf *&key )
   if ( ii < used )
     key = &records[ ii ];
   else
-    key = NULL;
+    key = nullptr;
 
   return ( ii < used );
 }
@@ -327,9 +327,9 @@ PRV_UINT32 BPlusLeaf::linkRecords( TRecord **ini,
   PRV_UINT16 num = 0;
   PRV_UINT32 localRecs2link;
 
-  initial = NULL;
-  prev    = NULL;
-  cur     = NULL;
+  initial = nullptr;
+  prev    = nullptr;
+  cur     = nullptr;
 
   if ( ( recs2link > LEAF_SIZE ) || ( recs2link < 0 ) )
     localRecs2link = LEAF_SIZE;  // Link all records in the leaf.
@@ -444,10 +444,10 @@ BPlusInternal::BPlusInternal()
   used = 0;
   for ( PRV_UINT16 ii = 0; ii < NODE_SIZE; ++ii )
   {
-    key[ ii ] = NULL;
-    child[ ii ] = NULL;
+    key[ ii ] = nullptr;
+    child[ ii ] = nullptr;
   }
-  child[ NODE_SIZE ] = NULL;
+  child[ NODE_SIZE ] = nullptr;
 }
 
 
@@ -458,15 +458,15 @@ BPlusInternal::~BPlusInternal()
 }
 
 
-RecordLeaf *BPlusInternal::minKey()
+RecordLeaf *BPlusInternal::minNodeKey()
 {
   return key[ 0 ];
 }
 
 
-RecordLeaf *BPlusInternal::minKeyTotal()
+RecordLeaf *BPlusInternal::minSubtreeKey()
 {
-  return child[ 0 ]->minKeyTotal();
+  return child[ 0 ]->minSubtreeKey();
 }
 
 
@@ -476,7 +476,7 @@ void BPlusInternal::insertInOrder( BPlusNode *newNode )
 
   for ( int ii = ( int )used - 2; ii >= 0; --ii )
   {
-    if ( *newNode->minKeyTotal() > *key[ ii ] )
+    if ( *newNode->minSubtreeKey() > *key[ ii ] )
     {
       for ( PRV_UINT16 jj = used - 2; jj >= ii + 1; --jj )
       {
@@ -484,7 +484,7 @@ void BPlusInternal::insertInOrder( BPlusNode *newNode )
         child[ jj + 2 ] = child[ jj + 1 ];
       }
       child[ ii + 2 ] = newNode;
-      key[ ii + 1 ] = newNode->minKeyTotal();
+      key[ ii + 1 ] = newNode->minSubtreeKey();
       inserted = true;
       break;
     }
@@ -500,20 +500,20 @@ void BPlusInternal::insertInOrder( BPlusNode *newNode )
     child[ 1 ] = child[ 0 ];
     child[ 0 ] = newNode;
 
-    if ( *child[ 0 ]->minKey() > *child[ 1 ]->minKey() )
+    if ( *child[ 0 ]->minNodeKey() > *child[ 1 ]->minNodeKey() )
     {
       BPlusNode *tmp = child[ 0 ];
       child[ 0 ] = child[ 1 ];
       child[ 1 ] = tmp;
     }
-    key[ 0 ] = child[ 1 ]->minKeyTotal();
+    key[ 0 ] = child[ 1 ]->minSubtreeKey();
   }
 
   ++used;
 
   for ( PRV_UINT16 ii = 0; ii < used; ++ii )
   {
-    if ( child[ ii ] == NULL )
+    if ( child[ ii ] == nullptr )
       used = ii;
   }
 }
@@ -524,7 +524,7 @@ void BPlusInternal::append( BPlusNode *newNode )
   child[ used ] = newNode;
 
   if ( used >= 1 )
-    key[ used - 1 ] = newNode->minKeyTotal();
+    key[ used - 1 ] = newNode->minSubtreeKey();
 
   ++used;
 }
@@ -537,7 +537,7 @@ BPlusInternal *BPlusInternal::splitAndInsert( BPlusNode *newNode,
   PRV_UINT16 middle = ( ( PRV_UINT16 ) ceil( used / 2.0 ) ) - 1;
   bool intoThis = false;
 
-  if ( *newNode->minKey() < *child[ middle ]->minKey() )
+  if ( *newNode->minNodeKey() < *child[ middle ]->minNodeKey() )
   {
     --middle;
     intoThis = true;
@@ -553,7 +553,7 @@ BPlusInternal *BPlusInternal::splitAndInsert( BPlusNode *newNode,
   else
     newInternal->insertInOrder( newNode );
 
-  retdat = newInternal->minKeyTotal();
+  retdat = newInternal->minSubtreeKey();
 
   return newInternal;
 }
@@ -570,7 +570,7 @@ RecordLeaf *BPlusInternal::insert( RecordLeaf *rl, BPlusNode *&newChild )
     if ( *rl < *key[ pos ] )
     {
       retKey = child[ pos ]->insert( rl, newNode );
-      if ( newNode != NULL )
+      if ( newNode != nullptr )
       {
         if ( pos > 0 )
           if ( *retKey < *key[ pos - 1 ] )
@@ -586,14 +586,14 @@ RecordLeaf *BPlusInternal::insert( RecordLeaf *rl, BPlusNode *&newChild )
     pos = used - 1;
   }
 
-  if ( newNode == NULL )
-    newChild = NULL;
+  if ( newNode == nullptr )
+    newChild = nullptr;
   else
   {
     if ( used < NODE_SIZE + 1 )
     {
       insertInOrder( newNode );
-      newChild = NULL;
+      newChild = nullptr;
     }
     else
     {
@@ -629,7 +629,7 @@ PRV_UINT32 BPlusInternal::linkRecords( TRecord **ini, TRecord **fin,
   // Link all the records in the leaf.
   if ( recs2link != 0 )
   {
-    prevIni = prevFin = currIni = currFin = NULL;
+    prevIni = prevFin = currIni = currFin = nullptr;
 
     recsLinked += child[ 0]->linkRecords( &prevIni, &prevFin, recs2link, lastLeaf, traceIndex );
 
@@ -637,7 +637,7 @@ PRV_UINT32 BPlusInternal::linkRecords( TRecord **ini, TRecord **fin,
     while ( ( ii < used ) && ( recs2link != 0 ) )
     {
       recsLinked += child[ ii ]->linkRecords( &currIni, &currFin, recs2link, lastLeaf, traceIndex );
-      if ( currFin != NULL )
+      if ( currFin != nullptr )
       {
         prevFin->next = currIni;
         currIni->prev = prevFin;
@@ -662,23 +662,23 @@ void BPlusInternal::print( string indent )
 
   for ( PRV_UINT16 ii = 0; ii < used - 1; ++ii )
   {
-    if ( key[ ii ] != NULL )
+    if ( key[ ii ] != nullptr )
       cout << ( key[ ii ]->getRecord() )->time << " ";
     else
-      cout << "key " << ii << " NULL!!!";
+      cout << "key " << ii << " nullptr!!!";
   }
   cout << "]" << endl;
 
-  if ( child[ 0 ] != NULL )
+  if ( child[ 0 ] != nullptr )
     child[ 0 ]->print( indent + "  " );
   else
-    cout << "child[0] NULL!!!";
+    cout << "child[0] nullptr!!!";
   for ( PRV_UINT16 ii = 1; ii < used; ++ii )
   {
-    if ( child[ 0 ] != NULL )
+    if ( child[ 0 ] != nullptr )
       child[ ii ]->print( indent + "  " );
     else
-      cout << "child[0] NULL!!!";
+      cout << "child[0] nullptr!!!";
   }
   cout << indent << "v" << endl;
 }
@@ -697,7 +697,7 @@ BPlusInternal *BPlusInternal::split( BPlusNode *dest,
   used = middle + 1;
 
   dest = newInternal;
-  retdat = newInternal->minKeyTotal();
+  retdat = newInternal->minSubtreeKey();
 
   return newInternal;
 }
@@ -720,7 +720,7 @@ bool BPlusInternal::partialDelete( RecordLeaf *limitKey,
   int ii;
   BPlusNode *auxValidPred =  *validPredecessor;
 
-  if ( limitKey != NULL )
+  if ( limitKey != nullptr )
   {
     // Left recursive total delete.
     removed = 0;                       // testing <=
@@ -746,13 +746,13 @@ bool BPlusInternal::partialDelete( RecordLeaf *limitKey,
     {
       key[ ii - removed ] = key[ ii ];
       if ( removed != 0 )
-        key[ ii ] = NULL;
+        key[ ii ] = nullptr;
     }
     for ( ii = removed; ii < used; ++ii )
     {
       child[ ii - removed ] = child[ ii ];
       if ( removed != 0 )
-        child[ ii ] = NULL;
+        child[ ii ] = nullptr;
     }
     // Rearrange node size.
     used -= removed;
@@ -767,13 +767,13 @@ bool BPlusInternal::partialDelete( RecordLeaf *limitKey,
         //                valid_predecessor --> only_child
         if ( *validPredecessor != auxValidPred )
         {
-          child[ 0 ] = NULL;
+          child[ 0 ] = nullptr;
           delete this;
         }
         else
         {
           *validPredecessor = child[ 0 ];
-          child[ 0 ] = NULL;
+          child[ 0 ] = nullptr;
           delete this;
         }
         deletedAll = false; // because we still have to check the children
@@ -805,12 +805,12 @@ BPlusTree::BPlusTree( const Trace *whichTrace,
                       const PRV_UINT32 upercent )
   : myTrace( whichTrace )
 {
-  root = NULL;
-  ini = NULL;
+  root = nullptr;
+  ini = nullptr;
   tmpAux = new RecordLeaf;
   recordsInserted = 0;
   recordsLinkedLastTime = 0;
-  lastLeaf = NULL;
+  lastLeaf = nullptr;
 
   numThreads = totalThreads;
   numCPUs    = totalCPUs;
@@ -823,7 +823,7 @@ BPlusTree::BPlusTree( const Trace *whichTrace,
 
 BPlusTree::~BPlusTree()
 {
-  if ( root != NULL )
+  if ( root != nullptr )
   {
     delete root;
   }
@@ -855,8 +855,8 @@ TTime BPlusTree::finish( TTime headerTime, Trace *whichTrace )
     tmpBegin.thread = i;
     tmpEnd.thread = i;
     tmpBegin.threadNext = unloadedTrace->getThreadBegin( i );
-    tmpBegin.threadPrev = NULL;
-    tmpEnd.threadNext = NULL;
+    tmpBegin.threadPrev = nullptr;
+    tmpEnd.threadNext = nullptr;
     tmpEnd.threadPrev = unloadedTrace->getThreadEnd( i );
     emptyThreadBegin.push_back( tmpBegin );
     emptyThreadEnd.push_back( tmpEnd );
@@ -889,8 +889,8 @@ TTime BPlusTree::finish( TTime headerTime, Trace *whichTrace )
     }
 
     tmpBegin.next = unloadedTrace->getCPUBegin( i );
-    tmpBegin.prev = NULL;
-    tmpEnd.next = NULL;
+    tmpBegin.prev = nullptr;
+    tmpEnd.next = nullptr;
     tmpEnd.prev = unloadedTrace->getCPUEnd( i );
     emptyCPUBegin.push_back( tmpBegin );
     emptyCPUEnd.push_back( tmpEnd );
@@ -919,9 +919,9 @@ void BPlusTree::insert( TRecord *r )
 {
   tmpAux->setRecord( r );
 
-  BPlusNode *newNode = NULL;
+  BPlusNode *newNode = nullptr;
 
-  if ( root == NULL )
+  if ( root == nullptr )
   {
     ini = new BPlusLeaf;
     root = ini;
@@ -929,7 +929,7 @@ void BPlusTree::insert( TRecord *r )
 
   root->insert( tmpAux, newNode );
 
-  if ( newNode != NULL )
+  if ( newNode != nullptr )
   {
     BPlusInternal *newRoot = new BPlusInternal;
     newRoot->append( root );
@@ -945,9 +945,9 @@ void BPlusTree::insert( TRecord *r )
 
 void BPlusTree::getRecordFirstTime( TRecord **rft )
 {
-  if ( lastLeaf == NULL )
+  if ( lastLeaf == nullptr )
     // ojo last_leaf se actualiza al sacar.
-    *rft = NULL;  // error, nada se ha enlazado todavia.
+    *rft = nullptr;  // error, nada se ha enlazado todavia.
   else
     *rft = lastLeaf->getRecord();
 }
@@ -980,7 +980,7 @@ PRV_UINT32 BPlusTree::linkRecords( TRecord **ini, TRecord **fin, PRV_INT32 recs2
 
 void BPlusTree::print()
 {
-  if ( root != NULL )
+  if ( root != nullptr )
   {
     root->print( "" );
     cout << endl;
@@ -990,14 +990,14 @@ void BPlusTree::print()
 
 void BPlusTree::partialDelete()
 {
-  if ( root != NULL )
+  if ( root != nullptr )
   {
     root->partialDelete( lastLeaf, &root );
     recordsInserted -= recordsLinkedLastTime;
     if ( recordsInserted <= 0 )
     {
       delete root;
-      root = NULL;
+      root = nullptr;
     }
   }
 }
@@ -1008,7 +1008,7 @@ void BPlusTree::unload( PRV_INT32 numrecords )
   PRV_UINT32 records_linked;
   TRecord *ini, *fin;
 
-  if ( root != NULL )
+  if ( root != nullptr )
   {
     records_linked = linkRecords( &ini, &fin, numrecords );
     unloadedTrace->append( ini, fin );
@@ -1017,7 +1017,7 @@ void BPlusTree::unload( PRV_INT32 numrecords )
     else
     {
       delete root;
-      root = NULL;
+      root = nullptr;
     }
   }
 }
@@ -1026,22 +1026,22 @@ void BPlusTree::unload( PRV_INT32 numrecords )
 void BPlusTree::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter,
                                        TRecordTime whichTime ) const
 {
-  TRecord *current = NULL;
+  TRecord *current = nullptr;
   TThreadOrder filled = 0;
 
   for ( TThreadOrder ii = 0; ii < numThreads; ++ii )
   {
-    if ( listIter[ ii ] != NULL )
+    if ( listIter[ ii ] != nullptr )
     {
       delete listIter[ ii ];
-      listIter[ ii ] = NULL;
+      listIter[ ii ] = nullptr;
     }
   }
 
   // Search for especific time.
   if ( traceIndex->findRecord( whichTime, current ) )
   {
-    while ( current != NULL )
+    while ( current != nullptr )
     {
       if ( current->time < whichTime )
         break;
@@ -1050,9 +1050,9 @@ void BPlusTree::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter
   }
 
   // Backward search filling vector of iterators.
-  while ( ( current != NULL ) && ( filled < numThreads ) )
+  while ( ( current != nullptr ) && ( filled < numThreads ) )
   {
-    if ( listIter[ current->thread ] == NULL )
+    if ( listIter[ current->thread ] == nullptr )
     {
       listIter[ current->thread ] = new BPlusTree::ThreadIterator( current, myTrace );
       ++filled;
@@ -1064,7 +1064,7 @@ void BPlusTree::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter
   if ( filled < numThreads )
   {
     for ( TThreadOrder i = 0; i < numThreads; ++i )
-      if ( listIter[ i ] == NULL )
+      if ( listIter[ i ] == nullptr )
         listIter[ i ] = threadBegin( i );
   }
 }
@@ -1073,22 +1073,22 @@ void BPlusTree::getRecordByTimeThread( vector<MemoryTrace::iterator *>& listIter
 void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
                                     TRecordTime whichTime ) const
 {
-  TRecord *current = NULL;
+  TRecord *current = nullptr;
   TCPUOrder filled = 0;
 
   for ( TCPUOrder ii = 0; ii < numCPUs; ++ii )
   {
-    if ( listIter[ ii ] != NULL )
+    if ( listIter[ ii ] != nullptr )
     {
       delete listIter[ ii ];
-      listIter[ ii ] = NULL;
+      listIter[ ii ] = nullptr;
     }
   }
 
   // Search for especific time.
   if ( traceIndex->findRecord( whichTime, current ) )
   {
-    while ( current != NULL )
+    while ( current != nullptr )
     {
       if ( current->time < whichTime )
         break;
@@ -1096,9 +1096,9 @@ void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
     }
   }
   // Backward search filling vector of iterators.
-  while ( ( current != NULL ) && ( filled < numCPUs ) )
+  while ( ( current != nullptr ) && ( filled < numCPUs ) )
   {
-    if ( current->CPU > 0 && listIter[ current->CPU - 1 ] == NULL )
+    if ( current->CPU > 0 && listIter[ current->CPU - 1 ] == nullptr )
     {
       listIter[ current->CPU - 1 ] = new BPlusTree::CPUIterator( current, myTrace );
       ++filled;
@@ -1110,7 +1110,7 @@ void BPlusTree::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
   if ( filled < numCPUs )
   {
     for ( TCPUOrder i = 0; i < numCPUs; ++i )
-      if ( listIter[ i ] == NULL )
+      if ( listIter[ i ] == nullptr )
         listIter[ i ] = CPUBegin( i );
   }
 }
@@ -1128,11 +1128,11 @@ inline BPlusTree::iterator::iterator( TRecord *whichRecord, const Trace *whichTr
 inline void BPlusTree::iterator::operator++()
 {
 #ifdef STRICT_CHECK_DEBUG
-  if ( record !=  NULL )
+  if ( record !=  nullptr )
     record = ( ( TRecord * )record )->next;
   else
-    throw BPlusTreeException( BPlusTreeException::wrongIterator,
-                              "next unreachable, record NULL.",
+    throw BPlusTreeException( TBPlusTreeErrorCode::wrongIterator,
+                              "next unreachable, record nullptr.",
                               __FILE__,
                               __LINE__ );
 #else
@@ -1143,11 +1143,11 @@ inline void BPlusTree::iterator::operator++()
 inline void BPlusTree::iterator::operator--()
 {
 #ifdef STRICT_CHECK_DEBUG
-  if ( record !=  NULL )
+  if ( record !=  nullptr )
     record = ( ( TRecord * )record )->prev;
   else
-    throw BPlusTreeException( BPlusTreeException::wrongIterator,
-                              "prev unreachable, record NULL.",
+    throw BPlusTreeException( TBPlusTreeErrorCode::wrongIterator,
+                              "prev unreachable, record nullptr.",
                               __FILE__,
                               __LINE__ );
 #else
@@ -1247,11 +1247,11 @@ inline TObjectOrder BPlusTree::ThreadIterator::getOrder() const
 inline void BPlusTree::ThreadIterator::operator++()
 {
 #ifdef STRICT_CHECK_DEBUG
-  if ( record !=  NULL )
+  if ( record !=  nullptr )
     record = ( ( TRecord * )record )->threadNext;
   else
-    throw BPlusTreeException( BPlusTreeException::wrongIterator,
-                              "threadNext unreachable, record NULL.",
+    throw BPlusTreeException( TBPlusTreeErrorCode::wrongIterator,
+                              "threadNext unreachable, record nullptr.",
                               __FILE__,
                               __LINE__ );
 #else
@@ -1262,11 +1262,11 @@ inline void BPlusTree::ThreadIterator::operator++()
 inline void BPlusTree::ThreadIterator::operator--()
 {
 #ifdef STRICT_CHECK_DEBUG
-  if ( record !=  NULL )
+  if ( record !=  nullptr )
     record = ( ( TRecord * )record )->threadPrev;
   else
-    throw BPlusTreeException( BPlusTreeException::wrongIterator,
-                              "threadPrev unreachable, record NULL.",
+    throw BPlusTreeException( TBPlusTreeErrorCode::wrongIterator,
+                              "threadPrev unreachable, record nullptr.",
                               __FILE__,
                               __LINE__ );
 #else
@@ -1290,13 +1290,13 @@ inline TObjectOrder BPlusTree::CPUIterator::getOrder() const
 
 inline void BPlusTree::CPUIterator::operator++()
 {
-  if ( record !=  NULL )
+  if ( record !=  nullptr )
   {
     TRecord *myRecord = ( TRecord * )this->record; // Keep current, maybe it's the last one.
 
     // Forward search, looking for next record with same CPU.
     record = ( ( TRecord * )record )->next;
-    while ( record != NULL )
+    while ( record != nullptr )
     {
       if ( ( ( TRecord * )record )->CPU == myRecord->CPU )
         break;
@@ -1304,8 +1304,8 @@ inline void BPlusTree::CPUIterator::operator++()
     }
   }
   else
-    throw BPlusTreeException( BPlusTreeException::wrongIterator,
-                              "CPUNext unreachable, record NULL.",
+    throw BPlusTreeException( TBPlusTreeErrorCode::wrongIterator,
+                              "CPUNext unreachable, record nullptr.",
                               __FILE__,
                               __LINE__ );
 }
@@ -1313,13 +1313,13 @@ inline void BPlusTree::CPUIterator::operator++()
 inline void BPlusTree::CPUIterator::operator--()
 {
   // Shared code with ++, but the prev/next and exception message.
-  if ( record !=  NULL )
+  if ( record !=  nullptr )
   {
     TRecord *myRecord = ( TRecord * )this->record; // Keep current, maybe it's the last one.
 
     // Backward search, looking for previous record with same CPU.
     record = ( ( TRecord * )record )->prev;
-    while ( record != NULL )
+    while ( record != nullptr )
     {
       if ( ( ( TRecord * )record )->CPU == myRecord->CPU )
         break;
@@ -1327,8 +1327,8 @@ inline void BPlusTree::CPUIterator::operator--()
     }
   }
   else
-    throw BPlusTreeException( BPlusTreeException::wrongIterator,
-                              "CPUPrev unreachable, record NULL.",
+    throw BPlusTreeException( TBPlusTreeErrorCode::wrongIterator,
+                              "CPUPrev unreachable, record nullptr.",
                               __FILE__,
                               __LINE__ );
 }

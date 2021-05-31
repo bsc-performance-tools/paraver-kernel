@@ -31,9 +31,23 @@
 #include "paraverconfig.h"
 #include "trace.h"
 
+#define PARAM_SEPARATOR "|"
+
 using boost::posix_time::ptime;
 
 class Histogram;
+
+enum class TGroupID
+{
+  COLOR = 0,
+  GRADIENT_FUNCTION,
+  DRAWMODE,
+  PIXEL_SIZE,
+  IMAGE_FORMAT,
+  TEXT_FORMAT,
+  OBJECT_LABELS,
+  OBJECT_AXIS
+};
 
 class LabelConstructor
 {
@@ -87,24 +101,14 @@ class LabelConstructor
 
     static void transformToShort( std::string& onLabel, char beginDelimiter = '[', char endDelimiter = ']' );
 
-    enum TGroupID
-    {
-      COLOR = 0,
-      GRADIENT_FUNCTION,
-      DRAWMODE,
-      PIXEL_SIZE,
-      IMAGE_FORMAT,
-      TEXT_FORMAT,
-      OBJECT_LABELS,
-      OBJECT_AXIS
-    };
-
     static void getGUIGroupLabels( const TGroupID group, std::vector< std::string > &labels );
 
     static std::string getDate( bool reverseOrder = false );
 
-    static std::string getImageFileSuffix( const ParaverConfig::TImageFormat& format = ParaverConfig::PNG );
-    static std::string getDataFileSuffix( const ParaverConfig::TTextFormat& format = ParaverConfig::PLAIN );
+    static std::string getImageFileSuffix( const TImageFormat& format =  TImageFormat::PNG );
+    static std::string getDataFileSuffix( const TTextFormat& format = TTextFormat::PLAIN );
+
+    static std::string getCFG4DParameterOriginalName( Window *whichWindow, TWindowLevel whichLevel, TParamIndex whichParam );
 
   private:
     static std::stringstream sstrObjectLabel;
@@ -113,6 +117,7 @@ class LabelConstructor
     static std::stringstream tmp;
     static std::stringstream sstrTimeLabel;
     static std::stringstream sstrSemanticLabel;
+    static std::stringstream sstrCFGS4DOriginalName;
 
     static std::string rowStr;
     static std::string tmpStr;

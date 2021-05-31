@@ -27,19 +27,19 @@
 
 #include "paraverkernelexception.h"
 
+enum class TSemanticErrorCode
+{
+  undefined = 0,
+  maxParamExceeded,
+  LAST
+};
+
 class SemanticException: public ParaverKernelException
 {
   public:
-    typedef enum
-    {
-      undefined = 0,
-      maxParamExceeded,
-      LAST
-  } TErrorCode;
-
-    SemanticException( TErrorCode whichCode = undefined,
+    SemanticException( TSemanticErrorCode whichCode = TSemanticErrorCode::undefined,
                        const char *whichAuxMessage = "",
-                       const char *whichFile = NULL,
+                       const char *whichFile = nullptr,
                        TExceptionLine whichLine = 0 ) throw()
     {
       code = whichCode;
@@ -52,14 +52,14 @@ class SemanticException: public ParaverKernelException
 
     static std::string moduleMessage;
 
-    TErrorCode code;
+    TSemanticErrorCode code;
 
   private:
     static const char *errorMessage[];
 
-    virtual const char *specificErrorMessage() const
+    virtual const char *specificErrorMessage() const override
     {
-      return errorMessage[ code ];
+      return errorMessage[ static_cast< int >( code ) ];
     }
 
     virtual std::string& specificModuleMessage() const

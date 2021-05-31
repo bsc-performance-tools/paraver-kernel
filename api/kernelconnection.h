@@ -94,24 +94,24 @@ class KernelConnection
                                          char *trace_out,
                                          TraceOptions *options,
                                          const std::map< TTypeValuePair, TTypeValuePair >& whichTranslationTable,
-                                         ProgressController *progress = NULL ) const = 0;
+                                         ProgressController *progress = nullptr ) const = 0;
     virtual TraceSoftwareCounters *newTraceSoftwareCounters( char *trace_in,
                                                              char *trace_out,
                                                              TraceOptions *options,
-                                                             ProgressController *progress = NULL ) const = 0;
+                                                             ProgressController *progress = nullptr ) const = 0;
     virtual TraceShifter *newTraceShifter( std::string traceIn,
                                            std::string traceOut,
                                            std::string shiftTimesFile,
                                            TWindowLevel shiftLevel,
-                                           ProgressController *progress = NULL ) const = 0;
+                                           ProgressController *progress = nullptr ) const = 0;
     virtual EventDrivenCutter *newEventDrivenCutter( std::string traceIn,
                                                      std::string traceOut,
                                                      TEventType whichEvent,
-                                                     ProgressController *progress = NULL ) const = 0;
+                                                     ProgressController *progress = nullptr ) const = 0;
     virtual EventTranslator *newEventTranslator( std::string traceIn,
                                                  std::string traceOut,
                                                  std::string traceReference,
-                                                 ProgressController *progress = NULL ) const = 0;
+                                                 ProgressController *progress = nullptr ) const = 0;
 
     virtual void getAllStatistics( std::vector<std::string>& onVector ) const = 0;
     virtual void getAllFilterFunctions( std::vector<std::string>& onVector ) const = 0;

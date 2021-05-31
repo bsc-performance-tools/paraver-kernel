@@ -40,7 +40,7 @@ bool TraceBodyIO_v2::ordered() const
 }
 
 void TraceBodyIO_v2::read( TraceStream *file, MemoryBlocks& records,
-                           hash_set<TState>& states,hash_set<TEventType>& events,
+                           unordered_set<TState>& states,unordered_set<TEventType>& events,
                            MetadataManager& traceInfo ) const
 {
   string line;
@@ -193,7 +193,7 @@ void TraceBodyIO_v2::writeCommInfo( fstream& whichStream,
 /**********************
   Read line functions
 ***********************/
-void TraceBodyIO_v2::readState( const string& line, MemoryBlocks& records, hash_set<TState>& states ) const
+void TraceBodyIO_v2::readState( const string& line, MemoryBlocks& records, unordered_set<TState>& states ) const
 {
   string tmpstring;
   TCPUOrder CPU;
@@ -254,7 +254,7 @@ void TraceBodyIO_v2::readState( const string& line, MemoryBlocks& records, hash_
 
 
 void TraceBodyIO_v2::readEvent( const string& line, MemoryBlocks& records,
-                                hash_set<TEventType>& events ) const
+                                unordered_set<TEventType>& events ) const
 {
   string tmpstring;
   TCPUOrder CPU;

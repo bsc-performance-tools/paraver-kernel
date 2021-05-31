@@ -57,5 +57,5 @@ MemoryTrace::iterator& MemoryTrace::iterator::operator=( const MemoryTrace::iter
 
 bool MemoryTrace::iterator::isNull() const
 {
-  return ( record == NULL );
+  return ( record == nullptr );
 }

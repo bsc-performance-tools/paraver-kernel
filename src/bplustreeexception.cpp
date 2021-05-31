@@ -36,6 +36,6 @@ const char *BPlusTreeException::errorMessage[] =
     "Invalid append: ",
     "Wrong Iterator: ",
     "Invalid cast: ",
-    NULL
+    nullptr
   };
 

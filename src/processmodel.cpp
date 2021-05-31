@@ -145,7 +145,7 @@ ProcessModel::ProcessModel( istringstream& headerInfo, bool existResourceInfo )
   if ( !( sstreamNumberAppl >> numberApplications ) ||
        numberApplications == 0 )
   {
-    throw TraceHeaderException( TraceHeaderException::invalidApplNumber,
+    throw TraceHeaderException( TTraceHeaderErrorCode::invalidApplNumber,
                                 stringNumberApplications.c_str() );
   }
 
@@ -163,7 +163,7 @@ ProcessModel::ProcessModel( istringstream& headerInfo, bool existResourceInfo )
     if ( !( sstreamNumberTasks >> numberTasks ) ||
          numberTasks == 0 )
     {
-      throw TraceHeaderException( TraceHeaderException::invalidTaskNumber,
+      throw TraceHeaderException( TTraceHeaderErrorCode::invalidTaskNumber,
                                   stringNumberTasks.c_str() );
     }
 
@@ -188,7 +188,7 @@ ProcessModel::ProcessModel( istringstream& headerInfo, bool existResourceInfo )
       if ( !( sstreamNumberThreads >> numberThreads ) ||
            numberThreads == 0 )
       {
-        throw TraceHeaderException( TraceHeaderException::invalidThreadNumber,
+        throw TraceHeaderException( TTraceHeaderErrorCode::invalidThreadNumber,
                                     stringNumberThreads.c_str() );
       }
 
@@ -204,7 +204,7 @@ ProcessModel::ProcessModel( istringstream& headerInfo, bool existResourceInfo )
       if ( !( sstreamNumberNode >> numberNode ) ||
            ( numberNode == 0 && existResourceInfo ) )
       {
-        throw TraceHeaderException( TraceHeaderException::invalidNodeNumber,
+        throw TraceHeaderException( TTraceHeaderErrorCode::invalidNodeNumber,
                                     stringNumberNode.c_str() );
       }
 
@@ -265,7 +265,7 @@ ProcessModel::ProcessModel( Trace *whichTrace, const std::string& fileName,
     istringstream sstreamNumberAppl( ATT[ 0 ] );
     if ( !( sstreamNumberAppl >> countAppl ) || countAppl == 0 )
     {
-      throw TraceHeaderException( TraceHeaderException::invalidApplNumber,
+      throw TraceHeaderException( TTraceHeaderErrorCode::invalidApplNumber,
                                   ATT[ 0 ].c_str() );
     }
 
@@ -285,7 +285,7 @@ ProcessModel::ProcessModel( Trace *whichTrace, const std::string& fileName,
 
     if ( !( sstreamNumberTasks >> countTask ) || countTask == 0 )
     {
-      throw TraceHeaderException( TraceHeaderException::invalidTaskNumber,
+      throw TraceHeaderException( TTraceHeaderErrorCode::invalidTaskNumber,
                                   stringNumberTasks.c_str() );
     }
 
@@ -307,7 +307,7 @@ ProcessModel::ProcessModel( Trace *whichTrace, const std::string& fileName,
     istringstream sstreamNumberThreads( stringNumberThreads );
     if ( !( sstreamNumberThreads >> countThread ) || countThread == 0 )
     {
-      throw TraceHeaderException( TraceHeaderException::invalidThreadNumber,
+      throw TraceHeaderException( TTraceHeaderErrorCode::invalidThreadNumber,
                                   stringNumberThreads.c_str() );
     }
 
@@ -329,7 +329,7 @@ ProcessModel::ProcessModel( Trace *whichTrace, const std::string& fileName,
     istringstream sstreamBeginTime( attText );
     if ( !( sstreamBeginTime >> beginTime ) )
     {
-      throw TraceHeaderException( TraceHeaderException::invalidTime,
+      throw TraceHeaderException( TTraceHeaderErrorCode::invalidTime,
                                   attText.c_str() );
     }
 
@@ -339,7 +339,7 @@ ProcessModel::ProcessModel( Trace *whichTrace, const std::string& fileName,
     istringstream sstreamDuration( attText );
     if ( !( sstreamDuration >> duration ) )
     {
-      throw TraceHeaderException( TraceHeaderException::invalidTime,
+      throw TraceHeaderException( TTraceHeaderErrorCode::invalidTime,
                                   attText.c_str() );
     }
     if ( beginTime + duration > traceEndTime )
@@ -466,7 +466,7 @@ void ProcessModel::addTask(  TApplOrder whichAppl )
   {
     stringstream tmpstr;
     tmpstr << whichAppl;
-    throw TraceHeaderException( TraceHeaderException::invalidApplNumber,
+    throw TraceHeaderException( TTraceHeaderErrorCode::invalidApplNumber,
                                 tmpstr.str().c_str() );
   }
 
@@ -484,14 +484,14 @@ void ProcessModel::addThread(  TApplOrder whichAppl, TTaskOrder whichTask,
   {
     stringstream tmpstr;
     tmpstr << whichAppl;
-    throw TraceHeaderException( TraceHeaderException::invalidApplNumber,
+    throw TraceHeaderException( TTraceHeaderErrorCode::invalidApplNumber,
                                 tmpstr.str().c_str() );
   }
   else if( whichTask > applications[ whichAppl ].tasks.size() )
   {
     stringstream tmpstr;
     tmpstr << whichAppl;
-    throw TraceHeaderException( TraceHeaderException::invalidTaskNumber,
+    throw TraceHeaderException( TTraceHeaderErrorCode::invalidTaskNumber,
                                 tmpstr.str().c_str() );
   }
 

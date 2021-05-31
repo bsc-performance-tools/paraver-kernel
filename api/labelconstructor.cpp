@@ -40,6 +40,7 @@ stringstream LabelConstructor::columnLabel;
 stringstream LabelConstructor::tmp;
 stringstream LabelConstructor::sstrTimeLabel;
 stringstream LabelConstructor::sstrSemanticLabel;
+stringstream LabelConstructor::sstrCFGS4DOriginalName;
 string       LabelConstructor::rowStr;
 string       LabelConstructor::tmpStr;
 char         LabelConstructor::separator;
@@ -591,7 +592,7 @@ void LabelConstructor::getGUIGroupLabels( const TGroupID groupID, vector< string
 {
   switch ( groupID )
   {
-    case COLOR:
+    case TGroupID::COLOR:
       labels.push_back( GUI_COLORS_CODE_COLOR );
       labels.push_back( GUI_COLORS_GRADIENT_COLOR );
       labels.push_back( GUI_COLORS_NOT_NULL_GRADIENT );
@@ -599,14 +600,14 @@ void LabelConstructor::getGUIGroupLabels( const TGroupID groupID, vector< string
       labels.push_back( GUI_COLORS_PUNCTUAL );
       break;
 
-    case GRADIENT_FUNCTION:
+    case TGroupID::GRADIENT_FUNCTION:
       labels.push_back( GUI_GRADIENT_FUNCTION_LINEAR );
       labels.push_back( GUI_GRADIENT_FUNCTION_STEPS );
       labels.push_back( GUI_GRADIENT_FUNCTION_LOGARITHMIC );
       labels.push_back( GUI_GRADIENT_FUNCTION_EXPONENTIAL );
       break;
 
-    case DRAWMODE:
+    case TGroupID::DRAWMODE:
       labels.push_back( GUI_DRAWMODE_LAST );
       labels.push_back( GUI_DRAWMODE_MAXIMUM );
       labels.push_back( GUI_DRAWMODE_MINIMUM_NOT_ZERO );
@@ -619,32 +620,32 @@ void LabelConstructor::getGUIGroupLabels( const TGroupID groupID, vector< string
       labels.push_back( GUI_DRAWMODE_MODE );
       break;
 
-    case PIXEL_SIZE:
+    case TGroupID::PIXEL_SIZE:
       labels.push_back( GUI_PIXEL_SIZE_X1 );
       labels.push_back( GUI_PIXEL_SIZE_X2 );
       labels.push_back( GUI_PIXEL_SIZE_X4 );
       labels.push_back( GUI_PIXEL_SIZE_X8 );
       break;
 
-    case IMAGE_FORMAT:
+    case TGroupID::IMAGE_FORMAT:
       labels.push_back( GUI_IMAGE_FORMAT_BMP );
       labels.push_back( GUI_IMAGE_FORMAT_JPEG );
       labels.push_back( GUI_IMAGE_FORMAT_PNG );
       labels.push_back( GUI_IMAGE_FORMAT_XPM );
       break;
 
-    case TEXT_FORMAT:
+    case TGroupID::TEXT_FORMAT:
       labels.push_back( GUI_TEXT_FORMAT_CSV );
       labels.push_back( GUI_TEXT_FORMAT_GNUPLOT );
       break;
 
-    case OBJECT_LABELS:
+    case TGroupID::OBJECT_LABELS:
       labels.push_back( GUI_OBJECT_LABELS_ALL );
       labels.push_back( GUI_OBJECT_LABELS_SPACED );
       labels.push_back( GUI_OBJECT_LABELS_POWER2 );
       break;
 
-    case OBJECT_AXIS:
+    case TGroupID::OBJECT_AXIS:
       labels.push_back( GUI_OBJECT_AXIS_CURRENT );
       labels.push_back( GUI_OBJECT_AXIS_ALL );
       labels.push_back( GUI_OBJECT_AXIS_ZERO );
@@ -698,25 +699,25 @@ string LabelConstructor::getDate( bool reverseOrder )
 }
 
 
-std::string LabelConstructor::getImageFileSuffix( const ParaverConfig::TImageFormat& format )
+std::string LabelConstructor::getImageFileSuffix( const TImageFormat& format )
 {
   string resultString;
 
   switch( format )
   {
-    case ParaverConfig::BMP:
+    case  TImageFormat::BMP:
       resultString = string( "bmp" );
       break;
 
-    case ParaverConfig::JPG:
+    case  TImageFormat::JPG:
       resultString = string( "jpg" );
       break;
 
-    case ParaverConfig::PNG:
+    case  TImageFormat::PNG:
       resultString = string( "png" );
       break;
 
-    case ParaverConfig::XPM:
+    case TImageFormat::XPM:
       resultString = string( "xpm" );
       break;
 
@@ -729,25 +730,35 @@ std::string LabelConstructor::getImageFileSuffix( const ParaverConfig::TImageFor
 }
 
 
-std::string LabelConstructor::getDataFileSuffix( const ParaverConfig::TTextFormat& format )
+std::string LabelConstructor::getDataFileSuffix( const TTextFormat& format )
 {
   string resultString;
 
   switch( format )
   {
-    case ParaverConfig::CSV:
+    case TTextFormat::CSV:
       resultString = string( "csv" );
       break;
 
-    case ParaverConfig::GNUPLOT:
+    case TTextFormat::GNUPLOT:
       resultString = string( "gnuplot" );
       break;
 
-    case ParaverConfig::PLAIN:
+    case TTextFormat::PLAIN:
     default:
       resultString = string( "dat" );
       break;
   }
 
   return resultString;
+}
+
+std::string LabelConstructor::getCFG4DParameterOriginalName( Window *whichWindow, TWindowLevel whichLevel, TParamIndex whichParam )
+{
+  sstrCFGS4DOriginalName.clear();
+  sstrCFGS4DOriginalName.str( "" );
+  sstrCFGS4DOriginalName << TimelineLevelLabels[ whichLevel ] << PARAM_SEPARATOR << whichParam << PARAM_SEPARATOR
+                         << whichWindow->getLevelFunction( whichLevel ) << "." << whichWindow->getFunctionParamName( whichLevel, whichParam );
+
+  return sstrCFGS4DOriginalName.str();
 }

@@ -154,7 +154,7 @@ void KTraceCutter::read_cutter_params()
     word = strtok( exec_options->tasks_list, "," );
     do
     {
-      if ( ( buffer = strchr( word, '-' ) ) != NULL )
+      if ( ( buffer = strchr( word, '-' ) ) != nullptr )
       {
         *buffer = '\0';
         wanted_tasks[j].min_task_id = atoll( word );
@@ -169,7 +169,7 @@ void KTraceCutter::read_cutter_params()
 
       j++;
     }
-    while ( ( word = strtok( NULL, "," ) ) != NULL );
+    while ( ( word = strtok( nullptr, "," ) ) != nullptr );
   }
 
   if ( exec_options->max_trace_size != 0 )
@@ -227,7 +227,7 @@ void KTraceCutter::proces_cutter_header( char *header,
   current_size += fprintf( outfile, "%s):", word );
 
   /* Obtaining the trace total time */
-  word = strtok( NULL, ":" );
+  word = strtok( nullptr, ":" );
   if ( strstr( word, "_ns" ) )
   {
     word[ strlen( word ) - 3 ] = '\0';
@@ -269,17 +269,17 @@ void KTraceCutter::proces_cutter_header( char *header,
   }
 
   /* Obtaining the number of communicators */
-   word = strtok( NULL, "\n" ); // put in word the rest of the line
+   word = strtok( nullptr, "\n" ); // put in word the rest of the line
   current_size += fprintf( outfile, "%s\n", word );
 
   // Do I have some "," looking back?
   word = strrchr( word, ',' );
-  if ( word != NULL )
+  if ( word != nullptr )
   {
     // Is it because some "1:1,1:1)\n" or the expected "1:1,1:1),16\n" ?
     //                       -^-                               -^-
     strcpy( header, word + 1 ); // Copy "1:1)" or "16" in header
-    if ( strchr( header, ')' ) == NULL ) // Do I have some ")"?
+    if ( strchr( header, ')' ) == nullptr ) // Do I have some ")"?
     {
       // No ==> No comunicators
       // Hope it's a number and it fits the number of communicator lines...
@@ -341,7 +341,7 @@ void KTraceCutter::proces_cutter_header( char *header,
     gzseek( gzInfile, -( strlen( auxLine ) ), SEEK_CUR );
 
   /* Writing of the current cut offset */
-//  if ( trace_in_name != NULL )
+//  if ( trace_in_name != nullptr )
 //    current_size += fprintf( outfile, "# %s: Offset %lld from %s\n", trace_out_name, time_min, trace_in_name );
 
   free( auxLine );
@@ -483,7 +483,7 @@ void KTraceCutter::ini_cutter_progress_bar( char *file_name,
 
   current_read_size = 0;
 
-  if( progress != NULL)
+  if( progress != nullptr)
   {
     if( writeToTmpFile )
     {
@@ -527,7 +527,7 @@ void KTraceCutter::show_cutter_progress_bar( ProgressController *progress )
   if ( is_zip )
     current_read_size = current_read_size / TraceStream::GZIP_COMPRESSION_RATIO;
 
-  if ( progress != NULL )
+  if ( progress != nullptr )
   {
     if( writeToTmpFile )
     {
@@ -604,7 +604,7 @@ void KTraceCutter::load_counters_of_pcf( char *trace_name )
   pcf_name = LocalKernel::composeName( string( trace_name ), string( "pcf" ) );
 
   last_counter = 0;
-  if ( ( pcf = fopen( pcf_name.c_str(), "r" ) ) == NULL )
+  if ( ( pcf = fopen( pcf_name.c_str(), "r" ) ) == nullptr )
     return;
 
   fclose( pcf );
@@ -635,7 +635,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
   if ( !is_zip )
   {
 #if defined(__FreeBSD__) || defined(__APPLE__)
-    if ( ( infile = fopen( nameIn, "r" ) ) == NULL )
+    if ( ( infile = fopen( nameIn, "r" ) ) == nullptr )
     {
       perror( "ERROR" );
       printf( "KCutter: Error Opening File %s\n", nameIn );
@@ -648,7 +648,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
       exit( 1 );
     }
 #else
-    if ( ( infile = fopen64( nameIn, "r" ) ) == NULL )
+    if ( ( infile = fopen64( nameIn, "r" ) ) == nullptr )
     {
       perror( "ERROR" );
       printf( "KCutter: Error Opening File %s\n", nameIn );
@@ -658,7 +658,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
   }
   else
   {
-    if ( ( gzInfile = gzopen( nameIn, "rb" ) ) == NULL )
+    if ( ( gzInfile = gzopen( nameIn, "rb" ) ) == nullptr )
     {
       printf( "KCutter: Error opening compressed trace\n" );
       exit( 1 );
@@ -666,7 +666,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
   }
 
 #if defined(__FreeBSD__) || defined(__APPLE__)
-  if ( ( outfile = fopen( nameOut, "w" ) ) == NULL )
+  if ( ( outfile = fopen( nameOut, "w" ) ) == nullptr )
   {
     perror( "ERROR" );
     printf( "KCutter: Error Opening File %s\n", nameOut );
@@ -679,7 +679,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
     exit( 1 );
   }
 #else
-  if ( ( outfile = fopen64( nameOut, "w" ) ) == NULL )
+  if ( ( outfile = fopen64( nameOut, "w" ) ) == nullptr )
   {
     perror( "ERROR" );
     printf( "KCutter: Error Opening File %s\n", nameOut );
@@ -701,7 +701,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
   }
 
   // Consume header
-  //proces_cutter_header( trace_header, NULL, NULL, is_zip );
+  //proces_cutter_header( trace_header, nullptr, nullptr, is_zip );
   proces_cutter_header( trace_header, is_zip );
 
   bool end_read = false;
@@ -736,7 +736,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
     else
     {
       char *auxLine = fgets( trace_header, MAX_TRACE_HEADER, infile );
-      if ( auxLine == NULL )
+      if ( auxLine == nullptr )
         end_read = true;
     }
   }
@@ -834,7 +834,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
       else
       {
         char *auxLine = fgets( trace_header, MAX_TRACE_HEADER, infile );
-        if ( auxLine == NULL )
+        if ( auxLine == nullptr )
           end_read = true;
       }
     }
@@ -908,9 +908,9 @@ void KTraceCutter::execute( std::string trace_in,
   unsigned long num_iters = 0;
   thread_info *p;
 
-  KProgressController *tmpKProgressControler = NULL;
+  KProgressController *tmpKProgressControler = nullptr;
 
-  if ( progress != NULL )
+  if ( progress != nullptr )
     tmpKProgressControler = (KProgressController *)progress->getConcrete();
 
   trace_name     = (char *) malloc( sizeof(char) * MAX_FILENAME_SIZE );
@@ -937,7 +937,7 @@ void KTraceCutter::execute( std::string trace_in,
   strcpy( trace_name, trace_in.c_str() );
 
   /* Is the trace zipped ? */
-  if ( ( c = strrchr( trace_name, '.' ) ) != NULL )
+  if ( ( c = strrchr( trace_name, '.' ) ) != nullptr )
   {
     /* The names finishes with .gz */
     if ( !strcmp( c, ".gz" ) )
@@ -950,11 +950,11 @@ void KTraceCutter::execute( std::string trace_in,
   reset_counters = false;
   load_counters_of_pcf( trace_name );
 
-  /* Open the files.  If NULL is returned there was an error */
+  /* Open the files.  If nullptr is returned there was an error */
   if ( !is_zip )
   {
 #if defined(__FreeBSD__) || defined(__APPLE__)
-    if ( ( infile = fopen( trace_name, "r" ) ) == NULL )
+    if ( ( infile = fopen( trace_name, "r" ) ) == nullptr )
     {
       perror( "ERROR" );
       printf( "KCutter: Error Opening File %s\n", trace_name );
@@ -968,7 +968,7 @@ void KTraceCutter::execute( std::string trace_in,
       exit( 1 );
     }
 #else
-    if ( ( infile = fopen64( trace_name, "r" ) ) == NULL )
+    if ( ( infile = fopen64( trace_name, "r" ) ) == nullptr )
     {
       perror( "ERROR" );
       printf( "KCutter: Error Opening File %s\n", trace_name );
@@ -978,7 +978,7 @@ void KTraceCutter::execute( std::string trace_in,
   }
   else
   {
-    if ( ( gzInfile = gzopen( trace_name, "rb" ) ) == NULL )
+    if ( ( gzInfile = gzopen( trace_name, "rb" ) ) == nullptr )
     {
       printf( "KCutter: Error opening compressed trace\n" );
       exit( 1 );
@@ -1004,7 +1004,7 @@ void KTraceCutter::execute( std::string trace_in,
     strcpy( trace_file_out, trace_out.c_str() );
 
 #if defined(__FreeBSD__) || defined(__APPLE__)
-  if ( ( outfile = fopen( trace_file_out, "w" ) ) == NULL )
+  if ( ( outfile = fopen( trace_file_out, "w" ) ) == nullptr )
   {
     printf( "Error Opening KCutter Ouput File %s\n", trace_file_out );
     exit( 1 );
@@ -1016,7 +1016,7 @@ void KTraceCutter::execute( std::string trace_in,
     exit( 1 );
   }
 #else
-  if ( ( outfile = fopen64( trace_file_out, "w" ) ) == NULL )
+  if ( ( outfile = fopen64( trace_file_out, "w" ) ) == nullptr )
   {
     printf( "Error Opening KCutter Ouput File %s\n", trace_file_out );
     exit( 1 );
@@ -1049,13 +1049,13 @@ void KTraceCutter::execute( std::string trace_in,
   total_tmp_lines = 0;
   secondPhase = false;
 
-  if( tmpKProgressControler != NULL )
+  if( tmpKProgressControler != nullptr )
     end_parsing = tmpKProgressControler->getStop();
 
   /* Processing the trace records */
   while ( !end_parsing && !maxTimeReached )
   {
-    if( tmpKProgressControler != NULL )
+    if( tmpKProgressControler != nullptr )
     {
       end_parsing = tmpKProgressControler->getStop();
       if ( end_parsing )
@@ -1065,7 +1065,7 @@ void KTraceCutter::execute( std::string trace_in,
     /* Read one more record is possible */
     if ( !is_zip )
     {
-      if ( feof( infile ) || fgets( line, MAX_TRACE_HEADER, infile ) == NULL )
+      if ( feof( infile ) || fgets( line, MAX_TRACE_HEADER, infile ) == nullptr )
       {
         end_parsing = true;
 
@@ -1257,7 +1257,7 @@ void KTraceCutter::execute( std::string trace_in,
           end_line = false;
           word = strtok( line, ":" );
           type = atoll( word );
-          word = strtok( NULL, ":" );
+          word = strtok( nullptr, ":" );
           value = atoll( word );
 
           update_queue( appl - 1, task - 1, thread - 1, type, value );
@@ -1267,10 +1267,10 @@ void KTraceCutter::execute( std::string trace_in,
 
           while ( !end_line )
           {
-            if ( ( word = strtok( NULL, ":" ) ) != NULL )
+            if ( ( word = strtok( nullptr, ":" ) ) != nullptr )
             {
               type = atoll( word );
-              word = strtok( NULL, ":" );
+              word = strtok( nullptr, ":" );
               value = atoll( word );
               update_queue( appl - 1, task - 1, thread - 1, type, value );
             }
@@ -1400,7 +1400,7 @@ void KTraceCutter::execute( std::string trace_in,
       break;
   }
 
-  if( tmpKProgressControler != NULL && tmpKProgressControler->getStop() )
+  if( tmpKProgressControler != nullptr && tmpKProgressControler->getStop() )
     tmpKProgressControler->setMessage( "Finishing cut..." );
 
   if ( last_record_time > time_max || remLastStates )

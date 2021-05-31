@@ -70,11 +70,10 @@ void createSemantic()
   functions[0].push_back( new ComposeNestingLevel() );
   functions[0].push_back( new ComposeLRUDepth() );
   functions[0].push_back( new ComposeEnumerate() );
-
-  functions[0].push_back( new ComposeAccumulate() );
-  
+  functions[0].push_back( new ComposeAccumulate() );  
   functions[0].push_back( new ComposeDelta() );
   functions[0].push_back( new ComposeBurstTime() );
+  functions[0].push_back( new ComposeDivideByBurstTime() );
   functions[0].push_back( new ComposeBeginTime() );
   functions[0].push_back( new ComposeEndTime() );
   functions[0].push_back( new ComposeJoinBursts() );
@@ -83,7 +82,6 @@ void createSemantic()
   functions[0].push_back( new ComposeCosine() );
   functions[0].push_back( new ComposeSqrtAbs() );
   functions[0].push_back( new ComposeArcTan() );
-
   functions[0].push_back( new ComposeLogN() );
   functions[0].push_back( new ComposeExponential() );
 
@@ -117,7 +115,6 @@ void createSemantic()
   functions[2].push_back( new ActiveThreadSign() );
   functions[2].push_back( new ActiveThreadValues() );
   functions[2].push_back( new ActiveThreadValuesSign() );
-
 
 
   /**************************

@@ -81,18 +81,18 @@ class NotCompressed: public TraceStream
     virtual ~NotCompressed()
     {}
 
-    virtual void open( const std::string& filename );
-    virtual void close();
-    virtual void getline( std::string& strLine );
-    virtual bool eof();
-    virtual void seekbegin();
-    virtual void seekend();
-    virtual void seekg( std::streampos pos );
-    virtual std::streampos tellg();
-    virtual bool canseekend();
-    virtual bool good() const;
-    virtual void clear();
-    virtual int peek();
+    virtual void open( const std::string& filename ) override;
+    virtual void close() override;
+    virtual void getline( std::string& strLine ) override;
+    virtual bool eof() override;
+    virtual void seekbegin() override;
+    virtual void seekend() override;
+    virtual void seekg( std::streampos pos ) override;
+    virtual std::streampos tellg() override;
+    virtual bool canseekend() override;
+    virtual bool good() const override;
+    virtual void clear() override;
+    virtual int peek() override;
 
     static TTraceSize getTraceFileSize( const std::string& filename );
 
@@ -113,18 +113,18 @@ class Compressed: public TraceStream
     virtual ~Compressed()
     {}
 
-    virtual void open( const std::string& filename );
-    virtual void close();
-    virtual void getline( std::string& strLine );
-    virtual bool eof();
-    virtual void seekbegin();
-    virtual void seekend();
-    virtual void seekg( std::streampos pos );
-    virtual std::streampos tellg();
-    virtual bool canseekend();
-    virtual bool good() const;
-    virtual void clear();
-    virtual int peek();
+    virtual void open( const std::string& filename ) override;
+    virtual void close() override;
+    virtual void getline( std::string& strLine ) override;
+    virtual bool eof() override;
+    virtual void seekbegin() override;
+    virtual void seekend() override;
+    virtual void seekg( std::streampos pos ) override;
+    virtual std::streampos tellg() override;
+    virtual bool canseekend() override;
+    virtual bool good() const override;
+    virtual void clear() override;
+    virtual int peek() override;
 
     static TTraceSize getTraceFileSize( const std::string& filename );
 

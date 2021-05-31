@@ -73,24 +73,24 @@ class StatNumSends: public HistogramStatistic
     StatNumSends() {};
     ~StatNumSends() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return true;
     }
-    virtual TObjectOrder getPartner( CalculateData *data );
+    virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -105,24 +105,24 @@ class StatNumReceives: public HistogramStatistic
     StatNumReceives() {};
     ~StatNumReceives() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return true;
     }
-    virtual TObjectOrder getPartner( CalculateData *data );
+    virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -137,24 +137,24 @@ class StatBytesSent: public HistogramStatistic
     StatBytesSent() {};
     ~StatBytesSent() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return true;
     }
-    virtual TObjectOrder getPartner( CalculateData *data );
+    virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -169,24 +169,24 @@ class StatBytesReceived: public HistogramStatistic
     StatBytesReceived() {};
     ~StatBytesReceived() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return true;
     }
-    virtual TObjectOrder getPartner( CalculateData *data );
+    virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -201,24 +201,24 @@ class StatAvgBytesSent: public HistogramStatistic
     StatAvgBytesSent() {};
     ~StatAvgBytesSent() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return true;
     }
-    virtual TObjectOrder getPartner( CalculateData *data );
+    virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -238,24 +238,24 @@ class StatAvgBytesReceived: public HistogramStatistic
     StatAvgBytesReceived() {};
     ~StatAvgBytesReceived() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return true;
     }
-    virtual TObjectOrder getPartner( CalculateData *data );
+    virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -275,24 +275,24 @@ class StatMinBytesSent: public HistogramStatistic
     StatMinBytesSent() {};
     ~StatMinBytesSent() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return true;
     }
-    virtual TObjectOrder getPartner( CalculateData *data );
+    virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -312,24 +312,24 @@ class StatMinBytesReceived: public HistogramStatistic
     StatMinBytesReceived() {};
     ~StatMinBytesReceived() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return true;
     }
-    virtual TObjectOrder getPartner( CalculateData *data );
+    virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -349,24 +349,24 @@ class StatMaxBytesSent: public HistogramStatistic
     StatMaxBytesSent() {};
     ~StatMaxBytesSent() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return true;
     }
-    virtual TObjectOrder getPartner( CalculateData *data );
+    virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -386,24 +386,24 @@ class StatMaxBytesReceived: public HistogramStatistic
     StatMaxBytesReceived() {};
     ~StatMaxBytesReceived() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return true;
     }
-    virtual TObjectOrder getPartner( CalculateData *data );
+    virtual TObjectOrder getPartner( CalculateData *data ) override;
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -426,27 +426,27 @@ class StatTime: public HistogramStatistic
     StatTime() {};
     ~StatTime() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return false;
     }
-    virtual TObjectOrder getPartner( CalculateData *data )
+    virtual TObjectOrder getPartner( CalculateData *data ) override
     {
       return 0;
     }
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -461,27 +461,27 @@ class StatPercTime: public HistogramStatistic
     StatPercTime() {};
     ~StatPercTime() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return false;
     }
-    virtual TObjectOrder getPartner( CalculateData *data )
+    virtual TObjectOrder getPartner( CalculateData *data ) override
     {
       return 0;
     }
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -501,27 +501,27 @@ class StatPercTimeNotZero: public HistogramStatistic
     StatPercTimeNotZero() {};
     ~StatPercTimeNotZero() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return false;
     }
-    virtual TObjectOrder getPartner( CalculateData *data )
+    virtual TObjectOrder getPartner( CalculateData *data ) override
     {
       return 0;
     }
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -541,27 +541,27 @@ class StatPercTimeWindow: public HistogramStatistic
     StatPercTimeWindow() {};
     ~StatPercTimeWindow() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return false;
     }
-    virtual TObjectOrder getPartner( CalculateData *data )
+    virtual TObjectOrder getPartner( CalculateData *data ) override
     {
       return 0;
     }
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -576,27 +576,27 @@ class StatNumBursts: public HistogramStatistic
     StatNumBursts() {};
     ~StatNumBursts() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return false;
     }
-    virtual TObjectOrder getPartner( CalculateData *data )
+    virtual TObjectOrder getPartner( CalculateData *data ) override
     {
       return 0;
     }
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -611,27 +611,27 @@ class StatPercNumBursts: public HistogramStatistic
     StatPercNumBursts() {};
     ~StatPercNumBursts() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return false;
     }
-    virtual TObjectOrder getPartner( CalculateData *data )
+    virtual TObjectOrder getPartner( CalculateData *data ) override
     {
       return 0;
     }
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -651,27 +651,27 @@ class StatIntegral: public HistogramStatistic
     StatIntegral() {};
     ~StatIntegral() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return false;
     }
-    virtual TObjectOrder getPartner( CalculateData *data )
+    virtual TObjectOrder getPartner( CalculateData *data ) override
     {
       return 0;
     }
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -686,27 +686,27 @@ class StatAvgValue: public HistogramStatistic
     StatAvgValue() {};
     ~StatAvgValue() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return false;
     }
-    virtual TObjectOrder getPartner( CalculateData *data )
+    virtual TObjectOrder getPartner( CalculateData *data ) override
     {
       return 0;
     }
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -726,27 +726,27 @@ class StatMaximum: public HistogramStatistic
     StatMaximum() {};
     ~StatMaximum() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return false;
     }
-    virtual TObjectOrder getPartner( CalculateData *data )
+    virtual TObjectOrder getPartner( CalculateData *data ) override
     {
       return 0;
     }
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -765,27 +765,27 @@ class StatMinimum: public HistogramStatistic
     StatMinimum() {};
     ~StatMinimum() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return false;
     }
-    virtual TObjectOrder getPartner( CalculateData *data )
+    virtual TObjectOrder getPartner( CalculateData *data ) override
     {
       return 0;
     }
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -805,27 +805,27 @@ class StatAvgBurstTime: public HistogramStatistic
     StatAvgBurstTime() {};
     ~StatAvgBurstTime() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return false;
     }
-    virtual TObjectOrder getPartner( CalculateData *data )
+    virtual TObjectOrder getPartner( CalculateData *data ) override
     {
       return 0;
     }
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -846,27 +846,27 @@ class StatStdevBurstTime: public HistogramStatistic
     StatStdevBurstTime() {};
     ~StatStdevBurstTime() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return false;
     }
-    virtual TObjectOrder getPartner( CalculateData *data )
+    virtual TObjectOrder getPartner( CalculateData *data ) override
     {
       return 0;
     }
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -888,27 +888,27 @@ class StatAvgPerBurst: public HistogramStatistic
     StatAvgPerBurst() {};
     ~StatAvgPerBurst() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return false;
     }
-    virtual TObjectOrder getPartner( CalculateData *data )
+    virtual TObjectOrder getPartner( CalculateData *data ) override
     {
       return 0;
     }
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -928,27 +928,27 @@ class StatAvgValueNotZero: public HistogramStatistic
     StatAvgValueNotZero() {};
     ~StatAvgValueNotZero() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return false;
     }
-    virtual TObjectOrder getPartner( CalculateData *data )
+    virtual TObjectOrder getPartner( CalculateData *data ) override
     {
       return 0;
     }
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -968,27 +968,27 @@ class StatAvgPerBurstNotZero: public HistogramStatistic
     StatAvgPerBurstNotZero() {};
     ~StatAvgPerBurstNotZero() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return false;
     }
-    virtual TObjectOrder getPartner( CalculateData *data )
+    virtual TObjectOrder getPartner( CalculateData *data ) override
     {
       return 0;
     }
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -1009,27 +1009,27 @@ class StatNumBurstsNotZero: public HistogramStatistic
     StatNumBurstsNotZero() {};
     ~StatNumBurstsNotZero() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return false;
     }
-    virtual TObjectOrder getPartner( CalculateData *data )
+    virtual TObjectOrder getPartner( CalculateData *data ) override
     {
       return 0;
     }
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
   protected:
 
   private:
@@ -1044,27 +1044,27 @@ class StatSumBursts: public HistogramStatistic
     StatSumBursts() {};
     ~StatSumBursts() {};
 
-    virtual bool createComms() const
+    virtual bool createComms() const override
     {
       return false;
     }
-    virtual TObjectOrder getPartner( CalculateData *data )
+    virtual TObjectOrder getPartner( CalculateData *data ) override
     {
       return 0;
     }
 
-    virtual void init( KHistogram *whichHistogram );
-    virtual void reset();
-    virtual bool filter( CalculateData *data ) const;
-    virtual TSemanticValue execute( CalculateData *data );
+    virtual void init( KHistogram *whichHistogram ) override;
+    virtual void reset() override;
+    virtual bool filter( CalculateData *data ) const override;
+    virtual TSemanticValue execute( CalculateData *data ) override;
     virtual TSemanticValue finishRow( TSemanticValue cellValue,
                                       THistogramColumn column,
                                       TObjectOrder row,
-                                      THistogramColumn plane = 0 );
+                                      THistogramColumn plane = 0 ) override;
 
-    virtual std::string getName() const;
-    virtual std::string getUnits( const KHistogram *whichHisto ) const;
-    virtual HistogramStatistic *clone();
+    virtual std::string getName() const override;
+    virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual HistogramStatistic *clone() override;
 
   protected:
 
@@ -1096,9 +1096,9 @@ class Statistics
     std::vector<bool> filterAllComm( CalculateData *data );
     std::vector<TSemanticValue> executeAllComm( CalculateData *data );
     std::vector<TSemanticValue> finishRowAllComm( const std::vector<TSemanticValue>& cellValue,
-        THistogramColumn column,
-        TObjectOrder row,
-        THistogramColumn plane = 0 );
+                                                  THistogramColumn column,
+                                                  TObjectOrder row,
+                                                  THistogramColumn plane = 0 );
 
     static int getNumStats();
     void initAll( KHistogram *whichHistogram );
@@ -1106,9 +1106,9 @@ class Statistics
     std::vector<bool> filterAll( CalculateData *data );
     std::vector<TSemanticValue> executeAll( CalculateData *data );
     std::vector<TSemanticValue> finishRowAll( const std::vector<TSemanticValue>& cellValue,
-                                         THistogramColumn column,
-                                         TObjectOrder row,
-                                         THistogramColumn plane = 0 );
+                                              THistogramColumn column,
+                                              TObjectOrder row,
+                                              THistogramColumn plane = 0 );
 
   private:
     StatNumSends statNumSends;

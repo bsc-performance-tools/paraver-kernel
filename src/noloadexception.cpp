@@ -34,5 +34,5 @@ const char *NoLoadException::errorMessage[] =
   {
     "Undefined error: ",
     "Wrong TraceBody version: ",
-    NULL
+    nullptr
   };

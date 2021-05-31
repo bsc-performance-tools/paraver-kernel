@@ -40,15 +40,15 @@ std::pair<Dimension1, Dimension1> ZoomHistory<Dimension1,Dimension2>::getFirstDi
 
   switch ( pos )
   {
-    case PREV_ZOOM:
+    case TZoomPosition::PREV_ZOOM:
       tmpPos = currentZoom - 1;
       break;
 
-    case CURRENT_ZOOM:
+    case TZoomPosition::CURRENT_ZOOM:
       tmpPos = currentZoom;
       break;
 
-    case NEXT_ZOOM:
+    case TZoomPosition::NEXT_ZOOM:
       tmpPos = currentZoom + 1;
       break;
 
@@ -66,15 +66,15 @@ std::pair<Dimension2, Dimension2> ZoomHistory<Dimension1,Dimension2>::getSecondD
 
   switch ( pos )
   {
-    case PREV_ZOOM:
+    case TZoomPosition::PREV_ZOOM:
       tmpPos = currentZoom - 1;
       break;
 
-    case CURRENT_ZOOM:
+    case TZoomPosition::CURRENT_ZOOM:
       tmpPos = currentZoom;
       break;
 
-    case NEXT_ZOOM:
+    case TZoomPosition::NEXT_ZOOM:
       tmpPos = currentZoom + 1;
       break;
 
@@ -147,15 +147,15 @@ bool ZoomHistory<Dimension1,Dimension2>::isEmpty( TZoomPosition pos ) const
 
   switch ( pos )
   {
-    case PREV_ZOOM:
+    case TZoomPosition::PREV_ZOOM:
       empty = ( currentZoom <= 0 );
       break;
 
-    case CURRENT_ZOOM:
+    case TZoomPosition::CURRENT_ZOOM:
       empty = ( zooms.begin() == zooms.end() );
       break;
 
-    case NEXT_ZOOM:
+    case TZoomPosition::NEXT_ZOOM:
       empty = ( currentZoom == int( zooms.size() - 1 ) );
       break;
 

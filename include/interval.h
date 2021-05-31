@@ -36,8 +36,8 @@ class Interval
   public:
     Interval()
     {
-      begin = NULL;
-      end = NULL;
+      begin = nullptr;
+      end = nullptr;
       currentValue = 0.0;
       notWindowInits = false;
     }
@@ -45,8 +45,8 @@ class Interval
     Interval( TWindowLevel whichLevel, TObjectOrder whichOrder ):
         order( whichOrder )
     {
-      begin = NULL;
-      end = NULL;
+      begin = nullptr;
+      end = nullptr;
       currentValue = 0.0;
       notWindowInits = false;
     }
@@ -104,9 +104,9 @@ class Interval
     }
 
     virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
-                              KRecordList *displayList = NULL ) = 0;
-    virtual KRecordList *calcNext( KRecordList *displayList = NULL, bool initCalc = false ) = 0;
-    virtual KRecordList *calcPrev( KRecordList *displayList = NULL, bool initCalc = false ) = 0;
+                              KRecordList *displayList = nullptr ) = 0;
+    virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) = 0;
+    virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) = 0;
 
     virtual KWindow *getWindow() = 0;
 
