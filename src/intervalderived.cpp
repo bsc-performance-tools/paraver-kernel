@@ -25,8 +25,9 @@
 #include "kwindow.h"
 #include "intervalderived.h"
 
+
 KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
-                                   KRecordList *displayList )
+                                    KRecordList *displayList )
 {
   TRecordTime myInitTime;
   info.values.clear();
@@ -63,7 +64,7 @@ KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
 
   info.callingInterval = this;
 
-  for ( TObjectOrder i = 0; i < childIntervals.size(); i++ )
+  for ( TObjectOrder i = 0; i < childIntervals.size(); ++i )
   {
     childIntervals[ i ]->init( myInitTime, createList, displayList );
 

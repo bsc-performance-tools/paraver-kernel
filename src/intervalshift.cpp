@@ -21,66 +21,60 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
+#include "intervalshift.h"
+#include "kwindow.h"
 
-#ifndef INTERVALDERIVED_H_INCLUDED
-#define INTERVALDERIVED_H_INCLUDED
-
-#include "intervalhigh.h"
-#include "semanticderived.h"
-
-class KWindow;
-class KDerivedWindow;
-class SemanticDerived;
-
-class IntervalDerived: public IntervalHigh
+KRecordList *IntervalShift::init( TRecordTime initialTime, TCreateList create,
+                                  KRecordList *displayList )
 {
-  public:
-    IntervalDerived()
-    {
-      function = nullptr;
-    }
+  queue<ShiftSemanticInfo>().swap( semanticBuffer );
 
-    IntervalDerived( KDerivedWindow *whichWindow, TWindowLevel whichLevel,
-                     TObjectOrder whichOrder ):
-        IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
-    {
-      function = nullptr;
-    }
+  return displayList;
+}
 
-    virtual ~IntervalDerived()
-    {
-      if ( begin != nullptr )
-        delete begin;
-      if ( end != nullptr )
-        delete end;
-    }
+KRecordList *IntervalShift::calcNext( KRecordList *displayList, bool initCalc )
+{
 
-    virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
-                              KRecordList *displayList = nullptr ) override;
-    virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) override;
-    virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) override;
+  return displayList;
+}
 
-    virtual KWindow *getWindow() override
-    {
-      return ( KWindow * ) window;
-    }
 
-  protected:
-    KDerivedWindow *window;
-    SemanticDerived *function;
-    TCreateList createList;
+KRecordList *IntervalShift::calcPrev( KRecordList *displayList, bool initCalc )
+{
 
-    virtual void setChildren() override;
+  return displayList;
+}
 
-    virtual KTrace *getWindowTrace() const override;
-    virtual TWindowLevel getWindowLevel() const override;
-    virtual Interval *getWindowInterval( TWindowLevel whichLevel, TObjectOrder whichOrder ) override;
-    virtual bool IsDerivedWindow() const override;
-    virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const override;
+TWindowLevel IntervalShift::getWindowLevel() const
+{
+  return window->getLevel();
+}
 
-  private:
-    SemanticHighInfo info;
 
-};
+Interval *IntervalShift::getWindowInterval( TWindowLevel whichLevel,
+    TObjectOrder whichOrder )
+{
+  return window->getLevelInterval( whichLevel, whichOrder );
+}
 
-#endif // INTERVALDERIVED_H_INCLUDED
+
+bool IntervalShift::IsDerivedWindow() const
+{
+  return window->isDerivedWindow();
+}
+
+
+TWindowLevel IntervalShift::getComposeLevel( TWindowLevel whichLevel ) const
+{
+  return window->getComposeLevel( whichLevel );
+}
+
+
+KTrace *IntervalShift::getWindowTrace() const
+{
+  return (KTrace*)window->getTrace();
+}
+
+void IntervalShift::setChildren()
+{
+}

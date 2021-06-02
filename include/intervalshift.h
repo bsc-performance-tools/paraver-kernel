@@ -22,32 +22,30 @@
 \*****************************************************************************/
 
 
-#ifndef INTERVALDERIVED_H_INCLUDED
-#define INTERVALDERIVED_H_INCLUDED
+#ifndef INTERVALSHIFT_H_INCLUDED
+#define INTERVALSHIFT_H_INCLUDED
 
+#include <queue>
 #include "intervalhigh.h"
-#include "semanticderived.h"
+
+using std::queue;
 
 class KWindow;
 class KDerivedWindow;
-class SemanticDerived;
 
-class IntervalDerived: public IntervalHigh
+class IntervalShift : public IntervalHigh
 {
   public:
-    IntervalDerived()
-    {
-      function = nullptr;
-    }
+    IntervalShift()
+    {}
 
-    IntervalDerived( KDerivedWindow *whichWindow, TWindowLevel whichLevel,
+    IntervalShift( KDerivedWindow *whichWindow, TWindowLevel whichLevel,
                      TObjectOrder whichOrder ):
         IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
     {
-      function = nullptr;
     }
 
-    virtual ~IntervalDerived()
+    virtual ~IntervalShift()
     {
       if ( begin != nullptr )
         delete begin;
@@ -55,8 +53,9 @@ class IntervalDerived: public IntervalHigh
         delete end;
     }
 
+
     virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
-                              KRecordList *displayList = nullptr ) override;
+                               KRecordList *displayList = nullptr ) override;
     virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) override;
     virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) override;
 
@@ -65,10 +64,20 @@ class IntervalDerived: public IntervalHigh
       return ( KWindow * ) window;
     }
 
-  protected:
+  private:
+    class ShiftSemanticInfo
+    {
+      public:
+        TSemanticValue semanticValue;
+        MemoryTrace::iterator *begin;
+        MemoryTrace::iterator *end;
+    };
+
     KDerivedWindow *window;
-    SemanticDerived *function;
-    TCreateList createList;
+
+    std::queue<IntervalShift::ShiftSemanticInfo> semanticBuffer;
+
+    PRV_INT16 semanticShift;
 
     virtual void setChildren() override;
 
@@ -78,9 +87,6 @@ class IntervalDerived: public IntervalHigh
     virtual bool IsDerivedWindow() const override;
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const override;
 
-  private:
-    SemanticHighInfo info;
-
 };
 
-#endif // INTERVALDERIVED_H_INCLUDED
+#endif // INTERVALSHIFT_H_INCLUDED

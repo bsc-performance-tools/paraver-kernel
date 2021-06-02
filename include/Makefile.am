@@ -20,6 +20,7 @@ noinst_HEADERS = \
                           interval.h\
                           intervalhigh.h\
                           intervalnotthread.h\
+                          intervalshift.h\
                           intervalthread.h\
                           keventdrivencutter.h\
                           keventtranslator.h\
@@ -45,7 +46,7 @@ noinst_HEADERS = \
                           noloadblocks.h\
                           noloadexception.h\
                           noloadtrace.h\
-    			  ParaverMetadataManager.h \
+    			                ParaverMetadataManager.h \
                           plainblocks.h\
                           plaintrace.h\
                           plaintypes.h\
