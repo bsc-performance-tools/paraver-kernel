@@ -25,10 +25,10 @@
 #ifndef INTERVALSHIFT_H_INCLUDED
 #define INTERVALSHIFT_H_INCLUDED
 
-#include <queue>
+#include <deque>
 #include "intervalhigh.h"
 
-using std::queue;
+using std::deque;
 
 class KWindow;
 class KDerivedWindow;
@@ -37,12 +37,15 @@ class IntervalShift : public IntervalHigh
 {
   public:
     IntervalShift()
-    {}
+    {
+      semanticShift = 0;
+    }
 
     IntervalShift( KDerivedWindow *whichWindow, TWindowLevel whichLevel,
-                     TObjectOrder whichOrder ):
+                   TObjectOrder whichOrder ):
         IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
     {
+      semanticShift = 0;
     }
 
     virtual ~IntervalShift()
@@ -51,6 +54,8 @@ class IntervalShift : public IntervalHigh
         delete begin;
       if ( end != nullptr )
         delete end;
+      
+      clearSemanticBuffer();
     }
 
 
@@ -64,11 +69,17 @@ class IntervalShift : public IntervalHigh
       return ( KWindow * ) window;
     }
 
+    void setChildInterval( Interval *whichInterval );
+    void setSemanticShift( PRV_INT16 whichShift );
+
+
+  protected: //TODO ??
     TRecordTime getBeginTime() const override;
     TRecordTime getEndTime() const override;
     TSemanticValue getValue() const override;
     MemoryTrace::iterator *getBegin() const override;
     MemoryTrace::iterator *getEnd() const override;
+
 
   private:
     class ShiftSemanticInfo
@@ -81,7 +92,7 @@ class IntervalShift : public IntervalHigh
 
     KDerivedWindow *window;
 
-    std::queue<IntervalShift::ShiftSemanticInfo> semanticBuffer;
+    std::deque<IntervalShift::ShiftSemanticInfo> semanticBuffer;
 
     PRV_INT16 semanticShift;
 
@@ -92,6 +103,10 @@ class IntervalShift : public IntervalHigh
     virtual Interval *getWindowInterval( TWindowLevel whichLevel, TObjectOrder whichOrder ) override;
     virtual bool IsDerivedWindow() const override;
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const override;
+
+    void popSemanticBuffer();
+    void clearSemanticBuffer();
+    void addSemanticBuffer();
 
 };
 

@@ -22,9 +22,38 @@
 \*****************************************************************************/
 
 
-#include "kwindow.h"
 #include "intervalderived.h"
+#include "intervalshift.h"
+#include "kwindow.h"
 
+
+IntervalDerived::IntervalDerived()
+{
+  function = nullptr;
+  childIntervals.push_back( new IntervalShift() );
+  childIntervals.push_back( new IntervalShift() );
+}
+
+IntervalDerived::IntervalDerived( KDerivedWindow *whichWindow,
+                                  TWindowLevel whichLevel,
+                                  TObjectOrder whichOrder ):
+    IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
+{
+  function = nullptr;
+  childIntervals.push_back( new IntervalShift( whichWindow, whichLevel, whichOrder ) );
+  childIntervals.push_back( new IntervalShift( whichWindow, whichLevel, whichOrder ) );
+}
+
+IntervalDerived::~IntervalDerived()
+{
+  if ( begin != nullptr )
+    delete begin;
+  if ( end != nullptr )
+    delete end;
+
+  delete childIntervals[ 0 ];
+  delete childIntervals[ 1 ];
+}
 
 KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
                                     KRecordList *displayList )
@@ -44,6 +73,8 @@ KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
 
   function = ( SemanticDerived * ) window->getSemanticFunction( level );
 
+  static_cast< IntervalShift * >( childIntervals[ 0 ] )->setSemanticShift( window->getShift( 0 ) );
+  static_cast< IntervalShift * >( childIntervals[ 1 ] )->setSemanticShift( window->getShift( 1 ) );
   setChildren();
 
   if ( begin != nullptr )
@@ -254,7 +285,7 @@ void IntervalDerived::setChildren()
   TNodeOrder tmpNode;
   TCPUOrder tmpCPU;
 
-  childIntervals.clear();
+//  childIntervals.clear();
 
   if ( window->getParent( 0 )->getLevel() >= window->getParent( 1 )->getLevel() )
   {
@@ -288,37 +319,48 @@ void IntervalDerived::setChildren()
     window1->getTrace()->getCPULocation( order, tmpNode, tmpCPU );
   }
 
-  childIntervals.push_back( window1->getLevelInterval( TOPCOMPOSE1, order, true ) );
+  //childIntervals.push_back( window1->getLevelInterval( TOPCOMPOSE1, order, true ) );
+  static_cast< IntervalShift * >( childIntervals[ 0 ] )->setChildInterval( window1->getLevelInterval( TOPCOMPOSE1, order, true ) );
 
   if ( window2->getLevel() == WORKLOAD )
   {
-    childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1, 0, true ) );
+    //childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1, 0, true ) );
+    ( (IntervalShift *) childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1, 0, true ) );
   }
   else if ( window2->getLevel() == APPLICATION )
   {
-    childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1, tmpAppl, true ) );
+    //childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1, tmpAppl, true ) );
+    ( (IntervalShift *) childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1, tmpAppl, true ) );
   }
   else if ( window2->getLevel() == TASK )
   {
-    childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1,
-                              window2->getTrace()->getGlobalTask( tmpAppl, tmpTask ), true ) );
+    //childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1,
+    //                          window2->getTrace()->getGlobalTask( tmpAppl, tmpTask ), true ) );
+    ( (IntervalShift *) childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1,
+                                                                 window2->getTrace()->getGlobalTask( tmpAppl, tmpTask ), true ) );
   }
   else if ( window2->getLevel() == THREAD )
   {
-    childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1,
-                              window2->getTrace()->getGlobalThread( tmpAppl, tmpTask, tmpThread ), true ) );
+    //childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1,
+    //                          window2->getTrace()->getGlobalThread( tmpAppl, tmpTask, tmpThread ), true ) );
+    ( (IntervalShift *) childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1,
+                                                                 window2->getTrace()->getGlobalThread( tmpAppl, tmpTask, tmpThread ), true ) );
   }
   else if ( window2->getLevel() == SYSTEM )
   {
-    childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1, 0, true ) );
+    //childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1, 0, true ) );
+    ( (IntervalShift *) childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1, 0, true ) );
   }
   else if ( window2->getLevel() == NODE )
   {
-    childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1, tmpNode, true ) );
+    //childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1, tmpNode, true ) );
+    ( (IntervalShift *) childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1, tmpNode, true ) );
   }
   else if ( window2->getLevel() == CPU )
   {
-    childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1,
-                              window2->getTrace()->getGlobalCPU( tmpNode, tmpCPU ), true ) );
+    //childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1,
+    //                          window2->getTrace()->getGlobalCPU( tmpNode, tmpCPU ), true ) );
+    ( (IntervalShift *) childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1,
+                                                                 window2->getTrace()->getGlobalCPU( tmpNode, tmpCPU ), true ) );
   }
 }

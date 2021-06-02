@@ -35,28 +35,16 @@ class SemanticDerived;
 class IntervalDerived: public IntervalHigh
 {
   public:
-    IntervalDerived()
-    {
-      function = nullptr;
-    }
+    IntervalDerived();
 
-    IntervalDerived( KDerivedWindow *whichWindow, TWindowLevel whichLevel,
-                     TObjectOrder whichOrder ):
-        IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
-    {
-      function = nullptr;
-    }
+    IntervalDerived( KDerivedWindow *whichWindow,
+                     TWindowLevel whichLevel,
+                     TObjectOrder whichOrder );
 
-    virtual ~IntervalDerived()
-    {
-      if ( begin != nullptr )
-        delete begin;
-      if ( end != nullptr )
-        delete end;
-    }
+    virtual ~IntervalDerived();
 
     virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
-                              KRecordList *displayList = nullptr ) override;
+                               KRecordList *displayList = nullptr ) override;
     virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) override;
     virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) override;
 

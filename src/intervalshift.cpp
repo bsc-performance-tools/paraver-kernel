@@ -27,13 +27,40 @@
 KRecordList *IntervalShift::init( TRecordTime initialTime, TCreateList create,
                                   KRecordList *displayList )
 {
-  queue<ShiftSemanticInfo>().swap( semanticBuffer );
+  TRecordTime myInitTime = 0.0;
+
+  clearSemanticBuffer();
+
+/*  if ( begin != nullptr )
+  {
+    delete begin;
+    begin = nullptr;
+  }
+  if ( end != nullptr )
+  {
+    delete end;
+    end = nullptr;
+  }
+*/
+  childIntervals[ 0 ]->init( myInitTime, create, displayList );
+  addSemanticBuffer();
+
+  if( semanticShift > 0 )
+  {
+    for( PRV_INT16 i = 1; i <= semanticShift; ++i )
+      calcNext( displayList );
+  }
 
   return displayList;
 }
 
 KRecordList *IntervalShift::calcNext( KRecordList *displayList, bool initCalc )
 {
+  childIntervals[ 0 ]->calcNext( displayList, initCalc );
+  addSemanticBuffer();
+
+  if( semanticBuffer.size() > semanticShift + 1 )
+    popSemanticBuffer();
 
   return displayList;
 }
@@ -41,6 +68,11 @@ KRecordList *IntervalShift::calcNext( KRecordList *displayList, bool initCalc )
 
 KRecordList *IntervalShift::calcPrev( KRecordList *displayList, bool initCalc )
 {
+  childIntervals[ 0 ]->calcPrev( displayList, initCalc );
+  addSemanticBuffer();
+
+  if( semanticBuffer.size() > semanticShift + 1 )
+    popSemanticBuffer();
 
   return displayList;
 }
@@ -79,27 +111,67 @@ void IntervalShift::setChildren()
 {
 }
 
+void IntervalShift::setChildInterval( Interval *whichInterval )
+{
+  childIntervals.clear();
+  childIntervals.push_back( whichInterval );
+}
+
+void IntervalShift::setSemanticShift( PRV_INT16 whichShift )
+{
+  semanticShift = whichShift;
+}
+
 TRecordTime IntervalShift::getBeginTime() const
 {
-  return begin->getTime();
+  return semanticBuffer.front().begin->getTime();
 }
 
 TRecordTime IntervalShift::getEndTime() const
 {
-  return end->getTime();
+  return semanticBuffer.front().end->getTime();
 }
 
 TSemanticValue IntervalShift::getValue() const
 {
-  return currentValue;
+  return semanticBuffer.back().semanticValue;
 }
 
 MemoryTrace::iterator *IntervalShift::getBegin() const
 {
-  return begin;
+  return semanticBuffer.front().begin;
 }
 
 MemoryTrace::iterator *IntervalShift::getEnd() const
 {
-  return end;
+  return semanticBuffer.front().end;
+}
+
+void IntervalShift::popSemanticBuffer()
+{
+  IntervalShift::ShiftSemanticInfo tmpElem = semanticBuffer.front();
+  delete tmpElem.begin;
+  delete tmpElem.end;
+  if( semanticShift > 0 )
+    semanticBuffer.pop_front();
+  else
+    semanticBuffer.pop_back();
+}
+
+void IntervalShift::clearSemanticBuffer()
+{
+  while ( !semanticBuffer.empty() )
+    popSemanticBuffer();
+}
+
+void IntervalShift::addSemanticBuffer()
+{
+  ShiftSemanticInfo tmpInfo;
+  tmpInfo.begin = childIntervals[ 0 ]->getBegin()->clone();
+  tmpInfo.end = childIntervals[ 0 ]->getEnd()->clone();
+  tmpInfo.semanticValue = childIntervals[ 0 ]->getValue();
+  if( semanticShift > 0 )
+    semanticBuffer.push_back( tmpInfo );
+  else
+    semanticBuffer.push_front( tmpInfo );
 }
