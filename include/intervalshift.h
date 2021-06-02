@@ -64,6 +64,12 @@ class IntervalShift : public IntervalHigh
       return ( KWindow * ) window;
     }
 
+    TRecordTime getBeginTime() const override;
+    TRecordTime getEndTime() const override;
+    TSemanticValue getValue() const override;
+    MemoryTrace::iterator *getBegin() const override;
+    MemoryTrace::iterator *getEnd() const override;
+
   private:
     class ShiftSemanticInfo
     {

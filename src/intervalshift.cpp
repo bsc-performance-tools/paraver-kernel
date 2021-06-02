@@ -78,3 +78,28 @@ KTrace *IntervalShift::getWindowTrace() const
 void IntervalShift::setChildren()
 {
 }
+
+TRecordTime IntervalShift::getBeginTime() const
+{
+  return begin->getTime();
+}
+
+TRecordTime IntervalShift::getEndTime() const
+{
+  return end->getTime();
+}
+
+TSemanticValue IntervalShift::getValue() const
+{
+  return currentValue;
+}
+
+MemoryTrace::iterator *IntervalShift::getBegin() const
+{
+  return begin;
+}
+
+MemoryTrace::iterator *IntervalShift::getEnd() const
+{
+  return end;
+}
