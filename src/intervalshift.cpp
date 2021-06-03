@@ -24,6 +24,19 @@
 #include "intervalshift.h"
 #include "kwindow.h"
 
+
+IntervalShift *IntervalShift::clone() const
+{
+  IntervalShift *tmpClone = new IntervalShift();
+  
+  tmpClone->order = order;
+  tmpClone->level = level;
+  tmpClone->window = window;
+  tmpClone->notWindowInits = notWindowInits;
+
+  return tmpClone;
+}
+
 KRecordList *IntervalShift::init( TRecordTime initialTime, TCreateList create,
                                   KRecordList *displayList )
 {
@@ -134,7 +147,8 @@ TRecordTime IntervalShift::getEndTime() const
 
 TSemanticValue IntervalShift::getValue() const
 {
-  return semanticBuffer.back().semanticValue;
+#warning TODO: Negative semantic shift pending / 0?
+  return semanticBuffer.back().semanticValue; 
 }
 
 MemoryTrace::iterator *IntervalShift::getBegin() const
@@ -150,8 +164,10 @@ MemoryTrace::iterator *IntervalShift::getEnd() const
 void IntervalShift::popSemanticBuffer()
 {
   IntervalShift::ShiftSemanticInfo tmpElem = semanticBuffer.front();
+
   delete tmpElem.begin;
   delete tmpElem.end;
+  
   if( semanticShift > 0 )
     semanticBuffer.pop_front();
   else
@@ -167,9 +183,11 @@ void IntervalShift::clearSemanticBuffer()
 void IntervalShift::addSemanticBuffer()
 {
   ShiftSemanticInfo tmpInfo;
+
   tmpInfo.begin = childIntervals[ 0 ]->getBegin()->clone();
   tmpInfo.end = childIntervals[ 0 ]->getEnd()->clone();
   tmpInfo.semanticValue = childIntervals[ 0 ]->getValue();
+  
   if( semanticShift > 0 )
     semanticBuffer.push_back( tmpInfo );
   else

@@ -55,6 +55,18 @@ IntervalDerived::~IntervalDerived()
   delete childIntervals[ 1 ];
 }
 
+IntervalDerived::IntervalDerived( const IntervalDerived &whichInterval )
+{
+  function = nullptr;
+  window = whichInterval.window;
+  level = whichInterval.level;
+  order = whichInterval.order;
+
+  for ( auto i: whichInterval.childIntervals )
+    childIntervals.push_back( static_cast< IntervalShift * >( i )->clone() );
+}
+
+
 KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
                                     KRecordList *displayList )
 {
@@ -285,8 +297,6 @@ void IntervalDerived::setChildren()
   TNodeOrder tmpNode;
   TCPUOrder tmpCPU;
 
-//  childIntervals.clear();
-
   if ( window->getParent( 0 )->getLevel() >= window->getParent( 1 )->getLevel() )
   {
     window1 = (KWindow *) window->getParent( 0 );
@@ -325,42 +335,42 @@ void IntervalDerived::setChildren()
   if ( window2->getLevel() == WORKLOAD )
   {
     //childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1, 0, true ) );
-    ( (IntervalShift *) childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1, 0, true ) );
+    static_cast< IntervalShift * >( childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1, 0, true ) );
   }
   else if ( window2->getLevel() == APPLICATION )
   {
     //childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1, tmpAppl, true ) );
-    ( (IntervalShift *) childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1, tmpAppl, true ) );
+    static_cast< IntervalShift * >( childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1, tmpAppl, true ) );
   }
   else if ( window2->getLevel() == TASK )
   {
     //childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1,
     //                          window2->getTrace()->getGlobalTask( tmpAppl, tmpTask ), true ) );
-    ( (IntervalShift *) childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1,
+    static_cast< IntervalShift * >( childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1,
                                                                  window2->getTrace()->getGlobalTask( tmpAppl, tmpTask ), true ) );
   }
   else if ( window2->getLevel() == THREAD )
   {
     //childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1,
     //                          window2->getTrace()->getGlobalThread( tmpAppl, tmpTask, tmpThread ), true ) );
-    ( (IntervalShift *) childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1,
+    static_cast< IntervalShift * >( childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1,
                                                                  window2->getTrace()->getGlobalThread( tmpAppl, tmpTask, tmpThread ), true ) );
   }
   else if ( window2->getLevel() == SYSTEM )
   {
     //childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1, 0, true ) );
-    ( (IntervalShift *) childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1, 0, true ) );
+    static_cast< IntervalShift * >( childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1, 0, true ) );
   }
   else if ( window2->getLevel() == NODE )
   {
     //childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1, tmpNode, true ) );
-    ( (IntervalShift *) childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1, tmpNode, true ) );
+    static_cast< IntervalShift * >( childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1, tmpNode, true ) );
   }
   else if ( window2->getLevel() == CPU )
   {
     //childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1,
     //                          window2->getTrace()->getGlobalCPU( tmpNode, tmpCPU ), true ) );
-    ( (IntervalShift *) childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1,
+    static_cast< IntervalShift * >( childIntervals[ 1 ] )->setChildInterval( window2->getLevelInterval( TOPCOMPOSE1,
                                                                  window2->getTrace()->getGlobalCPU( tmpNode, tmpCPU ), true ) );
   }
 }

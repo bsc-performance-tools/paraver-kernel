@@ -36,10 +36,10 @@ class IntervalDerived: public IntervalHigh
 {
   public:
     IntervalDerived();
-
     IntervalDerived( KDerivedWindow *whichWindow,
                      TWindowLevel whichLevel,
                      TObjectOrder whichOrder );
+    IntervalDerived( const IntervalDerived &whichInterval );
 
     virtual ~IntervalDerived();
 

@@ -48,6 +48,7 @@ class IntervalHigh: public Interval
 
   protected:
     std::vector<Interval *> childIntervals;
+
     TWindowLevel level;
     TWindowLevel lastLevel;
 
