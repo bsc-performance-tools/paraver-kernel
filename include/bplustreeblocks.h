@@ -68,7 +68,7 @@ namespace bplustree
         lastRecords.clear();
       }
 
-      virtual void newRecord();
+      virtual void newRecord() override;
       virtual void setType( TRecordType whichType ) override;
       virtual void setTime( TRecordTime whichTime ) override;
       virtual void setThread( TThreadOrder whichThread ) override;
@@ -105,7 +105,7 @@ namespace bplustree
       virtual void setPhysicalReceive( TRecordTime whichTime ) override;
 
       // Communication info getters
-      virtual TCommID getTotalComms() const;
+      virtual TCommID getTotalComms() const override;
       virtual TThreadOrder getSenderThread( TCommID whichComm) const override;
       virtual TCPUOrder getSenderCPU( TCommID whichComm) const override;
       virtual TThreadOrder getReceiverThread( TCommID whichComm) const override;
@@ -117,7 +117,7 @@ namespace bplustree
       virtual TRecordTime getPhysicalSend( TCommID whichComm) const override;
       virtual TRecordTime getPhysicalReceive( TCommID whichComm) const override;
 
-      virtual TRecordTime getLastRecordTime() const;
+      virtual TRecordTime getLastRecordTime() const override;
 
     protected:
 

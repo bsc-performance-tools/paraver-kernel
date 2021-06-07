@@ -91,7 +91,7 @@ class IntervalCPU: public IntervalHigh
                                                   KRecordList *displayList );
 
     virtual void setChildren() {}
-    virtual KTrace *getWindowTrace() const;
+    virtual KTrace *getWindowTrace() const override;
     virtual TWindowLevel getWindowLevel() const;
     virtual Interval *getWindowInterval( TWindowLevel whichLevel,
                                          TObjectOrder whichOrder );

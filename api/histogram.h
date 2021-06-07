@@ -1006,7 +1006,7 @@ class HistogramProxy : public Histogram
 
     HistogramProxy( KernelConnection *whichKernel );
 
-    THistogramColumn getNumColumns() const;
+    THistogramColumn getNumColumns() const override;
 
     void fillSemanticSort();
 
