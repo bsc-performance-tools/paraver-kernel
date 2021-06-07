@@ -275,7 +275,7 @@ class KTraceOptions: public TraceOptions
       return remLastStates;
     }
 
-    inline bool get_keep_events() const
+    inline bool get_keep_events() const override
     {
       return keep_events;
     }
