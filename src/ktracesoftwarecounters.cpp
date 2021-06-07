@@ -654,7 +654,7 @@ void KTraceSoftwareCounters::put_counters_by_thread( int appl, int task, int thr
 
 void KTraceSoftwareCounters::ini_progress_bar( char *file_name, ProgressController *progress )
 {
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || (__APPLE__)
   struct stat file_info;
 #elif defined(WIN32)
   struct _stat64 file_info;
