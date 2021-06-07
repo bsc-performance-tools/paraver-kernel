@@ -136,26 +136,26 @@ class KWindow: public Window
     virtual void setExtraFunctionParam( TWindowLevel whichLevel,
                                         size_t whichPosition,
                                         TParamIndex whichParam,
-                                        const TParamValue& newValue ) = 0;
-    virtual TParamIndex getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const = 0;
+                                        const TParamValue& newValue ) override = 0;
+    virtual TParamIndex getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const override = 0;
     virtual TParamValue getExtraFunctionParam( TWindowLevel whichLevel,
                                                size_t whichPosition,
-                                               TParamIndex whichParam ) const = 0;
+                                               TParamIndex whichParam ) const override = 0;
     virtual std::string getExtraFunctionParamName( TWindowLevel whichLevel,
                                                    size_t whichPosition,
-                                                   TParamIndex whichParam ) const = 0;
+                                                   TParamIndex whichParam ) const override = 0;
 
     virtual bool initFromBegin() const = 0;
 
-    RecordList *getRecordList( TObjectOrder whichObject );
-    virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true ) = 0;
-    virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits = true ) = 0;
-    virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true ) = 0;
-    virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true ) = 0;
+    RecordList *getRecordList( TObjectOrder whichObject ) override;
+    virtual void init( TRecordTime initialTime, TCreateList create, bool updateLimits = true ) override = 0;
+    virtual void initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits = true ) override = 0;
+    virtual RecordList *calcNext( TObjectOrder whichObject, bool updateLimits = true ) override = 0;
+    virtual RecordList *calcPrev( TObjectOrder whichObject, bool updateLimits = true ) override = 0;
 
-    virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const = 0;
-    virtual TRecordTime getEndTime( TObjectOrder whichObject ) const = 0;
-    virtual TSemanticValue getValue( TObjectOrder whichObject ) const = 0;
+    virtual TRecordTime getBeginTime( TObjectOrder whichObject ) const override = 0;
+    virtual TRecordTime getEndTime( TObjectOrder whichObject ) const override = 0;
+    virtual TSemanticValue getValue( TObjectOrder whichObject ) const override = 0;
 
     virtual Interval *getLevelInterval( TWindowLevel whichLevel,
                                         TObjectOrder whichOrder,

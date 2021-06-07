@@ -324,9 +324,6 @@ inline void Cube<ValueType>::eraseColumns( PRV_UINT32 ini_col, PRV_UINT32 fin_co
   if ( fin_col < ini_col )
     return;
 
-  if ( ini_col < 0 )
-    return;
-
   if ( fin_col >= ncols )
     return;
 
@@ -344,9 +341,6 @@ template <typename ValueType>
 inline void Cube<ValueType>::erasePlanes( PRV_UINT32 ini_plane, PRV_UINT32 fin_plane )
 {
   if ( fin_plane < ini_plane )
-    return;
-
-  if ( ini_plane < 0 )
     return;
 
   if ( fin_plane >= ( PRV_UINT32 ) planes.size() )

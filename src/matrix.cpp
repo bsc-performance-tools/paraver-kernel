@@ -195,9 +195,6 @@ inline void Matrix<ValueType>::eraseColumns( PRV_UINT32 ini_col, PRV_UINT32 fin_
   if ( fin_col < ini_col )
     return;
 
-  if ( ini_col < 0 )
-    return;
-
   if ( fin_col >= ( int ) cols.size() )
     return;
 
