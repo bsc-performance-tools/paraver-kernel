@@ -31,7 +31,7 @@ class GNUPlotOutput: public Output
 {
   public:
     GNUPlotOutput() {}
-    ~GNUPlotOutput() {}
+    virtual ~GNUPlotOutput() {}
 
     virtual void dumpWindow( Window *whichWindow,
                              std::string& strOutputFile,

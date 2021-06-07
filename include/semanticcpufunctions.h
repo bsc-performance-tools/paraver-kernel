@@ -49,7 +49,7 @@ class ActiveThread: public SemanticCPU
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -113,7 +113,7 @@ class ActiveThreadSign: public SemanticCPU
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -175,7 +175,7 @@ class ActiveThreadValues: public SemanticCPU
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -248,7 +248,7 @@ class ActiveThreadValuesSign: public SemanticCPU
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override

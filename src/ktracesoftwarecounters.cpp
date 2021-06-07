@@ -662,7 +662,7 @@ void KTraceSoftwareCounters::ini_progress_bar( char *file_name, ProgressControll
   struct stat64 file_info;
 #endif
 
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || (__APPLE__)
   if ( stat( file_name, &file_info ) < 0 )
   {
     perror( "Error calling stat" );

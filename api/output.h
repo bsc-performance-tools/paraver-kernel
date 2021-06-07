@@ -43,7 +43,7 @@ class Output
     static Output *createOutput( TOutput whichOutput );
 
     Output() {}
-    ~Output() {}
+    virtual ~Output() {}
 
     virtual void dumpWindow( Window *whichWindow,
                              std::string& strOutputFile,

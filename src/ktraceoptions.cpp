@@ -897,7 +897,7 @@ void KTraceOptions::saveXMLFilter( xmlTextWriterPtr &writer )
         rc = xmlTextWriterWriteFormatRaw( writer, "%s",BAD_CAST auxStrTypes.c_str() );
         for( int ivalue = 0; ivalue < auxTypes[ itype ].last_value; ++ivalue )
         {
-          rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "value", "%ld", auxTypes[ itype ].value[ ivalue ] );
+          rc = xmlTextWriterWriteFormatElement( writer, BAD_CAST "value", "%lld", auxTypes[ itype ].value[ ivalue ] );
         }
 
         rc = xmlTextWriterEndElement( writer ); // type

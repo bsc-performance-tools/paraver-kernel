@@ -398,7 +398,9 @@ bool TraceBodyIO_csv::writeState( const KTrace& whichTrace,
 
 
 bool TraceBodyIO_csv::writePendingMultiEvent( const KTrace& whichTrace ) const
-{ }
+{ 
+  return true;
+}
 
 
 void TraceBodyIO_csv::appendEvent( const MemoryTrace::iterator *record ) const

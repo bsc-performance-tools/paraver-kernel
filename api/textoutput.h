@@ -38,7 +38,7 @@ class TextOutput:public Output
 {
   public:
     TextOutput();
-    ~TextOutput();
+    virtual ~TextOutput();
 
     void dumpWindow( Window *whichWindow,
                      std::string& strOutputFile,

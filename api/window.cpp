@@ -142,8 +142,7 @@ void WindowProxy::init()
   myGradientColor.setGradientFunction( ParaverConfig::getInstance()->getTimelineGradientFunction() );
   drawModeObject = ParaverConfig::getInstance()->getTimelineDrawmodeObjects();
   drawModeTime = ParaverConfig::getInstance()->getTimelineDrawmodeTime();
-  if( ParaverConfig::getInstance()->getTimelinePixelSize() >= 0 &&
-      ParaverConfig::getInstance()->getTimelinePixelSize() <= 3 )
+  if( ParaverConfig::getInstance()->getTimelinePixelSize() <= 3 )
     pixelSize = (PRV_UINT16)pow( float(2), (int)ParaverConfig::getInstance()->getTimelinePixelSize() );
   else
     pixelSize = ParaverConfig::getInstance()->getTimelinePixelSize();

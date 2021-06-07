@@ -64,7 +64,7 @@ namespace Plain
 
           virtual void operator++() override;
           virtual void operator--() override;
-          virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy )
+          virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy ) override
           {
             return *this;
           }

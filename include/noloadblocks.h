@@ -96,19 +96,19 @@ namespace NoLoad
       virtual void setPhysicalReceive( TCommID whichComm, TRecordTime whichTime ) override;
 
       // Communication info getters
-      virtual TCommID getTotalComms() const;
-      virtual TThreadOrder getSenderThread( TCommID whichComm ) const;
-      virtual TCPUOrder getSenderCPU( TCommID whichComm ) const;
-      virtual TThreadOrder getReceiverThread( TCommID whichComm ) const;
-      virtual TCPUOrder getReceiverCPU( TCommID whichComm ) const;
-      virtual TCommTag getCommTag( TCommID whichComm ) const;
-      virtual TCommSize getCommSize( TCommID whichComm ) const;
-      virtual TRecordTime getLogicalSend( TCommID whichComm ) const;
-      virtual TRecordTime getLogicalReceive( TCommID whichComm ) const;
-      virtual TRecordTime getPhysicalSend( TCommID whichComm ) const;
-      virtual TRecordTime getPhysicalReceive( TCommID whichComm ) const;
+      virtual TCommID getTotalComms() const override;
+      virtual TThreadOrder getSenderThread( TCommID whichComm ) const override;
+      virtual TCPUOrder getSenderCPU( TCommID whichComm ) const override;
+      virtual TThreadOrder getReceiverThread( TCommID whichComm ) const override;
+      virtual TCPUOrder getReceiverCPU( TCommID whichComm ) const override;
+      virtual TCommTag getCommTag( TCommID whichComm ) const override;
+      virtual TCommSize getCommSize( TCommID whichComm ) const override;
+      virtual TRecordTime getLogicalSend( TCommID whichComm ) const override;
+      virtual TRecordTime getLogicalReceive( TCommID whichComm ) const override;
+      virtual TRecordTime getPhysicalSend( TCommID whichComm ) const override;
+      virtual TRecordTime getPhysicalReceive( TCommID whichComm ) const override;
 
-      virtual TRecordTime getLastRecordTime() const;
+      virtual TRecordTime getLastRecordTime() const override;
 
       virtual void getBeginRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
       virtual void getEndRecord( TRecord **record, PRV_INT64& offset, PRV_UINT16& recPos );
