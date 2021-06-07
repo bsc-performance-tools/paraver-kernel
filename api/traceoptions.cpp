@@ -514,15 +514,15 @@ string TraceOptionsProxy::getTraceToolName( const string& toolID )
   }
   else if ( toolID == TraceShifter::getID() )
   {
-    toolStr == TraceShifter::getName();
+    toolStr = TraceShifter::getName();
   }
   else if ( toolID == EventDrivenCutter::getID() )
   {
-    toolStr == EventDrivenCutter::getName();
+    toolStr = EventDrivenCutter::getName();
   }
   else if ( toolID == EventTranslator::getID() )
   {
-    toolStr == EventTranslator::getName();
+    toolStr = EventTranslator::getName();
   }
   else
   {
