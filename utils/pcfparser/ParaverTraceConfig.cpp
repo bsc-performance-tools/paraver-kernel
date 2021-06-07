@@ -323,8 +323,10 @@ bool ParaverTraceConfig::parse(const std::string & filename, bool resend) {
             const classic::file_position_base<std::string>&  pos =
                 exceptions[i].first.get_position();
             std::string stmp = pos.file;
-            stmp += ";" + pos.line;
-            stmp += ";" + pos.column;
+            stmp += ";";
+            stmp += pos.line;
+            stmp += ";";
+            stmp += pos.column;
             tmp.push_back(stmp);
         }
         BOOST_THROW_EXCEPTION(UIParaverTraceConfig::pcf_format_error(tmp));
