@@ -185,6 +185,7 @@ string levelToString( TWindowLevel whichLevel )
   switch ( whichLevel )
   {
     case NONE:
+    case EXTRATOPCOMPOSE1:
       break;
     case DERIVED:
       break;
@@ -405,8 +406,6 @@ bool CFGLoader::isDimemasCFGFile( const std::string& filename )
     if( cfgExt.compare( DIMEMAS_CFG_SUFFIX ) == 0 )
     {
       // Read shebang
-      bool found;
-
       ifstream cfgFile( filename.c_str() );
       if ( !cfgFile )
         return false;
@@ -536,8 +535,8 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
       if( windows[ windows.size() - 1 ] != nullptr &&
           !windows[ windows.size() - 1 ]->isDerivedWindow() &&
-          typeid( *( it->second ) ) == typeid( WindowName ) ||
-          typeid( *( it->second ) ) == typeid( Analyzer2DCreate ) )
+          ( typeid( *( it->second ) ) == typeid( WindowName ) ||
+            typeid( *( it->second ) ) == typeid( Analyzer2DCreate ) ) )
       {
         tmpError = !pickSymbols( whichTrace, windows[ windows.size() - 1 ] );
         clearSymbolPickers();
@@ -5014,7 +5013,6 @@ void Analyzer2DObjects::printLine( ofstream& cfgFile,
 {
   vector< TObjectOrder > myRows = ( *it )->getSelectedRows();
 
-  int i;
   cfgFile << CFG_TAG_OBJECTS << " ";
 
   TObjectOrder totalRows = ( *it )->getTrace()->getLevelObjects( ( *it )->getControlWindow()->getLevel() );
@@ -5024,6 +5022,7 @@ void Analyzer2DObjects::printLine( ofstream& cfgFile,
   }
   else
   {
+    size_t i;
     for ( i = 0; i < myRows.size() - 1; ++i )
       cfgFile << myRows[ i ] << ",";
 
