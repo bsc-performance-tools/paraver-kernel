@@ -138,7 +138,7 @@ class TraceEditSequenceProxy:public TraceEditSequence
 
     bool isEndOfSequence() const override;
 
-    TraceEditSequence *getConcrete();
+    TraceEditSequence *getConcrete() override;
 
   protected:
 
