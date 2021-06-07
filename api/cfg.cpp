@@ -535,8 +535,8 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
       if( windows[ windows.size() - 1 ] != nullptr &&
           !windows[ windows.size() - 1 ]->isDerivedWindow() &&
-          ( typeid( *( it->second ) ) == typeid( WindowName ) ||
-            typeid( *( it->second ) ) == typeid( Analyzer2DCreate ) ) )
+          typeid( *( it->second ) ) == typeid( WindowName ) ||
+          typeid( *( it->second ) ) == typeid( Analyzer2DCreate ) )
       {
         tmpError = !pickSymbols( whichTrace, windows[ windows.size() - 1 ] );
         clearSymbolPickers();
