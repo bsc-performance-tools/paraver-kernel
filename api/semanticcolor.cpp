@@ -40,8 +40,6 @@
 using namespace std;
 #ifdef _MSC_VER
 using namespace stdext;
-#else
-using namespace __gnu_cxx;
 #endif
 
 PRV_INT16 Normalizer::numSteps = 10;

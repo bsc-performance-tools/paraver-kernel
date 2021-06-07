@@ -36,8 +36,6 @@
 
 #ifdef _MSC_VER
 using namespace stdext;
-#else
-using namespace __gnu_cxx;
 #endif
 
 class TraceBodyIO

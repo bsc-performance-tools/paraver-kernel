@@ -45,8 +45,6 @@
 using namespace std;
 #ifdef _MSC_VER
 using namespace stdext;
-#else
-using namespace __gnu_cxx;
 #endif
 using boost::posix_time::time_input_facet;
 
