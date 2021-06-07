@@ -1514,7 +1514,7 @@ class ComposeStackedValue: public SemanticCompose
       return "";
     }
 
-    virtual std::vector<std::vector<TSemanticValue> > *getStack() overrdie
+    virtual std::vector<std::vector<TSemanticValue> > *getStack() override
     {
       return &myStack;
     }
