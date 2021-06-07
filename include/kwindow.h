@@ -347,7 +347,7 @@ class KSingleWindow: public KWindow
     std::vector<IntervalCPU>       intervalCPU;
 
   private:
-    virtual void initSemanticFunctions();
+    virtual void initSemanticFunctions() override;
 
     SemanticFunction *functions[ COMPOSECPU + 1 ];
     KFilter *myFilter;
@@ -417,7 +417,7 @@ class KDerivedWindow: public KWindow
                                         size_t whichPosition,
                                         const std::string& whichFunction ) override;
     virtual std::string getExtraLevelFunction( TWindowLevel whichLevel,
-                                               size_t whichPosition );
+                                               size_t whichPosition ) override;
     virtual void setExtraFunctionParam( TWindowLevel whichLevel,
                                         size_t whichPosition,
                                         TParamIndex whichParam,
@@ -496,7 +496,7 @@ class KDerivedWindow: public KWindow
   private:
     void setup( KTrace * whichTrace );
 
-    virtual void initSemanticFunctions();
+    virtual void initSemanticFunctions() override;
 };
 
 #endif // KWINDOW_H_INCLUDED
