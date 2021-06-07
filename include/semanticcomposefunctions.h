@@ -56,7 +56,6 @@ class ComposeAsIs: public SemanticCompose
     virtual void init( KWindow *whichWindow ) override
     {}
 
-
     virtual std::string getName() override
     {
       return ComposeAsIs::name;
@@ -640,7 +639,7 @@ class ComposeComplement: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -708,7 +707,7 @@ class ComposeInverseDiv: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -776,7 +775,7 @@ class ComposeSelectRange: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -854,7 +853,7 @@ class ComposeSelectRangeOpen: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -932,7 +931,7 @@ class ComposeIsInRange: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1007,7 +1006,7 @@ class ComposeIsInRangeOpen: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1080,7 +1079,7 @@ class ComposeIsEqual: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1152,7 +1151,7 @@ class ComposeIsEqualSign: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1221,9 +1220,8 @@ class ComposeFloor: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
-
 
     virtual std::string getName() override
     {
@@ -1286,9 +1284,8 @@ class ComposeCeil: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
-
 
     virtual std::string getName() override
     {
@@ -1351,9 +1348,8 @@ class ComposeRound: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
-
 
     virtual std::string getName() override
     {
@@ -1416,9 +1412,8 @@ class ComposeAbs: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
-
 
     virtual std::string getName() override
     {
@@ -1481,7 +1476,7 @@ class ComposeStackedValue: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow );
+    virtual void init( KWindow *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -1519,7 +1514,7 @@ class ComposeStackedValue: public SemanticCompose
       return "";
     }
 
-    virtual std::vector<std::vector<TSemanticValue> > *getStack()
+    virtual std::vector<std::vector<TSemanticValue> > *getStack() overrdie
     {
       return &myStack;
     }
@@ -1556,7 +1551,7 @@ class ComposeInStackedValue: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow );
+    virtual void init( KWindow *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -1592,7 +1587,7 @@ class ComposeInStackedValue: public SemanticCompose
       return "Value";
     }
 
-    virtual std::vector<std::vector<TSemanticValue> > *getStack()
+    virtual std::vector<std::vector<TSemanticValue> > *getStack() override
     {
       return &myStack;
     }
@@ -1628,7 +1623,7 @@ class ComposeNestingLevel: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow );
+    virtual void init( KWindow *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -1693,7 +1688,7 @@ class ComposeLRUDepth: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow );
+    virtual void init( KWindow *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -1762,7 +1757,7 @@ class ComposeEnumerate: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow );
+    virtual void init( KWindow *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -1826,7 +1821,7 @@ class ComposeAccumulate: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow );
+    virtual void init( KWindow *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -1889,7 +1884,7 @@ class ComposeDelta: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow );
+    virtual void init( KWindow *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -1953,7 +1948,7 @@ class ComposeBurstTime: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2021,7 +2016,7 @@ class ComposeDivideByBurstTime: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2088,7 +2083,7 @@ class ComposeJoinBursts: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2156,7 +2151,7 @@ class ComposeBeginTime: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2224,7 +2219,7 @@ class ComposeEndTime: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2294,7 +2289,7 @@ class ComposeTranslate: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2363,7 +2358,7 @@ class ComposeSine: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
 
@@ -2428,9 +2423,8 @@ class ComposeCosine: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
-
 
     virtual std::string getName() override
     {
@@ -2493,9 +2487,8 @@ class ComposeSqrtAbs: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
-
 
     virtual std::string getName() override
     {
@@ -2558,9 +2551,8 @@ class ComposeArcTan: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
-
 
     virtual std::string getName() override
     {
@@ -2626,7 +2618,7 @@ class ComposeLogN: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2693,9 +2685,8 @@ class ComposeExponential: public SemanticCompose
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow )
+    virtual void init( KWindow *whichWindow ) override
     {}
-
 
     virtual std::string getName() override
     {

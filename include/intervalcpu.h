@@ -90,13 +90,13 @@ class IntervalCPU: public IntervalHigh
     virtual MemoryTrace::iterator *getNextRecord( MemoryTrace::iterator *it,
                                                   KRecordList *displayList );
 
-    virtual void setChildren() {}
+    virtual void setChildren() override {};
     virtual KTrace *getWindowTrace() const override;
-    virtual TWindowLevel getWindowLevel() const;
+    virtual TWindowLevel getWindowLevel() const override;
     virtual Interval *getWindowInterval( TWindowLevel whichLevel,
-                                         TObjectOrder whichOrder );
-    virtual bool IsDerivedWindow() const;
-    virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const;
+                                         TObjectOrder whichOrder ) override;
+    virtual bool IsDerivedWindow() const override;
+    virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const override;
 
 };
 
