@@ -114,25 +114,25 @@ class KWindow: public Window
     }
 
     virtual bool setLevelFunction( TWindowLevel whichLevel,
-                                   const std::string& whichFunction ) = 0;
-    virtual std::string getLevelFunction( TWindowLevel whichLevel ) = 0;
+                                   const std::string& whichFunction ) override = 0;
+    virtual std::string getLevelFunction( TWindowLevel whichLevel ) override = 0;
     virtual SemanticFunction *getSemanticFunction( TWindowLevel whichLevel ) = 0;
-    virtual std::string getFirstUsefulFunction( ) = 0;
-    virtual TWindowLevel getFirstFreeCompose() const = 0;
+    virtual std::string getFirstUsefulFunction( ) override = 0;
+    virtual TWindowLevel getFirstFreeCompose() const override = 0;
     virtual SemanticFunction *getFirstSemUsefulFunction() = 0;
     virtual void setFunctionParam( TWindowLevel whichLevel,
                                    TParamIndex whichParam,
-                                   const TParamValue& newValue ) = 0;
+                                   const TParamValue& newValue ) override = 0;
 
     // Extra composes
-    virtual void addExtraCompose( TWindowLevel whichLevel ) = 0;
-    virtual void removeExtraCompose( TWindowLevel whichLevel ) = 0;
-    virtual size_t getExtraNumPositions( TWindowLevel whichLevel ) const;
+    virtual void addExtraCompose( TWindowLevel whichLevel ) override = 0;
+    virtual void removeExtraCompose( TWindowLevel whichLevel ) override = 0;
+    virtual size_t getExtraNumPositions( TWindowLevel whichLevel ) const override;
     virtual bool setExtraLevelFunction( TWindowLevel whichLevel,
                                         size_t whichPosition,
-                                        const std::string& whichFunction ) = 0;
+                                        const std::string& whichFunction ) override = 0;
     virtual std::string getExtraLevelFunction( TWindowLevel whichLevel,
-                                               size_t whichPosition ) = 0;
+                                               size_t whichPosition ) override = 0;
     virtual void setExtraFunctionParam( TWindowLevel whichLevel,
                                         size_t whichPosition,
                                         TParamIndex whichParam,
@@ -161,7 +161,7 @@ class KWindow: public Window
                                         TObjectOrder whichOrder,
                                         bool includeExtraCompose = false ) = 0;
 
-    virtual bool isDerivedWindow() const = 0;
+    virtual bool isDerivedWindow() const override = 0;
 
     TObjectOrder cpuObjectToWindowObject( TCPUOrder whichCPU ) override;
     TObjectOrder threadObjectToWindowObject( TThreadOrder whichThread )override;
