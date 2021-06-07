@@ -893,8 +893,8 @@ class WindowProxy: public Window
                                          TParamIndex whichParam ) const override;
 
     // Extra composes
-    virtual void addExtraCompose( TWindowLevel whichLevel );
-    virtual void removeExtraCompose( TWindowLevel whichLevel );
+    virtual void addExtraCompose( TWindowLevel whichLevel ) override; 
+    virtual void removeExtraCompose( TWindowLevel whichLevel ) override;
     virtual size_t getExtraNumPositions( TWindowLevel whichLevel ) const override;
     virtual bool setExtraLevelFunction( TWindowLevel whichLevel,
                                         size_t whichPosition,
