@@ -163,11 +163,16 @@ MemoryTrace::iterator *IntervalShift::getEnd() const
 
 void IntervalShift::popSemanticBuffer()
 {
-  IntervalShift::ShiftSemanticInfo tmpElem = semanticBuffer.front();
+  IntervalShift::ShiftSemanticInfo tmpElem;
+
+  if( semanticShift > 0 )
+    tmpElem = semanticBuffer.front();
+  else
+    tmpElem = semanticBuffer.back();
 
   delete tmpElem.begin;
   delete tmpElem.end;
-  
+
   if( semanticShift > 0 )
     semanticBuffer.pop_front();
   else

@@ -83,11 +83,11 @@ class IntervalShift : public IntervalHigh
     virtual bool IsDerivedWindow() const override;
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const override;
 
-    TRecordTime getBeginTime() const override;
-    TRecordTime getEndTime() const override;
-    TSemanticValue getValue() const override;
-    MemoryTrace::iterator *getBegin() const override;
-    MemoryTrace::iterator *getEnd() const override;
+    virtual TRecordTime getBeginTime() const override;
+    virtual TRecordTime getEndTime() const override;
+    virtual TSemanticValue getValue() const override;
+    virtual MemoryTrace::iterator *getBegin() const override;
+    virtual MemoryTrace::iterator *getEnd() const override;
 
   private:
     class ShiftSemanticInfo
