@@ -26,6 +26,7 @@
 #define INTERVALDERIVED_H_INCLUDED
 
 #include "intervalhigh.h"
+#include "intervalshift.h"
 #include "semanticderived.h"
 
 class KWindow;
@@ -39,7 +40,6 @@ class IntervalDerived: public IntervalHigh
     IntervalDerived( KDerivedWindow *whichWindow,
                      TWindowLevel whichLevel,
                      TObjectOrder whichOrder );
-    IntervalDerived( const IntervalDerived &whichInterval );
 
     virtual ~IntervalDerived();
 
@@ -68,6 +68,9 @@ class IntervalDerived: public IntervalHigh
 
   private:
     SemanticHighInfo info;
+
+    IntervalShift shift1;
+    IntervalShift shift2;
 
 };
 

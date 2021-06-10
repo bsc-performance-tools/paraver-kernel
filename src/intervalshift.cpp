@@ -44,17 +44,6 @@ KRecordList *IntervalShift::init( TRecordTime initialTime, TCreateList create,
 
   clearSemanticBuffer();
 
-/*  if ( begin != nullptr )
-  {
-    delete begin;
-    begin = nullptr;
-  }
-  if ( end != nullptr )
-  {
-    delete end;
-    end = nullptr;
-  }
-*/
   bufferSize = abs( semanticShift );
   ++bufferSize;
   
@@ -63,9 +52,12 @@ KRecordList *IntervalShift::init( TRecordTime initialTime, TCreateList create,
 
   if( semanticShift > 0 )
   {
-    for( PRV_INT16 i = 1; i <= semanticShift; ++i )
+    while( semanticBuffer.size() < bufferSize )
       calcNext( displayList );
   }
+
+  while ( getEndTime() < initialTime )
+    calcNext( displayList );
 
   return displayList;
 }
