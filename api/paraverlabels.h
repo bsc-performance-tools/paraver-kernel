@@ -68,6 +68,7 @@
 #define OLDCFG_TAG_WNDW_TYPE      "window_type"
 #define OLDCFG_TAG_WNDW_ID        "window_id"
 #define OLDCFG_TAG_WNDW_FACTORS   "window_factors"
+#define CFG_TAG_WNDW_SHIFTS       "window_shifts"
 #define OLDCFG_TAG_WNDW_POSX      "window_position_x"
 #define OLDCFG_TAG_WNDW_POSY      "window_position_y"
 #define OLDCFG_TAG_WNDW_WIDTH      "window_width"

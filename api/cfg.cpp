@@ -763,6 +763,7 @@ bool CFGLoader::saveCFG( const string& filename,
     if ( ( *it )->isDerivedWindow() )
     {
       WindowFactors::printLine( cfgFile, it );
+      WindowShifts::printLine( cfgFile, it );
       WindowOperation::printLine( cfgFile, it );
       WindowIdentifiers::printLine( cfgFile, allWindows, it );
     }
@@ -943,6 +944,7 @@ void CFGLoader::loadMap()
   cfgTagFunctions[OLDCFG_TAG_WNDW_NAME]                = new WindowName();
   cfgTagFunctions[OLDCFG_TAG_WNDW_TYPE]                = new WindowType();
   cfgTagFunctions[OLDCFG_TAG_WNDW_FACTORS]             = new WindowFactors();
+  cfgTagFunctions[CFG_TAG_WNDW_SHIFTS]                 = new WindowShifts();
   cfgTagFunctions[OLDCFG_TAG_WNDW_POSX]                = new WindowPositionX();
   cfgTagFunctions[OLDCFG_TAG_WNDW_POSY]                = new WindowPositionY();
   cfgTagFunctions[OLDCFG_TAG_WNDW_WIDTH]               = new WindowWidth();
@@ -1193,6 +1195,48 @@ void WindowFactors::printLine( ofstream& cfgFile,
 {
   cfgFile << OLDCFG_TAG_WNDW_FACTORS << " " << ( *it )->getFactor( 0 ) <<
   " " << ( *it )->getFactor( 1 ) << endl;
+}
+
+
+string WindowShifts::tagCFG = CFG_TAG_WNDW_SHIFTS;
+
+bool WindowShifts::parseLine( KernelConnection *whichKernel, istringstream& line,
+                              Trace *whichTrace,
+                              vector<Window *>& windows,
+                              vector<Histogram *>& histograms )
+{
+  string strShift;
+  PRV_UINT16 numShift = 0;
+
+  isWindowTag = true; // CFG4D
+
+  if ( windows[ windows.size() - 1 ] == nullptr )
+    return false;
+
+  if ( !windows[ windows.size() - 1 ]->isDerivedWindow() )
+    return true;
+
+  while ( !line.eof() )
+  {
+    getline( line, strShift, ' ' );
+    istringstream tmpStream( strShift );
+    PRV_INT16 shiftValue;
+
+    if ( !( tmpStream >> shiftValue ) )
+      return false;
+
+    windows[ windows.size() - 1 ]->setShift( numShift, shiftValue );
+
+    ++numShift;
+  }
+  return true;
+}
+
+void WindowShifts::printLine( ofstream& cfgFile,
+                              const vector<Window *>::const_iterator it )
+{
+  cfgFile << CFG_TAG_WNDW_SHIFTS << " " << ( *it )->getShift( 0 ) <<
+    " " << ( *it )->getShift( 1 ) << endl;
 }
 
 
