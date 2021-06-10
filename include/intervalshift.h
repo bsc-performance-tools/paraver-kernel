@@ -74,7 +74,7 @@ class IntervalShift : public IntervalHigh
     void setSemanticShift( PRV_INT16 whichShift );
 
 
-  protected: //TODO ??
+  protected:
     virtual void setChildren() override;
 
     virtual KTrace *getWindowTrace() const override;
@@ -103,6 +103,7 @@ class IntervalShift : public IntervalHigh
     std::deque<IntervalShift::ShiftSemanticInfo> semanticBuffer;
 
     PRV_INT16 semanticShift;
+    PRV_INT16 bufferSize;
 
     void popSemanticBuffer();
     void clearSemanticBuffer();

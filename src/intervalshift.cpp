@@ -55,6 +55,9 @@ KRecordList *IntervalShift::init( TRecordTime initialTime, TCreateList create,
     end = nullptr;
   }
 */
+  bufferSize = abs( semanticShift );
+  ++bufferSize;
+  
   childIntervals[ 0 ]->init( myInitTime, create, displayList );
   addSemanticBuffer();
 
@@ -72,7 +75,7 @@ KRecordList *IntervalShift::calcNext( KRecordList *displayList, bool initCalc )
   childIntervals[ 0 ]->calcNext( displayList, initCalc );
   addSemanticBuffer();
 
-  if( semanticBuffer.size() > semanticShift + 1 )
+  if( semanticBuffer.size() > bufferSize )
     popSemanticBuffer();
 
   return displayList;
@@ -84,7 +87,7 @@ KRecordList *IntervalShift::calcPrev( KRecordList *displayList, bool initCalc )
   childIntervals[ 0 ]->calcPrev( displayList, initCalc );
   addSemanticBuffer();
 
-  if( semanticBuffer.size() > semanticShift + 1 )
+  if( semanticBuffer.size() > bufferSize )
     popSemanticBuffer();
 
   return displayList;
@@ -147,8 +150,10 @@ TRecordTime IntervalShift::getEndTime() const
 
 TSemanticValue IntervalShift::getValue() const
 {
-#warning TODO: Negative semantic shift pending / 0?
-  return semanticBuffer.back().semanticValue; 
+  if( semanticBuffer.size() < bufferSize )
+    return 0.0;
+
+  return semanticBuffer.back().semanticValue;
 }
 
 MemoryTrace::iterator *IntervalShift::getBegin() const
