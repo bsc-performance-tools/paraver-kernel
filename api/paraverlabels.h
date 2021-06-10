@@ -466,9 +466,11 @@ enum TDerivedTimelineProperties
   DERIVED_COMPOSENODE,
   DERIVED_NODE,
   DERIVED_COMPOSECPU,
+  DERIVED_SHIFT1,
   DERIVED_FACTOR1,
   DERIVED_DERIVED,
   DERIVED_FACTOR2,
+  DERIVED_SHIFT2,
 
   TOTAL_DERIVED_PROPERTIES,
 
@@ -502,9 +504,11 @@ static const std::string DerivedTimelinePropertyLabels[ DERIVED_NULL ] =
   "Compose Node",
   "Node",
   "Compose CPU",
+  "Shift #1",
   "Factor #1",
   "Derived",
   "Factor #2",
+  "Shift #2",
   "-----------TOTAL_DERIVED_PROPERTIES-----------",
   "Extra Top Compose 1",
   "Parameters"
