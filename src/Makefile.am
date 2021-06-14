@@ -14,6 +14,7 @@ libparaver_kernel_la_SOURCES = \
     intervalcpu.cpp \
     intervalderived.cpp \
     intervalnotthread.cpp \
+    intervalshift.cpp \
     intervalthread.cpp \
     keventdrivencutter.cpp \
     keventtranslator.cpp \

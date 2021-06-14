@@ -68,6 +68,7 @@
 #define OLDCFG_TAG_WNDW_TYPE      "window_type"
 #define OLDCFG_TAG_WNDW_ID        "window_id"
 #define OLDCFG_TAG_WNDW_FACTORS   "window_factors"
+#define CFG_TAG_WNDW_SHIFTS       "window_shifts"
 #define OLDCFG_TAG_WNDW_POSX      "window_position_x"
 #define OLDCFG_TAG_WNDW_POSY      "window_position_y"
 #define OLDCFG_TAG_WNDW_WIDTH      "window_width"
@@ -466,9 +467,11 @@ enum TDerivedTimelineProperties
   DERIVED_COMPOSENODE,
   DERIVED_NODE,
   DERIVED_COMPOSECPU,
+  DERIVED_SHIFT1,
   DERIVED_FACTOR1,
   DERIVED_DERIVED,
   DERIVED_FACTOR2,
+  DERIVED_SHIFT2,
 
   TOTAL_DERIVED_PROPERTIES,
 
@@ -502,9 +505,11 @@ static const std::string DerivedTimelinePropertyLabels[ DERIVED_NULL ] =
   "Compose Node",
   "Node",
   "Compose CPU",
+  "Shift #1",
   "Factor #1",
   "Derived",
   "Factor #2",
+  "Shift #2",
   "-----------TOTAL_DERIVED_PROPERTIES-----------",
   "Extra Top Compose 1",
   "Parameters"

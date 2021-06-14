@@ -206,6 +206,30 @@ class WindowFactors: public TagFunction
 };
 
 
+class WindowShifts: public TagFunction
+{
+  public:
+    WindowShifts()
+    {}
+
+    virtual ~WindowShifts()
+    {}
+    virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
+                            Trace *whichTrace,
+                            std::vector<Window *>& windows,
+                            std::vector<Histogram *>& histograms ) override;
+    static void printLine( std::ofstream& cfgFile,
+                           const std::vector<Window *>::const_iterator it );
+
+    static const std::string &getTagCFG() { return tagCFG; }
+
+
+  protected:
+    static std::string tagCFG;
+
+};
+
+
 class WindowPositionX: public TagFunction
 {
   public:

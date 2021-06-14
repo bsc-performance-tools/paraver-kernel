@@ -56,27 +56,27 @@ class Interval
       myDisplayList.clear();
     }
 
-    TRecordTime getBeginTime() const
+    virtual TRecordTime getBeginTime() const
     {
       return begin->getTime();
     }
 
-    TRecordTime getEndTime() const
+    virtual TRecordTime getEndTime() const
     {
       return end->getTime();
     }
 
-    TSemanticValue getValue() const
+    virtual TSemanticValue getValue() const
     {
       return currentValue;
     }
 
-    MemoryTrace::iterator *getBegin() const
+    virtual MemoryTrace::iterator *getBegin() const
     {
       return begin;
     }
 
-    MemoryTrace::iterator *getEnd() const
+    virtual MemoryTrace::iterator *getEnd() const
     {
       return end;
     }

@@ -22,26 +22,43 @@
 \*****************************************************************************/
 
 
-#ifndef INTERVALDERIVED_H_INCLUDED
-#define INTERVALDERIVED_H_INCLUDED
+#ifndef INTERVALSHIFT_H_INCLUDED
+#define INTERVALSHIFT_H_INCLUDED
 
+#include <deque>
 #include "intervalhigh.h"
-#include "intervalshift.h"
-#include "semanticderived.h"
+
+using std::deque;
 
 class KWindow;
 class KDerivedWindow;
-class SemanticDerived;
 
-class IntervalDerived: public IntervalHigh
+class IntervalShift : public IntervalHigh
 {
   public:
-    IntervalDerived();
-    IntervalDerived( KDerivedWindow *whichWindow,
-                     TWindowLevel whichLevel,
-                     TObjectOrder whichOrder );
+    IntervalShift()
+    {
+      semanticShift = 0;
+    }
 
-    virtual ~IntervalDerived();
+    IntervalShift( KDerivedWindow *whichWindow, TWindowLevel whichLevel,
+                   TObjectOrder whichOrder ):
+        IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
+    {
+      semanticShift = 0;
+    }
+
+    virtual ~IntervalShift()
+    {
+      if ( begin != nullptr )
+        delete begin;
+      if ( end != nullptr )
+        delete end;
+      
+      clearSemanticBuffer();
+    }
+
+    IntervalShift *clone() const;
 
     virtual KRecordList *init( TRecordTime initialTime, TCreateList create,
                                KRecordList *displayList = nullptr ) override;
@@ -53,11 +70,11 @@ class IntervalDerived: public IntervalHigh
       return ( KWindow * ) window;
     }
 
-  protected:
-    KDerivedWindow *window;
-    SemanticDerived *function;
-    TCreateList createList;
+    void setChildInterval( Interval *whichInterval );
+    void setSemanticShift( PRV_INT16 whichShift );
 
+
+  protected:
     virtual void setChildren() override;
 
     virtual KTrace *getWindowTrace() const override;
@@ -66,12 +83,32 @@ class IntervalDerived: public IntervalHigh
     virtual bool IsDerivedWindow() const override;
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const override;
 
-  private:
-    SemanticHighInfo info;
+    virtual TRecordTime getBeginTime() const override;
+    virtual TRecordTime getEndTime() const override;
+    virtual TSemanticValue getValue() const override;
+    virtual MemoryTrace::iterator *getBegin() const override;
+    virtual MemoryTrace::iterator *getEnd() const override;
 
-    IntervalShift shift1;
-    IntervalShift shift2;
+  private:
+    class ShiftSemanticInfo
+    {
+      public:
+        TSemanticValue semanticValue;
+        MemoryTrace::iterator *begin;
+        MemoryTrace::iterator *end;
+    };
+
+    KDerivedWindow *window;
+
+    std::deque<IntervalShift::ShiftSemanticInfo> semanticBuffer;
+
+    PRV_INT16 semanticShift;
+    PRV_INT16 bufferSize;
+
+    void popSemanticBuffer();
+    void clearSemanticBuffer();
+    void addSemanticBuffer();
 
 };
 
-#endif // INTERVALDERIVED_H_INCLUDED
+#endif // INTERVALSHIFT_H_INCLUDED

@@ -1421,6 +1421,9 @@ bool KDerivedWindow::initFromBegin() const
 {
   bool tmp = false;
 
+  if( getShift( 0 ) != 0 || getShift( 1 ) != 0 )
+    return true;
+
   map< TWindowLevel, vector<SemanticFunction *> >::const_iterator itExtra = extraComposeFunctions.find( TOPCOMPOSE1 );
   if( itExtra != extraComposeFunctions.end() )
   {
@@ -1709,6 +1712,7 @@ KWindow *KDerivedWindow::clone( bool recursiveClone )
     else
       clonedKDerivedWindow->parents[ i ] = nullptr;
     clonedKDerivedWindow->factor[ i ] = factor[ i ];
+    clonedKDerivedWindow->shift[ i ] = shift[ i ];
   }
 
   for ( PRV_UINT16 i = 0; i <= DERIVED; ++i )
