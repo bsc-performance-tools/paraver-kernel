@@ -38,20 +38,25 @@ class CubeBuffer
     CubeBuffer( PRV_UINT32 numPlanes, PRV_UINT32 numRows );
     ~CubeBuffer();
 
-    void addValue( PRV_UINT32 plane, PRV_UINT32 row, THistogramColumn col, const std::vector< TSemanticValue >& semVal );
+    void addValue( PRV_UINT32 plane, PRV_UINT32 row, THistogramColumn col, const std::vector< TSemanticValue >& semVal, bool isNotZeroValue = true );
     void setValue( PRV_UINT32 plane, PRV_UINT32 row, THistogramColumn col, const std::vector< TSemanticValue >& semVal );
     bool getCellValue( std::vector< TSemanticValue >& semVal, PRV_UINT32 plane, PRV_UINT32 row, PRV_UINT32 col ) const;
+
 #ifdef PARALLEL_ENABLED
     const std::map< THistogramColumn, std::vector< TSemanticValue > >& getRowValues( PRV_UINT32 plane, PRV_UINT32 row ) const;
+    const std::map< THistogramColumn, bool >& getNotZeroValue( PRV_UINT32 plane, PRV_UINT32 row ) const;
 #else
     const std::unordered_map< THistogramColumn, std::vector< TSemanticValue > >& getRowValues( PRV_UINT32 plane, PRV_UINT32 row ) const;
+    const std::unordered_map< THistogramColumn, bool >& getNotZeroValue( PRV_UINT32 plane, PRV_UINT32 row ) const;
 #endif
 
   private:
 #ifdef PARALLEL_ENABLED
     std::vector< std::vector< std::map< THistogramColumn, std::vector< TSemanticValue > > > > buffer;
+    std::vector< std::vector< std::map< THistogramColumn, bool > > > bufferNotZeroValue;
 #else
     std::vector< std::vector< std::unordered_map< THistogramColumn, std::vector< TSemanticValue > > > > buffer;
+    std::vector< std::vector< std::unordered_map< THistogramColumn, bool > > > bufferNotZeroValue;
 #endif
 };
 

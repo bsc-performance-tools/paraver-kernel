@@ -1104,7 +1104,7 @@ class Statistics
     void initAll( KHistogram *whichHistogram );
     void resetAll();
     std::vector<bool> filterAll( CalculateData *data );
-    std::vector<TSemanticValue> executeAll( CalculateData *data );
+    std::vector<TSemanticValue> executeAll( CalculateData *data, bool& isNotZeroValue );
     std::vector<TSemanticValue> finishRowAll( const std::vector<TSemanticValue>& cellValue,
                                               THistogramColumn column,
                                               TObjectOrder row,

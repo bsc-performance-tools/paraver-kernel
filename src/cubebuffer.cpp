@@ -35,11 +35,18 @@ CubeBuffer::CubeBuffer( PRV_UINT32 numPlanes, PRV_UINT32 numRows )
 #ifdef PARALLEL_ENABLED
   map< THistogramColumn, vector< TSemanticValue > > tmpRow;
   vector< map< THistogramColumn, vector< TSemanticValue > > > tmpMatrix( numRows, tmpRow );
+
+  map< THistogramColumn, bool > tmpRowNotZeroValue;
+  vector< map< THistogramColumn, bool > > tmpMatrixNotZeroValue( numRows, tmpRowNotZeroValue );
 #else
   unordered_map< THistogramColumn, vector< TSemanticValue > > tmpRow;
   vector< unordered_map< THistogramColumn, vector< TSemanticValue > > > tmpMatrix( numRows, tmpRow );
+
+  unordered_map< THistogramColumn, bool > tmpRowNotZeroValue;
+  vector< unordered_map< THistogramColumn, bool > > tmpMatrixNotZeroValue( numRows, tmpRowNotZeroValue );
 #endif
   buffer.insert( buffer.begin(), numPlanes, tmpMatrix );
+  bufferNotZeroValue.insert( bufferNotZeroValue.begin(), numPlanes, tmpMatrixNotZeroValue );
 }
 
 
@@ -47,25 +54,32 @@ CubeBuffer::~CubeBuffer()
 {}
 
 
-void CubeBuffer::addValue( PRV_UINT32 plane, PRV_UINT32 row, THistogramColumn col, const std::vector< TSemanticValue >& semVal )
+void CubeBuffer::addValue( PRV_UINT32 plane, PRV_UINT32 row, THistogramColumn col, const std::vector< TSemanticValue >& semVal, bool isNotZeroValue )
 {
 #ifdef PARALLEL_ENABLED
   map< THistogramColumn, vector< TSemanticValue > >& currentRow = ( ( buffer[ plane ] )[ row ] );
-
   map< THistogramColumn, vector< TSemanticValue > >::iterator it = currentRow.find( col );
+
+  map< THistogramColumn, bool >& currentRowNotZeroValue = ( ( bufferNotZeroValue[ plane ] )[ row ] );
+  map< THistogramColumn, bool >::iterator itNotZeroValue = currentRowNotZeroValue.find( col );
 #else
   unordered_map< THistogramColumn, vector< TSemanticValue > >& currentRow = ( ( buffer[ plane ] )[ row ] );
-
   unordered_map< THistogramColumn, vector< TSemanticValue > >::iterator it = currentRow.find( col );
+
+  unordered_map< THistogramColumn, bool >& currentRowNotZeroValue = ( ( bufferNotZeroValue[ plane ] )[ row ] );
+  unordered_map< THistogramColumn, bool >::iterator itNotZeroValue = currentRowNotZeroValue.find( col );
 #endif
   if ( it != currentRow.end() )
   {
     for( PRV_UINT32 i = 0; i < semVal.size(); ++i )
       ( it->second )[ i ] += semVal[ i ];
+
+    itNotZeroValue->second = itNotZeroValue->second || isNotZeroValue;
   }
   else
   {
     currentRow[ col ] = semVal;
+    currentRowNotZeroValue[ col ] = isNotZeroValue;
   }
 }
 
@@ -101,4 +115,13 @@ const unordered_map< THistogramColumn, vector< TSemanticValue > >& CubeBuffer::g
 #endif
 {
   return ( ( buffer[ plane ] )[ row ] );
+}
+
+#ifdef PARALLEL_ENABLED
+const map< THistogramColumn, bool >& CubeBuffer::getNotZeroValue( PRV_UINT32 plane, PRV_UINT32 row ) const
+#else
+const unordered_map< THistogramColumn, bool >& CubeBuffer::getNotZeroValue( PRV_UINT32 plane, PRV_UINT32 row ) const
+#endif
+{
+  return ( ( bufferNotZeroValue[ plane ] )[ row ] );
 }

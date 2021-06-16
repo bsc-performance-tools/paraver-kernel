@@ -258,7 +258,7 @@ vector<bool> Statistics::filterAll( CalculateData *data )
   return values;
 }
 
-vector<TSemanticValue> Statistics::executeAll( CalculateData *data )
+vector<TSemanticValue> Statistics::executeAll( CalculateData *data, bool& isNotZeroValue )
 {
   vector<TSemanticValue> values;
 
@@ -275,7 +275,9 @@ vector<TSemanticValue> Statistics::executeAll( CalculateData *data )
   values.push_back( statAvgBurstTime.execute( data ) );
   values.push_back( statStdevBurstTime.execute( data ) );
   values.push_back( statAvgPerBurst.execute( data ) );
-  values.push_back( statAvgValueNotZero.execute( data ) );
+  TSemanticValue tmpVal = statAvgValueNotZero.execute( data );
+  isNotZeroValue = tmpVal != 0.0;
+  values.push_back( tmpVal );
   values.push_back( statAvgPerBurstNotZero.execute( data ) );
   values.push_back( statNumBurstsNotZero.execute( data ) );
   values.push_back( statSumBursts.execute( data ) );

@@ -1552,6 +1552,8 @@ void KHistogram::calculate( TObjectOrder iRow,
     if( !calcSemanticStats )
       return;
 
+    bool isNotZeroValue = false;
+
     // Semantic statistics
     if ( inclusive )
     {
@@ -1564,14 +1566,14 @@ void KHistogram::calculate( TObjectOrder iRow,
         if ( columnTranslator->getColumn( *it, column ) )
         {
           filter = statistics.filterAll( data );
-          values = statistics.executeAll( data );
+          values = statistics.executeAll( data, isNotZeroValue );
 
           for ( PRV_UINT16 iStat = 0; iStat < filter.size(); ++iStat )
           {
             if ( filter[ iStat ] )
             {
 #ifdef PARALLEL_ENABLED
-              semanticBuffer->addValue( data->plane, data->row, column, values );
+              semanticBuffer->addValue( data->plane, data->row, column, values, isNotZeroValue );
 #else
               if ( getThreeDimensions() )
                 cube->addValue( data->plane, column, values );
@@ -1589,14 +1591,14 @@ void KHistogram::calculate( TObjectOrder iRow,
     else
     {
       filter = statistics.filterAll( data );
-      values = statistics.executeAll( data );
+      values = statistics.executeAll( data, isNotZeroValue );
 
       for ( PRV_UINT16 iStat = 0; iStat < filter.size(); ++iStat )
       {
         if ( filter[ iStat ] )
         {
 #ifdef PARALLEL_ENABLED
-          semanticBuffer->addValue( data->plane, data->row, data->column, values );
+          semanticBuffer->addValue( data->plane, data->row, data->column, values, isNotZeroValue );
 #else
           if ( getThreeDimensions() )
             cube->addValue( data->plane, data->column, values );
