@@ -122,7 +122,7 @@ inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, ValueTy
 
 
 template <typename ValueType>
-inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, const std::vector<ValueType>& semVal )
+inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, const std::vector<ValueType>& semVal, bool isNotZeroValue )
 {
   if ( planes[ plane ] == nullptr )
   {
@@ -130,7 +130,7 @@ inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, const s
     ++nplanes;
   }
 
-  planes[ plane ]->setValue( col, semVal );
+  planes[ plane ]->setValue( col, semVal, isNotZeroValue );
 }
 
 

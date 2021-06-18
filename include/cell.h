@@ -41,7 +41,7 @@ class Cell
     void init( );
     void setValue( PRV_UINT16 idStat, ValueType semVal );
     void setValue( ValueType semVal );
-    void setValue( const std::vector<ValueType>& semVal );
+    void setValue( const std::vector<ValueType>& semVal, bool isNotZeroValue = true );
     void addValue( PRV_UINT16 idStat, ValueType semVal );
     void addValue( ValueType semVal );
     void addValue( const std::vector<ValueType>& semVal );
@@ -59,6 +59,7 @@ class Cell
     TObjectOrder row;
     PRV_UINT16 nStats;
     std::vector<ValueType> values;
+    bool isNotZeroValue;
 };
 
 #include "src/cell.cpp"

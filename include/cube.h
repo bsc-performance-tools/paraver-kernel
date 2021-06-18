@@ -40,7 +40,7 @@ class Cube
     void init( );
     void setValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal );
     void setValue( PRV_UINT32 plane, PRV_UINT32 col, ValueType semVal );
-    void setValue( PRV_UINT32 plane, PRV_UINT32 col, const std::vector<ValueType>& semVal );
+    void setValue( PRV_UINT32 plane, PRV_UINT32 col, const std::vector<ValueType>& semVal, bool isNotZeroValue = true );
     void addValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal );
     void addValue( PRV_UINT32 plane, PRV_UINT32 col, ValueType semVal );
     void addValue( PRV_UINT32 plane, PRV_UINT32 col, const std::vector<ValueType>& semVal );

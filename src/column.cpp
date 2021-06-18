@@ -119,11 +119,11 @@ inline void Column<ValueType>::setValue( ValueType semVal )
 
 
 template <typename ValueType>
-inline void Column<ValueType>::setValue( const std::vector<ValueType>& semVal )
+inline void Column<ValueType>::setValue( const std::vector<ValueType>& semVal, bool isNotZeroValue )
 {
   if ( *finished )
   {
-    it_cell->setValue( semVal );
+    it_cell->setValue( semVal, isNotZeroValue );
   }
   else
   {
@@ -134,7 +134,7 @@ inline void Column<ValueType>::setValue( const std::vector<ValueType>& semVal )
       modified = true;
       //it_cell = cells.begin();
     }
-    cells[ cells.size() - 1 ].setValue( semVal );
+    cells[ cells.size() - 1 ].setValue( semVal, isNotZeroValue );
   }
 }
 

@@ -73,21 +73,24 @@ KHistogramTotals::~KHistogramTotals()
 void KHistogramTotals::newValue( TSemanticValue whichValue,
                                  PRV_UINT16 idStat,
                                  THistogramColumn whichColumn,
-                                 THistogramColumn whichPlane )
+                                 THistogramColumn whichPlane,
+                                 bool isNotZeroValue )
 {
-  ( ( total[ whichPlane ] )[ idStat ] )[ whichColumn ] += whichValue;
+  if( isNotZeroValue )
+  {
+    ( ( total[ whichPlane ] )[ idStat ] )[ whichColumn ] += whichValue;
+    ( ( average[ whichPlane ] )[ idStat ] )[ whichColumn ] += 1;
 
-  ( ( average[ whichPlane ] )[ idStat ] )[ whichColumn ] += 1;
+    if ( whichValue > ( ( maximum[ whichPlane ] )[ idStat ] )[ whichColumn ] )
+      ( ( maximum[ whichPlane ] )[ idStat ] )[ whichColumn ] = whichValue;
 
-  if ( whichValue > ( ( maximum[ whichPlane ] )[ idStat ] )[ whichColumn ] )
-    ( ( maximum[ whichPlane ] )[ idStat ] )[ whichColumn ] = whichValue;
+    if ( whichValue != 0.0 &&
+        whichValue < ( ( minimum[ whichPlane ] )[ idStat ] )[ whichColumn ] )
+      ( ( minimum[ whichPlane ] )[ idStat ] )[ whichColumn ] = whichValue;
 
-  if ( whichValue != 0.0 &&
-       whichValue < ( ( minimum[ whichPlane ] )[ idStat ] )[ whichColumn ] )
-    ( ( minimum[ whichPlane ] )[ idStat ] )[ whichColumn ] = whichValue;
-
-  ( ( stdev[ whichPlane ] )[ idStat ] )[ whichColumn ] +=
-    ( whichValue * whichValue );
+    ( ( stdev[ whichPlane ] )[ idStat ] )[ whichColumn ] +=
+      ( whichValue * whichValue );
+  }
 }
 
 

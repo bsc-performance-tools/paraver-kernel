@@ -42,7 +42,8 @@ class KHistogramTotals: public HistogramTotals
     void newValue( TSemanticValue whichValue,
                    PRV_UINT16 idStat,
                    THistogramColumn whichColumn,
-                   THistogramColumn whichPlane = 0 );
+                   THistogramColumn whichPlane = 0,
+                   bool isNotZeroValue = true );
     void finish();
 
     TSemanticValue getTotal( PRV_UINT16 idStat,

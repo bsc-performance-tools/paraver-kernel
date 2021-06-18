@@ -43,7 +43,7 @@ class Column
     void init( );
     void setValue( short idStat, ValueType semVal );
     void setValue( ValueType semVal );
-    void setValue( const std::vector<ValueType>& semVal );
+    void setValue( const std::vector<ValueType>& semVal, bool isNotZeroValue = true );
     void addValue( short idStat, ValueType semVal );
     void addValue( ValueType semVal );
     void addValue( const std::vector<ValueType>& semVal );

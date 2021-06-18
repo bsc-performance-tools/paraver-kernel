@@ -30,20 +30,20 @@
 
 template <typename ValueType>
 Cell<ValueType>::Cell():
-    row( 0 ), nStats( 0 )
+    row( 0 ), nStats( 0 ), isNotZeroValue( false )
 {}
 
 
 template <typename ValueType>
 Cell<ValueType>::Cell( TObjectOrder idRow, PRV_UINT16 numStats ):
-    row( idRow ), nStats( numStats )
+    row( idRow ), nStats( numStats ), isNotZeroValue( false )
 {
   values.insert( values.begin(), nStats, (ValueType) 0 );
 }
 
 template <typename ValueType>
 Cell<ValueType>::Cell( const Cell< ValueType >& source ):
-    row( source.row ), nStats( source.nStats )
+    row( source.row ), nStats( source.nStats ), isNotZeroValue( source.isNotZeroValue )
 {
   values = source.values;
 }
@@ -85,9 +85,10 @@ inline void Cell<ValueType>::setValue( ValueType semVal )
 
 
 template <typename ValueType>
-inline void Cell<ValueType>::setValue( const std::vector<ValueType>& semVal )
+inline void Cell<ValueType>::setValue( const std::vector<ValueType>& semVal, bool isNotZeroValue )
 {
   values = semVal;
+  this->isNotZeroValue = isNotZeroValue;
 }
 
 

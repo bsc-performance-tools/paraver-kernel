@@ -89,9 +89,9 @@ inline void Matrix<ValueType>::setValue( PRV_UINT32 col, ValueType semVal )
 
 
 template <typename ValueType>
-inline void Matrix<ValueType>::setValue( PRV_UINT32 col, const std::vector<ValueType>& semVal )
+inline void Matrix<ValueType>::setValue( PRV_UINT32 col, const std::vector<ValueType>& semVal, bool isNotZeroValue )
 {
-  cols[ col ].setValue( semVal );
+  cols[ col ].setValue( semVal, isNotZeroValue );
 }
 
 

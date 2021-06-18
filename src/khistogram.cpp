@@ -1193,15 +1193,20 @@ void KHistogram::finishAllRows()
       {
         const map< THistogramColumn, vector< TSemanticValue > >& rowValues =
             semanticBuffer->getRowValues( iPlane, iRow );
+        const map< THistogramColumn, bool >& rowNotZeroValues =
+            semanticBuffer->getNotZeroValue( iPlane, iRow );
+        map< THistogramColumn, bool >::const_iterator itZero = rowNotZeroValues.begin();
+
         for ( map< THistogramColumn, vector< TSemanticValue > >::const_iterator it = rowValues.begin();
-              it != rowValues.end(); ++it )
+              it != rowValues.end(); ++it, ++itZero )
         {
           values = it->second;
-          cube->setValue( iPlane, it->first, values );
+          cube->setValue( iPlane, it->first, values, itZero->second );
+
           for ( PRV_UINT16 iStat = 0; iStat < values.size(); ++iStat )
           {
-            totals->newValue( values[ iStat ], iStat, it->first, iPlane );
-            rowTotals->newValue( values[ iStat ], iStat, iRow, iPlane );
+            totals->newValue( values[ iStat ], iStat, it->first, iPlane, itZero->second );
+            rowTotals->newValue( values[ iStat ], iStat, iRow, iPlane, itZero->second );
           }
         }
       }
@@ -1210,19 +1215,25 @@ void KHistogram::finishAllRows()
   }
   else
   {
+    THistogramColumn iPlane = 0;
     for ( TObjectOrder iRow = 0; iRow < rowsTranslator->totalRows(); ++iRow )
     {
       const map< THistogramColumn, vector< TSemanticValue > >& rowValues =
           semanticBuffer->getRowValues( 0, iRow );
+      const map< THistogramColumn, bool >& rowNotZeroValues =
+          semanticBuffer->getNotZeroValue( 0, iRow );
+      map< THistogramColumn, bool >::const_iterator itZero = rowNotZeroValues.begin();
+
       for ( map< THistogramColumn, vector< TSemanticValue > >::const_iterator it = rowValues.begin();
-            it != rowValues.end(); ++it )
+            it != rowValues.end(); ++it, ++itZero )
       {
         values = it->second;
-        matrix->setValue( it->first, values );
+        matrix->setValue( it->first, values, itZero->second );
+
         for ( PRV_UINT16 iStat = 0; iStat < values.size(); ++iStat )
         {
-          totals->newValue( values[ iStat ], iStat, it->first );
-          rowTotals->newValue( values[ iStat ], iStat, iRow );
+          totals->newValue( values[ iStat ], iStat, it->first, iPlane, itZero->second );
+          rowTotals->newValue( values[ iStat ], iStat, iRow, iPlane, itZero->second );
         }
       }
 
