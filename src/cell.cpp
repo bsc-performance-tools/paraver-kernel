@@ -130,6 +130,13 @@ inline ValueType Cell<ValueType>::getValue( PRV_UINT16 idStat ) const
 
 
 template <typename ValueType>
+inline bool Cell<ValueType>::getNotZeroValue( PRV_UINT16 idStat ) const
+{
+  return isNotZeroValue;
+}
+
+
+template <typename ValueType>
 inline std::vector<ValueType> Cell<ValueType>::getValue() const
 {
   return values;

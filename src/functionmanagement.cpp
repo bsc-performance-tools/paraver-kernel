@@ -96,6 +96,21 @@ T *FunctionManagement<T>::getFunction( const std::string& name ) const
 }
 
 template <class T>
+const T * FunctionManagement<T>::getFunctionNoClone( const std::string& name ) const
+{
+  T *retval = nullptr;
+
+  typename std::map<std::string, T*>::const_iterator it = hash.find( name );
+  if ( it != hash.end() )
+  {
+    retval = ( ( *it ).second );
+  }
+
+  return retval;
+}
+
+
+template <class T>
 PRV_UINT32 FunctionManagement<T>::numGroups() const
 {
   return groups.size();

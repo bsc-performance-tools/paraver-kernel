@@ -711,9 +711,22 @@ inline bool KHistogram::getCellValue( TSemanticValue& semVal,
   return matrix->getCellValue( semVal, whichRow, whichCol, idStat );
 }
 
+
+bool KHistogram::getNotZeroValue( PRV_UINT32 whichRow,
+                                  PRV_UINT32 whichCol,
+                                  PRV_UINT16 idStat,
+                                  PRV_UINT32 whichPlane ) const
+{
+  if( getThreeDimensions() )
+    return cube->getNotZeroValue( whichPlane, whichRow, whichCol, idStat );
+
+  return matrix->getNotZeroValue( whichRow, whichCol, idStat );
+}
+
+
 inline TSemanticValue KHistogram::getCommCurrentValue( PRV_UINT32 col,
-    PRV_UINT16 idStat,
-    PRV_UINT32 plane ) const
+                                                       PRV_UINT16 idStat,
+                                                       PRV_UINT32 plane ) const
 {
   if ( getThreeDimensions() )
     return commCube->getCurrentValue( plane, col, idStat );
@@ -722,6 +735,7 @@ inline TSemanticValue KHistogram::getCommCurrentValue( PRV_UINT32 col,
 
   return TSemanticValue( 0 );
 }
+
 
 inline PRV_UINT32 KHistogram::getCommCurrentRow( PRV_UINT32 col, PRV_UINT32 plane ) const
 {
@@ -1806,22 +1820,17 @@ void KHistogram::finishRow( CalculateData *data )
 
 bool KHistogram::isCommunicationStat( const string& whichStat ) const
 {
-  HistogramStatistic *tmpFunction = FunctionManagement<HistogramStatistic>::getInstance()->getFunction( whichStat );
+  return FunctionManagement<HistogramStatistic>::getInstance()->getFunctionNoClone( whichStat )->createComms();
+}
 
-  bool retval = tmpFunction->createComms();
-  delete tmpFunction;
-
-  return retval;
+bool KHistogram::isNotZeroStat( const string& whichStat ) const
+{
+  return FunctionManagement<HistogramStatistic>::getInstance()->getFunctionNoClone( whichStat )->isNotZeroStat();
 }
 
 string KHistogram::getUnitsLabel( const string& whichStat ) const
 {
-  HistogramStatistic *tmpFunction = FunctionManagement<HistogramStatistic>::getInstance()->getFunction( whichStat );
-
-  string retval = tmpFunction->getUnits( this );
-  delete tmpFunction;
-
-  return retval;
+  return FunctionManagement<HistogramStatistic>::getInstance()->getFunctionNoClone( whichStat )->getUnits( this );
 }
 
 void KHistogram::getGroupsLabels( vector<string>& onVector ) const

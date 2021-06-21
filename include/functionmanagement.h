@@ -55,6 +55,7 @@ class FunctionManagement
     ~FunctionManagement();
 
     T *getFunction( const std::string& ) const;
+    const T * getFunctionNoClone( const std::string& ) const;
     PRV_UINT32 numGroups() const;
     void getNameGroups( std::vector<std::string>& );
     void getAll( std::vector<T *>& ) const;

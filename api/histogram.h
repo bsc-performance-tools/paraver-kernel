@@ -122,6 +122,10 @@ class Histogram
                                PRV_UINT32 whichCol,
                                PRV_UINT16 idStat,
                                PRV_UINT32 whichPlane = 0 ) const = 0;
+    virtual bool getNotZeroValue( PRV_UINT32 whichRow,
+                                  PRV_UINT32 whichCol,
+                                  PRV_UINT16 idStat,
+                                  PRV_UINT32 whichPlane = 0 ) const = 0;
 
     virtual TSemanticValue getCommCurrentValue( PRV_UINT32 col,
         PRV_UINT16 idStat,
@@ -149,6 +153,8 @@ class Histogram
                           std::vector<TObjectOrder>& selectedRows, ProgressController *progress ) = 0;
 
     virtual bool isCommunicationStat( const std::string& whichStat ) const = 0;
+
+    virtual bool isNotZeroStat( const std::string& whichStat ) const = 0;
 
     virtual std::string getUnitsLabel( const std::string& whichStat ) const = 0;
 
@@ -701,6 +707,10 @@ class HistogramProxy : public Histogram
                                PRV_UINT32 whichCol,
                                PRV_UINT16 idStat,
                                PRV_UINT32 whichPlane = 0 ) const override;
+    virtual bool getNotZeroValue( PRV_UINT32 whichRow,
+                                  PRV_UINT32 whichCol,
+                                  PRV_UINT16 idStat,
+                                  PRV_UINT32 whichPlane = 0 ) const override;
 
     virtual TSemanticValue getCommCurrentValue( PRV_UINT32 col,
         PRV_UINT16 idStat,
@@ -822,6 +832,8 @@ class HistogramProxy : public Histogram
     virtual std::string getCurrentStat() const override;
 
     bool isCommunicationStat( const std::string& whichStat ) const override;
+
+    bool isNotZeroStat( const std::string& whichStat ) const override;
 
     THistogramColumn getSemanticRealColumn( THistogramColumn whichCol, const std::vector<THistogramColumn>& noVoidSemRanges ) const override;
 

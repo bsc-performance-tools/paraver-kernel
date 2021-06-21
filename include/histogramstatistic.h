@@ -57,6 +57,11 @@ class HistogramStatistic
 
     virtual std::string getName() const = 0;
     virtual std::string getUnits( const KHistogram *whichHisto ) const = 0;
+    virtual bool isNotZeroStat() const
+    {
+      return false;
+    }
+
     virtual HistogramStatistic *clone() = 0;
 
   protected:
@@ -948,6 +953,11 @@ class StatAvgValueNotZero: public HistogramStatistic
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual bool isNotZeroStat() const override
+    {
+      return true;
+    }
+
     virtual HistogramStatistic *clone() override;
   protected:
 
@@ -988,6 +998,11 @@ class StatAvgPerBurstNotZero: public HistogramStatistic
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual bool isNotZeroStat() const override
+    {
+      return true;
+    }
+
     virtual HistogramStatistic *clone() override;
   protected:
 
@@ -1029,6 +1044,11 @@ class StatNumBurstsNotZero: public HistogramStatistic
 
     virtual std::string getName() const override;
     virtual std::string getUnits( const KHistogram *whichHisto ) const override;
+    virtual bool isNotZeroStat() const override
+    {
+      return true;
+    }
+
     virtual HistogramStatistic *clone() override;
   protected:
 
@@ -1072,9 +1092,6 @@ class StatSumBursts: public HistogramStatistic
     static std::string name;
     Window *dataWin;
 };
-
-
-
 
 
 class Statistics

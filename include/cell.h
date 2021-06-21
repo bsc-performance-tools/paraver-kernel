@@ -46,6 +46,7 @@ class Cell
     void addValue( ValueType semVal );
     void addValue( const std::vector<ValueType>& semVal );
     ValueType getValue( PRV_UINT16 idStat ) const;
+    bool getNotZeroValue( PRV_UINT16 idStat ) const;
     std::vector<ValueType> getValue() const;
     TObjectOrder getRow( ) const;
     void setRow( TObjectOrder row );

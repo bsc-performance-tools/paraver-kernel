@@ -290,10 +290,11 @@ inline bool Column<ValueType>::endCell( )
   return ( it_cell == cells.end() );
 }
 
+
 template <typename ValueType>
 inline bool Column<ValueType>::getCellValue( ValueType& semVal,
-    int whichRow,
-    short idStat ) const
+                                             int whichRow,
+                                             short idStat ) const
 {
   Cell<ValueType> tmpCell( whichRow, 0 );
 
@@ -311,8 +312,24 @@ inline bool Column<ValueType>::getCellValue( ValueType& semVal,
 
 
 template <typename ValueType>
+inline bool Column<ValueType>::getNotZeroValue( int whichRow, short idStat ) const
+{
+  Cell<ValueType> tmpCell( whichRow, 0 );
+
+  typename std::vector<Cell<ValueType> >::const_iterator result;
+  for( result = cells.begin(); result != cells.end(); ++result )
+    if( result->getRow() == whichRow ) break;
+
+  if( result != cells.end() )
+    return result->getNotZeroValue( idStat );
+
+  return false;
+}
+
+
+template <typename ValueType>
 inline bool Column<ValueType>::getCellValue( std::vector<ValueType>& semVal,
-    int whichRow ) const
+                                             int whichRow ) const
 {
   Cell<ValueType> tmpCell( whichRow, 0 );
 

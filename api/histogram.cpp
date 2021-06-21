@@ -479,6 +479,14 @@ bool HistogramProxy::getCellValue( TSemanticValue& semVal,
   return myHisto->getCellValue( semVal, whichRow, getSemanticSortedColumn( whichCol ), idStat, whichPlane );
 }
 
+bool HistogramProxy::getNotZeroValue( PRV_UINT32 whichRow,
+                                      PRV_UINT32 whichCol,
+                                      PRV_UINT16 idStat,
+                                      PRV_UINT32 whichPlane ) const
+{
+  return myHisto->getNotZeroValue( whichRow, getSemanticSortedColumn( whichCol ), idStat, whichPlane );
+}
+
 TSemanticValue HistogramProxy::getCommCurrentValue( PRV_UINT32 col,
     PRV_UINT16 idStat,
     PRV_UINT32 plane ) const
@@ -980,6 +988,11 @@ PRV_INT32 HistogramProxy::getCommSelectedPlane() const
 bool HistogramProxy::isCommunicationStat( const string& whichStat ) const
 {
   return myHisto->isCommunicationStat( whichStat );
+}
+
+bool HistogramProxy::isNotZeroStat( const string& whichStat ) const
+{
+  return myHisto->isNotZeroStat( whichStat );
 }
 
 THistogramColumn HistogramProxy::getSemanticRealColumn( THistogramColumn whichCol, const vector<THistogramColumn>& noVoidSemRanges ) const

@@ -206,6 +206,10 @@ class KHistogram : public Histogram
                        PRV_UINT32 whichCol,
                        PRV_UINT16 idStat,
                        PRV_UINT32 whichPlane = 0 ) const override;
+    bool getNotZeroValue( PRV_UINT32 whichRow,
+                          PRV_UINT32 whichCol,
+                          PRV_UINT16 idStat,
+                          PRV_UINT32 whichPlane = 0 ) const override;
 
     TSemanticValue getCommCurrentValue( PRV_UINT32 col,
                                         PRV_UINT16 idStat,
@@ -230,6 +234,8 @@ class KHistogram : public Histogram
     void pushbackStatistic( const std::string& whichStatistic ) override;
 
     bool isCommunicationStat( const std::string& whichStat ) const override;
+
+    bool isNotZeroStat( const std::string& whichStat ) const override;
 
     std::string getUnitsLabel( const std::string& whichStat ) const override;
 

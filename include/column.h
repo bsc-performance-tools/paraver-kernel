@@ -59,6 +59,7 @@ class Column
     void print() const;
 
     bool getCellValue( ValueType& semVal, int whichRow, short idStat ) const;
+    bool getNotZeroValue( int whichRow, short idStat ) const;
     bool getCellValue( std::vector<ValueType>& semVal, int whichRow ) const;
 
   private:

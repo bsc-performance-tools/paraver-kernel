@@ -59,6 +59,7 @@ class Matrix
     void eraseColumns( PRV_UINT32 ini_col, PRV_UINT32 fin_col );
 
     bool getCellValue( ValueType& semVal, int whichRow, PRV_UINT32 whichCol, PRV_UINT16 idStat ) const;
+    bool getNotZeroValue( int whichRow, PRV_UINT32 whichCol, PRV_UINT16 idStat ) const;
     bool getCellValue( std::vector<ValueType>& semVal, int whichRow, PRV_UINT32 whichCol ) const;
 
     void print() const;

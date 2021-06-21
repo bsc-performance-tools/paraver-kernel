@@ -61,6 +61,7 @@ class Cube
     void erasePlanes( PRV_UINT32 ini_plane, PRV_UINT32 fin_plane );
 
     bool getCellValue( ValueType& semVal, PRV_UINT32 whichPlane, int whichRow, PRV_UINT32 whichCol, PRV_UINT16 idStat ) const;
+    bool getNotZeroValue( PRV_UINT32 whichPlane, int whichRow, PRV_UINT32 whichCol, PRV_UINT16 idStat ) const;
     bool getCellValue( std::vector<ValueType>& semVal, PRV_UINT32 whichPlane, int whichRow, PRV_UINT32 whichCol ) const;
 
     void print() const;

@@ -367,10 +367,10 @@ inline void Cube<ValueType>::erasePlanes( PRV_UINT32 ini_plane, PRV_UINT32 fin_p
 
 template <typename ValueType>
 inline bool Cube<ValueType>::getCellValue( ValueType& semVal,
-    PRV_UINT32 whichPlane,
-    int whichRow,
-    PRV_UINT32 whichCol,
-    PRV_UINT16 idStat ) const
+                                           PRV_UINT32 whichPlane,
+                                           int whichRow,
+                                           PRV_UINT32 whichCol,
+                                           PRV_UINT16 idStat ) const
 {
   if( !planeWithValues( whichPlane ) )
     return false;
@@ -378,12 +378,24 @@ inline bool Cube<ValueType>::getCellValue( ValueType& semVal,
   return planes[ whichPlane ]->getCellValue( semVal, whichRow, whichCol, idStat );
 }
 
+template <typename ValueType>
+inline bool Cube<ValueType>::getNotZeroValue( PRV_UINT32 whichPlane,
+                                              int whichRow,
+                                              PRV_UINT32 whichCol, 
+                                              PRV_UINT16 idStat ) const
+{
+  if( !planeWithValues( whichPlane ) )
+    return false;
+
+  return planes[ whichPlane ]->getNotZeroValue( whichRow, whichCol, idStat );
+}
+
 
 template <typename ValueType>
 inline bool Cube<ValueType>::getCellValue( std::vector<ValueType>& semVal,
-    PRV_UINT32 whichPlane,
-    int whichRow,
-    PRV_UINT32 whichCol ) const
+                                           PRV_UINT32 whichPlane,
+                                           int whichRow,
+                                           PRV_UINT32 whichCol ) const
 {
   if( !planeWithValues( whichPlane ) )
     return false;
