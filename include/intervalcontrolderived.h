@@ -26,6 +26,7 @@
 #define INTERVALCONTROLDERIVED_H_INCLUDED
 
 #include "intervalhigh.h"
+#include "intervalshift.h"
 #include "semanticderived.h"
 
 class KWindow;
@@ -45,6 +46,8 @@ class IntervalControlDerived: public IntervalHigh
         IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
     {
       function = nullptr;
+      shift1 = IntervalShift( whichWindow, whichLevel, whichOrder );
+      shift2 = IntervalShift( whichWindow, whichLevel, whichOrder );
     }
 
     virtual ~IntervalControlDerived()
@@ -79,6 +82,8 @@ class IntervalControlDerived: public IntervalHigh
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const override;
 
   private:
+    IntervalShift shift1;
+    IntervalShift shift2;
 
 };
 
