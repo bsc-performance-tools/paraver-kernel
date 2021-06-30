@@ -142,7 +142,7 @@ private:
 // r1 is less than r2?
 struct ltrecord
 {
-  bool operator()( const RLRecord& r1, const RLRecord& r2 )
+  bool operator()( const RLRecord& r1, const RLRecord& r2 ) const
   {
     if ( r1.getTime() < r2.getTime() )
       return true;
