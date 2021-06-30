@@ -210,6 +210,7 @@ TSemanticValue ControlDerivedEnumerate::execute( const SemanticInfo *info )
   return myEnumerate[ tmpOrder ];
 }
 
+
 void ControlDerivedEnumerate::init( KWindow *whichWindow )
 {
   TObjectOrder size = 0;
@@ -232,5 +233,50 @@ void ControlDerivedEnumerate::init( KWindow *whichWindow )
     myEnumerate.push_back( 0 );
     prevControlValue.push_back( 0 );
     prevDataTime.push_back( 0 );
+  }
+}
+
+
+string ControlDerivedAverage::name = "controlled: average";
+TSemanticValue ControlDerivedAverage::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+  TObjectOrder tmpOrder = myInfo->callingInterval->getOrder();
+
+  if( myInfo->newControlBurst )
+  {
+    totalValue[ tmpOrder ] = 0.0;
+    totalTime[ tmpOrder ] = 0.0;
+  }
+
+  TRecordTime tmpBurstDuration = myInfo->dataEndTime - myInfo->dataBeginTime;
+  totalValue[ tmpOrder ] += myInfo->values[ 1 ] * tmpBurstDuration;
+  totalTime[ tmpOrder ] += tmpBurstDuration;
+
+  if ( totalTime[ tmpOrder ] == 0.0 )
+    return 0.0;
+
+  return totalValue[ tmpOrder ] / totalTime[ tmpOrder ];
+}
+
+void ControlDerivedAverage::init( KWindow *whichWindow )
+{
+  TObjectOrder size = 0;
+
+  totalValue.clear();
+  totalTime.clear();
+
+  if( whichWindow->getLevel() >= SYSTEM )
+    size = whichWindow->getTrace()->totalCPUs();
+  else
+    size = whichWindow->getTrace()->totalThreads();
+
+  totalValue.reserve( size );
+  totalTime.reserve( size );
+
+  for( TObjectOrder i = 0; i < size; ++i )
+  {
+    totalValue.push_back( 0.0 );
+    totalTime.push_back( 0.0 );
   }
 }

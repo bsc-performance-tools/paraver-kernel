@@ -103,6 +103,7 @@ void createSemantic()
   functions[1].push_back( new ControlDerivedMaximum() );
   functions[1].push_back( new ControlDerivedAdd() );
   functions[1].push_back( new ControlDerivedEnumerate() );
+  functions[1].push_back( new ControlDerivedAverage() );
 
 
   /**************************

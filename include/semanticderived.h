@@ -38,7 +38,7 @@ class SemanticDerived: public SemanticHigh
 
     virtual bool isControlDerived() = 0;
 
-    virtual SemanticInfoType getSemanticInfoType() const
+    virtual SemanticInfoType getSemanticInfoType() const override
     {
       return SAME_TYPE;
     }

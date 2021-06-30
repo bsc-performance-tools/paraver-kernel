@@ -773,4 +773,77 @@ class ControlDerivedEnumerate: public SemanticDerived
 
 };
 
+
+class ControlDerivedAverage: public SemanticDerived
+{
+  public:
+    typedef enum
+    {
+      MAXPARAM = 0
+    } TParam;
+
+    ControlDerivedAverage()
+    {
+      setDefaultParam();
+    }
+
+    ~ControlDerivedAverage()
+    {}
+
+    virtual TParamIndex getMaxParam() const override
+    {
+      return MAXPARAM;
+    }
+
+    virtual bool isControlDerived() override
+    {
+      return controlDerived;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+    virtual void init( KWindow *whichWindow ) override;
+
+    virtual std::string getName() override
+    {
+      return ControlDerivedAverage::name;
+    }
+
+    virtual SemanticFunction *clone() override
+    {
+      return new ControlDerivedAverage( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const override
+    {
+      return NO_TYPE;
+    }
+
+  protected:
+    virtual const bool getMyInitFromBegin() override
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      return ( TParamValue ) 0;
+    }
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      return "";
+    }
+
+  private:
+    static const bool initFromBegin = false;
+    static const bool controlDerived = true;
+    static std::string name;
+
+    std::vector<TSemanticValue> totalValue;
+    std::vector<TRecordTime> totalTime;
+
+};
+
 #endif // SEMANTICDERIVEDFUNCTIONS_H_INCLUDED
