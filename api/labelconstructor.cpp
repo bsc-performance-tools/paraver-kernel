@@ -61,7 +61,7 @@ struct numpunct_nogroup : std::numpunct<char> {
 void LabelConstructor::init()
 {
   myLocaleWithoutThousands = locale( locale( "" ), new numpunct_nogroup );
-  myLocaleWithThousands = locale( locale( "" ), new numpunct_group );
+  myLocaleWithThousands    = locale( locale( "" ), new numpunct_group );
   point = use_facet<numpunct<char> >(myLocaleWithThousands).decimal_point();
   label.imbue( myLocaleWithThousands );
   columnLabel.imbue( myLocaleWithThousands );
@@ -310,33 +310,48 @@ string LabelConstructor::timeLabel( ptime value, PRV_UINT32 precision )
   return sstrTimeLabel.str();
 }
 
+// whichStream cleared and preset to myLocaleWithThousands
+void LabelConstructor::presetBaseFormat( std::stringstream &whichStream,
+                                         PRV_UINT32 precision )
+{
+  whichStream.clear();
+  whichStream.str( "" );
+
+  whichStream << fixed;
+  whichStream.precision( precision );
+  whichStream.imbue( myLocaleWithThousands );
+}
+
+
+void LabelConstructor::presetBaseTimeFormat( std::stringstream &whichStream,
+                                             TTimeUnit unit,
+                                             PRV_UINT32 precision )
+{
+  if( unit == NS )
+    precision = 0;
+
+  presetBaseFormat( whichStream, precision );
+}
+
 
 string LabelConstructor::timeLabel( TTime value, TTimeUnit unit, PRV_UINT32 precision )
 {
-  sstrTimeLabel.clear();
-  sstrTimeLabel.str( "" );
-
-  sstrTimeLabel << fixed;
-  if( unit == NS )
-    sstrTimeLabel.precision( 0 );
-  else
-    sstrTimeLabel.precision( precision );
-
-  sstrTimeLabel.imbue( myLocaleWithThousands );
+  presetBaseTimeFormat( sstrTimeLabel, unit, precision );
 
   sstrTimeLabel << value;
-
   sstrTimeLabel << " " << LABEL_TIMEUNIT[ unit ];
 
   return sstrTimeLabel.str();
 }
 
-
+// "100,123.456789" --> 100123.456789
 bool LabelConstructor::getTimeValue( const string& timeLabel,
-                                     TTimeUnit unit, PRV_UINT32 precision,
+                                     TTimeUnit unit,
+                                     PRV_UINT32 precision,
                                      TTime& value )
 {
   bool done = false;
+  
   sstrTimeLabel.clear();
   sstrTimeLabel.str( "" );
 

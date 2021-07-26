@@ -32,6 +32,9 @@
 #include "trace.h"
 
 #define PARAM_SEPARATOR "|"
+// TODO: Improve to global parameter
+#define PERCENT_PRECISION 2
+
 
 using boost::posix_time::ptime;
 
@@ -81,10 +84,10 @@ class LabelConstructor
                                  bool text, PRV_UINT32 precision, bool hexMode );
 
     static std::string eventLabel( Window *whichWindow,
-                              TEventType whichType,
-                              TSemanticValue whichValue,
-                              bool text );
-
+                                   TEventType whichType,
+                                   TSemanticValue whichValue,
+                                   bool text );
+ 
     static std::string eventTypeLabel( Window *whichWindow,
                                   TEventType whichType,
                                   bool text );
@@ -109,6 +112,12 @@ class LabelConstructor
     static std::string getDataFileSuffix( const TTextFormat& format = TTextFormat::PLAIN );
 
     static std::string getCFG4DParameterOriginalName( Window *whichWindow, TWindowLevel whichLevel, TParamIndex whichParam );
+
+    static void presetBaseFormat( std::stringstream &whichStream,
+                                  PRV_UINT32 precision = PERCENT_PRECISION );
+    static void presetBaseTimeFormat( std::stringstream &whichStream,
+                                      TTimeUnit unit = NS,
+                                      PRV_UINT32 precision = 0 );
 
   private:
     static std::stringstream sstrObjectLabel;
