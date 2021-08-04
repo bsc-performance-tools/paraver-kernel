@@ -53,6 +53,7 @@ TraceEditBlocks::TraceEditBlocks( const ResourceModel& resource, const ProcessMo
 TraceEditBlocks::~TraceEditBlocks()
 {
   file->close();
+  delete file;
 }
 
 TData *TraceEditBlocks::getLastRecord( PRV_UINT16 position ) const
