@@ -813,6 +813,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     file->close();
     delete body;
     body = nullptr;
+    delete file;
   }
   else
   {
@@ -820,8 +821,6 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   }
 
   blocks->setFileLoaded();
-
-  delete file;
 
   ready = true;
 }
