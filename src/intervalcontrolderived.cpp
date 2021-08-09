@@ -65,9 +65,6 @@ KRecordList *IntervalControlDerived::init( TRecordTime initialTime, TCreateList 
   begin = childIntervals[ 1 ]->getBegin()->clone();
   end = childIntervals[ 1 ]->getEnd()->clone();
 
-  while ( childIntervals[ 0 ]->getEnd()->getTime() > begin->getTime() )
-    childIntervals[ 0 ]->calcPrev( displayList );
-
   while ( childIntervals[ 0 ]->getEnd()->getTime() < begin->getTime() )
     childIntervals[ 0 ]->calcNext( displayList );
 
@@ -266,20 +263,10 @@ void IntervalControlDerived::setChildren()
 
   childIntervals.clear();
 
-  if ( window->getParent( 0 )->getLevel() > window->getParent( 1 )->getLevel() )
-  {
-    shift1.setSemanticShift( window->getShift( 0 ) );
-    shift2.setSemanticShift( window->getShift( 1 ) );
-    window1 = ( KWindow * ) window->getParent( 0 );
-    window2 = ( KWindow * ) window->getParent( 1 );
-  }
-  else
-  {
-    shift1.setSemanticShift( window->getShift( 1 ) );
-    shift2.setSemanticShift( window->getShift( 0 ) );
-    window1 = ( KWindow * ) window->getParent( 1 );
-    window2 = ( KWindow * ) window->getParent( 0 );
-  }
+  shift1.setSemanticShift( window->getShift( 0 ) );
+  shift2.setSemanticShift( window->getShift( 1 ) );
+  window1 = ( KWindow * ) window->getParent( 0 );
+  window2 = ( KWindow * ) window->getParent( 1 );
 
   if ( window1->getLevel() == APPLICATION )
   {
@@ -347,7 +334,8 @@ void IntervalControlDerived::setChildren()
     }
     else
       childIntervals.push_back( window2->getLevelInterval( TOPCOMPOSE1,
-                                window2->getTrace()->getGlobalTask( tmpAppl, tmpTask ), true ) );
+                                                           window2->getTrace()->getGlobalTask( tmpAppl, tmpTask ),
+                                                           true ) );
   }
   else if ( window2->getLevel() == THREAD )
   {

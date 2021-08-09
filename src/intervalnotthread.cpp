@@ -158,7 +158,7 @@ KRecordList *IntervalNotThread::calcPrev( KRecordList *displayList, bool initCal
 
   TObjectOrder i = 0;
   std::multimap<TRecordTime,TObjectOrder>::iterator itChild = orderedChildren.begin();
-  while( itChild->first == begin->getTime() )
+  while( itChild->first == end->getTime() )
   {
     if ( childIntervals[ itChild->second ]->getBegin()->getTime() >= end->getTime() )
       childIntervals[ itChild->second ]->calcPrev( displayList );
