@@ -42,6 +42,7 @@ missing
 obj/
 paramedir
 paramedir.bin
+paramedir.bin.exe
 paraver-kernel.depend
 paraver-kernel-*.tar.gz
 paraver-kernel-win32/Release/
