@@ -36,14 +36,14 @@ test "x$prefix" = xNONE && prefix=$ac_default_prefix
 AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
-AM_PATH_XML2
-
 # Search for available compilers and preprocessor
 AC_PROG_CC(gcc xlc cc)
 AC_PROG_CXX(g++ xlC CC)
 AC_PROG_CPP
 AC_PROG_CXXCPP
 AC_PROG_SED
+
+AM_PATH_XML2
 
 AX_BOOST_BASE(1.36)
 AX_BOOST_SERIALIZATION
