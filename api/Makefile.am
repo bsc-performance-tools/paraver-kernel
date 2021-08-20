@@ -21,7 +21,7 @@ endif
 
 libparavertraceconfig_la_SOURCES = $(PCFPARSER_FILES)
 
-libparavertraceconfig_la_CXXFLAGS = -I../include/ -I../api/ -I../ -I../../ -O2 -g0  -Wa,-mbig-obj $(BOOST_CPPFLAGS) $(CXXFLAGS_EXTRAE) $(XML_CPPFLAGS) $(MINGW_CPPFLAGS) -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -DBOOST_DATE_TIME_POSIX_TIME_STD_CONFIG
+libparavertraceconfig_la_CXXFLAGS = -I../include/ -I../api/ -I../ -I../../ -O2 -g0 $(BOOST_CPPFLAGS) $(CXXFLAGS_EXTRAE) $(XML_CPPFLAGS) $(MINGW_CPPFLAGS) -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -DBOOST_DATE_TIME_POSIX_TIME_STD_CONFIG $(OPENMP_CXXFLAGS)
 
 libparaver_api_la_LIBADD = libparavertraceconfig.la
 
