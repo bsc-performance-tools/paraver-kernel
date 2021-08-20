@@ -61,7 +61,7 @@ libparaver_api_la_SOURCES = \
                     workspace.cpp \
                     workspacemanager.cpp
 
-if MINGW_ENABLED
+if !MINGW_ENABLED
   libparaver_api_la_SOURCES += $(PCFPARSER_FILES)
 endif
 
