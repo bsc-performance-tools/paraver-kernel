@@ -96,8 +96,8 @@ AC_DEFUN([AX_PROG_ENABLE_OPENMP],
 
    if test "${enable_openmp}" = "yes" ; then
       AC_DEFINE([PARALLEL_ENABLED], 1, [Parallel version enabled by user.])
-      CXXFLAGS="$CXXFLAGS -fopenmp"
-      LDFLAGS="$LDFLAGS -fopenmp"
+      AC_SUBST( [OPENMP_CXXFLAGS], [-fopenmp] )
+      AC_SUBST( [OPENMP_LDFLAGS], [-fopenmp] )
    fi
 ])
 

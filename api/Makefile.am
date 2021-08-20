@@ -1,6 +1,8 @@
 
 pkglib_LTLIBRARIES = libparaver-api.la
 
+noinst_LTLIBRARIES = libparavertraceconfig.la
+
 
 if MAKE_OLD_PCFPARSER
   PCFPARSER_FILES=  ../utils/pcfparser/old/LibException.cpp \
@@ -17,6 +19,11 @@ else
                   ../utils/pcfparser/UIParaverTraceConfig.cpp
 endif
 
+libparavertraceconfig_la_SOURCES = $(PCFPARSER_FILES)
+
+libparavertraceconfig_la_CXXFLAGS = -I../include/ -I../api/ -I../ -I../../ -O2 -g0  -Wa,-mbig-obj $(BOOST_CPPFLAGS) $(CXXFLAGS_EXTRAE) $(XML_CPPFLAGS) $(MINGW_CPPFLAGS) -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -DBOOST_DATE_TIME_POSIX_TIME_STD_CONFIG
+
+libparaver_api_la_LIBADD = libparavertraceconfig.la
 
 libparaver_api_la_SOURCES = \
                     cfg.cpp \
@@ -54,8 +61,7 @@ libparaver_api_la_SOURCES = \
                     tracesoftwarecounters.cpp \
                     window.cpp \
                     workspace.cpp \
-                    workspacemanager.cpp \
-                    $(PCFPARSER_FILES)
+                    workspacemanager.cpp
 
 include_HEADERS = \
                   cfg.h \
