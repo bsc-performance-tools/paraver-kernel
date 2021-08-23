@@ -36,6 +36,9 @@ test "x$prefix" = xNONE && prefix=$ac_default_prefix
 AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
+: ${CFLAGS=""}
+: ${CXXFLAGS=""}
+
 # Search for available compilers and preprocessor
 AC_PROG_CC(gcc xlc cc)
 AC_PROG_CXX(g++ xlC CC)
