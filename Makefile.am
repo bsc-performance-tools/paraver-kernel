@@ -5,11 +5,7 @@ SUBDIRS = \
 	api \
 	utils
 
-
 bin_PROGRAMS = paramedir.bin
-
-
-
 
 paramedir_bin_SOURCES = \
 	api/paramedir.cpp
@@ -19,12 +15,7 @@ paramedir_bin_LDADD = \
 	api/libparaver-api.la \
 	src/libparaver-kernel.la
 
-
 install-data-hook:
-	if test -f $(DESTDIR)$(bindir)/paramedir ; then \
-		cp -f $(DESTDIR)$(bindir)/paramedir $(DESTDIR)$(bindir)/old.paramedir ; \
-	fi
-
 if ENABLE_DEPENDENCIES_AWARE_INSTALL
 	$(SED) "s|@inst_BOOST_LIBDIR@|${BOOST_LDFLAGS}|g ; s|-L||g ; \
 					s|@inst_LOGIN_NODE_DETECTION@|if [ ! \"$$\(hostname \| grep login\)x\" = \"x\" ]; then export OMP_NUM_THREADS=4 ; ulimit -Ss 128000 ; fi|g" < ./docs/paramedir > $(DESTDIR)$(bindir)/paramedir
@@ -42,7 +33,6 @@ endif
 
 uninstall-hook:
 	test -f $(DESTDIR)$(bindir)/paramedir            && rm  -fv $(DESTDIR)$(bindir)/paramedir
-	test -f $(DESTDIR)$(bindir)/old.paramedir        && rm  -fv $(DESTDIR)$(bindir)/old.paramedir
 
 	test -d $(DESTDIR)$(prefix)/share/filters-config && rm -rfv $(DESTDIR)$(prefix)/share/filters-config
 
@@ -53,6 +43,7 @@ dist-hook:
 	$(mkdir_p) $(distdir)/docs/filters
 	$(install_sh_PROGRAM) -m 775 ./docs/filters/*.xml $(distdir)/docs/filters
 #	$(install_sh_DATA) ./docs/filters/*.xml $(distdir)/docs/filters
+
 
 installcheck-local:
 	test -f $(DESTDIR)$(bindir)/paramedir && \
