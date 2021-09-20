@@ -1,6 +1,8 @@
 Library dependencies:
 	- Boost >= 1.36 (www.boost.org)
 	- Boost Serialization (www.boost.org)
+  - Boost Date-Time (www.boost.org)
+  - libssl (www.openssl.org)
 	- Zlib (zlib.net)
   - libxml2 (xmlsoft.org)
 
@@ -9,4 +11,3 @@ If you have installed these packages from a package manager, remember to install
 Read INSTALL file for installation instructions.
 
 Please send any question or suggestion to tools@bsc.es
-
