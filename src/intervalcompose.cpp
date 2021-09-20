@@ -153,13 +153,14 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
     end = childIntervals[ 0 ]->getEnd()->clone();
 
     tmpValue = childIntervals[ 0 ]->getValue();
+
+    childIntervals[ 0 ]->calcNext( displayList );
+
     if ( *end == *endRecord )
     {
       currentValue = tmpValue;
       return displayList;
     }
-
-    childIntervals[ 0 ]->calcNext( displayList );
 
     while ( tmpValue == childIntervals[ 0 ]->getValue() )
     {
