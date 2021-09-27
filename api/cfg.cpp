@@ -348,8 +348,6 @@ bool CFGLoader::isCFGFile( const string& filename )
 
   if ( hasCFGExtension( filename ) )
   {
-    // TODO: Read shebang
-    // Currently: detect first two tokens
     map< string, bool > found;
     found[ CFG_SHEBANG ] = false;
     found[ CFG_HEADER_VERSION ] = false;
