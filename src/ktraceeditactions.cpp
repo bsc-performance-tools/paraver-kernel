@@ -537,7 +537,7 @@ bool EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
     TTaskOrder taskLoc;
 
     tmpSequence->getCurrentTrace()->getThreadLocation( it->getThread(), applLoc, taskLoc, firstThread );
-    firstThread = it->getThread();
+    firstThread = tmpSequence->getCurrentTrace()->getFirstThread( applLoc, taskLoc );
     lastThread = tmpSequence->getCurrentTrace()->getLastThread( applLoc, taskLoc );
 
     if( countThreadsPerFile.count( currentThreadFile[ it->getThread() ] ) > 0 )

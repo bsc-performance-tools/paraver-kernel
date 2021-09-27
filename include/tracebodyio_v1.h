@@ -62,6 +62,9 @@ class TraceBodyIO_v1 : public TraceBodyIO
     // Multievent lines
     typedef struct TMultiEventCommonInfo
     {
+      // Used for multistreaming output (i.e. event driven cutter)
+      std::fstream *myStream;
+
       TThreadOrder thread;
       TCPUOrder cpu;
       TRecordTime time;

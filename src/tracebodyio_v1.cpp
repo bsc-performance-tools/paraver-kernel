@@ -30,7 +30,7 @@ using namespace std;
 
 string TraceBodyIO_v1::multiEventLine;
 TraceBodyIO_v1::TMultiEventCommonInfo TraceBodyIO_v1::multiEventCommonInfo =
-        { (TThreadOrder)0, (TCPUOrder)0, (TRecordTime)0 };
+        { nullptr, (TThreadOrder)0, (TCPUOrder)0, (TRecordTime)0 };
 
 istringstream TraceBodyIO_v1::fieldStream;
 istringstream TraceBodyIO_v1::strLine;
@@ -156,6 +156,7 @@ void TraceBodyIO_v1::write( fstream& whichStream,
       {
         writeReady = writePendingMultiEvent( whichTrace );
 
+        multiEventCommonInfo.myStream = &whichStream;
         multiEventCommonInfo.cpu = record->getCPU();
         multiEventCommonInfo.thread = record->getThread();
         multiEventCommonInfo.time = record->getTime();
@@ -654,6 +655,9 @@ bool TraceBodyIO_v1::writePendingMultiEvent( const KTrace& whichTrace ) const
 
     line += ostr.str();
 
+    bufferWrite( *multiEventCommonInfo.myStream, true );
+
+    multiEventCommonInfo.myStream = nullptr;
     multiEventCommonInfo.cpu = 0;
     multiEventCommonInfo.thread = 0;
     multiEventCommonInfo.time = 0;
@@ -661,7 +665,7 @@ bool TraceBodyIO_v1::writePendingMultiEvent( const KTrace& whichTrace ) const
     multiEventLine.clear();
   }
 
-  return writeLine;
+  return false;
 }
 
 
