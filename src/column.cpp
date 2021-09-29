@@ -49,9 +49,7 @@ Column<ValueType>::Column( const Column<ValueType>& source ):
 {
   current_cell = Cell<ValueType>( source.current_cell );
 
-  typename std::vector<Cell<ValueType> >::const_iterator it_aux;
-  for ( it_aux = source.cells.begin(); it_aux != source.cells.end(); ++it_aux )
-    cells.push_back( Cell<ValueType>( *it_aux ) );
+  cells = source.cells;
 }
 
 

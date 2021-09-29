@@ -139,37 +139,31 @@ void WindowCloneManager::clone( Window *whichWindow )
 
 RowsTranslator::RowsTranslator( const RowsTranslator& source )
 {
-  for ( size_t ii = 0; ii < source.childInfo.size() - 1; ii++ )
-  {
-    childInfo.push_back( RowChildInfo() );
-    childInfo[ii].oneToOne = source.childInfo[ii].oneToOne;
-    childInfo[ii].rowChildren = vector< pair< TObjectOrder, TObjectOrder > > ( source.childInfo[ii].rowChildren );
-    childInfo[ii].numRows = source.childInfo[ii].numRows;
-  }
+  childInfo = source.childInfo;
 }
 
 
 RowsTranslator::RowsTranslator( vector<KWindow *>& kwindows )
 {
-  for ( size_t ii = 0; ii < kwindows.size() - 1; ii++ )
+  for ( size_t ii = 0; ii < kwindows.size() - 1; ++ii )
   {
     childInfo.push_back( RowChildInfo() );
-    childInfo[ii].oneToOne = ( kwindows[ii]->getWindowLevelObjects() ==
-                               kwindows[ii + 1]->getWindowLevelObjects() );
-    childInfo[ii].numRows = kwindows[ii]->getWindowLevelObjects();
-    if ( !childInfo[ii].oneToOne )
+    childInfo[ii].oneToOne = ( kwindows[ ii ]->getWindowLevelObjects() ==
+                               kwindows[ ii + 1 ]->getWindowLevelObjects() );
+    childInfo[ii].numRows = kwindows[ ii ]->getWindowLevelObjects();
+    if ( !childInfo[ ii ].oneToOne )
     {
-      KTrace *auxTrace = ( KTrace* )kwindows[ii]->getTrace();
-      for ( TObjectOrder iRow = 0; iRow < kwindows[ii]->getWindowLevelObjects(); iRow++ )
+      KTrace *auxTrace = ( KTrace* )kwindows[ ii ]->getTrace();
+      for ( TObjectOrder iRow = 0; iRow < kwindows[ ii ]->getWindowLevelObjects(); ++iRow )
       {
         pair< TObjectOrder, TObjectOrder > range;
 
         range.first = auxTrace->getFirst( iRow,
-                                          kwindows[ii]->getLevel(),
-                                          kwindows[ii+1]->getLevel() );
+                                          kwindows[ ii ]->getLevel(),
+                                          kwindows[ ii+1 ]->getLevel() );
         range.second =  auxTrace->getLast( iRow,
-                                           kwindows[ii]->getLevel(),
-                                           kwindows[ii+1]->getLevel() );
+                                           kwindows[ ii ]->getLevel(),
+                                           kwindows[ ii+1 ]->getLevel() );
         childInfo[ii].rowChildren.push_back( range );
       }
     }

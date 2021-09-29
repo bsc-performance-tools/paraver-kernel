@@ -29,12 +29,7 @@ template <typename ValueType>
 Cube<ValueType>::Cube( PRV_UINT32 numPlanes, PRV_UINT32 numCols, PRV_UINT16 numStats ):
   nplanes( 0 ), ncols( numCols ), nstat( numStats ), crow( 0 )
 {
-  Matrix<ValueType> *tmp_mat = nullptr;
-
-  for ( PRV_UINT32 ii = 0; ii < numPlanes; ii++ )
-  {
-    planes.push_back( tmp_mat );
-  }
+  planes.assign( numPlanes, nullptr );
 }
 
 

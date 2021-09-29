@@ -160,16 +160,6 @@ MemoryTrace::iterator *IntervalShift::getEnd() const
 
 void IntervalShift::popSemanticBuffer()
 {
-  IntervalShift::ShiftSemanticInfo tmpElem;
-
-  if( semanticShift > 0 )
-    tmpElem = semanticBuffer.front();
-  else
-    tmpElem = semanticBuffer.back();
-
-  delete tmpElem.begin;
-  delete tmpElem.end;
-
   if( semanticShift > 0 )
     semanticBuffer.pop_front();
   else
@@ -184,14 +174,8 @@ void IntervalShift::clearSemanticBuffer()
 
 void IntervalShift::addSemanticBuffer()
 {
-  ShiftSemanticInfo tmpInfo;
-
-  tmpInfo.begin = childIntervals[ 0 ]->getBegin()->clone();
-  tmpInfo.end = childIntervals[ 0 ]->getEnd()->clone();
-  tmpInfo.semanticValue = childIntervals[ 0 ]->getValue();
-  
   if( semanticShift > 0 )
-    semanticBuffer.push_back( tmpInfo );
+    semanticBuffer.emplace_back( childIntervals[ 0 ]->getValue(), childIntervals[ 0 ]->getBegin()->clone(), childIntervals[ 0 ]->getEnd()->clone() );
   else
-    semanticBuffer.push_front( tmpInfo );
+    semanticBuffer.emplace_front( childIntervals[ 0 ]->getValue(), childIntervals[ 0 ]->getBegin()->clone(), childIntervals[ 0 ]->getEnd()->clone() );
 }

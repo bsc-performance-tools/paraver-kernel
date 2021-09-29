@@ -1414,6 +1414,9 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->propertiesAliasCFG4D = propertiesAliasCFG4D;
   clonedHistogramProxy->statisticsAliasCFG4D = statisticsAliasCFG4D;
 
+  clonedHistogramProxy->semanticSortCriteria = semanticSortCriteria;
+  clonedHistogramProxy->sortSemanticReverse = sortSemanticReverse;
+
   return clonedHistogramProxy;
 }
 

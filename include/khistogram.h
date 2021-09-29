@@ -78,8 +78,6 @@ class RowsTranslator
                        TObjectOrder& endRow ) const;
     TObjectOrder totalRows() const;
 
-    RowsTranslator *clone();
-
   protected:
 
   private:

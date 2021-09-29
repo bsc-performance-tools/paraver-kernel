@@ -93,6 +93,21 @@ class IntervalShift : public IntervalHigh
     class ShiftSemanticInfo
     {
       public:
+        ShiftSemanticInfo() : semanticValue( 0.0 ), begin( nullptr ), end( nullptr )
+        {}
+
+        ShiftSemanticInfo( TSemanticValue whichSemanticValue,
+                           MemoryTrace::iterator *whichBegin,
+                           MemoryTrace::iterator *whichEnd ) :
+          semanticValue( whichSemanticValue ), begin( whichBegin ), end( whichEnd )
+        {}
+
+        ~ShiftSemanticInfo()
+        {
+          if( begin != nullptr ) delete begin;
+          if( end != nullptr ) delete end;
+        }
+
         TSemanticValue semanticValue;
         MemoryTrace::iterator *begin;
         MemoryTrace::iterator *end;
