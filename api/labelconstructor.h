@@ -31,9 +31,9 @@
 #include "paraverconfig.h"
 #include "trace.h"
 
-#define PARAM_SEPARATOR "|"
+constexpr char PARAM_SEPARATOR = '|';
 // TODO: Improve to global parameter
-#define PERCENT_PRECISION 2
+constexpr PRV_UINT16 PERCENT_PRECISION = 2;
 
 
 using boost::posix_time::ptime;

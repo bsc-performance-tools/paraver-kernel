@@ -25,222 +25,222 @@
 #ifndef PARAVERLABELS_H_INCLUDED
 #define PARAVERLABELS_H_INCLUDED
 
-#define CFG_CURRENT_VERSION "3.4"
+constexpr char CFG_CURRENT_VERSION[] = "3.4";
 
-#define OLDCFG_HEADER_VERSION "version"
-#define OLDCFG_HEADER_NUM_WINDOWS "number_of_windows"
-#define OLDCFG_HEADER_BEGIN_DESCRIPTION "begin_description"
-#define OLDCFG_HEADER_END_DESCRIPTION "end_description"
+constexpr char OLDCFG_HEADER_VERSION[] = "version";
+constexpr char OLDCFG_HEADER_NUM_WINDOWS[] = "number_of_windows";
+constexpr char OLDCFG_HEADER_BEGIN_DESCRIPTION[] = "begin_description";
+constexpr char OLDCFG_HEADER_END_DESCRIPTION[] = "end_description";
 
-#define OLDCFG_LVL_APPL     "appl"
-#define OLDCFG_LVL_PTASK    "ptask"
-#define OLDCFG_LVL_WORKLOAD "workload"
-#define OLDCFG_LVL_TASK     "task"
-#define OLDCFG_LVL_THREAD   "thread"
-#define OLDCFG_LVL_CPU      "cpu"
-#define OLDCFG_LVL_NODE     "node"
-#define OLDCFG_LVL_SYSTEM    "system"
+constexpr char OLDCFG_LVL_APPL[]     = "appl";
+constexpr char OLDCFG_LVL_PTASK[]    = "ptask";
+constexpr char OLDCFG_LVL_WORKLOAD[] = "workload";
+constexpr char OLDCFG_LVL_TASK[]     = "task";
+constexpr char OLDCFG_LVL_THREAD[]   = "thread";
+constexpr char OLDCFG_LVL_CPU[]      = "cpu";
+constexpr char OLDCFG_LVL_NODE[]     = "node";
+constexpr char OLDCFG_LVL_SYSTEM[]   = "system";
 
-#define OLDCFG_LVL_HISTO_WORKLOAD "Workload"
-#define OLDCFG_LVL_HISTO_APPL "Application"
-#define OLDCFG_LVL_HISTO_TASK "Task"
-#define OLDCFG_LVL_HISTO_THREAD "Thread"
-#define OLDCFG_LVL_HISTO_SYSTEM "System"
-#define OLDCFG_LVL_HISTO_NODE "Node"
-#define OLDCFG_LVL_HISTO_CPU "CPU"
+constexpr char OLDCFG_LVL_HISTO_WORKLOAD[] = "Workload";
+constexpr char OLDCFG_LVL_HISTO_APPL[] = "Application";
+constexpr char OLDCFG_LVL_HISTO_TASK[] = "Task";
+constexpr char OLDCFG_LVL_HISTO_THREAD[] = "Thread";
+constexpr char OLDCFG_LVL_HISTO_SYSTEM[] = "System";
+constexpr char OLDCFG_LVL_HISTO_NODE[] = "Node";
+constexpr char OLDCFG_LVL_HISTO_CPU[] = "CPU";
 
-#define OLDCFG_LVL_TOPCOMPOSE       "topcompose"
-#define OLDCFG_LVL_TOPCOMPOSE1      "topcompose1"
-#define CFG_LVL_EXTRATOPCOMPOSE1    "extratopcompose1"
-#define OLDCFG_LVL_TOPCOMPOSE2      "topcompose2"
-#define OLDCFG_LVL_COMPOSE_WORKLOAD "compose_workload"
-#define OLDCFG_LVL_COMPOSE_APPL     "compose_appl"
-#define OLDCFG_LVL_COMPOSE_TASK     "compose_task"
-#define OLDCFG_LVL_COMPOSE_THREAD   "compose_thread"
-#define OLDCFG_LVL_COMPOSE_CPU      "compose_cpu"
-#define OLDCFG_LVL_COMPOSE_NODE     "compose_node"
-#define OLDCFG_LVL_COMPOSE_SYSTEM   "compose_system"
-#define OLDCFG_LVL_COMPOSE1         "compose1"
-#define OLDCFG_LVL_COMPOSE2         "compose2"
+constexpr char OLDCFG_LVL_TOPCOMPOSE[] =       "topcompose";
+constexpr char OLDCFG_LVL_TOPCOMPOSE1[] =      "topcompose1";
+constexpr char CFG_LVL_EXTRATOPCOMPOSE1[] =    "extratopcompose1";
+constexpr char OLDCFG_LVL_TOPCOMPOSE2[] =      "topcompose2";
+constexpr char OLDCFG_LVL_COMPOSE_WORKLOAD[] = "compose_workload";
+constexpr char OLDCFG_LVL_COMPOSE_APPL[] =     "compose_appl";
+constexpr char OLDCFG_LVL_COMPOSE_TASK[] =     "compose_task";
+constexpr char OLDCFG_LVL_COMPOSE_THREAD[] =   "compose_thread";
+constexpr char OLDCFG_LVL_COMPOSE_CPU[] =      "compose_cpu";
+constexpr char OLDCFG_LVL_COMPOSE_NODE[] =     "compose_node";
+constexpr char OLDCFG_LVL_COMPOSE_SYSTEM[] =   "compose_system";
+constexpr char OLDCFG_LVL_COMPOSE1[] =         "compose1";
+constexpr char OLDCFG_LVL_COMPOSE2[] =         "compose2";
 
 // TIMELINE CFGs TAGS
-#define OLDCFG_TAG_WNDW_NAME      "window_name"
-#define OLDCFG_TAG_WNDW_TYPE      "window_type"
-#define OLDCFG_TAG_WNDW_ID        "window_id"
-#define OLDCFG_TAG_WNDW_FACTORS   "window_factors"
-#define CFG_TAG_WNDW_SHIFTS       "window_shifts"
-#define OLDCFG_TAG_WNDW_POSX      "window_position_x"
-#define OLDCFG_TAG_WNDW_POSY      "window_position_y"
-#define OLDCFG_TAG_WNDW_WIDTH      "window_width"
-#define OLDCFG_TAG_WNDW_HEIGHT      "window_height"
-#define OLDCFG_TAG_WNDW_COMM_LINES  "window_comm_lines_enabled"
-#define OLDCFG_TAG_WNDW_FLAGS_ENABLED  "window_flags_enabled"
-#define OLDCFG_TAG_WNDW_NON_COLOR_MODE  "window_noncolor_mode"
-#define OLDCFG_TAG_WNDW_COLOR_MODE  "window_color_mode"
-#define OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED  "window_custom_color_enabled"
-#define OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE  "window_custom_color_palette"
-#define OLDCFG_TAG_WNDW_SEMANTIC_SCALE_MIN_AT_ZERO  "window_semantic_scale_min_at_zero"
-#define OLDCFG_TAG_WNDW_UNITS     "window_units"
-#define OLDCFG_TAG_WNDW_OPERATION "window_operation"
-#define OLDCFG_TAG_WNDW_MAXIMUM_Y "window_maximum_y"
-#define OLDCFG_TAG_WNDW_MINIMUM_Y "window_minimum_y"
-#define OLDCFG_TAG_WNDW_COMPUTE_Y_MAX "window_compute_y_max"
-#define OLDCFG_TAG_WNDW_LEVEL     "window_level"
-#define OLDCFG_TAG_WNDW_SCALE_RELATIVE "window_scale_relative"
-#define OLDCFG_TAG_WNDW_OBJECT "window_object"
-#define OLDCFG_TAG_WNDW_IDENTIFIERS "window_identifiers"
-#define OLDCFG_TAG_WNDW_ZOOM_OBJECTS "window_zoom_objects"
-#define OLDCFG_TAG_WNDW_BEGIN_TIME "window_begin_time"
-#define OLDCFG_TAG_WNDW_STOP_TIME "window_stop_time"
-#define OLDCFG_TAG_WNDW_END_TIME "window_end_time"
-#define OLDCFG_TAG_WNDW_BEGIN_TIME_RELATIVE "window_begin_time_relative"
-#define OLDCFG_TAG_WNDW_NUMBER_OF_ROWS "window_number_of_row"
-#define OLDCFG_TAG_WNDW_SELECTED_FUNCTIONS "window_selected_functions"
-#define OLDCFG_TAG_WNDW_SEMANTIC_MODULE "window_semantic_module"
-#define OLDCFG_TAG_WNDW_COMPOSE_FUNCTIONS "window_compose_functions"
-#define OLDCFG_TAG_WNDW_FILTER_MODULE "window_filter_module"
-#define OLDCFG_TAG_WNDW_LOGICAL_FILTERED "window_logical_filtered"
-#define OLDCFG_TAG_WNDW_PHYSICAL_FILTERED "window_physical_filtered"
-#define OLDCFG_TAG_WNDW_FROMTO "window_comm_fromto"
-#define OLDCFG_TAG_WNDW_COMM_TAGSIZE "window_comm_tagsize"
-#define OLDCFG_TAG_WNDW_TYPEVAL "window_comm_typeval"
-#define OLDCFG_TAG_WNDW_OPEN "window_open"
-#define OLDCFG_TAG_WNDW_DRAW_MODE "window_drawmode"
-#define OLDCFG_TAG_WNDW_DRAW_MODE_ROWS "window_drawmode_rows"
-#define OLDCFG_TAG_WNDW_PIXEL_SIZE "window_pixel_size"
-#define OLDCFG_TAG_WNDW_LABELS_TO_DRAW "window_labels_to_draw"
-#define OLDCFG_TAG_WNDW_PUNCTUAL_COLOR_WIN "window_punctual_color_window"
-#define OLDCFG_TAG_WNDW_SYNCHRONIZE "window_synchronize"
+constexpr char OLDCFG_TAG_WNDW_NAME[] =      "window_name";
+constexpr char OLDCFG_TAG_WNDW_TYPE[] =      "window_type";
+constexpr char OLDCFG_TAG_WNDW_ID[] =        "window_id";
+constexpr char OLDCFG_TAG_WNDW_FACTORS[] =   "window_factors";
+constexpr char CFG_TAG_WNDW_SHIFTS[] =       "window_shifts";
+constexpr char OLDCFG_TAG_WNDW_POSX[] =      "window_position_x";
+constexpr char OLDCFG_TAG_WNDW_POSY[] =      "window_position_y";
+constexpr char OLDCFG_TAG_WNDW_WIDTH[] =      "window_width";
+constexpr char OLDCFG_TAG_WNDW_HEIGHT[] =      "window_height";
+constexpr char OLDCFG_TAG_WNDW_COMM_LINES[] =  "window_comm_lines_enabled";
+constexpr char OLDCFG_TAG_WNDW_FLAGS_ENABLED[] =  "window_flags_enabled";
+constexpr char OLDCFG_TAG_WNDW_NON_COLOR_MODE[] =  "window_noncolor_mode";
+constexpr char OLDCFG_TAG_WNDW_COLOR_MODE[] =  "window_color_mode";
+constexpr char OLDCFG_TAG_WNDW_CUSTOM_COLOR_ENABLED[] =  "window_custom_color_enabled";
+constexpr char OLDCFG_TAG_WNDW_CUSTOM_COLOR_PALETTE[] =  "window_custom_color_palette";
+constexpr char OLDCFG_TAG_WNDW_SEMANTIC_SCALE_MIN_AT_ZERO[] =  "window_semantic_scale_min_at_zero";
+constexpr char OLDCFG_TAG_WNDW_UNITS[] =     "window_units";
+constexpr char OLDCFG_TAG_WNDW_OPERATION[] = "window_operation";
+constexpr char OLDCFG_TAG_WNDW_MAXIMUM_Y[] = "window_maximum_y";
+constexpr char OLDCFG_TAG_WNDW_MINIMUM_Y[] = "window_minimum_y";
+constexpr char OLDCFG_TAG_WNDW_COMPUTE_Y_MAX[] = "window_compute_y_max";
+constexpr char OLDCFG_TAG_WNDW_LEVEL[] =     "window_level";
+constexpr char OLDCFG_TAG_WNDW_SCALE_RELATIVE[] = "window_scale_relative";
+constexpr char OLDCFG_TAG_WNDW_OBJECT[] = "window_object";
+constexpr char OLDCFG_TAG_WNDW_IDENTIFIERS[] = "window_identifiers";
+constexpr char OLDCFG_TAG_WNDW_ZOOM_OBJECTS[] = "window_zoom_objects";
+constexpr char OLDCFG_TAG_WNDW_BEGIN_TIME[] = "window_begin_time";
+constexpr char OLDCFG_TAG_WNDW_STOP_TIME[] = "window_stop_time";
+constexpr char OLDCFG_TAG_WNDW_END_TIME[] = "window_end_time";
+constexpr char OLDCFG_TAG_WNDW_BEGIN_TIME_RELATIVE[] = "window_begin_time_relative";
+constexpr char OLDCFG_TAG_WNDW_NUMBER_OF_ROWS[] = "window_number_of_row";
+constexpr char OLDCFG_TAG_WNDW_SELECTED_FUNCTIONS[] = "window_selected_functions";
+constexpr char OLDCFG_TAG_WNDW_SEMANTIC_MODULE[] = "window_semantic_module";
+constexpr char OLDCFG_TAG_WNDW_COMPOSE_FUNCTIONS[] = "window_compose_functions";
+constexpr char OLDCFG_TAG_WNDW_FILTER_MODULE[] = "window_filter_module";
+constexpr char OLDCFG_TAG_WNDW_LOGICAL_FILTERED[] = "window_logical_filtered";
+constexpr char OLDCFG_TAG_WNDW_PHYSICAL_FILTERED[] = "window_physical_filtered";
+constexpr char OLDCFG_TAG_WNDW_FROMTO[] = "window_comm_fromto";
+constexpr char OLDCFG_TAG_WNDW_COMM_TAGSIZE[] = "window_comm_tagsize";
+constexpr char OLDCFG_TAG_WNDW_TYPEVAL[] = "window_comm_typeval";
+constexpr char OLDCFG_TAG_WNDW_OPEN[] = "window_open";
+constexpr char OLDCFG_TAG_WNDW_DRAW_MODE[] = "window_drawmode";
+constexpr char OLDCFG_TAG_WNDW_DRAW_MODE_ROWS[] = "window_drawmode_rows";
+constexpr char OLDCFG_TAG_WNDW_PIXEL_SIZE[] = "window_pixel_size";
+constexpr char OLDCFG_TAG_WNDW_LABELS_TO_DRAW[] = "window_labels_to_draw";
+constexpr char OLDCFG_TAG_WNDW_PUNCTUAL_COLOR_WIN[] = "window_punctual_color_window";
+constexpr char OLDCFG_TAG_WNDW_SYNCHRONIZE[] = "window_synchronize";
 
 // HISTOGRAM CFGs TAGS
-#define OLDCFG_TAG_AN2D_NEW "< NEW ANALYZER2D >"
-#define OLDCFG_TAG_AN2D_NAME "Analyzer2D.Name:"
-#define OLDCFG_TAG_AN2D_X "Analyzer2D.X:"
-#define OLDCFG_TAG_AN2D_Y "Analyzer2D.Y:"
-#define OLDCFG_TAG_AN2D_WIDTH "Analyzer2D.Width:"
-#define OLDCFG_TAG_AN2D_HEIGHT "Analyzer2D.Height:"
-#define OLDCFG_TAG_AN2D_CONTROL_WINDOW "Analyzer2D.ControlWindow:"
-#define OLDCFG_TAG_AN2D_DATA_WINDOW "Analyzer2D.DataWindow:"
-#define OLDCFG_TAG_AN2D_STATISTIC "Analyzer2D.Statistic:"
-#define OLDCFG_TAG_AN2D_CALCULATE_ALL "Analyzer2D.CalculateAll:"
-#define OLDCFG_TAG_AN2D_NUM_COLUMNS "Analyzer2D.num_columns:"
-#define OLDCFG_TAG_AN2D_HIDE_COLS "Analyzer2D.HideCols:"
-#define OLDCFG_TAG_AN2D_SCIENTIFIC_NOTATION "Analyzer2D.scientific_notation:"
-#define OLDCFG_TAG_AN2D_NUM_DECIMALS "Analyzer2D.num_decimals:"
-#define OLDCFG_TAG_AN2D_THOUSANDSEP "Analyzer2D.thousandsep:"
-#define OLDCFG_TAG_AN2D_UNITS "Analyzer2D.units:"
-#define OLDCFG_TAG_AN2D_HORIZONTAL "Analyzer2D.HorizVert:"
-#define OLDCFG_TAG_AN2D_COLOR "Analyzer2D.Color:"
-#define OLDCFG_TAG_AN2D_SEMANTIC_COLOR "Analyzer2D.SemanticColor:"
-#define OLDCFG_TAG_AN2D_ZOOM "Analyzer2D.Zoom:"
-#define OLDCFG_TAG_AN2D_ACCUMULATOR "Analyzer2D.Accumulator:"
-#define OLDCFG_TAG_AN2D_ACCUM_BY_CTRL_WINDOW "Analyzer2D.AccumulateByControlWindow:"
-#define OLDCFG_TAG_AN2D_SORTCOLS "Analyzer2D.SortCols:"
-#define OLDCFG_TAG_AN2D_SORTCRITERIA "Analyzer2D.SortCriteria:"
-#define OLDCFG_TAG_AN2D_SORTREVERSE "Analyzer2D.SortReverse:"
-#define OLDCFG_TAG_AN2D_PARAMETERS "Analyzer2D.Parameters:"
-#define OLDCFG_TAG_AN2D_ANALYSISLIMITS "Analyzer2D.AnalysisLimits:"
-#define OLDCFG_TAG_AN2D_RELATIVETIME "Analyzer2D.RelativeTime:"
-#define OLDCFG_TAG_AN2D_COMPUTEYSCALE "Analyzer2D.ComputeYScale:"
-#define OLDCFG_TAG_AN2D_MINIMUM "Analyzer2D.Minimum:"
-#define OLDCFG_TAG_AN2D_MAXIMUM "Analyzer2D.Maximum:"
-#define OLDCFG_TAG_AN2D_DELTA "Analyzer2D.Delta:"
-#define OLDCFG_TAG_AN2D_COMPUTEGRADIENT "Analyzer2D.ComputeGradient:"
-#define OLDCFG_TAG_AN2D_MINIMUMGRADIENT "Analyzer2D.MinimumGradient:"
-#define OLDCFG_TAG_AN2D_MAXIMUMGRADIENT "Analyzer2D.MaximumGradient:"
-#define OLDCFG_TAG_AN2D_PIXEL_SIZE "Analyzer2D.PixelSize:"
-#define OLDCFG_TAG_AN2D_CODE_COLOR "Analyzer2D.CodeColor:"
-#define OLDCFG_TAG_AN2D_COLOR_MODE "Analyzer2D.ColorMode:"
-#define OLDCFG_TAG_AN2D_ONLY_TOTALS "Analyzer2D.ShowOnlyTotals:"
-#define OLDCFG_TAG_AN2D_SHORT_LABELS "Analyzer2D.ShortHeaderLabels:"
-#define OLDCFG_TAG_AN2D_SYNCHRONIZE "Analyzer2D.Synchronize:"
-#define OLDCFG_TAG_AN3D_CONTROLWINDOW "Analyzer2D.3D_ControlWindow:"
-#define OLDCFG_TAG_AN3D_COMPUTEYSCALE "Analyzer3D.ComputeYScale:"
-#define OLDCFG_TAG_AN3D_MINIMUM "Analyzer2D.3D_Minimum:"
-#define OLDCFG_TAG_AN3D_MAXIMUM "Analyzer2D.3D_Maximum:"
-#define OLDCFG_TAG_AN3D_DELTA "Analyzer2D.3D_Delta:"
-#define OLDCFG_TAG_AN3D_FIXEDVALUE "Analyzer2D.3D_FixedValue:"
+constexpr char OLDCFG_TAG_AN2D_NEW[] = "< NEW ANALYZER2D >";
+constexpr char OLDCFG_TAG_AN2D_NAME[] = "Analyzer2D.Name:";
+constexpr char OLDCFG_TAG_AN2D_X[] = "Analyzer2D.X:";
+constexpr char OLDCFG_TAG_AN2D_Y[] = "Analyzer2D.Y:";
+constexpr char OLDCFG_TAG_AN2D_WIDTH[] = "Analyzer2D.Width:";
+constexpr char OLDCFG_TAG_AN2D_HEIGHT[] = "Analyzer2D.Height:";
+constexpr char OLDCFG_TAG_AN2D_CONTROL_WINDOW[] = "Analyzer2D.ControlWindow:";
+constexpr char OLDCFG_TAG_AN2D_DATA_WINDOW[] = "Analyzer2D.DataWindow:";
+constexpr char OLDCFG_TAG_AN2D_STATISTIC[] = "Analyzer2D.Statistic:";
+constexpr char OLDCFG_TAG_AN2D_CALCULATE_ALL[] = "Analyzer2D.CalculateAll:";
+constexpr char OLDCFG_TAG_AN2D_NUM_COLUMNS[] = "Analyzer2D.num_columns:";
+constexpr char OLDCFG_TAG_AN2D_HIDE_COLS[] = "Analyzer2D.HideCols:";
+constexpr char OLDCFG_TAG_AN2D_SCIENTIFIC_NOTATION[] = "Analyzer2D.scientific_notation:";
+constexpr char OLDCFG_TAG_AN2D_NUM_DECIMALS[] = "Analyzer2D.num_decimals:";
+constexpr char OLDCFG_TAG_AN2D_THOUSANDSEP[] = "Analyzer2D.thousandsep:";
+constexpr char OLDCFG_TAG_AN2D_UNITS[] = "Analyzer2D.units:";
+constexpr char OLDCFG_TAG_AN2D_HORIZONTAL[] = "Analyzer2D.HorizVert:";
+constexpr char OLDCFG_TAG_AN2D_COLOR[] = "Analyzer2D.Color:";
+constexpr char OLDCFG_TAG_AN2D_SEMANTIC_COLOR[] = "Analyzer2D.SemanticColor:";
+constexpr char OLDCFG_TAG_AN2D_ZOOM[] = "Analyzer2D.Zoom:";
+constexpr char OLDCFG_TAG_AN2D_ACCUMULATOR[] = "Analyzer2D.Accumulator:";
+constexpr char OLDCFG_TAG_AN2D_ACCUM_BY_CTRL_WINDOW[] = "Analyzer2D.AccumulateByControlWindow:";
+constexpr char OLDCFG_TAG_AN2D_SORTCOLS[] = "Analyzer2D.SortCols:";
+constexpr char OLDCFG_TAG_AN2D_SORTCRITERIA[] = "Analyzer2D.SortCriteria:";
+constexpr char OLDCFG_TAG_AN2D_SORTREVERSE[] = "Analyzer2D.SortReverse:";
+constexpr char OLDCFG_TAG_AN2D_PARAMETERS[] = "Analyzer2D.Parameters:";
+constexpr char OLDCFG_TAG_AN2D_ANALYSISLIMITS[] = "Analyzer2D.AnalysisLimits:";
+constexpr char OLDCFG_TAG_AN2D_RELATIVETIME[] = "Analyzer2D.RelativeTime:";
+constexpr char OLDCFG_TAG_AN2D_COMPUTEYSCALE[] = "Analyzer2D.ComputeYScale:";
+constexpr char OLDCFG_TAG_AN2D_MINIMUM[] = "Analyzer2D.Minimum:";
+constexpr char OLDCFG_TAG_AN2D_MAXIMUM[] = "Analyzer2D.Maximum:";
+constexpr char OLDCFG_TAG_AN2D_DELTA[] = "Analyzer2D.Delta:";
+constexpr char OLDCFG_TAG_AN2D_COMPUTEGRADIENT[] = "Analyzer2D.ComputeGradient:";
+constexpr char OLDCFG_TAG_AN2D_MINIMUMGRADIENT[] = "Analyzer2D.MinimumGradient:";
+constexpr char OLDCFG_TAG_AN2D_MAXIMUMGRADIENT[] = "Analyzer2D.MaximumGradient:";
+constexpr char OLDCFG_TAG_AN2D_PIXEL_SIZE[] = "Analyzer2D.PixelSize:";
+constexpr char OLDCFG_TAG_AN2D_CODE_COLOR[] = "Analyzer2D.CodeColor:";
+constexpr char OLDCFG_TAG_AN2D_COLOR_MODE[] = "Analyzer2D.ColorMode:";
+constexpr char OLDCFG_TAG_AN2D_ONLY_TOTALS[] = "Analyzer2D.ShowOnlyTotals:";
+constexpr char OLDCFG_TAG_AN2D_SHORT_LABELS[] = "Analyzer2D.ShortHeaderLabels:";
+constexpr char OLDCFG_TAG_AN2D_SYNCHRONIZE[] = "Analyzer2D.Synchronize:";
+constexpr char OLDCFG_TAG_AN3D_CONTROLWINDOW[] = "Analyzer2D.3D_ControlWindow:";
+constexpr char OLDCFG_TAG_AN3D_COMPUTEYSCALE[] = "Analyzer3D.ComputeYScale:";
+constexpr char OLDCFG_TAG_AN3D_MINIMUM[] = "Analyzer2D.3D_Minimum:";
+constexpr char OLDCFG_TAG_AN3D_MAXIMUM[] = "Analyzer2D.3D_Maximum:";
+constexpr char OLDCFG_TAG_AN3D_DELTA[] = "Analyzer2D.3D_Delta:";
+constexpr char OLDCFG_TAG_AN3D_FIXEDVALUE[] = "Analyzer2D.3D_FixedValue:";
 
-#define OLDCFG_VAL_DRAW_MODE_LAST        "0"
-#define OLDCFG_VAL_DRAW_MODE_MAXIMUM     "1"
-#define OLDCFG_VAL_DRAW_MODE_MINNOT0     "2"
-#define OLDCFG_VAL_DRAW_MODE_RANDOM      "3"
-#define OLDCFG_VAL_DRAW_MODE_RANDOMNOT0  "4"
-#define OLDCFG_VAL_DRAW_MODE_AVERAGE     "5"
-#define OLDCFG_VAL_DRAW_MODE_AVERAGENOT0 "6"
-#define OLDCFG_VAL_DRAW_MODE_MODE        "7"
+constexpr char OLDCFG_VAL_DRAW_MODE_LAST[] =        "0";
+constexpr char OLDCFG_VAL_DRAW_MODE_MAXIMUM[] =     "1";
+constexpr char OLDCFG_VAL_DRAW_MODE_MINNOT0[] =     "2";
+constexpr char OLDCFG_VAL_DRAW_MODE_RANDOM[] =      "3";
+constexpr char OLDCFG_VAL_DRAW_MODE_RANDOMNOT0[] =  "4";
+constexpr char OLDCFG_VAL_DRAW_MODE_AVERAGE[] =     "5";
+constexpr char OLDCFG_VAL_DRAW_MODE_AVERAGENOT0[] = "6";
+constexpr char OLDCFG_VAL_DRAW_MODE_MODE[] =        "7";
 
-#define OLDCFG_VAL_COLOR_MODE_CODE           "window_in_code_mode"
-#define OLDCFG_VAL_COLOR_MODE_GRADIENT       "window_in_gradient_mode"
-#define OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT  "window_in_null_gradient_mode"
-#define CFG_VAL_COLOR_MODE_PUNCTUAL          "window_in_punctual_mode"
-#define CFG_VAL_COLOR_MODE_FUSED_LINES       "window_in_fused_lines_mode"
+constexpr char OLDCFG_VAL_COLOR_MODE_CODE[] =           "window_in_code_mode";
+constexpr char OLDCFG_VAL_COLOR_MODE_GRADIENT[] =       "window_in_gradient_mode";
+constexpr char OLDCFG_VAL_COLOR_MODE_NULL_GRADIENT[] =  "window_in_null_gradient_mode";
+constexpr char CFG_VAL_COLOR_MODE_PUNCTUAL[] =          "window_in_punctual_mode";
+constexpr char CFG_VAL_COLOR_MODE_FUSED_LINES[] =       "window_in_fused_lines_mode";
 
-#define OLDCFG_VAL_TIMEUNIT_NS "Nanoseconds"
-#define OLDCFG_VAL_TIMEUNIT_US "Microseconds"
-#define OLDCFG_VAL_TIMEUNIT_MS "Milliseconds"
-#define OLDCFG_VAL_TIMEUNIT_S  "Seconds"
-#define OLDCFG_VAL_TIMEUNIT_M  "Minutes"
-#define OLDCFG_VAL_TIMEUNIT_H  "Hours"
-#define OLDCFG_VAL_TIMEUNIT_D  "Days"
+constexpr char OLDCFG_VAL_TIMEUNIT_NS[] = "Nanoseconds";
+constexpr char OLDCFG_VAL_TIMEUNIT_US[] = "Microseconds";
+constexpr char OLDCFG_VAL_TIMEUNIT_MS[] = "Milliseconds";
+constexpr char OLDCFG_VAL_TIMEUNIT_S[] =  "Seconds";
+constexpr char OLDCFG_VAL_TIMEUNIT_M[] =  "Minutes";
+constexpr char OLDCFG_VAL_TIMEUNIT_H[] =  "Hours";
+constexpr char OLDCFG_VAL_TIMEUNIT_D[] =  "Days";
 
-#define OLDCFG_VAL_FILTER_OBJ_FROM     "from_obj"
-#define OLDCFG_VAL_FILTER_OBJ_TO       "to_obj"
-#define OLDCFG_VAL_FILTER_COM_TAG      "tag_msg"
-#define OLDCFG_VAL_FILTER_COM_SIZE     "size_msg"
-#define OLDCFG_VAL_FILTER_COM_BW       "bw_msg"
-#define OLDCFG_VAL_FILTER_EVT_TYPE     "evt_type"
-#define OLDCFG_VAL_FILTER_EVT_VALUE    "evt_value"
-#define CFG_VAL_FILTER_EVT_TYPE_LABEL  "evt_type_label"
-#define CFG_VAL_FILTER_EVT_VALUE_LABEL "evt_value_label"
+constexpr char OLDCFG_VAL_FILTER_OBJ_FROM[] =     "from_obj";
+constexpr char OLDCFG_VAL_FILTER_OBJ_TO[] =       "to_obj";
+constexpr char OLDCFG_VAL_FILTER_COM_TAG[] =      "tag_msg";
+constexpr char OLDCFG_VAL_FILTER_COM_SIZE[] =     "size_msg";
+constexpr char OLDCFG_VAL_FILTER_COM_BW[] =       "bw_msg";
+constexpr char OLDCFG_VAL_FILTER_EVT_TYPE[] =     "evt_type";
+constexpr char OLDCFG_VAL_FILTER_EVT_VALUE[] =    "evt_value";
+constexpr char CFG_VAL_FILTER_EVT_TYPE_LABEL[] =  "evt_type_label";
+constexpr char CFG_VAL_FILTER_EVT_VALUE_LABEL[] = "evt_value_label";
 
-#define OLDCFG_VAL_TRUE   "true"
-#define OLDCFG_VAL_TRUE2  "True"
-#define OLDCFG_VAL_FALSE  "false"
-#define OLDCFG_VAL_FALSE2 "False"
+constexpr char OLDCFG_VAL_TRUE[] =   "true";
+constexpr char OLDCFG_VAL_TRUE2[] =  "True";
+constexpr char OLDCFG_VAL_FALSE[] =  "false";
+constexpr char OLDCFG_VAL_FALSE2[] = "False";
 
-#define OLDCFG_VAL_ENABLED "Enabled"
-#define OLDCFG_VAL_DISABLED "Disabled"
+constexpr char OLDCFG_VAL_ENABLED[] = "Enabled";
+constexpr char OLDCFG_VAL_DISABLED[] = "Disabled";
 
-#define OLDCFG_VAL_HORIZONTAL "Horizontal"
-#define OLDCFG_VAL_VERTICAL   "Vertical"
+constexpr char OLDCFG_VAL_HORIZONTAL[] = "Horizontal";
+constexpr char OLDCFG_VAL_VERTICAL[] =   "Vertical";
 
-#define OLDCFG_VAL_SORT_AVERAGE "Average"
-#define OLDCFG_VAL_SORT_TOTAL   "Total"
-#define OLDCFG_VAL_SORT_MAXIMUM "Maximum"
-#define OLDCFG_VAL_SORT_MINIMUM "Minimum"
-#define OLDCFG_VAL_SORT_STDEV   "Stdev"
-#define OLDCFG_VAL_SORT_AVGDIVMAX "Avg/Max"
+constexpr char OLDCFG_VAL_SORT_AVERAGE[] = "Average";
+constexpr char OLDCFG_VAL_SORT_TOTAL[] =   "Total";
+constexpr char OLDCFG_VAL_SORT_MAXIMUM[] = "Maximum";
+constexpr char OLDCFG_VAL_SORT_MINIMUM[] = "Minimum";
+constexpr char OLDCFG_VAL_SORT_STDEV[] =   "Stdev";
+constexpr char OLDCFG_VAL_SORT_AVGDIVMAX[] = "Avg/Max";
 
-#define OLDCFG_VAL_WNDW_TYPE_SINGLE   "single"
-#define OLDCFG_VAL_WNDW_TYPE_COMPOSED "composed"
+constexpr char OLDCFG_VAL_WNDW_TYPE_SINGLE[] =   "single";
+constexpr char OLDCFG_VAL_WNDW_TYPE_COMPOSED[] = "composed";
 
-#define OLDCFG_VAL_LIMIT_ALLTRACE  "Alltrace"
-#define OLDCFG_VAL_LIMIT_ALLWINDOW "Allwindow"
-#define OLDCFG_VAL_LIMIT_REGION    "Region"
+constexpr char OLDCFG_VAL_LIMIT_ALLTRACE[] =  "Alltrace";
+constexpr char OLDCFG_VAL_LIMIT_ALLWINDOW[] = "Allwindow";
+constexpr char OLDCFG_VAL_LIMIT_REGION[] =    "Region";
 
-#define OLDCFG_VAL_AN2D_ACCUM_SEMANTIC "Semantic"
+constexpr char OLDCFG_VAL_AN2D_ACCUM_SEMANTIC[] = "Semantic";
 
-#define CFG_TAG_ALIAS_CFG4D "cfg4d"
-#define CFG_TAG_LINK_CFG4D "cfg4dlink"
-#define CFG_TAG_STATISTIC_ALIAS_CFG4D "cfg4dstatistic"
-#define CFG_TAG_PARAM_ALIAS_CFG4D "cfg4dparam"
-#define CFG_TAG_CFG4D_ENABLED "CFG4D_ENABLED"
+constexpr char CFG_TAG_ALIAS_CFG4D[] = "cfg4d";
+constexpr char CFG_TAG_LINK_CFG4D[] = "cfg4dlink";
+constexpr char CFG_TAG_STATISTIC_ALIAS_CFG4D[] = "cfg4dstatistic";
+constexpr char CFG_TAG_PARAM_ALIAS_CFG4D[] = "cfg4dparam";
+constexpr char CFG_TAG_CFG4D_ENABLED[] = "CFG4D_ENABLED";
 
-#define CFG_TAG_OBJECTS          "Analyzer2D.Objects:"
-#define CFG_TAG_DRAWMODE_OBJECTS "Analyzer2D.DrawModeObjects:"
-#define CFG_TAG_DRAWMODE_COLUMNS "Analyzer2D.DrawModeColumns:"
-#define CFG_TAG_AN2D_COMPUTEYSCALE_ZERO "Analyzer2D.ComputeYScaleZero:"
+constexpr char CFG_TAG_OBJECTS[] =          "Analyzer2D.Objects:";
+constexpr char CFG_TAG_DRAWMODE_OBJECTS[] = "Analyzer2D.DrawModeObjects:";
+constexpr char CFG_TAG_DRAWMODE_COLUMNS[] = "Analyzer2D.DrawModeColumns:";
+constexpr char CFG_TAG_AN2D_COMPUTEYSCALE_ZERO[] = "Analyzer2D.ComputeYScaleZero:";
 
 
 // STRING CONSTRUCTION LABELS FOR THE GUI
-#define LEVEL_WORKLOAD     "WORKLOAD"
-#define LEVEL_APPLICATION  "APPL"
-#define LEVEL_TASK         "TASK"
-#define LEVEL_THREAD       "THREAD"
-#define LEVEL_SYSTEM       "SYSTEM"
-#define LEVEL_NODE         "NODE"
-#define LEVEL_CPU          "CPU"
+constexpr char LEVEL_WORKLOAD[] =     "WORKLOAD";
+constexpr char LEVEL_APPLICATION[] =  "APPL";
+constexpr char LEVEL_TASK[] =         "TASK";
+constexpr char LEVEL_THREAD[] =       "THREAD";
+constexpr char LEVEL_SYSTEM[] =       "SYSTEM";
+constexpr char LEVEL_NODE[] =         "NODE";
+constexpr char LEVEL_CPU[] =          "CPU";
 
 static const std::string LABEL_TIMEUNIT[ DAY + 1 ] =
 {
@@ -265,54 +265,54 @@ static const std::string FULL_LABEL_TIMEUNIT[ DAY + 1 ] =
 };
 
 // New cfg label definitions
-#define CFG_SHEBANG                    "#ParaverCFG"
-#define CFG_HEADER_VERSION             "ConfigFile.Version:"
-#define CFG_HEADER_NUM_WINDOWS         "ConfigFile.NumWindows:"
-#define CFG_HEADER_BEGIN_DESCRIPTION   "ConfigFile.BeginDescription"
-#define CFG_HEADER_END_DESCRIPTION     "ConfigFile.EndDescription"
+constexpr char CFG_SHEBANG[] =                    "#ParaverCFG";
+constexpr char CFG_HEADER_VERSION[] =             "ConfigFile.Version:";
+constexpr char CFG_HEADER_NUM_WINDOWS[] =         "ConfigFile.NumWindows:";
+constexpr char CFG_HEADER_BEGIN_DESCRIPTION[] =   "ConfigFile.BeginDescription";
+constexpr char CFG_HEADER_END_DESCRIPTION[] =     "ConfigFile.EndDescription";
 
-#define CFG_TAG_WNDW_END_TIME_RELATIVE "window_end_time_relative"
+constexpr char CFG_TAG_WNDW_END_TIME_RELATIVE[] = "window_end_time_relative";
 
 // GUI Misc Labels
-#define GUI_COLORS_CODE_COLOR                  "Code Color"
-#define GUI_COLORS_GRADIENT_COLOR              "Gradient Color"
-#define GUI_COLORS_NOT_NULL_GRADIENT           "Not Null Gradient"
-#define GUI_COLORS_FUNCTION_LINE               "Function Line"
-#define GUI_COLORS_PUNCTUAL                    "Punctual"
-#define GUI_GRADIENT_FUNCTION_LINEAR           "Linear"
-#define GUI_GRADIENT_FUNCTION_STEPS            "Steps"
-#define GUI_GRADIENT_FUNCTION_LOGARITHMIC      "Logarithmic"
-#define GUI_GRADIENT_FUNCTION_EXPONENTIAL      "Exponential"
-#define GUI_DRAWMODE_LAST                      "Last"
-#define GUI_DRAWMODE_MAXIMUM                   "Maximum"
-#define GUI_DRAWMODE_MINIMUM_NOT_ZERO          "Minimum not zero"
-#define GUI_DRAWMODE_ABSOLUTE_MAXIMUM          "Maximum abs."
-#define GUI_DRAWMODE_ABSOLUTE_MINIMUM_NOT_ZERO "Minimum abs. not zero"
-#define GUI_DRAWMODE_RANDOM                    "Random"
-#define GUI_DRAWMODE_RANDOM_NOT_ZERO           "Random not zero"
-#define GUI_DRAWMODE_AVERAGE                   "Average"
-#define GUI_DRAWMODE_AVERAGE_NOT_ZERO          "Average not zero"
-#define GUI_DRAWMODE_MODE                      "Mode"
-#define GUI_PIXEL_SIZE_X1                      "x1"
-#define GUI_PIXEL_SIZE_X2                      "x2"
-#define GUI_PIXEL_SIZE_X4                      "x4"
-#define GUI_PIXEL_SIZE_X8                      "x8"
-#define GUI_IMAGE_FORMAT_BMP                   "BMP"
-#define GUI_IMAGE_FORMAT_JPEG                  "JPEG"
-#define GUI_IMAGE_FORMAT_PNG                   "PNG"
-#define GUI_IMAGE_FORMAT_XPM                   "XPM"
-#define GUI_TEXT_FORMAT_CSV                    "CSV"
-#define GUI_TEXT_FORMAT_GNUPLOT                "GNUPlot"
-#define GUI_TEXT_FORMAT_PLAIN                  "Plain"
-#define GUI_OBJECT_LABELS_ALL                  "All"
-#define GUI_OBJECT_LABELS_SPACED               "Spaced"
-#define GUI_OBJECT_LABELS_POWER2               "2^n"
-#define GUI_OBJECT_AXIS_CURRENT                "Fit Current Level"
-#define GUI_OBJECT_AXIS_ALL                    "Fit All Levels"
-#define GUI_OBJECT_AXIS_ZERO                   "0%"
-#define GUI_OBJECT_AXIS_FIVE                   "5%"
-#define GUI_OBJECT_AXIS_TEN                    "10%"
-#define GUI_OBJECT_AXIS_TWENTYFIVE             "25%"
+constexpr char GUI_COLORS_CODE_COLOR[] =                  "Code Color";
+constexpr char GUI_COLORS_GRADIENT_COLOR[] =              "Gradient Color";
+constexpr char GUI_COLORS_NOT_NULL_GRADIENT[] =           "Not Null Gradient";
+constexpr char GUI_COLORS_FUNCTION_LINE[] =               "Function Line";
+constexpr char GUI_COLORS_PUNCTUAL[] =                    "Punctual";
+constexpr char GUI_GRADIENT_FUNCTION_LINEAR[] =           "Linear";
+constexpr char GUI_GRADIENT_FUNCTION_STEPS[] =            "Steps";
+constexpr char GUI_GRADIENT_FUNCTION_LOGARITHMIC[] =      "Logarithmic";
+constexpr char GUI_GRADIENT_FUNCTION_EXPONENTIAL[] =      "Exponential";
+constexpr char GUI_DRAWMODE_LAST[] =                      "Last";
+constexpr char GUI_DRAWMODE_MAXIMUM[] =                   "Maximum";
+constexpr char GUI_DRAWMODE_MINIMUM_NOT_ZERO[] =          "Minimum not zero";
+constexpr char GUI_DRAWMODE_ABSOLUTE_MAXIMUM[] =          "Maximum abs.";
+constexpr char GUI_DRAWMODE_ABSOLUTE_MINIMUM_NOT_ZERO[] = "Minimum abs. not zero";
+constexpr char GUI_DRAWMODE_RANDOM[] =                    "Random";
+constexpr char GUI_DRAWMODE_RANDOM_NOT_ZERO[] =           "Random not zero";
+constexpr char GUI_DRAWMODE_AVERAGE[] =                   "Average";
+constexpr char GUI_DRAWMODE_AVERAGE_NOT_ZERO[] =          "Average not zero";
+constexpr char GUI_DRAWMODE_MODE[] =                      "Mode";
+constexpr char GUI_PIXEL_SIZE_X1[] =                      "x1";
+constexpr char GUI_PIXEL_SIZE_X2[] =                      "x2";
+constexpr char GUI_PIXEL_SIZE_X4[] =                      "x4";
+constexpr char GUI_PIXEL_SIZE_X8[] =                      "x8";
+constexpr char GUI_IMAGE_FORMAT_BMP[] =                   "BMP";
+constexpr char GUI_IMAGE_FORMAT_JPEG[] =                  "JPEG";
+constexpr char GUI_IMAGE_FORMAT_PNG[] =                   "PNG";
+constexpr char GUI_IMAGE_FORMAT_XPM[] =                   "XPM";
+constexpr char GUI_TEXT_FORMAT_CSV[] =                    "CSV";
+constexpr char GUI_TEXT_FORMAT_GNUPLOT[] =                "GNUPlot";
+constexpr char GUI_TEXT_FORMAT_PLAIN[] =                  "Plain";
+constexpr char GUI_OBJECT_LABELS_ALL[] =                  "All";
+constexpr char GUI_OBJECT_LABELS_SPACED[] =               "Spaced";
+constexpr char GUI_OBJECT_LABELS_POWER2[] =               "2^n";
+constexpr char GUI_OBJECT_AXIS_CURRENT[] =                "Fit Current Level";
+constexpr char GUI_OBJECT_AXIS_ALL[] =                    "Fit All Levels";
+constexpr char GUI_OBJECT_AXIS_ZERO[] =                   "0%";
+constexpr char GUI_OBJECT_AXIS_FIVE[] =                   "5%";
+constexpr char GUI_OBJECT_AXIS_TEN[] =                    "10%";
+constexpr char GUI_OBJECT_AXIS_TWENTYFIVE[] =             "25%";
 
 
 // GUI Semantic Levels - INDEXED WITH TWindowLevel
@@ -562,8 +562,8 @@ static const std::string HistogramPropertyLabels[ TOTAL_HISTOGRAM_PROPERTIES ] =
 };
 
 // DIMEMAS
-#define OLD_DIMEMAS_SHEBANG "SDDFA"
-#define DIMEMAS_SHEBANG "#DIMEMAS_CONFIGURATION"
+constexpr char OLD_DIMEMAS_SHEBANG[] = "SDDFA";
+constexpr char DIMEMAS_SHEBANG[] = "#DIMEMAS_CONFIGURATION";
 
 
 #endif // PARAVERLABELS_H_INCLUDED

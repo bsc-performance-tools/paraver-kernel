@@ -21,9 +21,11 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
+#include <iostream>
 #include <string>
 #include <sstream>
-#include <iostream>
+#include <type_traits>
+
 #include "tracebodyio_v1.h"
 
 using namespace std;
@@ -45,7 +47,7 @@ ostringstream TraceBodyIO_v1::ostr;
 template <typename T>
 bool prv_atoll( const char *p, T *result )
 {
-  register long long int tmp = 0;
+  register T tmp = 0;
   bool neg = false;
 
   if( *p == '-' )
@@ -53,6 +55,10 @@ bool prv_atoll( const char *p, T *result )
     neg = true;
     ++p;
   }
+
+  if( neg && is_unsigned<T>::value )
+    return false;
+
   while( *p >= '0' && *p <= '9' )
   {
     tmp = ( tmp * 10 ) + ( *p - '0' );
@@ -66,7 +72,9 @@ bool prv_atoll( const char *p, T *result )
   {
     tmp = -tmp;
   }
+
   *result = tmp;
+
   return true;
 }
 

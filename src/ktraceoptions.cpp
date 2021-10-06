@@ -42,7 +42,7 @@ using namespace std;
 #define atoll _atoi64
 #endif
 
-#define FILTER_XML_ENCODING "UTF-8"
+constexpr char FILTER_XML_ENCODING[] = "UTF-8";
 
 KTraceOptions::KTraceOptions()
 {

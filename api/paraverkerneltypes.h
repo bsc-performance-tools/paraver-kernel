@@ -183,17 +183,7 @@ static const std::string  XPM_SUFFIX = ".xpm";
  * Record class field defines for a state record.
  */
 
-#define IDLE            0
-#define RUNNING         1
-#define STOPED          2
-#define WAIT_MESS       3
-#define WAIT_LINK       4
-#define WAIT_CPU        5
-#define WAIT_SEM        6
-#define OVERHEAD        7
-#define PROBE           8
-#define SEND_OVH        9
-#define RECV_OVH       10
-#define STATE_IO       12
+constexpr TState IDLE = 0;
+constexpr TState RUNNING = 1;
 
 #endif // PARAVERKERNELTYPES_H_INCLUDED

@@ -32,6 +32,8 @@
 class KWindow;
 class PreviousFiles;
 
+constexpr size_t MAX_TRACES_HISTORY_LENGTH = 256;
+
 class LocalKernel: public KernelConnection
 {
   public:
@@ -149,7 +151,6 @@ class LocalKernel: public KernelConnection
       int num_sc;
     };
 
-    #define MAX_TRACES_HISTORY_LENGTH 256
     struct traces_table trace_names_table[ MAX_TRACES_HISTORY_LENGTH ];
     int trace_names_table_last; // should be static?
 

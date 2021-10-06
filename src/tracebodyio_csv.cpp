@@ -230,7 +230,7 @@ inline void TraceBodyIO_csv::readEvents( const string& line, MemoryBlocks& recor
   TRecordTime begintime;
   TRecordTime endtime;
   TEventValue eventvalue;
-  double decimals = 1.05;
+  double decimals;
 
   strLine.clear();
   strLine.str( line );
