@@ -34,14 +34,14 @@ using std::vector;
 using std::map;
 
 // LAST is the default method
-template <int method>
+template <DrawModeMethod method>
 inline TSemanticValue selectMethod( vector<TSemanticValue>& v )
 {
   return v[ v.size() -1 ];
 }
 
 template <>
-inline TSemanticValue selectMethod<DRAW_MAXIMUM>( vector<TSemanticValue>& v )
+inline TSemanticValue selectMethod<DrawModeMethod::DRAW_MAXIMUM>( vector<TSemanticValue>& v )
 {
 #if __cplusplus >= 201103L
   TSemanticValue max = std::numeric_limits<TSemanticValue>::lowest();
@@ -58,7 +58,7 @@ inline TSemanticValue selectMethod<DRAW_MAXIMUM>( vector<TSemanticValue>& v )
 }
 
 template <>
-inline TSemanticValue selectMethod<DRAW_MINNOTZERO>( vector<TSemanticValue>& v )
+inline TSemanticValue selectMethod<DrawModeMethod::DRAW_MINNOTZERO>( vector<TSemanticValue>& v )
 {
   TSemanticValue min = std::numeric_limits<TSemanticValue>::max();
 
@@ -75,7 +75,7 @@ inline TSemanticValue selectMethod<DRAW_MINNOTZERO>( vector<TSemanticValue>& v )
 
 
 template <>
-inline TSemanticValue selectMethod<DRAW_ABSOLUTE_MINNOTZERO>( vector<TSemanticValue>& v )
+inline TSemanticValue selectMethod<DrawModeMethod::DRAW_ABSOLUTE_MINNOTZERO>( vector<TSemanticValue>& v )
 {
    TSemanticValue min = std::numeric_limits<TSemanticValue>::max();
 
@@ -93,7 +93,7 @@ inline TSemanticValue selectMethod<DRAW_ABSOLUTE_MINNOTZERO>( vector<TSemanticVa
 
 
 template <>
-inline TSemanticValue selectMethod<DRAW_ABSOLUTE_MAXIMUM>( vector<TSemanticValue>& v )
+inline TSemanticValue selectMethod<DrawModeMethod::DRAW_ABSOLUTE_MAXIMUM>( vector<TSemanticValue>& v )
 {
 #if __cplusplus >= 201103L
   TSemanticValue max = std::numeric_limits<TSemanticValue>::lowest();
@@ -111,7 +111,7 @@ inline TSemanticValue selectMethod<DRAW_ABSOLUTE_MAXIMUM>( vector<TSemanticValue
 
 
 template <>
-inline TSemanticValue selectMethod<DRAW_RANDOM>( vector<TSemanticValue>& v )
+inline TSemanticValue selectMethod<DrawModeMethod::DRAW_RANDOM>( vector<TSemanticValue>& v )
 {
   int pos;
 
@@ -123,7 +123,7 @@ inline TSemanticValue selectMethod<DRAW_RANDOM>( vector<TSemanticValue>& v )
 }
 
 template <>
-inline TSemanticValue selectMethod<DRAW_RANDNOTZERO>( vector<TSemanticValue>& v )
+inline TSemanticValue selectMethod<DrawModeMethod::DRAW_RANDNOTZERO>( vector<TSemanticValue>& v )
 {
   int pos;
 
@@ -144,7 +144,7 @@ inline TSemanticValue selectMethod<DRAW_RANDNOTZERO>( vector<TSemanticValue>& v 
 }
 
 template <>
-inline TSemanticValue selectMethod<DRAW_AVERAGE>( vector<TSemanticValue>& v )
+inline TSemanticValue selectMethod<DrawModeMethod::DRAW_AVERAGE>( vector<TSemanticValue>& v )
 {
   TSemanticValue avg = 0.0;
 
@@ -157,7 +157,7 @@ inline TSemanticValue selectMethod<DRAW_AVERAGE>( vector<TSemanticValue>& v )
 }
 
 template <>
-inline TSemanticValue selectMethod<DRAW_AVERAGENOTZERO>( vector<TSemanticValue>& v )
+inline TSemanticValue selectMethod<DrawModeMethod::DRAW_AVERAGENOTZERO>( vector<TSemanticValue>& v )
 {
   TSemanticValue avg = 0.0;
   TSemanticValue times = 0.0;
@@ -177,7 +177,7 @@ inline TSemanticValue selectMethod<DRAW_AVERAGENOTZERO>( vector<TSemanticValue>&
 }
 
 template<>
-inline TSemanticValue selectMethod<DRAW_MODE>( vector<TSemanticValue>& v )
+inline TSemanticValue selectMethod<DrawModeMethod::DRAW_MODE>( vector<TSemanticValue>& v )
 {
   map<TSemanticValue, int> modes;
   TSemanticValue currentMode = 0;
@@ -201,45 +201,45 @@ TSemanticValue DrawMode::selectValue( vector<TSemanticValue>& v,
 {
   switch ( method )
   {
-    case DRAW_MAXIMUM:
-      return selectMethod<DRAW_MAXIMUM>( v );
+    case DrawModeMethod::DRAW_MAXIMUM:
+      return selectMethod<DrawModeMethod::DRAW_MAXIMUM>( v );
       break;
 
-    case DRAW_MINNOTZERO:
-      return selectMethod<DRAW_MINNOTZERO>( v );
+    case DrawModeMethod::DRAW_MINNOTZERO:
+      return selectMethod<DrawModeMethod::DRAW_MINNOTZERO>( v );
       break;
 
-    case DRAW_ABSOLUTE_MINNOTZERO:
-      return selectMethod<DRAW_ABSOLUTE_MINNOTZERO>( v );
+    case DrawModeMethod::DRAW_ABSOLUTE_MINNOTZERO:
+      return selectMethod<DrawModeMethod::DRAW_ABSOLUTE_MINNOTZERO>( v );
       break;
 
-    case DRAW_ABSOLUTE_MAXIMUM:
-      return selectMethod<DRAW_ABSOLUTE_MAXIMUM>( v );
+    case DrawModeMethod::DRAW_ABSOLUTE_MAXIMUM:
+      return selectMethod<DrawModeMethod::DRAW_ABSOLUTE_MAXIMUM>( v );
       break;
 
-    case DRAW_RANDOM:
-      return selectMethod<DRAW_RANDOM>( v );
+    case DrawModeMethod::DRAW_RANDOM:
+      return selectMethod<DrawModeMethod::DRAW_RANDOM>( v );
       break;
 
-    case DRAW_RANDNOTZERO:
-      return selectMethod<DRAW_RANDNOTZERO>( v );
+    case DrawModeMethod::DRAW_RANDNOTZERO:
+      return selectMethod<DrawModeMethod::DRAW_RANDNOTZERO>( v );
       break;
 
-    case DRAW_AVERAGE:
-      return selectMethod<DRAW_AVERAGE>( v );
+    case DrawModeMethod::DRAW_AVERAGE:
+      return selectMethod<DrawModeMethod::DRAW_AVERAGE>( v );
       break;
 
-    case DRAW_AVERAGENOTZERO:
-      return selectMethod<DRAW_AVERAGENOTZERO>( v );
+    case DrawModeMethod::DRAW_AVERAGENOTZERO:
+      return selectMethod<DrawModeMethod::DRAW_AVERAGENOTZERO>( v );
       break;
 
-    case DRAW_MODE:
-      return selectMethod<DRAW_MODE>( v );
+    case DrawModeMethod::DRAW_MODE:
+      return selectMethod<DrawModeMethod::DRAW_MODE>( v );
       break;
 
     default:
       break;
   }
 
-  return selectMethod<DRAW_LAST>( v );
+  return selectMethod<DrawModeMethod::DRAW_LAST>( v );
 }

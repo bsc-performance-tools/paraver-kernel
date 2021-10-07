@@ -377,13 +377,13 @@ class Window
     {}
     virtual DrawModeMethod getDrawModeObject() const
     {
-      return DRAW_MAXIMUM;
+      return DrawModeMethod::DRAW_MAXIMUM;
     }
     virtual void setDrawModeTime( DrawModeMethod method )
     {}
     virtual DrawModeMethod getDrawModeTime() const
     {
-      return DRAW_MAXIMUM;
+      return DrawModeMethod::DRAW_MAXIMUM;
     }
     virtual CodeColor& getCodeColor()
     {

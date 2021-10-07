@@ -96,19 +96,20 @@ void initDrawModeCodes()
     // Old codification: "0" --> 0
     // This allows to read old cfgs
     // At the transition moment, DRAW_MODE was the last one
-    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_LAST ]        = DRAW_LAST;
-    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_MAXIMUM ]     = DRAW_MAXIMUM;
-    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_MINNOT0 ]     = DRAW_MINNOTZERO;
-    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_RANDOM ]      = DRAW_RANDOM;
-    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_RANDOMNOT0 ]  = DRAW_RANDNOTZERO;
-    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_AVERAGE ]     = DRAW_AVERAGE;
-    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_AVERAGENOT0 ] = DRAW_AVERAGENOTZERO;
-    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_MODE ]        = DRAW_MODE;
+    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_LAST ]        = DrawModeMethod::DRAW_LAST;
+    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_MAXIMUM ]     = DrawModeMethod::DRAW_MAXIMUM;
+    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_MINNOT0 ]     = DrawModeMethod::DRAW_MINNOTZERO;
+    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_RANDOM ]      = DrawModeMethod::DRAW_RANDOM;
+    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_RANDOMNOT0 ]  = DrawModeMethod::DRAW_RANDNOTZERO;
+    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_AVERAGE ]     = DrawModeMethod::DRAW_AVERAGE;
+    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_AVERAGENOT0 ] = DrawModeMethod::DRAW_AVERAGENOTZERO;
+    drawModeCodes[ OLDCFG_VAL_DRAW_MODE_MODE ]        = DrawModeMethod::DRAW_MODE;
     // New codification: "draw_last" --> 0
-    for (unsigned int current = DRAW_LAST; current < DRAW_NUMMETHODS; ++current )
+    for ( unsigned int current = static_cast<unsigned int>( DrawModeMethod::DRAW_LAST );
+          current < static_cast<unsigned int>( DrawModeMethod::DRAW_NUMMETHODS );
+          ++current )
     {
-      DrawModeMethod code = DrawModeMethod( current );
-      drawModeCodes[ string( drawModeCfgTags[ code ] ) ] = code;
+      drawModeCodes[ string( drawModeCfgTags[ current ] ) ] = DrawModeMethod( current );
     }
   }
 }
@@ -120,10 +121,11 @@ void initDrawModeTags()
   if ( drawModeTags.size() == 0 )
   {
     // New codification: 0 --> "draw_last"
-    for ( unsigned int current = DRAW_LAST; current < DRAW_NUMMETHODS; ++current )
+    for ( unsigned int current = static_cast<unsigned int>( DrawModeMethod::DRAW_LAST );
+          current < static_cast<unsigned int>( DrawModeMethod::DRAW_NUMMETHODS );
+          ++current )
     {
-      DrawModeMethod code = DrawModeMethod( current );
-      drawModeTags[ code ] = string( drawModeCfgTags[ code ] );
+      drawModeTags[ DrawModeMethod( current ) ] = string( drawModeCfgTags[ current ] );
     }
   }
 }
@@ -602,11 +604,11 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
 
   bool continueLoading = true;
   if ( !someEventsExist )
-    continueLoading = whichKernel->userMessage( MessageCFGNoneEvents );
+    continueLoading = whichKernel->userMessage( UserMessageID::MessageCFGNoneEvents );
   else if ( someEventsNotExist )
-    continueLoading = whichKernel->userMessage( MessageCFGSomeEvents );
+    continueLoading = whichKernel->userMessage( UserMessageID::MessageCFGSomeEvents );
   else if ( multipleLabelValues )
-    continueLoading = whichKernel->userMessage( MessageCFGMultipleValues );
+    continueLoading = whichKernel->userMessage( UserMessageID::MessageCFGMultipleValues );
 
   // Check if there are some objects in the selected level
   bool someWindowWithSelectedLevelEmpty = false;
@@ -619,7 +621,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
     }
   }
   if ( someWindowWithSelectedLevelEmpty )
-    continueLoading = whichKernel->userMessage( MessageCFGZeroObjects );
+    continueLoading = whichKernel->userMessage( UserMessageID::MessageCFGZeroObjects );
 
   if( !continueLoading )
   {

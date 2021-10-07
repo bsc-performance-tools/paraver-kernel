@@ -49,7 +49,7 @@ class EventTranslator;
 
 typedef std::pair< TEventType, TEventValue > TTypeValuePair;
 
-enum UserMessageID
+enum class UserMessageID
 {
   MessageCFGNoneEvents = 0,
   MessageCFGZeroObjects,
@@ -58,7 +58,7 @@ enum UserMessageID
   UserMessageSize
 };
 
-static const std::string userMessages[ UserMessageSize ] =
+static const std::string userMessages[ static_cast<size_t>( UserMessageID::UserMessageSize ) ] =
 {
   "None of the events specified in the filter appear in the trace.",
   "Some timeline has 0 objects selected at some level.",

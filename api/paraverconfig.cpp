@@ -175,8 +175,8 @@ ParaverConfig::ParaverConfig() : isModified( false )
   //DEPRECATED
   xmlTimeline.viewFunctionAsColor = true;
   xmlTimeline.color = TColorFunction::COLOR;
-  xmlTimeline.drawmodeTime = DRAW_MAXIMUM;
-  xmlTimeline.drawmodeObjects = DRAW_MAXIMUM;
+  xmlTimeline.drawmodeTime = DrawModeMethod::DRAW_MAXIMUM;
+  xmlTimeline.drawmodeObjects = DrawModeMethod::DRAW_MAXIMUM;
   xmlTimeline.gradientFunction = TGradientFunction::LINEAR;
   xmlTimeline.semanticScaleMinAtZero = false;
   xmlTimeline.pixelSize = 0;
@@ -206,8 +206,8 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlHistogram.autofitDataGradient = true;
   xmlHistogram.autofitThirdDimensionScale = true;
   xmlHistogram.gradientFunction = TGradientFunction::LINEAR;
-  xmlHistogram.drawmodeSemantic = DRAW_MAXIMUM;
-  xmlHistogram.drawmodeObjects = DRAW_MAXIMUM;
+  xmlHistogram.drawmodeSemantic = DrawModeMethod::DRAW_MAXIMUM;
+  xmlHistogram.drawmodeObjects = DrawModeMethod::DRAW_MAXIMUM;
   xmlHistogram.saveTextAsMatrix = true;
   xmlHistogram.saveTextFormat = TTextFormat::CSV;
   xmlHistogram.saveImageFormat = TImageFormat::PNG;

@@ -192,13 +192,13 @@ string eventTranslatorReferenceName("");
 // Message from CFGLoader. Must be changed to IDs and UI write its own message
 static bool userMessageOutput( UserMessageID messageID )
 {
-  std::cout<<currentCFG->first<<": "<<userMessages[ messageID ];
-  if( messageID >= MessageCFGMultipleValues )
+  std::cout << currentCFG->first << ": " << userMessages[ static_cast<size_t>( messageID ) ];
+  if( messageID >= UserMessageID::MessageCFGMultipleValues )
   {
-    std::cout<<std::endl;
+    std::cout << std::endl;
     return true;
   }
-  std::cout<<" File creation aborted."<<std::endl;
+  std::cout << " File creation aborted." << std::endl;
   return false;
 }
 
@@ -769,7 +769,6 @@ string applyFilters( KernelConnection *myKernel,
   delete traceCutter;
   delete traceFilter;
   delete traceSoftwareCounters;
-
 
   return intermediateNameOut;
 }
