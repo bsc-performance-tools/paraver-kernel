@@ -95,17 +95,19 @@ KRecordList *IntervalDerived::init( TRecordTime initialTime, TCreateList create,
     if ( begin == nullptr ||
          childIntervals[ i ]->getBegin()->getTime() > begin->getTime() )
     {
-      if ( begin != nullptr )
-        delete begin;
-      begin = childIntervals[ i ]->getBegin()->clone();
+      if ( begin == nullptr )
+        begin = childIntervals[ i ]->getBegin()->clone();
+      else
+        *begin = *childIntervals[ i ]->getBegin();
     }
 
     if ( end == nullptr ||
          childIntervals[ i ]->getEnd()->getTime() < end->getTime() )
     {
-      if ( end != nullptr )
-        delete end;
-      end = childIntervals[ i ]->getEnd()->clone();
+      if ( end == nullptr )
+        end = childIntervals[ i ]->getEnd()->clone();
+      else
+        *end = *childIntervals[ i ]->getEnd();
     }
 
     // Apply factor
@@ -138,9 +140,7 @@ KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc 
   if ( displayList == nullptr )
     displayList = &myDisplayList;
 
-  if ( begin != nullptr )
-    delete begin;
-  begin = end->clone();
+  *begin = *end;
 
   if ( end != nullptr )
   {
@@ -161,9 +161,10 @@ KRecordList *IntervalDerived::calcNext( KRecordList *displayList, bool initCalc 
            && childIntervals[ i ]->getEnd()->getTime() < childIntervals[ i ]->getWindow()->getTrace()->getEndTime() )
         )
     {
-      if ( end != nullptr )
-        delete end;
-      end = childIntervals[ i ]->getEnd()->clone();
+      if ( end == nullptr )
+        end = childIntervals[ i ]->getEnd()->clone();
+      else
+        *end = *childIntervals[ i ]->getEnd();
     }
 
     // Apply factor
@@ -195,9 +196,7 @@ KRecordList *IntervalDerived::calcPrev( KRecordList *displayList, bool initCalc 
   if ( displayList == nullptr )
     displayList = &myDisplayList;
 
-  if ( end != nullptr )
-    delete end;
-  end = begin->clone();
+  *end = *begin;
 
   if ( begin != nullptr )
   {
@@ -213,9 +212,10 @@ KRecordList *IntervalDerived::calcPrev( KRecordList *displayList, bool initCalc 
     if ( begin == nullptr ||
          childIntervals[ i ]->getBegin()->getTime() > begin->getTime() )
     {
-      if ( begin != nullptr )
-        delete begin;
-      begin = childIntervals[ i ]->getBegin()->clone();
+      if ( begin == nullptr )
+        begin = childIntervals[ i ]->getBegin()->clone();
+      else
+        *begin = *childIntervals[ i ]->getBegin();
     }
 
     // Apply factor

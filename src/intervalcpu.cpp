@@ -75,14 +75,6 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
     return displayList;
   }
 
-  /*if( intervalCompose.empty() )
-  {
-    begin = window->getCPUBeginRecord( order - 1 )->clone();
-    end = window->getCPUEndRecord( order - 1 )->clone();
-    return displayList;
-  }*/
-
-
   for( std::map<TThreadOrder, IntervalThread *>::iterator it = intervalThread.begin();
        it != intervalThread.end(); ++it )
     (*it).second->setSemanticFunction( functionThread );

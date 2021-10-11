@@ -71,17 +71,18 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
     if ( begin == nullptr ||
          childIntervals[ i ]->getBegin()->getTime() > begin->getTime() )
     {
-      if ( begin != nullptr )
-        delete begin;
-      begin = childIntervals[ i ]->getBegin()->clone();
+      if ( begin == nullptr )
+        begin = childIntervals[ i ]->getBegin()->clone();
+      else
+        *begin = *childIntervals[ i ]->getBegin();
     }
 
     if ( end == nullptr ||
          childIntervals[ i ]->getEnd()->getTime() < end->getTime() )
     {
-      if ( end != nullptr )
-        delete end;
-      end = childIntervals[ i ]->getEnd()->clone();
+      if ( end == nullptr )
+        end = childIntervals[ i ]->getEnd()->clone();
+        *end = *childIntervals[ i ]->getEnd();
     }
 
     info.values.push_back( childIntervals[ i ]->getValue() );
@@ -102,15 +103,7 @@ KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCal
   if ( displayList == nullptr )
     displayList = &myDisplayList;
 
-  if ( begin != nullptr )
-    delete begin;
-  begin = end->clone();
-
-  if( end != nullptr )
-  {
-    delete end;
-    end = nullptr;
-  }
+  *begin = *end;
 
   TObjectOrder i = 0;
   std::multimap<TRecordTime,TObjectOrder>::iterator itChild = orderedChildren.begin();
@@ -131,9 +124,8 @@ KRecordList *IntervalNotThread::calcNext( KRecordList *displayList, bool initCal
     ++i;
     if( i >= childIntervals.size() ) break;
   }
-  if ( end != nullptr )
-    delete end;
-  end = childIntervals[ itChild->second ]->getEnd()->clone();
+
+  *end = *childIntervals[ itChild->second ]->getEnd();
 
   currentValue = function->execute( &info );
 
@@ -146,15 +138,7 @@ KRecordList *IntervalNotThread::calcPrev( KRecordList *displayList, bool initCal
   if ( displayList == nullptr )
     displayList = &myDisplayList;
 
-  if ( end != nullptr )
-    delete end;
-  end = begin->clone();
-
-  if( begin != nullptr )
-  {
-    delete begin;
-    begin = nullptr;
-  }
+  *end = *begin;
 
   TObjectOrder i = 0;
   std::multimap<TRecordTime,TObjectOrder>::iterator itChild = orderedChildren.begin();
@@ -172,9 +156,8 @@ KRecordList *IntervalNotThread::calcPrev( KRecordList *displayList, bool initCal
     ++i;
     if( i >= childIntervals.size() ) break;
   }
-  if ( begin != nullptr )
-    delete begin;
-  begin = childIntervals[ itChild->second ]->getBegin()->clone();
+
+  *begin = *childIntervals[ itChild->second ]->getBegin();
 
   currentValue = function->execute( &info );
 

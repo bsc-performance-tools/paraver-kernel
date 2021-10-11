@@ -86,15 +86,13 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
   if ( joinBursts )
   {
     TSemanticValue tmpValue;
-    MemoryTrace::iterator *lastEnd = endRecord;
+    MemoryTrace::iterator *lastEnd = endRecord->clone();
 
     tmpValue = childIntervals[ 0 ]->getValue();
     childIntervals[ 0 ]->calcNext( displayList );
     while ( tmpValue == childIntervals[ 0 ]->getValue() )
     {
-      if( end != nullptr )
-        delete end;
-      end = childIntervals[ 0 ]->getEnd()->clone();
+      *end = *childIntervals[ 0 ]->getEnd();
 
       // somehow, this break never is executed
       // if ( *end == *endRecord )
@@ -102,14 +100,12 @@ KRecordList *IntervalCompose::init( TRecordTime initialTime, TCreateList create,
         break;
 
       // lastEnd to control loop!
-      if( lastEnd != nullptr && lastEnd != endRecord )
-        delete lastEnd;
-      lastEnd = end->clone();
+      *lastEnd = *end;
 
       childIntervals[ 0 ]->calcNext( displayList );
     }
     currentValue = tmpValue;
-    if( lastEnd != nullptr && lastEnd != endRecord )
+    if( lastEnd != nullptr )
       delete lastEnd;
   }
   else
@@ -139,18 +135,10 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
   if ( joinBursts )
   {
     TSemanticValue tmpValue;
-    MemoryTrace::iterator *lastEnd;
 
-    // lastEnd to control loop! Initialized with endRecord.
-    lastEnd = endRecord;
+    *begin = *childIntervals[ 0 ]->getBegin();
 
-    if( begin != nullptr && begin != beginRecord )
-      delete begin;
-    begin = childIntervals[ 0 ]->getBegin()->clone();
-
-    if( end != nullptr )
-      delete end;
-    end = childIntervals[ 0 ]->getEnd()->clone();
+    *end = *childIntervals[ 0 ]->getEnd();
 
     tmpValue = childIntervals[ 0 ]->getValue();
 
@@ -162,11 +150,11 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
       return displayList;
     }
 
+    MemoryTrace::iterator *lastEnd = endRecord->clone();
+
     while ( tmpValue == childIntervals[ 0 ]->getValue() )
     {
-      if( end != nullptr )
-        delete end;
-      end = childIntervals[ 0 ]->getEnd()->clone();
+      *end = *childIntervals[ 0 ]->getEnd();
 
       // somehow, this break never is executed
       // if ( *end == *endRecord )
@@ -174,26 +162,20 @@ KRecordList *IntervalCompose::calcNext( KRecordList *displayList, bool initCalc 
         break;
 
       // lastEnd to control loop!
-      if( lastEnd != nullptr && lastEnd != endRecord )
-        delete lastEnd;
-      lastEnd = end->clone();
+      *lastEnd = *end;
 
       childIntervals[ 0 ]->calcNext( displayList );
     }
     currentValue = tmpValue;
-    if( lastEnd != nullptr && lastEnd != endRecord )
+    if( lastEnd != nullptr )
       delete lastEnd;
   }
   else
   {
     childIntervals[ 0 ]->calcNext( displayList );
-    if( begin != nullptr && begin != beginRecord )
-      delete begin;
-    begin = childIntervals[ 0 ]->getBegin()->clone();
+    *begin = *childIntervals[ 0 ]->getBegin();
 
-    if( end != nullptr )
-      delete end;
-    end = childIntervals[ 0 ]->getEnd()->clone();
+    *end = *childIntervals[ 0 ]->getEnd();
 
     info.values.push_back( childIntervals[ 0 ]->getValue() );
     currentValue = function->execute( &info );
@@ -214,24 +196,15 @@ KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc 
   if ( joinBursts )
   {
     TSemanticValue tmpValue;
-    MemoryTrace::iterator *firstBegin;
+    MemoryTrace::iterator *firstBegin = beginRecord->clone();
 
-    // firstBegin to control loop! Initialized with beginRecord.
-    firstBegin = beginRecord;
-
-    if( begin != nullptr && begin != beginRecord )
-      delete begin;
-    begin = childIntervals[ 0 ]->getBegin()->clone();
-    if( end != nullptr )
-      delete end;
-    end = childIntervals[ 0 ]->getEnd()->clone();
+    *begin = *childIntervals[ 0 ]->getBegin();
+    *end = *childIntervals[ 0 ]->getEnd();
     tmpValue = childIntervals[ 0 ]->getValue();
     childIntervals[ 0 ]->calcPrev( displayList );
     while ( tmpValue == childIntervals[ 0 ]->getValue() )
     {
-      if( begin != nullptr && begin != beginRecord )
-        delete begin;
-      begin = childIntervals[ 0 ]->getBegin()->clone();
+      *begin = *childIntervals[ 0 ]->getBegin();
 
       // somehow, this break never is executed
       // if ( *begin == *beginRecord )
@@ -239,25 +212,19 @@ KRecordList *IntervalCompose::calcPrev( KRecordList *displayList, bool initCalc 
         break;
 
       // firstBegin to control loop!
-      if( firstBegin != nullptr && firstBegin != beginRecord )
-        delete firstBegin;
-      firstBegin = begin->clone();
+      *firstBegin = *begin;
 
       childIntervals[ 0 ]->calcPrev( displayList );
     }
-    if( firstBegin != nullptr && firstBegin != beginRecord )
+    if( firstBegin != nullptr )
       delete firstBegin;
   }
   else
   {
     childIntervals[ 0 ]->calcPrev( displayList );
-    if( begin != nullptr && begin != beginRecord )
-      delete begin;
-    begin = childIntervals[ 0 ]->getBegin()->clone();
+    *begin = *childIntervals[ 0 ]->getBegin();
 
-    if( end != nullptr )
-      delete end;
-    end = childIntervals[ 0 ]->getEnd()->clone();
+    *end = *childIntervals[ 0 ]->getEnd();
 
     info.values.push_back( childIntervals[ 0 ]->getValue() );
     currentValue = function->execute( &info );

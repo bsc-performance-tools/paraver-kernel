@@ -109,23 +109,12 @@ KRecordList *IntervalControlDerived::calcNext( KRecordList *displayList, bool in
   if ( displayList == nullptr )
     displayList = &myDisplayList;
 
-  if ( begin != nullptr )
-  {
-    delete begin;
-    begin = nullptr;
-  }
-  if ( end != nullptr )
-  {
-    delete end;
-    end = nullptr;
-  }
-
   info.callingInterval = this;
 
   childIntervals[ 1 ]->calcNext( displayList );
 
-  begin = childIntervals[ 1 ]->getBegin()->clone();
-  end = childIntervals[ 1 ]->getEnd()->clone();
+  *begin = *childIntervals[ 1 ]->getBegin();
+  *end = *childIntervals[ 1 ]->getEnd();
 
   if( begin->getTime() == window->getTrace()->getEndTime() )
     return displayList;
@@ -171,23 +160,12 @@ KRecordList *IntervalControlDerived::calcPrev( KRecordList *displayList, bool in
   if ( displayList == nullptr )
     displayList = &myDisplayList;
 
-  if ( begin != nullptr )
-  {
-    delete begin;
-    begin = nullptr;
-  }
-  if ( end != nullptr )
-  {
-    delete end;
-    end = nullptr;
-  }
-
   info.callingInterval = this;
 
   childIntervals[ 1 ]->calcPrev( displayList );
 
-  begin = childIntervals[ 1 ]->getBegin()->clone();
-  end = childIntervals[ 1 ]->getEnd()->clone();
+  *begin = *childIntervals[ 1 ]->getBegin();
+  *end = *childIntervals[ 1 ]->getEnd();
 
   while ( childIntervals[ 0 ]->getEnd()->getTime() <= begin->getTime() )
     childIntervals[ 0 ]->calcPrev( displayList );
