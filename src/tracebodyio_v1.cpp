@@ -49,31 +49,27 @@ constexpr bool prv_atoll_v( string::const_iterator& it, const string::const_iter
 template <typename T, typename... Targs>
 bool prv_atoll_v( string::const_iterator& it, const string::const_iterator& end, T& result, Targs&... Fargs )
 {
-  T tmp = 0;
-  bool neg = false;
+  result = 0;
+  bool negative = false;
 
   if( it == end )
     return false;
 
   if( *it == '-' )
   {
-    neg = true;
+    if( is_unsigned<T>::value )
+      return false;
+    negative = true;
     ++it;
   }
-
-  if( neg && is_unsigned<T>::value )
-    return false;
 
   while( *it >= '0' && *it <= '9' )
   {
-    tmp = ( tmp * 10 ) + ( *it - '0' );
+    result = ( result * 10 ) + ( *it - '0' );
     ++it;
   }
 
-  if( neg )
-    result = -tmp;
-  else
-    result = tmp;
+  result = negative ? -result : result;
 
   if( it == end )
     return sizeof...( Targs ) == 0;
