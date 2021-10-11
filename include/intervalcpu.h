@@ -25,6 +25,8 @@
 #ifndef INTERVALCPU_H_INCLUDED
 #define INTERVALCPU_H_INCLUDED
 
+#include <unordered_map>
+
 #include "intervalhigh.h"
 #include "semanticcpu.h"
 #include "semanticthread.h"
@@ -78,10 +80,8 @@ class IntervalCPU: public IntervalHigh
     TCreateList createList;
     SemanticThread *functionThread;
     SemanticCompose *functionComposeThread;
-//    std::vector<IntervalCompose *> intervalCompose;
-//    std::vector<IntervalThread *> intervalThread;
-    std::map<TThreadOrder, IntervalCompose *> intervalCompose;
-    std::map<TThreadOrder, IntervalThread *> intervalThread;
+    std::unordered_map<TThreadOrder, IntervalCompose *> intervalCompose;
+    std::unordered_map<TThreadOrder, IntervalThread *> intervalThread;
     TRecordTime currentInitialTime;
 
   private:

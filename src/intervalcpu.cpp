@@ -35,12 +35,6 @@ IntervalCPU::IntervalCPU( KSingleWindow *whichWindow, TWindowLevel whichLevel,
   function = nullptr;
   functionThread = nullptr;
   functionComposeThread = nullptr;
-
-/*  TNodeOrder tmpNode;
-  TCPUOrder tmpCPU;
-  window->getTrace()->getCPULocation( whichOrder, tmpNode, tmpCPU );
-  std::vector<TThreadOrder> tmpThreads;
-  window->getTrace()->getThreadsPerNode( tmpNode + 1, tmpThreads );*/
 }
 
 
@@ -75,11 +69,11 @@ KRecordList *IntervalCPU::init( TRecordTime initialTime, TCreateList create,
     return displayList;
   }
 
-  for( std::map<TThreadOrder, IntervalThread *>::iterator it = intervalThread.begin();
+  for( std::unordered_map<TThreadOrder, IntervalThread *>::iterator it = intervalThread.begin();
        it != intervalThread.end(); ++it )
     (*it).second->setSemanticFunction( functionThread );
 
-  for( std::map<TThreadOrder, IntervalCompose *>::iterator it = intervalCompose.begin();
+  for( std::unordered_map<TThreadOrder, IntervalCompose *>::iterator it = intervalCompose.begin();
        it != intervalCompose.end(); ++it )
   {
     (*it).second->setSemanticFunction( functionComposeThread );
