@@ -34,9 +34,6 @@ string TraceBodyIO_v1::multiEventLine;
 TraceBodyIO_v1::TMultiEventCommonInfo TraceBodyIO_v1::multiEventCommonInfo =
         { nullptr, (TThreadOrder)0, (TCPUOrder)0, (TRecordTime)0 };
 
-istringstream TraceBodyIO_v1::fieldStream;
-istringstream TraceBodyIO_v1::strLine;
-string TraceBodyIO_v1::tmpstring;
 string TraceBodyIO_v1::line;
 ostringstream TraceBodyIO_v1::ostr;
 
@@ -44,38 +41,44 @@ ostringstream TraceBodyIO_v1::ostr;
 //#define USE_ATOLL
 // Even more optimization using custom function instead of atoll with error checking
 #define USE_PRV_ATOLL
-template <typename T>
-bool prv_atoll( const char *p, T *result )
+constexpr bool prv_atoll_v( string::const_iterator& it, const string::const_iterator& end )
 {
-  register T tmp = 0;
+  return true;
+}
+
+template <typename T, typename... Targs>
+bool prv_atoll_v( string::const_iterator& it, const string::const_iterator& end, T& result, Targs&... Fargs )
+{
+  T tmp = 0;
   bool neg = false;
 
-  if( *p == '-' )
+  if( it == end )
+    return false;
+
+  if( *it == '-' )
   {
     neg = true;
-    ++p;
+    ++it;
   }
 
   if( neg && is_unsigned<T>::value )
     return false;
 
-  while( *p >= '0' && *p <= '9' )
+  while( *it >= '0' && *it <= '9' )
   {
-    tmp = ( tmp * 10 ) + ( *p - '0' );
-    ++p;
+    tmp = ( tmp * 10 ) + ( *it - '0' );
+    ++it;
   }
-
-  if( *p != '\n' && *p != '\r' && *p != '\0' )
-    return false;
 
   if( neg )
-  {
-    tmp = -tmp;
-  }
+    result = -tmp;
+  else
+    result = tmp;
 
-  *result = tmp;
+  if( it == end )
+    return sizeof...( Targs ) == 0;
 
-  return true;
+  return prv_atoll_v( ++it, end, Fargs... );
 }
 
 TraceBodyIO_v1::TraceBodyIO_v1( Trace* trace )
@@ -119,7 +122,7 @@ void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
       break;
 
     default:
-      cerr << "No logging system yet. TraceBodyIO_v1::read()" << endl;
+      cerr << "TraceBodyIO_v1::read()" << endl;
       cerr << "Unkwnown record type." << endl;
       break;
   };
@@ -193,7 +196,7 @@ void TraceBodyIO_v1::write( fstream& whichStream,
     else
     {
       writeReady = false;
-      cerr << "No logging system yet. TraceBodyIO_v1::write()" << endl;
+      cerr << "TraceBodyIO_v1::write()" << endl;
       cerr << "Unkwnown record type in memory." << endl;
     }
 
@@ -227,58 +230,22 @@ inline void TraceBodyIO_v1::readState( const string& line, MemoryBlocks& records
   TRecordTime endtime;
   TState state;
 
-  strLine.clear();
-  strLine.str( line );
+  auto it = line.begin() + 2;
 
-  // Discarding record type
-  std::getline( strLine, tmpstring, ':' );
   // Read the common info
-  if ( !readCommon( strLine, CPU, appl, task, thread, time ) )
+  if ( !readCommon( it, line.cend(), CPU, appl, task, thread, time ) )
   {
     cerr << "Error reading state record." << endl;
     cerr << line << endl;
     return;
   }
 
-  std::getline( strLine, tmpstring, ':' );
-
-#ifdef USE_ATOLL
-  endtime = atoll( tmpstring.c_str() );
-#else
-#ifdef USE_PRV_ATOLL
-  if( !prv_atoll<TRecordTime>( tmpstring.c_str(), &endtime ) )
-#else
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if ( !( fieldStream >> endtime ) )
-#endif
+  if( !prv_atoll_v( it, line.cend(), endtime, state ) )
   {
     cerr << "Error reading state record." << endl;
     cerr << line << endl;
     return;
   }
-#endif
-
-  std::getline( strLine, tmpstring );
-
-#ifdef USE_ATOLL
-  state = atoll( tmpstring.c_str() );
-#else
-  #ifdef USE_PRV_ATOLL
-  if( !prv_atoll<TState>( tmpstring.c_str(), &state ) )
-  #else
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if ( !( fieldStream >> state ) )
-  #endif
-  {
-    cerr << "Error reading state record." << endl;
-    cerr << line << endl;
-    return;
-  }
-#endif
-
-  //if ( time == endtime ) return;
 
   records.newRecord();
   records.setType( STATE + BEGIN );
@@ -314,59 +281,24 @@ inline void TraceBodyIO_v1::readEvent( const string& line, MemoryBlocks& records
   TEventType eventtype;
   TEventValue eventvalue;
 
-  strLine.clear();
-  strLine.str( line );
-
-  // Discarding record type
-  std::getline( strLine, tmpstring, ':' );
+  auto it = line.begin() + 2;
 
   // Read the common info
-  if ( !readCommon( strLine, CPU, appl, task, thread, time ) )
+  if ( !readCommon( it, line.cend(), CPU, appl, task, thread, time ) )
   {
     cerr << "Error reading event record." << endl;
     cerr << line << endl;
     return;
   }
 
-  while ( !strLine.eof() )
+  while ( it != line.end() )
   {
-    std::getline( strLine, tmpstring, ':' );
-
-#ifdef USE_ATOLL
-    eventtype = atoll( tmpstring.c_str() );
-#else
-    #ifdef USE_PRV_ATOLL
-    if( !prv_atoll<TEventType>( tmpstring.c_str(), &eventtype ) )
-    #else
-    fieldStream.clear();
-    fieldStream.str( tmpstring );
-    if ( !( fieldStream >> eventtype ) )
-    #endif
+    if( !prv_atoll_v( it, line.cend(), eventtype, eventvalue ) )
     {
       cerr << "Error reading event record." << endl;
       cerr << line << endl;
       return;
     }
-#endif
-
-    std::getline( strLine, tmpstring, ':' );
-
-#ifdef USE_ATOLL
-    eventvalue = atoll( tmpstring.c_str() );
-#else
-    #ifdef USE_PRV_ATOLL
-    if( !prv_atoll<TEventValue>( tmpstring.c_str(), &eventvalue ) )
-    #else
-    fieldStream.clear();
-    fieldStream.str( tmpstring );
-    if ( !( fieldStream >> eventvalue ) )
-    #endif
-    {
-      cerr << "Error reading event record." << endl;
-      cerr << line << endl;
-      return;
-    }
-#endif
 
     records.newRecord();
     records.setType( EVENT );
@@ -398,102 +330,22 @@ inline void TraceBodyIO_v1::readComm( const string& line, MemoryBlocks& records 
   TCommSize commSize;
   TCommTag commTag;
 
-  strLine.clear();
-  strLine.str( line );
-
-  // Discarding record type
-  std::getline( strLine, tmpstring, ':' );
+  auto it = line.begin() + 2;
 
   // Read the common info
-  if ( !readCommon( strLine, CPU, appl, task, thread, logSend ) )
+  if ( !readCommon( it, line.cend(), CPU, appl, task, thread, logSend ) )
   {
     cerr << "Error reading communication record." << endl;
     cerr << line << endl;
     return;
   }
 
-  std::getline( strLine, tmpstring, ':' );
-
-#ifdef USE_ATOLL
-  phySend = atoll( tmpstring.c_str() );
-#else
-  #ifdef USE_PRV_ATOLL
-  if( !prv_atoll<TRecordTime>( tmpstring.c_str(), &phySend ) )
-  #else
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if ( !( fieldStream >> phySend ) )
-  #endif
+  if( !prv_atoll_v( it, line.cend(), phySend, remoteCPU, remoteAppl, remoteTask, remoteThread, logReceive, phyReceive, commSize, commTag ) )
   {
     cerr << "Error reading communication record." << endl;
     cerr << line << endl;
     return;
   }
-#endif
-
-  if ( !readCommon( strLine, remoteCPU, remoteAppl, remoteTask, remoteThread,
-                    logReceive ) )
-  {
-    cerr << "Error reading communication record." << endl;
-    cerr << line << endl;
-    return;
-  }
-
-  std::getline( strLine, tmpstring, ':' );
-
-#ifdef USE_ATOLL
-  phyReceive = atoll( tmpstring.c_str() );
-#else
-  #ifdef USE_PRV_ATOLL
-  if( !prv_atoll<TRecordTime>( tmpstring.c_str(), &phyReceive ) )
-  #else
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if ( !( fieldStream >> phyReceive ) )
-  #endif
-  {
-    cerr << "Error reading communication record." << endl;
-    cerr << line << endl;
-    return;
-  }
-#endif
-  std::getline( strLine, tmpstring, ':' );
-
-#ifdef USE_ATOLL
-  commSize = atoll( tmpstring.c_str() );
-#else
-  #ifdef USE_PRV_ATOLL
-  if( !prv_atoll<TCommSize>( tmpstring.c_str(), &commSize ) )
-  #else
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if ( !( fieldStream >> commSize ) )
-  #endif
-  {
-    cerr << "Error reading communication record." << endl;
-    cerr << line << endl;
-    return;
-  }
-#endif
-
-  std::getline( strLine, tmpstring, ':' );
-
-#ifdef USE_ATOLL
-  commTag = atoll( tmpstring.c_str() );
-#else
-  #ifdef USE_PRV_ATOLL
-  if( !prv_atoll<TCommTag>( tmpstring.c_str(), &commTag ) )
-  #else
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if ( !( fieldStream >> commTag ) )
-  #endif
-  {
-    cerr << "Error reading communication record." << endl;
-    cerr << line << endl;
-    return;
-  }
-#endif
 
   records.newComm();
   records.setSenderCPU( CPU );
@@ -513,100 +365,23 @@ inline void TraceBodyIO_v1::readGlobalComm( const string& line, MemoryBlocks& re
 {}
 
 
-inline bool TraceBodyIO_v1::readCommon( istringstream& line,
+inline bool TraceBodyIO_v1::readCommon( string::const_iterator& it,
+                                        const string::const_iterator& end,
                                         TCPUOrder& CPU,
                                         TApplOrder& appl,
                                         TTaskOrder& task,
                                         TThreadOrder& thread,
                                         TRecordTime& time ) const
 {
-  std::getline( line, tmpstring, ':' );
-#ifdef USE_ATOLL
-  CPU = atoll( tmpstring.c_str() );
-#else
-  #ifdef USE_PRV_ATOLL
-  if( !prv_atoll<TCPUOrder>( tmpstring.c_str(), &CPU ) )
-  #else
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if ( !( fieldStream >> CPU ) )
-  #endif
-  {
-    return false;
-  }
-#endif
+  bool result;
+
+  result = prv_atoll_v( it, end, CPU, appl, task, thread, time );
 
   if ( !resourceModel->isValidGlobalCPU( CPU ) )
     return false;
 
-
-  std::getline( line, tmpstring, ':' );
-#ifdef USE_ATOLL
-  appl = atoll( tmpstring.c_str() );
-#else
-  #ifdef USE_PRV_ATOLL
-  if( !prv_atoll<TApplOrder>( tmpstring.c_str(), &appl ) )
-  #else
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if ( !( fieldStream >> appl ) )
-  #endif
-  {
-    return false;
-  }
-#endif
-
-
-  std::getline( line, tmpstring, ':' );
-#ifdef USE_ATOLL
-  task = atoll( tmpstring.c_str() );
-#else
-  #ifdef USE_PRV_ATOLL
-  if( !prv_atoll<TTaskOrder>( tmpstring.c_str(), &task ) )
-  #else
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if ( !( fieldStream >> task ) )
-  #endif
-  {
-    return false;
-  }
-#endif
-
-  std::getline( line, tmpstring, ':' );
-#ifdef USE_ATOLL
-  thread = atoll( tmpstring.c_str() );
-#else
-  #ifdef USE_PRV_ATOLL
-  if( !prv_atoll<TThreadOrder>( tmpstring.c_str(), &thread ) )
-  #else
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if ( !( fieldStream >> thread ) )
-  #endif
-  {
-    return false;
-  }
-#endif
-
   if ( !processModel->isValidThread( appl - 1, task - 1, thread - 1 ) )
     return false;
-
-  std::getline( line, tmpstring, ':' );
-#ifdef USE_ATOLL
-  time = atoll( tmpstring.c_str() );
-#else
-  #ifdef USE_PRV_ATOLL
-  if( !prv_atoll<TRecordTime>( tmpstring.c_str(), &time ) )
-  #else
-  fieldStream.clear();
-  fieldStream.str( tmpstring );
-  if ( !( fieldStream >> time ) )
-  #endif
-  {
-    return false;
-  }
-#endif
 
   return true;
 }

@@ -74,9 +74,6 @@ class TraceBodyIO_v1 : public TraceBodyIO
     static TMultiEventCommonInfo multiEventCommonInfo;
     static std::string multiEventLine;
 
-    static std::istringstream fieldStream;
-    static std::istringstream strLine;
-    static std::string tmpstring;
     static std::string line;
     static std::ostringstream ostr;
     Trace* whichTrace;
@@ -89,7 +86,8 @@ class TraceBodyIO_v1 : public TraceBodyIO
                     std::unordered_set<TEventType>& events ) const;
     void readComm( const std::string& line, MemoryBlocks& records ) const;
     void readGlobalComm( const std::string& line, MemoryBlocks& records ) const;
-    bool readCommon( std::istringstream& line,
+    bool readCommon( std::string::const_iterator& it,
+                     const std::string::const_iterator& end,
                      TCPUOrder& CPU,
                      TApplOrder& appl,
                      TTaskOrder& task,
