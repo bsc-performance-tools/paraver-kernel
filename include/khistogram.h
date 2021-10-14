@@ -25,6 +25,8 @@
 #ifndef KHISTOGRAM_H_INCLUDED
 #define KHISTOGRAM_H_INCLUDED
 
+#include <unordered_map>
+
 #include "cube.h"
 #include "histogram.h"
 #include "memorytrace.h"
@@ -50,7 +52,7 @@ class WindowCloneManager
     void clear();
 
   private:
-    std::map< Window *, std::vector< Window * > > clonedWindows;
+    std::unordered_map< Window *, std::vector< Window * > > clonedWindows;
 
     void clone( Window *whichWindow );
     bool isClonable( Window *whichWindow );

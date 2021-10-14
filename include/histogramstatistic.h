@@ -1110,8 +1110,8 @@ class Statistics
 
     void initAllComm( KHistogram *whichHistogram );
     void resetAllComm();
-    std::vector<bool> filterAllComm( CalculateData *data );
-    std::vector<TSemanticValue> executeAllComm( CalculateData *data );
+    bool filterAllComm( CalculateData *data );
+    void executeAllComm( CalculateData *data, std::vector<TSemanticValue>& onValues );
     std::vector<TSemanticValue> finishRowAllComm( const std::vector<TSemanticValue>& cellValue,
                                                   THistogramColumn column,
                                                   TObjectOrder row,
@@ -1120,8 +1120,8 @@ class Statistics
     static int getNumStats();
     void initAll( KHistogram *whichHistogram );
     void resetAll();
-    std::vector<bool> filterAll( CalculateData *data );
-    std::vector<TSemanticValue> executeAll( CalculateData *data, bool& isNotZeroValue );
+    bool filterAll( CalculateData *data );
+    void executeAll( CalculateData *data, std::vector<TSemanticValue>& onValues, bool& isNotZeroValue );
     std::vector<TSemanticValue> finishRowAll( const std::vector<TSemanticValue>& cellValue,
                                               THistogramColumn column,
                                               TObjectOrder row,

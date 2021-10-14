@@ -113,40 +113,34 @@ void Statistics::resetAllComm()
   statMaxBytesReceived.reset();
 }
 
-vector<bool> Statistics::filterAllComm( CalculateData *data )
+bool Statistics::filterAllComm( CalculateData *data )
 {
-  vector<bool> values;
+  if ( statNumSends.filter( data ) )         return true;
+  if ( statNumReceives.filter( data ) )      return true;
+  if ( statBytesSent.filter( data ) )        return true;
+  if ( statBytesReceived.filter( data ) )    return true;
+  if ( statAvgBytesSent.filter( data ) )     return true;
+  if ( statAvgBytesReceived.filter( data ) ) return true;
+  if ( statMinBytesSent.filter( data ) )     return true;
+  if ( statMinBytesReceived.filter( data ) ) return true;
+  if ( statMaxBytesSent.filter( data ) )     return true;
+  if ( statMaxBytesReceived.filter( data ) ) return true;
 
-  values.push_back( statNumSends.filter( data ) );
-  values.push_back( statNumReceives.filter( data ) );
-  values.push_back( statBytesSent.filter( data ) );
-  values.push_back( statBytesReceived.filter( data ) );
-  values.push_back( statAvgBytesSent.filter( data ) );
-  values.push_back( statAvgBytesReceived.filter( data ) );
-  values.push_back( statMinBytesSent.filter( data ) );
-  values.push_back( statMinBytesReceived.filter( data ) );
-  values.push_back( statMaxBytesSent.filter( data ) );
-  values.push_back( statMaxBytesReceived.filter( data ) );
-
-  return values;
+  return false;
 }
 
-vector<TSemanticValue> Statistics::executeAllComm( CalculateData *data )
+void Statistics::executeAllComm( CalculateData *data, vector<TSemanticValue>& onValues )
 {
-  vector<TSemanticValue> values;
-
-  values.push_back( statNumSends.execute( data ) );
-  values.push_back( statNumReceives.execute( data ) );
-  values.push_back( statBytesSent.execute( data ) );
-  values.push_back( statBytesReceived.execute( data ) );
-  values.push_back( statAvgBytesSent.execute( data ) );
-  values.push_back( statAvgBytesReceived.execute( data ) );
-  values.push_back( statMinBytesSent.execute( data ) );
-  values.push_back( statMinBytesReceived.execute( data ) );
-  values.push_back( statMaxBytesSent.execute( data ) );
-  values.push_back( statMaxBytesReceived.execute( data ) );
-
-  return values;
+  onValues.push_back( statNumSends.execute( data ) );
+  onValues.push_back( statNumReceives.execute( data ) );
+  onValues.push_back( statBytesSent.execute( data ) );
+  onValues.push_back( statBytesReceived.execute( data ) );
+  onValues.push_back( statAvgBytesSent.execute( data ) );
+  onValues.push_back( statAvgBytesReceived.execute( data ) );
+  onValues.push_back( statMinBytesSent.execute( data ) );
+  onValues.push_back( statMinBytesReceived.execute( data ) );
+  onValues.push_back( statMaxBytesSent.execute( data ) );
+  onValues.push_back( statMaxBytesReceived.execute( data ) );
 }
 
 vector<TSemanticValue> Statistics::finishRowAllComm( const vector<TSemanticValue>& cellValue,
@@ -233,56 +227,50 @@ void Statistics::resetAll()
   statSumBursts.reset();
 }
 
-vector<bool> Statistics::filterAll( CalculateData *data )
+bool Statistics::filterAll( CalculateData *data )
 {
-  vector<bool> values;
+  if ( statTime.filter( data ) )               return true;
+  if ( statPercTime.filter( data ) )           return true;
+  if ( statPercTimeNotZero.filter( data ) )    return true;
+  if ( statPercTimeWindow.filter( data ) )     return true;
+  if ( statNumBursts.filter( data ) )          return true;
+  if ( statPercNumBursts.filter( data ) )      return true;
+  if ( statIntegral.filter( data ) )           return true;
+  if ( statAvgValue.filter( data ) )           return true;
+  if ( statMaximum.filter( data ) )            return true;
+  if ( statMinimum.filter( data ) )            return true;
+  if ( statAvgBurstTime.filter( data ) )       return true;
+  if ( statStdevBurstTime.filter( data ) )     return true;
+  if ( statAvgPerBurst.filter( data ) )        return true;
+  if ( statAvgValueNotZero.filter( data ) )    return true;
+  if ( statAvgPerBurstNotZero.filter( data ) ) return true;
+  if ( statNumBurstsNotZero.filter( data ) )   return true;
+  if ( statSumBursts.filter( data ) )          return true;
 
-  values.push_back( statTime.filter( data ) );
-  values.push_back( statPercTime.filter( data ) );
-  values.push_back( statPercTimeNotZero.filter( data ) );
-  values.push_back( statPercTimeWindow.filter( data ) );
-  values.push_back( statNumBursts.filter( data ) );
-  values.push_back( statPercNumBursts.filter( data ) );
-  values.push_back( statIntegral.filter( data ) );
-  values.push_back( statAvgValue.filter( data ) );
-  values.push_back( statMaximum.filter( data ) );
-  values.push_back( statMinimum.filter( data ) );
-  values.push_back( statAvgBurstTime.filter( data ) );
-  values.push_back( statStdevBurstTime.filter( data ) );
-  values.push_back( statAvgPerBurst.filter( data ) );
-  values.push_back( statAvgValueNotZero.filter( data ) );
-  values.push_back( statAvgPerBurstNotZero.filter( data ) );
-  values.push_back( statNumBurstsNotZero.filter( data ) );
-  values.push_back( statSumBursts.filter( data ) );
-
-  return values;
+  return false;
 }
 
-vector<TSemanticValue> Statistics::executeAll( CalculateData *data, bool& isNotZeroValue )
+void Statistics::executeAll( CalculateData *data, vector<TSemanticValue>& onValues, bool& isNotZeroValue )
 {
-  vector<TSemanticValue> values;
-
-  values.push_back( statTime.execute( data ) );
-  values.push_back( statPercTime.execute( data ) );
-  values.push_back( statPercTimeNotZero.execute( data ) );
-  values.push_back( statPercTimeWindow.execute( data ) );
-  values.push_back( statNumBursts.execute( data ) );
-  values.push_back( statPercNumBursts.execute( data ) );
-  values.push_back( statIntegral.execute( data ) );
-  values.push_back( statAvgValue.execute( data ) );
-  values.push_back( statMaximum.execute( data ) );
-  values.push_back( statMinimum.execute( data ) );
-  values.push_back( statAvgBurstTime.execute( data ) );
-  values.push_back( statStdevBurstTime.execute( data ) );
-  values.push_back( statAvgPerBurst.execute( data ) );
+  onValues.push_back( statTime.execute( data ) );
+  onValues.push_back( statPercTime.execute( data ) );
+  onValues.push_back( statPercTimeNotZero.execute( data ) );
+  onValues.push_back( statPercTimeWindow.execute( data ) );
+  onValues.push_back( statNumBursts.execute( data ) );
+  onValues.push_back( statPercNumBursts.execute( data ) );
+  onValues.push_back( statIntegral.execute( data ) );
+  onValues.push_back( statAvgValue.execute( data ) );
+  onValues.push_back( statMaximum.execute( data ) );
+  onValues.push_back( statMinimum.execute( data ) );
+  onValues.push_back( statAvgBurstTime.execute( data ) );
+  onValues.push_back( statStdevBurstTime.execute( data ) );
+  onValues.push_back( statAvgPerBurst.execute( data ) );
   TSemanticValue tmpVal = statAvgValueNotZero.execute( data );
   isNotZeroValue = tmpVal != 0.0;
-  values.push_back( tmpVal );
-  values.push_back( statAvgPerBurstNotZero.execute( data ) );
-  values.push_back( statNumBurstsNotZero.execute( data ) );
-  values.push_back( statSumBursts.execute( data ) );
-
-  return values;
+  onValues.push_back( tmpVal );
+  onValues.push_back( statAvgPerBurstNotZero.execute( data ) );
+  onValues.push_back( statNumBurstsNotZero.execute( data ) );
+  onValues.push_back( statSumBursts.execute( data ) );
 }
 
 vector<TSemanticValue> Statistics::finishRowAll( const vector<TSemanticValue>& cellValue,

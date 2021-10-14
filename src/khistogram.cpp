@@ -53,9 +53,9 @@ WindowCloneManager::WindowCloneManager()
 WindowCloneManager::~WindowCloneManager()
 {
 #ifdef PARALLEL_ENABLED
-  for( map< Window *, vector< Window * > >::iterator it = clonedWindows.begin(); it != clonedWindows.end(); ++it )
+  for( auto it : clonedWindows )
   {
-    for( vector< Window * >::iterator itWin = it->second.begin(); itWin != it->second.end(); ++itWin )
+    for( vector< Window * >::iterator itWin = it.second.begin(); itWin != it.second.end(); ++itWin )
       delete *itWin;
   }
 #endif
@@ -65,7 +65,7 @@ WindowCloneManager::~WindowCloneManager()
 Window *WindowCloneManager::operator()( Window *originalWindow ) const
 {
 #ifdef PARALLEL_ENABLED
-  map< Window *, vector< Window * > >::const_iterator it = clonedWindows.find( originalWindow );
+  auto it = clonedWindows.find( originalWindow );
   if ( it != clonedWindows.end() )
     return it->second[ omp_get_thread_num() ];
 #endif
@@ -107,10 +107,10 @@ void WindowCloneManager::update( const KHistogram *whichHistogram )
 
 void WindowCloneManager::clear()
 {
-  for( map< Window *, vector< Window * > >::iterator it = clonedWindows.begin(); it != clonedWindows.end(); ++it )
+  for( auto it : clonedWindows )
   {
-    for( vector< Window * >::iterator itWin = it->second.begin(); itWin != it->second.end(); ++itWin )
-      delete *itWin;
+    for( auto itWin : it.second )
+      delete itWin;
   }
 
   clonedWindows.clear();
@@ -1152,10 +1152,8 @@ void KHistogram::finishAllRows()
       for ( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns();
             ++iPlane )
       {
-        const map< THistogramColumn, vector< TSemanticValue > >& rowValues =
-            commBuffer->getRowValues( iPlane, iRow );
-        for ( map< THistogramColumn, vector< TSemanticValue > >::const_iterator it = rowValues.begin();
-              it != rowValues.end(); ++it )
+        auto& rowValues = commBuffer->getRowValues( iPlane, iRow );
+        for ( auto it = rowValues.begin(); it != rowValues.end(); ++it )
         {
           values = it->second;
           commCube->setValue( iPlane, it->first, values );
@@ -1174,10 +1172,8 @@ void KHistogram::finishAllRows()
   {
     for ( TObjectOrder iRow = 0; iRow < rowsTranslator->totalRows(); ++iRow )
     {
-      const map< THistogramColumn, vector< TSemanticValue > >& rowValues =
-          commBuffer->getRowValues( 0, iRow );
-      for ( map< THistogramColumn, vector< TSemanticValue > >::const_iterator it = rowValues.begin();
-            it != rowValues.end(); ++it )
+      auto& rowValues = commBuffer->getRowValues( 0, iRow );
+      for ( auto it = rowValues.begin(); it != rowValues.end(); ++it )
       {
         values = it->second;
         commMatrix->setValue( it->first, values );
@@ -1199,14 +1195,11 @@ void KHistogram::finishAllRows()
       for ( THistogramColumn iPlane = 0; iPlane < planeTranslator->totalColumns();
             ++iPlane )
       {
-        const map< THistogramColumn, vector< TSemanticValue > >& rowValues =
-            semanticBuffer->getRowValues( iPlane, iRow );
-        const map< THistogramColumn, bool >& rowNotZeroValues =
-            semanticBuffer->getNotZeroValue( iPlane, iRow );
-        map< THistogramColumn, bool >::const_iterator itZero = rowNotZeroValues.begin();
+        auto& rowValues = semanticBuffer->getRowValues( iPlane, iRow );
+        auto& rowNotZeroValues = semanticBuffer->getNotZeroValue( iPlane, iRow );
+        auto itZero = rowNotZeroValues.begin();
 
-        for ( map< THistogramColumn, vector< TSemanticValue > >::const_iterator it = rowValues.begin();
-              it != rowValues.end(); ++it, ++itZero )
+        for ( auto it = rowValues.begin(); it != rowValues.end(); ++it, ++itZero )
         {
           values = it->second;
           cube->setValue( iPlane, it->first, values, itZero->second );
@@ -1226,14 +1219,11 @@ void KHistogram::finishAllRows()
     THistogramColumn iPlane = 0;
     for ( TObjectOrder iRow = 0; iRow < rowsTranslator->totalRows(); ++iRow )
     {
-      const map< THistogramColumn, vector< TSemanticValue > >& rowValues =
-          semanticBuffer->getRowValues( 0, iRow );
-      const map< THistogramColumn, bool >& rowNotZeroValues =
-          semanticBuffer->getNotZeroValue( 0, iRow );
-      map< THistogramColumn, bool >::const_iterator itZero = rowNotZeroValues.begin();
+      auto& rowValues = semanticBuffer->getRowValues( 0, iRow );
+      auto& rowNotZeroValues = semanticBuffer->getNotZeroValue( 0, iRow );
+      auto itZero = rowNotZeroValues.begin();
 
-      for ( map< THistogramColumn, vector< TSemanticValue > >::const_iterator it = rowValues.begin();
-            it != rowValues.end(); ++it, ++itZero )
+      for ( auto it = rowValues.begin(); it != rowValues.end(); ++it, ++itZero )
       {
         values = it->second;
         matrix->setValue( it->first, values, itZero->second );
@@ -1529,6 +1519,8 @@ void KHistogram::calculate( TObjectOrder iRow,
             itComm->getTime() >= getBeginTime() &&
             itComm->getTime() <= getEndTime()*/ )
     {
+      values.clear();
+
       if ( !( itComm->getType() & COMM ) ||
            !( itComm->getTime() >= getBeginTime() && itComm->getTime() <= getEndTime() )
          )
@@ -1538,29 +1530,24 @@ void KHistogram::calculate( TObjectOrder iRow,
       }
 
       data->comm = itComm;
-      filter = statistics.filterAllComm( data );
-      values = statistics.executeAllComm( data );
-      for ( PRV_UINT16 iStat = 0; iStat < filter.size(); iStat++ )
+      statistics.executeAllComm( data, values );
+      if ( statistics.filterAllComm( data ) )
       {
-        if ( filter[ iStat ] )
-        {
-          TObjectOrder column;
-          if ( controlWindow->getLevel() >= WORKLOAD && controlWindow->getLevel() <= THREAD )
-            column = controlWindow->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
-          else if( controlWindow->getLevel() >= SYSTEM && controlWindow->getLevel() <= NODE )
-            column = controlWindow->cpuObjectToWindowObject( data->comm->getCommPartnerObject() );
-          else // CPU
-            column = controlWindow->cpuObjectToWindowObject( data->comm->getCommPartnerObject() ) - 1;
+        TObjectOrder column;
+        if ( controlWindow->getLevel() >= WORKLOAD && controlWindow->getLevel() <= THREAD )
+          column = controlWindow->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
+        else if( controlWindow->getLevel() >= SYSTEM && controlWindow->getLevel() <= NODE )
+          column = controlWindow->cpuObjectToWindowObject( data->comm->getCommPartnerObject() );
+        else // CPU
+          column = controlWindow->cpuObjectToWindowObject( data->comm->getCommPartnerObject() ) - 1;
 #ifdef PARALLEL_ENABLED
-          commBuffer->addValue( data->plane, data->row, column, values );
+        commBuffer->addValue( data->plane, data->row, column, values );
 #else
-          if ( getThreeDimensions() )
-            commCube->addValue( data->plane, column, values );
-          else
-            commMatrix->addValue( column, values );
+        if ( getThreeDimensions() )
+          commCube->addValue( data->plane, column, values );
+        else
+          commMatrix->addValue( column, values );
 #endif
-          break;
-        }
       }
 
       ++itComm;
@@ -1584,24 +1571,19 @@ void KHistogram::calculate( TObjectOrder iRow,
       {
         if ( columnTranslator->getColumn( *it, column ) )
         {
-          filter = statistics.filterAll( data );
-          values = statistics.executeAll( data, isNotZeroValue );
+          values.clear();
+          statistics.executeAll( data, values, isNotZeroValue );
 
-          for ( PRV_UINT16 iStat = 0; iStat < filter.size(); ++iStat )
+          if ( statistics.filterAll( data ) )
           {
-            if ( filter[ iStat ] )
-            {
 #ifdef PARALLEL_ENABLED
-              semanticBuffer->addValue( data->plane, data->row, column, values, isNotZeroValue );
+            semanticBuffer->addValue( data->plane, data->row, column, values, isNotZeroValue );
 #else
-              if ( getThreeDimensions() )
-                cube->addValue( data->plane, column, values );
-              else
-                matrix->addValue( column, values );
+            if ( getThreeDimensions() )
+              cube->addValue( data->plane, column, values );
+            else
+              matrix->addValue( column, values );
 #endif
-
-              break;
-            }
           }
         }
         ++it;
@@ -1609,23 +1591,19 @@ void KHistogram::calculate( TObjectOrder iRow,
     }
     else
     {
-      filter = statistics.filterAll( data );
-      values = statistics.executeAll( data, isNotZeroValue );
+      values.clear();
+      statistics.executeAll( data, values, isNotZeroValue );
 
-      for ( PRV_UINT16 iStat = 0; iStat < filter.size(); ++iStat )
+      if ( statistics.filterAll( data ) )
       {
-        if ( filter[ iStat ] )
-        {
 #ifdef PARALLEL_ENABLED
-          semanticBuffer->addValue( data->plane, data->row, data->column, values, isNotZeroValue );
+        semanticBuffer->addValue( data->plane, data->row, data->column, values, isNotZeroValue );
 #else
-          if ( getThreeDimensions() )
-            cube->addValue( data->plane, data->column, values );
-          else
-            matrix->addValue( data->column, values );
+        if ( getThreeDimensions() )
+          cube->addValue( data->plane, data->column, values );
+        else
+          matrix->addValue( data->column, values );
 #endif
-          break;
-        }
       }
     }
   }
@@ -1656,10 +1634,8 @@ void KHistogram::finishRow( CalculateData *data )
           ++iPlane )
     {
 #ifdef PARALLEL_ENABLED
-      const map< THistogramColumn, vector< TSemanticValue > >& rowValues =
-          commBuffer->getRowValues( iPlane, data->row );
-      for ( map< THistogramColumn, vector< TSemanticValue > >::const_iterator it = rowValues.begin();
-            it != rowValues.end(); ++it )
+      auto& rowValues = commBuffer->getRowValues( iPlane, data->row );
+      for ( auto it = rowValues.begin(); it != rowValues.end(); ++it )
       {
         //values = it->second;
         values = statistics.finishRowAllComm( it->second, it->first, data->row, iPlane );
@@ -1691,10 +1667,8 @@ void KHistogram::finishRow( CalculateData *data )
   else
   {
 #ifdef PARALLEL_ENABLED
-    const map< THistogramColumn, vector< TSemanticValue > >& rowValues =
-        commBuffer->getRowValues( 0, data->row );
-    for ( map< THistogramColumn, vector< TSemanticValue > >::const_iterator it = rowValues.begin();
-          it != rowValues.end(); ++it )
+    auto& rowValues = commBuffer->getRowValues( 0, data->row );
+    for ( auto it = rowValues.begin(); it != rowValues.end(); ++it )
     {
       //values = it->second;
       values = statistics.finishRowAllComm( it->second, it->first, data->row );
@@ -1730,10 +1704,8 @@ void KHistogram::finishRow( CalculateData *data )
           ++iPlane )
     {
 #ifdef PARALLEL_ENABLED
-      const map< THistogramColumn, vector< TSemanticValue > >& rowValues =
-          semanticBuffer->getRowValues( iPlane, data->row );
-      for ( map< THistogramColumn, vector< TSemanticValue > >::const_iterator it = rowValues.begin();
-            it != rowValues.end(); ++it )
+      auto& rowValues = semanticBuffer->getRowValues( iPlane, data->row );
+      for ( auto it = rowValues.begin(); it != rowValues.end(); ++it )
       {
         //values = it->second;
         values = statistics.finishRowAll( it->second, it->first, data->row, iPlane );
@@ -1765,10 +1737,8 @@ void KHistogram::finishRow( CalculateData *data )
   else
   {
 #ifdef PARALLEL_ENABLED
-    const map< THistogramColumn, vector< TSemanticValue > >& rowValues =
-        semanticBuffer->getRowValues( 0, data->row );
-    for ( map< THistogramColumn, vector< TSemanticValue > >::const_iterator it = rowValues.begin();
-          it != rowValues.end(); ++it )
+    auto& rowValues = semanticBuffer->getRowValues( 0, data->row );
+    for ( auto it = rowValues.begin(); it != rowValues.end(); ++it )
     {
       //values = it->second;
       values = statistics.finishRowAll( it->second, it->first, data->row );
