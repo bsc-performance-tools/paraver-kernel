@@ -81,7 +81,6 @@ KRecordList *IntervalNotThread::init( TRecordTime initialTime, TCreateList creat
          childIntervals[ i ]->getEnd()->getTime() < end->getTime() )
     {
       if ( end == nullptr )
-        end = childIntervals[ i ]->getEnd()->clone();
         *end = *childIntervals[ i ]->getEnd();
     }
 

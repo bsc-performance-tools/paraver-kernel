@@ -227,7 +227,7 @@ void PlainTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
 }
 
 PlainTrace::iterator::iterator( PlainBlocks *whichBlocks, const Trace *whichTrace )
-    : blocks( whichBlocks ), MemoryTrace::iterator( whichTrace )
+    :  MemoryTrace::iterator( whichTrace ), blocks( whichBlocks )
 {
 }
 

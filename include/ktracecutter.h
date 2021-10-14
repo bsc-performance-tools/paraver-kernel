@@ -112,11 +112,11 @@ class KTraceCutter : public TraceCutter
     {
       public:
         thread_info() : last_time( 0 ), lastCPU( 0 ), finished( false )
-        {};
+        {}
 
         unsigned long long last_time;
-        bool finished;
         TCPUOrder lastCPU; // last CPU to be able to write trailing records.
+        bool finished;
         std::set< TEventType >      eventTypesWithoutPCFZeros; //
         std::multiset< TEventType > eventTypesWithPCFZeros;    //
     };
