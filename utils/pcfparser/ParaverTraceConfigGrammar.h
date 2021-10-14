@@ -1,5 +1,5 @@
-#ifndef PARAVER_TRACE_CONFIG_GRAMMAR_H
-#define PARAVER_TRACE_CONFIG_GRAMMAR_H
+#pragma once
+
 
 #include <iostream>
 #include <sstream>
@@ -131,4 +131,3 @@ public:
 
 #include "ParaverTraceConfigGrammar.ipp"
 }
-#endif

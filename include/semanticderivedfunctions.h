@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef SEMANTICDERIVEDFUNCTIONS_H_INCLUDED
-#define SEMANTICDERIVEDFUNCTIONS_H_INCLUDED
+#pragma once
+
 
 #include "semanticderived.h"
 
@@ -846,4 +846,4 @@ class ControlDerivedAverage: public SemanticDerived
 
 };
 
-#endif // SEMANTICDERIVEDFUNCTIONS_H_INCLUDED
+

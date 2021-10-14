@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef _ZOOMHISTORY_H
-#define _ZOOMHISTORY_H
+#pragma once
+
 
 //#include <utility>
 #include <vector>
@@ -71,4 +71,4 @@ class ZoomHistory
 
 #include "zoomhistory.cpp"
 
-#endif // _ZOOMHISTORY_H
+

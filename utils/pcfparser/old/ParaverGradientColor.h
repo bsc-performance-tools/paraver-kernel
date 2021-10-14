@@ -1,5 +1,5 @@
-#ifndef LIBPARAVER_PARAVERGRADIENTCOLOR_H
-#define LIBPARAVER_PARAVERGRADIENTCOLOR_H
+#pragma once
+
 
 
 namespace libparaver {

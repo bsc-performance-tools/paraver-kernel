@@ -21,8 +21,8 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#ifndef FILTER_H_INCLUDED
-#define FILTER_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include <set>
@@ -233,4 +233,4 @@ class FilterProxy : public Filter
     friend Filter *LocalKernel::newFilter( Filter * ) const;
 };
 
-#endif // FILTER_H_INCLUDED
+

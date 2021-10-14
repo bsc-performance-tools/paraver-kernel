@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef PROGRESSCONTROLLER_H_INCLUDED
-#define PROGRESSCONTROLLER_H_INCLUDED
+#pragma once
+
 
 #include "paraverkerneltypes.h"
 
@@ -97,4 +97,4 @@ class ProgressControllerProxy:public ProgressController
     friend ProgressController *ProgressController::create( KernelConnection * );
 };
 
-#endif // PROGRESSCONTROLLER_H_INCLUDED
+

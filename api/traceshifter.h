@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef TRACESHIFTER_H_INCLUDED
-#define TRACESHIFTER_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include <vector>
@@ -98,4 +98,4 @@ class TraceShifterProxy : public TraceShifter
                                                ProgressController *progress );
 };
 
-#endif // TRACESHIFTER_H_INCLUDED
+

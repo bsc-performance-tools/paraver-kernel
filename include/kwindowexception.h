@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef KWINDOWEXCEPTION_H_INCLUDED
-#define KWINDOWEXCEPTION_H_INCLUDED
+#pragma once
+
 
 #include "paraverkernelexception.h"
 
@@ -66,4 +66,4 @@ class KWindowException: public ParaverKernelException
 };
 
 
-#endif // KWINDOWEXCEPTION_H_INCLUDED
+

@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef PLAINTYPES_H_INCLUDED
-#define PLAINTYPES_H_INCLUDED
+#pragma once
+
 
 #include "paraverkerneltypes.h"
 #include "memorytrace.h"
@@ -185,4 +185,4 @@ namespace Plain
 
 }
 
-#endif // PLAINTYPES_H_INCLUDED
+

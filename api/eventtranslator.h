@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef EVENTTRANSLATOR_H_INCLUDED
-#define EVENTTRANSLATOR_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include "paraverkerneltypes.h"
@@ -89,4 +89,4 @@ class EventTranslatorProxy : public EventTranslator
 };
 
 
-#endif // EVENTTRANSLATOR_H_INCLUDED
+

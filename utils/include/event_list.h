@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef EVENT_LIST_H_INCLUDED
-#define EVENT_LIST_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include <vector>
@@ -80,4 +80,4 @@ class EventList
 };
 
 
-#endif // EVENT_LIST_H_INCLUDED
+

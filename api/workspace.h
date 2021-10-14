@@ -21,8 +21,8 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#ifndef WORKSPACE_H_INCLUDED
-#define WORKSPACE_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include <vector>
@@ -147,4 +147,4 @@ class Workspace
 BOOST_CLASS_VERSION( Workspace, 2 )
 
 
-#endif // WORKSPACE_H_INCLUDED
+

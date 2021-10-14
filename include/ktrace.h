@@ -21,8 +21,8 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#ifndef KTRACE_H_INCLUDED
-#define KTRACE_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include <vector>
@@ -221,4 +221,4 @@ class KTrace: public Trace
 
 };
 
-#endif // KTRACE_H_INCLUDED
+

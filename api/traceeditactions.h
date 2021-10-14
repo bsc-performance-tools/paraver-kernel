@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef TRACEEDITACTIONS_H_INCLUDED
-#define TRACEEDITACTIONS_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include <vector>
@@ -79,4 +79,4 @@ private:
 
 
 
-#endif // TRACEEDITACTIONS_H_INCLUDED
+

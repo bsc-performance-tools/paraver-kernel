@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef KWINDOW_H_INCLUDED
-#define KWINDOW_H_INCLUDED
+#pragma once
+
 
 #include <vector>
 #include "kwindowexception.h"
@@ -518,4 +518,4 @@ class KDerivedWindow: public KWindow
     virtual void initSemanticFunctions() override;
 };
 
-#endif // KWINDOW_H_INCLUDED
+

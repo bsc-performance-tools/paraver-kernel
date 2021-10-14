@@ -21,8 +21,8 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#ifndef TRACEEDITBLOCKS_H_INCLUDED
-#define TRACEEDITBLOCKS_H_INCLUDED
+#pragma once
+
 
 #include <fstream>
 #include <map>
@@ -170,4 +170,4 @@ namespace NoLoad
 
 }
 
-#endif // TRACEEDITBLOCKS_H_INCLUDED
+

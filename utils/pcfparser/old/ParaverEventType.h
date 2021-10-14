@@ -1,5 +1,5 @@
-#ifndef LIBPARAVER_PARAVEREVENTTYPE_H
-#define LIBPARAVER_PARAVEREVENTTYPE_H
+#pragma once
+
 
 
 #include <string>

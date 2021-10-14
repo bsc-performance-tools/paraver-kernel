@@ -21,8 +21,8 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#ifndef NOLOADBLOCKS_H_INCLUDED
-#define NOLOADBLOCKS_H_INCLUDED
+#pragma once
+
 
 #include <fstream>
 #include <map>
@@ -184,4 +184,4 @@ namespace NoLoad
   };
 }
 
-#endif // NOLOADBLOCKS_H_INCLUDED
+

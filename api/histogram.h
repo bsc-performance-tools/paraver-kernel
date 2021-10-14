@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef HISTOGRAM_H_INCLUDED
-#define HISTOGRAM_H_INCLUDED
+#pragma once
+
 
 #include <limits>
 #include "paraverkerneltypes.h"
@@ -1026,4 +1026,4 @@ class HistogramProxy : public Histogram
 };
 
 
-#endif // HISTOGRAM_H_INCLUDED
+

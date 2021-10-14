@@ -23,8 +23,8 @@
 
 
 
-#ifndef CUBEBUFFER_H_INCLUDED
-#define CUBEBUFFER_H_INCLUDED
+#pragma once
+
 
 #include <vector>
 #include <unordered_map>
@@ -50,4 +50,4 @@ class CubeBuffer
 };
 
 
-#endif // CUBEBUFFER_H_INCLUDED
+

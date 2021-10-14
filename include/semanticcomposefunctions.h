@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef SEMANTICCOMPOSEFUNCTIONS_H_INCLUDED
-#define SEMANTICCOMPOSEFUNCTIONS_H_INCLUDED
+#pragma once
+
 
 #include <stack>
 #include <list>
@@ -2725,4 +2725,4 @@ class ComposeExponential: public SemanticCompose
     static std::string name;
 };
 
-#endif // SEMANTICCOMPOSEFUNCTIONS_H_INCLUDED
+

@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef OUTPUT_H_INCLUDED
-#define OUTPUT_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include "progresscontroller.h"
@@ -89,4 +89,4 @@ class Output
 };
 
 
-#endif // OUTPUT_H_INCLUDED
+

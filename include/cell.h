@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef _CELL_H
-#define _CELL_H
+#pragma once
+
 
 
 #include "paraverkerneltypes.h"
@@ -65,4 +65,4 @@ class Cell
 
 #include "src/cell.cpp"
 
-#endif //_CELL_H
+

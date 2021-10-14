@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef KHISTOGRAMTOTALS_H_INCLUDED
-#define KHISTOGRAMTOTALS_H_INCLUDED
+#pragma once
+
 
 #include <vector>
 #include "paraverkerneltypes.h"
@@ -93,4 +93,4 @@ class KHistogramTotals: public HistogramTotals
 };
 
 
-#endif // KHISTOGRAMTOTALS_H_INCLUDED
+

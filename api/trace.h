@@ -21,8 +21,8 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#ifndef TRACE_H_INCLUDED
-#define TRACE_H_INCLUDED
+#pragma once
+
 
 #include <set>
 #include "boost/date_time/posix_time/posix_time.hpp"
@@ -388,4 +388,4 @@ class TraceProxy: public Trace
     friend Trace *Trace::create( KernelConnection *, const std::string&, bool noLoad, ProgressController * );
 };
 
-#endif // TRACE_H_INCLUDED
+

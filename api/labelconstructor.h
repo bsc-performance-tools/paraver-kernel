@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef LABELCONSTRUCTOR_H_INCLUDED
-#define LABELCONSTRUCTOR_H_INCLUDED
+#pragma once
+
 
 #include <locale>
 #include <sstream>
@@ -137,4 +137,4 @@ class LabelConstructor
     static std::locale myLocaleWithThousands;
 };
 
-#endif // LABELCONSTRUCTOR_H_INCLUDED
+

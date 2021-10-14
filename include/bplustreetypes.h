@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef BPLUSTREETYPES_H_INCLUDED
-#define BPLUSTREETYPES_H_INCLUDED
+#pragma once
+
 
 #include "paraverkerneltypes.h"
 #include "memorytrace.h"
@@ -251,4 +251,4 @@ namespace bplustree
 
 }
 
-#endif // BPLUSTREETYPES_H_INCLUDED
+

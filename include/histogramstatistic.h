@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef HISTOGRAMSTATISTIC_H_INCLUDED
-#define HISTOGRAMSTATISTIC_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include <map>
@@ -1162,4 +1162,4 @@ class Statistics
 
 };
 
-#endif // HISTOGRAMSTATISTIC_H_INCLUDED
+

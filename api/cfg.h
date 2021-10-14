@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef CFG_H_INCLUDED
-#define CFG_H_INCLUDED
+#pragma once
+
 
 #include <map>
 #include <vector>
@@ -2473,4 +2473,4 @@ class TagAliasParamCFG4D: public TagFunction
 };
 
 
-#endif // CFG_H_INCLUDED
+

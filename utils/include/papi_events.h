@@ -1,5 +1,5 @@
-#ifndef PAPI_EVENTS_H_INCLUDED
-#define PAPI_EVENTS_H_INCLUDED
+#pragma once
+
 
 #include "events.h"
 
@@ -432,4 +432,4 @@
 #define PAPI_VEC_DP_TYPE_LABEL  "Double precision vector/SIMD instructions"
 
 
-#endif // PAPI_EVENTS_H_INCLUDED
+

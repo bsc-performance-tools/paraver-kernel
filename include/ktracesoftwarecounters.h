@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef _KTRACESOFTWARECOUNTERS_H_
-#define _KTRACESOFTWARECOUNTERS_H_
+#pragma once
+
 
 #include "ktraceoptions.h"
 #include "tracesoftwarecounters.h"
@@ -185,4 +185,4 @@ class KTraceSoftwareCounters : public TraceSoftwareCounters
                                 struct KTraceSoftwareCounters::state_queue_elem *q );
     void sc_by_states( ProgressController *progress );
 };
-#endif // _KTRACESOFTWARECOUNTERS_H_
+

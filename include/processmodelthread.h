@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef PROCESSMODELTHREAD_H_INCLUDED
-#define PROCESSMODELTHREAD_H_INCLUDED
+#pragma once
+
 
 #include "paraverkerneltypes.h"
 
@@ -55,4 +55,4 @@ class ProcessModelThread
 
 };
 
-#endif // PROCESSMODELTHREAD_H_INCLUDED
+

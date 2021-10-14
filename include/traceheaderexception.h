@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef TRACEHEADEREXCEPTION_H_INCLUDED
-#define TRACEHEADEREXCEPTION_H_INCLUDED
+#pragma once
+
 
 #include "paraverkernelexception.h"
 
@@ -76,4 +76,4 @@ class TraceHeaderException: public ParaverKernelException
     }
 };
 
-#endif // TRACEHEADEREXCEPTION_H_INCLUDED
+

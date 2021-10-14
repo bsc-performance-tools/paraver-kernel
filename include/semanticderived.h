@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef SEMANTICDERIVED_H_INCLUDED
-#define SEMANTICDERIVED_H_INCLUDED
+#pragma once
+
 
 #include "semantichigh.h"
 
@@ -50,4 +50,4 @@ class SemanticDerived: public SemanticHigh
 };
 
 
-#endif // SEMANTICDERIVED_H_INCLUDED
+

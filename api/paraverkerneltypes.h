@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef PARAVERKERNELTYPES_H_INCLUDED
-#define PARAVERKERNELTYPES_H_INCLUDED
+#pragma once
+
 
 #include <stddef.h>
 #include <vector>
@@ -186,4 +186,4 @@ static const std::string  XPM_SUFFIX = ".xpm";
 constexpr TState IDLE = 0;
 constexpr TState RUNNING = 1;
 
-#endif // PARAVERKERNELTYPES_H_INCLUDED
+

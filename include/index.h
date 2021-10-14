@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef INDEX_H_INCLUDED
-#define INDEX_H_INCLUDED
+#pragma once
+
 
 #include "paraverkerneltypes.h"
 
@@ -51,4 +51,4 @@ class Index
 
 #include "src/index.cpp"
 
-#endif // INDEX_H_INCLUDED
+

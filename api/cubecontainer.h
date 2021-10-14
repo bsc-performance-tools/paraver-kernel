@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef CUBECONTAINER_H_INCLUDED
-#define CUBECONTAINER_H_INCLUDED
+#pragma once
+
 
 #include <map>
 
@@ -61,4 +61,4 @@ class CubeContainer
 
 #include "cubecontainer.cpp"
 
-#endif // CUBECONTAINER_H_INCLUDED
+

@@ -26,8 +26,8 @@
 
 
 
-#ifndef PARAVERMETADATAMANAGER_H_INCLUDED
-#define PARAVERMETADATAMANAGER_H_INCLUDED
+#pragma once
+
 
 #include <string>
 using std::string;
@@ -151,4 +151,4 @@ class MetadataManager
                          char            Delimiter);
 };
 
-#endif // PARAVERMETADATAMANAGER_H_INCLUDED
+

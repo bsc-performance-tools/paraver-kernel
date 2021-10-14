@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef KHISTOGRAM_H_INCLUDED
-#define KHISTOGRAM_H_INCLUDED
+#pragma once
+
 
 #include <unordered_map>
 
@@ -367,4 +367,4 @@ class KHistogram : public Histogram
 };
 
 
-#endif // KHISTOGRAM_H_INCLUDED
+

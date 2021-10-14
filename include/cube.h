@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef _CUBE_H
-#define _CUBE_H
+#pragma once
+
 
 #include <vector>
 #include "matrix.h"
@@ -76,4 +76,4 @@ class Cube
 
 #include "src/cube.cpp"
 
-#endif // _CUBE_H
+

@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef KPROGRESSCONTROLLER_H_INCLUDED
-#define KPROGRESSCONTROLLER_H_INCLUDED
+#pragma once
+
 
 #include "progresscontroller.h"
 
@@ -58,4 +58,4 @@ class KProgressController: public ProgressController
 };
 
 
-#endif // KPROGRESSCONTROLLER_H_INCLUDED
+

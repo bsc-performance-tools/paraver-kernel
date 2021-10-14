@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef SEMANTICNOTTHREADFUNCTIONS_H_INCLUDED
-#define SEMANTICNOTTHREADFUNCTIONS_H_INCLUDED
+#pragma once
+
 
 #include "semanticnotthread.h"
 
@@ -741,4 +741,4 @@ class ChangedValue: public SemanticNotThread
 
 };
 
-#endif // SEMANTICNOTTHREADFUNCTIONS_H_INCLUDED
+

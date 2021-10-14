@@ -1,5 +1,5 @@
-#ifndef _PARAVER_TRACE_CONFIG_H
-#define _PARAVER_TRACE_CONFIG_H
+#pragma once
+
 
 #define BOOST_SPIRIT_USE_PHOENIX_V3 1
 
@@ -241,6 +241,3 @@ public:
 #include "ParaverTraceConfig.ipp"
 
 }
-
-#endif
-

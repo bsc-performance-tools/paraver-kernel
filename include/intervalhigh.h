@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef INTERVALHIGH_H_INCLUDED
-#define INTERVALHIGH_H_INCLUDED
+#pragma once
+
 
 #include "interval.h"
 #include "ktrace.h"
@@ -65,4 +65,4 @@ class IntervalHigh: public Interval
 };
 
 
-#endif // INTERVALHIGH_H_INCLUDED
+

@@ -1,5 +1,5 @@
-#ifndef _PRVTYPES_H_
-#define _PRVTYPES_H_
+#pragma once
+
 
 /**
  * To include this file add these lines in configure.in:
@@ -89,4 +89,4 @@ AC_CHECK_TYPES([int64_t, uint64_t, int8_t, uint8_t, int32_t, uint32_t, int16_t, 
 
 typedef PRV_UINT64 STACK_ADDRESS;
 
-#endif /* _PRVTYPES_H_ */
+

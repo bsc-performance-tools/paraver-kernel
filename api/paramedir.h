@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef PARAMEDIR_H_INCLUDED
-#define PARAMEDIR_H_INCLUDED
+#pragma once
+
 
 #include <vector>
 #include <string>
@@ -34,4 +34,4 @@ using std::string;
 class Window;
 class Histogram;
 
-#endif // PARAMEDIR_H_INCLUDED
+

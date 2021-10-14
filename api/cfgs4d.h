@@ -21,8 +21,8 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#ifndef CFGS4D_H_INCLUDED
-#define CFGS4D_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include <map>
@@ -383,4 +383,4 @@ class CFGS4DGlobalManager
     CFGS4DGlobalManager();
 };
 
-#endif // CFGS4D_H_INCLUDED
+

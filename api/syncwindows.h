@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef SYNCWINDOWS_H_INCLUDED
-#define SYNCWINDOWS_H_INCLUDED
+#pragma once
+
 
 #include <map>
 #include "paraverkerneltypes.h"
@@ -67,4 +67,4 @@ class SyncWindows
     void broadcastTimeHistograms( TGroupId whichGroup, Histogram *sendWindow, TTime beginTime, TTime endTime );
 };
 
-#endif // SYNCWINDOWS_H_INCLUDED
+

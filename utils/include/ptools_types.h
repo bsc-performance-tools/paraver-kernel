@@ -22,15 +22,15 @@
 \*****************************************************************************/
 
 
-#ifndef _PTOOLS_TYPES_H_
-#define _PTOOLS_TYPES_H_
+#pragma once
+
 
 #include <ptools_config.h>
 
-#ifdef HAVE_STDINT_H
+
    #include <stdint.h>
 #endif
-#ifdef HAVE_INTTYPES_H
+
    #include <inttypes.h>
 #endif
 
@@ -100,4 +100,4 @@
 
 typedef PTOOLS_UINT64 STACK_ADDRESS;
 
-#endif /* _PTOOLS_TYPES_H_ */
+

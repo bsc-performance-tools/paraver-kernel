@@ -1,5 +1,5 @@
-#ifndef _UIPARAVER_TRACE_CONFIG_PYTHON_H
-#define _UIPARAVER_TRACE_CONFIG_PYTHON_H
+#pragma once
+
 
 #include "UIParaverTraceConfig.h"
 #include <boost/python.hpp>

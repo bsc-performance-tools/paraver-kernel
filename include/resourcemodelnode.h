@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef RESOURCEMODELNODE_H_INCLUDED
-#define RESOURCEMODELNODE_H_INCLUDED
+#pragma once
+
 
 #include <vector>
 #include "resourcemodelcpu.h"
@@ -53,4 +53,4 @@ class ResourceModelNode
 };
 
 
-#endif // RESOURCEMODELNODE_H_INCLUDED
+

@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef PARAVERLABELS_H_INCLUDED
-#define PARAVERLABELS_H_INCLUDED
+#pragma once
+
 
 constexpr char CFG_CURRENT_VERSION[] = "3.4";
 
@@ -566,4 +566,4 @@ constexpr char OLD_DIMEMAS_SHEBANG[] = "SDDFA";
 constexpr char DIMEMAS_SHEBANG[] = "#DIMEMAS_CONFIGURATION";
 
 
-#endif // PARAVERLABELS_H_INCLUDED
+

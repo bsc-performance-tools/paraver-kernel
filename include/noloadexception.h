@@ -21,8 +21,8 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#ifndef NOLOADEXCEPTION_H_INCLUDED
-#define NOLOADEXCEPTION_H_INCLUDED
+#pragma once
+
 
 #include "paraverkernelexception.h"
 
@@ -74,4 +74,4 @@ namespace NoLoad
 
 }
 
-#endif // NOLOADEXCEPTION_H_INCLUDED
+

@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef LOCALKERNEL_H_INCLUDED
-#define LOCALKERNEL_H_INCLUDED
+#pragma once
+
 
 #include <map>
 
@@ -167,4 +167,4 @@ class LocalKernel: public KernelConnection
 };
 
 
-#endif // LOCALKERNEL_H_INCLUDED
+

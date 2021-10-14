@@ -22,10 +22,10 @@
 \*****************************************************************************/
 
 
-#ifndef SEMANTICMANAGEMENT_H_INCLUDED
-#define SEMANTICMANAGEMENT_H_INCLUDED
+#pragma once
+
 
 void createSemantic();
 
 
-#endif // SEMANTICMANAGEMENT_H_INCLUDED
+

@@ -1,5 +1,5 @@
-#ifndef LIBPARAVER_PARAVERGRADIENTNAMES_H
-#define LIBPARAVER_PARAVERGRADIENTNAMES_H
+#pragma once
+
 
 
 #include <string>

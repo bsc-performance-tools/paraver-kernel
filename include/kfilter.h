@@ -21,8 +21,8 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#ifndef _FILTER_H
-#define _FILTER_H
+#pragma once
+
 
 #include <limits>
 #include <iostream>
@@ -560,4 +560,4 @@ class KFilter : public Filter
 };
 
 
-#endif // _FILTER_H_INCLUDED
+

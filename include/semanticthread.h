@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef SEMANTICTHREAD_H_INCLUDED
-#define SEMANTICTHREAD_H_INCLUDED
+#pragma once
+
 
 #include "semanticfunction.h"
 
@@ -72,4 +72,4 @@ class SemanticThread : public SemanticFunction
 };
 
 
-#endif // SEMANTICTHREAD_H_INCLUDED
+

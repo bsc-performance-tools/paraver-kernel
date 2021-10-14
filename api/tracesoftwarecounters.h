@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef TRACESOFTWARECOUNTERS_H_INCLUDED
-#define TRACESOFTWARECOUNTERS_H_INCLUDED
+#pragma once
+
 
 #include <string>
 
@@ -76,4 +76,4 @@ class TraceSoftwareCountersProxy : public TraceSoftwareCounters
 
 
 
-#endif // TRACESOFTWARECOUNTERS_H_INCLUDED
+

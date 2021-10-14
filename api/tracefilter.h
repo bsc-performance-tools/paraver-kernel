@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef TRACEFILTER_H_INCLUDED
-#define TRACEFILTER_H_INCLUDED
+#pragma once
+
 
 #include <map>
 
@@ -80,4 +80,4 @@ class TraceFilterProxy : public TraceFilter
 };
 
 
-#endif // TRACEFILTER_H_INCLUDED
+

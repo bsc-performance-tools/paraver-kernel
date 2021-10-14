@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef KTRACESHIFTER_H_INCLUDED
-#define KTRACESHIFTER_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include <vector>
@@ -64,4 +64,4 @@ class KTraceShifter : public TraceShifter
     TTime maxShiftTime;
 };
 
-#endif // KTRACESHIFTER_H_INCLUDED
+

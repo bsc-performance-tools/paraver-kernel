@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef TRACECUTTER_H_INCLUDED
-#define TRACECUTTER_H_INCLUDED
+#pragma once
+
 
 #include <string>
 
@@ -124,4 +124,4 @@ class TraceCutterProxy : public TraceCutter
 };
 
 
-#endif // TRACECUTTER_H_INCLUDED
+

@@ -23,8 +23,8 @@
 
  | @file: $HeadURL: https://svn.bsc.es/repos/ptools/extrae/trunk/src/merger/paraver/MPI_EventEncoding.h $
 
-#ifndef _MPI_EVENTENCODING_H
-#define _MPI_EVENTENCODING_H
+#pragma once
+
 
 /* ==========================================================================
    ==== MPI Event Types
@@ -379,4 +379,4 @@ MPIVal;
 #define  MPI_FILE_WRITE_AT_ALL_LABEL       "MPI_File_write_at_all"
 
 
-#endif /* _MPI_EVENTENCODING_H */
+

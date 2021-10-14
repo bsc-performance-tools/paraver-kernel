@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef _COLUMN_H
-#define _COLUMN_H
+#pragma once
+
 
 /*#include <deque>*/
 #include <vector>
@@ -75,4 +75,4 @@ class Column
 
 #include "src/column.cpp"
 
-#endif //_COLUMN_H
+

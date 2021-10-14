@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef INTERVALSHIFT_H_INCLUDED
-#define INTERVALSHIFT_H_INCLUDED
+#pragma once
+
 
 #include <deque>
 #include "intervalhigh.h"
@@ -126,4 +126,3 @@ class IntervalShift : public IntervalHigh
 
 };
 
-#endif // INTERVALSHIFT_H_INCLUDED

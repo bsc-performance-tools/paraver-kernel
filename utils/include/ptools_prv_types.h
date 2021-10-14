@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef _PTOOLS_PRV_TYPES_H_INCLUDED
-#define _PTOOLS_PRV_TYPES_H_INCLUDED
+#pragma once
+
 
 #include "ptools_types.h"
 
@@ -66,5 +66,5 @@ typedef PTOOLS_INT64  prvEventValue_t;
 typedef PTOOLS_UINT32 prvCommSize_t;
 typedef PTOOLS_UINT32 prvCommTag_t;
 
-#endif // _PTOOLS_PRV_TYPES_H_INCLUDED
+
 

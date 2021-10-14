@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef HISTOGRAMTOTALS_H_INCLUDED
-#define HISTOGRAMTOTALS_H_INCLUDED
+#pragma once
+
 
 #include "paraverkerneltypes.h"
 
@@ -115,4 +115,4 @@ class HistogramTotalsProxy: public HistogramTotals
     friend HistogramTotals *HistogramTotals::create( HistogramTotals * );
 };
 
-#endif // HISTOGRAMTOTALS_H_INCLUDED
+

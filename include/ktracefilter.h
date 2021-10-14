@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef _KTRACEFILTER_H_
-#define _KTRACEFILTER_H_
+#pragma once
+
 
 #include <map>
 
@@ -112,6 +112,6 @@ class KTraceFilter: public TraceFilter
     void dump_buffer();
 };
 
-#endif // _KTRACEFILTER_H_
+
 
 

@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef TRACEEDITSEQUENCE_H_INCLUDED
-#define TRACEEDITSEQUENCE_H_INCLUDED
+#pragma once
+
 
 #include <map>
 #include <vector>
@@ -147,4 +147,4 @@ class TraceEditSequenceProxy:public TraceEditSequence
 
 };
 
-#endif // TRACEEDITSEQUENCE_H_INCLUDED
+

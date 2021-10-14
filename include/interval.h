@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef INTERVAL_H_INCLUDED
-#define INTERVAL_H_INCLUDED
+#pragma once
+
 
 #include <set>
 #include "memorytrace.h"
@@ -123,4 +123,4 @@ class Interval
 };
 
 
-#endif // INTERVAL_H_INCLUDED
+

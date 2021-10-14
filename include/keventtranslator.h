@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef KEVENTTRANSLATOR_H_INCLUDED
-#define KEVENTTRANSLATOR_H_INCLUDED
+#pragma once
+
 
 
 #include <string>
@@ -59,4 +59,4 @@ class KEventTranslator : public EventTranslator
 
 };
 
-#endif // KEVENTTRANSLATOR_H_INCLUDED
+

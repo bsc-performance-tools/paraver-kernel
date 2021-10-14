@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef INTERVALDERIVED_H_INCLUDED
-#define INTERVALDERIVED_H_INCLUDED
+#pragma once
+
 
 #include "intervalhigh.h"
 #include "intervalshift.h"
@@ -74,4 +74,4 @@ class IntervalDerived: public IntervalHigh
 
 };
 
-#endif // INTERVALDERIVED_H_INCLUDED
+

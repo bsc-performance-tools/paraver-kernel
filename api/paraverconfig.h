@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef PARAVERCONFIG_H_INCLUDED
-#define PARAVERCONFIG_H_INCLUDED
+#pragma once
+
 
 #include <map>
 #include <sstream>
@@ -833,4 +833,4 @@ class HistoThousanSep: public PropertyFunction
   void parseLine( std::istringstream& line, ParaverConfig& config );
 };
 
-#endif // PARAVERCONFIG_H_INCLUDED
+

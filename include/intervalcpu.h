@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef INTERVALCPU_H_INCLUDED
-#define INTERVALCPU_H_INCLUDED
+#pragma once
+
 
 #include <unordered_map>
 
@@ -101,4 +101,4 @@ class IntervalCPU: public IntervalHigh
 };
 
 
-#endif // INTERVALCPU_H_INCLUDED
+

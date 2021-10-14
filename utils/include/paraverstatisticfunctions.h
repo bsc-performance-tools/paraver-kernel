@@ -1,5 +1,5 @@
-#ifndef PARAVERSTATISTICFUNCIONS_H_INCLUDED
-#define PARAVERSTATISTICFUNCIONS_H_INCLUDED
+#pragma once
+
 
 #include <map>
 
@@ -54,4 +54,4 @@ T ParaverStatisticFunctions<T>::mode( T data[], unsigned int size )
 
 
 
-#endif // PARAVERSTATISTICFUNCIONS_H_INCLUDED
+

@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef _BPLUSTREE_H
-#define _BPLUSTREE_H
+#pragma once
+
 
 #include <string>
 
@@ -395,5 +395,3 @@ namespace bplustree
       void insert( TRecord *r );
   };
 }
-
-#endif

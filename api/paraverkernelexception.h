@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef PARAVERKERNELEXCEPTION_H_INCLUDED
-#define PARAVERKERNELEXCEPTION_H_INCLUDED
+#pragma once
+
 
 #include <exception>
 #include <iostream>
@@ -95,4 +95,4 @@ class ParaverKernelException : public std::exception
 
 };
 
-#endif // PARAVERKERNELEXCEPTION_H_INCLUDED
+

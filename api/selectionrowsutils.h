@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef SELECTIONROWSUTILS_H_INCLUDED
-#define SELECTIONROWSUTILS_H_INCLUDED
+#pragma once
+
 
 #include <vector>
 #include "paraverkerneltypes.h"
@@ -40,4 +40,4 @@ class SelectionRowsUtils
                                           std::vector< TObjectOrder > &selected );
 };
 
-#endif // SELECTIONROWSUTILS_H_INCLUDED
+

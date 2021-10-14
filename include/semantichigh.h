@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef SEMANTICHIGH_H_INCLUDED
-#define SEMANTICHIGH_H_INCLUDED
+#pragma once
+
 
 #include "semanticfunction.h"
 
@@ -42,4 +42,4 @@ class SemanticHigh: public SemanticFunction
 };
 
 
-#endif // SEMANTICHIGH_H_INCLUDED
+

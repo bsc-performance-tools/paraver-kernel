@@ -21,8 +21,8 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#ifndef TRACEBODYIO_CSV_H_INCLUDED
-#define TRACEBODYIO_CSV_H_INCLUDED
+#pragma once
+
 
 #include "tracebodyio.h"
 #include "tracestream.h"
@@ -113,4 +113,4 @@ class TraceBodyIO_csv : public TraceBodyIO
 };
 
 
-#endif // TRACEBODYIO_csv_H_INCLUDED
+

@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef RESOURCEMODEL_H_INCLUDED
-#define RESOURCEMODEL_H_INCLUDED
+#pragma once
+
 
 #include <vector>
 #include <string>
@@ -96,4 +96,4 @@ class ResourceModel
 
 };
 
-#endif // RESOURCEMODEL_H_INCLUDED
+

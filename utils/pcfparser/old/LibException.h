@@ -1,5 +1,5 @@
-#ifndef LIBPARAVER_LIBEXCEPTION_H
-#define LIBPARAVER_LIBEXCEPTION_H
+#pragma once
+
 
 
 #include <exception>

@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef BPLUSTREEBLOCKS_H_INCLUDED
-#define BPLUSTREEBLOCKS_H_INCLUDED
+#pragma once
+
 
 #include <vector>
 #include "memoryblocks.h"
@@ -148,4 +148,4 @@ namespace bplustree
   };
 }
 
-#endif // BPLUSTREEBLOCKS_H_INCLUDED
+

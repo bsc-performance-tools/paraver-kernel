@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef KEVENTDRIVENCUTTER_H_INCLUDED
-#define KEVENTDRIVENCUTTER_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include <vector>
@@ -55,4 +55,4 @@ class KEventDrivenCutter : public EventDrivenCutter
 
 };
 
-#endif // KEVENTDRIVENCUTTER_H_INCLUDED
+

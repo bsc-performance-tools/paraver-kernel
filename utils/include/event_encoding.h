@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef EVENT_DEFINES_H_INCLUDED
-#define EVENT_DEFINES_H_INCLUDED
+#pragma once
+
 
 #include "MPI_EventEncoding.h"
 
@@ -32,4 +32,4 @@
 #define USER_FUNCTION_LABEL           "User functions"
 
 
-#endif // EVENT_DEFINES_H_INCLUDED
+

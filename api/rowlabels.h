@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef ROWLABELS_H_INCLUDED
-#define ROWLABELS_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include <vector>
@@ -59,4 +59,4 @@ class RowLabels
 };
 
 
-#endif // ROWLABELS_H_INCLUDED
+

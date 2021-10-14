@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef STATELABELS_H_INCLUDED
-#define STATELABELS_H_INCLUDED
+#pragma once
+
 
 #include <map>
 #include "paraverkerneltypes.h"
@@ -59,4 +59,4 @@ class StateLabels
 };
 
 
-#endif // STATELABELS_H_INCLUDED
+

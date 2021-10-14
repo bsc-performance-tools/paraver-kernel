@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef TRACEOPTIONS_H_INCLUDED
-#define TRACEOPTIONS_H_INCLUDED
+#pragma once
+
 
 class KernelConnection;
 #include "localkernel.h"
@@ -367,4 +367,4 @@ class TraceOptionsProxy :public TraceOptions
 };
 
 
-#endif // TRACEOPTIONS_H_INCLUDED
+

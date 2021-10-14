@@ -21,8 +21,8 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#ifndef TRACEBODYIO_H_INCLUDED
-#define TRACEBODYIO_H_INCLUDED
+#pragma once
+
 
 #ifdef _MSC_VER
 #include <hash_set>
@@ -73,4 +73,4 @@ class TraceBodyIO
 };
 
 
-#endif // TRACEBODYIO_H_INCLUDED
+

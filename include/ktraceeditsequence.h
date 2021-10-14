@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef KTRACEEDITSEQUENCE_H_INCLUDED
-#define KTRACEEDITSEQUENCE_H_INCLUDED
+#pragma once
+
 
 #include "traceeditsequence.h"
 #include "ktrace.h"
@@ -72,4 +72,4 @@ class KTraceEditSequence:public TraceEditSequence
 };
 
 
-#endif // KTRACEEDITSEQUENCE_H_INCLUDED
+

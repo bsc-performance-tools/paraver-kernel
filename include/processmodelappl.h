@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef PROCESSMODELAPPL_H_INCLUDED
-#define PROCESSMODELAPPL_H_INCLUDED
+#pragma once
+
 
 #include <vector>
 #include "processmodeltask.h"
@@ -53,4 +53,4 @@ class ProcessModelAppl
 
 };
 
-#endif // PROCESSMODELAPPL_H_INCLUDED
+

@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef TEXTOUTPUT_H_INCLUDED
-#define TEXTOUTPUT_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include "output.h"
@@ -142,4 +142,4 @@ class TextOutput:public Output
 
 };
 
-#endif // TEXTOUTPUT_H_INCLUDED
+

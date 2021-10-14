@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef KRECORDLIST_H_INCLUDED
-#define KRECORDLIST_H_INCLUDED
+#pragma once
+
 
 #include <set>
 #include "recordlist.h"
@@ -55,4 +55,4 @@ class KRecordList: public RecordList
 };
 
 
-#endif // KRECORDLIST_H_INCLUDED
+

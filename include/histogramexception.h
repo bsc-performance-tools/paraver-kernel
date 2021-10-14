@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef HISTOGRAMEXCEPTION_H_INCLUDED
-#define HISTOGRAMEXCEPTION_H_INCLUDED
+#pragma once
+
 
 #include "paraverkernelexception.h"
 
@@ -65,4 +65,4 @@ class HistogramException: public ParaverKernelException
 
 };
 
-#endif // HISTOGRAMEXCEPTION_H_INCLUDED
+

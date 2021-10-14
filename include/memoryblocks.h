@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef MEMORYBLOCKS_H_INCLUDED
-#define MEMORYBLOCKS_H_INCLUDED
+#pragma once
+
 
 #include "paraverkerneltypes.h"
 #include "memorytrace.h"
@@ -122,4 +122,4 @@ class MemoryBlocks
 };
 
 
-#endif // MEMORYBLOCKS_H_INCLUDED
+

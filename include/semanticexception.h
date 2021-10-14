@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef SEMANTICEXCEPTION_H_INCLUDED
-#define SEMANTICEXCEPTION_H_INCLUDED
+#pragma once
+
 
 #include "paraverkernelexception.h"
 
@@ -69,4 +69,4 @@ class SemanticException: public ParaverKernelException
 };
 
 
-#endif // SEMANTICEXCEPTION_H_INCLUDED
+

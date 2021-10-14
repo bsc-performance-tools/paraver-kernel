@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef TRACESTREAM_H_INCLUDED
-#define TRACESTREAM_H_INCLUDED
+#pragma once
+
 
 #include <fstream>
 #include <string>
@@ -135,4 +135,4 @@ class Compressed: public TraceStream
 
 };
 
-#endif // TRACESTREAM_H_INCLUDED
+

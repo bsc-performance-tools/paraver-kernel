@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef PREVIOUSFILES_H_INCLUDED
-#define PREVIOUSFILES_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include <fstream>
@@ -64,4 +64,4 @@ class PreviousFiles
 };
 
 
-#endif // PREVIOUSFILES_H_INCLUDED
+

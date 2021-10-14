@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef WINDOW_H_INCLUDED
-#define WINDOW_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include <map>
@@ -1359,4 +1359,4 @@ class WindowProxy: public Window
     friend Window *Window::create( KernelConnection *, Window *, Window * );
 };
 
-#endif // WINDOW_H_INCLUDED
+

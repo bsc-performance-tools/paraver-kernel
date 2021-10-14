@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef _STATISTIC_2D_H
-#define _STATISTIC_2D_H
+#pragma once
+
 
 template <typename ValueType>
 class Statistic_2D
@@ -50,4 +50,4 @@ class Statistic_2D
 
 #include "src/statistic_2d.cpp"
 
-#endif //_STATISTIC_2D_H
+

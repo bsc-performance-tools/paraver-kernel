@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef PARAVERTYPES_H_INCLUDED
-#define PARAVERTYPES_H_INCLUDED
+#pragma once
+
 
 // SERIALIZATION INCLUDES
 #include <fstream>
@@ -69,4 +69,4 @@ struct rgb
   }
 };
 
-#endif // PARAVERTYPES_H_INCLUDED
+

@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef MEMORYTRACE_H_INCLUDED
-#define MEMORYTRACE_H_INCLUDED
+#pragma once
+
 
 #include <vector>
 #include "paraverkerneltypes.h"
@@ -112,4 +112,4 @@ class MemoryTrace
 
 
 
-#endif // MEMORYTRACE_H_INCLUDED
+

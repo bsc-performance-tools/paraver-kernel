@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef KERNELCONNECTION_H_INCLUDED
-#define KERNELCONNECTION_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include <vector>
@@ -163,4 +163,4 @@ class KernelConnection
 };
 
 
-#endif // KERNELCONNECTION_H_INCLUDED
+

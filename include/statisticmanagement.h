@@ -22,9 +22,9 @@
 \*****************************************************************************/
 
 
-#ifndef STATISTICMANAGEMENT_H_INCLUDED
-#define STATISTICMANAGEMENT_H_INCLUDED
+#pragma once
+
 
 void createStatistic();
 
-#endif // STATISTICMANAGEMENT_H_INCLUDED
+

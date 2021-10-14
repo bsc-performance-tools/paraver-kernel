@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef RECORDLIST_H_INCLUDED
-#define RECORDLIST_H_INCLUDED
+#pragma once
+
 
 #include <set>
 #include "paraverkerneltypes.h"
@@ -213,4 +213,4 @@ class RecordListProxy: public RecordList
     friend RecordList *RecordList::create( RecordList * );
 };
 
-#endif // RECORDLIST_H_INCLUDED
+

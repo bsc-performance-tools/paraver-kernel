@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef SYMBOLPICKER_H_INCLUDED
-#define SYMBOLPICKER_H_INCLUDED
+#pragma once
+
 
 #include <vector>
 #include <set>
@@ -87,4 +87,4 @@ class EventValueSymbolPicker
                    std::set<TSemanticValue>& onValues ) const;
 };
 
-#endif // SYMBOLPICKER_H_INCLUDED
+

@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef RESOURCEMODELCPU_H_INCLUDED
-#define RESOURCEMODELCPU_H_INCLUDED
+#pragma once
+
 
 #include "paraverkerneltypes.h"
 
@@ -50,4 +50,4 @@ class ResourceModelCPU
 };
 
 
-#endif // RESOURCEMODELCPU_H_INCLUDED
+

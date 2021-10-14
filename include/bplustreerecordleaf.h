@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef _RECORDLEAF_H
-#define _RECORDLEAF_H
+#pragma once
+
 
 /******************************************************************************
  * RecordLeaf
@@ -98,5 +98,3 @@ namespace bplustree
 
   //std::ostream& operator<<( std::ostream& os, const RecordLeaf& rl );
 }
-
-#endif

@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef TRACEEDITSTATES_H_INCLUDED
-#define TRACEEDITSTATES_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include "kernelconnection.h"
@@ -191,4 +191,4 @@ typedef DerivedTraceEditStateTTime< TraceEditSequence * > MaxTraceTimeState;
 typedef DerivedTraceEditStateTWindowLevel< TraceEditSequence * > ShiftLevelState;
 typedef DerivedTraceEditStateTEventType< TraceEditSequence * > OnEventCutter;
 
-#endif // TRACEEDITSTATES_H_INCLUDED
+

@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef INTERVALNOTTHREAD_H_INCLUDED
-#define INTERVALNOTTHREAD_H_INCLUDED
+#pragma once
+
 
 #include <map>
 #include "intervalhigh.h"
@@ -147,4 +147,4 @@ class IntervalNotThread: public IntervalHigh
 };
 
 
-#endif // INTERVALNOTTHREAD_H_INCLUDED
+

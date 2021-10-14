@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef _MATRIX_H
-#define _MATRIX_H
+#pragma once
+
 
 #include <vector>
 #include "column.h"
@@ -71,4 +71,4 @@ class Matrix
 
 #include "src/matrix.cpp"
 
-#endif // _MATRIX_H
+

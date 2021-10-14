@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef SEMANTICCPUFUNCTIONS_H_INCLUDED
-#define SEMANTICCPUFUNCTIONS_H_INCLUDED
+#pragma once
+
 
 #include "semanticcpu.h"
 
@@ -292,4 +292,4 @@ class ActiveThreadValuesSign: public SemanticCPU
 
 };
 
-#endif // SEMANTICCPUFUNCTIONS_H_INCLUDED
+

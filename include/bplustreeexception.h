@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef BPLUSTREEEXCEPTION_H_INCLUDED
-#define BPLUSTREEEXCEPTION_H_INCLUDED
+#pragma once
+
 
 #include "paraverkernelexception.h"
 
@@ -77,4 +77,4 @@ namespace bplustree
 
 }
 
-#endif // BPLUSTREEEXCEPTION_H_INCLUDED
+

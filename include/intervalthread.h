@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef INTERVALTHREAD_H_INCLUDED
-#define INTERVALTHREAD_H_INCLUDED
+#pragma once
+
 
 #include "interval.h"
 #include "semanticthread.h"
@@ -91,4 +91,4 @@ class IntervalThread: public Interval
 };
 
 
-#endif // INTERVALTHREAD_H_INCLUDED
+

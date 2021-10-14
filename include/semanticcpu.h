@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef SEMANTICCPU_H_INCLUDED
-#define SEMANTICCPU_H_INCLUDED
+#pragma once
+
 
 #include "semantichigh.h"
 
@@ -42,4 +42,4 @@ class SemanticCPU: public SemanticHigh
 };
 
 
-#endif // SEMANTICCPU_H_INCLUDED
+

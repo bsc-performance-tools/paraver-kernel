@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef SEMANTICINFO_H_INCLUDED
-#define SEMANTICINFO_H_INCLUDED
+#pragma once
+
 
 #include <vector>
 #include "paraverkerneltypes.h"
@@ -51,4 +51,4 @@ struct SemanticHighInfo: public SemanticInfo
   bool newControlBurst;
 };
 
-#endif // SEMANTICINFO_H_INCLUDED
+

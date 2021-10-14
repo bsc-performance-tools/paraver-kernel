@@ -1,5 +1,5 @@
-#ifndef LIBPARAVER_PARAVERSTATE_H
-#define LIBPARAVER_PARAVERSTATE_H
+#pragma once
+
 
 
 #include <string>

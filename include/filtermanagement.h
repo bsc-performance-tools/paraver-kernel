@@ -22,12 +22,12 @@
 \*****************************************************************************/
 
 
-#ifndef FILTERMANAGEMENT_H_INCLUDED
-#define FILTERMANAGEMENT_H_INCLUDED
+#pragma once
+
 
 
 void createFilter();
 
 
 
-#endif // FILTERMANAGEMENT_H_INCLUDED
+

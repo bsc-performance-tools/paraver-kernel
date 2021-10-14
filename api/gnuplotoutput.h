@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef GNUPLOTOUTPUT_H_INCLUDED
-#define GNUPLOTOUTPUT_H_INCLUDED
+#pragma once
+
 
 #include "output.h"
 
@@ -55,4 +55,4 @@ class GNUPlotOutput: public Output
 };
 
 
-#endif // GNUPLOTOUTPUT_H_INCLUDED
+

@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef EVENTLABELS_H_INCLUDED
-#define EVENTLABELS_H_INCLUDED
+#pragma once
+
 
 #include <set>
 #include <map>
@@ -74,4 +74,4 @@ class EventLabels
 };
 
 
-#endif // EVENTLABELS_H_INCLUDED
+

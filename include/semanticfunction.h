@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef SEMANTICFUNCTION_H_INCLUDED
-#define SEMANTICFUNCTION_H_INCLUDED
+#pragma once
+
 
 #include <vector>
 #include <stack>
@@ -110,4 +110,4 @@ class SemanticFunction
 };
 
 
-#endif // SEMANTICFUNCTION_H_INCLUDED
+

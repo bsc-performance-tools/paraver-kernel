@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef INTERVALCOMPOSE_H_INCLUDED
-#define INTERVALCOMPOSE_H_INCLUDED
+#pragma once
+
 
 #include "intervalhigh.h"
 #include "semanticcompose.h"
@@ -102,4 +102,4 @@ class IntervalCompose: public IntervalHigh
 };
 
 
-#endif // INTERVALCOMPOSE_H_INCLUDED
+

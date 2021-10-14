@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef NOLOADTRACE_H_INCLUDED
-#define NOLOADTRACE_H_INCLUDED
+#pragma once
+
 
 #include "memorytrace.h"
 #include "plaintypes.h"
@@ -197,4 +197,4 @@ namespace NoLoad
 }
 
 
-#endif // NOLOADTRACE_H_INCLUDED
+

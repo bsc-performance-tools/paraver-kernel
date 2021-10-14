@@ -22,9 +22,9 @@
 \*****************************************************************************/
 
 
-#ifndef KTRACEEDITSTATES_H_INCLUDED
-#define KTRACEEDITSTATES_H_INCLUDED
+#pragma once
 
 
 
-#endif // KTRACEEDITSTATES_H_INCLUDED
+
+

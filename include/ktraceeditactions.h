@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef KTRACEEDITACTIONS_H_INCLUDED
-#define KTRACEEDITACTIONS_H_INCLUDED
+#pragma once
+
 
 #include <fstream>
 
@@ -353,4 +353,4 @@ class PCFEventMergerAction: public TraceToTraceAction
 
 
 
-#endif // KTRACEEDITACTIONS_H_INCLUDED
+

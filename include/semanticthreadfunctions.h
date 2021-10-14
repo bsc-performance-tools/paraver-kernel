@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef SEMANTICTHREADFUNCTIONS_H_INCLUDED
-#define SEMANTICTHREADFUNCTIONS_H_INCLUDED
+#pragma once
+
 
 #include "semanticthread.h"
 #include "paraverconfig.h"
@@ -3247,4 +3247,4 @@ class InCPUID: public SemanticThread
 
 };
 
-#endif // SEMANTICTHREADFUNCTIONS_H_INCLUDED
+

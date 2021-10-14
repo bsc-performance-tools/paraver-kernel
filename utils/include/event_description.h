@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef EVENT_DESCRIPTION_H_INCLUDED
-#define EVENT_DESCRIPTION_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include "ptools_prv_types.h"
@@ -71,4 +71,4 @@ class EventDescription
 };
 
 
-#endif // EVENT_DESCRIPTION_H_INCLUDED
+

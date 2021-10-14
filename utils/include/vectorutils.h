@@ -1,5 +1,5 @@
-#ifndef VECTORUTILS_H_INCLUDED
-#define VECTORUTILS_H_INCLUDED
+#pragma once
+
 
 #include <vector>
 #include <iostream>
@@ -48,4 +48,4 @@ class SortIndex
 };
 
 
-#endif // VECTORUTILS_H_INCLUDED
+

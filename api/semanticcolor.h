@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef SEMANTICCOLOR_H_INCLUDED
-#define SEMANTICCOLOR_H_INCLUDED
+#pragma once
+
 
 #include <map>
 #include "paravertypes.h"
@@ -204,4 +204,4 @@ class Normalizer
 };
 
 
-#endif // SEMANTICCOLOR_H_INCLUDED
+

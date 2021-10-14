@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef LOADEDWINDOWS_H_INCLUDED
-#define LOADEDWINDOWS_H_INCLUDED
+#pragma once
+
 
 #include <map>
 #include <vector>
@@ -83,4 +83,4 @@ class LoadedWindows
 };
 
 
-#endif // LOADEDWINDOWS_H_INCLUDED
+

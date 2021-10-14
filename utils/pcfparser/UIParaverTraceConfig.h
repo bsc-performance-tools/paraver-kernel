@@ -1,5 +1,5 @@
-#ifndef _UIPARAVER_TRACE_CONFIG_H
-#define _UIPARAVER_TRACE_CONFIG_H
+#pragma once
+
 
 #include <string>
 #include <vector>
@@ -357,5 +357,3 @@ protected:
 
 #include "UIParaverTraceConfig.ipp"
 } // namespace libparaver
-
-#endif

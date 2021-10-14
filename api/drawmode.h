@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef DRAWMODE_H_INCLUDED
-#define DRAWMODE_H_INCLUDED
+#pragma once
+
 
 #include <vector>
 #include "paraverkerneltypes.h"
@@ -52,4 +52,4 @@ class DrawMode
                                        DrawModeMethod method );
 };
 
-#endif // DRAWMODE_H_INCLUDED
+

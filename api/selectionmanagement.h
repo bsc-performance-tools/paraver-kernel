@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef _SELECTION_MANAGEMENT_H
-#define _SELECTION_MANAGEMENT_H
+#pragma once
+
 
 #include <vector>
 #include "paraverkerneltypes.h"
@@ -70,4 +70,4 @@ class SelectionManagement
 
 #include "selectionmanagement.cpp"
 
-#endif // _SELECTION_MANAGEMENT_H
+

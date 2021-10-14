@@ -1,5 +1,5 @@
-#ifndef LIBPARAVER_UIPARAVERTRACECONFIG_H
-#define LIBPARAVER_UIPARAVERTRACECONFIG_H
+#pragma once
+
 
 
 #include <string>

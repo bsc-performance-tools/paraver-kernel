@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef PROCESSMODEL_H_INCLUDED
-#define PROCESSMODEL_H_INCLUDED
+#pragma once
+
 
 #include <vector>
 #include <string>
@@ -145,4 +145,4 @@ class ProcessModel
 
 
 
-#endif // PROCESSMODEL_H_INCLUDED
+

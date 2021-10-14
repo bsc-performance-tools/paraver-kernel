@@ -1,5 +1,5 @@
-#ifndef _DEBUG_H
-#define _DEBUG_H
+#pragma once
+
 
 #include <iostream>
 //#define DEBUG

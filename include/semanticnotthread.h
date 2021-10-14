@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef SEMANTICNOTTHREAD_H_INCLUDED
-#define SEMANTICNOTTHREAD_H_INCLUDED
+#pragma once
+
 
 #include "semantichigh.h"
 
@@ -44,4 +44,4 @@ class SemanticNotThread: public SemanticHigh
 
 
 
-#endif // SEMANTICNOTTHREAD_H_INCLUDED
+

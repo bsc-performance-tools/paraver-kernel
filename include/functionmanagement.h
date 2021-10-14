@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef FUNCTIONMANAGEMENT_H_INCLUDED
-#define FUNCTIONMANAGEMENT_H_INCLUDED
+#pragma once
+
 
 
 #include <map>
@@ -66,4 +66,4 @@ class FunctionManagement
 
 #include "src/functionmanagement.cpp"
 
-#endif // FUNCTIONMANAGEMENT_H_INCLUDED
+

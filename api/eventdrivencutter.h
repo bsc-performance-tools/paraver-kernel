@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef EVENTDRIVENCUTTER_H_INCLUDED
-#define EVENTDRIVENCUTTER_H_INCLUDED
+#pragma once
+
 
 #include <string>
 #include "paraverkerneltypes.h"
@@ -85,4 +85,4 @@ class EventDrivenCutterProxy : public EventDrivenCutter
 };
 
 
-#endif // EVENTDRIVENCUTTER_H_INCLUDED
+

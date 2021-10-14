@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef PLAINTRACE_H_INCLUDED
-#define PLAINTRACE_H_INCLUDED
+#pragma once
+
 
 #include "memorytrace.h"
 #include "index.h"
@@ -193,4 +193,4 @@ namespace Plain
   };
 }
 
-#endif // PLAINTRACE_H_INCLUDED
+

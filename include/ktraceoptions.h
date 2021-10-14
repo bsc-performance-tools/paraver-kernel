@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef _KTRACEOPTIONS_H_
-#define _KTRACEOPTIONS_H_
+#pragma once
+
 
 #include <string.h>
 
@@ -584,4 +584,4 @@ class KTraceOptions: public TraceOptions
     void saveXMLSoftwareCounters( xmlTextWriterPtr &writer );
 };
 
-#endif // _KTRACEOPTIONS_H_
+

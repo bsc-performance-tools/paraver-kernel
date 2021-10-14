@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef _KTRACECUTTER_H_
-#define _KTRACECUTTER_H_
+#pragma once
+
 
 #include "ktraceoptions.h"
 #include "zlib.h"
@@ -167,4 +167,4 @@ class KTraceCutter : public TraceCutter
     bool is_selected_task( int task_id );
 };
 
-#endif // _KTRACECUTTER_H_
+

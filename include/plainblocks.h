@@ -22,8 +22,8 @@
 \*****************************************************************************/
 
 
-#ifndef PLAINBLOCKS_H_INCLUDED
-#define PLAINBLOCKS_H_INCLUDED
+#pragma once
+
 
 #include "memoryblocks.h"
 #include "resourcemodel.h"
@@ -143,4 +143,4 @@ namespace Plain
   };
 }
 
-#endif // PLAINBLOCKS_H_INCLUDED
+
