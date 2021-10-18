@@ -421,9 +421,6 @@ PlainTrace::CPUIterator::CPUIterator( PlainBlocks *whichBlocks, const Trace *whi
   record = &blocks->blocks[ threads[ lastThread ] ][ block[ lastThread ] ][ pos[ lastThread ] ];
 }
 
-PlainTrace::CPUIterator::~CPUIterator()
-{}
-
 inline TThreadOrder PlainTrace::CPUIterator::getThread() const
 {
   return lastThread;

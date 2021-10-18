@@ -59,9 +59,6 @@ namespace Plain
 
           iterator( PlainBlocks *whichBlocks, const Trace *whichTrace );
 
-          virtual ~iterator()
-          {}
-
           virtual void operator++() override;
           virtual void operator--() override;
           virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy ) override
@@ -100,9 +97,6 @@ namespace Plain
           ThreadIterator( PlainBlocks *whichBlocks, const Trace *whichTrace, PRV_UINT32 whichBlock, PRV_UINT32 whichPos,
                           TThreadOrder whichThread );
 
-          virtual ~ThreadIterator()
-          {}
-
           virtual TThreadOrder getThread() const override;
           virtual TObjectOrder getOrder() const override;
 
@@ -129,8 +123,6 @@ namespace Plain
 
           CPUIterator( PlainBlocks *whichBlocks, const Trace *whichTrace , std::vector<PRV_UINT32>& whichBlock, std::vector<PRV_UINT32>& whichPos,
                        TThreadOrder whichNumThreads, std::vector<TThreadOrder>& whichThreads, TCPUOrder whichCPU );
-
-          virtual ~CPUIterator();
 
           virtual TThreadOrder getThread() const override;
           virtual TObjectOrder getOrder() const override;

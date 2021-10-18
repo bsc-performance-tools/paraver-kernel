@@ -295,9 +295,6 @@ namespace bplustree
 
           iterator( TRecord *whichRecord, const Trace *whichTrace );
 
-          virtual ~iterator()
-          {}
-
           virtual void operator++() override;
           virtual void operator--() override;
 
@@ -331,9 +328,6 @@ namespace bplustree
             : BPlusTree::iterator( whichRecord, whichTrace )
           {}
 
-          virtual ~ThreadIterator()
-          {}
-
           virtual TObjectOrder getOrder() const override;
 
           virtual void operator++() override;
@@ -351,9 +345,6 @@ namespace bplustree
           // Constructor declaration needed for iterators.
           CPUIterator( TRecord *whichRecord, const Trace *whichTrace )
             : BPlusTree::iterator( whichRecord, whichTrace )
-          {}
-
-          virtual ~CPUIterator()
           {}
 
           virtual TObjectOrder getOrder() const override;

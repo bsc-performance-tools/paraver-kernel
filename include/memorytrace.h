@@ -42,8 +42,6 @@ class MemoryTrace
         iterator();
         iterator( const Trace *whichTrace );
 
-        virtual ~iterator();
-
         virtual void operator++() = 0;
         virtual void operator--() = 0;
         virtual MemoryTrace::iterator& operator=( const MemoryTrace::iterator& copy );

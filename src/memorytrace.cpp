@@ -32,9 +32,6 @@ MemoryTrace::iterator::iterator()
 MemoryTrace::iterator::iterator( const Trace *whichTrace ) : myTrace( whichTrace )
 {}
 
-MemoryTrace::iterator::~iterator()
-{}
-
 bool MemoryTrace::iterator::operator==( const MemoryTrace::iterator &it ) const
 {
   return ( this->record == it.record );
