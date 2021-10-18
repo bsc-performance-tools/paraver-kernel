@@ -55,7 +55,6 @@ namespace bplustree
       RecordLeaf( TRecord *r );
       RecordLeaf( TRecord *r, TRecordOrder order );
       RecordLeaf();
-      ~RecordLeaf();
 
       // Set & Get Methods
       inline void setRecord( TRecord *rec )

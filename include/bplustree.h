@@ -102,9 +102,6 @@ namespace bplustree
   {
     public:
 
-      virtual ~BPlusNode()
-      {}
-
       /************************************************************************
        * Inserts rl in the tree.
        * If a leaf split is done, newChild returns its address instead of nullptr.
@@ -147,7 +144,6 @@ namespace bplustree
 
     public:
       BPlusLeaf();
-      ~BPlusLeaf();
 
       virtual RecordLeaf *insert( RecordLeaf *rl, BPlusNode *&newChild ) override;
 

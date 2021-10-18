@@ -53,9 +53,6 @@ RecordLeaf::RecordLeaf()
   ord = 0;
 }
 
-RecordLeaf::~RecordLeaf()
-{}
-
 
 /******************************************************************************
  * Assign & Compare Methods

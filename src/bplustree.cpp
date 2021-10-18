@@ -148,10 +148,6 @@ BPlusLeaf::BPlusLeaf()
 }
 
 
-BPlusLeaf::~BPlusLeaf()
-{}
-
-
 RecordLeaf *BPlusLeaf::minNodeKey()
 {
   return &records[ 0 ];
