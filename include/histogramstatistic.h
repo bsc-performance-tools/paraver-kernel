@@ -29,13 +29,17 @@
 #include <map>
 #include "paraverkerneltypes.h"
 
-class KHistogram;
-class Window;
 #ifdef PARALLEL_ENABLED
-class CubeBuffer;
+#include "cubebuffer.h"
 #endif
 
+class KHistogram;
+class Window;
+
 struct CalculateData;
+
+constexpr size_t NUM_SEMANTIC_STATS = 17;
+constexpr size_t NUM_COMM_STATS = 10;
 
 class HistogramStatistic
 {
@@ -230,7 +234,7 @@ class StatAvgBytesSent: public HistogramStatistic
     static std::string name;
     Window *controlWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *numComms;
+    CubeBuffer<1> *numComms;
 #else
     std::vector<std::map<TObjectOrder, TSemanticValue> > numComms;
 #endif
@@ -267,7 +271,7 @@ class StatAvgBytesReceived: public HistogramStatistic
     static std::string name;
     Window *controlWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *numComms;
+    CubeBuffer<1> *numComms;
 #else
     std::vector<std::map<TObjectOrder, TSemanticValue> > numComms;
 #endif
@@ -304,7 +308,7 @@ class StatMinBytesSent: public HistogramStatistic
     static std::string name;
     Window *controlWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *min;
+    CubeBuffer<1> *min;
 #else
     std::vector<std::map<TObjectOrder, TSemanticValue> > min;
 #endif
@@ -341,7 +345,7 @@ class StatMinBytesReceived: public HistogramStatistic
     static std::string name;
     Window *controlWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *min;
+    CubeBuffer<1> *min;
 #else
     std::vector<std::map<TObjectOrder, TSemanticValue> > min;
 #endif
@@ -378,7 +382,7 @@ class StatMaxBytesSent: public HistogramStatistic
     static std::string name;
     Window *controlWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *max;
+    CubeBuffer<1> *max;
 #else
     std::vector<std::map<TObjectOrder, TSemanticValue> > max;
 #endif
@@ -415,7 +419,7 @@ class StatMaxBytesReceived: public HistogramStatistic
     static std::string name;
     Window *controlWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *max;
+    CubeBuffer<1> *max;
 #else
     std::vector<std::map<TObjectOrder, TSemanticValue> > max;
 #endif
@@ -493,7 +497,7 @@ class StatPercTime: public HistogramStatistic
     static std::string name;
     Window *controlWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *rowTotal;
+    CubeBuffer<1> *rowTotal;
 #else
     std::vector<TSemanticValue> rowTotal;
 #endif
@@ -533,7 +537,7 @@ class StatPercTimeNotZero: public HistogramStatistic
     static std::string name;
     Window *controlWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *rowTotal;
+    CubeBuffer<1> *rowTotal;
 #else
     std::vector<TSemanticValue> rowTotal;
 #endif
@@ -643,7 +647,7 @@ class StatPercNumBursts: public HistogramStatistic
     static std::string name;
     Window *dataWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *rowTotal;
+    CubeBuffer<1> *rowTotal;
 #else
     std::vector<TSemanticValue> rowTotal;
 #endif
@@ -718,7 +722,7 @@ class StatAvgValue: public HistogramStatistic
     static std::string name;
     Window *dataWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *numValues;
+    CubeBuffer<1> *numValues;
 #else
     std::vector<std::vector<TSemanticValue> > numValues;
 #endif
@@ -758,7 +762,7 @@ class StatMaximum: public HistogramStatistic
     static std::string name;
     Window *dataWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *max;
+    CubeBuffer<1> *max;
 #else
     std::vector<std::vector<TSemanticValue> > max;
 #endif
@@ -797,7 +801,7 @@ class StatMinimum: public HistogramStatistic
     static std::string name;
     Window *dataWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *min;
+    CubeBuffer<1> *min;
 #else
     std::vector<std::vector<TSemanticValue> > min;
 #endif
@@ -838,7 +842,7 @@ class StatAvgBurstTime: public HistogramStatistic
     Window *controlWin;
     Window *dataWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *numValues;
+    CubeBuffer<1> *numValues;
 #else
     std::vector<std::vector<TSemanticValue> > numValues;
 #endif
@@ -878,8 +882,8 @@ class StatStdevBurstTime: public HistogramStatistic
     static std::string name;
     Window *dataWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *numValues;
-    CubeBuffer *qValues;
+    CubeBuffer<1> *numValues;
+    CubeBuffer<1> *qValues;
 #else
     std::vector<std::vector<TSemanticValue> > numValues;
     std::vector<std::vector<TSemanticValue> > qValues;
@@ -920,7 +924,7 @@ class StatAvgPerBurst: public HistogramStatistic
     static std::string name;
     Window *dataWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *numValues;
+    CubeBuffer<1> *numValues;
 #else
     std::vector<std::vector<TSemanticValue> > numValues;
 #endif
@@ -965,7 +969,7 @@ class StatAvgValueNotZero: public HistogramStatistic
     static std::string name;
     Window *dataWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *numValues;
+    CubeBuffer<1> *numValues;
 #else
     std::vector<std::vector<TSemanticValue> > numValues;
 #endif
@@ -1010,7 +1014,7 @@ class StatAvgPerBurstNotZero: public HistogramStatistic
     static std::string name;
     Window *dataWin;
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *numValues;
+    CubeBuffer<1> *numValues;
 #else
     std::vector<std::vector<TSemanticValue> > numValues;
 #endif
@@ -1093,12 +1097,10 @@ class StatSumBursts: public HistogramStatistic
     Window *dataWin;
 };
 
-
 class Statistics
 {
   public:
     Statistics() {}
-    ~Statistics() {}
 
 #ifndef PARALLEL_ENABLED
     static std::vector<TSemanticValue> zeroVector;
@@ -1106,26 +1108,23 @@ class Statistics
     static std::vector<std::map<TObjectOrder, TSemanticValue> > zeroCommMatrix;
 #endif
 
-    static int getNumCommStats();
-
     void initAllComm( KHistogram *whichHistogram );
     void resetAllComm();
     bool filterAllComm( CalculateData *data );
-    void executeAllComm( CalculateData *data, std::vector<TSemanticValue>& onValues );
-    std::vector<TSemanticValue> finishRowAllComm( const std::vector<TSemanticValue>& cellValue,
-                                                  THistogramColumn column,
-                                                  TObjectOrder row,
-                                                  THistogramColumn plane = 0 );
+    void executeAllComm( CalculateData *data, std::array<TSemanticValue, NUM_COMM_STATS>& onValues );
+    std::array<TSemanticValue, NUM_COMM_STATS> finishRowAllComm( const std::array<TSemanticValue, NUM_COMM_STATS>& cellValue,
+                                                                 THistogramColumn column,
+                                                                 TObjectOrder row,
+                                                                 THistogramColumn plane = 0 );
 
-    static int getNumStats();
     void initAll( KHistogram *whichHistogram );
     void resetAll();
     bool filterAll( CalculateData *data );
-    void executeAll( CalculateData *data, std::vector<TSemanticValue>& onValues, bool& isNotZeroValue );
-    std::vector<TSemanticValue> finishRowAll( const std::vector<TSemanticValue>& cellValue,
-                                              THistogramColumn column,
-                                              TObjectOrder row,
-                                              THistogramColumn plane = 0 );
+    void executeAll( CalculateData *data, std::array<TSemanticValue, NUM_SEMANTIC_STATS>& onValues, bool& isNotZeroValue );
+    std::array<TSemanticValue, NUM_SEMANTIC_STATS> finishRowAll( const std::array<TSemanticValue, NUM_SEMANTIC_STATS>& cellValue,
+                                                                 THistogramColumn column,
+                                                                 TObjectOrder row,
+                                                                 THistogramColumn plane = 0 );
 
   private:
     StatNumSends statNumSends;
@@ -1156,10 +1155,6 @@ class Statistics
     StatAvgPerBurstNotZero statAvgPerBurstNotZero;
     StatNumBurstsNotZero statNumBurstsNotZero;
     StatSumBursts statSumBursts;
-
-    static int numCommStats;
-    static int numStats;
-
 };
 
 

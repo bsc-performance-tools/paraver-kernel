@@ -24,28 +24,25 @@
 
 #pragma once
 
-
 #include <vector>
 #include "matrix.h"
 
-template <typename ValueType>
+template <typename ValueType, size_t NStats>
 class Cube
 {
   public:
-    Cube( PRV_UINT32 numPlanes, PRV_UINT32 numCols, PRV_UINT16 numStats );
-    Cube( Cube<ValueType>& source );
+    Cube( PRV_UINT32 numPlanes, PRV_UINT32 numCols );
+    Cube( Cube<ValueType, NStats>& source );
     ~Cube();
 
     void init( PRV_UINT16 idStat );
     void init( );
     void setValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal );
-    void setValue( PRV_UINT32 plane, PRV_UINT32 col, ValueType semVal );
-    void setValue( PRV_UINT32 plane, PRV_UINT32 col, const std::vector<ValueType>& semVal, bool isNotZeroValue = true );
+    void setValue( PRV_UINT32 plane, PRV_UINT32 col, const std::array<ValueType, NStats>& semVal, bool isNotZeroValue = true );
     void addValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal );
-    void addValue( PRV_UINT32 plane, PRV_UINT32 col, ValueType semVal );
-    void addValue( PRV_UINT32 plane, PRV_UINT32 col, const std::vector<ValueType>& semVal );
+    void addValue( PRV_UINT32 plane, PRV_UINT32 col, const std::array<ValueType, NStats>& semVal );
     ValueType getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat ) const;
-    std::vector<ValueType> getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col ) const;
+    std::array<ValueType, NStats> getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col ) const;
     PRV_UINT32 getCurrentRow( PRV_UINT32 plane, PRV_UINT32 col ) const;
     PRV_UINT32 getCurrentRow( ) const;
     bool currentCellModified( PRV_UINT32 plane, PRV_UINT32 col ) const;
@@ -62,15 +59,12 @@ class Cube
 
     bool getCellValue( ValueType& semVal, PRV_UINT32 whichPlane, int whichRow, PRV_UINT32 whichCol, PRV_UINT16 idStat ) const;
     bool getNotZeroValue( PRV_UINT32 whichPlane, int whichRow, PRV_UINT32 whichCol, PRV_UINT16 idStat ) const;
-    bool getCellValue( std::vector<ValueType>& semVal, PRV_UINT32 whichPlane, int whichRow, PRV_UINT32 whichCol ) const;
-
-    void print() const;
+    bool getCellValue( std::array<ValueType, NStats>& semVal, PRV_UINT32 whichPlane, int whichRow, PRV_UINT32 whichCol ) const;
 
   private:
-    std::vector<Matrix<ValueType> *> planes;
+    std::vector<Matrix<ValueType, NStats> *> planes;
     PRV_UINT32 nplanes;
     PRV_UINT32 ncols;
-    PRV_UINT32 nstat;
     PRV_UINT32 crow;
 };
 

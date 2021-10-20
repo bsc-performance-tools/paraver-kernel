@@ -25,37 +25,32 @@
 #include <string>
 #include <iostream>
 
-template <typename ValueType>
-Matrix<ValueType>::Matrix( PRV_UINT32 numCols, PRV_UINT16 numStats ):
+template <typename ValueType, size_t NStats>
+Matrix<ValueType, NStats>::Matrix( PRV_UINT32 numCols ):
   finished( false )
 {
-  cols.insert( cols.begin(), numCols, Column<ValueType>( numStats, &finished ) );
+  cols.insert( cols.begin(), numCols, Column<ValueType, NStats>( &finished ) );
 }
 
 
-template <typename ValueType>
-Matrix<ValueType>::Matrix( TObjectOrder currentRow, PRV_UINT32 numCols, PRV_UINT16 numStats ):
+template <typename ValueType, size_t NStats>
+Matrix<ValueType, NStats>::Matrix( TObjectOrder currentRow, PRV_UINT32 numCols ):
   finished( false )
 {
-  cols.insert( cols.begin(), numCols, Column<ValueType>( currentRow, numStats, &finished ) );
+  cols.insert( cols.begin(), numCols, Column<ValueType, NStats>( currentRow, &finished ) );
 }
 
 
-template <typename ValueType>
-Matrix<ValueType>::Matrix( Matrix<ValueType>& source ):
+template <typename ValueType, size_t NStats>
+Matrix<ValueType, NStats>::Matrix( Matrix<ValueType, NStats>& source ):
   finished( source.finished )
 {
   cols = source.cols;
 }
 
 
-template <typename ValueType>
-Matrix<ValueType>::~Matrix()
-{}
-
-
-template <typename ValueType>
-inline void Matrix<ValueType>::init( PRV_UINT16 idStat )
+template <typename ValueType, size_t NStats>
+inline void Matrix<ValueType, NStats>::init( PRV_UINT16 idStat )
 {
   for ( PRV_UINT32 ii = 0; ii < ( PRV_UINT32 )cols.size(); ii++ )
   {
@@ -64,8 +59,8 @@ inline void Matrix<ValueType>::init( PRV_UINT16 idStat )
 }
 
 
-template <typename ValueType>
-inline void Matrix<ValueType>::init( )
+template <typename ValueType, size_t NStats>
+inline void Matrix<ValueType, NStats>::init( )
 {
   for ( PRV_UINT32 ii = 0; ii < ( PRV_UINT32 )cols.size(); ii++ )
   {
@@ -74,78 +69,64 @@ inline void Matrix<ValueType>::init( )
 }
 
 
-template <typename ValueType>
-inline void Matrix<ValueType>::setValue( PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal )
+template <typename ValueType, size_t NStats>
+inline void Matrix<ValueType, NStats>::setValue( PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal )
 {
   cols[ col ].setValue( idStat, semVal );
 }
 
 
-template <typename ValueType>
-inline void Matrix<ValueType>::setValue( PRV_UINT32 col, ValueType semVal )
-{
-  cols[ col ].setValue( semVal );
-}
-
-
-template <typename ValueType>
-inline void Matrix<ValueType>::setValue( PRV_UINT32 col, const std::vector<ValueType>& semVal, bool isNotZeroValue )
+template <typename ValueType, size_t NStats>
+inline void Matrix<ValueType, NStats>::setValue( PRV_UINT32 col, const std::array<ValueType, NStats>& semVal, bool isNotZeroValue )
 {
   cols[ col ].setValue( semVal, isNotZeroValue );
 }
 
 
-template <typename ValueType>
-inline void Matrix<ValueType>::addValue( PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal )
+template <typename ValueType, size_t NStats>
+inline void Matrix<ValueType, NStats>::addValue( PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal )
 {
   cols[ col ].addValue( idStat, semVal );
 }
 
 
-template <typename ValueType>
-inline void Matrix<ValueType>::addValue( PRV_UINT32 col, ValueType semVal )
+template <typename ValueType, size_t NStats>
+inline void Matrix<ValueType, NStats>::addValue( PRV_UINT32 col, const std::array<ValueType, NStats>& semVal )
 {
   cols[ col ].addValue( semVal );
 }
 
 
-template <typename ValueType>
-inline void Matrix<ValueType>::addValue( PRV_UINT32 col, const std::vector<ValueType>& semVal )
-{
-  cols[ col ].addValue( semVal );
-}
-
-
-template <typename ValueType>
-inline ValueType Matrix<ValueType>::getCurrentValue( PRV_UINT32 col, PRV_UINT16 idStat ) const
+template <typename ValueType, size_t NStats>
+inline ValueType Matrix<ValueType, NStats>::getCurrentValue( PRV_UINT32 col, PRV_UINT16 idStat ) const
 {
   return cols[ col ].getCurrentValue( idStat );
 }
 
 
-template <typename ValueType>
-inline std::vector<ValueType> Matrix<ValueType>::getCurrentValue( PRV_UINT32 col ) const
+template <typename ValueType, size_t NStats>
+inline std::array<ValueType, NStats> Matrix<ValueType, NStats>::getCurrentValue( PRV_UINT32 col ) const
 {
   return cols[ col ].getCurrentValue();
 }
 
 
-template <typename ValueType>
-inline TObjectOrder Matrix<ValueType>::getCurrentRow( PRV_UINT32 col ) const
+template <typename ValueType, size_t NStats>
+inline TObjectOrder Matrix<ValueType, NStats>::getCurrentRow( PRV_UINT32 col ) const
 {
   return cols[ col ].getCurrentRow();
 }
 
 
-template <typename ValueType>
-inline bool Matrix<ValueType>::currentCellModified( PRV_UINT32 col ) const
+template <typename ValueType, size_t NStats>
+inline bool Matrix<ValueType, NStats>::currentCellModified( PRV_UINT32 col ) const
 {
   return cols[ col ].currentCellModified();
 }
 
 
-template <typename ValueType>
-inline void Matrix<ValueType>::newRow( )
+template <typename ValueType, size_t NStats>
+inline void Matrix<ValueType, NStats>::newRow( )
 {
   for ( PRV_UINT32 ii = 0; ii < ( PRV_UINT32 )cols.size(); ii++ )
   {
@@ -154,43 +135,43 @@ inline void Matrix<ValueType>::newRow( )
 }
 
 
-template <typename ValueType>
-inline void Matrix<ValueType>::newRow( PRV_UINT32 col, TObjectOrder row )
+template <typename ValueType, size_t NStats>
+inline void Matrix<ValueType, NStats>::newRow( PRV_UINT32 col, TObjectOrder row )
 {
   cols[ col ].newRow( row );
 }
 
 
-template <typename ValueType>
-inline void Matrix<ValueType>::finish( )
+template <typename ValueType, size_t NStats>
+inline void Matrix<ValueType, NStats>::finish( )
 {
   finished = true;
 }
 
 
-template <typename ValueType>
-inline void Matrix<ValueType>::setNextCell( PRV_UINT32 col )
+template <typename ValueType, size_t NStats>
+inline void Matrix<ValueType, NStats>::setNextCell( PRV_UINT32 col )
 {
   cols[ col ].setNextCell();
 }
 
 
-template <typename ValueType>
-inline void Matrix<ValueType>::setFirstCell( PRV_UINT32 col )
+template <typename ValueType, size_t NStats>
+inline void Matrix<ValueType, NStats>::setFirstCell( PRV_UINT32 col )
 {
   cols[ col ].setFirstCell();
 }
 
 
-template <typename ValueType>
-inline bool Matrix<ValueType>::endCell( PRV_UINT32 col )
+template <typename ValueType, size_t NStats>
+inline bool Matrix<ValueType, NStats>::endCell( PRV_UINT32 col )
 {
   return cols[ col ].endCell();
 }
 
 
-template <typename ValueType>
-inline void Matrix<ValueType>::eraseColumns( PRV_UINT32 ini_col, PRV_UINT32 fin_col )
+template <typename ValueType, size_t NStats>
+inline void Matrix<ValueType, NStats>::eraseColumns( PRV_UINT32 ini_col, PRV_UINT32 fin_col )
 {
   if ( fin_col < ini_col )
     return;
@@ -198,7 +179,7 @@ inline void Matrix<ValueType>::eraseColumns( PRV_UINT32 ini_col, PRV_UINT32 fin_
   if ( fin_col >= ( int ) cols.size() )
     return;
 
-  typename std::vector<Column<ValueType> >::iterator it_ini, it_fin;
+  typename std::vector<Column<ValueType, NStats> >::iterator it_ini, it_fin;
   PRV_UINT32 i;
 
   it_ini = cols.begin();
@@ -210,38 +191,27 @@ inline void Matrix<ValueType>::eraseColumns( PRV_UINT32 ini_col, PRV_UINT32 fin_
 }
 
 
-template <typename ValueType>
-inline bool Matrix<ValueType>::getCellValue( ValueType& semVal,
-                                             int whichRow,
-                                             PRV_UINT32 whichCol,
-                                             PRV_UINT16 idStat ) const
+template <typename ValueType, size_t NStats>
+inline bool Matrix<ValueType, NStats>::getCellValue( ValueType& semVal,
+                                                     int whichRow,
+                                                     PRV_UINT32 whichCol,
+                                                     PRV_UINT16 idStat ) const
 {
   return cols[ whichCol ].getCellValue( semVal, whichRow, idStat );
 }
 
-template <typename ValueType>
-inline bool Matrix<ValueType>::getNotZeroValue( int whichRow,
-                                                PRV_UINT32 whichCol,
-                                                PRV_UINT16 idStat ) const
+template <typename ValueType, size_t NStats>
+inline bool Matrix<ValueType, NStats>::getNotZeroValue( int whichRow,
+                                                        PRV_UINT32 whichCol,
+                                                        PRV_UINT16 idStat ) const
 {
   return cols[ whichCol ].getNotZeroValue( whichRow, idStat );
 }
 
-template <typename ValueType>
-inline bool Matrix<ValueType>::getCellValue( std::vector<ValueType>& semVal,
-                                             int whichRow,
-                                             PRV_UINT32 whichCol ) const
+template <typename ValueType, size_t NStats>
+inline bool Matrix<ValueType, NStats>::getCellValue( std::array<ValueType, NStats>& semVal,
+                                                     int whichRow,
+                                                     PRV_UINT32 whichCol ) const
 {
   return cols[ whichCol ].getCellValue( semVal, whichRow );
-}
-
-
-template <typename ValueType>
-inline void Matrix<ValueType>::print() const
-{
-  for ( PRV_UINT32 ii = 0; ii < ( PRV_UINT32 )cols.size(); ii++ )
-  {
-    std::cout << "----------Column " << ii << "----------" << std::endl;
-    cols[ ii ].print();
-  }
 }

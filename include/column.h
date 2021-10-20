@@ -24,31 +24,26 @@
 
 #pragma once
 
-
-/*#include <deque>*/
 #include <vector>
 #include "cell.h"
 
 
-template <typename ValueType>
+template <typename ValueType, size_t NStats>
 class Column
 {
   public:
-    Column( short numStats, bool *mat_finished );
-    Column( int currentRow, short numStats, bool *mat_finished );
-    Column( const Column<ValueType>& source );
-    ~Column();
+    Column( bool *mat_finished );
+    Column( int currentRow, bool *mat_finished );
+    Column( const Column<ValueType, NStats>& source );
 
     void init( short idStat );
-    void init( );
+    void init();
     void setValue( short idStat, ValueType semVal );
-    void setValue( ValueType semVal );
-    void setValue( const std::vector<ValueType>& semVal, bool isNotZeroValue = true );
+    void setValue( const std::array<ValueType, NStats>& semVal, bool isNotZeroValue = true );
     void addValue( short idStat, ValueType semVal );
-    void addValue( ValueType semVal );
-    void addValue( const std::vector<ValueType>& semVal );
+    void addValue( const std::array<ValueType, NStats>& semVal );
     ValueType getCurrentValue( short idStat ) const;
-    std::vector<ValueType> getCurrentValue() const;
+    std::array<ValueType, NStats> getCurrentValue() const;
     int getCurrentRow( ) const;
     bool currentCellModified( ) const;
     void newRow( );
@@ -56,20 +51,17 @@ class Column
     void setNextCell( );
     void setFirstCell( );
     bool endCell( );
-    void print() const;
 
     bool getCellValue( ValueType& semVal, int whichRow, short idStat ) const;
     bool getNotZeroValue( int whichRow, short idStat ) const;
-    bool getCellValue( std::vector<ValueType>& semVal, int whichRow ) const;
+    bool getCellValue( std::array<ValueType, NStats>& semVal, int whichRow ) const;
 
   private:
-    std::vector<Cell<ValueType> > cells;
-    typename std::vector<Cell<ValueType> >::iterator it_cell;
+    std::vector<Cell<ValueType, NStats> > cells;
+    typename std::vector<Cell<ValueType, NStats> >::iterator it_cell;
 
-    short nstat;
-    Cell<ValueType> current_cell;
+    Cell<ValueType, NStats> current_cell;
     bool modified;
-    unsigned int n_cells;
     bool *finished;
 };
 

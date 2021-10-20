@@ -46,7 +46,7 @@ noinst_HEADERS = \
                           noloadblocks.h\
                           noloadexception.h\
                           noloadtrace.h\
-    			                ParaverMetadataManager.h \
+                          ParaverMetadataManager.h \
                           plainblocks.h\
                           plaintrace.h\
                           plaintypes.h\
@@ -72,7 +72,6 @@ noinst_HEADERS = \
                           semanticnotthread.h\
                           semanticthreadfunctions.h\
                           semanticthread.h\
-                          statistic_2d.h\
                           statisticmanagement.h\
                           tracebodyio.h\
                           tracebodyio_v1.h\

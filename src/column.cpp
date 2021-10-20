@@ -25,57 +25,48 @@
 #include <string>
 #include <iostream>
 
-template <typename ValueType>
-Column<ValueType>::Column( short numStats, bool *mat_finished ):
-  nstat( numStats ), modified( false ), n_cells( 0 ), finished( mat_finished )
+template <typename ValueType, size_t NStats>
+Column<ValueType, NStats>::Column( bool *mat_finished ):
+  modified( false ), finished( mat_finished )
 {
-  current_cell = Cell<ValueType>( 0, nstat );
-  //current_cell->init();
+  current_cell = Cell<ValueType, NStats>( 0 );
 }
 
 
-template <typename ValueType>
-Column<ValueType>::Column( int currentRow, short numStats, bool *mat_finished ):
-  nstat( numStats ), modified( false ), n_cells( 0 ), finished( mat_finished )
+template <typename ValueType, size_t NStats>
+Column<ValueType, NStats>::Column( int currentRow, bool *mat_finished ):
+  modified( false ), finished( mat_finished )
 {
-  current_cell = Cell<ValueType>( currentRow, nstat );
-  //current_cell->init();
+  current_cell = Cell<ValueType, NStats>( currentRow );
 }
 
 
-template <typename ValueType>
-Column<ValueType>::Column( const Column<ValueType>& source ):
-  nstat( source.nstat ), modified( source.modified ), n_cells( source.n_cells ), finished( source.finished )
+template <typename ValueType, size_t NStats>
+Column<ValueType, NStats>::Column( const Column<ValueType, NStats>& source ):
+  modified( source.modified ), finished( source.finished )
 {
-  current_cell = Cell<ValueType>( source.current_cell );
+  current_cell = Cell<ValueType, NStats>( source.current_cell );
 
   cells = source.cells;
 }
 
 
-template <typename ValueType>
-Column<ValueType>::~Column()
-{
-  cells.clear();
-}
-
-
-template <typename ValueType>
-inline void Column<ValueType>::init( short idStat )
+template <typename ValueType, size_t NStats>
+inline void Column<ValueType, NStats>::init( short idStat )
 {
   current_cell.init( idStat );
 }
 
 
-template <typename ValueType>
-inline void Column<ValueType>::init( )
+template <typename ValueType, size_t NStats>
+inline void Column<ValueType, NStats>::init( )
 {
   current_cell.init( );
 }
 
 
-template <typename ValueType>
-inline void Column<ValueType>::setValue( short idStat, ValueType semVal )
+template <typename ValueType, size_t NStats>
+inline void Column<ValueType, NStats>::setValue( short idStat, ValueType semVal )
 {
   if ( *finished )
   {
@@ -86,38 +77,15 @@ inline void Column<ValueType>::setValue( short idStat, ValueType semVal )
     if ( modified == false )
     {
       cells.push_back( current_cell );
-      ++n_cells;
       modified = true;
-      //it_cell = cells.begin();
     }
-    cells[ cells.size() - 1 ].setValue( idStat, semVal );
+    cells.back().setValue( idStat, semVal );
   }
 }
 
 
-template <typename ValueType>
-inline void Column<ValueType>::setValue( ValueType semVal )
-{
-  if ( *finished )
-  {
-    it_cell->setValue( semVal );
-  }
-  else
-  {
-    if ( modified == false )
-    {
-      cells.push_back( current_cell );
-      ++n_cells;
-      modified = true;
-      //it_cell = cells.begin();
-    }
-    cells[ cells.size() - 1 ].setValue( semVal );
-  }
-}
-
-
-template <typename ValueType>
-inline void Column<ValueType>::setValue( const std::vector<ValueType>& semVal, bool isNotZeroValue )
+template <typename ValueType, size_t NStats>
+inline void Column<ValueType, NStats>::setValue( const std::array<ValueType, NStats>& semVal, bool isNotZeroValue )
 {
   if ( *finished )
   {
@@ -128,59 +96,39 @@ inline void Column<ValueType>::setValue( const std::vector<ValueType>& semVal, b
     if ( modified == false )
     {
       cells.push_back( current_cell );
-      ++n_cells;
       modified = true;
-      //it_cell = cells.begin();
     }
-    cells[ cells.size() - 1 ].setValue( semVal, isNotZeroValue );
+    cells.back().setValue( semVal, isNotZeroValue );
   }
 }
 
 
-template <typename ValueType>
-inline void Column<ValueType>::addValue( short idStat, ValueType semVal )
+template <typename ValueType, size_t NStats>
+inline void Column<ValueType, NStats>::addValue( short idStat, ValueType semVal )
 {
   if ( modified == false )
   {
     cells.push_back( current_cell );
-    ++n_cells;
     modified = true;
-    //it_cell = cells.begin();
   }
-  cells[ cells.size() - 1 ].addValue( idStat, semVal );
+  cells.back().addValue( idStat, semVal );
 }
 
 
-template <typename ValueType>
-inline void Column<ValueType>::addValue( ValueType semVal )
+template <typename ValueType, size_t NStats>
+inline void Column<ValueType, NStats>::addValue( const std::array<ValueType, NStats>& semVal )
 {
   if ( modified == false )
   {
     cells.push_back( current_cell );
-    ++n_cells;
     modified = true;
-    //it_cell = cells.begin();
   }
-  cells[ cells.size() - 1 ].addValue( semVal );
+  cells.back().addValue( semVal );
 }
 
 
-template <typename ValueType>
-inline void Column<ValueType>::addValue( const std::vector<ValueType>& semVal )
-{
-  if ( modified == false )
-  {
-    cells.push_back( current_cell );
-    ++n_cells;
-    modified = true;
-    //it_cell = cells.begin();
-  }
-  cells[ cells.size() - 1 ].addValue( semVal );
-}
-
-
-template <typename ValueType>
-inline ValueType Column<ValueType>::getCurrentValue( short idStat ) const
+template <typename ValueType, size_t NStats>
+inline ValueType Column<ValueType, NStats>::getCurrentValue( short idStat ) const
 {
   if ( *finished )
   {
@@ -188,14 +136,14 @@ inline ValueType Column<ValueType>::getCurrentValue( short idStat ) const
   }
 
   if( modified )
-    return cells[ cells.size() - 1 ].getValue( idStat );
+    return cells.back().getValue( idStat );
 
   return current_cell.getValue( idStat );
 }
 
 
-template <typename ValueType>
-inline std::vector<ValueType> Column<ValueType>::getCurrentValue() const
+template <typename ValueType, size_t NStats>
+inline std::array<ValueType, NStats> Column<ValueType, NStats>::getCurrentValue() const
 {
   if ( *finished )
   {
@@ -203,46 +151,45 @@ inline std::vector<ValueType> Column<ValueType>::getCurrentValue() const
   }
 
   if( modified )
-    return cells[ cells.size() - 1 ].getValue();
+    return cells.back().getValue();
 
   return current_cell.getValue();
 }
 
 
-template <typename ValueType>
-inline int Column<ValueType>::getCurrentRow( ) const
+template <typename ValueType, size_t NStats>
+inline int Column<ValueType, NStats>::getCurrentRow( ) const
 {
   if ( *finished )
   {
-    if ( n_cells == 0 )
+    if ( cells.empty() )
       return -1;
     else
       return it_cell->getRow();
   }
 
   if( modified )
-    return cells[ cells.size() - 1 ].getRow();
+    return cells.back().getRow();
 
   return current_cell.getRow();
 }
 
 
-template <typename ValueType>
-inline bool Column<ValueType>::currentCellModified( ) const
+template <typename ValueType, size_t NStats>
+inline bool Column<ValueType, NStats>::currentCellModified( ) const
 {
   return modified;
 }
 
 
-template <typename ValueType>
-inline void Column<ValueType>::newRow( )
+template <typename ValueType, size_t NStats>
+inline void Column<ValueType, NStats>::newRow( )
 {
   int tmp_row = getCurrentRow();
 
   if ( modified )
   {
-    current_cell = Cell<ValueType>( tmp_row + 1, nstat );
-    //current_cell->init();
+    current_cell = Cell<ValueType, NStats>( tmp_row + 1 );
     modified = false;
   }
   else
@@ -252,13 +199,12 @@ inline void Column<ValueType>::newRow( )
 }
 
 
-template <typename ValueType>
-inline void Column<ValueType>::newRow( int row )
+template <typename ValueType, size_t NStats>
+inline void Column<ValueType, NStats>::newRow( int row )
 {
   if ( modified )
   {
-    current_cell = Cell<ValueType>( row, nstat );
-    //current_cell->init();
+    current_cell = Cell<ValueType, NStats>( row );
     modified = false;
   }
   else
@@ -268,35 +214,35 @@ inline void Column<ValueType>::newRow( int row )
 }
 
 
-template <typename ValueType>
-inline void Column<ValueType>::setNextCell( )
+template <typename ValueType, size_t NStats>
+inline void Column<ValueType, NStats>::setNextCell( )
 {
   ++it_cell;
 }
 
 
-template <typename ValueType>
-inline void Column<ValueType>::setFirstCell( )
+template <typename ValueType, size_t NStats>
+inline void Column<ValueType, NStats>::setFirstCell( )
 {
   it_cell = cells.begin();
 }
 
 
-template <typename ValueType>
-inline bool Column<ValueType>::endCell( )
+template <typename ValueType, size_t NStats>
+inline bool Column<ValueType, NStats>::endCell( )
 {
   return ( it_cell == cells.end() );
 }
 
 
-template <typename ValueType>
-inline bool Column<ValueType>::getCellValue( ValueType& semVal,
-                                             int whichRow,
-                                             short idStat ) const
+template <typename ValueType, size_t NStats>
+inline bool Column<ValueType, NStats>::getCellValue( ValueType& semVal,
+                                                     int whichRow,
+                                                     short idStat ) const
 {
-  Cell<ValueType> tmpCell( whichRow, 0 );
+  Cell<ValueType, NStats> tmpCell( whichRow );
 
-  typename std::vector<Cell<ValueType> >::const_iterator result;
+  typename std::vector<Cell<ValueType, NStats> >::const_iterator result;
   for( result = cells.begin(); result != cells.end(); ++result )
     if( result->getRow() == whichRow ) break;
 
@@ -309,12 +255,12 @@ inline bool Column<ValueType>::getCellValue( ValueType& semVal,
 }
 
 
-template <typename ValueType>
-inline bool Column<ValueType>::getNotZeroValue( int whichRow, short idStat ) const
+template <typename ValueType, size_t NStats>
+inline bool Column<ValueType, NStats>::getNotZeroValue( int whichRow, short idStat ) const
 {
-  Cell<ValueType> tmpCell( whichRow, 0 );
+  Cell<ValueType, NStats> tmpCell( whichRow );
 
-  typename std::vector<Cell<ValueType> >::const_iterator result;
+  typename std::vector<Cell<ValueType, NStats> >::const_iterator result;
   for( result = cells.begin(); result != cells.end(); ++result )
     if( result->getRow() == whichRow ) break;
 
@@ -325,28 +271,17 @@ inline bool Column<ValueType>::getNotZeroValue( int whichRow, short idStat ) con
 }
 
 
-template <typename ValueType>
-inline bool Column<ValueType>::getCellValue( std::vector<ValueType>& semVal,
-                                             int whichRow ) const
+template <typename ValueType, size_t NStats>
+inline bool Column<ValueType, NStats>::getCellValue( std::array<ValueType, NStats>& semVal,
+                                                     int whichRow ) const
 {
-  Cell<ValueType> tmpCell( whichRow, 0 );
+  Cell<ValueType, NStats> tmpCell( whichRow, 0 );
 
-  typename std::vector<Cell<ValueType> >::iterator result = find( cells.begin(), cells.end(), tmpCell );
+  typename std::vector<Cell<ValueType, NStats> >::iterator result = find( cells.begin(), cells.end(), tmpCell );
   if( result == cells.end() )
     return false;
   else
     semVal = result->getValue();
 
   return true;
-}
-
-
-template <typename ValueType>
-inline void Column<ValueType>::print() const
-{
-  for ( unsigned int ii = 0; ii < n_cells; ii++ )
-  {
-    cells[ ii ].print();
-    std::cout << std::endl;
-  }
 }

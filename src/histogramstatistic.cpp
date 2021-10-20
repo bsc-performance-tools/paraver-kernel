@@ -29,14 +29,8 @@
 #include "kwindow.h"
 #include "ktrace.h"
 #include "paraverlabels.h"
-#ifdef PARALLEL_ENABLED
-#include "cubebuffer.h"
-#endif
 
 using namespace std;
-
-int Statistics::numCommStats = 10;
-int Statistics::numStats = 17;
 
 //-------------------------------------------------------------------------
 // Statistics filtering functions
@@ -68,16 +62,6 @@ vector<TSemanticValue> Statistics::zeroVector;
 vector<vector<TSemanticValue> > Statistics::zeroMatrix;
 vector<map<TObjectOrder, TSemanticValue> > Statistics::zeroCommMatrix;
 #endif
-
-int Statistics::getNumCommStats()
-{
-  return Statistics::numCommStats;
-}
-
-int Statistics::getNumStats()
-{
-  return Statistics::numStats;
-}
 
 void Statistics::initAllComm( KHistogram *whichHistogram )
 {
@@ -129,48 +113,47 @@ bool Statistics::filterAllComm( CalculateData *data )
   return false;
 }
 
-void Statistics::executeAllComm( CalculateData *data, vector<TSemanticValue>& onValues )
+void Statistics::executeAllComm( CalculateData *data, array<TSemanticValue, NUM_COMM_STATS>& onValues )
 {
-  onValues.push_back( statNumSends.execute( data ) );
-  onValues.push_back( statNumReceives.execute( data ) );
-  onValues.push_back( statBytesSent.execute( data ) );
-  onValues.push_back( statBytesReceived.execute( data ) );
-  onValues.push_back( statAvgBytesSent.execute( data ) );
-  onValues.push_back( statAvgBytesReceived.execute( data ) );
-  onValues.push_back( statMinBytesSent.execute( data ) );
-  onValues.push_back( statMinBytesReceived.execute( data ) );
-  onValues.push_back( statMaxBytesSent.execute( data ) );
-  onValues.push_back( statMaxBytesReceived.execute( data ) );
+  onValues = { statNumSends.execute( data ) ,
+               statNumReceives.execute( data ),
+               statBytesSent.execute( data ),
+               statBytesReceived.execute( data ),
+               statAvgBytesSent.execute( data ),
+               statAvgBytesReceived.execute( data ),
+               statMinBytesSent.execute( data ),
+               statMinBytesReceived.execute( data ),
+               statMaxBytesSent.execute( data ),
+               statMaxBytesReceived.execute( data ) };
 }
 
-vector<TSemanticValue> Statistics::finishRowAllComm( const vector<TSemanticValue>& cellValue,
-    THistogramColumn column,
-    TObjectOrder row,
-    THistogramColumn plane )
+std::array<TSemanticValue, NUM_COMM_STATS> Statistics::finishRowAllComm( const array<TSemanticValue, NUM_COMM_STATS>& cellValue,
+                                                                         THistogramColumn column,
+                                                                         TObjectOrder row,
+                                                                         THistogramColumn plane )
 {
-  vector<TSemanticValue> values;
+  array<TSemanticValue, NUM_COMM_STATS> values;
   size_t i = 0;
 
-  values.push_back( statNumSends.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statNumSends.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statNumReceives.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statNumReceives.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statBytesSent.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statBytesSent.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statBytesReceived.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statBytesReceived.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statAvgBytesSent.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statAvgBytesSent.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statAvgBytesReceived.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statAvgBytesReceived.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statMinBytesSent.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statMinBytesSent.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statMinBytesReceived.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statMinBytesReceived.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statMaxBytesSent.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statMaxBytesSent.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statMaxBytesReceived.finishRow( cellValue[ i ], column, row, plane ) );
-  ++i;
+  values[ i ] = statMaxBytesReceived.finishRow( cellValue[ i ], column, row, plane );
 
   return values;
 }
@@ -250,71 +233,71 @@ bool Statistics::filterAll( CalculateData *data )
   return false;
 }
 
-void Statistics::executeAll( CalculateData *data, vector<TSemanticValue>& onValues, bool& isNotZeroValue )
+void Statistics::executeAll( CalculateData *data, array<TSemanticValue, NUM_SEMANTIC_STATS>& onValues, bool& isNotZeroValue )
 {
-  onValues.push_back( statTime.execute( data ) );
-  onValues.push_back( statPercTime.execute( data ) );
-  onValues.push_back( statPercTimeNotZero.execute( data ) );
-  onValues.push_back( statPercTimeWindow.execute( data ) );
-  onValues.push_back( statNumBursts.execute( data ) );
-  onValues.push_back( statPercNumBursts.execute( data ) );
-  onValues.push_back( statIntegral.execute( data ) );
-  onValues.push_back( statAvgValue.execute( data ) );
-  onValues.push_back( statMaximum.execute( data ) );
-  onValues.push_back( statMinimum.execute( data ) );
-  onValues.push_back( statAvgBurstTime.execute( data ) );
-  onValues.push_back( statStdevBurstTime.execute( data ) );
-  onValues.push_back( statAvgPerBurst.execute( data ) );
   TSemanticValue tmpVal = statAvgValueNotZero.execute( data );
   isNotZeroValue = tmpVal != 0.0;
-  onValues.push_back( tmpVal );
-  onValues.push_back( statAvgPerBurstNotZero.execute( data ) );
-  onValues.push_back( statNumBurstsNotZero.execute( data ) );
-  onValues.push_back( statSumBursts.execute( data ) );
+
+  onValues = { statTime.execute( data ),
+               statPercTime.execute( data ),
+               statPercTimeNotZero.execute( data ),
+               statPercTimeWindow.execute( data ),
+               statNumBursts.execute( data ),
+               statPercNumBursts.execute( data ),
+               statIntegral.execute( data ),
+               statAvgValue.execute( data ),
+               statMaximum.execute( data ),
+               statMinimum.execute( data ),
+               statAvgBurstTime.execute( data ),
+               statStdevBurstTime.execute( data ),
+               statAvgPerBurst.execute( data ),
+               tmpVal,
+               statAvgPerBurstNotZero.execute( data ),
+               statNumBurstsNotZero.execute( data ),
+               statSumBursts.execute( data ) };
 }
 
-vector<TSemanticValue> Statistics::finishRowAll( const vector<TSemanticValue>& cellValue,
-    THistogramColumn column,
-    TObjectOrder row,
-    THistogramColumn plane )
+array<TSemanticValue, NUM_SEMANTIC_STATS> Statistics::finishRowAll( const array<TSemanticValue, NUM_SEMANTIC_STATS>& cellValue,
+                                                                    THistogramColumn column,
+                                                                    TObjectOrder row,
+                                                                    THistogramColumn plane )
 {
-  vector<TSemanticValue> values;
+  array<TSemanticValue, NUM_SEMANTIC_STATS> values;
   size_t i = 0;
 
-  values.push_back( statTime.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statTime.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statPercTime.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statPercTime.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statPercTimeNotZero.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statPercTimeNotZero.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statPercTimeWindow.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statPercTimeWindow.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statNumBursts.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statNumBursts.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statPercNumBursts.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statPercNumBursts.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statIntegral.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statIntegral.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statAvgValue.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statAvgValue.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statMaximum.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statMaximum.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statMinimum.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statMinimum.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statAvgBurstTime.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statAvgBurstTime.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statStdevBurstTime.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statStdevBurstTime.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statAvgPerBurst.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statAvgPerBurst.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statAvgValueNotZero.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statAvgValueNotZero.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statAvgPerBurstNotZero.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statAvgPerBurstNotZero.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statNumBurstsNotZero.finishRow( cellValue[ i ], column, row, plane ) );
+  values[ i ] = statNumBurstsNotZero.finishRow( cellValue[ i ], column, row, plane );
   ++i;
-  values.push_back( statSumBursts.finishRow( cellValue[ i ], column, row, plane ) );
-  ++i;
+  values[ i ] = statSumBursts.finishRow( cellValue[ i ], column, row, plane );
 
   return values;
 }
@@ -567,7 +550,7 @@ void StatAvgBytesSent::init( KHistogram *whichHistogram )
 #ifndef PARALLEL_ENABLED
   numComms = Statistics::zeroCommMatrix;
 #else
-  numComms = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  numComms = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
 #endif
 }
 
@@ -595,7 +578,7 @@ TSemanticValue StatAvgBytesSent::execute( CalculateData *data )
       ( numComms[ data->plane ] )[ getPartner( data ) ] = 0.0;
     ++( ( numComms[ data->plane ] )[ getPartner( data ) ] );
 #else
-    numComms->addValue( data->plane, data->row, getPartner( data ), vector< TSemanticValue >( 1, 1.0 ) );
+    numComms->addValue( data->plane, data->row, getPartner( data ), array< TSemanticValue, 1 >{ 1.0 } );
 #endif
     return data->comm->getCommSize();
   }
@@ -610,7 +593,7 @@ TSemanticValue StatAvgBytesSent::finishRow( TSemanticValue cellValue,
 #ifndef PARALLEL_ENABLED
   return cellValue / ( numComms[ plane ] )[ column ];
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   if( !numComms->getCellValue( tmp, plane, row, column ) )
     return 0.0;
 
@@ -653,7 +636,7 @@ void StatAvgBytesReceived::init( KHistogram *whichHistogram )
 #ifndef PARALLEL_ENABLED
   numComms = Statistics::zeroCommMatrix;
 #else
-  numComms = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  numComms = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
 #endif
 }
 
@@ -681,7 +664,7 @@ TSemanticValue StatAvgBytesReceived::execute( CalculateData *data )
       ( numComms[ data->plane ] )[ getPartner( data ) ] = 0.0;
     ++( ( numComms[ data->plane ] )[ getPartner( data ) ] );
 #else
-    numComms->addValue( data->plane, data->row, getPartner( data ), vector< TSemanticValue >( 1, 1.0 ) );
+    numComms->addValue( data->plane, data->row, getPartner( data ), array< TSemanticValue, 1 >{ 1.0 } );
 #endif
     return data->comm->getCommSize();
   }
@@ -696,7 +679,7 @@ TSemanticValue StatAvgBytesReceived::finishRow( TSemanticValue cellValue,
 #ifndef PARALLEL_ENABLED
   return cellValue / ( numComms[ plane ] )[ column ];
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   if( !numComms->getCellValue( tmp, plane, row, column ) )
     return 0.0;
 
@@ -739,7 +722,7 @@ void StatMinBytesSent::init( KHistogram *whichHistogram )
 #ifndef PARALLEL_ENABLED
   min = Statistics::zeroCommMatrix;
 #else
-  min = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  min = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
 #endif
 }
 
@@ -774,15 +757,15 @@ TSemanticValue StatMinBytesSent::execute( CalculateData *data )
         data->comm->getCommSize();
     }
 #else
-    vector< TSemanticValue > tmp;
+    array< TSemanticValue, 1 > tmp;
     bool res = min->getCellValue( tmp, data->plane, data->row, getPartner( data ) );
     if( !res )
     {
-      min->setValue( data->plane, data->row, getPartner( data ), vector< TSemanticValue >( 1, data->comm->getCommSize() ) );
+      min->setValue( data->plane, data->row, getPartner( data ), array< TSemanticValue, 1 >{ static_cast<TSemanticValue>( data->comm->getCommSize() ) } );
     }
     else if( data->comm->getCommSize() < tmp[ 0 ] )
     {
-      min->setValue( data->plane, data->row, getPartner( data ), vector< TSemanticValue >( 1, data->comm->getCommSize() ) );
+      min->setValue( data->plane, data->row, getPartner( data ), array< TSemanticValue, 1 >{ static_cast<TSemanticValue>( data->comm->getCommSize() ) } );
     }
 #endif
     return 1;
@@ -798,7 +781,7 @@ TSemanticValue StatMinBytesSent::finishRow( TSemanticValue cellValue,
 #ifndef PARALLEL_ENABLED
   return ( ( min[ plane ] )[ column ] );
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   if( !min->getCellValue( tmp, plane, row, column ) )
     return 0.0;
 
@@ -841,7 +824,7 @@ void StatMinBytesReceived::init( KHistogram *whichHistogram )
 #ifndef PARALLEL_ENABLED
   min = Statistics::zeroCommMatrix;
 #else
-  min = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  min = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
 #endif
 }
 
@@ -876,15 +859,15 @@ TSemanticValue StatMinBytesReceived::execute( CalculateData *data )
         data->comm->getCommSize();
     }
 #else
-    vector< TSemanticValue > tmp;
+    array< TSemanticValue, 1 > tmp;
     bool res = min->getCellValue( tmp, data->plane, data->row, getPartner( data ) );
     if( !res )
     {
-      min->setValue( data->plane, data->row, getPartner( data ), vector< TSemanticValue >( 1, data->comm->getCommSize() ) );
+      min->setValue( data->plane, data->row, getPartner( data ), array< TSemanticValue, 1 >{ static_cast<TSemanticValue>( data->comm->getCommSize() ) } );
     }
     else if( data->comm->getCommSize() < tmp[ 0 ] )
     {
-      min->setValue( data->plane, data->row, getPartner( data ), vector< TSemanticValue >( 1, data->comm->getCommSize() ) );
+      min->setValue( data->plane, data->row, getPartner( data ), array< TSemanticValue, 1 >{ static_cast<TSemanticValue>( data->comm->getCommSize() ) } );
     }
 #endif
     return 1;
@@ -900,7 +883,7 @@ TSemanticValue StatMinBytesReceived::finishRow( TSemanticValue cellValue,
 #ifndef PARALLEL_ENABLED
   return ( ( min[ plane ] )[ column ] );
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   if( !min->getCellValue( tmp, plane, row, column ) )
     return 0.0;
 
@@ -943,7 +926,7 @@ void StatMaxBytesSent::init( KHistogram *whichHistogram )
 #ifndef PARALLEL_ENABLED
   max = Statistics::zeroCommMatrix;
 #else
-  max = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  max = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
 #endif
 }
 
@@ -973,15 +956,15 @@ TSemanticValue StatMaxBytesSent::execute( CalculateData *data )
         data->comm->getCommSize();
     }
 #else
-    vector< TSemanticValue > tmp;
+    array< TSemanticValue, 1 > tmp;
     bool res = max->getCellValue( tmp, data->plane, data->row, getPartner( data ) );
     if( !res )
     {
-      max->setValue( data->plane, data->row, getPartner( data ), vector< TSemanticValue >( 1, data->comm->getCommSize() ) );
+      max->setValue( data->plane, data->row, getPartner( data ), array< TSemanticValue, 1 >{ static_cast<TSemanticValue>( data->comm->getCommSize() ) } );
     }
     else if( data->comm->getCommSize() > tmp[ 0 ] )
     {
-      max->setValue( data->plane, data->row, getPartner( data ), vector< TSemanticValue >( 1, data->comm->getCommSize() ) );
+      max->setValue( data->plane, data->row, getPartner( data ), array< TSemanticValue, 1 >{ static_cast<TSemanticValue>( data->comm->getCommSize() ) } );
     }
 
 #endif
@@ -998,7 +981,7 @@ TSemanticValue StatMaxBytesSent::finishRow( TSemanticValue cellValue,
 #ifndef PARALLEL_ENABLED
   return ( ( max[ plane ] )[ column ] );
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   if( !max->getCellValue( tmp, plane, row, column ) )
     return 0.0;
 
@@ -1041,7 +1024,7 @@ void StatMaxBytesReceived::init( KHistogram *whichHistogram )
 #ifndef PARALLEL_ENABLED
   max = Statistics::zeroCommMatrix;
 #else
-  max = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  max = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
 #endif
 }
 
@@ -1071,15 +1054,15 @@ TSemanticValue StatMaxBytesReceived::execute( CalculateData *data )
         data->comm->getCommSize();
     }
 #else
-    vector< TSemanticValue > tmp;
+    array< TSemanticValue, 1 > tmp;
     bool res = max->getCellValue( tmp, data->plane, data->row, getPartner( data ) );
     if( !res )
     {
-      max->setValue( data->plane, data->row, getPartner( data ), vector< TSemanticValue >( 1, data->comm->getCommSize() ) );
+      max->setValue( data->plane, data->row, getPartner( data ), array< TSemanticValue, 1 >{ static_cast<TSemanticValue>( data->comm->getCommSize() ) } );
     }
     else if( data->comm->getCommSize() > tmp[ 0 ] )
     {
-      max->setValue( data->plane, data->row, getPartner( data ), vector< TSemanticValue >( 1, data->comm->getCommSize() ) );
+      max->setValue( data->plane, data->row, getPartner( data ), array< TSemanticValue, 1 >{ static_cast<TSemanticValue>( data->comm->getCommSize() ) } );
     }
 #endif
     return 1;
@@ -1095,7 +1078,7 @@ TSemanticValue StatMaxBytesReceived::finishRow( TSemanticValue cellValue,
 #ifndef PARALLEL_ENABLED
   return ( ( max[ plane ] )[ column ] );
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   if( !max->getCellValue( tmp, plane, row, column ) )
     return 0.0;
 
@@ -1194,7 +1177,7 @@ void StatPercTime::init( KHistogram *whichHistogram )
 #ifndef PARALLEL_ENABLED
   rowTotal = Statistics::zeroVector;
 #else
-  rowTotal = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  rowTotal = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
 #endif
 }
 
@@ -1230,7 +1213,7 @@ TSemanticValue StatPercTime::execute( CalculateData *data )
   else
     rowTotal[ 0 ] += end - begin;
 #else
-  rowTotal->addValue( data->plane, data->row, 0, vector< TSemanticValue >( 1, end - begin ) );
+  rowTotal->addValue( data->plane, data->row, 0, array< TSemanticValue, 1 >{ end - begin } );
 #endif
 
   return end - begin;
@@ -1244,7 +1227,7 @@ TSemanticValue StatPercTime::finishRow( TSemanticValue cellValue,
 #ifndef PARALLEL_ENABLED
   return ( cellValue * 100.0 ) / rowTotal[ plane ];
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   if( !rowTotal->getCellValue( tmp, plane, row, 0 ) )
     return 0.0;
 
@@ -1280,7 +1263,7 @@ void StatPercTimeNotZero::init( KHistogram *whichHistogram )
 #ifndef PARALLEL_ENABLED
   rowTotal = Statistics::zeroVector;
 #else
-  rowTotal = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  rowTotal = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
 #endif
 }
 
@@ -1318,7 +1301,7 @@ TSemanticValue StatPercTimeNotZero::execute( CalculateData *data )
     else
       rowTotal[ 0 ] += end - begin;
 #else
-    rowTotal->addValue( data->plane, data->row, 0, vector< TSemanticValue >( 1, end - begin ) );
+    rowTotal->addValue( data->plane, data->row, 0, array< TSemanticValue, 1 >{ end - begin } );
 #endif
 
     return end - begin;
@@ -1335,7 +1318,7 @@ TSemanticValue StatPercTimeNotZero::finishRow( TSemanticValue cellValue,
 #ifndef PARALLEL_ENABLED
   return ( cellValue * 100.0 ) / rowTotal[ plane ];
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   if( !rowTotal->getCellValue( tmp, plane, row, 0 ) )
     return 0.0;
 
@@ -1493,7 +1476,7 @@ void StatPercNumBursts::init( KHistogram *whichHistogram )
 #ifndef PARALLEL_ENABLED
   rowTotal = Statistics::zeroVector;
 #else
-  rowTotal = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  rowTotal = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
 #endif
 }
 
@@ -1531,7 +1514,7 @@ TSemanticValue StatPercNumBursts::execute( CalculateData *data )
   else
     rowTotal[ 0 ] += 1.0;
 #else
-  rowTotal->addValue( data->plane, data->row, 0, vector< TSemanticValue >( 1, 1.0 ) );
+  rowTotal->addValue( data->plane, data->row, 0, array< TSemanticValue, 1 >{ 1.0 } );
 #endif
 
   return 1.0;
@@ -1545,7 +1528,7 @@ TSemanticValue StatPercNumBursts::finishRow( TSemanticValue cellValue,
 #ifndef PARALLEL_ENABLED
   return ( cellValue * 100.0 ) / rowTotal[ plane ];
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   if( !rowTotal->getCellValue( tmp, plane, row, 0 ) )
     return 0.0;
 
@@ -1644,7 +1627,7 @@ void StatAvgValue::init( KHistogram *whichHistogram )
 #ifndef PARALLEL_ENABLED
   numValues = Statistics::zeroMatrix;
 #else
-  numValues = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  numValues = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
 #endif
 }
 
@@ -1678,7 +1661,7 @@ TSemanticValue StatAvgValue::execute( CalculateData *data )
 #ifndef PARALLEL_ENABLED
   ( numValues[ data->plane ] )[ data->column ] += ( end - begin );
 #else
-  numValues->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, end - begin ) );
+  numValues->addValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ end - begin } );
 #endif
 
   return myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) * ( end -begin );
@@ -1693,7 +1676,7 @@ TSemanticValue StatAvgValue::finishRow( TSemanticValue cellValue,
 #ifndef PARALLEL_ENABLED
   return cellValue / ( numValues[ plane ] )[ column ];
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   if( !numValues->getCellValue( tmp, plane, row, column ) )
     return 0.0;
 
@@ -1730,7 +1713,7 @@ void StatMaximum::init( KHistogram *whichHistogram )
 #ifndef PARALLEL_ENABLED
   max = Statistics::zeroMatrix;
 #else
-  max = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  max = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
 #endif
 }
 
@@ -1756,15 +1739,15 @@ TSemanticValue StatMaximum::execute( CalculateData *data )
        ( ( max[ data->plane ] )[ data->column ] ) )
     ( ( max[ data->plane ] )[ data->column ] ) = myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   bool res = max->getCellValue( tmp, data->plane, data->row, data->column );
   if( !res )
   {
-    max->setValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) ) );
+    max->setValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) } );
   }
   else if ( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) > tmp[ 0 ] )
   {
-    max->setValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) ) );
+    max->setValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) } );
   }
 #endif
   return 1;
@@ -1778,7 +1761,7 @@ TSemanticValue StatMaximum::finishRow( TSemanticValue cellValue,
 #ifndef PARALLEL_ENABLED
   return ( max[ plane ] )[ column ];
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   if( !max->getCellValue( tmp, plane, row, column ) )
     return 0.0;
 
@@ -1813,7 +1796,7 @@ void StatMinimum::init( KHistogram *whichHistogram )
 #ifndef PARALLEL_ENABLED
   min = Statistics::zeroMatrix;
 #else
-  min = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  min = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
 #endif
 }
 
@@ -1846,15 +1829,15 @@ TSemanticValue StatMinimum::execute( CalculateData *data )
      ( ( min[ data->plane ] )[ data->column ] ) = myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
   }
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   bool res = min->getCellValue( tmp, data->plane, data->row, data->column );
   if( !res )
   {
-    min->setValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) ) );
+    min->setValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) } );
   }
   else if ( myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) < tmp[ 0 ] )
   {
-    min->setValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) ) );
+    min->setValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) } );
   }
 #endif
   return 1;
@@ -1868,7 +1851,7 @@ TSemanticValue StatMinimum::finishRow( TSemanticValue cellValue,
 #ifndef PARALLEL_ENABLED
   return ( min[ plane ] )[ column ];
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   if( !min->getCellValue( tmp, plane, row, column ) )
     return 0.0;
 
@@ -1904,7 +1887,7 @@ void StatAvgBurstTime::init( KHistogram *whichHistogram )
 #ifndef PARALLEL_ENABLED
   numValues = Statistics::zeroMatrix;
 #else
-  numValues = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  numValues = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
 #endif
 }
 
@@ -1948,7 +1931,7 @@ TSemanticValue StatAvgBurstTime::execute( CalculateData *data )
 #ifndef PARALLEL_ENABLED
   ++( ( numValues[ data->plane ] )[ data->column ] );
 #else
-  numValues->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, 1.0 ) );
+  numValues->addValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ 1.0 } );
 #endif
 
   return end - begin;
@@ -1962,7 +1945,7 @@ TSemanticValue StatAvgBurstTime::finishRow( TSemanticValue cellValue,
 #ifndef PARALLEL_ENABLED
   return controlWin->traceUnitsToWindowUnits( cellValue ) / ( numValues[ plane ] )[ column ];
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   if( !numValues->getCellValue( tmp, plane, row, column ) )
     return 0.0;
 
@@ -2001,8 +1984,8 @@ void StatStdevBurstTime::init( KHistogram *whichHistogram )
   numValues = Statistics::zeroMatrix;
   qValues = Statistics::zeroMatrix;
 #else
-  numValues = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
-  qValues= new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  numValues = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  qValues= new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
 #endif
 }
 
@@ -2053,8 +2036,8 @@ TSemanticValue StatStdevBurstTime::execute( CalculateData *data )
   ( ( qValues[ data->plane ] )[ data->column ] ) +=
     tmpDuration * tmpDuration;
 #else
-  numValues->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, 1.0 ) );
-  qValues->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, tmpDuration * tmpDuration ) );
+  numValues->addValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ 1.0 } );
+  qValues->addValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ tmpDuration * tmpDuration } );
 #endif
 
   return tmpDuration;
@@ -2072,11 +2055,11 @@ TSemanticValue StatStdevBurstTime::finishRow( TSemanticValue cellValue,
                               ( numValues[ plane ] )[ column ];
   TSemanticValue avgQ = cellValue / ( numValues[ plane ] )[ column ];
 #else
-  vector< TSemanticValue > tmpNumValues;
+  array< TSemanticValue, 1 > tmpNumValues;
   if( !numValues->getCellValue( tmpNumValues, plane, row, column ) )
     return 0.0;
 
-  vector< TSemanticValue > tmpQValues;
+  array< TSemanticValue, 1 > tmpQValues;
   qValues->getCellValue( tmpQValues, plane, row, column );
 
   TSemanticValue avgQValues = tmpQValues[ 0 ] / tmpNumValues[ 0 ];
@@ -2120,7 +2103,7 @@ void StatAvgPerBurst::init( KHistogram *whichHistogram )
 #ifndef PARALLEL_ENABLED
   numValues = Statistics::zeroMatrix;
 #else
-  numValues = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  numValues = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
 #endif
 }
 
@@ -2155,7 +2138,7 @@ TSemanticValue StatAvgPerBurst::execute( CalculateData *data )
 #ifndef PARALLEL_ENABLED
   ++( ( numValues[ data->plane ] )[ data->column ] );
 #else
-  numValues->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, 1.0 ) );
+  numValues->addValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ 1.0 } );
 #endif
 
   return myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
@@ -2169,7 +2152,7 @@ TSemanticValue StatAvgPerBurst::finishRow( TSemanticValue cellValue,
 #ifndef PARALLEL_ENABLED
   return cellValue / ( numValues[ plane ] )[ column ];
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   if( !numValues->getCellValue( tmp, plane, row, column ) )
     return 0.0;
 
@@ -2205,7 +2188,7 @@ void StatAvgPerBurstNotZero::init( KHistogram *whichHistogram )
 #ifndef PARALLEL_ENABLED
   numValues = Statistics::zeroMatrix;
 #else
-  numValues = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  numValues = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
 #endif
 }
 
@@ -2241,7 +2224,7 @@ TSemanticValue StatAvgPerBurstNotZero::execute( CalculateData *data )
 #ifndef PARALLEL_ENABLED
     ++( ( numValues[ data->plane ] )[ data->column ] );
 #else
-    numValues->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, 1.0 ) );
+    numValues->addValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ 1.0 } );
 #endif
 
   return myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow );
@@ -2255,7 +2238,7 @@ TSemanticValue StatAvgPerBurstNotZero::finishRow( TSemanticValue cellValue,
 #ifndef PARALLEL_ENABLED
   return cellValue / ( numValues[ plane ] )[ column ];
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   if( !numValues->getCellValue( tmp, plane, row, column ) )
     return 0.0;
 
@@ -2291,7 +2274,7 @@ void StatAvgValueNotZero::init( KHistogram *whichHistogram )
 #ifndef PARALLEL_ENABLED
   numValues = Statistics::zeroMatrix;
 #else
-  numValues = new CubeBuffer( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
+  numValues = new CubeBuffer<1>( whichHistogram->getNumPlanes(), whichHistogram->getNumRows() );
 #endif
 }
 
@@ -2325,7 +2308,7 @@ TSemanticValue StatAvgValueNotZero::execute( CalculateData *data )
 #ifndef PARALLEL_ENABLED
     ( numValues[ data->plane ] )[ data->column ] += ( end - begin );
 #else
-    numValues->addValue( data->plane, data->row, data->column, vector< TSemanticValue >( 1, end - begin ) );
+    numValues->addValue( data->plane, data->row, data->column, array< TSemanticValue, 1 >{ static_cast<TSemanticValue>( end - begin ) } );
 #endif
 
   return myHistogram->getClonedWindow( dataWin )->getValue( data->dataRow ) * ( end -begin );
@@ -2341,7 +2324,7 @@ TSemanticValue StatAvgValueNotZero::finishRow( TSemanticValue cellValue,
     return 0.0;
   return cellValue / ( numValues[ plane ] )[ column ];
 #else
-  vector< TSemanticValue > tmp;
+  array< TSemanticValue, 1 > tmp;
   if( !numValues->getCellValue( tmp, plane, row, column ) )
     return 0.0;
 

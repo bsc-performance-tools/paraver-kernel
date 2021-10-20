@@ -21,45 +21,36 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-
 #pragma once
-
-
 
 #include "paraverkerneltypes.h"
 
-template <typename ValueType>
+template <typename ValueType, size_t NStats>
 class Cell
 {
   public:
     Cell();
-    Cell( TObjectOrder idRow, PRV_UINT16 numStats );
-    Cell( const Cell< ValueType >& source );
-    ~Cell();
+    Cell( TObjectOrder idRow );
+    Cell( const Cell< ValueType, NStats >& source );
 
     void init( PRV_UINT16 idStat );
     void init( );
     void setValue( PRV_UINT16 idStat, ValueType semVal );
-    void setValue( ValueType semVal );
-    void setValue( const std::vector<ValueType>& semVal, bool isNotZeroValue = true );
+    void setValue( const std::array<ValueType, NStats>& semVal, bool isNotZeroValue = true );
     void addValue( PRV_UINT16 idStat, ValueType semVal );
-    void addValue( ValueType semVal );
-    void addValue( const std::vector<ValueType>& semVal );
+    void addValue( const std::array<ValueType, NStats>& semVal );
     ValueType getValue( PRV_UINT16 idStat ) const;
     bool getNotZeroValue( PRV_UINT16 idStat ) const;
-    std::vector<ValueType> getValue() const;
+    std::array<ValueType, NStats> getValue() const;
     TObjectOrder getRow( ) const;
     void setRow( TObjectOrder row );
 
     bool operator==( const ValueType& anotherCell ) const;
     bool operator<( const ValueType& anotherCell ) const;
 
-    void print() const;
-
   private:
     TObjectOrder row;
-    PRV_UINT16 nStats;
-    std::vector<ValueType> values;
+    std::array<ValueType, NStats> values;
     bool isNotZeroValue;
 };
 

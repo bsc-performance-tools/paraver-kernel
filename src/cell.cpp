@@ -22,163 +22,128 @@
 \*****************************************************************************/
 
 
-#include <string>
+#include <algorithm>
+#include <functional>
 #include <iostream>
-#include <string.h>
+#include <stdexcept>
+#include <string>
+#include <type_traits>
 
 #include "paraverkerneltypes.h"
 
-template <typename ValueType>
-Cell<ValueType>::Cell():
-    row( 0 ), nStats( 0 ), isNotZeroValue( false )
+template <typename ValueType, size_t NStats>
+Cell<ValueType, NStats>::Cell():
+    row( 0 ), isNotZeroValue( false )
 {}
 
 
-template <typename ValueType>
-Cell<ValueType>::Cell( TObjectOrder idRow, PRV_UINT16 numStats ):
-    row( idRow ), nStats( numStats ), isNotZeroValue( false )
+template <typename ValueType, size_t NStats>
+Cell<ValueType, NStats>::Cell( TObjectOrder idRow ):
+    row( idRow ), isNotZeroValue( false )
 {
-  values.insert( values.begin(), nStats, (ValueType) 0 );
+  values.fill( 0 );
 }
 
-template <typename ValueType>
-Cell<ValueType>::Cell( const Cell< ValueType >& source ):
-    row( source.row ), nStats( source.nStats ), isNotZeroValue( source.isNotZeroValue )
+template <typename ValueType, size_t NStats>
+Cell<ValueType, NStats>::Cell( const Cell< ValueType, NStats >& source ):
+    row( source.row ), isNotZeroValue( source.isNotZeroValue )
 {
   values = source.values;
 }
 
-template <typename ValueType>
-Cell<ValueType>::~Cell()
-{}
-
-
-template <typename ValueType>
-inline void Cell<ValueType>::init( PRV_UINT16 idStat )
+template <typename ValueType, size_t NStats>
+inline void Cell<ValueType, NStats>::init( PRV_UINT16 idStat )
 {
-  if ( nStats > idStat )
+  if ( NStats > idStat )
     values[ idStat ] = (ValueType) 0;
 }
 
 
-template <typename ValueType>
-inline void Cell<ValueType>::init( )
+template <typename ValueType, size_t NStats>
+inline void Cell<ValueType, NStats>::init( )
 {
-  for ( PRV_UINT16 ii = 0; ii < nStats; ++ii )
-    values[ ii ] = (ValueType) 0;
+  values.fill( 0 );
 }
 
 
-template <typename ValueType>
-inline void Cell<ValueType>::setValue( PRV_UINT16 idStat, ValueType semVal )
+template <typename ValueType, size_t NStats>
+inline void Cell<ValueType, NStats>::setValue( PRV_UINT16 idStat, ValueType semVal )
 {
-  if ( nStats > idStat )
+  if ( NStats > idStat )
     values[ idStat ] = semVal;
 }
 
 
-template <typename ValueType>
-inline void Cell<ValueType>::setValue( ValueType semVal )
-{
-  values = semVal;
-}
-
-
-template <typename ValueType>
-inline void Cell<ValueType>::setValue( const std::vector<ValueType>& semVal, bool isNotZeroValue )
+template <typename ValueType, size_t NStats>
+inline void Cell<ValueType, NStats>::setValue( const std::array<ValueType, NStats>& semVal, bool isNotZeroValue )
 {
   values = semVal;
   this->isNotZeroValue = isNotZeroValue;
 }
 
 
-template <typename ValueType>
-inline void Cell<ValueType>::addValue( PRV_UINT16 idStat, ValueType semVal )
+template <typename ValueType, size_t NStats>
+inline void Cell<ValueType, NStats>::addValue( PRV_UINT16 idStat, ValueType semVal )
 {
-  if ( nStats > idStat )
+  if ( NStats > idStat )
     values[ idStat ] += semVal;
 }
 
 
-template <typename ValueType>
-inline void Cell<ValueType>::addValue( ValueType semVal )
+template <typename ValueType, size_t NStats>
+inline void Cell<ValueType, NStats>::addValue( const std::array<ValueType, NStats>& semVal )
 {
-  for ( PRV_UINT16 ii = 0; ii < nStats; ++ii )
-    values[ ii ] += semVal;
+  std::transform( values.begin(), values.end(), semVal.begin(), values.begin(), std::plus<ValueType>() );
 }
 
 
-template <typename ValueType>
-inline void Cell<ValueType>::addValue( const std::vector<ValueType>& semVal )
+template <typename ValueType, size_t NStats>
+inline ValueType Cell<ValueType, NStats>::getValue( PRV_UINT16 idStat ) const
 {
-  for ( PRV_UINT16 ii = 0; ii < nStats; ++ii )
-    values[ ii ] += semVal[ ii ];
+  if ( NStats <= idStat )
+    throw std::out_of_range( "Cell::getValue: invalid statistic id" );
+
+  return values[ idStat ];
 }
 
 
-template <typename ValueType>
-inline ValueType Cell<ValueType>::getValue( PRV_UINT16 idStat ) const
-{
-  if ( nStats > idStat )
-    return values[ idStat ];
-
-  ValueType tmp;
-
-  memset( ( void * ) &tmp, 0, sizeof( ValueType ) );
-  return tmp;
-}
-
-
-template <typename ValueType>
-inline bool Cell<ValueType>::getNotZeroValue( PRV_UINT16 idStat ) const
+template <typename ValueType, size_t NStats>
+inline bool Cell<ValueType, NStats>::getNotZeroValue( PRV_UINT16 idStat ) const
 {
   return isNotZeroValue;
 }
 
 
-template <typename ValueType>
-inline std::vector<ValueType> Cell<ValueType>::getValue() const
+template <typename ValueType, size_t NStats>
+inline std::array<ValueType, NStats> Cell<ValueType, NStats>::getValue() const
 {
   return values;
 }
 
 
-template <typename ValueType>
-inline TObjectOrder Cell<ValueType>::getRow( ) const
+template <typename ValueType, size_t NStats>
+inline TObjectOrder Cell<ValueType, NStats>::getRow( ) const
 {
   return row;
 }
 
 
-template <typename ValueType>
-inline void Cell<ValueType>::setRow( TObjectOrder row )
+template <typename ValueType, size_t NStats>
+inline void Cell<ValueType, NStats>::setRow( TObjectOrder row )
 {
   this->row = row;
 }
 
 
-template <typename ValueType>
-inline bool Cell<ValueType>::operator==( const ValueType& anotherCell ) const
+template <typename ValueType, size_t NStats>
+inline bool Cell<ValueType, NStats>::operator==( const ValueType& anotherCell ) const
 {
   return row == anotherCell.row;
 }
 
 
-template <typename ValueType>
-inline bool Cell<ValueType>::operator<( const ValueType& anotherCell ) const
+template <typename ValueType, size_t NStats>
+inline bool Cell<ValueType, NStats>::operator<( const ValueType& anotherCell ) const
 {
   return row < anotherCell.row;
-}
-
-template <typename ValueType>
-inline void Cell<ValueType>::print( ) const
-{
-  std::cout << "[" << row << "] " ;
-  for ( PRV_UINT16 ii = 0; ii < nStats; ++ii )
-  {
-    std::cout << values[ ii ];
-    std::cout << " ";
-  }
-
-  std::cout << std::endl;
 }

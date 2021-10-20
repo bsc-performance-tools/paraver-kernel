@@ -33,11 +33,12 @@
 #include "recordlist.h"
 #include "histogramstatistic.h"
 
+#ifdef PARALLEL_ENABLED
+#include "cubebuffer.h"
+#endif
+
 class KHistogramTotals;
 class KWindow;
-#ifdef PARALLEL_ENABLED
-class CubeBuffer;
-#endif
 
 
 class WindowCloneManager
@@ -303,14 +304,14 @@ class KHistogram : public Histogram
     ColumnTranslator *columnTranslator;
     ColumnTranslator *planeTranslator;
 
-    Cube<TSemanticValue> *cube;
-    Matrix<TSemanticValue> *matrix;
-    Cube<TSemanticValue> *commCube;
-    Matrix<TSemanticValue> *commMatrix;
+    Cube<TSemanticValue, NUM_SEMANTIC_STATS> *cube;
+    Matrix<TSemanticValue, NUM_SEMANTIC_STATS> *matrix;
+    Cube<TSemanticValue, NUM_COMM_STATS> *commCube;
+    Matrix<TSemanticValue, NUM_COMM_STATS> *commMatrix;
 
 #ifdef PARALLEL_ENABLED
-    CubeBuffer *semanticBuffer;
-    CubeBuffer *commBuffer;
+    CubeBuffer<NUM_SEMANTIC_STATS> *semanticBuffer;
+    CubeBuffer<NUM_COMM_STATS> *commBuffer;
 #endif
 
     KHistogramTotals *totals;

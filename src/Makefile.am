@@ -5,7 +5,6 @@ libparaver_kernel_la_SOURCES = \
     bplustree.cpp \
     bplustreeexception.cpp \
     bplustreerecordleaf.cpp \
-    cubebuffer.cpp \
     filtermanagement.cpp \
     histogramexception.cpp \
     histogramstatistic.cpp \
@@ -64,10 +63,10 @@ noinst_HEADERS = \
     cell.cpp \
     column.cpp \
     cube.cpp \
+    cubebuffer.cpp \
     functionmanagement.cpp \
     index.cpp \
-    matrix.cpp \
-    statistic_2d.cpp
+    matrix.cpp
 
 # Erases everything which should not be uploaded to CVS
 mrproper: distclean

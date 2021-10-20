@@ -25,30 +25,30 @@
 #include <string>
 #include <iostream>
 
-template <typename ValueType>
-Cube<ValueType>::Cube( PRV_UINT32 numPlanes, PRV_UINT32 numCols, PRV_UINT16 numStats ):
-  nplanes( 0 ), ncols( numCols ), nstat( numStats ), crow( 0 )
+template <typename ValueType, size_t NStats>
+Cube<ValueType, NStats>::Cube( PRV_UINT32 numPlanes, PRV_UINT32 numCols ):
+  nplanes( 0 ), ncols( numCols ), crow( 0 )
 {
   planes.assign( numPlanes, nullptr );
 }
 
 
-template <typename ValueType>
-Cube<ValueType>::Cube( Cube<ValueType>& source ):
-  nplanes( source.nplanes ), ncols( source.ncols ), nstat( source.nstat ), crow( source.crow )
+template <typename ValueType, size_t NStats>
+Cube<ValueType, NStats>::Cube( Cube<ValueType, NStats>& source ):
+  nplanes( source.nplanes ), ncols( source.ncols ), crow( source.crow )
 {
-  typename std::vector< Matrix<ValueType> *>::iterator it_mat;
+  typename std::vector< Matrix<ValueType, NStats> *>::iterator it_mat;
 
   for ( it_mat = source.planes.begin(); it_mat != source.planes.end(); ++it_mat )
     if ( *it_mat != nullptr )
-      planes.push_back( new Matrix<ValueType>( **it_mat ) );
+      planes.push_back( new Matrix<ValueType, NStats>( **it_mat ) );
     else
       planes.push_back( nullptr );
 }
 
 
-template <typename ValueType>
-Cube<ValueType>::~Cube()
+template <typename ValueType, size_t NStats>
+Cube<ValueType, NStats>::~Cube()
 {
   if ( nplanes > 0 )
   {
@@ -62,8 +62,8 @@ Cube<ValueType>::~Cube()
 }
 
 
-template <typename ValueType>
-inline void Cube<ValueType>::init( PRV_UINT16 idStat )
+template <typename ValueType, size_t NStats>
+inline void Cube<ValueType, NStats>::init( PRV_UINT16 idStat )
 {
   if ( nplanes > 0 )
   {
@@ -76,8 +76,8 @@ inline void Cube<ValueType>::init( PRV_UINT16 idStat )
 }
 
 
-template <typename ValueType>
-inline void Cube<ValueType>::init( )
+template <typename ValueType, size_t NStats>
+inline void Cube<ValueType, NStats>::init( )
 {
   if ( nplanes > 0 )
   {
@@ -90,12 +90,12 @@ inline void Cube<ValueType>::init( )
 }
 
 
-template <typename ValueType>
-inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal )
+template <typename ValueType, size_t NStats>
+inline void Cube<ValueType, NStats>::setValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal )
 {
   if ( planes[ plane ] == nullptr )
   {
-    planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
+    planes[ plane ] = new Matrix<ValueType, NStats>( crow, ncols );
     ++nplanes;
   }
 
@@ -103,25 +103,12 @@ inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UIN
 }
 
 
-template <typename ValueType>
-inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, ValueType semVal )
+template <typename ValueType, size_t NStats>
+inline void Cube<ValueType, NStats>::setValue( PRV_UINT32 plane, PRV_UINT32 col, const std::array<ValueType, NStats>& semVal, bool isNotZeroValue )
 {
   if ( planes[ plane ] == nullptr )
   {
-    planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
-    ++nplanes;
-  }
-
-  planes[ plane ]->setValue( col, semVal );
-}
-
-
-template <typename ValueType>
-inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, const std::vector<ValueType>& semVal, bool isNotZeroValue )
-{
-  if ( planes[ plane ] == nullptr )
-  {
-    planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
+    planes[ plane ] = new Matrix<ValueType, NStats>( crow, ncols );
     ++nplanes;
   }
 
@@ -129,12 +116,12 @@ inline void Cube<ValueType>::setValue( PRV_UINT32 plane, PRV_UINT32 col, const s
 }
 
 
-template <typename ValueType>
-inline void Cube<ValueType>::addValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal )
+template <typename ValueType, size_t NStats>
+inline void Cube<ValueType, NStats>::addValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal )
 {
   if ( planes[ plane ] == nullptr )
   {
-    planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
+    planes[ plane ] = new Matrix<ValueType, NStats>( crow, ncols );
     ++nplanes;
   }
 
@@ -142,12 +129,12 @@ inline void Cube<ValueType>::addValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UIN
 }
 
 
-template <typename ValueType>
-inline void Cube<ValueType>::addValue( PRV_UINT32 plane, PRV_UINT32 col, ValueType semVal )
+template <typename ValueType, size_t NStats>
+inline void Cube<ValueType, NStats>::addValue( PRV_UINT32 plane, PRV_UINT32 col, const std::array<ValueType, NStats>& semVal )
 {
   if ( planes[ plane ] == nullptr )
   {
-    planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
+    planes[ plane ] = new Matrix<ValueType, NStats>( crow, ncols );
     ++nplanes;
   }
 
@@ -155,46 +142,28 @@ inline void Cube<ValueType>::addValue( PRV_UINT32 plane, PRV_UINT32 col, ValueTy
 }
 
 
-template <typename ValueType>
-inline void Cube<ValueType>::addValue( PRV_UINT32 plane, PRV_UINT32 col, const std::vector<ValueType>& semVal )
-{
-  if ( planes[ plane ] == nullptr )
-  {
-    planes[ plane ] = new Matrix<ValueType>( crow, ncols, nstat );
-    ++nplanes;
-  }
-
-  planes[ plane ]->addValue( col, semVal );
-}
-
-
-template <typename ValueType>
-inline ValueType Cube<ValueType>::getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat ) const
+template <typename ValueType, size_t NStats>
+inline ValueType Cube<ValueType, NStats>::getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT16 idStat ) const
 {
   if ( planes[ plane ] != nullptr )
     return planes[ plane ]->getCurrentValue( col, idStat );
 
-  ValueType tmp;
-
-  memset( ( void * ) &tmp, 0, sizeof( ValueType ) );
-  return tmp;
+  return ValueType();
 }
 
 
-template <typename ValueType>
-inline std::vector<ValueType> Cube<ValueType>::getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col ) const
+template <typename ValueType, size_t NStats>
+inline std::array<ValueType, NStats> Cube<ValueType, NStats>::getCurrentValue( PRV_UINT32 plane, PRV_UINT32 col ) const
 {
   if ( planes[ plane ] != nullptr )
     return planes[ plane ]->getCurrentValue( col );
 
-  std::vector<ValueType> tmp;
-
-  return tmp;
+  return std::array<ValueType, NStats>();
 }
 
 
-template <typename ValueType>
-inline PRV_UINT32 Cube<ValueType>::getCurrentRow( PRV_UINT32 plane, PRV_UINT32 col ) const
+template <typename ValueType, size_t NStats>
+inline PRV_UINT32 Cube<ValueType, NStats>::getCurrentRow( PRV_UINT32 plane, PRV_UINT32 col ) const
 {
   if ( planes[ plane ] != nullptr )
     return planes[ plane ]->getCurrentRow( col );
@@ -202,14 +171,14 @@ inline PRV_UINT32 Cube<ValueType>::getCurrentRow( PRV_UINT32 plane, PRV_UINT32 c
 }
 
 
-template <typename ValueType>
-inline PRV_UINT32 Cube<ValueType>::getCurrentRow( ) const
+template <typename ValueType, size_t NStats>
+inline PRV_UINT32 Cube<ValueType, NStats>::getCurrentRow( ) const
 {
   return crow;
 }
 
-template <typename ValueType>
-inline bool Cube<ValueType>::currentCellModified( PRV_UINT32 plane, PRV_UINT32 col ) const
+template <typename ValueType, size_t NStats>
+inline bool Cube<ValueType, NStats>::currentCellModified( PRV_UINT32 plane, PRV_UINT32 col ) const
 {
   if ( planes[ plane ] != nullptr )
     return planes[ plane ]->currentCellModified( col );
@@ -217,23 +186,19 @@ inline bool Cube<ValueType>::currentCellModified( PRV_UINT32 plane, PRV_UINT32 c
 }
 
 
-template <typename ValueType>
-inline void Cube<ValueType>::newRow( )
+template <typename ValueType, size_t NStats>
+inline void Cube<ValueType, NStats>::newRow( )
 {
   if ( nplanes > 0 )
   {
-    for ( PRV_UINT32 ii = 0; ii < planes.size(); ++ii )
-    {
-      if ( planes[ ii ] != nullptr )
-        planes[ ii ]->newRow( );
-    }
+    std::for_each( planes.begin(), planes.end(), []( auto plane ){ if( plane != nullptr ) plane->newRow(); } );
   }
   ++crow;
 }
 
 
-template <typename ValueType>
-inline void Cube<ValueType>::newRow( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT32 row )
+template <typename ValueType, size_t NStats>
+inline void Cube<ValueType, NStats>::newRow( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT32 row )
 {
   if ( nplanes > 0 )
   {
@@ -245,22 +210,18 @@ inline void Cube<ValueType>::newRow( PRV_UINT32 plane, PRV_UINT32 col, PRV_UINT3
 }
 
 
-template <typename ValueType>
-inline void Cube<ValueType>::finish( )
+template <typename ValueType, size_t NStats>
+inline void Cube<ValueType, NStats>::finish( )
 {
   if ( nplanes > 0 )
   {
-    for ( PRV_UINT32 ii = 0; ii < planes.size(); ++ii )
-    {
-      if ( planes[ ii ] != nullptr )
-        planes[ ii ]->finish();
-    }
+    std::for_each( planes.begin(), planes.end(), []( auto plane ){ if( plane != nullptr ) plane->finish(); } );
   }
 }
 
 
-template <typename ValueType>
-inline void Cube<ValueType>::setNextCell( PRV_UINT32 plane, PRV_UINT32 col )
+template <typename ValueType, size_t NStats>
+inline void Cube<ValueType, NStats>::setNextCell( PRV_UINT32 plane, PRV_UINT32 col )
 {
   if ( nplanes == 0 )
     return;
@@ -270,8 +231,8 @@ inline void Cube<ValueType>::setNextCell( PRV_UINT32 plane, PRV_UINT32 col )
 }
 
 
-template <typename ValueType>
-inline void Cube<ValueType>::setFirstCell( PRV_UINT32 plane, PRV_UINT32 col )
+template <typename ValueType, size_t NStats>
+inline void Cube<ValueType, NStats>::setFirstCell( PRV_UINT32 plane, PRV_UINT32 col )
 {
   if ( nplanes == 0 )
     return;
@@ -281,8 +242,8 @@ inline void Cube<ValueType>::setFirstCell( PRV_UINT32 plane, PRV_UINT32 col )
 }
 
 
-template <typename ValueType>
-inline bool Cube<ValueType>::endCell( PRV_UINT32 plane, PRV_UINT32 col )
+template <typename ValueType, size_t NStats>
+inline bool Cube<ValueType, NStats>::endCell( PRV_UINT32 plane, PRV_UINT32 col )
 {
   if ( nplanes == 0 )
     return true;
@@ -293,8 +254,8 @@ inline bool Cube<ValueType>::endCell( PRV_UINT32 plane, PRV_UINT32 col )
 }
 
 
-template <typename ValueType>
-inline bool Cube<ValueType>::planeWithValues( PRV_UINT32 plane ) const
+template <typename ValueType, size_t NStats>
+inline bool Cube<ValueType, NStats>::planeWithValues( PRV_UINT32 plane ) const
 {
   if ( nplanes == 0 )
     return false;
@@ -303,8 +264,8 @@ inline bool Cube<ValueType>::planeWithValues( PRV_UINT32 plane ) const
 }
 
 
-template <typename ValueType>
-inline PRV_UINT32 Cube<ValueType>::getPlanes( ) const
+template <typename ValueType, size_t NStats>
+inline PRV_UINT32 Cube<ValueType, NStats>::getPlanes( ) const
 {
   if ( nplanes > 0 )
     return planes.size();
@@ -313,8 +274,8 @@ inline PRV_UINT32 Cube<ValueType>::getPlanes( ) const
 }
 
 
-template <typename ValueType>
-inline void Cube<ValueType>::eraseColumns( PRV_UINT32 ini_col, PRV_UINT32 fin_col )
+template <typename ValueType, size_t NStats>
+inline void Cube<ValueType, NStats>::eraseColumns( PRV_UINT32 ini_col, PRV_UINT32 fin_col )
 {
   if ( fin_col < ini_col )
     return;
@@ -322,18 +283,14 @@ inline void Cube<ValueType>::eraseColumns( PRV_UINT32 ini_col, PRV_UINT32 fin_co
   if ( fin_col >= ncols )
     return;
 
-  for ( PRV_UINT32 ii = 0; ii < planes.size(); ++ii )
-  {
-    if ( planes[ ii ] != nullptr )
-      planes[ ii ]->eraseColumns( ini_col, fin_col );
-  }
+  std::for_each( planes.begin(), planes.end(), [=]( auto plane ){ if( plane != nullptr ) plane->eraseColumns( ini_col, fin_col ); } );
 
   ncols = ncols - ( fin_col - ini_col );
 }
 
 
-template <typename ValueType>
-inline void Cube<ValueType>::erasePlanes( PRV_UINT32 ini_plane, PRV_UINT32 fin_plane )
+template <typename ValueType, size_t NStats>
+inline void Cube<ValueType, NStats>::erasePlanes( PRV_UINT32 ini_plane, PRV_UINT32 fin_plane )
 {
   if ( fin_plane < ini_plane )
     return;
@@ -341,7 +298,7 @@ inline void Cube<ValueType>::erasePlanes( PRV_UINT32 ini_plane, PRV_UINT32 fin_p
   if ( fin_plane >= ( PRV_UINT32 ) planes.size() )
     return;
 
-  typename std::vector<Matrix<ValueType> *>::iterator it_ini, it_fin;
+  typename std::vector<Matrix<ValueType, NStats> *>::iterator it_ini, it_fin;
   PRV_UINT32 i;
 
   it_ini = planes.begin();
@@ -360,8 +317,8 @@ inline void Cube<ValueType>::erasePlanes( PRV_UINT32 ini_plane, PRV_UINT32 fin_p
 }
 
 
-template <typename ValueType>
-inline bool Cube<ValueType>::getCellValue( ValueType& semVal,
+template <typename ValueType, size_t NStats>
+inline bool Cube<ValueType, NStats>::getCellValue( ValueType& semVal,
                                            PRV_UINT32 whichPlane,
                                            int whichRow,
                                            PRV_UINT32 whichCol,
@@ -373,8 +330,8 @@ inline bool Cube<ValueType>::getCellValue( ValueType& semVal,
   return planes[ whichPlane ]->getCellValue( semVal, whichRow, whichCol, idStat );
 }
 
-template <typename ValueType>
-inline bool Cube<ValueType>::getNotZeroValue( PRV_UINT32 whichPlane,
+template <typename ValueType, size_t NStats>
+inline bool Cube<ValueType, NStats>::getNotZeroValue( PRV_UINT32 whichPlane,
                                               int whichRow,
                                               PRV_UINT32 whichCol, 
                                               PRV_UINT16 idStat ) const
@@ -386,8 +343,8 @@ inline bool Cube<ValueType>::getNotZeroValue( PRV_UINT32 whichPlane,
 }
 
 
-template <typename ValueType>
-inline bool Cube<ValueType>::getCellValue( std::vector<ValueType>& semVal,
+template <typename ValueType, size_t NStats>
+inline bool Cube<ValueType, NStats>::getCellValue( std::array<ValueType, NStats>& semVal,
                                            PRV_UINT32 whichPlane,
                                            int whichRow,
                                            PRV_UINT32 whichCol ) const
@@ -396,21 +353,4 @@ inline bool Cube<ValueType>::getCellValue( std::vector<ValueType>& semVal,
     return false;
 
   return planes[ whichPlane ]->getCellValue( semVal, whichRow, whichCol );
-}
-
-
-template <typename ValueType>
-inline void Cube<ValueType>::print() const
-{
-  if ( nplanes > 0 )
-  {
-    for ( PRV_UINT32 ii = 0; ii < planes.size(); ++ii )
-    {
-      std::cout << std::endl;
-      std::cout << "******************************************************" << std::endl;
-      std::cout << "----------Plane " << ii << "----------" << std::endl;
-      if ( planes[ ii ] != nullptr )
-        planes[ ii ]->print();
-    }
-  }
 }

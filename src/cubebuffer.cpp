@@ -21,37 +21,30 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
+//#include "cubebuffer.h"
 
-#include "cubebuffer.h"
-
-using std::vector;
-using std::unordered_map;
-
-
-CubeBuffer::CubeBuffer( PRV_UINT32 numPlanes, PRV_UINT32 numRows )
+template< size_t NStats >
+CubeBuffer<NStats>::CubeBuffer( PRV_UINT32 numPlanes, PRV_UINT32 numRows )
 {
-  unordered_map< THistogramColumn, vector< TSemanticValue > > tmpRow;
-  vector< unordered_map< THistogramColumn, vector< TSemanticValue > > > tmpMatrix( numRows, tmpRow );
+  std::unordered_map< THistogramColumn, std::array< TSemanticValue, NStats > > tmpRow;
+  std::vector< std::unordered_map< THistogramColumn, std::array< TSemanticValue, NStats > > > tmpMatrix( numRows, tmpRow );
 
-  unordered_map< THistogramColumn, bool > tmpRowNotZeroValue;
-  vector< unordered_map< THistogramColumn, bool > > tmpMatrixNotZeroValue( numRows, tmpRowNotZeroValue );
+  std::unordered_map< THistogramColumn, bool > tmpRowNotZeroValue;
+  std::vector< std::unordered_map< THistogramColumn, bool > > tmpMatrixNotZeroValue( numRows, tmpRowNotZeroValue );
 
   buffer.insert( buffer.begin(), numPlanes, tmpMatrix );
   bufferNotZeroValue.insert( bufferNotZeroValue.begin(), numPlanes, tmpMatrixNotZeroValue );
 }
 
 
-CubeBuffer::~CubeBuffer()
-{}
-
-
-void CubeBuffer::addValue( PRV_UINT32 plane, PRV_UINT32 row, THistogramColumn col, const std::vector< TSemanticValue >& semVal, bool isNotZeroValue )
+template< size_t NStats >
+void CubeBuffer<NStats>::addValue( PRV_UINT32 plane, PRV_UINT32 row, THistogramColumn col, const std::array< TSemanticValue, NStats >& semVal, bool isNotZeroValue )
 {
-  unordered_map< THistogramColumn, vector< TSemanticValue > >& currentRow = ( ( buffer[ plane ] )[ row ] );
-  unordered_map< THistogramColumn, vector< TSemanticValue > >::iterator it = currentRow.find( col );
+  std::unordered_map< THistogramColumn, std::array< TSemanticValue, NStats > >& currentRow = ( ( buffer[ plane ] )[ row ] );
+  typename std::unordered_map< THistogramColumn, std::array< TSemanticValue, NStats > >::iterator it = currentRow.find( col );
 
-  unordered_map< THistogramColumn, bool >& currentRowNotZeroValue = ( ( bufferNotZeroValue[ plane ] )[ row ] );
-  unordered_map< THistogramColumn, bool >::iterator itNotZeroValue = currentRowNotZeroValue.find( col );
+  std::unordered_map< THistogramColumn, bool >& currentRowNotZeroValue = ( ( bufferNotZeroValue[ plane ] )[ row ] );
+  std::unordered_map< THistogramColumn, bool >::iterator itNotZeroValue = currentRowNotZeroValue.find( col );
 
   if ( it != currentRow.end() )
   {
@@ -68,16 +61,18 @@ void CubeBuffer::addValue( PRV_UINT32 plane, PRV_UINT32 row, THistogramColumn co
 }
 
 
-void CubeBuffer::setValue( PRV_UINT32 plane, PRV_UINT32 row, THistogramColumn col, const std::vector< TSemanticValue >& semVal )
+template< size_t NStats >
+void CubeBuffer<NStats>::setValue( PRV_UINT32 plane, PRV_UINT32 row, THistogramColumn col, const std::array< TSemanticValue, NStats >& semVal )
 {
   ( ( buffer[ plane ] )[ row ] )[ col ] = semVal;
 }
 
 
-bool CubeBuffer::getCellValue( std::vector< TSemanticValue >& semVal, PRV_UINT32 plane, PRV_UINT32 row, PRV_UINT32 col ) const
+template< size_t NStats >
+bool CubeBuffer<NStats>::getCellValue( std::array< TSemanticValue, NStats >& semVal, PRV_UINT32 plane, PRV_UINT32 row, PRV_UINT32 col ) const
 {
-  const unordered_map< THistogramColumn, vector< TSemanticValue > >& currentRow = ( ( buffer[ plane ] )[ row ] );
-  unordered_map< THistogramColumn, vector< TSemanticValue > >::const_iterator it = currentRow.find( col );
+  const std::unordered_map< THistogramColumn, std::array< TSemanticValue, NStats > >& currentRow = ( ( buffer[ plane ] )[ row ] );
+  typename std::unordered_map< THistogramColumn, std::array< TSemanticValue, NStats > >::const_iterator it = currentRow.find( col );
 
   if ( it == currentRow.end() )
     return false;
@@ -87,12 +82,14 @@ bool CubeBuffer::getCellValue( std::vector< TSemanticValue >& semVal, PRV_UINT32
 }
 
 
-const unordered_map< THistogramColumn, vector< TSemanticValue > >& CubeBuffer::getRowValues( PRV_UINT32 plane, PRV_UINT32 row ) const
+template< size_t NStats >
+const std::unordered_map< THistogramColumn, std::array< TSemanticValue, NStats > >& CubeBuffer<NStats>::getRowValues( PRV_UINT32 plane, PRV_UINT32 row ) const
 {
   return ( ( buffer[ plane ] )[ row ] );
 }
 
-const unordered_map< THistogramColumn, bool >& CubeBuffer::getNotZeroValue( PRV_UINT32 plane, PRV_UINT32 row ) const
+template< size_t NStats >
+const std::unordered_map< THistogramColumn, bool >& CubeBuffer<NStats>::getNotZeroValue( PRV_UINT32 plane, PRV_UINT32 row ) const
 {
   return ( ( bufferNotZeroValue[ plane ] )[ row ] );
 }

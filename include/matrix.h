@@ -24,30 +24,26 @@
 
 #pragma once
 
-
 #include <vector>
 #include "column.h"
 #include "paraverkerneltypes.h"
 
-template <typename ValueType>
+template <typename ValueType, size_t NStats>
 class Matrix
 {
   public:
-    Matrix( PRV_UINT32 numCols, PRV_UINT16 numStats );
-    Matrix( TObjectOrder currentRow, PRV_UINT32 numCols, PRV_UINT16 numStats );
-    Matrix( Matrix<ValueType>& source );
-    ~Matrix();
+    Matrix( PRV_UINT32 numCols );
+    Matrix( TObjectOrder currentRow, PRV_UINT32 numCols );
+    Matrix( Matrix<ValueType, NStats>& source );
 
     void init( PRV_UINT16 idStat );
     void init( );
     void setValue( PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal );
-    void setValue( PRV_UINT32 col, ValueType semVal );
-    void setValue( PRV_UINT32 col, const std::vector<ValueType>& semVal, bool isNotZeroValue = true );
+    void setValue( PRV_UINT32 col, const std::array<ValueType, NStats>& semVal, bool isNotZeroValue = true );
     void addValue( PRV_UINT32 col, PRV_UINT16 idStat, ValueType semVal );
-    void addValue( PRV_UINT32 col, ValueType semVal );
-    void addValue( PRV_UINT32 col, const std::vector<ValueType>& semVal );
+    void addValue( PRV_UINT32 col, const std::array<ValueType, NStats>& semVal );
     ValueType getCurrentValue( PRV_UINT32 col, PRV_UINT16 idStat ) const;
-    std::vector<ValueType> getCurrentValue( PRV_UINT32 col ) const;
+    std::array<ValueType, NStats> getCurrentValue( PRV_UINT32 col ) const;
     TObjectOrder getCurrentRow( PRV_UINT32 col ) const;
     bool currentCellModified( PRV_UINT32 col ) const;
     void newRow( );
@@ -60,12 +56,10 @@ class Matrix
 
     bool getCellValue( ValueType& semVal, int whichRow, PRV_UINT32 whichCol, PRV_UINT16 idStat ) const;
     bool getNotZeroValue( int whichRow, PRV_UINT32 whichCol, PRV_UINT16 idStat ) const;
-    bool getCellValue( std::vector<ValueType>& semVal, int whichRow, PRV_UINT32 whichCol ) const;
-
-    void print() const;
+    bool getCellValue( std::array<ValueType, NStats>& semVal, int whichRow, PRV_UINT32 whichCol ) const;
 
   private:
-    std::vector<Column<ValueType> > cols;
+    std::vector<Column<ValueType, NStats> > cols;
     bool finished;
 };
 
