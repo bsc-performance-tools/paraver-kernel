@@ -1646,8 +1646,8 @@ void KHistogram::finishRow( CalculateData *data )
         {
           if ( commCube->currentCellModified( iPlane, iColumn ) )
           {
-            values = commCube->getCurrentValue( iPlane, iColumn );
-            values = statistics.finishRowAllComm( commValues, iColumn, data->row, iPlane );
+            commValues = commCube->getCurrentValue( iPlane, iColumn );
+            commValues = statistics.finishRowAllComm( commValues, iColumn, data->row, iPlane );
 
             commCube->setValue( iPlane, iColumn, commValues );
             for ( PRV_UINT16 iStat = 0; iStat < NUM_COMM_STATS; ++iStat )
