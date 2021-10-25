@@ -101,6 +101,7 @@ namespace bplustree
   class BPlusNode
   {
     public:
+      virtual ~BPlusNode() = default;
 
       /************************************************************************
        * Inserts rl in the tree.

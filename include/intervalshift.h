@@ -118,7 +118,7 @@ class IntervalShift : public IntervalHigh
     std::deque<IntervalShift::ShiftSemanticInfo> semanticBuffer;
 
     PRV_INT16 semanticShift;
-    PRV_INT16 bufferSize;
+    PRV_UINT16 bufferSize;
 
     void popSemanticBuffer();
     void clearSemanticBuffer();
