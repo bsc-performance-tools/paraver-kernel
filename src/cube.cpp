@@ -191,7 +191,7 @@ inline void Cube<ValueType, NStats>::newRow( )
 {
   if ( nplanes > 0 )
   {
-    std::for_each( planes.begin(), planes.end(), []( auto plane ){ if( plane != nullptr ) plane->newRow(); } );
+    std::for_each( planes.begin(), planes.end(), []( Matrix<ValueType, NStats> *plane ){ if( plane != nullptr ) plane->newRow(); } );
   }
   ++crow;
 }
@@ -215,7 +215,7 @@ inline void Cube<ValueType, NStats>::finish( )
 {
   if ( nplanes > 0 )
   {
-    std::for_each( planes.begin(), planes.end(), []( auto plane ){ if( plane != nullptr ) plane->finish(); } );
+    std::for_each( planes.begin(), planes.end(), []( Matrix<ValueType, NStats> *plane ){ if( plane != nullptr ) plane->finish(); } );
   }
 }
 
@@ -283,7 +283,7 @@ inline void Cube<ValueType, NStats>::eraseColumns( PRV_UINT32 ini_col, PRV_UINT3
   if ( fin_col >= ncols )
     return;
 
-  std::for_each( planes.begin(), planes.end(), [=]( auto plane ){ if( plane != nullptr ) plane->eraseColumns( ini_col, fin_col ); } );
+  std::for_each( planes.begin(), planes.end(), [=]( Matrix<ValueType, NStats> *plane ){ if( plane != nullptr ) plane->eraseColumns( ini_col, fin_col ); } );
 
   ncols = ncols - ( fin_col - ini_col );
 }
