@@ -1206,8 +1206,8 @@ void KHistogram::finishAllRows()
 
           for ( PRV_UINT16 iStat = 0; iStat < NUM_SEMANTIC_STATS; ++iStat )
           {
-            totals->newValue( semanticValues[ iStat ], iStat, it->first, iPlane, itZero->second );
-            rowTotals->newValue( semanticValues[ iStat ], iStat, iRow, iPlane, itZero->second );
+            totals->newValue( semanticValues[ iStat ], iStat, it->first, iPlane );
+            rowTotals->newValue( semanticValues[ iStat ], iStat, iRow, iPlane );
           }
         }
       }
@@ -1230,8 +1230,8 @@ void KHistogram::finishAllRows()
 
         for ( PRV_UINT16 iStat = 0; iStat < NUM_SEMANTIC_STATS; ++iStat )
         {
-          totals->newValue( semanticValues[ iStat ], iStat, it->first, iPlane, itZero->second );
-          rowTotals->newValue( semanticValues[ iStat ], iStat, iRow, iPlane, itZero->second );
+          totals->newValue( semanticValues[ iStat ], iStat, it->first, iPlane );
+          rowTotals->newValue( semanticValues[ iStat ], iStat, iRow, iPlane );
         }
       }
 
