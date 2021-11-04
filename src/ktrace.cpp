@@ -396,7 +396,7 @@ TRecordTime KTrace::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit wh
 }
 
 
-void KTrace::dumpFileHeader( std::fstream& file, bool newFormat , PRV_INT32 numIter) const
+void KTrace::dumpFileHeader( std::fstream& file, bool newFormat, PRV_INT32 numIter ) const
 {
   ostringstream ostr;
 
@@ -412,7 +412,11 @@ void KTrace::dumpFileHeader( std::fstream& file, bool newFormat , PRV_INT32 numI
     file << "new format" << endl;
 
   file << "#Paraver (";
-  file << myTraceTime << "):";
+  if ( !myTraceTime.is_not_a_date_time() )
+    file << myTraceTime << "):";
+  else
+    file << rawTraceTime << "):";
+
   ostr << traceEndTime * numIter;
   file << ostr.str();
   if ( traceTimeUnit != US )
@@ -533,6 +537,8 @@ void KTrace::getRecordByTimeCPU( vector<MemoryTrace::iterator *>& listIter,
 
 void KTrace::parseDateTime( string &whichDateTime )
 {
+  rawTraceTime = whichDateTime;
+
   // Create locales for every time format that whichDateTime may take
   vector<string> strFormatDate;
   strFormatDate.push_back("%d/%m/%Y at %H:%M:%S%F");
@@ -572,7 +578,16 @@ void KTrace::parseDateTime( string &whichDateTime )
     else
       newYear += 1900;
 
-    string tmpTail = whichDateTime.substr( whichDateTime.find_first_of(' ') ); // " at hh:mm:ss" or empty
+    string tmpTail;
+    try
+    {
+      tmpTail = whichDateTime.substr( whichDateTime.find_first_of(' ') ); // " at hh:mm:ss" or empty
+    }
+    catch(const std::out_of_range& e)
+    {
+      tmpTail = "";
+    }
+    
 
     // c++ 11
     // tmpDate = whichDateTime.substr( 0, whichDateTime.find_last_of( '/' ) ) + "/" + std::to_string( newYear ) + tmpTail;

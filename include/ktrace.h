@@ -144,6 +144,11 @@ class KTrace: public Trace
                (long)traceUnitsToCustomUnits( myTraceInfo.GetCutterTotalOffset(), NS ) );
     }
 
+    inline string getRawTraceTime() const
+    {
+      return rawTraceTime;
+    }
+
     TRecordTime customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const override;
     TRecordTime traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const override;
 
@@ -207,6 +212,8 @@ class KTrace: public Trace
     MemoryTrace *memTrace;
     TraceBodyIO *body;
     ptime myTraceTime;
+    string rawTraceTime = "";
+
 
   private:
     std::string fileName;
