@@ -33,7 +33,7 @@
 
 using namespace std;
 
-KWindow::~KWindow()
+KTimeline::~KTimeline()
 {
   for( map< TWindowLevel, vector< vector< IntervalCompose * > > >::iterator itMap = extraCompose.begin();
        itMap != extraCompose.end(); ++itMap )
@@ -55,7 +55,7 @@ KWindow::~KWindow()
   }
 }
 
-TObjectOrder KWindow::cpuObjectToWindowObject( TCPUOrder whichCPU )
+TObjectOrder KTimeline::cpuObjectToWindowObject( TCPUOrder whichCPU )
 {
   TObjectOrder tmpObject = 0;
 
@@ -78,7 +78,7 @@ TObjectOrder KWindow::cpuObjectToWindowObject( TCPUOrder whichCPU )
 }
 
 
-TObjectOrder KWindow::threadObjectToWindowObject( TThreadOrder whichThread )
+TObjectOrder KTimeline::threadObjectToWindowObject( TThreadOrder whichThread )
 {
   TObjectOrder tmpObject = 0;
 
@@ -111,7 +111,7 @@ TObjectOrder KWindow::threadObjectToWindowObject( TThreadOrder whichThread )
 }
 
 
-TObjectOrder KWindow::getWindowLevelObjects() const
+TObjectOrder KTimeline::getWindowLevelObjects() const
 {
   TObjectOrder objectSize = 0;
   TWindowLevel whichLevel = getLevel();
@@ -135,19 +135,19 @@ TObjectOrder KWindow::getWindowLevelObjects() const
 }
 
 
-TRecordTime KWindow::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
+TRecordTime KTimeline::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
 {
   return myTrace->customUnitsToTraceUnits( whichTime, whichUnits );
 }
 
 
-TRecordTime KWindow::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
+TRecordTime KTimeline::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
 {
   return myTrace->traceUnitsToCustomUnits( whichTime, whichUnits );
 }
 
 
-TRecordTime KWindow::traceUnitsToWindowUnits( TRecordTime whichTime ) const
+TRecordTime KTimeline::traceUnitsToWindowUnits( TRecordTime whichTime ) const
 {
   TRecordTime tmpTime;
   TRecordTime factor = 1;
@@ -171,7 +171,7 @@ TRecordTime KWindow::traceUnitsToWindowUnits( TRecordTime whichTime ) const
   return tmpTime;
 }
 
-TRecordTime KWindow::windowUnitsToTraceUnits( TRecordTime whichTime ) const
+TRecordTime KTimeline::windowUnitsToTraceUnits( TRecordTime whichTime ) const
 {
   TRecordTime tmpTime;
   TRecordTime factor = 1;
@@ -195,7 +195,7 @@ TRecordTime KWindow::windowUnitsToTraceUnits( TRecordTime whichTime ) const
   return tmpTime;
 }
 
-RecordList *KWindow::getRecordList( TObjectOrder whichObject )
+RecordList *KTimeline::getRecordList( TObjectOrder whichObject )
 {
   map< TWindowLevel, vector< vector<IntervalCompose *> > >::const_iterator itExtra = extraCompose.find( TOPCOMPOSE1 );
   if( itExtra != extraCompose.end() )
@@ -207,18 +207,18 @@ RecordList *KWindow::getRecordList( TObjectOrder whichObject )
   return intervalTopCompose1[ whichObject ].getRecordList();
 }
 
-KWindow *KWindow::clone( bool recursiveClone )
+KTimeline *KTimeline::clone( bool recursiveClone )
 {
   return nullptr;
 }
 
-void KWindow::getGroupLabels( PRV_UINT32 whichGroup, vector<string>& onVector ) const
+void KTimeline::getGroupLabels( PRV_UINT32 whichGroup, vector<string>& onVector ) const
 {
   FunctionManagement<SemanticFunction>::getInstance()->getAll( onVector, whichGroup );
 }
 
 
-bool KWindow::getParametersOfFunction( string whichFunction,
+bool KTimeline::getParametersOfFunction( string whichFunction,
                                        PRV_UINT32 &numParameters,
                                        vector< string > &nameParameters,
                                        vector< vector < double > > &defaultValues ) const
@@ -248,7 +248,7 @@ bool KWindow::getParametersOfFunction( string whichFunction,
 }
 
 // Extra composes
-size_t KWindow::getExtraNumPositions( TWindowLevel whichLevel ) const
+size_t KTimeline::getExtraNumPositions( TWindowLevel whichLevel ) const
 {
   map< TWindowLevel, vector< vector< IntervalCompose * > > >::const_iterator it = extraCompose.find( whichLevel );
 
@@ -263,7 +263,7 @@ size_t KWindow::getExtraNumPositions( TWindowLevel whichLevel ) const
  *  KSingleWindow implementation
  **********************************************************************/
 
-KSingleWindow::KSingleWindow( Trace *whichTrace ): KWindow( whichTrace )
+KSingleWindow::KSingleWindow( Trace *whichTrace ): KTimeline( whichTrace )
 {
   initSemanticFunctions();
 
@@ -948,7 +948,7 @@ SemanticInfoType KSingleWindow::getSemanticInfoType() const
 }
 
 
-KWindow *KSingleWindow::clone( bool recursiveClone )
+KTimeline *KSingleWindow::clone( bool recursiveClone )
 {
   KSingleWindow *clonedKSWindow = new KSingleWindow( myTrace );
 
@@ -1668,14 +1668,14 @@ Interval *KDerivedWindow::getLevelInterval( TWindowLevel whichLevel,
   return nullptr;
 }
 
-void KDerivedWindow::setParent( PRV_UINT16 whichParent, Window *whichWindow )
+void KDerivedWindow::setParent( PRV_UINT16 whichParent, Timeline *whichWindow )
 {
-  parents[ whichParent ] = ( KWindow* )whichWindow;
+  parents[ whichParent ] = ( KTimeline * )whichWindow;
   if( parents[ 0 ] != nullptr && parents[ 1 ] != nullptr )
     setup( nullptr );
 }
 
-Window *KDerivedWindow::getParent( PRV_UINT16 whichParent ) const
+Timeline *KDerivedWindow::getParent( PRV_UINT16 whichParent ) const
 {
   return parents[whichParent];
 }
@@ -1701,7 +1701,7 @@ TWindowLevel KDerivedWindow::getMinAcceptableLevel() const
   return tmp;
 }
 
-KWindow *KDerivedWindow::clone( bool recursiveClone )
+KTimeline *KDerivedWindow::clone( bool recursiveClone )
 {
   KDerivedWindow *clonedKDerivedWindow = new KDerivedWindow();
 

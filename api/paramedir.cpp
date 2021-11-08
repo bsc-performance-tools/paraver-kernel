@@ -796,7 +796,7 @@ void loadCFGs( KernelConnection *myKernel )
 {
   for( std::map< string, string >::iterator it = cfgs.begin(); it != cfgs.end(); ++it )
   {
-    vector<Window *> windows;
+    vector<Timeline *> windows;
     vector<Histogram *> histograms;
     SaveOptions options; // P4D: Should options.enabledP4DMode be taken in this context?
 

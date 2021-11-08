@@ -352,7 +352,7 @@ TSemanticValue ComposeAbs::execute( const SemanticInfo *info )
 }
 
 
-void ComposeStackedValue::init( KWindow *whichWindow )
+void ComposeStackedValue::init( KTimeline *whichWindow )
 {
   myStack.clear();
 
@@ -394,7 +394,7 @@ TSemanticValue ComposeStackedValue::execute( const SemanticInfo *info )
 }
 
 
-void ComposeInStackedValue::init( KWindow *whichWindow )
+void ComposeInStackedValue::init( KTimeline *whichWindow )
 {
   myStack.clear();
 
@@ -437,7 +437,7 @@ TSemanticValue ComposeInStackedValue::execute( const SemanticInfo *info )
 }
 
 
-void ComposeNestingLevel::init( KWindow *whichWindow )
+void ComposeNestingLevel::init( KTimeline *whichWindow )
 {
   myStack.clear();
 
@@ -473,7 +473,7 @@ TSemanticValue ComposeNestingLevel::execute( const SemanticInfo *info )
 }
 
 
-void ComposeLRUDepth::init( KWindow *whichWindow )
+void ComposeLRUDepth::init( KTimeline *whichWindow )
 {
   LRUStack.clear();
 
@@ -532,7 +532,7 @@ TSemanticValue ComposeLRUDepth::execute( const SemanticInfo *info )
 }
 
 
-void ComposeEnumerate::init( KWindow *whichWindow )
+void ComposeEnumerate::init( KTimeline *whichWindow )
 {
 
 }
@@ -550,7 +550,7 @@ TSemanticValue ComposeEnumerate::execute( const SemanticInfo *info )
   return newInfoVal;
 }
 
-void ComposeAccumulate::init( KWindow *whichWindow )
+void ComposeAccumulate::init( KTimeline *whichWindow )
 {
 }
 
@@ -566,7 +566,7 @@ TSemanticValue ComposeAccumulate::execute( const SemanticInfo *info )
 
 
 
-void ComposeDelta::init( KWindow *whichWindow )
+void ComposeDelta::init( KTimeline *whichWindow )
 {
   semPrevValue.clear();
 

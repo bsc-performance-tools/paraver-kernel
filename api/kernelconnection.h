@@ -31,7 +31,7 @@
 
 #include "paraverkerneltypes.h"
 
-class Window;
+class Timeline;
 class Histogram;
 class Trace;
 class RecordList;
@@ -76,10 +76,10 @@ class KernelConnection
     virtual Trace *newTrace( const std::string& whichFile, bool noLoad, ProgressController *progress ) const = 0;
     virtual std::string getPCFFileLocation( const std::string& traceFile ) const = 0;
     virtual std::string getROWFileLocation( const std::string& traceFile ) const = 0;
-    virtual Window *newSingleWindow() const = 0;
-    virtual Window *newSingleWindow( Trace *whichTrace ) const = 0;
-    virtual Window *newDerivedWindow() const = 0;
-    virtual Window *newDerivedWindow( Window *window1, Window * window2 ) const = 0;
+    virtual Timeline *newSingleWindow() const = 0;
+    virtual Timeline *newSingleWindow( Trace *whichTrace ) const = 0;
+    virtual Timeline *newDerivedWindow() const = 0;
+    virtual Timeline *newDerivedWindow( Timeline *window1, Timeline * window2 ) const = 0;
     virtual Histogram *newHistogram() const = 0;
     virtual ProgressController *newProgressController() const = 0;
     virtual Filter *newFilter( Filter *concreteFilter ) const = 0;

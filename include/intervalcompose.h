@@ -28,7 +28,7 @@
 #include "intervalhigh.h"
 #include "semanticcompose.h"
 
-class KWindow;
+class KTimeline;
 
 class IntervalCompose: public IntervalHigh
 {
@@ -40,7 +40,7 @@ class IntervalCompose: public IntervalHigh
       beginRecord = nullptr;
     }
 
-    IntervalCompose( KWindow *whichWindow, TWindowLevel whichLevel,
+    IntervalCompose( KTimeline *whichWindow, TWindowLevel whichLevel,
                      TObjectOrder whichOrder ):
         IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
     {
@@ -66,7 +66,7 @@ class IntervalCompose: public IntervalHigh
     virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) override;
     virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) override;
 
-    virtual KWindow *getWindow() override
+    virtual KTimeline *getWindow() override
     {
       return window;
     }
@@ -83,7 +83,7 @@ class IntervalCompose: public IntervalHigh
     }
 
   protected:
-    KWindow *window;
+    KTimeline *window;
     SemanticCompose *function;
     TCreateList createList;
 

@@ -30,7 +30,7 @@
 
 using std::deque;
 
-class KWindow;
+class KTimeline;
 class KDerivedWindow;
 
 class IntervalShift : public IntervalHigh
@@ -65,9 +65,9 @@ class IntervalShift : public IntervalHigh
     virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) override;
     virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) override;
 
-    virtual KWindow *getWindow() override
+    virtual KTimeline *getWindow() override
     {
-      return ( KWindow * ) window;
+      return ( KTimeline * ) window;
     }
 
     void setChildInterval( Interval *whichInterval );

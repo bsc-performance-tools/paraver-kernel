@@ -29,7 +29,7 @@
 #include "recordlist.h"
 #include "memorytrace.h"
 
-class KWindow;
+class KTimeline;
 
 class KRecordList: public RecordList
 {
@@ -44,7 +44,7 @@ class KRecordList: public RecordList
     virtual bool newRecords() const;
 
     // Specific for KRecordList
-    virtual void insert( KWindow *window, MemoryTrace::iterator *it );
+    virtual void insert( KTimeline *window, MemoryTrace::iterator *it );
     virtual RecordList *clone();
 
   protected:

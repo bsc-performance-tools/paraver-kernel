@@ -29,7 +29,7 @@
 #include "memorytrace.h"
 #include "krecordlist.h"
 
-class KWindow;
+class KTimeline;
 
 class Interval
 {
@@ -108,7 +108,7 @@ class Interval
     virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) = 0;
     virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) = 0;
 
-    virtual KWindow *getWindow() = 0;
+    virtual KTimeline *getWindow() = 0;
 
   protected:
     TObjectOrder order;

@@ -132,22 +132,22 @@ enum class TObjectAxisSize
   TWENTYFIVE_PERC
 };
 
-class Window
+class Timeline
 {
   public:
 
-    // Create Single Window
-    static Window *create( KernelConnection *whichKernel, Trace *whichTrace );
-    //Create Derived Window
-    static Window *create( KernelConnection *whichKernel );
-    static Window *create( KernelConnection *whichKernel, Window *whichParent1,
-                           Window *whichParent2 );
+    // Create Single Timeline
+    static Timeline *create( KernelConnection *whichKernel, Trace *whichTrace );
+    //Create Derived Timeline
+    static Timeline *create( KernelConnection *whichKernel );
+    static Timeline *create( KernelConnection *whichKernel, Timeline *whichParent1,
+                           Timeline *whichParent2 );
 
-    static bool compatibleLevels( Window *window1, Window *window2 );
+    static bool compatibleLevels( Timeline *window1, Timeline *window2 );
 
-    Window() {}
-    Window( KernelConnection *whichKernel );
-    virtual ~Window() {}
+    Timeline() {}
+    Timeline( KernelConnection *whichKernel );
+    virtual ~Timeline() {}
 
     KernelConnection *getKernel() const
     {
@@ -172,13 +172,13 @@ class Window
     {
       return 0;
     }
-    virtual void setParent( PRV_UINT16 whichParent, Window *whichWindow ) {}
-    virtual void setChild( Window *whichWindow ) {}
-    virtual Window *getChild()
+    virtual void setParent( PRV_UINT16 whichParent, Timeline *whichWindow ) {}
+    virtual void setChild( Timeline *whichWindow ) {}
+    virtual Timeline *getChild()
     {
       return nullptr;
     }
-    virtual Window *getParent( PRV_UINT16 whichParent ) const
+    virtual Timeline *getParent( PRV_UINT16 whichParent ) const
     {
       return nullptr;
     }
@@ -246,7 +246,7 @@ class Window
       return false;
     }
 
-    virtual Window* clone( bool recursiveClone = false )
+    virtual Timeline* clone( bool recursiveClone = false )
     {
       return nullptr;
     }
@@ -328,7 +328,7 @@ class Window
     virtual SemanticInfoType getSemanticInfoType() const = 0;
 
     // Specific functions for WindowProxy
-    virtual Window *getConcrete() const
+    virtual Timeline *getConcrete() const
     {
       return nullptr;
     }
@@ -458,17 +458,17 @@ class Window
     }
     virtual void setPixelSize( PRV_UINT16 whichSize )
     {}
-    virtual Window *getPunctualColorWindow() const
+    virtual Timeline *getPunctualColorWindow() const
     {
       return nullptr;
     }
-    virtual void setPunctualColorWindow( Window *whichWindow )
+    virtual void setPunctualColorWindow( Timeline *whichWindow )
     {}
     virtual void allowOutOfScale( bool activate )
     {}
     virtual void allowOutliers( bool activate )
     {}
-    virtual rgb calcColor( TSemanticValue whichValue, Window& whichWindow )
+    virtual rgb calcColor( TSemanticValue whichValue, Timeline& whichWindow )
     {
       rgb tmp = { 0, 0, 0 };
       return tmp;
@@ -721,7 +721,7 @@ class Window
       return TParamAliasKey();
     }
 
-    virtual Window::TParamAliasKey getCFG4DParamAliasKey( const TParamAlias::iterator it ) const
+    virtual Timeline::TParamAliasKey getCFG4DParamAliasKey( const TParamAlias::iterator it ) const
     {
       return TParamAliasKey();
     }
@@ -736,10 +736,10 @@ class Window
       return std::string( "" );
     }
 
-    virtual std::vector<Window::TParamAliasKey > getCFG4DParamKeysBySemanticLevel( std::string whichSemanticLevel,
-                                                                                   const std::vector< Window::TParamAliasKey > &whichParamAlias = std::vector<Window::TParamAliasKey >() ) const
+    virtual std::vector<Timeline::TParamAliasKey > getCFG4DParamKeysBySemanticLevel( std::string whichSemanticLevel,
+                                                                                   const std::vector< Timeline::TParamAliasKey > &whichParamAlias = std::vector<Timeline::TParamAliasKey >() ) const
     {
-      return std::vector<Window::TParamAliasKey >();
+      return std::vector<Timeline::TParamAliasKey >();
     }
 
     virtual void setCFGS4DGroupLink( std::string originalName, TCFGS4DGroup whichGroup )
@@ -826,7 +826,7 @@ class Window
 };
 
 
-class WindowProxy: public Window
+class WindowProxy: public Timeline
 {
   public:
     virtual ~WindowProxy();
@@ -840,12 +840,12 @@ class WindowProxy: public Window
     virtual TSemanticValue getFactor( PRV_UINT16 whichFactor ) const override;
     virtual void setShift( PRV_UINT16 whichShift, TSemanticValue newValue ) override;
     virtual PRV_INT16 getShift( PRV_UINT16 whichShift ) const override;
-    virtual void setParent( PRV_UINT16 whichParent, Window *whichWindow ) override;
-    virtual void setChild( Window *whichWindow ) override;
-    virtual Window *getChild() override;
-    virtual Window *getParent( PRV_UINT16 whichParent ) const override;
+    virtual void setParent( PRV_UINT16 whichParent, Timeline *whichWindow ) override;
+    virtual void setChild( Timeline *whichWindow ) override;
+    virtual Timeline *getChild() override;
+    virtual Timeline *getParent( PRV_UINT16 whichParent ) const override;
 
-    virtual Window *clone( bool recursiveClone = false ) override;
+    virtual Timeline *clone( bool recursiveClone = false ) override;
 
     // Other
     virtual void setDestroy( bool newValue ) override;
@@ -948,7 +948,7 @@ class WindowProxy: public Window
     virtual void getAllSemanticFunctions( TSemanticGroup whichGroup,
                                           std::vector<std::string>& onVector ) const override;
 
-    virtual Window *getConcrete() const override;
+    virtual Timeline *getConcrete() const override;
     virtual void setName( const std::string& whichName ) override;
     virtual std::string getName() const override;
     virtual PRV_UINT16 getPosX() const override;
@@ -985,13 +985,13 @@ class WindowProxy: public Window
     virtual bool isPunctualColorSet() const override;
     virtual PRV_UINT16 getPixelSize() const override;
     virtual void setPixelSize( PRV_UINT16 whichSize ) override;
-    virtual Window *getPunctualColorWindow() const override;
-    virtual void setPunctualColorWindow( Window *whichWindow ) override;
+    virtual Timeline *getPunctualColorWindow() const override;
+    virtual void setPunctualColorWindow( Timeline *whichWindow ) override;
     virtual void setSemanticScaleMinAtZero( bool newValue ) override;
 
     virtual void allowOutOfScale( bool activate ) override;
     virtual void allowOutliers( bool activate ) override;
-    virtual rgb calcColor( TSemanticValue whichValue, Window& whichWindow ) override;
+    virtual rgb calcColor( TSemanticValue whichValue, Timeline& whichWindow ) override;
     virtual bool isColorOutlier( rgb whichColor ) const override;
     virtual bool getUseCustomPalette() const override;
     virtual void setUseCustomPalette( bool newValue ) override;
@@ -1091,13 +1091,13 @@ class WindowProxy: public Window
                                           std::string &function,
                                           TParamIndex &numParameter ) const override;
 
-    virtual Window::TParamAliasKey getCFG4DParamAliasKey( const TParamAlias::iterator it ) const override;
+    virtual Timeline::TParamAliasKey getCFG4DParamAliasKey( const TParamAlias::iterator it ) const override;
     virtual const std::string getCFG4DParamAlias( const TParamAlias::iterator &it ) const override;
     virtual const std::string getCFG4DParamAlias( const TParamAliasKey &pk ) const override;
-    virtual std::vector< Window::TParamAliasKey > getCFG4DParamKeysBySemanticLevel(
+    virtual std::vector< Timeline::TParamAliasKey > getCFG4DParamKeysBySemanticLevel(
                     std::string whichSemanticLevel,
-                    const std::vector< Window::TParamAliasKey > &whichParamAlias = std::vector<Window::TParamAliasKey >()  ) const override;
-    virtual const Window::TParamAliasKey buildCFG4DParamAliasKey(
+                    const std::vector< Timeline::TParamAliasKey > &whichParamAlias = std::vector<Timeline::TParamAliasKey >()  ) const override;
+    virtual const Timeline::TParamAliasKey buildCFG4DParamAliasKey(
                                                 const std::string &semanticLevel,
                                                 const std::string &function,
                                                 const TParamIndex &numParameter ) const override;
@@ -1166,9 +1166,9 @@ class WindowProxy: public Window
 #endif
 
   private:
-    Window *myWindow;
+    Timeline *myWindow;
 #ifdef PARALLEL_ENABLED
-    std::vector<Window *> parallelClone;
+    std::vector<Timeline *> parallelClone;
 #endif // PARALLEL_ENABLED
 
     Trace *myTrace;
@@ -1197,9 +1197,9 @@ class WindowProxy: public Window
     std::vector<RecordList *> myLists;
 
     // Must store the associated proxies
-    Window *parent1;
-    Window *parent2;
-    Window *child;
+    Timeline *parent1;
+    Timeline *parent2;
+    Timeline *child;
 
     std::set<Histogram *> usedByHistogram;
 
@@ -1221,7 +1221,7 @@ class WindowProxy: public Window
     bool flags;
     PRV_UINT16 pixelSize;
 
-    Window *punctualColorWindow;
+    Timeline *punctualColorWindow;
     // Zoom history
     ZoomHistory<TTime, TObjectOrder> zoomHistory;
 
@@ -1245,12 +1245,12 @@ class WindowProxy: public Window
 
     // For Clone
     WindowProxy();
-    // For Single Window
+    // For Single Timeline
     WindowProxy( KernelConnection *whichKernel, Trace *whichTrace );
-    // For Derived Window
+    // For Derived Timeline
     WindowProxy( KernelConnection *whichKernel );
-    WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
-                 Window *whichParent2 );
+    WindowProxy( KernelConnection *whichKernel, Timeline *whichParent1,
+                 Timeline *whichParent2 );
 
     int number_of_clones;
 
@@ -1354,9 +1354,9 @@ class WindowProxy: public Window
                                      std::unordered_set< commCoord, hashCommCoord >& commsToDraw ); // I/O
 #endif
 
-    friend Window *Window::create( KernelConnection *, Trace * );
-    friend Window *Window::create( KernelConnection * );
-    friend Window *Window::create( KernelConnection *, Window *, Window * );
+    friend Timeline *Timeline::create( KernelConnection *, Trace * );
+    friend Timeline *Timeline::create( KernelConnection * );
+    friend Timeline *Timeline::create( KernelConnection *, Timeline *, Timeline * );
 };
 
 

@@ -62,7 +62,7 @@ bool KRecordList::newRecords() const
 }
 
 
-void KRecordList::insert( KWindow *window, MemoryTrace::iterator *it )
+void KRecordList::insert( KTimeline *window, MemoryTrace::iterator *it )
 {
   //static RLRecord tmp;
   RLRecord tmp;

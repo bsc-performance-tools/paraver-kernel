@@ -29,7 +29,7 @@
 #include "paravertypes.h"
 #include "paraverkerneltypes.h"
 
-class Window;
+class Timeline;
 
 enum class TColorFunction
 {
@@ -92,7 +92,7 @@ class CodeColor: public SemanticColor
 {
   public:
     CodeColor();
-    CodeColor( Window *dummy )
+    CodeColor( Timeline *dummy )
     {}
     ~CodeColor();
 

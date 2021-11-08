@@ -36,7 +36,7 @@
 #endif
 
 class KSingleWindow;
-class KWindow;
+class KTimeline;
 
 class FilterFunction
 {
@@ -360,7 +360,7 @@ class KFilter : public Filter
       functionEventValues = new FilterAll();
     }
 
-    KFilter( Window *whichWindow ) : window( (KSingleWindow *)whichWindow )
+    KFilter( Timeline *whichWindow ) : window( (KSingleWindow *)whichWindow )
     {
       logical = true;
       physical = false;
@@ -513,7 +513,7 @@ class KFilter : public Filter
       return opTypeValue;
     }
 
-    KFilter *clone( KWindow *clonedWindow );
+    KFilter *clone( KTimeline *clonedWindow );
 
   private:
     KSingleWindow *window;

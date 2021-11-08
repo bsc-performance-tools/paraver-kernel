@@ -54,14 +54,14 @@ WindowCloneManager::~WindowCloneManager()
 #ifdef PARALLEL_ENABLED
   for( auto it : clonedWindows )
   {
-    for( vector< Window * >::iterator itWin = it.second.begin(); itWin != it.second.end(); ++itWin )
+    for( vector< Timeline * >::iterator itWin = it.second.begin(); itWin != it.second.end(); ++itWin )
       delete *itWin;
   }
 #endif
 }
 
 
-Window *WindowCloneManager::operator()( Window *originalWindow ) const
+Timeline *WindowCloneManager::operator()( Timeline *originalWindow ) const
 {
 #ifdef PARALLEL_ENABLED
   auto it = clonedWindows.find( originalWindow );
@@ -76,7 +76,7 @@ Window *WindowCloneManager::operator()( Window *originalWindow ) const
 #ifdef PARALLEL_ENABLED
 void WindowCloneManager::update( const KHistogram *whichHistogram )
 {
-  Window *tmpWindow = whichHistogram->getControlWindow();
+  Timeline *tmpWindow = whichHistogram->getControlWindow();
   if ( isClonable( tmpWindow ) )
   {
     clone( tmpWindow );
@@ -116,7 +116,7 @@ void WindowCloneManager::clear()
 }
 
 
-bool WindowCloneManager::isClonable( Window *whichWindow )
+bool WindowCloneManager::isClonable( Timeline *whichWindow )
 {
   return whichWindow->isDerivedWindow() &&
          whichWindow->getTrace()->getLevelObjects( whichWindow->getParent( 0 )->getLevel() ) !=
@@ -124,9 +124,9 @@ bool WindowCloneManager::isClonable( Window *whichWindow )
 }
 
 
-void WindowCloneManager::clone( Window *whichWindow )
+void WindowCloneManager::clone( Timeline *whichWindow )
 {
-  vector< Window * > tmpClones;
+  vector< Timeline * > tmpClones;
 
   for( int i = 0; i != omp_get_num_threads(); ++i )
     tmpClones.push_back( whichWindow->clone( true ) );
@@ -142,7 +142,7 @@ RowsTranslator::RowsTranslator( const RowsTranslator& source )
 }
 
 
-RowsTranslator::RowsTranslator( vector<KWindow *>& kwindows )
+RowsTranslator::RowsTranslator( vector<KTimeline *>& kwindows )
 {
   for ( size_t ii = 0; ii < kwindows.size() - 1; ++ii )
   {
@@ -363,39 +363,39 @@ inline TRecordTime KHistogram::getEndTime() const
 }
 
 
-inline Window *KHistogram::getControlWindow() const
+inline Timeline *KHistogram::getControlWindow() const
 {
   return controlWindow;
 }
 
 
-inline Window *KHistogram::getDataWindow() const
+inline Timeline *KHistogram::getDataWindow() const
 {
   return dataWindow;
 }
 
 
-inline Window *KHistogram::getExtraControlWindow() const
+inline Timeline *KHistogram::getExtraControlWindow() const
 {
   return xtraControlWindow;
 }
 
 
-inline void KHistogram::setControlWindow( Window *whichWindow )
+inline void KHistogram::setControlWindow( Timeline *whichWindow )
 {
-  controlWindow = ( KWindow * ) whichWindow;
+  controlWindow = ( KTimeline * ) whichWindow;
 }
 
 
-inline void KHistogram::setDataWindow( Window *whichWindow )
+inline void KHistogram::setDataWindow( Timeline *whichWindow )
 {
-  dataWindow = ( KWindow * ) whichWindow;
+  dataWindow = ( KTimeline * ) whichWindow;
 }
 
 
-inline void KHistogram::setExtraControlWindow( Window *whichWindow )
+inline void KHistogram::setExtraControlWindow( Timeline *whichWindow )
 {
-  xtraControlWindow = ( KWindow * ) whichWindow;
+  xtraControlWindow = ( KTimeline * ) whichWindow;
 }
 
 
@@ -1336,7 +1336,7 @@ void KHistogram::recursiveExecution( TRecordTime fromTime, TRecordTime toTime,
                                      ProgressController *progress,
                                      PRV_UINT16 winIndex, CalculateData *data )
 {
-  Window *currentWindow = orderedWindows[ winIndex ];
+  Timeline *currentWindow = orderedWindows[ winIndex ];
   int currentRow = 0;
 #ifndef PARALLEL_ENABLED
   int progressDelta;
@@ -1476,7 +1476,7 @@ void KHistogram::calculate( TObjectOrder iRow,
   TObjectOrder childToRow;
   TRecordTime childFromTime;
   TRecordTime childToTime;
-  Window *currentWindow = orderedWindows[ winIndex ];
+  Timeline *currentWindow = orderedWindows[ winIndex ];
 
   if ( currentWindow == controlWindow )
   {
@@ -1836,7 +1836,7 @@ TTimeUnit KHistogram::getTimeUnit() const
 }
 
 
-Window *KHistogram::getClonedWindow( Window *whichWindow ) const
+Timeline *KHistogram::getClonedWindow( Timeline *whichWindow ) const
 {
   return windowCloneManager( whichWindow );
 }

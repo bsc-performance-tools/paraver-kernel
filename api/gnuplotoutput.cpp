@@ -29,7 +29,7 @@
 
 using namespace std;
 
-void GNUPlotOutput::dumpWindow( Window *whichWindow, string& strOutputFile, ProgressController *progress )
+void GNUPlotOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, ProgressController *progress )
 {
   if( strOutputFile.rfind( string( ".gnuplot" ) ) == string::npos )
     strOutputFile += ".gnuplot";

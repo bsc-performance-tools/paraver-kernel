@@ -49,7 +49,7 @@ class Adding: public SemanticNotThread
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -109,7 +109,7 @@ class AddingSign: public SemanticNotThread
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -170,7 +170,7 @@ class Average: public SemanticNotThread
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -231,7 +231,7 @@ class Maximum: public SemanticNotThread
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -296,7 +296,7 @@ class Minimum: public SemanticNotThread
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -362,7 +362,7 @@ class Activity: public SemanticNotThread
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -428,7 +428,7 @@ class InActivity: public SemanticNotThread
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -494,7 +494,7 @@ class NotThreadMode: public SemanticNotThread
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -561,7 +561,7 @@ class ObjectI: public SemanticNotThread
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -632,7 +632,7 @@ class AddObjectsI: public SemanticNotThread
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -698,7 +698,7 @@ class ChangedValue: public SemanticNotThread
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override

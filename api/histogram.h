@@ -41,7 +41,7 @@
 
 class KernelConnection;
 class HistogramTotals;
-class Window;
+class Timeline;
 class Trace;
 
 class Histogram
@@ -61,12 +61,12 @@ class Histogram
     virtual TRecordTime getBeginTime() const = 0;
     virtual TRecordTime getEndTime() const = 0;
 
-    virtual Window *getControlWindow() const = 0;
-    virtual Window *getDataWindow() const = 0;
-    virtual Window *getExtraControlWindow() const = 0;
-    virtual void setControlWindow( Window *whichWindow ) = 0;
-    virtual void setDataWindow( Window *whichWindow ) = 0;
-    virtual void setExtraControlWindow( Window *whichWindow ) = 0;
+    virtual Timeline *getControlWindow() const = 0;
+    virtual Timeline *getDataWindow() const = 0;
+    virtual Timeline *getExtraControlWindow() const = 0;
+    virtual void setControlWindow( Timeline *whichWindow ) = 0;
+    virtual void setDataWindow( Timeline *whichWindow ) = 0;
+    virtual void setExtraControlWindow( Timeline *whichWindow ) = 0;
     virtual void clearControlWindow() = 0;
     virtual void clearDataWindow() = 0;
     virtual void clearExtraControlWindow() = 0;
@@ -647,12 +647,12 @@ class HistogramProxy : public Histogram
     virtual TRecordTime getBeginTime() const override;
     virtual TRecordTime getEndTime() const override;
     virtual Trace *getTrace() const override;
-    virtual Window *getControlWindow() const override;
-    virtual Window *getDataWindow() const override;
-    virtual Window *getExtraControlWindow() const override;
-    virtual void setControlWindow( Window *whichWindow ) override;
-    virtual void setDataWindow( Window *whichWindow ) override;
-    virtual void setExtraControlWindow( Window *whichWindow ) override;
+    virtual Timeline *getControlWindow() const override;
+    virtual Timeline *getDataWindow() const override;
+    virtual Timeline *getExtraControlWindow() const override;
+    virtual void setControlWindow( Timeline *whichWindow ) override;
+    virtual void setDataWindow( Timeline *whichWindow ) override;
+    virtual void setExtraControlWindow( Timeline *whichWindow ) override;
     virtual void clearControlWindow() override;
     virtual void clearDataWindow() override;
     virtual void clearExtraControlWindow() override;
@@ -989,9 +989,9 @@ class HistogramProxy : public Histogram
     TGroupId syncGroup;
 
     // Must store the associated proxies
-    Window *controlWindow;
-    Window *dataWindow;
-    Window *extraControlWindow;
+    Timeline *controlWindow;
+    Timeline *dataWindow;
+    Timeline *extraControlWindow;
     Trace *myTrace;
 
     bool calculateAll;

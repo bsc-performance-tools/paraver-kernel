@@ -62,9 +62,9 @@ class IntervalThread: public Interval
     virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) override;
     virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) override;
 
-    virtual KWindow *getWindow() override
+    virtual KTimeline *getWindow() override
     {
-      return ( KWindow * ) window;
+      return ( KTimeline * ) window;
     }
 
     virtual void setSemanticFunction( SemanticThread *whichFunction )

@@ -41,7 +41,7 @@ SyncWindows *SyncWindows::getInstance()
 SyncWindows::SyncWindows()
 {
   lastNewGroup = 0;
-  syncGroupsTimeline[ lastNewGroup ] = vector<Window *>();
+  syncGroupsTimeline[ lastNewGroup ] = vector<Timeline *>();
   syncGroupsHistogram[ lastNewGroup ] = vector<Histogram *>();
   removingAll = false;
 }
@@ -50,7 +50,7 @@ SyncWindows::~SyncWindows()
 {
 }
 
-bool SyncWindows::addWindow( Window *whichWindow, TGroupId whichGroup )
+bool SyncWindows::addWindow( Timeline *whichWindow, TGroupId whichGroup )
 {
   if( syncGroupsTimeline.find( whichGroup ) == syncGroupsTimeline.end() )
     return false;
@@ -98,12 +98,12 @@ bool SyncWindows::addWindow( Histogram *whichWindow, TGroupId whichGroup )
   return true;
 }
 
-void SyncWindows::removeWindow( Window *whichWindow, TGroupId whichGroup )
+void SyncWindows::removeWindow( Timeline *whichWindow, TGroupId whichGroup )
 {
   if( syncGroupsTimeline.find( whichGroup ) == syncGroupsTimeline.end() || removingAll )
     return;
 
-  for( vector<Window *>::iterator it = syncGroupsTimeline[ whichGroup ].begin();
+  for( vector<Timeline *>::iterator it = syncGroupsTimeline[ whichGroup ].begin();
        it != syncGroupsTimeline[ whichGroup ].end(); ++it )
   {
     if( *it == whichWindow )
@@ -137,7 +137,7 @@ void SyncWindows::removeAllWindows( TGroupId whichGroup )
 
   removingAll = true;
 
-  for( vector<Window *>::iterator it = syncGroupsTimeline[ whichGroup ].begin();
+  for( vector<Timeline *>::iterator it = syncGroupsTimeline[ whichGroup ].begin();
        it != syncGroupsTimeline[ whichGroup ].end(); ++it )
     (*it)->removeFromSync();
 
@@ -158,7 +158,7 @@ void SyncWindows::removeAllWindows( TGroupId whichGroup )
 
 void SyncWindows::removeAllGroups()
 {
-  for( std::map<TGroupId, std::vector<Window *> >::iterator it = syncGroupsTimeline.begin(); 
+  for( std::map<TGroupId, std::vector<Timeline *> >::iterator it = syncGroupsTimeline.begin(); 
        it != syncGroupsTimeline.end(); ++it )
     removeAllWindows( it->first );
 }
@@ -167,10 +167,10 @@ TGroupId SyncWindows::newGroup()
 {
   for( size_t i = 0; i <= lastNewGroup; ++i )
   {
-    map< TGroupId, std::vector< Window *> >::iterator it = syncGroupsTimeline.find( i );
+    map< TGroupId, std::vector< Timeline *> >::iterator it = syncGroupsTimeline.find( i );
     if( it == syncGroupsTimeline.end() )
     {
-      syncGroupsTimeline[ i ]  = vector<Window *>();
+      syncGroupsTimeline[ i ]  = vector<Timeline *>();
       syncGroupsHistogram[ i ] = vector<Histogram *>();
       return i;
     }
@@ -179,7 +179,7 @@ TGroupId SyncWindows::newGroup()
   }
 
   ++lastNewGroup;
-  syncGroupsTimeline[ lastNewGroup ]  = vector<Window *>();
+  syncGroupsTimeline[ lastNewGroup ]  = vector<Timeline *>();
   syncGroupsHistogram[ lastNewGroup ] = vector<Histogram *>();
 
   return lastNewGroup;
@@ -192,12 +192,12 @@ TGroupId SyncWindows::getNumGroups() const
 
 void SyncWindows::getGroups( vector< TGroupId >& groups ) const
 {
-  for( std::map<TGroupId, std::vector<Window *> >::const_iterator it = syncGroupsTimeline.begin();
+  for( std::map<TGroupId, std::vector<Timeline *> >::const_iterator it = syncGroupsTimeline.begin();
        it != syncGroupsTimeline.end(); ++it )
     groups.push_back( it->first );
 }
 
-void SyncWindows::broadcastTime( TGroupId whichGroup, Window *sendWindow, TTime beginTime, TTime endTime )
+void SyncWindows::broadcastTime( TGroupId whichGroup, Timeline *sendWindow, TTime beginTime, TTime endTime )
 {
   if( syncGroupsTimeline.find( whichGroup ) == syncGroupsTimeline.end() )
     return;
@@ -215,9 +215,9 @@ void SyncWindows::broadcastTime( TGroupId whichGroup, Histogram *sendWindow, TTi
   broadcastTimeHistograms( whichGroup, sendWindow, beginTime, endTime );
 }
 
-void SyncWindows::broadcastTimeTimelines( TGroupId whichGroup, Window *sendWindow, TTime beginTime, TTime endTime )
+void SyncWindows::broadcastTimeTimelines( TGroupId whichGroup, Timeline *sendWindow, TTime beginTime, TTime endTime )
 {
-  for( vector<Window *>::iterator it = syncGroupsTimeline[ whichGroup ].begin();
+  for( vector<Timeline *>::iterator it = syncGroupsTimeline[ whichGroup ].begin();
        it != syncGroupsTimeline[ whichGroup ].end(); ++it )
   {
     TTime tmpBeginTime, tmpEndTime;
@@ -263,7 +263,7 @@ void SyncWindows::getGroupTimes( TGroupId whichGroup, TTime& beginTime, TTime& e
   if( syncGroupsTimeline.find( whichGroup ) == syncGroupsTimeline.end() )
     return;
 
-  std::map<TGroupId, std::vector<Window *> >::const_iterator itTimeline = syncGroupsTimeline.find( whichGroup );
+  std::map<TGroupId, std::vector<Timeline *> >::const_iterator itTimeline = syncGroupsTimeline.find( whichGroup );
   if( (*itTimeline).second.size() > 0 )
   {
     beginTime = (*itTimeline).second[ 0 ]->traceUnitsToCustomUnits( (*itTimeline).second[ 0 ]->getWindowBeginTime(), NS );
@@ -274,7 +274,7 @@ void SyncWindows::getGroupTimes( TGroupId whichGroup, TTime& beginTime, TTime& e
   std::map<TGroupId, std::vector<Histogram *> >::const_iterator itHistogram = syncGroupsHistogram.find( whichGroup );
   if( (*itHistogram).second.size() > 0 )
   {
-    const Window *tmpControl = (*itHistogram).second[ 0 ]->getControlWindow();
+    const Timeline *tmpControl = (*itHistogram).second[ 0 ]->getControlWindow();
     beginTime = tmpControl->traceUnitsToCustomUnits( (*itHistogram).second[ 0 ]->getBeginTime(), NS );
     endTime   = tmpControl->traceUnitsToCustomUnits( (*itHistogram).second[ 0 ]->getEndTime(), NS );
     return;

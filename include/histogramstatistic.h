@@ -34,7 +34,7 @@
 #endif
 
 class KHistogram;
-class Window;
+class Timeline;
 
 struct CalculateData;
 
@@ -104,7 +104,7 @@ class StatNumSends: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *controlWin;
+    Timeline *controlWin;
 };
 
 
@@ -136,7 +136,7 @@ class StatNumReceives: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *controlWin;
+    Timeline *controlWin;
 };
 
 
@@ -168,7 +168,7 @@ class StatBytesSent: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *controlWin;
+    Timeline *controlWin;
 };
 
 
@@ -200,7 +200,7 @@ class StatBytesReceived: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *controlWin;
+    Timeline *controlWin;
 };
 
 
@@ -232,7 +232,7 @@ class StatAvgBytesSent: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *controlWin;
+    Timeline *controlWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer<1> *numComms;
 #else
@@ -269,7 +269,7 @@ class StatAvgBytesReceived: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *controlWin;
+    Timeline *controlWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer<1> *numComms;
 #else
@@ -306,7 +306,7 @@ class StatMinBytesSent: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *controlWin;
+    Timeline *controlWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer<1> *min;
 #else
@@ -343,7 +343,7 @@ class StatMinBytesReceived: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *controlWin;
+    Timeline *controlWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer<1> *min;
 #else
@@ -380,7 +380,7 @@ class StatMaxBytesSent: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *controlWin;
+    Timeline *controlWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer<1> *max;
 #else
@@ -417,7 +417,7 @@ class StatMaxBytesReceived: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *controlWin;
+    Timeline *controlWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer<1> *max;
 #else
@@ -460,7 +460,7 @@ class StatTime: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *controlWin;
+    Timeline *controlWin;
 };
 
 
@@ -495,7 +495,7 @@ class StatPercTime: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *controlWin;
+    Timeline *controlWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer<1> *rowTotal;
 #else
@@ -535,7 +535,7 @@ class StatPercTimeNotZero: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *controlWin;
+    Timeline *controlWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer<1> *rowTotal;
 #else
@@ -575,7 +575,7 @@ class StatPercTimeWindow: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *controlWin;
+    Timeline *controlWin;
 };
 
 
@@ -610,7 +610,7 @@ class StatNumBursts: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *dataWin;
+    Timeline *dataWin;
 };
 
 
@@ -645,7 +645,7 @@ class StatPercNumBursts: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *dataWin;
+    Timeline *dataWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer<1> *rowTotal;
 #else
@@ -685,7 +685,7 @@ class StatIntegral: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *dataWin;
+    Timeline *dataWin;
 };
 
 
@@ -720,7 +720,7 @@ class StatAvgValue: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *dataWin;
+    Timeline *dataWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer<1> *numValues;
 #else
@@ -760,7 +760,7 @@ class StatMaximum: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *dataWin;
+    Timeline *dataWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer<1> *max;
 #else
@@ -799,7 +799,7 @@ class StatMinimum: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *dataWin;
+    Timeline *dataWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer<1> *min;
 #else
@@ -839,8 +839,8 @@ class StatAvgBurstTime: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *controlWin;
-    Window *dataWin;
+    Timeline *controlWin;
+    Timeline *dataWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer<1> *numValues;
 #else
@@ -880,7 +880,7 @@ class StatStdevBurstTime: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *dataWin;
+    Timeline *dataWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer<1> *numValues;
     CubeBuffer<1> *qValues;
@@ -922,7 +922,7 @@ class StatAvgPerBurst: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *dataWin;
+    Timeline *dataWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer<1> *numValues;
 #else
@@ -967,7 +967,7 @@ class StatAvgValueNotZero: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *dataWin;
+    Timeline *dataWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer<1> *numValues;
 #else
@@ -1012,7 +1012,7 @@ class StatAvgPerBurstNotZero: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *dataWin;
+    Timeline *dataWin;
 #ifdef PARALLEL_ENABLED
     CubeBuffer<1> *numValues;
 #else
@@ -1058,7 +1058,7 @@ class StatNumBurstsNotZero: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *dataWin;
+    Timeline *dataWin;
 };
 
 
@@ -1094,7 +1094,7 @@ class StatSumBursts: public HistogramStatistic
 
   private:
     static std::string name;
-    Window *dataWin;
+    Timeline *dataWin;
 };
 
 class Statistics

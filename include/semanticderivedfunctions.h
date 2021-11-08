@@ -55,7 +55,7 @@ class DerivedAdd: public SemanticDerived
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -121,7 +121,7 @@ class DerivedProduct: public SemanticDerived
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -189,7 +189,7 @@ class DerivedSubstract: public SemanticDerived
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
 
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -256,7 +256,7 @@ class DerivedDivide: public SemanticDerived
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -323,7 +323,7 @@ class DerivedMaximum: public SemanticDerived
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -390,7 +390,7 @@ class DerivedMinimum: public SemanticDerived
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -457,7 +457,7 @@ class DerivedDifferent: public SemanticDerived
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -524,7 +524,7 @@ class ControlDerivedClearBy: public SemanticDerived
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override;
+    virtual void init( KTimeline *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -593,7 +593,7 @@ class ControlDerivedMaximum: public SemanticDerived
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -660,7 +660,7 @@ class ControlDerivedAdd: public SemanticDerived
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -727,7 +727,7 @@ class ControlDerivedEnumerate: public SemanticDerived
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override;
+    virtual void init( KTimeline *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -801,7 +801,7 @@ class ControlDerivedAverage: public SemanticDerived
     }
 
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override;
+    virtual void init( KTimeline *whichWindow ) override;
 
     virtual std::string getName() override
     {

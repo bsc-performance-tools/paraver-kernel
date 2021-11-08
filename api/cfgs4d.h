@@ -34,12 +34,12 @@ static const TCFGS4DGroup NO_GROUP_LINK = 0;
 typedef PRV_UINT32 TCFGS4DIndexLink;
 static const TCFGS4DIndexLink NO_INDEX_LINK = 0;
 
-class Window;
+class Timeline;
 class Histogram;
 
 struct lessWinCompare
 {
-  bool operator()( Window *win1, Window *win2 ) const;
+  bool operator()( Timeline *win1, Timeline *win2 ) const;
 };
 
 struct lessHistoCompare
@@ -47,7 +47,7 @@ struct lessHistoCompare
   bool operator()( Histogram *histo1, Histogram *histo2 ) const;
 };
 
-typedef std::set<Window *, lessWinCompare> TWindowsSet;
+typedef std::set<Timeline *, lessWinCompare> TWindowsSet;
 typedef std::set<Histogram *, lessHistoCompare> THistogramsSet;
 
 class CFGS4DPropertyWindowsList
@@ -67,15 +67,15 @@ class CFGS4DPropertyWindowsList
     void setCustomName( std::string whichName );
     std::string getCustomName() const;
 
-    void insertWindow( Window *whichWindow );
+    void insertWindow( Timeline *whichWindow );
     void insertWindow( Histogram *whichHistogram );
-    void removeWindow( Window *whichWindow );
+    void removeWindow( Timeline *whichWindow );
     void removeWindow( Histogram *whichHistogram );
     
     void getWindowList( TWindowsSet& onSet ) const;
     void getWindowList( THistogramsSet& onSet ) const;
     
-    bool existsWindow( Window *whichWindow ) const;
+    bool existsWindow( Timeline *whichWindow ) const;
     bool existsWindow( Histogram *whichHistogram ) const;
     
     size_t getListSize() const;
@@ -211,7 +211,7 @@ class CFGS4DLinkedPropertiesManager
     std::map< std::string, std::set< TCFGS4DGroup > > propertyNameToGroup;
 
     // Map containing the numeric key for every combination of Timeline+property (original name string)
-    std::map< Window *, std::map< std::string, TCFGS4DGroup > > windowPropertyToGroup;
+    std::map< Timeline *, std::map< std::string, TCFGS4DGroup > > windowPropertyToGroup;
     
     // Map containing the numeric key for every combination of Histogram+property (original name string)
     std::map< Histogram *, std::map< std::string, TCFGS4DGroup > > histogramPropertyToGroup;
@@ -219,7 +219,7 @@ class CFGS4DLinkedPropertiesManager
     TCFGS4DGroup groupCounter;
 
 
-    void insertWindowPropertyToGroup( Window *whichWindow, std::string originalName, TCFGS4DGroup whichGroup )
+    void insertWindowPropertyToGroup( Timeline *whichWindow, std::string originalName, TCFGS4DGroup whichGroup )
     {
       windowPropertyToGroup[ whichWindow ][ originalName ] = whichGroup;
     }
@@ -231,9 +231,9 @@ class CFGS4DLinkedPropertiesManager
     }
 
 
-    void getWindowLinkNames( const Window *window, std::set<std::string>& onSet ) const
+    void getWindowLinkNames( const Timeline *window, std::set<std::string>& onSet ) const
     {
-      auto itWindow = windowPropertyToGroup.find( const_cast<Window *>( window ) );
+      auto itWindow = windowPropertyToGroup.find( const_cast<Timeline *>( window ) );
       if ( itWindow != windowPropertyToGroup.end() )
       {
         for ( auto it: itWindow->second )
@@ -257,9 +257,9 @@ class CFGS4DLinkedPropertiesManager
     }
 
 
-    TCFGS4DGroup getPropertyGroup( const Window *window, const std::string originalName ) const
+    TCFGS4DGroup getPropertyGroup( const Timeline *window, const std::string originalName ) const
     {
-      auto itWindow = windowPropertyToGroup.find( const_cast<Window *>( window ) );
+      auto itWindow = windowPropertyToGroup.find( const_cast<Timeline *>( window ) );
       if ( itWindow != windowPropertyToGroup.end() )
       {
         auto itProperty = itWindow->second.find( originalName );
@@ -285,11 +285,11 @@ class CFGS4DLinkedPropertiesManager
     }
 
 
-    bool findWindowPropertyToGroup( Window *whichWindow,
+    bool findWindowPropertyToGroup( Timeline *whichWindow,
                                     std::string originalName,
                                     std::map< std::string, TCFGS4DGroup >::iterator& onGroup )
     {
-      std::map< Window *, std::map< std::string, TCFGS4DGroup > >::iterator it;
+      std::map< Timeline *, std::map< std::string, TCFGS4DGroup > >::iterator it;
       
       it = windowPropertyToGroup.find( whichWindow );
       if ( it != windowPropertyToGroup.end() )
@@ -319,7 +319,7 @@ class CFGS4DLinkedPropertiesManager
     }
 
 
-    void removeWindowPropertyToGroup( Window *whichWindow, std::map< std::string, TCFGS4DGroup >::iterator& whichGroup )
+    void removeWindowPropertyToGroup( Timeline *whichWindow, std::map< std::string, TCFGS4DGroup >::iterator& whichGroup )
     {
       windowPropertyToGroup[ whichWindow ].erase( whichGroup );
     }

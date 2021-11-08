@@ -61,7 +61,7 @@ class StateAsIs: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override;
+    virtual void init( KTimeline *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -131,7 +131,7 @@ class Useful: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override;
+    virtual void init( KTimeline *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -201,7 +201,7 @@ class StateSign: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override;
+    virtual void init( KTimeline *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -267,7 +267,7 @@ class GivenState: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override;
+    virtual void init( KTimeline *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -343,7 +343,7 @@ class InState: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override;
+    virtual void init( KTimeline *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -414,7 +414,7 @@ class NotInState: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override;
+    virtual void init( KTimeline *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -485,7 +485,7 @@ class StateRecordDuration: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override;
+    virtual void init( KTimeline *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -564,7 +564,7 @@ class LastEventType: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -629,7 +629,7 @@ class LastEventValue: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -694,7 +694,7 @@ class LastEventValueWOBursts: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -759,7 +759,7 @@ class NextEventType: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -824,7 +824,7 @@ class NextEventValue: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -890,7 +890,7 @@ class AverageNextEventValue: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -957,7 +957,7 @@ class AverageLastEventValue: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1024,7 +1024,7 @@ class GivenEventValue: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1095,7 +1095,7 @@ class InEventValue: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1161,7 +1161,7 @@ class IntervalBetweenEvents: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1227,7 +1227,7 @@ class NotInEventValue: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1295,7 +1295,7 @@ class InEventRange: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1367,7 +1367,7 @@ class EventBytes: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1432,7 +1432,7 @@ class EventSentBytes: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1499,7 +1499,7 @@ class LastTag: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1564,7 +1564,7 @@ class CommSize: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1629,7 +1629,7 @@ class CommRecvPartner: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1694,7 +1694,7 @@ class CommPartner: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1760,7 +1760,7 @@ class LastSendDuration: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1825,7 +1825,7 @@ class NextRecvDuration: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1890,7 +1890,7 @@ class LastSendSize: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -1954,7 +1954,7 @@ class SendBytesInTransit: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2019,7 +2019,7 @@ class SendMessagesInTransit: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2081,7 +2081,7 @@ class SendBandWidth: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override;
+    virtual void init( KTimeline *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -2152,7 +2152,7 @@ class RecvBytesInTransit: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2217,7 +2217,7 @@ class RecvMessagesInTransit: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2279,7 +2279,7 @@ class RecvBandWidth: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override;
+    virtual void init( KTimeline *whichWindow ) override;
 
     virtual std::string getName() override
     {
@@ -2350,7 +2350,7 @@ class RecvNegativeMessages: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2411,7 +2411,7 @@ class RecvNegativeBytes: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2476,7 +2476,7 @@ class NumberReceives: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2537,7 +2537,7 @@ class NumberReceiveBytes: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2606,7 +2606,7 @@ class ApplicationID: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2671,7 +2671,7 @@ class TaskID: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2736,7 +2736,7 @@ class ThreadID: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2801,7 +2801,7 @@ class NodeID: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2866,7 +2866,7 @@ class CPUID: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2932,7 +2932,7 @@ class InApplicationID: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -2999,7 +2999,7 @@ class InTaskID: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -3066,7 +3066,7 @@ class InThreadID: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -3133,7 +3133,7 @@ class InNodeID: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override
@@ -3200,7 +3200,7 @@ class InCPUID: public SemanticThread
       return MAXPARAM;
     }
     virtual TSemanticValue execute( const SemanticInfo *info ) override;
-    virtual void init( KWindow *whichWindow ) override
+    virtual void init( KTimeline *whichWindow ) override
     {}
 
     virtual std::string getName() override

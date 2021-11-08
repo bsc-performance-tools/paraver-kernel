@@ -37,7 +37,7 @@ TextOutput::TextOutput()
 TextOutput::~TextOutput()
 {}
 
-void TextOutput::dumpWindow( Window *whichWindow, string& strOutputFile, ProgressController *progress )
+void TextOutput::dumpWindow( Timeline *whichWindow, string& strOutputFile, ProgressController *progress )
 {
   static short int progressSteps = 0;
 

@@ -262,7 +262,7 @@ TSemanticValue StateAsIs::execute( const SemanticInfo *info )
     return myInfo->it->getState();
 }
 
-void StateAsIs::init( KWindow *whichWindow )
+void StateAsIs::init( KTimeline *whichWindow )
 {
   myWindow = ( KSingleWindow * ) whichWindow;
   fillStateGaps = myWindow->getTrace()->getFillStateGaps();
@@ -292,7 +292,7 @@ TSemanticValue Useful::execute( const SemanticInfo *info )
     return myInfo->it->getState() == RUNNING ? 1 : 0;
 }
 
-void Useful::init( KWindow *whichWindow )
+void Useful::init( KTimeline *whichWindow )
 {
   myWindow = ( KSingleWindow * ) whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
@@ -323,7 +323,7 @@ TSemanticValue StateSign::execute( const SemanticInfo *info )
     return myInfo->it->getState() != 0 ? 1 : 0;
 }
 
-void StateSign::init( KWindow *whichWindow )
+void StateSign::init( KTimeline *whichWindow )
 {
   myWindow = ( KSingleWindow * ) whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
@@ -367,7 +367,7 @@ TSemanticValue GivenState::execute( const SemanticInfo *info )
   return tmp;
 }
 
-void GivenState::init( KWindow *whichWindow )
+void GivenState::init( KTimeline *whichWindow )
 {
   myWindow = ( KSingleWindow * ) whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
@@ -413,7 +413,7 @@ TSemanticValue InState::execute( const SemanticInfo *info )
   return tmp;
 }
 
-void InState::init( KWindow *whichWindow )
+void InState::init( KTimeline *whichWindow )
 {
   myWindow = ( KSingleWindow * ) whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
@@ -459,7 +459,7 @@ TSemanticValue NotInState::execute( const SemanticInfo *info )
   return tmp;
 }
 
-void NotInState::init( KWindow *whichWindow )
+void NotInState::init( KTimeline *whichWindow )
 {
   myWindow = ( KSingleWindow * ) whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
@@ -507,7 +507,7 @@ TSemanticValue StateRecordDuration::execute( const SemanticInfo *info )
   return tmp;
 }
 
-void StateRecordDuration::init( KWindow *whichWindow )
+void StateRecordDuration::init( KTimeline *whichWindow )
 {
   myWindow = ( KSingleWindow * ) whichWindow;
   fillStateGaps = whichWindow->getTrace()->getFillStateGaps();
@@ -1162,7 +1162,7 @@ TSemanticValue SendMessagesInTransit::execute( const SemanticInfo *info )
   return msgs;
 }
 
-void SendBandWidth::init( KWindow *whichWindow )
+void SendBandWidth::init( KTimeline *whichWindow )
 {
   TObjectOrder size;
 
@@ -1369,7 +1369,7 @@ TSemanticValue RecvMessagesInTransit::execute( const SemanticInfo *info )
 }
 
 
-void RecvBandWidth::init( KWindow *whichWindow )
+void RecvBandWidth::init( KTimeline *whichWindow )
 {
   TObjectOrder size;
 

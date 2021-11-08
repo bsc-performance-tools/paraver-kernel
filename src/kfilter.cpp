@@ -577,7 +577,7 @@ bool KFilter::allowedEventValueFunctionNumParams( TFilterNumParam numParams ) co
   return functionEventValues->allowedNumParameters( numParams );
 }
 
-KFilter *KFilter::clone( KWindow *clonedWindow )
+KFilter *KFilter::clone( KTimeline *clonedWindow )
 {
   KFilter *clonedKFilter = new KFilter( clonedWindow );
 

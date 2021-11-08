@@ -270,8 +270,8 @@ KTrace *IntervalDerived::getWindowTrace() const
 
 void IntervalDerived::setChildren()
 {
-  KWindow *window1;
-  KWindow *window2;
+  KTimeline *window1;
+  KTimeline *window2;
   TApplOrder tmpAppl;
   TTaskOrder tmpTask;
   TThreadOrder tmpThread;
@@ -284,15 +284,15 @@ void IntervalDerived::setChildren()
   {
     shift1.setSemanticShift( window->getShift( 0 ) );
     shift2.setSemanticShift( window->getShift( 1 ) );
-    window1 = (KWindow *) window->getParent( 0 );
-    window2 = (KWindow *) window->getParent( 1 );
+    window1 = (KTimeline *) window->getParent( 0 );
+    window2 = (KTimeline *) window->getParent( 1 );
   }
   else
   {
     shift1.setSemanticShift( window->getShift( 1 ) );
     shift2.setSemanticShift( window->getShift( 0 ) );
-    window1 = (KWindow *) window->getParent( 1 );
-    window2 = (KWindow *) window->getParent( 0 );
+    window1 = (KTimeline *) window->getParent( 1 );
+    window2 = (KTimeline *) window->getParent( 0 );
   }
 
   if ( window1->getLevel() == APPLICATION )

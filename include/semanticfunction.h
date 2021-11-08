@@ -31,7 +31,7 @@
 #include "semanticexception.h"
 #include "semanticinfo.h"
 
-class KWindow;
+class KTimeline;
 
 class SemanticFunction
 {
@@ -79,7 +79,7 @@ class SemanticFunction
 
     virtual TSemanticValue execute( const SemanticInfo *info ) = 0;
 
-    virtual void init( KWindow *whichWindow ) = 0;
+    virtual void init( KTimeline *whichWindow ) = 0;
 
     virtual std::string getName() = 0;
 

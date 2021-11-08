@@ -45,22 +45,22 @@
 
 using namespace std;
 
-Window *Window::create( KernelConnection *whichKernel, Trace *whichTrace )
+Timeline *Timeline::create( KernelConnection *whichKernel, Trace *whichTrace )
 {
   return new WindowProxy( whichKernel, whichTrace );
 }
 
-Window *Window::create( KernelConnection *whichKernel )
+Timeline *Timeline::create( KernelConnection *whichKernel )
 {
   return new WindowProxy( whichKernel );
 }
 
-Window *Window::create( KernelConnection *whichKernel, Window *parent1, Window *parent2 )
+Timeline *Timeline::create( KernelConnection *whichKernel, Timeline *parent1, Timeline *parent2 )
 {
   return new WindowProxy( whichKernel, parent1, parent2 );
 }
 
-bool Window::compatibleLevels( Window *window1, Window *window2 )
+bool Timeline::compatibleLevels( Timeline *window1, Timeline *window2 )
 {
   return ( window1->getLevel() >= WORKLOAD && window1->getLevel() <= THREAD &&
            window2->getLevel() >= WORKLOAD && window2->getLevel() <= THREAD )
@@ -69,7 +69,7 @@ bool Window::compatibleLevels( Window *window1, Window *window2 )
            window2->getLevel() >= SYSTEM && window2->getLevel() <= CPU );
 }
 
-Window::Window( KernelConnection *whichKernel ) : myKernel( whichKernel )
+Timeline::Timeline( KernelConnection *whichKernel ) : myKernel( whichKernel )
 {}
 
 WindowProxy::WindowProxy():
@@ -83,7 +83,7 @@ WindowProxy::WindowProxy():
 }
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
-  Window( whichKernel ), myTrace( whichTrace ), myCodeColor( this )
+  Timeline( whichKernel ), myTrace( whichTrace ), myCodeColor( this )
 {
   parent1 = nullptr;
   parent2 = nullptr;
@@ -92,9 +92,9 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
   init();
 }
 
-WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
-                          Window *whichParent2 ):
-  Window( whichKernel ), myCodeColor( this )
+WindowProxy::WindowProxy( KernelConnection *whichKernel, Timeline *whichParent1,
+                          Timeline *whichParent2 ):
+  Timeline( whichKernel ), myCodeColor( this )
 {
   parent1 = whichParent1;
   parent1->setChild( this );
@@ -112,7 +112,7 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Window *whichParent1,
 }
 
 WindowProxy::WindowProxy( KernelConnection *whichKernel ):
-  Window( whichKernel ), myTrace( nullptr ), myCodeColor( this )
+  Timeline( whichKernel ), myTrace( nullptr ), myCodeColor( this )
 {
   parent1 = nullptr;
   parent2 = nullptr;
@@ -129,12 +129,12 @@ void WindowProxy::init()
   winBeginTime = 0.0;
   computeYMaxOnInit = false;
   yScaleComputed = false;
-  maximumY = Window::getMaximumY();
-  minimumY = Window::getMinimumY();
-  existSemanticZero = Window::getExistSemanticZero();
+  maximumY = Timeline::getMaximumY();
+  minimumY = Timeline::getMinimumY();
+  existSemanticZero = Timeline::getExistSemanticZero();
   semanticScaleMinAtZero = ParaverConfig::getInstance()->getTimelineSemanticScaleMinAtZero();
   colorMode = ParaverConfig::getInstance()->getTimelineColor();
-  useCustomPalette = Window::getUseCustomPalette();
+  useCustomPalette = Timeline::getUseCustomPalette();
   if( colorMode == TColorFunction::GRADIENT )
     myGradientColor.allowOutOfScale( true );
   else if( colorMode == TColorFunction::NOT_NULL_GRADIENT )
@@ -229,7 +229,7 @@ PRV_INT16 WindowProxy::getShift( PRV_UINT16 whichShift ) const
   return myWindow->getShift( whichShift );
 }
 
-void WindowProxy::setParent( PRV_UINT16 whichParent, Window *whichWindow )
+void WindowProxy::setParent( PRV_UINT16 whichParent, Timeline *whichWindow )
 {
   if ( myWindow->isDerivedWindow() )
   {
@@ -262,18 +262,18 @@ void WindowProxy::setParent( PRV_UINT16 whichParent, Window *whichWindow )
   }
 }
 
-void WindowProxy::setChild( Window *whichWindow )
+void WindowProxy::setChild( Timeline *whichWindow )
 {
   child = whichWindow;
 }
 
-Window *WindowProxy::getChild()
+Timeline *WindowProxy::getChild()
 {
   return child;
 }
 
 
-Window *WindowProxy::getParent( PRV_UINT16 whichParent ) const
+Timeline *WindowProxy::getParent( PRV_UINT16 whichParent ) const
 {
   switch ( whichParent )
   {
@@ -290,7 +290,7 @@ Window *WindowProxy::getParent( PRV_UINT16 whichParent ) const
 }
 
 
-Window *WindowProxy::clone( bool recursiveClone )
+Timeline *WindowProxy::clone( bool recursiveClone )
 {
   WindowProxy *clonedWindow = new WindowProxy();
   clonedWindow->myKernel = myKernel;
@@ -597,7 +597,7 @@ void WindowProxy::computeYScale( ProgressController *progress )
 
 
 #ifdef PARALLEL_ENABLED
-    for( vector<Window *>::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
+    for( vector<Timeline *>::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
       delete *it;
     parallelClone.clear();
 #endif // PARALLEL_ENABLED
@@ -852,7 +852,7 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create, bool update
 
 void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
-  Window *tmpMyWindow = myWindow;
+  Timeline *tmpMyWindow = myWindow;
 #ifdef PARALLEL_ENABLED
   if( parallelClone.size() > 0 )
     tmpMyWindow = parallelClone[ omp_get_thread_num() ];
@@ -878,7 +878,7 @@ void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCrea
                            int& rowComputedZeros,
                            bool updateLimits )
 {
-  Window *tmpMyWindow = myWindow;
+  Timeline *tmpMyWindow = myWindow;
 #ifdef PARALLEL_ENABLED
   if( parallelClone.size() > 0 )
     tmpMyWindow = parallelClone[ omp_get_thread_num() ];
@@ -901,7 +901,7 @@ void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCrea
 
 RecordList *WindowProxy::calcNext( TObjectOrder whichObject, bool updateLimits )
 {
-  Window *tmpMyWindow = myWindow;
+  Timeline *tmpMyWindow = myWindow;
 #ifdef PARALLEL_ENABLED
   if( parallelClone.size() > 0 )
     tmpMyWindow = parallelClone[ omp_get_thread_num() ];
@@ -930,7 +930,7 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject,
                                    int& rowComputedZeros,
                                    bool updateLimits )
 {
-  Window *tmpMyWindow = myWindow;
+  Timeline *tmpMyWindow = myWindow;
 #ifdef PARALLEL_ENABLED
   if( parallelClone.size() > 0 )
     tmpMyWindow = parallelClone[ omp_get_thread_num() ];
@@ -956,7 +956,7 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject,
 
 RecordList *WindowProxy::calcPrev( TObjectOrder whichObject, bool updateLimits )
 {
-  Window *tmpMyWindow = myWindow;
+  Timeline *tmpMyWindow = myWindow;
 #ifdef PARALLEL_ENABLED
   if( parallelClone.size() > 0 )
     tmpMyWindow = parallelClone[ omp_get_thread_num() ];
@@ -982,7 +982,7 @@ RecordList *WindowProxy::calcPrev( TObjectOrder whichObject, bool updateLimits )
 
 TRecordTime WindowProxy::getBeginTime( TObjectOrder whichObject ) const
 {
-  Window *tmpMyWindow = myWindow;
+  Timeline *tmpMyWindow = myWindow;
 #ifdef PARALLEL_ENABLED
   if( parallelClone.size() > 0 )
     tmpMyWindow = parallelClone[ omp_get_thread_num() ];
@@ -993,7 +993,7 @@ TRecordTime WindowProxy::getBeginTime( TObjectOrder whichObject ) const
 
 TRecordTime WindowProxy::getEndTime( TObjectOrder whichObject ) const
 {
-  Window *tmpMyWindow = myWindow;
+  Timeline *tmpMyWindow = myWindow;
 #ifdef PARALLEL_ENABLED
   if( parallelClone.size() > 0 )
     tmpMyWindow = parallelClone[ omp_get_thread_num() ];
@@ -1004,7 +1004,7 @@ TRecordTime WindowProxy::getEndTime( TObjectOrder whichObject ) const
 
 TSemanticValue WindowProxy::getValue( TObjectOrder whichObject ) const
 {
-  Window *tmpMyWindow = myWindow;
+  Timeline *tmpMyWindow = myWindow;
 #ifdef PARALLEL_ENABLED
   if( parallelClone.size() > 0 )
     tmpMyWindow = parallelClone[ omp_get_thread_num() ];
@@ -1053,7 +1053,7 @@ TRecordTime WindowProxy::windowUnitsToTraceUnits( TRecordTime whichTime ) const
   return myWindow->windowUnitsToTraceUnits( whichTime );
 }
 
-Window *WindowProxy::getConcrete() const
+Timeline *WindowProxy::getConcrete() const
 {
   return myWindow;
 }
@@ -1247,12 +1247,12 @@ void WindowProxy::setPixelSize( PRV_UINT16 whichSize )
   pixelSize = whichSize;
 }
 
-Window *WindowProxy::getPunctualColorWindow() const
+Timeline *WindowProxy::getPunctualColorWindow() const
 {
   return punctualColorWindow;
 }
 
-void WindowProxy::setPunctualColorWindow( Window *whichWindow )
+void WindowProxy::setPunctualColorWindow( Timeline *whichWindow )
 {
   punctualColorWindow = whichWindow;
 }
@@ -1272,7 +1272,7 @@ void WindowProxy::allowOutliers( bool activate )
   myGradientColor.allowOutliers( activate );
 }
 
-rgb WindowProxy::calcColor( TSemanticValue whichValue, Window& whichWindow )
+rgb WindowProxy::calcColor( TSemanticValue whichValue, Timeline& whichWindow )
 {
   if ( colorMode == TColorFunction::COLOR )
     return myCodeColor.calcColor( whichValue, minimumY, maximumY, useCustomPalette );
@@ -1857,7 +1857,7 @@ const vector< string > WindowProxy::getCFG4DFullTagList()
 }
 
 
-const vector< Window::TParamAliasKey > WindowProxy::getCFG4DCurrentSelectedFullParamList()
+const vector< Timeline::TParamAliasKey > WindowProxy::getCFG4DCurrentSelectedFullParamList()
 {
   vector< TParamAliasKey > retKeys;
 
@@ -1959,7 +1959,7 @@ void WindowProxy::setCFG4DParamAlias( string semanticLevel,
   paramAliasCFG4D[ key ] = paramAlias;
 }
 
-const Window::TParamAlias WindowProxy::getCFG4DParamAliasList() const
+const Timeline::TParamAlias WindowProxy::getCFG4DParamAliasList() const
 {
   return paramAliasCFG4D;
 }
@@ -1975,7 +1975,7 @@ void WindowProxy::splitCFG4DParamAliasKey( const TParamAliasKey &pk,
 }
 
 
-const Window::TParamAliasKey WindowProxy::buildCFG4DParamAliasKey( const string &semanticLevel,
+const Timeline::TParamAliasKey WindowProxy::buildCFG4DParamAliasKey( const string &semanticLevel,
                                                                    const string &function,
                                                                    const TParamIndex &numParameter ) const
 {
@@ -1984,7 +1984,7 @@ const Window::TParamAliasKey WindowProxy::buildCFG4DParamAliasKey( const string 
 }
 
 
-Window::TParamAliasKey WindowProxy::getCFG4DParamAliasKey( const TParamAlias::iterator it ) const
+Timeline::TParamAliasKey WindowProxy::getCFG4DParamAliasKey( const TParamAlias::iterator it ) const
 {
   return it->first;
 }
@@ -2002,8 +2002,8 @@ const string WindowProxy::getCFG4DParamAlias( const TParamAliasKey &pk ) const
 }
 
 
-vector< Window::TParamAliasKey > WindowProxy::getCFG4DParamKeysBySemanticLevel( string whichSemanticLevel,
-                                                                                const vector< Window::TParamAliasKey > &whichParamAliasKey ) const
+vector< Timeline::TParamAliasKey > WindowProxy::getCFG4DParamKeysBySemanticLevel( string whichSemanticLevel,
+                                                                                const vector< Timeline::TParamAliasKey > &whichParamAliasKey ) const
 {
   vector< TParamAliasKey > retKeys;
   string semanticLevel, function;
@@ -2028,7 +2028,7 @@ vector< Window::TParamAliasKey > WindowProxy::getCFG4DParamKeysBySemanticLevel( 
       splitCFG4DParamAliasKey( it->first, semanticLevel, function, numParameter );
       if ( semanticLevel == whichSemanticLevel )
       {
-        retKeys.push_back( (Window::TParamAliasKey) it->first );
+        retKeys.push_back( (Timeline::TParamAliasKey) it->first );
       }
     }
   }
@@ -2255,7 +2255,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
   }
 
 #ifdef PARALLEL_ENABLED
-  for( vector<Window *>::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
+  for( vector<Timeline *>::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
     delete *it;
   parallelClone.clear();
 #endif // PARALLEL_ENABLED
@@ -2670,7 +2670,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
   }
 
 #ifdef PARALLEL_ENABLED
-  for( vector<Window *>::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
+  for( vector<Timeline *>::iterator it = parallelClone.begin(); it != parallelClone.end(); ++it )
     delete *it;
   parallelClone.clear();
 #endif // PARALLEL_ENABLED

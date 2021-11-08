@@ -31,7 +31,7 @@
 
 class TraceEditSequence;
 class TraceOptions;
-class Window;
+class Timeline;
 
 template< bool v > struct BoolToType;
 
@@ -172,7 +172,7 @@ typedef BaseTraceEditState< TraceEditSequence * > TraceEditState;
 
 typedef DerivedTraceEditState< TraceEditSequence *, TextOutput > CSVOutputState;
 typedef DerivedTraceEditState< TraceEditSequence *, TraceOptions * > TraceOptionsState;
-typedef DerivedTraceEditState< TraceEditSequence *, Window * > CSVWindowState;
+typedef DerivedTraceEditState< TraceEditSequence *, Timeline * > CSVWindowState;
 typedef DerivedTraceEditState< TraceEditSequence *, std::vector< TTime > * > ShiftTimesState;
 typedef DerivedTraceEditState< TraceEditSequence *, std::map< TTypeValuePair, TTypeValuePair > > EventTranslationTableState;
 

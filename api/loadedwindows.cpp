@@ -45,7 +45,7 @@ LoadedWindows *LoadedWindows::getInstance()
 
 LoadedWindows::~LoadedWindows()
 {
-  for ( map<TWindowID, Window *>::iterator it = windows.begin();
+  for ( map<TWindowID, Timeline *>::iterator it = windows.begin();
         it != windows.end(); ++it )
     delete ( *it ).second;
   for ( map<TWindowID, Histogram *>::iterator it = histograms.begin();
@@ -53,7 +53,7 @@ LoadedWindows::~LoadedWindows()
     delete ( *it ).second;
 }
 
-TWindowID LoadedWindows::add( Window *whichWindow )
+TWindowID LoadedWindows::add( Timeline *whichWindow )
 {
   currentID++;
   windows[ currentID ] = whichWindow;
@@ -74,9 +74,9 @@ void LoadedWindows::eraseWindow( TWindowID id )
   windows.erase( id );
 }
 
-void LoadedWindows::eraseWindow( Window *whichWindow )
+void LoadedWindows::eraseWindow( Timeline *whichWindow )
 {
-  map<TWindowID, Window *>::iterator it;
+  map<TWindowID, Timeline *>::iterator it;
   for (  it = windows.begin(); it != windows.end(); ++it )
     if ( it->second == whichWindow )
       break;
@@ -101,7 +101,7 @@ void LoadedWindows::eraseHisto( Histogram *whichHisto )
     histograms.erase( it );
 }
 
-Window *LoadedWindows::getWindow( TWindowID id ) const
+Timeline *LoadedWindows::getWindow( TWindowID id ) const
 {
   return windows.find( id )->second;
 }
@@ -111,16 +111,16 @@ Histogram *LoadedWindows::getHisto( TWindowID id ) const
   return histograms.find( id )->second;
 }
 
-void LoadedWindows::getAll( vector<Window *>& onVector ) const
+void LoadedWindows::getAll( vector<Timeline *>& onVector ) const
 {
-  for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
+  for ( map<TWindowID, Timeline *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
     onVector.push_back( ( *it ).second );
 }
 
 void LoadedWindows::getAll( vector<TWindowID>& onVector ) const
 {
-  for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
+  for ( map<TWindowID, Timeline *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
     onVector.push_back( ( *it ).first );
 }
@@ -133,18 +133,18 @@ void LoadedWindows::getAll( vector<Histogram *>& onVector ) const
 }
 
 
-void LoadedWindows::getAll( Trace *whichTrace, vector< Window *>& onVector ) const
+void LoadedWindows::getAll( Trace *whichTrace, vector< Timeline *>& onVector ) const
 {
-  for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
+  for ( map<TWindowID, Timeline *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
     if ( ( *it ).second->getTrace() == whichTrace )
       onVector.push_back( ( *it ).second );
 }
 
 
-void LoadedWindows::getDerivedCompatible( Trace *whichTrace, vector< Window *>& onVector ) const
+void LoadedWindows::getDerivedCompatible( Trace *whichTrace, vector< Timeline *>& onVector ) const
 {
-  for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
+  for ( map<TWindowID, Timeline *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
   {  
     bool isProcessModel = ( *it ).second->isLevelProcessModel();
@@ -156,7 +156,7 @@ void LoadedWindows::getDerivedCompatible( Trace *whichTrace, vector< Window *>& 
 
 void LoadedWindows::getDerivedCompatible( Trace *whichTrace, vector<TWindowID>& onVector ) const
 {
-  for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
+  for ( map<TWindowID, Timeline *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
   {
     bool isProcessModel = ( *it ).second->isLevelProcessModel();
@@ -176,11 +176,11 @@ void LoadedWindows::getAll( Trace *whichTrace, vector< Histogram *>& onVector ) 
 
 
 // Histogram windows selection related methods
-void LoadedWindows::getValidControlWindow( Window *dataWindow,
-    Window *controlWindow,
+void LoadedWindows::getValidControlWindow( Timeline *dataWindow,
+    Timeline *controlWindow,
     vector<TWindowID>& onVector ) const
 {
-  for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
+  for ( map<TWindowID, Timeline *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
   {
     if ( LoadedWindows::validDataWindow( dataWindow, ( *it ).second )
@@ -189,11 +189,11 @@ void LoadedWindows::getValidControlWindow( Window *dataWindow,
   }
 }
 
-void LoadedWindows::getValidDataWindow( Window *controlWindow,
-                                        Window *extraWindow,
+void LoadedWindows::getValidDataWindow( Timeline *controlWindow,
+                                        Timeline *extraWindow,
                                         vector<TWindowID>& onVector ) const
 {
-  for ( map<TWindowID, Window *>::const_iterator it = windows.begin();
+  for ( map<TWindowID, Timeline *>::const_iterator it = windows.begin();
         it != windows.end(); ++it )
   {
     if ( LoadedWindows::validDataWindow( ( *it ).second, controlWindow )
@@ -202,7 +202,7 @@ void LoadedWindows::getValidDataWindow( Window *controlWindow,
   }
 }
 
-bool LoadedWindows::validDataWindow( Window *dataWindow, Window *controlWindow )
+bool LoadedWindows::validDataWindow( Timeline *dataWindow, Timeline *controlWindow )
 {
   if ( dataWindow == controlWindow )
     return true;
@@ -232,15 +232,15 @@ bool LoadedWindows::validDataWindow( Window *dataWindow, Window *controlWindow )
   return false;
 }
 
-bool LoadedWindows::validLevelDataWindow( Window *dataWindow, Window *controlWindow )
+bool LoadedWindows::validLevelDataWindow( Timeline *dataWindow, Timeline *controlWindow )
 {
   return ( dataWindow->getLevel() == controlWindow->getLevel() )
          ||
-         ( Window::compatibleLevels( dataWindow, controlWindow ) &&
+         ( Timeline::compatibleLevels( dataWindow, controlWindow ) &&
            dataWindow->getLevel() < controlWindow->getLevel() );
 }
 
-bool LoadedWindows::notInParents( Window *whichWindow, Window *inParents )
+bool LoadedWindows::notInParents( Timeline *whichWindow, Timeline *inParents )
 {
   bool result = true;
 

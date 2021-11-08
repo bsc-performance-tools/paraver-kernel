@@ -29,7 +29,7 @@
 #include <vector>
 #include "paraverkerneltypes.h"
 
-class Window;
+class Timeline;
 class Histogram;
 class Trace;
 
@@ -41,32 +41,32 @@ class LoadedWindows
     ~LoadedWindows();
 
     static LoadedWindows *getInstance();
-    static bool validDataWindow( Window *dataWindow, Window *controlWindow );
-    static bool validLevelDataWindow( Window *dataWindow, Window *controlWindow );
-    static bool notInParents( Window *whichWindow, Window *inParents );
+    static bool validDataWindow( Timeline *dataWindow, Timeline *controlWindow );
+    static bool validLevelDataWindow( Timeline *dataWindow, Timeline *controlWindow );
+    static bool notInParents( Timeline *whichWindow, Timeline *inParents );
 
-    TWindowID add( Window *whichWindow );
+    TWindowID add( Timeline *whichWindow );
     TWindowID add( Histogram *whichHisto );
     void eraseWindow( TWindowID id );
-    void eraseWindow( Window *whichWindow );
+    void eraseWindow( Timeline *whichWindow );
     void eraseHisto( TWindowID id );
     void eraseHisto( Histogram *whichHisto );
-    Window *getWindow( TWindowID id ) const;
+    Timeline *getWindow( TWindowID id ) const;
     Histogram *getHisto( TWindowID id ) const;
     bool emptyWindows() const;
     bool emptyHistograms() const;
-    void getAll( std::vector<Window *>& onVector ) const;
+    void getAll( std::vector<Timeline *>& onVector ) const;
     void getAll( std::vector<TWindowID>& onVector ) const;
 
     void getAll( std::vector<Histogram *>& onVector ) const;
-    void getAll( Trace *whichTrace, std::vector< Window *>& onVector ) const;
-    void getDerivedCompatible( Trace *whichTrace, std::vector< Window *>& onVector ) const;
+    void getAll( Trace *whichTrace, std::vector< Timeline *>& onVector ) const;
+    void getDerivedCompatible( Trace *whichTrace, std::vector< Timeline *>& onVector ) const;
     void getDerivedCompatible( Trace *whichTrace, std::vector<TWindowID>& onVector ) const;
     void getAll( Trace *whichTrace, std::vector< Histogram *>& onVector ) const;
 
     // Histogram windows selection related methods
-    void getValidControlWindow( Window *dataWindow, Window *controlWindow, std::vector<TWindowID>& onVector ) const;
-    void getValidDataWindow( Window *controlWindow, Window *extraWindow,
+    void getValidControlWindow( Timeline *dataWindow, Timeline *controlWindow, std::vector<TWindowID>& onVector ) const;
+    void getValidDataWindow( Timeline *controlWindow, Timeline *extraWindow,
                              std::vector<TWindowID>& onVector ) const;
   protected:
 
@@ -75,7 +75,7 @@ class LoadedWindows
 
     static LoadedWindows *instance;
 
-    std::map<TWindowID, Window *> windows;
+    std::map<TWindowID, Timeline *> windows;
     std::map<TWindowID, Histogram *> histograms;
     TWindowID currentID;
     TWindowID currentHistoID;

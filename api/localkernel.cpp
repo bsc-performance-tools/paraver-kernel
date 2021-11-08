@@ -243,26 +243,26 @@ string LocalKernel::getROWFileLocation( const string& traceFile ) const
 }
 
 
-Window *LocalKernel::newSingleWindow() const
+Timeline *LocalKernel::newSingleWindow() const
 {
   return new KSingleWindow();
 }
 
 
-Window *LocalKernel::newSingleWindow( Trace *whichTrace ) const
+Timeline *LocalKernel::newSingleWindow( Trace *whichTrace ) const
 {
   return new KSingleWindow( ( KTrace * ) whichTrace->getConcrete() );
 }
 
 
-Window *LocalKernel::newDerivedWindow( Window *window1, Window * window2 ) const
+Timeline *LocalKernel::newDerivedWindow( Timeline *window1, Timeline * window2 ) const
 {
-  return new KDerivedWindow( ( KWindow * ) window1->getConcrete(),
-                             ( KWindow * ) window2->getConcrete() );
+  return new KDerivedWindow( ( KTimeline * ) window1->getConcrete(),
+                             ( KTimeline * ) window2->getConcrete() );
 }
 
 
-Window *LocalKernel::newDerivedWindow() const
+Timeline *LocalKernel::newDerivedWindow() const
 {
   return new KDerivedWindow();
 }

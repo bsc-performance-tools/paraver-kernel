@@ -31,7 +31,7 @@
 using std::vector;
 using std::string;
 
-class Window;
+class Timeline;
 class Histogram;
 
 

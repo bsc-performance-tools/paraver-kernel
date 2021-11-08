@@ -170,22 +170,22 @@ Trace *HistogramProxy::getTrace() const
   return myTrace;
 }
 
-Window *HistogramProxy::getControlWindow() const
+Timeline *HistogramProxy::getControlWindow() const
 {
   return controlWindow;
 }
 
-Window *HistogramProxy::getDataWindow() const
+Timeline *HistogramProxy::getDataWindow() const
 {
   return dataWindow;
 }
 
-Window *HistogramProxy::getExtraControlWindow() const
+Timeline *HistogramProxy::getExtraControlWindow() const
 {
   return extraControlWindow;
 }
 
-void HistogramProxy::setControlWindow( Window *whichWindow )
+void HistogramProxy::setControlWindow( Timeline *whichWindow )
 {
   if( controlWindow != nullptr )
     controlWindow->unsetUsedByHistogram( this );
@@ -200,7 +200,7 @@ void HistogramProxy::setControlWindow( Window *whichWindow )
   //doubt: when I change between windows, should paraver keep my selection or use the new ctrl window ?
 }
 
-void HistogramProxy::setDataWindow( Window *whichWindow )
+void HistogramProxy::setDataWindow( Timeline *whichWindow )
 {
   if( dataWindow != nullptr )
     dataWindow->unsetUsedByHistogram( this );
@@ -209,7 +209,7 @@ void HistogramProxy::setDataWindow( Window *whichWindow )
   myHisto->setDataWindow( whichWindow->getConcrete() );
 }
 
-void HistogramProxy::setExtraControlWindow( Window *whichWindow )
+void HistogramProxy::setExtraControlWindow( Timeline *whichWindow )
 {
   if( extraControlWindow != nullptr )
     extraControlWindow->unsetUsedByHistogram( this );
@@ -1111,7 +1111,7 @@ string HistogramProxy::getColumnLabel( THistogramColumn whichColumn ) const
 
 string HistogramProxy::getPlaneLabel( THistogramColumn whichPlane ) const
 {
-  Window *win = ( extraControlWindow != nullptr ) ? extraControlWindow : controlWindow;
+  Timeline *win = ( extraControlWindow != nullptr ) ? extraControlWindow : controlWindow;
   if( win == nullptr )
     return "";
 

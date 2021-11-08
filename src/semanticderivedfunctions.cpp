@@ -145,7 +145,7 @@ TSemanticValue ControlDerivedClearBy::execute( const SemanticInfo *info )
   return result;
 }
 
-void ControlDerivedClearBy::init( KWindow *whichWindow )
+void ControlDerivedClearBy::init( KTimeline *whichWindow )
 {
   TObjectOrder size = 0;
 
@@ -211,7 +211,7 @@ TSemanticValue ControlDerivedEnumerate::execute( const SemanticInfo *info )
 }
 
 
-void ControlDerivedEnumerate::init( KWindow *whichWindow )
+void ControlDerivedEnumerate::init( KTimeline *whichWindow )
 {
   TObjectOrder size = 0;
 
@@ -259,7 +259,7 @@ TSemanticValue ControlDerivedAverage::execute( const SemanticInfo *info )
   return totalValue[ tmpOrder ] / totalTime[ tmpOrder ];
 }
 
-void ControlDerivedAverage::init( KWindow *whichWindow )
+void ControlDerivedAverage::init( KTimeline *whichWindow )
 {
   TObjectOrder size = 0;
 

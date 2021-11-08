@@ -30,7 +30,7 @@
 #include "paraverkerneltypes.h"
 #include "localkernel.h"
 
-class Window;
+class Timeline;
 
 class Filter
 {

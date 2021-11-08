@@ -29,7 +29,7 @@
 
 #include "kernelconnection.h"
 
-class KWindow;
+class KTimeline;
 class PreviousFiles;
 
 constexpr size_t MAX_TRACES_HISTORY_LENGTH = 256;
@@ -47,10 +47,10 @@ class LocalKernel: public KernelConnection
     virtual Trace *newTrace( const std::string& whichFile, bool noLoad, ProgressController *progress = nullptr ) const override;
     virtual std::string getPCFFileLocation( const std::string& traceFile ) const override;
     virtual std::string getROWFileLocation( const std::string& traceFile ) const override;
-    virtual Window *newSingleWindow() const override;
-    virtual Window *newSingleWindow( Trace *whichTrace ) const override;
-    virtual Window *newDerivedWindow() const override;
-    virtual Window *newDerivedWindow( Window *window1, Window * window2 ) const override;
+    virtual Timeline *newSingleWindow() const override;
+    virtual Timeline *newSingleWindow( Trace *whichTrace ) const override;
+    virtual Timeline *newDerivedWindow() const override;
+    virtual Timeline *newDerivedWindow( Timeline *window1, Timeline * window2 ) const override;
     virtual Histogram *newHistogram() const override;
 //    virtual RecordList *newRecordList() const;
     virtual ProgressController *newProgressController() const override;

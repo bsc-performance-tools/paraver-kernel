@@ -86,7 +86,7 @@ vector<TSequenceStates> TraceCutterAction::getStateDependencies() const
 bool TraceCutterAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
-  Window *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TSequenceStates::csvWindowState ) )->getData();
+  Timeline *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TSequenceStates::csvWindowState ) )->getData();
   TraceOptions *options = ( (TraceOptionsState *)tmpSequence->getState( TSequenceStates::traceOptionsState ) )->getData();
 
   std::string tmpSuffix = ( (OutputDirSuffixState *)tmpSequence->getState( TSequenceStates::outputDirSuffixState ) )->getData();
@@ -224,7 +224,7 @@ vector<TSequenceStates> CSVOutputAction::getStateDependencies() const
 bool CSVOutputAction::execute( std::string whichTrace )
 {
   KTraceEditSequence *tmpSequence = (KTraceEditSequence *)mySequence;
-  Window *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TSequenceStates::csvWindowState ) )->getData();
+  Timeline *tmpWindow = ( (CSVWindowState *)tmpSequence->getState( TSequenceStates::csvWindowState ) )->getData();
   std::string tmpFileName = ( (CSVFileNameState *)tmpSequence->getState( TSequenceStates::csvFileNameState ) )->getData();
   TextOutput output = ( (CSVOutputState *)tmpSequence->getState( TSequenceStates::csvOutputState ) )->getData();
 

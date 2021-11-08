@@ -40,7 +40,7 @@ class IntervalNotThread: public IntervalHigh
       function = nullptr;
     }
 
-    IntervalNotThread( KWindow *whichWindow, TWindowLevel whichLevel,
+    IntervalNotThread( KTimeline *whichWindow, TWindowLevel whichLevel,
                        TObjectOrder whichOrder ):
         IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
     {
@@ -60,13 +60,13 @@ class IntervalNotThread: public IntervalHigh
     virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) override;
     virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) override;
 
-    virtual KWindow *getWindow() override
+    virtual KTimeline *getWindow() override
     {
-      return ( KWindow * ) window;
+      return ( KTimeline * ) window;
     }
 
   protected:
-    KWindow *window;
+    KTimeline *window;
     SemanticNotThread *function;
     TCreateList createList;
 

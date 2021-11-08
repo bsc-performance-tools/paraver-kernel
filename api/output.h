@@ -28,7 +28,7 @@
 #include <string>
 #include "progresscontroller.h"
 
-class Window;
+class Timeline;
 class Histogram;
 
 enum class TOutput
@@ -45,7 +45,7 @@ class Output
     Output() {}
     virtual ~Output() {}
 
-    virtual void dumpWindow( Window *whichWindow,
+    virtual void dumpWindow( Timeline *whichWindow,
                              std::string& strOutputFile,
                              ProgressController *progress = nullptr ) = 0;
 

@@ -31,7 +31,7 @@
 #include "histogram.h"
 #include "progresscontroller.h"
 
-class Window;
+class Timeline;
 class Histogram;
 
 class TextOutput:public Output
@@ -40,7 +40,7 @@ class TextOutput:public Output
     TextOutput();
     virtual ~TextOutput();
 
-    void dumpWindow( Window *whichWindow,
+    void dumpWindow( Timeline *whichWindow,
                      std::string& strOutputFile,
                      ProgressController *progress = nullptr );
     void dumpHistogram( Histogram *whichHisto,

@@ -29,7 +29,7 @@ using std::string;
 using std::map;
 using std::set;
 
-bool lessWinCompare::operator()( Window *win1, Window *win2 ) const
+bool lessWinCompare::operator()( Timeline *win1, Timeline *win2 ) const
 {
   return win1->getName() < win2->getName();
 }
@@ -63,7 +63,7 @@ string CFGS4DPropertyWindowsList::getCustomName() const
   return customName;
 }
 
-void CFGS4DPropertyWindowsList::insertWindow( Window *whichWindow )
+void CFGS4DPropertyWindowsList::insertWindow( Timeline *whichWindow )
 {
   windows.insert( whichWindow );
 }
@@ -73,7 +73,7 @@ void CFGS4DPropertyWindowsList::insertWindow( Histogram *whichHistogram )
   histograms.insert( whichHistogram );
 }
 
-void CFGS4DPropertyWindowsList::removeWindow( Window *whichWindow )
+void CFGS4DPropertyWindowsList::removeWindow( Timeline *whichWindow )
 {
   windows.erase( whichWindow );
 }
@@ -93,7 +93,7 @@ void CFGS4DPropertyWindowsList::getWindowList( THistogramsSet& onSet ) const
   onSet = histograms;
 }
 
-bool CFGS4DPropertyWindowsList::existsWindow( Window *whichWindow ) const
+bool CFGS4DPropertyWindowsList::existsWindow( Timeline *whichWindow ) const
 {
   return windows.find( whichWindow ) != windows.end();
 }
@@ -134,7 +134,7 @@ void CFGS4DLinkedPropertiesManager::setCustomName( TCFGS4DGroup whichGroup, std:
 }
 
 
-// TODO: getCustomName using TCFGS4DGroup and maybe originalName+Window* also
+// TODO: getCustomName using TCFGS4DGroup and maybe originalName+Timeline * also
 std::string CFGS4DLinkedPropertiesManager::getCustomName( std::string originalName ) const
 {
   auto itGroup = propertyNameToGroup.find( originalName );

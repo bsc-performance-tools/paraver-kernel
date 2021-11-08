@@ -39,17 +39,17 @@
 #include "kfilter.h"
 #include "window.h"
 
-class KWindow: public Window
+class KTimeline: public Timeline
 {
   public:
-    KWindow()
+    KTimeline()
     {}
-    KWindow( Trace *whichTrace ): myTrace( (KTrace*)whichTrace )
+    KTimeline( Trace *whichTrace ): myTrace( (KTrace*)whichTrace )
     {
       timeUnit = NS;
       level = THREAD;
     }
-    virtual ~KWindow();
+    virtual ~KTimeline();
 
     virtual Filter *getFilter() const override
     {
@@ -173,7 +173,7 @@ class KWindow: public Window
     TRecordTime traceUnitsToWindowUnits( TRecordTime whichTime ) const override;
     TRecordTime windowUnitsToTraceUnits( TRecordTime whichTime ) const override;
 
-    virtual KWindow *clone( bool recursiveClone = false ) override;
+    virtual KTimeline *clone( bool recursiveClone = false ) override;
     void getGroupLabels(  PRV_UINT32 whichGroup, std::vector<std::string>& onVector ) const override;
     bool getParametersOfFunction( std::string whichFunction,
                                    PRV_UINT32 &numParameters,
@@ -198,7 +198,7 @@ class KWindow: public Window
 };
 
 
-class KSingleWindow: public KWindow
+class KSingleWindow: public KTimeline
 {
   public:
     KSingleWindow()
@@ -318,7 +318,7 @@ class KSingleWindow: public KWindow
 
     SemanticInfoType getSemanticInfoType() const override;
 
-    virtual KWindow *clone( bool recursiveClone = false ) override;
+    virtual KTimeline *clone( bool recursiveClone = false ) override;
 
   protected:
     std::vector<MemoryTrace::iterator *> recordsByTimeThread;
@@ -354,7 +354,7 @@ class KSingleWindow: public KWindow
 };
 
 
-class KDerivedWindow: public KWindow
+class KDerivedWindow: public KTimeline
 {
   public:
     KDerivedWindow()
@@ -375,7 +375,7 @@ class KDerivedWindow: public KWindow
       parents.push_back( nullptr );
     }
 
-    KDerivedWindow( Window *window1, Window *window2 )
+    KDerivedWindow( Timeline *window1, Timeline *window2 )
     {
       timeUnit = NS;
 
@@ -389,15 +389,15 @@ class KDerivedWindow: public KWindow
 
       initSemanticFunctions();
 
-      parents.push_back( (KWindow*)window1 );
-      parents.push_back( (KWindow*)window2 );
+      parents.push_back( (KTimeline *)window1 );
+      parents.push_back( (KTimeline *)window2 );
       setup( nullptr );
     }
 
     virtual ~KDerivedWindow();
 
-    virtual void setParent( PRV_UINT16 whichParent, Window *whichWindow ) override;
-    virtual Window *getParent( PRV_UINT16 whichParent ) const override;
+    virtual void setParent( PRV_UINT16 whichParent, Timeline *whichWindow ) override;
+    virtual Timeline *getParent( PRV_UINT16 whichParent ) const override;
 
     virtual void setLevel( TWindowLevel whichLevel ) override;
     virtual TWindowLevel getMinAcceptableLevel() const override;
@@ -480,10 +480,10 @@ class KDerivedWindow: public KWindow
 
     SemanticInfoType getSemanticInfoType() const override;
 
-    virtual KWindow *clone( bool recursiveClone = false ) override;
+    virtual KTimeline *clone( bool recursiveClone = false ) override;
 
   protected:
-    std::vector<KWindow *> parents;
+    std::vector<KTimeline *> parents;
     std::vector<TSemanticValue> factor;
     std::vector<PRV_INT16> shift;
 

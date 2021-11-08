@@ -38,7 +38,7 @@
 #endif
 
 class KHistogramTotals;
-class KWindow;
+class KTimeline;
 
 
 class WindowCloneManager
@@ -47,16 +47,16 @@ class WindowCloneManager
     WindowCloneManager();
     ~WindowCloneManager();
 
-    Window *operator()( Window *originalWindow ) const;
+    Timeline *operator()( Timeline *originalWindow ) const;
 #ifdef PARALLEL_ENABLED
     void update( const KHistogram *whichHistogram );
     void clear();
 
   private:
-    std::unordered_map< Window *, std::vector< Window * > > clonedWindows;
+    std::unordered_map< Timeline *, std::vector< Timeline * > > clonedWindows;
 
-    void clone( Window *whichWindow );
-    bool isClonable( Window *whichWindow );
+    void clone( Timeline *whichWindow );
+    bool isClonable( Timeline *whichWindow );
 #endif
 };
 
@@ -70,7 +70,7 @@ class RowsTranslator
         PRECOND3: windows std::vector size is 2 or 3 KWindows.
     */
     RowsTranslator( const RowsTranslator& source );
-    RowsTranslator( std::vector<KWindow *>& windows );
+    RowsTranslator( std::vector<KTimeline *>& windows );
     ~RowsTranslator();
 
     TObjectOrder globalTranslate( PRV_UINT16 winIndex,
@@ -145,12 +145,12 @@ class KHistogram : public Histogram
     TRecordTime getBeginTime() const override;
     TRecordTime getEndTime() const override;
 
-    Window *getControlWindow() const override;
-    Window *getDataWindow() const override;
-    Window *getExtraControlWindow() const override;
-    void setControlWindow( Window *whichWindow ) override;
-    void setDataWindow( Window *whichWindow ) override;
-    void setExtraControlWindow( Window *whichWindow ) override;
+    Timeline *getControlWindow() const override;
+    Timeline *getDataWindow() const override;
+    Timeline *getExtraControlWindow() const override;
+    void setControlWindow( Timeline *whichWindow ) override;
+    void setDataWindow( Timeline *whichWindow ) override;
+    void setExtraControlWindow( Timeline *whichWindow ) override;
     void clearControlWindow() override;
     void clearDataWindow() override;
     void clearExtraControlWindow() override;
@@ -257,14 +257,14 @@ class KHistogram : public Histogram
 
     virtual KHistogram *clone() override;
 
-    Window *getClonedWindow( Window *whichWindow ) const;
+    Timeline *getClonedWindow( Timeline *whichWindow ) const;
 
   protected:
 
   private:
-    KWindow *controlWindow;
-    KWindow *dataWindow;
-    KWindow *xtraControlWindow;
+    KTimeline *controlWindow;
+    KTimeline *dataWindow;
+    KTimeline *xtraControlWindow;
 
     TRecordTime beginTime;
     TRecordTime endTime;
@@ -299,7 +299,7 @@ class KHistogram : public Histogram
     std::vector<HistogramStatistic *> commStatisticFunctions;*/
     Statistics statistics;
 
-    std::vector<KWindow *> orderedWindows;
+    std::vector<KTimeline *> orderedWindows;
     RowsTranslator *rowsTranslator;
     ColumnTranslator *columnTranslator;
     ColumnTranslator *planeTranslator;

@@ -193,7 +193,7 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
 
 
 string LabelConstructor::histoColumnLabel( THistogramColumn whichColumn,
-    const Window *whichWindow,
+    const Timeline *whichWindow,
     THistogramLimit min,
     THistogramLimit max,
     THistogramLimit delta,
@@ -379,7 +379,7 @@ bool LabelConstructor::getTimeValue( const string& timeLabel,
 }
 
 
-string LabelConstructor::semanticLabel( const Window * whichWindow,
+string LabelConstructor::semanticLabel( const Timeline * whichWindow,
                                         TSemanticValue value,
                                         bool text, PRV_UINT32 precision, bool hexMode )
 {
@@ -503,7 +503,7 @@ string LabelConstructor::semanticLabel( const Window * whichWindow,
 }
 
 
-string LabelConstructor::eventLabel( Window *whichWindow,
+string LabelConstructor::eventLabel( Timeline *whichWindow,
                                      TEventType whichType,
                                      TSemanticValue whichValue,
                                      bool text )
@@ -544,7 +544,7 @@ string LabelConstructor::eventLabel( Window *whichWindow,
 }
 
 
-string LabelConstructor::eventTypeLabel( Window *whichWindow,
+string LabelConstructor::eventTypeLabel( Timeline *whichWindow,
                                          TEventType whichType,
                                          bool text )
 {
@@ -570,7 +570,7 @@ string LabelConstructor::eventTypeLabel( Window *whichWindow,
 }
 
 
-string LabelConstructor::eventValueLabel( Window *whichWindow,
+string LabelConstructor::eventValueLabel( Timeline *whichWindow,
                                           TEventType whichType,
                                           TSemanticValue whichValue,
                                           bool writeValueAsPrefix )
@@ -768,7 +768,7 @@ std::string LabelConstructor::getDataFileSuffix( const TTextFormat& format )
   return resultString;
 }
 
-std::string LabelConstructor::getCFG4DParameterOriginalName( Window *whichWindow, TWindowLevel whichLevel, TParamIndex whichParam )
+std::string LabelConstructor::getCFG4DParameterOriginalName( Timeline *whichWindow, TWindowLevel whichLevel, TParamIndex whichParam )
 {
   sstrCFGS4DOriginalName.clear();
   sstrCFGS4DOriginalName.str( "" );

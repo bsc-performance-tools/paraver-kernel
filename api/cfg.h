@@ -35,7 +35,7 @@
 #include "cfgs4d.h"
 
 class KernelConnection;
-class Window;
+class Timeline;
 class Trace;
 class Histogram;
 
@@ -53,7 +53,7 @@ class TagFunction
     virtual bool parseLine( KernelConnection *whichKernel,
                             std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms )
     {
       return false;
@@ -100,11 +100,11 @@ class CFGLoader
 
     static void loadMap();
     static void unLoadMap();
-    static void pushbackWindow( Window *whichWindow,
-                                std::vector<Window *>& allWindows );
-    static void pushbackAllWindows( const std::vector<Window *>& selected,
+    static void pushbackWindow( Timeline *whichWindow,
+                                std::vector<Timeline *>& allWindows );
+    static void pushbackAllWindows( const std::vector<Timeline *>& selected,
                                     const std::vector<Histogram *>& selectedHistos,
-                                    std::vector<Window *>& allWindows );
+                                    std::vector<Timeline *>& allWindows );
 
   public:
     static bool hasCFGExtension( const std::string& filename );
@@ -115,21 +115,21 @@ class CFGLoader
     static bool loadCFG( KernelConnection *whichKernel,
                          const std::string& filename,
                          Trace *whichTrace,
-                         std::vector<Window *>& windows,
+                         std::vector<Timeline *>& windows,
                          std::vector<Histogram *>& histograms,
                          SaveOptions &options );
     static bool saveCFG( const std::string& filename,
                          const SaveOptions& options,
-                         const std::vector<Window *>& windows,
+                         const std::vector<Timeline *>& windows,
                          const std::vector<Histogram *>& histograms,
                          const std::vector<CFGS4DLinkedPropertiesManager>& linkedProperties );
-    static int findWindow( const Window *whichWindow,
-                           const std::vector<Window *>& allWindows );
-    static int findWindowBackwards( const Window *whichWindow,
-                                    const std::vector<Window *>& allWindows,
-                                    const std::vector<Window *>::const_iterator it );
+    static int findWindow( const Timeline *whichWindow,
+                           const std::vector<Timeline *>& allWindows );
+    static int findWindowBackwards( const Timeline *whichWindow,
+                                    const std::vector<Timeline *>& allWindows,
+                                    const std::vector<Timeline *>::const_iterator it );
     // CFG4D
-    static const std::vector< std::string > getTagCFGFullList( Window *whichWindow );
+    static const std::vector< std::string > getTagCFGFullList( Timeline *whichWindow );
     static const std::vector< std::string > getTagCFGFullList( Histogram *whichHistogram );
 
     static std::string errorLine;
@@ -146,10 +146,10 @@ class WindowName: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -169,10 +169,10 @@ class WindowType: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -193,10 +193,10 @@ class WindowFactors: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -217,10 +217,10 @@ class WindowShifts: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -241,10 +241,10 @@ class WindowPositionX: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -265,10 +265,10 @@ class WindowPositionY: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -289,10 +289,10 @@ class WindowWidth: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -313,10 +313,10 @@ class WindowHeight: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -337,10 +337,10 @@ class WindowCommLines: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -361,10 +361,10 @@ class WindowFlagsEnabled: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -385,10 +385,10 @@ class WindowNonColorMode: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -409,10 +409,10 @@ class WindowColorMode: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -433,10 +433,10 @@ class WindowCustomColorEnabled: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -456,10 +456,10 @@ class WindowCustomColorPalette: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -479,10 +479,10 @@ class WindowSemanticScaleMinAtZero: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -502,10 +502,10 @@ class WindowUnits: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -526,10 +526,10 @@ class WindowOperation: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -550,10 +550,10 @@ class WindowMaximumY: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -574,10 +574,10 @@ class WindowMinimumY: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -598,11 +598,11 @@ class WindowComputeYMax: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -623,10 +623,10 @@ class WindowLevel: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -647,10 +647,10 @@ class WindowZoomObjects: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -671,11 +671,11 @@ class WindowIdentifiers: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>& allWindows,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>& allWindows,
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -696,11 +696,11 @@ class WindowScaleRelative: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -721,11 +721,11 @@ class WindowEndTimeRelative: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -746,10 +746,10 @@ class WindowObject: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -770,11 +770,11 @@ class WindowBeginTime: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -795,11 +795,11 @@ class WindowEndTime: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -820,11 +820,11 @@ class WindowStopTime: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -845,11 +845,11 @@ class WindowBeginTimeRelative: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -870,10 +870,10 @@ class WindowNumberOfRow: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -893,10 +893,10 @@ class WindowSelectedFunctions: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -917,10 +917,10 @@ class WindowComposeFunctions: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -941,10 +941,10 @@ class WindowSemanticModule: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -965,10 +965,10 @@ class WindowFilterModule: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -989,10 +989,10 @@ class WindowFilterLogical: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -1013,10 +1013,10 @@ class WindowFilterPhysical: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -1037,10 +1037,10 @@ class WindowFilterBoolOpFromTo: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -1061,10 +1061,10 @@ class WindowFilterBoolOpTagSize: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -1085,10 +1085,10 @@ class WindowFilterBoolOpTypeVal: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -1109,10 +1109,10 @@ class WindowOpen: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -1133,10 +1133,10 @@ class WindowDrawMode: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -1157,10 +1157,10 @@ class WindowDrawModeRows: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -1181,10 +1181,10 @@ class WindowPixelSize: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -1204,10 +1204,10 @@ class WindowLabelsToDraw: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -1227,11 +1227,11 @@ class WindowPunctualColorWindow: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>& allWindows,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>& allWindows,
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -1251,10 +1251,10 @@ class WindowSynchronize: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>::const_iterator it );
+                           const std::vector<Timeline *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
 
@@ -1275,7 +1275,7 @@ class Analyzer2DCreate: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1299,7 +1299,7 @@ class Analyzer2DName: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1323,7 +1323,7 @@ class Analyzer2DX: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1347,7 +1347,7 @@ class Analyzer2DY: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1371,7 +1371,7 @@ class Analyzer2DWidth: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1395,7 +1395,7 @@ class Analyzer2DHeight: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1419,10 +1419,10 @@ class Analyzer2DControlWindow: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>& allWindows,
+                           const std::vector<Timeline *>& allWindows,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1444,10 +1444,10 @@ class Analyzer2DDataWindow: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>& allWindows,
+                           const std::vector<Timeline *>& allWindows,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -1469,7 +1469,7 @@ class Analyzer2DStatistic: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1493,7 +1493,7 @@ class Analyzer2DCalculateAll: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1517,7 +1517,7 @@ class Analyzer2DHideColumns: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1541,7 +1541,7 @@ class Analyzer2DHorizontal: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1565,7 +1565,7 @@ class Analyzer2DColor: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1589,7 +1589,7 @@ class Analyzer2DSemanticColor: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1613,7 +1613,7 @@ class Analyzer2DZoom: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1637,7 +1637,7 @@ class Analyzer2DAccumulator: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1661,7 +1661,7 @@ class Analyzer2DAccumulateByControlWindow: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1685,7 +1685,7 @@ class Analyzer2DSortCols: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1709,7 +1709,7 @@ class Analyzer2DSortCriteria: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1733,7 +1733,7 @@ class Analyzer2DSortReverse: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1757,7 +1757,7 @@ class Analyzer2DParameters: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1781,7 +1781,7 @@ class Analyzer2DAnalysisLimits: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
@@ -1806,7 +1806,7 @@ class Analyzer2DRelativeTime: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1830,7 +1830,7 @@ class Analyzer2DComputeYScale: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
@@ -1854,7 +1854,7 @@ class Analyzer2DComputeYScaleZero: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
@@ -1878,7 +1878,7 @@ class Analyzer2DMinimum: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1902,7 +1902,7 @@ class Analyzer2DMaximum: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1926,7 +1926,7 @@ class Analyzer2DDelta: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1950,7 +1950,7 @@ class Analyzer2DComputeGradient: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
@@ -1974,7 +1974,7 @@ class Analyzer2DMinimumGradient: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -1998,7 +1998,7 @@ class Analyzer2DMaximumGradient: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -2021,7 +2021,7 @@ class Analyzer2DObjects: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -2044,7 +2044,7 @@ class Analyzer2DDrawModeObjects: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -2067,7 +2067,7 @@ class Analyzer2DDrawModeColumns: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -2090,7 +2090,7 @@ class Analyzer2DPixelSize: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -2113,7 +2113,7 @@ class Analyzer2DCodeColor: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -2137,7 +2137,7 @@ class Analyzer2DColorMode: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -2161,7 +2161,7 @@ class Analyzer2DOnlyTotals: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -2185,7 +2185,7 @@ class Analyzer2DShortLabels: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -2208,7 +2208,7 @@ class Analyzer2DSynchronize: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -2232,10 +2232,10 @@ class Analyzer3DControlWindow: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
-                           const std::vector<Window *>& allWindows,
+                           const std::vector<Timeline *>& allWindows,
                            const std::vector<Histogram *>::const_iterator it );
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2257,7 +2257,7 @@ class Analyzer3DComputeYScale: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const SaveOptions& options,
@@ -2282,7 +2282,7 @@ class Analyzer3DMinimum: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -2306,7 +2306,7 @@ class Analyzer3DMaximum: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -2330,7 +2330,7 @@ class Analyzer3DDelta: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -2354,7 +2354,7 @@ class Analyzer3DFixedValue: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
     static void printLine( std::ofstream& cfgFile,
                            const std::vector<Histogram *>::const_iterator it );
@@ -2377,13 +2377,13 @@ class TagAliasCFG4D: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
 
     static const std::string &getTagCFG() { return tagCFG; }
 
     static void printAliasList( std::ofstream& cfgFile,
-                                const std::vector<Window *>::const_iterator it );
+                                const std::vector<Timeline *>::const_iterator it );
     static void printAliasList( std::ofstream& cfgFile,
                                 const std::vector<Histogram *>::const_iterator it );
 
@@ -2403,7 +2403,7 @@ class TagLinkCFG4D: public TagFunction
     virtual bool parseLine( KernelConnection *whichKernel,
                             std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2437,7 +2437,7 @@ class TagAliasStatisticCFG4D: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
 
     static const std::string &getTagCFG() { return tagCFG; }
@@ -2460,13 +2460,13 @@ class TagAliasParamCFG4D: public TagFunction
     {}
     virtual bool parseLine( KernelConnection *whichKernel, std::istringstream& line,
                             Trace *whichTrace,
-                            std::vector<Window *>& windows,
+                            std::vector<Timeline *>& windows,
                             std::vector<Histogram *>& histograms ) override;
 
     static const std::string &getTagCFG() { return tagCFG; }
 
     static void printAliasList( std::ofstream& cfgFile,
-                                const std::vector<Window *>::const_iterator it );
+                                const std::vector<Timeline *>::const_iterator it );
 
   protected:
     static std::string tagCFG;

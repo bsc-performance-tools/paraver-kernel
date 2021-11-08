@@ -64,7 +64,7 @@ class LabelConstructor
                                bool showRowText = true );
 
     static std::string histoColumnLabel( THistogramColumn whichColumn,
-                                    const Window *whichWindow,
+                                    const Timeline *whichWindow,
                                     THistogramLimit min,
                                     THistogramLimit max,
                                     THistogramLimit delta,
@@ -80,19 +80,19 @@ class LabelConstructor
 
     static std::string timeLabel( ptime value, PRV_UINT32 precision );
 
-    static std::string semanticLabel( const Window * whichWindow, TSemanticValue value,
+    static std::string semanticLabel( const Timeline * whichWindow, TSemanticValue value,
                                  bool text, PRV_UINT32 precision, bool hexMode );
 
-    static std::string eventLabel( Window *whichWindow,
+    static std::string eventLabel( Timeline *whichWindow,
                                    TEventType whichType,
                                    TSemanticValue whichValue,
                                    bool text );
  
-    static std::string eventTypeLabel( Window *whichWindow,
+    static std::string eventTypeLabel( Timeline *whichWindow,
                                   TEventType whichType,
                                   bool text );
 
-    static std::string eventValueLabel( Window *whichWindow,
+    static std::string eventValueLabel( Timeline *whichWindow,
                                    TEventType whichType,
                                    TSemanticValue whichValue,
                                    bool writeValueAsPrefix = false );
@@ -111,7 +111,7 @@ class LabelConstructor
     static std::string getImageFileSuffix( const TImageFormat& format =  TImageFormat::PNG );
     static std::string getDataFileSuffix( const TTextFormat& format = TTextFormat::PLAIN );
 
-    static std::string getCFG4DParameterOriginalName( Window *whichWindow, TWindowLevel whichLevel, TParamIndex whichParam );
+    static std::string getCFG4DParameterOriginalName( Timeline *whichWindow, TWindowLevel whichLevel, TParamIndex whichParam );
 
     static void presetBaseFormat( std::stringstream &whichStream,
                                   PRV_UINT32 precision = PERCENT_PRECISION );

@@ -29,7 +29,7 @@
 #include "intervalshift.h"
 #include "semanticderived.h"
 
-class KWindow;
+class KTimeline;
 class KDerivedWindow;
 class SemanticDerived;
 
@@ -48,9 +48,9 @@ class IntervalDerived: public IntervalHigh
     virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) override;
     virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) override;
 
-    virtual KWindow *getWindow() override
+    virtual KTimeline *getWindow() override
     {
-      return ( KWindow * ) window;
+      return ( KTimeline * ) window;
     }
 
   protected:

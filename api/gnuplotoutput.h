@@ -33,7 +33,7 @@ class GNUPlotOutput: public Output
     GNUPlotOutput() {}
     virtual ~GNUPlotOutput() {}
 
-    virtual void dumpWindow( Window *whichWindow,
+    virtual void dumpWindow( Timeline *whichWindow,
                              std::string& strOutputFile,
                              ProgressController *progress = nullptr ) override;
     virtual void dumpHistogram( Histogram *whichHisto,
