@@ -826,10 +826,10 @@ class Timeline
 };
 
 
-class WindowProxy: public Timeline
+class TimelineProxy: public Timeline
 {
   public:
-    virtual ~WindowProxy();
+    virtual ~TimelineProxy();
 
     // Specific for WindowProxy because Single and Derived window
     // SingleWindow
@@ -1244,12 +1244,12 @@ class WindowProxy: public Timeline
     TCFGS4DIndexLink globalIndexLink;
 
     // For Clone
-    WindowProxy();
+    TimelineProxy();
     // For Single Timeline
-    WindowProxy( KernelConnection *whichKernel, Trace *whichTrace );
+    TimelineProxy( KernelConnection *whichKernel, Trace *whichTrace );
     // For Derived Timeline
-    WindowProxy( KernelConnection *whichKernel );
-    WindowProxy( KernelConnection *whichKernel, Timeline *whichParent1,
+    TimelineProxy( KernelConnection *whichKernel );
+    TimelineProxy( KernelConnection *whichKernel, Timeline *whichParent1,
                  Timeline *whichParent2 );
 
     int number_of_clones;

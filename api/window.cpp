@@ -47,17 +47,17 @@ using namespace std;
 
 Timeline *Timeline::create( KernelConnection *whichKernel, Trace *whichTrace )
 {
-  return new WindowProxy( whichKernel, whichTrace );
+  return new TimelineProxy( whichKernel, whichTrace );
 }
 
 Timeline *Timeline::create( KernelConnection *whichKernel )
 {
-  return new WindowProxy( whichKernel );
+  return new TimelineProxy( whichKernel );
 }
 
 Timeline *Timeline::create( KernelConnection *whichKernel, Timeline *parent1, Timeline *parent2 )
 {
-  return new WindowProxy( whichKernel, parent1, parent2 );
+  return new TimelineProxy( whichKernel, parent1, parent2 );
 }
 
 bool Timeline::compatibleLevels( Timeline *window1, Timeline *window2 )
@@ -72,7 +72,7 @@ bool Timeline::compatibleLevels( Timeline *window1, Timeline *window2 )
 Timeline::Timeline( KernelConnection *whichKernel ) : myKernel( whichKernel )
 {}
 
-WindowProxy::WindowProxy():
+TimelineProxy::TimelineProxy():
   myCodeColor( this )
 {
   parent1 = nullptr;
@@ -82,7 +82,7 @@ WindowProxy::WindowProxy():
   init();
 }
 
-WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
+TimelineProxy::TimelineProxy( KernelConnection *whichKernel, Trace *whichTrace ):
   Timeline( whichKernel ), myTrace( whichTrace ), myCodeColor( this )
 {
   parent1 = nullptr;
@@ -92,7 +92,7 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Trace *whichTrace ):
   init();
 }
 
-WindowProxy::WindowProxy( KernelConnection *whichKernel, Timeline *whichParent1,
+TimelineProxy::TimelineProxy( KernelConnection *whichKernel, Timeline *whichParent1,
                           Timeline *whichParent2 ):
   Timeline( whichKernel ), myCodeColor( this )
 {
@@ -111,7 +111,7 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel, Timeline *whichParent1,
   init();
 }
 
-WindowProxy::WindowProxy( KernelConnection *whichKernel ):
+TimelineProxy::TimelineProxy( KernelConnection *whichKernel ):
   Timeline( whichKernel ), myTrace( nullptr ), myCodeColor( this )
 {
   parent1 = nullptr;
@@ -121,7 +121,7 @@ WindowProxy::WindowProxy( KernelConnection *whichKernel ):
   init();
 }
 
-void WindowProxy::init()
+void TimelineProxy::init()
 {
   ready = false;
   destroy = false;
@@ -176,7 +176,7 @@ void WindowProxy::init()
   globalIndexLink = 0;
 }
 
-WindowProxy::~WindowProxy()
+TimelineProxy::~TimelineProxy()
 {
   if ( !myWindow->isDerivedWindow() && myFilter != nullptr )
     delete myFilter;
@@ -192,14 +192,14 @@ WindowProxy::~WindowProxy()
   }
 }
 
-Filter *WindowProxy::getFilter() const
+Filter *TimelineProxy::getFilter() const
 {
   if ( myWindow->isDerivedWindow() )
     return parent1->getFilter();
   return myFilter;
 }
 
-void WindowProxy::setFactor( PRV_UINT16 whichFactor, TSemanticValue newValue )
+void TimelineProxy::setFactor( PRV_UINT16 whichFactor, TSemanticValue newValue )
 {
   if ( myWindow->isDerivedWindow() )
   {
@@ -209,12 +209,12 @@ void WindowProxy::setFactor( PRV_UINT16 whichFactor, TSemanticValue newValue )
   }
 }
 
-TSemanticValue WindowProxy::getFactor( PRV_UINT16 whichFactor ) const
+TSemanticValue TimelineProxy::getFactor( PRV_UINT16 whichFactor ) const
 {
   return myWindow->getFactor( whichFactor );
 }
 
-void WindowProxy::setShift( PRV_UINT16 whichShift, TSemanticValue newValue )
+void TimelineProxy::setShift( PRV_UINT16 whichShift, TSemanticValue newValue )
 {
   if ( myWindow->isDerivedWindow() )
   {
@@ -224,12 +224,12 @@ void WindowProxy::setShift( PRV_UINT16 whichShift, TSemanticValue newValue )
   }
 }
 
-PRV_INT16 WindowProxy::getShift( PRV_UINT16 whichShift ) const
+PRV_INT16 TimelineProxy::getShift( PRV_UINT16 whichShift ) const
 {
   return myWindow->getShift( whichShift );
 }
 
-void WindowProxy::setParent( PRV_UINT16 whichParent, Timeline *whichWindow )
+void TimelineProxy::setParent( PRV_UINT16 whichParent, Timeline *whichWindow )
 {
   if ( myWindow->isDerivedWindow() )
   {
@@ -262,18 +262,18 @@ void WindowProxy::setParent( PRV_UINT16 whichParent, Timeline *whichWindow )
   }
 }
 
-void WindowProxy::setChild( Timeline *whichWindow )
+void TimelineProxy::setChild( Timeline *whichWindow )
 {
   child = whichWindow;
 }
 
-Timeline *WindowProxy::getChild()
+Timeline *TimelineProxy::getChild()
 {
   return child;
 }
 
 
-Timeline *WindowProxy::getParent( PRV_UINT16 whichParent ) const
+Timeline *TimelineProxy::getParent( PRV_UINT16 whichParent ) const
 {
   switch ( whichParent )
   {
@@ -290,9 +290,9 @@ Timeline *WindowProxy::getParent( PRV_UINT16 whichParent ) const
 }
 
 
-Timeline *WindowProxy::clone( bool recursiveClone )
+Timeline *TimelineProxy::clone( bool recursiveClone )
 {
-  WindowProxy *clonedWindow = new WindowProxy();
+  TimelineProxy *clonedWindow = new TimelineProxy();
   clonedWindow->myKernel = myKernel;
   clonedWindow->myTrace  = myTrace;
   clonedWindow->myWindow = myWindow->clone();
@@ -370,7 +370,7 @@ Timeline *WindowProxy::clone( bool recursiveClone )
 }
 
 
-bool WindowProxy::getShowProgressBar() const
+bool TimelineProxy::getShowProgressBar() const
 {
   if ( !myWindow->isDerivedWindow() )
     return myTrace->getShowProgressBar();
@@ -379,84 +379,84 @@ bool WindowProxy::getShowProgressBar() const
 }
 
 
-void WindowProxy::setDestroy( bool newValue )
+void TimelineProxy::setDestroy( bool newValue )
 {
   destroy = newValue;
 }
 
 
-bool WindowProxy::getDestroy() const
+bool TimelineProxy::getDestroy() const
 {
   return destroy;
 }
 
 
-void WindowProxy::setReady( bool newValue )
+void TimelineProxy::setReady( bool newValue )
 {
   ready = newValue;
 }
 
 
-bool WindowProxy::getReady() const
+bool TimelineProxy::getReady() const
 {
   return ready;
 }
 
 
-void WindowProxy::setUsedByHistogram( Histogram *whichHisto )
+void TimelineProxy::setUsedByHistogram( Histogram *whichHisto )
 {
   usedByHistogram.insert( whichHisto );
 }
 
 
-void WindowProxy::unsetUsedByHistogram( Histogram *whichHisto )
+void TimelineProxy::unsetUsedByHistogram( Histogram *whichHisto )
 {
   usedByHistogram.erase( whichHisto );
 }
 
 
-bool WindowProxy::getUsedByHistogram() const
+bool TimelineProxy::getUsedByHistogram() const
 {
   return usedByHistogram.size() > 0;
 }
 
 
-set<Histogram *> WindowProxy::getHistograms() const
+set<Histogram *> TimelineProxy::getHistograms() const
 {
   return usedByHistogram;
 }
 
 
-void WindowProxy::setWindowBeginTime( TRecordTime whichTime, bool isBroadcast )
+void TimelineProxy::setWindowBeginTime( TRecordTime whichTime, bool isBroadcast )
 {
   winBeginTime = whichTime;
   if( sync && !isBroadcast )
     SyncWindows::getInstance()->broadcastTime( syncGroup, this, winBeginTime, winEndTime );
 }
 
-void WindowProxy::setWindowEndTime( TRecordTime whichTime, bool isBroadcast )
+void TimelineProxy::setWindowEndTime( TRecordTime whichTime, bool isBroadcast )
 {
   winEndTime = whichTime;
   if( sync && !isBroadcast )
     SyncWindows::getInstance()->broadcastTime( syncGroup, this, winBeginTime, winEndTime );
 }
 
-TRecordTime WindowProxy::getWindowBeginTime() const
+TRecordTime TimelineProxy::getWindowBeginTime() const
 {
   return winBeginTime;
 }
 
-TRecordTime WindowProxy::getWindowEndTime() const
+TRecordTime TimelineProxy::getWindowEndTime() const
 {
   return winEndTime;
 }
 
-bool WindowProxy::getYScaleComputed() const
+bool TimelineProxy::getYScaleComputed() const
 {
   return yScaleComputed;
 }
 
-void WindowProxy::computeYScaleMin()
+void TimelineProxy::computeYScaleMin()
 {
   if ( !yScaleComputed )
   {
@@ -478,7 +478,7 @@ void WindowProxy::computeYScaleMin()
   minimumY = computedMinY;
 }
 
-void WindowProxy::computeYScaleMax()
+void TimelineProxy::computeYScaleMax()
 {
   if ( !yScaleComputed )
   {
@@ -500,7 +500,7 @@ void WindowProxy::computeYScaleMax()
   maximumY = computedMaxY;
 }
 
-void WindowProxy::computeYScale( ProgressController *progress )
+void TimelineProxy::computeYScale( ProgressController *progress )
 {
   vector< TSemanticValue > tmpComputedMaxY;
   vector< TSemanticValue > tmpComputedMinY;
@@ -613,27 +613,27 @@ void WindowProxy::computeYScale( ProgressController *progress )
   existSemanticZero = computedZeros;
 }
 
-void WindowProxy::setComputeYMaxOnInit( bool newValue )
+void TimelineProxy::setComputeYMaxOnInit( bool newValue )
 {
   computeYMaxOnInit = newValue;
 }
 
-bool WindowProxy::getComputeYMaxOnInit() const
+bool TimelineProxy::getComputeYMaxOnInit() const
 {
   return computeYMaxOnInit;
 }
 
-void WindowProxy::setMaximumY( TSemanticValue whichMax )
+void TimelineProxy::setMaximumY( TSemanticValue whichMax )
 {
   maximumY = whichMax;
 }
 
-void WindowProxy::setMinimumY( TSemanticValue whichMin )
+void TimelineProxy::setMinimumY( TSemanticValue whichMin )
 {
   minimumY = whichMin;
 }
 
-TSemanticValue WindowProxy::getMaximumY()
+TSemanticValue TimelineProxy::getMaximumY()
 {
   if ( computeYMaxOnInit )
   {
@@ -643,7 +643,7 @@ TSemanticValue WindowProxy::getMaximumY()
   return maximumY;
 }
 
-TSemanticValue WindowProxy::getMinimumY()
+TSemanticValue TimelineProxy::getMinimumY()
 {
   if ( computeYMaxOnInit )
   {
@@ -653,22 +653,22 @@ TSemanticValue WindowProxy::getMinimumY()
   return minimumY;
 }
 
-bool WindowProxy::getExistSemanticZero() const
+bool TimelineProxy::getExistSemanticZero() const
 {
   return existSemanticZero;
 }
 
-Trace *WindowProxy::getTrace() const
+Trace *TimelineProxy::getTrace() const
 {
   return myTrace;
 }
 
-TWindowLevel WindowProxy::getLevel() const
+TWindowLevel TimelineProxy::getLevel() const
 {
   return myWindow->getLevel();
 }
 
-void WindowProxy::setLevel( TWindowLevel whichLevel )
+void TimelineProxy::setLevel( TWindowLevel whichLevel )
 {
   if ( whichLevel == myWindow->getLevel() )
     return;
@@ -680,34 +680,34 @@ void WindowProxy::setLevel( TWindowLevel whichLevel )
   zoomHistory.addZoom( winBeginTime, winEndTime, 0, getWindowLevelObjects() - 1 );
 }
 
-bool WindowProxy::isLevelProcessModel() const
+bool TimelineProxy::isLevelProcessModel() const
 {
   return getLevel() >= WORKLOAD && getLevel() <= THREAD;
 }
 
-TWindowLevel WindowProxy::getMinAcceptableLevel() const
+TWindowLevel TimelineProxy::getMinAcceptableLevel() const
 {
   return myWindow->getMinAcceptableLevel();
 }
 
-void WindowProxy::setTimeUnit( TTimeUnit whichUnit )
+void TimelineProxy::setTimeUnit( TTimeUnit whichUnit )
 {
   yScaleComputed = false;
 
   myWindow->setTimeUnit( whichUnit );
 }
 
-TTimeUnit WindowProxy::getTimeUnit() const
+TTimeUnit TimelineProxy::getTimeUnit() const
 {
   return myWindow->getTimeUnit();
 }
 
-TWindowLevel WindowProxy::getComposeLevel( TWindowLevel whichLevel ) const
+TWindowLevel TimelineProxy::getComposeLevel( TWindowLevel whichLevel ) const
 {
   return myWindow->getComposeLevel( whichLevel );
 }
 
-bool WindowProxy::setLevelFunction( TWindowLevel whichLevel,
+bool TimelineProxy::setLevelFunction( TWindowLevel whichLevel,
                                     const string& whichFunction )
 {
   bool result = myWindow->setLevelFunction( whichLevel, whichFunction );
@@ -717,22 +717,22 @@ bool WindowProxy::setLevelFunction( TWindowLevel whichLevel,
   return result;
 }
 
-string WindowProxy::getLevelFunction( TWindowLevel whichLevel )
+string TimelineProxy::getLevelFunction( TWindowLevel whichLevel )
 {
   return myWindow->getLevelFunction( whichLevel );
 }
 
-string WindowProxy::getFirstUsefulFunction( )
+string TimelineProxy::getFirstUsefulFunction( )
 {
   return myWindow->getFirstUsefulFunction();
 }
 
-TWindowLevel WindowProxy::getFirstFreeCompose() const
+TWindowLevel TimelineProxy::getFirstFreeCompose() const
 {
   return myWindow->getFirstFreeCompose();
 }
 
-void WindowProxy::setFunctionParam( TWindowLevel whichLevel,
+void TimelineProxy::setFunctionParam( TWindowLevel whichLevel,
                                     TParamIndex whichParam,
                                     const TParamValue& newValue )
 {
@@ -741,53 +741,53 @@ void WindowProxy::setFunctionParam( TWindowLevel whichLevel,
   myWindow->setFunctionParam( whichLevel, whichParam, newValue );
 }
 
-TParamIndex WindowProxy::getFunctionNumParam( TWindowLevel whichLevel ) const
+TParamIndex TimelineProxy::getFunctionNumParam( TWindowLevel whichLevel ) const
 {
   return myWindow->getFunctionNumParam( whichLevel );
 }
 
-TParamValue WindowProxy::getFunctionParam( TWindowLevel whichLevel,
+TParamValue TimelineProxy::getFunctionParam( TWindowLevel whichLevel,
     TParamIndex whichParam ) const
 {
   return myWindow->getFunctionParam( whichLevel, whichParam );
 }
 
-string WindowProxy::getFunctionParamName( TWindowLevel whichLevel,
+string TimelineProxy::getFunctionParamName( TWindowLevel whichLevel,
     TParamIndex whichParam ) const
 {
   return myWindow->getFunctionParamName( whichLevel, whichParam );
 }
 
 // Extra composes
-void WindowProxy::addExtraCompose( TWindowLevel whichLevel )
+void TimelineProxy::addExtraCompose( TWindowLevel whichLevel )
 {
   myWindow->addExtraCompose( whichLevel );
 }
 
-void WindowProxy::removeExtraCompose( TWindowLevel whichLevel )
+void TimelineProxy::removeExtraCompose( TWindowLevel whichLevel )
 {
   myWindow->removeExtraCompose( whichLevel );
 }
 
-size_t WindowProxy::getExtraNumPositions( TWindowLevel whichLevel ) const
+size_t TimelineProxy::getExtraNumPositions( TWindowLevel whichLevel ) const
 {
   return myWindow->getExtraNumPositions( whichLevel );
 }
 
-bool WindowProxy::setExtraLevelFunction( TWindowLevel whichLevel,
+bool TimelineProxy::setExtraLevelFunction( TWindowLevel whichLevel,
                                          size_t whichPosition,
                                          const string& whichFunction )
 {
   return myWindow->setExtraLevelFunction( whichLevel, whichPosition, whichFunction );
 }
 
-string WindowProxy::getExtraLevelFunction( TWindowLevel whichLevel,
+string TimelineProxy::getExtraLevelFunction( TWindowLevel whichLevel,
                                            size_t whichPosition )
 {
   return myWindow->getExtraLevelFunction( whichLevel, whichPosition );
 }
 
-void WindowProxy::setExtraFunctionParam( TWindowLevel whichLevel,
+void TimelineProxy::setExtraFunctionParam( TWindowLevel whichLevel,
                                          size_t whichPosition,
                                          TParamIndex whichParam,
                                          const TParamValue& newValue )
@@ -795,19 +795,19 @@ void WindowProxy::setExtraFunctionParam( TWindowLevel whichLevel,
   myWindow->setExtraFunctionParam( whichLevel, whichPosition, whichParam, newValue );
 }
 
-TParamIndex WindowProxy::getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const
+TParamIndex TimelineProxy::getExtraFunctionNumParam( TWindowLevel whichLevel, size_t whichPosition ) const
 {
   return myWindow->getExtraFunctionNumParam( whichLevel, whichPosition );
 }
 
-TParamValue WindowProxy::getExtraFunctionParam( TWindowLevel whichLevel,
+TParamValue TimelineProxy::getExtraFunctionParam( TWindowLevel whichLevel,
                                                 size_t whichPosition,
                                                 TParamIndex whichParam ) const
 {
   return myWindow->getExtraFunctionParam( whichLevel, whichPosition, whichParam );
 }
 
-string WindowProxy::getExtraFunctionParamName( TWindowLevel whichLevel,
+string TimelineProxy::getExtraFunctionParamName( TWindowLevel whichLevel,
                                                size_t whichPosition,
                                                TParamIndex whichParam ) const
 {
@@ -815,14 +815,14 @@ string WindowProxy::getExtraFunctionParamName( TWindowLevel whichLevel,
 }
 
 
-RecordList *WindowProxy::getRecordList( TObjectOrder whichObject )
+RecordList *TimelineProxy::getRecordList( TObjectOrder whichObject )
 {
   if ( myLists.begin() == myLists.end() )
     return nullptr;
   return myLists[ whichObject ];
 }
 
-void WindowProxy::init( TRecordTime initialTime, TCreateList create, bool updateLimits )
+void TimelineProxy::init( TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
   if ( getComputeYMaxOnInit() )
   {
@@ -850,7 +850,7 @@ void WindowProxy::init( TRecordTime initialTime, TCreateList create, bool update
   }
 }
 
-void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits )
+void TimelineProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create, bool updateLimits )
 {
   Timeline *tmpMyWindow = myWindow;
 #ifdef PARALLEL_ENABLED
@@ -873,7 +873,7 @@ void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCrea
   }
 }
 
-void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create,
+void TimelineProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCreateList create,
                            TSemanticValue& rowComputedMaxY, TSemanticValue& rowComputedMinY,
                            int& rowComputedZeros,
                            bool updateLimits )
@@ -899,7 +899,7 @@ void WindowProxy::initRow( TObjectOrder whichRow, TRecordTime initialTime, TCrea
   }
 }
 
-RecordList *WindowProxy::calcNext( TObjectOrder whichObject, bool updateLimits )
+RecordList *TimelineProxy::calcNext( TObjectOrder whichObject, bool updateLimits )
 {
   Timeline *tmpMyWindow = myWindow;
 #ifdef PARALLEL_ENABLED
@@ -925,7 +925,7 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject, bool updateLimits )
   return myLists[ whichObject ];
 }
 
-RecordList *WindowProxy::calcNext( TObjectOrder whichObject,
+RecordList *TimelineProxy::calcNext( TObjectOrder whichObject,
                                    TSemanticValue& rowComputedMaxY, TSemanticValue& rowComputedMinY,
                                    int& rowComputedZeros,
                                    bool updateLimits )
@@ -954,7 +954,7 @@ RecordList *WindowProxy::calcNext( TObjectOrder whichObject,
   return myLists[ whichObject ];
 }
 
-RecordList *WindowProxy::calcPrev( TObjectOrder whichObject, bool updateLimits )
+RecordList *TimelineProxy::calcPrev( TObjectOrder whichObject, bool updateLimits )
 {
   Timeline *tmpMyWindow = myWindow;
 #ifdef PARALLEL_ENABLED
@@ -980,7 +980,7 @@ RecordList *WindowProxy::calcPrev( TObjectOrder whichObject, bool updateLimits )
   return myLists[ whichObject ];
 }
 
-TRecordTime WindowProxy::getBeginTime( TObjectOrder whichObject ) const
+TRecordTime TimelineProxy::getBeginTime( TObjectOrder whichObject ) const
 {
   Timeline *tmpMyWindow = myWindow;
 #ifdef PARALLEL_ENABLED
@@ -991,7 +991,7 @@ TRecordTime WindowProxy::getBeginTime( TObjectOrder whichObject ) const
   return tmpMyWindow->getBeginTime( whichObject );
 }
 
-TRecordTime WindowProxy::getEndTime( TObjectOrder whichObject ) const
+TRecordTime TimelineProxy::getEndTime( TObjectOrder whichObject ) const
 {
   Timeline *tmpMyWindow = myWindow;
 #ifdef PARALLEL_ENABLED
@@ -1002,7 +1002,7 @@ TRecordTime WindowProxy::getEndTime( TObjectOrder whichObject ) const
   return tmpMyWindow->getEndTime( whichObject );
 }
 
-TSemanticValue WindowProxy::getValue( TObjectOrder whichObject ) const
+TSemanticValue TimelineProxy::getValue( TObjectOrder whichObject ) const
 {
   Timeline *tmpMyWindow = myWindow;
 #ifdef PARALLEL_ENABLED
@@ -1013,147 +1013,147 @@ TSemanticValue WindowProxy::getValue( TObjectOrder whichObject ) const
   return tmpMyWindow->getValue( whichObject );
 }
 
-bool WindowProxy::isDerivedWindow() const
+bool TimelineProxy::isDerivedWindow() const
 {
   return myWindow->isDerivedWindow();
 }
 
-TObjectOrder WindowProxy::cpuObjectToWindowObject( TCPUOrder whichCPU )
+TObjectOrder TimelineProxy::cpuObjectToWindowObject( TCPUOrder whichCPU )
 {
   return myWindow->cpuObjectToWindowObject( whichCPU );
 }
 
-TObjectOrder WindowProxy::threadObjectToWindowObject( TThreadOrder whichThread )
+TObjectOrder TimelineProxy::threadObjectToWindowObject( TThreadOrder whichThread )
 {
   return myWindow->threadObjectToWindowObject( whichThread );
 }
 
-TObjectOrder WindowProxy::getWindowLevelObjects() const
+TObjectOrder TimelineProxy::getWindowLevelObjects() const
 {
   return myWindow->getWindowLevelObjects();
 }
 
-TRecordTime WindowProxy::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
+TRecordTime TimelineProxy::customUnitsToTraceUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
 {
   return myWindow->customUnitsToTraceUnits( whichTime, whichUnits );
 }
 
-TRecordTime WindowProxy::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
+TRecordTime TimelineProxy::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit whichUnits ) const
 {
   return myWindow->traceUnitsToCustomUnits( whichTime, whichUnits );
 }
 
-TRecordTime WindowProxy::traceUnitsToWindowUnits( TRecordTime whichTime ) const
+TRecordTime TimelineProxy::traceUnitsToWindowUnits( TRecordTime whichTime ) const
 {
   return myWindow->traceUnitsToWindowUnits( whichTime );
 }
 
-TRecordTime WindowProxy::windowUnitsToTraceUnits( TRecordTime whichTime ) const
+TRecordTime TimelineProxy::windowUnitsToTraceUnits( TRecordTime whichTime ) const
 {
   return myWindow->windowUnitsToTraceUnits( whichTime );
 }
 
-Timeline *WindowProxy::getConcrete() const
+Timeline *TimelineProxy::getConcrete() const
 {
   return myWindow;
 }
 
-void WindowProxy::setName( const string& whichName )
+void TimelineProxy::setName( const string& whichName )
 {
   name = whichName;
 }
 
-string WindowProxy::getName() const
+string TimelineProxy::getName() const
 {
   return name;
 }
 
-PRV_UINT16 WindowProxy::getPosX() const
+PRV_UINT16 TimelineProxy::getPosX() const
 {
   return posX;
 }
 
-void WindowProxy::setPosX( PRV_UINT16 whichPos )
+void TimelineProxy::setPosX( PRV_UINT16 whichPos )
 {
   posX = whichPos;
 }
 
-PRV_UINT16 WindowProxy::getPosY() const
+PRV_UINT16 TimelineProxy::getPosY() const
 {
   return posY;
 }
 
-void WindowProxy::setPosY( PRV_UINT16 whichPos )
+void TimelineProxy::setPosY( PRV_UINT16 whichPos )
 {
   posY = whichPos;
 }
 
-PRV_UINT16 WindowProxy::getWidth() const
+PRV_UINT16 TimelineProxy::getWidth() const
 {
   return width;
 }
 
-void WindowProxy::setWidth( PRV_UINT16 whichPos )
+void TimelineProxy::setWidth( PRV_UINT16 whichPos )
 {
   width = whichPos;
 }
 
-PRV_UINT16 WindowProxy::getHeight() const
+PRV_UINT16 TimelineProxy::getHeight() const
 {
   return height;
 }
 
-void WindowProxy::setHeight( PRV_UINT16 whichPos )
+void TimelineProxy::setHeight( PRV_UINT16 whichPos )
 {
   height = whichPos;
 }
 
-void WindowProxy::setDrawModeObject( DrawModeMethod method )
+void TimelineProxy::setDrawModeObject( DrawModeMethod method )
 {
   drawModeObject = method;
 }
 
-DrawModeMethod WindowProxy::getDrawModeObject() const
+DrawModeMethod TimelineProxy::getDrawModeObject() const
 {
   return drawModeObject;
 }
 
-void WindowProxy::setDrawModeTime( DrawModeMethod method )
+void TimelineProxy::setDrawModeTime( DrawModeMethod method )
 {
   drawModeTime = method;
 }
 
-DrawModeMethod WindowProxy::getDrawModeTime() const
+DrawModeMethod TimelineProxy::getDrawModeTime() const
 {
   return drawModeTime;
 }
 
-CodeColor& WindowProxy::getCodeColor()
+CodeColor& TimelineProxy::getCodeColor()
 {
   return myCodeColor;
 }
 
-GradientColor& WindowProxy::getGradientColor()
+GradientColor& TimelineProxy::getGradientColor()
 {
   return myGradientColor;
 }
 
-bool WindowProxy::getSemanticScaleMinAtZero()
+bool TimelineProxy::getSemanticScaleMinAtZero()
 {
   return semanticScaleMinAtZero;
 }
 
-bool WindowProxy::getShowWindow() const
+bool TimelineProxy::getShowWindow() const
 {
   return showWindow;
 }
 
-void WindowProxy::setShowWindow( bool newValue )
+void TimelineProxy::setShowWindow( bool newValue )
 {
   showWindow = newValue;
 }
 
-void WindowProxy::setShowChildrenWindow( bool newValue )
+void TimelineProxy::setShowChildrenWindow( bool newValue )
 {
   if ( getParent( 0 ) != nullptr )
   {
@@ -1165,114 +1165,114 @@ void WindowProxy::setShowChildrenWindow( bool newValue )
   }
 }
 
-bool WindowProxy::getRaiseWindow() const
+bool TimelineProxy::getRaiseWindow() const
 {
   return raise;
 }
 
-void WindowProxy::setRaiseWindow( bool newValue )
+void TimelineProxy::setRaiseWindow( bool newValue )
 {
   raise = newValue;
 }
 
-void WindowProxy::setCodeColorMode()
+void TimelineProxy::setCodeColorMode()
 {
   colorMode = TColorFunction::COLOR;
 }
 
-void WindowProxy::setGradientColorMode()
+void TimelineProxy::setGradientColorMode()
 {
   colorMode = TColorFunction::GRADIENT;
   myGradientColor.allowOutOfScale( true );
 }
 
-void WindowProxy::setNotNullGradientColorMode()
+void TimelineProxy::setNotNullGradientColorMode()
 {
   colorMode = TColorFunction::NOT_NULL_GRADIENT;
   myGradientColor.allowOutOfScale( false );
 }
 
-void WindowProxy::setFunctionLineColorMode()
+void TimelineProxy::setFunctionLineColorMode()
 {
   colorMode = TColorFunction::FUNCTION_LINE;
 }
 
-void WindowProxy::setFusedLinesColorMode()
+void TimelineProxy::setFusedLinesColorMode()
 {
   colorMode = TColorFunction::FUSED_LINES;
 }
 
-void WindowProxy::setPunctualColorMode()
+void TimelineProxy::setPunctualColorMode()
 {
   colorMode = TColorFunction::PUNCTUAL;
 }
 
-bool WindowProxy::isCodeColorSet() const
+bool TimelineProxy::isCodeColorSet() const
 {
   return colorMode == TColorFunction::COLOR;
 }
 
-bool WindowProxy::isGradientColorSet() const
+bool TimelineProxy::isGradientColorSet() const
 {
   return colorMode == TColorFunction::GRADIENT;
 }
 
-bool WindowProxy::isNotNullGradientColorSet() const
+bool TimelineProxy::isNotNullGradientColorSet() const
 {
   return colorMode == TColorFunction::NOT_NULL_GRADIENT;
 }
 
-bool WindowProxy::isFunctionLineColorSet() const
+bool TimelineProxy::isFunctionLineColorSet() const
 {
   return colorMode == TColorFunction::FUNCTION_LINE;
 }
 
-bool WindowProxy::isFusedLinesColorSet() const
+bool TimelineProxy::isFusedLinesColorSet() const
 {
   return colorMode == TColorFunction::FUSED_LINES;
 }
 
-bool WindowProxy::isPunctualColorSet() const
+bool TimelineProxy::isPunctualColorSet() const
 {
   return colorMode == TColorFunction::PUNCTUAL;
 }
 
-PRV_UINT16 WindowProxy::getPixelSize() const
+PRV_UINT16 TimelineProxy::getPixelSize() const
 {
   return pixelSize;
 }
 
-void WindowProxy::setPixelSize( PRV_UINT16 whichSize )
+void TimelineProxy::setPixelSize( PRV_UINT16 whichSize )
 {
   pixelSize = whichSize;
 }
 
-Timeline *WindowProxy::getPunctualColorWindow() const
+Timeline *TimelineProxy::getPunctualColorWindow() const
 {
   return punctualColorWindow;
 }
 
-void WindowProxy::setPunctualColorWindow( Timeline *whichWindow )
+void TimelineProxy::setPunctualColorWindow( Timeline *whichWindow )
 {
   punctualColorWindow = whichWindow;
 }
 
-void  WindowProxy::setSemanticScaleMinAtZero( bool newValue )
+void  TimelineProxy::setSemanticScaleMinAtZero( bool newValue )
 {
   semanticScaleMinAtZero = newValue;
 }
 
-void WindowProxy::allowOutOfScale( bool activate )
+void TimelineProxy::allowOutOfScale( bool activate )
 {
   myGradientColor.allowOutOfScale( activate );
 }
 
-void WindowProxy::allowOutliers( bool activate )
+void TimelineProxy::allowOutliers( bool activate )
 {
   myGradientColor.allowOutliers( activate );
 }
 
-rgb WindowProxy::calcColor( TSemanticValue whichValue, Timeline& whichWindow )
+rgb TimelineProxy::calcColor( TSemanticValue whichValue, Timeline& whichWindow )
 {
   if ( colorMode == TColorFunction::COLOR )
     return myCodeColor.calcColor( whichValue, minimumY, maximumY, useCustomPalette );
@@ -1280,95 +1280,95 @@ rgb WindowProxy::calcColor( TSemanticValue whichValue, Timeline& whichWindow )
   return myGradientColor.calcColor( whichValue, minimumY, maximumY );
 }
 
-bool WindowProxy::isColorOutlier( rgb whichColor ) const
+bool TimelineProxy::isColorOutlier( rgb whichColor ) const
 {
   if( colorMode != TColorFunction::GRADIENT )
     return false;
   return myGradientColor.isColorOutlier( whichColor );
 }
 
-bool WindowProxy::getUseCustomPalette() const
+bool TimelineProxy::getUseCustomPalette() const
 {
   return useCustomPalette;
 }
 
-void WindowProxy::setUseCustomPalette( bool newValue ) 
+void TimelineProxy::setUseCustomPalette( bool newValue ) 
 {
   useCustomPalette = newValue;
 }
 
-bool WindowProxy::getChanged() const
+bool TimelineProxy::getChanged() const
 {
   return changed;
 }
 
-void WindowProxy::setChanged( bool newValue )
+void TimelineProxy::setChanged( bool newValue )
 {
   changed = newValue;
 }
 
-bool WindowProxy::getRedraw() const
+bool TimelineProxy::getRedraw() const
 {
   return redraw;
 }
 
-void WindowProxy::setRedraw( bool newValue )
+void TimelineProxy::setRedraw( bool newValue )
 {
   redraw = newValue;
 }
 
-bool WindowProxy::getForceRedraw() const
+bool TimelineProxy::getForceRedraw() const
 {
   return forceRedraw;
 }
 
-void WindowProxy::setForceRedraw( bool newValue )
+void TimelineProxy::setForceRedraw( bool newValue )
 {
   forceRedraw = newValue;
 }
 
-bool WindowProxy::getDrawCommLines() const
+bool TimelineProxy::getDrawCommLines() const
 {
   return commLines;
 }
 
-void WindowProxy::setDrawCommLines( bool newValue )
+void TimelineProxy::setDrawCommLines( bool newValue )
 {
   commLines = newValue;
 }
 
-bool WindowProxy::getDrawFlags() const
+bool TimelineProxy::getDrawFlags() const
 {
   return flags;
 }
 
-void WindowProxy::setDrawFlags( bool newValue )
+void TimelineProxy::setDrawFlags( bool newValue )
 {
   flags = newValue;
 }
 
-SemanticInfoType WindowProxy::getSemanticInfoType() const
+SemanticInfoType TimelineProxy::getSemanticInfoType() const
 {
   return myWindow->getSemanticInfoType();
 }
 
-void WindowProxy::getAllSemanticFunctions( TSemanticGroup whichGroup,
+void TimelineProxy::getAllSemanticFunctions( TSemanticGroup whichGroup,
     vector<string>& onVector ) const
 {
   myKernel->getAllSemanticFunctions( whichGroup, onVector );
 }
 
-bool WindowProxy::emptyPrevZoom() const
+bool TimelineProxy::emptyPrevZoom() const
 {
   return zoomHistory.isEmpty( TZoomPosition::PREV_ZOOM );
 }
 
-bool WindowProxy::emptyNextZoom() const
+bool TimelineProxy::emptyNextZoom() const
 {
   return zoomHistory.isEmpty( TZoomPosition::NEXT_ZOOM );
 }
 
-void WindowProxy::nextZoom()
+void TimelineProxy::nextZoom()
 {
   zoomHistory.nextZoom();
   if( sync )
@@ -1380,7 +1380,7 @@ void WindowProxy::nextZoom()
   }
 }
 
-void WindowProxy::prevZoom()
+void TimelineProxy::prevZoom()
 {
   zoomHistory.prevZoom();
   if( sync )
@@ -1392,7 +1392,7 @@ void WindowProxy::prevZoom()
   }
 }
 
-void WindowProxy::addZoom( TTime beginTime, TTime endTime,
+void TimelineProxy::addZoom( TTime beginTime, TTime endTime,
                            TObjectOrder beginObject, TObjectOrder endObject,
                            bool isBroadCast )
 {
@@ -1406,7 +1406,7 @@ void WindowProxy::addZoom( TTime beginTime, TTime endTime,
   zoomHistory.addZoom( beginTime, endTime, beginObject, endObject );
 }
 
-void WindowProxy::addZoom( TTime beginTime, TTime endTime, bool isBroadCast )
+void TimelineProxy::addZoom( TTime beginTime, TTime endTime, bool isBroadCast )
 {
   if( sync && !isBroadCast )
   {
@@ -1418,49 +1418,49 @@ void WindowProxy::addZoom( TTime beginTime, TTime endTime, bool isBroadCast )
   zoomHistory.addZoom( beginTime, endTime );
 }
 
-void WindowProxy::addZoom( TObjectOrder beginObject, TObjectOrder endObject )
+void TimelineProxy::addZoom( TObjectOrder beginObject, TObjectOrder endObject )
 {
   zoomHistory.addZoom( beginObject, endObject );
 }
 
-void WindowProxy::setZoomFirstDimension( pair<TTime, TTime> &dim )
+void TimelineProxy::setZoomFirstDimension( pair<TTime, TTime> &dim )
 {
   zoomHistory.setFirstDimension( dim );
 }
 
-void WindowProxy::setZoomSecondDimension( pair<TObjectOrder, TObjectOrder>  &dim )
+void TimelineProxy::setZoomSecondDimension( pair<TObjectOrder, TObjectOrder>  &dim )
 {
   zoomHistory.setSecondDimension( dim );
 }
 
-pair<TTime, TTime> WindowProxy::getZoomFirstDimension() const
+pair<TTime, TTime> TimelineProxy::getZoomFirstDimension() const
 {
   return zoomHistory.getFirstDimension();
 }
 
-pair<TObjectOrder, TObjectOrder> WindowProxy::getZoomSecondDimension() const
+pair<TObjectOrder, TObjectOrder> TimelineProxy::getZoomSecondDimension() const
 {
   return zoomHistory.getSecondDimension();
 }
 
-pair<TObjectOrder, TObjectOrder> WindowProxy::getPrevZoomSecondDimension() const
+pair<TObjectOrder, TObjectOrder> TimelineProxy::getPrevZoomSecondDimension() const
 {
   return zoomHistory.getSecondDimension( TZoomPosition::PREV_ZOOM );
 }
 
-pair<TObjectOrder, TObjectOrder> WindowProxy::getNextZoomSecondDimension() const
+pair<TObjectOrder, TObjectOrder> TimelineProxy::getNextZoomSecondDimension() const
 {
   return zoomHistory.getSecondDimension( TZoomPosition::NEXT_ZOOM );
 }
 
-void WindowProxy::addToSyncGroup( TGroupId whichGroup )
+void TimelineProxy::addToSyncGroup( TGroupId whichGroup )
 {
   SyncWindows::getInstance()->removeWindow( this, syncGroup );
   syncGroup = whichGroup;
   sync = SyncWindows::getInstance()->addWindow( this, whichGroup );
 }
 
-void WindowProxy::removeFromSync()
+void TimelineProxy::removeFromSync()
 {
   if( !sync )
     return;
@@ -1468,33 +1468,33 @@ void WindowProxy::removeFromSync()
   sync = false;
 }
 
-bool WindowProxy::isSync() const
+bool TimelineProxy::isSync() const
 {
   return sync;
 }
 
-TGroupId WindowProxy::getSyncGroup() const
+TGroupId TimelineProxy::getSyncGroup() const
 {
   return syncGroup;
 }
 
-SelectionManagement< TObjectOrder, TWindowLevel > *WindowProxy::getSelectedRows()
+SelectionManagement< TObjectOrder, TWindowLevel > *TimelineProxy::getSelectedRows()
 {
   return &selectedRow;
 }
 
-void WindowProxy::setSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
+void TimelineProxy::setSelectedRows( TWindowLevel onLevel, vector< bool > &selected )
 {
   if( selected.size() == myTrace->getLevelObjects( onLevel ) )
     selectedRow.setSelected( selected, onLevel );
 }
 
-void WindowProxy::setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected )
+void TimelineProxy::setSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected )
 {
   selectedRow.setSelected( selected, myTrace->getLevelObjects( onLevel ), onLevel );
 }
 
-void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selected, bool lookUpLevels )
+void TimelineProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selected, bool lookUpLevels )
 {
   selectedRow.getSelected( selected, onLevel );
 
@@ -1541,7 +1541,7 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selecte
   }
 }
 
-void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selected,
+void TimelineProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selected,
                                    TObjectOrder first, TObjectOrder last, bool lookUpLevels )
 {
   selectedRow.getSelected( selected, first, last, onLevel );
@@ -1589,7 +1589,7 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< bool > &selecte
 }
 
 
-void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected, bool lookUpLevels )
+void TimelineProxy::getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > &selected, bool lookUpLevels )
 {
   selectedRow.getSelected( selected, onLevel );
 
@@ -1599,7 +1599,7 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel, vector< TObjectOrder > 
   }
 }
 
-void WindowProxy::getSelectedRows( TWindowLevel onLevel,
+void TimelineProxy::getSelectedRows( TWindowLevel onLevel,
                                    vector< TObjectOrder > &selected,
                                    TObjectOrder first, TObjectOrder last, bool lookUpLevels )
 {
@@ -1611,22 +1611,22 @@ void WindowProxy::getSelectedRows( TWindowLevel onLevel,
   }
 }
 
-TObjectOrder WindowProxy::shiftFirst( TObjectOrder whichFirst, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TWindowLevel level ) const
+TObjectOrder TimelineProxy::shiftFirst( TObjectOrder whichFirst, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TWindowLevel level ) const
 {
   return selectedRow.shiftFirst( whichFirst, shiftAmount, appliedAmount, level );
 }
 
-TObjectOrder WindowProxy::shiftLast( TObjectOrder whichLast, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TWindowLevel level ) const
+TObjectOrder TimelineProxy::shiftLast( TObjectOrder whichLast, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, TWindowLevel level ) const
 {
   return selectedRow.shiftLast( whichLast, shiftAmount, appliedAmount, level );
 }
 
-void WindowProxy::getGroupLabels( PRV_UINT32 whichGroup, vector<string>& onVector ) const
+void TimelineProxy::getGroupLabels( PRV_UINT32 whichGroup, vector<string>& onVector ) const
 {
   myWindow->getGroupLabels( whichGroup, onVector );
 }
 
-bool WindowProxy::getParametersOfFunction( string whichFunction,
+bool TimelineProxy::getParametersOfFunction( string whichFunction,
     PRV_UINT32 &numParameters,
     vector<string> &nameParameters,
     vector< vector< double > >&defaultParameters ) const
@@ -1637,28 +1637,28 @@ bool WindowProxy::getParametersOfFunction( string whichFunction,
          defaultParameters );
 }
 
-void WindowProxy::setObjectLabels( TObjectLabels whichLabels )
+void TimelineProxy::setObjectLabels( TObjectLabels whichLabels )
 {
   objectLabels = whichLabels;
 }
 
-TObjectLabels WindowProxy::getObjectLabels() const
+TObjectLabels TimelineProxy::getObjectLabels() const
 {
   return objectLabels;
 }
 
-void WindowProxy::setObjectAxisSize( TObjectAxisSize whichSize )
+void TimelineProxy::setObjectAxisSize( TObjectAxisSize whichSize )
 {
   objectAxisSize = whichSize;
 }
 
-TObjectAxisSize WindowProxy::getObjectAxisSize() const
+TObjectAxisSize TimelineProxy::getObjectAxisSize() const
 {
   return objectAxisSize;
 }
 
 
-bool WindowProxy::hasLevelSomeSelectedObject( TWindowLevel onLevel )
+bool TimelineProxy::hasLevelSomeSelectedObject( TWindowLevel onLevel )
 {
   std::vector< TObjectOrder > selection;
 
@@ -1668,7 +1668,7 @@ bool WindowProxy::hasLevelSomeSelectedObject( TWindowLevel onLevel )
 }
 
 
-void WindowProxy::setCFG4DMode( bool mode )
+void TimelineProxy::setCFG4DMode( bool mode )
 {
   if( isDerivedWindow() )
   {
@@ -1682,17 +1682,17 @@ void WindowProxy::setCFG4DMode( bool mode )
   CFG4DMode = mode;
 }
 
-bool WindowProxy::getCFG4DMode( ) const
+bool TimelineProxy::getCFG4DMode( ) const
 {
   return CFG4DMode;
 }
 
-bool WindowProxy::getCFG4DEnabled() const
+bool TimelineProxy::getCFG4DEnabled() const
 {
   return isCFG4DEnabled;
 }
 
-void WindowProxy::setCFG4DEnabled( bool enabled )
+void TimelineProxy::setCFG4DEnabled( bool enabled )
 {
   if( isDerivedWindow() )
   {
@@ -1706,7 +1706,7 @@ void WindowProxy::setCFG4DEnabled( bool enabled )
   isCFG4DEnabled = enabled;
 }
 
-bool WindowProxy::existsCFG4DAlias( const string &property ) const
+bool TimelineProxy::existsCFG4DAlias( const string &property ) const
 {
   bool found = false;
 
@@ -1724,7 +1724,7 @@ bool WindowProxy::existsCFG4DAlias( const string &property ) const
 
 
 
-bool WindowProxy::existsCFG4DAlias( const TSingleTimelineProperties &propertyIndex ) const
+bool TimelineProxy::existsCFG4DAlias( const TSingleTimelineProperties &propertyIndex ) const
 {
   bool found = false;
 
@@ -1743,7 +1743,7 @@ bool WindowProxy::existsCFG4DAlias( const TSingleTimelineProperties &propertyInd
 }
 
 
-bool WindowProxy::existsCFG4DAlias( const TDerivedTimelineProperties &propertyIndex ) const
+bool TimelineProxy::existsCFG4DAlias( const TDerivedTimelineProperties &propertyIndex ) const
 {
   bool found = false;
 
@@ -1762,7 +1762,7 @@ bool WindowProxy::existsCFG4DAlias( const TDerivedTimelineProperties &propertyIn
 }
 
 
-string WindowProxy::getCFG4DAlias( const string &property ) const
+string TimelineProxy::getCFG4DAlias( const string &property ) const
 {
   string alias = "";
 
@@ -1779,7 +1779,7 @@ string WindowProxy::getCFG4DAlias( const string &property ) const
 }
 
 
-string WindowProxy::getCFG4DAlias( const TSingleTimelineProperties &propertyIndex ) const
+string TimelineProxy::getCFG4DAlias( const TSingleTimelineProperties &propertyIndex ) const
 {
   string alias = "";
 
@@ -1798,7 +1798,7 @@ string WindowProxy::getCFG4DAlias( const TSingleTimelineProperties &propertyInde
 }
 
 
-string WindowProxy::getCFG4DAlias( const TDerivedTimelineProperties &propertyIndex ) const
+string TimelineProxy::getCFG4DAlias( const TDerivedTimelineProperties &propertyIndex ) const
 {
   string alias = "";
 
@@ -1817,24 +1817,24 @@ string WindowProxy::getCFG4DAlias( const TDerivedTimelineProperties &propertyInd
 }
 
 
-void WindowProxy::setCFG4DAlias( const string &property, const string &alias )
+void TimelineProxy::setCFG4DAlias( const string &property, const string &alias )
 {
   propertiesAliasCFG4D[ property ] = alias;
 }
 
 
-void WindowProxy::setCFG4DAliasList( const map< string, string >& aliasList )
+void TimelineProxy::setCFG4DAliasList( const map< string, string >& aliasList )
 {
   propertiesAliasCFG4D = aliasList;
 }
 
 
-const map< string, string > WindowProxy::getCFG4DAliasList() const
+const map< string, string > TimelineProxy::getCFG4DAliasList() const
 {
   return propertiesAliasCFG4D;
 }
 
-const vector< string > WindowProxy::getCFG4DFullTagList()
+const vector< string > TimelineProxy::getCFG4DFullTagList()
 {
   vector< string > tags;
 
@@ -1857,7 +1857,7 @@ const vector< string > WindowProxy::getCFG4DFullTagList()
 }
 
 
-const vector< Timeline::TParamAliasKey > WindowProxy::getCFG4DCurrentSelectedFullParamList()
+const vector< Timeline::TParamAliasKey > TimelineProxy::getCFG4DCurrentSelectedFullParamList()
 {
   vector< TParamAliasKey > retKeys;
 
@@ -1944,13 +1944,13 @@ const vector< Timeline::TParamAliasKey > WindowProxy::getCFG4DCurrentSelectedFul
 }
 
 
-void WindowProxy::setCFG4DParamAlias( const TParamAlias &whichParamAlias )
+void TimelineProxy::setCFG4DParamAlias( const TParamAlias &whichParamAlias )
 {
   paramAliasCFG4D = whichParamAlias;
 }
 
 
-void WindowProxy::setCFG4DParamAlias( string semanticLevel,
+void TimelineProxy::setCFG4DParamAlias( string semanticLevel,
                                       string function,
                                       PRV_UINT32 numParameter,
                                       string paramAlias )
@@ -1959,12 +1959,12 @@ void WindowProxy::setCFG4DParamAlias( string semanticLevel,
   paramAliasCFG4D[ key ] = paramAlias;
 }
 
-const Timeline::TParamAlias WindowProxy::getCFG4DParamAliasList() const
+const Timeline::TParamAlias TimelineProxy::getCFG4DParamAliasList() const
 {
   return paramAliasCFG4D;
 }
 
-void WindowProxy::splitCFG4DParamAliasKey( const TParamAliasKey &pk,
+void TimelineProxy::splitCFG4DParamAliasKey( const TParamAliasKey &pk,
                                            string &semanticLevel,
                                            string &function,
                                            TParamIndex &numParameter ) const
@@ -1975,7 +1975,7 @@ void WindowProxy::splitCFG4DParamAliasKey( const TParamAliasKey &pk,
 }
 
 
-const Timeline::TParamAliasKey WindowProxy::buildCFG4DParamAliasKey( const string &semanticLevel,
+const Timeline::TParamAliasKey TimelineProxy::buildCFG4DParamAliasKey( const string &semanticLevel,
                                                                    const string &function,
                                                                    const TParamIndex &numParameter ) const
 {
@@ -1984,25 +1984,25 @@ const Timeline::TParamAliasKey WindowProxy::buildCFG4DParamAliasKey( const strin
 }
 
 
-Timeline::TParamAliasKey WindowProxy::getCFG4DParamAliasKey( const TParamAlias::iterator it ) const
+Timeline::TParamAliasKey TimelineProxy::getCFG4DParamAliasKey( const TParamAlias::iterator it ) const
 {
   return it->first;
 }
 
-const string WindowProxy::getCFG4DParamAlias( const TParamAlias::iterator &it ) const
+const string TimelineProxy::getCFG4DParamAlias( const TParamAlias::iterator &it ) const
 {
   return it->second;
 }
 
 
-const string WindowProxy::getCFG4DParamAlias( const TParamAliasKey &pk ) const
+const string TimelineProxy::getCFG4DParamAlias( const TParamAliasKey &pk ) const
 {
   TParamAlias::const_iterator it = paramAliasCFG4D.find( pk );
   return ( it != paramAliasCFG4D.end()? it->second:string("") );
 }
 
 
-vector< Timeline::TParamAliasKey > WindowProxy::getCFG4DParamKeysBySemanticLevel( string whichSemanticLevel,
+vector< Timeline::TParamAliasKey > TimelineProxy::getCFG4DParamKeysBySemanticLevel( string whichSemanticLevel,
                                                                                 const vector< Timeline::TParamAliasKey > &whichParamAliasKey ) const
 {
   vector< TParamAliasKey > retKeys;
@@ -2037,22 +2037,22 @@ vector< Timeline::TParamAliasKey > WindowProxy::getCFG4DParamKeysBySemanticLevel
 }
 
 
-void WindowProxy::setCFGS4DIndexLink( TCFGS4DIndexLink whichIndex )
+void TimelineProxy::setCFGS4DIndexLink( TCFGS4DIndexLink whichIndex )
 {
   globalIndexLink = whichIndex;
 }
 
-TCFGS4DIndexLink WindowProxy::getCFGS4DIndexLink() const
+TCFGS4DIndexLink TimelineProxy::getCFGS4DIndexLink() const
 {
   return globalIndexLink;
 }
 
-void WindowProxy::setCFGS4DGroupLink( std::string originalName, TCFGS4DGroup whichGroup )
+void TimelineProxy::setCFGS4DGroupLink( std::string originalName, TCFGS4DGroup whichGroup )
 {
   groupLinkFromPropName[ originalName ] = whichGroup;
 }
 
-TCFGS4DGroup WindowProxy::getCFGS4DGroupLink( std::string originalName ) const
+TCFGS4DGroup TimelineProxy::getCFGS4DGroupLink( std::string originalName ) const
 {
   map< string, TCFGS4DGroup >::const_iterator it = groupLinkFromPropName.find( originalName );
   if( it != groupLinkFromPropName.end() )
@@ -2062,7 +2062,7 @@ TCFGS4DGroup WindowProxy::getCFGS4DGroupLink( std::string originalName ) const
 }
 
 #ifdef _MSC_VER
-void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
+void TimelineProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
                                            vector< bool >& selected,
                                            TTime timeStep,
                                            PRV_INT32 timePos,
@@ -2075,7 +2075,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
                                            vector< hash_set< commCoord > >& commsToDraw,
                                            ProgressController *progress )
 #else
-void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
+void TimelineProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
                                            vector< bool >& selected,
                                            TTime timeStep,
                                            PRV_INT32 timePos,
@@ -2262,7 +2262,7 @@ void WindowProxy::computeSemanticParallel( vector< TObjectOrder >& selectedSet,
 }
 
 #ifdef _MSC_VER
-void WindowProxy::computeSemanticRowParallel( int numRows,
+void TimelineProxy::computeSemanticRowParallel( int numRows,
                                               TObjectOrder firstRow,
                                               TObjectOrder lastRow,
                                               vector< TObjectOrder >& selectedSet,
@@ -2280,7 +2280,7 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
                                               hash_set< commCoord >& commsToDraw,
                                               ProgressController *progress )
 #else
-void WindowProxy::computeSemanticRowParallel( int numRows,
+void TimelineProxy::computeSemanticRowParallel( int numRows,
                                               TObjectOrder firstRow,
                                               TObjectOrder lastRow,
                                               vector< TObjectOrder >& selectedSet,
@@ -2405,7 +2405,7 @@ void WindowProxy::computeSemanticRowParallel( int numRows,
 }
 
 #ifdef _MSC_VER
-void WindowProxy::computeEventsCommsParallel( RecordList *records,
+void TimelineProxy::computeEventsCommsParallel( RecordList *records,
                                               TTime from,
                                               TTime to,
                                               TTime step,
@@ -2416,7 +2416,7 @@ void WindowProxy::computeEventsCommsParallel( RecordList *records,
                                               hash_set< PRV_INT32 >& eventsToDraw,
                                               hash_set< commCoord >& commsToDraw )
 #else
-void WindowProxy::computeEventsCommsParallel( RecordList *records,
+void TimelineProxy::computeEventsCommsParallel( RecordList *records,
                                               TTime from,
                                               TTime to,
                                               TTime step,
@@ -2501,7 +2501,7 @@ void WindowProxy::computeEventsCommsParallel( RecordList *records,
 }
 
 #ifdef _MSC_VER
-void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selectedSet,
+void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selectedSet,
                                                    vector< bool >& selected,
                                                    TTime timeStep,
                                                    PRV_INT32 timePos,
@@ -2514,7 +2514,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
                                                    vector< hash_set< commCoord > >& commsToDraw,
                                                    ProgressController *progress )
 #else
-void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selectedSet,
+void TimelineProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selectedSet,
                                                    vector< bool >& selected,
                                                    TTime timeStep,
                                                    PRV_INT32 timePos,
@@ -2677,7 +2677,7 @@ void WindowProxy::computeSemanticPunctualParallel( vector< TObjectOrder >& selec
 }
 
 #ifdef _MSC_VER
-void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
+void TimelineProxy::computeSemanticRowPunctualParallel( int numRows,
                                                       TObjectOrder firstRow,
                                                       TObjectOrder lastRow,
                                                       vector< TObjectOrder >& selectedSet,
@@ -2695,7 +2695,7 @@ void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
                                                       hash_set< commCoord >& commsToDraw,
                                                       ProgressController *progress )
 #else
-void WindowProxy::computeSemanticRowPunctualParallel( int numRows,
+void TimelineProxy::computeSemanticRowPunctualParallel( int numRows,
                                                       TObjectOrder firstRow,
                                                       TObjectOrder lastRow,
                                                       vector< TObjectOrder >& selectedSet,
