@@ -47,10 +47,10 @@ constexpr bool prv_atoll_v( string::const_iterator& it, const string::const_iter
 }
 
 template <typename T, typename... Targs>
-bool prv_atoll_v( string::const_iterator& it, const string::const_iterator& end, T& result, Targs&... Fargs )
+constexpr bool prv_atoll_v( string::const_iterator& it, const string::const_iterator& end, T& result, Targs&... Fargs )
 {
   result = 0;
-  bool negative = false;
+  int negative = 1;
 
   if( it == end )
     return false;
@@ -59,17 +59,18 @@ bool prv_atoll_v( string::const_iterator& it, const string::const_iterator& end,
   {
     if( is_unsigned<T>::value )
       return false;
-    negative = true;
+    negative = -1;
     ++it;
   }
 
-  while( *it >= '0' && *it <= '9' )
+  if( *it >= '0' && *it <= '9' )
   {
-    result = ( result * 10 ) + ( *it - '0' );
-    ++it;
-  }
+    result = ( *it++ - '0' );
+    while( *it >= '0' && *it <= '9' )
+      result = ( result * 10 ) + ( *it++ - '0' );
 
-  result = negative ? -result : result;
+    result *= negative;
+  }
 
   if( it == end )
     return sizeof...( Targs ) == 0;
