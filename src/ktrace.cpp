@@ -21,6 +21,7 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
+#include <array>
 #include <fstream>
 #include <sstream>
 #ifdef _MSC_VER
@@ -41,6 +42,7 @@
 #include "noloadtrace.h"
 #include "noloadblocks.h"
 #include "traceeditblocks.h"
+#include "customalgorithms.h"
 
 using namespace std;
 #ifdef _MSC_VER
@@ -540,71 +542,66 @@ void KTrace::parseDateTime( string &whichDateTime )
   rawTraceTime = whichDateTime;
 
   // Create locales for every time format that whichDateTime may take
-  vector<string> strFormatDate;
-  strFormatDate.push_back("%d/%m/%Y at %H:%M:%S%F");
-  strFormatDate.push_back("%d/%m/%Y at %H:%M:%S");
-  strFormatDate.push_back("%d/%m/%Y at %H:%M");
-  strFormatDate.push_back("%d/%m/%Y");
-  /*
-  // ptime will ignore these ones. ¿?
-  strFormatDate.push_back("%d/%m/%y at %H:%M:%S%F");
-  strFormatDate.push_back("%d/%m/%y at %H:%M:%S");
-  strFormatDate.push_back("%d/%m/%y at %H:%M");
-  strFormatDate.push_back("%d/%m/%y");
-  */
-
-  vector<std::locale> formatDate;
-  for( vector<string>::const_iterator it = strFormatDate.begin(); it != strFormatDate.end(); ++it )
+  static array<string, 6> strYearFormat
   {
-    formatDate.push_back(std::locale( std::locale::classic(), new time_input_facet(*it)));
+    "%d/%m/%Y",
+    "%d/%b/%Y",
+    "%Y/%m/%d",
+    "%Y/%b/%d",
+    "%m/%d/%Y",
+    "%b/%d/%Y"
+  };
+  static array<string, 2> strMidFormat
+  {
+    " ",
+    ""
+  };
+  static array<string, 4> strHourFormat
+  {
+    "%H:%M:%S%F",
+    "%H:%M:%S",
+    "%H:%M",
+    ""
+  };
+
+  static vector<array<string, 3>> strFormatDate;
+  static vector<std::locale> formatDate;
+
+  if( strFormatDate.size() == 0 )
+  {
+    cartesian_product( std::back_inserter( strFormatDate ), strYearFormat.begin(), strYearFormat.end(),
+                                                            strMidFormat.begin(),  strMidFormat.end(),
+                                                            strHourFormat.begin(), strHourFormat.end() );
+
+    for( auto el: strFormatDate )
+    {
+      string tmp =  el[ 0 ] + el[ 1 ] + el[ 2 ];
+      formatDate.push_back(std::locale( std::locale::classic(), new time_input_facet( tmp ) ) );
+    }
   }
 
-  // Guarantee year field in whichDateTime has 4 digits (years with 2 digits not covered by ptime)
-  string tmpDate;
-  string tmpYear = whichDateTime.substr( 0, whichDateTime.find_first_of(' ') );
-  tmpYear = tmpYear.substr( tmpYear.find_last_of('/') + 1, tmpYear.find_first_of(' '));
-  if ( tmpYear.length() == 4 )
+  try
   {
-    tmpDate = whichDateTime;
+    whichDateTime.erase( whichDateTime.find( "at" ), 3 );
   }
-  else
+  catch(const std::out_of_range& e)
   {
-    int newYear;
-    std::istringstream ss( tmpYear );
-    ss >> newYear;
-
-    if ( newYear < 80 )
-      newYear += 2000;
-    else
-      newYear += 1900;
-
-    string tmpTail;
-    try
-    {
-      tmpTail = whichDateTime.substr( whichDateTime.find_first_of(' ') ); // " at hh:mm:ss" or empty
-    }
-    catch(const std::out_of_range& e)
-    {
-      tmpTail = "";
-    }
-    
-
-    // c++ 11
-    // tmpDate = whichDateTime.substr( 0, whichDateTime.find_last_of( '/' ) ) + "/" + std::to_string( newYear ) + tmpTail;
-    stringstream tmpSSYear;
-    tmpSSYear << newYear;
-    tmpDate = whichDateTime.substr( 0, whichDateTime.find_last_of( '/' ) ) + "/" + tmpSSYear.str() + tmpTail;
   }
 
   // Now, try to match one ptime from {date * format}
-  std::stringstream tmpSSDate( tmpDate );
   for( vector<std::locale>::const_iterator it = formatDate.begin(); it != formatDate.end(); ++it )
   {
+    std::stringstream tmpSSDate( whichDateTime );
     tmpSSDate.imbue( *it );
-    tmpSSDate >> myTraceTime;
-
-    if ( !myTraceTime.is_not_a_date_time() )
-      break;
+    boost::posix_time::ptime tmpTraceTime;
+    if( tmpSSDate >> tmpTraceTime )
+    {
+      if( !tmpTraceTime.is_not_a_date_time() )
+      {
+        myTraceTime = tmpTraceTime;
+        break;
+      }
+    }
   }
 }
 
