@@ -68,9 +68,10 @@ endif
 include_HEADERS = \
                   cfg.h \
                   cfgs4d.h \
-                  cubecontainer.h \
                   ../config_traits.h \
                   ../config_types.h \
+                  cubecontainer.h \
+                  customalgorithms.h \
                   drawmode.h \
                   eventdrivencutter.h \
                   eventlabels.h \
