@@ -67,9 +67,6 @@ class TraceBodyIO
     const ProcessModel* processModel;
     const ResourceModel* resourceModel;
 
-  private:
-    Trace* whichTrace;
-
 };
 
 

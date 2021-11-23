@@ -370,17 +370,9 @@ inline bool TraceBodyIO_v1::readCommon( string::const_iterator& it,
                                         TThreadOrder& thread,
                                         TRecordTime& time ) const
 {
-  bool result;
-
-  result = prv_atoll_v( it, end, CPU, appl, task, thread, time );
-
-  if ( !resourceModel->isValidGlobalCPU( CPU ) )
-    return false;
-
-  if ( !processModel->isValidThread( appl - 1, task - 1, thread - 1 ) )
-    return false;
-
-  return true;
+  return prv_atoll_v( it, end, CPU, appl, task, thread, time ) &&
+         resourceModel->isValidGlobalCPU( CPU ) &&
+         processModel->isValidThread( appl - 1, task - 1, thread - 1 );
 }
 
 
