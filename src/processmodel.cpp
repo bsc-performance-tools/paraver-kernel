@@ -22,8 +22,6 @@
 \*****************************************************************************/
 
 
-#include <boost/algorithm/string/classification.hpp> // Include boost::for is_any_of
-#include <boost/algorithm/string/split.hpp> // Include for boost::split
 #include <sstream>
 #include <iostream>
 #include <fstream>
