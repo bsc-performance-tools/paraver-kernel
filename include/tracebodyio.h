@@ -44,13 +44,13 @@ class TraceBodyIO
     TraceBodyIO();
     virtual ~TraceBodyIO();
 
-    virtual void setProcessModel( const ProcessModel* whichProcessModel );
+    virtual void setProcessModel( ProcessModel* whichProcessModel );
     virtual void setResourceModel( const ResourceModel* whichResourceModel );
 
     virtual bool ordered() const = 0;
     virtual void read( TraceStream *file, MemoryBlocks& records,
                        std::unordered_set<TState>& states, std::unordered_set<TEventType>& events,
-                       MetadataManager& traceInfo ) const = 0;
+                       MetadataManager& traceInfo, TRecordTime& endTime ) const = 0;
     virtual void write( std::fstream& whichStream,
                         const KTrace& whichTrace,
                         MemoryTrace::iterator *record,
@@ -64,7 +64,7 @@ class TraceBodyIO
     static TraceBodyIO *createTraceBody( TraceStream *file, Trace *trace );
     static TraceBodyIO *createTraceBody();
   protected:
-    const ProcessModel* processModel;
+    ProcessModel* processModel;
     const ResourceModel* resourceModel;
 
 };

@@ -89,7 +89,7 @@ bool TraceBodyIO_v1::ordered() const
 
 void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
                            unordered_set<TState>& states, unordered_set<TEventType>& events,
-                           MetadataManager& traceInfo ) const
+                           MetadataManager& traceInfo, TRecordTime& endTime  ) const
 {
   file->getline( line );
 

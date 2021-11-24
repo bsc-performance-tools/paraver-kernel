@@ -37,14 +37,26 @@ class ProcessModel
 {
 
   public:
+    struct ThreadLocation
+    {
+      TApplOrder appl;
+      TTaskOrder task;
+      TThreadOrder thread;
+
+      bool operator==( const ThreadLocation& other ) const
+      {
+        return appl   == other.appl &&
+               task   == other.task &&
+               thread == other.thread;
+      }
+    };
+    
     ProcessModel()
     {
       ready = false;
     }
 
     ProcessModel( std::istringstream& headerInfo, bool existResourceInfo );
-    ProcessModel( Trace *whichTrace, const std::string &fileName,
-                  TTime &traceEndTime ); // Used for CSVs
 
     ~ProcessModel()
     {}
@@ -100,22 +112,11 @@ class ProcessModel
     void addApplication();
     void addTask( TApplOrder whichAppl );
     void addThread( TApplOrder whichAppl, TTaskOrder whichTask, TNodeOrder execNode );
+    void addApplTaskThread( const ThreadLocation& whichLocation,
+                            TNodeOrder execNode = 0 );
+
 
   protected:
-
-    struct ThreadLocation
-    {
-      TApplOrder appl;
-      TTaskOrder task;
-      TThreadOrder thread;
-
-      bool operator==( const ThreadLocation& other ) const
-      {
-        return appl   == other.appl &&
-               task   == other.task &&
-               thread == other.thread;
-      }
-    };
 
     struct TaskLocation
     {

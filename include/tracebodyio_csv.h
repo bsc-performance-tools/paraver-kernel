@@ -44,7 +44,7 @@ class TraceBodyIO_csv : public TraceBodyIO
     bool ordered() const override;
     void read( TraceStream *file, MemoryBlocks& records,
                std::unordered_set<TState>& states, std::unordered_set<TEventType>& events,
-               MetadataManager& traceInfo ) const override;
+               MetadataManager& traceInfo, TRecordTime& endTime ) const override;
     void write( std::fstream& whichStream,
                 const KTrace& whichTrace,
                 MemoryTrace::iterator *record,
@@ -55,6 +55,7 @@ class TraceBodyIO_csv : public TraceBodyIO
     void writeEvents( std::fstream& whichStream,
                       const KTrace& whichTrace,
                       std::vector<MemoryTrace::iterator *>& recordList ) const;
+
 
   protected:
 
@@ -81,7 +82,7 @@ class TraceBodyIO_csv : public TraceBodyIO
     void readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const;
 
     void readEvents( const std::string& line, MemoryBlocks& records,
-                    std::unordered_set<TState>& states ) const;
+                    std::unordered_set<TState>& states, TRecordTime& endTime ) const;
     bool readCommon( std::istringstream& line,
                      TCPUOrder& CPU,
                      TApplOrder& appl,
@@ -110,6 +111,8 @@ class TraceBodyIO_csv : public TraceBodyIO
                       const MemoryTrace::iterator *record ) const;
 
     bool sameMultiEvent( const MemoryTrace::iterator *record ) const;
+    bool updateATT( TApplOrder& appl, TTaskOrder& task, TThreadOrder& thread ) const;
+
 };
 
 

@@ -110,6 +110,14 @@ void PlainBlocks::setTime( TRecordTime whichTime )
 
 void PlainBlocks::setThread( TThreadOrder whichThread )
 {
+  if ( currentBlock.size() < whichThread + 1 )
+  {
+    blocks.push_back( vector<TRecord *>() );
+    blocks[ whichThread ].push_back( nullptr );
+    currentBlock.push_back( nullptr );
+    currentRecord.push_back( 0 );
+  }
+
   if ( currentBlock[ whichThread ] == nullptr )
   {
     blocks[ whichThread ][ 0 ] = new TRecord[ blockSize ];
@@ -152,6 +160,14 @@ void PlainBlocks::setThread( TApplOrder whichAppl,
                 whichTask,
                 whichThread );
 
+  if ( currentBlock.size() < whichThread + 1 )
+  {
+    blocks.push_back( vector<TRecord *>() );
+    blocks[ whichThread ].push_back( nullptr );
+    currentBlock.push_back( nullptr );
+    currentRecord.push_back( 0 );
+  }
+  
   if ( currentBlock[ whichThread ] == nullptr )
   {
     blocks[ whichThread ][ 0 ] = new TRecord[ blockSize ];

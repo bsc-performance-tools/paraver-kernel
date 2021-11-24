@@ -636,11 +636,12 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     // Saved CSV traces are in nanoseconds.
     traceTimeUnit = NS;
     traceEndTime = 0;
-    traceProcessModel = ProcessModel( this, whichFile, traceEndTime );
+    traceProcessModel = ProcessModel( );
     traceResourceModel = ResourceModel( );
 
     body->setProcessModel( &traceProcessModel );
     body->setResourceModel( &traceResourceModel );
+    traceProcessModel.setReady( true );
 
     if ( !file->canseekend() && progress != nullptr )
     {
@@ -775,7 +776,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   {
     while ( !file->eof() )
     {
-      body->read( file, *blocks, hashstates, hashevents, myTraceInfo );
+      body->read( file, *blocks, hashstates, hashevents, myTraceInfo, traceEndTime );
       if( blocks->getCountInserted() > 0 )
         ++count;
 

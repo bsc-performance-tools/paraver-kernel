@@ -53,9 +53,11 @@ void PlainTrace::insert( MemoryBlocks *blocks )
   for ( PRV_UINT16 i = 0; i < blocks->getCountInserted(); i++ )
   {
     TLastRecord *tmpLast = ( TLastRecord * )blocks->getLastRecord( i );
+    if ( traceIndex.size() < tmpLast->thread + 1 )
+      traceIndex.push_back( Index<pair<PRV_UINT32, PRV_UINT32> >( 1000 ) );
+    
     traceIndex[ tmpLast->thread ].indexRecord( tmpLast->time,
-        pair<PRV_UINT32, PRV_UINT32>( tmpLast->block,
-                              tmpLast->pos )
+                                               pair<PRV_UINT32, PRV_UINT32>( tmpLast->block, tmpLast->pos )
                                              );
   }
 

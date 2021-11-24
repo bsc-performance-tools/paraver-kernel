@@ -44,7 +44,7 @@ class TraceBodyIO_v1 : public TraceBodyIO
     bool ordered() const override;
     void read( TraceStream *file, MemoryBlocks& records,
                std::unordered_set<TState>& states, std::unordered_set<TEventType>& events,
-               MetadataManager& traceInfo ) const override;
+               MetadataManager& traceInfo, TRecordTime& endTime ) const override;
     void write( std::fstream& whichStream,
                 const KTrace& whichTrace,
                 MemoryTrace::iterator *record,

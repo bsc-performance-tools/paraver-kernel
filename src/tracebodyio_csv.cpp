@@ -119,13 +119,13 @@ bool TraceBodyIO_csv::ordered() const
 
 void TraceBodyIO_csv::read( TraceStream *file, MemoryBlocks& records,
                            unordered_set<TState>& states, unordered_set<TEventType>& events,
-                           MetadataManager& traceInfo ) const
+                           MetadataManager& traceInfo, TRecordTime& endTime ) const
 {
   file->getline( line );
   if ( line.size() == 0 )
     return;
 
-  readEvents( line, records, states );  
+  readEvents( line, records, states, endTime );  
 }
 
 void TraceBodyIO_csv::bufferWrite( fstream& whichStream, bool writeReady, bool lineClear ) const
@@ -220,7 +220,7 @@ inline void TraceBodyIO_csv::readTraceInfo(  const std::string& line, MetadataMa
 
 
 inline void TraceBodyIO_csv::readEvents( const string& line, MemoryBlocks& records,
-                                       unordered_set<TEventType>& events ) const
+                                       unordered_set<TEventType>& events, TRecordTime& endTime ) const
 { 
   TCPUOrder CPU = 0;
   TApplOrder appl;
@@ -228,7 +228,6 @@ inline void TraceBodyIO_csv::readEvents( const string& line, MemoryBlocks& recor
   TThreadOrder thread;
   TRecordTime time;
   TRecordTime begintime;
-  TRecordTime endtime;
   TEventValue eventvalue;
   double decimals;
 
@@ -242,7 +241,8 @@ inline void TraceBodyIO_csv::readEvents( const string& line, MemoryBlocks& recor
     cerr << line << endl;
     return;
   }
-  endtime = begintime + time;
+  if ( endTime < begintime + time )
+    endTime = begintime + time;
   TEventType eventtype = 1;
 
   //Event
@@ -269,6 +269,8 @@ inline bool TraceBodyIO_csv::readCommon( istringstream& line,
                                         TEventValue& eventvalue,
                                         double& decimals ) const
 { 
+  static ProcessModel::ThreadLocation lastATT = { 0, 0, 0 };
+
   std::getline( line, tmpstring, '.' ); 
 #ifdef USE_ATOLL
   appl = atoll( tmpstring.c_str() );
@@ -317,8 +319,16 @@ inline bool TraceBodyIO_csv::readCommon( istringstream& line,
   }
 #endif
 
-  if ( !processModel->isValidThread( appl - 1, task - 1, thread - 1 ) )
-    return false;
+  ProcessModel::ThreadLocation currATT = { appl, task, thread };
+  if ( !( currATT == lastATT ) )
+  {
+    lastATT = currATT;
+    --currATT.appl;
+    --currATT.task;
+    --currATT.thread;
+    processModel->addApplTaskThread( currATT );
+  }
+
 
   std::getline( line, tmpstring, '.' ); 
 #ifdef USE_ATOLL
@@ -353,6 +363,7 @@ inline bool TraceBodyIO_csv::readCommon( istringstream& line,
   }
 #endif
 
+
   std::getline( line, tmpstring, '\t' );
   std::getline( line, tmpstring, '\n' );
 #ifdef USE_ATOLL
@@ -372,6 +383,9 @@ inline bool TraceBodyIO_csv::readCommon( istringstream& line,
   return true;
 }
 
+bool TraceBodyIO_csv::updateATT( TApplOrder &appl, TTaskOrder &task, TThreadOrder &thread ) const
+{ 
+}
 
 /**************************
   Write records functions

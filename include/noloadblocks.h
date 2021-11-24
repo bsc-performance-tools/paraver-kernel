@@ -179,6 +179,7 @@ namespace NoLoad
       std::unordered_set<TEventType> notUsedEvents;
 
       MetadataManager dummyTraceInfo;
+      TTime dummyEndTime;
 
       void goToPrevLine();
   };

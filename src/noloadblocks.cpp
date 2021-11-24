@@ -494,7 +494,7 @@ void NoLoadBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
       return;
     }
 
-    body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo );
+    body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo, dummyEndTime );
   }
 
   fileLineData *currentData = blocks[ offset ];
@@ -541,7 +541,7 @@ void NoLoadBlocks::getPrevRecord( TRecord **record, PRV_INT64& offset, PRV_UINT1
   {
     lastData = nullptr;
     lastPos = offset;
-    body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo );
+    body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo, dummyEndTime );
   }
 
   fileLineData *currentData = blocks[ offset ];
@@ -591,7 +591,7 @@ void NoLoadBlocks::getNextRecord( TThreadOrder whichThread, TRecord **record, PR
     file->seekg( offset );
     lastData = nullptr;
     lastPos = offset;
-    body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo );
+    body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo, dummyEndTime );
   }
 
   fileLineData *currentData = blocks[ offset ];
@@ -637,7 +637,7 @@ void NoLoadBlocks::getPrevRecord( TThreadOrder whichThread, TRecord **record, PR
   {
     lastData = nullptr;
     lastPos = offset;
-    body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo );
+    body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo, dummyEndTime );
   }
 
   fileLineData *currentData = blocks[ offset ];
@@ -666,7 +666,7 @@ void NoLoadBlocks::getThreadRecordByTime( TThreadOrder whichThread, TRecordTime 
     file->seekg( offset );
     lastData = nullptr;
     lastPos = offset;
-    body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo );
+    body->read( file, *this, notUsedStates, notUsedEvents, dummyTraceInfo, dummyEndTime );
   }
 
   fileLineData *currentData = blocks[ offset ];
