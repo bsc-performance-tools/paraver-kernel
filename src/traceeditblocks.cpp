@@ -465,7 +465,7 @@ void TraceEditBlocks::goToPrevLine()
   file->seekg( curOffset );
 }
 
-void TraceEditBlocks::setFileLoaded()
+void TraceEditBlocks::setFileLoaded( TRecordTime traceEndTime )
 {
   fileLoaded = true;
 }

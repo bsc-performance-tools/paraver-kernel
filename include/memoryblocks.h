@@ -111,7 +111,7 @@ class MemoryBlocks
       countInserted = 0;
     }
 
-    virtual void setFileLoaded()
+    virtual void setFileLoaded( TRecordTime traceEndTime )
     {}
 
   protected:

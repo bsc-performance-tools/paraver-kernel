@@ -647,7 +647,6 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     {
       progress->setEndLimit( traceEndTime );
     }
-    //setEventTypePrecision( _, 2 );  //algo asi
   }
   else
   {
@@ -692,7 +691,6 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
         throw TraceHeaderException( TTraceHeaderErrorCode::invalidTime,
                                     tmpstr.c_str() );
       }
-   //   else cout << traceEndTime << endl;
     }
 
     if ( !file->canseekend() && progress != nullptr )
@@ -819,8 +817,6 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
 // End reading the body
   traceEndTime = memTrace->finish( traceEndTime, this );
 
-//  cout << traceEndTime << endl;
-
   if ( !noLoad )
   {
     file->close();
@@ -833,7 +829,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     file->clear();
   }
 
-  blocks->setFileLoaded();
+  blocks->setFileLoaded( traceEndTime );
 
   ready = true;
 }

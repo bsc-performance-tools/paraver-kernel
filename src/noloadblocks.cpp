@@ -714,7 +714,7 @@ void NoLoadBlocks::goToPrevLine()
   file->seekg( curOffset );
 }
 
-void NoLoadBlocks::setFileLoaded()
+void NoLoadBlocks::setFileLoaded( TRecordTime traceEndTime )
 {
   fileLoaded = true;
 }

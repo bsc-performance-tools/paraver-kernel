@@ -122,7 +122,7 @@ namespace NoLoad
     void incNumUseds( PRV_INT64 offset ) override;
     void decNumUseds( PRV_INT64 offset ) override;
 
-      virtual void setFileLoaded() override;
+      virtual void setFileLoaded( TRecordTime traceEndTime ) override;
       virtual void setFirstOffset( PRV_INT64 whichOffset ) override;
 
     protected:

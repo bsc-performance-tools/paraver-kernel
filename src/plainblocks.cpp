@@ -43,7 +43,7 @@ const TRecordType PlainBlocks::commTypes[] =
 
 PlainBlocks::PlainBlocks( const ResourceModel& resource, const ProcessModel& process,
                           TRecordTime endTime )
-    : resourceModel( resource ), processModel( process ), traceEndTime( endTime )
+    : resourceModel( resource ), processModel( process )
 {
   blocks.reserve( processModel.totalThreads() );
   currentBlock.reserve( processModel.totalThreads() );
@@ -410,7 +410,7 @@ TRecordTime PlainBlocks::getLastRecordTime() const
   return time;
 }
 
-void PlainBlocks::setFileLoaded()
+void PlainBlocks::setFileLoaded( TRecordTime traceEndTime )
 {
   TRecord tmpEndRec;
   tmpEndRec.time = traceEndTime;

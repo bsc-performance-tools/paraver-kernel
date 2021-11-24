@@ -105,7 +105,7 @@ namespace Plain
       virtual TRecordTime getPhysicalReceive( TCommID whichComm ) const override;
 
       virtual TRecordTime getLastRecordTime() const override;
-      virtual void setFileLoaded() override;
+      virtual void setFileLoaded( TRecordTime traceEndTime ) override;
     protected:
 
     private:
@@ -131,7 +131,6 @@ namespace Plain
       TCommID currentComm;
       const ResourceModel& resourceModel;
       const ProcessModel& processModel;
-      TRecordTime traceEndTime;
       TRecord tmpRecord;
       bool inserted;
       TThreadOrder insertedOnThread;
