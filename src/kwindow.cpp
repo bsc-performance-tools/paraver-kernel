@@ -367,14 +367,6 @@ KSingleWindow::~KSingleWindow()
   recordsByTimeCPU.clear();
 
   delete myFilter;
-
-  for( map< TWindowLevel, vector< SemanticFunction * > >::iterator itMap = extraComposeFunctions.begin();
-       itMap != extraComposeFunctions.end(); ++itMap )
-  {
-    for( vector<SemanticFunction *>::iterator it = itMap->second.begin();
-         it != itMap->second.end(); ++it )
-      delete *it;
-  }
 }
 
 
