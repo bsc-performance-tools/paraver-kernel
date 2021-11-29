@@ -24,7 +24,6 @@
 
 #pragma once
 
-
 constexpr char CFG_CURRENT_VERSION[] = "3.4";
 
 constexpr char OLDCFG_HEADER_VERSION[] = "version";
@@ -390,6 +389,7 @@ enum TSingleTimelineProperties
 // Dynamic properties
   SINGLE_EXTRATOPCOMPOSE1,
   SINGLE_FUNCTIONPARAMETERS,
+  SINGLE_EXTRAFUNCTIONPARAMETERS,
 
   SINGLE_NULL
 };
@@ -440,7 +440,8 @@ static const std::string SingleTimelinePropertyLabels[ SINGLE_NULL ] =
   "CPU",
   "-----------TOTAL_SINGLE_PROPERTIES-----------",
   "Extra Top Compose 1",
-  "Parameters"
+  "Parameters",
+  "Extra Parameters"
 };
 
 // GUI Derived Timeline property labels
@@ -478,6 +479,7 @@ enum TDerivedTimelineProperties
 // Dynamic properties
   DERIVED_EXTRATOPCOMPOSE1,
   DERIVED_FUNCTIONPARAMETERS,
+  DERIVED_EXTRAFUNCTIONPARAMETERS,
 
   DERIVED_NULL
 };
@@ -512,7 +514,8 @@ static const std::string DerivedTimelinePropertyLabels[ DERIVED_NULL ] =
   "Shift #2",
   "-----------TOTAL_DERIVED_PROPERTIES-----------",
   "Extra Top Compose 1",
-  "Parameters"
+  "Parameters",
+  "Extra Parameters"
 };
 
 // GUI Histogram property labels

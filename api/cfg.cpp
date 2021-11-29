@@ -29,7 +29,7 @@
 #include "cfg.h"
 #include "window.h"
 #include "trace.h"
-
+#include "paraverlabels.h"
 #include "histogram.h"
 #include "histogramstatistic.h"
 #include "functionmanagement.h"
@@ -5723,6 +5723,20 @@ bool TagLinkCFG4D::parseLine( KernelConnection *whichKernel,
   }
   
   return true;
+}
+
+template< typename T >
+void TagLinkCFG4D::printLinkList( std::ofstream& cfgFile,
+                                  const CFGS4DLinkedPropertiesManager& linkedProperties,
+                                  const T *window )
+{
+  std::set< std::string > linksNames;
+  linkedProperties.getLinksName( window, linksNames );
+  for( auto it : linksNames )
+  {
+    cfgFile << CFG_TAG_LINK_CFG4D << " " << linkedProperties.getGroup( window, it )  << "|\"" << it << "\"";
+    cfgFile << std::endl;
+  }
 }
 
 

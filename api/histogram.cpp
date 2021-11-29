@@ -32,6 +32,7 @@
 #include "labelconstructor.h"
 #include "loadedwindows.h"
 #include "syncwindows.h"
+#include "paraverlabels.h"
 #include <iostream>
 
 #ifdef WIN32

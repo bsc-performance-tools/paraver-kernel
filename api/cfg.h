@@ -31,7 +31,6 @@
 #include <fstream>
 #include <string>
 #include "paraverkerneltypes.h"
-#include "paraverlabels.h"
 #include "cfgs4d.h"
 
 class KernelConnection;
@@ -2411,16 +2410,7 @@ class TagLinkCFG4D: public TagFunction
     template< typename T >
     static void printLinkList( std::ofstream& cfgFile,
                                const CFGS4DLinkedPropertiesManager& linkedProperties,
-                               const T *window )
-    {
-      std::set< std::string > linksNames;
-      linkedProperties.getLinksName( window, linksNames );
-      for( auto it : linksNames )
-      {
-        cfgFile << CFG_TAG_LINK_CFG4D << " " << linkedProperties.getGroup( window, it )  << "|\"" << it << "\"";
-        cfgFile << std::endl;
-      }
-    }
+                               const T *window );
 
   protected:
     static std::string tagCFG;

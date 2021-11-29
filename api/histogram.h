@@ -31,7 +31,6 @@
 #include "semanticcolor.h"
 #include "drawmode.h"
 #include "zoomhistory.h"
-#include "paraverlabels.h"
 #include "cfgs4d.h"
 
 #ifdef WIN32
