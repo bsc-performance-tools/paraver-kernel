@@ -33,6 +33,7 @@
 #include "ktrace.h"
 #include "traceheaderexception.h"
 #include "tracebodyio.h"
+#include "tracebodyio_v2.h"
 #include "tracestream.h"
 #include "kprogresscontroller.h"
 #include "bplustree.h"
@@ -398,7 +399,7 @@ TRecordTime KTrace::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit wh
 }
 
 
-void KTrace::dumpFileHeader( std::fstream& file, bool newFormat, PRV_INT32 numIter ) const
+void KTrace::dumpFileHeader( std::fstream& file, bool newFormat ) const
 {
   ostringstream ostr;
 
@@ -419,7 +420,7 @@ void KTrace::dumpFileHeader( std::fstream& file, bool newFormat, PRV_INT32 numIt
   else
     file << rawTraceTime << "):";
 
-  ostr << traceEndTime * numIter;
+  ostr << traceEndTime;
   file << ostr.str();
   if ( traceTimeUnit != US )
     file << "_ns";
@@ -439,7 +440,7 @@ void KTrace::dumpFileHeader( std::fstream& file, bool newFormat, PRV_INT32 numIt
 }
 
 
-void KTrace::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
+void KTrace::dumpFile( const string& whichFile ) const
 {
   ostringstream ostr;
 
@@ -448,41 +449,22 @@ void KTrace::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
   ostr.precision( 0 );
 
   std::fstream file( whichFile.c_str(), fstream::out | fstream::trunc );
-  dumpFileHeader( file, true, numIter );
+  dumpFileHeader( file, true );
 
-#ifdef BYTHREAD
-  TraceBodyIO *body = TraceBodyIO::createTraceBody();
-  body->writeCommInfo( file, *this, numIter );
-
-  for ( TThreadOrder iThread = 0; iThread < totalThreads(); ++iThread )
-  {
-    for ( PRV_INT32 iter = 0; iter < numIter; ++iter )
-    {
-      MemoryTrace::iterator *it = memTrace->threadBegin( iThread );
-
-      while ( !it->isNull() )
-      {
-        body->write( file, *this, it, iter );
-        if ( it->getTime() == traceEndTime ) break;
-        ++( *it );
-      }
-
-      delete it;
-    }
-  }
-#else
   MemoryTrace::iterator *it = memTrace->begin();
   TraceBodyIO *body = TraceBodyIO::createTraceBody();
-  body->writeCommInfo( file, *this );
+  if( TraceBodyIO_v2 *tmpBody = dynamic_cast<TraceBodyIO_v2 *>( body ) )
+    tmpBody->writeCommInfo( file, *this );
 
   while ( !it->isNull() )
   {
-    body->write( file, *this, it );
+    body->write( file, traceProcessModel, traceResourceModel, it );
     ++( *it );
+
   }
 
   delete it;
-#endif
+
   file.close();
 }
 
@@ -639,8 +621,6 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     traceProcessModel = ProcessModel( );
     traceResourceModel = ResourceModel( );
 
-    body->setProcessModel( &traceProcessModel );
-    body->setResourceModel( &traceResourceModel );
     traceProcessModel.setReady( true );
 
     if ( !file->canseekend() && progress != nullptr )
@@ -700,9 +680,6 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
 
     traceResourceModel = ResourceModel( header );
     traceProcessModel = ProcessModel( header, existResourceInfo() );
-
-    body->setProcessModel( &traceProcessModel );
-    body->setResourceModel( &traceResourceModel );
 
     // Communicators
     PRV_UINT32 numberComm = 0;
@@ -774,7 +751,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   {
     while ( !file->eof() )
     {
-      body->read( file, *blocks, hashstates, hashevents, myTraceInfo, traceEndTime );
+      body->read( file, *blocks, traceProcessModel, traceResourceModel, hashstates, hashevents, myTraceInfo, traceEndTime );
       if( blocks->getCountInserted() > 0 )
         ++count;
 

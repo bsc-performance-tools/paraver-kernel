@@ -40,26 +40,26 @@ TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file, Trace *trace  )
 
   std::size_t lastDot = file->getFilename().find_last_of( '.' );
   std::string fileType = file->getFilename().substr( lastDot + 1 );
+
   if ( fileType == "csv" )
   {
     ret = new TraceBodyIO_csv( trace );
   }
-
   else
   {
 #ifndef WIN32
     file->getline( firstLine );
     if ( firstLine.compare( "new format" ) == 0 )
     {
-      ret = new TraceBodyIO_v2( trace );
+      ret = new TraceBodyIO_v2();
     }
     else
     {
-      ret = new TraceBodyIO_v1( trace );
+      ret = new TraceBodyIO_v1();
       file->seekbegin();
     }
 #else
-    ret = new TraceBodyIO_v1( trace );
+    ret = new TraceBodyIO_v1();
 #endif
   }
   return ret;
@@ -68,14 +68,4 @@ TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file, Trace *trace  )
 TraceBodyIO *TraceBodyIO::createTraceBody()
 {
   return new TraceBodyIO_v2();
-}
-
-void TraceBodyIO::setProcessModel( ProcessModel* whichProcessModel )
-{
-  processModel = whichProcessModel;
-}
-
-void TraceBodyIO::setResourceModel( const ResourceModel* whichResourceModel )
-{
-  resourceModel = whichResourceModel;
 }

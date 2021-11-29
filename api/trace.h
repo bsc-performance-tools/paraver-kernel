@@ -55,8 +55,8 @@ class Trace
     virtual std::string getFileName() const = 0;
     virtual std::string getTraceName() const = 0;
 
-    virtual void dumpFileHeader( std::fstream& file, bool newFormat = false, PRV_INT32 numIter = 1 ) const = 0;
-    virtual void dumpFile( const std::string& whichFile, PRV_INT32 numIter = 1 ) const = 0;
+    virtual void dumpFileHeader( std::fstream& file, bool newFormat = false ) const = 0;
+    virtual void dumpFile( const std::string& whichFile ) const = 0;
 
     virtual TApplOrder totalApplications() const = 0;
     virtual TTaskOrder totalTasks() const = 0;
@@ -243,8 +243,8 @@ class TraceProxy: public Trace
     virtual std::string getTraceNameNumbered() const override;
     virtual void setInstanceNumber( PRV_UINT32 whichInstanceNumber ) override;
 
-    virtual void dumpFileHeader( std::fstream& file, bool newFormat = false, PRV_INT32 numIter = 1 ) const override;
-    virtual void dumpFile( const std::string& whichFile, PRV_INT32 numIter = 1 ) const override;
+    virtual void dumpFileHeader( std::fstream& file, bool newFormat = false ) const override;
+    virtual void dumpFile( const std::string& whichFile ) const override;
 
     virtual TApplOrder totalApplications() const override;
     virtual TTaskOrder totalTasks() const override;

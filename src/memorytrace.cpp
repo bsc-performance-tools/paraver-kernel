@@ -23,6 +23,7 @@
 
 
 #include "memorytrace.h"
+#include "ktrace.h"
 #include <iostream>
 
 using namespace std;
@@ -55,4 +56,54 @@ MemoryTrace::iterator& MemoryTrace::iterator::operator=( const MemoryTrace::iter
 bool MemoryTrace::iterator::isNull() const
 {
   return ( record == nullptr );
+}
+
+TThreadOrder MemoryTrace::iterator::getSenderThread() const
+{
+  return myTrace->getSenderThread( getCommIndex() );
+}
+
+TCPUOrder MemoryTrace::iterator::getSenderCPU() const
+{
+  return myTrace->getSenderCPU( getCommIndex() );
+}
+
+TThreadOrder MemoryTrace::iterator::getReceiverThread() const
+{
+  return myTrace->getReceiverThread( getCommIndex() );
+}
+
+TCPUOrder MemoryTrace::iterator::getReceiverCPU() const
+{
+  return myTrace->getReceiverCPU( getCommIndex() );
+}
+
+TCommTag MemoryTrace::iterator::getCommTag() const
+{
+  return myTrace->getCommTag( getCommIndex() );
+}
+
+TCommSize MemoryTrace::iterator::getCommSize() const
+{
+  return myTrace->getCommSize( getCommIndex() );
+}
+
+TRecordTime MemoryTrace::iterator::getLogicalSend() const
+{
+  return myTrace->getLogicalSend( getCommIndex() );
+}
+
+TRecordTime MemoryTrace::iterator::getLogicalReceive() const
+{
+  return myTrace->getLogicalReceive( getCommIndex() );
+}
+
+TRecordTime MemoryTrace::iterator::getPhysicalSend() const
+{
+  return myTrace->getPhysicalSend( getCommIndex() );
+}
+
+TRecordTime MemoryTrace::iterator::getPhysicalReceive() const
+{
+  return myTrace->getPhysicalReceive( getCommIndex() );
 }

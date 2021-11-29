@@ -23,38 +23,34 @@
 
 #pragma once
 
-
 #include "tracebodyio.h"
 #include "tracestream.h"
-
 
 // Paraver trace old format file
 class TraceBodyIO_v1 : public TraceBodyIO
 {
   public:
     TraceBodyIO_v1() {}
-    TraceBodyIO_v1( Trace* trace );
 
-    static const PRV_UINT8 CommentRecord = '#';
-    static const PRV_UINT8 StateRecord = '1';
-    static const PRV_UINT8 EventRecord = '2';
-    static const PRV_UINT8 CommRecord = '3';
-    static const PRV_UINT8 GlobalCommRecord = '4';
+    static constexpr PRV_UINT8 CommentRecord = '#';
+    static constexpr PRV_UINT8 StateRecord = '1';
+    static constexpr PRV_UINT8 EventRecord = '2';
+    static constexpr PRV_UINT8 CommRecord = '3';
+    static constexpr PRV_UINT8 GlobalCommRecord = '4';
 
     bool ordered() const override;
-    void read( TraceStream *file, MemoryBlocks& records,
-               std::unordered_set<TState>& states, std::unordered_set<TEventType>& events,
-               MetadataManager& traceInfo, TRecordTime& endTime ) const override;
+    void read( TraceStream *file,
+               MemoryBlocks& records,
+               ProcessModel& whichProcessModel,
+               const ResourceModel& whichResourceModel,
+               std::unordered_set<TState>& states,
+               std::unordered_set<TEventType>& events,
+               MetadataManager& traceInfo,
+               TRecordTime& endTime ) const override;
     void write( std::fstream& whichStream,
-                const KTrace& whichTrace,
-                MemoryTrace::iterator *record,
-                PRV_INT32 numIter = 0 ) const override;
-    void writeCommInfo( std::fstream& whichStream,
-                        const KTrace& whichTrace,
-                        PRV_INT32 numIter = 1 ) const override;
-    void writeEvents( std::fstream& whichStream,
-                      const KTrace& whichTrace,
-                      std::vector<MemoryTrace::iterator *>& recordList ) const;
+                const ProcessModel& whichProcessModel,
+                const ResourceModel& whichResourceModel,
+                MemoryTrace::iterator *record ) const override;
 
   protected:
 
@@ -76,17 +72,27 @@ class TraceBodyIO_v1 : public TraceBodyIO
 
     static std::string line;
     static std::ostringstream ostr;
-    Trace* whichTrace;
 
     void readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const;
 
-    void readState( const std::string& line, MemoryBlocks& records,
+    void readState( const std::string& line,
+                    const ProcessModel& whichProcessModel,
+                    const ResourceModel& whichResourceModel,
+                    MemoryBlocks& records,
                     std::unordered_set<TState>& states ) const;
-    void readEvent( const std::string& line, MemoryBlocks& records,
+    void readEvent( const std::string& line,
+                    const ProcessModel& whichProcessModel,
+                    const ResourceModel& whichResourceModel,
+                    MemoryBlocks& records,
                     std::unordered_set<TEventType>& events ) const;
-    void readComm( const std::string& line, MemoryBlocks& records ) const;
+    void readComm( const std::string& line,
+                   const ProcessModel& whichProcessModel,
+                   const ResourceModel& whichResourceModel,
+                   MemoryBlocks& records ) const;
     void readGlobalComm( const std::string& line, MemoryBlocks& records ) const;
-    bool readCommon( std::string::const_iterator& it,
+    bool readCommon( const ProcessModel& whichProcessModel,
+                     const ResourceModel& whichResourceModel,
+                     std::string::const_iterator& it,
                      const std::string::const_iterator& end,
                      TCPUOrder& CPU,
                      TApplOrder& appl,
@@ -96,19 +102,22 @@ class TraceBodyIO_v1 : public TraceBodyIO
 
     void bufferWrite( std::fstream& whichStream, bool writeReady, bool lineClear = true  ) const;
 
-    bool writeState( const KTrace& whichTrace,
+    bool writeState( const ProcessModel& whichProcessModel,
+                     const ResourceModel& whichResourceModel,
                      const MemoryTrace::iterator *record ) const;
-    bool writePendingMultiEvent( const KTrace& whichTrace ) const;
+    bool writePendingMultiEvent( const ProcessModel& whichProcessModel ) const;
     void appendEvent( const MemoryTrace::iterator *record ) const;
-    bool writeEvent( const KTrace& whichTrace,
+    bool writeEvent( const ProcessModel& whichProcessModel,
                      const MemoryTrace::iterator *record,
                      bool needCommons = true ) const;
-    bool writeComm( const KTrace& whichTrace,
+    bool writeComm( const ProcessModel& whichProcessModel,
+                    const ResourceModel& whichResourceModel,
                     const MemoryTrace::iterator *record ) const;
-    bool writeGlobalComm( const KTrace& whichTrace,
+    bool writeGlobalComm( const ProcessModel& whichProcessModel,
                           const MemoryTrace::iterator *record ) const;
     void writeCommon( std::ostringstream& line,
-                      const KTrace& whichTrace,
+                      const ProcessModel& whichProcessModel,
+                      const ResourceModel& whichResourceModel,
                       const MemoryTrace::iterator *record ) const;
 
     bool sameMultiEvent( const MemoryTrace::iterator *record ) const;

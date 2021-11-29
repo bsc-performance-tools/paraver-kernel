@@ -159,10 +159,6 @@ TOptionParamedir definedOption[] =
 // Options
 std::map< TOptionID, TOptionParamedir > option;
 
-#ifdef BYTHREAD
-PRV_INT32 numIter = 1; // DUMP_TRACE by THREAD
-#endif
-
 // PRVs
 string sourceTraceName( "" );
 string outputTraceName( "" );
@@ -417,24 +413,6 @@ void registerTool( TOptionID whichOption,
 }
 
 
-#ifdef BYTHREAD
-void getDumpIterations( int &numArg, char *argv[] )
-{
-  if ( option[ DUMP_TRACE ].active )
-  {
-    ++numArg;
-    string strNumIter( argv[ numArg ] );
-    std::stringstream tmpNumIter( strNumIter );
-    if( !( tmpNumIter >> numIter ) )
-    {
-      numIter = 1;
-      --numArg;
-    }
-  }
-}
-#endif
-
-
 bool parseArguments( KernelConnection *myKernel,
                      int argc,
                      char *arguments[],
@@ -479,9 +457,6 @@ bool parseArguments( KernelConnection *myKernel,
 
       readParameter = option[ currentOption ].numParameters;
       registerTool( currentOption, registeredTool, needXMLOptionsFile );
-#ifdef BYTHREAD
-      getDumpIterations( numArg, arguments );
-#endif
     }
     else if ( readParameter > 0 )
     {
@@ -1049,11 +1024,7 @@ int main( int argc, char *argv[] )
           }
 
           if ( option[ DUMP_TRACE ].active )
-      #ifdef BYTHREAD
-            trace->dumpFile( sourceTraceName + ".new.bythread", numIter );
-      #else
             trace->dumpFile( sourceTraceName + ".new.global" );
-      #endif
 
           loadCFGs( myKernel );
 

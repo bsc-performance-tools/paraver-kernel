@@ -23,20 +23,13 @@
 
 #pragma once
 
-
-#ifdef _MSC_VER
-#include <hash_set>
-#else
-#include  <unordered_set>
-#endif
+#include <unordered_set>
 #include <fstream>
 #include "memoryblocks.h"
-#include "ktrace.h"
+#include "processmodel.h"
+#include "resourcemodel.h"
 #include "tracestream.h"
-
-#ifdef _MSC_VER
-using namespace stdext;
-#endif
+#include "ParaverMetadataManager.h"
 
 class TraceBodyIO
 {
@@ -44,28 +37,23 @@ class TraceBodyIO
     TraceBodyIO();
     virtual ~TraceBodyIO();
 
-    virtual void setProcessModel( ProcessModel* whichProcessModel );
-    virtual void setResourceModel( const ResourceModel* whichResourceModel );
-
     virtual bool ordered() const = 0;
-    virtual void read( TraceStream *file, MemoryBlocks& records,
-                       std::unordered_set<TState>& states, std::unordered_set<TEventType>& events,
-                       MetadataManager& traceInfo, TRecordTime& endTime ) const = 0;
+    virtual void read( TraceStream *file,
+                       MemoryBlocks& records,
+                       ProcessModel& whichProcessModel,
+                       const ResourceModel& whichResourceModel,
+                       std::unordered_set<TState>& states,
+                       std::unordered_set<TEventType>& events,
+                       MetadataManager& traceInfo,
+                       TRecordTime& endTime ) const = 0;
     virtual void write( std::fstream& whichStream,
-                        const KTrace& whichTrace,
-                        MemoryTrace::iterator *record,
-                        PRV_INT32 numIter = 0 ) const = 0;
-    virtual void writeCommInfo( std::fstream& whichStream,
-                                const KTrace& whichTrace,
-                                PRV_INT32 numIter = 1 ) const = 0;
-
-//    virtual void close( std::fstream& whichStream, const KTrace& whichTrace ) = 0;
+                        const ProcessModel& whichProcessModel,
+                        const ResourceModel& whichResourceModel,
+                        MemoryTrace::iterator *record ) const = 0;
 
     static TraceBodyIO *createTraceBody( TraceStream *file, Trace *trace );
     static TraceBodyIO *createTraceBody();
   protected:
-    ProcessModel* processModel;
-    const ResourceModel* resourceModel;
 
 };
 

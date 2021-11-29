@@ -63,8 +63,8 @@ class KTrace: public Trace
     std::string getFileName() const override;
     std::string getTraceName() const override;
 
-    void dumpFileHeader( std::fstream& file, bool newFormat = false, PRV_INT32 numIter = 1 ) const override;
-    void dumpFile( const std::string& whichFile, PRV_INT32 numIter = 1 ) const override;
+    void dumpFileHeader( std::fstream& file, bool newFormat = false ) const override;
+    void dumpFile( const std::string& whichFile ) const override;
 
     TApplOrder totalApplications() const override;
     TTaskOrder totalTasks() const override;
