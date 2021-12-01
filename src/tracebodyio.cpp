@@ -48,6 +48,8 @@ TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file, Trace *trace, Proc
   else
   {
 #ifndef WIN32
+    std::streampos currentPos = file->tellg();
+    file->seekbegin();
     file->getline( firstLine );
     if ( firstLine.compare( "new format" ) == 0 )
     {
@@ -56,8 +58,8 @@ TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file, Trace *trace, Proc
     else
     {
       ret = new TraceBodyIO_v1();
-      file->seekbegin();
     }
+    file->seekg( currentPos );
 #else
     ret = new TraceBodyIO_v1();
 #endif

@@ -630,6 +630,9 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   else
   {
     file->getline( tmpstr );
+    if ( tmpstr.compare( "new format" ) == 0 )
+      file->getline( tmpstr );
+
     istringstream header( tmpstr );
 
     string tmpDate;
