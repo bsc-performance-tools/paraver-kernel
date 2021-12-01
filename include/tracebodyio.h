@@ -40,7 +40,7 @@ class TraceBodyIO
     virtual bool ordered() const = 0;
     virtual void read( TraceStream *file,
                        MemoryBlocks& records,
-                       ProcessModel& whichProcessModel,
+                       const ProcessModel& whichProcessModel,
                        const ResourceModel& whichResourceModel,
                        std::unordered_set<TState>& states,
                        std::unordered_set<TEventType>& events,
@@ -51,7 +51,7 @@ class TraceBodyIO
                         const ResourceModel& whichResourceModel,
                         MemoryTrace::iterator *record ) const = 0;
 
-    static TraceBodyIO *createTraceBody( TraceStream *file, Trace *trace );
+    static TraceBodyIO *createTraceBody( TraceStream *file, Trace *trace, ProcessModel& whichProcessModel );
     static TraceBodyIO *createTraceBody();
   protected:
 

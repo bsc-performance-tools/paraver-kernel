@@ -33,7 +33,7 @@ TraceBodyIO::TraceBodyIO()
 TraceBodyIO::~TraceBodyIO()
 {}
 
-TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file, Trace *trace  )
+TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file, Trace *trace, ProcessModel& whichProcessModel )
 {
   TraceBodyIO *ret;
   string firstLine;
@@ -43,7 +43,7 @@ TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file, Trace *trace  )
 
   if ( fileType == "csv" )
   {
-    ret = new TraceBodyIO_csv( trace );
+    ret = new TraceBodyIO_csv( trace, whichProcessModel );
   }
   else
   {

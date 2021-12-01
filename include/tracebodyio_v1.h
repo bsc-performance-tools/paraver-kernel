@@ -41,7 +41,7 @@ class TraceBodyIO_v1 : public TraceBodyIO
     bool ordered() const override;
     void read( TraceStream *file,
                MemoryBlocks& records,
-               ProcessModel& whichProcessModel,
+               const ProcessModel& whichProcessModel,
                const ResourceModel& whichResourceModel,
                std::unordered_set<TState>& states,
                std::unordered_set<TEventType>& events,

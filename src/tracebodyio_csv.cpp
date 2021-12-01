@@ -103,8 +103,8 @@ bool prv_atoll( const char *p, T *result, double *decimals )
   return true;
 }
 
-TraceBodyIO_csv::TraceBodyIO_csv( Trace* trace )
-: whichTrace( trace )
+TraceBodyIO_csv::TraceBodyIO_csv( Trace* trace, ProcessModel& whichProcessModel )
+: myTrace( trace ),  myProcessModel( &whichProcessModel )
 {}
 
 
@@ -115,7 +115,7 @@ bool TraceBodyIO_csv::ordered() const
 
 void TraceBodyIO_csv::read( TraceStream *file,
                             MemoryBlocks& records,
-                            ProcessModel& whichProcessModel,
+                            const ProcessModel& whichProcessModel,
                             const ResourceModel& whichResourceModel,
                             std::unordered_set<TState>& states,
                             std::unordered_set<TEventType>& events,
@@ -126,7 +126,7 @@ void TraceBodyIO_csv::read( TraceStream *file,
   if ( line.size() == 0 )
     return;
 
-  readEvents( whichProcessModel, whichResourceModel, line, records, states, endTime );
+  readEvents( whichResourceModel, line, records, states, endTime );
 }
 
 void TraceBodyIO_csv::bufferWrite( fstream& whichStream, bool writeReady, bool lineClear ) const
@@ -158,8 +158,7 @@ inline void TraceBodyIO_csv::readTraceInfo(  const std::string& line, MetadataMa
 }
 
 
-inline void TraceBodyIO_csv::readEvents( ProcessModel& whichProcessModel,
-                                         const ResourceModel& whichResourceModel,
+inline void TraceBodyIO_csv::readEvents( const ResourceModel& whichResourceModel,
                                          const string& line,
                                          MemoryBlocks& records,
                                          unordered_set<TEventType>& events,
@@ -177,8 +176,7 @@ inline void TraceBodyIO_csv::readEvents( ProcessModel& whichProcessModel,
   strLine.clear();
   strLine.str( line );
   // Read the common info
-  if ( !readCommon( whichProcessModel,
-                    whichResourceModel,
+  if ( !readCommon( whichResourceModel,
                     strLine, CPU, appl, task, thread, 
                     begintime, time, eventvalue, decimals ) )
   {
@@ -200,12 +198,11 @@ inline void TraceBodyIO_csv::readEvents( ProcessModel& whichProcessModel,
   records.setEventValue( eventvalue );
   events.insert( eventtype );
 
-  whichTrace->setEventTypePrecision( eventtype, decimals );
+  myTrace->setEventTypePrecision( eventtype, decimals );
 }
 
 
-inline bool TraceBodyIO_csv::readCommon( ProcessModel& whichProcessModel,
-                                         const ResourceModel& whichResourceModel,
+inline bool TraceBodyIO_csv::readCommon( const ResourceModel& whichResourceModel,
                                          istringstream& line,
                                          TCPUOrder& CPU,
                                          TApplOrder& appl,
@@ -273,7 +270,7 @@ inline bool TraceBodyIO_csv::readCommon( ProcessModel& whichProcessModel,
     --currATT.appl;
     --currATT.task;
     --currATT.thread;
-    whichProcessModel.addApplTaskThread( currATT );
+    myProcessModel->addApplTaskThread( currATT );
   }
 
 

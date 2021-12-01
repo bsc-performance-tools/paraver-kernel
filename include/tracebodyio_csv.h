@@ -32,7 +32,7 @@ class TraceBodyIO_csv : public TraceBodyIO
 {
   public:
     TraceBodyIO_csv( ) {}
-    TraceBodyIO_csv( Trace* trace );
+    TraceBodyIO_csv( Trace* trace, ProcessModel& whichProcessModel );
 
     static const PRV_UINT8 CommentRecord = '#';
     static const PRV_UINT8 StateRecord = '1';
@@ -43,7 +43,7 @@ class TraceBodyIO_csv : public TraceBodyIO
     bool ordered() const override;
     void read( TraceStream *file,
                MemoryBlocks& records,
-               ProcessModel& whichProcessModel,
+               const ProcessModel& whichProcessModel,
                const ResourceModel& whichResourceModel,
                std::unordered_set<TState>& states,
                std::unordered_set<TEventType>& events,
@@ -63,19 +63,19 @@ class TraceBodyIO_csv : public TraceBodyIO
     static std::string line;
     static std::ostringstream ostr;
 
-    Trace* whichTrace;
+    ProcessModel *myProcessModel;
+
+    Trace* myTrace;
 
     void readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const;
 
-    void readEvents( ProcessModel& whichProcessModel,
-                     const ResourceModel& whichResourceModel,
+    void readEvents( const ResourceModel& whichResourceModel,
                      const std::string& line,
                      MemoryBlocks& records,
                      std::unordered_set<TState>& states,
                      TRecordTime& endTime ) const;
 
-    bool readCommon( ProcessModel& whichProcessModel,
-                     const ResourceModel& whichResourceModel,
+    bool readCommon( const ResourceModel& whichResourceModel,
                      std::istringstream& line,
                      TCPUOrder& CPU,
                      TApplOrder& appl,

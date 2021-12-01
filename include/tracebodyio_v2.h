@@ -47,7 +47,7 @@ class TraceBodyIO_v2 : public TraceBodyIO
     bool ordered() const override;
     void read( TraceStream *file,
                MemoryBlocks& records,
-               ProcessModel& whichProcessModel,
+               const ProcessModel& whichProcessModel,
                const ResourceModel& whichResourceModel,
                std::unordered_set<TState>& states,
                std::unordered_set<TEventType>& events,
@@ -59,6 +59,7 @@ class TraceBodyIO_v2 : public TraceBodyIO
                 MemoryTrace::iterator *record ) const override;
     void writeEvents( std::fstream& whichStream,
                       const ProcessModel& whichProcessModel,
+                      const ResourceModel& whichResourceModel,
                       std::vector<MemoryTrace::iterator *>& recordList ) const;
 
     void writeCommInfo( std::fstream& whichStream,

@@ -27,6 +27,7 @@
 #include "traceeditblocks.h"
 #include "processmodel.h"
 #include "resourcemodel.h"
+#include "ktrace.h"
 
 using namespace NoLoad;
 using namespace std;

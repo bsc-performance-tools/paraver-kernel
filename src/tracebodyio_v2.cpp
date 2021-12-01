@@ -36,7 +36,7 @@ bool TraceBodyIO_v2::ordered() const
 
 void TraceBodyIO_v2::read( TraceStream *file,
                            MemoryBlocks& records,
-                           ProcessModel& whichProcessModel,
+                           const ProcessModel& whichProcessModel,
                            const ResourceModel& whichResourceModel,
                            unordered_set<TState>& states,
                            unordered_set<TEventType>& events,
@@ -95,7 +95,7 @@ void TraceBodyIO_v2::write( std::fstream& whichStream,
   else if ( type & STATE )
     writeReady = writeState( line, whichProcessModel, whichResourceModel, record );
   else if ( type & EVENT )
-    writeReady = writeEvent( line, whichProcessModel, record, true );
+    writeReady = writeEvent( line, whichProcessModel, whichResourceModel, record, true );
   else if ( type & COMM )
     writeReady = writeCommRecord( line, record );
   else if ( type & GLOBCOMM )

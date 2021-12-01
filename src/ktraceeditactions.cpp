@@ -491,7 +491,10 @@ bool TraceWriterAction::execute( MemoryTrace::iterator *it  )
        ( eofParsed )
      )
   {
-    body.write( outputTrace, *tmpSequence->getCurrentTrace(), it );
+    body.write( outputTrace,
+                tmpSequence->getCurrentTrace()->getProcessModel(),
+                tmpSequence->getCurrentTrace()->getResourceModel(),
+                it );
   }
 
   if ( eofParsed && outputTrace.is_open() )
@@ -601,7 +604,10 @@ bool EventDrivenCutterAction::execute( MemoryTrace::iterator *it  )
        ( eofParsed )
      )
   {
-    body.write( *outputTraces[ currentFile ], *tmpSequence->getCurrentTrace(), it );
+    body.write( *outputTraces[ currentFile ],
+                tmpSequence->getCurrentTrace()->getProcessModel(),
+                tmpSequence->getCurrentTrace()->getResourceModel(),
+                it );
   }
 
   if ( eofParsed )

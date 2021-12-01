@@ -122,6 +122,16 @@ class KTrace: public Trace
     TRecordTime getPhysicalSend( TCommID whichComm ) const override;
     TRecordTime getPhysicalReceive( TCommID whichComm ) const override;
 
+    const ProcessModel& getProcessModel() const
+    {
+      return traceProcessModel;
+    }
+
+    const ResourceModel& getResourceModel() const
+    {
+      return traceResourceModel;
+    }
+
     inline TTime getEndTime() const override
     {
       return traceEndTime;

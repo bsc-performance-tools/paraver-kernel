@@ -858,7 +858,10 @@ void testReadWritePerformance( KernelConnection *myKernel )
          ( it->getType() == COMM + LOG + SEND )
        )
     {
-      body.write( outputTrace, myTrace, it );
+      body.write( outputTrace,
+                  myTrace->getProcessModel(),
+                  myTrace->getResourceModel(),
+                  it );
     }
 
     ++(*it);
@@ -896,7 +899,10 @@ void testNewIteratorCloneMethod( KernelConnection *myKernel )
       //MemoryTrace::iterator *itClone = myTrace.copyIterator( it );
       //MemoryTrace::iterator *itClone = myTrace.copyThreadIterator( it );
       MemoryTrace::iterator *itClone = it->clone();
-      body.write( outputTrace, myTrace, itClone );
+      body.write( outputTrace,
+                  myTrace->getProcessModel(),
+                  myTrace->getResourceModel(),
+                  itClone );
       delete itClone;
     }
 

@@ -218,14 +218,14 @@ void TraceProxy::setInstanceNumber( PRV_UINT32 whichInstanceNumber )
   instanceNumber = whichInstanceNumber;
 }
 
-void TraceProxy::dumpFileHeader( std::fstream& file, bool newFormat, PRV_INT32 numIter ) const
+void TraceProxy::dumpFileHeader( std::fstream& file, bool newFormat ) const
 {
-  myTrace->dumpFileHeader( file, newFormat, numIter );
+  myTrace->dumpFileHeader( file, newFormat );
 }
 
-void TraceProxy::dumpFile( const string& whichFile, PRV_INT32 numIter ) const
+void TraceProxy::dumpFile( const string& whichFile ) const
 {
-  myTrace->dumpFile( whichFile, numIter );
+  myTrace->dumpFile( whichFile );
 }
 
 TApplOrder TraceProxy::totalApplications() const
