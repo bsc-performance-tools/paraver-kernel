@@ -534,7 +534,8 @@ void TraceBodyIO_v1::writeCommon( ostringstream& line,
 
 bool TraceBodyIO_v1::sameMultiEvent( const MemoryTrace::iterator *record ) const
 {
-  return ( multiEventCommonInfo.cpu == record->getCPU() &&
+  return ( multiEventCommonInfo.myStream != nullptr &&
+           multiEventCommonInfo.cpu == record->getCPU() &&
            multiEventCommonInfo.thread == record->getThread() &&
            multiEventCommonInfo.time == record->getTime() );
 }

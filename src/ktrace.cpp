@@ -722,13 +722,13 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   if ( noLoad && body->ordered() )
   {
     blocks = new NoLoadBlocks( traceResourceModel, traceProcessModel, body, file, traceEndTime );
-    memTrace = new NoLoadTrace( blocks, traceProcessModel, traceResourceModel );
+    memTrace = new NoLoadTrace( this, blocks, traceProcessModel, traceResourceModel );
     ( ( NoLoadBlocks * )blocks )->setFirstOffset( file->tellg() );
   }
   else if( noLoad && !body->ordered() )
   {
     blocks = new TraceEditBlocks( traceResourceModel, traceProcessModel, body, file, traceEndTime );
-    memTrace = new NoLoadTrace( blocks, traceProcessModel, traceResourceModel );
+    memTrace = new NoLoadTrace( this, blocks, traceProcessModel, traceResourceModel );
     ( ( TraceEditBlocks * )blocks )->setFirstOffset( file->tellg() );
   }
   else if ( body->ordered() )

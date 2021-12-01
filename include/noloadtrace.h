@@ -59,9 +59,9 @@ namespace NoLoad
             destroyed( false )
           {}
 
-          iterator( NoLoadBlocks *whichBlocks );
+          iterator( const Trace *whichTrace, NoLoadBlocks *whichBlocks );
 
-          iterator( NoLoadBlocks *whichBlocks, TThreadOrder whichThread,
+          iterator( const Trace *whichTrace, NoLoadBlocks *whichBlocks, TThreadOrder whichThread,
                     TRecord *whichRecord, PRV_INT64 whichOffset, PRV_INT16 whichPos );
 
           virtual ~iterator();
@@ -108,7 +108,7 @@ namespace NoLoad
           ThreadIterator()
           {}
 
-          ThreadIterator( NoLoadBlocks *whichBlocks, TThreadOrder whichThread,
+          ThreadIterator( const Trace *whichTrace, NoLoadBlocks *whichBlocks, TThreadOrder whichThread,
                           TRecord *whichRecord, PRV_INT64 whichOffset, PRV_INT16 whichPos );
 
           virtual ~ThreadIterator();
@@ -132,7 +132,7 @@ namespace NoLoad
           CPUIterator()
           {}
 
-          CPUIterator( NoLoadBlocks *whichBlocks, TCPUOrder whichCPU,
+          CPUIterator( const Trace *whichTrace, NoLoadBlocks *whichBlocks, TCPUOrder whichCPU,
                        std::vector<TThreadOrder>& whichThreads, std::vector<TRecord *>& whichRecords,
                        std::vector<PRV_INT64>& whichOffsets, std::vector<PRV_UINT16>& whichPos, bool notMove = false );
 
@@ -163,7 +163,8 @@ namespace NoLoad
           friend class NoLoadTrace;
       };
 
-      NoLoadTrace( MemoryBlocks *whichBlocks,
+      NoLoadTrace( const Trace *whichTrace,
+                   MemoryBlocks *whichBlocks,
                    const ProcessModel& whichProcessModel,
                    const ResourceModel& whichResourceModel );
 
@@ -189,6 +190,7 @@ namespace NoLoad
     protected:
 
     private:
+      const Trace *myTrace;
       const ProcessModel& processModel;
       const ResourceModel& resourceModel;
       NoLoadBlocks *blocks;
