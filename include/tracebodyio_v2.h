@@ -29,7 +29,15 @@
 #include "ktrace.h"
 
 // Paraver trace NEW format file
-class TraceBodyIO_v2 : public TraceBodyIO
+class TraceBodyIO_v2 : public TraceBodyIO<TraceStream,
+                                          MemoryBlocks,
+                                          ProcessModel,
+                                          ResourceModel,
+                                          TState,
+                                          TEventType,
+                                          MetadataManager,
+                                          TRecordTime,
+                                          MemoryTrace::iterator>
 {
   public:
     static const PRV_UINT8 StateBeginRecord = '1';

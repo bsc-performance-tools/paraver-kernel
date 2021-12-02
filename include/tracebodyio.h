@@ -25,12 +25,16 @@
 
 #include <unordered_set>
 #include <fstream>
-#include "memoryblocks.h"
-#include "processmodel.h"
-#include "resourcemodel.h"
-#include "tracestream.h"
-#include "ParaverMetadataManager.h"
 
+template< class    TraceStreamT,
+          class    RecordContainerT,
+          class    ProcessModelT,
+          class    ResourceModelT,
+          typename StateT,
+          typename EventTypeT,
+          class    MetadataManagerT,
+          typename RecordTimeT,
+          class    RecordT>
 class TraceBodyIO
 {
   public:
@@ -38,18 +42,18 @@ class TraceBodyIO
     virtual ~TraceBodyIO() = default;
 
     virtual bool ordered() const = 0;
-    virtual void read( TraceStream *file,
-                       MemoryBlocks& records,
-                       const ProcessModel& whichProcessModel,
-                       const ResourceModel& whichResourceModel,
-                       std::unordered_set<TState>& states,
-                       std::unordered_set<TEventType>& events,
-                       MetadataManager& traceInfo,
-                       TRecordTime& endTime ) const = 0;
+    virtual void read( TraceStreamT *file,
+                       RecordContainerT& records,
+                       const ProcessModelT& whichProcessModel,
+                       const ResourceModelT& whichResourceModel,
+                       std::unordered_set<StateT>& states,
+                       std::unordered_set<EventTypeT>& events,
+                       MetadataManagerT& traceInfo,
+                       RecordTimeT& endTime ) const = 0;
     virtual void write( std::fstream& whichStream,
-                        const ProcessModel& whichProcessModel,
-                        const ResourceModel& whichResourceModel,
-                        MemoryTrace::iterator *record ) const = 0;
+                        const ProcessModelT& whichProcessModel,
+                        const ResourceModelT& whichResourceModel,
+                        RecordT *record ) const = 0;
 
   protected:
 

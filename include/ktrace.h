@@ -32,10 +32,9 @@
 #include "memorytrace.h"
 #include "processmodel.h"
 #include "resourcemodel.h"
+#include "tracebodyiofactory.h"
 
 #include "ParaverMetadataManager.h"
-
-class TraceBodyIO;
 
 /*
 class TraceInfo
@@ -220,7 +219,7 @@ class KTrace: public Trace
     TTimeUnit traceTimeUnit;
     MemoryBlocks *blocks;
     MemoryTrace *memTrace;
-    TraceBodyIO *body;
+    TraceBodyIO< PARAM_TRACEBODY_CLASS > *body;
     ptime myTraceTime;
     string rawTraceTime = "";
 

@@ -24,10 +24,27 @@
 #pragma once
 
 #include "tracebodyio.h"
+#include "tracestream.h"
+#include "ParaverMetadataManager.h"
+#include "memorytrace.h"
+#include "processmodel.h"
+#include "resourcemodel.h"
+#include "memoryblocks.h"
+
+
+#define PARAM_TRACEBODY_CLASS TraceStream, \
+                              MemoryBlocks, \
+                              ProcessModel, \
+                              ResourceModel, \
+                              TState, \
+                              TEventType, \
+                              MetadataManager, \
+                              TRecordTime, \
+                              MemoryTrace::iterator
 
 class TraceBodyIOFactory
 {
   public:
-    static TraceBodyIO *createTraceBody( TraceStream *file, Trace *trace, ProcessModel& whichProcessModel );
-    static TraceBodyIO *createTraceBody();
+    static TraceBodyIO< PARAM_TRACEBODY_CLASS > *createTraceBody( TraceStream *file, Trace *trace, ProcessModel& whichProcessModel );
+    static TraceBodyIO< PARAM_TRACEBODY_CLASS > *createTraceBody();
 };

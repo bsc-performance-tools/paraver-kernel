@@ -28,9 +28,9 @@
 
 using namespace std;
 
-TraceBodyIO *TraceBodyIOFactory::createTraceBody( TraceStream *file, Trace *trace, ProcessModel& whichProcessModel )
+TraceBodyIO< PARAM_TRACEBODY_CLASS > *TraceBodyIOFactory::createTraceBody( TraceStream *file, Trace *trace, ProcessModel& whichProcessModel )
 {
-  TraceBodyIO *ret;
+  TraceBodyIO< PARAM_TRACEBODY_CLASS > *ret;
   string firstLine;
 
   std::size_t lastDot = file->getFilename().find_last_of( '.' );
@@ -52,7 +52,7 @@ TraceBodyIO *TraceBodyIOFactory::createTraceBody( TraceStream *file, Trace *trac
     }
     else
     {
-      ret = new TraceBodyIO_v1();
+      ret = new TraceBodyIO_v1< PARAM_TRACEBODY_CLASS >();
     }
     file->seekg( currentPos );
 #else
@@ -61,8 +61,8 @@ TraceBodyIO *TraceBodyIOFactory::createTraceBody( TraceStream *file, Trace *trac
   }
   return ret;
 }
-
-TraceBodyIO *TraceBodyIOFactory::createTraceBody()
+ 
+TraceBodyIO< PARAM_TRACEBODY_CLASS > *TraceBodyIOFactory::createTraceBody()
 {
   return new TraceBodyIO_v2();
 }

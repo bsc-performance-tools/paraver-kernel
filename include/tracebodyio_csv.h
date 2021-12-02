@@ -28,7 +28,15 @@
 #include "ktrace.h"
 
 // Paraver trace old format file
-class TraceBodyIO_csv : public TraceBodyIO
+class TraceBodyIO_csv : public TraceBodyIO<TraceStream,
+                                           MemoryBlocks,
+                                           ProcessModel,
+                                           ResourceModel,
+                                           TState,
+                                           TEventType,
+                                           MetadataManager,
+                                           TRecordTime,
+                                           MemoryTrace::iterator>
 {
   public:
     TraceBodyIO_csv( ) {}

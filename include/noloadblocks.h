@@ -32,6 +32,7 @@
 #include "index.h"
 #include "plaintypes.h"
 #include "tracebodyio.h"
+#include "tracebodyiofactory.h"
 #include "tracestream.h"
 
 using Plain::TRecord;
@@ -50,7 +51,7 @@ namespace NoLoad
       }
 
       NoLoadBlocks( const ResourceModel& resource, const ProcessModel& process,
-                    TraceBodyIO *whichBody, TraceStream *whichFile, TRecordTime endTime );
+                    TraceBodyIO< PARAM_TRACEBODY_CLASS > *whichBody, TraceStream *whichFile, TRecordTime endTime );
 
       virtual ~NoLoadBlocks();
 
@@ -145,7 +146,7 @@ namespace NoLoad
 
       const ResourceModel& resourceModel;
       const ProcessModel& processModel;
-      TraceBodyIO *body;
+      TraceBodyIO< PARAM_TRACEBODY_CLASS > *body;
       TraceStream *file;
       PRV_INT64 endFileOffset;
       PRV_INT64 initialOffset;

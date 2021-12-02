@@ -27,11 +27,9 @@
 
 using namespace NoLoad;
 
-class TraceBodyIO;
-class TraceStream;
 
 NoLoadBlocks::NoLoadBlocks( const ResourceModel& resource, const ProcessModel& process,
-                            TraceBodyIO *whichBody, TraceStream *whichFile, TRecordTime endTime )
+                            TraceBodyIO< PARAM_TRACEBODY_CLASS > *whichBody, TraceStream *whichFile, TRecordTime endTime )
     : resourceModel( resource ), processModel( process ),
     body( whichBody ), file( whichFile )
 {

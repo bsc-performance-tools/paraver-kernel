@@ -52,7 +52,6 @@ libparaver_kernel_la_SOURCES = \
     semanticthreadfunctions.cpp \
     statisticmanagement.cpp \
     tracebodyiofactory.cpp \
-    tracebodyio_v1.cpp \
     tracebodyio_v2.cpp \
     tracebodyio_csv.cpp \
     traceeditblocks.cpp \

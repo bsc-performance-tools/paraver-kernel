@@ -26,16 +26,40 @@
 #include <sstream>
 #include <type_traits>
 
-#include "tracebodyio_v1.h"
-
 using namespace std;
 
-string TraceBodyIO_v1::multiEventLine;
-TraceBodyIO_v1::TMultiEventCommonInfo TraceBodyIO_v1::multiEventCommonInfo =
-        { nullptr, (TThreadOrder)0, (TCPUOrder)0, (TRecordTime)0 };
+#define PARAM_TYPENAME class    TraceStreamT, \
+                       class    RecordContainerT, \
+                       class    ProcessModelT, \
+                       class    ResourceModelT, \
+                       typename StateT, \
+                       typename EventTypeT, \
+                       class    MetadataManagerT, \
+                       typename RecordTimeT, \
+                       class    RecordT
 
-string TraceBodyIO_v1::line;
-ostringstream TraceBodyIO_v1::ostr;
+#define PARAM_LIST TraceStreamT, \
+                   RecordContainerT, \
+                   ProcessModelT, \
+                   ResourceModelT, \
+                   StateT, \
+                   EventTypeT, \
+                   MetadataManagerT, \
+                   RecordTimeT, \
+                   RecordT
+
+template< PARAM_TYPENAME >
+string TraceBodyIO_v1< PARAM_LIST >::multiEventLine;
+
+template< PARAM_TYPENAME >
+typename TraceBodyIO_v1< PARAM_LIST >::TMultiEventCommonInfo TraceBodyIO_v1< PARAM_LIST >::multiEventCommonInfo =
+        { nullptr, (TThreadOrder)0, (TCPUOrder)0, (RecordTimeT)0 };
+
+template< PARAM_TYPENAME >
+string TraceBodyIO_v1< PARAM_LIST >::line;
+
+template< PARAM_TYPENAME >
+ostringstream TraceBodyIO_v1< PARAM_LIST >::ostr;
 
 // Optimization on conversion string to numbers, but with no error control
 //#define USE_ATOLL
@@ -78,19 +102,22 @@ constexpr bool prv_atoll_v( string::const_iterator& it, const string::const_iter
   return prv_atoll_v( ++it, end, Fargs... );
 }
 
-bool TraceBodyIO_v1::ordered() const
+
+template< PARAM_TYPENAME >
+bool TraceBodyIO_v1< PARAM_LIST >::ordered() const
 {
   return false;
 }
 
-void TraceBodyIO_v1::read( TraceStream *file,
-                           MemoryBlocks& records,
-                           const ProcessModel& whichProcessModel,
-                           const ResourceModel& whichResourceModel,
-                           std::unordered_set<TState>& states,
-                           std::unordered_set<TEventType>& events,
-                           MetadataManager& traceInfo,
-                           TRecordTime& endTime  ) const
+template< PARAM_TYPENAME >
+void TraceBodyIO_v1< PARAM_LIST >::read( TraceStreamT *file,
+                                         RecordContainerT& records,
+                                         const ProcessModelT& whichProcessModel,
+                                         const ResourceModelT& whichResourceModel,
+                                         std::unordered_set<StateT>& states,
+                                         std::unordered_set<EventTypeT>& events,
+                                         MetadataManagerT& traceInfo,
+                                         RecordTimeT& endTime  ) const
 {
   file->getline( line );
 
@@ -126,7 +153,8 @@ void TraceBodyIO_v1::read( TraceStream *file,
   };
 }
 
-void TraceBodyIO_v1::bufferWrite( fstream& whichStream, bool writeReady, bool lineClear ) const
+template< PARAM_TYPENAME >
+void TraceBodyIO_v1< PARAM_LIST >::bufferWrite( fstream& whichStream, bool writeReady, bool lineClear ) const
 {
   if ( writeReady )
   {
@@ -136,11 +164,11 @@ void TraceBodyIO_v1::bufferWrite( fstream& whichStream, bool writeReady, bool li
   }
 }
 
-
-void TraceBodyIO_v1::write( fstream& whichStream,
-                            const ProcessModel& whichProcessModel,
-                            const ResourceModel& whichResourceModel,
-                            MemoryTrace::iterator *record ) const
+template< PARAM_TYPENAME >
+void TraceBodyIO_v1< PARAM_LIST >::write( fstream& whichStream,
+                            const ProcessModelT& whichProcessModel,
+                            const ResourceModelT& whichResourceModel,
+                            RecordT *record ) const
 {
   bool writeReady = false;
   TRecordType type = record->getType();
@@ -206,25 +234,27 @@ void TraceBodyIO_v1::write( fstream& whichStream,
 /**********************
   Read line functions
 ***********************/
-inline void TraceBodyIO_v1::readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const
+template< PARAM_TYPENAME >
+inline void TraceBodyIO_v1< PARAM_LIST >::readTraceInfo( const std::string& line, MetadataManagerT& traceInfo ) const
 {
   traceInfo.NewMetadata( line );
   // dummy set also to false if it is a comment
 }
 
-inline void TraceBodyIO_v1::readState( const string& line,
-                                       const ProcessModel& whichProcessModel,
-                                       const ResourceModel& whichResourceModel,
-                                       MemoryBlocks& records,
-                                       unordered_set<TState>& states ) const
+template< PARAM_TYPENAME >
+inline void TraceBodyIO_v1< PARAM_LIST >::readState( const string& line,
+                                       const ProcessModelT& whichProcessModel,
+                                       const ResourceModelT& whichResourceModel,
+                                       RecordContainerT& records,
+                                       unordered_set<StateT>& states ) const
 {
   TCPUOrder CPU;
   TApplOrder appl;
   TTaskOrder task;
   TThreadOrder thread;
-  TRecordTime time;
-  TRecordTime endtime;
-  TState state;
+  RecordTimeT time;
+  RecordTimeT endtime;
+  StateT state;
 
   auto it = line.begin() + 2;
 
@@ -265,19 +295,19 @@ inline void TraceBodyIO_v1::readState( const string& line,
   states.insert( state );
 }
 
-
-inline void TraceBodyIO_v1::readEvent( const string& line,
-                                       const ProcessModel& whichProcessModel,
-                                       const ResourceModel& whichResourceModel,
-                                       MemoryBlocks& records,
-                                       unordered_set<TEventType>& events ) const
+template< PARAM_TYPENAME >
+inline void TraceBodyIO_v1< PARAM_LIST >::readEvent( const string& line,
+                                       const ProcessModelT& whichProcessModel,
+                                       const ResourceModelT& whichResourceModel,
+                                       RecordContainerT& records,
+                                       unordered_set<EventTypeT>& events ) const
 {
   TCPUOrder CPU;
   TApplOrder appl;
   TTaskOrder task;
   TThreadOrder thread;
-  TRecordTime time;
-  TEventType eventtype;
+  RecordTimeT time;
+  EventTypeT eventtype;
   TEventValue eventvalue;
 
   auto it = line.begin() + 2;
@@ -311,20 +341,20 @@ inline void TraceBodyIO_v1::readEvent( const string& line,
   }
 }
 
-
-inline void TraceBodyIO_v1::readComm( const string& line,
-                                      const ProcessModel& whichProcessModel,
-                                      const ResourceModel& whichResourceModel,
-                                      MemoryBlocks& records ) const
+template< PARAM_TYPENAME >
+inline void TraceBodyIO_v1< PARAM_LIST >::readComm( const string& line,
+                                      const ProcessModelT& whichProcessModel,
+                                      const ResourceModelT& whichResourceModel,
+                                      RecordContainerT& records ) const
 {
   TCPUOrder CPU;
   TApplOrder appl;
   TTaskOrder task;
   TThreadOrder thread;
-  TRecordTime logSend;
-  TRecordTime phySend;
-  TRecordTime logReceive;
-  TRecordTime phyReceive;
+  RecordTimeT logSend;
+  RecordTimeT phySend;
+  RecordTimeT logReceive;
+  RecordTimeT phyReceive;
   TCPUOrder remoteCPU;
   TApplOrder remoteAppl;
   TTaskOrder remoteTask;
@@ -363,19 +393,21 @@ inline void TraceBodyIO_v1::readComm( const string& line,
 }
 
 
-inline void TraceBodyIO_v1::readGlobalComm( const string& line, MemoryBlocks& records ) const
+template< PARAM_TYPENAME >
+inline void TraceBodyIO_v1< PARAM_LIST >::readGlobalComm( const string& line, RecordContainerT& records ) const
 {}
 
 
-inline bool TraceBodyIO_v1::readCommon( const ProcessModel& whichProcessModel,
-                                        const ResourceModel& whichResourceModel,
+template< PARAM_TYPENAME >
+inline bool TraceBodyIO_v1< PARAM_LIST >::readCommon( const ProcessModelT& whichProcessModel,
+                                        const ResourceModelT& whichResourceModel,
                                         string::const_iterator& it,
                                         const string::const_iterator& end,
                                         TCPUOrder& CPU,
                                         TApplOrder& appl,
                                         TTaskOrder& task,
                                         TThreadOrder& thread,
-                                        TRecordTime& time ) const
+                                        RecordTimeT& time ) const
 {
   return prv_atoll_v( it, end, CPU, appl, task, thread, time ) &&
          whichResourceModel.isValidGlobalCPU( CPU ) &&
@@ -386,9 +418,10 @@ inline bool TraceBodyIO_v1::readCommon( const ProcessModel& whichProcessModel,
 /**************************
   Write records functions
 ***************************/
-bool TraceBodyIO_v1::writeState( const ProcessModel& whichProcessModel,
-                                 const ResourceModel& whichResourceModel,
-                                 const MemoryTrace::iterator *record ) const
+template< PARAM_TYPENAME >
+bool TraceBodyIO_v1< PARAM_LIST >::writeState( const ProcessModelT& whichProcessModel,
+                                 const ResourceModelT& whichResourceModel,
+                                 const RecordT *record ) const
 {
   if ( record->getType() & END )
     return false;
@@ -408,7 +441,8 @@ bool TraceBodyIO_v1::writeState( const ProcessModel& whichProcessModel,
 }
 
 
-bool TraceBodyIO_v1::writePendingMultiEvent( const ProcessModel& whichProcessModel ) const
+template< PARAM_TYPENAME >
+bool TraceBodyIO_v1< PARAM_LIST >::writePendingMultiEvent( const ProcessModelT& whichProcessModel ) const
 {
   TApplOrder appl;
   TTaskOrder task;
@@ -449,7 +483,8 @@ bool TraceBodyIO_v1::writePendingMultiEvent( const ProcessModel& whichProcessMod
 }
 
 
-void TraceBodyIO_v1::appendEvent( const MemoryTrace::iterator *record ) const
+template< PARAM_TYPENAME >
+void TraceBodyIO_v1< PARAM_LIST >::appendEvent( const RecordT *record ) const
 {
   ostr.clear();
   ostr.str( "" );
@@ -466,9 +501,10 @@ void TraceBodyIO_v1::appendEvent( const MemoryTrace::iterator *record ) const
 }
 
 
-bool TraceBodyIO_v1::writeComm( const ProcessModel& whichProcessModel,
-                                const ResourceModel& whichResourceModel,
-                                const MemoryTrace::iterator *record ) const
+template< PARAM_TYPENAME >
+bool TraceBodyIO_v1< PARAM_LIST >::writeComm( const ProcessModelT& whichProcessModel,
+                                const ResourceModelT& whichResourceModel,
+                                const RecordT *record ) const
 {
   TCommID commID;
   TApplOrder recvAppl;
@@ -504,18 +540,18 @@ bool TraceBodyIO_v1::writeComm( const ProcessModel& whichProcessModel,
   return true;
 }
 
-
-bool TraceBodyIO_v1::writeGlobalComm( const ProcessModel& whichProcessModel,
-                                      const MemoryTrace::iterator *record ) const
+template< PARAM_TYPENAME >
+bool TraceBodyIO_v1< PARAM_LIST >::writeGlobalComm( const ProcessModelT& whichProcessModel,
+                                      const RecordT *record ) const
 {
   return true;
 }
 
-
-void TraceBodyIO_v1::writeCommon( ostringstream& line,
-                                  const ProcessModel& whichProcessModel,
-                                  const ResourceModel& whichResourceModel,
-                                  const MemoryTrace::iterator *record ) const
+template< PARAM_TYPENAME >
+void TraceBodyIO_v1< PARAM_LIST >::writeCommon( ostringstream& line,
+                                  const ProcessModelT& whichProcessModel,
+                                  const ResourceModelT& whichResourceModel,
+                                  const RecordT *record ) const
 {
   TApplOrder appl;
   TTaskOrder task;
@@ -532,7 +568,8 @@ void TraceBodyIO_v1::writeCommon( ostringstream& line,
 }
 
 
-bool TraceBodyIO_v1::sameMultiEvent( const MemoryTrace::iterator *record ) const
+template< PARAM_TYPENAME >
+bool TraceBodyIO_v1< PARAM_LIST >::sameMultiEvent( const RecordT *record ) const
 {
   return ( multiEventCommonInfo.myStream != nullptr &&
            multiEventCommonInfo.cpu == record->getCPU() &&

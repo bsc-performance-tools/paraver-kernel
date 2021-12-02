@@ -452,7 +452,7 @@ void KTrace::dumpFile( const string& whichFile ) const
   dumpFileHeader( file, true );
 
   MemoryTrace::iterator *it = memTrace->begin();
-  TraceBodyIO *body = TraceBodyIOFactory::createTraceBody();
+  TraceBodyIO< PARAM_TRACEBODY_CLASS > *body = TraceBodyIOFactory::createTraceBody();
   if( TraceBodyIO_v2 *tmpBody = dynamic_cast<TraceBodyIO_v2 *>( body ) )
     tmpBody->writeCommInfo( file, *this );
 
