@@ -74,6 +74,7 @@ noinst_HEADERS = \
                           semanticthread.h\
                           statisticmanagement.h\
                           tracebodyio.h\
+                          tracebodyiofactory.h\
                           tracebodyio_v1.h\
                           tracebodyio_v2.h\
                           tracebodyio_csv.h\

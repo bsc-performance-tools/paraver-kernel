@@ -21,39 +21,48 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#pragma once
+#include "tracebodyiofactory.h"
+#include "tracebodyio_v1.h"
+#include "tracebodyio_v2.h"
+#include "tracebodyio_csv.h"
 
-#include <unordered_set>
-#include <fstream>
-#include "memoryblocks.h"
-#include "processmodel.h"
-#include "resourcemodel.h"
-#include "tracestream.h"
-#include "ParaverMetadataManager.h"
+using namespace std;
 
-class TraceBodyIO
+TraceBodyIO *TraceBodyIOFactory::createTraceBody( TraceStream *file, Trace *trace, ProcessModel& whichProcessModel )
 {
-  public:
-    TraceBodyIO() = default;
-    virtual ~TraceBodyIO() = default;
+  TraceBodyIO *ret;
+  string firstLine;
 
-    virtual bool ordered() const = 0;
-    virtual void read( TraceStream *file,
-                       MemoryBlocks& records,
-                       const ProcessModel& whichProcessModel,
-                       const ResourceModel& whichResourceModel,
-                       std::unordered_set<TState>& states,
-                       std::unordered_set<TEventType>& events,
-                       MetadataManager& traceInfo,
-                       TRecordTime& endTime ) const = 0;
-    virtual void write( std::fstream& whichStream,
-                        const ProcessModel& whichProcessModel,
-                        const ResourceModel& whichResourceModel,
-                        MemoryTrace::iterator *record ) const = 0;
+  std::size_t lastDot = file->getFilename().find_last_of( '.' );
+  std::string fileType = file->getFilename().substr( lastDot + 1 );
 
-  protected:
+  if ( fileType == "csv" )
+  {
+    ret = new TraceBodyIO_csv( trace, whichProcessModel );
+  }
+  else
+  {
+#ifndef WIN32
+    std::streampos currentPos = file->tellg();
+    file->seekbegin();
+    file->getline( firstLine );
+    if ( firstLine.compare( "new format" ) == 0 )
+    {
+      ret = new TraceBodyIO_v2();
+    }
+    else
+    {
+      ret = new TraceBodyIO_v1();
+    }
+    file->seekg( currentPos );
+#else
+    ret = new TraceBodyIO_v1();
+#endif
+  }
+  return ret;
+}
 
-};
-
-
-
+TraceBodyIO *TraceBodyIOFactory::createTraceBody()
+{
+  return new TraceBodyIO_v2();
+}

@@ -21,53 +21,13 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#include "tracebodyio_v1.h"
-#include "tracebodyio_v2.h"
-#include "tracebodyio_csv.h"
+#pragma once
 
-using namespace std;
+#include "tracebodyio.h"
 
-TraceBodyIO::TraceBodyIO()
-{}
-
-TraceBodyIO::~TraceBodyIO()
-{}
-
-TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file, Trace *trace, ProcessModel& whichProcessModel )
+class TraceBodyIOFactory
 {
-  TraceBodyIO *ret;
-  string firstLine;
-
-  std::size_t lastDot = file->getFilename().find_last_of( '.' );
-  std::string fileType = file->getFilename().substr( lastDot + 1 );
-
-  if ( fileType == "csv" )
-  {
-    ret = new TraceBodyIO_csv( trace, whichProcessModel );
-  }
-  else
-  {
-#ifndef WIN32
-    std::streampos currentPos = file->tellg();
-    file->seekbegin();
-    file->getline( firstLine );
-    if ( firstLine.compare( "new format" ) == 0 )
-    {
-      ret = new TraceBodyIO_v2();
-    }
-    else
-    {
-      ret = new TraceBodyIO_v1();
-    }
-    file->seekg( currentPos );
-#else
-    ret = new TraceBodyIO_v1();
-#endif
-  }
-  return ret;
-}
-
-TraceBodyIO *TraceBodyIO::createTraceBody()
-{
-  return new TraceBodyIO_v2();
-}
+  public:
+    static TraceBodyIO *createTraceBody( TraceStream *file, Trace *trace, ProcessModel& whichProcessModel );
+    static TraceBodyIO *createTraceBody();
+};

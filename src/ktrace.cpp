@@ -32,7 +32,7 @@
 
 #include "ktrace.h"
 #include "traceheaderexception.h"
-#include "tracebodyio.h"
+#include "tracebodyiofactory.h"
 #include "tracebodyio_v2.h"
 #include "tracestream.h"
 #include "kprogresscontroller.h"
@@ -452,7 +452,7 @@ void KTrace::dumpFile( const string& whichFile ) const
   dumpFileHeader( file, true );
 
   MemoryTrace::iterator *it = memTrace->begin();
-  TraceBodyIO *body = TraceBodyIO::createTraceBody();
+  TraceBodyIO *body = TraceBodyIOFactory::createTraceBody();
   if( TraceBodyIO_v2 *tmpBody = dynamic_cast<TraceBodyIO_v2 *>( body ) )
     tmpBody->writeCommInfo( file, *this );
 
@@ -717,7 +717,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
 // End reading the header
 
 // Reading the body
-  body = TraceBodyIO::createTraceBody( file, this, traceProcessModel );
+  body = TraceBodyIOFactory::createTraceBody( file, this, traceProcessModel );
 
   if ( noLoad && body->ordered() )
   {

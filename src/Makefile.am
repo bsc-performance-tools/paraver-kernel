@@ -51,7 +51,7 @@ libparaver_kernel_la_SOURCES = \
     semanticnotthreadfunctions.cpp \
     semanticthreadfunctions.cpp \
     statisticmanagement.cpp \
-    tracebodyio.cpp \
+    tracebodyiofactory.cpp \
     tracebodyio_v1.cpp \
     tracebodyio_v2.cpp \
     tracebodyio_csv.cpp \
