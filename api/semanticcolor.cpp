@@ -315,6 +315,7 @@ void CodeColor::expandColors()
   unordered_set<rgb, hashrgb, eqrgb> insertedColors;
 #endif
   insertedColors.insert( colors.begin(), colors.end() );
+  insertedColors.insert( ParaverConfig::getInstance()->getColorsTimelineBackground() );
 
   unsigned int baseColor = 1;
   for( unsigned int i = 0; i < iterations; ++i )
