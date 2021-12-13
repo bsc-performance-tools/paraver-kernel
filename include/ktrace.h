@@ -126,7 +126,7 @@ class KTrace: public Trace
       return traceProcessModel;
     }
 
-    const ResourceModel& getResourceModel() const
+    const ResourceModel<>& getResourceModel() const
     {
       return traceResourceModel;
     }
@@ -214,7 +214,7 @@ class KTrace: public Trace
   protected:
     bool ready;
     ProcessModel traceProcessModel;
-    ResourceModel traceResourceModel;
+    ResourceModel<> traceResourceModel;
     TTime traceEndTime;
     TTimeUnit traceTimeUnit;
     MemoryBlocks *blocks;

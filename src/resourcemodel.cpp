@@ -26,19 +26,20 @@
 #include <iostream>
 #include <fstream>
 #include <limits>
-#include "resourcemodel.h"
 #include "traceheaderexception.h"
 
 using namespace std;
 
 // subset
-bool ResourceModel::operator<( const ResourceModel& other ) const
+template< typename NodeOrderT,
+          typename CPUOrderT >
+bool ResourceModel< NodeOrderT, CPUOrderT >::operator<( const ResourceModel& other ) const
 {
   bool isSubset = true;
 
-  TNodeOrder iNode;
-  TCPUOrder iCPU;
-  for ( TCPUOrder iGlobalCPU = 0; iGlobalCPU < totalCPUs(); ++iGlobalCPU )
+  NodeOrderT iNode;
+  CPUOrderT iCPU;
+  for ( CPUOrderT iGlobalCPU = 0; iGlobalCPU < totalCPUs(); ++iGlobalCPU )
   {
     getCPULocation( iGlobalCPU, iNode, iCPU );
     if ( !other.isValidCPU( iNode, iCPU ) )
@@ -51,7 +52,9 @@ bool ResourceModel::operator<( const ResourceModel& other ) const
   return isSubset;
 }
 
-bool ResourceModel::operator==( const ResourceModel& other ) const
+template< typename NodeOrderT,
+          typename CPUOrderT >
+bool ResourceModel< NodeOrderT, CPUOrderT >::operator==( const ResourceModel& other ) const
 {
   /*
   return nodes == other.nodes &&
@@ -60,20 +63,26 @@ bool ResourceModel::operator==( const ResourceModel& other ) const
  return ( ( totalCPUs() == other.totalCPUs() ) && ( *this < other ) );
 }
 
-TNodeOrder ResourceModel::totalNodes() const
+template< typename NodeOrderT,
+          typename CPUOrderT >
+NodeOrderT ResourceModel< NodeOrderT, CPUOrderT >::totalNodes() const
 {
   return nodes.size();
 }
 
 
-TCPUOrder ResourceModel::totalCPUs() const
+template< typename NodeOrderT,
+          typename CPUOrderT >
+CPUOrderT ResourceModel< NodeOrderT, CPUOrderT >::totalCPUs() const
 {
   return CPUs.size();
 }
 
 
-TCPUOrder ResourceModel::getGlobalCPU( const TNodeOrder& inNode,
-                                       const TCPUOrder& inCPU ) const
+template< typename NodeOrderT,
+          typename CPUOrderT >
+CPUOrderT ResourceModel< NodeOrderT, CPUOrderT >::getGlobalCPU( const NodeOrderT& inNode,
+                                       const CPUOrderT& inCPU ) const
 {
   if( inCPU == 0 )
     return 0;
@@ -81,9 +90,11 @@ TCPUOrder ResourceModel::getGlobalCPU( const TNodeOrder& inNode,
 }
 
 
-void ResourceModel::getCPULocation( TCPUOrder globalCPU,
-                                    TNodeOrder& inNode,
-                                    TCPUOrder& inCPU ) const
+template< typename NodeOrderT,
+          typename CPUOrderT >
+void ResourceModel< NodeOrderT, CPUOrderT >::getCPULocation( CPUOrderT globalCPU,
+                                    NodeOrderT& inNode,
+                                    CPUOrderT& inCPU ) const
 {
   if( globalCPU == 0 )
   {
@@ -98,25 +109,33 @@ void ResourceModel::getCPULocation( TCPUOrder globalCPU,
 }
 
 
-TCPUOrder ResourceModel::getFirstCPU( TNodeOrder inNode ) const
+template< typename NodeOrderT,
+          typename CPUOrderT >
+CPUOrderT ResourceModel< NodeOrderT, CPUOrderT >::getFirstCPU( NodeOrderT inNode ) const
 {
   return nodes[ inNode ].CPUs[ 0 ].traceGlobalOrder + 1;
 }
 
 
-TCPUOrder ResourceModel::getLastCPU( TNodeOrder inNode ) const
+template< typename NodeOrderT,
+          typename CPUOrderT >
+CPUOrderT ResourceModel< NodeOrderT, CPUOrderT >::getLastCPU( NodeOrderT inNode ) const
 {
   return nodes[ inNode ].CPUs[
            nodes[ inNode ].CPUs.size() - 1 ].traceGlobalOrder + 1;
 }
 
 
-void ResourceModel::addNode()
+template< typename NodeOrderT,
+          typename CPUOrderT >
+void ResourceModel< NodeOrderT, CPUOrderT >::addNode()
 {
-  nodes.push_back( ResourceModelNode( nodes.size() ) );
+  nodes.push_back( ResourceModelNode< NodeOrderT, CPUOrderT >( nodes.size() ) );
 }
 
-void ResourceModel::addCPU( TNodeOrder whichNode )
+template< typename NodeOrderT,
+          typename CPUOrderT >
+void ResourceModel< NodeOrderT, CPUOrderT >::addCPU( NodeOrderT whichNode )
 {
   if( whichNode >= nodes.size() )
   {
@@ -129,17 +148,21 @@ void ResourceModel::addCPU( TNodeOrder whichNode )
   CPUs.push_back( CPULocation() );
   CPUs[ CPUs.size() - 1 ].node = whichNode;
   CPUs[ CPUs.size() - 1 ].CPU = nodes[ whichNode ].CPUs.size();
-  nodes[ whichNode ].CPUs.push_back( ResourceModelCPU( CPUs.size() - 1 ) );
+  nodes[ whichNode ].CPUs.push_back( ResourceModelCPU< NodeOrderT, CPUOrderT >( CPUs.size() - 1 ) );
 }
 
 
-bool ResourceModel::isValidNode( TNodeOrder whichNode ) const
+template< typename NodeOrderT,
+          typename CPUOrderT >
+bool ResourceModel< NodeOrderT, CPUOrderT >::isValidNode( NodeOrderT whichNode ) const
 {
   return whichNode < nodes.size();
 }
 
 
-bool ResourceModel::isValidCPU( TNodeOrder whichNode, TCPUOrder whichCPU ) const
+template< typename NodeOrderT,
+          typename CPUOrderT >
+bool ResourceModel< NodeOrderT, CPUOrderT >::isValidCPU( NodeOrderT whichNode, CPUOrderT whichCPU ) const
 {
   if ( !isValidNode( whichNode ) )
     return false;
@@ -148,17 +171,21 @@ bool ResourceModel::isValidCPU( TNodeOrder whichNode, TCPUOrder whichCPU ) const
 }
 
 
-bool ResourceModel::isValidGlobalCPU( TCPUOrder whichCPU ) const
+template< typename NodeOrderT,
+          typename CPUOrderT >
+bool ResourceModel< NodeOrderT, CPUOrderT >::isValidGlobalCPU( CPUOrderT whichCPU ) const
 {
   return whichCPU <= CPUs.size();
 }
 
 
-ResourceModel::ResourceModel( istringstream& headerInfo )
+template< typename NodeOrderT,
+          typename CPUOrderT >
+ResourceModel< NodeOrderT, CPUOrderT >::ResourceModel( istringstream& headerInfo )
 {
   string stringNumberNodes;
-  TNodeOrder numberNodes;
-  TCPUOrder globalCPUs = 0;
+  NodeOrderT numberNodes;
+  CPUOrderT globalCPUs = 0;
   bool readCPUs;
   ready = false;
 
@@ -189,11 +216,11 @@ ResourceModel::ResourceModel( istringstream& headerInfo )
   }
 
   // Insert nodes
-  for ( TNodeOrder countNode = 0; countNode < numberNodes; ++countNode )
+  for ( NodeOrderT countNode = 0; countNode < numberNodes; ++countNode )
   {
-    TCPUOrder numberCPUs;
+    CPUOrderT numberCPUs;
 
-    nodes.push_back( ResourceModelNode( countNode ) );
+    nodes.push_back( ResourceModelNode< NodeOrderT, CPUOrderT >( countNode ) );
 
     if ( readCPUs )
     {
@@ -215,11 +242,11 @@ ResourceModel::ResourceModel( istringstream& headerInfo )
       numberCPUs = 1;
 
     // Insert CPUs
-    for ( TCPUOrder countCPU = 0; countCPU < numberCPUs; ++countCPU )
+    for ( CPUOrderT countCPU = 0; countCPU < numberCPUs; ++countCPU )
     {
-      if( globalCPUs < std::numeric_limits<TCPUOrder>::max() )
+      if( globalCPUs < std::numeric_limits<CPUOrderT>::max() )
       {
-        nodes[ countNode ].CPUs.push_back( ResourceModelCPU( globalCPUs ) );
+        nodes[ countNode ].CPUs.push_back( ResourceModelCPU< NodeOrderT, CPUOrderT >( globalCPUs ) );
         CPUs.push_back( CPULocation() );
         CPUs[ globalCPUs ].node = countNode;
         CPUs[ globalCPUs ].CPU = countCPU;
@@ -238,7 +265,9 @@ ResourceModel::ResourceModel( istringstream& headerInfo )
   ready = true;
 }
 
-void ResourceModel::dumpToFile( fstream& file ) const
+template< typename NodeOrderT,
+          typename CPUOrderT >
+void ResourceModel< NodeOrderT, CPUOrderT >::dumpToFile( fstream& file ) const
 {
   ostringstream ostr;
   ostr << fixed;
@@ -252,7 +281,7 @@ void ResourceModel::dumpToFile( fstream& file ) const
   else
   {
     ostr << nodes.size() << '(';
-    for ( TNodeOrder iNode = 0; iNode < nodes.size(); ++iNode )
+    for ( NodeOrderT iNode = 0; iNode < nodes.size(); ++iNode )
     {
       ostr << nodes[ iNode ].CPUs.size();
       if ( iNode < nodes.size() - 1 )

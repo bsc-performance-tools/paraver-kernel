@@ -116,7 +116,7 @@ bool TraceBodyIO_csv::ordered() const
 void TraceBodyIO_csv::read( TraceStream *file,
                             MemoryBlocks& records,
                             const ProcessModel& whichProcessModel,
-                            const ResourceModel& whichResourceModel,
+                            const ResourceModel<>& whichResourceModel,
                             std::unordered_set<TState>& states,
                             std::unordered_set<TEventType>& events,
                             MetadataManager& traceInfo,
@@ -142,7 +142,7 @@ void TraceBodyIO_csv::bufferWrite( fstream& whichStream, bool writeReady, bool l
 
 void TraceBodyIO_csv::write( std::fstream& whichStream,
                              const ProcessModel& whichProcessModel,
-                             const ResourceModel& whichResourceModel,
+                             const ResourceModel<>& whichResourceModel,
                              MemoryTrace::iterator *record ) const
 {
 }
@@ -158,7 +158,7 @@ inline void TraceBodyIO_csv::readTraceInfo(  const std::string& line, MetadataMa
 }
 
 
-inline void TraceBodyIO_csv::readEvents( const ResourceModel& whichResourceModel,
+inline void TraceBodyIO_csv::readEvents( const ResourceModel<>& whichResourceModel,
                                          const string& line,
                                          MemoryBlocks& records,
                                          unordered_set<TEventType>& events,
@@ -202,7 +202,7 @@ inline void TraceBodyIO_csv::readEvents( const ResourceModel& whichResourceModel
 }
 
 
-inline bool TraceBodyIO_csv::readCommon( const ResourceModel& whichResourceModel,
+inline bool TraceBodyIO_csv::readCommon( const ResourceModel<>& whichResourceModel,
                                          istringstream& line,
                                          TCPUOrder& CPU,
                                          TApplOrder& appl,

@@ -28,9 +28,9 @@
 #include "memorytrace.h"
 #include "index.h"
 #include "plaintypes.h"
+#include "resourcemodel.h"
 
 class ProcessModel;
-class ResourceModel;
 
 namespace Plain
 {
@@ -151,7 +151,7 @@ namespace Plain
 
       PlainTrace( const Trace *whichTrace,
                   const ProcessModel& whichProcessModel,
-                  const ResourceModel& whichResourceModel );
+                  const ResourceModel<>& whichResourceModel );
       virtual ~PlainTrace()
       {}
 
@@ -177,7 +177,7 @@ namespace Plain
     private:
       const Trace *myTrace;
       const ProcessModel& processModel;
-      const ResourceModel& resourceModel;
+      const ResourceModel<>& resourceModel;
       TThreadOrder numThreads;
       TCPUOrder numCPUs;
       std::vector<Index<std::pair<PRV_UINT32, PRV_UINT32> > > traceIndex;

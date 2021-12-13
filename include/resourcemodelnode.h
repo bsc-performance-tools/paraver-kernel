@@ -27,30 +27,31 @@
 
 #include <vector>
 #include "resourcemodelcpu.h"
+#include "resourcemodel.h"
 
+template< typename NodeOrderT,
+          typename CPUOrderT >
 class ResourceModelNode
 {
   public:
-    ResourceModelNode( TNodeOrder order = 0 ) : traceGlobalOrder( order )
+    ResourceModelNode( NodeOrderT order = 0 ) : traceGlobalOrder( order )
     {}
 
     ~ResourceModelNode()
     {}
 
-    bool operator==( const ResourceModelNode& other ) const
+    bool operator==( const ResourceModelNode< NodeOrderT, CPUOrderT >& other ) const
     {
       return traceGlobalOrder == other.traceGlobalOrder &&
              CPUs             == other.CPUs;
     }
 
   protected:
-    TNodeOrder traceGlobalOrder;
-    std::vector<ResourceModelCPU> CPUs;
+    NodeOrderT traceGlobalOrder;
+    std::vector< ResourceModelCPU< NodeOrderT, CPUOrderT > > CPUs;
 
   private:
-    friend class ResourceModel;
+    template< typename NodeOrderU, typename CPUOrderU > friend class ResourceModel;
 
 };
-
-
 

@@ -35,7 +35,7 @@
 #define PARAM_TRACEBODY_CLASS TraceStream, \
                               MemoryBlocks, \
                               ProcessModel, \
-                              ResourceModel, \
+                              ResourceModel<>, \
                               TState, \
                               TEventType, \
                               MetadataManager, \

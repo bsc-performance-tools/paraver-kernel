@@ -32,7 +32,7 @@
 class TraceBodyIO_v2 : public TraceBodyIO<TraceStream,
                                           MemoryBlocks,
                                           ProcessModel,
-                                          ResourceModel,
+                                          ResourceModel<>,
                                           TState,
                                           TEventType,
                                           MetadataManager,
@@ -56,18 +56,18 @@ class TraceBodyIO_v2 : public TraceBodyIO<TraceStream,
     void read( TraceStream *file,
                MemoryBlocks& records,
                const ProcessModel& whichProcessModel,
-               const ResourceModel& whichResourceModel,
+               const ResourceModel<>& whichResourceModel,
                std::unordered_set<TState>& states,
                std::unordered_set<TEventType>& events,
                MetadataManager& traceInfo,
                TRecordTime& endTime ) const override;
     void write( std::fstream& whichStream,
                 const ProcessModel& whichProcessModel,
-                const ResourceModel& whichResourceModel,
+                const ResourceModel<>& whichResourceModel,
                 MemoryTrace::iterator *record ) const override;
     void writeEvents( std::fstream& whichStream,
                       const ProcessModel& whichProcessModel,
-                      const ResourceModel& whichResourceModel,
+                      const ResourceModel<>& whichResourceModel,
                       std::vector<MemoryTrace::iterator *>& recordList ) const;
 
     void writeCommInfo( std::fstream& whichStream,
@@ -79,33 +79,33 @@ class TraceBodyIO_v2 : public TraceBodyIO<TraceStream,
   private:
     void readState( const string& line, 
                     const ProcessModel& whichProcessModel,
-                    const ResourceModel& whichResourceModel,
+                    const ResourceModel<>& whichResourceModel,
                     MemoryBlocks& records,
                     std::unordered_set<TState>& states ) const;
     void readEvent( const string& line,
                     const ProcessModel& whichProcessModel,
-                    const ResourceModel& whichResourceModel,
+                    const ResourceModel<>& whichResourceModel,
                     MemoryBlocks& records,
                     std::unordered_set<TEventType>& events ) const;
     void readComm( const std::string& line,
                    const ProcessModel& whichProcessModel,
-                   const ResourceModel& whichResourceModel,
+                   const ResourceModel<>& whichResourceModel,
                    MemoryBlocks& records ) const;
     void readGlobalComm( const std::string& line, MemoryBlocks& records ) const;
     bool readCommon( std::istringstream& line,
                      const ProcessModel& whichProcessModel,
-                     const ResourceModel& whichResourceModel,
+                     const ResourceModel<>& whichResourceModel,
                      TCPUOrder& CPU,
                      TThreadOrder& thread,
                      TRecordTime& time ) const;
 
     bool writeState( std::string& line,
                      const ProcessModel& whichProcessModel,
-                     const ResourceModel& whichResourceModel,
+                     const ResourceModel<>& whichResourceModel,
                      MemoryTrace::iterator *record ) const;
     bool writeEvent( std::string& line,
                      const ProcessModel& whichProcessModel,
-                     const ResourceModel& whichResourceModel,
+                     const ResourceModel<>& whichResourceModel,
                      MemoryTrace::iterator *record,
                      bool needCommons = true ) const;
     bool writeCommRecord( std::string& line,
@@ -115,7 +115,7 @@ class TraceBodyIO_v2 : public TraceBodyIO<TraceStream,
                           MemoryTrace::iterator *record ) const;
     void writeCommon( std::ostringstream& line,
                       const ProcessModel& whichProcessModel,
-                      const ResourceModel& whichResourceModel,
+                      const ResourceModel<>& whichResourceModel,
                       MemoryTrace::iterator *record ) const;
 
 };

@@ -35,7 +35,7 @@ using namespace std;
 NoLoadTrace::NoLoadTrace( const Trace *whichTrace,
                           MemoryBlocks *whichBlocks,
                           const ProcessModel& whichProcessModel,
-                          const ResourceModel& whichResourceModel )
+                          const ResourceModel<>& whichResourceModel )
     : myTrace( whichTrace ), processModel( whichProcessModel ), resourceModel( whichResourceModel )
 {
   blocks = dynamic_cast<NoLoadBlocks *>( whichBlocks );

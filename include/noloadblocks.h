@@ -43,14 +43,14 @@ namespace NoLoad
   class NoLoadBlocks: public MemoryBlocks
   {
     public:
-      NoLoadBlocks( const ResourceModel& resource, const ProcessModel& process )
+      NoLoadBlocks( const ResourceModel<>& resource, const ProcessModel& process )
         : resourceModel( resource ), processModel( process )
       {
         body = nullptr;
         file = nullptr;
       }
 
-      NoLoadBlocks( const ResourceModel& resource, const ProcessModel& process,
+      NoLoadBlocks( const ResourceModel<>& resource, const ProcessModel& process,
                     TraceBodyIO< PARAM_TRACEBODY_CLASS > *whichBody, TraceStream *whichFile, TRecordTime endTime );
 
       virtual ~NoLoadBlocks();
@@ -144,7 +144,7 @@ namespace NoLoad
         std::vector<TRecord> records;
       };
 
-      const ResourceModel& resourceModel;
+      const ResourceModel<>& resourceModel;
       const ProcessModel& processModel;
       TraceBodyIO< PARAM_TRACEBODY_CLASS > *body;
       TraceStream *file;

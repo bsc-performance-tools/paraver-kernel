@@ -33,6 +33,9 @@
 
 class Trace;
 
+//template< TApplOrder appl,
+//          TTaskOrder task,
+//          TThreadOrder thread >
 class ProcessModel
 {
 

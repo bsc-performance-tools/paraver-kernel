@@ -42,7 +42,6 @@ libparaver_kernel_la_SOURCES = \
     plainblocks.cpp \
     plaintrace.cpp \
     processmodel.cpp \
-    resourcemodel.cpp \
     semanticcomposefunctions.cpp \
     semanticcpufunctions.cpp \
     semanticderivedfunctions.cpp \

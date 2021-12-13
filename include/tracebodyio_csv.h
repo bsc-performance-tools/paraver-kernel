@@ -31,7 +31,7 @@
 class TraceBodyIO_csv : public TraceBodyIO<TraceStream,
                                            MemoryBlocks,
                                            ProcessModel,
-                                           ResourceModel,
+                                           ResourceModel<>,
                                            TState,
                                            TEventType,
                                            MetadataManager,
@@ -52,14 +52,14 @@ class TraceBodyIO_csv : public TraceBodyIO<TraceStream,
     void read( TraceStream *file,
                MemoryBlocks& records,
                const ProcessModel& whichProcessModel,
-               const ResourceModel& whichResourceModel,
+               const ResourceModel<>& whichResourceModel,
                std::unordered_set<TState>& states,
                std::unordered_set<TEventType>& events,
                MetadataManager& traceInfo,
                TRecordTime& endTime ) const override;
     void write( std::fstream& whichStream,
                 const ProcessModel& whichProcessModel,
-                const ResourceModel& whichResourceModel,
+                const ResourceModel<>& whichResourceModel,
                 MemoryTrace::iterator *record ) const override;
 
   protected:
@@ -77,13 +77,13 @@ class TraceBodyIO_csv : public TraceBodyIO<TraceStream,
 
     void readTraceInfo( const std::string& line, MetadataManager& traceInfo ) const;
 
-    void readEvents( const ResourceModel& whichResourceModel,
+    void readEvents( const ResourceModel<>& whichResourceModel,
                      const std::string& line,
                      MemoryBlocks& records,
                      std::unordered_set<TState>& states,
                      TRecordTime& endTime ) const;
 
-    bool readCommon( const ResourceModel& whichResourceModel,
+    bool readCommon( const ResourceModel<>& whichResourceModel,
                      std::istringstream& line,
                      TCPUOrder& CPU,
                      TApplOrder& appl,

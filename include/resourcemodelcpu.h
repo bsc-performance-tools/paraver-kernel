@@ -26,28 +26,28 @@
 
 
 #include "paraverkerneltypes.h"
+#include "resourcemodel.h"
 
+template< typename NodeOrderT,
+          typename CPUOrderT >
 class ResourceModelCPU
 {
   public:
-    ResourceModelCPU( TCPUOrder order = 0 ): traceGlobalOrder( order )
+    ResourceModelCPU( CPUOrderT order = 0 ): traceGlobalOrder( order )
     {}
 
     ~ResourceModelCPU()
     {}
 
-    bool operator==( const ResourceModelCPU& other ) const
+    bool operator==( const ResourceModelCPU< NodeOrderT, CPUOrderT >& other ) const
     {
       return traceGlobalOrder == other.traceGlobalOrder;
     }
 
   protected:
-    TCPUOrder traceGlobalOrder;
+    CPUOrderT traceGlobalOrder;
 
   private:
-    friend class ResourceModel;
+    template< typename NodeOrderU, typename CPUOrderU > friend class ResourceModel;
 
 };
-
-
-

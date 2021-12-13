@@ -618,7 +618,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     traceTimeUnit = NS;
     traceEndTime = 0;
     traceProcessModel = ProcessModel( );
-    traceResourceModel = ResourceModel( );
+    traceResourceModel = ResourceModel<>( );
 
     traceProcessModel.setReady( true );
 
@@ -680,7 +680,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
       progress->setEndLimit( traceEndTime );
     }
 
-    traceResourceModel = ResourceModel( header );
+    traceResourceModel = ResourceModel<>( header );
     traceProcessModel = ProcessModel( header, existResourceInfo() );
 
     // Communicators

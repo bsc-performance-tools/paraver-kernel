@@ -29,6 +29,8 @@
 #include <string>
 #include "resourcemodelnode.h"
 
+template< typename NodeOrderT = TNodeOrder,
+          typename CPUOrderT = TCPUOrder >
 class ResourceModel
 {
   public:
@@ -42,8 +44,8 @@ class ResourceModel
     ~ResourceModel()
     {}
 
-    bool operator<( const ResourceModel& other ) const;
-    bool operator==( const ResourceModel& other ) const;
+    bool operator<( const ResourceModel< NodeOrderT, CPUOrderT >& other ) const;
+    bool operator==( const ResourceModel< NodeOrderT, CPUOrderT >& other ) const;
 
     bool isReady() const
     {
@@ -57,29 +59,29 @@ class ResourceModel
 
     void dumpToFile( std::fstream& file ) const;
 
-    TNodeOrder totalNodes() const;
-    TCPUOrder totalCPUs() const;
+    NodeOrderT totalNodes() const;
+    CPUOrderT totalCPUs() const;
 
-    TCPUOrder getGlobalCPU( const TNodeOrder& inNode,
-                            const TCPUOrder& inCPU ) const;
-    void getCPULocation( TCPUOrder globalCPU,
-                         TNodeOrder& inNode,
-                         TCPUOrder& inCPU ) const;
-    TCPUOrder getFirstCPU( TNodeOrder inNode ) const;
-    TCPUOrder getLastCPU( TNodeOrder inNode ) const;
+    CPUOrderT getGlobalCPU( const NodeOrderT& inNode,
+                            const CPUOrderT& inCPU ) const;
+    void getCPULocation( CPUOrderT globalCPU,
+                         NodeOrderT& inNode,
+                         CPUOrderT& inCPU ) const;
+    CPUOrderT getFirstCPU( NodeOrderT inNode ) const;
+    CPUOrderT getLastCPU( NodeOrderT inNode ) const;
 
     void addNode();
-    void addCPU( TNodeOrder whichNode );
+    void addCPU( NodeOrderT whichNode );
 
-    bool isValidNode( TNodeOrder whichNode ) const;
-    bool isValidCPU( TNodeOrder whichNode, TCPUOrder whichCPU ) const;
-    bool isValidGlobalCPU( TCPUOrder whichCPU ) const;
+    bool isValidNode( NodeOrderT whichNode ) const;
+    bool isValidCPU( NodeOrderT whichNode, CPUOrderT whichCPU ) const;
+    bool isValidGlobalCPU( CPUOrderT whichCPU ) const;
 
   protected:
     struct CPULocation
     {
-      TNodeOrder node;
-      TCPUOrder CPU;
+      NodeOrderT node;
+      CPUOrderT CPU;
 
       bool operator==( const CPULocation& other ) const
       {
@@ -88,12 +90,12 @@ class ResourceModel
       }
     };
 
-    std::vector<CPULocation> CPUs;
-    std::vector<ResourceModelNode> nodes;
+    std::vector< CPULocation > CPUs;
+    std::vector< ResourceModelNode< NodeOrderT, CPUOrderT > > nodes;
     bool ready;
 
   private:
 
 };
 
-
+#include "../src/resourcemodel.cpp"
