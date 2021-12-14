@@ -27,29 +27,35 @@
 
 #include <vector>
 #include "processmodeltask.h"
+#include "processmodel.h"
 
+
+template< typename ApplOrderT,
+          typename TaskOrderT,
+          typename ThreadOrderT,
+          typename NodeOrderT >
 class ProcessModelAppl
 {
 
   public:
-    ProcessModelAppl( TApplOrder order = 0 ): traceGlobalOrder( order )
+    ProcessModelAppl( ApplOrderT order = 0 ): traceGlobalOrder( order )
     {}
 
     ~ProcessModelAppl()
     {}
 
-    bool operator==( const ProcessModelAppl& other ) const
+    bool operator==( const ProcessModelAppl< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >& other ) const
     {
       return traceGlobalOrder == other.traceGlobalOrder &&
              tasks            == other.tasks;
     }
 
   protected:
-    TApplOrder traceGlobalOrder;
-    std::vector<ProcessModelTask> tasks;
+    ApplOrderT traceGlobalOrder;
+    std::vector< ProcessModelTask< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT > > tasks;
 
   private:
-    friend class ProcessModel;
+    template< typename ApplOrderU, typename TaskOrderU, typename ThreadOrderU, typename NodeOrderU > friend class ProcessModel;
 
 };
 

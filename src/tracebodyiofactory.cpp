@@ -28,7 +28,7 @@
 
 using namespace std;
 
-TraceBodyIO< PARAM_TRACEBODY_CLASS > *TraceBodyIOFactory::createTraceBody( TraceStream *file, Trace *trace, ProcessModel& whichProcessModel )
+TraceBodyIO< PARAM_TRACEBODY_CLASS > *TraceBodyIOFactory::createTraceBody( TraceStream *file, Trace *trace, ProcessModel<>& whichProcessModel )
 {
   TraceBodyIO< PARAM_TRACEBODY_CLASS > *ret;
   string firstLine;

@@ -27,11 +27,11 @@
 
 #include "memorytrace.h"
 #include "plaintypes.h"
+#include "processmodel.h"
 #include "resourcemodel.h"
 
 using Plain::TRecord;
 
-class ProcessModel; 
 
 namespace NoLoad
 {
@@ -165,7 +165,7 @@ namespace NoLoad
 
       NoLoadTrace( const Trace *whichTrace,
                    MemoryBlocks *whichBlocks,
-                   const ProcessModel& whichProcessModel,
+                   const ProcessModel<>& whichProcessModel,
                    const ResourceModel<>& whichResourceModel );
 
       virtual ~NoLoadTrace();
@@ -191,7 +191,7 @@ namespace NoLoad
 
     private:
       const Trace *myTrace;
-      const ProcessModel& processModel;
+      const ProcessModel<>& processModel;
       const ResourceModel<>& resourceModel;
       NoLoadBlocks *blocks;
   };

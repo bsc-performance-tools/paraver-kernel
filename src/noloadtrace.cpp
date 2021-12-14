@@ -34,7 +34,7 @@ using namespace std;
 
 NoLoadTrace::NoLoadTrace( const Trace *whichTrace,
                           MemoryBlocks *whichBlocks,
-                          const ProcessModel& whichProcessModel,
+                          const ProcessModel<>& whichProcessModel,
                           const ResourceModel<>& whichResourceModel )
     : myTrace( whichTrace ), processModel( whichProcessModel ), resourceModel( whichResourceModel )
 {

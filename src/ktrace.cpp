@@ -617,7 +617,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     // Saved CSV traces are in nanoseconds.
     traceTimeUnit = NS;
     traceEndTime = 0;
-    traceProcessModel = ProcessModel( );
+    traceProcessModel = ProcessModel<>( );
     traceResourceModel = ResourceModel<>( );
 
     traceProcessModel.setReady( true );
@@ -681,7 +681,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     }
 
     traceResourceModel = ResourceModel<>( header );
-    traceProcessModel = ProcessModel( header, existResourceInfo() );
+    traceProcessModel = ProcessModel<>( header, existResourceInfo() );
 
     // Communicators
     PRV_UINT32 numberComm = 0;

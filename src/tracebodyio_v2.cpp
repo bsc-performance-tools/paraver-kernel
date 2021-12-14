@@ -36,7 +36,7 @@ bool TraceBodyIO_v2::ordered() const
 
 void TraceBodyIO_v2::read( TraceStream *file,
                            MemoryBlocks& records,
-                           const ProcessModel& whichProcessModel,
+                           const ProcessModel<>& whichProcessModel,
                            const ResourceModel<>& whichResourceModel,
                            unordered_set<TState>& states,
                            unordered_set<TEventType>& events,
@@ -82,7 +82,7 @@ void TraceBodyIO_v2::read( TraceStream *file,
 
 
 void TraceBodyIO_v2::write( std::fstream& whichStream,
-                            const ProcessModel& whichProcessModel,
+                            const ProcessModel<>& whichProcessModel,
                             const ResourceModel<>& whichResourceModel,
                             MemoryTrace::iterator *record ) const
 {
@@ -117,7 +117,7 @@ void TraceBodyIO_v2::write( std::fstream& whichStream,
 
 
 void TraceBodyIO_v2::writeEvents( fstream& whichStream,
-                                  const ProcessModel& whichProcessModel,
+                                  const ProcessModel<>& whichProcessModel,
                                   const ResourceModel<>& whichResourceModel,
                                   vector<MemoryTrace::iterator *>& recordList ) const
 {
@@ -184,7 +184,7 @@ void TraceBodyIO_v2::writeCommInfo( fstream& whichStream,
   Read line functions
 ***********************/
 void TraceBodyIO_v2::readState( const string& line, 
-                                const ProcessModel& whichProcessModel,
+                                const ProcessModel<>& whichProcessModel,
                                 const ResourceModel<>& whichResourceModel,
                                 MemoryBlocks& records,
                                 unordered_set<TState>& states ) const
@@ -248,7 +248,7 @@ void TraceBodyIO_v2::readState( const string& line,
 
 
 void TraceBodyIO_v2::readEvent( const string& line,
-                                const ProcessModel& whichProcessModel,
+                                const ProcessModel<>& whichProcessModel,
                                 const ResourceModel<>& whichResourceModel,
                                 MemoryBlocks& records,
                                 unordered_set<TEventType>& events ) const
@@ -310,7 +310,7 @@ void TraceBodyIO_v2::readEvent( const string& line,
 
 
 void TraceBodyIO_v2::readComm( const string& line,
-                               const ProcessModel& whichProcessModel,
+                               const ProcessModel<>& whichProcessModel,
                                const ResourceModel<>& whichResourceModel,
                                MemoryBlocks& records ) const
 {
@@ -454,7 +454,7 @@ void TraceBodyIO_v2::readGlobalComm( const string& line, MemoryBlocks& records )
 
 
 bool TraceBodyIO_v2::readCommon( istringstream& line,
-                                 const ProcessModel& whichProcessModel,
+                                 const ProcessModel<>& whichProcessModel,
                                  const ResourceModel<>& whichResourceModel,
                                  TCPUOrder& CPU,
                                  TThreadOrder& thread,
@@ -497,7 +497,7 @@ bool TraceBodyIO_v2::readCommon( istringstream& line,
   Write records functions
 ***************************/
 bool TraceBodyIO_v2::writeState( string& line,
-                                 const ProcessModel& whichProcessModel,
+                                 const ProcessModel<>& whichProcessModel,
                                  const ResourceModel<>& whichResourceModel,
                                  MemoryTrace::iterator *record ) const
 {
@@ -520,7 +520,7 @@ bool TraceBodyIO_v2::writeState( string& line,
 
 
 bool TraceBodyIO_v2::writeEvent( string& line,
-                                 const ProcessModel& whichProcessModel,
+                                 const ProcessModel<>& whichProcessModel,
                                  const ResourceModel<>& whichResourceModel,
                                  MemoryTrace::iterator *record,
                                  bool needCommons ) const
@@ -584,7 +584,7 @@ bool TraceBodyIO_v2::writeCommRecord( string& line,
 
 
 bool TraceBodyIO_v2::writeGlobalComm( string& line,
-                                      const ProcessModel& whichProcessModel,
+                                      const ProcessModel<>& whichProcessModel,
                                       MemoryTrace::iterator *record ) const
 {
   return true;
@@ -592,7 +592,7 @@ bool TraceBodyIO_v2::writeGlobalComm( string& line,
 
 
 void TraceBodyIO_v2::writeCommon( ostringstream& line,
-                                  const ProcessModel& whichProcessModel,
+                                  const ProcessModel<>& whichProcessModel,
                                   const ResourceModel<>& whichResourceModel,
                                   MemoryTrace::iterator *record ) const
 {

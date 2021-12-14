@@ -599,7 +599,7 @@ bool LocalKernel::isTraceFile( const std::string &filename ) const
   try
   {
     ResourceModel<> tmpResource( firstLine );
-    ProcessModel tmpProcess( firstLine, tmpResource.isReady() );
+     ProcessModel<> tmpProcess( firstLine, tmpResource.isReady() );
     isParaverTrace = isParaverTrace && tmpProcess.isReady();
   }
   catch( ... )

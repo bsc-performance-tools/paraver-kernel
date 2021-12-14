@@ -33,18 +33,19 @@
 
 class Trace;
 
-//template< TApplOrder appl,
-//          TTaskOrder task,
-//          TThreadOrder thread >
+template< typename ApplOrderT = TApplOrder,
+          typename TaskOrderT = TTaskOrder,
+          typename ThreadOrderT = TThreadOrder,
+          typename NodeOrderT = TThreadOrder >
 class ProcessModel
 {
 
   public:
     struct ThreadLocation
     {
-      TApplOrder appl;
-      TTaskOrder task;
-      TThreadOrder thread;
+      ApplOrderT appl;
+      TaskOrderT task;
+      ThreadOrderT thread;
 
       bool operator==( const ThreadLocation& other ) const
       {
@@ -64,8 +65,8 @@ class ProcessModel
     ~ProcessModel()
     {}
 
-    bool operator<( const ProcessModel& other ) const;
-    bool operator==( const ProcessModel& other ) const;
+    bool operator<( const ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >& other ) const;
+    bool operator==( const ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >& other ) const;
 
     bool isReady() const
     {
@@ -79,52 +80,52 @@ class ProcessModel
 
     void dumpToFile( std::fstream& file, bool existResourceInfo ) const;
 
-    TApplOrder totalApplications() const;
+    ApplOrderT totalApplications() const;
 
-    TTaskOrder totalTasks() const;
-    TTaskOrder getGlobalTask( const TApplOrder& inAppl,
-                              const TTaskOrder& inTask ) const;
-    void getTaskLocation( TTaskOrder globalTask,
-                          TApplOrder& inAppl,
-                          TTaskOrder& inTask ) const;
-    TTaskOrder getFirstTask( TApplOrder inAppl ) const;
-    TTaskOrder getLastTask( TApplOrder inAppl ) const;
+    TaskOrderT totalTasks() const;
+    TaskOrderT getGlobalTask( const ApplOrderT& inAppl,
+                              const TaskOrderT& inTask ) const;
+    void getTaskLocation( TaskOrderT globalTask,
+                          ApplOrderT& inAppl,
+                          TaskOrderT& inTask ) const;
+    TaskOrderT getFirstTask( ApplOrderT inAppl ) const;
+    TaskOrderT getLastTask( ApplOrderT inAppl ) const;
 
-    TThreadOrder totalThreads() const;
-    TThreadOrder getGlobalThread( const TApplOrder& inAppl,
-                                  const TTaskOrder& inTask,
-                                  const TThreadOrder& inThread ) const;
-    void getThreadLocation( TThreadOrder globalThread,
-                            TApplOrder& inAppl,
-                            TTaskOrder& inTask,
-                            TThreadOrder& inThread ) const;
-    TThreadOrder getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const;
-    TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask )const;
+    ThreadOrderT totalThreads() const;
+    ThreadOrderT getGlobalThread( const ApplOrderT& inAppl,
+                                  const TaskOrderT& inTask,
+                                  const ThreadOrderT& inThread ) const;
+    void getThreadLocation( ThreadOrderT globalThread,
+                            ApplOrderT& inAppl,
+                            TaskOrderT& inTask,
+                            ThreadOrderT& inThread ) const;
+    ThreadOrderT getFirstThread( ApplOrderT inAppl, TaskOrderT inTask ) const;
+    ThreadOrderT getLastThread( ApplOrderT inAppl, TaskOrderT inTask )const;
 
-    void getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& onVector ) const;
+    void getThreadsPerNode( NodeOrderT inNode, std::vector<ThreadOrderT>& onVector ) const;
 
-    bool isValidThread( TThreadOrder whichThread ) const;
-    bool isValidThread( TApplOrder whichAppl,
-                        TTaskOrder whichTask,
-                        TThreadOrder whichThread ) const;
-    bool isValidTask( TTaskOrder whichTask ) const;
-    bool isValidTask( TApplOrder whichAppl,
-                        TTaskOrder whichTask ) const;
-    bool isValidAppl( TApplOrder whichAppl ) const;
+    bool isValidThread( ThreadOrderT whichThread ) const;
+    bool isValidThread( ApplOrderT whichAppl,
+                        TaskOrderT whichTask,
+                        ThreadOrderT whichThread ) const;
+    bool isValidTask( TaskOrderT whichTask ) const;
+    bool isValidTask( ApplOrderT whichAppl,
+                        TaskOrderT whichTask ) const;
+    bool isValidAppl( ApplOrderT whichAppl ) const;
 
     void addApplication();
-    void addTask( TApplOrder whichAppl );
-    void addThread( TApplOrder whichAppl, TTaskOrder whichTask, TNodeOrder execNode );
+    void addTask( ApplOrderT whichAppl );
+    void addThread( ApplOrderT whichAppl, TaskOrderT whichTask, NodeOrderT execNode );
     void addApplTaskThread( const ThreadLocation& whichLocation,
-                            TNodeOrder execNode = 0 );
+                            NodeOrderT execNode = 0 );
 
 
   protected:
 
     struct TaskLocation
     {
-      TApplOrder appl;
-      TTaskOrder task;
+      ApplOrderT appl;
+      TaskOrderT task;
 
       bool operator==( const TaskLocation& other ) const
       {
@@ -133,10 +134,10 @@ class ProcessModel
       }
     };
 
-    std::vector<ThreadLocation> threads;
-    std::vector<TaskLocation> tasks;
-    std::vector<ProcessModelAppl> applications;
-    std::map< TNodeOrder, std::vector<TThreadOrder> > threadsPerNode;
+    std::vector< ThreadLocation > threads;
+    std::vector< TaskLocation > tasks;
+    std::vector< ProcessModelAppl< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT > > applications;
+    std::map< NodeOrderT, std::vector< ThreadOrderT > > threadsPerNode;
 
     bool ready;
 
@@ -144,7 +145,4 @@ class ProcessModel
 
 };
 
-
-
-
-
+#include "../src/processmodel.cpp"

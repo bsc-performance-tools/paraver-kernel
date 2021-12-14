@@ -44,7 +44,7 @@ namespace Plain
   class PlainBlocks: public MemoryBlocks
   {
     public:
-      PlainBlocks( const ResourceModel<>& resource, const ProcessModel& process,
+      PlainBlocks( const ResourceModel<>& resource, const ProcessModel<>& process,
                    TRecordTime endTime );
 
       ~PlainBlocks();
@@ -130,7 +130,7 @@ namespace Plain
       std::vector<TCommInfo *> communications;
       TCommID currentComm;
       const ResourceModel<>& resourceModel;
-      const ProcessModel& processModel;
+      const ProcessModel<>& processModel;
       TRecord tmpRecord;
       bool inserted;
       TThreadOrder insertedOnThread;

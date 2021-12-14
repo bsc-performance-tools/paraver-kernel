@@ -34,7 +34,7 @@
 
 #define PARAM_TRACEBODY_CLASS TraceStream, \
                               MemoryBlocks, \
-                              ProcessModel, \
+                              ProcessModel<>, \
                               ResourceModel<>, \
                               TState, \
                               TEventType, \
@@ -45,6 +45,6 @@
 class TraceBodyIOFactory
 {
   public:
-    static TraceBodyIO< PARAM_TRACEBODY_CLASS > *createTraceBody( TraceStream *file, Trace *trace, ProcessModel& whichProcessModel );
+    static TraceBodyIO< PARAM_TRACEBODY_CLASS > *createTraceBody( TraceStream *file, Trace *trace, ProcessModel<>& whichProcessModel );
     static TraceBodyIO< PARAM_TRACEBODY_CLASS > *createTraceBody();
 };

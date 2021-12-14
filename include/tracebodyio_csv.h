@@ -30,7 +30,7 @@
 // Paraver trace old format file
 class TraceBodyIO_csv : public TraceBodyIO<TraceStream,
                                            MemoryBlocks,
-                                           ProcessModel,
+                                           ProcessModel<>,
                                            ResourceModel<>,
                                            TState,
                                            TEventType,
@@ -40,7 +40,7 @@ class TraceBodyIO_csv : public TraceBodyIO<TraceStream,
 {
   public:
     TraceBodyIO_csv( ) {}
-    TraceBodyIO_csv( Trace* trace, ProcessModel& whichProcessModel );
+    TraceBodyIO_csv( Trace* trace, ProcessModel<>& whichProcessModel );
 
     static const PRV_UINT8 CommentRecord = '#';
     static const PRV_UINT8 StateRecord = '1';
@@ -51,14 +51,14 @@ class TraceBodyIO_csv : public TraceBodyIO<TraceStream,
     bool ordered() const override;
     void read( TraceStream *file,
                MemoryBlocks& records,
-               const ProcessModel& whichProcessModel,
+               const ProcessModel<>& whichProcessModel,
                const ResourceModel<>& whichResourceModel,
                std::unordered_set<TState>& states,
                std::unordered_set<TEventType>& events,
                MetadataManager& traceInfo,
                TRecordTime& endTime ) const override;
     void write( std::fstream& whichStream,
-                const ProcessModel& whichProcessModel,
+                const ProcessModel<>& whichProcessModel,
                 const ResourceModel<>& whichResourceModel,
                 MemoryTrace::iterator *record ) const override;
 
@@ -71,7 +71,7 @@ class TraceBodyIO_csv : public TraceBodyIO<TraceStream,
     static std::string line;
     static std::ostringstream ostr;
 
-    ProcessModel *myProcessModel;
+     ProcessModel<> *myProcessModel;
 
     Trace* myTrace;
 

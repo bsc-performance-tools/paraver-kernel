@@ -33,7 +33,7 @@ using namespace Plain;
 using namespace std;
 
 PlainTrace::PlainTrace( const Trace *whichTrace,
-                        const ProcessModel& whichProcessModel,
+                        const ProcessModel<>& whichProcessModel,
                         const ResourceModel<>& whichResourceModel ):
     myTrace( whichTrace ), processModel( whichProcessModel ), resourceModel( whichResourceModel )
 

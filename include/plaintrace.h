@@ -28,9 +28,8 @@
 #include "memorytrace.h"
 #include "index.h"
 #include "plaintypes.h"
+#include "processmodel.h"
 #include "resourcemodel.h"
-
-class ProcessModel;
 
 namespace Plain
 {
@@ -150,7 +149,7 @@ namespace Plain
       };
 
       PlainTrace( const Trace *whichTrace,
-                  const ProcessModel& whichProcessModel,
+                  const ProcessModel<>& whichProcessModel,
                   const ResourceModel<>& whichResourceModel );
       virtual ~PlainTrace()
       {}
@@ -176,7 +175,7 @@ namespace Plain
 
     private:
       const Trace *myTrace;
-      const ProcessModel& processModel;
+      const ProcessModel<>& processModel;
       const ResourceModel<>& resourceModel;
       TThreadOrder numThreads;
       TCPUOrder numCPUs;

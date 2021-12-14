@@ -103,7 +103,7 @@ bool prv_atoll( const char *p, T *result, double *decimals )
   return true;
 }
 
-TraceBodyIO_csv::TraceBodyIO_csv( Trace* trace, ProcessModel& whichProcessModel )
+TraceBodyIO_csv::TraceBodyIO_csv( Trace* trace, ProcessModel<>& whichProcessModel )
 : myTrace( trace ),  myProcessModel( &whichProcessModel )
 {}
 
@@ -115,7 +115,7 @@ bool TraceBodyIO_csv::ordered() const
 
 void TraceBodyIO_csv::read( TraceStream *file,
                             MemoryBlocks& records,
-                            const ProcessModel& whichProcessModel,
+                            const ProcessModel<>& whichProcessModel,
                             const ResourceModel<>& whichResourceModel,
                             std::unordered_set<TState>& states,
                             std::unordered_set<TEventType>& events,
@@ -141,7 +141,7 @@ void TraceBodyIO_csv::bufferWrite( fstream& whichStream, bool writeReady, bool l
 
 
 void TraceBodyIO_csv::write( std::fstream& whichStream,
-                             const ProcessModel& whichProcessModel,
+                             const ProcessModel<>& whichProcessModel,
                              const ResourceModel<>& whichResourceModel,
                              MemoryTrace::iterator *record ) const
 {
@@ -213,7 +213,7 @@ inline bool TraceBodyIO_csv::readCommon( const ResourceModel<>& whichResourceMod
                                          TEventValue& eventvalue,
                                          double& decimals ) const
 { 
-  static ProcessModel::ThreadLocation lastATT = { 0, 0, 0 };
+  static ProcessModel<>::ThreadLocation lastATT = { 0, 0, 0 };
 
   std::getline( line, tmpstring, '.' ); 
 #ifdef USE_ATOLL
@@ -263,7 +263,7 @@ inline bool TraceBodyIO_csv::readCommon( const ResourceModel<>& whichResourceMod
   }
 #endif
 
-  ProcessModel::ThreadLocation currATT = { appl, task, thread };
+  ProcessModel<>::ThreadLocation currATT = { appl, task, thread };
   if ( !( currATT == lastATT ) )
   {
     lastATT = currATT;

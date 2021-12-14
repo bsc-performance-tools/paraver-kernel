@@ -43,7 +43,7 @@ namespace NoLoad
   class TraceEditBlocks: public NoLoadBlocks
   {
     public:
-      TraceEditBlocks( const ResourceModel<>& resource, const ProcessModel& process,
+      TraceEditBlocks( const ResourceModel<>& resource, const ProcessModel<>& process,
                        TraceBodyIO< PARAM_TRACEBODY_CLASS > *whichBody, TraceStream *whichFile, TRecordTime endTime );
 
       virtual ~TraceEditBlocks();
@@ -137,7 +137,7 @@ namespace NoLoad
       };
 
       const ResourceModel<>& resourceModel;
-      const ProcessModel& processModel;
+      const ProcessModel<>& processModel;
       TraceBodyIO< PARAM_TRACEBODY_CLASS > *body;
       TraceStream *file;
       PRV_INT64 endFileOffset;

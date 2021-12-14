@@ -26,13 +26,18 @@
 
 
 #include "paraverkerneltypes.h"
+#include "processmodel.h"
 
+template< typename ApplOrderT,
+          typename TaskOrderT,
+          typename ThreadOrderT,
+          typename NodeOrderT >
 class ProcessModelThread
 {
 
   public:
-    ProcessModelThread( TThreadOrder order = 0,
-                        TNodeOrder node = 0 ):
+    ProcessModelThread( ThreadOrderT order = 0,
+                        NodeOrderT node = 0 ):
         traceGlobalOrder( order ),
         nodeExecution( node )
     {}
@@ -40,18 +45,18 @@ class ProcessModelThread
     ~ProcessModelThread()
     {}
 
-    bool operator==( const ProcessModelThread& other ) const
+    bool operator==( const ProcessModelThread< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >& other ) const
     {
       return traceGlobalOrder == other.traceGlobalOrder &&
              nodeExecution    == other.nodeExecution;
     }
 
   protected:
-    TThreadOrder  traceGlobalOrder;
-    TNodeOrder    nodeExecution;
+    ThreadOrderT traceGlobalOrder;
+    NodeOrderT   nodeExecution;
 
   private:
-    friend class ProcessModel;
+    template< typename ApplOrderU, typename TaskOrderU, typename ThreadOrderU, typename NodeOrderU > friend class ProcessModel;
 
 };
 

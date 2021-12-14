@@ -41,7 +41,7 @@ const TRecordType PlainBlocks::commTypes[] =
   RRECV + PHY
 };
 
-PlainBlocks::PlainBlocks( const ResourceModel<>& resource, const ProcessModel& process,
+PlainBlocks::PlainBlocks( const ResourceModel<>& resource, const ProcessModel<>& process,
                           TRecordTime endTime )
     : resourceModel( resource ), processModel( process )
 {
