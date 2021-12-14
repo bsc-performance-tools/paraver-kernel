@@ -580,7 +580,6 @@ bool LocalKernel::isTraceFile( const std::string &filename ) const
 
   bool isParaverTrace = true;
 
-  //Step 1: paraver + datetime 
   string tmpFirstLine;
   file->getline( tmpFirstLine );
   istringstream firstLine( tmpFirstLine );
@@ -588,24 +587,6 @@ bool LocalKernel::isTraceFile( const std::string &filename ) const
   string item;
   getline( firstLine, item, ' ' );
   isParaverTrace = isParaverTrace && ( item == "#Paraver" );
-  getline( firstLine, item, ')' );
-  getline( firstLine, item, ':' );
-
-  //Step 2: trace end time
-  getline( firstLine, item, ':' );
-
-  //Step 3: trace models
-  
-  try
-  {
-    ResourceModel tmpResource( firstLine );
-    ProcessModel tmpProcess( firstLine, tmpResource.isReady() );
-    isParaverTrace = isParaverTrace && tmpProcess.isReady();
-  }
-  catch( ... )
-  {
-    isParaverTrace = false;
-  }
 
   file->close();
   delete file;
