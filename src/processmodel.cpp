@@ -28,7 +28,6 @@
 #include <limits>
 #include "processmodel.h"
 #include "traceheaderexception.h"
-#include "trace.h"
 
 #include <stdlib.h>
 

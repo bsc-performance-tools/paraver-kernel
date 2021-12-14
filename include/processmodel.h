@@ -31,12 +31,10 @@
 #include <sstream>
 #include "processmodelappl.h"
 
-class Trace;
-
 template< typename ApplOrderT = TApplOrder,
           typename TaskOrderT = TTaskOrder,
           typename ThreadOrderT = TThreadOrder,
-          typename NodeOrderT = TThreadOrder >
+          typename NodeOrderT = TNodeOrder >
 class ProcessModel
 {
 
