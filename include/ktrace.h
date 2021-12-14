@@ -213,7 +213,7 @@ class KTrace: public Trace
 
   protected:
     bool ready;
-     ProcessModel<> traceProcessModel;
+    ProcessModel<> traceProcessModel;
     ResourceModel<> traceResourceModel;
     TTime traceEndTime;
     TTimeUnit traceTimeUnit;

@@ -44,6 +44,7 @@
 #include "noloadblocks.h"
 #include "traceeditblocks.h"
 #include "customalgorithms.h"
+#include "traceheader.h"
 
 using namespace std;
 #ifdef _MSC_VER
@@ -629,92 +630,24 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
   }
   else
   {
-    file->getline( tmpstr );
-    if ( tmpstr.compare( "new format" ) == 0 )
-      file->getline( tmpstr );
-
-    istringstream header( tmpstr );
-
     string tmpDate;
-    std::getline( header, tmpDate, ')' );
-    tmpDate = tmpDate.substr( tmpDate.find_first_of( '(' ) + 1 );
+    try
+    {
+      parseTraceHeader( file, tmpDate, traceTimeUnit, traceEndTime, traceResourceModel, traceProcessModel, communicators );
+    }
+    catch( TraceHeaderException& e )
+    {
+      delete file;
+      throw e;
+    }
+
     parseDateTime( tmpDate );
-
-    header.get();
-
-    std::getline( header, tmpstr, ':' );
-    size_t pos = tmpstr.find( '_' );
-    if ( pos == string::npos )
-    {
-      // No '_' char found. The trace is in us.
-      traceTimeUnit = US;
-      istringstream stringEndTime( tmpstr );
-      if ( !( stringEndTime >> traceEndTime ) )
-      {
-        delete file;
-        throw TraceHeaderException( TTraceHeaderErrorCode::invalidTime,
-                                    tmpstr.c_str() );
-      }
-    }
-    else
-    {
-      string strTimeUnit( tmpstr.substr( pos, tmpstr.length() ) );
-      if ( strTimeUnit == "_ns" )
-        traceTimeUnit = NS;
-      else if ( strTimeUnit == "_ms" )
-        traceTimeUnit = MS;
-      else //if ( strTimeUnit == "_us" )
-        traceTimeUnit = US;
-
-      istringstream stringEndTime( tmpstr.substr( 0, pos ) );
-      if ( !( stringEndTime >> traceEndTime ) )
-      {
-        delete file;
-        throw TraceHeaderException( TTraceHeaderErrorCode::invalidTime,
-                                    tmpstr.c_str() );
-      }
-    }
 
     if ( !file->canseekend() && progress != nullptr )
     {
       progress->setEndLimit( traceEndTime );
     }
-
-    traceResourceModel = ResourceModel<>( header );
-    traceProcessModel = ProcessModel<>( header, existResourceInfo() );
-
-    // Communicators
-    PRV_UINT32 numberComm = 0;
-    if ( !header.eof() )
-    {
-      std::getline( header, tmpstr );
-      if ( tmpstr != "" )
-      {
-        istringstream streamComm( tmpstr );
-
-        if ( !( streamComm >> numberComm ) )
-        {
-          delete file;
-          throw TraceHeaderException( TTraceHeaderErrorCode::invalidCommNumber,
-                                      tmpstr.c_str() );
-        }
-      }
-    }
-
-    for ( PRV_UINT32 count = 0; count < numberComm; count++ )
-    {
-      file->getline( tmpstr );
-      if ( tmpstr[0] != 'C' && tmpstr[0] != 'c' && tmpstr[0] != 'I' && tmpstr[0] != 'i' )
-      {
-        delete file;
-        throw TraceHeaderException( TTraceHeaderErrorCode::unknownCommLine,
-                                    tmpstr.c_str() );
-      }
-      communicators.push_back( tmpstr );
-    }
-    // End communicators
   }
-// End reading the header
 
 // Reading the body
   body = TraceBodyIOFactory::createTraceBody( file, this, traceProcessModel );
