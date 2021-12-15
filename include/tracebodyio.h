@@ -42,7 +42,7 @@ class TraceBodyIO
     virtual ~TraceBodyIO() = default;
 
     virtual bool ordered() const = 0;
-    virtual void read( TraceStreamT *file,
+    virtual void read( TraceStreamT& file,
                        RecordContainerT& records,
                        const ProcessModelT& whichProcessModel,
                        const ResourceModelT& whichResourceModel,

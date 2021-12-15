@@ -34,7 +34,7 @@ bool TraceBodyIO_v2::ordered() const
   return true;
 }
 
-void TraceBodyIO_v2::read( TraceStream *file,
+void TraceBodyIO_v2::read( TraceStream& file,
                            MemoryBlocks& records,
                            const ProcessModel<>& whichProcessModel,
                            const ResourceModel<>& whichResourceModel,
@@ -45,7 +45,7 @@ void TraceBodyIO_v2::read( TraceStream *file,
 {
   string line;
 
-  file->getline( line );
+  file.getline( line );
 
   if ( line[0] == '#' || line.size() == 0 )
     return;

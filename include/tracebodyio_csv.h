@@ -49,7 +49,7 @@ class TraceBodyIO_csv : public TraceBodyIO<TraceStream,
     static const PRV_UINT8 GlobalCommRecord = '4';
 
     bool ordered() const override;
-    void read( TraceStream *file,
+    void read( TraceStream& file,
                MemoryBlocks& records,
                const ProcessModel<>& whichProcessModel,
                const ResourceModel<>& whichResourceModel,

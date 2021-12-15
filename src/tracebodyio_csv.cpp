@@ -113,7 +113,7 @@ bool TraceBodyIO_csv::ordered() const
   return true;
 }
 
-void TraceBodyIO_csv::read( TraceStream *file,
+void TraceBodyIO_csv::read( TraceStream& file,
                             MemoryBlocks& records,
                             const ProcessModel<>& whichProcessModel,
                             const ResourceModel<>& whichResourceModel,
@@ -122,7 +122,7 @@ void TraceBodyIO_csv::read( TraceStream *file,
                             MetadataManager& traceInfo,
                             TRecordTime& endTime ) const
 {
-  file->getline( line );
+  file.getline( line );
   if ( line.size() == 0 )
     return;
 

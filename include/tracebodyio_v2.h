@@ -53,7 +53,7 @@ class TraceBodyIO_v2 : public TraceBodyIO<TraceStream,
     TraceBodyIO_v2() {}
 
     bool ordered() const override;
-    void read( TraceStream *file,
+    void read( TraceStream& file,
                MemoryBlocks& records,
                const ProcessModel<>& whichProcessModel,
                const ResourceModel<>& whichResourceModel,

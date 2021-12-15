@@ -24,6 +24,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <type_traits>
 
 using namespace std;
@@ -109,8 +110,22 @@ bool TraceBodyIO_v1< PARAM_LIST >::ordered() const
   return false;
 }
 
+
+template< class StreamT >
+void myGetLine( StreamT& s, std::string& line )
+{
+  s.getline( line );
+}
+
+
+inline void myGetLine( std::fstream& s, std::string& line )
+{
+  std::getline( s, line );
+}
+
+
 template< PARAM_TYPENAME >
-void TraceBodyIO_v1< PARAM_LIST >::read( TraceStreamT *file,
+void TraceBodyIO_v1< PARAM_LIST >::read( TraceStreamT& file,
                                          RecordContainerT& records,
                                          const ProcessModelT& whichProcessModel,
                                          const ResourceModelT& whichResourceModel,
@@ -119,7 +134,7 @@ void TraceBodyIO_v1< PARAM_LIST >::read( TraceStreamT *file,
                                          MetadataManagerT& traceInfo,
                                          RecordTimeT& endTime  ) const
 {
-  file->getline( line );
+  myGetLine( file, line );
 
   if ( line.size() == 0 )
     return;

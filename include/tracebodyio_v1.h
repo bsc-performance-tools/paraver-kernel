@@ -56,7 +56,7 @@ class TraceBodyIO_v1 : public TraceBodyIO<TraceStreamT,
     static constexpr PRV_UINT8 GlobalCommRecord = '4';
 
     bool ordered() const override;
-    void read( TraceStreamT *file,
+    void read( TraceStreamT& file,
                RecordContainerT& records,
                const ProcessModelT& whichProcessModel,
                const ResourceModelT& whichResourceModel,

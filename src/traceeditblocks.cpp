@@ -394,7 +394,7 @@ void TraceEditBlocks::getNextRecord( TRecord **record, PRV_INT64& offset, PRV_UI
   {
     PRV_UINT16 previousSize = lastData.records.size();
 
-    body->read( file, *this, processModel, resourceModel, notUsedStates, notUsedEvents, dummyTraceInfo, dummyEndTime );
+    body->read( *file, *this, processModel, resourceModel, notUsedStates, notUsedEvents, dummyTraceInfo, dummyEndTime );
 
     if ( previousSize < lastData.records.size() )
       ++numLines;

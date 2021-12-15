@@ -69,7 +69,7 @@ void parseTraceHeader( TraceStreamT traceStream,
   }
   else
   {
-    string strTimeUnit( tmpstr.substr( pos, tmpstr.length() ) );
+    std::string strTimeUnit( tmpstr.substr( pos, tmpstr.length() ) );
     if ( strTimeUnit == "_ns" )
       traceTimeUnit = NS;
     else if ( strTimeUnit == "_ms" )
@@ -85,8 +85,8 @@ void parseTraceHeader( TraceStreamT traceStream,
     }
   }
 
-  traceResourceModel = ResourceModel<>( header );
-  traceProcessModel = ProcessModel<>( header, traceResourceModel.isReady() );
+  traceResourceModel = ResourceModelT( header );
+  traceProcessModel = ProcessModelT( header, traceResourceModel.isReady() );
 
   // Communicators
   PRV_UINT32 numberComm = 0;
