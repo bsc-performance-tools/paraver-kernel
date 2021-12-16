@@ -27,9 +27,9 @@
 #include <fstream>
 #include <limits>
 #include "processmodel.h"
+#ifdef USE_PARAVER_EXCEPTIONS
 #include "traceheaderexception.h"
-
-#include <stdlib.h>
+#endif
 
 using namespace std;
 
@@ -184,8 +184,13 @@ ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::ProcessModel( 
   if ( !( sstreamNumberAppl >> numberApplications ) ||
        numberApplications == 0 )
   {
+#ifdef USE_PARAVER_EXCEPTIONS
     throw TraceHeaderException( TTraceHeaderErrorCode::invalidApplNumber,
                                 stringNumberApplications.c_str() );
+#else
+    std::cerr << "[Error] Invalid applications number: " << stringNumberApplications << std::endl;
+    exit( 1 );
+#endif
   }
 
   // Insert applications
@@ -202,8 +207,13 @@ ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::ProcessModel( 
     if ( !( sstreamNumberTasks >> numberTasks ) ||
          numberTasks == 0 )
     {
+#ifdef USE_PARAVER_EXCEPTIONS
       throw TraceHeaderException( TTraceHeaderErrorCode::invalidTaskNumber,
                                   stringNumberTasks.c_str() );
+#else
+      std::cerr << "[Error] Invalid task number: " << stringNumberTasks << std::endl;
+      exit( 1 );
+#endif
     }
 
     // Insert tasks
@@ -227,8 +237,13 @@ ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::ProcessModel( 
       if ( !( sstreamNumberThreads >> numberThreads ) ||
            numberThreads == 0 )
       {
+#ifdef USE_PARAVER_EXCEPTIONS
         throw TraceHeaderException( TTraceHeaderErrorCode::invalidThreadNumber,
                                     stringNumberThreads.c_str() );
+#else
+      std::cerr << "[Error] Invalid thread number: " << stringNumberThreads << std::endl;
+      exit( 1 );
+#endif
       }
 
       string stringNumberNode;
@@ -243,8 +258,13 @@ ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::ProcessModel( 
       if ( !( sstreamNumberNode >> numberNode ) ||
            ( numberNode == 0 && existResourceInfo ) )
       {
+#ifdef USE_PARAVER_EXCEPTIONS
         throw TraceHeaderException( TTraceHeaderErrorCode::invalidNodeNumber,
                                     stringNumberNode.c_str() );
+#else
+        std::cerr << "[Error] Invalid node number: " << stringNumberNode << std::endl;
+        exit( 1 );
+#endif
       }
 
       // Insert threads
@@ -447,8 +467,13 @@ void ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addTask( 
   {
     stringstream tmpstr;
     tmpstr << whichAppl;
+#ifdef USE_PARAVER_EXCEPTIONS
     throw TraceHeaderException( TTraceHeaderErrorCode::invalidApplNumber,
                                 tmpstr.str().c_str() );
+#else
+    std::cerr << "[Error] Invalid header time: " << tmpstr.str() << std::endl;
+    exit( 1 );
+#endif
   }
 
   tasks.push_back( TaskLocation() );
@@ -462,22 +487,32 @@ template< typename ApplOrderT,
           typename TaskOrderT, 
           typename ThreadOrderT, 
           typename NodeOrderT >
-void ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addThread(  ApplOrderT whichAppl, TaskOrderT whichTask,
+void ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addThread( ApplOrderT whichAppl, TaskOrderT whichTask,
                               NodeOrderT execNode )
 {
   if( whichAppl > applications.size() )
   {
     stringstream tmpstr;
     tmpstr << whichAppl;
+#ifdef USE_PARAVER_EXCEPTIONS
     throw TraceHeaderException( TTraceHeaderErrorCode::invalidApplNumber,
                                 tmpstr.str().c_str() );
+#else
+    std::cerr << "[Error] Invalid application number: " << tmpstr.str() << std::endl;
+    exit( 1 );
+#endif
   }
   else if( whichTask > applications[ whichAppl ].tasks.size() )
   {
     stringstream tmpstr;
     tmpstr << whichAppl;
+#ifdef USE_PARAVER_EXCEPTIONS
     throw TraceHeaderException( TTraceHeaderErrorCode::invalidTaskNumber,
                                 tmpstr.str().c_str() );
+#else
+    std::cerr << "[Error] Invalid task number: " << tmpstr.str() << std::endl;
+    exit( 1 );
+#endif
   }
 
   threads.push_back( ThreadLocation() );

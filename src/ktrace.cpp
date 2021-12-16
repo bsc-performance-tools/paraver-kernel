@@ -633,7 +633,7 @@ KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLo
     string tmpDate;
     try
     {
-      parseTraceHeader( file, tmpDate, traceTimeUnit, traceEndTime, traceResourceModel, traceProcessModel, communicators );
+      parseTraceHeader( *file, tmpDate, traceTimeUnit, traceEndTime, traceResourceModel, traceProcessModel, communicators );
     }
     catch( TraceHeaderException& e )
     {

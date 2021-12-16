@@ -26,7 +26,9 @@
 #include <iostream>
 #include <fstream>
 #include <limits>
+#ifdef USE_PARAVER_EXCEPTIONS
 #include "traceheaderexception.h"
+#endif
 
 using namespace std;
 
@@ -141,8 +143,13 @@ void ResourceModel< NodeOrderT, CPUOrderT >::addCPU( NodeOrderT whichNode )
   {
     stringstream tmpstr;
     tmpstr << whichNode;
+#ifdef USE_PARAVER_EXCEPTIONS
     throw TraceHeaderException( TTraceHeaderErrorCode::invalidNodeNumber,
                                 tmpstr.str().c_str() );
+#else
+    std::cerr << "[Error] Invalid node number: " << tmpstr.str() << std::endl;
+    exit( 1 );
+#endif
   }
 
   CPUs.push_back( CPULocation() );
@@ -211,8 +218,13 @@ ResourceModel< NodeOrderT, CPUOrderT >::ResourceModel( istringstream& headerInfo
 
   if ( !( sstreamNumberNodes >> numberNodes ) )
   {
+#ifdef USE_PARAVER_EXCEPTIONS
     throw TraceHeaderException( TTraceHeaderErrorCode::invalidNodeNumber,
                                 stringNumberNodes.c_str() );
+#else
+    std::cerr << "[Error] Invalid number of nodes: " << stringNumberNodes << std::endl;
+    exit( 1 );
+#endif
   }
 
   // Insert nodes
@@ -234,8 +246,13 @@ ResourceModel< NodeOrderT, CPUOrderT >::ResourceModel( istringstream& headerInfo
 
       if ( !( sstreamNumberCPUs >> numberCPUs ) )
       {
+#ifdef USE_PARAVER_EXCEPTIONS
         throw TraceHeaderException( TTraceHeaderErrorCode::invalidCPUNumber,
                                     stringNumberCPUs.c_str() );
+#else
+        std::cerr << "[Error] Invalid number of CPUs: " << stringNumberCPUs << std::endl;
+        exit( 1 );
+#endif
       }
     }
     else

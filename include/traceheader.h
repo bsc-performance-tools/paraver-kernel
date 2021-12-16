@@ -23,17 +23,22 @@
 
 #pragma once
 
+#include <sstream>
 #include <string>
 #include <vector>
-#include <sstream>
 #include "paraverkerneltypes.h"
+#include "prvgetline.h"
+#ifdef USE_PARAVER_EXCEPTIONS
 #include "traceheaderexception.h"
+#else
+#include <iostream>
+#endif
 
 template< class TraceStreamT,
           typename TimeT,
           class ResourceModelT,
           class ProcessModelT >
-void parseTraceHeader( TraceStreamT traceStream,
+void parseTraceHeader( TraceStreamT& traceStream,
                        std::string& traceDate,
                        TTimeUnit& traceTimeUnit,
                        TimeT& traceEndTime,
@@ -43,10 +48,10 @@ void parseTraceHeader( TraceStreamT traceStream,
 {
   std::string tmpstr;
 
-  traceStream->getline( tmpstr );
+  prvGetLine( traceStream, tmpstr );
   if ( tmpstr.compare( "new format" ) == 0 )
-    traceStream->getline( tmpstr );
-
+    prvGetLine( traceStream, tmpstr );
+  
   std::istringstream header( tmpstr );
 
   std::getline( header, traceDate, ')' );
@@ -63,8 +68,13 @@ void parseTraceHeader( TraceStreamT traceStream,
     std::istringstream stringEndTime( tmpstr );
     if ( !( stringEndTime >> traceEndTime ) )
     {
+#ifdef USE_PARAVER_EXCEPTIONS
       throw TraceHeaderException( TTraceHeaderErrorCode::invalidTime,
                                   tmpstr.c_str() );
+#else
+      std::cerr << "[Error] Invalid header time: " << tmpstr << std::endl;
+      exit( 1 );
+#endif
     }
   }
   else
@@ -80,8 +90,13 @@ void parseTraceHeader( TraceStreamT traceStream,
     std::istringstream stringEndTime( tmpstr.substr( 0, pos ) );
     if ( !( stringEndTime >> traceEndTime ) )
     {
+#ifdef USE_PARAVER_EXCEPTIONS
       throw TraceHeaderException( TTraceHeaderErrorCode::invalidTime,
                                   tmpstr.c_str() );
+#else
+      std::cerr << "[Error] Invalid header time: " << tmpstr << std::endl;
+      exit( 1 );
+#endif
     }
   }
 
@@ -99,19 +114,29 @@ void parseTraceHeader( TraceStreamT traceStream,
 
       if ( !( streamComm >> numberComm ) )
       {
+#ifdef USE_PARAVER_EXCEPTIONS
         throw TraceHeaderException( TTraceHeaderErrorCode::invalidCommNumber,
                                     tmpstr.c_str() );
+#else
+        std::cerr << "[Error] Invalid communicator number: " << tmpstr << std::endl;
+        exit( 1 );
+#endif
       }
     }
   }
 
   for ( PRV_UINT32 count = 0; count < numberComm; count++ )
   {
-    traceStream->getline( tmpstr );
+    prvGetLine( traceStream, tmpstr );
     if ( tmpstr[0] != 'C' && tmpstr[0] != 'c' && tmpstr[0] != 'I' && tmpstr[0] != 'i' )
     {
+#ifdef USE_PARAVER_EXCEPTIONS
       throw TraceHeaderException( TTraceHeaderErrorCode::unknownCommLine,
                                   tmpstr.c_str() );
+#else
+      std::cerr << "[Error] Invalid communicator record: " << tmpstr << std::endl;
+      exit( 1 );
+#endif
     }
     communicators.push_back( tmpstr );
   }

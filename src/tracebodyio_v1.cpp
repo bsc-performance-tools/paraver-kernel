@@ -27,6 +27,8 @@
 #include <fstream>
 #include <type_traits>
 
+#include "prvgetline.h"
+
 using namespace std;
 
 #define PARAM_TYPENAME class    TraceStreamT, \
@@ -111,19 +113,6 @@ bool TraceBodyIO_v1< PARAM_LIST >::ordered() const
 }
 
 
-template< class StreamT >
-void myGetLine( StreamT& s, std::string& line )
-{
-  s.getline( line );
-}
-
-
-inline void myGetLine( std::fstream& s, std::string& line )
-{
-  std::getline( s, line );
-}
-
-
 template< PARAM_TYPENAME >
 void TraceBodyIO_v1< PARAM_LIST >::read( TraceStreamT& file,
                                          RecordContainerT& records,
@@ -134,7 +123,7 @@ void TraceBodyIO_v1< PARAM_LIST >::read( TraceStreamT& file,
                                          MetadataManagerT& traceInfo,
                                          RecordTimeT& endTime  ) const
 {
-  myGetLine( file, line );
+  prvGetLine( file, line );
 
   if ( line.size() == 0 )
     return;
