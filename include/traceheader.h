@@ -142,3 +142,46 @@ void parseTraceHeader( TraceStreamT& traceStream,
   }
 }
 
+template< class TraceStreamT,
+          typename TimeT,
+          class ResourceModelT,
+          class ProcessModelT >
+void dumpTraceHeader( TraceStreamT& file, 
+                      const std::string& traceTime,
+                      const TimeT& traceEndTime,
+                      const TTimeUnit& traceTimeUnit,
+                      const ResourceModelT& traceResourceModel,
+                      const ProcessModelT& traceProcessModel,
+                      const std::vector< std::string >& communicators )
+{
+  std::ostringstream ostr;
+
+  ostr << fixed;
+  ostr << dec;
+  ostr.precision( 0 );
+
+  file << fixed;
+  file << dec;
+  file.precision( 0 );
+
+  file << "#Paraver (";
+  file << traceTime << "):";
+
+  ostr << traceEndTime;
+  file << ostr.str();
+  if ( traceTimeUnit != US )
+    file << "_ns";
+  file << ':';
+  traceResourceModel.dumpToFile( file );
+  file << ':';
+  traceProcessModel.dumpToFile( file, traceResourceModel.isReady() );
+  if ( communicators.begin() != communicators.end() )
+  {
+    file << ',' << communicators.size() << endl;
+    for ( vector<string>::const_iterator it = communicators.begin();
+          it != communicators.end(); ++it )
+      file << ( *it ) << endl;
+  }
+  else
+    file << endl;
+}

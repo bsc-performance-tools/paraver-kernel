@@ -402,42 +402,17 @@ TRecordTime KTrace::traceUnitsToCustomUnits( TRecordTime whichTime, TTimeUnit wh
 
 void KTrace::dumpFileHeader( std::fstream& file, bool newFormat ) const
 {
-  ostringstream ostr;
-
-  ostr << fixed;
-  ostr << dec;
-  ostr.precision( 0 );
-
-  file << fixed;
-  file << dec;
-  file.precision( 0 );
-
-  if( newFormat )
-    file << "new format" << endl;
-
-  file << "#Paraver (";
+  string tmpTraceTime;
   if ( !myTraceTime.is_not_a_date_time() )
-    file << myTraceTime << "):";
-  else
-    file << rawTraceTime << "):";
-
-  ostr << traceEndTime;
-  file << ostr.str();
-  if ( traceTimeUnit != US )
-    file << "_ns";
-  file << ':';
-  traceResourceModel.dumpToFile( file );
-  file << ':';
-  traceProcessModel.dumpToFile( file, existResourceInfo() );
-  if ( communicators.begin() != communicators.end() )
   {
-    file << ',' << communicators.size() << endl;
-    for ( vector<string>::const_iterator it = communicators.begin();
-          it != communicators.end(); ++it )
-      file << ( *it ) << endl;
+    ostringstream tmpostr;
+    tmpostr << myTraceTime;
+    tmpTraceTime = tmpostr.str();
   }
   else
-    file << endl;
+    tmpTraceTime = rawTraceTime;
+
+  dumpTraceHeader( file, tmpTraceTime, traceEndTime, traceTimeUnit, traceResourceModel, traceProcessModel, communicators );
 }
 
 
