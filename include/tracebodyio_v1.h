@@ -68,6 +68,7 @@ class TraceBodyIO_v1 : public TraceBodyIO<TraceStreamT,
                 const ProcessModelT& whichProcessModel,
                 const ResourceModelT& whichResourceModel,
                 RecordT *record ) const override;
+    bool writePendingMultiEvent( const ProcessModelT& whichProcessModel ) const;
 
   protected:
 
@@ -122,7 +123,6 @@ class TraceBodyIO_v1 : public TraceBodyIO<TraceStreamT,
     bool writeState( const ProcessModelT& whichProcessModel,
                      const ResourceModelT& whichResourceModel,
                      const RecordT *record ) const;
-    bool writePendingMultiEvent( const ProcessModelT& whichProcessModel ) const;
     void appendEvent( const RecordT *record ) const;
     bool writeEvent( const ProcessModelT& whichProcessModel,
                      const RecordT *record,
