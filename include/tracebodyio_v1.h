@@ -24,9 +24,7 @@
 #pragma once
 
 #include "tracebodyio.h"
-#include "tracestream.h"
 
-// Paraver trace old format file
 template< class    TraceStreamT,
           class    RecordContainerT,
           class    ProcessModelT,
@@ -49,11 +47,11 @@ class TraceBodyIO_v1 : public TraceBodyIO<TraceStreamT,
   public:
     TraceBodyIO_v1() {}
 
-    static constexpr PRV_UINT8 CommentRecord = '#';
-    static constexpr PRV_UINT8 StateRecord = '1';
-    static constexpr PRV_UINT8 EventRecord = '2';
-    static constexpr PRV_UINT8 CommRecord = '3';
-    static constexpr PRV_UINT8 GlobalCommRecord = '4';
+    static constexpr char CommentRecord    = '#';
+    static constexpr char StateRecord      = '1';
+    static constexpr char EventRecord      = '2';
+    static constexpr char CommRecord       = '3';
+    static constexpr char GlobalCommRecord = '4';
 
     bool ordered() const override;
     void read( TraceStreamT& file,

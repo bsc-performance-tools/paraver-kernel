@@ -112,6 +112,7 @@ include_HEADERS = \
                   traceoptions.h \
                   traceshifter.h \
                   tracesoftwarecounters.h \
+                  tracetypes.h \
                   window.h \
                   workspace.h \
                   workspacemanager.h \

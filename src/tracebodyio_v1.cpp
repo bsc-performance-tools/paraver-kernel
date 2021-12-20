@@ -510,7 +510,6 @@ bool TraceBodyIO_v1< PARAM_LIST >::writeComm( const ProcessModelT& whichProcessM
                                 const ResourceModelT& whichResourceModel,
                                 const RecordT *record ) const
 {
-  TCommID commID;
   TApplOrder recvAppl;
   TTaskOrder recvTask;
   TThreadOrder recvThread;
