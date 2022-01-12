@@ -43,7 +43,6 @@ static const TRecordTime factorTable[ DAY + 1 ] =
   24   // days
 };
 
-typedef double        TSemanticValue;
 
 enum TWindowLevel
 {

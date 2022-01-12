@@ -25,7 +25,6 @@
 #pragma once
 
 
-#include "paraverkerneltypes.h"
 #include "resourcemodel.h"
 
 template< typename NodeOrderT,

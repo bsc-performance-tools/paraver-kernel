@@ -40,6 +40,8 @@ using TApplOrder   = TObjectOrder;
 using TNodeOrder   = TObjectOrder;
 using TCPUOrder    = TObjectOrder;
 
+using TSemanticValue = double;
+
 using TTime       = double;
 using TRecordTime = TTime;
 using TTimeUnit   = uint16_t;

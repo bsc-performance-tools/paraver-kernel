@@ -26,7 +26,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "paraverkerneltypes.h"
+
+#include "tracetypes.h"
 #include "prvgetline.h"
 #ifdef USE_PARAVER_EXCEPTIONS
 #include "traceheaderexception.h"
@@ -104,7 +105,7 @@ void parseTraceHeader( TraceStreamT& traceStream,
   traceProcessModel = ProcessModelT( header, traceResourceModel.isReady() );
 
   // Communicators
-  PRV_UINT32 numberComm = 0;
+  uint32_t numberComm = 0;
   if ( !header.eof() )
   {
     std::getline( header, tmpstr );
@@ -125,7 +126,7 @@ void parseTraceHeader( TraceStreamT& traceStream,
     }
   }
 
-  for ( PRV_UINT32 count = 0; count < numberComm; count++ )
+  for ( uint32_t count = 0; count < numberComm; count++ )
   {
     prvGetLine( traceStream, tmpstr );
     if ( tmpstr[0] != 'C' && tmpstr[0] != 'c' && tmpstr[0] != 'I' && tmpstr[0] != 'i' )
