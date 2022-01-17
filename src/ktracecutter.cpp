@@ -32,7 +32,7 @@
 #include <string>
 #include <sstream>
 
-#ifndef WIN32
+#ifndef _WIN32
 #include <unistd.h>
 #else
 #include <io.h>
@@ -45,7 +45,7 @@
 #include "paraverconfig.h"
 #include "ParaverMetadataManager.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #define atoll _atoi64
 #endif
 
@@ -332,7 +332,7 @@ void KTraceCutter::proces_cutter_header( char *header,
   }
 
   if ( !is_zip )
-#ifdef WIN32
+#ifdef _WIN32
     _fseeki64( infile, 0, SEEK_SET );
 #else
     fseek( infile, -( strlen( auxLine ) ), SEEK_CUR );
@@ -506,7 +506,7 @@ void KTraceCutter::show_cutter_progress_bar( ProgressController *progress )
       current_read_size = ( unsigned long long )ftello( infile );
     else
       current_read_size = ( unsigned long )gztell( gzInfile );
-#elif defined(WIN32)
+#elif defined(_WIN32)
     if ( !is_zip )
       current_read_size = ( unsigned long long )_ftelli64( infile );
     else
@@ -641,7 +641,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
       printf( "KCutter: Error Opening File %s\n", nameIn );
       exit( 1 );
     }
-#elif defined(WIN32)
+#elif defined(_WIN32)
     if ( fopen_s( &infile, nameIn, "r" ) != 0 )
     {
       printf( "KCutter: Error Opening File %s\n", nameIn );
@@ -672,7 +672,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
     printf( "KCutter: Error Opening File %s\n", nameOut );
     exit( 1 );
   }
-#elif defined(WIN32)
+#elif defined(_WIN32)
   if ( fopen_s( &outfile, nameOut, "w" ) != 0 )
   {
     printf( "KCutter: Error Opening File %s\n", nameOut );
@@ -706,7 +706,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
 
   bool end_read = false;
 
-#ifdef WIN32
+#ifdef _WIN32
   if ( !is_zip )
   {
     fgets( trace_header, MAX_TRACE_HEADER, infile );
@@ -960,7 +960,7 @@ void KTraceCutter::execute( std::string trace_in,
       printf( "KCutter: Error Opening File %s\n", trace_name );
       exit( 1 );
     }
-#elif defined(WIN32)
+#elif defined(_WIN32)
     if ( fopen_s( &infile, trace_name, "r" ) != 0 )
     {
       perror( "ERROR" );
@@ -992,7 +992,7 @@ void KTraceCutter::execute( std::string trace_in,
   {
     tmp_dir = ParaverConfig::getInstance()->getGlobalTmpPath();
 
-#ifdef WIN32
+#ifdef _WIN32
     sprintf( trace_file_out, "%s\\tmp_fileXXXXXX", tmp_dir.c_str() );
     _mktemp_s( trace_file_out, strlen( trace_file_out ) + 1 );
 #else
@@ -1009,7 +1009,7 @@ void KTraceCutter::execute( std::string trace_in,
     printf( "Error Opening KCutter Ouput File %s\n", trace_file_out );
     exit( 1 );
   }
-#elif defined(WIN32)
+#elif defined(_WIN32)
   if ( fopen_s( &outfile, trace_file_out, "w" ) != 0 )
   {
     printf( "Error Opening KCutter Ouput File %s\n", trace_file_out );
@@ -1379,7 +1379,7 @@ void KTraceCutter::execute( std::string trace_in,
 
       case '#':
         sscanf( line, "%s\n", buffer );
-#ifdef WIN32
+#ifdef _WIN32
         if( strcmp( buffer, "#Paraver" ) == 0 )
           break;
 #endif

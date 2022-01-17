@@ -26,7 +26,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdlib.h>
-#ifdef WIN32
+#ifdef _WIN32
   #include <shlobj.h>
   #include <Shlwapi.h>
   #define MAX_LEN_PATH 2048
@@ -62,7 +62,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   string paraverXMLDir;
   string paraverTutorialsDir;
 
-#ifdef WIN32
+#ifdef _WIN32
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
 
@@ -150,7 +150,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlGlobal.mainWindowWidth = 300;
   xmlGlobal.mainWindowHeight = 600;
   string strFile( homedir );
-#ifdef WIN32
+#ifdef _WIN32
   strFile.append( "\\paraver\\" );
 #else
   strFile.append( "/.paraver/" );
@@ -265,7 +265,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
 
 #ifdef __APPLE__
   xmlExternalApplications.myTextEditors.push_back( "open" );
-#elif !defined( WIN32 )
+#elif !defined( _WIN32 )
   xmlExternalApplications.myTextEditors.push_back( "xdg-open" );
   xmlExternalApplications.myTextEditors.push_back( "gvim" );
   xmlExternalApplications.myTextEditors.push_back( "nedit" );
@@ -279,7 +279,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
 
 #ifdef __APPLE__
   xmlExternalApplications.myPDFReaders.push_back( "open" );
-#elif !defined( WIN32 )
+#elif !defined( _WIN32 )
   xmlExternalApplications.myPDFReaders.push_back( "xdg-open" );
   xmlExternalApplications.myPDFReaders.push_back( "evince" );
   xmlExternalApplications.myPDFReaders.push_back( "okular" );
@@ -1497,7 +1497,7 @@ bool ParaverConfig::initCompleteSessionFile()
   string strLine;
   bool status = false;
 
-#ifdef WIN32
+#ifdef _WIN32
   strFile = getenv( "HOMEDRIVE" );
   strFile.append( getenv( "HOMEPATH" ) );
   strFile.append( "\\paraver\\CompleteSession" );
@@ -1530,7 +1530,7 @@ void ParaverConfig::cleanCompleteSessionFile()
   string strFile;
   string strLine;
 
-#ifdef WIN32
+#ifdef _WIN32
   strFile = getenv( "HOMEDRIVE" );
   strFile.append( getenv( "HOMEPATH" ) );
   strFile.append( "\\paraver\\CompleteSession" );
@@ -1566,7 +1566,7 @@ bool ParaverConfig::closeCompleteSessionFile()
   string strLine;
   bool status = false;
 
-#ifdef WIN32
+#ifdef _WIN32
   strFile = getenv( "HOMEDRIVE" );
   strFile.append( getenv( "HOMEPATH" ) );
   strFile.append( "\\paraver\\CompleteSession" );
@@ -1597,14 +1597,14 @@ void ParaverConfig::readParaverConfigFile()
   string strBackupFileXML;
   string homedir;
 
-#ifdef WIN32
+#ifdef _WIN32
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
 #else
   homedir = getenv( "HOME" );
 #endif
   strFile.append( homedir );
-#ifdef WIN32
+#ifdef _WIN32
   strFile.append( "\\paraver\\paraver" );
 #else
   strFile.append( "/.paraver/paraver" );
@@ -1685,7 +1685,7 @@ void ParaverConfig::writeParaverConfigFile( bool writeBackup )
   string homedir;
   string strFile, strBackupFile;
 
-#ifdef WIN32
+#ifdef _WIN32
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
 #else
@@ -1693,7 +1693,7 @@ void ParaverConfig::writeParaverConfigFile( bool writeBackup )
 #endif
   strFile.append( homedir );
 
-#ifdef WIN32
+#ifdef _WIN32
   strFile.append( "\\paraver\\paraver" );
   string tmpPath( homedir + "\\paraver" );
 
@@ -1734,7 +1734,7 @@ bool ParaverConfig::writeDefaultConfig()
   string strFile;
   string homedir;
 
-#ifdef WIN32
+#ifdef _WIN32
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
 #else
@@ -1742,7 +1742,7 @@ bool ParaverConfig::writeDefaultConfig()
 #endif
   strFile.append( homedir );
 
-#ifdef WIN32
+#ifdef _WIN32
   strFile.append( "\\paraver\\paraver.xml" );
   string tmpPath( homedir + "\\paraver" );
 

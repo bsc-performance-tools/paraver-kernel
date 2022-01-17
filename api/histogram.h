@@ -33,7 +33,7 @@
 #include "zoomhistory.h"
 #include "cfgs4d.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #undef max
 #undef min
 #endif

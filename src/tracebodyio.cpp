@@ -47,7 +47,7 @@ TraceBodyIO *TraceBodyIO::createTraceBody( TraceStream *file, Trace *trace  )
 
   else
   {
-#ifndef WIN32
+#ifndef _WIN32
     file->getline( firstLine );
     if ( firstLine.compare( "new format" ) == 0 )
     {

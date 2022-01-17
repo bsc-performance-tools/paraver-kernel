@@ -63,7 +63,7 @@ string KTrace::getTraceName() const
 {
   string traceName = fileName;
 
-#ifdef WIN32
+#ifdef _WIN32
   string::size_type pos = traceName.find_last_of( '\\' );
 #else
   string::size_type pos = traceName.find_last_of( '/' );

@@ -327,7 +327,7 @@ TSemanticValue ComposeCeil::execute( const SemanticInfo *info )
 }
 
 
-#ifdef WIN32
+#ifdef _WIN32
 inline double rint(double nr)
 {
   double f = floor(nr);

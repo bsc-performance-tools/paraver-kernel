@@ -25,7 +25,7 @@
 #include "tracestream.h"
 #include "paraverkernelexception.h"
 #include <iostream>
-#ifndef WIN32
+#ifndef _WIN32
 #include <stdlib.h>
 #endif
 
@@ -145,7 +145,7 @@ TTraceSize NotCompressed::getTraceFileSize( const string& filename )
 		return 0;
 	}
 
-#elif defined(WIN32)
+#elif defined(_WIN32)
   if ( fopen_s( &traceFile, filename.c_str(), "r" ) != 0 )
   {
     printf( "Error Opening File %s\n", filename.c_str() );
@@ -159,13 +159,13 @@ TTraceSize NotCompressed::getTraceFileSize( const string& filename )
   }
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
     _fseeki64( traceFile, 0, SEEK_END );
 #else
     fseek( traceFile, 0, SEEK_END );
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
     tmpSize = _ftelli64( traceFile );
 #else
     tmpSize = ftell( traceFile );

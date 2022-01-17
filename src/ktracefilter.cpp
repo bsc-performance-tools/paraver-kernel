@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#ifndef WIN32
+#ifndef _WIN32
 #include <unistd.h>
 #endif
 #include <sys/stat.h>
@@ -39,7 +39,7 @@
 #include "tracestream.h" // for GZIP_COMPRESSION_RATIO
 
 
-#ifdef WIN32
+#ifdef _WIN32
 #define atoll _atoi64
 #endif
 
@@ -256,7 +256,7 @@ void KTraceFilter::show_progress_bar( ProgressController *progress )
     current_read_size = ( unsigned long long )ftello( infile );
   else
     current_read_size = ( unsigned long )gztell( gzInfile );
-#elif defined(WIN32)
+#elif defined(_WIN32)
   if ( !is_zip_filter )
     current_read_size = ( unsigned long long )_ftelli64( infile );
   else
@@ -411,7 +411,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
       printf( "Error Opening File %s\n", trace_in );
       exit( 1 );
     }
-#elif defined(WIN32)
+#elif defined(_WIN32)
     if ( fopen_s( &infile, trace_name, "r" ) != 0 )
     {
       perror( "ERROR" );
@@ -442,7 +442,7 @@ void KTraceFilter::execute( char *trace_in, char *trace_out,ProgressController *
     printf( "Error Opening File %s\n", trace_out );
     exit( 1 );
   }
-#elif defined(WIN32)
+#elif defined(_WIN32)
   if ( fopen_s( &outfile, trace_out, "w" ) != 0 )
   {
     printf( "Error Opening File %s\n", trace_out );
