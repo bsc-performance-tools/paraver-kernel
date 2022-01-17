@@ -1,13 +1,26 @@
+Paraver is a performance analyzer based on event traces with a great
+flexibility to explore the collected data, supporting a detailed analysis of
+the variability and distribution of multiple metrics with the objective of
+understanding the application’s behavior. Paraver has two main views: The
+timeline view displays the application behavior over time, while the statistics
+view (histograms, profiles) complements the analysis with distribution
+of metrics.
+
+Website: https://tools.bsc.es/paraver
+Contact: tools@bsc.es
+
+HOW TO COMPILE
+==============
+C++ compiler compatible with C++14
+
 Library dependencies:
-	- Boost >= 1.36 (www.boost.org)
-	- Boost Serialization (www.boost.org)
-  - Boost Date-Time (www.boost.org)
-  - libssl (www.openssl.org)
-	- Zlib (zlib.net)
-  - libxml2 (xmlsoft.org)
+  - Boost >= 1.36 (https://www.boost.org)
+  - Boost Serialization (https://www.boost.org)
+  - Boost Date-Time (https://www.boost.org)
+  - libssl (https://www.openssl.org)
+  - Zlib (https://zlib.net)
+  - libxml2 (https://xmlsoft.org)
 
 If you have installed these packages from a package manager, remember to install devel packages too.
 
 Read INSTALL file for installation instructions.
-
-Please send any question or suggestion to tools@bsc.es
