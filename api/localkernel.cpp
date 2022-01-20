@@ -196,12 +196,12 @@ TTraceSize LocalKernel::getTraceSize( const string& filename ) const
 }
 
 
-Trace *LocalKernel::newTrace( const string& whichFile, bool noLoad, ProgressController *progress ) const
+Trace *LocalKernel::newTrace( const string& whichFile, bool noLoad, ProgressController *progress, TTraceSize traceSize ) const
 {
   if ( progress == nullptr )
-    return new KTrace( whichFile, nullptr, noLoad );
+    return new KTrace( whichFile, nullptr, noLoad, traceSize );
 
-  return new KTrace( whichFile, ( KProgressController * ) progress->getConcrete(), noLoad );
+  return new KTrace( whichFile, ( KProgressController * ) progress->getConcrete(), noLoad, traceSize );
 }
 
 

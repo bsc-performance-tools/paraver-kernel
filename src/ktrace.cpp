@@ -74,7 +74,10 @@ string KTrace::getTraceName() const
   return traceName;
 }
 
-
+TTraceSize KTrace::getTraceSize() const
+{
+  return traceSize;
+}
 
 TApplOrder KTrace::totalApplications() const
 {
@@ -606,8 +609,8 @@ void KTrace::parseDateTime( string &whichDateTime )
 }
 
 
-KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLoad )
-    : fileName( whichFile )
+KTrace::KTrace( const string& whichFile, ProgressController *progress, bool noLoad, TTraceSize whichTraceSize )
+    : fileName( whichFile ), traceSize( whichTraceSize )
 {
   string tmpstr;
 
