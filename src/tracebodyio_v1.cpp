@@ -119,8 +119,8 @@ void TraceBodyIO_v1::read( TraceStream *file, MemoryBlocks& records,
       break;
 
     default:
-      cerr << "TraceBodyIO_v1::read()" << endl;
       cerr << "Unkwnown record type." << endl;
+      cerr << line << endl;
       break;
   };
 }
