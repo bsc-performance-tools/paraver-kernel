@@ -21,9 +21,10 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#include <string>
-#include <sstream>
 #include <math.h>
+#include <sstream>
+#include <string>
+#include <type_traits>
 
 #include "kernelconnection.h"
 #include "cfg.h"
@@ -327,6 +328,58 @@ bool pickSymbols( Trace *whichTrace, Timeline *whichWindow )
 
   return true;
 }
+
+
+template< typename T, typename F >
+bool parseParamFilter( istringstream& line, std::string& strValue, F insertFunction, std::true_type )
+{
+  getline( line, strValue, '"' ); // Consume the starting '"'
+  getline( line, strValue, '"' );
+
+  insertFunction( strValue );
+
+  return true;
+}
+
+
+template< typename T, typename F >
+bool parseParamFilter( istringstream& line, std::string& strValue, F insertFunction, std::false_type )
+{
+  T parseValue;
+
+  getline( line, strValue, ' ' );
+  istringstream tmpValue( strValue );
+
+  if ( !( tmpValue >> parseValue ) )
+    return false;
+
+  insertFunction( parseValue );
+  
+  return true;
+}
+
+
+template< typename T, typename F >
+bool parseLineFilter( istringstream& line, F insertFunction )
+{
+  T parseValue;
+  string strNumberParams, strValue;
+  PRV_UINT16 numParams;
+
+  getline( line, strNumberParams, ' ' ); 
+  istringstream tmpNumberParams( strNumberParams );
+  if ( !( tmpNumberParams >> numParams ) )
+    return false;
+
+  for ( PRV_UINT16 ii = 0; ii < numParams; ++ii )
+  {
+    if( !parseParamFilter<T>( line, strValue, insertFunction, std::is_same<T, std::string>() ) )
+      return false;
+  }
+
+  return true;
+}
+
 
 bool CFGLoader::hasCFGExtension( const string& filename )
 {
@@ -3080,16 +3133,8 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
                                     vector<Timeline *>& windows,
                                     vector<Histogram *>& histograms )
 {
-  string strTag, strNumberParams, strValue;
-  PRV_UINT16 numParams;
+  string strTag;
   Filter *filter;
-  TObjectOrder fromObject;
-  TObjectOrder toObject;
-  TCommTag commTag;
-  TCommSize commSize;
-  TSemanticValue bandWidth;
-  TEventType eventType;
-  TSemanticValue eventValue;
 
   if ( windows[ windows.size() - 1 ] == nullptr )
     return false;
@@ -3098,102 +3143,44 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
     return true;
 
   getline( line, strTag, ' ' );          // Parameter type.
-  getline( line, strNumberParams, ' ' ); // Number of following parameters.
-  istringstream tmpNumberParams( strNumberParams );
-
-//  bool paramsWithQuotes = line;
-
-  if ( !( tmpNumberParams >> numParams ) )
-    return false;
 
   filter = windows[ windows.size() - 1 ]->getFilter();
 
-  for ( PRV_UINT16 ii = 0; ii < numParams; ii++ )
+  if ( strTag.compare( OLDCFG_VAL_FILTER_OBJ_FROM ) == 0 )
   {
-    if ( strTag.compare( OLDCFG_VAL_FILTER_OBJ_FROM ) == 0 )
-    {
-      getline( line, strValue, ' ' );
-      istringstream tmpValue( strValue );
-
-      if ( !( tmpValue >> fromObject ) )
-        return false;
-
-      filter->insertCommFrom( fromObject - 1 );
-    }
-    else if ( strTag.compare( OLDCFG_VAL_FILTER_OBJ_TO ) == 0 )
-    {
-      getline( line, strValue, ' ' );
-      istringstream tmpValue( strValue );
-
-      if ( !( tmpValue >> toObject ) )
-        return false;
-
-      filter->insertCommTo( toObject - 1 );
-    }
-    else if ( strTag.compare( OLDCFG_VAL_FILTER_COM_TAG ) == 0 )
-    {
-      getline( line, strValue, ' ' );
-      istringstream tmpValue( strValue );
-
-      if ( !( tmpValue >> commTag ) )
-        return false;
-
-      filter->insertCommTag( commTag );
-    }
-    else if ( strTag.compare( OLDCFG_VAL_FILTER_COM_SIZE ) == 0 )
-    {
-      getline( line, strValue, ' ' );
-      istringstream tmpValue( strValue );
-
-      if ( !( tmpValue >> commSize ) )
-        return false;
-
-      filter->insertCommSize( commSize );
-    }
-    else if ( strTag.compare( OLDCFG_VAL_FILTER_COM_BW ) == 0 )
-    {
-      getline( line, strValue, ' ' );
-      istringstream tmpValue( strValue );
-
-      if ( !( tmpValue >> bandWidth ) )
-        return false;
-
-      filter->insertBandWidth( bandWidth );
-    }
-    else if ( strTag.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
-    {
-      getline( line, strValue, ' ' );
-      istringstream tmpValue( strValue );
-
-      if ( !( tmpValue >> eventType ) )
-        return false;
-
-      eventTypeSymbolPicker.insert( eventType );
-    }
-    else if ( strTag.compare( OLDCFG_VAL_FILTER_EVT_VALUE ) == 0 )
-    {
-      getline( line, strValue, ' ' );
-      istringstream tmpValue( strValue );
-
-      if ( !( tmpValue >> eventValue ) )
-        return false;
-
-      eventValueSymbolPicker.insert( eventValue );
-    }
-    else if ( strTag.compare( CFG_VAL_FILTER_EVT_TYPE_LABEL ) == 0 )
-    {
-      getline( line, strValue, '"' ); // Consume the starting '"'
-      getline( line, strValue, '"' );
-
-      eventTypeSymbolPicker.insert( strValue );
-    }
-    else if ( strTag.compare( CFG_VAL_FILTER_EVT_VALUE_LABEL ) == 0 )
-    {
-      getline( line, strValue, '"' ); // Consume the starting '"'
-      getline( line, strValue, '"' );
-
-      eventValueSymbolPicker.insert( strValue );
-    }
+    return parseLineFilter<TObjectOrder>( line, [filter]( TObjectOrder fromObject ) { filter->insertCommFrom( fromObject - 1 ); } );
+  }
+  else if ( strTag.compare( OLDCFG_VAL_FILTER_OBJ_TO ) == 0 )
+  {
+    return parseLineFilter<TObjectOrder>( line, [filter]( TObjectOrder toObject ) { filter->insertCommTo( toObject - 1 ); } );
+  }
+  else if ( strTag.compare( OLDCFG_VAL_FILTER_COM_TAG ) == 0 )
+  {
+    return parseLineFilter<TCommTag>( line, [filter]( TCommTag commTag ) { filter->insertCommTag( commTag ); } );
+  }
+  else if ( strTag.compare( OLDCFG_VAL_FILTER_COM_SIZE ) == 0 )
+  {
+    return parseLineFilter<TCommSize>( line, [filter]( TCommSize commSize ) { filter->insertCommSize( commSize ); } );
+  }
+  else if ( strTag.compare( OLDCFG_VAL_FILTER_COM_BW ) == 0 )
+  {
+    return parseLineFilter<TSemanticValue>( line, [filter]( TSemanticValue bandWidth ) { filter->insertBandWidth( bandWidth ); } );
+  }
+  else if ( strTag.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
+  {
+    return parseLineFilter<TEventType>( line, []( TEventType eventType ) { eventTypeSymbolPicker.insert( eventType ); } );
+  }
+  else if ( strTag.compare( OLDCFG_VAL_FILTER_EVT_VALUE ) == 0 )
+  {
+    return parseLineFilter<TSemanticValue>( line, []( TSemanticValue eventValue ) { eventValueSymbolPicker.insert( eventValue ); } );
+  }
+  else if ( strTag.compare( CFG_VAL_FILTER_EVT_TYPE_LABEL ) == 0 )
+  {
+    return parseLineFilter<std::string>( line, []( std::string typeLabel ) { eventTypeSymbolPicker.insert( typeLabel ); } );
+  }
+  else if ( strTag.compare( CFG_VAL_FILTER_EVT_VALUE_LABEL ) == 0 )
+  {
+    return parseLineFilter<std::string>( line, []( std::string valueLabel ) { eventValueSymbolPicker.insert( valueLabel ); } );
   }
 
   return true;
