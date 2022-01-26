@@ -30,7 +30,6 @@
 #include "cfg.h"
 #include "window.h"
 #include "trace.h"
-#include "paraverlabels.h"
 #include "histogram.h"
 #include "histogramstatistic.h"
 #include "functionmanagement.h"
@@ -330,56 +329,6 @@ bool pickSymbols( Trace *whichTrace, Timeline *whichWindow )
 }
 
 
-template< typename T, typename F >
-bool parseParamFilter( istringstream& line, std::string& strValue, F insertFunction, std::true_type )
-{
-  getline( line, strValue, '"' ); // Consume the starting '"'
-  getline( line, strValue, '"' );
-
-  insertFunction( strValue );
-
-  return true;
-}
-
-
-template< typename T, typename F >
-bool parseParamFilter( istringstream& line, std::string& strValue, F insertFunction, std::false_type )
-{
-  T parseValue;
-
-  getline( line, strValue, ' ' );
-  istringstream tmpValue( strValue );
-
-  if ( !( tmpValue >> parseValue ) )
-    return false;
-
-  insertFunction( parseValue );
-  
-  return true;
-}
-
-
-template< typename T, typename F >
-bool parseLineFilter( istringstream& line, F insertFunction )
-{
-  string strNumberParams, strValue;
-  PRV_UINT16 numParams;
-
-  getline( line, strNumberParams, ' ' ); 
-  istringstream tmpNumberParams( strNumberParams );
-  if ( !( tmpNumberParams >> numParams ) )
-    return false;
-
-  for ( PRV_UINT16 ii = 0; ii < numParams; ++ii )
-  {
-    if( !parseParamFilter<T>( line, strValue, insertFunction, std::is_same<T, std::string>() ) )
-      return false;
-  }
-
-  return true;
-}
-
-
 bool CFGLoader::hasCFGExtension( const string& filename )
 {
   string cfgExt;
@@ -536,61 +485,6 @@ bool CFGLoader::getCFGTag( ifstream& cfgFile, string& strLine, istringstream& au
     getline( auxStream, cfgTag, ' ' );
 
   return true;
-}
-
-
-// Returns false if error parsing or no event type in evenTypes found in CFG
-bool CFGLoader::detectAnyEventTypeInCFG( const std::string& filename,
-                                         const std::vector< TEventType >& eventTypes )
-{
-  string strLine;
-  string cfgTag;
-  string filterTag;
-  istringstream auxStream;
-
-  ifstream cfgFile( filename.c_str() );
-  if ( !cfgFile )
-    return false;
-
-  vector<TEventType> cfgTypes;
-  while ( !cfgFile.eof() )
-  {
-    if( !CFGLoader::getCFGTag( cfgFile, strLine, auxStream, cfgTag ) )
-      continue;
-
-    if ( cfgTag.compare( OLDCFG_TAG_WNDW_FILTER_MODULE ) == 0 )
-    {
-      getline( auxStream, filterTag, ' ' );          // Parameter type.
-      if ( filterTag.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
-      {
-        if( !parseLineFilter<TEventType>( auxStream, 
-                                          [&cfgTypes, &eventTypes]( TEventType eventType )
-                                            { 
-                                              if ( find( eventTypes.begin(), eventTypes.end(), eventType ) != eventTypes.end() )
-                                                cfgTypes.push_back( eventType ); 
-                                            }
-                                        )
-          )
-        {
-          cfgFile.close();
-          return false;
-        }
-        else if ( cfgTypes.size() > 0 )
-        {
-          cfgFile.close();
-          return true;
-        }
-      }
-      // if ( filterTag.compare( CFG_VAL_FILTER_EVT_TYPE_LABEL ) == 0 )
-      // {
-      //   return parseLineFilter<std::string>( line, []( std::string typeLabel ) { eventTypeSymbolPicker.insert( typeLabel ); } );
-      // }
-    }
-  }
-
-  cfgFile.close();
-
-  return ( cfgTypes.size() > 0 );
 }
 
 

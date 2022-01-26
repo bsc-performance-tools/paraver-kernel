@@ -30,8 +30,9 @@
 #include <sstream>
 #include <fstream>
 #include <string>
-#include "paraverkerneltypes.h"
 #include "cfgs4d.h"
+#include "paraverkerneltypes.h"
+#include "paraverlabels.h"
 
 class KernelConnection;
 class Timeline;
@@ -91,6 +92,56 @@ public:
 };
 
 
+template< typename T, typename F >
+bool parseParamFilter( std::istringstream& line, std::string& strValue, F insertFunction, std::true_type )
+{
+  std::getline( line, strValue, '"' ); // Consume the starting '"'
+  std::getline( line, strValue, '"' );
+
+  insertFunction( strValue );
+
+  return true;
+}
+
+
+template< typename T, typename F >
+bool parseParamFilter( std::istringstream& line, std::string& strValue, F insertFunction, std::false_type )
+{
+  T parseValue;
+
+  std::getline( line, strValue, ' ' );
+  std::istringstream tmpValue( strValue );
+
+  if ( !( tmpValue >> parseValue ) )
+    return false;
+
+  insertFunction( parseValue );
+  
+  return true;
+}
+
+
+template< typename T, typename F >
+bool parseLineFilter( std::istringstream& line, F insertFunction )
+{
+  std::string strNumberParams, strValue;
+  PRV_UINT16 numParams;
+
+  std::getline( line, strNumberParams, ' ' ); 
+  std::istringstream tmpNumberParams( strNumberParams );
+  if ( !( tmpNumberParams >> numParams ) )
+    return false;
+
+  for ( PRV_UINT16 ii = 0; ii < numParams; ++ii )
+  {
+    if( !parseParamFilter<T>( line, strValue, insertFunction, std::is_same<T, std::string>() ) )
+      return false;
+  }
+
+  return true;
+}
+
+
 class CFGLoader
 {
   private:
@@ -113,9 +164,6 @@ class CFGLoader
 
     static bool getCFGTag( std::ifstream& cfgFile, std::string& strLine, std::istringstream& auxStream, std::string& cfgTag );
 
-    static bool detectAnyEventTypeInCFG( const std::string& filename,
-                                         const std::vector< TEventType >& eventTypes );
-
     static bool loadCFG( KernelConnection *whichKernel,
                          const std::string& filename,
                          Trace *whichTrace,
@@ -137,6 +185,65 @@ class CFGLoader
     static const std::vector< std::string > getTagCFGFullList( Histogram *whichHistogram );
 
     static std::string errorLine;
+
+    // Returns false if error parsing or no event type in evenTypes found in CFG
+    template< class Iterator >
+    static bool detectAnyEventTypeInCFG( const std::string& filename,
+                                         const Iterator& eventTypesBegin,
+                                         const Iterator& eventTypesEnd )
+    {
+      std::string strLine;
+      std::string cfgTag;
+      std::string filterTag;
+      std::istringstream auxStream;
+
+      std::ifstream cfgFile( filename.c_str() );
+      if ( !cfgFile )
+        return false;
+
+      std::vector<TEventType> cfgTypes;
+      while ( !cfgFile.eof() )
+      {
+        auxStream.clear();
+
+        if( !CFGLoader::getCFGTag( cfgFile, strLine, auxStream, cfgTag ) )
+          continue;
+
+        if ( cfgTag.compare( OLDCFG_TAG_WNDW_FILTER_MODULE ) == 0 )
+        {
+          std::getline( auxStream, filterTag, ' ' );          // Parameter type.
+          if ( filterTag.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
+          {
+            if( !parseLineFilter<TEventType>( auxStream, 
+                                              [&cfgTypes, &eventTypesBegin, &eventTypesEnd]( TEventType eventType )
+                                                { 
+                                                  if ( std::find( eventTypesBegin, eventTypesEnd, eventType ) != eventTypesEnd )
+                                                    cfgTypes.push_back( eventType ); 
+                                                }
+                                            )
+              )
+            {
+              cfgFile.close();
+              return false;
+            }
+            else if ( cfgTypes.size() > 0 )
+            {
+              cfgFile.close();
+              return true;
+            }
+          }
+          // if ( filterTag.compare( CFG_VAL_FILTER_EVT_TYPE_LABEL ) == 0 )
+          // {
+          //   return parseLineFilter<std::string>( line, []( std::string typeLabel ) { eventTypeSymbolPicker.insert( typeLabel ); } );
+          // }
+        }
+      }
+
+      cfgFile.close();
+
+      return ( cfgTypes.size() > 0 );
+    }
+
 };
 
 
