@@ -629,6 +629,7 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   istringstream auxStream;
   while ( !cfgFile.eof() )
   {
+    auxStream.clear();
 
     if( !CFGLoader::getCFGTag( cfgFile, strLine, auxStream, cfgTag ) )
       continue;
