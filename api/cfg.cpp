@@ -362,7 +362,6 @@ bool parseParamFilter( istringstream& line, std::string& strValue, F insertFunct
 template< typename T, typename F >
 bool parseLineFilter( istringstream& line, F insertFunction )
 {
-  T parseValue;
   string strNumberParams, strValue;
   PRV_UINT16 numParams;
 
@@ -519,6 +518,82 @@ bool CFGLoader::loadDescription( const std::string& filename, std::string& descr
   return false;
 }
 
+bool CFGLoader::getCFGTag( ifstream& cfgFile, string& strLine, istringstream& auxStream, string& cfgTag )
+{
+  getline( cfgFile, strLine );
+
+  if ( strLine.length() == 0 || strLine[ 0 ] == '#' )
+    return false;
+
+  if ( strLine[ strLine.length() - 1 ] == '\r' )
+    strLine = strLine.substr( 0, strLine.length() - 1 );
+
+  auxStream.str( strLine );
+
+  if ( strLine[ 0 ] == '<' )
+    cfgTag = strLine;
+  else
+    getline( auxStream, cfgTag, ' ' );
+
+  return true;
+}
+
+
+// Returns false if error parsing or no event type in evenTypes found in CFG
+bool CFGLoader::detectAnyEventTypeInCFG( const std::string& filename,
+                                         const std::vector< TEventType >& eventTypes )
+{
+  string strLine;
+  string cfgTag;
+  string filterTag;
+  istringstream auxStream;
+
+  ifstream cfgFile( filename.c_str() );
+  if ( !cfgFile )
+    return false;
+
+  vector<TEventType> cfgTypes;
+  while ( !cfgFile.eof() )
+  {
+    if( !CFGLoader::getCFGTag( cfgFile, strLine, auxStream, cfgTag ) )
+      continue;
+
+    if ( cfgTag.compare( OLDCFG_TAG_WNDW_FILTER_MODULE ) == 0 )
+    {
+      getline( auxStream, filterTag, ' ' );          // Parameter type.
+      if ( filterTag.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
+      {
+        if( !parseLineFilter<TEventType>( auxStream, 
+                                          [&cfgTypes, &eventTypes]( TEventType eventType )
+                                            { 
+                                              if ( find( eventTypes.begin(), eventTypes.end(), eventType ) != eventTypes.end() )
+                                                cfgTypes.push_back( eventType ); 
+                                            }
+                                        )
+          )
+        {
+          cfgFile.close();
+          return false;
+        }
+        else if ( cfgTypes.size() > 0 )
+        {
+          cfgFile.close();
+          return true;
+        }
+      }
+      // if ( filterTag.compare( CFG_VAL_FILTER_EVT_TYPE_LABEL ) == 0 )
+      // {
+      //   return parseLineFilter<std::string>( line, []( std::string typeLabel ) { eventTypeSymbolPicker.insert( typeLabel ); } );
+      // }
+    }
+  }
+
+  cfgFile.close();
+
+  return ( cfgTypes.size() > 0 );
+}
+
+
 bool CFGLoader::loadCFG( KernelConnection *whichKernel,
                          const string& filename,
                          Trace *whichTrace,
@@ -549,35 +624,20 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   syncRealGroup.clear();
   CFGLoader::errorLine.clear();
 
+  string strLine;
+  string cfgTag;
+  istringstream auxStream;
   while ( !cfgFile.eof() )
   {
-    string strLine;
-    string cfgTag;
 
-    getline( cfgFile, strLine );
-
-    if ( strLine.length() > 0 && strLine[ strLine.length() - 1 ] == '\r' )
-      strLine = strLine.substr( 0, strLine.length() - 1 );
-
-    if ( strLine.length() == 0 )
+    if( !CFGLoader::getCFGTag( cfgFile, strLine, auxStream, cfgTag ) )
       continue;
-    else if ( strLine[ 0 ] == '#' )
-      continue;
-    else if ( strLine.compare( CFG_TAG_CFG4D_ENABLED ) == 0 )
+
+    if ( strLine.compare( CFG_TAG_CFG4D_ENABLED ) == 0 )
     {
       lastGlobalLinkIndex = CFGS4DGlobalManager::getInstance()->newLinkManager();
       options.enabledCFG4DMode = true;
       continue;
-    }
-
-    istringstream auxStream( strLine );
-    if ( strLine[ 0 ] == '<' )
-    {
-      cfgTag = strLine;
-    }
-    else
-    {
-      getline( auxStream, cfgTag, ' ' );
     }
 
     map<string, TagFunction *>::iterator it = cfgTagFunctions.find( cfgTag );

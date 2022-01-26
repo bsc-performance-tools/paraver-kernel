@@ -111,6 +111,11 @@ class CFGLoader
     static bool isDimemasCFGFile( const std::string& filename ); // TODO: here?
     static bool loadDescription( const std::string& filename, std::string& description );
 
+    static bool getCFGTag( std::ifstream& cfgFile, std::string& strLine, std::istringstream& auxStream, std::string& cfgTag );
+
+    static bool detectAnyEventTypeInCFG( const std::string& filename,
+                                         const std::vector< TEventType >& eventTypes );
+
     static bool loadCFG( KernelConnection *whichKernel,
                          const std::string& filename,
                          Trace *whichTrace,
