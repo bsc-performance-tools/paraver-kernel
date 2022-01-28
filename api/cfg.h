@@ -196,6 +196,7 @@ class CFGLoader
       std::string cfgTag;
       std::string filterTag;
       std::istringstream auxStream;
+      bool filterTagsFound = false;
 
       std::ifstream cfgFile( filename.c_str() );
       if ( !cfgFile )
@@ -214,6 +215,8 @@ class CFGLoader
           std::getline( auxStream, filterTag, ' ' );          // Parameter type.
           if ( filterTag.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
           {
+            filterTagsFound = true;
+            
             if( !parseLineFilter<TEventType>( auxStream, 
                                               [&cfgTypes, &eventTypesBegin, &eventTypesEnd]( TEventType eventType )
                                                 { 
@@ -241,7 +244,7 @@ class CFGLoader
 
       cfgFile.close();
 
-      return ( cfgTypes.size() > 0 );
+      return !filterTagsFound;
     }
 
 };
