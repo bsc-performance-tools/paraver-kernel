@@ -292,6 +292,8 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlExternalApplications.myPDFReaders.push_back( "MicrosoftEdge.exe" );
 #endif
 
+  xmlWorkspaces.hintsDiscardedSubmenu = false;
+
   loadMap();
 }
 
@@ -1487,6 +1489,17 @@ std::vector< std::string> ParaverConfig::getGlobalExternalTextEditors() const
 std::vector< std::string> ParaverConfig::getGlobalExternalPDFReaders() const
 {
   return xmlExternalApplications.myPDFReaders;
+}
+
+// WORKSPACES
+void ParaverConfig::setWorkspacesHintsDiscardedSubmenu( bool whichDiscardedSubmenu )
+{
+  xmlWorkspaces.hintsDiscardedSubmenu = whichDiscardedSubmenu;
+}
+
+bool ParaverConfig::getWorkspacesHintsDiscardedSubmenu() const
+{
+  return xmlWorkspaces.hintsDiscardedSubmenu;
 }
 
 
