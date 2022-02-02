@@ -21,9 +21,10 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
+#include "functionmanagement.h"
 #include "kfilter.h"
 #include "kwindow.h"
-#include "functionmanagement.h"
+#include "paraverlabels.h"
 
 using namespace std;
 
@@ -259,7 +260,7 @@ bool FilterFewer::execute( TSemanticValue param, TFilterNumParam numParam, TSema
   return !result;
 }
 
-string FilterRange::name = "[x,y]";
+string FilterRange::name = CFG_VAL_FILTER_FUNCTION_RANGE;
 bool FilterRange::execute( TSemanticValue param, TFilterNumParam numParam, TSemanticValue data, bool& result )
 {
   bool tmp = true;

@@ -193,6 +193,8 @@ constexpr char OLDCFG_VAL_FILTER_EVT_VALUE[] =    "evt_value";
 constexpr char CFG_VAL_FILTER_EVT_TYPE_LABEL[] =  "evt_type_label";
 constexpr char CFG_VAL_FILTER_EVT_VALUE_LABEL[] = "evt_value_label";
 
+constexpr char CFG_VAL_FILTER_FUNCTION_RANGE[]  = "[x,y]";
+
 constexpr char OLDCFG_VAL_TRUE[] =   "true";
 constexpr char OLDCFG_VAL_TRUE2[] =  "True";
 constexpr char OLDCFG_VAL_FALSE[] =  "false";

@@ -182,6 +182,7 @@ TWindowLevel stringToLevel( const std::string& strLevel )
   return level;
 }
 
+
 string levelToString( TWindowLevel whichLevel )
 {
   switch ( whichLevel )
@@ -243,6 +244,36 @@ string levelToString( TWindowLevel whichLevel )
 
   return "";
 }
+
+
+bool parseSelectedFunctionsNumFunctions( std::istringstream& line, PRV_UINT16& numFunctions )
+{
+  std::string tmpString;
+  std::string strNumFunctions;
+
+  std::getline( line, tmpString, ' ' );
+  std::getline( line, strNumFunctions, ',' );
+  std::istringstream tmpNumFunctions( strNumFunctions );
+
+  if ( !( tmpNumFunctions >> numFunctions ) )
+    return false;
+
+  std::getline( line, tmpString, '{' );
+
+  return true;
+}
+
+void parseSelectedFunctionsLevelAndFunction( std::istringstream& line, std::string& strLevel, TWindowLevel& level, std::string& strFunction )
+{
+  std::string tmpString;
+
+  std::getline( line, tmpString, '{' );
+  std::getline( line, strLevel, ',' );
+  std::getline( line, tmpString, ' ' );
+  std::getline( line, strFunction, '}' );
+  level = stringToLevel( strLevel );
+}
+
 
 string levelToStringHisto( TWindowLevel whichLevel )
 {
@@ -2634,8 +2665,6 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
     vector<Timeline *>& windows,
     vector<Histogram *>& histograms )
 {
-  string tmpString;
-  string strNumFunctions;
   PRV_UINT16 numFunctions;
   string strLevel;
   TWindowLevel level;
@@ -2644,21 +2673,12 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
   if ( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  getline( line, tmpString, ' ' );
-  getline( line, strNumFunctions, ',' );
-  istringstream tmpNumFunctions( strNumFunctions );
-
-  if ( !( tmpNumFunctions >> numFunctions ) )
+  if ( !parseSelectedFunctionsNumFunctions( line, numFunctions ) )
     return false;
 
-  getline( line, tmpString, '{' );
   for ( PRV_UINT16 i = 0; i < numFunctions; i++ )
   {
-    getline( line, tmpString, '{' );
-    getline( line, strLevel, ',' );
-    getline( line, tmpString, ' ' );
-    getline( line, strFunction, '}' );
-    level = stringToLevel( strLevel );
+    parseSelectedFunctionsLevelAndFunction( line, strLevel, level, strFunction );
 
     // It's a semantic function
     if ( level != NONE )
