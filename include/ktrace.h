@@ -89,6 +89,8 @@ class KTrace: public Trace
     TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask ) const override;
     void getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& onVector ) const override;
 
+    TNodeOrder getNodeFromThread( TThreadOrder &whichThread ) const override;
+
     bool existResourceInfo() const override;
     TNodeOrder totalNodes() const override;
     TCPUOrder totalCPUs() const override;

@@ -157,6 +157,11 @@ void KTrace::getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& on
   traceProcessModel.getThreadsPerNode( inNode, onVector );
 }
 
+TNodeOrder KTrace::getNodeFromThread( TThreadOrder &whichThread ) const
+{
+  return traceProcessModel.getNode(whichThread);
+}
+
 bool KTrace::existResourceInfo() const
 {
   return traceResourceModel.isReady();

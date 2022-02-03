@@ -302,6 +302,11 @@ void TraceProxy::getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>
   myTrace->getThreadsPerNode( inNode, onVector );
 }
 
+TNodeOrder TraceProxy::getNodeFromThread( TThreadOrder &whichThread ) const
+{
+  return myTrace->getNodeFromThread( whichThread );
+}
+
 bool TraceProxy::existResourceInfo() const
 {
   return myTrace->existResourceInfo();
