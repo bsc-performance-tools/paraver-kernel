@@ -74,10 +74,7 @@ bool EventTypeSymbolPicker::pick( const EventLabels& eventLabels, vector<TEventT
   for( vector<TEventType>::const_iterator itType = eventTypes.begin();
        itType != eventTypes.end(); ++itType, ++itLabel )
   {
-    TEventType tmpType;
-    if( makepick( eventLabels, *itType, *itLabel, tmpType ) )
-      onVector.push_back( tmpType );
-    else
+    if( !makepick( eventLabels, *itType, *itLabel, onVector ) )
       return false;
   }
 
@@ -85,10 +82,10 @@ bool EventTypeSymbolPicker::pick( const EventLabels& eventLabels, vector<TEventT
 }
 
 
-bool EventTypeSymbolPicker::makepick( const EventLabels& eventLabels, TEventType eventType, const string& eventLabel, TEventType& onEvent ) const
+bool EventTypeSymbolPicker::makepick( const EventLabels& eventLabels, TEventType eventType, const string& eventLabel, vector<TEventType>& onVector ) const
 {
-  if( eventLabel == "" || eventLabel == EventLabels::unknownLabel || !eventLabels.getEventType( eventLabel, onEvent ) )
-    onEvent = eventType;
+  if( eventLabel == "" || eventLabel == EventLabels::unknownLabel || !eventLabels.getEventType( eventLabel, onVector ) )
+    onVector.push_back( eventType );
 
   return true;
 }

@@ -53,7 +53,7 @@ class EventTypeSymbolPicker
     std::vector<TEventType> eventTypes;
     std::vector<std::string> eventTypeLabels;
 
-    bool makepick( const EventLabels& eventLabels, TEventType eventType, const std::string& eventLabel, TEventType& onEvent ) const;
+    bool makepick( const EventLabels& eventLabels, TEventType eventType, const std::string& eventLabel, std::vector<TEventType>& onVector ) const;
 };
 
 
