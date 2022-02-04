@@ -21,15 +21,15 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#include <string>
-#include <sstream>
 #include <math.h>
+#include <sstream>
+#include <string>
+#include <type_traits>
 
 #include "kernelconnection.h"
 #include "cfg.h"
 #include "window.h"
 #include "trace.h"
-#include "paraverlabels.h"
 #include "histogram.h"
 #include "histogramstatistic.h"
 #include "functionmanagement.h"
@@ -182,6 +182,7 @@ TWindowLevel stringToLevel( const std::string& strLevel )
   return level;
 }
 
+
 string levelToString( TWindowLevel whichLevel )
 {
   switch ( whichLevel )
@@ -243,6 +244,36 @@ string levelToString( TWindowLevel whichLevel )
 
   return "";
 }
+
+
+bool parseSelectedFunctionsNumFunctions( std::istringstream& line, PRV_UINT16& numFunctions )
+{
+  std::string tmpString;
+  std::string strNumFunctions;
+
+  std::getline( line, tmpString, ' ' );
+  std::getline( line, strNumFunctions, ',' );
+  std::istringstream tmpNumFunctions( strNumFunctions );
+
+  if ( !( tmpNumFunctions >> numFunctions ) )
+    return false;
+
+  std::getline( line, tmpString, '{' );
+
+  return true;
+}
+
+void parseSelectedFunctionsLevelAndFunction( std::istringstream& line, std::string& strLevel, TWindowLevel& level, std::string& strFunction )
+{
+  std::string tmpString;
+
+  std::getline( line, tmpString, '{' );
+  std::getline( line, strLevel, ',' );
+  std::getline( line, tmpString, ' ' );
+  std::getline( line, strFunction, '}' );
+  level = stringToLevel( strLevel );
+}
+
 
 string levelToStringHisto( TWindowLevel whichLevel )
 {
@@ -327,6 +358,7 @@ bool pickSymbols( Trace *whichTrace, Timeline *whichWindow )
 
   return true;
 }
+
 
 bool CFGLoader::hasCFGExtension( const string& filename )
 {
@@ -466,6 +498,27 @@ bool CFGLoader::loadDescription( const std::string& filename, std::string& descr
   return false;
 }
 
+bool CFGLoader::getCFGTag( ifstream& cfgFile, string& strLine, istringstream& auxStream, string& cfgTag )
+{
+  getline( cfgFile, strLine );
+
+  if ( strLine.length() == 0 || strLine[ 0 ] == '#' )
+    return false;
+
+  if ( strLine[ strLine.length() - 1 ] == '\r' )
+    strLine = strLine.substr( 0, strLine.length() - 1 );
+
+  auxStream.str( strLine );
+
+  if ( strLine[ 0 ] == '<' )
+    cfgTag = strLine;
+  else
+    getline( auxStream, cfgTag, ' ' );
+
+  return true;
+}
+
+
 bool CFGLoader::loadCFG( KernelConnection *whichKernel,
                          const string& filename,
                          Trace *whichTrace,
@@ -496,35 +549,21 @@ bool CFGLoader::loadCFG( KernelConnection *whichKernel,
   syncRealGroup.clear();
   CFGLoader::errorLine.clear();
 
+  string strLine;
+  string cfgTag;
+  istringstream auxStream;
   while ( !cfgFile.eof() )
   {
-    string strLine;
-    string cfgTag;
+    auxStream.clear();
 
-    getline( cfgFile, strLine );
-
-    if ( strLine.length() > 0 && strLine[ strLine.length() - 1 ] == '\r' )
-      strLine = strLine.substr( 0, strLine.length() - 1 );
-
-    if ( strLine.length() == 0 )
+    if( !CFGLoader::getCFGTag( cfgFile, strLine, auxStream, cfgTag ) )
       continue;
-    else if ( strLine[ 0 ] == '#' )
-      continue;
-    else if ( strLine.compare( CFG_TAG_CFG4D_ENABLED ) == 0 )
+
+    if ( strLine.compare( CFG_TAG_CFG4D_ENABLED ) == 0 )
     {
       lastGlobalLinkIndex = CFGS4DGlobalManager::getInstance()->newLinkManager();
       options.enabledCFG4DMode = true;
       continue;
-    }
-
-    istringstream auxStream( strLine );
-    if ( strLine[ 0 ] == '<' )
-    {
-      cfgTag = strLine;
-    }
-    else
-    {
-      getline( auxStream, cfgTag, ' ' );
     }
 
     map<string, TagFunction *>::iterator it = cfgTagFunctions.find( cfgTag );
@@ -2626,8 +2665,6 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
     vector<Timeline *>& windows,
     vector<Histogram *>& histograms )
 {
-  string tmpString;
-  string strNumFunctions;
   PRV_UINT16 numFunctions;
   string strLevel;
   TWindowLevel level;
@@ -2636,21 +2673,12 @@ bool WindowSelectedFunctions::parseLine( KernelConnection *whichKernel, istrings
   if ( windows[ windows.size() - 1 ] == nullptr )
     return false;
 
-  getline( line, tmpString, ' ' );
-  getline( line, strNumFunctions, ',' );
-  istringstream tmpNumFunctions( strNumFunctions );
-
-  if ( !( tmpNumFunctions >> numFunctions ) )
+  if ( !parseSelectedFunctionsNumFunctions( line, numFunctions ) )
     return false;
 
-  getline( line, tmpString, '{' );
   for ( PRV_UINT16 i = 0; i < numFunctions; i++ )
   {
-    getline( line, tmpString, '{' );
-    getline( line, strLevel, ',' );
-    getline( line, tmpString, ' ' );
-    getline( line, strFunction, '}' );
-    level = stringToLevel( strLevel );
+    parseSelectedFunctionsLevelAndFunction( line, strLevel, level, strFunction );
 
     // It's a semantic function
     if ( level != NONE )
@@ -3080,16 +3108,8 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
                                     vector<Timeline *>& windows,
                                     vector<Histogram *>& histograms )
 {
-  string strTag, strNumberParams, strValue;
-  PRV_UINT16 numParams;
+  string strTag;
   Filter *filter;
-  TObjectOrder fromObject;
-  TObjectOrder toObject;
-  TCommTag commTag;
-  TCommSize commSize;
-  TSemanticValue bandWidth;
-  TEventType eventType;
-  TSemanticValue eventValue;
 
   if ( windows[ windows.size() - 1 ] == nullptr )
     return false;
@@ -3098,102 +3118,44 @@ bool WindowFilterModule::parseLine( KernelConnection *whichKernel, istringstream
     return true;
 
   getline( line, strTag, ' ' );          // Parameter type.
-  getline( line, strNumberParams, ' ' ); // Number of following parameters.
-  istringstream tmpNumberParams( strNumberParams );
-
-//  bool paramsWithQuotes = line;
-
-  if ( !( tmpNumberParams >> numParams ) )
-    return false;
 
   filter = windows[ windows.size() - 1 ]->getFilter();
 
-  for ( PRV_UINT16 ii = 0; ii < numParams; ii++ )
+  if ( strTag.compare( OLDCFG_VAL_FILTER_OBJ_FROM ) == 0 )
   {
-    if ( strTag.compare( OLDCFG_VAL_FILTER_OBJ_FROM ) == 0 )
-    {
-      getline( line, strValue, ' ' );
-      istringstream tmpValue( strValue );
-
-      if ( !( tmpValue >> fromObject ) )
-        return false;
-
-      filter->insertCommFrom( fromObject - 1 );
-    }
-    else if ( strTag.compare( OLDCFG_VAL_FILTER_OBJ_TO ) == 0 )
-    {
-      getline( line, strValue, ' ' );
-      istringstream tmpValue( strValue );
-
-      if ( !( tmpValue >> toObject ) )
-        return false;
-
-      filter->insertCommTo( toObject - 1 );
-    }
-    else if ( strTag.compare( OLDCFG_VAL_FILTER_COM_TAG ) == 0 )
-    {
-      getline( line, strValue, ' ' );
-      istringstream tmpValue( strValue );
-
-      if ( !( tmpValue >> commTag ) )
-        return false;
-
-      filter->insertCommTag( commTag );
-    }
-    else if ( strTag.compare( OLDCFG_VAL_FILTER_COM_SIZE ) == 0 )
-    {
-      getline( line, strValue, ' ' );
-      istringstream tmpValue( strValue );
-
-      if ( !( tmpValue >> commSize ) )
-        return false;
-
-      filter->insertCommSize( commSize );
-    }
-    else if ( strTag.compare( OLDCFG_VAL_FILTER_COM_BW ) == 0 )
-    {
-      getline( line, strValue, ' ' );
-      istringstream tmpValue( strValue );
-
-      if ( !( tmpValue >> bandWidth ) )
-        return false;
-
-      filter->insertBandWidth( bandWidth );
-    }
-    else if ( strTag.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
-    {
-      getline( line, strValue, ' ' );
-      istringstream tmpValue( strValue );
-
-      if ( !( tmpValue >> eventType ) )
-        return false;
-
-      eventTypeSymbolPicker.insert( eventType );
-    }
-    else if ( strTag.compare( OLDCFG_VAL_FILTER_EVT_VALUE ) == 0 )
-    {
-      getline( line, strValue, ' ' );
-      istringstream tmpValue( strValue );
-
-      if ( !( tmpValue >> eventValue ) )
-        return false;
-
-      eventValueSymbolPicker.insert( eventValue );
-    }
-    else if ( strTag.compare( CFG_VAL_FILTER_EVT_TYPE_LABEL ) == 0 )
-    {
-      getline( line, strValue, '"' ); // Consume the starting '"'
-      getline( line, strValue, '"' );
-
-      eventTypeSymbolPicker.insert( strValue );
-    }
-    else if ( strTag.compare( CFG_VAL_FILTER_EVT_VALUE_LABEL ) == 0 )
-    {
-      getline( line, strValue, '"' ); // Consume the starting '"'
-      getline( line, strValue, '"' );
-
-      eventValueSymbolPicker.insert( strValue );
-    }
+    return parseLineFilter<TObjectOrder>( line, [filter]( TObjectOrder fromObject ) { filter->insertCommFrom( fromObject - 1 ); } );
+  }
+  else if ( strTag.compare( OLDCFG_VAL_FILTER_OBJ_TO ) == 0 )
+  {
+    return parseLineFilter<TObjectOrder>( line, [filter]( TObjectOrder toObject ) { filter->insertCommTo( toObject - 1 ); } );
+  }
+  else if ( strTag.compare( OLDCFG_VAL_FILTER_COM_TAG ) == 0 )
+  {
+    return parseLineFilter<TCommTag>( line, [filter]( TCommTag commTag ) { filter->insertCommTag( commTag ); } );
+  }
+  else if ( strTag.compare( OLDCFG_VAL_FILTER_COM_SIZE ) == 0 )
+  {
+    return parseLineFilter<TCommSize>( line, [filter]( TCommSize commSize ) { filter->insertCommSize( commSize ); } );
+  }
+  else if ( strTag.compare( OLDCFG_VAL_FILTER_COM_BW ) == 0 )
+  {
+    return parseLineFilter<TSemanticValue>( line, [filter]( TSemanticValue bandWidth ) { filter->insertBandWidth( bandWidth ); } );
+  }
+  else if ( strTag.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
+  {
+    return parseLineFilter<TEventType>( line, []( TEventType eventType ) { eventTypeSymbolPicker.insert( eventType ); } );
+  }
+  else if ( strTag.compare( OLDCFG_VAL_FILTER_EVT_VALUE ) == 0 )
+  {
+    return parseLineFilter<TSemanticValue>( line, []( TSemanticValue eventValue ) { eventValueSymbolPicker.insert( eventValue ); } );
+  }
+  else if ( strTag.compare( CFG_VAL_FILTER_EVT_TYPE_LABEL ) == 0 )
+  {
+    return parseLineFilter<std::string>( line, []( std::string typeLabel ) { eventTypeSymbolPicker.insert( typeLabel ); } );
+  }
+  else if ( strTag.compare( CFG_VAL_FILTER_EVT_VALUE_LABEL ) == 0 )
+  {
+    return parseLineFilter<std::string>( line, []( std::string valueLabel ) { eventValueSymbolPicker.insert( valueLabel ); } );
   }
 
   return true;

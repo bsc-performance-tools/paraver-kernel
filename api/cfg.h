@@ -24,21 +24,21 @@
 
 #pragma once
 
-
+#include <algorithm>
+#include <functional>
 #include <map>
 #include <vector>
 #include <sstream>
 #include <fstream>
 #include <string>
-#include "paraverkerneltypes.h"
 #include "cfgs4d.h"
+#include "paraverkerneltypes.h"
+#include "paraverlabels.h"
 
 class KernelConnection;
 class Timeline;
 class Trace;
 class Histogram;
-
-TWindowLevel stringToLevel( const std::string& strLevel );
 
 class TagFunction
 {
@@ -91,6 +91,63 @@ public:
 };
 
 
+template< typename T, typename F >
+bool parseParamFilter( std::istringstream& line, std::string& strValue, F insertFunction, std::true_type )
+{
+  std::getline( line, strValue, '"' ); // Consume the starting '"'
+  std::getline( line, strValue, '"' );
+
+  insertFunction( strValue );
+
+  return true;
+}
+
+
+template< typename T, typename F >
+bool parseParamFilter( std::istringstream& line, std::string& strValue, F insertFunction, std::false_type )
+{
+  T parseValue;
+
+  std::getline( line, strValue, ' ' );
+  std::istringstream tmpValue( strValue );
+
+  if ( !( tmpValue >> parseValue ) )
+    return false;
+
+  insertFunction( parseValue );
+  
+  return true;
+}
+
+
+template< typename T, typename F >
+bool parseLineFilter( std::istringstream& line, F insertFunction )
+{
+  std::string strNumberParams, strValue;
+  PRV_UINT16 numParams;
+
+  std::getline( line, strNumberParams, ' ' ); 
+  std::istringstream tmpNumberParams( strNumberParams );
+  if ( !( tmpNumberParams >> numParams ) )
+    return false;
+
+  for ( PRV_UINT16 ii = 0; ii < numParams; ++ii )
+  {
+    if( !parseParamFilter<T>( line, strValue, insertFunction, std::is_same<T, std::string>() ) )
+      return false;
+  }
+
+  return true;
+}
+
+TWindowLevel stringToLevel( const std::string& strLevel );
+bool parseSelectedFunctionsNumFunctions( std::istringstream& line, PRV_UINT16& numFunctions );
+void parseSelectedFunctionsLevelAndFunction( std::istringstream& line,
+                                             std::string& strLevel,
+                                             TWindowLevel& level,
+                                             std::string& strFunction );
+
+
 class CFGLoader
 {
   private:
@@ -110,6 +167,8 @@ class CFGLoader
     static bool isCFGFile( const std::string& filename );
     static bool isDimemasCFGFile( const std::string& filename ); // TODO: here?
     static bool loadDescription( const std::string& filename, std::string& description );
+
+    static bool getCFGTag( std::ifstream& cfgFile, std::string& strLine, std::istringstream& auxStream, std::string& cfgTag );
 
     static bool loadCFG( KernelConnection *whichKernel,
                          const std::string& filename,
@@ -132,6 +191,111 @@ class CFGLoader
     static const std::vector< std::string > getTagCFGFullList( Histogram *whichHistogram );
 
     static std::string errorLine;
+
+    // Returns false if error parsing or no event type in evenTypes found in CFG & pass the filter
+    template< class Iterator >
+    static bool detectAnyEventTypeInCFG( const std::string& filename,
+                                         const Iterator& eventTypesBegin,
+                                         const Iterator& eventTypesEnd )
+    {
+      std::string strLine;
+      std::string cfgTag;
+      std::string filterTag;
+      std::string strLevel;
+      std::string strFunction;
+      TWindowLevel level;
+      PRV_UINT16 numFunctions;
+      std::istringstream auxStream;
+      bool filterTagsFound = false;
+      bool isRangeFunction = false;
+
+      std::ifstream cfgFile( filename.c_str() );
+      if ( !cfgFile )
+        return false;
+
+      std::vector<TEventType> cfgTypes;
+
+      // Lambda function that checks trace event types pass the cfg filter function
+      auto funcTypesCheck = []( std::vector<TEventType>& cfgTypes, bool isRangeFunction, const Iterator& eventTypesBegin,
+                                         const Iterator& eventTypesEnd, std::ifstream& cfgFile )
+        {
+          if( !cfgTypes.empty() )
+          {
+            std::function<bool( TEventType )> f;
+            if( isRangeFunction )
+            {
+              std::sort( cfgTypes.begin(), cfgTypes.end() );
+              f = [&cfgTypes]( auto elem ) { return elem >= cfgTypes.front() && elem <= cfgTypes.back(); };
+            }
+            else
+              f = [&cfgTypes]( auto elem ) { return std::find( cfgTypes.begin(), cfgTypes.end(), elem ) != cfgTypes.end(); };
+
+            if( std::find_if( eventTypesBegin, eventTypesEnd, f ) != eventTypesEnd )
+            {
+              cfgFile.close();
+              return true;
+            }
+            cfgTypes.clear();
+          }
+          return false;
+        };
+
+      while ( !cfgFile.eof() )
+      {
+        auxStream.clear();
+
+        if( !CFGLoader::getCFGTag( cfgFile, strLine, auxStream, cfgTag ) )
+          continue;
+
+        if ( cfgTag.compare( OLDCFG_TAG_WNDW_ID ) == 0 )
+        {
+          if( funcTypesCheck( cfgTypes, isRangeFunction, eventTypesBegin, eventTypesEnd, cfgFile ) )
+            return true;
+          isRangeFunction = false;
+        }
+
+        if ( cfgTag.compare( OLDCFG_TAG_WNDW_SELECTED_FUNCTIONS ) == 0 )
+        {
+          if ( !parseSelectedFunctionsNumFunctions( auxStream, numFunctions ) )
+            return false;
+
+          for ( PRV_UINT16 i = 0; i < numFunctions; i++ )
+          {
+            parseSelectedFunctionsLevelAndFunction( auxStream, strLevel, level, strFunction );
+
+            if ( level == NONE && strLevel.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
+            {
+              if( strFunction == CFG_VAL_FILTER_FUNCTION_RANGE )
+                isRangeFunction = true;
+            }
+          }
+        }
+
+        if ( cfgTag.compare( OLDCFG_TAG_WNDW_FILTER_MODULE ) == 0 )
+        {
+          std::getline( auxStream, filterTag, ' ' );          // Parameter type.
+          if ( filterTag.compare( OLDCFG_VAL_FILTER_EVT_TYPE ) == 0 )
+          {
+            filterTagsFound = true;
+            
+            if( !parseLineFilter<TEventType>( auxStream, 
+                                              [&cfgTypes]( TEventType eventType ) { cfgTypes.push_back( eventType ); } ) )
+            {
+              cfgFile.close();
+              return false;
+            }
+          }
+        }
+      }
+
+      if( funcTypesCheck( cfgTypes, isRangeFunction, eventTypesBegin, eventTypesEnd, cfgFile ) )
+        return true;
+
+      cfgFile.close();
+
+      return !filterTagsFound;
+    }
+
 };
 
 

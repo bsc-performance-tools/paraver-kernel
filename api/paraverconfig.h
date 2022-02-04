@@ -337,6 +337,9 @@ class ParaverConfig
     std::vector< std::string> getGlobalExternalTextEditors() const;
     std::vector< std::string> getGlobalExternalPDFReaders() const;
 
+    // WORKSPACES
+    void setWorkspacesHintsDiscardedSubmenu( bool whichDiscardedSubmenu );
+    bool getWorkspacesHintsDiscardedSubmenu() const;
 
     void saveXML( const std::string &filename );
     void loadXML( const std::string &filename );
@@ -761,6 +764,16 @@ class ParaverConfig
 
     } xmlColor;
 
+    struct XMLPreferencesWorkspaces
+    {
+      template< class Archive >
+      void serialize( Archive & ar, const unsigned int version )
+      {
+        ar & boost::serialization::make_nvp( "hints_discarded_submenu", hintsDiscardedSubmenu );
+      }
+
+      bool hintsDiscardedSubmenu;
+    } xmlWorkspaces;
 
     template< class Archive >
     void serialize( Archive & ar, const unsigned int version )
@@ -789,6 +802,10 @@ class ParaverConfig
       {
         ar & boost::serialization::make_nvp( "applications", xmlExternalApplications );
       }
+      if (version >= 3)
+      {
+        ar & boost::serialization::make_nvp( "workspaces", xmlWorkspaces );
+      }
     }
 };
 
@@ -796,7 +813,7 @@ class ParaverConfig
 // BOOST_CLASS_VERSION( ParaverConfig, 0)
 
 // Second version: introducing some structure
-BOOST_CLASS_VERSION( ParaverConfig, 2 )
+BOOST_CLASS_VERSION( ParaverConfig, 3 )
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 9 )
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 4 )
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 7 )
@@ -808,6 +825,7 @@ BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCounters, 0 )
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilters, 3 )
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesExternalApplications, 0 )
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesColor, 4 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesWorkspaces, 0 )
 
 // WhatWhere.num_decimals
 class WWNumDecimals: public PropertyFunction

@@ -24,11 +24,11 @@
 
 #pragma once
 
-
-
 #include <map>
 #include <vector>
 #include <string>
+
+#include "paraverkerneltypes.h"
 
 template <class T>
 class FunctionManagement
