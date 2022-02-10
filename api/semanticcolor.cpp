@@ -265,6 +265,11 @@ const std::map<TSemanticValue, rgb>& CodeColor::getCustomPalette() const
   return customPalette;
 }
 
+void CodeColor::setCustomPalette( const std::map<TSemanticValue, rgb>& whichPalette )
+{
+  customPalette = whichPalette;
+}
+
 #ifdef _MSC_VER
 namespace stdext
 {
