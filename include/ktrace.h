@@ -56,12 +56,13 @@ class KTrace: public Trace
       ready = false;
     }
 
-    KTrace( const std::string& whichFile, ProgressController *progress, bool noLoad );
+    KTrace( const std::string& whichFile, ProgressController *progress, bool noLoad, TTraceSize whichTraceSize = 0 );
 
     ~KTrace();
 
     std::string getFileName() const override;
     std::string getTraceName() const override;
+    TTraceSize getTraceSize() const override;
 
     void dumpFileHeader( std::fstream& file, bool newFormat = false, PRV_INT32 numIter = 1 ) const override;
     void dumpFile( const std::string& whichFile, PRV_INT32 numIter = 1 ) const override;
@@ -87,6 +88,8 @@ class KTrace: public Trace
     TThreadOrder getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const override;
     TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask ) const override;
     void getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& onVector ) const override;
+
+    TNodeOrder getNodeFromThread( TThreadOrder &whichThread ) const override;
 
     bool existResourceInfo() const override;
     TNodeOrder totalNodes() const override;
@@ -217,6 +220,7 @@ class KTrace: public Trace
 
   private:
     std::string fileName;
+    TTraceSize traceSize;
     std::vector<std::string> communicators;
     std::set<TEventType> events;
     std::set<TState> states;
