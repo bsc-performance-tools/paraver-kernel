@@ -81,7 +81,9 @@ class TraceOptions
     {}
     virtual void set_remLastStates( bool remStates )
     {}
-    virtual void set_keep_events( bool keepEvents )
+    virtual void set_keep_boundary_events( bool keepEvents )
+    {}
+    virtual void set_keep_all_events( bool keepAllEvents )
     {}
 
     virtual bool get_by_time() const
@@ -104,7 +106,9 @@ class TraceOptions
     { return 0; }
     virtual bool get_remLastStates() const
     { return 0; }
-    virtual bool get_keep_events() const
+    virtual bool get_keep_boundary_events() const
+    { return 0; }
+    virtual bool get_keep_all_events() const
     { return 0; }
 
 
@@ -262,7 +266,8 @@ class TraceOptionsProxy :public TraceOptions
     virtual void set_break_states( bool breakStates ) override;
     virtual void set_remFirstStates( bool remStates ) override;
     virtual void set_remLastStates( bool remStates ) override;
-    virtual void set_keep_events( bool keepEvents ) override;
+    virtual void set_keep_boundary_events( bool keepEvents ) override;
+    virtual void set_keep_all_events( bool keepAllEvents ) override;
 
     virtual bool get_by_time() const override;
     virtual unsigned long long get_min_cutting_time() const override;
@@ -274,7 +279,8 @@ class TraceOptionsProxy :public TraceOptions
     virtual bool get_break_states() const override;
     virtual bool get_remFirstStates() const override;
     virtual bool get_remLastStates() const override;
-    virtual bool get_keep_events() const override;
+    virtual bool get_keep_boundary_events() const override;
+    virtual bool get_keep_all_events() const override;
 
     /* Sets for filtering */
     virtual void set_filter_events( bool filterEvents ) override;

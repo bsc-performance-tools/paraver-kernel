@@ -51,7 +51,7 @@ class KTraceCutter : public TraceCutter
     virtual void set_break_states( bool breakStates ) override;
     virtual void set_remFirstStates( bool remStates ) override;
     virtual void set_remLastStates( bool remStates ) override;
-    virtual void set_keep_events( bool keepEvents ) override;
+    virtual void set_keep_boundary_events( bool keepEvents ) override;
     virtual void setCutterApplicationCaller( std::string caller ) override;
 
     virtual void execute( std::string trace_in,
@@ -88,7 +88,8 @@ class KTraceCutter : public TraceCutter
     int init_task_counter;
     bool remFirstStates;
     bool remLastStates;
-    bool keep_events;
+    bool keep_boundary_events;
+    bool keep_all_events;
     bool first_time_caught;
 
     /* Parameters for showing percentage */

@@ -195,9 +195,14 @@ void TraceCutterProxy::set_remLastStates( bool remStates )
   myTraceCutter->set_remLastStates( remStates );
 }
 
-void TraceCutterProxy::set_keep_events( bool keepEvents )
+void TraceCutterProxy::set_keep_boundary_events( bool keepBoundaryEvents )
 {
-  myTraceCutter->set_keep_events( keepEvents );
+  myTraceCutter->set_keep_boundary_events( keepBoundaryEvents );
+}
+
+void TraceCutterProxy::set_keep_all_events( bool keepAllEvents )
+{
+  myTraceCutter->set_keep_all_events( keepAllEvents );
 }
 
 void TraceCutterProxy::setCutterApplicationCaller( string caller )

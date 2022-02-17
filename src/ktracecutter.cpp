@@ -124,7 +124,7 @@ void KTraceCutter::set_remLastStates( bool remStates )
 {
 }
 
-void KTraceCutter::set_keep_events( bool keepEvents )
+void KTraceCutter::set_keep_boundary_events( bool keepEvents )
 {
 }
 
@@ -178,13 +178,14 @@ void KTraceCutter::read_cutter_params()
   break_states = exec_options->break_states;
   remFirstStates = exec_options->remFirstStates;
   remLastStates = exec_options->remLastStates;
-  keep_events = exec_options->keep_events;
+  keep_boundary_events = exec_options->keep_boundary_events;
+  keep_all_events = exec_options->keep_all_events;
 
   if ( originalTime )
     break_states = false; // Assigned ONLY if originalTime == true, else KEEP value.
 
   if( break_states )
-    keep_events = false;
+    keep_boundary_events = false;
 }
 
 
@@ -1215,7 +1216,7 @@ void KTraceCutter::execute( std::string trace_in,
         if ( ( tasks.find( appl - 1, task - 1, thread - 1 ) != tasks.end() ) &&
              ( time_1 > tasks( appl - 1, task - 1, thread - 1 ).last_time ) &&
              ( time_1 > time_max ) &&
-             !keep_events )
+             !keep_boundary_events )
           break;
 
         if ( tasks.find( appl - 1, task - 1, thread - 1 ) == tasks.end() && time_1 > time_max )
@@ -1232,7 +1233,11 @@ void KTraceCutter::execute( std::string trace_in,
              ( time_1 < time_min &&
                tasks.find( appl - 1, task - 1, thread - 1 ) != tasks.end() &&
                tasks( appl - 1, task - 1, thread - 1 ).last_time >= time_min &&
-               keep_events )
+               keep_boundary_events ) ||
+             ( first_time_caught &&
+               time_1 >= first_record_time &&
+              //  tasks.find( appl - 1, task - 1, thread - 1 ) != tasks.end() &&
+               keep_all_events )
            )
         {
           if ( !first_time_caught )
