@@ -452,16 +452,17 @@ template< typename ApplOrderT,
           typename TaskOrderT, 
           typename ThreadOrderT, 
           typename NodeOrderT >
-void ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addApplication(  )
+ApplOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addApplication(  )
 {
-  applications.push_back( ProcessModelAppl< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >( applications.size() ) );
+  applications.emplace_back( applications.size() );
+  return applications.size() - 1;
 }
 
 template< typename ApplOrderT, 
           typename TaskOrderT, 
           typename ThreadOrderT, 
           typename NodeOrderT >
-void ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addTask( ApplOrderT whichAppl )
+TaskOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addTask( ApplOrderT whichAppl )
 {
   if( whichAppl > applications.size() )
   {
@@ -477,9 +478,11 @@ void ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addTask( 
   }
 
   tasks.push_back( TaskLocation() );
-  tasks[ tasks.size() - 1 ].appl = whichAppl;
-  tasks[ tasks.size() - 1 ].task = applications[ whichAppl ].tasks.size();
-  applications[ whichAppl ].tasks.push_back( ProcessModelTask< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >( tasks.size() - 1 ) );
+  tasks.back().appl = whichAppl;
+  tasks.back().task = applications[ whichAppl ].tasks.size();
+  applications[ whichAppl ].tasks.emplace_back( tasks.size() - 1 );
+
+  return tasks.back().task;
 }
 
 
@@ -487,7 +490,7 @@ template< typename ApplOrderT,
           typename TaskOrderT, 
           typename ThreadOrderT, 
           typename NodeOrderT >
-void ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addThread( ApplOrderT whichAppl, TaskOrderT whichTask,
+ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addThread( ApplOrderT whichAppl, TaskOrderT whichTask,
                               NodeOrderT execNode )
 {
   if( whichAppl > applications.size() )
@@ -516,11 +519,12 @@ void ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addThread
   }
 
   threads.push_back( ThreadLocation() );
-  threads[ threads.size() - 1 ].appl = whichAppl;
-  //threads[ threads.size() - 1 ].task = applications[ whichAppl ].tasks[ whichTask ].traceGlobalOrder;
-  threads[ threads.size() - 1 ].task = whichTask;
-  threads[ threads.size() - 1 ].thread = applications[ whichAppl ].tasks[ whichTask ].threads.size();
-  applications[ whichAppl ].tasks[ whichTask ].threads.push_back( ProcessModelThread< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >( threads.size() - 1, execNode ) );
+  threads.back().appl = whichAppl;
+  threads.back().task = whichTask;
+  threads.back().thread = applications[ whichAppl ].tasks[ whichTask ].threads.size();
+  applications[ whichAppl ].tasks[ whichTask ].threads.emplace_back( threads.size() - 1, execNode );
+
+  return threads.back().thread;
 }
 
 
@@ -529,7 +533,7 @@ template< typename ApplOrderT,
           typename TaskOrderT, 
           typename ThreadOrderT, 
           typename NodeOrderT >
-void ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addApplTaskThread( const ThreadLocation& whichLocation,
+ThreadOrderT ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addApplTaskThread( const ThreadLocation& whichLocation,
                                       NodeOrderT execNode )
 {
   if( whichLocation.appl >= applications.size() )
@@ -539,5 +543,7 @@ void ProcessModel< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >::addApplTa
     addTask( whichLocation.appl );
 
   threads.push_back( whichLocation );
-  applications[ whichLocation.appl ].tasks[ whichLocation.task ].threads.push_back( ProcessModelThread< ApplOrderT, TaskOrderT, ThreadOrderT, NodeOrderT >( threads.size() - 1, execNode ) );
+  applications[ whichLocation.appl ].tasks[ whichLocation.task ].threads.emplace_back( threads.size() - 1, execNode );
+
+  return threads.size() - 1;
 }

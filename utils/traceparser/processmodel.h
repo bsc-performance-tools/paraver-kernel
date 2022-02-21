@@ -29,6 +29,7 @@
 #include <string>
 #include <map>
 #include <sstream>
+#include "tracetypes.h"
 #include "processmodelappl.h"
 
 template< typename ApplOrderT = TApplOrder,
@@ -111,11 +112,10 @@ class ProcessModel
                         TaskOrderT whichTask ) const;
     bool isValidAppl( ApplOrderT whichAppl ) const;
 
-    void addApplication();
-    void addTask( ApplOrderT whichAppl );
-    void addThread( ApplOrderT whichAppl, TaskOrderT whichTask, NodeOrderT execNode );
-    void addApplTaskThread( const ThreadLocation& whichLocation,
-                            NodeOrderT execNode = 0 );
+    ApplOrderT   addApplication();
+    TaskOrderT   addTask( ApplOrderT whichAppl );
+    ThreadOrderT addThread( ApplOrderT whichAppl, TaskOrderT whichTask, NodeOrderT execNode );
+    ThreadOrderT addApplTaskThread( const ThreadLocation& whichLocation, NodeOrderT execNode = 0 );
 
 
   protected:
