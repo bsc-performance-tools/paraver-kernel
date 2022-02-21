@@ -368,7 +368,7 @@ class TraceProxy: public Trace
 
     EventLabels myEventLabels;
     StateLabels myStateLabels;
-    RowLabels myRowLabels;
+    RowLabels<> myRowLabels;
 
     bool showProgressBar;
 

@@ -7,6 +7,8 @@ SUBDIRS = \
 
 bin_PROGRAMS = paramedir.bin
 
+paramedir_bin_CPPFLAGS = -I$(top_srcdir)/utils/traceparser -I$(top_srcdir)/api -I$(top_srcdir)/include
+
 paramedir_bin_SOURCES = \
 	api/paramedir.cpp
 

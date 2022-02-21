@@ -30,7 +30,7 @@
 #include <map>
 #include "paraverkerneltypes.h"
 
-template<>
+template< typename dummy = nullptr_t >
 class RowLabels
 {
   public:

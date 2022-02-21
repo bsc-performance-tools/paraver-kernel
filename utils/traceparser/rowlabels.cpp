@@ -33,12 +33,12 @@ using std::vector;
 using std::ifstream;
 using std::istringstream;
 
-template<>
-RowLabels<>::RowLabels()
+template<typename dummy>
+RowLabels<dummy>::RowLabels()
 {}
 
-template<>
-RowLabels<>::RowLabels( const string& filename )
+template<typename dummy>
+RowLabels<dummy>::RowLabels( const string& filename )
 {
   string strLine;
   string strLevel;
@@ -147,13 +147,13 @@ RowLabels<>::RowLabels( const string& filename )
 }
 
 
-template<>
-RowLabels<::~RowLabels()
+template<typename dummy>
+RowLabels<dummy>::~RowLabels()
 {}
 
 
-template<>
-string RowLabels<>::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const
+template<typename dummy>
+string RowLabels<dummy>::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const
 {
   const vector<string> *tmpvector = nullptr;
   switch( whichLevel )
@@ -199,8 +199,8 @@ string RowLabels<>::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow 
 }
 
 
-template<>
-void RowLabels<>::pushBack( TWindowLevel whichLevel, const string& rowLabel )
+template<typename dummy>
+void RowLabels<dummy>::pushBack( TWindowLevel whichLevel, const string& rowLabel )
 {
   vector<string> *tmpvector = nullptr;
   switch( whichLevel )
@@ -236,8 +236,8 @@ void RowLabels<>::pushBack( TWindowLevel whichLevel, const string& rowLabel )
   }
 }
 
-template<>
-size_t RowLabels<>::getMaxLength( TWindowLevel whichLevel ) const
+template<typename dummy>
+size_t RowLabels<dummy>::getMaxLength( TWindowLevel whichLevel ) const
 {
 #ifdef WIN32
   return maxLength.find( whichLevel )->second;
