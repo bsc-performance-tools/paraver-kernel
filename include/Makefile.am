@@ -50,13 +50,6 @@ noinst_HEADERS = \
                           plainblocks.h\
                           plaintrace.h\
                           plaintypes.h\
-                          processmodelappl.h\
-                          processmodel.h\
-                          processmodeltask.h\
-                          processmodelthread.h\
-                          resourcemodelcpu.h\
-                          resourcemodel.h\
-                          resourcemodelnode.h\
                           semanticcomposefunctions.h\
                           semanticcompose.h\
                           semanticcpufunctions.h\
@@ -73,9 +66,7 @@ noinst_HEADERS = \
                           semanticthreadfunctions.h\
                           semanticthread.h\
                           statisticmanagement.h\
-                          tracebodyio.h\
                           tracebodyiofactory.h\
-                          tracebodyio_v1.h\
                           tracebodyio_v2.h\
                           tracebodyio_csv.h\
                           traceeditblocks.h\

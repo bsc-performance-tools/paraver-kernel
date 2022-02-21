@@ -98,4 +98,4 @@ class ResourceModel
 
 };
 
-#include "../src/resourcemodel.cpp"
+#include "resourcemodel.cpp"

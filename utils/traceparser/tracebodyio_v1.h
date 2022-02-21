@@ -138,5 +138,5 @@ class TraceBodyIO_v1 : public TraceBodyIO<TraceStreamT,
     bool sameMultiEvent( const RecordT *record ) const;
 };
 
-#include "../src/tracebodyio_v1.cpp"
+#include "tracebodyio_v1.cpp"
 

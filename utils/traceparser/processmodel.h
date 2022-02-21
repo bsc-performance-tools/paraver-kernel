@@ -143,4 +143,4 @@ class ProcessModel
 
 };
 
-#include "../src/processmodel.cpp"
+#include "processmodel.cpp"
