@@ -30,6 +30,7 @@
 #include <map>
 #include "paraverkerneltypes.h"
 
+template<>
 class RowLabels
 {
   public:
@@ -58,5 +59,4 @@ class RowLabels
     std::map< TWindowLevel, size_t > maxLength;
 };
 
-
-
+#include "rowlabels.cpp"
