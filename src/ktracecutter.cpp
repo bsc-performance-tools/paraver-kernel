@@ -888,6 +888,20 @@ bool KTraceCutter::is_selected_task( int task_id )
   return false;
 }
 
+KTraceCutter::thread_info& KTraceCutter::initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu, bool& reset_counters )
+{
+  ++useful_tasks;
+  init_task_counter = 1;
+  thread_info& tmpInfo = tasks( appl - 1, task - 1, thread - 1 );
+  tmpInfo.finished = true;
+  tmpInfo.lastCPU = cpu;
+  tmpInfo.last_time = 0;
+
+  /* Have to reset HC and the begining of cut */
+  reset_counters = true;
+
+  return tmpInfo;
+}
 
 void KTraceCutter::execute( std::string trace_in,
                             std::string trace_out,
@@ -1107,13 +1121,24 @@ void KTraceCutter::execute( std::string trace_in,
         if ( time_2 <= time_min )
           break;
 
+        if ( time_1 < time_min && time_2 > time_max && ( remFirstStates || remLastStates ))
+        {
+          auto infoIt = tasks.find( appl - 1, task - 1, thread - 1 );
+          thread_info *tmpInfo = nullptr;
+          if ( infoIt == tasks.end() )
+            tmpInfo = &initThreadInfo( appl, task, thread, cpu, reset_counters );
+          else
+            tmpInfo = &infoIt->second;
+
+          tmpInfo->without_states = true;
+
+          break;
+        }
+
         if ( time_1 < time_min && time_2 >= time_min && remFirstStates )
           break;
 
         if ( time_1 < time_max && time_2 > time_max && remLastStates )
-          break;
-
-        if ( time_1 < time_min && time_2 > time_max && ( remFirstStates || remLastStates ))
           break;
 
         if ( originalTime && time_1 > time_max )
@@ -1135,17 +1160,7 @@ void KTraceCutter::execute( std::string trace_in,
         else // originalTime || time_1 <= time_max
         {
           if ( tasks.find( appl - 1, task - 1, thread - 1 ) == tasks.end() )
-          {
-            ++useful_tasks;
-            init_task_counter = 1;
-            thread_info& tmpInfo = tasks( appl - 1, task - 1, thread - 1 );
-            tmpInfo.finished = true;
-            tmpInfo.lastCPU = cpu;
-            tmpInfo.last_time = 0;
-
-            /* Have to reset HC and the begining of cut */
-            reset_counters = true;
-          }
+            initThreadInfo( appl, task, thread, cpu, reset_counters );
           
           if ( !originalTime && break_states )
           {
@@ -1236,7 +1251,8 @@ void KTraceCutter::execute( std::string trace_in,
                keep_boundary_events ) ||
              ( first_time_caught &&
                time_1 >= first_record_time &&
-              //  tasks.find( appl - 1, task - 1, thread - 1 ) != tasks.end() &&
+               tasks.find( appl - 1, task - 1, thread - 1 ) != tasks.end() &&
+               tasks( appl - 1, task - 1, thread - 1 ).without_states &&
                keep_all_events )
            )
         {

@@ -112,12 +112,13 @@ class KTraceCutter : public TraceCutter
     class thread_info
     {
       public:
-        thread_info() : last_time( 0 ), lastCPU( 0 ), finished( false )
+        thread_info() : last_time( 0 ), lastCPU( 0 ), finished( false ), without_states( false )
         {}
 
         unsigned long long last_time;
         TCPUOrder lastCPU; // last CPU to be able to write trailing records.
         bool finished;
+        bool without_states;
         std::set< TEventType >      eventTypesWithoutPCFZeros; //
         std::multiset< TEventType > eventTypesWithPCFZeros;    //
     };
@@ -166,6 +167,8 @@ class KTraceCutter : public TraceCutter
     void load_counters_of_pcf( char *trace_name );
     void shiftLeft_TraceTimes_ToStartFromZero( const char *originalTraceName, const char *nameIn, const char *nameOut, bool is_zip, ProgressController *progress );
     bool is_selected_task( int task_id );
+
+    thread_info& initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu, bool& reset_counters );
 };
 
 
