@@ -101,12 +101,8 @@ class KTraceCutter : public TraceCutter
     unsigned long long total_tmp_lines;
     unsigned long long current_tmp_lines;
 
-    /* Vars for saving the HC that will appear on the trace */
-    unsigned long long counters[500];
-    int last_counter;
-
     // Event types scanned from .pcf file with declared value 0.
-    std::set< TEventType > PCFEventTypesWithValuesZero;
+    std::set< TEventType > HWCTypesInPCF;
 
     /* Struct for the case of MAX_TRACE_SIZE */
     class thread_info
@@ -119,8 +115,8 @@ class KTraceCutter : public TraceCutter
         TCPUOrder lastCPU; // last CPU to be able to write trailing records.
         bool finished;
         bool without_states;
-        std::set< TEventType >      eventTypesWithoutPCFZeros; //
-        std::multiset< TEventType > eventTypesWithPCFZeros;    //
+        std::vector< TEventType > openedEventTypes;
+        std::set< TEventType > HWCTypesInPRV;
     };
 
     /* struct for cutting only selected tasks */
@@ -148,8 +144,10 @@ class KTraceCutter : public TraceCutter
                           unsigned long long timeOffset,
                           unsigned long long timeCutBegin,
                           unsigned long long timeCutEnd );
-    const std::set< TEventType > mergeDuplicates( const std::multiset< TEventType>& eventTypesWithPCFZeros );
-    void dumpEventsSet( const std::set< TEventType >& closingEventTypes,
+
+    template< typename IteratorType >
+    void dumpEventsSet( const IteratorType& begin,
+                        const IteratorType& end,
                         unsigned int cpu,
                         unsigned int appl,
                         unsigned int task,
@@ -158,6 +156,7 @@ class KTraceCutter : public TraceCutter
                         int &numWrittenChars,
                         bool &needEOL,
                         bool &writtenComment );
+
     void appendLastZerosToUnclosedEvents( const unsigned long long final_time );
     void ini_cutter_progress_bar( char *file_name, ProgressController *progress );
     void show_cutter_progress_bar( ProgressController *progress );
