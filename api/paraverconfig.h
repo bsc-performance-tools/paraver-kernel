@@ -107,9 +107,8 @@ class ParaverConfig
     void setGlobalPrevSessionLoad( bool isPrevSessionLoaded );
     void setGlobalHelpContentsUsesBrowser( bool isHelpContentsUsesBrowser );
     void setGlobalHelpContentsQuestionAnswered( bool isHelpContentsQuestionAnswered );
-    void setAppsChecked(); // will always set to True
+    void setAppsChecked(); // will always set to true
     void setDisableTimelineZoomMouseWheel( bool disable );
-
 
     std::string getGlobalTracesPath() const;
     std::string getGlobalCFGsPath() const;
@@ -127,9 +126,8 @@ class ParaverConfig
     bool getGlobalPrevSessionLoad() const;
     bool getGlobalHelpContentsUsesBrowser() const;
     bool getGlobalHelpContentsQuestionAnswered() const;
-    bool getDisableTimelineZoomMouseWheel() const;
-
     bool getAppsChecked() const;
+    bool getDisableTimelineZoomMouseWheel() const;
 
     // TIMELINES XML SECTION
     void setTimelineDefaultName( std::string whichDefaultName );
@@ -155,6 +153,7 @@ class ParaverConfig
     void setTimelineWhatWhereEventPixels( PRV_INT16 eventPixels );
     void setTimelineSaveTextFormat( TTextFormat whichSaveTextFormat );
     void setTimelineSaveImageFormat( TImageFormat whichSaveImageFormat );
+    void setTimelineKeepSyncGroupClone( bool keepSyncGroupClone );
 
     std::string getTimelineDefaultName() const;
     std::string getTimelineNameFormat() const;
@@ -179,6 +178,8 @@ class ParaverConfig
     PRV_INT16 getTimelineWhatWhereEventPixels() const;
     TTextFormat getTimelineSaveTextFormat() const;
     TImageFormat getTimelineSaveImageFormat() const;
+    bool getTimelineKeepSyncGroupClone() const;
+
 
     // HISTOGRAM
     void setHistogramViewZoom( bool whichViewZoom );
@@ -205,6 +206,7 @@ class ParaverConfig
     void setHistogramSkipCreateDialog( bool whichSkipCreateDialog );
     void setHistogramOnlyTotals( bool whichOnlyTotals );
     void setHistogramShortLabels( bool whichShortLabels );
+    void setHistogramKeepSyncGroupClone( bool keepSyncGroupClone );
 
     bool getHistogramViewZoom() const;
     bool getHistogramViewFirstRowColored() const;
@@ -230,6 +232,7 @@ class ParaverConfig
     bool getHistogramSkipCreateDialog() const;
     bool getHistogramOnlyTotals() const;
     bool getHistogramShortLabels() const;
+    bool getHistogramKeepSyncGroupClone() const;
 
 
     // FILTERS XML SECTION : GLOBAL
@@ -457,6 +460,8 @@ class ParaverConfig
           ar & boost::serialization::make_nvp( "object_axis_size", objectAxisSize );
         if ( version >= 4 )
           ar & boost::serialization::make_nvp( "semantic_scale_min_at_zero", semanticScaleMinAtZero );
+        if ( version >= 5 )
+          ar & boost::serialization::make_nvp( "keep_In_Sync_Group_On_Clone", keepSyncGroupClone );
       }
 
       std::string defaultName;
@@ -483,6 +488,7 @@ class ParaverConfig
       PRV_UINT16 whatWhereEventPixels;
       TTextFormat saveTextFormat;
       TImageFormat saveImageFormat;
+      bool keepSyncGroupClone;
 
     } xmlTimeline;
 
@@ -521,6 +527,8 @@ class ParaverConfig
           ar & boost::serialization::make_nvp( "column_short_labels", shortLabels );
         if( version >= 7 )
           ar & boost::serialization::make_nvp( "autofit_control_scale_zero", autofitControlScaleZero );
+        if( version >= 8 ) 
+          ar & boost::serialization::make_nvp( "keep_In_Sync_Group_On_Clone", keepSyncGroupClone );
       }
 
       bool viewZoom;
@@ -547,6 +555,7 @@ class ParaverConfig
       bool skipCreateDialog;
       bool onlyTotals;
       bool shortLabels;
+      bool keepSyncGroupClone;
 
     } xmlHistogram;
 
@@ -815,8 +824,8 @@ class ParaverConfig
 // Second version: introducing some structure
 BOOST_CLASS_VERSION( ParaverConfig, 3 )
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesGlobal, 9 )
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 4 )
-BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 7 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesTimeline, 5 )
+BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesHistogram, 8 )
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesCutter, 1 )
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesFilter, 0 )
 BOOST_CLASS_VERSION( ParaverConfig::XMLPreferencesSoftwareCountersRange, 0 )

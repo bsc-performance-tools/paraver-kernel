@@ -190,6 +190,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlTimeline.whatWhereEventPixels = 5;
   xmlTimeline.saveTextFormat = TTextFormat::CSV;
   xmlTimeline.saveImageFormat = TImageFormat::PNG;
+  xmlTimeline.keepSyncGroupClone = true;
 
   xmlHistogram.viewZoom = true;
   xmlHistogram.viewFirstRowColored = false;
@@ -215,6 +216,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlHistogram.skipCreateDialog = false;
   xmlHistogram.onlyTotals = false;
   xmlHistogram.shortLabels = true;
+  xmlHistogram.keepSyncGroupClone = true;
 
   // Filter Globals
   xmlFilters.filterTraceUpToMB = 500.0;
@@ -399,14 +401,14 @@ void ParaverConfig::setGlobalHelpContentsQuestionAnswered( bool isHelpContentsQu
   xmlGlobal.helpContentsQuestionAnswered = isHelpContentsQuestionAnswered;
 }
 
+
 void ParaverConfig::setDisableTimelineZoomMouseWheel( bool disable )
 {
   isModified = isModified || ( xmlGlobal.disableTimelineZoomMouseWheel != disable );
   xmlGlobal.disableTimelineZoomMouseWheel = disable;
 }
 
-
-void ParaverConfig::setAppsChecked() // will always set to True
+void ParaverConfig::setAppsChecked() // will always set to true
 {
   xmlGlobal.appsChecked = true;
 }
@@ -633,6 +635,10 @@ void ParaverConfig::setTimelineSaveImageFormat( TImageFormat whichSaveImageForma
   xmlTimeline.saveImageFormat = whichSaveImageFormat;
 }
 
+void ParaverConfig::setTimelineKeepSyncGroupClone( bool keepSyncGroupClone )
+{
+  xmlTimeline.keepSyncGroupClone = keepSyncGroupClone;
+}
 
 string ParaverConfig::getTimelineDefaultName() const
 {
@@ -748,6 +754,11 @@ TTextFormat ParaverConfig::getTimelineSaveTextFormat() const
 TImageFormat ParaverConfig::getTimelineSaveImageFormat() const
 {
   return xmlTimeline.saveImageFormat;
+}
+
+bool ParaverConfig::getTimelineKeepSyncGroupClone() const
+{
+  return xmlTimeline.keepSyncGroupClone;
 }
 
 
@@ -896,6 +907,12 @@ void ParaverConfig::setHistogramShortLabels( bool whichShortLabels )
   xmlHistogram.shortLabels = whichShortLabels;
 }
 
+void ParaverConfig::setHistogramKeepSyncGroupClone( bool keepSyncGroupClone )
+{
+  xmlHistogram.keepSyncGroupClone = keepSyncGroupClone;
+}
+
+
 bool ParaverConfig::getHistogramViewZoom() const
 {
   return xmlHistogram.viewZoom;
@@ -1015,6 +1032,12 @@ bool ParaverConfig::getHistogramShortLabels() const
 {
   return xmlHistogram.shortLabels;
 }
+
+bool ParaverConfig::getHistogramKeepSyncGroupClone() const
+{
+  return xmlHistogram.keepSyncGroupClone;
+}
+
 
 // FILTERS XML SECTION : GLOBAL
 void ParaverConfig::setFiltersFilterTraceUpToMB( float whichFilterTraceUpToMB )
@@ -1571,6 +1594,8 @@ bool ParaverConfig::getAppsChecked() const
 {
   return xmlGlobal.appsChecked;
 }
+
+
 
 bool ParaverConfig::closeCompleteSessionFile()
 {

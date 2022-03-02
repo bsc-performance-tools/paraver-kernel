@@ -1408,6 +1408,14 @@ Histogram *HistogramProxy::clone()
 
   myGradientColor.copy( clonedHistogramProxy->myGradientColor );
 
+  if ( ParaverConfig::getInstance()->getHistogramKeepSyncGroupClone() )
+  {
+    clonedHistogramProxy->sync = sync;
+    clonedHistogramProxy->syncGroup = syncGroup;
+    if( clonedHistogramProxy->sync )
+      SyncWindows::getInstance()->addWindow( clonedHistogramProxy, syncGroup );
+  }
+
   // CFG4D
   clonedHistogramProxy->isCFG4DEnabled = isCFG4DEnabled;
   clonedHistogramProxy->CFG4DMode = CFG4DMode;
