@@ -161,7 +161,7 @@ std::string RowLabels<dummy>::getRowLabel( TWindowLevel whichLevel, TObjectOrder
   if( vectorLabels.empty() || vectorLabels.size() <= whichRow )
     return "";
 
-  return vectorLabels[ whichLevel ];
+  return vectorLabels[ whichRow ];
 }
 
 
