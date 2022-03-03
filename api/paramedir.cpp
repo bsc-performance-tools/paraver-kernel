@@ -997,8 +997,14 @@ int main( int argc, char *argv[] )
     // Initializations
     LocalKernel::init();
     KernelConnection *myKernel = new LocalKernel( userMessageOutput );
-    ParaverConfig *config = ParaverConfig::getInstance();
-    config->readParaverConfigFile();
+    try
+    {
+      ParaverConfig::getInstance()->readParaverConfigFile();
+    }
+    catch( ... )
+    {
+      std::cout << "Error while loading preferences. Using default options.\n";
+    }
 
     if ( parseArguments( myKernel, argc, argv, registeredTool ) )
     {
