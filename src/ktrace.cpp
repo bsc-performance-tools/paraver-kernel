@@ -44,7 +44,7 @@
 #include "noloadblocks.h"
 #include "traceeditblocks.h"
 #include "customalgorithms.h"
-#include "traceheader.h"
+#include "utils/traceparser/traceheader.h"
 
 using namespace std;
 #ifdef _MSC_VER

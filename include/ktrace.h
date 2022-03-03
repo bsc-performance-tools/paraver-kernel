@@ -30,8 +30,8 @@
 #include "paraverkerneltypes.h"
 #include "trace.h"
 #include "memorytrace.h"
-#include "processmodel.h"
-#include "resourcemodel.h"
+#include "utils/traceparser/processmodel.h"
+#include "utils/traceparser/resourcemodel.h"
 #include "tracebodyiofactory.h"
 
 #include "ParaverMetadataManager.h"

@@ -30,7 +30,7 @@
 #include <string>
 #include "prvtypes.h"
 #include "config_traits.h"
-#include "tracetypes.h"
+#include "utils/traceparser/tracetypes.h"
 
 static const TRecordTime factorTable[ DAY + 1 ] =
 {

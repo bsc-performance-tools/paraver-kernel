@@ -26,8 +26,8 @@
 
 
 #include "memoryblocks.h"
-#include "resourcemodel.h"
-#include "processmodel.h"
+#include "utils/traceparser/resourcemodel.h"
+#include "utils/traceparser/processmodel.h"
 #include "plaintypes.h"
 #include "plaintrace.h"
 

@@ -22,7 +22,7 @@
 \*****************************************************************************/
 
 #include "tracebodyiofactory.h"
-#include "tracebodyio_v1.h"
+#include "utils/traceparser/tracebodyio_v1.h"
 #include "tracebodyio_v2.h"
 #include "tracebodyio_csv.h"
 

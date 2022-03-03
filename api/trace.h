@@ -31,7 +31,7 @@
 #include "semanticcolor.h"
 #include "eventlabels.h"
 #include "statelabels.h"
-#include "rowlabels.h"
+#include "utils/traceparser/rowlabels.h"
 
 using boost::posix_time::ptime;
 

@@ -27,8 +27,8 @@
 
 #include "memorytrace.h"
 #include "plaintypes.h"
-#include "processmodel.h"
-#include "resourcemodel.h"
+#include "utils/traceparser/processmodel.h"
+#include "utils/traceparser/resourcemodel.h"
 
 using Plain::TRecord;
 

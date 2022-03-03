@@ -23,12 +23,12 @@
 
 #pragma once
 
-#include "tracebodyio.h"
+#include "utils/traceparser/tracebodyio.h"
 #include "tracestream.h"
 #include "ParaverMetadataManager.h"
 #include "memorytrace.h"
-#include "processmodel.h"
-#include "resourcemodel.h"
+#include "utils/traceparser/processmodel.h"
+#include "utils/traceparser/resourcemodel.h"
 #include "memoryblocks.h"
 
 

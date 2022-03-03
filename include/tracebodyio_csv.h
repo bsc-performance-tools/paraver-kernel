@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include "tracebodyio.h"
+#include "utils/traceparser/tracebodyio.h"
 #include "tracestream.h"
 #include "ktrace.h"
 

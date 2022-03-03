@@ -30,7 +30,7 @@
 #include "traceeditactions.h"
 #include "memorytrace.h"
 #include "tracebodyiofactory.h"
-#include "tracebodyio_v1.h"
+#include "utils/traceparser/tracebodyio_v1.h"
 
 class TraceToRecordAction: public TraceEditAction
 {

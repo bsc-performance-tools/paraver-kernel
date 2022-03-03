@@ -28,7 +28,7 @@
 #include <vector>
 #include "memoryblocks.h"
 #include "bplustreetypes.h"
-#include "processmodel.h"
+#include "utils/traceparser/processmodel.h"
 
 namespace bplustree
 {
