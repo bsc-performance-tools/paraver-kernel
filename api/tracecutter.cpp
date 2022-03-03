@@ -40,7 +40,7 @@ using namespace libparaver;
 #include <string.h>
 #include "eventlabels.h"
 
-//#ifdef WIN32
+//#ifdef _WIN32
 #include <sys/types.h>
 #include <sys/stat.h>
 //#endif
@@ -87,7 +87,7 @@ TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
   string pcf_name;
   FILE *pcfFile;
   vector< TEventType > HWCTypes;
-#ifdef WIN32
+#ifdef _WIN32
   struct _stat tmpStatBuffer;
 #else
   struct stat tmpStatBuffer;
@@ -95,7 +95,7 @@ TraceCutterProxy::TraceCutterProxy( const KernelConnection *whichKernel,
 
   pcf_name = LocalKernel::composeName( traceIn, string( "pcf" ) );
   int statReturn;
-#ifdef WIN32
+#ifdef _WIN32
   statReturn = _stat( pcf_name.c_str(), &tmpStatBuffer );
 #else
   statReturn = stat( pcf_name.c_str(), &tmpStatBuffer );
@@ -195,9 +195,14 @@ void TraceCutterProxy::set_remLastStates( bool remStates )
   myTraceCutter->set_remLastStates( remStates );
 }
 
-void TraceCutterProxy::set_keep_events( bool keepEvents )
+void TraceCutterProxy::set_keep_boundary_events( bool keepBoundaryEvents )
 {
-  myTraceCutter->set_keep_events( keepEvents );
+  myTraceCutter->set_keep_boundary_events( keepBoundaryEvents );
+}
+
+void TraceCutterProxy::set_keep_all_events( bool keepAllEvents )
+{
+  myTraceCutter->set_keep_all_events( keepAllEvents );
 }
 
 void TraceCutterProxy::setCutterApplicationCaller( string caller )

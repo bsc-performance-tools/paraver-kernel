@@ -26,7 +26,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdlib.h>
-#ifdef WIN32
+#ifdef _WIN32
   #include <shlobj.h>
   #include <Shlwapi.h>
   #define MAX_LEN_PATH 2048
@@ -62,7 +62,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   string paraverXMLDir;
   string paraverTutorialsDir;
 
-#ifdef WIN32
+#ifdef _WIN32
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
 
@@ -150,7 +150,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlGlobal.mainWindowWidth = 300;
   xmlGlobal.mainWindowHeight = 600;
   string strFile( homedir );
-#ifdef WIN32
+#ifdef _WIN32
   strFile.append( "\\paraver\\" );
 #else
   strFile.append( "/.paraver/" );
@@ -190,6 +190,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlTimeline.whatWhereEventPixels = 5;
   xmlTimeline.saveTextFormat = TTextFormat::CSV;
   xmlTimeline.saveImageFormat = TImageFormat::PNG;
+  xmlTimeline.keepSyncGroupClone = true;
 
   xmlHistogram.viewZoom = true;
   xmlHistogram.viewFirstRowColored = false;
@@ -215,6 +216,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlHistogram.skipCreateDialog = false;
   xmlHistogram.onlyTotals = false;
   xmlHistogram.shortLabels = true;
+  xmlHistogram.keepSyncGroupClone = true;
 
   // Filter Globals
   xmlFilters.filterTraceUpToMB = 500.0;
@@ -265,7 +267,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
 
 #ifdef __APPLE__
   xmlExternalApplications.myTextEditors.push_back( "open" );
-#elif !defined( WIN32 )
+#elif !defined( _WIN32 )
   xmlExternalApplications.myTextEditors.push_back( "xdg-open" );
   xmlExternalApplications.myTextEditors.push_back( "gvim" );
   xmlExternalApplications.myTextEditors.push_back( "nedit" );
@@ -279,7 +281,7 @@ ParaverConfig::ParaverConfig() : isModified( false )
 
 #ifdef __APPLE__
   xmlExternalApplications.myPDFReaders.push_back( "open" );
-#elif !defined( WIN32 )
+#elif !defined( _WIN32 )
   xmlExternalApplications.myPDFReaders.push_back( "xdg-open" );
   xmlExternalApplications.myPDFReaders.push_back( "evince" );
   xmlExternalApplications.myPDFReaders.push_back( "okular" );
@@ -291,6 +293,8 @@ ParaverConfig::ParaverConfig() : isModified( false )
   xmlExternalApplications.myPDFReaders.push_back( "Acrobat.exe" ); 
   xmlExternalApplications.myPDFReaders.push_back( "MicrosoftEdge.exe" );
 #endif
+
+  xmlWorkspaces.hintsDiscardedSubmenu = false;
 
   loadMap();
 }
@@ -397,14 +401,14 @@ void ParaverConfig::setGlobalHelpContentsQuestionAnswered( bool isHelpContentsQu
   xmlGlobal.helpContentsQuestionAnswered = isHelpContentsQuestionAnswered;
 }
 
+
 void ParaverConfig::setDisableTimelineZoomMouseWheel( bool disable )
 {
   isModified = isModified || ( xmlGlobal.disableTimelineZoomMouseWheel != disable );
   xmlGlobal.disableTimelineZoomMouseWheel = disable;
 }
 
-
-void ParaverConfig::setAppsChecked() // will always set to True
+void ParaverConfig::setAppsChecked() // will always set to true
 {
   xmlGlobal.appsChecked = true;
 }
@@ -631,6 +635,10 @@ void ParaverConfig::setTimelineSaveImageFormat( TImageFormat whichSaveImageForma
   xmlTimeline.saveImageFormat = whichSaveImageFormat;
 }
 
+void ParaverConfig::setTimelineKeepSyncGroupClone( bool keepSyncGroupClone )
+{
+  xmlTimeline.keepSyncGroupClone = keepSyncGroupClone;
+}
 
 string ParaverConfig::getTimelineDefaultName() const
 {
@@ -746,6 +754,11 @@ TTextFormat ParaverConfig::getTimelineSaveTextFormat() const
 TImageFormat ParaverConfig::getTimelineSaveImageFormat() const
 {
   return xmlTimeline.saveImageFormat;
+}
+
+bool ParaverConfig::getTimelineKeepSyncGroupClone() const
+{
+  return xmlTimeline.keepSyncGroupClone;
 }
 
 
@@ -894,6 +907,12 @@ void ParaverConfig::setHistogramShortLabels( bool whichShortLabels )
   xmlHistogram.shortLabels = whichShortLabels;
 }
 
+void ParaverConfig::setHistogramKeepSyncGroupClone( bool keepSyncGroupClone )
+{
+  xmlHistogram.keepSyncGroupClone = keepSyncGroupClone;
+}
+
+
 bool ParaverConfig::getHistogramViewZoom() const
 {
   return xmlHistogram.viewZoom;
@@ -1013,6 +1032,12 @@ bool ParaverConfig::getHistogramShortLabels() const
 {
   return xmlHistogram.shortLabels;
 }
+
+bool ParaverConfig::getHistogramKeepSyncGroupClone() const
+{
+  return xmlHistogram.keepSyncGroupClone;
+}
+
 
 // FILTERS XML SECTION : GLOBAL
 void ParaverConfig::setFiltersFilterTraceUpToMB( float whichFilterTraceUpToMB )
@@ -1489,6 +1514,17 @@ std::vector< std::string> ParaverConfig::getGlobalExternalPDFReaders() const
   return xmlExternalApplications.myPDFReaders;
 }
 
+// WORKSPACES
+void ParaverConfig::setWorkspacesHintsDiscardedSubmenu( bool whichDiscardedSubmenu )
+{
+  xmlWorkspaces.hintsDiscardedSubmenu = whichDiscardedSubmenu;
+}
+
+bool ParaverConfig::getWorkspacesHintsDiscardedSubmenu() const
+{
+  return xmlWorkspaces.hintsDiscardedSubmenu;
+}
+
 
 bool ParaverConfig::initCompleteSessionFile()
 {
@@ -1497,7 +1533,7 @@ bool ParaverConfig::initCompleteSessionFile()
   string strLine;
   bool status = false;
 
-#ifdef WIN32
+#ifdef _WIN32
   strFile = getenv( "HOMEDRIVE" );
   strFile.append( getenv( "HOMEPATH" ) );
   strFile.append( "\\paraver\\CompleteSession" );
@@ -1530,7 +1566,7 @@ void ParaverConfig::cleanCompleteSessionFile()
   string strFile;
   string strLine;
 
-#ifdef WIN32
+#ifdef _WIN32
   strFile = getenv( "HOMEDRIVE" );
   strFile.append( getenv( "HOMEPATH" ) );
   strFile.append( "\\paraver\\CompleteSession" );
@@ -1559,6 +1595,8 @@ bool ParaverConfig::getAppsChecked() const
   return xmlGlobal.appsChecked;
 }
 
+
+
 bool ParaverConfig::closeCompleteSessionFile()
 {
   ofstream file;
@@ -1566,7 +1604,7 @@ bool ParaverConfig::closeCompleteSessionFile()
   string strLine;
   bool status = false;
 
-#ifdef WIN32
+#ifdef _WIN32
   strFile = getenv( "HOMEDRIVE" );
   strFile.append( getenv( "HOMEPATH" ) );
   strFile.append( "\\paraver\\CompleteSession" );
@@ -1597,14 +1635,14 @@ void ParaverConfig::readParaverConfigFile()
   string strBackupFileXML;
   string homedir;
 
-#ifdef WIN32
+#ifdef _WIN32
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
 #else
   homedir = getenv( "HOME" );
 #endif
   strFile.append( homedir );
-#ifdef WIN32
+#ifdef _WIN32
   strFile.append( "\\paraver\\paraver" );
 #else
   strFile.append( "/.paraver/paraver" );
@@ -1685,7 +1723,7 @@ void ParaverConfig::writeParaverConfigFile( bool writeBackup )
   string homedir;
   string strFile, strBackupFile;
 
-#ifdef WIN32
+#ifdef _WIN32
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
 #else
@@ -1693,7 +1731,7 @@ void ParaverConfig::writeParaverConfigFile( bool writeBackup )
 #endif
   strFile.append( homedir );
 
-#ifdef WIN32
+#ifdef _WIN32
   strFile.append( "\\paraver\\paraver" );
   string tmpPath( homedir + "\\paraver" );
 
@@ -1734,7 +1772,7 @@ bool ParaverConfig::writeDefaultConfig()
   string strFile;
   string homedir;
 
-#ifdef WIN32
+#ifdef _WIN32
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
 #else
@@ -1742,7 +1780,7 @@ bool ParaverConfig::writeDefaultConfig()
 #endif
   strFile.append( homedir );
 
-#ifdef WIN32
+#ifdef _WIN32
   strFile.append( "\\paraver\\paraver.xml" );
   string tmpPath( homedir + "\\paraver" );
 

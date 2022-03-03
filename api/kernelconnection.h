@@ -73,7 +73,7 @@ class KernelConnection
 
     virtual bool checkTraceSize( const std::string& filename, TTraceSize maxSize ) const = 0;
     virtual TTraceSize getTraceSize( const std::string& filename ) const = 0;
-    virtual Trace *newTrace( const std::string& whichFile, bool noLoad, ProgressController *progress ) const = 0;
+    virtual Trace *newTrace( const std::string& whichFile, bool noLoad, ProgressController *progress, TTraceSize traceSize = 0 ) const = 0;
     virtual std::string getPCFFileLocation( const std::string& traceFile ) const = 0;
     virtual std::string getROWFileLocation( const std::string& traceFile ) const = 0;
     virtual Timeline *newSingleWindow() const = 0;

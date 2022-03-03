@@ -117,6 +117,10 @@ class ProcessModel
     ThreadOrderT addThread( ApplOrderT whichAppl, TaskOrderT whichTask, NodeOrderT execNode );
     ThreadOrderT addApplTaskThread( const ThreadLocation& whichLocation, NodeOrderT execNode = 0 );
 
+    TNodeOrder getNode( TThreadOrder whichThread ) const
+    { 
+      return applications[ threads[ whichThread ].appl ].tasks[ threads[ whichThread ].task ].threads[ threads[ whichThread ].thread ].nodeExecution; 
+    }
 
   protected:
 

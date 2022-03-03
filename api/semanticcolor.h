@@ -101,6 +101,7 @@ class CodeColor: public SemanticColor
     void setCustomColor( TSemanticValue whichValue, rgb color );
     bool existCustomColors() const;
     const std::map<TSemanticValue, rgb>& getCustomPalette() const;
+    void setCustomPalette( const std::map<TSemanticValue, rgb>& whichPalette );
     rgb calcColor( TSemanticValue whichValue,
                    TSemanticValue minimum,
                    TSemanticValue maximum,

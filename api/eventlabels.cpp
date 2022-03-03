@@ -21,6 +21,8 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
+#include <algorithm>
+#include <regex>
 
 #include "eventlabels.h"
 
@@ -216,14 +218,56 @@ bool EventLabels::getValues( TEventType type, map<TEventValue, string> &values )
 }
 
 
-bool EventLabels::getEventType( const string& whichTypeLabel, TEventType& onType ) const
+bool EventLabels::getEventType( const string& whichTypeLabel, vector<TEventType>& onVector ) const
 {
-  map<string, TEventType>::const_iterator it = label2eventType.find( whichTypeLabel );
-  if( it == label2eventType.end() )
-    return false;
+  if( whichTypeLabel.find( "*" ) == string::npos )
+  {
+    map<string, TEventType>::const_iterator it = label2eventType.find( whichTypeLabel );
+    if( it == label2eventType.end() )
+      return false;
 
-  onType = (*it).second;
-  return true;
+    onVector.push_back( (*it).second );
+    return true;
+  }
+  else
+  {
+    string strRegex = "";
+    std::for_each( whichTypeLabel.begin(), whichTypeLabel.end(),
+                   [&strRegex]( char elem ) { switch( elem )
+                                              {
+                                                case '*':
+                                                  strRegex += ".*";
+                                                  break;
+                                                case '.':
+                                                case '+':
+                                                case '?':
+                                                case '$':
+                                                case '^':
+                                                case '|':
+                                                case '[':
+                                                case ']':
+                                                case '(':
+                                                case ')':
+                                                case '{':
+                                                case '}':
+                                                  strRegex += '\\';
+                                                  strRegex += elem;
+                                                  break;
+                                                default:
+                                                  strRegex += elem;
+                                                  break;
+                                              }
+                                            } );
+    std::regex tmpRegex( strRegex );
+    
+    size_t prevSize = onVector.size();
+    std::for_each( eventType2Label.begin(), eventType2Label.end(),
+                   [&onVector, &tmpRegex]( auto elem ) { if( std::regex_match( elem.second, tmpRegex ) ) onVector.push_back( elem.first ); } );
+
+    return prevSize != onVector.size();
+  }
+
+  return false;
 }
 
 

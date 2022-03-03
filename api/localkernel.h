@@ -44,7 +44,7 @@ class LocalKernel: public KernelConnection
 
     virtual bool checkTraceSize( const std::string& filename, TTraceSize maxSize ) const override;
     virtual TTraceSize getTraceSize( const std::string& filename ) const override;
-    virtual Trace *newTrace( const std::string& whichFile, bool noLoad, ProgressController *progress = nullptr ) const override;
+    virtual Trace *newTrace( const std::string& whichFile, bool noLoad, ProgressController *progress = nullptr, TTraceSize traceSize = 0 ) const override;
     virtual std::string getPCFFileLocation( const std::string& traceFile ) const override;
     virtual std::string getROWFileLocation( const std::string& traceFile ) const override;
     virtual Timeline *newSingleWindow() const override;

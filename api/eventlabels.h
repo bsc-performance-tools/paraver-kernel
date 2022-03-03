@@ -60,7 +60,7 @@ class EventLabels
     bool getValues( TEventType type, std::vector<std::string> &values ) const;
     bool getValues( TEventType type, std::map<TEventValue, std::string> &values ) const;
 
-    bool getEventType( const std::string& whichTypeLabel, TEventType& onType ) const;
+    bool getEventType( const std::string& whichTypeLabel, std::vector<TEventType>& onVector ) const;
     bool getEventValue( const std::string& whichValueLabel, std::multimap< TEventType, TEventValue >& onMap ) const;
 
   protected:

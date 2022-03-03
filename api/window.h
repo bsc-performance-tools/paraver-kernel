@@ -1135,7 +1135,7 @@ class TimelineProxy: public Timeline
                                           std::vector< std::unordered_set< PRV_INT32 > >& eventsToDraw,                 // I/O
                                           std::vector< std::unordered_set< commCoord, hashCommCoord > >& commsToDraw,   // I/O
                                           ProgressController *progress ) override;
-#endif // WIN32
+#endif // _WIN32
 
 #ifdef _MSC_VER
     virtual void computeSemanticPunctualParallel( std::vector< TObjectOrder >& selectedSet,

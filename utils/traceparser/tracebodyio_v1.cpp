@@ -151,8 +151,8 @@ void TraceBodyIO_v1< PARAM_LIST >::read( TraceStreamT& file,
       break;
 
     default:
-      cerr << "TraceBodyIO_v1::read()" << endl;
       cerr << "Unkwnown record type." << endl;
+      cerr << line << endl;
       break;
   };
 }

@@ -24,7 +24,7 @@
 #include "workspacemanager.h"
 #include "paraverkernelexception.h"
 
-#ifdef WIN32
+#ifdef _WIN32
   #include <shlobj.h>
   #include <Shlwapi.h>
 
@@ -234,7 +234,7 @@ void WorkspaceManager::loadXML()
   string fullPath;
 
   // Read distributed
-#ifdef WIN32
+#ifdef _WIN32
   baseDir = getenv( "HOMEDRIVE" );
   baseDir.append( getenv( "HOMEPATH" ) );
 
@@ -266,7 +266,7 @@ void WorkspaceManager::loadXML()
 #endif
 
   fullPath = baseDir;
-#ifdef WIN32
+#ifdef _WIN32
   fullPath.append( "\\share\\workspaces.xml" );
 #else
   fullPath.append( "/share/workspaces.xml" );
@@ -287,14 +287,14 @@ void WorkspaceManager::loadXML()
   baseDir.clear();
   fullPath.clear();
 
-#ifdef WIN32
+#ifdef _WIN32
   baseDir = getenv( "HOMEDRIVE" );
   baseDir.append( getenv( "HOMEPATH" ) );
 #else
   baseDir = getenv( "HOME" );
 #endif
   fullPath.append( baseDir );
-#ifdef WIN32
+#ifdef _WIN32
   fullPath.append( "\\paraver\\workspaces" );
 #else
   fullPath.append( "/.paraver/workspaces" );
@@ -324,7 +324,7 @@ void WorkspaceManager::saveXML()
   string homedir;
   string strFile;
 
-#ifdef WIN32
+#ifdef _WIN32
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
 #else
@@ -332,7 +332,7 @@ void WorkspaceManager::saveXML()
 #endif
   strFile.append( homedir );
 
-#ifdef WIN32
+#ifdef _WIN32
   strFile.append( "\\paraver\\workspaces" );
   string tmpPath( homedir + "\\workspaces" );
 /*

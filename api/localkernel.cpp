@@ -27,7 +27,7 @@
 
 #include <time.h>
 #include <sys/stat.h>
-#ifdef WIN32
+#ifdef _WIN32
   #include <shlobj.h>
   #include <Shlwapi.h>
   #define MAX_LEN_PATH 2048
@@ -92,7 +92,7 @@ void LocalKernel::init()
 LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
     myMessageFunction( messageFunction )
 {
-#ifdef WIN32
+#ifdef _WIN32
   setPathSeparator( string( "\\" ) );
 #else
   setPathSeparator( string( "/" ) );
@@ -103,7 +103,7 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
   string paraverHomeDir;
   string paraverCFGsDir;
 
-#ifdef WIN32
+#if defined _WIN32 || defined __MINGW32__
   char myPath[ MAX_LEN_PATH ];
   HMODULE hModule = GetModuleHandle( nullptr );
   if ( hModule != nullptr )
@@ -196,12 +196,12 @@ TTraceSize LocalKernel::getTraceSize( const string& filename ) const
 }
 
 
-Trace *LocalKernel::newTrace( const string& whichFile, bool noLoad, ProgressController *progress ) const
+Trace *LocalKernel::newTrace( const string& whichFile, bool noLoad, ProgressController *progress, TTraceSize traceSize ) const
 {
   if ( progress == nullptr )
-    return new KTrace( whichFile, nullptr, noLoad );
+    return new KTrace( whichFile, nullptr, noLoad, traceSize );
 
-  return new KTrace( whichFile, ( KProgressController * ) progress->getConcrete(), noLoad );
+  return new KTrace( whichFile, ( KProgressController * ) progress->getConcrete(), noLoad, traceSize );
 }
 
 
@@ -521,7 +521,7 @@ bool LocalKernel::isFileReadable( const std::string& filename,
   {
 #if defined(__FreeBSD__) || defined(__APPLE__)
     if ( ( tmpfile = fopen( filename.c_str(), "r" ) ) == nullptr )
-#elif defined(WIN32)
+#elif defined(_WIN32)
     if ( fopen_s( &tmpfile, filename.c_str(), "r" ) != 0 )
 #else
     if ( ( tmpfile = fopen64( filename.c_str(), "r" ) ) == nullptr )
@@ -580,7 +580,6 @@ bool LocalKernel::isTraceFile( const std::string &filename ) const
 
   bool isParaverTrace = true;
 
-  //Step 1: paraver + datetime 
   string tmpFirstLine;
   file->getline( tmpFirstLine );
   istringstream firstLine( tmpFirstLine );
@@ -588,24 +587,6 @@ bool LocalKernel::isTraceFile( const std::string &filename ) const
   string item;
   getline( firstLine, item, ' ' );
   isParaverTrace = isParaverTrace && ( item == "#Paraver" );
-  getline( firstLine, item, ')' );
-  getline( firstLine, item, ':' );
-
-  //Step 2: trace end time
-  getline( firstLine, item, ':' );
-
-  //Step 3: trace models
-  
-  try
-  {
-    ResourceModel<> tmpResource( firstLine );
-     ProcessModel<> tmpProcess( firstLine, tmpResource.isReady() );
-    isParaverTrace = isParaverTrace && tmpProcess.isReady();
-  }
-  catch( ... )
-  {
-    isParaverTrace = false;
-  }
 
   file->close();
   delete file;
@@ -637,7 +618,7 @@ void LocalKernel::getNewTraceName( char *name,
 {
   /* Putting on table of names in order to generate new trace names */
   int i;
-#ifndef WIN32
+#ifndef _WIN32
   struct stat file_info;
 #else
   struct _stat64 file_info;
@@ -784,7 +765,7 @@ void LocalKernel::getNewTraceName( char *name,
 
     sprintf( new_trace_name, "%s%s%d.prv", new_trace_name, toolInfix.c_str(), numInfix );
   }
-#ifndef WIN32
+#ifndef _WIN32
   while ( stat( new_trace_name, &file_info ) == 0 );
 #else
   while ( _stat64( new_trace_name, &file_info ) == 0 );
@@ -818,7 +799,7 @@ string LocalKernel::getNewTraceName( const string& fullPathTraceName,
 
   map< string, int > toolNumberedSuffix;
 
-#ifndef WIN32
+#ifndef _WIN32
   struct stat fileInfo;
 #else
   struct _stat64 fileInfo;
@@ -884,7 +865,7 @@ string LocalKernel::getNewTraceName( const string& fullPathTraceName,
     newTraceNamePrvGz = newTraceName + GZIPPED_PRV_SUFFIX;
 
    // Do these new names exist (in current dir)?
- #ifndef WIN32
+ #ifndef _WIN32
     newName = ( stat( newTraceNamePrv.c_str(), &fileInfo ) != 0 ) &&
               ( stat( newTraceNamePrvGz.c_str(), &fileInfo ) != 0 );
 #else

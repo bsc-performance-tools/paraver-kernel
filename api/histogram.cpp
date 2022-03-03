@@ -35,7 +35,7 @@
 #include "paraverlabels.h"
 #include <iostream>
 
-#ifdef WIN32
+#ifdef _WIN32
 #undef min
 #undef max
 #endif
@@ -1407,6 +1407,14 @@ Histogram *HistogramProxy::clone()
   clonedHistogramProxy->commCalcStat = vector<string>( commCalcStat );
 
   myGradientColor.copy( clonedHistogramProxy->myGradientColor );
+
+  if ( ParaverConfig::getInstance()->getHistogramKeepSyncGroupClone() )
+  {
+    clonedHistogramProxy->sync = sync;
+    clonedHistogramProxy->syncGroup = syncGroup;
+    if( clonedHistogramProxy->sync )
+      SyncWindows::getInstance()->addWindow( clonedHistogramProxy, syncGroup );
+  }
 
   // CFG4D
   clonedHistogramProxy->isCFG4DEnabled = isCFG4DEnabled;

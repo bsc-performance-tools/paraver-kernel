@@ -27,7 +27,7 @@
 
 using namespace std;
 
-#ifdef WIN32
+#ifdef _WIN32
 const string PreviousFiles::previousTracesFile = "\\paraver\\paraverdb";
 const string PreviousFiles::previousCFGsFile = "\\paraver\\paravercfgdb";
 const string PreviousFiles::previousSessionsFile = "\\paraver\\paraversessionsdb";
@@ -68,7 +68,7 @@ PreviousFiles::PreviousFiles( const string &filename, bool purge )
   fstream myFile;
   string homedir;
 
-#ifdef WIN32
+#ifdef _WIN32
   homedir = getenv( "HOMEDRIVE" );
   homedir.append( getenv( "HOMEPATH" ) );
 #else

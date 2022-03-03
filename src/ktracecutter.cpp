@@ -32,7 +32,7 @@
 #include <string>
 #include <sstream>
 
-#ifndef WIN32
+#ifndef _WIN32
 #include <unistd.h>
 #else
 #include <io.h>
@@ -45,7 +45,7 @@
 #include "paraverconfig.h"
 #include "ParaverMetadataManager.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #define atoll _atoi64
 #endif
 
@@ -58,7 +58,7 @@ KTraceCutter::KTraceCutter( TraceOptions *options,
   line = (char *) malloc( sizeof( char ) * MAX_TRACE_HEADER );
   total_cutter_iters = 0;
   exec_options = new KTraceOptions( (KTraceOptions *) options );
-  PCFEventTypesWithValuesZero.insert( whichTypesWithValuesZero.begin(), whichTypesWithValuesZero.end() );
+  HWCTypesInPCF.insert( whichTypesWithValuesZero.begin(), whichTypesWithValuesZero.end() );
   cutterApplicationCaller = CutterMetadata::ORIGINAL_APPLICATION_ID;
 }
 
@@ -124,7 +124,7 @@ void KTraceCutter::set_remLastStates( bool remStates )
 {
 }
 
-void KTraceCutter::set_keep_events( bool keepEvents )
+void KTraceCutter::set_keep_boundary_events( bool keepEvents )
 {
 }
 
@@ -178,13 +178,14 @@ void KTraceCutter::read_cutter_params()
   break_states = exec_options->break_states;
   remFirstStates = exec_options->remFirstStates;
   remLastStates = exec_options->remLastStates;
-  keep_events = exec_options->keep_events;
+  keep_boundary_events = exec_options->keep_boundary_events;
+  keep_all_events = exec_options->keep_all_events;
 
   if ( originalTime )
     break_states = false; // Assigned ONLY if originalTime == true, else KEEP value.
 
   if( break_states )
-    keep_events = false;
+    keep_boundary_events = false;
 }
 
 
@@ -332,7 +333,7 @@ void KTraceCutter::proces_cutter_header( char *header,
   }
 
   if ( !is_zip )
-#ifdef WIN32
+#ifdef _WIN32
     _fseeki64( infile, 0, SEEK_SET );
 #else
     fseek( infile, -( strlen( auxLine ) ), SEEK_CUR );
@@ -348,21 +349,9 @@ void KTraceCutter::proces_cutter_header( char *header,
 }
 
 
-const set< TEventType > KTraceCutter::mergeDuplicates( const multiset< TEventType>& eventTypesWithPCFZeros )
-{
-  set< TEventType > uniqueEventTypes;
-
-  for ( multiset< TEventType >::const_iterator it = eventTypesWithPCFZeros.begin();
-        it != eventTypesWithPCFZeros.end(); ++it )
-  {
-    uniqueEventTypes.insert( *it );
-  }
-
-  return uniqueEventTypes;
-}
-
-
-void KTraceCutter::dumpEventsSet( const set< TEventType >& closingEventTypes,
+template< typename IteratorType >
+void KTraceCutter::dumpEventsSet( const IteratorType& begin,
+                                  const IteratorType& end,
                                   unsigned int cpu,
                                   unsigned int appl,
                                   unsigned int task,
@@ -379,14 +368,14 @@ void KTraceCutter::dumpEventsSet( const set< TEventType >& closingEventTypes,
     writtenComment = true;
   }
 
-  for ( set< TEventType >::const_iterator it = closingEventTypes.begin(); it != closingEventTypes.end(); ++it )
+  for ( IteratorType it = begin; it != end; ++it )
   {
     if ( numWrittenChars == 0 )
     {
       // Write new line
       numWrittenChars += fprintf( outfile, "2:%d:%d:%d:%d:%lld:%lld:0",
-                               cpu, appl + 1, task + 1, thread + 1,
-                               final_time, (unsigned long long)*it );
+                                  cpu, appl + 1, task + 1, thread + 1,
+                                  final_time, (unsigned long long)*it );
       if( writeToTmpFile ) ++total_tmp_lines;
 
       needEOL = true;
@@ -422,7 +411,6 @@ void KTraceCutter::appendLastZerosToUnclosedEvents( const unsigned long long fin
   int numWrittenChars = 0;
   bool needEOL = false;
   bool writtenComment = false;
-  set< TEventType > currentEventTypesWithPCFZeros;
 
   for( CutterThreadInfo::iterator it = tasks.begin(); it != tasks.end(); ++it )
   {
@@ -436,9 +424,14 @@ void KTraceCutter::appendLastZerosToUnclosedEvents( const unsigned long long fin
     numWrittenChars = 0;
     needEOL = false;
 
-    if( tmpInfo.eventTypesWithoutPCFZeros.size() > 0 )
+    if( tmpInfo.openedEventTypes.size() > 0 )
     {
-      dumpEventsSet( tmpInfo.eventTypesWithoutPCFZeros,
+      std::set<TEventType> uniqueOpenedTypes;
+
+      std::copy( tmpInfo.openedEventTypes.begin(), tmpInfo.openedEventTypes.end(), std::inserter( uniqueOpenedTypes, uniqueOpenedTypes.begin() ) );
+
+      dumpEventsSet( uniqueOpenedTypes.begin(),
+                     uniqueOpenedTypes.end(),
                      cpu, appl, task, thread,
                      final_time,
                      numWrittenChars,
@@ -446,13 +439,10 @@ void KTraceCutter::appendLastZerosToUnclosedEvents( const unsigned long long fin
                      writtenComment );
     }
 
-    if( tmpInfo.eventTypesWithPCFZeros.size() > 0 )
+    if( tmpInfo.HWCTypesInPRV.size() > 0 )
     {
-
-      // Avoid long queues of zeros with same event type
-      currentEventTypesWithPCFZeros = mergeDuplicates( tmpInfo.eventTypesWithPCFZeros );
-
-      dumpEventsSet( currentEventTypesWithPCFZeros,
+      dumpEventsSet( tmpInfo.HWCTypesInPRV.begin(),
+                     tmpInfo.HWCTypesInPRV.end(),
                      cpu, appl, task, thread,
                      final_time,
                      numWrittenChars,
@@ -506,7 +496,7 @@ void KTraceCutter::show_cutter_progress_bar( ProgressController *progress )
       current_read_size = ( unsigned long long )ftello( infile );
     else
       current_read_size = ( unsigned long )gztell( gzInfile );
-#elif defined(WIN32)
+#elif defined(_WIN32)
     if ( !is_zip )
       current_read_size = ( unsigned long long )_ftelli64( infile );
     else
@@ -573,55 +563,23 @@ void KTraceCutter::update_queue( unsigned int appl, unsigned int task, unsigned 
   thread_info& tmpInfo = tasks( appl, task, thread );
   if ( value > 0 )
   {
-    if ( PCFEventTypesWithValuesZero.find( type ) != PCFEventTypesWithValuesZero.end() )
+    if ( HWCTypesInPCF.find( type ) != HWCTypesInPCF.end() )
     {
-      tmpInfo.eventTypesWithPCFZeros.insert( (TEventType)type );
+      tmpInfo.HWCTypesInPRV.insert( (TEventType)type );
     }
     else
     {
-      tmpInfo.eventTypesWithoutPCFZeros.insert( (TEventType)type );
+      tmpInfo.openedEventTypes.push_back( (TEventType)type );
     }
   }
   else
   {
-    if( tmpInfo.eventTypesWithPCFZeros.size() > 0)
-    {
-      multiset< TEventType >::const_iterator it = tmpInfo.eventTypesWithPCFZeros.find( (TEventType)type );
-      if ( it != tmpInfo.eventTypesWithPCFZeros.end() )
-      {
-        tmpInfo.eventTypesWithPCFZeros.erase( it );
-      }
-    }
+    auto it = std::find( tmpInfo.openedEventTypes.rbegin(), tmpInfo.openedEventTypes.rend(), (TEventType)type );
+    if( it != tmpInfo.openedEventTypes.rend() )
+      tmpInfo.openedEventTypes.erase( std::next( it ).base() ); // calling base() points resulting iterator to previous position
   }
 }
 
-
-void KTraceCutter::load_counters_of_pcf( char *trace_name )
-{
-  string pcf_name;
-  FILE *pcf;
-
-  pcf_name = LocalKernel::composeName( string( trace_name ), string( "pcf" ) );
-
-  last_counter = 0;
-  if ( ( pcf = fopen( pcf_name.c_str(), "r" ) ) == nullptr )
-    return;
-
-  fclose( pcf );
-
-  // Assumed counters
-  for( set< TEventType >::iterator it = PCFEventTypesWithValuesZero.begin(); it != PCFEventTypesWithValuesZero.end(); ++it )
-  {
-    counters[last_counter] = (unsigned long long)(*it);
-    last_counter++;
-
-    if ( last_counter == 500 )
-    {
-      printf( "NO more memory for loading counters of .pcf\n" );
-      break;
-    }
-  }
-}
 
 // Substract to all the times in the trace the first time of the first record
 // Doesn't change header
@@ -641,7 +599,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
       printf( "KCutter: Error Opening File %s\n", nameIn );
       exit( 1 );
     }
-#elif defined(WIN32)
+#elif defined(_WIN32)
     if ( fopen_s( &infile, nameIn, "r" ) != 0 )
     {
       printf( "KCutter: Error Opening File %s\n", nameIn );
@@ -672,7 +630,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
     printf( "KCutter: Error Opening File %s\n", nameOut );
     exit( 1 );
   }
-#elif defined(WIN32)
+#elif defined(_WIN32)
   if ( fopen_s( &outfile, nameOut, "w" ) != 0 )
   {
     printf( "KCutter: Error Opening File %s\n", nameOut );
@@ -706,7 +664,7 @@ void KTraceCutter::shiftLeft_TraceTimes_ToStartFromZero( const char *originalTra
 
   bool end_read = false;
 
-#ifdef WIN32
+#ifdef _WIN32
   if ( !is_zip )
   {
     fgets( trace_header, MAX_TRACE_HEADER, infile );
@@ -887,6 +845,20 @@ bool KTraceCutter::is_selected_task( int task_id )
   return false;
 }
 
+KTraceCutter::thread_info& KTraceCutter::initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu, bool& reset_counters )
+{
+  ++useful_tasks;
+  init_task_counter = 1;
+  thread_info& tmpInfo = tasks( appl - 1, task - 1, thread - 1 );
+  tmpInfo.finished = true;
+  tmpInfo.lastCPU = cpu;
+  tmpInfo.last_time = 0;
+
+  /* Have to reset HC and the begining of cut */
+  reset_counters = true;
+
+  return tmpInfo;
+}
 
 void KTraceCutter::execute( std::string trace_in,
                             std::string trace_out,
@@ -946,9 +918,7 @@ void KTraceCutter::execute( std::string trace_in,
       is_zip = false;
   }
 
-  /* Load what counters appears in the trace */
   reset_counters = false;
-  load_counters_of_pcf( trace_name );
 
   /* Open the files.  If nullptr is returned there was an error */
   if ( !is_zip )
@@ -960,7 +930,7 @@ void KTraceCutter::execute( std::string trace_in,
       printf( "KCutter: Error Opening File %s\n", trace_name );
       exit( 1 );
     }
-#elif defined(WIN32)
+#elif defined(_WIN32)
     if ( fopen_s( &infile, trace_name, "r" ) != 0 )
     {
       perror( "ERROR" );
@@ -992,7 +962,7 @@ void KTraceCutter::execute( std::string trace_in,
   {
     tmp_dir = ParaverConfig::getInstance()->getGlobalTmpPath();
 
-#ifdef WIN32
+#ifdef _WIN32
     sprintf( trace_file_out, "%s\\tmp_fileXXXXXX", tmp_dir.c_str() );
     _mktemp_s( trace_file_out, strlen( trace_file_out ) + 1 );
 #else
@@ -1009,7 +979,7 @@ void KTraceCutter::execute( std::string trace_in,
     printf( "Error Opening KCutter Ouput File %s\n", trace_file_out );
     exit( 1 );
   }
-#elif defined(WIN32)
+#elif defined(_WIN32)
   if ( fopen_s( &outfile, trace_file_out, "w" ) != 0 )
   {
     printf( "Error Opening KCutter Ouput File %s\n", trace_file_out );
@@ -1106,13 +1076,24 @@ void KTraceCutter::execute( std::string trace_in,
         if ( time_2 <= time_min )
           break;
 
+        if ( time_1 < time_min && time_2 > time_max && ( remFirstStates || remLastStates ))
+        {
+          auto infoIt = tasks.find( appl - 1, task - 1, thread - 1 );
+          thread_info *tmpInfo = nullptr;
+          if ( infoIt == tasks.end() )
+            tmpInfo = &initThreadInfo( appl, task, thread, cpu, reset_counters );
+          else
+            tmpInfo = &infoIt->second;
+
+          tmpInfo->without_states = true;
+
+          break;
+        }
+
         if ( time_1 < time_min && time_2 >= time_min && remFirstStates )
           break;
 
         if ( time_1 < time_max && time_2 > time_max && remLastStates )
-          break;
-
-        if ( time_1 < time_min && time_2 > time_max && ( remFirstStates || remLastStates ))
           break;
 
         if ( originalTime && time_1 > time_max )
@@ -1134,17 +1115,7 @@ void KTraceCutter::execute( std::string trace_in,
         else // originalTime || time_1 <= time_max
         {
           if ( tasks.find( appl - 1, task - 1, thread - 1 ) == tasks.end() )
-          {
-            ++useful_tasks;
-            init_task_counter = 1;
-            thread_info& tmpInfo = tasks( appl - 1, task - 1, thread - 1 );
-            tmpInfo.finished = true;
-            tmpInfo.lastCPU = cpu;
-            tmpInfo.last_time = 0;
-
-            /* Have to reset HC and the begining of cut */
-            reset_counters = true;
-          }
+            initThreadInfo( appl, task, thread, cpu, reset_counters );
           
           if ( !originalTime && break_states )
           {
@@ -1183,19 +1154,16 @@ void KTraceCutter::execute( std::string trace_in,
           if ( reset_counters )
           {
             reset_counters = false;
-            //sprintf( line, "2:%d:%d:%d:%d:%lld", cpu, appl, task, thread, time_1 );
             aux_buffer << "2:" << cpu << ":" << appl << ":" << task << ":" << thread << ":" << time_1;
 
-            for ( i = 0; i < last_counter; i++ )
-            {
-              //sprintf( line, "%s:%lld:0", line, counters[i] );
-              aux_buffer << ":" << counters[i] << ":" << "0";
-            }
+            std::for_each( HWCTypesInPCF.begin(), HWCTypesInPCF.end(), [&aux_buffer]( auto el )
+                                                                       {
+                                                                         aux_buffer << ":" << el << ":" << "0";
+                                                                       } );
 
-            if ( i > 0 )
+            if ( HWCTypesInPCF.size() > 0 )
             {
               aux_buffer << std::endl;
-              //current_size += fprintf( outfile, "%s\n", line );
               current_size += fprintf( outfile, "%s", aux_buffer.str().c_str() );
               if( writeToTmpFile ) ++total_tmp_lines;
             }
@@ -1215,7 +1183,7 @@ void KTraceCutter::execute( std::string trace_in,
         if ( ( tasks.find( appl - 1, task - 1, thread - 1 ) != tasks.end() ) &&
              ( time_1 > tasks( appl - 1, task - 1, thread - 1 ).last_time ) &&
              ( time_1 > time_max ) &&
-             !keep_events )
+             !keep_boundary_events )
           break;
 
         if ( tasks.find( appl - 1, task - 1, thread - 1 ) == tasks.end() && time_1 > time_max )
@@ -1232,7 +1200,12 @@ void KTraceCutter::execute( std::string trace_in,
              ( time_1 < time_min &&
                tasks.find( appl - 1, task - 1, thread - 1 ) != tasks.end() &&
                tasks( appl - 1, task - 1, thread - 1 ).last_time >= time_min &&
-               keep_events )
+               keep_boundary_events ) ||
+             ( first_time_caught &&
+               time_1 >= first_record_time &&
+               tasks.find( appl - 1, task - 1, thread - 1 ) != tasks.end() &&
+               tasks( appl - 1, task - 1, thread - 1 ).without_states &&
+               keep_all_events )
            )
         {
           if ( !first_time_caught )
@@ -1379,7 +1352,7 @@ void KTraceCutter::execute( std::string trace_in,
 
       case '#':
         sscanf( line, "%s\n", buffer );
-#ifdef WIN32
+#ifdef _WIN32
         if( strcmp( buffer, "#Paraver" ) == 0 )
           break;
 #endif

@@ -51,7 +51,7 @@ class KTraceCutter : public TraceCutter
     virtual void set_break_states( bool breakStates ) override;
     virtual void set_remFirstStates( bool remStates ) override;
     virtual void set_remLastStates( bool remStates ) override;
-    virtual void set_keep_events( bool keepEvents ) override;
+    virtual void set_keep_boundary_events( bool keepEvents ) override;
     virtual void setCutterApplicationCaller( std::string caller ) override;
 
     virtual void execute( std::string trace_in,
@@ -88,7 +88,8 @@ class KTraceCutter : public TraceCutter
     int init_task_counter;
     bool remFirstStates;
     bool remLastStates;
-    bool keep_events;
+    bool keep_boundary_events;
+    bool keep_all_events;
     bool first_time_caught;
 
     /* Parameters for showing percentage */
@@ -100,25 +101,22 @@ class KTraceCutter : public TraceCutter
     unsigned long long total_tmp_lines;
     unsigned long long current_tmp_lines;
 
-    /* Vars for saving the HC that will appear on the trace */
-    unsigned long long counters[500];
-    int last_counter;
-
     // Event types scanned from .pcf file with declared value 0.
-    std::set< TEventType > PCFEventTypesWithValuesZero;
+    std::set< TEventType > HWCTypesInPCF;
 
     /* Struct for the case of MAX_TRACE_SIZE */
     class thread_info
     {
       public:
-        thread_info() : last_time( 0 ), lastCPU( 0 ), finished( false )
+        thread_info() : last_time( 0 ), lastCPU( 0 ), finished( false ), without_states( false )
         {}
 
         unsigned long long last_time;
         TCPUOrder lastCPU; // last CPU to be able to write trailing records.
         bool finished;
-        std::set< TEventType >      eventTypesWithoutPCFZeros; //
-        std::multiset< TEventType > eventTypesWithPCFZeros;    //
+        bool without_states;
+        std::vector< TEventType > openedEventTypes;
+        std::set< TEventType > HWCTypesInPRV;
     };
 
     /* struct for cutting only selected tasks */
@@ -146,8 +144,10 @@ class KTraceCutter : public TraceCutter
                           unsigned long long timeOffset,
                           unsigned long long timeCutBegin,
                           unsigned long long timeCutEnd );
-    const std::set< TEventType > mergeDuplicates( const std::multiset< TEventType>& eventTypesWithPCFZeros );
-    void dumpEventsSet( const std::set< TEventType >& closingEventTypes,
+
+    template< typename IteratorType >
+    void dumpEventsSet( const IteratorType& begin,
+                        const IteratorType& end,
                         unsigned int cpu,
                         unsigned int appl,
                         unsigned int task,
@@ -156,6 +156,7 @@ class KTraceCutter : public TraceCutter
                         int &numWrittenChars,
                         bool &needEOL,
                         bool &writtenComment );
+
     void appendLastZerosToUnclosedEvents( const unsigned long long final_time );
     void ini_cutter_progress_bar( char *file_name, ProgressController *progress );
     void show_cutter_progress_bar( ProgressController *progress );
@@ -165,6 +166,8 @@ class KTraceCutter : public TraceCutter
     void load_counters_of_pcf( char *trace_name );
     void shiftLeft_TraceTimes_ToStartFromZero( const char *originalTraceName, const char *nameIn, const char *nameOut, bool is_zip, ProgressController *progress );
     bool is_selected_task( int task_id );
+
+    thread_info& initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu, bool& reset_counters );
 };
 
 

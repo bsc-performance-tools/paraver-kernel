@@ -54,6 +54,7 @@ class Trace
 
     virtual std::string getFileName() const = 0;
     virtual std::string getTraceName() const = 0;
+    virtual TTraceSize getTraceSize() const = 0;
 
     virtual void dumpFileHeader( std::fstream& file, bool newFormat = false ) const = 0;
     virtual void dumpFile( const std::string& whichFile ) const = 0;
@@ -79,6 +80,8 @@ class Trace
     virtual TThreadOrder getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const = 0;
     virtual TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask ) const = 0;
     virtual void getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& onVector ) const = 0;
+
+    virtual TNodeOrder getNodeFromThread( TThreadOrder &whichThread ) const = 0;
 
     virtual bool existResourceInfo() const = 0;
     virtual TNodeOrder totalNodes() const = 0;
@@ -246,6 +249,8 @@ class TraceProxy: public Trace
     virtual void dumpFileHeader( std::fstream& file, bool newFormat = false ) const override;
     virtual void dumpFile( const std::string& whichFile ) const override;
 
+    virtual TTraceSize getTraceSize() const override;
+
     virtual TApplOrder totalApplications() const override;
     virtual TTaskOrder totalTasks() const override;
     virtual TTaskOrder getGlobalTask( const TApplOrder& inAppl,
@@ -266,7 +271,9 @@ class TraceProxy: public Trace
                                     TThreadOrder& inThread ) const override;
     virtual TThreadOrder getFirstThread( TApplOrder inAppl, TTaskOrder inTask ) const override;
     virtual TThreadOrder getLastThread( TApplOrder inAppl, TTaskOrder inTask ) const override;
-    virtual void getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& onVector ) const override;
+    virtual void getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder> &onVector ) const override;
+
+    virtual TNodeOrder getNodeFromThread( TThreadOrder &whichThread ) const override;
 
     virtual bool existResourceInfo() const override;
     virtual TNodeOrder totalNodes() const override;

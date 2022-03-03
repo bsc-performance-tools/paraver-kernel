@@ -98,9 +98,10 @@ TraceProxy::TraceProxy( KernelConnection *whichKernel, const string& whichFile,
 {
   unload = false;
   instanceNumber = 0;
-  showProgressBar = myKernel->getTraceSize( whichFile ) / 1E6 > 10.0;
+  TTraceSize traceSize = myKernel->getTraceSize( whichFile );
+  showProgressBar = traceSize / 1E6 > 10.0;
 
-  myTrace = myKernel->newTrace( whichFile, noLoad, progress );
+  myTrace = myKernel->newTrace( whichFile, noLoad, progress, traceSize );
   string pcfFile = myKernel->getPCFFileLocation( whichFile );
   parsePCF( pcfFile );
   string rowFile = myKernel->getROWFileLocation( whichFile );
@@ -183,6 +184,11 @@ string TraceProxy::getFileName() const
 string TraceProxy::getTraceName() const
 {
   return myTrace->getTraceName();
+}
+
+TTraceSize TraceProxy::getTraceSize() const
+{
+  return myTrace->getTraceSize();
 }
 
 string TraceProxy::getFileNameNumbered() const
@@ -294,6 +300,11 @@ TThreadOrder TraceProxy::getLastThread( TApplOrder inAppl, TTaskOrder inTask ) c
 void TraceProxy::getThreadsPerNode( TNodeOrder inNode, std::vector<TThreadOrder>& onVector ) const
 {
   myTrace->getThreadsPerNode( inNode, onVector );
+}
+
+TNodeOrder TraceProxy::getNodeFromThread( TThreadOrder &whichThread ) const
+{
+  return myTrace->getNodeFromThread( whichThread );
 }
 
 bool TraceProxy::existResourceInfo() const

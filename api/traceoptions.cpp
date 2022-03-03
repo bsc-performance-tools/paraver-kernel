@@ -152,9 +152,14 @@ void TraceOptionsProxy::set_remLastStates( bool remStates )
   myTraceOptions->set_remLastStates( remStates );
 }
 
-void TraceOptionsProxy::set_keep_events( bool keepEvents )
+void TraceOptionsProxy::set_keep_boundary_events( bool keepEvents )
 {
-   myTraceOptions->set_keep_events( keepEvents );
+   myTraceOptions->set_keep_boundary_events( keepEvents );
+}
+
+void TraceOptionsProxy::set_keep_all_events( bool keepAllEvents )
+{
+   myTraceOptions->set_keep_all_events( keepAllEvents );
 }
 
 bool TraceOptionsProxy::get_by_time() const
@@ -207,9 +212,14 @@ bool TraceOptionsProxy::get_remLastStates() const
   return myTraceOptions->get_remLastStates();
 }
 
-bool TraceOptionsProxy::get_keep_events() const
+bool TraceOptionsProxy::get_keep_boundary_events() const
 {
-  return myTraceOptions->get_keep_events();
+  return myTraceOptions->get_keep_boundary_events();
+}
+
+bool TraceOptionsProxy::get_keep_all_events() const
+{
+  return myTraceOptions->get_keep_all_events();
 }
 
 /* Sets for filtering */

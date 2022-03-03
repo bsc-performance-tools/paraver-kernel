@@ -42,7 +42,7 @@ TraceBodyIO< PARAM_TRACEBODY_CLASS > *TraceBodyIOFactory::createTraceBody( Trace
   }
   else
   {
-#ifndef WIN32
+#ifndef _WIN32
     std::streampos currentPos = file->tellg();
     file->seekbegin();
     file->getline( firstLine );

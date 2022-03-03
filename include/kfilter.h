@@ -30,7 +30,7 @@
 #include "memorytrace.h"
 #include "filter.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #undef max
 #undef min
 #endif

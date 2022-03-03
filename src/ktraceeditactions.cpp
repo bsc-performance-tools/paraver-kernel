@@ -22,7 +22,7 @@
 \*****************************************************************************/
 
 
-#ifndef WIN32
+#ifndef _WIN32
 #include <unistd.h>
 #include <errno.h>
 #else
@@ -96,7 +96,7 @@ bool TraceCutterAction::execute( std::string whichTrace )
   tmpID.push_back( TraceCutter::getID() );
   std::string newName = mySequence->getKernelConnection()->getNewTraceName( whichTrace, outputPath, tmpID, false );
 
-#ifndef WIN32
+#ifndef _WIN32
   if( tmpWindow != nullptr && options->get_min_cutting_time() == 0 && options->get_max_cutting_time() >= tmpWindow->getTrace()->getEndTime() )
   {
     newName = outputPath + mySequence->getKernelConnection()->getPathSeparator() +
@@ -126,7 +126,7 @@ bool TraceCutterAction::execute( std::string whichTrace )
                                                 nullptr );
     myCutter->setCutterApplicationCaller( CutterMetadata::RUNAPP_APPLICATION_ID );
     myCutter->execute( whichTrace, newName, nullptr );
-#ifndef WIN32
+#ifndef _WIN32
   }
 #endif
 

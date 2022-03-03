@@ -96,7 +96,8 @@ class KTraceOptions: public TraceOptions
     bool break_states;
     bool remFirstStates;
     bool remLastStates;
-    bool keep_events;
+    bool keep_boundary_events;
+    bool keep_all_events;
     char tasks_list[256];
 
     // not used?
@@ -208,9 +209,14 @@ class KTraceOptions: public TraceOptions
       remLastStates = whichRemStates;
     }
 
-    inline void set_keep_events( bool whichKeepEvents ) override
+    inline void set_keep_boundary_events( bool whichKeepBoundaryEvents ) override
     {
-      keep_events = whichKeepEvents;
+      keep_boundary_events = whichKeepBoundaryEvents;
+    }
+
+    inline void set_keep_all_events( bool whichKeepAllEvents ) override
+    {
+      keep_all_events = whichKeepAllEvents;
     }
 
     inline bool get_by_time() const override
@@ -274,9 +280,14 @@ class KTraceOptions: public TraceOptions
       return remLastStates;
     }
 
-    inline bool get_keep_events() const override
+    inline bool get_keep_boundary_events() const override
     {
-      return keep_events;
+      return keep_boundary_events;
+    }
+
+    inline bool get_keep_all_events() const override
+    {
+      return keep_all_events;
     }
 
     /* Sets for filtering */

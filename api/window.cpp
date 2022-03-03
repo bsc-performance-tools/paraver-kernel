@@ -355,10 +355,13 @@ Timeline *TimelineProxy::clone( bool recursiveClone )
 
   clonedWindow->selectedRow.copy( selectedRow );
 
-  clonedWindow->sync = sync;
-  clonedWindow->syncGroup = syncGroup;
-  if( clonedWindow->sync )
-    SyncWindows::getInstance()->addWindow( clonedWindow, syncGroup );
+  if ( ParaverConfig::getInstance()->getTimelineKeepSyncGroupClone() )
+  {
+    clonedWindow->sync = sync;
+    clonedWindow->syncGroup = syncGroup;
+    if( clonedWindow->sync )
+      SyncWindows::getInstance()->addWindow( clonedWindow, syncGroup );
+  }
 
   // CFG4D
   clonedWindow->isCFG4DEnabled   = isCFG4DEnabled;
