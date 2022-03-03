@@ -34,9 +34,11 @@ template< typename dummy = nullptr_t >
 class RowLabels
 {
   public:
-    RowLabels();
+    RowLabels() = default;
     RowLabels( const std::string& filename );
-    ~RowLabels();
+    ~RowLabels() = default;
+
+    void dumpToFile( const std::string& filename ) const;
 
     std::string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const;
     void pushBack( TWindowLevel whichLevel, const std::string& rowLabel );
@@ -47,16 +49,12 @@ class RowLabels
   protected:
 
   private:
-    std::vector<std::string> workload;
-    std::vector<std::string> appl;
-    std::vector<std::string> task;
-    std::vector<std::string> thread;
+    // tuple elements are: level name, max length, level objects labels
+    std::map<TWindowLevel, std::tuple< std::string, size_t, std::vector<std::string> > > levelLabels;
 
-    std::vector<std::string> system;
-    std::vector<std::string> node;
-    std::vector<std::string> cpu;
+    size_t globalMaxLength;
 
-    std::map< TWindowLevel, size_t > maxLength;
+    void dumpLevel( const std::tuple< std::string, size_t, std::vector<std::string> >& whichLevel, std::ofstream& whichFile ) const;
 };
 
 #include "rowlabels.cpp"

@@ -241,6 +241,18 @@ constexpr char LEVEL_SYSTEM[] =       "SYSTEM";
 constexpr char LEVEL_NODE[] =         "NODE";
 constexpr char LEVEL_CPU[] =          "CPU";
 
+static const std::string LABEL_LEVELS[ CPU + 1 ] =
+{
+  "NONE",
+  LEVEL_WORKLOAD,
+  LEVEL_APPLICATION,
+  LEVEL_TASK,
+  LEVEL_THREAD,
+  LEVEL_SYSTEM,
+  LEVEL_NODE,
+  LEVEL_CPU
+};
+
 static const std::string LABEL_TIMEUNIT[ DAY + 1 ] =
 {
   "ns",

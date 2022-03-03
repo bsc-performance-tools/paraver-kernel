@@ -28,36 +28,24 @@
 
 #include "paraverlabels.h"
 
-using std::string;
-using std::vector;
-using std::ifstream;
-using std::istringstream;
-
 template<typename dummy>
-RowLabels<dummy>::RowLabels()
-{}
-
-template<typename dummy>
-RowLabels<dummy>::RowLabels( const string& filename )
+RowLabels<dummy>::RowLabels( const std::string& filename )
 {
-  string strLine;
-  string strLevel;
-  string strSize;
-  istringstream auxStream;
-  istringstream sizeStream;
+  std::string strLine;
+  std::string strLevel;
+  std::string strSize;
+  std::istringstream auxStream;
+  std::istringstream sizeStream;
 
-  for ( int l = (int)NONE; l <= (int)CPU; ++l )
-  {
-    maxLength[ (TWindowLevel)l ] = 0;
-  }
+  globalMaxLength = 0;
 
-  ifstream rowFile( filename.c_str() );
+  std::ifstream rowFile( filename.c_str() );
   if ( !rowFile )
     return;
 
   while ( !rowFile.eof() )
   {
-    vector<string> *tmpvector = nullptr;
+    std::vector<std::string> *tmpvector = nullptr;
 
     getline( rowFile, strLine );
     if ( strLine.length() == 0 )
@@ -72,42 +60,25 @@ RowLabels<dummy>::RowLabels( const string& filename )
 
     TWindowLevel level;
     if ( strLevel == LEVEL_WORKLOAD )
-    {
-      tmpvector = &workload;
       level = WORKLOAD;
-    }
     else if ( strLevel == LEVEL_APPLICATION )
-    {
-      tmpvector = &appl;
       level = APPLICATION;
-    }
     else if ( strLevel == LEVEL_TASK )
-    {
-      tmpvector = &task;
       level = TASK;
-    }
     else if ( strLevel == LEVEL_THREAD )
-    {
-      tmpvector = &thread;
       level = THREAD;
-    }
     else if ( strLevel == LEVEL_SYSTEM )
-    {
-      tmpvector = &system;
       level = SYSTEM;
-    }
     else if ( strLevel == LEVEL_NODE )
-    {
-      tmpvector = &node;
       level = NODE;
-    }
     else if ( strLevel == LEVEL_CPU )
-    {
-      tmpvector = &cpu;
       level = CPU;
-    }
     else
       continue;
+
+    std::map<TWindowLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::iterator currentLevelLabels;
+    std::tuple< std::string, size_t, std::vector<std::string> > tmpEmptyLevel( strLevel, 0, std::vector<std::string>() );
+    std::tie( currentLevelLabels, std::ignore ) = levelLabels.insert( std::make_pair( level, tmpEmptyLevel ) );
 
     getline( auxStream, strSize, 'S' ); // 'SIZE'
     getline( auxStream, strSize, ' ' ); // 'SIZE'
@@ -127,17 +98,17 @@ RowLabels<dummy>::RowLabels( const string& filename )
       getline( rowFile, strLine );
       if( strLine[ strLine.length() - 1 ] == '\r' )
         strLine.resize( strLine.length() - 1 );
-      tmpvector->push_back( strLine );
+      std::get<2>( currentLevelLabels->second ).push_back( strLine );
 
       currentLength = strLine.length();
 
       // By level
-      if ( maxLength[ level ] < currentLength )
-        maxLength[ level ] = currentLength;
+      if ( std::get<1>( currentLevelLabels->second ) < currentLength )
+        std::get<1>( currentLevelLabels->second ) = currentLength;
 
       // Global
-      if ( maxLength[ NONE ] < currentLength )
-        maxLength[ NONE ] = currentLength;
+      if ( globalMaxLength < currentLength )
+        globalMaxLength = currentLength;
 
       ++i;
     }
@@ -148,100 +119,81 @@ RowLabels<dummy>::RowLabels( const string& filename )
 
 
 template<typename dummy>
-RowLabels<dummy>::~RowLabels()
-{}
+void RowLabels<dummy>::dumpToFile( const std::string& filename ) const
+{
+  std::ofstream rowFile( filename.c_str() );
+  if ( !rowFile )
+    return;
+
+  for( int i = CPU; i >= WORKLOAD; --i )
+  {
+    std::map<TWindowLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::const_iterator currentLevelLabels;
+    if( ( currentLevelLabels = levelLabels.find( static_cast<TWindowLevel>( i ) ) ) != levelLabels.end() )
+      dumpLevel( currentLevelLabels->second, rowFile );
+  }
+
+  rowFile.close();
+}
 
 
 template<typename dummy>
-string RowLabels<dummy>::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const
+void RowLabels<dummy>::dumpLevel( const std::tuple< std::string, size_t, std::vector<std::string> >& whichLevel, std::ofstream& whichFile ) const
 {
-  const vector<string> *tmpvector = nullptr;
-  switch( whichLevel )
+  if( !std::get<2>( whichLevel ).empty() )
   {
-    case THREAD:
-      tmpvector = &thread;
-      break;
-    case TASK:
-      tmpvector = &task;
-      break;
-    case APPLICATION:
-      tmpvector = &appl;
-      break;
-    case WORKLOAD:
-      tmpvector = &workload;
-      break;
-    case CPU:
-      tmpvector = &cpu;
-      break;
-    case NODE:
-      tmpvector = &node;
-      break;
-    case SYSTEM:
-      tmpvector = &system;
-      break;
-    default:
-      tmpvector = nullptr;
-  }
+    whichFile << "LEVEL " << std::get<0>( whichLevel ) << " SIZE " << std::get<2>( whichLevel ).size() << std::endl;
 
-  if( tmpvector == nullptr )
+    std::copy( std::get<2>( whichLevel ).begin(), std::get<2>( whichLevel ).end(), std::ostream_iterator<std::string>( whichFile, "\n" ) );
+
+    whichFile << std::endl;
+  }
+}
+
+
+template<typename dummy>
+std::string RowLabels<dummy>::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const
+{
+  std::map<TWindowLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::const_iterator currentLevelLabels;
+  if( ( currentLevelLabels = levelLabels.find( whichLevel ) ) == levelLabels.end() )
     return "";
-  else
-  {
-//    if( tmpvector->begin() == tmpvector->end() || whichRow > tmpvector->size() )
-    if( tmpvector->begin() == tmpvector->end() ||
-        whichRow >= tmpvector->size() )
-      return "";
-    else
-      return (*tmpvector)[ whichRow ];
-  }
 
-  return "";
+  const std::vector<std::string>& vectorLabels = std::get<2>( currentLevelLabels->second );
+  if( vectorLabels.empty() || vectorLabels.size() <= whichRow )
+    return "";
+
+  return vectorLabels[ whichLevel ];
 }
 
 
 template<typename dummy>
-void RowLabels<dummy>::pushBack( TWindowLevel whichLevel, const string& rowLabel )
+void RowLabels<dummy>::pushBack( TWindowLevel whichLevel, const std::string& rowLabel )
 {
-  vector<string> *tmpvector = nullptr;
-  switch( whichLevel )
+  std::map<TWindowLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::iterator currentLevelLabels;
+  if( ( currentLevelLabels = levelLabels.find( whichLevel ) ) == levelLabels.end() )
   {
-    case THREAD:
-      tmpvector = &thread;
-      break;
-    case TASK:
-      tmpvector = &task;
-      break;
-    case APPLICATION:
-      tmpvector = &appl;
-      break;
-    case WORKLOAD:
-      tmpvector = &workload;
-      break;
-    case CPU:
-      tmpvector = &cpu;
-      break;
-    case NODE:
-      tmpvector = &node;
-      break;
-    case SYSTEM:
-      tmpvector = &system;
-      break;
-    default:
-      tmpvector = nullptr;
+    std::tuple< std::string, size_t, std::vector<std::string> > tmpCurrentLevel( LABEL_LEVELS[ whichLevel ], 0, std::vector<std::string>() );
+    std::tie( currentLevelLabels, std::ignore ) = levelLabels.insert( std::make_pair( whichLevel, tmpCurrentLevel ) );
   }
 
-  if( tmpvector != nullptr )
-  {
-    tmpvector->push_back( rowLabel );
-  }
+  std::get<2>( currentLevelLabels->second ).push_back( rowLabel );
+
+  if( std::get<1>( currentLevelLabels->second ) < rowLabel.length() )
+    std::get<1>( currentLevelLabels->second ) = rowLabel.length();
+
+  if( globalMaxLength < rowLabel.length() )
+    globalMaxLength = rowLabel.length();
 }
 
+// whichLevel == NONE (by default) ==> all levels MaxLength
 template<typename dummy>
 size_t RowLabels<dummy>::getMaxLength( TWindowLevel whichLevel ) const
 {
-#ifdef WIN32
-  return maxLength.find( whichLevel )->second;
-#else
-  return ( maxLength.at( whichLevel ) );
-#endif
+  if( whichLevel == NONE )
+    return globalMaxLength;
+
+  std::map<TWindowLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::const_iterator currentLevelLabels;
+  if( ( currentLevelLabels = levelLabels.find( whichLevel ) ) == levelLabels.end() )
+    return 0;
+
+  return std::get<1>( currentLevelLabels->second );
 }
