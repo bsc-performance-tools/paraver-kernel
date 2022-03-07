@@ -426,12 +426,22 @@ void KTraceCutter::appendLastZerosToUnclosedEvents( const unsigned long long fin
 
     if( tmpInfo.openedEventTypes.size() > 0 )
     {
-      std::set<TEventType> uniqueOpenedTypes;
+      std::set<TEventType> insertedUniqueOpenedTypes;
+      std::vector<TEventType> uniqueOpenedTypes;
 
-      std::copy( tmpInfo.openedEventTypes.begin(), tmpInfo.openedEventTypes.end(), std::inserter( uniqueOpenedTypes, uniqueOpenedTypes.begin() ) );
+      std::copy_if( tmpInfo.openedEventTypes.begin(),
+                    tmpInfo.openedEventTypes.end(),
+                    std::back_inserter( uniqueOpenedTypes ),
+                    [&insertedUniqueOpenedTypes]( auto elem )
+                    {
+                      if( insertedUniqueOpenedTypes.find( elem ) != insertedUniqueOpenedTypes.end() )
+                        return false;
+                      insertedUniqueOpenedTypes.insert( elem );
+                      return true;
+                    } );
 
-      dumpEventsSet( uniqueOpenedTypes.begin(),
-                     uniqueOpenedTypes.end(),
+      dumpEventsSet( uniqueOpenedTypes.rbegin(),
+                     uniqueOpenedTypes.rend(),
                      cpu, appl, task, thread,
                      final_time,
                      numWrittenChars,
