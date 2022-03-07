@@ -1062,6 +1062,8 @@ void KTraceCutter::execute( std::string trace_in,
     /* DEPRECATED 4: global comm */
     std::ostringstream aux_buffer;
 
+    CutterThreadInfo::iterator threadInfoIt;
+
     switch ( line[0] )
     {
       case '1':
@@ -1075,14 +1077,15 @@ void KTraceCutter::execute( std::string trace_in,
         if ( time_2 <= time_min )
           break;
 
+        threadInfoIt = threadsInfo.find( appl - 1, task - 1, thread - 1 );
+
         if ( time_1 < time_min && time_2 > time_max && ( remFirstStates || remLastStates ))
         {
-          auto infoIt = threadsInfo.find( appl - 1, task - 1, thread - 1 );
           ThreadInfo *tmpInfo = nullptr;
-          if ( infoIt == threadsInfo.end() )
+          if ( threadInfoIt == threadsInfo.end() )
             tmpInfo = &initThreadInfo( appl, task, thread, cpu, reset_counters );
           else
-            tmpInfo = &infoIt->second;
+            tmpInfo = &threadInfoIt->second;
 
           tmpInfo->without_states = true;
 
@@ -1095,7 +1098,7 @@ void KTraceCutter::execute( std::string trace_in,
         if ( time_1 < time_max && time_2 > time_max && remLastStates ||
              originalTime && time_1 > time_max )
         {
-          if ( threadsInfo.find( appl - 1, task - 1, thread - 1 ) != threadsInfo.end() &&
+          if ( threadInfoIt != threadsInfo.end() &&
                !threadsInfo( appl - 1, task - 1, thread - 1 ).finished )
           {
             --useful_tasks;
@@ -1112,7 +1115,7 @@ void KTraceCutter::execute( std::string trace_in,
         }
         else // originalTime || time_1 <= time_max
         {
-          if ( threadsInfo.find( appl - 1, task - 1, thread - 1 ) == threadsInfo.end() )
+          if ( threadInfoIt == threadsInfo.end() )
             initThreadInfo( appl, task, thread, cpu, reset_counters );
 
           threadsInfo( appl - 1, task - 1, thread - 1 ).lastStateEndTime = time_2;
@@ -1182,39 +1185,41 @@ void KTraceCutter::execute( std::string trace_in,
         if( cut_tasks && !is_selected_task( task ) )
           break;
 
-        if( threadsInfo.find( appl - 1, task - 1, thread - 1 ) != threadsInfo.end() &&
-            threadsInfo( appl - 1, task - 1, thread - 1 ).finished )
+        threadInfoIt = threadsInfo.find( appl - 1, task - 1, thread - 1 );
+
+        if( threadInfoIt != threadsInfo.end() &&
+            threadInfoIt->second.finished )
         {
-          if( !( !remLastStates && !break_states && keep_boundary_events && time_1 <= threadsInfo( appl - 1, task - 1, thread - 1 ).lastStateEndTime ) )
+          if( !( !remLastStates && !break_states && keep_boundary_events && time_1 <= threadInfoIt->second.lastStateEndTime ) )
             break;
         }
         else if ( time_1 > time_max )
           break;
 
-        if ( ( threadsInfo.find( appl - 1, task - 1, thread - 1 ) != threadsInfo.end() ) &&
-             ( time_1 > threadsInfo( appl - 1, task - 1, thread - 1 ).last_time ) &&
+        if ( ( threadInfoIt != threadsInfo.end() ) &&
+             ( time_1 > threadInfoIt->second.last_time ) &&
              ( time_1 > time_max ) &&
              !keep_boundary_events )
           break;
 
-        if ( threadsInfo.find( appl - 1, task - 1, thread - 1 ) == threadsInfo.end() && time_1 > time_max )
+        if ( threadInfoIt == threadsInfo.end() && time_1 > time_max )
           break;
 
         // TODO: keep_all_events
-        if ( threadsInfo.find( appl - 1, task - 1, thread - 1 ) == threadsInfo.end() && remFirstStates )
+        if ( threadInfoIt == threadsInfo.end() && remFirstStates )
           break; // ?
 
 
         /* If time inside cut, adjust time */
         if ( time_1 >= time_min ||
              ( time_1 < time_min &&
-               threadsInfo.find( appl - 1, task - 1, thread - 1 ) != threadsInfo.end() &&
-               threadsInfo( appl - 1, task - 1, thread - 1 ).last_time >= time_min &&
+               threadInfoIt != threadsInfo.end() &&
+               threadInfoIt->second.last_time >= time_min &&
                keep_boundary_events ) ||
              ( first_time_caught &&
                time_1 >= first_record_time &&
-               threadsInfo.find( appl - 1, task - 1, thread - 1 ) != threadsInfo.end() &&
-               threadsInfo( appl - 1, task - 1, thread - 1 ).without_states &&
+               threadInfoIt != threadsInfo.end() &&
+               threadInfoIt->second.without_states &&
                keep_all_events )
            )
         {
