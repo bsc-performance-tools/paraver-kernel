@@ -412,9 +412,9 @@ void KTraceCutter::appendLastZerosToUnclosedEvents( const unsigned long long fin
   bool needEOL = false;
   bool writtenComment = false;
 
-  for( CutterThreadInfo::iterator it = tasks.begin(); it != tasks.end(); ++it )
+  for( CutterThreadInfo::iterator it = threadsInfo.begin(); it != threadsInfo.end(); ++it )
   {
-    thread_info tmpInfo = (*it).second;
+    ThreadInfo tmpInfo = (*it).second;
     unsigned int appl = (*it).first.dim1;
     unsigned int task = (*it).first.dim2;
     unsigned int thread = (*it).first.dim3;
@@ -554,13 +554,13 @@ void KTraceCutter::update_queue( unsigned int appl, unsigned int task, unsigned 
                                  unsigned long long type,
                                  unsigned long long value )
 {
-  if ( tasks.find( appl, task, thread ) == tasks.end() )
+  if ( threadsInfo.find( appl, task, thread ) == threadsInfo.end() )
   {
-    init_task_counter = 1;
+    init_useful_tasks = true;
     ++useful_tasks;
   }
 
-  thread_info& tmpInfo = tasks( appl, task, thread );
+  ThreadInfo& tmpInfo = threadsInfo( appl, task, thread );
   if ( value > 0 )
   {
     if ( HWCTypesInPCF.find( type ) != HWCTypesInPCF.end() )
@@ -845,12 +845,11 @@ bool KTraceCutter::is_selected_task( int task_id )
   return false;
 }
 
-KTraceCutter::thread_info& KTraceCutter::initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu, bool& reset_counters )
+KTraceCutter::ThreadInfo& KTraceCutter::initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu, bool& reset_counters )
 {
   ++useful_tasks;
-  init_task_counter = 1;
-  thread_info& tmpInfo = tasks( appl - 1, task - 1, thread - 1 );
-  tmpInfo.finished = true;
+  init_useful_tasks = true;
+  ThreadInfo& tmpInfo = threadsInfo( appl - 1, task - 1, thread - 1 );
   tmpInfo.lastCPU = cpu;
   tmpInfo.last_time = 0;
 
@@ -878,7 +877,7 @@ void KTraceCutter::execute( std::string trace_in,
   bool end_line;
 
   unsigned long num_iters = 0;
-  thread_info *p;
+  ThreadInfo *p;
 
   KProgressController *tmpKProgressControler = nullptr;
 
@@ -895,7 +894,7 @@ void KTraceCutter::execute( std::string trace_in,
   cut_tasks = false;
   break_states = true;
   is_zip = false;
-  init_task_counter = 0;
+  init_useful_tasks = false;
   useful_tasks = 0;
   first_time_caught = false;
   current_size = 0;
@@ -1078,9 +1077,9 @@ void KTraceCutter::execute( std::string trace_in,
 
         if ( time_1 < time_min && time_2 > time_max && ( remFirstStates || remLastStates ))
         {
-          auto infoIt = tasks.find( appl - 1, task - 1, thread - 1 );
-          thread_info *tmpInfo = nullptr;
-          if ( infoIt == tasks.end() )
+          auto infoIt = threadsInfo.find( appl - 1, task - 1, thread - 1 );
+          ThreadInfo *tmpInfo = nullptr;
+          if ( infoIt == threadsInfo.end() )
             tmpInfo = &initThreadInfo( appl, task, thread, cpu, reset_counters );
           else
             tmpInfo = &infoIt->second;
@@ -1093,16 +1092,14 @@ void KTraceCutter::execute( std::string trace_in,
         if ( time_1 < time_min && time_2 >= time_min && remFirstStates )
           break;
 
-        if ( time_1 < time_max && time_2 > time_max && remLastStates )
-          break;
-
-        if ( originalTime && time_1 > time_max )
+        if ( time_1 < time_max && time_2 > time_max && remLastStates ||
+             originalTime && time_1 > time_max )
         {
-          if ( tasks.find( appl - 1, task - 1, thread - 1 ) != tasks.end() &&
-               tasks( appl - 1, task - 1, thread - 1 ).finished )
+          if ( threadsInfo.find( appl - 1, task - 1, thread - 1 ) != threadsInfo.end() &&
+               !threadsInfo( appl - 1, task - 1, thread - 1 ).finished )
           {
             --useful_tasks;
-            tasks( appl - 1, task - 1, thread - 1 ).finished = false;
+            threadsInfo( appl - 1, task - 1, thread - 1 ).finished = true;
           }
 
           break;
@@ -1114,7 +1111,7 @@ void KTraceCutter::execute( std::string trace_in,
         }
         else // originalTime || time_1 <= time_max
         {
-          if ( tasks.find( appl - 1, task - 1, thread - 1 ) == tasks.end() )
+          if ( threadsInfo.find( appl - 1, task - 1, thread - 1 ) == threadsInfo.end() )
             initThreadInfo( appl, task, thread, cpu, reset_counters );
           
           if ( !originalTime && break_states )
@@ -1130,8 +1127,8 @@ void KTraceCutter::execute( std::string trace_in,
             }
           }
 
-          //if ( tasks[appl-1][task-1][thread-1]->last_time < time_2 )
-          tasks( appl - 1, task - 1, thread - 1 ).last_time = time_2;
+          //if ( threadsInfo[appl-1][task-1][thread-1]->last_time < time_2 )
+          threadsInfo( appl - 1, task - 1, thread - 1 ).last_time = time_2;
 
           if ( !first_time_caught )
           {
@@ -1176,20 +1173,25 @@ void KTraceCutter::execute( std::string trace_in,
         sscanf( line, "%d:%d:%d:%d:%d:%lld:%s\n", &id, &cpu, &appl, &task, &thread, &time_1, buffer );
         strcpy( line, buffer );
 
+        if( threadsInfo.find( appl - 1, task - 1, thread - 1 ) != threadsInfo.end() &&
+            threadsInfo( appl - 1, task - 1, thread - 1 ).finished )
+          break;
+
         /* If isn't a traceable thread, get next record */
         if( cut_tasks && !is_selected_task( task ) )
           break;
 
-        if ( ( tasks.find( appl - 1, task - 1, thread - 1 ) != tasks.end() ) &&
-             ( time_1 > tasks( appl - 1, task - 1, thread - 1 ).last_time ) &&
+        if ( ( threadsInfo.find( appl - 1, task - 1, thread - 1 ) != threadsInfo.end() ) &&
+             ( time_1 > threadsInfo( appl - 1, task - 1, thread - 1 ).last_time ) &&
              ( time_1 > time_max ) &&
              !keep_boundary_events )
           break;
 
-        if ( tasks.find( appl - 1, task - 1, thread - 1 ) == tasks.end() && time_1 > time_max )
+        if ( threadsInfo.find( appl - 1, task - 1, thread - 1 ) == threadsInfo.end() && time_1 > time_max )
           break;
 
-        if ( tasks.find( appl - 1, task - 1, thread - 1 ) == tasks.end() && remFirstStates )
+        // TODO: keep_all_events
+        if ( threadsInfo.find( appl - 1, task - 1, thread - 1 ) == threadsInfo.end() && remFirstStates )
           break; // ?
 
         if ( time_1 > time_max )
@@ -1198,13 +1200,13 @@ void KTraceCutter::execute( std::string trace_in,
         /* If time inside cut, adjust time */
         if ( time_1 >= time_min ||
              ( time_1 < time_min &&
-               tasks.find( appl - 1, task - 1, thread - 1 ) != tasks.end() &&
-               tasks( appl - 1, task - 1, thread - 1 ).last_time >= time_min &&
+               threadsInfo.find( appl - 1, task - 1, thread - 1 ) != threadsInfo.end() &&
+               threadsInfo( appl - 1, task - 1, thread - 1 ).last_time >= time_min &&
                keep_boundary_events ) ||
              ( first_time_caught &&
                time_1 >= first_record_time &&
-               tasks.find( appl - 1, task - 1, thread - 1 ) != tasks.end() &&
-               tasks( appl - 1, task - 1, thread - 1 ).without_states &&
+               threadsInfo.find( appl - 1, task - 1, thread - 1 ) != threadsInfo.end() &&
+               threadsInfo( appl - 1, task - 1, thread - 1 ).without_states &&
                keep_all_events )
            )
         {
@@ -1235,8 +1237,8 @@ void KTraceCutter::execute( std::string trace_in,
 
           update_queue( appl - 1, task - 1, thread - 1, type, value );
 
-          tasks( appl - 1, task - 1, thread - 1 ).last_time = time_1;
-          tasks( appl - 1, task - 1, thread - 1 ).lastCPU = cpu;
+          threadsInfo( appl - 1, task - 1, thread - 1 ).last_time = time_1;
+          threadsInfo( appl - 1, task - 1, thread - 1 ).lastCPU = cpu;
 
           while ( !end_line )
           {
@@ -1369,7 +1371,7 @@ void KTraceCutter::execute( std::string trace_in,
       if ( max_size <= current_size )
         break;
 
-    if ( init_task_counter && useful_tasks == 0 )
+    if ( init_useful_tasks && useful_tasks == 0 )
       break;
   }
 

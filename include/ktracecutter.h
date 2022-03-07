@@ -85,7 +85,7 @@ class KTraceCutter : public TraceCutter
     unsigned long long total_size;
     unsigned long long trace_time;
     int useful_tasks;
-    int init_task_counter;
+    bool init_useful_tasks;
     bool remFirstStates;
     bool remLastStates;
     bool keep_boundary_events;
@@ -105,10 +105,10 @@ class KTraceCutter : public TraceCutter
     std::set< TEventType > HWCTypesInPCF;
 
     /* Struct for the case of MAX_TRACE_SIZE */
-    class thread_info
+    class ThreadInfo
     {
       public:
-        thread_info() : last_time( 0 ), lastCPU( 0 ), finished( false ), without_states( false )
+        ThreadInfo() : last_time( 0 ), lastCPU( 0 ), finished( false ), without_states( false )
         {}
 
         unsigned long long last_time;
@@ -120,8 +120,8 @@ class KTraceCutter : public TraceCutter
     };
 
     /* struct for cutting only selected tasks */
-    typedef CubeContainer<TApplOrder, TTaskOrder, TThreadOrder, thread_info> CutterThreadInfo;
-    CutterThreadInfo tasks;
+    typedef CubeContainer<TApplOrder, TTaskOrder, TThreadOrder, ThreadInfo> CutterThreadInfo;
+    CutterThreadInfo threadsInfo;
 
     struct selected_tasks
     {
@@ -167,7 +167,7 @@ class KTraceCutter : public TraceCutter
     void shiftLeft_TraceTimes_ToStartFromZero( const char *originalTraceName, const char *nameIn, const char *nameOut, bool is_zip, ProgressController *progress );
     bool is_selected_task( int task_id );
 
-    thread_info& initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu, bool& reset_counters );
+    ThreadInfo& initThreadInfo( unsigned int appl, unsigned int task, unsigned int thread, unsigned int cpu, bool& reset_counters );
 };
 
 
