@@ -108,10 +108,11 @@ class KTraceCutter : public TraceCutter
     class ThreadInfo
     {
       public:
-        ThreadInfo() : last_time( 0 ), lastCPU( 0 ), finished( false ), without_states( false )
+        ThreadInfo() : last_time( 0 ), lastCPU( 0 ), finished( false ), without_states( false ), lastStateEndTime( 0 )
         {}
 
         unsigned long long last_time;
+        unsigned long long lastStateEndTime;
         TCPUOrder lastCPU; // last CPU to be able to write trailing records.
         bool finished;
         bool without_states;

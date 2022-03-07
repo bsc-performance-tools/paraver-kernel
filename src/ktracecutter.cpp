@@ -1105,6 +1105,7 @@ void KTraceCutter::execute( std::string trace_in,
           break;
         }
 
+
         if ( !originalTime && time_1 > time_max )
         {
           maxTimeReached = true;
@@ -1113,7 +1114,11 @@ void KTraceCutter::execute( std::string trace_in,
         {
           if ( threadsInfo.find( appl - 1, task - 1, thread - 1 ) == threadsInfo.end() )
             initThreadInfo( appl, task, thread, cpu, reset_counters );
-          
+
+          threadsInfo( appl - 1, task - 1, thread - 1 ).lastStateEndTime = time_2;
+          if( time_1 < time_max && time_2 > time_max && !remLastStates && !break_states && keep_boundary_events )
+            threadsInfo( appl - 1, task - 1, thread - 1 ).finished = true;
+
           if ( !originalTime && break_states )
           {
             if ( time_1 < time_min )
@@ -1173,12 +1178,17 @@ void KTraceCutter::execute( std::string trace_in,
         sscanf( line, "%d:%d:%d:%d:%d:%lld:%s\n", &id, &cpu, &appl, &task, &thread, &time_1, buffer );
         strcpy( line, buffer );
 
-        if( threadsInfo.find( appl - 1, task - 1, thread - 1 ) != threadsInfo.end() &&
-            threadsInfo( appl - 1, task - 1, thread - 1 ).finished )
-          break;
-
         /* If isn't a traceable thread, get next record */
         if( cut_tasks && !is_selected_task( task ) )
+          break;
+
+        if( threadsInfo.find( appl - 1, task - 1, thread - 1 ) != threadsInfo.end() &&
+            threadsInfo( appl - 1, task - 1, thread - 1 ).finished )
+        {
+          if( !( !remLastStates && !break_states && keep_boundary_events && time_1 <= threadsInfo( appl - 1, task - 1, thread - 1 ).lastStateEndTime ) )
+            break;
+        }
+        else if ( time_1 > time_max )
           break;
 
         if ( ( threadsInfo.find( appl - 1, task - 1, thread - 1 ) != threadsInfo.end() ) &&
@@ -1194,8 +1204,6 @@ void KTraceCutter::execute( std::string trace_in,
         if ( threadsInfo.find( appl - 1, task - 1, thread - 1 ) == threadsInfo.end() && remFirstStates )
           break; // ?
 
-        if ( time_1 > time_max )
-          break;
 
         /* If time inside cut, adjust time */
         if ( time_1 >= time_min ||
