@@ -22,11 +22,35 @@
 \*****************************************************************************/
 
 
-#include <fstream>
-#include <sstream>
 #include <algorithm>
+#include <fstream>
+#include <ios>
+#include <regex>
+#include <sstream>
 
 #include "paraverlabels.h"
+
+
+template<typename dummy>
+bool RowFileParser<dummy>::openRowFileParser( const std::string& filename, RowFileParser<dummy>& outRowFile )
+{
+  static const std::regex prvFilenameRegex( R"((.+)\.(prv|prv\.gz)$)" );
+
+  std::string rowFilename = std::regex_replace( filename, prvFilenameRegex, "$1.row" );
+
+  try
+  {
+    outRowFile = RowFileParser<dummy>( rowFilename );
+  }
+  catch( const std::ios_base::failure& e )
+  {
+    std::cerr << e.what() << '\n';
+    return false;
+  }
+  
+  return true;
+}
+
 
 template<typename dummy>
 RowFileParser<dummy>::RowFileParser( const std::string& filename )
@@ -41,7 +65,7 @@ RowFileParser<dummy>::RowFileParser( const std::string& filename )
 
   std::ifstream rowFile( filename.c_str() );
   if ( !rowFile )
-    return;
+    throw std::ios_base::failure( "Error opening row file." );
 
   while ( !rowFile.eof() )
   {
@@ -123,7 +147,7 @@ void RowFileParser<dummy>::dumpToFile( const std::string& filename ) const
 {
   std::ofstream rowFile( filename.c_str() );
   if ( !rowFile )
-    return;
+    throw std::ios_base::failure( "Error creating output row file." );
 
   for( int i = CPU; i >= WORKLOAD; --i )
   {
@@ -183,6 +207,7 @@ void RowFileParser<dummy>::pushBack( TWindowLevel whichLevel, const std::string&
   if( globalMaxLength < rowLabel.length() )
     globalMaxLength = rowLabel.length();
 }
+
 
 // whichLevel == NONE (by default) ==> all levels MaxLength
 template<typename dummy>

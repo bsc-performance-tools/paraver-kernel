@@ -34,6 +34,8 @@ template< typename dummy = nullptr_t >
 class RowFileParser
 {
   public:
+    static bool openRowFileParser( const std::string& filename, RowFileParser<dummy>& outRowFile );
+
     RowFileParser() = default;
     RowFileParser( const std::string& filename );
     ~RowFileParser() = default;
