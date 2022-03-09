@@ -46,9 +46,14 @@ static const TRecordTime factorTable[ DAY + 1 ] =
 
 enum TWindowLevel
 {
-  NONE = 0,
-  WORKLOAD, APPLICATION, TASK, THREAD,
-  SYSTEM, NODE, CPU,
+  NONE = static_cast<int>( TTraceLevel::NONE ),
+  WORKLOAD = static_cast<int>( TTraceLevel::WORKLOAD ),
+  APPLICATION = static_cast<int>( TTraceLevel::APPLICATION ),
+  TASK = static_cast<int>( TTraceLevel::TASK ),
+  THREAD = static_cast<int>( TTraceLevel::THREAD ),
+  SYSTEM = static_cast<int>( TTraceLevel::SYSTEM ),
+  NODE = static_cast<int>( TTraceLevel::NODE ),
+  CPU = static_cast<int>( TTraceLevel::CPU ),
   // Compose levels (for setting the window functions only)
   TOPCOMPOSE1, TOPCOMPOSE2, COMPOSEWORKLOAD, COMPOSEAPPLICATION, COMPOSETASK,
   COMPOSETHREAD, COMPOSESYSTEM, COMPOSENODE, COMPOSECPU,

@@ -77,16 +77,16 @@ void LabelConstructor::init()
 
 
 string LabelConstructor::objectLabel( TObjectOrder globalOrder,
-                                      TWindowLevel level,
+                                      TTraceLevel level,
                                       Trace *whichTrace,
                                       bool showLevelTag,
                                       bool showRowText )
 {
   if( showRowText )
   {
-    if( level >= WORKLOAD && level <= THREAD )
+    if( level >= TTraceLevel::WORKLOAD && level <= TTraceLevel::THREAD )
       rowStr = whichTrace->getRowLabel( level, globalOrder );
-    else if( level >= SYSTEM && level <= CPU && globalOrder > 0 )
+    else if( level >= TTraceLevel::SYSTEM && level <= TTraceLevel::CPU && globalOrder > 0 )
       rowStr = whichTrace->getRowLabel( level, globalOrder - 1 );
   }
   else
@@ -97,7 +97,7 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
   if ( rowStr != "" )
     return rowStr;
 
-  if ( level == THREAD )
+  if ( level == TTraceLevel::THREAD )
   {
     TApplOrder appl;
     TTaskOrder task;
@@ -113,7 +113,7 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
         sstrObjectLabel << appl + 1 << '.' << task + 1 << '.' << thread + 1;
     }
   }
-  else if ( level == TASK )
+  else if ( level == TTraceLevel::TASK )
   {
     TApplOrder appl;
     TTaskOrder task;
@@ -128,7 +128,7 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
         sstrObjectLabel << appl + 1 << '.' << task + 1;
     }
   }
-  else if ( level == APPLICATION )
+  else if ( level == TTraceLevel::APPLICATION )
   {
     if( globalOrder >= whichTrace->totalApplications() )
       sstrObjectLabel << "Not valid application: " << globalOrder + 1;
@@ -140,12 +140,12 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
         sstrObjectLabel << globalOrder + 1;
     }
   }
-  else if ( level == WORKLOAD )
+  else if ( level == TTraceLevel::WORKLOAD )
   {
     if ( showLevelTag )
       sstrObjectLabel << LEVEL_WORKLOAD;
   }
-  else if ( level == CPU )
+  else if ( level == TTraceLevel::CPU )
   {
     if( globalOrder == 0 )
     {
@@ -170,7 +170,7 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
       }
     }
   }
-  else if ( level == NODE )
+  else if ( level == TTraceLevel::NODE )
   {
     if( globalOrder > whichTrace->totalNodes() )
       sstrObjectLabel << "Not valid node: " << globalOrder;
@@ -182,7 +182,7 @@ string LabelConstructor::objectLabel( TObjectOrder globalOrder,
         sstrObjectLabel << globalOrder;
     }
   }
-  else if ( level == SYSTEM )
+  else if ( level == TTraceLevel::SYSTEM )
   {
     if ( showLevelTag )
       sstrObjectLabel << LEVEL_SYSTEM;
@@ -409,19 +409,19 @@ string LabelConstructor::semanticLabel( const Timeline * whichWindow,
       sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, whichWindow->getLevel(),
                                                           whichWindow->getTrace() );
     else if ( infoType == APPL_TYPE )
-      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, APPLICATION,
+      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, TTraceLevel::APPLICATION,
                                                           whichWindow->getTrace() );
     else if ( infoType == TASK_TYPE )
-      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, TASK,
+      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, TTraceLevel::TASK,
                                                           whichWindow->getTrace() );
     else if ( infoType == THREAD_TYPE )
-      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, THREAD,
+      sstrSemanticLabel << LabelConstructor::objectLabel( value - 1, TTraceLevel::THREAD,
                                                           whichWindow->getTrace() );
     else if ( infoType == NODE_TYPE )
-      sstrSemanticLabel << LabelConstructor::objectLabel( value, NODE,
+      sstrSemanticLabel << LabelConstructor::objectLabel( value, TTraceLevel::NODE,
                                                           whichWindow->getTrace() );
     else if ( infoType == CPU_TYPE )
-      sstrSemanticLabel << LabelConstructor::objectLabel( value, CPU,
+      sstrSemanticLabel << LabelConstructor::objectLabel( value, TTraceLevel::CPU,
                                                           whichWindow->getTrace() );
     else if ( infoType == TIME_TYPE )
       sstrSemanticLabel << LabelConstructor::timeLabel( value, whichWindow->getTimeUnit(), precision );

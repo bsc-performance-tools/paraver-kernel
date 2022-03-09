@@ -1532,9 +1532,9 @@ void KHistogram::calculate( TObjectOrder iRow,
       if ( statistics.filterAllComm( data ) )
       {
         TObjectOrder column;
-        if ( controlWindow->getLevel() >= WORKLOAD && controlWindow->getLevel() <= THREAD )
+        if ( controlWindow->getLevel() >= TTraceLevel::WORKLOAD && controlWindow->getLevel() <= TTraceLevel::THREAD )
           column = controlWindow->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
-        else if( controlWindow->getLevel() >= SYSTEM && controlWindow->getLevel() <= NODE )
+        else if( controlWindow->getLevel() >= TTraceLevel::SYSTEM && controlWindow->getLevel() <= TTraceLevel::NODE )
           column = controlWindow->cpuObjectToWindowObject( data->comm->getCommPartnerObject() );
         else // CPU
           column = controlWindow->cpuObjectToWindowObject( data->comm->getCommPartnerObject() ) - 1;

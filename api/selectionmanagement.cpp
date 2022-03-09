@@ -203,25 +203,25 @@ bool SelectionManagement<SelType, LevelType>:: operator== ( const SelectionManag
 template < typename SelType, typename LevelType >
 void SelectionManagement< SelType, LevelType >::setSelected( std::vector< bool > &selection, LevelType level )
 {
-  selectedSet[ level ].clear();
-  if ( selected[ level ].size() >= selection.size() )
+  selectedSet[ static_cast<size_t>( level ) ].clear();
+  if ( selected[ static_cast<size_t>( level ) ].size() >= selection.size() )
   {
-    std::copy( selection.begin(), selection.end(), selected[ level ].begin() );
+    std::copy( selection.begin(), selection.end(), selected[ static_cast<size_t>( level ) ].begin() );
   }
   else
   {
-    size_t size = selected[ level ].size();
+    size_t size = selected[ static_cast<size_t>( level ) ].size();
     if ( size > 0 )
-      selected[ level ].resize( size );
-    selected[ level ] = selection;
+      selected[ static_cast<size_t>( level ) ].resize( size );
+    selected[ static_cast<size_t>( level ) ] = selection;
   }
 
-  if ( !selected[ level ].empty() )
+  if ( !selected[ static_cast<size_t>( level ) ].empty() )
   {
-    for ( size_t current = 0; current < selected[ level ].size(); ++current )
+    for ( size_t current = 0; current < selected[ static_cast<size_t>( level ) ].size(); ++current )
     {
-      if ( selected[ level ][ current ] )
-        selectedSet[ level ].push_back( current );
+      if ( selected[ static_cast<size_t>( level ) ][ current ] )
+        selectedSet[ static_cast<size_t>( level ) ].push_back( current );
     }
   }
 }
@@ -233,32 +233,32 @@ void SelectionManagement< SelType, LevelType >::setSelected( std::vector< SelTyp
     LevelType level )
 {
   // Prepare vectors for update
-  selected[ level ].clear();
-  selectedSet[ level ] = selection;
+  selected[ static_cast<size_t>( level ) ].clear();
+  selectedSet[ static_cast<size_t>( level ) ] = selection;
 
   typename std::vector<SelType>::iterator it;
 
   // Delete any SelType greater than maxElems ( number of level objects)
-  it = std::find_if( selectedSet[ level ].begin(),
-                     selectedSet[ level ].end(),
+  it = std::find_if( selectedSet[ static_cast<size_t>( level ) ].begin(),
+                     selectedSet[ static_cast<size_t>( level ) ].end(),
                      std::bind2nd( std::greater_equal<SelType>(), maxElems ) );
-  if ( it != selectedSet[ level ].end() )
-    selectedSet[ level ].erase( it, selectedSet[ level ].end() );
+  if ( it != selectedSet[ static_cast<size_t>( level ) ].end() )
+    selectedSet[ static_cast<size_t>( level ) ].erase( it, selectedSet[ static_cast<size_t>( level ) ].end() );
 
   // Any reamining row?
-  if ( !selectedSet[ level ].empty() )
+  if ( !selectedSet[ static_cast<size_t>( level ) ].empty() )
   {
-    it = selectedSet[ level ].begin();
+    it = selectedSet[ static_cast<size_t>( level ) ].begin();
     for ( size_t current = 0; current < ( size_t ) maxElems; ++current )
     {
-      if ( it != selectedSet[level].end() && current == ( size_t )*it )
+      if ( it != selectedSet[ static_cast<size_t>( level ) ].end() && current == ( size_t )*it )
       {
-        selected[ level ].push_back( true );
+        selected[ static_cast<size_t>( level ) ].push_back( true );
         ++it;
       }
       else
       {
-        selected[ level ].push_back( false );
+        selected[ static_cast<size_t>( level ) ].push_back( false );
       }
     }
   }
@@ -269,7 +269,7 @@ template < typename SelType, typename LevelType >
 bool SelectionManagement< SelType, LevelType >::isSelectedPosition( SelType whichSelected,
     LevelType level ) const
 {
-  return selected[ level ][ whichSelected ];
+  return selected[ static_cast<size_t>( level ) ][ whichSelected ];
 }
 
 
@@ -277,7 +277,7 @@ template < typename SelType, typename LevelType >
 void SelectionManagement< SelType, LevelType >::getSelected( std::vector< bool > &whichSelected,
     LevelType level ) const
 {
-  whichSelected = selected[ level ];
+  whichSelected = selected[ static_cast<size_t>( level ) ];
 }
 
 
@@ -290,14 +290,14 @@ void SelectionManagement< SelType, LevelType >::getSelected( std::vector< bool >
   whichSelected.clear();
 
   for ( SelType i = first; i <= last; ++ i )
-    whichSelected.push_back( ( selected[ level ] )[ i ] );
+    whichSelected.push_back( ( selected[ static_cast<size_t>( level ) ] )[ i ] );
 }
 
 template < typename SelType, typename LevelType >
 void SelectionManagement< SelType, LevelType >::getSelected( std::vector< SelType > &whichSelected,
     LevelType level ) const
 {
-  whichSelected = selectedSet[ level ];
+  whichSelected = selectedSet[ static_cast<size_t>( level ) ];
 }
 
 
@@ -309,7 +309,7 @@ void SelectionManagement< SelType, LevelType >::getSelected( std::vector< SelTyp
 {
   whichSelected.clear();
   typename std::vector< SelType >::const_iterator it;
-  for ( it = selectedSet[ level ].begin(); it != selectedSet[ level ].end(); ++it )
+  for ( it = selectedSet[ static_cast<size_t>( level ) ].begin(); it != selectedSet[ static_cast<size_t>( level ) ].end(); ++it )
   {
     if ( ( *it >= first ) && ( *it <= last ) )
       whichSelected.push_back( *it );
@@ -322,8 +322,8 @@ void SelectionManagement< SelType, LevelType >::getSelected( std::vector< SelTyp
 template < typename SelType, typename LevelType >
 SelType SelectionManagement< SelType, LevelType >::shiftFirst( SelType whichFirst, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, LevelType level ) const
 {
-  const typename std::vector<SelType>& tmpSelectedSet = selectedSet[ level ];
-  const std::vector<bool>& tmpSelected = selected[ level ];
+  const typename std::vector<SelType>& tmpSelectedSet = selectedSet[ static_cast<size_t>( level ) ];
+  const std::vector<bool>& tmpSelected = selected[ static_cast<size_t>( level ) ];
 
   if( whichFirst >= tmpSelected.size() )
     throw ParaverKernelException( TErrorCode::indexOutOfRange );
@@ -365,8 +365,8 @@ SelType SelectionManagement< SelType, LevelType >::shiftFirst( SelType whichFirs
 template < typename SelType, typename LevelType >
 SelType SelectionManagement< SelType, LevelType >::shiftLast( SelType whichLast, PRV_INT64 shiftAmount, PRV_INT64& appliedAmount, LevelType level ) const
 {
-  const typename std::vector<SelType>& tmpSelectedSet = selectedSet[ level ];
-  const std::vector<bool>& tmpSelected = selected[ level ];
+  const typename std::vector<SelType>& tmpSelectedSet = selectedSet[ static_cast<size_t>( level ) ];
+  const std::vector<bool>& tmpSelected = selected[ static_cast<size_t>( level ) ];
 
   if( whichLast >= tmpSelected.size() )
     throw ParaverKernelException( TErrorCode::indexOutOfRange );

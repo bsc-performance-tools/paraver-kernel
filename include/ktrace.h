@@ -102,11 +102,11 @@ class KTrace: public Trace
     TCPUOrder getLastCPU( TNodeOrder inNode ) const override;
 
     TObjectOrder getFirst( TObjectOrder globalOrder,
-                           TWindowLevel fromLevel,
-                           TWindowLevel toLevel ) const override;
+                           TTraceLevel fromLevel,
+                           TTraceLevel toLevel ) const override;
     TObjectOrder getLast( TObjectOrder globalOrder,
-                          TWindowLevel fromLevel,
-                          TWindowLevel toLevel ) const override;
+                          TTraceLevel fromLevel,
+                          TTraceLevel toLevel ) const override;
 
     bool isSameObjectStruct( Trace *compareTo, bool compareProcessModel ) const override;
     bool isSubsetObjectStruct( Trace *compareTo, bool compareProcessModel ) const override;

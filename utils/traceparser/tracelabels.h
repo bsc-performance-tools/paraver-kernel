@@ -1,7 +1,7 @@
 /*****************************************************************************\
  *                        ANALYSIS PERFORMANCE TOOLS                         *
  *                               libparaver-api                              *
- *                       Paraver Main Computing Library                      *
+ *                      API Library for libparaver-kernel                    *
  *****************************************************************************
  *     ___     This library is free software; you can redistribute it and/or *
  *    /  __         modify it under the terms of the GNU LGPL as published   *
@@ -21,48 +21,26 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-
 #pragma once
 
+#include "tracetypes.h"
 
-#include "interval.h"
-#include "ktrace.h"
+constexpr char LEVEL_WORKLOAD[] =     "WORKLOAD";
+constexpr char LEVEL_APPLICATION[] =  "APPL";
+constexpr char LEVEL_TASK[] =         "TASK";
+constexpr char LEVEL_THREAD[] =       "THREAD";
+constexpr char LEVEL_SYSTEM[] =       "SYSTEM";
+constexpr char LEVEL_NODE[] =         "NODE";
+constexpr char LEVEL_CPU[] =          "CPU";
 
-class IntervalHigh: public Interval
+static const std::string LABEL_LEVELS[ static_cast<int>( TTraceLevel::CPU ) + 1 ] =
 {
-  public:
-    IntervalHigh()
-    {}
-
-    IntervalHigh( TWindowLevel whichLevel, TObjectOrder whichOrder ):
-        Interval( whichLevel, whichOrder ), level( whichLevel ), lastLevel( NONE )
-    {}
-
-    ~IntervalHigh()
-    {}
-
-    TWindowLevel getLevel() const override
-    {
-      return level;
-    }
-
-  protected:
-    std::vector<Interval *> childIntervals;
-
-    TWindowLevel level;
-    TWindowLevel lastLevel;
-
-    virtual void setChildren() = 0;
-
-    virtual TTraceLevel getWindowLevel() const = 0;
-    virtual Interval *getWindowInterval( TWindowLevel whichLevel, TObjectOrder whichOrder ) = 0;
-    virtual bool IsDerivedWindow() const = 0;
-    virtual TWindowLevel getComposeLevel( TTraceLevel whichLevel ) const = 0;
-    virtual KTrace *getWindowTrace() const = 0;
-
-  private:
-
+  "NONE",
+  LEVEL_WORKLOAD,
+  LEVEL_APPLICATION,
+  LEVEL_TASK,
+  LEVEL_THREAD,
+  LEVEL_SYSTEM,
+  LEVEL_NODE,
+  LEVEL_CPU
 };
-
-
-

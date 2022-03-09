@@ -69,7 +69,7 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
   bool tmpResult = functionCommFrom->getDefaultValue();
   if ( existCommFrom )
   {
-    if ( window->getLevel() >= SYSTEM )
+    if ( window->getLevel() >= TTraceLevel::SYSTEM )
     {
       TCPUOrder tmpCPU = window->getTrace()->getSenderCPU( it->getCommIndex() );
       info = ( TSemanticValue ) window->cpuObjectToWindowObject( tmpCPU );
@@ -95,7 +95,7 @@ bool KFilter::filterComms( MemoryTrace::iterator *it )
   tmpResult = functionCommTo->getDefaultValue();
   if ( existCommTo )
   {
-    if ( window->getLevel() >= SYSTEM )
+    if ( window->getLevel() >= TTraceLevel::SYSTEM )
     {
       TCPUOrder tmpCPU = window->getTrace()->getReceiverCPU( it->getCommIndex() );
       info = ( TSemanticValue ) window->cpuObjectToWindowObject( tmpCPU );

@@ -211,28 +211,28 @@ TCPUOrder KTrace::getLastCPU( TNodeOrder inNode ) const
 
 // PRECOND: fromLevel > toLevel
 TObjectOrder KTrace::getFirst( TObjectOrder globalOrder,
-                               TWindowLevel fromLevel,
-                               TWindowLevel toLevel  ) const
+                               TTraceLevel fromLevel,
+                               TTraceLevel toLevel  ) const
 {
-  if ( fromLevel == WORKLOAD || fromLevel == SYSTEM )
+  if ( fromLevel == TTraceLevel::WORKLOAD || fromLevel == TTraceLevel::SYSTEM )
   {
     return 0;
   }
-  else if ( fromLevel == APPLICATION )
+  else if ( fromLevel == TTraceLevel::APPLICATION )
   {
-    if ( toLevel == TASK )
+    if ( toLevel == TTraceLevel::TASK )
       return getFirstTask( globalOrder );
     else
       return getFirstThread( globalOrder, 0 );
   }
-  else if ( fromLevel == TASK )
+  else if ( fromLevel == TTraceLevel::TASK )
   {
     TApplOrder application;
     TTaskOrder task;
     getTaskLocation( globalOrder, application, task );
     return getFirstThread( application, task );
   }
-  else if ( fromLevel == NODE )
+  else if ( fromLevel == TTraceLevel::NODE )
   {
     return getFirstCPU( globalOrder );
   }
@@ -242,40 +242,40 @@ TObjectOrder KTrace::getFirst( TObjectOrder globalOrder,
 
 
 TObjectOrder KTrace::getLast( TObjectOrder globalOrder,
-                              TWindowLevel fromLevel,
-                              TWindowLevel toLevel ) const
+                              TTraceLevel fromLevel,
+                              TTraceLevel toLevel ) const
 {
-  if ( fromLevel == WORKLOAD )
+  if ( fromLevel == TTraceLevel::WORKLOAD )
   {
-    if ( toLevel == APPLICATION )
+    if ( toLevel == TTraceLevel::APPLICATION )
       return totalApplications() - 1;
-    else if ( toLevel == TASK )
+    else if ( toLevel == TTraceLevel::TASK )
       return totalTasks() - 1;
     else
       return totalThreads() - 1;
   }
-  else if ( fromLevel == APPLICATION )
+  else if ( fromLevel == TTraceLevel::APPLICATION )
   {
-    if ( toLevel == TASK )
+    if ( toLevel == TTraceLevel::TASK )
       return getLastTask( globalOrder );
     else
       return getLastThread( globalOrder, getLastTask( globalOrder ) );
   }
-  else if ( fromLevel == TASK )
+  else if ( fromLevel == TTraceLevel::TASK )
   {
     TApplOrder application;
     TTaskOrder task;
     getTaskLocation( globalOrder, application, task );
     return getLastThread( application, task );
   }
-  else if ( fromLevel == SYSTEM )
+  else if ( fromLevel == TTraceLevel::SYSTEM )
   {
-    if ( toLevel == NODE )
+    if ( toLevel == TTraceLevel::NODE )
       return totalNodes() - 1;
     else
       return totalCPUs() - 1;
   }
-  else if ( fromLevel == NODE )
+  else if ( fromLevel == TTraceLevel::NODE )
   {
     return getLastCPU( globalOrder );
   }

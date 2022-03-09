@@ -63,27 +63,27 @@ Trace::Trace( KernelConnection *whichKernel ):
     myKernel( whichKernel )
 {}
 
-TObjectOrder Trace::getLevelObjects( TWindowLevel onLevel ) const
+TObjectOrder Trace::getLevelObjects( TTraceLevel onLevel ) const
 {
   switch ( onLevel )
   {
-    case WORKLOAD:
-    case SYSTEM:
+    case TTraceLevel::WORKLOAD:
+    case TTraceLevel::SYSTEM:
       return 1;
       break;
-    case APPLICATION:
+    case TTraceLevel::APPLICATION:
       return totalApplications();
       break;
-    case TASK:
+    case TTraceLevel::TASK:
       return totalTasks();
       break;
-    case THREAD:
+    case TTraceLevel::THREAD:
       return totalThreads();
       break;
-    case NODE:
+    case TTraceLevel::NODE:
       return totalNodes();
       break;
-    case CPU:
+    case TTraceLevel::CPU:
       return totalCPUs();
       break;
     default:
@@ -346,15 +346,15 @@ TCPUOrder TraceProxy::getLastCPU( TNodeOrder inNode ) const
 }
 
 TObjectOrder TraceProxy::getFirst( TObjectOrder globalOrder,
-                                   TWindowLevel fromLevel,
-                                   TWindowLevel toLevel ) const
+                                   TTraceLevel fromLevel,
+                                   TTraceLevel toLevel ) const
 {
   return myTrace->getFirst( globalOrder, fromLevel, toLevel );
 }
 
 TObjectOrder TraceProxy::getLast( TObjectOrder globalOrder,
-                                  TWindowLevel fromLevel,
-                                  TWindowLevel toLevel ) const
+                                  TTraceLevel fromLevel,
+                                  TTraceLevel toLevel ) const
 {
   return myTrace->getLast( globalOrder, fromLevel, toLevel );
 }
@@ -609,13 +609,13 @@ const StateLabels& TraceProxy::getStateLabels() const
   return myStateLabels;
 }
 
-string TraceProxy::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const
+string TraceProxy::getRowLabel( TTraceLevel whichLevel, TObjectOrder whichRow ) const
 {
   return myRowLabels.getRowLabel( whichLevel, whichRow );
 }
 
 // NONE ==> globalMaxLevel
-size_t TraceProxy::getMaxLengthRow( TWindowLevel whichLevel = NONE ) const
+size_t TraceProxy::getMaxLengthRow( TTraceLevel whichLevel = TTraceLevel::NONE ) const
 {
   return myRowLabels.getMaxLength( whichLevel );
 }

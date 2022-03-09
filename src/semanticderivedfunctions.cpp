@@ -152,7 +152,7 @@ void ControlDerivedClearBy::init( KTimeline *whichWindow )
   lastControlValue.clear();
   lastDataBeginTime.clear();
 
-  if( whichWindow->getLevel() >= SYSTEM )
+  if( whichWindow->getLevel() >= TTraceLevel::SYSTEM )
     size = whichWindow->getTrace()->totalCPUs();
   else
     size = whichWindow->getTrace()->totalThreads();
@@ -219,7 +219,7 @@ void ControlDerivedEnumerate::init( KTimeline *whichWindow )
   prevControlValue.clear();
   prevDataTime.clear();
 
-  if( whichWindow->getLevel() >= SYSTEM )
+  if( whichWindow->getLevel() >= TTraceLevel::SYSTEM )
     size = whichWindow->getTrace()->totalCPUs();
   else
     size = whichWindow->getTrace()->totalThreads();
@@ -266,7 +266,7 @@ void ControlDerivedAverage::init( KTimeline *whichWindow )
   totalValue.clear();
   totalTime.clear();
 
-  if( whichWindow->getLevel() >= SYSTEM )
+  if( whichWindow->getLevel() >= TTraceLevel::SYSTEM )
     size = whichWindow->getTrace()->totalCPUs();
   else
     size = whichWindow->getTrace()->totalThreads();

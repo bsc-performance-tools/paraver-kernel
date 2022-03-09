@@ -35,8 +35,8 @@ class SelectionRowsUtils
 {
 	public:
     static void getAllLevelsSelectedRows( const Trace* whichTrace,
-                                          const SelectionManagement< TObjectOrder, TWindowLevel > &selectedRow,
-                                          TWindowLevel onLevel,
+                                          const SelectionManagement< TObjectOrder, TTraceLevel > &selectedRow,
+                                          TTraceLevel onLevel,
                                           std::vector< TObjectOrder > &selected );
 };
 

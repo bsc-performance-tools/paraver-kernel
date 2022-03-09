@@ -309,7 +309,7 @@ string StatNumSends::name = "#Sends";
 
 TObjectOrder StatNumSends::getPartner( CalculateData *data )
 {
-  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+  if ( controlWin->getLevel() >= TTraceLevel::WORKLOAD && controlWin->getLevel() <= TTraceLevel::THREAD )
     return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
@@ -367,7 +367,7 @@ string StatNumReceives::name = "#Receives";
 
 TObjectOrder StatNumReceives::getPartner( CalculateData *data )
 {
-  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+  if ( controlWin->getLevel() >= TTraceLevel::WORKLOAD && controlWin->getLevel() <= TTraceLevel::THREAD )
     return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
@@ -424,7 +424,7 @@ string StatBytesSent::name = "Bytes sent";
 
 TObjectOrder StatBytesSent::getPartner( CalculateData *data )
 {
-  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+  if ( controlWin->getLevel() >= TTraceLevel::WORKLOAD && controlWin->getLevel() <= TTraceLevel::THREAD )
     return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
@@ -481,7 +481,7 @@ string StatBytesReceived::name = "Bytes received";
 
 TObjectOrder StatBytesReceived::getPartner( CalculateData *data )
 {
-  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+  if ( controlWin->getLevel() >= TTraceLevel::WORKLOAD && controlWin->getLevel() <= TTraceLevel::THREAD )
     return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
@@ -538,7 +538,7 @@ string StatAvgBytesSent::name = "Average bytes sent";
 
 TObjectOrder StatAvgBytesSent::getPartner( CalculateData *data )
 {
-  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+  if ( controlWin->getLevel() >= TTraceLevel::WORKLOAD && controlWin->getLevel() <= TTraceLevel::THREAD )
     return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
@@ -624,7 +624,7 @@ string StatAvgBytesReceived::name = "Average bytes received";
 
 TObjectOrder StatAvgBytesReceived::getPartner( CalculateData *data )
 {
-  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+  if ( controlWin->getLevel() >= TTraceLevel::WORKLOAD && controlWin->getLevel() <= TTraceLevel::THREAD )
     return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
@@ -710,7 +710,7 @@ string StatMinBytesSent::name = "Minimum bytes sent";
 
 TObjectOrder StatMinBytesSent::getPartner( CalculateData *data )
 {
-  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+  if ( controlWin->getLevel() >= TTraceLevel::WORKLOAD && controlWin->getLevel() <= TTraceLevel::THREAD )
     return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
@@ -812,7 +812,7 @@ string StatMinBytesReceived::name = "Minimum bytes received";
 
 TObjectOrder StatMinBytesReceived::getPartner( CalculateData *data )
 {
-  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+  if ( controlWin->getLevel() >= TTraceLevel::WORKLOAD && controlWin->getLevel() <= TTraceLevel::THREAD )
     return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
@@ -914,7 +914,7 @@ string StatMaxBytesSent::name = "Maximum bytes sent";
 
 TObjectOrder StatMaxBytesSent::getPartner( CalculateData *data )
 {
-  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+  if ( controlWin->getLevel() >= TTraceLevel::WORKLOAD && controlWin->getLevel() <= TTraceLevel::THREAD )
     return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }
@@ -1012,7 +1012,7 @@ string StatMaxBytesReceived::name = "Maximum bytes received";
 
 TObjectOrder StatMaxBytesReceived::getPartner( CalculateData *data )
 {
-  if ( controlWin->getLevel() >= WORKLOAD && controlWin->getLevel() <= THREAD )
+  if ( controlWin->getLevel() >= TTraceLevel::WORKLOAD && controlWin->getLevel() <= TTraceLevel::THREAD )
     return controlWin->threadObjectToWindowObject( data->comm->getCommPartnerObject() );
   return controlWin->cpuObjectToWindowObject( data->comm->getCommPartnerObject() - 1 );
 }

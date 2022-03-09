@@ -81,3 +81,10 @@ using TCommTag    = int64_t;
 using TEventType  = uint32_t;
 using TEventValue = int64_t;
 using TState      = uint32_t;
+
+enum class TTraceLevel
+{
+  NONE = 0,
+  WORKLOAD, APPLICATION, TASK, THREAD,
+  SYSTEM, NODE, CPU
+};

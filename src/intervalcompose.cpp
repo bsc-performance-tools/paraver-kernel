@@ -246,10 +246,10 @@ void IntervalCompose::setChildren()
   }
   else if ( level == TOPCOMPOSE2 )
   {
-    if ( lastLevel != getWindowLevel() )
+    if ( lastLevel != static_cast<TWindowLevel>( getWindowLevel() ) )
     {
       childIntervals.clear();
-      lastLevel = getWindowLevel();
+      lastLevel = static_cast<TWindowLevel>( getWindowLevel() );
       childIntervals.push_back( getWindowInterval(
                                 getComposeLevel( getWindowLevel() ), order ) );
     }
@@ -336,7 +336,7 @@ void IntervalCompose::setChildren()
 
 
 
-TWindowLevel IntervalCompose::getWindowLevel() const
+TTraceLevel IntervalCompose::getWindowLevel() const
 {
   return window->getLevel();
 }
@@ -355,7 +355,7 @@ bool IntervalCompose::IsDerivedWindow() const
 }
 
 
-TWindowLevel IntervalCompose::getComposeLevel( TWindowLevel whichLevel ) const
+TWindowLevel IntervalCompose::getComposeLevel( TTraceLevel whichLevel ) const
 {
   return window->getComposeLevel( whichLevel );
 }

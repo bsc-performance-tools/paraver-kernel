@@ -47,7 +47,7 @@ class KTimeline: public Timeline
     KTimeline( Trace *whichTrace ): myTrace( (KTrace*)whichTrace )
     {
       timeUnit = NS;
-      level = THREAD;
+      level = TTraceLevel::THREAD;
     }
     virtual ~KTimeline();
 
@@ -61,24 +61,22 @@ class KTimeline: public Timeline
       return myTrace;
     }
 
-    virtual TWindowLevel getLevel() const override
+    virtual TTraceLevel getLevel() const override
     {
       return level;
     }
 
-    virtual void setLevel( TWindowLevel whichLevel ) override
+    virtual void setLevel( TTraceLevel whichLevel ) override
     {
-      if ( whichLevel >= TOPCOMPOSE1 )
-        throw KWindowException( TKWindowErrorCode::invalidLevel );
       level = whichLevel;
     }
 
-    virtual TWindowLevel getMinAcceptableLevel() const override
+    virtual TTraceLevel getMinAcceptableLevel() const override
     {
-      TWindowLevel minAcceptableLevel = THREAD;
+      TTraceLevel minAcceptableLevel = TTraceLevel::THREAD;
 
-      if ( level >= SYSTEM && level <= CPU )
-        minAcceptableLevel = CPU;
+      if ( level >= TTraceLevel::SYSTEM && level <= TTraceLevel::CPU )
+        minAcceptableLevel = TTraceLevel::CPU;
 
       return minAcceptableLevel;
     }
@@ -93,21 +91,21 @@ class KTimeline: public Timeline
       return timeUnit;
     }
 
-    TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const override
+    TWindowLevel getComposeLevel( TTraceLevel whichLevel ) const override
     {
-      if ( whichLevel == WORKLOAD )
+      if ( whichLevel == TTraceLevel::WORKLOAD )
         return COMPOSEWORKLOAD;
-      else if ( whichLevel == APPLICATION )
+      else if ( whichLevel == TTraceLevel::APPLICATION )
         return COMPOSEAPPLICATION;
-      else if ( whichLevel == TASK )
+      else if ( whichLevel == TTraceLevel::TASK )
         return COMPOSETASK;
-      else if ( whichLevel == THREAD )
+      else if ( whichLevel == TTraceLevel::THREAD )
         return COMPOSETHREAD;
-      else if ( whichLevel == SYSTEM )
+      else if ( whichLevel == TTraceLevel::SYSTEM )
         return COMPOSESYSTEM;
-      else if ( whichLevel == NODE )
+      else if ( whichLevel == TTraceLevel::NODE )
         return COMPOSENODE;
-      else if ( whichLevel == CPU )
+      else if ( whichLevel == TTraceLevel::CPU )
         return COMPOSECPU;
 
       return NONE;
@@ -182,7 +180,7 @@ class KTimeline: public Timeline
 
   protected:
     KTrace *myTrace;
-    TWindowLevel level;
+    TTraceLevel level;
     TTimeUnit timeUnit;
 
     std::vector<IntervalCompose> intervalTopCompose1;
@@ -399,8 +397,8 @@ class KDerivedWindow: public KTimeline
     virtual void setParent( PRV_UINT16 whichParent, Timeline *whichWindow ) override;
     virtual Timeline *getParent( PRV_UINT16 whichParent ) const override;
 
-    virtual void setLevel( TWindowLevel whichLevel ) override;
-    virtual TWindowLevel getMinAcceptableLevel() const override;
+    virtual void setLevel( TTraceLevel whichLevel ) override;
+    virtual TTraceLevel getMinAcceptableLevel() const override;
 
     virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    const std::string& whichFunction ) override;

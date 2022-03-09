@@ -69,9 +69,9 @@ void KRecordList::insert( KTimeline *window, MemoryTrace::iterator *it )
   TCommID id = it->getCommIndex();
   tmp.setType( it->getType() );
   tmp.setTime( it->getTime() );
-  if ( window->getLevel() >= WORKLOAD && window->getLevel() <= THREAD )
+  if ( window->getLevel() >= TTraceLevel::WORKLOAD && window->getLevel() <= TTraceLevel::THREAD )
     tmp.setOrder( it->getOrder() );
-  else if ( window->getLevel() >= SYSTEM && window->getLevel() <= CPU )
+  else if ( window->getLevel() >= TTraceLevel::SYSTEM && window->getLevel() <= TTraceLevel::CPU )
     tmp.setOrder( it->getOrder() );
 
   if ( tmp.getType() & EVENT )
@@ -82,15 +82,15 @@ void KRecordList::insert( KTimeline *window, MemoryTrace::iterator *it )
   else if ( tmp.getType() & COMM )
   {
     KTrace *trace = ( KTrace * ) window->getTrace();
-    TWindowLevel level = window->getLevel();
+    TTraceLevel level = window->getLevel();
     tmp.setCommSize( trace->getCommSize( id ) );
     tmp.setCommTag( trace->getCommTag( id ) );
     tmp.setCommId( id );
     if ( it->getType() & SEND )
     {
-      if ( level >= WORKLOAD && level <= THREAD )
+      if ( level >= TTraceLevel::WORKLOAD && level <= TTraceLevel::THREAD )
         tmp.setCommPartnerObject( trace->getReceiverThread( id ) );
-      else if ( level >= SYSTEM && level <= CPU )
+      else if ( level >= TTraceLevel::SYSTEM && level <= TTraceLevel::CPU )
         tmp.setCommPartnerObject( trace->getReceiverCPU( id ) );
 
       if ( it->getType() & LOG )
@@ -104,9 +104,9 @@ void KRecordList::insert( KTimeline *window, MemoryTrace::iterator *it )
     }
     else if ( it->getType() & RECV )
     {
-      if ( level >= WORKLOAD && level <= THREAD )
+      if ( level >= TTraceLevel::WORKLOAD && level <= TTraceLevel::THREAD )
         tmp.setCommPartnerObject( trace->getSenderThread( id ) );
-      else if ( level >= SYSTEM && level <= CPU )
+      else if ( level >= TTraceLevel::SYSTEM && level <= TTraceLevel::CPU )
         tmp.setCommPartnerObject( trace->getSenderCPU( id ) );
 
       if ( it->getType() & LOG )

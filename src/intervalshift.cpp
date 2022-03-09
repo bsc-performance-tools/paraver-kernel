@@ -85,7 +85,7 @@ KRecordList *IntervalShift::calcPrev( KRecordList *displayList, bool initCalc )
   return displayList;
 }
 
-TWindowLevel IntervalShift::getWindowLevel() const
+TTraceLevel IntervalShift::getWindowLevel() const
 {
   return window->getLevel();
 }
@@ -104,7 +104,7 @@ bool IntervalShift::IsDerivedWindow() const
 }
 
 
-TWindowLevel IntervalShift::getComposeLevel( TWindowLevel whichLevel ) const
+TWindowLevel IntervalShift::getComposeLevel( TTraceLevel whichLevel ) const
 {
   return window->getComposeLevel( whichLevel );
 }

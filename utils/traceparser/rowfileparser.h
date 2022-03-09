@@ -28,7 +28,7 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "paraverkerneltypes.h"
+#include "tracetypes.h"
 
 template< typename dummy = nullptr_t >
 class RowFileParser
@@ -42,17 +42,17 @@ class RowFileParser
 
     void dumpToFile( const std::string& filename ) const;
 
-    std::string getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const;
-    void pushBack( TWindowLevel whichLevel, const std::string& rowLabel );
+    std::string getRowLabel( TTraceLevel whichLevel, TObjectOrder whichRow ) const;
+    void pushBack( TTraceLevel whichLevel, const std::string& rowLabel );
 
     // whichLevel == NONE (by default) ==> all levels MaxLength
-    size_t getMaxLength( TWindowLevel whichLevel = NONE ) const;
+    size_t getMaxLength( TTraceLevel whichLevel = TTraceLevel::NONE ) const;
 
   protected:
 
   private:
     // tuple elements are: level name, max length, level objects labels
-    std::map<TWindowLevel, std::tuple< std::string, size_t, std::vector<std::string> > > levelLabels;
+    std::map<TTraceLevel, std::tuple< std::string, size_t, std::vector<std::string> > > levelLabels;
 
     size_t globalMaxLength;
 

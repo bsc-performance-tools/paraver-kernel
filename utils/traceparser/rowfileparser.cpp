@@ -28,7 +28,7 @@
 #include <regex>
 #include <sstream>
 
-#include "paraverlabels.h"
+#include "tracelabels.h"
 
 
 template<typename dummy>
@@ -82,25 +82,25 @@ RowFileParser<dummy>::RowFileParser( const std::string& filename )
     getline( auxStream, strLevel, ' ' ); // 'LEVEL'
     getline( auxStream, strLevel, ' ' );
 
-    TWindowLevel level;
+    TTraceLevel level;
     if ( strLevel == LEVEL_WORKLOAD )
-      level = WORKLOAD;
+      level = TTraceLevel::WORKLOAD;
     else if ( strLevel == LEVEL_APPLICATION )
-      level = APPLICATION;
+      level = TTraceLevel::APPLICATION;
     else if ( strLevel == LEVEL_TASK )
-      level = TASK;
+      level = TTraceLevel::TASK;
     else if ( strLevel == LEVEL_THREAD )
-      level = THREAD;
+      level = TTraceLevel::THREAD;
     else if ( strLevel == LEVEL_SYSTEM )
-      level = SYSTEM;
+      level = TTraceLevel::SYSTEM;
     else if ( strLevel == LEVEL_NODE )
-      level = NODE;
+      level = TTraceLevel::NODE;
     else if ( strLevel == LEVEL_CPU )
-      level = CPU;
+      level = TTraceLevel::CPU;
     else
       continue;
 
-    std::map<TWindowLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::iterator currentLevelLabels;
+    std::map<TTraceLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::iterator currentLevelLabels;
     std::tuple< std::string, size_t, std::vector<std::string> > tmpEmptyLevel( strLevel, 0, std::vector<std::string>() );
     std::tie( currentLevelLabels, std::ignore ) = levelLabels.insert( std::make_pair( level, tmpEmptyLevel ) );
 
@@ -149,10 +149,10 @@ void RowFileParser<dummy>::dumpToFile( const std::string& filename ) const
   if ( !rowFile )
     throw std::ios_base::failure( "Error creating output row file." );
 
-  for( int i = CPU; i >= WORKLOAD; --i )
+  for( int i = static_cast<int>( TTraceLevel::CPU ); i >= static_cast<int>( TTraceLevel::WORKLOAD ); --i )
   {
-    std::map<TWindowLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::const_iterator currentLevelLabels;
-    if( ( currentLevelLabels = levelLabels.find( static_cast<TWindowLevel>( i ) ) ) != levelLabels.end() )
+    std::map<TTraceLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::const_iterator currentLevelLabels;
+    if( ( currentLevelLabels = levelLabels.find( static_cast<TTraceLevel>( i ) ) ) != levelLabels.end() )
       dumpLevel( currentLevelLabels->second, rowFile );
   }
 
@@ -175,9 +175,9 @@ void RowFileParser<dummy>::dumpLevel( const std::tuple< std::string, size_t, std
 
 
 template<typename dummy>
-std::string RowFileParser<dummy>::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const
+std::string RowFileParser<dummy>::getRowLabel( TTraceLevel whichLevel, TObjectOrder whichRow ) const
 {
-  std::map<TWindowLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::const_iterator currentLevelLabels;
+  std::map<TTraceLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::const_iterator currentLevelLabels;
   if( ( currentLevelLabels = levelLabels.find( whichLevel ) ) == levelLabels.end() )
     return "";
 
@@ -190,12 +190,12 @@ std::string RowFileParser<dummy>::getRowLabel( TWindowLevel whichLevel, TObjectO
 
 
 template<typename dummy>
-void RowFileParser<dummy>::pushBack( TWindowLevel whichLevel, const std::string& rowLabel )
+void RowFileParser<dummy>::pushBack( TTraceLevel whichLevel, const std::string& rowLabel )
 {
-  std::map<TWindowLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::iterator currentLevelLabels;
+  std::map<TTraceLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::iterator currentLevelLabels;
   if( ( currentLevelLabels = levelLabels.find( whichLevel ) ) == levelLabels.end() )
   {
-    std::tuple< std::string, size_t, std::vector<std::string> > tmpCurrentLevel( LABEL_LEVELS[ whichLevel ], 0, std::vector<std::string>() );
+    std::tuple< std::string, size_t, std::vector<std::string> > tmpCurrentLevel( LABEL_LEVELS[ static_cast<int>( whichLevel ) ], 0, std::vector<std::string>() );
     std::tie( currentLevelLabels, std::ignore ) = levelLabels.insert( std::make_pair( whichLevel, tmpCurrentLevel ) );
   }
 
@@ -211,12 +211,12 @@ void RowFileParser<dummy>::pushBack( TWindowLevel whichLevel, const std::string&
 
 // whichLevel == NONE (by default) ==> all levels MaxLength
 template<typename dummy>
-size_t RowFileParser<dummy>::getMaxLength( TWindowLevel whichLevel ) const
+size_t RowFileParser<dummy>::getMaxLength( TTraceLevel whichLevel ) const
 {
-  if( whichLevel == NONE )
+  if( whichLevel == TTraceLevel::NONE )
     return globalMaxLength;
 
-  std::map<TWindowLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::const_iterator currentLevelLabels;
+  std::map<TTraceLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::const_iterator currentLevelLabels;
   if( ( currentLevelLabels = levelLabels.find( whichLevel ) ) == levelLabels.end() )
     return 0;
 
