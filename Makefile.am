@@ -16,8 +16,8 @@ nobase_include_HEADERS = \
 	utils/traceparser/resourcemodelcpu.h \
 	utils/traceparser/resourcemodel.h \
 	utils/traceparser/resourcemodelnode.h \
-	utils/traceparser/rowlabels.cpp \
-	utils/traceparser/rowlabels.h \
+	utils/traceparser/rowfileparser.cpp \
+	utils/traceparser/rowfileparser.h \
 	utils/traceparser/tracebodyio.h \
 	utils/traceparser/tracebodyio_v1.cpp \
 	utils/traceparser/tracebodyio_v1.h \

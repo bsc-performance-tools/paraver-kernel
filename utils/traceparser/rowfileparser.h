@@ -31,12 +31,12 @@
 #include "paraverkerneltypes.h"
 
 template< typename dummy = nullptr_t >
-class RowLabels
+class RowFileParser
 {
   public:
-    RowLabels() = default;
-    RowLabels( const std::string& filename );
-    ~RowLabels() = default;
+    RowFileParser() = default;
+    RowFileParser( const std::string& filename );
+    ~RowFileParser() = default;
 
     void dumpToFile( const std::string& filename ) const;
 
@@ -57,4 +57,4 @@ class RowLabels
     void dumpLevel( const std::tuple< std::string, size_t, std::vector<std::string> >& whichLevel, std::ofstream& whichFile ) const;
 };
 
-#include "rowlabels.cpp"
+#include "rowfileparser.cpp"

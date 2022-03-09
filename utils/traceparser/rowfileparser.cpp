@@ -29,7 +29,7 @@
 #include "paraverlabels.h"
 
 template<typename dummy>
-RowLabels<dummy>::RowLabels( const std::string& filename )
+RowFileParser<dummy>::RowFileParser( const std::string& filename )
 {
   std::string strLine;
   std::string strLevel;
@@ -119,7 +119,7 @@ RowLabels<dummy>::RowLabels( const std::string& filename )
 
 
 template<typename dummy>
-void RowLabels<dummy>::dumpToFile( const std::string& filename ) const
+void RowFileParser<dummy>::dumpToFile( const std::string& filename ) const
 {
   std::ofstream rowFile( filename.c_str() );
   if ( !rowFile )
@@ -137,7 +137,7 @@ void RowLabels<dummy>::dumpToFile( const std::string& filename ) const
 
 
 template<typename dummy>
-void RowLabels<dummy>::dumpLevel( const std::tuple< std::string, size_t, std::vector<std::string> >& whichLevel, std::ofstream& whichFile ) const
+void RowFileParser<dummy>::dumpLevel( const std::tuple< std::string, size_t, std::vector<std::string> >& whichLevel, std::ofstream& whichFile ) const
 {
   if( !std::get<2>( whichLevel ).empty() )
   {
@@ -151,7 +151,7 @@ void RowLabels<dummy>::dumpLevel( const std::tuple< std::string, size_t, std::ve
 
 
 template<typename dummy>
-std::string RowLabels<dummy>::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const
+std::string RowFileParser<dummy>::getRowLabel( TWindowLevel whichLevel, TObjectOrder whichRow ) const
 {
   std::map<TWindowLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::const_iterator currentLevelLabels;
   if( ( currentLevelLabels = levelLabels.find( whichLevel ) ) == levelLabels.end() )
@@ -166,7 +166,7 @@ std::string RowLabels<dummy>::getRowLabel( TWindowLevel whichLevel, TObjectOrder
 
 
 template<typename dummy>
-void RowLabels<dummy>::pushBack( TWindowLevel whichLevel, const std::string& rowLabel )
+void RowFileParser<dummy>::pushBack( TWindowLevel whichLevel, const std::string& rowLabel )
 {
   std::map<TWindowLevel, std::tuple< std::string, size_t, std::vector<std::string> > >::iterator currentLevelLabels;
   if( ( currentLevelLabels = levelLabels.find( whichLevel ) ) == levelLabels.end() )
@@ -186,7 +186,7 @@ void RowLabels<dummy>::pushBack( TWindowLevel whichLevel, const std::string& row
 
 // whichLevel == NONE (by default) ==> all levels MaxLength
 template<typename dummy>
-size_t RowLabels<dummy>::getMaxLength( TWindowLevel whichLevel ) const
+size_t RowFileParser<dummy>::getMaxLength( TWindowLevel whichLevel ) const
 {
   if( whichLevel == NONE )
     return globalMaxLength;

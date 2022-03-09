@@ -31,7 +31,7 @@
 #include "semanticcolor.h"
 #include "eventlabels.h"
 #include "statelabels.h"
-#include "utils/traceparser/rowlabels.h"
+#include "utils/traceparser/rowfileparser.h"
 
 using boost::posix_time::ptime;
 
@@ -375,7 +375,7 @@ class TraceProxy: public Trace
 
     EventLabels myEventLabels;
     StateLabels myStateLabels;
-    RowLabels<> myRowLabels;
+    RowFileParser<> myRowLabels;
 
     bool showProgressBar;
 

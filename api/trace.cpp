@@ -139,7 +139,7 @@ TObjectOrder getNumLevelObjects( TWindowLevel whichLevel, Trace *myTrace )
 
 void TraceProxy::setFixedLabels()
 {
-  RowLabels<> tmpRowLabels;
+  RowFileParser<> tmpRowLabels;
   int maxLabelLength = 0;
   std::string tmpObjectLabel;
   std::string newObjectLabel;
@@ -586,7 +586,7 @@ void TraceProxy::parsePCF( const string& whichFile )
 
 void TraceProxy::parseROW( const string& whichFile )
 {
-  myRowLabels = RowLabels<>( whichFile );
+  myRowLabels = RowFileParser<>( whichFile );
 }
 
 const CodeColor& TraceProxy::getCodeColor() const
