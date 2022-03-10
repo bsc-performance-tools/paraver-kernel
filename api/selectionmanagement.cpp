@@ -61,7 +61,7 @@ inline void SelectionManagement< TObjectOrder, TTraceLevel >::init( Trace *trace
 
   std::vector< bool > auxSelected;
 
-  for ( TTraceLevel level = TTraceLevel::NONE; level <= TTraceLevel::CPU; level = static_cast<TTraceLevel>( static_cast<size_t>( level ) + 1 ) )
+  for ( TTraceLevel level = TTraceLevel::NONE; level <= TTraceLevel::CPU; ++level )
   {
     auxSelected.clear();
     selected.push_back( std::vector< bool >( ) );

@@ -88,3 +88,15 @@ enum class TTraceLevel
   WORKLOAD, APPLICATION, TASK, THREAD,
   SYSTEM, NODE, CPU
 };
+
+constexpr TTraceLevel& operator++( TTraceLevel& whichLevel )
+{
+  return whichLevel = static_cast<TTraceLevel>( static_cast<size_t>( whichLevel ) + 1 );
+}
+
+constexpr TTraceLevel operator++( TTraceLevel& whichLevel, int )
+{
+  TTraceLevel tmp = whichLevel;
+  whichLevel = static_cast<TTraceLevel>( static_cast<size_t>( whichLevel ) + 1 );
+  return tmp;
+}
