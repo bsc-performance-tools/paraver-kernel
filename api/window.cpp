@@ -705,7 +705,7 @@ TTimeUnit TimelineProxy::getTimeUnit() const
   return myWindow->getTimeUnit();
 }
 
-TWindowLevel TimelineProxy::getComposeLevel( TWindowLevel whichLevel ) const
+TWindowLevel TimelineProxy::getComposeLevel( TTraceLevel whichLevel ) const
 {
   return myWindow->getComposeLevel( whichLevel );
 }

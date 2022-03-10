@@ -53,15 +53,15 @@ SelectionManagement< SelType, LevelType >::~SelectionManagement()
 }
 
 
-template < typename SelType, typename LevelType >
-void SelectionManagement< SelType, LevelType >::init( Trace *trace )
+template <>
+inline void SelectionManagement< TObjectOrder, TTraceLevel >::init( Trace *trace )
 {
   selected.clear();
   selectedSet.clear();
 
   std::vector< bool > auxSelected;
 
-  for ( PRV_UINT32 level = ( PRV_UINT32 )NONE; level <= ( PRV_UINT32 )CPU; ++level )
+  for ( TTraceLevel level = TTraceLevel::NONE; level <= TTraceLevel::CPU; level = static_cast<TTraceLevel>( static_cast<size_t>( level ) + 1 ) )
   {
     auxSelected.clear();
     selected.push_back( std::vector< bool >( ) );
@@ -69,39 +69,39 @@ void SelectionManagement< SelType, LevelType >::init( Trace *trace )
 
     switch ( level )
     {
-      case APPLICATION:
+      case TTraceLevel::APPLICATION:
         auxSelected.insert( auxSelected.begin(),
                             ( size_t ) trace->totalApplications(),
                             true );
-        setSelected( auxSelected, ( TWindowLevel )level );
+        setSelected( auxSelected, level );
         break;
 
-      case TASK:
+      case TTraceLevel::TASK:
         auxSelected.insert( auxSelected.begin(),
                             ( size_t ) trace->totalTasks(),
                             true );
-        setSelected( auxSelected, ( TWindowLevel )level );
+        setSelected( auxSelected, level );
         break;
 
-      case THREAD:
+      case TTraceLevel::THREAD:
         auxSelected.insert( auxSelected.begin(),
                             ( size_t ) trace->totalThreads(),
                             true );
-        setSelected( auxSelected, ( TWindowLevel )level );
+        setSelected( auxSelected, level );
         break;
 
-      case NODE:
+      case TTraceLevel::NODE:
         auxSelected.insert( auxSelected.begin(),
                             trace->totalNodes(),
                             true );
-        setSelected( auxSelected, ( TWindowLevel )level );
+        setSelected( auxSelected, level );
         break;
 
-      case CPU:
+      case TTraceLevel::CPU:
         auxSelected.insert( auxSelected.begin(),
                             trace->totalCPUs(),
                             true );
-        setSelected( auxSelected, ( TWindowLevel )level );
+        setSelected( auxSelected, level );
         break;
 
 //    NONE, WORKLOAD, SYSTEM
@@ -109,7 +109,7 @@ void SelectionManagement< SelType, LevelType >::init( Trace *trace )
         auxSelected.insert( auxSelected.begin(),
                             1,
                             true );
-        setSelected( auxSelected, ( TWindowLevel )level );
+        setSelected( auxSelected, level );
         break;
     }
   }
