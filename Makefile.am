@@ -22,6 +22,7 @@ nobase_include_HEADERS = \
 	utils/traceparser/tracebodyio_v1.cpp \
 	utils/traceparser/tracebodyio_v1.h \
 	utils/traceparser/traceheader.h \
+  utils/traceparser/tracelabels.h \
 	utils/traceparser/tracetypes.h
 
 bin_PROGRAMS = paramedir.bin
