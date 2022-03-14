@@ -105,27 +105,69 @@ void Workspace::clearHintCFGs()
 
 // load/save XML for import/export certain workspaces
 
-void Workspace::loadXML( std::string &wsDir )
+void Workspace::loadXML( std::string &wsFile )
 {
-  // Read user defined
-  std::ifstream ifs( wsDir.c_str() );
-  //ifs.open( wsDir );
-  if( ifs.good() ) // due to xml_iarchive needs to be destroyed before fstream is closed
+  std::ifstream ifs( wsFile.c_str() );
+  if( ifs.good() )
   {
     boost::archive::xml_iarchive ia( ifs );
     ia >> boost::serialization::make_nvp( "workspace", *this );
   }
+  
   ifs.close();
 }
 
 
-void Workspace::saveXML( std::string &wsDir )
+void Workspace::saveXML( std::string &wsFile )
 {
-  std::ofstream ofs( wsDir.c_str() );
-  if( ofs.good() ) // due to xml_oarchive needs to be destroyed before fstream is closed
+  std::ofstream ofs( wsFile.c_str() );
+  if( ofs.good() )
   {
     boost::archive::xml_oarchive oa( ofs );
     oa << boost::serialization::make_nvp( "workspace", *this );
   }
+
   ofs.close();
+}
+
+std::string readToCFGSeparator( std::ifstream& ifs, std::ofstream& ofs )
+{
+  std::string line;
+  static const size_t cfgSeparatorSize = std::string( cfgSeparator ).length();
+  while( !ifs.eof() )
+  {
+    getline( ifs, line );
+    if( line.substr( 0, cfgSeparatorSize ) == cfgSeparator )
+    {
+      return line.substr( cfgSeparatorSize, line.npos );
+    }
+
+    ofs << line << std::endl;
+  }
+
+  return "";
+}
+
+void Workspace::importWS( std::string &wsFile )
+{
+  std::ifstream ifs( wsFile.c_str() );
+  std::string nextCfgName;
+  if( ifs.good() )
+  {
+    std::ofstream ofs( "temp.ws" );
+    if( ofs.good() )
+    {
+      nextCfgName = readToCFGSeparator( ifs, ofs );
+    }
+    ofs.close();
+
+    while( nextCfgName != "" )
+    {
+      ofs.open( nextCfgName );
+      nextCfgName = readToCFGSeparator( ifs, ofs );
+      ofs.close();
+    }
+  }
+
+  ifs.close();
 }

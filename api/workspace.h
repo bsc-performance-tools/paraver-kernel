@@ -39,6 +39,8 @@
 
 #include "paraverkerneltypes.h"
 
+constexpr char cfgSeparator[] = "=============";
+
 enum class WorkspaceType { STATE = 1, EVENT };
 
 struct WorkspaceValue
@@ -104,8 +106,30 @@ class Workspace
     virtual void modifyHintCFG( size_t position, std::pair<std::string,std::string>& whichCFG );
     virtual void clearHintCFGs();
 
-    virtual void loadXML( std::string &wsDir );
-    virtual void saveXML( std::string &wsDir );
+    virtual void loadXML( std::string &wsFile );
+    virtual void saveXML( std::string &wsFile );
+
+    virtual void importWS( std::string &wsFile );
+
+    template< class F >
+    void exportWS( std::string &wsFile, F makeAbs )
+    {
+      saveXML( wsFile );
+      std::ofstream ofs( wsFile.c_str(), std::ios::app );
+      if( ofs.good() )
+      {
+        for( auto hint : hintCFGs )
+        {
+          std::string cfgFilename = hint.first.substr( hint.first.find_last_of( '/' ) + 1, hint.first.npos );
+          ofs << cfgSeparator << cfgFilename << std::endl;
+          std::ifstream cfgFile( makeAbs( hint.first ) );
+          ofs << cfgFile.rdbuf();
+          cfgFile.close();
+        }
+      }
+      
+      ofs.close();
+    }
 
     template< class Archive >
     void serialize( Archive & ar, const unsigned int version )
@@ -137,8 +161,8 @@ class Workspace
   protected:
     std::string name;
     WorkspaceType myType;
-    std::vector<WorkspaceValue> autoTypes;
-    std::vector<std::pair<std::string,std::string> > hintCFGs; // path, description
+    std::vector< WorkspaceValue > autoTypes;
+    std::vector< std::pair< std::string, std::string > > hintCFGs; // path, description
 
   private:
 
