@@ -1158,6 +1158,9 @@ bool WindowType::parseLine( KernelConnection *whichKernel, istringstream& line,
   else
     return false;
 
+  // Force Code Color: cfgs assume this by default
+  tmpWin->setCodeColorMode();
+
   if ( windows.size() == 1 && windows[ 0 ] == nullptr )
     windows[ 0 ] = tmpWin;
   else
