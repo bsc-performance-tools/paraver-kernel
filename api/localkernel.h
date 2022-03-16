@@ -134,11 +134,14 @@ class LocalKernel: public KernelConnection
 
     virtual std::string getDistributedCFGsPath() const override { return distributedCFGsPath; }
 
+    virtual std::string getParaverUserDir() const override { return paraverUserDir; }
+
   protected:
 
   private:
     std::string pathSeparator;
     std::string distributedCFGsPath;
+    std::string paraverUserDir;
 
     bool (*myMessageFunction)(UserMessageID);
 

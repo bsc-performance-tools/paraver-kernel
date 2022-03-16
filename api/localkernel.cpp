@@ -98,12 +98,13 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
   setPathSeparator( string( "/" ) );
 #endif
 
-  //
   string homedir;
-  string paraverHomeDir;
   string paraverCFGsDir;
 
 #if defined _WIN32 || defined __MINGW32__
+  homedir = getenv( "HOMEDRIVE" );
+  homedir.append( getenv( "HOMEPATH" ) );
+
   char myPath[ MAX_LEN_PATH ];
   HMODULE hModule = GetModuleHandle( nullptr );
   if ( hModule != nullptr )
@@ -116,14 +117,11 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
   }
   else
   {
-    homedir = getenv( "HOMEDRIVE" );
-    homedir.append( getenv( "HOMEPATH" ) );
     paraverCFGsDir = homedir;
   }
 
 #else
 #ifdef __APPLE__
-
   CFBundleRef mainBundle = CFBundleGetMainBundle();
   CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
   char tmpPath[PATH_MAX];
@@ -135,11 +133,11 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
 
   paraverCFGsDir = std::string( tmpPath ) + std::string( "/cfgs" );
 
-#else // __APPLE__
+#else // ! __APPLE__ == LINUX
+  homedir = getenv( "HOME" );
 
   if ( getenv( "PARAVER_HOME" ) == nullptr )
   {
-    homedir = getenv( "HOME" );
     if( homedir.empty() )
     {
       struct passwd *pwd = getpwuid( getuid() );
@@ -156,14 +154,25 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
   }
   else
   {
-    paraverHomeDir = getenv( "PARAVER_HOME" );
-    paraverCFGsDir = paraverHomeDir + "/cfgs";
+    paraverCFGsDir.append( getenv( "PARAVER_HOME" ) ).append( "/cfgs" );
   }
 
 #endif // __APPLE__
 #endif
 
   distributedCFGsPath = paraverCFGsDir;
+
+  string tmpPath( homedir );
+
+#ifdef _WIN32
+  tmpPath.append( "\\paraver" );
+  SHCreateDirectoryEx( nullptr, tmpPath.c_str(), nullptr );
+#else
+  tmpPath.append( "/.paraver" );
+  mkdir( tmpPath.c_str(), (mode_t)0700 );
+#endif
+
+  paraverUserDir = tmpPath;
 
   // FILTERS
   trace_names_table_last = 0;
@@ -997,3 +1006,4 @@ string LocalKernel::getNewTraceName( const string& fullPathTraceName,
 
   return newName;
 }
+

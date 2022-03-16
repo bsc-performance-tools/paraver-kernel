@@ -106,10 +106,10 @@ class Workspace
     virtual void modifyHintCFG( size_t position, std::pair<std::string,std::string>& whichCFG );
     virtual void clearHintCFGs();
 
-    virtual void loadXML( std::string &wsFile );
+    virtual void loadXML( const std::string &wsFile );
     virtual void saveXML( std::string &wsFile );
 
-    virtual void importWS( std::string &wsFile );
+    virtual void importWS( std::string &wsFile, const std::string& paraverUserDir );
 
     template< class F >
     void exportWS( std::string &wsFile, F makeAbs )

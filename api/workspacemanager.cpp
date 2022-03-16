@@ -48,16 +48,17 @@ using std::vector;
 WorkspaceManager *WorkspaceManager::instance = nullptr;
 
 
-WorkspaceManager *WorkspaceManager::getInstance()
+WorkspaceManager *WorkspaceManager::getInstance( KernelConnection *whichKernel )
 {
   if ( WorkspaceManager::instance == nullptr )
-    WorkspaceManager::instance = new WorkspaceManager();
+    WorkspaceManager::instance = new WorkspaceManager( whichKernel );
   return WorkspaceManager::instance;
 }
 
 
-WorkspaceManager::WorkspaceManager()
+WorkspaceManager::WorkspaceManager( KernelConnection *whichKernel )
 {
+  myKernel = whichKernel;
 }
 
 
@@ -321,31 +322,14 @@ void WorkspaceManager::loadXML()
 
 void WorkspaceManager::saveXML()
 {
-  string homedir;
   string strFile;
 
-#ifdef _WIN32
-  homedir = getenv( "HOMEDRIVE" );
-  homedir.append( getenv( "HOMEPATH" ) );
-#else
-  homedir = getenv( "HOME" );
-#endif
-  strFile.append( homedir );
+  strFile.append( myKernel->getParaverUserDir() );
 
 #ifdef _WIN32
-  strFile.append( "\\paraver\\workspaces" );
-  string tmpPath( homedir + "\\workspaces" );
-/*
-  int len = tmpPath.length() + 1;
-  wchar_t *wText = new wchar_t[len];
-  memset(wText,0,len);
-  ::MultiByteToWideChar( CP_ACP, nullptr, tmpPath.c_str(), -1, wText, len );
-*/
-  SHCreateDirectoryEx( nullptr, tmpPath.c_str(), nullptr );
-  //delete []wText;
+  strFile.append( "\\workspaces" );
 #else
-  strFile.append( "/.paraver/workspaces" );
-  mkdir( ( homedir + "/.paraver" ).c_str(), (mode_t)0700 );
+  strFile.append( "/workspaces" );
 #endif
   strFile.append( ".xml" );
 

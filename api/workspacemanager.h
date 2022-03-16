@@ -28,6 +28,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include "kernelconnection.h"
 #include "paraverkerneltypes.h"
 #include "workspace.h"
 
@@ -37,7 +38,7 @@ class WorkspaceManager
 {
   public:
 
-    static WorkspaceManager *getInstance();
+    static WorkspaceManager *getInstance( KernelConnection *whichKernel );
 
     ~WorkspaceManager();
 
@@ -65,10 +66,12 @@ class WorkspaceManager
 
   protected:
 
-    WorkspaceManager();
+    WorkspaceManager( KernelConnection *whichKernel );
 
   private:
     static WorkspaceManager *instance;
+
+    KernelConnection *myKernel;
 
     std::map<std::string, Workspace> distWorkspaces;
     std::vector<std::string> distWorkspacesOrder;

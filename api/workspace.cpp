@@ -23,6 +23,14 @@
 
 #include "workspace.h"
 
+#include <sys/stat.h>
+#ifdef _WIN32
+  #include <shlobj.h>
+  #include <Shlwapi.h>
+#else
+  #include <sys/types.h>
+#endif
+
 using std::string;
 using std::vector;
 using std::pair;
@@ -92,10 +100,12 @@ void Workspace::removeHintCFG( size_t whichHint )
   hintCFGs.erase( hintCFGs.begin() + whichHint );
 }
 
+
 void Workspace::modifyHintCFG( size_t position, pair<string,string>& whichCFG )
 {
   hintCFGs[ position ] = whichCFG;
 }
+
 
 void Workspace::clearHintCFGs()
 {
@@ -103,9 +113,7 @@ void Workspace::clearHintCFGs()
 }
 
 
-// load/save XML for import/export certain workspaces
-
-void Workspace::loadXML( std::string &wsFile )
+void Workspace::loadXML( const std::string &wsFile )
 {
   std::ifstream ifs( wsFile.c_str() );
   if( ifs.good() )
@@ -130,6 +138,7 @@ void Workspace::saveXML( std::string &wsFile )
   ofs.close();
 }
 
+
 std::string readToCFGSeparator( std::ifstream& ifs, std::ofstream& ofs )
 {
   std::string line;
@@ -148,22 +157,50 @@ std::string readToCFGSeparator( std::ifstream& ifs, std::ofstream& ofs )
   return "";
 }
 
-void Workspace::importWS( std::string &wsFile )
+
+void Workspace::importWS( std::string& wsFile, const std::string& paraverUserDir )
 {
   std::ifstream ifs( wsFile.c_str() );
   std::string nextCfgName;
+
   if( ifs.good() )
   {
-    std::ofstream ofs( "temp.ws" );
+    std::ofstream ofs( paraverUserDir + "/temp.ws" );
     if( ofs.good() )
     {
       nextCfgName = readToCFGSeparator( ifs, ofs );
     }
     ofs.close();
 
+    loadXML( paraverUserDir + "/temp.ws" );
+
+    std::string importedCFGsPath( paraverUserDir );
+
+#ifdef _WIN32
+    importedCFGsPath.append( "\\importedCFGS\\" );
+    SHCreateDirectoryEx( nullptr, importedCFGsPath.c_str(), nullptr );
+    importedCFGsPath.append( name ).append( "\\" );
+    SHCreateDirectoryEx( nullptr, importedCFGsPath.c_str(), nullptr );
+#else
+    importedCFGsPath.append( "/importedCFGS/" );
+    mkdir( importedCFGsPath.c_str(), (mode_t)0700 );
+    importedCFGsPath.append( name ).append( "/" );
+    mkdir( importedCFGsPath.c_str(), (mode_t)0700 );
+#endif
+
+    for_each( hintCFGs.begin(), hintCFGs.end(), 
+              [&]( std::pair< std::string, std::string >& elem )
+              {
+#ifdef _WIN32
+                elem.first = importedCFGsPath + elem.first.substr( elem.first.find_last_of( '\\' ) + 1 );
+#else
+                elem.first = importedCFGsPath + elem.first.substr( elem.first.find_last_of( '/' ) + 1 );
+#endif
+              } );
+
     while( nextCfgName != "" )
     {
-      ofs.open( nextCfgName );
+      ofs.open( importedCFGsPath + nextCfgName );
       nextCfgName = readToCFGSeparator( ifs, ofs );
       ofs.close();
     }
