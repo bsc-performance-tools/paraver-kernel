@@ -24,6 +24,14 @@
 #pragma once
 
 
+#include <sys/stat.h>
+#ifdef _WIN32
+  #include <shlobj.h>
+  #include <Shlwapi.h>
+#else
+  #include <sys/types.h>
+#endif
+
 #include <string>
 #include <vector>
 
@@ -110,7 +118,6 @@ class Workspace
     virtual void saveXML( std::string &wsFile );
 
     virtual void importWSXML( std::string &wsFile, const std::string& paraverUserDir );
-    virtual void importWSCFGs( std::string& wsFile, const std::string& paraverUserDir );
 
     template< class F >
     void exportWS( std::string &wsFile, F makeAbs )
@@ -131,6 +138,50 @@ class Workspace
       
       ofs.close();
     }
+
+
+    template< class F >
+    void importWSCFGs( std::string& wsFile, const std::string& paraverUserDir, F getFullName )
+    {
+      std::ifstream ifs( wsFile.c_str() );
+      std::string nextCfgName = firstCFGName;
+
+      if( ifs.good() )
+      {
+        ifs.seekg( wsFileXMLPos );
+
+        std::string importedCFGsPath( paraverUserDir );
+
+    #ifdef _WIN32
+        importedCFGsPath.append( "\\importedCFGS\\" );
+        SHCreateDirectoryEx( nullptr, importedCFGsPath.c_str(), nullptr );
+        importedCFGsPath.append( name ).append( "\\" );
+        SHCreateDirectoryEx( nullptr, importedCFGsPath.c_str(), nullptr );
+    #else
+        importedCFGsPath.append( "/importedCFGS/" );
+        mkdir( importedCFGsPath.c_str(), (mode_t)0700 );
+        importedCFGsPath.append( name ).append( "/" );
+        mkdir( importedCFGsPath.c_str(), (mode_t)0700 );
+    #endif
+
+        for_each( hintCFGs.begin(), hintCFGs.end(), 
+                  [&]( std::pair< std::string, std::string >& elem )
+                  {
+                    elem.first = importedCFGsPath + getFullName( elem.first );
+                  } );
+
+        std::ofstream ofs;
+        while( nextCfgName != "" )
+        {
+          ofs.open( importedCFGsPath + nextCfgName );
+          nextCfgName = readToCFGSeparator( ifs, ofs );
+          ofs.close();
+        }
+      }
+
+      ifs.close();
+    }
+
 
     template< class Archive >
     void serialize( Archive & ar, const unsigned int version )
@@ -168,6 +219,25 @@ class Workspace
   private:
     std::streampos wsFileXMLPos;
     std::string firstCFGName;
+
+    std::string readToCFGSeparator( std::ifstream& ifs, std::ofstream& ofs )
+    {
+      std::string line;
+      static const size_t cfgSeparatorSize = std::string( cfgSeparator ).length();
+      while( !ifs.eof() )
+      {
+        getline( ifs, line );
+        if( line.substr( 0, cfgSeparatorSize ) == cfgSeparator )
+        {
+          return line.substr( cfgSeparatorSize, line.npos );
+        }
+
+        ofs << line << std::endl;
+      }
+
+      return "";
+    }
+
 };
 
 BOOST_CLASS_VERSION( Workspace, 2 )
