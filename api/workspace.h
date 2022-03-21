@@ -109,7 +109,8 @@ class Workspace
     virtual void loadXML( const std::string &wsFile );
     virtual void saveXML( std::string &wsFile );
 
-    virtual void importWS( std::string &wsFile, const std::string& paraverUserDir );
+    virtual void importWSXML( std::string &wsFile, const std::string& paraverUserDir );
+    virtual void importWSCFGs( std::string& wsFile, const std::string& paraverUserDir );
 
     template< class F >
     void exportWS( std::string &wsFile, F makeAbs )
@@ -165,7 +166,8 @@ class Workspace
     std::vector< std::pair< std::string, std::string > > hintCFGs; // path, description
 
   private:
-
+    std::streampos wsFileXMLPos;
+    std::string firstCFGName;
 };
 
 BOOST_CLASS_VERSION( Workspace, 2 )

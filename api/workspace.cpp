@@ -158,21 +158,36 @@ std::string readToCFGSeparator( std::ifstream& ifs, std::ofstream& ofs )
 }
 
 
-void Workspace::importWS( std::string& wsFile, const std::string& paraverUserDir )
+void Workspace::importWSXML( std::string& wsFile, const std::string& paraverUserDir )
 {
   std::ifstream ifs( wsFile.c_str() );
-  std::string nextCfgName;
 
   if( ifs.good() )
   {
     std::ofstream ofs( paraverUserDir + "/temp.ws" );
     if( ofs.good() )
     {
-      nextCfgName = readToCFGSeparator( ifs, ofs );
+      firstCFGName = readToCFGSeparator( ifs, ofs );
     }
     ofs.close();
-
+    
+    wsFileXMLPos = ifs.tellg();
+    
     loadXML( paraverUserDir + "/temp.ws" );
+  }
+
+  ifs.close();
+}
+
+
+void Workspace::importWSCFGs( std::string& wsFile, const std::string& paraverUserDir )
+{
+  std::ifstream ifs( wsFile.c_str() );
+  std::string nextCfgName = firstCFGName;
+
+  if( ifs.good() )
+  {
+    ifs.seekg( wsFileXMLPos );
 
     std::string importedCFGsPath( paraverUserDir );
 
@@ -198,6 +213,7 @@ void Workspace::importWS( std::string& wsFile, const std::string& paraverUserDir
 #endif
               } );
 
+    std::ofstream ofs;
     while( nextCfgName != "" )
     {
       ofs.open( importedCFGsPath + nextCfgName );
