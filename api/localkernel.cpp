@@ -162,17 +162,15 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
 
   distributedCFGsPath = paraverCFGsDir;
 
-  string tmpPath( homedir );
+  paraverUserDir = homedir;
 
 #ifdef _WIN32
-  tmpPath.append( "\\paraver" );
-  SHCreateDirectoryEx( nullptr, tmpPath.c_str(), nullptr );
+  paraverUserDir.append( "\\paraver" );
+  SHCreateDirectoryEx( nullptr, paraverUserDir.c_str(), nullptr );
 #else
-  tmpPath.append( "/.paraver" );
-  mkdir( tmpPath.c_str(), (mode_t)0700 );
+  paraverUserDir.append( "/.paraver" );
+  mkdir( paraverUserDir.c_str(), (mode_t)0700 );
 #endif
-
-  paraverUserDir = tmpPath;
 
   // FILTERS
   trace_names_table_last = 0;
