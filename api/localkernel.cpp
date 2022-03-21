@@ -122,6 +122,8 @@ LocalKernel::LocalKernel( bool ( *messageFunction )( UserMessageID ) ) :
 
 #else
 #ifdef __APPLE__
+  homedir = getenv( "HOME" );
+
   CFBundleRef mainBundle = CFBundleGetMainBundle();
   CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
   char tmpPath[PATH_MAX];
