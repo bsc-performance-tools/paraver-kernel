@@ -151,3 +151,30 @@ void Workspace::importWSXML( std::string& wsFile, const std::string& paraverUser
 
   ifs.close();
 }
+
+std::string Workspace::readToCFGSeparator( std::ifstream& ifs, std::ofstream& ofs )
+{
+  std::string line;
+  static const size_t cfgSeparatorSize = std::string( cfgSeparator ).length();
+  while( !ifs.eof() )
+  {
+    getline( ifs, line );
+    if( line.substr( 0, cfgSeparatorSize ) == cfgSeparator )
+    {
+      return line.substr( cfgSeparatorSize, line.npos );
+    }
+
+    ofs << line << std::endl;
+  }
+
+  return "";
+}
+
+void Workspace::createDir( const std::string& whichDir )
+{
+#ifdef _WIN32
+  SHCreateDirectoryEx( nullptr, whichDir.c_str(), nullptr );
+#else
+  mkdir( whichDir.c_str(), (mode_t)0700 );
+#endif
+}

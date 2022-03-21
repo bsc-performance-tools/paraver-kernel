@@ -154,15 +154,17 @@ class Workspace
 
     #ifdef _WIN32
         importedCFGsPath.append( "\\importedCFGS\\" );
-        SHCreateDirectoryEx( nullptr, importedCFGsPath.c_str(), nullptr );
-        importedCFGsPath.append( name ).append( "\\" );
-        SHCreateDirectoryEx( nullptr, importedCFGsPath.c_str(), nullptr );
     #else
         importedCFGsPath.append( "/importedCFGS/" );
-        mkdir( importedCFGsPath.c_str(), (mode_t)0700 );
-        importedCFGsPath.append( name ).append( "/" );
-        mkdir( importedCFGsPath.c_str(), (mode_t)0700 );
     #endif
+        createDir( importedCFGsPath.c_str() );
+
+    #ifdef _WIN32
+        importedCFGsPath.append( name ).append( "\\" );
+    #else
+        importedCFGsPath.append( name ).append( "/" );
+    #endif
+        createDir( importedCFGsPath.c_str() );
 
         for_each( hintCFGs.begin(), hintCFGs.end(), 
                   [&]( std::pair< std::string, std::string >& elem )
@@ -220,23 +222,9 @@ class Workspace
     std::streampos wsFileXMLPos;
     std::string firstCFGName;
 
-    std::string readToCFGSeparator( std::ifstream& ifs, std::ofstream& ofs )
-    {
-      std::string line;
-      static const size_t cfgSeparatorSize = std::string( cfgSeparator ).length();
-      while( !ifs.eof() )
-      {
-        getline( ifs, line );
-        if( line.substr( 0, cfgSeparatorSize ) == cfgSeparator )
-        {
-          return line.substr( cfgSeparatorSize, line.npos );
-        }
+    std::string readToCFGSeparator( std::ifstream& ifs, std::ofstream& ofs );
 
-        ofs << line << std::endl;
-      }
-
-      return "";
-    }
+    void createDir( const std::string& whichDir );
 
 };
 
