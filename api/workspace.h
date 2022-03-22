@@ -118,17 +118,27 @@ class Workspace
     virtual void saveXML( std::string &wsFile );
 
     virtual void importWSXML( std::string &wsFile, const std::string& paraverUserDir );
+    virtual void importWSCFGs( std::string& wsFile, const std::string& paraverUserDir );
 
-    template< class F >
-    void exportWS( std::string &wsFile, F makeAbs )
+    template< class TFuncMakeAbs, class TFuncGetFullName >
+    void exportWS( std::string &wsFile, TFuncMakeAbs makeAbs, TFuncGetFullName getFullName )
     {
+      auto tmpHints = hintCFGs;
+      for_each( hintCFGs.begin(), hintCFGs.end(), 
+                [&]( std::pair< std::string, std::string >& elem )
+                {
+                  elem.first = getFullName( elem.first );
+                } );
+
       saveXML( wsFile );
+      hintCFGs = tmpHints;
+
       std::ofstream ofs( wsFile.c_str(), std::ios::app );
       if( ofs.good() )
       {
         for( auto hint : hintCFGs )
         {
-          std::string cfgFilename = hint.first.substr( hint.first.find_last_of( '/' ) + 1, hint.first.npos );
+          std::string cfgFilename = getFullName( hint.first );
           ofs << cfgSeparator << cfgFilename << std::endl;
           std::ifstream cfgFile( makeAbs( hint.first ) );
           ofs << cfgFile.rdbuf();
@@ -138,52 +148,6 @@ class Workspace
       
       ofs.close();
     }
-
-
-    template< class F >
-    void importWSCFGs( std::string& wsFile, const std::string& paraverUserDir, F getFullName )
-    {
-      std::ifstream ifs( wsFile.c_str() );
-      std::string nextCfgName = firstCFGName;
-
-      if( ifs.good() )
-      {
-        ifs.seekg( wsFileXMLPos );
-
-        std::string importedCFGsPath( paraverUserDir );
-
-    #ifdef _WIN32
-        importedCFGsPath.append( "\\importedCFGS\\" );
-    #else
-        importedCFGsPath.append( "/importedCFGS/" );
-    #endif
-        createDir( importedCFGsPath.c_str() );
-
-    #ifdef _WIN32
-        importedCFGsPath.append( name ).append( "\\" );
-    #else
-        importedCFGsPath.append( name ).append( "/" );
-    #endif
-        createDir( importedCFGsPath.c_str() );
-
-        for_each( hintCFGs.begin(), hintCFGs.end(), 
-                  [&]( std::pair< std::string, std::string >& elem )
-                  {
-                    elem.first = importedCFGsPath + getFullName( elem.first );
-                  } );
-
-        std::ofstream ofs;
-        while( nextCfgName != "" )
-        {
-          ofs.open( importedCFGsPath + nextCfgName );
-          nextCfgName = readToCFGSeparator( ifs, ofs );
-          ofs.close();
-        }
-      }
-
-      ifs.close();
-    }
-
 
     template< class Archive >
     void serialize( Archive & ar, const unsigned int version )
