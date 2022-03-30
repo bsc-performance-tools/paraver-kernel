@@ -24,7 +24,7 @@ public:
         std::vector<std::string> excps;
         pcf_format_error() {}
         pcf_format_error(std::vector<std::string> e) : excps(e) {}
-        ~pcf_format_error() throw() {}
+        ~pcf_format_error() noexcept {}
     };
 
     class Color {

@@ -40,7 +40,7 @@ class KWindowException: public ParaverKernelException
     KWindowException( TKWindowErrorCode whichCode = TKWindowErrorCode::undefined,
                       const char *whichAuxMessage = "",
                       const char *whichFile = nullptr,
-                      TExceptionLine whichLine = 0 ) throw()
+                      TExceptionLine whichLine = 0 ) noexcept
     {
       code = whichCode;
       auxMessage = whichAuxMessage;

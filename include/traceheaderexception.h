@@ -48,7 +48,7 @@ class TraceHeaderException: public ParaverKernelException
     TraceHeaderException( TTraceHeaderErrorCode whichCode = TTraceHeaderErrorCode::undefined,
                           const char *whichAuxMessage = "",
                           const char *whichFile = nullptr,
-                          TExceptionLine whichLine = 0 ) throw()
+                          TExceptionLine whichLine = 0 ) noexcept
     {
       code = whichCode;
       auxMessage = whichAuxMessage;

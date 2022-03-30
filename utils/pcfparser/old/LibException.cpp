@@ -16,14 +16,14 @@ LibException::LibException(string file, int line, string message) {
   reason = ss.str();
 }
 
-LibException::~LibException() throw() {
+LibException::~LibException() noexcept {
 }
 
-const char * LibException::what() const throw() {
+const char * LibException::what() const noexcept {
   return reason.c_str();
 }
 
-const char * LibException::where() const throw() {
+const char * LibException::where() const noexcept {
   return stack.c_str();
 }
 

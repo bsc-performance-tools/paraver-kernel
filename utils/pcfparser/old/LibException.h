@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #include <exception>
 #include <string>
 
@@ -19,13 +17,12 @@ class LibException : public std::exception {
 
     LibException(std::string file, int line, std::string message);
 
-    virtual ~LibException() throw();
+    virtual ~LibException() noexcept;
 
-    virtual const char * what() const throw();
+    virtual const char * what() const noexcept;
 
-    virtual const char * where() const throw();
+    virtual const char * where() const noexcept;
 
 };
 
 } // namespace libparaver
-#endif
