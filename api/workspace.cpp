@@ -202,6 +202,9 @@ std::string Workspace::readToCFGSeparator( std::ifstream& ifs, std::ofstream& of
   while( !ifs.eof() )
   {
     getline( ifs, line );
+    if ( !line.empty() && line.back() == '\r' )
+      line.pop_back();
+
     if( line.substr( 0, cfgSeparatorSize ) == cfgSeparator )
     {
       return line.substr( cfgSeparatorSize, line.npos );
