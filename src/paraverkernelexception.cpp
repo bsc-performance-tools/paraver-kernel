@@ -46,7 +46,14 @@ const char *ParaverKernelException::errorMessage[] =
     nullptr
   };
 
-const char *ParaverKernelException::what() const noexcept
+ParaverKernelException::ParaverKernelException( TErrorCode whichCode,
+                                                const char *whichAuxMessage,
+                                                const char *whichFile,
+                                                TExceptionLine whichLine ) noexcept:
+    code( whichCode ),
+    auxMessage( whichAuxMessage ),
+    file( whichFile ),
+    line( whichLine )
 {
   ostringstream tmpStream( "" );
 
@@ -55,6 +62,11 @@ const char *ParaverKernelException::what() const noexcept
   if ( file != nullptr )
     tmpStream << file << " " << line << endl;
 
-  return string( tmpStream.str() ).c_str();
+  message = string( tmpStream.str() );
+}
+
+const char *ParaverKernelException::what() const noexcept
+{
+  return message.c_str();
 }
 

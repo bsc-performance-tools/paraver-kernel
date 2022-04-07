@@ -56,12 +56,7 @@ class ParaverKernelException : public std::exception
     ParaverKernelException( TErrorCode whichCode = TErrorCode::undefined,
                             const char *whichAuxMessage = "",
                             const char *whichFile = nullptr,
-                            TExceptionLine whichLine = 0 ) noexcept:
-        code( whichCode ),
-        auxMessage( whichAuxMessage ),
-        file( whichFile ),
-        line( whichLine )
-    {};
+                            TExceptionLine whichLine = 0 ) noexcept;
 
     ~ParaverKernelException() noexcept = default;
 
@@ -91,6 +86,7 @@ class ParaverKernelException : public std::exception
 
   private:
     static const char *errorMessage[];
+    std::string message;
 
 };
 
