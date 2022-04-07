@@ -92,10 +92,12 @@ void Workspace::removeHintCFG( size_t whichHint )
   hintCFGs.erase( hintCFGs.begin() + whichHint );
 }
 
+
 void Workspace::modifyHintCFG( size_t position, pair<string,string>& whichCFG )
 {
   hintCFGs[ position ] = whichCFG;
 }
+
 
 void Workspace::clearHintCFGs()
 {
@@ -103,29 +105,122 @@ void Workspace::clearHintCFGs()
 }
 
 
-// load/save XML for import/export certain workspaces
-
-void Workspace::loadXML( std::string &wsDir )
+void Workspace::loadXML( const std::string &wsFile )
 {
-  // Read user defined
-  std::ifstream ifs( wsDir.c_str() );
-  //ifs.open( wsDir );
-  if( ifs.good() ) // due to xml_iarchive needs to be destroyed before fstream is closed
+  std::ifstream ifs( wsFile.c_str() );
+  if( ifs.good() )
   {
     boost::archive::xml_iarchive ia( ifs );
     ia >> boost::serialization::make_nvp( "workspace", *this );
   }
+  
   ifs.close();
 }
 
 
-void Workspace::saveXML( std::string &wsDir )
+void Workspace::saveXML( std::string &wsFile )
 {
-  std::ofstream ofs( wsDir.c_str() );
-  if( ofs.good() ) // due to xml_oarchive needs to be destroyed before fstream is closed
+  std::ofstream ofs( wsFile.c_str() );
+  if( ofs.good() )
   {
     boost::archive::xml_oarchive oa( ofs );
     oa << boost::serialization::make_nvp( "workspace", *this );
   }
+
   ofs.close();
+}
+
+
+void Workspace::importWSXML( std::string& wsFile, const std::string& paraverUserDir )
+{
+  std::ifstream ifs( wsFile.c_str() );
+
+  if( ifs.good() )
+  {
+    std::ofstream ofs( paraverUserDir + "/temp.ws" );
+    if( ofs.good() )
+    {
+      firstCFGName = readToCFGSeparator( ifs, ofs );
+    }
+    ofs.close();
+    
+    wsFileXMLPos = ifs.tellg();
+    
+    loadXML( paraverUserDir + "/temp.ws" );
+  }
+
+  ifs.close();
+}
+
+void Workspace::importWSCFGs( std::string& wsFile, const std::string& paraverUserDir )
+{
+  std::ifstream ifs( wsFile.c_str() );
+  std::string nextCfgName = firstCFGName;
+
+  if( ifs.good() )
+  {
+    ifs.seekg( wsFileXMLPos );
+
+    std::string importedCFGsPath( paraverUserDir );
+
+#ifdef _WIN32
+    importedCFGsPath.append( "\\importedCFGS\\" );
+#else
+    importedCFGsPath.append( "/importedCFGS/" );
+#endif
+    createDir( importedCFGsPath.c_str() );
+
+#ifdef _WIN32
+    importedCFGsPath.append( name ).append( "\\" );
+#else
+    importedCFGsPath.append( name ).append( "/" );
+#endif
+    createDir( importedCFGsPath.c_str() );
+
+    for_each( hintCFGs.begin(), hintCFGs.end(), 
+              [&]( std::pair< std::string, std::string >& elem )
+              {
+                elem.first = importedCFGsPath + elem.first;
+              } );
+
+    std::ofstream ofs;
+    while( nextCfgName != "" )
+    {
+      ofs.open( importedCFGsPath + nextCfgName );
+      nextCfgName = readToCFGSeparator( ifs, ofs );
+      ofs.close();
+    }
+  }
+
+  ifs.close();
+}
+
+std::string Workspace::readToCFGSeparator( std::ifstream& ifs, std::ofstream& ofs )
+{
+  std::string line;
+  static const size_t cfgSeparatorSize = std::string( cfgSeparator ).length();
+  while( !ifs.eof() )
+  {
+    getline( ifs, line );
+    if ( !line.empty() && line.back() == '\r' )
+      line.pop_back();
+
+    if( line.substr( 0, cfgSeparatorSize ) == cfgSeparator )
+    {
+      return line.substr( cfgSeparatorSize, line.npos );
+    }
+
+    ofs << line << std::endl;
+  }
+
+  return "";
+}
+
+void Workspace::createDir( const std::string& whichDir )
+{
+#ifdef _WIN32
+  SHCreateDirectoryEx( nullptr, whichDir.c_str(), nullptr );
+#else
+  mkdir( whichDir.c_str(), (mode_t)0700 );
+#endif
 }

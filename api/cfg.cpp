@@ -502,11 +502,11 @@ bool CFGLoader::getCFGTag( ifstream& cfgFile, string& strLine, istringstream& au
 {
   getline( cfgFile, strLine );
 
-  if ( strLine.length() == 0 || strLine[ 0 ] == '#' )
+  if ( strLine.empty() || strLine[ 0 ] == '#' )
     return false;
 
-  if ( strLine[ strLine.length() - 1 ] == '\r' )
-    strLine = strLine.substr( 0, strLine.length() - 1 );
+  if ( strLine.back() == '\r' )
+    strLine.pop_back();
 
   auxStream.str( strLine );
 

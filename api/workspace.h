@@ -24,6 +24,14 @@
 #pragma once
 
 
+#include <sys/stat.h>
+#ifdef _WIN32
+  #include <shlobj.h>
+  #include <Shlwapi.h>
+#else
+  #include <sys/types.h>
+#endif
+
 #include <string>
 #include <vector>
 
@@ -38,6 +46,8 @@
 #include <boost/serialization/binary_object.hpp>
 
 #include "paraverkerneltypes.h"
+
+constexpr char cfgSeparator[] = "=============";
 
 enum class WorkspaceType { STATE = 1, EVENT };
 
@@ -104,8 +114,40 @@ class Workspace
     virtual void modifyHintCFG( size_t position, std::pair<std::string,std::string>& whichCFG );
     virtual void clearHintCFGs();
 
-    virtual void loadXML( std::string &wsDir );
-    virtual void saveXML( std::string &wsDir );
+    virtual void loadXML( const std::string &wsFile );
+    virtual void saveXML( std::string &wsFile );
+
+    virtual void importWSXML( std::string &wsFile, const std::string& paraverUserDir );
+    virtual void importWSCFGs( std::string& wsFile, const std::string& paraverUserDir );
+
+    template< class TFuncMakeAbs, class TFuncGetFullName >
+    void exportWS( std::string &wsFile, TFuncMakeAbs makeAbs, TFuncGetFullName getFullName )
+    {
+      auto tmpHints = hintCFGs;
+      for_each( hintCFGs.begin(), hintCFGs.end(), 
+                [&]( std::pair< std::string, std::string >& elem )
+                {
+                  elem.first = getFullName( elem.first );
+                } );
+
+      saveXML( wsFile );
+      hintCFGs = tmpHints;
+
+      std::ofstream ofs( wsFile.c_str(), std::ios::app );
+      if( ofs.good() )
+      {
+        for( auto hint : hintCFGs )
+        {
+          std::string cfgFilename = getFullName( hint.first );
+          ofs << cfgSeparator << cfgFilename << std::endl;
+          std::ifstream cfgFile( makeAbs( hint.first ) );
+          ofs << cfgFile.rdbuf();
+          cfgFile.close();
+        }
+      }
+      
+      ofs.close();
+    }
 
     template< class Archive >
     void serialize( Archive & ar, const unsigned int version )
@@ -137,10 +179,16 @@ class Workspace
   protected:
     std::string name;
     WorkspaceType myType;
-    std::vector<WorkspaceValue> autoTypes;
-    std::vector<std::pair<std::string,std::string> > hintCFGs; // path, description
+    std::vector< WorkspaceValue > autoTypes;
+    std::vector< std::pair< std::string, std::string > > hintCFGs; // path, description
 
   private:
+    std::streampos wsFileXMLPos;
+    std::string firstCFGName;
+
+    std::string readToCFGSeparator( std::ifstream& ifs, std::ofstream& ofs );
+
+    void createDir( const std::string& whichDir );
 
 };
 
