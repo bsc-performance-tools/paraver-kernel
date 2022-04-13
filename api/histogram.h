@@ -628,6 +628,14 @@ class Histogram
     virtual void setSelectedRows( std::vector< TObjectOrder > &selected )
     {}
 
+    virtual std::vector<int> getCurrentSemanticSort() const
+    {
+      return std::vector<int>();
+    }
+
+    virtual void setCurrentSemanticSort( const std::vector<int>& whichSort )
+    {}
+
   protected:
     KernelConnection *myKernel;
 
@@ -929,6 +937,8 @@ class HistogramProxy : public Histogram
     virtual void setSelectedRows( std::vector< bool > &selected ) override;
     virtual void setSelectedRows( std::vector< TObjectOrder > &selected ) override;
 
+    virtual std::vector<int> getCurrentSemanticSort() const override;
+    virtual void setCurrentSemanticSort( const std::vector<int>& whichSort ) override;
 
   private:
     std::string name;
@@ -951,6 +961,7 @@ class HistogramProxy : public Histogram
     THistoTotals semanticSortCriteria;
     bool sortSemanticReverse;
     std::vector<int> currentSemanticSort;
+    std::vector<int> customSemanticSort;
 
     double minGradient;
     double maxGradient;

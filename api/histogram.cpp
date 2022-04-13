@@ -1942,3 +1942,17 @@ void HistogramProxy::fillSemanticSort()
     delete tmpTotals;
   }
 }
+
+
+vector<int> HistogramProxy::getCurrentSemanticSort() const
+{
+  return currentSemanticSort;
+}
+
+void HistogramProxy::setCurrentSemanticSort( const vector<int>& whichSort )
+{
+  currentSemanticSort = whichSort;
+  customSemanticSort = whichSort;
+
+  sortSemanticColumns = true;
+}
