@@ -4447,17 +4447,22 @@ bool Analyzer2DSortCriteria::parseLine( KernelConnection *whichKernel, istringst
   getline( line, strSortCriteria );
 
   if ( strSortCriteria.compare( OLDCFG_VAL_SORT_AVERAGE ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( AVERAGE );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( THistoSortCriteria::AVERAGE );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_TOTAL ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( TOTAL );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( THistoSortCriteria::TOTAL );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_MAXIMUM ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( MAXIMUM );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( THistoSortCriteria::MAXIMUM );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_MINIMUM ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( MINIMUM );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( THistoSortCriteria::MINIMUM );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_STDEV ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( STDEV );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( THistoSortCriteria::STDEV );
   else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_AVGDIVMAX ) == 0 )
-    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( AVGDIVMAX );
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( THistoSortCriteria::AVGDIVMAX );
+  else if ( strSortCriteria.compare( OLDCFG_VAL_SORT_CUSTOM ) == 0 )
+  {
+    histograms[ histograms.size() - 1 ]->setSemanticSortCriteria( THistoSortCriteria::CUSTOM );
+    histograms[ histograms.size() - 1 ]->setSemanticSortColumns( false );
+  }
   else
     return false;
 
@@ -4470,23 +4475,26 @@ void Analyzer2DSortCriteria::printLine( ofstream& cfgFile,
   cfgFile << OLDCFG_TAG_AN2D_SORTCRITERIA << " ";
   switch ( ( *it )->getSemanticSortCriteria() )
   {
-    case AVERAGE:
+    case THistoSortCriteria::AVERAGE:
       cfgFile << OLDCFG_VAL_SORT_AVERAGE;
       break;
-    case TOTAL:
+    case THistoSortCriteria::TOTAL:
       cfgFile << OLDCFG_VAL_SORT_TOTAL;
       break;
-    case MAXIMUM:
+    case THistoSortCriteria::MAXIMUM:
       cfgFile << OLDCFG_VAL_SORT_MAXIMUM;
       break;
-    case MINIMUM:
+    case THistoSortCriteria::MINIMUM:
       cfgFile << OLDCFG_VAL_SORT_MINIMUM;
       break;
-    case STDEV:
+    case THistoSortCriteria::STDEV:
       cfgFile << OLDCFG_VAL_SORT_STDEV;
       break;
-    case AVGDIVMAX:
+    case THistoSortCriteria::AVGDIVMAX:
       cfgFile << OLDCFG_VAL_SORT_AVGDIVMAX;
+      break;
+    case THistoSortCriteria::CUSTOM:
+      cfgFile << OLDCFG_VAL_SORT_CUSTOM;
       break;
     default:
       break;

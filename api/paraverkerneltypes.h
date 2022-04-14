@@ -136,6 +136,11 @@ enum THistoTotals
   TOTAL = 0, AVERAGE, MAXIMUM, MINIMUM, STDEV, AVGDIVMAX, NUMTOTALS
 };
 
+enum class THistoSortCriteria
+{
+  TOTAL = 0, AVERAGE, MAXIMUM, MINIMUM, STDEV, AVGDIVMAX, CUSTOM
+};
+
 enum SemanticInfoType
 {
   NO_TYPE = 0, // without units

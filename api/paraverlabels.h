@@ -212,6 +212,7 @@ constexpr char OLDCFG_VAL_SORT_MAXIMUM[] = "Maximum";
 constexpr char OLDCFG_VAL_SORT_MINIMUM[] = "Minimum";
 constexpr char OLDCFG_VAL_SORT_STDEV[] =   "Stdev";
 constexpr char OLDCFG_VAL_SORT_AVGDIVMAX[] = "Avg/Max";
+constexpr char OLDCFG_VAL_SORT_CUSTOM[] = "Custom";
 
 constexpr char OLDCFG_VAL_WNDW_TYPE_SINGLE[] =   "single";
 constexpr char OLDCFG_VAL_WNDW_TYPE_COMPOSED[] = "composed";

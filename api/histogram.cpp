@@ -770,13 +770,13 @@ bool HistogramProxy::getSemanticSortColumns() const
   return sortSemanticColumns;
 }
 
-void HistogramProxy::setSemanticSortCriteria( THistoTotals whichCriteria )
+void HistogramProxy::setSemanticSortCriteria( THistoSortCriteria whichCriteria )
 {
   semanticSortCriteria = whichCriteria;
   fillSemanticSort();
 }
 
-THistoTotals HistogramProxy::getSemanticSortCriteria() const
+THistoSortCriteria HistogramProxy::getSemanticSortCriteria() const
 {
   return semanticSortCriteria;
 }
@@ -1917,23 +1917,26 @@ void HistogramProxy::fillSemanticSort()
 
     switch( semanticSortCriteria )
     {
-      case TOTAL:
+      case THistoSortCriteria::TOTAL:
         currentSemanticSort = tmpTotals->sortByTotal( tmpStat, tmpCurrentPlane );
         break;
-      case AVERAGE:
+      case THistoSortCriteria::AVERAGE:
         currentSemanticSort = tmpTotals->sortByAverage( tmpStat, tmpCurrentPlane );
         break;
-      case MAXIMUM:
+      case THistoSortCriteria::MAXIMUM:
         currentSemanticSort = tmpTotals->sortByMaximum( tmpStat, tmpCurrentPlane );
         break;
-      case MINIMUM:
+      case THistoSortCriteria::MINIMUM:
         currentSemanticSort = tmpTotals->sortByMinimum( tmpStat, tmpCurrentPlane );
         break;
-      case STDEV:
+      case THistoSortCriteria::STDEV:
         currentSemanticSort = tmpTotals->sortByStdev( tmpStat, tmpCurrentPlane );
         break;
-      case AVGDIVMAX:
+      case THistoSortCriteria::AVGDIVMAX:
         currentSemanticSort = tmpTotals->sortByAvgDivMax( tmpStat, tmpCurrentPlane );
+        break;
+      case THistoSortCriteria::CUSTOM:
+        currentSemanticSort = customSemanticSort;
         break;
       default:
         break;

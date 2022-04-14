@@ -251,10 +251,10 @@ class Histogram
     {
       return false;
     }
-    virtual void setSemanticSortCriteria( THistoTotals whichCriteria ) {}
-    virtual THistoTotals getSemanticSortCriteria() const
+    virtual void setSemanticSortCriteria( THistoSortCriteria whichCriteria ) {}
+    virtual THistoSortCriteria getSemanticSortCriteria() const
     {
-      return AVERAGE;
+      return THistoSortCriteria::AVERAGE;
     }
     virtual void setSemanticSortReverse( bool newValue ) {}
     virtual bool getSemanticSortReverse() const
@@ -759,8 +759,8 @@ class HistogramProxy : public Histogram
     virtual bool getShowUnits() const override;
     virtual void setSemanticSortColumns( bool newValue ) override;
     virtual bool getSemanticSortColumns() const override;
-    virtual void setSemanticSortCriteria( THistoTotals whichCriteria ) override;
-    virtual THistoTotals getSemanticSortCriteria() const override;
+    virtual void setSemanticSortCriteria( THistoSortCriteria whichCriteria ) override;
+    virtual THistoSortCriteria getSemanticSortCriteria() const override;
     virtual void setSemanticSortReverse( bool newValue ) override;
     virtual bool getSemanticSortReverse() const override;
     virtual PRV_UINT32 getSemanticSortedColumn( PRV_UINT32 col ) const override;
@@ -958,7 +958,7 @@ class HistogramProxy : public Histogram
     bool showUnits;
 
     bool sortSemanticColumns;
-    THistoTotals semanticSortCriteria;
+    THistoSortCriteria semanticSortCriteria;
     bool sortSemanticReverse;
     std::vector<int> currentSemanticSort;
     std::vector<int> customSemanticSort;
