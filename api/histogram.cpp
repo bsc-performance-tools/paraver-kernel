@@ -107,7 +107,7 @@ HistogramProxy::HistogramProxy( KernelConnection *whichKernel ):
   changed = false;
   redraw = false;
   recalc = false;
-  forceRecalc = false;
+  forceRecalc = true;
 
   colorMode = Histogram::getColorMode();
 
