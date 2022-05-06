@@ -1416,6 +1416,8 @@ Histogram *HistogramProxy::clone()
       SyncWindows::getInstance()->addWindow( clonedHistogramProxy, syncGroup );
   }
 
+  clonedHistogramProxy->rowSelection = rowSelection;
+
   // CFG4D
   clonedHistogramProxy->isCFG4DEnabled = isCFG4DEnabled;
   clonedHistogramProxy->CFG4DMode = CFG4DMode;
