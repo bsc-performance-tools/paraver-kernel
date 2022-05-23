@@ -729,5 +729,16 @@ string ComposeExponential::name = "exp";
 TSemanticValue ComposeExponential::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
-  return exp( myInfo->values[ 0 ] );
+
+  TSemanticValue expVal;
+  try
+  {
+    expVal = pow( parameters[ BASE ][ 0 ], myInfo->values[ 0 ] );
+  }
+  catch(const std::exception& e)
+  {
+    expVal = 0.0;
+  }
+  
+  return expVal;
 }

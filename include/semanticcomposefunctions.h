@@ -2667,7 +2667,8 @@ class ComposeExponential: public SemanticCompose
   public:
     typedef enum
     {
-      MAXPARAM = 0
+      BASE = 0,
+      MAXPARAM,
     } TParam;
 
     ComposeExponential()
@@ -2710,15 +2711,20 @@ class ComposeExponential: public SemanticCompose
     }
     virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
     {
+      TParamValue tmp;
+
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return ( TParamValue ) 0;
+      else if ( whichParam == BASE )
+        tmp.push_back( exp( 1 ) );
+
+      return tmp;
     }
     virtual std::string getDefaultParamName( TParamIndex whichParam ) override
     {
       if ( whichParam >= getMaxParam() )
         throw SemanticException( TSemanticErrorCode::maxParamExceeded );
-      return "";
+      return "Base";
     }
   private:
     static const bool initFromBegin = false;
