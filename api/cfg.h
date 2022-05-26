@@ -34,6 +34,7 @@
 #include "cfgs4d.h"
 #include "paraverkerneltypes.h"
 #include "paraverlabels.h"
+#include "eventlabels.h"
 
 class KernelConnection;
 class Timeline;
@@ -192,11 +193,12 @@ class CFGLoader
 
     static std::string errorLine;
 
-    // Returns false if error parsing or no event type in evenTypes found in CFG & pass the filter
+    // Returns false if error parsing or no event type in [evenTypesBegin, eventTypesEnd] found in CFG & pass the filter
     template< class Iterator >
     static bool detectAnyEventTypeInCFG( const std::string& filename,
                                          const Iterator& eventTypesBegin,
-                                         const Iterator& eventTypesEnd )
+                                         const Iterator& eventTypesEnd,
+                                         const EventLabels& eventLabels )
     {
       std::string strLine;
       std::string cfgTag;
@@ -214,11 +216,24 @@ class CFGLoader
         return false;
 
       std::vector<TEventType> cfgTypes;
+      std::vector<std::string> cfgTypeLabels;
 
       // Lambda function that checks trace event types pass the cfg filter function
-      auto funcTypesCheck = []( std::vector<TEventType>& cfgTypes, bool isRangeFunction, const Iterator& eventTypesBegin,
-                                         const Iterator& eventTypesEnd, std::ifstream& cfgFile )
+      auto funcTypesCheck = []( std::vector<std::string> cfgTypeLabels,
+                                const EventLabels& eventLabels,
+                                std::vector<TEventType>& cfgTypes,
+                                bool isRangeFunction,
+                                const Iterator& eventTypesBegin,
+                                const Iterator& eventTypesEnd )
         {
+          if( !cfgTypeLabels.empty() )
+          {
+            std::vector<TEventType> dummyTypes;
+            
+            if ( std::find_if( cfgTypeLabels.begin(), cfgTypeLabels.end(), [&](auto elem){ return eventLabels.getEventType( elem, dummyTypes ); } ) !=  cfgTypeLabels.end() )
+              return true;
+          }
+
           if( !cfgTypes.empty() )
           {
             std::function<bool( TEventType )> f;
@@ -231,11 +246,7 @@ class CFGLoader
               f = [&cfgTypes]( auto elem ) { return std::find( cfgTypes.begin(), cfgTypes.end(), elem ) != cfgTypes.end(); };
 
             if( std::find_if( eventTypesBegin, eventTypesEnd, f ) != eventTypesEnd )
-            {
-              cfgFile.close();
               return true;
-            }
-            cfgTypes.clear();
           }
           return false;
         };
@@ -249,9 +260,14 @@ class CFGLoader
 
         if ( cfgTag.compare( OLDCFG_TAG_WNDW_ID ) == 0 )
         {
-          if( funcTypesCheck( cfgTypes, isRangeFunction, eventTypesBegin, eventTypesEnd, cfgFile ) )
+          if( funcTypesCheck( cfgTypeLabels, eventLabels, cfgTypes, isRangeFunction, eventTypesBegin, eventTypesEnd ) )
+          {
+            cfgFile.close();
             return true;
+          }
           isRangeFunction = false;
+          cfgTypes.clear();
+          cfgTypeLabels.clear();
         }
 
         if ( cfgTag.compare( OLDCFG_TAG_WNDW_SELECTED_FUNCTIONS ) == 0 )
@@ -285,13 +301,24 @@ class CFGLoader
               return false;
             }
           }
+          else if ( filterTag.compare( CFG_VAL_FILTER_EVT_TYPE_LABEL ) == 0 )
+          {
+            filterTagsFound = true;
+            
+            if( !parseLineFilter<std::string>( auxStream, 
+                                               [&cfgTypeLabels]( std::string eventTypeLabel ) { cfgTypeLabels.push_back( eventTypeLabel ); } ) )
+            {
+              cfgFile.close();
+              return false;
+            }
+          }
+
         }
       }
 
-      if( funcTypesCheck( cfgTypes, isRangeFunction, eventTypesBegin, eventTypesEnd, cfgFile ) )
-        return true;
-
       cfgFile.close();
+      if( funcTypesCheck( cfgTypeLabels, eventLabels, cfgTypes, isRangeFunction, eventTypesBegin, eventTypesEnd ) )
+        return true;
 
       return !filterTagsFound;
     }
