@@ -25,6 +25,10 @@
 #include "semanticcomposefunctions.h"
 #include "kwindow.h"
 
+#include <cmath>
+#include <cerrno>
+#include <cfenv>
+
 using namespace std;
 
 string ComposeAsIs::name = "As Is";
@@ -730,15 +734,13 @@ TSemanticValue ComposeExponential::execute( const SemanticInfo *info )
 {
   const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
 
-  TSemanticValue expVal;
-  try
-  {
-    expVal = pow( parameters[ BASE ][ 0 ], myInfo->values[ 0 ] );
-  }
-  catch(const std::exception& e)
-  {
+  errno = 0;
+  std::feclearexcept( FE_ALL_EXCEPT );
+
+  TSemanticValue expVal = pow( parameters[ BASE ][ 0 ], myInfo->values[ 0 ] );
+  
+  if ( errno == EDOM || std::fetestexcept( FE_INVALID ) || std::fetestexcept( FE_DIVBYZERO ) )
     expVal = 0.0;
-  }
   
   return expVal;
 }
