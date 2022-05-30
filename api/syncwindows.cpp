@@ -55,8 +55,7 @@ bool SyncWindows::addWindow( Timeline *whichWindow, TGroupId whichGroup )
   if( syncGroupsTimeline.find( whichGroup ) == syncGroupsTimeline.end() )
     return false;
 
-  syncGroupsTimeline[ whichGroup ].push_back( whichWindow );
-  if( syncGroupsTimeline[ whichGroup ].size() > 1 || syncGroupsHistogram[ whichGroup ].size() > 0 )
+  if( syncGroupsTimeline[ whichGroup ].size() > 0 || syncGroupsHistogram[ whichGroup ].size() > 0 )
   {
     TTime nanoBeginTime, nanoEndTime;
     getGroupTimes( whichGroup, nanoBeginTime, nanoEndTime );
@@ -70,6 +69,7 @@ bool SyncWindows::addWindow( Timeline *whichWindow, TGroupId whichGroup )
       whichWindow->setRedraw( true );
     }
   }
+  syncGroupsTimeline[ whichGroup ].push_back( whichWindow );
 
   return true;
 }
@@ -79,8 +79,7 @@ bool SyncWindows::addWindow( Histogram *whichWindow, TGroupId whichGroup )
   if( syncGroupsHistogram.find( whichGroup ) == syncGroupsHistogram.end() )
     return false;
 
-  syncGroupsHistogram[ whichGroup ].push_back( whichWindow );
-  if( syncGroupsHistogram[ whichGroup ].size() > 1 || syncGroupsTimeline[ whichGroup ].size() > 0 )
+  if( syncGroupsHistogram[ whichGroup ].size() > 0 || syncGroupsTimeline[ whichGroup ].size() > 0 )
   {
     TTime nanoBeginTime, nanoEndTime;
     getGroupTimes( whichGroup, nanoBeginTime, nanoEndTime );
@@ -94,6 +93,7 @@ bool SyncWindows::addWindow( Histogram *whichWindow, TGroupId whichGroup )
       whichWindow->setRedraw( true );
     }
   }
+  syncGroupsHistogram[ whichGroup ].push_back( whichWindow );
 
   return true;
 }
@@ -277,6 +277,5 @@ void SyncWindows::getGroupTimes( TGroupId whichGroup, TTime& beginTime, TTime& e
     const Timeline *tmpControl = (*itHistogram).second[ 0 ]->getControlWindow();
     beginTime = tmpControl->traceUnitsToCustomUnits( (*itHistogram).second[ 0 ]->getBeginTime(), NS );
     endTime   = tmpControl->traceUnitsToCustomUnits( (*itHistogram).second[ 0 ]->getEndTime(), NS );
-    return;
   }
 }
