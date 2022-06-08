@@ -44,11 +44,12 @@ class SyncWindows
     void removeWindow( Timeline *whichWindow, TGroupId whichGroup = 0 );
     void removeWindow( Histogram *whichWindow, TGroupId whichGroup = 0 );
     void removeAllWindows( TGroupId whichGroup = 0 );
-    void removeAllGroups();
+    int getNumWindows( TGroupId whichGroup ) const;
 
     TGroupId newGroup();
     TGroupId getNumGroups() const;
     void getGroups( std::vector< TGroupId >& groups ) const;
+    void removeAllGroups();
 
     void broadcastTime( TGroupId whichGroup, Timeline *sendWindow, TTime beginTime, TTime endTime );
     void broadcastTime( TGroupId whichGroup, Histogram *sendWindow, TTime beginTime, TTime endTime );
