@@ -100,3 +100,5 @@ constexpr TTraceLevel operator++( TTraceLevel& whichLevel, int )
   whichLevel = static_cast<TTraceLevel>( static_cast<size_t>( whichLevel ) + 1 );
   return tmp;
 }
+
+using ParaverColor = unsigned char;

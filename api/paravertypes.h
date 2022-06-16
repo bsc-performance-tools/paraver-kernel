@@ -31,10 +31,7 @@
 #include <boost/serialization/string.hpp>
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
-
-typedef unsigned char ParaverColor;
-
-enum colorIndex { RED, GREEN, BLUE };
+#include "utils/traceparser/tracetypes.h"
 
 struct rgb
 {
@@ -68,5 +65,3 @@ struct rgb
            (red == b.red && blue == b.blue && green < b.green);
   }
 };
-
-

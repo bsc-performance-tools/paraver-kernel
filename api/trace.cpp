@@ -32,6 +32,7 @@
 #include "utils/pcfparser/UIParaverTraceConfig.h"
 #endif
 
+#include "utils/traceparser/pcffileparser.h"
 #include "progresscontroller.h"
 #include <sstream>
 #include "paraverconfig.h"
@@ -522,6 +523,7 @@ void TraceProxy::parsePCF( const string& whichFile )
 void TraceProxy::parsePCF( const string& whichFile )
 {
   UIParaverTraceConfig *config;
+  PCFFileParser<> pcfparser( whichFile );
 
   try
   {

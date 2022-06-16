@@ -27,6 +27,9 @@
 #include <ios>
 #include <regex>
 #include <sstream>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "tracelabels.h"
 
@@ -55,6 +58,20 @@ bool RowFileParser<dummy>::openRowFileParser( const std::string& filename, RowFi
 template<typename dummy>
 RowFileParser<dummy>::RowFileParser( const std::string& filename )
 {
+#ifndef _WIN32
+  struct stat fileInfo;
+#else
+  struct _stat64 fileInfo;
+#endif
+
+#ifndef _WIN32
+  if( stat( filename.c_str(), &fileInfo ) != 0 )
+    return;
+#else
+  if( _stat64( filename.c_str(), &fileInfo ) != 0 )
+    return;
+#endif
+
   std::string strLine;
   std::string strLevel;
   std::string strSize;
@@ -69,8 +86,6 @@ RowFileParser<dummy>::RowFileParser( const std::string& filename )
 
   while ( !rowFile.eof() )
   {
-    std::vector<std::string> *tmpvector = nullptr;
-
     getline( rowFile, strLine );
     if ( strLine.length() == 0 )
       continue;

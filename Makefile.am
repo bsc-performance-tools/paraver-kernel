@@ -6,6 +6,8 @@ SUBDIRS = \
 	utils
 
 nobase_include_HEADERS = \
+	utils/traceparser/pcffileparser.cpp \
+	utils/traceparser/pcffileparser.h \
 	utils/traceparser/processmodelappl.h \
 	utils/traceparser/processmodel.cpp \
 	utils/traceparser/processmodel.h \
