@@ -57,6 +57,14 @@ bool PCFFileParser<dummy>::openPCFFileParser( const std::string& filename, PCFFi
   return true;
 }
 
+template<typename dummy>
+void PCFFileParser<dummy>::trimAndCleanTabs( std::string& strLine )
+{
+  static const std::regex lineWithTabsRegex( R"((.*)(\t+)(.*))" );
+  strLine = std::regex_replace( strLine, lineWithTabsRegex, "$1 $3" );
+  strLine.erase( 0, strLine.find_first_not_of( ' ' ) );
+  strLine.erase( strLine.find_last_not_of( ' ' ) + 1 );
+}
 
 template<typename dummy>
 PCFFileParser<dummy>::PCFFileParser( const std::string& filename )
@@ -73,13 +81,13 @@ PCFFileParser<dummy>::PCFFileParser( const std::string& filename )
   while ( !pcfFile.eof() )
   {
     getline( pcfFile, strLine );
-    // TODO trim left and right spaces
+
+    trimAndCleanTabs( strLine );
     if ( strLine.length() == 0 )
       continue;
     else if ( strLine[ 0 ] == '#' )
       continue;
     
-
     auto tmpParserIt = sectionParserFactory.find( strLine );
     if( tmpParserIt != sectionParserFactory.end() )
     {

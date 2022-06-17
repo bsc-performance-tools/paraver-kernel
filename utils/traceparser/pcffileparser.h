@@ -84,6 +84,7 @@ class PCFFileParser
     SectionParser *currentParser;
 
     void initSectionParserFactory();
+    void trimAndCleanTabs( std::string& strLine );
 
     friend class DefaultOptionsParser;
     friend class DefaultSemanticParser;
