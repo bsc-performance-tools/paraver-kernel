@@ -60,8 +60,7 @@ bool PCFFileParser<dummy>::openPCFFileParser( const std::string& filename, PCFFi
 template<typename dummy>
 void PCFFileParser<dummy>::trimAndCleanTabs( std::string& strLine )
 {
-  static const std::regex lineWithTabsRegex( R"((.*)(\t+)(.*))" );
-  strLine = std::regex_replace( strLine, lineWithTabsRegex, "$1 $3" );
+  std::replace( strLine.begin(), strLine.end(), '\t', ' ' );
   strLine.erase( 0, strLine.find_first_not_of( ' ' ) );
   strLine.erase( strLine.find_last_not_of( ' ' ) + 1 );
 }
