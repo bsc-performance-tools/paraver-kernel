@@ -164,13 +164,14 @@ void DefaultOptionsParser::parseLine( const std::string& line )
 void DefaultOptionsParser::dumpToFile( std::ofstream& pcfFile, const PCFFileParser<>& whichMainParser )
 {
   pcfFile << PCF_LABEL_DEFAULT_OPTIONS << std::endl;
-  pcfFile << PCF_LABEL_LEVEL << " " << whichMainParser.level << std::endl;
-  pcfFile << PCF_LABEL_UNITS << " " << whichMainParser.units << std::endl;
-  pcfFile << PCF_LABEL_LOOK_BACK << " " << whichMainParser.look_back << std::endl;
-  pcfFile << PCF_LABEL_SPEED << " " << whichMainParser.speed << std::endl;
-  pcfFile << PCF_LABEL_FLAG_ICONS << " " << whichMainParser.flag_icons << std::endl;
-  pcfFile << PCF_LABEL_NUM_OF_STATE_COLORS << " " << whichMainParser.semanticColors.size() << std::endl;
-  pcfFile << PCF_LABEL_YMAX_SCALE << " " << whichMainParser.ymax_scale << std::endl;
+  size_t width = std::strlen( PCF_LABEL_NUM_OF_STATE_COLORS ) + 1;
+  pcfFile << std::left << std::setw(width) << PCF_LABEL_LEVEL << std::setw(0) << whichMainParser.level << std::endl;
+  pcfFile << std::left << std::setw(width) << PCF_LABEL_UNITS << std::setw(0) << whichMainParser.units << std::endl;
+  pcfFile << std::left << std::setw(width) << PCF_LABEL_LOOK_BACK << std::setw(0) << whichMainParser.look_back << std::endl;
+  pcfFile << std::left << std::setw(width) << PCF_LABEL_SPEED << std::setw(0) << whichMainParser.speed << std::endl;
+  pcfFile << std::left << std::setw(width) << PCF_LABEL_FLAG_ICONS << std::setw(0) << whichMainParser.flag_icons << std::endl;
+  pcfFile << std::left << std::setw(width) << PCF_LABEL_NUM_OF_STATE_COLORS << std::setw(0) << whichMainParser.semanticColors.size() << std::endl;
+  pcfFile << std::left << std::setw(width) << PCF_LABEL_YMAX_SCALE << std::setw(0) << whichMainParser.ymax_scale << std::endl;
 
   pcfFile << std::endl;
 }
@@ -212,7 +213,8 @@ void DefaultSemanticParser::parseLine( const std::string& line )
 void DefaultSemanticParser::dumpToFile( std::ofstream& pcfFile, const PCFFileParser<>& whichMainParser )
 {
   pcfFile << PCF_LABEL_DEFAULT_SEMANTIC << std::endl;
-  pcfFile << PCF_LABEL_THREAD_FUNC << " " << whichMainParser.thread_func << std::endl;
+  size_t width = std::strlen( PCF_LABEL_NUM_OF_STATE_COLORS ) + 1;
+  pcfFile << std::left << std::setw(width) << PCF_LABEL_THREAD_FUNC << std::setw(0) << whichMainParser.thread_func << std::endl;
 
   pcfFile << std::endl;
 }
@@ -256,7 +258,7 @@ void StatesParser::dumpToFile( std::ofstream& pcfFile, const PCFFileParser<>& wh
 {
   pcfFile << PCF_LABEL_STATES << std::endl;
   for( auto it : whichMainParser.states )
-    pcfFile << it.first << " " << it.second << std::endl;
+    pcfFile << it.first << '\t' << it.second << std::endl;
   
   pcfFile << std::endl;
 }
@@ -319,9 +321,9 @@ void StatesColorParser::dumpToFile( std::ofstream& pcfFile, const PCFFileParser<
 {
   pcfFile << PCF_LABEL_STATES_COLOR << std::endl;
   for ( auto it : whichMainParser.semanticColors )
-    pcfFile << it.first << " {" << (int)std::get<0>( it.second ) << ","
-                                << (int)std::get<1>( it.second ) << ","
-                                << (int)std::get<2>( it.second ) << "}" << std::endl;
+    pcfFile << it.first << "\t{" << (int)std::get<0>( it.second ) << ","
+                                 << (int)std::get<1>( it.second ) << ","
+                                 << (int)std::get<2>( it.second ) << "}" << std::endl;
 
   pcfFile << std::endl;
 }
@@ -422,12 +424,12 @@ void EventParser::dumpToFile( std::ofstream& pcfFile, const PCFFileParser<>& whi
   for( auto it : whichMainParser.events )
   {
     pcfFile << PCF_LABEL_EVENT_TYPE << std::endl;
-    pcfFile << 0 << " " << it.first << " " << it.second.label << std::endl;
+    pcfFile << 0 << "   " << it.first << "    " << it.second.label << std::endl;
     if( !it.second.values.empty() )
     {
       pcfFile << PCF_LABEL_EVENT_VALUES << std::endl;
       for( auto value : it.second.values )
-        pcfFile << value.first << " " << value.second << std::endl;
+        pcfFile << value.first << "  " << value.second << std::endl;
     }
     if( it.second.precision != 0 )
       pcfFile << PCF_LABEL_EVENT_PRECISION << " " << it.second.precision << std::endl;
