@@ -25,6 +25,9 @@
 #include "pcffileparser.h" //DELETE ME!
 #include <iostream> //DELETE ME!
 
+#include <cstring>
+#include <vector>
+
 // MAIN SECTIONS
 constexpr char PCF_LABEL_DEFAULT_OPTIONS[] = "DEFAULT_OPTIONS";
 constexpr char PCF_LABEL_DEFAULT_SEMANTIC[] = "DEFAULT_SEMANTIC";
@@ -61,7 +64,7 @@ template<typename dummy>
 void PCFFileParser<dummy>::trimAndCleanTabs( std::string& strLine )
 {
   std::string strOutLine;
-  std::replace_copy( strLine.begin() + strLine.find_first_not_of(" \t"  ),
+  std::replace_copy( strLine.begin() + strLine.find_first_not_of( " \t"  ),
                      strLine.begin() + strLine.find_last_not_of( " \t"  ) + 1,
                      std::back_inserter( strOutLine ),
                      '\t',
@@ -112,6 +115,7 @@ PCFFileParser<dummy>::PCFFileParser( const std::string& filename )
   pcfFile.close();
 }
 
+
 // ----------------------------------------------------------------------------
 // DefaultOptionsParser -------------------------------------------------------
 // ----------------------------------------------------------------------------
@@ -139,6 +143,8 @@ class DefaultOptionsParser : public PCFFileParser<>::SectionParser
     virtual ~DefaultOptionsParser() = default;
 
     virtual void parseLine( const std::string& line );
+    
+    static void dumpToFile( std::ofstream&, const PCFFileParser<>& whichMainParser );
 
   private:
     std::map<std::string, std::function<void( std::string )> > parameterSetter;
@@ -155,6 +161,19 @@ void DefaultOptionsParser::parseLine( const std::string& line )
     it->second( value );
 }
 
+void DefaultOptionsParser::dumpToFile( std::ofstream& pcfFile, const PCFFileParser<>& whichMainParser )
+{
+  pcfFile << PCF_LABEL_DEFAULT_OPTIONS << std::endl;
+  pcfFile << PCF_LABEL_LEVEL << " " << whichMainParser.level << std::endl;
+  pcfFile << PCF_LABEL_UNITS << " " << whichMainParser.units << std::endl;
+  pcfFile << PCF_LABEL_LOOK_BACK << " " << whichMainParser.look_back << std::endl;
+  pcfFile << PCF_LABEL_SPEED << " " << whichMainParser.speed << std::endl;
+  pcfFile << PCF_LABEL_FLAG_ICONS << " " << whichMainParser.flag_icons << std::endl;
+  pcfFile << PCF_LABEL_NUM_OF_STATE_COLORS << " " << whichMainParser.semanticColors.size() << std::endl;
+  pcfFile << PCF_LABEL_YMAX_SCALE << " " << whichMainParser.ymax_scale << std::endl;
+
+  pcfFile << std::endl;
+}
 
 // ----------------------------------------------------------------------------
 // DefaultSemanticParser ------------------------------------------------------
@@ -166,12 +185,14 @@ class DefaultSemanticParser : public PCFFileParser<>::SectionParser
   public:
     DefaultSemanticParser( PCFFileParser<> *whichMainParser ) : PCFFileParser<>::SectionParser( whichMainParser ) 
     {
-      parameterSetter[ PCF_LABEL_THREAD_FUNC ]      = [this]( std::string line ) { mainParser->thread_func = line; };
+      parameterSetter[ PCF_LABEL_THREAD_FUNC ] = [this]( std::string line ) { mainParser->thread_func = line; };
     }
 
     virtual ~DefaultSemanticParser() = default;
 
     virtual void parseLine( const std::string& line );
+
+    static void dumpToFile( std::ofstream& pcfFile, const PCFFileParser<>& whichMainParser );
 
   private:
     std::map<std::string, std::function<void( std::string )> > parameterSetter;
@@ -188,6 +209,13 @@ void DefaultSemanticParser::parseLine( const std::string& line )
     it->second( value );
 }
 
+void DefaultSemanticParser::dumpToFile( std::ofstream& pcfFile, const PCFFileParser<>& whichMainParser )
+{
+  pcfFile << PCF_LABEL_DEFAULT_SEMANTIC << std::endl;
+  pcfFile << PCF_LABEL_THREAD_FUNC << " " << whichMainParser.thread_func << std::endl;
+
+  pcfFile << std::endl;
+}
 
 // ----------------------------------------------------------------------------
 // StatesParser ---------------------------------------------------------------
@@ -201,6 +229,8 @@ class StatesParser : public PCFFileParser<>::SectionParser
     virtual ~StatesParser() = default;
 
     virtual void parseLine( const std::string& line );
+
+    static void dumpToFile( std::ofstream& pcfFile, const PCFFileParser<>& whichMainParser );
 };
 
 void StatesParser::parseLine( const std::string& line )
@@ -222,6 +252,15 @@ void StatesParser::parseLine( const std::string& line )
   mainParser->states[ tmpState ] = label;
 }
 
+void StatesParser::dumpToFile( std::ofstream& pcfFile, const PCFFileParser<>& whichMainParser )
+{
+  pcfFile << PCF_LABEL_STATES << std::endl;
+  for( auto it : whichMainParser.states )
+    pcfFile << it.first << " " << it.second << std::endl;
+  
+  pcfFile << std::endl;
+}
+
 
 // ----------------------------------------------------------------------------
 // StatesColorParser ----------------------------------------------------------
@@ -235,6 +274,8 @@ class StatesColorParser : public PCFFileParser<>::SectionParser
     virtual ~StatesColorParser() = default;
 
     virtual void parseLine( const std::string& line );
+    
+    static void dumpToFile( std::ofstream& pcfFile, const PCFFileParser<>& whichMainParser );
 };
 
 void StatesColorParser::parseLine( const std::string& line )
@@ -253,11 +294,11 @@ void StatesColorParser::parseLine( const std::string& line )
 
   std::string strRGB = line.substr( line.find_first_not_of( ' ', firstSpacePos ), std::string::npos );
 
-  size_t firstCommaPos = strRGB.find_first_of( ',', 1 );
-  std::string strRed   = strRGB.substr( 1, firstCommaPos );
+  size_t firstCommaPos  = strRGB.find_first_of( ',', 1 );
+  std::string strRed    = strRGB.substr( 1, firstCommaPos );
   size_t secondCommaPos = strRGB.find_last_of( ',' );
-  std::string strGreen = strRGB.substr( firstCommaPos + 1, secondCommaPos );
-  std::string strBlue  = strRGB.substr( secondCommaPos + 1, strRGB.length() - 1 );
+  std::string strGreen  = strRGB.substr( firstCommaPos + 1, secondCommaPos );
+  std::string strBlue   = strRGB.substr( secondCommaPos + 1, strRGB.length() - 1 );
 
   ParaverColor red, green, blue;
   try
@@ -274,26 +315,126 @@ void StatesColorParser::parseLine( const std::string& line )
   mainParser->semanticColors[ tmpSemanticValue ] = std::tie( red, green, blue );
 }
 
+void StatesColorParser::dumpToFile( std::ofstream& pcfFile, const PCFFileParser<>& whichMainParser )
+{
+  pcfFile << PCF_LABEL_STATES_COLOR << std::endl;
+  for ( auto it : whichMainParser.semanticColors )
+    pcfFile << it.first << " {" << (int)std::get<0>( it.second ) << ","
+                                << (int)std::get<1>( it.second ) << ","
+                                << (int)std::get<2>( it.second ) << "}" << std::endl;
+
+  pcfFile << std::endl;
+}
+
 
 // ----------------------------------------------------------------------------
 // EventParser ----------------------------------------------------------------
 // ----------------------------------------------------------------------------
+constexpr char PCF_LABEL_EVENT_VALUES[] = "VALUES";
+constexpr char PCF_LABEL_EVENT_PRECISION[] = "PRECISION";
+
 class EventParser : public PCFFileParser<>::SectionParser
 {
   public:
     EventParser( PCFFileParser<> *whichMainParser ) : PCFFileParser<>::SectionParser( whichMainParser ) 
-    {}
+    {
+      readingEventValues = false;
+    }
 
     virtual ~EventParser() = default;
 
     virtual void parseLine( const std::string& line );
+
+    static void dumpToFile( std::ofstream& pcfFile, const PCFFileParser<>& whichMainParser );
+
+  private:
+    bool readingEventValues;
+    std::vector<TEventType> currentTypes;
 };
 
 void EventParser::parseLine( const std::string& line )
 {
+  if( line == PCF_LABEL_EVENT_VALUES )
+  {
+    readingEventValues = true;
+    return;
+  }
 
+  if( line.substr( 0, strlen( PCF_LABEL_EVENT_PRECISION ) ) == PCF_LABEL_EVENT_PRECISION )
+  {
+    std::string precision = line.substr( line.find_first_not_of( ' ', strlen( PCF_LABEL_EVENT_PRECISION ) ), std::string::npos );
+    unsigned int tmpPrecision;
+    try
+    {
+      tmpPrecision = std::stoul( precision );
+    }
+    catch(...)
+    {
+      return;
+    }
+
+    for( auto it : currentTypes )
+      mainParser->events[ it ].precision = tmpPrecision;
+  }
+  else if ( !readingEventValues )
+  {
+    size_t firstSpacePos = line.find_first_of( ' ' );
+    std::string dummyColor = line.substr( 0, firstSpacePos );
+    size_t initTypePos = line.find_first_not_of( ' ', firstSpacePos );
+    size_t secondSpacePos = line.find_first_of( ' ', initTypePos );
+    std::string eventType = line.substr( initTypePos, secondSpacePos );
+    std::string label = line.substr( line.find_first_not_of( ' ', secondSpacePos ), std::string::npos );
+    TEventType tmpEventType;
+    try
+    {
+      tmpEventType = std::stoi( eventType );
+    }
+    catch(...)
+    {
+      return;
+    }
+    
+    currentTypes.push_back( tmpEventType );
+    mainParser->events[ tmpEventType ].label = label;
+  }
+  else
+  {
+    size_t firstSpacePos = line.find_first_of( ' ' );
+    std::string value = line.substr( 0, firstSpacePos );
+    std::string label = line.substr( line.find_first_not_of( ' ', firstSpacePos ), std::string::npos );
+    TEventValue tmpValue;
+    try
+    {
+      tmpValue = std::stoi( value );
+    }
+    catch(...)
+    {
+      return;
+    }  
+    
+    for( auto it : currentTypes )
+      mainParser->events[ it ].values[ tmpValue ] = label;
+  }
 }
 
+void EventParser::dumpToFile( std::ofstream& pcfFile, const PCFFileParser<>& whichMainParser )
+{
+  for( auto it : whichMainParser.events )
+  {
+    pcfFile << PCF_LABEL_EVENT_TYPE << std::endl;
+    pcfFile << 0 << " " << it.first << " " << it.second.label << std::endl;
+    if( !it.second.values.empty() )
+    {
+      pcfFile << PCF_LABEL_EVENT_VALUES << std::endl;
+      for( auto value : it.second.values )
+        pcfFile << value.first << " " << value.second << std::endl;
+    }
+    if( it.second.precision != 0 )
+      pcfFile << PCF_LABEL_EVENT_PRECISION << " " << it.second.precision << std::endl;
+    
+    pcfFile << std::endl;
+  }
+}
 
 // ----------------------------------------------------------------------------
 // GradientColorParser --------------------------------------------------------
@@ -309,6 +450,8 @@ class GradientColorParser : public PCFFileParser<>::SectionParser
     virtual ~GradientColorParser() = default;
 
     virtual void parseLine( const std::string& line );
+
+    static void dumpToFile( std::ofstream& pcfFile, const PCFFileParser<>& whichMainParser );
 };
 
 void GradientColorParser::parseLine( const std::string& line )
@@ -331,6 +474,8 @@ class GradientNamesParser : public PCFFileParser<>::SectionParser
     virtual ~GradientNamesParser() = default;
 
     virtual void parseLine( const std::string& line );
+
+    static void dumpToFile( std::ofstream& pcfFile, const PCFFileParser<>& whichMainParser );
 };
 
 void GradientNamesParser::parseLine( const std::string& line )
@@ -351,4 +496,21 @@ void PCFFileParser<dummy>::initSectionParserFactory()
   // IGNORED: NOT USEFUL FOR CURRENT PARAVER VERSION
   sectionParserFactory[ PCF_LABEL_GRADIENT_COLOR ]   = [this]() { return new GradientColorParser( this ); };
   sectionParserFactory[ PCF_LABEL_GRADIENT_NAMES ]   = [this]() { return new GradientNamesParser( this ); };
+}
+
+
+template<typename dummy>
+void PCFFileParser<dummy>::dumpToFile( const std::string& filename ) const
+{
+  std::ofstream pcfFile( filename.c_str() );
+  if ( !pcfFile )
+    throw std::ios_base::failure( "Error opening pcf file." );
+
+  DefaultOptionsParser::dumpToFile( pcfFile, *this );
+  DefaultSemanticParser::dumpToFile( pcfFile, *this );
+  StatesParser::dumpToFile( pcfFile, *this );
+  StatesColorParser::dumpToFile( pcfFile, *this );
+  EventParser::dumpToFile( pcfFile, *this );
+  // GradientColorParser::dumpToFile( pcfFile, *this );
+  // GradientNamesParser::dumpToFile( pcfFile, *this );
 }

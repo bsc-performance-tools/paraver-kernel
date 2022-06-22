@@ -524,6 +524,8 @@ void TraceProxy::parsePCF( const string& whichFile )
 {
   UIParaverTraceConfig *config;
   PCFFileParser<> pcfparser( whichFile );
+  
+  pcfparser.dumpToFile( whichFile + ".dump" );
 
   try
   {

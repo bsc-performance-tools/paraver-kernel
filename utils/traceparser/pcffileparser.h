@@ -68,17 +68,18 @@ class PCFFileParser
       std::map< TEventValue, std::string > values;
     };
 
-    std::string level; // VALOR POR DEFECTO HARDCODED NO GET/SET
-    std::string units; // VALOR POR DEFECTO HARDCODED NO GET/SET
-    std::string look_back; // VALOR POR DEFECTO HARDCODED NO GET/SET
-    std::string speed; // VALOR POR DEFECTO HARDCODED NO GET/SET
-    std::string flag_icons; // VALOR POR DEFECTO HARDCODED NO GET/SET
+    std::string level;
+    std::string units;
+    std::string look_back;
+    std::string speed;
+    std::string flag_icons;
     // int num_of_state_colors; se ignora y a la hora de volcar se usa el size del contenedor que tenga los colores
     std::string ymax_scale; // Recuperarlo desde los nuevos timelines creados
-    std::string thread_func; // VALOR POR DEFECTO HARDCODED NO GET/SET
+    std::string thread_func;
     std::map< TState, std::string > states;
     std::map< TSemanticValue, PCFFileParser::rgb > semanticColors;
     std::map< TEventType, PCFFileParser::EventType > events;
+    // TODO: Create class to manage same values and precission for a set of types
 
     std::map< std::string, std::function<PCFFileParser::SectionParser*(void)> > sectionParserFactory;
     SectionParser *currentParser;
