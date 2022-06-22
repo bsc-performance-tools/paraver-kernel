@@ -60,9 +60,13 @@ bool PCFFileParser<dummy>::openPCFFileParser( const std::string& filename, PCFFi
 template<typename dummy>
 void PCFFileParser<dummy>::trimAndCleanTabs( std::string& strLine )
 {
-  std::replace( strLine.begin(), strLine.end(), '\t', ' ' );
-  strLine.erase( 0, strLine.find_first_not_of( ' ' ) );
-  strLine.erase( strLine.find_last_not_of( ' ' ) + 1 );
+  std::string strOutLine;
+  std::replace_copy( strLine.begin() + strLine.find_first_not_of(" \t"  ),
+                     strLine.begin() + strLine.find_last_not_of( " \t"  ) + 1,
+                     std::back_inserter( strOutLine ),
+                     '\t',
+                     ' ' );
+  strLine = strOutLine;
 }
 
 template<typename dummy>
@@ -81,10 +85,12 @@ PCFFileParser<dummy>::PCFFileParser( const std::string& filename )
   {
     getline( pcfFile, strLine );
 
-    trimAndCleanTabs( strLine );
     if ( strLine.length() == 0 )
       continue;
-    else if ( strLine[ 0 ] == '#' )
+
+    trimAndCleanTabs( strLine );
+
+    if ( strLine[ 0 ] == '#' )
       continue;
     
     auto tmpParserIt = sectionParserFactory.find( strLine );
