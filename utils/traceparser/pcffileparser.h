@@ -37,6 +37,7 @@ class PCFFileParser
   public:
     using rgb = std::tuple< ParaverColor, ParaverColor, ParaverColor >;
 
+    template< typename dummyParser = std::nullptr_t >
     class SectionParser
     {
       public:
@@ -84,8 +85,8 @@ class PCFFileParser
     const std::map< TState, std::string >& getStates() const;
     void setState( TState state, const std::string& label );
     
-    const std::map< TSemanticValue, PCFFileParser::rgb >& getSemanticColors() const;
-    void setSemanticColor( TSemanticValue semanticValue, PCFFileParser::rgb color );
+    const std::map< uint32_t, PCFFileParser::rgb >& getSemanticColors() const;
+    void setSemanticColor( uint32_t semanticValue, PCFFileParser::rgb color );
 
     void                                        getEventTypes( std::vector< TEventType >& onVector ) const;
     unsigned int                                getEventPrecision( TEventType eventType ) const;
@@ -116,23 +117,23 @@ class PCFFileParser
     std::string ymaxScale;
     std::string threadFunc;
     std::map< TState, std::string > states;
-    std::map< TSemanticValue, PCFFileParser::rgb > semanticColors;
+    std::map< uint32_t, PCFFileParser::rgb > semanticColors;
     std::map< TEventType, PCFFileParser::EventTypeData > events;
     // TODO: Create class to manage same values and precission for a set of types
 
-    std::map< std::string, std::function<PCFFileParser::SectionParser*(void)> > sectionParserFactory;
-    SectionParser *currentParser;
+    std::map< std::string, std::function<PCFFileParser::SectionParser<>*(void)> > sectionParserFactory;
+    SectionParser<> *currentParser;
 
     void initSectionParserFactory();
     void trimAndCleanTabs( std::string& strLine );
 
-    friend class DefaultOptionsParser;
-    friend class DefaultSemanticParser;
-    friend class StatesParser;
-    friend class StatesColorParser;
-    friend class EventParser;
-    friend class GradientColorParser;
-    friend class GradientNamesParser;
+    template< typename dummyParser > friend class DefaultOptionsParser;
+    template< typename dummyParser > friend class DefaultSemanticParser;
+    template< typename dummyParser > friend class StatesParser;
+    template< typename dummyParser > friend class StatesColorParser;
+    template< typename dummyParser > friend class EventParser;
+    template< typename dummyParser > friend class GradientColorParser;
+    template< typename dummyParser > friend class GradientNamesParser;
 };
 
 #include "pcffileparser.cpp"

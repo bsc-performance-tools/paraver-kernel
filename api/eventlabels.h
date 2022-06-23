@@ -24,18 +24,10 @@
 
 #pragma once
 
-
 #include <set>
 #include <map>
 #include "paraverkerneltypes.h"
-
-#ifdef OLD_PCFPARSER
-#include "utils/pcfparser/old/ParaverTraceConfig.h"
-#else
-#include "utils/pcfparser/UIParaverTraceConfig.h"
-#endif
-
-using namespace libparaver;
+#include "utils/traceparser/pcffileparser.h"
 
 class EventLabels
 {
@@ -43,14 +35,7 @@ class EventLabels
     static const std::string unknownLabel;
 
     EventLabels();
-    EventLabels( const std::set<TEventType>& eventsLoaded );
-#ifdef OLD_PCFPARSER
-    EventLabels( const ParaverTraceConfig& config,
-                 const std::set<TEventType>& eventsLoaded );
-#else
-    EventLabels( const UIParaverTraceConfig& config,
-                 const std::set<TEventType>& eventsLoaded );
-#endif
+    EventLabels( const PCFFileParser<>& pcfParser );
     ~EventLabels();
 
     void getTypes( std::vector<TEventType>& onVector ) const;

@@ -24,13 +24,13 @@
 
 #pragma once
 
-
+#include <cstddef>
 #include <string>
 #include <vector>
 #include <map>
 #include "tracetypes.h"
 
-template< typename dummy = nullptr_t >
+template< typename dummy = std::nullptr_t >
 class RowFileParser
 {
   public:

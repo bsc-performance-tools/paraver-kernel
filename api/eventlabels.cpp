@@ -22,14 +22,10 @@
 \*****************************************************************************/
 
 #include <algorithm>
+#include <iostream>
 #include <regex>
 
 #include "eventlabels.h"
-
-#ifdef OLD_PCFPARSER
-#include "utils/pcfparser/old/ParaverEventType.h"
-#include "utils/pcfparser/old/ParaverEventValue.h"
-#endif
 
 using namespace std;
 
@@ -38,90 +34,29 @@ const string EventLabels::unknownLabel = "Unknown";
 EventLabels::EventLabels()
 {}
 
-#ifdef OLD_PCFPARSER
-
-EventLabels::EventLabels( const set<TEventType>& eventsLoaded )
+EventLabels::EventLabels( const PCFFileParser<>& pcfParser )
 {
-/*  for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
-        it != eventsLoaded.end(); ++it )
-    eventType2Label[ *it ] = unknownLabel + " type ";*/
-}
-
-EventLabels::EventLabels( const libparaver::ParaverTraceConfig& config,
-                          const set<TEventType>& eventsLoaded )
-{
-/*  for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
-        it != eventsLoaded.end(); ++it )
-    eventType2Label[ *it ] = unknownLabel + " type ";*/
-
-  const vector<ParaverEventType *>& types = config.get_eventTypes();
-  for ( vector<ParaverEventType *>::const_iterator it = types.begin();
-        it != types.end(); ++it )
+  vector< TEventType > types;
+  pcfParser.getEventTypes( types );
+  for ( auto it : types )
   {
-    eventType2Label[ ( *it )->get_key() ] = ( *it )->get_description();
-    label2eventType[ ( *it )->get_description() ] = ( *it )->get_key();
-    eventValue2Label[ ( *it )->get_key() ] = map<TEventValue, string>();
-    const vector<ParaverEventValue *>& values = ( *it )->get_eventValues();
-    for ( vector<ParaverEventValue *>::const_iterator itVal = values.begin();
-          itVal != values.end(); ++itVal )
-    {
-      ( eventValue2Label[ ( *it )->get_key() ] )[ ( *itVal )->get_key() ] =
-        ( *itVal )->get_value();
-
-      multimap< TEventType, TEventValue >& tmpEventMap = label2eventValue[ ( *itVal )->get_value() ];
-      tmpEventMap.insert( make_pair( ( *it )->get_key(), ( *itVal )->get_key() ) );
-    }
+    eventType2Label[ it ] = pcfParser.getEventLabel( it );
+    label2eventType[ pcfParser.getEventLabel( it ) ] = it;
+    eventValue2Label[ it ] = pcfParser.getEventValues( it );
+    for( auto itValue : eventValue2Label[ it ] )
+      label2eventValue[ itValue.second ].insert( make_pair( it, itValue.first ) );
   }
-}
-
-#else
-
-
-EventLabels::EventLabels( const set<TEventType>& eventsLoaded )
-{
-/*  for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
-        it != eventsLoaded.end(); ++it )
-    eventType2Label[ *it ] = unknownLabel + " type ";*/
-}
-#include <iostream>
-EventLabels::EventLabels( const libparaver::UIParaverTraceConfig& config,
-                          const set<TEventType>& eventsLoaded )
-{
-/*  for ( set<TEventType>::const_iterator it = eventsLoaded.begin();
-        it != eventsLoaded.end(); ++it )
-    eventType2Label[ *it ] = unknownLabel + " type ";*/
-
-  try
-  {
-    const vector<unsigned int>& types = config.getEventTypes();
-    for ( vector<unsigned int>::const_iterator it = types.begin(); it != types.end(); ++it )
-    {
-      eventType2Label[ *it ] = config.getEventType( *it );
-      label2eventType[ config.getEventType( *it ) ] = *it;
-      eventValue2Label[ *it ] = map<TEventValue, string>();
-      try
+/*
+      vector<unsigned int> values = config.getEventValues( *it );
+      for ( vector<unsigned int>::const_iterator itVal = values.begin(); itVal != values.end(); ++itVal )
       {
-        vector<unsigned int> values = config.getEventValues( *it );
-        for ( vector<unsigned int>::const_iterator itVal = values.begin(); itVal != values.end(); ++itVal )
-        {
-          ( eventValue2Label[ *it ] )[ *itVal ] = config.getEventValue( *it, *itVal );
+        ( eventValue2Label[ *it ] )[ *itVal ] = config.getEventValue( *it, *itVal );
 
-          multimap< TEventType, TEventValue >& tmpEventMap = label2eventValue[ config.getEventValue( *it, *itVal ) ];
-          tmpEventMap.insert( make_pair( *it, *itVal ) );
-        }
+        multimap< TEventType, TEventValue >& tmpEventMap = label2eventValue[ config.getEventValue( *it, *itVal ) ];
+        tmpEventMap.insert( make_pair( *it, *itVal ) );
       }
-      catch( libparaver::UIParaverTraceConfig::value_not_found )
-      {
-      }
-    }
-  }
-  catch( libparaver::UIParaverTraceConfig::value_not_found )
-  {
-  }
-
+  */
 }
-
-#endif
 
 EventLabels::~EventLabels()
 {}

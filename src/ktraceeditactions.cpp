@@ -683,7 +683,6 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
   TraceEditSequence *tmpSequence = mySequence;
   bool translationOk = false;
 
-#ifndef OLD_PCFPARSER
   // Get new tracename
   std::string newName = ( (OutputTraceFileNameState *)tmpSequence->getState( TSequenceStates::outputTraceFileNameState ) )->getData();
   if ( newName.empty() )
@@ -713,24 +712,9 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
                                                            "PCFEventMergerAction::execute",
                                                            verbose, keepOpen, exitProgram ) )
     return false;
-
-  // Read reference pcf
-#ifdef OLD_PCFPARSER
-  ParaverTraceConfig *referenceTraceConfig = new ParaverTraceConfig( referencePCFFile );
-  referenceTraceConfig->parse();
-#else
-  UIParaverTraceConfig *referenceTraceConfig = new UIParaverTraceConfig();
-  referenceTraceConfig->parse( referencePCFFile );
-#endif
-
-  // Read source pcf
-#ifdef OLD_PCFPARSER
-  ParaverTraceConfig *sourceTraceConfig = new ParaverTraceConfig( sourceTrace );
-  sourceTraceConfig->parse();
-#else
-  UIParaverTraceConfig *sourceTraceConfig = new UIParaverTraceConfig();
-  sourceTraceConfig->parse( sourceTrace );
-#endif
+#if 0
+  PCFFileParser<> referenceTraceConfig( referencePCFFile );
+  PCFFileParser<> sourceTraceConfig( sourceTrace );
 
   // Translation algorithm
   map< TTypeValuePair, TTypeValuePair > translation;
@@ -752,11 +736,7 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
       {
         sourceValues = sourceTraceConfig->getEventValues( *itSourceType );
       }
-#ifdef OLD_PCFPARSER
-      catch( libparaver::ParaverTraceConfig::value_not_found )
-#else
       catch( libparaver::UIParaverTraceConfig::value_not_found )
-#endif
       {}
 
       if ( sourceValues.empty() )
@@ -767,11 +747,7 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
       {
         tmpCodes = referenceTraceConfig->getEventValues( *itSourceType );
       }
-#ifdef OLD_PCFPARSER
-      catch( libparaver::ParaverTraceConfig::value_not_found )
-#else
       catch( libparaver::UIParaverTraceConfig::value_not_found )
-#endif
       {}
 
       if ( tmpCodes.empty() )
@@ -840,11 +816,7 @@ bool PCFEventMergerAction::execute( std::string whichTrace )
     tmpFileDestiny.close();
   }
 
-  delete sourceTraceConfig;
-  delete referenceTraceConfig;
-#endif
-
   tmpSequence->executeNextAction( whichTrace );
-
+#endif
   return true;
 }

@@ -465,109 +465,28 @@ Trace *TraceProxy::getConcrete() const
   return myTrace;
 }
 
-#ifdef OLD_PCFPARSER
 void TraceProxy::parsePCF( const string& whichFile )
 {
-  ParaverTraceConfig *config;
-
-  try
-  {
-    config = new ParaverTraceConfig( whichFile );
-    config->parse();
-  }
-  catch ( ... )
-  {
-    myEventLabels = EventLabels( myTrace->getLoadedEvents() );
-    return;
-  }
+  PCFFileParser<> pcfParser( whichFile );
 
   rgb tmpColor;
-
-  if ( config->get_statesColor().begin() != config->get_statesColor().end() )
+  const std::map< uint32_t, PCFFileParser<>::rgb >& semanticColors = pcfParser.getSemanticColors();
+  for ( auto it : semanticColors )
   {
-    for ( vector<ParaverStatesColor *>::const_iterator it = config->get_statesColor().begin();
-          it != config->get_statesColor().end(); ++it )
-    {
-      tmpColor.red = ( *it )->get_color1();
-      tmpColor.green = ( *it )->get_color2();
-      tmpColor.blue = ( *it )->get_color3();
-      myCodeColor.setColor( ( PRV_UINT32 )( *it )->get_key(), tmpColor );
-    }
+    std::tie( tmpColor.red, tmpColor.green, tmpColor.blue ) = it.second;
+    myCodeColor.setColor( it.first, tmpColor );
   }
 
-  if ( config->get_gradientColors().begin() != config->get_gradientColors().end() )
+  myEventLabels = EventLabels( pcfParser );
+  myStateLabels = StateLabels( pcfParser );
+
+  vector< TEventType > types;
+  pcfParser.getEventTypes( types );
+  for( auto it : types )
   {
-    ParaverGradientColor *grad = ( config->get_gradientColors() )[ 0 ];
-    tmpColor.red = grad->get_color1();
-    tmpColor.green = grad->get_color2();
-    tmpColor.blue = grad->get_color3();
-    myGradientColor.setBeginGradientColor( tmpColor );
-
-    grad = ( config->get_gradientColors() )[ config->get_gradientColors().size() - 1 ];
-    tmpColor.red = grad->get_color1();
-    tmpColor.green = grad->get_color2();
-    tmpColor.blue = grad->get_color3();
-    myGradientColor.setEndGradientColor( tmpColor );
+    setEventTypePrecision( it, pow( (double)10, (double)pcfParser.getEventPrecision( it ) ) );
   }
-  myEventLabels = EventLabels( *config, myTrace->getLoadedEvents() );
-  myStateLabels = StateLabels( *config );
-
-  //myDefaultTaskSemanticFunc = config->get_default_task_semantic_func();
-  //myDefaultThreadSemanticFunc = config->get_default_thread_semantic_func();
-
-  delete config;
 }
-
-#else
-
-void TraceProxy::parsePCF( const string& whichFile )
-{
-  UIParaverTraceConfig *config;
-  PCFFileParser<> pcfparser( whichFile );
-  
-  pcfparser.dumpToFile( whichFile + ".dump" );
-
-  try
-  {
-    config = new UIParaverTraceConfig();
-    config->parse( whichFile /* true */ );
-  }
-  catch ( ... )
-  {
-    myEventLabels = EventLabels( myTrace->getLoadedEvents() );
-    return;
-  }
-
-  rgb tmpColor;
-
-  const vector< int >& stateColors = config->getStateColors();
-  for ( vector< int >::const_iterator it = stateColors.begin(); it != stateColors.end(); ++it )
-  {
-    tmpColor.red = config->getStateColor( *it ).getRed();
-    tmpColor.green = config->getStateColor( *it ).getGreen();
-    tmpColor.blue = config->getStateColor( *it ).getBlue();
-    myCodeColor.setColor( ( PRV_UINT32 )( *it ), tmpColor );
-  }
-
-  myEventLabels = EventLabels( *config, myTrace->getLoadedEvents() );
-  myStateLabels = StateLabels( *config );
-
-  try
-  {
-    const vector<unsigned int>& types = config->getEventTypes();
-    for( vector<unsigned int>::const_iterator it = types.begin(); it != types.end(); ++it )
-    {
-      setEventTypePrecision( *it, pow( (double)10, (double)-config->getEventTypePrecision( *it ) ) );
-    }
-  }
-  catch( libparaver::UIParaverTraceConfig::value_not_found )
-  {
-  }
-
-  delete config;
-}
-
-#endif
 
 void TraceProxy::parseROW( const string& whichFile )
 {
