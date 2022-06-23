@@ -675,8 +675,8 @@ void PCFFileParser<dummy>::initSectionParserFactory()
   sectionParserFactory[ PCF_LABEL_EVENT_TYPE ]       = [this]() { return new EventParser<>( this ); };
 
   // IGNORED: NOT USEFUL FOR CURRENT PARAVER VERSION
-  // sectionParserFactory[ PCF_LABEL_GRADIENT_COLOR ]   = [this]() { return new GradientColorParser<>( this ); };
-  // sectionParserFactory[ PCF_LABEL_GRADIENT_NAMES ]   = [this]() { return new GradientNamesParser<>( this ); };
+  sectionParserFactory[ PCF_LABEL_GRADIENT_COLOR ]   = [this]() { return new GradientColorParser<>( this ); };
+  sectionParserFactory[ PCF_LABEL_GRADIENT_NAMES ]   = [this]() { return new GradientNamesParser<>( this ); };
 }
 
 
