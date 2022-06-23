@@ -183,11 +183,6 @@ class Trace
       CodeColor *tmp = nullptr;
       return *tmp;
     }
-    virtual const GradientColor& getGradientColor() const
-    {
-      GradientColor *tmp = nullptr;
-      return *tmp;
-    }
     virtual const EventLabels& getEventLabels() const
     {
       EventLabels *tmp = nullptr;
@@ -320,7 +315,6 @@ class TraceProxy: public Trace
     virtual void setUnload( bool newValue ) override;
     virtual Trace *getConcrete() const override;
     virtual const CodeColor& getCodeColor() const override;
-    virtual const GradientColor& getGradientColor() const override;
     virtual const EventLabels& getEventLabels() const override;
     virtual const StateLabels& getStateLabels() const override;
     virtual std::string getRowLabel( TTraceLevel whichLevel, TObjectOrder whichRow ) const override;
@@ -371,7 +365,6 @@ class TraceProxy: public Trace
     PRV_UINT32 instanceNumber;
 
     CodeColor myCodeColor;
-    GradientColor myGradientColor;
 
     EventLabels myEventLabels;
     StateLabels myStateLabels;

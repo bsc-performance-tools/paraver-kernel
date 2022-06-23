@@ -580,12 +580,6 @@ string applyFilters( KernelConnection *myKernel,
   vector< TEventType > typesWithValueZero;
   EventLabels labels;
   std::map< TEventValue, string > currentEventValues;
-#ifdef OLD_PCFPARSER
-  ParaverTraceConfig *config;
-#else
-  UIParaverTraceConfig *config;
-#endif
-  FILE *pcfFile;
 
   // Name initializations
   if ( outputTraceName.empty() )

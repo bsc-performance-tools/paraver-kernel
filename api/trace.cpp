@@ -549,22 +549,6 @@ void TraceProxy::parsePCF( const string& whichFile )
     myCodeColor.setColor( ( PRV_UINT32 )( *it ), tmpColor );
   }
 
-
-
-  const vector< int >& gradientColors = config->getGradientColors();
-  if ( gradientColors.begin() != gradientColors.end() )
-  {
-    tmpColor.red = config->getGradientColor( gradientColors[0] ).getRed();
-    tmpColor.green = config->getGradientColor( gradientColors[0] ).getGreen();
-    tmpColor.blue = config->getGradientColor( gradientColors[0] ).getBlue();
-    myGradientColor.setBeginGradientColor( tmpColor );
-
-    size_t last = gradientColors.size() - 1;
-    tmpColor.red = config->getGradientColor( gradientColors[ last ] ).getRed();
-    tmpColor.green = config->getGradientColor( gradientColors[ last ] ).getGreen();
-    tmpColor.blue = config->getGradientColor( gradientColors[ last ] ).getBlue();
-    myGradientColor.setEndGradientColor( tmpColor );
-  }
   myEventLabels = EventLabels( *config, myTrace->getLoadedEvents() );
   myStateLabels = StateLabels( *config );
 
@@ -580,9 +564,6 @@ void TraceProxy::parsePCF( const string& whichFile )
   {
   }
 
-  // myDefaultTaskSemanticFunc = config->get_default_task_semantic_func();
-  // myDefaultThreadSemanticFunc = config->get_default_thread_semantic_func();
-
   delete config;
 }
 
@@ -596,11 +577,6 @@ void TraceProxy::parseROW( const string& whichFile )
 const CodeColor& TraceProxy::getCodeColor() const
 {
   return myCodeColor;
-}
-
-const GradientColor& TraceProxy::getGradientColor() const
-{
-  return myGradientColor;
 }
 
 const EventLabels& TraceProxy::getEventLabels() const
