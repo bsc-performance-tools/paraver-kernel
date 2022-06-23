@@ -26,6 +26,7 @@
 #include <iostream> //DELETE ME!
 
 #include <cstring>
+#include <stdexcept>
 #include <vector>
 
 // MAIN SECTIONS
@@ -39,6 +40,8 @@ constexpr char PCF_LABEL_EVENT_TYPE[] = "EVENT_TYPE";
 constexpr char PCF_LABEL_GRADIENT_COLOR[] = "GRADIENT_COLOR";
 constexpr char PCF_LABEL_GRADIENT_NAMES[] = "GRADIENT_NAMES";
 
+constexpr char PCF_EXCEPTION_UNKNOWN_TYPE[] = "Unknown event type";
+constexpr char PCF_EXCEPTION_UNKNOWN_VALUE[] = "Unknown event value";
 
 template<typename dummy>
 bool PCFFileParser<dummy>::openPCFFileParser( const std::string& filename, PCFFileParser<dummy>& outPCFFile )
@@ -115,6 +118,145 @@ PCFFileParser<dummy>::PCFFileParser( const std::string& filename )
   pcfFile.close();
 }
 
+template<typename dummy>
+std::string PCFFileParser<dummy>::getLevel() const { return level; }
+template<typename dummy>
+void PCFFileParser<dummy>::setLevel( std::string& newValue ) { level = newValue; }
+
+template<typename dummy>
+std::string PCFFileParser<dummy>::getUnits() const { return units; }
+template<typename dummy>
+void PCFFileParser<dummy>::setUnits( std::string& newValue ) { units = newValue; }
+
+template<typename dummy>
+std::string PCFFileParser<dummy>::getLookBack() const { return lookBack; }
+template<typename dummy>
+void PCFFileParser<dummy>::setLookBack( std::string& newValue ) { lookBack = newValue; }
+
+template<typename dummy>
+std::string PCFFileParser<dummy>::getSpeed() const { return speed; }
+template<typename dummy>
+void PCFFileParser<dummy>::setSpeed( std::string& newValue ) { speed = newValue; }
+
+template<typename dummy>
+std::string PCFFileParser<dummy>::getFlagIcons() const { return flagIcons; }
+template<typename dummy>
+void PCFFileParser<dummy>::setFlagIcons( std::string& newValue ) { flagIcons = newValue; }
+
+template<typename dummy>
+std::string PCFFileParser<dummy>::getYmaxScale() const { return ymaxScale; }
+template<typename dummy>
+void PCFFileParser<dummy>::setYmaxScale( std::string& newValue ) { ymaxScale = newValue; }
+
+template<typename dummy>
+std::string PCFFileParser<dummy>::getThreadFunc() const { return threadFunc; }
+template<typename dummy>
+void PCFFileParser<dummy>::setThreadFunc( std::string& newValue ) { threadFunc = newValue; }
+
+template<typename dummy>
+const std::map< TState, std::string >& PCFFileParser<dummy>::getStates() const { return states; }
+template<typename dummy>
+void PCFFileParser<dummy>::setState( TState state, const std::string& label ) { states[ state ] = label; }
+
+template<typename dummy>
+const std::map< TSemanticValue, PCFFileParser<>::rgb >& PCFFileParser<dummy>::getSemanticColors() const { return semanticColors; }
+template<typename dummy>
+void PCFFileParser<dummy>::setSemanticColor( TSemanticValue semanticValue, PCFFileParser::rgb color ) { semanticColors[ semanticValue ] = color; }
+
+
+template<typename dummy>
+void PCFFileParser<dummy>::getEventTypes( std::vector< TEventType >& onVector ) const
+{
+  std::transform( std::begin( events ), std::end( events ), std::back_inserter( onVector ), 
+                  [](auto const& pair) { return pair.first; } );
+}
+
+template<typename dummy>
+unsigned int PCFFileParser<dummy>::getEventPrecision( TEventType eventType ) const
+{
+  auto it = events.find( eventType );
+  if( it == events.end() )
+    throw std::out_of_range( PCF_EXCEPTION_UNKNOWN_TYPE );
+
+  return it->second.precision;
+}
+
+template<typename dummy>
+const std::string& PCFFileParser<dummy>::getEventLabel( TEventType eventType ) const
+{
+  auto it = events.find( eventType );
+  if( it == events.end() )
+    throw std::out_of_range( PCF_EXCEPTION_UNKNOWN_TYPE );
+
+  return it->second.label;
+}
+
+template<typename dummy>
+const std::map< TEventValue, std::string >& PCFFileParser<dummy>::getEventValues( TEventType eventType ) const
+{
+  auto it = events.find( eventType );
+  if( it == events.end() )
+    throw std::out_of_range( PCF_EXCEPTION_UNKNOWN_TYPE );
+
+  return it->second.values;
+}
+
+template<typename dummy>
+void PCFFileParser<dummy>::setEventType( TEventType eventType,
+                                         unsigned int precision,
+                                         const std::string& label,
+                                         const std::map< TEventValue, std::string >& values )
+{
+  PCFFileParser::EventTypeData tmpEventData { precision, label, values };
+
+  events[ eventType ] = tmpEventData;
+}
+
+
+template<typename dummy>
+void PCFFileParser<dummy>::setEventPrecision( TEventType eventType, unsigned int precision )
+{
+  auto it = events.find( eventType );
+  if( it == events.end() )
+    throw std::out_of_range( PCF_EXCEPTION_UNKNOWN_TYPE );
+
+  it->second.precision = precision;
+}
+
+template<typename dummy>
+void PCFFileParser<dummy>::setEventLabel( TEventType eventType, const std::string& label )
+{
+  auto it = events.find( eventType );
+  if( it == events.end() )
+    throw std::out_of_range( PCF_EXCEPTION_UNKNOWN_TYPE );
+
+  it->second.label = label;
+}
+
+template<typename dummy>
+void PCFFileParser<dummy>::setEventValues( TEventType eventType, const std::map< TEventValue, std::string >& values )
+{
+  auto it = events.find( eventType );
+  if( it == events.end() )
+    throw std::out_of_range( PCF_EXCEPTION_UNKNOWN_TYPE );
+
+  it->second.values = values;
+}
+
+template<typename dummy>
+void PCFFileParser<dummy>::setEventValueLabel( TEventType eventType, TEventValue eventValue, const std::string& label )
+{
+  auto it = events.find( eventType );
+  if( it == events.end() )
+    throw std::out_of_range( PCF_EXCEPTION_UNKNOWN_TYPE );
+ 
+  auto itValues = it->second.values.find( eventType );
+  if( itValues == it->second.values.end() )
+    throw std::out_of_range( PCF_EXCEPTION_UNKNOWN_VALUE );
+
+  itValues->second.label = label;
+}
+
 
 // ----------------------------------------------------------------------------
 // DefaultOptionsParser -------------------------------------------------------
@@ -134,10 +276,10 @@ class DefaultOptionsParser : public PCFFileParser<>::SectionParser
     {
       parameterSetter[ PCF_LABEL_LEVEL ]      = [this]( std::string line ) { mainParser->level = line; };
       parameterSetter[ PCF_LABEL_UNITS ]      = [this]( std::string line ) { mainParser->units = line; };
-      parameterSetter[ PCF_LABEL_LOOK_BACK ]  = [this]( std::string line ) { mainParser->look_back = line; };
+      parameterSetter[ PCF_LABEL_LOOK_BACK ]  = [this]( std::string line ) { mainParser->lookBack = line; };
       parameterSetter[ PCF_LABEL_SPEED ]      = [this]( std::string line ) { mainParser->speed = line; };
-      parameterSetter[ PCF_LABEL_FLAG_ICONS ] = [this]( std::string line ) { mainParser->flag_icons = line; };
-      parameterSetter[ PCF_LABEL_YMAX_SCALE ] = [this]( std::string line ) { mainParser->ymax_scale = line; };
+      parameterSetter[ PCF_LABEL_FLAG_ICONS ] = [this]( std::string line ) { mainParser->flagIcons = line; };
+      parameterSetter[ PCF_LABEL_YMAX_SCALE ] = [this]( std::string line ) { mainParser->ymaxScale = line; };
     }
 
     virtual ~DefaultOptionsParser() = default;
@@ -167,11 +309,11 @@ void DefaultOptionsParser::dumpToFile( std::ofstream& pcfFile, const PCFFilePars
   size_t width = std::strlen( PCF_LABEL_NUM_OF_STATE_COLORS ) + 1;
   pcfFile << std::left << std::setw(width) << PCF_LABEL_LEVEL << std::setw(0) << whichMainParser.level << std::endl;
   pcfFile << std::left << std::setw(width) << PCF_LABEL_UNITS << std::setw(0) << whichMainParser.units << std::endl;
-  pcfFile << std::left << std::setw(width) << PCF_LABEL_LOOK_BACK << std::setw(0) << whichMainParser.look_back << std::endl;
+  pcfFile << std::left << std::setw(width) << PCF_LABEL_LOOK_BACK << std::setw(0) << whichMainParser.lookBack << std::endl;
   pcfFile << std::left << std::setw(width) << PCF_LABEL_SPEED << std::setw(0) << whichMainParser.speed << std::endl;
-  pcfFile << std::left << std::setw(width) << PCF_LABEL_FLAG_ICONS << std::setw(0) << whichMainParser.flag_icons << std::endl;
+  pcfFile << std::left << std::setw(width) << PCF_LABEL_FLAG_ICONS << std::setw(0) << whichMainParser.flagIcons << std::endl;
   pcfFile << std::left << std::setw(width) << PCF_LABEL_NUM_OF_STATE_COLORS << std::setw(0) << whichMainParser.semanticColors.size() << std::endl;
-  pcfFile << std::left << std::setw(width) << PCF_LABEL_YMAX_SCALE << std::setw(0) << whichMainParser.ymax_scale << std::endl;
+  pcfFile << std::left << std::setw(width) << PCF_LABEL_YMAX_SCALE << std::setw(0) << whichMainParser.ymaxScale << std::endl;
 
   pcfFile << std::endl;
 }
@@ -186,7 +328,7 @@ class DefaultSemanticParser : public PCFFileParser<>::SectionParser
   public:
     DefaultSemanticParser( PCFFileParser<> *whichMainParser ) : PCFFileParser<>::SectionParser( whichMainParser ) 
     {
-      parameterSetter[ PCF_LABEL_THREAD_FUNC ] = [this]( std::string line ) { mainParser->thread_func = line; };
+      parameterSetter[ PCF_LABEL_THREAD_FUNC ] = [this]( std::string line ) { mainParser->threadFunc = line; };
     }
 
     virtual ~DefaultSemanticParser() = default;
@@ -214,7 +356,7 @@ void DefaultSemanticParser::dumpToFile( std::ofstream& pcfFile, const PCFFilePar
 {
   pcfFile << PCF_LABEL_DEFAULT_SEMANTIC << std::endl;
   size_t width = std::strlen( PCF_LABEL_NUM_OF_STATE_COLORS ) + 1;
-  pcfFile << std::left << std::setw(width) << PCF_LABEL_THREAD_FUNC << std::setw(0) << whichMainParser.thread_func << std::endl;
+  pcfFile << std::left << std::setw(width) << PCF_LABEL_THREAD_FUNC << std::setw(0) << whichMainParser.threadFunc << std::endl;
 
   pcfFile << std::endl;
 }

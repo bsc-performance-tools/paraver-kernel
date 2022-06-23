@@ -24,13 +24,14 @@
 
 #pragma once
 
+#include <cstddef>
 #include <functional>
 #include <map>
 #include <string>
 #include <tuple>
 #include "tracetypes.h"
 
-template< typename dummy = nullptr_t >
+template< typename dummy = std::nullptr_t >
 class PCFFileParser
 {
   public:
@@ -59,9 +60,48 @@ class PCFFileParser
 
     void dumpToFile( const std::string& filename ) const;
 
+    std::string getLevel() const;
+    void setLevel( std::string& newValue );
+
+    std::string getUnits() const;
+    void setUnits( std::string& newValue );
+
+    std::string getLookBack() const;
+    void setLookBack( std::string& newValue );
+
+    std::string getSpeed() const;
+    void setSpeed( std::string& newValue );
+
+    std::string getFlagIcons() const;
+    void setFlagIcons( std::string& newValue );
+
+    std::string getYmaxScale() const;
+    void setYmaxScale( std::string& newValue );
+
+    std::string getThreadFunc() const;
+    void setThreadFunc( std::string& newValue );
+
+    const std::map< TState, std::string >& getStates() const;
+    void setState( TState state, const std::string& label );
+    
+    const std::map< TSemanticValue, PCFFileParser::rgb >& getSemanticColors() const;
+    void setSemanticColor( TSemanticValue semanticValue, PCFFileParser::rgb color );
+
+    void                                        getEventTypes( std::vector< TEventType >& onVector ) const;
+    unsigned int                                getEventPrecision( TEventType eventType ) const;
+    const std::string&                          getEventLabel( TEventType eventType ) const;
+    const std::map< TEventValue, std::string >& getEventValues( TEventType eventType ) const;
+    void setEventType( TEventType eventType,
+                       unsigned int precision,
+                       const std::string& label,
+                       const std::map< TEventValue, std::string >& values );
+    void setEventPrecision( TEventType eventType, unsigned int precision );
+    void setEventLabel( TEventType eventType, const std::string& label );
+    void setEventValues( TEventType eventType, const std::map< TEventValue, std::string >& values );
+    void setEventValueLabel( TEventType eventType, TEventValue eventValue, const std::string& label );
 
   private:
-    struct EventType
+    struct EventTypeData
     {
       unsigned int precision;
       std::string label;
@@ -70,15 +110,14 @@ class PCFFileParser
 
     std::string level;
     std::string units;
-    std::string look_back;
+    std::string lookBack;
     std::string speed;
-    std::string flag_icons;
-    // int num_of_state_colors; se ignora y a la hora de volcar se usa el size del contenedor que tenga los colores
-    std::string ymax_scale; // Recuperarlo desde los nuevos timelines creados
-    std::string thread_func;
+    std::string flagIcons;
+    std::string ymaxScale;
+    std::string threadFunc;
     std::map< TState, std::string > states;
     std::map< TSemanticValue, PCFFileParser::rgb > semanticColors;
-    std::map< TEventType, PCFFileParser::EventType > events;
+    std::map< TEventType, PCFFileParser::EventTypeData > events;
     // TODO: Create class to manage same values and precission for a set of types
 
     std::map< std::string, std::function<PCFFileParser::SectionParser*(void)> > sectionParserFactory;
