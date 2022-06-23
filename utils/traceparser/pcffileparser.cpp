@@ -29,6 +29,9 @@
 #include <regex>
 #include <stdexcept>
 #include <vector>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 // MAIN SECTIONS
 constexpr char PCF_LABEL_DEFAULT_OPTIONS[] = "DEFAULT_OPTIONS";
