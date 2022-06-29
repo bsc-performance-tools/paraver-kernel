@@ -1,6 +1,5 @@
 SUBDIRS = \
 	include \
-	pcfparser \
 	src
 
 

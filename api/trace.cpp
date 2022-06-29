@@ -24,14 +24,6 @@
 #include "kernelconnection.h"
 #include "trace.h"
 
-#ifdef OLD_PCFPARSER
-#include "utils/pcfparser/old/ParaverTraceConfig.h"
-#include "utils/pcfparser/old/ParaverStatesColor.h"
-#include "utils/pcfparser/old/ParaverGradientColor.h"
-#else
-#include "utils/pcfparser/UIParaverTraceConfig.h"
-#endif
-
 #include "utils/traceparser/pcffileparser.h"
 #include "progresscontroller.h"
 #include <sstream>

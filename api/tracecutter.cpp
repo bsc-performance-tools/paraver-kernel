@@ -28,12 +28,6 @@
 //#include "ktracecutter.h"
 #include "kernelconnection.h"
 
-#ifdef OLD_PCFPARSER
-#include "utils/pcfparser/old/ParaverTraceConfig.h"
-#else
-#include "utils/pcfparser/UIParaverTraceConfig.h"
-#endif
-
 using namespace libparaver;
 
 #include <map>

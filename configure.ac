@@ -55,7 +55,6 @@ AX_BOOST_DATE_TIME
 AC_CONFIG_HEADERS(config_traits.h)
 AX_PROG_ENABLE_DEPENDENCIES_AWARE_INSTALL
 AX_PROG_ENABLE_EXTENDED_OBJECTS
-AX_PROG_ENABLE_OLD_PCFPARSER
 AX_PROG_ENABLE_OMPSS
 AX_PROG_ENABLE_OPENMP
 AX_PROG_ENABLE_MINGW
@@ -89,4 +88,4 @@ AC_SUBST([AM_CFLAGS])
 AC_SUBST([AM_CXXFLAGS])
 AC_SUBST([AM_LDFLAGS])
 
-AC_OUTPUT([Makefile src/Makefile api/Makefile include/Makefile utils/Makefile utils/include/Makefile utils/src/Makefile utils/pcfparser/Makefile utils/pcfparser/old/Makefile])
+AC_OUTPUT([Makefile src/Makefile api/Makefile include/Makefile utils/Makefile utils/include/Makefile utils/src/Makefile])

@@ -1,27 +1,6 @@
 
 pkglib_LTLIBRARIES = libparaver-api.la
 
-if MAKE_OLD_PCFPARSER
-  PCFPARSER_FILES=  ../utils/pcfparser/old/LibException.cpp \
-                    ../utils/pcfparser/old/ParaverEventType.cpp \
-                    ../utils/pcfparser/old/ParaverEventValue.cpp \
-                    ../utils/pcfparser/old/ParaverGradientColor.cpp \
-                    ../utils/pcfparser/old/ParaverGradientNames.cpp \
-                    ../utils/pcfparser/old/ParaverState.cpp \
-                    ../utils/pcfparser/old/ParaverStatesColor.cpp \
-                    ../utils/pcfparser/old/ParaverTraceConfig.cpp \
-                    ../utils/pcfparser/old/ParaverTraceConfigGrammar.cpp 
-else
-  PCFPARSER_FILES=../utils/pcfparser/ParaverTraceConfig.cpp \
-                  ../utils/pcfparser/UIParaverTraceConfig.cpp
-endif
-
-if MINGW_ENABLED
-  noinst_LTLIBRARIES = libparavertraceconfig.la
-  libparavertraceconfig_la_SOURCES = $(PCFPARSER_FILES)
-  libparavertraceconfig_la_CXXFLAGS = -I../include/ -I../api/ -I../ -I../../ -O2 -g0 $(BOOST_CPPFLAGS) $(CXXFLAGS_EXTRAE) $(XML_CPPFLAGS) $(MINGW_CPPFLAGS) -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -DBOOST_DATE_TIME_POSIX_TIME_STD_CONFIG $(OPENMP_CXXFLAGS)
-  libparaver_api_la_LIBADD = libparavertraceconfig.la
-endif
 
 libparaver_api_la_SOURCES = \
                     cfg.cpp \
@@ -60,9 +39,6 @@ libparaver_api_la_SOURCES = \
                     workspace.cpp \
                     workspacemanager.cpp
 
-if !MINGW_ENABLED
-  libparaver_api_la_SOURCES += $(PCFPARSER_FILES)
-endif
 
 include_HEADERS = \
                   cfg.h \
@@ -118,17 +94,6 @@ include_HEADERS = \
                   selectionmanagement.cpp \
                   traceeditstates.cpp \
                   zoomhistory.cpp
-
-install-data-hook:
-	$(mkdir_p) $(DESTDIR)$(includedir)/utils/pcfparser
-	cp -f ../utils/pcfparser/UIParaverTraceConfig.h $(DESTDIR)$(includedir)/utils/pcfparser
-	cp -f ../utils/pcfparser/UIParaverTraceConfig.ipp $(DESTDIR)$(includedir)/utils/pcfparser
-
-	$(mkdir_p) $(DESTDIR)$(includedir)/utils/pcfparser/old
-	cp -f ../utils/pcfparser/old/ParaverTraceConfig.h $(DESTDIR)$(includedir)/utils/pcfparser/old
-
-uninstall-hook:
-	test -d $(DESTDIR)$(includedir)/utils/pcfparser && rm -rf $(DESTDIR)$(includedir)/utils/pcfparser
 
 
 # Erases everything which should not be uploaded to CVS

@@ -36,29 +36,6 @@ AC_DEFUN([AX_PROG_ENABLE_EXTENDED_OBJECTS],
 
 
 
-# AX_PROG_ENABLE_OLD_PCFPARSER
-# ----------------------------
-AC_DEFUN([AX_PROG_ENABLE_OLD_PCFPARSER],
-[
-   AC_ARG_ENABLE(old_pcfparser,
-      AC_HELP_STRING(
-         [--enable-old-pcfparser],
-         [enable compilation with old pcfparser (default: disabled)]
-      ),
-      [enable_old_pcfparser="${enableval}"],
-      [enable_old_pcfparser="no"]
-   )
-
-   if test "${enable_old_pcfparser}" = "yes" ; then
-      AC_MSG_NOTICE([Using old pcfparser.])
-      AC_DEFINE([OLD_PCFPARSER], 1, [Old pcfparser enabled by user.])
-   fi
-
-   AM_CONDITIONAL(MAKE_OLD_PCFPARSER, test "${enable_old_pcfparser}" = "yes" )
-])
-
-
-
 # AX_PROG_ENABLE_OMPSS
 # --------------------
 AC_DEFUN([AX_PROG_ENABLE_OMPSS],

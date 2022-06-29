@@ -54,11 +54,6 @@
 #include "eventdrivencutter.h"
 #include "eventtranslator.h"
 
-#ifdef OLD_PCFPARSER
-#include "utils/pcfparser/old/ParaverTraceConfig.h"
-#else
-#include "utils/pcfparser/UIParaverTraceConfig.h"
-#endif
 
 // PARAMEDIR OPTIONS
 typedef struct TOptionParamedir
