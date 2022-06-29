@@ -596,20 +596,49 @@ void EventParser<dummyParser>::parseLine( const std::string& line )
 template< typename dummyParser >
 void EventParser<dummyParser>::dumpToFile( std::ofstream& pcfFile, const PCFFileParser<>& whichMainParser )
 {
-  for( auto it : whichMainParser.events )
+  bool printMainLabel = true;
+  auto it = whichMainParser.events.begin();
+
+  auto printEventContent = [&]( const PCFFileParser<>::EventTypeData& eventData )
   {
-    pcfFile << PCF_LABEL_EVENT_TYPE << std::endl;
-    pcfFile << 0 << "   " << it.first << "    " << it.second.label << std::endl;
-    if( !it.second.values.empty() )
+    if( !eventData.values.empty() )
     {
       pcfFile << PCF_LABEL_EVENT_VALUES << std::endl;
-      for( auto value : it.second.values )
+      for( auto value : eventData.values )
         pcfFile << value.first << "  " << value.second << std::endl;
     }
-    if( it.second.precision != 0 )
-      pcfFile << PCF_LABEL_EVENT_PRECISION << " " << it.second.precision << std::endl;
+    if( eventData.precision != 0 )
+      pcfFile << PCF_LABEL_EVENT_PRECISION << " " << eventData.precision << std::endl;
     
     pcfFile << std::endl;
+  };
+
+  while( it != whichMainParser.events.end() )
+  {
+    if ( printMainLabel )
+    {
+      pcfFile << PCF_LABEL_EVENT_TYPE << std::endl;
+    }
+    pcfFile << 0 << "   " << it->first << "    " << it->second.label << std::endl;
+
+    auto itNext = std::next( it );
+    if( itNext != whichMainParser.events.end() )
+    {
+      if( itNext->second.values == it->second.values &&
+          itNext->second.precision == it->second.precision )
+      {
+        printMainLabel = false;
+        ++it;
+        continue;
+      }
+      else
+      {
+        printMainLabel = true;
+      }
+    }
+
+    printEventContent( it->second );
+    ++it;
   }
 }
 
