@@ -21,16 +21,14 @@
  *   Barcelona Supercomputing Center - Centro Nacional de Supercomputacion   *
 \*****************************************************************************/
 
-#include "kernelconnection.h"
-#include "trace.h"
-
-#include "utils/traceparser/pcffileparser.h"
-#include "progresscontroller.h"
 #include <sstream>
-#include "paraverconfig.h"
-//#include "extrae_user_events.h"
 
-using namespace libparaver;
+#include "kernelconnection.h"
+#include "paraverconfig.h"
+#include "progresscontroller.h"
+#include "trace.h"
+#include "utils/traceparser/pcffileparser.h"
+
 using namespace std;
 
 Trace *Trace::create( KernelConnection *whichKernel, const string& whichFile,

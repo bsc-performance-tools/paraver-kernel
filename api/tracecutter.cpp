@@ -22,22 +22,15 @@
 \*****************************************************************************/
 
 
-#include "tracecutter.h"
-//#include "ktraceoptions.h"
-#include "traceoptions.h"
-//#include "ktracecutter.h"
-#include "kernelconnection.h"
-
-using namespace libparaver;
-
 #include <map>
 #include <string.h>
-#include "eventlabels.h"
-
-//#ifdef _WIN32
 #include <sys/types.h>
 #include <sys/stat.h>
-//#endif
+
+#include "eventlabels.h"
+#include "kernelconnection.h"
+#include "tracecutter.h"
+#include "traceoptions.h"
 
 using namespace std;
 
