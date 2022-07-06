@@ -24,7 +24,7 @@
 
 #pragma once
 
-
+#include "bplustreetypes.h"
 #include "intervalhigh.h"
 #include "semanticcompose.h"
 
@@ -35,6 +35,8 @@ class IntervalCompose: public IntervalHigh
   public:
     IntervalCompose()
     {
+      behaviour = TBehaviour::REGULAR;
+      accumulatedDeltas = 0.0;
       function = nullptr;
       endRecord = nullptr;
       beginRecord = nullptr;
@@ -44,6 +46,8 @@ class IntervalCompose: public IntervalHigh
                      TObjectOrder whichOrder ):
         IntervalHigh( whichLevel, whichOrder ), window( whichWindow )
     {
+      behaviour = TBehaviour::REGULAR;
+      accumulatedDeltas = 0.0;
       function = nullptr;
       endRecord = nullptr;
       beginRecord = nullptr;
@@ -65,6 +69,14 @@ class IntervalCompose: public IntervalHigh
                                KRecordList *displayList = nullptr ) override;
     virtual KRecordList *calcNext( KRecordList *displayList = nullptr, bool initCalc = false ) override;
     virtual KRecordList *calcPrev( KRecordList *displayList = nullptr, bool initCalc = false ) override;
+
+    void initJoinBursts( KRecordList *displayList );
+    void calcNextJoinBursts( KRecordList *displayList );
+    void calcPrevJoinBursts( KRecordList *displayList );
+
+    void initTimer( KRecordList *displayList );
+    void calcNextTimer( KRecordList *displayList );
+    void calcPrevTimer( KRecordList *displayList );
 
     virtual KTimeline *getWindow() override
     {
@@ -95,11 +107,20 @@ class IntervalCompose: public IntervalHigh
     virtual KTrace *getWindowTrace() const override;
 
   private:
-    bool joinBursts;
+    enum class TBehaviour
+    {
+      REGULAR = 0,
+      JOIN_BURSTS,
+      TIMER
+    };
+
+    TRecordTime accumulatedDeltas;
+    TRecordTime timerBeginTime;
+    bplustree::TRecord virtualRecord;
+
+    TBehaviour behaviour;
     MemoryTrace::iterator *endRecord;
     MemoryTrace::iterator *beginRecord;
 
+    void copyRecordContent( MemoryTrace::iterator *whichRecord );
 };
-
-
-

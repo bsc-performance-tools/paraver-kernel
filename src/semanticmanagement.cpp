@@ -77,6 +77,7 @@ void createSemantic()
   functions[0].push_back( new ComposeBeginTime() );
   functions[0].push_back( new ComposeEndTime() );
   functions[0].push_back( new ComposeJoinBursts() );
+  functions[0].push_back( new ComposeTimer() );
   functions[0].push_back( new ComposeTranslate() );
   functions[0].push_back( new ComposeSine() );
   functions[0].push_back( new ComposeCosine() );

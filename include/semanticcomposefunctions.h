@@ -2128,6 +2128,77 @@ class ComposeJoinBursts: public SemanticCompose
 
 };
 
+class ComposeTimer: public SemanticCompose
+{
+  public:
+    typedef enum
+    {
+      DELTA_TIME = 0,
+      MAXPARAM
+    } TParam;
+
+    ComposeTimer()
+    {
+      setDefaultParam();
+    }
+
+    ~ComposeTimer()
+    {}
+
+    virtual TParamIndex getMaxParam() const override
+    {
+      return MAXPARAM;
+    }
+
+    virtual TSemanticValue execute( const SemanticInfo *info ) override;
+
+    virtual void init( KTimeline *whichWindow ) override
+    {}
+
+    virtual std::string getName() override
+    {
+      return ComposeTimer::name;
+    }
+
+    virtual SemanticFunction *clone() override
+    {
+      return new ComposeTimer( *this );
+    }
+
+    virtual SemanticInfoType getSemanticInfoType() const override
+    {
+      return SAME_TYPE;
+    }
+
+  protected:
+    virtual const bool getMyInitFromBegin() override
+    {
+      return initFromBegin;
+    }
+    virtual TParamValue getDefaultParam( TParamIndex whichParam ) override
+    {
+      TParamValue tmp;
+
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      else if ( whichParam == DELTA_TIME )
+        tmp.push_back( 1 );
+
+      return tmp;
+    }
+
+    virtual std::string getDefaultParamName( TParamIndex whichParam ) override
+    {
+      if ( whichParam >= getMaxParam() )
+        throw SemanticException( TSemanticErrorCode::maxParamExceeded );
+      return "Delta time";
+    }
+
+  private:
+    static const bool initFromBegin = true;
+    static std::string name;
+};
+
 class ComposeBeginTime: public SemanticCompose
 {
   public:

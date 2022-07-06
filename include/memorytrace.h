@@ -65,13 +65,17 @@ class MemoryTrace
         virtual TRecordTime    getStateEndTime() const = 0;
         virtual TCommID        getCommIndex() const = 0;
 
-        virtual void         setTime( const TRecordTime time ) = 0;
-        virtual void         setType( const TRecordType whichType ) = 0;
-        virtual void         setStateEndTime( const TRecordTime whichEndTime ) = 0;
+        virtual void setTime( const TRecordTime time ) = 0;
+        virtual void setType( const TRecordType whichType ) = 0;
+        virtual void setStateEndTime( const TRecordTime whichEndTime ) = 0;
 
         virtual TData *getRecord() const
         {
           return record;
+        }
+        virtual void setRecord( TData *whichRecord )
+        {
+          record = whichRecord;
         }
 
       protected :

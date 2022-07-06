@@ -646,6 +646,15 @@ TSemanticValue ComposeJoinBursts::execute( const SemanticInfo *info )
 }
 
 
+string ComposeTimer::name = "Timer";
+TSemanticValue ComposeTimer::execute( const SemanticInfo *info )
+{
+  const SemanticHighInfo *myInfo = ( const SemanticHighInfo * ) info;
+
+  return myInfo->values[ 0 ];
+}
+
+
 string ComposeBeginTime::name = "Begin Time";
 TSemanticValue ComposeBeginTime::execute( const SemanticInfo *info )
 {
