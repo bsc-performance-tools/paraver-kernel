@@ -56,7 +56,7 @@ TraceBodyIO< PARAM_TRACEBODY_CLASS > *TraceBodyIOFactory::createTraceBody( Trace
     }
     file->seekg( currentPos );
 #else
-    ret = new TraceBodyIO_v1();
+    ret = new TraceBodyIO_v1< PARAM_TRACEBODY_CLASS >();
 #endif
   }
   return ret;
