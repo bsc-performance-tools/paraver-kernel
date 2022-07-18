@@ -115,7 +115,7 @@ class KTimeline: public Timeline
 
     virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    const std::string& whichFunction ) override = 0;
-    virtual std::string getLevelFunction( TWindowLevel whichLevel ) override = 0;
+    virtual std::string getLevelFunction( TWindowLevel whichLevel ) const override = 0;
     virtual SemanticFunction *getSemanticFunction( TWindowLevel whichLevel ) = 0;
     virtual std::string getFirstUsefulFunction( ) override = 0;
     virtual TWindowLevel getFirstFreeCompose() const override = 0;
@@ -257,7 +257,7 @@ class KSingleWindow: public KTimeline
 
     virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    const std::string& whichFunction ) override;
-    virtual std::string getLevelFunction( TWindowLevel whichLevel ) override;
+    virtual std::string getLevelFunction( TWindowLevel whichLevel ) const override;
     virtual SemanticFunction *getSemanticFunction( TWindowLevel whichLevel ) override;
     virtual std::string getFirstUsefulFunction( ) override;
     virtual TWindowLevel getFirstFreeCompose() const override;
@@ -404,7 +404,7 @@ class KDerivedWindow: public KTimeline
 
     virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    const std::string& whichFunction ) override;
-    virtual std::string getLevelFunction( TWindowLevel whichLevel ) override;
+    virtual std::string getLevelFunction( TWindowLevel whichLevel ) const override;
     virtual SemanticFunction *getSemanticFunction( TWindowLevel whichLevel ) override;
     virtual std::string getFirstUsefulFunction( ) override;
     virtual TWindowLevel getFirstFreeCompose() const override;

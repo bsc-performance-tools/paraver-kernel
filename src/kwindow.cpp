@@ -457,7 +457,7 @@ bool KSingleWindow::setLevelFunction( TWindowLevel whichLevel,
 }
 
 
-string KSingleWindow::getLevelFunction( TWindowLevel whichLevel )
+string KSingleWindow::getLevelFunction( TWindowLevel whichLevel ) const
 {
   return functions[ whichLevel ]->getName();
 }
@@ -1166,7 +1166,7 @@ bool KDerivedWindow::setLevelFunction( TWindowLevel whichLevel,
 }
 
 
-string KDerivedWindow::getLevelFunction( TWindowLevel whichLevel )
+string KDerivedWindow::getLevelFunction( TWindowLevel whichLevel ) const
 {
   return functions[ whichLevel ]->getName();
 }

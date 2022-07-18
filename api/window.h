@@ -47,6 +47,8 @@
 using namespace stdext;
 #endif
 
+constexpr char PARAM_SEPARATOR = '|';
+
 struct commCoord
 {
   PRV_INT32 fromTime;
@@ -266,7 +268,7 @@ class Timeline
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const = 0;
     virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    const std::string& whichFunction ) = 0;
-    virtual std::string getLevelFunction( TWindowLevel whichLevel ) = 0;
+    virtual std::string getLevelFunction( TWindowLevel whichLevel ) const = 0;
     virtual std::string getFirstUsefulFunction( ) = 0;
     virtual TWindowLevel getFirstFreeCompose() const = 0;
     virtual void setFunctionParam( TWindowLevel whichLevel,
@@ -721,6 +723,12 @@ class Timeline
       return TParamAliasKey();
     }
 
+    virtual std::string getCFG4DParameterOriginalName( TWindowLevel whichLevel, TParamIndex whichParam ) const
+    {
+      return "";
+    }
+
+
     virtual Timeline::TParamAliasKey getCFG4DParamAliasKey( const TParamAlias::iterator it ) const
     {
       return TParamAliasKey();
@@ -887,7 +895,7 @@ class TimelineProxy: public Timeline
     virtual TWindowLevel getComposeLevel( TWindowLevel whichLevel ) const override;
     virtual bool setLevelFunction( TWindowLevel whichLevel,
                                    const std::string& whichFunction ) override;
-    virtual std::string getLevelFunction( TWindowLevel whichLevel ) override;
+    virtual std::string getLevelFunction( TWindowLevel whichLevel ) const override;
     virtual std::string getFirstUsefulFunction( ) override;
     virtual TWindowLevel getFirstFreeCompose() const override;
     virtual void setFunctionParam( TWindowLevel whichLevel,
@@ -1101,6 +1109,7 @@ class TimelineProxy: public Timeline
                                                 const std::string &semanticLevel,
                                                 const std::string &function,
                                                 const TParamIndex &numParameter ) const override;
+    virtual std::string getCFG4DParameterOriginalName( TWindowLevel whichLevel, TParamIndex whichParam ) const override;
 
     virtual void setCFGS4DGroupLink( std::string originalName, TCFGS4DGroup whichGroup ) override;
     virtual TCFGS4DGroup getCFGS4DGroupLink( std::string originalName ) const override;
@@ -1242,6 +1251,8 @@ class TimelineProxy: public Timeline
     TParamAlias paramAliasCFG4D;
     std::map< std::string, TCFGS4DGroup > groupLinkFromPropName;
     TCFGS4DIndexLink globalIndexLink;
+    static std::stringstream sstrCFGS4DOriginalName;
+
 
     // For Clone
     TimelineProxy();

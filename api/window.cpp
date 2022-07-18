@@ -45,6 +45,9 @@
 
 using namespace std;
 
+stringstream TimelineProxy::sstrCFGS4DOriginalName;
+
+
 Timeline *Timeline::create( KernelConnection *whichKernel, Trace *whichTrace )
 {
   return new TimelineProxy( whichKernel, whichTrace );
@@ -720,7 +723,7 @@ bool TimelineProxy::setLevelFunction( TWindowLevel whichLevel,
   return result;
 }
 
-string TimelineProxy::getLevelFunction( TWindowLevel whichLevel )
+string TimelineProxy::getLevelFunction( TWindowLevel whichLevel ) const
 {
   return myWindow->getLevelFunction( whichLevel );
 }
@@ -1979,11 +1982,21 @@ void TimelineProxy::splitCFG4DParamAliasKey( const TParamAliasKey &pk,
 
 
 const Timeline::TParamAliasKey TimelineProxy::buildCFG4DParamAliasKey( const string &semanticLevel,
-                                                                   const string &function,
-                                                                   const TParamIndex &numParameter ) const
+                                                                       const string &function,
+                                                                       const TParamIndex &numParameter ) const
 {
-  TParamAliasKey key( make_pair( make_pair( semanticLevel, function ), numParameter ) );
-  return key;
+  return TParamAliasKey( make_pair( make_pair( semanticLevel, function ), numParameter ) );
+}
+
+
+std::string TimelineProxy::getCFG4DParameterOriginalName( TWindowLevel whichLevel, TParamIndex whichParam ) const
+{
+  sstrCFGS4DOriginalName.clear();
+  sstrCFGS4DOriginalName.str( "" );
+  sstrCFGS4DOriginalName << TimelineLevelLabels[ whichLevel ] << PARAM_SEPARATOR << whichParam << PARAM_SEPARATOR
+                         << getLevelFunction( whichLevel ) << "." << getFunctionParamName( whichLevel, whichParam );
+
+  return sstrCFGS4DOriginalName.str();
 }
 
 
@@ -2029,6 +2042,7 @@ vector< Timeline::TParamAliasKey > TimelineProxy::getCFG4DParamKeysBySemanticLev
     for( TParamAlias::const_iterator it = paramAliasCFG4D.begin(); it != paramAliasCFG4D.end(); ++it )
     {
       splitCFG4DParamAliasKey( it->first, semanticLevel, function, numParameter );
+      
       if ( semanticLevel == whichSemanticLevel )
       {
         retKeys.push_back( (Timeline::TParamAliasKey) it->first );

@@ -31,7 +31,6 @@
 #include "paraverconfig.h"
 #include "trace.h"
 
-constexpr char PARAM_SEPARATOR = '|';
 // TODO: Improve to global parameter
 constexpr PRV_UINT16 PERCENT_PRECISION = 2;
 
@@ -111,8 +110,6 @@ class LabelConstructor
     static std::string getImageFileSuffix( const TImageFormat& format =  TImageFormat::PNG );
     static std::string getDataFileSuffix( const TTextFormat& format = TTextFormat::PLAIN );
 
-    static std::string getCFG4DParameterOriginalName( Timeline *whichWindow, TWindowLevel whichLevel, TParamIndex whichParam );
-
     static void presetBaseFormat( std::stringstream &whichStream,
                                   PRV_UINT32 precision = PERCENT_PRECISION );
     static void presetBaseTimeFormat( std::stringstream &whichStream,
@@ -126,7 +123,6 @@ class LabelConstructor
     static std::stringstream tmp;
     static std::stringstream sstrTimeLabel;
     static std::stringstream sstrSemanticLabel;
-    static std::stringstream sstrCFGS4DOriginalName;
 
     static std::string rowStr;
     static std::string tmpStr;

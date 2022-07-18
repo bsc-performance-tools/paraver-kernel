@@ -40,7 +40,6 @@ stringstream LabelConstructor::columnLabel;
 stringstream LabelConstructor::tmp;
 stringstream LabelConstructor::sstrTimeLabel;
 stringstream LabelConstructor::sstrSemanticLabel;
-stringstream LabelConstructor::sstrCFGS4DOriginalName;
 string       LabelConstructor::rowStr;
 string       LabelConstructor::tmpStr;
 char         LabelConstructor::separator;
@@ -766,14 +765,4 @@ std::string LabelConstructor::getDataFileSuffix( const TTextFormat& format )
   }
 
   return resultString;
-}
-
-std::string LabelConstructor::getCFG4DParameterOriginalName( Timeline *whichWindow, TWindowLevel whichLevel, TParamIndex whichParam )
-{
-  sstrCFGS4DOriginalName.clear();
-  sstrCFGS4DOriginalName.str( "" );
-  sstrCFGS4DOriginalName << TimelineLevelLabels[ whichLevel ] << PARAM_SEPARATOR << whichParam << PARAM_SEPARATOR
-                         << whichWindow->getLevelFunction( whichLevel ) << "." << whichWindow->getFunctionParamName( whichLevel, whichParam );
-
-  return sstrCFGS4DOriginalName.str();
 }
