@@ -1971,11 +1971,30 @@ const Timeline::TParamAlias TimelineProxy::getCFG4DParamAliasList() const
 }
 
 void TimelineProxy::splitCFG4DParamAliasKey( const TParamAliasKey &pk,
-                                           string &semanticLevel,
-                                           string &function,
-                                           TParamIndex &numParameter ) const
+                                             string &semanticLevel,
+                                             string &function,
+                                             TParamIndex &numParameter ) const
 {
   semanticLevel = pk.first.first;
+  function = pk.first.second;
+  numParameter = pk.second;
+}
+
+
+void TimelineProxy::splitCFG4DParamAliasKey( const TParamAliasKey &pk,
+                                             TWindowLevel &semanticLevel,
+                                             string &function,
+                                             TParamIndex &numParameter ) const
+{
+  string tmpSemanticLevel = pk.first.first;
+  int iSemLevel;
+  for( iSemLevel = 0; iSemLevel < DERIVED; ++iSemLevel )
+  {
+    if( TimelineLevelLabels[ iSemLevel ] == tmpSemanticLevel )
+      break;
+  }
+
+  semanticLevel = TWindowLevel( iSemLevel );
   function = pk.first.second;
   numParameter = pk.second;
 }

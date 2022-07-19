@@ -716,6 +716,13 @@ class Timeline
     {
     }
 
+    virtual void splitCFG4DParamAliasKey( const TParamAliasKey &pk,
+                                          TWindowLevel &semanticLevel,
+                                          std::string &function,
+                                          TParamIndex &numParameter ) const
+    {      
+    }
+
     virtual const TParamAliasKey buildCFG4DParamAliasKey( const std::string &semanticLevel,
                                                           const std::string &function,
                                                           const TParamIndex &numParameter ) const
@@ -1096,6 +1103,10 @@ class TimelineProxy: public Timeline
     virtual const TParamAlias getCFG4DParamAliasList() const override;
     virtual void splitCFG4DParamAliasKey( const TParamAliasKey &pk,
                                           std::string &semanticLevel,
+                                          std::string &function,
+                                          TParamIndex &numParameter ) const override;
+    virtual void splitCFG4DParamAliasKey( const TParamAliasKey &pk,
+                                          TWindowLevel &semanticLevel,
                                           std::string &function,
                                           TParamIndex &numParameter ) const override;
 
